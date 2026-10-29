@@ -184,5 +184,5 @@ classes, and packages for the target. See the
 
 Each component keeps its own upstream license; the patches in
 `ports/<name>/patches/` are offered under the license of the component they
-modify. The license for the build files, scripts and documentation of this
-repository is set in [LICENSE](LICENSE).
+modify. The build files, scripts, tests and documentation of this repository are
+under the [Apache License 2.0](LICENSE). See also [NOTICE.md](NOTICE.md).

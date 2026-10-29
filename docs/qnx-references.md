@@ -64,21 +64,3 @@ Note that CMake identifies `qcc` as compiler ID **`QCC`**, not `GNU` — project
 that branch on `CMAKE_C_COMPILER_ID MATCHES "GNU"` silently take their
 unknown-compiler path. That and 96 other traps are in
 [porting hazards](porting-hazards.md).
-
-## Internal BlackBerry/QNX resources
-
-The following were supplied as references but are on internal networks, so they
-are **not** reflected in this repository's content — nothing here was derived
-from them, and their guidance may differ from what is written here:
-
-- QNX OSG Dashboard — `wikis.rim.net/display/OSG/QNX+OSG+Dashboard`
-- The Linux Porting Guide for QNX (`go/lpg`) — `wikis.rim.net`
-- OSS Porting and Ecosystem Enablement (`go/osgoss`)
-- QNX Developer Desktop exercises, customization, CES 2026 demo instructions — `wikis.rim.net`
-- Companion repos for the Open Source Projects — `blackberry.atlassian.net`
-- QNX OSG Package Manager, apk demo — `blackberry.atlassian.net`, `gitlab.rim.net`
-- Internal package repository — `osgbox1.bts.rim.net/repo/`
-- cmake QNX support — `wikis.rim.net/display/QNXInfra/cmake+QNX+support`
-
-If any of these contradict this repository, they win — they are the authority
-and this is an independent build.

@@ -10,6 +10,13 @@ if [ -z "$P" ] || [ ! -x "$P/lib/demo_nodes_cpp/talker" ]; then
   echo "  FAIL ROS prefix with demo_nodes_cpp (AMENT_PREFIX_PATH=$P)"
   echo "FAIL ros2 (1 check(s) failed)"; exit 1
 fi
+# ROS's own libraries first, as its setup.sh puts them: the ROS build carries
+# its own Fast DDS, Fast CDR, Cyclone DDS, zstd, yaml-cpp ... under the same
+# sonames as this tree's standalone components in /usr/local/lib, and QNX's
+# loader takes LD_LIBRARY_PATH before any RPATH -- with the standalone
+# libfastcdr loaded, every Fast DDS node threw BadParamException ("This member
+# is not been selected") while registering its first type.
+LD_LIBRARY_PATH="$P/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"; export LD_LIBRARY_PATH
 T=$(mktemp -d /tmp/ros2-test.XXXXXX)
 ROS_LOG_DIR="$T/log"; export ROS_LOG_DIR
 ROS_DOMAIN_ID=$(( $$ % 200 )); export ROS_DOMAIN_ID

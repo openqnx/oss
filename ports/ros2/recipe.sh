@@ -15,6 +15,15 @@ VERSION=jazzy
 # run on the build host, in a venv of the host Python.
 # Installs to /usr/local/opt/ros/jazzy on the target (source its
 # setup.sh/local_setup.sh there).
+#
+# Run time: put /usr/local/opt/ros/jazzy/lib FIRST on LD_LIBRARY_PATH (its
+# setup.sh does). The ROS workspace builds its own Fast DDS, Fast CDR, Cyclone
+# DDS, zstd, yaml, yaml-cpp, console_bridge, orocos-kdl and benchmark, under
+# the same sonames as this tree's standalone components in /usr/local/lib, and
+# QNX's loader searches LD_LIBRARY_PATH before any RPATH: with /usr/local/lib
+# first, Fast DDS nodes loaded the standalone libfastcdr and threw
+# BadParamException registering their first type. Building ROS against the
+# standalone components instead would remove the duplicates.
 DEPS="python3 numpy opencv curl lz4"
 BUILDSYS=custom
 ROS_PREFIX="$PREFIX/opt/ros/$VERSION"
@@ -101,6 +110,16 @@ set(PYTHON_LIBRARIES "$lib")
 set(NUMPY_INSTALL_DIR "$STAGE$PREFIX/lib/python$pv/site-packages")
 set(Eigen3_INCLUDE_DIRS "$STAGE$PREFIX/include/eigen3")
 include_directories(SYSTEM \${PYTHON_INCLUDE_DIR})
+# Their linker flags carry --as-needed: a library that calls nothing in libc
+# itself (rcl_logging_noop, the generated *__rosidl_typesupport_c libraries)
+# then lost libc.so and exported copies of libc functions from QNX's static
+# libcS.a, which every other ROS library then called instead of libc's. Keep
+# libc needed (toolchain/qnx-x86_64.cmake does the same for every other port).
+foreach(k EXE SHARED MODULE)
+  if(NOT CMAKE_\${k}_LINKER_FLAGS MATCHES "no-as-needed -lc")
+    set(CMAKE_\${k}_LINKER_FLAGS "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state \${CMAKE_\${k}_LINKER_FLAGS}" CACHE STRING "" FORCE)
+  endif()
+endforeach()
 EOF
   # qnx-ports' geometry2 change has tf2_bullet depend on their bullet3_vendor
   # (Bullet 2.89, cloned and built at build time) where upstream wants a system
@@ -108,6 +127,13 @@ EOF
   # eigen, opencv and numpy, which come from this tree's components instead.
   rm -rf "$S/src/qnx-vendor" && mkdir -p "$S/src/qnx-vendor" && \
     cp -a "$RECIPE_DIR/ros2/qnx-ports/modules/bullet3_vendor" "$S/src/qnx-vendor/" || return 1
+  # It hands Bullet's own build -DCMAKE_C/CXX_FLAGS="-Wno-ignored-attributes",
+  # which replaces the toolchain's flags -- -Vgcc_nto<cpu> with them -- and
+  # qcc then compiles for its default target: the aarch64le build shipped
+  # x86-64 Bullet libraries (scripts/check-artifacts). Add to them instead.
+  sed -i -e 's|-DCMAKE_CXX_FLAGS="-Wno-ignored-attributes"|"-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -Wno-ignored-attributes"|' \
+         -e 's|-DCMAKE_C_FLAGS="-Wno-ignored-attributes"|"-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -Wno-ignored-attributes"|' \
+    "$S/src/qnx-vendor/bullet3_vendor/CMakeLists.txt" || return 1
   # colcon puts each installed package's lib directory on LD_LIBRARY_PATH.
   # Those hold QNX libraries, and on an x86_64 build host the loader accepts
   # them: once zstd_vendor was installed, the host cmake loaded its QNX

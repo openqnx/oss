@@ -1,0 +1,28 @@
+ddsrt: look for the resolver in libsocket on QNX, and link it.
+
+QNX keeps getaddrinfo, gethostbyname_r, inet_ntop and inet_pton in
+libsocket, which nothing links by default, so check_symbol_exists() found
+none of them and ddsrt was built without DNS (DDSRT_HAVE_DNS unset). A peer
+given by name is then rejected: with ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
+rmw_cyclonedds adds "localhost", Cyclone logged "add_peer_addresses:
+localhost: not a valid address", and nodes on one host never discovered each
+other. Check (and link) with libsocket on QNX.
+
+Upstream-Status: Pending
+
+--- a/src/ddsrt/CMakeLists.txt
++++ b/src/ddsrt/CMakeLists.txt
+@@ -152,6 +152,13 @@
+   endif()
+ endif()
+ 
++# QNX keeps the resolver (getaddrinfo, gethostbyname_r) and inet_ntop/pton
++# in libsocket: without it the checks below fail and ddsrt is built without
++# DNS, so no peer can be given by name ("localhost: not a valid address").
++if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
++  list(APPEND CMAKE_REQUIRED_LIBRARIES socket)
++  target_link_libraries(ddsrt INTERFACE socket)
++endif()
+ check_symbol_exists("gethostname" ${hostname_header} DDSRT_HAVE_GETHOSTNAME)
+ check_symbol_exists("inet_ntop" ${inet_header} DDSRT_HAVE_INET_NTOP)
+ check_symbol_exists("inet_pton" ${inet_header} DDSRT_HAVE_INET_PTON)

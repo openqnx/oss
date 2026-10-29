@@ -11,3 +11,9 @@ lib/libtimerfd.so.1=usr/lib/libtimerfd.so.1
 # QNX's audio library (io-audio client): SDL3, OpenAL and the sound tests
 # link it; a full image has it, the standard mkqnximage list does not.
 lib/libasound.so.5=lib/libasound.so.5
+# QNX's graphics client libraries (Screen, EGL, OpenGL ES): Qt 6's QtGui
+# links libEGL and libGLESv2 even when it draws offscreen. A full image with
+# graphics has them; an image built without --graphics does not.
+lib/libEGL.so.1=usr/lib/libEGL.so.1
+lib/libGLESv2.so.1=usr/lib/libGLESv2.so.1
+lib/libscreen.so.1=usr/lib/libscreen.so.1

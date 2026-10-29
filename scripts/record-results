@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""record-results -- keep the on-target test results: tests/results/<arch>.tsv.
+
+    scripts/record-results -a <arch> -t "<target>" -v <via> [-p <versions>] < transcript
+
+Reads a test transcript (what tests/run-on-target.sh or the deploy scripts
+print: "PASS test_x" / "FAIL test_x (rc=N)" lines) and records, per test,
+target and package version, the latest result -- a new version gets rows of
+its own, the results of the versions before it stay:
+
+    test  result  date  target  via  versions
+
+  <arch>     aarch64le | x86_64
+  <target>   what it ran on, e.g. "QEMU x86_64, vanilla mkqnximage image" or
+             "Raspberry Pi 5, QNX 8.0 BSP image"
+  <via>      how the code got there: bundle (tests/make-bundle.sh),
+             apk:local-dists (scripts/serve-dists), apk:github, ...
+  <versions> optional, e.g. "zstd 1.5.6-r0"
+
+tests/results/ is tracked: it is the record of what was verified where, read
+by scripts/gen-port-docs (the "How it was verified" section of every
+component) and scripts/publish-github-release --verified.
+"""
+import argparse, datetime, os, re, sys
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+COLS = ["test", "result", "date", "target", "via", "versions"]
+
+
+def load(path):
+    rows = {}
+    if os.path.exists(path):
+        for line in open(path):
+            if line.startswith("#") or not line.strip():
+                continue
+            f = line.rstrip("\n").split("\t")
+            f += [""] * (len(COLS) - len(f))
+            rows[(f[0], f[3], f[5])] = dict(zip(COLS, f))
+    return rows
+
+
+def save(path, rows):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as out:
+        out.write("# " + "\t".join(COLS) + "\n")
+        for k in sorted(rows):
+            out.write("\t".join(rows[k][c] for c in COLS) + "\n")
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-a", "--arch", required=True, choices=["aarch64le", "x86_64"])
+    ap.add_argument("-t", "--target", required=True)
+    ap.add_argument("-v", "--via", required=True)
+    ap.add_argument("-p", "--versions", default="")
+    ap.add_argument("-d", "--date", default=datetime.date.today().isoformat())
+    ap.add_argument("transcript", nargs="?")
+    a = ap.parse_args()
+    text = open(a.transcript).read() if a.transcript else sys.stdin.read()
+    path = os.path.join(WS, "tests", "results", a.arch + ".tsv")
+    rows = load(path)
+    n = 0
+    for m in re.finditer(r"^(PASS|FAIL) (test_\w+|pkg:[\w.+-]+)", text, re.M):
+        res, test = m.groups()
+        rows[(test, a.target, a.versions)] = {"test": test, "result": res, "date": a.date,
+                                  "target": a.target, "via": a.via, "versions": a.versions}
+        n += 1
+    save(path, rows)
+    print("recorded %d result(s) in %s" % (n, os.path.relpath(path, WS)))
+    return 0 if n else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

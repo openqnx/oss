@@ -1,90 +1,201 @@
 #!/bin/bash
-# publish-github-release -- put repo/8.0 on GitHub releases, where oss-get and
-# apk on a QNX target download from.
+# publish-github-release -- put dists/8.0 (and test_suites/8.0) on GitHub
+# releases, where oss-get and apk on a QNX target download from.
 #
-#   scripts/publish-github-release [--repo owner/name] [--upload] [--prune] [arch...]
+#   scripts/publish-github-release [--repo owner/name] [--upload] [--changed] [--prune]
+#                                  [--verified | --only <component>...] [--arch aarch64|x86_64]
 #
 # Without --upload this only stages and checks: nothing leaves the machine.
 #
-# Two releases per architecture, because GitHub allows at most 1000 assets per
-# release (and each under 2 GiB), and repo/8.0/<arch> holds ~1640 files:
+# What is published:
+#   (default)         every package in dists/8.0 -- all versions
+#   --only C...       the newest version of these components (and their -dev)
+#   --verified        the component versions that passed on a target, as
+#                     tests/results/<arch>.tsv records them (scripts/verify-on-target):
+#                     check locally, then publish exactly what was checked
+#   the port tests of the components published come along (test_suites/8.0)
+#   --changed         upload only files the release does not have yet: a new
+#                     version or release of a package (a published
+#                     <name>-<version>-r<N> is never rewritten, see qnxpkg)
 #
-#   packages-8.0-<arch>   <pkg>.tar.gz + INDEX      what oss-get reads
-#   apk-8.0-<arch>        <pkg>.apk + APKINDEX.tar.gz + the signing public key
+# The indexes uploaded always list what the release holds afterwards -- the
+# files already there plus the new ones -- so publishing a few components never
+# drops the others. --prune deletes assets that are no longer in dists/
+# (packages deleted locally on purpose); old versions are kept otherwise.
 #
+# Three releases per architecture, because GitHub allows at most 1000 assets
+# per release (and each under 2 GiB):
+#   packages-8.0-<arch>   <pkg>.tar.gz + INDEX                    what oss-get reads
+#   apk-8.0-<arch>        <pkg>.apk + APKINDEX.tar.gz + public key what apk reads
+#   tests-8.0-<arch>      qnx-test-*.apk/.tar.gz + both indexes   apk, second repository
 # Release assets are flat, so apk is pointed at the index itself:
 #   https://github.com/<repo>/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz
-# and fetches each package from beside it (target/apk-setup sets that up).
-#
-# --prune deletes assets of those releases that are no longer in repo/8.0 (an
-# old version's packages), after the upload. Requires gh, logged in, with
-# write access to the repository.
+# Requires gh (logged in, write access) for --upload.
 set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
-GHREPO=openqnx/oss; UPLOAD=""; PRUNE=""; ARCHES=()
+GHREPO=openqnx/oss; UPLOAD=""; PRUNE=""; CHANGED=""; MODE=all; ONLY=(); ARCHES=()
 while [ $# -gt 0 ]; do case "$1" in
   --repo) GHREPO=$2; shift 2 ;;
   --upload) UPLOAD=1; shift ;;
   --prune) PRUNE=1; shift ;;
-  -h|--help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  --changed) CHANGED=1; shift ;;
+  --verified) MODE=verified; shift ;;
+  --only) MODE=only; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY+=("$1"); shift; done ;;
+  --arch) ARCHES+=("$2"); shift 2 ;;
+  -h|--help) sed -n '2,36p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
   aarch64|x86_64) ARCHES+=("$1"); shift ;;
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac; done
 [ ${#ARCHES[@]} -gt 0 ] || ARCHES=(aarch64 x86_64)
 SDP=8.0; MAX_ASSETS=1000; MAX_BYTES=$((2*1024*1024*1024 - 1))
-# PUBLISH_REPO / PUBLISH_OUT: another repository tree / staging directory
-# (a test repository, say).
-REPO_ROOT=${PUBLISH_REPO:-$WS/repo}
-OUT=${PUBLISH_OUT:-$WS/dist/release}
+REPO_ROOT=${PUBLISH_REPO:-$WS/dists}
+TESTS_ROOT=${TESTS_ROOT:-$WS/test_suites}
+OUT=${PUBLISH_OUT:-$WS/build/release}   # staging only: hard links into dists/ where possible
+KEYFILE=$(ls "$WS"/keys/private/*.rsa 2>/dev/null | head -n 1)
+[ -n "$KEYFILE" ] || echo "!! no signing key in keys/private/: the indexes staged here are unsigned" >&2
 
-stage() { # tag pattern...
-  local tag=$1 src=$2; shift 2
+remote_assets() { # tag -> names on the release (nothing without --upload, or when it does not exist)
+  [ -n "$UPLOAD" ] || return 0
+  gh release view "$1" --repo "$GHREPO" --json assets -q '.assets[].name' 2>/dev/null || true
+}
+
+# select_files <arch> <repo-dir> <tests-dir>: "main <file>" / "tests <file>" lines
+select_files() {
+  python3 -I - "$1" "$2" "$3" "$MODE" "$WS" "${ONLY[@]}" <<'EOF'
+import json, os, re, sys
+arch, repo, tests, mode, ws = sys.argv[1:6]; only = set(sys.argv[6:])
+qarch = {"aarch64": "aarch64le", "x86_64": "x86_64"}[arch]
+def load(d):
+    p = os.path.join(d, ".index.json")
+    return json.load(open(p)) if os.path.exists(p) else {}
+def vk(v):
+    return [int(x) if x.isdigit() else -1 for x in re.findall(r"\d+|[a-z]+", v)]
+def files(e):
+    return ["%s-%s.apk" % (e["P"], e["V"]), "%s-%s.tar.gz" % (e["P"], e["V"])]
+main, tdata = load(repo), load(tests)
+ptests = {}
+mp = os.path.join(ws, "tests", "port-tests.tsv")
+if os.path.exists(mp):
+    for l in open(mp):
+        if not l.startswith("#") and "\t" in l:
+            c, t = l.split()[:2]; ptests[c] = "qnx-test-" + t[5:].replace("_", "-")
+passed = set()   # "<component> <version>" that passed on a target
+rp = os.path.join(ws, "tests", "results", qarch + ".tsv")
+if os.path.exists(rp):
+    for l in open(rp):
+        f = l.rstrip("\n").split("\t")
+        if len(f) >= 6 and f[1] == "PASS" and f[5]:
+            passed.add(f[5])
+if mode == "all":
+    pick = [v["apk"] for v in main.values()]
+    tpick = [v["apk"] for v in tdata.values()]
+else:
+    by = {}
+    for v in main.values():
+        e = v["apk"]; by.setdefault(e.get("o", e["P"]), []).append(e)
+    pick = []
+    for comp, es in by.items():
+        if mode == "only" and comp not in only:
+            continue
+        if mode == "verified":
+            vers = {e["V"] for e in es if e["P"] == comp and ("%s %s" % (comp, e["V"])) in passed}
+        else:
+            vers = {max((e["V"] for e in es if e["P"] == comp), key=vk, default=None)}
+        pick += [e for e in es if e["V"] in vers]
+    # What they need at run time comes along (newest version of each), or
+    # apk on the target could not install them from this release.
+    newest_of = {}
+    for v in main.values():
+        e = v["apk"]
+        if e["P"] not in newest_of or vk(e["V"]) > vk(newest_of[e["P"]]["V"]):
+            newest_of[e["P"]] = e
+    names = {e["P"] for e in pick}
+    queue = list(pick)
+    while queue:
+        e = queue.pop()
+        for dep in e.get("D", "").split():
+            if dep.startswith(("!", "so:")) or dep in names or dep not in newest_of:
+                continue
+            names.add(dep); pick.append(newest_of[dep]); queue.append(newest_of[dep])
+    want = {ptests[c] for c in {e.get("o", e["P"]) for e in pick} if c in ptests}
+    if want:
+        want.add("qnx-port-tests")
+    newest = {}
+    for v in tdata.values():
+        e = v["apk"]
+        if e["P"] in want and (e["P"] not in newest or vk(e["V"]) > vk(newest[e["P"]]["V"])):
+            newest[e["P"]] = e
+    tpick = list(newest.values())
+for kind, d, es in (("main", repo, pick), ("tests", tests, tpick)):
+    for e in es:
+        for f in files(e):
+            if os.path.exists(os.path.join(d, f)):
+                print(kind, f)
+EOF
+}
+
+stage() { # tag src-dir kind(apk|tgz|both) files...
+  local tag=$1 src=$2 kind=$3; shift 3
   local d=$OUT/$tag; rm -rf "$d"; mkdir -p "$d"
-  local f; for f in "$@"; do ln "$src/$f" "$d/$f" 2>/dev/null || cp "$src/$f" "$d/$f"; done
-  [ -z "$EXTRA" ] || cp "$EXTRA" "$d/"
-  local n big
-  n=$(ls "$d" | wc -l)
+  local f
+  for f in "$@"; do
+    case "$kind:$f" in apk:*.apk|tgz:*.tar.gz|both:*) ln "$src/$f" "$d/$f" 2>/dev/null || cp "$src/$f" "$d/$f" ;; esac
+  done
+  # The release's index: what it will hold afterwards (already there + these).
+  { remote_assets "$tag" | grep -E '\.(apk|tar\.gz)$' | grep -vx APKINDEX.tar.gz || true; } > "$OUT/.$tag.remote"
+  "$WS/scripts/qnxpkg" ${KEYFILE:+--key "$KEYFILE"} --reindex "$d" --from "$src" --also "$OUT/.$tag.remote" >/dev/null
+  case $kind in apk) rm -f "$d/INDEX" ;; tgz) rm -f "$d/APKINDEX.tar.gz" ;; esac
+  [ -z "$PUBKEY" ] || [ "$kind" = tgz ] || cp "$PUBKEY" "$d/"
+  local n big total
+  n=$(ls "$d" | wc -l); total=$(( n + $( { grep -vxFf <(ls "$d") "$OUT/.$tag.remote" || true; } | wc -l) ))
   big=$(find "$d" -type f -size +"$MAX_BYTES"c -printf '%f ')
-  printf '%-22s %4d assets  %6s\n' "$tag" "$n" "$(du -sh "$d" | cut -f1)"
-  [ "$n" -le $MAX_ASSETS ] || { echo "!! $tag: $n assets, GitHub allows $MAX_ASSETS per release" >&2; return 1; }
+  printf '%-22s %4d staged (%4d on the release after)  %6s\n' "$tag" "$n" "$total" "$(du -sh "$d" | cut -f1)"
+  [ "$total" -le $MAX_ASSETS ] || { echo "!! $tag: $total assets, GitHub allows $MAX_ASSETS per release" >&2; return 1; }
   [ -z "$big" ] || { echo "!! $tag: over 2 GiB, GitHub refuses: $big" >&2; return 1; }
 }
 
+PUBKEY=""
+if [ -n "$KEYFILE" ] && [ -f "$WS/keys/$(basename "$KEYFILE").pub" ]; then PUBKEY=$WS/keys/$(basename "$KEYFILE").pub; fi
+mkdir -p "$OUT"
 for a in "${ARCHES[@]}"; do
-  src=$REPO_ROOT/$SDP/$a
-  [ -f "$src/INDEX" ] && [ -f "$src/APKINDEX.tar.gz" ] || { echo "no repository in $src (run scripts/qnxpkg --all)" >&2; exit 1; }
-  key=$(cd "$src" && tar -tzf APKINDEX.tar.gz 2>/dev/null | sed -n 's/^\.SIGN\.RSA\.//p' | head -1)
-  [ -n "$key" ] || echo "!! $a: APKINDEX.tar.gz is not signed -- targets will need apk-setup -u (sign with: scripts/qnxpkg --key KEY --all)" >&2
-  [ -z "$key" ] || [ -f "$WS/keys/$key" ] || { echo "!! $a: signed with $key, but keys/$key is missing" >&2; exit 1; }
-  mapfile -t tgz < <(cd "$src" && ls *.tar.gz | grep -vx APKINDEX.tar.gz)
-  mapfile -t apk < <(cd "$src" && ls *.apk)
-  stage packages-$SDP-$a "$src" INDEX "${tgz[@]}"
-  EXTRA=${key:+$WS/keys/$key} stage apk-$SDP-$a "$src" APKINDEX.tar.gz "${apk[@]}"
+  src=$REPO_ROOT/$SDP/$a; ts=$TESTS_ROOT/$SDP/$a
+  [ -f "$src/.index.json" ] || { echo "no repository in $src (run scripts/qnxpkg --all)" >&2; exit 1; }
+  sel=$(select_files "$a" "$src" "$ts")
+  mapfile -t mf < <(echo "$sel" | sed -n 's/^main //p')
+  mapfile -t tf < <(echo "$sel" | sed -n 's/^tests //p')
+  echo "== $a ($MODE${ONLY:+: ${ONLY[*]}}): ${#mf[@]} package file(s), ${#tf[@]} test package file(s)"
+  stage packages-$SDP-$a "$src" tgz "${mf[@]}"
+  stage apk-$SDP-$a "$src" apk "${mf[@]}"
+  [ ${#tf[@]} -eq 0 ] || stage tests-$SDP-$a "$ts" both "${tf[@]}"
 done
 
 if [ -z "$UPLOAD" ]; then
-  echo "staged in $OUT -- nothing uploaded. To publish to github.com/$GHREPO: $0 --upload [--prune]"
+  echo "staged in $OUT -- nothing uploaded. To publish to github.com/$GHREPO: add --upload [--changed] [--prune] (same selection)"
   exit 0
 fi
 
 command -v gh >/dev/null || { echo "gh (GitHub CLI) is needed for --upload" >&2; exit 1; }
+NOTICE=""; [ -f "$WS/NOTICE.md" ] && NOTICE=$'\n\n'"$(sed -n '3,12p' "$WS/NOTICE.md")"
 for a in "${ARCHES[@]}"; do
-  for tag in packages-$SDP-$a apk-$SDP-$a; do
-    d=$OUT/$tag
+  for tag in packages-$SDP-$a apk-$SDP-$a tests-$SDP-$a; do
+    d=$OUT/$tag; [ -d "$d" ] || continue
     case $tag in
       packages-*) title="QNX SDP $SDP packages for oss-get ($a)"; notes="Install on target: target/oss-get install <package>" ;;
+      tests-*) title="QNX SDP $SDP port tests ($a)"; notes="On target: apk add qnx-test-<package> (target/apk-setup adds this repository). Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
       apk-*) title="QNX SDP $SDP APK repository ($a)"; notes="On target: target/apk-setup, then apk add <package>. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
     esac
     gh release view "$tag" --repo "$GHREPO" >/dev/null 2>&1 ||
-      gh release create "$tag" --repo "$GHREPO" --title "$title" --notes "$notes" --latest=false
-    # The index last, so a target never sees an index naming packages not yet up.
-    (cd "$d" && ls | grep -vxE 'INDEX|APKINDEX.tar.gz' | xargs -r -n 50 gh release upload "$tag" --repo "$GHREPO" --clobber)
+      gh release create "$tag" --repo "$GHREPO" --title "$title" --notes "$notes$NOTICE" --latest=false
+    up=$(cd "$d" && ls | grep -vxE 'INDEX|APKINDEX.tar.gz' | { if [ -n "$CHANGED" ]; then grep -vxFf "$OUT/.$tag.remote" || true; else cat; fi; })
+    # Packages first, the index last: a target never sees an index naming a file not yet up.
+    [ -z "$up" ] || (cd "$d" && echo "$up" | xargs -r -n 50 gh release upload "$tag" --repo "$GHREPO" --clobber)
     (cd "$d" && ls | grep -xE 'INDEX|APKINDEX.tar.gz' | xargs -r gh release upload "$tag" --repo "$GHREPO" --clobber)
     if [ -n "$PRUNE" ]; then
+      src=$REPO_ROOT/$SDP/$a; [ "${tag%%-*}" = tests ] && src=$TESTS_ROOT/$SDP/$a
       gh release view "$tag" --repo "$GHREPO" --json assets -q '.assets[].name' | while read -r n; do
-        [ -e "$d/$n" ] || { echo "prune $tag/$n"; gh release delete-asset "$tag" "$n" --repo "$GHREPO" -y; }
+        [ -e "$src/$n" ] || [ -e "$d/$n" ] || { echo "prune $tag/$n"; gh release delete-asset "$tag" "$n" --repo "$GHREPO" -y; }
       done
     fi
-    echo "== $tag uploaded"
+    echo "== $tag: $(echo "$up" | grep -c . || true) file(s) uploaded + index"
   done
 done

@@ -1,6 +1,6 @@
 # QNX OSS — open source for QNX SDP 8.0
 
-Build files, QNX patches and step-by-step guides for **450 open source
+Build files, QNX patches and step-by-step guides for **457 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64** — and the same components as prebuilt packages
 a QNX target can download and install directly.
@@ -26,12 +26,12 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 
 | | |
 |---|---|
-| Components | **450** (450 build for every architecture they support -- both, but for a few aarch64-only ones) |
-| 🟢 Standalone | **197** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **37** — need other components to build, run on their own |
-| 🔴 Dependent | **216** — need other components to build and to run |
-| QNX patches | **386**, one file per change, each with its reason |
-| On-target tests | **209** test programs |
+| Components | **457** (457 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| 🟢 Standalone | **200** — QNX SDP only, at build time and at run time |
+| 🟡 Build-deps only | **38** — need other components to build, run on their own |
+| 🔴 Dependent | **219** — need other components to build and to run |
+| QNX patches | **392**, one file per change, each with its reason |
+| On-target tests | **212** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 
 **→ [Component index](PORTS-INDEX.md)** · **[Dependencies](DEPENDENCIES.md)** ·
@@ -95,6 +95,16 @@ QNX_SDP_ROOT=$HOME/qnx800 docker/run.sh ./scripts/qnxbuild mosquitto
 ```
 
 → [docs/build-environment.md](docs/build-environment.md)
+
+### All of it at once, on a vanilla QEMU image
+
+```bash
+vanilla-vm/run-all both               # x86_64 + aarch64 images, every component installed with apk and tested
+vanilla-vm/run-all x86_64 --from github   # the same from the GitHub releases
+vanilla-vm/desktop x86_64             # an image with graphics: labwc + Xfce panel, every application in its menu
+```
+
+→ [vanilla-vm/README.md](vanilla-vm/README.md)
 
 ## Standalone vs dependent
 
@@ -183,6 +193,9 @@ scripts/verify-on-target  install + test on a target, record   scripts/record-re
 scripts/check-updates  newer upstream releases     scripts/port-update  port one, keep the old
 scripts/new-port     start a new component         scripts/gen-ported  ported/ sources
 tests/results/       what passed on which target, per version
+vanilla-vm/          QEMU images: every port installed and tested (run-all), the desktop (desktop)
+scripts/workspace-pack / workspace-setup   continue this workspace on another PC
+docs/STATUS.md       where the work stands
 keys/*.rsa.pub       package-signing public key (private half: keys/private/, untracked)
 docker/              the build container
 tests/               on-target test programs and runners

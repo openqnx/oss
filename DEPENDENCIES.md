@@ -4,18 +4,18 @@ Two kinds, by whether anything else from this repository is needed:
 
 | Kind | Meaning | Components |
 |---|---|---|
-| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **197** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **253** |
+| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **200** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **257** |
 
-Dependent components split further by what they need at run time (37 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (38 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
-| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **197** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **37** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **216** |
+| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **200** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **38** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **219** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -25,7 +25,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Standalone
 
-197 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
+200 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
 
 ✅ = built against an *empty* staging tree by `scripts/verify-standalone`, proving the build cannot have picked anything up from other components.
 
@@ -75,7 +75,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`flatbuffers`](ports/flatbuffers/) | 24.3.25 | cmake | aarch64le✅ x86_64✅ | 0 |
 | [`fmt`](ports/fmt/) | 11.2.0 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`font-cantarell`](ports/font-cantarell/) | 0.303.1 | custom | – | 0 |
-| [`font-dejavu`](ports/font-dejavu/) | 2.37 | custom | – | 0 |
+| [`font-dejavu`](ports/font-dejavu/) | 2.37 | custom | – | 1 |
 | [`font-hack`](ports/font-hack/) | 3.003 | custom | – | 0 |
 | [`font-inter`](ports/font-inter/) | 4.1 | custom | – | 0 |
 | [`font-liberation`](ports/font-liberation/) | 2.1.5 | custom | – | 0 |
@@ -99,7 +99,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`gperf`](ports/gperf/) | 3.1 | autotools | – | 0 |
 | [`graphite2`](ports/graphite2/) | 1.3.14 | cmake | aarch64le✅ x86_64✅ | 2 |
 | [`gsm`](ports/gsm/) | 1.0.22 | custom | aarch64le✅ x86_64✅ | 0 |
-| [`hicolor-icon-theme`](ports/hicolor-icon-theme/) | 0.18 | meson | – | 0 |
+| [`hicolor-icon-theme`](ports/hicolor-icon-theme/) | 0.18 | meson | – | 1 |
 | [`highway`](ports/highway/) | 1.2.0 | cmake | aarch64le✅ x86_64❌ | 1 |
 | [`hyphen`](ports/hyphen/) | 2.8.8 | autotools | aarch64le✅ x86_64✅ | 1 |
 | [`iceoryx`](ports/iceoryx/) | 2.0.6 | cmake | aarch64le✅ x86_64✅ | 0 |
@@ -118,6 +118,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libde265`](ports/libde265/) | 1.0.15 | cmake | – | 0 |
 | [`libdeflate`](ports/libdeflate/) | 1.22 | cmake | – | 0 |
 | [`libdisplay-info`](ports/libdisplay-info/) | 0.3.0 | meson | – | 0 |
+| [`libdrm-headers`](ports/libdrm-headers/) | 2.4.129 | custom | – | 1 |
 | [`libev`](ports/libev/) | 4.33 | autotools | – | 0 |
 | [`libexif`](ports/libexif/) | 0.6.24 | autotools | – | 1 |
 | [`libfdt`](ports/libfdt/) | 1.7.2 | meson | – | 0 |
@@ -138,6 +139,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libretro-retro8`](ports/libretro-retro8/) | 0-git-20260912 | custom | – | 1 |
 | [`libretro-samples`](ports/libretro-samples/) | 0-git-20221110 | custom | – | 1 |
 | [`libsamplerate`](ports/libsamplerate/) | 0.2.2 | cmake | – | 0 |
+| [`libsfdo`](ports/libsfdo/) | 0.1.4 | meson | – | 1 |
 | [`libsodium`](ports/libsodium/) | 1.0.20 | autotools | – | 2 |
 | [`libtasn1`](ports/libtasn1/) | 4.19.0 | autotools | – | 3 |
 | [`libtool`](ports/libtool/) | 2.5.4 | autotools | – | 0 |
@@ -148,12 +150,13 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libvpx`](ports/libvpx/) | 1.15.0 | custom | – | 2 |
 | [`libxcrypt`](ports/libxcrypt/) | 4.4.38 | autotools | – | 3 |
 | [`libyaml`](ports/libyaml/) | 0.2.5 | cmake | – | 2 |
+| [`linux-headers-input-codes`](ports/linux-headers-input-codes/) | 6.12 | custom | – | 1 |
 | [`lmbench`](ports/lmbench/) | 3.0-git-20260929 | custom | – | 0 |
 | [`lua`](ports/lua/) | 5.4.7 | custom | – | 0 |
 | [`lua5.1`](ports/lua5.1/) | 5.1.5 | custom | – | 0 |
 | [`lua5.3`](ports/lua5.3/) | 5.3.6 | custom | – | 0 |
 | [`luajit`](ports/luajit/) | 2.1.c6ffc141 | custom | – | 4 |
-| [`lxde-icon-theme`](ports/lxde-icon-theme/) | 0.5.2 | autotools | – | 0 |
+| [`lxde-icon-theme`](ports/lxde-icon-theme/) | 0.5.2 | autotools | – | 1 |
 | [`lz4`](ports/lz4/) | 1.10.0 | cmake | – | 6 |
 | [`lzo`](ports/lzo/) | 2.10 | autotools | – | 2 |
 | [`magic_enum`](ports/magic_enum/) | 0.9.6 | cmake | – | 0 |
@@ -231,7 +234,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Runtime-standalone
 
-37 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+38 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
@@ -252,9 +255,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`open-amp`](ports/open-amp/) | 2024.10.0 | libmetal | 1 |
 | [`openjpeg`](ports/openjpeg/) | 2.5.3 | zlib libpng libtiff lcms2 | 13 |
 | [`orocos-kdl`](ports/orocos-kdl/) | 1.5.1 | eigen | 1 |
+| [`oss-desktop`](ports/oss-desktop/) | 1.0 | labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu | 88 |
 | [`pcre2`](ports/pcre2/) | 10.44 | zlib bzip2 | 2 |
 | [`perl-error`](ports/perl-error/) | 0.17030 | perl | 2 |
-| [`pixman`](ports/pixman/) | 0.44.2 | libpng | 2 |
+| [`pixman`](ports/pixman/) | 0.46.4 | libpng | 2 |
 | [`pthreadpool`](ports/pthreadpool/) | 0-git-20250207 | fxdiv | 1 |
 | [`python3-dateutil`](ports/python3-dateutil/) | 2.9.0.post0 | python3 python3-six | 16 |
 | [`python3-packaging`](ports/python3-packaging/) | 25.0 | python3 | 15 |
@@ -270,12 +274,12 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`sdl2`](ports/sdl2/) | 2.32.10 | wayland libxkbcommon | 11 |
 | [`sdl2-compat`](ports/sdl2-compat/) | 2.32.60 | sdl3 | 25 |
 | [`sqlite_orm`](ports/sqlite_orm/) | 1.9 | sqlite | 2 |
-| [`wayland-protocols`](ports/wayland-protocols/) | 1.38 | wayland | 10 |
+| [`wayland-protocols`](ports/wayland-protocols/) | 1.47 | wayland | 10 |
 | [`zenoh-c`](ports/zenoh-c/) | 1.2.1 | rust | 1 |
 
 ## Dependent
 
-216 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+219 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -361,6 +365,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`javascriptcore`](ports/javascriptcore/) | 2.44.4 | icu | icu | 1 |
 | [`jq`](ports/jq/) | 1.7.1 | oniguruma | oniguruma | 1 |
 | [`json-glib`](ports/json-glib/) | 1.10.6 | glib | gettext glib | 8 |
+| [`labwc`](ports/labwc/) | 0.20.2 | wlroots wayland wayland-protocols libxkbcommon glib cairo pango libxml2 libsfdo libpng | cairo glib libpng libsfdo libxkbcommon libxml2 pango pixman wayland wlroots | 36 |
 | [`less`](ports/less/) | 668 | ncurses | ncurses | 1 |
 | [`leveldb`](ports/leveldb/) | 1.23 | snappy | snappy | 1 |
 | [`libarchive`](ports/libarchive/) | 3.7.7 | zlib bzip2 xz zstd openssl libxml2 expat lz4 | bzip2 expat lz4 openssl xz zlib zstd | 11 |
@@ -405,7 +410,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libxft`](ports/libxft/) | 2.3.8 | libx11 libxrender freetype fontconfig xorgproto | fontconfig freetype libx11 libxrender | 12 |
 | [`libxi`](ports/libxi/) | 1.8.2 | libx11 libxext libxfixes xorgproto | libx11 libxext | 5 |
 | [`libxinerama`](ports/libxinerama/) | 1.1.5 | libx11 libxext xorgproto | libx11 libxext | 5 |
-| [`libxkbcommon`](ports/libxkbcommon/) | 1.7.0 | libxml2 | libxml2 | 7 |
+| [`libxkbcommon`](ports/libxkbcommon/) | 1.8.1 | libxml2 | libxml2 | 7 |
 | [`libxml2`](ports/libxml2/) | 2.13.5 | zlib xz | xz zlib | 6 |
 | [`libxrandr`](ports/libxrandr/) | 1.5.4 | libx11 libxext libxrender xorgproto | libx11 libxext libxrender | 6 |
 | [`libxrender`](ports/libxrender/) | 0.9.11 | libx11 xorgproto | libx11 | 4 |
@@ -470,6 +475,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`strongswan`](ports/strongswan/) | 6.0.6 | openssl | openssl | 1 |
 | [`sudo`](ports/sudo/) | 1.9.17p2 | libxcrypt openssl zlib | libxcrypt openssl zlib | 3 |
 | [`suitesparse`](ports/suitesparse/) | 7.11.0 | openblas | openblas | 1 |
+| [`swaybg`](ports/swaybg/) | 1.2.2 | wayland wayland-protocols cairo gdk-pixbuf glib | cairo gdk-pixbuf glib wayland | 26 |
 | [`sysbench`](ports/sysbench/) | 1.0.20-git-20250309 | luajit | luajit | 1 |
 | [`taglib`](ports/taglib/) | 2.0.2 | zlib | zlib | 1 |
 | [`tar`](ports/tar/) | 1.35 | libiconv | libiconv | 1 |
@@ -483,8 +489,9 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`vlc`](ports/vlc/) | 3.0.21 | bzip2 libiconv lz4 openssl xz zstd | bzip2 libiconv lz4 openssl xz zstd | 9 |
 | [`vsomeip`](ports/vsomeip/) | 3.5.6 | boost | boost | 8 |
 | [`vte`](ports/vte/) | 0.78.2 | gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4 | at-spi2-core cairo fribidi gdk-pixbuf gettext glib gnutls graphene gtk3 gtk4 icu lz4 pango pcre2 | 58 |
-| [`wayland`](ports/wayland/) | 1.23.1 | libffi expat libxml2 | libffi | 1 |
+| [`wayland`](ports/wayland/) | 1.24.0 | libffi expat libxml2 | libffi | 1 |
 | [`webkitgtk`](ports/webkitgtk/) | 2.44.4 | gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret | at-spi2-core cairo fontconfig freetype gdk-pixbuf gettext glib gst-plugins-bad gst-plugins-base gstreamer gtk3 harfbuzz hyphen icu lcms2 libavif libepoxy libgcrypt libgpg-error libjpeg-turbo libjxl libpng libsecret libsoup libtasn1 libwebp libxml2 libxslt pango sqlite woff2 zlib | 77 |
+| [`wlroots`](ports/wlroots/) | 0.20.2 | wayland wayland-protocols pixman libxkbcommon lcms2 libdrm-headers linux-headers-input-codes | lcms2 libxkbcommon pixman wayland | 12 |
 | [`woff2`](ports/woff2/) | 1.0.2 | brotli | brotli | 1 |
 | [`xfce4-appfinder`](ports/xfce4-appfinder/) | 4.20.0 | glib gtk3 libxfce4util libxfce4ui xfconf garcon | cairo garcon gdk-pixbuf glib gtk3 libxfce4ui libxfce4util xfconf | 51 |
 | [`xfce4-panel`](ports/xfce4-panel/) | 4.20.0 | glib gtk3 libxfce4util libxfce4ui xfconf garcon exo libxfce4windowing gtk-layer-shell wayland wayland-protocols | at-spi2-core cairo exo garcon gdk-pixbuf gettext glib gtk-layer-shell gtk3 harfbuzz libxfce4ui libxfce4util libxfce4windowing pango wayland xfconf zlib | 54 |

@@ -96,6 +96,16 @@ QNX_SDP_ROOT=$HOME/qnx800 docker/run.sh ./scripts/qnxbuild mosquitto
 
 → [docs/build-environment.md](docs/build-environment.md)
 
+### All of it at once, on a vanilla QEMU image
+
+```bash
+vanilla-vm/run-all both               # x86_64 + aarch64 images, every component installed with apk and tested
+vanilla-vm/run-all x86_64 --from github   # the same from the GitHub releases
+vanilla-vm/desktop x86_64             # an image with graphics: labwc + Xfce panel, every application in its menu
+```
+
+→ [vanilla-vm/README.md](vanilla-vm/README.md)
+
 ## Standalone vs dependent
 
 Every component is classified from its recipe **and from its binaries**
@@ -183,6 +193,9 @@ scripts/verify-on-target  install + test on a target, record   scripts/record-re
 scripts/check-updates  newer upstream releases     scripts/port-update  port one, keep the old
 scripts/new-port     start a new component         scripts/gen-ported  ported/ sources
 tests/results/       what passed on which target, per version
+vanilla-vm/          QEMU images: every port installed and tested (run-all), the desktop (desktop)
+scripts/workspace-pack / workspace-setup   continue this workspace on another PC
+docs/STATUS.md       where the work stands
 keys/*.rsa.pub       package-signing public key (private half: keys/private/, untracked)
 docker/              the build container
 tests/               on-target test programs and runners

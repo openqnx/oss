@@ -72,6 +72,10 @@ Every component reaches a target one of two ways, and is tested there the same w
 Any QNX 8.0 image with a network, `sshd` and a writable `/data` will do -- the
 packages are installed under `/data/oss` and need nothing else from the image.
 
+All of this in one command -- image, apk, every component installed and
+tested, or the desktop with graphics: [`vanilla-vm/`](../vanilla-vm/README.md)
+(`vanilla-vm/run-all both`, `vanilla-vm/desktop x86_64`).
+
 ### x86_64 -- QEMU (vanilla mkqnximage image)
 
 ```bash

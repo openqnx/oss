@@ -31,4 +31,5 @@ point_cloud_transport.patch src/ros-perception/point_cloud_transport
 vision_opencv.patch src/ros-perception/vision_opencv
 rclpy-qnx-sigaction.patch src/ros2/rclpy
 rcutils-qnx-memchr-length.patch src/ros2/rcutils
-cyclonedds-qnx-libsocket-dns.patch src/eclipse-cyclonedds/cyclonedds
+rosbag2-qnx-system-zstd.patch src/ros2/rosbag2
+yaml_cpp_vendor-qnx-system-yaml-cpp.patch src/ros2/yaml_cpp_vendor

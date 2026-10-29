@@ -16,15 +16,20 @@ VERSION=jazzy
 # Installs to /usr/local/opt/ros/jazzy on the target (source its
 # setup.sh/local_setup.sh there).
 #
-# Run time: put /usr/local/opt/ros/jazzy/lib FIRST on LD_LIBRARY_PATH (its
-# setup.sh does). The ROS workspace builds its own Fast DDS, Fast CDR, Cyclone
-# DDS, zstd, yaml, yaml-cpp, console_bridge, orocos-kdl and benchmark, under
-# the same sonames as this tree's standalone components in /usr/local/lib, and
-# QNX's loader searches LD_LIBRARY_PATH before any RPATH: with /usr/local/lib
-# first, Fast DDS nodes loaded the standalone libfastcdr and threw
-# BadParamException registering their first type. Building ROS against the
-# standalone components instead would remove the duplicates.
-DEPS="python3 numpy opencv curl lz4"
+# Built against this tree's Fast DDS, Fast CDR, Cyclone DDS, console_bridge,
+# libyaml, yaml-cpp, zstd, Google Benchmark and tinyxml2 rather than copies
+# of its own (the Fast-CDR/Fast-DDS/cyclonedds repositories are
+# in COLCON_IGNORE.list; the *_vendor packages find the components through
+# the <Pkg>_DIR arguments below). The copies carried the components' sonames
+# into the ROS prefix, and QNX's loader takes whichever comes first on
+# LD_LIBRARY_PATH: with /usr/local/lib first, Fast DDS nodes loaded the
+# standalone libfastcdr and threw BadParamException registering their first
+# type. One copy of each library now, whatever the search order -- except
+# Orocos KDL: ROS's PyKDL needs a later commit than the orocos-kdl component's
+# 1.5.1 (std::hash for its types), so orocos_kdl_vendor still builds its own
+# liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its
+# setup.sh does).
+DEPS="python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2"
 BUILDSYS=custom
 ROS_PREFIX="$PREFIX/opt/ros/$VERSION"
 _rosvenv() {
@@ -143,6 +148,7 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  local L="$STAGE$PREFIX/lib"
   cd "$S" && PATH="$w:$v/bin:$PATH" CPU="$QNX_CPU" ARCH="$QNX_CPU" CPUVARDIR="$QNX_ARCH" CPUVAR="$QNX_ARCH" QNX_SDP_VERSION=qnx800 LC_NUMERIC=en_US.UTF-8 \
   colcon build --merge-install --cmake-force-configure --build-base "$B/build" --install-base "$B/install" \
     --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/ros2-toolchain.cmake" \
@@ -150,6 +156,12 @@ EOF
       -DTHIRDPARTY=FORCE -DCPU="$QNX_CPU" -DSECURITY=ON --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE$PREFIX/include/eigen3" -DEigen3_INCLUDE_DIRS="$STAGE$PREFIX/include/eigen3" -DOpenCV_DIR="$STAGE$PREFIX/lib/cmake/opencv4" -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$STAGE$PREFIX/include" -DCV_BRIDGE_DISABLE_PYTHON=ON -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" \
       -DPython3_INCLUDE_DIR="$STAGE$PREFIX/include/python3.14" -DPython3_LIBRARY="$STAGE$PREFIX/lib/libpython3.14.so" \
-      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include"
+      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include" \
+      -Dfastcdr_DIR="$L/cmake/fastcdr" -Dfastrtps_DIR="$STAGE$PREFIX/share/fastrtps/cmake" \
+      -Dfoonathan_memory_DIR="$L/foonathan_memory/cmake" -DTinyXML2_DIR="$L/cmake/tinyxml2" -Dtinyxml2_DIR="$L/cmake/tinyxml2" \
+      -DCycloneDDS_DIR="$L/cmake/CycloneDDS" -Dconsole_bridge_DIR="$L/console_bridge/cmake" \
+      -Dyaml_DIR="$L/cmake/yaml" -Dyaml-cpp_DIR="$L/cmake/yaml-cpp" \
+      -Dbenchmark_DIR="$L/cmake/benchmark" -Dzstd_INCLUDE_DIR="$STAGE$PREFIX/include" -Dzstd_LIBRARY="$L/libzstd.so" \
+      -DFastRTPS_INCLUDE_DIR="$STAGE$PREFIX/include" -DFastRTPS_LIBRARY_RELEASE="$L/libfastrtps.so" -DFastCDR_LIBRARY_RELEASE="$L/libfastcdr.so"
 }
 do_install() { mkdir -p "$STAGE$ROS_PREFIX" && cp -a "$B/install/." "$STAGE$ROS_PREFIX/"; }

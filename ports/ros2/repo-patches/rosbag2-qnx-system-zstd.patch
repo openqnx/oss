@@ -1,0 +1,22 @@
+zstd_vendor: use the system zstd when it is found.
+
+qnx-ports' rosbag2 change makes find_package(zstd) REQUIRED on QNX but
+passes ament_vendor() SATISFIED ${ZSTD_SATISFIED}, a variable nothing
+sets, so zstd_vendor always built its own libzstd.so.1 into the ROS
+prefix -- the soname of the zstd component in /usr/local/lib, and QNX's
+loader takes whichever comes first on LD_LIBRARY_PATH. Test zstd_FOUND,
+as upstream does.
+
+Upstream-Status: QNX-specific (fixes the qnx-ports change)
+
+--- a/zstd_vendor/CMakeLists.txt
++++ b/zstd_vendor/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ endif()
+ 
+ ament_vendor(zstd_vendor
+-  SATISFIED ${ZSTD_SATISFIED}
++  SATISFIED ${zstd_FOUND}
+   VCS_URL https://github.com/facebook/zstd.git
+   VCS_VERSION v1.5.5
+   SOURCE_SUBDIR build/cmake

@@ -1,0 +1,64 @@
+name: Check upstream updates
+
+# The "button": Actions -> Check upstream updates -> Run workflow.
+#
+# 1. check (GitHub-hosted): asks every component's original source for a
+#    newer release (scripts/check-updates) and shows the list in the run
+#    summary and in the "Upstream updates" issue, kept up to date.
+# 2. port (optional, self-hosted runner with QNX SDP 8.0 -- like build.yml):
+#    when "port" names components, builds their newer upstream version with
+#    scripts/port-update. The version ported before stays: its recipe and
+#    patches in ports/<name>/versions/<old>/, its packages in dists/, its
+#    sources in ported/<name>/<old>/. Nothing is published; check the result
+#    on a target (scripts/verify-on-target) and publish it from there.
+on:
+  workflow_dispatch:
+    inputs:
+      components:
+        description: "Components to check (space separated; empty = all)"
+        required: false
+        default: ""
+      port:
+        description: "Port these to their newest upstream version (space separated; empty = only check)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "0 3 * * 1"   # Mondays: check only
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check upstream for newer releases
+        run: |
+          ./scripts/check-updates --markdown UPDATES.md --json updates.json ${{ inputs.components }}
+          cat UPDATES.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-updates
+          path: |
+            UPDATES.md
+            updates.json
+      - name: Keep the "Upstream updates" issue current
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh issue list --state open --search 'in:title "Upstream updates"' --json number -q '.[0].number')
+          if [ -n "$n" ]; then gh issue edit "$n" --body-file UPDATES.md
+          else gh issue create --title "Upstream updates" --body-file UPDATES.md; fi
+
+  port:
+    needs: check
+    if: ${{ inputs.port != '' }}
+    runs-on: [self-hosted, qnx-sdp]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Port the newer versions (the old ones are kept)
+        run: |
+          set -e
+          for c in ${{ inputs.port }}; do ./scripts/port-update "$c"; done

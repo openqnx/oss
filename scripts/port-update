@@ -1,0 +1,126 @@
+#!/bin/bash
+# port-update -- port a newer upstream version of a component, keeping the
+# version ported before.
+#
+#   scripts/port-update [-n] <component> [<version>]
+#
+#   <version>  default: the newest upstream release (scripts/check-updates)
+#   -n         show what would change, change nothing
+#
+# 1. The current version is kept: ports/<name>/versions/<old>/ gets its
+#    recipe.sh and patches/ (and the recipe's other patch sets). Its packages
+#    stay in dists/ and test_suites/ (qnxpkg keeps every version), its
+#    sources in ported/<name>/<old>/, its results in tests/results/.
+# 2. recipe.sh is moved to the new version: VERSION, the tag (REF) or the
+#    tag's commit (COMMIT), or the tarball URL and its SHA256.
+# 3. The new source is fetched and the QNX patches applied (src/<name> is
+#    replaced) and both architectures are built. A patch that no longer
+#    applies stops here with what to do: edit the source, make the patch
+#    again with scripts/mkpatch, rerun.
+# 4. Built: the test is rebuilt, the new version packaged next to the old
+#    one (signed with keys/private/*.rsa when there is one), ported/ and the
+#    docs regenerated. Nothing is published: verify on a target first.
+set -o pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+DRY=""; [ "$1" = -n ] && { DRY=1; shift; }
+C=${1:?usage: $0 [-n] <component> [<version>]}; NEW=$2
+R=$WS/ports/$C/recipe.sh
+[ -f "$R" ] || { echo "no recipe: $R" >&2; exit 1; }
+export QNX_SDP_ROOT=${QNX_SDP_ROOT:-$HOME/qnx800}
+
+eval "$(python3 -I - "$R" <<'EOF'
+import re, sys, shlex
+t = open(sys.argv[1]).read()
+for k in ("VERSION", "GIT", "REF", "COMMIT", "TARBALL", "SHA256"):
+    m = re.search(r'(?:^|[;\s])%s=("?)([^";\s]+)\1' % k, t, re.M)
+    print("OLD_%s=%s" % (k, shlex.quote(m.group(2) if m else "")))
+EOF
+)"
+TAG=""
+if [ -z "$NEW" ]; then
+  row=$("$WS/scripts/check-updates" --json "$WS/tmp/port-update.$C.json" "$C" >/dev/null 2>&1; python3 -I -c "import json,sys; r=json.load(open(sys.argv[1]))[0]; print(r['status'], r['latest'], r['tag'])" "$WS/tmp/port-update.$C.json")
+  read -r st NEW TAG <<< "$row"
+  [ "$st" = update ] || { echo "$C $OLD_VERSION: no newer upstream release found ($st)"; exit 0; }
+fi
+[ "$NEW" != "$OLD_VERSION" ] || { echo "$C is already $NEW"; exit 0; }
+echo "== $C: $OLD_VERSION -> $NEW"
+
+# The new pin, in the recipe's own form.
+if [ -n "$OLD_GIT" ]; then
+  if [ -z "$TAG" ]; then   # a version given by hand: find its tag the way the old one was named
+    TAG=$(git ls-remote --tags --refs "$OLD_GIT" | sed 's|.*refs/tags/||' | grep -E "(^|[^0-9])${NEW//./[._]}$" | head -n 1)
+  fi
+  [ -n "$TAG" ] || { echo "!! no tag for $NEW in $OLD_GIT" >&2; exit 1; }
+  if [ -n "$OLD_COMMIT" ]; then
+    NEW_COMMIT=$(git ls-remote "$OLD_GIT" "refs/tags/$TAG^{}" "refs/tags/$TAG" | head -n 1 | cut -f1)
+    [ -n "$NEW_COMMIT" ] || { echo "!! cannot resolve $TAG" >&2; exit 1; }
+    echo "   COMMIT $OLD_COMMIT -> $NEW_COMMIT ($TAG)"
+  else
+    echo "   REF $OLD_REF -> $TAG"
+  fi
+elif [ -n "$OLD_TARBALL" ]; then
+  NEW_TARBALL=${OLD_TARBALL//$OLD_VERSION/$NEW}
+  [ "$NEW_TARBALL" != "$OLD_TARBALL" ] || { echo "!! the tarball URL does not contain the version; edit the recipe by hand" >&2; exit 1; }
+  echo "   TARBALL $NEW_TARBALL"
+else
+  echo "!! $C fetches with its own do_fetch: update its recipe by hand" >&2; exit 1
+fi
+[ -z "$DRY" ] || exit 0
+
+# 1. keep the version ported before
+K=$WS/ports/$C/versions/$OLD_VERSION
+if [ ! -d "$K" ]; then
+  mkdir -p "$K" && cp -a "$R" "$K/"
+  for x in "$WS/ports/$C"/*/; do
+    [ -d "$x" ] && [ "$(basename "$x")" != versions ] && cp -a "$x" "$K/"
+  done
+  echo "   kept $OLD_VERSION in ports/$C/versions/$OLD_VERSION/"
+fi
+
+# 2. move the recipe
+if [ -n "$OLD_TARBALL" ]; then
+  f=$WS/dist/$(basename "$NEW_TARBALL")
+  [ -f "$f" ] || curl -fsSL --retry 3 -o "$f" "$NEW_TARBALL" || { echo "!! download failed: $NEW_TARBALL" >&2; exit 1; }
+  NEW_SHA=$(sha256sum "$f" | cut -d' ' -f1)
+fi
+python3 -I - "$R" "$OLD_VERSION" "$NEW" "$OLD_REF" "$TAG" "$OLD_COMMIT" "${NEW_COMMIT:-}" "$OLD_TARBALL" "${NEW_TARBALL:-}" "$OLD_SHA256" "${NEW_SHA:-}" <<'EOF'
+import sys
+p, ov, nv, oref, tag, oc, nc, otb, ntb, osha, nsha = sys.argv[1:]
+t = open(p).read()
+def sub(k, old, new):
+    global t
+    if old and new:
+        t = t.replace("%s=%s" % (k, old), "%s=%s" % (k, new), 1).replace('%s="%s"' % (k, old), '%s="%s"' % (k, new), 1)
+sub("VERSION", ov, nv)
+sub("REF", oref, tag if oref else "")
+sub("COMMIT", oc, nc)
+sub("TARBALL", otb, ntb)
+sub("SHA256", osha, nsha)
+open(p, "w").write(t)
+EOF
+echo "   recipe.sh now at $NEW (diff: git diff ports/$C/recipe.sh)"
+
+# 3. fetch, patch, build
+source "$WS/env.sh" x86_64 >/dev/null || exit 1
+rm -rf "$SRC_DIR/$C"
+if ! "$WS/scripts/qnxbuild" -f "$C"; then
+  if grep -q "patch failed" "$WS"/logs/$C.*.log 2>/dev/null; then
+    p=$(grep -ho "patch failed: $C: [^ ]*" "$WS"/logs/$C.*.log | head -n 1 | sed 's/.*: //')
+    echo "!! $p does not apply to $NEW. Port it: fetch the new source unpatched"
+    echo "   (git clone/curl as in ports/$C/README.md, into src/$C), apply the patches"
+    echo "   that do apply, make the change by hand, then: scripts/mkpatch $C <name> \"<summary>\""
+    echo "   and drop the old patch file; rerun scripts/qnxbuild -f $C."
+  fi
+  echo "!! $C $NEW did not build (logs/$C.<arch>.log); $OLD_VERSION is kept in ports/$C/versions/$OLD_VERSION/"
+  exit 1
+fi
+
+# 4. test, package (next to the old version), sources, docs
+"$WS/tests/build-tests.sh" >/dev/null 2>&1 || echo "!! tests did not build (tests/build-tests.sh)"
+key=$(ls "$WS"/keys/private/*.rsa 2>/dev/null | head -n 1)
+"$WS/scripts/qnxpkg" ${key:+--key "$key"} --tests "$C" | grep -E '^(==|!!)'
+"$WS/scripts/gen-ported" "$C" | tail -n 1
+"$WS/scripts/gen-port-docs" >/dev/null 2>&1
+echo "== $C $NEW built and packaged; $OLD_VERSION is still in dists/ and ported/."
+echo "   next: scripts/serve-dists, then scripts/verify-on-target -t \"<target>\" <target> $C,"
+echo "   then scripts/publish-github-release --verified --upload"

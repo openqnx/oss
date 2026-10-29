@@ -1,0 +1,68 @@
+QNX change from QNX's aports (core/fakeroot/fix-qnx.patch).
+
+Taken from qnx-ports/aports core/fakeroot -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Changed here: its message.h hunk (an endian-header case that only exists in
+1.38) is replaced by 0003 for this release.
+
+Upstream-Status: QNX-specific
+
+diff -Naur fakeroot-1.38.1.orig/communicate.c fakeroot-1.38.1/communicate.c
+--- fakeroot-1.38.1.orig/communicate.c	2026-06-11 15:33:54.000000000 +0000
++++ fakeroot-1.38.1/communicate.c	2026-06-11 15:34:04.000000000 +0000
+@@ -32,6 +32,9 @@
+ # endif
+ #endif
+ 
++# ifdef __QNX__
++#define SOL_TCP 6
++# endif
+ #include "communicate.h"
+ #include <dlfcn.h>
+ #include <stdio.h>
+diff -Naur fakeroot-1.38.1.orig/faked.c fakeroot-1.38.1/faked.c
+--- fakeroot-1.38.1.orig/faked.c	2026-06-11 15:33:54.000000000 +0000
++++ fakeroot-1.38.1/faked.c	2026-06-11 15:34:05.000000000 +0000
+@@ -103,6 +103,7 @@
+ #else /* FAKEROOT_FAKENET */
+ # include <sys/socket.h>
+ # include <sys/param.h>
++# include <sys/select.h>
+ # include <netinet/in.h>
+ # include <netinet/tcp.h>
+ # include <arpa/inet.h>
+@@ -1163,7 +1164,7 @@
+       const int sd = sd_list_index(i);
+ 
+       FD_SET(sd, &readfds);
+-      maxfd = MAX(sd, maxfd);
++      maxfd = max(sd, maxfd);
+     }
+ 
+     count = select(maxfd + 1, &readfds, NULL, NULL, NULL);
+diff -Naur fakeroot-1.38.1.orig/libfakeroot.c fakeroot-1.38.1/libfakeroot.c
+--- fakeroot-1.38.1.orig/libfakeroot.c	2026-06-11 15:33:54.000000000 +0000
++++ fakeroot-1.38.1/libfakeroot.c	2026-06-11 15:34:05.000000000 +0000
+@@ -1130,7 +1130,7 @@
+ }
+ 
+ #ifdef HAVE_FSTATAT
+-#ifdef HAVE_MKNODAT
++#ifdef NEVER_HAVE_MKNODAT
+ int WRAP_MKNODAT MKNODAT_ARG(int ver UNUSED,
+ 			     int dir_fd,
+ 			     const char *pathname,
+@@ -1508,12 +1508,6 @@
+   return pid;
+ }
+ 
+-pid_t vfork(void)
+-{
+-  /* We can't wrap vfork(2) without breaking everything... */
+-  return fork();
+-}
+-
+ /* Return an error when trying to close the comm_sd file descriptor
+    (pretend that it's closed). */
+ int close(int fd)

@@ -1,0 +1,397 @@
+#!/usr/bin/env python3
+"""qnxpkg -- turn built components into packages a QNX target can install.
+
+    scripts/qnxpkg [-a ARCH] [-o REPO] [--key KEY.rsa] <component>... | --all
+
+For every component that qnxbuild has installed (pkgroot/<arch>/<component>),
+this writes, under REPO/<sdp>/<apk-arch>/:
+
+    <name>-<ver>-r<rel>.tar.gz        runtime files, paths relative to /
+    <name>-dev-<ver>-r<rel>.tar.gz    headers, .pc, CMake packages, static libs
+    <name>-<ver>-r<rel>.apk           the same two, as APK v2 packages
+    INDEX                             one line per package (read by oss-get)
+    APKINDEX.tar.gz                   the index apk-tools reads
+
+Runtime dependencies are computed, not copied from the recipe: every ELF file
+in the package is read for DT_NEEDED, and each soname is attributed to the
+component whose manifest provides it. Libraries the QNX SDP target image
+already carries are not dependencies.
+
+Files installed into staging can carry the absolute staging path of the build
+host (a .pc file, a CMake package file). Those are rewritten to the on-target
+path, since the package is installed at / on the board.
+"""
+import argparse, base64, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, time
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PREFIX = os.environ.get("PREFIX", "/usr/local")
+SDP = os.environ.get("QNX_OSS_SDP_VERSION", "8.0")
+APK_ARCH = {"aarch64le": "aarch64", "x86_64": "x86_64"}
+CPU = {"aarch64le": "aarch64", "x86_64": "x86_64"}
+
+# What goes into <name>-dev rather than the runtime package.
+DEV_PATTERNS = [
+    re.compile(r"^usr/local/include/"),
+    re.compile(r"^usr/local/lib/pkgconfig/"),
+    re.compile(r"^usr/local/share/pkgconfig/"),
+    re.compile(r"^usr/local/lib/cmake/"),
+    re.compile(r"^usr/local/share/cmake[^/]*/"),
+    re.compile(r"^usr/local/lib/[^/]+/cmake/"),
+    re.compile(r"^usr/local/share/aclocal/"),
+    re.compile(r"^usr/local/share/(man|doc|info|gtk-doc|devhelp)/"),
+    re.compile(r"^usr/local/share/vala/"),
+    re.compile(r"^usr/local/share/gir-1.0/"),
+    re.compile(r"\.a$"),
+    re.compile(r"^usr/local/lib/lib[^/]*\.so$"),   # the unversioned link-time name
+]
+
+
+def recipe_meta(name):
+    """VERSION / upstream / description out of a recipe, without running it."""
+    path = os.path.join(WS, "ports", name, "recipe.sh")
+    meta = {"version": "0", "url": "", "desc": ""}
+    if not os.path.exists(path):
+        return meta
+    text = open(path).read()
+    m = re.search(r"^VERSION=([^;\s]+)", text, re.M)
+    if m:
+        meta["version"] = m.group(1).strip("\"'")
+    m = re.search(r"GIT=(\S+?)(;|\s|$)", text) or re.search(r"TARBALL=(\S+)", text)
+    if m:
+        meta["url"] = m.group(1).strip("\"'")
+    readme = os.path.join(WS, "ports", name, "README.md")
+    meta["desc"] = "%s %s for QNX SDP 8.0" % (name, meta["version"])
+    meta["license"] = "see upstream"
+    # CONFLICTS: components that install the same files as this one (two
+    # implementations of one library, e.g. sdl2 and sdl2-compat).
+    m = re.search(r'^CONFLICTS="([^"]*)"', text, re.M)
+    meta["conflicts"] = m.group(1).split() if m else []
+    lic = os.path.join(WS, "ports", name, "LICENSE.id")
+    if os.path.exists(lic):
+        meta["license"] = open(lic).read().strip()
+    return meta
+
+
+def apk_version(v):
+    """APK versions are strict: digits and dots, an optional letter, suffixes.
+
+    Recipe versions are mapped onto that grammar so apk can still order them:
+    a dated snapshot 1.1-git-20190513 becomes 1.1_git20190513, OpenSSH-style
+    10.2p1 becomes 10.2_p1, 1.0-beta becomes 1.0_beta, a Python .post0 a _p0.
+    Anything else keeps its leading number and gets a bare _git.
+    """
+    SUF = r"(_(alpha|beta|pre|rc|cvs|svn|git|hg|p)\d*)*"
+    if re.fullmatch(r"\d+(\.\d+)*[a-z]?" + SUF, v):
+        return v
+    w = v
+    w = re.sub(r"[-.]git[-.]?(\d{8})$", r"_git\1", w)                  # -git-20240417
+    w = re.sub(r"\+rpt(\d+)$", r"_p\1", w)                              # +rpt20250722
+    w = re.sub(r"\.post(\d+)$", r"_p\1", w)                             # .post0
+    w = re.sub(r"(\d)p(\d+)$", r"\1_p\2", w)                            # 10.2p1
+    w = re.sub(r"(\d)test(\d+)$", r"\1_pre\2", w)                       # 2.93test4
+    w = re.sub(r"[-.](alpha|beta|pre|rc)(\d*)$", r"_\1\2", w)          # 1.0-beta
+    w = w.replace("-", ".")
+    if re.fullmatch(r"\d+(\.\d+)*[a-z]?" + SUF, w):
+        return w
+    m = re.match(r"\d+(\.\d+)*", v)
+    base = m.group(0) if m else "0"
+    return base + "_git"
+
+
+def is_dev(rel):
+    return any(p.search(rel) for p in DEV_PATTERNS)
+
+
+def readelf(arch):
+    host = os.environ.get("QNX_HOST", "")
+    if not host:
+        sys.exit("QNX_HOST is not set -- source env.sh (or the SDP's qnxsdp-env.sh) first")
+    return os.path.join(host, "usr/bin", "nto%s-readelf" % CPU[arch])
+
+
+def elf_info(path, tool):
+    """(soname, [needed]) of an ELF file, or None when it is not one."""
+    with open(path, "rb") as f:
+        if f.read(4) != b"\x7fELF":
+            return None
+    out = subprocess.run([tool, "-d", path], capture_output=True, text=True).stdout
+    soname = None
+    needed = []
+    for line in out.splitlines():
+        m = re.search(r"\((NEEDED|SONAME)\).*\[(.+)\]", line)
+        if m:
+            if m.group(1) == "SONAME":
+                soname = m.group(2)
+            else:
+                needed.append(m.group(2))
+    return soname, needed
+
+
+def load_manifests(arch):
+    """soname/file -> component that installed it, from every manifest."""
+    owner = {}
+    mdir = os.path.join(WS, "stage", arch, ".manifest")
+    if not os.path.isdir(mdir):
+        return owner
+    for comp in os.listdir(mdir):
+        for rel in open(os.path.join(mdir, comp)).read().split("\n"):
+            if rel.startswith("usr/local/lib/") and ".so" in rel:
+                owner.setdefault(os.path.basename(rel), comp)
+    return owner
+
+
+def collect(root):
+    """Files under a pkgroot, as paths relative to it, directories included."""
+    out = []
+    for dirpath, dirs, files in os.walk(root):
+        dirs.sort()
+        for n in sorted(dirs) + sorted(files):
+            full = os.path.join(dirpath, n)
+            out.append(os.path.relpath(full, root))
+    return out
+
+
+def rewrite_bytes(data, stage):
+    # /home/.../stage/<arch>/usr/local  ->  /usr/local
+    return data.replace(stage.encode(), b"")
+
+
+def tar_members(root, rels, stage, apk):
+    """Yield (TarInfo, bytes-or-None) for the selected files, host paths fixed."""
+    for rel in rels:
+        full = os.path.join(root, rel)
+        st = os.lstat(full)
+        ti = tarfile.TarInfo(rel)
+        ti.mtime = int(st.st_mtime)
+        ti.uid = ti.gid = 0
+        ti.uname = ti.gname = "root"
+        ti.mode = stat.S_IMODE(st.st_mode)
+        data = None
+        if stat.S_ISDIR(st.st_mode):
+            ti.type = tarfile.DIRTYPE
+        elif stat.S_ISLNK(st.st_mode):
+            ti.type = tarfile.SYMTYPE
+            ti.linkname = os.readlink(full)
+            if apk:
+                ti.pax_headers = {"APK-TOOLS.checksum.SHA1": hashlib.sha1(ti.linkname.encode()).hexdigest()}
+        else:
+            data = open(full, "rb").read()
+            if data[:4] != b"\x7fELF" and b"\0" not in data[:8192]:
+                data = rewrite_bytes(data, stage)
+            ti.size = len(data)
+            if apk:
+                ti.pax_headers = {"APK-TOOLS.checksum.SHA1": hashlib.sha1(data).hexdigest()}
+        yield ti, data
+
+
+def write_tar(members, fmt, cut=False):
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w", format=fmt) as t:
+        for ti, data in members:
+            t.addfile(ti, io.BytesIO(data) if data is not None else None)
+    raw = buf.getvalue()
+    if cut:
+        # apk concatenates gzip streams; every tar but the last must not end
+        # with the two zero blocks that mark end-of-archive (abuild-tar --cut).
+        raw = raw.rstrip(b"\0")
+        raw += b"\0" * ((-len(raw)) % 512)
+    return raw
+
+
+def gz(raw):
+    return gzip.compress(raw, compresslevel=9, mtime=0)
+
+
+def sign(blob, key):
+    """RSA-SHA1 signature segment, the way abuild-sign makes one."""
+    if not key:
+        return b""
+    sig = subprocess.run(["openssl", "dgst", "-sha1", "-sign", key], input=blob,
+                         capture_output=True, check=True).stdout
+    name = ".SIGN.RSA." + os.path.basename(key) + ".pub"
+    ti = tarfile.TarInfo(name)
+    ti.size = len(sig)
+    ti.mode = 0o644
+    ti.mtime = int(time.time())
+    return gz(write_tar([(ti, sig)], tarfile.USTAR_FORMAT, cut=True))
+
+
+def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, stage, key, outdir):
+    data = gz(write_tar(tar_members(root, rels, stage, apk=True), tarfile.PAX_FORMAT))
+    size = sum(os.lstat(os.path.join(root, r)).st_size for r in rels
+               if not os.path.isdir(os.path.join(root, r)))
+    info = [
+        "# Generated by qnxpkg",
+        "pkgname = %s" % pkgname,
+        "pkgver = %s" % ver,
+        "pkgdesc = %s" % meta["desc"],
+        "url = %s" % meta["url"],
+        "builddate = %d" % int(time.time()),
+        "packager = QNX OSS <https://github.com/openqnx/oss>",
+        "size = %d" % size,
+        "arch = %s" % APK_ARCH[arch],
+        "origin = %s" % meta["origin"],
+        "license = %s" % meta["license"],
+    ]
+    info += ["depend = %s" % d for d in deps]
+    info += ["depend = !%s" % c for c in meta.get("conflicts_pkg", [])]   # apk's conflict syntax
+    info += ["provides = %s" % p for p in provides]
+    info.append("datahash = %s" % hashlib.sha256(data).hexdigest())
+    pkginfo = ("\n".join(info) + "\n").encode()
+    ti = tarfile.TarInfo(".PKGINFO")
+    ti.size = len(pkginfo)
+    ti.mode = 0o644
+    ti.mtime = int(time.time())
+    ti.uname = ti.gname = "root"
+    control = gz(write_tar([(ti, pkginfo)], tarfile.USTAR_FORMAT, cut=True))
+    fname = "%s-%s.apk" % (pkgname, ver)
+    with open(os.path.join(outdir, fname), "wb") as f:
+        f.write(sign(control, key) + control + data)
+    entry = {
+        "C": "Q1" + base64.b64encode(hashlib.sha1(control).digest()).decode(),
+        "P": pkgname, "V": ver, "A": APK_ARCH[arch],
+        "S": str(os.path.getsize(os.path.join(outdir, fname))), "I": str(size),
+        "T": meta["desc"], "U": meta["url"], "L": meta["license"], "o": meta["origin"],
+        "t": str(int(time.time())),
+    }
+    dl = list(deps) + ["!%s" % c for c in meta.get("conflicts_pkg", [])]
+    if dl:
+        entry["D"] = " ".join(dl)
+    if provides:
+        entry["p"] = " ".join(provides)
+    return entry
+
+
+def make_tgz(name, root, rels, stage, outdir):
+    raw = write_tar(tar_members(root, rels, stage, apk=False), tarfile.GNU_FORMAT)
+    data = gz(raw)
+    path = os.path.join(outdir, name + ".tar.gz")
+    open(path, "wb").write(data)
+    return os.path.basename(path), hashlib.sha256(data).hexdigest(), len(data)
+
+
+def package(comp, arch, args, owner, outdir):
+    root = os.path.join(WS, "pkgroot", arch, comp)
+    if not os.path.isdir(root):
+        print("!! %s [%s]: not built with a manifest (run: scripts/qnxbuild -a %s %s)" % (comp, arch, arch, comp))
+        return []
+    stage = os.path.join(WS, "stage", arch)
+    meta = recipe_meta(comp)
+    meta["origin"] = comp
+    ver = apk_version(meta["version"]) + "-r%d" % args.release
+    rels = collect(root)
+    files = [r for r in rels if not os.path.isdir(os.path.join(root, r))]
+    # An unversioned lib*.so that is a *file* is the library itself, not the
+    # -dev symlink to it: a Rust cdylib (libzenohc.so) or a library built
+    # without an soname. It belongs in the runtime package.
+    unversioned_file = lambda r: (re.match(r"^usr/local/lib/lib[^/]*\.so$", r)
+                                  and not os.path.islink(os.path.join(root, r)))
+    dev = [r for r in files if is_dev(r) and not unversioned_file(r)]
+    run = [r for r in files if r not in set(dev)]
+
+    tool = readelf(arch)
+    needed, provides = set(), []
+    for r in run:
+        full = os.path.join(root, r)
+        if os.path.islink(full) or not os.path.isfile(full):
+            continue
+        info = elf_info(full, tool)
+        if not info:
+            continue
+        soname, need = info
+        if soname:
+            provides.append("so:%s=%s" % (soname, ver.split("-r")[0]))
+        needed.update(need)
+    sonames_here = {p.split(":", 1)[1].split("=")[0] for p in provides}
+    deps = sorted({owner[n] for n in needed if n in owner and n not in sonames_here and owner[n] != comp})
+
+    def with_dirs(sel):
+        out = set(sel)
+        for r in sel:
+            d = os.path.dirname(r)
+            while d:
+                out.add(d)
+                d = os.path.dirname(d)
+        return sorted(out)
+
+    entries, lines = [], []
+    for pname, sel, pdeps in ((comp, run, deps), (comp + "-dev", dev, [comp] if run else deps)):
+        if not sel:
+            continue
+        rels_sel = with_dirs(sel)
+        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, outdir)
+        conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
+        lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
+        pm = dict(meta); pm["conflicts_pkg"] = conf
+        entries.append(make_apk(pname, ver, arch, pm, root, rels_sel, pdeps,
+                                provides if pname == comp else [], stage, args.key, outdir))
+    print("== %s [%s] %s: %d runtime + %d dev files, depends: %s"
+          % (comp, arch, ver, len(run), len(dev), " ".join(deps) or "-"))
+    return list(zip(entries, lines))
+
+
+def write_indexes(outdir, key):
+    """Rebuild INDEX and APKINDEX.tar.gz from every package in the directory."""
+    db = os.path.join(outdir, ".index.json")
+    data = json.load(open(db)) if os.path.exists(db) else {}
+    with open(os.path.join(outdir, "INDEX"), "w") as f:
+        f.write("# name|version|depends|file|sha256|size|description|conflicts\n")
+        for name in sorted(data):
+            f.write(data[name]["line"] + "\n")
+    text = ""
+    for name in sorted(data):
+        e = data[name]["apk"]
+        for k in "C P V A S I T U L o t D p".split():
+            if k in e:
+                text += "%s:%s\n" % (k, e[k])
+        text += "\n"
+    members = []
+    for n, b in (("DESCRIPTION", b"QNX OSS (openqnx/oss)\n"), ("APKINDEX", text.encode())):
+        ti = tarfile.TarInfo(n)
+        ti.size = len(b)
+        ti.mode = 0o644
+        ti.mtime = int(time.time())
+        members.append((ti, b))
+    body = gz(write_tar(members, tarfile.USTAR_FORMAT))
+    open(os.path.join(outdir, "APKINDEX.tar.gz"), "wb").write(sign(body, key) + body)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-a", "--arch", action="append", choices=list(APK_ARCH))
+    ap.add_argument("-o", "--out", default=os.path.join(WS, "repo"))
+    ap.add_argument("-r", "--release", type=int, default=0)
+    ap.add_argument("--key", help="RSA private key for signing (abuild-keygen style)")
+    ap.add_argument("--all", action="store_true")
+    ap.add_argument("components", nargs="*")
+    args = ap.parse_args()
+    arches = args.arch or list(APK_ARCH)
+    rc = 0
+    for arch in arches:
+        comps = args.components
+        if args.all:
+            comps = sorted(os.listdir(os.path.join(WS, "pkgroot", arch)))
+        outdir = os.path.join(args.out, SDP, APK_ARCH[arch])
+        os.makedirs(outdir, exist_ok=True)
+        owner = load_manifests(arch)
+        db = os.path.join(outdir, ".index.json")
+        data = json.load(open(db)) if os.path.exists(db) else {}
+        for comp in comps:
+            res = package(comp, arch, args, owner, outdir)
+            if not res:
+                rc = 1
+            for entry, line in res:
+                old = data.get(entry["P"])
+                if old and old["apk"]["V"] != entry["V"]:
+                    for ext in (".apk", ".tar.gz"):
+                        p = os.path.join(outdir, "%s-%s%s" % (entry["P"], old["apk"]["V"], ext))
+                        if os.path.exists(p):
+                            os.remove(p)
+                data[entry["P"]] = {"apk": entry, "line": line}
+        json.dump(data, open(db, "w"), indent=1, sort_keys=True)
+        write_indexes(outdir, args.key)
+    return rc
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,21 @@
+Define EPOLLRDHUP as 0 where the epoll shim lacks it.
+
+QNX 8 provides epoll through libepoll, whose <sys/epoll.h> has no EPOLLRDHUP.
+libcoap only ORs it into masks next to EPOLLHUP/EPOLLIN, which still report
+a peer that closed its end, so a zero value keeps the behaviour.
+
+Upstream-Status: QNX-specific
+
+--- a/src/coap_net.c
++++ b/src/coap_net.c
+@@ -49,6 +49,10 @@
+ #ifdef COAP_EPOLL_SUPPORT
+ #include <sys/epoll.h>
+ #include <sys/timerfd.h>
++#ifndef EPOLLRDHUP
++/* QNX's libepoll has no EPOLLRDHUP; a peer close still raises EPOLLHUP/EPOLLIN. */
++#define EPOLLRDHUP 0
++#endif
+ #endif /* COAP_EPOLL_SUPPORT */
+ #ifdef HAVE_WS2TCPIP_H
+ #include <ws2tcpip.h>

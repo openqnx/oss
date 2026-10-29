@@ -1,0 +1,4 @@
+VERSION=0.8.2; GIT=https://github.com/Cyan4973/xxHash.git; REF=v0.8.2
+SUBDIR=cmake_unofficial
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DXXHASH_BUILD_XXHSUM=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

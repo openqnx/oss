@@ -1,0 +1,38 @@
+JSCOnly: select the Unix memory-pressure handler on QNX.
+
+Linking fails with:
+
+    MemoryPressureHandler.cpp: undefined reference to
+        WTF::MemoryPressureHandler::holdOffTimerFired()
+
+MemoryPressureHandler.h declares m_holdOffTimer and holdOffTimerFired() for
+"OS(LINUX) || OS(FREEBSD) || OS(QNX)", and unix/MemoryPressureHandlerUnix.cpp
+defines them -- it already has an OS(QNX) branch that reads the resident set
+size with devctl(DCMD_PROC_ASINFO) on /proc/self/ctl.  WTF knows about QNX; the
+JSCOnly platform list simply had no QNX case, so the build fell through to
+generic/MemoryPressureHandlerGeneric.cpp, which does not define the members the
+header declared.
+
+Upstream-Status: QNX-specific
+
+--- a/Source/WTF/wtf/PlatformJSCOnly.cmake
++++ b/Source/WTF/wtf/PlatformJSCOnly.cmake
+@@ -116,6 +116,18 @@
+ 
+         unix/MemoryPressureHandlerUnix.cpp
+     )
++elseif (CMAKE_SYSTEM_NAME MATCHES "QNX")
++    # MemoryPressureHandler.h declares m_holdOffTimer and holdOffTimerFired()
++    # under "OS(LINUX) || OS(FREEBSD) || OS(QNX)", and the definition lives in
++    # unix/MemoryPressureHandlerUnix.cpp -- which already carries an OS(QNX)
++    # branch reading rss through devctl(DCMD_PROC_ASINFO) on /proc/self/ctl.
++    # Only this platform list was missing QNX, so the build fell through to the
++    # generic handler and left holdOffTimerFired() undefined at link time.
++    list(APPEND WTF_SOURCES
++        generic/MemoryFootprintGeneric.cpp
++
++        unix/MemoryPressureHandlerUnix.cpp
++    )
+ else ()
+     list(APPEND WTF_SOURCES
+         generic/MemoryFootprintGeneric.cpp

@@ -1,0 +1,20 @@
+Install the QNX test config.sh under INSTALL_TO_DIR (honour DESTDIR).
+
+The QNX change installs include/config.sh straight into $(testdir), the
+final location, ignoring DESTDIR -- a staged install then tries to write to
+/usr/local on the build machine. INSTALL_TO_DIR is where the rest of the test
+files go.
+
+Upstream-Status: QNX-specific
+
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -47,7 +47,7 @@
+ 	done
+ 
+ 	@if test "${QNXENV}" = "true"; then \
+-	  $(INSTALL_DATA) $(PWD)/include/config.sh $(testdir)/include/config.sh; \
++	  $(INSTALL_DATA) $(PWD)/include/config.sh $(INSTALL_TO_DIR)/include/config.sh; \
+ 	fi
+ dist-hook:
+ 	$(MAKE)	INSTALL_TO_DIR="$(distdir)" install_test_files

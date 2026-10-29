@@ -1,0 +1,198 @@
+#!/bin/sh
+# oss-get -- install QNX OSS packages on a QNX 8.0 target.
+#
+#   oss-get update                 fetch the package index
+#   oss-get list | search <word>   what is available
+#   oss-get info <pkg>             version, dependencies, size
+#   oss-get install <pkg>...       download, verify (sha256) and unpack,
+#                                  dependencies first
+#   oss-get remove <pkg>...        delete the files a package installed
+#   oss-get installed              what is installed
+#   oss-get link                   map /usr/local onto the install root
+#   oss-get env                    print the PATH / LD_LIBRARY_PATH to use
+#
+# Needs only what a stock QNX 8.0 image has: sh (ksh), curl, tar, gzip and
+# openssl. Settings come from the environment or from /data/oss/etc/oss-get.conf:
+#
+#   OSS_REPO   where the packages are. "@ARCH@" in it is replaced with
+#              aarch64 or x86_64; without it, /<arch> is appended. Default:
+#              the openqnx/oss GitHub release for this architecture. Any
+#              web server or local directory laid out like repo/8.0/ works.
+#   OSS_ROOT   where packages are unpacked (default /data/oss). Packages
+#              contain usr/local/..., so files land in $OSS_ROOT/usr/local.
+#
+# Everything was built for the prefix /usr/local. On images where / is the
+# read-only IFS, "oss-get link" makes /usr/local a path-manager link to
+# $OSS_ROOT/usr/local (ln -sP, root only, lasts until reboot -- put it in a
+# startup script to keep it).
+
+OSS_ROOT=${OSS_ROOT:-/data/oss}
+CONF=${OSS_CONF:-$OSS_ROOT/etc/oss-get.conf}
+[ -f "$CONF" ] && . "$CONF"
+OSS_REPO=${OSS_REPO:-https://github.com/openqnx/oss/releases/download/packages-8.0-@ARCH@}
+
+case "$(uname -m)" in
+  aarch64*|QEMU_virt|*arm*|*RaspberryPi*) ARCH=aarch64 ;;
+  x86*|*86pc*) ARCH=x86_64 ;;
+  *) ARCH=$(uname -p) ;;
+esac
+ARCH=${OSS_ARCH:-$ARCH}
+
+repo_url() {
+  case "$OSS_REPO" in
+    *@ARCH@*) echo "$OSS_REPO" | sed "s/@ARCH@/$ARCH/g" ;;
+    *) echo "$OSS_REPO/$ARCH" ;;
+  esac
+}
+
+DB=$OSS_ROOT/var/lib/oss-get
+CACHE=$OSS_ROOT/var/cache/oss-get
+INDEX=$DB/INDEX
+
+die() { echo "oss-get: $*" >&2; exit 1; }
+say() { echo "oss-get: $*"; }
+
+fetch() { # url dest
+  case "$1" in
+    file://*) cp "${1#file://}" "$2" ;;
+    /*)       cp "$1" "$2" ;;
+    *)        curl -fsSL --retry 3 -o "$2" "$1" ;;
+  esac
+}
+
+sha256() { openssl dgst -sha256 "$1" | sed 's/.*= *//'; }
+
+need_index() { [ -f "$INDEX" ] || die "no package index -- run: oss-get update"; }
+
+# One INDEX line: name|version|depends|file|sha256|size|description|conflicts
+# (an index without the last field has no conflicts)
+entry() { need_index; grep "^$1|" "$INDEX" | head -n 1; }
+field() { echo "$1" | cut -d'|' -f"$2"; }
+
+cmd_update() {
+  mkdir -p "$DB" "$CACHE" || die "cannot create $DB"
+  fetch "$(repo_url)/INDEX" "$INDEX.new" || die "cannot fetch $(repo_url)/INDEX"
+  mv "$INDEX.new" "$INDEX"
+  say "$(grep -vc '^#' "$INDEX") packages for $ARCH from $(repo_url)"
+}
+
+cmd_list() {
+  need_index
+  grep -v '^#' "$INDEX" | while IFS='|' read -r n v d f s z t c; do
+    m=" "; [ -f "$DB/$n.list" ] && m="i"
+    printf "%s %-28s %-16s %s\n" "$m" "$n" "$v" "$t"
+  done
+}
+
+cmd_search() { cmd_list | grep -i -- "$1"; }
+
+cmd_info() {
+  e=$(entry "$1"); [ -n "$e" ] || die "no such package: $1"
+  echo "name:     $(field "$e" 1)"
+  echo "version:  $(field "$e" 2)"
+  echo "depends:  $(field "$e" 3 | tr ',' ' ')"
+  [ -n "$(field "$e" 8)" ] && echo "conflicts: $(field "$e" 8 | tr ',' ' ')"
+  echo "size:     $(field "$e" 6) bytes (download)"
+  echo "about:    $(field "$e" 7)"
+  [ -f "$DB/$1.list" ] && echo "status:   installed ($(cat "$DB/$1.version" 2>/dev/null))"
+  return 0
+}
+
+# Depth-first: a package's dependencies are installed before it.
+SEEN=" "
+install_one() {
+  case "$SEEN" in *" $1 "*) return 0 ;; esac
+  SEEN="$SEEN$1 "
+  e=$(entry "$1"); [ -n "$e" ] || die "no such package: $1"
+  deps=$(field "$e" 3 | tr ',' ' ')
+  for d in $deps; do install_one "$d" || return 1; done
+  # POSIX sh functions have no local variables and the recursion above has
+  # overwritten every one of them, so read this package's entry again.
+  e=$(entry "$1"); v=$(field "$e" 2)
+  # Two packages that install the same files (sdl2 and sdl2-compat) cannot
+  # both be installed; either side may declare it.
+  for c in $(field "$e" 8 | tr ',' ' '); do
+    [ -f "$DB/$c.list" ] && die "$1 conflicts with the installed $c (remove it first: oss-get remove $c)"
+  done
+  for l in "$DB"/*.list; do
+    [ -f "$l" ] || continue; q=$(basename "$l" .list); [ "$q" = "$1" ] && continue
+    case ",$(field "$(entry "$q")" 8)," in *",$1,"*) die "$1 conflicts with the installed $q (remove it first: oss-get remove $q)" ;; esac
+  done
+  e=$(entry "$1"); v=$(field "$e" 2)
+  if [ -f "$DB/$1.list" ] && [ "$(cat "$DB/$1.version" 2>/dev/null)" = "$v" ] && [ -z "$FORCE" ]; then
+    return 0
+  fi
+  f=$(field "$e" 4); sum=$(field "$e" 5)
+  say "installing $1 $v"
+  fetch "$(repo_url)/$f" "$CACHE/$f" || die "download failed: $f"
+  [ "$(sha256 "$CACHE/$f")" = "$sum" ] || { rm -f "$CACHE/$f"; die "checksum mismatch: $f"; }
+  mkdir -p "$OSS_ROOT"
+  gzip -dc "$CACHE/$f" | tar -tf - | grep -v '/$' > "$DB/$1.list.new" || die "corrupt archive: $f"
+  gzip -dc "$CACHE/$f" | (cd "$OSS_ROOT" && tar -xf -) || die "unpack failed: $f"
+  mv "$DB/$1.list.new" "$DB/$1.list"; echo "$v" > "$DB/$1.version"
+  [ -n "$KEEP" ] || rm -f "$CACHE/$f"
+}
+
+cmd_install() {
+  [ $# -gt 0 ] || die "usage: oss-get install <pkg>..."
+  mkdir -p "$DB" "$CACHE"
+  for p in "$@"; do install_one "$p" || exit 1; done
+  [ -d /usr/local ] || say "note: /usr/local does not exist -- run 'oss-get link' (as root) or see 'oss-get env'"
+}
+
+cmd_remove() {
+  for p in "$@"; do
+    [ -f "$DB/$p.list" ] || { say "$p is not installed"; continue; }
+    users=""
+    for l in "$DB"/*.list; do
+      q=$(basename "$l" .list); [ "$q" = "$p" ] && continue
+      e=$(entry "$q"); case ",$(field "$e" 3)," in *",$p,"*) users="$users $q" ;; esac
+    done
+    [ -z "$users" ] || [ -n "$FORCE" ] || die "$p is needed by:$users (use -f to remove anyway)"
+    (cd "$OSS_ROOT" && while read -r f; do rm -f "$f"; done) < "$DB/$p.list"
+    rm -f "$DB/$p.list" "$DB/$p.version"; say "removed $p"
+  done
+}
+
+cmd_installed() {
+  for l in "$DB"/*.list; do
+    [ -f "$l" ] || continue
+    p=$(basename "$l" .list); printf "%-28s %s\n" "$p" "$(cat "$DB/$p.version")"
+  done
+}
+
+cmd_link() {
+  [ -e /usr/local ] && { say "/usr/local already exists"; return 0; }
+  mkdir -p "$OSS_ROOT/usr/local"
+  ln -sP "$OSS_ROOT/usr/local" /usr/local || die "ln -sP failed (are you root?)"
+  say "/usr/local -> $OSS_ROOT/usr/local (until reboot)"
+}
+
+cmd_env() {
+  p=/usr/local; [ -d /usr/local ] || p=$OSS_ROOT/usr/local
+  echo "export PATH=$p/bin:$p/sbin:\$PATH"
+  echo "export LD_LIBRARY_PATH=$p/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
+}
+
+FORCE=""; KEEP=""
+while [ $# -gt 0 ]; do case "$1" in
+  -f) FORCE=1; shift ;;
+  -k) KEEP=1; shift ;;
+  -r) OSS_REPO=$2; shift 2 ;;
+  -R) OSS_ROOT=$2; DB=$OSS_ROOT/var/lib/oss-get; CACHE=$OSS_ROOT/var/cache/oss-get; INDEX=$DB/INDEX; shift 2 ;;
+  *) break ;;
+esac; done
+
+c=${1:-help}; [ $# -gt 0 ] && shift
+case "$c" in
+  update) cmd_update ;;
+  list) cmd_list ;;
+  search) cmd_search "$1" ;;
+  info) cmd_info "$1" ;;
+  install|add) cmd_install "$@" ;;
+  remove|del) cmd_remove "$@" ;;
+  installed) cmd_installed ;;
+  link) cmd_link ;;
+  env) cmd_env ;;
+  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+esac

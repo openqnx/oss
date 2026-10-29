@@ -1,0 +1,18 @@
+Do not build lat_sem.
+
+QNX declares the System V semaphore calls (semget, semctl, semop) in
+<sys/sem.h> but no library provides them, so lat_sem cannot link. QNX's
+semaphores are POSIX ones, which lmbench does not measure.
+
+Upstream-Status: QNX-specific
+
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -100,7 +100,6 @@
+ 	$O/lat_select $O/lat_pipe $O/lat_syscall $O/lat_tcp	\
+ 	$O/lat_udp $O/lat_mmap $O/mhz $O/lat_proc $O/lat_pagefault	\
+ 	$O/lat_connect $O/lat_fs $O/lat_sig $O/lat_mem_rd $O/lat_ctx	\
+-	$O/lat_sem 							\
+ 	$O/memsize $O/lat_unix $O/lmdd $O/timing_o $O/enough		\
+ 	$O/msleep $O/loop_o $O/lat_fifo $O/lmhttp $O/lat_http		\
+ 	$O/lat_fcntl $O/disk $O/lat_unix_connect $O/flushdisk		\

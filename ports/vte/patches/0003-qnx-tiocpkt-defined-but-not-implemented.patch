@@ -1,0 +1,66 @@
+QNX defines TIOCPKT but devc-pty does not implement it.
+
+vte_pty_new_sync() fails on QNX with:
+
+    Failed to open PTY: Inappropriate I/O control operation
+
+fd_set_cpkt() enables pty packet mode under #if defined(TIOCPKT), and
+treats failure as fatal.  QNX's <sys/ioctl.h> does define TIOCPKT --
+    #define TIOCPKT  _IOW('t', 112, int)   /* pty: set/clear packet mode */
+-- but its devc-pty resource manager does not implement the request and
+returns ENOTTY.  A macro being defined is not evidence that the kernel
+supports it.
+
+Ignoring the ENOTTY would be worse than the failure.  vte.cc's reader is
+compiled under the same #if and consumes a leading packet-header byte from
+every read(); with packet mode off but that branch compiled in, the first
+byte of real terminal output is eaten and misread as a header.  The two
+sites have to agree, so this turns both off together on QNX and the plain
+read() path already present as the #else is used instead.  What is lost is
+^S/^Q flow-control notification, not correctness.
+
+Upstream-Status: QNX-specific
+
+--- a/src/pty.cc
++++ b/src/pty.cc
+@@ -340,11 +340,28 @@
+         return false;
+ }
+ 
++/* QNX's <sys/ioctl.h> defines TIOCPKT, but devc-pty does not implement it:
++ * the ioctl returns ENOTTY ("Inappropriate I/O control operation").  A macro
++ * being defined is not evidence the kernel supports the request.
++ *
++ * This has to be decided at compile time and identically in pty.cc and vte.cc.
++ * pty.cc treats a failed TIOCPKT as fatal, so vte_pty_new_sync() fails outright
++ * -- but simply ignoring that error would be worse: vte.cc's reader is compiled
++ * under the same #if and consumes a leading packet-header byte from every
++ * read().  With packet mode off but that branch compiled in, the first byte of
++ * real terminal output would be eaten and misread as a header.  Both sites must
++ * agree, so VTE_USE_TIOCPKT turns the pair off together and the plain read()
++ * path (the #else below) is used instead.
++ */
++#if defined(TIOCPKT) && !defined(__QNX__)
++# define VTE_USE_TIOCPKT 1
++#endif
++
+ static int
+ fd_set_cpkt(vte::libc::FD& fd)
+ {
+         auto ret = 0;
+-#if defined(TIOCPKT)
++#if defined(VTE_USE_TIOCPKT)
+         /* tty_ioctl(4) -> every read() gives an extra byte at the beginning
+          * notifying us of stop/start (^S/^Q) events. */
+         int one = 1;
+--- a/src/vte.cc
++++ b/src/vte.cc
+@@ -4439,7 +4439,7 @@
+ 			bp = chunk->begin_writing();
+ 			len = 0;
+ 			do {
+-#if defined(TIOCPKT)
++#if defined(TIOCPKT) && !defined(__QNX__) /* see the note in pty.cc */
+                                 /* We'd like to read (fd, bp, rem); but due to TIOCPKT mode
+                                  * there's an extra input byte returned at the beginning.
+                                  * We need to see what that byte is, but otherwise drop it

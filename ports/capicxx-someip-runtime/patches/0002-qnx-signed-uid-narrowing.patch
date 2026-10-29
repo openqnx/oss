@@ -1,0 +1,30 @@
+CommonAPI SOME/IP: write "no uid/gid" as (uid_t)-1.
+
+uid_t and gid_t are signed on QNX, so the brace-initialisers 0xffffffff are
+narrowing conversions, which C++ rejects. (uid_t)-1 is the same value where
+the type is unsigned.
+
+Upstream-Status: Pending
+
+--- a/src/CommonAPI/SomeIP/ClientId.cpp
++++ b/src/CommonAPI/SomeIP/ClientId.cpp
+@@ -27,15 +27,15 @@
+ 
+ ClientId::ClientId()
+         : client_id_ {0xffff},
+-          uid_ {0xffffffff},
+-          gid_ {0xffffffff} {
++          uid_ {static_cast<uid_t>(-1)},
++          gid_ {static_cast<gid_t>(-1)} {
+ }
+ 
+ ClientId::ClientId(client_id_t _client,
+         const vsomeip_sec_client_t *_sec_client, const std::string &_env)
+     : client_id_ {_client},
+-      uid_ {_sec_client ? _sec_client->user : 0xffffffff},
+-      gid_ {_sec_client ? _sec_client->group : 0xffffffff},
++      uid_ {_sec_client ? static_cast<uid_t>(_sec_client->user) : static_cast<uid_t>(-1)},
++      gid_ {_sec_client ? static_cast<gid_t>(_sec_client->group) : static_cast<gid_t>(-1)},
+       env_(_env) {
+ 
+     if (_sec_client)

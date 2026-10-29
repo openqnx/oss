@@ -1,0 +1,21 @@
+Cyclone DDS: skip Token Ring and FDDI interface types on QNX.
+
+QNX defines IFM_ETHER and IFM_IEEE80211 but not the legacy Token Ring and
+FDDI media types, which ifaddrs.c otherwise uses on every non-FreeBSD BSD-
+style system.
+
+Upstream-Status: QNX-specific
+
+--- a/src/ddsrt/src/ifaddrs/posix/ifaddrs.c
++++ b/src/ddsrt/src/ifaddrs/posix/ifaddrs.c
+@@ -104,7 +104,9 @@
+     switch (IFM_TYPE (ifmr.ifm_active))
+     {
+       case IFM_ETHER:
+-#if !defined __FreeBSD__
++/* QNX SDP 8.0 defines IFM_ETHER and IFM_IEEE80211 but not the legacy
++ * Token Ring / FDDI media types, so they must be excluded here. */
++#if !defined __FreeBSD__ && !defined __QNXNTO__
+       case IFM_TOKEN:
+       case IFM_FDDI:
+ #endif

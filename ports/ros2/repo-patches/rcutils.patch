@@ -1,0 +1,23 @@
+QNX change from qnx-ports/build-files, copied unchanged:
+  ports/ros2/ros2-jazzy/qnx_patches/rcutils.patch
+  at revision 6f1507550d656edafbf8bcc826a196da1b00c459.
+
+Applied by ports/ros2/recipe.sh, in the repository repo-patches/MAP names.
+The reasons for the individual changes are in that file's history in
+qnx-ports/build-files.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/find.c b/src/find.c
+index d5dbf7a..cd2728e 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -60,7 +60,7 @@ rcutils_find_lastn(const char * str, char delimiter, size_t string_length)
+     return SIZE_MAX;
+   }
+ 
+-#if defined(_GNU_SOURCE)
++#if defined(_GNU_SOURCE) && !defined(__QNX__)
+   const char * ptr = memrchr(str, delimiter, string_length);
+   if (ptr == NULL) {
+     return SIZE_MAX;

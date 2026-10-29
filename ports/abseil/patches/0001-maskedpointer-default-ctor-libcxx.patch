@@ -1,0 +1,26 @@
+Give absl's MaskedPointer a default constructor (libc++).
+
+std::atomic<T>'s default constructor value-initialises T under libc++, the
+C++ library QNX ships, so std::atomic<MaskedPointer> in absl/flags needs T to
+be default-constructible; libstdc++ does not require it. The constructor
+makes a null pointer with no mask bits, which is what the atomic is always
+assigned before first use.
+
+Upstream-Status: Pending (affects any libc++ build)
+
+--- a/absl/flags/internal/flag.h
++++ b/absl/flags/internal/flag.h
+@@ -373,6 +373,13 @@
+ 
+   static constexpr int RequiredAlignment() { return 4; }
+ 
++  // libc++'s std::atomic<T> default constructor value-initialises its T, so T
++  // must be default-constructible; libstdc++'s leaves the value untouched and
++  // imposes no such requirement. QNX ships libc++, so std::atomic<MaskedPointer>
++  // needs one. A null pointer with no mask bits set matches what the atomic is
++  // always assigned before first use.
++  constexpr MaskedPointer() : ptr_(nullptr) {}
++
+   constexpr explicit MaskedPointer(ptr_t rhs) : ptr_(rhs) {}
+   MaskedPointer(ptr_t rhs, bool is_candidate);
+ 

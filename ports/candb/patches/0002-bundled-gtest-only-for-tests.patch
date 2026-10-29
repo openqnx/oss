@@ -1,0 +1,20 @@
+Build the bundled googletest only when tests are enabled.
+
+3rdParty/CMakeLists.txt always builds the bundled (old) googletest and
+googlemock. With CANDB__WITH_TESTS=OFF nothing uses them, and in a tree that
+also has a current googletest installed the old gmock picks up the new gtest
+headers and fails to compile.
+
+Upstream-Status: QNX-specific
+
+--- a/3rdParty/CMakeLists.txt
++++ b/3rdParty/CMakeLists.txt
+@@ -1,5 +1,7 @@
+ add_subdirectory(termcolor)
+-add_subdirectory(gtest)
++if(CANDB__WITH_TESTS)
++    add_subdirectory(gtest)
++endif()
+ set(CXXOPTS_BUILD_EXAMPLES OFF CACHE BOOL "")
+ set(CXXOPTS_BUILD_TESTS OFF CACHE BOOL "")
+ add_subdirectory(cxxopts)

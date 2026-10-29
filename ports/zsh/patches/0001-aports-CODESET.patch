@@ -1,0 +1,18 @@
+QNX change from QNX's aports (extra/zsh/CODESET.patch).
+
+Taken from qnx-ports/aports extra/zsh -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- a/Src/Modules/langinfo.c
++++ zsh-5.9/Src/Modules/langinfo.c
+@@ -37,6 +37,8 @@
+ /**/
+ #ifdef HAVE_NL_LANGINFO
+ 
++#define CODESET CODESET
++
+ static char *nl_names[] = {
+ #ifdef CODESET
+     "CODESET",

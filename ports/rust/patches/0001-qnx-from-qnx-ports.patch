@@ -1,0 +1,95 @@
+From d2119192d5dd097504a24f97fc5af4bb38432caa Mon Sep 17 00:00:00 2001
+From: Pavlo Kleymonov <pkleymonov@blackberry.com>
+Date: Mon, 27 Oct 2025 14:20:35 +0100
+Subject: [PATCH] add support for QNX 8.0
+
+Imported from qnx-ports/rust (1.90.0...qnx-1.90.0); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ library/std/src/sys/backtrace.rs         |  2 +-
+ library/std/src/sys/process/unix/unix.rs | 21 ++++++++++++++-------
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/library/std/src/sys/backtrace.rs b/library/std/src/sys/backtrace.rs
+index 272d0fa4d1a19..fd2abb5677637 100644
+--- a/library/std/src/sys/backtrace.rs
++++ b/library/std/src/sys/backtrace.rs
+@@ -113,7 +113,7 @@ unsafe fn _print_fmt(fmt: &mut fmt::Formatter<'_>, print_fmt: PrintFmt) -> fmt::
+                         res = bt_fmt.frame().symbol(frame, symbol);
+                     }
+                 });
+-                #[cfg(target_os = "nto")]
++                #[cfg(any(target_env = "nto71", target_env = "nto70"))]
+                 if libc::__my_thread_exit as *mut libc::c_void == frame.ip() {
+                     if !hit && print {
+                         use crate::backtrace_rs::SymbolName;
+diff --git a/library/std/src/sys/process/unix/unix.rs b/library/std/src/sys/process/unix/unix.rs
+index 5d13d6da18582..cd0622af80ecf 100644
+--- a/library/std/src/sys/process/unix/unix.rs
++++ b/library/std/src/sys/process/unix/unix.rs
+@@ -19,7 +19,8 @@ use crate::sys::pal::linux::pidfd::PidFd;
+ use crate::{fmt, mem, sys};
+ 
+ cfg_if::cfg_if! {
+-    if #[cfg(target_os = "nto")] {
++    // This workaround is only needed for QNX 7.0 and 7.1. The bug should have been fixed in 8.0
++    if #[cfg(any(target_env = "nto70", target_env = "nto71"))] {
+         use crate::thread;
+         use libc::{c_char, posix_spawn_file_actions_t, posix_spawnattr_t};
+         use crate::time::Duration;
+@@ -181,7 +182,12 @@ impl Command {
+ 
+     // Attempts to fork the process. If successful, returns Ok((0, -1))
+     // in the child, and Ok((child_pid, -1)) in the parent.
+-    #[cfg(not(any(target_os = "watchos", target_os = "tvos", target_os = "nto")))]
++    #[cfg(not(any(
++        target_os = "watchos",
++        target_os = "tvos",
++        target_env = "nto70",
++        target_env = "nto71"
++    )))]
+     unsafe fn do_fork(&mut self) -> Result<pid_t, io::Error> {
+         cvt(libc::fork())
+     }
+@@ -190,7 +196,8 @@ impl Command {
+     // or closed a file descriptor while the fork() was occurring".
+     // Documentation says "... or try calling fork() again". This is what we do here.
+     // See also https://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.lib_ref/topic/f/fork.html
+-    #[cfg(target_os = "nto")]
++    // This workaround is only needed for QNX 7.0 and 7.1. The bug should have been fixed in 8.0
++    #[cfg(any(target_env = "nto70", target_env = "nto71"))]
+     unsafe fn do_fork(&mut self) -> Result<pid_t, io::Error> {
+         use crate::sys::os::errno;
+ 
+@@ -549,7 +556,7 @@ impl Command {
+         // or closed a file descriptor while the posix_spawn() was occurring".
+         // Documentation says "... or try calling posix_spawn() again". This is what we do here.
+         // See also http://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.lib_ref/topic/p/posix_spawn.html
+-        #[cfg(target_os = "nto")]
++        #[cfg(any(target_env = "nto70", target_env = "nto71"))]
+         unsafe fn retrying_libc_posix_spawnp(
+             pid: *mut pid_t,
+             file: *const c_char,
+@@ -761,9 +768,9 @@ impl Command {
+             let _env_lock = sys::env::env_read_lock();
+             let envp = envp.map(|c| c.as_ptr()).unwrap_or_else(|| *sys::env::environ() as *const _);
+ 
+-            #[cfg(not(target_os = "nto"))]
++            #[cfg(not(any(target_env = "nto70", target_env = "nto71")))]
+             let spawn_fn = libc::posix_spawnp;
+-            #[cfg(target_os = "nto")]
++            #[cfg(any(target_env = "nto70", target_env = "nto71"))]
+             let spawn_fn = retrying_libc_posix_spawnp;
+ 
+             #[cfg(target_os = "linux")]
+@@ -816,7 +823,7 @@ impl Command {
+                 envp as *const _,
+             );
+ 
+-            #[cfg(target_os = "nto")]
++            #[cfg(any(target_env = "nto70", target_env = "nto71"))]
+             let spawn_res = spawn_res?;
+ 
+             cvt_nz(spawn_res)?;

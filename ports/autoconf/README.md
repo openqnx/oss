@@ -1,0 +1,140 @@
+# autoconf 2.72
+
+**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+
+| | |
+|---|---|
+| Upstream | https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz |
+| SHA-256 | `ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a` |
+| Build system | GNU Autotools |
+| QNX patches | 0 |
+| Build dependencies | none |
+| Run-time dependencies | none (QNX SDP only) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | none (no run-time code) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install autoconf
+oss-get install autoconf-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild autoconf` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+No other component has to be built first.
+
+### 2. Get the upstream source
+
+```bash
+URL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz
+mkdir -p dist src/autoconf
+curl -fL -o dist/$(basename $URL) $URL
+echo "ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a  dist/$(basename $URL)" | sha256sum -c -
+tar xf dist/$(basename $URL) -C src/autoconf --strip-components=1
+```
+
+### 3. Apply the QNX patches
+
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+mkdir -p build/$QNX_ARCH/autoconf && cd build/$QNX_ARCH/autoconf
+CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
+CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
+LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
+         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+$OLDPWD/src/autoconf/configure --host=$QNX_TRIPLE --prefix=/usr/local
+make -j$(nproc)
+make DESTDIR=$STAGE install
+cd -
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- GNU Autoconf (configure script generator; needs perl and m4 on the target). Version as in the QNX Everywhere 8.0.4r1 image.
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH autoconf`.
+
+### 5. What it installs
+
+63 files under `/usr/local`, 7 programs.
+
+```
+/usr/local/bin/autoconf
+/usr/local/bin/autoheader
+/usr/local/bin/autom4te
+/usr/local/bin/autoreconf
+/usr/local/bin/autoscan
+/usr/local/bin/autoupdate
+/usr/local/bin/ifnames
+```
+
+The complete list is `stage/<arch>/.manifest/autoconf` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH autoconf
+ls repo/8.0/*/ | grep '^autoconf-'
+```
+
+This writes `autoconf-<ver>-r0.tar.gz` (run time) and `autoconf-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install autoconf
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/autoconf-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/autoconf-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+# GNU Autoconf (configure script generator; needs perl and m4 on the target). Version as in the QNX Everywhere 8.0.4r1 image.
+VERSION=2.72
+TARBALL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz
+SHA256=ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=(  )
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

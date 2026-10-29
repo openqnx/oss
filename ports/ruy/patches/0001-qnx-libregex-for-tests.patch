@@ -1,0 +1,56 @@
+From: Cosmo Zhao <yuszhao@blackberry.com>
+Date: Fri, 19 Jul 2024 16:01:23 -0400
+Subject: [PATCH] add libregex dependency to test
+
+QNX: link ruy's test wrapper with libregex.
+
+From qnx-ports/ruy (c08ec529fc91...qnx, commit "add libregex dependency to
+test"). googletest uses regcomp()/regexec(), which QNX
+keeps in libregex rather than libc. The fork's other commits switch the
+cpuinfo and googletest submodules to qnx-ports' forks; this recipe builds
+against the cpuinfo port instead (RUY_FIND_CPUINFO=ON), so they are left out.
+
+Upstream-Status: QNX-specific
+
+diff --git a/ruy/CMakeLists.txt b/ruy/CMakeLists.txt
+index 8e493de8f85..200095f7de7 100644
+--- a/ruy/CMakeLists.txt
++++ b/ruy/CMakeLists.txt
+@@ -48,15 +48,28 @@ ruy_cc_library(
+     ${ruy_2_O3}
+ )
+ 
+-ruy_cc_library(
+-  NAME
+-    ruy_gtest_wrapper
+-  TESTONLY
+-  HDRS
+-    gtest_wrapper.h
+-  DEPS
+-    gtest
+-)
++if (QNX)
++  ruy_cc_library(
++    NAME
++      ruy_gtest_wrapper
++    TESTONLY
++    HDRS
++      gtest_wrapper.h
++    DEPS
++      gtest
++      regex
++  )
++else()
++  ruy_cc_library(
++    NAME
++      ruy_gtest_wrapper
++    TESTONLY
++    HDRS
++      gtest_wrapper.h
++    DEPS
++      gtest
++  )
++endif()
+ 
+ ruy_cc_library(
+   NAME

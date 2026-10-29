@@ -1,0 +1,25 @@
+QNX change from qnx-ports/build-files, copied unchanged:
+  ports/ros2/ros2-jazzy/qnx_patches/image_common.patch
+  at revision 6f1507550d656edafbf8bcc826a196da1b00c459.
+
+Applied by ports/ros2/recipe.sh, in the repository repo-patches/MAP names.
+The reasons for the individual changes are in that file's history in
+qnx-ports/build-files.
+
+Upstream-Status: QNX-specific
+
+diff --git a/image_transport/CMakeLists.txt b/image_transport/CMakeLists.txt
+index 089d5a1..4f42355 100644
+--- a/image_transport/CMakeLists.txt
++++ b/image_transport/CMakeLists.txt
+@@ -57,7 +57,9 @@ target_link_libraries(${PROJECT_NAME}_plugins PRIVATE
+ add_executable(list_transports src/list_transports.cpp)
+ target_link_libraries(list_transports
+   ${PROJECT_NAME}
+-  pluginlib::pluginlib)
++  pluginlib::pluginlib
++  $<$<AND:$<BOOL:${QNX}>,$<STREQUAL:$ENV{QNX_SDP_VERSION},qnx710>>:c++fs>
++)
+ 
+ # # Build republish
+ add_library(republish_node SHARED

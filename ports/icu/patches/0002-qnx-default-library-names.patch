@@ -1,0 +1,40 @@
+Use ICU's standard library names on QNX.
+
+mh-qnx names each library's real file after its soname (libicuuc.so.76),
+for QNX's old native package format, by redefining FINAL_SO_TARGET in terms
+of SO_TARGET_VERSION_MAJOR. pkgdata, which builds libicudata, learns the
+file-name suffix from FINAL_SO_TARGET evaluated where SO_TARGET_VERSION_MAJOR
+is not set: it got an empty suffix and produced "libicudataso.76.1" (soname
+libicudataso.76). Installed, libicudata.so.76 was then the 7 KB stub, and
+every ICU user on the target had no data. Take the default rules, as Linux
+does: libicuuc.so.76.1, soname libicuuc.so.76 -- the same soname as before.
+
+Upstream-Status: Pending
+
+--- a/source/config/mh-qnx
++++ b/source/config/mh-qnx
+@@ -73,20 +73,12 @@
+ 		| sed '\''s%\($*\)\.o[ :]*%\1.o $@ : %g'\'' > $@; \
+ 		[ -s $@ ] || rm -f $@'
+ 
+-## Versioned libraries rules
+-##
+-## QNX wants the SONAME in the shared lib to match the final "real" filename.
+-## (to ease in packaging with QNX's native package format)
+-##
+-MIDDLE_SO_TARGET = $(SO_TARGET).$(SO_TARGET_VERSION_MAJOR)
+-FINAL_SO_TARGET = $(MIDDLE_SO_TARGET)
+-
++## Versioned libraries rules: the defaults (as on Linux) --
++## lib<name>.so.<major>.<minor>, with lib<name>.so.<major> as the soname.
++%.$(SO).$(SO_TARGET_VERSION_MAJOR): %.$(SO).$(SO_TARGET_VERSION)
++	$(RM) $@ && ln -s ${<F} $@
+ %.$(SO): %.$(SO).$(SO_TARGET_VERSION_MAJOR)
+ 	$(RM) $@ && ln -s ${*F}.$(SO).$(SO_TARGET_VERSION_MAJOR) $@
+-#%.$(SO).$(SO_TARGET_VERSION_MAJOR): %.$(SO).$(SO_TARGET_VERSION)
+-#	$(RM) $@ && ln -s ${<F} $@
+-#%.$(SO): %.$(SO).$(SO_TARGET_VERSION_MAJOR)
+-#	$(RM) $@ && ln -s ${*F}.$(SO).$(SO_TARGET_VERSION) $@
+ 
+ ##  Bind internal references
+ 

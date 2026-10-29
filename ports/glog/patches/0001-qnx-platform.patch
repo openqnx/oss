@@ -1,0 +1,35 @@
+glog: recognise QNX as a POSIX platform.
+
+Add GLOG_OS_QNX so QNX takes glog's generic POSIX paths rather than the Linux
+ones, which use /proc layouts and glibc-only system calls. Also use ::fdopen:
+QNX's libc++ <cstdio> does not put that POSIX function into namespace std.
+
+Upstream-Status: QNX-specific
+
+--- a/src/glog/platform.h
++++ b/src/glog/platform.h
+@@ -53,6 +53,11 @@
+ #  define GLOG_OS_OPENBSD
+ #elif defined(__EMSCRIPTEN__)
+ #  define GLOG_OS_EMSCRIPTEN
++#elif defined(__QNXNTO__)
++// QNX Neutrino. Generic POSIX is the right fit: glog's OS branches are almost
++// entirely Windows-vs-POSIX, and QNX must not take the GLOG_OS_LINUX paths,
++// which reach for /proc layouts and glibc-only syscalls it does not provide.
++#  define GLOG_OS_QNX
+ #else
+ // TODO(hamaji): Add other platforms.
+ #error Platform not supported by glog. Please consider to contribute platform information by submitting a pull request on Github.
+--- a/src/logging.cc
++++ b/src/logging.cc
+@@ -116,7 +116,9 @@
+ using std::perror;
+ 
+ #ifdef __QNX__
+-using std::fdopen;
++// fdopen is POSIX, not ISO C, so QNX's libc++ <cstdio> does not re-export it
++// into namespace std -- only <stdio.h> declares it, at global scope.
++using ::fdopen;
+ #endif
+ 
+ // There is no thread annotation support.

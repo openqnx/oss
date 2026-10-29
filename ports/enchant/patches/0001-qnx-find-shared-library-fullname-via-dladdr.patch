@@ -1,0 +1,50 @@
+Teach gnulib's relocatable.c how to find a shared library on QNX.
+
+find_shared_library_fullname() is implemented only for Linux and Cygwin,
+both by scanning /proc/self/maps.  QNX has no such file in that format, so
+on QNX the function compiles to nothing, get_shared_library_fullname()
+always returns NULL, and relocate() hands every path straight back.
+
+That failure is silent and total: enchant dlopens its spell-checking
+providers from a directory it composes from the configure-time PKGLIBDIR,
+so with --enable-relocatable in effect but relocation not working, a
+broker installed anywhere other than the configured prefix constructs
+successfully and reports no providers at all.
+
+dladdr() answers exactly the question the /proc scan is asking -- which
+object contains this address -- and QNX 8.0 has it in libc, with Dl_info
+exposed under __EXT_UNIX_MISC (which _QNX_SOURCE turns on).
+
+Upstream-Status: QNX-specific
+
+--- a/libgnu/relocatable.c
++++ b/libgnu/relocatable.c
+@@ -399,10 +399,27 @@
+ 
+ #else /* Unix */
+ 
++#if defined __QNX__
++# include <dlfcn.h>
++#endif
++
+ static void
+ find_shared_library_fullname ()
+ {
+-#if (defined __linux__ && (__GLIBC__ >= 2 || defined __UCLIBC__)) || defined __CYGWIN__
++#if defined __QNX__
++  /* QNX has no /proc/self/maps in the Linux format, so the scan below cannot
++     work here and a shared library built --enable-relocatable would silently
++     never relocate: every path it composes from the configured prefix stays
++     absolute, and a library that dlopens its own plugins (enchant does, from
++     $libdir/enchant-2) finds nothing once the tree is installed anywhere but
++     the configure-time prefix.  dladdr() answers the same question directly
++     and is in QNX's libc; ask it for the object containing this very
++     function.  */
++  Dl_info info;
++  if (dladdr ((void *) &find_shared_library_fullname, &info) != 0
++      && info.dli_fname != NULL && info.dli_fname[0] == '/')
++    shared_library_fullname = strdup (info.dli_fname);
++#elif (defined __linux__ && (__GLIBC__ >= 2 || defined __UCLIBC__)) || defined __CYGWIN__
+   /* Linux has /proc/self/maps. glibc 2 and uClibc have the getline()
+      function.
+      Cygwin >= 1.5 has /proc/self/maps and the getline() function too.

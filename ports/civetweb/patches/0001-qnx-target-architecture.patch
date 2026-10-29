@@ -1,0 +1,22 @@
+Take the target architecture from the toolchain on QNX.
+
+DetermineTargetArchitecture runs "$CC -dumpmachine", which qcc does not
+support, and configure stops with "Failed to determine target architecture
+triplet: 1". CMAKE_SYSTEM_PROCESSOR from the QNX toolchain file is the same
+answer.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/DetermineTargetArchitecture.cmake
++++ b/cmake/DetermineTargetArchitecture.cmake
+@@ -26,6 +26,10 @@
+     else()
+       message(FATAL_ERROR "Failed to determine the MSVC target architecture: ${MSVC_C_ARCHITECTURE_ID}")
+     endif()
++  elseif(QNX)
++    # qcc is a driver, not GCC: it rejects -dumpmachine. The toolchain file
++    # already names the processor.
++    set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+   else()
+     execute_process(
+       COMMAND ${CMAKE_C_COMPILER} -dumpmachine

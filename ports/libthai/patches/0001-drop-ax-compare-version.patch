@@ -1,0 +1,30 @@
+libthai: do not use AX_COMPARE_VERSION in configure.
+
+The macro comes from autoconf-archive, which is not a build dependency, and
+the shipped configure contains it unexpanded, so the shell cannot parse
+configure even with the doxygen docs off. The docs are not built here.
+
+Upstream-Status: Pending
+
+diff --git a/configure.ac b/configure.ac
+index 9492c84..a7b0a08 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -87,11 +87,14 @@ if test "x$enable_doxygen_doc" = "xyes"; then
+   if test "x$DOXYGEN" = "xno"; then
+     enable_doxygen_doc="no"
+   else
++    dnl AX_COMPARE_VERSION comes from autoconf-archive, which is not a build
++    dnl dependency of this package and is not installed here. Worse, the
++    dnl shipped ./configure contains the macro *unexpanded*, so the shell
++    dnl fails to parse it even when doxygen docs are disabled. The docs are
++    dnl not wanted in a cross build, so take the version as given.
+     AC_MSG_CHECKING([doxygen >= $DOXYGEN_REQ_VER])
+     DOXYGEN_VER=$($DOXYGEN --version)
+-    AX_COMPARE_VERSION([$DOXYGEN_VER],[ge],[DOXYGEN_REQ_VER], 
+-                       [AC_MSG_RESULT([$DOXYGEN_VER, yes])], 
+-                       [AC_MSG_RESULT([$DOXYGEN_VER, no, documentation disabled]); enable_doxygen_doc="no"])
++    AC_MSG_RESULT([$DOXYGEN_VER])
+   fi
+ fi
+ 

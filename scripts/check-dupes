@@ -1,0 +1,39 @@
+#!/bin/bash
+# Audit staging for the same library installed twice under different sonames.
+#
+# Two packages that each vendor a copy of a dependency both install it, the
+# unversioned lib<name>.so symlink points at whichever installed last, and a
+# process can end up with both copies mapped.  For most C libraries that is
+# wasteful; for protobuf and abseil it is fatal, and it builds and links
+# without a word -- ld prints "may conflict with" only when something happens
+# to link against both.  gRPC's bundled protobuf 29.0 + abseil 2407 next to
+# the protobuf recipe's 29.3 + abseil 2401 is what this was written for.
+#
+#   ./scripts/check-dupes [aarch64le|x86_64]
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+rc=0
+for arch in ${1:-aarch64le x86_64}; do
+  source "$WS/env.sh" "$arch" >/dev/null || exit 1
+  R="$QNX_HOST/usr/bin/nto${QNX_CPU}-readelf"
+  declare -A seen=()
+  while read -r f; do
+    so=$("$R" -d "$f" 2>/dev/null | sed -n 's/.*SONAME.*\[\(.*\)\]/\1/p')
+    [ -n "$so" ] || continue
+    stem=${so%%.so*}
+    case " ${seen[$stem]} " in *" $so "*) ;; *) seen[$stem]="${seen[$stem]} $so";; esac
+  done < <(find "$STAGE$PREFIX/lib" -maxdepth 1 -type f -name '*.so*' | sort)
+  bad=""
+  for stem in "${!seen[@]}"; do
+    set -- ${seen[$stem]}
+    [ $# -gt 1 ] && bad="$bad\n  !! $stem:${seen[$stem]}"
+  done
+  if [ -z "$bad" ]; then
+    echo "OK  [$arch] no library is staged under two sonames"
+  else
+    echo "[$arch] libraries staged more than once:"
+    printf "%b\n" "$bad" | sort
+    rc=1
+  fi
+  unset seen
+done
+exit $rc

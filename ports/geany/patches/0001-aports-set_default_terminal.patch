@@ -1,0 +1,18 @@
+QNX change from QNX's aports (extra/geany/set_default_terminal.patch).
+
+Taken from qnx-ports/aports extra/geany -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- geany-2.0.origin/src/keyfile.c	2025-09-16 16:16:54.000000000 +0000
++++ geany-2.0/src/keyfile.c	2025-09-16 16:17:57.000000000 +0000
+@@ -91,7 +91,7 @@
+ # define GEANY_DEFAULT_FONT_MSG_WINDOW	"Menlo Medium 12"
+ # define GEANY_DEFAULT_FONT_EDITOR		"Menlo Medium 12"
+ #else
+-# define GEANY_DEFAULT_TOOLS_TERMINAL	"xterm -e \"/bin/sh %c\""
++# define GEANY_DEFAULT_TOOLS_TERMINAL	"Terminal -e \"/bin/sh %c\""
+ # define GEANY_DEFAULT_USE_NATIVE_DLGS	FALSE
+ # define GEANY_DEFAULT_FONT_SYMBOL_LIST	"Sans 9"
+ # define GEANY_DEFAULT_FONT_MSG_WINDOW	"Monospace 9"

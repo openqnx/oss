@@ -1,0 +1,49 @@
+Cyclone DDS IDL compiler: no xlocale on QNX.
+
+QNX 8.0 has no locale_t, newlocale/uselocale or the *_l functions, and only
+the C locale. The IDL front end parses ASCII only, so map the *_l calls to
+the plain ones and make the locale handle an inert value.
+
+Upstream-Status: QNX-specific
+
+--- a/src/idl/src/string.c
++++ b/src/idl/src/string.c
+@@ -53,6 +53,38 @@
+ # endif
+ #endif
+ 
++/* ---- QNX SDP 8.0 port -------------------------------------------------
++ * QNX 8.0 provides no xlocale: there is no locale_t, no newlocale/uselocale/
++ * freelocale, and none of the *_l variants. QNX supports only the "C" locale,
++ * and the IDL front end parses ASCII exclusively, so the locale-independent
++ * functions are exact equivalents. Map the _l forms onto them and reduce the
++ * locale handle to an inert value so the existing control flow -- including
++ * the uselocale() save/restore in idl_vfprintf -- stays valid.
++ */
++#if defined(__QNXNTO__)
++typedef void *locale_t;
++#define LC_ALL_MASK 0
++#define newlocale(cat, loc, base)  ((locale_t)0)
++#define freelocale(loc)            ((void)(loc))
++#define uselocale(loc)             ((locale_t)0)
++#define isalnum_l(c, l)            isalnum(c)
++#define isalpha_l(c, l)            isalpha(c)
++#define isblank_l(c, l)            isblank(c)
++#define iscntrl_l(c, l)            iscntrl(c)
++#define isgraph_l(c, l)            isgraph(c)
++#define islower_l(c, l)            islower(c)
++#define isprint_l(c, l)            isprint(c)
++#define ispunct_l(c, l)            ispunct(c)
++#define isspace_l(c, l)            isspace(c)
++#define isupper_l(c, l)            isupper(c)
++#define toupper_l(c, l)            toupper(c)
++#define tolower_l(c, l)            tolower(c)
++#define strcasecmp_l(a, b, l)      strcasecmp((a), (b))
++#define strncasecmp_l(a, b, n, l)  strncasecmp((a), (b), (n))
++#define strtoull_l(s, e, b, l)     strtoull((s), (e), (b))
++#define strtold_l(s, e, l)         strtold((s), (e))
++#endif /* __QNXNTO__ */
++
+ #include "idl/stream.h"
+ #include "idl/string.h"
+ 

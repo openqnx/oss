@@ -1,0 +1,30 @@
+QNX change from QNX's aports (core/gawk/fix-qnx.patch).
+
+Taken from qnx-ports/aports core/gawk -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- gawk-5.3.2.orig/awk.h	2025-09-04 15:43:02.000000000 +0000
++++ gawk-5.3.2/awk.h	2025-09-04 15:54:04.000000000 +0000
+@@ -473,6 +473,10 @@
+ 	long valref;
+ } NODE;
+ 
++#ifdef __QNX__
++#include <spawn.h>
++#endif
++
+ #define vname sub.nodep.name
+ 
+ #define lnode	sub.nodep.l.lptr
+--- gawk-5.3.2.orig/extension/inplace.c	2025-09-04 15:43:02.000000000 +0000
++++ gawk-5.3.2/extension/inplace.c	2025-09-04 15:54:04.000000000 +0000
+@@ -27,6 +27,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <sys/platform.h>
+ #ifndef _XOPEN_SOURCE
+ # define _XOPEN_SOURCE 1
+ #endif

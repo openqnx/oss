@@ -1,0 +1,155 @@
+# p11-kit 0.25.5
+
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
+
+| | |
+|---|---|
+| Upstream | https://github.com/p11-glue/p11-kit.git (tag `0.25.5`) |
+| Build system | Meson |
+| QNX patches | 0 |
+| Build dependencies | [`libffi`](../libffi/) [`libtasn1`](../libtasn1/) |
+| Run-time dependencies | [`libffi`](../libffi/) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_p11kit`](../../tests/src/) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install p11-kit
+oss-get install p11-kit-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild p11-kit` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+**Build the dependencies first** (2 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild libffi libtasn1
+```
+
+### 2. Get the upstream source
+
+```bash
+git clone --depth 1 -b 0.25.5 --recurse-submodules --shallow-submodules \
+    https://github.com/p11-glue/p11-kit.git src/p11-kit
+```
+
+### 3. Apply the QNX patches
+
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+meson setup build/$QNX_ARCH/p11-kit src/p11-kit \
+      --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
+      --native-file $QNX_MESON_DIR/meson-native.ini \
+      --prefix=/usr/local --buildtype=release --default-library=both \
+      -Dtrust_module=disabled \
+      -Dsystemd=disabled \
+      -Dbash_completion=disabled \
+      -Dgtk_doc=false \
+      -Dman=false \
+      -Dnls=false \
+      -Dtest=false \
+      -Dlibffi=enabled
+ninja -C build/$QNX_ARCH/p11-kit
+DESTDIR=$STAGE ninja -C build/$QNX_ARCH/p11-kit install
+```
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH p11-kit`.
+
+### 5. What it installs
+
+19 files under `/usr/local`: 4 shared-library entries, 1 programs, 9 headers.
+
+```
+/usr/local/lib/libp11-kit.so
+/usr/local/lib/libp11-kit.so.0
+/usr/local/lib/libp11-kit.so.0.4.1
+/usr/local/lib/p11-kit-proxy.so
+/usr/local/bin/p11-kit
+```
+
+The complete list is `stage/<arch>/.manifest/p11-kit` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH p11-kit
+ls repo/8.0/*/ | grep '^p11-kit-'
+```
+
+This writes `p11-kit-<ver>-r0.tar.gz` (run time) and `p11-kit-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install p11-kit
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/p11-kit-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/p11-kit-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_p11kit`](../../tests/src/) links p11-kit the way an application would and checks its core API on the target:
+
+```bash
+./tests/build-tests.sh $QNX_ARCH
+scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_p11kit root@<target>:/data/
+ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_p11kit'
+```
+
+```
+== p11-kit ==
+  ok   ...
+PASS p11-kit
+```
+
+`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=0.25.5; GIT=https://github.com/p11-glue/p11-kit.git; REF=0.25.5
+DEPS="libffi libtasn1"
+BUILDSYS=meson
+MESON_ARGS_EXTRA=( -Dtrust_module=disabled -Dsystemd=disabled -Dbash_completion=disabled
+                   -Dgtk_doc=false -Dman=false -Dnls=false -Dtest=false
+                   -Dlibffi=enabled )
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

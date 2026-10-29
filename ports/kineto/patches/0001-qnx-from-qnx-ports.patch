@@ -1,0 +1,38 @@
+From c45f8f6be190851c73dd06a0317bd52b6cdfab84 Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Fri, 14 Feb 2025 09:38:04 -0500
+Subject: [PATCH] Support QNX.
+
+Imported from qnx-ports/kineto (a054a4be0db1...qnx_main); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ libkineto/src/ThreadUtil.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/libkineto/src/ThreadUtil.cpp b/libkineto/src/ThreadUtil.cpp
+index 58e3024c2..40d98197b 100644
+--- a/libkineto/src/ThreadUtil.cpp
++++ b/libkineto/src/ThreadUtil.cpp
+@@ -10,7 +10,11 @@
+ 
+ #ifndef _WIN32
+ #include <pthread.h>
++#ifdef __QNX__
++#include <process.h>
++#else
+ #include <sys/syscall.h>
++#endif
+ #include <sys/types.h>
+ #include <unistd.h>
+ #else // _WIN32
+@@ -66,6 +70,8 @@ int32_t systemThreadId(bool cache) {
+     sysTid = (int32_t)GetCurrentThreadId();
+ #elif defined __FreeBSD__
+     syscall(SYS_thr_self, &sysTid);
++#elif defined __QNX__
++    _sysTid = (int32_t)gettid();
+ #else
+     sysTid = (int32_t)syscall(SYS_gettid);
+ #endif

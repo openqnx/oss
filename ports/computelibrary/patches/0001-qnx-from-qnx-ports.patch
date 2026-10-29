@@ -1,0 +1,69 @@
+From bebc64812854d3f6573d08ea505f0d4f5c64763e Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Tue, 25 Aug 2026 10:53:46 +0530
+Subject: [PATCH 1/2] Add QNX Support
+
+Imported from qnx-ports/ComputeLibrary (v53.0.0...qnx-v53.0.0); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ CMakeLists.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b302a0488d6..a42f54d705c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -373,6 +373,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+       $<BUILD_INTERFACE:${ARM_COMPUTE_PUBLIC_INCLUDE}>
+       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+     )
++    if(QNX)
++      list(APPEND ARM_COMPUTE_TARGETS ${test_name})
++    endif()
+   endforeach()
+ 
+   # NEON Examples
+@@ -386,6 +389,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+       $<BUILD_INTERFACE:${ARM_COMPUTE_PUBLIC_INCLUDE}>
+       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+     )
++    if(QNX)
++      list(APPEND ARM_COMPUTE_TARGETS ${test_name})
++    endif()
+   endforeach()
+ 
+   # Set common properties
+
+From da3500fb09f92bcdcf42d1a3a9350e339f3791d5 Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Mon, 31 Aug 2026 10:02:11 +0530
+Subject: [PATCH 2/2] Fix linking order
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a42f54d705c..08662f273e6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -346,7 +346,7 @@ if(ARM_COMPUTE_BUILD_TESTING)
+     COMPILE_OPTIONS "${ARM_COMPUTE_ARCH};${ARM_COMPUTE_COMMON_CCXX_FLAGS}"
+     INCLUDE_DIRECTORIES "${ARM_COMPUTE_PUBLIC_INCLUDE};${ARM_COMPUTE_COMMON_INCLUDE}"
+     COMPILE_DEFINITIONS "${ARM_COMPUTE_DEFINES}"
+-    LINK_LIBRARIES "arm_compute;arm_compute_graph"
++    LINK_LIBRARIES "arm_compute_graph;arm_compute"
+ 
+     # Adjusted for relative location of installed arm_compute lib
+     INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+@@ -403,7 +403,7 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+   )
+ 
+   # Now set the linking properties which differ between the NEON and Graph examples
+-  set_target_properties(${EXAMPLE_GRAPH_NAMES} PROPERTIES LINK_LIBRARIES "arm_compute;arm_compute_graph")
++  set_target_properties(${EXAMPLE_GRAPH_NAMES} PROPERTIES LINK_LIBRARIES "arm_compute_graph;arm_compute")
+   set_target_properties(${EXAMPLE_NEON_NAMES} PROPERTIES LINK_LIBRARIES arm_compute)
+ endif(ARM_COMPUTE_BUILD_EXAMPLES)
+ 

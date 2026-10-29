@@ -1,0 +1,32 @@
+From e87a01517fa17d7a15dc8f52edfd813ae6ee36b7 Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@qnx.corp-partner.google.com>
+Date: Tue, 10 Jun 2025 09:52:07 -0400
+Subject: [PATCH 1/2] Allow QNX build.
+
+Imported from qnx-ports/XNNPACK (e55b3998cadb...qnx_master); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b97f34ead60..aacbe07d13e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -355,7 +355,7 @@ ENDIF()
+ # ---[ Build flags
+ IF(NOT CMAKE_SYSTEM_NAME)
+   MESSAGE(FATAL_ERROR "CMAKE_SYSTEM_NAME not defined")
+-ELSEIF(NOT CMAKE_SYSTEM_NAME MATCHES "^(Android|Darwin|iOS|Linux|Windows|CYGWIN|MSYS|QURT)$")
++ELSEIF(NOT CMAKE_SYSTEM_NAME MATCHES "^(Android|Darwin|iOS|Linux|Windows|CYGWIN|MSYS|QURT|QNX)$")
+   MESSAGE(FATAL_ERROR "Unrecognized CMAKE_SYSTEM_NAME value \"${CMAKE_SYSTEM_NAME}\"")
+ ENDIF()
+ IF(CMAKE_SYSTEM_NAME MATCHES "Windows")
+
+From 23664ebc00c5d92d030eabfad807588203a12986 Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@qnx.corp-partner.google.com>
+Date: Tue, 10 Jun 2025 09:52:07 -0400
+Subject: [PATCH 2/2] Trigger Build
+

@@ -1,0 +1,3 @@
+VERSION=2.2.2; GIT=https://github.com/gflags/gflags.git; REF=v2.2.2
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_gflags_LIB=ON
+                   -DBUILD_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

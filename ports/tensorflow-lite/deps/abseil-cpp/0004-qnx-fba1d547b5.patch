@@ -1,0 +1,24 @@
+From fba1d547b5057d38b95d345e7384804d59d2c7a1 Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Tue, 7 May 2024 14:44:37 -0400
+Subject: [PATCH] Only install tests if they were built
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f52d8ac33b2..0341d768e29 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -240,7 +240,7 @@ if(ABSL_ENABLE_INSTALL)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/absl/base
+          RENAME "options.h")
+   
+-  if(QNX)
++  if(QNX AND ABSL_BUILD_TESTING)
+     install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/
+       DESTINATION bin/abseil-cpp_tests
+     )

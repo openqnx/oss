@@ -1,0 +1,73 @@
+QNX change from QNX's aports (core/binutils/0007.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 98bd578aa07e15c77d609311ce395fb1dfabe2db Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:22:47 -0400
+Subject: [PATCH] include: update elf and gdb headers for qnx
+
+adding qnx patches to elf and gdb headers
+
+CLT-9242
+---
+diff --git a/include/elf/common.h b/include/elf/common.h
+index c9920e7731a..28b04d32e89 100644
+--- a/include/elf/common.h
++++ b/include/elf/common.h
+@@ -1417,7 +1417,11 @@
+ #define	AT_SECURE	23		/* Boolean, was exec setuid-like?  */
+ #define AT_BASE_PLATFORM 24		/* String identifying real platform,
+ 					   may differ from AT_PLATFORM.  */
++#ifndef __QNXTARGET__
+ #define AT_RANDOM	25		/* Address of 16 random bytes.  */
++#else
++#define AT_RANDOM	43		/* 4 random bytes in NTO.  */
++#endif
+ #define AT_HWCAP2	26		/* Extension of AT_HWCAP.  */
+ #define AT_RSEQ_FEATURE_SIZE	27	/* rseq supported feature size */
+ #define AT_RSEQ_ALIGN	28		/* rseq allocation alignment */
+@@ -1477,6 +1481,15 @@
+ #define AT_FREEBSD_USRSTACKBASE 35      /* Top of user stack. */
+ #define AT_FREEBSD_USRSTACKLIM  36      /* Grow limit of user stack. */
+ 
++#if defined __QNXTARGET__
++  #define AT_FREE_STACK       44      /* QNX Extension */
++  #define AT_INTP_DEVICE      45      /* QNX Extension */
++  #define AT_INTP_INODE       46      /* QNX Extension */
++  #define AT_EXEFILE          47      /* QNX Extension */
++  #define AT_LIBPATH          48      /* QNX Extension */
++  #define AT_DATA             49      /* QNX Extension */
++#endif
++
+ #define AT_SUN_UID      2000    /* Effective user ID.  */
+ #define AT_SUN_RUID     2001    /* Real user ID.  */
+ #define AT_SUN_GID      2002    /* Effective group ID.  */
+diff --git a/include/gdb/signals.def b/include/gdb/signals.def
+index 677b01e7f40..f8cd3f30f1f 100644
+--- a/include/gdb/signals.def
++++ b/include/gdb/signals.def
+@@ -196,7 +196,18 @@ SET (GDB_EXC_BREAKPOINT, 150, "EXC_BREAKPOINT", "Breakpoint")
+ 
+ SET (GDB_SIGNAL_LIBRT, 151, "SIGLIBRT", "librt internal signal")
+ 
++/* signal used for select() in QNX NTO */
++SET (GDB_SIGNAL_SELECT,      152, "SIGSELECT", "Data available")
++SET (GDB_SIGNAL_PHOTON,      153, "SIGPHOTON", "Legacy Photon")
++SET (GDB_SIGNAL_PROCNTO_59,  154, "PROCNTO59", "NTO reserved")
++SET (GDB_SIGNAL_PROCNTO_60,  155, "PROCNTO60", "NTO reserved")
++SET (GDB_SIGNAL_PROCNTO_61,  156, "PROCNTO61", "NTO reserved")
++SET (GDB_SIGNAL_PROCNTO_62,  157, "PROCNTO62", "NTO reserved")
++SET (GDB_SIGNAL_PROCNTO_63,  158, "PROCNTO63", "NTO reserved")
++SET (GDB_SIGNAL_PROCNTO_MAX, 159, "PROCNTO64", "NTO reserved")
++SET (GDB_SIGNAL_DOOM,        160, "SIGDOOM", "unable to process signal")
++
+ /* If you are adding a new signal, add it just above this comment.  */
+ 
+ /* Last and unused enum value, for sizing arrays, etc.  */
+-SET (GDB_SIGNAL_LAST, 152, NULL, "GDB_SIGNAL_LAST")
++SET (GDB_SIGNAL_LAST, 161, NULL, "GDB_SIGNAL_LAST")
+

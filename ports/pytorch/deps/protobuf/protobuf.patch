@@ -1,0 +1,32 @@
+QNX change from qnx-ports/build-files, copied unchanged:
+  ports/pytorch/patches/protobuf.patch
+  at revision 6f1507550d656edafbf8bcc826a196da1b00c459.
+
+Applied by ports/pytorch/recipe.sh, inside the PyTorch submodule it is named for.
+The reasons for the individual changes are in that file's history in
+qnx-ports/build-files.
+
+Upstream-Status: QNX-specific
+
+diff --git a/cmake/install.cmake b/cmake/install.cmake
+index be47c54a1..3a4c64a0f 100644
+--- a/cmake/install.cmake
++++ b/cmake/install.cmake
+@@ -137,11 +137,13 @@ install(EXPORT protobuf-targets
+   NAMESPACE protobuf::
+   COMPONENT protobuf-export)
+ 
+-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_CMAKEDIR}/
+-  DESTINATION "${CMAKE_INSTALL_CMAKEDIR}"
+-  COMPONENT protobuf-export
+-  PATTERN protobuf-targets.cmake EXCLUDE
++if(NOT QNX)
++  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_CMAKEDIR}/
++    DESTINATION "${CMAKE_INSTALL_CMAKEDIR}"
++    COMPONENT protobuf-export
++    PATTERN protobuf-targets.cmake EXCLUDE
+ )
++endif()
+ 
+ option(protobuf_INSTALL_EXAMPLES "Install the examples folder" OFF)
+ if(protobuf_INSTALL_EXAMPLES)

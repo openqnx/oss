@@ -1,0 +1,78 @@
+QNX change from QNX's aports (extra/mate-calc/fix-angle-parsing-qnx.patch).
+
+Taken from qnx-ports/aports extra/mate-calc -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- a/src/mp-convert.c	2025-10-15 17:46:03.000000000 +0000
++++ b/src/mp-convert.c	2025-10-15 17:46:37.000000000 +0000
+@@ -191,18 +191,42 @@
+ static bool
+ set_from_sexagesimal(const char *str, int length, MPNumber *z)
+ {
++    const char *p = str;
+     int degrees = 0, minutes = 0;
+-    char seconds[length+1];
+-    int n_matched;
+-
+-    seconds[0] = '\0';
+-    n_matched = sscanf(str, "%d°%d'%s\"", &degrees, &minutes, seconds);
+-
+-    if (n_matched < 1)
+-        return true;
++    char seconds_str[100];
++    
++    // Parse degrees
++    degrees = atoi(p);
++    while (*p && (*p == '-' || *p == '+' || isdigit(*p))) p++;
++    
++    // Must have a degree symbol
++    if (!*p || (unsigned char)*p < 0x80) return true;
++    
++    // Skip the degree symbol (UTF-8 multi-byte character)
++    while (*p && (unsigned char)*p >= 0x80) p++;
++    
++    // Parse minutes (optional)
++    if (*p && isdigit(*p)) {
++        minutes = atoi(p);
++        while (*p && isdigit(*p)) p++;
++        if (*p == '\'') p++;
++    }
++    
++    // Parse seconds (optional)
++    seconds_str[0] = '\0';
++    if (*p && (isdigit(*p) || *p == '.')) {
++        int i = 0;
++        while (*p && *p != '"' && i < 99) {
++            seconds_str[i++] = *p++;
++        }
++        seconds_str[i] = '\0';
++    }
++    
++    // Calculate result
+     MPNumber t = mp_new();
+     mp_set_from_integer(degrees, z);
+-    if (n_matched > 1) {
++    
++    if (minutes > 0) {
+         mp_set_from_integer(minutes, &t);
+         mp_divide_integer(&t, 60, &t);
+         mp_add(z, &t, z);
+@@ -209,6 +233,7 @@
+     }
+-    if (n_matched > 2) {
+-        mp_set_from_string(seconds, 10, &t);
++    
++    if (seconds_str[0] != '\0') {
++        mp_set_from_string(seconds_str, 10, &t);
+         mp_divide_integer(&t, 3600, &t);
+         mp_add(z, &t, z);
+     }
+@@ -215,5 +240,5 @@
++    
+     mp_clear(&t);
+-
+     return false;
+ }
+ 

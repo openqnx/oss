@@ -1,0 +1,31 @@
+asio: check for <experimental/string_view> before using it with GCC.
+
+The GCC branch of asio's config assumes libstdc++ and enables
+BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW unconditionally. QNX pairs GCC with
+libc++, which has no <experimental/string_view>; test with __has_include as
+the clang branch already does.
+
+Upstream-Status: Pending
+
+--- a/boost/asio/detail/config.hpp
++++ b/boost/asio/detail/config.hpp
+@@ -521,7 +521,18 @@
+ #  elif defined(__GNUC__)
+ #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+ #    if (__cplusplus >= 201402)
+-#     define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
++// The __clang__ branch above tests __has_include before committing to the
++// experimental header; this branch did not, because GCC was assumed to imply
++// libstdc++. QNX pairs GCC with libc++, which has no <experimental/string_view>,
++// so at C++14 -- too old for BOOST_ASIO_HAS_STD_STRING_VIEW -- string_view.hpp
++// would include a header that does not exist. Test for it the same way.
++#     if defined(__has_include)
++#      if __has_include(<experimental/string_view>)
++#       define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
++#      endif // __has_include(<experimental/string_view>)
++#     else // defined(__has_include)
++#      define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
++#     endif // defined(__has_include)
+ #    endif // (__cplusplus >= 201402)
+ #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+ #  endif // defined(__GNUC__)

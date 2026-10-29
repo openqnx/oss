@@ -1,0 +1,31 @@
+Turn off ICU 76's second C++ API switch as well.
+
+WTF/Platform.h sets U_SHOW_CPLUSPLUS_API 0 because WebKit uses only ICU's C
+API.  ICU 76 introduced U_SHOW_CPLUSPLUS_HEADER_API, defaulting to 1, and moved
+some declarations behind "U_SHOW_CPLUSPLUS_API || U_SHOW_CPLUSPLUS_HEADER_API".
+Building against ICU 76 therefore compiles a std::u16string_view iterator in
+uset.h whose helper types the first switch has already suppressed:
+
+    unicode/uset.h:1660:21: error: 'ConstChar16Ptr' was not declared in this scope
+    unicode/uset.h:1763:5:  error: 'UnicodeString' does not name a type
+
+Setting both to 0 is what the ICU 76 release notes prescribe for C-only
+consumers.  Not QNX-specific: any WebKit 2.44 build against ICU >= 76 hits it.
+
+Upstream-Status: Pending
+
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -115,6 +115,12 @@
+ /* ICU configuration. Some of these match ICU defaults on some platforms, but we would like them consistently set everywhere we build WebKit. */
+ #define U_HIDE_DEPRECATED_API 1
+ #define U_SHOW_CPLUSPLUS_API 0
++/* ICU 76 moved part of its C++ API behind a second switch, which defaults on.
++   Without turning that one off too, uset.h compiles a std::u16string_view
++   iterator that needs ConstChar16Ptr and UnicodeString -- declarations
++   U_SHOW_CPLUSPLUS_API 0 has just suppressed:
++     unicode/uset.h:1660: 'ConstChar16Ptr' was not declared in this scope  */
++#define U_SHOW_CPLUSPLUS_HEADER_API 0
+ #ifdef __cplusplus
+ #define UCHAR_TYPE char16_t
+ #endif

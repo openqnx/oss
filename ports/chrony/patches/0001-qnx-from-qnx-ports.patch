@@ -1,0 +1,824 @@
+From 7a9445af34dd93baf770e35d35cc9e022069d9e3 Mon Sep 17 00:00:00 2001
+From: hyarasi13 <hyarasi@qnx.com>
+Date: Fri, 15 May 2026 12:04:12 +0530
+Subject: [PATCH] Add qnx support
+
+Imported from qnx-ports/chrony (d622b222a9ac...master); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+This pull request introduces source code changes to add QNX support for chrony 4.8
+---
+ Makefile.in            |   8 -
+ adjtime_qnx.h          | 154 ++++++++++++++++
+ client.c               |   4 +-
+ configure              |  17 ++
+ socket.c               |   6 +
+ sys.c                  |   9 +
+ sys_qnx.c              | 399 +++++++++++++++++++++++++++++++++++++++++
+ sys_qnx.h              |  41 +++++
+ sysincl.h              |   2 +
+ test/unit/quantiles.c  |   1 +
+ test/unit/samplefilt.c |   1 +
+ test/unit/socket.c     |   1 +
+ 12 files changed, 633 insertions(+), 10 deletions(-)
+ create mode 100644 adjtime_qnx.h
+ create mode 100644 sys_qnx.c
+ create mode 100644 sys_qnx.h
+
+diff --git a/Makefile.in b/Makefile.in
+index 0edb91ec..b58bb63f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -68,7 +68,6 @@ chronyc : $(CLI_OBJS)
+ getdate.o: CFLAGS += $(GETDATE_CFLAGS)
+ 
+ distclean : clean
+-	$(MAKE) -C doc distclean
+ 	$(MAKE) -C test/unit distclean
+ 	-rm -f .DS_Store
+ 	-rm -f Makefile config.h config.log
+@@ -101,13 +100,6 @@ install: chronyd chronyc
+ 	chmod 755 $(DESTDIR)$(SBINDIR)/chronyd
+ 	cp chronyc $(DESTDIR)$(BINDIR)/chronyc
+ 	chmod 755 $(DESTDIR)$(BINDIR)/chronyc
+-	$(MAKE) -C doc install
+-
+-docs :
+-	$(MAKE) -C doc docs
+-
+-install-docs :
+-	$(MAKE) -C doc install-docs
+ 
+ %.o : %.c config.h
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+diff --git a/adjtime_qnx.h b/adjtime_qnx.h
+new file mode 100644
+index 00000000..3feeb2cc
+--- /dev/null
++++ b/adjtime_qnx.h
+@@ -0,0 +1,154 @@
++#ifndef ADJTIME_QNX_H
++#define ADJTIME_QNX_H
++
++/*
++ * Derived from:
++ * https://web.mit.edu/freebsd/head/contrib/ntp/libntp/adjtime.c
++ *
++ * Copyright and licensing information:
++ * https://web.mit.edu/freebsd/head/contrib/ntp/COPYRIGHT
++ *
++ * This file contains an implementation of adjtime() for QNX
++ * derived from code in the Network Time Protocol Version 4
++ * Distribution.
++ */
++/*
++ * Emulate adjtime() using QNX ClockAdjust().
++ * Chris Burghart <burghart@atd.ucar.edu>, 11/2001
++ * Miroslaw Pabich <miroslaw_pabich@o2.pl>, 09/2005
++ *
++ * This is an implementation of adjtime() for QNX.  
++ * ClockAdjust() is used to tweak the system clock for about
++ * 1 second period until the desired delta is achieved.
++ * Time correction slew is limited to reasonable value.
++ * Internal rounding and relative errors are reduced.
++ */
++
++#include <sys/neutrino.h>
++#include <sys/time.h>
++
++/*
++ * Time correction slew limit. QNX is a hard real-time system,
++ * so don't adjust system clock too fast.
++ */
++#define CORR_SLEW_LIMIT     0.02  /* [s/s] */
++
++/*
++ * Period of system clock adjustment. It should be equal to adjtime
++ * execution period (1s). If slightly less than 1s (0.95-0.99), then olddelta
++ * residual error (introduced by execution period jitter) will be reduced.
++ */
++#define ADJUST_PERIOD       0.97  /* [s] */
++
++int adjtime(struct timeval *delta, struct timeval *olddelta);
++
++#ifdef ADJTIME_QNX_IMPLEMENTATION
++
++  int 
++adjtime (struct timeval *delta, struct timeval *olddelta)
++{
++  double delta_nsec;
++  double delta_nsec_old;
++  struct _clockadjust adj;
++  struct _clockadjust oldadj;
++
++  /*
++   * How many nanoseconds are we adjusting?
++   */
++  if (delta != NULL)
++    delta_nsec = 1e9 * (long)delta->tv_sec + 1e3 * delta->tv_usec;
++  else
++    delta_nsec = 0;
++
++  /*
++   * Build the adjust structure and call ClockAdjust()
++   */
++  if (delta_nsec != 0)
++  {
++    struct _clockperiod period;
++    long count;
++    long increment;
++    long increment_limit;
++    int isneg = 0;
++
++    /*
++     * Convert to absolute value for future processing
++     */
++    if (delta_nsec < 0)
++    {
++      isneg = 1;
++      delta_nsec = -delta_nsec;
++    }
++
++    /*
++     * Get the current clock period (nanoseconds)
++     */
++    if (ClockPeriod (CLOCK_REALTIME, 0, &period, 0) == -1)
++      return -1;
++
++    /*
++     * Compute count and nanoseconds increment
++     */
++    count = 1e9 * ADJUST_PERIOD / period.nsec;
++    increment = delta_nsec / count + .5;
++    /* Reduce relative error */
++    if (count > increment + 1)
++    {
++      increment = 1 + (long)((delta_nsec - 1) / count);
++      count = delta_nsec / increment + .5;
++    }
++
++    /*
++     * Limit the adjust increment to appropriate value
++     */
++    increment_limit = CORR_SLEW_LIMIT * period.nsec;
++    if (increment > increment_limit)
++    {
++      increment = increment_limit;
++      count = delta_nsec / increment + .5;
++      /* Reduce relative error */
++      if (increment > count + 1)
++      {
++        count =  1 + (long)((delta_nsec - 1) / increment);
++        increment = delta_nsec / count + .5;
++      }
++    }
++
++    adj.tick_nsec_inc = isneg ? -increment : increment;
++    adj.tick_count = count;
++  }
++  else
++  {
++    adj.tick_nsec_inc = 0;
++    adj.tick_count = 0;
++  }
++
++  if (ClockAdjust (CLOCK_REALTIME, &adj, &oldadj) == -1)
++    return -1;
++
++  /*
++   * Build olddelta
++   */
++  delta_nsec_old = (double)oldadj.tick_count * oldadj.tick_nsec_inc;
++  if (olddelta != NULL)
++  {
++    if (delta_nsec_old != 0)
++    {
++      /* Reduce rounding error */
++      delta_nsec_old += (delta_nsec_old < 0) ? -500 : 500;
++      olddelta->tv_sec = delta_nsec_old / 1e9;
++      olddelta->tv_usec = (long)(delta_nsec_old - 1e9
++          * (long)olddelta->tv_sec) / 1000;
++    }
++    else
++    {
++      olddelta->tv_sec = 0;
++      olddelta->tv_usec = 0;
++    }
++  }
++
++  return 0;
++}
++#endif // ADJTIME_QNX_IMPLEMENTATION
++
++#endif // ADJTIME_QNX_H
+diff --git a/client.c b/client.c
+index 71db5677..9ea2d026 100644
+--- a/client.c
++++ b/client.c
+@@ -287,7 +287,7 @@ open_unix_socket(char *server_path)
+     goto error1;
+   }
+ 
+-  dir_fd1 = open(sock_dir1, O_RDONLY | O_NOFOLLOW);
++  dir_fd1 = open(sock_dir1, O_RDONLY | O_NOFOLLOW | O_DIRECTORY); // qnx-ism required for fstat
+   if (dir_fd1 < 0 || fstat(dir_fd1, &st) < 0) {
+     LOG(LOGS_ERR, "Could not open/stat %s : %s", sock_dir1, strerror(errno));
+     goto error2;
+@@ -311,7 +311,7 @@ open_unix_socket(char *server_path)
+ 
+   if (chmod(sock_path, 0666) < 0 ||
+       chmod(sock_dir2, 0711) < 0 ||
+-      fchmod(dir_fd1, 0711) < 0) {
++      chmod(sock_dir1, 0711) < 0) {
+     LOG(LOGS_ERR, "Could not change socket or directory permissions : %s", strerror(errno));
+     SCK_RemoveSocket(s);
+     SCK_CloseSocket(s);
+diff --git a/configure b/configure
+index 1c254435..5fa5209e 100755
+--- a/configure
++++ b/configure
+@@ -448,6 +448,23 @@ case $OPERATINGSYSTEM in
+         add_def NETBSD
+         echo "Configuring for $SYSTEM"
+     ;;
++    QNX)
++        EXTRA_OBJECTS="sys_generic.o sys_qnx.o sys_posix.o"
++        LIBS="$LIBS -lsocket"
++        try_setsched=1
++        try_lockmem=1
++        feat_refclock=0
++        try_recvmmsg=0 # Freebsd "bug" which we inherited. using regular recvmsg makes things work
++        CFLAGS="-O2 -g -fPIE -fstack-protector-strong --param=ssp-buffer-size=4 -Wmissing-prototypes -Wshadow -Wall -pthread -I/usr/include/p11-kit-1"
++        add_def QNX
++        if [ $feat_droproot = "1" ]; then
++          add_def FEAT_PRIVDROP
++          priv_ops="ADJUSTTIME SETTIME BINDSOCKET"
++        fi
++        # QNX doesn't have SA_RESTART
++        add_def SA_RESTART 0
++    ;;
++    
+     OpenBSD)
+         EXTRA_OBJECTS="sys_generic.o sys_openbsd.o sys_posix.o"
+         try_setsched=1
+diff --git a/socket.c b/socket.c
+index ec1a5973..07fd4513 100644
+--- a/socket.c
++++ b/socket.c
+@@ -1737,6 +1737,12 @@ SCK_RemoveSocket(int sock_fd)
+ 
+   saddr_len = sizeof (saddr);
+ 
++#ifdef QNX
++  // QNX getsockname doesn't null terminate sun_path
++  // 0 initializing will ensure that there is at least a null byte where the string ends
++  memset(&saddr, 0, sizeof(saddr)); 
++#endif
++
+   if (getsockname(sock_fd, &saddr.sa, &saddr_len) < 0) {
+     DEBUG_LOG("getsockname() failed : %s", strerror(errno));
+     return 0;
+diff --git a/sys.c b/sys.c
+index 138f8fc2..94a5625c 100644
+--- a/sys.c
++++ b/sys.c
+@@ -47,6 +47,9 @@
+ #include "sys_posix.h"
+ #elif defined(MACOSX)
+ #include "sys_macosx.h"
++#elif defined(QNX)
++#include "sys_qnx.h"
++#include "sys_posix.h"
+ #endif
+ 
+ /* ================================================== */
+@@ -73,6 +76,8 @@ SYS_Initialise(int clock_control)
+   SYS_OpenBSD_Initialise();
+ #elif defined(MACOSX)
+   SYS_MacOSX_Initialise();
++#elif defined(QNX)
++  SYS_QNX_Initialise();
+ #else
+ #error Unknown system
+ #endif
+@@ -97,6 +102,8 @@ SYS_Finalise(void)
+   SYS_OpenBSD_Finalise();
+ #elif defined(MACOSX)
+   SYS_MacOSX_Finalise();
++#elif defined(QNX)
++  SYS_QNX_Finalise();
+ #else
+ #error Unknown system
+ #endif
+@@ -116,6 +123,8 @@ void SYS_DropRoot(uid_t uid, gid_t gid, SYS_ProcessContext context)
+   SYS_OpenBSD_DropRoot(uid, gid, context, !null_driver);
+ #elif defined(MACOSX) && defined(FEAT_PRIVDROP)
+   SYS_MacOSX_DropRoot(uid, gid, context);
++#elif defined(QNX) && defined(FEAT_PRIVDROP)
++  SYS_QNX_DropRoot(uid, gid, context);
+ #else
+   LOG_FATAL("dropping root privileges not supported");
+ #endif
+diff --git a/sys_qnx.c b/sys_qnx.c
+new file mode 100644
+index 00000000..2ccd7d60
+--- /dev/null
++++ b/sys_qnx.c
+@@ -0,0 +1,399 @@
++/*
++  chronyd/chronyc - Programs for keeping computer clocks accurate.
++
++ **********************************************************************
++ * Copyright (C) Richard P. Curnow  1997-2001
++ * Copyright (C) J. Hannken-Illjes  2001
++ * Copyright (C) Bryan Christianson  2015, 2017, 2020
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ *
++ **********************************************************************
++
++  =======================================================================
++
++  Driver file for the QNX operating system.
++
++  */
++
++#include "config.h"
++
++#define ADJTIME_QNX_IMPLEMENTATION
++#include "adjtime_qnx.h"
++
++#include "sysincl.h"
++
++#include <pthread.h>
++
++#include "sys_qnx.h"
++#include "conf.h"
++#include "local.h"
++#include "localp.h"
++#include "logging.h"
++#include "sched.h"
++#include "privops.h"
++#include "util.h"
++
++#include <dlfcn.h>
++
++/* ================================================== */
++
++/* This register contains the number of seconds by which the local
++   clock was estimated to be fast of reference time at the epoch when
++   LCL_ReadRawTime() returned T0 */
++
++static double offset_register;
++
++/* This register contains the epoch to which the offset is referenced */
++
++static struct timespec T0;
++
++/* This register contains the current estimate of the system
++   frequency, in absolute (NOT ppm) */
++
++static double current_freq;
++
++/* This register contains the number of seconds of adjustment that
++   were passed to adjtime last time it was called. */
++
++static double adjustment_requested;
++
++/* Interval in seconds between adjustments to cancel systematic drift */
++
++#define DRIFT_REMOVAL_INTERVAL (4.0)
++#define DRIFT_REMOVAL_INTERVAL_MIN (0.5)
++
++/* If current_drift_removal_interval / drift_removal_interval exceeds this
++   ratio, then restart the drift removal timer */
++
++#define DRIFT_REMOVAL_RESTART_RATIO (8.0)
++
++static double drift_removal_interval;
++static double current_drift_removal_interval;
++static struct timespec Tdrift;
++
++/* weighting applied to error in calculating drift_removal_interval */
++#define ERROR_WEIGHT (0.5)
++
++/* minimum resolution of current_frequency */
++#define FREQUENCY_RES (1.0e-9)
++
++#define NANOS_PER_MSEC (1000000ULL)
++
++/* RTC synchronisation - once an hour */
++
++static struct timespec last_rtc_sync;
++#define RTC_SYNC_INTERVAL (60 * 60.0)
++
++/* ================================================== */
++
++static void
++clock_initialise(void)
++{
++  struct timeval newadj, oldadj;
++
++  offset_register = 0.0;
++  adjustment_requested = 0.0;
++  current_freq = 0.0;
++  drift_removal_interval = DRIFT_REMOVAL_INTERVAL;
++  current_drift_removal_interval = DRIFT_REMOVAL_INTERVAL;
++
++  LCL_ReadRawTime(&T0);
++  Tdrift = T0;
++  last_rtc_sync = T0;
++
++  newadj.tv_sec = 0;
++  newadj.tv_usec = 0;
++
++  if (PRV_AdjustTime(&newadj, &oldadj) < 0) {
++    LOG_FATAL("adjtime() failed");
++  }
++}
++
++/* ================================================== */
++
++static void
++clock_finalise(void)
++{
++  /* Nothing to do yet */
++}
++
++/* ================================================== */
++
++static void
++start_adjust(void)
++{
++  struct timeval newadj, oldadj;
++  struct timespec T1;
++  double elapsed, accrued_error, predicted_error, drift_removal_elapsed;
++  double adjust_required;
++  double rounding_error;
++  double old_adjust_remaining;
++
++  /* Determine the amount of error built up since the last adjustment */
++  LCL_ReadRawTime(&T1);
++
++  elapsed = UTI_DiffTimespecsToDouble(&T1, &T0);
++  accrued_error = elapsed * current_freq;
++
++  drift_removal_elapsed = UTI_DiffTimespecsToDouble(&T1, &Tdrift);
++
++  /* To allow for the clock being stepped either forward or backwards, clamp
++     the elapsed time to bounds [ 0.0, current_drift_removal_interval ] */
++  drift_removal_elapsed = MIN(MAX(0.0, drift_removal_elapsed), current_drift_removal_interval);
++
++  predicted_error = (current_drift_removal_interval - drift_removal_elapsed) / 2.0 * current_freq;
++
++  DEBUG_LOG("drift_removal_elapsed: %.3f current_drift_removal_interval: %.3f predicted_error: %.3f",
++            1.0e6 * drift_removal_elapsed, 1.0e6 * current_drift_removal_interval,
++            1.0e6 * predicted_error);
++
++  adjust_required = - (accrued_error + offset_register + predicted_error);
++
++  UTI_DoubleToTimeval(adjust_required, &newadj);
++  adjustment_requested = UTI_TimevalToDouble(&newadj);
++  rounding_error = adjust_required - adjustment_requested;
++
++  if (PRV_AdjustTime(&newadj, &oldadj) < 0) {
++    LOG_FATAL("adjtime() failed");
++  }
++
++  old_adjust_remaining = UTI_TimevalToDouble(&oldadj);
++
++  offset_register = rounding_error - old_adjust_remaining - predicted_error;
++
++  T0 = T1;
++}
++
++/* ================================================== */
++
++static void
++stop_adjust(void)
++{
++  struct timespec T1;
++  struct timeval zeroadj, remadj;
++  double adjustment_remaining, adjustment_achieved;
++  double elapsed, elapsed_plus_adjust;
++
++  zeroadj.tv_sec = 0;
++  zeroadj.tv_usec = 0;
++
++  if (PRV_AdjustTime(&zeroadj, &remadj) < 0) {
++    LOG_FATAL("adjtime() failed");
++  }
++
++  LCL_ReadRawTime(&T1);
++
++  elapsed = UTI_DiffTimespecsToDouble(&T1, &T0);
++  adjustment_remaining = UTI_TimevalToDouble(&remadj);
++
++  adjustment_achieved = adjustment_requested - adjustment_remaining;
++  elapsed_plus_adjust = elapsed - adjustment_achieved;
++
++  offset_register += current_freq * elapsed_plus_adjust - adjustment_remaining;
++
++  adjustment_requested = 0.0;
++  T0 = T1;
++}
++
++/* ================================================== */
++
++/* Positive offset means system clock is fast of true time, therefore
++   slew backwards */
++
++static void
++accrue_offset(double offset, double corr_rate)
++{
++  stop_adjust();
++  offset_register += offset;
++  start_adjust();
++}
++
++/* ================================================== */
++
++/* Positive offset means system clock is fast of true time, therefore
++   step backwards */
++
++static int
++apply_step_offset(double offset)
++{
++  struct timespec old_time, new_time, T1;
++  struct timeval new_time_tv;
++
++  stop_adjust();
++
++  LCL_ReadRawTime(&old_time);
++
++  UTI_AddDoubleToTimespec(&old_time, -offset, &new_time);
++  UTI_TimespecToTimeval(&new_time, &new_time_tv);
++
++  if (PRV_SetTime(&new_time_tv, NULL) < 0) {
++    DEBUG_LOG("settimeofday() failed");
++    return 0;
++  }
++
++  UTI_AddDoubleToTimespec(&T0, -offset, &T1);
++  T0 = T1;
++
++  start_adjust();
++
++  return 1;
++}
++
++/* ================================================== */
++
++static double
++set_frequency(double new_freq_ppm)
++{
++  stop_adjust();
++  current_freq = new_freq_ppm * 1.0e-6;
++  start_adjust();
++
++  return current_freq * 1.0e6;
++}
++
++/* ================================================== */
++
++static double
++read_frequency(void)
++{
++  return current_freq * 1.0e6;
++}
++
++/* ================================================== */
++
++static void
++get_offset_correction(struct timespec *raw,
++                      double *corr, double *err)
++{
++  stop_adjust();
++  *corr = -offset_register;
++  start_adjust();
++  if (err)
++    *err = 0.0;
++}
++
++/* ================================================== */
++
++/* Cancel systematic drift */
++
++static SCH_TimeoutID drift_removal_id;
++
++/* ================================================== */
++/* This is the timer callback routine which is called periodically to
++ invoke a time adjustment to take out the machine's drift.
++ Otherwise, times reported through this software (e.g. by running
++ ntpdate from another machine) show the machine being correct (since
++ they correct for drift build-up), but any program on this machine
++ that reads the system time will be given an erroneous value, the
++ degree of error depending on how long it is since
++ get_offset_correction was last called. */
++
++static void
++drift_removal_timeout(SCH_ArbitraryArgument not_used)
++{
++
++  stop_adjust();
++
++  LCL_ReadRawTime(&Tdrift);
++
++  current_drift_removal_interval = drift_removal_interval;
++
++  start_adjust();
++
++  drift_removal_id = SCH_AddTimeoutByDelay(drift_removal_interval, drift_removal_timeout, NULL);
++}
++
++/* ================================================== */
++
++/* use est_error to calculate the drift_removal_interval and
++   update the RTC */
++
++static void
++set_sync_status(int synchronised, double est_error, double max_error)
++{
++  double interval;
++
++  if (!synchronised) {
++    drift_removal_interval = MAX(drift_removal_interval, DRIFT_REMOVAL_INTERVAL);
++  } else {
++    if (CNF_GetRtcSync()) {
++      struct timespec now;
++      double rtc_sync_elapsed;
++
++      SCH_GetLastEventTime(NULL, NULL, &now);
++      rtc_sync_elapsed = UTI_DiffTimespecsToDouble(&now, &last_rtc_sync);
++      if (fabs(rtc_sync_elapsed) >= RTC_SYNC_INTERVAL) {
++        /* update the RTC by applying a step of 0.0 secs */
++        apply_step_offset(0.0);
++        last_rtc_sync = now;
++        DEBUG_LOG("rtc synchronised");
++      }
++    }
++
++    interval = ERROR_WEIGHT * est_error / (fabs(current_freq) + FREQUENCY_RES);
++    drift_removal_interval = MAX(interval, DRIFT_REMOVAL_INTERVAL_MIN);
++
++    DEBUG_LOG("est_error: %.3f current_freq: %.3f est drift_removal_interval: %.3f act drift_removal_interval: %.3f",
++                est_error * 1.0e6, current_freq * 1.0e6, interval, drift_removal_interval);
++  }
++
++  if (current_drift_removal_interval / drift_removal_interval > DRIFT_REMOVAL_RESTART_RATIO) {
++    /* recover from a large est_error by resetting the timer */
++    SCH_ArbitraryArgument unused;
++    SCH_RemoveTimeout(drift_removal_id);
++    unused = NULL;
++    drift_removal_timeout(unused);
++  }
++}
++
++/* ================================================== */
++
++#ifdef FEAT_PRIVDROP
++void SYS_QNX_DropRoot(uid_t uid, gid_t gid, SYS_ProcessContext context)
++{
++  if (context == SYS_MAIN_PROCESS)
++    PRV_StartHelper();
++
++  UTI_DropRoot(uid, gid);
++}
++#endif
++
++
++/* ================================================== */
++
++void
++SYS_QNX_Initialise(void)
++{
++  clock_initialise();
++
++  lcl_RegisterSystemDrivers(read_frequency, set_frequency,
++                            accrue_offset, apply_step_offset,
++                            get_offset_correction,
++                            NULL /* set_leap */,
++                            set_sync_status);
++
++
++  drift_removal_id = SCH_AddTimeoutByDelay(drift_removal_interval, drift_removal_timeout, NULL);
++}
++
++/* ================================================== */
++
++void
++SYS_QNX_Finalise(void)
++{
++  SCH_RemoveTimeout(drift_removal_id);
++
++  clock_finalise();
++}
+diff --git a/sys_qnx.h b/sys_qnx.h
+new file mode 100644
+index 00000000..e69b0024
+--- /dev/null
++++ b/sys_qnx.h
+@@ -0,0 +1,41 @@
++/*
++  chronyd/chronyc - Programs for keeping computer clocks accurate.
++
++ **********************************************************************
++ * Copyright (C) Richard P. Curnow  1997-2001
++ * Copyright (C) J. Hannken-Illjes  2001
++ * Copyright (C) Bryan Christianson 2015
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ *
++ **********************************************************************
++
++  =======================================================================
++
++  Header file for QNX driver
++
++  */
++
++#ifndef GOT_SYS_QNX_H
++#define GOT_SYS_QNX_H
++
++#include "adjtime_qnx.h"
++
++#include "sys.h"
++
++void SYS_QNX_DropRoot(uid_t uid, gid_t gid, SYS_ProcessContext context);
++void SYS_QNX_Initialise(void);
++void SYS_QNX_Finalise(void);
++
++#endif
+diff --git a/sysincl.h b/sysincl.h
+index e26b2362..019147af 100644
+--- a/sysincl.h
++++ b/sysincl.h
+@@ -53,7 +53,9 @@
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <sys/un.h>
++#ifndef QNX
+ #include <sys/shm.h>
++#endif
+ #include <sys/wait.h>
+ #include <time.h>
+ #include <unistd.h>
+diff --git a/test/unit/quantiles.c b/test/unit/quantiles.c
+index a6e3dbbd..050857b3 100644
+--- a/test/unit/quantiles.c
++++ b/test/unit/quantiles.c
+@@ -17,6 +17,7 @@
+  *
+  **********************************************************************
+  */
++#include <config.h>
+ 
+ #include <local.h>
+ #include "test.h"
+diff --git a/test/unit/samplefilt.c b/test/unit/samplefilt.c
+index 19d2f707..2b0fd18e 100644
+--- a/test/unit/samplefilt.c
++++ b/test/unit/samplefilt.c
+@@ -17,6 +17,7 @@
+  * 
+  **********************************************************************
+  */
++#include <config.h>
+ 
+ #include <local.h>
+ #include "test.h"
+diff --git a/test/unit/socket.c b/test/unit/socket.c
+index e3db0742..d6e64c77 100644
+--- a/test/unit/socket.c
++++ b/test/unit/socket.c
+@@ -70,6 +70,7 @@ send_and_recv(int type, int is_stream, int is_client_bound, int server_fd, int c
+   UTI_GetRandomBytes(buf1, sizeof (buf1));
+ 
+   TEST_CHECK(SCK_Send(client_fd, buf1, sizeof (buf1), 0) == sizeof (buf1));
++  usleep(250); // very flaky without wait, and we call this function a lot during this test
+   msg1 = SCK_ReceiveMessage(server_fd, 0);
+ 
+   TEST_CHECK(msg1);

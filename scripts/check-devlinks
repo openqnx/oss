@@ -1,0 +1,63 @@
+#!/bin/bash
+# Audit staged shared libraries for a missing development symlink.
+#
+# A library installed only as libfoo.so.1 with no libfoo.so cannot be found by
+# "-lfoo".  That is not a link error: the linker keeps searching and picks up
+# whatever libfoo.so the SDP happens to ship -- so a consumer silently links
+# against QNX's prebuilt copy instead of the one we just built.  readline's
+# support/shlib-install did exactly this because it has no case for nto-qnx.
+#
+#   ./scripts/check-devlinks [aarch64le|x86_64]
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+rc=0
+for arch in ${1:-aarch64le x86_64}; do
+  source "$WS/env.sh" "$arch" >/dev/null || exit 1
+  libdir="$STAGE$PREFIX/lib"
+  bad=""
+  while read -r so; do
+    base=$(basename "$so")
+    stem=${base%%.so.*}
+    [ -n "$stem" ] || continue
+    # A dev symlink, an .a, or a libtool/cmake-only module means -l can resolve it.
+    [ -e "$libdir/$stem.so" ] && continue
+    [ -e "$libdir/$stem.a" ] && continue
+    sdp=""
+    for d in "$QNX_TARGET_SDP/$QNX_ARCH/usr/lib" "$QNX_TARGET_SDP/$QNX_ARCH/lib"; do
+      [ -e "$d/$stem.so" ] && sdp="$d/$stem.so"
+    done
+    if [ -n "$sdp" ]; then
+      bad="$bad\n  !! $base  -- no $stem.so here, but the SDP has one at $sdp"
+      rc=1
+    else
+      bad="$bad\n  -- $base  -- no $stem.so (nothing else provides it either)"
+    fi
+  done < <(find "$libdir" -maxdepth 1 -name '*.so.*' -type f | sort)
+  # Second pass: a shared library that exports nothing.  ThorVG built one --
+  # meson's --default-library=both made it define TVG_STATIC, which expands its
+  # TVG_API visibility macro to nothing.  The .so links and installs; every
+  # consumer then fails on the first symbol it wants.
+  NM="$QNX_HOST/usr/bin/nto${QNX_CPU}-nm"
+  empty=""
+  if [ -x "$NM" ]; then
+    while read -r so; do
+      n=$("$NM" -D --defined-only "$so" 2>/dev/null | grep -c ' [TWDBRi] ')
+      [ "$n" -gt 0 ] && continue
+      empty="$empty\n  !! $(basename "$so")  -- exports no dynamic symbols"
+      rc=1
+    done < <(find "$libdir" -maxdepth 1 -name '*.so.*' -type f | sort)
+  fi
+
+  if [ -z "$bad" ] && [ -z "$empty" ]; then
+    echo "OK  [$arch] every staged shared library has a development symlink and exports symbols"
+  else
+    [ -n "$bad" ] && {
+      echo "[$arch] libraries without a lib<name>.so development symlink:"
+      printf "%b\n" "$bad"
+    }
+    [ -n "$empty" ] && {
+      echo "[$arch] shared libraries that export nothing:"
+      printf "%b\n" "$empty"
+    }
+  fi
+done
+exit $rc

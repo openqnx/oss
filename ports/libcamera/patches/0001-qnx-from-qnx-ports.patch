@@ -1,0 +1,3502 @@
+From 5275c862fdcedab54352f2c951e072aaf6323726 Mon Sep 17 00:00:00 2001
+From: James Choi <chachoi@qnx.com>
+Date: Fri, 26 Sep 2025 18:33:34 +0000
+Subject: [PATCH 1/4] Port RPi image processing algorithms to QNX
+
+Imported from qnx-ports/libcamera (v0.5.1+rpt20250722...qnx-v0.5.1_rpt20250722); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+QNXCAM-3642
+---
+ .gitignore                                    |   4 +
+ include/libcamera/base/log.h                  |  78 +++
+ include/libcamera/internal/yaml_parser.h      |   8 +
+ include/linux/bcm2835-isp.h                   |  12 +
+ qnx/LICENSE.md                                |  23 +
+ qnx/README.md                                 |   7 +
+ qnx/build/CMakeLists.txt                      |  82 +++
+ qnx/build/Makefile                            |   8 +
+ qnx/build/common.mk                           |  72 +++
+ qnx/build/nto-aarch64-le/Makefile             |   1 +
+ qnx/build/qnx.nto.toolchain.cmake             |   6 +
+ qnx/build/qnx800/dependencies.yml             |   2 +
+ qnx/build/qnx800dev/dependencies.yml          |   2 +
+ qnx/build/sdp_mainline/dependencies.yml       |   2 +
+ qnx/shiplist/rpi_camera_ipa.xml               |  18 +
+ qnx/shiplist/rpi_camera_ipa_dev.xml           |  15 +
+ src/ipa/libipa/pwl.cpp                        |   8 +
+ src/ipa/libipa/pwl.h                          |   9 +
+ src/ipa/rpi/cam_helper/cam_helper.cpp         |   8 +
+ src/ipa/rpi/cam_helper/cam_helper.h           |   2 +
+ src/ipa/rpi/cam_helper/cam_helper_imx500.cpp  |   2 +
+ src/ipa/rpi/cam_helper/md_parser.h            |   9 +
+ src/ipa/rpi/controller/agc_algorithm.h        |   8 +
+ src/ipa/rpi/controller/alsc_status.h          |  10 +
+ src/ipa/rpi/controller/cac_status.h           |   7 +
+ src/ipa/rpi/controller/controller.h           |   4 +
+ src/ipa/rpi/controller/hdr_algorithm.h        |   4 +
+ src/ipa/rpi/controller/histogram.h            |   8 +
+ src/ipa/rpi/controller/metadata.h             |  49 +-
+ src/ipa/rpi/controller/region_stats.h         |   8 +
+ src/ipa/rpi/controller/rpi/af.cpp             |   2 +
+ src/ipa/rpi/controller/rpi/agc.cpp            |  10 +
+ src/ipa/rpi/controller/rpi/agc.h              |  13 +
+ src/ipa/rpi/controller/rpi/agc_channel.cpp    |  14 +
+ src/ipa/rpi/controller/rpi/agc_channel.h      |  17 +
+ src/ipa/rpi/controller/rpi/awb.cpp            |   3 +
+ src/ipa/rpi/controller/rpi/cac.cpp            |   5 +
+ src/ipa/rpi/controller/rpi/hdr.cpp            |   4 +
+ src/ipa/rpi/controller/rpi/hdr.h              |  20 +
+ src/ipa/rpi/controller/statistics.h           |  15 +-
+ src/ipa/rpi/qnx/log_handler.cpp               |  69 +++
+ src/ipa/rpi/qnx/log_handler.h                 |  93 ++++
+ src/ipa/rpi/qnx/no_throw_allocator.h          |  67 +++
+ src/ipa/rpi/qnx/no_throw_any.h                | 233 ++++++++
+ src/ipa/rpi/qnx/pisp_statistics.h             |  70 +++
+ .../rpi/qnx/public/include/rpi_camera_ipa.h   |  81 +++
+ src/ipa/rpi/qnx/rpi_camera_ipa.cpp            | 505 ++++++++++++++++++
+ src/libcamera/yaml_parser.cpp                 |  22 +
+ 48 files changed, 1712 insertions(+), 7 deletions(-)
+ create mode 100755 qnx/LICENSE.md
+ create mode 100644 qnx/README.md
+ create mode 100644 qnx/build/CMakeLists.txt
+ create mode 100755 qnx/build/Makefile
+ create mode 100644 qnx/build/common.mk
+ create mode 100644 qnx/build/nto-aarch64-le/Makefile
+ create mode 100644 qnx/build/qnx.nto.toolchain.cmake
+ create mode 100644 qnx/build/qnx800/dependencies.yml
+ create mode 100644 qnx/build/qnx800dev/dependencies.yml
+ create mode 100644 qnx/build/sdp_mainline/dependencies.yml
+ create mode 100644 qnx/shiplist/rpi_camera_ipa.xml
+ create mode 100644 qnx/shiplist/rpi_camera_ipa_dev.xml
+ create mode 100644 src/ipa/rpi/qnx/log_handler.cpp
+ create mode 100644 src/ipa/rpi/qnx/log_handler.h
+ create mode 100644 src/ipa/rpi/qnx/no_throw_allocator.h
+ create mode 100644 src/ipa/rpi/qnx/no_throw_any.h
+ create mode 100644 src/ipa/rpi/qnx/pisp_statistics.h
+ create mode 100644 src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+ create mode 100644 src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+
+diff --git a/.gitignore b/.gitignore
+index 51d314408..b42e73f9b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -7,3 +7,7 @@
+ *.pyc
+ __pycache__/
+ venv/
++.vscode/
++
++# QNX Build folder
++qnx/build/nto-aarch64-le/build/
+diff --git a/include/libcamera/base/log.h b/include/libcamera/base/log.h
+index 8af74b59d..233482c44 100644
+--- a/include/libcamera/base/log.h
++++ b/include/libcamera/base/log.h
+@@ -48,6 +48,11 @@ class LogCategory
+ 	static_assert(decltype(severity_)::is_always_lock_free);
+ };
+ 
++#ifdef __QNX__
++// Define these macros to be nothing
++#define LOG_DECLARE_CATEGORY(name)
++#define LOG_DEFINE_CATEGORY(name)
++#else
+ #define LOG_DECLARE_CATEGORY(name)					\
+ extern const LogCategory &_LOG_CATEGORY(name)();
+ 
+@@ -59,6 +64,7 @@ const LogCategory &_LOG_CATEGORY(name)()				\
+ 	static LogCategory *category = LogCategory::create(#name);	\
+ 	return *category;						\
+ }
++#endif
+ 
+ class LogMessage
+ {
+@@ -105,6 +111,77 @@ LogMessage _log(const LogCategory *category, LogSeverity severity,
+ 		const char *fileName = __builtin_FILE(),
+ 		unsigned int line = __builtin_LINE());
+ 
++#ifdef __QNX__
++#include <log_handler.h>
++#include <ostream>
++#include <cstdio>
++#include <cstring>
++
++// Use FixedBuffer instead of ostringstream to avoid
++// string dynamic allocation
++struct FixedBuffer : std::streambuf {
++    FixedBuffer(char* buf, size_t len)
++    {
++        setp(buf, buf + len - 1);
++    }
++
++    // Handle overflow
++    int_type overflow(int_type ch) override
++    {
++        if (ch != traits_type::eof() && pptr() < epptr())
++        {
++            *pptr() = ch;
++            pbump(1);
++            return ch;
++        }
++        return traits_type::eof();
++    }
++
++    const char* c_str()
++    {
++        *pptr() = '\0';
++        return pbase();
++    }
++};
++
++// Wrapper for QNX slog2 LOG_* macros
++struct LogStreamAdapter {
++    using LogFunc = void (*)(const char*);
++    LogFunc log_func;
++
++    static constexpr size_t BUFFER_SIZE = 512;
++    char buffer[BUFFER_SIZE];
++    FixedBuffer fb;
++    std::ostream stream;
++
++    LogStreamAdapter(LogFunc f) noexcept
++        : log_func(f), fb(buffer, BUFFER_SIZE), stream(&fb) {}
++
++    template<typename T>
++    LogStreamAdapter& operator<<(const T& value) noexcept
++    {
++        stream << value;
++        return *this;
++    }
++
++    ~LogStreamAdapter() noexcept
++    {
++        log_func(fb.c_str());
++    }
++};
++
++#define LOG_HELPER_Warning(...) LOG_WARNING(__VA_ARGS__)
++#define LOG_HELPER_Debug(...)   LOG_DEBUG1(__VA_ARGS__)
++#define LOG_HELPER_Fatal(...)   LOG_ERROR(__VA_ARGS__)
++#define LOG_HELPER_Error(...)   LOG_ERROR(__VA_ARGS__)
++#define LOG_HELPER_Info(...)    LOG_INFO(__VA_ARGS__)
++
++#define LOG_DISPATCH(level, ...) LOG_HELPER_##level(__VA_ARGS__)
++// Define LOG macro to use the LogStreamAdapter class
++// LogStreamAdpater then uses LOG_DISPATCH which translates to slog2 macros
++#define LOG(category, level) \
++    LogStreamAdapter(+[](const char* s){ LOG_DISPATCH(level, "%s", s); })
++#else
+ #ifndef __DOXYGEN__
+ #define _LOG_CATEGORY(name) logCategory##name
+ 
+@@ -122,6 +199,7 @@ LogMessage _log(const LogCategory *category, LogSeverity severity,
+ #else /* __DOXYGEN___ */
+ #define LOG(category, severity)
+ #endif /* __DOXYGEN__ */
++#endif
+ 
+ #ifndef NDEBUG
+ #define ASSERT(condition) static_cast<void>(({                          \
+diff --git a/include/libcamera/internal/yaml_parser.h b/include/libcamera/internal/yaml_parser.h
+index 8c7916565..a14c8403c 100644
+--- a/include/libcamera/internal/yaml_parser.h
++++ b/include/libcamera/internal/yaml_parser.h
+@@ -19,6 +19,10 @@
+ 
+ #include <libcamera/geometry.h>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ namespace libcamera {
+ 
+ class File;
+@@ -200,7 +204,11 @@ class YamlObject
+ #else
+ 	template<typename T>
+ #endif
++#ifdef __QNX__
++	std::optional<std::vector<T, NothrowAllocator<T>>> getList() const;
++#else
+ 	std::optional<std::vector<T>> getList() const;
++#endif
+ 
+ 	DictAdapter asDict() const { return DictAdapter{ list_ }; }
+ 	ListAdapter asList() const { return ListAdapter{ list_ }; }
+diff --git a/include/linux/bcm2835-isp.h b/include/linux/bcm2835-isp.h
+index 5f0f78e3e..e2a2965ee 100644
+--- a/include/linux/bcm2835-isp.h
++++ b/include/linux/bcm2835-isp.h
+@@ -13,6 +13,7 @@
+ #ifndef __BCM2835_ISP_H_
+ #define __BCM2835_ISP_H_
+ 
++#ifndef __QNX__
+ #include <linux/v4l2-controls.h>
+ 
+ #define V4L2_CID_USER_BCM2835_ISP_CC_MATRIX	\
+@@ -33,6 +34,17 @@
+ 				(V4L2_CID_USER_BCM2835_ISP_BASE + 0x0008)
+ #define V4L2_CID_USER_BCM2835_ISP_CDN \
+ 				(V4L2_CID_USER_BCM2835_ISP_BASE + 0x0009)
++#endif
++
++#ifdef __QNX__
++#include <stdint.h>
++typedef int32_t __s32;
++typedef uint8_t __u8;
++typedef uint16_t __u16;
++typedef uint32_t __u32;
++typedef uint64_t __u64;
++#endif
++
+ /*
+  * All structs below are directly mapped onto the equivalent structs in
+  * drivers/staging/vc04_services/vchiq-mmal/mmal-parameters.h
+diff --git a/qnx/LICENSE.md b/qnx/LICENSE.md
+new file mode 100755
+index 000000000..41caa1169
+--- /dev/null
++++ b/qnx/LICENSE.md
+@@ -0,0 +1,23 @@
++This license covers all the content of the qnx folder except where a license is included in a file
++
++
++Copyright (c) 2025, BlackBerry Limited. All Rights Reserved.
++
++This software is provided 'as-is', without any express or implied
++warranty. In no event will the authors be held liable for any
++damages arising from the use of this software.
++
++Permission is granted to anyone to use this software for any
++purpose, including commercial applications, and to alter it and
++redistribute it freely, subject to the following restrictions:
++
++1. The origin of this software must not be misrepresented; you must
++not claim that you wrote the original software. If you use this
++software in a product, an acknowledgment in the product documentation
++would be appreciated but is not required.
++
++2. Altered source versions must be plainly marked as such, and
++must not be misrepresented as being the original software.
++
++3. This notice may not be removed or altered from any source
++distribution.
+diff --git a/qnx/README.md b/qnx/README.md
+new file mode 100644
+index 000000000..d4a00f2c9
+--- /dev/null
++++ b/qnx/README.md
+@@ -0,0 +1,7 @@
++# Compile the port for QNX
++
++**NOTE**: QNX ports are only supported from a Linux host operating system
++
++- Setup your QNX SDP environment
++- From the root folder, type:
++	- `OSLIST=nto make -C qnx/build install`
+diff --git a/qnx/build/CMakeLists.txt b/qnx/build/CMakeLists.txt
+new file mode 100644
+index 000000000..c8ec53bfe
+--- /dev/null
++++ b/qnx/build/CMakeLists.txt
+@@ -0,0 +1,82 @@
++cmake_minimum_required(VERSION 3.15)
++
++# Project name and language
++project(rpi_camera_ipa
++    VERSION 0.5.1
++    DESCRIPTION "RPi camera image processing algorithm library"
++    LANGUAGES CXX
++)
++
++# Set PROJECT_ROOT to be the root of the libcamera repository
++set(PROJECT_ROOT ${PROJECT_SOURCE_DIR}/../../)
++
++# Collect the sources we want
++set(SOURCE_CPP_FILES
++    ${PROJECT_ROOT}/src/ipa/libipa/colours.cpp
++    ${PROJECT_ROOT}/src/ipa/libipa/pwl.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx219.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx283.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx290.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx296.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx415.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx477.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx519.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx708.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov5647.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov64a40.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov7251.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov9281.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/md_parser_smia.cpp
++
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/algorithm.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/controller.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/device_status.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/histogram.cpp
++
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc_channel.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/lux.cpp
++
++    ${PROJECT_ROOT}/src/ipa/rpi/qnx/log_handler.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
++
++    ${PROJECT_ROOT}/src/libcamera/yaml_parser.cpp
++    ${PROJECT_ROOT}/src/libcamera/base/file.cpp
++    ${PROJECT_ROOT}/src/libcamera/base/unique_fd.cpp
++    ${PROJECT_ROOT}/src/libcamera/base/utils.cpp
++)
++
++# Build shared library
++add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
++
++# Header directories
++target_include_directories(${PROJECT_NAME}
++    PUBLIC
++        $<BUILD_INTERFACE:${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include>
++        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
++    PRIVATE
++        ${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include
++        ${PROJECT_ROOT}/include
++        ${PROJECT_ROOT}/src/ipa
++        ${PROJECT_ROOT}/src/ipa/rpi
++        ${PROJECT_ROOT}/src/ipa/rpi/cam_helper
++        ${PROJECT_ROOT}/src/ipa/rpi/controller
++        ${PROJECT_ROOT}/src/ipa/rpi/qnx
++)
++
++# Add compiler warnings
++target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -DLIBCAMERA_BASE_PRIVATE)
++
++# Set library version and SOVERSION
++set_target_properties(${PROJECT_NAME} PROPERTIES
++    VERSION ${PROJECT_VERSION}
++    SOVERSION 1
++    PUBLIC_HEADER "${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h"
++)
++
++# Install rules
++install(TARGETS ${PROJECT_NAME}
++    LIBRARY DESTINATION lib
++    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++)
+diff --git a/qnx/build/Makefile b/qnx/build/Makefile
+new file mode 100755
+index 000000000..1f2540041
+--- /dev/null
++++ b/qnx/build/Makefile
+@@ -0,0 +1,8 @@
++LIST=OS
++ifndef QRECURSE
++QRECURSE=recurse.mk
++ifdef QCONFIG
++QRDIR=$(dir $(QCONFIG))
++endif
++endif
++include $(QRDIR)$(QRECURSE)
+diff --git a/qnx/build/common.mk b/qnx/build/common.mk
+new file mode 100644
+index 000000000..5169becf6
+--- /dev/null
++++ b/qnx/build/common.mk
+@@ -0,0 +1,72 @@
++ifndef QCONFIG
++QCONFIG=qconfig.mk
++endif
++include $(QCONFIG)
++
++NAME=rpi_camera_ipa
++
++#$(INSTALL_ROOT_$(OS)) is pointing to $QNX_TARGET
++#by default, unless it was manually re-routed to
++#a staging area by setting both INSTALL_ROOT_nto
++#and USE_INSTALL_ROOT
++INSTALL_ROOT ?= $(INSTALL_ROOT_$(OS))
++
++#A prefix path to use **on the target**. This is
++#different from INSTALL_ROOT, which refers to a
++#installation destination **on the host machine**.
++#This prefix path may be exposed to the source code,
++#the linker, or package discovery config files (.pc,
++#CMake config modules, etc.). Default is /usr
++PREFIX ?= /usr
++
++#choose Release or Debug
++CMAKE_BUILD_TYPE ?= Release
++
++#override 'all' target to bypass the default QNX build system
++ALL_DEPENDENCIES = rpi_camera_ipa_all
++.PHONY: rpi_camera_ipa_all rpi_camera_ipa_all_clean
++
++FLAGS   += -D_QNX_SOURCE -D__QNXNTO__
++LDFLAGS += -Wl,--build-id=md5 -lang-c++
++
++include $(MKFILES_ROOT)/qtargets.mk
++
++NTO_DIR_NAME=nto-aarch64-le
++CMAKE_SYSTEM_PROCESSOR=aarch64
++
++CMAKE_ARGS = -DCMAKE_TOOLCHAIN_FILE=$(PROJECT_ROOT)/qnx.nto.toolchain.cmake \
++             -DCMAKE_SYSTEM_PROCESSOR=$(CMAKE_SYSTEM_PROCESSOR) \
++             -DCMAKE_CXX_COMPILER_TARGET=gcc_nto$(CPUVARDIR) \
++             -DCMAKE_INSTALL_PREFIX=$(INSTALL_ROOT)/$(CPUVARDIR)/$(PREFIX) \
++             -DCMAKE_INSTALL_INCLUDEDIR=$(INSTALL_ROOT)/$(PREFIX)/include \
++             -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
++             -DBUILD_QNX_CXX_FLAGS="$(FLAGS)" \
++             -DBUILD_QNX_LINKER_FLAGS="$(LDFLAGS)" \
++             -DCMAKE_VERBOSE_MAKEFILE=1 \
++             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
++
++ifndef NO_TARGET_OVERRIDE
++
++MAKE_ARGS ?= -j $(firstword $(JLEVEL) 1)
++
++rpi_camera_ipa_all:
++	echo "make rpi_camera_ipa_all $(NTO_DIR_NAME)"
++	mkdir -p build && \
++	cd build && \
++	cmake 	"${PRODUCT_ROOT}/build" \
++		${CMAKE_ARGS} && \
++	make all $(MAKE_ARGS)
++
++rpi_camera_ipa_all_clean:
++	echo "make rpi_camera_ipa_all_clean $(NTO_DIR_NAME)"
++	cd $(PRODUCT_ROOT)/build && \
++	rm -rf build
++	rm -rf $(PROJECT_ROOT)/$(NTO_DIR_NAME)/build
++
++clean: rpi_camera_ipa_all_clean
++
++install check: rpi_camera_ipa_all
++	cd build && make install $(MAKE_ARGS)
++
++uninstall:
++endif
+diff --git a/qnx/build/nto-aarch64-le/Makefile b/qnx/build/nto-aarch64-le/Makefile
+new file mode 100644
+index 000000000..23f8a8fa2
+--- /dev/null
++++ b/qnx/build/nto-aarch64-le/Makefile
+@@ -0,0 +1 @@
++include ../common.mk
+diff --git a/qnx/build/qnx.nto.toolchain.cmake b/qnx/build/qnx.nto.toolchain.cmake
+new file mode 100644
+index 000000000..7e860534f
+--- /dev/null
++++ b/qnx/build/qnx.nto.toolchain.cmake
+@@ -0,0 +1,6 @@
++set(QNX TRUE)
++set(CMAKE_SYSTEM_NAME QNX)
++set(CMAKE_CXX_COMPILER q++)
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_QNX_CXX_FLAGS} -w" CACHE STRING "cxx_flags")
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BUILD_QNX_LINKER_FLAGS}" CACHE STRING "exe_linker_flags")
++set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${BUILD_QNX_LINKER_FLAGS}" CACHE STRING "so_linker_flags")
+diff --git a/qnx/build/qnx800/dependencies.yml b/qnx/build/qnx800/dependencies.yml
+new file mode 100644
+index 000000000..c2e69562a
+--- /dev/null
++++ b/qnx/build/qnx800/dependencies.yml
+@@ -0,0 +1,2 @@
++packages:
++- com.qnx.qnx800.osr.yaml: 0.1.7.00091T202509131949L
+diff --git a/qnx/build/qnx800dev/dependencies.yml b/qnx/build/qnx800dev/dependencies.yml
+new file mode 100644
+index 000000000..6f2382359
+--- /dev/null
++++ b/qnx/build/qnx800dev/dependencies.yml
+@@ -0,0 +1,2 @@
++packages:
++- com.qnx.qnx800dev.osr.yaml
+diff --git a/qnx/build/sdp_mainline/dependencies.yml b/qnx/build/sdp_mainline/dependencies.yml
+new file mode 100644
+index 000000000..a5fa168dc
+--- /dev/null
++++ b/qnx/build/sdp_mainline/dependencies.yml
+@@ -0,0 +1,2 @@
++packages:
++- com.qnx.sdp_mainline.osr.yaml
+diff --git a/qnx/shiplist/rpi_camera_ipa.xml b/qnx/shiplist/rpi_camera_ipa.xml
+new file mode 100644
+index 000000000..b8f301291
+--- /dev/null
++++ b/qnx/shiplist/rpi_camera_ipa.xml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<shiplist>
++    <id>com.qnx.${baselineId}.osr.rpi_camera_ipa</id>
++    <name>rpi-camera-ipa</name>
++    <version>0.5.1</version>
++    <category>OSR</category>
++    <description>rpi-camera-ipa - RPi camera image processing algorithm library</description>
++    <property key="f.support" value="Custom"/>
++    <property key="f.swtype" value="III"/>
++    <property key="f.engage" value="B"/>
++    <property key="useInfo" value="false"/>
++    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so"/>
++    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so.1"/>
++    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so.0.5.1"/>
++    <provides>library: librpi_camera_ipa.so</provides>
++    <provides>library: librpi_camera_ipa.so.1</provides>
++    <provides>library: librpi_camera_ipa.so.0.5.1</provides>
++</shiplist>
+diff --git a/qnx/shiplist/rpi_camera_ipa_dev.xml b/qnx/shiplist/rpi_camera_ipa_dev.xml
+new file mode 100644
+index 000000000..c7fead643
+--- /dev/null
++++ b/qnx/shiplist/rpi_camera_ipa_dev.xml
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<shiplist>
++    <id>com.qnx.${baselineId}.osr.rpi_camera_ipa.dev</id>
++    <name>rpi_camera_ipa</name>
++    <version>0.5.1</version>
++    <category>OSR</category>
++    <description>rpi_camera_ipa - RPi camera image processing algorithm library</description>
++    <property key="f.support" value="Custom"/>
++    <property key="f.swtype" value="III"/>
++    <property key="f.engage" value="B"/>
++    <property key="useInfo" value="false"/>
++    <file name="${targetfolder}/usr/include/rpi_camera_ipa.h"/>
++    <provides>dev: rpi_camera_ipa (${primaryVersion})</provides>
++    <requires>package: com.qnx.${baselineId}.osr.rpi_camera_ipa</requires>
++</shiplist>
+diff --git a/src/ipa/libipa/pwl.cpp b/src/ipa/libipa/pwl.cpp
+index 3fa005ba9..e767733d1 100644
+--- a/src/ipa/libipa/pwl.cpp
++++ b/src/ipa/libipa/pwl.cpp
+@@ -107,7 +107,11 @@ Pwl::Pwl()
+  *
+  * \a points must be in ascending order of x-value.
+  */
++#ifdef __QNX__
++Pwl::Pwl(const std::vector<Point, NothrowAllocator<Point>> &points)
++#else
+ Pwl::Pwl(const std::vector<Point> &points)
++#endif
+ 	: points_(points)
+ {
+ }
+@@ -118,7 +122,11 @@ Pwl::Pwl(const std::vector<Point> &points)
+  * The contents of the \a points vector is moved to the newly constructed Pwl
+  * instance.
+  */
++#ifdef __QNX__
++Pwl::Pwl(std::vector<Point, NothrowAllocator<Point>> &&points)
++#else
+ Pwl::Pwl(std::vector<Point> &&points)
++#endif
+ 	: points_(std::move(points))
+ {
+ }
+diff --git a/src/ipa/libipa/pwl.h b/src/ipa/libipa/pwl.h
+index c1496c300..a703105dd 100644
+--- a/src/ipa/libipa/pwl.h
++++ b/src/ipa/libipa/pwl.h
+@@ -43,8 +43,13 @@ class Pwl
+ 	};
+ 
+ 	Pwl();
++#ifdef __QNX__
++	Pwl(const std::vector<Point, NothrowAllocator<Point>> &points);
++	Pwl(std::vector<Point, NothrowAllocator<Point>> &&points);
++#else
+ 	Pwl(const std::vector<Point> &points);
+ 	Pwl(std::vector<Point> &&points);
++#endif
+ 
+ 	void append(double x, double y, double eps = 1e-6);
+ 
+@@ -78,7 +83,11 @@ class Pwl
+ 	void prepend(double x, double y, double eps = 1e-6);
+ 	int findSpan(double x, int span) const;
+ 
++#ifdef __QNX__
++	std::vector<Point, NothrowAllocator<Point>> points_;
++#else
+ 	std::vector<Point> points_;
++#endif
+ };
+ 
+ } /* namespace ipa */
+diff --git a/src/ipa/rpi/cam_helper/cam_helper.cpp b/src/ipa/rpi/cam_helper/cam_helper.cpp
+index a78db9c1c..3b8ad75b8 100644
+--- a/src/ipa/rpi/cam_helper/cam_helper.cpp
++++ b/src/ipa/rpi/cam_helper/cam_helper.cpp
+@@ -5,13 +5,21 @@
+  * helper information for different sensors
+  */
+ 
++#ifndef __QNX__
+ #include <linux/videodev2.h>
++#endif
+ 
+ #include <limits>
+ #include <map>
+ #include <string.h>
+ 
++#ifndef __QNX__
+ #include "libcamera/internal/v4l2_videodevice.h"
++#endif
++
++#ifdef __QNX__
++#include <libcamera/base/log.h>
++#endif
+ 
+ #include "cam_helper.h"
+ #include "md_parser.h"
+diff --git a/src/ipa/rpi/cam_helper/cam_helper.h b/src/ipa/rpi/cam_helper/cam_helper.h
+index 4a826690e..1c51e009a 100644
+--- a/src/ipa/rpi/cam_helper/cam_helper.h
++++ b/src/ipa/rpi/cam_helper/cam_helper.h
+@@ -18,7 +18,9 @@
+ #include "controller/metadata.h"
+ #include "md_parser.h"
+ 
++#ifndef __QNX__
+ #include "libcamera/internal/v4l2_videodevice.h"
++#endif
+ 
+ namespace RPiController {
+ 
+diff --git a/src/ipa/rpi/cam_helper/cam_helper_imx500.cpp b/src/ipa/rpi/cam_helper/cam_helper_imx500.cpp
+index 6b12f3021..334c4c46c 100644
+--- a/src/ipa/rpi/cam_helper/cam_helper_imx500.cpp
++++ b/src/ipa/rpi/cam_helper/cam_helper_imx500.cpp
+@@ -18,7 +18,9 @@
+ #include <libcamera/base/log.h>
+ #include <libcamera/base/span.h>
+ 
++#ifndef __QNX__
+ #include <libcamera/control_ids.h>
++#endif
+ 
+ #include "imx500_tensor_parser/imx500_tensor_parser.h"
+ 
+diff --git a/src/ipa/rpi/cam_helper/md_parser.h b/src/ipa/rpi/cam_helper/md_parser.h
+index 227c376ce..7c1a3c725 100644
+--- a/src/ipa/rpi/cam_helper/md_parser.h
++++ b/src/ipa/rpi/cam_helper/md_parser.h
+@@ -53,6 +53,10 @@
+  * before calling Parse again.
+  */
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ namespace RPiController {
+ 
+ /* Abstract base class from which other metadata parsers are derived. */
+@@ -60,7 +64,12 @@ namespace RPiController {
+ class MdParser
+ {
+ public:
++#ifdef __QNX__
++	using RegisterMap =
++		std::map<uint32_t, uint32_t, std::less<uint32_t>, NothrowAllocator<std::pair<const uint32_t, uint32_t>>>;
++#else
+ 	using RegisterMap = std::map<uint32_t, uint32_t>;
++#endif
+ 
+ 	/*
+ 	 * Parser status codes:
+diff --git a/src/ipa/rpi/controller/agc_algorithm.h b/src/ipa/rpi/controller/agc_algorithm.h
+index fdaa10e6c..a9525adb8 100644
+--- a/src/ipa/rpi/controller/agc_algorithm.h
++++ b/src/ipa/rpi/controller/agc_algorithm.h
+@@ -20,7 +20,11 @@ class AgcAlgorithm : public Algorithm
+ 	AgcAlgorithm(Controller *controller) : Algorithm(controller) {}
+ 	/* An AGC algorithm must provide the following: */
+ 	virtual unsigned int getConvergenceFrames() const = 0;
++#ifdef __QNX__
++	virtual std::vector<double, NothrowAllocator<double>> const &getWeights() const = 0;
++#else
+ 	virtual std::vector<double> const &getWeights() const = 0;
++#endif
+ 	virtual void setEv(unsigned int channel, double ev) = 0;
+ 	virtual void setFlickerPeriod(libcamera::utils::Duration flickerPeriod) = 0;
+ 	virtual void setFixedExposureTime(unsigned int channel,
+@@ -36,7 +40,11 @@ class AgcAlgorithm : public Algorithm
+ 	virtual void enableAutoGain() = 0;
+ 	virtual void disableAutoGain() = 0;
+ 	virtual bool autoGainEnabled() const = 0;
++#ifdef __QNX__
++	virtual void setActiveChannels(const std::vector<unsigned int, NothrowAllocator<unsigned int>> &activeChannels) = 0;
++#else
+ 	virtual void setActiveChannels(const std::vector<unsigned int> &activeChannels) = 0;
++#endif
+ };
+ 
+ } /* namespace RPiController */
+diff --git a/src/ipa/rpi/controller/alsc_status.h b/src/ipa/rpi/controller/alsc_status.h
+index 329e8a377..01e6d6071 100644
+--- a/src/ipa/rpi/controller/alsc_status.h
++++ b/src/ipa/rpi/controller/alsc_status.h
+@@ -8,15 +8,25 @@
+ 
+ #include <vector>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ /*
+  * The ALSC algorithm should post the following structure into the image's
+  * "alsc.status" metadata.
+  */
+ 
+ struct AlscStatus {
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> r;
++	std::vector<double, NothrowAllocator<double>> g;
++	std::vector<double, NothrowAllocator<double>> b;
++#else
+ 	std::vector<double> r;
+ 	std::vector<double> g;
+ 	std::vector<double> b;
++#endif
+ 	unsigned int rows;
+ 	unsigned int cols;
+ };
+diff --git a/src/ipa/rpi/controller/cac_status.h b/src/ipa/rpi/controller/cac_status.h
+index adffce411..6102a2d20 100644
+--- a/src/ipa/rpi/controller/cac_status.h
++++ b/src/ipa/rpi/controller/cac_status.h
+@@ -7,8 +7,15 @@
+ #pragma once
+ 
+ struct CacStatus {
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> lutRx;
++	std::vector<double, NothrowAllocator<double>> lutRy;
++	std::vector<double, NothrowAllocator<double>> lutBx;
++	std::vector<double, NothrowAllocator<double>> lutBy;
++#else
+ 	std::vector<double> lutRx;
+ 	std::vector<double> lutRy;
+ 	std::vector<double> lutBx;
+ 	std::vector<double> lutBy;
++#endif
+ };
+diff --git a/src/ipa/rpi/controller/controller.h b/src/ipa/rpi/controller/controller.h
+index e58baed41..f7b9f840f 100644
+--- a/src/ipa/rpi/controller/controller.h
++++ b/src/ipa/rpi/controller/controller.h
+@@ -101,7 +101,11 @@ class Controller
+ 	int createAlgorithm(const std::string &name, const libcamera::YamlObject &params);
+ 
+ 	Metadata globalMetadata_;
++#ifdef __QNX__
++	std::vector<AlgorithmPtr, NothrowAllocator<AlgorithmPtr>> algorithms_;
++#else
+ 	std::vector<AlgorithmPtr> algorithms_;
++#endif
+ 	bool switchModeCalled_;
+ 
+ private:
+diff --git a/src/ipa/rpi/controller/hdr_algorithm.h b/src/ipa/rpi/controller/hdr_algorithm.h
+index b889d8fdf..7ef988e3d 100644
+--- a/src/ipa/rpi/controller/hdr_algorithm.h
++++ b/src/ipa/rpi/controller/hdr_algorithm.h
+@@ -19,7 +19,11 @@ class HdrAlgorithm : public Algorithm
+ 		: Algorithm(controller) {}
+ 	/* An HDR algorithm must provide the following: */
+ 	virtual int setMode(std::string const &modeName) = 0;
++#ifdef __QNX__
++	virtual std::vector<unsigned int, NothrowAllocator<unsigned int>> getChannels() const = 0;
++#else
+ 	virtual std::vector<unsigned int> getChannels() const = 0;
++#endif
+ };
+ 
+ } /* namespace RPiController */
+diff --git a/src/ipa/rpi/controller/histogram.h b/src/ipa/rpi/controller/histogram.h
+index ab4e5e311..1eb1b370c 100644
+--- a/src/ipa/rpi/controller/histogram.h
++++ b/src/ipa/rpi/controller/histogram.h
+@@ -10,6 +10,10 @@
+ #include <vector>
+ #include <cassert>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ /*
+  * A simple histogram class, for use in particular to find "quantiles" and
+  * averages between "quantiles".
+@@ -49,7 +53,11 @@ class Histogram
+ 	double interQuantileMean(double qLo, double qHi) const;
+ 
+ private:
++#ifdef __QNX__
++	std::vector<uint64_t, NothrowAllocator<uint64_t>> cumulative_;
++#else
+ 	std::vector<uint64_t> cumulative_;
++#endif
+ };
+ 
+ } /* namespace RPiController */
+diff --git a/src/ipa/rpi/controller/metadata.h b/src/ipa/rpi/controller/metadata.h
+index 77d3b0745..b98553f10 100644
+--- a/src/ipa/rpi/controller/metadata.h
++++ b/src/ipa/rpi/controller/metadata.h
+@@ -16,6 +16,10 @@
+ 
+ #include <libcamera/base/thread_annotations.h>
+ 
++#ifdef __QNX__
++#include <no_throw_any.h>
++#endif
++
+ namespace RPiController {
+ 
+ class LIBCAMERA_TSA_CAPABILITY("mutex") Metadata
+@@ -36,13 +40,31 @@ class LIBCAMERA_TSA_CAPABILITY("mutex") Metadata
+ 		other.data_.clear();
+ 	}
+ 
+-	template<typename T>
+-	void set(std::string const &tag, T &&value)
+-	{
+-		std::scoped_lock lock(mutex_);
+-		data_[tag] = std::forward<T>(value);
+-	}
++    template<typename T>
++    void set(const std::string &tag, T&& value) noexcept {
++        std::scoped_lock lock(mutex_);
++        data_[tag].set(std::forward<T>(value));
++    }
+ 
++#ifdef __QNX__
++	template<typename T>
++    int get(const std::string &tag, T &value) const noexcept
++    {
++        auto it = data_.find(tag);
++        if (it == data_.end()) {
++            return -1;
++        }
++
++        if (auto ptr = it->second.any_cast<T>())
++        {   // Safe, returns nullptr if mismatch
++            value = *ptr;
++            return 0;
++        }
++
++        // Type mismatch
++        return -2;
++    }
++#else
+ 	template<typename T>
+ 	int get(std::string const &tag, T &value) const
+ 	{
+@@ -53,6 +75,7 @@ class LIBCAMERA_TSA_CAPABILITY("mutex") Metadata
+ 		value = std::any_cast<T>(it->second);
+ 		return 0;
+ 	}
++#endif
+ 
+ 	void clear()
+ 	{
+@@ -107,7 +130,12 @@ class LIBCAMERA_TSA_CAPABILITY("mutex") Metadata
+ 		auto it = data_.find(tag);
+ 		if (it == data_.end())
+ 			return nullptr;
++#ifdef __QNX__
++		// Use NowthrowAny's custom any_cast function
++		return it->second.any_cast<T>();
++#else
+ 		return std::any_cast<T>(&it->second);
++#endif
+ 	}
+ 
+ 	template<typename T>
+@@ -136,7 +164,16 @@ class LIBCAMERA_TSA_CAPABILITY("mutex") Metadata
+ 
+ private:
+ 	mutable std::mutex mutex_;
++#ifdef __QNX__
++	using MapType = std::map<
++        std::string,
++        NothrowAny,
++        std::less<std::string>,
++        NothrowAllocator<std::pair<const std::string, NothrowAny>>>;
++    MapType data_;
++#else
+ 	std::map<std::string, std::any> data_;
++#endif
+ };
+ 
+ } /* namespace RPiController */
+diff --git a/src/ipa/rpi/controller/region_stats.h b/src/ipa/rpi/controller/region_stats.h
+index c60f7d9a8..0caf5282a 100644
+--- a/src/ipa/rpi/controller/region_stats.h
++++ b/src/ipa/rpi/controller/region_stats.h
+@@ -12,6 +12,10 @@
+ 
+ #include <libcamera/geometry.h>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ namespace RPiController {
+ 
+ template<typename T>
+@@ -116,7 +120,11 @@ class RegionStats
+ 
+ 	libcamera::Size size_;
+ 	unsigned int numFloating_;
++#ifdef __QNX__
++	std::vector<Region, NothrowAllocator<Region>> regions_;
++#else
+ 	std::vector<Region> regions_;
++#endif
+ 	Region default_;
+ };
+ 
+diff --git a/src/ipa/rpi/controller/rpi/af.cpp b/src/ipa/rpi/controller/rpi/af.cpp
+index 26e599303..e00c6777a 100644
+--- a/src/ipa/rpi/controller/rpi/af.cpp
++++ b/src/ipa/rpi/controller/rpi/af.cpp
+@@ -13,7 +13,9 @@
+ 
+ #include <libcamera/base/log.h>
+ 
++#ifndef __QNX__
+ #include <libcamera/control_ids.h>
++#endif
+ 
+ using namespace RPiController;
+ using namespace libcamera;
+diff --git a/src/ipa/rpi/controller/rpi/agc.cpp b/src/ipa/rpi/controller/rpi/agc.cpp
+index 02bfdb4a5..1ddc549d8 100644
+--- a/src/ipa/rpi/controller/rpi/agc.cpp
++++ b/src/ipa/rpi/controller/rpi/agc.cpp
+@@ -138,7 +138,11 @@ unsigned int Agc::getConvergenceFrames() const
+ 	return channelData_[0].channel.getConvergenceFrames() * activeChannels_.size();
+ }
+ 
++#ifdef __QNX__
++std::vector<double, NothrowAllocator<double>> const &Agc::getWeights() const
++#else
+ std::vector<double> const &Agc::getWeights() const
++#endif
+ {
+ 	/*
+ 	 * In future the metering weights may be determined differently, making it
+@@ -229,7 +233,11 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v)
+ 	return os;
+ }
+ 
++#ifdef __QNX__
++void Agc::setActiveChannels(const std::vector<unsigned int, NothrowAllocator<unsigned int>> &activeChannels)
++#else
+ void Agc::setActiveChannels(const std::vector<unsigned int> &activeChannels)
++#endif
+ {
+ 	if (activeChannels.empty()) {
+ 		LOG(RPiAgc, Warning) << "No active AGC channels supplied";
+@@ -240,7 +248,9 @@ void Agc::setActiveChannels(const std::vector<unsigned int> &activeChannels)
+ 		if (checkChannel(index))
+ 			return;
+ 
++#ifndef __QNX__
+ 	LOG(RPiAgc, Debug) << "setActiveChannels " << activeChannels;
++#endif
+ 	activeChannels_ = activeChannels;
+ 	index_ = 0;
+ }
+diff --git a/src/ipa/rpi/controller/rpi/agc.h b/src/ipa/rpi/controller/rpi/agc.h
+index c3a940bf6..f12100549 100644
+--- a/src/ipa/rpi/controller/rpi/agc.h
++++ b/src/ipa/rpi/controller/rpi/agc.h
+@@ -29,7 +29,11 @@ class Agc : public AgcAlgorithm
+ 	char const *name() const override;
+ 	int read(const libcamera::YamlObject &params) override;
+ 	unsigned int getConvergenceFrames() const override;
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> const &getWeights() const override;
++#else
+ 	std::vector<double> const &getWeights() const override;
++#endif
+ 	void setEv(unsigned int channel, double ev) override;
+ 	void setFlickerPeriod(libcamera::utils::Duration flickerPeriod) override;
+ 	void setMaxExposureTime(libcamera::utils::Duration maxExposureTime) override;
+@@ -49,12 +53,21 @@ class Agc : public AgcAlgorithm
+ 	void switchMode(CameraMode const &cameraMode, Metadata *metadata) override;
+ 	void prepare(Metadata *imageMetadata) override;
+ 	void process(StatisticsPtr &stats, Metadata *imageMetadata) override;
++#ifdef __QNX__
++	void setActiveChannels(const std::vector<unsigned int, NothrowAllocator<unsigned int>> &activeChannels) override;
++#else
+ 	void setActiveChannels(const std::vector<unsigned int> &activeChannels) override;
++#endif
+ 
+ private:
+ 	int checkChannel(unsigned int channel) const;
++#ifdef __QNX__
++	std::vector<AgcChannelData, NothrowAllocator<AgcChannelData>> channelData_;
++	std::vector<unsigned int, NothrowAllocator<unsigned int>> activeChannels_;
++#else
+ 	std::vector<AgcChannelData> channelData_;
+ 	std::vector<unsigned int> activeChannels_;
++#endif
+ 	unsigned int index_; /* index into the activeChannels_ */
+ 	AgcChannelTotalExposures channelTotalExposures_;
+ };
+diff --git a/src/ipa/rpi/controller/rpi/agc_channel.cpp b/src/ipa/rpi/controller/rpi/agc_channel.cpp
+index b2999364b..6330a1420 100644
+--- a/src/ipa/rpi/controller/rpi/agc_channel.cpp
++++ b/src/ipa/rpi/controller/rpi/agc_channel.cpp
+@@ -258,7 +258,12 @@ int AgcConfig::read(const libcamera::YamlObject &params)
+ 
+ 	stableRegion = params["stable_region"].get<double>(0.02);
+ 
++#ifdef __QNX__
++	// Disable desaturation due to flickering
++	desaturate = params["desaturate"].get<int>(0);
++#else
+ 	desaturate = params["desaturate"].get<int>(1);
++#endif
+ 
+ 	return 0;
+ }
+@@ -362,7 +367,11 @@ unsigned int AgcChannel::getConvergenceFrames() const
+ 		return config_.convergenceFrames;
+ }
+ 
++#ifdef __QNX__
++std::vector<double, NothrowAllocator<double>> const &AgcChannel::getWeights() const
++#else
+ std::vector<double> const &AgcChannel::getWeights() const
++#endif
+ {
+ 	/*
+ 	 * In case someone calls setMeteringMode and then this before the
+@@ -669,8 +678,13 @@ void AgcChannel::fetchAwbStatus(Metadata *imageMetadata)
+ 		LOG(RPiAgc, Debug) << "No AWB status found";
+ }
+ 
++#ifdef __QNX__
++static double computeInitialY(StatisticsPtr &stats, AwbStatus const &awb,
++			      std::vector<double, NothrowAllocator<double>> &weights, double gain)
++#else
+ static double computeInitialY(StatisticsPtr &stats, AwbStatus const &awb,
+ 			      std::vector<double> &weights, double gain)
++#endif
+ {
+ 	constexpr uint64_t maxVal = 1 << Statistics::NormalisationFactorPow2;
+ 
+diff --git a/src/ipa/rpi/controller/rpi/agc_channel.h b/src/ipa/rpi/controller/rpi/agc_channel.h
+index fa697e6fa..6a6e0a9d8 100644
+--- a/src/ipa/rpi/controller/rpi/agc_channel.h
++++ b/src/ipa/rpi/controller/rpi/agc_channel.h
+@@ -14,6 +14,10 @@
+ 
+ #include <libipa/pwl.h>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ #include "../agc_status.h"
+ #include "../awb_status.h"
+ #include "../controller.h"
+@@ -25,13 +29,22 @@ namespace RPiController {
+ using AgcChannelTotalExposures = std::vector<libcamera::utils::Duration>;
+ 
+ struct AgcMeteringMode {
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> weights;
++#else
+ 	std::vector<double> weights;
++#endif
+ 	int read(const libcamera::YamlObject &params);
+ };
+ 
+ struct AgcExposureMode {
++#ifdef __QNX__
++	std::vector<libcamera::utils::Duration, NothrowAllocator<libcamera::utils::Duration>> exposureTime;
++	std::vector<double, NothrowAllocator<double>> gain;
++#else
+ 	std::vector<libcamera::utils::Duration> exposureTime;
+ 	std::vector<double> gain;
++#endif
+ 	int read(const libcamera::YamlObject &params);
+ };
+ 
+@@ -87,7 +100,11 @@ class AgcChannel
+ 	int read(const libcamera::YamlObject &params,
+ 		 const Controller::HardwareConfig &hardwareConfig);
+ 	unsigned int getConvergenceFrames() const;
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> const &getWeights() const;
++#else
+ 	std::vector<double> const &getWeights() const;
++#endif
+ 	void setEv(double ev);
+ 	void setFlickerPeriod(libcamera::utils::Duration flickerPeriod);
+ 	void setMaxExposureTime(libcamera::utils::Duration maxExposureTime);
+diff --git a/src/ipa/rpi/controller/rpi/awb.cpp b/src/ipa/rpi/controller/rpi/awb.cpp
+index 365b595ff..8480980f0 100644
+--- a/src/ipa/rpi/controller/rpi/awb.cpp
++++ b/src/ipa/rpi/controller/rpi/awb.cpp
+@@ -785,7 +785,10 @@ void Awb::doAwb()
+ 	 * we're done with these; we may as well relinquish our hold on the
+ 	 * pointer.
+ 	 */
++#ifndef __QNX__
++	// Avoid using std::shared_ptr to have std::nothrow for new
+ 	statistics_.reset();
++#endif
+ }
+ 
+ /* Register algorithm with the system. */
+diff --git a/src/ipa/rpi/controller/rpi/cac.cpp b/src/ipa/rpi/controller/rpi/cac.cpp
+index 17779ad54..75ca91110 100644
+--- a/src/ipa/rpi/controller/rpi/cac.cpp
++++ b/src/ipa/rpi/controller/rpi/cac.cpp
+@@ -42,8 +42,13 @@ static bool arrayToSet(const libcamera::YamlObject &params, std::vector<double>
+ 	return num == max_num;
+ }
+ 
++#ifdef __QNX__
++static void setStrength(std::vector<double, NothrowAllocator<double>> &inputArray, std::vector<double, NothrowAllocator<double>> &outputArray,
++			double strengthFactor)
++#else
+ static void setStrength(std::vector<double> &inputArray, std::vector<double> &outputArray,
+ 			double strengthFactor)
++#endif
+ {
+ 	int num = 0;
+ 	for (const auto &p : inputArray) {
+diff --git a/src/ipa/rpi/controller/rpi/hdr.cpp b/src/ipa/rpi/controller/rpi/hdr.cpp
+index f3da8291b..26c594e44 100644
+--- a/src/ipa/rpi/controller/rpi/hdr.cpp
++++ b/src/ipa/rpi/controller/rpi/hdr.cpp
+@@ -146,7 +146,11 @@ int Hdr::setMode(std::string const &mode)
+ 	return 0;
+ }
+ 
++#ifdef __QNX__
++std::vector<unsigned int, NothrowAllocator<unsigned int>> Hdr::getChannels() const
++#else
+ std::vector<unsigned int> Hdr::getChannels() const
++#endif
+ {
+ 	return config_.at(status_.mode).cadence;
+ }
+diff --git a/src/ipa/rpi/controller/rpi/hdr.h b/src/ipa/rpi/controller/rpi/hdr.h
+index 5c2f3988d..21131c3f0 100644
+--- a/src/ipa/rpi/controller/rpi/hdr.h
++++ b/src/ipa/rpi/controller/rpi/hdr.h
+@@ -23,7 +23,11 @@ namespace RPiController {
+ 
+ struct HdrConfig {
+ 	std::string name;
++#ifdef __QNX__
++	std::vector<unsigned int, NothrowAllocator<unsigned int>> cadence;
++#else
+ 	std::vector<unsigned int> cadence;
++#endif
+ 	std::map<unsigned int, std::string> channelMap;
+ 
+ 	/* Lens shading related parameters. */
+@@ -39,12 +43,24 @@ struct HdrConfig {
+ 	libcamera::ipa::Pwl tonemap;
+ 	/* These relate to adaptive tonemap calculation. */
+ 	double speed;
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> hiQuantileTargets;
++#else
+ 	std::vector<double> hiQuantileTargets; /* quantiles to check for unsaturated images */
++#endif
+ 	double hiQuantileMaxGain; /* the max gain we'll apply when unsaturated */
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> quantileTargets;
++#else
+ 	std::vector<double> quantileTargets; /* target values for histogram quantiles */
++#endif
+ 	double powerMin; /* minimum tonemap power */
+ 	double powerMax; /* maximum tonemap power */
++#ifdef __QNX__
++	std::vector<double, NothrowAllocator<double>> contrastAdjustments;
++#else
+ 	std::vector<double> contrastAdjustments; /* any contrast adjustment factors */
++#endif
+ 
+ 	/* Stitch related parameters. */
+ 	bool stitchEnable;
+@@ -65,7 +81,11 @@ class Hdr : public HdrAlgorithm
+ 	void prepare(Metadata *imageMetadata) override;
+ 	void process(StatisticsPtr &stats, Metadata *imageMetadata) override;
+ 	int setMode(std::string const &mode) override;
++#ifdef __QNX__
++	std::vector<unsigned int, NothrowAllocator<unsigned int>> getChannels() const override;
++#else
+ 	std::vector<unsigned int> getChannels() const override;
++#endif
+ 
+ private:
+ 	void updateAgcStatus(Metadata *metadata);
+diff --git a/src/ipa/rpi/controller/statistics.h b/src/ipa/rpi/controller/statistics.h
+index cbd81161d..d5e892ce7 100644
+--- a/src/ipa/rpi/controller/statistics.h
++++ b/src/ipa/rpi/controller/statistics.h
+@@ -10,6 +10,10 @@
+ #include <stdint.h>
+ #include <vector>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ #include "histogram.h"
+ #include "region_stats.h"
+ 
+@@ -63,7 +67,11 @@ struct Statistics {
+ 	Histogram yHist;
+ 
+ 	/* Row sums for flicker avoidance. */
++#ifdef __QNX__
++	std::vector<RgbySums, NothrowAllocator<RgbySums>> rowSums;
++#else
+ 	std::vector<RgbySums> rowSums;
++#endif
+ 
+ 	/* Region based colour sums. */
+ 	RgbyRegions agcRegions;
+@@ -72,7 +80,12 @@ struct Statistics {
+ 	/* Region based focus FoM. */
+ 	FocusRegions focusRegions;
+ };
+-
++#ifdef __QNX__
++// Avoid using std::shared_ptr to have std::nothrow for new so that
++// slog2 is not flooded with warnings
++using StatisticsPtr = Statistics*;
++#else
+ using StatisticsPtr = std::shared_ptr<Statistics>;
++#endif
+ 
+ } /* namespace RPiController */
+diff --git a/src/ipa/rpi/qnx/log_handler.cpp b/src/ipa/rpi/qnx/log_handler.cpp
+new file mode 100644
+index 000000000..0794f9e0a
+--- /dev/null
++++ b/src/ipa/rpi/qnx/log_handler.cpp
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (c) 2025 BlackBerry Limited. All Rights Reserved.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *    http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++/**
++ * @file log_handler.c
++ *
++ * @brief Implements the logging for the application
++ *
++ */
++
++#include "log_handler.h"
++
++#include <errno.h>
++#include <stdarg.h>
++#include <stdint.h>
++#include <stdio.h>
++
++static const char* BUFFER_NAME_MAIN = "main";
++
++// Global variable for use by log macros
++static slog2_buffer_t slog2_buffer = NULL;
++
++int loghInit(int verbosity, const char* bufferName)
++{
++    slog2_buffer_set_config_t buffer_config;
++
++    // Create a own small (8 kB) buffer for logging
++    buffer_config.buffer_set_name              = (char*) bufferName;
++    buffer_config.num_buffers                  = 1;
++    buffer_config.verbosity_level              = verbosity;
++    buffer_config.buffer_config[0].buffer_name = (char*) BUFFER_NAME_MAIN;
++    buffer_config.buffer_config[0].num_pages   = 8;
++    // Register the Buffer Set
++    if (slog2_register(&buffer_config, &slog2_buffer, 0) == 0) {
++        LOG_INFO("Registered with slog2");
++    } else {
++        // We will not have any logging - logging to NULL buffer is harmless
++        slog2_buffer = NULL;
++        return EIO;
++    }
++
++    return EOK;
++}
++
++void loghEntry(int severity, const char* format, ...)
++{
++    va_list arg;
++    // Preserve errno
++    int ext_errno = errno;
++
++    va_start(arg, format);
++    vslog2f(slog2_buffer, 0, severity, format, arg);
++    va_end(arg);
++
++    errno = ext_errno;
++}
+diff --git a/src/ipa/rpi/qnx/log_handler.h b/src/ipa/rpi/qnx/log_handler.h
+new file mode 100644
+index 000000000..8abd23380
+--- /dev/null
++++ b/src/ipa/rpi/qnx/log_handler.h
+@@ -0,0 +1,93 @@
++/*
++ * Copyright (c) 2024 BlackBerry Limited. All Rights Reserved.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *    http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++/**
++ * @file log_handler.h
++ *
++ * @brief Implements the logging for the application
++ *
++ */
++
++#ifndef _LOG_HANDLER_H_
++#define _LOG_HANDLER_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sys/slog2.h>
++
++/**
++ * @brief Macros to add a log at a given severity level
++ * @details
++ * Call the appropriate macro to add a log entry at a given severity level; the
++ * log will only be visible if this severity level is below or equal our
++ * verbosity level.  Macros add in function name and line number to each log
++ * entry.
++ *
++ * @param format printf-style format string
++ * @param args variable argument list
++ */
++#define LOG_CRITICAL(format, args...) \
++    loghEntry(SLOG2_CRITICAL, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_ERROR(format, args...) \
++    loghEntry(SLOG2_ERROR, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_WARNING(format, args...) \
++    loghEntry(SLOG2_WARNING, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_NOTICE(format, args...) \
++    loghEntry(SLOG2_NOTICE, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_INFO(format, args...) \
++    loghEntry(SLOG2_INFO, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_DEBUG1(format, args...) \
++    loghEntry(SLOG2_DEBUG1, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++#define LOG_DEBUG2(format, args...) \
++    loghEntry(SLOG2_DEBUG2, "%s(%d): " format, __PRETTY_FUNCTION__, __LINE__, ##args);
++
++/**
++ * @brief Initialize our logging system before first use
++ * @details
++ * This is for logging generated directly from this application.  Needs to be
++ * called once before any logging occurs.
++ *
++ * @param verbosity The desired slog2 verbosity for the logs
++ * @param bufferName Buffer name for slog2
++ *
++ * @return @c int which is EOK on success, error code on failure
++ */
++int loghInit(int verbosity, const char* bufferName);
++
++/**
++ * @brief Add a log entry at a given severity level
++ * @details
++ * Macros call this function to add a log entry; do not call directly, use the
++ * macros instead.
++ *
++ * @param severity 0-7 defined severity levels from slog2
++ * @format printf-style format string
++ */
++void loghEntry(int severity, const char* format, ...) __attribute__((format(printf, 2, 3)));
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif  // _LOG_HANDLER_H_
+diff --git a/src/ipa/rpi/qnx/no_throw_allocator.h b/src/ipa/rpi/qnx/no_throw_allocator.h
+new file mode 100644
+index 000000000..d24c318ef
+--- /dev/null
++++ b/src/ipa/rpi/qnx/no_throw_allocator.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/*
++ * Copyright (C) 2019-2023, Raspberry Pi Ltd
++ *
++ * Raspberry Pi IPA
++ *
++ * This custom allocator is for supplying std::nothrow
++ * to std::vector to avoid QNX slog2 being flooded with
++ * warning messages
++ */
++
++#ifndef NO_THROW_ALLOCATOR_H
++#define NO_THROW_ALLOCATOR_H
++
++#include <new>
++#include <cstddef>
++#include <limits>
++#include <type_traits>
++#include <memory>
++
++template <typename T>
++struct NothrowAllocator {
++    using value_type = T;
++
++    // Default constructor
++    NothrowAllocator() noexcept = default;
++
++    // Copy from other type
++    template <class U>
++    NothrowAllocator(const NothrowAllocator<U>&) noexcept {}
++
++    // Allocate memory using ::operator new (std::nothrow)
++    T* allocate(std::size_t size)
++    {
++        if (size == 0) {
++            return nullptr;
++        }
++        // Prevent overflow
++        if (size > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
++            throw std::bad_alloc();
++        }
++
++        void* ptr = ::operator new(size * sizeof(T), std::nothrow);
++        if (!ptr) {
++            throw std::bad_alloc();
++        }
++        return static_cast<T*>(ptr);
++    }
++
++    // Deallocate memory
++    void deallocate(T* ptr, std::size_t) noexcept
++    {
++        ::operator delete(ptr);
++    }
++
++    bool operator==(const NothrowAllocator&) const noexcept
++    {
++        return true;
++    }
++    bool operator!=(const NothrowAllocator&) const noexcept
++    {
++        return false;
++    }
++};
++
++
++#endif
+diff --git a/src/ipa/rpi/qnx/no_throw_any.h b/src/ipa/rpi/qnx/no_throw_any.h
+new file mode 100644
+index 000000000..cad2ada2e
+--- /dev/null
++++ b/src/ipa/rpi/qnx/no_throw_any.h
+@@ -0,0 +1,233 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/*
++ * Copyright (C) 2019-2023, Raspberry Pi Ltd
++ *
++ * NothrowAny - std::any replacement
++ *
++ * This custom class is a replacement for std::any which uses
++ * dynamic allocation
++ */
++
++#ifndef NO_THROW_ANY_H
++#define NO_THROW_ANY_H
++
++#include <type_traits>
++#include <typeinfo>
++#include <utility>
++#include <new>
++#include <cstring>
++#include <cstddef>
++#include <cassert>
++
++class NothrowAny {
++public:
++    NothrowAny() noexcept
++        : mType(&typeid(void)),
++          mDestroyFn(nullptr),
++          mCopyFn(nullptr),
++          mMoveFn(nullptr)
++    {}
++
++    ~NothrowAny() noexcept
++    {
++        destroy();
++    }
++
++    // Copy constructor
++    NothrowAny(const NothrowAny& other)
++    {
++        mType = &typeid(void);
++        mDestroyFn = nullptr;
++        mCopyFn = nullptr;
++        mMoveFn = nullptr;
++        if (other.has_value()) {
++            other.mCopyFn(&other.mStorage, &mStorage);
++            mType = other.mType;
++            mDestroyFn = other.mDestroyFn;
++            mCopyFn = other.mCopyFn;
++            mMoveFn = other.mMoveFn;
++        }
++    }
++
++    // Move constructor
++    NothrowAny(NothrowAny&& other) noexcept
++    {
++        mType = &typeid(void);
++        mDestroyFn = nullptr;
++        mCopyFn = nullptr;
++        mMoveFn = nullptr;
++        if (other.has_value()) {
++            other.mMoveFn(&other.mStorage, &mStorage);
++            mType = other.mType;
++            mDestroyFn = other.mDestroyFn;
++            mCopyFn = other.mCopyFn;
++            mMoveFn = other.mMoveFn;
++
++            // leave other empty
++            other.mDestroyFn = nullptr;
++            other.mCopyFn = nullptr;
++            other.mMoveFn = nullptr;
++            other.mType = &typeid(void);
++        }
++    }
++
++    // Copy assignment
++    NothrowAny& operator=(const NothrowAny& other)
++    {
++        if (this == &other) {
++            return *this;
++        }
++        NothrowAny tmp(other);
++        swap(tmp);
++        return *this;
++    }
++
++    // Move assignment
++    NothrowAny& operator=(NothrowAny&& other) noexcept
++    {
++        if (this == &other) {
++            return *this;
++        }
++        destroy();
++        if (other.has_value()) {
++            other.mMoveFn(&other.mStorage, &mStorage);
++            mType = other.mType;
++            mDestroyFn = other.mDestroyFn;
++            mCopyFn = other.mCopyFn;
++            mMoveFn = other.mMoveFn;
++
++            other.mDestroyFn = nullptr;
++            other.mCopyFn = nullptr;
++            other.mMoveFn = nullptr;
++            other.mType = &typeid(void);
++        } else {
++            mType = &typeid(void);
++            mDestroyFn = nullptr;
++            mCopyFn = nullptr;
++            mMoveFn = nullptr;
++        }
++        return *this;
++    }
++
++    // Construct from value
++    template<typename T>
++    NothrowAny(T&& value)
++    {
++        static_assert(sizeof(std::remove_cv_t<std::remove_reference_t<T>>) <= SBO_SIZE,
++                      "Type too large for NothrowAny");
++        mType = &typeid(void);
++        mDestroyFn = nullptr;
++        mCopyFn = nullptr;
++        mMoveFn = nullptr;
++        store(std::forward<T>(value));
++    }
++
++    // Store a new value and replace the existing value
++    template<typename T>
++    void set(T&& value)
++    {
++        static_assert(sizeof(std::remove_cv_t<std::remove_reference_t<T>>) <= SBO_SIZE,
++                      "Type too large for NothrowAny");
++        store(std::forward<T>(value));
++    }
++
++    // Non-throwing pointer-style cast
++    template<typename T>
++    T* any_cast() noexcept
++    {
++        if (*mType != typeid(T)) {
++            return nullptr;
++        }
++        return reinterpret_cast<T*>(&mStorage);
++    }
++
++    template<typename T>
++    const T* any_cast() const noexcept
++    {
++        if (*mType != typeid(T)) {
++            return nullptr;
++        }
++        return reinterpret_cast<const T*>(&mStorage);
++    }
++
++    // check
++    bool has_value() const noexcept
++    {
++        return *mType != typeid(void);
++    }
++
++    // swap
++    void swap(NothrowAny& other) noexcept
++    {
++        // Swap buffers by using std::move
++        if (this == &other) return;
++
++        NothrowAny tmp(std::move(*this));
++        *this = std::move(other);
++        other = std::move(tmp);
++    }
++
++private:
++    static constexpr size_t SBO_SIZE = 256;
++    using Storage = typename std::aligned_storage<SBO_SIZE>::type;
++    Storage mStorage;
++    const std::type_info* mType;
++
++    void (*mDestroyFn)(void*) noexcept;
++    void (*mCopyFn)(const void* src, void* dest);
++    void (*mMoveFn)(void* src, void* dest) noexcept;
++
++    // Destroy stored object if any
++    void destroy() noexcept
++    {
++        if (mDestroyFn) {
++            mDestroyFn(&mStorage);
++            mDestroyFn = nullptr;
++        }
++        mType = &typeid(void);
++        mCopyFn = nullptr;
++        mMoveFn = nullptr;
++    }
++
++    template<typename T>
++    static void destroyImpl(void* p) noexcept
++    {
++        reinterpret_cast<T*>(p)->~T();
++    }
++
++    template<typename T>
++    static void copyImpl(const void* src, void* dest)
++    {
++        new (dest) T(*reinterpret_cast<const T*>(src));
++    }
++
++    template<typename T>
++    static void moveImpl(void* src, void* dest) noexcept
++    {
++        new (dest) T(std::move(*reinterpret_cast<T*>(src)));
++        // destroy source
++        reinterpret_cast<T*>(src)->~T();
++    }
++
++    template<typename T>
++    void setOpsAndType() noexcept
++    {
++        mDestroyFn = &destroyImpl<T>;
++        mCopyFn = &copyImpl<T>;
++        mMoveFn = &moveImpl<T>;
++        mType = &typeid(T);
++    }
++
++    template<typename T>
++    void store(T&& value)
++    {
++        // Destroy previous
++        destroy();
++
++        using U = std::remove_cv_t<std::remove_reference_t<T>>;
++        new (&mStorage) U(std::forward<T>(value));
++        setOpsAndType<U>();
++    }
++};
++
++#endif
+diff --git a/src/ipa/rpi/qnx/pisp_statistics.h b/src/ipa/rpi/qnx/pisp_statistics.h
+new file mode 100644
+index 000000000..8414ec590
+--- /dev/null
++++ b/src/ipa/rpi/qnx/pisp_statistics.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
++/*
++ * RP1 PiSP Front End statistics definitions
++ *
++ * Copyright (C) 2021 - Raspberry Pi Ltd.
++ *
++ * This file is taken from RPi Linux GitHub repository
++ */
++
++#ifdef __QNX__
++#include <stdint.h>
++typedef uint32_t u32;
++typedef uint64_t u64;
++#endif
++
++#ifndef _PISP_FE_STATISTICS_H_
++#define _PISP_FE_STATISTICS_H_
++
++#define PISP_FLOATING_STATS_NUM_ZONES 4
++#define PISP_AGC_STATS_NUM_BINS 1024
++#define PISP_AGC_STATS_SIZE 16
++#define PISP_AGC_STATS_NUM_ZONES (PISP_AGC_STATS_SIZE * PISP_AGC_STATS_SIZE)
++#define PISP_AGC_STATS_NUM_ROW_SUMS 512
++
++struct pisp_agc_statistics_zone {
++	u64 Y_sum;
++	u32 counted;
++	u32 pad;
++};
++
++struct pisp_agc_statistics {
++	u32 row_sums[PISP_AGC_STATS_NUM_ROW_SUMS];
++	/*
++	 * 32-bits per bin means an image (just less than) 16384x16384 pixels
++	 * in size can weight every pixel from 0 to 15.
++	 */
++	u32 histogram[PISP_AGC_STATS_NUM_BINS];
++	struct pisp_agc_statistics_zone floating[PISP_FLOATING_STATS_NUM_ZONES];
++};
++
++#define PISP_AWB_STATS_SIZE 32
++#define PISP_AWB_STATS_NUM_ZONES (PISP_AWB_STATS_SIZE * PISP_AWB_STATS_SIZE)
++
++struct pisp_awb_statistics_zone {
++	u32 R_sum;
++	u32 G_sum;
++	u32 B_sum;
++	u32 counted;
++};
++
++struct pisp_awb_statistics {
++	struct pisp_awb_statistics_zone zones[PISP_AWB_STATS_NUM_ZONES];
++	struct pisp_awb_statistics_zone floating[PISP_FLOATING_STATS_NUM_ZONES];
++};
++
++#define PISP_CDAF_STATS_SIZE 8
++#define PISP_CDAF_STATS_NUM_FOMS (PISP_CDAF_STATS_SIZE * PISP_CDAF_STATS_SIZE)
++
++struct pisp_cdaf_statistics {
++	u64 foms[PISP_CDAF_STATS_NUM_FOMS];
++	u64 floating[PISP_FLOATING_STATS_NUM_ZONES];
++};
++
++struct pisp_statistics {
++	struct pisp_awb_statistics awb;
++	struct pisp_agc_statistics agc;
++	struct pisp_cdaf_statistics cdaf;
++};
++
++#endif /* _PISP_FE_STATISTICS_H_ */
+diff --git a/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h b/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+new file mode 100644
+index 000000000..cd27636fe
+--- /dev/null
++++ b/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/*
++ * Copyright (C) 2019-2023, Raspberry Pi Ltd
++ *
++ * Raspberry Pi IPA
++ *
++ * Modified by BlackBerry Limited
++ */
++
++#ifndef RPI_CAMERA_IPA
++#define RPI_CAMERA_IPA
++
++#include <stddef.h>
++#include <stdint.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++typedef enum {
++    RPI_NONE = 0,
++    RPI4,
++    RPI5,
++} rpiPlatform_t;
++
++// Forward declaration
++struct RpiIpaHandle_t;
++
++/**
++ * @brief Start the image processing algorithm library
++ *
++ * Make sure to call this function before calling @c rpiIpaProcessData
++ *
++ * @param[in] platform Enum indicating which @c rpiPlatform_t it is
++ * @param[in] configPath Absolute path to an algorithm config file
++ * @param[in] sensorName Name of sensorName
++ * @param[in] width Width of the current viewfinder in pixels
++ * @param[in] height Height of the current viewfinder in pixels
++ *
++ * @return Return a handle to the image processing algorithm library on
++ * success, otherwise a NULL
++ */
++RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
++                            const char* configPath,
++                            const char* sensorName,
++                            uint16_t width,
++                            uint16_t height);
++
++/**
++ * @brief Clean up the image processing algorithm library
++ *
++ * @param[in] handle Handle to the image processing algorithm library
++ */
++void rpiIpaStop(RpiIpaHandle_t* handle);
++
++/**
++ * @brief Feed sensor embedded metadata and ISP metadata into the algorithms
++ *
++ * @param[in] handle Handle to the library
++ * @param[in] sensorMetadata Buffer containing sensor embedded metadata
++ * @param[in] sensorMetadataSize Size of @c sensorMetadata in bytes
++ * @param[in] ispMetadata Buffer containing ISP metadata
++ * @param[in] ispMetadataSize Size of @c ispMetadata in bytes
++ * @param[out] exposureTime Output exposure time to set on the sensor
++ * @param[out] iso Output iso to set on the sensor
++ *
++ * @return Return EOK on success, otherwise an error
++ */
++int rpiIpaProcessData(RpiIpaHandle_t* handle,
++                      void* sensorMetadata,
++                      size_t sensorMetadataSize,
++                      void* ispMetadata,
++                      size_t ispMetadataSize,
++                      int32_t* exposureTime,
++                      int32_t* iso);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif // RPI_CAMERA_IPA
+diff --git a/src/ipa/rpi/qnx/rpi_camera_ipa.cpp b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+new file mode 100644
+index 000000000..780929ce6
+--- /dev/null
++++ b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+@@ -0,0 +1,505 @@
++/* SPDX-License-Identifier: BSD-2-Clause */
++/*
++ * Copyright (C) 2019-2023, Raspberry Pi Ltd
++ *
++ * Raspberry Pi IPA
++ *
++ * Modified by BlackBerry Limited
++ *
++ * This file takes functions from the following files to
++ * make algorithms usable for QNX:
++ *
++ * src/ipa/rpi/common/ipa_base.cpp
++ * src/ipa/rpi/pisp/pisp.cpp
++ * src/ipa/rpi/vc4/vc4.cpp
++ */
++
++#include "rpi_camera_ipa.h"
++
++#include <errno.h>
++#include <memory>
++
++#include <log_handler.h>
++#include <linux/bcm2835-isp.h>
++#include <libcamera/base/log.h>
++#include <libcamera/base/span.h>
++
++#include "pisp_statistics.h"
++
++#include "cam_helper/cam_helper.h"
++#include "controller/agc_algorithm.h"
++#include "controller/agc_status.h"
++#include "controller/controller.h"
++
++using namespace std::chrono_literals;
++using namespace std::literals::chrono_literals;
++
++// slog2 name
++static const char* LOG_NAME =                                   "rpi_camera_ipa";
++
++// Configure the sensor with these values initially.
++constexpr double defaultAnalogueGain =                          1.0;
++constexpr libcamera::utils::Duration defaultExposureTime =      20.0ms;
++constexpr libcamera::utils::Duration defaultMinFrameDuration =  1.0s / 30.0;
++constexpr libcamera::utils::Duration defaultMaxFrameDuration =  250.0s;
++
++// imx708 sensor constants
++constexpr uint16_t IMX708_MAX_SENSOR_WIDTH =                    4608u;
++constexpr uint16_t IMX708_MAX_SENSOR_HEIGHT =                   2592u;
++constexpr uint32_t IMX708_BITS_PER_PIXEL =                      10u;
++constexpr uint32_t IMX708_MIN_GAIN_CODE =                       112u;
++constexpr uint32_t IMX708_MAX_GAIN_CODE =                       960u;
++constexpr uint32_t IMX708_DEFAULT_EXPOSURE_LINES =              0x640u;
++constexpr uint32_t IMX708_DEFAULT_VBLANK =                      1198u;
++constexpr uint32_t IMX708_DEFAULT_HBLANK =                      5520u;
++constexpr uint64_t IMX708_PIXEL_RATE =                          585600000u;
++constexpr uint64_t IMX708_MIN_FRAME_LENGTH =                    1336u;
++constexpr uint64_t IMX708_MAX_FRAME_LENGTH =                    8388480u;
++constexpr int IMX708_MIN_LINE_LENGTH =                          7824;
++constexpr int IMX708_MAX_LINE_LENGTH =                          7824;
++constexpr libcamera::utils::Duration IMX708_MAX_EXPOSURE_TIME = 32680.16us;
++
++// Data structure to keep track of the library state
++struct RpiIpaHandle_t {
++    std::unique_ptr<RPiController::CamHelper> camHelper {};
++    RPiController::Controller controller                {};
++    RPiController::Metadata rpiMetadata                 {};
++    rpiPlatform_t rpiPlatform                           {};
++    CameraMode cameraMode                               {};
++};
++
++extern "C" {
++
++/**
++ * @brief Set initial camera mode with imx708 default values
++ *
++ * This modified function is taken from src/ipa/rpi/common/ipa_base.cpp
++ *
++ * In Linux, this function would read a generated sensor config file, but
++ * we don't have that mechanism so hardcode imx708 values for now
++ *
++ * @param[in] handle Handle to the library
++ * @param[in] width Width of the current viewfinder in pixels
++ * @param[in] height Height of the current viewfinder in pixels
++ */
++static void setMode(RpiIpaHandle_t* handle, uint16_t width, uint16_t height)
++{
++    handle->cameraMode.bitdepth = IMX708_BITS_PER_PIXEL;
++    handle->cameraMode.width = width;
++    handle->cameraMode.height = height;
++    handle->cameraMode.sensorWidth = IMX708_MAX_SENSOR_WIDTH;
++    handle->cameraMode.sensorHeight = IMX708_MAX_SENSOR_HEIGHT;
++    handle->cameraMode.cropX = 0;
++    handle->cameraMode.cropY = 0;
++    handle->cameraMode.pixelRate = IMX708_PIXEL_RATE;
++
++    /*
++     * Calculate scaling parameters. The scale_[xy] factors are determined
++     * by the ratio between the crop rectangle size and the output size.
++     */
++    handle->cameraMode.scaleX = (double) IMX708_MAX_SENSOR_WIDTH / width;
++    handle->cameraMode.scaleY = (double) IMX708_MAX_SENSOR_HEIGHT / height;
++
++    /*
++     * We're not told by the pipeline handler how scaling is split between
++     * binning and digital scaling. For now, as a heuristic, assume that
++     * downscaling up to 2 is achieved through binning, and that any
++     * additional scaling is achieved through digital scaling.
++     *
++     * \todo Get the pipeline handle to provide the full data
++     */
++    handle->cameraMode.binX = std::min(2, static_cast<int>(handle->cameraMode.scaleX));
++    handle->cameraMode.binY = std::min(2, static_cast<int>(handle->cameraMode.scaleY));
++
++    /* The noise factor is the square root of the total binning factor. */
++    handle->cameraMode.noiseFactor = std::sqrt(handle->cameraMode.binX * handle->cameraMode.binY);
++
++    /*
++     * Calculate the line length as the ratio between the line length in
++     * pixels and the pixel rate.
++     */
++    handle->cameraMode.minLineLength = IMX708_MIN_LINE_LENGTH * (1.0s / IMX708_PIXEL_RATE);
++    handle->cameraMode.maxLineLength = IMX708_MAX_LINE_LENGTH * (1.0s / IMX708_PIXEL_RATE);
++
++    /*
++     * Ensure that the maximum pixel processing rate does not exceed the ISP
++     * hardware capabilities. If it does, try adjusting the minimum line
++     * length to compensate if possible.
++     */
++    libcamera::utils::Duration minPixelTime = handle->controller.getHardwareConfig().minPixelProcessingTime;
++    libcamera::utils::Duration pixelTime = handle->cameraMode.minLineLength / handle->cameraMode.width;
++    if (minPixelTime && pixelTime < minPixelTime) {
++        libcamera::utils::Duration adjustedLineLength = minPixelTime * handle->cameraMode.width;
++        if (adjustedLineLength <= handle->cameraMode.maxLineLength) {
++            LOG_INFO("Adjusting mode minimum line length from  %d to %d because of ISP constraints", handle->cameraMode.minLineLength, adjustedLineLength);
++            handle->cameraMode.minLineLength = adjustedLineLength;
++        } else {
++            LOG_ERROR("Sensor minimum line length of %d is below the minimum allowable ISP limit of %d MPix/s", pixelTime * handle->cameraMode.width, adjustedLineLength);
++            LOG_ERROR("THIS WILL CAUSE IMAGE CORRUPTION!!! Please update the camera sensor driver to allow more horizontal blanking control.");
++        }
++    }
++
++    /*
++     * Set the frame length limits for the mode to ensure exposure and
++     * framerate calculations are clipped appropriately.
++     */
++    handle->cameraMode.minFrameLength = IMX708_MIN_FRAME_LENGTH;
++    handle->cameraMode.maxFrameLength = IMX708_MAX_FRAME_LENGTH;
++
++    /* Store these for convenience. */
++    handle->cameraMode.minFrameDuration = handle->cameraMode.minFrameLength * handle->cameraMode.minLineLength;
++    handle->cameraMode.maxFrameDuration = handle->cameraMode.maxFrameLength * handle->cameraMode.maxLineLength;
++
++    /*
++     * Some sensors may have different sensitivities in different modes;
++     * the CamHelper will know the correct value.
++     */
++    handle->cameraMode.sensitivity = handle->camHelper->getModeSensitivity(handle->cameraMode);
++
++    handle->cameraMode.minAnalogueGain = handle->camHelper->gain(IMX708_MIN_GAIN_CODE);
++    handle->cameraMode.maxAnalogueGain = handle->camHelper->gain(IMX708_MAX_GAIN_CODE);
++
++    /*
++     * We need to give the helper the min/max frame durations so it can calculate
++     * the correct exposure limits below.
++     */
++    handle->camHelper->setCameraMode(handle->cameraMode);
++
++    /*
++     * Exposure time is calculated based on the limits of the frame
++     * durations.
++     */
++    handle->cameraMode.minExposureTime = handle->camHelper->exposure(1,
++                          handle->cameraMode.minLineLength);
++    handle->cameraMode.maxExposureTime = libcamera::utils::Duration::max();
++    handle->camHelper->getBlanking(handle->cameraMode.maxExposureTime, handle->cameraMode.minFrameDuration,
++                 handle->cameraMode.maxFrameDuration);
++}
++
++/**
++ * @brief Helper function for filling RPiController::Metadata with
++ * sensor default values
++ *
++ * This modified function is taken from src/ipa/rpi/common/ipa_base.cpp
++ *
++ * In Linux, this function uses v4l2 to get the current imx708 sensor
++ * values. Set default values for now for QNX.
++ *
++ * @param[in] handle Handle to the library
++ * @param[in,out] rpiMetadata Fill this variable with default imx708 values
++ *
++ * @return Return EOK on sucess, otherwise an error
++ */
++static int fillDeviceStatus(RpiIpaHandle_t* handle, RPiController::Metadata& rpiMetadata)
++{
++    // Sanity check
++    if (handle == NULL) {
++        LOG_ERROR("Invalid handle");
++        return EINVAL;
++    }
++
++    DeviceStatus deviceStatus = {};
++
++    // Set to default imx708 values
++    int32_t exposureLines = IMX708_DEFAULT_EXPOSURE_LINES;
++    int32_t gainCode = IMX708_MIN_GAIN_CODE;
++    int32_t vblank = IMX708_DEFAULT_VBLANK;
++    int32_t hblank = IMX708_DEFAULT_HBLANK;
++
++    deviceStatus.lineLength = handle->camHelper->hblankToLineLength(hblank);
++    deviceStatus.exposureTime = handle->camHelper->exposure(exposureLines, deviceStatus.lineLength);
++    deviceStatus.analogueGain = handle->camHelper->gain(gainCode);
++    deviceStatus.frameLength = handle->cameraMode.height + vblank;
++
++    rpiMetadata.set("device.status", deviceStatus);
++
++    return EOK;
++}
++
++/**
++ * @brief Helper function for parsing RPi4 ISP metadata
++ *
++ * This modified function is taken from src/ipa/rpi/vc4/vc4.cpp
++ *
++ * @param[in] handle Handle to the library
++ * @param[in] mem ISP metadata buffer
++ *
++ * @return Return @c RPiController::StatisticsPtr containing parsed ISP metadata
++ */
++static RPiController::StatisticsPtr rpi4ProcessStats(RpiIpaHandle_t* handle, const libcamera::Span<uint8_t>& mem)
++{
++    // Sanity check
++    if (handle == NULL) {
++        LOG_ERROR("NULL handle");
++        return NULL;
++    }
++
++    const bcm2835_isp_stats *stats = reinterpret_cast<bcm2835_isp_stats *>(mem.data());
++    RPiController::StatisticsPtr statistics = new (std::nothrow) RPiController::Statistics( RPiController::Statistics::AgcStatsPos::PreWb,
++                                 RPiController::Statistics::ColourStatsPos::PostLsc);
++    const RPiController::Controller::HardwareConfig &hw = handle->controller.getHardwareConfig();
++    unsigned int i;
++
++    /* RGB histograms are not used, so do not populate them. */
++    statistics->yHist = RPiController::Histogram(stats->hist[0].g_hist,
++                             hw.numHistogramBins);
++
++    /* All region sums are based on a 16-bit normalised pipeline bit-depth. */
++    unsigned int scale =  RPiController::Statistics::NormalisationFactorPow2 - hw.pipelineWidth;
++
++    statistics->awbRegions.init(hw.awbRegions);
++    for (i = 0; i < statistics->awbRegions.numRegions(); i++)
++        statistics->awbRegions.set(i, { { stats->awb_stats[i].r_sum << scale,
++                          stats->awb_stats[i].g_sum << scale,
++                          stats->awb_stats[i].b_sum << scale },
++                        stats->awb_stats[i].counted,
++                        stats->awb_stats[i].notcounted });
++
++    RPiController::AgcAlgorithm *agc = dynamic_cast<RPiController::AgcAlgorithm *>(
++        handle->controller.getAlgorithm("agc"));
++    if (!agc) {
++        LOG_ERROR("No AGC algorithm - not copying statistics");
++        statistics->agcRegions.init(0);
++    } else {
++        statistics->agcRegions.init(hw.agcRegions);
++        const std::vector<double, NothrowAllocator<double>> &weights = agc->getWeights();
++        for (i = 0; i < statistics->agcRegions.numRegions(); i++) {
++            uint64_t rSum = (stats->agc_stats[i].r_sum << scale) * weights[i];
++            uint64_t gSum = (stats->agc_stats[i].g_sum << scale) * weights[i];
++            uint64_t bSum = (stats->agc_stats[i].b_sum << scale) * weights[i];
++            uint32_t counted = stats->agc_stats[i].counted * weights[i];
++            uint32_t notcounted = stats->agc_stats[i].notcounted * weights[i];
++            statistics->agcRegions.set(i, { { rSum, gSum, bSum },
++                            counted,
++                            notcounted });
++        }
++    }
++
++    statistics->focusRegions.init(hw.focusRegions);
++    for (i = 0; i < statistics->focusRegions.numRegions(); i++)
++        statistics->focusRegions.set(i, { stats->focus_stats[i].contrast_val[1][1] / 1000,
++                          stats->focus_stats[i].contrast_val_num[1][1],
++                          stats->focus_stats[i].contrast_val_num[1][0] });
++
++    return statistics;
++}
++
++/**
++ * @brief Helper function for parsing RPi5 ISP metadata
++ *
++ * This modified function is taken from src/ipa/rpi/pisp/pisp.cpp
++ *
++ * @param[in] handle Handle to the library
++ * @param[in] mem ISP metadata buffer
++ *
++ * @return Return @c RPiController::StatisticsPtr containing parsed ISP metadata
++ */
++static RPiController::StatisticsPtr rpi5ProcessStats(RpiIpaHandle_t* handle, const libcamera::Span<uint8_t>& mem)
++{
++    // Sanity check
++    if (handle == NULL) {
++        LOG_ERROR("NULL handle");
++        return NULL;
++    }
++
++    const pisp_statistics *stats = reinterpret_cast<pisp_statistics *>(mem.data());
++
++    RPiController::AgcAlgorithm *agc = dynamic_cast<RPiController::AgcAlgorithm *>(
++        handle->controller.getAlgorithm("agc"));
++    agc->setMeteringMode("matrix");
++    agc->setEv(0, 1.0);
++
++    unsigned int i;
++    RPiController::StatisticsPtr statistics =
++        new (std::nothrow) RPiController::Statistics(RPiController::Statistics::AgcStatsPos::PostWb,
++                                                     RPiController::Statistics::ColourStatsPos::PreLsc);
++
++    /* RGB histograms are not used, so do not populate them. */
++    statistics->yHist = RPiController::Histogram(stats->agc.histogram,
++                             PISP_AGC_STATS_NUM_BINS);
++
++    statistics->awbRegions.init({ PISP_AWB_STATS_SIZE, PISP_AWB_STATS_SIZE });
++    for (i = 0; i < statistics->awbRegions.numRegions(); i++)
++        statistics->awbRegions.set(i, { { stats->awb.zones[i].R_sum,
++                          stats->awb.zones[i].G_sum,
++                          stats->awb.zones[i].B_sum },
++                        stats->awb.zones[i].counted, 0 });
++
++    /* AGC region sums only get collected on floating zones. */
++    statistics->agcRegions.init({ 0, 0 }, PISP_FLOATING_STATS_NUM_ZONES);
++    for (i = 0; i < statistics->agcRegions.numRegions(); i++)
++        statistics->agcRegions.setFloating(i,
++                           { { 0, 0, 0, stats->agc.floating[i].Y_sum },
++                             stats->agc.floating[i].counted, 0 });
++
++    statistics->focusRegions.init({ PISP_CDAF_STATS_SIZE, PISP_CDAF_STATS_SIZE });
++    for (i = 0; i < statistics->focusRegions.numRegions(); i++)
++        statistics->focusRegions.set(i, { stats->cdaf.foms[i] >> 20, 0, 0 });
++
++    return statistics;
++}
++
++RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
++                            const char* configPath,
++                            const char* sensorName,
++                            uint16_t width,
++                            uint16_t height)
++{
++    int err;
++
++    // Initialize logging
++    err = loghInit(SLOG2_INFO, LOG_NAME);
++    if (err != EOK) {
++        (void) fprintf(stderr, "Failed to initialize logging\n");
++        return NULL;
++    }
++
++    RpiIpaHandle_t* handle = new (std::nothrow) RpiIpaHandle_t();
++
++    // This library only supports RPi4 and RPi5
++    if ((platform == rpiPlatform_t::RPI4) ||
++        (platform == rpiPlatform_t::RPI5)) {
++        handle->rpiPlatform = platform;
++    } else {
++        LOG_ERROR("Invalid platform: %d", platform);
++        delete handle;
++        return NULL;
++    }
++
++    // Create a camera helper
++    handle->camHelper = std::unique_ptr<RPiController::CamHelper>(RPiController::CamHelper::create(sensorName));
++    if (handle->camHelper == NULL) {
++        LOG_ERROR("Failed to create a camera helper for %s", sensorName);
++        delete handle;
++        return NULL;
++    }
++
++    // Configure algorithms with the given configuration file
++    err = handle->controller.read(configPath);
++    if (err != EOK) {
++        LOG_ERROR("Failed to load tuning data file %s: err = %d", configPath, err);
++        delete handle;
++        return NULL;
++    }
++
++    // Initialize algorithms
++    handle->controller.initialise();
++    handle->camHelper->setHwConfig(handle->controller.getHardwareConfig());
++
++    // Set camera mode
++    setMode(handle, width, height);
++    handle->camHelper->setCameraMode(handle->cameraMode);
++
++    // Clear metadata and fill with default values
++    handle->rpiMetadata.clear();
++    err = fillDeviceStatus(handle, handle->rpiMetadata);
++    if (err != EOK) {
++        LOG_ERROR("Failed to fill device status: err = %d", err);
++        return NULL;
++    }
++
++    // Switch algorithm mode according to the parsed metadata
++    handle->controller.switchMode(handle->cameraMode, &handle->rpiMetadata);
++
++    // Set auto exposure algorithm settings
++    RPiController::AgcAlgorithm *agc = dynamic_cast<RPiController::AgcAlgorithm *>(
++    handle->controller.getAlgorithm("agc"));
++    if (agc == NULL) {
++        LOG_ERROR("Failed to get agc algorithm");
++        return NULL;
++    }
++    agc->setMaxExposureTime(IMX708_MAX_EXPOSURE_TIME);
++    agc->setEv(0, 1);
++
++    return handle;
++}
++
++void rpiIpaStop(RpiIpaHandle_t* handle)
++{
++    delete handle;
++}
++
++int rpiIpaProcessData(RpiIpaHandle_t* handle,
++                      void* sensorMetadata,
++                      size_t sensorMetadataSize,
++                      void* ispMetadata,
++                      size_t ispMetadataSize,
++                      int32_t* exposureTime,
++                      int32_t* iso)
++{
++    RPiController::StatisticsPtr statistics;
++
++    // Sanity check
++    if ((handle == NULL) ||
++        (sensorMetadata == NULL) ||
++        (ispMetadata == NULL) ||
++        (exposureTime == NULL) ||
++        (iso == NULL)) {
++        LOG_ERROR("NULL parameter");
++        return EINVAL;
++    }
++
++    libcamera::Span<uint8_t> sensorMem((uint8_t*)sensorMetadata, sensorMetadataSize);
++    libcamera::Span<uint8_t> ispMem((uint8_t*)ispMetadata, ispMetadataSize);
++
++    // Parse sensor embedded metadata
++    handle->camHelper->prepare(sensorMem, handle->rpiMetadata);
++    // Configure algorithms with the parsed sensor metadata
++    handle->controller.prepare(&handle->rpiMetadata);
++
++    // Parse ISP metadata
++    if (handle->rpiPlatform == RPI4) {
++        statistics = rpi4ProcessStats(handle, ispMem);
++    } else if (handle->rpiPlatform == RPI5) {
++        statistics = rpi5ProcessStats(handle, ispMem);
++    } else {
++        LOG_ERROR("Invalid RPi platform %d", handle->rpiPlatform);
++        return EINVAL;
++    }
++
++    // Make sure rpi*ProcessStats function has worked
++    if (statistics == NULL) {
++        LOG_ERROR("Failed to get parsed ISP metadata statistics");
++        return EINVAL;
++    }
++
++    // Sensor specific configuration with ISP metadata
++    handle->camHelper->process(statistics, handle->rpiMetadata);
++    // Run algorithms with the parsed ISP metadata
++    handle->controller.process(statistics, &handle->rpiMetadata);
++
++    // Get the auto exposure algorithm output
++    struct AgcStatus agcStatus;
++    if (handle->rpiMetadata.get("agc.status", agcStatus) != 0) {
++        delete statistics;
++        return EINVAL;
++    }
++
++    const int32_t minGainCode = handle->camHelper->gainCode(handle->cameraMode.minAnalogueGain);
++    const int32_t maxGainCode = handle->camHelper->gainCode(handle->cameraMode.maxAnalogueGain);
++    // Get the int32_t gainCode from agcStatus.analogueGain floating point
++    int32_t gainCode = handle->camHelper->gainCode(agcStatus.analogueGain);
++
++    /*
++     * Ensure anything larger than the max gain code will not be passed to
++     * DelayedControls. The AGC will correctly handle a lower gain returned
++     * by the sensor, provided it knows the actual gain used.
++     */
++    gainCode = std::clamp<int32_t>(gainCode, minGainCode, maxGainCode);
++    /* getBlanking might clip exposure time to the fps limits. */
++    libcamera::utils::Duration exposure = agcStatus.exposureTime;
++    auto [vblank, hblank] = handle->camHelper->getBlanking(exposure, handle->cameraMode.minFrameDuration,
++                 handle->cameraMode.maxFrameDuration);
++    int32_t exposureLines = handle->camHelper->exposureLines(exposure,
++                       handle->camHelper->hblankToLineLength(hblank));
++
++    // Return auto exposure algorithm outputs
++    *exposureTime = exposureLines;
++    *iso = gainCode;
++
++    delete statistics;
++
++    return EOK;
++}
++
++} // extern "C"
+diff --git a/src/libcamera/yaml_parser.cpp b/src/libcamera/yaml_parser.cpp
+index a5e424615..8ecc41da4 100644
+--- a/src/libcamera/yaml_parser.cpp
++++ b/src/libcamera/yaml_parser.cpp
+@@ -268,12 +268,20 @@ template<typename T,
+ 		 std::is_same_v<uint32_t, T> ||
+ 		 std::is_same_v<std::string, T> ||
+ 		 std::is_same_v<Size, T>> *>
++#ifdef __QNX__
++std::optional<std::vector<T, NothrowAllocator<T>>> YamlObject::getList() const
++#else
+ std::optional<std::vector<T>> YamlObject::getList() const
++#endif
+ {
+ 	if (type_ != Type::List)
+ 		return std::nullopt;
+ 
++#ifdef __QNX__
++	std::vector<T, NothrowAllocator<T>> values;
++#else
+ 	std::vector<T> values;
++#endif
+ 	values.reserve(list_.size());
+ 
+ 	for (const YamlObject &entry : asList()) {
+@@ -286,6 +294,19 @@ std::optional<std::vector<T>> YamlObject::getList() const
+ 	return values;
+ }
+ 
++#ifdef __QNX__
++template std::optional<std::vector<bool, NothrowAllocator<bool>>> YamlObject::getList<bool>() const;
++template std::optional<std::vector<float, NothrowAllocator<float>>> YamlObject::getList<float>() const;
++template std::optional<std::vector<double, NothrowAllocator<double>>> YamlObject::getList<double>() const;
++template std::optional<std::vector<int8_t, NothrowAllocator<int8_t>>> YamlObject::getList<int8_t>() const;
++template std::optional<std::vector<uint8_t, NothrowAllocator<uint8_t>>> YamlObject::getList<uint8_t>() const;
++template std::optional<std::vector<int16_t, NothrowAllocator<int16_t>>> YamlObject::getList<int16_t>() const;
++template std::optional<std::vector<uint16_t, NothrowAllocator<uint16_t>>> YamlObject::getList<uint16_t>() const;
++template std::optional<std::vector<int32_t, NothrowAllocator<int32_t>>> YamlObject::getList<int32_t>() const;
++template std::optional<std::vector<uint32_t, NothrowAllocator<uint32_t>>> YamlObject::getList<uint32_t>() const;
++template std::optional<std::vector<std::string, NothrowAllocator<std::string>>> YamlObject::getList<std::string>() const;
++template std::optional<std::vector<Size, NothrowAllocator<Size>>> YamlObject::getList<Size>() const;
++#else
+ template std::optional<std::vector<bool>> YamlObject::getList<bool>() const;
+ template std::optional<std::vector<float>> YamlObject::getList<float>() const;
+ template std::optional<std::vector<double>> YamlObject::getList<double>() const;
+@@ -297,6 +318,7 @@ template std::optional<std::vector<int32_t>> YamlObject::getList<int32_t>() cons
+ template std::optional<std::vector<uint32_t>> YamlObject::getList<uint32_t>() const;
+ template std::optional<std::vector<std::string>> YamlObject::getList<std::string>() const;
+ template std::optional<std::vector<Size>> YamlObject::getList<Size>() const;
++#endif
+ 
+ #endif /* __DOXYGEN__ */
+ 
+
+From ceea862aee56df0a7accbf7372cfc993d0a97e4e Mon Sep 17 00:00:00 2001
+From: James Choi <chachoi@qnx.com>
+Date: Wed, 1 Oct 2025 16:59:54 +0000
+Subject: [PATCH 2/4] Port RPi auto whitebalance algorithm to QNX
+
+QNXCAM-3641
+---
+ qnx/build/CMakeLists.txt                      |  1 +
+ src/ipa/libipa/pwl.cpp                        |  4 +
+ src/ipa/libipa/pwl.h                          | 39 +++++++++
+ src/ipa/rpi/controller/rpi/awb.cpp            |  9 ++
+ src/ipa/rpi/controller/rpi/awb.h              | 15 ++++
+ .../rpi/qnx/public/include/rpi_camera_ipa.h   |  8 +-
+ src/ipa/rpi/qnx/rpi_camera_ipa.cpp            | 82 ++++++++++++++++++-
+ 7 files changed, 155 insertions(+), 3 deletions(-)
+
+diff --git a/qnx/build/CMakeLists.txt b/qnx/build/CMakeLists.txt
+index c8ec53bfe..8a1dd88e4 100644
+--- a/qnx/build/CMakeLists.txt
++++ b/qnx/build/CMakeLists.txt
+@@ -36,6 +36,7 @@ set(SOURCE_CPP_FILES
+ 
+     ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc_channel.cpp
+     ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc.cpp
++    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/awb.cpp
+     ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/lux.cpp
+ 
+     ${PROJECT_ROOT}/src/ipa/rpi/qnx/log_handler.cpp
+diff --git a/src/ipa/libipa/pwl.cpp b/src/ipa/libipa/pwl.cpp
+index e767733d1..6468cea13 100644
+--- a/src/ipa/libipa/pwl.cpp
++++ b/src/ipa/libipa/pwl.cpp
+@@ -360,6 +360,7 @@ void Pwl::map(std::function<void(double x, double y)> f) const
+  * the combined list of x-values from \a pwl0 and \a pwl1, y0 is the y-value
+  * for the given x in \a pwl0, and y1 is the y-value for the same x in \a pwl1.
+  */
++#ifndef __QNX__
+ void Pwl::map2(Pwl const &pwl0, Pwl const &pwl1,
+ 	       std::function<void(double x, double y0, double y1)> f)
+ {
+@@ -380,6 +381,7 @@ void Pwl::map2(Pwl const &pwl0, Pwl const &pwl1,
+ 		f(x, pwl0.eval(x, &span0, false), pwl1.eval(x, &span1, false));
+ 	}
+ }
++#endif
+ 
+ /**
+  * \brief Combine two Pwls
+@@ -393,6 +395,7 @@ void Pwl::map2(Pwl const &pwl0, Pwl const &pwl1,
+  *
+  * \return The combined pwl
+  */
++#ifndef __QNX__
+ Pwl Pwl::combine(Pwl const &pwl0, Pwl const &pwl1,
+ 		 std::function<double(double x, double y0, double y1)> f,
+ 		 const double eps)
+@@ -403,6 +406,7 @@ Pwl Pwl::combine(Pwl const &pwl0, Pwl const &pwl1,
+ 	});
+ 	return result;
+ }
++#endif
+ 
+ /**
+  * \brief Multiply the piecewise linear function
+diff --git a/src/ipa/libipa/pwl.h b/src/ipa/libipa/pwl.h
+index a703105dd..dc60a7e3e 100644
+--- a/src/ipa/libipa/pwl.h
++++ b/src/ipa/libipa/pwl.h
+@@ -68,18 +68,57 @@ class Pwl
+ 
+ 	void map(std::function<void(double x, double y)> f) const;
+ 
++#ifdef __QNX__
++	// Don't use std::function to avoid the new operator
++	template<typename Func>
++	static Pwl combine(Pwl const &pwl0, Pwl const &pwl1, Func &&f, double eps = 1e-6)
++	{
++		// Implementation copied from the pwl.cpp file
++		Pwl result;
++		map2(pwl0, pwl1, [&](double x, double y0, double y1) {
++			result.append(x, f(x, y0, y1), eps);
++		});
++		return result;
++	}
++#else
+ 	static Pwl
+ 	combine(const Pwl &pwl0, const Pwl &pwl1,
+ 		std::function<double(double x, double y0, double y1)> f,
+ 		double eps = 1e-6);
++#endif
+ 
+ 	Pwl &operator*=(double d);
+ 
+ 	std::string toString() const;
+ 
+ private:
++#ifdef __QNX__
++	// Don't use std::function to avoid the new operator
++	template<typename Func>
++	static void map2(const Pwl &pwl0, const Pwl &pwl1, Func&& f)
++	{
++		// Implementation copied from the pwl.cpp file
++		int span0 = 0, span1 = 0;
++		double x = std::min(pwl0.points_[0].x(), pwl1.points_[0].x());
++		f(x, pwl0.eval(x, &span0, false), pwl1.eval(x, &span1, false));
++
++		while (span0 < (int)pwl0.points_.size() - 1 ||
++			span1 < (int)pwl1.points_.size() - 1) {
++			if (span0 == (int)pwl0.points_.size() - 1)
++				x = pwl1.points_[++span1].x();
++			else if (span1 == (int)pwl1.points_.size() - 1)
++				x = pwl0.points_[++span0].x();
++			else if (pwl0.points_[span0 + 1].x() > pwl1.points_[span1 + 1].x())
++				x = pwl1.points_[++span1].x();
++			else
++				x = pwl0.points_[++span0].x();
++			f(x, pwl0.eval(x, &span0, false), pwl1.eval(x, &span1, false));
++		}
++	}
++#else
+ 	static void map2(const Pwl &pwl0, const Pwl &pwl1,
+ 			 std::function<void(double x, double y0, double y1)> f);
++#endif
+ 	void prepend(double x, double y, double eps = 1e-6);
+ 	int findSpan(double x, int span) const;
+ 
+diff --git a/src/ipa/rpi/controller/rpi/awb.cpp b/src/ipa/rpi/controller/rpi/awb.cpp
+index 8480980f0..689e7256f 100644
+--- a/src/ipa/rpi/controller/rpi/awb.cpp
++++ b/src/ipa/rpi/controller/rpi/awb.cpp
+@@ -433,7 +433,11 @@ void Awb::asyncFunc()
+ 	}
+ }
+ 
++#ifdef __QNX__
++static void generateStats(std::vector<Awb::RGB, NothrowAllocator<Awb::RGB>> &zones,
++#else
+ static void generateStats(std::vector<Awb::RGB> &zones,
++#endif
+ 			  StatisticsPtr &stats, double minPixels,
+ 			  double minG, Metadata &globalMetadata,
+ 			  double biasProportion, double biasCtR, double biasCtB)
+@@ -737,8 +741,13 @@ void Awb::awbGrey()
+ 	 * consider some variations, such as normalising all the zones first, or
+ 	 * doing an L2 average etc.
+ 	 */
++#ifdef __QNX__
++	std::vector<RGB, NothrowAllocator<RGB>> &derivsR(zones_);
++	std::vector<RGB, NothrowAllocator<RGB>> derivsB(derivsR);
++#else
+ 	std::vector<RGB> &derivsR(zones_);
+ 	std::vector<RGB> derivsB(derivsR);
++#endif
+ 	std::sort(derivsR.begin(), derivsR.end(),
+ 		  [](RGB const &a, RGB const &b) {
+ 			  return a.G * b.R < b.G * a.R;
+diff --git a/src/ipa/rpi/controller/rpi/awb.h b/src/ipa/rpi/controller/rpi/awb.h
+index 2fb912541..b2d6e4f01 100644
+--- a/src/ipa/rpi/controller/rpi/awb.h
++++ b/src/ipa/rpi/controller/rpi/awb.h
+@@ -12,6 +12,10 @@
+ 
+ #include <libcamera/geometry.h>
+ 
++#ifdef __QNX__
++#include <no_throw_allocator.h>
++#endif
++
+ #include "../awb_algorithm.h"
+ #include "../awb_status.h"
+ #include "../statistics.h"
+@@ -48,9 +52,15 @@ struct AwbConfig {
+ 	libcamera::ipa::Pwl ctRInverse; /* inverse of ctR */
+ 	libcamera::ipa::Pwl ctBInverse; /* inverse of ctB */
+ 	/* table of illuminant priors at different lux levels */
++#ifdef __QNX__
++	std::vector<AwbPrior, NothrowAllocator<AwbPrior>> priors;
++	/* AWB "modes" (determines the search range) */
++	std::map<std::string, AwbMode, std::less<std::string>, NothrowAllocator<std::pair<const std::string, AwbMode>>> modes;
++#else
+ 	std::vector<AwbPrior> priors;
+ 	/* AWB "modes" (determines the search range) */
+ 	std::map<std::string, AwbMode> modes;
++#endif
+ 	AwbMode *defaultMode; /* mode used if no mode selected */
+ 	/*
+ 	 * minimum proportion of pixels counted within AWB region for it to be
+@@ -171,8 +181,13 @@ class Awb : public AwbAlgorithm
+ 	libcamera::ipa::Pwl interpolatePrior();
+ 	double coarseSearch(libcamera::ipa::Pwl const &prior);
+ 	void fineSearch(double &t, double &r, double &b, libcamera::ipa::Pwl const &prior);
++#ifdef __QNX__
++	std::vector<RGB, NothrowAllocator<RGB>> zones_;
++	std::vector<libcamera::ipa::Pwl::Point, NothrowAllocator<libcamera::ipa::Pwl::Point>> points_;
++#else
+ 	std::vector<RGB> zones_;
+ 	std::vector<libcamera::ipa::Pwl::Point> points_;
++#endif
+ 	/* manual r setting */
+ 	double manualR_;
+ 	/* manual b setting */
+diff --git a/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h b/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+index cd27636fe..dded9cf85 100644
+--- a/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
++++ b/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+@@ -63,6 +63,9 @@ void rpiIpaStop(RpiIpaHandle_t* handle);
+  * @param[in] ispMetadataSize Size of @c ispMetadata in bytes
+  * @param[out] exposureTime Output exposure time to set on the sensor
+  * @param[out] iso Output iso to set on the sensor
++ * @param[out] gainR Output red gain
++ * @param[out] gainG Output green gain
++ * @param[out] gainB output blue gain
+  *
+  * @return Return EOK on success, otherwise an error
+  */
+@@ -72,7 +75,10 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+                       void* ispMetadata,
+                       size_t ispMetadataSize,
+                       int32_t* exposureTime,
+-                      int32_t* iso);
++                      int32_t* iso,
++                      int32_t* gainR,
++                      int32_t* gainG,
++                      int32_t* gainB);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/src/ipa/rpi/qnx/rpi_camera_ipa.cpp b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+index 780929ce6..540647efe 100644
+--- a/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
++++ b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+@@ -29,6 +29,8 @@
+ #include "cam_helper/cam_helper.h"
+ #include "controller/agc_algorithm.h"
+ #include "controller/agc_status.h"
++#include "controller/awb_algorithm.h"
++#include "controller/awb_status.h"
+ #include "controller/controller.h"
+ 
+ using namespace std::chrono_literals;
+@@ -59,6 +61,14 @@ constexpr int IMX708_MIN_LINE_LENGTH =                          7824;
+ constexpr int IMX708_MAX_LINE_LENGTH =                          7824;
+ constexpr libcamera::utils::Duration IMX708_MAX_EXPOSURE_TIME = 32680.16us;
+ 
++// Multiply by this amount for RPi4 red blue green gains
++constexpr int32_t RPI4_WHITE_BALANCE_CONVERSION =               1000;
++
++// Number of output int32_t field bits for floating point to int32_t conversion
++constexpr size_t RPI5_WHITE_BALANCE_FIELD_BITS =                14;
++// Number of output int32_t fractional bits for floating point to int32_t conversion
++constexpr size_t RPI5_WHITE_BALANCE_FRACTIONAL_BITS =           10;
++
+ // Data structure to keep track of the library state
+ struct RpiIpaHandle_t {
+     std::unique_ptr<RPiController::CamHelper> camHelper {};
+@@ -216,6 +226,40 @@ static int fillDeviceStatus(RpiIpaHandle_t* handle, RPiController::Metadata& rpi
+     return EOK;
+ }
+ 
++/**
++ * @brief Helper function for converting a floating point to
++ * a fixed point integer
++ *
++ * This function is taken from src/ipa/rpi/pisp/pisp.cpp
++ *
++ * @param[in] value Floating point to convert
++ * @param[in] fieldBits Total number of bits for storing the int32_t integer
++ * @param[in] fracBits Number of fractional bits
++ * @param[in] isSigned @c value's sign
++ * @param[in] desc Optional description string
++ *
++ * @return Return the converted int32_t value
++ */
++static int32_t clampField(double value,
++                          std::size_t fieldBits,
++                          std::size_t fracBits = 0,
++                          bool isSigned = false,
++                          const char *desc = nullptr)
++{
++    ASSERT(fracBits <= fieldBits && fieldBits <= 32);
++
++    int min = -(isSigned << (fieldBits - 1));
++    int max = (1 << (fieldBits - isSigned)) - 1;
++    int32_t val =
++    std::clamp<int32_t>(std::round(value * (1 << fracBits)), min, max);
++
++    if (desc && val / (1 << fracBits) != value) {
++        LOG_WARNING("rounded/clamped to %f", val / (1 << fracBits));
++    }
++
++    return val;
++}
++
+ /**
+  * @brief Helper function for parsing RPi4 ISP metadata
+  *
+@@ -425,7 +469,10 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+                       void* ispMetadata,
+                       size_t ispMetadataSize,
+                       int32_t* exposureTime,
+-                      int32_t* iso)
++                      int32_t* iso,
++                      int32_t* gainR,
++                      int32_t* gainG,
++                      int32_t* gainB)
+ {
+     RPiController::StatisticsPtr statistics;
+ 
+@@ -434,7 +481,10 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+         (sensorMetadata == NULL) ||
+         (ispMetadata == NULL) ||
+         (exposureTime == NULL) ||
+-        (iso == NULL)) {
++        (iso == NULL) ||
++        (gainR == NULL) ||
++        (gainG == NULL) ||
++        (gainB == NULL)) {
+         LOG_ERROR("NULL parameter");
+         return EINVAL;
+     }
+@@ -475,6 +525,34 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+         return EINVAL;
+     }
+ 
++    // Get the auto whitebalance algorithm output
++    struct AwbStatus awbStatus;
++    if (handle->rpiMetadata.get("awb.status", awbStatus) != 0) {
++        delete statistics;
++        return EINVAL;
++    }
++
++    // Convert auto whitebalance output for each platform
++    if (handle->rpiPlatform == RPI4) {
++        *gainR = awbStatus.gainR * RPI4_WHITE_BALANCE_CONVERSION;
++        *gainG = awbStatus.gainG * RPI4_WHITE_BALANCE_CONVERSION;
++        *gainB = awbStatus.gainB * RPI4_WHITE_BALANCE_CONVERSION;
++    } else if (handle->rpiPlatform == RPI5) {
++        *gainR = clampField(awbStatus.gainR,
++                            RPI5_WHITE_BALANCE_FIELD_BITS,
++                            RPI5_WHITE_BALANCE_FRACTIONAL_BITS);
++        *gainG = clampField(awbStatus.gainG,
++                            RPI5_WHITE_BALANCE_FIELD_BITS,
++                            RPI5_WHITE_BALANCE_FRACTIONAL_BITS);
++        *gainB = clampField(awbStatus.gainB,
++                            RPI5_WHITE_BALANCE_FIELD_BITS,
++                            RPI5_WHITE_BALANCE_FRACTIONAL_BITS);
++    } else {
++        LOG_ERROR("Invalid RPi platform %d", handle->rpiPlatform);
++        delete statistics;
++        return EINVAL;
++    }
++
+     const int32_t minGainCode = handle->camHelper->gainCode(handle->cameraMode.minAnalogueGain);
+     const int32_t maxGainCode = handle->camHelper->gainCode(handle->cameraMode.maxAnalogueGain);
+     // Get the int32_t gainCode from agcStatus.analogueGain floating point
+
+From 01349740edc01115ec5315bd842c3915f2611c42 Mon Sep 17 00:00:00 2001
+From: James Choi <chachoi@qnx.com>
+Date: Tue, 7 Apr 2026 12:21:15 -0400
+Subject: [PATCH 3/4] Fix statistics ptr being used after delete
+
+QNXCAM-3540
+---
+ src/ipa/rpi/controller/histogram.h |   7 ++
+ src/ipa/rpi/qnx/rpi_camera_ipa.cpp | 131 ++++++++++++++++++-----------
+ 2 files changed, 88 insertions(+), 50 deletions(-)
+
+diff --git a/src/ipa/rpi/controller/histogram.h b/src/ipa/rpi/controller/histogram.h
+index 1eb1b370c..781a343ef 100644
+--- a/src/ipa/rpi/controller/histogram.h
++++ b/src/ipa/rpi/controller/histogram.h
+@@ -52,6 +52,13 @@ class Histogram
+ 	/* Return the average histogram bin value between the two quantiles. */
+ 	double interQuantileMean(double qLo, double qHi) const;
+ 
++#ifdef __QNX__
++	void clear()
++	{
++		cumulative_.clear();
++	}
++#endif
++
+ private:
+ #ifdef __QNX__
+ 	std::vector<uint64_t, NothrowAllocator<uint64_t>> cumulative_;
+diff --git a/src/ipa/rpi/qnx/rpi_camera_ipa.cpp b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+index 540647efe..d5a29c056 100644
+--- a/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
++++ b/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+@@ -76,6 +76,7 @@ struct RpiIpaHandle_t {
+     RPiController::Metadata rpiMetadata                 {};
+     rpiPlatform_t rpiPlatform                           {};
+     CameraMode cameraMode                               {};
++    RPiController::StatisticsPtr statistics             {};
+ };
+ 
+ extern "C" {
+@@ -279,53 +280,59 @@ static RPiController::StatisticsPtr rpi4ProcessStats(RpiIpaHandle_t* handle, con
+     }
+ 
+     const bcm2835_isp_stats *stats = reinterpret_cast<bcm2835_isp_stats *>(mem.data());
+-    RPiController::StatisticsPtr statistics = new (std::nothrow) RPiController::Statistics( RPiController::Statistics::AgcStatsPos::PreWb,
+-                                 RPiController::Statistics::ColourStatsPos::PostLsc);
++
++    // Reset statistics
++    handle->statistics->rHist.clear();
++    handle->statistics->gHist.clear();
++    handle->statistics->bHist.clear();
++    handle->statistics->yHist.clear();
++    handle->statistics->rowSums.clear();
++
+     const RPiController::Controller::HardwareConfig &hw = handle->controller.getHardwareConfig();
+     unsigned int i;
+ 
+     /* RGB histograms are not used, so do not populate them. */
+-    statistics->yHist = RPiController::Histogram(stats->hist[0].g_hist,
++    handle->statistics->yHist = RPiController::Histogram(stats->hist[0].g_hist,
+                              hw.numHistogramBins);
+ 
+     /* All region sums are based on a 16-bit normalised pipeline bit-depth. */
+     unsigned int scale =  RPiController::Statistics::NormalisationFactorPow2 - hw.pipelineWidth;
+ 
+-    statistics->awbRegions.init(hw.awbRegions);
+-    for (i = 0; i < statistics->awbRegions.numRegions(); i++)
+-        statistics->awbRegions.set(i, { { stats->awb_stats[i].r_sum << scale,
+-                          stats->awb_stats[i].g_sum << scale,
+-                          stats->awb_stats[i].b_sum << scale },
+-                        stats->awb_stats[i].counted,
+-                        stats->awb_stats[i].notcounted });
++    handle->statistics->awbRegions.init(hw.awbRegions);
++    for (i = 0; i < handle->statistics->awbRegions.numRegions(); i++)
++        handle->statistics->awbRegions.set(i, { { stats->awb_stats[i].r_sum << scale,
++                                                  stats->awb_stats[i].g_sum << scale,
++                                                  stats->awb_stats[i].b_sum << scale },
++                                                stats->awb_stats[i].counted,
++                                                stats->awb_stats[i].notcounted });
+ 
+     RPiController::AgcAlgorithm *agc = dynamic_cast<RPiController::AgcAlgorithm *>(
+         handle->controller.getAlgorithm("agc"));
+     if (!agc) {
+         LOG_ERROR("No AGC algorithm - not copying statistics");
+-        statistics->agcRegions.init(0);
++        handle->statistics->agcRegions.init(0);
+     } else {
+-        statistics->agcRegions.init(hw.agcRegions);
++        handle->statistics->agcRegions.init(hw.agcRegions);
+         const std::vector<double, NothrowAllocator<double>> &weights = agc->getWeights();
+-        for (i = 0; i < statistics->agcRegions.numRegions(); i++) {
++        for (i = 0; i < handle->statistics->agcRegions.numRegions(); i++) {
+             uint64_t rSum = (stats->agc_stats[i].r_sum << scale) * weights[i];
+             uint64_t gSum = (stats->agc_stats[i].g_sum << scale) * weights[i];
+             uint64_t bSum = (stats->agc_stats[i].b_sum << scale) * weights[i];
+             uint32_t counted = stats->agc_stats[i].counted * weights[i];
+             uint32_t notcounted = stats->agc_stats[i].notcounted * weights[i];
+-            statistics->agcRegions.set(i, { { rSum, gSum, bSum },
+-                            counted,
+-                            notcounted });
++            handle->statistics->agcRegions.set(i, { { rSum, gSum, bSum },
++                                                    counted,
++                                                    notcounted });
+         }
+     }
+ 
+-    statistics->focusRegions.init(hw.focusRegions);
+-    for (i = 0; i < statistics->focusRegions.numRegions(); i++)
+-        statistics->focusRegions.set(i, { stats->focus_stats[i].contrast_val[1][1] / 1000,
+-                          stats->focus_stats[i].contrast_val_num[1][1],
+-                          stats->focus_stats[i].contrast_val_num[1][0] });
++    handle->statistics->focusRegions.init(hw.focusRegions);
++    for (i = 0; i < handle->statistics->focusRegions.numRegions(); i++)
++        handle->statistics->focusRegions.set(i, { stats->focus_stats[i].contrast_val[1][1] / 1000,
++                                                  stats->focus_stats[i].contrast_val_num[1][1],
++                                                  stats->focus_stats[i].contrast_val_num[1][0] });
+ 
+-    return statistics;
++    return handle->statistics;
+ }
+ 
+ /**
+@@ -348,39 +355,43 @@ static RPiController::StatisticsPtr rpi5ProcessStats(RpiIpaHandle_t* handle, con
+ 
+     const pisp_statistics *stats = reinterpret_cast<pisp_statistics *>(mem.data());
+ 
++    // Reset statistics
++    handle->statistics->rHist.clear();
++    handle->statistics->gHist.clear();
++    handle->statistics->bHist.clear();
++    handle->statistics->yHist.clear();
++    handle->statistics->rowSums.clear();
++
+     RPiController::AgcAlgorithm *agc = dynamic_cast<RPiController::AgcAlgorithm *>(
+         handle->controller.getAlgorithm("agc"));
+     agc->setMeteringMode("matrix");
+     agc->setEv(0, 1.0);
+ 
+     unsigned int i;
+-    RPiController::StatisticsPtr statistics =
+-        new (std::nothrow) RPiController::Statistics(RPiController::Statistics::AgcStatsPos::PostWb,
+-                                                     RPiController::Statistics::ColourStatsPos::PreLsc);
+ 
+     /* RGB histograms are not used, so do not populate them. */
+-    statistics->yHist = RPiController::Histogram(stats->agc.histogram,
+-                             PISP_AGC_STATS_NUM_BINS);
++    handle->statistics->yHist = RPiController::Histogram(stats->agc.histogram,
++                                                         PISP_AGC_STATS_NUM_BINS);
+ 
+-    statistics->awbRegions.init({ PISP_AWB_STATS_SIZE, PISP_AWB_STATS_SIZE });
+-    for (i = 0; i < statistics->awbRegions.numRegions(); i++)
+-        statistics->awbRegions.set(i, { { stats->awb.zones[i].R_sum,
+-                          stats->awb.zones[i].G_sum,
+-                          stats->awb.zones[i].B_sum },
+-                        stats->awb.zones[i].counted, 0 });
++    handle->statistics->awbRegions.init({ PISP_AWB_STATS_SIZE, PISP_AWB_STATS_SIZE });
++    for (i = 0; i < handle->statistics->awbRegions.numRegions(); i++)
++        handle->statistics->awbRegions.set(i, { { stats->awb.zones[i].R_sum,
++                                                  stats->awb.zones[i].G_sum,
++                                                  stats->awb.zones[i].B_sum },
++                                                  stats->awb.zones[i].counted, 0 });
+ 
+     /* AGC region sums only get collected on floating zones. */
+-    statistics->agcRegions.init({ 0, 0 }, PISP_FLOATING_STATS_NUM_ZONES);
+-    for (i = 0; i < statistics->agcRegions.numRegions(); i++)
+-        statistics->agcRegions.setFloating(i,
++    handle->statistics->agcRegions.init({ 0, 0 }, PISP_FLOATING_STATS_NUM_ZONES);
++    for (i = 0; i < handle->statistics->agcRegions.numRegions(); i++)
++        handle->statistics->agcRegions.setFloating(i,
+                            { { 0, 0, 0, stats->agc.floating[i].Y_sum },
+                              stats->agc.floating[i].counted, 0 });
+ 
+-    statistics->focusRegions.init({ PISP_CDAF_STATS_SIZE, PISP_CDAF_STATS_SIZE });
+-    for (i = 0; i < statistics->focusRegions.numRegions(); i++)
+-        statistics->focusRegions.set(i, { stats->cdaf.foms[i] >> 20, 0, 0 });
++    handle->statistics->focusRegions.init({ PISP_CDAF_STATS_SIZE, PISP_CDAF_STATS_SIZE });
++    for (i = 0; i < handle->statistics->focusRegions.numRegions(); i++)
++        handle->statistics->focusRegions.set(i, { stats->cdaf.foms[i] >> 20, 0, 0 });
+ 
+-    return statistics;
++    return handle->statistics;
+ }
+ 
+ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+@@ -399,21 +410,35 @@ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+     }
+ 
+     RpiIpaHandle_t* handle = new (std::nothrow) RpiIpaHandle_t();
++    if (handle == nullptr) {
++        LOG_ERROR("Failed to allocate memory for handle");
++        return nullptr;
++    }
+ 
+     // This library only supports RPi4 and RPi5
+-    if ((platform == rpiPlatform_t::RPI4) ||
+-        (platform == rpiPlatform_t::RPI5)) {
+-        handle->rpiPlatform = platform;
++    handle->rpiPlatform = platform;
++    if (platform == rpiPlatform_t::RPI4) {
++        handle->statistics = new (std::nothrow) RPiController::Statistics(RPiController::Statistics::AgcStatsPos::PreWb,
++                                                                          RPiController::Statistics::ColourStatsPos::PostLsc);
++    } else if (platform == rpiPlatform_t::RPI5) {
++        handle->statistics = new (std::nothrow) RPiController::Statistics(RPiController::Statistics::AgcStatsPos::PostWb,
++                                                                          RPiController::Statistics::ColourStatsPos::PreLsc);
+     } else {
+         LOG_ERROR("Invalid platform: %d", platform);
+         delete handle;
+-        return NULL;
++        return nullptr;
++    }
++    if (handle->statistics == nullptr) {
++        LOG_ERROR("Failed to allocate memory for statistics");
++        delete handle;
++        return nullptr;
+     }
+ 
+     // Create a camera helper
+     handle->camHelper = std::unique_ptr<RPiController::CamHelper>(RPiController::CamHelper::create(sensorName));
+     if (handle->camHelper == NULL) {
+         LOG_ERROR("Failed to create a camera helper for %s", sensorName);
++        delete handle->statistics;
+         delete handle;
+         return NULL;
+     }
+@@ -422,6 +447,7 @@ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+     err = handle->controller.read(configPath);
+     if (err != EOK) {
+         LOG_ERROR("Failed to load tuning data file %s: err = %d", configPath, err);
++        delete handle->statistics;
+         delete handle;
+         return NULL;
+     }
+@@ -439,6 +465,8 @@ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+     err = fillDeviceStatus(handle, handle->rpiMetadata);
+     if (err != EOK) {
+         LOG_ERROR("Failed to fill device status: err = %d", err);
++        delete handle->statistics;
++        delete handle;
+         return NULL;
+     }
+ 
+@@ -450,6 +478,8 @@ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+     handle->controller.getAlgorithm("agc"));
+     if (agc == NULL) {
+         LOG_ERROR("Failed to get agc algorithm");
++        delete handle->statistics;
++        delete handle;
+         return NULL;
+     }
+     agc->setMaxExposureTime(IMX708_MAX_EXPOSURE_TIME);
+@@ -460,7 +490,13 @@ RpiIpaHandle_t* rpiIpaStart(rpiPlatform_t platform,
+ 
+ void rpiIpaStop(RpiIpaHandle_t* handle)
+ {
+-    delete handle;
++    if (handle != nullptr) {
++        RPiController::StatisticsPtr statistics = handle->statistics;
++        // Delete handle first which calls the destructor of algorithms to stop
++        // async threads which access statistics
++        delete handle;
++        delete statistics;
++    }
+ }
+ 
+ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+@@ -521,14 +557,12 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+     // Get the auto exposure algorithm output
+     struct AgcStatus agcStatus;
+     if (handle->rpiMetadata.get("agc.status", agcStatus) != 0) {
+-        delete statistics;
+         return EINVAL;
+     }
+ 
+     // Get the auto whitebalance algorithm output
+     struct AwbStatus awbStatus;
+     if (handle->rpiMetadata.get("awb.status", awbStatus) != 0) {
+-        delete statistics;
+         return EINVAL;
+     }
+ 
+@@ -549,7 +583,6 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+                             RPI5_WHITE_BALANCE_FRACTIONAL_BITS);
+     } else {
+         LOG_ERROR("Invalid RPi platform %d", handle->rpiPlatform);
+-        delete statistics;
+         return EINVAL;
+     }
+ 
+@@ -575,8 +608,6 @@ int rpiIpaProcessData(RpiIpaHandle_t* handle,
+     *exposureTime = exposureLines;
+     *iso = gainCode;
+ 
+-    delete statistics;
+-
+     return EOK;
+ }
+ 
+
+From 6716c1242303fbeb7070c0d8580aee362375dfb8 Mon Sep 17 00:00:00 2001
+From: James Choi <chachoi@blackberry.com>
+Date: Thu, 9 Apr 2026 13:29:14 -0700
+Subject: [PATCH 4/4] Remove qnx folder
+
+---
+ qnx/LICENSE.md                          | 23 -------
+ qnx/README.md                           |  7 ---
+ qnx/build/CMakeLists.txt                | 83 -------------------------
+ qnx/build/Makefile                      |  8 ---
+ qnx/build/common.mk                     | 72 ---------------------
+ qnx/build/nto-aarch64-le/Makefile       |  1 -
+ qnx/build/qnx.nto.toolchain.cmake       |  6 --
+ qnx/build/qnx800/dependencies.yml       |  2 -
+ qnx/build/qnx800dev/dependencies.yml    |  2 -
+ qnx/build/sdp_mainline/dependencies.yml |  2 -
+ qnx/shiplist/rpi_camera_ipa.xml         | 18 ------
+ qnx/shiplist/rpi_camera_ipa_dev.xml     | 15 -----
+ 12 files changed, 239 deletions(-)
+ delete mode 100755 qnx/LICENSE.md
+ delete mode 100644 qnx/README.md
+ delete mode 100644 qnx/build/CMakeLists.txt
+ delete mode 100755 qnx/build/Makefile
+ delete mode 100644 qnx/build/common.mk
+ delete mode 100644 qnx/build/nto-aarch64-le/Makefile
+ delete mode 100644 qnx/build/qnx.nto.toolchain.cmake
+ delete mode 100644 qnx/build/qnx800/dependencies.yml
+ delete mode 100644 qnx/build/qnx800dev/dependencies.yml
+ delete mode 100644 qnx/build/sdp_mainline/dependencies.yml
+ delete mode 100644 qnx/shiplist/rpi_camera_ipa.xml
+ delete mode 100644 qnx/shiplist/rpi_camera_ipa_dev.xml
+
+diff --git a/qnx/LICENSE.md b/qnx/LICENSE.md
+deleted file mode 100755
+index 41caa1169..000000000
+--- a/qnx/LICENSE.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-This license covers all the content of the qnx folder except where a license is included in a file
+-
+-
+-Copyright (c) 2025, BlackBerry Limited. All Rights Reserved.
+-
+-This software is provided 'as-is', without any express or implied
+-warranty. In no event will the authors be held liable for any
+-damages arising from the use of this software.
+-
+-Permission is granted to anyone to use this software for any
+-purpose, including commercial applications, and to alter it and
+-redistribute it freely, subject to the following restrictions:
+-
+-1. The origin of this software must not be misrepresented; you must
+-not claim that you wrote the original software. If you use this
+-software in a product, an acknowledgment in the product documentation
+-would be appreciated but is not required.
+-
+-2. Altered source versions must be plainly marked as such, and
+-must not be misrepresented as being the original software.
+-
+-3. This notice may not be removed or altered from any source
+-distribution.
+diff --git a/qnx/README.md b/qnx/README.md
+deleted file mode 100644
+index d4a00f2c9..000000000
+--- a/qnx/README.md
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# Compile the port for QNX
+-
+-**NOTE**: QNX ports are only supported from a Linux host operating system
+-
+-- Setup your QNX SDP environment
+-- From the root folder, type:
+-	- `OSLIST=nto make -C qnx/build install`
+diff --git a/qnx/build/CMakeLists.txt b/qnx/build/CMakeLists.txt
+deleted file mode 100644
+index 8a1dd88e4..000000000
+--- a/qnx/build/CMakeLists.txt
++++ /dev/null
+@@ -1,83 +0,0 @@
+-cmake_minimum_required(VERSION 3.15)
+-
+-# Project name and language
+-project(rpi_camera_ipa
+-    VERSION 0.5.1
+-    DESCRIPTION "RPi camera image processing algorithm library"
+-    LANGUAGES CXX
+-)
+-
+-# Set PROJECT_ROOT to be the root of the libcamera repository
+-set(PROJECT_ROOT ${PROJECT_SOURCE_DIR}/../../)
+-
+-# Collect the sources we want
+-set(SOURCE_CPP_FILES
+-    ${PROJECT_ROOT}/src/ipa/libipa/colours.cpp
+-    ${PROJECT_ROOT}/src/ipa/libipa/pwl.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx219.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx283.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx290.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx296.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx415.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx477.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx519.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_imx708.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov5647.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov64a40.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov7251.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/cam_helper_ov9281.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/cam_helper/md_parser_smia.cpp
+-
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/algorithm.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/controller.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/device_status.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/histogram.cpp
+-
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc_channel.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/agc.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/awb.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/controller/rpi/lux.cpp
+-
+-    ${PROJECT_ROOT}/src/ipa/rpi/qnx/log_handler.cpp
+-    ${PROJECT_ROOT}/src/ipa/rpi/qnx/rpi_camera_ipa.cpp
+-
+-    ${PROJECT_ROOT}/src/libcamera/yaml_parser.cpp
+-    ${PROJECT_ROOT}/src/libcamera/base/file.cpp
+-    ${PROJECT_ROOT}/src/libcamera/base/unique_fd.cpp
+-    ${PROJECT_ROOT}/src/libcamera/base/utils.cpp
+-)
+-
+-# Build shared library
+-add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
+-
+-# Header directories
+-target_include_directories(${PROJECT_NAME}
+-    PUBLIC
+-        $<BUILD_INTERFACE:${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include>
+-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+-    PRIVATE
+-        ${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include
+-        ${PROJECT_ROOT}/include
+-        ${PROJECT_ROOT}/src/ipa
+-        ${PROJECT_ROOT}/src/ipa/rpi
+-        ${PROJECT_ROOT}/src/ipa/rpi/cam_helper
+-        ${PROJECT_ROOT}/src/ipa/rpi/controller
+-        ${PROJECT_ROOT}/src/ipa/rpi/qnx
+-)
+-
+-# Add compiler warnings
+-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -DLIBCAMERA_BASE_PRIVATE)
+-
+-# Set library version and SOVERSION
+-set_target_properties(${PROJECT_NAME} PROPERTIES
+-    VERSION ${PROJECT_VERSION}
+-    SOVERSION 1
+-    PUBLIC_HEADER "${PROJECT_ROOT}/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h"
+-)
+-
+-# Install rules
+-install(TARGETS ${PROJECT_NAME}
+-    LIBRARY DESTINATION lib
+-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+-)
+diff --git a/qnx/build/Makefile b/qnx/build/Makefile
+deleted file mode 100755
+index 1f2540041..000000000
+--- a/qnx/build/Makefile
++++ /dev/null
+@@ -1,8 +0,0 @@
+-LIST=OS
+-ifndef QRECURSE
+-QRECURSE=recurse.mk
+-ifdef QCONFIG
+-QRDIR=$(dir $(QCONFIG))
+-endif
+-endif
+-include $(QRDIR)$(QRECURSE)
+diff --git a/qnx/build/common.mk b/qnx/build/common.mk
+deleted file mode 100644
+index 5169becf6..000000000
+--- a/qnx/build/common.mk
++++ /dev/null
+@@ -1,72 +0,0 @@
+-ifndef QCONFIG
+-QCONFIG=qconfig.mk
+-endif
+-include $(QCONFIG)
+-
+-NAME=rpi_camera_ipa
+-
+-#$(INSTALL_ROOT_$(OS)) is pointing to $QNX_TARGET
+-#by default, unless it was manually re-routed to
+-#a staging area by setting both INSTALL_ROOT_nto
+-#and USE_INSTALL_ROOT
+-INSTALL_ROOT ?= $(INSTALL_ROOT_$(OS))
+-
+-#A prefix path to use **on the target**. This is
+-#different from INSTALL_ROOT, which refers to a
+-#installation destination **on the host machine**.
+-#This prefix path may be exposed to the source code,
+-#the linker, or package discovery config files (.pc,
+-#CMake config modules, etc.). Default is /usr
+-PREFIX ?= /usr
+-
+-#choose Release or Debug
+-CMAKE_BUILD_TYPE ?= Release
+-
+-#override 'all' target to bypass the default QNX build system
+-ALL_DEPENDENCIES = rpi_camera_ipa_all
+-.PHONY: rpi_camera_ipa_all rpi_camera_ipa_all_clean
+-
+-FLAGS   += -D_QNX_SOURCE -D__QNXNTO__
+-LDFLAGS += -Wl,--build-id=md5 -lang-c++
+-
+-include $(MKFILES_ROOT)/qtargets.mk
+-
+-NTO_DIR_NAME=nto-aarch64-le
+-CMAKE_SYSTEM_PROCESSOR=aarch64
+-
+-CMAKE_ARGS = -DCMAKE_TOOLCHAIN_FILE=$(PROJECT_ROOT)/qnx.nto.toolchain.cmake \
+-             -DCMAKE_SYSTEM_PROCESSOR=$(CMAKE_SYSTEM_PROCESSOR) \
+-             -DCMAKE_CXX_COMPILER_TARGET=gcc_nto$(CPUVARDIR) \
+-             -DCMAKE_INSTALL_PREFIX=$(INSTALL_ROOT)/$(CPUVARDIR)/$(PREFIX) \
+-             -DCMAKE_INSTALL_INCLUDEDIR=$(INSTALL_ROOT)/$(PREFIX)/include \
+-             -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
+-             -DBUILD_QNX_CXX_FLAGS="$(FLAGS)" \
+-             -DBUILD_QNX_LINKER_FLAGS="$(LDFLAGS)" \
+-             -DCMAKE_VERBOSE_MAKEFILE=1 \
+-             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+-
+-ifndef NO_TARGET_OVERRIDE
+-
+-MAKE_ARGS ?= -j $(firstword $(JLEVEL) 1)
+-
+-rpi_camera_ipa_all:
+-	echo "make rpi_camera_ipa_all $(NTO_DIR_NAME)"
+-	mkdir -p build && \
+-	cd build && \
+-	cmake 	"${PRODUCT_ROOT}/build" \
+-		${CMAKE_ARGS} && \
+-	make all $(MAKE_ARGS)
+-
+-rpi_camera_ipa_all_clean:
+-	echo "make rpi_camera_ipa_all_clean $(NTO_DIR_NAME)"
+-	cd $(PRODUCT_ROOT)/build && \
+-	rm -rf build
+-	rm -rf $(PROJECT_ROOT)/$(NTO_DIR_NAME)/build
+-
+-clean: rpi_camera_ipa_all_clean
+-
+-install check: rpi_camera_ipa_all
+-	cd build && make install $(MAKE_ARGS)
+-
+-uninstall:
+-endif
+diff --git a/qnx/build/nto-aarch64-le/Makefile b/qnx/build/nto-aarch64-le/Makefile
+deleted file mode 100644
+index 23f8a8fa2..000000000
+--- a/qnx/build/nto-aarch64-le/Makefile
++++ /dev/null
+@@ -1 +0,0 @@
+-include ../common.mk
+diff --git a/qnx/build/qnx.nto.toolchain.cmake b/qnx/build/qnx.nto.toolchain.cmake
+deleted file mode 100644
+index 7e860534f..000000000
+--- a/qnx/build/qnx.nto.toolchain.cmake
++++ /dev/null
+@@ -1,6 +0,0 @@
+-set(QNX TRUE)
+-set(CMAKE_SYSTEM_NAME QNX)
+-set(CMAKE_CXX_COMPILER q++)
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BUILD_QNX_CXX_FLAGS} -w" CACHE STRING "cxx_flags")
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BUILD_QNX_LINKER_FLAGS}" CACHE STRING "exe_linker_flags")
+-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${BUILD_QNX_LINKER_FLAGS}" CACHE STRING "so_linker_flags")
+diff --git a/qnx/build/qnx800/dependencies.yml b/qnx/build/qnx800/dependencies.yml
+deleted file mode 100644
+index c2e69562a..000000000
+--- a/qnx/build/qnx800/dependencies.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-packages:
+-- com.qnx.qnx800.osr.yaml: 0.1.7.00091T202509131949L
+diff --git a/qnx/build/qnx800dev/dependencies.yml b/qnx/build/qnx800dev/dependencies.yml
+deleted file mode 100644
+index 6f2382359..000000000
+--- a/qnx/build/qnx800dev/dependencies.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-packages:
+-- com.qnx.qnx800dev.osr.yaml
+diff --git a/qnx/build/sdp_mainline/dependencies.yml b/qnx/build/sdp_mainline/dependencies.yml
+deleted file mode 100644
+index a5fa168dc..000000000
+--- a/qnx/build/sdp_mainline/dependencies.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-packages:
+-- com.qnx.sdp_mainline.osr.yaml
+diff --git a/qnx/shiplist/rpi_camera_ipa.xml b/qnx/shiplist/rpi_camera_ipa.xml
+deleted file mode 100644
+index b8f301291..000000000
+--- a/qnx/shiplist/rpi_camera_ipa.xml
++++ /dev/null
+@@ -1,18 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<shiplist>
+-    <id>com.qnx.${baselineId}.osr.rpi_camera_ipa</id>
+-    <name>rpi-camera-ipa</name>
+-    <version>0.5.1</version>
+-    <category>OSR</category>
+-    <description>rpi-camera-ipa - RPi camera image processing algorithm library</description>
+-    <property key="f.support" value="Custom"/>
+-    <property key="f.swtype" value="III"/>
+-    <property key="f.engage" value="B"/>
+-    <property key="useInfo" value="false"/>
+-    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so"/>
+-    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so.1"/>
+-    <file name="${targetfolder}/[ARCH:aarch64le]/usr/lib/librpi_camera_ipa.so.0.5.1"/>
+-    <provides>library: librpi_camera_ipa.so</provides>
+-    <provides>library: librpi_camera_ipa.so.1</provides>
+-    <provides>library: librpi_camera_ipa.so.0.5.1</provides>
+-</shiplist>
+diff --git a/qnx/shiplist/rpi_camera_ipa_dev.xml b/qnx/shiplist/rpi_camera_ipa_dev.xml
+deleted file mode 100644
+index c7fead643..000000000
+--- a/qnx/shiplist/rpi_camera_ipa_dev.xml
++++ /dev/null
+@@ -1,15 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<shiplist>
+-    <id>com.qnx.${baselineId}.osr.rpi_camera_ipa.dev</id>
+-    <name>rpi_camera_ipa</name>
+-    <version>0.5.1</version>
+-    <category>OSR</category>
+-    <description>rpi_camera_ipa - RPi camera image processing algorithm library</description>
+-    <property key="f.support" value="Custom"/>
+-    <property key="f.swtype" value="III"/>
+-    <property key="f.engage" value="B"/>
+-    <property key="useInfo" value="false"/>
+-    <file name="${targetfolder}/usr/include/rpi_camera_ipa.h"/>
+-    <provides>dev: rpi_camera_ipa (${primaryVersion})</provides>
+-    <requires>package: com.qnx.${baselineId}.osr.rpi_camera_ipa</requires>
+-</shiplist>

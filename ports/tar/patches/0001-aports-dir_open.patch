@@ -1,0 +1,24 @@
+QNX change from QNX's aports (core/tar/dir_open.patch).
+
+Taken from qnx-ports/aports core/tar -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/create.c b/src/create.c
+index d20178c..d9cd1f5 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -1742,7 +1742,11 @@ dump_file0 (struct tar_stat_info *st, char const *name, char const *p)
+       xattrs_xattrs_get (parentfd, name, st, fd);
+ 
+       if (is_dir)
+-	{
++	{    
++    // reopen as directory, QNX only
++    close(st->fd);
++    st->fd = subfile_open (parent, name, open_read_flags | O_DIRECTORY);
++
+ 	  const char *tag_file_name;
+ 	  ensure_slash (&st->orig_file_name);
+ 	  ensure_slash (&st->file_name);

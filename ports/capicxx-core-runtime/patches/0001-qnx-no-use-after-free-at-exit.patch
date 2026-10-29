@@ -1,0 +1,45 @@
+CommonAPI: do not reset the runtime from a static destructor.
+
+The deinitializer resets and deletes the runtime at exit, when static objects
+it still refers to may already be destroyed -- a use-after-free during exit.
+Leave the runtime to process teardown.
+
+Upstream-Status: Pending
+
+--- a/src/CommonAPI/Runtime.cpp
++++ b/src/CommonAPI/Runtime.cpp
+@@ -33,15 +33,25 @@
+ 
+ #ifndef _WIN32
+ DEINITIALIZER(RuntimeDeinit) {
+-    if (theRuntimePtr__) {
+-        // TODO: This mutex is causing a crash due to the changes introduced with 938f3d1. Since
+-        // this "deinitializer" only runs on the main thread, no mutex should be needed. Leaving a
+-        // comment pending a refactor.
+-        // std::lock_guard<std::mutex> itsLock(getMutex__);
+-        theRuntimePtr__->reset();
+-        delete theRuntimePtr__;
+-        theRuntimePtr__ = nullptr;
+-    }
++    // TODO: This mutex is causing a crash due to the changes introduced with 938f3d1. Since
++    // this "deinitializer" only runs on the main thread, no mutex should be needed. Leaving a
++    // comment pending a refactor.
++    // std::lock_guard<std::mutex> itsLock(getMutex__);
++    //
++    // The Runtime is deliberately NOT destroyed here. ELF finalisers run per DSO
++    // and their relative order is not something either library controls, so a
++    // binding's own deinitializer -- CommonAPI::SomeIP::FactoryDeinit(), which
++    // calls Runtime::unregisterFactory() -- can still run after this point. That
++    // locks Runtime::factoriesMutex_, an instance member of the object destroyed
++    // here, i.e. a use-after-free. glibc's pthread_mutex_lock happens to tolerate
++    // the stale mutex; QNX returns EINVAL, libc++ turns that into a thrown
++    // std::system_error, and the process aborts at exit with
++    // "mutex lock failed: Invalid argument".
++    //
++    // Outliving the process is harmless for a singleton: the OS reclaims the
++    // memory at exit, and leaving it alive keeps every late unregisterFactory()
++    // call valid.
++    theRuntimePtr__ = nullptr;
+ }
+ #endif
+ 

@@ -1,0 +1,29 @@
+Skip the libxml2 Python module check when cross compiling.
+
+configure imports libxml2 with the build machine's Python, which says
+nothing about the target: itstool needs the module in the Python it runs
+under on the target. Skip the test in a cross build ("maybe" included:
+itstool checks no compiler, so configure never settles it to "yes").
+
+Upstream-Status: QNX-specific
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -14,6 +14,9 @@
+ 
+ py_module=libxml2
+ AC_MSG_CHECKING(for python module $py_module)
++if test "$cross_compiling" != no; then
++	AC_MSG_RESULT([not checked (cross compiling; needed by the target's Python at run time)])
++else
+ echo "import $py_module" | $PYTHON - &>/dev/null
+ if test $? -ne 0; then
+ 	AC_MSG_RESULT(not found)
+@@ -21,6 +24,7 @@
+ else
+ 	AC_MSG_RESULT(found)
+ fi
++fi
+ 
+ AC_CONFIG_FILES([
+ Makefile

@@ -1,0 +1,47 @@
+quinn-udp: IP_RECVTOS on QNX.
+
+quinn-udp requests IP_RECVTOS (for ECN) on every system but OpenBSD, NetBSD
+and Solaris, reading it from the libc crate. QNX has the option -- 68, as on
+FreeBSD, in <netinet/in.h> -- but libc does not export it for
+target_os = "nto" ("cannot find value IP_RECVTOS in crate libc"). Define it
+locally on QNX.
+
+Applied to quinn-udp 0.5.5 (the version zenoh-c's Cargo.lock pins) by
+ports/zenoh-c/recipe.sh.
+
+Upstream-Status: Pending (the constant belongs in the libc crate)
+
+--- a/src/unix.rs
++++ b/src/unix.rs
+@@ -24,6 +24,13 @@
+     IO_ERROR_LOG_INTERVAL,
+ };
+ 
++// QNX defines IP_RECVTOS (68, as FreeBSD does) in <netinet/in.h>, but the libc
++// crate does not export it for target_os = "nto".
++#[cfg(target_os = "nto")]
++const IP_RECVTOS: libc::c_int = 68;
++#[cfg(not(target_os = "nto"))]
++use libc::IP_RECVTOS;
++
+ // Defined in netinet6/in6.h on OpenBSD, this is not yet exported by the libc crate
+ // directly.  See https://github.com/rust-lang/libc/issues/3704 for when we might be able to
+ // rely on this from the libc crate.
+@@ -93,7 +100,7 @@
+         #[cfg(not(any(target_os = "openbsd", target_os = "netbsd", target_os = "solaris")))]
+         if is_ipv4 || !io.only_v6()? {
+             if let Err(_err) =
+-                set_socket_option(&*io, libc::IPPROTO_IP, libc::IP_RECVTOS, OPTION_ON)
++                set_socket_option(&*io, libc::IPPROTO_IP, IP_RECVTOS, OPTION_ON)
+             {
+                 debug!("Ignoring error setting IP_RECVTOS on socket: {_err:?}");
+             }
+@@ -576,7 +583,7 @@
+             },
+             // FreeBSD uses IP_RECVTOS here, and we can be liberal because cmsgs are opt-in.
+             #[cfg(not(any(target_os = "openbsd", target_os = "netbsd", target_os = "solaris")))]
+-            (libc::IPPROTO_IP, libc::IP_RECVTOS) => unsafe {
++            (libc::IPPROTO_IP, IP_RECVTOS) => unsafe {
+                 ecn_bits = cmsg::decode::<u8, libc::cmsghdr>(cmsg);
+             },
+             (libc::IPPROTO_IPV6, libc::IPV6_TCLASS) => unsafe {

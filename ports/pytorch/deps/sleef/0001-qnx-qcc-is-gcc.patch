@@ -1,0 +1,38 @@
+sleef: give QNX's qcc the GCC compiler flags
+
+CMake identifies the QNX compiler driver as "QCC" (it is GCC underneath),
+which the GNU/Clang block here does not match. Every FLAGS_ENABLE_<ext> was
+then empty, so the SIMD variants were compiled without their -m options, and
+the FMA scalar one stopped at "#error FP_FAST_FMA or FP_FAST_FMAF not defined".
+
+Upstream-Status: Pending
+---
+diff --git a/Configure.cmake b/Configure.cmake
+index 8141e8e..b1d08cb 100644
+--- a/Configure.cmake
++++ b/Configure.cmake
+@@ -166,7 +166,7 @@ set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
+ set(FLAGS_OTHERS "")
+ 
+ # All variables storing compiler flags should be prefixed with FLAGS_
+-if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
++if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
+   # Always compile sleef with -ffp-contract.
+   set(FLAGS_STRICTMATH "-ffp-contract=off")
+   set(FLAGS_FASTMATH "-ffast-math")
+@@ -187,13 +187,13 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
+ 
+   # Warning flags.
+   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes -Wno-unused-result")
+-  if(CMAKE_C_COMPILER_ID MATCHES "GNU")
++  if(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)")
+     # The following compiler option is needed to suppress the warning
+     # "AVX vector return without AVX enabled changes the ABI" at
+     # src/arch/helpervecext.h:88
+     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
+     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
+-  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
++  endif(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)")
+ 
+   if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+     if (NOT LLVM_AR_COMMAND)

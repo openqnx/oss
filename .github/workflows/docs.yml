@@ -1,0 +1,55 @@
+name: docs
+
+# GitHub-hosted runners have no QNX SDP and no licence, so nothing here can
+# compile a port. What CI *can* do is prove the checked-in documentation still
+# matches the recipes it is generated from, and that the shell is sane.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  generated-docs-are-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell and Python syntax
+        run: |
+          sh -n target/oss-get
+          for f in scripts/qnxbuild scripts/verify-standalone scripts/mkpatch env.sh docker/run.sh tests/*.sh; do bash -n "$f"; done
+          python3 -m py_compile scripts/qnxpkg scripts/gen-port-docs scripts/gen-root-readme scripts/gen-dependency-index
+      # ports/dependencies.json is produced on a build host (it reads the
+      # binaries); the READMEs and the index are derived from it and the
+      # recipes alone, so they can be checked here.
+      - name: Regenerate the component docs and index
+        run: |
+          ./scripts/gen-port-docs
+          ./scripts/gen-root-readme
+      - name: Fail if anything drifted
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Generated docs are stale. Run ./scripts/gen-dependency-index (on a build host), ./scripts/gen-port-docs and ./scripts/gen-root-readme, then commit."
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "generated docs are current"
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax-check every script and recipe
+        run: |
+          rc=0
+          for f in env.sh scripts/* tests/*.sh ports/*/recipe.sh; do
+            case "$f" in *.py) continue ;; esac
+            [ -f "$f" ] || continue
+            head -1 "$f" | grep -q python && continue
+            bash -n "$f" || { echo "syntax error: $f"; rc=1; }
+          done
+          exit $rc
+
+  # Real builds need an SDP, so they run only on a self-hosted runner that has
+  # one installed. Start it with: gh workflow run build.yml
+  # (kept separate so this file stays green on GitHub-hosted runners)

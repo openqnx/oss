@@ -1,0 +1,33 @@
+Use a 128 MB structure heap on QNX.
+
+JSC reserves its structure heap with tryReserveUncommittedAligned(size,
+structureHeapAddressSize).  StructureMemoryManager halves the size up to eight
+times when the reservation fails, but the *alignment* argument stays at
+structureHeapAddressSize -- so with the 4 GB default every attempt needs up to
+8 GB of contiguous address space.  On a QNX target with 1 GB of RAM all eight
+fail and the RELEASE_ASSERT aborts inside JSContextGroupCreate(), before any
+script runs.  It passes on an 8 GB board, so the failure looks like an
+architecture difference and is really an address-space one.
+
+128 MB is the value PLAYSTATION already uses for the same reason.  StructureID
+derives its masks from this constant, so nothing else needs changing.
+
+Upstream-Status: QNX-specific
+
+--- a/Source/JavaScriptCore/runtime/StructureID.h
++++ b/Source/JavaScriptCore/runtime/StructureID.h
+@@ -49,6 +49,14 @@
+ constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
+ #elif PLATFORM(PLAYSTATION)
+ constexpr uintptr_t structureHeapAddressSize = 128 * MB;
++#elif OS(QNX)
++// The reservation below is aligned to structureHeapAddressSize, and that
++// alignment is not reduced when the size is halved on failure -- so a 4 GB
++// value asks for up to 8 GB of address space.  A QNX target with 1 GB of RAM
++// cannot satisfy it, every attempt in StructureMemoryManager fails, and the
++// RELEASE_ASSERT aborts inside JSContextGroupCreate().  128 MB is what
++// PLAYSTATION uses for the same reason.
++constexpr uintptr_t structureHeapAddressSize = 128 * MB;
+ #elif PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+ constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+ #else

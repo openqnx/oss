@@ -1,0 +1,4 @@
+VERSION=6.1.0; GIT=https://github.com/msgpack/msgpack-c.git; REF=c-6.1.0
+BUILDSYS=cmake
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DMSGPACK_BUILD_TESTS=OFF
+                   -DMSGPACK_BUILD_EXAMPLES=OFF )

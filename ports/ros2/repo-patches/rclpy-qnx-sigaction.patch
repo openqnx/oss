@@ -1,0 +1,23 @@
+rclpy: take the sigaction() path on QNX
+
+signal_handler.cpp picks sigaction() when one of _POSIX_C_SOURCE,
+_XOPEN_SOURCE or _POSIX_SOURCE is defined and otherwise falls back to the
+BSD/glibc sig_t, which QNX does not declare ("'sig_t' does not name a
+type"). QNX has sigaction(), but builds with _QNX_SOURCE and none of those
+macros set, so name it in the test.
+
+Upstream-Status: Pending
+---
+diff --git a/rclpy/src/rclpy/signal_handler.cpp b/rclpy/src/rclpy/signal_handler.cpp
+index bb72763..ba2bd2d 100644
+--- a/rclpy/src/rclpy/signal_handler.cpp
++++ b/rclpy/src/rclpy/signal_handler.cpp
+@@ -188,7 +188,7 @@ CleanupdeferredSignalHandler cleanup_deferred_signal_handler;
+ 
+ }  // namespace
+ 
+-#if __APPLE__ || _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
++#if __APPLE__ || defined(__QNX__) || _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
+ 
+ #define SIGNAL_HANDLER_T struct sigaction
+ 

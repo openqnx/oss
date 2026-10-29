@@ -1,0 +1,716 @@
+<title>Porting to QNX SDP 8.0</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ink:#12161c; --ink-2:#39424f; --mute:#727a83;
+  --paper:#f7f6f3; --surface:#ffffff;
+  --rule:#ddd9d2; --rule-soft:#eae6df;
+  --amber:#b4632f; --amber-soft:#f4e8dd;
+  --teal:#2f6f6b; --teal-soft:#e2edeb;
+  --crit:#a33f36; --crit-soft:#f7e3e0;
+  --code-bg:#1b1f26; --code-fg:#e2ded7;
+  --code-key:#e0975f; --code-str:#93bfa0; --code-com:#767f8c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eceae6; --ink-2:#b9b4ad; --mute:#8b857d;
+    --paper:#14161a; --surface:#1b1e23;
+    --rule:#31353c; --rule-soft:#262a30;
+    --amber:#e0975f; --amber-soft:#332620;
+    --teal:#79b8b2; --teal-soft:#1d2a29;
+    --crit:#e08b80; --crit-soft:#33211f;
+    --code-bg:#0e1116; --code-fg:#dcd8d1;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eceae6; --ink-2:#b9b4ad; --mute:#8b857d;
+  --paper:#14161a; --surface:#1b1e23;
+  --rule:#31353c; --rule-soft:#262a30;
+  --amber:#e0975f; --amber-soft:#332620;
+  --teal:#79b8b2; --teal-soft:#1d2a29;
+  --crit:#e08b80; --crit-soft:#33211f;
+  --code-bg:#0e1116; --code-fg:#dcd8d1;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.shell{display:grid; grid-template-columns:232px minmax(0,1fr); gap:0; max-width:1220px; margin:0 auto}
+
+/* ---- side nav ---- */
+nav{
+  position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  padding:40px 24px 40px 28px; border-right:1px solid var(--rule);
+}
+nav .navtitle{
+  font-family:"JetBrains Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--amber); margin:0 0 18px;
+}
+nav ol{list-style:none; margin:0; padding:0; counter-reset:step}
+nav ol li{counter-increment:step; margin-bottom:2px}
+nav ol li a{
+  display:block; padding:5px 0 5px 26px; position:relative;
+  font-size:13.5px; color:var(--ink-2); text-decoration:none; line-height:1.35;
+}
+nav ol li a::before{
+  content:counter(step,decimal-leading-zero);
+  position:absolute; left:0; top:5px;
+  font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--mute);
+}
+nav ol li a:hover{color:var(--amber)}
+nav .navsub{
+  margin-top:24px; padding-top:16px; border-top:1px solid var(--rule-soft);
+}
+nav .navsub a{
+  display:block; padding:4px 0; font-size:13px; color:var(--ink-2);
+  text-decoration:none;
+}
+nav .navsub a:hover{color:var(--amber)}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  nav{position:static; height:auto; border-right:none; border-bottom:1px solid var(--rule); padding:28px 24px}
+  nav ol{columns:2; column-gap:24px}
+}
+
+main{padding:40px 36px 100px; min-width:0}
+@media (max-width:860px){ main{padding:32px 24px 80px} }
+
+/* ---- header ---- */
+.mast{border-bottom:1px solid var(--rule); padding-bottom:26px; margin-bottom:38px}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--amber); margin:0 0 14px;
+}
+h1{
+  font-family:Fraunces,Georgia,serif; font-size:clamp(30px,4.4vw,44px);
+  font-weight:600; line-height:1.06; margin:0 0 14px; letter-spacing:-.015em;
+  text-wrap:balance;
+}
+.standfirst{font-size:17.5px; color:var(--ink-2); max-width:64ch; margin:0}
+
+h2{
+  font-family:Fraunces,Georgia,serif; font-size:26px; font-weight:600;
+  margin:0 0 4px; letter-spacing:-.01em; scroll-margin-top:24px;
+}
+.step-n{
+  font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.12em;
+  color:var(--amber); display:block; margin-bottom:6px; text-transform:uppercase;
+}
+h3{
+  font-size:14px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+  margin:30px 0 10px; color:var(--ink);
+}
+section{margin-bottom:54px}
+p{margin:0 0 14px; max-width:68ch}
+p.lead{color:var(--ink-2); margin-bottom:20px}
+ul,ol.body{max-width:68ch; padding-left:20px; margin:0 0 14px}
+li{margin-bottom:6px}
+code{
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.87em;
+  background:var(--rule-soft); padding:1.5px 5px; border-radius:3px;
+}
+a{color:var(--amber)}
+
+/* ---- code blocks ---- */
+.code{
+  position:relative; background:var(--code-bg); border-radius:5px;
+  margin:0 0 20px; overflow:hidden;
+}
+.code .bar{
+  display:flex; align-items:center; gap:10px;
+  padding:7px 12px; border-bottom:1px solid rgba(255,255,255,.07);
+}
+.code .path{
+  font-family:"JetBrains Mono",monospace; font-size:11px; color:#9aa2ad;
+  letter-spacing:.02em;
+}
+.code button{
+  margin-left:auto; font-family:"Source Sans 3",sans-serif; font-size:11.5px;
+  background:rgba(255,255,255,.08); color:#cfd4da; border:none; border-radius:3px;
+  padding:3px 10px; cursor:pointer; letter-spacing:.02em;
+}
+.code button:hover{background:rgba(255,255,255,.16)}
+.code button:focus-visible{outline:2px solid var(--code-key); outline-offset:1px}
+.code button.done{background:rgba(147,191,160,.2); color:#93bfa0}
+.code pre{
+  margin:0; padding:14px 16px; overflow-x:auto;
+  font-family:"JetBrains Mono",monospace; font-size:12.8px; line-height:1.62;
+  color:var(--code-fg);
+}
+.code .c{color:var(--code-com)}
+.code .k{color:var(--code-key)}
+.code .s{color:var(--code-str)}
+
+/* ---- callout ---- */
+.note{
+  border-left:2px solid var(--teal); background:var(--teal-soft);
+  padding:13px 16px; margin:0 0 20px; border-radius:0 3px 3px 0;
+  font-size:14.5px; color:var(--ink-2); max-width:68ch;
+}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--crit); background:var(--crit-soft)}
+
+/* ---- symptom table ---- */
+.sym-scroll{overflow-x:auto; margin-bottom:22px}
+table.sym{border-collapse:collapse; width:100%; font-size:14px; min-width:640px}
+table.sym th{
+  text-align:left; font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--mute); font-weight:600; padding:8px 14px 8px 0;
+  border-bottom:1.5px solid var(--ink); white-space:nowrap;
+}
+table.sym td{
+  padding:11px 14px 11px 0; border-bottom:1px solid var(--rule-soft);
+  vertical-align:top;
+}
+table.sym td.msg{width:38%}
+table.sym td.msg code{
+  background:transparent; padding:0; color:var(--crit); font-size:12.3px;
+  display:block; line-height:1.45;
+}
+table.sym td.fix code{
+  background:var(--rule-soft); font-size:12.3px;
+}
+table.sym tr:last-child td{border-bottom:none}
+
+/* ---- decision list ---- */
+.pick{border-top:1px solid var(--rule); margin-bottom:22px}
+.pick .row{
+  display:grid; grid-template-columns:132px 1fr; gap:20px;
+  padding:14px 0; border-bottom:1px solid var(--rule-soft);
+}
+.pick .row .when{
+  font-family:"JetBrains Mono",monospace; font-size:12.5px; color:var(--amber);
+  font-weight:500;
+}
+.pick .row p{margin:0; font-size:14.5px; color:var(--ink-2)}
+@media (max-width:640px){ .pick .row{grid-template-columns:1fr; gap:4px} }
+
+footer{
+  border-top:1px solid var(--rule); padding-top:20px; color:var(--mute);
+  font-size:13px;
+}
+footer code{font-size:12px}
+</style>
+
+<div class="shell">
+
+<nav>
+  <p class="navtitle">Porting sequence</p>
+  <ol>
+    <li><a href="#env">Enter the environment</a></li>
+    <li><a href="#recipe">Write the recipe</a></li>
+    <li><a href="#build">Build and read the log</a></li>
+    <li><a href="#fix">Fix what QNX breaks</a></li>
+    <li><a href="#patch">Record the patch</a></li>
+    <li><a href="#test">Write a real test</a></li>
+    <li><a href="#verify">Run it on hardware</a></li>
+    <li><a href="#audit">Audit the staging tree</a></li>
+  </ol>
+  <div class="navsub">
+    <a href="#symptoms">Symptom → fix table</a>
+    <a href="#native">Native helper tools</a>
+    <a href="#rules">Rules worth internalising</a>
+  </div>
+</nav>
+
+<main>
+
+<header class="mast">
+  <p class="eyebrow">Working guide · QNX SDP 8.0 · aarch64le + x86_64</p>
+  <h1>Porting an open source package to QNX SDP 8.0</h1>
+  <p class="standfirst">
+    The procedure used for 218 packages in this workspace, with the commands to copy.
+    Every fix below came from a build that actually failed — the symptom table is the
+    fastest route from an error message to the thing that causes it.
+  </p>
+</header>
+
+<section id="env">
+  <h2><span class="step-n">Step 01</span>Enter the environment</h2>
+  <p class="lead">
+    One script sets the compiler, the staging prefix, pkg-config, the native tool path
+    and the link sysroot. Everything else assumes it has been sourced.
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">shell</span><button type="button" data-copy>Copy</button></div>
+<pre><span class="k">cd</span> ~/oss
+<span class="k">source</span> env.sh aarch64le      <span class="c"># or: source env.sh x86_64</span>
+
+<span class="c"># what you now have:</span>
+<span class="c">#   $QNX_TARGET   -> stage/&lt;arch&gt;/linkroot   (shadow tree, see the note)</span>
+<span class="c">#   $QNX_TARGET_SDP -> $QNX_SDP_ROOT/target/qnx  (the real SDP)</span>
+<span class="c">#   $STAGE$PREFIX -> stage/&lt;arch&gt;/usr/local  (where ports install)</span>
+<span class="c">#   CC = qcc -Vgcc_nto&lt;arch&gt; -D_QNX_SOURCE</span></pre>
+  </div>
+  <div class="note">
+    <strong>Why <code>QNX_TARGET</code> points at a shadow tree.</strong>
+    The QNX gcc spec injects its own <code>-rpath-link</code> with four SDP directories
+    <em>ahead</em> of anything you pass, and ld takes the first match — so a transitive
+    <code>DT_NEEDED</code> for a soname the SDP also ships (<code>libssl.so.3</code>,
+    <code>libxml2.so.2</code>, <code>libzstd.so.1</code>…) resolves to the SDP's older copy.
+    ld expands that literal <code>${QNX_TARGET}</code> from the environment, so
+    <code>env.sh</code> builds <code>stage/&lt;arch&gt;/linkroot</code> — every SDP entry
+    symlinked through, with <code>&lt;arch&gt;/usr/lib</code> a real directory where our
+    libraries overwrite the SDP's names — and points <code>QNX_TARGET</code> at it.
+    The SDP itself is never modified.
+  </div>
+</section>
+
+<section id="recipe">
+  <h2><span class="step-n">Step 02</span>Write the recipe</h2>
+  <p class="lead">
+    A recipe is a shell fragment at <code>recipes/&lt;name&gt;/recipe.sh</code>. Declare where
+    the source comes from, which build system it uses, and what it depends on. The driver
+    does the rest.
+  </p>
+
+  <h3>CMake — the default, no <code>BUILDSYS</code> line needed</h3>
+  <div class="code">
+    <div class="bar"><span class="path">recipes/zstd/recipe.sh</span><button type="button" data-copy>Copy</button></div>
+<pre>VERSION=1.5.6; GIT=https://github.com/facebook/zstd.git; REF=v1.5.6
+SUBDIR=build/cmake                <span class="c"># CMakeLists.txt is not at the root</span>
+CMAKE_ARGS_EXTRA=( -DZSTD_BUILD_SHARED=ON -DZSTD_BUILD_PROGRAMS=OFF
+                   -DZSTD_BUILD_TESTS=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )</pre>
+  </div>
+
+  <h3>Meson</h3>
+  <div class="code">
+    <div class="bar"><span class="path">recipes/pixman/recipe.sh</span><button type="button" data-copy>Copy</button></div>
+<pre>VERSION=0.44.2; GIT=https://gitlab.freedesktop.org/pixman/pixman.git
+REF=pixman-0.44.2
+DEPS=<span class="s">"libpng"</span>                  <span class="c"># built first, automatically</span>
+BUILDSYS=meson
+MESON_ARGS_EXTRA=( -Dtests=disabled -Ddemos=disabled
+                   -Dgtk=disabled -Dlibpng=enabled )</pre>
+  </div>
+
+  <h3>autotools</h3>
+  <div class="code">
+    <div class="bar"><span class="path">recipes/libexif/recipe.sh</span><button type="button" data-copy>Copy</button></div>
+<pre>VERSION=0.6.24; GIT=https://github.com/libexif/libexif.git; REF=v0.6.24
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-docs --disable-nls )
+
+<span class="c"># Cache variables for probes configure cannot run across a cross build:</span>
+<span class="c"># CONF_ENV=( ac_cv_file__dev_ptmx=yes ac_cv_header_sys_termio_h=no )</span>
+
+<span class="c"># Regenerate the build system when the tree ships no ./configure:</span>
+<span class="c"># do_patch() { cd "$SRCROOT" &amp;&amp; autoreconf -fi; }</span></pre>
+  </div>
+
+  <h3>Tarball instead of git, and custom builds</h3>
+  <div class="code">
+    <div class="bar"><span class="path">recipes/&lt;name&gt;/recipe.sh — other forms</span><button type="button" data-copy>Copy</button></div>
+<pre><span class="c"># A release tarball (use when the repo needs credentials or has no tags)</span>
+VERSION=0.5
+TARBALL=https://xorg.freedesktop.org/releases/individual/lib/libpthread-stubs-0.5.tar.xz
+
+<span class="c"># A project with no build system at all: override the hooks.</span>
+<span class="c"># $S = source dir, $B = build dir, both already set.</span>
+BUILDSYS=custom
+do_build() {
+  <span class="s">"$QNX_HOST/usr/bin/qcc"</span> -V<span class="s">"$QCC_TARGET"</span> -O2 -fPIC -D_QNX_SOURCE \
+    -I<span class="s">"$S/src"</span> -c <span class="s">"$S/src/duktape.c"</span> -o <span class="s">"$B/duktape.o"</span>
+  <span class="s">"$QNX_HOST/usr/bin/qcc"</span> -V<span class="s">"$QCC_TARGET"</span> -shared \
+    -Wl,-soname,libduktape.so.207 -o <span class="s">"$B/libduktape.so.207.0.0"</span> \
+    <span class="s">"$B/duktape.o"</span> -lm
+}
+do_install() {
+  install -d <span class="s">"$STAGE$PREFIX/lib"</span> <span class="s">"$STAGE$PREFIX/include"</span>
+  install -m 755 <span class="s">"$B/libduktape.so.207.0.0"</span> <span class="s">"$STAGE$PREFIX/lib/"</span>
+  ln -sfn libduktape.so.207.0.0 <span class="s">"$STAGE$PREFIX/lib/libduktape.so.207"</span>
+  ln -sfn libduktape.so.207     <span class="s">"$STAGE$PREFIX/lib/libduktape.so"</span>
+  install -m 644 <span class="s">"$S/src/duktape.h"</span> <span class="s">"$STAGE$PREFIX/include/"</span>
+}</pre>
+  </div>
+
+  <div class="note warn">
+    <strong>Declare every dependency in <code>DEPS</code>, even one you know is already built.</strong>
+    An undeclared dependency does not fail loudly — it makes the build depend on the order
+    packages happen to be listed in. Worse, it can link the SDP's prebuilt copy instead:
+    gettext linked the SDP's ncurses for exactly this reason, and that only surfaced in a
+    from-scratch rebuild.
+  </div>
+</section>
+
+<section id="build">
+  <h2><span class="step-n">Step 03</span>Build and read the log</h2>
+  <div class="code">
+    <div class="bar"><span class="path">shell</span><button type="button" data-copy>Copy</button></div>
+<pre>./scripts/qnxbuild -l                    <span class="c"># status of every recipe</span>
+./scripts/qnxbuild mypkg                 <span class="c"># both architectures</span>
+./scripts/qnxbuild -a aarch64le mypkg    <span class="c"># one architecture</span>
+./scripts/qnxbuild -f -a aarch64le mypkg <span class="c"># force rebuild (ignores the stamp)</span>
+
+<span class="c"># The log is the whole story; the console only prints headlines.</span>
+grep -nE <span class="s">"error:|undefined reference|No such file"</span> logs/mypkg.aarch64le.log | head</pre>
+  </div>
+  <div class="note">
+    <strong>Patches apply on first fetch only.</strong> After editing a patch, delete the
+    source tree so the driver re-clones and re-applies:
+    <code>rm -rf src/mypkg &amp;&amp; ./scripts/qnxbuild -a aarch64le mypkg</code>.
+    Editing <code>src/</code> directly is fine while iterating — just make sure the change
+    ends up in <code>recipes/</code> before you finish (step 05).
+  </div>
+</section>
+
+<section id="fix">
+  <h2><span class="step-n">Step 04</span>Fix what QNX breaks</h2>
+  <p class="lead">
+    Roughly a quarter of packages need a source change. Decide which kind of change it is
+    before writing it — the right fix is usually smaller than it first looks.
+  </p>
+  <div class="pick">
+    <div class="row">
+      <div class="when">build flag</div>
+      <p>A feature detected that QNX cannot support. Disable it in the recipe with a cache variable or a <code>-D</code>, and say why in a comment. No patch needed.</p>
+    </div>
+    <div class="row">
+      <div class="when">platform list</div>
+      <p>The most common real patch. A <code>#if defined(__linux__)</code> or a configure <code>case $host_os</code> that simply predates QNX. Add QNX beside the platform it behaves like, don't invent a new branch.</p>
+    </div>
+    <div class="row">
+      <div class="when">missing API</div>
+      <p>QNX has an equivalent under another name or header — <code>posix_madvise</code> for <code>madvise</code>, <code>&lt;unix.h&gt;</code> for <code>openpty</code>. Check the semantics, not just the name: <code>posix_madvise</code> returns the error instead of setting <code>errno</code>.</p>
+    </div>
+    <div class="row">
+      <div class="when">absent concept</div>
+      <p>No equivalent exists (<code>EPOLLET</code>, <code>SA_RESTART</code>). Prefer failing honestly over pretending: guard the constant so a caller gets an error, rather than defining it to 0 and silently changing behaviour — unless 0 genuinely is a no-op.</p>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <strong>An existing QNX branch is not evidence that QNX works.</strong>
+    Most upstream QNX support targets 6.x or 7.x and actively breaks on 8.0. x264's
+    <code>*qnx*</code> case put a Visual C++ header on the include path; vsomeip carried an
+    <code>accept4</code> emulation QNX 8 no longer needs; CPython's <code>LINKCC=qcc</code>
+    case was written for native builds and dropped the cross target selector. Always check
+    what the branch was written against.
+  </div>
+</section>
+
+<section id="symptoms">
+  <h2>Symptom → fix</h2>
+  <p class="lead">
+    Every row here is a build that failed in this workspace. Search for your error text.
+  </p>
+  <div class="sym-scroll">
+  <table class="sym">
+    <tr><th>Error</th><th>Cause and fix</th></tr>
+
+    <tr><td class="msg"><code>undefined reference to 'eventfd'<br>…'epoll_create1', 'signalfd', 'timerfd_create'</code></td>
+        <td class="fix">QNX splits libc: these live in <code>libeventfd</code>, <code>libepoll</code>, <code>libsignalfd</code>, <code>libtimerfd</code>. The toolchain files already link them; if the package links with raw <code>ld</code>, add them to its <code>LDFLAGS</code>.</td></tr>
+
+    <tr><td class="msg"><code>undefined reference to 'regcomp'</code></td>
+        <td class="fix">QNX has a real <code>libregex.so</code> in <code>$QNX_TARGET/&lt;arch&gt;/lib</code>. Add <code>-lregex</code>. Do <em>not</em> add a compat stub — that shadows the real library.</td></tr>
+
+    <tr><td class="msg"><code>cannot find -lrt / -ldl / -lpthread</code></td>
+        <td class="fix">Folded into libc on QNX. <code>env.sh</code> stages empty stub archives so these flags become no-ops; nothing to do.</td></tr>
+
+    <tr><td class="msg"><code>'SA_RESTART' undeclared</code></td>
+        <td class="fix">QNX leaves it commented out ("not supported yet") — kernel calls return <code>EINTR</code>. <code>#define SA_RESTART 0</code> under a <code>__QNX__</code> guard is a true no-op.</td></tr>
+
+    <tr><td class="msg"><code>'EPOLLET' undeclared<br>'EPOLLRDHUP' undeclared</code></td>
+        <td class="fix">QNX's epoll is level-triggered only. Either disable the epoll backend, or define the bit to 0 <em>and</em> stop advertising the capability so callers can pick another path.</td></tr>
+
+    <tr><td class="msg"><code>'posix_memalign' was not declared</code></td>
+        <td class="fix">It is in <code>&lt;malloc.h&gt;</code>, not <code>&lt;stdlib.h&gt;</code>, and gated behind <code>__EXT_POSIX1_200112</code> — so <code>-std=c++14</code> hides it. Include the header and keep <code>-D_QNX_SOURCE</code>.</td></tr>
+
+    <tr><td class="msg"><code>::stat / ::getpid has not been declared</code></td>
+        <td class="fix"><code>-std=c++17</code> defines <code>__STRICT_ANSI__</code>, which switches off QNX's <code>__EXT_*</code> declarations. The toolchain sets <code>-D_QNX_SOURCE</code> globally; for autotools put it on <code>CC</code>/<code>CXX</code>, not just <code>CFLAGS</code> — configure may overwrite the flag variables.</td></tr>
+
+    <tr><td class="msg"><code>#error termio/termios incompatibility</code></td>
+        <td class="fix">QNX's <code>&lt;sys/termio.h&gt;</code> and <code>&lt;termios.h&gt;</code> are mutually exclusive. Tell configure the first is absent: <code>ac_cv_header_sys_termio_h=no</code>.</td></tr>
+
+    <tr><td class="msg"><code>&lt;sys/syscall.h&gt;: No such file<br>&lt;sys/sysinfo.h&gt; / &lt;pty.h&gt; / &lt;linux/input.h&gt;</code></td>
+        <td class="fix">Microkernel — no syscall table. Use the library function instead. <code>openpty</code>/<code>forkpty</code> are in <code>&lt;unix.h&gt;</code>; <code>sysinfo</code> becomes <code>sysconf</code>.</td></tr>
+
+    <tr><td class="msg"><code>cross build not supported for …-nto-qnx<br>could not identify NASM format for nto-qnx</code></td>
+        <td class="fix">A platform table with no QNX entry. Add QNX beside the closest match — Linux for ELF/NASM, VxWorks for RTOS cases.</td></tr>
+
+    <tr><td class="msg"><code>Relocations in generic ELF (EM: 183)</code></td>
+        <td class="fix">The wrong architecture's linker. Bare <code>qcc</code> uses its default target; the driver must carry <code>-V&lt;target&gt;</code>. Look for a hard-coded <code>LINKCC=qcc</code> or similar.</td></tr>
+
+    <tr><td class="msg"><code>relocation R_AARCH64_ADR_PREL_PG_HI21 …<br>can not be used when making a shared object</code></td>
+        <td class="fix">Objects compiled without <code>-fPIC</code>, usually because a per-platform <code>CCSHARED</code>-style variable has no QNX entry.</td></tr>
+
+    <tr><td class="msg"><code>operand mismatch — `mov v0.8h,v4.8h'<br>invalid addressing mode — `ld1 {v4.16b},[x3,80]'</code></td>
+        <td class="fix">Clang-isms in hand-written NEON that the SDP's GNU <code>as</code> rejects. Use <code>.16b</code> for register moves; change <code>"m"</code> asm operands to <code>"r"</code> with an explicit <code>[%N]</code>.</td></tr>
+
+    <tr><td class="msg"><code>__multc3 … final link failed: bad value</code><br><span style="color:var(--mute);font-size:12px">every meson probe fails</span></td>
+        <td class="fix">QNX's <code>libm.so</code> references a symbol hidden in static libgcc. Add <code>-shared-libgcc</code> — already in the meson cross files.</td></tr>
+
+    <tr><td class="msg"><code>Could not load library</code> at run time<br><span style="color:var(--mute);font-size:12px">…naming a file that is present</span></td>
+        <td class="fix">A dangling link in a multi-level symlink chain (<code>libfoo.so → .so.6 → .so.6.5</code>). Copy every step, not just the head and the resolved file.</td></tr>
+
+    <tr><td class="msg"><code>cannot run test program while cross compiling</code></td>
+        <td class="fix">A run-time probe. Supply the answer as a cache variable — and look it up rather than guessing. QNX documents <code>malloc(0)</code>: "returns a valid pointer with a size of zero".</td></tr>
+
+    <tr><td class="msg"><code>is not a valid libtool archive</code></td>
+        <td class="fix"><code>.la</code> files record absolute <em>target</em> paths. The driver deletes them from staging after every install, as Yocto and Buildroot do.</td></tr>
+
+    <tr><td class="msg"><code>An exe_wrapper is needed but was not found</code><br><code>must install xdt-csource</code></td>
+        <td class="fix">The source is a git checkout. GTK4 compiles its CSS from Sass and Xfce regenerates <code>*-aliasdef.c</code> only for git trees, and both need to <em>run</em> a tool. Use the project's release tarball (<code>TARBALL=</code>), which ships the generated files.</td></tr>
+
+    <tr><td class="msg"><code>sys/shm.h: No such file or directory</code></td>
+        <td class="fix">QNX 8.0 has no System V shared memory — no <code>shmget</code>/<code>shmat</code>, only <code>shm_open</code>. X11's MIT-SHM therefore cannot exist. Take the package's no-SHM path (cairo has one; see <code>recipes/cairo/patches</code>) or disable the backend.</td></tr>
+
+    <tr><td class="msg"><code>sys/asoundlib.h: No such file</code></td>
+        <td class="fix">That is QSA, the QNX 6.x/7.x sound API. QNX 8.0 ships a real alsa-lib (<code>&lt;alsa/asoundlib.h&gt;</code>). Gate the QSA backend off and let the package's generic ALSA check pick up (SDL2, SDL3).</td></tr>
+
+    <tr><td class="msg"><code>no type named 'type' in 'enable_if&lt;false, int&gt;'</code> (from <code>from_chars_integral.h</code>)</td>
+        <td class="fix">QNX 8.0's libc++ has <code>std::from_chars</code> for integers only. Use <code>strtod</code> on a NUL-terminated copy, and reject what <code>chars_format::general</code> would reject (<code>+</code>, hex, inf/nan) to keep the semantics.</td></tr>
+
+    <tr><td class="msg"><code>'W_EXITCODE' was not declared</code></td>
+        <td class="fix">A glibc/BSD convenience macro. QNX's wait-status encoding is the same (<code>WEXITSTATUS</code> is <code>(s&gt;&gt;8)&amp;0xff</code>), so <code>#define W_EXITCODE(r,s) ((r)&lt;&lt;8|(s))</code> under <code>#ifndef</code>.</td></tr>
+
+    <tr><td class="msg"><code>cc: unknown option: '--include'</code></td>
+        <td class="fix">qcc parses its own options first and rejects GCC's long spellings. Replace <code>--include</code> with <code>-include</code> (in <code>Makefile.am</code> <em>and</em> <code>Makefile.in</code> for a tarball).</td></tr>
+
+    <tr><td class="msg"><code>Inappropriate I/O control operation</code> at run time</td>
+        <td class="fix">The request is <em>defined</em> in QNX's headers but not implemented by the resource manager — <code>TIOCPKT</code> on devc-pty, for one. Turn the feature off at compile time, and turn off every site that depends on it together: VTE's reader strips a packet byte that would no longer be there.</td></tr>
+
+    <tr><td class="msg"><code>Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE)</code></td>
+        <td class="fix">CMake found a <em>target</em> <code>pkgconf</code> under the staging prefix, could not run it, and said nothing more. The toolchain files now put <code>stage/…/bin</code> in <code>CMAKE_IGNORE_PATH</code>; check that yours do.</td></tr>
+
+    <tr><td class="msg"><code>ld: warning: libX.so.N, needed by …, may conflict with libX.so.M</code></td>
+        <td class="fix">The same library is staged twice, usually because a package installed a vendored copy. This is how gRPC put a second protobuf and abseil beside ours. Switch the package to its <code>PROVIDER=package</code>/system option and run <code>scripts/check-dupes</code>.</td></tr>
+
+    <tr><td class="msg"><code>undefined reference to 'lua_pcallk'</code> linking against LuaJIT</td>
+        <td class="fix">Compiled against Lua 5.4's <code>lua.h</code>, which lives in the same prefix. An imported CMake target's include dir is passed as <code>-isystem</code>, after the toolchain's; add it as a plain <code>-I</code> (<code>target_include_directories(… BEFORE PRIVATE …)</code>).</td></tr>
+
+    <tr><td class="msg">Crash on the first line of any script, in generated-VM code (LuaJIT)</td>
+        <td class="fix">A build-machine generator compiled for a different target OS than the target code. LuaJIT's buildvm used <code>LUAJIT_OS_OTHER</code>; the target used <code>POSIX</code>; the struct layouts differ by 16 bytes. Make the generator see the same configuration (<code>recipes/luajit/files</code>).</td></tr>
+
+    <tr><td class="msg"><code>Could not load library libeventfd.so.1</code> on every test</td>
+        <td class="fix">The target image omits QNX's split-libc libraries (a default <code>mkqnximage</code> build does). Use a fuller image, or <code>tests/deploy-and-run-chunked.sh … --with-os-runtime</code> to carry them from the SDP.</td></tr>
+
+    <tr><td class="msg"><code>scp: Connection closed</code> / <code>tar: No space left on device</code> while deploying</td>
+        <td class="fix">The target is out of disk, not off the network — a default image has 147 MB in total. Use <code>tests/deploy-and-run-chunked.sh</code>, which streams one batch at a time.</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="patch">
+  <h2><span class="step-n">Step 05</span>Record the patch</h2>
+  <p class="lead">
+    A fix that lives only in <code>src/</code> is lost on the next clean build. Patches go in
+    <code>recipes/&lt;name&gt;/patches/</code> and are applied in filename order on first fetch.
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">shell</span><button type="button" data-copy>Copy</button></div>
+<pre><span class="c"># git checkout: diff against HEAD</span>
+mkdir -p recipes/mypkg/patches
+git -C src/mypkg diff &gt; recipes/mypkg/patches/0001-qnx-short-description.patch
+
+<span class="c"># tarball: diff against a pristine extract of the same release</span>
+mkdir -p /tmp/orig &amp;&amp; tar xf dist/mypkg-1.2.3.tar.gz -C /tmp/orig \
+  --strip-components=1 mypkg-1.2.3/src/thing.c
+diff -u /tmp/orig/src/thing.c src/mypkg/src/thing.c \
+  | sed <span class="s">'1s|.*|--- a/src/thing.c|; 2s|.*|+++ b/src/thing.c|'</span> \
+  &gt; recipes/mypkg/patches/0001-qnx-short-description.patch
+
+<span class="c"># verify it applies to a pristine tree</span>
+rm -rf src/mypkg &amp;&amp; ./scripts/qnxbuild -a aarch64le mypkg</pre>
+  </div>
+  <div class="note">
+    <strong>Write the patch as if you were sending it upstream.</strong> Comment
+    <em>why</em> QNX differs, not just what changed — the comment is what stops the next
+    person re-deriving it. Patches that only a cross build needs (a cache variable, a
+    <code>-D</code>) belong in the recipe, not in a patch.
+  </div>
+</section>
+
+<section id="test">
+  <h2><span class="step-n">Step 06</span>Write a real test</h2>
+  <p class="lead">
+    Linking proves headers and libraries are usable. It proves nothing about behaviour.
+    Exercise the library's actual API and check results against known values.
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">tests/src/test_mypkg.c</span><button type="button" data-copy>Copy</button></div>
+<pre><span class="c">/* One line per check; exits 0 only if every check passed. */</span>
+#include <span class="s">"common.h"</span>
+#include &lt;mypkg.h&gt;
+
+int main(void) {
+  QT_BEGIN(<span class="s">"mypkg"</span>);
+  printf(<span class="s">"  info version %s\n"</span>, mypkg_version());
+
+  <span class="c">/* Round-trip, not just "did it return non-NULL". */</span>
+  char out[64];
+  QT_CHECK(mypkg_encode(<span class="s">"qnx"</span>, out, sizeof out) == 3, <span class="s">"encode"</span>);
+  QT_CHECK(strcmp(mypkg_decode(out), <span class="s">"qnx"</span>) == 0, <span class="s">"round trip"</span>);
+
+  <span class="c">/* A published test vector beats a self-consistent one. */</span>
+  QT_CHECK(mypkg_hash(<span class="s">"abc"</span>) == 0x352441c2, <span class="s">"reference vector"</span>);
+
+  <span class="c">/* The error path matters as much as the happy path. */</span>
+  QT_CHECK(mypkg_decode(<span class="s">"not valid"</span>) == NULL, <span class="s">"bad input is rejected"</span>);
+  QT_END();
+}</pre>
+  </div>
+  <div class="code">
+    <div class="bar"><span class="path">tests/CMakeLists.txt</span><button type="button" data-copy>Copy</button></div>
+<pre><span class="c"># plain library name</span>
+port_test(test_mypkg   test_mypkg.c   mypkg)
+
+<span class="c"># headers under a subdirectory</span>
+target_include_directories(test_mypkg PRIVATE <span class="s">"${INC}/mypkg-2"</span>)
+
+<span class="c"># or let pkg-config supply the flags</span>
+pkg_check_modules(MYPKG REQUIRED IMPORTED_TARGET mypkg-2.0)
+port_test(test_mypkg   test_mypkg.c   PkgConfig::MYPKG)</pre>
+  </div>
+  <div class="note warn">
+    <strong>Honour the alignment and lifetime contracts the API documents.</strong>
+    zimg requires 32-byte aligned buffers on x86. A plain <code>malloc</code> gives 16 —
+    which aarch64's NEON accepts by accident, so the test passed there and segfaulted only
+    on x86_64. Test both architectures before believing a result.
+  </div>
+</section>
+
+<section id="verify">
+  <h2><span class="step-n">Step 07</span>Run it on hardware</h2>
+  <p class="lead">
+    Cross-built binaries cannot run on the build host. The bundle carries the test binaries
+    plus only the libraries they pull in — and the run-time data some of them read from disk.
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">shell</span><button type="button" data-copy>Copy</button></div>
+<pre>./tests/build-tests.sh          <span class="c"># both arches</span>
+./tests/make-bundle.sh          <span class="c"># dist/qnx-port-tests-&lt;arch&gt;.tar.gz</span>
+
+./tests/deploy-and-run.sh aarch64le &lt;target&gt;   <span class="c"># copy, unpack under $HOME, run</span>
+
+<span class="c"># a target too small for the whole bundle (default mkqnximage: 147 MB disk):</span>
+./tests/deploy-and-run-chunked.sh x86_64 &lt;target&gt; 12
+<span class="c">#   ...and if the image lacks QNX's own libeventfd/libsocket/...:</span>
+./tests/deploy-and-run-chunked.sh x86_64 &lt;target&gt; 12 --with-os-runtime</pre>
+  </div>
+  <div class="note">
+    <strong>Loadable modules and data files are invisible to a <code>DT_NEEDED</code> walk.</strong>
+    GStreamer elements and gdk-pixbuf loaders are <code>dlopen</code>ed, so a dependency walk
+    packages none of them — the registry then comes up with one plugin and every
+    <code>gst_element_factory_make()</code> returns NULL. The bundler carries the plugin
+    directory, <code>gst-plugin-scanner</code>, enchant's provider modules, the XKB rules,
+    fontconfig's config, the terminfo database and libthai's dictionary; the runner exports
+    the matching environment variables. The chunked runner reuses <code>run-on-target.sh</code>
+    rather than re-creating that environment — re-creating it is how Wayland and GStreamer
+    tests came back "failing" when they were fine.
+  </div>
+  <div class="note">
+    <strong>Relocatable libraries need to find themselves.</strong> gnulib's
+    <code>relocate()</code> locates a shared library through <code>/proc/self/maps</code>, which
+    QNX lacks, so on QNX it silently returns every path unchanged. enchant then looked for its
+    plugins at the configure-time prefix and found none. <code>dladdr()</code> works on QNX; see
+    <code>recipes/enchant/patches</code>.
+  </div>
+  <p>
+    To debug a crash on target, gdb is already there — but note it resolves symbols from the
+    target's own <code>/usr/lib</code>, which may shadow the library you shipped:
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">on the target</span><button type="button" data-copy>Copy</button></div>
+<pre>LD_LIBRARY_PATH=$PWD/lib gdb -batch -ex run -ex bt ./bin/test_mypkg</pre>
+  </div>
+</section>
+
+<section id="audit">
+  <h2><span class="step-n">Step 08</span>Audit the staging tree</h2>
+  <p class="lead">
+    Four checks catch the failures that do not announce themselves. Run them after every
+    batch, not at the end.
+  </p>
+  <div class="code">
+    <div class="bar"><span class="path">shell</span><button type="button" data-copy>Copy</button></div>
+<pre>./scripts/check-undefined     <span class="c"># holes in shared libraries</span>
+./scripts/check-devlinks      <span class="c"># missing lib&lt;name&gt;.so symlinks</span>
+./scripts/check-sdp-leak      <span class="c"># binaries loading an SDP prebuilt library</span>
+./scripts/check-dupes         <span class="c"># one library staged under two sonames</span></pre>
+  </div>
+  <div class="pick">
+    <div class="row">
+      <div class="when">check-undefined</div>
+      <p>Shared libraries link with undefined symbols allowed, so a forgotten <code>target_link_libraries</code> installs cleanly and fails only when an executable finally links it. This is how libyuv's missing libjpeg and SVT-AV1's missing <code>cpuinfo_isa</code> were found.</p>
+    </div>
+    <div class="row">
+      <div class="when">check-devlinks</div>
+      <p>A library staged as <code>libfoo.so.8</code> with no <code>libfoo.so</code> is not a link error — <code>-lfoo</code> keeps searching and finds the SDP's prebuilt copy. Silent downgrade. It also flags a shared library that exports no symbols at all, which is what ThorVG built when <code>--default-library=both</code> defined its static-build macro.</p>
+    </div>
+    <div class="row">
+      <div class="when">check-sdp-leak</div>
+      <p>Reports any staged binary whose <code>DT_NEEDED</code> names a soname we do not provide but do build — i.e. it loads QNX's prebuilt library on target. This is the check that actually enforces "build everything from source".</p>
+    </div>
+    <div class="row">
+      <div class="when">check-dupes</div>
+      <p>Reports a library stem staged under more than one soname. Packages that vendor their dependencies install them: gRPC put protobuf 29.0 and 86 abseil libraries beside the ones already staged, and a gRPC process mapped both. It cannot see a same-soname overwrite (gRPC also replaced c-ares's <code>libcares.pc</code>); a package's install manifest can.</p>
+    </div>
+  </div>
+  <div class="note warn">
+    <strong>Finish with a from-scratch rebuild.</strong>
+    Move <code>stage</code>, <code>build</code>, <code>src</code> and <code>dist</code> aside, then
+    <code>./scripts/qnxbuild $(ls recipes)</code> — the driver keeps going past a failure, so one
+    run lists every problem.
+    An incremental tree hides ordering assumptions: it is how three undeclared dependencies
+    and a driver bug that made glib stamp itself "built" while installing nothing all went
+    unnoticed. Every earlier build had worked by luck of ordering.
+  </div>
+</section>
+
+<section id="native">
+  <h2>Native helper tools</h2>
+  <p class="lead">
+    Some tools must <em>run</em> on the build machine. A cross-built copy is a QNX binary and
+    cannot. <code>scripts/build-host-tools.sh</code> builds these into <code>hosttools/</code>.
+  </p>
+  <div class="pick">
+    <div class="row"><div class="when">gettext</div><p><code>xgettext</code>/<code>msgfmt</code> run during almost every GNOME build.</p></div>
+    <div class="row"><div class="when">nasm</div><p>x86_64 assembly in dav1d, openh264, libvpx, FFmpeg, libass. Without it those builds fail or silently fall back to C.</p></div>
+    <div class="row"><div class="when">wayland-scanner</div><p>Turns Wayland's XML protocol definitions into C.</p></div>
+    <div class="row"><div class="when">trietool</div><p>libthai generates its word-break dictionary by running it. Taking the <code>--disable-dict</code> escape ships a libthai that cannot break Thai text.</p></div>
+    <div class="row"><div class="when">xorg-macros</div><p>Every X.Org <code>configure.ac</code> opens with <code>XORG_MACROS_VERSION</code>; <code>autoreconf</code> refuses without it. <code>ACLOCAL_PATH</code> must point at it.</p></div>
+    <div class="row"><div class="when">python3.14</div><p>Cross-building CPython needs a native interpreter of the <em>same</em> version — the build freezes its own stdlib with it and <code>--with-build-python</code> rejects a mismatch.</p></div>
+  </div>
+</section>
+
+<section id="rules">
+  <h2>Rules worth internalising</h2>
+  <ul>
+    <li><strong>A clean build is not a working port.</strong> Every serious defect found here compiled and linked without complaint.</li>
+    <li><strong>Test both architectures.</strong> Orc's missing JIT target appeared only on aarch64; SVT-AV1's unresolved symbol and zimg's alignment crash only on x86_64.</li>
+    <li><strong>Look the answer up.</strong> QNX documents <code>malloc(0)</code>, its feature-test macros and which library holds which symbol. Guessing produces a flag that makes configure proceed and a behaviour change you will not notice.</li>
+    <li><strong>Prefer an honest failure to a silent downgrade.</strong> Leaving <code>select.EPOLLET</code> undefined gives an <code>AttributeError</code>; defining it to 0 gives level-triggered semantics to code that asked for edge-triggered.</li>
+    <li><strong>Read what the SDP already ships.</strong> QNX's own <code>python3.13/pyconfig.h</code> settled which CPython features are genuinely unavailable — useful as a reference even though its binaries are not reused.</li>
+    <li><strong>A defined macro is not an implemented feature.</strong> <code>TIOCPKT</code> is in QNX's headers and not in its pty driver. Compile-time probes answer "does the name exist", not "will the kernel do it".</li>
+    <li><strong>Use one copy of everything.</strong> Vendored dependencies turn into duplicate libraries the moment a package installs them. Prefer the package's option to use what is already built.</li>
+    <li><strong>Generators must see the target the compiler sees.</strong> A tool compiled for the build machine that emits target code or offsets has to be configured as the target, or the layouts disagree silently.</li>
+    <li><strong>Comment the why.</strong> Every workaround here carries the failure it prevents. That is what stops the next person deleting it.</li>
+  </ul>
+</section>
+
+<footer>
+  Workspace <code>~/oss</code> · driver <code>scripts/qnxbuild</code> ·
+  84 hazards in <code>README.md</code> · package table in <code>PORTS.md</code>
+</footer>
+
+</main>
+</div>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.closest('.code').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(function () {
+      var prev = btn.textContent;
+      btn.textContent = 'Copied';
+      btn.classList.add('done');
+      setTimeout(function () { btn.textContent = prev; btn.classList.remove('done'); }, 1400);
+    });
+  });
+});
+</script>

@@ -1,0 +1,135 @@
+From eb51ec9e519a7cc99ee207961d3ebedd43ee721b Mon Sep 17 00:00:00 2001
+From: Yongxin Dai <yodai@qnx.com>
+Date: Tue, 1 Apr 2025 16:10:32 -0400
+Subject: [PATCH] [QNX Base] Update DEPS to support QNX OS
+
+Imported from qnx-ports/webrtc (commit eb51ec9e519a on M132 afaf497805cb).
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+Changed here: qnx_build (qnx-ports/build-files, which carries the QNX patch
+series and build scripts the DEPS hooks run) is pinned to commit 6f1507550d65
+instead of following its main branch.
+
+- Add dependency: qnx_build
+- Add hooks to initialize QNX build system and
+  apply necessary changes
+---
+ DEPS | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+
+diff --git a/DEPS b/DEPS
+index a9b8fde206..188e8116c6 100644
+--- a/DEPS
++++ b/DEPS
+@@ -37,6 +37,7 @@ vars = {
+   # By default, download the fuchsia images from the fuchsia GCS bucket.
+   'fuchsia_images_bucket': 'fuchsia',
+   'checkout_fuchsia': False,
++  'checkout_qnx': False,
+   # Since the images are hundreds of MB, default to only downloading the image
+   # most commonly useful for developers. Bots and developers that need to use
+   # other images can override this with additional images.
+@@ -59,6 +60,9 @@ vars = {
+ 
+   # condition to allowlist deps for non-git-source processing.
+   'non_git_source': 'True',
++
++  'qnx_build_files': 'https://github.com/qnx-ports/build-files.git',
++  'qnx_build_files_revision': '6f1507550d656edafbf8bcc826a196da1b00c459'
+ }
+ 
+ deps = {
+@@ -1860,6 +1864,11 @@ deps = {
+       'dep_type': 'cipd',
+   },
+ 
++  'src/qnx_build': {
++    'url': Var('qnx_build_files') + '@' + Var('qnx_build_files_revision'),
++    'condition': 'checkout_qnx',
++  },
++
+   # === ANDROID_DEPS Generated Code End ===
+ }
+ 
+@@ -2134,6 +2143,82 @@ hooks = [
+         'src/third_party/test_fonts/test_fonts.tar.gz', # Remove after 20240901
+     ],
+   },
++
++  # Apply changes made for QNX.
++  {
++    'name': 'appple_qnx_patches',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/apply_patches.py'
++        ],
++  },
++
++  {
++    # workarounds for building with QNX SDP.
++    'name': 'libvpx_revert_to_previous_versions',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/checkout_third_party_version.py',
++        '--path',
++        'src/third_party/libvpx/source/libvpx',
++        '--sha',
++        '10b9492dcf05b652e2e4b370e205bd605d421972',
++        '--message',
++        'Revert to previous version that does not require Clang.',
++        ],
++  },
++
++  {
++    # workarounds for building with QNX SDP.
++    'name': 'libaom_revert_to_previous_versions',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/checkout_third_party_version.py',
++        '--path',
++        'src/third_party/libaom/source/libaom',
++        '--sha',
++        '70b12695e1967d9589dd15b345a039e575e8f429',
++        '--message',
++        'Revert to previous version that does not require Clang.',
++        ],
++  },
++
++  # Apply changes made into third-party reositories by QNX.
++  {
++    'name': 'appple_qnx_ancillary_patches',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/apply_ancillary_patches.py'
++        ],
++  },
++
++  {
++    'name': 'collect-headers',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/collect-headers.py'
++        ],
++  },
++
++  {
++    'name': 'initialize_build_structure',
++    'pattern': '.',
++    'condition': 'checkout_qnx',
++    'action': [
++        'python3',
++        'src/qnx_build/ports/webrtc/scripts/generate_supplementary_files.py'
++        ],
++  },
+ ]
+ 
+ recursedeps = [

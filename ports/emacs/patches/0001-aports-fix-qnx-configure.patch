@@ -1,0 +1,23 @@
+QNX build fix from QNX's aports (extra/emacs/fix-qnx-configure.patch).
+
+Taken from qnx-ports/aports extra/emacs, the APKBUILD the QNX Everywhere image's
+package is built from.
+
+Upstream-Status: QNX-specific
+
+--- emacs-30.2.orig/configure.ac
++++ emacs-30.2/configure.ac
+@@ -1496,8 +1496,11 @@
+   ## QNX Neutrino
+   *-nto-qnx* )
+     opsys=qnxnto
+-    test -z "$CC" && CC=qcc
+-    LDFLAGS="-N2M $LDFLAGS"
++
++    if [ -z "$CC" ]; then
++        CC=qcc
++        LDFLAGS="-N2M $LDFLAGS"
++    fi
+   ;;
+ 
+   *-haiku )

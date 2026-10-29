@@ -1,0 +1,35 @@
+Export all three compat getusershell functions from libsudo_util.
+
+On a system without getusershell() (QNX), sudo builds its own
+setusershell/getusershell/endusershell into libsudo_util as sudo_*, but
+configure adds only sudo_getusershell to the library's export list. The
+sudoers plugin and visudo call the other two, so linking them fails with
+"undefined reference to sudo_setusershell" / "sudo_endusershell".
+
+configure is changed along with configure.ac so the release tarball builds
+without regenerating it.
+
+Upstream-Status: Pending (affects any system without getusershell())
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -2768,7 +2768,7 @@
+     AC_CHECK_DECLS([getusershell])
+ ], [
+     AC_LIBOBJ(getusershell)
+-    SUDO_APPEND_COMPAT_EXP(sudo_getusershell)
++    SUDO_APPEND_COMPAT_EXP(sudo_getusershell sudo_setusershell sudo_endusershell)
+ ])
+ AC_CHECK_FUNCS([reallocarray], [], [
+     AC_LIBOBJ(reallocarray)
+--- a/configure
++++ b/configure
+@@ -23028,7 +23028,7 @@
+ esac
+ 
+ 
+-    for _sym in sudo_getusershell; do
++    for _sym in sudo_getusershell sudo_setusershell sudo_endusershell; do
+ 	COMPAT_EXP="${COMPAT_EXP}${_sym}
+ "
+     done

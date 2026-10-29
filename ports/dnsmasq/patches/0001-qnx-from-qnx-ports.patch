@@ -1,0 +1,118 @@
+From e8b7dfbfa9dc45d90bbee00970b0ce5ba3cbe4e1 Mon Sep 17 00:00:00 2001
+From: nnarayanamurthy <nnarayanamurthy@blackberry.com>
+Date: Fri, 20 Feb 2026 11:28:23 +0530
+Subject: [PATCH 1/2] Port dnsmasq for QNX 8.0
+
+Imported from qnx-ports/dnsmasq (e4d0bb45799a...qnx-v2.92); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ src/bpf.c     | 2 +-
+ src/dhcp.c    | 2 +-
+ src/dnsmasq.h | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/bpf.c b/src/bpf.c
+index dd67735d..0a972481 100644
+--- a/src/bpf.c
++++ b/src/bpf.c
+@@ -16,7 +16,7 @@
+ 
+ #include "dnsmasq.h"
+ 
+-#if defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
++#if defined(HAVE_BSD_NETWORK) || defined(HAVE_SOLARIS_NETWORK) || defined(__QNX__)
+ #include <ifaddrs.h>
+ 
+ #include <sys/param.h>
+diff --git a/src/dhcp.c b/src/dhcp.c
+index 6775fb6c..954e03dc 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -158,7 +158,7 @@ void dhcp_packet(time_t now, int pxe_fd)
+     char control[CMSG_SPACE(sizeof(struct in_pktinfo))];
+ #elif defined(HAVE_SOLARIS_NETWORK)
+     char control[CMSG_SPACE(sizeof(unsigned int))];
+-#elif defined(HAVE_BSD_NETWORK) 
++#elif defined(HAVE_BSD_NETWORK) || defined(__QNX__)
+     char control[CMSG_SPACE(sizeof(struct sockaddr_dl))];
+ #endif
+   } control_u;
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 254bacd5..0de973e5 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -125,7 +125,7 @@ typedef unsigned long long u64;
+ #include <pwd.h>
+ #include <grp.h>
+ #include <stdarg.h>
+-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__sun__) || defined (__sun) || defined (__ANDROID__)
++#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__sun__) || defined (__sun) || defined (__ANDROID__) || defined(__QNX__)
+ #  include <netinet/if_ether.h>
+ #else
+ #  include <net/ethernet.h>
+@@ -1299,7 +1299,7 @@ extern struct daemon {
+ #endif
+ #if defined(HAVE_LINUX_NETWORK)
+   int netlinkfd, kernel_version;
+-#elif defined(HAVE_BSD_NETWORK)
++#elif defined(HAVE_BSD_NETWORK) || defined(__QNX__)
+   int dhcp_raw_fd, dhcp_icmp_fd, routefd;
+ #endif
+   struct iovec dhcp_packet;
+
+From 54dc09186eda564ad5321afa45dd3af395fc126f Mon Sep 17 00:00:00 2001
+From: nnarayanamurthy <nnarayanamurthy@blackberry.com>
+Date: Tue, 28 Jul 2026 15:04:37 +0530
+Subject: [PATCH 2/2] Dnsmasq: Adding BSD_NETWORK flags in config and updating
+ bpf interface
+
+---
+ src/bpf.c    | 12 ++++++++++++
+ src/config.h |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/src/bpf.c b/src/bpf.c
+index 0a972481..a42c8fea 100644
+--- a/src/bpf.c
++++ b/src/bpf.c
+@@ -247,6 +247,7 @@ int iface_enumerate(int family, void *parm, callback_t callback)
+ 
+ void init_bpf(void)
+ {
++#ifndef __QNX__
+   int i = 0;
+ 
+   while (1) 
+@@ -258,6 +259,17 @@ void init_bpf(void)
+       if (errno != EBUSY)
+ 	die(_("cannot create DHCP BPF socket: %s"), NULL, EC_BADNET);
+     }	     
++#else
+++    // QNX Only have the one bpf interface
++  sprintf(daemon->dhcp_buff, "/dev/bpf");
++
++  if ((daemon->dhcp_raw_fd = open(daemon->dhcp_buff, O_RDWR, 0)) != -1)
++    return;
++
++  if (errno != EBUSY)
++	die(_("cannot create DHCP BPF socket: %s"), NULL, EC_BADNET);
++	     
++#endif
+ }
+ 
+ void send_via_bpf(struct dhcp_packet *mess, size_t len,
+diff --git a/src/config.h b/src/config.h
+index a73c1342..e77c0026 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -303,7 +303,7 @@ HAVE_SOCKADDR_SA_LEN
+ #  define SOL_TCP IPPROTO_TCP
+ #endif
+ 
+-#elif defined(__NetBSD__)
++#elif defined(__NetBSD__) || defined(__QNX__)
+ #define HAVE_BSD_NETWORK
+ #define HAVE_GETOPT_LONG
+ #define HAVE_SOCKADDR_SA_LEN

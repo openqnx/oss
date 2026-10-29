@@ -1,0 +1,83 @@
+Fast DDS: no inotify file watch on QNX.
+
+QNX defines __unix__, but the file-watch backend behind those guards is
+inotify, which QNX lacks. Use the existing no-watch fallback on QNX: XML
+profiles are read once at start-up rather than re-read on change.
+
+Upstream-Status: QNX-specific
+
+--- a/src/cpp/utils/SystemInfo.cpp
++++ b/src/cpp/utils/SystemInfo.cpp
+@@ -224,7 +224,11 @@
+         const fastdds::rtps::ThreadSettings& watch_thread_config,
+         const fastdds::rtps::ThreadSettings& callback_thread_config)
+ {
+-#if defined(_WIN32) || defined(__unix__)
++// QNX defines __unix__, but the file-watch backend behind these guards is
++// inotify, which is Linux-only and absent from QNX. Excluding QNX here drops it
++// onto the existing no-watch fallback below: XML profile files are then read
++// once at startup instead of being re-read on change.
++#if defined(_WIN32) || (defined(__unix__) && !defined(__QNXNTO__))
+     return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
+                    [callback](const std::string& /*path*/, const filewatch::Event change_type)
+                    {
+@@ -238,21 +242,21 @@
+                                break;
+                        }
+                    }, watch_thread_config, callback_thread_config));
+-#else // defined(_WIN32) || defined(__unix__)
++#else // defined(_WIN32) || (defined(__unix__) && !defined(__QNXNTO__))
+     static_cast<void>(filename);
+     static_cast<void>(callback);
+     static_cast<void>(watch_thread_config);
+     static_cast<void>(callback_thread_config);
+     return FileWatchHandle();
+-#endif // defined(_WIN32) || defined(__unix__)
++#endif // defined(_WIN32) || (defined(__unix__) && !defined(__QNXNTO__))
+ }
+ 
+ void SystemInfo::stop_watching_file(
+         FileWatchHandle& handle)
+ {
+-#if defined(_WIN32) || defined(__unix__)
++#if defined(_WIN32) || (defined(__unix__) && !defined(__QNXNTO__))
+     handle.reset();
+-#endif // if defined(_WIN32) || defined(__unix__)
++#endif // if defined(_WIN32) || (defined(__unix__) && !defined(__QNXNTO__))
+     static_cast<void>(handle);
+ }
+ 
+--- a/thirdparty/filewatch/FileWatch.hpp
++++ b/thirdparty/filewatch/FileWatch.hpp
+@@ -47,7 +47,31 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <sys/types.h>
++#if defined(__QNXNTO__)
++/* QNX defines __unix__ but has no inotify and no equivalent kernel file-change
++ * notification. The class below weaves inotify through its constructor and
++ * member layout, so it cannot simply be compiled out. Supply inert shims
++ * instead: they keep the header well-formed while every call fails cleanly.
++ * Nothing here is reachable in practice -- SystemInfo::watch_file returns an
++ * empty handle on QNX, so FileWatch is never instantiated; XML profiles are
++ * read once at startup rather than re-read on change. */
++#include <cstdint>
++struct inotify_event {
++    int      wd;
++    uint32_t mask;
++    uint32_t cookie;
++    uint32_t len;
++    char     name[];
++};
++#define IN_MODIFY 0x00000002
++#define IN_CREATE 0x00000100
++#define IN_DELETE 0x00000200
++static inline int inotify_init(void)                             { errno = ENOSYS; return -1; }
++static inline int inotify_add_watch(int, const char*, uint32_t)  { errno = ENOSYS; return -1; }
++static inline int inotify_rm_watch(int, int)                     { errno = ENOSYS; return -1; }
++#else
+ #include <sys/inotify.h>
++#endif
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #endif // __unix__

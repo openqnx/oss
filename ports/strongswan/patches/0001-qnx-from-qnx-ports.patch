@@ -1,0 +1,994 @@
+From 1e790d72266f5ee86333563e36d533a5cfa22c70 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Wed, 19 Aug 2026 12:20:35 +0530
+Subject: [PATCH 1/4] Add qnx support to strongswan
+
+Imported from qnx-ports/strongswan (4d709df8b25f...qnx-6.0.6); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ configure.ac                                  |   2 +-
+ .../plugins/kernel_pfkey/kernel_pfkey_ipsec.c | 142 +++++++++++++++++-
+ .../socket_default/socket_default_socket.c    |  17 +++
+ src/libcharon/plugins/vici/Makefile.am        |   4 +
+ src/libcharon/tests/Makefile.am               |   4 +
+ src/libipsec/tests/Makefile.am                |   4 +
+ src/libstrongswan/networking/tun_device.c     |   2 +
+ .../plugins/sshkey/sshkey_builder.c           |  58 +++++++
+ src/libstrongswan/tests/Makefile.am           |   6 +-
+ .../tests/suites/test_threading.c             |   7 +-
+ src/libstrongswan/utils/utils/align.h         |   6 +-
+ src/libtls/tests/Makefile.am                  |   4 +
+ src/starter/tests/Makefile.am                 |   4 +
+ 13 files changed, 252 insertions(+), 8 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 370bad009fa..2a5e56c830e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1920,7 +1920,7 @@ AM_CONDITIONAL(USE_PYTHON_WHEELS, test x$python_wheels = xtrue)
+ AM_CONDITIONAL(USE_PERL_CPAN, test x$perl_cpan = xtrue)
+ AM_CONDITIONAL(USE_TOX, test "x$TOX" != x)
+ AM_CONDITIONAL(USE_PY_TEST, test "x$PY_TEST" != x -a "x$TOX" = x)
+-
++AM_CONDITIONAL([QNX], [test "x$host_os" = "xnto-qnx"])
+ # ========================
+ #  set global definitions
+ # ========================
+diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+index abf85fdbd57..dc53ca45ebb 100644
+--- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
++++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+@@ -513,6 +513,13 @@ struct policy_entry_t {
+ 		uint8_t mask;
+ 		/** Protocol */
+ 		uint8_t proto;
++#ifdef __QNX__
++		/* Port range, which may be used when the port of (host_t *net) is any(0) */
++		/* It is not for icmp and icmp6 */
++		/* We don't reuse (host_t *net) for compatibility */
++		uint16_t from_port;
++		uint16_t to_port;
++#endif
+ 	} src, dst;
+ 
+ 	/** Associated route installed for this policy */
+@@ -539,6 +546,17 @@ static policy_entry_t *create_policy_entry(traffic_selector_t *src_ts,
+ 	src_ts->to_subnet(src_ts, &policy->src.net, &policy->src.mask);
+ 	dst_ts->to_subnet(dst_ts, &policy->dst.net, &policy->dst.mask);
+ 
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++	policy->src.from_port = src_ts->get_from_port(src_ts);
++	policy->src.to_port = src_ts->get_to_port(src_ts);
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++	policy->dst.from_port = dst_ts-> get_from_port(dst_ts);
++	policy->dst.to_port = dst_ts->get_to_port(dst_ts);
++#endif
++#endif
++
+ 	/* src or dest proto may be "any" (0), use more restrictive one */
+ 	proto = max(src_ts->get_protocol(src_ts), dst_ts->get_protocol(dst_ts));
+ 	/* map the ports to ICMP type/code how the Linux kernel expects them, that
+@@ -602,6 +620,16 @@ CALLBACK(policy_entry_equals, bool,
+ 		   current->dst.proto == policy->dst.proto &&
+ 		   current->src.mask == policy->src.mask &&
+ 		   current->dst.mask == policy->dst.mask &&
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++		   current->src.from_port == policy->src.from_port &&
++		   current->src.to_port == policy->src.to_port &&
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++		   current->dst.from_port == policy->dst.from_port &&
++		   current->dst.to_port == policy->dst.to_port &&
++#endif
++#endif
+ 		   current->src.net->equals(current->src.net, policy->src.net) &&
+ 		   current->dst.net->equals(current->dst.net, policy->dst.net);
+ }
+@@ -693,7 +721,7 @@ struct pfkey_msg_t
+ 			struct sadb_x_kmprivate *x_kmprivate;	/* SADB_X_EXT_KMPRIVATE */
+ 			struct sadb_x_policy *x_policy;			/* SADB_X_EXT_POLICY */
+ 			struct sadb_x_sa2 *x_sa2;				/* SADB_X_EXT_SA2 */
+-#if defined(__linux__) || defined (__FreeBSD__)
++#if defined(__linux__) || defined (__FreeBSD__) || defined(__QNX__)
+ 			struct sadb_x_nat_t_type *x_natt_type;	/* SADB_X_EXT_NAT_T_TYPE */
+ 			struct sadb_x_nat_t_port *x_natt_sport;	/* SADB_X_EXT_NAT_T_SPORT */
+ 			struct sadb_x_nat_t_port *x_natt_dport;	/* SADB_X_EXT_NAT_T_DPORT */
+@@ -713,7 +741,7 @@ struct pfkey_msg_t
+ #endif
+ #endif
+ #endif /* __linux__ */
+-#endif /* __linux__ || __FreeBSD__ */
++#endif /* __linux__ || __FreeBSD__ || __QNX__*/
+ 		} __attribute__((__packed__));
+ 	};
+ };
+@@ -762,14 +790,38 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+ 	"SADB_X_EXT_NAT_T_OAI",
+ 	"SADB_X_EXT_NAT_T_OAR",
+ 	"SADB_X_EXT_NAT_T_FRAG",
++#ifndef __QNX__
++	"SADB_X_EXT_SA_REPLAY",
++	"SADB_X_EXT_NEW_ADDRESS_SRC",
++	"SADB_X_EXT_NEW_ADDRESS_DST",
++#else
++#ifdef SADB_X_EXT_IF_INNER
++	"SADB_X_EXT_IF_INNER",
++#endif
++#ifdef SADB_X_EXT_IF_OUTER
++	"SADB_X_EXT_IF_OUTER",
++#endif
++#ifdef SADB_X_EXT_SA_REPLAY
+ 	"SADB_X_EXT_SA_REPLAY",
++#endif
++#ifdef SADB_X_EXT_NEW_ADDRESS_SRC 
+ 	"SADB_X_EXT_NEW_ADDRESS_SRC",
++#endif
++#ifdef SADB_X_EXT_NEW_ADDRESS_DST 
+ 	"SADB_X_EXT_NEW_ADDRESS_DST",
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++	"SADB_X_EXT_PORT_RANGE_SRC",
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++	"SADB_X_EXT_PORT_RANGE_DST",
++#endif /*__QNX__*/
+ #ifdef SADB_X_EXT_IF_HW_OFFL
+ 	"SADB_X_EXT_LFT_CUR_SW_OFFL",
+ 	"SADB_X_EXT_LFT_CUR_HW_OFFL",
+ 	"SADB_X_EXT_IF_HW_OFFL",
+ #endif
++#endif /*__QNX__*/
+ #endif /* __linux__ */
+ #endif /* __APPLE__ */
+ );
+@@ -929,6 +981,13 @@ static kernel_algorithm_t encryption_algs[] = {
+ /*  {ENCR_AES_CCM_ICV8,			SADB_X_EALG_AES_CCM_ICV8	}, */
+ /*	{ENCR_AES_CCM_ICV12,		SADB_X_EALG_AES_CCM_ICV12	}, */
+ /*	{ENCR_AES_CCM_ICV16,		SADB_X_EALG_AES_CCM_ICV16	}, */
++#ifdef __QNX__
++#ifdef SADB_X_EALG_AES_CCM_ICV8
++	{ENCR_AES_CCM_ICV8,		SADB_X_EALG_AES_CCM_ICV8	},
++	{ENCR_AES_CCM_ICV12,		SADB_X_EALG_AES_CCM_ICV12	},
++	{ENCR_AES_CCM_ICV16,		SADB_X_EALG_AES_CCM_ICV16	},
++#endif
++#endif
+ #ifdef SADB_X_EALG_AES_GCM_ICV8 /* assume the others are defined too */
+ 	{ENCR_AES_GCM_ICV8,			SADB_X_EALG_AES_GCM_ICV8	},
+ 	{ENCR_AES_GCM_ICV12,		SADB_X_EALG_AES_GCM_ICV12	},
+@@ -941,6 +1000,11 @@ static kernel_algorithm_t encryption_algs[] = {
+ #endif
+ #ifdef SADB_X_EALG_CHACHA20POLY1305
+ 	{ENCR_CHACHA20_POLY1305,	SADB_X_EALG_CHACHA20POLY1305},
++#endif
++#ifdef __QNX__
++#ifdef SADB_X_EALG_AESGMAC
++	{ENCR_NULL_AUTH_AES_GMAC,	SADB_X_EALG_AESGMAC		},
++#endif
+ #endif
+ 	{END_OF_LIST,				0							},
+ };
+@@ -958,6 +1022,20 @@ static kernel_algorithm_t integrity_algs[] = {
+ /*	{AUTH_KPDK_MD5,				0,							}, */
+ #ifdef SADB_X_AALG_AES_XCBC_MAC
+ 	{AUTH_AES_XCBC_96,			SADB_X_AALG_AES_XCBC_MAC,	},
++#endif
++#ifdef __QNX__
++#ifdef SADB_X_AALG_AES128GMAC
++	{AUTH_AES_128_GMAC,			SADB_X_AALG_AES128GMAC,	},
++#endif
++#ifdef SADB_X_AALG_AES192GMAC
++	{AUTH_AES_192_GMAC,			SADB_X_AALG_AES192GMAC,	},
++#endif
++#ifdef SADB_X_AALG_AES256GMAC
++	{AUTH_AES_256_GMAC,			SADB_X_AALG_AES256GMAC,	},
++#endif
++#ifdef SADB_X_AALG_AES_CMAC
++	{AUTH_AES_CMAC_96,			SADB_X_AALG_AES_CMAC,	},
++#endif
+ #endif
+ 	{END_OF_LIST,				0,							},
+ };
+@@ -1070,6 +1148,24 @@ static void add_addr_ext(struct sadb_msg *msg, host_t *host, uint16_t type,
+ 	PFKEY_EXT_ADD(msg, addr);
+ }
+ 
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++/**
++ * add port range to the given sadb_msg
++ */
++static void add_port_range_ext(struct sadb_msg *msg, uint16_t type, uint16_t from_port, uint16_t to_port)
++{
++	struct sadb_x_port_range *port_range = (struct sadb_x_port_range *)PFKEY_EXT_ADD_NEXT(msg);
++
++	port_range->sadb_x_port_range_len = PFKEY_LEN(sizeof(*port_range));
++	port_range->sadb_x_port_range_exttype = type;
++	port_range->sadb_x_port_range_from_port = from_port;
++	port_range->sadb_x_port_range_to_port = to_port;
++	PFKEY_EXT_ADD(msg, port_range);
++}
++#endif
++#endif
++
+ #ifdef HAVE_NATT
+ /**
+  * add udp encap extensions to a sadb_msg
+@@ -2161,10 +2257,17 @@ METHOD(kernel_ipsec_t, update_sa, status_t,
+ 	return status;
+ }
+ 
++#ifndef __QNX__
+ METHOD(kernel_ipsec_t, query_sa, status_t,
+ 	private_kernel_pfkey_ipsec_t *this, kernel_ipsec_sa_id_t *id,
+ 	kernel_ipsec_query_sa_t *data, uint64_t *bytes, uint64_t *packets,
+ 	time_t *time)
++#else
++METHOD(kernel_ipsec_t, query_sa, status_t,
++	private_kernel_pfkey_ipsec_t *this, kernel_ipsec_sa_id_t *id,
++	kernel_ipsec_query_sa_t *data, uint64_t *bytes, uint64_t *packets,
++	time_t *use_time)
++#endif
+ {
+ 	unsigned char request[PFKEY_BUFFER_SIZE];
+ 	struct sadb_msg *msg, *out;
+@@ -2223,11 +2326,20 @@ METHOD(kernel_ipsec_t, query_sa, status_t,
+ 		/* at least on Linux and FreeBSD this contains the number of packets */
+ 		*packets = response.lft_current->sadb_lifetime_allocations;
+ 	}
++#ifndef __QNX__
+ 	if (time)
++#else
++	if (use_time)
++#endif
+ 	{
+-#ifdef __APPLE__
++#if defined(__APPLE__) || (defined(__QNX__) && !(defined(__FreeBSD__)))
+ 		/* OS X uses the "last" time of use in usetime */
++#ifndef __QNX__
+ 		*time = response.lft_current->sadb_lifetime_usetime;
++#else
++		*use_time = time_monotonic(NULL) - (time(NULL) - response.lft_current->sadb_lifetime_usetime);
++#endif
++
+ #else /* !__APPLE__ */
+ 		/* on Linux and FreeBSD, sadb_lifetime_usetime is set to the "first"
+ 		 * time of use, which is actually correct according to PF_KEY. We have
+@@ -2730,6 +2842,14 @@ static status_t add_policy_internal(private_kernel_pfkey_ipsec_t *this,
+ 				 policy->src.mask, TRUE);
+ 	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
+ 				 policy->dst.mask, TRUE);
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_SRC, policy->src.from_port, policy->src.to_port);
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_DST, policy->dst.from_port, policy->dst.to_port);
++#endif
++#endif
+ 
+ #ifdef __FreeBSD__
+ 	{	/* on FreeBSD a lifetime has to be defined to be able to later query
+@@ -2959,6 +3079,14 @@ METHOD(kernel_ipsec_t, query_policy, status_t,
+ 				 policy->src.mask, TRUE);
+ 	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
+ 				 policy->dst.mask, TRUE);
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_SRC, policy->src.from_port, policy->src.to_port);
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_DST, policy->dst.from_port, policy->dst.to_port);
++#endif
++#endif
+ 
+ 	this->mutex->unlock(this->mutex);
+ 
+@@ -3129,6 +3257,14 @@ METHOD(kernel_ipsec_t, del_policy, status_t,
+ 				 policy->src.mask, TRUE);
+ 	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
+ 				 policy->dst.mask, TRUE);
++#ifdef __QNX__
++#ifdef SADB_X_EXT_PORT_RANGE_SRC
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_SRC, policy->src.from_port, policy->src.to_port);
++#endif
++#ifdef SADB_X_EXT_PORT_RANGE_DST
++	add_port_range_ext(msg, SADB_X_EXT_PORT_RANGE_DST, policy->dst.from_port, policy->dst.to_port);
++#endif
++#endif
+ 
+ 	if (policy->route)
+ 	{
+diff --git a/src/libcharon/plugins/socket_default/socket_default_socket.c b/src/libcharon/plugins/socket_default/socket_default_socket.c
+index a34bf81a255..ca6cef80f2f 100644
+--- a/src/libcharon/plugins/socket_default/socket_default_socket.c
++++ b/src/libcharon/plugins/socket_default/socket_default_socket.c
+@@ -45,6 +45,15 @@
+ #include <daemon.h>
+ #include <threading/thread.h>
+ 
++#ifdef __QNX__
++#include <sys/neutrino.h>
++#if _NTO_VERSION < 800 && !defined(IOSOCK)
++#include <netinet6/in6.h>
++
++#undef IP_PKTINFO
++#endif /* _NTO_VERSION < 800 && !defined(IOSOCK) */
++#endif /* __QNX__ */
++
+ /* these are not defined on some platforms */
+ #ifndef SOL_IP
+ #define SOL_IP IPPROTO_IP
+@@ -463,11 +472,19 @@ static ssize_t send_msg_v4(private_socket_default_socket_t *this,
+ static ssize_t send_msg_v6(private_socket_default_socket_t *this, int skt,
+ 						   struct msghdr *msg, host_t *src)
+ {
++#ifndef __QNX__
+ 	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))] = {};
++#else
++	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))]; 
++#endif
+ 	struct cmsghdr *cmsg;
+ 	struct in6_pktinfo *pktinfo;
+ 	struct sockaddr_in6 *sin;
+ 
++#ifdef __QNX__
++	memset(buf, 0, sizeof(buf));
++#endif
++
+ 	msg->msg_control = buf;
+ 	msg->msg_controllen = sizeof(buf);
+ 	cmsg = CMSG_FIRSTHDR(msg);
+diff --git a/src/libcharon/plugins/vici/Makefile.am b/src/libcharon/plugins/vici/Makefile.am
+index 1cb03a12dc3..b79217fd085 100644
+--- a/src/libcharon/plugins/vici/Makefile.am
++++ b/src/libcharon/plugins/vici/Makefile.am
+@@ -47,9 +47,13 @@ libvici_la_SOURCES = \
+ libvici_la_LIBADD = $(top_builddir)/src/libstrongswan/libstrongswan.la
+ 
+ 
++if QNX
++bin_PROGRAMS = vici_tests
++else
+ TESTS = vici_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
+ 
+ vici_tests_SOURCES = \
+ 	suites/test_socket.c \
+diff --git a/src/libcharon/tests/Makefile.am b/src/libcharon/tests/Makefile.am
+index 1d925019cfc..dca80c28d86 100644
+--- a/src/libcharon/tests/Makefile.am
++++ b/src/libcharon/tests/Makefile.am
+@@ -1,6 +1,10 @@
++if QNX
++bin_PROGRAMS = libcharon_tests exchange_tests
++else
+ TESTS = libcharon_tests exchange_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
+ 
+ libcharon_tests_SOURCES = \
+   suites/test_ike_cfg.c \
+diff --git a/src/libipsec/tests/Makefile.am b/src/libipsec/tests/Makefile.am
+index 6138833e7c3..7d115fc7306 100644
+--- a/src/libipsec/tests/Makefile.am
++++ b/src/libipsec/tests/Makefile.am
+@@ -1,6 +1,10 @@
++if QNX
++bin_PROGRAMS = ipsec_tests
++else
+ TESTS = ipsec_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
+ 
+ ipsec_tests_SOURCES = \
+ 	suites/test_chapoly.c \
+diff --git a/src/libstrongswan/networking/tun_device.c b/src/libstrongswan/networking/tun_device.c
+index 49cb54f4ebc..d9464aaeba7 100644
+--- a/src/libstrongswan/networking/tun_device.c
++++ b/src/libstrongswan/networking/tun_device.c
+@@ -62,7 +62,9 @@ tun_device_t *tun_device_create(const char *name_tmpl)
+ #include <linux/ipv6.h>
+ #else
+ #include <net/if_tun.h>
++#ifndef __QNX__
+ #include <net/if_var.h>
++#endif
+ #include <netinet/in_var.h>
+ #endif
+ 
+diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+index 728860ecbb5..f0aead68eab 100644
+--- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
++++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+@@ -195,6 +195,7 @@ static sshkey_public_key_t *load_from_stream(FILE *file)
+ /**
+  * Load SSH key from a blob of data (most likely the content of a file)
+  */
++ #ifndef __QNX__
+ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+ {
+ 	FILE *stream;
+@@ -206,6 +207,63 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+ 	}
+ 	return load_from_stream(stream);
+ }
++#else
++#define MAX_LINE 1024
++static u_char * getstr(u_char *line, size_t len, chunk_t b, size_t *start)
++{
++	u_char *s, *e;
++
++	if ((*start) >= b.len) {
++		/* read done */
++		return NULL;
++	}
++
++	len = min(b.len - (*start), MAX_LINE - 1);
++	s = &(b.ptr[*start]);
++	e = memchr(s, '\n', len);
++	if (e) {
++		len = e - s;
++		(*start) += len + 1;
++	} else {
++		(*start) += len;
++	}
++	memcpy(line, s, len);
++	line[len] = 0;
++
++	return line;
++}
++
++static sshkey_public_key_t *load_from_blob(chunk_t b)
++{
++	sshkey_public_key_t *public = NULL;
++	chunk_t blob = chunk_empty;
++	enumerator_t *enumerator;
++	u_char line[MAX_LINE], *token;
++	size_t start = 0;
++
++	while (!public && getstr(line, sizeof(line), b, &start))
++	{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
++		if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
++			!strpfx(line, "ssh-ed25519") && !strpfx(line, "ssh-ed448"))
++		{
++			continue;
++		}
++		enumerator = enumerator_create_token(line, " ", " ");
++		if (enumerator->enumerate(enumerator, &token) &&
++			enumerator->enumerate(enumerator, &token))
++		{
++			blob = chunk_from_base64(chunk_from_str(token), NULL);
++		}
++		enumerator->destroy(enumerator);
++		if (blob.ptr)
++		{
++			public = parse_public_key(blob);
++			chunk_free(&blob);
++		}
++	}
++	return public;
++}
++#endif
+ 
+ /**
+  * Load SSH key from file
+diff --git a/src/libstrongswan/tests/Makefile.am b/src/libstrongswan/tests/Makefile.am
+index e04a793e473..c4bab49a78c 100644
+--- a/src/libstrongswan/tests/Makefile.am
++++ b/src/libstrongswan/tests/Makefile.am
+@@ -13,10 +13,14 @@ libtest_la_LIBADD = \
+   $(top_builddir)/src/libstrongswan/libstrongswan.la \
+   $(PTHREADLIB) $(ATOMICLIB)
+ 
+-
++if QNX
++bin_PROGRAMS = libstrongswan_tests
++else
+ TESTS = libstrongswan_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
++
+ 
+ libstrongswan_tests_SOURCES = tests.h tests.c \
+   suites/test_linked_list.c \
+diff --git a/src/libstrongswan/tests/suites/test_threading.c b/src/libstrongswan/tests/suites/test_threading.c
+index cd0101a517e..63434ee97ee 100644
+--- a/src/libstrongswan/tests/suites/test_threading.c
++++ b/src/libstrongswan/tests/suites/test_threading.c
+@@ -52,7 +52,12 @@ static inline void time_is_at_least(timeval_t *expected, timeval_t *actual)
+ #else /* WIN32 */
+ static inline void time_is_at_least(timeval_t *expected, timeval_t *actual)
+ {
+-	ck_assert_msg(timercmp(actual, expected, >), "expected: %u.%u, actual: "
++	#ifdef __QNX__
++    ck_assert_msg(timercmp(actual, expected, >=),
++	#else
++    ck_assert_msg(timercmp(actual, expected, >),
++	#endif
++				 "expected: %u.%u, actual: "
+ 				  "%u.%u", expected->tv_sec, expected->tv_usec, actual->tv_sec,
+ 				  actual->tv_usec);
+ }
+diff --git a/src/libstrongswan/utils/utils/align.h b/src/libstrongswan/utils/utils/align.h
+index 228ccc49346..79700a84976 100644
+--- a/src/libstrongswan/utils/utils/align.h
++++ b/src/libstrongswan/utils/utils/align.h
+@@ -26,19 +26,21 @@
+ /**
+  * Macro gives back larger of two values.
+  */
++#ifndef max
+ #define max(x,y) ({ \
+ 	typeof(x) _x = (x); \
+ 	typeof(y) _y = (y); \
+ 	_x > _y ? _x : _y; })
+-
++#endif
+ /**
+  * Macro gives back smaller of two values.
+  */
++#ifndef min
+ #define min(x,y) ({ \
+ 	typeof(x) _x = (x); \
+ 	typeof(y) _y = (y); \
+ 	_x < _y ? _x : _y; })
+-
++#endif
+ /**
+  * Get the padding required to make size a multiple of alignment
+  */
+diff --git a/src/libtls/tests/Makefile.am b/src/libtls/tests/Makefile.am
+index 2220ff4a63d..85f80043760 100644
+--- a/src/libtls/tests/Makefile.am
++++ b/src/libtls/tests/Makefile.am
+@@ -1,6 +1,10 @@
++if QNX
++bin_PROGRAMS = tls_tests
++else
+ TESTS = tls_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
+ 
+ tls_tests_SOURCES = \
+ 	suites/test_hkdf.c \
+diff --git a/src/starter/tests/Makefile.am b/src/starter/tests/Makefile.am
+index f84327b6b31..1401de32915 100644
+--- a/src/starter/tests/Makefile.am
++++ b/src/starter/tests/Makefile.am
+@@ -1,6 +1,10 @@
++if QNX
++bin_PROGRAMS = starter_tests
++else
+ TESTS = starter_tests
+ 
+ check_PROGRAMS = $(TESTS)
++endif
+ 
+ starter_tests_SOURCES = \
+ 	suites/test_parser.c \
+
+From f8824500c9e870265f6f390179bb4d0887963d52 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Fri, 28 Aug 2026 02:09:50 +0530
+Subject: [PATCH 2/4] Add QNX PF_KEY extension names
+
+---
+ .../plugins/kernel_pfkey/kernel_pfkey_ipsec.c | 55 ++++--------
+ .../plugins/sshkey/sshkey_builder.c           | 89 ++++++++++---------
+ 2 files changed, 60 insertions(+), 84 deletions(-)
+
+diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+index dc53ca45ebb..606a7a4af3d 100644
+--- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
++++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+@@ -778,6 +778,20 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+ 	"SADB_EXT_MIGRATE_ADDRESS_SRC",
+ 	"SADB_EXT_MIGRATE_ADDRESS_DST",
+ 	"SADB_X_EXT_MIGRATE_IPSECIF",
++#elif defined(__QNX__)
++	"SADB_X_EXT_NAT_T_TYPE",          
++	"SADB_X_EXT_NAT_T_SPORT",         
++	"SADB_X_EXT_NAT_T_DPORT",         
++	"SADB_X_EXT_NAT_T_OAI",           
++	"SADB_X_EXT_NAT_T_OAR",           
++	"SADB_X_EXT_NAT_T_FRAG",          
++	"SADB_X_EXT_IF_INNER",            
++	"SADB_X_EXT_IF_OUTER",            
++	"SADB_X_EXT_SA_REPLAY",           
++	"SADB_X_EXT_NEW_ADDRESS_SRC",     
++	"SADB_X_EXT_NEW_ADDRESS_DST",     
++	"SADB_X_EXT_PORT_RANGE_SRC",      
++	"SADB_X_EXT_PORT_RANGE_DST",      
+ #else
+ 	"SADB_X_EXT_NAT_T_TYPE",
+ 	"SADB_X_EXT_NAT_T_SPORT",
+@@ -790,38 +804,14 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+ 	"SADB_X_EXT_NAT_T_OAI",
+ 	"SADB_X_EXT_NAT_T_OAR",
+ 	"SADB_X_EXT_NAT_T_FRAG",
+-#ifndef __QNX__
+ 	"SADB_X_EXT_SA_REPLAY",
+ 	"SADB_X_EXT_NEW_ADDRESS_SRC",
+ 	"SADB_X_EXT_NEW_ADDRESS_DST",
+-#else
+-#ifdef SADB_X_EXT_IF_INNER
+-	"SADB_X_EXT_IF_INNER",
+-#endif
+-#ifdef SADB_X_EXT_IF_OUTER
+-	"SADB_X_EXT_IF_OUTER",
+-#endif
+-#ifdef SADB_X_EXT_SA_REPLAY
+-	"SADB_X_EXT_SA_REPLAY",
+-#endif
+-#ifdef SADB_X_EXT_NEW_ADDRESS_SRC 
+-	"SADB_X_EXT_NEW_ADDRESS_SRC",
+-#endif
+-#ifdef SADB_X_EXT_NEW_ADDRESS_DST 
+-	"SADB_X_EXT_NEW_ADDRESS_DST",
+-#endif
+-#ifdef SADB_X_EXT_PORT_RANGE_SRC
+-	"SADB_X_EXT_PORT_RANGE_SRC",
+-#endif
+-#ifdef SADB_X_EXT_PORT_RANGE_DST
+-	"SADB_X_EXT_PORT_RANGE_DST",
+-#endif /*__QNX__*/
+ #ifdef SADB_X_EXT_IF_HW_OFFL
+ 	"SADB_X_EXT_LFT_CUR_SW_OFFL",
+ 	"SADB_X_EXT_LFT_CUR_HW_OFFL",
+ 	"SADB_X_EXT_IF_HW_OFFL",
+ #endif
+-#endif /*__QNX__*/
+ #endif /* __linux__ */
+ #endif /* __APPLE__ */
+ );
+@@ -2257,17 +2247,10 @@ METHOD(kernel_ipsec_t, update_sa, status_t,
+ 	return status;
+ }
+ 
+-#ifndef __QNX__
+ METHOD(kernel_ipsec_t, query_sa, status_t,
+ 	private_kernel_pfkey_ipsec_t *this, kernel_ipsec_sa_id_t *id,
+ 	kernel_ipsec_query_sa_t *data, uint64_t *bytes, uint64_t *packets,
+ 	time_t *time)
+-#else
+-METHOD(kernel_ipsec_t, query_sa, status_t,
+-	private_kernel_pfkey_ipsec_t *this, kernel_ipsec_sa_id_t *id,
+-	kernel_ipsec_query_sa_t *data, uint64_t *bytes, uint64_t *packets,
+-	time_t *use_time)
+-#endif
+ {
+ 	unsigned char request[PFKEY_BUFFER_SIZE];
+ 	struct sadb_msg *msg, *out;
+@@ -2326,19 +2309,11 @@ METHOD(kernel_ipsec_t, query_sa, status_t,
+ 		/* at least on Linux and FreeBSD this contains the number of packets */
+ 		*packets = response.lft_current->sadb_lifetime_allocations;
+ 	}
+-#ifndef __QNX__
+ 	if (time)
+-#else
+-	if (use_time)
+-#endif
+ 	{
+-#if defined(__APPLE__) || (defined(__QNX__) && !(defined(__FreeBSD__)))
++#ifdef __APPLE__
+ 		/* OS X uses the "last" time of use in usetime */
+-#ifndef __QNX__
+ 		*time = response.lft_current->sadb_lifetime_usetime;
+-#else
+-		*use_time = time_monotonic(NULL) - (time(NULL) - response.lft_current->sadb_lifetime_usetime);
+-#endif
+ 
+ #else /* !__APPLE__ */
+ 		/* on Linux and FreeBSD, sadb_lifetime_usetime is set to the "first"
+diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+index f0aead68eab..287add856c1 100644
+--- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
++++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+@@ -208,60 +208,61 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+ 	return load_from_stream(stream);
+ }
+ #else
+-#define MAX_LINE 1024
+-static u_char * getstr(u_char *line, size_t len, chunk_t b, size_t *start)
++static u_char *getstr(u_char *line, size_t len, chunk_t b, size_t *start)
+ {
+-	u_char *s, *e;
++u_char *s, *e;
+ 
+-	if ((*start) >= b.len) {
+-		/* read done */
+-		return NULL;
+-	}
++if (*start >= b.len)
++{
++	/* read done */
++	return NULL;
++}
+ 
+-	len = min(b.len - (*start), MAX_LINE - 1);
+-	s = &(b.ptr[*start]);
+-	e = memchr(s, '\n', len);
+-	if (e) {
+-		len = e - s;
+-		(*start) += len + 1;
+-	} else {
+-		(*start) += len;
+-	}
+-	memcpy(line, s, len);
+-	line[len] = 0;
++len = min(b.len - *start, 1024 - 1);
++s = &b.ptr[*start];
++e = memchr(s, '\n', len);
++if (e){
++	len = e - s;
++	*start += len + 1;
++}
++else{
++	*start += len;
++}
++memcpy(line, s, len);
++line[len] = 0;
+ 
+-	return line;
++return line;
+ }
+ 
+ static sshkey_public_key_t *load_from_blob(chunk_t b)
+ {
+-	sshkey_public_key_t *public = NULL;
+-	chunk_t blob = chunk_empty;
+-	enumerator_t *enumerator;
+-	u_char line[MAX_LINE], *token;
+-	size_t start = 0;
++sshkey_public_key_t *public = NULL;
++chunk_t blob = chunk_empty;
++enumerator_t *enumerator;
++u_char line[1024], *token;
++size_t start = 0;
+ 
+-	while (!public && getstr(line, sizeof(line), b, &start))
+-	{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
+-		if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
+-			!strpfx(line, "ssh-ed25519") && !strpfx(line, "ssh-ed448"))
+-		{
+-			continue;
+-		}
+-		enumerator = enumerator_create_token(line, " ", " ");
+-		if (enumerator->enumerate(enumerator, &token) &&
+-			enumerator->enumerate(enumerator, &token))
+-		{
+-			blob = chunk_from_base64(chunk_from_str(token), NULL);
+-		}
+-		enumerator->destroy(enumerator);
+-		if (blob.ptr)
+-		{
+-			public = parse_public_key(blob);
+-			chunk_free(&blob);
+-		}
++while (!public && getstr(line, sizeof(line), b, &start))
++{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
++	if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
++		!strpfx(line, "ssh-ed25519") && !strpfx(line, "ssh-ed448"))
++	{
++		continue;
+ 	}
+-	return public;
++	enumerator = enumerator_create_token(line, " ", " ");
++	if (enumerator->enumerate(enumerator, &token) &&
++		enumerator->enumerate(enumerator, &token))
++	{
++		blob = chunk_from_base64(chunk_from_str(token), NULL);
++	}
++	enumerator->destroy(enumerator);
++	if (blob.ptr)
++	{
++		public = parse_public_key(blob);
++		chunk_free(&blob);
++	}
++}
++return public;
+ }
+ #endif
+ 
+
+From dd6b36ab73da081b216730677290558c86e55133 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Fri, 28 Aug 2026 19:32:40 +0530
+Subject: [PATCH 3/4]  simplify QNX conditionals and restore alignment
+
+---
+ .../socket_default/socket_default_socket.c    |  7 +-
+ .../plugins/sshkey/sshkey_builder.c           | 94 +++++++++----------
+ 2 files changed, 49 insertions(+), 52 deletions(-)
+
+diff --git a/src/libcharon/plugins/socket_default/socket_default_socket.c b/src/libcharon/plugins/socket_default/socket_default_socket.c
+index ca6cef80f2f..f07fe41ce19 100644
+--- a/src/libcharon/plugins/socket_default/socket_default_socket.c
++++ b/src/libcharon/plugins/socket_default/socket_default_socket.c
+@@ -475,16 +475,13 @@ static ssize_t send_msg_v6(private_socket_default_socket_t *this, int skt,
+ #ifndef __QNX__
+ 	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))] = {};
+ #else
+-	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))]; 
++	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))];
++	memset(buf, 0, sizeof(buf));
+ #endif
+ 	struct cmsghdr *cmsg;
+ 	struct in6_pktinfo *pktinfo;
+ 	struct sockaddr_in6 *sin;
+ 
+-#ifdef __QNX__
+-	memset(buf, 0, sizeof(buf));
+-#endif
+-
+ 	msg->msg_control = buf;
+ 	msg->msg_controllen = sizeof(buf);
+ 	cmsg = CMSG_FIRSTHDR(msg);
+diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+index 287add856c1..17d5553bf83 100644
+--- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
++++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
+@@ -195,7 +195,7 @@ static sshkey_public_key_t *load_from_stream(FILE *file)
+ /**
+  * Load SSH key from a blob of data (most likely the content of a file)
+  */
+- #ifndef __QNX__
++#ifndef __QNX__
+ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+ {
+ 	FILE *stream;
+@@ -210,59 +210,59 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+ #else
+ static u_char *getstr(u_char *line, size_t len, chunk_t b, size_t *start)
+ {
+-u_char *s, *e;
+-
+-if (*start >= b.len)
+-{
+-	/* read done */
+-	return NULL;
+-}
+-
+-len = min(b.len - *start, 1024 - 1);
+-s = &b.ptr[*start];
+-e = memchr(s, '\n', len);
+-if (e){
+-	len = e - s;
+-	*start += len + 1;
+-}
+-else{
+-	*start += len;
+-}
+-memcpy(line, s, len);
+-line[len] = 0;
+-
+-return line;
++	u_char *s, *e;
++	
++	if (*start >= b.len)
++	{
++		/* read done */
++		return NULL;
++	}
++	
++	len = min(b.len - *start, 1024 - 1);
++	s = &b.ptr[*start];
++	e = memchr(s, '\n', len);
++	if (e){
++		len = e - s;
++		*start += len + 1;
++	}
++	else{
++		*start += len;
++	}
++	memcpy(line, s, len);
++	line[len] = 0;
++	
++	return line;
+ }
+ 
+ static sshkey_public_key_t *load_from_blob(chunk_t b)
+ {
+-sshkey_public_key_t *public = NULL;
+-chunk_t blob = chunk_empty;
+-enumerator_t *enumerator;
+-u_char line[1024], *token;
+-size_t start = 0;
+-
+-while (!public && getstr(line, sizeof(line), b, &start))
+-{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
+-	if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
++	sshkey_public_key_t *public = NULL;
++	chunk_t blob = chunk_empty;
++	enumerator_t *enumerator;
++	u_char line[1024], *token;
++	size_t start = 0;
++	
++	while (!public && getstr(line, sizeof(line), b, &start))
++	{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
++		if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
+ 		!strpfx(line, "ssh-ed25519") && !strpfx(line, "ssh-ed448"))
+-	{
+-		continue;
+-	}
+-	enumerator = enumerator_create_token(line, " ", " ");
+-	if (enumerator->enumerate(enumerator, &token) &&
++		{
++			continue;
++		}
++		enumerator = enumerator_create_token(line, " ", " ");
++		if (enumerator->enumerate(enumerator, &token) &&
+ 		enumerator->enumerate(enumerator, &token))
+-	{
+-		blob = chunk_from_base64(chunk_from_str(token), NULL);
+-	}
+-	enumerator->destroy(enumerator);
+-	if (blob.ptr)
+-	{
+-		public = parse_public_key(blob);
+-		chunk_free(&blob);
++		{
++			blob = chunk_from_base64(chunk_from_str(token), NULL);
++		}
++		enumerator->destroy(enumerator);
++		if (blob.ptr)
++		{
++			public = parse_public_key(blob);
++			chunk_free(&blob);
++		}
+ 	}
+-}
+-return public;
++	return public;
+ }
+ #endif
+ 
+
+From 1b8d7fe7aa628ec293c2c71a850dff085ba0b0ae Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Tue, 1 Sep 2026 14:30:44 +0530
+Subject: [PATCH 4/4] Fix QNX PF_KEY extension enum compatibility between
+ qnx7.1 and qnx8.0
+
+---
+ .../plugins/kernel_pfkey/kernel_pfkey_ipsec.c        | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+index 606a7a4af3d..a803b49b55c 100644
+--- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
++++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
+@@ -784,14 +784,18 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+ 	"SADB_X_EXT_NAT_T_DPORT",         
+ 	"SADB_X_EXT_NAT_T_OAI",           
+ 	"SADB_X_EXT_NAT_T_OAR",           
+-	"SADB_X_EXT_NAT_T_FRAG",          
++	"SADB_X_EXT_NAT_T_FRAG",  
++#if SADB_EXT_MAX == 32        
+ 	"SADB_X_EXT_IF_INNER",            
+-	"SADB_X_EXT_IF_OUTER",            
++	"SADB_X_EXT_IF_OUTER",  
++#endif          
+ 	"SADB_X_EXT_SA_REPLAY",           
+ 	"SADB_X_EXT_NEW_ADDRESS_SRC",     
+-	"SADB_X_EXT_NEW_ADDRESS_DST",     
++	"SADB_X_EXT_NEW_ADDRESS_DST",  
++#if SADB_EXT_MAX == 32   
+ 	"SADB_X_EXT_PORT_RANGE_SRC",      
+-	"SADB_X_EXT_PORT_RANGE_DST",      
++	"SADB_X_EXT_PORT_RANGE_DST",  
++#endif  
+ #else
+ 	"SADB_X_EXT_NAT_T_TYPE",
+ 	"SADB_X_EXT_NAT_T_SPORT",

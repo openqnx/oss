@@ -1,0 +1,80 @@
+#!/bin/bash
+# Audit staged binaries for DT_NEEDED entries that resolve to the SDP's own
+# prebuilt copy of a library this workspace also builds.
+#
+# Two ways this happens, both silent:
+#   * a package's configure found the SDP's headers/library and recorded its
+#     soname (our zlib is libz.so.1, the SDP's is libz.so.2), so the binary
+#     loads the SDP copy on the target no matter what LD_LIBRARY_PATH says;
+#   * the soname matches but the QNX gcc spec injects its own -rpath-link with
+#     the four SDP directories *ahead* of any -rpath-link we pass, so link-time
+#     symbol checking used the SDP's copy.
+#
+#   ./scripts/check-sdp-leak [aarch64le|x86_64]
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+rc=0
+# Genuine QNX OS / toolchain libraries: the C runtime and its split-out pieces,
+# the C++ runtime, the unwinder, QNX's own logging and JSON, and the audio and
+# regex libraries QNX ships as part of the OS.  None has an upstream this
+# workspace builds.
+QNX_OS_LIBS="libc libc++ libgcc_s libm libsocket libeventfd libepoll libsignalfd
+libtimerfd libfsnotify libregex libunwind libslog2 libslog2parse libslog2shim
+libjson libasound libiconv libpps libscreen libEGL libGLESv2 libqh libcatalog
+libpam libsecpol libjail libcam libz_qnx ldqnx-64"
+for arch in ${1:-aarch64le x86_64}; do
+  source "$WS/env.sh" "$arch" >/dev/null || exit 1
+  READELF="$QNX_HOST/usr/bin/nto${QNX_CPU}-readelf"
+  libdir="$STAGE$PREFIX/lib"
+  # Sonames we ourselves provide, and the base names we build at all.
+  declare -A provided=() built=()
+  # Scan the whole staged lib tree, not just its top level, and match on the
+  # file name rather than a *.so* pattern: libproxy keeps its backend in
+  # lib/libproxy/, and ICU installs its data library as "libicudataso.76"
+  # (its QNX platform rules compose the name without the dot), so a
+  # maxdepth-1 *.so* scan reported both as coming from the SDP.
+  while read -r f; do
+    b=$(basename "$f"); provided[$b]=1
+    built[${b%%.so*}]=1
+  done < <(find "$libdir" -type f -o -type l | sort)
+
+  report=""
+  while read -r f; do
+    while read -r n; do
+      [ -n "${provided[$n]}" ] && continue
+      stem=${n%%.so*}
+      # An allowlist, not "do we happen to have staged it".  The old test --
+      # flag only sonames whose stem we also stage -- cannot see a library we
+      # are *supposed* to build but never installed: gettext was configured
+      # --disable-nls, staged no libintl at all, and 56 staged libraries
+      # quietly linked the SDP's prebuilt libintl.so.1 for weeks.  Anything
+      # loaded from the SDP now has to be named here as a genuine OS or
+      # toolchain component with no upstream we build.
+      case " $(echo $QNX_OS_LIBS) " in
+        *" $stem "*) continue ;;
+      esac
+      if [ -z "${built[$stem]}" ] && [ ! -d "$WS/recipes/$stem" ]; then
+        # Not staged, no recipe named after it, not allowlisted: report it as
+        # unclassified rather than silently accepting it.
+        report="$report\n  ?? $(basename "$f") needs $n from the SDP -- not built here and not in QNX_OS_LIBS"
+        rc=1
+        continue
+      fi
+      sdp=""
+      for d in "$QNX_TARGET_SDP/$QNX_ARCH/usr/lib" "$QNX_TARGET_SDP/$QNX_ARCH/lib"; do
+        [ -e "$d/$n" ] && sdp="$d/$n"
+      done
+      [ -n "$sdp" ] || continue
+      report="$report\n  !! $(basename "$f") needs $n -- we build $stem but staged a different soname; this loads $sdp"
+      rc=1
+    done < <("$READELF" -d "$f" 2>/dev/null | sed -n 's/.*NEEDED.*\[\(.*\)\]/\1/p')
+  done < <(find "$libdir" "$STAGE$PREFIX/bin" -maxdepth 2 -type f \( -name '*.so*' -o -perm -u+x \) 2>/dev/null | sort)
+
+  if [ -z "$report" ]; then
+    echo "OK  [$arch] no staged binary falls back to an SDP-prebuilt library we also build"
+  else
+    echo "[$arch] SDP prebuilt libraries leaking into staged binaries:"
+    printf "%b\n" "$report" | sort -u
+  fi
+  unset provided built
+done
+exit $rc

@@ -1,0 +1,1297 @@
+QNX change from QNX's aports (core/binutils/0005.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 015cc055174836f70a7f46fc138018b25646b84a Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:12:38 -0400
+Subject: [PATCH] ld: adding qnx testsuite
+
+adding testsuite changes for qnx as-is.
+
+CLT-9242
+---
+diff --git a/ld/testsuite/ld-arm/arm-app-abs32.s b/ld/testsuite/ld-arm/arm-app-abs32.s
+index a1cf52690a7..6f7297876b8 100644
+--- a/ld/testsuite/ld-arm/arm-app-abs32.s
++++ b/ld/testsuite/ld-arm/arm-app-abs32.s
+@@ -1,5 +1,6 @@
+ 	.text
+ 	.globl _start
++	.type  _start, %function
+ _start:
+ 	mov	ip, sp
+ 	stmdb	sp!, {r11, ip, lr, pc}
+@@ -11,6 +12,7 @@ _start:
+ 	.long	lib_func1
+ 
+ 	.globl app_func2
++	.type  app_func2, %function
+ app_func2:
+ 	bx	lr
+ 
+diff --git a/ld/testsuite/ld-arm/arm-app.s b/ld/testsuite/ld-arm/arm-app.s
+index 8f6d27c32a0..2629937e238 100644
+--- a/ld/testsuite/ld-arm/arm-app.s
++++ b/ld/testsuite/ld-arm/arm-app.s
+@@ -1,5 +1,6 @@
+ 	.text
+ 	.globl _start
++	.type   _start, %function
+ _start:
+ 	mov	ip, sp
+ 	stmdb	sp!, {r11, ip, lr, pc}
+@@ -8,6 +9,7 @@ _start:
+ 	bx lr
+ 
+ 	.globl app_func
++	.type  app_func, %function
+ app_func:
+ 	mov	ip, sp
+ 	stmdb	sp!, {r11, ip, lr, pc}
+@@ -16,6 +18,7 @@ app_func:
+ 	bx lr
+ 
+ 	.globl app_func2
++	.type  app_func2, %function
+ app_func2:
+ 	bx	lr
+ 
+diff --git a/ld/testsuite/ld-arm/arm-static-app.s b/ld/testsuite/ld-arm/arm-static-app.s
+index 99c579f0b40..0659ee45046 100644
+--- a/ld/testsuite/ld-arm/arm-static-app.s
++++ b/ld/testsuite/ld-arm/arm-static-app.s
+@@ -1,5 +1,6 @@
+ 	.text
+ 	.globl _start
++	.type   _start, %function
+ _start:
+ 	mov	ip, sp
+ 	stmdb	sp!, {r11, ip, lr, pc}
+diff --git a/ld/testsuite/ld-arm/cortex-a8-far-1.s b/ld/testsuite/ld-arm/cortex-a8-far-1.s
+index 09d3583a931..975f473dd63 100644
+--- a/ld/testsuite/ld-arm/cortex-a8-far-1.s
++++ b/ld/testsuite/ld-arm/cortex-a8-far-1.s
+@@ -1,6 +1,7 @@
+ 	.syntax unified
+ 	.thumb
+ 	.globl two
++	.type  two, %function
+ two:	
+ 	bl far_fn
+ 	.rept 0x200000
+diff --git a/ld/testsuite/ld-arm/cortex-a8-far-2.s b/ld/testsuite/ld-arm/cortex-a8-far-2.s
+index 22fd40f0216..95d0282f7dc 100644
+--- a/ld/testsuite/ld-arm/cortex-a8-far-2.s
++++ b/ld/testsuite/ld-arm/cortex-a8-far-2.s
+@@ -1,5 +1,6 @@
+ 	.syntax unified
+ 	.thumb
++	.type   _start, %function
+ three:
+ 	bl far_fn1
+ 	bl far_fn2
+diff --git a/ld/testsuite/ld-arm/cortex-a8-fix-blx.s b/ld/testsuite/ld-arm/cortex-a8-fix-blx.s
+index 5d740248e99..d28304e163f 100644
+--- a/ld/testsuite/ld-arm/cortex-a8-fix-blx.s
++++ b/ld/testsuite/ld-arm/cortex-a8-fix-blx.s
+@@ -24,6 +24,7 @@
+ 
+ 	.arm
+         .align  2
++	.type   armfn, %function
+ armfn:
+ 	mov	r2, r3, asl r4
+ 	bx	lr
+diff --git a/ld/testsuite/ld-arm/farcall-arm-arm.s b/ld/testsuite/ld-arm/farcall-arm-arm.s
+index 00c1e48be41..55a98d110b8 100644
+--- a/ld/testsuite/ld-arm/farcall-arm-arm.s
++++ b/ld/testsuite/ld-arm/farcall-arm-arm.s
+@@ -1,6 +1,7 @@
+ @ Test to ensure that a ARM to ARM call exceeding 32Mb generates a stub.
+ 
+ 	.global _start
++	.type   _start, %function
+ 	.syntax unified
+ 
+ @ We will place the section .text at 0x1000.
+diff --git a/ld/testsuite/ld-arm/farcall-arm-thumb.s b/ld/testsuite/ld-arm/farcall-arm-thumb.s
+index c69f31cb36e..479e3261b5f 100644
+--- a/ld/testsuite/ld-arm/farcall-arm-thumb.s
++++ b/ld/testsuite/ld-arm/farcall-arm-thumb.s
+@@ -1,6 +1,7 @@
+ @ Test to ensure that a ARM to Thumb call exceeding 32Mb generates a stub.
+ 
+ 	.global _start
++	.type   _start, %function
+ 	.global bar
+ 	.syntax unified
+ 
+diff --git a/ld/testsuite/ld-arm/farcall-group.s b/ld/testsuite/ld-arm/farcall-group.s
+index 0ede36df4f6..f707cd4925e 100644
+--- a/ld/testsuite/ld-arm/farcall-group.s
++++ b/ld/testsuite/ld-arm/farcall-group.s
+@@ -1,6 +1,7 @@
+ @ Test to ensure that ARM calls exceeding 32Mb generate stubs.
+ 
+ 	.global _start
++	.type   _start, %function
+ 	.syntax unified
+ 
+ @ We will place the section .text at 0x1000.
+@@ -33,6 +34,7 @@ bar3:
+ 	bx lr
+ 
+ 	.global bar4
++	.type bar4, %function
+ 	.thumb_func
+ bar4:
+ 	bx lr
+diff --git a/ld/testsuite/ld-arm/farcall-group3.s b/ld/testsuite/ld-arm/farcall-group3.s
+index ea2ce7f1e79..a5d1204dc86 100644
+--- a/ld/testsuite/ld-arm/farcall-group3.s
++++ b/ld/testsuite/ld-arm/farcall-group3.s
+@@ -5,5 +5,6 @@
+ 	.text
+ 	.global bar
+ 	.global _start
++	.type   _start, %function
+ _start:
+ 	bl bar
+diff --git a/ld/testsuite/ld-arm/farcall-mix.s b/ld/testsuite/ld-arm/farcall-mix.s
+index 41b27f2d443..1fb7985633a 100644
+--- a/ld/testsuite/ld-arm/farcall-mix.s
++++ b/ld/testsuite/ld-arm/farcall-mix.s
+@@ -1,6 +1,7 @@
+ @ Test to ensure that ARM calls exceeding 32Mb generate stubs.
+ 
+ 	.global _start
++	.type   _start, %function
+ 	.syntax unified
+ 
+ @ We will place the section .text at 0x1000.
+@@ -36,6 +37,7 @@ bar3:
+ 
+ 	.global bar4
+ 	.thumb_func
++	.type bar4, %function
+ bar4:
+ 	bx lr
+ 
+diff --git a/ld/testsuite/ld-arm/farcall-mix2.s b/ld/testsuite/ld-arm/farcall-mix2.s
+index 803e8d08f87..ab5a82fc047 100644
+--- a/ld/testsuite/ld-arm/farcall-mix2.s
++++ b/ld/testsuite/ld-arm/farcall-mix2.s
+@@ -1,6 +1,7 @@
+ @ Test to ensure that ARM calls exceeding 32Mb generate stubs.
+ 
+ 	.global _start
++	.type   _start, %function
+ 	.syntax unified
+ 
+ @ We will place the section .text at 0x1000.
+@@ -24,6 +25,7 @@ _start:
+ 	.section .foo, "xa"
+ 
+ 	.global bar
++	.type bar, %function
+ 	.thumb_func
+ bar:
+ 	bx lr
+@@ -41,6 +43,7 @@ bar3:
+ 
+ 	.global bar4
+ 	.thumb_func
++	@.type bar4, %function
+ bar4:
+ 	bx lr
+ 
+diff --git a/ld/testsuite/ld-arm/fix-arm1176.s b/ld/testsuite/ld-arm/fix-arm1176.s
+index 96e03284acd..daf4975fc2c 100644
+--- a/ld/testsuite/ld-arm/fix-arm1176.s
++++ b/ld/testsuite/ld-arm/fix-arm1176.s
+@@ -1,9 +1,11 @@
+ 	.syntax unified
+ 	.globl _start
++	.type  _start, %function
+ 	.globl func_to_branch_to
+ 
+ 	.arm
+ 	.text
++	.type  func_to_branch_to, %function
+ func_to_branch_to:
+ 	bx lr
+ 
+diff --git a/ld/testsuite/ld-arm/group-relocs.s b/ld/testsuite/ld-arm/group-relocs.s
+index 7b226c72889..3b6dd523755 100644
+--- a/ld/testsuite/ld-arm/group-relocs.s
++++ b/ld/testsuite/ld-arm/group-relocs.s
+@@ -10,7 +10,7 @@
+ 
+ 	.text
+ 	.globl _start
+-
++	.type   _start, %function
+ _start:
+ 	@ ALU, PC-relative
+ 
+diff --git a/ld/testsuite/ld-arm/ifunc-1.rd b/ld/testsuite/ld-arm/ifunc-1.rd
+index 264412312f6..6c0069af636 100644
+--- a/ld/testsuite/ld-arm/ifunc-1.rd
++++ b/ld/testsuite/ld-arm/ifunc-1.rd
+@@ -1,7 +1,7 @@
+ 
+ There is no dynamic section in this file\.
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 3 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 3 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......a0 R_ARM_IRELATIVE  
+ 00011014  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-10.rd b/ld/testsuite/ld-arm/ifunc-10.rd
+index 250def844a6..726756039d8 100644
+--- a/ld/testsuite/ld-arm/ifunc-10.rd
++++ b/ld/testsuite/ld-arm/ifunc-10.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 24 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 24 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001108c  ......15 R_ARM_GLOB_DAT    00009018   atf2
+ 00011090  ......15 R_ARM_GLOB_DAT    00009024   aaf4
+@@ -26,7 +26,7 @@ Relocation section '\.rel\.dyn' at offset 0x8000 contains 24 entries:
+ 00011064  ......a0 R_ARM_IRELATIVE  
+ 00011068  ......a0 R_ARM_IRELATIVE  
+ 
+-Relocation section '\.rel\.plt' at offset 0x80c0 contains 12 entries:
++Relocation section '\.rel\.plt' at offset 0x[0-9a-f]+ contains 12 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......16 R_ARM_JUMP_SLOT   00009018   atf2
+ 00011010  ......16 R_ARM_JUMP_SLOT   00009024   aaf4
+diff --git a/ld/testsuite/ld-arm/ifunc-11.rd b/ld/testsuite/ld-arm/ifunc-11.rd
+index 82ce9b71121..4bc688045b0 100644
+--- a/ld/testsuite/ld-arm/ifunc-11.rd
++++ b/ld/testsuite/ld-arm/ifunc-11.rd
+@@ -1,7 +1,7 @@
+ 
+ There is no dynamic section in this file\.
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 6 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 6 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00011010  ......a0 R_ARM_IRELATIVE  
+ 00011024  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-12.rd b/ld/testsuite/ld-arm/ifunc-12.rd
+index c5d62c1ac52..dcf729e4984 100644
+--- a/ld/testsuite/ld-arm/ifunc-12.rd
++++ b/ld/testsuite/ld-arm/ifunc-12.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 16 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 16 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001001c  ......17 R_ARM_RELATIVE   
+ 00010020  ......17 R_ARM_RELATIVE   
+diff --git a/ld/testsuite/ld-arm/ifunc-13.rd b/ld/testsuite/ld-arm/ifunc-13.rd
+index f4394faf460..0462f93bc0d 100644
+--- a/ld/testsuite/ld-arm/ifunc-13.rd
++++ b/ld/testsuite/ld-arm/ifunc-13.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 6 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 6 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001101c  ......15 R_ARM_GLOB_DAT    00000000   f2t
+ 00011024  ......15 R_ARM_GLOB_DAT    00000000   f2
+diff --git a/ld/testsuite/ld-arm/ifunc-14.rd b/ld/testsuite/ld-arm/ifunc-14.rd
+index 9c440928fe3..378f99c882d 100644
+--- a/ld/testsuite/ld-arm/ifunc-14.rd
++++ b/ld/testsuite/ld-arm/ifunc-14.rd
+@@ -1,12 +1,12 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 4 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 4 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00011014  ......a0 R_ARM_IRELATIVE  
+ 00011018  ......a0 R_ARM_IRELATIVE  
+ 0001101c  ......a0 R_ARM_IRELATIVE  
+ 00011020  ......a0 R_ARM_IRELATIVE  
+ 
+-Relocation section '\.rel\.plt' at offset 0x8020 contains 2 entries:
++Relocation section '\.rel\.plt' at offset 0x[0-9a-f]+ contains 2 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......16 R_ARM_JUMP_SLOT   00000000   f2t
+ 00011010  ......16 R_ARM_JUMP_SLOT   00000000   f2
+diff --git a/ld/testsuite/ld-arm/ifunc-15.rd b/ld/testsuite/ld-arm/ifunc-15.rd
+index 59ea29bcb2d..bdb7d1ce294 100644
+--- a/ld/testsuite/ld-arm/ifunc-15.rd
++++ b/ld/testsuite/ld-arm/ifunc-15.rd
+@@ -1,12 +1,12 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 4 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 4 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00011014  ......a0 R_ARM_IRELATIVE  
+ 00011018  ......a0 R_ARM_IRELATIVE  
+ 0001101c  ......a0 R_ARM_IRELATIVE  
+ 00011020  ......a0 R_ARM_IRELATIVE  
+ 
+-Relocation section '\.rel\.plt' at offset 0x8020 contains 2 entries:
++Relocation section '\.rel\.plt' at offset 0x[0-9a-f]+ contains 2 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......16 R_ARM_JUMP_SLOT   00009014   f2t
+ 00011010  ......16 R_ARM_JUMP_SLOT   00009020   f2
+diff --git a/ld/testsuite/ld-arm/ifunc-16.rd b/ld/testsuite/ld-arm/ifunc-16.rd
+index 7296316488a..6d3a86ca43d 100644
+--- a/ld/testsuite/ld-arm/ifunc-16.rd
++++ b/ld/testsuite/ld-arm/ifunc-16.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 6 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 6 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......a0 R_ARM_IRELATIVE  
+ 00011010  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-17.rd b/ld/testsuite/ld-arm/ifunc-17.rd
+index b167f4529d5..c21b268b803 100644
+--- a/ld/testsuite/ld-arm/ifunc-17.rd
++++ b/ld/testsuite/ld-arm/ifunc-17.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 2 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 2 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......a0 R_ARM_IRELATIVE  
+ 00011010  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-2.rd b/ld/testsuite/ld-arm/ifunc-2.rd
+index 7bbabf421f3..bfd23b287db 100644
+--- a/ld/testsuite/ld-arm/ifunc-2.rd
++++ b/ld/testsuite/ld-arm/ifunc-2.rd
+@@ -1,7 +1,7 @@
+ 
+ There is no dynamic section in this file\.
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 8 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 8 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......a0 R_ARM_IRELATIVE  
+ 00011010  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-3.rd b/ld/testsuite/ld-arm/ifunc-3.rd
+index 274a4e45ac4..2473aa233b0 100644
+--- a/ld/testsuite/ld-arm/ifunc-3.rd
++++ b/ld/testsuite/ld-arm/ifunc-3.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 13 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 13 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00010004  ......17 R_ARM_RELATIVE   
+ 0001101c  ......17 R_ARM_RELATIVE   
+@@ -15,6 +15,6 @@ Relocation section '\.rel\.dyn' at offset 0x8000 contains 13 entries:
+ 00010024  ......02 R_ARM_ABS32       f4\(\)       f4
+ 00011028  ......15 R_ARM_GLOB_DAT    f4\(\)       f4
+ 
+-Relocation section '\.rel\.plt' at offset 0x8068 contains 1 entry:
++Relocation section '\.rel\.plt' at offset 0x[0-9a-f]+ contains 1 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......16 R_ARM_JUMP_SLOT   f2\(\)       f2
+diff --git a/ld/testsuite/ld-arm/ifunc-4.rd b/ld/testsuite/ld-arm/ifunc-4.rd
+index b8079d5c615..c48bb811b9e 100644
+--- a/ld/testsuite/ld-arm/ifunc-4.rd
++++ b/ld/testsuite/ld-arm/ifunc-4.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 62 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 62 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001106c  ......17 R_ARM_RELATIVE   
+ 00011070  ......17 R_ARM_RELATIVE   
+@@ -64,7 +64,7 @@ Relocation section '\.rel\.dyn' at offset 0x8000 contains 62 entries:
+ 000100bc  ......02 R_ARM_ABS32       tbf4\(\)     tbf4
+ 00011090  ......15 R_ARM_GLOB_DAT    tbf4\(\)     tbf4
+ 
+-Relocation section '\.rel\.plt' at offset 0x81f0 contains 6 entries:
++Relocation section '\.rel\.plt' at offset 0x[0-9a-f]+ contains 6 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......16 R_ARM_JUMP_SLOT   atf2\(\)     atf2
+ 00011010  ......16 R_ARM_JUMP_SLOT   ttf2\(\)     ttf2
+diff --git a/ld/testsuite/ld-arm/ifunc-5.rd b/ld/testsuite/ld-arm/ifunc-5.rd
+index 264412312f6..6c0069af636 100644
+--- a/ld/testsuite/ld-arm/ifunc-5.rd
++++ b/ld/testsuite/ld-arm/ifunc-5.rd
+@@ -1,7 +1,7 @@
+ 
+ There is no dynamic section in this file\.
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 3 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 3 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 0001100c  ......a0 R_ARM_IRELATIVE  
+ 00011014  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-6.rd b/ld/testsuite/ld-arm/ifunc-6.rd
+index 04c18a926f6..56f7c9493c0 100644
+--- a/ld/testsuite/ld-arm/ifunc-6.rd
++++ b/ld/testsuite/ld-arm/ifunc-6.rd
+@@ -1,7 +1,7 @@
+ 
+ There is no dynamic section in this file\.
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 4 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 4 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00011018  ......a0 R_ARM_IRELATIVE  
+ 00011010  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/ifunc-7.rd b/ld/testsuite/ld-arm/ifunc-7.rd
+index f250bb7e430..7d3690ceaa0 100644
+--- a/ld/testsuite/ld-arm/ifunc-7.rd
++++ b/ld/testsuite/ld-arm/ifunc-7.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 7 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 7 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00010004  ......17 R_ARM_RELATIVE   
+ 00011014  ......17 R_ARM_RELATIVE   
+diff --git a/ld/testsuite/ld-arm/ifunc-9.rd b/ld/testsuite/ld-arm/ifunc-9.rd
+index a28cd0034f2..ecaa0780651 100644
+--- a/ld/testsuite/ld-arm/ifunc-9.rd
++++ b/ld/testsuite/ld-arm/ifunc-9.rd
+@@ -1,5 +1,5 @@
+ 
+-Relocation section '\.rel\.dyn' at offset 0x8000 contains 3 entries:
++Relocation section '\.rel\.dyn' at offset 0x[0-9a-f]+ contains 3 entries:
+  Offset     Info    Type            Sym\.Value  Sym\. Name
+ 00011028  ......15 R_ARM_GLOB_DAT    00009014   f2
+ 00011010  ......a0 R_ARM_IRELATIVE  
+diff --git a/ld/testsuite/ld-arm/thumb2-bl-undefweak1.s b/ld/testsuite/ld-arm/thumb2-bl-undefweak1.s
+index a302811b42c..621a5f51c15 100644
+--- a/ld/testsuite/ld-arm/thumb2-bl-undefweak1.s
++++ b/ld/testsuite/ld-arm/thumb2-bl-undefweak1.s
+@@ -4,6 +4,7 @@
+ 	.arch armv6
+ 	.syntax unified
+ 	.text
++	.type   foo, %function
+ foo:
+ 	bl bar
+ 	.weak bar
+diff --git a/ld/testsuite/ld-arm/unresolved-1.d b/ld/testsuite/ld-arm/unresolved-1.d
+index cfc1b04c0d7..3840617e708 100644
+--- a/ld/testsuite/ld-arm/unresolved-1.d
++++ b/ld/testsuite/ld-arm/unresolved-1.d
+@@ -5,4 +5,4 @@
+ .*
+ 
+ Contents of section \.got:
+- *[^ ]* 00000000 00000000 00000000 00000000  .*
++ *[^ ]* 00000000 .*
+diff --git a/ld/testsuite/ld-arm/vfp11-fix-none.s b/ld/testsuite/ld-arm/vfp11-fix-none.s
+index a016c49411b..db417b9c72e 100644
+--- a/ld/testsuite/ld-arm/vfp11-fix-none.s
++++ b/ld/testsuite/ld-arm/vfp11-fix-none.s
+@@ -1,6 +1,7 @@
+ 	.arm
+ 	.text
+ 	.globl _start
++	.type  _start, %function
+ _start:
+ 	.word 0xee474a20
+ 	.word 0xed927a00
+diff --git a/ld/testsuite/ld-arm/vfp11-fix-scalar.s b/ld/testsuite/ld-arm/vfp11-fix-scalar.s
+index 4ffb891df89..0f224929c3d 100644
+--- a/ld/testsuite/ld-arm/vfp11-fix-scalar.s
++++ b/ld/testsuite/ld-arm/vfp11-fix-scalar.s
+@@ -1,6 +1,7 @@
+ 	.arm
+ 	.text
+ 	.globl _start
++	.type   _start, %function
+ _start:
+ 	fmacseq s9, s14, s1
+ 	flds s14, [r2]
+diff --git a/ld/testsuite/ld-arm/vfp11-fix-vector.s b/ld/testsuite/ld-arm/vfp11-fix-vector.s
+index 05b6100bf19..0e6400b22a0 100644
+--- a/ld/testsuite/ld-arm/vfp11-fix-vector.s
++++ b/ld/testsuite/ld-arm/vfp11-fix-vector.s
+@@ -1,6 +1,7 @@
+ 	.arm
+ 	.text
+ 	.globl _start
++	.type  _start, %function
+ _start:
+ 	fmacseq s9, s14, s1
+ 	mov r2,r3
+diff --git a/ld/testsuite/ld-elf/binutils.exp b/ld/testsuite/ld-elf/binutils.exp
+index 578276e595e..e68364c1871 100644
+--- a/ld/testsuite/ld-elf/binutils.exp
++++ b/ld/testsuite/ld-elf/binutils.exp
+@@ -25,6 +25,8 @@
+ 
+ if { !([istarget *-*-linux*]
+        || [istarget arm*-*-uclinuxfdpiceabi]
++       || [istarget *-*-nto*]
++       || [istarget *-*-qnx*]
+        || [istarget *-*-nacl*]
+        || [istarget *-*-gnu*]) || [istarget *ecoff] } then {
+     return
+@@ -163,6 +164,8 @@ binutils_test objcopy "-z relro -shared" relro1
+ if { ([istarget "i?86-*-elf*"]
+       || [istarget "i?86-*-linux*"]
+       || [istarget "i?86-*-gnu*"]
++      || [istarget "i?86-*-nto*"]
++      || [istarget "i?86-*-qnx*"]
+       || [istarget "x86_64-*-linux*"]
+       || [istarget "amd64-*-linux*"]) } {
+     binutils_test strip "-z relro -shared" relro2
+diff --git a/ld/testsuite/ld-elf/commonpage1.d b/ld/testsuite/ld-elf/commonpage1.d
+index e3f5037e5cd..0a21a08ec8c 100644
+--- a/ld/testsuite/ld-elf/commonpage1.d
++++ b/ld/testsuite/ld-elf/commonpage1.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -z max-page-size=0x200000 -z common-page-size=0x100000
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   LOAD+.*0x200000
+diff --git a/ld/testsuite/ld-elf/compress1c.d b/ld/testsuite/ld-elf/compress1c.d
+index dab0f30d470..78227d68cc2 100644
+--- a/ld/testsuite/ld-elf/compress1c.d
++++ b/ld/testsuite/ld-elf/compress1c.d
+@@ -2,7 +2,7 @@
+ #as: --compress-debug-sections
+ #ld: -shared
+ #readelf: -S --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/discard1.d b/ld/testsuite/ld-elf/discard1.d
+index 03073288748..b70a6078ca4 100644
+--- a/ld/testsuite/ld-elf/discard1.d
++++ b/ld/testsuite/ld-elf/discard1.d
+@@ -1,7 +1,7 @@
+ #source: discard1.s
+ #ld: -r -T discard.ld
+ #readelf: -r
+-#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu*
++#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu* i?86-*-nto* i?86-*-qnx*
+ 
+ Relocation section '.rel.*.debug_info' at offset 0x[0-9a-z]+ contains 1 entry:
+ [ \t]+Offset[ \t]+Info[ \t]+Type[ \t]+Sym.*
+diff --git a/ld/testsuite/ld-elf/discard2.d b/ld/testsuite/ld-elf/discard2.d
+index fddf52973d0..95687bb2390 100644
+--- a/ld/testsuite/ld-elf/discard2.d
++++ b/ld/testsuite/ld-elf/discard2.d
+@@ -1,7 +1,7 @@
+ #source: discard2.s
+ #ld: -r -T discard.ld
+ #readelf: -r
+-#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu*
++#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu* i?86-*-nto* i?86-*-qnx*
+ 
+ Relocation section '.rel.*.debug_info' at offset 0x[0-9a-z]+ contains 1 entry:
+ [ \t]+Offset[ \t]+Info[ \t]+Type[ \t]+Sym.*
+diff --git a/ld/testsuite/ld-elf/discard3.d b/ld/testsuite/ld-elf/discard3.d
+index 970a8af599e..c3a4a0a994b 100644
+--- a/ld/testsuite/ld-elf/discard3.d
++++ b/ld/testsuite/ld-elf/discard3.d
+@@ -2,7 +2,7 @@
+ #source: discard2.s
+ #ld: -r -T discard.ld
+ #readelf: -r
+-#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu*
++#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu* i?86-*-nto* i?86-*-qnx*
+ 
+ Relocation section '.rel.*.debug_info' at offset 0x[0-9a-z]+ contains 2 entries:
+ [ \t]+Offset[ \t]+Info[ \t]+Type[ \t]+Sym.*
+diff --git a/ld/testsuite/ld-elf/dynamic1.d b/ld/testsuite/ld-elf/dynamic1.d
+index 5bebd175c0f..7c19e8a1b02 100644
+--- a/ld/testsuite/ld-elf/dynamic1.d
++++ b/ld/testsuite/ld-elf/dynamic1.d
+@@ -1,6 +1,6 @@
+ #ld: -shared -T dynamic1.ld
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/dynsym1.d b/ld/testsuite/ld-elf/dynsym1.d
+index 171c5f75ba7..ca788261db4 100644
+--- a/ld/testsuite/ld-elf/dynsym1.d
++++ b/ld/testsuite/ld-elf/dynsym1.d
+@@ -1,7 +1,7 @@
+ #source: empty.s
+ #ld: -shared
+ #readelf: --dyn-syms
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/eh6.d b/ld/testsuite/ld-elf/eh6.d
+index 08e9d7b2bd2..3532dd2ec1b 100644
+--- a/ld/testsuite/ld-elf/eh6.d
++++ b/ld/testsuite/ld-elf/eh6.d
+@@ -1,7 +1,7 @@
+ #source: eh6.s
+ #ld: --gc-sections -shared -z notext
+ #readelf: -wf -rW
+-#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu*
++#target: x86_64-*-linux-gnu* i?86-*-linux-gnu i?86-*-gnu* i?86-*-nto* i?86-*-qnx*
+ 
+ #...
+ [0-9a-f]+ +[0-9a-f]+ +R_.*_NONE *0?
+diff --git a/ld/testsuite/ld-elf/ehdr_start-missing.d b/ld/testsuite/ld-elf/ehdr_start-missing.d
+index 3fb85e00f2d..694416678cd 100644
+--- a/ld/testsuite/ld-elf/ehdr_start-missing.d
++++ b/ld/testsuite/ld-elf/ehdr_start-missing.d
+@@ -1,5 +1,5 @@
+ #source: ehdr_start-strongref.s
+ #ld: -e _start -T ehdr_start-missing.t --no-dynamic-linker
+ #error: .*: undefined reference to `__ehdr_start'
+-#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: bfin-*-*
+diff --git a/ld/testsuite/ld-elf/ehdr_start-shared.d b/ld/testsuite/ld-elf/ehdr_start-shared.d
+index a2a4dcc4975..e8ba170cb8b 100644
+--- a/ld/testsuite/ld-elf/ehdr_start-shared.d
++++ b/ld/testsuite/ld-elf/ehdr_start-shared.d
+@@ -1,7 +1,7 @@
+ #source: ehdr_start.s
+ #ld: -e _start -shared -z notext
+ #nm: -n
+-#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: bfin-*-* cris*-*-* frv-*-* lm32-*-* ![check_shared_lib_support]
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/ehdr_start-userdef.d b/ld/testsuite/ld-elf/ehdr_start-userdef.d
+index 93ed0d8138d..044d1cffdb5 100644
+--- a/ld/testsuite/ld-elf/ehdr_start-userdef.d
++++ b/ld/testsuite/ld-elf/ehdr_start-userdef.d
+@@ -1,7 +1,7 @@
+ #source: ehdr_start-strongref.s
+ #ld: -e _start -T ehdr_start-userdef.t
+ #readelf: -Ws
+-#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: bfin-*-* frv-*-*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/ehdr_start-weak.d b/ld/testsuite/ld-elf/ehdr_start-weak.d
+index c4f9072e42a..d877bfe35c6 100644
+--- a/ld/testsuite/ld-elf/ehdr_start-weak.d
++++ b/ld/testsuite/ld-elf/ehdr_start-weak.d
+@@ -1,7 +1,7 @@
+ #source: ehdr_start.s
+ #ld: -e _start -T ehdr_start-missing.t --no-dynamic-linker
+ #nm: -n
+-#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: bfin-*-* frv-*-*
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/ehdr_start.d b/ld/testsuite/ld-elf/ehdr_start.d
+index 0ec3b134831..2a058e63368 100644
+--- a/ld/testsuite/ld-elf/ehdr_start.d
++++ b/ld/testsuite/ld-elf/ehdr_start.d
+@@ -1,7 +1,7 @@
+ #source: ehdr_start.s
+ #ld: -e _start --build-id
+ #nm: -n
+-#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: bfin-*-* frv-*-* lm32-*-*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/elf.exp b/ld/testsuite/ld-elf/elf.exp
+index 831dfae153e..76455dd439f 100644
+--- a/ld/testsuite/ld-elf/elf.exp
++++ b/ld/testsuite/ld-elf/elf.exp
+@@ -445,6 +445,8 @@ run_ld_link_exec_tests $array_tests $xfails
+ 
+ if { [istarget *-*-linux*]
+      || [istarget *-*-nacl*]
++     || [istarget *-*-nto*]
++     || [istarget *-*-qnx*]
+      || [istarget *-*-gnu*] } {
+     run_ld_link_exec_tests $array_tests_pie $xfails
+ 
+diff --git a/ld/testsuite/ld-elf/exclude3b.d b/ld/testsuite/ld-elf/exclude3b.d
+index 632d0b56803..cbe16f6ea73 100644
+--- a/ld/testsuite/ld-elf/exclude3b.d
++++ b/ld/testsuite/ld-elf/exclude3b.d
+@@ -1,7 +1,7 @@
+ #source: exclude3.s
+ #ld: --shared
+ #readelf: -S --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/global1.d b/ld/testsuite/ld-elf/global1.d
+index f1c24cdaee0..5e3292ea686 100644
+--- a/ld/testsuite/ld-elf/global1.d
++++ b/ld/testsuite/ld-elf/global1.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #ld: -shared -z global
+ #readelf: -d
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/hash.d b/ld/testsuite/ld-elf/hash.d
+index ab278c00040..22afbcefca4 100644
+--- a/ld/testsuite/ld-elf/hash.d
++++ b/ld/testsuite/ld-elf/hash.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -s -D
+ #ld: -shared --hash-style=gnu
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ #xfail: mips*-*-*
+ # MIPS uses a different style of GNU hash due to psABI restrictions
+diff --git a/ld/testsuite/ld-elf/header.d b/ld/testsuite/ld-elf/header.d
+index ade4f3a3dc8..785ffe62683 100644
+--- a/ld/testsuite/ld-elf/header.d
++++ b/ld/testsuite/ld-elf/header.d
+@@ -1,4 +1,4 @@
+-# target: *-*-linux* *-*-gnu* *-*-vxworks arm*-*-uclinuxfdpiceabi
++# target: *-*-linux* *-*-gnu* *-*-vxworks arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ # ld: -T header.t -z max-page-size=0x100 -z common-page-size=0x100 --no-warn-rwx-segments
+ # objdump: -hpw
+ 
+diff --git a/ld/testsuite/ld-elf/loadaddr1.d b/ld/testsuite/ld-elf/loadaddr1.d
+index 1418313cf9c..15ec0dc6e2a 100644
+--- a/ld/testsuite/ld-elf/loadaddr1.d
++++ b/ld/testsuite/ld-elf/loadaddr1.d
+@@ -1,7 +1,7 @@
+ #source: loadaddr.s
+ #ld: -T loadaddr1.t -T loadaddr.t -z max-page-size=0x200000 -z noseparate-code --no-warn-rwx-segments
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: h8300-*-* rx-*-linux*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/loadaddr2.d b/ld/testsuite/ld-elf/loadaddr2.d
+index 357bbe5de7b..4cf25f9fa18 100644
+--- a/ld/testsuite/ld-elf/loadaddr2.d
++++ b/ld/testsuite/ld-elf/loadaddr2.d
+@@ -1,7 +1,7 @@
+ #source: loadaddr.s
+ #ld: -T loadaddr2.t -T loadaddr.t -z max-page-size=0x200000 -z noseparate-code --no-warn-rwx-segments
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: h8300-*-* rx-*-linux*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/loadaddr3a.d b/ld/testsuite/ld-elf/loadaddr3a.d
+index f531f931a46..538b5cf067d 100644
+--- a/ld/testsuite/ld-elf/loadaddr3a.d
++++ b/ld/testsuite/ld-elf/loadaddr3a.d
+@@ -1,7 +1,7 @@
+ #source: loadaddr.s
+ #ld: -T loadaddr3.t -z max-page-size=0x200000
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   LOAD +0x000000 0x0*00000000 0x0*00000000 0x0*0110 0x0*0110 R E 0x.*
+diff --git a/ld/testsuite/ld-elf/loadaddr3b.d b/ld/testsuite/ld-elf/loadaddr3b.d
+index aa5e9515248..c007ae9039c 100644
+--- a/ld/testsuite/ld-elf/loadaddr3b.d
++++ b/ld/testsuite/ld-elf/loadaddr3b.d
+@@ -1,7 +1,7 @@
+ #source: loadaddr.s
+ #ld: -T loadaddr3.t -z max-page-size=0x200000
+ #objdump: -t
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+ 0+0000110 g       \*ABS\*	0+0000000 data_load
+diff --git a/ld/testsuite/ld-elf/local1.d b/ld/testsuite/ld-elf/local1.d
+index 4cb4faa4f93..8d7f8982f8b 100644
+--- a/ld/testsuite/ld-elf/local1.d
++++ b/ld/testsuite/ld-elf/local1.d
+@@ -1,6 +1,6 @@
+ #ld: -shared --version-script local1.map
+ #readelf: -s --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/maxpage1.d b/ld/testsuite/ld-elf/maxpage1.d
+index 0b7401437d6..2c263379dc2 100644
+--- a/ld/testsuite/ld-elf/maxpage1.d
++++ b/ld/testsuite/ld-elf/maxpage1.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -z max-page-size=0x200000
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   LOAD+.*0x200000
+diff --git a/ld/testsuite/ld-elf/maxpage2.d b/ld/testsuite/ld-elf/maxpage2.d
+index 95b3dc20340..c2db2e5b413 100644
+--- a/ld/testsuite/ld-elf/maxpage2.d
++++ b/ld/testsuite/ld-elf/maxpage2.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -z max-page-size=0x100000
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   LOAD+.*0x100000
+diff --git a/ld/testsuite/ld-elf/maxpage3a.d b/ld/testsuite/ld-elf/maxpage3a.d
+index 5faddb7fc94..deb46aefff7 100644
+--- a/ld/testsuite/ld-elf/maxpage3a.d
++++ b/ld/testsuite/ld-elf/maxpage3a.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -z max-page-size=0x10000000 -T maxpage3.t
+ #readelf: -lS --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   \[[ 0-9]+\] \.data[ \t]+PROGBITS[ \t]+0*10000000[ \t]+[ \t0-9a-f]+WA?.*
+diff --git a/ld/testsuite/ld-elf/multibss1.d b/ld/testsuite/ld-elf/multibss1.d
+index e85c223f9b0..2265c65fdb1 100644
+--- a/ld/testsuite/ld-elf/multibss1.d
++++ b/ld/testsuite/ld-elf/multibss1.d
+@@ -1,7 +1,7 @@
+ #source: multibss1.s
+ #ld: -e 0
+ #readelf: -l --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: hppa64-*-*
+ # hppa64 default script add 16 bytes at start of .data giving 0x500010 p_memsz
+ 
+diff --git a/ld/testsuite/ld-elf/noload-2.d b/ld/testsuite/ld-elf/noload-2.d
+index d0af8d9be08..fe7c8fc36de 100644
+--- a/ld/testsuite/ld-elf/noload-2.d
++++ b/ld/testsuite/ld-elf/noload-2.d
+@@ -1,7 +1,7 @@
+ #source: noload-1.s
+ #ld: -T noload-1.t -z max-page-size=0x200000
+ #readelf: -Sl --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+  +LOAD +0x.00000 +0x0+ +0x0+ +0x0+.. +0x0+.. +RW +0x200000
+diff --git a/ld/testsuite/ld-elf/now-1.d b/ld/testsuite/ld-elf/now-1.d
+index 060d1ebed57..de2dbf2cc38 100644
+--- a/ld/testsuite/ld-elf/now-1.d
++++ b/ld/testsuite/ld-elf/now-1.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -z now --enable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/now-2.d b/ld/testsuite/ld-elf/now-2.d
+index 970878c0777..6ffd06ea9be 100644
+--- a/ld/testsuite/ld-elf/now-2.d
++++ b/ld/testsuite/ld-elf/now-2.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -z now --enable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/now-3.d b/ld/testsuite/ld-elf/now-3.d
+index 2ffb5271e49..86f3603e759 100644
+--- a/ld/testsuite/ld-elf/now-3.d
++++ b/ld/testsuite/ld-elf/now-3.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -z now --disable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/now-4.d b/ld/testsuite/ld-elf/now-4.d
+index 0c0c8e144a5..44de91aad8a 100644
+--- a/ld/testsuite/ld-elf/now-4.d
++++ b/ld/testsuite/ld-elf/now-4.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -z now --disable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/pr12975.d b/ld/testsuite/ld-elf/pr12975.d
+index 2f5551ea0bb..b714d8c27e6 100644
+--- a/ld/testsuite/ld-elf/pr12975.d
++++ b/ld/testsuite/ld-elf/pr12975.d
+@@ -1,6 +1,6 @@
+ #ld: --gc-sections -shared -version-script pr12975.t
+ #readelf: -s --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: [is_generic] hppa64-*-* mep-*-* mn10200-*-* ![check_shared_lib_support] 
+ # generic linker targets don't support --gc-sections, nor do a bunch of others
+ 
+diff --git a/ld/testsuite/ld-elf/pr13177.d b/ld/testsuite/ld-elf/pr13177.d
+index c67ee122dfe..e3a6d958a35 100644
+--- a/ld/testsuite/ld-elf/pr13177.d
++++ b/ld/testsuite/ld-elf/pr13177.d
+@@ -1,7 +1,7 @@
+ #source: pr13177.s
+ #ld: --gc-sections -shared
+ #readelf: -s -D --wide
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: [is_generic] hppa64-*-* mep-*-* mn10200-*-* ![check_shared_lib_support] 
+ # generic linker targets don't support --gc-sections, nor do a bunch of others
+ 
+diff --git a/ld/testsuite/ld-elf/pr13195.d b/ld/testsuite/ld-elf/pr13195.d
+index 0409c7102ec..0afb49bee6f 100644
+--- a/ld/testsuite/ld-elf/pr13195.d
++++ b/ld/testsuite/ld-elf/pr13195.d
+@@ -1,6 +1,6 @@
+ #ld: --gc-sections -shared -version-script pr13195.t
+ #readelf: -s --wide -D
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: [is_generic] hppa64-*-* mep-*-* mn10200-*-* ![check_shared_lib_support] 
+ # generic linker targets don't support --gc-sections, nor do a bunch of others
+ 
+diff --git a/ld/testsuite/ld-elf/pr16322.d b/ld/testsuite/ld-elf/pr16322.d
+index 1e9175c67de..97f7bca528d 100644
+--- a/ld/testsuite/ld-elf/pr16322.d
++++ b/ld/testsuite/ld-elf/pr16322.d
+@@ -1,6 +1,6 @@
+ #ld: -shared -z relro -z noseparate-code
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* *-*-nacl* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ #xfail: ![check_relro_support]
+ 
+diff --git a/ld/testsuite/ld-elf/rpath-1.d b/ld/testsuite/ld-elf/rpath-1.d
+index b1651c3bbf5..97e47ff7ba4 100644
+--- a/ld/testsuite/ld-elf/rpath-1.d
++++ b/ld/testsuite/ld-elf/rpath-1.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -rpath=. --disable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/rpath-2.d b/ld/testsuite/ld-elf/rpath-2.d
+index 3a457d0f3a8..70f79be574d 100644
+--- a/ld/testsuite/ld-elf/rpath-2.d
++++ b/ld/testsuite/ld-elf/rpath-2.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -rpath=. --disable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/runpath-1.d b/ld/testsuite/ld-elf/runpath-1.d
+index 03931dc9809..626cd8797d3 100644
+--- a/ld/testsuite/ld-elf/runpath-1.d
++++ b/ld/testsuite/ld-elf/runpath-1.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -rpath . --enable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #failif
+diff --git a/ld/testsuite/ld-elf/runpath-2.d b/ld/testsuite/ld-elf/runpath-2.d
+index 2f21b8299cb..e5b83f0951a 100644
+--- a/ld/testsuite/ld-elf/runpath-2.d
++++ b/ld/testsuite/ld-elf/runpath-2.d
+@@ -1,7 +1,7 @@
+ #source: start.s
+ #readelf: -d -W
+ #ld: -shared -rpath . --enable-new-dtags
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support]
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/seg.d b/ld/testsuite/ld-elf/seg.d
+index 9dce11e59e3..3f7731fdb3a 100644
+--- a/ld/testsuite/ld-elf/seg.d
++++ b/ld/testsuite/ld-elf/seg.d
+@@ -1,4 +1,4 @@
+-#target: *-*-linux* *-*-gnu* *-*-vxworks arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* *-*-vxworks arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #source: seg.s
+ #ld: -T seg.t -z max-page-size=0x1000 -z common-page-size=0x1000
+ #readelf: -l --wide
+diff --git a/ld/testsuite/ld-elf/textaddr1.d b/ld/testsuite/ld-elf/textaddr1.d
+index 169cf817797..c685c644e77 100644
+--- a/ld/testsuite/ld-elf/textaddr1.d
++++ b/ld/testsuite/ld-elf/textaddr1.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -Ttext-segment 0x7000000 -z max-page-size=0x200000 -z noseparate-code
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: h8300-*-* rx-*-linux*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/textaddr2.d b/ld/testsuite/ld-elf/textaddr2.d
+index 6689c923bc5..87fa10a3627 100644
+--- a/ld/testsuite/ld-elf/textaddr2.d
++++ b/ld/testsuite/ld-elf/textaddr2.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -shared -Ttext-segment 0x7000000 -z max-page-size=0x200000 -z noseparate-code
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support]
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/textaddr3.d b/ld/testsuite/ld-elf/textaddr3.d
+index 3796b7dcb98..2b076da8fcc 100644
+--- a/ld/testsuite/ld-elf/textaddr3.d
++++ b/ld/testsuite/ld-elf/textaddr3.d
+@@ -1,4 +1,4 @@
+ #source: maxpage1.s
+ #ld: -Ttext-segment 0x10000 -z max-page-size=0x200000
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #warning: .*address of `text-segment' isn't multiple of maximum page size
+diff --git a/ld/testsuite/ld-elf/textaddr4.d b/ld/testsuite/ld-elf/textaddr4.d
+index 02350ea7801..086c7420db8 100644
+--- a/ld/testsuite/ld-elf/textaddr4.d
++++ b/ld/testsuite/ld-elf/textaddr4.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -z max-page-size=0x10000 -Ttext-segment 0x10000 -z noseparate-code
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: h8300-*-* rx-*-linux*
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/textaddr5.d b/ld/testsuite/ld-elf/textaddr5.d
+index ab1097f40cf..8b746e58ad7 100644
+--- a/ld/testsuite/ld-elf/textaddr5.d
++++ b/ld/testsuite/ld-elf/textaddr5.d
+@@ -1,5 +1,5 @@
+ #source: maxpage1.s
+ #ld: -shared -z max-page-size=0x200000 -Ttext-segment 0x10000
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support]
+ #warning: .*address of `text-segment' isn't multiple of maximum page size
+diff --git a/ld/testsuite/ld-elf/textaddr6.d b/ld/testsuite/ld-elf/textaddr6.d
+index 7e4e3c665c4..46a86195c49 100644
+--- a/ld/testsuite/ld-elf/textaddr6.d
++++ b/ld/testsuite/ld-elf/textaddr6.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -shared -z max-page-size=0x10000 -Ttext-segment 0x10000 -z noseparate-code
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-elf/textaddr7.d b/ld/testsuite/ld-elf/textaddr7.d
+index aa745348829..95e8e40163e 100644
+--- a/ld/testsuite/ld-elf/textaddr7.d
++++ b/ld/testsuite/ld-elf/textaddr7.d
+@@ -1,7 +1,7 @@
+ #source: maxpage1.s
+ #ld: -n -z max-page-size=0x200000 -Ttext-segment 0x10000 --no-warn-rwx-segments
+ #readelf: -l --wide
+-#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux-gnu *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   LOAD .*
+diff --git a/ld/testsuite/ld-elf/unknown2.d b/ld/testsuite/ld-elf/unknown2.d
+index ef9b40f6b38..32865003aa8 100644
+--- a/ld/testsuite/ld-elf/unknown2.d
++++ b/ld/testsuite/ld-elf/unknown2.d
+@@ -1,7 +1,7 @@
+ #source: unknown2.s
+ #ld: -shared
+ #readelf: -S
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-gc/gc.exp b/ld/testsuite/ld-gc/gc.exp
+index c4eb8d4a8b2..22939d03a0b 100644
+--- a/ld/testsuite/ld-gc/gc.exp
++++ b/ld/testsuite/ld-gc/gc.exp
+@@ -143,6 +143,8 @@ if { [is_elf_format] && [check_shared_lib_support] } then {
+ if { [check_compiler_available] } {
+     if { [istarget "*-*-linux*"]
+ 	 || [istarget "*-*-nacl*"]
++	 || [istarget "*-*-nto*"]
++	 || [istarget "*-*-qbx*"]
+ 	 || [istarget "*-*-gnu*"] } {
+ 	ld_compile "$CC_FOR_TARGET -fPIC $cflags" $srcdir/$subdir/pr11218-1.c tmpdir/pr11218-1.o
+ 	ld_link $ld tmpdir/pr11218-1.so "-shared tmpdir/pr11218-1.o"
+diff --git a/ld/testsuite/ld-gc/pr11218.d b/ld/testsuite/ld-gc/pr11218.d
+index 349f9c5eea9..6c33adaf896 100644
+--- a/ld/testsuite/ld-gc/pr11218.d
++++ b/ld/testsuite/ld-gc/pr11218.d
+@@ -1,5 +1,5 @@
+ # name: --gc-sections with shared library
+ # source: dummy.s
+ # ld: --gc-sections -e main tmpdir/pr11218-2.o tmpdir/pr11218-1.so
+-# target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++# target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto*  *-*-qnx*
+ # error: undefined reference to `unresolved_detected_at_runtime_not_at_linktime'
+diff --git a/ld/testsuite/ld-ifunc/binutils.exp b/ld/testsuite/ld-ifunc/binutils.exp
+index f12b0d02363..7560cfc9cff 100644
+--- a/ld/testsuite/ld-ifunc/binutils.exp
++++ b/ld/testsuite/ld-ifunc/binutils.exp
+@@ -28,7 +28,9 @@ if { !([istarget "i?86-*-elf*"]
+        || [istarget "i?86-*-linux*"]
+        || [istarget "i?86-*-gnu*"]
+        || [istarget "x86_64-*-linux*"]
+-       || [istarget "amd64-*-linux*"]) } {
++       || [istarget "amd64-*-linux*"]
++       || [istarget "i?86-*-nto*"])
++       || [istarget "i?86-*-qnx*"]) } {
+     return
+ }
+ 
+diff --git a/ld/testsuite/ld-linkonce/zeroehl32.d b/ld/testsuite/ld-linkonce/zeroehl32.d
+index 3aa73c98e77..86f5400ad2b 100644
+--- a/ld/testsuite/ld-linkonce/zeroehl32.d
++++ b/ld/testsuite/ld-linkonce/zeroehl32.d
+@@ -2,7 +2,7 @@
+ #source: zeroeh_y.s
+ #ld: -Ttext 0xa00 -T zeroeh.ld
+ #objdump: -s
+-#target: cris-*-elf cris-*-linux* i?86-*-elf i?86-*-linux* i?86-*-gnu*
++#target: cris-*-elf cris-*-linux* i?86-*-elf i?86-*-linux* i?86-*-gnu* i?86-*-nto* i?86-*-qnx*
+ #target: powerpc-*-elf powerpc-*-linux*
+ 
+ # The word at address 201c, for the linkonce-excluded section, must be zero.
+diff --git a/ld/testsuite/ld-scripts/phdrs2.exp b/ld/testsuite/ld-scripts/phdrs2.exp
+index 489847956f0..8038f32b12f 100644
+--- a/ld/testsuite/ld-scripts/phdrs2.exp
++++ b/ld/testsuite/ld-scripts/phdrs2.exp
+@@ -26,6 +26,8 @@ if { !([istarget *-*-sysv4*]
+        || [istarget *-*-linux*]
+        || [istarget arm*-*-uclinuxfdpiceabi]
+        || [istarget *-*-gnu*]
++       || [istarget *-*-nto*]
++       || [istarget *-*-qbx*]
+        || [istarget *-*-irix5*]
+        || [istarget *-*-irix6*]
+        || [istarget *-*-solaris2*]) || [istarget *ecoff] } then {
+diff --git a/ld/testsuite/ld-scripts/rgn-at5.d b/ld/testsuite/ld-scripts/rgn-at5.d
+index e9ab08123df..1a04b0e45a5 100644
+--- a/ld/testsuite/ld-scripts/rgn-at5.d
++++ b/ld/testsuite/ld-scripts/rgn-at5.d
+@@ -2,7 +2,7 @@
+ # source: rgn-at5.s
+ # ld: -T rgn-at5.t -z max-page-size=0x1000 -z common-page-size=0x1000
+ # objdump: -w -h
+-# target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++# target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ # xfail: rx-*-*
+ #   FAILS on the RX because the linker has to set LMA == VMA for the
+ #   Renesas loader.
+diff --git a/ld/testsuite/ld-undefined/entry-3.d b/ld/testsuite/ld-undefined/entry-3.d
+index 8f93e455278..3e27f591798 100644
+--- a/ld/testsuite/ld-undefined/entry-3.d
++++ b/ld/testsuite/ld-undefined/entry-3.d
+@@ -2,7 +2,7 @@
+ #source: dummy.s
+ #ld: -shared --entry foo tmpdir/libentry.a
+ #nm: -n
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-undefined/entry-4.d b/ld/testsuite/ld-undefined/entry-4.d
+index 774d0589730..6b9035140fd 100644
+--- a/ld/testsuite/ld-undefined/entry-4.d
++++ b/ld/testsuite/ld-undefined/entry-4.d
+@@ -2,7 +2,7 @@
+ #source: dummy.s
+ #ld: -shared --entry foo -u foo tmpdir/libentry.a
+ #nm: -n
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ #xfail: ![check_shared_lib_support] 
+ 
+ #...
+diff --git a/ld/testsuite/ld-undefined/weak-undef.exp b/ld/testsuite/ld-undefined/weak-undef.exp
+index 88136685284..8f507b7236e 100644
+--- a/ld/testsuite/ld-undefined/weak-undef.exp
++++ b/ld/testsuite/ld-undefined/weak-undef.exp
+@@ -29,7 +29,7 @@ if { [is_pecoff_format] } then {
+     set IMAGE_BASE ""
+ }
+ 
+-if { ![is_elf_format] && ![is_pecoff_format] } then {
++if { ![is_elf_format] && ![is_pecoff_format] && ![istarget *-*-qnx*] } then {
+     unsupported $testname
+ } elseif {![ld_assemble $as $srcdir/$subdir/weak-undef.s \
+ 	    tmpdir/weak-undef.o]} then {
+diff --git a/ld/testsuite/ld-x86-64/x86-64.exp b/ld/testsuite/ld-x86-64/x86-64.exp
+index 742823e6458..e1d95c7fc41 100644
+--- a/ld/testsuite/ld-x86-64/x86-64.exp
++++ b/ld/testsuite/ld-x86-64/x86-64.exp
+@@ -22,7 +22,7 @@
+ # Test x86_64 linking; all types of relocs.  This tests the assembler and
+ # tools like objdump as well as the linker.
+ 
+-if { !([istarget "x86_64-*-elf*"] || [istarget "x86_64-*-linux*"]) } {
++if { !([istarget "x86_64-*-elf*"] || [istarget "x86_64-*-linux*"]) || [istarget "x86_64-*-nto*"] || [istarget "x86_64-*-qnx*"]} {
+     return
+ }
+ 

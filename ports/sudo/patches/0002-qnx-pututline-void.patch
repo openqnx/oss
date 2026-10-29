@@ -1,0 +1,24 @@
+Cope with QNX's void pututline().
+
+sudo checks pututline()'s return value (the written entry, or NULL), but
+QNX declares it as returning void: "void value not ignored as it ought to
+be" in src/utmp.c. Treat the call as successful and yield the entry.
+
+Upstream-Status: QNX-specific
+
+--- a/src/utmp.c
++++ b/src/utmp.c
+@@ -67,7 +67,12 @@
+ # define sudo_endutent()	endutxent()
+ #elif defined(HAVE_GETUTID)
+ # define sudo_getutline(u)	getutline(u)
+-# define sudo_pututline(u)	pututline(u)
++# ifdef __QNX__
++/* QNX's pututline() returns void and reports no error; yield the entry. */
++#  define sudo_pututline(u)	(pututline(u), (u))
++# else
++#  define sudo_pututline(u)	pututline(u)
++# endif
+ # define sudo_setutent()	setutent()
+ # define sudo_endutent()	endutent()
+ #endif

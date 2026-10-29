@@ -1,0 +1,23 @@
+fribidi: do not build in C90 (-ansi) mode on QNX.
+
+-ansi means C90, where "inline" is not a keyword, and QNX's own headers use
+"static inline" (stdlib.h declares atexit that way): the build failed inside
+the system headers.
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -21,7 +21,11 @@
+ # C compiler. This is the cross compiler if we're cross-compiling
+ cc = meson.get_compiler('c')
+ 
+-if cc.get_id() == 'gcc' and cc.has_argument('-ansi')
++# -ansi means C90, where "inline" is not a keyword. QNX's own headers use
++# "static inline" (stdlib.h declares atexit that way), so building against them
++# in C90 mode fails inside the system headers themselves with
++# "expected ';' before 'int'".
++if cc.get_id() == 'gcc' and host_machine.system() != 'qnx' and cc.has_argument('-ansi')
+   add_project_arguments('-ansi', language: 'c')
+ endif
+ 

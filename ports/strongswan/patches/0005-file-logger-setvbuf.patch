@@ -1,0 +1,18 @@
+Use setvbuf(_IOLBF) instead of setlinebuf().
+
+setlinebuf() is a BSD extension QNX's stdio does not have; setvbuf() with
+_IOLBF is the standard spelling of the same thing.
+
+Upstream-Status: QNX-specific
+
+--- a/src/libcharon/bus/listeners/file_logger.c
++++ b/src/libcharon/bus/listeners/file_logger.c
+@@ -335,7 +335,7 @@
+ #ifdef HAVE_SETLINEBUF
+ 		if (flush_line)
+ 		{
+-			setlinebuf(file);
++			setvbuf(file, NULL, _IOLBF, 0);
+ 		}
+ #endif /* HAVE_SETLINEBUF */
+ 	}

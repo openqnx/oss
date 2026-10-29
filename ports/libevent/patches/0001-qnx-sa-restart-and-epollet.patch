@@ -1,0 +1,68 @@
+libevent: QNX's epoll has no EPOLLET.
+
+QNX 8.0's libepoll is level-triggered only. Keep the epoll backend but stop
+advertising EV_FEATURE_ET, so a caller that needs edge-triggered behaviour
+gets another backend instead of silently level-triggered events.
+
+Upstream-Status: QNX-specific
+
+diff --git a/epoll.c b/epoll.c
+index bdec2e4..d3f1ccd 100644
+--- a/epoll.c
++++ b/epoll.c
+@@ -96,6 +96,18 @@ static void *epoll_init(struct event_base *);
+ static int epoll_dispatch(struct event_base *, struct timeval *);
+ static void epoll_dealloc(struct event_base *);
+ 
++/* QNX 8.0's epoll (libepoll) implements the level-triggered interface only --
++ * <sys/epoll.h> defines no EPOLLET.  Keep the backend (it is still the O(1)
++ * one) but stop advertising EV_FEATURE_ET below, so that a caller asking for
++ * edge-triggered behaviour is handed a different backend instead of silently
++ * getting level-triggered semantics. */
++#if defined(__QNX__) && !defined(EPOLLET)
++#define EPOLLET 0
++#define EV_EPOLL_FEATURE_ET 0
++#else
++#define EV_EPOLL_FEATURE_ET EV_FEATURE_ET
++#endif
++
+ static const struct eventop epollops_changelist = {
+ 	"epoll (with changelist)",
+ 	epoll_init,
+@@ -104,7 +116,7 @@ static const struct eventop epollops_changelist = {
+ 	epoll_dispatch,
+ 	epoll_dealloc,
+ 	1, /* need reinit */
+-	EV_FEATURE_ET|EV_FEATURE_O1| EARLY_CLOSE_IF_HAVE_RDHUP,
++	EV_EPOLL_FEATURE_ET|EV_FEATURE_O1| EARLY_CLOSE_IF_HAVE_RDHUP,
+ 	EVENT_CHANGELIST_FDINFO_SIZE
+ };
+ 
+@@ -122,7 +134,7 @@ const struct eventop epollops = {
+ 	epoll_dispatch,
+ 	epoll_dealloc,
+ 	1, /* need reinit */
+-	EV_FEATURE_ET|EV_FEATURE_O1|EV_FEATURE_EARLY_CLOSE,
++	EV_EPOLL_FEATURE_ET|EV_FEATURE_O1|EV_FEATURE_EARLY_CLOSE,
+ 	0
+ };
+ 
+diff --git a/signal.c b/signal.c
+index 89f5fc1..f6a68dd 100644
+--- a/signal.c
++++ b/signal.c
+@@ -64,6 +64,14 @@
+ #include "evmap-internal.h"
+ #include "evthread-internal.h"
+ 
++/* QNX 8.0 leaves SA_RESTART commented out in <signal.h> ("not supported yet"):
++ * kernel calls are never auto-restarted, they return EINTR and libevent's own
++ * EINTR retry loops already cope.  Requesting the flag is therefore a no-op. */
++#if defined(__QNX__) && !defined(SA_RESTART)
++#define SA_RESTART 0
++#endif
++
++
+ /*
+   signal.c
+ 

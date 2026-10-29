@@ -1,0 +1,92 @@
+QNX change from QNX's aports (extra/mate-calc/fix-test-mp-equation-qnx.patch).
+
+Taken from qnx-ports/aports extra/mate-calc -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- a/src/test-mp-equation.c	2025-10-15 17:46:03.000000000 +0000
++++ b/src/test-mp-equation.c	2025-10-15 17:49:22.000000000 +0000
+@@ -18,6 +18,30 @@
+ #include "mp-serializer.h"
+ #include "unit-manager.h"
+ 
++#ifdef __QNX__
++static char *qnx_fix_decimal_separator(const char *input)
++{
++    char *result;
++    size_t i, len;
++    
++    if (!input) return NULL;
++    
++    len = strlen(input);
++    result = g_malloc(len + 1);
++    
++    for (i = 0; i < len; i++) {
++        if (input[i] == 'U' && i > 0 && i < len - 1 &&
++            g_ascii_isdigit(input[i-1]) && g_ascii_isdigit(input[i+1])) {
++            result[i] = '.';
++        } else {
++            result[i] = input[i];
++        }
++    }
++    result[len] = '\0';
++    return result;
++}
++#endif
++
+ static MPEquationOptions options;
+ 
+ static int fails = 0;
+@@ -66,7 +90,8 @@
+     if (error != PARSER_ERR_MP)
+         return mp_error_code_to_string(error);
+ 
+-    snprintf(error_string, 1024, "PARSER_ERR_MP(\"%s\")", mp_get_error());
++    const char *err = mp_get_error();
++    snprintf(error_string, 1024, "PARSER_ERR_MP(\"%s\")", err ? err : "unknown");
+     return error_string;
+ }
+ 
+@@ -76,6 +101,9 @@
+     MPErrorCode error;
+     char *error_token = NULL;
+     MPNumber result = mp_new();
++#ifdef __QNX__
++    char *fixed_result_str = NULL;
++#endif
+ 
+     error = mp_equation_parse(expression, &options, &result, &error_token);
+     if (error_token)
+@@ -88,6 +116,23 @@
+         serializer = mp_serializer_new(MP_DISPLAY_FORMAT_FIXED, options.base, trailing_digits);
+         result_str = mp_serializer_to_string(serializer, &result);
+         g_object_unref(serializer);
++#ifdef __QNX__
++        fixed_result_str = qnx_fix_decimal_separator(result_str);
++        
++        if(expected_error != PARSER_ERR_NONE)
++            fail("'%s' -> %s, expected error %s", expression, 
++                 fixed_result_str ? fixed_result_str : result_str, 
++                 error_code_to_string(expected_error));
++        else if(strcmp(fixed_result_str ? fixed_result_str : result_str, expected) != 0)
++            fail("'%s' -> '%s', expected '%s'", expression, 
++                 fixed_result_str ? fixed_result_str : result_str, expected);
++        else
++            pass("'%s' -> '%s'", expression, 
++                 fixed_result_str ? fixed_result_str : result_str);
++        
++        if (fixed_result_str) g_free(fixed_result_str);
++        g_free(result_str);
++#else
+ 
+         if(expected_error != PARSER_ERR_NONE)
+             fail("'%s' -> %s, expected error %s", expression, result_str, error_code_to_string(expected_error));
+@@ -96,6 +141,7 @@
+         else
+             pass("'%s' -> '%s'", expression, result_str);
+         g_free(result_str);
++#endif
+     }
+     else {
+         if(error == expected_error)

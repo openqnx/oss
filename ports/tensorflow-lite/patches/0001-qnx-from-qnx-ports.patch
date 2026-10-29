@@ -1,0 +1,678 @@
+From 53bf95f518661cbe1dbc2862ec4dde334ba610b0 Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Tue, 7 May 2024 10:00:23 -0400
+Subject: [PATCH 1/8] Add qnx port
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ .../lite/cmake/DownloadPThreadPool.cmake      |  1 +
+ tensorflow/lite/kernels/CMakeLists.txt        | 23 +++++++++++++++---
+ .../lite/tools/cmake/modules/Findre2.cmake    |  2 +-
+ .../lite/tools/cmake/modules/abseil-cpp.cmake |  1 +
+ .../lite/tools/cmake/modules/eigen.cmake      |  1 +
+ .../cmake/modules/ml_dtypes/CMakeLists.txt    |  4 ++--
+ tensorflow/lite/tools/cmake/modules/ruy.cmake |  1 +
+ .../native_tools/flatbuffers/CMakeLists.txt   |  2 +-
+ tensorflow/lite/tools/evaluation/utils.cc     | 24 +++++++++++++++++++
+ 9 files changed, 52 insertions(+), 7 deletions(-)
+
+diff --git a/tensorflow/lite/cmake/DownloadPThreadPool.cmake b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+index 5490472d0e7fd3..f4e5579cb3b2c3 100644
+--- a/tensorflow/lite/cmake/DownloadPThreadPool.cmake
++++ b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+@@ -27,4 +27,5 @@ ExternalProject_Add(pthreadpool
+   BUILD_COMMAND ""
+   INSTALL_COMMAND ""
+   TEST_COMMAND ""
++  PATCH_COMMAND patch < "${QNX_PATCH_DIR}/pthreadpool.patch"
+ )
+diff --git a/tensorflow/lite/kernels/CMakeLists.txt b/tensorflow/lite/kernels/CMakeLists.txt
+index bde319bf45e9dd..f6292559a3d087 100644
+--- a/tensorflow/lite/kernels/CMakeLists.txt
++++ b/tensorflow/lite/kernels/CMakeLists.txt
+@@ -34,7 +34,7 @@ if(${CMAKE_CROSSCOMPILING})
+       ${TFLITE_HOST_TOOLS_DIR}/bin
+       ${TFLITE_HOST_TOOLS_DIR}/flatbuffers-flatc/bin
+       )
+-  find_program(FLATC_BIN flatc PATHS ${FLATC_PATHS})
++  find_program(FLATC_BIN flatc PATHS ${FLATC_PATHS} NO_DEFAULT_PATH)
+   if(${FLATC_BIN} STREQUAL "FLATC_BIN-NOTFOUND")
+     message(FATAL_ERROR "Natively compiled 'flatc' compiler has not been found in the following\
+     locations: ${FLATC_PATHS}")
+@@ -164,6 +164,13 @@ macro(add_kernel_test TEST_SRC TEST_LIB)
+   add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}
+     WORKING_DIRECTORY ${TENSORFLOW_SOURCE_DIR}
+   )
++
++  if(QNX)
++    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}
++      DESTINATION ${CMAKE_INSTALL_BINDIR}/kernel_tests
++    )
++  endif()
++
+   set_tests_properties(${TEST_NAME} PROPERTIES LABELS "plain")
+ 
+   if(_TFLITE_ENABLE_NNAPI OR TFLITE_ENABLE_EXTERNAL_DELEGATE OR TFLITE_ENABLE_XNNPACK)
+@@ -242,7 +249,6 @@ set(TEST_WITH_EXTERNAL_MAIN_LIST
+   gather_test.cc
+   hashtable_lookup_test.cc
+   hashtable_ops_test.cc
+-  if_test.cc
+   l2norm_test.cc
+   local_response_norm_test.cc
+   log_softmax_test.cc
+@@ -308,9 +314,13 @@ set(TEST_WITH_EXTERNAL_MAIN_LIST
+   unpack_test.cc
+   variable_ops_test.cc
+   where_test.cc
+-  while_test.cc
+   zeros_like_test.cc
+ )
++
++if(TFLITE_ENABLE_XNNPACK)
++  list(APPEND TEST_WITH_EXTERNAL_MAIN_LIST if_test.cc while_test.cc)
++endif()
++
+ # Tests where the main() provided by the GoogleTest framework
+ set(TEST_WITH_GTEST_MAIN_LIST
+   cpu_backend_gemm_test.cc
+@@ -338,3 +348,10 @@ if(${CMAKE_CROSSCOMPILING})
+     COPYONLY
+   )
+ endif()
++
++
++if(QNX)
++  install(TARGETS tensorflow-lite-test-external-main tensorflow-lite-test-base
++    DESTINATION ${CMAKE_INSTALL_BINDIR}/kernel_tests_libs
++  )
++endif()
+diff --git a/tensorflow/lite/tools/cmake/modules/Findre2.cmake b/tensorflow/lite/tools/cmake/modules/Findre2.cmake
+index 02e61e0383cc33..0941f2c09a582b 100644
+--- a/tensorflow/lite/tools/cmake/modules/Findre2.cmake
++++ b/tensorflow/lite/tools/cmake/modules/Findre2.cmake
+@@ -22,7 +22,7 @@ include(OverridableFetchContent)
+ OverridableFetchContent_Declare(
+   re2
+   GIT_REPOSITORY https://github.com/google/re2.git
+-  GIT_TAG 2021-02-02
++  GIT_TAG 2023-11-01
+   GIT_SHALLOW TRUE
+   GIT_PROGRESS TRUE
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/re2"
+diff --git a/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake b/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
+index 28fbb6281e3475..18f353ddecc5a4 100644
+--- a/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
++++ b/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
+@@ -37,6 +37,7 @@ endif()
+ 
+ set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Disable googletest")
+ set(ABSL_RUN_TESTS OFF CACHE BOOL "Disable build of ABSL tests")
++set(ABSL_ENABLE_INSTALL TFLITE_ENABLE_INSTALL)
+ add_subdirectory(
+   "${abseil-cpp_SOURCE_DIR}"
+   "${abseil-cpp_BINARY_DIR}"
+diff --git a/tensorflow/lite/tools/cmake/modules/eigen.cmake b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+index 1bb203388a04a5..edbcd39809c831 100644
+--- a/tensorflow/lite/tools/cmake/modules/eigen.cmake
++++ b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+@@ -33,6 +33,7 @@ OverridableFetchContent_Declare(
+   PREFIX "${CMAKE_BINARY_DIR}"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/eigen"
+   LICENSE_FILE "COPYING.MPL2"
++  PATCH_COMMAND git reset --hard && git apply "${QNX_PATCH_DIR}/eigen.patch"
+ )
+ OverridableFetchContent_GetProperties(eigen)
+ if(NOT eigen_POPULATED)
+diff --git a/tensorflow/lite/tools/cmake/modules/ml_dtypes/CMakeLists.txt b/tensorflow/lite/tools/cmake/modules/ml_dtypes/CMakeLists.txt
+index 91e893ee377048..17bcff42b95c2b 100644
+--- a/tensorflow/lite/tools/cmake/modules/ml_dtypes/CMakeLists.txt
++++ b/tensorflow/lite/tools/cmake/modules/ml_dtypes/CMakeLists.txt
+@@ -24,8 +24,8 @@ endif()
+ 
+ add_library(ml_dtypes INTERFACE)
+ target_include_directories(ml_dtypes INTERFACE
+-  "${ML_DTYPES_SOURCE_DIR}"
+-  "${ML_DTYPES_SOURCE_DIR}/ml_dtypes")
++  "$<BUILD_INTERFACE:${ML_DTYPES_SOURCE_DIR}>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
++  "$<BUILD_INTERFACE:${ML_DTYPES_SOURCE_DIR}/ml_dtypes>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ml_dtypes>")
+ file(GLOB ML_DTYPES_PUBLIC_HEADERS
+   ${ML_DTYPES_SOURCE_DIR}/ml_dtypes/include/*.h)
+ set_target_properties(ml_dtypes PROPERTIES
+diff --git a/tensorflow/lite/tools/cmake/modules/ruy.cmake b/tensorflow/lite/tools/cmake/modules/ruy.cmake
+index 1c5965f94f501d..87704e65143dc3 100644
+--- a/tensorflow/lite/tools/cmake/modules/ruy.cmake
++++ b/tensorflow/lite/tools/cmake/modules/ruy.cmake
+@@ -33,6 +33,7 @@ if(NOT ruy_POPULATED)
+ endif()
+ 
+ set(RUY_SOURCE_DIR "${ruy_SOURCE_DIR}" CACHE PATH "RUY source directory")
++set(RUY_ENABLE_INSTALL TFLITE_ENABLE_INSTALL)
+ 
+ add_subdirectory(
+   "${ruy_SOURCE_DIR}"
+diff --git a/tensorflow/lite/tools/cmake/native_tools/flatbuffers/CMakeLists.txt b/tensorflow/lite/tools/cmake/native_tools/flatbuffers/CMakeLists.txt
+index c13f36fb140b2e..583a7c8c6bacf7 100644
+--- a/tensorflow/lite/tools/cmake/native_tools/flatbuffers/CMakeLists.txt
++++ b/tensorflow/lite/tools/cmake/native_tools/flatbuffers/CMakeLists.txt
+@@ -40,4 +40,4 @@ else()
+   set(FLATC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Flatc installation directory")
+ endif()
+ 
+-find_package(flatbuffers)
++find_package(FlatBuffers)
+diff --git a/tensorflow/lite/tools/evaluation/utils.cc b/tensorflow/lite/tools/evaluation/utils.cc
+index 20221df8d37c91..157afac7805e37 100644
+--- a/tensorflow/lite/tools/evaluation/utils.cc
++++ b/tensorflow/lite/tools/evaluation/utils.cc
+@@ -82,8 +82,32 @@ TfLiteStatus GetSortedFileNames(
+   result->clear();
+   std::string dir_path = StripTrailingSlashes(directory);
+   if ((dir = opendir(dir_path.c_str())) != nullptr) {
++#if defined(__QNX__)
++    // Turn on stat info in the dirent.
++    int dirflags;
++    if ( (dirflags = dircntl(dir, D_GETFLAG)) == -1 ) {
++        return kTfLiteError;
++    } else if (dircntl(dir, D_SETFLAG, dirflags | D_FLAG_STAT) == -1) {
++        return kTfLiteError;
++    }
++
++    while ((ent = readdir(dir)) != nullptr) {
++      // Get the dirent stat
++      struct dirent_extra *dex;
++      struct dirent_extra_stat *dex_stat;
++      bool is_dir = false;
++      for ( dex = _DEXTRA_FIRST(ent); _DEXTRA_VALID(dex, ent);
++          dex = _DEXTRA_NEXT(dex) ) {
++          if ( dex->d_type == _DTYPE_STAT || dex->d_type == _DTYPE_LSTAT ) {
++              dex_stat = (struct dirent_extra_stat *) dex;
++              if (S_ISDIR(dex_stat->d_stat.st_mode)) is_dir = true;
++          }
++      }
++      if (is_dir) continue;
++#else
+     while ((ent = readdir(dir)) != nullptr) {
+       if (ent->d_type == DT_DIR) continue;
++#endif
+       std::string filename(std::string(ent->d_name));
+       size_t lastdot = filename.find_last_of('.');
+       std::string ext = lastdot != std::string::npos ? filename.substr(lastdot)
+
+From e0a7fcfce10aa65bcbd9c32d3377509f0d5b7946 Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Thu, 23 May 2024 12:21:11 -0400
+Subject: [PATCH 2/8] Make patches QNX-only
+
+---
+ tensorflow/lite/CMakeLists.txt                  | 3 +++
+ tensorflow/lite/cmake/DownloadPThreadPool.cmake | 2 +-
+ tensorflow/lite/tools/cmake/modules/eigen.cmake | 6 +++++-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/lite/CMakeLists.txt b/tensorflow/lite/CMakeLists.txt
+index a61f537365a86e..6b8e863b1160c4 100644
+--- a/tensorflow/lite/CMakeLists.txt
++++ b/tensorflow/lite/CMakeLists.txt
+@@ -168,6 +168,9 @@ if(SYSTEM_PTHREADPOOL)
+   find_library(PTHREADPOOL_LIB pthreadpool REQUIRED)
+ elseif(NOT DEFINED PTHREADPOOL_SOURCE_DIR)
+     message(STATUS "Downloading pthreadpool to ${CMAKE_BINARY_DIR}/pthreadpool-source (define SYSTEM_PTHREADPOOL or PTHREADPOOL_SOURCE_DIR to avoid it)")
++    if(QNX)
++      set(PATCH_CMD "patch" "<" "${QNX_PATCH_DIR}/pthreadpool.patch")
++    endif()
+     configure_file(cmake/DownloadPThreadPool.cmake "${CMAKE_BINARY_DIR}/pthreadpool-download/CMakeLists.txt")
+     execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pthreadpool-download")
+diff --git a/tensorflow/lite/cmake/DownloadPThreadPool.cmake b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+index f4e5579cb3b2c3..743ac3452975d1 100644
+--- a/tensorflow/lite/cmake/DownloadPThreadPool.cmake
++++ b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+@@ -27,5 +27,5 @@ ExternalProject_Add(pthreadpool
+   BUILD_COMMAND ""
+   INSTALL_COMMAND ""
+   TEST_COMMAND ""
+-  PATCH_COMMAND patch < "${QNX_PATCH_DIR}/pthreadpool.patch"
++  PATCH_COMMAND ${PATCH_CMD}
+ )
+diff --git a/tensorflow/lite/tools/cmake/modules/eigen.cmake b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+index edbcd39809c831..54dbf49924b615 100644
+--- a/tensorflow/lite/tools/cmake/modules/eigen.cmake
++++ b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+@@ -19,6 +19,10 @@ endif()
+ 
+ include(OverridableFetchContent)
+ 
++if(QNX)
++  set(PATCH_CMD git reset --hard && git apply "${QNX_PATCH_DIR}/eigen.patch")
++endif()
++
+ OverridableFetchContent_Declare(
+   eigen
+   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+@@ -33,7 +37,7 @@ OverridableFetchContent_Declare(
+   PREFIX "${CMAKE_BINARY_DIR}"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/eigen"
+   LICENSE_FILE "COPYING.MPL2"
+-  PATCH_COMMAND git reset --hard && git apply "${QNX_PATCH_DIR}/eigen.patch"
++  PATCH_COMMAND ${PATCH_CMD}
+ )
+ OverridableFetchContent_GetProperties(eigen)
+ if(NOT eigen_POPULATED)
+
+From 7fab691518d2a739420e0074142fe716b8edb7e9 Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Fri, 24 May 2024 15:55:27 -0400
+Subject: [PATCH 3/8] Fix including directories in GetSortedFileNames() result
+ bug
+
+---
+ tensorflow/lite/tools/evaluation/utils.cc | 28 ++++++-----------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/tensorflow/lite/tools/evaluation/utils.cc b/tensorflow/lite/tools/evaluation/utils.cc
+index 157afac7805e37..541948bbcb6455 100644
+--- a/tensorflow/lite/tools/evaluation/utils.cc
++++ b/tensorflow/lite/tools/evaluation/utils.cc
+@@ -82,33 +82,19 @@ TfLiteStatus GetSortedFileNames(
+   result->clear();
+   std::string dir_path = StripTrailingSlashes(directory);
+   if ((dir = opendir(dir_path.c_str())) != nullptr) {
++    while ((ent = readdir(dir)) != nullptr) {
+ #if defined(__QNX__)
+-    // Turn on stat info in the dirent.
+-    int dirflags;
+-    if ( (dirflags = dircntl(dir, D_GETFLAG)) == -1 ) {
+-        return kTfLiteError;
+-    } else if (dircntl(dir, D_SETFLAG, dirflags | D_FLAG_STAT) == -1) {
++      std::string filename(std::string(ent->d_name));
++      std::string path = dir_path + "/" + filename;
++      struct stat sbuf;
++      if( lstat( path.c_str(), &sbuf ) == -1 ) {
+         return kTfLiteError;
+-    }
+-
+-    while ((ent = readdir(dir)) != nullptr) {
+-      // Get the dirent stat
+-      struct dirent_extra *dex;
+-      struct dirent_extra_stat *dex_stat;
+-      bool is_dir = false;
+-      for ( dex = _DEXTRA_FIRST(ent); _DEXTRA_VALID(dex, ent);
+-          dex = _DEXTRA_NEXT(dex) ) {
+-          if ( dex->d_type == _DTYPE_STAT || dex->d_type == _DTYPE_LSTAT ) {
+-              dex_stat = (struct dirent_extra_stat *) dex;
+-              if (S_ISDIR(dex_stat->d_stat.st_mode)) is_dir = true;
+-          }
++      } else if (S_ISDIR(sbuf.st_mode)) {
++        continue;
+       }
+-      if (is_dir) continue;
+ #else
+-    while ((ent = readdir(dir)) != nullptr) {
+       if (ent->d_type == DT_DIR) continue;
+ #endif
+-      std::string filename(std::string(ent->d_name));
+       size_t lastdot = filename.find_last_of('.');
+       std::string ext = lastdot != std::string::npos ? filename.substr(lastdot)
+                                                      : std::string();
+
+From 0deb27aa2652b2699ad23d834f744ba96a495ad6 Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Thu, 6 Jun 2024 13:43:59 -0400
+Subject: [PATCH 4/8] Find NEON_2_SSE only if building for x86
+
+---
+ tensorflow/lite/tools/cmake/tensorflow-liteConfig.cmake.in | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tensorflow/lite/tools/cmake/tensorflow-liteConfig.cmake.in b/tensorflow/lite/tools/cmake/tensorflow-liteConfig.cmake.in
+index e49f635648ad90..8253adc421cf80 100644
+--- a/tensorflow/lite/tools/cmake/tensorflow-liteConfig.cmake.in
++++ b/tensorflow/lite/tools/cmake/tensorflow-liteConfig.cmake.in
+@@ -18,7 +18,9 @@ include(CMakeFindDependencyMacro)
+ find_dependency(absl)
+ find_dependency(Eigen3)
+ find_dependency(FlatBuffers)
++if (NOT CMAKE_SYSTEM_PROCESSOR OR CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
+ find_dependency(NEON_2_SSE)
++endif()
+ find_dependency(cpuinfo)
+ find_dependency(ruy)
+ find_dependency(gemmlowp)
+
+From a052b2711e796ce427cb04590c275893d8e54128 Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Mon, 9 Sep 2024 14:43:26 +0000
+Subject: [PATCH 5/8] Modified py package script for qnx support.
+
+---
+ .../build_pip_package_with_cmake.sh           | 144 ++++++++++--------
+ 1 file changed, 79 insertions(+), 65 deletions(-)
+
+diff --git a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+index 3815751d063246..d9c2e63c119520 100755
+--- a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
++++ b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+@@ -23,7 +23,9 @@ TENSORFLOW_LITE_DIR="${TENSORFLOW_DIR}/tensorflow/lite"
+ TENSORFLOW_VERSION=$(grep "_VERSION = " "${TENSORFLOW_DIR}/tensorflow/tools/pip_package/setup.py" | cut -d= -f2 | sed "s/[ '-]//g")
+ export PACKAGE_VERSION="${TENSORFLOW_VERSION}${VERSION_SUFFIX}"
+ export PROJECT_NAME=${WHEEL_PROJECT_NAME:-tflite_runtime}
+-BUILD_DIR="${SCRIPT_DIR}/gen/tflite_pip/${PYTHON}"
++if [ -z "${BUILD_DIR}" ]; then
++  BUILD_DIR="${SCRIPT_DIR}/gen/tflite_pip/${PYTHON}"
++fi
+ TENSORFLOW_TARGET=${TENSORFLOW_TARGET:-$1}
+ if [ "${TENSORFLOW_TARGET}" = "rpi" ]; then
+   export TENSORFLOW_TARGET="armhf"
+@@ -62,69 +64,76 @@ cp "${TENSORFLOW_LITE_DIR}/python/interpreter.py" \
+ echo "__version__ = '${PACKAGE_VERSION}'" >> "${BUILD_DIR}/tflite_runtime/__init__.py"
+ echo "__git_version__ = '$(git -C "${TENSORFLOW_DIR}" describe)'" >> "${BUILD_DIR}/tflite_runtime/__init__.py"
+ 
+-# Build python interpreter_wrapper.
+-mkdir -p "${BUILD_DIR}/cmake_build"
+-cd "${BUILD_DIR}/cmake_build"
+-
+-echo "Building for ${TENSORFLOW_TARGET}"
+-case "${TENSORFLOW_TARGET}" in
+-  armhf)
+-    eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
+-    ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
+-    cmake \
+-      -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
+-      -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
+-      -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_SYSTEM_NAME=Linux \
+-      -DCMAKE_SYSTEM_PROCESSOR=armv7 \
+-      -DTFLITE_ENABLE_XNNPACK=OFF \
+-      "${TENSORFLOW_LITE_DIR}"
+-    ;;
+-  rpi0)
+-    eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
+-    ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
+-    cmake \
+-      -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
+-      -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
+-      -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_SYSTEM_NAME=Linux \
+-      -DCMAKE_SYSTEM_PROCESSOR=armv6 \
+-      -DTFLITE_ENABLE_XNNPACK=OFF \
+-      "${TENSORFLOW_LITE_DIR}"
+-    ;;
+-  aarch64)
+-    eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
+-    ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
+-    cmake \
+-      -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
+-      -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
+-      -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
+-      -DCMAKE_SYSTEM_NAME=Linux \
+-      -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+-      -DXNNPACK_ENABLE_ARM_I8MM=OFF \
+-      "${TENSORFLOW_LITE_DIR}"
+-    ;;
+-  native)
+-    BUILD_FLAGS=${BUILD_FLAGS:-"-march=native -I${PYTHON_INCLUDE} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"}
+-    cmake \
+-      -DCMAKE_C_FLAGS="${BUILD_FLAGS}" \
+-      -DCMAKE_CXX_FLAGS="${BUILD_FLAGS}" \
+-      "${TENSORFLOW_LITE_DIR}"
+-    ;;
+-  *)
+-    BUILD_FLAGS=${BUILD_FLAGS:-"-I${PYTHON_INCLUDE} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"}
+-    cmake \
+-      -DCMAKE_C_FLAGS="${BUILD_FLAGS}" \
+-      -DCMAKE_CXX_FLAGS="${BUILD_FLAGS}" \
+-      "${TENSORFLOW_LITE_DIR}"
+-    ;;
+-esac
+-
+-cmake --build . --verbose -j ${BUILD_NUM_JOBS} -t _pywrap_tensorflow_interpreter_wrapper
+-cd "${BUILD_DIR}"
++if [ -z "${CMAKE_BUILD_DIR}" ]; then
++  CMAKE_BUILD_DIR=${BUILD_DIR}/cmake_build
++  # Build python interpreter_wrapper.
++  mkdir -p "${CMAKE_BUILD_DIR}"
++  cd "${CMAKE_BUILD_DIR}"
++
++  echo "Building for ${TENSORFLOW_TARGET}"
++  case "${TENSORFLOW_TARGET}" in
++    armhf)
++      eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
++      ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
++      cmake \
++        -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
++        -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
++        -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_SYSTEM_NAME=Linux \
++        -DCMAKE_SYSTEM_PROCESSOR=armv7 \
++        -DTFLITE_ENABLE_XNNPACK=OFF \
++        "${TENSORFLOW_LITE_DIR}"
++      ;;
++    rpi0)
++      eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
++      ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
++      cmake \
++        -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
++        -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
++        -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_SYSTEM_NAME=Linux \
++        -DCMAKE_SYSTEM_PROCESSOR=armv6 \
++        -DTFLITE_ENABLE_XNNPACK=OFF \
++        "${TENSORFLOW_LITE_DIR}"
++      ;;
++    aarch64)
++      eval $(${TENSORFLOW_LITE_DIR}/tools/cmake/download_toolchains.sh "${TENSORFLOW_TARGET}")
++      ARMCC_FLAGS="${ARMCC_FLAGS} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"
++      cmake \
++        -DCMAKE_C_COMPILER=${ARMCC_PREFIX}gcc \
++        -DCMAKE_CXX_COMPILER=${ARMCC_PREFIX}g++ \
++        -DCMAKE_C_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_CXX_FLAGS="${ARMCC_FLAGS}" \
++        -DCMAKE_SYSTEM_NAME=Linux \
++        -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
++        -DXNNPACK_ENABLE_ARM_I8MM=OFF \
++        "${TENSORFLOW_LITE_DIR}"
++      ;;
++    nto)
++      echo "ERROR: QNX only supports building with cmake prior to calling the script and setting CMAKE_BUILD_DIR=<path-to-build-dir>."
++      exit 1
++      ;;
++    native)
++      BUILD_FLAGS=${BUILD_FLAGS:-"-march=native -I${PYTHON_INCLUDE} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"}
++      cmake \
++        -DCMAKE_C_FLAGS="${BUILD_FLAGS}" \
++        -DCMAKE_CXX_FLAGS="${BUILD_FLAGS}" \
++        "${TENSORFLOW_LITE_DIR}"
++      ;;
++    *)
++      BUILD_FLAGS=${BUILD_FLAGS:-"-I${PYTHON_INCLUDE} -I${PYBIND11_INCLUDE} -I${NUMPY_INCLUDE}"}
++      cmake \
++        -DCMAKE_C_FLAGS="${BUILD_FLAGS}" \
++        -DCMAKE_CXX_FLAGS="${BUILD_FLAGS}" \
++        "${TENSORFLOW_LITE_DIR}"
++      ;;
++  esac
++
++  cmake --build . --verbose -j ${BUILD_NUM_JOBS} -t _pywrap_tensorflow_interpreter_wrapper
++  cd "${BUILD_DIR}"
++fi
+ 
+ case "${TENSORFLOW_TARGET}" in
+   windows)
+@@ -135,7 +144,7 @@ case "${TENSORFLOW_TARGET}" in
+     ;;
+ esac
+ 
+-cp "${BUILD_DIR}/cmake_build/_pywrap_tensorflow_interpreter_wrapper${LIBRARY_EXTENSION}" \
++cp "${CMAKE_BUILD_DIR}/_pywrap_tensorflow_interpreter_wrapper${LIBRARY_EXTENSION}" \
+    "${BUILD_DIR}/tflite_runtime"
+ # Bazel generates the wrapper library with r-x permissions for user.
+ # At least on Windows, we need write permissions to delete the file.
+@@ -160,6 +169,11 @@ case "${TENSORFLOW_TARGET}" in
+     ${PYTHON} setup.py bdist --plat-name=${WHEEL_PLATFORM_NAME} \
+                        bdist_wheel --plat-name=${WHEEL_PLATFORM_NAME}
+     ;;
++  nto)
++    WHEEL_PLATFORM_NAME="${WHEEL_PLATFORM_NAME:-nto}"
++    ${PYTHON} setup.py bdist --plat-name=${WHEEL_PLATFORM_NAME} \
++                       bdist_wheel --plat-name=${WHEEL_PLATFORM_NAME}
++    ;;
+   *)
+     if [[ -n "${WHEEL_PLATFORM_NAME}" ]]; then
+       ${PYTHON} setup.py bdist --plat-name=${WHEEL_PLATFORM_NAME} \
+
+From 46cace26c9ea9cbac8d6999ed372ad8f251b1f92 Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Mon, 16 Sep 2024 14:51:04 -0400
+Subject: [PATCH 6/8] Fix issue with numpy being needed but unused in build.
+
+---
+ .../tools/pip_package/build_pip_package_with_cmake.sh  | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+index d9c2e63c119520..158a97472a7a9e 100755
+--- a/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
++++ b/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake.sh
+@@ -30,10 +30,12 @@ TENSORFLOW_TARGET=${TENSORFLOW_TARGET:-$1}
+ if [ "${TENSORFLOW_TARGET}" = "rpi" ]; then
+   export TENSORFLOW_TARGET="armhf"
+ fi
+-PYTHON_INCLUDE=$(${PYTHON} -c "from sysconfig import get_paths as gp; print(gp()['include'])")
+-PYBIND11_INCLUDE=$(${PYTHON} -c "import pybind11; print (pybind11.get_include())")
+-NUMPY_INCLUDE=$(${PYTHON} -c "import numpy; print (numpy.get_include())")
+-export CROSSTOOL_PYTHON_INCLUDE_PATH=${PYTHON_INCLUDE}
++if [ -z "${CMAKE_BUILD_DIR}" ]; then
++  PYTHON_INCLUDE=$(${PYTHON} -c "from sysconfig import get_paths as gp; print(gp()['include'])")
++  PYBIND11_INCLUDE=$(${PYTHON} -c "import pybind11; print (pybind11.get_include())")
++  NUMPY_INCLUDE=$(${PYTHON} -c "import numpy; print (numpy.get_include())")
++  export CROSSTOOL_PYTHON_INCLUDE_PATH=${PYTHON_INCLUDE}
++fi
+ 
+ # Fix container image for cross build.
+ if [ ! -z "${CI_BUILD_HOME}" ] && [ `pwd` = "/workspace" ]; then
+
+From b8d75a1354d4914bb0ee14998e2d449eef5d5329 Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Fri, 20 Sep 2024 09:01:24 -0400
+Subject: [PATCH 7/8] Added tflite XNNPACK dependency w/ kernel tests.
+
+---
+ tensorflow/lite/CMakeLists.txt                       | 3 ---
+ tensorflow/lite/cmake/DownloadPThreadPool.cmake      | 2 +-
+ tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake | 1 -
+ tensorflow/lite/tools/cmake/modules/eigen.cmake      | 6 +-----
+ tensorflow/lite/tools/cmake/modules/xnnpack.cmake    | 1 +
+ 5 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/tensorflow/lite/CMakeLists.txt b/tensorflow/lite/CMakeLists.txt
+index 6b8e863b1160c4..a61f537365a86e 100644
+--- a/tensorflow/lite/CMakeLists.txt
++++ b/tensorflow/lite/CMakeLists.txt
+@@ -168,9 +168,6 @@ if(SYSTEM_PTHREADPOOL)
+   find_library(PTHREADPOOL_LIB pthreadpool REQUIRED)
+ elseif(NOT DEFINED PTHREADPOOL_SOURCE_DIR)
+     message(STATUS "Downloading pthreadpool to ${CMAKE_BINARY_DIR}/pthreadpool-source (define SYSTEM_PTHREADPOOL or PTHREADPOOL_SOURCE_DIR to avoid it)")
+-    if(QNX)
+-      set(PATCH_CMD "patch" "<" "${QNX_PATCH_DIR}/pthreadpool.patch")
+-    endif()
+     configure_file(cmake/DownloadPThreadPool.cmake "${CMAKE_BINARY_DIR}/pthreadpool-download/CMakeLists.txt")
+     execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pthreadpool-download")
+diff --git a/tensorflow/lite/cmake/DownloadPThreadPool.cmake b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+index 743ac3452975d1..b486b974e37646 100644
+--- a/tensorflow/lite/cmake/DownloadPThreadPool.cmake
++++ b/tensorflow/lite/cmake/DownloadPThreadPool.cmake
+@@ -27,5 +27,5 @@ ExternalProject_Add(pthreadpool
+   BUILD_COMMAND ""
+   INSTALL_COMMAND ""
+   TEST_COMMAND ""
+-  PATCH_COMMAND ${PATCH_CMD}
++  PATCH_COMMAND ${PTHREADPOOL_PATCH_CMD}
+ )
+diff --git a/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake b/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
+index 18f353ddecc5a4..28fbb6281e3475 100644
+--- a/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
++++ b/tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake
+@@ -37,7 +37,6 @@ endif()
+ 
+ set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Disable googletest")
+ set(ABSL_RUN_TESTS OFF CACHE BOOL "Disable build of ABSL tests")
+-set(ABSL_ENABLE_INSTALL TFLITE_ENABLE_INSTALL)
+ add_subdirectory(
+   "${abseil-cpp_SOURCE_DIR}"
+   "${abseil-cpp_BINARY_DIR}"
+diff --git a/tensorflow/lite/tools/cmake/modules/eigen.cmake b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+index 54dbf49924b615..79c73f68d0b34e 100644
+--- a/tensorflow/lite/tools/cmake/modules/eigen.cmake
++++ b/tensorflow/lite/tools/cmake/modules/eigen.cmake
+@@ -19,10 +19,6 @@ endif()
+ 
+ include(OverridableFetchContent)
+ 
+-if(QNX)
+-  set(PATCH_CMD git reset --hard && git apply "${QNX_PATCH_DIR}/eigen.patch")
+-endif()
+-
+ OverridableFetchContent_Declare(
+   eigen
+   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+@@ -37,7 +33,7 @@ OverridableFetchContent_Declare(
+   PREFIX "${CMAKE_BINARY_DIR}"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/eigen"
+   LICENSE_FILE "COPYING.MPL2"
+-  PATCH_COMMAND ${PATCH_CMD}
++  PATCH_COMMAND ${EIGEN_PATCH_CMD}
+ )
+ OverridableFetchContent_GetProperties(eigen)
+ if(NOT eigen_POPULATED)
+diff --git a/tensorflow/lite/tools/cmake/modules/xnnpack.cmake b/tensorflow/lite/tools/cmake/modules/xnnpack.cmake
+index dbc832812f4f17..fa7f2d262f0d1e 100644
+--- a/tensorflow/lite/tools/cmake/modules/xnnpack.cmake
++++ b/tensorflow/lite/tools/cmake/modules/xnnpack.cmake
+@@ -27,6 +27,7 @@ OverridableFetchContent_Declare(
+   GIT_PROGRESS TRUE
+   PREFIX "${CMAKE_BINARY_DIR}"
+   SOURCE_DIR "${CMAKE_BINARY_DIR}/xnnpack"
++  PATCH_COMMAND ${XNNPACK_PATCH_CMD}
+ )
+ OverridableFetchContent_GetProperties(xnnpack)
+ if(NOT xnnpack_POPULATED)
+
+From 951ad6f8d5da9ee95e66e9b052cb215f6f47555b Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Fri, 27 Feb 2026 08:12:35 -0500
+Subject: [PATCH 8/8] Only change install path when crosscompiling.
+
+---
+ tensorflow/lite/kernels/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/lite/kernels/CMakeLists.txt b/tensorflow/lite/kernels/CMakeLists.txt
+index f6292559a3d087..cef9b343f4f365 100644
+--- a/tensorflow/lite/kernels/CMakeLists.txt
++++ b/tensorflow/lite/kernels/CMakeLists.txt
+@@ -165,7 +165,7 @@ macro(add_kernel_test TEST_SRC TEST_LIB)
+     WORKING_DIRECTORY ${TENSORFLOW_SOURCE_DIR}
+   )
+ 
+-  if(QNX)
++  if(CMAKE_CROSSCOMPILING AND QNX)
+     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}
+       DESTINATION ${CMAKE_INSTALL_BINDIR}/kernel_tests
+     )
+@@ -350,7 +350,7 @@ if(${CMAKE_CROSSCOMPILING})
+ endif()
+ 
+ 
+-if(QNX)
++if(CMAKE_CROSSCOMPILING AND QNX)
+   install(TARGETS tensorflow-lite-test-external-main tensorflow-lite-test-base
+     DESTINATION ${CMAKE_INSTALL_BINDIR}/kernel_tests_libs
+   )

@@ -1,0 +1,30 @@
+ICU: compile shared-library objects for QNX with -fPIC.
+
+config/mh-qnx dates from QNX 6 and puts -shared, a link flag, in the
+SHAREDLIB*FLAGS compile flags, leaving the objects non-PIC; the aarch64 link
+then fails ("relocation R_AARCH64_ADR_PREL_PG_HI21 ... recompile with
+-fPIC"). Use -fPIC like the other mh-* fragments.
+
+Upstream-Status: Pending
+
+--- a/source/config/mh-qnx
++++ b/source/config/mh-qnx
+@@ -17,9 +17,15 @@
+ GEN_DEPS.cc= $(CXX) -E -Wp,-MM $(DEFS) $(CPPFLAGS)
+ 
+ ## Flags for position independent code
+-SHAREDLIBCFLAGS = -shared
+-SHAREDLIBCXXFLAGS = -shared
+-# SHAREDLIBCPPFLAGS = -shared
++## These are *compile* flags -- ICU appends them when building objects destined
++## for a shared library. This fragment dates from the QNX 6 era and had -shared
++## here, which is a link flag and leaves the objects non-PIC; the aarch64 link
++## then fails with "relocation R_AARCH64_ADR_PREL_PG_HI21 ... can not be used
++## when making a shared object; recompile with -fPIC". Every other modern mh-*
++## fragment uses -fPIC, as mh-linux does.
++SHAREDLIBCFLAGS = -fPIC
++SHAREDLIBCXXFLAGS = -fPIC
++SHAREDLIBCPPFLAGS = -DPIC
+ 
+ #
+ # Always generatate PIC code.

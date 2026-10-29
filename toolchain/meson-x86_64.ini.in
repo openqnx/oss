@@ -1,0 +1,63 @@
+[constants]
+qnx_sdp_path  = '@QNX_SDP_ROOT@'
+qnx_host_dir  = qnx_sdp_path + '/host/linux/x86_64'
+qnx_target_dir= qnx_sdp_path + '/target/qnx'
+stage_dir     = '@STAGE_DIR@/x86_64'
+target        = 'x86_64-pc-nto-qnx8.0.0'
+
+[host_machine]
+system     = 'qnx'
+cpu_family = 'x86_64'
+cpu        = 'x86_64'
+endian     = 'little'
+
+[built-in options]
+c_args     = ['-D_QNX_SOURCE', '-I' + qnx_target_dir + '/usr/include', '-I' + stage_dir + '/usr/local/include']
+cpp_args   = ['-D_QNX_SOURCE', '-I' + qnx_target_dir + '/usr/include', '-I' + stage_dir + '/usr/local/include']
+# -shared-libgcc: meson wraps its link tests in --start-group/--end-group, and
+# QNX's libm.so references __multc3, a hidden symbol in the *static* libgcc.a.
+# ld refuses that with "final link failed: bad value", so every meson probe
+# fails -- including find_library('m'). Taking libgcc from the DSO fixes it.
+# lib/libproxy is where libproxy keeps its private backend library.
+# -Wl,-rpath-link lets the linker follow dependencies-of-dependencies
+# (libfontconfig.so needing libexpat.so.1, say). Without it meson's probe
+# links fail for reasons unrelated to what is being probed, and meson then
+# reports the feature as absent -- cairo concluded QNX has no ctime_r and
+# defined a conflicting fallback.
+c_link_args  = ['-shared-libgcc',
+                '-L' + stage_dir + '/usr/local/lib',
+                '-Wl,-rpath-link,' + stage_dir + '/usr/local/lib',
+                '-Wl,-rpath-link,' + stage_dir + '/usr/local/lib/libproxy',
+                '-L' + qnx_target_dir + '/x86_64/usr/lib',
+                '-L' + qnx_target_dir + '/x86_64/lib',
+                '-lm', '-lsocket', '-leventfd', '-lepoll', '-lsignalfd', '-ltimerfd', '-lfsnotify']
+cpp_link_args = ['-shared-libgcc',
+                '-L' + stage_dir + '/usr/local/lib',
+                '-Wl,-rpath-link,' + stage_dir + '/usr/local/lib',
+                '-Wl,-rpath-link,' + stage_dir + '/usr/local/lib/libproxy',
+                '-L' + qnx_target_dir + '/x86_64/usr/lib',
+                '-L' + qnx_target_dir + '/x86_64/lib',
+                '-lm', '-lsocket', '-leventfd', '-lepoll', '-lsignalfd', '-ltimerfd', '-lfsnotify']
+prefix     = '/usr/local'
+
+[properties]
+growing_stack      = false
+needs_exe_wrapper  = true
+# pkg-config sysroot is the STAGING tree: the only .pc files in play are the
+# ones we install, and they carry the on-target prefix (/usr/local). Pointing
+# it at the SDP turns their -I/usr/local/include into a path that does not
+# exist, which GLib rejects outright under -Werror=missing-include-dirs.
+# The SDP itself ships no pkgconfig directory at all.
+sys_root           = stage_dir
+pkg_config_libdir  = [stage_dir + '/usr/local/lib/pkgconfig',
+                      stage_dir + '/usr/local/share/pkgconfig']
+
+[binaries]
+c       = qnx_host_dir + '/usr/bin/' + target + '-gcc'
+cpp     = qnx_host_dir + '/usr/bin/' + target + '-g++'
+ar      = qnx_host_dir + '/usr/bin/ntox86_64-ar'
+ld      = qnx_host_dir + '/usr/bin/ntox86_64-ld'
+strip   = qnx_host_dir + '/usr/bin/ntox86_64-strip'
+objcopy = qnx_host_dir + '/usr/bin/ntox86_64-objcopy'
+ranlib  = qnx_host_dir + '/usr/bin/ntox86_64-ranlib'
+pkg-config = 'pkg-config'

@@ -1,0 +1,21 @@
+Define SA_RESTART as 0 where the system lacks it.
+
+QNX's <signal.h> leaves SA_RESTART commented out ("not supported yet");
+bsd_signal() only uses it to request restartable system calls.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/bsdsignal.c
++++ b/lib/bsdsignal.c
+@@ -6,6 +6,11 @@
+ 
+ #include "config.h"
+ 
++#ifndef SA_RESTART
++/* QNX: SA_RESTART is not supported (commented out in <signal.h>). */
++#define SA_RESTART 0
++#endif
++
+ void (*bsd_signal(int signum, void (*handler) (int))) (int) {
+     struct sigaction action, oldaction;
+ 

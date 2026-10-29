@@ -1,0 +1,3 @@
+VERSION=2.0.3; GIT=https://github.com/mstorsjo/fdk-aac.git; REF=v2.0.3
+BUILDSYS=cmake
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_PROGRAMS=OFF )

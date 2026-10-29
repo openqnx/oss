@@ -1,0 +1,75 @@
+From 7b2df12e0f82ab0628b1b0314652ce95294a2858 Mon Sep 17 00:00:00 2001
+From: Ramya Timmaraju <rtimmaraju@CI0600000003641.rim.net>
+Date: Fri, 23 Jan 2026 15:07:24 +0530
+Subject: [PATCH 1/2] interactive row count fixed for qnx
+
+Imported from qnx-ports/dump1090 (0c3bb23eb447...port-dump1090-qnx); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ dump1090.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/dump1090.c b/dump1090.c
+index ed9b2bfce..25221c726 100644
+--- a/dump1090.c
++++ b/dump1090.c
+@@ -274,7 +274,9 @@ void modesInitConfig(void) {
+     Modes.interactive_rows = MODES_INTERACTIVE_ROWS;
+     Modes.interactive_ttl = MODES_INTERACTIVE_TTL;
+     Modes.aggressive = 0;
++    # if(!QNX)
+     Modes.interactive_rows = getTermRows();
++    #endif
+     Modes.loop = 0;
+ }
+ 
+@@ -1830,7 +1832,6 @@ void interactiveShowData(void) {
+     memset(progress,' ',3);
+     progress[time(NULL)%3] = '.';
+     progress[3] = '\0';
+-
+     printf("\x1b[H\x1b[2J");    /* Clear the screen */
+     printf(
+ "Hex    Flight   Altitude  Speed   Lat       Lon       Track  Messages Seen %s\n"
+
+From ddb8f06b958a87dc9bf3fd245f15632703fd7c14 Mon Sep 17 00:00:00 2001
+From: Ramya Timmaraju <rtimmaraju@CI0600000003641.rim.net>
+Date: Tue, 27 Jan 2026 15:53:29 +0530
+Subject: [PATCH 2/2] Makefile was adapted to build for different
+ aarchitectures
+
+---
+ Makefile | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f9637b7eb..7202f06da 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,13 +3,18 @@ LDLIBS+=$(shell pkg-config --libs librtlsdr) -lpthread -lm
+ CC?=gcc
+ PROGNAME=dump1090
+ 
+-all: dump1090
++OBJDIR ?= .
++VPATH := .
+ 
+-%.o: %.c
+-	$(CC) $(CFLAGS) -c $<
++OBJS = $(OBJDIR)/dump1090.o $(OBJDIR)/anet.o
+ 
+-dump1090: dump1090.o anet.o
+-	$(CC) -g -o dump1090 dump1090.o anet.o $(LDFLAGS) $(LDLIBS)
++all: $(PROGNAME)
++
++$(OBJDIR)/%.o: %.c
++	$(CC) $(CFLAGS) -c $< -o $@
++
++$(PROGNAME): $(OBJS)
++	$(CC) -g -o $(OBJDIR)/$(PROGNAME) $(OBJS) $(LDFLAGS) $(LDLIBS)
+ 
+ clean:
+-	rm -f *.o dump1090
++	rm -f $(OBJDIR)/*.o $(OBJDIR)/$(PROGNAME)

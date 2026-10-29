@@ -1,0 +1,33 @@
+QNX change from QNX's aports (core/ninja/not-use-linux-specific.patch).
+
+Taken from qnx-ports/aports core/ninja -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/disk_interface.cc b/src/disk_interface.cc
+index 7f86e19..3dcc1e5 100644
+--- a/src/disk_interface.cc
++++ b/src/disk_interface.cc
+@@ -237,7 +237,7 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
+ #elif defined(__APPLE__)
+   return ((int64_t)st.st_mtimespec.tv_sec * 1000000000LL +
+           st.st_mtimespec.tv_nsec);
+-#elif defined(st_mtime) // A macro, so we're likely on modern POSIX.
++#elif (defined(st_mtime) || defined(_QNX_SOURCE)) // A macro, so we're likely on modern POSIX.
+   return (int64_t)st.st_mtim.tv_sec * 1000000000LL + st.st_mtim.tv_nsec;
+ #else
+   return (int64_t)st.st_mtime * 1000000000LL + st.st_mtimensec;
+diff --git a/src/util.cc b/src/util.cc
+index 7000a6a..4176d22 100644
+--- a/src/util.cc
++++ b/src/util.cc
+@@ -902,7 +902,7 @@ double GetLoadAverage() {
+     return -0.0f;
+   return 1.0 / (1 << SI_LOAD_SHIFT) * si.loads[0];
+ }
+-#elif defined(__HAIKU__)
++#elif defined(__HAIKU__) || defined(_QNX_SOURCE)
+ double GetLoadAverage() {
+     return -0.0f;
+ }

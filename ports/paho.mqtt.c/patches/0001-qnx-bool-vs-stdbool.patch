@@ -1,0 +1,26 @@
+Paho MQTT C: do not redefine bool when <stdbool.h> is in scope.
+
+With PAHO_WITH_SSL the OpenSSL headers bring in <stdbool.h>, which makes bool
+a macro for _Bool; the typedef then reads "typedef unsigned int _Bool" and is
+rejected.
+
+Upstream-Status: Pending
+
+--- a/src/MQTTPacket.h
++++ b/src/MQTTPacket.h
+@@ -28,7 +28,15 @@
+ #include "LinkedList.h"
+ #include "Clients.h"
+ 
++/* With PAHO_WITH_SSL=ON the OpenSSL headers above drag in <stdbool.h>, which
++ * makes "bool" a macro for _Bool -- this typedef then reads
++ * "typedef unsigned int _Bool" and the compiler rejects it. Where the C99
++ * boolean is already in scope, use it instead of redefining the name. */
++#if defined(__bool_true_false_are_defined)
++/* bool already provided by <stdbool.h> */
++#else
+ typedef unsigned int bool;
++#endif
+ typedef void* (*pf)(int, unsigned char, char*, size_t);
+ 
+ #include "MQTTProperties.h"

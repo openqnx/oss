@@ -1,0 +1,35 @@
+Use async-std 1.13.
+
+zenoh-c pins async-std 1.12.0, which brings in async-io 1.13 and with it
+rustix 0.37 -- a rustix without QNX support (no preadv/pwritev, statfs or
+DT_* constants for target_os = "nto"). async-std 1.13 moved to async-io 2
+and rustix 0.38, which zenoh itself already uses and which builds for QNX.
+zenoh-c uses only async_std::task::sleep, unchanged between the two.
+
+ports/zenoh-c/recipe.sh updates the async-std entry of Cargo.lock to match
+(cargo update -p async-std --precise 1.13.0).
+
+Upstream-Status: Pending
+
+--- a/Cargo.toml.in
++++ b/Cargo.toml.in
+@@ -63,7 +63,7 @@
+ maintenance = { status = "actively-developed" }
+ 
+ [dependencies]
+-async-std = "=1.12.0"
++async-std = "=1.13.0"
+ chrono = "0.4.37"
+ json5 = "0.4.1"
+ lazy_static = "1.4.0"
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -63,7 +63,7 @@
+ maintenance = { status = "actively-developed" }
+ 
+ [dependencies]
+-async-std = "=1.12.0"
++async-std = "=1.13.0"
+ chrono = "0.4.37"
+ json5 = "0.4.1"
+ lazy_static = "1.4.0"

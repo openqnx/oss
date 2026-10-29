@@ -1,0 +1,4 @@
+VERSION=2.2.0; GIT=https://github.com/libsdl-org/SDL_net.git; REF=release-2.2.0
+SRCROOT="$SRC_DIR/sdl2-net"
+DEPS="sdl2"
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DSDL2NET_SAMPLES=OFF -DSDL2NET_TESTS=OFF )

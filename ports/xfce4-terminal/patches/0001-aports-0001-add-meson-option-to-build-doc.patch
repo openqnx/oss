@@ -1,0 +1,50 @@
+QNX change from QNX's aports (extra/xfce4-terminal/0001-add-meson-option-to-build-doc.patch).
+
+Taken from qnx-ports/aports extra/xfce4-terminal -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 44aa8968d4da1d31feff20730805b587a3adca60 Mon Sep 17 00:00:00 2001
+From: felixlionardo <flionardo@blackberry.com>
+Date: Fri, 19 Sep 2025 10:31:31 -0400
+Subject: [PATCH] add meson option to build doc
+
+---
+ meson.build       | 4 +++-
+ meson_options.txt | 7 +++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 2d9e86cb..d1a9df1e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -219,7 +219,9 @@ foreach file : desktop_files
+ endforeach
+ 
+ subdir('colorschemes')
+-subdir('doc')
++if get_option('docs')
++  subdir('doc')
++endif
+ subdir('icons')
+ subdir('po')
+ subdir('terminal')
+diff --git a/meson_options.txt b/meson_options.txt
+index 0b2a859f..37659424 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -25,3 +25,10 @@ option(
+   value: 'auto',
+   description: 'Support for utmp/wtmp files',
+ )
++
++option(
++  'docs',
++  type: 'boolean',
++  value: 'true',
++  description: 'Build documentation',
++)
+-- 
+2.34.1
+

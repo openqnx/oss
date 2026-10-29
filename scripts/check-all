@@ -1,0 +1,43 @@
+#!/bin/bash
+# Run every staging audit for BOTH architectures and report honestly.
+#
+# Why this exists: the audits do not share one convention. check-devlinks,
+# check-sdp-leak, check-dupes and check-artifacts loop over both arches
+# themselves; check-undefined takes the arch as $1 and defaults to aarch64le,
+# so running the five in a row silently verifies x86_64 four times out of five.
+# Piping each through `tail` to shorten the output then hides the exit code as
+# well -- the pipeline reports tail's status, which is always 0.
+set -u
+WS="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$WS" || exit 1
+rc=0
+
+run() {  # run <label> <command...>
+  local label=$1; shift
+  local out
+  out=$("$@" 2>&1); local s=$?
+  printf '%s\n' "$out" | sed 's/^/    /'
+  if [ $s -ne 0 ]; then echo "!!  $label FAILED (exit $s)"; rc=1; fi
+}
+
+echo "== per-arch audit"
+for arch in aarch64le x86_64; do
+  echo "-- check-undefined [$arch]"
+  run "check-undefined [$arch]" ./scripts/check-undefined "$arch"
+done
+
+echo "== both-arch audits"
+for s in check-devlinks check-sdp-leak check-dupes check-artifacts; do
+  echo "-- $s"
+  run "$s" "./scripts/$s"
+done
+
+echo "== test coverage"
+for arch in aarch64le x86_64; do
+  echo "-- check-test-coverage [$arch]"
+  run "check-test-coverage [$arch]" ./scripts/check-test-coverage "$arch"
+done
+
+echo
+[ $rc -eq 0 ] && echo "ALL AUDITS PASS (both architectures)" || echo "AUDITS FAILED"
+exit $rc

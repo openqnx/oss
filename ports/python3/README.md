@@ -1,0 +1,339 @@
+# python3 3.14.0
+
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
+
+| | |
+|---|---|
+| Upstream | https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz |
+| SHA-256 | `2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9` |
+| Build system | GNU Autotools |
+| QNX patches | 1 |
+| Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`libffi`](../libffi/) [`expat`](../expat/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`sqlite`](../sqlite/) [`ncurses`](../ncurses/) [`readline`](../readline/) [`gdbm`](../gdbm/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_python`](../../tests/src/) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install python3
+oss-get install python3-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild python3` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+**Build the dependencies first** (14 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild zlib openssl libffi expat bzip2 xz sqlite ncurses readline gdbm zstd
+```
+
+<details><summary>Full build chain (14)</summary>
+
+[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+</details>
+
+### 2. Get the upstream source
+
+```bash
+URL=https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz
+mkdir -p dist src/python3
+curl -fL -o dist/$(basename $URL) $URL
+echo "2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9  dist/$(basename $URL)" | sha256sum -c -
+tar xf dist/$(basename $URL) -C src/python3 --strip-components=1
+```
+
+### 3. Apply the QNX patches
+
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/python3 < ports/python3/patches/0001-qnx-support.patch
+```
+
+**[`0001-qnx-support.patch`](patches/0001-qnx-support.patch)** — CPython: build for QNX.
+
+> - configure: recognise *-nto-qnx* hosts (ac_sys_system=QNX); do not define
+>   _XOPEN_SOURCE, which on QNX hides everything outside that standard
+>   (declarations are gated on _QNX_SOURCE); link with $(CC), which in a cross
+>   build carries qcc's -V target; build a real shared libpython with
+>   --enable-shared (it silently came out static).
+> - mimalloc, pycore_time.h, faulthandler, signal, posix, select, termios: the
+>   QNX-specific declarations and the Linux-only interfaces QNX lacks.
+> configure is changed with configure.ac.
+
+Touches: `configure.ac`, `configure`, `Objects/mimalloc/prim/unix/prim.c`, `Include/internal/pycore_time.h`, `Modules/faulthandler.c`, `Modules/signalmodule.c` … · Upstream status: QNX-specific
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+mkdir -p build/$QNX_ARCH/python3 && cd build/$QNX_ARCH/python3
+CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
+CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
+LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
+         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+# \
+These \
+probe \
+for \
+device \
+files, \
+which \
+configure \
+cannot \
+do \
+across \
+a \
+cross \
+# \
+build; \
+QNX \
+has \
+/dev/ptmx \
+but \
+no \
+/dev/ptc. \
+ac_cv_file__dev_ptmx=yes \
+ac_cv_file__dev_ptc=no \
+# \
+configure \
+otherwise \
+tries \
+to \
+*run* \
+a \
+target \
+binary \
+to \
+decide \
+these. \
+ac_cv_buggy_getaddrinfo=no \
+ac_cv_have_long_long_format=yes \
+ac_cv_little_endian_double=yes \
+# \
+QNX \
+ships \
+<sys/timerfd.h> \
+with \
+timerfd_create() \
+and \
+timerfd_settime() \
+but \
+# \
+no \
+timerfd_gettime(), \
+so \
+os.timerfd_* \
+cannot \
+be \
+implemented \
+completely. \
+# \
+QNX's \
+own \
+Python \
+3.13 \
+port \
+reaches \
+the \
+same \
+conclusion \
+-- \
+its \
+pyconfig.h \
+# \
+leaves \
+HAVE_SYS_TIMERFD_H \
+and \
+HAVE_TIMERFD_CREATE \
+undefined. \
+ac_cv_header_sys_timerfd_h=no \
+ac_cv_func_timerfd_create=no \
+# \
+QNX's \
+<sys/termio.h> \
+and \
+<termios.h> \
+are \
+mutually \
+exclusive \
+by \
+design: \
+the \
+# \
+header \
+ends \
+in \
+#error \
+termio/termios \
+incompatibility \
+when \
+both \
+are \
+pulled \
+# \
+in. \
+The \
+termios \
+module \
+includes \
+both \
+if \
+configure \
+finds \
+sys/termio.h. \
+ac_cv_header_sys_termio_h=no \
+$OLDPWD/src/python3/configure --host=$QNX_TRIPLE --prefix=/usr/local \
+    --enable-shared \
+    --without-ensurepip \
+    --disable-test-modules \
+    --with-system-ffi \
+    --with-system-expat \
+    --with-system-libmpdec \
+    --with-build-python="$WS/hosttools/bin/python3.14" \
+    --build=x86_64-pc-linux-gnu \
+    --without-static-libpython
+make -j$(nproc)
+make DESTDIR=$STAGE install
+cd -
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- Also linked at run time (found by scripts/gen-dependency-index): zstd
+- Cross-building CPython needs a *native* interpreter of the same version: the build freezes its own stdlib modules and runs setup steps with it. scripts/build-host-tools.sh puts one in hosttools/.
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3`.
+
+### 5. What it installs
+
+3025 files under `/usr/local`: 3 shared-library entries, 8 programs, 283 headers.
+
+```
+/usr/local/lib/libpython3.14.so
+/usr/local/lib/libpython3.14.so.1.0
+/usr/local/lib/libpython3.so
+/usr/local/bin/idle3
+/usr/local/bin/idle3.14
+/usr/local/bin/pydoc3
+/usr/local/bin/pydoc3.14
+/usr/local/bin/python3
+/usr/local/bin/python3-config
+/usr/local/bin/python3.14
+/usr/local/bin/python3.14-config
+```
+
+The complete list is `stage/<arch>/.manifest/python3` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH python3
+ls repo/8.0/*/ | grep '^python3-'
+```
+
+This writes `python3-<ver>-r0.tar.gz` (run time) and `python3-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install python3
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/python3-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/python3-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_python`](../../tests/src/) links python3 the way an application would and checks its core API on the target:
+
+```bash
+./tests/build-tests.sh $QNX_ARCH
+scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_python root@<target>:/data/
+ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_python'
+```
+
+```
+== python3 ==
+  ok   ...
+PASS python3
+```
+
+`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=3.14.0
+TARBALL=https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz
+SHA256=2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9
+# Also linked at run time (found by scripts/gen-dependency-index): zstd
+DEPS="zlib openssl libffi expat bzip2 xz sqlite ncurses readline gdbm zstd"
+BUILDSYS=autotools
+# Cross-building CPython needs a *native* interpreter of the same version: the
+# build freezes its own stdlib modules and runs setup steps with it.
+# scripts/build-host-tools.sh puts one in hosttools/.
+CONF_ENV=(
+  # These probe for device files, which configure cannot do across a cross
+  # build; QNX has /dev/ptmx but no /dev/ptc.
+  ac_cv_file__dev_ptmx=yes
+  ac_cv_file__dev_ptc=no
+  # configure otherwise tries to *run* a target binary to decide these.
+  ac_cv_buggy_getaddrinfo=no
+  ac_cv_have_long_long_format=yes
+  ac_cv_little_endian_double=yes
+  # QNX ships <sys/timerfd.h> with timerfd_create() and timerfd_settime() but
+  # no timerfd_gettime(), so os.timerfd_* cannot be implemented completely.
+  # QNX's own Python 3.13 port reaches the same conclusion -- its pyconfig.h
+  # leaves HAVE_SYS_TIMERFD_H and HAVE_TIMERFD_CREATE undefined.
+  ac_cv_header_sys_timerfd_h=no
+  ac_cv_func_timerfd_create=no
+  # QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design: the
+  # header ends in "#error termio/termios incompatibility" when both are pulled
+  # in. The termios module includes both if configure finds sys/termio.h.
+  ac_cv_header_sys_termio_h=no
+)
+CONF_ARGS_EXTRA=(
+  --enable-shared --without-ensurepip --disable-test-modules
+  --with-system-ffi --with-system-expat --with-system-libmpdec
+  --with-build-python="$WS/hosttools/bin/python3.14"
+  --build=x86_64-pc-linux-gnu
+  --without-static-libpython
+)
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

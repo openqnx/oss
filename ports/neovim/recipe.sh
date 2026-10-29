@@ -26,7 +26,7 @@ do_configure() {
   cmake -S "$S" -B "$B" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$QNX_ARCH.cmake" -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCI_BUILD=OFF -DENABLE_TRANSLATIONS=OFF \
     -DLUA_PRG="$H/usr/bin/luajit" -DLUA_GEN_PRG="$H/usr/bin/luajit" -DNLUA0_HOST_PRG="$N/lib/libnlua0.so" -DNVIM_HOST_PRG="$N/bin/nvim" \
-    -DLPEG_LIBRARY="$STAGE$PREFIX/lib/lua/5.1/lpeg.so"
+    -DLPEG_LIBRARY="$STAGE$PREFIX/lib/liblpeg.a"
 }
 do_build() { cmake --build "$B" -j"$(nproc)"; }
 do_install() { DESTDIR="$STAGE" cmake --install "$B"; }

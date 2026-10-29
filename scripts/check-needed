@@ -1,0 +1,26 @@
+#!/bin/bash
+# Audit staged ELF files for DT_NEEDED entries the target cannot satisfy by
+# name: an absolute or relative path (a library without a soname, linked by
+# its path -- the build host's staging path then ends up in the binary) or a
+# malformed soname ("libunibilium.so..", from a CMake VERSION built of
+# undefined variables). Either one fails at load on the target with "Could
+# not load library", however the library is installed.
+#
+#   ./scripts/check-needed [aarch64le|x86_64]
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+rc=0
+for arch in ${1:-aarch64le x86_64}; do
+  source "$WS/env.sh" "$arch" >/dev/null || exit 1
+  readelf="$QNX_HOST/usr/bin/$QNX_TRIPLE-readelf"
+  bad=$(find "$STAGE$PREFIX" -type f \( -name '*.so*' -o -perm -u+x \) -size +1k 2>/dev/null | while read -r f; do
+    "$readelf" -h "$f" >/dev/null 2>&1 || continue
+    "$readelf" -d "$f" 2>/dev/null | sed -n 's/.*(NEEDED).*\[\(.*\)\]/\1/p' | grep -E '/|\.\.|\.$' |
+      sed "s|^|  !! ${f#$STAGE$PREFIX/}: |"
+  done)
+  if [ -n "$bad" ]; then
+    echo "== $arch: DT_NEEDED entries no library name can satisfy:"; echo "$bad"; rc=1
+  else
+    echo "== $arch: every DT_NEEDED is a plain soname"
+  fi
+done
+exit $rc

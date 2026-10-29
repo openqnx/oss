@@ -1,0 +1,29 @@
+#!/bin/bash
+# screenshot -- a PNG of the graphics VM's screen (QEMU's QMP screendump).
+#
+#   vanilla-vm/screenshot [x86_64|aarch64le] [file.png]   (default logs/desktop-<arch>.png)
+. "$(dirname "$0")/common.sh"
+ARCH=$(norm_arch "${1:-x86_64}") || exit 2
+OUT=${2:-$WS/logs/desktop-$ARCH.png}
+S=$(vm_dir "$ARCH" desktop)/qmp.sock
+[ -S "$S" ] || { echo "no QMP socket $S: is the desktop VM (vanilla-vm/desktop) running?" >&2; exit 1; }
+python3 -I - "$S" "$OUT" <<'PY'
+import json, os, socket, sys, tempfile, zlib, struct
+s = socket.socket(socket.AF_UNIX); s.connect(sys.argv[1]); f = s.makefile("rw")
+def cmd(c, **a):
+    f.write(json.dumps({"execute": c, "arguments": a} if a else {"execute": c}) + "\n"); f.flush()
+    while True:
+        r = json.loads(f.readline())
+        if "return" in r or "error" in r: return r
+f.readline(); cmd("qmp_capabilities")
+ppm = tempfile.mktemp(suffix=".ppm"); r = cmd("screendump", filename=ppm)
+if "error" in r: sys.exit("screendump: %s" % r["error"])
+d = open(ppm, "rb").read(); os.unlink(ppm)
+# P6 <w> <h> <max>\n<rgb>
+parts = d.split(b"\n", 3); w, h = map(int, parts[1].split()); px = parts[3]
+raw = b"".join(b"\0" + px[y*w*3:(y+1)*w*3] for y in range(h))
+chunk = lambda t, b: struct.pack(">I", len(b)) + t + b + struct.pack(">I", zlib.crc32(t + b) & 0xffffffff)
+open(sys.argv[2], "wb").write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+    + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
+print(sys.argv[2], "%dx%d" % (w, h))
+PY

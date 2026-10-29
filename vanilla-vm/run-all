@@ -1,0 +1,106 @@
+#!/bin/bash
+# run-all -- one command: build and boot a vanilla QNX 8.0 QEMU image, set it
+# up for apk, install every ported component and run its test, report.
+#
+#   vanilla-vm/run-all [x86_64|aarch64le|both] [--from local|github] [--together]
+#                      [--only "<name>..."] [--rebuild] [--stop]
+#
+#   --from local    the packages built here (dists/, served by scripts/serve-dists) [default]
+#   --from github   the GitHub releases of github.com/openqnx/oss (what a user gets)
+#   --together      install everything first, then run the whole test suite
+#                   (needs a big /data: the VM is made with 16 GB); default is
+#                   one component at a time (scripts/verify-on-target --all:
+#                   apk add, test, apk del -- a 4 GB /data is enough)
+#   --only          these components instead of all of them
+#   --rebuild       a brand-new image (vanilla-vm/make-vm --rebuild)
+#   --stop          stop the VM afterwards
+#
+# both: the two architectures in parallel (aarch64 is emulated, it takes
+# longer). Results: tests/results/<arch>.tsv (as verify-on-target records
+# them), transcripts: logs/vanilla-vm-<arch>.log.
+set -o pipefail
+HERE=$(cd "$(dirname "$0")" && pwd)
+. "$HERE/common.sh"
+A=x86_64; FROM=local; TOGETHER=; ONLY=; REBUILD=; STOP=
+while [ $# -gt 0 ]; do case "$1" in
+  x86_64|aarch64le|aarch64|both) A=$1; shift ;;
+  --from) FROM=$2; shift 2 ;;
+  --together) TOGETHER=1; shift ;;
+  --only) ONLY=$2; shift 2 ;;
+  --rebuild) REBUILD=--rebuild; shift ;;
+  --stop) STOP=1; shift ;;
+  -h|--help) sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) echo "unknown argument $1" >&2; exit 2 ;;
+esac; done
+case "$FROM" in local|github) ;; *) echo "--from local|github" >&2; exit 2 ;; esac
+sdp_env || exit 1
+mkdir -p "$WS/logs"
+
+if [ "$A" = both ]; then
+  args=(--from "$FROM"); [ -n "$TOGETHER" ] && args+=(--together); [ -n "$ONLY" ] && args+=(--only "$ONLY")
+  [ -n "$REBUILD" ] && args+=("$REBUILD"); [ -n "$STOP" ] && args+=(--stop)
+  "$0" x86_64 "${args[@]}" & p1=$!
+  "$0" aarch64le "${args[@]}" & p2=$!
+  wait $p1; r1=$?; wait $p2; r2=$?
+  echo "== x86_64: $([ $r1 -eq 0 ] && echo all passed || echo failures)   aarch64le: $([ $r2 -eq 0 ] && echo all passed || echo failures)"
+  exit $(( r1 || r2 ))
+fi
+
+ARCH=$(norm_arch "$A") || exit 2
+LOG=$WS/logs/vanilla-vm-$ARCH.log
+exec > >(tee -a "$LOG") 2>&1
+echo "== $(date -u +%FT%TZ) vanilla $ARCH, packages from $FROM"
+
+mk=(--data-size 4000); [ -n "$TOGETHER" ] && mk=(--data-size 16000)
+IP=$("$HERE/make-vm" "$ARCH" "${mk[@]}" $REBUILD) || exit 1
+
+# 1. apk on the target, from here or from GitHub
+if [ "$FROM" = local ]; then
+  HOST=$(ip -4 route get "$IP" 2>/dev/null | grep -Eo 'src [0-9.]+' | cut -d' ' -f2)
+  PORT=${SERVE_PORT:-8000}
+  if ! curl -s -o /dev/null "http://$HOST:$PORT/dists/8.0/" 2>/dev/null; then
+    echo ">> serving dists/ on $HOST:$PORT (scripts/serve-dists, log logs/serve-dists.log)"
+    setsid nohup "$WS/scripts/serve-dists" -p "$PORT" >"$WS/logs/serve-dists.log" 2>&1 < /dev/null &
+    for _ in $(seq 1 20); do curl -s -o /dev/null "http://$HOST:$PORT/dists/8.0/" 2>/dev/null && break; sleep 1; done
+  fi
+  REPO=(-r "http://$HOST:$PORT/dists/8.0")
+else
+  REPO=()
+fi
+want=$( [ "$FROM" = local ] && echo "http://$HOST:$PORT/dists/8.0" || echo https://github.com/ )
+if on_vm "$IP" ". /data/oss/etc/oss-env.sh 2>/dev/null && apk --version >/dev/null 2>&1 && head -n 1 /data/oss/etc/apk/repositories" 2>/dev/null | grep -q "^$want"; then
+  echo ">> apk already set up on $IP"
+else
+  echo ">> scripts/target-bootstrap $IP ${REPO[*]}"
+  "$WS/scripts/target-bootstrap" "$IP" "${REPO[@]}" || exit 1
+fi
+
+DESC="QEMU $ARCH, vanilla mkqnximage image"
+# 2. every component (or --only), and its test
+if [ -z "$TOGETHER" ]; then
+  # shellcheck disable=SC2086
+  "$WS/scripts/verify-on-target" -t "$DESC" "$IP" ${ONLY:---all}
+  rc=$?
+else
+  if [ -n "$ONLY" ]; then comps=$ONLY
+  else comps=$(python3 -I - "$WS/ports/dependencies.json" "$ARCH" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+print(" ".join(n for n, e in sorted(d.items()) if e.get("built", {}).get(sys.argv[2])))
+PY
+  ); fi
+  tests=$(for c in $comps; do awk -F'\t' -v c="$c" '$1==c{print $2}' "$WS/tests/port-tests.tsv"; done | sort -u)
+  tpk=$(for t in $tests; do printf 'qnx-test-%s ' "$(echo "${t#test_}" | tr _ -)"; done)
+  echo ">> apk add: $(echo $comps | wc -w) components, $(echo $tests | wc -w) tests"
+  on_vm "$IP" ". /data/oss/etc/oss-env.sh; apk update -q; apk add $comps $tpk qnx-port-tests" | tail -3 || { echo "!! apk add failed"; exit 1; }
+  echo ">> the whole test suite (run-on-target.sh)"
+  # shellcheck disable=SC2086
+  on_vm "$IP" ". /data/oss/etc/oss-env.sh; /usr/local/bin/qnx-port-tests/run-on-target.sh $tests" > "$WS/logs/vanilla-vm-$ARCH-suite.txt" 2>&1
+  rc=$?
+  grep -E '^(PASS|FAIL) ' "$WS/logs/vanilla-vm-$ARCH-suite.txt" | "$WS/scripts/record-results" -a "$ARCH" -t "$DESC" \
+    -v "apk:$( [ "$FROM" = local ] && echo local-dists || echo github)" >/dev/null 2>&1 || true
+  echo "== $(grep -c '^PASS ' "$WS/logs/vanilla-vm-$ARCH-suite.txt") passed, $(grep -c '^FAIL ' "$WS/logs/vanilla-vm-$ARCH-suite.txt") failed (logs/vanilla-vm-$ARCH-suite.txt)"
+  grep '^FAIL ' "$WS/logs/vanilla-vm-$ARCH-suite.txt" | head -20
+fi
+[ -n "$STOP" ] && "$HERE/stop-vm" "$ARCH"
+exit $rc

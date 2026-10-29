@@ -1,0 +1,65 @@
+#!/bin/bash
+# make-vm -- build a vanilla QNX 8.0 QEMU image with mkqnximage and boot it
+# in the background, then wait until it answers on SSH. Prints its address.
+#
+#   vanilla-vm/make-vm <x86_64|aarch64le> [--graphics] [--data-size MB] [--ram SIZE] [--cpu N] [--rebuild]
+#
+#   --graphics    the image with graphics (mkqnximage --graphics=yes: QNX
+#                 Screen on QEMU's virtio GPU, keyboard and mouse through
+#                 io-hid), shown in a QEMU window on this desktop; its own
+#                 VM directory (~/vm/oss-desktop-<arch>), 4G RAM. QEMU's QMP
+#                 socket <dir>/qmp.sock takes screenshots (vanilla-vm/screenshot).
+#   --data-size   /data in MB (default 4000; ~16000 for run-all --together)
+#   --ram         default 2G       --cpu   default 4
+#   --rebuild     wipe the VM directory first (a brand-new image)
+#
+# The image is mkqnximage's standard one -- nothing from this repository is
+# put in it; run-all installs everything afterwards with apk, like on any
+# other target. VM directory: ~/vm/oss-vanilla-<arch> (VM_ROOT to change).
+# Already running: just prints its address.
+set -eo pipefail
+. "$(dirname "$0")/common.sh"
+ARCH=$(norm_arch "${1:?usage: $0 <x86_64|aarch64le> [options]}"); shift
+DATA=4000; RAM=2G; CPU=4; REBUILD=; GFX=
+while [ $# -gt 0 ]; do case "$1" in
+  --data-size) DATA=$2; shift 2 ;;
+  --ram) RAM=$2; shift 2 ;;
+  --cpu) CPU=$2; shift 2 ;;
+  --rebuild) REBUILD=1; shift ;;
+  --graphics) GFX=1; RAM=4G; shift ;;
+  -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) echo "unknown option $1" >&2; exit 2 ;;
+esac; done
+sdp_env
+D=$(vm_dir "$ARCH" ${GFX:+desktop})
+if [ -n "$REBUILD" ] && [ -d "$D" ]; then (cd "$D" && mkqnximage --wipe >/dev/null 2>&1 || true); rm -rf "$D"; fi
+mkdir -p "$D"
+KEY=$(ssh_key)
+
+ip=$(vm_ip "$ARCH" ${GFX:+desktop} || true)
+if [ -n "$ip" ] && on_vm "$ip" true 2>/dev/null; then echo "$ip"; exit 0; fi
+
+echo ">> building and booting the vanilla $ARCH image in $D" >&2
+host=vanilla-${ARCH%le}; host=${host/aarch64/a64}; [ -n "$GFX" ] && host=${host/vanilla/desktop}
+gfx=(--graphics=no)
+if [ -n "$GFX" ]; then
+  gfx=(--graphics=yes)
+  [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] || { echo "!! --graphics needs a desktop session here (DISPLAY): QEMU opens a window" >&2; exit 1; }
+  export QEMU_OPTIONS="${QEMU_OPTIONS:-} -qmp unix:$D/qmp.sock,server=on,wait=off"
+fi
+(cd "$D" && mkqnximage --type=qemu --arch="$ARCH" --hostname="$host" \
+    --ssh-ident="$KEY.pub" --data-size="$DATA" --data-inodes=$((DATA * 20)) \
+    --ram="$RAM" --cpu="$CPU" "${gfx[@]}" --run=-h) >"$D.make-vm.log" 2>&1 \
+  || { tail -20 "$D.make-vm.log" >&2; exit 1; }
+
+# aarch64 runs emulated (no KVM): its first boot takes minutes.
+for _ in $(seq 1 120); do
+  ip=$(vm_ip "$ARCH" ${GFX:+desktop} || true)
+  if [ -n "$ip" ]; then
+    ssh-keygen -f "$WS/tests/ssh/known_hosts" -R "$ip" >/dev/null 2>&1 || true
+    on_vm "$ip" true 2>/dev/null && { echo ">> $ARCH VM up at $ip" >&2; echo "$ip"; exit 0; }
+  fi
+  sleep 5
+done
+echo "!! the $ARCH VM did not come up on SSH in 10 minutes (see $D/make-vm.log, $D/output/qemu.out)" >&2
+exit 1

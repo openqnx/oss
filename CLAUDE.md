@@ -49,6 +49,14 @@ Before the first push to github.com/openqnx/oss: the notice that this work
 was ported and contributed by Claude (`NOTICE.md`, README) -- confirm the
 wording with the user.
 
+## Commits and publishing identity
+
+Commit as `openqnx-oss <noreply@openqnx.invalid>`
+(`git -c user.name=openqnx-oss -c user.email=noreply@openqnx.invalid commit ...`):
+no personal names or addresses in commits, files or release notes. Push
+`main` only. The attribution is NOTICE.md (Claude ported and contributed the
+work); the license is Apache-2.0 (LICENSE).
+
 ## Rules that bit before
 
 - A published `<name>-<version>-r<N>` is never rewritten: qnxpkg bumps `-r` when contents change, and keeps every version.

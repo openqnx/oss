@@ -1,0 +1,58 @@
+#!/bin/bash
+# workspace-setup -- set this workspace up on a new PC, from a pack
+# (scripts/workspace-pack), a clone, or a copied directory.
+#
+#   workspace-setup --from <pack-dir> <workspace-dir>   # unpack a pack, then set up
+#   scripts/workspace-setup                             # in a clone or a copy
+#
+# A clone (git clone https://github.com/openqnx/oss) has everything to build,
+# but neither the signing key nor the published packages: build and test
+# with a new key (qnxpkg makes one), or bring secrets.tar/dists.tar from a pack.
+#
+# Then: checks the SDP (QNX_SDP_ROOT, default ~/qnx800) and the host tools
+# the builds use, replaces links that pointed into the old PC (dist/,
+# hosttools/), and builds the host tools (scripts/build-host-tools.sh;
+# NO_HOSTTOOLS=1 skips it).
+set -eo pipefail
+if [ "$1" = --from ]; then
+  P=$(cd "${2:?pack directory}" && pwd); W=${3:?workspace directory}
+  (cd "$P" && sha256sum -c --quiet SHA256SUMS)
+  [ -e "$W" ] && { echo "$W exists" >&2; exit 1; }
+  git clone -q -b main "$P/oss.bundle" "$W"
+  cd "$W"
+  git remote set-url origin https://github.com/openqnx/oss.git
+  for b in $(git -C "$W" branch -r | grep -v HEAD | sed 's#origin/##'); do git branch -q --track "$b" "origin/$b" 2>/dev/null || true; done
+  for t in secrets.tar dists.tar ported.tar cache.tar; do [ -f "$P/$t" ] && { echo ">> $t"; tar xf "$P/$t"; }; done
+  [ -f "$P/stage.tar.zst" ] && { echo ">> stage.tar.zst"; tar -I zstd -xf "$P/stage.tar.zst"; }
+  exec "$W/scripts/workspace-setup"
+fi
+WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"
+miss=()
+for t in git curl gcc g++ make cmake ninja meson python3 pkg-config autoconf automake libtoolize bison flex patch xz zstd rsync ssh; do
+  command -v "$t" >/dev/null || miss+=("$t")
+done
+[ ${#miss[@]} -eq 0 ] || { echo "!! missing host tools: ${miss[*]}"; echo "   (or build in the container: docker/run.sh, docs/build-environment.md)"; }
+export QNX_SDP_ROOT=${QNX_SDP_ROOT:-$HOME/qnx800}
+if [ -f "$QNX_SDP_ROOT/qnxsdp-env.sh" ]; then echo ">> QNX SDP: $QNX_SDP_ROOT"
+else echo "!! QNX SDP 8.0 not found at $QNX_SDP_ROOT: export QNX_SDP_ROOT=<your SDP 8.0>"; exit 1; fi
+# Links into the old PC's file system are dangling here: make them directories.
+for d in dist hosttools; do
+  if [ -L "$d" ] && [ ! -e "$d" ]; then rm "$d"; echo ">> $d/: was a link into the old PC, now a directory"; fi
+  mkdir -p "$d"
+done
+ls keys/private/*.rsa >/dev/null 2>&1 && echo ">> signing key: $(ls keys/private/*.rsa)" \
+  || echo "!! no signing key in keys/private/: packages will be signed with a new one (targets then need its .pub)"
+[ -d dists/8.0 ] && echo ">> packages: $(ls dists/8.0/*/*.apk 2>/dev/null | wc -l) in dists/" || echo ">> no dists/ yet: qnxbuild + qnxpkg make it"
+mkdir -p logs
+if [ -z "$NO_HOSTTOOLS" ]; then
+  echo ">> host tools (scripts/build-host-tools.sh, log: logs/hosttools.log)"
+  ./scripts/build-host-tools.sh > logs/hosttools.log 2>&1 || { tail -5 logs/hosttools.log; exit 1; }
+fi
+cat <<EOT
+Ready. Next:
+    export QNX_SDP_ROOT=$QNX_SDP_ROOT
+    source ./env.sh x86_64          # or aarch64le
+    ./scripts/qnxbuild -a x86_64 zstd && ./scripts/qnxpkg zstd
+Where the work stands: docs/STATUS.md. With Claude Code: open this directory
+(CLAUDE.md tells it how the repository works and to read docs/STATUS.md).
+EOT

@@ -128,3 +128,22 @@ docker/              the build container
 tests/               on-target test programs and runners
 src/ build/ stage/ pkgroot/ dists/ logs/ dist/ hosttools/   generated, not tracked (dists/: the packages)
 ```
+
+## Moving the workspace to another PC
+
+Git carries the recipes, patches, scripts, tests and docs. What it does not:
+the package signing key (`keys/private/`), the target SSH key (`tests/ssh/`),
+the published packages (`dists/`, `test_suites/` -- qnxpkg compares new builds
+with them and never rewrites a published `<name>-<version>-r<N>`), and what
+can be regenerated (`stage/`, `ported/`, the download cache `dist/`).
+
+```bash
+scripts/workspace-pack -o /mnt/usb [--with-stage] [--with-ported] [--with-cache]   # on this PC
+/mnt/usb/oss-workspace-<date>/workspace-setup --from /mnt/usb/oss-workspace-<date> ~/oss  # on the new one
+```
+
+`secrets.tar` in the pack holds the signing key: keep it private. Copying the
+whole directory (an external disk) also works: run `scripts/workspace-setup`
+in the copy. Either way `hosttools/` is rebuilt on the new PC (its programs
+have the old paths compiled in), and links that pointed into the old PC's
+file system become directories. `docs/STATUS.md` says where the work stands.

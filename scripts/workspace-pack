@@ -1,0 +1,59 @@
+#!/bin/bash
+# workspace-pack -- pack what git does not carry, to continue this workspace
+# on another PC (with scripts/workspace-setup there).
+#
+#   scripts/workspace-pack [-o DIR] [--no-dists] [--with-stage] [--with-ported] [--with-cache]
+#
+# Always:
+#   oss.bundle         the git repository (every branch except backup/*, tags)
+#   secrets.tar        keys/private/ (the package signing key) and tests/ssh/
+#                      (the target SSH key) -- KEEP IT PRIVATE: whoever has the
+#                      signing key can publish packages targets will trust
+# By default:
+#   dists.tar          dists/ and test_suites/ -- the published packages: qnxpkg
+#                      compares new builds against them (it never rewrites a
+#                      published <name>-<version>-r<N>), publish --changed too
+# On request:
+#   --with-stage       stage/ (zstd): build one component without rebuilding
+#                      everything it depends on first (15 GB)
+#   --with-ported      ported/ (regenerable with scripts/gen-ported, 12 GB)
+#   --with-cache       dist/ -- downloaded upstream tarballs (re-fetched otherwise)
+#
+# Not packed, rebuilt there: src/ build/ pkgroot/ logs/ and hosttools/ (its
+# programs have this machine's paths compiled in: scripts/build-host-tools.sh).
+# Copying the whole directory (an external disk) works too: run
+# scripts/workspace-setup in the copy.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+OUT=$WS/..; DISTS=1; STAGE=; PORTED=; CACHE=
+while [ $# -gt 0 ]; do case "$1" in
+  -o) OUT=$2; shift 2 ;;
+  --no-dists) DISTS=; shift ;;
+  --with-stage) STAGE=1; shift ;;
+  --with-ported) PORTED=1; shift ;;
+  --with-cache) CACHE=1; shift ;;
+  -h|--help) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) echo "unknown option $1" >&2; exit 2 ;;
+esac; done
+D=$OUT/oss-workspace-$(date +%Y%m%d); mkdir -p "$D"; D=$(cd "$D" && pwd)
+cd "$WS"
+[ -z "$(git status --porcelain --untracked-files=no)" ] || echo "!! uncommitted changes are NOT in the bundle (commit first)" >&2
+echo ">> $D"
+refs=$(git for-each-ref --format='%(refname)' refs/heads refs/tags | grep -v '^refs/heads/backup/')
+# shellcheck disable=SC2086
+git bundle create "$D/oss.bundle" HEAD $refs
+tar cf "$D/secrets.tar" $(ls -d keys/private tests/ssh 2>/dev/null)
+chmod 600 "$D/secrets.tar"
+[ -n "$DISTS" ]  && tar cf "$D/dists.tar" $(ls -d dists test_suites 2>/dev/null)
+[ -n "$STAGE" ]  && tar -I 'zstd -T0 -3' -cf "$D/stage.tar.zst" stage
+[ -n "$PORTED" ] && tar cf "$D/ported.tar" ported
+[ -n "$CACHE" ]  && tar -chf "$D/cache.tar" dist           # -h: dist/ may be a link
+cp scripts/workspace-setup "$D/"
+(cd "$D" && sha256sum ./*.bundle ./*.tar* > SHA256SUMS)
+cat > "$D/README.txt" <<EOT
+QNX OSS ports workspace, packed $(date -u +%Y-%m-%dT%H:%MZ) at $(git rev-parse --short HEAD).
+On the new PC (QNX SDP 8.0 installed):
+    ./workspace-setup --from $(basename "$D") <new-workspace-dir>
+secrets.tar holds the package signing key: keep it private.
+EOT
+du -sh "$D"/* | sed 's/^/   /'

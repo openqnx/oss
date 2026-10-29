@@ -3,7 +3,8 @@
 Open source components ported to QNX SDP 8.0 (aarch64le, x86_64): one recipe
 per component in `ports/<name>/`, built by `scripts/qnxbuild`, packaged by
 `scripts/qnxpkg`, tested on QNX targets. Start with `README.md`,
-`docs/porting-guide.md` and `docs/target-guide.md`.
+`docs/porting-guide.md` and `docs/target-guide.md`; where the work stands
+(what is done, what is next): `docs/STATUS.md` -- read it first, keep it current.
 
 ## Environment
 
@@ -16,6 +17,13 @@ Generated, not tracked: `src/ build/ stage/ pkgroot/ logs/ dist/ hosttools/`
 and the three deliverables `dists/` (packages), `ported/` (original source +
 QNX patches), `test_suites/` (tests). `keys/private/` holds the package
 signing key: never commit it, never serve it.
+
+## Moving to another PC
+
+`scripts/workspace-pack` packs what git does not carry (signing key, target
+SSH key, `dists/`, `test_suites/`, optionally `stage/`, `ported/`, the download
+cache); `workspace-setup --from <pack> <dir>` on the new PC. `hosttools/` is
+rebuilt there (`scripts/build-host-tools.sh`).
 
 ## Requests and how to handle them
 

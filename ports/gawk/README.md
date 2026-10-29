@@ -8,8 +8,8 @@
 | SHA-256 | `f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
-| Build dependencies | [`readline`](../readline/) |
-| Run-time dependencies | [`readline`](../readline/) |
+| Build dependencies | [`readline`](../readline/) [`ncurses`](../ncurses/) |
+| Run-time dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | none (no run-time code) |
 
@@ -45,13 +45,8 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 **Build the dependencies first** (2 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild readline
+./scripts/qnxbuild readline ncurses
 ```
-
-<details><summary>Full build chain (2)</summary>
-
-[`ncurses`](../ncurses/) [`readline`](../readline/)
-</details>
 
 ### 2. Get the upstream source
 
@@ -150,7 +145,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PAT
 VERSION=5.3.2
 TARBALL=https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz
 SHA256=f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc
-DEPS="readline"
+DEPS="readline ncurses"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls --without-mpfr )
 ```

@@ -6,7 +6,7 @@
 |---|---|
 | Upstream | https://github.com/neovim/unibilium.git (tag `v2.1.2`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -52,7 +52,23 @@ git clone --depth 1 -b v2.1.2 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/unibilium < ports/unibilium/patches/0001-cmake-libtool-compatible-soname.patch
+```
+
+**[`0001-cmake-libtool-compatible-soname.patch`](patches/0001-cmake-libtool-compatible-soname.patch)** — Give the shared library the soname of the libtool build: libunibilium.so.4.
+
+> The CMake build names the library version "${VERSION_MAJOR}.${VERSION_MINOR}",
+> two variables nothing defines (project() sets PROJECT_VERSION_MAJOR), so the
+> library came out as "libunibilium.so.." with that as its soname, and every
+> program linking it -- neovim -- needed a file called "libunibilium.so..".
+> Use what the Makefile build of the same release produces (-version-info
+> 4:1:0): libunibilium.so.4.0.1, soname libunibilium.so.4, as distributions
+> ship it.
+
+Touches: `CMakeLists.txt` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -61,20 +77,26 @@ cmake -S src/unibilium -B build/$QNX_ARCH/unibilium -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
-      -DBUILD_SHARED_LIBS=ON
+      -DBUILD_SHARED_LIBS=ON \
+      -DTERMINFO_DIRS=/usr/local/share/terminfo:/usr/share/terminfo:/etc/terminfo:/usr/lib/terminfo
 cmake --build build/$QNX_ARCH/unibilium -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/unibilium
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- TERMINFO_DIRS: the compiled-in search path. Left alone, CMakeLists asks the BUILD HOST's ncurses6-config and bakes in the host's directories (/etc/terminfo:/lib/terminfo:/usr/share/terminfo), none of which holds this tree's database on the target: the ncurses component installs it in /usr/local/share/terminfo. TERMINFO / TERMINFO_DIRS still override it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH unibilium`.
 
 ### 5. What it installs
 
-3 files under `/usr/local`: 2 shared-library entries, 1 headers.
+4 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libunibilium.so
-/usr/local/lib/libunibilium.so..
+/usr/local/lib/libunibilium.so.4
+/usr/local/lib/libunibilium.so.4.0.1
 ```
 
 The complete list is `stage/<arch>/.manifest/unibilium` after a build.
@@ -130,7 +152,13 @@ PASS unibilium
 ```bash
 VERSION=2.1.2; GIT=https://github.com/neovim/unibilium.git; REF=v2.1.2
 BUILDSYS=cmake
-CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON )
+# TERMINFO_DIRS: the compiled-in search path. Left alone, CMakeLists asks the
+# BUILD HOST's ncurses6-config and bakes in the host's directories
+# (/etc/terminfo:/lib/terminfo:/usr/share/terminfo), none of which holds this
+# tree's database on the target: the ncurses component installs it in
+# /usr/local/share/terminfo. TERMINFO / TERMINFO_DIRS still override it.
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON
+                   -DTERMINFO_DIRS=/usr/local/share/terminfo:/usr/share/terminfo:/etc/terminfo:/usr/lib/terminfo )
 ```
 </details>
 

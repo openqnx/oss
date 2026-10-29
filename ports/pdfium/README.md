@@ -85,7 +85,11 @@ do_install() {
   # The build makes a shared or a static library, not always both: copy what
   # is there (the check below requires one).
   { cp -a "$d"/libpdfium* "$d"/obj/libpdfium.a "$STAGE$PREFIX/lib/" 2>/dev/null || true; }; cp -a "$S"/public/*.h "$S/public/cpp" "$STAGE$PREFIX/include/pdfium/"
-  ls "$STAGE$PREFIX/lib" | grep -q pdfium
+  ls "$STAGE$PREFIX/lib" | grep -q pdfium || return 1
+  # The complete static library carries its debug information: 8 GB, which
+  # made pdfium-dev a 1.9 GB download -- just under GitHub's 2 GiB limit per
+  # release asset. Without it the library is what an application links.
+  [ ! -f "$STAGE$PREFIX/lib/libpdfium.a" ] || "$QNX_HOST/usr/bin/$QNX_TRIPLE-strip" --strip-debug "$STAGE$PREFIX/lib/libpdfium.a"
 }
 ```
 
@@ -200,7 +204,11 @@ do_install() {
   # The build makes a shared or a static library, not always both: copy what
   # is there (the check below requires one).
   { cp -a "$d"/libpdfium* "$d"/obj/libpdfium.a "$STAGE$PREFIX/lib/" 2>/dev/null || true; }; cp -a "$S"/public/*.h "$S/public/cpp" "$STAGE$PREFIX/include/pdfium/"
-  ls "$STAGE$PREFIX/lib" | grep -q pdfium
+  ls "$STAGE$PREFIX/lib" | grep -q pdfium || return 1
+  # The complete static library carries its debug information: 8 GB, which
+  # made pdfium-dev a 1.9 GB download -- just under GitHub's 2 GiB limit per
+  # release asset. Without it the library is what an application links.
+  [ ! -f "$STAGE$PREFIX/lib/libpdfium.a" ] || "$QNX_HOST/usr/bin/$QNX_TRIPLE-strip" --strip-debug "$STAGE$PREFIX/lib/libpdfium.a"
 }
 ```
 </details>

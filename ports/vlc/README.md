@@ -140,13 +140,15 @@ do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR=
 ```
 
 ```bash
-do_install() { make -C "$B/build" DESTDIR="$STAGE" install; }
+do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - VLC 3.0.21 with qnx-ports' QNX support (patches/: a Screen + EGL/GLES2 video output, QNX fixes in the core and modules, and QNX recipes in VLC's contrib system). Built the way the fork's qnx/ makefiles do it: 1. ./bootstrap; fetch every contrib tarball (VLC's contrib system checks each one against its own SHA512 list); 2. build protoc natively from the contrib protobuf (the cross build of the protobuf contrib needs a matching protoc); 3. build the contribs for the target, then VLC against them. Audio output modules are off (ALSA's uses IEC958 rates QNX's alsa-lib does not define; Pulse, sndio and JACK do not exist on QNX). The Qt GUI is left out (it needs a Qt 5 contrib build): libvlc, the plugins and the command-line player (cvlc) are built. Audio output is not supported on QNX yet (upstream of this port). Beyond its contribs, VLC links these components' shared libraries (found on the toolchain's default library path), so its package depends on them.
 - The contribs find each other through the pkg-config paths VLC's contrib Makefile sets; env.sh's PKG_CONFIG_* (this tree's staging) must not apply -- its sysroot was prefixed to the contribs' own paths ("libopenjp2 >= 2.1.0 not found" for FFmpeg). SDL 1.2 and SDL_image are left out: they only serve the SDL image decoder module, and SDL_image's configure found no SDL.h for the contrib SDL 1.2. The contribs get -D_QNX_SOURCE through CFLAGS/CXXFLAGS (their Meson cross file and configure scripts take them from there): without it QNX's headers hide POSIX interfaces such as clock_gettime, and dav1d's configure stopped. The make that runs first in PATH may be the SDP's 4.4, which hands its children a "fifo:" jobserver; contribs built with CMake run gmake, which can be the build machine's 4.3 and stops on it ("invalid --jobserver-auth string"). The pipe style is understood by both.
+- vlc-plugin.pc carries -L for the contrib tree in the build directory (where libintl/libiconv were found): meaningless on any other machine, and scripts/check-artifacts rejects build paths in installed metadata.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vlc`.
 
@@ -268,7 +270,11 @@ do_configure() {
     --disable-alsa --disable-pulse --disable-sndio --disable-jack
 }
 do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR="$B/$(_vlc_host)/lib/pkgconfig" make -C "$B/build" -j"$(nproc)" $(_vlc_jobserver); }
-do_install() { make -C "$B/build" DESTDIR="$STAGE" install; }
+# vlc-plugin.pc carries -L for the contrib tree in the build directory (where
+# libintl/libiconv were found): meaningless on any other machine, and
+# scripts/check-artifacts rejects build paths in installed metadata.
+do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }
 ```
 </details>
 

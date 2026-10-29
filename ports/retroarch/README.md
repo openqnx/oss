@@ -6,7 +6,7 @@
 |---|---|
 | Upstream | https://github.com/RetroPie/RetroArch.git |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`fontconfig`](../fontconfig/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`openssl`](../openssl/) |
 | Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`libxkbcommon`](../libxkbcommon/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -61,10 +61,11 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/retroarch < ports/retroarch/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/retroarch < ports/retroarch/patches/0002-qnx-no-libstdcxx.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — updated drivers
@@ -89,6 +90,16 @@ patch -p1 -d src/retroarch < ports/retroarch/patches/0001-qnx-from-qnx-ports.pat
 
 Touches: `Makefile.common`, `frontend/drivers/platform_qnx.c`, `frontend/drivers/platform_unix.c`, `gfx/drivers_context/qnx_ctx.c`, `input/drivers/qnx_input.c`, `input/drivers/qnx_input.h` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
+**[`0002-qnx-no-libstdcxx.patch`](patches/0002-qnx-no-libstdcxx.patch)** — Do not link GNU libstdc++ on QNX.
+
+> Makefile.common adds -lstdc++ for the switchres code unconditionally, which
+> is GNU's C++ runtime. QNX's q++ links its own, libc++, and the objects are
+> compiled against it: retroarch ended up loading both libc++.so.2 and the
+> SDP's libstdc++.so.6 (scripts/check-sdp-leak), two C++ runtimes with their
+> own exception handling and std:: types in one process. Leave it out on QNX.
+
+Touches: `Makefile.common` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_configure`, `do_build`, `do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -101,7 +112,7 @@ S=src/retroarch; B=build/$QNX_ARCH/retroarch; mkdir -p $B
 do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc" CXX="q++" CFLAGS="-D_QNX_SOURCE -std=c17 -V$QCC_TARGET -I$STAGE$PREFIX/include" \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
-  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V$QCC_TARGET -L$STAGE$PREFIX/lib" \
+  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
   ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
 ```
@@ -118,7 +129,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - RetroArch, the libretro frontend, as packaged by RetroPie, at the upstream commit qnx-ports' QNX port is based on (patches/: QNX platform support -- Screen/EGL video, input, QNX build settings). Part of the RetroPie stack.
 - RetroArch's configure is its own (not autoconf) and builds in the source tree.
-- PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use. --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the tree's FFmpeg is 7. It only provides the ffmpeg core and recording. --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in deps/libz, whose prototypes clash with the staged zlib.h. --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2. Its Wayland input maps Linux evdev key codes (<linux/input.h>); its X11 drivers include the XShm one, which needs SysV shared memory (<sys/shm.h>) that QNX does not have. EGL_LIBS=-lEGL: configure finds QNX's EGL (HAVE_EGL) through its headers but has no pkg-config file to take the library from, so the link missed it.
+- LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is GNU libstdc++'s -- next to the libc++ every C++ object here is compiled against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak). PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use. --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the tree's FFmpeg is 7. It only provides the ffmpeg core and recording. --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in deps/libz, whose prototypes clash with the staged zlib.h. --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2. Its Wayland input maps Linux evdev key codes (<linux/input.h>); its X11 drivers include the XShm one, which needs SysV shared memory (<sys/shm.h>) that QNX does not have. EGL_LIBS=-lEGL: configure finds QNX's EGL (HAVE_EGL) through its headers but has no pkg-config file to take the library from, so the link missed it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH retroarch`.
 
@@ -174,9 +185,12 @@ BUILDSYS=custom
 do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc" CXX="q++" CFLAGS="-D_QNX_SOURCE -std=c17 -V$QCC_TARGET -I$STAGE$PREFIX/include" \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
-  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V$QCC_TARGET -L$STAGE$PREFIX/lib" \
+  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
   ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
+# LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is
+# GNU libstdc++'s -- next to the libc++ every C++ object here is compiled
+# against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak).
 # PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config
 # (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use.
 # --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports

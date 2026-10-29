@@ -1,6 +1,6 @@
 # Component index
 
-451 components. **450** build for both `aarch64le` and `x86_64` from upstream source, carrying 224 QNX patches between them.
+451 components. **450** build for both `aarch64le` and `x86_64` from upstream source, carrying 228 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
@@ -22,7 +22,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [adwaita-fonts](ports/adwaita-fonts/README.md) | 49.0 | custom | download.gnome.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [amqp-cpp](ports/amqp-cpp/README.md) | 4.3.27 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [aom](ports/aom/README.md) | 3.12.1 | cmake | aomedia.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [apk-tools](ports/apk-tools/README.md) | 3.0.0_rc5 | meson | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
+| [apk-tools](ports/apk-tools/README.md) | 3.0.0_rc5 | meson | github.com | 3 | 🔴 dependent | 3 | ✅ | ✅ |
 | [asio](ports/asio/README.md) | 1.30.2 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [aspell](ports/aspell/README.md) | 0.60.8.1 | autotools | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [at-spi2-core](ports/at-spi2-core/README.md) | 2.54.0 | meson | download.gnome.org | — | 🔴 dependent | 6 | ✅ | ✅ |
@@ -124,7 +124,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [fxdiv](ports/fxdiv/README.md) | 0-git-20200417 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [g3log](ports/g3log/README.md) | 2.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [garcon](ports/garcon/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 11 | ✅ | ✅ |
-| [gawk](ports/gawk/README.md) | 5.3.2 | autotools | ftp.gnu.org | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [gawk](ports/gawk/README.md) | 5.3.2 | autotools | ftp.gnu.org | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [gcr](ports/gcr/README.md) | 3.41.2 | meson | gitlab.gnome.org | 1 | 🔴 dependent | 8 | ✅ | ✅ |
 | [gdb](ports/gdb/README.md) | 14.2 | autotools | ftp.gnu.org | 2 | 🔴 dependent | 10 | ✅ | ✅ |
 | [gdbm](ports/gdbm/README.md) | 1.24 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -137,7 +137,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [git](ports/git/README.md) | 2.51.0 | custom | mirrors.edge.kernel.org | 1 | 🔴 dependent | 6 | ✅ | ✅ |
 | [gklib](ports/gklib/README.md) | 5.1.1-git-20230326 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [glib-networking](ports/glib-networking/README.md) | 2.80.1 | meson | gitlab.gnome.org | — | 🔴 dependent | 4 | ✅ | ✅ |
-| [glib](ports/glib/README.md) | 2.82.4 | meson | gitlab.gnome.org | 1 | 🔴 dependent | 4 | ✅ | ✅ |
+| [glib](ports/glib/README.md) | 2.82.4 | meson | gitlab.gnome.org | 1 | 🔴 dependent | 5 | ✅ | ✅ |
 | [glm](ports/glm/README.md) | 1.0.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [glog](ports/glog/README.md) | 0.7.1 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [gmp](ports/gmp/README.md) | 6.3.0 | autotools | gmplib.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -329,7 +329,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [open-amp](ports/open-amp/README.md) | 2024.10.0 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [open62541](ports/open62541/README.md) | 1.4.8 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [openal-soft](ports/openal-soft/README.md) | 1.24.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [openblas](ports/openblas/README.md) | 0.3.28 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
+| [openblas](ports/openblas/README.md) | 0.3.28 | cmake | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
 | [opencv](ports/opencv/README.md) | 4.10.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [openh264](ports/openh264/README.md) | 2.5.0 | meson | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [openjpeg](ports/openjpeg/README.md) | 2.5.3 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -376,7 +376,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [re2](ports/re2/README.md) | 2024-07-02 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [readline](ports/readline/README.md) | 8.2 | autotools | ftp.gnu.org | 2 | 🟡 build-deps only | — | ✅ | ✅ |
 | [restbed](ports/restbed/README.md) | 4.8 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
-| [retroarch](ports/retroarch/README.md) | 1.15-git-20230408 | custom | github.com | 1 | 🔴 dependent | 7 | ✅ | ✅ |
+| [retroarch](ports/retroarch/README.md) | 1.15-git-20230408 | custom | github.com | 2 | 🔴 dependent | 7 | ✅ | ✅ |
 | [retropie](ports/retropie/README.md) | 0.3 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [ros2](ports/ros2/README.md) | jazzy | custom | custom | — | 🔴 dependent | 6 | ✅ | ✅ |
 | [rsync](ports/rsync/README.md) | 3.3.0 | autotools | download.samba.org | — | 🔴 dependent | 4 | ✅ | ✅ |
@@ -409,7 +409,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [taglib](ports/taglib/README.md) | 2.0.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [tar](ports/tar/README.md) | 1.35 | autotools | ftp.gnu.org | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [tensorflow-lite](ports/tensorflow-lite/README.md) | 2.16.1 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
-| [tftp-hpa](ports/tftp-hpa/README.md) | 5.2 | custom | git.kernel.org | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [tftp-hpa](ports/tftp-hpa/README.md) | 5.2 | custom | git.kernel.org | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [thorvg](ports/thorvg/README.md) | 0.15.8 | meson | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [thunar](ports/thunar/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 18 | ✅ | ✅ |
 | [tinyxml2](ports/tinyxml2/README.md) | 10.0.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -426,7 +426,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [trompeloeil](ports/trompeloeil/README.md) | 48 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tumbler](ports/tumbler/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 13 | ✅ | ✅ |
 | [unbound](ports/unbound/README.md) | 1.24.1 | autotools | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
-| [unibilium](ports/unibilium/README.md) | 2.1.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [unibilium](ports/unibilium/README.md) | 2.1.2 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [urdfdom_headers](ports/urdfdom_headers/README.md) | 1.1.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [uriparser](ports/uriparser/README.md) | 0.9.8 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [utf8proc](ports/utf8proc/README.md) | 2.11.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |

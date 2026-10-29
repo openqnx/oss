@@ -6,7 +6,7 @@
 |---|---|
 | Upstream | https://github.com/alpinelinux/apk-tools.git (tag `v3.0.0_rc5`) |
 | Build system | Meson |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -56,11 +56,12 @@ git clone --depth 1 -b v3.0.0_rc5 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0001-aports-qnx-compat.patch
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0002-portability-optional-sys-random-h.patch
+patch -p1 -d src/apk-tools < ports/apk-tools/patches/0003-qnx-openat-layer-dir-o-directory.patch
 ```
 
 **[`0001-aports-qnx-compat.patch`](patches/0001-aports-qnx-compat.patch)** — QNX compatibility for apk-tools (from QNX's aports core/apk-tools).
@@ -88,6 +89,19 @@ Touches: `libfetch/common.c`, `src/apk_xattr.h`, `src/io.c` · Upstream status: 
 
 Touches: `portability/sys/random.h` · Upstream status: QNX-specific
 
+**[`0003-qnx-openat-layer-dir-o-directory.patch`](patches/0003-qnx-openat-layer-dir-o-directory.patch)** — Open the database layer directory with O_DIRECTORY.
+
+> apk_db_read_layer() opens lib/apk/db with plain O_RDONLY and then reads
+> installed, triggers and scripts.tar from it with openat(). On QNX 8 a
+> directory descriptor is only accepted as an openat() base if it was opened
+> with O_DIRECTORY; otherwise every openat() under it fails with ENOTDIR
+> (verified on the target). The first "apk --initdb add" works because the
+> directory does not exist yet, but every later apk command on that root stops
+> with "Unable to read database: Not a directory". Open the layer directory
+> with O_DIRECTORY, as apk already does for the root and cache directories.
+
+Touches: `src/database.c` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 ```bash
@@ -111,6 +125,7 @@ DESTDIR=$STAGE ninja -C build/$QNX_ARCH/apk-tools install
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - apk-tools, the Alpine package manager the QNX Everywhere image (and repo.oss.qnx.com) uses -- with it a target can install this repository's APK packages. Version as in the image.
+- Not linked, but needed to fetch from an https:// repository (the GitHub releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH apk-tools`.
 
@@ -162,6 +177,9 @@ QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PAT
 # packages. Version as in the image.
 VERSION=3.0.0_rc5; GIT=https://github.com/alpinelinux/apk-tools.git; REF=v3.0.0_rc5
 DEPS="openssl zlib zstd"
+# Not linked, but needed to fetch from an https:// repository (the GitHub
+# releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.
+RUNTIME_DEPS="ca-certificates"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Ddocs=disabled -Dhelp=disabled -Dlua=disabled -Dpython=disabled -Dtests=disabled -Dcrypto_backend=openssl -Dzstd=true -Dc_args=-D_QNX_SOURCE -Dc_link_args=-lsocket )
 ```

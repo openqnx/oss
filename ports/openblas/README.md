@@ -6,7 +6,7 @@
 |---|---|
 | Upstream | https://github.com/OpenMathLib/OpenBLAS.git (tag `v0.3.28`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -52,11 +52,12 @@ git clone --depth 1 -b v0.3.28 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/openblas < ports/openblas/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/openblas < ports/openblas/patches/0002-blas-server-qnx-headers.patch
+patch -p1 -d src/openblas < ports/openblas/patches/0003-qnx-cap-threads-at-cpu-count.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Synchronize libm linkage
@@ -78,6 +79,20 @@ Touches: `ctest/CMakeLists.txt`, `utest/CMakeLists.txt`, `CMakeLists.txt`, `cpp_
 > fails to compile ("storage size of 'rlim' isn't known").
 
 Touches: `driver/others/blas_server.c` · Upstream status: QNX-specific
+
+**[`0003-qnx-cap-threads-at-cpu-count.patch`](patches/0003-qnx-cap-threads-at-cpu-count.patch)** — Limit the default thread count to the CPUs present on QNX, as on Linux.
+
+> blas_get_cpu_number() caps the default thread count at get_num_procs() only
+> for the operating systems it lists, and QNX is not among them, although
+> get_num_procs() exists for it (0001, from the syspage). On QNX the default
+> was therefore MAX_CPU_NUMBER -- NUM_THREADS, 64 here -- whatever the machine
+> has, and every server thread takes a BUFFER_SIZE buffer, 128 MB on x86_64.
+> QNX commits anonymous memory when it is mapped rather than when it is
+> touched, so loading libopenblas consumed all of a 2 GB target's RAM before
+> main() and the process stalled (PyTorch, which links it, never started;
+> with OPENBLAS_NUM_THREADS=4 it ran in 5 s). Add OS_QNX to both lists.
+
+Touches: `driver/others/memory.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -103,7 +118,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/openblas
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- Built with OpenBLAS's CMake build, as qnx-ports does: the Makefile build queries the compiler with -dumpversion, which qcc does not answer (and then fails with "expr: syntax error"). No Fortran: LAPACK comes from its C translation (C_LAPACK). One kernel set per architecture -- ARMV8 (NEON) and HASWELL (AVX2) -- rather than runtime dispatch.
+- Built with OpenBLAS's CMake build, as qnx-ports does: the Makefile build queries the compiler with -dumpversion, which qcc does not answer (and then fails with "expr: syntax error"). No Fortran: LAPACK comes from its C translation (C_LAPACK). One kernel set per architecture -- ARMV8 (NEON) and HASWELL (AVX2) -- rather than runtime dispatch. The default thread count is capped at the CPU count by patch 0003 -- on QNX it was 64, each with a 128 MB buffer QNX commits at once. The buffer size stays (a smaller one makes OpenBLAS warn that large GEMMs may crash).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openblas`.
 
@@ -156,6 +171,9 @@ VERSION=0.3.28; GIT=https://github.com/OpenMathLib/OpenBLAS.git; REF=v0.3.28
 # fails with "expr: syntax error"). No Fortran: LAPACK comes from its C
 # translation (C_LAPACK). One kernel set per architecture -- ARMV8 (NEON) and
 # HASWELL (AVX2) -- rather than runtime dispatch.
+# The default thread count is capped at the CPU count by patch 0003 -- on
+# QNX it was 64, each with a 128 MB buffer QNX commits at once. The buffer
+# size stays (a smaller one makes OpenBLAS warn that large GEMMs may crash).
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DNOFORTRAN=ON -DC_LAPACK=ON -DBUILD_WITHOUT_LAPACK=OFF
                    -DDYNAMIC_ARCH=OFF -DUSE_OPENMP=0 -DUSE_THREAD=1 -DNUM_THREADS=64 -DBUILD_TESTING=OFF
                    "-DTARGET=$([ "$QNX_ARCH" = aarch64le ] && echo ARMV8 || echo HASWELL)" )

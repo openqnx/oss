@@ -1,0 +1,111 @@
+#!/bin/bash
+# verify-on-target -- install components on a real target with apk, from the
+# packages being served (local dists/ or GitHub), run each one's test, and
+# record the result. This is the check before a component is published.
+#
+#   scripts/verify-on-target [-u user] [-k] -t "<target description>" <target> <what>...
+#
+#   <what>   component names, or --standalone / --dependent / --all
+#            (the two kinds of ports/dependencies.json), or --changed (the
+#            components whose package in dists/ is not yet in
+#            tests/results/<arch>.tsv as passed at that version)
+#   -t       recorded with the result: what the target is, e.g.
+#            "QEMU x86_64, vanilla mkqnximage image", "Raspberry Pi 5, QNX 8.0 BSP"
+#   -k       keep the packages installed (default: apk del after each test,
+#            so a small /data can work through all of them)
+#
+# The target must be set up for apk first (scripts/target-bootstrap <target>
+# -r http://<host>:8000/dists/8.0, with scripts/serve-dists running). For each
+# component: apk add <component> qnx-test-<test> qnx-port-tests, run the test,
+# record PASS/FAIL with the package version in tests/results/<arch>.tsv. A
+# component without a test is recorded as pkg:<name>, passed when apk
+# installed it and every program and library it ships loads (ldd). The
+# transcript of each run is kept in logs/verify-<arch>.txt.
+#
+# scripts/publish-github-release --verified then publishes only what passed.
+set -o pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+USER_=${TARGET_USER:-root}; TARGET_DESC=""; KEEP=""
+while [ $# -gt 0 ]; do case "$1" in
+  -u) USER_=$2; shift 2 ;;
+  -t) TARGET_DESC=$2; shift 2 ;;
+  -k) KEEP=1; shift ;;
+  -h|--help) sed -n '2,28p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) break ;;
+esac; done
+T=${1:?usage: $0 [-u user] [-k] -t "<target description>" <target> <component>...|--standalone|--dependent|--all|--changed}; shift
+[ -n "$TARGET_DESC" ] || { echo "-t \"<target description>\" is required (it is recorded with every result)" >&2; exit 2; }
+. "$WS/tests/ssh-opts.sh"
+mapfile -t O < <(qnxport_ssh_opts "$WS")
+on() { ssh "${O[@]}" "$USER_@$T" ". /data/oss/etc/oss-env.sh 2>/dev/null; $*"; }
+
+case "$(ssh "${O[@]}" "$USER_@$T" uname -m)" in
+  aarch64*|QEMU_virt|*arm*|*Raspberry*) ARCH=aarch64le; A=aarch64 ;; *) ARCH=x86_64; A=x86_64 ;;
+esac
+on "command -v apk >/dev/null" || { echo "!! $T has no apk set up (run scripts/target-bootstrap $T first)" >&2; exit 1; }
+VIA="apk:$(on 'head -n 1 /data/oss/etc/apk/repositories' 2>/dev/null)"
+MAP=$WS/tests/port-tests.tsv          # component <TAB> test, written by scripts/gen-port-docs
+IDX=$WS/dists/8.0/$A/INDEX
+RES=$WS/tests/results/$ARCH.tsv
+ver_of() { grep "^$1|" "$IDX" 2>/dev/null | head -n 1 | cut -d'|' -f2; }
+
+comps=()
+for w in "$@"; do
+  case "$w" in
+    --standalone|--dependent|--all)
+      mapfile -t -O "${#comps[@]}" comps < <(python3 -I - "$WS/ports/dependencies.json" "$w" "$ARCH" <<'EOF'
+import json, sys
+d = json.load(open(sys.argv[1])); kind = sys.argv[2]; arch = sys.argv[3]
+for n, e in sorted(d.items()):
+    if not e.get("built", {}).get(arch):
+        continue
+    c = e.get("class")
+    if kind == "--all" or (kind == "--standalone") == (c == "standalone"):
+        print(n)
+EOF
+      ) ;;
+    --changed)
+      while IFS='|' read -r n v _; do
+        case "$n" in \#*|*-dev) continue ;; esac
+        t=$(awk -F'\t' -v c="$n" '$1==c{print $2}' "$MAP")
+        key=${t:-pkg:$n}
+        grep -qP "^$key\tPASS\t[^\t]*\t\Q$TARGET_DESC\E\t[^\t]*\t$n $v\$" "$RES" 2>/dev/null || comps+=("$n")
+      done < "$IDX" ;;
+    *) comps+=("$w") ;;
+  esac
+done
+[ ${#comps[@]} -gt 0 ] || { echo "nothing to verify"; exit 0; }
+LOG=$WS/logs/verify-$ARCH.txt; mkdir -p "$WS/logs"
+on "apk update >/dev/null 2>&1" || echo "!! apk update failed on $T (is scripts/serve-dists running?)" >&2
+echo "== $T ($ARCH, $TARGET_DESC): ${#comps[@]} component(s)" | tee -a "$LOG"
+pass=0; fail=0
+for c in "${comps[@]}"; do
+  v=$(ver_of "$c")
+  [ -n "$v" ] || { echo "?? $c: not in $IDX" | tee -a "$LOG"; continue; }
+  t=$(awk -F'\t' -v c="$c" '$1==c{print $2}' "$MAP")
+  pkgs="$c"; [ -n "$t" ] && pkgs="$pkgs qnx-test-$(echo "${t#test_}" | tr _ -) qnx-port-tests"
+  out=$(on "apk add $pkgs 2>&1" ) || { echo "FAIL $c: apk add $pkgs" | tee -a "$LOG"; echo "$out" | tail -5 | sed 's/^/    /' | tee -a "$LOG"
+    printf 'FAIL %s\n' "${t:-pkg:$c}" | "$WS/scripts/record-results" -a "$ARCH" -t "$TARGET_DESC" -v "$VIA" -p "$c $v" >/dev/null
+    fail=$((fail+1)); continue; }
+  if [ -n "$t" ]; then
+    out=$(on "/usr/local/bin/qnx-port-tests/run-on-target.sh $t 2>&1" 2>&1)
+    r=$(echo "$out" | grep -E "^(PASS|FAIL) $t\b" | head -n 1)
+    [ -n "$r" ] || r="FAIL $t"
+  else
+    # No test of its own: every ELF file it installs must load.
+    out=$(on "for d in /data/oss/usr/local/opt/*/lib /data/oss/usr/local/opt/ros/*/lib; do [ -d \$d ] && LD_LIBRARY_PATH=\$d:\$LD_LIBRARY_PATH; done; export LD_LIBRARY_PATH; apk info -L $c 2>/dev/null | grep -E '(^|/)(s?bin|lib)/' | while read -r f; do f=/data/oss/\$f; [ -f \"\$f\" ] || continue; case \"\$(head -c 4 \$f | od -An -c | tr -d ' ')\" in 177ELF*) ldd \"\$f\" >/dev/null 2>&1 || echo \"load failed: \$f\";; esac; done" 2>&1)
+    case "$out" in *"load failed"*) r="FAIL $c" ;; *) r="INSTALLED $c" ;; esac
+  fi
+  echo "$r  ($c $v)" | tee -a "$LOG"
+  echo "$out" | grep -E '^\s+FAIL|load failed|Could not' | head -5 | sed 's/^/    /' | tee -a "$LOG"
+  case "$r" in
+    PASS*|INSTALLED*) pass=$((pass+1)) ;;
+    *) fail=$((fail+1)) ;;
+  esac
+  key=${t:-pkg:$c}
+  res=${r%% *}; [ "$res" = INSTALLED ] && res=PASS
+  printf '%s %s\n' "$res" "$key" | "$WS/scripts/record-results" -a "$ARCH" -t "$TARGET_DESC" -v "$VIA" -p "$c $v" >/dev/null
+  [ -n "$KEEP" ] || on "apk del $pkgs >/dev/null 2>&1"
+done
+echo "== $T: $pass verified, $fail failed (results: tests/results/$ARCH.tsv, transcript: logs/verify-$ARCH.txt)" | tee -a "$LOG"
+[ $fail -eq 0 ]

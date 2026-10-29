@@ -68,4 +68,8 @@ do_configure() {
     --disable-alsa --disable-pulse --disable-sndio --disable-jack
 }
 do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR="$B/$(_vlc_host)/lib/pkgconfig" make -C "$B/build" -j"$(nproc)" $(_vlc_jobserver); }
-do_install() { make -C "$B/build" DESTDIR="$STAGE" install; }
+# vlc-plugin.pc carries -L for the contrib tree in the build directory (where
+# libintl/libiconv were found): meaningless on any other machine, and
+# scripts/check-artifacts rejects build paths in installed metadata.
+do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }

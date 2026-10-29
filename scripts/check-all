@@ -27,7 +27,7 @@ for arch in aarch64le x86_64; do
 done
 
 echo "== both-arch audits"
-for s in check-devlinks check-sdp-leak check-dupes check-artifacts; do
+for s in check-devlinks check-sdp-leak check-dupes check-artifacts check-embedded-libc check-needed; do
   echo "-- $s"
   run "$s" "./scripts/$s"
 done

@@ -29,7 +29,17 @@ for arch in aarch64le x86_64; do
   esac
 
   # --- dangling symlinks -------------------------------------------------
-  dangling=$(find "$STAGE" -xtype l 2>/dev/null)
+  # An absolute link points into the target's tree, not the build host's:
+  # resolve it inside the staging root (groff's pdf/mom-pdf.pdf ->
+  # /usr/local/share/doc/... is fine; find -xtype l called it dangling).
+  # Only what ships (usr/local): linkroot*/ are the driver's links into the SDP.
+  dangling=$(find "$STAGE/usr/local" -type l 2>/dev/null | while IFS= read -r l; do
+    t=$(readlink "$l")
+    case "$t" in
+      /*) [ -e "$STAGE$t" ] || [ -e "${STAGE%/usr/local}$t" ] || echo "$l" ;;
+      *)  [ -e "$l" ] || echo "$l" ;;
+    esac
+  done)
   if [ -n "$dangling" ]; then
     echo "FAIL [$arch] dangling symlinks:"
     echo "$dangling" | sed 's,^,    ,'

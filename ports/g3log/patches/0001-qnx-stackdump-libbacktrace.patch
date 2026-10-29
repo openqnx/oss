@@ -38,19 +38,25 @@ Upstream-Status: QNX-specific
  #include <unistd.h>
  #include <atomic>
  #include <csignal>
-@@ -137,6 +141,25 @@
+@@ -137,6 +141,32 @@
           if (nullptr != rawdump && !std::string(rawdump).empty()) {
              return {rawdump};
           }
 +#if defined(__QNX__)
 +         // QNX: walk the stack with libbacktrace and print each frame as
 +         // "address  object+offset"; symbolise offline with addr2line.
++         // An accessor of our own: SDP 8's libbacktrace.so declares
++         // bt_acc_self in <backtrace.h> but does not export it.
 +         const int max_dump_size = 50;
 +         bt_addr_t addrs[max_dump_size];
-+         const int n = bt_get_backtrace(&bt_acc_self, addrs, max_dump_size);
-+         bt_memmap_t memmap;
++         bt_accessor_t acc;
 +         std::ostringstream oss;
-+         if (n > 0 && bt_load_memmap(&bt_acc_self, &memmap) == 0) {
++         if (bt_init_accessor(&acc, BT_SELF) != 0) {
++            return oss.str();
++         }
++         const int n = bt_get_backtrace(&acc, addrs, max_dump_size);
++         bt_memmap_t memmap;
++         if (n > 0 && bt_load_memmap(&acc, &memmap) == 0) {
 +            char line[512];
 +            for (int idx = 1; idx < n; ++idx) {  // skip this frame
 +               if (bt_sprnf_addrs(&memmap, &addrs[idx], 1, const_cast<char*>("%a  %f+%o"), line, sizeof line, nullptr) > 0) {
@@ -59,12 +65,13 @@ Upstream-Status: QNX-specific
 +            }
 +            bt_unload_memmap(&memmap);
 +         }
++         bt_release_accessor(&acc);
 +         return oss.str();
 +#else
           const size_t max_dump_size = 50;
           void* dump[max_dump_size];
           const size_t size = backtrace(dump, max_dump_size);
-@@ -187,6 +210,7 @@
+@@ -187,6 +217,7 @@
           }  // END: for(size_t idx = 1; idx < size && messages != nullptr; ++idx)
           free(messages);
           return oss.str();

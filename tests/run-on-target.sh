@@ -3,7 +3,7 @@
 #
 # Copy stage/<arch>/usr/local to the target (it is a /usr/local overlay), then:
 #     export LD_LIBRARY_PATH=/usr/local/lib
-#     /usr/local/bin/qnx-port-tests/run-on-target.sh
+#     /usr/local/bin/qnx-port-tests/run-on-target.sh [test_name...]
 #
 # Each test prints per-check lines and a final PASS/FAIL; this script tallies
 # them and exits non-zero if any test failed.
@@ -43,7 +43,10 @@ if [ -d "$DIR/../lib/gstreamer-1.0" ]; then
 fi
 # The bundled CPython stdlib.  test_python runs with an isolated config, which
 # ignores PYTHONHOME, so it reads this variable itself and sets PyConfig.home.
-[ -d "$DIR/../lib/python3.14" ] && { QNX_PORT_PYTHONHOME="$(cd "$DIR/.." && pwd)"; export QNX_PORT_PYTHONHOME; }
+# Installed from packages (apk add qnx-test-python) the stdlib is the python3
+# package's, under /usr/local.
+if [ -d "$DIR/../lib/python3.14" ]; then QNX_PORT_PYTHONHOME="$(cd "$DIR/.." && pwd)"; export QNX_PORT_PYTHONHOME
+elif [ -d /usr/local/lib/python3.14 ]; then QNX_PORT_PYTHONHOME=/usr/local; export QNX_PORT_PYTHONHOME; fi
 rm -rf /tmp/qnx-port-tests-run.* 2>/dev/null   # stale runtime dirs from earlier runs
 # Wayland refuses an XDG_RUNTIME_DIR that is not a 0700 directory owned by the
 # caller, so /tmp itself will not do -- make a private one.
@@ -70,6 +73,8 @@ free_kb=$(df -kP /tmp 2>/dev/null | awk 'NR==2 {print $4}')
 pass=0; fail=0; failed=""
 list="$DIR/tests.list"
 [ -f "$list" ] || list=$(ls "$DIR"/test_* 2>/dev/null | sed 's|.*/||')
+# Named tests only: run-on-target.sh test_zstd test_jq (scripts/verify-on-target).
+[ $# -gt 0 ] && list="$*"
 for t in $(cat "$list" 2>/dev/null || echo $list); do
   [ -x "$DIR/$t" ] || continue
   "$DIR/$t" > /tmp/$t.out 2>&1

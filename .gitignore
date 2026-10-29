@@ -11,7 +11,7 @@
 /dist
 /hosttools
 /pkgroot
-/repo
+/dists
 /tmp
 /tests/build/
 
@@ -32,3 +32,8 @@ qnx-session-backups/
 # The package-signing private key. Only the public half (keys/*.rsa.pub) is
 # tracked; targets install it in /etc/apk/keys. Never commit the private key.
 /keys/private/
+/ported
+/test_suites
+
+# Python byte code
+__pycache__/

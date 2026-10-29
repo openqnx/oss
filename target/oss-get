@@ -5,7 +5,8 @@
 #   oss-get list | search <word>   what is available
 #   oss-get info <pkg>             version, dependencies, size
 #   oss-get install <pkg>...       download, verify (sha256) and unpack,
-#                                  dependencies first
+#                                  dependencies first (<pkg>=<version>: that one)
+#   oss-get versions <pkg>         every version the repository has
 #   oss-get remove <pkg>...        delete the files a package installed
 #   oss-get installed              what is installed
 #   oss-get link                   map /usr/local onto the install root
@@ -17,7 +18,7 @@
 #   OSS_REPO   where the packages are. "@ARCH@" in it is replaced with
 #              aarch64 or x86_64; without it, /<arch> is appended. Default:
 #              the openqnx/oss GitHub release for this architecture. Any
-#              web server or local directory laid out like repo/8.0/ works.
+#              web server or local directory laid out like dists/8.0/ works.
 #   OSS_ROOT   where packages are unpacked (default /data/oss). Packages
 #              contain usr/local/..., so files land in $OSS_ROOT/usr/local.
 #   SSL_CERT_FILE  CA bundle for https:// (a stock image has none; after
@@ -76,7 +77,13 @@ need_index() { [ -f "$INDEX" ] || die "no package index -- run: oss-get update";
 
 # One INDEX line: name|version|depends|file|sha256|size|description|conflicts
 # (an index without the last field has no conflicts)
-entry() { need_index; grep "^$1|" "$INDEX" | head -n 1; }
+# "<name>" is its newest version (the index lists those first), "<name>=<version>"
+# a specific one: every version stays in the repository.
+entry() { need_index
+  case "$1" in
+    *=*) grep "^${1%%=*}|${1#*=}|" "$INDEX" | head -n 1 ;;
+    *)   grep "^$1|" "$INDEX" | head -n 1 ;;
+  esac; }
 field() { echo "$1" | cut -d'|' -f"$2"; }
 
 cmd_update() {
@@ -111,14 +118,15 @@ cmd_info() {
 # Depth-first: a package's dependencies are installed before it.
 SEEN=" "
 install_one() {
-  case "$SEEN" in *" $1 "*) return 0 ;; esac
-  SEEN="$SEEN$1 "
+  case "$SEEN" in *" ${1%%=*} "*) return 0 ;; esac
+  SEEN="$SEEN${1%%=*} "
   e=$(entry "$1"); [ -n "$e" ] || die "no such package: $1"
   deps=$(field "$e" 3 | tr ',' ' ')
   for d in $deps; do install_one "$d" || return 1; done
   # POSIX sh functions have no local variables and the recursion above has
   # overwritten every one of them, so read this package's entry again.
-  e=$(entry "$1"); v=$(field "$e" 2)
+  spec=$1; set -- "${1%%=*}"
+  e=$(entry "$spec"); v=$(field "$e" 2)
   # Two packages that install the same files (sdl2 and sdl2-compat) cannot
   # both be installed; either side may declare it.
   for c in $(field "$e" 8 | tr ',' ' '); do
@@ -128,7 +136,7 @@ install_one() {
     [ -f "$l" ] || continue; q=$(basename "$l" .list); [ "$q" = "$1" ] && continue
     case ",$(field "$(entry "$q")" 8)," in *",$1,"*) die "$1 conflicts with the installed $q (remove it first: oss-get remove $q)" ;; esac
   done
-  e=$(entry "$1"); v=$(field "$e" 2)
+  e=$(entry "$spec"); v=$(field "$e" 2)
   if [ -f "$DB/$1.list" ] && [ "$(cat "$DB/$1.version" 2>/dev/null)" = "$v" ] && [ -z "$FORCE" ]; then
     return 0
   fi
@@ -199,10 +207,11 @@ case "$c" in
   list) cmd_list ;;
   search) cmd_search "$1" ;;
   info) cmd_info "$1" ;;
+  versions) need_index; grep "^$1|" "$INDEX" | cut -d'|' -f2 ;;
   install|add) cmd_install "$@" ;;
   remove|del) cmd_remove "$@" ;;
   installed) cmd_installed ;;
   link) cmd_link ;;
   env) cmd_env ;;
-  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+  *) sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac

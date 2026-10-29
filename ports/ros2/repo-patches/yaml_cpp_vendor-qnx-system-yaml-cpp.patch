@@ -1,0 +1,31 @@
+yaml_cpp_vendor: keep a found system yaml-cpp_DIR.
+
+The package's CMake extras set yaml-cpp_DIR to the vendored install
+unconditionally, also when ament_vendor() found a system yaml-cpp and
+built nothing. On a distribution the missing directory makes find_package
+fall back to its default search; under a cross toolchain's restricted
+search (QNX here, built against this tree's yaml-cpp component) it simply
+failed: camera_calibration_parsers "Could not find a package
+configuration file provided by yaml-cpp". Set it only if it exists.
+
+Upstream-Status: Pending
+
+--- a/yaml_cpp_vendor-extras.cmake.in
++++ b/yaml_cpp_vendor-extras.cmake.in
+@@ -1,7 +1,14 @@
+ # add the local Modules directory to the modules path
++# Only when this package built yaml-cpp itself: with a system yaml-cpp found
++# (ament_vendor SATISFIED) nothing is installed there, and overriding
++# yaml-cpp_DIR anyway hid the found one from every package that depends on
++# this one.
+ if(WIN32)
+-  set(yaml-cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/yaml_cpp_vendor/CMake")
++  set(_yaml_cpp_vendor_dir "${@PROJECT_NAME@_DIR}/../../../opt/yaml_cpp_vendor/CMake")
+ else()
+-  set(yaml-cpp_DIR "${@PROJECT_NAME@_DIR}/../../../opt/yaml_cpp_vendor/share/cmake/yaml-cpp")
++  set(_yaml_cpp_vendor_dir "${@PROJECT_NAME@_DIR}/../../../opt/yaml_cpp_vendor/share/cmake/yaml-cpp")
++endif()
++if(EXISTS "${_yaml_cpp_vendor_dir}")
++  set(yaml-cpp_DIR "${_yaml_cpp_vendor_dir}")
+ endif()
+ message(STATUS "Setting yaml-cpp_DIR to: '${yaml-cpp_DIR}'")

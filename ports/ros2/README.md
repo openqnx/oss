@@ -7,23 +7,24 @@
 | Upstream | see recipe.sh |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
-| Build dependencies | [`python3`](../python3/) [`numpy`](../numpy/) [`opencv`](../opencv/) [`curl`](../curl/) [`lz4`](../lz4/) |
-| Run-time dependencies | [`curl`](../curl/) [`lz4`](../lz4/) [`opencv`](../opencv/) [`openssl`](../openssl/) [`python3`](../python3/) [`sqlite`](../sqlite/) |
+| Build dependencies | [`python3`](../python3/) [`numpy`](../numpy/) [`opencv`](../opencv/) [`curl`](../curl/) [`lz4`](../lz4/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`cyclonedds`](../cyclonedds/) [`console_bridge`](../console_bridge/) [`libyaml`](../libyaml/) [`yaml-cpp`](../yaml-cpp/) [`zstd`](../zstd/) [`benchmark`](../benchmark/) [`tinyxml2`](../tinyxml2/) |
+| Run-time dependencies | [`benchmark`](../benchmark/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`opencv`](../opencv/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_ros2`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
-No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
 
 ```sh
 # on the QNX target
-oss-get update
-oss-get install ros2
-oss-get install ros2-dev    # only for building on the target: headers, .pc, CMake files
+. /data/oss/etc/oss-env.sh
+apk add ros2
+apk add ros2-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-ros2 && /usr/local/bin/qnx-port-tests/test_ros2    # its on-target test
 ```
 
-See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install ros2`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
 
 ## Build it from upstream
 
@@ -41,15 +42,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (24 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (33 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild python3 numpy opencv curl lz4
+./scripts/qnxbuild python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2
 ```
 
-<details><summary>Full build chain (24)</summary>
+<details><summary>Full build chain (33)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`eigen`](../eigen/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`lz4`](../lz4/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`benchmark`](../benchmark/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`foonathan_memory`](../foonathan_memory/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -70,7 +71,7 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 More QNX changes, outside the main source tree:
 
-- [`repo-patches/`](repo-patches/) — 34 one patch per repository of a multi-repository source (repo-patches/MAP)
+- [`repo-patches/`](repo-patches/) — 35 one patch per repository of a multi-repository source (repo-patches/MAP)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -167,6 +168,7 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  local L="$STAGE$PREFIX/lib"
   cd "$S" && PATH="$w:$v/bin:$PATH" CPU="$QNX_CPU" ARCH="$QNX_CPU" CPUVARDIR="$QNX_ARCH" CPUVAR="$QNX_ARCH" QNX_SDP_VERSION=qnx800 LC_NUMERIC=en_US.UTF-8 \
   colcon build --merge-install --cmake-force-configure --build-base "$B/build" --install-base "$B/install" \
     --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/ros2-toolchain.cmake" \
@@ -174,7 +176,13 @@ EOF
       -DTHIRDPARTY=FORCE -DCPU="$QNX_CPU" -DSECURITY=ON --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE$PREFIX/include/eigen3" -DEigen3_INCLUDE_DIRS="$STAGE$PREFIX/include/eigen3" -DOpenCV_DIR="$STAGE$PREFIX/lib/cmake/opencv4" -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$STAGE$PREFIX/include" -DCV_BRIDGE_DISABLE_PYTHON=ON -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" \
       -DPython3_INCLUDE_DIR="$STAGE$PREFIX/include/python3.14" -DPython3_LIBRARY="$STAGE$PREFIX/lib/libpython3.14.so" \
-      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include"
+      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include" \
+      -Dfastcdr_DIR="$L/cmake/fastcdr" -Dfastrtps_DIR="$STAGE$PREFIX/share/fastrtps/cmake" \
+      -Dfoonathan_memory_DIR="$L/foonathan_memory/cmake" -DTinyXML2_DIR="$L/cmake/tinyxml2" -Dtinyxml2_DIR="$L/cmake/tinyxml2" \
+      -DCycloneDDS_DIR="$L/cmake/CycloneDDS" -Dconsole_bridge_DIR="$L/console_bridge/cmake" \
+      -Dyaml_DIR="$L/cmake/yaml" -Dyaml-cpp_DIR="$L/cmake/yaml-cpp" \
+      -Dbenchmark_DIR="$L/cmake/benchmark" -Dzstd_INCLUDE_DIR="$STAGE$PREFIX/include" -Dzstd_LIBRARY="$L/libzstd.so" \
+      -DFastRTPS_INCLUDE_DIR="$STAGE$PREFIX/include" -DFastRTPS_LIBRARY_RELEASE="$L/libfastrtps.so" -DFastCDR_LIBRARY_RELEASE="$L/libfastcdr.so"
 }
 ```
 
@@ -184,7 +192,7 @@ do_install() { mkdir -p "$STAGE$ROS_PREFIX" && cp -a "$B/install/." "$STAGE$ROS_
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- ROS 2 Jazzy Jalisco: the core (rclcpp, rclpy, Fast DDS and Cyclone DDS RMWs, rosbag2, tf2, common interfaces, demos) -- 107 repositories at the versions pinned in ros2.repos. Taken from qnx-ports/build-files ports/ros2/ros2-jazzy (see qnx-ports/LICENSE): ros2.repos          the repository set and versions ros2-extra.repos    vision_opencv (cv_bridge), imported on top of it repo-patches/*.patch QNX changes, one per repository (repo-patches/MAP says where) COLCON_IGNORE.list  packages that are not built for QNX (rviz, gazebo, ...) qnx-ports/platform  the CMake toolchain file the ROS build uses qnx-ports/modules   find modules and vendor package overrides The ROS build tools (vcstool, colcon, the rosidl generator dependencies) run on the build host, in a venv of the host Python. Installs to /usr/local/opt/ros/jazzy on the target (source its setup.sh/local_setup.sh there). Run time: put /usr/local/opt/ros/jazzy/lib FIRST on LD_LIBRARY_PATH (its setup.sh does). The ROS workspace builds its own Fast DDS, Fast CDR, Cyclone DDS, zstd, yaml, yaml-cpp, console_bridge, orocos-kdl and benchmark, under the same sonames as this tree's standalone components in /usr/local/lib, and QNX's loader searches LD_LIBRARY_PATH before any RPATH: with /usr/local/lib first, Fast DDS nodes loaded the standalone libfastcdr and threw BadParamException registering their first type. Building ROS against the standalone components instead would remove the duplicates.
+- ROS 2 Jazzy Jalisco: the core (rclcpp, rclpy, Fast DDS and Cyclone DDS RMWs, rosbag2, tf2, common interfaces, demos) -- 107 repositories at the versions pinned in ros2.repos. Taken from qnx-ports/build-files ports/ros2/ros2-jazzy (see qnx-ports/LICENSE): ros2.repos          the repository set and versions ros2-extra.repos    vision_opencv (cv_bridge), imported on top of it repo-patches/*.patch QNX changes, one per repository (repo-patches/MAP says where) COLCON_IGNORE.list  packages that are not built for QNX (rviz, gazebo, ...) qnx-ports/platform  the CMake toolchain file the ROS build uses qnx-ports/modules   find modules and vendor package overrides The ROS build tools (vcstool, colcon, the rosidl generator dependencies) run on the build host, in a venv of the host Python. Installs to /usr/local/opt/ros/jazzy on the target (source its setup.sh/local_setup.sh there). Built against this tree's Fast DDS, Fast CDR, Cyclone DDS, console_bridge, libyaml, yaml-cpp, zstd, Google Benchmark and tinyxml2 rather than copies of its own (the Fast-CDR/Fast-DDS/cyclonedds repositories are in COLCON_IGNORE.list; the *_vendor packages find the components through the <Pkg>_DIR arguments below). The copies carried the components' sonames into the ROS prefix, and QNX's loader takes whichever comes first on LD_LIBRARY_PATH: with /usr/local/lib first, Fast DDS nodes loaded the standalone libfastcdr and threw BadParamException registering their first type. One copy of each library now, whatever the search order -- except Orocos KDL: ROS's PyKDL needs a later commit than the orocos-kdl component's 1.5.1 (std::hash for its types), so orocos_kdl_vendor still builds its own liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its setup.sh does).
 - The qnx-ports toolchain file and patches read CPU, ARCH, CPUVARDIR and QNX_SDP_VERSION (qnx800; zstd_vendor's CMakeLists tests it) from the environment (ARCH names the archiver, nto<ARCH>-ar: without it "Error running link command" on the first static library). Eigen3_INCLUDE_DIRS: qnx-ports' orocos_kdl_vendor change forwards it to the orocos_kdl sub-build as EIGEN3_INCLUDE_DIR; unset, that was empty ("Eigen/Core: No such file or directory"). OpenCV_DIR: that toolchain's CMAKE_FIND_ROOT_PATH is the colcon install prefix and the SDP only, so the opencv component's config is out of reach (image_geometry, cv_bridge: "Could not find a package configuration file provided by OpenCV"). Name it alone rather than add the whole staging tree, which would let the vendor packages settle for staged copies of what they vendor. Boost likewise (cv_bridge: "Could NOT find Boost"), as headers through FindBoost's own search: BoostConfig.cmake finds its components by absolute path, which that find-root setup reroots out of reach ("Could not find a package configuration file provided by boost_headers"). cv_bridge is built without its Python bindings (CV_BRIDGE_DISABLE_PYTHON): they need Boost.Python, which the boost component leaves out. Python3_*: the target's Python is this tree's python3 (3.14), not the SDP's libpython3.11, whose headers the SDP does not ship ("Python3::Python includes non-existent path .../python3.11").
 - Their linker flags carry --as-needed: a library that calls nothing in libc itself (rcl_logging_noop, the generated *__rosidl_typesupport_c libraries) then lost libc.so and exported copies of libc functions from QNX's static libcS.a, which every other ROS library then called instead of libc's. Keep libc needed (toolchain/qnx-x86_64.cmake does the same for every other port).
 
@@ -192,37 +200,79 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2`.
 
 ### 5. What it installs
 
-25241 files under `/usr/local`.
+24226 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2` after a build.
 
 ### 6. Package it for the target
 
 ```bash
-./scripts/qnxpkg -a $QNX_ARCH ros2
-ls repo/8.0/*/ | grep '^ros2-'
+./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa ros2
+ls dists/8.0/*/ | grep '^ros2-'
 ```
 
 This writes `ros2-<ver>-r0.tar.gz` (run time) and `ros2-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
 
 ## Run it on a target
 
-Either install from your own repository (serve `repo/8.0/` with any web server):
+Serve your build from `dists/` and install it with apk:
 
+```bash
+./scripts/serve-dists &                                  # on the build host: http://<host>:8000
+./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target
+```
 ```sh
 # on the target
-export OSS_REPO=http://<build-host>:8000
-oss-get update && oss-get install ros2
+. /data/oss/etc/oss-env.sh
+apk update && apk add ros2
 ```
 
 or copy the tarball and unpack it yourself:
 
 ```bash
-scp repo/8.0/aarch64/ros2-*-r0.tar.gz root@<target>:/data/
-ssh root@<target> 'cd /data/oss && tar xzf /data/ros2-*-r0.tar.gz'
+scp dists/8.0/aarch64/ros2-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/ros2-*-r0.tar.gz'
 ```
 
-QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_ros2`](../../tests/src/) links ros2 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-ros2`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-ros2
+/usr/local/bin/qnx-port-tests/test_ros2
+```
+
+```
+== ros2 ==
+  ok   ...
+PASS ros2
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_ros2` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+## How it was verified
+
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_ros2`](../../tests/src/) -- a program linked against ros2 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date |
+|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64 virt, vanilla mkqnximage image | apk:http://192.168.122.1:8000/dists/8.0 | ros2 0_git-r1 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:http://192.168.122.1:8000/dists/8.0 | ros2 0_git-r1 | ✅ PASS | 2026-10-30 |
+
+## Versions
+
+This recipe builds **jazzy**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ros2=<version>`), sources in `ported/ros2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ros2`; port one with `scripts/port-update ros2`.
 
 <details><summary>recipe.sh</summary>
 
@@ -245,15 +295,20 @@ VERSION=jazzy
 # Installs to /usr/local/opt/ros/jazzy on the target (source its
 # setup.sh/local_setup.sh there).
 #
-# Run time: put /usr/local/opt/ros/jazzy/lib FIRST on LD_LIBRARY_PATH (its
-# setup.sh does). The ROS workspace builds its own Fast DDS, Fast CDR, Cyclone
-# DDS, zstd, yaml, yaml-cpp, console_bridge, orocos-kdl and benchmark, under
-# the same sonames as this tree's standalone components in /usr/local/lib, and
-# QNX's loader searches LD_LIBRARY_PATH before any RPATH: with /usr/local/lib
-# first, Fast DDS nodes loaded the standalone libfastcdr and threw
-# BadParamException registering their first type. Building ROS against the
-# standalone components instead would remove the duplicates.
-DEPS="python3 numpy opencv curl lz4"
+# Built against this tree's Fast DDS, Fast CDR, Cyclone DDS, console_bridge,
+# libyaml, yaml-cpp, zstd, Google Benchmark and tinyxml2 rather than copies
+# of its own (the Fast-CDR/Fast-DDS/cyclonedds repositories are
+# in COLCON_IGNORE.list; the *_vendor packages find the components through
+# the <Pkg>_DIR arguments below). The copies carried the components' sonames
+# into the ROS prefix, and QNX's loader takes whichever comes first on
+# LD_LIBRARY_PATH: with /usr/local/lib first, Fast DDS nodes loaded the
+# standalone libfastcdr and threw BadParamException registering their first
+# type. One copy of each library now, whatever the search order -- except
+# Orocos KDL: ROS's PyKDL needs a later commit than the orocos-kdl component's
+# 1.5.1 (std::hash for its types), so orocos_kdl_vendor still builds its own
+# liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its
+# setup.sh does).
+DEPS="python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2"
 BUILDSYS=custom
 ROS_PREFIX="$PREFIX/opt/ros/$VERSION"
 _rosvenv() {
@@ -372,6 +427,7 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  local L="$STAGE$PREFIX/lib"
   cd "$S" && PATH="$w:$v/bin:$PATH" CPU="$QNX_CPU" ARCH="$QNX_CPU" CPUVARDIR="$QNX_ARCH" CPUVAR="$QNX_ARCH" QNX_SDP_VERSION=qnx800 LC_NUMERIC=en_US.UTF-8 \
   colcon build --merge-install --cmake-force-configure --build-base "$B/build" --install-base "$B/install" \
     --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/ros2-toolchain.cmake" \
@@ -379,7 +435,13 @@ EOF
       -DTHIRDPARTY=FORCE -DCPU="$QNX_CPU" -DSECURITY=ON --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE$PREFIX/include/eigen3" -DEigen3_INCLUDE_DIRS="$STAGE$PREFIX/include/eigen3" -DOpenCV_DIR="$STAGE$PREFIX/lib/cmake/opencv4" -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$STAGE$PREFIX/include" -DCV_BRIDGE_DISABLE_PYTHON=ON -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" \
       -DPython3_INCLUDE_DIR="$STAGE$PREFIX/include/python3.14" -DPython3_LIBRARY="$STAGE$PREFIX/lib/libpython3.14.so" \
-      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include"
+      -DPython3_NumPy_INCLUDE_DIR="$STAGE$PREFIX/lib/python3.14/site-packages/numpy/_core/include" \
+      -Dfastcdr_DIR="$L/cmake/fastcdr" -Dfastrtps_DIR="$STAGE$PREFIX/share/fastrtps/cmake" \
+      -Dfoonathan_memory_DIR="$L/foonathan_memory/cmake" -DTinyXML2_DIR="$L/cmake/tinyxml2" -Dtinyxml2_DIR="$L/cmake/tinyxml2" \
+      -DCycloneDDS_DIR="$L/cmake/CycloneDDS" -Dconsole_bridge_DIR="$L/console_bridge/cmake" \
+      -Dyaml_DIR="$L/cmake/yaml" -Dyaml-cpp_DIR="$L/cmake/yaml-cpp" \
+      -Dbenchmark_DIR="$L/cmake/benchmark" -Dzstd_INCLUDE_DIR="$STAGE$PREFIX/include" -Dzstd_LIBRARY="$L/libzstd.so" \
+      -DFastRTPS_INCLUDE_DIR="$STAGE$PREFIX/include" -DFastRTPS_LIBRARY_RELEASE="$L/libfastrtps.so" -DFastCDR_LIBRARY_RELEASE="$L/libfastcdr.so"
 }
 do_install() { mkdir -p "$STAGE$ROS_PREFIX" && cp -a "$B/install/." "$STAGE$ROS_PREFIX/"; }
 ```

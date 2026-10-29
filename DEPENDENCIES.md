@@ -1,5 +1,14 @@
 # Dependencies
 
+Two kinds, by whether anything else from this repository is needed:
+
+| Kind | Meaning | Components |
+|---|---|---|
+| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **197** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **253** |
+
+Dependent components split further by what they need at run time (37 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
@@ -30,7 +39,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`autoconf`](ports/autoconf/) | 2.72 | autotools | – | 0 |
 | [`automake`](ports/automake/) | 1.18 | autotools | – | 0 |
 | [`aws-c-common`](ports/aws-c-common/) | 0.12.6 | cmake | – | 5 |
-| [`benchmark`](ports/benchmark/) | 1.9.0 | cmake | aarch64le✅ x86_64✅ | 0 |
+| [`benchmark`](ports/benchmark/) | 1.9.0 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`brotli`](ports/brotli/) | 1.1.0 | cmake | aarch64le✅ x86_64✅ | 9 |
 | [`busybox`](ports/busybox/) | 1.36.1 | custom | – | 0 |
 | [`bzip2`](ports/bzip2/) | 1.0.8 | custom | aarch64le✅ x86_64✅ | 11 |
@@ -46,11 +55,11 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`clapack`](ports/clapack/) | 3.2.1 | cmake | – | 0 |
 | [`cli11`](ports/cli11/) | 2.4.2 | cmake | aarch64le✅ x86_64✅ | 0 |
 | [`computelibrary`](ports/computelibrary/) | 53.0.0 | cmake | – | 0 |
-| [`console_bridge`](ports/console_bridge/) | 1.0.2 | cmake | aarch64le✅ x86_64✅ | 0 |
+| [`console_bridge`](ports/console_bridge/) | 1.0.2 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`cpuinfo`](ports/cpuinfo/) | 0-git-20240417 | cmake | – | 2 |
 | [`csmith`](ports/csmith/) | 2.3.0 | cmake | – | 0 |
 | [`cunit`](ports/cunit/) | 2.1-3 | custom | – | 0 |
-| [`cyclonedds`](ports/cyclonedds/) | 0.10.5 | cmake | aarch64le✅ x86_64✅ | 0 |
+| [`cyclonedds`](ports/cyclonedds/) | 0.10.5 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`dav1d`](ports/dav1d/) | 1.5.0 | meson | – | 2 |
 | [`dnsmasq`](ports/dnsmasq/) | 2.93test4 | custom | – | 0 |
 | [`double-conversion`](ports/double-conversion/) | 3.3.0 | cmake | aarch64le✅ x86_64✅ | 1 |
@@ -61,7 +70,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`expat`](ports/expat/) | 2.6.4 | cmake | aarch64le✅ x86_64✅ | 9 |
 | [`fakeroot`](ports/fakeroot/) | 1.37.1.1 | autotools | – | 0 |
 | [`farmhash`](ports/farmhash/) | 1.1-git-20190513 | autotools | – | 0 |
-| [`fastcdr`](ports/fastcdr/) | 2.2.6 | cmake | aarch64le✅ x86_64✅ | 1 |
+| [`fastcdr`](ports/fastcdr/) | 2.2.6 | cmake | aarch64le✅ x86_64✅ | 2 |
 | [`fdk-aac`](ports/fdk-aac/) | 2.0.3 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`flatbuffers`](ports/flatbuffers/) | 24.3.25 | cmake | aarch64le✅ x86_64✅ | 0 |
 | [`fmt`](ports/fmt/) | 11.2.0 | cmake | aarch64le✅ x86_64✅ | 1 |
@@ -138,7 +147,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libuv`](ports/libuv/) | 1.51.0 | cmake | – | 4 |
 | [`libvpx`](ports/libvpx/) | 1.15.0 | custom | – | 2 |
 | [`libxcrypt`](ports/libxcrypt/) | 4.4.38 | autotools | – | 3 |
-| [`libyaml`](ports/libyaml/) | 0.2.5 | cmake | – | 1 |
+| [`libyaml`](ports/libyaml/) | 0.2.5 | cmake | – | 2 |
 | [`lmbench`](ports/lmbench/) | 3.0-git-20260929 | custom | – | 0 |
 | [`lua`](ports/lua/) | 5.4.7 | custom | – | 0 |
 | [`lua5.1`](ports/lua5.1/) | 5.1.5 | custom | – | 0 |
@@ -186,7 +195,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`speexdsp`](ports/speexdsp/) | 1.2.1 | autotools | – | 0 |
 | [`svt-av1`](ports/svt-av1/) | 2.3.0 | cmake | – | 1 |
 | [`tensorflow-lite`](ports/tensorflow-lite/) | 2.16.1 | custom | – | 0 |
-| [`tinyxml2`](ports/tinyxml2/) | 10.0.0 | cmake | – | 1 |
+| [`tinyxml2`](ports/tinyxml2/) | 10.0.0 | cmake | – | 2 |
 | [`tomlplusplus`](ports/tomlplusplus/) | 3.4.0 | cmake | – | 0 |
 | [`tree`](ports/tree/) | 2.2.1 | custom | – | 0 |
 | [`tree-sitter`](ports/tree-sitter/) | 0.25.9 | cmake | – | 2 |
@@ -214,11 +223,11 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`xtrans`](ports/xtrans/) | 1.5.2 | autotools | – | 2 |
 | [`xvidcore`](ports/xvidcore/) | 1.3.7 | custom | – | 0 |
 | [`xxhash`](ports/xxhash/) | 0.8.2 | cmake | – | 2 |
-| [`yaml-cpp`](ports/yaml-cpp/) | 0.8.0 | cmake | – | 0 |
+| [`yaml-cpp`](ports/yaml-cpp/) | 0.8.0 | cmake | – | 1 |
 | [`zimg`](ports/zimg/) | 3.0.5 | autotools | – | 0 |
 | [`zlib`](ports/zlib/) | 1.3.1 | cmake | aarch64le✅ | 57 |
 | [`zlib-ng`](ports/zlib-ng/) | 2.2.5 | cmake | – | 0 |
-| [`zstd`](ports/zstd/) | 1.5.6 | cmake | – | 16 |
+| [`zstd`](ports/zstd/) | 1.5.6 | cmake | – | 17 |
 
 ## Runtime-standalone
 
@@ -446,7 +455,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`re2`](ports/re2/) | 2024-07-02 | abseil | abseil | 1 |
 | [`restbed`](ports/restbed/) | 4.8 | openssl asio | openssl | 1 |
 | [`retroarch`](ports/retroarch/) | 1.15-git-20230408 | sdl2 freetype zlib fontconfig fribidi libass openssl | fontconfig freetype fribidi libass libxkbcommon openssl zlib | 23 |
-| [`ros2`](ports/ros2/) | jazzy | python3 numpy opencv curl lz4 | curl lz4 opencv openssl python3 sqlite | 20 |
+| [`ros2`](ports/ros2/) | jazzy | python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2 | benchmark console_bridge curl cyclonedds fastcdr fastdds libyaml lz4 opencv python3 sqlite tinyxml2 yaml-cpp zstd | 29 |
 | [`rsync`](ports/rsync/) | 3.3.0 | zstd lz4 xxhash openssl | lz4 openssl xxhash zstd | 4 |
 | [`rtl-sdr`](ports/rtl-sdr/) | 2.0.2 | libusb | libusb | 1 |
 | [`s2n-tls`](ports/s2n-tls/) | 1.7.0 | openssl | openssl | 1 |

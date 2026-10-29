@@ -14,16 +14,16 @@
 
 ## Install the prebuilt package on a target
 
-No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
 
 ```sh
 # on the QNX target
-oss-get update
-oss-get install tftp-hpa
-oss-get install tftp-hpa-dev    # only for building on the target: headers, .pc, CMake files
+. /data/oss/etc/oss-env.sh
+apk add tftp-hpa
+apk add tftp-hpa-dev    # only for building on the target: headers, .pc, CMake files
 ```
 
-See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install tftp-hpa`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
 
 ## Build it from upstream
 
@@ -112,30 +112,44 @@ The complete list is `stage/<arch>/.manifest/tftp-hpa` after a build.
 ### 6. Package it for the target
 
 ```bash
-./scripts/qnxpkg -a $QNX_ARCH tftp-hpa
-ls repo/8.0/*/ | grep '^tftp-hpa-'
+./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa tftp-hpa
+ls dists/8.0/*/ | grep '^tftp-hpa-'
 ```
 
 This writes `tftp-hpa-<ver>-r0.tar.gz` (run time) and `tftp-hpa-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
 
 ## Run it on a target
 
-Either install from your own repository (serve `repo/8.0/` with any web server):
+Serve your build from `dists/` and install it with apk:
 
+```bash
+./scripts/serve-dists &                                  # on the build host: http://<host>:8000
+./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target
+```
 ```sh
 # on the target
-export OSS_REPO=http://<build-host>:8000
-oss-get update && oss-get install tftp-hpa
+. /data/oss/etc/oss-env.sh
+apk update && apk add tftp-hpa
 ```
 
 or copy the tarball and unpack it yourself:
 
 ```bash
-scp repo/8.0/aarch64/tftp-hpa-*-r0.tar.gz root@<target>:/data/
-ssh root@<target> 'cd /data/oss && tar xzf /data/tftp-hpa-*-r0.tar.gz'
+scp dists/8.0/aarch64/tftp-hpa-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/tftp-hpa-*-r0.tar.gz'
 ```
 
-QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
+
+## How it was verified
+
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+No test program of its own (no run-time code to exercise, or covered by a dependent's test); `scripts/verify-on-target` installs it with apk and checks that every program and library it ships loads.
+
+## Versions
+
+This recipe builds **5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tftp-hpa=<version>`), sources in `ported/tftp-hpa/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tftp-hpa`; port one with `scripts/port-update tftp-hpa`.
 
 <details><summary>recipe.sh</summary>
 

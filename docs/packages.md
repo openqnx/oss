@@ -136,11 +136,11 @@ exactly what the program loads — see the run-time column in
 ```bash
 source ./env.sh aarch64le
 ./scripts/qnxbuild mosquitto         # installs into pkgroot/<arch>/mosquitto too
-./scripts/qnxpkg mosquitto           # -> repo/8.0/{aarch64,x86_64}/
+./scripts/qnxpkg mosquitto           # -> dists/8.0/{aarch64,x86_64}/
 ./scripts/qnxpkg --all               # everything that has been built
 ```
 
-`repo/8.0/<arch>/` then holds, per package:
+`dists/8.0/<arch>/` then holds, per package:
 
 ```
 <name>-<ver>-r0.tar.gz        what oss-get downloads
@@ -149,8 +149,8 @@ INDEX                         name|version|depends|file|sha256|size|description
 APKINDEX.tar.gz               the index apk-tools reads
 ```
 
-Serve it with anything — `python3 -m http.server -d repo/8.0 8000` is enough
-for a lab — and point `OSS_REPO` at it.
+Serve it with `scripts/serve-dists` (or any web server pointed at
+`dists/8.0`) — see [Serving your own build](#serving-your-own-build-from-dists).
 
 ### APK packages
 
@@ -172,7 +172,7 @@ How `apk` finds the index:
 
 | Repository given as | `apk` fetches |
 |---|---|
-| `http://<host>:8000` | `http://<host>:8000/<arch>/APKINDEX.tar.gz` — it appends the architecture itself, so give the `repo/8.0` level, not `.../x86_64` |
+| `http://<host>:8000` | `http://<host>:8000/<arch>/APKINDEX.tar.gz` — it appends the architecture itself, so give the `dists/8.0` level, not `.../x86_64` |
 | `http://<host>:8000/x86_64/APKINDEX.tar.gz` | that index; packages are fetched next to it. Use this form for a flat layout such as the GitHub releases below |
 
 Either form also goes in `<root>/etc/apk/repositories`, one per line, after
@@ -195,20 +195,64 @@ openssl genrsa -out oss.rsa 2048 && openssl rsa -in oss.rsa -pubout -out oss.rsa
 # on the target: cp oss.rsa.pub <root>/etc/apk/keys/
 ```
 
+## Serving your own build from `dists/`
+
+Everything `scripts/qnxpkg` writes lands in `dists/` (not tracked by git):
+
+```
+dists/8.0/aarch64/          dists/8.0/x86_64/          one repository per architecture
+  <pkg>-<ver>-r0.apk          apk packages + APKINDEX.tar.gz (signed with --key)
+  <pkg>-<ver>-r0.tar.gz       oss-get packages + INDEX
+dists/8.0/tests/<arch>/     the port tests: qnx-test-<name>, qnx-port-tests (qnxpkg --tests)
+```
+
+It can be served at any time, as it is, to targets on the network:
+
+```bash
+./scripts/qnxpkg --key keys/private/<key>.rsa --all --tests   # (re)package what is built
+./scripts/serve-dists                                         # http://<host>:8000, Ctrl-C to stop
+./scripts/target-bootstrap <target> -r http://<host>:8000     # once per target
+```
+
+and then on the target:
+
+```sh
+. /data/oss/etc/oss-env.sh
+apk update
+apk add mosquitto                       # + its run-time dependencies, signature-checked
+apk add qnx-test-mosquitto qnx-port-tests
+/usr/local/bin/qnx-port-tests/test_mosquitto      # one test
+/usr/local/bin/qnx-port-tests/run-on-target.sh    # every installed test
+```
+
+`target-bootstrap -r http://<host>:8000` makes `apk-setup` register both
+`http://<host>:8000` (apk appends `/<arch>/APKINDEX.tar.gz`) and
+`http://<host>:8000/tests` in `/data/oss/etc/apk/repositories`; `-T none`
+leaves the tests out. `oss-get` reads the same tree:
+`OSS_REPO=http://<host>:8000 oss-get install mosquitto`.
+
+Each test package's dependencies are computed like any package's (from its
+binary's `DT_NEEDED`), plus what the test loads at run time (GStreamer
+plugins, Python's standard library, the TensorFlow Lite, PyTorch and ROS 2
+prefixes), so `apk add qnx-test-<name>` brings everything the test needs.
+
+Tested on both architectures (x86_64 and aarch64le VMs).
+
 ## Publishing to GitHub releases
 
 GitHub allows at most 1000 assets per release, each under 2 GiB, and assets
-are flat (no directories). `repo/8.0/<arch>` holds about 1640 files, so each
-architecture gets two releases:
+are flat (no directories). `dists/8.0/<arch>` holds about 1640 files, so each
+architecture gets three releases:
 
 | Release | Assets | Read by |
 |---|---|---|
 | `packages-8.0-<arch>` | `<pkg>-<ver>.tar.gz`, `INDEX` | `oss-get` (its default `OSS_REPO`) |
 | `apk-8.0-<arch>` | `<pkg>-<ver>.apk`, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>/APKINDEX.tar.gz`) |
+| `tests-8.0-<arch>` | the port tests `qnx-test-<name>` (`.apk`, `.tar.gz`, both indexes) | `apk`, as a second repository |
 
 ```bash
 source ./env.sh x86_64
-./scripts/qnxpkg --key keys/private/<key>.rsa --all   # signed; see APK packages above
+./scripts/qnxpkg --key keys/private/<key>.rsa --all --tests   # signed; see APK packages above
 ./scripts/publish-github-release                     # stage in dist/release/ and check limits
 ./scripts/publish-github-release --upload --prune    # gh release create/upload; drop old versions
 ```
@@ -217,7 +261,7 @@ Without `--upload` nothing leaves the machine. With it, `gh` (logged in, with
 write access to the repository) creates any missing release and uploads the
 packages first and the index last, so a target never sees an index naming a
 package that is not there yet; `--prune` then deletes assets no longer in
-`repo/` (superseded versions). `--repo owner/name` publishes to a fork.
+`dists/` (superseded versions). `--repo owner/name` publishes to a fork.
 
 The signing key: the public half is `keys/<name>.rsa.pub` (tracked, and what
 `target-bootstrap` installs and `apk-setup` downloads by default); the

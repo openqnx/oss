@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""gen-target-guide -- docs/target-guide.md: putting every component on a
+vanilla QNX 8.0 target (x86_64 QEMU, aarch64 QEMU, Raspberry Pi 5), by kind
+(standalone / dependent), from dists/ or built from ported/, and testing it.
+
+    scripts/gen-target-guide
+
+Reads ports/dependencies.json, tests/port-tests.tsv and tests/results/*.tsv.
+"""
+import json, os, re
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(WS)
+deps = json.load(open("ports/dependencies.json"))
+ptest = {}
+if os.path.exists("tests/port-tests.tsv"):
+    for l in open("tests/port-tests.tsv"):
+        if not l.startswith("#") and "\t" in l:
+            c, t = l.split()[:2]; ptest[c] = t
+res = {}
+for arch in ("aarch64le", "x86_64"):
+    p = f"tests/results/{arch}.tsv"
+    if os.path.exists(p):
+        for l in open(p):
+            f = l.rstrip("\n").split("\t")
+            if len(f) >= 4 and not l.startswith("#"):
+                res.setdefault((f[0], arch), []).append(f)
+
+
+def verified(n):
+    t = ptest.get(n, f"pkg:{n}")
+    marks = []
+    for arch, short in (("x86_64", "x86"), ("aarch64le", "a64")):
+        rows = res.get((t, arch), [])
+        if not rows:
+            continue
+        ok = all(r[1] == "PASS" for r in rows)
+        van = any("vanilla" in r[3] for r in rows)
+        marks.append(f"{short}{'✅' if ok else '❌'}{'ᵛ' if van else ''}")
+    return " ".join(marks) or "–"
+
+
+def tpkg(n):
+    t = ptest.get(n)
+    return f"`qnx-test-{t[5:].replace('_', '-')}`" if t else "–"
+
+
+L = []
+A = L.append
+A("""# Putting the components on a QNX 8.0 target
+
+Every component reaches a target one of two ways, and is tested there the same way:
+
+| | How | Where it comes from |
+|---|---|---|
+| **A. Install the built package** | `apk add <name>` | `dists/` -- served from this machine (`scripts/serve-dists`) or the GitHub releases |
+| **B. Build it yourself, then deploy** | original source + QNX patches, configure, build, package | `ported/<name>/<version>/` |
+| **Test** (either way) | `apk add qnx-test-<name>`, run it | `test_suites/` |
+
+## The three directories
+
+| Directory | What is in it | Made by |
+|---|---|---|
+| `dists/8.0/<arch>/` | the packages: `<name>-<ver>-r<N>.apk` + `APKINDEX.tar.gz` (apk), `.tar.gz` + `INDEX` (oss-get), signed; **every version kept** | `scripts/qnxpkg --key keys/private/<key>.rsa --all` |
+| `ported/<name>/<version>/` | `SOURCE.md` (where the original comes from and how to get it), `patches/` (the QNX patches, each with its reason), `<name>-<ver>-orig.tar.gz` (the original, untouched), `<name>-<ver>-qnx.tar.gz` (patched: what is built) | `scripts/gen-ported` |
+| `test_suites/8.0/<arch>/` | the tests as packages (`qnx-test-<name>`, `qnx-port-tests` = the runner), `bin/` (the plain programs), `qnx-port-tests-<arch>.tar.gz` (every test with every library it loads, for a target without apk) | `scripts/qnxpkg --tests` |
+
+`<arch>` is `x86_64` or `aarch64`. None of the three is tracked by git; `scripts/publish-github-release` puts `dists/` and `test_suites/` on GitHub releases.
+
+## 1. Prepare the target (once)
+
+Any QNX 8.0 image with a network, `sshd` and a writable `/data` will do -- the
+packages are installed under `/data/oss` and need nothing else from the image.
+
+### x86_64 -- QEMU (vanilla mkqnximage image)
+
+```bash
+source ~/qnx800/qnxsdp-env.sh
+mkdir -p ~/vm/qnx-x86_64 && cd ~/vm/qnx-x86_64
+mkqnximage --type=qemu --arch=x86_64 --ssh-ident=$HOME/.ssh/id_ed25519.pub \\
+           --data-size=3000 --data-inodes=60000 --run=-h      # 3 GB /data for the packages
+mkqnximage --getip                                             # the target's address
+```
+
+### aarch64 -- QEMU (vanilla mkqnximage image)
+
+The same with `--arch=aarch64le`. QEMU emulates Arm on an x86 host (no KVM):
+correct, several times slower -- fine for testing, give it time.
+
+### aarch64 -- Raspberry Pi 5 (QNX 8.0 BSP image)
+
+Write the QNX 8.0 Raspberry Pi 5 BSP image to an SD card as its BSP
+documentation describes, boot, and make sure of three things:
+network up (`ifconfig`), `sshd` running with your public key in
+`/root/.ssh/authorized_keys` (or a password), and a writable `/data` with a
+few hundred MB free (`df -h /data`). Not tested here on hardware: everything
+below was checked on the two QEMU targets; the Pi is the same `aarch64le`
+architecture and the same packages.
+
+### Then, from the build host (for every target)
+
+```bash
+./scripts/serve-dists &                                               # local dists/ + test_suites/, port 8000
+./scripts/target-bootstrap <target> -r http://<host>:8000/dists/8.0   # local packages
+./scripts/target-bootstrap <target>                                   # or: the GitHub releases
+```
+
+`target-bootstrap` copies over SSH what a vanilla image lacks for the first
+download -- `oss-get`, `apk-setup`, the signing key, a CA bundle -- and the
+QNX run-time libraries the packages use that the image does not carry (a
+vanilla mkqnximage image lacks `libeventfd`, `libepoll`, `libsignalfd`,
+`libtimerfd`, `libasound`, `libEGL`, `libGLESv2`, `libscreen`,
+`libbacktrace`; they come from your SDP, into `/data/oss/qnx-runtime/lib`).
+Then apk installs itself into `/data/oss`, with this repository and its
+tests repository configured. On the target, once per shell:
+
+```sh
+. /data/oss/etc/oss-env.sh     # PATH, LD_LIBRARY_PATH
+```
+
+## 2A. Install and test a package
+
+```sh
+apk add <name>                               # + everything it needs at run time
+apk add qnx-test-<test> qnx-port-tests       # its test (names in the tables below)
+/usr/local/bin/qnx-port-tests/test_<test>    # one test: ok/FAIL per check, PASS/FAIL at the end
+/usr/local/bin/qnx-port-tests/run-on-target.sh   # every installed test
+apk add <name>=<version>                     # a specific version (all are kept)
+apk del <name>
+```
+
+From the build host, the same for one component, a kind, or what changed --
+installed with apk from what `serve-dists` serves, tested, and recorded in
+`tests/results/<arch>.tsv`:
+
+```bash
+./scripts/verify-on-target -t "QEMU x86_64, vanilla mkqnximage image" <target> zstd mosquitto
+./scripts/verify-on-target -t "Raspberry Pi 5, QNX 8.0 BSP" <target> --standalone
+./scripts/verify-on-target -t "<target>" <target> --dependent
+./scripts/verify-on-target -t "<target>" <target> --changed    # versions not yet verified there
+```
+
+Only what passed there is published with `scripts/publish-github-release --verified --upload`
+(`--changed` uploads only files the release does not have yet; `--only <name>...` a few components).
+
+## 2B. Build it yourself from `ported/`, then test on the target
+
+```bash
+tar xf ported/<name>/<ver>/<name>-<ver>-qnx.tar.gz -C src/   # original + QNX patches
+#   or: the original (-orig.tar.gz, or the URL in SOURCE.md) + patch -p1 < ported/<name>/<ver>/patches/*.patch
+source ./env.sh x86_64          # or aarch64le
+```
+
+then configure, build and install into the staging tree exactly as
+`ports/<name>/README.md` shows (step 4; `./scripts/qnxbuild <name>` does the
+same in one command). Deploy what you built the same way as 2A -- package it
+and let the target install it:
+
+```bash
+./scripts/qnxpkg --key keys/private/<key>.rsa <name>      # -> dists/ (a new release if it changed)
+./scripts/serve-dists &
+./scripts/verify-on-target -t "<target>" <target> <name>   # apk add + its test + record
+```
+
+or copy the files yourself (`scp` the `dists/8.0/<arch>/<name>-*.tar.gz` and
+unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
+
+## Standalone and dependent
+
+""")
+
+S = sorted(n for n, e in deps.items() if e.get("class") == "standalone")
+D = sorted(n for n, e in deps.items() if e.get("class") in ("dependent", "runtime-standalone"))
+A(f"**{len(S)} standalone** components build with the QNX SDP alone and run on a vanilla image "
+  f"with nothing else: `apk add <name>` installs one package. **{len(D)} dependent** components need "
+  "others: apk installs those first by itself (the *needs at run time* column); to build one yourself, "
+  "build its *build* dependencies first (`ports/<name>/README.md` lists them in order).\n")
+A("Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, "
+  "`ᵛ` on a vanilla image installed with apk; details per component in its README's "
+  "*How it was verified*.\n")
+A(f"### Standalone ({len(S)})\n")
+A("| Component | Version | Install | Test package | Verified |\n|---|---|---|---|---|")
+for n in S:
+    e = deps[n]
+    A(f"| [`{n}`](../ports/{n}/) | {e.get('version', '')} | `apk add {n}` | {tpkg(n)} | {verified(n)} |")
+A(f"\n### Dependent ({len(D)})\n")
+A("| Component | Version | Install | Needs at run time | Needs to build | Test package | Verified |\n|---|---|---|---|---|---|---|")
+for n in D:
+    e = deps[n]
+    rt = " ".join(e.get("runtime_deps") or []) or "–"
+    bd = " ".join(e.get("build_deps") or []) or "–"
+    A(f"| [`{n}`](../ports/{n}/) | {e.get('version', '')} | `apk add {n}` | {rt} | {bd} | {tpkg(n)} | {verified(n)} |")
+A("\n---\n<sub>Generated by <code>scripts/gen-target-guide</code>.</sub>\n")
+open("docs/target-guide.md", "w").write("\n".join(L))
+print("docs/target-guide.md: %d standalone, %d dependent" % (len(S), len(D)))

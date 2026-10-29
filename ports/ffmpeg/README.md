@@ -14,16 +14,17 @@
 
 ## Install the prebuilt package on a target
 
-No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
 
 ```sh
 # on the QNX target
-oss-get update
-oss-get install ffmpeg
-oss-get install ffmpeg-dev    # only for building on the target: headers, .pc, CMake files
+. /data/oss/etc/oss-env.sh
+apk add ffmpeg
+apk add ffmpeg-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-ffmpeg && /usr/local/bin/qnx-port-tests/test_ffmpeg    # its on-target test
 ```
 
-See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install ffmpeg`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
 
 ## Build it from upstream
 
@@ -149,39 +150,43 @@ The complete list is `stage/<arch>/.manifest/ffmpeg` after a build.
 ### 6. Package it for the target
 
 ```bash
-./scripts/qnxpkg -a $QNX_ARCH ffmpeg
-ls repo/8.0/*/ | grep '^ffmpeg-'
+./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa ffmpeg
+ls dists/8.0/*/ | grep '^ffmpeg-'
 ```
 
 This writes `ffmpeg-<ver>-r0.tar.gz` (run time) and `ffmpeg-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
 
 ## Run it on a target
 
-Either install from your own repository (serve `repo/8.0/` with any web server):
+Serve your build from `dists/` and install it with apk:
 
+```bash
+./scripts/serve-dists &                                  # on the build host: http://<host>:8000
+./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target
+```
 ```sh
 # on the target
-export OSS_REPO=http://<build-host>:8000
-oss-get update && oss-get install ffmpeg
+. /data/oss/etc/oss-env.sh
+apk update && apk add ffmpeg
 ```
 
 or copy the tarball and unpack it yourself:
 
 ```bash
-scp repo/8.0/aarch64/ffmpeg-*-r0.tar.gz root@<target>:/data/
-ssh root@<target> 'cd /data/oss && tar xzf /data/ffmpeg-*-r0.tar.gz'
+scp dists/8.0/aarch64/ffmpeg-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/ffmpeg-*-r0.tar.gz'
 ```
 
-QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
 ### Test
 
-[`test_ffmpeg`](../../tests/src/) links ffmpeg the way an application would and checks its core API on the target:
+[`test_ffmpeg`](../../tests/src/) links ffmpeg the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-ffmpeg`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
 
-```bash
-./tests/build-tests.sh $QNX_ARCH
-scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_ffmpeg root@<target>:/data/
-ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_ffmpeg'
+```sh
+# on the target
+apk add qnx-test-ffmpeg
+/usr/local/bin/qnx-port-tests/test_ffmpeg
 ```
 
 ```
@@ -190,7 +195,39 @@ ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_ffmpeg'
 PASS ffmpeg
 ```
 
-`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_ffmpeg` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+## How it was verified
+
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_ffmpeg`](../../tests/src/) -- a program linked against ffmpeg the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - H.264 encoder is registered (libx264)
+   - H.264 decoder is registered
+   - avcodec_open2 (encoder)
+   - avcodec_open2 (decoder)
+   - av_frame_get_buffer
+   - all frames encoded
+   - at least one frame decoded back at the right size
+   - sws_getContext
+   - av_image_alloc
+   - sws_scale converted every row
+   - swr_alloc_set_opts2
+   - swr_init
+   - the mp4 muxer is registered
+   - matroska muxer by filename
+
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date |
+|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+
+## Versions
+
+This recipe builds **7.1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ffmpeg=<version>`), sources in `ported/ffmpeg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ffmpeg`; port one with `scripts/port-update ffmpeg`.
 
 <details><summary>recipe.sh</summary>
 

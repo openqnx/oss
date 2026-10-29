@@ -378,7 +378,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [restbed](ports/restbed/README.md) | 4.8 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [retroarch](ports/retroarch/README.md) | 1.15-git-20230408 | custom | github.com | 2 | 🔴 dependent | 7 | ✅ | ✅ |
 | [retropie](ports/retropie/README.md) | 0.3 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [ros2](ports/ros2/README.md) | jazzy | custom | custom | — | 🔴 dependent | 6 | ✅ | ✅ |
+| [ros2](ports/ros2/README.md) | jazzy | custom | custom | — | 🔴 dependent | 14 | ✅ | ✅ |
 | [rsync](ports/rsync/README.md) | 3.3.0 | autotools | download.samba.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [rtl-sdr](ports/rtl-sdr/README.md) | 2.0.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [rust](ports/rust/README.md) | 1.90.0 | custom | static.rust-lang.org | 1 | 🟢 standalone | — | ✅ | ✅ |

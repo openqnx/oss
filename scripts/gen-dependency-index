@@ -237,6 +237,16 @@ def write_md(out):
     L = []
     A = L.append
     A("# Dependencies\n")
+    A("Two kinds, by whether anything else from this repository is needed:\n")
+    A("| Kind | Meaning | Components |")
+    A("|---|---|---|")
+    A(f"| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **{len(S)}** |")
+    A(f"| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **{len(R) + len(D)}** |")
+    A("")
+    A(f"Dependent components split further by what they need at run time ({len(R)} run on their own once built). "
+      "Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the "
+      "upstream source -- download, QNX patches, configure, build, install, package, test -- with its "
+      "dependencies first when it has any.\n")
     A("Every component is in exactly one of three classes. The class is computed "
       "by `scripts/gen-dependency-index` from the recipes *and* from the "
       "binaries the build installed (their `DT_NEEDED` entries), so it describes "

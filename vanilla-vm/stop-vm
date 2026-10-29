@@ -1,0 +1,16 @@
+#!/bin/bash
+# stop-vm -- stop the vanilla VM(s); --wipe also deletes the image.
+#
+#   vanilla-vm/stop-vm [x86_64|aarch64le|both] [--desktop] [--wipe]
+#   --desktop: the graphics VM (vanilla-vm/desktop) instead of the plain one
+set -eo pipefail
+. "$(dirname "$0")/common.sh"
+W=; A=both; K=
+for a in "$@"; do case "$a" in --wipe) W=1 ;; --desktop) K=desktop ;; *) A=$a ;; esac; done
+sdp_env
+[ "$A" = both ] && set -- x86_64 aarch64le || set -- "$(norm_arch "$A")"
+for arch; do
+  D=$(vm_dir "$arch" $K); [ -d "$D" ] || continue
+  if [ -n "$W" ]; then (cd "$D" && mkqnximage --wipe >/dev/null 2>&1 || true); rm -rf "$D"; echo "wiped $arch"
+  else (cd "$D" && mkqnximage --stop >/dev/null 2>&1 || true); echo "stopped $arch"; fi
+done

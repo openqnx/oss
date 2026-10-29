@@ -1,0 +1,68 @@
+#!/bin/bash
+# desktop -- the desktop on a QNX 8.0 QEMU image, in a window here: build
+# and boot the image with graphics, set it up for apk, install oss-desktop
+# (labwc, swaybg, the Xfce panel, terminal and file manager) and every ported
+# application with a desktop entry, and start the session.
+#
+#   vanilla-vm/desktop [x86_64|aarch64le] [--from local|github] [--apps-only "<name>..."]
+#                      [--no-apps] [--rebuild] [--stop]
+#
+#   --from          where the packages come from (as run-all; default local)
+#   --no-apps       only the session, not every application
+#   --apps-only     these applications instead of all of them
+#
+# In the window: right click (or Super+Space) on the background for the
+# menu -- Applications lists everything installed, "Run the port tests" runs
+# the test suite in a terminal; Super+Return a terminal. From here:
+# vanilla-vm/screenshot <arch> [file.png].
+#
+# Needs QNX's "Screen Board Support VirtIO" package in the SDP (mkqnximage
+# --graphics=yes says so if it is missing: install it with the QNX Software
+# Center) and a desktop session on this machine for the QEMU window.
+set -o pipefail
+HERE=$(cd "$(dirname "$0")" && pwd)
+. "$HERE/common.sh"
+A=x86_64; FROM=local; APPS=all; REBUILD=; STOP=
+while [ $# -gt 0 ]; do case "$1" in
+  x86_64|aarch64le|aarch64) A=$1; shift ;;
+  --from) FROM=$2; shift 2 ;;
+  --no-apps) APPS=; shift ;;
+  --apps-only) APPS=$2; shift 2 ;;
+  --rebuild) REBUILD=--rebuild; shift ;;
+  --stop) STOP=1; shift ;;
+  -h|--help) sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) echo "unknown argument $1" >&2; exit 2 ;;
+esac; done
+sdp_env || exit 1
+ARCH=$(norm_arch "$A") || exit 2
+mkdir -p "$WS/logs"; LOG=$WS/logs/desktop-vm-$ARCH.log
+exec > >(tee -a "$LOG") 2>&1
+echo "== $(date -u +%FT%TZ) desktop $ARCH, packages from $FROM"
+IP=$("$HERE/make-vm" "$ARCH" --graphics --data-size 8000 $REBUILD) || exit 1
+
+if [ "$FROM" = local ]; then
+  HOST=$(ip -4 route get "$IP" 2>/dev/null | grep -Eo 'src [0-9.]+' | cut -d' ' -f2); PORT=${SERVE_PORT:-8000}
+  curl -s -o /dev/null "http://$HOST:$PORT/dists/8.0/" 2>/dev/null || {
+    setsid nohup "$WS/scripts/serve-dists" -p "$PORT" >"$WS/logs/serve-dists.log" 2>&1 < /dev/null &
+    for _ in $(seq 1 20); do curl -s -o /dev/null "http://$HOST:$PORT/dists/8.0/" 2>/dev/null && break; sleep 1; done; }
+  REPO=(-r "http://$HOST:$PORT/dists/8.0"); want="http://$HOST:$PORT/dists/8.0"
+else REPO=(); want=https://github.com/; fi
+on_vm "$IP" ". /data/oss/etc/oss-env.sh 2>/dev/null && apk --version >/dev/null 2>&1 && head -n 1 /data/oss/etc/apk/repositories" 2>/dev/null | grep -q "^$want" \
+  || "$WS/scripts/target-bootstrap" "$IP" "${REPO[@]}" || exit 1
+
+# Every component that installs a desktop entry: the applications.
+if [ "$APPS" = all ]; then
+  APPS=$(for d in "$WS"/pkgroot/"$ARCH"/*/usr/local/share/applications; do
+    ls "$d"/*.desktop >/dev/null 2>&1 && basename "$(dirname "$(dirname "$(dirname "$(dirname "$d")")")")"; done \
+    | grep -vxE 'oss-desktop|xfce4-.*|thunar|exo|garcon|libxfce4ui|gcr' | sort -u | tr '\n' ' ')
+fi
+echo ">> apk add oss-desktop qnx-port-tests ${APPS:+(+ $(echo $APPS | wc -w) applications: $APPS)}"
+on_vm "$IP" ". /data/oss/etc/oss-env.sh; apk update -q; apk add oss-desktop qnx-port-tests $APPS" | tail -2 || exit 1
+on_vm "$IP" "slay -f labwc >/dev/null 2>&1; . /data/oss/etc/oss-env.sh; nohup oss-desktop > /tmp/oss-desktop.out 2>&1 &" ; sleep 8
+if on_vm "$IP" "pidin -p labwc >/dev/null 2>&1"; then
+  echo "== the desktop is up in the QEMU window ($IP). Screenshot: vanilla-vm/screenshot $ARCH"
+else
+  echo "!! labwc did not stay up; its log:"; on_vm "$IP" "cat /tmp/oss-desktop.out /tmp/xdg-runtime-0/labwc.log 2>/dev/null | tail -30"; exit 1
+fi
+[ -n "$STOP" ] && "$HERE/stop-vm" "$ARCH" --desktop
+exit 0

@@ -1,5 +1,5 @@
 # test	result	date	target	via	versions
-pkg:adwaita-fonts	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	adwaita-fonts 49.0-r0
+pkg:adwaita-fonts	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	adwaita-fonts 49.0-r0
 test_aom	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_atk	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_benchmark	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -54,7 +54,7 @@ test_graphite2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime
 test_grpc	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_gst_plugins_good	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_gstreamer	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_gstreamer	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	gstreamer 1.24.10-r0
+test_gstreamer	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	gstreamer 1.24.10-r0
 test_gtk3	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_gtk4	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_gtk_layer_shell	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -64,7 +64,7 @@ test_icu	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libra
 test_jansson	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_javascriptcore	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_jq	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_jq	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	jq 1.7.1-r0
+test_jq	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	jq 1.7.1-r0
 test_json_c	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_json_glib	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_jsoncpp	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -132,7 +132,7 @@ test_magic_enum	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtim
 test_mbedtls	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_misc_libs	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	mosquitto 2.0.20-r0
+test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	mosquitto 2.0.20-r0
 test_mpc	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mpfr	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mpg123	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -151,7 +151,7 @@ test_opencv	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime li
 test_openh264	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_openjpeg	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_openssl	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_openssl	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	openssl 3.5.1-r0
+test_openssl	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	openssl 3.5.1-r0
 test_opus	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_orc	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_orocos_kdl	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -165,17 +165,17 @@ test_protobuf	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime 
 test_protobuf_c	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_pugixml	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_python	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_python	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	python3 3.14.0-r0
+test_python	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	python3 3.14.0-r0
 test_qt6	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_qt6	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	qt6 6.8.1-r0
+test_qt6	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	qt6 6.8.1-r0
 test_quickjs	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_rapidjson	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_re2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_readline	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_ros2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_ros2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	ros2 0_git-r1
+test_ros2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r1
 test_sdl2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_sdl2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	sdl2 2.32.10-r0
+test_sdl2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	sdl2 2.32.10-r0
 test_sdl2_ext	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_simdjson	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_simdutf	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -188,13 +188,13 @@ test_svt_av1	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime l
 test_taglib	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_textstack	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_tflite	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_tflite	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	tensorflow-lite 2.16.1-r1
+test_tflite	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	tensorflow-lite 2.16.1-r1
 test_theora	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_thorvg	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_tinyxml2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_tomlplusplus	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_torch	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_torch	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	pytorch 2.3.1-r1
+test_torch	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	pytorch 2.3.1-r1
 test_tree_sitter	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_unibilium	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_uriparser	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -220,4 +220,4 @@ test_zenoh_c	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime l
 test_zimg	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_zlib	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_zstd	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
-test_zstd	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:http://192.168.122.1:8000/dists/8.0	zstd 1.5.6-r0
+test_zstd	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	zstd 1.5.6-r0

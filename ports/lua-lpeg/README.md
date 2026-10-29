@@ -136,7 +136,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date |
 |---|---|---|---|---|---|
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:http://192.168.122.1:8000/dists/8.0 | lua-lpeg 1.1.0-r0 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lua-lpeg 1.1.0-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 

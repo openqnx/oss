@@ -1,0 +1,41 @@
+#!/bin/bash
+# serve-dists -- serve the built packages (dists/) and the port tests
+# (test_suites/) to QNX targets over HTTP, so a target can install and test
+# them with apk (or oss-get) straight from this machine -- before anything is
+# pushed anywhere.
+#
+#   scripts/serve-dists [-p PORT] [-b ADDRESS]      (default 0.0.0.0:8000)
+#
+#   http://<host>:8000/dists/8.0/<arch>/        packages: .apk + APKINDEX.tar.gz, .tar.gz + INDEX
+#   http://<host>:8000/test_suites/8.0/<arch>/  qnx-test-<name> packages, bin/, the test bundle
+#
+# with <arch> aarch64 or x86_64 (apk appends /<arch>/APKINDEX.tar.gz itself):
+#
+#   scripts/target-bootstrap <target> -r http://<this-host>:8000/dists/8.0   # once, from here
+#   . /data/oss/etc/oss-env.sh; apk update; apk add mosquitto                # on the target
+#   apk add qnx-test-mosquitto && /usr/local/bin/qnx-port-tests/test_mosquitto
+#
+# Only those two trees are served (a scratch root of links), never the rest of
+# the workspace -- keys/private/ holds the signing key.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+PORT=8000; BIND=0.0.0.0
+while getopts p:b:h o; do case $o in
+  p) PORT=$OPTARG ;; b) BIND=$OPTARG ;;
+  *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+esac; done
+D=$WS/dists/8.0; T=$WS/test_suites/8.0
+[ -f "$D/x86_64/APKINDEX.tar.gz" ] || [ -f "$D/aarch64/APKINDEX.tar.gz" ] ||
+  { echo "no repository in $D (run: scripts/qnxpkg --key <key> --all --tests)" >&2; exit 1; }
+for a in aarch64 x86_64; do
+  [ -f "$D/$a/INDEX" ] && printf '  %-8s %4d packages' "$a" "$(grep -vc '^#' "$D/$a/INDEX")" &&
+    { [ -f "$T/$a/INDEX" ] && printf ', %d test packages' "$(grep -vc '^#' "$T/$a/INDEX")"; echo; }
+done
+R=$WS/build/serve-root; rm -rf "$R"; mkdir -p "$R/dists" "$R/test_suites"
+ln -s "$D" "$R/dists/8.0"; [ -d "$T" ] && ln -s "$T" "$R/test_suites/8.0"
+H=$( [ "$BIND" = 0.0.0.0 ] && hostname -I 2>/dev/null | awk '{print $1}' || echo "$BIND")
+U=http://${H:-<this-host>}:$PORT
+echo "serving $U/dists/8.0 and $U/test_suites/8.0"
+echo "  target setup (from here):  scripts/target-bootstrap <target> -r $U/dists/8.0"
+echo "  oss-get on a target:       OSS_REPO=$U/dists/8.0 oss-get update"
+exec python3 -m http.server -d "$R" -b "$BIND" "$PORT"

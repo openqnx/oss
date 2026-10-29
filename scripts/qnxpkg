@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 """qnxpkg -- turn built components into packages a QNX target can install.
 
-    scripts/qnxpkg [-a ARCH] [-o REPO] [--key KEY.rsa] <component>... | --all
+    scripts/qnxpkg [-a ARCH] [-o REPO] [--key KEY.rsa] [--tests] <component>... | --all
 
 For every component that qnxbuild has installed (pkgroot/<arch>/<component>),
-this writes, under REPO/<sdp>/<apk-arch>/:
+this writes, under REPO/<sdp>/<apk-arch>/ (REPO is dists/ by default):
 
     <name>-<ver>-r<rel>.tar.gz        runtime files, paths relative to /
     <name>-dev-<ver>-r<rel>.tar.gz    headers, .pc, CMake packages, static libs
     <name>-<ver>-r<rel>.apk           the same two, as APK v2 packages
     INDEX                             one line per package (read by oss-get)
     APKINDEX.tar.gz                   the index apk-tools reads
+
+With --tests, the on-target port tests go to test_suites/<sdp>/<apk-arch>/ in
+the same form -- qnx-test-<name> per test program, qnx-port-tests the runner --
+with the plain programs in bin/ next to them and, when tests/make-bundle.sh
+has made one, the self-contained bundle (tests + every library they load).
 
 Runtime dependencies are computed, not copied from the recipe: every ELF file
 in the package is read for DT_NEEDED, and each soname is attributed to the
@@ -276,7 +281,7 @@ def make_tgz(name, root, rels, stage, outdir):
     return os.path.basename(path), hashlib.sha256(data).hexdigest(), len(data)
 
 
-def package(comp, arch, args, owner, outdir):
+def package(comp, arch, args, owner, outdir, existing=None):
     root = os.path.join(WS, "pkgroot", arch, comp)
     if not os.path.isdir(root):
         print("!! %s [%s]: not built with a manifest (run: scripts/qnxbuild -a %s %s)" % (comp, arch, arch, comp))
@@ -305,7 +310,11 @@ def package(comp, arch, args, owner, outdir):
         if not info:
             continue
         soname, need = info
-        if soname:
+        # Libraries under a private prefix (usr/local/opt/<name>: ROS 2, TensorFlow
+        # Lite, PyTorch) are that component's own, found through its RUNPATH or
+        # setup.sh -- not provided to other packages: ROS 2 carrying its own
+        # liborocos-kdl.so.1.5 must not make apk see a conflict with orocos-kdl.
+        if soname and not r.startswith("usr/local/opt/"):
             provides.append("so:%s=%s" % (soname, ver.split("-r")[0]))
         needed.update(need)
     # One provides entry per soname: a component that carries a library twice
@@ -332,28 +341,123 @@ def package(comp, arch, args, owner, outdir):
         if not sel:
             continue
         rels_sel = with_dirs(sel)
+        fp = fingerprint(root, rels_sel)
+        base = ver.rpartition("-r")[0]
+        ver = "%s-r%d" % (base, choose_release(existing, pname, base, fp, args.release,
+                                               fingerprint(root, rels_sel, v=1)))
         tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, outdir)
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
         lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
         pm = dict(meta); pm["conflicts_pkg"] = conf
         entries.append(make_apk(pname, ver, arch, pm, root, rels_sel, pdeps,
                                 provides if pname == comp else [], stage, args.key, outdir))
+        entries[-1]["fp"] = fp
     print("== %s [%s] %s: %d runtime + %d dev files, depends: %s"
           % (comp, arch, ver, len(run), len(dev), " ".join(deps) or "-"))
     return list(zip(entries, lines))
+
+
+# What a test loads at run time beyond its DT_NEEDED entries (the same list
+# tests/deploy-and-run-chunked.sh ships): paths under usr/local, resolved to
+# the components that install them.
+TEST_EXTRAS = {
+    "test_ltdl": ["lib/libz.so.1"],
+    "test_gstreamer": ["lib/gstreamer-1.0"], "test_gst_plugins_good": ["lib/gstreamer-1.0"],
+    "test_sdl2": ["lib/libSDL3.so.0"],
+    "test_enchant": ["lib/enchant-2"],
+    "test_python": ["lib/python3.14"],
+    "test_tflite": ["opt/tensorflow-lite/lib"],
+    "test_torch": ["opt/pytorch/lib"],
+    "test_ros2": ["opt/ros/jazzy/lib"],
+}
+TESTS_VERSION = "1.0"
+
+
+def package_tests(arch, args, owner, outdir):
+    """The on-target port tests as packages: qnx-test-<name> per test program
+    (its run-time dependencies computed like any package's, plus TEST_EXTRAS),
+    and qnx-port-tests with the runner that runs every installed test."""
+    stage = os.path.join(WS, "stage", arch)
+    tdir = "usr/local/bin/qnx-port-tests"
+    if not os.path.isdir(os.path.join(stage, tdir)):
+        print("!! [%s] no port tests staged (run: tests/build-tests.sh %s)" % (arch, arch))
+        return []
+    files_of = {}
+    mdir = os.path.join(stage, ".manifest")
+    for comp in os.listdir(mdir):
+        files_of[comp] = open(os.path.join(mdir, comp)).read().split("\n")
+    def owners_of(path):
+        pre = "usr/local/" + path
+        return {c for c, fs in files_of.items() if any(f == pre or f.startswith(pre + "/") for f in fs)}
+    tool = readelf(arch)
+    out = []
+    db = os.path.join(outdir, ".index.json")
+    existing = json.load(open(db)) if os.path.exists(db) else {}
+    def emit(pname, root, rels, deps, desc):
+        allr = set()
+        for r in rels:
+            while r:
+                allr.add(r)
+                r = os.path.dirname(r)
+        rels = sorted(allr)
+        fp = fingerprint(root, rels)
+        ver = "%s-r%d" % (TESTS_VERSION, choose_release(existing, pname, TESTS_VERSION, fp, args.release,
+                                                        fingerprint(root, rels, v=1)))
+        meta = {"version": TESTS_VERSION, "url": "https://github.com/openqnx/oss/tree/main/tests",
+                "desc": desc, "license": "see tests/", "origin": "qnx-port-tests", "conflicts": []}
+        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels, stage, outdir)
+        line = "|".join([pname, ver, ",".join(deps), tgz, sha, str(size), desc, ""])
+        e = make_apk(pname, ver, arch, meta, root, rels, deps, [], stage, args.key, outdir)
+        e["fp"] = fp
+        out.append((e, line))
+    for n in sorted(os.listdir(os.path.join(stage, tdir))):
+        if not n.startswith("test_"):
+            continue
+        rel = os.path.join(tdir, n)
+        deps = set()
+        info = elf_info(os.path.join(stage, rel), tool)
+        if info:
+            deps |= {owner[s] for s in info[1] if s in owner}
+        for x in TEST_EXTRAS.get(n, []):
+            deps |= owners_of(x)
+        pname = "qnx-test-" + n[len("test_"):].replace("_", "-")
+        emit(pname, stage, [rel], sorted(deps), "QNX port test %s: checks its component on the target" % n)
+    # The runner: a stand-alone copy, so it is packaged from a scratch root.
+    root = os.path.join(WS, "build", arch, "qnx-port-tests-pkg")
+    shutil.rmtree(root, ignore_errors=True)
+    os.makedirs(os.path.join(root, tdir))
+    shutil.copy2(os.path.join(WS, "tests", "run-on-target.sh"), os.path.join(root, tdir, "run-on-target.sh"))
+    emit("qnx-port-tests", root, [os.path.join(tdir, "run-on-target.sh")], [],
+         "QNX port tests runner: runs every installed qnx-test-* package")
+    # The plain programs too, for a target without apk, and the bundle.
+    bdir = os.path.join(outdir, "bin")
+    shutil.rmtree(bdir, ignore_errors=True)
+    os.makedirs(bdir)
+    for n in sorted(os.listdir(os.path.join(stage, tdir))):
+        if n.startswith("test_"):
+            shutil.copy2(os.path.join(stage, tdir, n), bdir)
+    shutil.copy2(os.path.join(WS, "tests", "run-on-target.sh"), bdir)
+    bundle = os.path.join(WS, "dist", "qnx-port-tests-%s.tar.gz" % arch)
+    if os.path.exists(bundle):
+        shutil.copy2(bundle, outdir)
+    print("== port tests [%s]: %d packages" % (arch, len(out)))
+    return out
 
 
 def write_indexes(outdir, key):
     """Rebuild INDEX and APKINDEX.tar.gz from every package in the directory."""
     db = os.path.join(outdir, ".index.json")
     data = json.load(open(db)) if os.path.exists(db) else {}
+    # By name, and newest first within a name: oss-get takes the first line.
+    order = sorted(data, key=lambda k: apk_version_key(data[k]["apk"]["V"]), reverse=True)
+    order = sorted(order, key=lambda k: data[k]["apk"]["P"])
     with open(os.path.join(outdir, "INDEX"), "w") as f:
         f.write("# name|version|depends|file|sha256|size|description|conflicts\n")
-        for name in sorted(data):
-            f.write(data[name]["line"] + "\n")
+        for k in order:
+            f.write(data[k]["line"] + "\n")
     text = ""
-    for name in sorted(data):
-        e = data[name]["apk"]
+    for k in order:
+        e = data[k]["apk"]
         for k in "C P V A S I T U L o t D p".split():
             if k in e:
                 text += "%s:%s\n" % (k, e[k])
@@ -369,40 +473,147 @@ def write_indexes(outdir, key):
     open(os.path.join(outdir, "APKINDEX.tar.gz"), "wb").write(sign(body, key) + body)
 
 
+def fingerprint(root, rels, v=2):
+    """What a package holds: path, type and link target of every member, and
+    the contents of each file -- hashed when under 32 MB, size and mtime for
+    bigger ones. Equal fingerprints -> the same package. v=1 is the first
+    form (size and mtime only), still recognised in existing indexes."""
+    h = hashlib.sha256()
+    for r in rels:
+        full = os.path.join(root, r)
+        st = os.lstat(full)
+        tgt = os.readlink(full) if stat.S_ISLNK(st.st_mode) else ""
+        if stat.S_ISDIR(st.st_mode):
+            body = "0\0" + "0"
+        elif v == 2 and stat.S_ISREG(st.st_mode) and st.st_size < (32 << 20):
+            body = hashlib.sha256(open(full, "rb").read()).hexdigest()
+        else:
+            body = "%d\0%d" % (st.st_size, int(st.st_mtime))
+        h.update(("%s\0%o\0%s\0%s\n" % (r, st.st_mode, body, tgt)).encode())
+    return ("v2:" if v == 2 else "") + h.hexdigest()
+
+
+BUMP = False   # --bump: a new release even where the contents look the same
+
+
+def choose_release(existing, pname, base, fp, default, fp1=None):
+    """A published <name>-<version>-r<N> is never rewritten: the same
+    contents keep their release, changed contents get the next one."""
+    rels = []
+    for v in (existing or {}).values():
+        if v["apk"]["P"] == pname:
+            b, _, r = v["apk"]["V"].rpartition("-r")
+            if b == base and r.isdigit():
+                rels.append((int(r), v.get("fp")))
+    if not rels:
+        return default
+    n, old = max(rels)
+    # Entries made before fingerprints were recorded (old is None) are taken
+    # as unchanged; --bump says otherwise.
+    same = old is None or old == fp or (fp1 is not None and old == fp1)
+    return n + 1 if BUMP or not same else n
+
+
+_SUFFIX = {"alpha": 0, "beta": 1, "pre": 2, "rc": 3, "": 4, "cvs": 5, "svn": 6, "git": 7, "hg": 8, "p": 9}
+
+
+def apk_version_key(v):
+    """Sort key following apk's version order: numbers numerically, then the
+    _alpha/_beta/_pre/_rc (before the release) and _git/_p (after) suffixes,
+    then -r<release>."""
+    v, _, rel = v.partition("-r")
+    main, *sufs = v.split("_")
+    nums = tuple(int(x) if x.isdigit() else 0 for x in re.findall(r"\d+|[a-z]+", main))
+    sk = []
+    for s in sufs or [""]:
+        m = re.match(r"([a-z]*)(\d*)", s)
+        sk.append((_SUFFIX.get(m.group(1), 4), int(m.group(2) or 0)))
+    return (nums, tuple(sk), int(rel) if rel.isdigit() else 0)
+
+
+def store(outdir, results, key):
+    """Add packages to the repository in outdir and rewrite its indexes.
+    Every version is kept: a new version of a package is added next to the
+    ones already there, never in their place (apk installs the newest unless
+    told "apk add <name>=<version>"; oss-get likewise)."""
+    db = os.path.join(outdir, ".index.json")
+    data = json.load(open(db)) if os.path.exists(db) else {}
+    # Indexes written before versions were kept are keyed by name alone.
+    data = {("%s-%s" % (v["apk"]["P"], v["apk"]["V"])): v for v in data.values()}
+    for entry, line in results:
+        fp = entry.pop("fp", None)
+        data["%s-%s" % (entry["P"], entry["V"])] = {"apk": entry, "line": line, "fp": fp}
+    json.dump(data, open(db, "w"), indent=1, sort_keys=True)
+    write_indexes(outdir, key)
+
+
+def reindex(dirpath, src, also, key):
+    """Write INDEX and APKINDEX.tar.gz into dirpath for the packages whose
+    files are there, or named in `also` (already published elsewhere), taking
+    their entries from the repository src. For publishing a subset."""
+    data = json.load(open(os.path.join(src, ".index.json")))
+    have = set(os.listdir(dirpath)) | set(also)
+    sel = {k: v for k, v in data.items()
+           if "%s-%s.apk" % (v["apk"]["P"], v["apk"]["V"]) in have
+           or "%s-%s.tar.gz" % (v["apk"]["P"], v["apk"]["V"]) in have}
+    json.dump(sel, open(os.path.join(dirpath, ".index.json"), "w"), indent=1, sort_keys=True)
+    write_indexes(dirpath, key)
+    os.remove(os.path.join(dirpath, ".index.json"))
+    print("== %s: index of %d packages" % (dirpath, len(sel)))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-a", "--arch", action="append", choices=list(APK_ARCH))
-    ap.add_argument("-o", "--out", default=os.path.join(WS, "repo"))
+    ap.add_argument("-o", "--out", default=os.path.join(WS, "dists"))
     ap.add_argument("-r", "--release", type=int, default=0)
     ap.add_argument("--key", help="RSA private key for signing (abuild-keygen style)")
     ap.add_argument("--all", action="store_true")
+    ap.add_argument("--tests", action="store_true",
+                    help="package the on-target port tests too, into the separate "
+                         "repository TESTS_OUT/<sdp>/<arch> (qnx-test-<name>, qnx-port-tests)")
+    ap.add_argument("--tests-out", default=os.path.join(WS, "test_suites"))
+    ap.add_argument("--bump", action="store_true",
+                    help="give the packages a new release number even if their contents look unchanged")
+    ap.add_argument("--reindex", metavar="DIR", help="only write the indexes of DIR (see reindex())")
+    ap.add_argument("--from", dest="src", metavar="REPO_DIR")
+    ap.add_argument("--also", metavar="FILE", help="package file names to index as well, one per line")
     ap.add_argument("components", nargs="*")
     args = ap.parse_args()
+    global BUMP
+    BUMP = args.bump
+    if args.reindex:
+        also = open(args.also).read().split() if args.also else []
+        reindex(args.reindex, args.src, also, args.key)
+        return 0
     arches = args.arch or list(APK_ARCH)
     rc = 0
     for arch in arches:
         comps = args.components
         if args.all:
             comps = sorted(os.listdir(os.path.join(WS, "pkgroot", arch)))
-        outdir = os.path.join(args.out, SDP, APK_ARCH[arch])
-        os.makedirs(outdir, exist_ok=True)
         owner = load_manifests(arch)
-        db = os.path.join(outdir, ".index.json")
-        data = json.load(open(db)) if os.path.exists(db) else {}
-        for comp in comps:
-            res = package(comp, arch, args, owner, outdir)
+        if comps:
+            outdir = os.path.join(args.out, SDP, APK_ARCH[arch])
+            os.makedirs(outdir, exist_ok=True)
+            results = []
+            db = os.path.join(outdir, ".index.json")
+            existing = json.load(open(db)) if os.path.exists(db) else {}
+            for comp in comps:
+                res = package(comp, arch, args, owner, outdir, existing)
+                if not res:
+                    rc = 1
+                results += res
+            store(outdir, results, args.key)
+        if args.tests:
+            # A repository of their own: tests depend on components, never the
+            # other way, and GitHub allows 1000 assets per release.
+            outdir = os.path.join(args.tests_out, SDP, APK_ARCH[arch])
+            os.makedirs(outdir, exist_ok=True)
+            res = package_tests(arch, args, owner, outdir)
             if not res:
                 rc = 1
-            for entry, line in res:
-                old = data.get(entry["P"])
-                if old and old["apk"]["V"] != entry["V"]:
-                    for ext in (".apk", ".tar.gz"):
-                        p = os.path.join(outdir, "%s-%s%s" % (entry["P"], old["apk"]["V"], ext))
-                        if os.path.exists(p):
-                            os.remove(p)
-                data[entry["P"]] = {"apk": entry, "line": line}
-        json.dump(data, open(db, "w"), indent=1, sort_keys=True)
-        write_indexes(outdir, args.key)
+            store(outdir, res, args.key)
     return rc
 
 

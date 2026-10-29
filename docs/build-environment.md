@@ -126,5 +126,5 @@ scripts/             qnxbuild, qnxpkg, mkpatch, checks, doc generators
 target/oss-get       the on-target package installer
 docker/              the build container
 tests/               on-target test programs and runners
-src/ build/ stage/ pkgroot/ repo/ logs/ dist/ hosttools/    generated, not tracked
+src/ build/ stage/ pkgroot/ dists/ logs/ dist/ hosttools/   generated, not tracked (dists/: the packages)
 ```

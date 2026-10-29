@@ -17,13 +17,22 @@
 #
 # and runs apk-setup there, which installs apk-tools and ca-certificates into
 # /data/oss; from then on the target updates over https:// by itself.
+# QNX run-time libraries: the packages link QNX libraries a full image has
+# but a vanilla BSP / mkqnximage image may not (libeventfd, libepoll,
+# libsignalfd, libtimerfd, libfsnotify, libasound, libEGL, libGLESv2,
+# libscreen, ...). Those missing on the target are copied from the SDP
+# ($QNX_SDP_ROOT/target/qnx/<arch>) to /data/oss/qnx-runtime/lib, which
+# oss-env.sh and the apk wrapper put on LD_LIBRARY_PATH. --no-qnx-runtime
+# skips it. They are QNX's own libraries, under QNX's license.
 # Extra arguments go to apk-setup (-R root, -r repository, -u unsigned).
 # OSS_REPO, if set here, is passed on (where oss-get bootstraps apk-tools
 # from); CA_BUNDLE picks the CA bundle to copy.
 set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
 USER_=${TARGET_USER:-root}
+QRT=1
 [ "$1" = -u ] && { USER_=$2; shift 2; }
+[ "$1" = --no-qnx-runtime ] && { QRT=""; shift; }
 T=${1:?usage: $0 [-u user] <target> [apk-setup options...]}; shift
 . "$WS/tests/ssh-opts.sh"
 mapfile -t O < <(qnxport_ssh_opts "$WS")
@@ -37,6 +46,38 @@ key=$(ls -t "$WS"/keys/*.rsa.pub 2>/dev/null | head -1)
 
 D=/data/oss-setup
 ssh "${O[@]}" "$USER_@$T" "mkdir -p $D"
+
+# The QNX libraries the packages may need (scripts/check-sdp-leak's list of
+# QNX OS libraries), copied for the ones the target image lacks.
+if [ -n "$QRT" ]; then
+  case "$(ssh "${O[@]}" "$USER_@$T" uname -m)" in
+    aarch64*|QEMU_virt|*arm*|*Raspberry*) QA=aarch64le ;; *) QA=x86_64 ;;
+  esac
+  SDPT=${QNX_SDP_ROOT:+$QNX_SDP_ROOT/target/qnx}
+  SDPT=${QNX_TARGET:-$SDPT}
+  if [ -d "$SDPT/$QA" ]; then
+    stems=$(sed -n '/^QNX_OS_LIBS="/,/"$/p' "$WS/scripts/check-sdp-leak" | tr -d '"' | sed 's/QNX_OS_LIBS=//' | tr ' \n' '\n\n' | grep -vE '^(libc|libm|libc\+\+|libgcc_s|ldqnx-64|)$')
+    files=""
+    for s in $stems; do
+      for f in "$SDPT/$QA"/lib/$s.so.[0-9] "$SDPT/$QA"/lib/$s.so.[0-9][0-9] "$SDPT/$QA"/usr/lib/$s.so.[0-9] "$SDPT/$QA"/usr/lib/$s.so.[0-9][0-9]; do
+        case "$f" in *.sym|*'*'*) continue ;; esac
+        [ -f "$f" ] && files="$files $f"
+      done
+    done
+    have=$(ssh "${O[@]}" "$USER_@$T" "ls /proc/boot /system/lib /lib /usr/lib /lib/dll 2>/dev/null; true" | sort -u)
+    need=""
+    for f in $files; do echo "$have" | grep -qx "$(basename "$f")" || need="$need $f"; done
+    if [ -n "$need" ]; then
+      ssh "${O[@]}" "$USER_@$T" "mkdir -p /data/oss/qnx-runtime/lib"
+      scp -q "${O[@]}" $need "$USER_@$T:/data/oss/qnx-runtime/lib/"
+      echo "== $T: QNX run-time libraries the image lacks, from the SDP:$(for f in $need; do printf ' %s' "$(basename "$f")"; done)"
+    else
+      echo "== $T: the image has every QNX run-time library the packages use"
+    fi
+  else
+    echo "!! QNX SDP target libraries not found (set QNX_SDP_ROOT); not checking the image's QNX run-time" >&2
+  fi
+fi
 scp -q "${O[@]}" "$WS/target/oss-get" "$WS/target/apk-setup" "$USER_@$T:$D/"
 scp -q "${O[@]}" "$ca" "$USER_@$T:$D/cacert.pem"
 kopt=()

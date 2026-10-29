@@ -1,5 +1,5 @@
-VERSION=1.38
-GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.38
+VERSION=1.47
+GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.47
 DEPS="wayland"
 BUILDSYS=meson
 # Data only: the XML protocol definitions that wayland-scanner turns into C in

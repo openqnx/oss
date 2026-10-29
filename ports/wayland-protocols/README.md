@@ -1,10 +1,10 @@
-# wayland-protocols 1.38
+# wayland-protocols 1.47
 
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/wayland/wayland-protocols.git (tag `1.38`) |
+| Upstream | https://gitlab.freedesktop.org/wayland/wayland-protocols.git (tag `1.47`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`wayland`](../wayland/) |
@@ -55,7 +55,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.38 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.47 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/wayland/wayland-protocols.git src/wayland-protocols
 ```
 
@@ -83,7 +83,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH wayland-protocol
 
 ### 5. What it installs
 
-101 files under `/usr/local`, 50 headers.
+118 files under `/usr/local`, 60 headers.
 
 The complete list is `stage/<arch>/.manifest/wayland-protocols` after a build.
 
@@ -123,17 +123,21 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
-No test program of its own (no run-time code to exercise, or covered by a dependent's test); `scripts/verify-on-target` installs it with apk and checks that every program and library it ships loads.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date |
+|---|---|---|---|---|---|
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland-protocols 1.47-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
-This recipe builds **1.38**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland-protocols=<version>`), sources in `ported/wayland-protocols/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland-protocols`; port one with `scripts/port-update wayland-protocols`.
+This recipe builds **1.47**. Kept from earlier: `1.38` ([recipe and patches](versions/1.38/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland-protocols=<version>`), sources in `ported/wayland-protocols/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland-protocols`; port one with `scripts/port-update wayland-protocols`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.38
-GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.38
+VERSION=1.47
+GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.47
 DEPS="wayland"
 BUILDSYS=meson
 # Data only: the XML protocol definitions that wayland-scanner turns into C in

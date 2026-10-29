@@ -1,10 +1,10 @@
-# pixman 0.44.2
+# pixman 0.46.4
 
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/pixman/pixman.git (tag `pixman-0.44.2`) |
+| Upstream | https://gitlab.freedesktop.org/pixman/pixman.git (tag `pixman-0.46.4`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`libpng`](../libpng/) |
@@ -56,7 +56,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b pixman-0.44.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b pixman-0.46.4 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/pixman/pixman.git src/pixman
 ```
 
@@ -88,7 +88,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH pixman`.
 ```
 /usr/local/lib/libpixman-1.so
 /usr/local/lib/libpixman-1.so.0
-/usr/local/lib/libpixman-1.so.0.44.2
+/usr/local/lib/libpixman-1.so.0.46.4
 ```
 
 The complete list is `stage/<arch>/.manifest/pixman` after a build.
@@ -162,15 +162,16 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | pixman 0.46.4-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
-This recipe builds **0.44.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pixman=<version>`), sources in `ported/pixman/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pixman`; port one with `scripts/port-update pixman`.
+This recipe builds **0.46.4**. Kept from earlier: `0.44.2` ([recipe and patches](versions/0.44.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pixman=<version>`), sources in `ported/pixman/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pixman`; port one with `scripts/port-update pixman`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.44.2; GIT=https://gitlab.freedesktop.org/pixman/pixman.git; REF=pixman-0.44.2
+VERSION=0.46.4; GIT=https://gitlab.freedesktop.org/pixman/pixman.git; REF=pixman-0.46.4
 DEPS="libpng"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=disabled -Ddemos=disabled -Dgtk=disabled -Dlibpng=enabled )

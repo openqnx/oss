@@ -1,12 +1,12 @@
-# libxkbcommon 1.7.0
+# libxkbcommon 1.8.1
 
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://github.com/xkbcommon/libxkbcommon.git (tag `xkbcommon-1.7.0`) |
+| Upstream | https://github.com/xkbcommon/libxkbcommon.git (tag `xkbcommon-1.8.1`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`libxml2`](../libxml2/) |
 | Run-time dependencies | [`libxml2`](../libxml2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,13 +55,28 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b xkbcommon-1.7.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b xkbcommon-1.8.1 --recurse-submodules --shallow-submodules \
     https://github.com/xkbcommon/libxkbcommon.git src/libxkbcommon
 ```
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/libxkbcommon < ports/libxkbcommon/patches/0001-libxml-checks-use-dependency.patch
+```
+
+**[`0001-libxml-checks-use-dependency.patch`](patches/0001-libxml-checks-use-dependency.patch)** — Check libxml features against the libxml2 being built with
+
+> The libxml feature checks compiled without libxml's own -I, so they saw
+> whatever libxml/parser.h the compiler's default search path has instead of
+> the libxml2 the library is built against. On QNX SDP 8.0.5 that is the SDP's
+> own, newer libxml (usr/include/libxml): the checks found xmlCtxtParseDtd and
+> XML_INPUT_BUF_STATIC (libxml 2.14), the build then compiled registry.c
+> against libxml2 2.13 and failed. Check with the dependency's flags.
+
+Touches: `meson.build` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -75,7 +90,9 @@ meson setup build/$QNX_ARCH/libxkbcommon src/libxkbcommon \
       -Denable-x11=false \
       -Denable-xkbregistry=true \
       -Denable-tools=false \
-      -Denable-bash-completion=false
+      -Denable-bash-completion=false \
+      -Dxkb-config-root=/usr/local/share/X11/xkb \
+      -Dx-locale-root=/usr/local/share/X11/locale
 ninja -C build/$QNX_ARCH/libxkbcommon
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/libxkbcommon install
 ```
@@ -89,10 +106,10 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxkbcommon`.
 ```
 /usr/local/lib/libxkbcommon.so
 /usr/local/lib/libxkbcommon.so.0
-/usr/local/lib/libxkbcommon.so.0.0.0
+/usr/local/lib/libxkbcommon.so.0.8.1
 /usr/local/lib/libxkbregistry.so
 /usr/local/lib/libxkbregistry.so.0
-/usr/local/lib/libxkbregistry.so.0.0.0
+/usr/local/lib/libxkbregistry.so.0.8.1
 ```
 
 The complete list is `stage/<arch>/.manifest/libxkbcommon` after a build.
@@ -133,20 +150,30 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
-No test program of its own (no run-time code to exercise, or covered by a dependent's test); `scripts/verify-on-target` installs it with apk and checks that every program and library it ships loads.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date |
+|---|---|---|---|---|---|
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libxkbcommon 1.7.0-r0 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libxkbcommon 1.8.1-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
-This recipe builds **1.7.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxkbcommon=<version>`), sources in `ported/libxkbcommon/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxkbcommon`; port one with `scripts/port-update libxkbcommon`.
+This recipe builds **1.8.1**. Kept from earlier: `1.7.0` ([recipe and patches](versions/1.7.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxkbcommon=<version>`), sources in `ported/libxkbcommon/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxkbcommon`; port one with `scripts/port-update libxkbcommon`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.7.0; GIT=https://github.com/xkbcommon/libxkbcommon.git; REF=xkbcommon-1.7.0
+VERSION=1.8.1; GIT=https://github.com/xkbcommon/libxkbcommon.git; REF=xkbcommon-1.8.1
 DEPS="libxml2"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Denable-docs=false -Denable-wayland=false -Denable-x11=false
-                   -Denable-xkbregistry=true -Denable-tools=false -Denable-bash-completion=false )
+                   -Denable-xkbregistry=true -Denable-tools=false -Denable-bash-completion=false
+                   -Dxkb-config-root=/usr/local/share/X11/xkb -Dx-locale-root=/usr/local/share/X11/locale )
+# Where the keymaps are on the target. Since 1.8 the default comes from
+# xkeyboard-config's pkg-config file -- with the sysroot in front, the build
+# machine's staging path, compiled in: every keymap failed to load
+# ("failed to add default include path /home/.../stage/...").
 ```
 </details>
 

@@ -1,4 +1,4 @@
-VERSION=1.23.1; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.23.1
+VERSION=1.24.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.24.0
 DEPS="libffi expat libxml2"
 BUILDSYS=meson
 # wayland-scanner has to run on the build machine to turn the XML protocol

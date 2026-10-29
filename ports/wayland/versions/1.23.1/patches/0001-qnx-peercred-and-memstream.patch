@@ -1,0 +1,117 @@
+Wayland: peer credentials and open_memstream on QNX.
+
+wayland-os.c: implement wl_os_socket_peercred() with getpeereid(), which gives
+uid and gid but no pid (reported as 0, as on FreeBSD). connection.c: QNX 8.0
+has no open_memstream() (nor fopencookie/funopen); wl_closure_print, the
+WAYLAND_DEBUG log, gets the same write-then-read-back behaviour from a
+tmpfile().
+
+Upstream-Status: QNX-specific
+
+--- a/src/wayland-os.c
++++ b/src/wayland-os.c
+@@ -125,6 +125,20 @@
+ 	*pid = ucred.pid;
+ 	return 0;
+ }
++#elif defined(__QNXNTO__)
++int
++wl_os_socket_peercred(int sockfd, uid_t *uid, gid_t *gid, pid_t *pid)
++{
++	/* QNX offers getpeereid(), which yields the peer's uid and gid but no
++	 * pid. The FreeBSD branch above already reports *pid = 0 when the
++	 * platform cannot supply one, so follow that precedent rather than
++	 * failing: callers use uid/gid for access checks and treat pid as
++	 * advisory. */
++	if (getpeereid(sockfd, uid, gid) < 0)
++		return -1;
++	*pid = 0;
++	return 0;
++}
+ #else
+ #error "Don't know how to read ucred on this platform"
+ #endif
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -1319,6 +1319,57 @@
+ 	return buffer_size + 2;
+ }
+ 
++
++#if defined(__QNXNTO__)
++/* QNX 8.0 has no open_memstream (and no fopencookie/funopen to build one from).
++ * It is used here only by wl_closure_print, the WAYLAND_DEBUG logging path,
++ * which writes with fprintf and then reads the whole buffer back once. A
++ * temporary file gives exactly those semantics; wl_qnx_memstream_close()
++ * replaces the fclose() at the end of that function and hands back the
++ * accumulated text. */
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++
++static FILE *
++wl_qnx_open_memstream(void)
++{
++	return tmpfile();
++}
++
++static int
++wl_qnx_memstream_close(FILE *f, char **bufp, size_t *lenp)
++{
++	long size;
++	char *buf;
++
++	*bufp = NULL;
++	*lenp = 0;
++
++	if (fflush(f) != 0 || (size = ftell(f)) < 0) {
++		fclose(f);
++		return -1;
++	}
++	buf = malloc((size_t)size + 1);
++	if (buf == NULL) {
++		fclose(f);
++		return -1;
++	}
++	rewind(f);
++	if (size > 0 && fread(buf, 1, (size_t)size, f) != (size_t)size) {
++		free(buf);
++		fclose(f);
++		return -1;
++	}
++	buf[size] = '\0';
++	fclose(f);
++	*bufp = buf;
++	*lenp = (size_t)size;
++	return 0;
++}
++#endif /* __QNXNTO__ */
++
++
+ static int
+ serialize_closure(struct wl_closure *closure, uint32_t *buffer,
+ 		  size_t buffer_count)
+@@ -1493,7 +1544,11 @@
+ 	char *buffer;
+ 	size_t buffer_length;
+ 
++#if defined(__QNXNTO__)
++	f = wl_qnx_open_memstream();
++#else
+ 	f = open_memstream(&buffer, &buffer_length);
++#endif
+ 	if (f == NULL)
+ 		return;
+ 
+@@ -1576,7 +1631,11 @@
+ 
+ 	fprintf(f, ")\n");
+ 
++#if defined(__QNXNTO__)
++	if (wl_qnx_memstream_close(f, &buffer, &buffer_length) == 0) {
++#else
+ 	if (fclose(f) == 0) {
++#endif
+ 		fprintf(stderr, "%s", buffer);
+ 		free(buffer);
+ 	}

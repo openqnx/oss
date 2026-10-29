@@ -1,0 +1,35 @@
+rcutils_strndup: bound memchr's length by PTRDIFF_MAX.
+
+rcutils_strdup() calls rcutils_strndup(str, SIZE_MAX), which calls
+memchr(str, '\0', SIZE_MAX). QNX 8's x86_64 memchr compares the length
+signed (cmovle): SIZE_MAX is -1 there, it indexes its alignment jump table
+at -1 and jumps to address 0. librcl's load-time constructor makes exactly
+that call when RMW_IMPLEMENTATION is set, so every ROS 2 node died before
+main() with SIGSEGV. No object is larger than PTRDIFF_MAX, so the bound
+changes nothing on any other system.
+
+Upstream-Status: Pending (a QNX libc defect worked around)
+
+--- a/src/strdup.c
++++ b/src/strdup.c
+@@ -21,6 +21,7 @@
+ 
+ #include <limits.h>
+ #include <stddef.h>
++#include <stdint.h>
+ #include <string.h>
+ 
+ #include "./common.h"
+@@ -44,7 +45,11 @@
+     return NULL;
+   }
+   RCUTILS_CHECK_ALLOCATOR(&allocator, return NULL);
+-  char * p = memchr(str, '\0', max_length);
++  // QNX 8's x86_64 memchr compares the length as a signed value: with
++  // SIZE_MAX (what rcutils_strdup passes) it indexes its jump table at -1 and
++  // jumps to address 0. No object is larger than PTRDIFF_MAX, so this bound
++  // changes nothing anywhere else.
++  char * p = memchr(str, '\0', max_length > PTRDIFF_MAX ? PTRDIFF_MAX : max_length);
+   size_t string_length = p == NULL ? max_length : (size_t)(p - str);
+   char * new_string = allocator.allocate(string_length + 1, allocator.state);
+   if (NULL == new_string) {

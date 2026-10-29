@@ -1,0 +1,171 @@
+#!/usr/bin/env python3
+"""check-updates -- is there a newer upstream release than the one ported?
+
+    scripts/check-updates [-j N] [--markdown FILE] [--json FILE] [<component>...]
+
+For every component (or those named), asks the original source:
+
+  git, tag pinned (REF)      git ls-remote --tags: the newest release tag
+  git, commit pinned         the newest release tag, else whether the default
+                             branch has moved past the pinned commit
+  tarball (TARBALL)          the download directory's listing: the newest
+                             <name>-<version>.tar.* there (GitHub archive URLs:
+                             the repository's tags)
+
+Pre-releases (rc, alpha, beta, dev) only count when the ported version is one
+itself. Prints one line per component that has an update, and writes the full
+table with --markdown (docs/UPDATES.md is the one the GitHub "Check upstream
+updates" workflow publishes) and --json. Nothing is changed: to port a newer
+version, scripts/port-update <component> [<version>].
+"""
+import argparse, concurrent.futures, json, os, re, subprocess, sys, urllib.request
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PRE = re.compile(r"(rc|alpha|beta|pre|dev|preview|snapshot)", re.I)
+
+
+def recipe(name):
+    text = open(os.path.join(WS, "ports", name, "recipe.sh")).read()
+    get = lambda k: (re.search(r'(?:^|[;\s])%s=("?)([^";\s]+)\1' % k, text, re.M) or [None, None, ""])[2]
+    return {"VERSION": get("VERSION"), "GIT": get("GIT"), "REF": get("REF"), "COMMIT": get("COMMIT"),
+            "TARBALL": get("TARBALL"), "custom": bool(re.search(r"^do_fetch\(\)", text, re.M)),
+            "planned": "STATUS=planned" in text or "STATUS=blocked" in text}
+
+
+def vkey(v):
+    return [int(x) if x.isdigit() else -1 for x in re.findall(r"\d+|[a-z]+", v.lower())]
+
+
+def norm(tag, name):
+    """A release tag -> a version string, or None for tags that are not one."""
+    t = tag
+    for pre in (name + "-", name + "_", name.replace("-", "_") + "-", "release-", "release_", "rel-", "ver-", "version-"):
+        if t.lower().startswith(pre.lower()):
+            t = t[len(pre):]
+    t = re.sub(r"^[vV]", "", t)
+    if not re.match(r"^\d+([._-]\d+)*([._-]?(rc|alpha|beta|pre|dev|preview|a|b|p|patch)\.?\d*)?$", t, re.I):
+        return None
+    return t.replace("_", ".") if re.match(r"^\d+(_\d+)+$", t) else t
+
+
+def run(cmd, timeout=60):
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout,
+                          env=dict(os.environ, GIT_TERMINAL_PROMPT="0")).stdout
+
+
+def git_tags(url, name):
+    out = run(["git", "ls-remote", "--tags", "--refs", url])
+    tags = {}
+    for line in out.splitlines():
+        sha, ref = line.split("\t")
+        tag = ref.rsplit("refs/tags/", 1)[1]
+        v = norm(tag, name)
+        if v:
+            tags[v] = tag
+    return tags
+
+
+def newest(versions, allow_pre):
+    vs = [v for v in versions if allow_pre or not PRE.search(v)]
+    return max(vs, key=vkey) if vs else None
+
+
+def tarball_versions(url, name):
+    m = re.match(r"https://github\.com/([^/]+/[^/]+)/(?:archive|releases/download)/", url)
+    if m:
+        return {v: t for v, t in git_tags("https://github.com/%s.git" % m.group(1), name).items()}, "tags"
+    base, fname = url.rsplit("/", 1)
+    stem = re.match(r"^(.*?)[-_]v?\d", fname)
+    if not stem:
+        return {}, "listing"
+    stem = stem.group(1)
+    req = urllib.request.Request(base + "/", headers={"User-Agent": "openqnx-oss check-updates"})
+    html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+    found = {}
+    for f in set(re.findall(re.escape(stem) + r"[-_]v?(\d[\w.]*?)\.(?:tar\.(?:gz|xz|bz2|lz|zst)|tgz|zip)\b", html)):
+        found[f] = f
+    return found, "listing"
+
+
+def check(name):
+    r = recipe(name)
+    row = {"component": name, "ported": r["VERSION"], "latest": "", "tag": "", "how": "", "status": "", "note": ""}
+    if r["planned"]:
+        row.update(status="skipped", note="not ported")
+        return row
+    cur = r["VERSION"]
+    allow_pre = bool(PRE.search(cur))
+    try:
+        if r["GIT"]:
+            tags = git_tags(r["GIT"], name)
+            best = newest(tags, allow_pre)
+            if r["COMMIT"] and not r["REF"] and (not best or not re.search(r"\d", cur.split("-git")[0])):
+                head = run(["git", "ls-remote", r["GIT"], "HEAD"]).split("\t")[0]
+                row.update(how="branch", latest=head[:12])
+                row["status"] = "update" if head and not head.startswith(r["COMMIT"][:12]) else "current"
+                row["note"] = "pinned commit %s" % r["COMMIT"][:12]
+                return row
+            row.update(how="tags", latest=best or "", tag=tags.get(best, "") if best else "")
+        elif r["TARBALL"]:
+            vs, how = tarball_versions(r["TARBALL"], name)
+            best = newest(vs, allow_pre)
+            row.update(how=how, latest=best or "", tag=vs.get(best, "") if best else "")
+        else:
+            row.update(status="skipped", note="no upstream URL in the recipe")
+            return row
+    except Exception as e:  # network, timeouts, odd listings
+        row.update(status="error", note=str(e)[:80])
+        return row
+    base = re.sub(r"[-_](git|r)\w*$", "", cur)
+    if not row["latest"]:
+        row["status"] = "unknown"
+    elif row["how"] == "listing" and cur in r["TARBALL"].rsplit("/", 1)[0]:
+        # The download directory itself is per version (Qt's .../6.8/6.8.1/):
+        # its listing cannot show a newer release.
+        row.update(status="unknown", note="versioned download directory: check %s" % r["TARBALL"].rsplit("/", 2)[0])
+    elif vkey(row["latest"]) > vkey(base):
+        row["status"] = "update"
+    else:
+        row["status"] = "current"
+    if r["custom"]:
+        row["note"] = (row["note"] + " custom fetch: check the recipe").strip()
+    return row
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-j", type=int, default=16)
+    ap.add_argument("--markdown")
+    ap.add_argument("--json")
+    ap.add_argument("components", nargs="*")
+    a = ap.parse_args()
+    names = a.components or sorted(n for n in os.listdir(os.path.join(WS, "ports"))
+                                   if os.path.exists(os.path.join(WS, "ports", n, "recipe.sh")))
+    with concurrent.futures.ThreadPoolExecutor(a.j) as ex:
+        rows = list(ex.map(check, names))
+    upd = [r for r in rows if r["status"] == "update"]
+    for r in upd:
+        print("%-28s %-22s -> %s  (%s)" % (r["component"], r["ported"], r["latest"], r["how"]))
+    counts = {s: sum(1 for r in rows if r["status"] == s) for s in ("update", "current", "unknown", "error", "skipped")}
+    print("== %d components: %s" % (len(rows), ", ".join("%d %s" % (n, s) for s, n in counts.items() if n)))
+    if a.json:
+        json.dump(rows, open(a.json, "w"), indent=1)
+    if a.markdown:
+        with open(a.markdown, "w") as f:
+            f.write("# Upstream updates\n\nWritten by `scripts/check-updates`: the newest upstream release of every "
+                    "component against the version ported here. To port one: "
+                    "`scripts/port-update <component> [<version>]` (keeps the current version's recipe, "
+                    "patches, packages and sources).\n\n")
+            f.write("| | count |\n|---|---|\n" + "".join("| %s | %d |\n" % (s, n) for s, n in counts.items()) + "\n")
+            f.write("## Updates available\n\n| Component | Ported | Upstream | Found via | Note |\n|---|---|---|---|---|\n")
+            for r in upd:
+                f.write("| [`%s`](../ports/%s/) | %s | **%s** | %s | %s |\n" % (r["component"], r["component"], r["ported"], r["latest"], r["how"], r["note"]))
+            f.write("\n## Could not tell\n\n| Component | Ported | Status | Note |\n|---|---|---|---|\n")
+            for r in rows:
+                if r["status"] in ("unknown", "error"):
+                    f.write("| `%s` | %s | %s | %s |\n" % (r["component"], r["ported"], r["status"], r["note"]))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

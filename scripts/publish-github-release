@@ -1,0 +1,90 @@
+#!/bin/bash
+# publish-github-release -- put repo/8.0 on GitHub releases, where oss-get and
+# apk on a QNX target download from.
+#
+#   scripts/publish-github-release [--repo owner/name] [--upload] [--prune] [arch...]
+#
+# Without --upload this only stages and checks: nothing leaves the machine.
+#
+# Two releases per architecture, because GitHub allows at most 1000 assets per
+# release (and each under 2 GiB), and repo/8.0/<arch> holds ~1640 files:
+#
+#   packages-8.0-<arch>   <pkg>.tar.gz + INDEX      what oss-get reads
+#   apk-8.0-<arch>        <pkg>.apk + APKINDEX.tar.gz + the signing public key
+#
+# Release assets are flat, so apk is pointed at the index itself:
+#   https://github.com/<repo>/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz
+# and fetches each package from beside it (target/apk-setup sets that up).
+#
+# --prune deletes assets of those releases that are no longer in repo/8.0 (an
+# old version's packages), after the upload. Requires gh, logged in, with
+# write access to the repository.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+GHREPO=openqnx/oss; UPLOAD=""; PRUNE=""; ARCHES=()
+while [ $# -gt 0 ]; do case "$1" in
+  --repo) GHREPO=$2; shift 2 ;;
+  --upload) UPLOAD=1; shift ;;
+  --prune) PRUNE=1; shift ;;
+  -h|--help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  aarch64|x86_64) ARCHES+=("$1"); shift ;;
+  *) echo "unknown argument: $1" >&2; exit 2 ;;
+esac; done
+[ ${#ARCHES[@]} -gt 0 ] || ARCHES=(aarch64 x86_64)
+SDP=8.0; MAX_ASSETS=1000; MAX_BYTES=$((2*1024*1024*1024 - 1))
+# PUBLISH_REPO / PUBLISH_OUT: another repository tree / staging directory
+# (a test repository, say).
+REPO_ROOT=${PUBLISH_REPO:-$WS/repo}
+OUT=${PUBLISH_OUT:-$WS/dist/release}
+
+stage() { # tag pattern...
+  local tag=$1 src=$2; shift 2
+  local d=$OUT/$tag; rm -rf "$d"; mkdir -p "$d"
+  local f; for f in "$@"; do ln "$src/$f" "$d/$f" 2>/dev/null || cp "$src/$f" "$d/$f"; done
+  [ -z "$EXTRA" ] || cp "$EXTRA" "$d/"
+  local n big
+  n=$(ls "$d" | wc -l)
+  big=$(find "$d" -type f -size +"$MAX_BYTES"c -printf '%f ')
+  printf '%-22s %4d assets  %6s\n' "$tag" "$n" "$(du -sh "$d" | cut -f1)"
+  [ "$n" -le $MAX_ASSETS ] || { echo "!! $tag: $n assets, GitHub allows $MAX_ASSETS per release" >&2; return 1; }
+  [ -z "$big" ] || { echo "!! $tag: over 2 GiB, GitHub refuses: $big" >&2; return 1; }
+}
+
+for a in "${ARCHES[@]}"; do
+  src=$REPO_ROOT/$SDP/$a
+  [ -f "$src/INDEX" ] && [ -f "$src/APKINDEX.tar.gz" ] || { echo "no repository in $src (run scripts/qnxpkg --all)" >&2; exit 1; }
+  key=$(cd "$src" && tar -tzf APKINDEX.tar.gz 2>/dev/null | sed -n 's/^\.SIGN\.RSA\.//p' | head -1)
+  [ -n "$key" ] || echo "!! $a: APKINDEX.tar.gz is not signed -- targets will need apk-setup -u (sign with: scripts/qnxpkg --key KEY --all)" >&2
+  [ -z "$key" ] || [ -f "$WS/keys/$key" ] || { echo "!! $a: signed with $key, but keys/$key is missing" >&2; exit 1; }
+  mapfile -t tgz < <(cd "$src" && ls *.tar.gz | grep -vx APKINDEX.tar.gz)
+  mapfile -t apk < <(cd "$src" && ls *.apk)
+  stage packages-$SDP-$a "$src" INDEX "${tgz[@]}"
+  EXTRA=${key:+$WS/keys/$key} stage apk-$SDP-$a "$src" APKINDEX.tar.gz "${apk[@]}"
+done
+
+if [ -z "$UPLOAD" ]; then
+  echo "staged in $OUT -- nothing uploaded. To publish to github.com/$GHREPO: $0 --upload [--prune]"
+  exit 0
+fi
+
+command -v gh >/dev/null || { echo "gh (GitHub CLI) is needed for --upload" >&2; exit 1; }
+for a in "${ARCHES[@]}"; do
+  for tag in packages-$SDP-$a apk-$SDP-$a; do
+    d=$OUT/$tag
+    case $tag in
+      packages-*) title="QNX SDP $SDP packages for oss-get ($a)"; notes="Install on target: target/oss-get install <package>" ;;
+      apk-*) title="QNX SDP $SDP APK repository ($a)"; notes="On target: target/apk-setup, then apk add <package>. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
+    esac
+    gh release view "$tag" --repo "$GHREPO" >/dev/null 2>&1 ||
+      gh release create "$tag" --repo "$GHREPO" --title "$title" --notes "$notes" --latest=false
+    # The index last, so a target never sees an index naming packages not yet up.
+    (cd "$d" && ls | grep -vxE 'INDEX|APKINDEX.tar.gz' | xargs -r -n 50 gh release upload "$tag" --repo "$GHREPO" --clobber)
+    (cd "$d" && ls | grep -xE 'INDEX|APKINDEX.tar.gz' | xargs -r gh release upload "$tag" --repo "$GHREPO" --clobber)
+    if [ -n "$PRUNE" ]; then
+      gh release view "$tag" --repo "$GHREPO" --json assets -q '.assets[].name' | while read -r n; do
+        [ -e "$d/$n" ] || { echo "prune $tag/$n"; gh release delete-asset "$tag" "$n" --repo "$GHREPO" -y; }
+      done
+    fi
+    echo "== $tag uploaded"
+  done
+done

@@ -1,0 +1,48 @@
+#!/bin/bash
+# target-bootstrap -- set a QNX 8.0 target up for apk from this host, in one go.
+#
+#   scripts/target-bootstrap [-u user] <target> [apk-setup options...]
+#
+#   scripts/target-bootstrap 192.168.1.50                 # GitHub releases
+#   scripts/target-bootstrap 192.168.1.50 -r http://192.168.1.10:8000   # own mirror
+#
+# A stock QNX image cannot start from the board alone: it has no CA bundle,
+# so its curl cannot verify https://github.com (curl error 60). This copies
+# over SSH what the first download needs, into /data/oss-setup on the target:
+#
+#   oss-get, apk-setup      target/
+#   the signing public key  keys/*.rsa.pub (newest)
+#   a CA bundle             stage/<arch>/usr/local/ssl/cert.pem (the
+#                           ca-certificates port), else this host's own
+#
+# and runs apk-setup there, which installs apk-tools and ca-certificates into
+# /data/oss; from then on the target updates over https:// by itself.
+# Extra arguments go to apk-setup (-R root, -r repository, -u unsigned).
+# OSS_REPO, if set here, is passed on (where oss-get bootstraps apk-tools
+# from); CA_BUNDLE picks the CA bundle to copy.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+USER_=${TARGET_USER:-root}
+[ "$1" = -u ] && { USER_=$2; shift 2; }
+T=${1:?usage: $0 [-u user] <target> [apk-setup options...]}; shift
+. "$WS/tests/ssh-opts.sh"
+mapfile -t O < <(qnxport_ssh_opts "$WS")
+
+ca=${CA_BUNDLE:-}
+[ -n "$ca" ] || for c in "$WS"/stage/*/usr/local/ssl/cert.pem /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt /etc/ssl/cert.pem; do
+  [ -f "$c" ] && { ca=$c; break; }
+done
+[ -f "$ca" ] || { echo "no CA bundle found on this host" >&2; exit 1; }
+key=$(ls -t "$WS"/keys/*.rsa.pub 2>/dev/null | head -1)
+
+D=/data/oss-setup
+ssh "${O[@]}" "$USER_@$T" "mkdir -p $D"
+scp -q "${O[@]}" "$WS/target/oss-get" "$WS/target/apk-setup" "$USER_@$T:$D/"
+scp -q "${O[@]}" "$ca" "$USER_@$T:$D/cacert.pem"
+kopt=()
+if [ -n "$key" ]; then
+  scp -q "${O[@]}" "$key" "$USER_@$T:$D/"
+  kopt=(-k "$D/$(basename "$key")")
+fi
+echo "== $T: apk-setup ${kopt[*]} $*"
+ssh "${O[@]}" "$USER_@$T" "chmod +x $D/oss-get $D/apk-setup && ${OSS_REPO:+OSS_REPO='$OSS_REPO' }sh $D/apk-setup -c $D/cacert.pem ${kopt[*]} $*"

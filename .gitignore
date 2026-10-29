@@ -28,3 +28,7 @@
 *session-log*.md
 qnx-session-backups/
 /.verify/
+
+# The package-signing private key. Only the public half (keys/*.rsa.pub) is
+# tracked; targets install it in /etc/apk/keys. Never commit the private key.
+/keys/private/

@@ -1,0 +1,155 @@
+#!/bin/sh
+# apk-setup -- make apk-tools on a QNX 8.0 target install this repository's
+# packages (the openqnx/oss GitHub releases, or any mirror of them).
+#
+#   apk-setup                      set up, then: apk add <pkg>...
+#   apk-setup -r <index-url>       another repository (see APK_REPO below)
+#   apk-setup -k <key.pub|url>     another signing key
+#   apk-setup -R <root>            another install root (default /data/oss)
+#   apk-setup -u                   repository is not signed (--allow-untrusted)
+#   apk-setup -c <ca-bundle.pem>   CA bundle for the first https:// downloads:
+#                                  a stock QNX image has none (scripts/target-
+#                                  bootstrap copies one over from the host)
+#
+# What it does, once, as root:
+#   1. bootstraps apk-tools with oss-get into a scratch directory (oss-get
+#      needs only sh, curl, tar, gzip and openssl, which a stock image has);
+#   2. writes <root>/etc/apk/repositories and installs the signing key in
+#      <root>/etc/apk/keys/;
+#   3. lets that apk install apk-tools and ca-certificates into <root>, so apk
+#      owns and can upgrade itself, then deletes the scratch copy;
+#   4. writes the wrapper <root>/bin/apk, which runs that apk on that root with
+#      its libraries and CA bundle, and links /usr/local to <root>/usr/local.
+#
+# Afterwards:  . /data/oss/etc/oss-env.sh     (PATH, LD_LIBRARY_PATH)
+#              apk update; apk add mosquitto; apk upgrade; apk del mosquitto
+#
+# Settings (environment, or the options above):
+#   APK_REPO   the repository. "@ARCH@" becomes aarch64 or x86_64. A URL ending
+#              in APKINDEX.tar.gz is that index with its packages beside it (the
+#              GitHub release layout); anything else gets /<arch>/APKINDEX.tar.gz
+#              appended by apk (a repo/8.0 tree on a web server).
+#   APK_KEY    public key: a file on the target or a URL. Its file name must be
+#              the one the repository was signed with.
+#   OSS_REPO   where oss-get bootstraps apk-tools from (oss-get's default: the
+#              packages-8.0-@ARCH@ release).
+#   OSS_GET    the oss-get script (default: next to this one, then $PATH, then
+#              downloaded from OSS_GET_URL).
+#
+# Use one package manager per root: packages oss-get installed into <root> are
+# not known to apk. apk-setup refuses a root that oss-get already uses.
+
+GH=https://github.com/openqnx/oss
+RAW=https://raw.githubusercontent.com/openqnx/oss/main
+APK_ROOT=${APK_ROOT:-/data/oss}
+APK_REPO=${APK_REPO:-$GH/releases/download/apk-8.0-@ARCH@/APKINDEX.tar.gz}
+APK_KEY=${APK_KEY:-$RAW/keys/openqnx-oss-20261029.rsa.pub}
+OSS_GET_URL=${OSS_GET_URL:-$RAW/target/oss-get}
+UNTRUSTED=""
+
+die() { echo "apk-setup: $*" >&2; exit 1; }
+say() { echo "apk-setup: $*"; }
+
+while [ $# -gt 0 ]; do case "$1" in
+  -r) APK_REPO=$2; shift 2 ;;
+  -k) APK_KEY=$2; shift 2 ;;
+  -R) APK_ROOT=$2; shift 2 ;;
+  -u) UNTRUSTED=1; shift ;;
+  -c) [ -f "$2" ] || die "no such CA bundle: $2"; export SSL_CERT_FILE=$2; shift 2 ;;
+  *) sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+esac; done
+
+case "$(uname -m)" in
+  aarch64*|QEMU_virt|*arm*|*RaspberryPi*) ARCH=aarch64 ;;
+  x86*|*86pc*) ARCH=x86_64 ;;
+  *) ARCH=$(uname -p) ;;
+esac
+ARCH=${OSS_ARCH:-$ARCH}
+REPO=$(echo "$APK_REPO" | sed "s/@ARCH@/$ARCH/g")
+
+fetch() { # url-or-file dest
+  case "$1" in
+    file://*) cp "${1#file://}" "$2" ;;
+    /*)       cp "$1" "$2" ;;
+    *)        curl -fsSL --retry 3 -o "$2" "$1" ;;
+  esac
+}
+
+[ -n "$(ls "$APK_ROOT"/var/lib/oss-get/*.list 2>/dev/null)" ] &&
+  die "$APK_ROOT already holds packages installed by oss-get; remove them (oss-get remove ...) or use -R <another root>"
+
+# 1. bootstrap apk-tools with oss-get
+if [ -z "$OSS_GET" ]; then
+  if [ -x "$(dirname "$0")/oss-get" ]; then OSS_GET=$(dirname "$0")/oss-get
+  elif command -v oss-get >/dev/null 2>&1; then OSS_GET=$(command -v oss-get)
+  fi
+fi
+B=$APK_ROOT/var/cache/apk-bootstrap
+rm -rf "$B"; mkdir -p "$B" || die "cannot create $B"
+if [ -z "$OSS_GET" ]; then
+  OSS_GET=$B/oss-get
+  fetch "$OSS_GET_URL" "$OSS_GET" || die "cannot fetch oss-get from $OSS_GET_URL"
+fi
+say "bootstrapping apk-tools ($ARCH) with $OSS_GET"
+sh "$OSS_GET" -R "$B" update >/dev/null || die "oss-get update failed (OSS_REPO=${OSS_REPO:-default})"
+sh "$OSS_GET" -R "$B" install apk-tools ca-certificates >/dev/null || die "oss-get install apk-tools failed"
+BL=$B/usr/local
+[ -x "$BL/bin/apk" ] || die "bootstrap did not produce $BL/bin/apk"
+
+# 2. repository and key
+mkdir -p "$APK_ROOT/etc/apk/keys" "$APK_ROOT/bin" || die "cannot write $APK_ROOT"
+echo "$REPO" > "$APK_ROOT/etc/apk/repositories"
+if [ -n "$UNTRUSTED" ]; then
+  say "repository is unsigned: apk will run with --allow-untrusted"
+else
+  k=$APK_ROOT/etc/apk/keys/$(basename "$APK_KEY")
+  fetch "$APK_KEY" "$k" || die "cannot fetch the signing key $APK_KEY"
+  grep -q 'BEGIN PUBLIC KEY' "$k" || { rm -f "$k"; die "$APK_KEY is not a PEM public key"; }
+  say "signing key: $(basename "$k")"
+fi
+
+# 4 (first, so step 3 can use it). The wrapper: the apk in <root>, on <root>.
+# LD_LIBRARY_PATH because QNX's loader looks there first; SSL_CERT_FILE because
+# OpenSSL's default (/usr/local/ssl/cert.pem) only exists once /usr/local is
+# linked.
+L=$APK_ROOT/usr/local
+cat > "$APK_ROOT/bin/apk" <<EOF
+#!/bin/sh
+# Generated by apk-setup: apk-tools on the root $APK_ROOT.
+export LD_LIBRARY_PATH=$L/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}
+export SSL_CERT_FILE=\${SSL_CERT_FILE:-$L/ssl/cert.pem}
+exec $L/bin/apk --root $APK_ROOT ${UNTRUSTED:+--allow-untrusted }"\$@"
+EOF
+chmod 755 "$APK_ROOT/bin/apk"
+
+# 3. apk installs itself into the root
+say "installing apk-tools into $APK_ROOT from $REPO"
+LD_LIBRARY_PATH=$BL/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
+SSL_CERT_FILE=${SSL_CERT_FILE:-$BL/ssl/cert.pem} \
+  "$BL/bin/apk" --root "$APK_ROOT" --initdb ${UNTRUSTED:+--allow-untrusted} \
+  add apk-tools ca-certificates || die "apk could not install from $REPO"
+rm -rf "$B"
+"$APK_ROOT/bin/apk" --version >/dev/null || die "$APK_ROOT/bin/apk does not run"
+
+# /usr/local: everything was built for that prefix
+if [ ! -e /usr/local ]; then
+  if ln -sP "$L" /usr/local 2>/dev/null; then
+    say "/usr/local -> $L (until reboot: add 'ln -sP $L /usr/local' to a startup script)"
+  else
+    say "note: could not link /usr/local (not root?); programs that read their data from /usr/local need it"
+  fi
+fi
+# The shell environment for what apk installs: QNX's loader does not search
+# /usr/local/lib by itself. TensorFlow Lite and PyTorch (/usr/local/opt/<name>)
+# find their own libraries through RPATH $ORIGIN. ROS 2 is left to its own
+# setup.sh (. /usr/local/opt/ros/jazzy/setup.sh), which puts its lib directory
+# FIRST: it carries its own Fast DDS, Cyclone DDS, zstd ... under the sonames
+# of components in /usr/local/lib, and ROS processes must load its copies.
+cat > "$APK_ROOT/etc/oss-env.sh" <<EOF
+# Generated by apk-setup. Use: . $APK_ROOT/etc/oss-env.sh
+if [ -d /usr/local/lib ]; then _l=/usr/local; else _l=$L; fi
+export PATH=$APK_ROOT/bin:\$_l/bin:\$_l/sbin:\$PATH
+export LD_LIBRARY_PATH=\$_l/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}
+unset _l
+EOF
+say "done. In a shell: . $APK_ROOT/etc/oss-env.sh   then: apk add <package>"

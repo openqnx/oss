@@ -1,0 +1,34 @@
+#!/bin/bash
+# Audit staged shared objects for private copies of libc.
+#
+# A shared library linked with --as-needed that calls nothing in libc itself
+# loses libc.so from its DT_NEEDED, and the libc functions its crt/libgcc_eh
+# code still needs are pulled from QNX's static libcS.a instead -- exported,
+# as memchr, malloc, memcpy ... of its own. The dynamic linker then binds
+# OTHER libraries' calls to those copies instead of libc's -- a private,
+# uninitialised malloc arena or stdio, in the worst case. The toolchain files
+# now keep libc needed (toolchain/qnx-x86_64.cmake); this catches anything
+# built around them.
+#
+#   ./scripts/check-embedded-libc [aarch64le|x86_64]
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+rc=0
+for arch in ${1:-aarch64le x86_64}; do
+  source "$WS/env.sh" "$arch" >/dev/null || exit 1
+  readelf="$QNX_HOST/usr/bin/$QNX_TRIPLE-readelf"
+  [ -x "$readelf" ] || readelf=readelf
+  bad=$(find "$STAGE$PREFIX" -name '*.so*' -type f 2>/dev/null | while read -r f; do
+    "$readelf" -h "$f" >/dev/null 2>&1 || continue
+    "$readelf" --dyn-syms -W "$f" 2>/dev/null |
+      awk '$7 != "UND" && ($8 == "memchr" || $8 == "malloc" || $8 == "memcpy" || $8 == "strlen") {f = 1} END {exit !f}' &&
+      echo "  !! ${f#$STAGE$PREFIX/}"
+  done)
+  if [ -n "$bad" ]; then
+    echo "== $arch: shared objects exporting their own libc functions (relink with libc needed):"
+    echo "$bad"
+    rc=1
+  else
+    echo "== $arch: no shared object carries its own libc"
+  fi
+done
+exit $rc

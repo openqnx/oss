@@ -296,6 +296,8 @@ _build_one_body() {
         # splits out of libc -- socket, m, eventfd, epoll, signalfd, timerfd,
         # fsnotify -- which portable code calls without ever asking for a
         # library, the same set the CMake and Meson toolchain files carry.
+        # libc itself comes first and always needed, as in those files: see
+        # toolchain/qnx-x86_64.cmake (--as-needed and QNX's static libcS.a).
         #
         # Every one of these assignments has to stay on an unbroken backslash
         # continuation: a comment line in the middle ends the command, and the
@@ -310,7 +312,7 @@ _build_one_body() {
           CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" \
           CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
           CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
-          LDFLAGS="-L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify $LDFLAGS_APPEND" \
+          LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify $LDFLAGS_APPEND" \
           GDBUS_CODEGEN="$STAGE$PREFIX/bin/gdbus-codegen" \
           env "${CONF_ENV[@]}" \
           "$S/configure" --host="$QNX_TRIPLE" --prefix="$PREFIX" "${CONF_ARGS_EXTRA[@]}" ) >>"$log" 2>&1 ;;

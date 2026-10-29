@@ -1,0 +1,24 @@
+Open the database layer directory with O_DIRECTORY.
+
+apk_db_read_layer() opens lib/apk/db with plain O_RDONLY and then reads
+installed, triggers and scripts.tar from it with openat(). On QNX 8 a
+directory descriptor is only accepted as an openat() base if it was opened
+with O_DIRECTORY; otherwise every openat() under it fails with ENOTDIR
+(verified on the target). The first "apk --initdb add" works because the
+directory does not exist yet, but every later apk command on that root stops
+with "Unable to read database: Not a directory". Open the layer directory
+with O_DIRECTORY, as apk already does for the root and cache directories.
+
+Upstream-Status: QNX-specific
+
+--- a/src/database.c
++++ b/src/database.c
+@@ -1230,7 +1230,7 @@
+ 	 * 4. scripts db
+ 	 */
+ 
+-	fd = openat(db->root_fd, apk_db_layer_name(layer), O_RDONLY | O_CLOEXEC);
++	fd = openat(db->root_fd, apk_db_layer_name(layer), O_DIRECTORY | O_RDONLY | O_CLOEXEC);
+ 	if (fd < 0) return -errno;
+ 
+ 	if (!(flags & APK_OPENF_NO_WORLD)) {

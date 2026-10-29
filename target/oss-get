@@ -20,6 +20,8 @@
 #              web server or local directory laid out like repo/8.0/ works.
 #   OSS_ROOT   where packages are unpacked (default /data/oss). Packages
 #              contain usr/local/..., so files land in $OSS_ROOT/usr/local.
+#   SSL_CERT_FILE  CA bundle for https:// (a stock image has none; after
+#              "oss-get install ca-certificates" the installed one is used).
 #
 # Everything was built for the prefix /usr/local. On images where / is the
 # read-only IFS, "oss-get link" makes /usr/local a path-manager link to
@@ -52,11 +54,19 @@ INDEX=$DB/INDEX
 die() { echo "oss-get: $*" >&2; exit 1; }
 say() { echo "oss-get: $*"; }
 
+# A stock QNX 8.0 image has no CA bundle (its OpenSSL looks for
+# /usr/ssl/cert.pem), so curl cannot verify an https:// repository. Give one
+# with SSL_CERT_FILE the first time; once the ca-certificates package is
+# installed here, its bundle is used.
 fetch() { # url dest
   case "$1" in
     file://*) cp "${1#file://}" "$2" ;;
     /*)       cp "$1" "$2" ;;
-    *)        curl -fsSL --retry 3 -o "$2" "$1" ;;
+    *)        if [ -z "$SSL_CERT_FILE$CURL_CA_BUNDLE" ] && [ -f "$OSS_ROOT/usr/local/ssl/cert.pem" ]; then
+                SSL_CERT_FILE=$OSS_ROOT/usr/local/ssl/cert.pem curl -fsSL --retry 3 -o "$2" "$1"
+              else
+                curl -fsSL --retry 3 -o "$2" "$1"
+              fi || { rc=$?; [ $rc = 60 ] && echo "oss-get: cannot verify the server's certificate -- set SSL_CERT_FILE to a CA bundle (see docs/packages.md)" >&2; return $rc; } ;;
   esac
 }
 

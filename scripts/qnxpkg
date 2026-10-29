@@ -15,7 +15,8 @@ this writes, under REPO/<sdp>/<apk-arch>/:
 Runtime dependencies are computed, not copied from the recipe: every ELF file
 in the package is read for DT_NEEDED, and each soname is attributed to the
 component whose manifest provides it. Libraries the QNX SDP target image
-already carries are not dependencies.
+already carries are not dependencies. A recipe's RUNTIME_DEPS="..." adds the
+ones no binary shows (data such as CA certificates, programs run by name).
 
 Files installed into staging can carry the absolute staging path of the build
 host (a .pc file, a CMake package file). Those are rewritten to the on-target
@@ -66,6 +67,11 @@ def recipe_meta(name):
     # implementations of one library, e.g. sdl2 and sdl2-compat).
     m = re.search(r'^CONFLICTS="([^"]*)"', text, re.M)
     meta["conflicts"] = m.group(1).split() if m else []
+    # RUNTIME_DEPS: run-time needs no DT_NEEDED shows -- data files, or a
+    # program the component executes (apk-tools needs ca-certificates to
+    # fetch over HTTPS).
+    m = re.search(r'^RUNTIME_DEPS="([^"]*)"', text, re.M)
+    meta["runtime_deps"] = m.group(1).split() if m else []
     lic = os.path.join(WS, "ports", name, "LICENSE.id")
     if os.path.exists(lic):
         meta["license"] = open(lic).read().strip()
@@ -302,8 +308,15 @@ def package(comp, arch, args, owner, outdir):
         if soname:
             provides.append("so:%s=%s" % (soname, ver.split("-r")[0]))
         needed.update(need)
+    # One provides entry per soname: a component that carries a library twice
+    # (TensorFlow Lite's CMake package directory holds a second copy of
+    # libtflite-XNNPACK.so) would otherwise list it twice, and apk reads a
+    # repeated provides as the package conflicting with itself ("unable to
+    # select packages ... conflicts: tensorflow-lite[so:...]").
+    provides = list(dict.fromkeys(provides))
     sonames_here = {p.split(":", 1)[1].split("=")[0] for p in provides}
-    deps = sorted({owner[n] for n in needed if n in owner and n not in sonames_here and owner[n] != comp})
+    deps = sorted({owner[n] for n in needed if n in owner and n not in sonames_here and owner[n] != comp}
+                  | set(meta["runtime_deps"]))
 
     def with_dirs(sel):
         out = set(sel)

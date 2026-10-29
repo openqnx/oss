@@ -1,0 +1,66 @@
+From b0b49874ada3387726ccd9e58534f627e0ad141d Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Mon, 11 Nov 2024 16:05:38 +0530
+Subject: [PATCH] Add QNX support
+
+Imported from qnx-ports/azure-iot-sdk-c (LTS_08_2024...qnx-LTS_08_2024); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ CMakeLists.txt                                 | 2 ++
+ serializer/tests/serializer_e2e/CMakeLists.txt | 5 ++++-
+ testtools/iothub_test/src/iothub_account.c     | 4 ++--
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 427e82ee24..d9dc4bef37 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,6 +34,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+     set(MACOSX TRUE)
+     add_definitions(-DMACOSX)
++elseif (CMAKE_SYSTEM_NAME STREQUAL "QNX")
++    set(QNX TRUE)
+ endif()
+ 
+ IF(WIN32)
+diff --git a/serializer/tests/serializer_e2e/CMakeLists.txt b/serializer/tests/serializer_e2e/CMakeLists.txt
+index 027e9cba0c..93489bb88e 100644
+--- a/serializer/tests/serializer_e2e/CMakeLists.txt
++++ b/serializer/tests/serializer_e2e/CMakeLists.txt
+@@ -75,7 +75,10 @@ else()
+ 				aziotsharedutil
+ 				iothub_client_http_transport
+ 			)
+-		target_link_libraries(${theseTestsName}_exe pthread)
++		if (NOT QNX)
++			# pthread is a part of libc on QNX
++			target_link_libraries(${theseTestsName}_exe pthread)
++		endif()
+ 		linkSharedUtil(${theseTestsName}_exe)
+ 		linkUAMQP(${theseTestsName}_exe)
+ 		linkHttp(${theseTestsName}_exe)
+diff --git a/testtools/iothub_test/src/iothub_account.c b/testtools/iothub_test/src/iothub_account.c
+index af7267a2d2..6f2533efe4 100644
+--- a/testtools/iothub_test/src/iothub_account.c
++++ b/testtools/iothub_test/src/iothub_account.c
+@@ -1206,7 +1206,7 @@ IOTHUB_GATEWAY_VERSION IoTHubAccount_GetIoTHubVersion(IOTHUB_ACCOUNT_INFO_HANDLE
+ 
+         if (commandLength > 0 && commandLength < NSLOOKUP_MAX_COMMAND_SIZE)
+         {
+-#if defined(__APPLE__) || defined(AZIOT_LINUX)
++#if defined(__APPLE__) || defined(AZIOT_LINUX) || defined(__QNX__)
+             FILE* stdOut = popen(command, "r");
+ #else
+             FILE* stdOut = _popen(command, "r");
+@@ -1231,7 +1231,7 @@ IOTHUB_GATEWAY_VERSION IoTHubAccount_GetIoTHubVersion(IOTHUB_ACCOUNT_INFO_HANDLE
+                 }
+             }
+ 
+-#if defined(__APPLE__) || defined(AZIOT_LINUX)
++#if defined(__APPLE__) || defined(AZIOT_LINUX) || defined(__QNX__)
+             (void)pclose(stdOut);
+ #else
+             (void)_pclose(stdOut);

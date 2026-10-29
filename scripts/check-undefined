@@ -1,0 +1,55 @@
+#!/bin/bash
+# Report undefined symbols in staged shared libraries that no DT_NEEDED entry,
+# and no QNX system library, can satisfy. This is how the missing -leventfd in
+# libCommonAPI-SomeIP.so was found: --allow-shlib-undefined lets a .so link with
+# holes, and they only surface when an application links against it.
+source "$(dirname "${BASH_SOURCE[0]}")/../env.sh" "${1:-aarch64le}" >/dev/null || exit 1
+NM="$QNX_HOST/usr/bin/nto${QNX_CPU}-nm"
+T="$QNX_TARGET/$QNX_ARCH"
+
+# every symbol QNX itself provides
+sysdefs=$(mktemp)
+for f in "$T"/lib/*.so.[0-9]* "$T"/usr/lib/*.so.[0-9]*; do
+  [ -e "$f" ] || continue
+  # QNX exports carry a @@libfoo.so.N version suffix; strip it so the names
+  # line up with the undefined references, which have none.
+  "$NM" -D --defined-only "$f" 2>/dev/null | awk '{print $NF}' | sed 's/@@.*//;s/@.*//'
+done | sort -u > "$sysdefs"
+
+# Everything we staged, including private plugin directories. A package may
+# install its backend under lib/<pkg>/ and reach it through an RPATH -- libproxy
+# puts px_manager_* in lib/libproxy/libpxbackend-1.0.so with
+# RPATH=/usr/local/lib/libproxy -- so a scan of lib/ alone reports symbols that
+# in fact resolve perfectly at run time.
+staged=$(mktemp)
+while read -r f; do
+  "$NM" -D --defined-only "$f" 2>/dev/null | awk '{print $NF}' | sed 's/@@.*//;s/@.*//'
+done < <(find "$STAGE$PREFIX/lib" -type f \( -name '*.so' -o -name '*.so.*' \) 2>/dev/null) \
+  | sort -u > "$staged"
+
+# Merge the two symbol universes ONCE.  Doing "sort -u $sysdefs $staged" inside
+# the loop below re-sorted a million-line table for every library scanned: at
+# 205 packages that is ~1000 sorts and the audit runs for over half an hour,
+# looking for all the world like a hang.
+alldefs=$(mktemp)
+sort -u "$sysdefs" "$staged" > "$alldefs"
+
+rc=0
+for f in "$STAGE$PREFIX"/lib/*.so.[0-9]*; do
+  [ -f "$f" ] || continue
+  # Keep only STRONG undefined references (type "U"). Weak ones -- "w"/"v",
+  # which is what GCC emits for thread_local init thunks (_ZTH...) and for gcov
+  # hooks -- are allowed to stay unresolved at load time.
+  und=$("$NM" -D --undefined-only "$f" 2>/dev/null \
+        | awk '$(NF-1) == "U" {print $NF}' | sed 's/@@.*//;s/@.*//' | sort -u)
+  [ -z "$und" ] && continue
+  missing=$(comm -23 <(printf '%s\n' "$und") "$alldefs")
+  if [ -n "$missing" ]; then
+    echo "!! $(basename "$f")"
+    printf '     %s\n' $missing | head -12
+    rc=1
+  fi
+done
+rm -f "$sysdefs" "$staged" "$alldefs"
+[ $rc -eq 0 ] && echo "OK  [$QNX_ARCH] no unresolvable undefined symbols in staged libraries"
+exit $rc

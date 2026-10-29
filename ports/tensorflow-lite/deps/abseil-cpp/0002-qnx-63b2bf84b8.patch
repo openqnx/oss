@@ -1,0 +1,624 @@
+From 63b2bf84b866ad3e3ea1194d4bbcdbb79796751a Mon Sep 17 00:00:00 2001
+From: Peter Cai <xicai@blackberry.com>
+Date: Tue, 6 Feb 2024 15:39:33 -0500
+Subject: [PATCH] QNXOSG-324: Enable dependency discovery config files
+
+- Default CMAKE_INSTALL_PREFIX is now /usr/local (can be overridden using PREFIX)
+- Redirect installation on host using CMAKE_STAGING_PREFIX
+- Unset CMAKE_INSTALL_LIBDIR and CMAKE_INSTALL_INCLUDEDIR to remove absolute path references to them
+- Add proper support for staging area via INSTALL_ROOT_nto (and is recommended over installing directly into SDP)
+
+Note: pkg-config files are installed but not used with CMake projects. Using pkg-config files requires a wrapper script over pkg-config, which will be provided in an upcoming port that needs pkg-config.
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ CMake/AbseilHelpers.cmake                     |   6 +-
+ CMakeLists.txt                                |  50 ++-
+ qnx/build/common.mk                           |  60 +--
+ .../shiplist-sdp-abseil-cpp-internal.xml      | 404 +++++++++---------
+ ...shiplist-sdp-abseil-cpp_tests-internal.xml |   4 +-
+ 5 files changed, 259 insertions(+), 265 deletions(-)
+
+diff --git a/CMake/AbseilHelpers.cmake b/CMake/AbseilHelpers.cmake
+index f80c5a3053e..3bd33ce8718 100644
+--- a/CMake/AbseilHelpers.cmake
++++ b/CMake/AbseilHelpers.cmake
+@@ -213,10 +213,8 @@ Version: ${PC_VERSION}\n\
+ Requires:${PC_DEPS}\n\
+ Libs: -L\${libdir} $<$<NOT:$<BOOL:${ABSL_CC_LIB_IS_INTERFACE}>>:${LNK_LIB}> ${PC_LINKOPTS}\n\
+ Cflags: -I\${includedir}${PC_CFLAGS}\n")
+-    if(NOT QNX)
+-      INSTALL(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/absl_${_NAME}.pc"
+-              DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+-    endif()
++    INSTALL(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/absl_${_NAME}.pc"
++            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+   endif()
+ 
+   if(NOT ABSL_CC_LIB_IS_INTERFACE)
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ac7264d201e..f52d8ac33b2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -182,36 +182,34 @@ add_subdirectory(absl)
+ 
+ if(ABSL_ENABLE_INSTALL)
+   
+-  if(NOT QNX)
+-    # install as a subdirectory only
+-    install(EXPORT ${PROJECT_NAME}Targets
+-      NAMESPACE absl::
+-      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+-    )
++  # install as a subdirectory only
++  install(EXPORT ${PROJECT_NAME}Targets
++    NAMESPACE absl::
++    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
++  )
+ 
+-    configure_package_config_file(
+-      CMake/abslConfig.cmake.in
+-      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+-      INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
++  configure_package_config_file(
++    CMake/abslConfig.cmake.in
++    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
++    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
++  )
++  install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
++    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
++  )
++
++  # Abseil only has a version in LTS releases.  This mechanism is accomplished
++  # Abseil's internal Copybara (https://github.com/google/copybara) workflows and
++  # isn't visible in the CMake buildsystem itself.
++  if(absl_VERSION)
++    write_basic_package_version_file(
++      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
++      COMPATIBILITY ExactVersion
+     )
+-    install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
++
++    install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+       DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+     )
+-
+-    # Abseil only has a version in LTS releases.  This mechanism is accomplished
+-    # Abseil's internal Copybara (https://github.com/google/copybara) workflows and
+-    # isn't visible in the CMake buildsystem itself.
+-    if(absl_VERSION)
+-      write_basic_package_version_file(
+-        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+-        COMPATIBILITY ExactVersion
+-      )
+-
+-      install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+-      )
+-    endif()  # absl_VERSION
+-  endif()
++  endif()  # absl_VERSION
+   
+   install(DIRECTORY absl
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+diff --git a/qnx/build/common.mk b/qnx/build/common.mk
+index 44f864d5087..17d27f51b90 100644
+--- a/qnx/build/common.mk
++++ b/qnx/build/common.mk
+@@ -12,9 +12,15 @@ DIST_BASE=$(PRODUCT_ROOT)/../
+ #by default, unless it was manually re-routed to
+ #a staging area by setting both INSTALL_ROOT_nto
+ #and USE_INSTALL_ROOT
+-abseil-cpp_INSTALL_ROOT ?= $(INSTALL_ROOT_$(OS))
++INSTALL_ROOT ?= $(INSTALL_ROOT_$(OS))
+ 
+-abseil-cpp_VERSION = .2308.0.0
++#A prefix path to use **on the target**. This is
++#different from INSTALL_ROOT, which refers to a
++#installation destination **on the host machine**.
++#This prefix path may be exposed to the source code,
++#the linker, or package discovery config files (.pc,
++#CMake config modules, etc.). Default is /usr/local
++PREFIX ?= /usr/local
+ 
+ #choose Release or Debug
+ CMAKE_BUILD_TYPE ?= Release
+@@ -28,19 +34,35 @@ ALL_DEPENDENCIES = abseil-cpp_all
+ 
+ CFLAGS += $(FLAGS)
+ 
+-define PINFO
+-endef
+-PINFO_STATE=Experimental
+-USEFILE=
+-
+ include $(MKFILES_ROOT)/qtargets.mk
+ 
++#Search paths for all of CMake's find_* functions --
++#headers, libraries, etc.
++#
++#$(QNX_TARGET): for architecture-agnostic files shipped with SDP (e.g. headers)
++#$(QNX_TARGET)/$(CPUVARDIR): for architecture-specific files in SDP
++#$(INSTALL_ROOT)/$(CPUVARDIR): any packages that may have been installed in the staging area
++CMAKE_FIND_ROOT_PATH := $(QNX_TARGET);$(QNX_TARGET)/$(CPUVARDIR);$(INSTALL_ROOT)/$(CPUVARDIR)
++
++#Path to CMake modules; These are CMake files installed by other packages
++#for downstreams to discover them automatically. We support discovering
++#CMake-based packages from inside SDP or in the staging area.
++#Note that CMake modules can automatically detect the prefix they are
++#installed in.
++CMAKE_MODULE_PATH := $(QNX_TARGET)/$(CPUVARDIR)/$(PREFIX)/lib/cmake;$(INSTALL_ROOT)/$(CPUVARDIR)/$(PREFIX)/lib/cmake
++
++#Headers from INSTALL_ROOT need to be made available by default
++#because CMake and pkg-config do not necessary add it automatically
++#if the include path is "default"
++CFLAGS += -I$(INSTALL_ROOT)/$(CPUVARDIR)/$(PREFIX)/include
++
+ CMAKE_ARGS = -DCMAKE_TOOLCHAIN_FILE=$(PROJECT_ROOT)/qnx.nto.toolchain.cmake \
+-             -DCMAKE_INSTALL_PREFIX=$(abseil-cpp_INSTALL_ROOT)/$(CPUVARDIR)/usr \
++             -DCMAKE_INSTALL_PREFIX="$(PREFIX)" \
++             -DCMAKE_STAGING_PREFIX="$(INSTALL_ROOT)/$(CPUVARDIR)/$(PREFIX)" \
++             -DCMAKE_FIND_ROOT_PATH="$(CMAKE_FIND_ROOT_PATH)" \
++             -DCMAKE_MODULE_PATH="$(CMAKE_MODULE_PATH)" \
+              -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
+              -DCMAKE_SYSTEM_PROCESSOR=$(CPUVARDIR) \
+-             -DCMAKE_INSTALL_LIBDIR=$(abseil-cpp_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib \
+-             -DCMAKE_INSTALL_INCLUDEDIR=$(abseil-cpp_INSTALL_ROOT)/usr/include \
+              -DEXTRA_CMAKE_C_FLAGS="$(CFLAGS)" \
+              -DEXTRA_CMAKE_CXX_FLAGS="$(CFLAGS)" \
+              -DEXTRA_CMAKE_ASM_FLAGS="$(FLAGS)" \
+@@ -51,7 +73,7 @@ CMAKE_ARGS = -DCMAKE_TOOLCHAIN_FILE=$(PROJECT_ROOT)/qnx.nto.toolchain.cmake \
+              -DCPU=$(CPU) \
+              -DABSL_RUN_TESTS=OFF \
+              -DABSL_ENABLE_INSTALL=ON \
+-             -DABSL_USE_GOOGLETEST_HEAD=ON
++             -DABSL_USE_EXTERNAL_GOOGLETEST=ON
+ 
+ MAKE_ARGS ?= -j $(firstword $(JLEVEL) 1)
+ 
+@@ -69,19 +91,3 @@ install check: abseil-cpp_all
+ clean iclean spotless:
+ 	rm -rf build
+ endif
+-
+-#everything down below deals with the generation of the PINFO
+-#information for shared objects that is used by the QNX build
+-#infrastructure to embed metadata in the .so files, for example
+-#data and time, version number, description, etc. Metadata can
+-#be retrieved on the target by typing 'use -i <path to openblas .so file>'.
+-#this is optional: setting GENERATE_PINFO_FILES to FALSE will disable
+-#the insertion of metadata in .so files.
+-ifeq ($(GENERATE_PINFO_FILES), TRUE)
+-#the following rules are called by the cmake generated makefiles,
+-#in order to generate the .pinfo files for the shared libraries
+-%.so$(abseil-cpp_VERSION):
+-	$(ADD_PINFO)
+-	$(ADD_USAGE)
+-
+-endif
+diff --git a/qnx/shiplist/shiplist-sdp-abseil-cpp-internal.xml b/qnx/shiplist/shiplist-sdp-abseil-cpp-internal.xml
+index 60d7c3dc0b9..e5ef1e2b259 100644
+--- a/qnx/shiplist/shiplist-sdp-abseil-cpp-internal.xml
++++ b/qnx/shiplist/shiplist-sdp-abseil-cpp-internal.xml
+@@ -13,209 +13,201 @@
+ 	<requires value="suppress-library: autogen"/>
+ 	<provides value="suppress-library: autogen"/>
+ 
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_atomic_hook_test_helper.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_atomic_hook_test_helper.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_any_cast_impl.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_any_cast_impl.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_optional_access.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_optional_access.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_variant_access.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_bad_variant_access.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_base.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_base.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_city.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_city.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_civil_time.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_civil_time.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cord_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cord_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cord.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cord.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_functions.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_functions.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_handle.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_handle.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_info.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_info.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_sample_token.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_cordz_sample_token.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc32c.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc32c.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_cord_state.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_cord_state.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_cpu_detect.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_cpu_detect.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_crc_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_debugging_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_debugging_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_demangle_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_demangle_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_die_if_null.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_die_if_null.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_examine_stack.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_examine_stack.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_exception_safety_testing.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_exception_safety_testing.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_exponential_biased.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_exponential_biased.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_failure_signal_handler.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_failure_signal_handler.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_commandlineflag_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_commandlineflag_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_commandlineflag.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_commandlineflag.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_config.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_config.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_marshalling.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_marshalling.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_parse.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_parse.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_private_handle_accessor.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_private_handle_accessor.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_program_name.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_program_name.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_reflection.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_reflection.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_usage_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_usage_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_usage.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_flags_usage.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_graphcycles_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_graphcycles_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hash_generator_testing.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hash_generator_testing.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hash.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hash.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hashtablez_sampler.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_hashtablez_sampler.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_int128.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_int128.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_kernel_timeout_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_kernel_timeout_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_leak_check.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_leak_check.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_entry.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_entry.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_flags.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_flags.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_globals.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_globals.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_initialize.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_initialize.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_check_op.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_check_op.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_conditions.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_conditions.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_format.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_format.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_globals.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_globals.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_log_sink_set.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_log_sink_set.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_message.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_message.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_nullguard.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_nullguard.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_proto.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_proto.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_actions.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_actions.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_helpers.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_helpers.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_matchers.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_internal_test_matchers.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_severity.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_severity.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_sink.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_log_sink.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_low_level_hash.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_low_level_hash.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_malloc_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_malloc_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_periodic_sampler.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_periodic_sampler.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_per_thread_sem_test_common.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_per_thread_sem_test_common.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_pow10_helper.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_pow10_helper.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_distributions.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_distributions.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_distribution_test_util.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_distribution_test_util.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_platform.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_platform.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_pool_urbg.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_pool_urbg.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_hwaes_impl.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_hwaes_impl.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_hwaes.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_hwaes.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_slow.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen_slow.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_randen.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_seed_material.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_internal_seed_material.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_seed_gen_exception.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_seed_gen_exception.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_seed_sequences.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_random_seed_sequences.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_raw_hash_set.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_raw_hash_set.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_raw_logging_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_raw_logging_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_scoped_mock_log.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_scoped_mock_log.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_scoped_set_env.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_scoped_set_env.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_spinlock_test_common.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_spinlock_test_common.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_spinlock_wait.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_spinlock_wait.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_stack_consumption.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_stack_consumption.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_stacktrace.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_stacktrace.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_statusor.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_statusor.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_status.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_status.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strerror.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strerror.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_str_format_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_str_format_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strings_internal.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strings_internal.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strings.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_strings.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_string_view.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_string_view.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_symbolize.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_symbolize.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_synchronization.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_synchronization.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_test_instance_tracker.soinput" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_test_instance_tracker.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_throw_delegate.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_throw_delegate.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time_internal_test_util.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time_internal_test_util.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time_zone.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libabsl_time_zone.so.2308.0.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgmock_main.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgmock_main.so.1.14.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgmock.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgmock.so.1.14.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgtest_main.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgtest_main.so.1.14.0" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgtest.so" />
+-    <file name="${targetfolder}/[ARCH]/usr/lib/libgtest.so.1.14.0" />
+-    <asset dest="${targetfolder}/usr/include/" />
+-</shiplist>
+\ No newline at end of file
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_atomic_hook_test_helper.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_atomic_hook_test_helper.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_any_cast_impl.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_any_cast_impl.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_optional_access.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_optional_access.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_variant_access.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_bad_variant_access.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_base.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_base.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_city.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_city.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_civil_time.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_civil_time.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cord_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cord_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cord.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cord.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_functions.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_functions.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_handle.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_handle.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_info.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_info.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_sample_token.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_cordz_sample_token.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc32c.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc32c.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_cord_state.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_cord_state.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_cpu_detect.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_cpu_detect.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_crc_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_debugging_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_debugging_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_demangle_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_demangle_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_die_if_null.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_die_if_null.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_examine_stack.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_examine_stack.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_exception_safety_testing.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_exception_safety_testing.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_exponential_biased.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_exponential_biased.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_failure_signal_handler.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_failure_signal_handler.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_commandlineflag_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_commandlineflag_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_commandlineflag.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_commandlineflag.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_config.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_config.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_marshalling.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_marshalling.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_parse.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_parse.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_private_handle_accessor.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_private_handle_accessor.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_program_name.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_program_name.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_reflection.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_reflection.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_usage_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_usage_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_usage.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_flags_usage.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_graphcycles_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_graphcycles_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hash_generator_testing.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hash_generator_testing.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hash.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hash.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hashtablez_sampler.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_hashtablez_sampler.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_int128.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_int128.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_kernel_timeout_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_kernel_timeout_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_leak_check.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_leak_check.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_entry.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_entry.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_flags.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_flags.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_globals.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_globals.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_initialize.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_initialize.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_check_op.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_check_op.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_conditions.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_conditions.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_format.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_format.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_globals.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_globals.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_log_sink_set.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_log_sink_set.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_message.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_message.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_nullguard.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_nullguard.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_proto.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_proto.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_actions.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_actions.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_helpers.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_helpers.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_matchers.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_internal_test_matchers.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_severity.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_severity.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_sink.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_log_sink.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_low_level_hash.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_low_level_hash.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_malloc_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_malloc_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_periodic_sampler.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_periodic_sampler.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_per_thread_sem_test_common.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_per_thread_sem_test_common.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_pow10_helper.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_pow10_helper.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_distributions.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_distributions.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_distribution_test_util.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_distribution_test_util.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_platform.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_platform.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_pool_urbg.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_pool_urbg.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_hwaes_impl.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_hwaes_impl.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_hwaes.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_hwaes.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_slow.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen_slow.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_randen.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_seed_material.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_internal_seed_material.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_seed_gen_exception.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_seed_gen_exception.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_seed_sequences.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_random_seed_sequences.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_raw_hash_set.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_raw_hash_set.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_raw_logging_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_raw_logging_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_scoped_mock_log.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_scoped_mock_log.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_scoped_set_env.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_scoped_set_env.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_spinlock_test_common.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_spinlock_test_common.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_spinlock_wait.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_spinlock_wait.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_stack_consumption.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_stack_consumption.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_stacktrace.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_stacktrace.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_statusor.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_statusor.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_status.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_status.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strerror.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strerror.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_str_format_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_str_format_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strings_internal.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strings_internal.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strings.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_strings.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_string_view.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_string_view.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_symbolize.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_symbolize.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_synchronization.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_synchronization.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_test_instance_tracker.soinput" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_test_instance_tracker.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_throw_delegate.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_throw_delegate.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time_internal_test_util.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time_internal_test_util.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time.so.2308.0.0" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time_zone.so" />
++    <file name="${targetfolder}/[ARCH]/usr/local/lib/libabsl_time_zone.so.2308.0.0" />
++    <asset dest="${targetfolder}/usr/local/include/" />
++</shiplist>
+diff --git a/qnx/shiplist/shiplist-sdp-abseil-cpp_tests-internal.xml b/qnx/shiplist/shiplist-sdp-abseil-cpp_tests-internal.xml
+index f970d9bd4db..fd0ca6e0107 100644
+--- a/qnx/shiplist/shiplist-sdp-abseil-cpp_tests-internal.xml
++++ b/qnx/shiplist/shiplist-sdp-abseil-cpp_tests-internal.xml
+@@ -13,5 +13,5 @@
+ 	<requires value="suppress-library: autogen"/>
+ 	<provides value="suppress-library: autogen"/>
+ 
+-	<asset dest="${targetfolder}/[ARCH]/usr/bin/abseil-cpp_tests" />
+-</shiplist>
+\ No newline at end of file
++	<asset dest="${targetfolder}/[ARCH]/usr/local/bin/abseil-cpp_tests" />
++</shiplist>

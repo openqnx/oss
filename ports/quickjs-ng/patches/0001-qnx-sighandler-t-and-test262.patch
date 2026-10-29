@@ -1,0 +1,51 @@
+Build on QNX: sighandler_t and the test262 runner.
+
+- sighandler_t is a glibc name and QNX has neither it nor the BSD sig_t;
+  declare the plain function-pointer type.
+- run-test262 is a conformance-suite driver, not part of the engine, and
+  relies on struct dirent's d_type, which QNX does not have. Skip it.
+- test_conv (an internal unit test) trips a GCC 12 aarch64 false positive
+  under -Werror; it is not built on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/quickjs-libc.c
++++ b/quickjs-libc.c
+@@ -78,6 +78,11 @@
+ extern char **environ;
+ #endif
+ 
++#if defined(__QNX__)
++/* QNX has neither glibc's sighandler_t nor the BSD sig_t. */
++typedef void (*sighandler_t)(int);
++#endif
++
+ #endif /* _WIN32 */
+ 
+ #if !defined(_WIN32) && !defined(__wasi__)
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -293,7 +293,8 @@
+ # Test262 runner
+ #
+ 
+-if(NOT EMSCRIPTEN)
++# The test262 runner walks directories with dirent.d_type, which QNX lacks.
++if(NOT EMSCRIPTEN AND NOT QNX)
+     add_executable(run-test262
+         run-test262.c
+     )
+@@ -374,9 +375,13 @@
+     target_link_libraries(test_fib qjs)
+ endif()
+ 
++# test_conv is an internal unit test; GCC 12 for aarch64 reports a false
++# -Wstringop-overflow in it, which -Werror turns into a build failure.
++if(NOT QNX)
+ add_executable(test_conv
+     tests/test_conv.c
+ )
++endif()
+ 
+ # Install target
+ #

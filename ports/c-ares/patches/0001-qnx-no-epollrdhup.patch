@@ -1,0 +1,28 @@
+c-ares: build the epoll backend without EPOLLRDHUP.
+
+QNX 8.0's epoll (libepoll) has no EPOLLRDHUP. Defined as 0 the bit is never
+requested; c-ares still sees a closed connection through EPOLLHUP and a read
+of 0 bytes.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/lib/event/ares_event_epoll.c b/src/lib/event/ares_event_epoll.c
+index 538c38b..d79f8c2 100644
+--- a/src/lib/event/ares_event_epoll.c
++++ b/src/lib/event/ares_event_epoll.c
+@@ -35,6 +35,15 @@
+ 
+ #ifdef HAVE_EPOLL
+ 
++/* QNX 8.0's epoll (libepoll) implements the level-triggered core only: there is
++ * no EPOLLRDHUP, which reports that the peer closed its write half. Asking for
++ * a bit the implementation does not define is harmless once it is zero -- the
++ * bit is then never requested and never reported, and c-ares still learns about
++ * a closed connection from EPOLLHUP and from the read returning 0. */
++#if (defined(__QNX__) || defined(__QNXNTO__)) && !defined(EPOLLRDHUP)
++#  define EPOLLRDHUP 0
++#endif
++
+ typedef struct {
+   int epoll_fd;
+ } ares_evsys_epoll_t;

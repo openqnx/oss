@@ -1,0 +1,5 @@
+VERSION=1.2.2; GIT=https://github.com/libsndfile/libsndfile.git; REF=1.2.2
+DEPS="libogg libvorbis flac opus"
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF
+                   -DBUILD_TESTING=OFF -DENABLE_EXTERNAL_LIBS=ON -DENABLE_MPEG=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

@@ -1,0 +1,26 @@
+Detect GDK's X11 backend at compile time, not by running a program.
+
+meson.build compiles and *runs* a test program to see whether GDK was built
+with X11, which a cross build cannot do ("Can not run test applications in
+this cross environment"). The answer is a preprocessor condition, so a
+compile check that fails without GDK_WINDOWING_X11 gives the same result.
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -217,12 +217,11 @@
+ #ifdef GDK_WINDOWING_X11
+   return 0;
+ #else
+-  return 1;
++#error no X11 backend
+ #endif
+ }
+ '''
+-result = c_comp.run(code, name : 'GDK has X11 backend', dependencies : gtk_dep)
+-use_x11 = result.returncode() == 0
++use_x11 = c_comp.compiles(code, name : 'GDK has X11 backend', dependencies : gtk_dep)
+ if use_x11
+   common_deps += dependency('x11')
+ endif

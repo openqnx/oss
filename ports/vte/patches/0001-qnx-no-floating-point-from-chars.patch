@@ -1,0 +1,89 @@
+QNX 8.0's libc++ has no floating-point std::from_chars.
+
+parse_termprop_floating() calls the double overload of std::from_chars.
+QNX 8.0's libc++ implements from_chars for integral types only, so the
+call resolves into __charconv/from_chars_integral.h and fails to compile:
+
+    no type named 'type' in 'struct std::__2::enable_if<false, int>'
+
+std::strtod performs the conversion, but it accepts strictly more than
+std::chars_format::general does -- a leading '+', hexadecimal floats, and
+"inf"/"nan".  Rejecting those explicitly keeps a termprop parsed exactly
+as the standard overload would parse it, instead of more permissively on
+this one platform.  Everything else, including the ERANGE and isfinite
+checks and the requirement that the whole string be consumed, is the same
+as the original.
+
+Upstream-Status: QNX-specific
+
+--- a/src/termprops.hh
++++ b/src/termprops.hh
+@@ -24,6 +24,11 @@
+ #include "glib-glue.hh"
+ 
+ #include <cmath> // for std::isfinite
++#if defined(__QNX__)
++#include <cerrno>   // for errno, ERANGE -- see parse_termprop_floating
++#include <cstdlib>  // for std::strtod
++#include <cstring>  // for std::memcpy
++#endif
+ 
+ #include <charconv>
+ #include <optional>
+@@ -389,6 +394,48 @@
+ parse_termprop_floating(std::string_view const& str) noexcept
+ {
+         auto v = T{};
++#if defined(__QNX__)
++        /* QNX 8.0's libc++ ships std::from_chars for integral types only.  The
++         * floating-point overload resolves into from_chars_integral.h, whose
++         * enable_if<is_integral<T>> is false for double, so this does not even
++         * compile ("no type named 'type' in struct enable_if<false, int>").
++         *
++         * std::strtod does the conversion, but it accepts strictly more than
++         * chars_format::general does: a leading '+', hexadecimal floats, and
++         * "inf"/"nan".  Each of those is rejected below so that a termprop
++         * string is parsed exactly as the standard overload would parse it,
++         * rather than more permissively on this one platform.
++         */
++        if (str.empty())
++                return std::nullopt;
++
++        auto const c0 = str.front();
++        if (!(c0 == '-' || c0 == '.' || (c0 >= '0' && c0 <= '9')))
++                return std::nullopt; // '+', 'i'nf, 'n'an, anything else
++
++        auto const hex_at = [&str](size_t i) {
++                return str.size() > i + 1 && str[i] == '0' &&
++                       (str[i + 1] == 'x' || str[i + 1] == 'X');
++        };
++        if (hex_at(0) || (c0 == '-' && hex_at(1)))
++                return std::nullopt;
++
++        char buf[128];
++        if (str.size() >= sizeof(buf))
++                return std::nullopt;
++        std::memcpy(buf, str.data(), str.size());
++        buf[str.size()] = '\0';
++
++        auto end = static_cast<char*>(nullptr);
++        errno = 0;
++        auto const d = std::strtod(buf, &end);
++        if (end == buf + str.size() &&
++            errno != ERANGE &&
++            std::isfinite(d)) {
++                v = T(d);
++                return double(v);
++        }
++#else
+         if (auto [ptr, err] = std::from_chars(std::begin(str),
+                                               std::end(str),
+                                               v,
+@@ -398,6 +445,7 @@
+             std::isfinite(v)) {
+                 return double(v);
+         }
++#endif
+ 
+         return std::nullopt;
+ }

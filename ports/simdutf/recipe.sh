@@ -1,0 +1,4 @@
+VERSION=6.4.2; GIT=https://github.com/simdutf/simdutf.git; REF=v6.4.2
+BUILDSYS=cmake
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DSIMDUTF_TESTS=OFF -DSIMDUTF_BENCHMARKS=OFF
+                   -DSIMDUTF_TOOLS=OFF )

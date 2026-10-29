@@ -1,0 +1,22 @@
+QNX change from qnx-ports/build-files, copied unchanged:
+  ports/ros2/ros2-jazzy/qnx_patches/rmw_dds_common.patch
+  at revision 6f1507550d656edafbf8bcc826a196da1b00c459.
+
+Applied by ports/ros2/recipe.sh, in the repository repo-patches/MAP names.
+The reasons for the individual changes are in that file's history in
+qnx-ports/build-files.
+
+Upstream-Status: QNX-specific
+
+diff --git a/rmw_dds_common/package.xml b/rmw_dds_common/package.xml
+index 25ea971..40878f1 100644
+--- a/rmw_dds_common/package.xml
++++ b/rmw_dds_common/package.xml
+@@ -22,6 +22,7 @@
+   <depend>rmw</depend>
+   <depend>rosidl_runtime_c</depend>
+   <depend>rosidl_runtime_cpp</depend>
++  <depend>numpy_vendor</depend>
+ 
+   <test_depend>ament_cmake_gmock</test_depend>
+   <test_depend>ament_lint_auto</test_depend>

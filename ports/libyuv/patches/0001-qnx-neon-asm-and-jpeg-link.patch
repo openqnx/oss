@@ -1,0 +1,144 @@
+libyuv: link libjpeg into the libraries; fix an aarch64 asm operand.
+
+With HAVE_JPEG the MJPEG decoder is compiled into libyuv itself, but only the
+yuvconvert tool linked libjpeg, leaving libyuv.so with unresolved jpeg_*
+symbols. In row_neon64.cc, ld1 takes its shuffle table through a register
+address operand: the "m" constraint gave GCC an addressing form ld1 does not
+accept.
+
+Upstream-Status: Pending
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 636531e..5ed9065 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,6 +39,11 @@ INCLUDE ( FindJPEG )
+ if (JPEG_FOUND)
+   include_directories( ${JPEG_INCLUDE_DIR} )
+   target_link_libraries( yuvconvert ${JPEG_LIBRARY} )
++  # -DHAVE_JPEG compiles the MJPEG decoder into the libraries too, so they
++  # need libjpeg as well -- upstream only links the yuvconvert tool, which
++  # leaves libyuv.so with unresolved jpeg_* symbols and no DT_NEEDED entry.
++  target_link_libraries( ${ly_lib_shared} ${JPEG_LIBRARY} )
++  target_link_libraries( ${ly_lib_static} ${JPEG_LIBRARY} )
+   add_definitions( -DHAVE_JPEG )
+ endif()
+ 
+diff --git a/source/row_neon64.cc b/source/row_neon64.cc
+index ba6ca5d..1c328ae 100644
+--- a/source/row_neon64.cc
++++ b/source/row_neon64.cc
+@@ -1711,7 +1711,7 @@ void ARGBToAB64Row_NEON(const uint8_t* src_argb,
+                         uint16_t* dst_ab64,
+                         int width) {
+   asm volatile(
+-      "ld1         {v4.16b}, %3                  \n"  // shuffler
++      "ld1         {v4.16b}, [%3]                \n"  // shuffler
+       "1:                                        \n"
+       "ldp         q0, q2, [%0], #32             \n"  // load 8 pixels
+       "tbl         v0.16b, {v0.16b}, v4.16b      \n"
+@@ -1726,7 +1726,7 @@ void ARGBToAB64Row_NEON(const uint8_t* src_argb,
+       : "+r"(src_argb),          // %0
+         "+r"(dst_ab64),          // %1
+         "+r"(width)              // %2
+-      : "m"(kShuffleARGBToABGR)  // %3
++      : "r"(&kShuffleARGBToABGR)  // %3
+       : "cc", "memory", "v0", "v1", "v2", "v3", "v4");
+ }
+ 
+@@ -1737,7 +1737,7 @@ void AR64ToARGBRow_NEON(const uint16_t* src_ar64,
+                         uint8_t* dst_argb,
+                         int width) {
+   asm volatile(
+-      "ld1         {v4.16b}, %3                  \n"  // shuffler
++      "ld1         {v4.16b}, [%3]                \n"  // shuffler
+       "1:                                        \n"
+       "ldp         q0, q1, [%0], #32             \n"  // load 4 pixels
+       "ldp         q2, q3, [%0], #32             \n"  // load 4 pixels
+@@ -1750,7 +1750,7 @@ void AR64ToARGBRow_NEON(const uint16_t* src_ar64,
+       : "+r"(src_ar64),          // %0
+         "+r"(dst_argb),          // %1
+         "+r"(width)              // %2
+-      : "m"(kShuffleAR64ToARGB)  // %3
++      : "r"(&kShuffleAR64ToARGB)  // %3
+       : "cc", "memory", "v0", "v1", "v2", "v3", "v4");
+ }
+ 
+@@ -1761,7 +1761,7 @@ void AB64ToARGBRow_NEON(const uint16_t* src_ab64,
+                         uint8_t* dst_argb,
+                         int width) {
+   asm volatile(
+-      "ld1         {v4.16b}, %3                  \n"  // shuffler
++      "ld1         {v4.16b}, [%3]                \n"  // shuffler
+       "1:                                        \n"
+       "ldp         q0, q1, [%0], #32             \n"  // load 4 pixels
+       "ldp         q2, q3, [%0], #32             \n"  // load 4 pixels
+@@ -1774,7 +1774,7 @@ void AB64ToARGBRow_NEON(const uint16_t* src_ab64,
+       : "+r"(src_ab64),          // %0
+         "+r"(dst_argb),          // %1
+         "+r"(width)              // %2
+-      : "m"(kShuffleAB64ToARGB)  // %3
++      : "r"(&kShuffleAB64ToARGB)  // %3
+       : "cc", "memory", "v0", "v1", "v2", "v3", "v4");
+ }
+ 
+diff --git a/source/scale_neon64.cc b/source/scale_neon64.cc
+index 8656fec..2cd6c55 100644
+--- a/source/scale_neon64.cc
++++ b/source/scale_neon64.cc
+@@ -601,8 +601,8 @@ void ScaleRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
+       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
+       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
+ 
+-      "mov         v0.8h, v4.8h                  \n"
+-      "mov         v1.8h, v5.8h                  \n"
++      "mov         v0.16b, v4.16b                  \n"
++      "mov         v1.16b, v5.16b                  \n"
+       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
+       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
+       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)
+@@ -642,7 +642,7 @@ void ScaleRowUp2_Linear_12_NEON(const uint16_t* src_ptr,
+       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
+       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+ 
+-      "mov         v2.8h, v0.8h                  \n"
++      "mov         v2.16b, v0.16b                  \n"
+       "mla         v0.8h, v1.8h, v31.8h          \n"  // 3*near+far (odd)
+       "mla         v1.8h, v2.8h, v31.8h          \n"  // 3*near+far (even)
+ 
+@@ -679,7 +679,7 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
+       "ld1         {v3.8h}, [%2], #16            \n"  // 12345678 (16b)
+       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+ 
+-      "mov         v0.8h, v2.8h                  \n"
++      "mov         v0.16b, v2.16b                  \n"
+       "mla         v2.8h, v3.8h, v31.8h          \n"  // 3*near+far (odd)
+       "mla         v3.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
+ 
+@@ -687,12 +687,12 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
+       "ld1         {v5.8h}, [%3], #16            \n"  // 12345678 (16b)
+       "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
+ 
+-      "mov         v0.8h, v4.8h                  \n"
++      "mov         v0.16b, v4.16b                  \n"
+       "mla         v4.8h, v5.8h, v31.8h          \n"  // 3*near+far (odd)
+       "mla         v5.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
+ 
+-      "mov         v0.8h, v4.8h                  \n"
+-      "mov         v1.8h, v5.8h                  \n"
++      "mov         v0.16b, v4.16b                  \n"
++      "mov         v1.16b, v5.16b                  \n"
+       "mla         v4.8h, v2.8h, v31.8h          \n"  // 9 3 3 1 (1, odd)
+       "mla         v5.8h, v3.8h, v31.8h          \n"  // 9 3 3 1 (1, even)
+       "mla         v2.8h, v0.8h, v31.8h          \n"  // 9 3 3 1 (2, odd)
+@@ -887,8 +887,8 @@ void ScaleUVRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
+       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
+       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
+ 
+-      "mov         v0.8h, v4.8h                  \n"
+-      "mov         v1.8h, v5.8h                  \n"
++      "mov         v0.16b, v4.16b                  \n"
++      "mov         v1.16b, v5.16b                  \n"
+       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
+       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
+       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)

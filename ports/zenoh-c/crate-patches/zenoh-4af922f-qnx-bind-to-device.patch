@@ -1,0 +1,35 @@
+zenoh-util: bind-to-device stubs for every non-Linux system.
+
+set_bind_to_device_{tcp,udp}_socket() are implemented with SO_BINDTODEVICE on
+Linux/Android and stubbed (a warning, then Ok) on macOS and Windows; other
+systems, QNX among them, get no definition and zenoh-link-commons fails to
+compile ("cannot find function set_bind_to_device_tcp_socket"). Use the stubs
+everywhere but Linux and Android.
+
+Applied to the zenoh workspace at 4af922f701c5 (release/1.2.1, the commit
+zenoh-c's Cargo.lock pins) by ports/zenoh-c/recipe.sh.
+
+Upstream-Status: Pending
+
+diff -ruN a/commons/zenoh-util/src/net/mod.rs b/commons/zenoh-util/src/net/mod.rs
+--- a/commons/zenoh-util/src/net/mod.rs	2026-10-28 05:58:15.066129914 +0900
++++ b/commons/zenoh-util/src/net/mod.rs	2026-10-28 05:58:15.093248068 +0900
+@@ -447,14 +447,14 @@
+     Ok(())
+ }
+ 
+-#[cfg(any(target_os = "macos", target_os = "windows"))]
++#[cfg(not(any(target_os = "linux", target_os = "android")))]
+ pub fn set_bind_to_device_tcp_socket(socket: &TcpSocket, iface: &str) -> ZResult<()> {
+-    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on macOS and Windows");
++    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on this platform");
+     Ok(())
+ }
+ 
+-#[cfg(any(target_os = "macos", target_os = "windows"))]
++#[cfg(not(any(target_os = "linux", target_os = "android")))]
+ pub fn set_bind_to_device_udp_socket(socket: &UdpSocket, iface: &str) -> ZResult<()> {
+-    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on macOS and Windows");
++    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on this platform");
+     Ok(())
+ }

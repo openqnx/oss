@@ -1,0 +1,34 @@
+Build QNX shared libraries with an soname.
+
+support/shobj-conf has no case for QNX (nto-qnx*), so it reports shared
+objects as unsupported and the libraries come out without DT_SONAME:
+programs linked against them record libreadline.so -- the -dev symlink --
+and fail to start where only the run-time package is installed. Add a case
+with the Linux rules (lib<name>.so.<major> as the soname), minus the rpath
+and minus the second -soname the Linux case puts in SHOBJ_LDFLAGS.
+
+Upstream-Status: Pending
+
+--- a/support/shobj-conf
++++ b/support/shobj-conf
+@@ -132,6 +132,20 @@
+ 	SHLIB_LIBVERSION='$(SHLIB_LIBSUFF).$(SHLIB_MAJOR)$(SHLIB_MINOR)'
+ 	;;
+ 
++# QNX Neutrino: as Linux, without the rpath (the libraries go where the
++# target's loader already looks, or LD_LIBRARY_PATH says).
++nto*)
++	SHOBJ_CFLAGS=-fPIC
++	SHOBJ_LD='${CC}'
++	# No -soname here: SHLIB_XLDFLAGS gives the library's. A second one naming
++	# the output file itself makes qcc stop with "input file ... is the same
++	# as output file".
++	SHOBJ_LDFLAGS='-shared'
++
++	SHLIB_XLDFLAGS='-Wl,-soname,`basename $@ $(SHLIB_MINOR)`'
++	SHLIB_LIBVERSION='$(SHLIB_LIBSUFF).$(SHLIB_MAJOR)$(SHLIB_MINOR)'
++	;;
++
+ # Darwin/MacOS X
+ darwin*)
+ 	# Common definitions for all darwin/mac os x versions

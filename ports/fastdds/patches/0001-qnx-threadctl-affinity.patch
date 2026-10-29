@@ -1,0 +1,84 @@
+Fast DDS: CPU count and thread affinity on QNX.
+
+The pthread threading code uses glibc's <sys/sysinfo.h> and cpu_set_t. On QNX
+the CPU count comes from sysconf() and affinity is set with ThreadCtl(); the
+Linux-only SCHED_BATCH and SCHED_IDLE policies map to SCHED_OTHER.
+
+Upstream-Status: QNX-specific
+
+--- a/src/cpp/utils/threading/threading_pthread.ipp
++++ b/src/cpp/utils/threading/threading_pthread.ipp
+@@ -19,7 +19,25 @@
+ 
+ #include <pthread.h>
+ #include <sys/resource.h>
++#if defined(__QNXNTO__)
++// <sys/sysinfo.h> is a glibc header. On QNX the CPU count comes from sysconf()
++// and thread affinity is set through ThreadCtl() rather than cpu_set_t.
++#include <unistd.h>
++#include <sys/neutrino.h>
++#include <sched.h>
++// QNX implements SCHED_FIFO / SCHED_RR / SCHED_OTHER / SCHED_SPORADIC only; the
++// Linux-only BATCH and IDLE classes have no counterpart. Fold them onto
++// SCHED_OTHER so the policy comparisons below stay well-formed -- they then
++// simply never select a class QNX cannot honour.
++#ifndef SCHED_BATCH
++#define SCHED_BATCH SCHED_OTHER
++#endif
++#ifndef SCHED_IDLE
++#define SCHED_IDLE  SCHED_OTHER
++#endif
++#else
+ #include <sys/sysinfo.h>
++#endif
+ #include <sys/time.h>
+ #include <sys/types.h>
+ 
+@@ -145,6 +163,39 @@
+         const char* thread_name,
+         uint64_t affinity_mask)
+ {
++#if defined(__QNXNTO__)
++    //
++    // QNX expresses thread affinity as a "runmask": a plain bitmask of CPUs,
++    // applied with ThreadCtl(_NTO_TCTL_RUNMASK). That is the same shape as the
++    // affinity_mask passed in, so the mask maps across directly -- no cpu_set_t
++    // round trip is needed. _GET_AND_SET_INHERIT also makes threads created by
++    // this one inherit the mask, matching pthread_setaffinity_np's semantics.
++    //
++    long cpu_count = sysconf(_SC_NPROCESSORS_CONF);
++    if (cpu_count < 1)
++    {
++        cpu_count = 1;
++    }
++
++    const uint64_t valid_cpus = (cpu_count >= 64)
++            ? ~UINT64_C(0)
++            : ((UINT64_C(1) << cpu_count) - 1);
++
++    if (0 != (affinity_mask & ~valid_cpus))
++    {
++        EPROSIMA_LOG_ERROR(SYSTEM, "Affinity mask has more processors than the ones present in the system");
++    }
++
++    unsigned runmask = static_cast<unsigned>(affinity_mask & valid_cpus);
++    if (0 != runmask)
++    {
++        if (-1 == ThreadCtl(_NTO_TCTL_RUNMASK, reinterpret_cast<void*>(static_cast<uintptr_t>(runmask))))
++        {
++            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread [" << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
++                        errno) << "'");
++        }
++    }
++#else
+     int a;
+     int result;
+     int cpu_count;
+@@ -195,6 +246,7 @@
+         EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
+                     result) << "'");
+     }
++#endif // defined(__QNXNTO__)
+ }
+ 
+ void apply_thread_settings_to_current_thread(

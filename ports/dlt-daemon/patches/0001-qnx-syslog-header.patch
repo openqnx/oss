@@ -1,0 +1,23 @@
+DLT: include <syslog.h> on QNX.
+
+<sys/syslog.h> is a glibc/BSD alias that QNX does not ship; QNX has the POSIX
+<syslog.h>.
+
+Upstream-Status: QNX-specific
+
+--- a/src/offlinelogstorage/dlt_offline_logstorage.c
++++ b/src/offlinelogstorage/dlt_offline_logstorage.c
+@@ -22,7 +22,13 @@
+ #include <stdlib.h>
+ #include <limits.h>
+ #include <ctype.h>
++/* <sys/syslog.h> is a glibc/BSD compatibility alias. QNX ships only the
++ * standard <syslog.h>, which is what POSIX actually specifies. */
++#if defined(__QNXNTO__)
++#include <syslog.h>
++#else
+ #include <sys/syslog.h>
++#endif
+ #include <syslog.h>
+ #include <sys/stat.h>
+ #include <sys/stat.h>

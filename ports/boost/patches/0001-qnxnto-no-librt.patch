@@ -1,0 +1,30 @@
+b2: do not link -lrt for target-os=qnxnto.
+
+QNX 8.0 has no librt (clock_gettime, shm_open and the timers are in libc).
+b2 already exempts target-os=qnx from the generic "-pthread -lrt" rule but not
+qnxnto, which Boost.Log's Jamfile requires.
+
+Upstream-Status: QNX-specific
+
+--- a/tools/build/src/tools/gcc.jam
++++ b/tools/build/src/tools/gcc.jam
+@@ -408,6 +408,10 @@
+     threading-flags <target-os>cygwin/<threadapi>pthread : -pthread ;
+     threading-flags <target-os>solaris  : -pthreads : rt ;
+     threading-flags <target-os>qnx : -pthread ;
++    # QNX 8.0 has no librt -- clock_gettime/shm_open/timers all live in libc.
++    # b2 exempts target-os=qnx from the generic "-pthread plus -lrt" rule but
++    # not qnxnto, which Boost.Log's Jamfile requires us to use.
++    threading-flags <target-os>qnxnto : -pthread ;
+ 
+     local bsd = [ MATCH ^(.*bsd)$ : $(all-os) ] ;
+     threading-flags <target-os>$(bsd) : -pthread ;
+@@ -415,7 +419,7 @@
+     # iOS doesn't need pthread flag according to the https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread.3.html
+     # The default system libraries include pthread functions.  No additional libraries or CFLAGS are necessary to use this API.
+     local no-threading = android beos haiku sgi darwin vxworks iphone appletv ;
+-    local threading-generic-os = [ set.difference $(all-os) : $(no-threading) $(bsd) windows cygwin solaris qnx ] ;
++    local threading-generic-os = [ set.difference $(all-os) : $(no-threading) $(bsd) windows cygwin solaris qnx qnxnto ] ;
+     threading-flags <target-os>$(threading-generic-os) : -pthread : rt ;
+ }
+ 

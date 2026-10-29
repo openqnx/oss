@@ -1,0 +1,321 @@
+CPython: build for QNX.
+
+- configure: recognise *-nto-qnx* hosts (ac_sys_system=QNX); do not define
+  _XOPEN_SOURCE, which on QNX hides everything outside that standard
+  (declarations are gated on _QNX_SOURCE); link with $(CC), which in a cross
+  build carries qcc's -V target; build a real shared libpython with
+  --enable-shared (it silently came out static).
+- mimalloc, pycore_time.h, faulthandler, signal, posix, select, termios: the
+  QNX-specific declarations and the Linux-only interfaces QNX lacks.
+configure is changed with configure.ac.
+
+Upstream-Status: QNX-specific
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -336,6 +336,9 @@
+ 	*-*-vxworks*)
+ 	    ac_sys_system=VxWorks
+ 	    ;;
++	*-*-qnx* | *-nto-qnx*)
++	    ac_sys_system=QNX
++	    ;;
+ 	*-*-emscripten)
+ 	    ac_sys_system=Emscripten
+ 	    ;;
+@@ -806,6 +809,9 @@
+ 	*-*-vxworks*)
+ 		_host_ident=$host_cpu
+ 		;;
++	*-*-qnx* | *-nto-qnx*)
++		_host_ident=$host_cpu
++		;;
+ 	*-*-emscripten)
+ 		_host_ident=$(emcc -dumpversion | cut -f1 -d-)-$host_cpu
+ 		;;
+@@ -863,6 +869,12 @@
+   # entirely and define __EXTENSIONS__ instead.
+   SunOS/*)
+     define_xopen_source=no;;
++  # QNX, like Solaris, treats _XOPEN_SOURCE as a request to *disable* anything
++  # outside the named standard: its headers gate declarations on __EXT_* macros
++  # derived from _QNX_SOURCE, and defining _XOPEN_SOURCE switches those off.
++  # Leave it out and let _QNX_SOURCE (which the toolchain passes) do the work.
++  QNX/*)
++    define_xopen_source=no;;
+   # On UnixWare 7, u_long is never defined with _XOPEN_SOURCE,
+   # but used in /usr/include/netinet/tcp.h. Reported by Tim Rice.
+   # Reconfirmed for 7.1.4 by Martin v. Loewis.
+@@ -1430,9 +1442,13 @@
+ 	LINKCC='$(PURIFY) $(CC)'
+ 	case $ac_sys_system in
+ 	QNX*)
+-	   # qcc must be used because the other compilers do not
+-	   # support -N.
+-	   LINKCC=qcc;;
++	   # qcc must be used because the other compilers do not support -N.
++	   # $(CC) already *is* qcc here, and in a cross build it carries the
++	   # -V<target> selector that a bare "qcc" lacks -- without it qcc drives
++	   # its default target's linker, which then rejects the objects with
++	   # "Relocations in generic ELF (EM: 183)". This case predates anyone
++	   # cross-building CPython for QNX.
++	   LINKCC='$(PURIFY) $(CC)';;
+ 	esac
+ fi
+ AC_MSG_RESULT([$LINKCC])
+@@ -1569,7 +1585,11 @@
+         PY3LIBRARY=libpython3.so
+       fi
+       ;;
+-    Linux*|GNU*|NetBSD*|FreeBSD*|DragonFly*|OpenBSD*|VxWorks*)
++    # QNX is ordinary ELF with the same soname conventions as the systems
++    # beside it here. Without this entry --enable-shared is accepted and then
++    # quietly produces a static libpython, so anything embedding Python (and
++    # python3-config --libs) gets the archive instead of a shared object.
++    Linux*|GNU*|NetBSD*|FreeBSD*|DragonFly*|OpenBSD*|VxWorks*|QNX*)
+       LDLIBRARY='libpython$(LDVERSION).so'
+       BLDLIBRARY='-L. -lpython$(LDVERSION)'
+       RUNSHARED=LD_LIBRARY_PATH=`pwd`${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+@@ -3565,6 +3585,12 @@
+ 		]);;
+ 	FreeBSD*|NetBSD*|OpenBSD*|DragonFly*) CCSHARED="-fPIC";;
+ 	Haiku*) CCSHARED="-fPIC";;
++	# QNX is ELF and needs position-independent code in a shared library like
++	# every other ELF platform here. Without this entry the core objects are
++	# built without -fPIC and the link fails with "relocation
++	# R_AARCH64_ADR_PREL_PG_HI21 against symbol _PyRuntime ... can not be used
++	# when making a shared object".
++	QNX*) CCSHARED="-fPIC";;
+ 	OpenUNIX*|UnixWare*)
+ 		if test "$ac_cv_gcc_compat" = "yes"
+ 		then CCSHARED="-fPIC"
+--- a/configure
++++ b/configure
+@@ -4122,6 +4122,9 @@
+ 	*-*-vxworks*)
+ 	    ac_sys_system=VxWorks
+ 	    ;;
++	*-*-qnx* | *-nto-qnx*)
++	    ac_sys_system=QNX
++	    ;;
+ 	*-*-emscripten)
+ 	    ac_sys_system=Emscripten
+ 	    ;;
+@@ -4626,6 +4629,9 @@
+ 	*-*-vxworks*)
+ 		_host_ident=$host_cpu
+ 		;;
++	*-*-qnx* | *-nto-qnx*)
++		_host_ident=$host_cpu
++		;;
+ 	*-*-emscripten)
+ 		_host_ident=$(emcc -dumpversion | cut -f1 -d-)-$host_cpu
+ 		;;
+@@ -4684,6 +4690,8 @@
+   # entirely and define __EXTENSIONS__ instead.
+   SunOS/*)
+     define_xopen_source=no;;
++  QNX/*)
++    define_xopen_source=no;;
+   # On UnixWare 7, u_long is never defined with _XOPEN_SOURCE,
+   # but used in /usr/include/netinet/tcp.h. Reported by Tim Rice.
+   # Reconfirmed for 7.1.4 by Martin v. Loewis.
+@@ -7544,9 +7552,13 @@
+ 	LINKCC='$(PURIFY) $(CC)'
+ 	case $ac_sys_system in
+ 	QNX*)
+-	   # qcc must be used because the other compilers do not
+-	   # support -N.
+-	   LINKCC=qcc;;
++	   # qcc must be used because the other compilers do not support -N.
++	   # $(CC) already *is* qcc here, and in a cross build it carries the
++	   # -V<target> selector that a bare "qcc" lacks -- without it qcc drives
++	   # its default target's linker, which then rejects the objects with
++	   # "Relocations in generic ELF (EM: 183)". This case predates anyone
++	   # cross-building CPython for QNX.
++	   LINKCC='$(PURIFY) $(CC)';;
+ 	esac
+ fi
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $LINKCC" >&5
+@@ -7721,7 +7733,11 @@
+         PY3LIBRARY=libpython3.so
+       fi
+       ;;
+-    Linux*|GNU*|NetBSD*|FreeBSD*|DragonFly*|OpenBSD*|VxWorks*)
++    # QNX is ordinary ELF with the same soname conventions as the systems
++    # beside it here. Without this entry --enable-shared is accepted and then
++    # quietly produces a static libpython, so anything embedding Python (and
++    # python3-config --libs) gets the archive instead of a shared object.
++    Linux*|GNU*|NetBSD*|FreeBSD*|DragonFly*|OpenBSD*|VxWorks*|QNX*)
+       LDLIBRARY='libpython$(LDVERSION).so'
+       BLDLIBRARY='-L. -lpython$(LDVERSION)'
+       RUNSHARED=LD_LIBRARY_PATH=`pwd`${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+@@ -13673,6 +13689,12 @@
+ fi;;
+ 	FreeBSD*|NetBSD*|OpenBSD*|DragonFly*) CCSHARED="-fPIC";;
+ 	Haiku*) CCSHARED="-fPIC";;
++	# QNX is ELF and needs position-independent code in a shared library like
++	# every other ELF platform here. Without this entry the core objects are
++	# built without -fPIC and the link fails with "relocation
++	# R_AARCH64_ADR_PREL_PG_HI21 against symbol _PyRuntime ... can not be used
++	# when making a shared object".
++	QNX*) CCSHARED="-fPIC";;
+ 	OpenUNIX*|UnixWare*)
+ 		if test "$ac_cv_gcc_compat" = "yes"
+ 		then CCSHARED="-fPIC"
+--- a/Objects/mimalloc/prim/unix/prim.c
++++ b/Objects/mimalloc/prim/unix/prim.c
+@@ -51,7 +51,10 @@
+   #include <sys/sysctl.h>
+ #endif
+ 
+-#if !defined(__HAIKU__) && !defined(__APPLE__) && !defined(__CYGWIN__) && !defined(_AIX) && !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(__sun) && !defined(__NetBSD__)
++// QNX is a microkernel: there is no <sys/syscall.h> and no stable syscall
++// number table to call through. Without MI_HAS_SYSCALL_H mimalloc uses the
++// ordinary open/read/close functions below, which is the intended fallback.
++#if !defined(__HAIKU__) && !defined(__APPLE__) && !defined(__CYGWIN__) && !defined(_AIX) && !defined(__OpenBSD__) && !defined(__FreeBSD__) && !defined(__sun) && !defined(__NetBSD__) && !defined(__QNX__) && !defined(__QNXNTO__)
+   #define MI_HAS_SYSCALL_H
+   #include <sys/syscall.h>
+ #endif
+@@ -153,8 +156,36 @@
+ // mmap
+ //---------------------------------------------
+ 
++#if defined(__QNX__) || defined(__QNXNTO__)
++// QNX has no madvise(); it provides POSIX's posix_madvise(), which reports
++// failure by *returning* the error number rather than setting errno. Translate
++// to the madvise convention, because the callers below inspect errno (they
++// retry on EAGAIN and fall back on EINVAL).
++//
++// MADV_DONTNEED is used here to decommit -- "it decreases rss immediately"
++// per the comment below -- and plain POSIX_MADV_DONTNEED is only advisory on
++// QNX. POSIX_MADV_DISCARD_NP is the one that actually drops the pages, so it
++// is the faithful equivalent; fall back to the portable name if absent.
++#if defined(POSIX_MADV_DISCARD_NP)
++  #define MADV_DONTNEED POSIX_MADV_DISCARD_NP
++#else
++  #define MADV_DONTNEED POSIX_MADV_DONTNEED
++#endif
++#define MADV_NORMAL     POSIX_MADV_NORMAL
++#define MADV_RANDOM     POSIX_MADV_RANDOM
++#define MADV_SEQUENTIAL POSIX_MADV_SEQUENTIAL
++#define MADV_WILLNEED   POSIX_MADV_WILLNEED
++// No MADV_FREE and no MADV_HUGEPAGE on QNX: leaving them undefined makes the
++// #if defined() guards above pick the MADV_DONTNEED path and skip the
++// transparent-huge-page hint, which QNX does not have either.
++#endif
++
+ static int unix_madvise(void* addr, size_t size, int advice) {
+-  #if defined(__sun)
++  #if defined(__QNX__) || defined(__QNXNTO__)
++  const int rc = posix_madvise(addr, size, advice);
++  if (rc != 0) { errno = rc; return -1; }
++  return 0;
++  #elif defined(__sun)
+   return madvise((caddr_t)addr, size, advice);  // Solaris needs cast (issue #520)
+   #else
+   return madvise(addr, size, advice);
+--- a/Include/internal/pycore_time.h
++++ b/Include/internal/pycore_time.h
+@@ -59,6 +59,15 @@
+ 
+ #include "pycore_runtime_structs.h" // _PyTimeFraction
+ 
++#if defined(__QNX__) || defined(__QNXNTO__)
++   // struct timeval reaches this header implicitly via <time.h> on glibc, but
++   // QNX declares it only in <sys/time.h>. Without it the declarations below
++   // build an incomplete "struct timeval" scoped to their own parameter lists,
++   // and pytime.c -- which does include <sys/time.h> -- then fails with
++   // "conflicting types for _PyTime_FromTimeval".
++#  include <sys/time.h>
++#endif
++
+ #ifdef __clang__
+ struct timeval;
+ #endif
+--- a/Modules/faulthandler.c
++++ b/Modules/faulthandler.c
+@@ -1,4 +1,13 @@
+ #include "Python.h"
++
++/* QNX 8.0 leaves SA_RESTART commented out in <signal.h> ("not supported yet"):
++   interrupted kernel calls always return EINTR rather than restarting, and the
++   EINTR retry loops elsewhere in CPython already handle that. Requesting the
++   flag is therefore a no-op, not a behaviour change. */
++#if (defined(__QNX__) || defined(__QNXNTO__)) && !defined(SA_RESTART)
++#  define SA_RESTART 0
++#endif
++
+ #include "pycore_ceval.h"         // _PyEval_IsGILEnabled()
+ #include "pycore_initconfig.h"    // _PyStatus_ERR()
+ #include "pycore_pyerrors.h"      // _Py_DumpExtensionModules()
+--- a/Modules/signalmodule.c
++++ b/Modules/signalmodule.c
+@@ -4,6 +4,15 @@
+ /* XXX Signals should be recorded per thread, now we have thread state. */
+ 
+ #include "Python.h"
++
++/* QNX 8.0 leaves SA_RESTART commented out in <signal.h> ("not supported yet"):
++   interrupted kernel calls always return EINTR rather than restarting, and the
++   EINTR retry loops elsewhere in CPython already handle that. Requesting the
++   flag is therefore a no-op, not a behaviour change. */
++#if (defined(__QNX__) || defined(__QNXNTO__)) && !defined(SA_RESTART)
++#  define SA_RESTART 0
++#endif
++
+ #include "pycore_call.h"          // _PyObject_Call()
+ #include "pycore_ceval.h"         // _PyEval_SignalReceived()
+ #include "pycore_emscripten_signal.h"  // _Py_CHECK_EMSCRIPTEN_SIGNALS
+--- a/Modules/posixmodule.c
++++ b/Modules/posixmodule.c
+@@ -8811,6 +8811,10 @@
+ #include <libutil.h>
+ #elif defined(HAVE_UTIL_H)
+ #include <util.h>
++#elif defined(__QNX__) || defined(__QNXNTO__)
++/* QNX has openpty(), forkpty() and login_tty(), but declares them in <unix.h>
++   rather than in any of the three headers above. */
++#include <unix.h>
+ #endif /* HAVE_PTY_H */
+ #ifdef HAVE_UTMP_H
+ #include <utmp.h>
+--- a/Modules/selectmodule.c
++++ b/Modules/selectmodule.c
+@@ -2724,7 +2724,13 @@
+     /* Kernel 2.6.17 */
+     ADD_INT(EPOLLRDHUP);
+ #endif
++#ifdef EPOLLET
++    /* Not universal: QNX's epoll is level-triggered only and defines no
++       EPOLLET. Leaving the constant out means select.EPOLLET raises
++       AttributeError there, rather than existing and silently doing nothing.
++       Its neighbours above and below are already guarded this way. */
+     ADD_INT(EPOLLET);
++#endif
+ #ifdef EPOLLONESHOT
+     /* Kernel 2.6.2+ */
+     ADD_INT(EPOLLONESHOT);
+--- a/Modules/termios.c
++++ b/Modules/termios.c
+@@ -14,6 +14,20 @@
+ #include <termios.h>
+ #include <unistd.h>               // _POSIX_VDISABLE
+ 
++#if defined(__QNX__) || defined(__QNXNTO__)
++/* QNX's <sys/termio.h> and <termios.h> are mutually exclusive -- including
++   both ends in "#error termio/termios incompatibility" -- so this module is
++   built with termios alone and "struct termio" is never defined. The legacy
++   TC*A ioctl request codes are macros expressed as sizeof(struct termio),
++   so they cannot be evaluated here. They are the pre-POSIX interface that
++   termios replaced; dropping them leaves the POSIX TCGETS/TCSETS family,
++   which QNX does define. */
++#undef TCGETA
++#undef TCSETA
++#undef TCSETAF
++#undef TCSETAW
++#endif
++
+ // On QNX 6, struct termio must be declared by including sys/termio.h
+ // if TCGETA, TCSETA, TCSETAW, or TCSETAF are used. sys/termio.h must
+ // be included before termios.h or it will generate an error.

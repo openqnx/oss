@@ -1,0 +1,2 @@
+VERSION=1.14; GIT=https://github.com/zeux/pugixml.git; REF=v1.14
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DPUGIXML_BUILD_TESTS=OFF )

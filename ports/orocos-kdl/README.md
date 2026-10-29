@@ -1,0 +1,148 @@
+# orocos-kdl 1.5.1
+
+**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
+
+| | |
+|---|---|
+| Upstream | https://github.com/orocos/orocos_kinematics_dynamics.git (tag `v1.5.1`) |
+| Build system | CMake |
+| QNX patches | 0 |
+| Build dependencies | [`eigen`](../eigen/) |
+| Run-time dependencies | none (QNX SDP only) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_orocos_kdl`](../../tests/src/) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install orocos-kdl
+oss-get install orocos-kdl-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild orocos-kdl` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild eigen
+```
+
+### 2. Get the upstream source
+
+```bash
+git clone --depth 1 -b v1.5.1 --recurse-submodules --shallow-submodules \
+    https://github.com/orocos/orocos_kinematics_dynamics.git src/orocos-kdl
+```
+
+The project lives in the `orocos_kdl/` subdirectory of the repository.
+
+### 3. Apply the QNX patches
+
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+cmake -S src/orocos-kdl/orocos_kdl -B build/$QNX_ARCH/orocos-kdl -G Ninja \
+      -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
+      -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
+      -DENABLE_TESTS=OFF \
+      -DENABLE_EXAMPLES=OFF \
+      -DEigen3_DIR="$STAGE$PREFIX/share/eigen3/cmake"
+cmake --build build/$QNX_ARCH/orocos-kdl -j$(nproc)
+DESTDIR=$STAGE cmake --install build/$QNX_ARCH/orocos-kdl
+```
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH orocos-kdl`.
+
+### 5. What it installs
+
+103 files under `/usr/local`: 3 shared-library entries, 93 headers.
+
+```
+/usr/local/lib/liborocos-kdl.so
+/usr/local/lib/liborocos-kdl.so.1.5
+/usr/local/lib/liborocos-kdl.so.1.5.1
+```
+
+The complete list is `stage/<arch>/.manifest/orocos-kdl` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH orocos-kdl
+ls repo/8.0/*/ | grep '^orocos-kdl-'
+```
+
+This writes `orocos-kdl-<ver>-r0.tar.gz` (run time) and `orocos-kdl-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install orocos-kdl
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/orocos-kdl-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/orocos-kdl-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_orocos_kdl`](../../tests/src/) links orocos-kdl the way an application would and checks its core API on the target:
+
+```bash
+./tests/build-tests.sh $QNX_ARCH
+scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_orocos_kdl root@<target>:/data/
+ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_orocos_kdl'
+```
+
+```
+== orocos-kdl ==
+  ok   ...
+PASS orocos-kdl
+```
+
+`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=1.5.1; GIT=https://github.com/orocos/orocos_kinematics_dynamics.git; REF=v1.5.1
+DEPS="eigen"
+SUBDIR=orocos_kdl
+CMAKE_ARGS_EXTRA=( -DENABLE_TESTS=OFF -DENABLE_EXAMPLES=OFF -DEigen3_DIR="$STAGE$PREFIX/share/eigen3/cmake" )
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

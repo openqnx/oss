@@ -1,0 +1,45 @@
+V8 gyp: trap-handler sources for the host half of a QNX build.
+
+V8's trap-handler.h decides by the OS it is compiled on whether the wasm trap
+handler exists (Linux on x64; the arm64 simulator on x64 Linux). The gyp
+files add the matching sources by gyp's OS, which is the target's -- qnx --
+for the host toolset too. The host build of V8 for a QNX target on a Linux
+machine therefore compiled code that calls the trap handler without its
+sources, and mksnapshot failed to link (undefined trap_handler::TryHandleSignal,
+v8_internal_simulator_ProbeMemory). Add them for that host toolset.
+
+Upstream-Status: QNX-specific
+
+--- a/tools/v8_gypfiles/v8.gyp
++++ b/tools/v8_gypfiles/v8.gyp
+@@ -1152,6 +1152,14 @@
+             }],
+             ['v8_enable_webassembly==1', {
+               'conditions': [
++                # QNX: the host half of the build runs on Linux, and V8's code picks its
++                # trap handler by the OS it is compiled on, not by gyp's OS.
++                ['_toolset=="host" and OS=="qnx" and host_os=="linux"', {
++                  'sources': [
++                    '<(V8_ROOT)/src/trap-handler/handler-inside-posix.cc',
++                    '<(V8_ROOT)/src/trap-handler/handler-outside-posix.cc',
++                  ],
++                }],
+                 ['OS in "linux mac ios freebsd openharmony"', {
+                   'sources': [
+                     '<(V8_ROOT)/src/trap-handler/handler-inside-posix.cc',
+@@ -1192,6 +1200,15 @@
+                     '<(V8_ROOT)/src/trap-handler/handler-outside-win.cc',
+                   ],
+                 }],
++                # QNX: the host half of the build runs on Linux, and V8's code picks its
++                # trap handler by the OS it is compiled on, not by gyp's OS.
++                ['_toolset=="host" and OS=="qnx" and host_os=="linux" and host_arch=="x64"', {
++                  'sources': [
++                    '<(V8_ROOT)/src/trap-handler/handler-inside-posix.cc',
++                    '<(V8_ROOT)/src/trap-handler/handler-outside-posix.cc',
++                    '<(V8_ROOT)/src/trap-handler/handler-outside-simulator.cc',
++                  ],
++                }],
+                 ['(_toolset=="host" and host_arch=="x64" or _toolset=="target" and target_arch=="x64") and (OS in "linux mac win openharmony")', {
+                   'sources': [
+                     '<(V8_ROOT)/src/trap-handler/handler-outside-simulator.cc',

@@ -1,0 +1,25 @@
+From 19783c90f74c771070baf221fda802265e02014c Mon Sep 17 00:00:00 2001
+From: Jianyan Li <jianyli@blackberry.com>
+Date: Wed, 17 Apr 2024 15:42:01 -0400
+Subject: [PATCH] Disable GetSignalHandlerStackConsumption for qnx < 800
+
+QNXOSG-84
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ absl/debugging/internal/stack_consumption.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/absl/debugging/internal/stack_consumption.h b/absl/debugging/internal/stack_consumption.h
+index f41b64c39df..04c0ba8c348 100644
+--- a/absl/debugging/internal/stack_consumption.h
++++ b/absl/debugging/internal/stack_consumption.h
+@@ -24,7 +24,7 @@
+ // Use this feature test macro to detect its availability.
+ #ifdef ABSL_INTERNAL_HAVE_DEBUGGING_STACK_CONSUMPTION
+ #error ABSL_INTERNAL_HAVE_DEBUGGING_STACK_CONSUMPTION cannot be set directly
+-#elif !defined(__APPLE__) && !defined(_WIN32) &&                     \
++#elif !defined(__APPLE__) && !defined(_WIN32) && !(defined(__QNX__) && __QNX__ < 800) && \
+     (defined(__i386__) || defined(__x86_64__) || defined(__ppc__) || \
+      defined(__aarch64__) || defined(__riscv))
+ #define ABSL_INTERNAL_HAVE_DEBUGGING_STACK_CONSUMPTION 1

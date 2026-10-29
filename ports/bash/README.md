@@ -1,0 +1,157 @@
+# bash 5.2.37
+
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
+
+| | |
+|---|---|
+| Upstream | https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz |
+| SHA-256 | `9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff` |
+| Build system | GNU Autotools |
+| QNX patches | 1 |
+| Build dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) [`libiconv`](../libiconv/) |
+| Run-time dependencies | [`libiconv`](../libiconv/) [`ncurses`](../ncurses/) [`readline`](../readline/) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | none (no run-time code) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install bash
+oss-get install bash-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild bash` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+**Build the dependencies first** (3 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild ncurses readline libiconv
+```
+
+### 2. Get the upstream source
+
+```bash
+URL=https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz
+mkdir -p dist src/bash
+curl -fL -o dist/$(basename $URL) $URL
+echo "9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff  dist/$(basename $URL)" | sha256sum -c -
+tar xf dist/$(basename $URL) -C src/bash --strip-components=1
+```
+
+### 3. Apply the QNX patches
+
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/bash < ports/bash/patches/0001-qnx8-drop-qnx4-watcom-flags.patch
+```
+
+**[`0001-qnx8-drop-qnx4-watcom-flags.patch`](patches/0001-qnx8-drop-qnx4-watcom-flags.patch)** — Do not apply the QNX 4 (Watcom) compiler flags to QNX Neutrino.
+
+> bash's configure matches every *qnx* host and adds "-Dqnx -F -3s" and
+> -lunix: Watcom options from QNX 4. Neutrino (nto-qnx8.0.0) is GCC-based; both
+> the cross compiler and the build-host gcc that compiles mksyntax reject -3s.
+> Restrict the case to the old qnx4 host triplets.
+
+Touches: `configure.ac`, `configure` · Upstream status: QNX-specific
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+mkdir -p build/$QNX_ARCH/bash && cd build/$QNX_ARCH/bash
+CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
+CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
+LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
+         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+$OLDPWD/src/bash/configure --host=$QNX_TRIPLE --prefix=/usr/local \
+    --without-bash-malloc \
+    --disable-nls \
+    --with-installed-readline \
+    --with-curses
+make -j$(nproc)
+make DESTDIR=$STAGE install
+cd -
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- Also linked at run time (found by scripts/gen-dependency-index): libiconv
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH bash`.
+
+### 5. What it installs
+
+15 files under `/usr/local`, 2 programs.
+
+```
+/usr/local/bin/bash
+/usr/local/bin/bashbug
+```
+
+The complete list is `stage/<arch>/.manifest/bash` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH bash
+ls repo/8.0/*/ | grep '^bash-'
+```
+
+This writes `bash-<ver>-r0.tar.gz` (run time) and `bash-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install bash
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/bash-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/bash-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=5.2.37
+TARBALL=https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz
+SHA256=9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff
+# Also linked at run time (found by scripts/gen-dependency-index): libiconv
+DEPS="ncurses readline libiconv"
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=( --without-bash-malloc --disable-nls --with-installed-readline --with-curses )
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

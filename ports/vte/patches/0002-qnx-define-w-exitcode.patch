@@ -1,0 +1,34 @@
+Define W_EXITCODE where the platform does not.
+
+widget.cc composes a wait status with W_EXITCODE(0, SIGKILL).  That macro
+is a glibc/BSD extension, not POSIX, and QNX's <sys/wait.h> does not have
+it:
+
+    widget.cc:927:30: error: 'W_EXITCODE' was not declared in this scope
+
+The encoding itself is the same.  QNX's own <sys/wait.h> defines
+WEXITSTATUS(s) as ((s) >> 8) & 0xff and WTERMSIG(s) as (s) & 0x7f, so the
+usual definition composes a status QNX's accessors read back correctly.
+Guarded with #ifndef so any platform that does define it keeps its own.
+
+Upstream-Status: QNX-specific
+
+--- a/src/widget.cc
++++ b/src/widget.cc
+@@ -22,6 +22,16 @@
+ 
+ #include <sys/wait.h> // for W_EXITCODE
+ 
++#ifndef W_EXITCODE
++/* W_EXITCODE is a glibc/BSD convenience macro, not POSIX, and QNX does not
++ * define it.  QNX uses the same wait-status encoding, which its own <sys/wait.h>
++ * states directly: WEXITSTATUS is ((status) >> 8) & 0xff and WTERMSIG is
++ * (status) & 0x7f.  So composing a status is the same shift and or as everywhere
++ * else -- this is not a QNX-specific layout, just a missing spelling.
++ */
++#define W_EXITCODE(ret, sig) ((ret) << 8 | (sig))
++#endif
++
+ #include <exception>
+ #include <new>
+ #include <stdexcept>

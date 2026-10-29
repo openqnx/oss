@@ -1,0 +1,1404 @@
+From 4d808451b5a8327f0a53d6b307d4490f801ed9b1 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Wed, 3 Jun 2026 15:19:31 +0530
+Subject: [PATCH 1/6] Add qnx-support
+
+Imported from qnx-ports/ntpsec (NTPsec_1_2_4...qnx-ntpsec-1.2.4); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ include/ntp_refclock.h  |  2 +-
+ include/ntp_syscall.h   |  7 +++++++
+ include/ntp_tty.h       |  2 +-
+ include/ntp_types.h     |  3 ++-
+ libntp/clockwork.c      |  2 ++
+ libntp/ntp_c.c          |  5 +++++
+ libntp/statestr.c       | 36 ++++++++++++++++++++++----------
+ ntpd/ntp_control.c      |  9 +++++++-
+ ntpd/ntp_loopfilter.c   | 46 +++++++++++++++++++++++++++++++++++------
+ ntpd/wscript            |  3 ++-
+ tests/libntp/statestr.c |  8 ++++++-
+ wscript                 | 20 +++++++++++++-----
+ 12 files changed, 115 insertions(+), 28 deletions(-)
+
+diff --git a/include/ntp_refclock.h b/include/ntp_refclock.h
+index acee9e54fd..8ca38aedd2 100644
+--- a/include/ntp_refclock.h
++++ b/include/ntp_refclock.h
+@@ -5,7 +5,7 @@
+ #ifndef GUARD_NTP_REFCLOCK_H
+ #define GUARD_NTP_REFCLOCK_H
+ 
+-#if defined(HAVE_SYS_MODEM_H)
++#if defined(HAVE_SYS_MODEM_H) && defined(__QNXNTO__)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/include/ntp_syscall.h b/include/ntp_syscall.h
+index 8529355642..adb4ae5b24 100644
+--- a/include/ntp_syscall.h
++++ b/include/ntp_syscall.h
+@@ -10,8 +10,15 @@
+ #define GUARD_NTP_SYSCALL_H
+ 
+ # include <sys/time.h>	/* prerequisite on NetBSD */
++#ifndef __QNXNTO__
+ # include <sys/timex.h>
++#endif
++
++#ifdef HAVE_STRUCT_TIMEX 
+ extern int ntp_adjtime_ns(struct timex *);
++#else  
++extern int ntp_adjtime_ns(void *);  
++#endif
+ 
+ /*
+  * The units of the maxerror and esterror fields vary by platform.  If
+diff --git a/include/ntp_tty.h b/include/ntp_tty.h
+index a426340de6..74b82588c0 100644
+--- a/include/ntp_tty.h
++++ b/include/ntp_tty.h
+@@ -12,7 +12,7 @@
+ 
+ #include <termios.h>
+ 
+-#if defined(HAVE_SYS_MODEM_H)
++#if defined(HAVE_SYS_MODEM_H) && defined (__QNXNTO__)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/include/ntp_types.h b/include/ntp_types.h
+index 8884ccfa1f..d042b63de6 100644
+--- a/include/ntp_types.h
++++ b/include/ntp_types.h
+@@ -47,8 +47,9 @@ typedef uint32_t uptime_t;	/* seconds since startup */
+  * We now assume the platform supports a 64-bit scalar type (the ISC
+  * library wouldn't compile otherwise).
+  */
+-
++#ifndef __QNXNTO__
+ typedef uint64_t time64_t;
++#endif
+ #define LOW32MASK	0x00000000ffffffffUL
+ #define HIGH32MASK	0xffffffff00000000UL
+ #define time64lo(n)	((uint32_t)((n) & LOW32MASK))
+diff --git a/libntp/clockwork.c b/libntp/clockwork.c
+index 419160339d..c1745445b6 100644
+--- a/libntp/clockwork.c
++++ b/libntp/clockwork.c
+@@ -6,7 +6,9 @@
+ 
+ #include <unistd.h>
+ #include <sys/time.h>	/* prerequisite on NetBSD */
++#ifdef HAVE_SYS_TIMEX_H
+ #include <sys/timex.h>
++#endif
+ 
+ #include "ntp.h"
+ #include "ntp_machine.h"
+diff --git a/libntp/ntp_c.c b/libntp/ntp_c.c
+index 8dc5e093e5..6f6985863e 100644
+--- a/libntp/ntp_c.c
++++ b/libntp/ntp_c.c
+@@ -90,7 +90,12 @@ ntpc_lfptofloat(char *s)
+ bool
+ ntpc_adj_systime(double adjustment)
+ {
++	#ifdef HAVE_ADJTIME
+ 	return adj_systime(adjustment, adjtime) ? 1 : 0;
++	#else  
++    (void)adjustment; /* suppress unused warning */  
++    return -1; /* indicate not supported */  
++	#endif
+ }
+ 
+ bool
+diff --git a/libntp/statestr.c b/libntp/statestr.c
+index 36717ac59b..ce22d76026 100644
+--- a/libntp/statestr.c
++++ b/libntp/statestr.c
+@@ -189,6 +189,7 @@ static const struct codestring res_access_bits[] = {
+ /*
+  * kernel discipline status bits
+  */
++#ifdef HAVE_STRUCT_TIMEX 
+ static const struct codestring k_st_bits[] = {
+ 	{ STA_PLL,			"pll" },
+ 	{ STA_PPSFREQ,			"ppsfreq" },
+@@ -214,6 +215,7 @@ static const struct codestring k_st_bits[] = {
+ # endif
+ 	/* not used with getcode(), no terminating entry needed */
+ };
++#endif
+ 
+ /* Forwards */
+ static const char *	getcode(int, const struct codestring *);
+@@ -316,16 +318,18 @@ decode_bitflags(
+     toosmall:
+ 	snprintf(buf, LIB_BUFLENGTH,
+ 		 "decode_bitflags(%s) can't decode 0x%x in %d bytes",
+-		 (tab == peer_st_bits)
+-		     ? "peer_st"
+-		     :
+-		       (tab == k_st_bits)
+-			   ? "kern_st"
+-			   :
+-			     "",
+-		 (unsigned)bits, (int)LIB_BUFLENGTH);
+-	errno = saved_errno;
+-
++#ifdef HAVE_STRUCT_TIMEX  
++		 (tab == k_st_bits)  
++		     ? "kern_st"  
++		     :  
++#endif  
++		       (tab == peer_st_bits)  
++		     ? "peer_st"  
++		     :  
++		         "",  
++		 (unsigned)bits, (int)LIB_BUFLENGTH);  
++	errno = saved_errno;  
++  
+ 	return buf;
+ }
+ 
+@@ -359,7 +363,7 @@ res_access_flags(
+ 			       COUNTOF(res_access_bits));
+ }
+ 
+-
++#ifdef HAVE_STRUCT_TIMEX
+ const char *
+ k_st_flags(
+ 	uint32_t st
+@@ -367,6 +371,16 @@ k_st_flags(
+ {
+ 	return decode_bitflags((int)st, " ", k_st_bits, COUNTOF(k_st_bits));
+ }
++#else  
++const char *  
++k_st_flags(  
++	uint32_t st  
++	)  
++{  
++	(void)st;
++	return "kernel-unavailable";  
++}  
++#endif
+ 
+ /*
+  * statustoa - return a descriptive string for a peer status
+diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
+index adb8f0a7fc..88b0d635b1 100644
+--- a/ntpd/ntp_control.c
++++ b/ntpd/ntp_control.c
+@@ -37,7 +37,9 @@ struct utsname utsnamebuf;
+ 
+ /* Variables that need updating each time. */
+ static leap_signature_t lsig;
++#ifdef HAVE_STRUCT_TIMEX
+ static struct timex ntx;
++#endif
+ 
+ /* Ugh.  timex slots are tough.  The man page says "long"
+  * But the actual implementation on Linux uses something else.
+@@ -382,6 +384,7 @@ static const struct var sys_var[] = {
+   Var_uli("authcmacdecrypts", RO, authcmacdecrypt),
+   Var_uli("authcmacfails", RO, authcmacfail),
+ 
++#ifdef HAVE_STRUCT_TIMEX  
+ /* kerninfo: Kernel timekeeping info */
+   Var_kli("koffset", RO|N_CLOCK|KNUToMS, ntx.offset),
+   Var_kli("kfreq", RO|N_CLOCK|K_16, ntx.freq),
+@@ -399,7 +402,7 @@ static const struct var sys_var[] = {
+   Var_kli("kppscalibs", RO|N_CLOCK, ntx.calcnt),
+   Var_kli("kppscaliberrs", RO|N_CLOCK, ntx.errcnt),
+   Var_kli("kppsstbexc", RO|N_CLOCK, ntx.stbcnt),
+-
++#endif
+ 
+ /* refclock stuff in ntp_io */
+   Var_since("iostats_reset", RO, io_timereset),
+@@ -1402,7 +1405,9 @@ ctl_putarray(
+  */
+ static void
+ ctl_putsys(const struct var * v) {
++	#ifdef HAVE_STRUCT_TIMEX 
+ 	static unsigned long ntp_adjtime_time;
++	#endif
+ 	static unsigned long ntp_leap_time;
+ 
+ /* older compilers don't allow declarations on each case without {} */
+@@ -1415,6 +1420,7 @@ ctl_putsys(const struct var * v) {
+  * This could get data from 2 samples if the clock ticks while we are working..
+  */
+ 	/* The Kernel clock variables need up-to-date output of ntp_adjtime() */
++	#ifdef HAVE_STRUCT_TIMEX 
+ 	if (v->flags&N_CLOCK && current_time != ntp_adjtime_time) {
+ 		ZERO(ntx);
+ 		if (ntp_adjtime(&ntx) < 0)
+@@ -1422,6 +1428,7 @@ ctl_putsys(const struct var * v) {
+                             "MODE6: ntp_adjtime() for mode 6 query failed: %s", strerror(errno));
+                 ntp_adjtime_time = current_time;
+ 	}
++	#endif
+ 
+ 	/* The leap second variables need up-to-date info */
+         if (v->flags&N_LEAP && current_time != ntp_leap_time) {
+diff --git a/ntpd/ntp_loopfilter.c b/ntpd/ntp_loopfilter.c
+index 1804253c3a..31a74c133f 100644
+--- a/ntpd/ntp_loopfilter.c
++++ b/ntpd/ntp_loopfilter.c
+@@ -131,13 +131,17 @@ static void set_freq(double);	/* set frequency */
+ static char relative_path[PATH_MAX + 1]; /* relative path per recursive make */
+ static char *this_file = NULL;
+ 
++#ifdef HAVE_STRUCT_TIMEX 
+ static struct timex ntv;	/* ntp_adjtime() parameters */
+ static int	pll_status;	/* last kernel status bits */
++#endif
+ #if defined(STA_NANO) && defined(NTP_API) && NTP_API == 4
+ static unsigned int loop_tai;	/* last TAI offset (non-lockclock case only) */
+ #endif /* STA_NANO */
++#ifdef HAVE_STRUCT_TIMEX  
+ static	void	start_kern_loop(void);
+ static	void	stop_kern_loop(void);
++#endif
+ 
+ /*
+  * Clock state machine control flags
+@@ -154,7 +158,9 @@ struct clock_control_flags clock_ctl = {
+ int	freq_cnt;		/* initial frequency clamp */
+ 
+ static int freq_set;		/* initial set frequency switch */
++#ifdef HAVE_STRUCT_TIMEX
+ static bool	ext_enable;	/* external clock enabled */
++#endif
+ 
+ /*
+  * Clock state machine variables
+@@ -172,6 +178,7 @@ static int sys_hufflen;		/* huff-n'-puff filter stages */
+ static int sys_huffptr;		/* huff-n'-puff filter pointer */
+ static double sys_mindly;	/* huff-n'-puff filter min delay */
+ 
++#ifdef HAVE_STRUCT_TIMEX 
+ /* Emacs cc-mode goes nuts if we split the next line... */
+ #define MOD_BITS (MOD_OFFSET | MOD_MAXERROR | MOD_ESTERROR | \
+     MOD_STATUS | MOD_TIMECONST)
+@@ -199,6 +206,7 @@ static char *file_name(void) {
+ 	}
+ 	return this_file;
+ }
++#endif
+ 
+ /*
+  * init_loopfilter - initialize loop filter data
+@@ -216,6 +224,7 @@ init_loopfilter(void) {
+ /*
+  * ntp_adjtime_error_handler - process errors from ntp_adjtime
+  */
++#ifdef HAVE_STRUCT_TIMEX
+ static void
+ ntp_adjtime_error_handler(
+ 	const char *caller,	/* name of calling function */
+@@ -411,7 +420,7 @@ or, from ntp_adjtime():
+ 	}
+ 	return;
+ }
+-
++#endif
+ /*
+  * local_clock - the NTP logical clock loop filter.
+  *
+@@ -444,7 +453,9 @@ local_clock(
+ 
+ 	int	rval;		/* return code */
+ 	int	osys_poll;	/* old system poll */
++	#ifdef HAVE_STRUCT_TIMEX
+ 	int	ntp_adj_ret;	/* returned by ntp_adjtime */
++	#endif
+ 	double	mu;		/* interval since last update */
+ 	double	clock_frequency; /* clock frequency */
+ 	double	dtemp, etemp;	/* double temps */
+@@ -485,7 +496,12 @@ local_clock(
+ 			    fp_offset);
+ 			printf("ntpd: time set %+.6fs\n", fp_offset);
+ 		} else {
+-			adj_systime(fp_offset, adjtime);
++			#ifdef HAVE_ADJTIME
++				adj_systime(fp_offset, adjtime);
++			#else
++				/* QNX doesn't have adjtime, use step instead */
++				step_systime(fp_offset);
++			#endif
+ 			msyslog(LOG_NOTICE, "CLOCK: time slew %+.6f s",
+ 			    fp_offset);
+ 			printf("ntpd: time slew %+.6fs\n", fp_offset);
+@@ -641,7 +657,12 @@ local_clock(
+ 		 * the stepout threshold.
+ 		 */
+ 		case EVNT_NSET:
+-			adj_systime(fp_offset, adjtime);
++		#ifdef HAVE_ADJTIME  
++				adj_systime(fp_offset, adjtime);  
++		#else  
++				/* QNX doesn't have adjtime, use step instead */  
++				step_systime(fp_offset);  
++		#endif
+ 			rstclock(EVNT_FREQ, fp_offset);
+ 			break;
+ 
+@@ -716,6 +737,7 @@ local_clock(
+ 	 * lead to overflow problems. This might occur if some misguided
+ 	 * lad set the step threshold to something ridiculous.
+ 	 */
++	#ifdef HAVE_STRUCT_TIMEX  
+ 	if (clock_ctl.pll_control && clock_ctl.kern_enable && freq_cnt == 0) {
+ 		static int kernel_status;	/* from ntp_adjtime */
+ 
+@@ -810,6 +832,7 @@ local_clock(
+ 		}
+ #endif /* STA_NANO */
+ 	}
++	#endif
+ 
+ 	/*
+ 	 * Clamp the frequency within the tolerance range and calculate
+@@ -958,7 +981,12 @@ adj_host_clock(
+ 	 * but does not automatically stop slewing when an offset
+ 	 * has decayed to zero.
+ 	 */
+-	adj_systime(offset_adj + freq_adj, adjtime);
++	#ifdef HAVE_ADJTIME  
++		adj_systime(offset_adj + freq_adj, adjtime);  
++	#else  
++		/* QNX doesn't have adjtime */  
++		return;  
++	#endif
+ }
+ 
+ 
+@@ -1024,6 +1052,7 @@ set_freq(
+ 
+ 	loop_data.drift_comp = freq;
+ 	loop_desc = "ntpd";
++#ifdef HAVE_STRUCT_TIMEX
+ 	if (clock_ctl.pll_control) {
+ 		int ntp_adj_ret;
+ 		ZERO(ntv);
+@@ -1036,10 +1065,12 @@ set_freq(
+ 		    ntp_adjtime_error_handler(__func__, &ntv, ntp_adj_ret, errno, false, false, __LINE__ - 1);
+ 		}
+ 	}
++#endif
+ 	mprintf_event(EVNT_FSET, NULL, "%s %.6f PPM", loop_desc,
+ 	    loop_data.drift_comp * US_PER_S);
+ }
+ 
++#ifdef HAVE_STRUCT_TIMEX 
+ static void
+ start_kern_loop(void)
+ {
+@@ -1075,7 +1106,7 @@ start_kern_loop(void)
+ 	  	    "kernel time sync enabled");
+ 	}
+ }
+-
++#endif
+ 
+ static void
+ stop_kern_loop(void)
+@@ -1100,7 +1131,9 @@ select_loop(
+ 		stop_kern_loop();
+ 	clock_ctl.kern_enable = use_kern_loop;
+ 	if (clock_ctl.pll_control && use_kern_loop)
++	#ifdef HAVE_STRUCT_TIMEX
+ 		start_kern_loop();
++	#endif
+ 	/*
+ 	 * If this loop selection change occurs after initial startup,
+ 	 * call set_freq() to switch the frequency compensation to or
+@@ -1158,8 +1191,9 @@ loop_config(
+ 	case LOOP_DRIFTINIT:
+ 		if (loop_data.lockclock || clock_ctl.mode_ntpdate)
+ 			break;
+-
++	#ifdef HAVE_STRUCT_TIMEX
+ 		start_kern_loop();
++	#endif
+ 
+ 		/*
+ 		 * Initialize frequency if given; otherwise, begin frequency
+diff --git a/ntpd/wscript b/ntpd/wscript
+index 407b9de049..1d798c04ce 100644
+--- a/ntpd/wscript
++++ b/ntpd/wscript
+@@ -1,11 +1,12 @@
+ # Copyright the NTPsec project contributors
+ #
+ # SPDX-License-Identifier: BSD-2-Clause
+-
++import os
+ def build(ctx):
+     bldnode = ctx.bldnode.abspath()
+ 
+     if ctx.variant == "host":
++        host_compat = os.path.join(ctx.path.abspath(), "host_compat")
+         bison_source = ["ntp_parser.y"]
+ 
+         ctx(
+diff --git a/tests/libntp/statestr.c b/tests/libntp/statestr.c
+index 9726396f2a..2388d48ab5 100644
+--- a/tests/libntp/statestr.c
++++ b/tests/libntp/statestr.c
+@@ -4,7 +4,9 @@
+ #include "unity.h"
+ #include "unity_fixture.h"
+ 
+-#include <sys/timex.h>
++#ifdef HAVE_STRUCT_TIMEX  
++#include <sys/timex.h>  
++#endif
+ 
+ TEST_GROUP(statestr);
+ 
+@@ -30,10 +32,12 @@ TEST(statestr, ResAccessFlags2) {
+ 	TEST_ASSERT_EQUAL_STRING("noserve", res_access_flags(RES_NOSERVE));
+ }
+ 
++#ifdef HAVE_STRUCT_TIMEX
+ // k_st_flags()
+ TEST(statestr, KSTFlags) {
+ 	TEST_ASSERT_EQUAL_STRING("ppsfreq", k_st_flags(STA_PPSFREQ));
+ }
++#endif
+ 
+ // statustoa
+ TEST(statestr, StatusToA) {
+@@ -67,7 +71,9 @@ TEST_GROUP_RUNNER(statestr) {
+ 	RUN_TEST_CASE(statestr, ResMatchFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags2);
++	#ifdef HAVE_STRUCT_TIMEX
+ 	RUN_TEST_CASE(statestr, KSTFlags);
++	#endif
+ 	RUN_TEST_CASE(statestr, StatusToA);
+ 	RUN_TEST_CASE(statestr, PeerRestart);
+ 	RUN_TEST_CASE(statestr, SysUnspecified);
+diff --git a/wscript b/wscript
+index fe926b35fe..03f1b942ee 100644
+--- a/wscript
++++ b/wscript
+@@ -251,7 +251,10 @@ def configure(ctx):
+ 
+     # These are required by various refclocks
+     # needs to be tested before CFLAGS are set
+-    if ctx.check_endianness() == "big":
++    if "nto-qnx" in ctx.env.CC[0]:
++        ctx.msg("Checking for endianness", "little endian (QNX forced)")
++        ctx.define("WORDS_BIGENDIAN", 0)
++    elif ctx.check_endianness() == "big":
+         ctx.define("WORDS_BIGENDIAN", 1)
+ 
+     if ctx.options.enable_leap_testing:
+@@ -578,7 +581,7 @@ int main(int argc, char **argv) {
+     structures = (
+         ("struct if_laddrconf", ["sys/types.h", "net/if6.h"], False),
+         ("struct if_laddrreq", ["sys/types.h", "net/if6.h"], False),
+-        ("struct timex", ["sys/time.h", "sys/timex.h"], True),
++        ("struct timex", ["sys/time.h", "sys/timex.h"], False),
+         ("struct ntptimeval", ["sys/time.h", "sys/timex.h"], False),
+     )
+     for (s, h, r) in structures:
+@@ -613,9 +616,16 @@ int main(int argc, char **argv) {
+         ("time.h",      "time_t"),
+         (None,          "long"),
+     ]
+-
+-    for header, sizeof in sorted(sizeofs, key=lambda x: x[1:]):
+-        check_sizeof(ctx, header, sizeof)
++    # QNX cross-compilation cannot execute probe binaries.
++    # Force known datatype sizes.
++    if "nto-qnx" in ctx.env.CC[0]:
++        ctx.define("NTP_SIZEOF_LONG", 8)
++        ctx.define("NTP_SIZEOF_TIME_T", 8)
++        ctx.define("NTP_SIZEOF_STRUCT_TIMESPEC", 16)
++        ctx.define("NTP_SIZEOF_STRUCT_TIMEVAL", 16)
++    else:
++        for header, sizeof in sorted(sizeofs, key=lambda x: x[1:]):
++            check_sizeof(ctx, header, sizeof)
+ 
+     check_timex(ctx)
+ 
+
+From 0210905ae182980bf97ca931c581553143d44d91 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Tue, 30 Jun 2026 11:16:33 +0530
+Subject: [PATCH 2/6] Updating required changes
+
+---
+ libntp/statestr.c  | 19 +++++++++++++++----
+ ntpd/ntp_control.c |  2 +-
+ wscript            |  2 +-
+ 3 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/libntp/statestr.c b/libntp/statestr.c
+index ce22d76026..9565162eee 100644
+--- a/libntp/statestr.c
++++ b/libntp/statestr.c
+@@ -318,18 +318,29 @@ decode_bitflags(
+     toosmall:
+ 	snprintf(buf, LIB_BUFLENGTH,
+ 		 "decode_bitflags(%s) can't decode 0x%x in %d bytes",
+-#ifdef HAVE_STRUCT_TIMEX  
++		#ifdef __QNXNTO__	 
++		#ifdef HAVE_STRUCT_TIMEX  
+ 		 (tab == k_st_bits)  
+ 		     ? "kern_st"  
+ 		     :  
+-#endif  
++		#endif  
+ 		       (tab == peer_st_bits)  
+ 		     ? "peer_st"  
+ 		     :  
+ 		         "",  
+ 		 (unsigned)bits, (int)LIB_BUFLENGTH);  
+-	errno = saved_errno;  
+-  
++	errno = saved_errno;
++		#else
++		(tab == peer_st_bits)
++		    ? "peer_st"
++		    :
++			 (tab == k_st_bits)
++			 ? "kern_st"
++			 :
++			    "",
++		(unsigned)bits, (int)LIB_BUFLENGTH);
++	errno = saved_errno;
++		#endif
+ 	return buf;
+ }
+ 
+diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
+index 88b0d635b1..d899ff26e9 100644
+--- a/ntpd/ntp_control.c
++++ b/ntpd/ntp_control.c
+@@ -37,7 +37,7 @@ struct utsname utsnamebuf;
+ 
+ /* Variables that need updating each time. */
+ static leap_signature_t lsig;
+-#ifdef HAVE_STRUCT_TIMEX
++#ifdef HAVE_STRUCT_TIMEX 
+ static struct timex ntx;
+ #endif
+ 
+diff --git a/wscript b/wscript
+index 03f1b942ee..fe788b2036 100644
+--- a/wscript
++++ b/wscript
+@@ -581,7 +581,7 @@ int main(int argc, char **argv) {
+     structures = (
+         ("struct if_laddrconf", ["sys/types.h", "net/if6.h"], False),
+         ("struct if_laddrreq", ["sys/types.h", "net/if6.h"], False),
+-        ("struct timex", ["sys/time.h", "sys/timex.h"], False),
++        ("struct timex",["sys/time.h", "sys/timex.h"],False if "nto-qnx" in ctx.env.CC[0] else True),
+         ("struct ntptimeval", ["sys/time.h", "sys/timex.h"], False),
+     )
+     for (s, h, r) in structures:
+
+From f36d51b9560191afa0bedb2587a590af2090f88f Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Thu, 9 Jul 2026 11:49:29 +0530
+Subject: [PATCH 3/6] Adding qnx macros in support
+
+---
+ include/ntp_syscall.h   |  2 +-
+ libntp/clockwork.c      |  2 +-
+ libntp/ntp_c.c          |  2 +-
+ libntp/statestr.c       |  4 ++--
+ ntpd/ntp_control.c      |  8 ++++----
+ ntpd/ntp_loopfilter.c   | 28 ++++++++++++++--------------
+ tests/libntp/statestr.c |  6 +++---
+ 7 files changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/include/ntp_syscall.h b/include/ntp_syscall.h
+index adb4ae5b24..dfe3b69c17 100644
+--- a/include/ntp_syscall.h
++++ b/include/ntp_syscall.h
+@@ -14,7 +14,7 @@
+ # include <sys/timex.h>
+ #endif
+ 
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ extern int ntp_adjtime_ns(struct timex *);
+ #else  
+ extern int ntp_adjtime_ns(void *);  
+diff --git a/libntp/clockwork.c b/libntp/clockwork.c
+index c1745445b6..7c28f258e7 100644
+--- a/libntp/clockwork.c
++++ b/libntp/clockwork.c
+@@ -6,7 +6,7 @@
+ 
+ #include <unistd.h>
+ #include <sys/time.h>	/* prerequisite on NetBSD */
+-#ifdef HAVE_SYS_TIMEX_H
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ #include <sys/timex.h>
+ #endif
+ 
+diff --git a/libntp/ntp_c.c b/libntp/ntp_c.c
+index 6f6985863e..c05ab0aa15 100644
+--- a/libntp/ntp_c.c
++++ b/libntp/ntp_c.c
+@@ -90,7 +90,7 @@ ntpc_lfptofloat(char *s)
+ bool
+ ntpc_adj_systime(double adjustment)
+ {
+-	#ifdef HAVE_ADJTIME
++	#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)
+ 	return adj_systime(adjustment, adjtime) ? 1 : 0;
+ 	#else  
+     (void)adjustment; /* suppress unused warning */  
+diff --git a/libntp/statestr.c b/libntp/statestr.c
+index 9565162eee..3bbeb0ba7d 100644
+--- a/libntp/statestr.c
++++ b/libntp/statestr.c
+@@ -189,7 +189,7 @@ static const struct codestring res_access_bits[] = {
+ /*
+  * kernel discipline status bits
+  */
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ static const struct codestring k_st_bits[] = {
+ 	{ STA_PLL,			"pll" },
+ 	{ STA_PPSFREQ,			"ppsfreq" },
+@@ -374,7 +374,7 @@ res_access_flags(
+ 			       COUNTOF(res_access_bits));
+ }
+ 
+-#ifdef HAVE_STRUCT_TIMEX
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ const char *
+ k_st_flags(
+ 	uint32_t st
+diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
+index d899ff26e9..ce343bf8a4 100644
+--- a/ntpd/ntp_control.c
++++ b/ntpd/ntp_control.c
+@@ -37,7 +37,7 @@ struct utsname utsnamebuf;
+ 
+ /* Variables that need updating each time. */
+ static leap_signature_t lsig;
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ static struct timex ntx;
+ #endif
+ 
+@@ -384,7 +384,7 @@ static const struct var sys_var[] = {
+   Var_uli("authcmacdecrypts", RO, authcmacdecrypt),
+   Var_uli("authcmacfails", RO, authcmacfail),
+ 
+-#ifdef HAVE_STRUCT_TIMEX  
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
+ /* kerninfo: Kernel timekeeping info */
+   Var_kli("koffset", RO|N_CLOCK|KNUToMS, ntx.offset),
+   Var_kli("kfreq", RO|N_CLOCK|K_16, ntx.freq),
+@@ -1405,7 +1405,7 @@ ctl_putarray(
+  */
+ static void
+ ctl_putsys(const struct var * v) {
+-	#ifdef HAVE_STRUCT_TIMEX 
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 	static unsigned long ntp_adjtime_time;
+ 	#endif
+ 	static unsigned long ntp_leap_time;
+@@ -1420,7 +1420,7 @@ ctl_putsys(const struct var * v) {
+  * This could get data from 2 samples if the clock ticks while we are working..
+  */
+ 	/* The Kernel clock variables need up-to-date output of ntp_adjtime() */
+-	#ifdef HAVE_STRUCT_TIMEX 
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 	if (v->flags&N_CLOCK && current_time != ntp_adjtime_time) {
+ 		ZERO(ntx);
+ 		if (ntp_adjtime(&ntx) < 0)
+diff --git a/ntpd/ntp_loopfilter.c b/ntpd/ntp_loopfilter.c
+index 31a74c133f..379176d30e 100644
+--- a/ntpd/ntp_loopfilter.c
++++ b/ntpd/ntp_loopfilter.c
+@@ -131,14 +131,14 @@ static void set_freq(double);	/* set frequency */
+ static char relative_path[PATH_MAX + 1]; /* relative path per recursive make */
+ static char *this_file = NULL;
+ 
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ static struct timex ntv;	/* ntp_adjtime() parameters */
+ static int	pll_status;	/* last kernel status bits */
+ #endif
+ #if defined(STA_NANO) && defined(NTP_API) && NTP_API == 4
+ static unsigned int loop_tai;	/* last TAI offset (non-lockclock case only) */
+ #endif /* STA_NANO */
+-#ifdef HAVE_STRUCT_TIMEX  
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
+ static	void	start_kern_loop(void);
+ static	void	stop_kern_loop(void);
+ #endif
+@@ -158,7 +158,7 @@ struct clock_control_flags clock_ctl = {
+ int	freq_cnt;		/* initial frequency clamp */
+ 
+ static int freq_set;		/* initial set frequency switch */
+-#ifdef HAVE_STRUCT_TIMEX
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ static bool	ext_enable;	/* external clock enabled */
+ #endif
+ 
+@@ -178,7 +178,7 @@ static int sys_hufflen;		/* huff-n'-puff filter stages */
+ static int sys_huffptr;		/* huff-n'-puff filter pointer */
+ static double sys_mindly;	/* huff-n'-puff filter min delay */
+ 
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ /* Emacs cc-mode goes nuts if we split the next line... */
+ #define MOD_BITS (MOD_OFFSET | MOD_MAXERROR | MOD_ESTERROR | \
+     MOD_STATUS | MOD_TIMECONST)
+@@ -224,7 +224,7 @@ init_loopfilter(void) {
+ /*
+  * ntp_adjtime_error_handler - process errors from ntp_adjtime
+  */
+-#ifdef HAVE_STRUCT_TIMEX
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ static void
+ ntp_adjtime_error_handler(
+ 	const char *caller,	/* name of calling function */
+@@ -453,7 +453,7 @@ local_clock(
+ 
+ 	int	rval;		/* return code */
+ 	int	osys_poll;	/* old system poll */
+-	#ifdef HAVE_STRUCT_TIMEX
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 	int	ntp_adj_ret;	/* returned by ntp_adjtime */
+ 	#endif
+ 	double	mu;		/* interval since last update */
+@@ -496,7 +496,7 @@ local_clock(
+ 			    fp_offset);
+ 			printf("ntpd: time set %+.6fs\n", fp_offset);
+ 		} else {
+-			#ifdef HAVE_ADJTIME
++			#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)
+ 				adj_systime(fp_offset, adjtime);
+ 			#else
+ 				/* QNX doesn't have adjtime, use step instead */
+@@ -657,7 +657,7 @@ local_clock(
+ 		 * the stepout threshold.
+ 		 */
+ 		case EVNT_NSET:
+-		#ifdef HAVE_ADJTIME  
++		#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__) 
+ 				adj_systime(fp_offset, adjtime);  
+ 		#else  
+ 				/* QNX doesn't have adjtime, use step instead */  
+@@ -737,7 +737,7 @@ local_clock(
+ 	 * lead to overflow problems. This might occur if some misguided
+ 	 * lad set the step threshold to something ridiculous.
+ 	 */
+-	#ifdef HAVE_STRUCT_TIMEX  
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
+ 	if (clock_ctl.pll_control && clock_ctl.kern_enable && freq_cnt == 0) {
+ 		static int kernel_status;	/* from ntp_adjtime */
+ 
+@@ -981,7 +981,7 @@ adj_host_clock(
+ 	 * but does not automatically stop slewing when an offset
+ 	 * has decayed to zero.
+ 	 */
+-	#ifdef HAVE_ADJTIME  
++	#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)  
+ 		adj_systime(offset_adj + freq_adj, adjtime);  
+ 	#else  
+ 		/* QNX doesn't have adjtime */  
+@@ -1052,7 +1052,7 @@ set_freq(
+ 
+ 	loop_data.drift_comp = freq;
+ 	loop_desc = "ntpd";
+-#ifdef HAVE_STRUCT_TIMEX
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 	if (clock_ctl.pll_control) {
+ 		int ntp_adj_ret;
+ 		ZERO(ntv);
+@@ -1070,7 +1070,7 @@ set_freq(
+ 	    loop_data.drift_comp * US_PER_S);
+ }
+ 
+-#ifdef HAVE_STRUCT_TIMEX 
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__) 
+ static void
+ start_kern_loop(void)
+ {
+@@ -1131,7 +1131,7 @@ select_loop(
+ 		stop_kern_loop();
+ 	clock_ctl.kern_enable = use_kern_loop;
+ 	if (clock_ctl.pll_control && use_kern_loop)
+-	#ifdef HAVE_STRUCT_TIMEX
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 		start_kern_loop();
+ 	#endif
+ 	/*
+@@ -1191,7 +1191,7 @@ loop_config(
+ 	case LOOP_DRIFTINIT:
+ 		if (loop_data.lockclock || clock_ctl.mode_ntpdate)
+ 			break;
+-	#ifdef HAVE_STRUCT_TIMEX
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 		start_kern_loop();
+ 	#endif
+ 
+diff --git a/tests/libntp/statestr.c b/tests/libntp/statestr.c
+index 2388d48ab5..9ffb42255c 100644
+--- a/tests/libntp/statestr.c
++++ b/tests/libntp/statestr.c
+@@ -4,7 +4,7 @@
+ #include "unity.h"
+ #include "unity_fixture.h"
+ 
+-#ifdef HAVE_STRUCT_TIMEX  
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
+ #include <sys/timex.h>  
+ #endif
+ 
+@@ -32,7 +32,7 @@ TEST(statestr, ResAccessFlags2) {
+ 	TEST_ASSERT_EQUAL_STRING("noserve", res_access_flags(RES_NOSERVE));
+ }
+ 
+-#ifdef HAVE_STRUCT_TIMEX
++#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ // k_st_flags()
+ TEST(statestr, KSTFlags) {
+ 	TEST_ASSERT_EQUAL_STRING("ppsfreq", k_st_flags(STA_PPSFREQ));
+@@ -71,7 +71,7 @@ TEST_GROUP_RUNNER(statestr) {
+ 	RUN_TEST_CASE(statestr, ResMatchFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags2);
+-	#ifdef HAVE_STRUCT_TIMEX
++	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
+ 	RUN_TEST_CASE(statestr, KSTFlags);
+ 	#endif
+ 	RUN_TEST_CASE(statestr, StatusToA);
+
+From 105a51441a8f689d98df417e6fe50899b97ba0ef Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Mon, 13 Jul 2026 16:03:08 +0530
+Subject: [PATCH 4/6] Removing unwanted macro conditions
+
+---
+ include/ntp_refclock.h  |  2 +-
+ include/ntp_syscall.h   |  4 ++--
+ include/ntp_tty.h       |  2 +-
+ include/ntp_types.h     |  2 +-
+ libntp/clockwork.c      |  2 +-
+ libntp/ntp_c.c          |  2 +-
+ libntp/statestr.c       |  6 +++---
+ ntpd/ntp_control.c      |  8 ++++----
+ ntpd/ntp_loopfilter.c   | 35 +++++++++++++++++------------------
+ tests/libntp/statestr.c |  6 +++---
+ 10 files changed, 34 insertions(+), 35 deletions(-)
+
+diff --git a/include/ntp_refclock.h b/include/ntp_refclock.h
+index 8ca38aedd2..32f6045b96 100644
+--- a/include/ntp_refclock.h
++++ b/include/ntp_refclock.h
+@@ -5,7 +5,7 @@
+ #ifndef GUARD_NTP_REFCLOCK_H
+ #define GUARD_NTP_REFCLOCK_H
+ 
+-#if defined(HAVE_SYS_MODEM_H) && defined(__QNXNTO__)
++#if defined(HAVE_SYS_MODEM_H) && defined(__QNX__)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/include/ntp_syscall.h b/include/ntp_syscall.h
+index dfe3b69c17..4bdb4adec8 100644
+--- a/include/ntp_syscall.h
++++ b/include/ntp_syscall.h
+@@ -10,11 +10,11 @@
+ #define GUARD_NTP_SYSCALL_H
+ 
+ # include <sys/time.h>	/* prerequisite on NetBSD */
+-#ifndef __QNXNTO__
++#ifndef __QNX__
+ # include <sys/timex.h>
+ #endif
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ extern int ntp_adjtime_ns(struct timex *);
+ #else  
+ extern int ntp_adjtime_ns(void *);  
+diff --git a/include/ntp_tty.h b/include/ntp_tty.h
+index 74b82588c0..2c78dc3025 100644
+--- a/include/ntp_tty.h
++++ b/include/ntp_tty.h
+@@ -12,7 +12,7 @@
+ 
+ #include <termios.h>
+ 
+-#if defined(HAVE_SYS_MODEM_H) && defined (__QNXNTO__)
++#if defined(HAVE_SYS_MODEM_H) && defined (__QNX__)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/include/ntp_types.h b/include/ntp_types.h
+index d042b63de6..234becba35 100644
+--- a/include/ntp_types.h
++++ b/include/ntp_types.h
+@@ -47,7 +47,7 @@ typedef uint32_t uptime_t;	/* seconds since startup */
+  * We now assume the platform supports a 64-bit scalar type (the ISC
+  * library wouldn't compile otherwise).
+  */
+-#ifndef __QNXNTO__
++#ifndef __QNX__
+ typedef uint64_t time64_t;
+ #endif
+ #define LOW32MASK	0x00000000ffffffffUL
+diff --git a/libntp/clockwork.c b/libntp/clockwork.c
+index 7c28f258e7..106887ace9 100644
+--- a/libntp/clockwork.c
++++ b/libntp/clockwork.c
+@@ -6,7 +6,7 @@
+ 
+ #include <unistd.h>
+ #include <sys/time.h>	/* prerequisite on NetBSD */
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ #include <sys/timex.h>
+ #endif
+ 
+diff --git a/libntp/ntp_c.c b/libntp/ntp_c.c
+index c05ab0aa15..dd7c36c947 100644
+--- a/libntp/ntp_c.c
++++ b/libntp/ntp_c.c
+@@ -90,7 +90,7 @@ ntpc_lfptofloat(char *s)
+ bool
+ ntpc_adj_systime(double adjustment)
+ {
+-	#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 	return adj_systime(adjustment, adjtime) ? 1 : 0;
+ 	#else  
+     (void)adjustment; /* suppress unused warning */  
+diff --git a/libntp/statestr.c b/libntp/statestr.c
+index 3bbeb0ba7d..6db7205a9a 100644
+--- a/libntp/statestr.c
++++ b/libntp/statestr.c
+@@ -189,7 +189,7 @@ static const struct codestring res_access_bits[] = {
+ /*
+  * kernel discipline status bits
+  */
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ static const struct codestring k_st_bits[] = {
+ 	{ STA_PLL,			"pll" },
+ 	{ STA_PPSFREQ,			"ppsfreq" },
+@@ -318,7 +318,7 @@ decode_bitflags(
+     toosmall:
+ 	snprintf(buf, LIB_BUFLENGTH,
+ 		 "decode_bitflags(%s) can't decode 0x%x in %d bytes",
+-		#ifdef __QNXNTO__	 
++		#ifdef __QNX__	 
+ 		#ifdef HAVE_STRUCT_TIMEX  
+ 		 (tab == k_st_bits)  
+ 		     ? "kern_st"  
+@@ -374,7 +374,7 @@ res_access_flags(
+ 			       COUNTOF(res_access_bits));
+ }
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ const char *
+ k_st_flags(
+ 	uint32_t st
+diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
+index ce343bf8a4..44b1ead827 100644
+--- a/ntpd/ntp_control.c
++++ b/ntpd/ntp_control.c
+@@ -37,7 +37,7 @@ struct utsname utsnamebuf;
+ 
+ /* Variables that need updating each time. */
+ static leap_signature_t lsig;
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ static struct timex ntx;
+ #endif
+ 
+@@ -384,7 +384,7 @@ static const struct var sys_var[] = {
+   Var_uli("authcmacdecrypts", RO, authcmacdecrypt),
+   Var_uli("authcmacfails", RO, authcmacfail),
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
++#ifndef __QNX__ 
+ /* kerninfo: Kernel timekeeping info */
+   Var_kli("koffset", RO|N_CLOCK|KNUToMS, ntx.offset),
+   Var_kli("kfreq", RO|N_CLOCK|K_16, ntx.freq),
+@@ -1405,7 +1405,7 @@ ctl_putarray(
+  */
+ static void
+ ctl_putsys(const struct var * v) {
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 	static unsigned long ntp_adjtime_time;
+ 	#endif
+ 	static unsigned long ntp_leap_time;
+@@ -1420,7 +1420,7 @@ ctl_putsys(const struct var * v) {
+  * This could get data from 2 samples if the clock ticks while we are working..
+  */
+ 	/* The Kernel clock variables need up-to-date output of ntp_adjtime() */
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 	if (v->flags&N_CLOCK && current_time != ntp_adjtime_time) {
+ 		ZERO(ntx);
+ 		if (ntp_adjtime(&ntx) < 0)
+diff --git a/ntpd/ntp_loopfilter.c b/ntpd/ntp_loopfilter.c
+index 379176d30e..59995cf6ca 100644
+--- a/ntpd/ntp_loopfilter.c
++++ b/ntpd/ntp_loopfilter.c
+@@ -131,14 +131,14 @@ static void set_freq(double);	/* set frequency */
+ static char relative_path[PATH_MAX + 1]; /* relative path per recursive make */
+ static char *this_file = NULL;
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ static struct timex ntv;	/* ntp_adjtime() parameters */
+ static int	pll_status;	/* last kernel status bits */
+ #endif
+ #if defined(STA_NANO) && defined(NTP_API) && NTP_API == 4
+ static unsigned int loop_tai;	/* last TAI offset (non-lockclock case only) */
+ #endif /* STA_NANO */
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
++#ifndef __QNX__ 
+ static	void	start_kern_loop(void);
+ static	void	stop_kern_loop(void);
+ #endif
+@@ -158,7 +158,7 @@ struct clock_control_flags clock_ctl = {
+ int	freq_cnt;		/* initial frequency clamp */
+ 
+ static int freq_set;		/* initial set frequency switch */
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ static bool	ext_enable;	/* external clock enabled */
+ #endif
+ 
+@@ -178,7 +178,7 @@ static int sys_hufflen;		/* huff-n'-puff filter stages */
+ static int sys_huffptr;		/* huff-n'-puff filter pointer */
+ static double sys_mindly;	/* huff-n'-puff filter min delay */
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ /* Emacs cc-mode goes nuts if we split the next line... */
+ #define MOD_BITS (MOD_OFFSET | MOD_MAXERROR | MOD_ESTERROR | \
+     MOD_STATUS | MOD_TIMECONST)
+@@ -224,7 +224,7 @@ init_loopfilter(void) {
+ /*
+  * ntp_adjtime_error_handler - process errors from ntp_adjtime
+  */
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ static void
+ ntp_adjtime_error_handler(
+ 	const char *caller,	/* name of calling function */
+@@ -453,7 +453,7 @@ local_clock(
+ 
+ 	int	rval;		/* return code */
+ 	int	osys_poll;	/* old system poll */
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 	int	ntp_adj_ret;	/* returned by ntp_adjtime */
+ 	#endif
+ 	double	mu;		/* interval since last update */
+@@ -496,7 +496,7 @@ local_clock(
+ 			    fp_offset);
+ 			printf("ntpd: time set %+.6fs\n", fp_offset);
+ 		} else {
+-			#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)
++			#ifndef __QNX__
+ 				adj_systime(fp_offset, adjtime);
+ 			#else
+ 				/* QNX doesn't have adjtime, use step instead */
+@@ -657,11 +657,10 @@ local_clock(
+ 		 * the stepout threshold.
+ 		 */
+ 		case EVNT_NSET:
+-		#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__) 
+-				adj_systime(fp_offset, adjtime);  
+-		#else  
+-				/* QNX doesn't have adjtime, use step instead */  
+-				step_systime(fp_offset);  
++		#ifdef __QNX__
++				step_systime(fp_offset);
++		#else   
++				adj_systime(fp_offset, adjtime);
+ 		#endif
+ 			rstclock(EVNT_FREQ, fp_offset);
+ 			break;
+@@ -737,7 +736,7 @@ local_clock(
+ 	 * lead to overflow problems. This might occur if some misguided
+ 	 * lad set the step threshold to something ridiculous.
+ 	 */
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
++	#ifndef __QNX__
+ 	if (clock_ctl.pll_control && clock_ctl.kern_enable && freq_cnt == 0) {
+ 		static int kernel_status;	/* from ntp_adjtime */
+ 
+@@ -981,7 +980,7 @@ adj_host_clock(
+ 	 * but does not automatically stop slewing when an offset
+ 	 * has decayed to zero.
+ 	 */
+-	#if defined(HAVE_ADJTIME) && !defined(__QNXNTO__)  
++	#ifndef __QNX__ 
+ 		adj_systime(offset_adj + freq_adj, adjtime);  
+ 	#else  
+ 		/* QNX doesn't have adjtime */  
+@@ -1052,7 +1051,7 @@ set_freq(
+ 
+ 	loop_data.drift_comp = freq;
+ 	loop_desc = "ntpd";
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ 	if (clock_ctl.pll_control) {
+ 		int ntp_adj_ret;
+ 		ZERO(ntv);
+@@ -1070,7 +1069,7 @@ set_freq(
+ 	    loop_data.drift_comp * US_PER_S);
+ }
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__) 
++#ifndef __QNX__
+ static void
+ start_kern_loop(void)
+ {
+@@ -1131,7 +1130,7 @@ select_loop(
+ 		stop_kern_loop();
+ 	clock_ctl.kern_enable = use_kern_loop;
+ 	if (clock_ctl.pll_control && use_kern_loop)
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 		start_kern_loop();
+ 	#endif
+ 	/*
+@@ -1191,7 +1190,7 @@ loop_config(
+ 	case LOOP_DRIFTINIT:
+ 		if (loop_data.lockclock || clock_ctl.mode_ntpdate)
+ 			break;
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 		start_kern_loop();
+ 	#endif
+ 
+diff --git a/tests/libntp/statestr.c b/tests/libntp/statestr.c
+index 9ffb42255c..825326c5ac 100644
+--- a/tests/libntp/statestr.c
++++ b/tests/libntp/statestr.c
+@@ -4,7 +4,7 @@
+ #include "unity.h"
+ #include "unity_fixture.h"
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)  
++#ifndef __QNX__
+ #include <sys/timex.h>  
+ #endif
+ 
+@@ -32,7 +32,7 @@ TEST(statestr, ResAccessFlags2) {
+ 	TEST_ASSERT_EQUAL_STRING("noserve", res_access_flags(RES_NOSERVE));
+ }
+ 
+-#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++#ifndef __QNX__
+ // k_st_flags()
+ TEST(statestr, KSTFlags) {
+ 	TEST_ASSERT_EQUAL_STRING("ppsfreq", k_st_flags(STA_PPSFREQ));
+@@ -71,7 +71,7 @@ TEST_GROUP_RUNNER(statestr) {
+ 	RUN_TEST_CASE(statestr, ResMatchFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags);
+ 	RUN_TEST_CASE(statestr, ResAccessFlags2);
+-	#if defined(HAVE_STRUCT_TIMEX) && !defined(__QNXNTO__)
++	#ifndef __QNX__
+ 	RUN_TEST_CASE(statestr, KSTFlags);
+ 	#endif
+ 	RUN_TEST_CASE(statestr, StatusToA);
+
+From f5e99c7039e2e975afab93dbf178893f5c27d5f9 Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Tue, 14 Jul 2026 14:33:35 +0530
+Subject: [PATCH 5/6] Cleared unwanted macros
+
+---
+ include/ntp_refclock.h |  2 +-
+ include/ntp_tty.h      |  2 +-
+ libntp/statestr.c      | 33 ++++++++++-----------------------
+ wscript                |  9 +++++----
+ 4 files changed, 17 insertions(+), 29 deletions(-)
+
+diff --git a/include/ntp_refclock.h b/include/ntp_refclock.h
+index 32f6045b96..acee9e54fd 100644
+--- a/include/ntp_refclock.h
++++ b/include/ntp_refclock.h
+@@ -5,7 +5,7 @@
+ #ifndef GUARD_NTP_REFCLOCK_H
+ #define GUARD_NTP_REFCLOCK_H
+ 
+-#if defined(HAVE_SYS_MODEM_H) && defined(__QNX__)
++#if defined(HAVE_SYS_MODEM_H)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/include/ntp_tty.h b/include/ntp_tty.h
+index 2c78dc3025..a426340de6 100644
+--- a/include/ntp_tty.h
++++ b/include/ntp_tty.h
+@@ -12,7 +12,7 @@
+ 
+ #include <termios.h>
+ 
+-#if defined(HAVE_SYS_MODEM_H) && defined (__QNX__)
++#if defined(HAVE_SYS_MODEM_H)
+ #include <sys/modem.h>
+ #endif
+ 
+diff --git a/libntp/statestr.c b/libntp/statestr.c
+index 6db7205a9a..f66644cd08 100644
+--- a/libntp/statestr.c
++++ b/libntp/statestr.c
+@@ -317,19 +317,11 @@ decode_bitflags(
+ 
+     toosmall:
+ 	snprintf(buf, LIB_BUFLENGTH,
+-		 "decode_bitflags(%s) can't decode 0x%x in %d bytes",
++		"decode_bitflags(%s) can't decode 0x%x in %d bytes",
+ 		#ifdef __QNX__	 
+-		#ifdef HAVE_STRUCT_TIMEX  
+-		 (tab == k_st_bits)  
+-		     ? "kern_st"  
+-		     :  
+-		#endif  
+-		       (tab == peer_st_bits)  
+-		     ? "peer_st"  
+-		     :  
+-		         "",  
+-		 (unsigned)bits, (int)LIB_BUFLENGTH);  
+-	errno = saved_errno;
++		    (tab == peer_st_bits)  
++				? "peer_st"  
++		     	: "",  
+ 		#else
+ 		(tab == peer_st_bits)
+ 		    ? "peer_st"
+@@ -337,10 +329,11 @@ decode_bitflags(
+ 			 (tab == k_st_bits)
+ 			 ? "kern_st"
+ 			 :
+-			    "",
++			   "",
++		#endif
+ 		(unsigned)bits, (int)LIB_BUFLENGTH);
+ 	errno = saved_errno;
+-		#endif
++	
+ 	return buf;
+ }
+ 
+@@ -374,24 +367,18 @@ res_access_flags(
+ 			       COUNTOF(res_access_bits));
+ }
+ 
+-#ifndef __QNX__
+ const char *
+ k_st_flags(
+ 	uint32_t st
+ 	)
+ {
++#ifndef __QNX__
+ 	return decode_bitflags((int)st, " ", k_st_bits, COUNTOF(k_st_bits));
+-}
+-#else  
+-const char *  
+-k_st_flags(  
+-	uint32_t st  
+-	)  
+-{  
++#else 
+ 	(void)st;
+ 	return "kernel-unavailable";  
+-}  
+ #endif
++}  
+ 
+ /*
+  * statustoa - return a descriptive string for a peer status
+diff --git a/wscript b/wscript
+index fe788b2036..ec0193ba97 100644
+--- a/wscript
++++ b/wscript
+@@ -251,7 +251,7 @@ def configure(ctx):
+ 
+     # These are required by various refclocks
+     # needs to be tested before CFLAGS are set
+-    if "nto-qnx" in ctx.env.CC[0]:
++    if "qnx" in ctx.env.CC[0]:
+         ctx.msg("Checking for endianness", "little endian (QNX forced)")
+         ctx.define("WORDS_BIGENDIAN", 0)
+     elif ctx.check_endianness() == "big":
+@@ -581,7 +581,7 @@ int main(int argc, char **argv) {
+     structures = (
+         ("struct if_laddrconf", ["sys/types.h", "net/if6.h"], False),
+         ("struct if_laddrreq", ["sys/types.h", "net/if6.h"], False),
+-        ("struct timex",["sys/time.h", "sys/timex.h"],False if "nto-qnx" in ctx.env.CC[0] else True),
++        ("struct timex",["sys/time.h", "sys/timex.h"],False if "qnx" in ctx.env.CC[0] else True),
+         ("struct ntptimeval", ["sys/time.h", "sys/timex.h"], False),
+     )
+     for (s, h, r) in structures:
+@@ -618,7 +618,7 @@ int main(int argc, char **argv) {
+     ]
+     # QNX cross-compilation cannot execute probe binaries.
+     # Force known datatype sizes.
+-    if "nto-qnx" in ctx.env.CC[0]:
++    if "qnx" in ctx.env.CC[0]:
+         ctx.define("NTP_SIZEOF_LONG", 8)
+         ctx.define("NTP_SIZEOF_TIME_T", 8)
+         ctx.define("NTP_SIZEOF_STRUCT_TIMESPEC", 16)
+@@ -753,7 +753,8 @@ int main(int argc, char **argv) {
+         if os.path.exists("/usr/include/" + hdr):
+             # Sanity check...
+             print("Compilation check failed but include exists %s" % hdr)
+-
++    if ctx.options.cross_compiler and "qnx" in ctx.options.cross_compiler.lower():  
++        ctx.undefine("HAVE_SYS_MODEM_H") 
+     if ((ctx.get_define("HAVE_TIMEPPS_H") or
+             ctx.get_define("HAVE_SYS_TIMEPPS_H"))):
+         ctx.define("HAVE_PPSAPI", 1, comment="Enable the PPS API")
+
+From 6a2fa2738412bf1f821fdd84e07a8f4c87b5c8ab Mon Sep 17 00:00:00 2001
+From: hyarasi13 <hyarasi@qnx.com>
+Date: Tue, 14 Jul 2026 15:07:37 +0530
+Subject: [PATCH 6/6] Update wscript
+
+---
+ ntpd/wscript | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/ntpd/wscript b/ntpd/wscript
+index 1d798c04ce..407b9de049 100644
+--- a/ntpd/wscript
++++ b/ntpd/wscript
+@@ -1,12 +1,11 @@
+ # Copyright the NTPsec project contributors
+ #
+ # SPDX-License-Identifier: BSD-2-Clause
+-import os
++
+ def build(ctx):
+     bldnode = ctx.bldnode.abspath()
+ 
+     if ctx.variant == "host":
+-        host_compat = os.path.join(ctx.path.abspath(), "host_compat")
+         bison_source = ["ntp_parser.y"]
+ 
+         ctx(

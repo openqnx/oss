@@ -1,0 +1,18 @@
+Include <netinet/in.h> for sockaddr_in/sockaddr_in6.
+
+addressinfo.h compares IPv4 and IPv6 addresses through struct sockaddr_in
+and sockaddr_in6 but only includes <netdb.h>. glibc's <netdb.h> happens to
+pull in <netinet/in.h>; QNX's does not, so the structs are incomplete there.
+
+Upstream-Status: QNX-specific
+
+--- a/src/linux_tcp/addressinfo.h
++++ b/src/linux_tcp/addressinfo.h
+@@ -10,6 +10,7 @@
+ /**
+  *  Dependencies
+  */
++#include <netinet/in.h>
+ #include <random>
+ #include "connectionorder.h"
+ 

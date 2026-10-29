@@ -1,0 +1,19 @@
+QNX change from QNX's aports (core/libxcrypt/printf-null.patch).
+
+Taken from qnx-ports/aports core/libxcrypt -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff -ru libxcrypt-4.4.38/test/checksalt.c libxcrypt-4.4.38-qnx/test/checksalt.c
+--- libxcrypt-4.4.38/test/checksalt.c	2025-10-16 17:08:46.000000000 +0000
++++ libxcrypt-4.4.38-qnx/test/checksalt.c	2025-10-16 17:11:10.000000000 +0000
+@@ -19,6 +19,8 @@
+ #include "crypt-port.h"
+ #include <stdio.h>
+ 
++const char* output_for_percent_s_NULL = "(null)";
++
+ struct testcase
+ {
+   const char *prefix;

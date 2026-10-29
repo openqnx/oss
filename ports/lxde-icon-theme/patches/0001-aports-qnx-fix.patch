@@ -1,0 +1,18 @@
+QNX change from QNX's aports (extra/lxde-icon-theme/qnx-fix.patch).
+
+Taken from qnx-ports/aports extra/lxde-icon-theme -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- lxde-icon-theme-0.5.2.orig/Makefile.am	2025-09-09 20:44:32.000000000 +0000
++++ lxde-icon-theme-0.5.2/Makefile.am	2025-09-09 20:44:55.000000000 +0000
+@@ -9,7 +9,7 @@
+ 
+ install-data-hook:
+ 	$(mkdir_p) $(DESTDIR)$(datadir)/icons
+-	cp -raf --no-preserve=ownership nuoveXT2 $(DESTDIR)$(datadir)/icons
++	cp -raf nuoveXT2 $(DESTDIR)$(datadir)/icons
+ 	$(LN_S) -f user-desktop.png $(DESTDIR)$(datadir)/icons/nuoveXT2/48x48/places/desktop.png
+ 	$(LN_S) -f user-desktop.png $(DESTDIR)$(datadir)/icons/nuoveXT2/48x48/places/gnome-fs-desktop.png
+ 	$(LN_S) -f folder-saved-search.png $(DESTDIR)$(datadir)/icons/nuoveXT2/48x48/places/application-x-gnome-saved-search.png

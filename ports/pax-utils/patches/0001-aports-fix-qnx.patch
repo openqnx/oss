@@ -1,0 +1,21 @@
+QNX change from QNX's aports (core/pax-utils/fix-qnx.patch).
+
+Taken from qnx-ports/aports core/pax-utils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff '--color=auto' -Naur pax-utils-1.3.8.orig/porting.h pax-utils-1.3.8/porting.h
+--- pax-utils-1.3.8.orig/porting.h	2025-04-07 11:45:57.931966345 -0400
++++ pax-utils-1.3.8/porting.h	2025-04-07 11:46:39.309963630 -0400
+@@ -73,6 +73,10 @@
+ # define __PAX_UTILS_DEFAULT_LD_CACHE_CONFIG ""
+ #endif
+ 
++#if defined(__QNX__)
++# include <sys/param.h>
++#endif
++
+ #undef PAX_UTILS_CLEANUP
+ #ifndef __SANITIZE_ADDRESS__
+ # ifdef __has_feature

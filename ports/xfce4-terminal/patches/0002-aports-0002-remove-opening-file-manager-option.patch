@@ -1,0 +1,59 @@
+QNX change from QNX's aports (extra/xfce4-terminal/0002-remove-opening-file-manager-option.patch).
+
+Taken from qnx-ports/aports extra/xfce4-terminal -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 3d81a62bcf6233f1717d0d881525e2b775d1942e Mon Sep 17 00:00:00 2001
+From: felixlionardo <flionardo@blackberry.com>
+Date: Fri, 19 Sep 2025 13:35:23 -0400
+Subject: [PATCH] remove opening file manager option
+
+---
+ terminal/terminal-window.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/terminal/terminal-window.c b/terminal/terminal-window.c
+index d9e3a413..9e2960c3 100644
+--- a/terminal/terminal-window.c
++++ b/terminal/terminal-window.c
+@@ -429,6 +429,7 @@ static XfceGtkActionEntry action_entries[] = {
+     "window-new",
+     G_CALLBACK (terminal_window_action_new_window),
+   },
++#ifndef __QNX__
+   {
+     TERMINAL_WINDOW_ACTION_OPEN_FOLDER,
+     "<Actions>/terminal-window/open-folder",
+@@ -439,6 +440,7 @@ static XfceGtkActionEntry action_entries[] = {
+     "folder-open",
+     G_CALLBACK (terminal_window_action_open_folder),
+   },
++#endif
+   {
+     TERMINAL_WINDOW_ACTION_UNDO_CLOSE_TAB,
+     "<Actions>/terminal-window/undo-close-tab",
+@@ -2120,7 +2122,9 @@ terminal_window_get_context_menu (TerminalScreen *screen,
+ 
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_NEW_TAB), G_OBJECT (window), GTK_MENU_SHELL (context_menu));
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (context_menu));
++#ifndef __QNX__
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_OPEN_FOLDER), G_OBJECT (window), GTK_MENU_SHELL (context_menu));
++#endif
+   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (context_menu));
+ 
+   terminal_window_menu_add_section (window, context_menu, MENU_SECTION_COPY | MENU_SECTION_PASTE, FALSE);
+@@ -3918,7 +3922,9 @@ terminal_window_update_file_menu (TerminalWindow *window,
+   terminal_window_menu_clean (GTK_MENU (menu));
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_NEW_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (menu));
++#ifndef __QNX__
+   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_OPEN_FOLDER), G_OBJECT (window), GTK_MENU_SHELL (menu));
++#endif
+   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (TERMINAL_WINDOW_ACTION_UNDO_CLOSE_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
+   gtk_widget_set_sensitive (item, !g_queue_is_empty (window->priv->closed_tabs_list));
+   xfce_gtk_menu_append_separator (GTK_MENU_SHELL (menu));
+-- 
+2.34.1
+

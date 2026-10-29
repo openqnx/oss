@@ -1,0 +1,20 @@
+Treat B230400 as optional.
+
+The termios speed constants above B115200 are not POSIX. QNX's <termios.h>
+stops at B115200, so the case label for 230400 baud has to be conditional.
+
+Upstream-Status: QNX-specific
+
+--- a/src/ttyopts.c
++++ b/src/ttyopts.c
+@@ -176,8 +176,10 @@
+         return 57600;
+     case B115200:
+         return 115200;
++#ifdef B230400
+     case B230400:
+         return 230400;
++#endif
+     }
+ }
+ 

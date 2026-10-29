@@ -1,0 +1,71 @@
+#!/bin/bash
+# mkpatch -- turn your edits in src/<component> into a patch file in the
+# format every patch in ports/*/patches/ uses.
+#
+#   scripts/mkpatch <component> <patch-name> "<one-line summary>" [description-file]
+#
+# Edit the source in src/<component> first (after qnxbuild has fetched and
+# patched it), then run this. The new patch contains only the changes that are
+# not already in ports/<component>/patches/, and is numbered after them:
+#
+#   ports/<component>/patches/000N-<patch-name>.patch
+#
+#     <summary>
+#
+#     <description>
+#
+#     Upstream-Status: QNX-specific
+#
+#     --- a/path/to/file
+#     +++ b/path/to/file
+#     ...
+#
+# How the baseline is found: the pristine upstream tree is rebuilt in a
+# temporary directory (git checkout of REF, or the pinned tarball), the
+# existing patches are applied to it, and the result is diffed against
+# src/<component>. Only files that exist upstream are compared, so files a
+# build generates in the source tree (autogen.sh output, say) never end up in
+# a patch; files you added are listed so you can include them deliberately
+# (diff -N), which is rarely what a port needs.
+set -eo pipefail
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+pkg=$1; name=$2; summary=$3; descfile=$4
+[ -n "$pkg" ] && [ -n "$name" ] && [ -n "$summary" ] || { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+rec="$WS/ports/$pkg/recipe.sh"; [ -f "$rec" ] || { echo "no recipe: $pkg" >&2; exit 1; }
+src="$WS/src/$pkg"; [ -d "$src" ] || { echo "no source tree: $src (run qnxbuild $pkg first)" >&2; exit 1; }
+
+# Recipe fields, read without running any hooks.
+field() { sed -n -E "s/^(.*;[[:space:]]*)?$1=([^;[:space:]]*).*/\2/p" "$rec" | head -1 | tr -d "\"'"; }
+GIT=$(field GIT); REF=$(field REF); TARBALL=$(field TARBALL)
+
+tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+base="$tmp/a"
+if [ -n "$GIT" ]; then
+  git -c advice.detachedHead=false clone -q --depth 1 ${REF:+--branch "$REF"} --recurse-submodules --shallow-submodules "$GIT" "$base"
+elif [ -n "$TARBALL" ]; then
+  tb="$WS/dist/$(basename "$TARBALL")"
+  [ -f "$tb" ] || curl -fsSL -o "$tb" "$TARBALL"
+  mkdir -p "$base"; tar xf "$tb" -C "$base" --strip-components=1
+else
+  echo "recipe fetches with a do_fetch hook; make the patch with git/diff by hand" >&2; exit 1
+fi
+for p in "$WS/ports/$pkg"/patches/*.patch; do
+  [ -e "$p" ] && patch -s -p1 -d "$base" < "$p"
+done
+
+n=$( (find "$WS/ports/$pkg/patches" -maxdepth 1 -name "*.patch" 2>/dev/null || true) | wc -l)
+out="$WS/ports/$pkg/patches/$(printf '%04d' $((n+1)))-$name.patch"
+mkdir -p "$WS/ports/$pkg/patches"
+{
+  echo "$summary"; echo
+  [ -n "$descfile" ] && { cat "$descfile"; echo; }
+  echo "Upstream-Status: QNX-specific"; echo
+  ( cd "$tmp" && diff -ru --no-dereference \
+      -x .git -x '*.o' -x '*.a' -x '*.so*' -x autom4te.cache a "$src" ) | grep -v '^Only in ' || true
+} > "$out.tmp"
+( cd "$tmp" && diff -rq -x .git a "$src" 2>/dev/null | sed -n "s#^Only in $src\(.*\): #  new (not in patch): \1/#p" ) | head -20 >&2 || true
+if ! grep -q '^+++ ' "$out.tmp"; then rm -f "$out.tmp"; echo "no changes in $src beyond the existing patches"; exit 1; fi
+# diff labels the trees a/ and b/ already; strip the timestamps it appends.
+sed -E -e "s#^(\+\+\+|diff -ru.*) $src/#\1 b/#" -e 's#^(---|\+\+\+) ([^\t]*)\t.*#\1 \2#' -e '/^diff -ru /d' "$out.tmp" > "$out"; rm -f "$out.tmp"
+echo "wrote $out ($(grep -c '^+++ ' "$out") file(s))"
+echo "check it applies to a fresh tree:  rm -rf src/$pkg && ./scripts/qnxbuild -f $pkg"

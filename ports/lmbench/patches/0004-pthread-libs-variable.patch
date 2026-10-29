@@ -1,0 +1,29 @@
+Make lat_mem_pingpong's -lpthread -lrt overridable.
+
+QNX has the threads and realtime calls in libc and no libpthread or librt to
+link, so "-lpthread -lrt" fails ("cannot find -lpthread"). Keep them as the
+default and let a build set PTHREAD_LIBS to what its system needs.
+
+Upstream-Status: QNX-specific
+
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -42,6 +42,9 @@
+ # base of installation location
+ BASE=/usr/local
+ O= ../bin/unknown
++# Where the threads and realtime calls live; libc on systems that have no
++# separate libpthread/librt.
++PTHREAD_LIBS ?= -lpthread -lrt
+ D= ../doc
+ TRUE=/bin/true
+ OS=`../scripts/os`
+@@ -361,7 +364,7 @@
+ 
+ $O/lat_mem_pingpong.s:lat_mem_pingpong.c timing.h stats.h bench.h
+ $O/lat_mem_pingpong:  lat_mem_pingpong.c timing.h stats.h bench.h $O/lmbench.a
+-	$(COMPILE) -o $O/lat_mem_pingpong lat_mem_pingpong.c $O/lmbench.a $(LDLIBS) -lpthread -lrt
++	$(COMPILE) -o $O/lat_mem_pingpong lat_mem_pingpong.c $O/lmbench.a $(LDLIBS) $(PTHREAD_LIBS)
+ 
+ $O/lat_mem_wr.s:lat_mem_wr.c timing.h stats.h bench.h
+ $O/lat_mem_wr:  lat_mem_wr.c timing.h stats.h bench.h $O/lmbench.a

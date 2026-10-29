@@ -1,0 +1,35 @@
+QNX 8.0 has alsa-lib, not QSA -- do not force the QSA audio backend.
+
+CMakeLists.txt selects src/audio/qnx unconditionally for QNX.  That
+backend is written against <sys/asoundlib.h> and snd_pcm_open_preferred(),
+the QNX 6.x/7.x sound API.  QNX 8.0 replaced QSA with a real alsa-lib, so
+the header does not exist and the build stops at:
+
+    src/audio/qnx/SDL_qsa_audio.c:37:10: fatal error:
+        sys/asoundlib.h: No such file or directory
+
+CheckALSA() runs a few lines later and finds the alsa-lib that QNX 8 does
+ship, so the generic ALSA backend covers this platform properly.  Gating
+the QSA block on QNX_USE_QSA_AUDIO keeps it available for older QNX
+releases without breaking QNX 8.  Same change as the SDL2 recipe here.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1562,7 +1562,14 @@
+         set(SDL_AUDIO_DRIVER_NETBSD 1)
+         sdl_glob_sources("${SDL3_SOURCE_DIR}/src/audio/netbsd/*.c")
+         set(HAVE_SDL_AUDIO TRUE)
+-    elseif(QNX)
++    elseif(QNX AND QNX_USE_QSA_AUDIO)
++        # src/audio/qnx is the QSA backend: it includes <sys/asoundlib.h> and
++        # calls snd_pcm_open_preferred(), the QNX 6.x/7.x sound API.  QNX 8.0
++        # replaced QSA with a real alsa-lib -- <alsa/asoundlib.h>, libasound.so
++        # -- so this file does not compile there.  CheckALSA() immediately
++        # below picks the generic ALSA backend, which is the correct one for
++        # QNX 8.  Set QNX_USE_QSA_AUDIO=ON to build the old backend on an
++        # older QNX.
+         set(SDL_AUDIO_DRIVER_QNX 1)
+         sdl_glob_sources("${SDL3_SOURCE_DIR}/src/audio/qnx/*.c")
+         sdl_link_dependency(asound LIBS asound)

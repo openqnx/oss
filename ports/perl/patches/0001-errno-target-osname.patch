@@ -1,0 +1,108 @@
+Errno_pm.PL: decide by the target OS, not the build host's.
+
+When cross compiling, Errno_pm.PL runs under the build host's miniperl,
+where $^O is "linux". It then takes its Linux path, preprocesses the host's
+glibc <errno.h> with the QNX compiler ("features.h: No such file") and finds
+no error definitions. $Config{osname} is the target's ("nto").
+
+Upstream-Status: QNX-specific
+
+--- a/ext/Errno/Errno_pm.PL
++++ b/ext/Errno/Errno_pm.PL
+@@ -6,7 +6,7 @@
+ 
+ my %err = ();
+ 
+-my $IsMSWin32 = $^O eq 'MSWin32';
++my $IsMSWin32 = $Config{osname} eq 'MSWin32';
+ 
+ unlink "Errno.pm" if -f "Errno.pm";
+ unlink "Errno.tmp" if -f "Errno.tmp";
+@@ -14,7 +14,7 @@
+ select OUT;
+ my $file;
+ my @files = get_files();
+-if ($Config{gccversion} ne '' && $^O eq 'MSWin32') {
++if ($Config{gccversion} ne '' && $Config{osname} eq 'MSWin32') {
+     # MinGW complains "warning: #pragma system_header ignored outside include
+     # file" if the header files are processed individually, so include them
+     # all in .c file and process that instead.
+@@ -44,7 +44,7 @@
+     my($file) = @_;
+ 
+     # for win32 perl under cygwin, we need to get a windows pathname
+-    if ($^O eq 'MSWin32' && $Config{cc} =~ /\B-mno-cygwin\b/ &&
++    if ($Config{osname} eq 'MSWin32' && $Config{cc} =~ /\B-mno-cygwin\b/ &&
+         defined($file) && !-f $file) {
+         chomp($file = `cygpath -w "$file"`);
+     }
+@@ -53,7 +53,7 @@
+ #    warn "Processing $file\n";
+ 
+     local *FH;
+-    if (($^O eq 'VMS') && ($Config{vms_cc_type} ne 'gnuc')) {
++    if (($Config{osname} eq 'VMS') && ($Config{vms_cc_type} ne 'gnuc')) {
+ 	unless(open(FH," LIBRARY/EXTRACT=ERRNO/OUTPUT=SYS\$OUTPUT $file |")) {
+             warn "Cannot open '$file'";
+             return;
+@@ -111,7 +111,7 @@
+     # When cross-compiling we may store a path for gcc's "sysroot" option:
+     my $sysroot = $Config{sysroot} || '';
+     my $linux_errno_h;
+-    if ($^O eq 'linux') {
++    if ($Config{osname} eq 'linux') {
+ 	# Some Linuxes have weird errno.hs which generate
+ 	# no #file or #line directives
+ 	($linux_errno_h) = grep { -e $_ } map { "$_/errno.h" }
+@@ -120,9 +120,9 @@
+     }
+ 
+     # VMS keeps its include files in system libraries
+-    if ($^O eq 'VMS') {
++    if ($Config{osname} eq 'VMS') {
+ 	push(@file, 'Sys$Library:DECC$RTLDEF.TLB');
+-    } elsif ($^O eq 'os390') {
++    } elsif ($Config{osname} eq 'os390') {
+ 	# OS/390 C compiler doesn't generate #file or #line directives
+         # and it does not tag the header as 1047 (EBCDIC), so make a local
+         # copy and tag it
+@@ -135,18 +135,18 @@
+ 	if ($dep =~ /(\S+errno\.h)/) {
+ 	     push(@file, $1);
+ 	}
+-    } elsif ($^O eq 'linux' &&
++    } elsif ($Config{osname} eq 'linux' &&
+ 	      $Config{gccversion} ne '' && 
+ 	      $Config{gccversion} !~ /intel/i &&
+ 	      # might be using, say, Intel's icc
+ 	      $linux_errno_h
+ 	     ) {
+ 	push(@file, $linux_errno_h);
+-    } elsif ($^O eq 'haiku') {
++    } elsif ($Config{osname} eq 'haiku') {
+ 	# hidden in a special place
+ 	push(@file, '/boot/system/develop/headers/posix/errno.h');
+ 
+-    } elsif ($^O eq 'vos') {
++    } elsif ($Config{osname} eq 'vos') {
+ 	# avoid problem where cpp returns non-POSIX pathnames
+ 	push(@file, '/system/include_library/errno.h');
+     } else {
+@@ -172,7 +172,7 @@
+ 
+ 	my $pat = '^#\s*(?:line)?\s*\d+\s+"([^"]+)"';
+ 	while(<CPPO>) {
+-	    if ($^O eq 'os2' or $IsMSWin32) {
++	    if ($Config{osname} eq 'os2' or $IsMSWin32) {
+ 		if (/$pat/o) {
+ 		   my $f = $1;
+ 		   $f =~ s,\\\\,/,g;
+@@ -234,7 +234,7 @@
+ 	    $inhibit_linemarkers = ' -P';
+ 	}
+ 
+-	if ($^O eq 'VMS') {
++	if ($Config{osname} eq 'VMS') {
+ 	    my $cpp = "$Config{cppstdin} $Config{cppflags}" .
+ 		$inhibit_linemarkers . " $Config{cppminus}";
+ 	    $cpp =~ s/sys\$input//i;

@@ -1,0 +1,115 @@
+QNX compatibility for apk-tools (from QNX's aports core/apk-tools).
+
+Taken from qnx-ports/aports core/apk-tools/0001-qnx-compat.patch, the patch
+the QNX Everywhere image's apk is built with.
+
+Upstream-Status: QNX-specific
+
+From efd30daa52083d67cd49b0fcdaa9edfcbd03ef04 Mon Sep 17 00:00:00 2001
+From: Leo Shen <i@szclsya.me>
+Date: Tue, 21 Apr 2026 15:13:18 -0400
+Subject: [PATCH] qnx: compat
+
+---
+ libfetch/common.c | 4 ++++
+ src/apk_xattr.h   | 8 ++++++++
+ src/io.c          | 6 +++---
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/libfetch/common.c b/libfetch/common.c
+index ea82d509..e16d2648 100644
+--- a/libfetch/common.c
++++ b/libfetch/common.c
+@@ -219,8 +219,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
+ 	if (verbose)
+ 		fetch_info("connecting to %s:%d", url->host, url->port);
+ 
++#if !defined(__QNX__) || __QNX__ >= 800
+ 	if (fetchTimeout)
+ 		sock_flags |= SOCK_NONBLOCK;
++#endif
+ 
+ 	/* try to connect */
+ 	for (sd = -1, res = res0; res; sd = -1, res = res->ai_next) {
+@@ -276,8 +278,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
+ 		return (NULL);
+ 	}
+ 
++#if !defined(__QNX__) || __QNX__ >= 800
+ 	if (sock_flags & SOCK_NONBLOCK)
+ 		fcntl(sd, F_SETFL, fcntl(sd, F_GETFL) & ~O_NONBLOCK);
++#endif
+ 
+ 	if ((conn = fetch_reopen(sd)) == NULL) {
+ 		fetch_syserr();
+diff --git a/src/apk_xattr.h b/src/apk_xattr.h
+index 595fe68d..42f8f8ac 100644
+--- a/src/apk_xattr.h
++++ b/src/apk_xattr.h
+@@ -1,11 +1,15 @@
+ #pragma once
+ #include <unistd.h>
++#ifndef __QNX__
+ #include <sys/xattr.h>
++#endif
+ 
+ static inline int apk_fsetxattr(int fd, const char *name, void *value, size_t size)
+ {
+ #ifdef __APPLE__
+ 	return fsetxattr(fd, name, value, size, 0, 0);
++#elif defined(__QNX__)
++	return 0;
+ #else
+ 	return fsetxattr(fd, name, value, size, 0);
+ #endif
+@@ -15,6 +19,8 @@ static inline ssize_t apk_fgetxattr(int fd, const char *name, void *value, size_
+ {
+ #ifdef __APPLE__
+ 	return fgetxattr(fd, name, value, size, 0, 0);
++#elif defined(__QNX__)
++	return 0;
+ #else
+ 	return fgetxattr(fd, name, value, size);
+ #endif
+@@ -24,6 +30,8 @@ static inline ssize_t apk_flistxattr(int fd, char *namebuf, size_t size)
+ {
+ #ifdef __APPLE__
+ 	return flistxattr(fd, namebuf, size, 0);
++#elif defined(__QNX__)
++	return 0;
+ #else
+ 	return flistxattr(fd, namebuf, size);
+ #endif
+diff --git a/src/io.c b/src/io.c
+index 50c2f771..511e5300 100644
+--- a/src/io.c
++++ b/src/io.c
+@@ -1382,7 +1382,7 @@ static FILE *fopenat(int dirfd, const char *pathname)
+ 	FILE *f;
+ 	int fd;
+ 
+-	fd = openat(dirfd, pathname, O_RDONLY | O_CLOEXEC);
++	fd = openat(dirfd, pathname, O_RDONLY | O_CLOEXEC | O_DIRECTORY);
+ 	if (fd < 0) return NULL;
+ 
+ 	f = fdopen(fd, "r");
+@@ -1408,7 +1408,7 @@ static void idcache_load_users(int root_fd, struct apk_id_hash *idh)
+ 	do {
+ #ifdef HAVE_FGETPWENT_R
+ 		fgetpwent_r(in, &pwent, buf, sizeof(buf), &pwd);
+-#elif !defined(__APPLE__)
++#elif !defined(__APPLE__) && !defined(__QNX__)
+ 		pwd = fgetpwent(in);
+ #else
+ # warning macOS does not support nested /etc/passwd databases, using system one.
+@@ -1441,7 +1441,7 @@ static void idcache_load_groups(int root_fd, struct apk_id_hash *idh)
+ 	do {
+ #ifdef HAVE_FGETGRENT_R
+ 		fgetgrent_r(in, &grent, buf, sizeof(buf), &grp);
+-#elif !defined(__APPLE__)
++#elif !defined(__APPLE__) && !defined(__QNX__)
+ 		grp = fgetgrent(in);
+ #else
+ # warning macOS does not support nested /etc/group databases, using system one.
+-- 
+2.53.0

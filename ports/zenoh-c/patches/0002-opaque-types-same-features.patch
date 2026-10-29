@@ -1,0 +1,25 @@
+build.rs: build the opaque-types crate with this build's features only.
+
+build.rs builds build-resources/opaque-types for the target to learn the
+sizes of zenoh's types, passing on each feature this build has with -F --
+but not --no-default-features, so that crate's default features are always
+added. A build without one of them (here transport_unixsock-stream, whose
+nix dependency does not support QNX) still compiled it in the nested build,
+failed there, and build.rs then stopped with "no sigatures found for
+building generic z_call".
+
+Upstream-Status: Pending
+
+--- a/build.rs
++++ b/build.rs
+@@ -122,7 +122,9 @@
+         linker_args.push(format!("target.{target}.linker=\"{linker}\""));
+     }
+     #[allow(unused_mut)]
+-    let mut feature_args: Vec<&str> = vec!["-F", "panic"]; // enable output structure sizes in panic messages during build
++    // Exactly the features this build has: the opaque-types crate's own
++    // defaults would otherwise be added to them.
++    let mut feature_args: Vec<&str> = vec!["--no-default-features", "-F", "panic"]; // enable output structure sizes in panic messages during build
+     for (rust_feature, _c_feature) in RUST_TO_C_FEATURES.entries() {
+         if test_feature(rust_feature) {
+             feature_args.push("-F");

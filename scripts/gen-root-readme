@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Generate PORTS-INDEX.md: the component table, in the shape of the
+qnx-ports/build-files root README.  Run after scripts/gen-port-docs."""
+import glob, os, re, subprocess, json, sys
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(WS)
+
+dj = json.load(open("ports/dependencies.json")) if os.path.exists("ports/dependencies.json") else {}
+CLS = {"standalone": "🟢 standalone", "runtime-standalone": "🟡 build-deps only",
+       "dependent": "🔴 dependent", "unknown": "—", "planned": "📋 planned", "blocked": "⛔ blocked"}
+rows = []
+for rec in sorted(glob.glob("ports/*/recipe.sh")):
+    n = os.path.basename(os.path.dirname(rec))
+    txt = open(rec).read()
+    def field(k):
+        m = re.search(rf'(?:^|;\s*)\s*{k}=(.*?)(?:;|$)', txt, re.M)
+        return m.group(1).strip().strip('"').strip("'") if m else ""
+    ver = field("VERSION")
+    bs  = field("BUILDSYS") or "cmake"
+    src = field("GIT") or field("TARBALL") or field("UPSTREAM")
+    host = re.sub(r'^https?://([^/]+)/.*$', r'\1', src) if src else "custom"
+    npat = len(glob.glob(f"ports/{n}/patches/*.patch"))
+    m = re.search(r'^DEPS=\((.*?)\)', txt, re.M | re.S) or re.search(r'^DEPS="(.*?)"', txt, re.M | re.S)
+    ndep = len([d for d in (m.group(1).split() if m else []) if d])
+    # Build status comes from dependencies.json (so CI can regenerate this
+    # file without a build); fall back to the local stamps when it is absent.
+    b = dj.get(n, {}).get("built") or {a: os.path.exists(f"stage/{a}/.stamp/{n}") for a in ("aarch64le", "x86_64")}
+    # A component limited to some architectures (ARCHES_SUPPORTED) is "n/a" on
+    # the others, which do not count against it.
+    only = (field("ARCHES_SUPPORTED") or "aarch64le x86_64").split()
+    a = "OK" if b.get("aarch64le") else ("n/a" if "aarch64le" not in only else "--")
+    x = "OK" if b.get("x86_64") else ("n/a" if "x86_64" not in only else "--")
+    d = dj.get(n, {})
+    cls = field("STATUS") if field("STATUS") in ("planned", "blocked") else d.get("class", "unknown")
+    if cls in ("planned", "blocked"):
+        bs = "—"
+    rows.append((n, ver, bs, host, npat, cls, len(d.get("runtime_deps", [])), a, x))
+
+built = sum(1 for r in rows if r[7] in ("OK", "n/a") and r[8] in ("OK", "n/a"))
+pat   = sum(r[4] for r in rows)
+cnt   = lambda c: sum(1 for r in rows if r[5] == c)
+
+out = []
+A = out.append
+A("# Component index\n")
+A(f"{len(rows)} components. **{built}** build for both `aarch64le` and `x86_64` "
+  f"from upstream source, carrying {pat} QNX patches between them.\n")
+A(f"| Class | | Components |\n|---|---|---|\n"
+  f"| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **{cnt('standalone')}** |\n"
+  f"| 🟡 **build-deps only** | needs other components to build, runs on its own | **{cnt('runtime-standalone')}** |\n"
+  f"| 🔴 **dependent** | needs other components to build and to run | **{cnt('dependent')}** |\n"
+  f"| 📋 **planned** | recorded for porting, not ported yet | **{cnt('planned')}** |\n"
+  f"| ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **{cnt('blocked')}** |\n")
+A("How the class is decided, and every component's full chain: "
+  "[DEPENDENCIES.md](DEPENDENCIES.md).\n")
+A("Click a component for its source URL, its patches, the exact build "
+  "commands and how it is verified on a target.\n")
+A("| Component | Version | Build | Upstream | Patches | Class | Run-time deps | aarch64le | x86_64 |")
+A("|---|---|---|---|---|---|---|---|---|")
+for n, ver, bs, host, npat, cls, nrt, a, x in rows:
+    mark = lambda s: "✅" if s == "OK" else ("n/a" if s == "n/a" else "—")
+    A(f"| [{n}](ports/{n}/README.md) | {ver or '—'} | {bs} | {host} | "
+      f"{npat or '—'} | {CLS[cls]} | {nrt or '—'} | {mark(a)} | {mark(x)} |")
+A("")
+open("PORTS-INDEX.md", "w").write("\n".join(out) + "\n")
+print(f"PORTS-INDEX.md: {len(rows)} rows, {built} built both arches, {pat} patches")
+
+# README.md is README.md.in with its @COUNTS@ filled in from the same data, so
+# the front page cannot drift from the index. Patches count every file the
+# builds apply: patches/, plus deps/, qnx-patches/ and repo-patches/.
+if os.path.exists("README.md.in"):
+    allpat = sum(1 for r, _, fs in os.walk("ports") for x in fs if x.endswith(".patch"))
+    ntest = len(re.findall(r'^\s*port_test\(', open("tests/CMakeLists.txt").read(), re.M))
+    ported = [r for r in rows if r[5] not in ("planned", "blocked")]
+    vals = {"TOTAL": len(ported), "BUILT": built, "STANDALONE": cnt("standalone"),
+            "RTSTANDALONE": cnt("runtime-standalone"), "DEPENDENT": cnt("dependent"),
+            "PATCHES": allpat, "TESTS": ntest}
+    txt = open("README.md.in").read()
+    for k, v in vals.items():
+        txt = txt.replace(f"@{k}@", str(v))
+    left = sorted(set(re.findall(r'@[A-Z]+@', txt)))
+    if left:
+        sys.exit(f"README.md.in: no value for {' '.join(left)}")
+    open("README.md", "w").write(txt)
+    print("README.md: " + ", ".join(f"{k}={v}" for k, v in vals.items()))

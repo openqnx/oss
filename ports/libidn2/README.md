@@ -1,0 +1,170 @@
+# libidn2 2.3.7
+
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
+
+| | |
+|---|---|
+| Upstream | https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz |
+| SHA-256 | `4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64` |
+| Build system | GNU Autotools |
+| QNX patches | 0 |
+| Build dependencies | [`libunistring`](../libunistring/) [`gettext`](../gettext/) |
+| Run-time dependencies | [`gettext`](../gettext/) [`libunistring`](../libunistring/) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_libidn2`](../../tests/src/) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install libidn2
+oss-get install libidn2-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild libidn2` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+**Build the dependencies first** (4 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild libunistring gettext
+```
+
+<details><summary>Full build chain (4)</summary>
+
+[`gettext`](../gettext/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/)
+</details>
+
+### 2. Get the upstream source
+
+```bash
+URL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz
+mkdir -p dist src/libidn2
+curl -fL -o dist/$(basename $URL) $URL
+echo "4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64  dist/$(basename $URL)" | sha256sum -c -
+tar xf dist/$(basename $URL) -C src/libidn2 --strip-components=1
+```
+
+### 3. Apply the QNX patches
+
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+
+### 4. Configure, build and install into the staging tree
+
+```bash
+mkdir -p build/$QNX_ARCH/libidn2 && cd build/$QNX_ARCH/libidn2
+CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
+CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
+LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
+         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+$OLDPWD/src/libidn2/configure --host=$QNX_TRIPLE --prefix=/usr/local \
+    --enable-shared \
+    --disable-static \
+    --disable-doc \
+    --disable-gcc-warnings
+make -j$(nproc)
+make DESTDIR=$STAGE install
+cd -
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- libidn2 releases live under gnu/libidn/, not gnu/libidn2/.
+- Also linked at run time (found by scripts/gen-dependency-index): gettext
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libidn2`.
+
+### 5. What it installs
+
+30 files under `/usr/local`: 2 shared-library entries, 1 programs, 1 headers.
+
+```
+/usr/local/lib/libidn2.so
+/usr/local/lib/libidn2.so.4
+/usr/local/bin/idn2
+```
+
+The complete list is `stage/<arch>/.manifest/libidn2` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH libidn2
+ls repo/8.0/*/ | grep '^libidn2-'
+```
+
+This writes `libidn2-<ver>-r0.tar.gz` (run time) and `libidn2-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install libidn2
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/libidn2-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/libidn2-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_libidn2`](../../tests/src/) links libidn2 the way an application would and checks its core API on the target:
+
+```bash
+./tests/build-tests.sh $QNX_ARCH
+scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libidn2 root@<target>:/data/
+ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_libidn2'
+```
+
+```
+== libidn2 ==
+  ok   ...
+PASS libidn2
+```
+
+`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=2.3.7
+# libidn2 releases live under gnu/libidn/, not gnu/libidn2/.
+TARBALL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz
+SHA256=4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64
+BUILDSYS=autotools
+# Also linked at run time (found by scripts/gen-dependency-index): gettext
+DEPS="libunistring gettext"
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doc --disable-gcc-warnings )
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

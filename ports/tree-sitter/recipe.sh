@@ -1,0 +1,4 @@
+VERSION=0.25.9; GIT=https://github.com/tree-sitter/tree-sitter.git; REF=v0.25.9
+BUILDSYS=cmake
+SUBDIR=lib
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DTREE_SITTER_FEATURE_WASM=OFF )

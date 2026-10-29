@@ -1,0 +1,143 @@
+# QNX OSS — open source for QNX SDP 8.0
+
+Build files, QNX patches and step-by-step guides for **450 open source
+components**, cross-built from their upstream source for **QNX SDP 8.0** on
+**aarch64le** and **x86_64** — and the same components as prebuilt packages
+a QNX target can download and install directly.
+
+| | |
+|---|---|
+| Components | **450** (450 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| 🟢 Standalone | **197** — QNX SDP only, at build time and at run time |
+| 🟡 Build-deps only | **37** — need other components to build, run on their own |
+| 🔴 Dependent | **216** — need other components to build and to run |
+| QNX patches | **379**, one file per change, each with its reason |
+| On-target tests | **209** test programs |
+| Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
+
+**→ [Component index](PORTS-INDEX.md)** · **[Dependencies](DEPENDENCIES.md)** ·
+**[Status by area](PORTS.md)**
+
+## Three ways to use it
+
+### 1. Install a prebuilt package on the target
+
+```sh
+# on a QNX 8.0 target (needs only curl, tar, gzip, openssl -- all in a stock image)
+curl -fsSLo /data/oss-get https://raw.githubusercontent.com/openqnx/oss/main/target/oss-get
+chmod +x /data/oss-get
+/data/oss-get update
+/data/oss-get install mosquitto      # dependencies come along, every file is checksummed
+/data/oss-get link                   # as root: /usr/local -> /data/oss/usr/local
+```
+
+→ [docs/packages.md](docs/packages.md)
+
+### 2. Build one component from upstream, by hand
+
+Every component has its own guide, `ports/<name>/README.md`, that takes you
+from the upstream source to a binary on the target:
+
+1. get the upstream source at the pinned version (git tag, or tarball + SHA-256)
+2. apply the QNX patches in `ports/<name>/patches/` — each patch is separate
+   and says why it is needed
+3. configure — the exact command, every option explained
+4. build and install into a staging tree
+5. package it, copy it to the target, run its test
+
+Start with a 🟢 **standalone** component: it needs nothing but the QNX SDP.
+
+### 3. Build everything with the driver
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800          # your SDP 8.0 installation
+./scripts/build-host-tools.sh             # once: native generators the cross builds run
+source ./env.sh aarch64le                 # or x86_64
+./scripts/qnxbuild mosquitto              # fetch, patch, build deps first, install
+./scripts/qnxpkg mosquitto                # -> repo/8.0/aarch64/mosquitto-*.tar.gz / .apk
+```
+
+Or in a container that needs only the SDP mounted — no host packages:
+
+```bash
+QNX_SDP_ROOT=$HOME/qnx800 docker/run.sh ./scripts/qnxbuild mosquitto
+```
+
+→ [docs/build-environment.md](docs/build-environment.md)
+
+## Standalone vs dependent
+
+Every component is classified from its recipe **and from its binaries**
+(`DT_NEEDED`), so the class says what really happens on the target:
+
+| Class | To build | On the target | |
+|---|---|---|---|
+| 🟢 standalone | QNX SDP only | nothing else needed | proven by building against an *empty* staging tree (`scripts/verify-standalone`) |
+| 🟡 build-deps only | other components first (headers, header-only or static libraries) | runs on its own | |
+| 🔴 dependent | other components first | their shared libraries must be installed too | `oss-get` installs them |
+
+The class is at the top of every component README, and
+[DEPENDENCIES.md](DEPENDENCIES.md) lists each component's full build chain
+and run-time closure.
+
+## Requirements
+
+* Linux build host (Ubuntu 22.04 / 24.04), or Docker
+* QNX SDP 8.0, installed and licensed — including the eventfd/epoll/signalfd/
+  timerfd shim libraries:
+  `ls $QNX_SDP_ROOT/target/qnx/aarch64le/usr/lib/lib{eventfd,epoll,signalfd,timerfd}.so`
+* A target: any QNX 8.0 board (verified on Raspberry Pi 5), or a QEMU image
+  made with `mkqnximage` (verified on x86_64 and aarch64le)
+
+## Adding a component
+
+[docs/porting-guide.md](docs/porting-guide.md) — recipe fields, the QNX
+problems that come up again and again and how each was solved, turning an
+edit into a patch with `scripts/mkpatch`, the standalone check, a test on the
+target, and packaging.
+
+## Documentation
+
+| | |
+|---|---|
+| [Component index](PORTS-INDEX.md) | every component: version, upstream, patches, class, status |
+| [Dependencies](DEPENDENCIES.md) | standalone / build-deps only / dependent, with full chains |
+| [Status by area](PORTS.md) | components grouped by what they are for |
+| [Build environment](docs/build-environment.md) | host or container setup, `env.sh`, isolated builds |
+| [Packages and oss-get](docs/packages.md) | prebuilt packages, the target installer, publishing |
+| [Porting guide](docs/porting-guide.md) | how to port a new project |
+| [Porting hazards](docs/porting-hazards.md) | ~100 QNX-specific traps and their fixes |
+| [Upstream comparison](docs/upstream-comparison.md) | this set vs qnx-ports/build-files |
+| [QNX references](docs/qnx-references.md) | QNX Everywhere, apk, the OSS dashboard |
+
+## Layout
+
+```
+ports/<component>/   recipe.sh, patches/*.patch, README.md (generated)
+ports/dependencies.json   classes, build chains, run-time closures
+toolchain/           CMake toolchain files, Meson cross-file templates
+scripts/qnxbuild     the build driver           scripts/qnxpkg    packager
+scripts/mkpatch      edits -> patch file         scripts/verify-standalone
+scripts/gen-*        regenerate READMEs, index, dependency classes
+target/oss-get       installer for the QNX target
+docker/              the build container
+tests/               on-target test programs and runners
+```
+
+Generated trees (`src/ build/ stage/ pkgroot/ repo/ logs/ dist/ hosttools/`)
+are not tracked.
+
+## Relationship to qnx-ports/build-files
+
+Same layout as [qnx-ports/build-files](https://github.com/qnx-ports/build-files)
+— one directory per component holding its build files, patches and README —
+with a recipe driver instead of QNX recursive make, computed dependency
+classes, and packages for the target. See the
+[upstream comparison](docs/upstream-comparison.md).
+
+## License
+
+Each component keeps its own upstream license; the patches in
+`ports/<name>/patches/` are offered under the license of the component they
+modify. The license for the build files, scripts and documentation of this
+repository is set in [LICENSE](LICENSE).

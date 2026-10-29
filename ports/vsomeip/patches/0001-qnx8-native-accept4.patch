@@ -1,0 +1,40 @@
+vsomeip: use QNX 8.0's own accept4().
+
+The QNX wrapper re-implements accept4() with the _IO_OPENFD message protocol
+for QNX 7.x. QNX 8.0 exports accept4() from libsocket and no longer has
+<sys/sockmsg.h>, which the emulation needs; build it for pre-8.0 targets only.
+
+Upstream-Status: Pending
+
+--- a/implementation/utility/src/wrappers_qnx.cpp
++++ b/implementation/utility/src/wrappers_qnx.cpp
+@@ -14,11 +14,21 @@
+ #include <pthread.h>
+ #include <stdlib.h>
+ #include <string.h>
++/* QNX 7.x did not export accept4(), so the block below re-implements it on top
++ * of the _IO_OPENFD message protocol. QNX SDP 8.0 declares accept4() in
++ * <sys/socket.h> and exports it from libsocket.so.4, and it also removed
++ * <sys/sockmsg.h> -- which this implementation needs. Compile the emulation
++ * only for pre-8.0 targets and let libsocket supply accept4() on 8.0+.
++ * __QNX__ is predefined by qcc as 700 / 710 / 800.
++ */
++#if __QNX__ < 800
+ #include <sys/dcmd_ip.h>
+ #include <sys/netmgr.h>
+ #include <sys/sockmsg.h>
++#endif
+ #include <unistd.h>
+ 
++#if __QNX__ < 800
+ typedef enum accept_msg_t {
+ 	ACCEPT1=1,
+ 	ACCEPT4,
+@@ -117,6 +127,7 @@
+ accept4 (int s, struct sockaddr *addr, socklen_t *addrlen, int flags) {
+ 	return __accept(s, addr, addrlen, ACCEPT4, flags);
+ }
++#endif /* __QNX__ < 800 */
+ 
+ /*
+  * These definitions MUST remain in the global namespace.

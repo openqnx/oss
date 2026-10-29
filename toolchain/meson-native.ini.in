@@ -1,0 +1,19 @@
+# Build-machine (native) settings for meson cross builds.
+#
+# Some projects need a dependency that runs on the *build* machine -- Wayland
+# asks pkg-config for wayland-scanner, for example. The cross file's
+# pkg_config_libdir points at the QNX staging tree, so without this the native
+# lookup searches the wrong place and fails. Everything native lives in
+# hosttools/, built by scripts/build-host-tools.sh.
+[binaries]
+pkg-config = '@WS@/hosttools/bin/pkg-config-native'
+
+[built-in options]
+pkg_config_path = ''
+
+[properties]
+pkg_config_libdir = ['@WS@/hosttools/lib/x86_64-linux-gnu/pkgconfig',
+                     '@WS@/hosttools/lib/pkgconfig',
+                     '@WS@/hosttools/share/pkgconfig',
+                     '/usr/lib/x86_64-linux-gnu/pkgconfig',
+                     '/usr/share/pkgconfig']

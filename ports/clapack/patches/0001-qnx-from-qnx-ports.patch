@@ -1,0 +1,140 @@
+From 6dce4ab6fcabff8af5d5b3feaab213ef1f20eb4b Mon Sep 17 00:00:00 2001
+From: Jai Moraes <jmoraes@blackberry.com>
+Date: Tue, 26 Nov 2024 15:26:13 -0500
+Subject: [PATCH] ADDED: From GL, support for corss compiling for QNX.
+ Generation of test .sh scripts for automating binaries. MODIFIED: Added
+ support for custom /sh paths for test .sh generation
+
+Imported from qnx-ports/clapack (master...qnx_v3.2.1); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ CMakeLists.txt                |  2 +-
+ F2CLIBS/libf2c/CMakeLists.txt | 21 ++++++++++++++++-----
+ TESTING/CMakeLists.txt        | 34 ++++++++++++++++++++++++++++------
+ TESTING/MATGEN/CMakeLists.txt |  3 +++
+ TESTING/run_test.sh.in        |  5 +++++
+ 5 files changed, 53 insertions(+), 12 deletions(-)
+ create mode 100644 TESTING/run_test.sh.in
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 225f9a2..2335a00 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.4)
++cmake_minimum_required(VERSION 2.8.12)
+ project(CLAPACK C)
+ 
+ enable_testing()
+diff --git a/F2CLIBS/libf2c/CMakeLists.txt b/F2CLIBS/libf2c/CMakeLists.txt
+index cb74530..2453398 100755
+--- a/F2CLIBS/libf2c/CMakeLists.txt
++++ b/F2CLIBS/libf2c/CMakeLists.txt
+@@ -44,11 +44,22 @@ if(UNIX)
+ endif()
+ set_target_properties(arithchk PROPERTIES COMPILE_DEFINITIONS 
+   "NO_FPINIT;NO_LONG_LONG")
+-ADD_CUSTOM_COMMAND(
+-   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arith.h
+-   COMMAND arithchk > ${CMAKE_CURRENT_BINARY_DIR}/arith.h
+-   DEPENDS arithchk
+-   )
++if(CMAKE_CROSSCOMPILING)
++  # When cross compiling, we require arithchk to be available from host
++  if(NOT DEFINED ENV{ARITHCHK})
++    message(FATAL_ERROR "Please set ARITHCHK to the path of the arithchk binary executable on host")
++  endif()
++  ADD_CUSTOM_COMMAND(
++     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arith.h
++     COMMAND $ENV{ARITHCHK} > ${CMAKE_CURRENT_BINARY_DIR}/arith.h
++     )
++else()
++  ADD_CUSTOM_COMMAND(
++     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arith.h
++     COMMAND arithchk > ${CMAKE_CURRENT_BINARY_DIR}/arith.h
++     DEPENDS arithchk
++     )
++endif()
+ 
+ 
+ set(OFILES  ${MISC} ${POW} ${CX} ${DCX} ${REAL} ${DBL} ${INT} 
+diff --git a/TESTING/CMakeLists.txt b/TESTING/CMakeLists.txt
+index 825f013..d498a22 100755
+--- a/TESTING/CMakeLists.txt
++++ b/TESTING/CMakeLists.txt
+@@ -1,9 +1,16 @@
++option(CLAPACK_INSTALL_TESTS "Install tests to be run on target" OFF)
+ if(MSVC_VERSION)
+ #  string(REPLACE "/STACK:10000000" "/STACK:900000000000000000"
+ #    CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+   string(REGEX REPLACE "(.*)/STACK:(.*) (.*)" "\\1/STACK:900000000000000000 \\3"
+     CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+ endif()
++if(QNX)
++  # Set stack size to 16 MiB on QNX because the default is nowhere enough to run tests
++  # Some test binaries also contain duplicate symbols; these are fine and we can ignore
++  # these errors produced by qcc.
++  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -N 16777216 -Wl,-z muldefs")
++endif()
+ add_subdirectory(MATGEN)
+ add_subdirectory(LIN)
+ add_subdirectory(EIG)
+@@ -13,12 +20,27 @@ macro(add_lapack_test output input target)
+   string(REPLACE "." "_" input_name ${input})
+   set(testName "${target}_${input_name}")
+   if(EXISTS "${TEST_INPUT}")
+-    add_test(${testName} "${CMAKE_COMMAND}"
+-      -DTEST=$<TARGET_FILE:${name}>
+-      -DINPUT=${TEST_INPUT}
+-      -DOUTPUT=${TEST_OUTPUT}
+-      -DINTDIR=${CMAKE_CFG_INTDIR}
+-      -P "${CLAPACK_SOURCE_DIR}/TESTING/runtest.cmake")
++    if(CLAPACK_INSTALL_TESTS)
++      # Install test and its input on target
++      install(TARGETS ${target} DESTINATION "bin/clapack_tests")
++      install(FILES ${TEST_INPUT} DESTINATION "bin/clapack_tests")
++      set(TEST_TARGET ${target})
++      set(TEST_INPUT_NAME ${input})
++      set(TEST_TARGET_SHELL "$ENV{TEST_TARGET_SHELL}")
++      # Generate a test script to run on target
++      configure_file(run_test.sh.in "${CMAKE_CURRENT_BINARY_DIR}/${testName}.sh" @ONLY)
++      install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${testName}.sh"
++              DESTINATION "bin/clapack_tests"
++              PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
++                          GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    else()
++      add_test(${testName} "${CMAKE_COMMAND}"
++        -DTEST=$<TARGET_FILE:${name}>
++        -DINPUT=${TEST_INPUT}
++        -DOUTPUT=${TEST_OUTPUT}
++        -DINTDIR=${CMAKE_CFG_INTDIR}
++        -P "${CLAPACK_SOURCE_DIR}/TESTING/runtest.cmake")
++    endif()
+   endif()
+ endmacro(add_lapack_test)
+ 
+diff --git a/TESTING/MATGEN/CMakeLists.txt b/TESTING/MATGEN/CMakeLists.txt
+index b2cb47a..679ac3d 100755
+--- a/TESTING/MATGEN/CMakeLists.txt
++++ b/TESTING/MATGEN/CMakeLists.txt
+@@ -66,4 +66,7 @@ if(BUILD_COMPLEX16)
+   set(ALLOBJ $(ZMATGEN) $(DZATGEN))
+ endif()
+ add_library(tmglib ${ALLOBJ} )
++if(CLAPACK_INSTALL_TESTS)
++  install(TARGETS tmglib DESTINATION "lib/")
++endif()
+ 
+diff --git a/TESTING/run_test.sh.in b/TESTING/run_test.sh.in
+new file mode 100644
+index 0000000..b7f59ef
+--- /dev/null
++++ b/TESTING/run_test.sh.in
+@@ -0,0 +1,5 @@
++#!@TEST_TARGET_SHELL@
++
++SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
++
++exec ${SCRIPTPATH}/@TEST_TARGET@ < ${SCRIPTPATH}/@TEST_INPUT_NAME@

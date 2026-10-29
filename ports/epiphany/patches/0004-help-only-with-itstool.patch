@@ -1,0 +1,21 @@
+Build the help pages only when itstool is available.
+
+The user manual is translated with itstool at build time; without it on the
+build machine, configuration stops. Skip the help in that case.
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -151,7 +151,10 @@
+                       language: 'c')
+ 
+ subdir('data')
+-subdir('help')
++# The help pages are built with itstool, a build-host tool that may be absent.
++if find_program('itstool', required : false).found()
++  subdir('help')
++endif
+ subdir('po')
+ subdir('third-party')
+ subdir('lib')

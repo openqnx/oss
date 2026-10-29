@@ -1,0 +1,30 @@
+QNX change from QNX's aports (core/binutils/0006.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From e781d89dc1b11331114dd0d702c4221f49837347 Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:15:05 -0400
+Subject: [PATCH] libiberty: adding qnx patches
+
+adding qnx patches to libiberty
+
+CLT-9242
+---
+diff --git a/libiberty/pex-unix.c b/libiberty/pex-unix.c
+index f3a1cc95ada..0fd8821172f 100644
+--- a/libiberty/pex-unix.c
++++ b/libiberty/pex-unix.c
+@@ -369,7 +369,7 @@ pex_unix_close (struct pex_obj *obj ATTRIBUTE_UNUSED, int fd)
+ 
+ /* Execute a child.  */
+ 
+-#if defined(HAVE_SPAWNVE) && defined(HAVE_SPAWNVPE)
++#if defined(HAVE_SPAWNVE) && defined(HAVE_SPAWNVPE) && !defined(__QNXNTO__)
+ /* Implementation of pex->exec_child using the Cygwin spawn operation.  */
+ 
+ /* Subroutine of pex_unix_exec_child.  Move OLD_FD to a new file descriptor
+

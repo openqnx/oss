@@ -1,0 +1,536 @@
+From 76466302298aee279692bee38fd61ffd0128799d Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Tue, 2 Sep 2025 14:11:08 +0530
+Subject: [PATCH] Add QNX Support
+
+Imported from qnx-ports/s2n-tls (v1.5.25...qnx-v1.5.25).
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ CMakeLists.txt                                 |  2 +-
+ crypto/s2n_drbg.c                              |  3 +++
+ stuffer/s2n_stuffer.c                          |  5 +++++
+ tls/extensions/s2n_client_psk.c                |  4 ++++
+ tls/extensions/s2n_client_supported_versions.c |  4 ++++
+ tls/extensions/s2n_supported_versions.c        |  4 ++++
+ tls/s2n_alerts.c                               |  4 ++++
+ tls/s2n_cbc.c                                  |  5 +++++
+ tls/s2n_client_hello.c                         |  4 ++++
+ tls/s2n_client_key_exchange.c                  |  4 ++++
+ tls/s2n_config.h                               |  4 ++++
+ tls/s2n_connection.c                           |  3 +++
+ tls/s2n_early_data.c                           |  4 ++++
+ tls/s2n_early_data_io.c                        |  4 ++++
+ tls/s2n_fingerprint_ja4.c                      |  3 +++
+ tls/s2n_handshake_io.c                         |  4 ++++
+ tls/s2n_ktls_io.c                              | 10 ++++++++++
+ tls/s2n_post_handshake.c                       |  4 ++++
+ tls/s2n_prf.c                                  |  4 ++++
+ tls/s2n_psk.c                                  |  4 ++++
+ tls/s2n_record_read.c                          |  4 ++++
+ tls/s2n_record_write.c                         |  5 +++++
+ tls/s2n_recv.c                                 |  5 +++++
+ tls/s2n_resume.c                               |  4 ++++
+ tls/s2n_send.c                                 |  4 ++++
+ tls/s2n_server_hello.c                         |  4 ++++
+ tls/s2n_server_new_session_ticket.c            |  4 ++++
+ tls/s2n_tls13_handshake.c                      |  4 ++++
+ utils/s2n_array.c                              |  4 ++++
+ utils/s2n_blob.c                               |  4 ++++
+ utils/s2n_mem.c                                |  4 ++++
+ utils/s2n_random.c                             |  3 +++
+ 32 files changed, 131 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0e976d0c115..b70d139d872 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -89,7 +89,7 @@ else()
+     find_package(Threads REQUIRED)
+ endif()
+ 
+-if(APPLE)
++if(APPLE OR QNX)
+     set(OS_LIBS c Threads::Threads)
+ elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+     set(OS_LIBS thr execinfo)
+diff --git a/crypto/s2n_drbg.c b/crypto/s2n_drbg.c
+index 869591b6671..61f13dde12e 100644
+--- a/crypto/s2n_drbg.c
++++ b/crypto/s2n_drbg.c
+@@ -27,6 +27,9 @@ static bool ignore_prediction_resistance_for_testing = false;
+ 
+ #define s2n_drbg_key_size(drgb)  EVP_CIPHER_CTX_key_length((drbg)->ctx)
+ #define s2n_drbg_seed_size(drgb) (S2N_DRBG_BLOCK_SIZE + s2n_drbg_key_size(drgb))
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
+ 
+ /* This function is the same as s2n_increment_sequence_number
+     but it does not check for overflow, since overflow is
+diff --git a/stuffer/s2n_stuffer.c b/stuffer/s2n_stuffer.c
+index 134ec0ba9c8..7a8d30cdadc 100644
+--- a/stuffer/s2n_stuffer.c
++++ b/stuffer/s2n_stuffer.c
+@@ -22,6 +22,11 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_stuffer_validate(const struct s2n_stuffer *stuffer)
+ {
+     /**
+diff --git a/tls/extensions/s2n_client_psk.c b/tls/extensions/s2n_client_psk.c
+index 271548b2990..a1dca5e6432 100644
+--- a/tls/extensions/s2n_client_psk.c
++++ b/tls/extensions/s2n_client_psk.c
+@@ -33,6 +33,10 @@
+  * We may want to make this configurable someday, but just set a reasonable maximum for now. */
+ #define MAX_REJECTED_TICKETS 3
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ static int s2n_client_psk_send(struct s2n_connection *conn, struct s2n_stuffer *out);
+ static int s2n_client_psk_recv(struct s2n_connection *conn, struct s2n_stuffer *extension);
+ static int s2n_client_psk_is_missing(struct s2n_connection *conn);
+diff --git a/tls/extensions/s2n_client_supported_versions.c b/tls/extensions/s2n_client_supported_versions.c
+index d59adb1738e..bad1eb37b98 100644
+--- a/tls/extensions/s2n_client_supported_versions.c
++++ b/tls/extensions/s2n_client_supported_versions.c
+@@ -25,6 +25,10 @@
+ #include "tls/s2n_tls_parameters.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ /**
+  * Specified in https://tools.ietf.org/html/rfc8446#section-4.2.1
+  *
+diff --git a/tls/extensions/s2n_supported_versions.c b/tls/extensions/s2n_supported_versions.c
+index 86c40ecca01..47fda3a7252 100644
+--- a/tls/extensions/s2n_supported_versions.c
++++ b/tls/extensions/s2n_supported_versions.c
+@@ -21,6 +21,10 @@
+ #include "tls/s2n_security_policies.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_connection_get_minimum_supported_version(struct s2n_connection *conn, uint8_t *min_version)
+ {
+     RESULT_ENSURE_REF(min_version);
+diff --git a/tls/s2n_alerts.c b/tls/s2n_alerts.c
+index 8f4f4d624ee..089613a5d26 100644
+--- a/tls/s2n_alerts.c
++++ b/tls/s2n_alerts.c
+@@ -27,6 +27,10 @@
+ #include "utils/s2n_blob.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ #define S2N_ALERT_CASE(error, alert_code) \
+     case (error):                         \
+         *alert = (alert_code);            \
+diff --git a/tls/s2n_cbc.c b/tls/s2n_cbc.c
+index 20367a10a0f..f2b463bba18 100644
+--- a/tls/s2n_cbc.c
++++ b/tls/s2n_cbc.c
+@@ -23,6 +23,11 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ /* A TLS CBC record looks like ..
+  *
+  * [ Payload data ] [ HMAC ] [ Padding ] [ Padding length byte ]
+diff --git a/tls/s2n_client_hello.c b/tls/s2n_client_hello.c
+index 402f31082ce..6bf29fd4a86 100644
+--- a/tls/s2n_client_hello.c
++++ b/tls/s2n_client_hello.c
+@@ -42,6 +42,10 @@
+ #include "utils/s2n_random.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ struct s2n_client_hello *s2n_connection_get_client_hello(struct s2n_connection *conn)
+ {
+     if (conn->client_hello.parsed != 1) {
+diff --git a/tls/s2n_client_key_exchange.c b/tls/s2n_client_key_exchange.c
+index c55aec0de54..df294fa8df4 100644
+--- a/tls/s2n_client_key_exchange.c
++++ b/tls/s2n_client_key_exchange.c
+@@ -31,6 +31,10 @@
+ #include "utils/s2n_random.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ typedef S2N_RESULT s2n_kex_client_key_method(const struct s2n_kex *kex, struct s2n_connection *conn, struct s2n_blob *shared_key);
+ typedef void *s2n_stuffer_action(struct s2n_stuffer *stuffer, uint32_t data_len);
+ 
+diff --git a/tls/s2n_config.h b/tls/s2n_config.h
+index 0be3d848913..50dee2d9700 100644
+--- a/tls/s2n_config.h
++++ b/tls/s2n_config.h
+@@ -45,6 +45,10 @@
+ #define S2N_MIN_SEND_BUFFER_FRAGMENT_SIZE MAX(S2N_KEY_UPDATE_MESSAGE_SIZE, S2N_ALERT_LENGTH)
+ #define S2N_MIN_SEND_BUFFER_SIZE          S2N_TLS_MAX_RECORD_LEN_FOR(S2N_MIN_SEND_BUFFER_FRAGMENT_SIZE)
+ 
++#if defined(__QNX__)
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ struct s2n_cipher_preferences;
+ 
+ typedef enum {
+diff --git a/tls/s2n_connection.c b/tls/s2n_connection.c
+index 060bb3c7dc3..4baee23ecd6 100644
+--- a/tls/s2n_connection.c
++++ b/tls/s2n_connection.c
+@@ -59,6 +59,9 @@
+ 
+ #define S2N_SET_KEY_SHARE_LIST_EMPTY(keyshares) (keyshares |= 1)
+ #define S2N_SET_KEY_SHARE_REQUEST(keyshares, i) (keyshares |= (1 << (i + 1)))
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
+ 
+ static S2N_RESULT s2n_connection_and_config_get_client_auth_type(const struct s2n_connection *conn,
+         const struct s2n_config *config, s2n_cert_auth_type *client_cert_auth_type);
+diff --git a/tls/s2n_early_data.c b/tls/s2n_early_data.c
+index bb61331e712..538618ce30a 100644
+--- a/tls/s2n_early_data.c
++++ b/tls/s2n_early_data.c
+@@ -23,6 +23,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ const s2n_early_data_state valid_previous_states[] = {
+     [S2N_EARLY_DATA_REQUESTED] = S2N_UNKNOWN_EARLY_DATA_STATE,
+     [S2N_EARLY_DATA_NOT_REQUESTED] = S2N_UNKNOWN_EARLY_DATA_STATE,
+diff --git a/tls/s2n_early_data_io.c b/tls/s2n_early_data_io.c
+index 2201c0fc4c5..f2c57203702 100644
+--- a/tls/s2n_early_data_io.c
++++ b/tls/s2n_early_data_io.c
+@@ -20,6 +20,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ int s2n_end_of_early_data_send(struct s2n_connection *conn)
+ {
+     if (conn->early_data_expected) {
+diff --git a/tls/s2n_fingerprint_ja4.c b/tls/s2n_fingerprint_ja4.c
+index 171e514a7d6..a52f8172c76 100644
+--- a/tls/s2n_fingerprint_ja4.c
++++ b/tls/s2n_fingerprint_ja4.c
+@@ -77,6 +77,9 @@ const char *s2n_ja4_version_strings[] = {
+  *# Unknown = “00”
+  */
+ #define S2N_JA4_UNKNOWN_STR "00"
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
+ 
+ DEFINE_POINTER_CLEANUP_FUNC(struct s2n_stuffer *, s2n_stuffer_wipe);
+ 
+diff --git a/tls/s2n_handshake_io.c b/tls/s2n_handshake_io.c
+index 4c340cc9b33..a536899c595 100644
+--- a/tls/s2n_handshake_io.c
++++ b/tls/s2n_handshake_io.c
+@@ -37,6 +37,10 @@
+ #include "utils/s2n_safety.h"
+ #include "utils/s2n_socket.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ /* clang-format off */
+ struct s2n_handshake_action {
+     uint8_t record_type;
+diff --git a/tls/s2n_ktls_io.c b/tls/s2n_ktls_io.c
+index ad1d984c6e2..5b1726b54b9 100644
+--- a/tls/s2n_ktls_io.c
++++ b/tls/s2n_ktls_io.c
+@@ -211,7 +211,12 @@ S2N_RESULT s2n_ktls_sendmsg(void *io_context, uint8_t record_type, const struct
+         .msg_iovlen = msg_iovlen,
+     };
+ 
++#if defined(__QNX__) && (__QNX__ < 800)
++    char control_data[S2N_KTLS_CONTROL_BUFFER_SIZE];
++    memset(control_data, 0, S2N_KTLS_CONTROL_BUFFER_SIZE);
++#else
+     char control_data[S2N_KTLS_CONTROL_BUFFER_SIZE] = { 0 };
++#endif
+     RESULT_GUARD(s2n_ktls_set_control_data(&msg, control_data, sizeof(control_data),
+             S2N_TLS_SET_RECORD_TYPE, record_type));
+ 
+@@ -254,7 +259,12 @@ S2N_RESULT s2n_ktls_recvmsg(void *io_context, uint8_t *record_type, uint8_t *buf
+      * member of the msghdr with the length of the control message
+      * buffer.
+      */
++#if defined(__QNX__) && (__QNX__ < 800)
++    char control_data[S2N_KTLS_CONTROL_BUFFER_SIZE];
++    memset(control_data, 0, S2N_KTLS_CONTROL_BUFFER_SIZE);
++#else
+     char control_data[S2N_KTLS_CONTROL_BUFFER_SIZE] = { 0 };
++#endif
+     msg.msg_controllen = sizeof(control_data);
+     msg.msg_control = control_data;
+ 
+diff --git a/tls/s2n_post_handshake.c b/tls/s2n_post_handshake.c
+index e0c3daed848..5300d7bcf69 100644
+--- a/tls/s2n_post_handshake.c
++++ b/tls/s2n_post_handshake.c
+@@ -21,6 +21,10 @@
+ #include "tls/s2n_tls.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_post_handshake_process(struct s2n_connection *conn, struct s2n_stuffer *in, uint8_t message_type)
+ {
+     RESULT_ENSURE_REF(conn);
+diff --git a/tls/s2n_prf.c b/tls/s2n_prf.c
+index 159116999e7..3561cd0f96f 100644
+--- a/tls/s2n_prf.c
++++ b/tls/s2n_prf.c
+@@ -35,6 +35,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ /* The s2n p_hash implementation is abstracted to allow for separate implementations.
+  * Currently the only implementation uses s2n-tls's custom HMAC implementation.
+  */
+diff --git a/tls/s2n_psk.c b/tls/s2n_psk.c
+index c1cfd6aec54..0df09fa7e2e 100644
+--- a/tls/s2n_psk.c
++++ b/tls/s2n_psk.c
+@@ -25,6 +25,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_psk_init(struct s2n_psk *psk, s2n_psk_type type)
+ {
+     RESULT_ENSURE_MUT(psk);
+diff --git a/tls/s2n_record_read.c b/tls/s2n_record_read.c
+index d68f6ac5fb4..b8f7d58e024 100644
+--- a/tls/s2n_record_read.c
++++ b/tls/s2n_record_read.c
+@@ -28,6 +28,10 @@
+ #include "utils/s2n_blob.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ int s2n_sslv2_record_header_parse(
+         struct s2n_connection *conn,
+         uint8_t *record_type,
+diff --git a/tls/s2n_record_write.c b/tls/s2n_record_write.c
+index 115e8d7d115..59b85df3c3b 100644
+--- a/tls/s2n_record_write.c
++++ b/tls/s2n_record_write.c
+@@ -30,6 +30,11 @@
+ #include "utils/s2n_random.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ extern uint8_t s2n_unknown_protocol_version;
+ 
+ /* In TLS1.3 the record type is obfuscated as APPLICATION_DATA once the handshake begins to be encrypted.
+diff --git a/tls/s2n_recv.c b/tls/s2n_recv.c
+index 14e1d52a4c5..8ce3b7c4201 100644
+--- a/tls/s2n_recv.c
++++ b/tls/s2n_recv.c
+@@ -36,6 +36,11 @@
+ #include "utils/s2n_safety.h"
+ #include "utils/s2n_socket.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_recv_in_init(struct s2n_connection *conn, uint32_t written, uint32_t total)
+ {
+     RESULT_ENSURE_REF(conn);
+diff --git a/tls/s2n_resume.c b/tls/s2n_resume.c
+index 5fa3b23226d..d3bc6aeb7bb 100644
+--- a/tls/s2n_resume.c
++++ b/tls/s2n_resume.c
+@@ -28,6 +28,10 @@
+ #include "utils/s2n_random.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ int s2n_allowed_to_cache_connection(struct s2n_connection *conn)
+ {
+     /* We're unable to cache connections with a Client Cert since we currently don't serialize the Client Cert,
+diff --git a/tls/s2n_send.c b/tls/s2n_send.c
+index 042a3e8d5d5..e53098b2b38 100644
+--- a/tls/s2n_send.c
++++ b/tls/s2n_send.c
+@@ -32,6 +32,10 @@
+ #include "utils/s2n_io.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ /*
+  * Determine whether there is currently sufficient space in the send buffer to construct
+  * another record, or if we need to flush now.
+diff --git a/tls/s2n_server_hello.c b/tls/s2n_server_hello.c
+index d08999e4bea..f0fcf41ec7c 100644
+--- a/tls/s2n_server_hello.c
++++ b/tls/s2n_server_hello.c
+@@ -34,6 +34,10 @@
+ #include "utils/s2n_random.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ /* From RFC5246 7.4.1.2. */
+ #define S2N_TLS_COMPRESSION_METHOD_NULL 0
+ 
+diff --git a/tls/s2n_server_new_session_ticket.c b/tls/s2n_server_new_session_ticket.c
+index d4ad8754475..05c049a4cee 100644
+--- a/tls/s2n_server_new_session_ticket.c
++++ b/tls/s2n_server_new_session_ticket.c
+@@ -39,6 +39,10 @@
+  */
+ #define S2N_TLS13_MAX_FIXED_NEW_SESSION_TICKET_SIZE 112
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ int s2n_server_nst_recv(struct s2n_connection *conn)
+ {
+     POSIX_GUARD(s2n_stuffer_read_uint32(&conn->handshake.io, &conn->ticket_lifetime_hint));
+diff --git a/tls/s2n_tls13_handshake.c b/tls/s2n_tls13_handshake.c
+index df31be1a7d9..33ad4669d6b 100644
+--- a/tls/s2n_tls13_handshake.c
++++ b/tls/s2n_tls13_handshake.c
+@@ -19,6 +19,10 @@
+ #include "tls/s2n_key_log.h"
+ #include "tls/s2n_security_policies.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ static int s2n_zero_sequence_number(struct s2n_connection *conn, s2n_mode mode)
+ {
+     POSIX_ENSURE_REF(conn);
+diff --git a/utils/s2n_array.c b/utils/s2n_array.c
+index b9f5d88431e..d21c2f2116f 100644
+--- a/utils/s2n_array.c
++++ b/utils/s2n_array.c
+@@ -21,6 +21,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_array_validate(const struct s2n_array *array)
+ {
+     uint32_t mem_size = 0;
+diff --git a/utils/s2n_blob.c b/utils/s2n_blob.c
+index ecf0e81709d..d2d9d586297 100644
+--- a/utils/s2n_blob.c
++++ b/utils/s2n_blob.c
+@@ -23,6 +23,10 @@
+ #include "error/s2n_errno.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MAX(X,Y) (((X) > (Y)) ? (X) : (Y))
++#endif
++
+ S2N_RESULT s2n_blob_validate(const struct s2n_blob *b)
+ {
+     RESULT_ENSURE_REF(b);
+diff --git a/utils/s2n_mem.c b/utils/s2n_mem.c
+index 7f8b2afa03e..929a846bec5 100644
+--- a/utils/s2n_mem.c
++++ b/utils/s2n_mem.c
+@@ -30,6 +30,10 @@
+ #include "utils/s2n_mem.h"
+ #include "utils/s2n_safety.h"
+ 
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
++
+ static uint32_t page_size = 4096;
+ static bool initialized = false;
+ 
+diff --git a/utils/s2n_random.c b/utils/s2n_random.c
+index 161dd721b1d..991a8a9937b 100644
+--- a/utils/s2n_random.c
++++ b/utils/s2n_random.c
+@@ -98,6 +98,9 @@ const char s2n_rand_engine_id[] = "s2n_rand";
+ 
+ /* Placeholder value for an uninitialized entropy file descriptor */
+ #define UNINITIALIZED_ENTROPY_FD -1
++#if defined(__QNX__)
++    #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))
++#endif
+ 
+ static struct s2n_rand_device s2n_dev_urandom = {
+     .source = "/dev/urandom",

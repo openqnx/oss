@@ -1,0 +1,40 @@
+#!/bin/bash
+# fork2patches -- turn the QNX commits of a fork into patch files against the
+# upstream release, so a port can be "upstream at a tag + ports/<n>/patches".
+#
+#   scripts/fork2patches <component> <upstream-git> <upstream-tag> <fork-git> <fork-branch>
+#
+# Example (qnx-ports keeps its QNX changes on branches of forked repositories):
+#   scripts/fork2patches picocom https://github.com/npat-efault/picocom 3.1 \
+#                         https://github.com/qnx-ports/picocom qnx
+#
+# Writes ports/<component>/patches/NNNN-<subject>.patch, one per commit on the
+# fork branch that is not in the upstream tag (git format-patch), and prints
+# what it found. Merge commits are skipped; when the fork branch was merged
+# with a newer upstream, only the fork's own commits are kept. Each patch keeps
+# its original author and message. Review them -- they are a starting point:
+# the guide's patch rules (one concern per patch, a reason in the message)
+# still apply.
+set -eo pipefail
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+pkg=$1; up=$2; tag=$3; fork=$4; branch=$5
+[ $# -eq 5 ] || { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
+git -C "$tmp" init -q r
+cd "$tmp/r"
+git remote add up "$up"; git remote add fork "$fork"
+git fetch -q --filter=blob:none up "refs/tags/$tag:refs/tags/$tag"
+git fetch -q --filter=blob:none fork "$branch:refs/remotes/fork/$branch"
+base=$(git merge-base "refs/tags/$tag" "fork/$branch")
+n=$(git rev-list --no-merges --count "$tag..fork/$branch" -- )
+echo "fork $branch: $n commit(s) not in $tag (merge-base $(git rev-parse --short "$base"))"
+if [ "$base" != "$(git rev-parse "refs/tags/$tag^{commit}")" ]; then
+  echo "!! the fork branch is not based on $tag: its patches include upstream changes made"
+  echo "   after the merge-base. Port to the release the fork is based on instead:"
+  git describe --tags --abbrev=0 "$base" 2>/dev/null | sed 's/^/   nearest upstream tag below the branch: /' || true
+fi
+out="$WS/ports/$pkg/patches"; mkdir -p "$out"
+start=$( (find "$out" -name '*.patch' 2>/dev/null || true) | wc -l)
+git format-patch -q --no-merges --start-number $((start+1)) -o "$out" "$tag..fork/$branch" --
+ls "$out"
+echo "check they apply to the release: rm -rf src/$pkg && ./scripts/qnxbuild -f $pkg"

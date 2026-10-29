@@ -1,0 +1,111 @@
+Work without open_memstream() (QNX).
+
+QNX 8's C library has no open_memstream(). The library's memory_stream
+helper writes to a tmpfile() on QNX and reads the text back into a string on
+close; di-edid-decode's join_str() builds its string directly.
+
+(QNX's own package includes <sys/memstream.h> from a QNX add-on library that
+is not part of the SDP; this keeps the port buildable with the SDP alone.)
+
+Upstream-Status: QNX-specific
+
+--- a/memory-stream.c
++++ b/memory-stream.c
+@@ -2,6 +2,43 @@
+ 
+ #include "memory-stream.h"
+ 
++#if defined(__QNX__)
++/*
++ * QNX 8 has no open_memstream(). Write to an anonymous temporary file and
++ * read it back into a string when the stream is closed -- same interface,
++ * same result.
++ */
++bool
++memory_stream_open(struct memory_stream *m)
++{
++	*m = (struct memory_stream){ 0 };
++	m->fp = tmpfile();
++	return m->fp != NULL;
++}
++
++char *
++memory_stream_close(struct memory_stream *m)
++{
++	char *str = NULL;
++	long len;
++
++	if (m->fp == NULL)
++		return NULL;
++	if (fflush(m->fp) == 0 && (len = ftell(m->fp)) >= 0 &&
++	    (str = malloc((size_t)len + 1)) != NULL) {
++		rewind(m->fp);
++		if (fread(str, 1, (size_t)len, m->fp) != (size_t)len) {
++			free(str);
++			str = NULL;
++		} else {
++			str[len] = '\0';
++		}
++	}
++	fclose(m->fp);
++	*m = (struct memory_stream){ 0 };
++	return str;
++}
++#else
+ bool
+ memory_stream_open(struct memory_stream *m)
+ {
+@@ -29,6 +66,8 @@
+ 	return str;
+ }
+ 
++#endif
++
+ void
+ memory_stream_cleanup(struct memory_stream *m)
+ {
+--- a/di-edid-decode/edid.c
++++ b/di-edid-decode/edid.c
+@@ -3,6 +3,7 @@
+ #include <math.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ 
+ #include <libdisplay-info/dmt.h>
+ #include <libdisplay-info/edid.h>
+@@ -99,23 +100,21 @@
+ static char *
+ join_str(const char *l[])
+ {
+-	char *out = NULL;
+-	size_t out_size = 0, i;
+-	FILE *f;
++	char *out;
++	size_t len = 1, i;
+ 
+-	f = open_memstream(&out, &out_size);
+-	if (!f) {
++	/* plain string join: needs no open_memstream() (absent on QNX) */
++	for (i = 0; l[i] != NULL; i++)
++		len += strlen(l[i]) + 2;
++	out = malloc(len);
++	if (!out)
+ 		return NULL;
+-	}
+-
++	out[0] = '\0';
+ 	for (i = 0; l[i] != NULL; i++) {
+-		if (i > 0) {
+-			fprintf(f, ", ");
+-		}
+-		fprintf(f, "%s", l[i]);
++		if (i > 0)
++			strcat(out, ", ");
++		strcat(out, l[i]);
+ 	}
+-
+-	fclose(f);
+ 	return out;
+ }
+ 

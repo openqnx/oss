@@ -1,0 +1,4 @@
+VERSION=1.9.6; GIT=https://github.com/open-source-parsers/jsoncpp.git; REF=1.9.6
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DJSONCPP_WITH_TESTS=OFF
+                   -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

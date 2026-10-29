@@ -1,0 +1,22 @@
+Cyclone DDS idlpp: treat qcc as GCC.
+
+CMake identifies qcc as "QCC", not "GNU", so HOST_COMPILER stayed empty and
+mcpp's "#if HOST_COMPILER == ..." lines became syntax errors. qcc is a GCC
+driver; take the GNUC branch.
+
+Upstream-Status: QNX-specific
+
+--- a/src/tools/idlpp/CMakeLists.txt
++++ b/src/tools/idlpp/CMakeLists.txt
+@@ -61,7 +61,10 @@
+ if(CMAKE_C_COMPILER_ID MATCHES "MSVC")
+   set(idlpp_host_compiler "MSC")
+   set(idlpp_host_cmp_name "Visual C++")
+-elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
++# QNX: CMake identifies qcc/q++ as "QCC", not "GNU". qcc is a GCC driver, so it
++# must take the GNUC branch -- otherwise HOST_COMPILER is left empty and every
++# "#if HOST_COMPILER == ..." in mcpp becomes "#if == ..." (syntax error).
++elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|QCC")
+   set(idlpp_host_compiler "GNUC")
+   set(idlpp_host_cmp_name "GCC")
+   if(CMAKE_C_COMPILER_VERSION MATCHES "([0-9]+)\.([0-9]+)")

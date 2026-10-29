@@ -1,0 +1,30 @@
+GTK port: select the Unix memory-pressure handler on QNX.
+
+The same gap as the JSCOnly port has.  MemoryPressureHandler.h declares
+m_holdOffTimer and holdOffTimerFired() for "OS(LINUX) || OS(FREEBSD) ||
+OS(QNX)", and unix/MemoryPressureHandlerUnix.cpp defines them -- it already
+carries an OS(QNX) branch that reads the resident set size with
+devctl(DCMD_PROC_ASINFO) on /proc/self/ctl.  Only this platform list had no
+QNX case, so the build fell through to the generic handler, which does not
+define what the header declared, and WTF failed to link.
+
+Upstream-Status: QNX-specific
+
+--- a/Source/WTF/wtf/PlatformGTK.cmake
++++ b/Source/WTF/wtf/PlatformGTK.cmake
+@@ -70,6 +70,15 @@
+ 
+         unix/MemoryPressureHandlerUnix.cpp
+     )
++elseif (CMAKE_SYSTEM_NAME MATCHES "QNX")
++    # MemoryPressureHandler.h declares m_holdOffTimer and holdOffTimerFired()
++    # for OS(QNX); unix/MemoryPressureHandlerUnix.cpp defines them and already
++    # has an OS(QNX) branch reading rss via devctl(DCMD_PROC_ASINFO).
++    list(APPEND WTF_SOURCES
++        generic/MemoryFootprintGeneric.cpp
++
++        unix/MemoryPressureHandlerUnix.cpp
++    )
+ else ()
+     list(APPEND WTF_SOURCES
+         generic/MemoryFootprintGeneric.cpp

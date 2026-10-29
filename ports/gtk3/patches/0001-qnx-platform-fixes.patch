@@ -1,0 +1,78 @@
+GTK 3: Wayland input button codes without Linux headers.
+
+QNX has neither <linux/input.h> nor <dev/evdev/input.h>. The wl_pointer
+protocol defines its button codes with the Linux evdev numbers on every
+platform, so the few BTN_* values the Wayland backend uses are defined here.
+
+Upstream-Status: QNX-specific
+
+--- a/gdk/wayland/gdkdevice-wayland.c
++++ b/gdk/wayland/gdkdevice-wayland.c
+@@ -44,6 +44,17 @@
+ #include <dev/evdev/input.h>
+ #elif defined(HAVE_LINUX_INPUT_H)
+ #include <linux/input.h>
++#else
++/* QNX has neither <linux/input.h> nor <dev/evdev/input.h>. These are not really
++ * kernel constants here: the wl_pointer protocol specifies button codes using
++ * the Linux evdev numbering on every platform, so the values are fixed by the
++ * Wayland spec. Define the handful this file uses, the same way it already
++ * defines BTN_STYLUS3 below. */
++#define BTN_LEFT    0x110
++#define BTN_RIGHT   0x111
++#define BTN_MIDDLE  0x112
++#define BTN_STYLUS  0x14b
++#define BTN_STYLUS2 0x14c
+ #endif
+ 
+ #define BUTTON_BASE (BTN_LEFT - 1) /* Used to translate to 1-indexed buttons */
+--- a/gdk/wayland/gdkdisplay-wayland.c
++++ b/gdk/wayland/gdkdisplay-wayland.c
+@@ -28,7 +28,11 @@
+ #endif
+ 
+ #include <sys/mman.h>
++/* Linux-only. The one use below, memfd_create, is already guarded on
++ * __NR_memfd_create and falls back to shm_open, which QNX provides. */
++#if defined(__NR_memfd_create) || defined(__linux__)
+ #include <sys/syscall.h>
++#endif
+ 
+ #include <glib.h>
+ #include "gdkwayland.h"
+--- a/gdk/broadway/broadwayd.c
++++ b/gdk/broadway/broadwayd.c
+@@ -490,8 +490,14 @@
+       g_free (basename);
+ 
+       g_print ("Listening on %s\n", path);
++	  /* QNX has no abstract UNIX socket namespace (the Linux \0-prefixed
++	   * addresses), so bind/connect through the filesystem path instead.
++	   * Both ends must agree, hence the identical choice in broadwayd.c and
++	   * gdkbroadway-server.c. */
+       address = g_unix_socket_address_new_with_type (path, -1,
+-						     G_UNIX_SOCKET_ADDRESS_ABSTRACT);
++						     g_unix_socket_address_abstract_names_supported ()
++						       ? G_UNIX_SOCKET_ADDRESS_ABSTRACT
++						       : G_UNIX_SOCKET_ADDRESS_PATH);
+       g_free (path);
+     }
+ #endif
+--- a/gdk/broadway/gdkbroadway-server.c
++++ b/gdk/broadway/gdkbroadway-server.c
+@@ -133,8 +133,14 @@
+       path = g_build_filename (g_get_user_runtime_dir (), basename, NULL);
+       g_free (basename);
+ 
++	  /* QNX has no abstract UNIX socket namespace (the Linux \0-prefixed
++	   * addresses), so bind/connect through the filesystem path instead.
++	   * Both ends must agree, hence the identical choice in broadwayd.c and
++	   * gdkbroadway-server.c. */
+       address = g_unix_socket_address_new_with_type (path, -1,
+-						     G_UNIX_SOCKET_ADDRESS_ABSTRACT);
++						     g_unix_socket_address_abstract_names_supported ()
++						       ? G_UNIX_SOCKET_ADDRESS_ABSTRACT
++						       : G_UNIX_SOCKET_ADDRESS_PATH);
+       g_free (path);
+     }
+ #endif

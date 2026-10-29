@@ -1,0 +1,24 @@
+V8: include v8config.h before testing V8_TARGET_OS_LINUX in wasm-objects.cc.
+
+wasm-objects.cc includes <sys/mman.h> and <sys/stat.h> under
+#if V8_TARGET_OS_LINUX at the top of the file, before any V8 header. When
+the build passes no target OS -- the host half of a cross build to QNX --
+v8config.h defines the macro, later: the test at the top sees it undefined,
+the headers are skipped, and the Linux code further down then fails
+("memfd_create was not declared").
+
+Upstream-Status: Pending
+
+--- a/deps/v8/src/wasm/wasm-objects.cc
++++ b/deps/v8/src/wasm/wasm-objects.cc
+@@ -2,6 +2,10 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
++// V8_TARGET_OS_LINUX is defined by v8config.h when the build does not pass a
++// target OS; read it before testing it.
++#include "include/v8config.h"
++
+ #if V8_TARGET_OS_LINUX
+ #include <sys/mman.h>
+ #include <sys/stat.h>

@@ -1,0 +1,423 @@
+From d2aa33cb981c5ec37208a7eb42b5638e493dc915 Mon Sep 17 00:00:00 2001
+From: hyarasi13 <hyarasi@qnx.com>
+Date: Wed, 17 Dec 2025 15:55:40 +0530
+Subject: [PATCH 1/3] Adding QNX support to sysbench
+
+Imported from qnx-ports/sysbench (3ceba0b1e115...qnx-1.0.20); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+* Adding QNX support
+
+* Fixing some conditional and whitespacing issues.
+---
+ Makefile.am                                |  5 ++++
+ configure.ac                               |  5 ++++
+ src/lua/internal/Makefile.am               |  2 +-
+ src/sb_timer.c                             | 21 +++++++++++++
+ src/sb_timer.h                             | 11 +++++++
+ tests/Makefile.am                          |  4 ++-
+ tests/t/api_rand.t                         |  2 +-
+ third_party/concurrency_kit/ck/configure   | 34 +++++++++++++++++-----
+ third_party/luajit/Makefile.am             | 19 +++++++++---
+ third_party/luajit/luajit/src/Makefile     | 29 ++++++++++++++++--
+ third_party/luajit/luajit/src/lj_profile.c |  2 ++
+ 11 files changed, 117 insertions(+), 17 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index fe933650..f0473cfd 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -15,6 +15,11 @@
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ 
++if QNX
++export host_cpu
++export QNXENV
++endif
++
+ ACLOCAL_AMFLAGS = -I m4
+ AM_DISTCHECK_CONFIGURE_FLAGS = --without-mysql
+ 
+diff --git a/configure.ac b/configure.ac
+index 029ad8cd..988be84a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -120,6 +120,11 @@ then
+ # TODO: Set flags for Gcov-enabled builds, if supported by Sun Studio
+ fi
+ 
++# Check if we should compile for QNX
++AC_ARG_VAR(QNXENV, compile for the QNX OS)
++
++# Check for QNX (automake)
++AM_CONDITIONAL([QNX], [test "x$QNXENV" = xtrue])
+ 
+ # Check if we should compile with MySQL support
+ AC_ARG_WITH([mysql],
+diff --git a/src/lua/internal/Makefile.am b/src/lua/internal/Makefile.am
+index 278a0718..5d035cf9 100644
+--- a/src/lua/internal/Makefile.am
++++ b/src/lua/internal/Makefile.am
+@@ -26,7 +26,7 @@ SUFFIXES = .lua .lua.h
+ 
+ .lua.lua.h:
+ 	@echo "Creating $@ from $<"
+-	@var=$$(echo $< | sed 's/\./_/g')	&& \
++	@var=$$(echo $< | xargs basename | sed 's/\./_/g')	&& \
+ 	( echo "unsigned char $${var}[] =" 	&& \
+ 	sed -e 's/\\/\\\\/g'			\
+ 	    -e 's/"/\\"/g'			\
+diff --git a/src/sb_timer.c b/src/sb_timer.c
+index 01ddf3bb..ca806291 100644
+--- a/src/sb_timer.c
++++ b/src/sb_timer.c
+@@ -28,12 +28,33 @@
+ # include <string.h>
+ #endif
+ 
++#ifdef __QNX__
++#include <sys/syspage.h>
++#include <sys/neutrino.h>
++#include <inttypes.h>
++#endif
+ #include "sb_logger.h"
+ #include "sb_timer.h"
+ #include "sb_util.h"
+ 
+ /* Some functions for simple time operations */
+ 
++
++#ifdef __QNX__
++int sb_timer_cycle_timer(struct timespec *tsp) {
++  static uint64_t cycles_per_sec = 0;
++  if (cycles_per_sec == 0) {
++    cycles_per_sec = SYSPAGE_ENTRY(qtime)->cycles_per_sec;
++  }
++  uint64_t count;
++  count = ClockCycles();
++  tsp->tv_sec= count/cycles_per_sec;
++  tsp->tv_nsec= (count % cycles_per_sec) * NS_PER_SEC / cycles_per_sec;
++
++  return 0;
++}
++#endif
++
+ /* initialize timer */
+ 
+ void sb_timer_init(sb_timer_t *t)
+diff --git a/src/sb_timer.h b/src/sb_timer.h
+index 43d0d149..79e17ee4 100644
+--- a/src/sb_timer.h
++++ b/src/sb_timer.h
+@@ -62,6 +62,10 @@
+ 			    (a.tv_nsec - b.tv_nsec))
+ 
+ /* Wrapper over various *gettime* functions */
++
++#ifdef __QNX__
++# define SB_GETTIME(tsp) sb_timer_cycle_timer(tsp)
++#else
+ #ifdef HAVE_CLOCK_GETTIME
+ # define SB_GETTIME(tsp) clock_gettime(CLOCK_MONOTONIC, tsp)
+ #else
+@@ -73,6 +77,7 @@
+     (tsp)->tv_nsec = tv.tv_usec * 1000;         \
+   } while (0)
+ #endif
++#endif
+ 
+ typedef enum {TIMER_UNINITIALIZED, TIMER_INITIALIZED, TIMER_STOPPED, \
+               TIMER_RUNNING} timer_state_t;
+@@ -102,6 +107,12 @@ static inline int sb_nanosleep(uint64_t ns)
+   return nanosleep(&ts, NULL);
+ }
+ 
++
++/* Create Clock Cycle timer */
++#ifdef __QNX__
++int sb_timer_cycle_timer(struct timespec *tsp);
++#endif
++
+ /* timer control functions */
+ 
+ /* Initialize timer */
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index ae2a7032..d62fbdb4 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -45,7 +45,9 @@ install_test_files:
+ 	    fi; \
+ 	  done \
+ 	done
+-
++	@if test "${QNXENV}" = "true"; then \
++	  $(INSTALL_DATA) $(PWD)/include/config.sh $(testdir)/include/config.sh; \
++	fi
+ dist-hook:
+ 	$(MAKE)	INSTALL_TO_DIR="$(distdir)" install_test_files
+ 
+diff --git a/tests/t/api_rand.t b/tests/t/api_rand.t
+index efaf0303..1aa85ea8 100644
+--- a/tests/t/api_rand.t
++++ b/tests/t/api_rand.t
+@@ -60,6 +60,6 @@ GH-96: sb_rand_uniq(1, oltp_table_size) generate duplicate value
+   > end
+   > EOF
+ 
+-  $ sysbench $SB_ARGS --events=100000 $CRAMTMP/api_rand_uniq.lua run |
++  $ sysbench $SB_ARGS --events=100000 --time=9999 $CRAMTMP/api_rand_uniq.lua run |
+   >   sort -n | uniq | wc -l | sed -e 's/ //g'
+   100000
+diff --git a/third_party/concurrency_kit/ck/configure b/third_party/concurrency_kit/ck/configure
+index 9d2fe83b..a5b7a43f 100755
+--- a/third_party/concurrency_kit/ck/configure
++++ b/third_party/concurrency_kit/ck/configure
+@@ -26,6 +26,18 @@
+ # SUCH DAMAGE.
+ #
+ 
++if test ${QNXENV} = "true"; then
++SYSTEM="QNX"
++case $host_cpu in 
++aarch64)
++PLATFORM="aarch64"
++;;
++x86_64)
++PLATFORM="x86_64"
++;;
++esac
++fi
++
+ REQUIRE_HEADER="stdbool.h stddef.h stdint.h string.h"
+ 
+ EXIT_SUCCESS=0
+@@ -69,6 +81,8 @@ assert()
+ 	elif test "$#" -eq 3; then
+ 		fail=$3
+ 		print=echo
++	elif "${QNXENV}" = "true" && test "$#" -gt 0; then
++		print=echo
+ 	else
+ 		echo "Usage: assert <test> <fail string> or assert <test> <success string> <fail string>" 1>&2
+ 		exit $EXIT_FAILURE
+@@ -570,12 +584,16 @@ else
+ fi
+ 
+ printf "Finding suitable compiler........"
+-if test ! -x "${CC}"; then
+-	CC=`pathsearch "${CC:-cc}"`
+-	if test -z "$CC" -o ! -x "$CC"; then
+-		CC=`pathsearch "${CC:-gcc}"`
++
++if test ${QNXENV} != "true"; then
++	if test ! -x "${CC}"; then
++		CC=`pathsearch "${CC:-cc}"`
++		if test -z "$CC" -o ! -x "$CC"; then
++			CC=`pathsearch "${CC:-gcc}"`
++		fi
+ 	fi
+ fi
++
+ assert "$CC" "not found"
+ 
+ cat << EOF > .1.c
+@@ -611,10 +629,10 @@ COMPILER=`./.1 2> /dev/null`
+ r=$?
+ rm -f .1.c .1
+ 
+-if test "$r" -ne 0; then
+-	assert "" "update compiler"
++if test ${QNXENV} != "true" && test "$r" -ne 0; then
++    assert "" "update compiler"
+ else
+-	echo "success [$CC]"
++    echo "success [$CC]"
+ fi
+ 
+ if test "$COMPILER" = "suncc"; then
+@@ -622,7 +640,7 @@ if test "$COMPILER" = "suncc"; then
+ 	LDFLAGS="-G -z text -h libck.so.$VERSION_MAJOR $LDFLAGS"
+ 	CFLAGS="-xO5 $CFLAGS"
+ 	PTHREAD_CFLAGS="-mt -lpthread"
+-elif test "$COMPILER" = "gcc" || test "$COMPILER" = "clang" || test "$COMPILER" = "mingw32" || test "$COMPILER" = "mingw64"; then
++elif test ${QNXENV} = "true" || test "$COMPILER" = "gcc" || test "$COMPILER" = "clang" || test "$COMPILER" = "mingw32" || test "$COMPILER" = "mingw64"; then
+ 	LD=$CC
+ 	SONAME="$LDNAME_MAJOR"
+ 	if test "$SYSTEM" = "darwin"; then
+diff --git a/third_party/luajit/Makefile.am b/third_party/luajit/Makefile.am
+index b80b93d0..f5e6c249 100644
+--- a/third_party/luajit/Makefile.am
++++ b/third_party/luajit/Makefile.am
+@@ -29,10 +29,21 @@ $(builddir)/lib/libluajit-5.1.a:
+ 	mkdir tmp
+ 	tar -C $(srcdir) -cf - luajit | tar -xf - -C tmp/
+ 	chmod -R u+w tmp
+-	$(MAKE) -C tmp/luajit \
+-                PREFIX=$(abs_top_builddir)/third_party/luajit \
+-                INSTALL_INC=$(abs_top_builddir)/third_party/luajit/inc \
+-                install
++	@if test ${QNXENV} == true; \
++	then \
++	  $(MAKE) -C tmp/luajit \
++			TARGET=POSIX \
++	        CC="gcc" \
++	        PREFIX=$(abs_top_builddir)/third_party/luajit \
++	        INSTALL_INC=$(abs_top_builddir)/third_party/luajit/inc \
++	        CROSS=$(host_alias)- \
++	        install; \
++	else \
++	  $(MAKE) -C tmp/luajit \
++	        PREFIX=$(abs_top_builddir)/third_party/luajit \
++	        INSTALL_INC=$(abs_top_builddir)/third_party/luajit/inc \
++	        install; \
++	fi
+ 
+ clean-local:
+ 	rm -rf tmp bin inc lib share
+diff --git a/third_party/luajit/luajit/src/Makefile b/third_party/luajit/luajit/src/Makefile
+index 30d64be2..9b395876 100644
+--- a/third_party/luajit/luajit/src/Makefile
++++ b/third_party/luajit/luajit/src/Makefile
+@@ -192,8 +192,13 @@ ASOPTIONS= $(CCOPT) $(CCWARN) $(XCFLAGS) $(CFLAGS)
+ CCOPTIONS= $(CCDEBUG) $(ASOPTIONS)
+ LDOPTIONS= $(CCDEBUG) $(LDFLAGS)
+ 
+-HOST_CC= $(CC)
+-HOST_RM?= rm -f
++HOST_CC ?= $(CC)
++HOST_RM ?= rm -f
++
++ifeq ($(OS),QNX)
++  HOST_CC = qcc
++endif
++
+ # If left blank, minilua is built and used. You can supply an installed
+ # copy of (plain) Lua 5.1 or 5.2, plus Lua BitOp. E.g. with: HOST_LUA=lua
+ HOST_LUA=
+@@ -639,7 +644,11 @@ depend:
+ 
+ $(MINILUA_T): $(MINILUA_O)
+ 	$(E) "HOSTLINK  $@"
++ifeq ($(QNXENV), true)
++	$(Q)$(HOST_CC) -o $@ $(MINILUA_O) $(MINILUA_LIBS) $(HOST_ALIBS)
++else
+ 	$(Q)$(HOST_CC) $(HOST_ALDFLAGS) -o $@ $(MINILUA_O) $(MINILUA_LIBS) $(HOST_ALIBS)
++endif
+ 
+ host/buildvm_arch.h: $(DASM_DASC) $(DASM_DEP) $(DASM_DIR)/*.lua lj_arch.h lua.h luaconf.h
+ 	$(E) "DYNASM    $@"
+@@ -649,7 +658,11 @@ host/buildvm.o: $(DASM_DIR)/dasm_*.h
+ 
+ $(BUILDVM_T): $(BUILDVM_O)
+ 	$(E) "HOSTLINK  $@"
++ifeq ($(QNXENV), true)
++	$(Q)$(HOST_CC) -o $@ $(BUILDVM_O) $(HOST_ALIBS)
++else
+ 	$(Q)$(HOST_CC) $(HOST_ALDFLAGS) -o $@ $(BUILDVM_O) $(HOST_ALIBS)
++endif
+ 
+ $(LJVM_BOUT): $(BUILDVM_T)
+ 	$(E) "BUILDVM   $@"
+@@ -699,7 +712,11 @@ $(LUAJIT_O):
+ 
+ $(HOST_O): %.o: %.c
+ 	$(E) "HOSTCC    $@"
++ifeq ($(QNXENV), true)
++	$(Q)$(HOST_CC) $(filter-out -mlittle-endian, $(HOST_ACFLAGS)) -c -o $@ $<
++else
+ 	$(Q)$(HOST_CC) $(HOST_ACFLAGS) -c -o $@ $<
++endif
+ 
+ include Makefile.dep
+ 
+@@ -714,12 +731,20 @@ $(LUAJIT_A): $(LJVMCORE_O)
+ # The dependency on _O, but linking with _DYNO is intentional.
+ $(LUAJIT_SO): $(LJVMCORE_O)
+ 	$(E) "DYNLINK   $@"
++ifeq ($(QNXENV), true)
++	$(Q)$(TARGET_LD) $(TARGET_ASHLDFLAGS) -o $@ $(LJVMCORE_DYNO) $(filter-out -ldl, $(TARGET_ALIBS))
++else 
+ 	$(Q)$(TARGET_LD) $(TARGET_ASHLDFLAGS) -o $@ $(LJVMCORE_DYNO) $(TARGET_ALIBS)
++endif
+ 	$(Q)$(TARGET_STRIP) $@
+ 
+ $(LUAJIT_T): $(TARGET_O) $(LUAJIT_O) $(TARGET_DEP)
+ 	$(E) "LINK      $@"
++ifeq ($(QNXENV), true)
++	$(Q)$(TARGET_LD) $(TARGET_ALDFLAGS) -o $@ $(LUAJIT_O) $(TARGET_O) $(filter-out -ldl, $(TARGET_ALIBS))
++else
+ 	$(Q)$(TARGET_LD) $(TARGET_ALDFLAGS) -o $@ $(LUAJIT_O) $(TARGET_O) $(TARGET_ALIBS)
++endif
+ 	$(Q)$(TARGET_STRIP) $@
+ 	$(E) "OK        Successfully built LuaJIT"
+ 
+diff --git a/third_party/luajit/luajit/src/lj_profile.c b/third_party/luajit/luajit/src/lj_profile.c
+index 4a13537d..85cb1778 100644
+--- a/third_party/luajit/luajit/src/lj_profile.c
++++ b/third_party/luajit/luajit/src/lj_profile.c
+@@ -185,11 +185,13 @@ static void profile_timer_start(ProfileState *ps)
+   tm.it_value.tv_sec = tm.it_interval.tv_sec = interval / 1000;
+   tm.it_value.tv_usec = tm.it_interval.tv_usec = (interval % 1000) * 1000;
+   setitimer(ITIMER_PROF, &tm, NULL);
++
+ #if LJ_TARGET_QNX
+   sa.sa_flags = 0;
+ #else
+   sa.sa_flags = SA_RESTART;
+ #endif
++
+   sa.sa_handler = profile_signal;
+   sigemptyset(&sa.sa_mask);
+   sigaction(SIGPROF, &sa, &ps->oldsa);
+
+From ceaf570c1678722d1da67ad60007635a594fa58a Mon Sep 17 00:00:00 2001
+From: hyarasi13 <hyarasi@qnx.com>
+Date: Fri, 19 Dec 2025 10:26:06 +0530
+Subject: [PATCH 2/3] Update lj_profile.c
+
+---
+ third_party/luajit/luajit/src/lj_profile.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/third_party/luajit/luajit/src/lj_profile.c b/third_party/luajit/luajit/src/lj_profile.c
+index 85cb1778..4a13537d 100644
+--- a/third_party/luajit/luajit/src/lj_profile.c
++++ b/third_party/luajit/luajit/src/lj_profile.c
+@@ -185,13 +185,11 @@ static void profile_timer_start(ProfileState *ps)
+   tm.it_value.tv_sec = tm.it_interval.tv_sec = interval / 1000;
+   tm.it_value.tv_usec = tm.it_interval.tv_usec = (interval % 1000) * 1000;
+   setitimer(ITIMER_PROF, &tm, NULL);
+-
+ #if LJ_TARGET_QNX
+   sa.sa_flags = 0;
+ #else
+   sa.sa_flags = SA_RESTART;
+ #endif
+-
+   sa.sa_handler = profile_signal;
+   sigemptyset(&sa.sa_mask);
+   sigaction(SIGPROF, &sa, &ps->oldsa);
+
+From 546333e6677250c4f6fd9cd9da64d597ee275942 Mon Sep 17 00:00:00 2001
+From: hyarasi13 <hyarasi@qnx.com>
+Date: Fri, 19 Dec 2025 10:28:35 +0530
+Subject: [PATCH 3/3] Update Makefile.am
+
+---
+ tests/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index d62fbdb4..eeb6d267 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -45,6 +45,7 @@ install_test_files:
+ 	    fi; \
+ 	  done \
+ 	done
++
+ 	@if test "${QNXENV}" = "true"; then \
+ 	  $(INSTALL_DATA) $(PWD)/include/config.sh $(testdir)/include/config.sh; \
+ 	fi

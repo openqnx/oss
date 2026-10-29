@@ -1,0 +1,81 @@
+From de9fccad86b959907103e5f710359d5e559e5e77 Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Thu, 20 Feb 2025 13:18:08 +0530
+Subject: [PATCH] Add QNX support
+
+Imported from qnx-ports/aws-crt-cpp (v0.30.1...qnx-0.30.1).
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ CMakeLists.txt                    | 10 +++++++++-
+ bin/elasticurl_cpp/CMakeLists.txt |  2 ++
+ bin/mqtt5_app/CMakeLists.txt      |  2 ++
+ bin/mqtt5_canary/CMakeLists.txt   |  2 ++
+ 4 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b0409fc9e..8f738e35f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -380,7 +380,7 @@ install(FILES "${GENERATED_ROOT_DIR}/${PROJECT_NAME}-config-version.cmake"
+     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
+     COMPONENT Development)
+ 
+-if(NOT CMAKE_CROSSCOMPILING)
++if(NOT CMAKE_CROSSCOMPILING OR QNX)
+     if(BUILD_TESTING)
+         add_subdirectory(tests)
+ 
+@@ -389,5 +389,13 @@ if(NOT CMAKE_CROSSCOMPILING)
+             add_subdirectory(bin/mqtt5_app)
+             add_subdirectory(bin/mqtt5_canary)
+         endif()
++
++        if(INSTALL_TESTS)
++            install(
++            TARGETS aws-crt-cpp-tests
++            RUNTIME DESTINATION bin/aws_crt_cpp_tests COMPONENT Runtime
++            )
++        endif()
++
+     endif()
+ endif()
+diff --git a/bin/elasticurl_cpp/CMakeLists.txt b/bin/elasticurl_cpp/CMakeLists.txt
+index a96f94e8b..3d6e7c265 100644
+--- a/bin/elasticurl_cpp/CMakeLists.txt
++++ b/bin/elasticurl_cpp/CMakeLists.txt
+@@ -20,6 +20,8 @@ if (MSVC)
+         target_compile_options(${ELASTICURL_CPP_PROJECT_NAME} PRIVATE "/MD$<$<CONFIG:Debug>:d>")
+     endif()
+     target_compile_options(${ELASTICURL_CPP_PROJECT_NAME} PRIVATE /W4 /WX)
++elseif(QNX)
++    target_compile_options(${ELASTICURL_CPP_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic)
+ else ()
+     target_compile_options(${ELASTICURL_CPP_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic -Werror)
+ endif ()
+diff --git a/bin/mqtt5_app/CMakeLists.txt b/bin/mqtt5_app/CMakeLists.txt
+index 931e07e7c..9e258e12f 100644
+--- a/bin/mqtt5_app/CMakeLists.txt
++++ b/bin/mqtt5_app/CMakeLists.txt
+@@ -20,6 +20,8 @@ if (MSVC)
+         target_compile_options(${MQTT5_APP_PROJECT_NAME} PRIVATE "/MD$<$<CONFIG:Debug>:d>")
+     endif()
+     target_compile_options(${MQTT5_APP_PROJECT_NAME} PRIVATE /W4 /WX)
++elseif(QNX)
++    target_compile_options(${MQTT5_APP_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic)
+ else ()
+     target_compile_options(${MQTT5_APP_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic -Werror)
+ endif ()
+diff --git a/bin/mqtt5_canary/CMakeLists.txt b/bin/mqtt5_canary/CMakeLists.txt
+index 4426053d4..37468ce70 100644
+--- a/bin/mqtt5_canary/CMakeLists.txt
++++ b/bin/mqtt5_canary/CMakeLists.txt
+@@ -21,6 +21,8 @@ if (MSVC)
+         target_compile_options(${MQTT5_CANARY_PROJECT_NAME} PRIVATE "/MD$<$<CONFIG:Debug>:d>")
+     endif()
+     target_compile_options(${MQTT5_CANARY_PROJECT_NAME} PRIVATE /W4 /WX)
++elseif(QNX)
++    target_compile_options(${MQTT5_CANARY_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic)
+ else ()
+     target_compile_options(${MQTT5_CANARY_PROJECT_NAME} PRIVATE -Wall -Wno-long-long -pedantic -Werror)
+ endif ()

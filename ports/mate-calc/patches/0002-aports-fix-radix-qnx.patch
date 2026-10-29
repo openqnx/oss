@@ -1,0 +1,26 @@
+QNX change from QNX's aports (extra/mate-calc/fix-radix-qnx.patch).
+
+Taken from qnx-ports/aports extra/mate-calc -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- a/src/mp-serializer.c	2025-10-14 22:01:54.000000000 +0000
++++ b/src/mp-serializer.c	2025-10-14 22:01:59.000000000 +0000
+@@ -611,6 +611,10 @@
+     gchar *radix, *utf8_radix, *tsep;
+     serializer->priv = mp_serializer_get_instance_private (serializer);
+ 
++#ifdef __QNX__
++    /* QNX nl_langinfo(RADIXCHAR) is broken - returns "UTF-8" instead of "." */
++    serializer->priv->radix = '.';
++#else
+     radix = nl_langinfo(RADIXCHAR);
+     utf8_radix = g_locale_to_utf8(radix, -1, NULL, NULL, NULL);
+     serializer->priv->radix = radix ? g_utf8_get_char(utf8_radix) : '.';
+@@ -617,4 +621,5 @@
+     g_free(utf8_radix);
++#endif
+     tsep = nl_langinfo(THOUSEP);
+     if (tsep && tsep[0] != '\0')
+     {

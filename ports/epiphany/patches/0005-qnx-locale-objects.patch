@@ -1,0 +1,80 @@
+Emulate newlocale()/uselocale() on QNX with setlocale().
+
+QNX has no POSIX.1-2008 locale objects, so gnome-languages.c (copied from
+gnome-desktop) fails to compile: unknown type name locale_t, implicit
+declaration of newlocale. It uses them only to check a locale name and to
+switch locale around one translation lookup; a process-wide setlocale()
+does the same job there.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/contrib/gnome-languages.c
++++ b/lib/contrib/gnome-languages.c
+@@ -39,6 +39,67 @@
+ #define GNOME_DESKTOP_USE_UNSTABLE_API
+ #include "gnome-languages.h"
+ 
++#if defined(__QNX__) && !defined(LC_GLOBAL_LOCALE)
++/* QNX has no POSIX.1-2008 locale objects (newlocale, uselocale, freelocale).
++ * This file uses them only briefly: to check that a locale name is usable and
++ * to switch locale around one translation lookup. Emulate them with the
++ * process-wide setlocale(); unlike uselocale() that is visible to other
++ * threads for the duration of the lookup. QNX's LC_* values are bit masks
++ * already, so they serve as the *_MASK names too. */
++#define LC_CTYPE_MASK    LC_CTYPE
++#define LC_MESSAGES_MASK LC_MESSAGES
++struct qnx_locale { int category; char *name; };
++typedef struct qnx_locale *locale_t;
++/* What uselocale() hands back to be restored later, one per category. */
++static struct qnx_locale qnx_saved_ctype = { LC_CTYPE, NULL };
++static struct qnx_locale qnx_saved_messages = { LC_MESSAGES, NULL };
++
++static locale_t
++newlocale (int mask, const char *name, locale_t base)
++{
++        char *old = g_strdup (setlocale (mask, NULL));
++        gboolean usable = setlocale (mask, name) != NULL;
++        locale_t l;
++
++        (void) base;
++        setlocale (mask, old);
++        g_free (old);
++        if (!usable)
++                return (locale_t) 0;
++        l = g_new0 (struct qnx_locale, 1);
++        l->category = mask;
++        l->name = g_strdup (name);
++        return l;
++}
++
++static locale_t
++uselocale (locale_t l)
++{
++        locale_t saved;
++        char *name;
++
++        if (l == (locale_t) 0)
++                return (locale_t) 0;
++        saved = l->category == LC_CTYPE ? &qnx_saved_ctype : &qnx_saved_messages;
++        /* l may be the saved slot itself (a restore): take its name first. */
++        name = g_strdup (l->name);
++        g_free (saved->name);
++        saved->name = g_strdup (setlocale (l->category, NULL));
++        setlocale (l->category, name);
++        g_free (name);
++        return saved;
++}
++
++static void
++freelocale (locale_t l)
++{
++        if (l == &qnx_saved_ctype || l == &qnx_saved_messages)
++                return;
++        g_free (l->name);
++        g_free (l);
++}
++#endif
++
+ #include <langinfo.h>
+ #ifndef __LC_LAST
+ #define __LC_LAST       13

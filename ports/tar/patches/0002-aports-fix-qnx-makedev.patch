@@ -1,0 +1,21 @@
+QNX change from QNX's aports (core/tar/fix-qnx-makedev.patch).
+
+Taken from qnx-ports/aports core/tar -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/list.c b/src/list.c
+index e9a6815..ac33e32 100644
+--- a/src/list.c
++++ b/src/list.c
+@@ -705,7 +705,8 @@ decode_header (union block *header, struct tar_stat_info *stat_info,
+ 	case BLKTYPE:
+ 	case CHRTYPE:
+ 	  stat_info->stat.st_rdev =
+-	    makedev (MAJOR_FROM_HEADER (header->header.devmajor),
++	    makedev (0,
++			 MAJOR_FROM_HEADER (header->header.devmajor),
+ 		     MINOR_FROM_HEADER (header->header.devminor));
+ 	  break;
+ 

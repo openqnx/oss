@@ -1,0 +1,282 @@
+From 5d76fff70001114ecfc01a14840c9dec134375f4 Mon Sep 17 00:00:00 2001
+From: nnarayanamurthy <nnarayanamurthy@blackberry.com>
+Date: Thu, 13 Nov 2025 16:26:22 +0530
+Subject: [PATCH] QNX Porting support for unbound branch-1.24.1
+
+Imported from qnx-ports/unbound (a33f0638e1da...qnx-release-1.24.1); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+* qnx Porting support for version release-1.24.1
+
+* updating __QNXNTO__ with __QNX__
+---
+ compat/arc4random.c        |  7 +++++++
+ compat/getentropy_linux.c  | 20 ++++++++++++++++++++
+ services/outside_network.h |  4 ++++
+ testcode/replay.h          |  4 ++++
+ testcode/unitldns.c        |  4 ++++
+ testcode/unitmsgparse.c    |  4 ++++
+ testcode/unitverify.c      |  5 ++++-
+ testcode/unitzonemd.c      |  4 ++++
+ util/data/msgreply.h       |  4 ++++
+ util/timehist.h            |  4 ++++
+ 10 files changed, 59 insertions(+), 1 deletion(-)
+
+diff --git a/compat/arc4random.c b/compat/arc4random.c
+index 486ab89c68..50d87beac9 100644
+--- a/compat/arc4random.c
++++ b/compat/arc4random.c
+@@ -38,6 +38,9 @@
+ #ifndef UB_ON_WINDOWS
+ #include <sys/mman.h>
+ #endif
++#ifdef __QNX__
++#include "util/log.h"
++#endif /* __QNX__ */
+ 
+ #define KEYSTREAM_ONLY
+ #include "chacha_private.h"
+@@ -187,7 +190,11 @@ _rs_stir(void)
+ 		if(errno != ENOSYS ||
+ 			fallback_getentropy_urandom(rnd, sizeof rnd) == -1) {
+ #ifdef SIGKILL
++#ifndef __QNX__
+ 			raise(SIGKILL);
++#else /* !__QNX__ */
++			fatal_exit("failed to getentropy");
++#endif /* __QNX__ */
+ #else
+ 			exit(9); /* windows */
+ #endif
+diff --git a/compat/getentropy_linux.c b/compat/getentropy_linux.c
+index 82cdb78b80..1a91c99ed5 100644
+--- a/compat/getentropy_linux.c
++++ b/compat/getentropy_linux.c
+@@ -29,7 +29,9 @@
+ #include <sys/param.h>
+ #include <sys/ioctl.h>
+ #include <sys/resource.h>
++#ifndef __QNX__
+ #include <sys/syscall.h>
++#endif /* !__QNX__ */
+ #ifdef SYS__sysctl
+ #include <linux/sysctl.h>
+ #endif
+@@ -42,7 +44,9 @@
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <stdio.h>
++#ifndef __QNX__
+ #include <link.h>
++#endif /* __QNX__ */
+ #include <termios.h>
+ #include <fcntl.h>
+ #include <signal.h>
+@@ -60,12 +64,14 @@
+ #define SHA512_Final(r, c)	sha512_digest(c, SHA512_DIGEST_SIZE, r)
+ #endif
+ 
++#ifndef __QNX__
+ #include <linux/types.h>
+ #include <linux/random.h>
+ #ifdef HAVE_GETAUXVAL
+ #include <sys/auxv.h>
+ #endif
+ #include <sys/vfs.h>
++#endif /* !__QNX__ */
+ #ifndef MAP_ANON
+ #define MAP_ANON MAP_ANONYMOUS
+ #endif
+@@ -94,8 +100,10 @@ static int getentropy_urandom(void *buf, size_t len);
+ #ifdef SYS__sysctl
+ static int getentropy_sysctl(void *buf, size_t len);
+ #endif
++#ifndef __QNX__
+ static int getentropy_fallback(void *buf, size_t len);
+ static int getentropy_phdr(struct dl_phdr_info *info, size_t size, void *data);
++#endif /* !__QNX__ */
+ 
+ int
+ getentropy(void *buf, size_t len)
+@@ -178,6 +186,7 @@ getentropy(void *buf, size_t len)
+ 	 * sysctl ABI, or consider providing a new failsafe API which
+ 	 * works in a chroot or when file descriptors are exhausted.
+ 	 */
++#ifndef __QNX__
+ #undef FAIL_INSTEAD_OF_TRYING_FALLBACK
+ #ifdef FAIL_INSTEAD_OF_TRYING_FALLBACK
+ 	raise(SIGKILL);
+@@ -185,6 +194,9 @@ getentropy(void *buf, size_t len)
+ 	ret = getentropy_fallback(buf, len);
+ 	if (ret != -1)
+ 		return (ret);
++#else /* !__QNX__ */
++	fatal_exit("failed to read from /dev/urandom");
++#endif /* __QNX__ */
+ 
+ 	errno = EIO;
+ 	return (ret);
+@@ -214,7 +226,11 @@ getentropy_urandom(void *buf, size_t len)
+ {
+ 	struct stat st;
+ 	size_t i;
++#ifndef __QNX__
+ 	int fd, cnt, flags;
++#else /* !__QNX__ */
++	int fd, flags;
++#endif /* __QNX__ */
+ 	int save_errno = errno;
+ 
+ start:
+@@ -241,10 +257,12 @@ getentropy_urandom(void *buf, size_t len)
+ 		close(fd);
+ 		goto nodevrandom;
+ 	}
++#ifndef __QNX__
+ 	if (ioctl(fd, RNDGETENTCNT, &cnt) == -1) {
+ 		close(fd);
+ 		goto nodevrandom;
+ 	}
++#endif /* !__QNX__ */
+ 	for (i = 0; i < len; ) {
+ 		size_t wanted = len - i;
+ 		ssize_t ret = read(fd, (char *)buf + i, wanted);
+@@ -265,6 +283,7 @@ getentropy_urandom(void *buf, size_t len)
+ 	return (-1);
+ }
+ 
++#ifndef __QNX__
+ #ifdef SYS__sysctl
+ static int
+ getentropy_sysctl(void *buf, size_t len)
+@@ -537,3 +556,4 @@ getentropy_fallback(void *buf, size_t len)
+ 	errno = save_errno;
+ 	return (0);		/* satisfied */
+ }
++#endif /* !__QNX__ */
+diff --git a/services/outside_network.h b/services/outside_network.h
+index 0a77e3388d..7404d462f0 100644
+--- a/services/outside_network.h
++++ b/services/outside_network.h
+@@ -48,6 +48,10 @@
+ #include "util/regional.h"
+ #include "util/netevent.h"
+ #include "dnstap/dnstap_config.h"
++#ifdef __QNX__
++/* For struct timeval */
++#include <sys/time.h>
++#endif /* __QNX__ */
+ struct pending;
+ struct pending_timeout;
+ struct ub_randstate;
+diff --git a/testcode/replay.h b/testcode/replay.h
+index 809e8ee397..42a56a1c46 100644
+--- a/testcode/replay.h
++++ b/testcode/replay.h
+@@ -142,6 +142,10 @@
+ #include "util/netevent.h"
+ #include "testcode/testpkts.h"
+ #include "util/rbtree.h"
++#ifdef __QNX__
++/* For struct timeval */
++#include <sys/time.h>
++#endif /* __QNX__ */
+ struct replay_answer;
+ struct replay_moment;
+ struct replay_range;
+diff --git a/testcode/unitldns.c b/testcode/unitldns.c
+index f8409fec71..07d001a792 100644
+--- a/testcode/unitldns.c
++++ b/testcode/unitldns.c
+@@ -207,7 +207,11 @@ rr_test_file(const char* input, const char* check)
+ #define xstr(s) str(s)
+ #define str(s) #s
+ 
++#ifndef __QNX__
+ #define SRCDIRSTR xstr(SRCDIR)
++#else /* !__QNX__ */
++#define SRCDIRSTR "."
++#endif /* __QNX__ */
+ 
+ /** read rrs to and from string, to and from wireformat */
+ static void
+diff --git a/testcode/unitmsgparse.c b/testcode/unitmsgparse.c
+index a87314019d..d65b7dd02d 100644
+--- a/testcode/unitmsgparse.c
++++ b/testcode/unitmsgparse.c
+@@ -498,7 +498,11 @@ testfromdrillfile(sldns_buffer* pkt, struct alloc_cache* alloc,
+ #define xstr(s) str(s)
+ #define str(s) #s
+ 
++#ifndef __QNX__
+ #define SRCDIRSTR xstr(SRCDIR)
++#else /* !__QNX__ */
++#define SRCDIRSTR "."
++#endif /* __QNX__ */
+ 
+ void msgparse_test(void)
+ {
+diff --git a/testcode/unitverify.c b/testcode/unitverify.c
+index 12d5205b07..028c6c61fa 100644
+--- a/testcode/unitverify.c
++++ b/testcode/unitverify.c
+@@ -513,8 +513,11 @@ nsec3_hash_test(const char* fname)
+ #define xstr(s) str(s)
+ #define str(s) #s
+ 
++#ifndef __QNX__
+ #define SRCDIRSTR xstr(SRCDIR)
+-
++#else /* !__QNX__ */
++#define SRCDIRSTR "."
++#endif /* __QNX__ */
+ #if defined(HAVE_SSL) && defined(USE_SHA1)
+ /* Detect if openssl is configured to disable RSASHA1 signatures,
+  * with the rh-allow-sha1-signatures disabled. */
+diff --git a/testcode/unitzonemd.c b/testcode/unitzonemd.c
+index 0420b03615..c98dcf3959 100644
+--- a/testcode/unitzonemd.c
++++ b/testcode/unitzonemd.c
+@@ -50,7 +50,11 @@
+ 
+ #define xstr(s) str(s)
+ #define str(s) #s
++#ifndef __QNX__
+ #define SRCDIRSTR xstr(SRCDIR)
++#else /* !__QNX__ */
++#define SRCDIRSTR "."
++#endif /* __QNX__ */
+ 
+ /** Add zone from file for testing */
+ struct auth_zone* authtest_addzone(struct auth_zones* az, const char* name,
+diff --git a/util/data/msgreply.h b/util/data/msgreply.h
+index 1ec4e850b8..dfb192deac 100644
+--- a/util/data/msgreply.h
++++ b/util/data/msgreply.h
+@@ -44,6 +44,10 @@
+ #include "util/storage/lruhash.h"
+ #include "util/data/packed_rrset.h"
+ #include "sldns/rrdef.h"
++#ifdef __QNX__
++/* For struct timeval */
++#include <sys/time.h>
++#endif /* __QNX__ */
+ struct sldns_buffer;
+ struct comm_reply;
+ struct alloc_cache;
+diff --git a/util/timehist.h b/util/timehist.h
+index 5f88a38a9f..12855f94bd 100644
+--- a/util/timehist.h
++++ b/util/timehist.h
+@@ -42,6 +42,10 @@
+ #ifndef UTIL_TIMEHIST_H
+ #define UTIL_TIMEHIST_H
+ 
++#ifdef __QNX__
++/* For struct timeval */
++#include <sys/time.h>
++#endif /* __QNX__ */
+ /** Number of buckets in a histogram */
+ #define NUM_BUCKETS_HIST 40
+ 

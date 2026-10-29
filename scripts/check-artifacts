@@ -1,0 +1,87 @@
+#!/bin/bash
+# Fifth staging audit: every staged ELF must be a QNX binary of the correct
+# architecture, no symlink may dangle, and no installed .pc/.la/config script
+# may point back into the build or host tree.
+#
+# This catches classes of error the other audits cannot see:
+#   - a host (Linux) binary installed into stage by a build that ran a native
+#     compiler where it should have cross-compiled
+#   - an aarch64 object installed into the x86_64 tree (wrong toolchain picked
+#     up from the environment)
+#   - a .pc file whose -I/-L still names build/<arch>/<pkg>, which silently
+#     works for us and breaks for anyone consuming the staged SDK
+set -u
+WS="$(cd "$(dirname "$0")/.." && pwd)"
+# Take the SDP location from the environment rather than hardcoding one, so
+# this runs on any machine. env.sh sets QNX_HOST; honour an already-sourced
+# environment and fall back to sourcing it.
+[ -n "${QNX_HOST:-}" ] || source "$WS/env.sh" aarch64le >/dev/null || exit 1
+HOSTBIN="$QNX_HOST/usr/bin"
+SDP_HOST_DIR="${QNX_SDP_ROOT:-}/host"
+rc=0
+
+for arch in aarch64le x86_64; do
+  STAGE="$WS/stage/$arch"
+  [ -d "$STAGE" ] || continue
+  case $arch in
+    aarch64le) want="ARM aarch64" ;;
+    x86_64)    want="x86-64" ;;
+  esac
+
+  # --- dangling symlinks -------------------------------------------------
+  dangling=$(find "$STAGE" -xtype l 2>/dev/null)
+  if [ -n "$dangling" ]; then
+    echo "FAIL [$arch] dangling symlinks:"
+    echo "$dangling" | sed 's,^,    ,'
+    rc=1
+  fi
+
+  # --- ELF architecture / OS --------------------------------------------
+  case $arch in
+    aarch64le) READELF=$HOSTBIN/ntoaarch64-readelf ;;
+    x86_64)    READELF=$HOSTBIN/ntox86_64-readelf ;;
+  esac
+  bad=0
+  while IFS= read -r f; do
+    # read the ELF header only: e_machine and the OS/ABI note
+    info=$(file -b "$f" 2>/dev/null)
+    case "$info" in
+      *ELF*) ;;
+      *) continue ;;
+    esac
+    case "$info" in
+      *"$want"*) ;;
+      *) echo "FAIL [$arch] wrong machine: ${f#$STAGE/}  ($info)"; bad=1; continue ;;
+    esac
+    # QNX and Linux ELFs are both ELF/SYSV, so the OS/ABI byte does not
+    # separate them. What does: a Linux binary needs glibc's libc.so.6 or
+    # the ld-linux interpreter; a QNX one needs QNX's split libc and
+    # ldqnx-64.so.2.
+    case "$info" in
+      *"interpreter /lib"*|*"interpreter /usr/lib/ld-linux"*)
+        echo "FAIL [$arch] host Linux binary staged: ${f#$STAGE/}"; bad=1; continue ;;
+    esac
+    # NOTE: QNX 8's own libc soname is literally "libc.so.6", the same string
+    # glibc uses, so DT_NEEDED cannot tell the two apart. Glibc symbol
+    # versioning can: a host-built ELF carries GLIBC_2.x version references,
+    # a QNX-built one carries none.
+    if $READELF -V "$f" 2>/dev/null | grep -q 'GLIBC_'; then
+      echo "FAIL [$arch] host glibc build leaked in: ${f#$STAGE/}"; bad=1
+    fi
+  done < <(find "$STAGE" -type f \( -perm -u+x -o -name '*.so*' -o -name '*.a' \) 2>/dev/null)
+  [ $bad -eq 0 ] || rc=1
+
+  # --- build/host paths leaking into installed metadata -----------------
+  leak=$(grep -rlE "$WS/build/|$WS/host-tools|$SDP_HOST_DIR" \
+           "$STAGE/usr/local/lib/pkgconfig" \
+           "$STAGE/usr/local/lib" \
+           --include='*.pc' --include='*.la' --include='*-config' 2>/dev/null)
+  if [ -n "$leak" ]; then
+    echo "FAIL [$arch] build/host paths in installed metadata:"
+    echo "$leak" | sed "s,^$STAGE/,    ,"
+    rc=1
+  fi
+
+  [ $rc -eq 0 ] && echo "OK  [$arch] all staged ELFs are QNX/$want, no dangling links, no path leaks"
+done
+exit $rc

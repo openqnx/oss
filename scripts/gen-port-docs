@@ -1,0 +1,415 @@
+#!/usr/bin/env python3
+"""Generate ports/<name>/README.md for every component.
+
+Each README is a complete, standalone guide for one component: where the
+upstream source comes from, which QNX patches are applied and why, how it is
+configured, how to build it (with the driver or entirely by hand), how to
+package it, and how to put it on a target and test it there.
+
+Everything is derived from the recipe, the patches, the install manifest and
+ports/dependencies.json, so the READMEs are regenerated, never edited:
+
+    ./scripts/gen-dependency-index && ./scripts/gen-port-docs
+"""
+import glob, json, os, re
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(WS)
+
+CLASS_TEXT = {
+    "standalone": ("🟢 Standalone",
+                   "Builds with only the QNX SDP and runs on a stock QNX 8.0 target. "
+                   "Nothing else from this repository is needed, at build time or at run time."),
+    "runtime-standalone": ("🟡 Runtime-standalone",
+                           "Needs other components **to build** (listed below), but what it installs "
+                           "runs on the target **on its own**."),
+    "dependent": ("🔴 Dependent",
+                  "Needs other components **to build and at run time**. `oss-get` installs the "
+                  "run-time ones with it."),
+    "unknown": ("⚪ Not classified", "Not built in this tree."),
+    "planned": ("📋 Planned", "Recorded for porting; not ported yet."),
+}
+
+BUILDSYS_NAME = {"cmake": "CMake", "meson": "Meson", "autotools": "GNU Autotools", "custom": "custom (see recipe)"}
+
+
+def parse(path):
+    txt = open(path).read()
+    f = {"text": txt}
+    for key in ("VERSION", "GIT", "REF", "TARBALL", "SHA256", "BUILDSYS", "DEPS", "SUBDIR"):
+        # The last assignment wins, as it does when bash sources the recipe
+        # (some set BUILDSYS twice: the upstream build system, then custom).
+        ms = list(re.finditer(rf'(?:^|;\s*)\s*{key}=(.*?)(?:;|$)', txt, re.M))
+        if ms:
+            f[key] = ms[-1].group(1).strip().strip('"').strip("'").strip("()").strip()
+    # DEPS may continue over several lines inside its quotes.
+    m = re.search(r'^DEPS=\((.*?)\)', txt, re.M | re.S) or re.search(r'^DEPS="(.*?)"', txt, re.M | re.S)
+    if m:
+        f["DEPS"] = " ".join(m.group(1).split())
+    for key in ("CMAKE_ARGS_EXTRA", "CONF_ARGS_EXTRA", "MESON_ARGS_EXTRA", "CONF_ENV"):
+        m = re.search(rf'^{key}=\(\s*(.*?)\s*\)\s*$', txt, re.M | re.S)
+        if m:
+            f[key] = m.group(1).split()
+            # keep quoted groups together
+            f[key] = re.findall(r'(?:[^\s"]+(?:"[^"]*")?[^\s"]*)+', m.group(1))
+    f["hooks"] = re.findall(r'^(do_\w+)\s*\(\)', txt, re.M)
+    f["buildsys"] = f.get("BUILDSYS", "cmake")
+    # Comment blocks in the recipe explain the choices; keep them for the guide.
+    f["notes"] = []
+    block = []
+    for line in txt.splitlines():
+        if line.startswith("#"):
+            block.append(line.lstrip("#").strip())
+        else:
+            if block and any(block):
+                f["notes"].append(" ".join(b for b in block if b))
+            block = []
+    return f
+
+
+def patch_info(path):
+    """(summary, body, files touched, upstream status) from a patch file."""
+    lines = open(path, errors="ignore").read().splitlines()
+    header = []
+    for l in lines:
+        if l.startswith(("--- ", "diff ", "Index: ")):
+            break
+        header.append(l)
+    files = []
+    for l in lines:
+        m = re.match(r'^\+\+\+ (?:b/)?(\S+)', l)
+        if m and m.group(1) != "/dev/null":
+            files.append(m.group(1))
+    status = ""
+    clean = []
+    for l in header:
+        if l.startswith("Upstream-Status:"):
+            status = l.split(":", 1)[1].strip()
+        elif l.startswith(("From ", "Date: ", "From: ")):
+            continue
+        elif l.startswith("Subject: "):
+            clean.append(re.sub(r'^\[PATCH[^\]]*\]\s*', '', l[9:]))
+        else:
+            clean.append(l)
+    text = "\n".join(clean).strip()
+    summary, body = (text.split("\n", 1) + [""])[:2] if text else ("", "")
+    if not summary:
+        # Patch without a description: say what it touches, and quote the
+        # first explanatory comment it adds, if any.
+        for l in lines:
+            m = re.match(r'^\+\s*(?:/\*|//|#)\s*(.{12,})', l)
+            if m and not l.startswith("+++") and "include" not in m.group(1):
+                summary = m.group(1).rstrip("*/ ").strip()
+                break
+    return summary.strip(), body.strip(), files, status
+
+
+def cmd_source(n, f):
+    if f.get("GIT"):
+        ref = f.get("REF", "")
+        return (f"git clone --depth 1 {'-b ' + ref + ' ' if ref else ''}--recurse-submodules "
+                f"--shallow-submodules \\\n    {f['GIT']} src/{n}")
+    if f.get("TARBALL"):
+        tb = f["TARBALL"]
+        c = (f"URL={tb}\nmkdir -p dist src/{n}\n"
+             f"curl -fL -o dist/$(basename $URL) $URL\n")
+        if f.get("SHA256"):
+            c += f"echo \"{f['SHA256']}  dist/$(basename $URL)\" | sha256sum -c -\n"
+        c += f"tar xf dist/$(basename $URL) -C src/{n} --strip-components=1"
+        return c
+    return None
+
+
+def fmt_args(args, indent="      "):
+    if not args:
+        return ""
+    return " \\\n" + " \\\n".join(indent + a for a in args)
+
+
+def cmd_build(n, f):
+    S = f"src/{n}" + (f"/{f['SUBDIR']}" if f.get("SUBDIR") else "")
+    bs = f["buildsys"]
+    B = f"build/$QNX_ARCH/{n}"
+    if bs == "cmake":
+        return (f"cmake -S {S} -B {B} -G Ninja \\\n"
+                f"      -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \\\n"
+                f"      -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \\\n"
+                f"      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF"
+                + fmt_args(f.get("CMAKE_ARGS_EXTRA", [])) + "\n"
+                f"cmake --build {B} -j$(nproc)\n"
+                f"DESTDIR=$STAGE cmake --install {B}")
+    if bs == "meson":
+        return (f"meson setup {B} {S} \\\n"
+                f"      --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \\\n"
+                f"      --native-file $QNX_MESON_DIR/meson-native.ini \\\n"
+                f"      --prefix=/usr/local --buildtype=release --default-library=both"
+                + fmt_args(f.get("MESON_ARGS_EXTRA", [])) + "\n"
+                f"ninja -C {B}\n"
+                f"DESTDIR=$STAGE ninja -C {B} install")
+    if bs == "autotools":
+        env = f.get("CONF_ENV", [])
+        gen = ""
+        if not f.get("TARBALL"):
+            gen = (f"# A git checkout has no ./configure yet\n"
+                   f"( cd {S} && if [ -f autogen.sh ]; then NOCONFIGURE=1 ./autogen.sh; else autoreconf -fi; fi )\n")
+        return (gen + f"mkdir -p {B} && cd {B}\n"
+                "CC=\"qcc -V$QCC_TARGET -D_QNX_SOURCE\" CXX=\"q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE\" \\\n"
+                "CPP=\"$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E\" \\\n"
+                "CPPFLAGS=\"-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include\" \\\n"
+                "CFLAGS=\"$CPPFLAGS\" CXXFLAGS=\"$CPPFLAGS\" \\\n"
+                "LDFLAGS=\"-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \\\n"
+                "         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify\" \\\n"
+                + ("".join(f"{e} \\\n" for e in env)) +
+                f"$OLDPWD/{S}/configure --host=$QNX_TRIPLE --prefix=/usr/local"
+                + fmt_args(f.get("CONF_ARGS_EXTRA", []), "    ") + "\n"
+                f"make -j$(nproc)\n"
+                f"make DESTDIR=$STAGE install\ncd -")
+    return None
+
+
+def hook_bodies(txt):
+    out = []
+    for m in re.finditer(r'^(do_\w+)\s*\(\)\s*\{', txt, re.M):
+        start = m.start()
+        depth, i = 0, m.end() - 1
+        while i < len(txt):
+            if txt[i] == "{":
+                depth += 1
+            elif txt[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            i += 1
+        out.append(txt[start:i + 1])
+    return out
+
+
+def tests_for(n):
+    exact = f"tests/src/test_{n.replace('-', '_')}"
+    for ext in (".c", ".cpp"):
+        if os.path.exists(exact + ext):
+            return f"test_{n.replace('-', '_')}"
+    special = {"cppzmq": "test_libzmq", "quickjs-ng": "test_quickjs", "libccd": "test_fcl",
+               "urdfdom_headers": None}
+    if n in special:
+        return special[n]
+    cm = open("tests/CMakeLists.txt").read()
+    m = re.search(rf'port_test\((test_\w+)\s+\S+\s+[^)]*\b{re.escape(n)}\b', cm)
+    return m.group(1) if m else None
+
+
+def render_planned(n, f):
+    txt = f["text"]
+    get = lambda k: (re.search(rf'^{k}=(.*)$', txt, re.M) or [None, ""])[1].strip().strip('"')
+    src = re.search(r'^# Planned: (.*?)(?:\n[^#]|\Z)', txt, re.M | re.S)
+    why = " ".join(l.lstrip("# ").strip() for l in txt.splitlines() if l.startswith("#"))
+    L = [f"# {n} {get('VERSION')}\n", "**📋 Planned** — recorded for porting, not ported yet. "
+         "There is no build recipe; `qnxbuild` reports it as planned.\n",
+         "| | |\n|---|---|", f"| Target version | {get('VERSION')} |",
+         f"| Upstream | {get('UPSTREAM')} |", f"| License | {get('LICENSE')} |", "",
+         f"Why it is listed: {why}\n",
+         "To port it, replace `recipe.sh` with a real recipe (see the "
+         "[porting guide](../../docs/porting-guide.md)) and remove `STATUS=planned`.\n",
+         "---\n<sub>Generated by <code>scripts/gen-port-docs</code>.</sub>\n"]
+    return "\n".join(L)
+
+
+def render(n, f, d, patches, test):
+    L = []
+    A = L.append
+    ver = f.get("VERSION", "")
+    cls = d.get("class", "unknown")
+    badge, expl = CLASS_TEXT[cls]
+    upstream = f.get("GIT") or f.get("TARBALL") or "see recipe.sh"
+    A(f"# {n} {ver}\n")
+    A(f"**{badge}** — {expl}\n")
+    A("| | |\n|---|---|")
+    A(f"| Upstream | {upstream}" + (f" (tag `{f['REF']}`)" if f.get("REF") else "") + " |")
+    if f.get("SHA256"):
+        A(f"| SHA-256 | `{f['SHA256']}` |")
+    A(f"| Build system | {BUILDSYS_NAME.get(f['buildsys'], f['buildsys'])} |")
+    A(f"| QNX patches | {len(patches)} |")
+    A(f"| Build dependencies | " + (" ".join(f"[`{x}`](../{x}/)" for x in d.get("build_deps", [])) or "none") + " |")
+    A(f"| Run-time dependencies | " + (" ".join(f"[`{x}`](../{x}/)" for x in d.get("runtime_deps", [])) or "none (QNX SDP only)") + " |")
+    sv = d.get("standalone_verified") or {}
+    if sv:
+        A("| Built alone (empty stage) | " + " ".join(f"{a} {'✅' if r == 'OK' else '❌'}" for a, r in sv.items()) + " |")
+    A(f"| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |")
+    A(f"| On-target test | " + (f"[`{test}`](../../tests/src/)" if test else "none (no run-time code)") + " |")
+    A("")
+
+    # ---- quick install ------------------------------------------------------
+    A("## Install the prebuilt package on a target\n")
+    A("No build needed: [`oss-get`](../../target/oss-get) downloads the package "
+      "(and its run-time dependencies), checks its SHA-256 and unpacks it.\n")
+    A(f"```sh\n# on the QNX target\noss-get update\noss-get install {n}\n"
+      f"oss-get install {n}-dev    # only for building on the target: headers, .pc, CMake files\n```\n")
+    A("See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.\n")
+
+    # ---- build from upstream -------------------------------------------------
+    A("## Build it from upstream\n")
+    A("Every step below can be run by hand. `./scripts/qnxbuild " + n + "` performs "
+      "exactly the same steps (2–5) in one command.\n")
+    A("### 1. Build environment\n")
+    A("A Linux host with QNX SDP 8.0 installed and licensed — or the container in "
+      "[`docker/`](../../docs/build-environment.md), which needs only the SDP "
+      "mounted. Then, from the repository root:\n")
+    A("```bash\nexport QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation\n"
+      "./scripts/build-host-tools.sh          # once per machine\n"
+      "source ./env.sh aarch64le              # or x86_64; once per shell\n```\n")
+    A("`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree "
+      "`stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the "
+      "CMake/Meson toolchain files.\n")
+    deps = d.get("build_closure", [])
+    if deps:
+        A(f"**Build the dependencies first** ({len(deps)} component(s)), or let "
+          f"`qnxbuild` do it:\n")
+        A("```bash\n./scripts/qnxbuild " + " ".join(d.get("build_deps", [])) + "\n```\n")
+        if len(deps) > len(d.get("build_deps", [])):
+            A(f"<details><summary>Full build chain ({len(deps)})</summary>\n\n" +
+              " ".join(f"[`{x}`](../{x}/)" for x in deps) + "\n</details>\n")
+    else:
+        A("No other component has to be built first.\n")
+
+    A("### 2. Get the upstream source\n")
+    src = cmd_source(n, f)
+    if src:
+        A("```bash\n" + src + "\n```\n")
+    else:
+        A("Fetched by the recipe's `do_fetch` hook:\n")
+        for h in hook_bodies(f["text"]):
+            if h.startswith("do_fetch"):
+                A("```bash\n" + h + "\n```\n")
+    if f.get("SUBDIR"):
+        A(f"The project lives in the `{f['SUBDIR']}/` subdirectory of the repository.\n")
+
+    A("### 3. Apply the QNX patches\n")
+    if patches:
+        A(f"{len(patches)} patch(es), each a separate file in [`patches/`](patches/), applied in order:\n")
+        A("```bash\n" + "\n".join(f"patch -p1 -d src/{n} < ports/{n}/patches/{p}" for p in patches) + "\n```\n")
+        for p in patches:
+            s, body, files, status = patch_info(f"ports/{n}/patches/{p}")
+            A(f"**[`{p}`](patches/{p})**" + (f" — {s}" if s else ""))
+            if body:
+                A("\n" + "\n".join("> " + l if l else ">" for l in body.splitlines()))
+            A("\n" + (f"Touches: " + ", ".join(f"`{x}`" for x in files[:6]) + (" …" if len(files) > 6 else "")) +
+              (f" · Upstream status: {status}" if status else "") + "\n")
+    else:
+        A("None — the upstream source builds for QNX unmodified; everything QNX-specific "
+          "is in the configuration below and in the shared toolchain files.\n")
+
+    extra = []
+    for sub, what in (("deps", "patches for dependencies the build fetches itself (applied by the recipe)"),
+                      ("qnx-patches", "patch series for sub-projects (applied after the sub-projects are fetched)"),
+                      ("repo-patches", "one patch per repository of a multi-repository source (repo-patches/MAP)"),
+                      ("crate-patches", "patches for Rust crates the build uses, each applied to the released crate at the version Cargo.lock pins")):
+        pdir = f"ports/{n}/{sub}"   # not "d": that is this component's dependency record
+        if os.path.isdir(pdir):
+            cnt = sum(1 for r, _, fs in os.walk(pdir) for x in fs if x.endswith(".patch"))
+            extra.append(f"- [`{sub}/`]({sub}/) — {cnt} {what}")
+    if extra:
+        A("More QNX changes, outside the main source tree:\n")
+        A("\n".join(extra) + "\n")
+
+    A("### 4. Configure, build and install into the staging tree\n")
+    custom = [h for h in f["hooks"] if h in ("do_configure", "do_build", "do_install")]
+    bcmd = cmd_build(n, f) if not custom else None
+    if bcmd:
+        A("```bash\n" + bcmd + "\n```\n")
+    else:
+        A("This component uses its own build steps "
+          f"({', '.join('`' + h + '`' for h in custom) or 'custom build system'}), "
+          "run with `S` = the source tree, `B` = the build directory:\n")
+        A("```bash\nS=src/" + n + (f"/{f['SUBDIR']}" if f.get("SUBDIR") else "") +
+          f"; B=build/$QNX_ARCH/{n}; mkdir -p $B\n```\n")
+        for h in hook_bodies(f["text"]):
+            if not h.startswith("do_fetch"):
+                A("```bash\n" + h + "\n```\n")
+    if f["notes"]:
+        A("Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):\n")
+        for note in f["notes"]:
+            A(f"- {note}")
+        A("")
+    A(f"Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH {n}`.\n")
+
+    inst = d.get("installs") or {}
+    A("### 5. What it installs\n")
+    if inst:
+        libs, bins, hdr = inst.get("libs", []), inst.get("bins", []), inst.get("headers", 0)
+        A(f"{inst['files']} files under `/usr/local`" +
+          (f": {len(libs)} shared-library entries" if libs else "") +
+          (f", {len(bins)} programs" if bins else "") +
+          (f", {hdr} headers" if hdr else "") + ".\n")
+        shown = (libs + bins)[:16]
+        if shown:
+            A("```\n" + "\n".join("/" + x for x in shown) + ("\n..." if len(libs + bins) > 16 else "") + "\n```\n")
+        A(f"The complete list is `stage/<arch>/.manifest/{n}` after a build.\n")
+    else:
+        A("Build it once to see the list (`stage/<arch>/.manifest/" + n + "`).\n")
+
+    A("### 6. Package it for the target\n")
+    A("```bash\n./scripts/qnxpkg -a $QNX_ARCH " + n + "\nls repo/8.0/*/ | grep '^" + n + "-'\n```\n")
+    A(f"This writes `{n}-<ver>-r0.tar.gz` (run time) and `{n}-dev-<ver>-r0.tar.gz` "
+      "(headers, pkg-config, CMake files, static libraries), the matching `.apk` "
+      "files, and updates the repository index. The run-time dependencies recorded "
+      "in the package are computed from the binaries.\n")
+
+    # ---- deploy + test -------------------------------------------------------
+    A("## Run it on a target\n")
+    A("Either install from your own repository (serve `repo/8.0/` with any web server):\n")
+    A(f"```sh\n# on the target\nexport OSS_REPO=http://<build-host>:8000\noss-get update && oss-get install {n}\n```\n")
+    A(f"or copy the tarball and unpack it yourself:\n")
+    A(f"```bash\nscp repo/8.0/aarch64/{n}-*-r0.tar.gz root@<target>:/data/\n"
+      f"ssh root@<target> 'cd /data/oss && tar xzf /data/{n}-*-r0.tar.gz'\n```\n")
+    A("QNX has no `ld.so.conf`; make the libraries findable with "
+      "`export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or "
+      "`eval $(oss-get env)`.\n")
+    if test:
+        A("### Test\n")
+        A(f"[`{test}`](../../tests/src/) links {n} the way an application would and "
+          "checks its core API on the target:\n")
+        A(f"```bash\n./tests/build-tests.sh $QNX_ARCH\n"
+          f"scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/{test} root@<target>:/data/\n"
+          f"ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/{test}'\n```\n")
+        A(f"```\n== {n} ==\n  ok   ...\nPASS {n}\n```\n")
+        A("`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.\n")
+
+    A("<details><summary>recipe.sh</summary>\n\n```bash\n" + f["text"].rstrip() + "\n```\n</details>\n")
+    A("---\n<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, "
+      "<code>patches/</code> and the build manifest. Edit those, not this file.</sub>\n")
+    return "\n".join(L)
+
+
+def render_blocked(n, f):
+    txt = f["text"]
+    why = "\n".join(l[2:] if l.startswith("# ") else l.lstrip("#")
+                    for l in txt.splitlines() if l.startswith("#"))
+    up = f.get("GIT") or f.get("TARBALL") or ""
+    L = [f"# {n} {f.get('VERSION', '')}\n",
+         "**⛔ Blocked** — tried, and not buildable for QNX as things stand. "
+         "`qnxbuild` reports it as blocked instead of building it.\n",
+         "| | |\n|---|---|", f"| Version tried | {f.get('VERSION', '')} |", f"| Upstream | {up} |", "",
+         "## What stops it\n", why + "\n",
+         "To take it up, resolve the above, replace the hooks in `recipe.sh` with a "
+         "real build and remove `STATUS=blocked`.\n",
+         "---\n<sub>Generated by <code>scripts/gen-port-docs</code>.</sub>\n"]
+    return "\n".join(L)
+
+
+def main():
+    deps = json.load(open("ports/dependencies.json")) if os.path.exists("ports/dependencies.json") else {}
+    names = sorted(os.path.basename(os.path.dirname(r)) for r in glob.glob("ports/*/recipe.sh"))
+    for n in names:
+        f = parse(f"ports/{n}/recipe.sh")
+        if re.search(r'^STATUS=planned', f["text"], re.M):
+            open(f"ports/{n}/README.md", "w").write(render_planned(n, f))
+            continue
+        if re.search(r'^STATUS=blocked', f["text"], re.M):
+            open(f"ports/{n}/README.md", "w").write(render_blocked(n, f))
+            continue
+        patches = sorted(os.path.basename(p) for p in glob.glob(f"ports/{n}/patches/*.patch"))
+        open(f"ports/{n}/README.md", "w").write(render(n, f, deps.get(n, {}), patches, tests_for(n)))
+    print(f"wrote {len(names)} port READMEs")
+
+
+main()

@@ -1,0 +1,22 @@
+Do not require a system <sys/random.h>.
+
+The portability wrapper always does #include_next <sys/random.h>, but its
+whole purpose is systems without getrandom(): QNX 8 has neither the header
+nor the function, and the build stops before the bundled getrandom.c (which
+reads /dev/urandom) is used. Include the system header only if it exists.
+
+Upstream-Status: QNX-specific
+
+--- a/portability/sys/random.h
++++ b/portability/sys/random.h
+@@ -1,4 +1,10 @@
++#if defined(__has_include_next)
++#if __has_include_next(<sys/random.h>)
+ #include_next <sys/random.h>
++#endif
++#else
++#include_next <sys/random.h>
++#endif
+ #include <sys/types.h>
+ 
+ #ifdef NEED_GETRANDOM

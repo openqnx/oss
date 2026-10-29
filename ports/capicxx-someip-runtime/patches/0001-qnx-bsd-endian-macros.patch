@@ -1,0 +1,67 @@
+CommonAPI SOME/IP: byte-order macros on QNX.
+
+The streams test glibc's __BYTE_ORDER/__LITTLE_ENDIAN; QNX has only the BSD
+names from <sys/param.h>. Alias them on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/include/CommonAPI/SomeIP/OutputStream.hpp
++++ b/include/CommonAPI/SomeIP/OutputStream.hpp
+@@ -10,6 +10,19 @@
+ #ifndef COMMONAPI_SOMEIP_OUTPUTSTREAM_HPP_
+ #define COMMONAPI_SOMEIP_OUTPUTSTREAM_HPP_
+ 
++/* QNX exposes only the BSD spellings of the byte-order macros, from
++ * <sys/param.h>; the __-prefixed glibc names used below do not exist there.
++ * Alias them so the endianness checks keep working unmodified. */
++#if defined(__QNXNTO__)
++#include <sys/param.h>
++#ifndef __BYTE_ORDER
++#define __BYTE_ORDER    BYTE_ORDER
++#define __LITTLE_ENDIAN LITTLE_ENDIAN
++#define __BIG_ENDIAN    BIG_ENDIAN
++#endif
++#endif
++
++
+ #include <cstring>
+ #include <iomanip>
+ #include <limits>
+--- a/include/CommonAPI/SomeIP/InputStream.hpp
++++ b/include/CommonAPI/SomeIP/InputStream.hpp
+@@ -10,6 +10,19 @@
+ #ifndef COMMONAPI_SOMEIP_INPUTSTREAM_HPP_
+ #define COMMONAPI_SOMEIP_INPUTSTREAM_HPP_
+ 
++/* QNX exposes only the BSD spellings of the byte-order macros, from
++ * <sys/param.h>; the __-prefixed glibc names used below do not exist there.
++ * Alias them so the endianness checks keep working unmodified. */
++#if defined(__QNXNTO__)
++#include <sys/param.h>
++#ifndef __BYTE_ORDER
++#define __BYTE_ORDER    BYTE_ORDER
++#define __LITTLE_ENDIAN LITTLE_ENDIAN
++#define __BIG_ENDIAN    BIG_ENDIAN
++#endif
++#endif
++
++
+ #include <CommonAPI/InputStream.hpp>
+ #include <CommonAPI/SomeIP/Message.hpp>
+ #include <CommonAPI/SomeIP/Deployment.hpp>
+--- a/src/CommonAPI/SomeIP/StringEncoder.cpp
++++ b/src/CommonAPI/SomeIP/StringEncoder.cpp
+@@ -3,6 +3,13 @@
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
++/* BIG_ENDIAN / LITTLE_ENDIAN arrive transitively via <endian.h> on glibc. QNX
++ * has no <endian.h>; the BSD spellings live in <sys/param.h> and must be
++ * included explicitly. */
++#if defined(__QNXNTO__)
++#include <sys/param.h>
++#endif
++
+ #include <CommonAPI/SomeIP/StringEncoder.hpp>
+ 
+ namespace CommonAPI {

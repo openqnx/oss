@@ -1,0 +1,81 @@
+QNX change from QNX's aports (core/binutils/0002.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From ff6e8944f97da0d2496de78a8888d044c07526b1 Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:07:11 -0400
+Subject: [PATCH] binutils: adding qnx patches
+
+added qnx patches from internal svn to git as-is.
+
+CLT-9242
+---
+diff --git a/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d b/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
+index 27cb6e17db3..d94b2c7994a 100644
+--- a/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
++++ b/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
+@@ -1,4 +1,4 @@
+-#skip: aarch64_be-*-*
++#skip: aarch64_be-*-* aarch64-unknown-nto-qnx* aarch64-unknown-qnx-*
+ #ld: -e0
+ #PROG: objcopy
+ #objcopy: -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .rel.* -j .rela.* -j .rel* -j .rela* -j .reloc --target=efi-app-aarch64
+diff --git a/binutils/testsuite/binutils-all/elfedit-2.d b/binutils/testsuite/binutils-all/elfedit-2.d
+index b32b97ceff0..2ba78b712a3 100644
+--- a/binutils/testsuite/binutils-all/elfedit-2.d
++++ b/binutils/testsuite/binutils-all/elfedit-2.d
+@@ -3,7 +3,7 @@
+ #source: empty.s
+ #readelf: -h
+ #name: Update ELF header 2
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto-* *-*-qnx-*
+ 
+ #...
+ ELF Header:
+diff --git a/binutils/testsuite/binutils-all/i386/i386.exp b/binutils/testsuite/binutils-all/i386/i386.exp
+index ecfc6b44f0e..b1820a7c4fd 100644
+--- a/binutils/testsuite/binutils-all/i386/i386.exp
++++ b/binutils/testsuite/binutils-all/i386/i386.exp
+@@ -16,6 +16,8 @@
+ 
+ if {!([istarget "i*86-*-linux*"]
+       || [istarget "i*86-*-gnu*"]
++      || [istarget "i*86-*-nto*"]
++      || [istarget "i*86-*-qnx*"]
+       || [istarget "x86_64-*-linux*"])
+     || ![is_elf_format]
+     || [is_remote host]} then {
+diff --git a/binutils/testsuite/binutils-all/strip-3.d b/binutils/testsuite/binutils-all/strip-3.d
+index 89c75ae6992..0bf948b832f 100644
+--- a/binutils/testsuite/binutils-all/strip-3.d
++++ b/binutils/testsuite/binutils-all/strip-3.d
+@@ -3,7 +3,7 @@
+ #strip: -R .text -R .data -R .bss -R .ARM.attributes -R .reginfo -R .gnu.attributes -R .MIPS.abiflags -R .MIPS.options -R .pdr -R .xtensa.info -R .ARC.attributes -R .note.gnu.property -R .riscv.attributes -R .csky.attributes
+ #readelf: -S --wide
+ #name: strip empty file
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-*-nto* *-*-qnx*
+ 
+ #...
+   \[[ 0]+\][ \t]+NULL[ \t]+.*
+diff --git a/binutils/testsuite/lib/binutils-common.exp b/binutils/testsuite/lib/binutils-common.exp
+index cffd9cfe290..3ce0aceed99 100644
+--- a/binutils/testsuite/lib/binutils-common.exp
++++ b/binutils/testsuite/lib/binutils-common.exp
+@@ -48,6 +48,7 @@ proc is_elf_format {} {
+ 	 && ![istarget *-*-netbsd*]
+ 	 && ![istarget *-*-nto*]
+ 	 && ![istarget *-*-openbsd*]
++	 && ![istarget *-*-qnx*]
+ 	 && ![istarget *-*-rtems*]
+ 	 && ![istarget *-*-solaris2*]
+ 	 && ![istarget *-*-sysv4*]
+-- 
+GitLab
+
+

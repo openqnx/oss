@@ -1,0 +1,110 @@
+QNX change from QNX's aports (extra/xfce4-session/0001-Fix-logout-shutdown-and-restart.patch).
+
+Taken from qnx-ports/aports extra/xfce4-session -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 26a02cc3fb9e4e0e3c235b121f8e112279d31e37 Mon Sep 17 00:00:00 2001
+From: felixlionardo <flionardo@blackberry.com>
+Date: Tue, 18 Nov 2025 12:50:49 -0500
+Subject: [PATCH] Fix logout, shutdown, and restart
+
+---
+ libxfsm/xfsm-shutdown-common.h         |  3 +++
+ xfce4-session/main.c                   |  2 +-
+ xfce4-session/xfsm-manager.c           |  4 ++--
+ xfce4-session/xfsm-shutdown-fallback.c | 17 +++++++++++++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/libxfsm/xfsm-shutdown-common.h b/libxfsm/xfsm-shutdown-common.h
+index 6bceb8b3..6f574f10 100644
+--- a/libxfsm/xfsm-shutdown-common.h
++++ b/libxfsm/xfsm-shutdown-common.h
+@@ -50,6 +50,9 @@
+ #elif defined(sun) || defined(__sun)
+ #define POWEROFF_CMD "/usr/sbin/shutdown -i 5 -g 0 -y"
+ #define REBOOT_CMD "/usr/sbin/shutdown -i 6 -g 0 -y"
++#elif defined(__QNX__)
++#define POWEROFF_CMD "sudo /usr/bin/shutdown -S system"
++#define REBOOT_CMD "sudo /usr/bin/shutdown -S reboot"
+ #else
+ #define POWEROFF_CMD "/sbin/shutdown -h now"
+ #define REBOOT_CMD "/sbin/shutdown -r now"
+diff --git a/xfce4-session/main.c b/xfce4-session/main.c
+index bb076ec1..72be1b96 100644
+--- a/xfce4-session/main.c
++++ b/xfce4-session/main.c
+@@ -267,7 +267,7 @@ name_lost (GDBusConnection *connection,
+             cmd = g_strdup ("loginctl terminate-session ''");
+         }
+ 
+-      if (cmd != NULL && !g_spawn_command_line_async (cmd, &error))
++      if (cmd != NULL && !g_spawn_command_line_sync (cmd, NULL, NULL, NULL, &error))
+         g_warning ("Failed to run logout command: %s", error->message);
+       g_free (cmd);
+     }
+diff --git a/xfce4-session/xfsm-manager.c b/xfce4-session/xfsm-manager.c
+index 21f7b649..cb31a25d 100644
+--- a/xfce4-session/xfsm-manager.c
++++ b/xfce4-session/xfsm-manager.c
+@@ -2392,12 +2392,12 @@ xfsm_manager_save_yourself_dbus (XfsmManager *manager,
+                                  gboolean allow_save)
+ {
+   ShutdownIdleData *idata;
+-
++#ifndef __QNX__
+   if (manager->state != XFSM_MANAGER_IDLE)
+     {
+       return FALSE;
+     }
+-
++#endif
+   idata = g_new (ShutdownIdleData, 1);
+   idata->manager = manager;
+   idata->type = type;
+diff --git a/xfce4-session/xfsm-shutdown-fallback.c b/xfce4-session/xfsm-shutdown-fallback.c
+index 09e7f9f5..7b8fb6cd 100644
+--- a/xfce4-session/xfsm-shutdown-fallback.c
++++ b/xfce4-session/xfsm-shutdown-fallback.c
+@@ -380,6 +380,17 @@ xfsm_shutdown_fallback_try_action (XfsmShutdownType type,
+     }
+ #endif
+ 
++#ifdef __QNX__
++  if (type == XFSM_SHUTDOWN_SHUTDOWN)
++    {
++      return g_spawn_command_line_sync (cmd, NULL, NULL, NULL, error);
++    }
++  else if (type == XFSM_SHUTDOWN_RESTART)
++    {
++      return g_spawn_command_line_sync (cmd, NULL, NULL, NULL, error);
++    }
++#endif
++
+     /* xfsm-shutdown-helper requires polkit to run */
+ #ifdef HAVE_POLKIT
+   command = g_strdup_printf ("pkexec " XFSM_SHUTDOWN_HELPER_CMD " --%s", xfsm_helper_action);
+@@ -487,6 +498,9 @@ xfsm_shutdown_fallback_auth_shutdown (void)
+   gboolean ret_val = xfsm_shutdown_fallback_bsd_check_auth (XFSM_SHUTDOWN_SHUTDOWN);
+   if (ret_val)
+     return TRUE;
++#endif
++#ifdef __QNX__
++  return TRUE;
+ #endif
+   return xfsm_shutdown_fallback_check_auth_polkit (POLKIT_AUTH_SHUTDOWN_XFSM);
+ }
+@@ -505,6 +519,9 @@ xfsm_shutdown_fallback_auth_restart (void)
+   gboolean ret_val = xfsm_shutdown_fallback_bsd_check_auth (XFSM_SHUTDOWN_RESTART);
+   if (ret_val)
+     return TRUE;
++#endif
++#ifdef __QNX__
++  return TRUE;
+ #endif
+   return xfsm_shutdown_fallback_check_auth_polkit (POLKIT_AUTH_RESTART_XFSM);
+ }
+-- 
+2.51.1
+

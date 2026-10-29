@@ -1,0 +1,181 @@
+From 13d75be709be4c26190383767d346ff02915c628 Mon Sep 17 00:00:00 2001
+From: Jai Moraes <jmoraes@blackberry.com>
+Date: Thu, 1 May 2025 14:07:25 -0400
+Subject: [PATCH] QNX Changes
+
+Imported from qnx-ports/openttd (41b113840a98...qnx_master); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ CMakeLists.txt                | 27 ++++++++++++++++++++++++++-
+ cmake/CompileFlags.cmake      |  7 +++++--
+ src/3rdparty/catch2/catch.hpp |  2 ++
+ src/music/CMakeLists.txt      |  2 +-
+ src/os/unix/crashlog_unix.cpp |  7 ++++++-
+ 5 files changed, 40 insertions(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 60f4bc43fff9e..c760579dc2462 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -42,8 +42,11 @@ set_directory_options()
+ include(Static)
+ set_static_if_needed()
+ 
++if(NOT QNX)
++message(STATUS "NOT QNX")
+ set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_CXX_STANDARD_REQUIRED YES)
++endif()
+ set(CMAKE_CXX_EXTENSIONS NO)
+ 
+ set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
+@@ -115,7 +118,9 @@ endif()
+ # Prefer -pthread over -lpthread, which is often the better option of the two.
+ set(CMAKE_THREAD_PREFER_PTHREAD YES)
+ # Make sure we have Threads available.
++if(NOT QNX)
+ find_package(Threads REQUIRED)
++endif()
+ 
+ find_package(ZLIB)
+ find_package(LibLZMA)
+@@ -143,11 +148,17 @@ if(NOT OPTION_DEDICATED)
+         if(NOT APPLE)
+             find_package(Freetype)
+             find_package(SDL2)
++            if(NOT QNX)
+             find_package(Fluidsynth)
++            endif()
++            if(NOT QNX)
+             if(Freetype_FOUND)
+                 find_package(Fontconfig)
+             endif()
++            endif()
++            if(NOT QNX)
+             find_package(Harfbuzz)
++            endif()
+             find_package(ICU OPTIONAL_COMPONENTS i18n uc)
+         endif()
+     endif()
+@@ -168,6 +179,10 @@ if(NOT EMSCRIPTEN AND NOT OPTION_DEDICATED)
+     find_package(OpenGL COMPONENTS OpenGL)
+ endif()
+ 
++if(QNX)
++    set(OPENGLES2_FOUND true)
++endif()
++
+ if(MSVC)
+     find_package(Editbin REQUIRED)
+ endif()
+@@ -269,12 +284,20 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/media)
+ add_dependencies(openttd
+     find_version)
+ 
++if(NOT QNX)
+ target_link_libraries(openttd_lib
+     openttd::languages
+     openttd::settings
+     openttd::script_api
+     Threads::Threads
+ )
++else()
++target_link_libraries(openttd_lib
++    openttd::languages
++    openttd::settings
++    openttd::script_api
++)
++endif()
+ 
+ target_link_libraries(openttd
+     openttd_lib
+@@ -302,7 +325,9 @@ endif()
+ set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+ 
+ include(LinkPackage)
++if(NOT QNX)
+ link_package(PNG TARGET PNG::PNG ENCOURAGED)
++endif()
+ link_package(ZLIB TARGET ZLIB::ZLIB ENCOURAGED)
+ link_package(LIBLZMA TARGET LibLZMA::LibLZMA ENCOURAGED)
+ link_package(LZO)
+@@ -338,7 +363,7 @@ if(NOT OPTION_DEDICATED)
+     endif()
+ endif()
+ 
+-include(3rdparty/llvm/CheckAtomic)
++# include(3rdparty/llvm/CheckAtomic)
+ 
+ if(APPLE)
+     link_package(Iconv TARGET Iconv::Iconv)
+diff --git a/cmake/CompileFlags.cmake b/cmake/CompileFlags.cmake
+index 1f613e9377ee9..d644849d542bc 100644
+--- a/cmake/CompileFlags.cmake
++++ b/cmake/CompileFlags.cmake
+@@ -61,7 +61,7 @@ macro(compile_flags)
+                 -Wno-multichar
+             )
+         endif()
+-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
++    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "QCC")
+         add_compile_options(
+             -W
+             -Wall
+@@ -99,9 +99,12 @@ macro(compile_flags)
+             endif()
+         endif()
+ 
+-        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
++        #OR CMAKE_CXX_COMPILER_ID STREQUAL "QCC"
++        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
++            if(NOT QNX)
+             include(CheckCXXCompilerFlag)
+             check_cxx_compiler_flag("-flifetime-dse=1" LIFETIME_DSE_FOUND)
++            endif()
+ 
+             add_compile_options(
+                 # GCC 4.2+ automatically assumes that signed overflows do
+diff --git a/src/3rdparty/catch2/catch.hpp b/src/3rdparty/catch2/catch.hpp
+index 109698a5c2603..81eb08f28d82f 100644
+--- a/src/3rdparty/catch2/catch.hpp
++++ b/src/3rdparty/catch2/catch.hpp
+@@ -21,6 +21,8 @@
+ #    pragma clang system_header
+ #elif defined __GNUC__
+ #    pragma GCC system_header
++#elif defined __QNX__
++#    pragma QCC system_header
+ #endif
+ 
+ // start catch_suppress_warnings.h
+diff --git a/src/music/CMakeLists.txt b/src/music/CMakeLists.txt
+index cf60e7866906f..a30f1ab553774 100644
+--- a/src/music/CMakeLists.txt
++++ b/src/music/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-if(NOT OPTION_DEDICATED)
++if(NOT OPTION_DEDICATED AND NOT QNX)
+     add_files(
+         allegro_m.cpp
+         allegro_m.h
+diff --git a/src/os/unix/crashlog_unix.cpp b/src/os/unix/crashlog_unix.cpp
+index d60ddb79f8026..b18673ae92bbb 100644
+--- a/src/os/unix/crashlog_unix.cpp
++++ b/src/os/unix/crashlog_unix.cpp
+@@ -148,8 +148,13 @@ static sigset_t SetSignals(void(*handler)(int))
+ 
+ 	struct sigaction sa;
+ 	memset(&sa, 0, sizeof(sa));
++#ifdef __QNX__
++#define SA_RESTART 0
++#endif
+ 	sa.sa_flags = SA_RESTART;
+-
++#ifdef __QNX__
++#undef SA_RESTART
++#endif
+ 	sigemptyset(&sa.sa_mask);
+ 	sa.sa_handler = handler;
+ 	sa.sa_mask = sigs;

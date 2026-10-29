@@ -1,0 +1,33 @@
+pnet_sys: tv_usec is a C int on QNX.
+
+pnet_sys picks the type of struct timeval's tv_usec per OS and falls back to
+c_long. QNX's suseconds_t is 32-bit on both aarch64 and x86_64, so
+duration_to_timeval() does not compile there: "expected i32, found i64".
+Put QNX (target_os = "nto") with the systems that use c_int.
+
+Applied to pnet_sys 0.35.0 (the version zenoh-c's Cargo.lock pins) by
+ports/zenoh-c/recipe.sh, which points cargo at the patched copy.
+
+Upstream-Status: Pending
+
+--- a/src/unix.rs
++++ b/src/unix.rs
+@@ -30,14 +30,16 @@
+         target_os = "macos",
+         target_os = "ios",
+         target_os = "tvos",
+-        target_os = "netbsd"
++        target_os = "netbsd",
++        target_os = "nto"
+     )))]
+     pub type TvUsecType = libc::c_long;
+     #[cfg(any(
+         target_os = "macos",
+         target_os = "ios",
+         target_os = "tvos",
+-        target_os = "netbsd"
++        target_os = "netbsd",
++        target_os = "nto"
+     ))]
+     pub type TvUsecType = libc::c_int;
+     #[cfg(not(any(target_os = "illumos", target_os = "solaris")))]

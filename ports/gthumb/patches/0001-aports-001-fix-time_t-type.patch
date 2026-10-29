@@ -1,0 +1,20 @@
+QNX change from QNX's aports (extra/gthumb/001-fix-time_t-type.patch).
+
+Taken from qnx-ports/aports extra/gthumb -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/gthumb/main-migrate-catalogs.c b/gthumb/main-migrate-catalogs.c
+index e194ed1..302eee3 100644
+--- a/gthumb/main-migrate-catalogs.c
++++ b/gthumb/main-migrate-catalogs.c
+@@ -171,7 +171,7 @@ migration_for_each_file (GFile     *file,
+ 				gboolean    b;
+ 				int         line_ofs;
+ 				/*gboolean    all_keywords;*/
+-				long        date;
++				time_t      date;
+ 				int         date_scope;
+ 
+ 				extension = ".search";

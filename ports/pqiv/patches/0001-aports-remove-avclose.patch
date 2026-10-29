@@ -1,0 +1,19 @@
+QNX change from QNX's aports (extra/pqiv/remove-avclose.patch).
+
+Taken from qnx-ports/aports extra/pqiv -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/backends/libav.c b/backends/libav.c
+index f3bfee7..da26c97 100644
+--- a/backends/libav.c
++++ b/backends/libav.c
+@@ -167,7 +167,6 @@ void file_type_libav_unload(file_t *file) {/*{{{*/
+ 	}
+ 
+ 	if(private->avcontext) {
+-		avcodec_close(private->cocontext);
+ 		#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55,53,0)
+ 			avcodec_free_context(&(private->cocontext));
+ 		#else

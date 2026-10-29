@@ -1,0 +1,24 @@
+gRPC's bundled abseil: default constructor for MaskedPointer (libc++).
+
+The same change as ports/abseil/patches/0001, for the abseil copy gRPC
+builds: under libc++, the C++ library QNX ships, std::atomic<T> requires a
+default-constructible T.
+
+Upstream-Status: Pending (affects any libc++ build)
+
+--- a/third_party/abseil-cpp/absl/flags/internal/flag.h
++++ b/third_party/abseil-cpp/absl/flags/internal/flag.h
+@@ -373,6 +373,13 @@
+ 
+   static constexpr int RequiredAlignment() { return 4; }
+ 
++  // libc++'s std::atomic<T> default constructor value-initialises its T, so T
++  // must be default-constructible; libstdc++'s leaves the value untouched and
++  // imposes no such requirement. QNX ships libc++, so std::atomic<MaskedPointer>
++  // needs one. A null pointer with no mask bits set matches what the atomic is
++  // always assigned before first use.
++  constexpr MaskedPointer() : ptr_(nullptr) {}
++
+   constexpr explicit MaskedPointer(ptr_t rhs) : ptr_(rhs) {}
+   MaskedPointer(ptr_t rhs, bool is_candidate);
+ 

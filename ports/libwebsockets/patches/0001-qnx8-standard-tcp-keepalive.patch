@@ -1,0 +1,23 @@
+libwebsockets: standard TCP keepalive options on QNX 8.0.
+
+QNX 8.0 defines TCP_KEEPIDLE/TCP_KEEPINTVL/TCP_KEEPCNT in <netinet/tcp.h> and
+no longer the TCPCTL_* names older QNX had; apply the remap only before 8.0
+(qcc predefines __QNX__ as 700, 710 or 800).
+
+Upstream-Status: Pending
+
+--- a/lib/plat/unix/private-lib-plat-unix.h
++++ b/lib/plat/unix/private-lib-plat-unix.h
+@@ -134,7 +134,11 @@
+ #include <sys/syslog.h>
+ #endif
+ 
+-#ifdef __QNX__
++/* Older QNX exposed the keepalive knobs only as TCPCTL_* in <netinet/tcp_var.h>.
++ * QNX 8.0 defines the standard TCP_KEEPIDLE / TCP_KEEPINTVL / TCP_KEEPCNT in
++ * <netinet/tcp.h> and no longer provides the TCPCTL_ spellings, so the remap
++ * must not happen there. __QNX__ is predefined by qcc as 700 / 710 / 800. */
++#if defined(__QNX__) && __QNX__ < 800
+ # include "netinet/tcp_var.h"
+ # define TCP_KEEPINTVL TCPCTL_KEEPINTVL
+ # define TCP_KEEPIDLE  TCPCTL_KEEPIDLE

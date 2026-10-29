@@ -1,0 +1,70 @@
+QNX change from QNX's aports (core/openssh/fix-qnx-build.patch).
+
+Taken from qnx-ports/aports core/openssh -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff -Naur openssh-10.3p1.orig/includes.h openssh-10.3p1/includes.h
+--- openssh-10.3p1.orig/includes.h	2026-06-10 21:19:48.000000000 +0000
++++ openssh-10.3p1/includes.h	2026-06-10 21:20:34.000000000 +0000
+@@ -65,6 +65,9 @@
+ #ifdef HAVE_LOGIN_H
+ # include <login.h>
+ #endif
++#ifdef HAVE_SHADOW_H
++# include <shadow.h>
++#endif
+ 
+ #ifdef HAVE_UTMP_H
+ #  include <utmp.h>
+@@ -173,6 +176,10 @@
+ #include <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
+ #endif
+ 
++#ifdef __QNX__
++# include <unix.h>
++#endif
++
+ #include "defines.h"
+ 
+ #include "platform.h"
+diff -Naur openssh-10.3p1.orig/openbsd-compat/openbsd-compat.h openssh-10.3p1/openbsd-compat/openbsd-compat.h
+--- openssh-10.3p1.orig/openbsd-compat/openbsd-compat.h	2026-06-10 21:19:48.000000000 +0000
++++ openssh-10.3p1/openbsd-compat/openbsd-compat.h	2026-06-10 21:19:57.000000000 +0000
+@@ -107,7 +107,7 @@
+ #endif
+ 
+ #ifndef HAVE_RRESVPORT_AF
+-int rresvport_af(int *alport, sa_family_t af);
++int rresvport_af(int *alport, int af);
+ #endif
+ 
+ #ifndef HAVE_STRLCPY
+diff -Naur openssh-10.3p1.orig/openbsd-compat/rresvport.c openssh-10.3p1/openbsd-compat/rresvport.c
+--- openssh-10.3p1.orig/openbsd-compat/rresvport.c	2026-06-10 21:19:48.000000000 +0000
++++ openssh-10.3p1/openbsd-compat/rresvport.c	2026-06-10 21:19:57.000000000 +0000
+@@ -55,7 +55,7 @@
+ #endif
+ 
+ int
+-rresvport_af(int *alport, sa_family_t af)
++rresvport_af(int *alport, int af)
+ {
+ 	struct sockaddr_storage ss;
+ 	struct sockaddr *sa;
+diff --git a/sshpty.c b/sshpty.c
+index 0a82b7d..8425508 100644
+--- a/sshpty.c
++++ b/sshpty.c
+@@ -50,6 +50,10 @@
+ # endif
+ #endif
+ 
++#ifdef __QNX__
++# include <unix.h>
++#endif
++
+ /*
+  * Allocates and opens a pty.  Returns 0 if no pty could be allocated, or
+  * nonzero if a pty was successfully allocated.  On success, open file

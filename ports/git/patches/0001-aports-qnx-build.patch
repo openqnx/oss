@@ -1,0 +1,94 @@
+QNX change from QNX's aports (extra/git/qnx-build.patch).
+
+Taken from qnx-ports/aports extra/git -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- git-2.51.0.orig/config.mak.uname	2025-08-21 18:22:13.000000000 +0000
++++ git-2.51.0/config.mak.uname	2025-08-21 18:27:46.000000000 +0000
+@@ -780,7 +780,6 @@
+ endif
+ ifeq ($(uname_S),QNX)
+ 	COMPAT_CFLAGS += -DSA_RESTART=0
+-	EXPAT_NEEDS_XMLPARSE_H = YesPlease
+ 	HAVE_STRINGS_H = YesPlease
+ 	NEEDS_SOCKET = YesPlease
+ 	NO_GETPAGESIZE = YesPlease
+@@ -787,4 +786,3 @@
+-	NO_ICONV = YesPlease
+ 	NO_MEMMEM = YesPlease
+ 	NO_MKDTEMP = YesPlease
+ 	NO_NSEC = YesPlease
+--- git-2.51.0.orig/t/helper/test-rot13-filter.c	2025-08-21 18:22:13.000000000 +0000
++++ git-2.51.0/t/helper/test-rot13-filter.c	2025-08-21 18:56:32.000000000 +0000
+@@ -44,7 +44,7 @@
+ 
+ static FILE *logfile;
+ static int always_delay, has_clean_cap, has_smudge_cap;
+-static struct strmap delay = STRMAP_INIT;
++static struct strmap rot13_delay = STRMAP_INIT;
+ 
+ static inline const char *str_or_null(const char *str)
+ {
+@@ -128,7 +128,7 @@
+ 	struct hashmap_iter iter;
+ 	struct strmap_entry *ent;
+ 
+-	strmap_for_each_entry(&delay, &iter, ent) {
++	strmap_for_each_entry(&rot13_delay, &iter, ent) {
+ 		struct delay_entry *delay_entry = ent->value;
+ 		free(delay_entry->output);
+ 		free(delay_entry);
+@@ -135,5 +135,5 @@
+ 	}
+-	strmap_clear(&delay, 0);
++	strmap_clear(&rot13_delay, 0);
+ }
+ 
+ static void add_delay_entry(const char *pathname, int count, int requested)
+@@ -141,7 +141,7 @@
+ 	struct delay_entry *entry = xcalloc(1, sizeof(*entry));
+ 	entry->count = count;
+ 	entry->requested = requested;
+-	if (strmap_put(&delay, pathname, entry))
++	if (strmap_put(&rot13_delay, pathname, entry))
+ 		BUG("adding the same path twice to delay hash?");
+ }
+ 
+@@ -156,7 +156,7 @@
+ 	if (packet_read_line(0, NULL))
+ 		die("bad list_available_blobs end");
+ 
+-	strmap_for_each_entry(&delay, &iter, ent) {
++	strmap_for_each_entry(&rot13_delay, &iter, ent) {
+ 		struct delay_entry *delay_entry = ent->value;
+ 		if (!delay_entry->requested)
+ 			continue;
+@@ -216,7 +216,7 @@
+ 		/* Read until flush */
+ 		while ((buf = packet_read_line(0, NULL))) {
+ 			if (!strcmp(buf, "can-delay=1")) {
+-				entry = strmap_get(&delay, pathname);
++				entry = strmap_get(&rot13_delay, pathname);
+ 				if (entry && !entry->requested)
+ 					entry->requested = 1;
+ 				else if (!entry && always_delay)
+@@ -239,7 +239,7 @@
+ 		read_packetized_to_strbuf(0, &input, 0);
+ 		fprintf(logfile, " %"PRIuMAX" [OK] -- ", (uintmax_t)input.len);
+ 
+-		entry = strmap_get(&delay, pathname);
++		entry = strmap_get(&rot13_delay, pathname);
+ 		if (entry && entry->output) {
+ 			output = entry->output;
+ 		} else if (!strcmp(pathname, "error.r") || !strcmp(pathname, "abort.r")) {
+@@ -261,7 +261,7 @@
+ 			packet_write_fmt(1, "status=abort");
+ 			packet_flush(1);
+ 		} else if (!strcmp(command, "smudge") &&
+-			   (entry = strmap_get(&delay, pathname)) &&
++			   (entry = strmap_get(&rot13_delay, pathname)) &&
+ 			   entry->requested == 1) {
+ 			fprintf(logfile, "[DELAYED]\n");
+ 			packet_write_fmt(1, "status=delayed");

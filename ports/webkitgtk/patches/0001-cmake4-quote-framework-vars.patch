@@ -1,0 +1,28 @@
+Quote the framework variables in _WEBKIT_TARGET_LINK_FRAMEWORK.
+
+Configuring with CMake 4 fails before any compilation:
+
+    CMake Error at Source/cmake/WebKitMacros.cmake:280 (if):
+      if given arguments:
+        "(" "NOT" "_linked_into" ")" "OR" "(" "WTF" "STREQUAL" ")" "OR" ...
+      Unknown arguments specified
+
+When a framework has no LINKED_INTO property, ${_linked_into} expands to
+nothing and STREQUAL loses its right-hand operand.  Older CMake accepted the
+malformed expression; 4.x does not.  Quoting both expansions makes the
+comparison well-formed for every CMake version, and changes nothing about what
+it decides.  Not QNX-specific.
+
+Upstream-Status: Pending
+
+--- a/Source/cmake/WebKitMacros.cmake
++++ b/Source/cmake/WebKitMacros.cmake
+@@ -277,7 +277,7 @@
+         get_property(_linked_into GLOBAL PROPERTY ${framework}_LINKED_INTO)
+ 
+         # See if the target is linking a framework that the specified framework is already linked into
+-        if ((NOT _linked_into) OR (${framework} STREQUAL ${_linked_into}) OR (NOT ${_linked_into} IN_LIST ${_target}_FRAMEWORKS))
++        if ((NOT _linked_into) OR ("${framework}" STREQUAL "${_linked_into}") OR (NOT "${_linked_into}" IN_LIST ${_target}_FRAMEWORKS))
+             list(APPEND ${_target}_PRIVATE_LIBRARIES WebKit::${framework})
+ 
+             # The WebKit:: alias targets do not propagate OBJECT libraries so the

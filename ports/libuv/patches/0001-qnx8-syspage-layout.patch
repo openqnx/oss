@@ -1,0 +1,45 @@
+libuv: uptime on QNX 8.0 from CLOCK_MONOTONIC.
+
+QNX 8.0 removed qtime_entry::nsec from the system page, so uv_uptime() no
+longer compiled. CLOCK_MONOTONIC counts from boot on QNX and needs no system
+page access.
+
+Upstream-Status: Pending
+
+--- a/src/unix/qnx.c
++++ b/src/unix/qnx.c
+@@ -22,6 +22,8 @@
+ #include "uv.h"
+ #include "internal.h"
+ 
++#include <time.h>
++
+ #include <string.h>
+ #include <sys/process.h>
+ #include <sys/neutrino.h>
+@@ -113,15 +115,22 @@
+ 
+ 
+ int uv_uptime(double* uptime) {
+-  struct qtime_entry* qtime = _SYSPAGE_ENTRY(_syspage_ptr, qtime);
+-  *uptime = (qtime->nsec / 1000000000.0);
++  /* QNX 8.0 removed qtime_entry::nsec; the syspage now carries boot_time and
++   * tick bookkeeping instead. CLOCK_MONOTONIC counts from boot on QNX and needs
++   * no syspage access at all, so use it directly. */
++  struct timespec ts;
++  if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)
++    return UV__ERR(errno);
++  *uptime = ts.tv_sec + ts.tv_nsec / 1000000000.0;
+   return 0;
+ }
+ 
+ 
+ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
++  /* The syspage member is plain "cpuinfo" on QNX 8.0; "new_cpuinfo" was the
++   * QNX 7.x spelling. */
+   struct cpuinfo_entry* cpuinfo =
+-    (struct cpuinfo_entry*)_SYSPAGE_ENTRY(_syspage_ptr, new_cpuinfo);
++    (struct cpuinfo_entry*)_SYSPAGE_ENTRY(_syspage_ptr, cpuinfo);
+   size_t cpuinfo_size = _SYSPAGE_ELEMENT_SIZE(_syspage_ptr, cpuinfo);
+   struct strings_entry* strings = _SYSPAGE_ENTRY(_syspage_ptr, strings);
+   int num_cpus = _syspage_ptr->num_cpu;

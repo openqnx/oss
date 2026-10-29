@@ -1,0 +1,26 @@
+Define SA_RESTART as 0 on QNX, where <signal.h> leaves it commented out.
+
+QNX 8.0's <signal.h> carries SA_RESTART commented out ("not supported yet"):
+an interrupted kernel call returns EINTR rather than restarting.  This code
+only passes the flag to sigaction(); nothing branches on it, and the callers
+already retry on EINTR, so 0 is a true no-op rather than a behaviour change.
+
+Upstream-Status: QNX-specific
+
+--- a/libxfce4util/xfce-posix-signal-handler.c
++++ b/libxfce4util/xfce-posix-signal-handler.c
+@@ -40,6 +40,14 @@
+ #endif
+ #ifdef HAVE_SIGNAL_H
+ #include <signal.h>
++
++/* QNX 8.0 leaves SA_RESTART commented out in <signal.h> ("not supported yet"):
++   interrupted kernel calls return EINTR rather than restarting, and the retry
++   loops here already handle that, so requesting the flag is a no-op rather
++   than a behaviour change. */
++#if (defined(__QNX__) || defined(__QNXNTO__)) && !defined(SA_RESTART)
++#define SA_RESTART 0
++#endif
+ #endif
+ #ifdef HAVE_STRING_H
+ #include <string.h>

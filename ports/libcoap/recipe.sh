@@ -1,0 +1,4 @@
+VERSION=4.3.5; GIT=https://github.com/obgm/libcoap.git; REF=v4.3.5
+DEPS="openssl"
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_DTLS=ON -DDTLS_BACKEND=openssl -DENABLE_DOCS=OFF
+                   -DENABLE_EXAMPLES=ON -DENABLE_TESTS=OFF )

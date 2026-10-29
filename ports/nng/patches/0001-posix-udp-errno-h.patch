@@ -1,0 +1,18 @@
+Include <errno.h>, not <sys/errno.h>.
+
+<sys/errno.h> is a Linux/BSD-internal header; POSIX only specifies <errno.h>
+and QNX does not ship the other one.
+
+Upstream-Status: QNX-specific
+
+--- a/src/platform/posix/posix_udp.c
++++ b/src/platform/posix/posix_udp.c
+@@ -11,7 +11,7 @@
+ #include "core/nng_impl.h"
+ #include "nng/nng.h"
+ #include "platform/posix/posix_impl.h"
+-#include <sys/errno.h>
++#include <errno.h>
+ 
+ #ifdef NNG_PLATFORM_POSIX
+ #include "platform/posix/posix_pollq.h"

@@ -1,0 +1,25 @@
+SVT-AV1: pass -z linker options through -Wl.
+
+The qcc driver does not forward a bare "-z foo". Every try_compile() after
+these flags failed, silently turning off __builtin_expect, threads and the
+NEON dotprod/i8mm paths.
+
+Upstream-Status: Pending
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index abaffac..48cf68a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -320,7 +320,11 @@ if(UNIX)
+             set(CMAKE_CXX_ARCHIVE_FINISH "<CMAKE_RANLIB> -no_warning_for_no_symbols -c <TARGET>")
+         endif()
+     else()
+-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack -z relro -z now")
++        # Bare "-z foo" is an ld spelling that the qcc/q++ driver does not
++        # forward; it swallows -z and then chokes on the value.  Every
++        # try_compile() after this point would fail, silently disabling
++        # __builtin_expect, Threads and the NEON dotprod/i8mm paths.
++        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now")
+     endif()
+ endif()
+ 

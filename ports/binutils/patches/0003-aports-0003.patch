@@ -1,0 +1,82 @@
+QNX change from QNX's aports (core/binutils/0003.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Changed here: the hunk adding gas/itbl-lex.c is dropped -- it is a generated
+file the release tarball already contains (QNX's git tree did not).
+
+Upstream-Status: QNX-specific
+
+From 5644a914273a9f9ce5617c5461587f671506ed05 Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:08:44 -0400
+Subject: [PATCH] gas: add qnx patches for assembler
+
+adding qnx patches for gas as-is from internal svn.
+
+CLT-9242
+---
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index d58f21873a3..b81d48e4891 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -139,6 +139,8 @@ case ${generic_target} in
+   aarch64*-*-nto*)			fmt=elf;;
+   aarch64*-*-openbsd*)			fmt=elf;;
+   aarch64*-*-pe* | aarch64*-*-mingw*)	fmt=coff em=pepaarch64 ;;
++  aarch64*-nto-* | aarch64*-qnx-*)			fmt=elf;;
++
+   alpha-*-*vms*)			fmt=evax ;;
+   alpha-*-osf*)				fmt=ecoff ;;
+   alpha-*-linux*ecoff*)			fmt=ecoff ;;
+@@ -163,7 +165,8 @@ case ${generic_target} in
+   arm-*-uclinux*)			fmt=elf  em=linux ;;
+   arm-*-nacl*)				fmt=elf  em=nacl ;;
+   arm-*-netbsd* | arm-*-openbsd*)	fmt=elf  em=nbsd ;;
+-  arm-*-nto*)				fmt=elf ;;
++  arm-*-nto-*eabi* | arm-*-qnx-*eabi*)			fmt=elf em=armeabi ;;
++  arm-*-nto-* | arm-*-qnx-*)				fmt=elf ;;
+   arm-wince-pe | arm-*-wince | arm*-*-mingw32ce* | arm*-*-cegcc*)
+ 					fmt=coff em=wince-pe ;;
+   arm-*-pe)				fmt=coff em=pe ;;
+@@ -263,7 +266,7 @@ case ${generic_target} in
+       x86_64*)				fmt=coff em=pep ;;
+       i*)				fmt=coff em=pe ;;
+     esac ;;
+-  i386-*-nto-qnx*)			fmt=elf ;;
++  i386-*-nto-* | i386-*-qnx-*)				fmt=elf ;;
+   i386-*-*nt*)				fmt=coff em=pe ;;
+   i386-*-rdos*)				fmt=elf ;;
+   i386-*-darwin*)			fmt=macho ;;
+@@ -369,7 +372,7 @@ case ${generic_target} in
+   ppc-*-linux-*)			fmt=elf em=linux ;;
+   ppc-*-solaris*)			fmt=elf em=solaris ;;
+   ppc-*-macos*)				fmt=coff em=macos ;;
+-  ppc-*-nto*)				fmt=elf ;;
++  ppc-*-nto-*)				fmt=elf ;;
+   ppc-*-kaos*)				fmt=elf ;;
+ 
+   pru-*-*)				fmt=elf ;;
+@@ -397,7 +400,6 @@ case ${generic_target} in
+   sh-*-elf*)				fmt=elf ;;
+   sh-*-uclinux* | sh[12]-*-uclinux*)	fmt=elf em=uclinux ;;
+   sh-*-coff*)				fmt=coff ;;
+-  sh-*-nto*)				fmt=elf ;;
+   sh-*-pe*)				fmt=coff em=pe endian=little ;;
+   sh-*-kaos*)				fmt=elf ;;
+   shle*-*-kaos*)			fmt=elf ;;
+diff --git a/gas/testsuite/gas/arm/mapshort-elf.d b/gas/testsuite/gas/arm/mapshort-elf.d
+index d4790e595c6..f4ac5f41ab9 100644
+--- a/gas/testsuite/gas/arm/mapshort-elf.d
++++ b/gas/testsuite/gas/arm/mapshort-elf.d
+@@ -1,7 +1,7 @@
+ #objdump: --syms --special-syms -d
+ #name: ARM Mapping Symbols for .short (ELF version)
+ # This test is only valid on ELF based ports.
+-#notarget: *-*-pe *-*-wince
++#notarget: *-*-pe *-*-wince *-*-nto* *-*-qnx*
+ #source: mapshort.s
+ 
+ # Test the generation and use of ARM ELF Mapping Symbols
+

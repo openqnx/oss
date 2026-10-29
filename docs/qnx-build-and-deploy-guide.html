@@ -1,0 +1,691 @@
+<title>QNX Port Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --ground:#F5F7F9; --surface:#FFFFFF; --surface-2:#EEF1F5;
+  --ink:#14181D; --ink-2:#4C5763; --ink-3:#6F7B88;
+  --line:#D9DFE6; --line-2:#C3CCD6;
+  --accent:#A65B08; --accent-2:#C98328; --accent-soft:#FAF1E4;
+  --ok:#2C6E4E; --bad:#A93A2C; --info:#2B5C8A;
+  --code-bg:#151A21; --code-fg:#DDE4EC; --code-dim:#8494A6; --code-line:#2A323C;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1218; --surface:#151A21; --surface-2:#1B222B;
+    --ink:#E3E9F0; --ink-2:#A3AFBC; --ink-3:#7C8896;
+    --line:#252D37; --line-2:#333D49;
+    --accent:#E0A23C; --accent-2:#C98328; --accent-soft:#241C0E;
+    --ok:#5FB287; --bad:#E0796A; --info:#6FA8D8;
+    --code-bg:#0A0E13; --code-fg:#DDE4EC; --code-dim:#7B8A9C; --code-line:#222A34;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1218; --surface:#151A21; --surface-2:#1B222B;
+  --ink:#E3E9F0; --ink-2:#A3AFBC; --ink-3:#7C8896;
+  --line:#252D37; --line-2:#333D49;
+  --accent:#E0A23C; --accent-2:#C98328; --accent-soft:#241C0E;
+  --ok:#5FB287; --bad:#E0796A; --info:#6FA8D8;
+  --code-bg:#0A0E13; --code-fg:#DDE4EC; --code-dim:#7B8A9C; --code-line:#222A34;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--serif);
+     font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:0}
+header.masthead{border-bottom:2px solid var(--ink);margin-bottom:34px;padding-block:44px 22px}
+.eyebrow{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font-family:var(--sans);font-weight:700;font-size:clamp(30px,4.6vw,46px);line-height:1.08;
+   margin:0 0 14px;letter-spacing:-.02em;text-wrap:balance}
+.standfirst{font-size:19px;color:var(--ink-2);max-width:64ch;margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:26px;margin-top:26px;font-family:var(--sans)}
+.fact{display:flex;flex-direction:column;gap:2px}
+.fact b{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.fact span{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.cols{display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px;align-items:start}
+@media (max-width:980px){.cols{grid-template-columns:1fr;gap:0}}
+nav.toc{position:sticky;top:20px;font-family:var(--sans);font-size:13.5px;
+        border-left:2px solid var(--line);padding-left:16px}
+@media (max-width:980px){nav.toc{position:static;border-left:0;border-bottom:1px solid var(--line);
+  padding:0 0 22px;margin-bottom:26px}}
+nav.toc p{margin:0 0 8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+nav.toc a{display:block;padding:3px 0;color:var(--ink-2);text-decoration:none;border-bottom:0}
+nav.toc a:hover{color:var(--accent)}
+nav.toc .part{margin-top:14px;font-weight:600;color:var(--ink);font-size:12px;
+              letter-spacing:.06em;text-transform:uppercase}
+main{min-width:0;padding-bottom:80px}
+section{margin-bottom:46px;scroll-margin-top:20px}
+h2{font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+   color:var(--accent);margin:0 0 6px}
+h3{font-family:var(--sans);font-size:25px;font-weight:600;line-height:1.2;margin:0 0 14px;
+   letter-spacing:-.01em;text-wrap:balance}
+h4{font-family:var(--sans);font-size:16px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:70ch}
+ul,ol{max-width:70ch;padding-left:22px;margin:0 0 14px}
+li{margin-bottom:7px}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+code{font-family:var(--mono);font-size:.855em;background:var(--surface-2);
+     padding:1px 5px;border-radius:3px;color:var(--ink)}
+pre{background:var(--code-bg);color:var(--code-fg);font-family:var(--mono);font-size:13px;
+    line-height:1.62;padding:16px 18px;border-radius:7px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--code-dim)}
+pre .p{color:var(--accent-2)}
+.step{display:flex;gap:14px;align-items:baseline;margin:0 0 14px}
+.step .n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+         border:1px solid var(--line-2);border-radius:4px;padding:2px 7px;flex:none}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:13px 16px;
+      margin:0 0 16px;font-size:15.5px;max-width:70ch}
+.note b{font-family:var(--sans)}
+.warn{border-left:3px solid var(--bad)}
+.tablewrap{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;min-width:460px}
+th{text-align:left;font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+   color:var(--ink-3);border-bottom:1px solid var(--line-2);padding:0 12px 7px 0;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:9px 12px 9px 0;vertical-align:top}
+td:last-child,th:last-child{padding-right:0}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.ok{color:var(--ok);font-weight:600}
+.no{color:var(--bad);font-weight:600}
+hr.part{border:0;border-top:2px solid var(--ink);margin:56px 0 34px}
+.partlabel{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--ink-3);margin:0 0 6px}
+footer{border-top:1px solid var(--line);padding:22px 0 60px;font-family:var(--sans);
+       font-size:13px;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+<header class="masthead">
+  <p class="eyebrow">QNX SDP 8.0 &middot; aarch64le + x86_64</p>
+  <h1>Building 220 open source packages for QNX, from scratch</h1>
+  <p class="standfirst">Every step needed to reproduce this workspace on a bare Linux machine &mdash;
+     where each source comes from, what has to be patched and why, the exact compile and link
+     contract &mdash; and then how to put the result on a Raspberry Pi&nbsp;5 running QNX.</p>
+  <div class="facts">
+    <div class="fact"><b>220</b><span>packages</span></div>
+    <div class="fact"><b>2</b><span>architectures</span></div>
+    <div class="fact"><b>70</b><span>patches</span></div>
+    <div class="fact"><b>165</b><span>on-target tests</span></div>
+    <div class="fact"><b>~3.5 h</b><span>full rebuild</span></div>
+  </div>
+</header>
+
+<div class="cols">
+<nav class="toc">
+  <p>Contents</p>
+  <div class="part">Part I &mdash; Build</div>
+  <a href="#s0">0 &middot; Before you start</a>
+  <a href="#s1">1 &middot; The workspace</a>
+  <a href="#s2">2 &middot; env.sh</a>
+  <a href="#s3">3 &middot; Host tools</a>
+  <a href="#s4">4 &middot; Recipes &amp; sources</a>
+  <a href="#s5">5 &middot; Compile &amp; link contract</a>
+  <a href="#s6">6 &middot; Patching</a>
+  <a href="#s7">7 &middot; Build everything</a>
+  <a href="#s8">8 &middot; Audit</a>
+  <a href="#s9">9 &middot; Tests</a>
+  <a href="#s10">10 &middot; Worked example</a>
+  <div class="part">Part II &mdash; Deploy</div>
+  <a href="#s11">11 &middot; Pick a route</a>
+  <a href="#s12">12 &middot; System install</a>
+  <a href="#s13">13 &middot; Portable bundle</a>
+  <a href="#s14">14 &middot; Runtime environment</a>
+  <a href="#s15">15 &middot; Verify on target</a>
+  <a href="#s16">16 &middot; Troubleshooting</a>
+</nav>
+
+<main>
+
+<section id="s0">
+<h2>Step 0</h2>
+<h3>Before you start</h3>
+<p>You need a Linux build machine and an installed QNX SDP 8.0 with a valid licence.
+   Nothing from the SDP&rsquo;s prebuilt package set and nothing from
+   <code>repo.oss.qnx.com</code> is reused &mdash; every binary here is compiled from upstream
+   source, which is the whole point of the exercise.</p>
+<pre><code><span class="c"># QNX SDP 8.0, installed and licensed</span>
+source $QNX_SDP_ROOT/qnxsdp-env.sh
+qcc -V                 <span class="c"># should list gcc_ntoaarch64le and gcc_ntox86_64</span>
+
+<span class="c"># Build-machine packages (Ubuntu/Debian names)</span>
+sudo apt install build-essential git curl pkg-config \
+     autoconf automake libtool gettext bison flex nasm \
+     python3 python3-pip ninja-build meson cmake</code></pre>
+<div class="note"><b>CMake 4 caveat.</b> Many of these projects still declare
+  <code>cmake_minimum_required(VERSION &lt; 3.5)</code>, which CMake 4 rejects outright.
+  <code>env.sh</code> exports <code>CMAKE_POLICY_VERSION_MINIMUM=3.5</code> into the
+  environment &mdash; not just as a <code>-D</code> flag, because nested
+  <code>cmake -P</code> script runs (OpenCV&rsquo;s pkg-config generator, for one) never see
+  command-line defines.</div>
+</section>
+
+<section id="s1">
+<h2>Step 1</h2>
+<h3>The workspace</h3>
+<p>Everything lives in one directory, separate from the SDP, which stays untouched and
+   read-only throughout.</p>
+<pre><code>qnx-oss-ports/
+  env.sh              <span class="c"># source it to enter the build environment</span>
+  toolchain/          <span class="c"># CMake toolchain files + Meson cross files, per arch</span>
+  recipes/&lt;pkg&gt;/      <span class="c"># recipe.sh (+ patches/*.patch)</span>
+  scripts/qnxbuild    <span class="c"># the driver</span>
+  scripts/check-*     <span class="c"># five staging audits + the coverage report</span>
+  tests/              <span class="c"># one QNX test binary per package</span>
+  src/                <span class="c"># fetched upstream sources (shared across arches)</span>
+  build/&lt;arch&gt;/&lt;pkg&gt;/ <span class="c"># out-of-tree build dirs</span>
+  stage/&lt;arch&gt;/       <span class="c"># the install tree -- this is the deliverable</span>
+  logs/  dist/</code></pre>
+<h4>What belongs in version control</h4>
+<p>Only what is written by hand: the recipes and their patches, the driver and audits,
+   the toolchain files, the tests and the docs &mdash; 497 files. Everything else is
+   regenerated from those, and amounts to about 30&nbsp;GB.</p>
+<pre><code><span class="c"># .gitignore</span>
+/src/            /build/          /stage/       /stage.prev-*/
+/logs/           /dist/           /hosttools/   /tmp/
+/tests/build/
+/tests/ssh/      <span class="c">&lt;- the private key for the lab targets. Never commit this.</span></code></pre>
+<div class="note warn"><b>Two gitignore rules that are easy to get backwards.</b>
+  A pattern has <em>no trailing comment</em> &mdash; it runs to the end of the line, spaces
+  included &mdash; so <code>/src/ # upstream checkouts</code> matches nothing and the next
+  <code>git add</code> starts ingesting 12&nbsp;GB. And a pattern whose only slash is at the
+  end matches <em>at any depth</em>: an unanchored <code>src/</code> also swallows
+  <code>tests/src/</code>, quietly dropping all 165 hand-written test sources. Anchor them
+  with a leading slash, as above.</div>
+
+<p>The target prefix is <code>/usr/local</code>. Staging mirrors it per architecture at
+   <code>stage/&lt;arch&gt;/usr/local</code>, so a file that will live at
+   <code>/usr/local/lib/libfoo.so.1</code> on the target sits at
+   <code>stage/aarch64le/usr/local/lib/libfoo.so.1</code> on the host. Every baked-in path
+   &mdash; pkg-config prefixes, GStreamer plugin dirs, gettext locale roots &mdash; is
+   therefore already correct for the target.</p>
+</section>
+
+<section id="s2">
+<h2>Step 2</h2>
+<h3>What <code>env.sh</code> sets up</h3>
+<p><code>source ./env.sh aarch64le</code> (or <code>x86_64</code>) does six things. Each one
+   exists because something broke without it.</p>
+
+<div class="step"><span class="n">1</span><div><b>Rebuilds <code>PATH</code> from a remembered base.</b>
+  Both this file and the SDP&rsquo;s <code>qnxsdp-env.sh</code> <em>prepend</em> to
+  <code>PATH</code> every time they are sourced, and the driver sources it twice per package.
+  At 218 packages <code>PATH</code> passed the kernel&rsquo;s 128&nbsp;KB limit for one
+  environment string and every <code>exec</code> failed with &ldquo;Argument list too
+  long&rdquo; &mdash; including the <code>dirname</code> that computes the workspace root,
+  which then silently became the current directory.</div></div>
+
+<div class="step"><span class="n">2</span><div><b>Sources the SDP environment</b> and derives the
+  per-arch triple: <code>aarch64-unknown-nto-qnx8.0.0</code> or
+  <code>x86_64-pc-nto-qnx8.0.0</code>, with <code>QCC_TARGET=gcc_nto&lt;arch&gt;</code>.</div></div>
+
+<div class="step"><span class="n">3</span><div><b>Points pkg-config at staging only.</b>
+  <code>PKG_CONFIG_LIBDIR</code> is set (not <code>PKG_CONFIG_PATH</code>, which only adds)
+  and <code>PKG_CONFIG_SYSROOT_DIR</code> maps the recorded <code>/usr/local</code> onto the
+  staging tree. Host <code>.pc</code> files can then never leak in.</div></div>
+
+<div class="step"><span class="n">4</span><div><b>Creates compatibility stub archives.</b> QNX folds
+  <code>librt</code>, <code>libdl</code>, <code>libpthread</code>, <code>libcrypt</code>,
+  <code>libutil</code>, <code>libresolv</code>, <code>libanl</code> and <code>libatomic</code>
+  into libc, but portable build systems emit <code>-lrt -ldl -lpthread</code>
+  unconditionally. Empty <code>.a</code> files in the staging lib dir turn those flags into
+  no-ops &mdash; far cheaper than patching 200 build systems.
+  <em>Not</em> <code>libregex</code>: QNX ships a real one, and an empty stub would shadow it.</div></div>
+
+<div class="step"><span class="n">5</span><div><b>Builds the link sysroot (&ldquo;linkroot&rdquo;).</b>
+  The QNX gcc spec injects its own <code>-rpath-link&nbsp;${QNX_TARGET}/&lt;arch&gt;/...</code>
+  <em>ahead</em> of anything you pass, and <code>ld</code> takes the first match. For any
+  soname the SDP also ships &mdash; <code>libssl.so.3</code>, <code>libcrypto.so.3</code>,
+  <code>libxml2.so.2</code>, <code>libzstd.so.1</code> &mdash; the SDP&rsquo;s older copy won.
+  That is how libcurl&rsquo;s valid call to <code>SSL_get0_group_name</code> came out as an
+  undefined reference: it was checked against the SDP&rsquo;s OpenSSL, not the 3.5.1 we built.
+  The fix is a shadow tree of symlinks with our libraries overwriting the SDP names, and
+  <code>QNX_TARGET</code> pointed at it &mdash; <code>ld</code> expands that variable from the
+  environment, so its own spec redirects to us without the SDP being touched.</div></div>
+
+<div class="step"><span class="n">6</span><div><b>Puts <code>hosttools/bin</code> on
+  <code>PATH</code></b> and <code>hosttools/share/aclocal</code> on
+  <code>ACLOCAL_PATH</code>, for the native generators built in the next step.</div></div>
+</section>
+
+<section id="s3">
+<h2>Step 3</h2>
+<h3>Host tools: the generators a cross build must <em>run</em></h3>
+<p>This is the single most common way a cross build fails. A package compiles a helper with
+   the cross compiler and then executes it on the build machine to generate a source file.
+   The helper is a QNX binary, so Linux refuses it &mdash;
+   <code>Could not open '/usr/lib/ldqnx-64.so.2'</code>.</p>
+<pre><code>./scripts/build-host-tools.sh      <span class="c"># ~15 min, builds into hosttools/</span></code></pre>
+<div class="tablewrap"><table>
+<thead><tr><th>Native tool</th><th>Needed because</th></tr></thead>
+<tbody>
+<tr><td><code>gettext</code></td><td>GLib, GStreamer and most of GNOME run <code>xgettext</code>/<code>msgfmt</code> during the build</td></tr>
+<tr><td><code>nasm</code></td><td>the x86_64 assembly in dav1d, openh264, libvpx, aom and FFmpeg is NASM syntax</td></tr>
+<tr><td><code>wayland-scanner</code></td><td>turns Wayland protocol XML into C at build time</td></tr>
+<tr><td><code>libdatrie</code> / <code>trietool</code></td><td>libthai generates its word-break dictionary by running it</td></tr>
+<tr><td><code>CPython 3.14</code></td><td>cross-building CPython needs a native interpreter of the <em>same</em> version; <code>--with-build-python</code> rejects a mismatch</td></tr>
+<tr><td><code>xorg-macros</code></td><td>every X.Org <code>configure.ac</code> opens with <code>XORG_MACROS_VERSION</code>; autoreconf refuses without it</td></tr>
+<tr><td><code>gtk-doc</code> stubs</td><td>without <code>GTK_DOC_CHECK</code>, autoconf leaves the call unexpanded and the generated <code>configure</code> dies in the shell</td></tr>
+<tr><td><code>gperf</code>, <code>unifdef</code>, <code>libyaml</code>, <code>ruby</code></td><td>perfect-hash and preprocessing generators; Ruby drives some GNOME builds</td></tr>
+</tbody></table></div>
+<div class="note"><b>Ruby needs <code>--with-opt-dir</code>.</b> For its psych/YAML extension,
+  <code>CPPFLAGS</code>, <code>LDFLAGS</code> and even <code>--with-libyaml-dir</code> do
+  <em>not</em> reach the extension build. Only <code>--with-opt-dir="$HT"</code> does.</div>
+</section>
+
+<section id="s4">
+<h2>Step 4</h2>
+<h3>Recipes, and where every source comes from</h3>
+<p>One directory per package. The recipe is plain shell: a few variables, and optional hook
+   functions for anything that does not fit the default flow.</p>
+<pre><code><span class="c"># recipes/enca/recipe.sh</span>
+VERSION=1.19; GIT=https://github.com/nijel/enca.git; REF=1.19
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-external )
+do_patch()  { cd "$SRCROOT" &amp;&amp; autoreconf -fi; }
+do_build()  { <span class="c">... see the worked example in Step 10 ...</span> }</code></pre>
+<div class="tablewrap"><table>
+<thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>GIT</code> + <code>REF</code></td><td>shallow clone at a tag or commit &mdash; used by 168 recipes</td></tr>
+<tr><td><code>TARBALL</code></td><td>release tarball URL, cached in <code>dist/</code> &mdash; used by 49 recipes</td></tr>
+<tr><td><code>BUILDSYS</code></td><td><code>autotools</code> (69) &middot; <code>meson</code> (45) &middot; <code>custom</code> (18) &middot; <code>cmake</code> (16, also the default)</td></tr>
+<tr><td><code>DEPS</code></td><td>other recipes, built recursively before this one</td></tr>
+<tr><td><code>*_ARGS_EXTRA</code></td><td>extra flags appended to the configure step for that build system</td></tr>
+<tr><td><code>CONF_ENV</code></td><td>environment for <code>configure</code>, typically an <code>ac_cv_*</code> override</td></tr>
+<tr><td><code>SUBDIR</code> / <code>SRCROOT</code></td><td>when the buildable tree is not the repository root</td></tr>
+<tr><td><code>do_fetch</code> &hellip; <code>do_install</code></td><td>hooks that replace the corresponding default stage</td></tr>
+</tbody></table></div>
+<h4>Choosing a tarball over a git tag</h4>
+<p>Several projects ship <em>generated</em> files in their release tarballs that a git checkout
+   does not have and that you cannot regenerate without more host tooling: GTK4&rsquo;s CSS
+   (needs <code>sassc</code>), the Xfce <code>*-aliasdef.c</code> files, enchant&rsquo;s
+   gnulib import. For those, the tarball is the correct source, not a shortcut.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Upstream host</th><th class="num">Packages</th></tr></thead>
+<tbody>
+<tr><td>github.com</td><td class="num">116</td></tr>
+<tr><td>gitlab.freedesktop.org</td><td class="num">31</td></tr>
+<tr><td>gitlab.gnome.org</td><td class="num">14</td></tr>
+<tr><td>ftp.gnu.org</td><td class="num">11</td></tr>
+<tr><td>archive.xfce.org</td><td class="num">9</td></tr>
+<tr><td>gitlab.com &middot; sourceforge &middot; download.gnome.org &middot; chromium.googlesource.com &middot; webkitgtk.org &middot; gnupg.org &middot; videolan &middot; x.org &middot; tcpdump &middot; sqlite</td><td class="num">39</td></tr>
+</tbody></table></div>
+<p>The complete per-package list &mdash; exact URL, tag, build system, flags and patches
+   &mdash; is in <code>docs/qnx-port-recipes.html</code>, generated from the recipes
+   themselves so it cannot drift.</p>
+</section>
+
+<section id="s5">
+<h2>Step 5</h2>
+<h3>The compile and link contract</h3>
+<p>Every package is built with the same flags, set centrally. If you are porting a package by
+   hand rather than through the driver, this is the contract to reproduce.</p>
+
+<h4>CMake &mdash; <code>toolchain/qnx-&lt;arch&gt;.cmake</code></h4>
+<pre><code>set(CMAKE_SYSTEM_NAME QNX)
+set(CMAKE_C_COMPILER   "${QNX_HOST}/usr/bin/qcc")
+set(CMAKE_CXX_COMPILER "${QNX_HOST}/usr/bin/q++")
+set(CMAKE_C_COMPILER_TARGET gcc_ntoaarch64le)
+
+<span class="c"># Assemble with the cross-GCC driver, not qcc: qcc accepts -march but does</span>
+<span class="c"># not forward it to the assembler, so .S files needing an ISA extension fail.</span>
+set(CMAKE_ASM_COMPILER "${QNX_HOST}/usr/bin/aarch64-unknown-nto-qnx8.0.0-gcc")
+
+<span class="c"># -isystem, not -I: with -I the staging headers outrank a project's own</span>
+<span class="c"># include dirs, and vendored copies (protobuf's abseil) get cross-wired.</span>
+set(CMAKE_C_FLAGS_INIT   "-isystem ${QNX_STAGE}${QNX_PREFIX}/include")
+set(CMAKE_CXX_FLAGS_INIT "-std=gnu++17 -isystem ${QNX_STAGE}${QNX_PREFIX}/include")
+
+<span class="c"># QNX splits libc: these are never implicit.</span>
+set(CMAKE_C_STANDARD_LIBRARIES_INIT "-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib ...")</code></pre>
+<div class="note"><b>Why <code>-std=gnu++17</code> and not <code>-std=c++17</code>.</b>
+  Strict-ANSI mode switches off QNX&rsquo;s <code>__EXT_POSIX1*</code> / <code>__EXT_QNX</code>
+  guards, and <code>::stat</code>, <code>::fstat</code>, <code>::getpid</code> and
+  <code>::isatty</code> simply disappear. The GNU dialect keeps them. The standard goes in
+  <code>CMAKE_CXX_FLAGS</code> itself because <code>check_cxx_source_compiles</code> often
+  clears <code>CMAKE_REQUIRED_FLAGS</code>, and QNX&rsquo;s libc++ hard-errors below C++11.</div>
+
+<h4>Autotools</h4>
+<pre><code>CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" \
+CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" \
+CFLAGS="$CPPFLAGS"  CXXFLAGS="$CPPFLAGS" \
+LDFLAGS="-L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib \
+         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+"$S/configure" --host="$QNX_TRIPLE" --prefix=/usr/local</code></pre>
+<ul>
+<li><b><code>_QNX_SOURCE</code> goes on <code>CC</code>/<code>CXX</code>, not only in
+  <code>CFLAGS</code>.</b> A configure script may overwrite <code>CXXFLAGS</code> outright
+  (zimg sets it to <code>-fvisibility=hidden</code> and drops everything you passed). The
+  compiler variable survives that.</li>
+<li><b><code>CPPFLAGS</code> matters as much as <code>CFLAGS</code>.</b> Autoconf runs its
+  header probes with <code>CPPFLAGS</code> only; leave it unset and <code>configure</code>
+  records the SDP&rsquo;s version of a library while compilation sees yours.</li>
+<li><b><code>CPP</code> must be the cross-GCC driver.</b> Autoconf otherwise derives
+  <code>"$CC -E"</code>, and qcc mishandles some preprocess-only invocations &mdash;
+  libgpg-error then builds its error tables into empty headers, silently.</li>
+<li><b>Staging include dirs come before the SDP&rsquo;s.</b> The SDP ships its own zlib 1.2.13
+  and friends; the brief is to build against what this workspace produced.</li>
+</ul>
+<div class="note warn"><b>One unbroken continuation.</b> Every assignment above must stay on
+  one backslash-continued command. A comment line in the middle ends the command, and the
+  assignments before it become ordinary shell variables <code>configure</code> never sees.
+  That bug silently cost the driver its <code>CC</code>, <code>CPP</code> and all three flag
+  variables for every autotools package &mdash; and they still built, because
+  <code>--host</code> makes autoconf find the cross compiler by itself. Which is exactly why
+  it went unnoticed.</div>
+
+<h4>Meson</h4>
+<pre><code>meson setup "$B" "$S" --cross-file toolchain/meson-&lt;arch&gt;.ini \
+      --native-file toolchain/meson-native.ini \
+      --prefix=/usr/local --buildtype=release --default-library=both</code></pre>
+<p>The native file tells Meson where <em>build-machine</em> dependencies live
+   (<code>hosttools/</code>), separately from the cross file&rsquo;s QNX staging tree.</p>
+<div class="note warn"><b><code>--default-library=both</code> is not always right.</b> ThorVG
+  defines <code>TVG_STATIC</code> when it builds a static library, and the shared object
+  produced in the same pass then exported <em>zero</em> symbols. It links, it installs, and
+  every consumer fails at run time. That recipe builds shared-only.
+  <code>scripts/check-devlinks</code> now fails on any staged <code>.so</code> that exports
+  nothing.</div>
+</section>
+
+<section id="s6">
+<h2>Step 6</h2>
+<h3>Patching</h3>
+<p>Patches live in <code>recipes/&lt;pkg&gt;/patches/*.patch</code>, are applied with
+   <code>patch -p1</code> in filename order, and are applied <b>on first fetch only</b>.
+   The <code>do_patch</code> hook runs afterwards and is the place for regeneration
+   (<code>autoreconf -fi</code>) or edits easier to express as <code>sed</code>.</p>
+<pre><code><span class="c"># Adding a patch to a package that has already been fetched:</span>
+cd src/&lt;pkg&gt; &amp;&amp; git diff &gt; ../../recipes/&lt;pkg&gt;/patches/0002-fix-thing.patch
+rm -rf src/&lt;pkg&gt;                      <span class="c"># REQUIRED -- see the warning below</span>
+./scripts/qnxbuild -f &lt;pkg&gt;</code></pre>
+<div class="note warn"><b>The trap that cost two rebuilds.</b> Dropping a new patch file into
+  a recipe whose source is <em>already</em> in <code>src/</code> does nothing at all &mdash;
+  the fetch stage is skipped, so the patch is never applied, and the build succeeds with the
+  bug still in it. Delete <code>src/&lt;pkg&gt;</code> first. And a plain
+  <code>qnxbuild &lt;pkg&gt;</code> after that still reports &ldquo;already built
+  (skip)&rdquo;; you need <code>-f</code>.</div>
+<h4>What the 70 patches actually do</h4>
+<div class="tablewrap"><table>
+<thead><tr><th>Category</th><th>Representative example</th></tr></thead>
+<tbody>
+<tr><td>Missing Linux-only headers</td><td>cairo&rsquo;s Xlib backend includes <code>&lt;sys/shm.h&gt;</code>; QNX has no SysV shared memory at all, so the patch takes cairo&rsquo;s own no-SHM path</td></tr>
+<tr><td>Linux-only runtime paths</td><td>gnulib&rsquo;s <code>relocatable.c</code> finds its own install prefix by reading <code>/proc/self/maps</code>; the QNX branch uses <code>dladdr()</code>. Without it enchant loaded <em>zero</em> spelling providers</td></tr>
+<tr><td>Declared-but-unimplemented</td><td>QNX defines <code>TIOCPKT</code> but <code>devc-pty</code> does not implement it &mdash; VTE had to be told so at <em>both</em> call sites, because <code>vte.cc</code> strips a packet header byte</td></tr>
+<tr><td>Missing C++ library pieces</td><td>QNX libc++ has no floating-point <code>std::from_chars</code>; VTE gets a <code>strtod</code> path with equivalent rejection rules</td></tr>
+<tr><td>Address-space assumptions</td><td>JavaScriptCore reserves up to 8&nbsp;GB for its structure heap and aborts on QNX; the patch adds an <code>OS(QNX)</code> branch capping it at 128&nbsp;MB</td></tr>
+<tr><td>Host/target confusion</td><td>LuaJIT&rsquo;s <code>buildvm</code> was compiled as <code>LUAJIT_OS_OTHER</code> while the target was <code>POSIX</code>; <code>LJ_HASPROFILE</code> then differed, <code>jit_State</code> changed size, and dispatch offsets were 16 bytes off &mdash; <code>print(1)</code> segfaulted</td></tr>
+<tr><td>Toolchain era</td><td>CMake 4 rejecting an <code>if()</code> on an empty framework variable; ICU 76 needing <code>U_SHOW_CPLUSPLUS_HEADER_API 0</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s7">
+<h2>Step 7</h2>
+<h3>Build everything</h3>
+<pre><code>cd ~/oss
+./scripts/qnxbuild -l                      <span class="c"># status of every recipe</span>
+./scripts/qnxbuild $(ls recipes)           <span class="c"># both arches, deps resolved recursively</span>
+
+./scripts/qnxbuild -a aarch64le vsomeip    <span class="c"># one arch</span>
+./scripts/qnxbuild -f gettext              <span class="c"># force a rebuild</span></code></pre>
+<p>Dependencies are built recursively and each package stamps itself at
+   <code>stage/&lt;arch&gt;/.stamp/&lt;pkg&gt;</code>. A full from-scratch rebuild of all 220
+   packages for both architectures takes about 3 h 25 min on a 16-core machine. Logs land in
+   <code>logs/&lt;pkg&gt;.&lt;arch&gt;.log</code>.</p>
+<div class="note"><b>Order matters more than it looks.</b> <code>gettext</code> must be built
+  with <code>--enable-nls</code>. It was originally <code>--disable-nls</code>, which
+  installed no <code>libintl</code> at all &mdash; and 56 staged libraries silently linked the
+  SDP&rsquo;s prebuilt <code>libintl.so.1</code> instead. Everything worked; it was simply not
+  our build. That is the class of failure these audits exist to catch.</div>
+</section>
+
+<section id="s8">
+<h2>Step 8</h2>
+<h3>Audit the staging tree</h3>
+<p>Five independent checks. All five pass on both architectures; each was written after a real
+   defect got past the previous ones.</p>
+<pre><code>./scripts/check-all            <span class="c"># every audit, both architectures, one verdict</span></code></pre>
+<p>Run them individually while you are working on one:</p>
+<pre><code>./scripts/check-undefined &lt;arch&gt;  <span class="c"># unresolved symbols in staged libraries</span>
+./scripts/check-devlinks          <span class="c"># missing lib&lt;name&gt;.so symlink, or a .so exporting nothing</span>
+./scripts/check-sdp-leak          <span class="c"># a staged binary that falls back to an SDP prebuilt</span>
+./scripts/check-dupes             <span class="c"># one library stem staged under two sonames</span>
+./scripts/check-artifacts         <span class="c"># non-QNX ELF, wrong arch, dangling link, build path in a .pc</span>
+./scripts/check-test-coverage &lt;arch&gt;   <span class="c"># a package no test exercises</span></code></pre>
+<div class="note warn"><b>Use the wrapper, and here is why.</b> The audits do not share one
+  convention. <code>check-undefined</code> and <code>check-test-coverage</code> take the
+  architecture as an argument and default to <code>aarch64le</code>; the other four loop over
+  both themselves. Run the five in a row and x86_64 is genuinely verified four times out of
+  five &mdash; the run still looks clean. Piping each through <code>tail</code> to shorten the
+  output compounds it, because a pipeline reports <code>tail</code>&rsquo;s exit status, which
+  is always&nbsp;0. <code>check-all</code> calls each audit correctly, keeps every exit code,
+  and prints one verdict at the end.</div>
+<div class="tablewrap"><table>
+<thead><tr><th>Audit</th><th>The defect that motivated it</th></tr></thead>
+<tbody>
+<tr><td><code>check-sdp-leak</code></td><td>56 libraries linking the SDP&rsquo;s <code>libintl</code>. Rewritten to an allowlist of genuine QNX OS libraries, because a denylist could not see a library we had never built</td></tr>
+<tr><td><code>check-dupes</code></td><td>gRPC&rsquo;s <code>PROVIDER=module</code> installed a second protobuf and a second abseil &mdash; 89 libraries staged twice, symlinks pointing at whichever landed last. <code>test_grpc</code> passed; protobuf aborts when a descriptor registers twice, so that was luck</td></tr>
+<tr><td><code>check-devlinks</code></td><td>ThorVG&rsquo;s shared object exporting zero symbols</td></tr>
+<tr><td><code>check-artifacts</code></td><td>a host Linux binary or a wrong-architecture object reaching the staging tree. Note that QNX 8&rsquo;s libc soname is literally <code>libc.so.6</code>, the same string glibc uses, so <code>DT_NEEDED</code> cannot tell them apart &mdash; glibc <em>symbol versioning</em> can</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s9">
+<h2>Step 9</h2>
+<h3>Build and bundle the tests</h3>
+<p>One QNX binary per package &mdash; 165 of them. Each links against the staging tree exactly
+   as a downstream application would, which proves the headers, libraries and link lines are
+   usable; running them on a target proves the ports actually work.</p>
+<pre><code>./tests/build-tests.sh                 <span class="c"># both arches -> stage/&lt;arch&gt;/usr/local/bin/qnx-port-tests/</span>
+./tests/make-bundle.sh aarch64le       <span class="c"># self-contained tarball in dist/ (~220 MB)</span></code></pre>
+<p>The bundle carries the test binaries, their full library closure, and the runtime data some
+   libraries read: the CPython stdlib, enchant providers, GStreamer plugins, xkb keymaps,
+   fontconfig, terminfo and libthai&rsquo;s dictionary.</p>
+</section>
+
+<section id="s10">
+<h2>Step 10</h2>
+<h3>Worked example: <code>enca</code>, end to end</h3>
+<p>A small package that exhibits the single most instructive cross-compilation failure, so it
+   is worth following completely.</p>
+
+<h4>1. Where it comes from</h4>
+<pre><code>git clone --depth 1 -b 1.19 https://github.com/nijel/enca.git src/enca</code></pre>
+
+<h4>2. What goes wrong</h4>
+<p>enca compiles a helper, <code>tools/make_hash</code>, and then <em>runs</em> it to generate
+   <code>encodings.h</code>. Built for the target it is a QNX binary, and the build dies in
+   the Linux binfmt handler:</p>
+<pre><code>sed -f encodings.sed tools/encodings.dat | ./make_hash &gt;encodings.h
+aarch64-binfmt-P: Could not open '/usr/lib/ldqnx-64.so.2': No such file or directory
+make[2]: *** [Makefile:671: encodings.h] Error 255</code></pre>
+
+<h4>3. The fix</h4>
+<p>The generated header is architecture-independent, so build the generator natively, let the
+   cross build fail once, swap the helper, and resume. That is the whole recipe:</p>
+<pre><code>VERSION=1.19; GIT=https://github.com/nijel/enca.git; REF=1.19
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-external )
+
+do_patch() { cd "$SRCROOT" &amp;&amp; autoreconf -fi; }
+
+do_build() {
+  cc -O1 -o "$B/make_hash_native" "$S/tools/make_hash.c" -lm   <span class="c"># native</span>
+  make -C "$B" -j"$(nproc)" || true                            <span class="c"># expected to fail here</span>
+  install -m 755 "$B/make_hash_native" "$B/tools/make_hash"    <span class="c"># swap in the native one</span>
+  make -C "$B" -j"$(nproc)"                                    <span class="c"># resume</span>
+}</code></pre>
+<div class="note"><b>Read your logs with this in mind.</b> <code>enca</code>&rsquo;s build log
+  contains <code>make: *** Error 2</code> on both architectures <em>by design</em> &mdash; the
+  <code>|| true</code> pass. It is the only package in the tree where a failure marker in the
+  log is not a failure, which is precisely why a log scan alone is not a verification method.
+  What confirms it: a 426-line generated <code>encodings.h</code> and 60 exported
+  <code>enca_*</code> symbols in the staged library.</div>
+
+<h4>4. Build, audit, test</h4>
+<pre><code>./scripts/qnxbuild enca
+./scripts/check-artifacts
+<span class="c"># exercised on target by tests/src/test_misc_libs.c</span></code></pre>
+</section>
+
+<hr class="part">
+<p class="partlabel">Part II</p>
+<h3 style="font-size:32px;margin-bottom:28px">Putting it on a Raspberry Pi 5</h3>
+
+<section id="s11">
+<h2>Step 11</h2>
+<h3>Pick a route</h3>
+<p>The reference target is a Raspberry Pi 5 running
+   <code>QNX 8.0.0 RaspberryPi5 aarch64le</code>. Its filesystem layout decides the route:</p>
+<pre><code>ifs          on /        type ifs     <span class="c"># read-only boot image</span>
+/dev/hd0t178 on /usr     type qnx6    <span class="c"># writable, 9.9G (5.8G free)</span>
+/dev/hd0t179 on /data    type qnx6    <span class="c"># writable, 19G (15G free)</span></code></pre>
+<div class="tablewrap"><table>
+<thead><tr><th>Route</th><th>Needs root</th><th>Use when</th></tr></thead>
+<tbody>
+<tr><td><b>A &mdash; system install</b> to <code>/usr/local</code></td><td class="no">yes</td><td>the normal choice; every path compiled into the binaries is already correct</td></tr>
+<tr><td><b>B &mdash; portable bundle</b> in <code>$HOME</code></td><td class="ok">no</td><td>no root, or several builds side by side; needs environment overrides</td></tr>
+<tr><td><b>C &mdash; NFS</b>, read-only</td><td class="no">yes</td><td>target too small to hold the tree (a default <code>mkqnximage</code> VM has a 146 MB disk)</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="s12">
+<h2>Step 12</h2>
+<h3>Route A &mdash; system install to <code>/usr/local</code></h3>
+<p>The staging tree <em>is</em> the deliverable: <code>stage/aarch64le/usr/local</code> is a
+   drop-in overlay for the target&rsquo;s <code>/usr/local</code>.</p>
+<pre><code><span class="c"># 1. On the build machine -- pack the tree (about 1.2 GB unstripped)</span>
+cd ~/oss
+tar czf qnx-local-aarch64le.tar.gz -C stage/aarch64le/usr local
+
+<span class="c"># 2. Copy it to the Pi (HOME is on /data, which has room)</span>
+scp qnx-local-aarch64le.tar.gz qnxuser@<target-ip>:
+
+<span class="c"># 3. On the Pi -- unpack into /usr, which needs root</span>
+ssh qnxuser@<target-ip>
+sudo tar xzf ~/qnx-local-aarch64le.tar.gz -C /usr
+ls /usr/local/lib | wc -l</code></pre>
+<div class="note"><b>Trim it first if you want.</b> The tree is unstripped and carries static
+  archives, headers and <code>.pc</code> files that a runtime-only target does not need.
+  <code>find /usr/local -name '*.a' -delete</code> and
+  <code>ntoaarch64-strip</code> on the shared objects take it down substantially. Keep the
+  headers if the Pi is also a development machine.</div>
+</section>
+
+<section id="s13">
+<h2>Step 13</h2>
+<h3>Route B &mdash; portable bundle, no root</h3>
+<pre><code><span class="c"># On the build machine</span>
+./tests/make-bundle.sh aarch64le
+./tests/deploy-and-run.sh aarch64le <target-ip></code></pre>
+<p>That unpacks under <code>$HOME</code> on the target &mdash; deliberately not
+   <code>/tmp</code>, which on a small QNX image is a RAM disk where a 220 MB copy closes the
+   connection mid-transfer and looks like a network fault. The bundle is relocatable: nothing
+   inside it assumes <code>/usr/local</code>, because
+   <code>bin/qnx-port-tests/run-on-target.sh</code> sets every path from its own location.</p>
+<h4>Route C &mdash; NFS, for targets with no room</h4>
+<pre><code>./tests/run-over-nfs.sh x86_64 <target-ip> root</code></pre>
+<p>The target mounts the build machine&rsquo;s home directory <b>read-only</b>
+   (<code>fs-nfs3 -r</code>) and runs everything in place; only <code>/tmp</code> is written.
+   If the image also lacks QNX&rsquo;s own split-libc shims the script carries them from the
+   SDP alongside the bundle.</p>
+</section>
+
+<section id="s14">
+<h2>Step 14</h2>
+<h3>The runtime environment</h3>
+<p>QNX has no <code>ld.so.conf</code>; <code>/usr/local/lib</code> is not searched by default.
+   These are the variables that matter, and every one of them was added because something
+   failed without it.</p>
+<pre><code><span class="c"># ~/.profile on the target (Route A paths shown)</span>
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export PATH=/usr/local/bin:$PATH
+
+export XKB_CONFIG_ROOT=/usr/local/share/X11/xkb     <span class="c"># keymaps</span>
+export FONTCONFIG_PATH=/usr/local/etc/fonts         <span class="c"># font config</span>
+export TERMINFO=/usr/local/share/terminfo           <span class="c"># ncurses</span>
+export LIBTHAI_DICTDIR=/usr/local/share/libthai     <span class="c"># compiled-in path is wrong when relocated</span>
+
+<span class="c"># GStreamer: elements are loadable modules, and the registry must be writable</span>
+export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0
+export GST_PLUGIN_SCANNER=/usr/local/libexec/gstreamer-1.0/gst-plugin-scanner
+export GST_REGISTRY=/tmp/gst-registry.bin
+
+<span class="c"># Wayland refuses an XDG_RUNTIME_DIR that is not a 0700 dir owned by you</span>
+export XDG_RUNTIME_DIR=/tmp/run.$(id -u)
+mkdir -p "$XDG_RUNTIME_DIR" &amp;&amp; chmod 700 "$XDG_RUNTIME_DIR"</code></pre>
+<div class="note"><b>Python needs more than <code>PYTHONHOME</code>.</b> A CPython embedded
+  with an isolated config ignores <code>PYTHONHOME</code> entirely. It then searches
+  <code>PATH</code>, finds the system <code>/system/bin/python3</code>, and loads
+  <em>QNX&rsquo;s</em> stdlib and prebuilt <code>_ssl</code>, <code>_ctypes</code> and
+  <code>_sqlite3</code> &mdash; a test that looked like it was exercising our Python and was
+  not. Set <code>PyConfig.home</code> in the embedding code and assert the module paths.</div>
+</section>
+
+<section id="s15">
+<h2>Step 15</h2>
+<h3>Verify on the target</h3>
+<pre><code>export LD_LIBRARY_PATH=/usr/local/lib
+/usr/local/bin/qnx-port-tests/run-on-target.sh</code></pre>
+<pre><code>PASS test_webkit
+PASS test_javascriptcore
+PASS test_xfce_apps
+<span class="c">--------------------------------------------</span>
+passed: 165   failed: 0</code></pre>
+<div class="tablewrap"><table>
+<thead><tr><th>Target</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td><code>QNX qnxpi 8.0.0 RaspberryPi5 aarch64le</code> (hardware)</td><td class="ok">165 / 165</td></tr>
+<tr><td><code>QNX 8.0.0 x86pc x86_64</code> (QEMU, 146 MB image, over NFS)</td><td class="ok">165 / 165</td></tr>
+</tbody></table></div>
+<p>Each test prints one line per check and a final <code>PASS</code>/<code>FAIL</code>; the
+   runner tallies them and exits non-zero if any test failed, so it drops straight into CI.</p>
+</section>
+
+<section id="s16">
+<h2>Step 16</h2>
+<h3>Troubleshooting</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
+<tbody>
+<tr><td><code>ldd:FATAL: Could not load library libfoo.so.N</code></td><td><code>LD_LIBRARY_PATH</code> does not include <code>/usr/local/lib</code> &mdash; or, with a bundle, the library is genuinely missing because the bundle&rsquo;s closure was computed before you added a test. Rebuild the bundle</td></tr>
+<tr><td><code>Argument list too long</code> on every command</td><td><code>PATH</code> has grown past the 128 KB environment limit from repeated sourcing. Start a fresh shell</td></tr>
+<tr><td>Tests that write files start failing, more each run</td><td>the target filesystem is full. A 61 MB <code>/data</code> reached 100% after a few runs and produced a growing, misleading failure list. QNX also does not reclaim space until a <code>sync</code> settles</td></tr>
+<tr><td>Every Wayland test fails on the lockfile</td><td><code>XDG_RUNTIME_DIR</code> was deleted by a <code>/tmp</code> cleanup, or is not 0700 and owned by you</td></tr>
+<tr><td>GStreamer finds no elements</td><td><code>GST_PLUGIN_PATH</code> unset, or <code>GST_REGISTRY</code> points somewhere unwritable so every run rescans</td></tr>
+<tr><td>A program aborts with no output</td><td>stdout was buffered and went down with the abort. The test harness calls <code>setvbuf(stdout, NULL, _IONBF, 0)</code> for exactly this reason. For the real cause, use QNX&rsquo;s <code>dumper</code> and the SDP&rsquo;s cross gdb (<code>ntoaarch64-gdb</code>) on the core file</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>Known limits</h2>
+<h3>What cannot be built, and why</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Package</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td>MIT-SHM paths in X11 / cairo</td><td>QNX has no SysV shared memory &mdash; no <code>shmget</code>, no <code>shmat</code>, no <code>&lt;sys/shm.h&gt;</code>. Structurally impossible, not a porting gap</td></tr>
+<tr><td>Mesa, Vulkan, GStreamer-GL</td><td>the only EGL on QNX belongs to Screen, and its <code>EGLNativeDisplayType</code> is an integer handle rather than a display pointer</td></tr>
+<tr><td>Weston</td><td>needs the DRM/KMS and input stack QNX does not expose</td></tr>
+<tr><td>zenoh-c, Kuksa</td><td>no Rust toolchain targets QNX 8</td></tr>
+<tr><td>can-utils</td><td>SocketCAN is a Linux kernel interface</td></tr>
+<tr><td>gobject-introspection</td><td>scans by <em>executing</em> target binaries on the build host</td></tr>
+<tr><td>X11 / Wayland windowing for WebKitGTK</td><td>builds and runs headless &mdash; it reports <code>Mozilla/5.0 (X11; QNX RaspberryPi5) AppleWebKit/605.1.15</code> &mdash; but has no on-screen backend for the reasons above</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>
+  QNX SDP 8.0 &middot; aarch64le + x86_64 &middot; 220 packages, 70 patches, 165 on-target tests.
+  Per-package detail: <code>docs/qnx-port-recipes.html</code> &middot;
+  full hazard list: <code>README.md</code>
+</footer>
+
+</main>
+</div>
+</div>

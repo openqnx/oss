@@ -1,0 +1,48 @@
+V8: give the derived V8_TARGET_OS_* macros the value 1.
+
+When the build does not set V8_HAVE_TARGET_OS, v8config.h derives the
+target OS from the host OS (V8_OS_LINUX -> V8_TARGET_OS_LINUX) and defines
+the macro empty. V8 tests it both ways -- #if defined(...) and #if
+V8_TARGET_OS_LINUX (wasm-objects.cc, std-object-sizes.h, d8.cc) -- and the
+second form needs a value: "#if with no expression". The build system's own
+-DV8_TARGET_OS_LINUX means 1; do the same. This is the path the host half
+of a cross build to QNX takes, as no V8_TARGET_OS_* exists for QNX.
+
+Upstream-Status: Pending
+
+--- a/deps/v8/include/v8config.h
++++ b/deps/v8/include/v8config.h
+@@ -221,27 +221,27 @@
+ 
+ // Fall back to the detected host OS.
+ #ifdef V8_OS_ANDROID
+-# define V8_TARGET_OS_ANDROID
++# define V8_TARGET_OS_ANDROID 1
+ #endif
+ 
+ #ifdef V8_OS_FUCHSIA
+-# define V8_TARGET_OS_FUCHSIA
++# define V8_TARGET_OS_FUCHSIA 1
+ #endif
+ 
+ #ifdef V8_OS_IOS
+-# define V8_TARGET_OS_IOS
++# define V8_TARGET_OS_IOS 1
+ #endif
+ 
+ #ifdef V8_OS_LINUX
+-# define V8_TARGET_OS_LINUX
++# define V8_TARGET_OS_LINUX 1
+ #endif
+ 
+ #ifdef V8_OS_MACOS
+-# define V8_TARGET_OS_MACOS
++# define V8_TARGET_OS_MACOS 1
+ #endif
+ 
+ #ifdef V8_OS_WIN
+-# define V8_TARGET_OS_WIN
++# define V8_TARGET_OS_WIN 1
+ #endif
+ 
+ #endif  // V8_HAVE_TARGET_OS

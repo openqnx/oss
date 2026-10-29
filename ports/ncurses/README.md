@@ -1,0 +1,239 @@
+# ncurses 6.5
+
+**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+
+| | |
+|---|---|
+| Upstream | https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz |
+| SHA-256 | `136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6` |
+| Build system | GNU Autotools |
+| QNX patches | 1 |
+| Build dependencies | none |
+| Run-time dependencies | none (QNX SDP only) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_ncurses`](../../tests/src/) |
+
+## Install the prebuilt package on a target
+
+No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+
+```sh
+# on the QNX target
+oss-get update
+oss-get install ncurses
+oss-get install ncurses-dev    # only for building on the target: headers, .pc, CMake files
+```
+
+See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild ncurses` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+No other component has to be built first.
+
+### 2. Get the upstream source
+
+```bash
+URL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
+mkdir -p dist src/ncurses
+curl -fL -o dist/$(basename $URL) $URL
+echo "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6  dist/$(basename $URL)" | sha256sum -c -
+tar xf dist/$(basename $URL) -C src/ncurses --strip-components=1
+```
+
+### 3. Apply the QNX patches
+
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/ncurses < ports/ncurses/patches/0001-qnx-shared-library-soname.patch
+```
+
+**[`0001-qnx-shared-library-soname.patch`](patches/0001-qnx-shared-library-soname.patch)** — Give QNX shared libraries an soname.
+
+> configure builds QNX (nto-qnx*) shared libraries with the old BSD rule
+> (${LD} -Bshareable), which sets no DT_SONAME. Programs linked against
+> libncursesw.so then record that file name -- the -dev symlink -- instead of
+> libncursesw.so.6, and fail to start where only the run-time library is
+> installed ("Could not load library libtinfo.so"). Use the soname scheme
+> of the Linux case: lib<name>.so.<ABI_VERSION>.
+>
+> aclocal.m4 (CF_SHARED_OPTS) is changed with configure, so a regenerated
+> configure keeps it.
+
+Touches: `configure`, `aclocal.m4` · Upstream status: Pending
+
+### 4. Configure, build and install into the staging tree
+
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
+```bash
+S=src/ncurses; B=build/$QNX_ARCH/ncurses; mkdir -p $B
+```
+
+```bash
+do_install() {
+  cd "$B" && make install DESTDIR="$STAGE" >/dev/null
+  local d="$STAGE$PREFIX/lib"
+  for n in ncurses form menu panel; do
+    [ -e "$d/lib${n}w.so" ] && ln -sfn "lib${n}w.so" "$d/lib${n}.so"
+    [ -e "$d/lib${n}w.a" ]  && ln -sfn "lib${n}w.a"  "$d/lib${n}.a"
+  done
+  # ncurses builds terminfo into libncursesw unless --with-termlib is used, so
+  # -ltinfo has to resolve to the same library.
+  [ -e "$d/libncursesw.so" ] && ln -sfn "libncursesw.so" "$d/libtinfo.so"
+  [ -e "$d/libncursesw.a" ]  && ln -sfn "libncursesw.a"  "$d/libtinfo.a"
+  for p in ncurses form menu panel tinfo; do
+    [ -e "$d/pkgconfig/${p}w.pc" ] && ln -sfn "${p}w.pc" "$d/pkgconfig/${p}.pc"
+  done
+  find "$STAGE$PREFIX" -name '*.la' -delete
+}
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design -- the header ends in "#error termio/termios incompatibility" when both are pulled in. ncurses includes sys/termio.h whenever configure finds it, so tell configure it is not there and let it use termios alone. ncurses links its shared libraries by invoking ld directly, so LDFLAGS must not carry compiler-driver syntax (ld rejects -Wl,-rpath-link) -- but configure's own link test runs through qcc, which rejects the bare ld spelling just as hard. Neither form works for both, so drop -rpath-link altogether: ncurses needs nothing from staging but libc, and transitive resolution now goes through the link sysroot that env.sh builds. The SDP library directory has to be named explicitly: ncurses links its shared libraries with a raw "ld" invocation that inherits only LDFLAGS, and it links -lregex -- which QNX keeps in $QNX_TARGET/<arch>/lib, a directory only the compiler driver knows about.
+- --without-progs: reset/tset use TAB3, a Linux termios delay constant QNX does not define. The target needs the library, not the terminal utilities.
+- --enable-widec renames every library to the "w" variant, so a consumer asking for -lncurses or -ltinfo finds nothing here and the linker falls through to the SDP's own prebuilt ncurses (soname libncursesw.so.1 against our .so.6). Distributions solve this with compatibility symlinks; do the same.
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ncurses`.
+
+### 5. What it installs
+
+2926 files under `/usr/local`: 17 shared-library entries, 1 programs, 17 headers.
+
+```
+/usr/local/lib/libform.so
+/usr/local/lib/libformw.so
+/usr/local/lib/libformw.so.6
+/usr/local/lib/libformw.so.6.5
+/usr/local/lib/libmenu.so
+/usr/local/lib/libmenuw.so
+/usr/local/lib/libmenuw.so.6
+/usr/local/lib/libmenuw.so.6.5
+/usr/local/lib/libncurses.so
+/usr/local/lib/libncursesw.so
+/usr/local/lib/libncursesw.so.6
+/usr/local/lib/libncursesw.so.6.5
+/usr/local/lib/libpanel.so
+/usr/local/lib/libpanelw.so
+/usr/local/lib/libpanelw.so.6
+/usr/local/lib/libpanelw.so.6.5
+...
+```
+
+The complete list is `stage/<arch>/.manifest/ncurses` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH ncurses
+ls repo/8.0/*/ | grep '^ncurses-'
+```
+
+This writes `ncurses-<ver>-r0.tar.gz` (run time) and `ncurses-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Either install from your own repository (serve `repo/8.0/` with any web server):
+
+```sh
+# on the target
+export OSS_REPO=http://<build-host>:8000
+oss-get update && oss-get install ncurses
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp repo/8.0/aarch64/ncurses-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'cd /data/oss && tar xzf /data/ncurses-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_ncurses`](../../tests/src/) links ncurses the way an application would and checks its core API on the target:
+
+```bash
+./tests/build-tests.sh $QNX_ARCH
+scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_ncurses root@<target>:/data/
+ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/test_ncurses'
+```
+
+```
+== ncurses ==
+  ok   ...
+PASS ncurses
+```
+
+`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+VERSION=6.5
+TARBALL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
+SHA256=136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6
+BUILDSYS=autotools
+# QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design -- the
+# header ends in "#error termio/termios incompatibility" when both are pulled
+# in. ncurses includes sys/termio.h whenever configure finds it, so tell
+# configure it is not there and let it use termios alone.
+# ncurses links its shared libraries by invoking ld directly, so LDFLAGS must
+# not carry compiler-driver syntax (ld rejects -Wl,-rpath-link) -- but configure's
+# own link test runs through qcc, which rejects the bare ld spelling just as
+# hard. Neither form works for both, so drop -rpath-link altogether: ncurses
+# needs nothing from staging but libc, and transitive resolution now goes
+# through the link sysroot that env.sh builds.
+# The SDP library directory has to be named explicitly: ncurses links its
+# shared libraries with a raw "ld" invocation that inherits only LDFLAGS, and
+# it links -lregex -- which QNX keeps in $QNX_TARGET/<arch>/lib, a directory
+# only the compiler driver knows about.
+CONF_ENV=( ac_cv_header_sys_termio_h=no ac_cv_header_termio_h=no
+           LDFLAGS="-L$STAGE$PREFIX/lib -L$QNX_TARGET/$QNX_ARCH/lib" )
+# --without-progs: reset/tset use TAB3, a Linux termios delay constant QNX does
+# not define. The target needs the library, not the terminal utilities.
+CONF_ARGS_EXTRA=( --with-shared --without-debug --without-ada --without-tests --without-progs
+                  --enable-widec --enable-pc-files --without-manpages
+                  --with-pkg-config-libdir="$STAGE$PREFIX/lib/pkgconfig" )
+
+# --enable-widec renames every library to the "w" variant, so a consumer asking
+# for -lncurses or -ltinfo finds nothing here and the linker falls through to
+# the SDP's own prebuilt ncurses (soname libncursesw.so.1 against our .so.6).
+# Distributions solve this with compatibility symlinks; do the same.
+do_install() {
+  cd "$B" && make install DESTDIR="$STAGE" >/dev/null
+  local d="$STAGE$PREFIX/lib"
+  for n in ncurses form menu panel; do
+    [ -e "$d/lib${n}w.so" ] && ln -sfn "lib${n}w.so" "$d/lib${n}.so"
+    [ -e "$d/lib${n}w.a" ]  && ln -sfn "lib${n}w.a"  "$d/lib${n}.a"
+  done
+  # ncurses builds terminfo into libncursesw unless --with-termlib is used, so
+  # -ltinfo has to resolve to the same library.
+  [ -e "$d/libncursesw.so" ] && ln -sfn "libncursesw.so" "$d/libtinfo.so"
+  [ -e "$d/libncursesw.a" ]  && ln -sfn "libncursesw.a"  "$d/libtinfo.a"
+  for p in ncurses form menu panel tinfo; do
+    [ -e "$d/pkgconfig/${p}w.pc" ] && ln -sfn "${p}w.pc" "$d/pkgconfig/${p}.pc"
+  done
+  find "$STAGE$PREFIX" -name '*.la' -delete
+}
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

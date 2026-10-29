@@ -1,0 +1,26 @@
+From eb55f97e22c161134ddae4b2558aa740b32141fc Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Fri, 30 Aug 2024 15:02:00 -0400
+Subject: [PATCH] Fixed issue with deathtests that explicitly write to stderr.
+
+QNXE-167
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ absl/base/internal/raw_logging.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/absl/base/internal/raw_logging.cc b/absl/base/internal/raw_logging.cc
+index 4c922ccf2c1..8f7f0b2d477 100644
+--- a/absl/base/internal/raw_logging.cc
++++ b/absl/base/internal/raw_logging.cc
+@@ -43,7 +43,8 @@
+ // this, consider moving both to config.h instead.
+ #if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || \
+     defined(__Fuchsia__) || defined(__native_client__) ||               \
+-    defined(__OpenBSD__) || defined(__EMSCRIPTEN__) || defined(__ASYLO__)
++    defined(__OpenBSD__) || defined(__EMSCRIPTEN__) ||                  \
++    defined(__ASYLO__) || defined(__QNX__)
+ 
+ #include <unistd.h>
+ 

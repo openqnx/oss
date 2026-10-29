@@ -1,0 +1,52 @@
+QNX change from qnx-ports/build-files, copied unchanged:
+  ports/tensorflow/patches/eigen.patch
+  at revision 6f1507550d656edafbf8bcc826a196da1b00c459.
+
+Applied by TensorFlow Lite's own dependency download (the PATCH_COMMAND its QNX patch adds).
+The reasons for the individual changes are in that file's history in
+qnx-ports/build-files.
+
+Upstream-Status: QNX-specific
+
+diff --git a/Eigen/src/Core/util/Meta.h b/Eigen/src/Core/util/Meta.h
+index b7635f985..5876d8c89 100755
+--- a/Eigen/src/Core/util/Meta.h
++++ b/Eigen/src/Core/util/Meta.h
+@@ -61,6 +61,37 @@ typedef ::int64_t  int64_t;
+ }
+ #endif
+ 
++namespace Eigen {
++namespace numext {
++
++template <size_t Size>
++struct get_integer_by_size {
++    typedef void signed_type;
++    typedef void unsigned_type;
++};
++template <>
++struct get_integer_by_size<1> {
++    typedef int8_t signed_type;
++    typedef uint8_t unsigned_type;
++};
++template <>
++struct get_integer_by_size<2> {
++    typedef int16_t signed_type;
++    typedef uint16_t unsigned_type;
++};
++template <>
++struct get_integer_by_size<4> {
++    typedef int32_t signed_type;
++    typedef uint32_t unsigned_type;
++};
++template <>
++struct get_integer_by_size<8> {
++    typedef int64_t signed_type;
++    typedef uint64_t unsigned_type;
++};
++}
++}
++
+ namespace Eigen {
+ 
+ typedef EIGEN_DEFAULT_DENSE_INDEX_TYPE DenseIndex;

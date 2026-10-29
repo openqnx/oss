@@ -1,0 +1,4 @@
+VERSION=1.0.2; GIT=https://github.com/google/woff2.git; REF=v1.0.2
+DEPS="brotli"
+BUILDSYS=cmake
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DCANONICAL_PREFIXES=ON )

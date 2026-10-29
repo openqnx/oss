@@ -1,0 +1,33 @@
+qtmultimedia: use the ALSA backend on QNX SDP 8
+
+Qt's QNX audio backend (src/multimedia/qnx) is written against io-snd's
+<sys/asoundlib.h> and its snd_pcm_plugin_* API, which SDP 8 no longer ships
+("sys/asoundlib.h: No such file or directory"). SDP 8's libasound offers the
+ALSA API under <alsa/asoundlib.h> instead, which is what Qt's ALSA backend
+uses. Let the alsa feature be enabled on QNX, and build the QNX backend only
+when it is not; qplatformmediadevices.cpp already prefers ALSA to Q_OS_QNX.
+
+Upstream-Status: Pending
+---
+--- a/qtmultimedia/src/multimedia/configure.cmake
++++ b/qtmultimedia/src/multimedia/configure.cmake
+@@ -148,7 +148,7 @@
+ qt_feature("alsa" PUBLIC PRIVATE
+     LABEL "ALSA (experimental)"
+     AUTODETECT false
+-    CONDITION UNIX AND NOT QNX AND ALSA_FOUND AND NOT QT_FEATURE_pulseaudio
++    CONDITION UNIX AND ALSA_FOUND AND NOT QT_FEATURE_pulseaudio
+ )
+ qt_feature("avfoundation" PUBLIC PRIVATE
+     LABEL "AVFoundation"
+--- a/qtmultimedia/src/multimedia/CMakeLists.txt
++++ b/qtmultimedia/src/multimedia/CMakeLists.txt
+@@ -213,7 +213,7 @@
+         ${FWFoundation}
+ )
+ 
+-qt_internal_extend_target(Multimedia CONDITION QNX
++qt_internal_extend_target(Multimedia CONDITION QNX AND NOT QT_FEATURE_alsa
+     SOURCES
+         qnx/qqnxaudiodevice.cpp qnx/qqnxaudiodevice_p.h
+         qnx/qqnxaudiosink.cpp qnx/qqnxaudiosink_p.h

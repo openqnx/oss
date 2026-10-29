@@ -1,0 +1,183 @@
+ONNX Runtime: QNX platform fixes.
+
+- path_lib.h: QNX's dirent has d_type but no DT_* values; classify entries with
+  stat(), as the AIX path does.
+- logging.cc, env.cc: no <sys/syscall.h> or SYS_gettid on QNX.
+- threadpool.cc: cpuinfo has no linux_id on QNX; use the logical CPU index,
+  which is also the ThreadCtl() run-mask bit. There is no "current CPU" call;
+  report it as unknown (it only labels profiler output).
+- stacktrace.cc: no <execinfo.h> backtrace() on QNX.
+- cmake: qcc does not accept -Xlinker; use -Wl, for the version script.
+
+Upstream-Status: QNX-specific
+
+--- a/onnxruntime/core/platform/path_lib.h
++++ b/onnxruntime/core/platform/path_lib.h
+@@ -7,7 +7,11 @@
+ #include <sstream>
+ #include <assert.h>
+ #include <stdexcept>
+-#if defined(_AIX)
++/* QNX's <dirent.h> carries a d_type field but defines none of the DT_* values,
++ * so the dirent-based directory walk cannot be built there. The AIX path below
++ * classifies entries with stat() instead, which is exactly what QNX needs --
++ * and QNX defines _S_IFMT as well, so that code compiles unchanged. */
++#if defined(_AIX) || defined(__QNXNTO__)
+ #include <sys/stat.h>
+ #include <iostream>
+ #endif
+@@ -234,7 +238,7 @@
+   return input.substr(pos);
+ }
+ 
+-#elif defined(_AIX)
++#elif defined(_AIX) || defined(__QNXNTO__)
+ inline OrtFileType DTToFileTypeAIX(struct stat st) {
+   switch (st.st_mode & _S_IFMT) {
+     case S_IFBLK:
+--- a/onnxruntime/core/common/logging/logging.cc
++++ b/onnxruntime/core/common/logging/logging.cc
+@@ -16,7 +16,10 @@
+ #include "core/platform/windows/logging/etw_sink.h"
+ #else
+ #include <unistd.h>
+-#if defined(__MACH__) || defined(__wasm__) || defined(_AIX)
++/* QNX has no <sys/syscall.h> and no SYS_gettid/SYS_getpid: pthread_self() is
++ * the thread identifier and getpid() the process one, exactly as on the AIX and
++ * wasm paths below. */
++#if defined(__MACH__) || defined(__wasm__) || defined(_AIX) || defined(__QNXNTO__)
+ #include <pthread.h>
+ #else
+ #include <sys/syscall.h>
+@@ -230,7 +233,7 @@
+   long tid;
+   thr_self(&tid);
+   return static_cast<unsigned int>(tid);
+-#elif defined(__wasm__) || defined(_AIX)
++#elif defined(__wasm__) || defined(_AIX) || defined(__QNXNTO__)
+   return static_cast<unsigned int>(pthread_self());
+ #else
+   return static_cast<unsigned int>(syscall(SYS_gettid));
+@@ -243,7 +246,7 @@
+ unsigned int GetProcessId() {
+ #ifdef _WIN32
+   return static_cast<unsigned int>(GetCurrentProcessId());
+-#elif defined(__MACH__) || defined(__wasm__) || defined(_AIX)
++#elif defined(__MACH__) || defined(__wasm__) || defined(_AIX) || defined(__QNXNTO__)
+   return static_cast<unsigned int>(getpid());
+ #else
+   return static_cast<unsigned int>(syscall(SYS_getpid));
+--- a/onnxruntime/core/platform/posix/env.cc
++++ b/onnxruntime/core/platform/posix/env.cc
+@@ -26,7 +26,10 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/mman.h>
+-#if !defined(_AIX)
++/* QNX has no <sys/syscall.h>, and no SYS_gettid; it is used below only inside
++ * the pthread_setaffinity_np block, which QNX is excluded from as well (QNX
++ * sets affinity through ThreadCtl(_NTO_TCTL_RUNMASK), not cpu_set_t). */
++#if !defined(_AIX) && !defined(__QNXNTO__)
+ #include <sys/syscall.h>
+ #endif
+ #include <unistd.h>
+@@ -209,7 +212,7 @@
+   static void* ThreadMain(void* param) {
+     std::unique_ptr<Param> p(static_cast<Param*>(param));
+     ORT_TRY {
+-#if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_AIX)
++#if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_AIX) && !defined(__QNXNTO__)
+       if (p->affinity.has_value() && !p->affinity->empty()) {
+         cpu_set_t cpuset;
+         CPU_ZERO(&cpuset);
+@@ -295,7 +298,16 @@
+         auto log_proc_idx = core->processor_start;
+         for (uint32_t count = 0; count < core->processor_count; count++, ++log_proc_idx) {
+           const auto* log_proc = cpuinfo_get_processor(log_proc_idx);
++#if defined(__QNXNTO__)
++          ORT_UNUSED_PARAMETER(log_proc);
++          // cpuinfo only carries linux_id on Linux/Android builds. QNX addresses
++          // CPUs by logical processor index anyway -- that index is the bit
++          // position in the ThreadCtl(_NTO_TCTL_RUNMASK) affinity mask -- so use
++          // it directly.
++          th_aff.push_back(log_proc_idx);
++#else
+           th_aff.push_back(log_proc->linux_id);
++#endif
+         }
+         ret.push_back(std::move(th_aff));
+       }
+--- a/onnxruntime/core/common/threadpool.cc
++++ b/onnxruntime/core/common/threadpool.cc
+@@ -138,6 +138,11 @@
+   core_ = emscripten_num_logical_cores();
+ #elif defined(_AIX)
+   core_ = mycpu();
++#elif defined(__QNXNTO__)
++  // QNX exposes thread affinity (ThreadCtl/_NTO_TCTL_RUNMASK) but no "which CPU
++  // am I running on right now" call. core_ only labels profiler output, so
++  // report it as unknown rather than inventing a number.
++  core_ = -1;
+ #else
+   core_ = sched_getcpu();
+ #endif
+@@ -222,6 +227,8 @@
+       child_thread_stats_[thread_idx].core_ = emscripten_num_logical_cores();
+ #elif defined(_AIX)
+       child_thread_stats_[thread_idx].core_ = mycpu();
++#elif defined(__QNXNTO__)
++      child_thread_stats_[thread_idx].core_ = -1;  // see MainThreadStat above
+ #else
+       child_thread_stats_[thread_idx].core_ = sched_getcpu();
+ #endif
+--- a/onnxruntime/core/platform/posix/stacktrace.cc
++++ b/onnxruntime/core/platform/posix/stacktrace.cc
+@@ -3,7 +3,10 @@
+ 
+ #include "core/common/common.h"
+ 
+-#if !defined(__ANDROID__) && !defined(__wasm__) && !defined(_OPSCHEMA_LIB_) && !defined(_AIX)
++/* backtrace()/backtrace_symbols() live in glibc's <execinfo.h>; QNX has
++ * neither the header nor the functions, so it joins the platforms that
++ * return an empty stack trace. */
++#if !defined(__ANDROID__) && !defined(__wasm__) && !defined(_OPSCHEMA_LIB_) && !defined(_AIX) && !defined(__QNXNTO__)
+ #include <execinfo.h>
+ #endif
+ #include <vector>
+@@ -13,7 +16,7 @@
+ std::vector<std::string> GetStackTrace() {
+   std::vector<std::string> stack;
+ 
+-#if !defined(NDEBUG) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_OPSCHEMA_LIB_)
++#if !defined(NDEBUG) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_OPSCHEMA_LIB_) && !defined(_AIX) && !defined(__QNXNTO__)
+   constexpr int kCallstackLimit = 64;  // Maximum depth of callstack
+ 
+   void* array[kCallstackLimit];
+--- a/cmake/onnxruntime.cmake
++++ b/cmake/onnxruntime.cmake
+@@ -141,7 +141,10 @@
+   if (APPLE)
+     set(ONNXRUNTIME_SO_LINK_FLAG " -Xlinker -dead_strip")
+   elseif(NOT ${CMAKE_SYSTEM_NAME} MATCHES "AIX")
+-    set(ONNXRUNTIME_SO_LINK_FLAG " -Xlinker --version-script=${SYMBOL_FILE} -Xlinker --no-undefined -Xlinker --gc-sections -z noexecstack")
++        # qcc does not accept -Xlinker; it consumes the flag and then rejects the
++    # option that follows ("cc: unknown option: '--version-script=...'"). The
++    # -Wl, form means exactly the same thing to GCC and Clang and qcc handles it.
++    set(ONNXRUNTIME_SO_LINK_FLAG " -Wl,--version-script=${SYMBOL_FILE} -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
+   endif()
+ else()
+   set(ONNXRUNTIME_SO_LINK_FLAG " -DEF:${SYMBOL_FILE}")
+--- a/cmake/onnxruntime_providers_cpu.cmake
++++ b/cmake/onnxruntime_providers_cpu.cmake
+@@ -239,7 +239,10 @@
+   set_property(TARGET onnxruntime_providers_shared APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker -exported_symbols_list ${ONNXRUNTIME_ROOT}/core/providers/shared/exported_symbols.lst")
+   elseif(UNIX)
+     if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "AIX")
+-      set_property(TARGET onnxruntime_providers_shared APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/shared/version_script.lds -Xlinker --gc-sections")
++            # qcc does not accept -Xlinker; it consumes the flag and then rejects the
++      # option that follows ("cc: unknown option: '--version-script=...'"). The
++      # -Wl, form means exactly the same thing to GCC and Clang and qcc handles it.
++      set_property(TARGET onnxruntime_providers_shared APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--version-script=${ONNXRUNTIME_ROOT}/core/providers/shared/version_script.lds -Wl,--gc-sections")
+     endif()
+   elseif(WIN32)
+   set_property(TARGET onnxruntime_providers_shared APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/shared/symbols.def")

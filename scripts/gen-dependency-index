@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+"""Classify every component as standalone or dependent, and write
+DEPENDENCIES.md plus the machine-readable ports/dependencies.json.
+
+Two questions decide the class, and they are answered separately:
+
+  build time   Does the recipe need anything from this tree built first?
+               (DEPS in recipe.sh, followed transitively.)
+  run time     Does anything it installs load a library from another
+               component? Answered from the binaries, not the recipe: every
+               ELF file in the component's manifest is read for DT_NEEDED and
+               each soname is attributed to the component that installed it.
+               Libraries of the QNX SDP target are not dependencies -- they
+               are on every QNX 8.0 system.
+
+  standalone            nothing at build time, nothing at run time. Builds
+                        from its own source with only the QNX SDP, and runs on
+                        a stock target with nothing else installed.
+  runtime-standalone    needs other components to *build* (headers,
+                        header-only libraries, static archives, generators),
+                        but what it installs runs on its own.
+  dependent             needs other components at run time as well.
+
+The run-time answer is also checked against the recipe. A run-time dependency
+that is not in the build closure means configure found a library in staging
+that the recipe never asked for -- built alone, that component would come out
+different. Those are reported as undeclared.
+
+"Verified standalone" comes from scripts/verify-standalone, which builds each
+standalone candidate against an empty staging tree.
+"""
+import glob, json, os, re, subprocess, sys
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(WS)
+ARCHES = ("aarch64le", "x86_64")
+CPU = {"aarch64le": "aarch64", "x86_64": "x86_64"}
+
+
+def recipe_field(txt, k):
+    m = re.search(rf'(?:^|;\s*)\s*{k}=(.*?)(?:;|$)', txt, re.M)
+    return m.group(1).strip().strip('"').strip("'") if m else ""
+
+
+def load():
+    deps, meta = {}, {}
+    for r in sorted(glob.glob("ports/*/recipe.sh")):
+        n = os.path.basename(os.path.dirname(r))
+        txt = open(r).read()
+        m = re.search(r'^DEPS=\((.*?)\)', txt, re.M | re.S) or \
+            re.search(r'^DEPS="(.*?)"', txt, re.M | re.S)
+        deps[n] = [d for d in (m.group(1).split() if m else []) if d]
+        meta[n] = {"version": recipe_field(txt, "VERSION"),
+                   "buildsys": recipe_field(txt, "BUILDSYS") or "cmake",
+                   "planned": recipe_field(txt, "STATUS") == "planned",
+                   "blocked": recipe_field(txt, "STATUS") == "blocked"}
+    return deps, meta
+
+
+def closure(n, graph, seen=None):
+    seen = set() if seen is None else seen
+    for d in graph.get(n, []):
+        if d not in seen:
+            seen.add(d)
+            closure(d, graph, seen)
+    return seen
+
+
+def readelf(arch):
+    host = os.environ.get("QNX_HOST")
+    if not host:
+        sys.exit("QNX_HOST is not set -- source env.sh (or the SDP's qnxsdp-env.sh) first")
+    return os.path.join(host, "usr/bin", f"nto{CPU[arch]}-readelf")
+
+
+def sdp_sonames(arch):
+    """Every shared library name the SDP target tree provides."""
+    tgt = os.environ.get("QNX_TARGET_SDP") or os.environ.get("QNX_TARGET")
+    names = set()
+    for sub in ("lib", "usr/lib", "opt/lib", "lib/dll"):
+        d = os.path.join(tgt, arch, sub)
+        if os.path.isdir(d):
+            names.update(e for e in os.listdir(d) if ".so" in e)
+    return names
+
+
+def runtime(arch):
+    """component -> {needed component}, plus unresolved sonames."""
+    mdir = f"stage/{arch}/.manifest"
+    stage = f"stage/{arch}"
+    tool = readelf(arch)
+    owner, files, links = {}, {}, {}
+    for comp in sorted(os.listdir(mdir)) if os.path.isdir(mdir) else []:
+        rels = [r for r in open(os.path.join(mdir, comp)).read().split("\n") if r]
+        files[comp] = rels
+        for r in rels:
+            # A component with a prefix of its own (usr/local/opt/<name>: ROS,
+            # TensorFlow Lite, PyTorch) carries private copies of libraries
+            # that are not on the default search path; they provide nothing to
+            # other components. (ROS's vendored libzstd.so.1 had otherwise
+            # "provided" zstd to everything that links it.)
+            if "/opt/" in r:
+                continue
+            if "/lib" in r and ".so" in os.path.basename(r):
+                owner.setdefault(os.path.basename(r), comp)
+                if os.path.islink(os.path.join(stage, r)):
+                    links.setdefault(os.path.basename(r), True)
+    sdp = sdp_sonames(arch)
+    need, unresolved, devname = {}, {}, {}
+    for comp, rels in files.items():
+        mine = {os.path.basename(r) for r in rels}
+        mine_links = {os.path.basename(r) for r in rels if os.path.islink(os.path.join(stage, r))}
+        out, miss, dev = set(), set(), set()
+        for r in rels:
+            p = os.path.join(stage, r)
+            if os.path.islink(p) or not os.path.isfile(p):
+                continue
+            with open(p, "rb") as f:
+                if f.read(4) != b"\x7fELF":
+                    continue
+            txt = subprocess.run([tool, "-d", p], capture_output=True, text=True).stdout
+            for so in re.findall(r"\(NEEDED\).*\[(.+)\]", txt):
+                # An unversioned name that is a symlink here (libfoo.so ->
+                # libfoo.so.1) is the -dev link: the library it was linked
+                # against had no DT_SONAME, and the program will not start
+                # where only the run-time package is installed.
+                # (A component's own regular libfoo.so, packaged with it, is fine.)
+                if re.fullmatch(r"lib.+\.so", so) and (so in mine_links if so in mine else links.get(so)):
+                    dev.add(so)
+                if so in mine:
+                    continue
+                if so in owner and owner[so] != comp:
+                    out.add(owner[so])
+                elif so not in sdp and so not in owner:
+                    miss.add(so)
+        need[comp] = out
+        unresolved[comp] = miss
+        devname[comp] = dev
+    return need, unresolved, set(files), devname
+
+
+def installs(n):
+    """What the component installs, summarised from its manifest -- kept in the
+    JSON so the READMEs can be regenerated without a build (e.g. in CI)."""
+    for a in ARCHES:
+        p = f"stage/{a}/.manifest/{n}"
+        if os.path.exists(p):
+            rels = [r for r in open(p).read().split("\n") if r]
+            return {
+                "files": len(rels),
+                "libs": [r for r in rels if re.match(r"usr/local/lib/[^/]+\.so", r)],
+                "bins": [r for r in rels if re.match(r"usr/local/s?bin/", r)],
+                "headers": sum(1 for r in rels if r.startswith("usr/local/include/")),
+            }
+    return {}
+
+
+def main():
+    deps, meta = load()
+    rt, unres, devn, have = {}, {}, {}, set()
+    for a in ARCHES:
+        n, u, h, dv = runtime(a)
+        have |= h
+        for c, s in dv.items():
+            devn.setdefault(c, set()).update(s)
+        for c, s in n.items():
+            rt.setdefault(c, set()).update(s)
+        for c, s in u.items():
+            unres.setdefault(c, set()).update(s)
+
+    verified = {}
+    for f in glob.glob("logs/standalone/*.result"):
+        c, a = os.path.basename(f)[:-len(".result")].rsplit(".", 1)
+        verified.setdefault(c, {})[a] = open(f).read().strip()
+
+    out = {}
+    for n in sorted(deps):
+        bclos = sorted(closure(n, deps))
+        rdirect = sorted(rt.get(n, set()))
+        rclos = set(rdirect)
+        for d in rdirect:
+            rclos |= closure(d, {k: sorted(v) for k, v in rt.items()})
+        if meta[n]["planned"]:
+            cls = "planned"
+        elif meta[n]["blocked"]:
+            cls = "blocked"
+        elif n not in have:
+            cls = "unknown"          # not built (or built before manifests)
+        elif not deps[n] and not rdirect:
+            cls = "standalone"
+        elif not rdirect:
+            cls = "runtime-standalone"
+        else:
+            cls = "dependent"
+        v = verified.get(n, {})
+        out[n] = {
+            "class": cls,
+            "version": meta[n]["version"],
+            "buildsys": meta[n]["buildsys"],
+            "build_deps": deps[n],
+            "build_closure": bclos,
+            "runtime_deps": rdirect,
+            "runtime_closure": sorted(rclos - {n}),
+            "undeclared": sorted(set(rdirect) - set(bclos)),
+            "unresolved": sorted(unres.get(n, set())),
+            "linked_by_dev_name": sorted(devn.get(n, set())),
+            "standalone_verified": {a: v[a] for a in sorted(v)},
+            "installs": installs(n),
+            "built": {a: os.path.exists(f"stage/{a}/.stamp/{n}") for a in ARCHES},
+        }
+    json.dump(out, open("ports/dependencies.json", "w"), indent=1, sort_keys=True)
+    write_md(out)
+    counts = {c: sum(1 for v in out.values() if v["class"] == c)
+              for c in ("standalone", "runtime-standalone", "dependent", "unknown", "planned")}
+    print("ports/dependencies.json + DEPENDENCIES.md:", counts)
+    bad = [n for n, v in out.items() if v["undeclared"]]
+    if bad:
+        print("undeclared run-time dependencies:", ", ".join(f"{n}->{'/'.join(out[n]['undeclared'])}" for n in bad))
+    devbad = [n for n in sorted(out) if out[n]["linked_by_dev_name"]]
+    if devbad:
+        print("linked by the -dev name (library without DT_SONAME):",
+              ", ".join(f"{n}->{'/'.join(out[n]['linked_by_dev_name'])}" for n in devbad))
+
+
+def link(n):
+    return f"[`{n}`](ports/{n}/)"
+
+
+def write_md(out):
+    by = lambda c: [n for n in sorted(out) if out[n]["class"] == c]
+    S, R, D, U, P = by("standalone"), by("runtime-standalone"), by("dependent"), by("unknown"), by("planned")
+    X = by("blocked")
+    rev = {}
+    for n, v in out.items():
+        for d in v["build_deps"]:
+            rev.setdefault(d, []).append(n)
+    L = []
+    A = L.append
+    A("# Dependencies\n")
+    A("Every component is in exactly one of three classes. The class is computed "
+      "by `scripts/gen-dependency-index` from the recipes *and* from the "
+      "binaries the build installed (their `DT_NEEDED` entries), so it describes "
+      "what actually happens on the target, not only what the recipe declares.\n")
+    A("| Class | Build | Run on the target | Components |")
+    A("|---|---|---|---|")
+    A(f"| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **{len(S)}** |")
+    A(f"| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **{len(R)}** |")
+    A(f"| **[Dependent](#dependent)** | needs other components first | needs other components installed | **{len(D)}** |")
+    if U:
+        A(f"| not classified | not built | | {len(U)} |")
+    A("")
+    A("Libraries that ship with the QNX SDP target (libc, libm, libsocket, "
+      "libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 "
+      "system and are never counted as dependencies.\n")
+    A("On a target, `oss-get install <component>` installs the run-time closure "
+      "automatically; the *runtime* column below is what it pulls in.\n")
+    A("Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).\n")
+
+    A(f"## Standalone\n")
+    A(f"{len(S)} components. Clone the upstream source, apply the patches in "
+      "`ports/<name>/patches/`, build with the QNX toolchain files -- nothing "
+      "else from this repository has to be built first, and the result runs on "
+      "a stock QNX 8.0 target.\n")
+    A("✅ = built against an *empty* staging tree by `scripts/verify-standalone`, "
+      "proving the build cannot have picked anything up from other components.\n")
+    A("| Component | Version | Build system | Verified alone | Used by |")
+    A("|---|---|---|---|---|")
+    for n in S:
+        v = out[n]
+        ver = " ".join(f"{a}{'✅' if r == 'OK' else '❌'}" for a, r in v["standalone_verified"].items()) or "–"
+        A(f"| {link(n)} | {v['version']} | {v['buildsys']} | {ver} | {len(rev.get(n, []))} |")
+    A("")
+
+    A("## Runtime-standalone\n")
+    A(f"{len(R)} components. They need other components at *build* time -- "
+      "header-only libraries (Eigen, nlohmann_json, ...), static archives, or "
+      "generators -- but what they install loads nothing from this tree. Build "
+      "the listed chain first (`qnxbuild` does it); deploy the component alone.\n")
+    A("| Component | Version | Needs to build | Full build chain |")
+    A("|---|---|---|---|")
+    for n in R:
+        v = out[n]
+        A(f"| {link(n)} | {v['version']} | {' '.join(v['build_deps'])} | {len(v['build_closure'])} |")
+    A("")
+
+    A("## Dependent\n")
+    A(f"{len(D)} components. Both the build and the target need other "
+      "components. *Runtime* is the set of components whose shared libraries "
+      "these binaries load -- the packages `oss-get` installs with it.\n")
+    A("| Component | Version | Needs to build | Needs at run time | Run-time closure |")
+    A("|---|---|---|---|---|")
+    for n in D:
+        v = out[n]
+        A(f"| {link(n)} | {v['version']} | {' '.join(v['build_deps']) or '–'} | "
+          f"{' '.join(v['runtime_deps'])} | {len(v['runtime_closure'])} |")
+    A("")
+
+    bad = [n for n in sorted(out) if out[n]["undeclared"] or out[n]["unresolved"] or out[n]["linked_by_dev_name"]]
+    A("## Consistency\n")
+    if not bad:
+        A("Every run-time dependency is declared in the recipe's `DEPS` (directly or "
+          "transitively), and every `DT_NEEDED` resolves either to a component of "
+          "this tree or to the QNX SDP.\n")
+    else:
+        A("| Component | Run-time dependency not declared in DEPS | Unresolved soname | Linked by the -dev name |")
+        A("|---|---|---|---|")
+        for n in bad:
+            A(f"| {link(n)} | {' '.join(out[n]['undeclared']) or '–'} | {' '.join(out[n]['unresolved']) or '–'} "
+              f"| {' '.join(out[n]['linked_by_dev_name']) or '–'} |")
+        A("")
+    if P:
+        A("## Planned\n")
+        A(f"{len(P)} components recorded for porting but not built yet "
+          "(`STATUS=planned` in their recipe); classified once ported: "
+          + ", ".join(link(n) for n in P) + "\n")
+    if X:
+        A("## Blocked\n")
+        A(f"{len(X)} components tried and not buildable for QNX as things stand "
+          "(`STATUS=blocked`; each recipe's comment says what stops it): "
+          + ", ".join(link(n) for n in X) + "\n")
+    if U:
+        A("## Not classified\n")
+        A("No install manifest (not built in this tree): " + ", ".join(link(n) for n in U) + "\n")
+    A("---\n<sub>Generated by <code>scripts/gen-dependency-index</code>. Edit recipes, not this file.</sub>\n")
+    open("DEPENDENCIES.md", "w").write("\n".join(L))
+
+
+main()

@@ -1,0 +1,23 @@
+QNX build fix from QNX's aports (extra/neovim/qnx-endian.patch).
+
+Taken from qnx-ports/aports extra/neovim, the APKBUILD the QNX Everywhere image's
+package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/cmake.config/CMakeLists.txt b/cmake.config/CMakeLists.txt
+index aac8c4c27b..3b4fc011b7 100644
+--- a/cmake.config/CMakeLists.txt
++++ b/cmake.config/CMakeLists.txt
+@@ -117,6 +117,11 @@ if(NOT HAVE_ENDIAN_H)
+   check_include_files("sys/endian.h" HAVE_SYS_ENDIAN_H)
+   if (HAVE_SYS_ENDIAN_H)
+     set(ENDIAN_INCLUDE_FILE "sys/endian.h")
++  else()
++    check_include_files("net/netbyte.h" HAVE_NET_NETBYTE_H)
++    if(HAVE_NET_NETBYTE_H)
++      set(ENDIAN_INCLUDE_FILE "net/netbyte.h")
++    endif()
+   endif()
+ endif()
+ 

@@ -1,0 +1,30 @@
+Only pass the PID socket argument where it exists.
+
+ProcessLauncherGLib declares pidSocketPair/pidSocket under "#if OS(LINUX)" and
+guards the fd hand-off and the readPIDFromPeer() call the same way -- but puts
+the argument on the child's command line unconditionally:
+
+    ProcessLauncherGLib.cpp:205: error: 'pidSocket' was not declared in this scope
+
+The child agrees with the guards, not with the argument: AuxiliaryProcessMain
+reads argv[3] under "#if USE(GLIB) && OS(LINUX)".  The mechanism is Linux-only
+by nature -- it recovers a sandboxed child's pid across a PID namespace using
+SCM_CREDENTIALS, which QNX does not have -- and the non-Linux path already
+takes the pid from g_subprocess_get_identifier().  So the argument simply
+should not be pushed when the rest is compiled out.  Any non-Linux GLib port
+hits this.
+
+Upstream-Status: Pending
+
+--- a/Source/WebKit/UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
++++ b/Source/WebKit/UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
+@@ -202,7 +202,9 @@
+     argv[i++] = const_cast<char*>(realExecutablePath.data());
+     argv[i++] = processIdentifier.get();
+     argv[i++] = webkitSocket.get();
++#if OS(LINUX)
+     argv[i++] = pidSocket.get();
++#endif
+ #if ENABLE(DEVELOPER_MODE)
+     if (configureJSCForTesting)
+         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");

@@ -1,0 +1,590 @@
+<title>QNX SDP 8.0 Port Register</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ink:#12161c;
+  --ink-2:#39424f;
+  --mute:#727a83;
+  --paper:#f7f6f3;
+  --surface:#ffffff;
+  --rule:#ddd9d2;
+  --rule-soft:#eae6df;
+  --amber:#b4632f;
+  --amber-soft:#f0e2d5;
+  --teal:#2f6f6b;
+  --teal-soft:#dfeae8;
+  --good:#3f7a4d;
+  --warn:#9a6a1e;
+  --shadow:0 1px 2px rgba(18,22,28,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eceae6; --ink-2:#b9b4ad; --mute:#8b857d;
+    --paper:#14161a; --surface:#1b1e23;
+    --rule:#31353c; --rule-soft:#262a30;
+    --amber:#e0975f; --amber-soft:#332620;
+    --teal:#79b8b2; --teal-soft:#1d2a29;
+    --good:#7fb98c; --warn:#cfa257;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eceae6; --ink-2:#b9b4ad; --mute:#8b857d;
+  --paper:#14161a; --surface:#1b1e23;
+  --rule:#31353c; --rule-soft:#262a30;
+  --amber:#e0975f; --amber-soft:#332620;
+  --teal:#79b8b2; --teal-soft:#1d2a29;
+  --good:#7fb98c; --warn:#cfa257;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:0 28px 96px}
+
+/* ---- masthead ---- */
+header.mast{
+  border-bottom:1px solid var(--rule);
+  padding:56px 0 30px; margin-bottom:40px;
+}
+.eyebrow{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--amber); margin:0 0 18px;
+}
+h1{
+  font-family:Fraunces,Georgia,serif;
+  font-size:clamp(34px,5.5vw,54px); line-height:1.04;
+  font-weight:600; margin:0 0 16px; text-wrap:balance;
+  letter-spacing:-.015em;
+}
+.standfirst{
+  font-size:18px; color:var(--ink-2); max-width:62ch; margin:0;
+}
+.standfirst code{
+  font-family:"JetBrains Mono",monospace; font-size:.86em;
+  background:var(--rule-soft); padding:1px 5px; border-radius:3px;
+}
+
+/* ---- headline figures ---- */
+.figures{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:0; margin:34px 0 0;
+  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+}
+.fig{padding:20px 22px 20px 0; border-right:1px solid var(--rule-soft)}
+.fig:last-child{border-right:none}
+.fig .n{
+  font-family:Fraunces,Georgia,serif; font-size:38px; font-weight:600;
+  line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums;
+  display:block;
+}
+.fig .l{
+  font-size:12.5px; color:var(--mute); margin-top:7px; display:block;
+  letter-spacing:.02em;
+}
+.fig.pass .n{color:var(--good)}
+
+/* ---- sections ---- */
+section{margin-top:52px}
+h2{
+  font-family:Fraunces,Georgia,serif; font-size:25px; font-weight:600;
+  margin:0 0 6px; letter-spacing:-.01em;
+}
+.sec-note{color:var(--mute); font-size:14.5px; margin:0 0 20px; max-width:66ch}
+
+/* ---- package tables ---- */
+.cat{margin-bottom:30px}
+.cat-head{
+  display:flex; align-items:baseline; gap:12px;
+  border-bottom:2px solid var(--ink); padding-bottom:7px; margin-bottom:0;
+}
+.cat-head h3{
+  font-family:"Source Sans 3",sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; margin:0;
+}
+.cat-head .count{
+  font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--mute);
+  margin-left:auto; font-variant-numeric:tabular-nums;
+}
+.tbl-scroll{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:14.5px}
+th{
+  text-align:left; font-weight:500; font-size:11.5px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--mute); padding:9px 12px 9px 0;
+  border-bottom:1px solid var(--rule-soft); white-space:nowrap;
+}
+td{padding:8px 12px 8px 0; border-bottom:1px solid var(--rule-soft); vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.pkg{font-weight:500; white-space:nowrap}
+td.ver{
+  font-family:"JetBrains Mono",monospace; font-size:12.5px; color:var(--ink-2);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+td.role{color:var(--ink-2); font-size:14px}
+td.pat{
+  font-family:"JetBrains Mono",monospace; font-size:12.5px;
+  text-align:center; width:1%; color:var(--mute);
+}
+td.pat.has{color:var(--amber); font-weight:500}
+.tag{
+  display:inline-block; font-size:10.5px; letter-spacing:.06em;
+  text-transform:uppercase; padding:2px 7px; border-radius:3px;
+  font-weight:600; white-space:nowrap;
+}
+.tag.new{background:var(--amber-soft); color:var(--amber)}
+.tag.re{background:var(--rule-soft); color:var(--mute)}
+
+/* ---- defects ---- */
+.defects{display:flex; flex-direction:column; gap:0; border-top:1px solid var(--rule)}
+.defect{
+  display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:22px;
+  padding:16px 0; border-bottom:1px solid var(--rule-soft);
+}
+.defect .what{font-weight:600; font-size:14.5px}
+.defect .what code{
+  font-family:"JetBrains Mono",monospace; font-size:12.5px; font-weight:400;
+  display:block; color:var(--amber); margin-top:3px;
+}
+.defect .why{color:var(--ink-2); font-size:14.5px; margin:0}
+.defect .why code{
+  font-family:"JetBrains Mono",monospace; font-size:.85em;
+  background:var(--rule-soft); padding:1px 4px; border-radius:3px;
+}
+@media (max-width:640px){ .defect{grid-template-columns:1fr; gap:6px} }
+
+/* ---- verification strip ---- */
+.verify{
+  background:var(--surface); border:1px solid var(--rule);
+  border-radius:4px; padding:22px 24px; box-shadow:var(--shadow);
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:24px;
+}
+.vcol h4{
+  font-size:11.5px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--mute); margin:0 0 9px; font-weight:600;
+}
+.vrow{
+  display:flex; justify-content:space-between; gap:14px;
+  font-size:14px; padding:4px 0; border-bottom:1px dotted var(--rule-soft);
+}
+.vrow:last-child{border-bottom:none}
+.vrow .k{color:var(--ink-2)}
+.vrow .v{
+  font-family:"JetBrains Mono",monospace; font-size:12.5px;
+  font-variant-numeric:tabular-nums; color:var(--good); font-weight:500;
+}
+.vrow .v.plain{color:var(--ink-2)}
+
+/* ---- blocked ---- */
+.blocked{border-top:1px solid var(--rule)}
+.bl{
+  display:grid; grid-template-columns:minmax(120px,170px) 1fr; gap:22px;
+  padding:14px 0; border-bottom:1px solid var(--rule-soft);
+}
+.bl .n{font-weight:600; font-size:14.5px}
+.bl .r{color:var(--ink-2); font-size:14.5px; margin:0}
+@media (max-width:640px){ .bl{grid-template-columns:1fr; gap:4px} }
+
+footer{
+  margin-top:60px; padding-top:22px; border-top:1px solid var(--rule);
+  color:var(--mute); font-size:13px; display:flex; flex-wrap:wrap;
+  gap:8px 24px; justify-content:space-between;
+}
+footer code{font-family:"JetBrains Mono",monospace; font-size:12px}
+a{color:var(--amber)}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Port register · QNX SDP 8.0 · aarch64le + x86_64</p>
+  <h1>220 open source packages, built from source for QNX 8.0</h1>
+  <p class="standfirst">
+    Cross-built against the SDP at <code>$QNX_SDP_ROOT</code> with qcc/q++ 12.2.0.
+    No prebuilt binary from the SDP or <code>repo.oss.qnx.com</code> is reused — a dedicated
+    audit enforces that. Verified by running 159 test binaries on a Raspberry Pi 5 and a QNX 8.0 x86_64 VM, after a from-scratch rebuild of the whole tree.
+  </p>
+
+  <div class="figures">
+    <div class="fig"><span class="n">220</span><span class="l">packages, each architecture</span></div>
+    <div class="fig pass"><span class="n">159/159</span><span class="l">on-target tests, both arches</span></div>
+    <div class="fig"><span class="n">72</span><span class="l">upstream patches</span></div>
+    <div class="fig"><span class="n">97</span><span class="l">porting hazards documented</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>How it was verified</h2>
+  <p class="sec-note">
+    The staging tree was deleted and rebuilt from nothing — every source re-cloned, every
+    patch re-applied from <code>recipes/</code> — before these results were taken. That rebuild
+    is what caught the most serious defect in the workspace.
+  </p>
+  <div class="verify">
+    <div class="vcol">
+      <h4>Targets</h4>
+      <div class="vrow"><span class="k">QNX 8.0.0 aarch64le · Raspberry Pi 5</span><span class="v">159 / 159</span></div>
+      <div class="vrow"><span class="k">QNX 8.0.0 x86_64 · QEMU (over NFS)</span><span class="v">159 / 159</span></div>
+    </div>
+    <div class="vcol">
+      <h4>Staging audits</h4>
+      <div class="vrow"><span class="k">check-undefined</span><span class="v">clean</span></div>
+      <div class="vrow"><span class="k">check-devlinks</span><span class="v">clean</span></div>
+      <div class="vrow"><span class="k">check-sdp-leak</span><span class="v">clean</span></div>
+      <div class="vrow"><span class="k">check-dupes</span><span class="v">clean</span></div>
+    </div>
+    <div class="vcol">
+      <h4>Build systems used</h4>
+      <div class="vrow"><span class="k">CMake</span><span class="v plain">88</span></div>
+      <div class="vrow"><span class="k">autotools</span><span class="v plain">69</span></div>
+      <div class="vrow"><span class="k">Meson</span><span class="v plain">45</span></div>
+      <div class="vrow"><span class="k">custom recipe</span><span class="v plain">16</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>What was ported</h2>
+  <p class="sec-note">
+    <span class="tag new">New</span> means absent from both github.com/qnx-ports and the
+    repo.oss.qnx.com APK index — the gaps this workspace fills.
+    <span class="tag re">Rebuild</span> means a recipe exists elsewhere, rebuilt here from
+    source against this SDP.
+  </p>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Automotive middleware &amp; communication</h3><span class="count">14</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">vsomeip</td><td class="ver">3.5.6</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">SOME/IP transport (COVESA)</td></tr>
+      <tr><td class="pkg">CommonAPI C++ core</td><td class="ver">3.2.4</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">AUTOSAR-style API layer</td></tr>
+      <tr><td class="pkg">CommonAPI C++ SOME/IP</td><td class="ver">3.2.4</td><td><span class="tag new">New</span></td><td class="pat has">2</td><td class="role">binding onto vsomeip</td></tr>
+      <tr><td class="pkg">DLT daemon</td><td class="ver">2.18.10</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">AUTOSAR diagnostic log &amp; trace</td></tr>
+      <tr><td class="pkg">Cyclone DDS</td><td class="ver">0.10.5</td><td><span class="tag new">New</span></td><td class="pat has">3</td><td class="role">ROS 2 default RMW</td></tr>
+      <tr><td class="pkg">Eclipse iceoryx</td><td class="ver">2.0.6</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">zero-copy IPC + RouDi daemon</td></tr>
+      <tr><td class="pkg">Fast-DDS</td><td class="ver">2.14.4</td><td><span class="tag re">Rebuild</span></td><td class="pat has">2</td><td class="role">eProsima RTPS/DDS</td></tr>
+      <tr><td class="pkg">Fast-CDR</td><td class="ver">2.2.6</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">CDR serialization</td></tr>
+      <tr><td class="pkg">lely-core</td><td class="ver">2.3.4</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">CANopen stack</td></tr>
+      <tr><td class="pkg">Paho MQTT C</td><td class="ver">1.3.14</td><td><span class="tag new">New</span></td><td class="pat has">2</td><td class="role">telematics uplink</td></tr>
+      <tr><td class="pkg">Paho MQTT C++</td><td class="ver">1.5.2</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">C++ wrapper</td></tr>
+      <tr><td class="pkg">libwebsockets</td><td class="ver">4.3.5</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">V2X / remote diagnostics</td></tr>
+      <tr><td class="pkg">Protocol Buffers</td><td class="ver">29.3</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">serialization</td></tr>
+      <tr><td class="pkg">gRPC</td><td class="ver">1.69.0</td><td><span class="tag re">Rebuild</span></td><td class="pat has">2</td><td class="role">service RPC</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Security &amp; crypto</h3><span class="count">12</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">OpenSSL</td><td class="ver">3.5.1</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">QNX target config written from scratch</td></tr>
+      <tr><td class="pkg">Mbed-TLS</td><td class="ver">3.6.2</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">compact TLS</td></tr>
+      <tr><td class="pkg">wolfSSL</td><td class="ver">5.7.6</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">embedded TLS</td></tr>
+      <tr><td class="pkg">GnuTLS</td><td class="ver">3.8.8</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">TLS stack</td></tr>
+      <tr><td class="pkg">libgcrypt</td><td class="ver">1.11.0</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">GnuPG crypto</td></tr>
+      <tr><td class="pkg">libgpg-error</td><td class="ver">1.51</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">lock-obj headers generated on target</td></tr>
+      <tr><td class="pkg">nettle</td><td class="ver">3.10.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">low-level crypto</td></tr>
+      <tr><td class="pkg">libtasn1</td><td class="ver">4.19.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">ASN.1 / DER</td></tr>
+      <tr><td class="pkg">libsodium</td><td class="ver">1.0.20</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">NaCl crypto</td></tr>
+      <tr><td class="pkg">p11-kit</td><td class="ver">0.25.5</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">PKCS#11 module loader</td></tr>
+      <tr><td class="pkg">GMP</td><td class="ver">6.3.0</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">bignum</td></tr>
+      <tr><td class="pkg">MPFR / MPC</td><td class="ver">4.2.1 / 1.3.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">arbitrary precision float / complex</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Perception &amp; compute</h3><span class="count">8</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">ONNX Runtime</td><td class="ver">1.20.1</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">inference engine — 12 build iterations</td></tr>
+      <tr><td class="pkg">OpenCV</td><td class="ver">4.10.0</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">vision</td></tr>
+      <tr><td class="pkg">PCL</td><td class="ver">1.14.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">point clouds (LiDAR)</td></tr>
+      <tr><td class="pkg">Eigen</td><td class="ver">3.4.0</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">linear algebra</td></tr>
+      <tr><td class="pkg">Ceres Solver</td><td class="ver">2.2.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">non-linear least squares (SLAM)</td></tr>
+      <tr><td class="pkg">FLANN</td><td class="ver">1.9.2</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">nearest neighbour search</td></tr>
+      <tr><td class="pkg">Highway</td><td class="ver">1.2.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">portable SIMD</td></tr>
+      <tr><td class="pkg">Boost</td><td class="ver">1.86.0</td><td><span class="tag re">Rebuild</span></td><td class="pat has">4</td><td class="role">all 39 libraries — Process backend written for QNX</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Multimedia — GStreamer, FFmpeg and codecs</h3><span class="count">31</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">GStreamer</td><td class="ver">1.24.10</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">core + base/good/ugly/bad + libav — 135 plugins</td></tr>
+      <tr><td class="pkg">FFmpeg</td><td class="ver">7.1</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">avcodec/format/util/swscale/swresample</td></tr>
+      <tr><td class="pkg">Orc</td><td class="ver">0.4.40</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">SIMD JIT — aarch64 target detection fixed</td></tr>
+      <tr><td class="pkg">x264 / x265</td><td class="ver">– / 3.6</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1+1</td><td class="role">H.264 / HEVC encoders</td></tr>
+      <tr><td class="pkg">OpenH264</td><td class="ver">2.5.0</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">H.264 codec</td></tr>
+      <tr><td class="pkg">libvpx</td><td class="ver">1.15.0</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">VP8 / VP9</td></tr>
+      <tr><td class="pkg">dav1d</td><td class="ver">1.5.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">AV1 decoder</td></tr>
+      <tr><td class="pkg">libaom</td><td class="ver">3.12.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">AV1 reference codec</td></tr>
+      <tr><td class="pkg">SVT-AV1</td><td class="ver">2.3.0</td><td><span class="tag new">New</span></td><td class="pat has">2</td><td class="role">AV1 encoder — cpuinfo taught about QNX</td></tr>
+      <tr><td class="pkg">fdk-aac</td><td class="ver">2.0.3</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">AAC codec</td></tr>
+      <tr><td class="pkg">Opus / FLAC / Vorbis / Ogg</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">audio codecs</td></tr>
+      <tr><td class="pkg">Theora / LAME</td><td class="ver">– / 3.100</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">video / MP3</td></tr>
+      <tr><td class="pkg">libsndfile / libsamplerate / soxr</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">audio I/O and resampling</td></tr>
+      <tr><td class="pkg">zimg</td><td class="ver">3.0.5</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">colourspace conversion &amp; scaling</td></tr>
+      <tr><td class="pkg">libass</td><td class="ver">0.17.3</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">ASS/SSA subtitles — NASM format taught QNX</td></tr>
+      <tr><td class="pkg">SDL2</td><td class="ver">2.32.10</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">switched from QSA to QNX 8's real ALSA</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Graphics, text rendering and GUI</h3><span class="count">34</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">GLib</td><td class="ver">2.82.4</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">QNX added to the fstab mount-point branch</td></tr>
+      <tr><td class="pkg">GTK 3</td><td class="ver">3.24.43</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">Wayland + Broadway backends</td></tr>
+      <tr><td class="pkg">Wayland</td><td class="ver">1.23.1</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">getpeereid instead of SO_PEERCRED</td></tr>
+      <tr><td class="pkg">libX11 + libxcb</td><td class="ver">1.8.10 / 1.17.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">X11 client stack — 17 packages, zero patches</td></tr>
+      <tr><td class="pkg">Cairo / Pango</td><td class="ver">1.18.2 / 1.54</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">2D drawing and text layout</td></tr>
+      <tr><td class="pkg">HarfBuzz / FriBidi</td><td class="ver">– / 1.0.16</td><td><span class="tag re">Rebuild</span></td><td class="pat has">0+1</td><td class="role">shaping and bidi</td></tr>
+      <tr><td class="pkg">FreeType / fontconfig</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">font rasterisation and matching</td></tr>
+      <tr><td class="pkg">ICU</td><td class="ver">76.1</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">mh-qnx used a link flag as a compile flag</td></tr>
+      <tr><td class="pkg">libthai / libdatrie / libunibreak</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat has">2</td><td class="role">word and line breaking</td></tr>
+      <tr><td class="pkg">Pixman / libepoxy / graphite2 / ATK</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">rendering support</td></tr>
+      <tr><td class="pkg">libxkbcommon / xkeyboard-config</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">keymap handling</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Imaging</h3><span class="count">13</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">libpng / libjpeg-turbo / giflib</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">core image formats</td></tr>
+      <tr><td class="pkg">libtiff / libwebp</td><td class="ver">4.7.0 / –</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">TIFF and WebP</td></tr>
+      <tr><td class="pkg">libavif</td><td class="ver">1.1.1</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">AVIF over libaom + dav1d</td></tr>
+      <tr><td class="pkg">libjxl</td><td class="ver">0.11.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">JPEG XL</td></tr>
+      <tr><td class="pkg">OpenJPEG</td><td class="ver">2.5.3</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">JPEG 2000</td></tr>
+      <tr><td class="pkg">libyuv</td><td class="ver">stable</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">NEON assembly reworked for the SDP assembler</td></tr>
+      <tr><td class="pkg">Little-CMS</td><td class="ver">2.16</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">colour management</td></tr>
+      <tr><td class="pkg">Exiv2 / libexif</td><td class="ver">0.28.5 / 0.6.24</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">image metadata</td></tr>
+      <tr><td class="pkg">gdk-pixbuf</td><td class="ver">2.42</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">loader framework</td></tr>
+      <tr><td class="pkg">woff2</td><td class="ver">1.0.2</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">web font compression</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Networking, event loops and IPC</h3><span class="count">16</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">curl</td><td class="ver">8.11.1</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">HTTP client</td></tr>
+      <tr><td class="pkg">nghttp2</td><td class="ver">1.64.0</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">HTTP/2</td></tr>
+      <tr><td class="pkg">c-ares</td><td class="ver">1.34.4</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">async DNS — QNX epoll has no EPOLLRDHUP</td></tr>
+      <tr><td class="pkg">libuv</td><td class="ver">1.49.2</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">async I/O — existing QNX branch targeted 7.x</td></tr>
+      <tr><td class="pkg">libev / libevent</td><td class="ver">4.33 / 2.1.12</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">event loops — EPOLLET absent on QNX</td></tr>
+      <tr><td class="pkg">D-Bus</td><td class="ver">1.16.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">IPC bus — epoll backend disabled</td></tr>
+      <tr><td class="pkg">libsoup</td><td class="ver">3.6.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">GNOME HTTP</td></tr>
+      <tr><td class="pkg">libssh2 / libpcap / libusb</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">SSH, capture, USB</td></tr>
+      <tr><td class="pkg">libproxy / libnotify</td><td class="ver">0.5.9 / 0.8.3</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">proxy config, notifications</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Language runtimes, data and foundation</h3><span class="count">50</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">CPython</td><td class="ver">3.14.0</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">interpreter + 60 extension modules; 9 files patched</td></tr>
+      <tr><td class="pkg">Lua / LuaJIT-free</td><td class="ver">5.4.7</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">scripting</td></tr>
+      <tr><td class="pkg">Duktape</td><td class="ver">2.7.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">embeddable ECMAScript</td></tr>
+      <tr><td class="pkg">libffi</td><td class="ver">3.4.6</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">executable closures enabled for QNX</td></tr>
+      <tr><td class="pkg">SQLite / GDBM</td><td class="ver">3.47.2 / 1.24</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">embedded databases</td></tr>
+      <tr><td class="pkg">zlib / zstd / xz / bzip2 / lz4 / brotli</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">compression</td></tr>
+      <tr><td class="pkg">libxml2 / libxslt / expat</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat">–</td><td class="role">XML</td></tr>
+      <tr><td class="pkg">nlohmann/json, jansson, jsoncpp, simdjson, cJSON</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">JSON</td></tr>
+      <tr><td class="pkg">ncurses / readline / libedit / unibilium</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">terminal — readline's .so symlink fixed</td></tr>
+      <tr><td class="pkg">spdlog / fmt / yaml-cpp / tinyxml2</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">logging and config</td></tr>
+      <tr><td class="pkg">googletest / gflags / glog</td><td class="ver">–</td><td><span class="tag re">Rebuild</span></td><td class="pat has">1</td><td class="role">test and logging infrastructure</td></tr>
+      <tr><td class="pkg">libarchive / libfdt / tree-sitter / jq</td><td class="ver">–</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">archives, device trees, parsing</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>GTK4, Xfce and desktop integration</h3><span class="count">28</span></div>
+    <p class="sec-note">
+      Every package here was built from a <strong>release tarball, not a git tag</strong>.
+      GTK4 compiles its CSS themes from Sass at build time and Xfce regenerates
+      <code>*-aliasdef.c</code> — both only when the source is a git checkout, and both
+      need to <em>run</em> a program the cross build has no way to execute. The tarballs
+      ship the generated files; six Xfce packages went from blocked to building on that
+      change alone, and two patches became unnecessary.
+    </p>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">GTK4</td><td class="ver">4.16.7</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">GTK 4 toolkit — X11, Wayland and Broadway backends</td></tr>
+      <tr><td class="pkg">graphene</td><td class="ver">1.10.8</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">SIMD vector and matrix types GTK4 requires</td></tr>
+      <tr><td class="pkg">libhandy</td><td class="ver">1.8.3</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">adaptive GTK3 widgets</td></tr>
+      <tr><td class="pkg">libdazzle</td><td class="ver">3.44.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">GNOME Builder widget and animation kit</td></tr>
+      <tr><td class="pkg">gtk-layer-shell</td><td class="ver">0.9.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">wlr-layer-shell panels and docks</td></tr>
+      <tr><td class="pkg">libxfce4util</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce base utility library</td></tr>
+      <tr><td class="pkg">xfconf</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce configuration store over D-Bus</td></tr>
+      <tr><td class="pkg">libxfce4ui</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce shared widgets</td></tr>
+      <tr><td class="pkg">libxfce4windowing</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">window-manager abstraction, X11 + Wayland</td></tr>
+      <tr><td class="pkg">garcon</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">freedesktop.org menu implementation</td></tr>
+      <tr><td class="pkg">exo</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce application support library</td></tr>
+      <tr><td class="pkg">libsecret</td><td class="ver">0.21.4</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">Secret Service client (keyring)</td></tr>
+      <tr><td class="pkg">gcr</td><td class="ver">3.41.2</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">crypto UI and PKCS#11 for libsecret</td></tr>
+      <tr><td class="pkg">SDL2_image / SDL2_ttf / SDL2_net</td><td class="ver">2.8.8 / 2.24.0 / 2.2.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">SDL2 image, text and network add-ons</td></tr>
+      <tr><td class="pkg">ThorVG</td><td class="ver">0.15.8</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">vector graphics / Lottie engine — shared-only, see defects</td></tr>
+      <tr><td class="pkg">libgsf</td><td class="ver">1.14.53</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">structured-file (OLE2 / ZIP) access</td></tr>
+      <tr><td class="pkg">aspell</td><td class="ver">0.60.8.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">spell checker</td></tr>
+      <tr><td class="pkg">WebKitGTK</td><td class="ver">2.44.4</td><td><span class="tag new">New</span></td><td class="pat has">5</td><td class="role">the web engine — runs on QNX; X11/Wayland windowing cannot (no EGL but Screen's)</td></tr>
+      <tr><td class="pkg">JavaScriptCore</td><td class="ver">2.44.4</td><td><span class="tag new">New</span></td><td class="pat has">4</td><td class="role">WebKit's JS engine, JSCOnly port — verified running on target</td></tr>
+      <tr><td class="pkg">enchant</td><td class="ver">2.8.2</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">spell-checking broker; dlopens its aspell provider</td></tr>
+      <tr><td class="pkg">hyphen</td><td class="ver">2.8.8</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Liang hyphenation</td></tr>
+      <tr><td class="pkg">enca</td><td class="ver">1.19</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">charset analyser</td></tr>
+      <tr><td class="pkg">libgsm</td><td class="ver">1.0.22</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">GSM 06.10 full-rate speech codec</td></tr>
+      <tr><td class="pkg">xvidcore</td><td class="ver">1.3.7</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">MPEG-4 ASP codec</td></tr>
+      <tr><td class="pkg">vid.stab</td><td class="ver">1.1.1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">video stabilisation, FFmpeg filter</td></tr>
+      <tr><td class="pkg">ffmpegthumbnailer</td><td class="ver">2.2.3</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">video thumbnail extraction</td></tr>
+      <tr><td class="pkg">libfontenc</td><td class="ver">1.1.8</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">X font encoding tables</td></tr>
+      <tr><td class="pkg">iperf3</td><td class="ver">3.17.1</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">network throughput measurement</td></tr>
+    </table></div>
+  </div>
+
+  <div class="cat">
+    <div class="cat-head"><h3>Desktop integration, accessibility and Lua</h3><span class="count">14</span></div>
+    <div class="tbl-scroll"><table>
+      <tr><th>Package</th><th>Version</th><th>Status</th><th>Patches</th><th>Role</th></tr>
+      <tr><td class="pkg">at-spi2-core</td><td class="ver">2.54.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">accessibility bus, ATK bridge — <strong>and ATK itself</strong>, merged upstream at 2.52</td></tr>
+      <tr><td class="pkg">VTE</td><td class="ver">0.78.2</td><td><span class="tag new">New</span></td><td class="pat has">3</td><td class="role">terminal widget (GTK3 + GTK4)</td></tr>
+      <tr><td class="pkg">tumbler</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce thumbnailer — 8 plugins, incl. ffmpeg and GStreamer</td></tr>
+      <tr><td class="pkg">SDL3</td><td class="ver">3.2.10</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">X11 backend — its Wayland path hard-requires EGL, which QNX has only via Screen</td></tr>
+      <tr><td class="pkg">libde265</td><td class="ver">1.0.15</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">HEVC decoder, the other half of the x265 pair</td></tr>
+      <tr><td class="pkg">xfce4-panel</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce panel and libxfce4panel</td></tr>
+      <tr><td class="pkg">Thunar</td><td class="ver">4.20.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">Xfce file manager and thunarx — required GTK3's X11 backend</td></tr>
+      <tr><td class="pkg">LuaJIT</td><td class="ver">2.1 (c6ffc141)</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">trace compiler verified running on target</td></tr>
+      <tr><td class="pkg">luv</td><td class="ver">1.51.0-1</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">libuv bindings for Lua</td></tr>
+      <tr><td class="pkg">abseil-cpp</td><td class="ver">20240722.0</td><td><span class="tag new">New</span></td><td class="pat has">1</td><td class="role">one copy for protobuf and gRPC, which had installed two</td></tr>
+      <tr><td class="pkg">libXcomposite / libXdamage</td><td class="ver">0.4.6 / 1.1.6</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">GTK3 X11 backend dependencies</td></tr>
+      <tr><td class="pkg">libXScrnSaver / pkgconf</td><td class="ver">1.2.4 / 2.3.0</td><td><span class="tag new">New</span></td><td class="pat">–</td><td class="role">screensaver extension; a target pkg-config</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Defects found — and only findable by running the code</h2>
+  <p class="sec-note">
+    Every one of these produced a library that compiled and linked without complaint.
+    Building is not evidence; these surfaced on a real target, under gdb, or in a
+    from-scratch rebuild.
+  </p>
+  <div class="defects">
+    <div class="defect">
+      <div class="what">WebKitGTK ports; a browser window does not<code>EGLNativeDisplayType</code></div>
+      <p class="why">The engine builds and runs on QNX and reports itself as <code>Mozilla/5.0 (X11; QNX RaspberryPi5) AppleWebKit/605.1.15</code>. Seven fixes were needed and only two were about QNX — CMake 4's stricter <code>if()</code>, ICU 76's second C++ API switch, and a PID-socket argument GLib ports push unconditionally while guarding its declaration, its fd hand-off <em>and</em> the child's parsing with <code>OS(LINUX)</code>, are upstream problems any current build hits. What is genuinely QNX: its only EGL belongs to Screen and types <code>EGLNativeDisplayType</code> as an integer handle, so WebKit's X11 and Wayland display backends do not compile. Turning both off costs 2 of 1712 source files; painting into a window would need a <code>PlatformDisplay</code> backend written against QNX Screen, which is new development, not a port.</p>
+    </div>
+    <div class="defect">
+      <div class="what">56 libraries linked QNX's prebuilt libintl<code>--disable-nls</code></div>
+      <p class="why">gettext was configured without NLS, so it installed no <code>libintl</code> at all — and glib, GTK, ATK and every Xfce component quietly resolved <code>-lintl</code> to the SDP's <code>libintl.so.1</code>. The audit could not see it: it only flagged sonames whose stem we had <em>also</em> staged, and a library we never installed has no stem to match. It now works from an explicit allowlist of genuine OS and toolchain libraries, and reports everything else. Under that rule the whole tree had exactly one offender.</p>
+    </div>
+    <div class="defect">
+      <div class="what">JavaScriptCore aborted before running a line<code>structure heap</code></div>
+      <p class="why">JSC reserves its structure heap aligned to 4 GB; the size halves on failure but the alignment does not, so every attempt needs up to 8 GB of address space. A 1 GB QNX VM cannot give that and the <code>RELEASE_ASSERT</code> fires inside <code>JSContextGroupCreate()</code>. It passed on an 8 GB Raspberry Pi, so it read as an architecture difference and was really an address-space one. Found by taking a core with QNX's <code>dumper</code> and reading it with the SDP's cross gdb.</p>
+    </div>
+    <div class="defect">
+      <div class="what">The clean rebuild found six more<code>218 packages, one pass</code></div>
+      <p class="why">Rebuilding the whole tree from nothing turned up four undeclared dependencies — one of which (aspell) was linking QNX's <em>prebuilt</em> ncurses — two patches that existed only as edits in <code>src/</code> and would have been lost, and a package whose feature detection had silently changed underneath it. Every one of them built fine incrementally. The run also broke itself: <code>env.sh</code> prepends to <code>PATH</code> on each of its two sourcings per package, and at 218 packages <code>PATH</code> crossed the kernel's 128 KB limit, after which every <code>exec</code> failed with "Argument list too long" — starting with the <code>dirname</code> that locates the workspace.</p>
+    </div>
+    <div class="defect">
+      <div class="what">test_python was testing QNX's Python<code>/system/lib/python3.14</code></div>
+      <p class="why">With an isolated config and no program name, CPython finds its prefix by searching <code>PATH</code> for <code>python3</code>. On the Pi that is QNX's own interpreter, so our <code>libpython</code> loaded QNX's stdlib and its prebuilt <code>_ssl</code>, <code>_ctypes</code> and <code>_sqlite3</code> — and the test's ssl, sqlite3 and libffi-callback checks never touched our ports. The x86_64 image has no system Python, which is how it surfaced. The bundle now carries our stdlib and the test asserts every module loads from inside it.</p>
+    </div>
+    <div class="defect">
+      <div class="what">LuaJIT crashed on <code>print(1)</code><code>buildvm host layout</code></div>
+      <p class="why">LuaJIT generates its interpreter by running <code>buildvm</code> on the build machine, and for a target its Makefile does not list it compiles buildvm as <code>LUAJIT_OS_OTHER</code> while the target code sees <code>POSIX</code>. Those disagree on <code>LJ_HASPROFILE</code>, which changes the size of <code>jit_State</code> — and the VM finds global state by offsets from the dispatch table that follows it. Every such access was 16 bytes off. It built, linked and passed every static audit; gdb on the Pi showed a <code>lua_State</code> with odd <code>base</code>/<code>top</code> addresses. The recipe had described this mismatch as harmless.</p>
+    </div>
+    <div class="defect">
+      <div class="what">Two protobufs and two abseils in one process<code>gRPC PROVIDER=module</code></div>
+      <p class="why">gRPC installed its bundled protobuf 29.0 and abseil 20240722 beside the protobuf recipe's 29.3 and abseil 20240116 — 89 libraries twice, headers merged file by file, and c-ares's <code>libcares.pc</code> overwritten. The gRPC test mapped both pairs and still passed. One abseil recipe now, providers switched to <code>package</code>, and a new <code>check-dupes</code> audit.</p>
+    </div>
+    <div class="defect">
+      <div class="what">cairo's Xlib surface needs SysV shm<code>&lt;sys/shm.h&gt;</code></div>
+      <p class="why">QNX 8.0 has no System V shared memory at all, so X11's MIT-SHM is impossible there. cairo already had a no-SHM path; it is now taken when the header is absent.</p>
+    </div>
+    <div class="defect">
+      <div class="what">VTE could not open a pty at all<code>TIOCPKT</code></div>
+      <p class="why">QNX's <code>&lt;sys/ioctl.h&gt;</code> <em>defines</em> <code>TIOCPKT</code> — commented "pty: set/clear packet mode" — but devc-pty does not implement it and returns ENOTTY, so <code>vte_pty_new_sync()</code> failed outright. Ignoring the errno would have been worse than the failure: vte.cc's reader is compiled under the <em>same</em> <code>#if</code> and strips a leading packet-header byte from every <code>read()</code>, so the first byte of real output would have been eaten and misread as a header. A compile-time probe for a request the kernel may not honour has to switch every site that depends on it, together.</p>
+    </div>
+    <div class="defect">
+      <div class="what">A staged target binary broke every later CMake build<code>pkgconf</code></div>
+      <p class="why">Porting pkgconf put a QNX binary in <code>stage/&lt;arch&gt;/usr/local/bin</code>, which sits on <code>CMAKE_PREFIX_PATH</code>. <code>find_package(PkgConfig)</code> matched it, tried to run it for a version, and reported <strong>"Could NOT find PkgConfig"</strong> — naming neither the file it found nor why it rejected it. Staging's <code>bin</code> and <code>sbin</code> are now in <code>CMAKE_IGNORE_PATH</code>.</p>
+    </div>
+    <div class="defect">
+      <div class="what">at-spi2-core silently replaced ATK<code>libatk-1.0.so.0</code></div>
+      <p class="why">ATK moved into at-spi2-core upstream at 2.52, so 2.54 installs its own copy. With the standalone <code>atk</code> recipe still present, both staged a <code>libatk-1.0.so.0.*</code> and build order picked the winner — the ordering dependence a clean rebuild exists to eliminate. Nothing failed at build time; it surfaced on target, because 2.54 aliases <code>ATK_ROLE_PUSH_BUTTON</code> to <code>ATK_ROLE_BUTTON</code> and <code>atk_role_get_name()</code> changed its answer.</p>
+    </div>
+    <div class="defect">
+      <div class="what">enchant found none of its own plugins<code>gnulib relocate()</code></div>
+      <p class="why">gnulib's <code>relocatable.c</code> locates the running shared library by reading <code>/proc/self/maps</code> — implemented for Linux and Cygwin, and for nothing else. On QNX the function compiles away, <code>relocate()</code> becomes the identity, and enchant kept composing its provider directory from the configure-time prefix. The broker constructed cleanly and enumerated <strong>zero</strong> providers anywhere but that one path, with no error at any layer. <code>dladdr()</code> asks exactly the question the <code>/proc</code> scan asks, and QNX has it in libc. Any package vendoring this gnulib module carries the same hole.</p>
+    </div>
+    <div class="defect">
+      <div class="what">ThorVG shipped a library with no symbols<code>TVG_STATIC</code></div>
+      <p class="why">Meson's <code>--default-library=both</code> makes ThorVG define <code>TVG_STATIC</code>, and <code>TVG_STATIC</code> expands its <code>TVG_API</code> visibility macro to nothing. The shared object compiled, linked and installed exporting <strong>zero</strong> <code>tvg_*</code> symbols. Building a shared-only library restored 121. Any project whose visibility macro keys off a static-build define behaves this way, and nothing short of linking against it says so — <code>check-devlinks</code> now flags a staged <code>.so</code> with an empty dynamic symbol table.</p>
+    </div>
+    <div class="defect">
+      <div class="what">Build driver clobbered recipes<code>scripts/qnxbuild</code></div>
+      <p class="why">Recipe variables and hook functions cannot be local in bash, so a package that recursed to build a dependency came back holding the <em>dependency's</em> recipe — then installed with it and stamped itself done. glib stamped "OK" while staging no glib at all. Invisible until a clean rebuild made recursion the normal path: every earlier build had depended on lucky ordering.</p>
+    </div>
+    <div class="defect">
+      <div class="what">libffi handed out non-executable closures<code>FFI_MMAP_EXEC_WRIT</code></div>
+      <p class="why">The executable-memory allocator is gated on <code>__linux__</code> or Windows; everywhere else libffi falls back to <code>malloc</code>. On QNX every closure call jumped into the malloc arena — gdb put <code>rip</code> at <code>__main_arena+2240</code>. That breaks every libffi callback, which is the mechanism behind Python <code>ctypes</code> and all GObject introspection.</p>
+    </div>
+    <div class="defect">
+      <div class="what">SDP prebuilt libraries linked silently<code>check-sdp-leak</code></div>
+      <p class="why">The QNX gcc spec injects its own <code>-rpath-link</code> with four SDP directories <em>ahead</em> of anything you pass, and <code>find_package()</code> searched the SDP first. Eleven libraries were shadowed; binaries recorded <code>libz.so.2</code> (the SDP's soname) instead of our <code>libz.so.1</code> and loaded QNX's copy on target — precisely what the brief forbids.</p>
+    </div>
+    <div class="defect">
+      <div class="what">Orc registered no compile target<code>aarch64 only</code></div>
+      <p class="why">ARM NEON detection reads <code>/proc/cpuinfo</code>, which QNX does not have, so the backend was marked non-executable and every Orc program fell back to the interpreter — silently losing the SIMD fast paths in GStreamer's converters. x86_64 passed; only the Raspberry Pi run caught it.</p>
+    </div>
+    <div class="defect">
+      <div class="what">readline installed no development symlink<code>libreadline.so</code></div>
+      <p class="why"><code>support/shlib-install</code> has no case for <code>nto-qnx</code>, so only <code>libreadline.so.8</code> was staged. <code>-lreadline</code> is then not an error: the linker keeps searching and finds the SDP's prebuilt copy.</p>
+    </div>
+    <div class="defect">
+      <div class="what">Shared libraries shipped with holes<code>libyuv, libSvtAv1Enc</code></div>
+      <p class="why">Shared libraries link with undefined symbols allowed, so a forgotten <code>target_link_libraries</code> installs cleanly and fails only when an executable finally links it. libyuv compiled its MJPEG decoder but linked libjpeg into a tool alone; SVT-AV1 referenced <code>cpuinfo_isa</code> from a cpuinfo build that excluded QNX.</p>
+    </div>
+    <div class="defect">
+      <div class="what">CommonAPI aborted at process exit<code>mutex lock: EINVAL</code></div>
+      <p class="why">A use-after-free across DSO finaliser order: libCommonAPI destroyed the <code>Runtime</code> singleton whose member mutex libCommonAPI-SomeIP then locked. glibc tolerates the stale mutex; QNX returns EINVAL, libc++ throws, the process aborts. Root-caused with a gdb backtrace on target.</p>
+    </div>
+    <div class="defect">
+      <div class="what">CPython built a static library while reporting success<code>--enable-shared</code></div>
+      <p class="why">Three platform tables omit QNX, so <code>--enable-shared</code> was accepted and quietly produced <code>libpython3.14.a</code>. Its <em>existing</em> QNX case for <code>LINKCC</code> was written for native builds and dropped qcc's <code>-V</code> target selector, so the cross build drove the x86_64 linker against aarch64 objects.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Not built — and why</h2>
+  <p class="sec-note">These are blocked on something structural, not on time.</p>
+  <div class="blocked">
+    <div class="bl">
+      <div class="n">zenoh-c · Kuksa</div>
+      <p class="r">Rust. No toolchain on this host, and stock rustup ships no QNX 8.0 std target — the <code>qnx-ports/rust</code> bootstrap has to come first.</p>
+    </div>
+    <div class="bl">
+      <div class="n">can-utils</div>
+      <p class="r">Not a port. Every tool is written against SocketCAN (<code>AF_CAN</code>/<code>PF_CAN</code>), which QNX does not have — it uses <code>dev/can</code> resource managers. A translation layer would have to be written first, which is new development.</p>
+    </div>
+    <div class="bl">
+      <div class="n">Weston</div>
+      <p class="r">Hard-requires libinput and libdrm at configure time even for the headless backend. libinput needs udev, libevdev and mtdev — the Linux device model. GTK3's widget layer is covered through Broadway instead.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Workspace: <code>~/oss</code> · target overlay <code>stage/&lt;arch&gt;/usr/local</code></span>
+  <span>Full package table in <code>PORTS.md</code> · 97 hazards in <code>README.md</code></span>
+</footer>
+
+</div>

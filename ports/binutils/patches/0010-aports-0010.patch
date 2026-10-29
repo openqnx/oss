@@ -1,0 +1,30 @@
+QNX change from QNX's aports (core/binutils/0010.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From b93b29df22d7a90244896968decb4343f5ef625b Mon Sep 17 00:00:00 2001
+From: Jim Sleeth <jsleeth@blackberry.com>
+Date: Fri, 18 Oct 2024 21:42:40 +0000
+Subject: [PATCH] bdf-ld : custom linker script null derefence
+
+check the bed before using it.
+
+CLT-9353
+---
+diff --git a/bfd/elflink.c b/bfd/elflink.c
+index a180e59e8ca..9af3d4db7bd 100644
+--- a/bfd/elflink.c
++++ b/bfd/elflink.c
+@@ -64,7 +64,7 @@ _bfd_elf_link_keep_memory (struct bfd_link_info *info)
+      this is opt-in by each backend.  */
+   const struct elf_backend_data *bed
+     = get_elf_backend_data (info->output_bfd);
+-  if (bed->use_mmap)
++  if (bed && (bed->use_mmap))
+     return false;
+ #endif
+   bfd *abfd;
+

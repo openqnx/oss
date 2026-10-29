@@ -1,0 +1,23 @@
+QNX change from QNX's aports (extra/gthumb/002-fix-xopen-source.patch).
+
+Taken from qnx-ports/aports extra/gthumb -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/gthumb/gth-time-selector.c b/gthumb/gth-time-selector.c
+index 270c6946..9542fec3 100644
+--- a/gthumb/gth-time-selector.c
++++ b/gthumb/gth-time-selector.c
+@@ -20,7 +20,11 @@
+  */
+ 
+ #include <config.h>
++#if defined(__QNX__)
++#define _XOPEN_SOURCE 700 /* glibc2 needs this */
++#else
+ #define _XOPEN_SOURCE /* glibc2 needs this */
++#endif
+ #define _XOPEN_SOURCE_EXTENDED 1
+ #include <time.h>
+ #include <glib/gi18n.h>

@@ -1,0 +1,32 @@
+name: build
+
+# Requires a self-hosted runner with QNX SDP 8.0 installed and licensed at
+# $QNX_SDP_ROOT. Never runs on GitHub-hosted runners -- they have no SDP.
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Components to build (space separated, or 'all')"
+        required: true
+        default: "zlib"
+      arch:
+        description: "aarch64le, x86_64, or both"
+        required: true
+        default: "both"
+
+jobs:
+  build:
+    runs-on: [self-hosted, qnx-sdp]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          set -e
+          pkgs="${{ inputs.packages }}"
+          [ "$pkgs" = "all" ] && pkgs="$(ls ports)"
+          case "${{ inputs.arch }}" in
+            both) ./scripts/qnxbuild $pkgs ;;
+            *)    ./scripts/qnxbuild -a "${{ inputs.arch }}" $pkgs ;;
+          esac
+      - name: Audit the staging tree
+        run: ./scripts/check-all

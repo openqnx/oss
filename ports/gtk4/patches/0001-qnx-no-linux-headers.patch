@@ -1,0 +1,49 @@
+GTK 4: Wayland backend without Linux headers.
+
+QNX has no <sys/syscall.h> (only memfd_create's guarded fast path used it; the
+shm_open() fallback is taken) and no <linux/input.h> or <dev/evdev/input.h>;
+define the BTN_* codes the wl_pointer protocol fixes.
+
+Upstream-Status: QNX-specific
+
+--- a/gdk/wayland/gdkdisplay-wayland.c
++++ b/gdk/wayland/gdkdisplay-wayland.c
+@@ -31,7 +31,13 @@
+ #endif
+ 
+ #include <sys/mman.h>
++#if !defined (__QNX__) && !defined (__QNXNTO__)
++/* QNX is a microkernel: there is no <sys/syscall.h> and no __NR_* table. The
++   only use of it here is the memfd_create() fast path, which is already guarded
++   on __NR_memfd_create -- undefined on QNX -- so the shm_open() fallback below
++   is taken instead. */
+ #include <sys/syscall.h>
++#endif
+ 
+ #include <glib.h>
+ #include <gio/gio.h>
+--- a/gdk/wayland/gdkseat-wayland.c
++++ b/gdk/wayland/gdkseat-wayland.c
+@@ -49,7 +49,21 @@
+ #include <unistd.h>
+ #include <sys/time.h>
+ #include <sys/mman.h>
+-#if defined(HAVE_DEV_EVDEV_INPUT_H)
++#if defined (__QNX__) || defined (__QNXNTO__)
++/* Neither <linux/input.h> nor <dev/evdev/input.h> exists on QNX, so the block
++   below is skipped entirely and the BTN_* codes go undefined. The only thing
++   taken from those headers here is the button numbering, and in this context it
++   is not Linux-specific: the Wayland pointer protocol specifies wl_pointer
++   button codes *as* the evdev codes, so a compositor on any platform sends
++   exactly these values. Spell them out rather than pull in a device model QNX
++   does not have. */
++#define BTN_LEFT    0x110
++#define BTN_RIGHT   0x111
++#define BTN_MIDDLE  0x112
++#define BTN_STYLUS  0x14b
++#define BTN_STYLUS2 0x14c
++#define BTN_STYLUS3 0x149
++#elif defined(HAVE_DEV_EVDEV_INPUT_H)
+ #include <dev/evdev/input.h>
+ #elif defined(HAVE_LINUX_INPUT_H)
+ #include <linux/input.h>

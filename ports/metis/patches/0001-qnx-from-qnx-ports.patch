@@ -1,0 +1,97 @@
+From d40674521995c3eb3ee370b2a3ecfb8c32beb889 Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Fri, 29 Nov 2024 15:14:31 -0500
+Subject: [PATCH 1/2] Port METIS minus tests.
+
+Imported from qnx-ports/METIS (f5ae915a84d3...qnx_v5.2.1); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+---
+ conf/gkbuild.cmake      | 2 +-
+ include/CMakeLists.txt  | 6 +++++-
+ programs/CMakeLists.txt | 2 +-
+ test/CMakeLists.txt     | 8 ++++++++
+ 4 files changed, 15 insertions(+), 3 deletions(-)
+ create mode 100644 test/CMakeLists.txt
+
+diff --git a/conf/gkbuild.cmake b/conf/gkbuild.cmake
+index 0e70a8e..d5ffa32 100644
+--- a/conf/gkbuild.cmake
++++ b/conf/gkbuild.cmake
+@@ -31,7 +31,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
+   set(GK_COPTIONS "${GK_COPTIONS} -std=c99 -fno-strict-aliasing")
+ if(VALGRIND)
+   set(GK_COPTIONS "${GK_COPTIONS} -march=x86-64 -mtune=generic")
+-else()
++elseif(NOT QNX)
+   set(GK_COPTIONS "${GK_COPTIONS} -march=native")
+ endif(VALGRIND)
+   if(NOT MINGW)
+diff --git a/include/CMakeLists.txt b/include/CMakeLists.txt
+index 9515a51..6d01919 100644
+--- a/include/CMakeLists.txt
++++ b/include/CMakeLists.txt
+@@ -1,3 +1,7 @@
+ if(METIS_INSTALL)
+-  install(FILES metis.h DESTINATION include)
++  if(QNX)
++    install(FILES metis.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  else()
++    install(FILES metis.h DESTINATION include)
++  endif()
+ endif()
+diff --git a/programs/CMakeLists.txt b/programs/CMakeLists.txt
+index baf40ad..2b52a1e 100644
+--- a/programs/CMakeLists.txt
++++ b/programs/CMakeLists.txt
+@@ -11,7 +11,7 @@ add_executable(cmpfillin cmpfillin.c io.c smbfactor.c)
+ 
+ # Link with the required libraries
+ foreach(prog gpmetis ndmetis mpmetis m2gmetis graphchk cmpfillin)
+-  target_link_libraries(${prog} metis GKlib m)
++  target_link_libraries(${prog} metis GKlib m regex)
+ endforeach(prog)
+ 
+ if(METIS_INSTALL)
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+new file mode 100644
+index 0000000..12027b6
+--- /dev/null
++++ b/test/CMakeLists.txt
+@@ -0,0 +1,8 @@
++add_executable(mtest mtest.c)
++
++target_link_libraries(mtest metis) 
++target_include_directories(mtest PRIVATE ${CMAKE_SOURCE_DIR}/libmetis)
++if(METIS_INSTALL)
++  install(TARGETS mtest
++    RUNTIME DESTINATION bin/metis_tests)
++endif()
+
+From e6671fd8ef813ccded773fd63dcc2612bdb20a7b Mon Sep 17 00:00:00 2001
+From: eleir <eleir@blackberry.com>
+Date: Fri, 20 Dec 2024 16:16:10 -0500
+Subject: [PATCH 2/2] Added QNX cond around regex lib.
+
+---
+ programs/CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/programs/CMakeLists.txt b/programs/CMakeLists.txt
+index 2b52a1e..43a0770 100644
+--- a/programs/CMakeLists.txt
++++ b/programs/CMakeLists.txt
+@@ -11,7 +11,11 @@ add_executable(cmpfillin cmpfillin.c io.c smbfactor.c)
+ 
+ # Link with the required libraries
+ foreach(prog gpmetis ndmetis mpmetis m2gmetis graphchk cmpfillin)
+-  target_link_libraries(${prog} metis GKlib m regex)
++  if(QNX)
++    target_link_libraries(${prog} metis GKlib m regex)
++  else()
++    target_link_libraries(${prog} metis GKlib m)
++  endif()
+ endforeach(prog)
+ 
+ if(METIS_INSTALL)

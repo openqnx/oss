@@ -1,0 +1,342 @@
+#!/bin/bash
+# qnxbuild -- recipe driver for QNX SDP 8.0 OSS ports
+#   qnxbuild <pkg> [<pkg>...]        build for both arches
+#   qnxbuild -a aarch64le <pkg>      single arch
+#   qnxbuild -f <pkg>                force rebuild
+#   qnxbuild -l                      list recipes + status
+#   qnxbuild -I <pkg>                re-run only the install step from an
+#                                    existing build tree (records the manifest
+#                                    of a component built before manifests)
+#
+# Every component installs into pkgroot/<arch>/<pkg> first and is then merged
+# into stage/<arch>. The pkgroot tree is exactly what that one component
+# installs -- the input to scripts/qnxpkg -- and its file list is kept in
+# stage/<arch>/.manifest/<pkg>.
+set -o pipefail
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ARCHES="aarch64le x86_64"; FORCE=0; REPLAY=0
+while getopts "a:flI" o; do case $o in
+  a) ARCHES="$OPTARG";; f) FORCE=1;; I) REPLAY=1; FORCE=1;;
+  l) printf "%-22s %-10s %-10s\n" RECIPE aarch64le x86_64
+     for r in "$WS"/ports/*/recipe.sh; do n=$(basename "$(dirname "$r")")
+       grep -q '^STATUS=planned' "$r" && { printf "%-22s %-10s %-10s\n" "$n" planned planned; continue; }
+       grep -q '^STATUS=blocked' "$r" && { printf "%-22s %-10s %-10s\n" "$n" blocked blocked; continue; }
+       s1=NO; s2=NO
+       [ -f "$WS/stage/aarch64le/.stamp/$n" ] && s1=OK
+       [ -f "$WS/stage/x86_64/.stamp/$n" ] && s2=OK
+       printf "%-22s %-10s %-10s\n" "$n" "$s1" "$s2"; done; exit 0;;
+esac; done; shift $((OPTIND-1))
+[ $# -eq 0 ] && { echo "usage: qnxbuild [-a arch] [-f] <pkg>..."; exit 1; }
+
+# Packages currently being built, as " pkg:arch pkg:arch ". A dependency cycle
+# otherwise recurses until the shell's stack gives out -- a bare "Segmentation
+# fault" with no indication of which packages are involved. Seen for real:
+# xz -> gettext -> libxml2 -> xz, harmless while stamps existed to break the
+# recursion, fatal on a from-scratch build.
+QNXBUILD_INPROGRESS=" "
+
+# Marks the package in progress, runs the real build, then unmarks it on every
+# exit path -- a package reached twice as a dependency is normal and must not
+# be mistaken for a cycle.
+build_one() {
+  local pkg=$1 arch=$2
+  case "$QNXBUILD_INPROGRESS" in
+    *" $pkg:$arch "*)
+      echo "!! dependency cycle: $pkg [$arch] is already being built"
+      echo "   chain:$QNXBUILD_INPROGRESS"
+      return 1 ;;
+  esac
+  QNXBUILD_INPROGRESS="$QNXBUILD_INPROGRESS$pkg:$arch "
+  _build_one_body "$pkg" "$arch"; local rc=$?
+  QNXBUILD_INPROGRESS="${QNXBUILD_INPROGRESS/ $pkg:$arch / }"
+  return $rc
+}
+
+# Install one component into its own tree, then merge it into staging.
+# Recipes write to "$STAGE" in their install hooks, so STAGE is pointed at the
+# component's pkgroot for the duration of the install step only.
+_install_to_pkgroot() {
+  local root="$PKGROOT_DIR/$arch/$pkg" real="$STAGE"
+  rm -rf "$root"; mkdir -p "$root$PREFIX"
+  STAGE="$root"
+  # errexit for the recipe's install hook: most are several commands in a
+  # row, and only the last one's status used to count -- a failed "ninja
+  # install" followed by a successful write of a .pc file recorded a package
+  # that held nothing but the .pc. A step that may fail says "|| true".
+  if declare -F do_install >/dev/null; then ( set -e; do_install ) >>"$log" 2>&1
+  else case "$BUILDSYS" in
+      cmake) DESTDIR="$STAGE" cmake --install "$B" >>"$log" 2>&1 ;;
+      meson) DESTDIR="$STAGE" ninja -C "$B" install >>"$log" 2>&1 ;;
+      autotools) make -C "$B" DESTDIR="$STAGE" install >>"$log" 2>&1 ;;
+    esac; fi
+  local rc=$?; STAGE="$real"
+  [ $rc -eq 0 ] || { echo "!! install failed: $pkg [$arch] -- $log"; return 1; }
+
+  # libtool .la files record absolute *target* paths (/usr/local/lib/...), which
+  # do not exist on the build host; a later libtool link then dies with
+  # "is not a valid libtool archive". Nothing here consumes them, so drop them
+  # -- the same thing Yocto and Buildroot do.
+  find "$root" -name '*.la' -delete 2>/dev/null
+  # share/info/dir is the Info index, which install-info rebuilds from whatever
+  # manuals a system has. Every GNU package installs one; packaged, they would
+  # all claim the same file. Leave it out -- of staging too; no build reads it.
+  rm -f "$root$PREFIX/share/info/dir"
+  # A few install steps write their own location into what they install (b2
+  # bakes --prefix into Boost's CMake package files). Inside staging that has
+  # to read as the staging tree, not the pkgroot it was installed through.
+  grep -rlIF -- "$root" "$root" 2>/dev/null | while read -r f; do
+    sed -i "s#$root#$STAGE#g" "$f"; done
+  # A reinstall (a version bump, -f) must not leave the previous version's
+  # files behind: an old libfoo.so.1.2.3 next to the new one, still found by
+  # whatever links or bundles by file name. Remove what the old manifest lists
+  # and the new install does not.
+  local newlist; newlist=$( cd "$root" && find . ! -type d | sed 's#^\./##' | LC_ALL=C sort )
+  # Two components must not install the same file: the second overwrites the
+  # first's copy in staging (and their packages could not be installed side
+  # by side). tensorflow-lite once installed the abseil it bundles over the
+  # abseil component, and the staged headers and dev links then belonged to a
+  # different abseil. Refuse, unless one declares CONFLICTS with the other
+  # (sdl2 and sdl2-compat are alternatives for the same files).
+  local o clash="" n
+  for o in "$STAGE/.manifest"/*; do
+    [ -f "$o" ] || continue; o=${o##*/}; [ "$o" = "$pkg" ] && continue
+    n=$(LC_ALL=C comm -12 <(LC_ALL=C sort -u "$STAGE/.manifest/$o") <(printf '%s\n' "$newlist") | wc -l)
+    [ "$n" -gt 0 ] || continue
+    grep -qE "^CONFLICTS=\"?([^\"]* )?$o( |\"|$)" "$WS/ports/$pkg/recipe.sh" 2>/dev/null && continue
+    grep -qE "^CONFLICTS=\"?([^\"]* )?$pkg( |\"|$)" "$WS/ports/$o/recipe.sh" 2>/dev/null && continue
+    clash+=" $o($n)"
+    LC_ALL=C comm -12 <(LC_ALL=C sort -u "$STAGE/.manifest/$o") <(printf '%s\n' "$newlist") | head -5 | sed "s#^#!! also installed by $o: #" >>"$log"
+  done
+  [ -z "$clash" ] || { echo "!! $pkg [$arch] would overwrite files installed by:$clash -- $log"; return 1; }
+  # A file another component also lists stays: it is (also) that one's.
+  if [ -f "$STAGE/.manifest/$pkg" ]; then
+    LC_ALL=C comm -23 "$STAGE/.manifest/$pkg" <(printf '%s\n' "$newlist") | while IFS= read -r f; do
+      [ -n "$f" ] || continue
+      grep -qxF -- "$f" $(ls "$STAGE/.manifest"/* | grep -vxF "$STAGE/.manifest/$pkg") 2>/dev/null && continue
+      rm -f "$STAGE/$f"
+      # and the directories that leaves empty (rmdir stops at a non-empty one)
+      rmdir -p --ignore-fail-on-non-empty "$(dirname "$STAGE/$f")" 2>/dev/null || true; done
+  fi
+  cp -a "$root/." "$STAGE/"
+  mkdir -p "$STAGE/.manifest"
+  printf '%s\n' "$newlist" > "$STAGE/.manifest/$pkg"
+  # A configure option that switches everything off still "builds" and
+  # "installs" successfully. Installing nothing is never what a recipe means.
+  [ -s "$STAGE/.manifest/$pkg" ] || { echo "!! install produced no files: $pkg [$arch] -- $log"; return 1; }
+}
+
+_build_one_body() {
+  local pkg=$1 arch=$2
+  local rec="$WS/ports/$pkg/recipe.sh"
+  [ -f "$rec" ] || { echo "!! no recipe: $pkg"; return 1; }
+  # A planned entry records a component to port (version, upstream, license)
+  # before it has a real recipe; there is nothing to build yet.
+  if grep -q '^STATUS=planned' "$rec"; then echo "!! $pkg is planned, not ported yet (ports/$pkg/recipe.sh)"; return 1; fi
+  # A blocked entry was tried and cannot be built for QNX as things stand; the
+  # recipe's comment says what stops it.
+  if grep -q '^STATUS=blocked' "$rec"; then echo "!! $pkg is blocked on QNX -- see the comment in ports/$pkg/recipe.sh"; return 1; fi
+
+  source "$WS/env.sh" "$arch" >/dev/null || return 1
+  local stamp="$STAGE/.stamp/$pkg"; mkdir -p "$STAGE/.stamp" "$LOG_DIR"
+  if [ -f "$stamp" ] && [ $FORCE -eq 0 ]; then echo "== $pkg [$arch] already built (skip)"; return 0; fi
+
+  # A recipe sets plain shell variables and defines hook *functions*, and
+  # neither can be made local to a bash function -- so a nested build_one for a
+  # dependency overwrites the caller's. Loading is therefore factored out and
+  # repeated after the dependency loop, or the parent would go on to configure,
+  # build and install with the last dependency's recipe and then stamp itself as
+  # done. (That is exactly what happened: glib recursed into xz, came back, ran
+  # xz's install hooks again, wrote its own stamp, and staged no glib at all --
+  # invisible until a from-scratch rebuild made the recursion the normal case.)
+  _load_recipe() {
+    NAME="$pkg"; VERSION=""; GIT=""; REF=""; TARBALL=""; SUBDIR=""
+    BUILDSYS="cmake"; CMAKE_ARGS_EXTRA=(); MESON_ARGS_EXTRA=(); CONF_ARGS_EXTRA=()
+    DEPS=""; SRCROOT=""; CFLAGS_APPEND=""; LDFLAGS_APPEND=""; CONF_ENV=(); SHA256=""; COMMIT=""; ARCHES_SUPPORTED=""
+    unset -f do_fetch do_patch do_configure do_build do_install 2>/dev/null
+    source "$rec"
+  }
+  _load_recipe
+  # Components that exist for one architecture only (Arm NEON libraries, say).
+  if [ -n "$ARCHES_SUPPORTED" ] && [[ " $ARCHES_SUPPORTED " != *" $arch "* ]]; then
+    echo "== $pkg [$arch] not applicable (ARCHES_SUPPORTED=$ARCHES_SUPPORTED)"; return 0
+  fi
+
+  local log="$LOG_DIR/${pkg}.${arch}.log"
+  [ $REPLAY -eq 1 ] && log="$LOG_DIR/${pkg}.${arch}.install.log"
+  : > "$log"
+  echo "== $pkg [$arch] building -> $log"
+
+  if [ $REPLAY -eq 1 ]; then
+    SRCROOT="${SRCROOT:-$SRC_DIR/$pkg}"
+    local S="$SRCROOT${SUBDIR:+/$SUBDIR}" B="$BUILD_DIR/$arch/$pkg"
+    [ -d "$B" ] || { echo "!! no build tree to replay: $B"; return 1; }
+    _install_to_pkgroot && echo "== $pkg [$arch] manifest recorded"; return
+  fi
+
+  # ---- deps first
+  local _deps="$DEPS" d
+  for d in $_deps; do
+    [ -f "$STAGE/.stamp/$d" ] || build_one "$d" "$arch" || {
+      # Say so: a package skipped because a dependency failed used to print
+      # nothing at all, so a clean rebuild listed only the leaf that broke and
+      # hid everything above it (libxtst -> at-spi2-core -> gtk3 -> ...).
+      echo "!! dependency failed: $pkg [$arch] needs $d"; return 1; }
+    source "$WS/env.sh" "$arch" >/dev/null
+  done
+  # Restore this package's recipe: the loop above may have clobbered it.
+  _load_recipe
+
+  # ---- fetch (shared across arches)
+  SRCROOT="${SRCROOT:-$SRC_DIR/$pkg}"
+  if [ ! -d "$SRCROOT" ]; then
+    if declare -F do_fetch >/dev/null; then do_fetch >>"$log" 2>&1
+    elif [ -n "$GIT" ] && [ -n "$COMMIT" ]; then
+      # A pinned commit (projects without release tags, or a submodule pin):
+      # fetch exactly that commit, shallow.
+      echo "-- fetch $GIT ($COMMIT)" | tee -a "$log"
+      { git init -q "$SRCROOT" && git -C "$SRCROOT" remote add origin "$GIT" \
+        && git -C "$SRCROOT" fetch -q --depth 1 origin "$COMMIT" \
+        && git -C "$SRCROOT" -c advice.detachedHead=false checkout -q FETCH_HEAD \
+        && git -C "$SRCROOT" submodule update -q --init --recursive --depth 1; } >>"$log" 2>&1 \
+        || rm -rf "$SRCROOT"
+    elif [ -n "$GIT" ]; then
+      echo "-- clone $GIT ($REF)" | tee -a "$log"
+      git clone --recurse-submodules --shallow-submodules ${REF:+--branch "$REF"} --depth 1 \
+        "$GIT" "$SRCROOT" >>"$log" 2>&1
+    elif [ -n "$TARBALL" ]; then
+      # mkdir dist too: it holds the downloaded tarballs and is not tracked, so
+      # on a fresh clone it does not exist and curl fails with "(23) Failure
+      # writing output to destination" -- which reads like a network fault.
+      mkdir -p "$SRCROOT" "$WS/dist"; local tb="$WS/dist/$(basename "$TARBALL")"
+      if [ ! -f "$tb" ]; then
+        curl -fsSL --retry 3 -o "$tb" "$TARBALL" >>"$log" 2>&1 || rm -f "$tb"
+        # ftp.gnu.org is often slow or unreachable; its mirror network carries
+        # the same files (and the pinned SHA256 below makes sure of it).
+        if [ ! -f "$tb" ] && [[ "$TARBALL" == https://ftp.gnu.org/gnu/* ]]; then
+          curl -fsSL --retry 3 -o "$tb" "https://ftpmirror.gnu.org/gnu/${TARBALL#https://ftp.gnu.org/gnu/}" >>"$log" 2>&1 || rm -f "$tb"
+        fi
+      fi
+      # Pinned checksum: what was verified here is exactly what gets built.
+      if [ -n "$SHA256" ] && [ -f "$tb" ] && ! echo "$SHA256  $tb" | sha256sum -c --status; then
+        echo "!! checksum mismatch: $tb (expected $SHA256)" | tee -a "$log"
+        rm -f "$tb"; rm -rf "$SRCROOT"; return 1
+      fi
+      tar xf "$tb" -C "$SRCROOT" --strip-components=1 >>"$log" 2>&1
+    fi
+    # An empty source dir means the download or unpack failed. mkdir already
+    # created it, so testing for existence alone passes and the tree is left
+    # poisoned: the next run sees the directory, skips the fetch entirely, and
+    # fails in configure with a misleading "no such file: .../configure".
+    if [ -z "$(ls -A "$SRCROOT" 2>/dev/null)" ]; then
+      rm -rf "$SRCROOT"
+      echo "!! fetch failed: $pkg (see $log)"; return 1
+    fi
+    if [ -d "$WS/ports/$pkg/patches" ]; then
+      for p in "$WS/ports/$pkg"/patches/*.patch; do
+        [ -e "$p" ] || continue; echo "-- patch $(basename "$p")" | tee -a "$log"
+        # A tree with only some of its patches applied must not survive: the
+        # next run (or the other architecture) would build it as if it were
+        # complete.
+        patch -p1 -d "$SRCROOT" < "$p" >>"$log" 2>&1 || {
+          echo "!! patch failed: $pkg: $(basename "$p") (see $log)"; rm -rf "$SRCROOT"; return 1; }
+      done
+    fi
+    declare -F do_patch >/dev/null && { do_patch >>"$log" 2>&1 || { echo "!! do_patch failed: $pkg (see $log)"; rm -rf "$SRCROOT"; return 1; }; }
+  fi
+
+  local S="$SRCROOT${SUBDIR:+/$SUBDIR}"
+  local B="$BUILD_DIR/$arch/$pkg"; rm -rf "$B"; mkdir -p "$B"
+
+  if declare -F do_configure >/dev/null; then do_configure >>"$log" 2>&1 || { echo "!! configure failed: $pkg [$arch] -- $log"; return 1; }
+  else
+    case "$BUILDSYS" in
+      cmake)
+        cmake -S "$S" -B "$B" -G Ninja \
+          -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$arch.cmake" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+          -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+          -DBUILD_TESTING=OFF \
+          "${CMAKE_ARGS_EXTRA[@]}" >>"$log" 2>&1 ;;
+      meson)
+        # A native file tells meson where build-machine dependencies live
+        # (hosttools/), separately from the cross file's QNX staging tree.
+        nativefile=()
+        [ -f "$QNX_MESON_DIR/meson-native.ini" ] && nativefile=( --native-file "$QNX_MESON_DIR/meson-native.ini" )
+        meson setup "$B" "$S" --cross-file "$QNX_MESON_DIR/meson-$arch.ini" \
+          "${nativefile[@]}" \
+          --prefix="$PREFIX" --buildtype=release --default-library=both \
+          "${MESON_ARGS_EXTRA[@]}" >>"$log" 2>&1 ;;
+      autotools)
+        # generate ./configure when the tarball/repo ships only configure.ac
+        if [ ! -x "$S/configure" ]; then
+          ( cd "$S"
+            if [ -f autogen.sh ]; then NOCONFIGURE=1 ./autogen.sh
+            elif [ -f configure.ac ] || [ -f configure.in ]; then autoreconf -fi
+            fi ) >>"$log" 2>&1
+        fi
+        # Staging comes before the SDP include dir on purpose: the SDP ships its own
+        # copies of several of these libraries (zlib 1.2.13, for one) and we are meant
+        # to build against what this workspace produced. CPPFLAGS matters as much as
+        # CFLAGS -- autoconf runs its header probes with CPPFLAGS only, so leaving it
+        # unset lets configure record the SDP's version while compilation sees ours.
+        # CPP: autoconf otherwise derives "$CC -E", and qcc mishandles some
+        # preprocess-only invocations. Packages that generate sources by running
+        # the preprocessor (libgpg-error builds its error tables this way) then
+        # silently produce empty headers. The cross-GCC driver is reliable here.
+        # _QNX_SOURCE goes on CC/CXX, not only on CFLAGS: a configure script is
+        # free to overwrite CXXFLAGS outright (zimg sets it to
+        # "-fvisibility=hidden" and drops everything we passed), and then
+        # -std=c++14 turns on __STRICT_ANSI__ and QNX hides posix_memalign,
+        # strdup and friends behind their __EXT_* guards. The compiler variable
+        # survives that.
+        # LDFLAGS carries -rpath-link so the linker can resolve a dependency's
+        # own dependencies (libvorbis.so needing libogg.so.0, say) without them
+        # being named on the command line. It also names the libraries QNX
+        # splits out of libc -- socket, m, eventfd, epoll, signalfd, timerfd,
+        # fsnotify -- which portable code calls without ever asking for a
+        # library, the same set the CMake and Meson toolchain files carry.
+        #
+        # Every one of these assignments has to stay on an unbroken backslash
+        # continuation: a comment line in the middle ends the command, and the
+        # assignments before it become ordinary shell variables that configure
+        # never sees. That bug silently cost this driver its CC, CPP, CPPFLAGS,
+        # CFLAGS and CXXFLAGS for every autotools package -- they still built,
+        # because --host makes autoconf find the cross gcc on its own and
+        # pkg-config supplied most include paths, which is exactly why it went
+        # unnoticed.
+        ( cd "$B" && CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
+          CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
+          CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" \
+          CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
+          CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
+          LDFLAGS="-L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify $LDFLAGS_APPEND" \
+          GDBUS_CODEGEN="$STAGE$PREFIX/bin/gdbus-codegen" \
+          env "${CONF_ENV[@]}" \
+          "$S/configure" --host="$QNX_TRIPLE" --prefix="$PREFIX" "${CONF_ARGS_EXTRA[@]}" ) >>"$log" 2>&1 ;;
+      custom) : ;;
+      *) echo "!! unknown BUILDSYS=$BUILDSYS"; return 1 ;;
+    esac
+    [ $? -eq 0 ] || { echo "!! configure failed: $pkg [$arch] -- $log"; return 1; }
+  fi
+
+  if declare -F do_build >/dev/null; then do_build >>"$log" 2>&1
+  else case "$BUILDSYS" in
+      cmake) cmake --build "$B" -j"$(nproc)" >>"$log" 2>&1 ;;
+      meson) ninja -C "$B" >>"$log" 2>&1 ;;
+      autotools) make -C "$B" -j"$(nproc)" >>"$log" 2>&1 ;;
+    esac; fi
+  [ $? -eq 0 ] || { echo "!! build failed: $pkg [$arch] -- $log"; return 1; }
+
+  _install_to_pkgroot || return 1
+
+  # Refresh the link sysroot so the next package's linker sees what this one
+  # just staged, rather than the SDP's prebuilt copy of the same soname.
+  declare -F qnx_make_linkroot >/dev/null && qnx_make_linkroot
+
+  touch "$stamp"; echo "== $pkg [$arch] OK"
+}
+
+rc=0
+for pkg in "$@"; do for arch in $ARCHES; do build_one "$pkg" "$arch" || rc=1; done; done
+exit $rc

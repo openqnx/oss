@@ -1,0 +1,25 @@
+libsecret: fix an undeclared variable in the LOCAL_CREDS path.
+
+The error message uses "fd" where the parameter is "sock". The branch is
+compiled only where LOCAL_CREDS exists and CMSGCRED does not -- QNX, not
+Linux or the BSDs -- so the typo has gone unnoticed upstream.
+
+Upstream-Status: Pending
+
+diff --git a/egg/egg-unix-credentials.c b/egg/egg-unix-credentials.c
+index 6366d29..a186214 100644
+--- a/egg/egg-unix-credentials.c
++++ b/egg/egg-unix-credentials.c
+@@ -230,7 +230,11 @@ egg_unix_credentials_setup (int sock)
+ #if defined(LOCAL_CREDS) && !defined(HAVE_CMSGCRED)
+ 	int val = 1;
+ 	if (setsockopt (sock, 0, LOCAL_CREDS, &val, sizeof (val)) < 0) {
+-		fprintf (stderr, "unable to set LOCAL_CREDS socket option on fd %d\n", fd);
++		/* The parameter is called "sock"; "fd" does not exist here. This
++		   branch is compiled only where LOCAL_CREDS exists and CMSGCRED
++		   does not -- true on QNX, false on Linux and the BSDs, which is
++		   why the typo has never been hit upstream. */
++		fprintf (stderr, "unable to set LOCAL_CREDS socket option on fd %d\n", sock);
+ 		retval = -1;
+ 	}
+ #endif

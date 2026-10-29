@@ -1,0 +1,52 @@
+#!/bin/bash
+# Report which ported packages have no verification test.
+#
+# Nothing in the tree records which staged file came from which package, so
+# ownership is reconstructed from the install lines in each package's build
+# log. A package counts as covered when a test links one of its libraries,
+# includes one of its headers, or runs one of its programs.
+set -u
+WS="$(cd "$(dirname "$0")/.." && pwd)"
+arch=${1:-aarch64le}
+STAGE="stage/$arch/usr/local"
+cd "$WS" || exit 1
+
+# Everything the tests refer to, in one haystack: link lines, sources, runner.
+HAY=$(cat tests/CMakeLists.txt tests/src/* tests/run-on-target.sh tests/make-bundle.sh 2>/dev/null)
+
+covered=0; uncovered=()
+for r in ports/*/; do
+  pkg=$(basename "$r")
+  log="logs/$pkg.$arch.log"
+  [ -f "stage/$arch/.stamp/$pkg" ] || continue
+
+  # What this package installed: library stems, program names, header dirs.
+  toks=$(grep -hoE "$STAGE/(lib|bin|libexec|include)/[^ '\")]+" "$log" 2>/dev/null |
+    sed -e "s,^$STAGE/,," |
+    awk -F/ '
+      $1=="lib"     && $2 ~ /^lib.*\.so/ { s=$2; sub(/\.so.*$/,"",s); sub(/^lib/,"",s); print s }
+      $1=="lib"     && $2 ~ /^lib.*\.a$/ { s=$2; sub(/\.a$/,"",s);    sub(/^lib/,"",s); print s }
+      $1=="bin"     && NF==2             { print $2 }
+      $1=="libexec" && NF>=2             { print $2 }
+      $1=="include" && NF>=2             { s=$2; sub(/\.h$/,"",s); print s }
+    ' | sort -u)
+  # A test may reach a package through pkg-config rather than -lfoo, in which
+  # case no library stem appears anywhere in the test tree. The package's own
+  # name (as written, and with separators removed) covers that case.
+  toks="$toks $pkg $(printf '%s' "$pkg" | tr -d -- '-_')"
+
+  hit=""
+  for t in $toks; do
+    case "$t" in ''|pkgconfig|cmake) continue ;; esac
+    # Word-boundary match so "z" does not match "zip".
+    if printf '%s' "$HAY" | grep -qiE "(^|[^A-Za-z0-9_./-])$(printf '%s' "$t" | sed 's/[.[\*^$]/\\&/g')([^A-Za-z0-9_-]|$)"; then
+      hit="$t"; break
+    fi
+  done
+
+  if [ -n "$hit" ]; then covered=$((covered+1)); else uncovered+=("$pkg"); fi
+done
+
+echo "covered:   $covered"
+echo "uncovered: ${#uncovered[@]}"
+printf '  %s\n' "${uncovered[@]}"

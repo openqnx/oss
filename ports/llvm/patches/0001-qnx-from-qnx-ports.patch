@@ -1,0 +1,1571 @@
+From c9ae055f25e53ba7383051c57e42be5dcbce0155 Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Fri, 17 Oct 2025 10:59:41 -0400
+Subject: [PATCH 01/10] qnx: add llvm target support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ llvm/cmake/modules/GetHostTriple.cmake  |  6 ++++++
+ llvm/include/llvm/ADT/bit.h             |  8 ++++++++
+ llvm/include/llvm/Support/ExitCodes.h   |  2 +-
+ llvm/include/llvm/TargetParser/Triple.h |  5 ++++-
+ llvm/lib/Support/Unix/Path.inc          | 20 +++++++++++++++++++-
+ llvm/lib/Support/Unix/Threading.inc     |  6 ++++++
+ llvm/lib/TargetParser/Triple.cpp        |  5 +++--
+ 7 files changed, 47 insertions(+), 5 deletions(-)
+
+diff --git a/llvm/cmake/modules/GetHostTriple.cmake b/llvm/cmake/modules/GetHostTriple.cmake
+index cbecd85df5e43c..4c906d5f6042f7 100644
+--- a/llvm/cmake/modules/GetHostTriple.cmake
++++ b/llvm/cmake/modules/GetHostTriple.cmake
+@@ -41,6 +41,12 @@ function( get_host_triple var )
+     else()
+       set( value "powerpc-ibm-aix" )
+     endif()
++  elseif( CMAKE_SYSTEM_NAME STREQUAL QNX )
++    if( CMAKE_C_COMPILER_ARCHITECTURE_ID MATCHES "aarch64" )
++      set( value "aarch64-unknown-qnx" )
++    else()
++      set( value "x86_64-pc-qnx" )
++    endif()
+   else()
+     if(CMAKE_HOST_SYSTEM_NAME STREQUAL Windows AND NOT MSYS)
+       message(WARNING "unable to determine host target triple")
+diff --git a/llvm/include/llvm/ADT/bit.h b/llvm/include/llvm/ADT/bit.h
+index 5971b75045b6b5..8d0d4a45689086 100644
+--- a/llvm/include/llvm/ADT/bit.h
++++ b/llvm/include/llvm/ADT/bit.h
+@@ -44,6 +44,14 @@
+ #else
+ #define BYTE_ORDER LITTLE_ENDIAN
+ #endif
++#elif defined(__QNX__)
++#define BIG_ENDIAN 4321
++#define LITTLE_ENDIAN 1234
++#if defined(__LITTLEENDIAN__)
++#define BYTE_ORDER LITTLE_ENDIAN
++#else
++#define BYTE_ORDER BIG_ENDIAN
++#endif
+ #elif defined(__MVS__)
+ #define BIG_ENDIAN 4321
+ #define LITTLE_ENDIAN 1234
+diff --git a/llvm/include/llvm/Support/ExitCodes.h b/llvm/include/llvm/Support/ExitCodes.h
+index 4eb5dedc688bc3..1134a0159563c9 100644
+--- a/llvm/include/llvm/Support/ExitCodes.h
++++ b/llvm/include/llvm/Support/ExitCodes.h
+@@ -20,7 +20,7 @@
+ 
+ #if HAVE_SYSEXITS_H
+ #include <sysexits.h>
+-#elif __MVS__ || defined(_WIN32)
++#elif __MVS__ || defined(_WIN32) || defined(__QNX__)
+ // <sysexits.h> does not exist on z/OS and Windows. The only value used in LLVM
+ // is EX_IOERR, which is used to signal a special error condition (broken pipe).
+ // Define the macro with its usual value from BSD systems, which is chosen to
+diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
+index 9c83abeeb3b19a..61804bba9c885a 100644
+--- a/llvm/include/llvm/TargetParser/Triple.h
++++ b/llvm/include/llvm/TargetParser/Triple.h
+@@ -252,7 +252,8 @@ class Triple {
+     Serenity,
+     Vulkan, // Vulkan SPIR-V
+     CheriotRTOS,
+-    LastOSType = CheriotRTOS
++    QNX,    // Blackberry QNX
++    LastOSType = QNX
+   };
+   enum EnvironmentType {
+     UnknownEnvironment,
+@@ -892,6 +893,8 @@ class Triple {
+ 
+   bool isOSManagarm() const { return getOS() == Triple::Managarm; }
+ 
++  bool isOSQNX() const { return getOS() == Triple::QNX; }
++
+   bool isShaderStageEnvironment() const {
+     EnvironmentType Env = getEnvironment();
+     return Env == Triple::Pixel || Env == Triple::Vertex ||
+diff --git a/llvm/lib/Support/Unix/Path.inc b/llvm/lib/Support/Unix/Path.inc
+index fc71ca46d823a5..6efa2590744a62 100644
+--- a/llvm/lib/Support/Unix/Path.inc
++++ b/llvm/lib/Support/Unix/Path.inc
+@@ -111,12 +111,16 @@ typedef uint_t uint;
+ #endif
+ 
+ #if defined(__NetBSD__) || defined(__DragonFly__) || defined(__GNU__) ||       \
+-    defined(__MVS__)
++    defined(__MVS__) || defined(__QNX__)
+ #define STATVFS_F_FLAG(vfs) (vfs).f_flag
+ #else
+ #define STATVFS_F_FLAG(vfs) (vfs).f_flags
+ #endif
+ 
++#if defined(__QNX__)
++#include <process.h> // _cmdname()
++#endif
++
+ using namespace llvm;
+ 
+ namespace llvm {
+@@ -253,6 +257,17 @@ std::string getMainExecutable(const char *argv0, void *MainAddr) {
+   // If we don't have procfs mounted, fall back to argv[0]
+   if (getprogpath(exe_path, argv0) != NULL)
+     return exe_path;
++#elif defined(__QNX__)
++  char exe_path[PATH_MAX] = {};
++  if (_cmdline(exe_path) == nullptr) {
++    return "";
++  }
++
++  if (char *real_path = realpath(exe_path, nullptr)) {
++      std::string ret = std::string(real_path);
++      free(real_path);
++      return ret;
++  }
+ #elif defined(__linux__) || defined(__CYGWIN__) || defined(__gnu_hurd__) ||    \
+     defined(__managarm__)
+   char exe_path[PATH_MAX];
+@@ -564,6 +579,9 @@ static bool is_local_impl(struct STATVFS &Vfs) {
+   // The file system can have an arbitrary structure on z/OS; must go with the
+   // conservative answer.
+   return false;
++#elif defined(__QNX__)
++  // Not supported on QNX
++  return false;
+ #else
+   return !!(STATVFS_F_FLAG(Vfs) & MNT_LOCAL);
+ #endif
+diff --git a/llvm/lib/Support/Unix/Threading.inc b/llvm/lib/Support/Unix/Threading.inc
+index a009a3db2b4255..8b5a68cf6f8038 100644
+--- a/llvm/lib/Support/Unix/Threading.inc
++++ b/llvm/lib/Support/Unix/Threading.inc
+@@ -70,6 +70,10 @@
+ #include <OS.h> // For B_OS_NAME_LENGTH
+ #endif
+ 
++#if defined(__QNX__)
++#include <sys/neutrino.h>  // For _NTO_THREAD_NAME_MAX
++#endif
++
+ namespace llvm {
+ pthread_t
+ llvm_execute_on_thread_impl(void *(*ThreadFunc)(void *), void *Arg,
+@@ -171,6 +175,8 @@ static constexpr uint32_t get_max_thread_name_length_impl() {
+   return 24;
+ #elif defined(__CYGWIN__)
+   return 16;
++#elif defined(__QNX__)
++  return _NTO_THREAD_NAME_MAX;
+ #else
+   return 0;
+ #endif
+diff --git a/llvm/lib/TargetParser/Triple.cpp b/llvm/lib/TargetParser/Triple.cpp
+index a4f9dd42c0fecf..55e5e1a835f9f1 100644
+--- a/llvm/lib/TargetParser/Triple.cpp
++++ b/llvm/lib/TargetParser/Triple.cpp
+@@ -339,8 +339,8 @@ StringRef Triple::getOSTypeName(OSType Kind) {
+   case LiteOS: return "liteos";
+   case XROS: return "xros";
+   case Vulkan: return "vulkan";
+-  case CheriotRTOS:
+-    return "cheriotrtos";
++  case CheriotRTOS: return "cheriotrtos";
++  case QNX: return "qnx";
+   }
+ 
+   llvm_unreachable("Invalid OSType");
+@@ -754,6 +754,7 @@ static Triple::OSType parseOS(StringRef OSName) {
+       .StartsWith("serenity", Triple::Serenity)
+       .StartsWith("vulkan", Triple::Vulkan)
+       .StartsWith("cheriotrtos", Triple::CheriotRTOS)
++      .StartsWith("qnx", Triple::QNX)
+       .Default(Triple::UnknownOS);
+ }
+ 
+
+From 970e8282558a34f89f244c541eba783a0d0b30ca Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Fri, 17 Oct 2025 10:59:58 -0400
+Subject: [PATCH 02/10] qnx/clang: add os target support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+---
+ clang/lib/Basic/Targets.cpp         |   5 +
+ clang/lib/Basic/Targets/OSTargets.h |  33 ++++
+ clang/lib/Driver/CMakeLists.txt     |   1 +
+ clang/lib/Driver/Driver.cpp         |   4 +
+ clang/lib/Driver/ToolChains/QNX.cpp | 233 ++++++++++++++++++++++++++++
+ clang/lib/Driver/ToolChains/QNX.h   |  70 +++++++++
+ 6 files changed, 346 insertions(+)
+ create mode 100644 clang/lib/Driver/ToolChains/QNX.cpp
+ create mode 100644 clang/lib/Driver/ToolChains/QNX.h
+
+diff --git a/clang/lib/Basic/Targets.cpp b/clang/lib/Basic/Targets.cpp
+index 263253918d965d..79a7428a6eece7 100644
+--- a/clang/lib/Basic/Targets.cpp
++++ b/clang/lib/Basic/Targets.cpp
+@@ -166,6 +166,9 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
+     case llvm::Triple::Managarm:
+       return std::make_unique<ManagarmTargetInfo<AArch64leTargetInfo>>(Triple,
+                                                                        Opts);
++    case llvm::Triple::QNX:
++      return std::make_unique<QNXTargetInfo<AArch64leTargetInfo>>(Triple,
++                                                                    Opts);
+     case llvm::Triple::NetBSD:
+       return std::make_unique<NetBSDTargetInfo<AArch64leTargetInfo>>(Triple,
+                                                                      Opts);
+@@ -660,6 +663,8 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
+     case llvm::Triple::Managarm:
+       return std::make_unique<ManagarmTargetInfo<X86_64TargetInfo>>(Triple,
+                                                                     Opts);
++    case llvm::Triple::QNX:
++      return std::make_unique<QNXTargetInfo<X86_64TargetInfo>>(Triple, Opts);
+     default:
+       return std::make_unique<X86_64TargetInfo>(Triple, Opts);
+     }
+diff --git a/clang/lib/Basic/Targets/OSTargets.h b/clang/lib/Basic/Targets/OSTargets.h
+index 04608649a8634f..99b30d539e3c73 100644
+--- a/clang/lib/Basic/Targets/OSTargets.h
++++ b/clang/lib/Basic/Targets/OSTargets.h
+@@ -1089,6 +1089,39 @@ class LLVM_LIBRARY_VISIBILITY OHOSTargetInfo : public OSTargetInfo<Target> {
+   }
+ };
+ 
++// QNX Target
++template <typename Target>
++class LLVM_LIBRARY_VISIBILITY QNXTargetInfo : public OSTargetInfo<Target> {
++protected:
++  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
++                    MacroBuilder &Builder) const override {
++    // QNX defines
++    DefineStd(Builder, "unix", Opts);
++    Builder.defineMacro("__QNXNTO__");
++    Builder.defineMacro("__QNX__", "800");
++    Builder.defineMacro("__ELF__");
++    Builder.defineMacro("__LITTLEENDIAN__");
++    Builder.defineMacro("_QNX_SOURCE");
++    Builder.defineMacro("QNX_LIBM_BUILTINS"); // required if using the default QNX libc++
++
++    switch (Triple.getArch()) {
++    default:
++      break;
++    case llvm::Triple::aarch64:
++      Builder.defineMacro("__AARCH64LE__");
++      break;
++    case llvm::Triple::x86_64:
++      Builder.defineMacro("__X86_64__");
++      break;
++    }
++  }
++
++public:
++  QNXTargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
++      : OSTargetInfo<Target>(Triple, Opts) {
++  }
++};
++
+ } // namespace targets
+ } // namespace clang
+ #endif // LLVM_CLANG_LIB_BASIC_TARGETS_OSTARGETS_H
+diff --git a/clang/lib/Driver/CMakeLists.txt b/clang/lib/Driver/CMakeLists.txt
+index 0026ba89917195..8abefa31415b54 100644
+--- a/clang/lib/Driver/CMakeLists.txt
++++ b/clang/lib/Driver/CMakeLists.txt
+@@ -76,6 +76,7 @@ add_clang_library(clangDriver
+   ToolChains/OHOS.cpp
+   ToolChains/OpenBSD.cpp
+   ToolChains/PS4CPU.cpp
++  ToolChains/QNX.cpp
+   ToolChains/Solaris.cpp
+   ToolChains/SPIRV.cpp
+   ToolChains/SPIRVOpenMP.cpp
+diff --git a/clang/lib/Driver/Driver.cpp b/clang/lib/Driver/Driver.cpp
+index eb3f9cbea2845a..6d789a8a3012d8 100644
+--- a/clang/lib/Driver/Driver.cpp
++++ b/clang/lib/Driver/Driver.cpp
+@@ -43,6 +43,7 @@
+ #include "ToolChains/PPCFreeBSD.h"
+ #include "ToolChains/PPCLinux.h"
+ #include "ToolChains/PS4CPU.h"
++#include "ToolChains/QNX.h"
+ #include "ToolChains/SPIRV.h"
+ #include "ToolChains/SPIRVOpenMP.h"
+ #include "ToolChains/SYCL.h"
+@@ -6957,6 +6958,9 @@ const ToolChain &Driver::getToolChain(const ArgList &Args,
+     case llvm::Triple::ZOS:
+       TC = std::make_unique<toolchains::ZOS>(*this, Target, Args);
+       break;
++    case llvm::Triple::QNX:
++      TC = std::make_unique<toolchains::QNX>(*this, Target, Args);
++      break;
+     case llvm::Triple::Vulkan:
+     case llvm::Triple::ShaderModel:
+       TC = std::make_unique<toolchains::HLSLToolChain>(*this, Target, Args);
+diff --git a/clang/lib/Driver/ToolChains/QNX.cpp b/clang/lib/Driver/ToolChains/QNX.cpp
+new file mode 100644
+index 00000000000000..7ebab096afb03e
+--- /dev/null
++++ b/clang/lib/Driver/ToolChains/QNX.cpp
+@@ -0,0 +1,233 @@
++//===--- QNX.cpp - QNX ToolChain Implementations --------------*- C++ -*-===//
++//
++// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
++// See https://llvm.org/LICENSE.txt for license information.
++// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
++//
++//===----------------------------------------------------------------------===//
++
++#include "QNX.h"
++#include "clang/Config/config.h"
++#include "clang/Driver/CommonArgs.h"
++#include "clang/Driver/Compilation.h"
++#include "clang/Driver/SanitizerArgs.h"
++#include "llvm/Support/Path.h"
++
++using namespace clang::driver;
++using namespace clang::driver::tools;
++using namespace clang::driver::toolchains;
++using namespace clang;
++using namespace llvm::opt;
++
++void tools::QNX::Linker::ConstructJob(Compilation &C, const JobAction &JA,
++                                      const InputInfo &Output,
++                                      const InputInfoList &Inputs,
++                                      const ArgList &Args,
++                                      const char *LinkingOutput) const {
++
++  const auto &ToolChain = static_cast<const toolchains::QNX &>(getToolChain());
++  const Driver &D = ToolChain.getDriver();
++  const bool Shared = Args.hasArg(options::OPT_shared);
++  const bool Static = Args.hasArg(options::OPT_static);
++  const bool Relocatable = Args.hasArg(options::OPT_r);
++  ArgStringList CmdArgs;
++  bool isLLD = false;
++  const bool IsPIE = !Shared && !Relocatable && (Args.hasArg(options::OPT_pie) || ToolChain.isPIEDefault(Args));
++
++  ToolChain.GetLinkerPath(&isLLD);
++  // Silence warning for "clang -g foo.o -o foo"
++  Args.ClaimAllArgs(options::OPT_g_Group);
++  // and "clang -emit-llvm foo.o -o foo"
++  Args.ClaimAllArgs(options::OPT_emit_llvm);
++  // and for "clang -w foo.o -o foo". Other warning options are already
++  // handled somewhere else.
++  Args.ClaimAllArgs(options::OPT_w);
++  // libgcc_s is determine by -static
++  Args.ClaimAllArgs(options::OPT_shared_libgcc);
++
++  // Silence warning for "clang -pie foo.o -o foo"
++  Args.ClaimAllArgs(options::OPT_pie);
++
++  if (!D.SysRoot.empty()) {
++    CmdArgs.push_back(Args.MakeArgString("--sysroot=" + D.SysRoot));
++  }
++
++  if (IsPIE) {
++    CmdArgs.push_back("-pie");
++  }
++
++  CmdArgs.push_back("--warn-shared-textrel");
++  CmdArgs.push_back("-zrelro");
++  CmdArgs.push_back("-znow");
++  CmdArgs.push_back("--eh-frame-hdr");
++
++  if (Static) {
++    CmdArgs.push_back("-Bstatic");
++  } else {
++    if (Shared) {
++      CmdArgs.push_back("-shared");
++    } else if (!Relocatable) {
++      CmdArgs.push_back("-dynamic-linker");
++      CmdArgs.push_back("/usr/lib/ldqnx-64.so.2");
++    }
++  }
++
++  assert((Output.isFilename() || Output.isNothing()) && "Invalid output.");
++  if (Output.isFilename()) {
++    CmdArgs.push_back("-o");
++    CmdArgs.push_back(Output.getFilename());
++  }
++
++  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nostartfiles,
++                   options::OPT_r)) {
++    const char *crt1 = "crt1.o";
++    if (Args.hasArg(options::OPT_pg)) {
++      crt1 = "mcrt1.o";
++    }
++
++    if (!Shared) {
++      CmdArgs.push_back(Args.MakeArgString(ToolChain.GetFilePath(crt1)));
++    }
++    CmdArgs.push_back(Args.MakeArgString(ToolChain.GetFilePath("crti.o")));
++    CmdArgs.push_back(Args.MakeArgString(ToolChain.GetFilePath("crtbegin.o")));
++  }
++
++  Args.addAllArgs(CmdArgs, {options::OPT_L, options::OPT_T_Group,
++                            options::OPT_s, options::OPT_t});
++  ToolChain.AddFilePathLibArgs(Args, CmdArgs);
++
++  if (D.isUsingLTO() && isLLD) {
++    addLTOOptions(ToolChain, Args, CmdArgs, Output, Inputs,
++                  D.getLTOMode() == LTOK_Thin);
++  }
++
++  addLinkerCompressDebugSectionsOption(ToolChain, Args, CmdArgs);
++  AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
++
++  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs,
++                   options::OPT_r)) {
++    CmdArgs.push_back("-lc");
++    CmdArgs.push_back("-lm");
++    CmdArgs.push_back("-lregex");
++
++    if (Static) {
++      CmdArgs.push_back("-lgcc");
++    } else {
++      CmdArgs.push_back("-lgcc_s");
++    }
++
++    // Use the static OpenMP runtime with -static-openmp
++    bool StaticOpenMP = Args.hasArg(options::OPT_static_openmp) && !Static;
++    addOpenMPRuntime(C, CmdArgs, ToolChain, Args, StaticOpenMP);
++
++    if (D.CCCIsCXX() && ToolChain.ShouldLinkCXXStdlib(Args)) {
++      ToolChain.AddCXXStdlibLibArgs(Args, CmdArgs);
++
++      if (Static) {
++        // These are required for static linking
++        CmdArgs.push_back("-llocale");
++        CmdArgs.push_back("-lcatalog");
++      }
++    }
++
++    CmdArgs.push_back("-lgcc_eh");
++
++    // Silence warnings when linking C code with a C++ '-stdlib' argument.
++    Args.ClaimAllArgs(options::OPT_stdlib_EQ);
++
++    // Additional linker set-up and flags for Fortran. This is required in order
++    // to generate executables. As Fortran runtime depends on the C runtime,
++    // these dependencies need to be listed before the C runtime below (i.e.
++    // AddRunTimeLibs).
++    if (D.IsFlangMode() &&
++        !Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
++      ToolChain.addFortranRuntimeLibraryPath(Args, CmdArgs);
++      ToolChain.addFortranRuntimeLibs(Args, CmdArgs);
++    }
++  }
++
++  Args.claimAllArgs(options::OPT_pthread, options::OPT_pthreads);
++
++  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nostartfiles,
++                   options::OPT_r)) {
++    CmdArgs.push_back(Args.MakeArgString(ToolChain.GetFilePath("crtend.o")));
++    CmdArgs.push_back(Args.MakeArgString(ToolChain.GetFilePath("crtn.o")));
++  }
++
++  ToolChain.addProfileRTLibs(Args, CmdArgs);
++
++  const char *Exec = Args.MakeArgString(getToolChain().GetLinkerPath());
++  C.addCommand(std::make_unique<Command>(JA, *this,
++                                         ResponseFileSupport::AtFileCurCP(),
++                                         Exec, CmdArgs, Inputs, Output));
++}
++
++toolchains::QNX::QNX(const Driver &D, const llvm::Triple &Triple,
++                     const ArgList &Args)
++    : Generic_ELF(D, Triple, Args) {
++  GCCInstallation.init(Triple, Args);
++
++  getFilePaths().push_back(concat(getDriver().SysRoot, "/usr/lib"));
++
++  if (GCCInstallation.isValid())
++    getFilePaths().push_back(GCCInstallation.getInstallPath().str());
++}
++
++void toolchains::QNX::AddClangSystemIncludeArgs(
++    const llvm::opt::ArgList &DriverArgs,
++    llvm::opt::ArgStringList &CC1Args) const {
++  const Driver &D = getDriver();
++
++  if (DriverArgs.hasArg(options::OPT_nostdinc)) {
++    return;
++  }
++
++  if (!DriverArgs.hasArg(options::OPT_nobuiltininc)) {
++    SmallString<128> Dir(D.ResourceDir);
++    llvm::sys::path::append(Dir, "include");
++    addSystemInclude(DriverArgs, CC1Args, Dir.str());
++  }
++
++  if (DriverArgs.hasArg(options::OPT_nostdlibinc)) {
++    return;
++  }
++
++  // Check for configure-time C include directories.
++  StringRef CIncludeDirs(C_INCLUDE_DIRS);
++  if (CIncludeDirs != "") {
++    SmallVector<StringRef, 5> dirs;
++    CIncludeDirs.split(dirs, ":");
++    for (StringRef dir : dirs) {
++      StringRef Prefix =
++          llvm::sys::path::is_absolute(dir) ? StringRef(D.SysRoot) : "";
++      addExternCSystemInclude(DriverArgs, CC1Args, Prefix + dir);
++    }
++    return;
++  }
++
++  addSystemInclude(DriverArgs, CC1Args,
++                   concat(D.SysRoot, "/usr/include/shims"));
++  addSystemInclude(DriverArgs, CC1Args, concat(D.SysRoot, "/usr/include"));
++}
++
++void clang::driver::toolchains::QNX::addLibCxxIncludePaths(
++    const llvm::opt::ArgList &DriverArgs,
++    llvm::opt::ArgStringList &CC1Args) const {
++  std::string inclxx = concat(getDriver().SysRoot, "/usr/include/c++/v1");
++  addSystemInclude(DriverArgs, CC1Args, inclxx);
++}
++
++SanitizerMask clang::driver::toolchains::QNX::getSupportedSanitizers() const {
++  SanitizerMask Res = ToolChain::getSupportedSanitizers();
++  Res |= SanitizerKind::Address;
++  Res |= SanitizerKind::PointerCompare;
++  Res |= SanitizerKind::PointerSubtract;
++  Res |= SanitizerKind::Memory;
++  Res |= SanitizerKind::Leak;
++  Res |= SanitizerKind::Thread;
++  return {};
++}
++
++Tool *clang::driver::toolchains::QNX::buildLinker() const {
++  return new tools::QNX::Linker(*this);
++}
+\ No newline at end of file
+diff --git a/clang/lib/Driver/ToolChains/QNX.h b/clang/lib/Driver/ToolChains/QNX.h
+new file mode 100644
+index 00000000000000..0cfe7135f2bce4
+--- /dev/null
++++ b/clang/lib/Driver/ToolChains/QNX.h
+@@ -0,0 +1,70 @@
++//===--- QNX.h - QNX ToolChain Implementations --------------*- C++ -*-===//
++//
++// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
++// See https://llvm.org/LICENSE.txt for license information.
++// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
++//
++//===----------------------------------------------------------------------===//
++
++#ifndef LLVM_CLANG_LIB_DRIVER_TOOLCHAINS_QNX_H
++#define LLVM_CLANG_LIB_DRIVER_TOOLCHAINS_QNX_H
++
++#include "Gnu.h"
++#include "clang/Driver/Driver.h"
++#include "clang/Driver/ToolChain.h"
++
++namespace clang {
++namespace driver {
++namespace tools {
++
++namespace QNX {
++class LLVM_LIBRARY_VISIBILITY Linker final : public Tool {
++public:
++  Linker(const ToolChain &TC) : Tool("QNX::Linker", "linker", TC) {}
++
++  bool hasIntegratedCPP() const override { return false; }
++  bool isLinkJob() const override { return true; }
++
++  void ConstructJob(Compilation &C, const JobAction &JA,
++                    const InputInfo &Output, const InputInfoList &Inputs,
++                    const llvm::opt::ArgList &Args,
++                    const char *LinkingOutput) const override;
++};
++} // end namespace QNX
++} // end namespace tools
++
++namespace toolchains {
++
++class LLVM_LIBRARY_VISIBILITY QNX : public Generic_ELF {
++public:
++  QNX(const Driver &D, const llvm::Triple &Triple,
++      const llvm::opt::ArgList &Args);
++
++  bool IsMathErrnoDefault() const override { return false; }
++  bool isPICDefault() const override { return true; }
++  bool isPIEDefault(const llvm::opt::ArgList &Args) const override { return true; }
++  bool HasNativeLLVMSupport() const override { return true; }
++  const char *getDefaultLinker() const override { return "ld"; }
++
++  void
++  AddClangSystemIncludeArgs(const llvm::opt::ArgList &DriverArgs,
++                            llvm::opt::ArgStringList &CC1Args) const override;
++  void addLibCxxIncludePaths(const llvm::opt::ArgList &DriverArgs,
++                             llvm::opt::ArgStringList &CC1Args) const override;
++  SanitizerMask getSupportedSanitizers() const override;
++  CXXStdlibType GetDefaultCXXStdlibType() const override {
++    return ToolChain::CST_Libcxx;
++  }
++  UnwindLibType GetDefaultUnwindLibType() const override {
++    return ToolChain::UNW_Libgcc;
++  }
++
++protected:
++  Tool *buildLinker() const override;
++};
++
++} // end namespace toolchains
++} // end namespace driver
++} // end namespace clang
++
++#endif
+\ No newline at end of file
+
+From d6b6bf2cd4541f0c510012ec1c216960788278b7 Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Fri, 17 Oct 2025 11:00:13 -0400
+Subject: [PATCH 03/10] qnx/compiler-rt: add qnx os support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+---
+ compiler-rt/cmake/config-ix.cmake                     |  2 +-
+ compiler-rt/lib/orc/endianness.h                      |  8 ++++++++
+ compiler-rt/lib/profile/InstrProfilingPlatformLinux.c | 10 +++++++---
+ compiler-rt/lib/profile/InstrProfilingPlatformOther.c |  2 +-
+ compiler-rt/lib/profile/InstrProfilingUtil.c          |  3 +++
+ 5 files changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/compiler-rt/cmake/config-ix.cmake b/compiler-rt/cmake/config-ix.cmake
+index 1f82ff3cf75312..e2b5f4bff74b1d 100644
+--- a/compiler-rt/cmake/config-ix.cmake
++++ b/compiler-rt/cmake/config-ix.cmake
+@@ -842,7 +842,7 @@ else()
+ endif()
+ 
+ if (PROFILE_SUPPORTED_ARCH AND NOT LLVM_USE_SANITIZER AND
+-    (OS_NAME MATCHES "Darwin|Linux|FreeBSD|Windows|Android|Fuchsia|SunOS|NetBSD|AIX|WASI|Haiku" OR COMPILER_RT_PROFILE_BAREMETAL))
++    (OS_NAME MATCHES "Darwin|Linux|FreeBSD|Windows|Android|Fuchsia|SunOS|NetBSD|AIX|WASI|Haiku|QNX" OR COMPILER_RT_PROFILE_BAREMETAL))
+   set(COMPILER_RT_HAS_PROFILE TRUE)
+ else()
+   set(COMPILER_RT_HAS_PROFILE FALSE)
+diff --git a/compiler-rt/lib/orc/endianness.h b/compiler-rt/lib/orc/endianness.h
+index ac65d83744c7f5..0f332be2b9bd65 100644
+--- a/compiler-rt/lib/orc/endianness.h
++++ b/compiler-rt/lib/orc/endianness.h
+@@ -40,6 +40,14 @@
+ #define BIG_ENDIAN 4321
+ #define LITTLE_ENDIAN 1234
+ #define BYTE_ORDER BIG_ENDIAN
++#elif defined(__QNX__)
++#define BIG_ENDIAN 4321
++#define LITTLE_ENDIAN 1234
++#if defined(__LITTLEENDIAN__)
++#define BYTE_ORDER LITTLE_ENDIAN
++#else
++#define BYTE_ORDER BIG_ENDIAN
++#endif
+ #else
+ #if !defined(BYTE_ORDER) && !defined(_WIN32)
+ #include <machine/endian.h>
+diff --git a/compiler-rt/lib/profile/InstrProfilingPlatformLinux.c b/compiler-rt/lib/profile/InstrProfilingPlatformLinux.c
+index acdb222004fd47..a3081e896c01a0 100644
+--- a/compiler-rt/lib/profile/InstrProfilingPlatformLinux.c
++++ b/compiler-rt/lib/profile/InstrProfilingPlatformLinux.c
+@@ -23,16 +23,20 @@
+ #if defined(__linux__) || defined(__FreeBSD__) || defined(__Fuchsia__) ||      \
+     (defined(__sun__) && defined(__svr4__)) || defined(__NetBSD__) ||          \
+     defined(_AIX) || defined(__wasm__) || defined(__HAIKU__) ||                \
+-    defined(COMPILER_RT_PROFILE_BAREMETAL)
++    defined(__QNX__) || defined(COMPILER_RT_PROFILE_BAREMETAL)
+ 
+-#if !defined(_AIX) && !defined(__wasm__) &&                                    \
++#if !defined(_AIX) && !defined(__wasm__) && !defined(__QNX__) &&               \
+     !defined(COMPILER_RT_PROFILE_BAREMETAL)
+ // Includes for non-baremetal ELF targets, used to output build IDs.
+ #include <elf.h>
+ #include <link.h>
++#elif defined(__QNX__)
++#include <sys/elf.h>
++#include <sys/link.h>
++#endif
++
+ #include <stdlib.h>
+ #include <string.h>
+-#endif
+ 
+ #include "InstrProfiling.h"
+ #include "InstrProfilingInternal.h"
+diff --git a/compiler-rt/lib/profile/InstrProfilingPlatformOther.c b/compiler-rt/lib/profile/InstrProfilingPlatformOther.c
+index f5d1c74f101153..07c712ccc73f1b 100644
+--- a/compiler-rt/lib/profile/InstrProfilingPlatformOther.c
++++ b/compiler-rt/lib/profile/InstrProfilingPlatformOther.c
+@@ -16,7 +16,7 @@
+ #if !defined(__APPLE__) && !defined(__linux__) && !defined(__FreeBSD__) &&     \
+     !defined(__Fuchsia__) && !(defined(__sun__) && defined(__svr4__)) &&       \
+     !defined(__NetBSD__) && !defined(_WIN32) && !defined(_AIX) &&              \
+-    !defined(__wasm__) && !defined(__HAIKU__) &&                               \
++    !defined(__wasm__) && !defined(__HAIKU__) && !defined(__QNX__) && \
+     !defined(COMPILER_RT_PROFILE_BAREMETAL)
+ 
+ #include <stdlib.h>
+diff --git a/compiler-rt/lib/profile/InstrProfilingUtil.c b/compiler-rt/lib/profile/InstrProfilingUtil.c
+index a9d9df813764b3..91449362855a5a 100644
+--- a/compiler-rt/lib/profile/InstrProfilingUtil.c
++++ b/compiler-rt/lib/profile/InstrProfilingUtil.c
+@@ -500,6 +500,9 @@ COMPILER_RT_VISIBILITY int lprofReleaseMemoryPagesToOS(uintptr_t Begin,
+     return _zx_vmar_op_range(_zx_vmar_root_self(), ZX_VMAR_OP_DECOMMIT,
+                              (zx_vaddr_t)BeginAligned,
+                              EndAligned - BeginAligned, NULL, 0);
++#elif defined(__QNX__)
++    return posix_madvise((void *)BeginAligned, EndAligned - BeginAligned,
++                   POSIX_MADV_DONTNEED);
+ #else
+     return madvise((void *)BeginAligned, EndAligned - BeginAligned,
+                    MADV_DONTNEED);
+
+From 958b8bdca2f34b8e18e55855a503d1f1ccd9399b Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Fri, 17 Oct 2025 11:00:28 -0400
+Subject: [PATCH 04/10] qnx/libunwind: add qnx target support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+---
+ libunwind/src/AddressSpace.hpp | 22 +++++++++++++++++++++-
+ libunwind/src/config.h         |  2 +-
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/libunwind/src/AddressSpace.hpp b/libunwind/src/AddressSpace.hpp
+index 3711189f57b1d1..65c315de1a4547 100644
+--- a/libunwind/src/AddressSpace.hpp
++++ b/libunwind/src/AddressSpace.hpp
+@@ -117,7 +117,11 @@ extern char __exidx_end;
+ #elif defined(_LIBUNWIND_USE_DL_ITERATE_PHDR) ||                               \
+       defined(_LIBUNWIND_USE_DL_UNWIND_FIND_EXIDX)
+ 
+-#include <link.h>
++#if defined(__QNX__)
++  #include <sys/link.h>
++#else
++  #include <link.h>
++#endif
+ 
+ #endif
+ 
+@@ -380,6 +384,17 @@ LocalAddressSpace::getEncodedP(pint_t &addr, pint_t end, uint8_t encoding,
+ // The ElfW() macro for pointer-size independent ELF header traversal is not
+ // provided by <link.h> on some systems (e.g., FreeBSD). On these systems the
+ // data structures are just called Elf_XXX. Define ElfW() locally.
++
++#if defined(__QNX__)
++  #if (__PTR_BITS__ == 32)
++    #define ElfW(type) Elf32_##type
++  #elif (__PTR_BITS__ == 64)
++    #define ElfW(type) Elf64_##type
++  #else
++    #error "QNX: __PTR_BITS__ is invalid"
++  #endif
++#endif
++
+ #if !defined(ElfW)
+   #define ElfW(type) Elf_##type
+ #endif
+@@ -453,8 +468,13 @@ static bool checkForUnwindInfoSegment(const Elf_Phdr *phdr, size_t image_base,
+ #endif
+ }
+ 
++#if defined(__QNX__)
++static int findUnwindSectionsByPhdr(const struct dl_phdr_info *pinfo,
++                                    size_t pinfo_size, void *data) {
++#else
+ static int findUnwindSectionsByPhdr(struct dl_phdr_info *pinfo,
+                                     size_t pinfo_size, void *data) {
++#endif
+   auto cbdata = static_cast<dl_iterate_cb_data *>(data);
+   if (pinfo->dlpi_phnum == 0 || cbdata->targetAddr < pinfo->dlpi_addr)
+     return 0;
+diff --git a/libunwind/src/config.h b/libunwind/src/config.h
+index f017403fa2234f..30299e71be3601 100644
+--- a/libunwind/src/config.h
++++ b/libunwind/src/config.h
+@@ -135,7 +135,7 @@
+ #ifndef _LIBUNWIND_REMEMBER_HEAP_ALLOC
+ #if defined(_LIBUNWIND_REMEMBER_STACK_ALLOC) || defined(__APPLE__) ||          \
+     defined(__linux__) || defined(__ANDROID__) || defined(__MINGW32__) ||      \
+-    defined(_LIBUNWIND_IS_BAREMETAL)
++    defined(__QNX__) || defined(_LIBUNWIND_IS_BAREMETAL)
+ #define _LIBUNWIND_REMEMBER_ALLOC(_size) __builtin_alloca(_size)
+ #define _LIBUNWIND_REMEMBER_FREE(_ptr)                                         \
+   do {                                                                         \
+
+From 1175d0511353751c30d99ac0b1869750793d9235 Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Fri, 17 Oct 2025 11:00:42 -0400
+Subject: [PATCH 05/10] qnx/libcxx: add qnx os target support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+---
+ libcxx/include/__config                       | 11 ++++++++---
+ libcxx/include/__cxx03/__config               | 11 ++++++++---
+ libcxx/include/__cxx03/csetjmp                |  9 +++++++++
+ libcxx/include/__locale                       | 13 +++++++++++++
+ libcxx/include/__locale_dir/locale_base_api.h |  2 +-
+ libcxx/include/csetjmp                        |  9 +++++++++
+ libcxx/src/filesystem/posix_compat.h          |  4 +++-
+ libcxx/src/include/config_elast.h             |  2 ++
+ libcxx/src/locale.cpp                         |  2 ++
+ libcxxabi/include/cxxabi.h                    |  2 +-
+ libcxxabi/src/cxa_thread_atexit.cpp           |  2 +-
+ 11 files changed, 57 insertions(+), 10 deletions(-)
+
+diff --git a/libcxx/include/__config b/libcxx/include/__config
+index f72f091d28c768..64ad37a15ebed8 100644
+--- a/libcxx/include/__config
++++ b/libcxx/include/__config
+@@ -171,8 +171,10 @@
+ #    define decltype(...) __decltype(__VA_ARGS__)
+ #    define _LIBCPP_CONSTEXPR
+ 
+-typedef __char16_t char16_t;
+-typedef __char32_t char32_t;
++#    if !defined(__QNX__)
++       typedef __char16_t char16_t;
++       typedef __char32_t char32_t;
++#    endif
+ 
+ #  endif
+ 
+@@ -631,7 +633,8 @@ typedef __char32_t char32_t;
+         defined(__APPLE__) ||                                                                                          \
+         defined(__MVS__) ||                                                                                            \
+         defined(_AIX) ||                                                                                               \
+-        defined(__EMSCRIPTEN__)
++        defined(__EMSCRIPTEN__) ||                                                                                     \
++        defined(__QNX__)
+ // clang-format on
+ #      undef _LIBCPP_HAS_THREAD_API_PTHREAD
+ #      define _LIBCPP_HAS_THREAD_API_PTHREAD 1
+@@ -651,6 +654,8 @@ typedef __char32_t char32_t;
+ #    define _LIBCPP_HAS_COND_CLOCKWAIT 0
+ #  elif (defined(__ANDROID__) && __ANDROID_API__ >= 30) || _LIBCPP_GLIBC_PREREQ(2, 30)
+ #    define _LIBCPP_HAS_COND_CLOCKWAIT 1
++#  elif defined(__QNX__)
++#    define _LIBCPP_HAS_COND_CLOCKWAIT 1
+ #  else
+ #    define _LIBCPP_HAS_COND_CLOCKWAIT 0
+ #  endif
+diff --git a/libcxx/include/__cxx03/__config b/libcxx/include/__cxx03/__config
+index d574eab8a12b11..3d404e66d9774d 100644
+--- a/libcxx/include/__cxx03/__config
++++ b/libcxx/include/__cxx03/__config
+@@ -306,8 +306,10 @@ _LIBCPP_HARDENING_MODE_DEBUG
+ #  define static_assert(...) _Static_assert(__VA_ARGS__)
+ #  define decltype(...) __decltype(__VA_ARGS__)
+ 
+-typedef __char16_t char16_t;
+-typedef __char32_t char32_t;
++#    if !defined(__QNX__)
++       typedef __char16_t char16_t;
++       typedef __char32_t char32_t;
++#    endif
+ 
+ #  define _LIBCPP_PREFERRED_ALIGNOF(_Tp) __alignof(_Tp)
+ 
+@@ -684,7 +686,8 @@ typedef __char32_t char32_t;
+         defined(__APPLE__) ||                                                                                          \
+         defined(__MVS__) ||                                                                                            \
+         defined(_AIX) ||                                                                                               \
+-        defined(__EMSCRIPTEN__)
++        defined(__EMSCRIPTEN__) ||                                                                                     \
++        defined(__QNX__)
+ // clang-format on
+ #      define _LIBCPP_HAS_THREAD_API_PTHREAD
+ #    elif defined(__Fuchsia__)
+@@ -700,6 +703,8 @@ typedef __char32_t char32_t;
+ #  if defined(_LIBCPP_HAS_THREAD_API_PTHREAD)
+ #    if defined(__ANDROID__) && __ANDROID_API__ >= 30
+ #      define _LIBCPP_HAS_COND_CLOCKWAIT
++#    elif defined(__QNX__)
++#      define _LIBCPP_HAS_COND_CLOCKWAIT
+ #    elif defined(_LIBCPP_GLIBC_PREREQ)
+ #      if _LIBCPP_GLIBC_PREREQ(2, 30)
+ #        define _LIBCPP_HAS_COND_CLOCKWAIT
+diff --git a/libcxx/include/__cxx03/csetjmp b/libcxx/include/__cxx03/csetjmp
+index 5eeda2dda4ba62..68f3879ab41743 100644
+--- a/libcxx/include/__cxx03/csetjmp
++++ b/libcxx/include/__cxx03/csetjmp
+@@ -47,7 +47,16 @@ void longjmp(jmp_buf env, int val);
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+ using ::jmp_buf _LIBCPP_USING_IF_EXISTS;
++
++#if defined(__QNX__)
++#  undef longjmp
++[[noreturn]] inline void longjmp(jmp_buf __env, int __val)
++{
++    ::siglongjmp(__env, __val);
++}
++#else
+ using ::longjmp _LIBCPP_USING_IF_EXISTS;
++#endif
+ 
+ _LIBCPP_END_NAMESPACE_STD
+ 
+diff --git a/libcxx/include/__locale b/libcxx/include/__locale
+index 5b1787451fb259..f370f7bd04f7e8 100644
+--- a/libcxx/include/__locale
++++ b/libcxx/include/__locale
+@@ -408,6 +408,19 @@ public:
+ #    define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
+ #    define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_ALPHA
+ #    define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_XDIGIT
++#  elif defined(__QNX__)
++  typedef short mask;
++  static const mask space  = (_CN|_SP|_XS);
++  static const mask print  = (_DI|_LO|_PU|_SP|_UP|_XA);
++  static const mask cntrl  = _BB;
++  static const mask upper  = _UP;
++  static const mask lower  = _LO;
++  static const mask alpha  = (_LO|_UP|_XA);
++  static const mask digit  = _DI;
++  static const mask punct  = _PU;
++  static const mask xdigit = _XD;
++  static const mask blank  = (_SP|_XB);
++  static const mask __regex_word = 0x1000;
+ #  elif defined(__MVS__)
+ #    if defined(__NATIVE_ASCII_F)
+   typedef unsigned int mask;
+diff --git a/libcxx/include/__locale_dir/locale_base_api.h b/libcxx/include/__locale_dir/locale_base_api.h
+index 0474c1db359dea..c12e15a43909f9 100644
+--- a/libcxx/include/__locale_dir/locale_base_api.h
++++ b/libcxx/include/__locale_dir/locale_base_api.h
+@@ -108,7 +108,7 @@
+ 
+ #  if defined(__APPLE__)
+ #    include <__locale_dir/support/apple.h>
+-#  elif defined(__FreeBSD__)
++#  elif defined(__FreeBSD__) || defined(__QNX__)
+ #    include <__locale_dir/support/freebsd.h>
+ #  elif defined(__NetBSD__)
+ #    include <__locale_dir/support/netbsd.h>
+diff --git a/libcxx/include/csetjmp b/libcxx/include/csetjmp
+index 39ab035a5f3848..7c6fd881d41e32 100644
+--- a/libcxx/include/csetjmp
++++ b/libcxx/include/csetjmp
+@@ -50,7 +50,16 @@ void longjmp(jmp_buf env, int val);
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+ using ::jmp_buf _LIBCPP_USING_IF_EXISTS;
++
++#if defined(__QNX__)
++#  undef longjmp
++[[noreturn]] inline void longjmp(jmp_buf __env, int __val)
++{
++    ::siglongjmp(__env, __val);
++}
++#else
+ using ::longjmp _LIBCPP_USING_IF_EXISTS;
++#endif
+ 
+ _LIBCPP_END_NAMESPACE_STD
+ 
+diff --git a/libcxx/src/filesystem/posix_compat.h b/libcxx/src/filesystem/posix_compat.h
+index ddd99d8aaf206f..bcdfe93a745182 100644
+--- a/libcxx/src/filesystem/posix_compat.h
++++ b/libcxx/src/filesystem/posix_compat.h
+@@ -475,7 +475,9 @@ using ::stat;
+ using ::statvfs;
+ using ::truncate;
+ 
+-#  define O_BINARY 0
++#  ifndef O_BINARY
++#    define O_BINARY 0
++#  endif
+ 
+ using StatVFS = struct statvfs;
+ using ModeT   = ::mode_t;
+diff --git a/libcxx/src/include/config_elast.h b/libcxx/src/include/config_elast.h
+index be665a97bf91b5..59375ef09dae53 100644
+--- a/libcxx/src/include/config_elast.h
++++ b/libcxx/src/include/config_elast.h
+@@ -43,6 +43,8 @@
+ #  define _LIBCPP_ELAST (_sys_nerr - 1)
+ #elif defined(_AIX)
+ #  define _LIBCPP_ELAST 127
++#elif defined(__QNX__)
++# define _LIBCPP_ELAST (sys_nerr - 1)
+ #else
+ // Warn here so that the person doing the libcxx port has an easier time:
+ #  warning ELAST for this platform not yet implemented
+diff --git a/libcxx/src/locale.cpp b/libcxx/src/locale.cpp
+index 6be0537735c8fd..e2f7da59b40881 100644
+--- a/libcxx/src/locale.cpp
++++ b/libcxx/src/locale.cpp
+@@ -913,6 +913,8 @@ const ctype<char>::mask* ctype<char>::classic_table() noexcept {
+   return _ctype_ + 1;
+ #  elif defined(_AIX)
+   return (const unsigned int*)__lc_ctype_ptr->obj->mask;
++#  elif defined(__QNX__)
++  return &_Getchrtype(0);
+ #  elif defined(__MVS__)
+ #    if defined(__NATIVE_ASCII_F)
+   return const_cast<const ctype<char>::mask*>(__OBJ_DATA(__lc_ctype_a)->mask);
+diff --git a/libcxxabi/include/cxxabi.h b/libcxxabi/include/cxxabi.h
+index 9ea93680f62e06..01321f68fc76a7 100644
+--- a/libcxxabi/include/cxxabi.h
++++ b/libcxxabi/include/cxxabi.h
+@@ -180,7 +180,7 @@ __cxa_decrement_exception_refcount(void *primary_exception) _LIBCXXABI_NOEXCEPT;
+ extern _LIBCXXABI_FUNC_VIS bool __cxa_uncaught_exception() _LIBCXXABI_NOEXCEPT;
+ extern _LIBCXXABI_FUNC_VIS unsigned int __cxa_uncaught_exceptions() _LIBCXXABI_NOEXCEPT;
+ 
+-#if defined(__linux__) || defined(__Fuchsia__)
++#if defined(__linux__) || defined(__Fuchsia__) || defined(__QNX__)
+ // Linux and Fuchsia TLS support. Not yet an official part of the Itanium ABI.
+ // https://sourceware.org/glibc/wiki/Destructor%20support%20for%20thread_local%20variables
+ extern _LIBCXXABI_FUNC_VIS int __cxa_thread_atexit(void (*)(void *), void *,
+diff --git a/libcxxabi/src/cxa_thread_atexit.cpp b/libcxxabi/src/cxa_thread_atexit.cpp
+index 402a52c741012d..2b96ccfe766180 100644
+--- a/libcxxabi/src/cxa_thread_atexit.cpp
++++ b/libcxxabi/src/cxa_thread_atexit.cpp
+@@ -106,7 +106,7 @@ namespace {
+ 
+ #endif // HAVE___CXA_THREAD_ATEXIT_IMPL
+ 
+-#if defined(__linux__) || defined(__Fuchsia__)
++#if defined(__linux__) || defined(__Fuchsia__) || defined(__QNX__)
+ extern "C" {
+ 
+   _LIBCXXABI_FUNC_VIS int __cxa_thread_atexit(Dtor dtor, void* obj, void* dso_symbol) throw() {
+
+From b4315a32adab54dbff3f3ac3fce51d61a431b732 Mon Sep 17 00:00:00 2001
+From: Felix Xing <fxing@qnx.com>
+Date: Tue, 21 Oct 2025 13:43:43 -0400
+Subject: [PATCH 06/10] qnx/openmp: add qnx target support
+
+Co-authored-by: Leo Shen <yishen@qnx.com>
+---
+ openmp/runtime/src/kmp.h                |  4 ++
+ openmp/runtime/src/kmp_config.h.cmake   |  2 +-
+ openmp/runtime/src/kmp_ftn_entry.h      |  2 +-
+ openmp/runtime/src/kmp_itt.cpp          |  2 +-
+ openmp/runtime/src/kmp_os.h             |  2 +-
+ openmp/runtime/src/kmp_platform.h       | 10 ++++-
+ openmp/runtime/src/kmp_runtime.cpp      |  6 +--
+ openmp/runtime/src/kmp_str.cpp          |  4 ++
+ openmp/runtime/src/kmp_wrapper_getpid.h |  5 ++-
+ openmp/runtime/src/z_Linux_util.cpp     | 49 ++++++++++++++++++++++++-
+ openmp/tools/multiplex/ompt-multiplex.h |  2 +-
+ 11 files changed, 75 insertions(+), 13 deletions(-)
+
+diff --git a/openmp/runtime/src/kmp.h b/openmp/runtime/src/kmp.h
+index 36c40abaf1ef44..34f8f15bf952bf 100644
+--- a/openmp/runtime/src/kmp.h
++++ b/openmp/runtime/src/kmp.h
+@@ -1401,6 +1401,10 @@ extern kmp_uint64 __kmp_now_nsec();
+ /* TODO: tune for KMP_OS_AIX */
+ #define KMP_INIT_WAIT 1024U /* initial number of spin-tests   */
+ #define KMP_NEXT_WAIT 512U /* susequent number of spin-tests */
++#elif KMP_OS_QNX
++/* TODO: tune for KMP_OS_AIX */
++#define KMP_INIT_WAIT 1024U /* initial number of spin-tests   */
++#define KMP_NEXT_WAIT 512U /* susequent number of spin-tests */
+ #endif
+ 
+ #if KMP_ARCH_X86 || KMP_ARCH_X86_64
+diff --git a/openmp/runtime/src/kmp_config.h.cmake b/openmp/runtime/src/kmp_config.h.cmake
+index 40f1087fd7f27e..1d5acf3ff50fe8 100644
+--- a/openmp/runtime/src/kmp_config.h.cmake
++++ b/openmp/runtime/src/kmp_config.h.cmake
+@@ -119,7 +119,7 @@
+ #define KMP_ASM_INTRINS 1
+ #define USE_ITT_BUILD LIBOMP_USE_ITT_NOTIFY
+ #define INTEL_ITTNOTIFY_PREFIX __kmp_itt_
+-#if ! (KMP_MIC || KMP_OS_HAIKU)
++#if ! (KMP_MIC || KMP_OS_HAIKU || KMP_OS_QNX)
+ # define USE_LOAD_BALANCE 1
+ #endif
+ #if ! (KMP_OS_WINDOWS || KMP_OS_DARWIN)
+diff --git a/openmp/runtime/src/kmp_ftn_entry.h b/openmp/runtime/src/kmp_ftn_entry.h
+index dc57a6a74668e5..3707ba61019596 100644
+--- a/openmp/runtime/src/kmp_ftn_entry.h
++++ b/openmp/runtime/src/kmp_ftn_entry.h
+@@ -704,7 +704,7 @@ int FTN_STDCALL KMP_EXPAND_NAME(FTN_GET_THREAD_NUM)(void) {
+ 
+ #if KMP_OS_DARWIN || KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD ||    \
+     KMP_OS_OPENBSD || KMP_OS_HAIKU || KMP_OS_HURD || KMP_OS_SOLARIS ||         \
+-    KMP_OS_AIX
++    KMP_OS_AIX || KMP_OS_QNX
+   gtid = __kmp_entry_gtid();
+ #elif KMP_OS_WINDOWS
+   if (!__kmp_init_parallel ||
+diff --git a/openmp/runtime/src/kmp_itt.cpp b/openmp/runtime/src/kmp_itt.cpp
+index 29c8735ff99361..d2c00c520fe2e8 100644
+--- a/openmp/runtime/src/kmp_itt.cpp
++++ b/openmp/runtime/src/kmp_itt.cpp
+@@ -75,7 +75,7 @@ void __kmp_itt_initialize() {
+   __kmp_str_buf_print(&buf, "OMP RTL Version %d.%d.%d", __kmp_version_major,
+                       __kmp_version_minor, __kmp_version_build);
+   if (__itt_api_version_ptr != NULL) {
+-    __kmp_str_buf_print(&buf, ":%s", __itt_api_version());
++    __kmp_str_buf_print(&buf, ":%s", __itt_api_version() ? __itt_api_version() : "(null)");
+   }
+   version = __itt_mark_create(buf.str);
+   __itt_mark(version, NULL);
+diff --git a/openmp/runtime/src/kmp_os.h b/openmp/runtime/src/kmp_os.h
+index e8ad2a6fdb78e1..700c3cdb2da961 100644
+--- a/openmp/runtime/src/kmp_os.h
++++ b/openmp/runtime/src/kmp_os.h
+@@ -220,7 +220,7 @@ typedef kmp_uint32 kmp_uint;
+ // stdarg handling
+ #if (KMP_ARCH_ARM || KMP_ARCH_X86_64 || KMP_ARCH_AARCH64 || KMP_ARCH_WASM) &&  \
+     (KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_OPENBSD || KMP_OS_DRAGONFLY ||  \
+-     KMP_OS_LINUX || KMP_OS_WASI)
++     KMP_OS_LINUX || KMP_OS_WASI || KMP_OS_QNX )
+ typedef va_list *kmp_va_list;
+ #define kmp_va_deref(ap) (*(ap))
+ #define kmp_va_addr_of(ap) (&(ap))
+diff --git a/openmp/runtime/src/kmp_platform.h b/openmp/runtime/src/kmp_platform.h
+index 609b7c46888421..bc7ef3ffc9a08b 100644
+--- a/openmp/runtime/src/kmp_platform.h
++++ b/openmp/runtime/src/kmp_platform.h
+@@ -28,6 +28,7 @@
+ #define KMP_OS_WASI 0
+ #define KMP_OS_EMSCRIPTEN 0
+ #define KMP_OS_AIX 0
++#define KMP_OS_QNX 0
+ #define KMP_OS_UNIX 0 /* disjunction of KMP_OS_LINUX, KMP_OS_DARWIN etc. */
+ 
+ #ifdef _WIN32
+@@ -100,15 +101,20 @@
+ #define KMP_OS_AIX 1
+ #endif
+ 
++#if (defined __QNX__)
++#undef KMP_OS_QNX
++#define KMP_OS_QNX 1
++#endif
++
+ #if (1 != KMP_OS_LINUX + KMP_OS_DRAGONFLY + KMP_OS_FREEBSD + KMP_OS_NETBSD +   \
+               KMP_OS_OPENBSD + KMP_OS_DARWIN + KMP_OS_WINDOWS + KMP_OS_HAIKU + \
+-              KMP_OS_HURD + KMP_OS_SOLARIS + KMP_OS_WASI + KMP_OS_AIX)
++              KMP_OS_HURD + KMP_OS_SOLARIS + KMP_OS_WASI + KMP_OS_AIX + KMP_OS_QNX)
+ #error Unknown OS
+ #endif
+ 
+ #if KMP_OS_LINUX || KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD ||     \
+     KMP_OS_OPENBSD || KMP_OS_DARWIN || KMP_OS_HAIKU || KMP_OS_HURD ||          \
+-    KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX
++    KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX || KMP_OS_QNX
+ #undef KMP_OS_UNIX
+ #define KMP_OS_UNIX 1
+ #endif
+diff --git a/openmp/runtime/src/kmp_runtime.cpp b/openmp/runtime/src/kmp_runtime.cpp
+index 48e29c9f9fe454..2ee48743cc3e10 100644
+--- a/openmp/runtime/src/kmp_runtime.cpp
++++ b/openmp/runtime/src/kmp_runtime.cpp
+@@ -8928,7 +8928,7 @@ __kmp_determine_reduction_method(
+ 
+ #if KMP_OS_LINUX || KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD ||     \
+     KMP_OS_OPENBSD || KMP_OS_WINDOWS || KMP_OS_DARWIN || KMP_OS_HAIKU ||       \
+-    KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX
++    KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX || KMP_OS_QNX
+ 
+     int teamsize_cutoff = 4;
+ 
+@@ -8953,14 +8953,14 @@ __kmp_determine_reduction_method(
+ #error "Unknown or unsupported OS"
+ #endif // KMP_OS_LINUX || KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD ||
+        // KMP_OS_OPENBSD || KMP_OS_WINDOWS || KMP_OS_DARWIN || KMP_OS_HAIKU ||
+-       // KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX
++       // KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX || KMP_OS_QNX
+ 
+ #elif KMP_ARCH_X86 || KMP_ARCH_ARM || KMP_ARCH_AARCH || KMP_ARCH_MIPS ||       \
+     KMP_ARCH_WASM || KMP_ARCH_PPC || KMP_ARCH_AARCH64_32 || KMP_ARCH_SPARC
+ 
+ #if KMP_OS_LINUX || KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD ||     \
+     KMP_OS_OPENBSD || KMP_OS_WINDOWS || KMP_OS_HAIKU || KMP_OS_HURD ||         \
+-    KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX
++    KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX || KMP_OS_QNX
+ 
+     // basic tuning
+ 
+diff --git a/openmp/runtime/src/kmp_str.cpp b/openmp/runtime/src/kmp_str.cpp
+index 12cce530748214..7e28641aa8b79f 100644
+--- a/openmp/runtime/src/kmp_str.cpp
++++ b/openmp/runtime/src/kmp_str.cpp
+@@ -19,6 +19,10 @@
+ #include "kmp.h"
+ #include "kmp_i18n.h"
+ 
++#if KMP_OS_QNX
++static const char* output_for_percent_s_NULL = "(null)";
++#endif
++
+ /* String buffer.
+ 
+    Usage:
+diff --git a/openmp/runtime/src/kmp_wrapper_getpid.h b/openmp/runtime/src/kmp_wrapper_getpid.h
+index 9854d61aa5522b..6be9950fc91092 100644
+--- a/openmp/runtime/src/kmp_wrapper_getpid.h
++++ b/openmp/runtime/src/kmp_wrapper_getpid.h
+@@ -17,7 +17,7 @@
+ 
+ // On Unix-like systems (Linux* OS and OS X*) getpid() is declared in standard
+ // headers.
+-#if !KMP_OS_AIX && !KMP_OS_HAIKU
++#if !KMP_OS_AIX && !KMP_OS_HAIKU && !KMP_OS_QNX
+ #include <sys/syscall.h>
+ #endif
+ #include <sys/types.h>
+@@ -39,6 +39,9 @@
+ #elif KMP_OS_HAIKU
+ #include <OS.h>
+ #define __kmp_gettid() find_thread(NULL)
++#elif KMP_OS_QNX
++#include <process.h>
++#define __kmp_gettid() gettid()
+ #elif defined(SYS_gettid)
+ // Hopefully other Unix systems define SYS_gettid syscall for getting os thread
+ // id
+diff --git a/openmp/runtime/src/z_Linux_util.cpp b/openmp/runtime/src/z_Linux_util.cpp
+index c7fe0642cea63d..c60e030b37bf90 100644
+--- a/openmp/runtime/src/z_Linux_util.cpp
++++ b/openmp/runtime/src/z_Linux_util.cpp
+@@ -32,7 +32,7 @@
+ #if KMP_OS_AIX
+ #include <sys/ldr.h>
+ #include <libperfstat.h>
+-#elif !KMP_OS_HAIKU
++#elif !KMP_OS_HAIKU && !KMP_OS_QNX
+ #include <sys/syscall.h>
+ #endif
+ #include <sys/time.h>
+@@ -80,6 +80,10 @@
+ #include <sys/loadavg.h>
+ #endif
+ 
++#if KMP_OS_QNX
++#include <sys/mman.h>
++#endif
++
+ #include <ctype.h>
+ #include <dirent.h>
+ #include <fcntl.h>
+@@ -1903,7 +1907,8 @@ static int __kmp_get_xproc(void) {
+   __kmp_type_convert(sysconf(_SC_NPROCESSORS_CONF), &(r));
+ 
+ #elif KMP_OS_DRAGONFLY || KMP_OS_FREEBSD || KMP_OS_NETBSD || KMP_OS_OPENBSD || \
+-    KMP_OS_HAIKU || KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX
++    KMP_OS_HAIKU || KMP_OS_HURD || KMP_OS_SOLARIS || KMP_OS_WASI || KMP_OS_AIX || \
++    KMP_OS_QNX
+ 
+   __kmp_type_convert(sysconf(_SC_NPROCESSORS_ONLN), &(r));
+ 
+@@ -2148,6 +2153,46 @@ int __kmp_is_address_mapped(void *addr) {
+     }
+   }
+ 
++  // Free resources.
++  fclose(file);
++  KMP_INTERNAL_FREE(name);
++#elif KMP_OS_QNX
++  char *name = __kmp_str_format("/proc/%d/pmap", getpid());
++  FILE *file = NULL;
++
++  file = fopen(name, "r");
++  KMP_ASSERT(file != NULL);
++
++  while(fgetc(file) != '\n')
++  {
++    // discard the first line
++  }
++
++  for (;;) {
++    void *beginning = NULL;
++    void *length = NULL;
++    void *flags = NULL;
++    void *perms = NULL;
++
++    rc = fscanf(file, "%p,%p,%p,%p %*[^\n]\n", &beginning, &length, &flags, &perms);
++    if (rc == EOF) {
++      break;
++    }
++
++    // Make sure all fields are read.
++    KMP_ASSERT((unsigned long long)(perms) & (PROT_READ >> 8)); 
++
++    // Ending address is not included in the region, but beginning is.
++    void *ending = (void*)((unsigned long long)(beginning) + (unsigned long long)(length));
++    if ((addr >= beginning) && (addr < ending)) {
++      if ((unsigned long long)(perms) & (PROT_WRITE >> 8)) {
++        // Memory we are looking for should be readable and writable.
++        found = 1;
++      }
++      break;
++    }
++  }
++
+   // Free resources.
+   fclose(file);
+   KMP_INTERNAL_FREE(name);
+diff --git a/openmp/tools/multiplex/ompt-multiplex.h b/openmp/tools/multiplex/ompt-multiplex.h
+index 4c17802a3769e1..007d9b1167a622 100644
+--- a/openmp/tools/multiplex/ompt-multiplex.h
++++ b/openmp/tools/multiplex/ompt-multiplex.h
+@@ -21,7 +21,7 @@
+ #endif
+ #include <dlfcn.h>
+ #include <errno.h>
+-#ifndef __HAIKU__
++#if !defined(__HAIKU__) && !defined(__QNX__)
+ #include <execinfo.h>
+ #endif
+ #include <inttypes.h>
+
+From 7aed3dc57b379a2420fcb8f51280ac1fa46c7788 Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <arbassett4@outlook.com>
+Date: Tue, 11 Aug 2026 14:45:03 -0400
+Subject: [PATCH 07/10] qnx/lld: add qnx os support
+
+---
+ lld/ELF/Config.h              |  2 ++
+ lld/ELF/Driver.cpp            |  4 +++-
+ lld/ELF/InputFiles.cpp        | 45 +++++++++++++++++++++++++++++++++++
+ lld/ELF/SyntheticSections.cpp | 25 +++++++++++++++++++
+ lld/ELF/SyntheticSections.h   | 12 ++++++++++
+ 5 files changed, 87 insertions(+), 1 deletion(-)
+
+diff --git a/lld/ELF/Config.h b/lld/ELF/Config.h
+index 7ae6f871fe3e0c..70c18ebec7d317 100644
+--- a/lld/ELF/Config.h
++++ b/lld/ELF/Config.h
+@@ -601,6 +601,8 @@ struct InStruct {
+   std::unique_ptr<StringTableSection> strTab;
+   std::unique_ptr<SymbolTableBaseSection> symTab;
+   std::unique_ptr<SymtabShndxSection> symTabShndx;
++  // QNX
++  std::unique_ptr<SyntheticSection> qnxStack;
+ };
+ 
+ struct Ctx : CommonLinkerContext {
+diff --git a/lld/ELF/Driver.cpp b/lld/ELF/Driver.cpp
+index ee5a1017131086..7149c2ba9eb1ed 100644
+--- a/lld/ELF/Driver.cpp
++++ b/lld/ELF/Driver.cpp
+@@ -1553,7 +1553,9 @@ static void readConfigs(Ctx &ctx, opt::InputArgList &args) {
+   if (args.hasArg(OPT_randomize_section_padding))
+     ctx.arg.randomizeSectionPadding =
+         args::getInteger(args, OPT_randomize_section_padding, 0);
+-  ctx.arg.singleRoRx = !args.hasFlag(OPT_rosegment, OPT_no_rosegment, true);
++  // TODO: figure out a "correct" way to do this that is upstreamable
++  // QNX has a bug in its elfloader where you MUST have a singleRoRx
++  ctx.arg.singleRoRx = !args.hasFlag(OPT_rosegment, OPT_no_rosegment, ctx.arg.dynamicLinker.contains("ldqnx") ? false : true);
+   ctx.arg.singleXoRx = !args.hasFlag(OPT_xosegment, OPT_no_xosegment, false);
+   ctx.arg.soName = args.getLastArgValue(OPT_soname);
+   ctx.arg.sortSection = getSortSection(ctx, args);
+diff --git a/lld/ELF/InputFiles.cpp b/lld/ELF/InputFiles.cpp
+index 7ba2be5d1608f7..94867e37d3c69b 100644
+--- a/lld/ELF/InputFiles.cpp
++++ b/lld/ELF/InputFiles.cpp
+@@ -1083,6 +1083,45 @@ static void readGnuProperty(Ctx &ctx, const InputSection &sec,
+   }
+ }
+ 
++template <class ELFT>
++static bool isQnxStack(Ctx &ctx, const InputSection &sec) {
++  using Elf_Nhdr = typename ELFT::Nhdr;
++  using Elf_Note = typename ELFT::Note;
++
++  constexpr uint32_t QNX_NOTE_STACK = 3; // Target note type
++
++  ArrayRef<uint8_t> data = sec.content();
++  auto err = [&](const uint8_t *place) -> ELFSyncStream {
++    auto diag = Err(ctx);
++    diag << sec.file << ":(" << sec.name << "+0x"
++         << Twine::utohexstr(place - sec.content().data()) << "): ";
++    return diag;
++  };
++
++  while (!data.empty()) {
++    if (data.size() < sizeof(Elf_Nhdr)) {
++      return false;
++    }
++
++    auto *nhdr = reinterpret_cast<const Elf_Nhdr *>(data.data());
++    size_t noteSize = nhdr->getSize(sec.addralign);
++
++    if (data.size() < noteSize) {
++      err(data.data()) << "corrupt note section: note header claims size larger than section bounds";
++      return false;
++    }
++
++    Elf_Note note(*nhdr);
++    if (nhdr->n_type == QNX_NOTE_STACK && note.getName() == "QNX")
++      return true;
++
++    // Advance to the next note record safely using alignment rules
++    data = data.slice(noteSize);
++  }
++
++  return false;
++}
++
+ template <class ELFT>
+ InputSectionBase *ObjFile<ELFT>::getRelocTarget(uint32_t idx, uint32_t info) {
+   if (info < this->sections.size()) {
+@@ -1177,6 +1216,12 @@ InputSectionBase *ObjFile<ELFT>::createInputSection(uint32_t idx,
+     // against it.
+     if (name == ".note.gnu.build-id")
+       return &InputSection::discarded;
++
++    // We need to check both .note and .note.qnx.stack since qnx qcc/gcc default to just using
++    // .note so we need this extra check for backwards compatability
++    if ((name == ".note" || name == ".note.qnx.stack") && isQnxStack<ELFT>(ctx, InputSection(*this, sec, name))) {
++      return &InputSection::discarded;
++    }
+   }
+ 
+   // The linker merges EH (exception handling) frames and creates a
+diff --git a/lld/ELF/SyntheticSections.cpp b/lld/ELF/SyntheticSections.cpp
+index c81f649861a732..4c5dd262c60448 100644
+--- a/lld/ELF/SyntheticSections.cpp
++++ b/lld/ELF/SyntheticSections.cpp
+@@ -4566,6 +4566,26 @@ size_t PackageMetadataNote::getSize() const {
+          alignTo(ctx.arg.packageMetadata.size() + 1, 4);
+ }
+ 
++QNXStackNote::QNXStackNote(Ctx &ctx)
++    : SyntheticSection(ctx, ".note.qnx.stack", SHT_NOTE, SHF_ALLOC, 4) {
++
++    stackSize = ctx.arg.zStackSize ? ctx.arg.zStackSize : 0;
++    stackAlloc = stackSize;
++    flags = (ctx.arg.zGnustack == GnuStackKind::Exec) ? 0 : 1;
++}
++
++void QNXStackNote::writeTo(uint8_t *buf) {
++    write32(ctx, buf + 0, 4);
++    write32(ctx, buf + 4, 12);
++    write32(ctx, buf + 8, 3);  // QNT_STACK (3)
++
++    memcpy(buf + 12, "QNX", 4);
++
++    write32(ctx, buf + 16, stackSize);
++    write32(ctx, buf + 20, stackAlloc);
++    write32(ctx, buf + 24, flags);
++}
++
+ // Helper function, return the size of the ULEB128 for 'v', optionally writing
+ // it to `*(buf + offset)` if `buf` is non-null.
+ static size_t computeOrWriteULEB128(uint64_t v, uint8_t *buf, size_t offset) {
+@@ -4930,6 +4950,11 @@ template <class ELFT> void elf::createSyntheticSections(Ctx &ctx) {
+     add(*ctx.in.gnuStack);
+   }
+ 
++  if (ctx.arg.dynamicLinker.contains("ldqnx") && (ctx.arg.zStackSize || (ctx.arg.zGnustack != GnuStackKind::None))){
++    ctx.in.qnxStack = std::make_unique<QNXStackNote>(ctx);
++    add(*ctx.in.qnxStack);
++  }
++
+   if (ctx.in.symTab)
+     add(*ctx.in.symTab);
+   if (ctx.in.symTabShndx)
+diff --git a/lld/ELF/SyntheticSections.h b/lld/ELF/SyntheticSections.h
+index f9862b07b1ed78..83d13897e58839 100644
+--- a/lld/ELF/SyntheticSections.h
++++ b/lld/ELF/SyntheticSections.h
+@@ -1439,6 +1439,18 @@ class MemtagGlobalDescriptors final : public SyntheticSection {
+   SmallVector<const Symbol *, 0> symbols;
+ };
+ 
++// .note.qnx.stack section.
++class QNXStackNote : public SyntheticSection {
++public:
++  QNXStackNote(Ctx &ctx);
++  void writeTo(uint8_t *buf) override;
++  size_t getSize() const override { return 28; }
++private:
++    uint32_t stackSize;
++    uint32_t stackAlloc;
++    uint32_t flags;
++};
++
+ template <class ELFT> void createSyntheticSections(Ctx &);
+ InputSection *createInterpSection(Ctx &);
+ MergeInputSection *createCommentSection(Ctx &);
+
+From cfe79fe0980e568074862aaf8bf4ea4fb5d5ff19 Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Thu, 13 Aug 2026 16:03:51 -0400
+Subject: [PATCH 08/10] qnx/llvm: fix cmdline to cmdname
+
+---
+ llvm/lib/Support/Unix/Path.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/lib/Support/Unix/Path.inc b/llvm/lib/Support/Unix/Path.inc
+index 6efa2590744a62..c7d674fc319c86 100644
+--- a/llvm/lib/Support/Unix/Path.inc
++++ b/llvm/lib/Support/Unix/Path.inc
+@@ -259,7 +259,7 @@ std::string getMainExecutable(const char *argv0, void *MainAddr) {
+     return exe_path;
+ #elif defined(__QNX__)
+   char exe_path[PATH_MAX] = {};
+-  if (_cmdline(exe_path) == nullptr) {
++  if (_cmdname(exe_path) == nullptr) {
+     return "";
+   }
+ 
+
+From 299553b3e6d6e6eae747622aed6a15e917377652 Mon Sep 17 00:00:00 2001
+From: Leo Shen <i@szclsya.me>
+Date: Thu, 7 May 2026 14:05:54 -0400
+Subject: [PATCH 09/10] lld: fix MADV symbols
+
+---
+ lld/MachO/Driver.cpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/lld/MachO/Driver.cpp b/lld/MachO/Driver.cpp
+index 973b3f5535cb44..71ba53488bf780 100644
+--- a/lld/MachO/Driver.cpp
++++ b/lld/MachO/Driver.cpp
+@@ -58,6 +58,11 @@
+ #include <sys/mman.h>
+ #endif
+ 
++#ifdef __QNX__
++#define madvise posix_madvise
++#define MADV_WILLNEED POSIX_MADV_WILLNEED
++#endif
++
+ using namespace llvm;
+ using namespace llvm::MachO;
+ using namespace llvm::object;
+
+From a67e0276b2035e51a698e7c82058ef6e223dad5f Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Wed, 26 Aug 2026 11:59:17 -0400
+Subject: [PATCH 10/10] qnx: lld mmap-files-output by default
+
+---
+ lld/ELF/Driver.cpp | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lld/ELF/Driver.cpp b/lld/ELF/Driver.cpp
+index 7149c2ba9eb1ed..d60c36e2410359 100644
+--- a/lld/ELF/Driver.cpp
++++ b/lld/ELF/Driver.cpp
+@@ -1483,8 +1483,12 @@ static void readConfigs(Ctx &ctx, opt::InputArgList &args) {
+   ctx.arg.mipsGotSize = args::getInteger(args, OPT_mips_got_size, 0xfff0);
+   ctx.arg.mergeArmExidx =
+       args.hasFlag(OPT_merge_exidx_entries, OPT_no_merge_exidx_entries, true);
++  // TODO: figure out a "correct" way to do this that is upstreamable
++  // QNX memory manager keeps mmap files fd open for up to a second after they have been closed
++  // This results in the output file being un executable for up to a second which breaks
++  // configure scripts
+   ctx.arg.mmapOutputFile =
+-      args.hasFlag(OPT_mmap_output_file, OPT_no_mmap_output_file, false);
++      args.hasFlag(OPT_mmap_output_file, OPT_no_mmap_output_file,  ctx.arg.dynamicLinker.contains("ldqnx") ? true : false);
+   ctx.arg.nmagic = args.hasFlag(OPT_nmagic, OPT_no_nmagic, false);
+   ctx.arg.noinhibitExec = args.hasArg(OPT_noinhibit_exec);
+   ctx.arg.nostdlib = args.hasArg(OPT_nostdlib);

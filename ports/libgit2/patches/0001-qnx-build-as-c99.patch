@@ -1,0 +1,123 @@
+Build as C99 on QNX.
+
+libgit2 sets C_STANDARD 90 on its targets, so CMake passes -std=c90. QNX's
+<time.h>, <stdlib.h> and <sys/process.h> declare static inline helpers, and
+every file fails with "unknown type name 'inline'". Use C99 on QNX only.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -8,6 +8,15 @@
+ 
+ project(libgit2 VERSION "1.8.4" LANGUAGES C)
+ 
++# libgit2 builds as strict C90. QNX's libc headers use "static inline" in
++# <time.h>, <stdlib.h> and <sys/process.h>, which C90 does not have, so on
++# QNX build as C99 instead.
++if(QNX)
++	set(GIT_C_STANDARD 99)
++else()
++	set(GIT_C_STANDARD 90)
++endif()
++
+ # Add find modules to the path
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+ 
+--- a/fuzzers/CMakeLists.txt
++++ b/fuzzers/CMakeLists.txt
+@@ -20,7 +20,7 @@
+ 	endif()
+ 
+ 	add_executable(${fuzz_target_name} ${${fuzz_target_name}_SOURCES})
+-	set_target_properties(${fuzz_target_name} PROPERTIES C_STANDARD 90)
++	set_target_properties(${fuzz_target_name} PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ 
+ 	target_include_directories(${fuzz_target_name} PRIVATE ${LIBGIT2_INCLUDES} ${LIBGIT2_DEPENDENCY_INCLUDES})
+ 	target_include_directories(${fuzz_target_name} SYSTEM PRIVATE ${LIBGIT2_SYSTEM_INCLUDES})
+--- a/src/libgit2/CMakeLists.txt
++++ b/src/libgit2/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ # git library functionality.
+ 
+ add_library(libgit2 OBJECT)
+-set_target_properties(libgit2 PROPERTIES C_STANDARD 90)
++set_target_properties(libgit2 PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(libgit2 PROPERTIES C_EXTENSIONS OFF)
+ 
+ include(PkgBuildConfig)
+@@ -60,7 +60,7 @@
+ target_link_libraries(libgit2package ${LIBGIT2_SYSTEM_LIBS})
+ target_include_directories(libgit2package SYSTEM PRIVATE ${LIBGIT2_INCLUDES})
+ 
+-set_target_properties(libgit2package PROPERTIES C_STANDARD 90)
++set_target_properties(libgit2package PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(libgit2package PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+ set_target_properties(libgit2package PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+ set_target_properties(libgit2package PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+--- a/src/util/CMakeLists.txt
++++ b/src/util/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ # util: a shared library for common utility functions for libgit2 projects
+ 
+ add_library(util OBJECT)
+-set_target_properties(util PROPERTIES C_STANDARD 90)
++set_target_properties(util PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(util PROPERTIES C_EXTENSIONS OFF)
+ 
+ configure_file(git2_features.h.in git2_features.h)
+--- a/examples/CMakeLists.txt
++++ b/examples/CMakeLists.txt
+@@ -3,7 +3,7 @@
+ file(GLOB SRC_EXAMPLES *.c *.h)
+ 
+ add_executable(lg2 ${SRC_EXAMPLES})
+-set_target_properties(lg2 PROPERTIES C_STANDARD 90)
++set_target_properties(lg2 PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ 
+ # Ensure that we do not use deprecated functions internally
+ add_definitions(-DGIT_DEPRECATE_HARD)
+--- a/tests/libgit2/CMakeLists.txt
++++ b/tests/libgit2/CMakeLists.txt
+@@ -40,7 +40,7 @@
+ 
+ add_executable(libgit2_tests ${SRC_CLAR} ${SRC_TEST} ${LIBGIT2_OBJECTS})
+ 
+-set_target_properties(libgit2_tests PROPERTIES C_STANDARD 90)
++set_target_properties(libgit2_tests PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(libgit2_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+ 
+ target_include_directories(libgit2_tests PRIVATE ${TEST_INCLUDES} ${LIBGIT2_INCLUDES} ${LIBGIT2_DEPENDENCY_INCLUDES})
+--- a/src/cli/CMakeLists.txt
++++ b/src/cli/CMakeLists.txt
+@@ -40,7 +40,7 @@
+ 	${LIBGIT2_DEPENDENCY_OBJECTS})
+ target_link_libraries(git2_cli ${CLI_LIBGIT2_LIBRARY} ${LIBGIT2_SYSTEM_LIBS})
+ 
+-set_target_properties(git2_cli PROPERTIES C_STANDARD 90)
++set_target_properties(git2_cli PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(git2_cli PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${libgit2_BINARY_DIR})
+ set_target_properties(git2_cli PROPERTIES OUTPUT_NAME ${LIBGIT2_FILENAME})
+ 
+--- a/tests/headertest/CMakeLists.txt
++++ b/tests/headertest/CMakeLists.txt
+@@ -3,7 +3,7 @@
+ # even when they have aggressive C90 warnings enabled.
+ 
+ add_executable(headertest headertest.c)
+-set_target_properties(headertest PROPERTIES C_STANDARD 90)
++set_target_properties(headertest PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(headertest PROPERTIES C_EXTENSIONS OFF)
+ target_include_directories(headertest PRIVATE ${LIBGIT2_INCLUDES})
+ 
+--- a/tests/util/CMakeLists.txt
++++ b/tests/util/CMakeLists.txt
+@@ -39,7 +39,7 @@
+ 
+ add_executable(util_tests ${SRC_CLAR} ${SRC_TEST} ${LIBGIT2_OBJECTS})
+ 
+-set_target_properties(util_tests PROPERTIES C_STANDARD 90)
++set_target_properties(util_tests PROPERTIES C_STANDARD ${GIT_C_STANDARD})
+ set_target_properties(util_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${libgit2_BINARY_DIR})
+ 
+ target_include_directories(util_tests PRIVATE ${TEST_INCLUDES} ${LIBGIT2_INCLUDES} ${LIBGIT2_DEPENDENCY_INCLUDES})

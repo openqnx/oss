@@ -1,0 +1,74 @@
+Produce stack dumps on QNX with QNX's libbacktrace.
+
+g3log's crash handler uses glibc's backtrace()/backtrace_symbols() from
+<execinfo.h>, and Build.cmake requires CMake's FindBacktrace, which finds
+nothing on QNX: configure stops with Backtrace_INCLUDE_DIR NOTFOUND. QNX has
+its own stack walker, libbacktrace (<backtrace.h>, bt_get_backtrace and
+bt_sprnf_addrs). Use it on QNX, so a fatal signal still logs one line per
+frame (address, object, offset), and link -lbacktrace instead of looking for
+execinfo.
+
+Upstream-Status: QNX-specific
+
+--- a/Build.cmake
++++ b/Build.cmake
+@@ -102,7 +102,10 @@
+ TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} Threads::Threads )
+ 
+ # check for backtrace and cxa_demangle only in non-Windows dev environments
+-IF(NOT(MSVC OR MINGW))
++IF(QNX)
++	# QNX has no execinfo backtrace(); stack dumps use QNX's own libbacktrace.
++	TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} backtrace)
++ELSEIF(NOT(MSVC OR MINGW))
+ 	# the backtrace module does not provide a modern cmake target
+ 	FIND_PACKAGE(Backtrace REQUIRED)
+ 	if(Backtrace_FOUND)
+--- a/src/crashhandler_unix.cpp
++++ b/src/crashhandler_unix.cpp
+@@ -16,7 +16,11 @@
+ #endif
+ 
+ #include <cxxabi.h>
++#if defined(__QNX__)
++#include <backtrace.h>
++#else
+ #include <execinfo.h>
++#endif
+ #include <unistd.h>
+ #include <atomic>
+ #include <csignal>
+@@ -137,6 +141,25 @@
+          if (nullptr != rawdump && !std::string(rawdump).empty()) {
+             return {rawdump};
+          }
++#if defined(__QNX__)
++         // QNX: walk the stack with libbacktrace and print each frame as
++         // "address  object+offset"; symbolise offline with addr2line.
++         const int max_dump_size = 50;
++         bt_addr_t addrs[max_dump_size];
++         const int n = bt_get_backtrace(&bt_acc_self, addrs, max_dump_size);
++         bt_memmap_t memmap;
++         std::ostringstream oss;
++         if (n > 0 && bt_load_memmap(&bt_acc_self, &memmap) == 0) {
++            char line[512];
++            for (int idx = 1; idx < n; ++idx) {  // skip this frame
++               if (bt_sprnf_addrs(&memmap, &addrs[idx], 1, const_cast<char*>("%a  %f+%o"), line, sizeof line, nullptr) > 0) {
++                  oss << "\tstack dump [" << idx << "]  " << line << std::endl;
++               }
++            }
++            bt_unload_memmap(&memmap);
++         }
++         return oss.str();
++#else
+          const size_t max_dump_size = 50;
+          void* dump[max_dump_size];
+          const size_t size = backtrace(dump, max_dump_size);
+@@ -187,6 +210,7 @@
+          }  // END: for(size_t idx = 1; idx < size && messages != nullptr; ++idx)
+          free(messages);
+          return oss.str();
++#endif
+       }
+ 
+       /// string representation of signal ID

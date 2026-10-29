@@ -1,0 +1,24 @@
+SDL2: use the ALSA backend on QNX 8.0.
+
+The QSA backend targets the <sys/asoundlib.h> of QNX 6.x/7.x. QNX 8.0 ships
+alsa-lib (<alsa/asoundlib.h>, libasound.so.5), which SDL's generic ALSA backend
+uses; keep QSA behind QNX_USE_QSA_AUDIO.
+
+Upstream-Status: QNX-specific
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e45b53e..82b47dc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1489,7 +1489,10 @@ elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
+         file(GLOB AIX_AUDIO_SOURCES ${SDL2_SOURCE_DIR}/src/audio/paudio/*.c)
+         list(APPEND SOURCE_FILES ${AIX_AUDIO_SOURCES})
+         set(HAVE_SDL_AUDIO TRUE)
+-    elseif(QNX)
++    elseif(QNX AND QNX_USE_QSA_AUDIO)
++        # The QSA backend targets QNX 6.x/7.x <sys/asoundlib.h>.  QNX 8.0 ships
++        # a real alsa-lib (<alsa/asoundlib.h>, libasound.so.5) instead, so the
++        # generic ALSA backend selected by CheckALSA() below is the right one.
+         set(SDL_AUDIO_DRIVER_QSA 1)
+         file(GLOB QSA_AUDIO_SOURCES ${SDL2_SOURCE_DIR}/src/audio/qsa/*.c)
+         list(APPEND SOURCE_FILES ${QSA_AUDIO_SOURCES})

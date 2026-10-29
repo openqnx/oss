@@ -1,0 +1,18 @@
+QNX change from QNX's aports (core/pax-utils/fix-recursive.patch).
+
+Taken from qnx-ports/aports core/pax-utils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- pax-utils-1.3.8/scanelf.c.orig	2025-10-02 16:23:13.000000000 +0000
++++ pax-utils-1.3.8/scanelf.c	2025-10-02 16:24:55.000000000 +0000
+@@ -1699,7 +1699,7 @@
+ 		return scanelf_fileat(dir_fd, path, &st_top);
+ 
+ 	/* now scan the dir looking for fun stuff */
+-	subdir_fd = openat(dir_fd, path, O_RDONLY|O_CLOEXEC);
++	subdir_fd = openat(dir_fd, path, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
+ 	if (subdir_fd == -1)
+ 		dir = NULL;
+ 	else

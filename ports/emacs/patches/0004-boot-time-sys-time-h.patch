@@ -1,0 +1,20 @@
+Include <sys/time.h> for the sysctl boot-time fallback.
+
+gnulib's get_bsd_boot_time_final_fallback() reads KERN_BOOTTIME into a
+struct timeval, which boot-time.c relies on <sys/sysctl.h> to declare. QNX
+has KERN_BOOTTIME but its <sys/sysctl.h> does not bring in <sys/time.h>:
+storage size of 'result' isn't known.
+
+Upstream-Status: Pending (gnulib lib/boot-time.c)
+
+--- a/lib/boot-time.c
++++ b/lib/boot-time.c
+@@ -37,6 +37,8 @@
+ #  include <sys/param.h>
+ # endif
+ # include <sys/sysctl.h>
++/* struct timeval, for the KERN_BOOTTIME fallback in boot-time-aux.h.  */
++# include <sys/time.h>
+ #endif
+ 
+ #if HAVE_OS_H

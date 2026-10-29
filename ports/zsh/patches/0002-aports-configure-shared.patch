@@ -1,0 +1,18 @@
+QNX change from QNX's aports (extra/zsh/configure-shared.patch).
+
+Taken from qnx-ports/aports extra/zsh -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- zsh-5.9/configure.ac
++++ a/configure.ac
+@@ -2841,7 +2841,7 @@
+   fi
+   case "$host_os" in
+     osf*) DLLDFLAGS="${DLLDFLAGS=-shared -expect_unresolved '*'}" ;;
+-    *freebsd*|*netbsd*|linux*|irix*|gnu*|interix*|dragonfly*) DLLDFLAGS="${DLLDFLAGS=-shared}" ;;
++    *freebsd*|*netbsd*|linux*|irix*|gnu*|interix*|dragonfly*|*qnx*) DLLDFLAGS="${DLLDFLAGS=-shared}" ;;
+     sunos*)       DLLDFLAGS="${DLLDFLAGS=-assert nodefinitions}" ;;
+     sysv4*|esix*) DLLDFLAGS="${DLLDFLAGS=-G $ldflags}" ;;
+     aix*)         DLLDFLAGS="${DLLDFLAGS=-G -bexpall -lc}" ;;

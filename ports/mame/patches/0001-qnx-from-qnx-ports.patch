@@ -1,0 +1,2092 @@
+From 2e7a847de4af8bcdff165daa111da35f2d701ccb Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Mon, 10 Nov 2025 16:11:16 -0500
+Subject: [PATCH 1/5] Port mame to QNX 8.0
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ 3rdparty/asio/include/asio/detail/config.hpp  |  5 ++
+ .../include/asio/detail/impl/posix_thread.ipp |  5 ++
+ .../asio/include/asio/detail/socket_types.hpp |  8 +-
+ .../cpp11/local/fd_passing_stream_client.cpp  |  8 ++
+ .../cpp11/local/fd_passing_stream_server.cpp  |  8 ++
+ 3rdparty/asio/src/tests/unit/ip/multicast.cpp |  9 ++-
+ .../3rdparty/dear-imgui/widgets/file_list.inl | 47 ++++++++++++
+ .../bgfx/examples/common/entry/entry_sdl.cpp  |  2 +
+ 3rdparty/bgfx/include/bgfx/embedded_shader.h  |  1 +
+ 3rdparty/bgfx/src/bgfx.cpp                    |  1 +
+ 3rdparty/bgfx/src/glcontext_egl.cpp           | 21 +++++-
+ 3rdparty/bgfx/src/renderer_gl.h               |  1 +
+ 3rdparty/bx/include/bx/platform.h             | 15 ++++
+ 3rdparty/bx/src/os.cpp                        | 49 +++++++++++-
+ 3rdparty/bx/src/thread.cpp                    |  2 +-
+ 3rdparty/genie/src/host/scripts.c             |  4 +-
+ 3rdparty/genie/src/tools/gcc.lua              |  2 +-
+ 3rdparty/lua/src/lopcodes.h                   | 70 +++++++++---------
+ 3rdparty/lzma/C/CpuArch.c                     | 19 ++++-
+ 3rdparty/portmidi/pm_common/pmutil.c          | 28 +++----
+ 3rdparty/portmidi/pm_linux/pmlinuxalsa.c      | 74 +++++++++----------
+ 3rdparty/portmidi/porttime/ptlinux.c          | 26 ++++---
+ makefile                                      | 38 ++++++++--
+ scripts/genie.lua                             | 12 ++-
+ scripts/src/3rdparty.lua                      | 19 ++++-
+ scripts/src/main.lua                          | 19 ++++-
+ scripts/src/osd/modules.lua                   |  8 +-
+ scripts/src/osd/sdl.lua                       | 21 +++++-
+ scripts/toolchain.lua                         | 42 +++++++++++
+ src/devices/cpu/z180/z180.cpp                 |  4 +
+ src/devices/cpu/z180/z180dd.hxx               |  4 +
+ src/devices/cpu/z180/z180fd.hxx               |  4 +
+ src/devices/cpu/z180/z180op.hxx               | 16 ++++
+ src/devices/cpu/z180/z180ops.h                |  8 ++
+ src/osd/modules/file/posixdir.cpp             | 27 ++++++-
+ src/osd/modules/file/posixfile.cpp            | 14 ++--
+ src/osd/modules/file/posixptty.cpp            |  6 +-
+ src/osd/modules/render/drawbgfx.cpp           | 10 +++
+ 38 files changed, 514 insertions(+), 143 deletions(-)
+
+diff --git a/3rdparty/asio/include/asio/detail/config.hpp b/3rdparty/asio/include/asio/detail/config.hpp
+index cd345eac2cd1b..1124d67d92eb3 100644
+--- a/3rdparty/asio/include/asio/detail/config.hpp
++++ b/3rdparty/asio/include/asio/detail/config.hpp
+@@ -35,6 +35,11 @@
+ # include <cstddef>
+ #endif // defined(__has_include)
+ 
++// Need to include unistd.h here for thread support.
++#if defined(__QNX__)
++#include <unistd.h>
++#endif
++
+ // boostify: non-boost code ends here
+ #if defined(ASIO_STANDALONE)
+ # define ASIO_DISABLE_BOOST_ALIGN 1
+diff --git a/3rdparty/asio/include/asio/detail/impl/posix_thread.ipp b/3rdparty/asio/include/asio/detail/impl/posix_thread.ipp
+index 7602377336ef3..71077b33c1868 100644
+--- a/3rdparty/asio/include/asio/detail/impl/posix_thread.ipp
++++ b/3rdparty/asio/include/asio/detail/impl/posix_thread.ipp
+@@ -47,6 +47,11 @@ std::size_t posix_thread::hardware_concurrency()
+ {
+ #if defined(_SC_NPROCESSORS_ONLN)
+   long result = sysconf(_SC_NPROCESSORS_ONLN);
++
++#if defined(__QNX__)
++  result &= 0xFFFFFFFF;
++#endif //defined(__QNX__)
++
+   if (result > 0)
+     return result;
+ #endif // defined(_SC_NPROCESSORS_ONLN)
+diff --git a/3rdparty/asio/include/asio/detail/socket_types.hpp b/3rdparty/asio/include/asio/detail/socket_types.hpp
+index cf4f746a44ba6..634591534c107 100644
+--- a/3rdparty/asio/include/asio/detail/socket_types.hpp
++++ b/3rdparty/asio/include/asio/detail/socket_types.hpp
+@@ -411,7 +411,13 @@ const int max_iov_len = IOV_MAX;
+ // POSIX platforms are not required to define IOV_MAX.
+ const int max_iov_len = 16;
+ # endif
+-# define ASIO_OS_DEF_SA_RESTART SA_RESTART
++// Note: QNX does not support SA_RESTART
++// Therefore they are specifically excluded here.
++# if defined(__QNX__)
++#  define ASIO_OS_DEF_SA_RESTART 0
++# else
++#  define ASIO_OS_DEF_SA_RESTART SA_RESTART
++# endif
+ # define ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
+ # define ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
+ #endif
+diff --git a/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp b/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
+index 229509f1c1473..6982507b0777d 100644
+--- a/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
++++ b/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
+@@ -23,6 +23,14 @@
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ 
++#if defined(__QNX__)
++   #undef CMSG_ALIGN
++   #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) & (size_t) ~(sizeof (size_t) - 1))
++
++   #undef CMSG_SPACE
++   #define CMSG_SPACE(len) (CMSG_ALIGN (len) + CMSG_ALIGN (sizeof (struct cmsghdr)))
++#endif //defined(__QNX__)
++
+ using asio::local::stream_protocol;
+ 
+ constexpr std::size_t max_length = 1024;
+diff --git a/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp b/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
+index 5082185e75ca2..8406466135e71 100644
+--- a/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
++++ b/3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
+@@ -22,6 +22,14 @@
+ 
+ #if defined(ASIO_HAS_LOCAL_SOCKETS)
+ 
++#if defined(__QNX__)
++   #undef CMSG_ALIGN
++   #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) & (size_t) ~(sizeof (size_t) - 1))
++
++   #undef CMSG_SPACE
++   #define CMSG_SPACE(len) (CMSG_ALIGN (len) + CMSG_ALIGN (sizeof (struct cmsghdr)))
++#endif //defined(__QNX__)
++
+ using asio::local::stream_protocol;
+ 
+ class session
+diff --git a/3rdparty/asio/src/tests/unit/ip/multicast.cpp b/3rdparty/asio/src/tests/unit/ip/multicast.cpp
+index 4f0b3f45e145a..ced8d1e78f149 100644
+--- a/3rdparty/asio/src/tests/unit/ip/multicast.cpp
++++ b/3rdparty/asio/src/tests/unit/ip/multicast.cpp
+@@ -146,17 +146,20 @@ void test()
+ #if (defined(__MACH__) && defined(__APPLE__)) \
+   || defined(__FreeBSD__) \
+   || defined(__NetBSD__) \
+-  || defined(__OpenBSD__)
++  || defined(__OpenBSD__) \
++  || defined(__QNX__)
+   const ip::address multicast_address_v6 = ip::make_address("ff02::1%lo0", ec);
+ #else // (defined(__MACH__) && defined(__APPLE__))
+       //   || defined(__FreeBSD__)
+       //   || defined(__NetBSD__)
+       //   || defined(__OpenBSD__)
++      //   || defined(__QNX__)
+   const ip::address multicast_address_v6 = ip::make_address("ff01::1", ec);
+ #endif // (defined(__MACH__) && defined(__APPLE__))
+        //   || defined(__FreeBSD__)
+        //   || defined(__NetBSD__)
+        //   || defined(__OpenBSD__)
++       //   || defined(__QNX__)
+   ASIO_CHECK(!have_v6 || !ec);
+ 
+   // join_group class.
+@@ -207,11 +210,11 @@ void test()
+ 
+   if (have_v6)
+   {
+-#if defined(__hpux)
++#if defined(__hpux) || defined(__QNX__)
+     ip::multicast::outbound_interface outbound_interface(if_nametoindex("lo0"));
+ #else
+     ip::multicast::outbound_interface outbound_interface(1);
+-#endif
++#endif // defined(__hpux) || defined(__QNX__)
+     sock_v6.set_option(outbound_interface, ec);
+     ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+   }
+diff --git a/3rdparty/bgfx/3rdparty/dear-imgui/widgets/file_list.inl b/3rdparty/bgfx/3rdparty/dear-imgui/widgets/file_list.inl
+index fda99b61bf550..49310a60634c1 100644
+--- a/3rdparty/bgfx/3rdparty/dear-imgui/widgets/file_list.inl
++++ b/3rdparty/bgfx/3rdparty/dear-imgui/widgets/file_list.inl
+@@ -18,6 +18,53 @@ namespace ImGui
+ 	{
+ #if BX_PLATFORM_PS4
+ 		BX_UNUSED(path);
++#elif BX_PLATFORM_QNX
++		DIR* dir = opendir(path);
++		if (NULL != dir)
++		{
++			FileList.clear();
++
++			for (dirent* item = readdir(dir); NULL != item; item = readdir(dir))
++			{
++                if (0 == ImStricmp(item->d_name, "..") )
++                {
++                    FileList.push_back(ImFileInfo(item->d_name, -1) );
++                }
++                else if (0 != ImStricmp(item->d_name, ".") )
++                {
++                    struct dirent_extra *dex;
++
++                    for (dex = _DEXTRA_FIRST(item); _DEXTRA_VALID(dex, item);
++                         dex = _DEXTRA_NEXT(dex))
++                    {
++                        struct dirent_extra_stat *dex_stat;
++                        struct stat statbuf;
++
++                        switch(dex->d_type)
++                        {
++                        case _DTYPE_STAT:
++                        case _DTYPE_LSTAT:
++                            dex_stat = (struct dirent_extra_stat *) dex;
++                            statbuf = dex_stat->d_stat;
++
++                            if ((statbuf.st_mode & S_IFDIR) == S_IFDIR)
++                            {
++                                FileList.push_back(ImFileInfo(item->d_name, -1) );
++                            }
++                            else
++                            {
++                                FileList.push_back(ImFileInfo(item->d_name, statbuf.st_size) );
++                            }
++                            break;
++                        default:
++                            break;
++                        }
++                    }
++                }
++			}
++
++			closedir(dir);
++		}
+ #else
+ 		DIR* dir = opendir(path);
+ 		if (NULL != dir)
+diff --git a/3rdparty/bgfx/examples/common/entry/entry_sdl.cpp b/3rdparty/bgfx/examples/common/entry/entry_sdl.cpp
+index bbcdb069257e4..23ff3dd6a0005 100644
+--- a/3rdparty/bgfx/examples/common/entry/entry_sdl.cpp
++++ b/3rdparty/bgfx/examples/common/entry/entry_sdl.cpp
+@@ -60,6 +60,8 @@ namespace entry
+ 		return wmi.info.win.window;
+ #   elif BX_PLATFORM_ANDROID
+ 		return wmi.info.android.window;
++#   elif BX_PLATFORM_QNX
++		return wmi.info.qnx.window;
+ #	endif // BX_PLATFORM_
+ 	}
+ 
+diff --git a/3rdparty/bgfx/include/bgfx/embedded_shader.h b/3rdparty/bgfx/include/bgfx/embedded_shader.h
+index c4ddca0c3b42a..d5508fda9738f 100644
+--- a/3rdparty/bgfx/include/bgfx/embedded_shader.h
++++ b/3rdparty/bgfx/include/bgfx/embedded_shader.h
+@@ -34,6 +34,7 @@
+ 	)
+ #define BGFX_PLATFORM_SUPPORTS_ESSL (0  \
+ 	|| BX_PLATFORM_ANDROID              \
++	|| BX_PLATFORM_QNX                  \
+ 	|| BX_PLATFORM_EMSCRIPTEN           \
+ 	|| BX_PLATFORM_IOS                  \
+ 	|| BX_PLATFORM_LINUX                \
+diff --git a/3rdparty/bgfx/src/bgfx.cpp b/3rdparty/bgfx/src/bgfx.cpp
+index d2aa92ad8adba..3697077d064ec 100644
+--- a/3rdparty/bgfx/src/bgfx.cpp
++++ b/3rdparty/bgfx/src/bgfx.cpp
+@@ -2731,6 +2731,7 @@ namespace bgfx
+ 					 ||  BX_PLATFORM_ANDROID
+ 					 ||  BX_PLATFORM_EMSCRIPTEN
+ 					 ||  BX_PLATFORM_RPI
++					 ||  BX_PLATFORM_QNX
+ 					 ) )
+ 				{
+ 					score += RendererType::OpenGLES == renderer ? 20 : 0;
+diff --git a/3rdparty/bgfx/src/glcontext_egl.cpp b/3rdparty/bgfx/src/glcontext_egl.cpp
+index 85de92e1df5ad..b15a2e8168ffc 100644
+--- a/3rdparty/bgfx/src/glcontext_egl.cpp
++++ b/3rdparty/bgfx/src/glcontext_egl.cpp
+@@ -15,6 +15,11 @@
+ #			include <bcm_host.h>
+ #		endif // BX_PLATFORM_RPI
+ 
++#	if BX_PLATFORM_QNX
++#		include <screen/screen.h>
++#		include <limits.h>
++#	endif
++
+ namespace bgfx { namespace gl
+ {
+ #ifndef EGL_CONTEXT_FLAG_NO_ERROR_BIT_KHR
+@@ -71,7 +76,7 @@ EGL_IMPORT
+ 	void* eglOpen()
+ 	{
+ 	    void* handle = bx::dlopen(
+-#if BX_PLATFORM_LINUX
++#if BX_PLATFORM_LINUX || BX_PLATFORM_QNX
+ 			"libEGL.so.1"
+ #else
+ 			"libEGL." BX_DL_EXT
+@@ -349,6 +354,19 @@ WL_EGL_IMPORT
+ 			eglGetConfigAttrib(m_display, m_config, EGL_NATIVE_VISUAL_ID, &format);
+ 			ANativeWindow_setBuffersGeometry( (ANativeWindow*)g_platformData.nwh, _width, _height, format);
+ 
++#	elif BX_PLATFORM_QNX
++
++			int size[2];
++
++			size[0] = (_width > INT_MAX) ? INT_MAX : static_cast<int>(_width);
++			size[1] = (_height > INT_MAX) ? INT_MAX : static_cast<int>(_height);
++			if (screen_set_window_property_iv(
++					*static_cast<screen_window_t *>(g_platformData.nwh),
++					SCREEN_PROPERTY_SIZE,
++					size) < 0) {
++				BGFX_FATAL(0, Fatal::UnableToInitialize, "screen_set_window_property_iv");
++			}
++
+ #	elif BX_PLATFORM_RPI
+ 			DISPMANX_DISPLAY_HANDLE_T dispmanDisplay = vc_dispmanx_display_open(0);
+ 			DISPMANX_UPDATE_HANDLE_T  dispmanUpdate  = vc_dispmanx_update_start(0);
+@@ -554,6 +572,7 @@ WL_EGL_IMPORT
+ 			| BX_PLATFORM_LINUX
+ 			| BX_PLATFORM_WINDOWS
+ 			| BX_PLATFORM_ANDROID
++			| BX_PLATFORM_QNX
+ 			)
+ 			? BGFX_CAPS_SWAP_CHAIN
+ 			: 0
+diff --git a/3rdparty/bgfx/src/renderer_gl.h b/3rdparty/bgfx/src/renderer_gl.h
+index 6d0346f3f8b08..8cf705c5bb577 100644
+--- a/3rdparty/bgfx/src/renderer_gl.h
++++ b/3rdparty/bgfx/src/renderer_gl.h
+@@ -10,6 +10,7 @@
+ 	|| BX_PLATFORM_ANDROID                                                                  \
+ 	|| BX_PLATFORM_BSD                                                                      \
+ 	|| BX_PLATFORM_LINUX                                                                    \
++	|| BX_PLATFORM_QNX                                                                    \
+ 	|| BX_PLATFORM_NX                                                                       \
+ 	|| BX_PLATFORM_RPI                                                                      \
+ 	) )
+diff --git a/3rdparty/bx/include/bx/platform.h b/3rdparty/bx/include/bx/platform.h
+index f14f9b680bfc6..ce25f9e81414b 100644
+--- a/3rdparty/bx/include/bx/platform.h
++++ b/3rdparty/bx/include/bx/platform.h
+@@ -36,6 +36,7 @@
+ #define BX_CRT_MINGW  0
+ #define BX_CRT_MSVC   0
+ #define BX_CRT_NEWLIB 0
++#define BX_CRT_QNX    0
+ 
+ #ifndef BX_CRT_NONE
+ #	define BX_CRT_NONE 0
+@@ -59,6 +60,7 @@
+ #define BX_PLATFORM_OSX        0
+ #define BX_PLATFORM_PS4        0
+ #define BX_PLATFORM_PS5        0
++#define BX_PLATFORM_QNX        0
+ #define BX_PLATFORM_RPI        0
+ #define BX_PLATFORM_WINDOWS    0
+ #define BX_PLATFORM_WINRT      0
+@@ -193,6 +195,9 @@
+ #elif  defined(__linux__)
+ #	undef  BX_PLATFORM_LINUX
+ #	define BX_PLATFORM_LINUX 1
++#elif  defined(__QNX__)
++#	undef  BX_PLATFORM_QNX
++#	define BX_PLATFORM_QNX 1
+ #elif  defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) \
+ 	|| defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__)
+ #	undef  BX_PLATFORM_IOS
+@@ -247,6 +252,9 @@
+ #	elif BX_PLATFORM_BSD
+ #		undef  BX_CRT_BSD
+ #		define BX_CRT_BSD 1
++#	elif BX_PLATFORM_QNX
++#		undef  BX_CRT_QNX
++#		define BX_CRT_QNX 1
+ #	endif //
+ 
+ #	if !BX_CRT_BIONIC \
+@@ -255,6 +263,7 @@
+ 	&& !BX_CRT_LIBCXX \
+ 	&& !BX_CRT_MINGW  \
+ 	&& !BX_CRT_MSVC   \
++	&& !BX_CRT_QNX    \
+ 	&& !BX_CRT_NEWLIB
+ #		undef  BX_CRT_NONE
+ #		define BX_CRT_NONE 1
+@@ -274,6 +283,7 @@
+ 	||  BX_PLATFORM_OSX        \
+ 	||  BX_PLATFORM_PS4        \
+ 	||  BX_PLATFORM_PS5        \
++	||  BX_PLATFORM_QNX        \
+ 	||  BX_PLATFORM_RPI        \
+ 	)
+ 
+@@ -290,6 +300,7 @@
+ 	||  BX_PLATFORM_OSX        \
+ 	||  BX_PLATFORM_PS4        \
+ 	||  BX_PLATFORM_PS5        \
++	||  BX_PLATFORM_QNX        \
+ 	||  BX_PLATFORM_RPI        \
+ 	||  BX_PLATFORM_WINDOWS    \
+ 	||  BX_PLATFORM_WINRT      \
+@@ -392,6 +403,8 @@
+ #	define BX_PLATFORM_NAME "PlayStation 4"
+ #elif BX_PLATFORM_PS5
+ #	define BX_PLATFORM_NAME "PlayStation 5"
++#elif BX_PLATFORM_QNX
++#	define BX_PLATFORM_NAME "QNX"
+ #elif BX_PLATFORM_RPI
+ #	define BX_PLATFORM_NAME "RaspberryPi"
+ #elif BX_PLATFORM_WINDOWS
+@@ -432,6 +445,8 @@
+ #	define BX_CRT_NAME "Clang C Library"
+ #elif BX_CRT_NEWLIB
+ #	define BX_CRT_NAME "Newlib"
++#elif BX_CRT_QNX
++#	define BX_CRT_NAME "QNX C Library"
+ #elif BX_CRT_NONE
+ #	define BX_CRT_NAME "None"
+ #else
+diff --git a/3rdparty/bx/src/os.cpp b/3rdparty/bx/src/os.cpp
+index 917b02e8c5a69..a9d95f72d1b28 100644
+--- a/3rdparty/bx/src/os.cpp
++++ b/3rdparty/bx/src/os.cpp
+@@ -25,7 +25,8 @@
+ 	|| BX_PLATFORM_HAIKU     \
+ 	|| BX_PLATFORM_IOS       \
+ 	|| BX_PLATFORM_OSX       \
+-	|| BX_PLATFORM_PS4
++	|| BX_PLATFORM_PS4       \
++	|| BX_PLATFORM_QNX
+ #		include <pthread.h> // mach_port_t
+ #	endif // BX_PLATFORM_*
+ 
+@@ -34,6 +35,10 @@
+ #		include <dlfcn.h> // dlopen, dlclose, dlsym
+ #	endif // !BX_PLATFORM_PS4
+ 
++#	if BX_PLATFORM_QNX
++#		include <string.h> // strstr
++#   endif
++
+ #	if BX_PLATFORM_ANDROID
+ #		include <malloc.h> // mallinfo
+ #	elif   BX_PLATFORM_LINUX     \
+@@ -41,7 +46,8 @@
+ #		include <stdio.h>  // fopen
+ #		include <unistd.h> // syscall
+ #		include <sys/syscall.h>
+-#	elif   BX_PLATFORM_HAIKU
++#	elif   BX_PLATFORM_HAIKU     \
++		|| BX_PLATFORM_QNX
+ #		include <stdio.h>  // fopen
+ #		include <unistd.h> // syscall
+ #	elif BX_PLATFORM_OSX
+@@ -98,6 +104,7 @@ namespace bx
+ #elif BX_PLATFORM_BSD
+ 		return *(uint32_t*)::pthread_self();
+ #elif BX_PLATFORM_HURD
++	|| BX_PLATFORM_QNX
+ 		return (pthread_t)::pthread_self();
+ #else
+ 		debugOutput("getTid is not implemented"); debugBreak();
+@@ -151,6 +158,41 @@ namespace bx
+ 		}
+ 
+ 		return info.resident_size;
++#elif BX_PLATFORM_QNX
++		const size_t buff_sz = 512;
++		char buffer[buff_sz];
++		char *pos;
++
++		size_t mem = 0;
++		int items;
++
++		FILE* file = fopen("/proc/self/vmstat", "r");
++		if (NULL == file)
++		{
++			return 0;
++		}
++
++		// Find map_size in output.
++		do {
++			char *ret = fgets(buffer, buff_sz, file);
++			if (ret == NULL && !feof(file)) {
++				goto FAIL;
++			}
++			// FIXME: Use defs from bx/string.h
++			// i.e. strFind + getTerm
++		} while ((pos = strstr(buffer, "as_stats.map_size=")) == NULL);
++		fclose(file);
++		pos += 18;
++
++		items = sscanf(pos, "%16lx", &mem);
++
++		return 1 == items
++			? mem
++			: 0
++			;
++	FAIL:
++		fclose(file);
++		return 0;
+ #elif BX_PLATFORM_WINDOWS
+ 		PROCESS_MEMORY_COUNTERS pmc;
+ 		GetProcessMemoryInfo(GetCurrentProcess()
+@@ -311,7 +353,8 @@ namespace bx
+ 	void* exec(const char* const* _argv)
+ 	{
+ #if BX_PLATFORM_LINUX \
+- || BX_PLATFORM_HURD
++ || BX_PLATFORM_HURD \
++ || BX_PLATFORM_QNX
+ 		pid_t pid = fork();
+ 
+ 		if (0 == pid)
+diff --git a/3rdparty/bx/src/thread.cpp b/3rdparty/bx/src/thread.cpp
+index 162d4cafaf056..5aeaabd3029c2 100644
+--- a/3rdparty/bx/src/thread.cpp
++++ b/3rdparty/bx/src/thread.cpp
+@@ -239,7 +239,7 @@ namespace bx
+ #elif  BX_PLATFORM_OSX \
+ 	|| BX_PLATFORM_IOS
+ 		pthread_setname_np(_name);
+-#elif BX_CRT_GLIBC && ! BX_PLATFORM_HURD
++#elif (BX_CRT_GLIBC || BX_PLATFORM_QNX) && ! BX_PLATFORM_HURD
+ 		pthread_setname_np(ti->m_handle, _name);
+ #elif BX_PLATFORM_LINUX
+ 		prctl(PR_SET_NAME,_name, 0, 0, 0);
+diff --git a/3rdparty/genie/src/host/scripts.c b/3rdparty/genie/src/host/scripts.c
+index 2ea0429904f3e..a7dfb2f53acbd 100644
+--- a/3rdparty/genie/src/host/scripts.c
++++ b/3rdparty/genie/src/host/scripts.c
+@@ -1,6 +1,6 @@
+ /* Premake's Lua scripts, as static data buffers for release mode builds */
+ /* DO NOT EDIT - this file is autogenerated - see BUILD.txt */
+-/* To regenerate this file, run: premake4 embed */ 
++/* To regenerate this file, run: premake4 embed */
+ 
+ const char* builtin_scripts[] = {
+ 	/* base/os.lua */
+@@ -149,7 +149,7 @@ const char* builtin_scripts[] = {
+ 
+ 	/* tools/gcc.lua */
+ 	"premake.gcc = { }\npremake.gcc.cc     = \"gcc\"\npremake.gcc.cxx    = \"g++\"\npremake.gcc.ar     = \"ar\"\npremake.gcc.rc     = \"windres\"\npremake.gcc.llvm   = false\nlocal cflags =\n{\nEnableSSE        = \"-msse\",\nEnableSSE2       = \"-msse2\",\nEnableAVX        = \"-mavx\",\nEnableAVX2       = \"-mavx2\",\nPedanticWarnings = \"-Wall -Wextra -pedantic\",\nExtraWarnings    = \"-Wall -Wextra\",\nFatalWarnings    = \"-Werror\",\nFloatFast        = \"-ffast-math\",\nFloatStrict      = \"-ffloat-store\",\nNoFramePointer   = \"-fomit-frame-pointer\",\nOptimize         = \"-O2\",\nOptimizeSize     = \"-Os\",\nOptimizeSpeed    = \"-O3\",\nSymbols          = \"-g\",\n}\nlocal cxxflags =\n{\nCpp11        = \"-std=c++11\",\nCpp14        = \"-std=c++14\",\nCpp17        = \"-std=c++17\",\nCpp20        = \"-std=c++20\",\nCppLatest    = \"-std=c++2b\",\nNoExceptions = \"-fno-exceptions\",\nNoRTTI       = \"-fno-rtti\",\nUnsignedChar = \"-funsigned-char\",\n}\nlocal objcflags =\n{\nObjcARC = \"-fobjc-arc\",\n}\npremake."
+-	"gcc.platforms =\n{\nNative = {\ncppflags = \"-MMD -MP\",\n},\nx32 = {\ncppflags = \"-MMD -MP\",\nflags    = \"-m32\",\n},\nx64 = {\ncppflags = \"-MMD -MP\",\nflags    = \"-m64\",\n},\nUniversal = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch i386 -arch x86_64 -arch ppc -arch ppc64\",\n},\nUniversal32 = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch i386 -arch ppc\",\n},\nUniversal64 = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch x86_64 -arch ppc64\",\n},\nPS3 = {\ncc         = \"ppu-lv2-g++\",\ncxx        = \"ppu-lv2-g++\",\nar         = \"ppu-lv2-ar\",\ncppflags   = \"-MMD -MP\",\n},\nWiiDev = {\ncppflags    = \"-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)\",\nldflags= \"-L$(LIBOGC_LIB) $(MACHDEP)\",\ncfgsettings = [[\n  ifeq ($(strip $(DEVKITPPC)),)\n    $(error \"DEVKITPPC environment variable is not set\")'\n  endif\n  include $(DEVKITPPC)/wii_rules']],\n},\nOrbis = {\ncc         = \"orbis-clang\",\ncxx        = \"orbis-clang++\",\nar "
++	"gcc.platforms =\n{\nNative = {\ncppflags = \"-MMD -MP\",\n},\nx32 = {\ncppflags = \"-MMD -MP\",\nflags    = \"-m32\",\n},\nx64 = {\ncppflags = \"-MMD -MP\",\n},\nUniversal = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch i386 -arch x86_64 -arch ppc -arch ppc64\",\n},\nUniversal32 = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch i386 -arch ppc\",\n},\nUniversal64 = {\nar       = \"libtool\",\ncppflags = \"-MMD -MP\",\nflags    = \"-arch x86_64 -arch ppc64\",\n},\nPS3 = {\ncc         = \"ppu-lv2-g++\",\ncxx        = \"ppu-lv2-g++\",\nar         = \"ppu-lv2-ar\",\ncppflags   = \"-MMD -MP\",\n},\nWiiDev = {\ncppflags    = \"-MMD -MP -I$(LIBOGC_INC) $(MACHDEP)\",\nldflags= \"-L$(LIBOGC_LIB) $(MACHDEP)\",\ncfgsettings = [[\n  ifeq ($(strip $(DEVKITPPC)),)\n    $(error \"DEVKITPPC environment variable is not set\")'\n  endif\n  include $(DEVKITPPC)/wii_rules']],\n},\nOrbis = {\ncc         = \"orbis-clang\",\ncxx        = \"orbis-clang++\",\nar "
+ 	"        = \"orbis-ar\",\ncppflags   = \"-MMD -MP\",\n},\nEmscripten = {\ncc         = \"$(EMSCRIPTEN)/emcc\",\ncxx        = \"$(EMSCRIPTEN)/em++\",\nar         = \"$(EMSCRIPTEN)/emar\",\ncppflags   = \"-MMD -MP\",\n},\nNX32 = {\ncc         = \"clang\",\ncxx        = \"clang++\",\nar         = \"armv7l-nintendo-nx-eabihf-ar\",\ncppflags   = \"-MMD -MP\",\nflags      = \"-march=armv7l\",\n},\nNX64 = {\ncc         = \"clang\",\ncxx        = \"clang++\",\nar         = \"aarch64-nintendo-nx-elf-ar\",\ncppflags   = \"-MMD -MP\",\nflags      = \"-march=aarch64\",\n},\n}\nlocal platforms = premake.gcc.platforms\nfunction premake.gcc.getcppflags(cfg)\nlocal flags = { }\ntable.insert(flags, platforms[cfg.platform].cppflags)\nif flags[1]:startswith(\"-MMD\") then\ntable.insert(flags, \"-MP\")\nend\nreturn flags\nend\nfunction premake.gcc.getcflags(cfg)\nlocal result = table.translate(cfg.flags, cflags)\ntable.insert(result, platforms[cfg.platform].flags)\nif cfg.system ~= \"windows\" and cfg.kind == \"SharedLib\" then\nt"
+ 	"able.insert(result, \"-fPIC\")\nend\nreturn result\nend\nfunction premake.gcc.getcxxflags(cfg)\nlocal result = table.translate(cfg.flags, cxxflags)\nreturn result\nend\nfunction premake.gcc.getobjcflags(cfg)\nreturn table.translate(cfg.flags, objcflags)\nend\nfunction premake.gcc.getldflags(cfg)\nlocal result = { }\nif not cfg.flags.Symbols then\nif cfg.system == \"macosx\" then\nelse\ntable.insert(result, \"-s\")\nend\nend\nif cfg.kind == \"Bundle\" then\ntable.insert(result, \"-bundle\")\nend\nif cfg.kind == \"SharedLib\" then\nif cfg.system == \"macosx\" then\ntable.insert(result, \"-dynamiclib\")\nelse\ntable.insert(result, \"-shared\")\nend\nif cfg.system == \"windows\" and not cfg.flags.NoImportLib then\ntable.insert(result, '-Wl,--out-implib=\"' .. cfg.linktarget.fullpath .. '\"')\nend\nend\nif cfg.kind == \"WindowedApp\" and cfg.system == \"windows\" then\ntable.insert(result, \"-mwindows\")\nend\nlocal platform = platforms[cfg.platform]\ntable.insert(result, platform.flags)\ntable.insert(result, platf"
+ 	"orm.ldflags)\nreturn result\nend\nfunction premake.gcc.getlibdirflags(cfg)\nlocal result = { }\nfor _, value in ipairs(premake.getlinks(cfg, \"all\", \"directory\")) do\ntable.insert(result, '-L\\\"' .. value .. '\\\"')\nend\nreturn result\nend\nfunction premake.gcc.islibfile(p)\nif path.getextension(p) == \".a\" then\nreturn true\nend\nreturn false\nend\nfunction premake.gcc.getlibfiles(cfg)\nlocal result = {}\nfor _, value in ipairs(premake.getlinks(cfg, \"system\", \"fullpath\")) do\nif premake.gcc.islibfile(value) then\ntable.insert(result, _MAKE.esc(value))\nend\nend\nreturn result\nend\nfunction premake.gcc.getlinkflags(cfg)\nlocal result = {}\nfor _, value in ipairs(premake.getlinks(cfg, \"system\", \"fullpath\")) do\nif premake.gcc.islibfile(value) then\nvalue = path.rebase(value, cfg.project.location, cfg.location)\ntable.insert(result, _MAKE.esc(value))\nelseif path.getextension(value) == \".framework\" then\ntable.insert(result, '-framework ' .. _MAKE.esc(path.getbasename(value)))\nelse\ntable.inser"
+diff --git a/3rdparty/genie/src/tools/gcc.lua b/3rdparty/genie/src/tools/gcc.lua
+index 30a9fa91d9160..08e40aeff4b0d 100644
+--- a/3rdparty/genie/src/tools/gcc.lua
++++ b/3rdparty/genie/src/tools/gcc.lua
+@@ -73,7 +73,7 @@
+ 		},
+ 		x64 = {
+ 			cppflags = "-MMD -MP",
+-			flags    = "-m64",
++--			flags    = "-m64",
+ 		},
+ 		Universal = {
+ 			ar       = "libtool",
+diff --git a/3rdparty/lua/src/lopcodes.h b/3rdparty/lua/src/lopcodes.h
+index 46911cac14e09..5430f7a55c7d4 100644
+--- a/3rdparty/lua/src/lopcodes.h
++++ b/3rdparty/lua/src/lopcodes.h
+@@ -35,21 +35,21 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ /*
+ ** size and position of opcode arguments.
+ */
+-#define SIZE_C		8
+-#define SIZE_B		8
+-#define SIZE_Bx		(SIZE_C + SIZE_B + 1)
+-#define SIZE_A		8
+-#define SIZE_Ax		(SIZE_Bx + SIZE_A)
+-#define SIZE_sJ		(SIZE_Bx + SIZE_A)
++#define LUA_SIZE_C		8
++#define LUA_SIZE_B		8
++#define LUA_SIZE_Bx		(LUA_SIZE_C + LUA_SIZE_B + 1)
++#define LUA_SIZE_A		8
++#define LUA_SIZE_Ax		(LUA_SIZE_Bx + LUA_SIZE_A)
++#define LUA_SIZE_sJ		(LUA_SIZE_Bx + LUA_SIZE_A)
+ 
+-#define SIZE_OP		7
++#define LUA_SIZE_OP		7
+ 
+ #define POS_OP		0
+ 
+-#define POS_A		(POS_OP + SIZE_OP)
+-#define POS_k		(POS_A + SIZE_A)
++#define POS_A		(POS_OP + LUA_SIZE_OP)
++#define POS_k		(POS_A + LUA_SIZE_A)
+ #define POS_B		(POS_k + 1)
+-#define POS_C		(POS_B + SIZE_B)
++#define POS_C		(POS_B + LUA_SIZE_B)
+ 
+ #define POS_Bx		POS_k
+ 
+@@ -68,8 +68,8 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ #define L_INTHASBITS(b)		((UINT_MAX >> ((b) - 1)) >= 1)
+ 
+ 
+-#if L_INTHASBITS(SIZE_Bx)
+-#define MAXARG_Bx	((1<<SIZE_Bx)-1)
++#if L_INTHASBITS(LUA_SIZE_Bx)
++#define MAXARG_Bx	((1<<LUA_SIZE_Bx)-1)
+ #else
+ #define MAXARG_Bx	MAX_INT
+ #endif
+@@ -77,14 +77,14 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ #define OFFSET_sBx	(MAXARG_Bx>>1)         /* 'sBx' is signed */
+ 
+ 
+-#if L_INTHASBITS(SIZE_Ax)
+-#define MAXARG_Ax	((1<<SIZE_Ax)-1)
++#if L_INTHASBITS(LUA_SIZE_Ax)
++#define MAXARG_Ax	((1<<LUA_SIZE_Ax)-1)
+ #else
+ #define MAXARG_Ax	MAX_INT
+ #endif
+ 
+-#if L_INTHASBITS(SIZE_sJ)
+-#define MAXARG_sJ	((1 << SIZE_sJ) - 1)
++#if L_INTHASBITS(LUA_SIZE_sJ)
++#define MAXARG_sJ	((1 << LUA_SIZE_sJ) - 1)
+ #else
+ #define MAXARG_sJ	MAX_INT
+ #endif
+@@ -92,9 +92,9 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ #define OFFSET_sJ	(MAXARG_sJ >> 1)
+ 
+ 
+-#define MAXARG_A	((1<<SIZE_A)-1)
+-#define MAXARG_B	((1<<SIZE_B)-1)
+-#define MAXARG_C	((1<<SIZE_C)-1)
++#define MAXARG_A	((1<<LUA_SIZE_A)-1)
++#define MAXARG_B	((1<<LUA_SIZE_B)-1)
++#define MAXARG_C	((1<<LUA_SIZE_C)-1)
+ #define OFFSET_sC	(MAXARG_C >> 1)
+ 
+ #define int2sC(i)	((i) + OFFSET_sC)
+@@ -111,9 +111,9 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ ** the following macros help to manipulate instructions
+ */
+ 
+-#define GET_OPCODE(i)	(cast(OpCode, ((i)>>POS_OP) & MASK1(SIZE_OP,0)))
+-#define SET_OPCODE(i,o)	((i) = (((i)&MASK0(SIZE_OP,POS_OP)) | \
+-		((cast(Instruction, o)<<POS_OP)&MASK1(SIZE_OP,POS_OP))))
++#define GET_OPCODE(i)	(cast(OpCode, ((i)>>POS_OP) & MASK1(LUA_SIZE_OP,0)))
++#define SET_OPCODE(i,o)	((i) = (((i)&MASK0(LUA_SIZE_OP,POS_OP)) | \
++		((cast(Instruction, o)<<POS_OP)&MASK1(LUA_SIZE_OP,POS_OP))))
+ 
+ #define checkopm(i,m)	(getOpMode(GET_OPCODE(i)) == m)
+ 
+@@ -122,35 +122,35 @@ enum OpMode {iABC, iABx, iAsBx, iAx, isJ};  /* basic instruction formats */
+ #define setarg(i,v,pos,size)	((i) = (((i)&MASK0(size,pos)) | \
+                 ((cast(Instruction, v)<<pos)&MASK1(size,pos))))
+ 
+-#define GETARG_A(i)	getarg(i, POS_A, SIZE_A)
+-#define SETARG_A(i,v)	setarg(i, v, POS_A, SIZE_A)
++#define GETARG_A(i)	getarg(i, POS_A, LUA_SIZE_A)
++#define SETARG_A(i,v)	setarg(i, v, POS_A, LUA_SIZE_A)
+ 
+-#define GETARG_B(i)	check_exp(checkopm(i, iABC), getarg(i, POS_B, SIZE_B))
++#define GETARG_B(i)	check_exp(checkopm(i, iABC), getarg(i, POS_B, LUA_SIZE_B))
+ #define GETARG_sB(i)	sC2int(GETARG_B(i))
+-#define SETARG_B(i,v)	setarg(i, v, POS_B, SIZE_B)
++#define SETARG_B(i,v)	setarg(i, v, POS_B, LUA_SIZE_B)
+ 
+-#define GETARG_C(i)	check_exp(checkopm(i, iABC), getarg(i, POS_C, SIZE_C))
++#define GETARG_C(i)	check_exp(checkopm(i, iABC), getarg(i, POS_C, LUA_SIZE_C))
+ #define GETARG_sC(i)	sC2int(GETARG_C(i))
+-#define SETARG_C(i,v)	setarg(i, v, POS_C, SIZE_C)
++#define SETARG_C(i,v)	setarg(i, v, POS_C, LUA_SIZE_C)
+ 
+ #define TESTARG_k(i)	check_exp(checkopm(i, iABC), (cast_int(((i) & (1u << POS_k)))))
+ #define GETARG_k(i)	check_exp(checkopm(i, iABC), getarg(i, POS_k, 1))
+ #define SETARG_k(i,v)	setarg(i, v, POS_k, 1)
+ 
+-#define GETARG_Bx(i)	check_exp(checkopm(i, iABx), getarg(i, POS_Bx, SIZE_Bx))
+-#define SETARG_Bx(i,v)	setarg(i, v, POS_Bx, SIZE_Bx)
++#define GETARG_Bx(i)	check_exp(checkopm(i, iABx), getarg(i, POS_Bx, LUA_SIZE_Bx))
++#define SETARG_Bx(i,v)	setarg(i, v, POS_Bx, LUA_SIZE_Bx)
+ 
+-#define GETARG_Ax(i)	check_exp(checkopm(i, iAx), getarg(i, POS_Ax, SIZE_Ax))
+-#define SETARG_Ax(i,v)	setarg(i, v, POS_Ax, SIZE_Ax)
++#define GETARG_Ax(i)	check_exp(checkopm(i, iAx), getarg(i, POS_Ax, LUA_SIZE_Ax))
++#define SETARG_Ax(i,v)	setarg(i, v, POS_Ax, LUA_SIZE_Ax)
+ 
+ #define GETARG_sBx(i)  \
+-	check_exp(checkopm(i, iAsBx), getarg(i, POS_Bx, SIZE_Bx) - OFFSET_sBx)
++	check_exp(checkopm(i, iAsBx), getarg(i, POS_Bx, LUA_SIZE_Bx) - OFFSET_sBx)
+ #define SETARG_sBx(i,b)	SETARG_Bx((i),cast_uint((b)+OFFSET_sBx))
+ 
+ #define GETARG_sJ(i)  \
+-	check_exp(checkopm(i, isJ), getarg(i, POS_sJ, SIZE_sJ) - OFFSET_sJ)
++	check_exp(checkopm(i, isJ), getarg(i, POS_sJ, LUA_SIZE_sJ) - OFFSET_sJ)
+ #define SETARG_sJ(i,j) \
+-	setarg(i, cast_uint((j)+OFFSET_sJ), POS_sJ, SIZE_sJ)
++	setarg(i, cast_uint((j)+OFFSET_sJ), POS_sJ, LUA_SIZE_sJ)
+ 
+ 
+ #define CREATE_ABCk(o,a,b,c,k)	((cast(Instruction, o)<<POS_OP) \
+diff --git a/3rdparty/lzma/C/CpuArch.c b/3rdparty/lzma/C/CpuArch.c
+index 33f8a3ab4c1e9..821f3b1a80a52 100644
+--- a/3rdparty/lzma/C/CpuArch.c
++++ b/3rdparty/lzma/C/CpuArch.c
+@@ -45,7 +45,7 @@
+ */
+ 
+ #define ASM_LN "\n"
+-   
++
+ #if defined(MY_CPU_AMD64) && defined(__PIC__) \
+     && ((defined (__GNUC__) && (__GNUC__ < 5)) || defined(__clang__))
+ 
+@@ -222,7 +222,7 @@ void __declspec(naked) Z7_FASTCALL z7_x86_cpuid(UInt32 p[4], UInt32 func)
+  where ECX value is first parameter for FASTCALL / NO_INLINE func,
+  So the caller of MY_cpuidex_HACK() sets ECX as subFunction, and
+  old MSVC for __cpuid() doesn't change ECX and cpuid instruction gets (subFunction) value.
+- 
++
+ DON'T remove Z7_NO_INLINE and Z7_FASTCALL for MY_cpuidex_HACK(): !!!
+ */
+ static
+@@ -531,7 +531,7 @@ static UInt64 x86_xgetbv_0(UInt32 num)
+   // return a;
+ 
+ #elif defined(_MSC_VER) && !defined(MY_CPU_AMD64)
+-  
++
+   UInt32 a, d;
+   __asm {
+     push eax
+@@ -562,7 +562,7 @@ static UInt64 x86_xgetbv_0(UInt32 num)
+       // (1 << 0) |  // x87
+         (1 << 1)   // SSE
+       | (1 << 2);  // AVX
+-  
++
+ #endif
+ }
+ 
+@@ -758,6 +758,17 @@ BoolInt CPU_IsSupported_SHA2(void) { return APPLE_CRYPTO_SUPPORT_VAL; }
+ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
+ 
+ 
++#elif defined(__QNX__)
++
++#include <string.h>
++#include <sys/syspage.h>
++
++BoolInt CPU_IsSupported_CRC32(void)  { return 0; }
++BoolInt CPU_IsSupported_NEON(void)   { return (SYSPAGE_ARRAY_IDX(cpuinfo,0)->flags & AARCH32_CPU_FLAG_NEON) != 0; }
++BoolInt CPU_IsSupported_SHA1(void) { return (SYSPAGE_ARRAY_IDX(cpuinfo,0)->flags & AARCH64_CPU_FLAG_SHA1) != 0; }
++BoolInt CPU_IsSupported_SHA2(void) { return (SYSPAGE_ARRAY_IDX(cpuinfo,0)->flags & AARCH64_CPU_FLAG_SHA256) != 0; }
++BoolInt CPU_IsSupported_AES (void) { return (SYSPAGE_ARRAY_IDX(cpuinfo,0)->flags & AARCH64_CPU_FLAG_AES) != 0; }
++
+ #else // __APPLE__
+ 
+ #include <sys/auxv.h>
+diff --git a/3rdparty/portmidi/pm_common/pmutil.c b/3rdparty/portmidi/pm_common/pmutil.c
+index a70fe2fa1f817..ea54b67d0adce 100644
+--- a/3rdparty/portmidi/pm_common/pmutil.c
++++ b/3rdparty/portmidi/pm_common/pmutil.c
+@@ -8,7 +8,7 @@
+ #include "pmutil.h"
+ #include "pminternal.h"
+ 
+-#ifdef WIN32
++#if defined(WIN32) || defined(__QNX__)
+ #define bzero(addr, siz) memset(addr, 0, siz)
+ #endif
+ 
+@@ -32,7 +32,7 @@ typedef struct {
+ 
+ PMEXPORT PmQueue *Pm_QueueCreate(long num_msgs, int32_t bytes_per_msg)
+ {
+-    int32_t int32s_per_msg = 
++    int32_t int32s_per_msg =
+             (int32_t) (((bytes_per_msg + sizeof(int32_t) - 1) &
+                        ~(sizeof(int32_t) - 1)) / sizeof(int32_t));
+     PmQueueRep *queue = (PmQueueRep *) pm_alloc(sizeof(PmQueueRep));
+@@ -70,11 +70,11 @@ PMEXPORT PmQueue *Pm_QueueCreate(long num_msgs, int32_t bytes_per_msg)
+ PMEXPORT PmError Pm_QueueDestroy(PmQueue *q)
+ {
+     PmQueueRep *queue = (PmQueueRep *) q;
+-        
++
+     /* arg checking */
+-    if (!queue || !queue->buffer || !queue->peek) 
++    if (!queue || !queue->buffer || !queue->peek)
+                 return pmBadPtr;
+-    
++
+     pm_free(queue->peek);
+     pm_free(queue->buffer);
+     pm_free(queue);
+@@ -108,7 +108,7 @@ PMEXPORT PmError Pm_Dequeue(PmQueue *q, void *msg)
+ 
+     head = queue->head;
+     /* if writer overflows, it writes queue->overflow = tail+1 so that
+-     * when the reader gets to that position in the buffer, it can 
++     * when the reader gets to that position in the buffer, it can
+      * return the overflow condition to the reader. The problem is that
+      * at overflow, things have wrapped around, so tail == head, and the
+      * reader will detect overflow immediately instead of waiting until
+@@ -116,11 +116,11 @@ PMEXPORT PmError Pm_Dequeue(PmQueue *q, void *msg)
+      * point where tail == head. So the condition also checks that
+      * queue->buffer[head] is zero -- if so, then the buffer is now
+      * empty, and we're at the point in the msg stream where overflow
+-     * occurred. It's time to signal overflow to the reader. If 
++     * occurred. It's time to signal overflow to the reader. If
+      * queue->buffer[head] is non-zero, there's a message there and we
+      * should read all the way around the buffer before signalling overflow.
+      * There is a write-order dependency here, but to fail, the overflow
+-     * field would have to be written while an entire buffer full of 
++     * field would have to be written while an entire buffer full of
+      * writes are still pending. I'm assuming out-of-order writes are
+      * possible, but not that many.
+      */
+@@ -131,14 +131,14 @@ PMEXPORT PmError Pm_Dequeue(PmQueue *q, void *msg)
+ 
+     /* test to see if there is data in the queue -- test from back
+      * to front so if writer is simultaneously writing, we don't
+-     * waste time discovering the write is not finished 
++     * waste time discovering the write is not finished
+      */
+     for (i = queue->msg_size - 1; i >= 0; i--) {
+         if (!queue->buffer[head + i]) {
+             return pmNoData;
+         }
+     }
+-    memcpy(msg, (char *) &queue->buffer[head + 1], 
++    memcpy(msg, (char *) &queue->buffer[head + 1],
+            sizeof(int32_t) * (queue->msg_size - 1));
+     /* fix up zeros */
+     i = queue->buffer[head];
+@@ -185,7 +185,7 @@ PMEXPORT PmError Pm_Enqueue(PmQueue *q, void *msg)
+     int32_t *ptr;
+     int32_t *dest;
+     int rslt;
+-    if (!queue) 
++    if (!queue)
+         return pmBadPtr;
+     /* no more enqueue until receiver acknowledges overflow */
+     if (queue->overflow) return pmBufferOverflow;
+@@ -229,7 +229,7 @@ PMEXPORT int Pm_QueueEmpty(PmQueue *q)
+ PMEXPORT int Pm_QueueFull(PmQueue *q)
+ {
+     long tail;
+-    int i; 
++    int i;
+     PmQueueRep *queue = (PmQueueRep *) q;
+     /* arg checking */
+     if (!queue)
+@@ -257,7 +257,7 @@ PMEXPORT void *Pm_QueuePeek(PmQueue *q)
+     if (queue->peek_flag) {
+         return queue->peek;
+     }
+-    /* this is ugly: if peek_overflow is set, then Pm_Dequeue() 
++    /* this is ugly: if peek_overflow is set, then Pm_Dequeue()
+      * returns immediately with pmBufferOverflow, but here, we
+      * want Pm_Dequeue() to really check for data. If data is
+      * there, we can return it
+@@ -271,7 +271,7 @@ PMEXPORT void *Pm_QueuePeek(PmQueue *q)
+         queue->peek_flag = TRUE;
+         return queue->peek;
+     } else if (rslt == pmBufferOverflow) {
+-        /* when overflow is indicated, the queue is empty and the 
++        /* when overflow is indicated, the queue is empty and the
+          * first message that was dropped by Enqueue (signalling
+          * pmBufferOverflow to its caller) would have been the next
+          * message in the queue. Pm_QueuePeek will return NULL, but
+diff --git a/3rdparty/portmidi/pm_linux/pmlinuxalsa.c b/3rdparty/portmidi/pm_linux/pmlinuxalsa.c
+index 62b82d73b2579..9936de82c6fd1 100644
+--- a/3rdparty/portmidi/pm_linux/pmlinuxalsa.c
++++ b/3rdparty/portmidi/pm_linux/pmlinuxalsa.c
+@@ -1,11 +1,11 @@
+ /*
+  * pmlinuxalsa.c -- system specific definitions
+- * 
++ *
+  * written by:
+  *  Roger Dannenberg (port to Alsa 0.9.x)
+  *  Clemens Ladisch (provided code examples and invaluable consulting)
+  *  Jason Cohen, Rico Colon, Matt Filippone (Alsa 0.5.x implementation)
+- */ 
++ */
+ 
+ /* omit this code if PMALSA is not defined -- this mechanism allows
+  * selection of different MIDI interfaces (at compile time).
+@@ -46,7 +46,7 @@
+ extern pm_fns_node pm_linuxalsa_in_dictionary;
+ extern pm_fns_node pm_linuxalsa_out_dictionary;
+ 
+-static snd_seq_t *seq = NULL; // all input comes here, 
++static snd_seq_t *seq = NULL; // all input comes here,
+                               // output queue allocated on seq
+ static int queue, queue_used; /* one for all ports, reference counted */
+ 
+@@ -151,10 +151,10 @@ static alsa_info_type alsa_info_create(int client_port, long id, int is_virtual)
+     info->port = GET_DESCRIPTOR_PORT(client_port);
+     info->in_sysex = 0;
+     return info;
+-}    
++}
+ 
+ 
+-static PmError alsa_out_open(PmInternal *midi, void *driverInfo) 
++static PmError alsa_out_open(PmInternal *midi, void *driverInfo)
+ {
+     int id = midi->device_id;
+     void *client_port = pm_descriptors[id].descriptor;
+@@ -166,19 +166,19 @@ static PmError alsa_out_open(PmInternal *midi, void *driverInfo)
+ 
+     if (!ainfo) return pmInsufficientMemory;
+     midi->api_info = ainfo;
+-    
++
+     if (!ainfo->is_virtual) {
+         snd_seq_port_info_alloca(&pinfo);
+         snd_seq_port_info_set_port(pinfo, id);
+         snd_seq_port_info_set_capability(pinfo, SND_SEQ_PORT_CAP_WRITE |
+                                          SND_SEQ_PORT_CAP_READ);
+-        snd_seq_port_info_set_type(pinfo, SND_SEQ_PORT_TYPE_MIDI_GENERIC | 
++        snd_seq_port_info_set_type(pinfo, SND_SEQ_PORT_TYPE_MIDI_GENERIC |
+                                    SND_SEQ_PORT_TYPE_APPLICATION);
+         snd_seq_port_info_set_port_specified(pinfo, 1);
+         err = snd_seq_create_port(seq, pinfo);
+         if (err < 0) goto free_ainfo;
+     }
+-    
++
+     err = snd_midi_event_new(PM_DEFAULT_SYSEX_BUFFER_SIZE, &ainfo->parser);
+     if (err < 0) goto free_this_port;
+ 
+@@ -206,9 +206,9 @@ static PmError alsa_out_open(PmInternal *midi, void *driverInfo)
+     pm_free(ainfo);
+     return check_hosterror(err);
+ }
+-    
+ 
+-static PmError alsa_write_byte(PmInternal *midi, unsigned char byte, 
++
++static PmError alsa_write_byte(PmInternal *midi, unsigned char byte,
+                                PmTimestamp timestamp)
+ {
+     alsa_info_type info = (alsa_info_type) midi->api_info;
+@@ -225,8 +225,8 @@ static PmError alsa_write_byte(PmInternal *midi, unsigned char byte,
+         snd_seq_ev_set_source(&ev, info->this_port);
+         if (midi->latency > 0) {
+             /* compute relative time of event = timestamp - now + latency */
+-            PmTimestamp now = (midi->time_proc ? 
+-                               midi->time_proc(midi->time_info) : 
++            PmTimestamp now = (midi->time_proc ?
++                               midi->time_proc(midi->time_info) :
+                                Pt_Time());
+             int when = timestamp;
+             /* if timestamp is zero, send immediately */
+@@ -234,7 +234,7 @@ static PmError alsa_write_byte(PmInternal *midi, unsigned char byte,
+             if (when == 0) when = now;
+             when = (when - now) + midi->latency;
+             if (when < 0) when = 0;
+-            VERBOSE printf("timestamp %d now %d latency %d, ", 
++            VERBOSE printf("timestamp %d now %d latency %d, ",
+                            (int) timestamp, (int) now, midi->latency);
+             VERBOSE printf("scheduling event after %d\n", when);
+             /* message is sent in relative ticks, where 1 tick = 1 ms */
+@@ -295,7 +295,7 @@ static PmError alsa_create_virtual(int is_input, const char *name,
+     snd_seq_port_info_t *pinfo;
+     int err;
+     int client, port;
+-    
++
+     /* we need the id to set the port. */
+     PmDeviceID id = pm_add_device("ALSA", name, is_input, TRUE, NULL,
+                                   (is_input ? &pm_linuxalsa_in_dictionary :
+@@ -333,7 +333,7 @@ static PmError alsa_create_virtual(int is_input, const char *name,
+      int err = snd_seq_delete_port(seq, id);
+      return check_hosterror(err);
+  }
+- 
++
+ 
+ static PmError alsa_in_open(PmInternal *midi, void *driverInfo)
+ {
+@@ -346,7 +346,7 @@ static PmError alsa_in_open(PmInternal *midi, void *driverInfo)
+     snd_seq_addr_t addr;
+     int err = 0;
+     int is_virtual = pm_descriptors[id].pub.is_virtual;
+-    
++
+     if (!ainfo) return pmInsufficientMemory;
+     midi->api_info = ainfo;
+ 
+@@ -362,7 +362,7 @@ static PmError alsa_in_open(PmInternal *midi, void *driverInfo)
+         snd_seq_port_info_set_port(pinfo, id);
+         snd_seq_port_info_set_capability(pinfo, SND_SEQ_PORT_CAP_WRITE |
+                                          SND_SEQ_PORT_CAP_READ);
+-        snd_seq_port_info_set_type(pinfo, SND_SEQ_PORT_TYPE_MIDI_GENERIC | 
++        snd_seq_port_info_set_type(pinfo, SND_SEQ_PORT_TYPE_MIDI_GENERIC |
+                                    SND_SEQ_PORT_TYPE_APPLICATION);
+         snd_seq_port_info_set_port_specified(pinfo, 1);
+         err = snd_seq_create_port(seq, pinfo);
+@@ -377,7 +377,7 @@ static PmError alsa_in_open(PmInternal *midi, void *driverInfo)
+         addr.port = ainfo->this_port;
+         snd_seq_port_subscribe_set_dest(sub, &addr);
+ 
+-        /* forward from the sender which is the device named by 
++        /* forward from the sender which is the device named by
+            client and port */
+         addr.client = ainfo->client;
+         addr.port = ainfo->port;
+@@ -412,15 +412,15 @@ static PmError alsa_in_close(PmInternal *midi)
+     pm_free(info);
+     return check_hosterror(err);
+ }
+-        
++
+ 
+ static PmError alsa_abort(PmInternal *midi)
+ {
+-    /* NOTE: ALSA documentation is vague. This is supposed to 
+-     * remove any pending output messages. If you can test and 
++    /* NOTE: ALSA documentation is vague. This is supposed to
++     * remove any pending output messages. If you can test and
+      * confirm this code is correct, please update this comment. -RBD
+      */
+-    /* Unfortunately, I can't even compile it -- my ALSA version 
++    /* Unfortunately, I can't even compile it -- my ALSA version
+      * does not implement snd_seq_remove_events_t, so this does
+      * not compile. I'll try again, but it looks like I'll need to
+      * upgrade my entire Linux OS -RBD
+@@ -435,7 +435,7 @@ static PmError alsa_abort(PmInternal *midi)
+     snd_seq_remove_events_set_condition(&info, SND_SEQ_REMOVE_DEST);
+     pm_hosterror = snd_seq_remove_events(seq, &info);
+     if (pm_hosterror) {
+-        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN, 
++        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN,
+                             pm_hosterror);
+         return pmHostError;
+     }
+@@ -486,7 +486,7 @@ static PmTimestamp alsa_synchronize(PmInternal *midi)
+     return 0; /* linux implementation does not use this synchronize function */
+     /* Apparently, Alsa data is relative to the time you send it, and there
+        is no reference. If this is true, this is a serious shortcoming of
+-       Alsa. If not true, then PortMidi has a serious shortcoming -- it 
++       Alsa. If not true, then PortMidi has a serious shortcoming -- it
+        should be scheduling relative to Alsa's time reference. */
+ }
+ 
+@@ -525,9 +525,9 @@ static void handle_event(snd_seq_event_t *ev)
+     }
+     /* CURRENT: portmidi timestamp is "now". In a test, timestamps from
+      * hardware (MIDI over USB) were timestamped with the current ALSA
+-     * time (snd_seq_queue_status_get_tick_time) and flags indicating 
++     * time (snd_seq_queue_status_get_tick_time) and flags indicating
+      * absolute ticks, but timestamps from another application's virtual
+-     * port, sent direct with 0 absolute ticks, were received with a 
++     * port, sent direct with 0 absolute ticks, were received with a
+      * large value that is apparently the time since the start time of
+      * the other application. Without any reference to our local time,
+      * this seems useless. PortMidi is supposed to return the local
+@@ -649,7 +649,7 @@ static void handle_event(snd_seq_event_t *ev)
+         break;
+     }
+     case SND_SEQ_EVENT_PORT_UNSUBSCRIBED: {
+-        /* this happens if you have an input port open and the 
++        /* this happens if you have an input port open and the
+          * device or application with virtual ports closes. We
+          * mark the port as closed to avoid closing a 2nd time
+          * when Pm_Close() is called.
+@@ -733,16 +733,16 @@ pm_fns_node pm_linuxalsa_out_dictionary = {
+     alsa_write_short, /* short realtime message */
+     alsa_write_flush,
+     alsa_synchronize,
+-    alsa_out_open, 
+-    alsa_abort, 
++    alsa_out_open,
++    alsa_abort,
+     alsa_out_close,
+     none_poll,
+     alsa_check_host_error
+ };
+ 
+ 
+-/* pm_strdup -- copy a string to the heap. Use this rather than strdup so 
+- *    that we call pm_alloc, not malloc. This allows portmidi to avoid 
++/* pm_strdup -- copy a string to the heap. Use this rather than strdup so
++ *    that we call pm_alloc, not malloc. This allows portmidi to avoid
+  *    malloc which might cause priority inversion. Probably ALSA is going
+  *    to call malloc anyway, so this extra work here may be pointless.
+  */
+@@ -765,18 +765,18 @@ PmError pm_linuxalsa_init(void)
+     /* Register interface ALSA with create_virtual fn */
+     pm_add_interf("ALSA", &alsa_create_virtual, &alsa_delete_virtual);
+ 
+-    /* Previously, the last parameter was SND_SEQ_NONBLOCK, but this 
++    /* Previously, the last parameter was SND_SEQ_NONBLOCK, but this
+      * would cause messages to be dropped if the ALSA buffer fills up.
+-     * The correct behavior is for writes to block until there is 
++     * The correct behavior is for writes to block until there is
+      * room to send all the data. The client should normally allocate
+-     * a large enough buffer to avoid blocking on output. 
++     * a large enough buffer to avoid blocking on output.
+      * Now that blocking is enabled, the seq_event_input() will block
+      * if there is no input data. This is not what we want, so must
+      * call seq_event_input_pending() to avoid blocking.
+      */
+     err = snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0);
+     if (err < 0) goto error_return;
+-    
++
+     snd_seq_client_info_alloca(&cinfo);
+     snd_seq_port_info_alloca(&pinfo);
+ 
+@@ -793,7 +793,7 @@ PmError pm_linuxalsa_init(void)
+                           SND_SEQ_PORT_CAP_SUBS_WRITE)))
+                 continue; /* ignore if you cannot read or write port */
+             if (caps & SND_SEQ_PORT_CAP_SUBS_WRITE) {
+-                if (pm_default_output_device_id == -1) 
++                if (pm_default_output_device_id == -1)
+                     pm_default_output_device_id = pm_descriptor_len;
+                 pm_add_device("ALSA",
+                         pm_strdup(snd_seq_port_info_get_name(pinfo)),
+@@ -803,7 +803,7 @@ PmError pm_linuxalsa_init(void)
+                         &pm_linuxalsa_out_dictionary);
+             }
+             if (caps & SND_SEQ_PORT_CAP_SUBS_READ) {
+-                if (pm_default_input_device_id == -1) 
++                if (pm_default_input_device_id == -1)
+                     pm_default_input_device_id = pm_descriptor_len;
+                 pm_add_device("ALSA",
+                         pm_strdup(snd_seq_port_info_get_name(pinfo)),
+diff --git a/3rdparty/portmidi/porttime/ptlinux.c b/3rdparty/portmidi/porttime/ptlinux.c
+index 7302e212311cf..e3c23c827d0fb 100644
+--- a/3rdparty/portmidi/porttime/ptlinux.c
++++ b/3rdparty/portmidi/porttime/ptlinux.c
+@@ -1,24 +1,24 @@
+ /* ptlinux.c -- portable timer implementation for linux */
+ 
+ 
+-/* IMPLEMENTATION NOTES (by Mark Nelson): 
++/* IMPLEMENTATION NOTES (by Mark Nelson):
+ 
+ Unlike Windows, Linux has no system call to request a periodic callback,
+ so if Pt_Start() receives a callback parameter, it must create a thread
+ that wakes up periodically and calls the provided callback function.
+-If running as superuser, use setpriority() to renice thread to -20.  
++If running as superuser, use setpriority() to renice thread to -20.
+ One could also set the timer thread to a real-time priority (SCHED_FIFO
+-and SCHED_RR), but this is dangerous for This is necessary because  
++and SCHED_RR), but this is dangerous for This is necessary because
+ if the callback hangs it'll never return. A more serious reason
+-is that the current scheduler implementation busy-waits instead 
+-of sleeping when realtime threads request a sleep of <=2ms (as a way 
+-to get around the 10ms granularity), which means the thread would never 
++is that the current scheduler implementation busy-waits instead
++of sleeping when realtime threads request a sleep of <=2ms (as a way
++to get around the 10ms granularity), which means the thread would never
+ let anyone else on the CPU.
+ 
+ CHANGE LOG
+ 
+ 18-Jul-03 Roger Dannenberg -- Simplified code to set priority of timer
+-            thread. Simplified implementation notes. 
++            thread. Simplified implementation notes.
+ 
+ */
+ /* stdlib, stdio, unistd, and sys/types were added because they appeared
+@@ -80,17 +80,21 @@ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
+ {
+     if (time_started_flag) return ptNoError;
+     /* need this set before process runs: */
++#ifndef __QNX__
+     clock_gettime(CLOCK_MONOTONIC_RAW, &time_offset);
++#else
++    clock_gettime(CLOCK_MONOTONIC, &time_offset);
++#endif
+     if (callback) {
+         int res;
+-        pt_callback_parameters *parms = (pt_callback_parameters *) 
++        pt_callback_parameters *parms = (pt_callback_parameters *)
+             malloc(sizeof(pt_callback_parameters));
+         if (!parms) return ptInsufficientMemory;
+         parms->id = pt_callback_proc_id;
+         parms->resolution = resolution;
+         parms->callback = callback;
+         parms->userData = userData;
+-        res = pthread_create(&pt_thread_pid, NULL, 
++        res = pthread_create(&pt_thread_pid, NULL,
+                              Pt_CallbackProc, parms);
+         if (res != 0) return ptHostError;
+         pt_thread_created = TRUE;
+@@ -123,7 +127,11 @@ PtTimestamp Pt_Time(void)
+ {
+     long seconds, ms;
+     struct timespec now;
++#ifndef __QNX__
+     clock_gettime(CLOCK_MONOTONIC_RAW, &now);
++#else
++    clock_gettime(CLOCK_MONOTONIC, &now);
++#endif
+     seconds = now.tv_sec - time_offset.tv_sec;
+     ms = (now.tv_nsec - time_offset.tv_nsec) / 1000000; /* round down */
+     return seconds * 1000 + ms;
+diff --git a/makefile b/makefile
+index fbd91c978a592..cde3a076791ec 100644
+--- a/makefile
++++ b/makefile
+@@ -116,6 +116,8 @@
+ # IGNORE_BAD_LOCALISATION = 1
+ # PRECOMPILE = 0
+ 
++# JLEVEL = 1
++
+ # DEBUG_DIR=c:\test\location
+ # DEBUG_ARGS= -window -video bgfx
+ 
+@@ -260,6 +262,10 @@ else # MINGW64
+ endif # MINGW64
+ endif # MSYSTEM
+ 
++ifndef JLEVEL
++JLEVEL := 1
++endif
++
+ #-------------------------------------------------
+ # specify core target: mame, ldplayer
+ # specify subtarget: mame, tiny, etc.
+@@ -1236,18 +1242,38 @@ $(PROJECTDIR)/$(MAKETYPE)-linux/Makefile: makefile $(SCRIPTS) $(GENIE)
+ 
+ .PHONY: linux_x64
+ linux_x64: generate $(PROJECTDIR)/$(MAKETYPE)-linux/Makefile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)64 precompile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)64
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)64 precompile -j$(JLEVEL)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)64 -j$(JLEVEL)
+ 
+ .PHONY: linux_x86
+ linux_x86: generate $(PROJECTDIR)/$(MAKETYPE)-linux/Makefile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)32 precompile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)32
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)32 precompile -j$(JLEVEL)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)32 -j$(JLEVEL)
+ 
+ .PHONY: linux
+ linux: generate $(PROJECTDIR)/$(MAKETYPE)-linux/Makefile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG) precompile
+-	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG) precompile -j$(JLEVEL)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-linux config=$(CONFIG) -j$(JLEVEL)
++
++#-------------------------------------------------
++# gmake-qnx
++#-------------------------------------------------
++
++$(PROJECTDIR)/$(MAKETYPE)-nto-x86_64-o/Makefile: makefile $(SCRIPTS) $(GENIE)
++	$(SILENT) $(GENIE) $(PARAMS) $(TARGET_PARAMS) --gcc=qnx-x64 --gcc_version=12.2.0 $(MAKETYPE)
++
++$(PROJECTDIR)/$(MAKETYPE)-nto-aarch64-le/Makefile: makefile $(SCRIPTS) $(GENIE)
++	$(SILENT) $(GENIE) $(PARAMS) $(TARGET_PARAMS) --gcc=qnx-arm64 --gcc_version=12.2.0 $(MAKETYPE)
++
++.PHONY: qnx_x64
++qnx_x64: generate $(PROJECTDIR)/$(MAKETYPE)-nto-x86_64-o/Makefile
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-nto-x86_64-o config=$(CONFIG)64 precompile -j$(JLEVEL)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-nto-x86_64-o config=$(CONFIG)64 -j$(JLEVEL)
++
++.PHONY: qnx_arm64
++qnx_arm64: generate $(PROJECTDIR)/$(MAKETYPE)-nto-aarch64-le/Makefile
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-nto-aarch64-le config=$(CONFIG)64 precompile -j$(JLEVEL)
++	$(SILENT) $(MAKE) $(MAKEPARAMS) -C $(PROJECTDIR)/$(MAKETYPE)-nto-aarch64-le config=$(CONFIG)64 -j$(JLEVEL)
+ 
+ #-------------------------------------------------
+ # gmake-linux-clang
+diff --git a/scripts/genie.lua b/scripts/genie.lua
+index 4b3025b5ec83d..2ef16099dfe74 100644
+--- a/scripts/genie.lua
++++ b/scripts/genie.lua
+@@ -154,6 +154,7 @@ newoption {
+ 		{ "windows",       "Windows"                },
+ 		{ "haiku",         "Haiku"                  },
+ 		{ "solaris",       "Solaris SunOS"          },
++		{ "qnx",           "QNX"                    },
+ 	},
+ }
+ 
+@@ -711,9 +712,6 @@ local version = str_to_version(_OPTIONS["gcc_version"])
+ 		"-std=c++17",
+ 	}
+ -- this speeds it up a bit by piping between the preprocessor/compiler/assembler
+-	buildoptions {
+-		"-pipe",
+-	}
+ -- add -g if we need symbols, and ensure we have frame pointers
+ if _OPTIONS["SYMBOLS"]~=nil and _OPTIONS["SYMBOLS"]~="0" then
+ 	buildoptions {
+@@ -894,6 +892,11 @@ end
+ 
+ 
+ if _OPTIONS["OPENMP"]=="1" then
++	if _OPTIONS["targetos"]=="qnx" then
++		buildoptions {
++			"-lgomp"
++		}
++	end
+ 	buildoptions {
+ 		"-fopenmp",
+ 	}
+@@ -1180,7 +1183,6 @@ configuration { "linux-*" }
+ 			"LinkSupportCircularDependencies",
+ 		}
+ 
+-
+ configuration { "freebsd or netbsd" }
+ 		flags {
+ 			"LinkSupportCircularDependencies",
+@@ -1191,6 +1193,8 @@ configuration { "osx*" }
+ 			"pthread",
+ 		}
+ 
++configuration { "qnx*" }
++
+ configuration { "mingw*" }
+ 		if _OPTIONS["osd"]=="sdl" then
+ 			linkoptions {
+diff --git a/scripts/src/3rdparty.lua b/scripts/src/3rdparty.lua
+index f404f5b9a6449..9fbd1b104e5c9 100755
+--- a/scripts/src/3rdparty.lua
++++ b/scripts/src/3rdparty.lua
+@@ -1251,9 +1251,10 @@ end
+ 			MAME_DIR .. "3rdparty/portmidi/porttime/ptlinux.c",
+ 		}
+ 	end
+-	if _OPTIONS["targetos"]=="netbsd" then
++	if _OPTIONS["targetos"]=="netbsd" or _OPTIONS["targetos"]=="qnx" then
+ 		files {
+ 			MAME_DIR .. "3rdparty/portmidi/pm_linux/pmlinux.c",
++			MAME_DIR .. "3rdparty/portmidi/pm_linux/pmlinuxnull.c",
+ 			MAME_DIR .. "3rdparty/portmidi/pm_linux/finddefault.c",
+ 			MAME_DIR .. "3rdparty/portmidi/porttime/ptlinux.c",
+ 		}
+@@ -1319,6 +1320,7 @@ project "bx"
+ 			MAME_DIR .. "3rdparty/bx/include/compat/linux",
+ 		}
+ 
++	-- FIXME?
+ 	configuration { }
+ 
+ 	if _OPTIONS["targetos"]=="macosx" or _OPTIONS["targetos"]=="linux" or _OPTIONS["targetos"]=="windows" or _OPTIONS["targetos"]=="asmjs" then
+@@ -1530,9 +1532,20 @@ end
+ 		MAME_DIR .. "3rdparty/bx/include",
+ 		MAME_DIR .. "3rdparty/bimg/include",
+ 		MAME_DIR .. "3rdparty/bgfx/3rdparty/directx-headers/include/directx",
+-		MAME_DIR .. "3rdparty/bgfx/3rdparty/khronos",
+ 	}
+ 
++	if not _OPTIONS["targetos"]=="qnx" then
++		includedirs {
++			MAME_DIR .. "3rdparty/bgfx/3rdparty/khronos",
++		}
++	else
++		links {
++			"GLESv2",
++			"EGL",
++			"screen",
++		}
++	end
++
+ 	configuration { "android-*"}
+ 		buildoptions {
+ 			"-Wno-macro-redefined",
+@@ -1625,7 +1638,7 @@ end
+ 		"BGFX_CONFIG_MAX_FRAME_BUFFERS=128",
+ 	}
+ 
+-	if _OPTIONS["targetos"]=="linux" or _OPTIONS["targetos"]=="netbsd" or _OPTIONS["targetos"]=="openbsd" then
++	if _OPTIONS["targetos"]=="linux" or _OPTIONS["targetos"]=="netbsd" or _OPTIONS["targetos"]=="openbsd" or _OPTIONS["targetos"] == "qnx" then
+ 		if _OPTIONS["NO_X11"]=="1" then
+ 			defines {
+ 				"BGFX_CONFIG_RENDERER_OPENGLES=1",
+diff --git a/scripts/src/main.lua b/scripts/src/main.lua
+index 8cd4609a6f574..82886198aca26 100644
+--- a/scripts/src/main.lua
++++ b/scripts/src/main.lua
+@@ -38,6 +38,12 @@ end
+ 			"GLESv2",
+ 			"SDL2",
+ 		}
++	configuration { "qnx*" }
++		links {
++			"EGL",
++			"GLESv2",
++			"SDL2",
++		}
+ 
+ 	configuration {  }
+ 
+@@ -124,15 +130,15 @@ end
+ if (STANDALONE~=true) then
+ 	findfunction("linkProjects_" .. _OPTIONS["target"] .. "_" .. _OPTIONS["subtarget"])(_OPTIONS["target"], _OPTIONS["subtarget"])
+ end
++	links {
++		"optional",
++		"emu",
++	}
+ if (STANDALONE~=true) then
+ 	links {
+ 		"frontend",
+ 	}
+ end
+-	links {
+-		"optional",
+-		"emu",
+-	}
+ 	links {
+ 		"osd_" .. _OPTIONS["osd"],
+ 	}
+@@ -209,6 +215,11 @@ end
+ 		"bx",
+ 		"ocore_" .. _OPTIONS["osd"],
+ 	}
++	if _OPTIONS["targetos"]=="qnx" then
++		links {
++			"screen",
++		}
++	end
+ 
+ 	override_resources = false;
+ 
+diff --git a/scripts/src/osd/modules.lua b/scripts/src/osd/modules.lua
+index 4b796a1f5b4dd..15be7e21f6772 100644
+--- a/scripts/src/osd/modules.lua
++++ b/scripts/src/osd/modules.lua
+@@ -287,10 +287,14 @@ function osdmodulesbuild()
+ 		MAME_DIR .. "3rdparty/bgfx/examples/common",
+ 		MAME_DIR .. "3rdparty/bgfx/include",
+ 		MAME_DIR .. "3rdparty/bgfx/3rdparty",
+-		MAME_DIR .. "3rdparty/bgfx/3rdparty/khronos",
+ 		MAME_DIR .. "3rdparty/bx/include",
+ 		ext_includedir("rapidjson")
+ 	}
++	if not _OPTIONS["targetos"]=="qnx" then
++		includedirs {
++			MAME_DIR .. "3rdparty/bgfx/3rdparty/khronos",
++		}
++	end
+ 
+ 	if _OPTIONS["NO_USE_PORTAUDIO"]=="1" then
+ 		defines {
+@@ -624,7 +628,7 @@ newoption {
+ }
+ 
+ if not _OPTIONS["NO_OPENGL"] then
+-	if _OPTIONS["targetos"] == "android" then
++	if _OPTIONS["targetos"] == "android" or _OPTIONS["targetos"] == "qnx" then
+ 		_OPTIONS["NO_OPENGL"] = "1"
+ 	else
+ 		_OPTIONS["NO_OPENGL"] = "0"
+diff --git a/scripts/src/osd/sdl.lua b/scripts/src/osd/sdl.lua
+index 86a727213a90f..5b7674f47262c 100644
+--- a/scripts/src/osd/sdl.lua
++++ b/scripts/src/osd/sdl.lua
+@@ -30,11 +30,16 @@ function maintargetosdoptions(_target,_subtarget)
+ 			"Xinerama",
+ 		}
+ 	else
+-		if _OPTIONS["targetos"]=="linux" or _OPTIONS["targetos"]=="netbsd" or _OPTIONS["targetos"]=="openbsd" then
++		if _OPTIONS["targetos"]=="linux" or _OPTIONS["targetos"]=="netbsd" or _OPTIONS["targetos"]=="openbsd" or _OPTIONS["targetos"]=="qnx" then
+ 			links {
+ 				"EGL",
+ 			}
+ 		end
++		if _OPTIONS["targetos"]=="qnx" then
++			links {
++				"GLESv2",
++			}
++		end
+ 	end
+ 
+ 	if _OPTIONS["NO_USE_XINPUT"]~="1" then
+@@ -91,6 +96,10 @@ function maintargetosdoptions(_target,_subtarget)
+ 			"network",
+ 			"bsd",
+ 		}
++	elseif _OPTIONS["targetos"]=="qnx" then
++		links {
++			"socket"
++		}
+ 	end
+ 
+ 	configuration { "mingw*" or "vs*" }
+@@ -270,14 +279,20 @@ if BASE_TARGETOS=="unix" then
+ 		if _OPTIONS["targetos"]~="haiku" and _OPTIONS["targetos"]~="android" then
+ 			links {
+ 				"m",
+-				"pthread",
+ 			}
++
++			if _OPTIONS["targetos"]~="qnx" then
++				links {
++					"pthread",
++				}
++			end
++
+ 			if _OPTIONS["targetos"]=="solaris" then
+ 				links {
+ 					"socket",
+ 					"nsl",
+ 				}
+-			elseif _OPTIONS["targetos"]~="asmjs" then
++			elseif _OPTIONS["targetos"]~="asmjs" and _OPTIONS["targetos"]~="qnx" then
+ 				links {
+ 					"util",
+ 				}
+diff --git a/scripts/toolchain.lua b/scripts/toolchain.lua
+index 59e8bdb504a2e..41234c053bf3f 100644
+--- a/scripts/toolchain.lua
++++ b/scripts/toolchain.lua
+@@ -34,6 +34,8 @@ newoption {
+ 		{ "osx",           "OSX (GCC compiler)"     },
+ 		{ "osx-clang",     "OSX (Clang compiler)"   },
+ 		{ "solaris",       "Solaris"                },
++		{ "qnx-x64",       "QNX QCC - x64"          },
++		{ "qnx-arm64",     "QNX QCC - arm64"        },
+ 	},
+ }
+ 
+@@ -157,6 +159,22 @@ function toolchain(_buildDir, _subDir)
+ 			location (_buildDir .. "projects/" .. _subDir .. "/".. _ACTION .. "-linux-clang")
+ 		end
+ 
++		if "qnx-x64" == _OPTIONS["gcc"] then
++			premake.gcc.cc            = "ntox86_64-gcc"
++			premake.gcc.cxx           = "ntox86_64-g++"
++			premake.gcc.ar            = "ntox86_64-ar"
++			premake.gcc.ranlib        = "ntox86_64-ranlib"
++			location (_buildDir .. "projects/" .. _subDir .. "/".. _ACTION .. "-nto-x86_64-o")
++		end
++
++		if "qnx-arm64" == _OPTIONS["gcc"] then
++			premake.gcc.cc  = "ntoaarch64-gcc"
++			premake.gcc.cxx = "ntoaarch64-g++"
++			premake.gcc.ar  = "ntoaarch64-ar"
++			premake.gcc.ranlib  = "ntoaarch64-ranlib"
++			location (_buildDir .. "projects/" .. _subDir .. "/".. _ACTION .. "-nto-aarch64-le")
++		end
++
+ 		if "mingw32-gcc" == _OPTIONS["gcc"] then
+ 			if toolchainPrefix == nil or toolchainPrefix == "" then
+ 				if not os.getenv("MINGW32") then
+@@ -382,6 +400,24 @@ function toolchain(_buildDir, _subDir)
+ 			"-m32",
+ 		}
+ 
++	configuration { "qnx-x64", "x64" }
++		objdir (_buildDir .. "qnx_x64" .. "/obj")
++
++	configuration { "qnx-x64", "x64", "Release" }
++		targetdir (_buildDir .. "qnx_x64" .. "/bin/x64/Release")
++
++	configuration { "qnx-x64", "x64", "Debug" }
++		targetdir (_buildDir .. "qnx_x64" .. "/bin/x64/Debug")
++
++	configuration { "qnx-arm64", "arm64" }
++		objdir (_buildDir .. "qnx_arm64" .. "/obj")
++
++	configuration { "qnx-arm64", "arm64", "Release" }
++		targetdir (_buildDir .. "qnx_arm64" .. "/bin/arm64/Release")
++
++	configuration { "qnx-arm64", "arm64", "Debug" }
++		targetdir (_buildDir .. "qnx_arm64" .. "/bin/arm64/Debug")
++
+ 	configuration { "solaris", "x32", "Release" }
+ 		targetdir (_buildDir .. "solaris" .. "/bin/x32/Release")
+ 
+@@ -626,6 +662,12 @@ function strip()
+ 			"$(SILENT) strip -s \"$(TARGET)\""
+ 		}
+ 
++	configuration { "qnx-*" }
++		postbuildcommands {
++			"$(SILENT) echo Stripping symbols.",
++			"$(SILENT) strip -s \"$(TARGET)\"",
++		}
++
+ 	configuration { "mingw*", "x64" }
+ 		postbuildcommands {
+ 			"$(SILENT) echo Stripping symbols.",
+diff --git a/src/devices/cpu/z180/z180.cpp b/src/devices/cpu/z180/z180.cpp
+index 7d8f0c4c4f37b..18e35c215231e 100644
+--- a/src/devices/cpu/z180/z180.cpp
++++ b/src/devices/cpu/z180/z180.cpp
+@@ -222,7 +222,11 @@ bool z180_device::get_tend1()
+ #define _PC     m_PC.w.l
+ 
+ #define _SPD    m_SP.d
++#ifndef __QNX__
+ #define _SP     m_SP.w.l
++#else
++#define MAME_SP     m_SP.w.l
++#endif
+ 
+ #define _AFD    m_AF.d
+ #define _AF     m_AF.w.l
+diff --git a/src/devices/cpu/z180/z180dd.hxx b/src/devices/cpu/z180/z180dd.hxx
+index 2bee2a99d629f..81b3d742a61e7 100644
+--- a/src/devices/cpu/z180/z180dd.hxx
++++ b/src/devices/cpu/z180/z180dd.hxx
+@@ -289,7 +289,11 @@ OP(dd,f6) { illegal_1(); op_f6();                                   } /* DB   DD
+ OP(dd,f7) { illegal_1(); op_f7();                                   } /* DB   DD          */
+ 
+ OP(dd,f8) { illegal_1(); op_f8();                                   } /* DB   DD          */
++#ifndef __QNX__
+ OP(dd,f9) { m_R++; _SP = _IX;                                       } /* LD   SP,IX       */
++#else
++OP(dd,f9) { m_R++; MAME_SP = _IX;                                       } /* LD   SP,IX       */
++#endif
+ OP(dd,fa) { illegal_1(); op_fa();                                   } /* DB   DD          */
+ OP(dd,fb) { illegal_1(); op_fb();                                   } /* DB   DD          */
+ OP(dd,fc) { illegal_1(); op_fc();                                   } /* DB   DD          */
+diff --git a/src/devices/cpu/z180/z180fd.hxx b/src/devices/cpu/z180/z180fd.hxx
+index c34e6876e68ba..1a0bad6b07d22 100644
+--- a/src/devices/cpu/z180/z180fd.hxx
++++ b/src/devices/cpu/z180/z180fd.hxx
+@@ -283,7 +283,11 @@ OP(fd,f6) { illegal_1(); op_f6();                                   } /* DB   FD
+ OP(fd,f7) { illegal_1(); op_f7();                                   } /* DB   FD          */
+ 
+ OP(fd,f8) { illegal_1(); op_f8();                                   } /* DB   FD          */
++#ifndef __QNX__
+ OP(fd,f9) { m_R++; _SP = _IY;                                       } /* LD   SP,IY       */
++#else
++OP(fd,f9) { m_R++; MAME_SP = _IY;                                       } /* LD   SP,IY       */
++#endif
+ OP(fd,fa) { illegal_1(); op_fa();                                   } /* DB   FD          */
+ OP(fd,fb) { illegal_1(); op_fb();                                   } /* DB   FD          */
+ OP(fd,fc) { illegal_1(); op_fc();                                   } /* DB   FD          */
+diff --git a/src/devices/cpu/z180/z180op.hxx b/src/devices/cpu/z180/z180op.hxx
+index 824f95dccaa99..b3f95aefdc31f 100644
+--- a/src/devices/cpu/z180/z180op.hxx
++++ b/src/devices/cpu/z180/z180op.hxx
+@@ -58,9 +58,17 @@ OP(op,2e) { _L = ARG();                                           } /* LD   L,n
+ OP(op,2f) { _A ^= 0xff; _F = (_F&(SF|ZF|PF|CF))|HF|NF|(_A&(YF|XF)); } /* CPL              */
+ 
+ OP(op,30) { JR_COND( !(_F & CF), 0x30 );                          } /* JR   NC,o        */
++#ifndef __QNX__
+ OP(op,31) { _SP = ARG16();                                            } /* LD   SP,w        */
++#else
++OP(op,31) { MAME_SP = ARG16();                                            } /* LD   SP,w        */
++#endif
+ OP(op,32) { m_ea = ARG16(); WM( m_ea, _A );                             } /* LD   (w),A       */
++#ifndef __QNX__
+ OP(op,33) { _SP++;                                                    } /* INC  SP          */
++#else
++OP(op,33) { MAME_SP++;                                                    } /* INC  SP          */
++#endif
+ OP(op,34) { WM( _HL, INC(RM(_HL)) );                              } /* INC  (HL)        */
+ OP(op,35) { WM( _HL, DEC(RM(_HL)) );                              } /* DEC  (HL)        */
+ OP(op,36) { WM( _HL, ARG() );                                       } /* LD   (HL),n      */
+@@ -69,7 +77,11 @@ OP(op,37) { _F = (_F & (SF|ZF|PF)) | CF | (_A & (YF|XF));         } /* SCF
+ OP(op,38) { JR_COND( _F & CF, 0x38 );                             } /* JR   C,o         */
+ OP(op,39) { ADD16(HL,SP);                                           } /* ADD  HL,SP       */
+ OP(op,3a) { m_ea = ARG16(); _A = RM( m_ea );                            } /* LD   A,(w)       */
++#ifndef __QNX__
+ OP(op,3b) { _SP--;                                                    } /* DEC  SP          */
++#else
++OP(op,3b) { MAME_SP--;                                                    } /* DEC  SP          */
++#endif
+ OP(op,3c) { _A = INC(_A);                                         } /* INC  A           */
+ OP(op,3d) { _A = DEC(_A);                                         } /* DEC  A           */
+ OP(op,3e) { _A = ARG();                                           } /* LD   A,n         */
+@@ -284,7 +296,11 @@ OP(op,f6) { OR(ARG());                                              } /* OR   n
+ OP(op,f7) { RST(0x30);                                              } /* RST  6           */
+ 
+ OP(op,f8) { RET_COND( _F & SF, 0xf8 );                                } /* RET  M           */
++#ifndef __QNX__
+ OP(op,f9) { _SP = _HL;                                              } /* LD   SP,HL       */
++#else
++OP(op,f9) { MAME_SP = _HL;                                              } /* LD   SP,HL       */
++#endif
+ OP(op,fa) { JP_COND(_F & SF);                                     } /* JP   M,a         */
+ OP(op,fb) { EI;                                                     } /* EI               */
+ OP(op,fc) { CALL_COND( _F & SF, 0xfc );                           } /* CALL M,a         */
+diff --git a/src/devices/cpu/z180/z180ops.h b/src/devices/cpu/z180/z180ops.h
+index 1391dc52de9a2..7bfd4a6af01a6 100644
+--- a/src/devices/cpu/z180/z180ops.h
++++ b/src/devices/cpu/z180/z180ops.h
+@@ -159,12 +159,20 @@ uint32_t z180_device::ARG16()
+ /***************************************************************
+  * POP
+  ***************************************************************/
++#ifndef __QNX__
+ #define POP(DR) { RM16(_SPD, &m_##DR ); _SP += 2; }
++#else
++#define POP(DR) { RM16(_SPD, &m_##DR ); MAME_SP += 2; }
++#endif
+ 
+ /***************************************************************
+  * PUSH
+  ***************************************************************/
++#ifndef __QNX__
+ #define PUSH(SR) { _SP -= 2; WM16(_SPD, &m_##SR); }
++#else
++#define PUSH(SR) { MAME_SP -= 2; WM16(_SPD, &m_##SR); }
++#endif
+ 
+ /***************************************************************
+  * JP
+diff --git a/src/osd/modules/file/posixdir.cpp b/src/osd/modules/file/posixdir.cpp
+index d4d78b342aab4..749c947664708 100644
+--- a/src/osd/modules/file/posixdir.cpp
++++ b/src/osd/modules/file/posixdir.cpp
+@@ -69,7 +69,7 @@ constexpr char PATHSEPCH = '\\';
+ constexpr char PATHSEPCH = '/';
+ #endif
+ 
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(_WIN32) || defined(__QNX__) || defined(SDLMAME_NO64BITIO)
+ using sdl_dirent = struct dirent;
+ using sdl_stat = struct stat;
+ #define sdl_readdir readdir
+@@ -159,7 +159,30 @@ const osd::directory::entry *posix_directory::read()
+ 	sdl_stat st;
+ 	bool stat_err(0 > sdl_stat_fn(util::string_format("%s%c%s", m_path, PATHSEPCH, static_cast<const char *>(m_data->d_name)).c_str(), &st));
+ 
+-#if HAS_DT_XXX
++#ifdef __QNX__
++	struct dirent_extra *dex;
++	for (dex = _DEXTRA_FIRST(m_data); _DEXTRA_VALID(dex, m_data);
++		 dex = _DEXTRA_NEXT(dex) ) {
++		switch (dex->d_type) {
++		case _DTYPE_STAT:
++		case _DTYPE_LSTAT:
++			struct dirent_extra_stat *dex_stat;
++			dex_stat = (struct dirent_extra_stat *) dex;
++
++			// TODO: Properly handle links to dirs.
++			if (S_ISDIR(dex_stat->d_stat.st_mode)) {
++				m_entry.type = entry::entry_type::DIR;
++			} else if (S_ISREG(dex_stat->d_stat.st_mode)) {
++				m_entry.type = entry::entry_type::FILE;
++			} else {
++				m_entry.type = entry::entry_type::OTHER;
++			}
++			break;
++		default:
++			break;
++		}
++	}
++#elif HAS_DT_XXX
+ 	switch (m_data->d_type)
+ 	{
+ 	case DT_DIR:
+diff --git a/src/osd/modules/file/posixfile.cpp b/src/osd/modules/file/posixfile.cpp
+index f5dc2e91f10f3..7a32b42972c86 100644
+--- a/src/osd/modules/file/posixfile.cpp
++++ b/src/osd/modules/file/posixfile.cpp
+@@ -100,7 +100,7 @@ class posix_osd_file : public osd_file
+ 	{
+ 		ssize_t result;
+ 
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(__QNX__)
+ 		result = ::pread(m_fd, buffer, size_t(count), off_t(std::make_unsigned_t<off_t>(offset)));
+ #elif defined(_WIN32) || defined(SDLMAME_NO64BITIO)
+ 		if (lseek(m_fd, off_t(std::make_unsigned_t<off_t>(offset)), SEEK_SET) < 0)
+@@ -121,7 +121,7 @@ class posix_osd_file : public osd_file
+ 	{
+ 		ssize_t result;
+ 
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(__QNX__)
+ 		result = ::pwrite(m_fd, buffer, size_t(count), off_t(std::make_unsigned_t<off_t>(offset)));
+ #elif defined(_WIN32) || defined(SDLMAME_NO64BITIO)
+ 		if (lseek(m_fd, off_t(std::make_unsigned_t<off_t>(offset)), SEEK_SET) < 0)
+@@ -142,7 +142,7 @@ class posix_osd_file : public osd_file
+ 	{
+ 		int result;
+ 
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__) || defined(__QNX__)
+ 		result = ::ftruncate(m_fd, off_t(std::make_unsigned_t<off_t>(offset)));
+ #else
+ 		result = ::ftruncate64(m_fd, off64_t(offset));
+@@ -260,7 +260,7 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
+ 
+ 	// attempt to open the file
+ 	int fd = -1;
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__) || defined(__QNX__)
+ 	fd = ::open(dst.c_str(), access, 0666);
+ #else
+ 	fd = ::open64(dst.c_str(), access, 0666);
+@@ -283,7 +283,7 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
+ 				// attempt to reopen the file
+ 				if (!createrr)
+ 				{
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__) || defined(__QNX__)
+ 					fd = ::open(dst.c_str(), access, 0666);
+ #else
+ 					fd = ::open64(dst.c_str(), access, 0666);
+@@ -304,7 +304,7 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
+ 	}
+ 
+ 	// get the file size
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__) || defined(__QNX__)
+ 	struct stat st;
+ 	if (::fstat(fd, &st) < 0)
+ #else
+@@ -369,7 +369,7 @@ bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders,
+ 
+ osd::directory::entry::ptr osd_stat(const std::string &path)
+ {
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__) || defined(__QNX__)
+ 	struct stat st;
+ 	int const err = ::stat(path.c_str(), &st);
+ #else
+diff --git a/src/osd/modules/file/posixptty.cpp b/src/osd/modules/file/posixptty.cpp
+index fa12045470643..ec245cae05709 100644
+--- a/src/osd/modules/file/posixptty.cpp
++++ b/src/osd/modules/file/posixptty.cpp
+@@ -25,6 +25,10 @@
+ #elif defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
+ #include <termios.h>
+ #include <util.h>
++#elif defined(__QNX__)
++#include <unix.h>
++#include <termios.h>
++#include <sys/ioctl.h>
+ #elif defined(__linux__) || defined(__EMSCRIPTEN__)
+ #include <pty.h>
+ #elif defined(__HAIKU__)
+@@ -182,7 +186,7 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
+ 		::close(masterfd);
+ 		return std::error_condition(result, std::generic_category());
+ 	}
+-#elif defined(__linux__) || defined(__FreeBSD__)
++#elif defined(__linux__) || defined(__FreeBSD__) || defined(__QNX__)
+ 	// ptsname_r is present but there's no maximum length defined
+ 	if (::openpty(&masterfd, &slavefd, nullptr, &tios, nullptr) < 0)
+ 		return std::error_condition(errno, std::generic_category());
+diff --git a/src/osd/modules/render/drawbgfx.cpp b/src/osd/modules/render/drawbgfx.cpp
+index ef90478e59e94..7c2ce84599990 100644
+--- a/src/osd/modules/render/drawbgfx.cpp
++++ b/src/osd/modules/render/drawbgfx.cpp
+@@ -443,6 +443,12 @@ bool video_bgfx::set_platform_data(bgfx::PlatformData &platform_data, osd_window
+ 		platform_data.ndt = nullptr;
+ 		platform_data.nwh = wmi.info.android.window;
+ 		break;
++#endif
++#if defined(SDL_VIDEO_DRIVER_QNX)
++	case SDL_SYSWM_QNX:
++		platform_data.ndt = nullptr;
++		platform_data.nwh = wmi.info.qnx.window;
++		break;
+ #endif
+ 	default:
+ 		osd_printf_error("BGFX: Unsupported SDL window manager type %u\n", wmi.subsystem);
+@@ -529,6 +535,10 @@ static std::pair<void *, bool> sdlNativeWindowHandle(SDL_Window *window)
+ #if defined(SDL_VIDEO_DRIVER_ANDROID)
+ 	case SDL_SYSWM_ANDROID:
+ 		return std::make_pair(wmi.info.android.window, true);
++#endif
++#if defined(SDL_VIDEO_DRIVER_QNX)
++	case SDL_SYSWM_QNX:
++		return std::make_pair(wmi.info.qnx.window, true);
+ #endif
+ 	default:
+ 		return std::make_pair(nullptr, false);
+
+From c0c8aa3f127ae408e3b85ab0245cf1fa4bd48c1c Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Tue, 18 Nov 2025 17:14:44 -0500
+Subject: [PATCH 2/5] Fix bgfx initialization issues.
+
+---
+ src/osd/modules/render/drawbgfx.cpp | 2 +-
+ src/osd/sdl/window.cpp              | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/osd/modules/render/drawbgfx.cpp b/src/osd/modules/render/drawbgfx.cpp
+index 7c2ce84599990..cbaa4fed4f2dd 100644
+--- a/src/osd/modules/render/drawbgfx.cpp
++++ b/src/osd/modules/render/drawbgfx.cpp
+@@ -447,7 +447,7 @@ bool video_bgfx::set_platform_data(bgfx::PlatformData &platform_data, osd_window
+ #if defined(SDL_VIDEO_DRIVER_QNX)
+ 	case SDL_SYSWM_QNX:
+ 		platform_data.ndt = nullptr;
+-		platform_data.nwh = wmi.info.qnx.window;
++		platform_data.nwh = (void *)&wmi.info.qnx.window;
+ 		break;
+ #endif
+ 	default:
+diff --git a/src/osd/sdl/window.cpp b/src/osd/sdl/window.cpp
+index 59be82238d0fa..3303753364c7c 100644
+--- a/src/osd/sdl/window.cpp
++++ b/src/osd/sdl/window.cpp
+@@ -832,6 +832,15 @@ int sdl_window_info::complete_create()
+ 
+ 	// create the window .....
+ 
++#if defined(SDL_VIDEO_DRIVER_QNX)
++	// QNX SDL requires running video init first but doesn't use the driver_name
++	// argument.
++	if (SDL_VideoInit("") != 0) {
++		osd_printf_error("BGFX: Error initializing SDL video driver: %s\n", SDL_GetError());
++		return 1;
++	}
++#endif
++
+ 	/* FIXME: On Ubuntu and potentially other Linux OS you should use
+ 	 * to disable panning. This has to be done before every invocation of mame.
+ 	 *
+
+From 1c8f413df66b0819822bccee9908db69b5fa1d93 Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Fri, 28 Nov 2025 13:59:18 -0500
+Subject: [PATCH 3/5] Fix drawbgfx.cpp and add error msgs.
+
+---
+ src/osd/modules/render/drawbgfx.cpp | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/src/osd/modules/render/drawbgfx.cpp b/src/osd/modules/render/drawbgfx.cpp
+index cbaa4fed4f2dd..b24d6e7b83839 100644
+--- a/src/osd/modules/render/drawbgfx.cpp
++++ b/src/osd/modules/render/drawbgfx.cpp
+@@ -169,7 +169,13 @@ class video_bgfx : public osd_module, public render_module, protected renderer_b
+ 	virtual std::unique_ptr<osd_renderer> create(osd_window &window) override;
+ 
+ protected:
+-	virtual unsigned flags() const override { return FLAG_INTERACTIVE; }
++	virtual unsigned flags() const override {
++#ifndef __QNX__
++		return FLAG_INTERACTIVE;
++#else
++		return FLAG_INTERACTIVE | FLAG_SDL_NEEDS_OPENGL;
++#endif
++	}
+ 
+ private:
+ 	virtual void last_renderer_destroyed() override;
+@@ -447,7 +453,7 @@ bool video_bgfx::set_platform_data(bgfx::PlatformData &platform_data, osd_window
+ #if defined(SDL_VIDEO_DRIVER_QNX)
+ 	case SDL_SYSWM_QNX:
+ 		platform_data.ndt = nullptr;
+-		platform_data.nwh = (void *)&wmi.info.qnx.window;
++		platform_data.nwh = (void *)wmi.info.qnx.window;
+ 		break;
+ #endif
+ 	default:
+@@ -511,8 +517,10 @@ static std::pair<void *, bool> sdlNativeWindowHandle(SDL_Window *window)
+ {
+ 	SDL_SysWMinfo wmi;
+ 	SDL_VERSION(&wmi.version);
+-	if (!SDL_GetWindowWMInfo(window, &wmi))
++	if (!SDL_GetWindowWMInfo(window, &wmi)) {
++		osd_printf_error("Failed to get window manager info from SDL.\n");
+ 		return std::make_pair(nullptr, false);
++	}
+ 
+ 	switch (wmi.subsystem)
+ 	{
+@@ -643,6 +651,7 @@ int renderer_bgfx::create()
+ 		auto const [winhdl, success] = sdlNativeWindowHandle(dynamic_cast<sdl_window_info &>(window()).platform_window());
+ 		if (!success)
+ 		{
++			osd_printf_error("Failed to create an SDL window handle.\n");
+ 			m_targets.reset();
+ 			m_textures.reset();
+ 			return -1;
+
+From 2a22f8fbaa6ccb262e4f2ff003052d3cca4d1813 Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Sat, 29 Nov 2025 16:27:41 -0500
+Subject: [PATCH 4/5] Fix bugs.
+
+---
+ src/osd/modules/file/posixptty.cpp  | 2 +-
+ src/osd/modules/lib/osdlib_unix.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/osd/modules/file/posixptty.cpp b/src/osd/modules/file/posixptty.cpp
+index ec245cae05709..f9f39be4fe231 100644
+--- a/src/osd/modules/file/posixptty.cpp
++++ b/src/osd/modules/file/posixptty.cpp
+@@ -42,7 +42,7 @@
+ 
+ namespace {
+ 
+-#if defined(__APPLE__)
++#if defined(__APPLE__) || defined(__QNX__)
+ char const *const posix_ptty_identifier  = "/dev/pty";
+ #else
+ char const *const posix_ptty_identifier  = "/dev/pts";
+diff --git a/src/osd/modules/lib/osdlib_unix.cpp b/src/osd/modules/lib/osdlib_unix.cpp
+index 1cfa9b1f1834a..9929da11e5892 100644
+--- a/src/osd/modules/lib/osdlib_unix.cpp
++++ b/src/osd/modules/lib/osdlib_unix.cpp
+@@ -300,7 +300,7 @@ void *virtual_memory_allocation::do_alloc(std::initializer_list<std::size_t> blo
+ #else
+ 	int const prot(PROT_NONE);
+ #endif
+-#if defined(SDLMAME_BSD) || defined(SDLMAME_MACOSX) || defined(SDLMAME_EMSCRIPTEN)
++#if defined(SDLMAME_BSD) || defined(SDLMAME_MACOSX) || defined(SDLMAME_EMSCRIPTEN) || defined(__QNX__)
+ 	int const fd(-1);
+ #else
+ 	// TODO: portable applications are supposed to use -1 for anonymous mappings - detect whatever requires 0 specifically
+
+From df1fe099203b7a25d5d891eb13d18f983d26ea1b Mon Sep 17 00:00:00 2001
+From: Ethan Leir <eleir@blackberry.com>
+Date: Sat, 13 Dec 2025 10:17:09 -0500
+Subject: [PATCH 5/5] SDL video init/deinit fix
+
+---
+ src/osd/sdl/video.cpp  | 25 +++++++++++++++++++++++++
+ src/osd/sdl/window.cpp |  9 ---------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/src/osd/sdl/video.cpp b/src/osd/sdl/video.cpp
+index 8fe836aabf26c..aebefb6ad3ddd 100644
+--- a/src/osd/sdl/video.cpp
++++ b/src/osd/sdl/video.cpp
+@@ -25,6 +25,10 @@
+ 
+ #include <SDL2/SDL.h>
+ 
++#ifdef SDL_VIDEO_DRIVER_QNX
++#include <cstring>
++#endif
++
+ 
+ //============================================================
+ //  GLOBAL VARIABLES
+@@ -54,6 +58,21 @@ bool sdl_osd_interface::video_init()
+ 	// we need the beam width in a float, contrary to what the core does.
+ 	video_config.beamwidth = options().beam_width_min();
+ 
++#if defined(SDL_VIDEO_DRIVER_QNX)
++	// QNX SDL requires running video init first but doesn't use the driver_name
++	// argument.
++	//
++	// Let us have custom behaviour for screen while still allowing a
++	// wayland backend.
++	if (strcmp(downcast<sdl_options &>(machine().options()).video_driver(), "qnx") == 0)
++	{
++		if (SDL_VideoInit("") != 0) {
++			osd_printf_error("BGFX: Error initializing SDL video driver: %s\n", SDL_GetError());
++			return 1;
++		}
++	}
++#endif
++
+ 	// initialize the window system so we can make windows
+ 	if (!window_init())
+ 		return false;
+@@ -85,6 +104,12 @@ bool sdl_osd_interface::video_init()
+ void sdl_osd_interface::video_exit()
+ {
+ 	window_exit();
++#ifdef SDL_VIDEO_DRIVER_QNX
++	if (strcmp(downcast<sdl_options &>(machine().options()).video_driver(), "qnx") == 0)
++	{
++		SDL_VideoQuit();
++	}
++#endif
+ }
+ 
+ //============================================================
+diff --git a/src/osd/sdl/window.cpp b/src/osd/sdl/window.cpp
+index 3303753364c7c..59be82238d0fa 100644
+--- a/src/osd/sdl/window.cpp
++++ b/src/osd/sdl/window.cpp
+@@ -832,15 +832,6 @@ int sdl_window_info::complete_create()
+ 
+ 	// create the window .....
+ 
+-#if defined(SDL_VIDEO_DRIVER_QNX)
+-	// QNX SDL requires running video init first but doesn't use the driver_name
+-	// argument.
+-	if (SDL_VideoInit("") != 0) {
+-		osd_printf_error("BGFX: Error initializing SDL video driver: %s\n", SDL_GetError());
+-		return 1;
+-	}
+-#endif
+-
+ 	/* FIXME: On Ubuntu and potentially other Linux OS you should use
+ 	 * to disable panning. This has to be done before every invocation of mame.
+ 	 *

@@ -1,0 +1,296 @@
+QNX change from QNX's aports (core/binutils/0001.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 9eb011fdd38e51441ffdd495f1eb704cd977bdf2 Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:05:04 -0400
+Subject: [PATCH] bfd: adding qnx bfd patches for binutils
+
+adding proper target and bfd changes for qnx as-is from internal
+svn.
+
+With edits to add qnx target support
+
+CLT-9242
+---
+ bfd/Makefile.am     |  2 +-
+ bfd/Makefile.in     |  2 +-
+ bfd/coffcode.h      |  4 ++++
+ bfd/compress.c      |  4 ++++
+ bfd/config.bfd      | 29 ++++++++++++++++-------------
+ bfd/development.sh  |  2 +-
+ bfd/elf.c           | 20 +++++++++++++++++++-
+ bfd/elf32-arm.c     |  9 +++++++--
+ bfd/elfnn-aarch64.c |  6 ++++++
+ bfd/elfxx-x86.h     |  8 ++++++++
+ 10 files changed, 67 insertions(+), 19 deletions(-)
+
+diff --git a/bfd/Makefile.am b/bfd/Makefile.am
+index 0dc733eaba9..acaf134dd17 100644
+--- a/bfd/Makefile.am
++++ b/bfd/Makefile.am
+@@ -996,7 +996,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
+ 	. $(srcdir)/development.sh ;\
+ 	if test "$$development" = true ; then \
+ 	  bfd_version_date=`$(SED) -n -e 's/.*DATE //p' < $(srcdir)/version.h` ;\
+-	  bfd_version_string="\"$(VERSION).$${bfd_version_date}\"" ;\
++	  bfd_version_string="\"$(VERSION).0 $${bfd_version_date}\"" ;\
+ 	  bfd_soversion="$(VERSION).$${bfd_version_date}" ;\
+ 	fi ;\
+ 	$(SED) -e "s,@bfd_version@,$$bfd_version," \
+diff --git a/bfd/Makefile.in b/bfd/Makefile.in
+index b3d97d478ea..e326e8da434 100644
+--- a/bfd/Makefile.in
++++ b/bfd/Makefile.in
+@@ -2468,7 +2468,7 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/development.sh $(srcdir)/Makefile.in
+ 	. $(srcdir)/development.sh ;\
+ 	if test "$$development" = true ; then \
+ 	  bfd_version_date=`$(SED) -n -e 's/.*DATE //p' < $(srcdir)/version.h` ;\
+-	  bfd_version_string="\"$(VERSION).$${bfd_version_date}\"" ;\
++	  bfd_version_string="\"$(VERSION).0 $${bfd_version_date}\"" ;\
+ 	  bfd_soversion="$(VERSION).$${bfd_version_date}" ;\
+ 	fi ;\
+ 	$(SED) -e "s,@bfd_version@,$$bfd_version," \
+diff --git a/bfd/coffcode.h b/bfd/coffcode.h
+index ebf4f513fde..640a29539ba 100644
+--- a/bfd/coffcode.h
++++ b/bfd/coffcode.h
+@@ -360,6 +360,10 @@ CODE_FRAGMENT
+ #include "coffswap.h"
+ #endif
+ 
++#ifdef HAVE_STDINT_H
++#include <stdint.h>
++#endif
++
+ #define STRING_SIZE_SIZE 4
+ 
+ #define DOT_DEBUG	".debug"
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 6553aac1e99..28dba3e783c 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -294,6 +294,11 @@ case "${targ}" in
+     targ_selvecs="aarch64_elf64_le_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_be_vec arm_elf32_le_vec"
+     want64=true
+     ;;
++  aarch64-*-nto-* | aarch64-*-qnx-*)
++    targ_defvec=aarch64_elf64_le_vec
++    targ_selvecs="aarch64_elf64_be_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_le_vec arm_elf32_be_vec"
++    want64=true
++    ;;
+   alpha*-*-freebsd* | alpha*-*-kfreebsd*-gnu)
+     targ_defvec=alpha_elf64_fbsd_vec
+     targ_selvecs="alpha_elf64_vec alpha_ecoff_le_vec"
+@@ -392,7 +397,7 @@ case "${targ}" in
+     targ_defvec=arm_elf32_le_vec
+     targ_selvecs="arm_elf32_be_vec"
+     ;;
+-  arm-*-nto* | nto*arm*)
++  arm-*-nto-* | nto*arm* | arm-*-qnx-* | qnx*arm*)
+     targ_defvec=arm_elf32_le_vec
+     targ_selvecs=arm_elf32_be_vec
+     targ_cflags=-D__QNXTARGET__
+@@ -604,9 +609,10 @@ case "${targ}" in
+     want64=true
+     ;;
+ #endif
+-  i[3-7]86-*-nto*)
++  i[3-7]86-*-nto-* | i[3-7]86-*-qnx-*)
+     targ_defvec=i386_elf32_vec
+-    targ_selvecs="iamcu_elf32_vec i386_coff_vec"
++    targ_selvecs="iamcu_elf32_vec i386_coff_vec i386_pei_vec"
++    targ_cflags=-D__QNXTARGET__
+     ;;
+   i[3-7]86-*-aros*)
+     targ_defvec=i386_elf32_vec
+@@ -721,6 +727,12 @@ case "${targ}" in
+     want64=true
+     targ_underscore=no
+     ;;
++  x86_64-*-nto-* | x86_64-*-qnx-*)
++    targ_defvec=x86_64_elf64_vec
++    targ_selvecs="i386_elf32_vec iamcu_elf32_vec x86_64_elf32_vec i386_pei_vec x86_64_pei_vec"
++    want64=true
++    targ_cflags=-D__QNXTARGET__
++    ;;
+   x86_64-*-rdos*)
+     targ_defvec=x86_64_elf64_vec
+     want64=true
+@@ -1202,7 +1214,7 @@ case "${targ}" in
+   powerpc-*-macos*)
+     targ_defvec=powerpc_xcoff_vec
+     ;;
+-  powerpc-*-nto*)
++  powerpc-*-nto-*)
+     targ_defvec=powerpc_elf32_vec
+     targ_selvecs="rs6000_xcoff_vec powerpc_elf32_le_vec powerpc_boot_vec"
+     ;;
+@@ -1211,10 +1223,6 @@ case "${targ}" in
+     targ_selvecs="rs6000_xcoff_vec powerpc_elf32_vec powerpc_elf32_le_vec powerpc_boot_vec"
+     targ64_selvecs="powerpc_elf64_vec powerpc_elf64_le_vec"
+     ;;
+-  powerpcle-*-nto*)
+-    targ_defvec=powerpc_elf32_le_vec
+-    targ_selvecs="rs6000_xcoff_vec powerpc_elf32_vec powerpc_boot_vec"
+-    ;;
+   powerpcle-*-elf* | powerpcle-*-sysv4* | powerpcle-*-eabi* | \
+   powerpcle-*-solaris2* | powerpcle-*-linux-* | powerpcle-*-vxworks*)
+     targ_defvec=powerpc_elf32_le_vec
+@@ -1323,11 +1331,6 @@ case "${targ}" in
+     targ_underscore=yes
+     ;;
+ 
+-  sh-*-nto*)
+-    targ_defvec=sh_elf32_vec
+-    targ_selvecs="sh_elf32_le_vec sh_coff_vec sh_coff_le_vec sh_coff_small_vec sh_coff_small_le_vec"
+-    targ_underscore=yes
+-    ;;
+   sh*-*-openbsd*)
+     targ_defvec=sh_elf32_nbsd_le_vec
+     targ_selvecs="sh_elf32_nbsd_vec sh_coff_vec sh_coff_le_vec"
+diff --git a/bfd/development.sh b/bfd/development.sh
+index ad74927b5cb..8503914896c 100644
+--- a/bfd/development.sh
++++ b/bfd/development.sh
+@@ -16,7 +16,7 @@
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ # Controls whether to enable development-mode features by default.
+-development=false
++development=true
+ 
+ # Indicate whether this is a release branch.
+ experimental=false
+diff --git a/bfd/elf.c b/bfd/elf.c
+index f85f79e1e35..28f5f319a66 100644
+--- a/bfd/elf.c
++++ b/bfd/elf.c
+@@ -8028,10 +8028,25 @@ copy_elf_program_header (bfd *ibfd, bfd *obfd)
+   map_first = NULL;
+   pointer_to_map = &map_first;
+ 
++  num_segments = elf_elfheader (ibfd)->e_phnum;
++#ifdef __QNXTARGET__
++  p_paddr_valid = true;
++  /* ldrel has produced binaries that PT_LOAD segments with valid
++     p_paddr and other segments with zero fields. */
++
++  for (i = 0, segment = elf_tdata (ibfd)->phdr;
++       i < num_segments;
++       i++, segment++)
++    if (!segment->p_paddr)
++      {
++        p_paddr_valid = false;
++        break;
++      }
++
++#else
+   /* If all the segment p_paddr fields are zero, don't set
+      map->p_paddr_valid.  */
+   p_paddr_valid = false;
+-  num_segments = elf_elfheader (ibfd)->e_phnum;
+   for (i = 0, segment = elf_tdata (ibfd)->phdr;
+        i < num_segments;
+        i++, segment++)
+@@ -8040,6 +8055,7 @@ copy_elf_program_header (bfd *ibfd, bfd *obfd)
+ 	p_paddr_valid = true;
+ 	break;
+       }
++#endif
+ 
+   p_palign_valid = elf_is_p_align_valid (ibfd);
+ 
+@@ -12118,6 +12134,8 @@ elfcore_grok_nto_note (bfd *abfd, Elf_Internal_Note *note)
+       return elfcore_grok_nto_regs (abfd, note, tid, ".reg");
+     case QNT_CORE_FPREG:
+       return elfcore_grok_nto_regs (abfd, note, tid, ".reg2");
++    case QNT_LINK_MAP:
++      return elfcore_make_note_pseudosection (abfd, ".qnx_link_map", note);
+     default:
+       return true;
+     }
+diff --git a/bfd/elf32-arm.c b/bfd/elf32-arm.c
+index ca76bee6adc..f813e9aa590 100644
+--- a/bfd/elf32-arm.c
++++ b/bfd/elf32-arm.c
+@@ -14825,7 +14825,9 @@ elf32_arm_merge_eabi_attributes (bfd *ibfd, struct bfd_link_info *info)
+ 		  /* This assert is still reasonable, we shouldn't
+ 		     produce the suspicious build attribute
+ 		     combination (See below for in_attr).  */
+-		  BFD_ASSERT (out_attr[Tag_ABI_HardFP_use].i == 0);
++		/*  Remove assert as binutils 2.19.1 generated */
++		/*  Tag_ABI_HardFP_use without Tag_FP_arch */
++		/*  BFD_ASSERT (out_attr[Tag_ABI_HardFP_use].i == 0); */
+ 		  out_attr[i].i = in_attr[i].i;
+ 		  out_attr[Tag_ABI_HardFP_use].i
+ 		    = in_attr[Tag_ABI_HardFP_use].i;
+@@ -20741,6 +20743,7 @@ elf32_arm_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
+ 	  flags_compatible = false;
+ 	}
+ 
++#ifndef __QNXTARGET__
+       if ((in_flags & EF_ARM_VFP_FLOAT) != (out_flags & EF_ARM_VFP_FLOAT))
+ 	{
+ 	  if (in_flags & EF_ARM_VFP_FLOAT)
+@@ -20754,8 +20757,9 @@ elf32_arm_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
+ 
+ 	  flags_compatible = false;
+ 	}
+-
++#endif
+ #ifdef EF_ARM_SOFT_FLOAT
++#ifndef __QNXTARGET__
+       if ((in_flags & EF_ARM_SOFT_FLOAT) != (out_flags & EF_ARM_SOFT_FLOAT))
+ 	{
+ 	  /* We can allow interworking between code that is VFP format
+@@ -20778,6 +20782,7 @@ elf32_arm_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
+ 	      flags_compatible = false;
+ 	    }
+ 	}
++#endif
+ #endif
+ 
+       /* Interworking mismatch is only a warning.  */
+diff --git a/bfd/elfnn-aarch64.c b/bfd/elfnn-aarch64.c
+index 94c9a01069b..c62d67f39a3 100644
+--- a/bfd/elfnn-aarch64.c
++++ b/bfd/elfnn-aarch64.c
+@@ -10704,7 +10704,13 @@ const struct elf_size_info elfNN_aarch64_size_info =
+ 
+ #define ELF_ARCH			bfd_arch_aarch64
+ #define ELF_MACHINE_CODE		EM_AARCH64
++
++#ifdef __QNXTARGET__
++#define ELF_MAXPAGESIZE			0x1000
++#else
+ #define ELF_MAXPAGESIZE			0x10000
++#endif
++
+ #define ELF_COMMONPAGESIZE		0x1000
+ 
+ #define bfd_elfNN_bfd_free_cached_info		\
+diff --git a/bfd/elfxx-x86.h b/bfd/elfxx-x86.h
+index 5eef7b09152..ce58c5ae0dd 100644
+--- a/bfd/elfxx-x86.h
++++ b/bfd/elfxx-x86.h
+@@ -257,6 +257,14 @@
+ #define ABS_SYMBOL_P(H) \
+   (bfd_is_abs_symbol (&(H)->root) && !(H)->root.ldscript_def)
+ 
++/* TRUE if this symbol isn't defined by a shared object.  */
++#define SYMBOL_DEFINED_NON_SHARED_P(H) \
++  ((H)->def_regular \
++   || (H)->root.linker_def \
++   || (H)->root.ldscript_def \
++   || ((struct elf_x86_link_hash_entry *) (H))->linker_def \
++   || ELF_COMMON_DEF_P (H))
++
+ /* TRUE if relative relocation should be generated.  GOT reference to
+    global symbol in PIC will lead to dynamic symbol.  It becomes a
+    problem when "time" or "times" is defined as a variable in an
+

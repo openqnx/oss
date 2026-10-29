@@ -1,0 +1,24 @@
+Use GCC's byte-swap builtins on QNX.
+
+QNX has no <byteswap.h> (a glibc header); __builtin_bswap32/64 are what
+it would provide.
+
+Upstream-Status: QNX-specific
+
+--- a/src/farmhash.cc
++++ b/src/farmhash.cc
+@@ -169,6 +169,14 @@
+ #define bswap_64(x) bswap64(x)
+ #endif
+ 
++#elif defined(__QNX__)
++
++// QNX has no <byteswap.h>; GCC's builtins do the same.
++#undef bswap_32
++#undef bswap_64
++#define bswap_32(x) __builtin_bswap32(x)
++#define bswap_64(x) __builtin_bswap64(x)
++
+ #else
+ 
+ #undef bswap_32

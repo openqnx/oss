@@ -1,0 +1,21 @@
+Use compiler flags qcc accepts in the QNX configure case.
+
+The QNX case sets CFLAGS with "--param=ssp-buffer-size=4", which qcc (the
+QNX compiler driver) rejects as an unknown option -- configure then reports
+that the C compiler cannot create executables. -fstack-protector-strong
+already selects a sensible buffer size. Also drop -I/usr/include/p11-kit-1,
+a path of the build host that has no business in a cross build.
+
+Upstream-Status: QNX-specific
+
+--- a/configure
++++ b/configure
+@@ -455,7 +455,7 @@
+         try_lockmem=1
+         feat_refclock=0
+         try_recvmmsg=0 # Freebsd "bug" which we inherited. using regular recvmsg makes things work
+-        CFLAGS="-O2 -g -fPIE -fstack-protector-strong --param=ssp-buffer-size=4 -Wmissing-prototypes -Wshadow -Wall -pthread -I/usr/include/p11-kit-1"
++        CFLAGS="-O2 -g -fPIE -fstack-protector-strong -Wmissing-prototypes -Wshadow -Wall -pthread"
+         add_def QNX
+         if [ $feat_droproot = "1" ]; then
+           add_def FEAT_PRIVDROP

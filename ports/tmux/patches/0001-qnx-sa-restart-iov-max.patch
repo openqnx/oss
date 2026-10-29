@@ -1,0 +1,40 @@
+Provide SA_RESTART and IOV_MAX on QNX.
+
+- QNX's <signal.h> leaves SA_RESTART commented out ("not supported yet"), so
+  client.c and proc.c do not compile. tmux retries on EINTR already; asking
+  for no flag is the correct behaviour on QNX.
+- QNX's <limits.h> undefines IOV_MAX on purpose; the bundled imsg-buffer.c
+  sizes arrays with it. Use the kernel limit, UIO_MAXIOV from <sys/uio.h>.
+
+Upstream-Status: QNX-specific
+
+--- a/compat.h
++++ b/compat.h
+@@ -23,6 +23,8 @@
+ 
+ #include <fnmatch.h>
+ #include <limits.h>
++#include <signal.h>
++#include <sys/uio.h>
+ #include <stdio.h>
+ #include <termios.h>
+ #include <wchar.h>
+@@ -471,4 +473,18 @@
+ #define optreset           BSDoptreset
+ #define optarg             BSDoptarg
+ 
++#ifndef SA_RESTART
++/*
++ * QNX does not restart interrupted system calls; its <signal.h> has
++ * SA_RESTART commented out as "not supported yet". tmux only asks for it as a
++ * convenience and already handles EINTR, so request nothing.
++ */
++#define SA_RESTART 0
++#endif
++
++#if !defined(IOV_MAX) && defined(UIO_MAXIOV)
++/* QNX's <limits.h> deliberately undefines IOV_MAX; the kernel limit is UIO_MAXIOV. */
++#define IOV_MAX UIO_MAXIOV
++#endif
++
+ #endif /* COMPAT_H */

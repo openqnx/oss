@@ -1,0 +1,32 @@
+QNX change from QNX's aports (extra/geany-plugins/fix-qnx.patch).
+
+Taken from qnx-ports/aports extra/geany-plugins -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+--- geany-plugins-2.1/build/scope.m4.orig	2025-10-08 15:27:40.000000000 +0000
++++ geany-plugins-2.1/build//scope.m4	2025-10-08 15:27:47.000000000 +0000
+@@ -11,7 +11,7 @@
+              GP_CHECK_UTILSLIB_VTECOMPAT([Scope])
+ 
+              AC_CHECK_HEADERS([util.h pty.h libutil.h])
+-             PTY_LIBS="-lutil"])
++             PTY_LIBS=""])
+ 
+     AC_SUBST(PTY_LIBS)
+ 
+--- geany-plugins-2.1.orig/scope/src/conterm.c	2025-06-10 16:19:20.000000000 +0000
++++ geany-plugins-2.1/scope/src/conterm.c	2026-01-07 11:04:11.000000000 +0000
+@@ -42,6 +42,11 @@
+ #elif defined(HAVE_PTY_H)
+ #include <pty.h>
+ #endif
++#if defined(__QNX__)
++#include <unix.h>
++#include <termios.h>
++#include <sys/ioctl.h>
++#endif
+ int grantpt(int fd);
+ int unlockpt(int fd);
+ 

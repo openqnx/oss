@@ -1,0 +1,6 @@
+VERSION=3.6.2
+TARBALL=https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.2/mbedtls-3.6.2.tar.bz2
+SHA256=8b54fb9bcf4d5a7078028e0520acddefb7900b3e66fec7f7175bb5b7d85ccdca
+CMAKE_ARGS_EXTRA=( -DUSE_SHARED_MBEDTLS_LIBRARY=ON -DUSE_STATIC_MBEDTLS_LIBRARY=ON
+                   -DENABLE_TESTING=OFF -DENABLE_PROGRAMS=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

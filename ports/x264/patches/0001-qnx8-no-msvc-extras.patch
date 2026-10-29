@@ -1,0 +1,25 @@
+x264: do not put extras/ on the include path for QNX 8.0.
+
+extras/ holds MSVC-only shims (its inttypes.h is an #error for other
+compilers). Older QNX needed the getopt kept there; QNX 8.0 has a proper
+<inttypes.h>, which the shim shadowed. getopt is used only by the CLI, which
+is not built.
+
+Upstream-Status: QNX-specific
+
+--- a/configure
++++ b/configure
+@@ -746,7 +746,12 @@
+         define HAVE_MALLOC_H
+         libm="-lm"
+         HAVE_GETOPT_LONG=0
+-        CFLAGS="$CFLAGS -I\$(SRCPATH)/extras"
++        # extras/ holds MSVC-only shims -- its inttypes.h starts with
++        # #error "Use this header only with Microsoft Visual C++ compilers!".
++        # Older QNX needed the getopt replacement kept there, but QNX 8.0 has a
++        # proper <inttypes.h>/<stdint.h>, so putting extras on the include path
++        # shadows them and the build fails before it starts. getopt is only used
++        # by the CLI, which this port does not build.
+         ;;
+     *haiku*)
+         SYS="HAIKU"

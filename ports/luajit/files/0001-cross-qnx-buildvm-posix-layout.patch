@@ -1,0 +1,39 @@
+Cross builds for QNX: generate the VM for a POSIX target, not OS_OTHER.
+
+When HOST_SYS != TARGET_SYS, src/Makefile compiles buildvm with a LUAJIT_OS
+matching the target -- but only for Windows, Linux, Darwin and iOS.  Any other
+TARGET_SYS gets LUAJIT_OS_OTHER.  The target's own sources see __QNX__ and
+lj_arch.h maps that to LUAJIT_OS_POSIX.
+
+The two are not layout-compatible.  LJ_HASPROFILE is 1 for POSIX and 0 for
+OTHER, and it adds three fields to the end of jit_State.  jit_State precedes
+the dispatch table inside GG_State, and the assembler VM addresses global state
+at offsets from that table which buildvm computed with the host's layout.  So
+every such access was 16 bytes off.  The result on QNX aarch64 is a crash in
+the very first C call the VM makes -- luaopen_base -> lj_tab_setstr, walking a
+hash chain through a corrupted lua_State -- for any script, with or without
+the JIT.  It builds and links without a warning.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/Makefile b/src/Makefile
+index 0b8c04f..b5a1e77 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -373,12 +373,16 @@ ifneq ($(HOST_SYS),$(TARGET_SYS))
+   else
+   ifeq (iOS,$(TARGET_SYS))
+     HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OSX -DLUAJIT_TARGET_IPHONE=1
++  else
++  ifeq (QNX,$(TARGET_SYS))
++    HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_POSIX
+   else
+     HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OTHER
+   endif
+   endif
+   endif
+   endif
++  endif
+ endif
+ 
+ ifneq (,$(CCDEBUG))

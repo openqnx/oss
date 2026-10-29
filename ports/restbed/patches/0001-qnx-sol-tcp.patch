@@ -1,0 +1,20 @@
+Use IPPROTO_TCP as the TCP socket-option level on QNX.
+
+SOL_TCP is a Linux alias for IPPROTO_TCP; QNX only has the POSIX name.
+
+Upstream-Status: QNX-specific
+
+--- a/source/corvusoft/restbed/detail/socket_impl.cpp
++++ b/source/corvusoft/restbed/detail/socket_impl.cpp
+@@ -3,6 +3,11 @@
+  */
+ 
+ //System Includes
++#if defined(__QNX__) && !defined(SOL_TCP)
++// QNX names the TCP socket-option level only IPPROTO_TCP (SOL_TCP is Linux).
++#include <netinet/in.h>
++#define SOL_TCP IPPROTO_TCP
++#endif
+ #include <future>
+ #include <ciso646>
+ 

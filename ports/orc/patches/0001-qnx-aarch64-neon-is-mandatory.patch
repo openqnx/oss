@@ -1,0 +1,26 @@
+orc: NEON is always present on aarch64 QNX.
+
+QNX has no /proc/cpuinfo or auxv to probe, so orc found no NEON, marked its
+NEON backend unusable and interpreted every program. Advanced SIMD is
+mandatory in ARMv8-A, the reasoning orc already uses for Windows and macOS.
+
+Upstream-Status: Pending
+
+diff --git a/orc/orccpu-arm.c b/orc/orccpu-arm.c
+index 8e65cee..5cd692a 100644
+--- a/orc/orccpu-arm.c
++++ b/orc/orccpu-arm.c
+@@ -125,6 +125,13 @@ orc_cpu_arm_getflags_cpuinfo ()
+   ret = ORC_TARGET_ARM_EDSP | ORC_TARGET_NEON_NEON;
+ #elif defined (__APPLE__) && defined (__arm64__) && TARGET_OS_OSX
+   ret = ORC_TARGET_ARM_EDSP | ORC_TARGET_NEON_NEON;
++#elif (defined (__QNX__) || defined (__QNXNTO__)) && defined (__aarch64__)
++  /* QNX has no /proc/cpuinfo and no ELF auxv to read, so the probe below finds
++     nothing and the NEON backend is marked non-executable -- which leaves orc
++     with no target at all and every program interpreted. Advanced SIMD is
++     architecturally mandatory on ARMv8-A, the same reasoning Windows ARM64 and
++     macOS arm64 use above. */
++  ret = ORC_TARGET_ARM_EDSP | ORC_TARGET_NEON_NEON;
+ #else
+   char *cpuinfo;
+   char *cpuinfo_line;

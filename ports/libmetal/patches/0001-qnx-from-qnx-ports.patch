@@ -1,0 +1,2048 @@
+From 3e2223af62372ff1d6df96797f2af8bcdb48811c Mon Sep 17 00:00:00 2001
+From: Deep Chordia <dchordia@blackberry.com>
+Date: Wed, 23 Jul 2025 17:32:47 +0530
+Subject: [PATCH] Add QNX support
+
+Imported from qnx-ports/libmetal (f8a0e51aee8e...qnx-v2024.10.0); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+Following API additions are made to support libmetal on QNX systems
+
+allocate and free memory
+assert statements
+caching support
+condition variables
+physical devices like static shared memory
+i/o configurations
+interrupt requests
+logs
+mutex
+dynamic shared memory (under /dev/shmem) with precise page-wise controls
+sleep
+time
+system and misc utilities
+
+Signed-off-by: Deep Chordia <dchordia@blackberry.com>
+---
+ lib/CMakeLists.txt                  |   7 +-
+ lib/system/qnx/CMakeLists.txt       |  21 +++
+ lib/system/qnx/alloc.h              |  39 +++++
+ lib/system/qnx/assert.h             |  27 +++
+ lib/system/qnx/cache.h              |  45 +++++
+ lib/system/qnx/condition.c          |  19 +++
+ lib/system/qnx/condition.h          |  59 +++++++
+ lib/system/qnx/device.c             |  29 ++++
+ lib/system/qnx/init.c               |  77 +++++++++
+ lib/system/qnx/io.c                 |  45 +++++
+ lib/system/qnx/io.h                 |  43 +++++
+ lib/system/qnx/irq.c                | 256 ++++++++++++++++++++++++++++
+ lib/system/qnx/irq.h                |  45 +++++
+ lib/system/qnx/log.h                |  27 +++
+ lib/system/qnx/mutex.h              |  74 ++++++++
+ lib/system/qnx/shmem.c              | 103 +++++++++++
+ lib/system/qnx/sleep.h              |  40 +++++
+ lib/system/qnx/sys.h                |  86 ++++++++++
+ lib/system/qnx/time.c               |  30 ++++
+ lib/system/qnx/utilities.c          |  98 +++++++++++
+ test/CMakeLists.txt                 |   6 +-
+ test/system/qnx/CMakeLists.txt      |  13 ++
+ test/system/qnx/alloc.c             |  28 +++
+ test/system/qnx/atomic.c            |  47 +++++
+ test/system/qnx/condition.c         | 101 +++++++++++
+ test/system/qnx/irq.c               |  68 ++++++++
+ test/system/qnx/main.c              |  16 ++
+ test/system/qnx/mutex.c             |  44 +++++
+ test/system/qnx/rpi4/CMakeLists.txt |   1 +
+ test/system/qnx/rpi4/device.c       |  83 +++++++++
+ test/system/qnx/shmem.c             |  58 +++++++
+ test/system/qnx/spinlock.c          |  50 ++++++
+ test/system/qnx/threads.c           |  61 +++++++
+ 33 files changed, 1744 insertions(+), 2 deletions(-)
+ create mode 100644 lib/system/qnx/CMakeLists.txt
+ create mode 100644 lib/system/qnx/alloc.h
+ create mode 100644 lib/system/qnx/assert.h
+ create mode 100644 lib/system/qnx/cache.h
+ create mode 100644 lib/system/qnx/condition.c
+ create mode 100644 lib/system/qnx/condition.h
+ create mode 100644 lib/system/qnx/device.c
+ create mode 100644 lib/system/qnx/init.c
+ create mode 100644 lib/system/qnx/io.c
+ create mode 100644 lib/system/qnx/io.h
+ create mode 100644 lib/system/qnx/irq.c
+ create mode 100644 lib/system/qnx/irq.h
+ create mode 100644 lib/system/qnx/log.h
+ create mode 100644 lib/system/qnx/mutex.h
+ create mode 100644 lib/system/qnx/shmem.c
+ create mode 100644 lib/system/qnx/sleep.h
+ create mode 100644 lib/system/qnx/sys.h
+ create mode 100644 lib/system/qnx/time.c
+ create mode 100644 lib/system/qnx/utilities.c
+ create mode 100644 test/system/qnx/CMakeLists.txt
+ create mode 100644 test/system/qnx/alloc.c
+ create mode 100644 test/system/qnx/atomic.c
+ create mode 100644 test/system/qnx/condition.c
+ create mode 100644 test/system/qnx/irq.c
+ create mode 100644 test/system/qnx/main.c
+ create mode 100644 test/system/qnx/mutex.c
+ create mode 100644 test/system/qnx/rpi4/CMakeLists.txt
+ create mode 100644 test/system/qnx/rpi4/device.c
+ create mode 100644 test/system/qnx/shmem.c
+ create mode 100644 test/system/qnx/spinlock.c
+ create mode 100644 test/system/qnx/threads.c
+
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 8b186dd64..d8121e0aa 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -51,8 +51,13 @@ collector_list (_deps PROJECT_LIB_DEPS)
+ 
+ foreach (f ${_headers})
+   configure_file (${f} include/${PROJECT_NAME}/${f} @ONLY)
+-  install (FILES ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/${f}
++  if (QNX)
++    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/${f}
++           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} RENAME ${PROJECT_NAME}/${f})
++  else (QNX)
++    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/${f}
+            DESTINATION include RENAME ${PROJECT_NAME}/${f})
++  endif (QNX)
+   if (${f} MATCHES "^[^/]*\\.h")
+     collect (PROJECT_HDR_TESTS "metal/${f}")
+   endif (${f} MATCHES "^[^/]*\\.h")
+diff --git a/lib/system/qnx/CMakeLists.txt b/lib/system/qnx/CMakeLists.txt
+new file mode 100644
+index 000000000..805298b45
+--- /dev/null
++++ b/lib/system/qnx/CMakeLists.txt
+@@ -0,0 +1,21 @@
++collect (PROJECT_LIB_HEADERS alloc.h)
++collect (PROJECT_LIB_HEADERS assert.h)
++collect (PROJECT_LIB_HEADERS cache.h)
++collect (PROJECT_LIB_HEADERS condition.h)
++collect (PROJECT_LIB_HEADERS io.h)
++collect (PROJECT_LIB_HEADERS irq.h)
++collect (PROJECT_LIB_HEADERS log.h)
++collect (PROJECT_LIB_HEADERS mutex.h)
++collect (PROJECT_LIB_HEADERS sleep.h)
++collect (PROJECT_LIB_HEADERS sys.h)
++
++collect (PROJECT_LIB_SOURCES condition.c)
++collect (PROJECT_LIB_SOURCES device.c)
++collect (PROJECT_LIB_SOURCES init.c)
++collect (PROJECT_LIB_SOURCES io.c)
++collect (PROJECT_LIB_SOURCES irq.c)
++collect (PROJECT_LIB_SOURCES shmem.c)
++collect (PROJECT_LIB_SOURCES time.c)
++collect (PROJECT_LIB_SOURCES utilities.c)
++
++collect (PROJECT_LIB_DEPS cache)
+diff --git a/lib/system/qnx/alloc.h b/lib/system/qnx/alloc.h
+new file mode 100644
+index 000000000..442db32f6
+--- /dev/null
++++ b/lib/system/qnx/alloc.h
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/alloc.h
++ * @brief	QNX libmetal memory allocation definitions.
++ */
++
++#ifndef __METAL_ALLOC__H__
++#error "Include metal/alloc.h instead of metal/qnx/alloc.h"
++#endif
++
++#ifndef __METAL_QNX_ALLOC__H__
++#define __METAL_QNX_ALLOC__H__
++
++#include <stdlib.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++static inline void *__metal_allocate_memory(unsigned int size)
++{
++	return malloc(size);
++}
++
++static inline void __metal_free_memory(void *ptr)
++{
++	free(ptr);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_ALLOC__H__ */
+diff --git a/lib/system/qnx/assert.h b/lib/system/qnx/assert.h
+new file mode 100644
+index 000000000..1c728c68c
+--- /dev/null
++++ b/lib/system/qnx/assert.h
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/assert.h
++ * @brief	QNX libmetal assertion support.
++ */
++
++#ifndef __METAL_ASSERT__H__
++#error "Include metal/assert.h instead of metal/qnx/assert.h"
++#endif
++
++#ifndef __METAL_QNX_ASSERT__H__
++#define __METAL_QNX_ASSERT__H__
++
++#include <assert.h>
++
++/**
++ * @brief Assertion macro for QNX-based applications.
++ * @param cond Condition to evaluate.
++ */
++#define metal_sys_assert(cond) assert(cond)
++
++#endif /* __METAL_QNX_ASSERT__H__ */
+diff --git a/lib/system/qnx/cache.h b/lib/system/qnx/cache.h
+new file mode 100644
+index 000000000..3f2fd099e
+--- /dev/null
++++ b/lib/system/qnx/cache.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/cache.h
++ * @brief	QNX cache operation primitives for libmetal.
++ */
++
++#ifndef __METAL_CACHE__H__
++#error "Include metal/cache.h instead of metal/qnx/cache.h"
++#endif
++
++#ifndef __METAL_QNX_CACHE__H__
++#define __METAL_QNX_CACHE__H__
++
++#include <stdlib.h>
++#include <sys/mman.h>
++#include <sys/cache.h>
++#include <metal/assert.h>
++#include <metal/sys.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++extern struct cache_ctrl __qnx_cache_control;
++
++static inline void __metal_cache_flush(void *addr, unsigned int len)
++{
++	CACHE_FLUSH(&__qnx_cache_control, addr, (uint64_t)__qnx_get_physical_address(addr, len), len);
++}
++
++static inline void __metal_cache_invalidate(void *addr, unsigned int len)
++{
++	CACHE_INVAL(&__qnx_cache_control, addr, (uint64_t)__qnx_get_physical_address(addr, len), len);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_CACHE__H__ */
+diff --git a/lib/system/qnx/condition.c b/lib/system/qnx/condition.c
+new file mode 100644
+index 000000000..c6eca5f4b
+--- /dev/null
++++ b/lib/system/qnx/condition.c
+@@ -0,0 +1,19 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/condition.c
++ * @brief	QNX libmetal condition variable handling.
++ */
++
++#include <metal/condition.h>
++
++int metal_condition_wait(struct metal_condition *cv, metal_mutex_t *m)
++{
++	int ret = pthread_cond_wait(&cv->cond, m);
++
++	return (ret == EOK) ? 0 : -ret;
++}
+diff --git a/lib/system/qnx/condition.h b/lib/system/qnx/condition.h
+new file mode 100644
+index 000000000..35964bb61
+--- /dev/null
++++ b/lib/system/qnx/condition.h
+@@ -0,0 +1,59 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/condition.h
++ * @brief	QNX condition variable primitives for libmetal.
++ */
++
++#ifndef __METAL_CONDITION__H__
++#error "Include metal/condition.h instead of metal/qnx/condition.h"
++#endif
++
++#ifndef __METAL_QNX_CONDITION__H__
++#define __METAL_QNX_CONDITION__H__
++
++#include <pthread.h>
++#include <metal/errno.h>
++#include <metal/assert.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++struct metal_condition {
++	pthread_cond_t cond;
++};
++
++/*
++ * METAL_CONDITION_INIT - static metal condition variable initialization
++ */
++#define METAL_CONDITION_INIT { PTHREAD_COND_INITIALIZER }
++
++static inline void metal_condition_init(struct metal_condition *cv)
++{
++	metal_assert(pthread_cond_init(&cv->cond, NULL) == EOK);
++}
++
++static inline int metal_condition_signal(struct metal_condition *cv)
++{
++	int ret = pthread_cond_signal(&cv->cond);
++
++	return (ret == EOK) ? 0 : -ret;
++}
++
++static inline int metal_condition_broadcast(struct metal_condition *cv)
++{
++	int ret = pthread_cond_broadcast(&cv->cond);
++
++	return (ret == EOK) ? 0 : -ret;
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_CONDITION__H__ */
+diff --git a/lib/system/qnx/device.c b/lib/system/qnx/device.c
+new file mode 100644
+index 000000000..dd60b3934
+--- /dev/null
++++ b/lib/system/qnx/device.c
+@@ -0,0 +1,29 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/device.c
++ * @brief	QNX libmetal device operations.
++ */
++
++#include <metal/device.h>
++
++int metal_generic_dev_sys_open(struct metal_device *dev)
++{
++	struct metal_io_region *io;
++	unsigned int i, ret;
++
++	/* map I/O memory regions */
++	for (i = 0; i < dev->num_regions; i++) {
++		io = &dev->regions[i];
++		ret = metal_sys_io_mem_map(io);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
++}
++
+diff --git a/lib/system/qnx/init.c b/lib/system/qnx/init.c
+new file mode 100644
+index 000000000..c370e3c5a
+--- /dev/null
++++ b/lib/system/qnx/init.c
+@@ -0,0 +1,77 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/init.c
++ * @brief	QNX libmetal initialization.
++ */
++
++#include <sys/types.h>
++#include <metal/sys.h>
++#include <metal/device.h>
++#include <metal/irq.h>
++#include <metal/cache.h>
++#include <metal/utilities.h>
++
++struct metal_state _metal;
++struct cache_ctrl __qnx_cache_control;
++static int GENERIC_BUS_REGISTER;
++
++static void metal_init_page_sizes(void)
++{
++	_metal.page_size = sysconf(_SC_PAGESIZE);
++	_metal.page_shift = metal_log2(_metal.page_size);
++}
++
++int metal_sys_init(const struct metal_init_params *params)
++{
++	int ret;
++
++	/* Initialize page size */
++	metal_init_page_sizes();
++
++	/* Initialize IRQ */
++	ret = metal_qnx_irq_init();
++	if (ret != 0) {
++		metal_log(METAL_LOG_ERROR, "irq init failed - %s\n",
++			  strerror(-ret));
++		return ret;
++	}
++
++	/* Initialize cache */
++	memset(&__qnx_cache_control, 0, sizeof(__qnx_cache_control));
++	__qnx_cache_control.fd = NOFD;
++
++	ret = cache_init(0, &__qnx_cache_control, NULL);
++	if (ret == -1) {
++		metal_log(METAL_LOG_ERROR, "cache init failed - %s\n",
++			  strerror(errno));
++		return -errno;
++	}
++
++	/* Initialize generic bus */
++	ret = metal_bus_register(&metal_generic_bus);
++	if (ret != 0) {
++		metal_log(METAL_LOG_DEBUG, "generic bus init failed - %s\n",
++			  strerror(-ret));
++	} else {
++		GENERIC_BUS_REGISTER = 1;
++	}
++
++	metal_unused(params);
++
++	return 0;
++}
++
++void metal_sys_finish(void)
++{
++	cache_fini(&__qnx_cache_control);
++	metal_qnx_irq_shutdown();
++	if (GENERIC_BUS_REGISTER) {
++		metal_bus_unregister(&metal_generic_bus);
++	}
++}
++
+diff --git a/lib/system/qnx/io.c b/lib/system/qnx/io.c
+new file mode 100644
+index 000000000..10c00c6db
+--- /dev/null
++++ b/lib/system/qnx/io.c
+@@ -0,0 +1,45 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/io.c
++ * @brief	QNX libmetal io operations.
++ */
++
++#include <metal/io.h>
++#include <metal/sys.h>
++
++int metal_sys_io_mem_map(struct metal_io_region *io)
++{
++	if (io->virt)
++		return 0;
++
++	void *addr;
++	int flags, prot;
++
++	flags = (io->mem_flags & ~PROT_MASK) | MAP_PHYS;
++	prot = (io->mem_flags & PROT_MASK) | PROT_READ | PROT_WRITE;
++	addr = mmap64(NULL, io->size, prot, flags, NOFD, *((off64_t *)io->physmap));
++	if (addr == MAP_FAILED)
++		return -errno;
++
++	io->virt = addr;
++	return 0;
++}
++
++int metal_sys_io_mem_unmap(struct metal_io_region *io)
++{
++	int ret;
++
++	if (!io->virt)
++		return 0;
++
++	ret = munmap(io->virt, io->size);
++	if (ret != 0)
++		return -errno;
++
++	return 0;
++}
+diff --git a/lib/system/qnx/io.h b/lib/system/qnx/io.h
+new file mode 100644
+index 000000000..3884b5914
+--- /dev/null
++++ b/lib/system/qnx/io.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/io.h
++ * @brief	QNX specific io definitions.
++ */
++
++#ifndef __METAL_IO__H__
++#error "Include metal/io.h instead of metal/qnx/io.h"
++#endif
++
++#ifndef __METAL_QNX_IO__H__
++#define __METAL_QNX_IO__H__
++
++#include <stdlib.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#ifdef METAL_INTERNAL
++
++/**
++ * @brief memory mapping for an I/O region
++ */
++int metal_sys_io_mem_map(struct metal_io_region *io);
++
++/**
++ * @brief unmapping for an I/O region
++ */
++int metal_sys_io_mem_unmap(struct metal_io_region *io);
++
++#endif
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_IO__H__ */
+diff --git a/lib/system/qnx/irq.c b/lib/system/qnx/irq.c
+new file mode 100644
+index 000000000..cec641589
+--- /dev/null
++++ b/lib/system/qnx/irq.c
+@@ -0,0 +1,256 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/**
++ * @file	qnx/irq.c
++ * @brief	QNX libmetal irq operations.
++ */
++
++#include <pthread.h>
++#include <sched.h>
++#include <metal/device.h>
++#include <metal/irq.h>
++#include <metal/irq_controller.h>
++#include <metal/sys.h>
++#include <metal/mutex.h>
++#include <metal/list.h>
++#include <metal/utilities.h>
++#include <metal/alloc.h>
++#include <sys/neutrino.h>
++#include <sys/time.h>
++#include <sched.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <string.h>
++#include <poll.h>
++#include <unistd.h>
++
++#define MAX_IRQS	1024  /* maximum number of irqs */
++
++#define INTR_PULSE_CODE _PULSE_CODE_MINAVAIL
++
++#define INTR_PRIORITY SIGEV_PULSE_PRIO_INHERIT
++
++static int chid; /* QNX interrupt handling thread channel id */
++
++static int self_coid; /* QNX interrupt handling thread connectionn id */
++
++static bool irq_handling_stop; /* stop interrupts handling */
++
++static pthread_t irq_pthread; /* irq handling thread id */
++
++static struct metal_irq irqs[MAX_IRQS]; /* QNX IRQs array */
++
++static int irqs_ids[MAX_IRQS]; /* QNX registered IRQs IDs array */
++
++/* Static functions */
++static void metal_qnx_irq_set_enable(struct metal_irq_controller *irq_cntr,
++					int irq, unsigned int state);
++
++/* QNX IRQ controller */
++static METAL_IRQ_CONTROLLER_DECLARE(qnx_irq_cntr,
++						0, MAX_IRQS,
++						NULL,
++						metal_qnx_irq_set_enable, NULL,
++						irqs);
++
++unsigned int metal_irq_save_disable(void)
++{
++	InterruptDisable();
++	return 0;
++}
++
++void metal_irq_restore_enable(unsigned int flags)
++{
++	InterruptEnable();
++	metal_unused(flags);
++}
++
++static void metal_qnx_irq_set_enable(struct metal_irq_controller *irq_cntr,
++					int irq, unsigned int state)
++{
++	if (irq < irq_cntr->irq_base ||
++	  irq >= irq_cntr->irq_base + irq_cntr->irq_num) {
++		metal_log(METAL_LOG_ERROR, "%s: invalid irq %d\n",
++			  __func__, irq);
++		return;
++	}
++
++	if (state == METAL_IRQ_ENABLE) {
++		struct sigevent event;
++
++		SIGEV_PULSE_INIT(&event, self_coid, INTR_PRIORITY, INTR_PULSE_CODE, irq);
++		irqs_ids[irq] = InterruptAttachEvent(irq, &event, _NTO_INTR_FLAGS_NO_UNMASK);
++		if (irqs_ids[irq] == -1) {
++			metal_log(METAL_LOG_ERROR,
++				  "%s: unable to enable irq %d\n", __func__, irq);
++		}
++	} else if (state == METAL_IRQ_DISABLE) {
++		if (irqs_ids[irq] == -1) {
++			metal_log(METAL_LOG_ERROR,
++				  "%s: request to disable irq %d which is not enabled\n",
++				  __func__, irq);
++		} else if (InterruptDetach(irqs_ids[irq]) == -1) {
++			metal_log(METAL_LOG_ERROR,
++				  "%s: unable to disable irq %d\n",
++				  __func__, irq);
++		}
++	} else {
++		metal_log(METAL_LOG_ERROR,
++			  "%s: unknown requested interrupt state %d for irq %d\n",
++			  __func__, state, irq);
++	}
++}
++
++/**
++ * @brief       IRQ handler
++ * @param[in]   args  not used. required for pthread.
++ */
++static void *metal_qnx_irq_handling(void *args)
++{
++	struct _pulse msg;
++
++	metal_unused(args);
++
++	while (1) {
++		/* block here waiting for interrupt pulse */
++		int rcvid = MsgReceivePulse(chid, &msg, sizeof(msg), NULL);
++
++		if (rcvid == -1) {
++			if (!irq_handling_stop) {
++				metal_log(METAL_LOG_ERROR,
++					  "MsgReceivePulse failed: %s\n", strerror(errno));
++			}
++			break;
++		}
++
++		if (msg.code == _PULSE_CODE_DISCONNECT) {
++			ConnectDetach(msg.scoid);
++			continue;
++		}
++
++		if (msg.code != INTR_PULSE_CODE) {
++			metal_log(METAL_LOG_WARNING,
++				  "Unhandled pulse code: %d\n", msg.code);
++			continue;
++		}
++
++		int irq = msg.value.sival_int;
++		int irq_id = irqs_ids[irq];
++
++		if (irq_id != -1) {
++			metal_log(METAL_LOG_DEBUG,
++				  "Received interrupt on vector %d (0x%.4hX)\n",
++				  irq, (uint16_t)irq);
++
++			/* call handler for received irq if enabled */
++			if (metal_irq_handle(&irqs[irq], irq) != METAL_IRQ_HANDLED) {
++				metal_log(METAL_LOG_WARNING,
++					  "IRQ %d (0x%.4hX) unhandled\n",
++					  irq, (uint16_t)irq);
++			}
++
++			/* enable receiving of new interrupts */
++			int ret = __QNX__ < 800 ? InterruptUnmask(irq, irq_id) : InterruptUnmask(0, irq_id);
++
++			if (ret == -1) {
++				metal_log(METAL_LOG_ERROR,
++					  "Unable to unmask the interrupt %d (0x%.4hX)\n",
++					  irq, (uint16_t)irq);
++			}
++		} else {
++			metal_log(METAL_LOG_ERROR,
++				  "Received interrupt on unregistered vector %d (0x%.4hX)\n",
++				  irq, (uint16_t)irq);
++		}
++	}
++
++	return NULL;
++}
++
++/**
++ * @brief irq handling initialization
++ * @return 0 on success, non-zero on failure
++ */
++int metal_qnx_irq_init(void)
++{
++	int ret;
++
++	memset(&irqs, 0, sizeof(irqs));
++
++	for (int i = 0; i < MAX_IRQS; i++) {
++		irqs_ids[i] = -1;
++	}
++
++	chid = ChannelCreate(_NTO_CHF_DISCONNECT | _NTO_CHF_UNBLOCK);
++	if (chid == -1) {
++		metal_log(METAL_LOG_ERROR,
++			  "Unable to create channel: chid %d: %s\n",
++			  chid, strerror(errno));
++		return -EAGAIN;
++	}
++
++	self_coid = ConnectAttach(0, 0, chid, _NTO_SIDE_CHANNEL, _NTO_COF_CLOEXEC);
++	if (self_coid == -1) {
++		metal_log(METAL_LOG_ERROR,
++			  "Unable to attach connection: coid %d: %s\n",
++			  self_coid, strerror(errno));
++		return -EAGAIN;
++	}
++
++	irq_handling_stop = false;
++	ret = metal_irq_register_controller(&qnx_irq_cntr);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR,
++			  "QNX IRQ controller failed to register.\n");
++		return -EINVAL;
++	}
++
++	ret = pthread_create(&irq_pthread, NULL, metal_qnx_irq_handling, NULL);
++	if (ret != EOK) {
++		metal_log(METAL_LOG_ERROR, "Failed to create IRQ thread: %d.\n",
++			  ret);
++		return -EAGAIN;
++	}
++
++	return 0;
++}
++
++/**
++ * @brief irq handling shutdown
++ */
++void metal_qnx_irq_shutdown(void)
++{
++	int ret;
++
++	metal_log(METAL_LOG_DEBUG, "%s\n", __func__);
++
++	irq_handling_stop = true;
++
++	for (int irq = 0; irq < MAX_IRQS; irq++) {
++		if (irqs_ids[irq] != -1) {
++			ret = InterruptDetach(irqs_ids[irq]);
++			if (ret == -1) {
++				metal_log(METAL_LOG_ERROR,
++					  "Unable to detach connection: coid %d: %s\n",
++					  self_coid, strerror(errno));
++			}
++		}
++	}
++
++	ret = ChannelDestroy(chid);
++	if (ret == -1) {
++		metal_log(METAL_LOG_ERROR,
++			  "Failed to destroy channel: chid %d: %s\n",
++			  chid, strerror(errno));
++	}
++
++	ret = pthread_join(irq_pthread, NULL);
++	if (ret != EOK) {
++		metal_log(METAL_LOG_ERROR,
++			  "Failed to join IRQ thread: %d.\n", ret);
++	}
++}
+diff --git a/lib/system/qnx/irq.h b/lib/system/qnx/irq.h
+new file mode 100644
+index 000000000..e920a9876
+--- /dev/null
++++ b/lib/system/qnx/irq.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/irq.h
++ * @brief	QNX libmetal irq definitions.
++ */
++
++#ifndef __METAL_IRQ__H__
++#error "Include metal/irq.h instead of metal/qnx/irq.h"
++#endif
++
++#ifndef __METAL_QNX_IRQ__H__
++#ifdef METAL_INTERNAL
++
++#include <metal/device.h>
++
++#endif /* METAL_INTERNAL */
++#define __METAL_QNX_IRQ__H__
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#ifdef METAL_INTERNAL
++/**
++ * @brief irq initialization
++ */
++int metal_qnx_irq_init(void);
++
++/**
++ * @brief irq shutdown
++ */
++void metal_qnx_irq_shutdown(void);
++
++#endif
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_IRQ__H__ */
+diff --git a/lib/system/qnx/log.h b/lib/system/qnx/log.h
+new file mode 100644
+index 000000000..4ae4a736b
+--- /dev/null
++++ b/lib/system/qnx/log.h
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/log.h
++ * @brief	QNX libmetal log handler definition.
++ */
++
++#ifndef __METAL_METAL_LOG__H__
++#error "Include metal/log.h instead of metal/qnx/log.h"
++#endif
++
++#ifndef __METAL_QNX_LOG__H__
++#define __METAL_QNX_LOG__H__
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_LOG__H__ */
+diff --git a/lib/system/qnx/mutex.h b/lib/system/qnx/mutex.h
+new file mode 100644
+index 000000000..df285116a
+--- /dev/null
++++ b/lib/system/qnx/mutex.h
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/mutex.h
++ * @brief	QNX mutex primitives for libmetal.
++ */
++
++#ifndef __METAL_MUTEX__H__
++#error "Include metal/mutex.h instead of metal/qnx/mutex.h"
++#endif
++
++#ifndef __METAL_QNX_MUTEX__H__
++#define __METAL_QNX_MUTEX__H__
++
++#include <pthread.h>
++#include <errno.h>
++#include <metal/assert.h>
++#include <metal/errno.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++typedef pthread_mutex_t metal_mutex_t;
++
++/*
++ * METAL_MUTEX_DEFINE - used for defining and initializing a global or
++ * static singleton mutex
++ */
++#define METAL_MUTEX_DEFINE(m) metal_mutex_t m = PTHREAD_MUTEX_INITIALIZER
++
++static inline void __metal_mutex_init(metal_mutex_t *mutex)
++{
++	metal_assert(pthread_mutex_init(mutex, NULL) == EOK);
++}
++
++static inline void __metal_mutex_deinit(metal_mutex_t *mutex)
++{
++	metal_assert(pthread_mutex_destroy(mutex) == EOK);
++}
++
++static inline int __metal_mutex_try_acquire(metal_mutex_t *mutex)
++{
++	int ret = pthread_mutex_trylock(mutex);
++
++	return (ret != EOK) ? 0 : 1;
++}
++
++static inline void __metal_mutex_acquire(metal_mutex_t *mutex)
++{
++	metal_assert(pthread_mutex_lock(mutex) == EOK);
++}
++
++static inline void __metal_mutex_release(metal_mutex_t *mutex)
++{
++	metal_assert(pthread_mutex_unlock(mutex) == EOK);
++}
++
++static inline int __metal_mutex_is_acquired(metal_mutex_t *mutex)
++{
++	int ret = pthread_mutex_trylock(mutex);
++
++	return (ret == EBUSY) ? 1 : 0;
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_MUTEX__H__ */
+diff --git a/lib/system/qnx/shmem.c b/lib/system/qnx/shmem.c
+new file mode 100644
+index 000000000..92fb33662
+--- /dev/null
++++ b/lib/system/qnx/shmem.c
+@@ -0,0 +1,103 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/shmem.c
++ * @brief	QNX libmetal shared memory handling.
++ */
++
++#include <metal/shmem.h>
++#include <metal/utilities.h>
++
++static void metal_shmem_io_close(struct metal_io_region *io)
++{
++	metal_unmap(io->virt, io->size);
++	free((void *)io->physmap);
++}
++
++static const struct metal_io_ops metal_shmem_io_ops = {
++	NULL, NULL, NULL, NULL, NULL, metal_shmem_io_close, NULL, NULL
++};
++
++static int metal_shmem_try_map(int fd, size_t size, struct metal_io_region **result)
++{
++	size_t pages, page, phys_size;
++	struct metal_io_region *io;
++	metal_phys_addr_t *phys;
++	void *mem;
++	uint32_t *virt;
++	int ret;
++
++	size = metal_align_up(size, _metal.page_size);
++	pages = size / _metal.page_size;
++
++	ret = metal_map(fd, 0, size, 1, 0, &mem);
++	if (ret) {
++		metal_log(METAL_LOG_WARNING,
++			  "failed to mmap shmem %ld - %s\n",
++			  size, strerror(-ret));
++		return ret;
++	}
++
++	ret = mlock(mem, size);
++	if (ret == -1) {
++		metal_log(METAL_LOG_WARNING, "failed to mlock shmem - %s\n",
++				strerror(errno));
++	}
++
++	phys_size = sizeof(*phys) * pages;
++	phys = malloc(phys_size);
++	if (!phys) {
++		metal_unmap(mem, size);
++		return -ENOMEM;
++	}
++	io = malloc(sizeof(*io));
++	if (!io) {
++		free(phys);
++		metal_unmap(mem, size);
++		return -ENOMEM;
++	}
++
++	for (virt = mem, page = 0; page < pages; ++page) {
++		size_t offset = page * _metal.page_size;
++
++		ret = mem_offset64(virt + offset, NOFD, size, (off64_t *)&phys[page], NULL);
++		if (ret) {
++			phys[page] = METAL_BAD_OFFSET;
++		}
++	}
++	metal_io_init(io, mem, phys, size, _metal.page_shift, 0,
++				&metal_shmem_io_ops);
++	*result = io;
++
++	return 0;
++}
++
++int metal_shmem_open(const char *name, size_t size,
++		     struct metal_io_region **result)
++{
++	int ret, fd;
++
++	ret = metal_shmem_open_generic(name, size, result);
++	if (ret != -ENOENT)
++		return ret;
++
++	ret = metal_open(name, 1);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR, "failed to open %s\n shmem", name);
++		return ret;
++	}
++	fd = ret;
++
++	ret = metal_shmem_try_map(fd, size, result);
++	if (ret) {
++		metal_log(METAL_LOG_ERROR, "failed to map %s shmem\n", name);
++		return ret;
++	}
++
++	close(fd);
++	return 0;
++}
+diff --git a/lib/system/qnx/sleep.h b/lib/system/qnx/sleep.h
+new file mode 100644
+index 000000000..57ac6bff7
+--- /dev/null
++++ b/lib/system/qnx/sleep.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/sleep.h
++ * @brief	QNX sleep primitives for libmetal.
++ */
++
++#ifndef __METAL_SLEEP__H__
++#error "Include metal/sleep.h instead of metal/qnx/sleep.h"
++#endif
++
++#ifndef __METAL_QNX_SLEEP__H__
++#define __METAL_QNX_SLEEP__H__
++
++#include <time.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#define NS_PER_US (1000)
++
++static inline int __metal_sleep_usec(unsigned int usec)
++{
++	struct timespec ts;
++
++	ts.tv_sec = 0;
++	ts.tv_nsec = usec * NS_PER_US;
++	return nanosleep(&ts, NULL);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_SLEEP__H__ */
+diff --git a/lib/system/qnx/sys.h b/lib/system/qnx/sys.h
+new file mode 100644
+index 000000000..39d542eb8
+--- /dev/null
++++ b/lib/system/qnx/sys.h
+@@ -0,0 +1,86 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/sys.h
++ * @brief	QNX system primitives for libmetal.
++ */
++
++#ifndef __METAL_SYS__H__
++#error "Include metal/sys.h instead of metal/qnx/sys.h"
++#endif
++
++#ifndef __METAL_QNX_SYS__H__
++#define __METAL_QNX_SYS__H__
++
++#include <fcntl.h>
++#include <libgen.h>
++#include <limits.h>
++#include <metal/cpu.h>
++#include <metal/errno.h>
++#include <pthread.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdarg.h>
++#include <syslog.h>
++#include <sys/mman.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#define METAL_INVALID_VADDR     NULL
++
++#define metal_yield() metal_cpu_yield()
++
++#define __qnx_get_physical_address(addr, len) ({ \
++	off64_t qnx_offset = 0; \
++	metal_assert(mem_offset64(addr, NOFD, len, &qnx_offset, NULL) == 0); \
++	(qnx_offset); \
++})
++
++struct metal_device;
++
++/** Structure of qnx specific libmetal runtime state. */
++struct metal_state {
++
++	/** Common (system independent) data. */
++	struct metal_common_state common;
++
++	/** system page size. */
++	unsigned long		page_size;
++
++	/** system page shift. */
++	unsigned long		page_shift;
++};
++
++#ifdef METAL_INTERNAL
++extern int metal_open(const char *path, int shm);
++extern int metal_map(int fd, off_t offset, size_t size, int expand,
++		     int flags, void **result);
++extern int metal_unmap(void *mem, size_t size);
++
++/**
++ * @brief restore interrupts to state before disable_global_interrupt()
++ */
++void sys_irq_restore_enable(unsigned int flags);
++
++/**
++ * @brief disable all interrupts
++ */
++unsigned int sys_irq_save_disable(void);
++
++#endif /* METAL_INTERNAL */
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* __METAL_QNX_SYS__H__ */
+diff --git a/lib/system/qnx/time.c b/lib/system/qnx/time.c
+new file mode 100644
+index 000000000..fb8e6b047
+--- /dev/null
++++ b/lib/system/qnx/time.c
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	qnx/time.c
++ * @brief	QNX libmetal time handling.
++ */
++
++#include <time.h>
++#include <metal/time.h>
++
++#define NS_PER_S        (1000 * 1000 * 1000)
++
++unsigned long long metal_get_timestamp(void)
++{
++	unsigned long long time = 0;
++
++	struct timespec ts;
++	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
++		metal_log(METAL_LOG_ERROR, "%s failed!\n", __func__);
++		return time;
++	}
++	time = ts.tv_sec * NS_PER_S;
++	time += ts.tv_nsec;
++	return 0;
++}
++
+diff --git a/lib/system/qnx/utilities.c b/lib/system/qnx/utilities.c
+new file mode 100644
+index 000000000..aaff60641
+--- /dev/null
++++ b/lib/system/qnx/utilities.c
+@@ -0,0 +1,98 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++/*
++ * @file	utilities.c
++ * @brief	QNX libmetal utility functions.
++ */
++
++#include <metal/utilities.h>
++#include <metal/sys.h>
++#include <string.h>
++
++/**
++ * @brief	Open (or create) a file.
++ *
++ * This function opens or creates a file with read/write permissions and the
++ * O_CLOEXEC flag set.
++ *
++ * @param[in]	path	File path to open.
++ * @param[in]	shm	Open shared memory (via shm_open) if non-zero.
++ * @return	File descriptor.
++ */
++int metal_open(const char *path, int shm)
++{
++	const int flags = O_RDWR | O_CREAT | O_CLOEXEC;
++	const int mode = S_IRUSR | S_IWUSR;
++	int fd;
++
++	if (!path || !strlen(path))
++		return -EINVAL;
++
++	fd = shm ? shm_open(path, flags, mode) : open(path, flags, mode);
++	return fd == -1 ? -errno : fd;
++}
++
++/**
++ * @brief	Map a segment of a file/device.
++ *
++ * This function maps a segment of a file or device into the process address
++ * space, after optionally expanding the file if necessary.  If required, the
++ * file is expanded to hold the requested map area.  This is done under and
++ * advisory lock, and therefore the called must not have an advisory lock on
++ * the file being mmapped.
++ *
++ * @param[in]	fd	File descriptor to map.
++ * @param[in]	offset	Offset in file to map.
++ * @param[in]	size	Size of region to map.
++ * @param[in]	expand	Allow file expansion via ftruncate if non-zero.
++ * @param[in]	flags	Flags for mmap(), MAP_SHARED included implicitly.
++ * @param[out]	result	Returned pointer to new memory map.
++ * @return	0 on success, or -errno on error.
++ */
++int metal_map(int fd, off_t offset, size_t size, int expand, int flags,
++				void **result)
++{
++	int prot = PROT_READ | PROT_WRITE, error = 0;
++	void *mem;
++
++	flags |= MAP_SHARED;
++
++	if (fd < 0) {
++		fd = NOFD;
++		flags = MAP_PRIVATE | MAP_ANON;
++	} else if (expand) {
++		off_t reqsize = offset + size;
++		struct stat stat;
++
++		if (!error)
++			error = fstat(fd, &stat);
++		if (!error && stat.st_size < reqsize)
++			error = ftruncate(fd, reqsize);
++		if (error)
++			return -errno;
++	}
++
++	mem = mmap(NULL, size, prot, flags, fd, offset);
++	if (mem == MAP_FAILED)
++		return -errno;
++	*result = mem;
++	return 0;
++}
++
++/**
++ * @brief	Unmap a segment of the process address space.
++ *
++ * This function unmaps a segment of the process address space.
++ *
++ * @param[in]	mem	Segment to unmap.
++ * @param[in]	size	Size of region to unmap.
++ * @return	0 on success, or -errno on error.
++ */
++int metal_unmap(void *mem, size_t size)
++{
++	return munmap(mem, size) != 0 ? -errno : 0;
++}
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 127df2caa..ef36af8cd 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -39,7 +39,11 @@ else (WITH_ZEPHYR)
+     set (_lib ${PROJECT_NAME}-shared)
+     add_executable (test-${_lib} ${_srcs})
+     target_link_libraries (test-${_lib} ${_deps} ${_lib})
+-    install (TARGETS test-${_lib} RUNTIME DESTINATION bin)
++    if (QNX)
++      install (TARGETS test-${_lib} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++    else (QNX)
++      install (TARGETS test-${_lib} RUNTIME DESTINATION bin)
++    endif (QNX)
+     target_compile_options (test-${_lib} PUBLIC ${_ec_flgs})
+     add_dependencies (test-${_lib}  ${PROJECT_NAME}-shared)
+     if (WITH_TESTS_EXEC)
+diff --git a/test/system/qnx/CMakeLists.txt b/test/system/qnx/CMakeLists.txt
+new file mode 100644
+index 000000000..0e2f927cf
+--- /dev/null
++++ b/test/system/qnx/CMakeLists.txt
+@@ -0,0 +1,13 @@
++collect (PROJECT_LIB_TESTS main.c)
++collect (PROJECT_LIB_TESTS atomic.c)
++collect (PROJECT_LIB_TESTS mutex.c)
++collect (PROJECT_LIB_TESTS shmem.c)
++collect (PROJECT_LIB_TESTS condition.c)
++collect (PROJECT_LIB_TESTS threads.c)
++collect (PROJECT_LIB_TESTS spinlock.c)
++collect (PROJECT_LIB_TESTS alloc.c)
++collect (PROJECT_LIB_TESTS irq.c)
++
++if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_MACHINE})
++	add_subdirectory(${PROJECT_MACHINE})
++endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_MACHINE})
+diff --git a/test/system/qnx/alloc.c b/test/system/qnx/alloc.c
+new file mode 100644
+index 000000000..d347eaf79
+--- /dev/null
++++ b/test/system/qnx/alloc.c
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <stdlib.h>
++
++#include "metal-test.h"
++#include <metal/alloc.h>
++#include <metal/log.h>
++
++static int alloc(void)
++{
++	void *ptr;
++
++	ptr = metal_allocate_memory(400);
++	if (!ptr) {
++		metal_log(METAL_LOG_DEBUG, "failed to allocate memory\n");
++		return -errno;
++	}
++
++	metal_free_memory(ptr);
++
++	return 0;
++}
++
++METAL_ADD_TEST(alloc);
+diff --git a/test/system/qnx/atomic.c b/test/system/qnx/atomic.c
+new file mode 100644
+index 000000000..cfbee58c5
+--- /dev/null
++++ b/test/system/qnx/atomic.c
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <stdlib.h>
++#include <pthread.h>
++
++#include "metal-test.h"
++#include <metal/atomic.h>
++#include <metal/log.h>
++
++static const int atomic_test_count = 1000;
++
++static void *atomic_thread(void *arg)
++{
++	atomic_int *c = arg;
++	int i;
++
++	for (i = 0; i < atomic_test_count; ++i)
++		atomic_fetch_add(c, 1);
++
++	return NULL;
++}
++
++static int atomic(void)
++{
++	const int threads = 10;
++	atomic_int counter = ATOMIC_VAR_INIT(0);
++	int value, error;
++
++	error = metal_run(threads, atomic_thread, &counter);
++	if (!error) {
++		value = atomic_load(&counter);
++		value -= atomic_test_count * threads;
++		if (value) {
++			metal_log(METAL_LOG_DEBUG, "counter mismatch, delta = %d\n",
++				value);
++			error = -EINVAL;
++		}
++	}
++
++	return error;
++}
++
++METAL_ADD_TEST(atomic);
+diff --git a/test/system/qnx/condition.c b/test/system/qnx/condition.c
+new file mode 100644
+index 000000000..81a087a6a
+--- /dev/null
++++ b/test/system/qnx/condition.c
+@@ -0,0 +1,101 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <pthread.h>
++
++#include "metal-test.h"
++#include <metal/log.h>
++#include <metal/sys.h>
++#include <metal/mutex.h>
++#include <metal/condition.h>
++
++#define COUNTER_MAX 10
++
++#define THREADS 10
++
++METAL_MUTEX_DEFINE(lock);
++static struct metal_condition nempty_condv = METAL_CONDITION_INIT;
++static struct metal_condition nfull_condv = METAL_CONDITION_INIT;
++static unsigned int counter;
++
++static void *consumer_thread(void *arg)
++{
++	(void)arg;
++	metal_mutex_acquire(&lock);
++	while (!counter)
++		metal_condition_wait(&nempty_condv, &lock);
++	counter--;
++	metal_condition_signal(&nfull_condv);
++	metal_mutex_release(&lock);
++
++	return NULL;
++}
++
++static void *producer_thread(void *arg)
++{
++	(void)arg;
++	metal_mutex_acquire(&lock);
++	while (counter == COUNTER_MAX)
++		metal_condition_wait(&nfull_condv, &lock);
++	counter++;
++	metal_condition_signal(&nempty_condv);
++	metal_mutex_release(&lock);
++
++	return NULL;
++}
++
++static int condition(void)
++{
++	int ret;
++	int ts_created;
++	pthread_t tids[THREADS];
++
++	/** TC1 consumer threads go first */
++	/** create 10 consumer threads first */
++	ret = metal_run_noblock(THREADS, consumer_thread, NULL, tids,
++				&ts_created);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR, "Failed to create consumer thread: %d.\n",
++			  ret);
++		goto out;
++	}
++
++	/** create 10 producer threads next */
++	ret = metal_run(THREADS, producer_thread, NULL);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR, "Failed to create producer thread: %d.\n",
++			  ret);
++		goto out;
++	}
++
++	/** wait for consumer threads to finish */
++	metal_finish_threads(THREADS, (void *)tids);
++
++	/** TC2 producer threads go first */
++	/** create 10 producer threads first */
++	ret = metal_run_noblock(THREADS, producer_thread, NULL, tids,
++				&ts_created);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR, "Failed to create consumer thread: %d.\n",
++			  ret);
++		goto out;
++	}
++
++	/** create 10 consumer threads next */
++	ret = metal_run(THREADS, consumer_thread, NULL);
++	if (ret < 0) {
++		metal_log(METAL_LOG_ERROR, "Failed to create producer thread: %d.\n",
++			  ret);
++		goto out;
++	}
++
++out:
++	/** wait for producer threads to finish */
++	metal_finish_threads(THREADS, (void *)tids);
++	return ret;
++}
++
++METAL_ADD_TEST(condition);
+diff --git a/test/system/qnx/irq.c b/test/system/qnx/irq.c
+new file mode 100644
+index 000000000..cb253c867
+--- /dev/null
++++ b/test/system/qnx/irq.c
+@@ -0,0 +1,68 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <stdlib.h>
++#include <metal/errno.h>
++
++#define METAL_INTERNAL
++
++#include "metal-test.h"
++#include <metal/irq.h>
++#include <metal/log.h>
++#include <metal/list.h>
++#define BASE 1000
++
++static int irq_handler(int irq, void *arg)
++{
++	(void)irq;
++	(void)arg;
++
++	return 0;
++}
++
++static int irq(void)
++{
++	int ret;
++	char *err_msg = "";
++	enum metal_log_level mll = metal_get_log_level();
++	int i, tst_irq[2];
++
++	for (i = 0; i < 2; i++) {
++		tst_irq[i] = BASE + i;
++		metal_log(METAL_LOG_DEBUG, "%s: %d interrupt associated with irq %d\n",
++			__func__, i, tst_irq[i]);
++	}
++
++	ret = metal_irq_register(tst_irq[0], irq_handler, (void *)1);
++	if (ret) {
++		err_msg = "register irq 0 fail drv_id\n";
++		goto out;
++	}
++	ret = metal_irq_register(tst_irq[1], irq_handler, (void *)1);
++	if (ret) {
++		err_msg = "register irq 1 fail drv_id\n";
++		goto out;
++	}
++
++	metal_irq_unregister(tst_irq[0]);
++	ret = metal_irq_register(tst_irq[0], irq_handler, (void *)1);
++	if (ret) {
++		err_msg = "register irq 0 fail drv_id\n";
++		goto out;
++	}
++	metal_irq_unregister(tst_irq[0]);
++	metal_irq_unregister(tst_irq[1]);
++
++out:
++	metal_set_log_level(mll);
++	if ((err_msg[0] != '\0') && !ret)
++		ret = -EINVAL;
++	if (ret)
++		metal_log(METAL_LOG_DEBUG, "%s", err_msg);
++	return ret;
++}
++
++METAL_ADD_TEST(irq);
+diff --git a/test/system/qnx/main.c b/test/system/qnx/main.c
+new file mode 100644
+index 000000000..d340bb242
+--- /dev/null
++++ b/test/system/qnx/main.c
+@@ -0,0 +1,16 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include "metal-test.h"
++
++int main(void)
++{
++	int status;
++
++	status = metal_tests_run(NULL);
++
++	return status;
++}
+diff --git a/test/system/qnx/mutex.c b/test/system/qnx/mutex.c
+new file mode 100644
+index 000000000..4149a2d0d
+--- /dev/null
++++ b/test/system/qnx/mutex.c
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <pthread.h>
++
++#include "metal-test.h"
++#include <metal/log.h>
++#include <metal/mutex.h>
++
++static const int mutex_test_count = 1000;
++
++static void *mutex_thread(void *arg)
++{
++	metal_mutex_t *l = arg;
++	int i;
++
++	for (i = 0; i < mutex_test_count; i++) {
++		metal_mutex_acquire(l);
++		usleep(1);
++		metal_mutex_release(l);
++	}
++
++	return NULL;
++}
++
++static int mutex(void)
++{
++	metal_mutex_t lock;
++	const int threads = 10;
++	int error;
++
++	metal_mutex_init(&lock);
++
++	error = metal_run(threads, mutex_thread, &lock);
++
++	metal_mutex_deinit(&lock);
++
++	return error;
++}
++
++METAL_ADD_TEST(mutex);
+diff --git a/test/system/qnx/rpi4/CMakeLists.txt b/test/system/qnx/rpi4/CMakeLists.txt
+new file mode 100644
+index 000000000..12ce3e482
+--- /dev/null
++++ b/test/system/qnx/rpi4/CMakeLists.txt
+@@ -0,0 +1 @@
++collect (PROJECT_LIB_TESTS device.c)
+diff --git a/test/system/qnx/rpi4/device.c b/test/system/qnx/rpi4/device.c
+new file mode 100644
+index 000000000..215f2ce8d
+--- /dev/null
++++ b/test/system/qnx/rpi4/device.c
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <unistd.h>
++
++#include "metal-test.h"
++#include <metal/device.h>
++
++#define SHM_NAME "shmram"
++#define SHM_BASE_ADDR 0x3b3f0000
++#define EXPECTED_ID 0x10
++
++#define DEFAULT_PAGE_SHIFT 12
++#define DEFAULT_PAGE_MASK (-1UL)
++
++const metal_phys_addr_t shm_phys = {
++	SHM_BASE_ADDR,
++};
++
++static struct metal_device metal_dev_table[] = {
++	{
++		/* Shared memory device */
++		.name = "shmram",
++		.bus = NULL,
++		.num_regions = 1,
++		.regions = {
++			{
++				.virt = NULL,
++				.physmap = &shm_phys,
++				.size = 0x10000,
++				.page_shift = DEFAULT_PAGE_SHIFT,
++				.page_mask = DEFAULT_PAGE_MASK,
++				.mem_flags = MAP_SHARED,
++				.ops = {NULL},
++			},
++		},
++		.node = {NULL},
++		.irq_num = 0,
++		.irq_info = NULL,
++	},
++};
++
++static int device(void)
++{
++	struct metal_device *shm_dev = &metal_dev_table[0];
++	struct metal_io_region *io;
++	int error, idcode;
++
++	error = metal_register_generic_device(shm_dev);
++	if (error) {
++		metal_log(METAL_LOG_DEBUG, "device registration failed - %s\n",
++			strerror(-error));
++		return error;
++	}
++
++	error = metal_device_open("generic", "shmram", &shm_dev);
++	if (error) {
++		metal_log(METAL_LOG_DEBUG, "device opening failed - %s\n",
++			strerror(-errno));
++		return error;
++	}
++
++	io = metal_device_io_region(shm_dev, 0);
++	if (!io) {
++		metal_device_close(shm_dev);
++		return -ENODEV;
++	}
++
++	idcode = metal_io_read32(io, 0);
++	if (idcode != EXPECTED_ID) {
++		metal_log(METAL_LOG_DEBUG, "Read id code %d but expected %d\n",
++			  idcode, EXPECTED_ID);
++  }
++
++	metal_device_close(shm_dev);
++
++	return 0;
++}
++
++METAL_ADD_TEST(device)
+diff --git a/test/system/qnx/shmem.c b/test/system/qnx/shmem.c
+new file mode 100644
+index 000000000..7cb1a0b63
+--- /dev/null
++++ b/test/system/qnx/shmem.c
+@@ -0,0 +1,58 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include "metal-test.h"
++#include <metal/log.h>
++#include <metal/mutex.h>
++#include <metal/shmem.h>
++#include <metal/sys.h>
++#include <metal/atomic.h>
++#include <metal/utilities.h>
++#include <signal.h>
++
++static atomic_int nb_err = ATOMIC_VAR_INIT(0);
++
++static const int shmem_threads = 10;
++
++static void *shmem_child(void *arg)
++{
++	const char *name = arg;
++	void *virt;
++	struct metal_io_region *io;
++	unsigned long phys;
++	size_t size = 1 * 1024 * 1024;
++	int error;
++
++	error = metal_shmem_open(name, size, &io);
++	if (error) {
++		metal_log(METAL_LOG_ERROR, "Failed shmem_open: %d.\n", error);
++		atomic_fetch_add(&nb_err, 1);
++		return NULL;
++	}
++
++	virt = metal_io_virt(io, 0);
++	phys = metal_io_phys(io, 0);
++	if (phys != METAL_BAD_OFFSET) {
++		if (virt != metal_io_phys_to_virt(io, phys)) {
++			atomic_fetch_add(&nb_err, 1);
++			metal_log(METAL_LOG_ERROR, "Failed virt != phys.\n");
++		}
++		if (phys != metal_io_virt_to_phys(io, virt)) {
++			atomic_fetch_add(&nb_err, 1);
++			metal_log(METAL_LOG_ERROR, "Failed phys != virt.\n");
++		}
++	}
++
++	metal_io_finish(io);
++	return NULL;
++}
++
++static int shmem(void)
++{
++	return atomic_load(&nb_err) || metal_run(shmem_threads, shmem_child, "/foo");
++}
++
++METAL_ADD_TEST(shmem);
+diff --git a/test/system/qnx/spinlock.c b/test/system/qnx/spinlock.c
+new file mode 100644
+index 000000000..085686733
+--- /dev/null
++++ b/test/system/qnx/spinlock.c
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <pthread.h>
++
++#include "metal-test.h"
++#include <metal/log.h>
++#include <metal/spinlock.h>
++
++static const int spinlock_test_count = 1000;
++static unsigned int total;
++
++static void *spinlock_thread(void *arg)
++{
++	struct metal_spinlock *l = arg;
++	int i;
++
++	for (i = 0; i < spinlock_test_count; ++i) {
++		metal_spinlock_acquire(l);
++		total++;
++		metal_spinlock_release(l);
++	}
++
++	return NULL;
++}
++
++static int spinlock(void)
++{
++	struct metal_spinlock lock = METAL_SPINLOCK_INIT;
++	const int threads = 10;
++	int value, error;
++
++	error = metal_run(threads, spinlock_thread, &lock);
++	if (!error) {
++		value = total;
++		value -= spinlock_test_count * threads;
++		if (value) {
++			metal_log(METAL_LOG_DEBUG, "counter mismatch, detla = %d\n",
++				  value);
++			error = -EINVAL;
++		}
++	}
++
++	return error;
++}
++
++METAL_ADD_TEST(spinlock);
+diff --git a/test/system/qnx/threads.c b/test/system/qnx/threads.c
+new file mode 100644
+index 000000000..22a13625a
+--- /dev/null
++++ b/test/system/qnx/threads.c
+@@ -0,0 +1,61 @@
++/*
++ * Copyright (c) 2025, BlackBerry Limited. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <metal/sys.h>
++#include <pthread.h>
++#include <string.h>
++#include "metal-test.h"
++
++int metal_run(int threads, metal_thread_t child, void *arg)
++{
++	pthread_t tids[threads];
++	int error, ts_created;
++
++	error = metal_run_noblock(threads, child, arg, tids, &ts_created);
++
++	metal_finish_threads(ts_created, (void *)tids);
++
++	return error;
++}
++
++int metal_run_noblock(int threads, metal_thread_t child,
++			void *arg, void *tids, int *threads_out)
++{
++	int error, i;
++	pthread_t *tid_p = (pthread_t *)tids;
++
++	if (!tids) {
++		metal_log(METAL_LOG_ERROR, "invalid argument, tids is NULL.\n");
++		return -EINVAL;
++	}
++
++	error = 0;
++	for (i = 0; i < threads; ++i) {
++		error = pthread_create(&tid_p[i], NULL, child, arg);
++		if (error != EOK) {
++			metal_log(METAL_LOG_ERROR, "failed to create thread - %s\n",
++				strerror(error));
++			break;
++		}
++	}
++
++	*threads_out = i;
++	return -error;
++}
++
++void metal_finish_threads(int threads, void *tids)
++{
++	int i;
++	pthread_t *tid_p = (pthread_t *)tids;
++
++	if (!tids) {
++		metal_log(METAL_LOG_ERROR, "invalid argument, tids is NULL.\n");
++		return;
++	}
++
++	for (i = 0; i < threads; ++i)
++		(void)pthread_join(tid_p[i], NULL);
++}

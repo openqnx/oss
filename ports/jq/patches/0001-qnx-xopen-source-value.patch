@@ -1,0 +1,21 @@
+jq: give _XOPEN_SOURCE a value on QNX.
+
+QNX's <sys/platform.h> accepts only 500, 600 or 700; the valueless definition
+in builtin.c stops with "This version of XOPEN_SOURCE is not supported".
+
+Upstream-Status: QNX-specific
+
+--- a/src/builtin.c
++++ b/src/builtin.c
+@@ -1,4 +1,10 @@
+-#ifndef __sun__
++#if defined(__QNXNTO__)
++/* QNX's <sys/platform.h> only accepts _XOPEN_SOURCE set to 500, 600 or 700; a
++ * valueless #define evaluates to 0 there and trips
++ * "#error This version of XOPEN_SOURCE is not supported". */
++# define _XOPEN_SOURCE 700
++# define _XOPEN_SOURCE_EXTENDED 1
++#elif !defined(__sun__)
+ # define _XOPEN_SOURCE
+ # define _XOPEN_SOURCE_EXTENDED 1
+ #else

@@ -1,0 +1,30 @@
+QNX change from QNX's aports (core/binutils/0009.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 7f3d33967ea5e651bfc3df4541789e6f7dab0c2e Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Mon, 23 Sep 2024 14:44:36 +0000
+Subject: [PATCH] qnx: re-sync with svn
+
+re-syncing the qnx/main branch to the latest in svn.
+
+CLT-9242
+---
+diff --git a/ld/emultempl/nto.em b/ld/emultempl/nto.em
+index c577e0f33f9..2c726e5a814 100644
+--- a/ld/emultempl/nto.em
++++ b/ld/emultempl/nto.em
+@@ -170,7 +170,7 @@ nto_add_note_section (void) {
+   /* Update QNX stack note content.  */
+   h_size = note_sec->size - sizeof(struct nto_stack_note);
+   n_note = (struct nto_stack_note *) (note_sec->contents + h_size);
+-  is_update = note_sec->owner != stub_file->the_bfd;
++  is_update = stub_file && (note_sec->owner != stub_file->the_bfd);
+ 
+   if (link_info.stacksize > 0)
+     bfd_h_put_32 (note_sec->owner, link_info.stacksize, &n_note->stacksize);
+

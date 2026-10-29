@@ -1,0 +1,48 @@
+#!/bin/bash
+# verify-standalone -- prove that components declaring no dependencies really
+# build with nothing but the QNX SDP.
+#
+#   scripts/verify-standalone [-a arch] [component...]   (default: every
+#                                                         component with no DEPS)
+#
+# Each component is built in a throw-away workspace configuration whose
+# staging tree starts out EMPTY: no other component's headers, libraries or
+# pkg-config files exist, so configure cannot quietly pick one up. The source
+# tree is shared with the main build (src/), everything else is separate:
+#
+#   .verify/<arch>/{stage,build,pkgroot}   wiped before every component
+#   logs/standalone/<component>.<arch>.log      the build log
+#   logs/standalone/<component>.<arch>.result   OK or FAIL
+#
+# scripts/gen-dependency-index reads the results into DEPENDENCIES.md.
+set -o pipefail
+WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ARCHES="aarch64le x86_64"
+while getopts "a:" o; do case $o in a) ARCHES="$OPTARG";; esac; done
+shift $((OPTIND-1))
+
+if [ $# -eq 0 ]; then
+  set -- $(for r in "$WS"/ports/*/recipe.sh; do
+             grep -qE '^DEPS=("[^"]|\(\s*[^) ])|^STATUS=(planned|blocked)' "$r" && continue
+             basename "$(dirname "$r")"; done)
+fi
+
+mkdir -p "$WS/logs/standalone"
+pass=0; fail=0
+for pkg in "$@"; do
+  for arch in $ARCHES; do
+    v="$WS/.verify/$arch"
+    rm -rf "$v"; mkdir -p "$v"
+    res="$WS/logs/standalone/$pkg.$arch.result"
+    if QNX_OSS_STAGE_DIR="$v/stage" QNX_OSS_BUILD_DIR="$v/build" \
+       QNX_OSS_PKGROOT_DIR="$v/pkgroot" QNX_OSS_LOG_DIR="$WS/logs/standalone" \
+       "$WS/scripts/qnxbuild" -f -a "$arch" "$pkg" >/dev/null 2>&1; then
+      echo OK > "$res"; pass=$((pass+1)); echo "ok   $pkg [$arch]"
+    else
+      echo FAIL > "$res"; fail=$((fail+1)); echo "FAIL $pkg [$arch] -- logs/standalone/$pkg.$arch.log"
+    fi
+  done
+done
+rm -rf "$WS/.verify"
+echo "standalone builds: $pass ok, $fail failed"
+[ $fail -eq 0 ]

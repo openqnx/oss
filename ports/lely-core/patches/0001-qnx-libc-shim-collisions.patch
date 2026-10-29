@@ -1,0 +1,121 @@
+lely-core: do not redefine struct timespec/itimerspec on QNX.
+
+QNX defines them in <time.h> but gates its POSIX declarations on __EXT_POSIX*
+rather than _POSIX_C_SOURCE, so lely's probes miss them and its fallback
+definitions collide with the system ones.
+
+Upstream-Status: QNX-specific
+
+--- a/include/lely/libc/time.h
++++ b/include/lely/libc/time.h
+@@ -27,16 +27,23 @@
+ #include <time.h>
+ 
+ #ifndef LELY_HAVE_ITIMERSPEC
++/* QNX declares struct itimerspec in <time.h>, but gates its POSIX surface on
++ * __EXT_POSIX* rather than _POSIX_C_SOURCE, so none of the probes below fire
++ * and the fallback definition collides with the system one. */
+ #if defined(_POSIX_C_SOURCE) || defined(_POSIX_TIMERS) \
+-		|| defined(_TIMESPEC_DEFINED)
++		|| defined(_TIMESPEC_DEFINED) || defined(__QNXNTO__)
+ #define LELY_HAVE_ITIMERSPEC 1
+ #endif
+ #endif
+ 
+ #ifndef LELY_HAVE_TIMESPEC
++/* __STDC_VERSION__ is not defined when compiling C++, and QNX does not set
++ * _POSIX_C_SOURCE, so none of these fire for QNX C++ translation units even
++ * though <time.h> defines struct timespec. */
+ #if __STDC_VERSION__ >= 201112L || _MSC_VER >= 1900 \
+ 		|| _POSIX_C_SOURCE >= 199309L || defined(__CYGWIN__) \
+-		|| defined(_TIMESPEC_DEFINED) || defined(__timespec_defined)
++		|| defined(_TIMESPEC_DEFINED) || defined(__timespec_defined) \
++		|| defined(__QNXNTO__)
+ #define LELY_HAVE_TIMESPEC 1
+ #endif
+ #endif
+@@ -52,6 +59,8 @@
+ 		&& !defined(__MINGW32__)
+ 
+ #ifndef CLOCK_REALTIME
++/* Only CLOCK_REALTIME was guarded upstream. QNX defines the whole set in
++ * <time.h>, so each fallback needs its own #ifndef. */
+ /// The identifier of the system-wide clock measuring real time.
+ #define CLOCK_REALTIME 0
+ #endif
+@@ -61,19 +70,25 @@
+  * clock measuring real time, whose value cannot be set via `clock_settime()`
+  * and which cannot have negative clock jumps.
+  */
++#ifndef CLOCK_MONOTONIC
+ #define CLOCK_MONOTONIC 1
++#endif
+ 
+ /**
+  * The identifier of the CPU-time clock associated with the process making a
+  * `clock_*()` function call (not supported on Windows).
+  */
++#ifndef CLOCK_PROCESS_CPUTIME_ID
+ #define CLOCK_PROCESS_CPUTIME_ID 2
++#endif
+ 
+ /**
+  * The identifier of the CPU-time clock associated with the thread making a
+  * `clock_*()` function call (not supported on Windows).
+  */
++#ifndef CLOCK_THREAD_CPUTIME_ID
+ #define CLOCK_THREAD_CPUTIME_ID 3
++#endif
+ 
+ #ifndef TIMER_ABSTIME
+ /// Flag indicating time is absolute.
+--- a/include/lely/libc/strings.h
++++ b/include/lely/libc/strings.h
+@@ -50,8 +50,12 @@
+  *
+  * @returns the index of the first bit set, or 0 if <b>i</b> is 0.
+  */
++/* QNX's <strings.h> already declares ffs and libc implements it. Defining an
++ * inline wrapper around __builtin_ffs here makes GCC 12 lower the builtin back
++ * to a call to ffs -- i.e. to this very function (-Werror=infinite-recursion).
++ * Take the plain-declaration branch below instead. */
+ #if (defined(__GNUC__) || __has_builtin(__builtin_ffs)) \
+-		&& !defined(__BSD_VISIBLE)
++		&& !defined(__BSD_VISIBLE) && !defined(__QNXNTO__)
+ LELY_LIBC_STRINGS_INLINE int ffs(int i);
+ 
+ inline int
+--- a/include/lely/libc/unistd.h
++++ b/include/lely/libc/unistd.h
+@@ -25,7 +25,12 @@
+ #include <lely/features.h>
+ 
+ #ifndef LELY_HAVE_UNISTD_H
+-#if defined(_POSIX_C_SOURCE) || defined(__MINGW32__) || defined(__NEWLIB__)
++/* QNX has a full <unistd.h> -- including getopt and its optarg/optind globals --
++ * but gates its POSIX surface on __EXT_POSIX* rather than _POSIX_C_SOURCE. Left
++ * undetected, lely compiles its own getopt replacement and it collides with the
++ * one in libc at link time. */
++#if defined(_POSIX_C_SOURCE) || defined(__MINGW32__) || defined(__NEWLIB__) \
++		|| defined(__QNXNTO__)
+ #define LELY_HAVE_UNISTD_H 1
+ #endif
+ #endif
+--- a/src/coapp/node.cpp
++++ b/src/coapp/node.cpp
+@@ -835,7 +835,14 @@
+ void
+ Node::Impl_::OnTimeInd(co_time_t*, const timespec* tp) noexcept {
+   assert(tp);
+-  ::std::chrono::system_clock::time_point abs_time(util::from_timespec(*tp));
++  // from_timespec() yields nanoseconds. libstdc++ gives system_clock a
++  // nanosecond duration so that converts implicitly, but QNX ships libc++, where
++  // system_clock::duration is microseconds -- a narrowing conversion the
++  // time_point constructor will not perform implicitly. Cast it explicitly;
++  // this is a no-op wherever the two periods already match.
++  ::std::chrono::system_clock::time_point abs_time(
++      ::std::chrono::duration_cast< ::std::chrono::system_clock::duration>(
++          util::from_timespec(*tp)));
+   self->OnTime(abs_time);
+ 
+   if (on_time) {

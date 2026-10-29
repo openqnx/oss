@@ -1,0 +1,19 @@
+#!/bin/sh
+# oss-desktop-menu -- labwc pipe menu: every installed application (.desktop
+# entry, NoDisplay ones left out), by name, started with its Exec line.
+P=$(cd "$(dirname "$0")/.." && pwd)
+esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g'; }
+echo '<openbox_pipe_menu>'
+for f in "$P"/share/applications/*.desktop; do
+  [ -f "$f" ] || continue
+  grep -qi '^NoDisplay=true' "$f" && continue
+  grep -q '^Type=Application' "$f" || continue
+  name=$(sed -n 's/^Name=//p' "$f" | head -n 1)
+  ex=$(sed -n 's/^Exec=//p' "$f" | head -n 1 | sed 's/ *%[fFuUdDnNickvm]//g')
+  [ -n "$name" ] && [ -n "$ex" ] || continue
+  t=$(sed -n 's/^Terminal=//p' "$f" | head -n 1)
+  [ "$t" = true ] && ex="xfce4-terminal -x $ex"
+  printf '  <item label="%s"><action name="Execute" command="%s"/></item>\n' \
+    "$(printf %s "$name" | esc)" "$(printf %s "$ex" | esc)"
+done | sort -t'"' -k2,2f
+echo '</openbox_pipe_menu>'

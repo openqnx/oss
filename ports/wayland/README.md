@@ -1,10 +1,10 @@
-# wayland 1.23.1
+# wayland 1.24.0
 
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/wayland/wayland.git (tag `1.23.1`) |
+| Upstream | https://gitlab.freedesktop.org/wayland/wayland.git (tag `1.24.0`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`libffi`](../libffi/) [`expat`](../expat/) [`libxml2`](../libxml2/) |
@@ -56,7 +56,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.23.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.24.0 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/wayland/wayland.git src/wayland
 ```
 
@@ -119,16 +119,16 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH wayland`.
 ```
 /usr/local/lib/libwayland-client.so
 /usr/local/lib/libwayland-client.so.0
-/usr/local/lib/libwayland-client.so.0.23.1
+/usr/local/lib/libwayland-client.so.0.24.0
 /usr/local/lib/libwayland-cursor.so
 /usr/local/lib/libwayland-cursor.so.0
-/usr/local/lib/libwayland-cursor.so.0.23.1
+/usr/local/lib/libwayland-cursor.so.0.24.0
 /usr/local/lib/libwayland-egl.so
 /usr/local/lib/libwayland-egl.so.1
-/usr/local/lib/libwayland-egl.so.1.23.1
+/usr/local/lib/libwayland-egl.so.1.24.0
 /usr/local/lib/libwayland-server.so
 /usr/local/lib/libwayland-server.so.0
-/usr/local/lib/libwayland-server.so.0.23.1
+/usr/local/lib/libwayland-server.so.0.24.0
 ```
 
 The complete list is `stage/<arch>/.manifest/wayland` after a build.
@@ -207,15 +207,17 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland 1.23.1-r0 | ❌ FAIL | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland 1.24.0-r0 | ❌ FAIL | 2026-10-30 |
 
 ## Versions
 
-This recipe builds **1.23.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland=<version>`), sources in `ported/wayland/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland`; port one with `scripts/port-update wayland`.
+This recipe builds **1.24.0**. Kept from earlier: `1.23.1` ([recipe and patches](versions/1.23.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland=<version>`), sources in `ported/wayland/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland`; port one with `scripts/port-update wayland`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.23.1; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.23.1
+VERSION=1.24.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.24.0
 DEPS="libffi expat libxml2"
 BUILDSYS=meson
 # wayland-scanner has to run on the build machine to turn the XML protocol

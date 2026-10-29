@@ -1,0 +1,188 @@
+labwc on QNX, from QNX's port (github.com/qnx-ports/labwc, tag qnx-0.20.2-r0,
+commit 5f4c032a): libinput becomes optional (QNX has none: the libinput
+configuration and the seat's libinput device handling are compiled out when
+wlroots has no libinput backend), and on the QNX Screen backend labwc creates
+the qnx-redir global QNX's compositors provide.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+From 5f4c032a3cd8652d3cef652ca83bb12d79d13570 Mon Sep 17 00:00:00 2001
+From: jscaff <jscaffidi@qnx.com>
+Date: Mon, 5 Oct 2026 19:19:13 +0000
+Subject: [PATCH] initial draft port
+
+---
+ include/labwc.h        |  2 ++
+ src/config/meson.build |  7 ++++++-
+ src/config/rcxml.c     | 13 +++++++++++--
+ src/seat.c             |  2 ++
+ src/server.c           | 25 +++++++++++++++++++++++++
+ 5 files changed, 46 insertions(+), 3 deletions(-)
+
+diff --git a/include/labwc.h b/include/labwc.h
+index 87a421984e..b3e86cc9c9 100644
+--- a/include/labwc.h
++++ b/include/labwc.h
+@@ -313,6 +313,8 @@ struct server {
+ 	struct wlr_tablet_manager_v2 *tablet_manager;
+ 	struct wlr_security_context_manager_v1 *security_context_manager_v1;
+ 
++	struct wlr_qnx_redir *qnx_redir;
++
+ 	/* Set when in cycle (alt-tab) mode */
+ 	struct cycle_state cycle;
+ 
+diff --git a/src/config/meson.build b/src/config/meson.build
+index 70b1baa371..0f54268761 100644
+--- a/src/config/meson.build
++++ b/src/config/meson.build
+@@ -6,5 +6,10 @@ labwc_sources += files(
+   'touch.c',
+   'tablet.c',
+   'tablet-tool.c',
+-  'libinput.c',
+ )
++
++if input.found()
++  labwc_source += files(
++    'libinput.c',
++  )
++endif
+diff --git a/src/config/rcxml.c b/src/config/rcxml.c
+index b341e8e194..2c9af65321 100644
+--- a/src/config/rcxml.c
++++ b/src/config/rcxml.c
+@@ -25,7 +25,9 @@
+ #include "common/xml.h"
+ #include "config/default-bindings.h"
+ #include "config/keybind.h"
++#if WLR_HAS_LIBINPUT_BACKEND
+ #include "config/libinput.h"
++#endif
+ #include "config/mousebind.h"
+ #include "config/tablet.h"
+ #include "config/tablet-tool.h"
+@@ -702,7 +704,7 @@ fill_tablet_button_map(xmlNode *node)
+ 
+ 	tablet_button_mapping_add(map_from, map_to);
+ }
+-
++#if WLR_HAS_LIBINPUT_BACKEND
+ static int
+ get_accel_profile(const char *s)
+ {
+@@ -938,6 +940,10 @@ fill_libinput_category(xmlNode *node)
+ 		}
+ 	}
+ }
++#else
++static void
++fill_libinput_category(xmlNode *node){}
++#endif
+ 
+ static void
+ set_font_attr(struct font *font, const char *nodename, const char *content)
+@@ -1860,6 +1866,7 @@ post_processing(void)
+ 	if (!rc.font_osd.name) {
+ 		rc.font_osd.name = xstrdup("sans");
+ 	}
++#if WLR_HAS_LIBINPUT_BACKEND
+ 	if (!libinput_category_get_default()) {
+ 		/* So we set default values of <tap> and <scrollFactor> */
+ 		struct libinput_category *l = libinput_category_create();
+@@ -1876,6 +1883,7 @@ post_processing(void)
+ 			l->scroll_factor = mouse_scroll_factor;
+ 		}
+ 	}
++#endif
+ 
+ 	int nr_workspaces = wl_list_length(&rc.workspace_config.workspaces);
+ 	if (nr_workspaces < rc.workspace_config.min_nr_workspaces) {
+@@ -2095,7 +2103,7 @@ rcxml_finish(void)
+ 		action_list_free(&m->actions);
+ 		zfree(m);
+ 	}
+-
++#if WLR_HAS_LIBINPUT_BACKEND
+ 	struct touch_config_entry *touch_config, *touch_config_tmp;
+ 	wl_list_for_each_safe(touch_config, touch_config_tmp, &rc.touch_configs, link) {
+ 		wl_list_remove(&touch_config->link);
+@@ -2110,6 +2118,7 @@ rcxml_finish(void)
+ 		zfree(l->name);
+ 		zfree(l);
+ 	}
++#endif
+ 
+ 	struct workspace_config *w, *w_tmp;
+ 	wl_list_for_each_safe(w, w_tmp, &rc.workspace_config.workspaces, link) {
+diff --git a/src/seat.c b/src/seat.c
+index fe85dc2656..4df6d71c49 100644
+--- a/src/seat.c
++++ b/src/seat.c
+@@ -17,7 +17,9 @@
+ #include <wlr/util/log.h>
+ #include "common/macros.h"
+ #include "common/mem.h"
++#if WLR_HAS_LIBINPUT_BACKEND
+ #include "config/libinput.h"
++#endif
+ #include "config/rcxml.h"
+ #include "config/touch.h"
+ #include "input/ime.h"
+diff --git a/src/server.c b/src/server.c
+index e1a91eca4c..f4f645e6f6 100644
+--- a/src/server.c
++++ b/src/server.c
+@@ -6,6 +6,7 @@
+ #include <string.h>
+ #include <sys/wait.h>
+ #include <wlr/backend/headless.h>
++#include <wlr/backend/qnx_screen.h>
+ #include <wlr/backend/multi.h>
+ #include <wlr/config.h>
+ #include <wlr/render/allocator.h>
+@@ -43,6 +44,10 @@
+ #include <wlr/types/wlr_xdg_foreign_v1.h>
+ #include <wlr/types/wlr_xdg_foreign_v2.h>
+ 
++/* qnx */
++
++#include <wlr/types/wlr_qnx_redir.h>
++
+ #if HAVE_XWAYLAND
+ 	#include <wlr/xwayland.h>
+ #endif
+@@ -400,6 +405,15 @@ get_headless_backend(struct wlr_backend *backend, void *data)
+ 	}
+ }
+ 
++static void
++get_qnx_screen_backend(struct wlr_backend *backend, void*data)
++{
++	if(wlr_backend_is_qnx_screen(backend)){
++		struct wlr_backend **qnx_screen = data;
++		*qnx_screen = backend;
++	}
++}
++
+ static void
+ handle_renderer_lost(struct wl_listener *listener, void *data)
+ {
+@@ -545,6 +559,17 @@ server_init(void)
+ 	}
+ 	wlr_multi_backend_add(server.backend, server.headless.backend);
+ 
++	struct wlr_backend *qnx_backend = NULL;
++	wlr_multi_for_each_backend(server.backend,
++                get_qnx_screen_backend, &qnx_backend);
++
++	if (qnx_backend) {
++		server.qnx_redir = wlr_qnx_redir_create(server.wl_display, 1);
++		if(!server.qnx_redir) {
++			wlr_log(WLR_ERROR, "Unable to create wl_qnx_redir global");
++		}
++	}
++
+ 	/*
+ 	 * If we don't populate headless backend with a virtual output (that we
+ 	 * create and immediately destroy), then virtual outputs being added

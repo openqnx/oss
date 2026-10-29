@@ -1,0 +1,44 @@
+Do not print a NULL output identifier
+
+An output's identifier comes from its wl_output description; an output that
+sends none (wlroots' headless outputs, for one) keeps it NULL, and the debug
+messages print it with "%s". glibc prints "(null)"; QNX's libc crashes in
+strlen: swaybg died with "Memory fault" on its first output under labwc.
+Print "-" for an output without one.
+
+Upstream-Status: Pending
+
+--- a/main.c
++++ b/main.c
+@@ -249,7 +249,7 @@
+ 		struct zwlr_layer_surface_v1 *surface) {
+ 	struct swaybg_output *output = data;
+ 	swaybg_log(LOG_DEBUG, "Destroying output %s (%s)",
+-			output->name, output->identifier);
++			output->name, output->identifier ? output->identifier : "-");
+ 	destroy_swaybg_output(output);
+ }
+ 
+@@ -326,11 +326,11 @@
+ 	struct swaybg_output *output = data;
+ 	if (!output->config) {
+ 		swaybg_log(LOG_DEBUG, "Could not find config for output %s (%s)",
+-				output->name, output->identifier);
++				output->name, output->identifier ? output->identifier : "-");
+ 		destroy_swaybg_output(output);
+ 	} else if (!output->layer_surface) {
+ 		swaybg_log(LOG_DEBUG, "Found config %s for output %s (%s)",
+-				output->config->output, output->name, output->identifier);
++				output->config->output, output->name, output->identifier ? output->identifier : "-");
+ 		create_layer_surface(output);
+ 	}
+ }
+@@ -438,7 +438,7 @@
+ 	wl_list_for_each_safe(output, tmp, &state->outputs, link) {
+ 		if (output->wl_name == name) {
+ 			swaybg_log(LOG_DEBUG, "Destroying output %s (%s)",
+-					output->name, output->identifier);
++					output->name, output->identifier ? output->identifier : "-");
+ 			destroy_swaybg_output(output);
+ 			break;
+ 		}

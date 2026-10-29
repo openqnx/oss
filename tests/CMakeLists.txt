@@ -366,6 +366,18 @@ port_test(test_libhandy         test_libhandy.c          PkgConfig::HANDY)
 pkg_check_modules(LAYERSHELL REQUIRED IMPORTED_TARGET gtk-layer-shell-0)
 port_test(test_gtk_layer_shell  test_gtk_layer_shell.c   PkgConfig::LAYERSHELL PkgConfig::GTK3)
 
+# The compositor stack of the desktop: wlroots (headless backend, pixman
+# rendering, read back), labwc running with swaybg on it, libsfdo.
+# wlroots-0.20.pc requires libdrm, whose .pc the wlroots build makes for the
+# SDP's libdrm (scripts/lib/sdp-pc.sh) in the staging tree's .toolchain/.
+set(ENV{PKG_CONFIG_LIBDIR} "$ENV{STAGE}/.toolchain/sdp-pkgconfig:$ENV{PKG_CONFIG_LIBDIR}")
+pkg_check_modules(WLROOTS REQUIRED IMPORTED_TARGET wlroots-0.20)
+port_test(test_wlroots          test_wlroots.c           PkgConfig::WLROOTS PkgConfig::WLSERVER)
+target_include_directories(test_wlroots PRIVATE "${INC}/libdrm-uapi")
+port_test(test_labwc            test_labwc.c             PkgConfig::WLCLIENT)
+pkg_check_modules(SFDO REQUIRED IMPORTED_TARGET libsfdo-desktop libsfdo-basedir)
+port_test(test_libsfdo          test_libsfdo.c           PkgConfig::SFDO)
+
 pkg_check_modules(VIDSTAB REQUIRED IMPORTED_TARGET vidstab)
 port_test(test_vidstab          test_vidstab.c           PkgConfig::VIDSTAB)
 

@@ -1,0 +1,36 @@
+#!/bin/sh
+# oss-desktop -- start the desktop session on QNX Screen: labwc with a
+# background, the Xfce panel and a menu of every installed application.
+#
+#   oss-desktop                 on a target with graphics (Screen running)
+#   oss-desktop --headless      without a display (checks the session starts)
+#
+# Packages from github.com/openqnx/oss under /data/oss (apk-setup), or at /.
+P=$(cd "$(dirname "$0")/.." && pwd)
+[ -f /data/oss/etc/oss-env.sh ] && . /data/oss/etc/oss-env.sh
+case "$1" in
+  --headless) WLR_BACKENDS=headless; WLR_RENDERER=pixman ;;
+  -h|--help) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) WLR_BACKENDS=${WLR_BACKENDS:-qnx-screen}
+     # QNX Screen must be running (a graphics image starts it at boot).
+     if [ ! -e /dev/screen ]; then echo "oss-desktop: QNX Screen is not running (an image built with graphics starts it)" >&2; exit 1; fi ;;
+esac
+export WLR_BACKENDS ${WLR_RENDERER:+WLR_RENDERER}
+: "${XDG_RUNTIME_DIR:=/tmp/xdg-runtime-$(id -u)}"; mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
+: "${HOME:=/tmp}"
+export XDG_RUNTIME_DIR HOME
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/etc/xdg}"
+export XDG_CURRENT_DESKTOP=XFCE XDG_SESSION_TYPE=wayland GDK_BACKEND=wayland
+export XCURSOR_PATH="$P/share/icons" GTK_THEME="${GTK_THEME:-Adwaita}"
+export FONTCONFIG_PATH="${FONTCONFIG_PATH:-$P/etc/fonts}"
+export TERMINFO="${TERMINFO:-$P/share/terminfo}"
+# GLib's helpers (gdk-pixbuf loaders, GIO modules) live under the prefix.
+[ -f "$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" ] && export GDK_PIXBUF_MODULE_FILE="$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+# Xfce's settings (xfconfd) and the panel's plugins talk over the session bus.
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && command -v dbus-daemon >/dev/null; then
+  DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+  dbus-daemon --session --address="$DBUS_SESSION_BUS_ADDRESS" --fork --nopidfile >/dev/null 2>&1
+  export DBUS_SESSION_BUS_ADDRESS
+fi
+echo "oss-desktop: labwc on $WLR_BACKENDS (log: $XDG_RUNTIME_DIR/labwc.log)"
+exec labwc -C "$P/share/oss-desktop/labwc" > "$XDG_RUNTIME_DIR/labwc.log" 2>&1

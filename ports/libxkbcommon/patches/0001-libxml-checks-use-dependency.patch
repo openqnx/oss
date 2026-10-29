@@ -1,0 +1,29 @@
+Check libxml features against the libxml2 being built with
+
+The libxml feature checks compiled without libxml's own -I, so they saw
+whatever libxml/parser.h the compiler's default search path has instead of
+the libxml2 the library is built against. On QNX SDP 8.0.5 that is the SDP's
+own, newer libxml (usr/include/libxml): the checks found xmlCtxtParseDtd and
+XML_INPUT_BUF_STATIC (libxml 2.14), the build then compiled registry.c
+against libxml2 2.13 and failed. Check with the dependency's flags.
+
+Upstream-Status: Pending
+
+--- a/meson.build
++++ b/meson.build
+@@ -386,6 +386,7 @@
+         'libxml/parser.h',
+         'xmlCtxtSetErrorHandler',
+         prefix: system_ext_define,
++        dependencies: dep_libxml,
+     )
+         configh_data.set10('HAVE_XML_CTXT_SET_ERRORHANDLER', true)
+     endif
+@@ -394,6 +395,7 @@
+         'libxml/parser.h',
+         'xmlCtxtParseDtd',
+         prefix: system_ext_define,
++        dependencies: dep_libxml,
+     )
+         configh_data.set10('HAVE_XML_CTXT_PARSE_DTD', true)
+     endif

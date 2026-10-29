@@ -72,8 +72,11 @@ fi
 
 # wayland-scanner turns Wayland's XML protocol definitions into C during the
 # build, so it has to be a build-machine binary. Build just the scanner.
-if [ ! -x "$HT/bin/wayland-scanner" ]; then
-  echo "== building native wayland-scanner -> $HT"
+# The same version as the wayland port (wayland.pc and wayland-scanner.pc
+# report the port's version, and wlroots checks the scanner's against it).
+WL_VER=$(sed -n 's/^VERSION=\([^;]*\).*/\1/p' "$WS/ports/wayland/recipe.sh")
+if [ "$("$HT/bin/wayland-scanner" --version 2>&1 | grep -Eo '[0-9][0-9.]+$')" != "$WL_VER" ]; then
+  echo "== building native wayland-scanner $WL_VER -> $HT"
   # src/wayland-host, NOT src/wayland: that path belongs to the wayland recipe.
   # Cloning into it made the recipe's fetch a no-op -- and the driver applies
   # patches only on first fetch -- so 0001-qnx-peercred-and-memstream.patch was
@@ -81,8 +84,8 @@ if [ ! -x "$HT/bin/wayland-scanner" ]; then
   # "Don't know how to read ucred on this platform". Every other host tool here
   # already uses its own -host/-native directory; this one was the exception.
   src="$WS/src/wayland-host"
-  [ -d "$src" ] || git clone -q --depth 1 -b 1.23.1 \
-      https://gitlab.freedesktop.org/wayland/wayland.git "$src"
+  [ "$(git -C "$src" describe --tags 2>/dev/null)" = "$WL_VER" ] || { rm -rf "$src"; git clone -q --depth 1 -b "$WL_VER" \
+      https://gitlab.freedesktop.org/wayland/wayland.git "$src"; }
   b="$WS/build/host/wayland"; rm -rf "$b"
   ( unset CC CXX CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS PKG_CONFIG_LIBDIR PKG_CONFIG_SYSROOT_DIR
     meson setup "$b" "$src" --prefix="$HT" \

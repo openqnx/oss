@@ -189,7 +189,7 @@ def tests_for(n):
     for ext in (".c", ".cpp", ".sh"):
         if os.path.exists(exact + ext):
             return f"test_{n.replace('-', '_')}"
-    special = {"cppzmq": "test_libzmq", "quickjs-ng": "test_quickjs", "libccd": "test_fcl", "pytorch": "test_torch",
+    special = {"cppzmq": "test_libzmq", "quickjs-ng": "test_quickjs", "libccd": "test_fcl", "pytorch": "test_torch", "swaybg": "test_labwc", "oss-desktop": "test_labwc",
                "urdfdom_headers": None}
     if n in special:
         return special[n]

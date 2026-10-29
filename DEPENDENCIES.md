@@ -154,7 +154,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`msgpack-c`](ports/msgpack-c/) | 6.1.0 | cmake | – | 0 |
 | [`muslflt`](ports/muslflt/) | 1.0-git-20240802 | custom | – | 0 |
 | [`nanosvg`](ports/nanosvg/) | 0-git-20260709 | cmake | – | 1 |
-| [`ncurses`](ports/ncurses/) | 6.5 | autotools | – | 14 |
+| [`ncurses`](ports/ncurses/) | 6.5 | autotools | – | 16 |
 | [`ninja`](ports/ninja/) | 1.13.1 | cmake | – | 0 |
 | [`nlohmann_json`](ports/nlohmann_json/) | 3.12.0 | cmake | – | 0 |
 | [`nng`](ports/nng/) | 1.9.0 | cmake | – | 0 |
@@ -318,7 +318,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`fontenc`](ports/fontenc/) | 1.1.8 | xorgproto zlib | zlib | 1 |
 | [`freetype`](ports/freetype/) | 2.13.3 | zlib bzip2 libpng brotli | brotli bzip2 libpng zlib | 4 |
 | [`garcon`](ports/garcon/) | 4.20.0 | glib gtk3 libxfce4util libxfce4ui | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libxfce4ui libxfce4util pango zlib | 50 |
-| [`gawk`](ports/gawk/) | 5.3.2 | readline | readline | 1 |
+| [`gawk`](ports/gawk/) | 5.3.2 | readline ncurses | ncurses readline | 2 |
 | [`gcr`](ports/gcr/) | 3.41.2 | glib libgcrypt p11-kit libsecret gtk3 | cairo gdk-pixbuf gettext glib gtk3 libgcrypt p11-kit pango | 50 |
 | [`gdb`](ports/gdb/) | 14.2 | gmp mpfr ncurses readline expat zlib libiconv xxhash xz zstd | expat gmp libiconv mpfr ncurses readline xxhash xz zlib zstd | 12 |
 | [`gdk-pixbuf`](ports/gdk-pixbuf/) | 2.42.12 | glib libpng libjpeg-turbo | gettext glib libjpeg-turbo libpng | 10 |
@@ -326,7 +326,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`geany-plugins`](ports/geany-plugins/) | 2.1 | geany | at-spi2-core cairo gdk-pixbuf geany gettext glib gtk3 harfbuzz pango zlib | 48 |
 | [`gettext`](ports/gettext/) | 0.22.5 | ncurses libiconv libunistring | libiconv libunistring ncurses | 3 |
 | [`git`](ports/git/) | 2.51.0 | zlib openssl curl expat pcre2 perl perl-error libiconv | curl expat libiconv openssl pcre2 zlib | 10 |
-| [`glib`](ports/glib/) | 2.82.4 | libffi pcre2 gettext zlib | gettext libffi pcre2 zlib | 7 |
+| [`glib`](ports/glib/) | 2.82.4 | libffi pcre2 gettext zlib | gettext libffi libiconv pcre2 zlib | 7 |
 | [`glib-networking`](ports/glib-networking/) | 2.80.1 | glib gnutls libproxy | gettext glib gnutls libproxy | 20 |
 | [`glog`](ports/glog/) | 0.7.1 | gflags | gflags | 1 |
 | [`gnutls`](ports/gnutls/) | 3.8.8 | nettle gmp libtasn1 libunistring libidn2 zlib brotli zstd | brotli gmp libidn2 libtasn1 libunistring nettle zlib zstd | 11 |
@@ -464,7 +464,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`sysbench`](ports/sysbench/) | 1.0.20-git-20250309 | luajit | luajit | 1 |
 | [`taglib`](ports/taglib/) | 2.0.2 | zlib | zlib | 1 |
 | [`tar`](ports/tar/) | 1.35 | libiconv | libiconv | 1 |
-| [`tftp-hpa`](ports/tftp-hpa/) | 5.2 | readline | readline | 1 |
+| [`tftp-hpa`](ports/tftp-hpa/) | 5.2 | readline ncurses | ncurses readline | 2 |
 | [`thorvg`](ports/thorvg/) | 0.15.8 | libjpeg-turbo libpng zlib | libjpeg-turbo libpng | 3 |
 | [`thunar`](ports/thunar/) | 4.20.0 | glib gtk3 libxfce4util libxfce4ui xfconf exo pango gdk-pixbuf libnotify libexif pcre2 xfce4-panel | at-spi2-core cairo exo gdk-pixbuf gettext glib gtk3 harfbuzz libexif libnotify libx11 libxfce4ui libxfce4util pango pcre2 xfce4-panel xfconf zlib | 57 |
 | [`tmux`](ports/tmux/) | 3.5a | libevent ncurses | libevent ncurses | 3 |
@@ -489,11 +489,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Consistency
 
-| Component | Run-time dependency not declared in DEPS | Unresolved soname | Linked by the -dev name |
-|---|---|---|---|
-| [`javascriptcore`](ports/javascriptcore/) | – | libicudataso.76 | – |
-| [`neovim`](ports/neovim/) | – | /home/qnx/oss/stage/aarch64le/usr/local/lib/lua/5.1/lpeg.so /home/qnx/oss/stage/x86_64/usr/local/lib/lua/5.1/lpeg.so | – |
-| [`webkitgtk`](ports/webkitgtk/) | – | libicudataso.76 | – |
+Every run-time dependency is declared in the recipe's `DEPS` (directly or transitively), and every `DT_NEEDED` resolves either to a component of this tree or to the QNX SDP.
 
 ## Blocked
 

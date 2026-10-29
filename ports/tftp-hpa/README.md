@@ -7,8 +7,8 @@
 | Upstream | https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git (tag `tftp-hpa-5.2`) |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
-| Build dependencies | [`readline`](../readline/) |
-| Run-time dependencies | [`readline`](../readline/) |
+| Build dependencies | [`readline`](../readline/) [`ncurses`](../ncurses/) |
+| Run-time dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | none (no run-time code) |
 
@@ -44,13 +44,8 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 **Build the dependencies first** (2 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild readline
+./scripts/qnxbuild readline ncurses
 ```
-
-<details><summary>Full build chain (2)</summary>
-
-[`ncurses`](../ncurses/) [`readline`](../readline/)
-</details>
 
 ### 2. Get the upstream source
 
@@ -147,7 +142,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PAT
 ```bash
 VERSION=5.2; GIT=https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git; REF=tftp-hpa-5.2
 # Also linked at run time (found by scripts/gen-dependency-index): readline
-DEPS="readline"
+DEPS="readline ncurses"
 BUILDSYS=custom
 # tftp-hpa's Makefiles only work in the source tree, so build in a copy of it.
 # -fcommon: tftp.c and main.c both define "toplevel" (old-style common symbol),

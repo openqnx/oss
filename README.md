@@ -11,7 +11,7 @@ a QNX target can download and install directly.
 | 🟢 Standalone | **197** — QNX SDP only, at build time and at run time |
 | 🟡 Build-deps only | **37** — need other components to build, run on their own |
 | 🔴 Dependent | **216** — need other components to build and to run |
-| QNX patches | **379**, one file per change, each with its reason |
+| QNX patches | **385**, one file per change, each with its reason |
 | On-target tests | **209** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 
@@ -22,14 +22,21 @@ a QNX target can download and install directly.
 
 ### 1. Install a prebuilt package on the target
 
+With `apk`, from the GitHub releases (x86_64 and aarch64):
+
 ```sh
-# on a QNX 8.0 target (needs only curl, tar, gzip, openssl -- all in a stock image)
-curl -fsSLo /data/oss-get https://raw.githubusercontent.com/openqnx/oss/main/target/oss-get
-chmod +x /data/oss-get
-/data/oss-get update
-/data/oss-get install mosquitto      # dependencies come along, every file is checksummed
-/data/oss-get link                   # as root: /usr/local -> /data/oss/usr/local
+./scripts/target-bootstrap <target-ip>   # on the host, once per target: apk + CA bundle + key
+
+# then on the target
+. /data/oss/etc/oss-env.sh
+apk add mosquitto                        # dependencies come along, signatures checked
+apk upgrade
 ```
+
+Or with `oss-get`, a single shell script that needs nothing beyond a stock
+image (`scp target/oss-get root@<target>:/data/`, then
+`/data/oss-get install mosquitto`; the first `https://` download needs
+`SSL_CERT_FILE`, as a stock image has no CA bundle).
 
 → [docs/packages.md](docs/packages.md)
 
@@ -119,7 +126,9 @@ toolchain/           CMake toolchain files, Meson cross-file templates
 scripts/qnxbuild     the build driver           scripts/qnxpkg    packager
 scripts/mkpatch      edits -> patch file         scripts/verify-standalone
 scripts/gen-*        regenerate READMEs, index, dependency classes
-target/oss-get       installer for the QNX target
+target/oss-get       installer for the QNX target    target/apk-setup  apk on the target
+scripts/target-bootstrap  set a target up for apk  scripts/publish-github-release
+keys/*.rsa.pub       package-signing public key (private half: keys/private/, untracked)
 docker/              the build container
 tests/               on-target test programs and runners
 ```

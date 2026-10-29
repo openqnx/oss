@@ -8,7 +8,7 @@
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`gettext`](../gettext/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_glib`](../../tests/src/) |
 

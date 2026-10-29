@@ -4867,7 +4867,8 @@
    "readline"
   ],
   "build_deps": [
-   "readline"
+   "readline",
+   "ncurses"
   ],
   "buildsys": "autotools",
   "built": {
@@ -4888,9 +4889,11 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "ncurses",
    "readline"
   ],
   "runtime_deps": [
+   "ncurses",
    "readline"
   ],
   "standalone_verified": {},
@@ -5831,6 +5834,7 @@
   "runtime_deps": [
    "gettext",
    "libffi",
+   "libiconv",
    "pcre2",
    "zlib"
   ],
@@ -8456,9 +8460,7 @@
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libicudataso.76"
-  ],
+  "unresolved": [],
   "version": "2.44.4"
  },
  "jq": {
@@ -13362,7 +13364,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 2,
+   "files": 3,
    "headers": 0,
    "libs": []
   },
@@ -14447,7 +14449,7 @@
    "bins": [
     "usr/local/bin/ncursesw6-config"
    ],
-   "files": 2926,
+   "files": 2928,
    "headers": 17,
    "libs": [
     "usr/local/lib/libform.so",
@@ -14466,6 +14468,7 @@
     "usr/local/lib/libpanelw.so",
     "usr/local/lib/libpanelw.so.6",
     "usr/local/lib/libpanelw.so.6.5",
+    "usr/local/lib/libtermcap.so",
     "usr/local/lib/libtinfo.so"
    ]
   },
@@ -14538,10 +14541,7 @@
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "/home/qnx/oss/stage/aarch64le/usr/local/lib/lua/5.1/lpeg.so",
-   "/home/qnx/oss/stage/x86_64/usr/local/lib/lua/5.1/lpeg.so"
-  ],
+  "unresolved": [],
   "version": "0.12.3"
  },
  "nettle": {
@@ -17952,7 +17952,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 25247,
+   "files": 25241,
    "headers": 0,
    "libs": []
   },
@@ -19234,7 +19234,8 @@
    "readline"
   ],
   "build_deps": [
-   "readline"
+   "readline",
+   "ncurses"
   ],
   "buildsys": "custom",
   "built": {
@@ -19253,9 +19254,11 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "ncurses",
    "readline"
   ],
   "runtime_deps": [
+   "ncurses",
    "readline"
   ],
   "standalone_verified": {},
@@ -19977,11 +19980,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 3,
+   "files": 4,
    "headers": 1,
    "libs": [
     "usr/local/lib/libunibilium.so",
-    "usr/local/lib/libunibilium.so.."
+    "usr/local/lib/libunibilium.so.4",
+    "usr/local/lib/libunibilium.so.4.0.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -20800,9 +20804,7 @@
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libicudataso.76"
-  ],
+  "unresolved": [],
   "version": "2.44.4"
  },
  "webrtc": {

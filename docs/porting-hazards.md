@@ -164,6 +164,57 @@ ONNX Runtime needed both `FETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER` and
 `CPUINFO_SUPPORTED_PLATFORM=0`, while consumers that only check the CPU
 architecture still call into it and fail at link time on `cpuinfo_initialize`.
 
+**24. x86_64 `memchr` takes its length as signed.** QNX 8's libc compares the
+length with a signed `cmovle`, so `memchr(s, c, SIZE_MAX)` -- the usual way to
+say "no limit", and what `strndup(s, SIZE_MAX)`-style helpers pass -- indexes
+its alignment jump table at -1 and jumps to address 0. ROS 2's
+`rcutils_strdup()` does exactly this from librcl's load-time constructor:
+every node died with SIGSEGV before `main()`. Bound the length by
+`PTRDIFF_MAX` (`ports/ros2/repo-patches/rcutils-qnx-memchr-length.patch`).
+
+**25. `openat()` needs a directory fd opened with `O_DIRECTORY`.** A directory
+opened plain `O_RDONLY` works with `read`/`fstat`, but every `openat()` under
+it fails with `ENOTDIR`. apk-tools opened its database directory that way, so
+any second `apk` command on a root failed "Unable to read database: Not a
+directory" (`ports/apk-tools/patches/0003-*`).
+
+**26. `--as-needed` can leave a library exporting its own libc.** When a
+shared library itself calls nothing in libc, `--as-needed` drops `libc.so`,
+and what crt/libgcc_eh still need comes from the static `libcS.a` -- exported:
+`memchr`, `malloc`, `sigaction` and some 200 more, to which every library
+loaded later then binds. Meson uses `--as-needed` by default; 32 libraries
+here had it. The toolchain files keep libc needed with
+`-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state`;
+`scripts/check-embedded-libc` audits for it.
+
+**27. Anonymous memory is committed when it is mapped.** QNX has no
+overcommit: a buffer `mmap`ed and never touched is still RAM. OpenBLAS sized
+its thread pool at 64 on QNX (the OS was missing from its CPU-count clamp) and
+reserved 128 MB per thread at load: any program linking it consumed a 2 GB
+target's memory before `main()` (`ports/openblas/patches/0003-*`). Look for
+large up-front reservations that are free on Linux.
+
+**28. Shared objects are initialised in reverse load order.** QNX's loader runs
+constructors in the reverse of the order it loaded objects, not in dependency
+order: a library loaded before its user is initialised after it (with libc
+first in an executable's `DT_NEEDED`, libc's own initialisers run after every
+other library's). Constructors that rely on another library's constructors
+having run cannot assume it.
+
+**29. A stock target has no CA certificates.** The SDP's OpenSSL looks for
+`/usr/ssl/cert.pem`, which neither the SDP nor an image ships: `curl` and
+anything else using it fail to verify any `https://` server (curl error 60).
+The `ca-certificates` component installs a bundle at this tree's OpenSSL
+default, `/usr/local/ssl/cert.pem`; the first download onto a fresh board
+needs one copied over (`scripts/target-bootstrap`).
+
+**30. CMake `VERSION` from undefined variables.** unibilium's
+`VERSION "${VERSION_MAJOR}.${VERSION_MINOR}"` names variables nothing sets,
+giving the soname `libunibilium.so..`; and a module linked by path that has no
+soname (LPeg's `lpeg.so`) puts the build host's path in the consumer's
+`DT_NEEDED`. Both fail at load on the target; `scripts/check-needed` audits
+every staged ELF file for them.
+
 ---
 ## Port verification tests
 

@@ -1,0 +1,23 @@
+Give the shared library the soname of the libtool build: libunibilium.so.4.
+
+The CMake build names the library version "${VERSION_MAJOR}.${VERSION_MINOR}",
+two variables nothing defines (project() sets PROJECT_VERSION_MAJOR), so the
+library came out as "libunibilium.so.." with that as its soname, and every
+program linking it -- neovim -- needed a file called "libunibilium.so..".
+Use what the Makefile build of the same release produces (-version-info
+4:1:0): libunibilium.so.4.0.1, soname libunibilium.so.4, as distributions
+ship it.
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,7 +4,7 @@ project(unibilium LANGUAGES C VERSION 2.1.2)
+ file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/*.c)
+ add_library(unibilium ${SRC_FILES})
+ set_target_properties(unibilium PROPERTIES PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/unibilium.h
+-  VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
++  VERSION 4.0.1 SOVERSION 4)
+ 
+ if(NOT WIN32)
+   execute_process(COMMAND sh -c "ncursesw6-config --terminfo-dirs 2>/dev/null || \

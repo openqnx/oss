@@ -11,7 +11,7 @@ a QNX target can download and install directly.
 | 🟢 Standalone | **197** — QNX SDP only, at build time and at run time |
 | 🟡 Build-deps only | **37** — need other components to build, run on their own |
 | 🔴 Dependent | **216** — need other components to build and to run |
-| QNX patches | **385**, one file per change, each with its reason |
+| QNX patches | **386**, one file per change, each with its reason |
 | On-target tests | **209** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 
@@ -32,6 +32,11 @@ With `apk`, from the GitHub releases (x86_64 and aarch64):
 apk add mosquitto                        # dependencies come along, signatures checked
 apk upgrade
 ```
+
+Or from your own build: `./scripts/serve-dists` serves `dists/` (everything
+`scripts/qnxpkg` wrote) and `./scripts/target-bootstrap <target> -r
+http://<host>:8000` points the target at it. Every component's on-target test
+is a package too: `apk add qnx-test-<name>`.
 
 Or with `oss-get`, a single shell script that needs nothing beyond a stock
 image (`scp target/oss-get root@<target>:/data/`, then
@@ -61,7 +66,7 @@ export QNX_SDP_ROOT=$HOME/qnx800          # your SDP 8.0 installation
 ./scripts/build-host-tools.sh             # once: native generators the cross builds run
 source ./env.sh aarch64le                 # or x86_64
 ./scripts/qnxbuild mosquitto              # fetch, patch, build deps first, install
-./scripts/qnxpkg mosquitto                # -> repo/8.0/aarch64/mosquitto-*.tar.gz / .apk
+./scripts/qnxpkg mosquitto                # -> dists/8.0/aarch64/mosquitto-*.tar.gz / .apk
 ```
 
 Or in a container that needs only the SDP mounted — no host packages:
@@ -96,8 +101,32 @@ and run-time closure.
 * A target: any QNX 8.0 board (verified on Raspberry Pi 5), or a QEMU image
   made with `mkqnximage` (verified on x86_64 and aarch64le)
 
+## What is delivered
+
+| Directory | | |
+|---|---|---|
+| `dists/8.0/<arch>/` | built packages, signed, every version kept | `apk add <name>` on a target, from this machine (`scripts/serve-dists`) or the GitHub releases |
+| `ported/<name>/<version>/` | the original upstream source, the QNX patches (each with its reason), the patched source, and where the original comes from | build it yourself |
+| `test_suites/8.0/<arch>/` | each component's on-target test, as a package (`qnx-test-<name>`) and as a plain program | `apk add qnx-test-<name>` |
+
+→ [docs/target-guide.md](docs/target-guide.md): preparing a vanilla x86_64
+(QEMU) or aarch64 (QEMU, Raspberry Pi 5) image, installing or building every
+component -- by kind, standalone or dependent -- and testing it; each
+component's README says how it was verified and where.
+
+## Checking, updating, publishing
+
+```bash
+./scripts/verify-on-target -t "<target>" <target> <name>|--standalone|--dependent|--changed   # on a real target, recorded
+./scripts/check-updates                       # newer upstream releases (also: Actions -> "Check upstream updates")
+./scripts/port-update <name> [<version>]      # port one; the old version is kept
+./scripts/publish-github-release --verified --upload [--changed]   # what passed, or only what is new
+```
+
 ## Adding a component
 
+`scripts/new-port <name> <git-url|tarball-url> [<tag>]` starts one (recipe,
+test skeleton, first build).
 [docs/porting-guide.md](docs/porting-guide.md) — recipe fields, the QNX
 problems that come up again and again and how each was solved, turning an
 edit into a patch with `scripts/mkpatch`, the standalone check, a test on the
@@ -111,7 +140,9 @@ target, and packaging.
 | [Dependencies](DEPENDENCIES.md) | standalone / build-deps only / dependent, with full chains |
 | [Status by area](PORTS.md) | components grouped by what they are for |
 | [Build environment](docs/build-environment.md) | host or container setup, `env.sh`, isolated builds |
+| [Target guide](docs/target-guide.md) | vanilla x86_64 / aarch64 / Raspberry Pi 5 targets: install, build, test every component |
 | [Packages and oss-get](docs/packages.md) | prebuilt packages, the target installer, publishing |
+| [Upstream updates](docs/UPDATES.md) | newer upstream releases than the ones ported (`scripts/check-updates`) |
 | [Porting guide](docs/porting-guide.md) | how to port a new project |
 | [Porting hazards](docs/porting-hazards.md) | ~100 QNX-specific traps and their fixes |
 | [Upstream comparison](docs/upstream-comparison.md) | this set vs qnx-ports/build-files |
@@ -128,13 +159,18 @@ scripts/mkpatch      edits -> patch file         scripts/verify-standalone
 scripts/gen-*        regenerate READMEs, index, dependency classes
 target/oss-get       installer for the QNX target    target/apk-setup  apk on the target
 scripts/target-bootstrap  set a target up for apk  scripts/publish-github-release
+scripts/serve-dists  serve dists/ + test_suites/ to targets
+scripts/verify-on-target  install + test on a target, record   scripts/record-results
+scripts/check-updates  newer upstream releases     scripts/port-update  port one, keep the old
+scripts/new-port     start a new component         scripts/gen-ported  ported/ sources
+tests/results/       what passed on which target, per version
 keys/*.rsa.pub       package-signing public key (private half: keys/private/, untracked)
 docker/              the build container
 tests/               on-target test programs and runners
 ```
 
-Generated trees (`src/ build/ stage/ pkgroot/ repo/ logs/ dist/ hosttools/`)
-are not tracked.
+Generated trees (`src/ build/ stage/ pkgroot/ logs/ dist/ hosttools/` and the
+deliverables `dists/ ported/ test_suites/`) are not tracked.
 
 ## Relationship to qnx-ports/build-files
 

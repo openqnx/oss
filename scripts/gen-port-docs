@@ -186,16 +186,96 @@ def hook_bodies(txt):
 
 def tests_for(n):
     exact = f"tests/src/test_{n.replace('-', '_')}"
-    for ext in (".c", ".cpp"):
+    for ext in (".c", ".cpp", ".sh"):
         if os.path.exists(exact + ext):
             return f"test_{n.replace('-', '_')}"
-    special = {"cppzmq": "test_libzmq", "quickjs-ng": "test_quickjs", "libccd": "test_fcl",
+    special = {"cppzmq": "test_libzmq", "quickjs-ng": "test_quickjs", "libccd": "test_fcl", "pytorch": "test_torch",
                "urdfdom_headers": None}
     if n in special:
         return special[n]
     cm = open("tests/CMakeLists.txt").read()
     m = re.search(rf'port_test\((test_\w+)\s+\S+\s+[^)]*\b{re.escape(n)}\b', cm)
     return m.group(1) if m else None
+
+
+
+RESULTS = {}
+
+
+def load_results():
+    for arch in ("aarch64le", "x86_64"):
+        path = f"tests/results/{arch}.tsv"
+        if not os.path.exists(path):
+            continue
+        for line in open(path):
+            if line.startswith("#") or not line.strip():
+                continue
+            f = (line.rstrip("\n").split("\t") + [""] * 6)[:6]
+            RESULTS.setdefault(f[0], []).append(dict(zip(("test", "result", "date", "target", "via", "versions"), f), arch=arch))
+
+
+def test_checks(test):
+    """The check descriptions a test prints ("ok   <what>"), from its source."""
+    out = []
+    for path in glob.glob(f"tests/src/{test}.*"):
+        src = open(path, errors="replace").read()
+        out += re.findall(r'QT_CHECK\s*\((?:[^;]*?),\s*"((?:[^"\\]|\\.)*)"\s*\)\s*;', src, re.S)
+        out += re.findall(r'echo\s+"\s+ok\s+([^"$]+?)(?:\s*\(|")', src)
+    seen, res = set(), []
+    for c in out:
+        if c not in seen:
+            seen.add(c); res.append(c)
+    return res
+
+
+def render_verified(A, n, d, test):
+    A("## How it was verified\n")
+    built = d.get("built", {})
+    archs = [a for a in ("aarch64le", "x86_64") if built.get(a)]
+    A("1. **Built** from the original source with the patches above for " + (", ".join(f"`{a}`" for a in archs) or "no architecture yet")
+      + ", by `scripts/qnxbuild` from a clean build directory.")
+    sv = d.get("standalone_verified") or {}
+    if sv:
+        A("   Built again against an *empty* staging tree (`scripts/verify-standalone`): "
+          + ", ".join(f"{a} {'passed' if r == 'OK' else 'failed'}" for a, r in sv.items())
+          + " -- it cannot have picked anything up from other components.")
+    A("2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, "
+      "no library taken from the SDP where this tree builds one, development links present, no duplicate "
+      "files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.")
+    if test:
+        checks = test_checks(test)
+        A(f"3. **On the target**: [`{test}`](../../tests/src/) -- a program linked against {n} the way an "
+          "application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:\n")
+        for c in checks[:25]:
+            A(f"   - {c}")
+        if len(checks) > 25:
+            A(f"   - ... and {len(checks) - 25} more")
+        A("")
+    rows = RESULTS.get(test, []) if test else []
+    rows = rows + RESULTS.get(f"pkg:{n}", [])
+    if rows:
+        A("Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, "
+          "`scripts/verify-on-target`):\n")
+        A("| Arch | Target | Installed from | Version | Result | Date |\n|---|---|---|---|---|---|")
+        for r in sorted(rows, key=lambda r: (r["arch"], r["target"], r["date"]), reverse=False):
+            A(f"| {r['arch']} | {r['target']} | {r['via']} | {r['versions'] or '–'} | "
+              f"{'✅ PASS' if r['result'] == 'PASS' else '❌ ' + r['result']} | {r['date']} |")
+        A("")
+    elif test:
+        A("Not run on a target yet: `scripts/verify-on-target -t \"<target>\" <target> " + n + "`.\n")
+    else:
+        A("No test program of its own (no run-time code to exercise, or covered by a dependent's test); "
+          f"`scripts/verify-on-target` installs it with apk and checks that every program and library it ships loads.\n")
+
+
+def render_versions(A, n, f):
+    kept = sorted(os.path.basename(x) for x in glob.glob(f"ports/{n}/versions/*") if os.path.isdir(x))
+    ver = (re.search(r'^VERSION=([^;\s]+)', f["text"], re.M) or [None, "?"])[1].strip('"')
+    A("## Versions\n")
+    A(f"This recipe builds **{ver}**. " + ("Kept from earlier: " + ", ".join(f"`{k}` ([recipe and patches](versions/{k}/))" for k in kept) + ". " if kept else "")
+      + "Every version stays available: packages in `dists/8.0/<arch>/` (`apk add " + n + "=<version>`), "
+      "sources in `ported/" + n + "/<version>/`, results per version in `tests/results/`. "
+      "Newer upstream releases: `scripts/check-updates " + n + "`; port one with `scripts/port-update " + n + "`.\n")
 
 
 def render_planned(n, f):
@@ -239,12 +319,19 @@ def render(n, f, d, patches, test):
     A("")
 
     # ---- quick install ------------------------------------------------------
+    tpkg = ("qnx-test-" + test[len("test_"):].replace("_", "-")) if test else None
     A("## Install the prebuilt package on a target\n")
-    A("No build needed: [`oss-get`](../../target/oss-get) downloads the package "
-      "(and its run-time dependencies), checks its SHA-256 and unpacks it.\n")
-    A(f"```sh\n# on the QNX target\noss-get update\noss-get install {n}\n"
-      f"oss-get install {n}-dev    # only for building on the target: headers, .pc, CMake files\n```\n")
-    A("See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.\n")
+    A("No build needed. With `apk` (set up once per target with "
+      "[`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its "
+      "run-time dependencies are downloaded, signature-checked and installed:\n")
+    A(f"```sh\n# on the QNX target\n. /data/oss/etc/oss-env.sh\napk add {n}\n"
+      f"apk add {n}-dev    # only for building on the target: headers, .pc, CMake files\n"
+      + (f"apk add {tpkg} && /usr/local/bin/qnx-port-tests/{test}    # its on-target test\n" if tpkg else "")
+      + "```\n")
+    A(f"Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install {n}`. "
+      "Both read the GitHub releases by default, or your own build served from "
+      "`dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see "
+      "[docs/packages.md](../../docs/packages.md).\n")
 
     # ---- build from upstream -------------------------------------------------
     A("## Build it from upstream\n")
@@ -348,7 +435,7 @@ def render(n, f, d, patches, test):
         A("Build it once to see the list (`stage/<arch>/.manifest/" + n + "`).\n")
 
     A("### 6. Package it for the target\n")
-    A("```bash\n./scripts/qnxpkg -a $QNX_ARCH " + n + "\nls repo/8.0/*/ | grep '^" + n + "-'\n```\n")
+    A("```bash\n./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa " + n + "\nls dists/8.0/*/ | grep '^" + n + "-'\n```\n")
     A(f"This writes `{n}-<ver>-r0.tar.gz` (run time) and `{n}-dev-<ver>-r0.tar.gz` "
       "(headers, pkg-config, CMake files, static libraries), the matching `.apk` "
       "files, and updates the repository index. The run-time dependencies recorded "
@@ -356,24 +443,31 @@ def render(n, f, d, patches, test):
 
     # ---- deploy + test -------------------------------------------------------
     A("## Run it on a target\n")
-    A("Either install from your own repository (serve `repo/8.0/` with any web server):\n")
-    A(f"```sh\n# on the target\nexport OSS_REPO=http://<build-host>:8000\noss-get update && oss-get install {n}\n```\n")
+    A("Serve your build from `dists/` and install it with apk:\n")
+    A(f"```bash\n./scripts/serve-dists &                                  # on the build host: http://<host>:8000\n"
+      f"./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target\n```\n"
+      f"```sh\n# on the target\n. /data/oss/etc/oss-env.sh\napk update && apk add {n}\n```\n")
     A(f"or copy the tarball and unpack it yourself:\n")
-    A(f"```bash\nscp repo/8.0/aarch64/{n}-*-r0.tar.gz root@<target>:/data/\n"
-      f"ssh root@<target> 'cd /data/oss && tar xzf /data/{n}-*-r0.tar.gz'\n```\n")
+    A(f"```bash\nscp dists/8.0/aarch64/{n}-*-r0.tar.gz root@<target>:/data/\n"
+      f"ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/{n}-*-r0.tar.gz'\n```\n")
     A("QNX has no `ld.so.conf`; make the libraries findable with "
-      "`export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or "
-      "`eval $(oss-get env)`.\n")
+      "`. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.\n")
     if test:
         A("### Test\n")
         A(f"[`{test}`](../../tests/src/) links {n} the way an application would and "
-          "checks its core API on the target:\n")
-        A(f"```bash\n./tests/build-tests.sh $QNX_ARCH\n"
-          f"scp stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/{test} root@<target>:/data/\n"
-          f"ssh root@<target> 'LD_LIBRARY_PATH=/usr/local/lib /data/{test}'\n```\n")
+          f"checks its core API on the target. It is a package of its own, `{tpkg}`, "
+          "in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which "
+          "apk-setup adds next to the package repository:\n")
+        A(f"```sh\n# on the target\napk add {tpkg}\n/usr/local/bin/qnx-port-tests/{test}\n```\n")
         A(f"```\n== {n} ==\n  ok   ...\nPASS {n}\n```\n")
-        A("`./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.\n")
+        A("`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. "
+          "Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy "
+          f"`stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/{test}` over and run it with "
+          "`LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh "
+          "<arch> <target>` runs every test at once.\n")
 
+    render_verified(A, n, d, test)
+    render_versions(A, n, f)
     A("<details><summary>recipe.sh</summary>\n\n```bash\n" + f["text"].rstrip() + "\n```\n</details>\n")
     A("---\n<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, "
       "<code>patches/</code> and the build manifest. Edit those, not this file.</sub>\n")
@@ -399,6 +493,13 @@ def render_blocked(n, f):
 def main():
     deps = json.load(open("ports/dependencies.json")) if os.path.exists("ports/dependencies.json") else {}
     names = sorted(os.path.basename(os.path.dirname(r)) for r in glob.glob("ports/*/recipe.sh"))
+    load_results()
+    with open("tests/port-tests.tsv", "w") as m:   # read by scripts/verify-on-target
+        m.write("# component\ttest\n")
+        for n in names:
+            tt = tests_for(n)
+            if tt:
+                m.write(f"{n}\t{tt}\n")
     for n in names:
         f = parse(f"ports/{n}/recipe.sh")
         if re.search(r'^STATUS=planned', f["text"], re.M):

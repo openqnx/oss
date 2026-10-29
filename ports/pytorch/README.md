@@ -10,20 +10,21 @@
 | Build dependencies | [`python3`](../python3/) [`protobuf`](../protobuf/) [`openblas`](../openblas/) |
 | Run-time dependencies | [`abseil`](../abseil/) [`openblas`](../openblas/) [`protobuf`](../protobuf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_torch`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
-No build needed: [`oss-get`](../../target/oss-get) downloads the package (and its run-time dependencies), checks its SHA-256 and unpacks it.
+No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
 
 ```sh
 # on the QNX target
-oss-get update
-oss-get install pytorch
-oss-get install pytorch-dev    # only for building on the target: headers, .pc, CMake files
+. /data/oss/etc/oss-env.sh
+apk add pytorch
+apk add pytorch-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-torch && /usr/local/bin/qnx-port-tests/test_torch    # its on-target test
 ```
 
-See [docs/packages.md](../../docs/packages.md) for setting up `oss-get` on a board.
+Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install pytorch`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
 
 ## Build it from upstream
 
@@ -161,30 +162,77 @@ The complete list is `stage/<arch>/.manifest/pytorch` after a build.
 ### 6. Package it for the target
 
 ```bash
-./scripts/qnxpkg -a $QNX_ARCH pytorch
-ls repo/8.0/*/ | grep '^pytorch-'
+./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa pytorch
+ls dists/8.0/*/ | grep '^pytorch-'
 ```
 
 This writes `pytorch-<ver>-r0.tar.gz` (run time) and `pytorch-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
 
 ## Run it on a target
 
-Either install from your own repository (serve `repo/8.0/` with any web server):
+Serve your build from `dists/` and install it with apk:
 
+```bash
+./scripts/serve-dists &                                  # on the build host: http://<host>:8000
+./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target
+```
 ```sh
 # on the target
-export OSS_REPO=http://<build-host>:8000
-oss-get update && oss-get install pytorch
+. /data/oss/etc/oss-env.sh
+apk update && apk add pytorch
 ```
 
 or copy the tarball and unpack it yourself:
 
 ```bash
-scp repo/8.0/aarch64/pytorch-*-r0.tar.gz root@<target>:/data/
-ssh root@<target> 'cd /data/oss && tar xzf /data/pytorch-*-r0.tar.gz'
+scp dists/8.0/aarch64/pytorch-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/pytorch-*-r0.tar.gz'
 ```
 
-QNX has no `ld.so.conf`; make the libraries findable with `export LD_LIBRARY_PATH=/usr/local/lib` (with `oss-get link`) or `eval $(oss-get env)`.
+QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_torch`](../../tests/src/) links pytorch the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-torch`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-torch
+/usr/local/bin/qnx-port-tests/test_torch
+```
+
+```
+== pytorch ==
+  ok   ...
+PASS pytorch
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_torch` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+## How it was verified
+
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_torch`](../../tests/src/) -- a program linked against pytorch the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - matmul shape 2x2
+   - matmul values
+   - sum reduction
+   - autograd gradient 2x
+
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date |
+|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64 virt, vanilla mkqnximage image | apk:http://192.168.122.1:8000/dists/8.0 | pytorch 2.3.1-r1 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | – | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:http://192.168.122.1:8000/dists/8.0 | pytorch 2.3.1-r1 | ✅ PASS | 2026-10-30 |
+
+## Versions
+
+This recipe builds **2.3.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pytorch=<version>`), sources in `ported/pytorch/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pytorch`; port one with `scripts/port-update pytorch`.
 
 <details><summary>recipe.sh</summary>
 

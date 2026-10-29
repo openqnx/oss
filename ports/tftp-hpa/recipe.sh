@@ -1,6 +1,6 @@
 VERSION=5.2; GIT=https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git; REF=tftp-hpa-5.2
 # Also linked at run time (found by scripts/gen-dependency-index): readline
-DEPS="readline"
+DEPS="readline ncurses"
 BUILDSYS=custom
 # tftp-hpa's Makefiles only work in the source tree, so build in a copy of it.
 # -fcommon: tftp.c and main.c both define "toplevel" (old-style common symbol),

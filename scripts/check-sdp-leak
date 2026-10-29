@@ -20,7 +20,7 @@ rc=0
 QNX_OS_LIBS="libc libc++ libgcc_s libm libsocket libeventfd libepoll libsignalfd
 libtimerfd libfsnotify libregex libunwind libslog2 libslog2parse libslog2shim
 libjson libasound libiconv libpps libscreen libEGL libGLESv2 libqh libcatalog
-libpam libsecpol libjail libcam libz_qnx ldqnx-64"
+libpam libsecpol libjail libcam libz_qnx libbacktrace ldqnx-64"
 for arch in ${1:-aarch64le x86_64}; do
   source "$WS/env.sh" "$arch" >/dev/null || exit 1
   READELF="$QNX_HOST/usr/bin/nto${QNX_CPU}-readelf"
@@ -35,7 +35,11 @@ for arch in ${1:-aarch64le x86_64}; do
   while read -r f; do
     b=$(basename "$f"); provided[$b]=1
     built[${b%%.so*}]=1
-  done < <(find "$libdir" -type f -o -type l | sort)
+  # Also the private library directories some components keep, found
+  # through their RUNPATH: sudo's libexec/sudo, the prefixes of their own
+  # under opt/ (TensorFlow Lite, PyTorch, ROS 2).
+  done < <(find "$libdir" "$STAGE$PREFIX/libexec" "$STAGE$PREFIX/opt" \( -type f -o -type l \) -name '*.so*' 2>/dev/null; \
+           find "$libdir" -type f -o -type l | sort)
 
   report=""
   while read -r f; do

@@ -8,9 +8,12 @@ BUILDSYS=custom
 do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc" CXX="q++" CFLAGS="-D_QNX_SOURCE -std=c17 -V$QCC_TARGET -I$STAGE$PREFIX/include" \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
-  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V$QCC_TARGET -L$STAGE$PREFIX/lib" \
+  CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
   ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
+# LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is
+# GNU libstdc++'s -- next to the libc++ every C++ object here is compiled
+# against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak).
 # PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config
 # (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use.
 # --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports

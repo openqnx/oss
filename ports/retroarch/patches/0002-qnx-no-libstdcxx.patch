@@ -1,0 +1,24 @@
+Do not link GNU libstdc++ on QNX.
+
+Makefile.common adds -lstdc++ for the switchres code unconditionally, which
+is GNU's C++ runtime. QNX's q++ links its own, libc++, and the objects are
+compiled against it: retroarch ended up loading both libc++.so.2 and the
+SDP's libstdc++.so.6 (scripts/check-sdp-leak), two C++ runtimes with their
+own exception handling and std:: types in one process. Leave it out on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/Makefile.common
++++ b/Makefile.common
+@@ -2315,7 +2315,10 @@
+    ifneq ($(findstring Win32,$(OS)),)
+       DEFINES += -DSR_WIN32_STATIC
+    endif
+-   LIBS += -lstdc++
++   # QNX: q++ links its own C++ runtime (libc++); -lstdc++ is GNU libstdc++.
++   ifneq ($(OS),qnx)
++      LIBS += -lstdc++
++   endif
+ endif
+ 
+ ifeq ($(HAVE_COMPRESSION), 1)

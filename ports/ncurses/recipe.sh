@@ -39,6 +39,10 @@ do_install() {
   # -ltinfo has to resolve to the same library.
   [ -e "$d/libncursesw.so" ] && ln -sfn "libncursesw.so" "$d/libtinfo.so"
   [ -e "$d/libncursesw.a" ]  && ln -sfn "libncursesw.a"  "$d/libtinfo.a"
+  # And -ltermcap (readline users such as gawk and tftp-hpa link it): unmet
+  # here it was the SDP's libtermcap.so -> libncursesw.so.1 that got linked.
+  [ -e "$d/libncursesw.so" ] && ln -sfn "libncursesw.so" "$d/libtermcap.so"
+  [ -e "$d/libncursesw.a" ]  && ln -sfn "libncursesw.a"  "$d/libtermcap.a"
   for p in ncurses form menu panel tinfo; do
     [ -e "$d/pkgconfig/${p}w.pc" ] && ln -sfn "${p}w.pc" "$d/pkgconfig/${p}.pc"
   done

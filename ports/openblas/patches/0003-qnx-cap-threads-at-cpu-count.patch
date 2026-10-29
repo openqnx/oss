@@ -1,0 +1,70 @@
+Limit the default thread count to the CPUs present on QNX, as on Linux.
+
+blas_get_cpu_number() caps the default thread count at get_num_procs() only
+for the operating systems it lists, and QNX is not among them, although
+get_num_procs() exists for it (0001, from the syspage). On QNX the default
+was therefore MAX_CPU_NUMBER -- NUM_THREADS, 64 here -- whatever the machine
+has, and every server thread takes a BUFFER_SIZE buffer, 128 MB on x86_64.
+QNX commits anonymous memory when it is mapped rather than when it is
+touched, so loading libopenblas consumed all of a 2 GB target's RAM before
+main() and the process stalled (PyTorch, which links it, never started;
+with OPENBLAS_NUM_THREADS=4 it ran in 5 s). Add OS_QNX to both lists.
+
+Upstream-Status: Pending
+
+--- a/driver/others/memory.c
++++ b/driver/others/memory.c
+@@ -465,7 +465,7 @@ extern int openblas_goto_num_threads_env(void);
+ extern int openblas_omp_num_threads_env(void);
+ 
+ int blas_get_cpu_number(void){
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   int max_num;
+ #endif
+   int blas_goto_num   = 0;
+@@ -473,7 +473,7 @@ int blas_get_cpu_number(void){
+ 
+   if (blas_num_threads) return blas_num_threads;
+ 
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   max_num = get_num_procs();
+ #endif
+ 
+@@ -497,7 +497,7 @@ int blas_get_cpu_number(void){
+   else if (blas_omp_num > 0) blas_num_threads = blas_omp_num;
+   else blas_num_threads = MAX_CPU_NUMBER;
+ 
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   if (blas_num_threads > max_num) blas_num_threads = max_num;
+ #endif
+ 
+@@ -2050,7 +2050,7 @@ extern int openblas_goto_num_threads_env(void);
+ extern int openblas_omp_num_threads_env(void);
+ 
+ int blas_get_cpu_number(void){
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   int max_num;
+ #endif
+   int blas_goto_num   = 0;
+@@ -2058,7 +2058,7 @@ int blas_get_cpu_number(void){
+ 
+   if (blas_num_threads) return blas_num_threads;
+ 
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   max_num = get_num_procs();
+ #endif
+ 
+@@ -2082,7 +2082,7 @@ int blas_get_cpu_number(void){
+   else if (blas_omp_num > 0) blas_num_threads = blas_omp_num;
+   else blas_num_threads = MAX_CPU_NUMBER;
+ 
+-#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU)
++#if defined(OS_LINUX) || defined(OS_WINDOWS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_HAIKU) || defined(OS_QNX)
+   if (blas_num_threads > max_num) blas_num_threads = max_num;
+ #endif
+ 

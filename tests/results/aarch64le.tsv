@@ -132,6 +132,7 @@ test_magic_enum	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtim
 test_mbedtls	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_misc_libs	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
+test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:github	
 test_mosquitto	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	mosquitto 2.0.20-r0
 test_mpc	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mpfr	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -173,6 +174,7 @@ test_rapidjson	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime
 test_re2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_readline	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_ros2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
+test_ros2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:github	
 test_ros2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r1
 test_sdl2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_sdl2	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	sdl2 2.32.10-r0
@@ -220,4 +222,5 @@ test_zenoh_c	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime l
 test_zimg	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_zlib	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_zstd	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
+test_zstd	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:github	
 test_zstd	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	zstd 1.5.6-r0

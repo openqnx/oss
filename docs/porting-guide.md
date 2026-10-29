@@ -4,6 +4,27 @@ How every component in `ports/` was made, step by step, so you can do the same
 for a project that is not here yet. The worked examples are real ports from
 this repository.
 
+## Adding a project that is not here yet
+
+```bash
+scripts/new-port <name> <git-url | tarball-url> [<tag | commit>]
+```
+
+writes `ports/<name>/recipe.sh` (the newest release tag, or the tarball and
+its SHA-256, and the build system it finds) and a test skeleton, and tries the
+first build. The sections below are what follows: fix, patch, both
+architectures, test. Then package (`scripts/qnxpkg --tests <name>`), generate
+`ported/<name>/` (`scripts/gen-ported <name>`) and the docs, verify it on a
+target (`scripts/verify-on-target`, [target guide](target-guide.md)), and
+publish it on its own when it passed (`scripts/publish-github-release --only
+<name> --upload --changed`).
+
+A newer upstream version of a component already here is
+`scripts/port-update <name> [<version>]` (`scripts/check-updates` lists them):
+the version ported before keeps its recipe and patches in
+`ports/<name>/versions/<old>/`, its packages in `dists/`, its sources in
+`ported/<name>/<old>/` and its test results.
+
 ## The shape of a port
 
 ```
@@ -167,6 +188,6 @@ to the image's `/system/lib`, which is on the loader's search path. Log in as
 ## 7. Package and document
 
 ```bash
-./scripts/qnxpkg nng                   # repo/8.0/<arch>/nng-1.9.0-r0.{tar.gz,apk}
+./scripts/qnxpkg nng                   # dists/8.0/<arch>/nng-1.9.0-r0.{tar.gz,apk}
 ./scripts/gen-dependency-index && ./scripts/gen-port-docs && ./scripts/gen-root-readme
 ```

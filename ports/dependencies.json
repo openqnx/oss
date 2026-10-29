@@ -8630,6 +8630,136 @@
   "unresolved": [],
   "version": "0-git-20250214"
  },
+ "labwc": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "cairo",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "lcms2",
+   "libdrm-headers",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libsfdo",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxrender",
+   "linux-headers-input-codes",
+   "lzo",
+   "ncurses",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "wayland",
+   "wayland-protocols",
+   "wlroots",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib"
+  ],
+  "build_deps": [
+   "wlroots",
+   "wayland",
+   "wayland-protocols",
+   "libxkbcommon",
+   "glib",
+   "cairo",
+   "pango",
+   "libxml2",
+   "libsfdo",
+   "libpng"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/lab-sensible-terminal",
+    "usr/local/bin/labnag",
+    "usr/local/bin/labwc"
+   ],
+   "files": 15,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "cairo",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "lcms2",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libsfdo",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "pango",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "wlroots",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "cairo",
+   "glib",
+   "libpng",
+   "libsfdo",
+   "libxkbcommon",
+   "libxml2",
+   "pango",
+   "pixman",
+   "wayland",
+   "wlroots"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.20.2"
+ },
  "lame": {
   "build_closure": [],
   "build_deps": [],
@@ -9392,6 +9522,29 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.3.0"
+ },
+ "libdrm-headers": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 22,
+   "headers": 22,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.4.129"
  },
  "libedit": {
   "build_closure": [
@@ -10890,6 +11043,38 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.21.4"
+ },
+ "libsfdo": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 22,
+   "headers": 6,
+   "libs": [
+    "usr/local/lib/libsfdo-basedir.so",
+    "usr/local/lib/libsfdo-basedir.so.0",
+    "usr/local/lib/libsfdo-desktop-file.so",
+    "usr/local/lib/libsfdo-desktop-file.so.0",
+    "usr/local/lib/libsfdo-desktop.so",
+    "usr/local/lib/libsfdo-desktop.so.0",
+    "usr/local/lib/libsfdo-icon.so",
+    "usr/local/lib/libsfdo-icon.so.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.1.4"
  },
  "libsndfile": {
   "build_closure": [
@@ -12575,10 +12760,10 @@
    "libs": [
     "usr/local/lib/libxkbcommon.so",
     "usr/local/lib/libxkbcommon.so.0",
-    "usr/local/lib/libxkbcommon.so.0.0.0",
+    "usr/local/lib/libxkbcommon.so.0.8.1",
     "usr/local/lib/libxkbregistry.so",
     "usr/local/lib/libxkbregistry.so.0",
-    "usr/local/lib/libxkbregistry.so.0.0.0"
+    "usr/local/lib/libxkbregistry.so.0.8.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -12597,7 +12782,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.0"
+  "version": "1.8.1"
  },
  "libxml2": {
   "build_closure": [
@@ -13103,6 +13288,29 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.4.77"
+ },
+ "linux-headers-input-codes": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 1,
+   "headers": 1,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "6.12"
  },
  "llvm": {
   "build_closure": [
@@ -15621,6 +15829,132 @@
   "unresolved": [],
   "version": "1.5.1"
  },
+ "oss-desktop": {
+  "build_closure": [
+   "at-spi2-core",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dbus",
+   "exo",
+   "expat",
+   "font-dejavu",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "garcon",
+   "gdk-pixbuf",
+   "gettext",
+   "giflib",
+   "glib",
+   "gmp",
+   "gnutls",
+   "graphene",
+   "graphite2",
+   "gtk-layer-shell",
+   "gtk3",
+   "gtk4",
+   "harfbuzz",
+   "hicolor-icon-theme",
+   "icu",
+   "labwc",
+   "lcms2",
+   "libdrm-headers",
+   "libepoxy",
+   "libexif",
+   "libffi",
+   "libiconv",
+   "libidn2",
+   "libjpeg-turbo",
+   "libnotify",
+   "libpng",
+   "libsfdo",
+   "libtasn1",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
+   "libxdmcp",
+   "libxext",
+   "libxfce4ui",
+   "libxfce4util",
+   "libxfce4windowing",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
+   "libxrender",
+   "libxtst",
+   "linux-headers-input-codes",
+   "lxde-icon-theme",
+   "lz4",
+   "lzo",
+   "ncurses",
+   "nettle",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "swaybg",
+   "thunar",
+   "vte",
+   "wayland",
+   "wayland-protocols",
+   "wlroots",
+   "xcb-proto",
+   "xfce4-appfinder",
+   "xfce4-panel",
+   "xfce4-terminal",
+   "xfconf",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "labwc",
+   "swaybg",
+   "xfce4-panel",
+   "xfce4-terminal",
+   "thunar",
+   "xfce4-appfinder",
+   "dbus",
+   "hicolor-icon-theme",
+   "lxde-icon-theme",
+   "font-dejavu"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/oss-desktop",
+    "usr/local/bin/oss-desktop-menu"
+   ],
+   "files": 5,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0"
+ },
  "p11-kit": {
   "build_closure": [
    "libffi",
@@ -16309,7 +16643,7 @@
    "libs": [
     "usr/local/lib/libpixman-1.so",
     "usr/local/lib/libpixman-1.so.0",
-    "usr/local/lib/libpixman-1.so.0.44.2"
+    "usr/local/lib/libpixman-1.so.0.46.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -16318,7 +16652,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.44.2"
+  "version": "0.46.4"
  },
  "pkgconf": {
   "build_closure": [],
@@ -19134,6 +19468,103 @@
   "unresolved": [],
   "version": "2.3.0"
  },
+ "swaybg": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "cairo",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxml2",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib"
+  ],
+  "build_deps": [
+   "wayland",
+   "wayland-protocols",
+   "cairo",
+   "gdk-pixbuf",
+   "glib"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/swaybg"
+   ],
+   "files": 1,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "cairo",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "cairo",
+   "gdk-pixbuf",
+   "glib",
+   "wayland"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.2.2"
+ },
  "sysbench": {
   "build_closure": [
    "luajit"
@@ -20519,16 +20950,16 @@
    "libs": [
     "usr/local/lib/libwayland-client.so",
     "usr/local/lib/libwayland-client.so.0",
-    "usr/local/lib/libwayland-client.so.0.23.1",
+    "usr/local/lib/libwayland-client.so.0.24.0",
     "usr/local/lib/libwayland-cursor.so",
     "usr/local/lib/libwayland-cursor.so.0",
-    "usr/local/lib/libwayland-cursor.so.0.23.1",
+    "usr/local/lib/libwayland-cursor.so.0.24.0",
     "usr/local/lib/libwayland-egl.so",
     "usr/local/lib/libwayland-egl.so.1",
-    "usr/local/lib/libwayland-egl.so.1.23.1",
+    "usr/local/lib/libwayland-egl.so.1.24.0",
     "usr/local/lib/libwayland-server.so",
     "usr/local/lib/libwayland-server.so.0",
-    "usr/local/lib/libwayland-server.so.0.23.1"
+    "usr/local/lib/libwayland-server.so.0.24.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -20541,7 +20972,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.23.1"
+  "version": "1.24.0"
  },
  "wayland-protocols": {
   "build_closure": [
@@ -20567,8 +20998,8 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 101,
-   "headers": 50,
+   "files": 118,
+   "headers": 60,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -20577,7 +21008,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.38"
+  "version": "1.47"
  },
  "webkitgtk": {
   "build_closure": [
@@ -20905,6 +21336,75 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0-git-20250702"
+ },
+ "wlroots": {
+  "build_closure": [
+   "expat",
+   "gettext",
+   "lcms2",
+   "libdrm-headers",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "linux-headers-input-codes",
+   "ncurses",
+   "pixman",
+   "wayland",
+   "wayland-protocols",
+   "xz",
+   "zlib"
+  ],
+  "build_deps": [
+   "wayland",
+   "wayland-protocols",
+   "pixman",
+   "libxkbcommon",
+   "lcms2",
+   "libdrm-headers",
+   "linux-headers-input-codes"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 121,
+   "headers": 118,
+   "libs": [
+    "usr/local/lib/libwlroots-0.20.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "lcms2",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "ncurses",
+   "pixman",
+   "wayland",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "lcms2",
+   "libxkbcommon",
+   "pixman",
+   "wayland"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.20.2"
  },
  "woff2": {
   "build_closure": [

@@ -5,6 +5,20 @@ components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64** — and the same components as prebuilt packages
 a QNX target can download and install directly.
 
+## QNX resources
+
+| | |
+|---|---|
+| [QNX on GitHub](https://github.com/qnx/) | QNX's own repositories: BSPs (Raspberry Pi 4/5), samples, workshops |
+| [QNX Everywhere](https://blackberry.qnx.com/en/products/qnx-everywhere) | the product page |
+| [Get QNX](https://www.qnx.com/getqnx) | quick steps to the free non-commercial developer kit (QNX SDP 8.0) |
+| [QNX Developer Blog](https://devblog.qnx.com/) | articles and how-tos |
+| [qnx-ports on GitHub](https://github.com/qnx-ports) | QNX's open source ports |
+| [QNX Build Files Repository](https://github.com/qnx-ports/build-files) | QNX's build files for those ports -- this repository started from it |
+| [QNX Open-Source Dashboard](https://oss.qnx.com/) | build and test status of QNX's official ports; their apk repository is [repo.oss.qnx.com](https://repo.oss.qnx.com/) |
+
+How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-comparison.md).
+
 > **Ported by Claude.** The ports, QNX patches, scripts, tests, packages and
 > documentation here were ported, built, tested and documented by Claude
 > (Anthropic's AI model, through Claude Code) and contributed to this

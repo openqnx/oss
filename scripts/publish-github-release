@@ -13,7 +13,9 @@
 #   --verified        the component versions that passed on a target, as
 #                     tests/results/<arch>.tsv records them (scripts/verify-on-target):
 #                     check locally, then publish exactly what was checked
-#   the port tests of the components published come along (test_suites/8.0)
+#   the port tests of the components published come along (test_suites/8.0),
+#   and with --only/--verified, apk-tools and ca-certificates always do: they
+#   are what target-bootstrap installs first
 #   --changed         upload only files the release does not have yet: a new
 #                     version or release of a package (a published
 #                     <name>-<version>-r<N> is never rewritten, see qnxpkg)
@@ -102,6 +104,12 @@ else:
         else:
             vers = {max((e["V"] for e in es if e["P"] == comp), key=vk, default=None)}
         pick += [e for e in es if e["V"] in vers]
+    # What target-bootstrap installs first is always published: apk-tools and
+    # the CA bundle (every apk install on a target goes through them).
+    for comp in ("apk-tools", "ca-certificates"):
+        if comp in by and not any(e.get("o", e["P"]) == comp for e in pick):
+            v = max((e["V"] for e in by[comp] if e["P"] == comp), key=vk)
+            pick += [e for e in by[comp] if e["V"] == v]
     # What they need at run time comes along (newest version of each), or
     # apk on the target could not install them from this release.
     newest_of = {}

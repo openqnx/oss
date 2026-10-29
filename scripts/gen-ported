@@ -1,0 +1,173 @@
+#!/bin/bash
+# gen-ported -- the ported sources: each component's ORIGINAL upstream source
+# next to its QNX patches and the patched result, under ported/<name>/.
+#
+#   scripts/gen-ported [<component>...]        (default: every component)
+#
+# One directory per version, ported/<name>/<version>/: porting a newer
+# upstream release adds a directory and leaves the earlier ones as they are.
+#
+#   ported/<name>/<ver>/SOURCE.md            where the original comes from (URL,
+#                                            tag/commit or tarball + SHA-256),
+#                                            how to get it by hand, the patches
+#                                            and why each exists
+#   ported/<name>/<ver>/patches/             the QNX patches (ports/<name>/patches)
+#   ported/<name>/<ver>/<name>-<ver>-orig.tar.gz  the original upstream source, untouched
+#   ported/<name>/<ver>/<name>-<ver>-qnx.tar.gz   the same with the QNX patches applied:
+#                                            what scripts/qnxbuild configures and builds
+#
+# The original is produced exactly as qnxbuild fetches it -- the pinned
+# tarball (checksum verified), or a shallow clone of the tag/commit with its
+# submodules -- reusing src/<name> when it is there (its git HEAD is the
+# pristine upstream; the patches are uncommitted changes on top). Components
+# whose recipe fetches with its own do_fetch (multi-repository workspaces:
+# ROS 2, PDFium, WebRTC ...) get SOURCE.md and their patches only: their
+# sources are many repositories, fetched by that recipe step.
+#
+# ported/ is generated and not tracked (like dists/ and test_suites/).
+set -o pipefail
+# Large-file pointers stay pointers: a submodule of test media (GStreamer's
+# gst-integration-testsuites) would otherwise download gigabytes.
+export GIT_LFS_SKIP_SMUDGE=1
+WS=$(cd "$(dirname "$0")/.." && pwd)
+export QNX_SDP_ROOT=${QNX_SDP_ROOT:-$HOME/qnx800}
+source "$WS/env.sh" x86_64 >/dev/null || exit 1
+OUT=$WS/ported
+mkdir -p "$OUT"
+TMP=$(mktemp -d "$WS/tmp/gen-ported.XXXXXX") || exit 1
+trap 'rm -rf "$TMP"' EXIT
+comps=("$@"); [ ${#comps[@]} -gt 0 ] || mapfile -t comps < <(ls "$WS/ports" | while read -r c; do [ -f "$WS/ports/$c/recipe.sh" ] && echo "$c"; done)
+ok=0; partial=0; failed=0
+
+pristine_git() { # src-dir dest-dir : HEAD of a checkout (and of each submodule), no working-tree changes
+  local s=$1 d=$2
+  mkdir -p "$d" && git -C "$s" archive HEAD | tar -x -C "$d" || return 1
+  # Submodules that are checked out (a broken .gitmodules entry -- libnotify's
+  # gi-docgen -- makes foreach fail; what is there is still archived).
+  { git -C "$s" submodule --quiet foreach --recursive 'echo "$displaypath"' 2>/dev/null || true; } | while read -r m; do
+    [ -e "$s/$m/.git" ] || continue
+    mkdir -p "$d/$m" && git -C "$s/$m" archive HEAD | tar -x -C "$d/$m"
+  done
+  return 0
+}
+
+for pkg in "${comps[@]}"; do
+  rec=$WS/ports/$pkg/recipe.sh
+  [ -f "$rec" ] || { echo "!! $pkg: no recipe"; failed=$((failed+1)); continue; }
+  (
+    NAME=$pkg; VERSION=""; GIT=""; REF=""; TARBALL=""; SUBDIR=""; SHA256=""; COMMIT=""
+    SRCROOT=""; RECIPE_DIR=$WS/ports; STATUS=""
+    unset -f do_fetch do_patch
+    source "$rec" >/dev/null 2>&1
+    d=$OUT/$pkg/${VERSION:-0}; rm -rf "$d"; mkdir -p "$d"
+    [ -d "$WS/ports/$pkg/patches" ] && cp -a "$WS/ports/$pkg/patches" "$d/"
+    for x in "$WS/ports/$pkg"/*/; do   # recipe-specific patch sets (ros2/repo-patches, pdfium/qnx-patches ...)
+      [ -d "$x" ] && [ "$(basename "$x")" != patches ] && cp -a "$x" "$d/"
+    done
+    v=${VERSION:-0}; base="$pkg-$v"
+    custom=""; declare -F do_fetch >/dev/null && custom=1
+    {
+      echo "# $pkg $v -- original source and QNX port"
+      echo
+      if [ -n "$custom" ]; then
+        echo "**Origin:** fetched by the recipe's own \`do_fetch\` (several repositories):"
+        echo
+        echo '```bash'; declare -f do_fetch | tail -n +2; echo '```'
+        echo
+        [ -n "$GIT" ] && echo "Main repository: $GIT ${REF:+(ref \`$REF\`)}${COMMIT:+(commit \`$COMMIT\`)}" && echo
+        echo "Get it the same way with \`./scripts/qnxbuild $pkg\` (fetch, patch and build), or follow the commands above."
+      elif [ -n "$GIT" ]; then
+        echo "**Origin:** $GIT"
+        echo
+        if [ -n "$COMMIT" ]; then
+          echo "Pinned commit \`$COMMIT\`. To get the original by hand:"
+          echo; echo '```bash'
+          echo "git init $pkg && cd $pkg && git remote add origin $GIT"
+          echo "git fetch --depth 1 origin $COMMIT && git checkout FETCH_HEAD"
+          echo "git submodule update --init --recursive --depth 1"
+          echo '```'
+        else
+          echo "Tag/branch \`$REF\`. To get the original by hand:"
+          echo; echo '```bash'
+          echo "git clone --depth 1 -b $REF --recurse-submodules --shallow-submodules $GIT $pkg"
+          echo '```'
+        fi
+      elif [ -n "$TARBALL" ]; then
+        echo "**Origin:** $TARBALL"
+        echo
+        echo "SHA-256 \`${SHA256:-not pinned}\`. To get the original by hand:"
+        echo; echo '```bash'
+        echo "curl -fLO $TARBALL"
+        [ -n "$SHA256" ] && echo "echo '$SHA256  $(basename "$TARBALL")' | sha256sum -c"
+        echo '```'
+      else
+        echo "**Origin:** none -- the component is made from files in this repository (see ports/$pkg/recipe.sh)."
+      fi
+      [ -n "$SUBDIR" ] && { echo; echo "The project builds from the \`$SUBDIR/\` subdirectory."; }
+      echo
+      echo "## QNX patches"
+      echo
+      if ls "$d"/patches/*.patch >/dev/null 2>&1; then
+        echo "Applied in order with \`patch -p1\` from the top of the source tree:"
+        echo
+        for p in "$d"/patches/*.patch; do
+          why=$(head -n 1 "$p")
+          case "$why" in "From "*) why=$(sed -n 's/^Subject: *\(\[[^]]*\] *\)\{0,1\}//p' "$p" | head -n 1) ;; esac
+          echo "- \`patches/$(basename "$p")\` -- $why"
+        done
+        echo
+        echo "Each patch file starts with the reason for the change."
+      else
+        echo "None: the original builds for QNX as it is; everything QNX-specific is in the build configuration ([ports/$pkg/recipe.sh](https://github.com/openqnx/oss/blob/main/ports/$pkg/recipe.sh), the shared toolchain files)."
+      fi
+      for x in "$d"/*/; do
+        [ -d "$x" ] && [ "$(basename "$x")" != patches ] && echo && echo "Also \`$(basename "$x")/\`: the recipe's own patch set, applied by its \`do_patch\`/\`do_fetch\`."
+      done
+      echo
+      echo "## Files here"
+      echo
+      if [ -z "$custom" ]; then
+        echo "- \`$base-orig.tar.gz\` -- the original source, unmodified"
+        echo "- \`$base-qnx.tar.gz\` -- the original with the patches above applied (what is configured and built)"
+      fi
+      echo "- \`patches/\` -- the QNX patches"
+      echo
+      echo "How it is configured, built, installed and tested: [ports/$pkg/README.md](https://github.com/openqnx/oss/blob/main/ports/$pkg/README.md)."
+    } > "$d/SOURCE.md"
+    [ -n "$custom" ] && { echo "== $pkg: SOURCE.md + patches (custom fetch)"; exit 3; }
+    o=$TMP/$pkg/orig/$base; rm -rf "$TMP/$pkg"; mkdir -p "$o"
+    if [ -n "$TARBALL" ]; then
+      tb=$WS/dist/$(basename "$TARBALL")
+      [ -f "$tb" ] || curl -fsSL --retry 3 -o "$tb" "$TARBALL" || { echo "!! $pkg: download failed"; exit 1; }
+      [ -z "$SHA256" ] || echo "$SHA256  $tb" | sha256sum -c --status || { echo "!! $pkg: checksum mismatch"; exit 1; }
+      tar xf "$tb" -C "$o" --strip-components=1 || exit 1
+    elif [ -n "$GIT" ]; then
+      s=$SRC_DIR/$pkg
+      if [ ! -d "$s/.git" ]; then
+        s=$TMP/$pkg/clone
+        if [ -n "$COMMIT" ]; then
+          { git init -q "$s" && git -C "$s" remote add origin "$GIT" && git -C "$s" fetch -q --depth 1 origin "$COMMIT" \
+            && git -C "$s" -c advice.detachedHead=false checkout -q FETCH_HEAD \
+            && git -C "$s" submodule update -q --init --recursive --depth 1; } >/dev/null 2>&1
+        else
+          git clone -q --recurse-submodules --shallow-submodules ${REF:+--branch "$REF"} --depth 1 "$GIT" "$s" >/dev/null 2>&1
+        fi || { echo "!! $pkg: clone failed"; exit 1; }
+      fi
+      pristine_git "$s" "$o" || { echo "!! $pkg: archive failed"; exit 1; }
+    else
+      echo "== $pkg: SOURCE.md + patches (no upstream source)"; exit 3
+    fi
+    tar -C "$TMP/$pkg/orig" -czf "$d/$base-orig.tar.gz" "$base" || exit 1
+    q=$TMP/$pkg/qnx; mkdir -p "$q" && cp -a "$o" "$q/" || exit 1
+    for p in "$d"/patches/*.patch; do
+      [ -e "$p" ] || continue
+      patch -s -p1 -d "$q/$base" < "$p" >/dev/null || { echo "!! $pkg: $(basename "$p") does not apply"; exit 1; }
+    done
+    tar -C "$q" -czf "$d/$base-qnx.tar.gz" "$base" || exit 1
+    rm -rf "$TMP/$pkg"
+    echo "== $pkg: $(du -h "$d/$base-orig.tar.gz" | cut -f1) original, $(ls "$d"/patches/*.patch 2>/dev/null | wc -l) patch(es)"
+  )
+  case $? in 0) ok=$((ok+1));; 3) partial=$((partial+1));; *) failed=$((failed+1));; esac
+done
+echo "ported/: $ok with original + patched source, $partial patches/SOURCE.md only, $failed failed"
+[ $failed -eq 0 ]

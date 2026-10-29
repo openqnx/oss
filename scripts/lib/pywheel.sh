@@ -39,8 +39,8 @@ qnx_py_crossfile() {
     echo "cpp_args = ['-D_QNX_SOURCE', '-I$py']"
     # libm too: Meson's checks for math functions (numpy's "sin" with
     # dependency -lm) otherwise link without it and fail with "DSO missing".
-    echo "c_link_args = ['-L$STAGE$PREFIX/lib', '-lpython$QNX_PYV', '-lm']"
-    echo "cpp_link_args = ['-L$STAGE$PREFIX/lib', '-lpython$QNX_PYV', '-lm']"
+    echo "c_link_args = ['-Wl,--push-state,--no-as-needed', '-lc', '-Wl,--pop-state', '-L$STAGE$PREFIX/lib', '-lpython$QNX_PYV', '-lm']"
+    echo "cpp_link_args = ['-Wl,--push-state,--no-as-needed', '-lc', '-Wl,--pop-state', '-L$STAGE$PREFIX/lib', '-lpython$QNX_PYV', '-lm']"
     echo "[binaries]"
     # The GCC driver qcc runs, named so that Meson recognises it (it does not
     # know qcc), as qnx-ports' numpy cross file does.

@@ -56,9 +56,16 @@ set(CMAKE_CXX_FLAGS_INIT "-std=gnu++17 -isystem ${QNX_STAGE}${QNX_PREFIX}/includ
 
 set(CMAKE_C_STANDARD_LIBRARIES_INIT   "-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify")
 set(CMAKE_CXX_STANDARD_LIBRARIES_INIT "-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify")
-set(CMAKE_EXE_LINKER_FLAGS_INIT    "-Wl,--build-id=md5 -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
-set(CMAKE_SHARED_LINKER_FLAGS_INIT "-Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
-set(CMAKE_MODULE_LINKER_FLAGS_INIT "-Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+# libc always needed. With --as-needed (Meson's default, and ROS's
+# toolchain) a library that calls nothing in libc itself drops libc.so, and
+# the libc functions libgcc_eh/crt still need are then taken from QNX's static
+# libcS.a: the .so ends up EXPORTING its own copies of memchr, malloc, ... ,
+# and the dynamic linker binds every later library's calls to them instead of
+# libc's (32 such libraries: glib's libgthread, GStreamer plugins, ROS 2's
+# typesupport libraries). scripts/check-embedded-libc audits for it.
+set(CMAKE_EXE_LINKER_FLAGS_INIT    "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+set(CMAKE_SHARED_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+set(CMAKE_MODULE_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
 
 set(CMAKE_SYSROOT "${QNX_TARGET}")
 # Staging first. With the SDP ahead of it, find_library(ZLIB) resolved to the

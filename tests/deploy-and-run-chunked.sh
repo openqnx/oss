@@ -111,6 +111,8 @@ BUDGET=$(( BUDGET_MB * 1024 * 1024 ))
 # Keep every batch's output: the summary alone cannot say why a test failed.
 TRANSCRIPT="$WS/logs/ontarget-chunked.$ARCH.txt"; : > "$TRANSCRIPT"
 TESTS=$(cd "$BUNDLE/bin" && ls test_* 2>/dev/null | sort)
+# ONLY="test_a test_b": run just those (re-running the failures of a full run).
+[ -z "$ONLY" ] || TESTS=$(for t in $TESTS; do case " $ONLY " in *" $t "*) echo "$t" ;; esac; done)
 TOTAL=$(printf '%s\n' $TESTS | wc -l)
 echo "== $ARCH -> $TUSER@$HOST   $TOTAL tests, ${BUDGET_MB} MB per batch"
 

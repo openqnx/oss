@@ -1,0 +1,112 @@
+#!/bin/bash
+# new-port -- start porting an open source project that is not here yet.
+#
+#   scripts/new-port <name> <git-url | tarball-url> [<tag | commit>]
+#
+#   scripts/new-port libfoo https://github.com/example/libfoo.git          # newest release tag
+#   scripts/new-port libfoo https://github.com/example/libfoo.git v2.3.1
+#   scripts/new-port libfoo https://example.org/dl/libfoo-2.3.1.tar.xz
+#
+# Writes ports/<name>/recipe.sh -- the pin (tag or commit, or tarball and its
+# SHA-256), the version, and the build system found in the source (CMake,
+# Meson, autotools; anything else gets do_build/do_install hooks to fill in)
+# -- and a test skeleton tests/src/test_<name>.c, then tries the first build.
+# From there it is the normal porting loop (docs/porting-guide.md): read the
+# first error, fix it in src/<name>, turn the fix into a patch with
+# scripts/mkpatch, rebuild, both architectures; then write the test,
+# package, verify on a target, publish.
+set -o pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+N=${1:?usage: $0 <name> <git-url|tarball-url> [<tag|commit>]}; URL=${2:?usage: $0 <name> <git-url|tarball-url> [<tag|commit>]}; PIN=$3
+case "$N" in *[!a-z0-9._+-]*) echo "name: lower case letters, digits, . _ + - only" >&2; exit 2 ;; esac
+P=$WS/ports/$N
+[ ! -e "$P" ] || { echo "ports/$N exists already" >&2; exit 1; }
+T=$(mktemp -d "$WS/tmp/new-port.XXXXXX"); trap 'rm -rf "$T"' EXIT
+
+case "$URL" in
+  *.tar.gz|*.tgz|*.tar.xz|*.tar.bz2|*.tar.lz|*.tar.zst|*.zip)
+    f=$WS/dist/$(basename "$URL")
+    [ -f "$f" ] || curl -fsSL --retry 3 -o "$f" "$URL" || { echo "download failed: $URL" >&2; exit 1; }
+    SHA=$(sha256sum "$f" | cut -d' ' -f1)
+    VER=$(basename "$URL" | sed -E 's/\.(tar\.(gz|xz|bz2|lz|zst)|tgz|zip)$//; s/^.*[-_]v?([0-9][0-9A-Za-z.]*)$/\1/')
+    mkdir -p "$T/src" && tar xf "$f" -C "$T/src" --strip-components=1 || { echo "cannot unpack $f" >&2; exit 1; }
+    PINLINE="VERSION=$VER
+TARBALL=$URL
+SHA256=$SHA" ;;
+  *)
+    if [ -z "$PIN" ]; then   # the newest release tag
+      PIN=$(git ls-remote --tags --refs "$URL" | sed 's|.*refs/tags/||' \
+            | grep -E '^[vV]?[0-9]+(\.[0-9]+)+$|^'"$N"'[-_][0-9]' | sort -V | tail -n 1)
+      [ -n "$PIN" ] || { echo "no release tag found in $URL: give a tag or commit" >&2; exit 1; }
+    fi
+    if [[ "$PIN" =~ ^[0-9a-f]{40}$ ]]; then
+      VER=0_git$(date +%Y%m%d)
+      git init -q "$T/src" && git -C "$T/src" fetch -q --depth 1 "$URL" "$PIN" && git -C "$T/src" checkout -q FETCH_HEAD || exit 1
+      PINLINE="VERSION=$VER; GIT=$URL; COMMIT=$PIN"
+    else
+      VER=$(echo "$PIN" | sed -E "s/^$N[-_]//; s/^[vV]//")
+      git clone -q --depth 1 -b "$PIN" "$URL" "$T/src" || exit 1
+      PINLINE="VERSION=$VER; GIT=$URL; REF=$PIN"
+    fi ;;
+esac
+
+if   [ -f "$T/src/CMakeLists.txt" ]; then BS=cmake
+elif [ -f "$T/src/meson.build" ]; then BS=meson
+elif [ -f "$T/src/configure" ] || [ -f "$T/src/configure.ac" ] || [ -f "$T/src/configure.in" ]; then BS=autotools
+else BS=custom; fi
+
+mkdir -p "$P"
+{
+  echo "# $N: <what it is, in one line>. Ported by request; see ports/$N/README.md."
+  echo "# <why it is built the way it is: options, what is left out and why>"
+  echo "$PINLINE"
+  echo "DEPS=\"\"            # components it needs first (ports/<name>), space separated"
+  echo "BUILDSYS=$BS"
+  case $BS in
+    cmake) echo "CMAKE_ARGS_EXTRA=( -DBUILD_TESTING=OFF )" ;;
+    meson) echo "MESON_ARGS_EXTRA=( -Dtests=disabled )" ;;
+    autotools) echo "CONF_ARGS_EXTRA=( --disable-static )" ;;
+    custom)
+      echo '# No CMake/Meson/autotools build found: build and install by hand.'
+      echo 'do_build() { make -C "$S" CC="qcc -V$QCC_TARGET" -j"$(nproc)"; }'
+      echo 'do_install() { make -C "$S" PREFIX="$PREFIX" DESTDIR="$STAGE" install; }' ;;
+  esac
+} > "$P/recipe.sh"
+echo "== ports/$N/recipe.sh ($BS, $VER)"
+
+tt=test_${N//-/_}
+if [ ! -f "$WS/tests/src/$tt.c" ] && [ ! -f "$WS/tests/src/$tt.cpp" ]; then
+  cat > "$WS/tests/src/$tt.c" <<EOF
+/* $N: <what this checks>. Link it the way an application would and check
+ * behaviour, not just that a symbol exists: a call that does real work and
+ * a result compared against a known answer. */
+#include "common.h"
+/* #include <$N.h> */
+
+int main(void) {
+  QT_BEGIN("$N");
+  QT_CHECK(1, "replace with a real check");
+  QT_END();
+}
+EOF
+  echo "== tests/src/$tt.c (skeleton). Register it in tests/CMakeLists.txt:"
+  echo "   port_test($tt $tt.c <libraries to link>)"
+fi
+
+echo "== first build (both architectures)"
+export QNX_SDP_ROOT=${QNX_SDP_ROOT:-$HOME/qnx800}
+source "$WS/env.sh" x86_64 >/dev/null || exit 1
+if "$WS/scripts/qnxbuild" "$N"; then
+  echo "== $N builds. Next:"
+else
+  echo "== $N does not build yet (logs/$N.<arch>.log). The porting loop:"
+  echo "   fix src/$N, then scripts/mkpatch $N <patch-name> \"<why>\"; scripts/qnxbuild -f $N"
+fi
+cat <<EOF
+   1. finish recipe.sh's comments and DEPS; patches carry their reason (docs/porting-guide.md)
+   2. write tests/src/$tt.c, register it, ./tests/build-tests.sh
+   3. scripts/qnxpkg --key keys/private/<key>.rsa --tests $N
+   4. scripts/gen-dependency-index && scripts/gen-port-docs && scripts/gen-root-readme && scripts/gen-ported $N
+   5. scripts/serve-dists; scripts/verify-on-target -t "<target>" <target> $N
+   6. scripts/publish-github-release --only $N --upload --changed   (when the user says so)
+EOF

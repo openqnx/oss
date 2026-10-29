@@ -1,4 +1,6 @@
 #include "common.h"
+#include <stdlib.h>
+#include <sys/stat.h>
 #include <wayland-client.h>
 #include <wayland-server.h>
 #include <xkbcommon/xkbcommon.h>
@@ -7,6 +9,10 @@
  * connection attempt failing cleanly, and xkbcommon compiling a real keymap. */
 int main(void) {
   QT_BEGIN("wayland");
+  /* A compositor's socket lives in XDG_RUNTIME_DIR (a session sets it;
+   * wayland 1.24 refuses to guess): make one when the shell has none. */
+  char rt[] = "/tmp/wl-rt-XXXXXX";
+  if (!getenv("XDG_RUNTIME_DIR") && mkdtemp(rt)) { chmod(rt, 0700); setenv("XDG_RUNTIME_DIR", rt, 1); }
 
   /* --- server side: a display and its event loop are purely local --- */
   struct wl_display *disp = wl_display_create();

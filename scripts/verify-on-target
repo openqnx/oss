@@ -12,7 +12,8 @@
 #   -t       recorded with the result: what the target is, e.g.
 #            "QEMU x86_64, vanilla mkqnximage image", "Raspberry Pi 5, QNX 8.0 BSP"
 #   -k       keep the packages installed (default: apk del after each test,
-#            so a small /data can work through all of them)
+#            so a small /data can work through all of them; what was
+#            installed before the run -- apk-tools itself -- always stays)
 #
 # The target must be set up for apk first (scripts/target-bootstrap <target>
 # -r http://<host>:8000/dists/8.0, with scripts/serve-dists running). For each
@@ -83,6 +84,11 @@ done
 LOG=$WS/logs/verify-$ARCH.txt; mkdir -p "$WS/logs"
 on "apk update >/dev/null 2>&1" || echo "!! apk update failed on $T (is scripts/serve-dists running?)" >&2
 echo "== $T ($ARCH, $TARGET_DESC): ${#comps[@]} component(s)" | tee -a "$LOG"
+# What is installed before the first test stays installed: apk-tools and what
+# it runs on (apk-setup installed them), anything the user installed. Only
+# what a test added is removed again -- "apk del apk-tools" after its own
+# check took apk away from every component after it.
+BASE=" $(on "apk info 2>/dev/null" | tr '\n' ' ') "
 pass=0; fail=0
 for c in "${comps[@]}"; do
   v=$(ver_of "$c")
@@ -97,8 +103,14 @@ for c in "${comps[@]}"; do
     r=$(echo "$out" | grep -E "^(PASS|FAIL) $t\b" | head -n 1)
     [ -n "$r" ] || r="FAIL $t"
   else
-    # No test of its own: every ELF file it installs must load.
-    out=$(on "for d in /data/oss/usr/local/opt/*/lib /data/oss/usr/local/opt/ros/*/lib; do [ -d \$d ] && LD_LIBRARY_PATH=\$d:\$LD_LIBRARY_PATH; done; export LD_LIBRARY_PATH; apk info -L $c 2>/dev/null | grep -E '(^|/)(s?bin|lib)/' | while read -r f; do f=/data/oss/\$f; [ -f \"\$f\" ] || continue; case \"\$(head -c 4 \$f | od -An -c | tr -d ' ')\" in 177ELF*) ldd \"\$f\" >/dev/null 2>&1 || echo \"load failed: \$f\";; esac; done" 2>&1)
+    # No test of its own: every ELF file it installs must load. QNX's ldd
+    # refuses a file without the execute bit (a 644 library loads fine with
+    # dlopen or as DT_NEEDED): such a library is checked through a copy.
+    # Relocatable objects (.o, ELF type 1) are not loaded at all: skipped.
+    # QNX's ldd loads a library with thread-local storage and then fails in
+    # its own teardown ("Could not clean up dynamic TLS memory") -- after
+    # every dependency resolved: that is a library that loads.
+    out=$(on "for d in /data/oss/usr/local/opt/*/lib /data/oss/usr/local/opt/ros/*/lib; do [ -d \$d ] && LD_LIBRARY_PATH=\$d:\$LD_LIBRARY_PATH; done; export LD_LIBRARY_PATH; apk info -L $c 2>/dev/null | grep -E '(^|/)(s?bin|lib)/' | while read -r f; do f=/data/oss/\$f; [ -f \"\$f\" ] || continue; case \"\$(head -c 4 \$f | od -An -c | tr -d ' ')\" in 177ELF*) [ \"\$(od -An -tx1 -j16 -N1 \$f | tr -d ' ')\" = 01 ] && continue; g=\$f; if [ ! -x \"\$f\" ]; then g=/tmp/.vot-ldd; cp \"\$f\" \$g; chmod 755 \$g; fi; o=\$(ldd \"\$g\" 2>&1) || case \"\$o\" in *'Could not clean up dynamic TLS memory'*) ;; *) echo \"load failed: \$f\";; esac;; esac; done; rm -f /tmp/.vot-ldd" 2>&1)
     case "$out" in *"load failed"*) r="FAIL $c" ;; *) r="INSTALLED $c" ;; esac
   fi
   echo "$r  ($c $v)" | tee -a "$LOG"
@@ -110,7 +122,10 @@ for c in "${comps[@]}"; do
   key=${t:-pkg:$c}
   res=${r%% *}; [ "$res" = INSTALLED ] && res=PASS
   printf '%s %s\n' "$res" "$key" | "$WS/scripts/record-results" -a "$ARCH" -t "$TARGET_DESC" -v "$VIA" -p "$c $v" >/dev/null
-  [ -n "$KEEP" ] || on "apk del $pkgs >/dev/null 2>&1"
+  if [ -z "$KEEP" ]; then
+    rm_=""; for p in $pkgs; do case "$BASE" in *" $p "*) ;; *) rm_="$rm_ $p" ;; esac; done
+    [ -n "$rm_" ] && on "apk del$rm_ >/dev/null 2>&1"
+  fi
 done
 echo "== $T: $pass verified, $fail failed (results: tests/results/$ARCH.tsv, transcript: logs/verify-$ARCH.txt)" | tee -a "$LOG"
 [ $fail -eq 0 ]

@@ -20,7 +20,7 @@ rc=0
 QNX_OS_LIBS="libc libc++ libgcc_s libm libsocket libeventfd libepoll libsignalfd
 libtimerfd libfsnotify libregex libunwind libslog2 libslog2parse libslog2shim
 libjson libasound libiconv libpps libscreen libEGL libGLESv2 libqh libcatalog
-libpam libsecpol libjail libcam libz_qnx libbacktrace ldqnx-64"
+libpam libsecpol libjail libcam libz_qnx libbacktrace libdrm libgbm ldqnx-64"
 for arch in ${1:-aarch64le x86_64}; do
   source "$WS/env.sh" "$arch" >/dev/null || exit 1
   READELF="$QNX_HOST/usr/bin/nto${QNX_CPU}-readelf"

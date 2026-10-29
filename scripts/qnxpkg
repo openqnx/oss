@@ -369,6 +369,12 @@ TEST_EXTRAS = {
     "test_tflite": ["opt/tensorflow-lite/lib"],
     "test_torch": ["opt/pytorch/lib"],
     "test_ros2": ["opt/ros/jazzy/lib"],
+    # data the tests read: the terminfo database, the XKB keymaps
+    "test_unibilium": ["share/terminfo"],
+    "test_wayland": ["share/X11/xkb"],
+    # programs the test runs: the compositor and a client of it
+    "test_labwc": ["bin/labwc", "bin/swaybg", "share/X11/xkb"],
+    "test_wlroots": ["share/X11/xkb"],
 }
 TESTS_VERSION = "1.0"
 

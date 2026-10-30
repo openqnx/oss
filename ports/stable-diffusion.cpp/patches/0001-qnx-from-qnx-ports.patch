@@ -1,0 +1,44 @@
+stable-diffusion.cpp on QNX, from QNX's port (github.com/qnx-ports/
+stable-diffusion.cpp, branch qnx-8.0): the server example links QNX's
+libsocket, and the shared library takes all of ggml-vulkan's objects when
+that backend is built (not here: the SDP has no Vulkan).
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2804bad46..83c262539 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -311,6 +311,19 @@ endif()
+ add_subdirectory(thirdparty)
+ 
+ target_link_libraries(${SD_LIB} PUBLIC ggml zip)
++
++# On QNX the ggml-vulkan static archive contains SPIR-V shader data objects that
++# self-register via C++ global constructors with no externally-referenced symbols.
++# The linker silently drops them unless --whole-archive forces full inclusion.
++if(QNXNTO AND SD_BUILD_SHARED_LIBS AND SD_VULKAN)
++    target_link_options(${SD_LIB} PRIVATE
++        "LINKER:--whole-archive"
++        $<TARGET_FILE:ggml-vulkan>
++        "LINKER:--no-whole-archive"
++    )
++    add_dependencies(${SD_LIB} ggml-vulkan)
++endif()
++
+ target_include_directories(${SD_LIB} PUBLIC . src include)
+ target_include_directories(${SD_LIB} PUBLIC . thirdparty)
+ target_compile_features(${SD_LIB} PUBLIC c_std_11 cxx_std_17)
+diff --git a/examples/server/CMakeLists.txt b/examples/server/CMakeLists.txt
+index 5c462258b..2126f810c 100644
+--- a/examples/server/CMakeLists.txt
++++ b/examples/server/CMakeLists.txt
+@@ -103,5 +103,8 @@ endif()
+ if(WIN32 AND NOT MSVC)
+     target_link_libraries(${TARGET} PRIVATE ws2_32)
+ endif()
++if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
++    target_link_libraries(${TARGET} PRIVATE socket)
++endif()
+ 
+ target_compile_features(${TARGET} PUBLIC c_std_11 cxx_std_17)

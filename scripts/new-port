@@ -17,6 +17,8 @@
 # package, verify on a target, publish.
 set -o pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
+# Native tools this workspace builds (lzip for .tar.lz) unpack the source.
+PATH="$WS/hosttools/bin:$PATH"
 N=${1:?usage: $0 <name> <git-url|tarball-url> [<tag|commit>]}; URL=${2:?usage: $0 <name> <git-url|tarball-url> [<tag|commit>]}; PIN=$3
 case "$N" in *[!a-z0-9._+-]*) echo "name: lower case letters, digits, . _ + - only" >&2; exit 2 ;; esac
 P=$WS/ports/$N

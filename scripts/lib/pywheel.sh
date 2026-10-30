@@ -90,3 +90,22 @@ qnx_py_install_pure() {
   mkdir -p "$sp"
   for w in "$SRCROOT"/*.whl; do "$WS/hosttools/bin/python$QNX_PYV" -m zipfile -e "$w" "$sp" || return 1; done
 }
+
+# Pure-Python packages published only as a source distribution: the build
+# machine's Python of the target's version builds the (platform independent)
+# wheel from it. Recipe: TARBALL=<sdist url>, SHA256=..., BUILDSYS=custom,
+#   do_fetch() { qnx_py_fetch_sdist; }  do_build() { qnx_py_wheel_pure; }  do_install() { qnx_py_install; }
+qnx_py_fetch_sdist() {
+  local a="$WS/dist/$(basename "$TARBALL")"
+  mkdir -p "$WS/dist" "$SRCROOT"
+  [ -f "$a" ] || curl -fsSL -o "$a" "$TARBALL" || return 1
+  echo "$SHA256  $a" | sha256sum -c --status || { echo "checksum mismatch: $a"; rm -f "$a"; return 1; }
+  tar xf "$a" -C "$SRCROOT" --strip-components=1
+}
+qnx_py_wheel_pure() {
+  qnx_py_venv setuptools wheel || return 1
+  rm -rf "$B/wheel" && mkdir -p "$B/wheel" && \
+  env -u CC -u CXX -u CFLAGS -u LDFLAGS -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR \
+    "$B/venv/bin/python" -m pip wheel --no-deps --no-build-isolation -q -w "$B/wheel" "$S" || return 1
+  ls "$B"/wheel/*-none-any.whl >/dev/null 2>&1 || { echo "not a pure wheel: $(ls "$B/wheel")"; return 1; }
+}

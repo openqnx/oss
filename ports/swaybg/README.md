@@ -175,8 +175,14 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date |
 |---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | labwc 0.20.2-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | oss-desktop 1.0-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | swaybg 1.2.2-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | labwc 0.20.2-r0 | ❌ FAIL | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | labwc 0.20.2-r1 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | oss-desktop 1.0-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | swaybg 1.2.2-r0 | ❌ FAIL | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | swaybg 1.2.2-r1 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | swaybg 1.2.2-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions

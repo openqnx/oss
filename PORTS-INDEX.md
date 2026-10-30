@@ -1,12 +1,12 @@
 # Component index
 
-458 components. **457** build for both `aarch64le` and `x86_64` from upstream source, carrying 233 QNX patches between them.
+521 components. **520** build for both `aarch64le` and `x86_64` from upstream source, carrying 244 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
-| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **200** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **38** |
-| 🔴 **dependent** | needs other components to build and to run | **219** |
+| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **223** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **63** |
+| 🔴 **dependent** | needs other components to build and to run | **234** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -20,6 +20,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [abuild](ports/abuild/README.md) | 3.16.0 | custom | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [ada](ports/ada/README.md) | 3.4.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [adwaita-fonts](ports/adwaita-fonts/README.md) | 49.0 | custom | download.gnome.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [adwaita-icon-theme](ports/adwaita-icon-theme/README.md) | 51.0 | meson | download.gnome.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [amqp-cpp](ports/amqp-cpp/README.md) | 4.3.27 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [aom](ports/aom/README.md) | 3.12.1 | cmake | aomedia.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [apk-tools](ports/apk-tools/README.md) | 3.0.0_rc5 | meson | github.com | 3 | 🔴 dependent | 3 | ✅ | ✅ |
@@ -47,6 +48,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [binutils](ports/binutils/README.md) | 2.43 | autotools | ftp.gnu.org | 10 | 🔴 dependent | 2 | ✅ | ✅ |
 | [boost](ports/boost/README.md) | 1.86.0 | custom | archives.boost.io | 4 | 🔴 dependent | 3 | ✅ | ✅ |
 | [brotli](ports/brotli/README.md) | 1.1.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [btop](ports/btop/README.md) | 1.4.6 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [busybox](ports/busybox/README.md) | 1.36.1 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [bzip2](ports/bzip2/README.md) | 1.0.8 | custom | gitlab.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [c-ares](ports/c-ares/README.md) | 1.34.3 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
@@ -56,6 +58,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [capicxx-core-runtime](ports/capicxx-core-runtime/README.md) | 3.2.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [capicxx-someip-runtime](ports/capicxx-someip-runtime/README.md) | 3.2.4 | cmake | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
 | [capnproto](ports/capnproto/README.md) | 1.0.2 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
+| [capstone](ports/capstone/README.md) | 5.0.9 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [catch2](ports/catch2/README.md) | 3.7.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [cereal](ports/cereal/README.md) | 1.3.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [ceres-solver](ports/ceres-solver/README.md) | 2.2.0 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
@@ -79,9 +82,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [desktop-file-utils](ports/desktop-file-utils/README.md) | 0.28 | meson | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [dlt-daemon](ports/dlt-daemon/README.md) | 2.18.10 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [dnsmasq](ports/dnsmasq/README.md) | 2.93test4 | custom | thekelleys.org.uk | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [docbook-xsl](ports/docbook-xsl/README.md) | 1.79.2 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [double-conversion](ports/double-conversion/README.md) | 3.3.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [doxygen](ports/doxygen/README.md) | 1.17.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [duktape](ports/duktape/README.md) | 2.7.0 | custom | duktape.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [dump1090](ports/dump1090/README.md) | 0-git-20240121 | custom | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [ed](ports/ed/README.md) | 1.22.5 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [eigen](ports/eigen/README.md) | 3.4.0 | cmake | gitlab.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [emacs](ports/emacs/README.md) | 30.2 | custom | ftp.gnu.org | 4 | 🔴 dependent | 9 | ✅ | ✅ |
 | [emulationstation](ports/emulationstation/README.md) | 2.11-git-20241212 | cmake | github.com | 1 | 🔴 dependent | 6 | ✅ | ✅ |
@@ -147,6 +153,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [googletest](ports/googletest/README.md) | 1.17.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [gperf](ports/gperf/README.md) | 3.1 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [graphene](ports/graphene/README.md) | 1.10.8 | meson | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [graphicsmagick](ports/graphicsmagick/README.md) | 1.3.46 | autotools | downloads.sourceforge.net | — | 🔴 dependent | 13 | ✅ | ✅ |
 | [graphite2](ports/graphite2/README.md) | 1.3.14 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [grep](ports/grep/README.md) | 3.11 | autotools | ftp.gnu.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [groff](ports/groff/README.md) | 1.23.0 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -167,6 +174,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [harfbuzz](ports/harfbuzz/README.md) | 10.1.0 | meson | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [hicolor-icon-theme](ports/hicolor-icon-theme/README.md) | 0.18 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [highway](ports/highway/README.md) | 1.2.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [htop](ports/htop/README.md) | 3.5.0 | autotools | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [hyphen](ports/hyphen/README.md) | 2.8.8 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
 | [iceoryx](ports/iceoryx/README.md) | 2.0.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [icu](ports/icu/README.md) | 76.1 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
@@ -182,10 +190,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [kineto](ports/kineto/README.md) | 0-git-20250214 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [labwc](ports/labwc/README.md) | 0.20.2 | meson | github.com | 2 | 🔴 dependent | 10 | ✅ | ✅ |
 | [lame](ports/lame/README.md) | 3.100 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
+| [lcm](ports/lcm/README.md) | 1.5.2 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [lcms2](ports/lcms2/README.md) | 2.16 | meson | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [lely-core](ports/lely-core/README.md) | 2.3.4 | autotools | gitlab.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [less](ports/less/README.md) | 668 | autotools | www.greenwoodsoftware.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [leveldb](ports/leveldb/README.md) | 1.23 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [libaec](ports/libaec/README.md) | 1.1.7 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libarchive](ports/libarchive/README.md) | 3.7.7 | cmake | github.com | — | 🔴 dependent | 7 | ✅ | ✅ |
 | [libass](ports/libass/README.md) | 0.17.3 | autotools | github.com | 1 | 🔴 dependent | 4 | ✅ | ✅ |
 | [libavif](ports/libavif/README.md) | 1.1.1 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
@@ -212,12 +222,14 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libgpg-error](ports/libgpg-error/README.md) | 1.50 | autotools | gnupg.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libgsf](ports/libgsf/README.md) | 1.14.53 | autotools | gitlab.gnome.org | — | 🔴 dependent | 5 | ✅ | ✅ |
 | [libhandy](ports/libhandy/README.md) | 1.8.3 | meson | gitlab.gnome.org | — | 🔴 dependent | 8 | ✅ | ✅ |
+| [libice](ports/libice/README.md) | 1.1.2 | autotools | xorg.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [libiconv](ports/libiconv/README.md) | 1.18 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libidn2](ports/libidn2/README.md) | 2.3.7 | autotools | ftp.gnu.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [libinih](ports/libinih/README.md) | 58 | meson | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libjpeg-turbo](ports/libjpeg-turbo/README.md) | 3.0.4 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libjson](ports/libjson/README.md) | 0.8-git-20260512 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libjxl](ports/libjxl/README.md) | 0.11.1 | cmake | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
+| [libmd](ports/libmd/README.md) | 1.1.0 | autotools | libbsd.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libmetal](ports/libmetal/README.md) | 2024.10.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libmicrohttpd](ports/libmicrohttpd/README.md) | 1.0.1 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libmodbus](ports/libmodbus/README.md) | 3.1.11 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -237,6 +249,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libsamplerate](ports/libsamplerate/README.md) | 0.2.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libsecret](ports/libsecret/README.md) | 0.21.4 | meson | gitlab.gnome.org | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [libsfdo](ports/libsfdo/README.md) | 0.1.4 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [libsm](ports/libsm/README.md) | 1.2.6 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libsndfile](ports/libsndfile/README.md) | 1.2.2 | cmake | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [libsodium](ports/libsodium/README.md) | 1.0.20 | autotools | download.libsodium.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libsoup](ports/libsoup/README.md) | 3.6.1 | meson | gitlab.gnome.org | — | 🔴 dependent | 7 | ✅ | ✅ |
@@ -249,6 +262,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libtool](ports/libtool/README.md) | 2.5.4 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libunibreak](ports/libunibreak/README.md) | 6.1 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libunistring](ports/libunistring/README.md) | 1.3 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [libunwind](ports/libunwind/README.md) | 1.8.3 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libusb](ports/libusb/README.md) | 1.0.27 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libuv](ports/libuv/README.md) | 1.51.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libvorbis](ports/libvorbis/README.md) | 1.3.7 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -261,6 +275,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libxcomposite](ports/libxcomposite/README.md) | 0.4.6 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libxcrypt](ports/libxcrypt/README.md) | 4.4.38 | autotools | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libxcursor](ports/libxcursor/README.md) | 1.2.2 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
+| [libxcvt](ports/libxcvt/README.md) | 0.1.3 | meson | xorg.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libxdamage](ports/libxdamage/README.md) | 1.1.6 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [libxdmcp](ports/libxdmcp/README.md) | 1.1.5 | autotools | gitlab.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [libxext](ports/libxext/README.md) | 1.3.6 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -268,15 +283,20 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libxfce4util](ports/libxfce4util/README.md) | 4.20.0 | autotools | archive.xfce.org | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [libxfce4windowing](ports/libxfce4windowing/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 10 | ✅ | ✅ |
 | [libxfixes](ports/libxfixes/README.md) | 6.0.1 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [libxfont2](ports/libxfont2/README.md) | 2.0.7 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [libxft](ports/libxft/README.md) | 2.3.8 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [libxi](ports/libxi/README.md) | 1.8.2 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [libxinerama](ports/libxinerama/README.md) | 1.1.5 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [libxkbcommon](ports/libxkbcommon/README.md) | 1.8.1 | meson | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [libxkbfile](ports/libxkbfile/README.md) | 1.2.0 | meson | xorg.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libxml2](ports/libxml2/README.md) | 2.13.5 | cmake | gitlab.gnome.org | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [libxmu](ports/libxmu/README.md) | 1.3.1 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [libxrandr](ports/libxrandr/README.md) | 1.5.4 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [libxrender](ports/libxrender/README.md) | 0.9.11 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libxscrnsaver](ports/libxscrnsaver/README.md) | 1.2.4 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [libxshmfence](ports/libxshmfence/README.md) | 1.3.3 | autotools | xorg.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [libxslt](ports/libxslt/README.md) | 1.1.42 | cmake | gitlab.gnome.org | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [libxt](ports/libxt/README.md) | 1.3.1 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [libxtst](ports/libxtst/README.md) | 1.2.5 | autotools | gitlab.freedesktop.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [libyaml](ports/libyaml/README.md) | 0.2.5 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libyuv](ports/libyuv/README.md) | stable | cmake | chromium.googlesource.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
@@ -294,6 +314,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [luv](ports/luv/README.md) | 1.51.0-1 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [lxde-icon-theme](ports/lxde-icon-theme/README.md) | 0.5.2 | autotools | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [lz4](ports/lz4/README.md) | 1.10.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [lzip](ports/lzip/README.md) | 1.26 | autotools | download.savannah.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [lzo](ports/lzo/README.md) | 2.10 | autotools | www.oberhumer.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [m4](ports/m4/README.md) | 1.4.19 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [magic_enum](ports/magic_enum/README.md) | 0.9.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -302,18 +323,23 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [man-db](ports/man-db/README.md) | 2.13.1 | autotools | download.savannah.gnu.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [mate-calc](ports/mate-calc/README.md) | 1.28.0 | autotools | pub.mate-desktop.org | 3 | 🔴 dependent | 13 | ✅ | ✅ |
 | [mbedtls](ports/mbedtls/README.md) | 3.6.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [mcap-cpp](ports/mcap-cpp/README.md) | 2.1.3 | custom | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [meson](ports/meson/README.md) | 1.10.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [metis](ports/metis/README.md) | 5.2.1 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [mimalloc](ports/mimalloc/README.md) | 3.1.5 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [minicom](ports/minicom/README.md) | 2.9 | autotools | salsa.debian.org | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [miniz](ports/miniz/README.md) | 3.1.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [mkfontscale](ports/mkfontscale/README.md) | 1.2.3 | autotools | www.x.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [mosquitto](ports/mosquitto/README.md) | 2.0.20 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [mpc](ports/mpc/README.md) | 1.3.1 | autotools | ftp.gnu.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [mpfr](ports/mpfr/README.md) | 4.2.1 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [mpg123](ports/mpg123/README.md) | 1.32.9 | autotools | www.mpg123.de | — | 🟢 standalone | — | ✅ | ✅ |
 | [msgpack-c](ports/msgpack-c/README.md) | 6.1.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [mujoco](ports/mujoco/README.md) | 3.10.0 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [muslflt](ports/muslflt/README.md) | 1.0-git-20240802 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [nano](ports/nano/README.md) | 8.2 | autotools | www.nano-editor.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [nanosvg](ports/nanosvg/README.md) | 0-git-20260709 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [ncnn](ports/ncnn/README.md) | 20260526 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [ncurses](ports/ncurses/README.md) | 6.5 | autotools | ftp.gnu.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [neovim](ports/neovim/README.md) | 0.12.3 | custom | github.com | 4 | 🔴 dependent | 6 | ✅ | ✅ |
 | [nettle](ports/nettle/README.md) | 3.10.1 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -339,8 +365,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [openjpeg](ports/openjpeg/README.md) | 2.5.3 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [openssh](ports/openssh/README.md) | 10.2p1 | autotools | cdn.openbsd.org | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [openssl](ports/openssl/README.md) | 3.5.1 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [openttd-opengfx](ports/openttd-opengfx/README.md) | 8.0 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [openttd-openmsx](ports/openttd-openmsx/README.md) | 0.4.2 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [openttd-opensfx](ports/openttd-opensfx/README.md) | 1.0.3 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [openttd](ports/openttd/README.md) | 15.0-git-20250501 | custom | github.com | 2 | 🔴 dependent | 7 | ✅ | ✅ |
 | [opus](ports/opus/README.md) | 1.5.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [opusfile](ports/opusfile/README.md) | 0.12 | autotools | downloads.xiph.org | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [orc](ports/orc/README.md) | 0.4.40 | meson | gitlab.freedesktop.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [orocos-kdl](ports/orocos-kdl/README.md) | 1.5.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [oss-desktop](ports/oss-desktop/README.md) | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -349,29 +379,53 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [paho.mqtt.cpp](ports/paho.mqtt.cpp/README.md) | 1.5.2 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [pandas](ports/pandas/README.md) | 2.3.3 | custom | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [pango](ports/pango/README.md) | 1.54.0 | meson | gitlab.gnome.org | — | 🔴 dependent | 9 | ✅ | ✅ |
+| [patch](ports/patch/README.md) | 2.8 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [pax-utils](ports/pax-utils/README.md) | 1.3.8 | meson | dev.gentoo.org | 3 | 🟢 standalone | — | ✅ | ✅ |
 | [pcl](ports/pcl/README.md) | 1.14.1 | cmake | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [pcre](ports/pcre/README.md) | 8.45 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
 | [pcre2](ports/pcre2/README.md) | 10.44 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [pdfium](ports/pdfium/README.md) | 0-git-84a8011 | custom | pdfium.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [perl-error](ports/perl-error/README.md) | 0.17030 | custom | cpan.metacpan.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [perl-mozilla-ca](ports/perl-mozilla-ca/README.md) | 20261020 | custom | cpan.metacpan.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [perl](ports/perl/README.md) | 5.40.2 | custom | www.cpan.org | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [picocom](ports/picocom/README.md) | 3.1 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [pistache](ports/pistache/README.md) | 0.4.26 | meson | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [pixman](ports/pixman/README.md) | 0.46.4 | meson | gitlab.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [pkgconf](ports/pkgconf/README.md) | 2.3.0 | meson | distfiles.ariadne.space | — | 🟢 standalone | — | ✅ | ✅ |
+| [poppler](ports/poppler/README.md) | 25.12.0 | cmake | gitlab.freedesktop.org | — | 🔴 dependent | 12 | ✅ | ✅ |
 | [pqiv](ports/pqiv/README.md) | 2.13.2 | custom | github.com | 1 | 🔴 dependent | 10 | ✅ | ✅ |
 | [protobuf-c](ports/protobuf-c/README.md) | 1.5.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [protobuf](ports/protobuf/README.md) | 29.3 | custom | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [pthread-stubs](ports/pthread-stubs/README.md) | 0.5 | autotools | xorg.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [pthreadpool](ports/pthreadpool/README.md) | 0-git-20250207 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [pugixml](ports/pugixml/README.md) | 1.14 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [python3-astor](ports/python3-astor/README.md) | 0.8.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-async-generator](ports/python3-async-generator/README.md) | 1.10 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-click](ports/python3-click/README.md) | 8.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-coverage](ports/python3-coverage/README.md) | 7.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-curio](ports/python3-curio/README.md) | 1.6_git20251221 | custom | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-dateutil](ports/python3-dateutil/README.md) | 2.9.0.post0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-idna](ports/python3-idna/README.md) | 3.20 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-iniconfig](ports/python3-iniconfig/README.md) | 2.3.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-mypy-extensions](ports/python3-mypy-extensions/README.md) | 1.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-packaging](ports/python3-packaging/README.md) | 25.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pip](ports/python3-pip/README.md) | 25.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pluggy](ports/python3-pluggy/README.md) | 1.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pretend](ports/python3-pretend/README.md) | 1.0.9 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pygments](ports/python3-pygments/README.md) | 2.21.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pytest-cov](ports/python3-pytest-cov/README.md) | 7.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pytest-tornasync](ports/python3-pytest-tornasync/README.md) | 0.6.0.post2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pytest](ports/python3-pytest/README.md) | 9.2.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pytokens](ports/python3-pytokens/README.md) | 0.4.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pytz](ports/python3-pytz/README.md) | 2025.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-setuptools](ports/python3-setuptools/README.md) | 80.8.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-six](ports/python3-six/README.md) | 1.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-sniffio](ports/python3-sniffio/README.md) | 1.3.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-sortedcontainers](ports/python3-sortedcontainers/README.md) | 2.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-tornado](ports/python3-tornado/README.md) | 6.6 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-traitlets](ports/python3-traitlets/README.md) | 5.16.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tzdata](ports/python3-tzdata/README.md) | 2025.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-versioneer](ports/python3-versioneer/README.md) | 0.29 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-wheel](ports/python3-wheel/README.md) | 0.46.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3](ports/python3/README.md) | 3.14.0 | autotools | www.python.org | 1 | 🔴 dependent | 11 | ✅ | ✅ |
 | [pytorch](ports/pytorch/README.md) | 2.3.1 | custom | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
@@ -406,6 +460,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [sqlite](ports/sqlite/README.md) | 3.47.2 | autotools | www.sqlite.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [sqlite_orm](ports/sqlite_orm/README.md) | 1.9 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [sscep](ports/sscep/README.md) | 0.10.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [stable-diffusion.cpp](ports/stable-diffusion.cpp/README.md) | 0_git20260601 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [strongswan](ports/strongswan/README.md) | 6.0.6 | autotools | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [sudo](ports/sudo/README.md) | 1.9.17p2 | autotools | www.sudo.ws | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [suitesparse](ports/suitesparse/README.md) | 7.11.0 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
@@ -421,9 +476,13 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [tinyxml2](ports/tinyxml2/README.md) | 10.0.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tmux](ports/tmux/README.md) | 3.5a | autotools | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [tomlplusplus](ports/tomlplusplus/README.md) | 3.4.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [tree-sitter-bash](ports/tree-sitter-bash/README.md) | 0.25.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-c](ports/tree-sitter-c/README.md) | 0.24.1 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [tree-sitter-cmake](ports/tree-sitter-cmake/README.md) | 0.7.2 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-lua](ports/tree-sitter-lua/README.md) | 0.4.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [tree-sitter-make](ports/tree-sitter-make/README.md) | 1.1.1 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-markdown](ports/tree-sitter-markdown/README.md) | 0.5.1 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [tree-sitter-python](ports/tree-sitter-python/README.md) | 0.23.6 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-query](ports/tree-sitter-query/README.md) | 0.7.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-vim](ports/tree-sitter-vim/README.md) | 0.7.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree-sitter-vimdoc](ports/tree-sitter-vimdoc/README.md) | 4.0.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -446,6 +505,8 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [webkitgtk](ports/webkitgtk/README.md) | 2.44.4 | cmake | webkitgtk.org | 5 | 🔴 dependent | 32 | ✅ | ✅ |
 | [webrtc](ports/webrtc/README.md) | m132-afaf497 | custom | webrtc.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [weston](ports/weston/README.md) | 13.0.3 | — | gitlab.freedesktop.org | — | ⛔ blocked | — | — | — |
+| [wget](ports/wget/README.md) | 1.25.0 | autotools | ftp.gnu.org | — | 🔴 dependent | 7 | ✅ | ✅ |
+| [whisper.cpp](ports/whisper.cpp/README.md) | 0_git20260728 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [wlr-protocols](ports/wlr-protocols/README.md) | 0-git-20250702 | custom | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [wlroots](ports/wlroots/README.md) | 0.20.2 | meson | gitlab.freedesktop.org | 1 | 🔴 dependent | 4 | ✅ | ✅ |
 | [woff2](ports/woff2/README.md) | 1.0.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -453,6 +514,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [x264](ports/x264/README.md) | stable | custom | code.videolan.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [x265](ports/x265/README.md) | 3.6 | cmake | bitbucket.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [xcb-proto](ports/xcb-proto/README.md) | 1.17.0 | autotools | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [xcb-util](ports/xcb-util/README.md) | 0.4.1 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [xdg-utils](ports/xdg-utils/README.md) | 1.2.1 | autotools | gitlab.freedesktop.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [xfce4-appfinder](ports/xfce4-appfinder/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 8 | ✅ | ✅ |
 | [xfce4-panel](ports/xfce4-panel/README.md) | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 17 | ✅ | ✅ |
@@ -460,6 +522,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [xfce4-settings](ports/xfce4-settings/README.md) | 4.20.1 | autotools | archive.xfce.org | — | 🔴 dependent | 16 | ✅ | ✅ |
 | [xfce4-terminal](ports/xfce4-terminal/README.md) | 1.1.5 | meson | archive.xfce.org | 2 | 🔴 dependent | 12 | ✅ | ✅ |
 | [xfconf](ports/xfconf/README.md) | 4.20.0 | autotools | archive.xfce.org | 1 | 🔴 dependent | 3 | ✅ | ✅ |
+| [xkbcomp](ports/xkbcomp/README.md) | 1.5.0 | meson | xorg.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [xkeyboard-config](ports/xkeyboard-config/README.md) | 2.43 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [xnnpack](ports/xnnpack/README.md) | 0-git-20250209 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [xorgproto](ports/xorgproto/README.md) | 2024.1 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |

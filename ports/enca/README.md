@@ -176,6 +176,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | enca 1.19-r0 | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gsm 1.0.22-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | hyphen 2.8.8-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | enca 1.19-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gsm 1.0.22-r0 | ✅ PASS | 2026-10-30 |

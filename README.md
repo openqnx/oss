@@ -1,6 +1,6 @@
 # QNX OSS — open source for QNX SDP 8.0
 
-Build files, QNX patches and step-by-step guides for **457 open source
+Build files, QNX patches and step-by-step guides for **520 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64** — and the same components as prebuilt packages
 a QNX target can download and install directly.
@@ -26,12 +26,12 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 
 | | |
 |---|---|
-| Components | **457** (457 build for every architecture they support -- both, but for a few aarch64-only ones) |
-| 🟢 Standalone | **200** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **38** — need other components to build, run on their own |
-| 🔴 Dependent | **219** — need other components to build and to run |
-| QNX patches | **392**, one file per change, each with its reason |
-| On-target tests | **212** test programs |
+| Components | **520** (520 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| 🟢 Standalone | **223** — QNX SDP only, at build time and at run time |
+| 🟡 Build-deps only | **63** — need other components to build, run on their own |
+| 🔴 Dependent | **234** — need other components to build and to run |
+| QNX patches | **403**, one file per change, each with its reason |
+| On-target tests | **230** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 
 **→ [Component index](PORTS-INDEX.md)** · **[Dependencies](DEPENDENCIES.md)** ·

@@ -72,7 +72,23 @@ if os.path.exists("README.md.in"):
     allpat = sum(1 for r, _, fs in os.walk("ports") for x in fs if x.endswith(".patch"))
     ntest = len(re.findall(r'^\s*port_test\(', open("tests/CMakeLists.txt").read(), re.M))
     ported = [r for r in rows if r[5] not in ("planned", "blocked")]
-    vals = {"TOTAL": len(ported), "BUILT": built, "STANDALONE": cnt("standalone"),
+    # Verified: passed on a QNX target on every architecture it is built for, at any version
+    # (tests/results/<arch>.tsv, what verify-on-target records) -- exactly
+    # what publish-github-release --verified puts in the GitHub releases.
+    def passed(arch):
+        s = set(); f = "tests/results/%s.tsv" % arch
+        if os.path.exists(f):
+            for line in open(f):
+                c = line.rstrip("\n").split("\t")
+                if len(c) >= 6 and c[1] == "PASS" and c[5]:
+                    s.add(c[5].split()[0])
+        return s
+    px, pa = passed("x86_64"), passed("aarch64le")
+    # rows: name, ..., built aarch64le, built x86_64 -- verified on every
+    # architecture it is built for (a few are aarch64-only).
+    verified = sum(1 for r in ported
+                   if (r[7] != "OK" or r[0] in pa) and (r[8] != "OK" or r[0] in px) and "OK" in (r[7], r[8]))
+    vals = {"TOTAL": len(ported), "VERIFIED": verified, "BUILT": built, "STANDALONE": cnt("standalone"),
             "RTSTANDALONE": cnt("runtime-standalone"), "DEPENDENT": cnt("dependent"),
             "PATCHES": allpat, "TESTS": ntest}
     txt = open("README.md.in").read()

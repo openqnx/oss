@@ -15,6 +15,11 @@ set(STAGE "$ENV{STAGE}$ENV{PREFIX}" CACHE PATH "staging prefix")
 set(INC "${STAGE}/include")
 set(LIB "${STAGE}/lib")
 
+# The tests print their source file (__FILE__) in failure messages: relative,
+# so the binaries -- and their packages -- do not change with the checkout's
+# path (they did when the workspace was reached through another mount path).
+add_compile_options("-fmacro-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}/=tests/")
+
 # Tests find their headers and libraries the same way an application would.
 include_directories(SYSTEM "${INC}" "${CMAKE_CURRENT_SOURCE_DIR}")
 link_directories("${LIB}")

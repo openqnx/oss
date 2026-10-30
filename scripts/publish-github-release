@@ -16,6 +16,7 @@
 #   the port tests of the components published come along (test_suites/8.0),
 #   and with --only/--verified, apk-tools and ca-certificates always do: they
 #   are what target-bootstrap installs first
+#   --no-tests        leave the tests-<sdp>-<arch> releases alone
 #   --changed         upload only files the release does not have yet: a new
 #                     version or release of a package (a published
 #                     <name>-<version>-r<N> is never rewritten, see qnxpkg)
@@ -41,6 +42,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --upload) UPLOAD=1; shift ;;
   --prune) PRUNE=1; shift ;;
   --changed) CHANGED=1; shift ;;
+  --no-tests) NOTESTS=1; shift ;;
   --verified) MODE=verified; shift ;;
   --only) MODE=only; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY+=("$1"); shift; done ;;
   --arch) ARCHES+=("$2"); shift 2 ;;
@@ -174,7 +176,7 @@ for a in "${ARCHES[@]}"; do
   echo "== $a ($MODE${ONLY:+: ${ONLY[*]}}): ${#mf[@]} package file(s), ${#tf[@]} test package file(s)"
   stage packages-$SDP-$a "$src" tgz "${mf[@]}"
   stage apk-$SDP-$a "$src" apk "${mf[@]}"
-  [ ${#tf[@]} -eq 0 ] || stage tests-$SDP-$a "$ts" both "${tf[@]}"
+  [ ${#tf[@]} -eq 0 ] || [ -n "$NOTESTS" ] || stage tests-$SDP-$a "$ts" both "${tf[@]}"
 done
 
 if [ -z "$UPLOAD" ]; then
@@ -201,7 +203,7 @@ paced_upload() { # tag, file names on stdin
 }
 NOTICE=""; [ -f "$WS/NOTICE.md" ] && NOTICE=$'\n\n'"$(sed -n '3,12p' "$WS/NOTICE.md")"
 for a in "${ARCHES[@]}"; do
-  for tag in packages-$SDP-$a apk-$SDP-$a tests-$SDP-$a; do
+  for tag in packages-$SDP-$a apk-$SDP-$a $([ -n "$NOTESTS" ] || echo tests-$SDP-$a); do
     d=$OUT/$tag; [ -d "$d" ] || continue
     case $tag in
       packages-*) title="QNX SDP $SDP packages for oss-get ($a)"; notes="Install on target: target/oss-get install <package>" ;;

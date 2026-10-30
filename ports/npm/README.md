@@ -157,6 +157,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date |
 |---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | npm 11.11.0-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | npm 11.11.0-r0 | ✅ PASS | 2026-10-30 |
 
 ## Versions

@@ -1,121 +1,51 @@
-# Upstream comparison
+# Comparison with QNX's own lists
 
-How this set relates to [qnx-ports/build-files](https://github.com/qnx-ports/build-files), compared against its `ports/` directory as of 2026-09-27.
+What QNX publishes, compared with `ports/` here (2026-10-31). Names were
+matched case- and separator-insensitively plus the aliases below, then checked
+by hand.
 
-| | Count |
-|---|---|
-| Components here | 222 |
-| Components upstream | 150 |
-| Upstream components also here | 68 |
-| Upstream components **not** here | 82 |
-| Here but not upstream | 154 |
+| QNX's list | Entries | Here | Not here |
+|---|---|---|---|
+| [repo.oss.qnx.com](https://repo.oss.qnx.com/) 8.0.5 apk repository (package origins, core + extra) | 162 | 142 | 20 |
+| [qnx-ports/build-files](https://github.com/qnx-ports/build-files) `ports/` | 151 | 147 | 4 (none real) |
+| [github.com/qnx-ports](https://github.com/qnx-ports) repositories | 216 | 130 | 86 |
 
-Names were matched case- and separator-insensitively, then checked by hand; matching is approximate by nature, so treat the counts as close rather than exact.
+Here under another name: clang, clang22, llvm22 -> `llvm`; libxml2.13 ->
+`libxml2`; ros2-jazzy -> `ros2`; vte3 -> `vte`; webkit2gtk-4.1 -> `webkitgtk`;
+python3-tz -> `python3-pytz`; python3-pandas -> `pandas`; wlroots0.20 ->
+`wlroots`; libexpat -> `expat`; memory, foonathan_memory_vendor ->
+`foonathan_memory`; mcap -> `mcap-cpp`; llvm-project -> `llvm`; ggml (inside
+`whisper.cpp`, `stable-diffusion.cpp`). epoll is QNX's own library in the SDP.
 
-## Upstream components not in this set
+## repo.oss.qnx.com origins not here
 
-The gap is mostly frameworks with their own large toolchains (PyTorch, TensorFlow, Qt, ROS 2, Rust), host utilities (vim, bash, minicom) and the AWS/Azure IoT SDKs — none blocked, simply not in scope for an automotive middleware and HMI stack.
+- LLVM subprojects: lld22, mlir22, flang22, llvm-runtimes (compiler-rt), openmp
+  -- `llvm` builds LLVM and clang; these extend that build.
+- glfw, raylib -- windowing on QNX; possible now that the Wayland stack
+  (`wlroots`, `labwc`) runs.
+- gnupg (needs libassuan, libksba, npth), nss (and nspr), nginx, dhcpcd,
+  asciidoc, perl-io-tty (a Perl XS module).
+- python3-matplotlib, python3-ml-dtypes (C/C++ extensions), python3-colcon-common-extensions.
+- QNX's own pieces, not open source projects to port: filesystem (the base
+  layout of QNX's image), openrc (QNX's init integration),
+  qnx-posix-publish-subscribe, libsysv-ipc-shim.
 
-- `amqp-cpp`
-- `asio`
-- `aws-c-cal`
-- `aws-c-common`
-- `aws-c-io`
-- `aws-crt-cpp`
-- `azure-iot-sdk-c`
-- `bash`
-- `benchmark`
-- `CANdb`
-- `capnproto`
-- `Catch2`
-- `check`
-- `chrony`
-- `clapack`
-- `ComputeLibrary`
-- `cpuinfo`
-- `csmith`
-- `cunit`
-- `dnsmasq`
-- `dump1090`
-- `epoll`
-- `farmhash`
-- `flatbuffers`
-- `FreeImage`
-- `g3log`
-- `gtsam`
-- `kineto`
-- `libcamera`
-- `libiconv`
-- `libjson` — different library from jsoncpp
-- `libmetal`
-- `libyaml` — built as a host tool only, not a target port
-- `libzmq`
-- `lighttpd1.4`
-- `lmbench`
-- `mame`
-- `memory`
-- `METIS`
-- `minicom`
-- `mosquitto`
-- `muslflt`
-- `nanosvg`
-- `NTPsec`
-- `numpy`
-- `numpy2`
-- `oneTBB`
-- `open-amp`
-- `openal-soft`
-- `OpenBLAS`
-- `pandas`
-- `pdfium`
-- `perl5`
-- `picocom`
-- `pugixml`
-- `pytorch`
-- `qt`
-- `rapidjson`
-- `re2` — different library from pcre2
-- `restbed`
-- `RetroPie`
-- `ros2`
-- `rtl-sdr`
-- `rust`
-- `ruy`
-- `s2n-tls`
-- `SDL_ttf`
-- `sleef`
-- `sqlite_orm` — C++ ORM wrapper, not SQLite itself
-- `sscep`
-- `strongswan`
-- `SuiteSparse`
-- `sysbench`
-- `tensorflow`
-- `tftp-hpa`
-- `tree`
-- `trompeloeil`
-- `unbound`
-- `vim`
-- `vlc`
-- `webrtc`
-- `XNNPACK`
+## github.com/qnx-ports repositories not here
 
-## Named differently
+Infrastructure and forks of QNX's own tooling (build-files, aports, qsc-apk,
+perl-cross, check-tools, up-conan-recipes, es-theme-qnx, mason.nvim,
+qnx-ros2-workspace, cairo-test-result, gyp-next, .github); Rust crates (libc-rs,
+cc-rs, filetime, gitoxide, nix, socket2-rs, tokio, target-lexicon,
+platform-info, getrandom-rs, rustix, rust_libloading, rust-ctrlc, rust-errno);
+large frameworks and toolchains (bazel, jdk25u, node, mediapipe, openvino,
+tflite-micro, executorch, MNN, llama.cpp, xla, gloo, MPItrampoline,
+sentencepiece, perfetto, godot-QNX, chipStar, HIPCC and the ROCm repositories,
+oneDNN, mlas); and ports still to do here (boringssl, zenoh-pico, zenoh-cpp,
+up-cpp, up-transport-zenoh-cpp, lldpd, samba, nss, nspr, xmlto, psutil,
+libdaemon, avahi, xtl, cups, skalibs, mosh, hailort, libutempter, ZeroTierOne,
+pygame, qdirstat, c-blosc, riegeli, fastfetch, 7zip, iperf2, libpnet,
+ntttcp-for-linux, qualcomm-alsa, openrc, libsysv-ipc-shim).
 
-| Upstream | Here |
-|---|---|
-| `abseil-cpp` | [`abseil`](../ports/abseil/README.md) |
-| `cJSON` | [`cjson`](../ports/cjson/README.md) |
-| `Fast-CDR` | [`fastcdr`](../ports/fastcdr/README.md) |
-| `Fast-DDS` | [`fastdds`](../ports/fastdds/README.md) |
-| `foonathan_memory_vendor` | [`foonathan_memory`](../ports/foonathan_memory/README.md) |
-| `gettext-runtime` | [`gettext`](../ports/gettext/README.md) |
-| `graphite` | [`graphite2`](../ports/graphite2/README.md) |
-| `gtk` | [`gtk3`](../ports/gtk3/README.md) |
-| `libexpat` | [`expat`](../ports/expat/README.md) |
-| `onnx` | [`onnxruntime`](../ports/onnxruntime/README.md) |
-| `SDL` | [`sdl2`](../ports/sdl2/README.md) |
-
-## In this set, not upstream
-
-222 components against 150 upstream: the surplus is the GTK/Xfce desktop stack, GStreamer with its plugin sets, FFmpeg and its codecs, WebKitGTK and JavaScriptCore, CPython, the X11 client libraries, and the dependency tail each of those pulls in.
-
+Ported here from these lists in this round, with QNX's own changes where QNX
+publishes them: wlroots (QNX Screen backend), labwc, htop and btop (QNX
+platforms), mimalloc, pistache, whisper.cpp, stable-diffusion.cpp.

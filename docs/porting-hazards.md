@@ -1044,3 +1044,16 @@ build silently used the unpatched file and aborted on the 1 GB x86_64 target
 exactly as JavaScriptCore had. `rm -rf src/<pkg>` after adding a patch, or
 apply it by hand — and check the source, not the recipe directory, before
 believing a fix is in.
+
+**98. QNX's loader does not expand `$ORIGIN`.** A run path of
+`$ORIGIN/../lib` -- DT_RPATH or DT_RUNPATH, with or without `-z origin` --
+finds nothing on QNX 8.0 ("Could not load library"); an absolute run path
+works. Components with a prefix of their own (`opt/<name>`) passed their tests
+only because the test runner puts `opt/*/lib` on `LD_LIBRARY_PATH`; their
+commands failed when started by hand. Give such a prefix's binaries the
+absolute run path of where the package installs (`/usr/local/opt/<name>/lib`).
+
+**99. QNX's C library crashes on `printf("%s", NULL)`.** glibc prints
+`(null)`; QNX's libc dereferences it in strlen. Log lines that print an
+optional string (labwc's theme name, swaybg's output description) crashed
+programs that work everywhere else -- found only by running them.

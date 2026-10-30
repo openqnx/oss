@@ -1,0 +1,22 @@
+Use the poll() backend on QNX
+
+ospoll picks epoll when epoll_create1() exists, and its epoll backend uses
+edge-triggered notification (EPOLLET). QNX's epoll is an emulation
+(libepoll) without EPOLLET, so the server did not compile. On QNX use the
+portable poll() backend ospoll already has.
+
+Upstream-Status: Pending
+
+--- a/os/ospoll.c
++++ b/os/ospoll.c
+@@ -46,7 +46,9 @@
+ #define HAVE_OSPOLL     1
+ #endif
+ 
+-#if !HAVE_OSPOLL && defined(HAVE_EPOLL_CREATE1)
++/* QNX: epoll is an emulation (libepoll) without edge-triggered mode
++ * (EPOLLET), which this backend uses -- poll() instead. */
++#if !HAVE_OSPOLL && defined(HAVE_EPOLL_CREATE1) && !defined(__QNX__)
+ #include <sys/epoll.h>
+ #define EPOLL           1
+ #define HAVE_OSPOLL     1

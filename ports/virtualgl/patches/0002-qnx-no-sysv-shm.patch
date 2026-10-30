@@ -1,0 +1,21 @@
+Draw without MIT-SHM on QNX (no System V shared memory)
+
+fbx draws with MIT-SHM (XShmPutImage) when USESHM is defined, and with
+XPutImage otherwise; USESHM is defined unconditionally. MIT-SHM needs System
+V shared memory (<sys/shm.h>, shmget/shmat), which QNX does not have. On QNX
+leave it undefined: frames go to the X server with XPutImage.
+
+Upstream-Status: Pending
+
+--- a/include/fbx.h
++++ b/include/fbx.h
+@@ -23,7 +23,9 @@
+ #ifndef __FBX_H__
+ #define __FBX_H__
+ 
++#ifndef __QNX__  /* no System V shared memory (sys/shm.h) on QNX */
+ #define USESHM
++#endif
+ 
+ #include <stdio.h>
+ #include "pf.h"

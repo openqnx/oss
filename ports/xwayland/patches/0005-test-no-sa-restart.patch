@@ -1,0 +1,22 @@
+simple-xinit: no SA_RESTART where there is none
+
+simple-xinit, the launcher of the test suite, sets SA_RESTART for its
+SIGCHLD handler; QNX does not define SA_RESTART. Leave it out there (as 0003
+does for the server's scheduler timer).
+
+Upstream-Status: Pending
+
+--- a/test/simple-xinit.c
++++ b/test/simple-xinit.c
+@@ -86,7 +86,11 @@
+         struct sigaction sa;
+         sa.sa_handler = handle_sigchld;
+         sigemptyset(&sa.sa_mask);
++#ifdef SA_RESTART
+         sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
++#else
++        sa.sa_flags = SA_NOCLDSTOP;
++#endif
+         if (sigaction(SIGCHLD, &sa, 0) == -1) {
+             fprintf(stderr, "Failed to set up signal handler: %s\n",
+                     strerror(errno));

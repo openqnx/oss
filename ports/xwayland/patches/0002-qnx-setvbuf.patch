@@ -1,0 +1,19 @@
+Line-buffer the log with setvbuf on QNX
+
+The log file is made line buffered with setlinebuf(), a BSD function QNX's
+C library does not have, except on the systems listed for the standard
+setvbuf(..., _IOLBF, BUFSIZ) form. Add QNX to that list.
+
+Upstream-Status: Pending
+
+--- a/os/osinit.c
++++ b/os/osinit.c
+@@ -252,7 +252,7 @@
+                 dup2(fileno(err), 2);
+                 fclose(err);
+             }
+-#if defined(SYSV) || defined(SVR4) || defined(WIN32) || defined(__CYGWIN__)
++#if defined(SYSV) || defined(SVR4) || defined(WIN32) || defined(__CYGWIN__) || defined(__QNX__)
+             {
+                 static char buf[BUFSIZ];
+ 

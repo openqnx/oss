@@ -1,0 +1,22 @@
+Install the scheduler signal handler without SA_RESTART where there is none
+
+The smart-scheduler timer signal handler is installed with SA_RESTART,
+which QNX does not define (it has no restartable system calls). Without it
+the flags are 0: the server's read and write paths already retry on EINTR.
+
+Upstream-Status: Pending
+
+--- a/os/utils.c
++++ b/os/utils.c
+@@ -1179,7 +1179,11 @@
+     memset((char *) &act, 0, sizeof(struct sigaction));
+ 
+     /* Set up the timer signal function */
++#ifdef SA_RESTART
+     act.sa_flags = SA_RESTART;
++#else
++    act.sa_flags = 0;   /* QNX: no SA_RESTART; callers retry on EINTR */
++#endif
+     act.sa_handler = SmartScheduleTimer;
+     sigemptyset(&act.sa_mask);
+     sigaddset(&act.sa_mask, SIGALRM);

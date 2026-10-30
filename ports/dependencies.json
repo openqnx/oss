@@ -5767,7 +5767,7 @@
    "bins": [
     "usr/local/bin/gflags_completions.sh"
    ],
-   "files": 19,
+   "files": 18,
    "headers": 4,
    "libs": [
     "usr/local/lib/libgflags.so",
@@ -7916,6 +7916,175 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.9.0"
+ },
+ "gtk-vnc": {
+  "build_closure": [
+   "at-spi2-core",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dbus",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "gmp",
+   "gnutls",
+   "graphite2",
+   "gtk3",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libgcrypt",
+   "libgpg-error",
+   "libiconv",
+   "libidn2",
+   "libjpeg-turbo",
+   "libpng",
+   "libtasn1",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
+   "libxdmcp",
+   "libxext",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
+   "libxrender",
+   "libxtst",
+   "lzo",
+   "ncurses",
+   "nettle",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "gtk3",
+   "gdk-pixbuf",
+   "cairo",
+   "gnutls",
+   "libgcrypt",
+   "zlib",
+   "libx11"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/gvnccapture",
+    "usr/local/bin/gvncviewer"
+   ],
+   "files": 82,
+   "headers": 19,
+   "libs": [
+    "usr/local/lib/libgtk-vnc-2.0.so",
+    "usr/local/lib/libgtk-vnc-2.0.so.0",
+    "usr/local/lib/libgtk-vnc-2.0.so.0.0.2",
+    "usr/local/lib/libgvnc-1.0.so",
+    "usr/local/lib/libgvnc-1.0.so.0",
+    "usr/local/lib/libgvnc-1.0.so.0.0.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "at-spi2-core",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dbus",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "gmp",
+   "gnutls",
+   "graphite2",
+   "gtk3",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libgcrypt",
+   "libgpg-error",
+   "libiconv",
+   "libidn2",
+   "libjpeg-turbo",
+   "libpng",
+   "libtasn1",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
+   "libxdmcp",
+   "libxext",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
+   "libxrender",
+   "libxtst",
+   "lzo",
+   "ncurses",
+   "nettle",
+   "pango",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "cairo",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "gnutls",
+   "gtk3",
+   "libgcrypt",
+   "libx11",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.3.1"
  },
  "gtk3": {
   "build_closure": [
@@ -12111,6 +12280,96 @@
   "unresolved": [],
   "version": "1.51.0"
  },
+ "libvncserver": {
+  "build_closure": [
+   "brotli",
+   "expat",
+   "gettext",
+   "gmp",
+   "gnutls",
+   "libffi",
+   "libiconv",
+   "libidn2",
+   "libjpeg-turbo",
+   "libpng",
+   "libtasn1",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "lzo",
+   "ncurses",
+   "nettle",
+   "openssl",
+   "sdl2",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "zlib",
+   "lzo",
+   "libjpeg-turbo",
+   "libpng",
+   "gnutls",
+   "openssl",
+   "sdl2"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/SDLvncviewer"
+   ],
+   "files": 20,
+   "headers": 7,
+   "libs": [
+    "usr/local/lib/libvncclient.so",
+    "usr/local/lib/libvncclient.so.0.9.15",
+    "usr/local/lib/libvncclient.so.1",
+    "usr/local/lib/libvncserver.so",
+    "usr/local/lib/libvncserver.so.0.9.15",
+    "usr/local/lib/libvncserver.so.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "gettext",
+   "gmp",
+   "gnutls",
+   "libiconv",
+   "libidn2",
+   "libjpeg-turbo",
+   "libpng",
+   "libtasn1",
+   "libunistring",
+   "lzo",
+   "ncurses",
+   "nettle",
+   "openssl",
+   "sdl2",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "gnutls",
+   "libjpeg-turbo",
+   "libpng",
+   "lzo",
+   "openssl",
+   "sdl2",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.9.15"
+ },
  "libvorbis": {
   "build_closure": [
    "libogg"
@@ -15599,7 +15858,7 @@
    "bins": [
     "usr/local/bin/ncursesw6-config"
    ],
-   "files": 2928,
+   "files": 2932,
    "headers": 17,
    "libs": [
     "usr/local/lib/libform.so",
@@ -22864,6 +23123,59 @@
   "unresolved": [],
   "version": "9.1.0900"
  },
+ "virtualgl": {
+  "build_closure": [
+   "libjpeg-turbo",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "pthread-stubs",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans"
+  ],
+  "build_deps": [
+   "libx11",
+   "libxext",
+   "libjpeg-turbo"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/nettest",
+    "usr/local/bin/vglclient",
+    "usr/local/bin/vglconnect"
+   ],
+   "files": 16,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libjpeg-turbo",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext"
+  ],
+  "runtime_deps": [
+   "libjpeg-turbo",
+   "libx11",
+   "libxext"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.1.5"
+ },
  "vlc": {
   "build_closure": [
    "bzip2",
@@ -25045,6 +25357,106 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.3.7"
+ },
+ "xwayland": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "expat",
+   "font-util",
+   "fontenc",
+   "freetype",
+   "gettext",
+   "libdrm-headers",
+   "libffi",
+   "libiconv",
+   "libmd",
+   "libpng",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcvt",
+   "libxdmcp",
+   "libxfont2",
+   "libxkbfile",
+   "libxml2",
+   "libxshmfence",
+   "linux-headers-input-codes",
+   "ncurses",
+   "pixman",
+   "pthread-stubs",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xkbcomp",
+   "xkeyboard-config",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib"
+  ],
+  "build_deps": [
+   "wayland",
+   "wayland-protocols",
+   "pixman",
+   "xorgproto",
+   "xtrans",
+   "libxau",
+   "libxdmcp",
+   "libxfont2",
+   "libxkbfile",
+   "libxcvt",
+   "libxshmfence",
+   "libdrm-headers",
+   "linux-headers-input-codes",
+   "libmd",
+   "xkbcomp",
+   "xkeyboard-config",
+   "font-util"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/Xwayland"
+   ],
+   "files": 6,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "fontenc",
+   "freetype",
+   "libffi",
+   "libmd",
+   "libpng",
+   "libxau",
+   "libxcvt",
+   "libxfont2",
+   "pixman",
+   "wayland",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libmd",
+   "libxau",
+   "libxcvt",
+   "libxfont2",
+   "pixman",
+   "wayland"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "24.1.14"
  },
  "xxhash": {
   "build_closure": [],

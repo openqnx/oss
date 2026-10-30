@@ -166,11 +166,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date |
 |---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wget 1.25.0-r0 | ✅ PASS | 2026-10-30 |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r0 | ❌ FAIL | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-10-30 |

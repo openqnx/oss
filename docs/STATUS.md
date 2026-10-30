@@ -34,6 +34,14 @@ current: it is the hand-over, not a history (that is `git log`).
    then `vanilla-vm/desktop x86_64` and check the session on screen
    (xfconfd D-Bus activation, panel menu, every application).
    Not yet packaged/verified for aarch64 (waits for the aarch64 run).
+2b. **Remote display for VirtualGL / RViz** (done, 2026-10-30): RViz rendered on a
+   Linux machine (vglrun, e.g. an Ubuntu guest) shown on QNX -- over VNC:
+   libvncserver (+ SDLvncviewer, straight onto QNX Screen) and gtk-vnc
+   (gvncviewer on the desktop); over VirtualGL's X11 transport: xwayland
+   (an X display on labwc) and virtualgl (vglclient, vglconnect; client only,
+   no desktop GL on QNX). test_virtualgl runs labwc -> Xwayland -> vglclient
+   and sends a frame over the VGL protocol, read back from the X server.
+   Not yet seen on a screen (needs the graphics image).
 3. **libunwind** (done): upstream 1.8.3 in its own prefix, /usr/local/opt/libunwind
    (the SDP's 1.8.2 stays the system libunwind.so.8); test_libunwind passes on
    both architectures.
@@ -61,9 +69,14 @@ current: it is the hand-over, not a history (that is `git log`).
 6. **`$ORIGIN` is not expanded by QNX's loader** (porting-hazards 98):
    tensorflow-lite (94 files) and pytorch (4) rely on it and work only with
    their lib directory on LD_LIBRARY_PATH; give them absolute run paths.
-7. qnxpkg does not bump `-r` when only a package's dependencies change
+7. Package trees are now checked for build-machine paths (check-artifacts):
+   ncurses, geany-plugins and gflags had shipped them (fixed, -r1), several
+   -dev .pc files named the old workspace (fixed). qnxpkg compares legacy
+   index entries (no fingerprint) by archive contents now: it had rewritten
+   published r0 names locally (repaired: those became r1).
+8. qnxpkg does not bump `-r` when only a package's dependencies change
    (fingerprints cover contents): mind it for published packages.
-8. Components still not verified on a target are published later with
+9. Components still not verified on a target are published later with
    `publish-github-release --changed` after `verify-on-target --changed`.
 
 ## Machine notes

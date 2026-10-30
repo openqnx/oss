@@ -5,7 +5,7 @@ Two kinds, by whether anything else from this repository is needed:
 | Kind | Meaning | Components |
 |---|---|---|
 | 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **223** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **297** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **301** |
 
 Dependent components split further by what they need at run time (63 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
@@ -15,7 +15,7 @@ Every component is in exactly one of three classes. The class is computed by `sc
 |---|---|---|---|
 | **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **223** |
 | **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **63** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **234** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **238** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -86,7 +86,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`font-noto-emoji`](ports/font-noto-emoji/) | 2.048 | custom | – | 0 |
 | [`font-noto-sans-cjk`](ports/font-noto-sans-cjk/) | 2.004 | custom | – | 0 |
 | [`font-noto-serif-cjk`](ports/font-noto-serif-cjk/) | 2.003 | custom | – | 0 |
-| [`font-util`](ports/font-util/) | 1.4.1 | autotools | – | 0 |
+| [`font-util`](ports/font-util/) | 1.4.1 | autotools | – | 1 |
 | [`foonathan_memory`](ports/foonathan_memory/) | 0.7-3 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`fp16`](ports/fp16/) | 0-git-20260620 | cmake | – | 0 |
 | [`freeimage`](ports/freeimage/) | 3.18.0 | custom | – | 1 |
@@ -123,16 +123,16 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libde265`](ports/libde265/) | 1.0.15 | cmake | – | 0 |
 | [`libdeflate`](ports/libdeflate/) | 1.22 | cmake | – | 0 |
 | [`libdisplay-info`](ports/libdisplay-info/) | 0.3.0 | meson | – | 0 |
-| [`libdrm-headers`](ports/libdrm-headers/) | 2.4.129 | custom | – | 1 |
+| [`libdrm-headers`](ports/libdrm-headers/) | 2.4.129 | custom | – | 2 |
 | [`libev`](ports/libev/) | 4.33 | autotools | – | 0 |
 | [`libexif`](ports/libexif/) | 0.6.24 | autotools | – | 1 |
 | [`libfdt`](ports/libfdt/) | 1.7.2 | meson | – | 0 |
 | [`libffi`](ports/libffi/) | 3.4.6 | autotools | – | 6 |
 | [`libiconv`](ports/libiconv/) | 1.18 | autotools | – | 17 |
 | [`libinih`](ports/libinih/) | 58 | meson | – | 1 |
-| [`libjpeg-turbo`](ports/libjpeg-turbo/) | 3.0.4 | cmake | – | 15 |
+| [`libjpeg-turbo`](ports/libjpeg-turbo/) | 3.0.4 | cmake | – | 17 |
 | [`libjson`](ports/libjson/) | 0.8-git-20260512 | custom | – | 1 |
-| [`libmd`](ports/libmd/) | 1.1.0 | autotools | – | 0 |
+| [`libmd`](ports/libmd/) | 1.1.0 | autotools | – | 1 |
 | [`libmetal`](ports/libmetal/) | 2024.10.0 | cmake | – | 1 |
 | [`libmicrohttpd`](ports/libmicrohttpd/) | 1.0.1 | autotools | – | 0 |
 | [`libmodbus`](ports/libmodbus/) | 3.1.11 | autotools | – | 0 |
@@ -156,9 +156,9 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libuv`](ports/libuv/) | 1.51.0 | cmake | – | 4 |
 | [`libvpx`](ports/libvpx/) | 1.15.0 | custom | – | 2 |
 | [`libxcrypt`](ports/libxcrypt/) | 4.4.38 | autotools | – | 3 |
-| [`libxcvt`](ports/libxcvt/) | 0.1.3 | meson | – | 0 |
+| [`libxcvt`](ports/libxcvt/) | 0.1.3 | meson | – | 1 |
 | [`libyaml`](ports/libyaml/) | 0.2.5 | cmake | – | 2 |
-| [`linux-headers-input-codes`](ports/linux-headers-input-codes/) | 6.12 | custom | – | 1 |
+| [`linux-headers-input-codes`](ports/linux-headers-input-codes/) | 6.12 | custom | – | 2 |
 | [`lmbench`](ports/lmbench/) | 3.0-git-20260929 | custom | – | 0 |
 | [`lua`](ports/lua/) | 5.4.7 | custom | – | 0 |
 | [`lua5.1`](ports/lua5.1/) | 5.1.5 | custom | – | 0 |
@@ -167,7 +167,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`lxde-icon-theme`](ports/lxde-icon-theme/) | 0.5.2 | autotools | – | 1 |
 | [`lz4`](ports/lz4/) | 1.10.0 | cmake | – | 7 |
 | [`lzip`](ports/lzip/) | 1.26 | autotools | – | 0 |
-| [`lzo`](ports/lzo/) | 2.10 | autotools | – | 2 |
+| [`lzo`](ports/lzo/) | 2.10 | autotools | – | 3 |
 | [`magic_enum`](ports/magic_enum/) | 0.9.6 | cmake | – | 0 |
 | [`make`](ports/make/) | 4.4.1 | autotools | – | 0 |
 | [`mbedtls`](ports/mbedtls/) | 3.6.2 | cmake | – | 0 |
@@ -189,7 +189,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`openal-soft`](ports/openal-soft/) | 1.24.1 | cmake | – | 0 |
 | [`openblas`](ports/openblas/) | 0.3.28 | cmake | – | 3 |
 | [`openh264`](ports/openh264/) | 2.5.0 | meson | – | 2 |
-| [`openssl`](ports/openssl/) | 3.5.1 | custom | – | 43 |
+| [`openssl`](ports/openssl/) | 3.5.1 | custom | – | 44 |
 | [`openttd-opengfx`](ports/openttd-opengfx/) | 8.0 | custom | – | 0 |
 | [`openttd-openmsx`](ports/openttd-openmsx/) | 0.4.2 | custom | – | 0 |
 | [`openttd-opensfx`](ports/openttd-opensfx/) | 1.0.3 | custom | – | 0 |
@@ -244,14 +244,14 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`x265`](ports/x265/) | 3.6 | cmake | – | 2 |
 | [`xcb-proto`](ports/xcb-proto/) | 1.17.0 | autotools | – | 1 |
 | [`xdg-utils`](ports/xdg-utils/) | 1.2.1 | autotools | – | 0 |
-| [`xkeyboard-config`](ports/xkeyboard-config/) | 2.43 | meson | – | 0 |
-| [`xorgproto`](ports/xorgproto/) | 2024.1 | meson | – | 24 |
-| [`xtrans`](ports/xtrans/) | 1.5.2 | autotools | – | 5 |
+| [`xkeyboard-config`](ports/xkeyboard-config/) | 2.43 | meson | – | 1 |
+| [`xorgproto`](ports/xorgproto/) | 2024.1 | meson | – | 25 |
+| [`xtrans`](ports/xtrans/) | 1.5.2 | autotools | – | 6 |
 | [`xvidcore`](ports/xvidcore/) | 1.3.7 | custom | – | 0 |
 | [`xxhash`](ports/xxhash/) | 0.8.2 | cmake | – | 2 |
 | [`yaml-cpp`](ports/yaml-cpp/) | 0.8.0 | cmake | – | 1 |
 | [`zimg`](ports/zimg/) | 3.0.5 | autotools | – | 0 |
-| [`zlib`](ports/zlib/) | 1.3.1 | cmake | aarch64le✅ | 61 |
+| [`zlib`](ports/zlib/) | 1.3.1 | cmake | aarch64le✅ | 63 |
 | [`zlib-ng`](ports/zlib-ng/) | 2.2.5 | cmake | – | 0 |
 | [`zstd`](ports/zstd/) | 1.5.6 | cmake | – | 19 |
 
@@ -327,7 +327,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Dependent
 
-234 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+238 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -407,6 +407,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`gstreamer`](ports/gstreamer/) | 1.24.10 | glib libxml2 | gettext glib | 8 |
 | [`gthumb`](ports/gthumb/) | 3.12.8.2 | glib gtk3 gdk-pixbuf libjpeg-turbo libpng libtiff libwebp lcms2 exiv2 libsecret json-glib | cairo exiv2 gdk-pixbuf gettext glib gtk3 lcms2 libjpeg-turbo libpng libtiff libwebp pango zlib | 53 |
 | [`gtk-layer-shell`](ports/gtk-layer-shell/) | 0.9.0 | glib gtk3 wayland wayland-protocols | cairo glib gtk3 wayland | 47 |
+| [`gtk-vnc`](ports/gtk-vnc/) | 1.3.1 | glib gtk3 gdk-pixbuf cairo gnutls libgcrypt zlib libx11 | cairo gdk-pixbuf gettext glib gnutls gtk3 libgcrypt libx11 zlib | 55 |
 | [`gtk3`](ports/gtk3/) | 3.24.43 | glib cairo pango gdk-pixbuf at-spi2-core libepoxy wayland wayland-protocols libxkbcommon fribidi harfbuzz fontconfig libx11 libxext libxi libxrandr libxcursor libxfixes libxcomposite libxdamage libxinerama | at-spi2-core cairo fontconfig fribidi gdk-pixbuf gettext glib harfbuzz libepoxy libx11 libxcomposite libxcursor libxdamage libxext libxfixes libxi libxinerama libxkbcommon libxrandr pango wayland | 46 |
 | [`gtk4`](ports/gtk4/) | 4.16.7 | glib graphene cairo pango gdk-pixbuf harfbuzz fribidi libepoxy wayland wayland-protocols libxkbcommon libpng libjpeg-turbo libtiff | cairo fontconfig fribidi gdk-pixbuf gettext glib graphene harfbuzz libepoxy libjpeg-turbo libpng libtiff libxkbcommon pango wayland | 40 |
 | [`gtsam`](ports/gtsam/) | 4.2 | boost eigen | boost | 8 |
@@ -448,6 +449,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libthai`](ports/libthai/) | 0.1.29 | libdatrie | libdatrie | 1 |
 | [`libtheora`](ports/libtheora/) | 1.1.1 | libogg libvorbis | libogg | 1 |
 | [`libtiff`](ports/libtiff/) | 4.7.0 | zlib xz zstd libjpeg-turbo libwebp | libjpeg-turbo libwebp xz zlib zstd | 9 |
+| [`libvncserver`](ports/libvncserver/) | 0.9.15 | zlib lzo libjpeg-turbo libpng gnutls openssl sdl2 | gnutls libjpeg-turbo libpng lzo openssl sdl2 zlib | 17 |
 | [`libvorbis`](ports/libvorbis/) | 1.3.7 | libogg | libogg | 1 |
 | [`libwebsockets`](ports/libwebsockets/) | 4.3.5 | openssl zlib | openssl | 1 |
 | [`libx11`](ports/libx11/) | 1.8.10 | libxcb xorgproto xtrans | libxcb | 3 |
@@ -546,6 +548,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`tumbler`](ports/tumbler/) | 4.20.0 | glib dbus gdk-pixbuf libgsf ffmpegthumbnailer libpng freetype libxfce4util curl gst-plugins-base gstreamer | curl ffmpegthumbnailer freetype gdk-pixbuf gettext glib gst-plugins-base gstreamer libgsf libjpeg-turbo libpng libxfce4util libxml2 | 37 |
 | [`unbound`](ports/unbound/) | 1.24.1 | openssl expat | expat openssl | 2 |
 | [`vim`](ports/vim/) | 9.1.0900 | ncurses libiconv libsodium | libiconv libsodium ncurses | 3 |
+| [`virtualgl`](ports/virtualgl/) | 3.1.5 | libx11 libxext libjpeg-turbo | libjpeg-turbo libx11 libxext | 6 |
 | [`vlc`](ports/vlc/) | 3.0.21 | bzip2 libiconv lz4 openssl xz zstd | bzip2 libiconv lz4 openssl xz zstd | 9 |
 | [`vsomeip`](ports/vsomeip/) | 3.5.6 | boost | boost | 8 |
 | [`vte`](ports/vte/) | 0.78.2 | gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4 | at-spi2-core cairo fribidi gdk-pixbuf gettext glib gnutls graphene gtk3 gtk4 icu lz4 pango pcre2 | 58 |
@@ -563,6 +566,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`xfconf`](ports/xfconf/) | 4.20.0 | glib libxfce4util dbus | gettext glib libxfce4util | 9 |
 | [`xkbcomp`](ports/xkbcomp/) | 1.5.0 | libx11 libxkbfile xorgproto | libx11 libxkbfile | 5 |
 | [`xnnpack`](ports/xnnpack/) | 0-git-20250209 | cpuinfo pthreadpool fxdiv | pthreadpool | 1 |
+| [`xwayland`](ports/xwayland/) | 24.1.14 | wayland wayland-protocols pixman xorgproto xtrans libxau libxdmcp libxfont2 libxkbfile libxcvt libxshmfence libdrm-headers linux-headers-input-codes libmd xkbcomp xkeyboard-config font-util | libmd libxau libxcvt libxfont2 pixman wayland | 13 |
 | [`xz`](ports/xz/) | 5.6.3 | gettext | gettext | 4 |
 | [`zsh`](ports/zsh/) | 5.9 | ncurses pcre2 libiconv | libiconv ncurses | 2 |
 

@@ -112,13 +112,14 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design -- the header ends in "#error termio/termios incompatibility" when both are pulled in. ncurses includes sys/termio.h whenever configure finds it, so tell configure it is not there and let it use termios alone. ncurses links its shared libraries by invoking ld directly, so LDFLAGS must not carry compiler-driver syntax (ld rejects -Wl,-rpath-link) -- but configure's own link test runs through qcc, which rejects the bare ld spelling just as hard. Neither form works for both, so drop -rpath-link altogether: ncurses needs nothing from staging but libc, and transitive resolution now goes through the link sysroot that env.sh builds. The SDP library directory has to be named explicitly: ncurses links its shared libraries with a raw "ld" invocation that inherits only LDFLAGS, and it links -lregex -- which QNX keeps in $QNX_TARGET/<arch>/lib, a directory only the compiler driver knows about.
 - --without-progs: reset/tset use TAB3, a Linux termios delay constant QNX does not define. The target needs the library, not the terminal utilities.
+- The .pc directory is the target path: make install puts DESTDIR in front (with the staging tree here, the files went to <stage><stage>/... and the package carried a home/.../stage/... directory).
 - --enable-widec renames every library to the "w" variant, so a consumer asking for -lncurses or -ltinfo finds nothing here and the linker falls through to the SDP's own prebuilt ncurses (soname libncursesw.so.1 against our .so.6). Distributions solve this with compatibility symlinks; do the same.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ncurses`.
 
 ### 5. What it installs
 
-2928 files under `/usr/local`: 18 shared-library entries, 1 programs, 17 headers.
+2932 files under `/usr/local`: 18 shared-library entries, 1 programs, 17 headers.
 
 ```
 /usr/local/lib/libform.so
@@ -215,8 +216,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ncurses 6.5-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ncurses 6.5-r1 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ncurses 6.5-r0 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ncurses 6.5-r1 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
@@ -249,7 +252,10 @@ CONF_ENV=( ac_cv_header_sys_termio_h=no ac_cv_header_termio_h=no
 # not define. The target needs the library, not the terminal utilities.
 CONF_ARGS_EXTRA=( --with-shared --without-debug --without-ada --without-tests --without-progs
                   --enable-widec --enable-pc-files --without-manpages
-                  --with-pkg-config-libdir="$STAGE$PREFIX/lib/pkgconfig" )
+                  --with-pkg-config-libdir="$PREFIX/lib/pkgconfig" )
+# The .pc directory is the target path: make install puts DESTDIR in front
+# (with the staging tree here, the files went to <stage><stage>/... and the
+# package carried a home/.../stage/... directory).
 
 # --enable-widec renames every library to the "w" variant, so a consumer asking
 # for -lncurses or -ltinfo finds nothing here and the linker falls through to

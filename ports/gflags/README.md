@@ -63,6 +63,8 @@ cmake -S src/gflags -B build/$QNX_ARCH/gflags -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
+      -DREGISTER_INSTALL_PREFIX=OFF \
+      -DREGISTER_BUILD_DIR=OFF \
       -DBUILD_SHARED_LIBS=ON \
       -DBUILD_gflags_LIB=ON \
       -DBUILD_TESTING=OFF \
@@ -71,11 +73,15 @@ cmake --build build/$QNX_ARCH/gflags -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/gflags
 ```
 
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- REGISTER_*: gflags installs a CMake user-registry entry into $HOME/.cmake (packaged as home/<user>/.cmake/packages/gflags/...); not on a target.
+
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gflags`.
 
 ### 5. What it installs
 
-19 files under `/usr/local`: 6 shared-library entries, 1 programs, 4 headers.
+18 files under `/usr/local`: 6 shared-library entries, 1 programs, 4 headers.
 
 ```
 /usr/local/lib/libgflags.so
@@ -155,8 +161,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gflags 2.2.2-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gflags 2.2.2-r1 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gflags 2.2.2-r0 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gflags 2.2.2-r1 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
@@ -166,7 +174,9 @@ This recipe builds **2.2.2**. Every version stays available: packages in `dists/
 
 ```bash
 VERSION=2.2.2; GIT=https://github.com/gflags/gflags.git; REF=v2.2.2
-CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_gflags_LIB=ON
+# REGISTER_*: gflags installs a CMake user-registry entry into $HOME/.cmake
+# (packaged as home/<user>/.cmake/packages/gflags/...); not on a target.
+CMAKE_ARGS_EXTRA=( -DREGISTER_INSTALL_PREFIX=OFF -DREGISTER_BUILD_DIR=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_gflags_LIB=ON
                    -DBUILD_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```
 </details>

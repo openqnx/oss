@@ -22,7 +22,10 @@ CONF_ENV=( ac_cv_header_sys_termio_h=no ac_cv_header_termio_h=no
 # not define. The target needs the library, not the terminal utilities.
 CONF_ARGS_EXTRA=( --with-shared --without-debug --without-ada --without-tests --without-progs
                   --enable-widec --enable-pc-files --without-manpages
-                  --with-pkg-config-libdir="$STAGE$PREFIX/lib/pkgconfig" )
+                  --with-pkg-config-libdir="$PREFIX/lib/pkgconfig" )
+# The .pc directory is the target path: make install puts DESTDIR in front
+# (with the staging tree here, the files went to <stage><stage>/... and the
+# package carried a home/.../stage/... directory).
 
 # --enable-widec renames every library to the "w" variant, so a consumer asking
 # for -lncurses or -ltinfo finds nothing here and the linker falls through to

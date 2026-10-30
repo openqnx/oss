@@ -104,3 +104,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(CMAKE_THREAD_LIBS_INIT "")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_PTHREADS_INIT 1)
+
+# Never register packages in the build user's ~/.cmake/packages (export(PACKAGE)):
+# gflags did, and its package carried /home/<user>/.cmake/packages/... .
+set(CMAKE_EXPORT_NO_PACKAGE_REGISTRY ON)

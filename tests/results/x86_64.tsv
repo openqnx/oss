@@ -97,7 +97,6 @@ pkg:iperf3	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists
 pkg:iso-codes	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	iso-codes 4.17.0-r0
 pkg:itstool	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	itstool 2.0.7-r0
 pkg:kineto	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	kineto 0_git20250214-r0
-pkg:labwc	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	labwc 0.20.2-r0
 pkg:less	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	less 668-r0
 pkg:libdazzle	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libdazzle 3.44.0-r0
 pkg:libde265	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libde265 1.0.15-r0
@@ -139,7 +138,6 @@ pkg:libxft	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists
 pkg:libxi	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxi 1.8.2-r0
 pkg:libxinerama	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxinerama 1.1.5-r0
 pkg:libxkbcommon	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxkbcommon 1.7.0-r0
-pkg:libxkbcommon	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxkbcommon 1.8.1-r0
 pkg:libxkbcommon	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxkbcommon 1.8.1-r1
 pkg:libxrandr	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxrandr 1.5.4-r0
 pkg:libxrender	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	libxrender 0.9.11-r0
@@ -221,7 +219,6 @@ pkg:sscep	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	
 pkg:strongswan	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	strongswan 6.0.6-r0
 pkg:sudo	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	sudo 1.9.17_p2-r0
 pkg:suitesparse	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	suitesparse 7.11.0-r0
-pkg:swaybg	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	swaybg 1.2.2-r0
 pkg:sysbench	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	sysbench 1.0.20_git20250309-r0
 pkg:tar	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	tar 1.35-r0
 pkg:tftp-hpa	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	tftp-hpa 5.2-r0
@@ -286,7 +283,6 @@ test_cjson	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries
 test_cjson	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	cjson 1.7.18-r0
 test_cli11	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_cli11	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	cli11 2.4.2-r0
-test_cli_tools	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ed 1.22.5-r0
 test_cli_tools	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ed 1.22.5-r1
 test_cli_tools	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lzip 1.26-r0
 test_cli_tools	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	patch 2.8-r0
@@ -397,10 +393,8 @@ test_json_glib	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libra
 test_json_glib	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	json-glib 1.10.6-r0
 test_jsoncpp	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_jsoncpp	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	jsoncpp 1.9.6-r0
-test_labwc	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	labwc 0.20.2-r0
 test_labwc	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	labwc 0.20.2-r1
 test_labwc	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	oss-desktop 1.0-r0
-test_labwc	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	swaybg 1.2.2-r0
 test_labwc	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	swaybg 1.2.2-r1
 test_lame	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_lame	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lame 3.100-r0
@@ -647,8 +641,6 @@ test_readline	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-di
 test_ros2	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_ros2	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:github	
 test_ros2	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r1
-test_sdcpp	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	stable-diffusion.cpp 0_git20260601-r0
-test_sdcpp	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	stable-diffusion.cpp 0_git20260601-r1
 test_sdcpp	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	stable-diffusion.cpp 0_git20260601-r2
 test_sdl2	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_sdl2	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	
@@ -710,8 +702,6 @@ test_wayland	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime librari
 test_wayland	FAIL	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	wayland 1.23.1-r0
 test_wayland	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	wayland 1.24.0-r0
 test_webkit	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
-test_whisper	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	whisper.cpp 0_git20260728-r0
-test_whisper	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	whisper.cpp 0_git20260728-r1
 test_whisper	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	whisper.cpp 0_git20260728-r2
 test_wlroots	PASS	2026-10-30	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	wlroots 0.20.2-r0
 test_woff2	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	

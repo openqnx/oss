@@ -1,0 +1,19 @@
+Use localtime_r on QNX
+
+mju_localTimeStr() picks localtime_r() when _POSIX_C_SOURCE is defined, and
+stops with #error otherwise. QNX's C library has localtime_r(), but its
+headers do not define _POSIX_C_SOURCE unless the program asks for it.
+
+Upstream-Status: Pending
+
+--- a/src/engine/engine_util_errmem.c
++++ b/src/engine/engine_util_errmem.c
+@@ -197,7 +197,7 @@
+   struct tm timeinfo;
+   time(&rawtime);
+ 
+-#if defined(_POSIX_C_SOURCE) || defined(__APPLE__) || defined(__STDC_VERSION_TIME_H__) || defined(__EMSCRIPTEN__)
++#if defined(_POSIX_C_SOURCE) || defined(__APPLE__) || defined(__STDC_VERSION_TIME_H__) || defined(__EMSCRIPTEN__) || defined(__QNX__)
+   localtime_r(&rawtime, &timeinfo);
+ #elif defined(_WIN32)
+   localtime_s(&timeinfo, &rawtime);

@@ -1,0 +1,132 @@
+whisper.cpp on QNX, from QNX's port (github.com/qnx-ports/whisper.cpp,
+branch qnx-8.0): ggml recognises QNX's aarch64le processor name (the CPU
+backend's Arm features are chosen from it), the server example links
+QNX's libsocket, and the Vulkan backend's QNX changes (not built here: the
+SDP has no Vulkan). QNX's hand-over notes and its test fix are left out.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/examples/server/CMakeLists.txt b/examples/server/CMakeLists.txt
+index c082546bdf1..50258cdac59 100644
+--- a/examples/server/CMakeLists.txt
++++ b/examples/server/CMakeLists.txt
+@@ -12,4 +12,8 @@ if (WIN32)
+     target_link_libraries(${TARGET} PRIVATE ws2_32)
+ endif()
+ 
++if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
++    target_link_libraries(${TARGET} PRIVATE socket)
++endif()
++
+ install(TARGETS ${TARGET} RUNTIME)
+diff --git a/ggml/cmake/common.cmake b/ggml/cmake/common.cmake
+index cb663883320..d88d79e125a 100644
+--- a/ggml/cmake/common.cmake
++++ b/ggml/cmake/common.cmake
+@@ -29,7 +29,7 @@ function(ggml_get_system_arch)
+     if (CMAKE_OSX_ARCHITECTURES      STREQUAL "arm64" OR
+         CMAKE_GENERATOR_PLATFORM_LWR STREQUAL "arm64" OR
+         (NOT CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_GENERATOR_PLATFORM_LWR AND
+-            CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm.*|ARM64)$"))
++            CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64(le|be)?|arm.*|ARM64)$"))
+         set(GGML_SYSTEM_ARCH "ARM" PARENT_SCOPE)
+     elseif (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64" OR
+             CMAKE_GENERATOR_PLATFORM_LWR MATCHES "^(x86_64|i686|amd64|x64|win32)$" OR
+diff --git a/ggml/src/ggml-vulkan/CMakeLists.txt b/ggml/src/ggml-vulkan/CMakeLists.txt
+index 5aeb6e97b15..a8ceea85b07 100644
+--- a/ggml/src/ggml-vulkan/CMakeLists.txt
++++ b/ggml/src/ggml-vulkan/CMakeLists.txt
+@@ -67,23 +67,33 @@ if (Vulkan_FOUND)
+     set(VULKAN_SHADER_GEN_CMAKE_ARGS "")
+ 
+     # Test all shader extensions
+-    test_shader_extension_support(
+-        "GL_KHR_cooperative_matrix"
+-        "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat.comp"
+-        "GGML_VULKAN_COOPMAT_GLSLC_SUPPORT"
+-    )
++    # QNX: glslc's basic coopmat feature test passes, but the full flash_attn cooperative
++    # matrix shaders fail intermittently on QNX due to resource constraints during
++    # shader generation, and QNX's gfxstream ICD does not expose cooperative matrix
++    # support at runtime.  Disable coopmat/coopmat2 shader compilation on QNX.
++    if(NOT QNXNTO)
++        test_shader_extension_support(
++            "GL_KHR_cooperative_matrix"
++            "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat.comp"
++            "GGML_VULKAN_COOPMAT_GLSLC_SUPPORT"
++        )
+ 
+-    test_shader_extension_support(
+-        "GL_NV_cooperative_matrix2"
+-        "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat2.comp"
+-        "GGML_VULKAN_COOPMAT2_GLSLC_SUPPORT"
+-    )
++        test_shader_extension_support(
++            "GL_NV_cooperative_matrix2"
++            "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat2.comp"
++            "GGML_VULKAN_COOPMAT2_GLSLC_SUPPORT"
++        )
+ 
+-    test_shader_extension_support(
+-        "GL_NV_cooperative_matrix_decode_vector"
+-        "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat2_decode_vector.comp"
+-        "GGML_VULKAN_COOPMAT2_DECODE_VECTOR_GLSLC_SUPPORT"
+-    )
++        test_shader_extension_support(
++            "GL_NV_cooperative_matrix_decode_vector"
++            "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-shaders/feature-tests/coopmat2_decode_vector.comp"
++            "GGML_VULKAN_COOPMAT2_DECODE_VECTOR_GLSLC_SUPPORT"
++        )
++    else()
++        message(STATUS "GL_KHR_cooperative_matrix disabled on QNX (not supported by gfxstream ICD)")
++        message(STATUS "GL_NV_cooperative_matrix2 disabled on QNX (not supported by gfxstream ICD)")
++        message(STATUS "GL_NV_cooperative_matrix_decode_vector disabled on QNX (not supported by gfxstream ICD)")
++    endif()
+ 
+     test_shader_extension_support(
+         "GL_EXT_integer_dot_product"
+diff --git a/ggml/src/ggml-vulkan/ggml-vulkan.cpp b/ggml/src/ggml-vulkan/ggml-vulkan.cpp
+index a483d22c1a2..b3176791c2f 100644
+--- a/ggml/src/ggml-vulkan/ggml-vulkan.cpp
++++ b/ggml/src/ggml-vulkan/ggml-vulkan.cpp
+@@ -6865,6 +6865,7 @@ static void ggml_vk_instance_init() {
+     if (debug_utils_ext) {
+         extensions.push_back("VK_EXT_debug_utils");
+     }
++#if VK_HEADER_VERSION >= 301
+     VkBool32 enable_best_practice = layer_settings;
+     std::vector<vk::LayerSettingEXT> settings = {
+         {
+@@ -6877,6 +6878,9 @@ static void ggml_vk_instance_init() {
+     };
+     vk::LayerSettingsCreateInfoEXT layer_setting_info(settings);
+     vk::InstanceCreateInfo instance_create_info(vk::InstanceCreateFlags{}, &app_info, layers, extensions, &layer_setting_info);
++#else
++    vk::InstanceCreateInfo instance_create_info(vk::InstanceCreateFlags{}, &app_info, layers, extensions);
++#endif
+ #ifdef __APPLE__
+     if (portability_enumeration_ext) {
+         instance_create_info.flags |= vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR;
+diff --git a/ggml/src/ggml-vulkan/vulkan-shaders/vulkan-shaders-gen.cpp b/ggml/src/ggml-vulkan/vulkan-shaders/vulkan-shaders-gen.cpp
+index 1925582ffed..c5c739103ed 100644
+--- a/ggml/src/ggml-vulkan/vulkan-shaders/vulkan-shaders-gen.cpp
++++ b/ggml/src/ggml-vulkan/vulkan-shaders/vulkan-shaders-gen.cpp
+@@ -326,7 +326,18 @@ using compile_count_guard = std::unique_ptr<uint32_t, decltype(&decrement_compil
+ compile_count_guard acquire_compile_slot() {
+     // wait until fewer than N compiles are in progress.
+     // 16 is an arbitrary limit, the goal is to avoid "failed to create pipe" errors.
++    // QNX enforces a hard per-process FD limit (default 1000, set via procnto -f in the
++    // system image).  Concurrent glslc invocations exhaust available FDs: fork()/pipe()
++    // succeeds but glslc exits without writing its .spv file, silently omitting shader
++    // variants.  N=4 still produced ~10% intermittent failures; N=1 is required at the
++    // default limit.  This guard can be removed once the target image is built with a
++    // sufficiently high -f value (e.g. procnto-smp-instr -f 32768) and that setting has
++    // been validated to eliminate the failures.
++#if defined(__QNX__)
++    uint32_t N = 1u;
++#else
+     uint32_t N = std::max(1u, std::min(16u, std::thread::hardware_concurrency()));
++#endif
+     std::unique_lock<std::mutex> guard(compile_count_mutex);
+     compile_count_cond.wait(guard, [N] { return compile_count < N; });
+     compile_count++;

@@ -1,0 +1,22 @@
+Take dl_iterate_phdr from <sys/link.h> on QNX
+
+The OpenGL loader finds which GL platform library is loaded with
+dl_iterate_phdr(), declared in <link.h> on Linux and the BSDs. QNX declares
+it, with struct dl_phdr_info, in <sys/link.h> and has no <link.h>.
+
+Upstream-Status: Pending
+
+--- a/src/render/classic/glad/glad.c
++++ b/src/render/classic/glad/glad.c
+@@ -112,7 +112,11 @@
+ static void* mjGlad_libGL;
+ 
+ #if !defined(__APPLE__) && !defined(__HAIKU__)
++#if defined(__QNX__)
++#include <sys/link.h>
++#else
+ #include <link.h>
++#endif
+ 
+ typedef void* (APIENTRYP PFNGLXGETPROCADDRESSPROC_PRIVATE)(const char*);
+ static PFNGLXGETPROCADDRESSPROC_PRIVATE mjGladGetProcAddressPtr;

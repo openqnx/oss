@@ -267,6 +267,19 @@ if [ ! -x "$HT/bin/gperf" ]; then
   ( cd "$b" && "$src/configure" --prefix="$HT" && make -j"$(nproc)" && make install )     > "$WS/logs/hosttools-gperf.log" 2>&1     || { echo "!! native gperf failed -- see $WS/logs/hosttools-gperf.log"; exit 1; }
 fi
 
+# GNU ed is published only as .tar.lz: tar needs lzip on the build machine.
+if [ ! -x "$HT/bin/lzip" ]; then
+  echo "== building native lzip -> $HT"
+  src="$WS/src/lzip-host"
+  if [ ! -d "$src" ]; then
+    mkdir -p "$src"
+    curl -fsSL --retry 3 -o "$WS/dist/lzip-1.26.tar.gz" https://download.savannah.gnu.org/releases/lzip/lzip-1.26.tar.gz \
+      && tar xf "$WS/dist/lzip-1.26.tar.gz" -C "$src" --strip-components=1
+  fi
+  ( cd "$src" && ./configure --prefix="$HT" CXX=g++ && make -j"$(nproc)" && make install ) > "$WS/logs/hosttools-lzip.log" 2>&1 \
+    || { echo "!! native lzip failed -- see $WS/logs/hosttools-lzip.log"; exit 1; }
+fi
+
 if [ ! -x "$HT/bin/unifdef" ]; then
   echo "== building native unifdef -> $HT"
   src="$WS/src/unifdef-host"

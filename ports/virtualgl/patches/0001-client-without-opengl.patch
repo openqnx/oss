@@ -1,0 +1,113 @@
+Build the client without desktop OpenGL (X11 drawing only)
+
+vglclient draws the frames it receives with X11 (XShm/XPutImage); OpenGL
+(GLX) is used only for stereo frames, through GLFrame -- and when GLX fails
+at run time, ClientWin already falls back to X11 drawing and turns stereo
+off. QNX has no desktop OpenGL (EGL and OpenGL ES only), so the client could
+not be built at all. A VGL_USEGL option (default on, unchanged): off, GLFrame
+is built without GLX and its constructors throw, which takes that same
+fallback; the OpenGL programs (glreadtest, the demos, the diagnostics) are
+not built.
+
+Upstream-Status: Pending
+
+--- a/client/GLFrame.cpp
++++ b/client/GLFrame.cpp
+@@ -14,6 +14,28 @@
+ // Frame drawn using OpenGL
+ 
+ #include "GLFrame.h"
++
++#ifdef VGL_NOGL
++
++// No desktop OpenGL: there is no OpenGL drawing. The constructors throw, and
++// ClientWin falls back to X11 drawing (and disables stereo), as it does when
++// GLX fails at run time.
++#include "Error.h"
++using namespace common;
++GLFrame::GLFrame(char *dpystring, Window win_) : Frame(), dpy(NULL), win(win_), ctx(0), tjhnd(NULL), newdpy(false)
++{ (void)dpystring; throw(util::Error("GLFrame::GLFrame()", "OpenGL drawing is not available on this platform")); }
++GLFrame::GLFrame(Display *dpy_, Window win_) : Frame(), dpy(dpy_), win(win_), ctx(0), tjhnd(NULL), newdpy(false)
++{ throw(util::Error("GLFrame::GLFrame()", "OpenGL drawing is not available on this platform")); }
++GLFrame::~GLFrame(void) {}
++void GLFrame::init(rrframeheader &h, bool stereo_) { (void)h; (void)stereo_; }
++GLFrame &GLFrame::operator= (CompressedFrame &cf) { (void)cf; return *this; }
++void GLFrame::redraw(void) {}
++void GLFrame::drawTile(int x, int y, int width, int height) { (void)x; (void)y; (void)width; (void)height; }
++void GLFrame::sync(void) {}
++void GLFrame::init(void) {}
++int GLFrame::glError(void) { return 0; }
++
++#else
+ #include "Error.h"
+ #include "Log.h"
+ #include "vglutil.h"
+@@ -227,3 +249,5 @@
+ 	while(i != GL_NO_ERROR) i = glGetError();
+ 	return ret;
+ }
++
++#endif  // VGL_NOGL
+--- a/client/GLFrame.h
++++ b/client/GLFrame.h
+@@ -16,7 +16,12 @@
+ 
+ // Frame drawn using OpenGL
+ 
++#ifndef VGL_NOGL
+ #include <GL/glx.h>
++#else
++#include <X11/Xlib.h>
++typedef void *GLXContext;
++#endif
+ #include "Frame.h"
+ 
+ 
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -326,7 +326,16 @@
+ # Clarify that we need to link with the legacy OpenGL library (libGL) rather
+ # than the GLVND OpenGL library.  This shuts up CMake 3.11 and later.
+ set(OpenGL_GL_PREFERENCE LEGACY)
++# Without desktop OpenGL (QNX: EGL/GLES only) the client draws with X11 only:
++# GLFrame (stereo drawing) reports that OpenGL is unavailable.
++option(VGL_USEGL "Use OpenGL (GLX) in the client (stereo drawing)" TRUE)
++if(VGL_USEGL)
+ include(FindOpenGL)
++else()
++add_definitions(-DVGL_NOGL)
++set(OPENGL_INCLUDE_DIR "")
++set(OPENGL_gl_LIBRARY "")
++endif()
+ 
+ # Ensure that we build and link against the X11 version of OpenGL on OS X/macOS
+ if(APPLE)
+@@ -402,8 +411,11 @@
+ 	add_subdirectory(server)
+ endif()
+ add_subdirectory(client)
++# The demos (glxspheres, ...) and diagnostics are OpenGL programs.
++if(VGL_USEGL)
+ add_subdirectory(demos)
+ add_subdirectory(diags)
++endif()
+ add_subdirectory(doc)
+ 
+ else()
+--- a/util/CMakeLists.txt
++++ b/util/CMakeLists.txt
+@@ -70,12 +70,14 @@
+ 		set(IFRLIB nvidia-ifr)
+ 	endif()
+ 
++	if(VGL_USEGL)
+ 	add_executable(glreadtest glreadtest.cpp)
+ 	target_link_libraries(glreadtest ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}
+ 		${X11_X11_LIB} ${IFRLIB} vglutil)
+ 	if(VGL_BUILDSERVER)
+ 		install(TARGETS glreadtest DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 	endif()
++	endif()
+ endif()
+ 
+ if(WIN32)

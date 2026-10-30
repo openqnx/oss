@@ -1,0 +1,23 @@
+Take the button codes from linux/input-event-codes.h on QNX
+
+xwayland-input.c includes <linux/input.h> for the BTN_* button codes it
+maps Wayland pointer buttons to. QNX has no evdev and no <linux/input.h>;
+the codes alone are in <linux/input-event-codes.h> (as Wayland compositors
+on QNX use them): include that on QNX.
+
+Upstream-Status: Pending
+
+--- a/hw/xwayland/xwayland-input.c
++++ b/hw/xwayland/xwayland-input.c
+@@ -27,7 +27,11 @@
+ #include <math.h>
+ #include <xwayland-config.h>
+ 
++#ifdef __QNX__
++#include <linux/input-event-codes.h>   /* the BTN_* codes; QNX has no evdev */
++#else
+ #include <linux/input.h>
++#endif
+ #include <sys/mman.h>
+ 
+ #include <inputstr.h>

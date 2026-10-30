@@ -1,0 +1,281 @@
+pistache on QNX, from QNX's port (github.com/qnx-ports/pistache, branch
+qnx-v0.4.26): pistache's event loop runs on libevent where there is no
+Linux epoll/eventfd/timerfd interface of its own to use (the PISTACHE_USE_
+CONTENT_LIBEVENT path, extended to QNX), and QNX branches for errno values,
+strerror_r and sendfile.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/include/pistache/emosandlibevdefs.h b/include/pistache/emosandlibevdefs.h
+index ce12d4675..0d9fa6418 100644
+--- a/include/pistache/emosandlibevdefs.h
++++ b/include/pistache/emosandlibevdefs.h
+@@ -39,7 +39,7 @@
+   #endif
+ #endif
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) || defined (__QNX__)
+   #ifndef _USE_LIBEVENT
+     #define _USE_LIBEVENT 1
+   #endif
+diff --git a/include/pistache/pist_strerror_r.h b/include/pistache/pist_strerror_r.h
+index 78c84b0bc..c8560ec55 100644
+--- a/include/pistache/pist_strerror_r.h
++++ b/include/pistache/pist_strerror_r.h
+@@ -16,7 +16,7 @@
+ /* ------------------------------------------------------------------------- */
+ 
+ #if !defined(__linux__) && ((!defined(__GNUC__)) || (defined(__MINGW32__)) \
+-      || (defined(__clang__)) || (defined(__NetBSD__)) || (defined(__APPLE__)))
++      || (defined(__clang__)) || (defined(__NetBSD__)) || (defined(__APPLE__)) || (defined(__QNX__)))
+ 
+ /* ------------------------------------------------------------------------- */
+ // Note: We provide the GNU-specific/POSIX style (which returns char *), not
+diff --git a/include/pistache/ps_sendfile.h b/include/pistache/ps_sendfile.h
+index ebd2be339..331f9970b 100644
+--- a/include/pistache/ps_sendfile.h
++++ b/include/pistache/ps_sendfile.h
+@@ -19,7 +19,7 @@
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-#if defined(_IS_WINDOWS) || defined(_IS_BSD)
++#if defined(_IS_WINDOWS) || defined(_IS_BSD) || defined(__QNX__)
+ 
+ #include <sys/types.h> // off_t, size_t
+ #include <pistache/em_socket_t.h>
+@@ -34,7 +34,7 @@ extern "C" PST_SSIZE_T ps_sendfile(em_socket_t out_fd, int in_fd,
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-#else // of if defined(_IS_WINDOWS) || defined(_IS_BSD)
++#else // of if defined(_IS_WINDOWS) || defined(_IS_BSD) || defined(__QNX__)
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+@@ -42,7 +42,7 @@ extern "C" PST_SSIZE_T ps_sendfile(em_socket_t out_fd, int in_fd,
+ 
+ #ifdef __linux__
+ #include <sys/sendfile.h>
+-#elif defined __APPLE__
++#elif defined __APPLE__ || defined __QNX__
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <sys/uio.h>
+@@ -50,7 +50,7 @@ extern "C" PST_SSIZE_T ps_sendfile(em_socket_t out_fd, int in_fd,
+ 
+ #define PS_SENDFILE ::sendfile
+ 
+-#endif // of if defined(_IS_WINDOWS) || defined(_IS_BSD)... else...
++#endif // of if defined(_IS_WINDOWS) || defined(_IS_BSD) || defined(__QNX__) ... else...
+ 
+ /* ------------------------------------------------------------------------- */
+ #endif // of ifndef _PIST_PS_SENDFILE_H_
+diff --git a/include/pistache/pst_errno.h b/include/pistache/pst_errno.h
+index 6bc0470c6..43a8b0194 100644
+--- a/include/pistache/pst_errno.h
++++ b/include/pistache/pst_errno.h
+@@ -23,6 +23,8 @@
+ 
+ #ifdef _IS_WINDOWS
+ #include <errno.h>
++#elif defined(__QNX__)
++#include <errno.h>
+ #else
+ #include <sys/errno.h>
+ #endif
+diff --git a/include/pistache/winornix.h b/include/pistache/winornix.h
+index e849bb0a0..e868fffb9 100644
+--- a/include/pistache/winornix.h
++++ b/include/pistache/winornix.h
+@@ -135,6 +135,12 @@ typedef int PST_SOCK_OPT_VAL_T;
+ // #define PST_CLOCK_REALTIME_ALARM                8
+ // #define PST_CLOCK_BOOTTIME_ALARM                9
+ 
++#elif defined __QNX__
++#define PST_CLOCK_REALTIME CLOCK_REALTIME
++#define PST_CLOCK_MONOTONIC CLOCK_MONOTONIC
++#define PST_CLOCK_PROCESS_CPUTIME_ID CLOCK_PROCESS_CPUTIME_ID
++#define PST_CLOCK_THREAD_CPUTIME_ID CLOCK_THREAD_CPUTIME_ID
++
+ #else
+ #define PST_CLOCK_REALTIME CLOCK_REALTIME
+ #define PST_CLOCK_MONOTONIC CLOCK_MONOTONIC
+@@ -182,7 +188,7 @@ typedef int PST_SOCK_OPT_VAL_T;
+ // mingw gcc doesn't define strerror_r (Oct/2024)
+ // gcc on macOS does define strerror_r, but the XSI version not the POSIX one
+ #if defined(__linux__) || (defined(__GNUC__) && (!defined(__MINGW32__)) && \
+-      (!defined(__clang__)) && (!defined(__NetBSD__)) && (!defined(__APPLE__)))
++      (!defined(__clang__)) && (!defined(__NetBSD__)) && (!defined(__APPLE__)) && (!defined(__QNX__)))
+ #define PST_STRERROR_R_HDR "string.h"
+ #define PST_STRERROR_R strerror_r // returns char *
+ #else
+diff --git a/meson.build b/meson.build
+index 9fb540c3b..9a5f5ce18 100644
+--- a/meson.build
++++ b/meson.build
+@@ -21,7 +21,8 @@ fs = import('fs')
+ 
+ #macOS host_machine.system() is 'darwin'
+ 
+-if host_machine.system() != 'linux' and host_machine.system() != 'darwin' and host_machine.system() != 'windows' and not host_machine.system().endswith('bsd')
++if host_machine.system() != 'linux' and host_machine.system() != 'darwin' and host_machine.system() != 'windows' and host_machine.system() != 'qnx' and not host_machine.system().endswith('bsd')
++
+ 	error('Pistache currenly only supports Linux, macOS, Free/Open/NetBSD and Windows.')
+ endif
+ 
+@@ -185,7 +186,7 @@ if get_option('PISTACHE_USE_SSL')
+ 	public_deps += openssl_dep
+ endif
+ 
+-if host_machine.system() == 'darwin' or host_machine.system() == 'windows' or host_machine.system().endswith('bsd') or get_option('PISTACHE_FORCE_LIBEVENT')
++if host_machine.system() == 'darwin' or host_machine.system() == 'windows' or host_machine.system().endswith('bsd') or host_machine.system() == 'qnx' or get_option('PISTACHE_FORCE_LIBEVENT')
+ 	deps_libpistache += dependency('libevent')
+         if (not (host_machine.system() == 'windows'))
+                 # It looks like libevent assumes windows threads in
+diff --git a/src/common/eventmeth.cc b/src/common/eventmeth.cc
+index 9fbd424e2..d3eecd81e 100644
+--- a/src/common/eventmeth.cc
++++ b/src/common/eventmeth.cc
+@@ -1916,8 +1916,8 @@ EmEventTmrFd::EmEventTmrFd(PST_CLOCK_ID_T clock_id,
+             break;
+ 
+         case PST_CLOCK_MONOTONIC:
+-        #ifndef _IS_BSD
+-        // CLOCK_MONOTONIC_RAW not defined on FreeBSD13.3 and OpenBSD 7.3
++        #if !defined(_IS_BSD) && !defined(__QNX__)
++        // CLOCK_MONOTONIC_RAW not defined on FreeBSD13.3 and OpenBSD 7.3 and QNX
+         case PST_CLOCK_MONOTONIC_RAW:
+         #endif
+         #ifdef __APPLE__
+@@ -3549,7 +3549,7 @@ EmEventTmrFd::EmEventTmrFd(PST_CLOCK_ID_T clock_id,
+             case SIGCHLD: // child status has changed
+             case SIGIO:   // I/O is possible on a descriptor (see fcntl(2))
+             case SIGWINCH:// Window size change
+-            #ifndef __linux__
++            #if !defined(__linux__) && !defined(__QNX__)
+             case SIGINFO: // status request from keyboard
+                 // May be undefined on Linux, or means power failure (SIGPWR)
+             #endif
+diff --git a/src/common/pist_check.cc b/src/common/pist_check.cc
+index 81a8102b7..63cdaecd0 100644
+--- a/src/common/pist_check.cc
++++ b/src/common/pist_check.cc
+@@ -28,6 +28,9 @@
+ #include <windows.h> // required for dbghelp.h
+ #include <dbghelp.h>
+ // See pist_timelog.h for usage
++#elif defined(__QNX__)
++#include <cxxabi.h>
++#include <dlfcn.h>
+ #else
+ #include <cxxabi.h> // for abi::__cxa_demangle
+ #include <execinfo.h>
+@@ -131,6 +134,12 @@ static void logStackTrace(int pri)
+     }
+ }
+ 
++#elif defined(__QNX__)
++static void logStackTrace(int pri)
++{
++
++}
++
+ #else
+ static void logStackTrace(int pri)
+ {
+diff --git a/src/common/pist_strerror_r.cc b/src/common/pist_strerror_r.cc
+index 93a6f27e5..192ec1309 100644
+--- a/src/common/pist_strerror_r.cc
++++ b/src/common/pist_strerror_r.cc
+@@ -261,7 +261,7 @@ extern "C" char * pist_strerror_r(int errnum, char *buf, size_t buflen)
+ /* ------------------------------------------------------------------------- */
+ 
+ #elif !defined(__linux__) && ((!defined(__GNUC__)) || (defined(__MINGW32__)) \
+-      || (defined(__clang__)) || (defined(__NetBSD__)) || (defined(__APPLE__)))
++      || (defined(__clang__)) || (defined(__NetBSD__)) || (defined(__APPLE__)) || (defined(__QNX__)))
+ 
+ #include <pistache/ps_strl.h>
+ 
+diff --git a/src/common/ps_sendfile.cc b/src/common/ps_sendfile.cc
+index cb9d17993..cff815ed5 100644
+--- a/src/common/ps_sendfile.cc
++++ b/src/common/ps_sendfile.cc
+@@ -138,7 +138,7 @@ extern "C" PST_SSIZE_T ps_sendfile(em_socket_t out_fd, int in_fd,
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-#elif defined(_IS_BSD)
++#elif defined(_IS_BSD) || defined (__QNX__)
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+diff --git a/src/common/transport.cc b/src/common/transport.cc
+index 2376d2a6d..4b8822384 100644
+--- a/src/common/transport.cc
++++ b/src/common/transport.cc
+@@ -16,7 +16,7 @@
+ 
+ #ifdef _USE_LIBEVENT_LIKE_APPLE
+ 
+-#ifdef __NetBSD__
++#if defined __NetBSD__ || defined __QNX__
+ // For TCP_NODELAY
+ #include <netinet/in.h>
+ #include <netinet/tcp.h>
+@@ -51,7 +51,7 @@
+ using std::to_string;
+ 
+ #ifdef _USE_LIBEVENT_LIKE_APPLE
+-#if defined(__NetBSD__) || defined(_IS_WINDOWS)
++#if defined(__NetBSD__) || defined(_IS_WINDOWS) || defined(__QNX__)
+ #define PS_USE_TCP_NODELAY 1
+ #endif
+ #endif
+@@ -849,7 +849,6 @@ namespace Pistache::Tcp
+             {
+                 bytesWritten = -1;
+             }
+-
+ #else
+         bytesWritten = PS_SENDFILE(GET_ACTUAL_FD(fd), file, &offset, len);
+ #endif
+diff --git a/tests/headers_test.cc b/tests/headers_test.cc
+index cf0578ad5..1d0c2df43 100644
+--- a/tests/headers_test.cc
++++ b/tests/headers_test.cc
+@@ -571,7 +571,7 @@ TEST(headers_test, date_test_ostream)
+     d4.parse("Fri, 25 Jan 2019 21:04:45.000000000 UTC");
+     d4.write(os);
+     const char* cstr_to_compare = "Fri, 25 Jan 2019 21:04:45."
+-#if defined __clang__ && !defined __linux__
++#if defined (__QNX__) || (__clang__ && !defined __linux__)
+                                   "000000"
+ #elif defined _MSC_VER // Microsoft Visual Compiler
+                                   "0000000"
+diff --git a/tests/meson.build b/tests/meson.build
+index c23df5f4f..5770b2e50 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -2,7 +2,12 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-curl_dep = dependency('libcurl')
++if meson.is_cross_build() and host_machine.system() == 'qnx'
++  cc = meson.get_compiler('cpp')
++  curl_dep = cc.find_library('curl', required: true)
++else
++  curl_dep = dependency('libcurl')
++endif
+ gtest_main_dep = dependency('gtest', main: true, fallback: ['gtest', 'gtest_main_dep'])
+ gmock_dep = dependency('gmock', version: '>=1.11.0', fallback: ['gtest', 'gmock_dep'])
+ 
+diff --git a/version.txt b/version.txt
+index 66c6aac8d..ad6b336f4 100644
+--- a/version.txt
++++ b/version.txt
+@@ -1 +1 @@
+-0.4.26.20241222
++0.4.26.20260702

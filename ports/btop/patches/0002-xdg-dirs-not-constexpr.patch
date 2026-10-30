@@ -1,0 +1,21 @@
+Do not declare the XDG state directory lookup constexpr
+
+get_xdg_state_dir() is declared constexpr but calls std::getenv(), so it can
+never be evaluated at compile time. C++23 allows
+such a declaration; GCC 12 -- QNX SDP 8.0's compiler -- rejects it ("call to
+non-'constexpr' function 'char* getenv(const char*)'"). It is only ever
+called at run time: a plain function.
+
+Upstream-Status: Pending
+
+--- a/src/btop_config.cpp
++++ b/src/btop_config.cpp
+@@ -797,7 +797,7 @@
+ 		}
+ 	}
+ 
+-	static constexpr auto get_xdg_state_dir() -> std::optional<fs::path> {
++	static auto get_xdg_state_dir() -> std::optional<fs::path> {
+ 		std::optional<fs::path> xdg_state_home;
+ 
+ 		{

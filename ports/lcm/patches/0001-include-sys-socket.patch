@@ -1,0 +1,19 @@
+Include <sys/socket.h> for struct sockaddr
+
+lcm_buf_t has a struct sockaddr member, and the header includes
+<arpa/inet.h> and <netdb.h> but not <sys/socket.h>, where struct sockaddr is
+declared. glibc's headers pull it in through those; QNX's do not ("field
+'from' has incomplete type").
+
+Upstream-Status: Pending
+
+--- a/lcm/udpm_util.h
++++ b/lcm/udpm_util.h
+@@ -11,6 +11,7 @@
+ #ifndef WIN32
+ #include <arpa/inet.h>
+ #include <netdb.h>
++#include <sys/socket.h>
+ #include <sys/time.h>
+ #include <unistd.h>
+ typedef int SOCKET;

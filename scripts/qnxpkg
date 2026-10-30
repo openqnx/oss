@@ -27,7 +27,7 @@ Files installed into staging can carry the absolute staging path of the build
 host (a .pc file, a CMake package file). Those are rewritten to the on-target
 path, since the package is installed at / on the board.
 """
-import argparse, base64, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, time
+import argparse, base64, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, tempfile, time
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREFIX = os.environ.get("PREFIX", "/usr/local")
@@ -345,6 +345,21 @@ def package(comp, arch, args, owner, outdir, existing=None):
         base = ver.rpartition("-r")[0]
         ver = "%s-r%d" % (base, choose_release(existing, pname, base, fp, args.release,
                                                fingerprint(root, rels_sel, v=1)))
+        prev = (existing or {}).get("%s-%s" % (pname, ver))
+        if prev is not None and prev.get("fp") is None:
+            # A legacy entry (no fingerprint): choose_release took it as
+            # unchanged. Compare what the archives hold instead -- ncurses
+            # 6.5-r0 was rewritten with different contents this way.
+            old_tgz = os.path.join(outdir, "%s-%s.tar.gz" % (pname, ver))
+            if os.path.exists(old_tgz):
+                tmpdir = tempfile.mkdtemp(dir=outdir)
+                try:
+                    new_tgz = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, tmpdir)[0]
+                    if archive_digest(old_tgz) != archive_digest(os.path.join(tmpdir, new_tgz)):
+                        ver = "%s-r%d" % (base, int(ver.rpartition("-r")[2]) + 1)
+                        print("   %s: contents differ from the published %s -> %s" % (pname, os.path.basename(old_tgz), ver))
+                finally:
+                    shutil.rmtree(tmpdir, ignore_errors=True)
         tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, outdir)
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
         lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
@@ -383,6 +398,7 @@ TEST_EXTRAS = {
                           "share/games/openttd/baseset/opensfx-1.0.3", "share/games/openttd/baseset/openmsx-0.4.2"],
     "test_adwaita": ["share/icons/Adwaita"],
     "test_doxygen": ["bin/doxygen"],
+    "test_virtualgl": ["bin/vglclient", "bin/Xwayland", "bin/labwc"],
     "test_graphicsmagick": ["bin/gm"],
     "test_poppler": ["share/fonts/font-dejavu"],
     "test_docbook_xsl": ["share/xml/docbook/xsl-stylesheets-1.79.2"],
@@ -517,6 +533,19 @@ def fingerprint(root, rels, v=2):
 
 
 BUMP = False   # --bump: a new release even where the contents look the same
+
+
+def archive_digest(path):
+    """What a package archive holds, independent of time stamps and order:
+    every member's name, type, link target and contents."""
+    h = hashlib.sha256()
+    with tarfile.open(path) as tf:
+        for m in sorted(tf.getmembers(), key=lambda m: m.name):
+            body = ""
+            if m.isreg():
+                body = hashlib.sha256(tf.extractfile(m).read()).hexdigest()
+            h.update(("%s\0%s\0%s\0%s\n" % (m.name, m.type, m.linkname, body)).encode())
+    return h.hexdigest()
 
 
 def choose_release(existing, pname, base, fp, default, fp1=None):

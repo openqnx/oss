@@ -86,6 +86,8 @@ _install_to_pkgroot() {
   # to read as the staging tree, not the pkgroot it was installed through.
   grep -rlIF -- "$root" "$root" 2>/dev/null | while read -r f; do
     sed -i "s#$root#$STAGE#g" "$f"; done
+  # pkg-config files must not name the staging tree (scripts/lib/pc-unstage.py).
+  find "$root" -name '*.pc' -exec python3 "$WS/scripts/lib/pc-unstage.py" "$STAGE$PREFIX" "$PREFIX" {} + >>"$log" 2>&1
   # A reinstall (a version bump, -f) must not leave the previous version's
   # files behind: an old libfoo.so.1.2.3 next to the new one, still found by
   # whatever links or bundles by file name. Remove what the old manifest lists

@@ -92,6 +92,28 @@ for arch in aarch64le x86_64; do
     rc=1
   fi
 
+  # --- the staging tree itself named in staged pkg-config files ---------
+  # pkg-config adds the sysroot (staging) itself; a .pc that names it is
+  # doubled for every consumer (scripts/lib/pc-unstage.py fixes them).
+  real=$(readlink -f "$STAGE")
+  leak=$(grep -rlE "($STAGE|$real|/stage/$arch)/usr/local" "$STAGE$PREFIX" --include='*.pc' 2>/dev/null)
+  if [ -n "$leak" ]; then
+    echo "FAIL [$arch] staging paths in pkg-config files:"
+    echo "$leak" | sed "s,^$STAGE/,    ,"
+    rc=1
+  fi
+
+  # --- package trees: nothing installed through the build machine's paths -
+  # A nested <stage>/usr/local (a directory option given the staging path,
+  # then DESTDIR in front again) or a CMake user registry ($HOME/.cmake)
+  # ended up in ncurses', geany-plugins' and gflags' packages.
+  odd=$(find "$WS/pkgroot/$arch" -mindepth 2 \( -path "*/stage/$arch/*" -o -path '*/.cmake/packages*' \) -prune -print 2>/dev/null)
+  if [ -n "$odd" ]; then
+    echo "FAIL [$arch] build-machine paths inside package trees:"
+    echo "$odd" | sed "s,^$WS/pkgroot/$arch/,    ," | head -20
+    rc=1
+  fi
+
   [ $rc -eq 0 ] && echo "OK  [$arch] all staged ELFs are QNX/$want, no dangling links, no path leaks"
 done
 exit $rc

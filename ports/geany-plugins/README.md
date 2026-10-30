@@ -89,6 +89,7 @@ CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
 $OLDPWD/src/geany-plugins/configure --host=$QNX_TRIPLE --prefix=/usr/local \
+    --with-geany-libdir=$PREFIX/lib \
     --disable-all-plugins \
     --enable-addons \
     --enable-autoclose \
@@ -114,6 +115,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - The Geany plugin collection (the plugins without extra library dependencies). Version as in the QNX Everywhere 8.0.4r1 image.
+- The plugin directory: geany.pc's libdir, which pkg-config reports with the sysroot (the staging tree) in front -- the plugins were installed, and packaged, under <stage>/usr/local/lib/geany, where geany never looks.
 - The QNX patch touches the autotools inputs; regenerate the build files.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH geany-plugins`.
@@ -170,7 +172,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date |
 |---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | geany-plugins 2.1-r0 | ✅ PASS | 2026-10-30 |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | geany-plugins 2.1-r1 | ✅ PASS | 2026-10-30 |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | geany-plugins 2.1-r0 | ✅ PASS | 2026-10-30 |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | geany-plugins 2.1-r1 | ✅ PASS | 2026-10-30 |
 
 ## Versions
 
@@ -186,7 +190,10 @@ TARBALL=https://plugins.geany.org/geany-plugins/geany-plugins-2.1.tar.bz2
 SHA256=813f24570ca7590a9ae6e8e9ca4e5bd6c9f09d61fe36ad6feca89b7c2feaae70
 DEPS="geany"
 BUILDSYS=autotools
-CONF_ARGS_EXTRA=( --disable-all-plugins --enable-addons --enable-autoclose --enable-automark --enable-codenav --enable-commander --enable-defineformat --enable-filebrowser --enable-keyrecord --enable-lineoperations --enable-overview --enable-pairtaghighlighter --enable-projectorganizer --enable-sendmail --enable-shiftcolumn --enable-treebrowser --enable-xmlsnippets )
+# The plugin directory: geany.pc's libdir, which pkg-config reports with the
+# sysroot (the staging tree) in front -- the plugins were installed, and
+# packaged, under <stage>/usr/local/lib/geany, where geany never looks.
+CONF_ARGS_EXTRA=( --with-geany-libdir=$PREFIX/lib --disable-all-plugins --enable-addons --enable-autoclose --enable-automark --enable-codenav --enable-commander --enable-defineformat --enable-filebrowser --enable-keyrecord --enable-lineoperations --enable-overview --enable-pairtaghighlighter --enable-projectorganizer --enable-sendmail --enable-shiftcolumn --enable-treebrowser --enable-xmlsnippets )
 # The QNX patch touches the autotools inputs; regenerate the build files.
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
 ```

@@ -183,6 +183,22 @@ if [ -z "$UPLOAD" ]; then
 fi
 
 command -v gh >/dev/null || { echo "gh (GitHub CLI) is needed for --upload" >&2; exit 1; }
+# GitHub limits content creation to about 500 uploads an hour (a "secondary
+# rate limit": HTTP 403 "API rate limit exceeded" while the hourly API quota
+# is far from used), and a first full upload is thousands of files. Batches
+# of 25, at most ~450 an hour; a batch that is refused waits and is retried.
+paced_upload() { # tag, file names on stdin
+  local tag=$1 batch n=0 try
+  while mapfile -t -n 25 batch && [ ${#batch[@]} -gt 0 ]; do
+    for try in $(seq 1 12); do
+      gh release upload "$tag" "${batch[@]}" --repo "$GHREPO" --clobber && break
+      [ "$try" = 12 ] && { echo "!! $tag: upload refused 12 times, stopping (rerun with --changed)" >&2; return 1; }
+      echo "   $tag: refused (rate limit?), retrying in 5 minutes ($try/12)" >&2; sleep 300
+    done
+    n=$((n + ${#batch[@]})); echo "   $tag: $n uploaded" >&2
+    sleep "${QNXPUB_PAUSE:-200}"
+  done
+}
 NOTICE=""; [ -f "$WS/NOTICE.md" ] && NOTICE=$'\n\n'"$(sed -n '3,12p' "$WS/NOTICE.md")"
 for a in "${ARCHES[@]}"; do
   for tag in packages-$SDP-$a apk-$SDP-$a tests-$SDP-$a; do
@@ -196,7 +212,7 @@ for a in "${ARCHES[@]}"; do
       gh release create "$tag" --repo "$GHREPO" --title "$title" --notes "$notes$NOTICE" --latest=false
     up=$(cd "$d" && ls | grep -vxE 'INDEX|APKINDEX.tar.gz' | { if [ -n "$CHANGED" ]; then grep -vxFf "$OUT/.$tag.remote" || true; else cat; fi; })
     # Packages first, the index last: a target never sees an index naming a file not yet up.
-    [ -z "$up" ] || (cd "$d" && echo "$up" | xargs -r -n 50 gh release upload "$tag" --repo "$GHREPO" --clobber)
+    [ -z "$up" ] || (cd "$d" && echo "$up" | paced_upload "$tag") || exit 1
     (cd "$d" && ls | grep -xE 'INDEX|APKINDEX.tar.gz' | xargs -r gh release upload "$tag" --repo "$GHREPO" --clobber)
     if [ -n "$PRUNE" ]; then
       src=$REPO_ROOT/$SDP/$a; [ "${tag%%-*}" = tests ] && src=$TESTS_ROOT/$SDP/$a

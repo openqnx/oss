@@ -1,0 +1,23 @@
+Compile as C99 on QNX: its C headers are not C89
+
+opusfile compiles with -std=c89 -pedantic. QNX's C library headers are C99
+-- stdlib.h declares atexit() "static inline" -- and do not compile as C89
+("expected ';' before 'int'"). On QNX add -std=gnu99 after it (the last -std
+wins); the warnings it asks for stay.
+
+Upstream-Status: QNX-specific
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -46,6 +46,11 @@
+ 
+ # Platform-specific tweaks
+ case $host in
++  *-nto-qnx*)
++    # QNX's C library headers use C99 (static inline): -std=c89 cannot
++    #  compile them. The later -std wins.
++    CC_CHECK_CFLAGS_APPEND([-std=gnu99])
++    ;;
+   *-mingw*)
+     # -std=c89 causes some warnings under mingw.
+     CC_CHECK_CFLAGS_APPEND([-U__STRICT_ANSI__])

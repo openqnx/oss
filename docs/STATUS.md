@@ -34,23 +34,36 @@ current: it is the hand-over, not a history (that is `git log`).
    then `vanilla-vm/desktop x86_64` and check the session on screen
    (xfconfd D-Bus activation, panel menu, every application).
    Not yet packaged/verified for aarch64 (waits for the aarch64 run).
-3. **libunwind**: QNX's repository has it; the SDP already ships
-   libunwind.so.8 (+ -nto, -coredump). A port must not ship a second
-   libunwind.so.8 (`check-dupes`, `check-sdp-leak`): decide between
-   documenting the SDP's and a prefixed build.
-4. **Compare with QNX's lists and port what is missing** (`docs/upstream-comparison.md`
-   is out of date): lists in `tmp/qnxlists/` are scratch; regenerate from
-   github.com/qnx-ports, github.com/qnx-ports/build-files and
-   repo.oss.qnx.com (8.0.5 APKINDEX). About 89 origins of QNX's repository
-   are not here (labwc, wlroots, swaybg, linux-headers-input-codes are now).
+3. **libunwind** (done): upstream 1.8.3 in its own prefix, /usr/local/opt/libunwind
+   (the SDP's 1.8.2 stays the system libunwind.so.8); test_libunwind passes on
+   both architectures.
+4. **QNX's lists, ported so far** (2026-10-30/31): the X.Org libraries libxcvt,
+   libxshmfence, libxkbfile, libice, libsm, libxt, libxmu, libxfont2, xkbcomp,
+   xcb-util; ed, patch, lzip, wget, htop and btop (QNX's QNX platforms), libmd,
+   opusfile, capstone, libaec, miniz, lcm, mimalloc and pistache (QNX's
+   changes), mcap-cpp, four tree-sitter grammars, 21 pure-Python modules
+   (pytest, tornado, curio, click, ...), whisper.cpp and stable-diffusion.cpp
+   (QNX's changes; own prefixes), ncnn, mujoco, OpenTTD's free base sets,
+   adwaita-icon-theme, docbook-xsl, perl-mozilla-ca. Each has a test with
+   known answers. Not yet: doxygen, poppler, graphicsmagick (in progress),
+   gnupg (+ libassuan, libksba, npth), nginx, glfw and raylib (now possible on
+   the Wayland stack), asciidoc, perl-io-tty, dhcpcd, nss/nspr, the LLVM
+   subprojects (lld, openmp, mlir, flang, compiler-rt), openrc, matplotlib,
+   ml-dtypes, colcon, and QNX's own components (qnx-posix-publish-subscribe,
+   libsysv-ipc-shim). Aliases already here: clang/llvm22 (llvm),
+   libxml2.13 (libxml2), ros2-jazzy (ros2), vte3 (vte), webkit2gtk-4.1
+   (webkitgtk), python3-tz (python3-pytz), python3-pandas (pandas).
 5. **Compiled-in build-host paths**: some binaries carry the staging path --
    mostly harmless RPATH entries and assert file names, but a few are data
    paths (epiphany's iso-codes and locale directory; check's checkmk
    shebang). libxkbcommon 1.8.1 had one (fixed with -Dxkb-config-root).
    A check for it belongs in `check-all`.
-6. qnxpkg does not bump `-r` when only a package's dependencies change
+6. **`$ORIGIN` is not expanded by QNX's loader** (porting-hazards 98):
+   tensorflow-lite (94 files) and pytorch (4) rely on it and work only with
+   their lib directory on LD_LIBRARY_PATH; give them absolute run paths.
+7. qnxpkg does not bump `-r` when only a package's dependencies change
    (fingerprints cover contents): mind it for published packages.
-7. Components still not verified on a target are published later with
+8. Components still not verified on a target are published later with
    `publish-github-release --changed` after `verify-on-target --changed`.
 
 ## Machine notes

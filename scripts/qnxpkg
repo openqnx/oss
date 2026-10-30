@@ -375,6 +375,23 @@ TEST_EXTRAS = {
     # programs the test runs: the compositor and a client of it
     "test_labwc": ["bin/labwc", "bin/swaybg", "share/X11/xkb"],
     "test_wlroots": ["share/X11/xkb"],
+    "test_libunwind": ["opt/libunwind/lib"],
+    "test_xkbcomp": ["bin/xkbcomp", "share/X11/xkb"],
+    "test_cli_tools": ["bin/ed", "bin/patch", "bin/lzip", "bin/wget"],
+    "test_monitors": ["bin/htop", "bin/btop"],
+    "test_openttd_sets": ["games/openttd", "share/games/openttd/baseset/opengfx-8.0",
+                          "share/games/openttd/baseset/opensfx-1.0.3", "share/games/openttd/baseset/openmsx-0.4.2"],
+    "test_adwaita": ["share/icons/Adwaita"],
+    "test_doxygen": ["bin/doxygen"],
+    "test_graphicsmagick": ["bin/gm"],
+    "test_poppler": ["share/fonts/font-dejavu"],
+    "test_docbook_xsl": ["share/xml/docbook/xsl-stylesheets-1.79.2"],
+    "test_perl_mozilla_ca": ["bin/perl", "lib/perl5/site_perl/5.40.2/Mozilla"],
+    "test_whisper": ["opt/whisper.cpp/lib", "opt/whisper.cpp/share/models"],
+    "test_sdcpp": ["opt/stable-diffusion.cpp/bin/sd-cli"],
+    "test_pymods": ["bin/python3", "lib/python3.14/site-packages/astor", "lib/python3.14/site-packages/async_generator", "lib/python3.14/site-packages/click", "lib/python3.14/site-packages/coverage", "lib/python3.14/site-packages/idna", "lib/python3.14/site-packages/mypy_extensions.py", "lib/python3.14/site-packages/pretend.py", "lib/python3.14/site-packages/pluggy", "lib/python3.14/site-packages/iniconfig", "lib/python3.14/site-packages/pygments", "lib/python3.14/site-packages/pytest", "lib/python3.14/site-packages/pytest_cov", "lib/python3.14/site-packages/pytest_tornasync", "lib/python3.14/site-packages/pytokens", "lib/python3.14/site-packages/sniffio", "lib/python3.14/site-packages/sortedcontainers", "lib/python3.14/site-packages/traitlets", "lib/python3.14/site-packages/versioneer.py", "lib/python3.14/site-packages/curio", "lib/python3.14/site-packages/tornado"],
+    "test_ts_grammars": ["lib/tree-sitter/bash.so", "lib/tree-sitter/python.so",
+                         "lib/tree-sitter/cmake.so", "lib/tree-sitter/make.so"],
 }
 TESTS_VERSION = "1.0"
 

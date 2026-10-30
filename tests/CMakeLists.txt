@@ -166,6 +166,33 @@ target_include_directories(test_libxslt PRIVATE "${INC}/libxml2")
 port_test(test_gdbm             test_gdbm.c              gdbm)
 port_test(test_libinih          test_libinih.c           inih)
 port_test(test_tree_sitter      test_tree_sitter.c       tree-sitter)
+port_test(test_ts_grammars      test_ts_grammars.c       tree-sitter)
+port_test(test_monitors         test_monitors.c)
+port_test(test_libmd            test_libmd.c             md)
+port_test(test_miniz            test_miniz.c             miniz)
+target_include_directories(test_miniz PRIVATE "${INC}/miniz")
+port_test(test_capstone         test_capstone.c          capstone)
+port_test(test_libaec           test_libaec.c            aec sz)
+pkg_check_modules(OPUSFILE REQUIRED IMPORTED_TARGET opusfile ogg)
+port_test(test_opusfile         test_opusfile.c          PkgConfig::OPUSFILE)
+pkg_check_modules(LCM REQUIRED IMPORTED_TARGET lcm)
+port_test(test_lcm              test_lcm.c               PkgConfig::LCM)
+port_test(test_mimalloc         test_mimalloc.c          mimalloc)
+target_include_directories(test_mimalloc PRIVATE "${INC}/mimalloc-3.1")
+pkg_check_modules(PISTACHE REQUIRED IMPORTED_TARGET libpistache)
+port_test(test_pistache         test_pistache.cpp        PkgConfig::PISTACHE)
+port_test(test_mcap             test_mcap.cpp            zstd lz4)
+pkg_check_modules(XSLT REQUIRED IMPORTED_TARGET libxslt libexslt libxml-2.0)
+port_test(test_docbook_xsl      test_docbook_xsl.c       PkgConfig::XSLT)
+port_test(test_ncnn             test_ncnn.cpp            ncnn)
+target_include_directories(test_ncnn PRIVATE "${INC}/ncnn")
+port_test(test_mujoco           test_mujoco.c            mujoco m)
+pkg_check_modules(POPPLERGLIB REQUIRED IMPORTED_TARGET poppler-glib cairo-pdf)
+port_test(test_poppler          test_poppler.c           PkgConfig::POPPLERGLIB)
+# whisper.cpp in its own prefix (its own ggml): linked by path, run path to it.
+port_test(test_whisper          test_whisper.c           "${STAGE}/opt/whisper.cpp/lib/libwhisper.so")
+target_include_directories(test_whisper BEFORE PRIVATE "${STAGE}/opt/whisper.cpp/include")
+target_link_options(test_whisper PRIVATE "-Wl,-rpath-link,${STAGE}/opt/whisper.cpp/lib")
 
 # ---- crypto and internationalisation --------------------------------------
 port_test(test_gmp              test_gmp.c               gmp)
@@ -378,6 +405,16 @@ port_test(test_labwc            test_labwc.c             PkgConfig::WLCLIENT)
 pkg_check_modules(SFDO REQUIRED IMPORTED_TARGET libsfdo-desktop libsfdo-basedir)
 port_test(test_libsfdo          test_libsfdo.c           PkgConfig::SFDO)
 
+# libunwind 1.8.3 in its own prefix (the SDP's 1.8.2 is the system one): the
+# test names it by path, so the SDP's cannot stand in for it.
+# The X.Org libraries that work without an X server (one test, known answers).
+pkg_check_modules(XORGLIBS REQUIRED IMPORTED_TARGET libxcvt xshmfence xcb-util xmu xt ice sm xkbfile xfont2 x11)
+port_test(test_xorg_libs        test_xorg_libs.c         PkgConfig::XORGLIBS)
+
+port_test(test_libunwind        test_libunwind.c         "${STAGE}/opt/libunwind/lib/libunwind.so")
+target_include_directories(test_libunwind BEFORE PRIVATE "${STAGE}/opt/libunwind/include")
+target_compile_options(test_libunwind PRIVATE -fno-omit-frame-pointer -O0)
+
 pkg_check_modules(VIDSTAB REQUIRED IMPORTED_TARGET vidstab)
 port_test(test_vidstab          test_vidstab.c           PkgConfig::VIDSTAB)
 
@@ -466,6 +503,15 @@ set_target_properties(test_qt6 PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # ROS 2 is checked with its own demo nodes; this test is a script that runs them.
 install(PROGRAMS src/test_ros2.sh DESTINATION bin/qnx-port-tests RENAME test_ros2)
+install(PROGRAMS src/test_xkbcomp.sh DESTINATION bin/qnx-port-tests RENAME test_xkbcomp)
+install(PROGRAMS src/test_cli_tools.sh DESTINATION bin/qnx-port-tests RENAME test_cli_tools)
+install(PROGRAMS src/test_pymods.sh DESTINATION bin/qnx-port-tests RENAME test_pymods)
+install(PROGRAMS src/test_sdcpp.sh DESTINATION bin/qnx-port-tests RENAME test_sdcpp)
+install(PROGRAMS src/test_openttd_sets.sh DESTINATION bin/qnx-port-tests RENAME test_openttd_sets)
+install(PROGRAMS src/test_adwaita.sh DESTINATION bin/qnx-port-tests RENAME test_adwaita)
+install(PROGRAMS src/test_perl_mozilla_ca.sh DESTINATION bin/qnx-port-tests RENAME test_perl_mozilla_ca)
+install(PROGRAMS src/test_doxygen.sh DESTINATION bin/qnx-port-tests RENAME test_doxygen)
+install(PROGRAMS src/test_graphicsmagick.sh DESTINATION bin/qnx-port-tests RENAME test_graphicsmagick)
 set(QNX_TESTS "${QNX_TESTS};test_ros2" CACHE INTERNAL "")
 
 # A manifest the on-target runner reads, so it never guesses at binary names.

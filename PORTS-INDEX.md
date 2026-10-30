@@ -1,12 +1,12 @@
 # Component index
 
-521 components. **520** build for both `aarch64le` and `x86_64` from upstream source, carrying 244 QNX patches between them.
+525 components. **524** build for both `aarch64le` and `x86_64` from upstream source, carrying 251 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
 | 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **223** |
 | 🟡 **build-deps only** | needs other components to build, runs on its own | **63** |
-| 🔴 **dependent** | needs other components to build and to run | **234** |
+| 🔴 **dependent** | needs other components to build and to run | **238** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -168,6 +168,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [gstreamer](ports/gstreamer/README.md) | 1.24.10 | meson | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [gthumb](ports/gthumb/README.md) | 3.12.8.2 | meson | download.gnome.org | 4 | 🔴 dependent | 13 | ✅ | ✅ |
 | [gtk-layer-shell](ports/gtk-layer-shell/README.md) | 0.9.0 | meson | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
+| [gtk-vnc](ports/gtk-vnc/README.md) | 1.3.1 | meson | gitlab.gnome.org | — | 🔴 dependent | 9 | ✅ | ✅ |
 | [gtk3](ports/gtk3/README.md) | 3.24.43 | meson | gitlab.gnome.org | 1 | 🔴 dependent | 21 | ✅ | ✅ |
 | [gtk4](ports/gtk4/README.md) | 4.16.7 | meson | download.gnome.org | 1 | 🔴 dependent | 15 | ✅ | ✅ |
 | [gtsam](ports/gtsam/README.md) | 4.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -265,6 +266,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libunwind](ports/libunwind/README.md) | 1.8.3 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libusb](ports/libusb/README.md) | 1.0.27 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libuv](ports/libuv/README.md) | 1.51.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [libvncserver](ports/libvncserver/README.md) | 0.9.15 | cmake | github.com | — | 🔴 dependent | 7 | ✅ | ✅ |
 | [libvorbis](ports/libvorbis/README.md) | 1.3.7 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libvpx](ports/libvpx/README.md) | 1.15.0 | custom | chromium.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libwebp](ports/libwebp/README.md) | 1.4.0 | cmake | chromium.googlesource.com | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -497,6 +499,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [utf8proc](ports/utf8proc/README.md) | 2.11.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [vidstab](ports/vidstab/README.md) | 1.1.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [vim](ports/vim/README.md) | 9.1.0900 | autotools | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
+| [virtualgl](ports/virtualgl/README.md) | 3.1.5 | cmake | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [vlc](ports/vlc/README.md) | 3.0.21 | custom | code.videolan.org | 1 | 🔴 dependent | 6 | ✅ | ✅ |
 | [vsomeip](ports/vsomeip/README.md) | 3.5.6 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [vte](ports/vte/README.md) | 0.78.2 | meson | download.gnome.org | 3 | 🔴 dependent | 14 | ✅ | ✅ |
@@ -528,6 +531,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [xorgproto](ports/xorgproto/README.md) | 2024.1 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [xtrans](ports/xtrans/README.md) | 1.5.2 | autotools | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [xvidcore](ports/xvidcore/README.md) | 1.3.7 | custom | downloads.xvid.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [xwayland](ports/xwayland/README.md) | 24.1.14 | meson | gitlab.freedesktop.org | 5 | 🔴 dependent | 6 | ✅ | ✅ |
 | [xxhash](ports/xxhash/README.md) | 0.8.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [xz](ports/xz/README.md) | 5.6.3 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [yaml-cpp](ports/yaml-cpp/README.md) | 0.8.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |

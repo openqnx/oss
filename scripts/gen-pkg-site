@@ -86,6 +86,45 @@ for arch, qarch in ARCHES:
 for k in pkgs:
     pkgs[k].sort(key=lambda e: vkey(e["V"]), reverse=True)
 
+# The oss-get INDEX of every packages shard: file, sha256 and dependencies for
+# the by-hand install. (arch, name, version) -> fields; (arch, name) -> newest.
+INDEX_F = ("name", "version", "depends", "file", "sha256", "size", "description", "conflicts")
+tgz_index, tgz_newest = {}, {}
+for arch, _ in ARCHES:
+    for sfx, _ in shards.SHARDS:
+        ptag = f"packages-{SDP}-{arch}{sfx}"
+        ip = os.path.join(args.releases, ptag, "INDEX")
+        if not os.path.exists(ip):
+            print(f"gen-pkg-site: no {ip} (not staged?)", file=sys.stderr)
+            continue
+        for l in open(ip):
+            if l.startswith("#") or not l.strip():
+                continue
+            x = dict(zip(INDEX_F, l.rstrip("\n").split("|")))
+            x["release"] = ptag
+            tgz_index[(arch, x["name"], x["version"])] = x
+            tgz_newest.setdefault((arch, x["name"]), x)      # the index lists the newest first
+
+
+def tgz_deps(x):
+    return [d for d in x.get("depends", "").split(",") if d]
+
+
+def tgz_closure(arch, x):
+    """Every dependency of an INDEX entry, each after its own dependencies."""
+    out, seen = [], set()
+    def walk(n):
+        if n in seen:
+            return
+        seen.add(n)
+        y = tgz_newest.get((arch, n))
+        for d in tgz_deps(y) if y else ():
+            walk(d)
+        out.append(n)
+    for d in tgz_deps(x):
+        walk(d)
+    return out
+
 rdeps = {}
 for (arch, name), es in pkgs.items():
     for d in es[0].get("D", "").split():
@@ -190,6 +229,65 @@ def pkg_url(arch, name):
     return f"package/{arch}/{name}.html"
 
 
+def install_remove(arch, name, e, rel_apk):
+    """The "Install and remove" section: A apk, B-1 oss-get, B-2 by hand."""
+    v = e["V"]
+    x = tgz_index.get((arch, name, v))
+    plink = lambda n: (f'<a href="{E(n)}.html">{E(n)}</a>' if (arch, n) in pkgs else E(n))
+    dev = name.endswith("-dev")
+    o = []
+    o.append("<h2>Install and remove</h2><div class=gs>")
+    # A. apk
+    o.append("<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>"
+             f"apk add {E(name)}\napk add {E(name)}={E(v)}   <span class=mut># this version</span>\n\n"
+             f"apk del {E(name)}   <span class=mut># also drops dependencies nothing else needs</span></code></pre>"
+             f"<p class=mut>Package: <a href=\"{rel_apk}/{E(name)}-{E(v)}.apk\">{E(name)}-{E(v)}.apk</a>. "
+             f"Setting up apk: <a href=\"{GH}/blob/main/INSTALL.md#2a-install-with-apk\">INSTALL.md 2A</a>.</p></section>")
+    # B-1. oss-get
+    deps = tgz_deps(x) if x else e.get("D", "").split()
+    left = ("<p class=mut>Its dependencies stay installed: " + ", ".join(plink(d) for d in deps)
+            + ". Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them;"
+            " oss-get refuses a package another installed one still needs.</p>") if deps else ""
+    o.append("<section><h3>B-1. oss-get</h3><p>No apk: <a href=\"" + GH + "/blob/main/target/oss-get\">target/oss-get</a> "
+             "downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>"
+             f"oss-get update\noss-get install {E(name)}\noss-get install {E(name)}={E(v)}   <span class=mut># this version</span>\n\n"
+             f"oss-get remove {E(name)}   <span class=mut># its files only</span></code></pre>{left}</section>")
+    # B-2. by hand
+    o.append("<section style=\"grid-column:1/-1\"><h3>B-2. By hand</h3>")
+    if not x:
+        o.append("<p class=mut>Not in the packages release index: use apk.</p></section></div>")
+        return "\n".join(o)
+    url = f"{GH}/releases/download/{x['release']}/{x['file']}"
+    clo = tgz_closure(arch, x)
+    o.append("<dl>"
+             f"<dt>Archive</dt><dd><a href=\"{E(url)}\">{E(url)}</a> ({size(x.get('size'))})</dd>"
+             f"<dt>SHA-256</dt><dd><code>{E(x['sha256'])}</code></dd>"
+             "<dt>Install first</dt><dd>" + (", ".join(plink(d) for d in clo) + " <span class=mut>(in this order, each from its own page"
+             " the same way; skip any already installed)</span>" if clo else "nothing") + "</dd></dl>")
+    f, lst = x["file"], f"var/lib/manual/{name}.list"
+    o.append("<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>"
+             + E(f"mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl\n"
+                 f"curl -fsSLO {url}\n"
+                 f"[ \"$(openssl dgst -sha256 {f} | sed 's/.*= *//')\" = {x['sha256']} ] && echo OK || echo BAD\n"
+                 f"gzip -dc {f} | tar -tf - | grep -v '/$' > /data/oss/{lst}\n"
+                 f"gzip -dc {f} | (cd /data/oss && tar -xf -) && rm {f}")
+             + "</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>"
+             + E(f"cd /data/oss && while read -r f; do rm -f \"$f\"; done < {lst}\nrm {lst}")
+             + "</code></pre>"
+             + ("<p class=mut>Its dependencies stay installed: " + ", ".join(plink(d) for d in clo)
+                + ". Remove each the same way, from its own page, if nothing else needs it.</p>" if clo else ""))
+    o.append("<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock "
+             "<code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see "
+             f"<a href=\"{GH}/blob/main/INSTALL.md#1-prepare-a-target\">INSTALL.md</a>). Empty directories stay. "
+             "Don't remove a dependency another installed package still needs"
+             + ((f"; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is {plink(name[:-4])})"
+                 if (arch, name[:-4]) in pkgs else "; a -dev package holds headers, pkg-config/CMake files and static libraries only"
+                 " (here the whole component: it has no run-time package)") if dev else "")
+             + ". Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>")
+    o.append("</section></div>")
+    return "\n".join(o)
+
+
 os.makedirs(args.out, exist_ok=True)
 rows = []
 for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])):
@@ -223,10 +321,7 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
                  ("Test on target", badge(r) + (f' <span class=mut>{E(r[1])} &middot; {E(r[2])}</span>' if r else ""))):
         b.append(f"<dt>{k}</dt><dd>{v}</dd>")
     b.append("</dl>")
-    b.append("<h2>Install</h2><pre><code>apk add " + E(name) + "</code></pre>"
-             f"<p class=mut>Downloads: <a href=\"{rel_apk}/{E(name)}-{E(e['V'])}.apk\">{E(name)}-{E(e['V'])}.apk</a> (apk) &middot; "
-             f"<a href=\"{rel_pkg}/{E(name)}-{E(e['V'])}.tar.gz\">{E(name)}-{E(e['V'])}.tar.gz</a> (oss-get, unpack under /data/oss). "
-             f"Setting up apk on a target: <a href=\"{GH}/blob/main/docs/target-guide.md\">install guide</a>.</p>")
+    b.append(install_remove(arch, name, e, rel_apk))
     b.append(f"<h2>Depends ({len(deps)})</h2>" + (", ".join(dl) if dl else "<span class=mut>nothing beyond the QNX target image</span>"))
     b.append(f"<h2>Required by ({len(rd)})</h2>" + (", ".join(f'<a href="{E(x)}.html">{E(x)}</a>' for x in rd) or "<span class=mut>–</span>"))
     b.append(f"<h2>QNX patches ({len(patches)})</h2>")
@@ -287,7 +382,9 @@ or <code>packages-8.0-&lt;arch&gt;-m-z</code> (m-z); the <code>INDEX</code> of e
 gives dependencies and SHA-256:</p><pre><code>curl -fsSLO $GH/packages-8.0-x86_64-m-z/\\
   zstd-1.5.6-r0.tar.gz
 gzip -dc zstd-*.tar.gz |
-  (cd /data/oss &amp;&amp; tar -xf -)</code></pre></section>
+  (cd /data/oss &amp;&amp; tar -xf -)</code></pre>
+<p><b>Remove</b>: <code>apk del curl</code>, <code>oss-get remove curl</code>, or by hand with the file list
+saved at install; every package's page shows all three, with its exact URL and SHA-256.</p></section>
 <section><h3>3. Test</h3><p>Every package has a test on the target; compare its output with the recorded log on the package's page:</p>
 <pre><code>cd /usr/local/bin/qnx-port-tests
 ./run-on-target.sh test_curl

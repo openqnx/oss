@@ -152,6 +152,44 @@ the QNX SDP target are never dependencies. So `oss-get install` pulls in
 exactly what the program loads — see the run-time column in
 [DEPENDENCIES.md](../DEPENDENCIES.md).
 
+## Installing and removing, by method
+
+Every package's page on the [package site](https://openqnx.github.io/oss/)
+(`package/<arch>/<pkg>.html`) shows these for that package, with its exact
+file, release, SHA-256 and dependencies; `ports/<name>/README.md` has them in
+general form. Use one method per root: apk and oss-get do not know about
+files installed another way.
+
+| Method | Install | Remove |
+|---|---|---|
+| A. apk | `apk add <pkg>` (dependencies come along); `apk add <pkg>=<version>` for one version | `apk del <pkg>`: also removes the dependencies nothing else needs |
+| B-1. oss-get | `oss-get install <pkg>` (dependencies first; `<pkg>=<version>` for one version) | `oss-get remove <pkg>`: deletes the files listed in `/data/oss/var/lib/oss-get/<pkg>.list` at install; the dependencies stay, and it refuses a package another installed one needs (`-f` to force) |
+| B-2. by hand | download from the package's release, check the SHA-256, save the file list, unpack (below) | delete exactly the files in that list (below) |
+
+By hand, with `<release>` `packages-8.0-<arch>` (names 0-9, a-l) or
+`packages-8.0-<arch>-m-z` (m-z), and `<file>`, `<sha256>` and the
+dependencies (install them first, the same way) from the release's `INDEX`
+(`name|version|depends|file|sha256|...`):
+
+```sh
+mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/<release>/<file>
+[ "$(openssl dgst -sha256 <file> | sed 's/.*= *//')" = <sha256> ] && echo OK || echo BAD
+gzip -dc <file> | tar -tf - | grep -v '/$' > /data/oss/var/lib/manual/<pkg>.list
+gzip -dc <file> | (cd /data/oss && tar -xf -) && rm <file>
+
+# remove
+cd /data/oss && while read -r f; do rm -f "$f"; done < var/lib/manual/<pkg>.list
+rm var/lib/manual/<pkg>.list
+```
+
+This is what oss-get does, with its own list directory. With B-1 and B-2 the
+dependencies stay after a remove: remove one only if no other installed
+package needs it. A `-dev` package holds headers, pkg-config/CMake files and
+static libraries only (a header-only component has nothing else: just
+`<name>-dev`); remove it before the package it belongs to. Empty directories
+stay. [INSTALL.md](../INSTALL.md) walks through all of it with zstd and curl.
+
 ## Building packages
 
 ```bash

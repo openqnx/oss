@@ -14,19 +14,42 @@
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_graphene`](../../tests/src/) |
 
-## Install the prebuilt package on a target
+## Install and remove on a target
 
-No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
+No build needed: prebuilt packages for `x86_64` and `aarch64`, installed under `/data/oss` (with `/usr/local` linked to `/data/oss/usr/local`; [INSTALL.md](../../INSTALL.md) step 1 prepares a target). Packages: `graphene` (programs, shared libraries, run-time data) and `graphene-dev` (headers, pkg-config/CMake files, static libraries; needs `graphene`).
+
+Each package's page gives the exact file, URL, SHA-256 and dependencies per architecture: [`graphene`](https://openqnx.github.io/oss/package/x86_64/graphene.html) ([aarch64](https://openqnx.github.io/oss/package/aarch64/graphene.html)) · [`graphene-dev`](https://openqnx.github.io/oss/package/x86_64/graphene-dev.html) ([aarch64](https://openqnx.github.io/oss/package/aarch64/graphene-dev.html)).
+
+| Method | Install | Remove |
+|---|---|---|
+| **A.** [apk](../../INSTALL.md#2a-install-with-apk) | `apk add graphene` (dependencies come along); one version: `apk add graphene=<version>` | `apk del graphene` (also removes dependencies nothing else needs) |
+| **B-1.** [oss-get](../../target/oss-get) | `oss-get update && oss-get install graphene` (dependencies first) | `oss-get remove graphene` (its files only: the dependencies stay) |
+| **B-2.** by hand | download, check, save the file list, unpack (below) | delete the listed files (below) |
+
+`graphene-dev` the same way, by its own name (`apk add graphene-dev`, `oss-get install graphene-dev`, by hand with its own file and list `graphene-dev.list`); remove it before `graphene`, which it needs.
 
 ```sh
-# on the QNX target
-. /data/oss/etc/oss-env.sh
-apk add graphene
-apk add graphene-dev    # only for building on the target: headers, .pc, CMake files
+# on the QNX target, as root
+apk add graphene graphene-dev
 apk add qnx-test-graphene && /usr/local/bin/qnx-port-tests/test_graphene    # its on-target test
+apk del graphene graphene-dev qnx-test-graphene
 ```
 
-Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install graphene`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
+By hand (B-2), from the release `packages-8.0-<arch>`; take `<file>` and `<sha256>` from the package's page (or its release's `INDEX`: `name|version|depends|file|sha256|...`), and install its dependencies first, the same way:
+
+```sh
+GH=https://github.com/openqnx/oss/releases/download
+mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl
+curl -fsSLO $GH/packages-8.0-<arch>/<file>
+[ "$(openssl dgst -sha256 <file> | sed 's/.*= *//')" = <sha256> ] && echo OK || echo BAD
+gzip -dc <file> | tar -tf - | grep -v '/$' > /data/oss/var/lib/manual/graphene.list
+gzip -dc <file> | (cd /data/oss && tar -xf -) && rm <file>
+# remove: exactly the files it installed
+cd /data/oss && while read -r f; do rm -f "$f"; done < var/lib/manual/graphene.list
+rm var/lib/manual/graphene.list
+```
+
+With B-1 and B-2 the dependencies stay installed after a remove: remove them too only if no other installed package needs them (`oss-get remove` refuses one that is still needed). Use one method per `/data/oss`: apk and oss-get do not know about files unpacked by hand. Then `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)` sets `PATH` and `LD_LIBRARY_PATH`; [docs/packages.md](../../docs/packages.md) has the details, and your own build can be served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)).
 
 ## Build it from upstream
 

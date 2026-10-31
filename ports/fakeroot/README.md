@@ -1,5 +1,7 @@
 # fakeroot 1.37.1.1
 
+> Runs a command in an environment faking root privileges for packaging
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_fakeroot`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add fakeroot
 apk add fakeroot-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-fakeroot && /usr/local/bin/qnx-port-tests/test_fakeroot    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install fakeroot`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -92,26 +95,26 @@ Touches: `message.h` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-mkdir -p build/$QNX_ARCH/fakeroot && cd build/$QNX_ARCH/fakeroot
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/fakeroot/configure --host=$QNX_TRIPLE --prefix=/usr/local \
-    --disable-static \
-    --with-ipc=tcp
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/fakeroot; B=build/$QNX_ARCH/fakeroot; mkdir -p $B
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i -e 's|^FAKEROOT_LIB=libfakeroot\.so$|FAKEROOT_LIB=libfakeroot-0.so|' \
+         -e '1s|^#!.*|#!/bin/sh|' "$STAGE$PREFIX/bin/fakeroot"
+  grep -q '^FAKEROOT_LIB=libfakeroot-0.so$' "$STAGE$PREFIX/bin/fakeroot"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - fakeroot (run as fake root for packaging). Version as in the QNX Everywhere 8.0.4r1 image.
 - configure cannot test which IPC works when cross compiling; fakeroot uses its TCP transport on QNX.
+- The wrapper preloads FAKEROOT_LIB=libfakeroot.so, the unversioned name that qnxpkg puts in fakeroot-dev (it is the link-time symlink); the runtime package carries only libfakeroot-0.so (libtool -release 0), so `fakeroot` failed on a target with "preload library not found". Point it at the real file. Its shebang is configure's $SHELL -- the build host's /bin/bash, which a QNX target does not have; the script is POSIX sh (Debian runs it so).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fakeroot`.
 
@@ -160,10 +163,43 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/fakeroot-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_fakeroot`](../../tests/src/) links fakeroot the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-fakeroot`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-fakeroot
+/usr/local/bin/qnx-port-tests/test_fakeroot
+```
+
+```
+== fakeroot ==
+  ok   ...
+PASS fakeroot
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_fakeroot` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_fakeroot`](../../tests/src/) -- a program linked against fakeroot the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - mkdtemp
+   - faked started and printed key:pid
+   - getuid/geteuid/getgid/getegid are 0 under fakeroot
+   - chown(1234:5678) succeeds and stat reports it
+   - mknod(S_IFCHR) succeeds and stat reports a char device
+   - second process sees the faked owner (daemon state)
+   - second process sees the faked char device
+   - real file keeps its real owner
+   - real \"device\" is a plain file
+   - faked stopped
+   - fakeroot wrapper: #!/bin/sh, preloads libfakeroot-0.so
+   - fakeroot -- <cmd>: ids are 0
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
@@ -188,6 +224,18 @@ BUILDSYS=autotools
 # configure cannot test which IPC works when cross compiling; fakeroot uses
 # its TCP transport on QNX.
 CONF_ARGS_EXTRA=( --disable-static --with-ipc=tcp )
+# The wrapper preloads FAKEROOT_LIB=libfakeroot.so, the unversioned name that
+# qnxpkg puts in fakeroot-dev (it is the link-time symlink); the runtime
+# package carries only libfakeroot-0.so (libtool -release 0), so `fakeroot`
+# failed on a target with "preload library not found". Point it at the real
+# file. Its shebang is configure's $SHELL -- the build host's /bin/bash, which
+# a QNX target does not have; the script is POSIX sh (Debian runs it so).
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i -e 's|^FAKEROOT_LIB=libfakeroot\.so$|FAKEROOT_LIB=libfakeroot-0.so|' \
+         -e '1s|^#!.*|#!/bin/sh|' "$STAGE$PREFIX/bin/fakeroot"
+  grep -q '^FAKEROOT_LIB=libfakeroot-0.so$' "$STAGE$PREFIX/bin/fakeroot"
+}
 ```
 </details>
 

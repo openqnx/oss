@@ -1,5 +1,7 @@
 # perl-mozilla-ca 20261020
 
+> Mozilla's CA certificate bundle for Perl (Mozilla::CA)
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

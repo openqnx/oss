@@ -1,5 +1,7 @@
 # labwc 0.20.2
 
+> Stacking Wayland compositor (window manager) based on wlroots
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

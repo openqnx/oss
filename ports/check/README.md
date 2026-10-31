@@ -1,5 +1,7 @@
 # check 0.15.2
 
+> Unit testing framework for C
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_check`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add check
 apk add check-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-check && /usr/local/bin/qnx-port-tests/test_check    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install check`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -63,10 +66,15 @@ cmake -S src/check -B build/$QNX_ARCH/check -G Ninja \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
       -DBUILD_SHARED_LIBS=ON \
       -DCHECK_ENABLE_TESTS=OFF \
-      -DCHECK_ENABLE_TIMEOUT_TESTS=OFF
+      -DCHECK_ENABLE_TIMEOUT_TESTS=OFF \
+      -DAWK_PATH=/usr/local/bin/awk
 cmake --build build/$QNX_ARCH/check -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/check
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- checkmk is an awk script whose "#!" line is configured from find_program(awk) -- on the build machine, so it named the cross build's linkroot awk (/home/.../stage/x86_64/linkroot/x86_64/usr/bin/awk), which no target has. Point it at the awk the gawk package installs on the target, and depend on it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH check`.
 
@@ -115,10 +123,41 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/check-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_check`](../../tests/src/) links check the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-check`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-check
+/usr/local/bin/qnx-port-tests/test_check
+```
+
+```
+== check ==
+  ok   ...
+PASS check
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_check` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_check`](../../tests/src/) -- a program linked against check the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - library version 0.15.2
+   - fork mode: 9 tests run
+   - fork mode: 2 not passed (deliberate failure + abort)
+   - fork mode: 7 pass, 1 failure, 1 error
+   - failure message is \"deliberate failure 42\"
+   - abort() reported as an error by signal
+   - no-fork mode: 6 run, 1 failed
+   - checkmk's #! interpreter exists on the target
+   - mkdtemp
+   - checkmk generated suite, two START_TESTs, tcase_add_test and srunner_run_all
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
@@ -136,7 +175,13 @@ This recipe builds **0.15.2**. Every version stays available: packages in `dists
 
 ```bash
 VERSION=0.15.2; GIT=https://github.com/libcheck/check.git; REF=0.15.2
-CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DCHECK_ENABLE_TESTS=OFF -DCHECK_ENABLE_TIMEOUT_TESTS=OFF )
+# checkmk is an awk script whose "#!" line is configured from find_program(awk)
+# -- on the build machine, so it named the cross build's linkroot awk
+# (/home/.../stage/x86_64/linkroot/x86_64/usr/bin/awk), which no target has.
+# Point it at the awk the gawk package installs on the target, and depend on it.
+RUNTIME_DEPS="gawk"
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DCHECK_ENABLE_TESTS=OFF -DCHECK_ENABLE_TIMEOUT_TESTS=OFF
+                   -DAWK_PATH=/usr/local/bin/awk )
 ```
 </details>
 

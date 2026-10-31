@@ -1,5 +1,7 @@
 # amqp-cpp 4.3.27
 
+> C++ library for communicating with a RabbitMQ message broker
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_amqp_cpp`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add amqp-cpp
 apk add amqp-cpp-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-amqp-cpp && /usr/local/bin/qnx-port-tests/test_amqp_cpp    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install amqp-cpp`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -128,10 +131,46 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/amqp-cpp-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_amqp_cpp`](../../tests/src/) links amqp-cpp the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-amqp-cpp`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-amqp-cpp
+/usr/local/bin/qnx-port-tests/test_amqp_cpp
+```
+
+```
+== amqp-cpp ==
+  ok   ...
+PASS amqp-cpp
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_amqp_cpp` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_amqp_cpp`](../../tests/src/) -- a program linked against amqp-cpp the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - client sends the AMQP 0-9-1 protocol header
+   - Connection.Start answered with StartOk
+   - StartOk carries the PLAIN response
+   - StartOk selects the PLAIN mechanism
+   - Tune answered with TuneOk within the offered limits
+   - Connection.Open names the virtual host /vh
+   - not ready before OpenOk
+   - OpenOk makes the connection ready
+   - Channel.Open on channel 1
+   - Queue.Declare for \"jobs\" sent after OpenOk
+   - DeclareOk delivers name and message count to the callback
+   - Basic.Publish method frame
+   - content header announces a 14-byte body
+   - body frame carries the message
+   - no protocol error reported
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

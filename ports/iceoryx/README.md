@@ -1,5 +1,7 @@
 # iceoryx 2.0.6
 
+> Eclipse iceoryx, true zero-copy inter-process communication middleware
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

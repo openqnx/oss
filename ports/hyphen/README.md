@@ -1,5 +1,7 @@
 # hyphen 2.8.8
 
+> Hyphenation library using converted TeX hyphenation patterns
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

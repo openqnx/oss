@@ -1,5 +1,7 @@
 # libthai 0.1.29
 
+> Thai language support library (word breaking, input, sorting)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

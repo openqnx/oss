@@ -1,5 +1,7 @@
 # adwaita-icon-theme 51.0
 
+> GNOME's Adwaita icon theme and default cursors
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

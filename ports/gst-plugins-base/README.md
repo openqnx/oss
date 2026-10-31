@@ -1,5 +1,7 @@
 # gst-plugins-base 1.24.10
 
+> Essential GStreamer plugins and helper libraries (base set)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`gstreamer`](../gstreamer/) [`orc`](../orc/) [`libogg`](../libogg/) [`libvorbis`](../libvorbis/) [`opus`](../opus/) [`libtheora`](../libtheora/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`glib`](../glib/) [`gstreamer`](../gstreamer/) [`libogg`](../libogg/) [`libtheora`](../libtheora/) [`libvorbis`](../libvorbis/) [`opus`](../opus/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_gst_plugins_base`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add gst-plugins-base
 apk add gst-plugins-base-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-gst-plugins-base && /usr/local/bin/qnx-port-tests/test_gst_plugins_base    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install gst-plugins-base`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -164,10 +167,53 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/gst-plugi
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_gst_plugins_base`](../../tests/src/) links gst-plugins-base the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gst-plugins-base`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-gst-plugins-base
+/usr/local/bin/qnx-port-tests/test_gst_plugins_base
+```
+
+```
+== gst-plugins-base ==
+  ok   ...
+PASS gst-plugins-base
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_gst_plugins_base` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_gst_plugins_base`](../../tests/src/) -- a program linked against gst-plugins-base the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - all base elements used here are registered
+   - video pipeline built
+   - exactly num-buffers=10 frames arrive
+   - negotiated RGB 64x48
+   - frame size 64*3*48 = 9216 bytes
+   - pattern=red converts to RGB red
+   - appsink reached EOS
+   - audio pipeline built
+   - 8000 samples @ 8 kHz resample to ~16000 @ 16 kHz
+   - volume 0.8 * 0.5 -> peak ~0.4
+   - mono upmixed to identical left/right
+   - scratch directory
+   - encoded 1 s of audio to Ogg/Vorbis
+   - file starts with OggS
+   - decodebin (oggdemux + vorbisdec) returns ~44100 samples (1 s)
+   - decode pipeline built
+   - GstDiscoverer: duration 1.0 s
+   - GstDiscoverer: one 44100 Hz audio stream
+   - GstDiscoverer analysed the file
+   - gst-discoverer-1.0 prints a 1 s duration
+   - gst-discoverer-1.0 names the Vorbis stream
+   - pbutils codec description
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

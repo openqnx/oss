@@ -1,5 +1,7 @@
 # libconfig 1.8.1
 
+> C/C++ library for processing structured configuration files
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

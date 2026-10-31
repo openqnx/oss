@@ -1,5 +1,7 @@
 # godot 4.4.1
 
+> Godot game engine runtime (export templates) for 2D and 3D games
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`freetype`](../freetype/) [`harfbuzz`](../harfbuzz/) [`graphite2`](../graphite2/) [`libogg`](../libogg/) [`libtheora`](../libtheora/) [`libpng`](../libpng/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`opus`](../opus/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) [`zstd`](../zstd/) [`brotli`](../brotli/) [`libxkbcommon`](../libxkbcommon/) |
 | Run-time dependencies | [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`libiconv`](../libiconv/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`libxkbcommon`](../libxkbcommon/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_godot`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add godot
 apk add godot-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-godot && /usr/local/bin/qnx-port-tests/test_godot    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install godot`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -158,10 +161,31 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/godot-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_godot`](../../tests/src/) links godot the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-godot`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-godot
+/usr/local/bin/qnx-port-tests/test_godot
+```
+
+```
+== godot ==
+  ok   ...
+PASS godot
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_godot` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_godot`](../../tests/src/) -- a program linked against godot the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

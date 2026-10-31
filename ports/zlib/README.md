@@ -1,5 +1,7 @@
 # zlib 1.3.1
 
+> General purpose data compression library
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

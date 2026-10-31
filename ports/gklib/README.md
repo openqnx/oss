@@ -1,16 +1,18 @@
 # gklib 5.1.1-git-20230326
 
+> Helper routines library used by METIS and related software
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
 |---|---|
 | Upstream | https://github.com/KarypisLab/GKlib.git |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_gklib`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add gklib
 apk add gklib-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-gklib && /usr/local/bin/qnx-port-tests/test_gklib    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install gklib`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -52,10 +55,11 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/gklib < ports/gklib/patches/0001-qnx-from-qnx-ports-build-files.patch
+patch -p1 -d src/gklib < ports/gklib/patches/0002-qnx-link-libregex.patch
 ```
 
 **[`0001-qnx-from-qnx-ports-build-files.patch`](patches/0001-qnx-from-qnx-ports-build-files.patch)** — Build GKlib for QNX: no tests by default, no -march=native, QNX string functions.
@@ -63,6 +67,16 @@ patch -p1 -d src/gklib < ports/gklib/patches/0001-qnx-from-qnx-ports-build-files
 > Taken from qnx-ports/build-files ports/METIS/patches/GKlib.patch.
 
 Touches: `CMakeLists.txt`, `GKlibSystem.cmake`, `string.c` · Upstream status: QNX-specific
+
+**[`0002-qnx-link-libregex.patch`](patches/0002-qnx-link-libregex.patch)** — Link libGKlib against libregex on QNX.
+
+> GKlib calls regcomp/regexec/regfree (gk_strstr_replace and friends), which
+> QNX keeps in libregex.so.1, not in libc. Without it libGKlib.so carries no
+> DT_NEEDED for libregex: it links only because shared libraries are linked
+> with --allow-shlib-undefined, and every program that uses it has to know to
+> add -lregex itself (METIS's programs do; anything else fails to load).
+
+Touches: `CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -125,10 +139,52 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/gklib-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_gklib`](../../tests/src/) links gklib the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gklib`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-gklib
+/usr/local/bin/qnx-port-tests/test_gklib
+```
+
+```
+== gklib ==
+  ok   ...
+PASS gklib
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_gklib` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_gklib`](../../tests/src/) -- a program linked against gklib the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - gk_isorti ascending
+   - gk_isortd descending
+   - key-value sort keeps values with keys
+   - norm2(3,4,0,0) = 5
+   - dot and sum
+   - argmax / max
+   - axpy
+   - incset
+   - head/tail prune
+   - character replacement
+   - regex global replace
+   - strdup + case-insensitive equal
+   - tokenizer collapses repeated delimiters
+   - priority queue top after update
+   - max-heap pops 3, 2, 4
+   - seeded RNG is reproducible
+   - dexists / fexists
+   - basename / extension
+   - CSR file read: 4 rows, 3 columns, 7 non-zeros
+   - row sums
+   - transpose: columns hold 2 and 3 entries
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

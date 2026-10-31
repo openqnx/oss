@@ -1,5 +1,7 @@
 # aspell 0.60.8.1
 
+> GNU Aspell spell checker and library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`ncurses`](../ncurses/) |
 | Run-time dependencies | [`ncurses`](../ncurses/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_aspell`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add aspell
 apk add aspell-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-aspell && /usr/local/bin/qnx-port-tests/test_aspell    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install aspell`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -136,10 +139,47 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/aspell-*-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_aspell`](../../tests/src/) links aspell the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-aspell`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-aspell
+/usr/local/bin/qnx-port-tests/test_aspell
+```
+
+```
+== aspell ==
+  ok   ...
+PASS aspell
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_aspell` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_aspell`](../../tests/src/) -- a program linked against aspell the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - mkdtemp
+   - aspell --version: 0.60.8.1
+   - aspell create master: xx.rws compiled
+   - new_aspell_speller
+   - new_aspell_speller on the compiled dictionary
+   - speller language is xx
+   - check(\"banana\") == correct
+   - check(\"microkernel\") == correct
+   - check(\"bananna\") == misspelled
+   - check(\"linux\") == unknown
+   - suggest(\"bananna\") -> \"banana\" first
+   - add_to_session(\"photon\")
+   - session word now correct
+   - aspell list: exactly bananna, qnz
+   - aspell -a: '& cherri ... : cherry'
+   - aspell dump master: 7 words
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

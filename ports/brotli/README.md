@@ -1,5 +1,7 @@
 # brotli 1.1.0
 
+> Generic lossless compression library and tool using the Brotli format
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

@@ -1,5 +1,7 @@
 # protobuf-c 1.5.0
 
+> Protocol Buffers implementation in C (runtime library)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

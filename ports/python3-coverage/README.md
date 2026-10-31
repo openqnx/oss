@@ -1,5 +1,7 @@
 # python3-coverage 7.17.0
 
+> Code coverage measurement for Python
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

@@ -1,5 +1,7 @@
 # python3-pretend 1.0.9
 
+> Python library for creating test stubs
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

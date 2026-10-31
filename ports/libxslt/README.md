@@ -1,5 +1,7 @@
 # libxslt 1.1.42
 
+> XSLT processor library based on libxml2, with EXSLT extensions
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

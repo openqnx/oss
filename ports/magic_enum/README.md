@@ -1,5 +1,7 @@
 # magic_enum 0.9.6
 
+> Header-only C++17 library for static reflection of enums
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

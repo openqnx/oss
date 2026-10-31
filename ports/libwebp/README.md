@@ -1,5 +1,7 @@
 # libwebp 1.4.0
 
+> Library and tools for the WebP image format
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

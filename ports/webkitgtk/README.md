@@ -1,5 +1,7 @@
 # webkitgtk 2.44.4
 
+> WebKitGTK web content engine for GTK applications
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`gtk3`](../gtk3/) [`glib`](../glib/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`libgcrypt`](../libgcrypt/) [`libtasn1`](../libtasn1/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libepoxy`](../libepoxy/) [`libxml2`](../libxml2/) [`libpng`](../libpng/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`libwebp`](../libwebp/) [`libxslt`](../libxslt/) [`libsoup`](../libsoup/) [`gstreamer`](../gstreamer/) [`gst-plugins-base`](../gst-plugins-base/) [`hyphen`](../hyphen/) [`woff2`](../woff2/) [`libx11`](../libx11/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`at-spi2-core`](../at-spi2-core/) [`gst-plugins-bad`](../gst-plugins-bad/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libjxl`](../libjxl/) [`libsecret`](../libsecret/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libepoxy`](../libepoxy/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libxslt`](../libxslt/) [`pango`](../pango/) [`sqlite`](../sqlite/) [`woff2`](../woff2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_webkitgtk`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add webkitgtk
 apk add webkitgtk-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-webkitgtk && /usr/local/bin/qnx-port-tests/test_webkitgtk    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install webkitgtk`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -462,10 +465,56 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/webkitgtk
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_webkitgtk`](../../tests/src/) links webkitgtk the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-webkitgtk`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-webkitgtk
+/usr/local/bin/qnx-port-tests/test_webkitgtk
+```
+
+```
+== webkitgtk ==
+  ok   ...
+PASS webkitgtk
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_webkitgtk` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_webkitgtk`](../../tests/src/) -- a program linked against webkitgtk the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - libwebkit2gtk-4.1 is 2.44.4
+   - libjavascriptcoregtk-4.1 is 2.44
+   - jsc_context_new
+   - 6 * 7 = 42
+   - recursion: fib(20) = 6765
+   - strings and Array.sort
+   - JSON.stringify
+   - RegExp capture group
+   - Date.UTC / toISOString (leap day)
+   - Math.sqrt
+   - C callback called from JS (twice)
+   - object literal
+   - object property read from C
+   - property set from C, seen by JS
+   - TypeError reported as a JSCException
+   - exception name TypeError
+   - scratch directory
+   - libexec jsc runs a script file
+   - jsc -e evaluates an expression
+   - WebKitWebDriver --help
+   - WebKitWebDriver listens on 127.0.0.1
+   - GET /status -> HTTP 200
+   - status: ready true
+   - status: \"No sessions\"
+   - unknown session -> 404 invalid session id
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

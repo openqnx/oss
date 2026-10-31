@@ -1,5 +1,7 @@
 # libarchive 3.7.7
 
+> Library and tools (bsdtar, bsdcpio) for reading and writing archives
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

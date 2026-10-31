@@ -1,5 +1,7 @@
 # libtiff 4.7.0
 
+> Library for reading and writing TIFF images
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

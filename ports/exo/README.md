@@ -1,5 +1,7 @@
 # exo 4.20.0
 
+> Extension library and helper applications for the Xfce desktop
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_exo`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add exo
 apk add exo-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-exo && /usr/local/bin/qnx-port-tests/test_exo    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install exo`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -139,10 +142,53 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/exo-*-r0.
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_exo`](../../tests/src/) links exo the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-exo`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-exo
+/usr/local/bin/qnx-port-tests/test_exo
+```
+
+```
+== exo ==
+  ok   ...
+PASS exo
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_exo` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_exo`](../../tests/src/) -- a program linked against exo the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - exo 4.20.0
+   - exo_check_version (upstream stub: always NULL)
+   - exo_str_elide_underscores (\"__\" keeps one)
+   - exo_str_replace
+   - exo_str_is_equal (NULL-safe)
+   - exo_str_looks_like_an_uri
+   - exo_str_is_flag
+   - exo_strdup_strftime
+   - exo_strndupv (first 2 of 3)
+   - exo_binding: follows; with negation: inverts
+   - bindings track a second change
+   - exo_mutual_binding: target -> source
+   - exo_mutual_binding: source -> target
+   - scale_ratio 100x50 -> 20x10
+   - scale_down 100x50 into 40x40 -> 40x20
+   - scale_down: already small enough -> the same pixbuf
+   - lucent 50%: colour kept, alpha 255 -> 127
+   - lucent 20% on RGB: alpha channel added, 51
+   - scratch directory
+   - exo-open --version: exo-open 4.20.0
+   - exo-open --help lists --launch TYPE
+   - without a display exo-open stops at the display probe
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

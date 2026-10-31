@@ -1,5 +1,7 @@
 # btop 1.4.6
 
+> Terminal resource monitor for CPU, memory, disks, network and processes
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

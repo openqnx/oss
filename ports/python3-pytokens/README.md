@@ -1,5 +1,7 @@
 # python3-pytokens 0.4.1
 
+> Fast spec-compliant Python 3.12+ tokenizer
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

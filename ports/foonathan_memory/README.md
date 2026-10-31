@@ -1,5 +1,7 @@
 # foonathan_memory 0.7-3
 
+> C++ memory allocator library improving on the STL allocator model
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

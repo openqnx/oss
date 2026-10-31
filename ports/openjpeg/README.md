@@ -1,5 +1,7 @@
 # openjpeg 2.5.3
 
+> JPEG 2000 image codec library and tools
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

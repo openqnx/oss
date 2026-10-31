@@ -1,5 +1,7 @@
 # exiv2 0.28.5
 
+> C++ library and tool for reading and writing Exif, IPTC and XMP metadata
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

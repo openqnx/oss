@@ -1,5 +1,7 @@
 # thorvg 0.15.8
 
+> Lightweight library for rendering vector graphics, SVG and Lottie
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

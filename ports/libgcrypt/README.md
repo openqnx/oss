@@ -1,5 +1,7 @@
 # libgcrypt 1.11.0
 
+> GNU general purpose cryptographic library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

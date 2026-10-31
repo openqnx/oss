@@ -1,5 +1,7 @@
 # ffmpeg 7.1.1
 
+> Libraries and tools for decoding, encoding and processing audio and video
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

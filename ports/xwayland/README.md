@@ -1,5 +1,7 @@
 # xwayland 24.1.14
 
+> X server running as a Wayland client (Xwayland)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

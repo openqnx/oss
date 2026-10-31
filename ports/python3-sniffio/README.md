@@ -1,5 +1,7 @@
 # python3-sniffio 1.3.1
 
+> Detects which async library a Python program is running under
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

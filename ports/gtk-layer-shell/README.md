@@ -1,5 +1,7 @@
 # gtk-layer-shell 0.9.0
 
+> Library for using the Wayland layer shell protocol with GTK 3
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # freetype 2.13.3
 
+> Portable font rendering engine library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

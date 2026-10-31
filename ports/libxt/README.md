@@ -1,5 +1,7 @@
 # libxt 1.3.1
 
+> X Toolkit Intrinsics library (Xt)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

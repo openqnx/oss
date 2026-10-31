@@ -1,5 +1,7 @@
 # luajit 2.1.c6ffc141
 
+> Just-in-time compiler for the Lua programming language
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

@@ -1,5 +1,7 @@
 # sdl2 2.32.10
 
+> Simple DirectMedia Layer 2, cross-platform multimedia and input library
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

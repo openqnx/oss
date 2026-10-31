@@ -1,5 +1,7 @@
 # vidstab 1.1.1
 
+> Video stabilization library for FFmpeg and Transcode
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

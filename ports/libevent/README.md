@@ -1,5 +1,7 @@
 # libevent 2.1.12
 
+> Asynchronous event notification library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

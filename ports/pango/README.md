@@ -1,5 +1,7 @@
 # pango 1.54.0
 
+> Library for layout and rendering of internationalized text
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`fribidi`](../fribidi/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`libxft`](../libxft/) |
 | Run-time dependencies | [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`libx11`](../libx11/) [`libxft`](../libxft/) [`libxrender`](../libxrender/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_pango`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add pango
 apk add pango-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-pango && /usr/local/bin/qnx-port-tests/test_pango    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install pango`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -145,10 +148,50 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/pango-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_pango`](../../tests/src/) links pango the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-pango`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-pango
+/usr/local/bin/qnx-port-tests/test_pango
+```
+
+```
+== pango ==
+  ok   ...
+PASS pango
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_pango` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_pango`](../../tests/src/) -- a program linked against pango the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - pangocairo font map
+   - pango_font_map_load_font(DejaVu Sans)
+   - fontconfig found DejaVu Sans
+   - font families listed
+   - width = 10 x 1767/2048 x 20 px = 172.56 px
+   - one line
+   - no unknown glyphs
+   - ten glyphs shaped
+   - \"Hello QNX\" ~101 px wide (kerning aside)
+   - xy_to_index(0,0) is the first character
+   - word wrap at 100 px gives >= 3 lines
+   - no line wider than 100 px
+   - text was drawn
+   - every drawn pixel is inside the ink rectangle
+   - pango-segmentation word boundaries |Hello| |QNX|
+   - pango-segmentation sentence boundaries
+   - scratch directory
+   - pango-view wrote a PNG
+   - PNG is one line of 20 pt text
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

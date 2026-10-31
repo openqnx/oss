@@ -1,5 +1,7 @@
 # libxkbfile 1.2.0
 
+> Library for reading, writing and compiling XKB keyboard descriptions
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

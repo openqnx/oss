@@ -1,5 +1,7 @@
 # cli11 2.4.2
 
+> Header-only command line parser for C++11 and later
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

@@ -1,5 +1,7 @@
 # civetweb 1.16
 
+> Embeddable C/C++ web server with optional Lua and WebSocket support
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

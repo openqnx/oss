@@ -1,5 +1,7 @@
 # sleef 3.8-git-20250214
 
+> SIMD library of vectorized elementary math functions and DFT
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_sleef`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add sleef
 apk add sleef-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-sleef && /usr/local/bin/qnx-port-tests/test_sleef    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install sleef`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -147,10 +150,49 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/sleef-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_sleef`](../../tests/src/) links sleef the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sleef`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-sleef
+/usr/local/bin/qnx-port-tests/test_sleef
+```
+
+```
+== sleef ==
+  ok   ...
+PASS sleef
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_sleef` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_sleef`](../../tests/src/) -- a program linked against sleef the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - sin(1)
+   - cos(1)
+   - sin(1e6) (large-argument reduction)
+   - exp(1) = e
+   - log(10)
+   - pow(2, 0.5) = sqrt 2
+   - pow(3, 4) = 81 exactly
+   - 4*atan2(1,1) = pi
+   - sinpi(1/6) = 0.5
+   - tgamma(5) = 24
+   - erf(0.5)
+   - cbrt(27) = 3
+   - sincos(0.5)
+   - special values: log(-1)=NaN, exp overflow/underflow
+   - float sinf/expf
+   - Sleef_sind2_u10 (2 lanes)
+   - Sleef_expd2_u10 (2 lanes)
+   - Sleef_logf4_u10 (4 lanes)
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

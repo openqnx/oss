@@ -55,11 +55,12 @@ A("How the class is decided, and every component's full chain: "
   "[DEPENDENCIES.md](DEPENDENCIES.md).\n")
 A("Click a component for its source URL, its patches, the exact build "
   "commands and how it is verified on a target.\n")
-A("| Component | Version | Build | Upstream | Patches | Class | Run-time deps | aarch64le | x86_64 |")
-A("|---|---|---|---|---|---|---|---|---|")
+A("| Component | What it is | Version | Build | Upstream | Patches | Class | Run-time deps | aarch64le | x86_64 |")
+A("|---|---|---|---|---|---|---|---|---|---|")
 for n, ver, bs, host, npat, cls, nrt, a, x in rows:
     mark = lambda s: "✅" if s == "OK" else ("n/a" if s == "n/a" else "—")
-    A(f"| [{n}](ports/{n}/README.md) | {ver or '—'} | {bs} | {host} | "
+    dsc = open(f"ports/{n}/DESCRIPTION").read().strip().replace("|", "/") if os.path.exists(f"ports/{n}/DESCRIPTION") else ""
+    A(f"| [{n}](ports/{n}/README.md) | {dsc or '—'} | {ver or '—'} | {bs} | {host} | "
       f"{npat or '—'} | {CLS[cls]} | {nrt or '—'} | {mark(a)} | {mark(x)} |")
 A("")
 open("PORTS-INDEX.md", "w").write("\n".join(out) + "\n")

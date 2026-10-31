@@ -1,5 +1,7 @@
 # libass 0.17.3
 
+> Subtitle renderer library for the ASS/SSA subtitle format
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

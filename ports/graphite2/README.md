@@ -1,5 +1,7 @@
 # graphite2 1.3.14
 
+> Font rendering engine for complex scripts (SIL Graphite smart fonts)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

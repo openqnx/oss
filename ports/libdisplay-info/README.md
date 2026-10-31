@@ -1,5 +1,7 @@
 # libdisplay-info 0.3.0
 
+> EDID and DisplayID parsing library
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libdisplay_info`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libdisplay-info
 apk add libdisplay-info-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libdisplay-info && /usr/local/bin/qnx-port-tests/test_libdisplay_info    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libdisplay-info`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -131,10 +134,49 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libdispla
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libdisplay_info`](../../tests/src/) links libdisplay-info the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libdisplay-info`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libdisplay-info
+/usr/local/bin/qnx-port-tests/test_libdisplay_info
+```
+
+```
+== libdisplay-info ==
+  ok   ...
+PASS libdisplay-info
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libdisplay_info` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libdisplay_info`](../../tests/src/) -- a program linked against libdisplay-info the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - di_info_parse_edid accepts the block
+   - no conformity failures
+   - di_info_get_make names QNX
+   - di_info_get_model = \"QNX Test\"
+   - di_info_get_serial = QNX12345
+   - EDID version 1.4
+   - vendor/product: QNX 0x1234 serial 1
+   - manufactured week 1 of 2024
+   - screen size 52 x 29 cm
+   - one detailed timing definition
+   - DTD: 1920x1080 at 148.5 MHz
+   - DTD: blanking, porches and sync widths
+   - DTD: 527 x 296 mm, progressive
+   - 3 display descriptors, product name \"QNX Test\"
+   - a bad checksum is reported
+   - di_cvt_compute: CVT-RB 1920x1080@60 = 138.5 MHz, 48/32/80
+   - scratch directory
+   - di-edid-decode: manufacturer, product name, DTD 1920x1080 148.5 MHz, conformity PASS
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

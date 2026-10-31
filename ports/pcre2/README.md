@@ -1,5 +1,7 @@
 # pcre2 10.44
 
+> Perl compatible regular expressions library (PCRE2 API)
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

@@ -1,5 +1,7 @@
 # python3-click 8.5.0
 
+> Python package for creating composable command line interfaces
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

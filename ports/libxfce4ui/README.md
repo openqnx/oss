@@ -1,5 +1,7 @@
 # libxfce4ui 4.20.0
 
+> Shared widgets library for Xfce applications
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`xfconf`](../xfconf/) [`libepoxy`](../libepoxy/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libxfce4ui`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libxfce4ui
 apk add libxfce4ui-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libxfce4ui && /usr/local/bin/qnx-port-tests/test_libxfce4ui    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libxfce4ui`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -142,10 +145,52 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libxfce4u
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libxfce4ui`](../../tests/src/) links libxfce4ui the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxfce4ui`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libxfce4ui
+/usr/local/bin/qnx-port-tests/test_libxfce4ui
+```
+
+```
+== libxfce4ui ==
+  ok   ...
+PASS libxfce4ui
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libxfce4ui` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libxfce4ui`](../../tests/src/) -- a program linked against libxfce4ui the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - xfce_gicon_from_name: themed icon for a named icon
+   - themed icon names start with org.xfce.about
+   - desktop file with an absolute Icon path -> GFileIcon
+   - GFileIcon points at that path
+   - scratch directory
+   - libxfce4ui 4.20.0
+   - libxfce4ui_check_version
+   - xfce_icon_name_from_desktop_id(xfce4-about) = org.xfce.about
+   - xfce_gtk_get_action_entry_by_id finds the entry (labels kept in the C locale)
+   - xfce4-about --version: 4.20.0
+   - gtk_init_check on the headless display
+   - XfceTitledDialog with mixed buttons
+   - subtitle set and read back
+   - dialog title
+   - OK response button is \"_Save\"
+   - xfce_gtk_button_new_mixed
+   - xfce_gtk_frame_box_new returns a frame and its container
+   - menu item built from the action entry and appended
+   - activating the menu item runs the entry's callback
+   - xfce_spawn_command_line ran the child
+   - without a display xfce4-about stops at the display probe
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

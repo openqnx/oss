@@ -1,5 +1,7 @@
 # docbook-xsl 1.79.2
 
+> DocBook XSL stylesheets for converting DocBook XML to HTML and man pages
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

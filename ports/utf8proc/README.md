@@ -1,5 +1,7 @@
 # utf8proc 2.11.3
 
+> C library for Unicode normalization, case-folding and UTF-8 processing
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

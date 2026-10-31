@@ -1,5 +1,7 @@
 # orocos-kdl 1.5.1
 
+> Orocos Kinematics and Dynamics Library for robot kinematic chains
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

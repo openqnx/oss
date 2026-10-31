@@ -1,5 +1,7 @@
 # opusfile 0.12
 
+> High-level library for decoding and seeking in Ogg Opus files
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

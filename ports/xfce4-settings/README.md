@@ -1,5 +1,7 @@
 # xfce4-settings 4.20.1
 
+> Xfce settings daemon, manager and editor
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`garcon`](../garcon/) [`exo`](../exo/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_xfce4_settings`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add xfce4-settings
 apk add xfce4-settings-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-xfce4-settings && /usr/local/bin/qnx-port-tests/test_xfce4_settings    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install xfce4-settings`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -149,10 +152,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/xfce4-set
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_xfce4_settings`](../../tests/src/) links xfce4-settings the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-xfce4-settings`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-xfce4-settings
+/usr/local/bin/qnx-port-tests/test_xfce4_settings
+```
+
+```
+== xfce4-settings ==
+  ok   ...
+PASS xfce4-settings
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_xfce4_settings` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_xfce4_settings`](../../tests/src/) -- a program linked against xfce4-settings the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - scratch directory
+   - xfsettingsd --version: 4.20.1
+   - xfsettingsd --help lists --replace, --daemon
+   - every helper .desktop: Type=X-XFCE-Helper, a known category, commands
+   - firefox helper is a WebBrowser
+   - helpers.rc defaults
+   - GTK module xfsettingsd-gtk-settings-sync loads (dlopen), exports gtk_module_init and g_module_check_init
+   - GModule refuses the module without a session bus (its xfconf_init check)
+   - xfce4-mime-helper --query WebBrowser -> our qnxbrowser helper
+   - xfce4-mime-helper rejects an unknown helper type
+   - without a display xfce4-settings-manager stops at the display probe
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

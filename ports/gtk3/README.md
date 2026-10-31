@@ -1,5 +1,7 @@
 # gtk3 3.24.43
 
+> GTK 3 multi-platform toolkit for graphical user interfaces
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

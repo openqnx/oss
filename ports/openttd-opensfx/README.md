@@ -1,5 +1,7 @@
 # openttd-opensfx 1.0.3
 
+> OpenSFX, the free base sound set for OpenTTD
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

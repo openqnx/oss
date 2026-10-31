@@ -1,5 +1,7 @@
 # libunibreak 6.1
 
+> Implementation of Unicode line, word and grapheme breaking algorithms
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

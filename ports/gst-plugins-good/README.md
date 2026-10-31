@@ -1,5 +1,7 @@
 # gst-plugins-good 1.24.10
 
+> Well-supported GStreamer plugins under preferred licenses (good set)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

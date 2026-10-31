@@ -1,5 +1,7 @@
 # strongswan 6.0.6
 
+> IPsec-based VPN solution
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_strongswan`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add strongswan
 apk add strongswan-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-strongswan && /usr/local/bin/qnx-port-tests/test_strongswan    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install strongswan`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -130,7 +133,10 @@ $OLDPWD/src/strongswan/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-vici \
     --enable-updown \
     --enable-kdf \
-    --with-capabilities=no
+    --with-capabilities=no \
+    --enable-pki \
+    --enable-constraints \
+    --enable-revocation
 make -j$(nproc)
 make DESTDIR=$STAGE install
 cd -
@@ -139,6 +145,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - GCC 12 reports a false -Wmaybe-uninitialized in utils/backtrace.c, which the build turns into an error.
+- --disable-defaults also drops three defaults that matter: * pki, the certificate tool (keys, CSRs, self-signed and issued certs); * constraints, which enforces X.509 name/path-length/policy constraints -- without it charon trusts a chain that violates its CA's name constraints, and libstrongswan_tests' certnames suite fails 0/10; * revocation (CRL/OCSP checking of peer certificates).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH strongswan`.
 
@@ -188,10 +195,31 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/strongswa
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_strongswan`](../../tests/src/) links strongswan the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-strongswan`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-strongswan
+/usr/local/bin/qnx-port-tests/test_strongswan
+```
+
+```
+== strongswan ==
+  ok   ...
+PASS strongswan
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_strongswan` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_strongswan`](../../tests/src/) -- a program linked against strongswan the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
@@ -214,11 +242,18 @@ BUILDSYS=autotools
 # GCC 12 reports a false -Wmaybe-uninitialized in utils/backtrace.c, which the
 # build turns into an error.
 CFLAGS_APPEND="-Wno-error=maybe-uninitialized"
+# --disable-defaults also drops three defaults that matter:
+#  * pki, the certificate tool (keys, CSRs, self-signed and issued certs);
+#  * constraints, which enforces X.509 name/path-length/policy constraints --
+#    without it charon trusts a chain that violates its CA's name constraints,
+#    and libstrongswan_tests' certnames suite fails 0/10;
+#  * revocation (CRL/OCSP checking of peer certificates).
 CONF_ARGS_EXTRA=( --disable-kernel-netlink --enable-kernel-pfkey --enable-kernel-pfroute --disable-gmp --enable-openssl
                   --disable-scripts --disable-stroke --enable-swanctl --disable-defaults --enable-charon
                   --enable-ikev2 --enable-nonce --enable-random --enable-pem --enable-pkcs1 --enable-pkcs8 --enable-x509
                   --enable-pubkey --enable-sha2 --enable-hmac --enable-socket-default --enable-vici --enable-updown
-                  --enable-kdf --with-capabilities=no )
+                  --enable-kdf --with-capabilities=no
+                  --enable-pki --enable-constraints --enable-revocation )
 ```
 </details>
 

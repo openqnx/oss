@@ -1,5 +1,7 @@
 # sqlite 3.47.2
 
+> SQLite embedded SQL database engine and command line shell
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

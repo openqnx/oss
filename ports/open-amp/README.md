@@ -1,5 +1,7 @@
 # open-amp 2024.10.0
 
+> OpenAMP framework for asymmetric multiprocessing (remoteproc, RPMsg)
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`libmetal`](../libmetal/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_open_amp`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add open-amp
 apk add open-amp-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-open-amp && /usr/local/bin/qnx-port-tests/test_open_amp    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install open-amp`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -115,10 +118,44 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/open-amp-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_open_amp`](../../tests/src/) links open-amp the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-open-amp`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-open-amp
+/usr/local/bin/qnx-port-tests/test_open_amp
+```
+
+```
+== open-amp ==
+  ok   ...
+PASS open-amp
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_open_amp` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_open_amp`](../../tests/src/) -- a program linked against open-amp the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - metal_init
+   - vrings fit their slots
+   - virtio driver and device created on one resource table
+   - both vrings set up on both sides
+   - host (driver) rpmsg device: buffers posted, DRIVER_OK
+   - remote (device) rpmsg device: saw the driver ready
+   - payload size 496 bytes
+   - remote endpoint qnx-echo created
+   - name service: host bound an endpoint to it
+   - 3 messages host -> remote -> host, upper-cased
+   - remote learned the host's address
+   - 40 more round trips: buffers recycled through the vrings
+   - destroying the remote endpoint unbound the host's
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

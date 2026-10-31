@@ -1,5 +1,7 @@
 # libsndfile 1.2.2
 
+> C library for reading and writing sampled audio files
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

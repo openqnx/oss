@@ -1,5 +1,7 @@
 # libdrm-headers 2.4.129
 
+> Headers for the DRM kernel interface and the libdrm API (headers only)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libdrm_headers`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libdrm-headers
 apk add libdrm-headers-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libdrm-headers && /usr/local/bin/qnx-port-tests/test_libdrm_headers    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libdrm-headers`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -121,10 +124,44 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libdrm-he
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libdrm_headers`](../../tests/src/) links libdrm-headers the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libdrm-headers`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libdrm-headers
+/usr/local/bin/qnx-port-tests/test_libdrm_headers
+```
+
+```
+== libdrm-headers ==
+  ok   ...
+PASS libdrm-headers
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libdrm_headers` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libdrm_headers`](../../tests/src/) -- a program linked against libdrm-headers the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - DRM_FORMAT_XRGB8888 = 'XR24' = 0x34325258
+   - ARGB8888 'AR24', NV12, YUYV fourccs
+   - modifiers LINEAR = 0, INVALID
+   - I915_FORMAT_MOD_X_TILED: vendor Intel, code 1
+   - DRM_FORMAT_BIG_ENDIAN flag
+   - DRM_IOCTL_VERSION: group 'd', nr 0x00
+   - MODE_GETRESOURCES nr 0xA0, MODE_ADDFB2 nr 0xB8
+   - ioctl encodes sizeof(struct drm_mode_card_res)
+   - modeinfo 68 bytes, card_res 64 bytes
+   - drm_mode_fb_cmd2: pixel_format at 12, modifier[] at 72
+   - connector types, mode flags
+   - DRM_CAP_DUMB_BUFFER, DRM_CLIENT_CAP_ATOMIC
+   - a 1080p60 mode line: refresh 60 Hz
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

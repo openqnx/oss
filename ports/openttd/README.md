@@ -1,5 +1,7 @@
 # openttd 15.0-git-20250501
 
+> OpenTTD, an open source simulation game based on Transport Tycoon Deluxe
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

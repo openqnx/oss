@@ -1,17 +1,19 @@
-# libxfce4windowing 4.20.0
+# libxfce4windowing 4.20.7
+
+> X11/Wayland windowing abstraction library for Xfce
 
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.0.tar.bz2 |
-| SHA-256 | `56f29b1d79606fb00a12c83ef4ece12877d2b22bf1acaaff89537fbe8e939f68` |
+| Upstream | https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.7.tar.bz2 |
+| SHA-256 | `01320b279648ab5b13263f8d260bc5958be599e1eaac77c4503598dfcf96c8bb` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`pango`](../pango/) [`wayland`](../wayland/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libxfce4windowing`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libxfce4windowing
 apk add libxfce4windowing-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libxfce4windowing && /usr/local/bin/qnx-port-tests/test_libxfce4windowing    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libxfce4windowing`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -56,10 +59,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.7.tar.bz2
 mkdir -p dist src/libxfce4windowing
 curl -fL -o dist/$(basename $URL) $URL
-echo "56f29b1d79606fb00a12c83ef4ece12877d2b22bf1acaaff89537fbe8e939f68  dist/$(basename $URL)" | sha256sum -c -
+echo "01320b279648ab5b13263f8d260bc5958be599e1eaac77c4503598dfcf96c8bb  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libxfce4windowing --strip-components=1
 ```
 
@@ -77,7 +80,8 @@ CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
 CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" \
+WAYLAND_SCANNER="$_wls" \
+XDT_GEN_VISIBILITY="${SRC_DIR:-$WS/src}/libxfce4windowing/xdt-gen-visibility" \
 $OLDPWD/src/libxfce4windowing/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
     --disable-static \
@@ -93,8 +97,9 @@ cd -
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- The release tarball, not the git tag: Xfce keeps its generated sources (*-alias.h, *-aliasdef.c, the .ui C sources) out of git and behind "if MAINTAINER_MODE", and regenerating them needs xdt-csource, which xfce4-dev-tools 4.20 no longer ships. The tarball has them all.
-- configure looks for wayland-scanner on PATH and finds nothing useful in a cross build; point it at the build-machine binary from hosttools/, which is the one that has to run.
+- Not 4.20.0: its Wayland workspace-group object (ext-workspace) was broken upstream -- no instance-private data, no "handle" property, a finalize that unrefs itself -- and it spoke a 2023 draft of ext-workspace-v1 that current compositors (labwc) no longer offer. Any client on labwc crashed as soon as the compositor announced a workspace group. Fixed upstream in 4.20.x. The release tarball, not the git tag: Xfce keeps its generated sources (*-alias.h, *-aliasdef.c, the .ui C sources) out of git and behind "if MAINTAINER_MODE", and regenerating them needs xdt-csource, which xfce4-dev-tools 4.20 no longer ships. The tarball has them all.
+- configure looks for wayland-scanner on PATH and finds nothing useful in a cross build; point it at the build-machine binary from hosttools/, which is the one that has to run. The host's wayland-scanner (hosttools/, or the build machine's own).
+- 4.20.x ships xdt-gen-visibility in the tarball but looks for it only in $PWD (the build directory) and PATH: name it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxfce4windowing`.
 
@@ -145,10 +150,40 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libxfce4w
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libxfce4windowing`](../../tests/src/) links libxfce4windowing the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxfce4windowing`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libxfce4windowing
+/usr/local/bin/qnx-port-tests/test_libxfce4windowing
+```
+
+```
+== libxfce4windowing ==
+  ok   ...
+PASS libxfce4windowing
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libxfce4windowing` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libxfce4windowing`](../../tests/src/) -- a program linked against libxfce4windowing the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - private XDG_RUNTIME_DIR
+   - labwc (headless) Wayland socket appeared
+   - gtk_init_check on labwc
+   - windowing detected as Wayland
+   - xfw_screen_get_default
+   - mapped GTK window listed by xfw_screen_get_windows
+   - window belongs to the screen
+   - title change seen through the compositor
+   - screen has a seat
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
@@ -160,24 +195,33 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4windowing=<version>`), sources in `ported/libxfce4windowing/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4windowing`; port one with `scripts/port-update libxfce4windowing`.
+This recipe builds **4.20.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4windowing=<version>`), sources in `ported/libxfce4windowing/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4windowing`; port one with `scripts/port-update libxfce4windowing`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
+VERSION=4.20.7
+# Not 4.20.0: its Wayland workspace-group object (ext-workspace) was broken
+# upstream -- no instance-private data, no "handle" property, a finalize that
+# unrefs itself -- and it spoke a 2023 draft of ext-workspace-v1 that current
+# compositors (labwc) no longer offer. Any client on labwc crashed as soon as
+# the compositor announced a workspace group. Fixed upstream in 4.20.x.
 # The release tarball, not the git tag: Xfce keeps its generated sources
 # (*-alias.h, *-aliasdef.c, the .ui C sources) out of git and behind
 # "if MAINTAINER_MODE", and regenerating them needs xdt-csource, which
 # xfce4-dev-tools 4.20 no longer ships. The tarball has them all.
-TARBALL=https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.0.tar.bz2
-SHA256=56f29b1d79606fb00a12c83ef4ece12877d2b22bf1acaaff89537fbe8e939f68
+TARBALL=https://archive.xfce.org/src/xfce/libxfce4windowing/4.20/libxfce4windowing-4.20.7.tar.bz2
+SHA256=01320b279648ab5b13263f8d260bc5958be599e1eaac77c4503598dfcf96c8bb
 DEPS="glib gtk3 wayland wayland-protocols"
 BUILDSYS=autotools
 # configure looks for wayland-scanner on PATH and finds nothing useful in a
 # cross build; point it at the build-machine binary from hosttools/, which is
 # the one that has to run.
-CONF_ENV=( WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" )
+# The host's wayland-scanner (hosttools/, or the build machine's own).
+_wls="$WS/hosttools/bin/wayland-scanner"; [ -x "$_wls" ] || _wls=$(command -v wayland-scanner)
+# 4.20.x ships xdt-gen-visibility in the tarball but looks for it only in
+# $PWD (the build directory) and PATH: name it.
+CONF_ENV=( WAYLAND_SCANNER="$_wls" XDT_GEN_VISIBILITY="${SRC_DIR:-$WS/src}/libxfce4windowing/xdt-gen-visibility" )
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-gtk-doc
                   --disable-introspection --disable-linker-opts --disable-x11 --enable-wayland )
 ```

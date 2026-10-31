@@ -1,5 +1,7 @@
 # sdl2-image 2.8.8
 
+> Image loading library for SDL2
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`sdl2`](../sdl2/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libavif`](../libavif/) [`libjxl`](../libjxl/) |
 | Run-time dependencies | [`libavif`](../libavif/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`sdl2`](../sdl2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_sdl2_image`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add sdl2-image
 apk add sdl2-image-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-sdl2-image && /usr/local/bin/qnx-port-tests/test_sdl2_image    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install sdl2-image`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -127,10 +130,45 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/sdl2-imag
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_sdl2_image`](../../tests/src/) links sdl2-image the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sdl2-image`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-sdl2-image
+/usr/local/bin/qnx-port-tests/test_sdl2_image
+```
+
+```
+== sdl2-image ==
+  ok   ...
+PASS sdl2-image
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_sdl2_image` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_sdl2_image`](../../tests/src/) -- a program linked against sdl2-image the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - PNG and JPEG codecs available
+   - format sniffing: PNG
+   - IMG_Load_RW decodes the 1x1 PNG
+   - decoded pixel is pure red
+   - create 64x48 RGBA surface
+   - IMG_SavePNG to /tmp
+   - IMG_Load reads it back (64x48)
+   - PNG round trip is lossless (RGBA)
+   - IMG_SaveJPG quality 95
+   - format sniffing: JPEG
+   - JPEG round trip within tolerance
+   - TGA decoded (2x1)
+   - TGA pixels: blue, green
+   - missing file -> NULL with an error
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

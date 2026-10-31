@@ -1,5 +1,7 @@
 # nghttp2 1.64.0
 
+> HTTP/2 protocol implementation library in C
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

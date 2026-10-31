@@ -1,5 +1,7 @@
 # gdk-pixbuf 2.42.12
 
+> GTK library for loading and scaling images
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

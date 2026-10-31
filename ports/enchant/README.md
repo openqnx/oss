@@ -1,5 +1,7 @@
 # enchant 2.8.2
 
+> Generic spell checking library wrapping several spell checker backends
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

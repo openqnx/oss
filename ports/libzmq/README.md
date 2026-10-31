@@ -1,5 +1,7 @@
 # libzmq 4.3.5
 
+> ZeroMQ lightweight messaging library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

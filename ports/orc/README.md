@@ -1,5 +1,7 @@
 # orc 0.4.40
 
+> Oil Runtime Compiler library for optimized inner loops (SIMD)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

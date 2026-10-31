@@ -1,5 +1,7 @@
 # libdazzle 3.44.0
 
+> Companion library of extra widgets and utilities for GObject and GTK 3
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) |
 | Run-time dependencies | [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`pango`](../pango/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libdazzle`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libdazzle
 apk add libdazzle-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libdazzle && /usr/local/bin/qnx-port-tests/test_libdazzle    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libdazzle`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -124,10 +127,44 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libdazzle
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libdazzle`](../../tests/src/) links libdazzle the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libdazzle`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libdazzle
+/usr/local/bin/qnx-port-tests/test_libdazzle
+```
+
+```
+== libdazzle ==
+  ok   ...
+PASS libdazzle
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libdazzle` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libdazzle`](../../tests/src/) -- a program linked against libdazzle the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - \"gws\" matches only gtk_widget_show
+   - case-insensitive \"GTKW\" matches the three gtk_ keys
+   - matches sorted by score
+   - removed key no longer matches
+   - highlight markup
+   - trie lookup
+   - three keys under the prefix \"car\"
+   - remove keeps the prefix key
+   - heap top is the maximum
+   - extraction is non-increasing
+   - ring keeps the last three of five values
+   - pattern spec needs every keyword
+   - time-span labels
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

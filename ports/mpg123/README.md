@@ -1,5 +1,7 @@
 # mpg123 1.32.9
 
+> MPEG audio (MP3) decoder library and signal synthesis library
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

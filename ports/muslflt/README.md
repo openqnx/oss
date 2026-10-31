@@ -1,5 +1,7 @@
 # muslflt 1.0-git-20240802
 
+> musl's libm and float conversion routines as a separate library
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_muslflt`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add muslflt
 apk add muslflt-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-muslflt && /usr/local/bin/qnx-port-tests/test_muslflt    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install muslflt`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -77,7 +80,12 @@ do_build() {
     objs+=("$B/obj/$base.o"); n=$((n+1))
   done
   echo "muslflt: $n objects"
-  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
+  # -Bsymbolic: musl's functions call each other (snprintf -> vsnprintf,
+  # cexp -> exp, printf's %a -> frexpl). Through the PLT those calls bind to the
+  # first definition in the process, and QNX's libc/libm are always loaded
+  # before this library (libc.so is the first DT_NEEDED of every executable),
+  # so muslflt's snprintf ran QNX libc's vsnprintf. Bind them inside the library.
+  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -Wl,-Bsymbolic -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
   "$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" rcs "$B/libmuslflt.a" "${objs[@]}"
 }
 ```
@@ -139,10 +147,57 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/muslflt-*
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_muslflt`](../../tests/src/) links muslflt the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-muslflt`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-muslflt
+/usr/local/bin/qnx-port-tests/test_muslflt
+```
+
+```
+== muslflt ==
+  ok   ...
+PASS muslflt
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_muslflt` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_muslflt`](../../tests/src/) -- a program linked against muslflt the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - dlopen libmuslflt.so.1
+   - sqrt(2) correctly rounded
+   - exp(1)
+   - log(10)
+   - sin(1), cos(1)
+   - sin(1e22) (Payne-Hanek reduction)
+   - pow(2,10)=1024, pow(-8,1/3)=NaN
+   - cbrt(-27) = -3, hypot(3,4) = 5
+   - tgamma(5), lgamma(1/2) = log(sqrt(pi))
+   - erf(0.5)
+   - fma(0.1, 10, -1) is fused (5.55e-17)
+   - rint/round/trunc/floor
+   - fmod and remainder
+   - special values
+   - fesetround(FE_UPWARD)
+   - rint follows the rounding mode
+   - cexp(i*pi) = -1 (Euler)
+   - csqrt(-4) = 2i
+   - cabs(3+4i) = 5
+   - snprintf float formats
+   - snprintf %.20f
+   - snprintf ties-to-even and inf
+   - strtod hex float, end pointer
+   - strtod near DBL_MIN (correct rounding)
+   - strtod 2^53+1 rounds to even
+   - ... and 5 more
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
@@ -183,7 +238,12 @@ do_build() {
     objs+=("$B/obj/$base.o"); n=$((n+1))
   done
   echo "muslflt: $n objects"
-  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
+  # -Bsymbolic: musl's functions call each other (snprintf -> vsnprintf,
+  # cexp -> exp, printf's %a -> frexpl). Through the PLT those calls bind to the
+  # first definition in the process, and QNX's libc/libm are always loaded
+  # before this library (libc.so is the first DT_NEEDED of every executable),
+  # so muslflt's snprintf ran QNX libc's vsnprintf. Bind them inside the library.
+  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -Wl,-Bsymbolic -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
   "$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" rcs "$B/libmuslflt.a" "${objs[@]}"
 }
 do_install() {

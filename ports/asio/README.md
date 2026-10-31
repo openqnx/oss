@@ -1,5 +1,7 @@
 # asio 1.30.2
 
+> Header-only C++ library for asynchronous network and low-level I/O
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_asio`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add asio
 apk add asio-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-asio && /usr/local/bin/qnx-port-tests/test_asio    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install asio`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -126,10 +129,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/asio-*-r0
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_asio`](../../tests/src/) links asio the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-asio`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-asio
+/usr/local/bin/qnx-port-tests/test_asio
+```
+
+```
+== asio ==
+  ok   ...
+PASS asio
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_asio` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_asio`](../../tests/src/) -- a program linked against asio the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - acceptor bound to 127.0.0.1, ephemeral port
+   - client connected
+   - three messages echoed back upper-cased
+   - server accepted one connection
+   - UDP datagram received, sender port right
+   - steady_timer 50 ms
+   - 100 handlers posted from another thread ran
+   - no exception
+   - make_address(192.168.1.10)
+   - make_address(::1) is v6 loopback
+   - make_address rejects 300.1.1.1
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

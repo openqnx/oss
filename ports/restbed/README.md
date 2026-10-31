@@ -1,5 +1,7 @@
 # restbed 4.8
 
+> C++ framework for building HTTP and HTTPS client and server applications
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`openssl`](../openssl/) [`asio`](../asio/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_restbed`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add restbed
 apk add restbed-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-restbed && /usr/local/bin/qnx-port-tests/test_restbed    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install restbed`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -139,10 +142,39 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/restbed-*
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_restbed`](../../tests/src/) links restbed the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-restbed`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-restbed
+/usr/local/bin/qnx-port-tests/test_restbed
+```
+
+```
+== restbed ==
+  ok   ...
+PASS restbed
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_restbed` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_restbed`](../../tests/src/) -- a program linked against restbed the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - service up on 127.0.0.1
+   - GET /sensor/42 -> 200
+   - Content-Type header
+   - path and query parameters reached the handler
+   - POST /echo -> 201 with custom header
+   - request body read and transformed by the handler
+   - path not matching the {id: [0-9]+} rule -> 404
+   - service stopped
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

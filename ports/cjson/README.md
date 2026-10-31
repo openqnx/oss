@@ -1,5 +1,7 @@
 # cjson 1.7.18
 
+> Lightweight JSON parser in ANSI C
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

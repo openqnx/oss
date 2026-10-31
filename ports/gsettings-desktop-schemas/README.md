@@ -1,5 +1,7 @@
 # gsettings-desktop-schemas 49.0
 
+> GSettings schemas for settings shared by desktop components
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`glib`](../glib/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_gsettings_desktop_schemas`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add gsettings-desktop-schemas
 apk add gsettings-desktop-schemas-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-gsettings-desktop-schemas && /usr/local/bin/qnx-port-tests/test_gsettings_desktop_schemas    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install gsettings-desktop-schemas`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -119,10 +122,47 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/gsettings
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_gsettings_desktop_schemas`](../../tests/src/) links gsettings-desktop-schemas the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gsettings-desktop-schemas`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-gsettings-desktop-schemas
+/usr/local/bin/qnx-port-tests/test_gsettings_desktop_schemas
+```
+
+```
+== gsettings-desktop-schemas ==
+  ok   ...
+PASS gsettings-desktop-schemas
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_gsettings_desktop_schemas` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_gsettings_desktop_schemas`](../../tests/src/) -- a program linked against gsettings-desktop-schemas the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - share/glib-2.0/schemas/org.gnome.desktop.*.gschema.xml installed
+   - glib-compile-schemas available
+   - glib-compile-schemas --strict compiled them
+   - schema source loads gschemas.compiled
+   - 30+ schemas, wm.preferences and system.proxy among them
+   - relocatable app-folders.folder
+   - GSettings for org.gnome.desktop.interface (memory backend)
+   - defaults: font-name 'Adwaita Sans 11', gtk-theme 'Adwaita'
+   - enum defaults match gdesktop-enums.h: 24h, default
+   - set color-scheme = G_DESKTOP_COLOR_SCHEME_PREFER_DARK
+   - reads back as nick 'prefer-dark'
+   - 'neon' is not a valid color-scheme
+   - wm num-workspaces: range 1..36
+   - num-workspaces default 4
+   - org.gnome.desktop.wm.preferences
+   - gsettings get org.gnome.desktop.interface font-name
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

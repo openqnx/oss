@@ -1,5 +1,7 @@
 # lcms2 2.16
 
+> Little CMS, small-footprint ICC color management engine
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

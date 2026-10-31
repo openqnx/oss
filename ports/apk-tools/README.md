@@ -1,16 +1,18 @@
 # apk-tools 3.0.0_rc5
 
+> Alpine Package Keeper (apk), the Alpine package manager
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
 | Upstream | https://github.com/alpinelinux/apk-tools.git (tag `v3.0.0_rc5`) |
 | Build system | Meson |
-| QNX patches | 3 |
+| QNX patches | 4 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_apk_tools`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add apk-tools
 apk add apk-tools-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-apk-tools && /usr/local/bin/qnx-port-tests/test_apk_tools    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install apk-tools`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -56,12 +59,13 @@ git clone --depth 1 -b v3.0.0_rc5 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0001-aports-qnx-compat.patch
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0002-portability-optional-sys-random-h.patch
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0003-qnx-openat-layer-dir-o-directory.patch
+patch -p1 -d src/apk-tools < ports/apk-tools/patches/0004-qnx-mkpkg-subdir-o-directory.patch
 ```
 
 **[`0001-aports-qnx-compat.patch`](patches/0001-aports-qnx-compat.patch)** — QNX compatibility for apk-tools (from QNX's aports core/apk-tools).
@@ -101,6 +105,18 @@ Touches: `portability/sys/random.h` · Upstream status: QNX-specific
 > with O_DIRECTORY, as apk already does for the root and cache directories.
 
 Touches: `src/database.c` · Upstream status: QNX-specific
+
+**[`0004-qnx-mkpkg-subdir-o-directory.patch`](patches/0004-qnx-mkpkg-subdir-o-directory.patch)** — Open mkpkg's subdirectories with O_DIRECTORY.
+
+> mkpkg_process_dirent() opens each subdirectory of the -F tree with plain
+> O_RDONLY and then walks it with fstatat()/openat(). On QNX 8 a directory
+> descriptor is only accepted as an *at() base if it was opened with
+> O_DIRECTORY (see 0003), so every package with a nested directory failed:
+> "failed to process directory 'usr': -1" and "failed to create package:
+> Operation not permitted". The top-level -F directory was already opened
+> with O_DIRECTORY, which is why a flat file tree worked.
+
+Touches: `src/app_mkpkg.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -173,10 +189,31 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/apk-tools
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_apk_tools`](../../tests/src/) links apk-tools the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-apk-tools`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-apk-tools
+/usr/local/bin/qnx-port-tests/test_apk_tools
+```
+
+```
+== apk-tools ==
+  ok   ...
+PASS apk-tools
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_apk_tools` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_apk_tools`](../../tests/src/) -- a program linked against apk-tools the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

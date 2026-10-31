@@ -1,5 +1,7 @@
 # rapidjson 1.1.0-24b5e7a
 
+> Header-only fast JSON parser and generator for C++ (SAX and DOM APIs)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

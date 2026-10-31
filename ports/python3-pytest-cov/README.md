@@ -1,5 +1,7 @@
 # python3-pytest-cov 7.1.0
 
+> pytest plugin for measuring code coverage
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

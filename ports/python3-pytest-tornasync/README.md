@@ -1,5 +1,7 @@
 # python3-pytest-tornasync 0.6.0.post2
 
+> pytest plugin for testing tornado coroutines
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

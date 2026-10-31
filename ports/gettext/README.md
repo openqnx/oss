@@ -1,5 +1,7 @@
 # gettext 0.22.5
 
+> GNU internationalization tools and libraries for translated messages
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -7,11 +9,11 @@
 | Upstream | https://ftp.gnu.org/gnu/gettext/gettext-0.22.5.tar.gz |
 | SHA-256 | `ec1705b1e969b83a9f073144ec806151db88127f5e40fe5a94cb6c8fa48996a0` |
 | Build system | GNU Autotools |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`ncurses`](../ncurses/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) |
 | Run-time dependencies | [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_gettext`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add gettext
 apk add gettext-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-gettext && /usr/local/bin/qnx-port-tests/test_gettext    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install gettext`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -60,7 +63,23 @@ tar xf dist/$(basename $URL) -C src/gettext --strip-components=1
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/gettext < ports/gettext/patches/0001-qnx-canonicalize-readlink-errno.patch
+```
+
+**[`0001-qnx-canonicalize-readlink-errno.patch`](patches/0001-qnx-canonicalize-readlink-errno.patch)** — QNX: do not treat every non-EINVAL readlink() failure as an error.
+
+> gnulib canonicalize_filename_mode() and realpath() readlink() each path
+> component and accept only EINVAL as "not a symbolic link". On the QNX 8.0
+> target msgfmt -o loc/de/LC_MESSAGES/x.mo failed with "Not a directory"
+> (open_supersede -> canonicalize_filename_mode) while writing into the
+> current directory worked: QNX path managers answer readlink() of a
+> directory with another errno (ENOTDIR; ENOSYS where links are
+> unsupported). Fall back to lstat() to tell a real link from a plain file.
+
+Touches: `gettext-runtime/gnulib-lib/canonicalize-lgpl.c`, `gettext-tools/gnulib-lib/canonicalize.c`, `gettext-tools/gnulib-lib/canonicalize-lgpl.c`
 
 ### 4. Configure, build and install into the staging tree
 
@@ -152,10 +171,31 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/gettext-*
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_gettext`](../../tests/src/) links gettext the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gettext`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-gettext
+/usr/local/bin/qnx-port-tests/test_gettext
+```
+
+```
+== gettext ==
+  ok   ...
+PASS gettext
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_gettext` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_gettext`](../../tests/src/) -- a program linked against gettext the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

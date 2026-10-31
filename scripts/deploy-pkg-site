@@ -1,0 +1,32 @@
+#!/bin/bash
+# deploy-pkg-site -- regenerate the package site and put it on GitHub Pages
+# (branch gh-pages of openqnx/oss, one commit, replaced every time).
+#
+#     scripts/deploy-pkg-site [--no-gen]
+#
+# Run after every scripts/publish-github-release: the site is built from the
+# staged release indexes (scripts/gen-pkg-site), so it shows what the
+# releases hold. --no-gen deploys tmp/pkg-site as it is.
+# The site: https://openqnx.github.io/oss/
+set -e
+WS=$(cd "$(dirname "$0")/.." && pwd)
+SITE=$WS/tmp/pkg-site
+GHREPO=openqnx/oss
+[ "$1" = --no-gen ] || "$WS/scripts/gen-pkg-site"
+[ -f "$SITE/index.html" ] || { echo "no site in $SITE" >&2; exit 1; }
+
+# A throw-away repository: the working tree and branches of this one stay untouched.
+D=$(mktemp -d "$WS/tmp/pages.XXXXXX")
+trap 'rm -rf "$D"' EXIT
+cp -a "$SITE/." "$D/"
+cd "$D"
+git init -q -b gh-pages
+git add -A
+git -c user.name=openqnx-oss -c user.email=noreply@openqnx.invalid \
+    commit -q -m "Package site, $(date -u '+%Y-%m-%d %H:%M UTC')"
+git push -q --force "$(git -C "$WS" remote get-url origin)" gh-pages:gh-pages
+
+# Pages on, from gh-pages (once; afterwards the push alone updates it).
+gh api "repos/$GHREPO/pages" >/dev/null 2>&1 ||
+  gh api -X POST "repos/$GHREPO/pages" -f "source[branch]=gh-pages" -f "source[path]=/" >/dev/null
+echo "deployed: https://openqnx.github.io/oss/"

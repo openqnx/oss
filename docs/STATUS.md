@@ -93,8 +93,8 @@ current: it is the hand-over, not a history (that is `git log`).
    indexes (= GitHub's, checked by digest), with each package's files,
    dependencies both ways, QNX patches, license (`ports/<name>/LICENSE.id`,
    `scripts/detect-licenses`; 436 of 525 found, the rest "see upstream")
-   and its on-target test log. Regenerate after every publish. Not hosted
-   yet: GitHub Pages is the maintainer's decision.
+   and its on-target test log. Live at https://openqnx.github.io/oss/
+   (branch gh-pages): run `scripts/deploy-pkg-site` after every publish.
 
 ## Machine notes
 

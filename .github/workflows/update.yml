@@ -5,7 +5,10 @@ name: update
 # "publish", ports each one (scripts/port-update), builds it for both
 # architectures, installs and tests it on both QEMU targets, and publishes
 # what passed (scripts/update-all). A component whose port or test fails stays
-# on its previous version and is listed in the run summary.
+# on its previous version and is listed in the run summary; with "ai_fix",
+# Claude Code then tries to port it (scripts/ai-fix) and opens a pull request
+# when it passes on both targets, an issue when not. Claude runs unattended
+# with full permissions of the runner's user on this machine.
 #
 # Only the repository owner can run it: GitHub lets only users with write
 # access start a workflow by hand, and the first step refuses anyone else.
@@ -25,6 +28,10 @@ on:
         description: "At most this many components per run"
         required: false
         default: "10"
+      ai_fix:
+        description: "For each component that fails: let Claude Code port it (pull request for review; nothing published before you merge)"
+        type: boolean
+        default: false
 
 concurrency:
   group: qnx-targets
@@ -49,6 +56,7 @@ jobs:
           MODE: ${{ inputs.mode }}
           COMPONENTS: ${{ inputs.components }}
           MAX: ${{ inputs.max }}
+          AI_FIX: ${{ inputs.ai_fix }}
         run: |
           cd "$OSS_WS"
           case "$MODE" in
@@ -59,6 +67,8 @@ jobs:
           esac
           case "$MAX" in ''|*[!0-9]*) MAX=10 ;; esac
           set -- $COMPONENTS
+          [ "$AI_FIX" = true ] && [ "$MODE" != check ] && opt="$opt --ai-fix"
+          export PATH="$HOME/.local/bin:$PATH"     # the claude CLI
           ./scripts/update-all $opt --max "$MAX" "$@"
       - name: Summary
         if: always()

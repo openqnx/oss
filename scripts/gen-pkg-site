@@ -10,7 +10,7 @@ RELEASES (default tmp/release-staging) holds one directory per GitHub release
 as scripts/publish-github-release staged it: apk-8.0-<arch>/APKINDEX.tar.gz is
 what the site lists -- the very index on GitHub -- and packages-8.0-<arch>/
 gives each package's file list. Also read: ports/dependencies.json (kind),
-ports/<name>/patches/, tests/results/<arch>.tsv and tests/logs/<arch>/.
+ports/<name>/patches/ and LICENSE.id, tests/results/<arch>.tsv and tests/logs/<arch>/.
 OUT (default tmp/pkg-site) is a static site: open OUT/index.html, or serve it
 (GitHub Pages, any web server). Run it after every publish.
 """
@@ -95,6 +95,14 @@ def test_of(e):
     return results.get((e["qarch"], o, e["V"])), f"tests/logs/{e['qarch']}/{o}-{e['V']}.log"
 
 
+def license(e):
+    # ports/<name>/LICENSE.id (scripts/detect-licenses): read here, not baked into
+    # the packages -- a package's bytes stay as they were published.
+    p = f"ports/{origin(e)}/LICENSE.id"
+    v = open(p).read().strip() if os.path.exists(p) else ""
+    return v or e.get("L", "") or "see upstream"
+
+
 def kind(e):
     c = deps_json.get(origin(e), {}).get("class", "")
     return "standalone" if c == "standalone" else ("dependent" if c else "")
@@ -168,7 +176,7 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
     e = es[0]
     r, logp = test_of(e)
     rows.append({"n": name, "v": e["V"], "a": arch, "d": e.get("T", ""), "u": e.get("U", ""),
-                 "l": e.get("L", ""), "k": kind(e), "t": (r[0] if r else ""), "b": date(e.get("t")),
+                 "l": license(e), "k": kind(e), "t": (r[0] if r else ""), "b": date(e.get("t")),
                  "dev": name.endswith("-dev")})
 
     # the package's own page
@@ -187,7 +195,7 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
     for k, v in (("Version", E(e["V"])), ("Architecture", E(arch) + (" &middot; also: " + ", ".join(
                      f'<a href="../{a}/{E(name)}.html">{a}</a>' for a in other) if other else "")),
                  ("Upstream", f'<a href="{E(e.get("U", ""))}">{E(e.get("U", ""))}</a>' if e.get("U") else "–"),
-                 ("License", E(e.get("L", "")) or "–"), ("Kind", E(kind(e)) or "–"),
+                 ("License", E(license(e)) + ' <span class=mut>(from the original source\'s license files; they decide)</span>'), ("Kind", E(kind(e)) or "–"),
                  ("Origin", f'<a href="{GH}/tree/main/ports/{E(o)}">ports/{E(o)}</a>'),
                  ("Package size", size(e.get("S"))), ("Installed size", size(e.get("I"))),
                  ("Build date", date(e.get("t"))), ("Provides", E(e.get("p", "")) or "–"),

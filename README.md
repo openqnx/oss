@@ -11,15 +11,27 @@ repository's releases.** The numbers are counted from `ports/` and
 `tests/results/` each time this page is generated (`scripts/gen-root-readme`),
 so they follow every component added.
 
-**Browse the packages:** <https://openqnx.github.io/oss/> -- every package with
-its version, license, dependencies (both ways), files, downloads, QNX patches
-and the log of its test on a QNX target; searchable by name, architecture,
-kind and test result.
-
 Build files, QNX patches and step-by-step guides for **524 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64** — and the same components as prebuilt packages
 a QNX target can download and install directly.
+
+## Package site and getting started
+
+**Package site: <https://openqnx.github.io/oss/>** -- the published packages,
+browsable like Alpine's package site and generated from the same release
+indexes `apk` uses, so it always shows what the releases hold:
+
+- search by name or description; filter by architecture (x86_64, aarch64),
+  kind (standalone / dependent), test result, with or without `-dev` packages
+- a page per package: version, upstream, license, dependencies and what
+  needs it, its files, download links (`.apk` and `.tar.gz`), the
+  `apk add` command, its QNX patches, and the log of its test on a QNX target
+
+**New here? [INSTALL.md](INSTALL.md)** walks through the three steps with two
+sample packages (zstd, curl): prepare a stock QNX 8.0 QEMU target, install
+with `apk` or by downloading the archive, run the package's test and compare
+it with the recorded log.
 
 ## QNX resources
 
@@ -57,6 +69,10 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 ## Three ways to use it
 
 ### 1. Install a prebuilt package on the target
+
+Step by step with samples, without any of this repository's scripts:
+[INSTALL.md](INSTALL.md). Briefly:
+
 
 With `apk`, from the GitHub releases (x86_64 and aarch64):
 

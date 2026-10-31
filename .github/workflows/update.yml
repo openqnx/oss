@@ -1,0 +1,65 @@
+name: update
+
+# The maintainer's button: Actions -> update -> Run workflow.
+# Checks every component's upstream for a newer release; with "port" or
+# "publish", ports each one (scripts/port-update), builds it for both
+# architectures, installs and tests it on both QEMU targets, and publishes
+# what passed (scripts/update-all). A component whose port or test fails stays
+# on its previous version and is listed in the run summary.
+#
+# Only the repository owner can run it: GitHub lets only users with write
+# access start a workflow by hand, and the first step refuses anyone else.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check: list updates only / port: port, build, test (no publish) / publish: port, build, test, publish"
+        type: choice
+        options: [check, port, publish]
+        default: check
+      components:
+        description: "Only these components (space separated; empty = every component with an update)"
+        required: false
+        default: ""
+      max:
+        description: "At most this many components per run"
+        required: false
+        default: "10"
+
+concurrency:
+  group: qnx-targets
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    if: github.triggering_actor == github.repository_owner
+    runs-on: [self-hosted, qnx-sdp]
+    timeout-minutes: 4320
+    env:
+      CI_TARGET_X86_64: ${{ vars.CI_TARGET_X86_64 }}
+      CI_TARGET_AARCH64LE: ${{ vars.CI_TARGET_AARCH64LE }}
+    steps:
+      - name: Workspace up to date with main
+        run: cd "$OSS_WS" && git fetch -q origin main && git merge --ff-only origin/main
+      - name: Check, port, test${{ inputs.mode == 'publish' && ', publish' || '' }}
+        env:
+          MODE: ${{ inputs.mode }}
+          COMPONENTS: ${{ inputs.components }}
+          MAX: ${{ inputs.max }}
+        run: |
+          cd "$OSS_WS"
+          case "$MODE" in
+            check)   opt=--check-only ;;
+            port)    opt=--no-publish ;;
+            publish) opt= ;;
+            *) echo "unknown mode $MODE"; exit 2 ;;
+          esac
+          case "$MAX" in ''|*[!0-9]*) MAX=10 ;; esac
+          set -- $COMPONENTS
+          ./scripts/update-all $opt --max "$MAX" "$@"
+      - name: Summary
+        if: always()
+        run: cat "$OSS_WS/tmp/update-all/summary.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true

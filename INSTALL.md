@@ -64,20 +64,26 @@ qnx# mkdir -p /data/oss/usr/local && ln -sP /data/oss/usr/local /usr/local   # a
 ## 2A. Install with apk
 
 apk is a package too. Unpack it once from its archive, then let it install
-itself properly:
+itself properly. The packages are in two releases per architecture (GitHub
+allows 1000 files per release): `packages-8.0-$A` holds the names starting
+with 0-9 or a-l, `packages-8.0-$A-m-z` the rest. Each has its own `INDEX`;
+the loop below merges both and remembers which release each line came from:
 
 ```sh
 qnx# mkdir -p /data/boot/root && cd /data/boot
-qnx# curl -fsSLO $GH/packages-8.0-$A/INDEX
+qnx# for r in packages-8.0-$A packages-8.0-$A-m-z; do
+       curl -fsSL $GH/$r/INDEX | grep -v '^#' | sed "s/\$/|$r/"
+     done > INDEX                                         # each line ends with its release
 qnx# for p in zlib zstd openssl ca-certificates apk-tools; do
-       l=$(grep "^$p|" INDEX | head -n 1); f=$(echo "$l" | cut -d'|' -f4)
-       curl -fsSLO $GH/packages-8.0-$A/$f
+       l=$(grep "^$p|" INDEX | head -n 1); f=$(echo "$l" | cut -d'|' -f4); r=${l##*|}
+       curl -fsSLO $GH/$r/$f
        [ "$(openssl dgst -sha256 $f | sed 's/.*= *//')" = "$(echo "$l" | cut -d'|' -f5)" ] || echo "BAD $f"
        gzip -dc $f | (cd root && tar -xf -)
      done
 qnx# mkdir -p /data/oss/etc/apk/keys
-qnx# echo "$GH/apk-8.0-$A/APKINDEX.tar.gz"   >  /data/oss/etc/apk/repositories
-qnx# echo "$GH/tests-8.0-$A/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories
+qnx# echo "$GH/apk-8.0-$A/APKINDEX.tar.gz"     >  /data/oss/etc/apk/repositories   # 0-9, a-l
+qnx# echo "$GH/apk-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories   # m-z
+qnx# echo "$GH/tests-8.0-$A/APKINDEX.tar.gz"   >> /data/oss/etc/apk/repositories
 qnx# curl -fsSL -o /data/oss/etc/apk/keys/openqnx-oss-20261029.rsa.pub \
        https://raw.githubusercontent.com/openqnx/oss/main/keys/openqnx-oss-20261029.rsa.pub
 qnx# LD_LIBRARY_PATH=root/usr/local/lib:$LD_LIBRARY_PATH \
@@ -86,7 +92,16 @@ qnx# cd / && rm -rf /data/boot
 qnx# alias apk='apk --root /data/oss'; export SSL_CERT_FILE=/usr/local/ssl/cert.pem
 ```
 
-(`target/apk-setup` in this repository does the same in one command.)
+(`target/apk-setup` in this repository does the same in one command.) apk
+reads the three repositories as one: a package in one may depend on packages
+in another.
+
+A target set up before the split (November 2026) has only the
+`apk-8.0-$A` line and sees no new package named m-z: add the second line
+(`echo "$GH/apk-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories`,
+then `apk update`), or run `target/apk-setup` again. For oss-get, the new
+default `OSS_REPO` names both releases; a `/data/oss/etc/oss-get.conf` that
+sets `OSS_REPO` to the old release needs the `-m-z` one added (space-separated).
 
 Then install the samples. apk fetches the dependencies, checks every
 signature, and installs the test packages from the tests repository:
@@ -101,24 +116,30 @@ qnx# apk del curl qnx-test-curl                           # remove again
 ## 2B. Install by downloading the archive
 
 Without apk: each package is a `.tar.gz` of files under `usr/local/`, listed
-in the release's `INDEX` with its dependencies and SHA-256. Install the
-dependencies first, yourself:
+in its release's `INDEX` with its dependencies and SHA-256. There are two
+releases, `packages-8.0-$A` (names 0-9, a-l) and `packages-8.0-$A-m-z` (m-z),
+so read both indexes; a package's dependencies may be in the other one.
+Install the dependencies first, yourself:
 
 ```sh
 qnx# mkdir -p /data/oss/dl && cd /data/oss/dl
-qnx# curl -fsSLO $GH/packages-8.0-$A/INDEX
+qnx# curl -fsSL -o INDEX.a-l $GH/packages-8.0-$A/INDEX
+qnx# curl -fsSL -o INDEX.m-z $GH/packages-8.0-$A-m-z/INDEX
+qnx# { sed "s/\$/|packages-8.0-$A/" INDEX.a-l; sed "s/\$/|packages-8.0-$A-m-z/" INDEX.m-z; } |
+       grep -v '^#' > INDEX                               # each line ends with its release
 qnx# grep '^curl|' INDEX | cut -d'|' -f1-3                # name|version|dependencies
 curl|8.11.1-r0|brotli,c-ares,nghttp2,openssl,zlib,zstd
 qnx# for p in brotli c-ares nghttp2 openssl zlib zstd curl; do        # dependencies first
-       l=$(grep "^$p|" INDEX | head -n 1); f=$(echo "$l" | cut -d'|' -f4)
-       curl -fsSLO $GH/packages-8.0-$A/$f
+       l=$(grep "^$p|" INDEX | head -n 1); f=$(echo "$l" | cut -d'|' -f4); r=${l##*|}
+       curl -fsSLO $GH/$r/$f
        [ "$(openssl dgst -sha256 $f | sed 's/.*= *//')" = "$(echo "$l" | cut -d'|' -f5)" ] \
          && gzip -dc $f | (cd /data/oss && tar -xf -) && echo "installed $p" || echo "BAD $f"
      done
 qnx# curl --version                                       # the ported curl
 ```
 
-The tests come the same way from the `tests-8.0-$A` release (its own `INDEX`):
+(`target/oss-get` does this for you: `oss-get update` merges both indexes.)
+The tests come the same way from the `tests-8.0-$A` release (one release, its own `INDEX`):
 `qnx-port-tests` (the runner) and `qnx-test-curl`. Use one method per
 `/data/oss`: apk does not know about files unpacked by hand.
 

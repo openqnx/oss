@@ -26,11 +26,18 @@
 # drops the others. --prune deletes assets that are no longer in dists/
 # (packages deleted locally on purpose); old versions are kept otherwise.
 #
-# Three releases per architecture, because GitHub allows at most 1000 assets
+# Five releases per architecture, because GitHub allows at most 1000 assets
 # per release (and each under 2 GiB):
-#   packages-8.0-<arch>   <pkg>.tar.gz + INDEX                    what oss-get reads
-#   apk-8.0-<arch>        <pkg>.apk + APKINDEX.tar.gz + public key what apk reads
-#   tests-8.0-<arch>      qnx-test-*.apk/.tar.gz + both indexes   apk, second repository
+#   packages-8.0-<arch>[-m-z]  <pkg>.tar.gz + INDEX                    what oss-get reads
+#   apk-8.0-<arch>[-m-z]       <pkg>.apk + APKINDEX.tar.gz + public key what apk reads
+#   tests-8.0-<arch>           qnx-test-*.apk/.tar.gz + both indexes   apk, third repository
+# The apk and packages releases are split by the first character of the
+# package name (scripts/lib/shards.py, the one place that says how): 0-9 a-l
+# in the tags of before the split, m-z in the -m-z ones. Each is a complete
+# repository with its own indexes; a target reads all of them (target/apk-setup,
+# target/oss-get). Every check (asset count, --changed, --prune) is per release.
+# With --prune, the packages a release holds that now belong to another shard
+# are deleted from it too (after that shard's release got them).
 # Release assets are flat, so apk is pointed at the index itself:
 #   https://github.com/<repo>/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz
 # Requires gh (logged in, write access) for --upload.
@@ -46,7 +53,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --verified) MODE=verified; shift ;;
   --only) MODE=only; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY+=("$1"); shift; done ;;
   --arch) ARCHES+=("$2"); shift 2 ;;
-  -h|--help) sed -n '2,36p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  -h|--help) sed -n '2,43p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
   aarch64|x86_64) ARCHES+=("$1"); shift ;;
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac; done
@@ -57,6 +64,9 @@ TESTS_ROOT=${TESTS_ROOT:-$WS/test_suites}
 OUT=${PUBLISH_OUT:-$WS/build/release}   # staging only: hard links into dists/ where possible
 KEYFILE=$(ls "$WS"/keys/private/*.rsa 2>/dev/null | head -n 1)
 [ -n "$KEYFILE" ] || echo "!! no signing key in keys/private/: the indexes staged here are unsigned" >&2
+
+shards() { python3 -I "$WS/scripts/lib/shards.py" "$@"; }
+mapfile -t SHARDS < <(shards suffixes)   # "<suffix> <first characters>", the first suffix "-"
 
 remote_assets() { # tag -> names on the release (nothing without --upload, or when it does not exist)
   [ -n "$UPLOAD" ] || return 0
@@ -146,29 +156,44 @@ for kind, d, es in (("main", repo, pick), ("tests", tests, tpick)):
 EOF
 }
 
-stage() { # tag src-dir kind(apk|tgz|both) files...
-  local tag=$1 src=$2 kind=$3; shift 3
+stage() { # tag src-dir kind(apk|tgz|both) shard files...
+  # shard: a suffix as "shards suffixes" prints it ("-" the first), "" not sharded
+  local tag=$1 src=$2 kind=$3 shard=$4; shift 4
   local d=$OUT/$tag; rm -rf "$d"; mkdir -p "$d"
   local f
   for f in "$@"; do
     case "$kind:$f" in apk:*.apk|tgz:*.tar.gz|both:*) ln "$src/$f" "$d/$f" 2>/dev/null || cp "$src/$f" "$d/$f" ;; esac
   done
   # The release's index: what it will hold afterwards (already there + these).
-  { remote_assets "$tag" | grep -E '\.(apk|tar\.gz)$' | grep -vx APKINDEX.tar.gz || true; } > "$OUT/.$tag.remote"
+  # Packages on it that belong to another shard (from before the split) are
+  # not indexed here: .foreign, deleted with --prune.
+  { remote_assets "$tag" | grep -E '\.(apk|tar\.gz)$' | grep -vx APKINDEX.tar.gz || true; } > "$OUT/.$tag.all"
+  if [ -n "$shard" ]; then
+    shards split < "$OUT/.$tag.all" | awk -v s="$shard" '$1 == s { print $2 }' > "$OUT/.$tag.remote"
+    shards split < "$OUT/.$tag.all" | awk -v s="$shard" '$1 != s { print $2 }' > "$OUT/.$tag.foreign"
+  else
+    cp "$OUT/.$tag.all" "$OUT/.$tag.remote"; : > "$OUT/.$tag.foreign"
+  fi
   "$WS/scripts/qnxpkg" ${KEYFILE:+--key "$KEYFILE"} --reindex "$d" --from "$src" --also "$OUT/.$tag.remote" >/dev/null
   case $kind in apk) rm -f "$d/INDEX" ;; tgz) rm -f "$d/APKINDEX.tar.gz" ;; esac
   [ -z "$PUBKEY" ] || [ "$kind" = tgz ] || cp "$PUBKEY" "$d/"
-  local n big total
+  local n big total foreign
+  foreign=$(grep -c . "$OUT/.$tag.foreign" || true)
   n=$(ls "$d" | wc -l); total=$(( n + $( { grep -vxFf <(ls "$d") "$OUT/.$tag.remote" || true; } | wc -l) ))
+  [ -n "$PRUNE" ] || total=$((total + foreign))
   big=$(find "$d" -type f -size +"$MAX_BYTES"c -printf '%f ')
-  printf '%-22s %4d staged (%4d on the release after)  %6s\n' "$tag" "$n" "$total" "$(du -sh "$d" | cut -f1)"
+  printf '%-26s %4d staged (%4d on the release after)  %6s\n' "$tag" "$n" "$total" "$(du -sh "$d" | cut -f1)"
+  [ "$foreign" = 0 ] || [ -n "$PRUNE" ] ||
+    echo "   $tag: $foreign package(s) of another shard are still on it (not indexed): --prune deletes them" >&2
   [ "$total" -le $MAX_ASSETS ] || { echo "!! $tag: $total assets, GitHub allows $MAX_ASSETS per release" >&2; return 1; }
   [ -z "$big" ] || { echo "!! $tag: over 2 GiB, GitHub refuses: $big" >&2; return 1; }
+  STAGED+=("$tag")
 }
 
 PUBKEY=""
 if [ -n "$KEYFILE" ] && [ -f "$WS/keys/$(basename "$KEYFILE").pub" ]; then PUBKEY=$WS/keys/$(basename "$KEYFILE").pub; fi
 mkdir -p "$OUT"
+STAGED=()   # the tags staged, in upload order: per arch the last shard first
 for a in "${ARCHES[@]}"; do
   src=$REPO_ROOT/$SDP/$a; ts=$TESTS_ROOT/$SDP/$a
   [ -f "$src/.index.json" ] || { echo "no repository in $src (run scripts/qnxpkg --all)" >&2; exit 1; }
@@ -176,9 +201,16 @@ for a in "${ARCHES[@]}"; do
   mapfile -t mf < <(echo "$sel" | sed -n 's/^main //p')
   mapfile -t tf < <(echo "$sel" | sed -n 's/^tests //p')
   echo "== $a ($MODE${ONLY:+: ${ONLY[*]}}): ${#mf[@]} package file(s), ${#tf[@]} test package file(s)"
-  stage packages-$SDP-$a "$src" tgz "${mf[@]}"
-  stage apk-$SDP-$a "$src" apk "${mf[@]}"
-  [ ${#tf[@]} -eq 0 ] || [ -n "$NOTESTS" ] || stage tests-$SDP-$a "$ts" both "${tf[@]}"
+  split=$(printf '%s\n' "${mf[@]}" | shards split)
+  # The last shard first: with --prune, a package that moved to a new shard
+  # is uploaded there before it is deleted from the release it was in.
+  for ((i = ${#SHARDS[@]} - 1; i >= 0; i--)); do
+    sh=${SHARDS[i]%% *}; sfx=$sh; [ "$sh" = - ] && sfx=""
+    mapfile -t sf < <(echo "$split" | awk -v s="$sh" '$1 == s { print $2 }')
+    stage packages-$SDP-$a$sfx "$src" tgz "$sh" "${sf[@]}"
+    stage apk-$SDP-$a$sfx "$src" apk "$sh" "${sf[@]}"
+  done
+  [ ${#tf[@]} -eq 0 ] || [ -n "$NOTESTS" ] || stage tests-$SDP-$a "$ts" both "" "${tf[@]}"
 done
 
 if [ -z "$UPLOAD" ]; then
@@ -204,26 +236,59 @@ paced_upload() { # tag, file names on stdin
   done
 }
 NOTICE=""; [ -f "$WS/NOTICE.md" ] && NOTICE=$'\n\n'"$(sed -n '3,12p' "$WS/NOTICE.md")"
-for a in "${ARCHES[@]}"; do
-  for tag in packages-$SDP-$a apk-$SDP-$a $([ -n "$NOTESTS" ] || echo tests-$SDP-$a); do
+# tag -> "<arch> <kind> <suffix or -> <first characters>" (tests: "<arch> tests - -")
+tag_info() {
+  local a k e sfx
+  for a in "${ARCHES[@]}"; do
+    [ "$1" = tests-$SDP-$a ] && { echo "$a tests - -"; return; }
+    for k in packages apk; do for e in "${SHARDS[@]}"; do
+      sfx=${e%% *}; [ "${e%% *}" = - ] && sfx=""
+      [ "$1" = $k-$SDP-$a$sfx ] && { echo "$a $k $e"; return; }
+    done; done
+  done
+}
+for tag in "${STAGED[@]}"; do
     d=$OUT/$tag; [ -d "$d" ] || continue
-    case $tag in
-      packages-*) title="QNX SDP $SDP packages for oss-get ($a)"; notes="Install on target: target/oss-get install <package>" ;;
-      tests-*) title="QNX SDP $SDP port tests ($a)"; notes="On target: apk add qnx-test-<package> (target/apk-setup adds this repository). Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
-      apk-*) title="QNX SDP $SDP APK repository ($a)"; notes="On target: target/apk-setup, then apk add <package>. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
+    read -r a kind sh range < <(tag_info "$tag")
+    sfx=$sh; [ "$sh" = - ] && sfx=""
+    # The other shards of this kind: a target needs every one of them.
+    others=""
+    for e in "${SHARDS[@]}"; do
+      o=${e%% *}; [ "${e%% *}" = - ] && o=""
+      [ "$o" = "$sfx" ] || others="$others $kind-$SDP-$a$o (${e#* })"
+    done
+    part="packages whose name starts with [$range]"
+    case $kind in
+      packages) title="QNX SDP $SDP packages for oss-get ($a, ${range})"
+        notes="Install on target: target/oss-get install <package>. This release holds the $part; the others are in:$others. oss-get reads the INDEX of each (its default OSS_REPO)." ;;
+      tests) title="QNX SDP $SDP port tests ($a)"; notes="On target: apk add qnx-test-<package> (target/apk-setup adds this repository). Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
+      apk) title="QNX SDP $SDP APK repository ($a, ${range})"
+        notes="On target: target/apk-setup, then apk add <package>. This repository holds the $part; the others are in:$others -- /data/oss/etc/apk/repositories names each index. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
     esac
     gh release view "$tag" --repo "$GHREPO" >/dev/null 2>&1 ||
       gh release create "$tag" --repo "$GHREPO" --title "$title" --notes "$notes$NOTICE" --latest=false
+    # Packages of another shard (on the release from before the split), once
+    # their own release has them: uploaded earlier in this run (the last shard
+    # goes first) or already there.
+    if [ -n "$PRUNE" ] && [ -s "$OUT/.$tag.foreign" ]; then
+      while read -r n; do
+        t=$kind-$SDP-$a$(shards of "$n")
+        if [ -e "$OUT/$t/$n" ] || grep -qxF "$n" "$OUT/.$t.remote" 2>/dev/null; then
+          echo "prune $tag/$n (now in $t)"; gh release delete-asset "$tag" "$n" --repo "$GHREPO" -y
+        else
+          echo "   $tag/$n belongs to $t, which does not have it: kept (publish it there first)" >&2
+        fi
+      done < "$OUT/.$tag.foreign"
+    fi
     up=$(cd "$d" && ls | grep -vxE 'INDEX|APKINDEX.tar.gz' | { if [ -n "$CHANGED" ]; then grep -vxFf "$OUT/.$tag.remote" || true; else cat; fi; })
     # Packages first, the index last: a target never sees an index naming a file not yet up.
     [ -z "$up" ] || (cd "$d" && echo "$up" | paced_upload "$tag") || exit 1
     (cd "$d" && ls | grep -xE 'INDEX|APKINDEX.tar.gz' | xargs -r gh release upload "$tag" --repo "$GHREPO" --clobber)
     if [ -n "$PRUNE" ]; then
-      src=$REPO_ROOT/$SDP/$a; [ "${tag%%-*}" = tests ] && src=$TESTS_ROOT/$SDP/$a
+      src=$REPO_ROOT/$SDP/$a; [ "$kind" = tests ] && src=$TESTS_ROOT/$SDP/$a
       gh release view "$tag" --repo "$GHREPO" --json assets -q '.assets[].name' | while read -r n; do
         [ -e "$src/$n" ] || [ -e "$d/$n" ] || { echo "prune $tag/$n"; gh release delete-asset "$tag" "$n" --repo "$GHREPO" -y; }
       done
     fi
     echo "== $tag: $(echo "$up" | grep -c . || true) file(s) uploaded + index"
-  done
 done

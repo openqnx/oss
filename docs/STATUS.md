@@ -14,6 +14,19 @@ current: it is the hand-over, not a history (that is `git log`).
 - Published: `main` on github.com/openqnx/oss; releases `packages-8.0-<arch>`,
   `apk-8.0-<arch>`, `tests-8.0-<arch>` hold the verified packages
   (`scripts/publish-github-release --verified --upload`).
+- **Releases split by package name** (2026-11, in the scripts, not yet
+  published): `packages-8.0-aarch64` needed 1025 assets, GitHub allows 1000
+  per release, and every version is kept. The apk and packages releases now
+  hold the names 0-9, a-l (the old tag names, so existing URLs keep working
+  for that half) and m-z in new `-m-z` releases (`apk-8.0-<arch>-m-z`,
+  `packages-8.0-<arch>-m-z`), each a complete repository with its own signed
+  index; tests stays one release. Rule: `scripts/lib/shards.py`. apk-setup
+  writes three repository lines, oss-get merges several INDEX files.
+  Staged with `--verified`: a-l 613-621, m-z 404-408, tests 957/961 assets
+  per release. Next: publish with `--upload --prune` (creates the -m-z
+  releases, then removes the m-z packages from the old ones); targets set up
+  before need the m-z line (INSTALL.md, docs/packages.md). The tests release
+  is at 961 of 1000: the next to split.
 
 ## In progress / next
 

@@ -7,16 +7,20 @@ dependencies, files, downloads, QNX patches, the on-target test and its log).
     scripts/gen-pkg-site [-r RELEASES] [-o OUT]
 
 RELEASES (default tmp/release-staging) holds one directory per GitHub release
-as scripts/publish-github-release staged it: apk-8.0-<arch>/APKINDEX.tar.gz is
-what the site lists -- the very index on GitHub -- and packages-8.0-<arch>/
-gives each package's file list. Also read: ports/dependencies.json (kind),
+as scripts/publish-github-release staged it: the APKINDEX.tar.gz of every
+apk shard, apk-8.0-<arch> and apk-8.0-<arch>-m-z (scripts/lib/shards.py), is
+what the site lists -- the very indexes on GitHub -- and the packages-8.0-<arch>
+shards give each package's file list. Download links point at the release of
+the package's shard. Also read: ports/dependencies.json (kind),
 ports/<name>/patches/ and LICENSE.id, tests/results/<arch>.tsv and tests/logs/<arch>/.
 OUT (default tmp/pkg-site) is a static site: open OUT/index.html, or serve it
 (GitHub Pages, any web server). Run it after every publish.
 """
-import argparse, html, json, os, tarfile, time
+import argparse, html, json, os, sys, tarfile, time
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(WS, "scripts", "lib"))
+import shards
 REPO = "openqnx/oss"
 SDP = "8.0"
 ARCHES = (("x86_64", "x86_64"), ("aarch64", "aarch64le"))   # apk arch, QNX arch
@@ -68,13 +72,17 @@ for _, qarch in ARCHES:
 pkgs = {}           # (arch, name) -> [entry, ...] newest first
 provides = {}       # (arch, so:x / name) -> name
 for arch, qarch in ARCHES:
-    idx = os.path.join(args.releases, f"apk-{SDP}-{arch}", "APKINDEX.tar.gz")
-    for e in apkindex(idx):
-        e["arch"], e["qarch"] = arch, qarch
-        pkgs.setdefault((arch, e["P"]), []).append(e)
-        provides[(arch, e["P"])] = e["P"]
-        for p in e.get("p", "").split():
-            provides[(arch, p.split("=")[0])] = e["P"]
+    for sfx, _ in shards.SHARDS:
+        idx = os.path.join(args.releases, f"apk-{SDP}-{arch}{sfx}", "APKINDEX.tar.gz")
+        if not os.path.exists(idx):
+            print(f"gen-pkg-site: no {idx} (not staged?)", file=sys.stderr)
+            continue
+        for e in apkindex(idx):
+            e["arch"], e["qarch"] = arch, qarch
+            pkgs.setdefault((arch, e["P"]), []).append(e)
+            provides[(arch, e["P"])] = e["P"]
+            for p in e.get("p", "").split():
+                provides[(arch, p.split("=")[0])] = e["P"]
 for k in pkgs:
     pkgs[k].sort(key=lambda e: vkey(e["V"]), reverse=True)
 
@@ -198,9 +206,10 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
     o = origin(e)
     pdir = f"ports/{o}/patches"
     patches = sorted(f for f in os.listdir(pdir) if f.endswith(".patch")) if os.path.isdir(pdir) else []
-    tgz = os.path.join(args.releases, f"packages-{SDP}-{arch}", f"{name}-{e['V']}.tar.gz")
+    ptag, atag = shards.tag("packages", arch, name, SDP), shards.tag("apk", arch, name, SDP)
+    tgz = os.path.join(args.releases, ptag, f"{name}-{e['V']}.tar.gz")
     files = file_list(tgz)
-    rel_apk, rel_pkg = f"{GH}/releases/download/apk-{SDP}-{arch}", f"{GH}/releases/download/packages-{SDP}-{arch}"
+    rel_apk, rel_pkg = f"{GH}/releases/download/{atag}", f"{GH}/releases/download/{ptag}"
     other = [a for a, _ in ARCHES if a != arch and (a, name) in pkgs]
     b = [f"<h1>{E(name)} <span class=mut>{E(e['V'])}</span></h1><p class=sum><b>{E(purpose(e))}</b><br>{E(e.get('T', ''))}</p>"]
     b.append("<dl>")
@@ -273,8 +282,9 @@ libraries from the SDP:</p><pre><code>mkqnximage --type=qemu \\
   --run=-h
 scp cacert.pem root@$T:/data/oss-setup/</code></pre></section>
 <section><h3>2. Install</h3><p><b>A. apk</b> (dependencies and signatures handled):</p><pre><code>apk add curl qnx-test-curl qnx-port-tests</code></pre>
-<p><b>B. Download the archive</b> from the <code>packages-8.0-&lt;arch&gt;</code> release; its <code>INDEX</code>
-gives dependencies and SHA-256:</p><pre><code>curl -fsSLO $GH/packages-8.0-x86_64/\\
+<p><b>B. Download the archive</b> from the <code>packages-8.0-&lt;arch&gt;</code> release (names 0-9, a-l)
+or <code>packages-8.0-&lt;arch&gt;-m-z</code> (m-z); the <code>INDEX</code> of each
+gives dependencies and SHA-256:</p><pre><code>curl -fsSLO $GH/packages-8.0-x86_64-m-z/\\
   zstd-1.5.6-r0.tar.gz
 gzip -dc zstd-*.tar.gz |
   (cd /data/oss &amp;&amp; tar -xf -)</code></pre></section>

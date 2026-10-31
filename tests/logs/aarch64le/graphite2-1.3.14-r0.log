@@ -1,0 +1,25 @@
+# graphite2 1.3.14-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:54:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphite2 qnx-test-graphite2 qnx-port-tests
+(1/3) Installing graphite2 (1.3.14-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-graphite2 (1.0-r6)
+OK: 10 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphite2
+     == graphite2 ==
+       info graphite2 1.3.14
+       ok   engine version >= 1
+       info no font with a Graphite table on this target
+       ok   missing file is reported as an error
+     PASS graphite2
+PASS test_graphite2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,29 @@
+# libarchive 3.7.7-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libarchive qnx-test-libarchive qnx-port-tests
+(1/4) Installing lz4 (1.10.0-r0)
+(2/4) Installing libarchive (3.7.7-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-libarchive (1.0-r6)
+OK: 168 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libarchive
+     == libarchive ==
+       ok   archive_write_new
+       ok   archive_write_open_memory
+       ok   archive_write_close
+       ok   archive bytes produced
+       ok   archive_read_open_memory
+       ok   both entries read back with correct contents
+       ok   gzip filter detected
+     PASS libarchive
+PASS test_libarchive
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

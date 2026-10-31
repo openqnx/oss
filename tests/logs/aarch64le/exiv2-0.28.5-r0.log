@@ -1,0 +1,32 @@
+# exiv2 0.28.5-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:45:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u exiv2 qnx-test-exiv2 qnx-port-tests
+(1/6) Installing brotli (1.1.0-r0)
+(2/6) Installing expat (2.6.4-r0)
+(3/6) Installing libinih (58-r0)
+(4/6) Installing exiv2 (0.28.5-r0)
+(5/6) Installing qnx-port-tests (1.0-r1)
+(6/6) Installing qnx-test-exiv2 (1.0-r6)
+OK: 15 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_exiv2
+     == exiv2 ==
+       info exiv2 0.28.5
+       ok   ImageFactory::open on an in-memory JPEG
+       ok   mime type is image/jpeg
+       ok   metadata made the file bigger
+       ok   Exif.Image.Make survives
+       ok   a numeric EXIF tag survives
+       ok   IPTC caption survives
+       ok   XMP title survives (expat is wired up)
+     PASS exiv2
+PASS test_exiv2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,65 @@
+# xfce4-terminal 1.1.5-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:31:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-terminal
+( 1/51) Installing expat (2.6.4-r0)
+( 2/51) Installing dbus (1.16.0-r0)
+( 3/51) Installing libxau (1.0.11-r0)
+( 4/51) Installing libxdmcp (1.1.5-r0)
+( 5/51) Installing libxcb (1.17.0-r0)
+( 6/51) Installing libx11 (1.8.10-r0)
+( 7/51) Installing libxext (1.3.6-r0)
+( 8/51) Installing libxi (1.8.2-r0)
+( 9/51) Installing libxtst (1.2.5-r0)
+(10/51) Installing at-spi2-core (2.54.0-r0)
+(11/51) Installing bzip2 (1.0.8-r0)
+(12/51) Installing freetype (2.13.3-r0)
+(13/51) Installing fontconfig (2.15.0-r0)
+(14/51) Installing libxrender (0.9.11-r0)
+(15/51) Installing lzo (2.10-r0)
+(16/51) Installing pixman (0.46.4-r0)
+(17/51) Installing cairo (1.18.2-r0)
+(18/51) Installing fribidi (1.0.16-r0)
+(19/51) Installing graphite2 (1.3.14-r0)
+(20/51) Installing icu (76.1-r0)
+(21/51) Installing harfbuzz (<ip>-r0)
+(22/51) Installing libepoxy (1.5.10-r0)
+(23/51) Installing libxcomposite (0.4.6-r0)
+(24/51) Installing libxfixes (6.0.1-r0)
+(25/51) Installing libxcursor (1.2.2-r0)
+(26/51) Installing libxdamage (1.1.6-r0)
+(27/51) Installing libxinerama (1.1.5-r0)
+(28/51) Installing xz (5.6.3-r0)
+(29/51) Installing libxml2 (2.13.5-r0)
+(30/51) Installing libxkbcommon (1.8.1-r1)
+(31/51) Installing libxrandr (1.5.4-r0)
+(32/51) Installing libxft (2.3.8-r0)
+(33/51) Installing pango (1.54.0-r0)
+(34/51) Installing wayland (1.24.0-r0)
+(35/51) Installing gtk3 (3.24.43-r0)
+(36/51) Installing gtk-layer-shell (0.9.0-r0)
+(37/51) Installing libxfce4util (4.20.0-r0)
+(38/51) Installing xfconf (4.20.0-r0)
+(39/51) Installing libxfce4ui (4.20.0-r0)
+(40/51) Installing gmp (6.3.0-r0)
+(41/51) Installing libidn2 (2.3.7-r0)
+(42/51) Installing libtasn1 (4.19.0-r0)
+(43/51) Installing nettle (3.10.1-r0)
+(44/51) Installing gnutls (3.8.8-r0)
+(45/51) Installing graphene (1.10.8-r0)
+(46/51) Installing libwebp (1.4.0-r0)
+(47/51) Installing libtiff (4.7.0-r0)
+(48/51) Installing gtk4 (4.16.7-r0)
+(49/51) Installing lz4 (1.10.0-r0)
+(50/51) Installing vte (0.78.2-r0)
+(51/51) Installing xfce4-terminal (1.1.5-r0)
+OK: 211 MiB in 80 packages
+
+$ ldd on every program and library apk info -L xfce4-terminal lists
+ok   loads: /data/oss/usr/local/bin/xfce4-terminal
+
+RESULT: INSTALLED

@@ -1,0 +1,34 @@
+# htop 3.5.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:01:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u htop qnx-test-monitors qnx-port-tests
+(1/5) Installing ncurses (6.5-r1)
+(2/5) Installing htop (3.5.0-r0)
+(3/5) Installing qnx-port-tests (1.0-r1)
+(4/5) Installing btop (1.4.6-r0)
+(5/5) Installing qnx-test-monitors (1.0-r4)
+OK: 14 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_monitors
+     == monitors ==
+       info htop drew 7394 bytes
+       ok   htop drew a screen
+       ok   htop: header and meters
+       ok   htop: lists sshd (QNX process table)
+       ok   htop: lists io-sock
+       ok   htop exits on q
+       info btop drew 35171 bytes
+       ok   btop drew a screen
+       ok   btop: cpu, mem, proc boxes
+       ok   btop: lists this target's processes
+       ok   btop exits on q
+     PASS monitors
+PASS test_monitors
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

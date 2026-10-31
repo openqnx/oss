@@ -1,0 +1,15 @@
+# gperf 3.1-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gperf
+(1/1) Installing gperf (3.1-r0)
+OK: 166 MiB in 53 packages
+
+$ ldd on every program and library apk info -L gperf lists
+ok   loads: /data/oss/usr/local/bin/gperf
+
+RESULT: INSTALLED

@@ -1,0 +1,29 @@
+# freetype 2.13.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:48:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u freetype qnx-test-freetype qnx-port-tests
+(1/6) Installing brotli (1.1.0-r0)
+(2/6) Installing bzip2 (1.0.8-r0)
+(3/6) Installing libpng (1.6.44-r0)
+(4/6) Installing freetype (2.13.3-r0)
+(5/6) Installing qnx-port-tests (1.0-r1)
+(6/6) Installing qnx-test-freetype (1.0-r6)
+OK: 11 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_freetype
+     == freetype ==
+       ok   FT_Init_FreeType
+       info FreeType 2.13.3
+       ok   version >= 2
+       info no TTF found on target; checking error path only
+       ok   missing font file is reported as an error
+     PASS freetype
+PASS test_freetype
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

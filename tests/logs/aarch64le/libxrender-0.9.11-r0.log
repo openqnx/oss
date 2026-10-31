@@ -1,0 +1,19 @@
+# libxrender 0.9.11-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:35:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxrender
+(1/5) Installing libxau (1.0.11-r0)
+(2/5) Installing libxdmcp (1.1.5-r0)
+(3/5) Installing libxcb (1.17.0-r0)
+(4/5) Installing libx11 (1.8.10-r0)
+(5/5) Installing libxrender (0.9.11-r0)
+OK: 59 MiB in 34 packages
+
+$ ldd on every program and library apk info -L libxrender lists
+ok   loads: /data/oss/usr/local/lib/libXrender.so.1
+
+RESULT: INSTALLED

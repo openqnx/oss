@@ -1,0 +1,72 @@
+# xfce4-panel 4.20.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:31:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-panel
+( 1/43) Installing expat (2.6.4-r0)
+( 2/43) Installing dbus (1.16.0-r0)
+( 3/43) Installing libxau (1.0.11-r0)
+( 4/43) Installing libxdmcp (1.1.5-r0)
+( 5/43) Installing libxcb (1.17.0-r0)
+( 6/43) Installing libx11 (1.8.10-r0)
+( 7/43) Installing libxext (1.3.6-r0)
+( 8/43) Installing libxi (1.8.2-r0)
+( 9/43) Installing libxtst (1.2.5-r0)
+(10/43) Installing at-spi2-core (2.54.0-r0)
+(11/43) Installing bzip2 (1.0.8-r0)
+(12/43) Installing freetype (2.13.3-r0)
+(13/43) Installing fontconfig (2.15.0-r0)
+(14/43) Installing libxrender (0.9.11-r0)
+(15/43) Installing lzo (2.10-r0)
+(16/43) Installing pixman (0.46.4-r0)
+(17/43) Installing cairo (1.18.2-r0)
+(18/43) Installing fribidi (1.0.16-r0)
+(19/43) Installing graphite2 (1.3.14-r0)
+(20/43) Installing icu (76.1-r0)
+(21/43) Installing harfbuzz (<ip>-r0)
+(22/43) Installing libepoxy (1.5.10-r0)
+(23/43) Installing libxcomposite (0.4.6-r0)
+(24/43) Installing libxfixes (6.0.1-r0)
+(25/43) Installing libxcursor (1.2.2-r0)
+(26/43) Installing libxdamage (1.1.6-r0)
+(27/43) Installing libxinerama (1.1.5-r0)
+(28/43) Installing xz (5.6.3-r0)
+(29/43) Installing libxml2 (2.13.5-r0)
+(30/43) Installing libxkbcommon (1.8.1-r1)
+(31/43) Installing libxrandr (1.5.4-r0)
+(32/43) Installing libxft (2.3.8-r0)
+(33/43) Installing pango (1.54.0-r0)
+(34/43) Installing wayland (1.24.0-r0)
+(35/43) Installing gtk3 (3.24.43-r0)
+(36/43) Installing libxfce4util (4.20.0-r0)
+(37/43) Installing xfconf (4.20.0-r0)
+(38/43) Installing libxfce4ui (4.20.0-r0)
+(39/43) Installing exo (4.20.0-r0)
+(40/43) Installing garcon (4.20.0-r0)
+(41/43) Installing gtk-layer-shell (0.9.0-r0)
+(42/43) Installing libxfce4windowing (4.20.0-r0)
+(43/43) Installing xfce4-panel (4.20.0-r0)
+OK: 168 MiB in 72 packages
+
+$ ldd on every program and library apk info -L xfce4-panel lists
+ok   loads: /data/oss/usr/local/bin/xfce4-panel
+ok   loads: /data/oss/usr/local/lib/libxfce4panel-2.0.so.4
+ok   loads: /data/oss/usr/local/lib/libxfce4panel-2.0.so.4.0.0
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/migrate
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/wrapper-2.0
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libactions.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libapplicationsmenu.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libclock.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libdirectorymenu.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/liblauncher.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libpager.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libseparator.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libshowdesktop.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libsystray.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libtasklist.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libwindowmenu.so
+
+RESULT: INSTALLED

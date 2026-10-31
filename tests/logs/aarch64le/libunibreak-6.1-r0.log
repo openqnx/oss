@@ -1,0 +1,28 @@
+# libunibreak 6.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libunibreak qnx-test-libunibreak qnx-port-tests
+(1/3) Installing libunibreak (6.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libunibreak (1.0-r6)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libunibreak
+     == libunibreak ==
+       ok   line breaks are allowed at the spaces
+       ok   text without a terminator ends indeterminate
+       ok   no mandatory break inside the line
+       ok   a newline is a mandatory break
+       ok   no break before U+00A0
+       info 7 word break(s) in "QNX SDP 8.0 ports"
+       ok   word boundaries were found
+     PASS libunibreak
+PASS test_libunibreak
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

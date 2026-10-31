@@ -1,0 +1,16 @@
+# aws-c-compression 0.3.2-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-compression
+(1/2) Installing aws-c-common (0.12.6-r0)
+(2/2) Installing aws-c-compression (0.3.2-r0)
+OK: 166 MiB in 54 packages
+
+$ ldd on every program and library apk info -L aws-c-compression lists
+ok   loads: /data/oss/usr/local/lib/libaws-c-compression.so.1.0.0
+
+RESULT: INSTALLED

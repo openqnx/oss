@@ -1,0 +1,19 @@
+# onnx 1.17.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:27:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u onnx
+(1/3) Installing abseil (20240722.0-r0)
+(2/3) Installing protobuf (29.3-r0)
+(3/3) Installing onnx (1.17.0-r0)
+OK: 185 MiB in 55 packages
+
+$ ldd on every program and library apk info -L onnx lists
+ok   loads: /data/oss/usr/local/lib/libonnx.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libonnx_proto.so
+
+RESULT: INSTALLED

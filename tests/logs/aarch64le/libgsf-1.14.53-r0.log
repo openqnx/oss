@@ -1,0 +1,21 @@
+# libgsf 1.14.53-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:31:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libgsf
+(1/4) Installing bzip2 (1.0.8-r0)
+(2/4) Installing xz (5.6.3-r0)
+(3/4) Installing libxml2 (2.13.5-r0)
+(4/4) Installing libgsf (1.14.53-r0)
+OK: 58 MiB in 33 packages
+
+$ ldd on every program and library apk info -L libgsf lists
+ok   loads: /data/oss/usr/local/bin/gsf
+ok   loads: /data/oss/usr/local/bin/gsf-office-thumbnailer
+ok   loads: /data/oss/usr/local/bin/gsf-vba-dump
+ok   loads: /data/oss/usr/local/lib/libgsf-1.so.114
+
+RESULT: INSTALLED

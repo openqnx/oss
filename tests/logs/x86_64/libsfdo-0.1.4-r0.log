@@ -1,0 +1,37 @@
+# libsfdo 0.1.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:25:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libsfdo qnx-test-libsfdo qnx-port-tests
+(1/3) Installing libsfdo (0.1.4-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libsfdo (1.0-r5)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libsfdo
+     == libsfdo ==
+       ok   temporary data directory
+       ok   sfdo_basedir_ctx_create
+       ok   sfdo_desktop_ctx_create
+       ok   sfdo_desktop_db_load_from
+       info 2 entries
+       info id qnx-demo
+       info id qnx-hidden
+       ok   two entries found
+       ok   entry qnx-demo by id
+       info name: QNX Vorfuehrung
+       ok   localized name (de)
+       ok   type Application
+       ok   Exec parsed
+       ok   Icon
+       ok   two categories
+       ok   NoDisplay entry flagged
+     PASS libsfdo
+PASS test_libsfdo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

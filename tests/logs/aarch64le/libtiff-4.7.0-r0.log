@@ -1,0 +1,35 @@
+# libtiff 4.7.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libtiff qnx-test-libtiff qnx-port-tests
+(1/5) Installing libwebp (1.4.0-r0)
+(2/5) Installing xz (5.6.3-r0)
+(3/5) Installing libtiff (4.7.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-libtiff (1.0-r6)
+OK: 57 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libtiff
+     == libtiff ==
+       info LIBTIFF, Version 4.7.0
+     Copyright (c) 1988-1996 Sam Leffler
+     Copyright (c) 1991-1996 Silicon Graphics, Inc.  ok   create temp file
+       ok   TIFFOpen for write
+       ok   TIFFWriteScanline for every row
+     TIFFWriteDirectorySec: Warning, Creating TIFF with legacy Deflate codec identifier, COMPRESSION_ADOBE_DEFLATE is more widely supported.
+       ok   TIFFOpen for read
+       ok   dimensions match
+       ok   3 samples of 8 bits
+       ok   deflate compression survives (zlib is wired up)
+       ok   TIFFReadScanline for every row
+       ok   pixels survive the round trip
+     PASS libtiff
+PASS test_libtiff
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

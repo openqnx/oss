@@ -1,0 +1,20 @@
+# at-spi2-core 2.54.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u at-spi2-core
+OK: 166 MiB in 52 packages
+
+$ ldd on every program and library apk info -L at-spi2-core lists
+ok   loads: /data/oss/usr/local/lib/libatk-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libatk-1.0.so.0.25409.1
+ok   loads: /data/oss/usr/local/lib/libatk-bridge-2.0.so.0
+ok   loads: /data/oss/usr/local/lib/libatk-bridge-2.0.so.0.0.0
+ok   loads: /data/oss/usr/local/lib/libatspi.so.0
+ok   loads: /data/oss/usr/local/lib/libatspi.so.0.0.1
+ok   loads: /data/oss/usr/local/lib/gtk-2.0/modules/libatk-bridge.so
+
+RESULT: INSTALLED

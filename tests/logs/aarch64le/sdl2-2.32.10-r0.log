@@ -1,0 +1,56 @@
+# sdl2 2.32.10-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:23:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2 qnx-test-sdl2 qnx-port-tests
+( 1/16) Installing qnx-port-tests (1.0-r1)
+( 2/16) Installing sdl2 (2.32.10-r0)
+( 3/16) Installing libxau (1.0.11-r0)
+( 4/16) Installing libxdmcp (1.1.5-r0)
+( 5/16) Installing libxcb (1.17.0-r0)
+( 6/16) Installing libx11 (1.8.10-r0)
+( 7/16) Installing libxfixes (6.0.1-r0)
+( 8/16) Installing libxrender (0.9.11-r0)
+( 9/16) Installing libxcursor (1.2.2-r0)
+(10/16) Installing libxext (1.3.6-r0)
+(11/16) Installing libxi (1.8.2-r0)
+(12/16) Installing libxrandr (1.5.4-r0)
+(13/16) Installing libxscrnsaver (1.2.4-r0)
+(14/16) Installing libxtst (1.2.5-r0)
+(15/16) Installing sdl3 (3.4.18-r0)
+(16/16) Installing qnx-test-sdl2 (1.0-r6)
+OK: 64 MiB in 45 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2
+     == sdl2 ==
+       info SDL 2.32.10
+       ok   SDL_Init(TIMER|EVENTS)
+       ok   SDL_AddTimer
+       ok   timer callback fired
+       ok   performance counter advances
+       ok   SDL_GetTicks64
+       ok   SDL_PushEvent
+       ok   SDL_PollEvent
+       ok   the event round-tripped
+       ok   SDL_RWFromMem
+       ok   SDL_RWwrite
+       ok   SDL_RWseek
+       ok   SDL_RWread
+       ok   SDL_Swap32
+       ok   SDL_GetCPUCount
+       info 4 cpu(s), 0 MiB RAM, 128-byte cache line
+       info 2 video driver(s): offscreen dummy
+       ok   at least one video driver is compiled in
+       info 3 audio driver(s): alsa disk dummy
+       ok   at least one audio driver is compiled in
+       ok   the ALSA backend is built (QNX 8 ships alsa-lib, not QSA)
+       info video initialised with "offscreen"
+     PASS sdl2
+PASS test_sdl2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

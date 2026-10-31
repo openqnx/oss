@@ -1,0 +1,42 @@
+# strongswan 6.0.6-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:24:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u strongswan
+(1/1) Installing strongswan (6.0.6-r0)
+OK: 60 MiB in 30 packages
+
+$ ldd on every program and library apk info -L strongswan lists
+ok   loads: /data/oss/usr/local/bin/exchange_tests
+ok   loads: /data/oss/usr/local/bin/libcharon_tests
+ok   loads: /data/oss/usr/local/bin/libstrongswan_tests
+ok   loads: /data/oss/usr/local/bin/vici_tests
+ok   loads: /data/oss/usr/local/lib/ipsec/libcharon.so
+ok   loads: /data/oss/usr/local/lib/ipsec/libcharon.so.0
+ok   loads: /data/oss/usr/local/lib/ipsec/libstrongswan.so
+ok   loads: /data/oss/usr/local/lib/ipsec/libstrongswan.so.0
+ok   loads: /data/oss/usr/local/lib/ipsec/libvici.so
+ok   loads: /data/oss/usr/local/lib/ipsec/libvici.so.0
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-counters.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-hmac.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-kdf.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-kernel-pfkey.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-kernel-pfroute.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-nonce.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-openssl.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-pem.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-pkcs1.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-pkcs8.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-pubkey.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-random.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-sha2.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-socket-default.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-updown.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-vici.so
+ok   loads: /data/oss/usr/local/lib/ipsec/plugins/libstrongswan-x509.so
+ok   loads: /data/oss/usr/local/sbin/swanctl
+
+RESULT: INSTALLED

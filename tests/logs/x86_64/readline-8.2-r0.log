@@ -1,0 +1,35 @@
+# readline 8.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:40:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u readline qnx-test-readline qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing readline (8.2-r0)
+(3/3) Installing qnx-test-readline (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_readline
+     == readline ==
+       info readline 8.2
+       ok   rl_readline_version
+       ok   history_list
+       ok   three entries in the history
+       ok   first entry
+       ok   history_search_prefix found a match
+       ok   remove_history
+       ok   history_expand("!!")
+       info "!!" -> run tests
+       ok   rl_line_buffer is allocated
+       ok   rl_insert_text
+       ok   rl_point tracks the insertion
+       ok   rl_delete_text cleared the buffer
+       ok   clear_history
+     PASS readline
+PASS test_readline
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,16 @@
+# sysbench 1.0.20_git20250309-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:25:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sysbench
+(1/2) Installing luajit (2.1_git-r0)
+(2/2) Installing sysbench (1.0.20_git20250309-r0)
+OK: 57 MiB in 31 packages
+
+$ ldd on every program and library apk info -L sysbench lists
+ok   loads: /data/oss/usr/local/bin/sysbench
+
+RESULT: INSTALLED

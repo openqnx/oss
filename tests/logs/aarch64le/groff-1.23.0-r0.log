@@ -1,0 +1,37 @@
+# groff 1.23.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:29:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u groff
+(1/1) Installing groff (1.23.0-r0)
+OK: 68 MiB in 30 packages
+
+$ ldd on every program and library apk info -L groff lists
+ok   loads: /data/oss/usr/local/bin/addftinfo
+ok   loads: /data/oss/usr/local/bin/eqn
+ok   loads: /data/oss/usr/local/bin/grn
+ok   loads: /data/oss/usr/local/bin/grodvi
+ok   loads: /data/oss/usr/local/bin/groff
+ok   loads: /data/oss/usr/local/bin/grolbp
+ok   loads: /data/oss/usr/local/bin/grolj4
+ok   loads: /data/oss/usr/local/bin/grops
+ok   loads: /data/oss/usr/local/bin/grotty
+ok   loads: /data/oss/usr/local/bin/hpftodit
+ok   loads: /data/oss/usr/local/bin/indxbib
+ok   loads: /data/oss/usr/local/bin/lkbib
+ok   loads: /data/oss/usr/local/bin/lookbib
+ok   loads: /data/oss/usr/local/bin/pfbtops
+ok   loads: /data/oss/usr/local/bin/pic
+ok   loads: /data/oss/usr/local/bin/post-grohtml
+ok   loads: /data/oss/usr/local/bin/pre-grohtml
+ok   loads: /data/oss/usr/local/bin/preconv
+ok   loads: /data/oss/usr/local/bin/refer
+ok   loads: /data/oss/usr/local/bin/soelim
+ok   loads: /data/oss/usr/local/bin/tbl
+ok   loads: /data/oss/usr/local/bin/tfmtodit
+ok   loads: /data/oss/usr/local/bin/troff
+
+RESULT: INSTALLED

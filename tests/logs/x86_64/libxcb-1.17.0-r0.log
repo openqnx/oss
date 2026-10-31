@@ -1,0 +1,38 @@
+# libxcb 1.17.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:25:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxcb
+OK: 166 MiB in 52 packages
+
+$ ldd on every program and library apk info -L libxcb lists
+ok   loads: /data/oss/usr/local/lib/libxcb-composite.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-damage.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-dbe.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-dpms.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-dri2.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-dri3.so.1
+ok   loads: /data/oss/usr/local/lib/libxcb-glx.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-present.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-randr.so.1
+ok   loads: /data/oss/usr/local/lib/libxcb-record.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-render.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-res.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-screensaver.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-shape.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-shm.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-sync.so.1
+ok   loads: /data/oss/usr/local/lib/libxcb-xf86dri.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-xfixes.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-xinerama.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-xinput.so.1
+ok   loads: /data/oss/usr/local/lib/libxcb-xkb.so.1
+ok   loads: /data/oss/usr/local/lib/libxcb-xtest.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-xv.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb-xvmc.so.0
+ok   loads: /data/oss/usr/local/lib/libxcb.so.2
+
+RESULT: INSTALLED

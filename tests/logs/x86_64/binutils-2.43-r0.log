@@ -1,0 +1,40 @@
+# binutils 2.43-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u binutils
+(1/1) Installing binutils (2.43-r0)
+OK: 219 MiB in 53 packages
+
+$ ldd on every program and library apk info -L binutils lists
+ok   loads: /data/oss/usr/local/bin/addr2line
+ok   loads: /data/oss/usr/local/bin/ar
+ok   loads: /data/oss/usr/local/bin/as
+ok   loads: /data/oss/usr/local/bin/c++filt
+ok   loads: /data/oss/usr/local/bin/elfedit
+ok   loads: /data/oss/usr/local/bin/gprof
+ok   loads: /data/oss/usr/local/bin/ld
+ok   loads: /data/oss/usr/local/bin/ld.bfd
+ok   loads: /data/oss/usr/local/bin/nm
+ok   loads: /data/oss/usr/local/bin/objcopy
+ok   loads: /data/oss/usr/local/bin/objdump
+ok   loads: /data/oss/usr/local/bin/ranlib
+ok   loads: /data/oss/usr/local/bin/readelf
+ok   loads: /data/oss/usr/local/bin/size
+ok   loads: /data/oss/usr/local/bin/strings
+ok   loads: /data/oss/usr/local/bin/strip
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/ar
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/as
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/ld
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/ld.bfd
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/nm
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/objcopy
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/objdump
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/ranlib
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/readelf
+ok   loads: /data/oss/usr/local/x86_64-pc-nto-qnx8.0.0/bin/strip
+
+RESULT: INSTALLED

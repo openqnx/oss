@@ -1,0 +1,57 @@
+# gst-plugins-good 1.24.10-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gst-plugins-good qnx-test-gst-plugins-good qnx-port-tests
+( 1/29) Installing libogg (1.3.5-r0)
+( 2/29) Installing flac (1.4.3-r0)
+( 3/29) Installing gstreamer (1.24.10-r0)
+( 4/29) Installing libtheora (1.1.1-r0)
+( 5/29) Installing libvorbis (1.3.7-r0)
+( 6/29) Installing opus (1.5.2-r0)
+( 7/29) Installing gst-plugins-base (1.24.10-r0)
+( 8/29) Installing lame (3.100-r0)
+( 9/29) Installing libidn2 (2.3.7-r0)
+(10/29) Installing libpsl (0.21.5-r0)
+(11/29) Installing nghttp2 (1.64.0-r0)
+(12/29) Installing sqlite (3.47.2-r0)
+(13/29) Installing libsoup (3.6.1-r0)
+(14/29) Installing libvpx (1.15.0-r0)
+(15/29) Installing gst-plugins-good (1.24.10-r0)
+(16/29) Installing qnx-port-tests (1.0-r1)
+(17/29) Installing dav1d (1.5.0-r0)
+(18/29) Installing openh264 (2.5.0-r0)
+(19/29) Installing x264 (0_git-r0)
+(20/29) Installing x265 (3.6-r0)
+(21/29) Installing ffmpeg (7.1.1-r0)
+(22/29) Installing gst-libav (1.24.10-r0)
+(23/29) Installing aom (3.12.1-r0)
+(24/29) Installing fdk-aac (2.0.3-r0)
+(25/29) Installing libwebp (1.4.0-r0)
+(26/29) Installing svt-av1 (2.3.0-r0)
+(27/29) Installing gst-plugins-bad (1.24.10-r0)
+(28/29) Installing gst-plugins-ugly (1.24.10-r0)
+(29/29) Installing qnx-test-gst-plugins-good (1.0-r6)
+OK: 252 MiB in 81 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gst_plugins_good
+     == gst-plugins-good ==
+       ok   level (good: audio level meter)
+       ok   audiopanorama (good: audiofx)
+       ok   videoflip (good: videofilter)
+       ok   videocrop (good: videocrop)
+       ok   wavparse (good: wavparse)
+       ok   mp4 muxer (good: isomp4)
+       ok   build pipeline through good elements
+       ok   pipeline reaches PLAYING
+       info pulled 10 buffer(s)
+       ok   audio flows through audiopanorama and level
+     PASS gst-plugins-good
+PASS test_gst_plugins_good
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

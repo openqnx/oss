@@ -1,0 +1,53 @@
+# numpy 2.3.4-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u numpy
+(1/5) Installing openblas (0.3.28-r0)
+(2/5) Installing gdbm (1.24-r0)
+(3/5) Installing sqlite (3.47.2-r0)
+(4/5) Installing python3 (3.14.0-r0)
+(5/5) Installing numpy (2.3.4-r0)
+OK: 314 MiB in 57 packages
+
+$ ldd on every program and library apk info -L numpy lists
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_multiarray_tests.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_multiarray_umath.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_operand_flag_tests.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_rational_tests.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_simd.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_struct_ufunc_tests.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/_core/_umath_tests.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/fft/_pocketfft_umath.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/linalg/_umath_linalg.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/linalg/lapack_lite.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_bounded_integers.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_common.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_generator.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_mt19937.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_pcg64.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_philox.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/_sfc64.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/bit_generator.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/numpy/random/mtrand.cpython-314.so
+
+RESULT: INSTALLED

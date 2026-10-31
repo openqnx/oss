@@ -1,0 +1,29 @@
+# man-db 2.13.1-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u man-db
+(1/3) Installing gdbm (1.24-r0)
+(2/3) Installing libpipeline (1.5.8-r0)
+(3/3) Installing man-db (2.13.1-r0)
+OK: 168 MiB in 55 packages
+
+$ ldd on every program and library apk info -L man-db lists
+ok   loads: /data/oss/usr/local/bin/apropos
+ok   loads: /data/oss/usr/local/bin/catman
+ok   loads: /data/oss/usr/local/bin/lexgrog
+ok   loads: /data/oss/usr/local/bin/man
+ok   loads: /data/oss/usr/local/bin/man-recode
+ok   loads: /data/oss/usr/local/bin/mandb
+ok   loads: /data/oss/usr/local/bin/manpath
+ok   loads: /data/oss/usr/local/bin/whatis
+ok   loads: /data/oss/usr/local/lib/man-db/libman-2.13.1.so
+ok   loads: /data/oss/usr/local/lib/man-db/libman.so
+ok   loads: /data/oss/usr/local/lib/man-db/libmandb-2.13.1.so
+ok   loads: /data/oss/usr/local/lib/man-db/libmandb.so
+ok   loads: /data/oss/usr/local/sbin/accessdb
+
+RESULT: INSTALLED

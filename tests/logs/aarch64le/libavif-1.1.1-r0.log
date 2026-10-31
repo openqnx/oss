@@ -1,0 +1,38 @@
+# libavif 1.1.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:04:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libavif qnx-test-libavif qnx-port-tests
+(1/5) Installing aom (3.12.1-r0)
+(2/5) Installing dav1d (1.5.0-r0)
+(3/5) Installing libavif (1.1.1-r0)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-libavif (1.0-r6)
+OK: 17 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libavif
+     == libavif ==
+       info libavif 1.1.1
+       info codecs: dav1d [dec]:1.5.0-0-g32cf02a, aom [enc/dec]:3.12.1
+       ok   an AV1 encoder is available
+       ok   an AV1 decoder is available
+       ok   avifImageCreate
+       ok   avifImageRGBToYUV
+       ok   avifEncoderCreate
+       ok   avifEncoderWrite
+       ok   AVIF bytes produced
+       ok   avifDecoderSetIOMemory
+       ok   avifDecoderParse
+       ok   decoded dimensions match
+       ok   avifDecoderNextImage
+       ok   avifImageYUVToRGB
+       ok   decoded pixels are close to the original
+     PASS libavif
+PASS test_libavif
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,22 @@
+# sdl2-ttf 2.24.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:23:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2-ttf
+(1/7) Installing bzip2 (1.0.8-r0)
+(2/7) Installing freetype (2.13.3-r0)
+(3/7) Installing graphite2 (1.3.14-r0)
+(4/7) Installing icu (76.1-r0)
+(5/7) Installing harfbuzz (<ip>-r0)
+(6/7) Installing sdl2 (2.32.10-r0)
+(7/7) Installing sdl2-ttf (2.24.0-r0)
+OK: 99 MiB in 36 packages
+
+$ ldd on every program and library apk info -L sdl2-ttf lists
+ok   loads: /data/oss/usr/local/lib/libSDL2_ttf-2.0.so.0
+ok   loads: /data/oss/usr/local/lib/libSDL2_ttf-2.0.so.0.2400.0
+
+RESULT: INSTALLED

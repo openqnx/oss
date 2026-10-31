@@ -108,15 +108,15 @@ QNX_SDP_ROOT=$HOME/qnx800 docker/run.sh ./scripts/qnxbuild mosquitto
 
 → [docs/build-environment.md](docs/build-environment.md)
 
-### All of it at once, on a vanilla QEMU image
+### The test targets, step by step
 
-```bash
-vanilla-vm/run-all both               # x86_64 + aarch64 images, every component installed with apk and tested
-vanilla-vm/run-all x86_64 --from github   # the same from the GitHub releases
-vanilla-vm/desktop x86_64             # an image with graphics: labwc + Xfce panel, every application in its menu
-```
-
-→ [vanilla-vm/README.md](vanilla-vm/README.md)
+Every result here was recorded on two stock QNX SDP 8.0 QEMU images
+(x86_64, aarch64le) with nothing from this repository in them.
+[docs/qemu-test-vms.md](docs/qemu-test-vms.md) shows how to build the same
+VMs with your own SDP 8.0 license, set up apk on them and run each package's
+test -- one command at a time. Each package's recorded run (install, test
+command, full output, verdict) is in `tests/logs/<arch>/<name>-<version>.log`.
+([vanilla-vm/](vanilla-vm/README.md) automates the same steps.)
 
 ## Standalone vs dependent
 

@@ -1,0 +1,16 @@
+# libtool 2.5.4-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libtool
+(1/1) Installing libtool (2.5.4-r0)
+OK: 55 MiB in 30 packages
+
+$ ldd on every program and library apk info -L libtool lists
+ok   loads: /data/oss/usr/local/lib/libltdl.so.7
+ok   loads: /data/oss/usr/local/lib/libltdl.so.7.3.3
+
+RESULT: INSTALLED

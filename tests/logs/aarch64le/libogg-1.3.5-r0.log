@@ -1,0 +1,17 @@
+# libogg 1.3.5-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:32:06Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libogg
+(1/1) Installing libogg (1.3.5-r0)
+OK: 55 MiB in 30 packages
+
+$ ldd on every program and library apk info -L libogg lists
+ok   loads: /data/oss/usr/local/lib/libogg.so.0
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libogg.so.0.8.5
+
+RESULT: INSTALLED

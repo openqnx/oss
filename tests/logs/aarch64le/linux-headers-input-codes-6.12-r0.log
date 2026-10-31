@@ -1,0 +1,15 @@
+# linux-headers-input-codes 6.12-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:36:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u linux-headers-input-codes-dev
+(1/1) Installing linux-headers-input-codes-dev (6.12-r0)
+OK: 55 MiB in 30 packages
+
+$ ldd on every program and library apk info -L linux-headers-input-codes-dev lists
+
+
+RESULT: INSTALLED

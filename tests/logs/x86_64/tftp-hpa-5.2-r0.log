@@ -1,0 +1,17 @@
+# tftp-hpa 5.2-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tftp-hpa
+(1/2) Installing readline (8.2-r0)
+(2/2) Installing tftp-hpa (5.2-r0)
+OK: 166 MiB in 54 packages
+
+$ ldd on every program and library apk info -L tftp-hpa lists
+ok   loads: /data/oss/usr/local/bin/tftp
+ok   loads: /data/oss/usr/local/sbin/in.tftpd
+
+RESULT: INSTALLED

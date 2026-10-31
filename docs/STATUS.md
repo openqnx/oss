@@ -64,7 +64,8 @@ current: it is the hand-over, not a history (that is `git log`).
 5. **Compiled-in build-host paths**: some binaries carry the staging path --
    mostly harmless RPATH entries and assert file names, but a few are data
    paths (epiphany's iso-codes and locale directory; check's checkmk
-   shebang). libxkbcommon 1.8.1 had one (fixed with -Dxkb-config-root).
+   shebang; lely-core's diagnostics print its source path, visible in
+   its test log). libxkbcommon 1.8.1 had one (fixed with -Dxkb-config-root).
    A check for it belongs in `check-all`.
 6. **`$ORIGIN` is not expanded by QNX's loader** (porting-hazards 98):
    tensorflow-lite (94 files) and pytorch (4) rely on it and work only with

@@ -1,0 +1,17 @@
+# bc 1.08.2-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:22:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bc
+(1/2) Installing readline (8.2-r0)
+(2/2) Installing bc (1.08.2-r0)
+OK: 56 MiB in 31 packages
+
+$ ldd on every program and library apk info -L bc lists
+ok   loads: /data/oss/usr/local/bin/bc
+ok   loads: /data/oss/usr/local/bin/dc
+
+RESULT: INSTALLED

@@ -1,0 +1,29 @@
+# fastdds 2.14.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:46:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fastdds qnx-test-fastdds qnx-port-tests
+(1/6) Installing fastcdr (2.2.6-r0)
+(2/6) Installing foonathan_memory (0.7.3-r0)
+(3/6) Installing tinyxml2 (<ip>-r0)
+(4/6) Installing fastdds (2.14.4-r0)
+(5/6) Installing qnx-port-tests (1.0-r1)
+(6/6) Installing qnx-test-fastdds (1.0-r6)
+OK: 23 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fastdds
+     == fastdds ==
+       ok   get participant factory
+       ok   create participant on domain 0
+       ok   domain id readback
+       ok   create publisher
+       ok   create subscriber
+     PASS fastdds
+PASS test_fastdds
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

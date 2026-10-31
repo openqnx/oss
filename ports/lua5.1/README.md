@@ -178,10 +178,12 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
-| Arch | Target | Installed from | Version | Result | Date |
-|---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lua5.1 5.1.5-r0 | ✅ PASS | 2026-10-30 |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lua5.1 5.1.5-r0 | ✅ PASS | 2026-10-30 |
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lua5.1 5.1.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/lua5.1-5.1.5-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lua5.1 5.1.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/lua5.1-5.1.5-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

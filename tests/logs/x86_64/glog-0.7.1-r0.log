@@ -1,0 +1,27 @@
+# glog 0.7.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u glog qnx-test-glog qnx-port-tests
+(1/4) Installing gflags (2.2.2-r1)
+(2/4) Installing glog (0.7.1-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-glog (1.0-r6)
+OK: 166 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glog
+     == glog ==
+     I20261031 04:24:09.330266     1 test_glog.cpp:7] glog reached stderr from QNX
+     W20261031 04:24:09.330368     1 test_glog.cpp:8] warning path
+       ok   InitGoogleLogging + LOG() did not abort
+     I20261031 04:24:09.330445     1 test_glog.cpp:10] conditional log
+       ok   LOG_IF evaluated its condition once
+     PASS glog
+PASS test_glog
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

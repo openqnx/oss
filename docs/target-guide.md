@@ -23,17 +23,19 @@ Every component reaches a target one of two ways, and is tested there the same w
 Any QNX 8.0 image with a network, `sshd` and a writable `/data` will do -- the
 packages are installed under `/data/oss` and need nothing else from the image.
 
-All of this in one command -- image, apk, every component installed and
-tested, or the desktop with graphics: [`vanilla-vm/`](../vanilla-vm/README.md)
-(`vanilla-vm/run-all both`, `vanilla-vm/desktop x86_64`).
+Step by step, with every option explained (QNX SDP 8.0 installation,
+host network, the exact `mkqnximage` options of the recorded results, what a
+stock image lacks): [docs/qemu-test-vms.md](qemu-test-vms.md). In short:
 
 ### x86_64 -- QEMU (vanilla mkqnximage image)
 
 ```bash
 source ~/qnx800/qnxsdp-env.sh
-mkdir -p ~/vm/qnx-x86_64 && cd ~/vm/qnx-x86_64
-mkqnximage --type=qemu --arch=x86_64 --ssh-ident=$HOME/.ssh/id_ed25519.pub \
-           --data-size=3000 --data-inodes=60000 --run=-h      # 3 GB /data for the packages
+mkdir -p ~/vm/oss-vanilla-x86_64 && cd ~/vm/oss-vanilla-x86_64
+mkqnximage --type=qemu --arch=x86_64 --hostname=vanilla-x86 \
+           --ssh-ident=$HOME/.ssh/qnx-target.pub \
+           --data-size=4000 --data-inodes=80000 --ram=2G --cpu=4 \
+           --run=-h                                           # the recorded results' options
 mkqnximage --getip                                             # the target's address
 ```
 
@@ -146,24 +148,24 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`bzip2`](../ports/bzip2/) | 1.0.8 | `apk add bzip2` | `qnx-test-bzip2` | x86✅ᵛ a64✅ᵛ |
 | [`c-ares`](../ports/c-ares/) | 1.34.3 | `apk add c-ares` | `qnx-test-c-ares` | x86✅ᵛ a64✅ᵛ |
 | [`ca-certificates`](../ports/ca-certificates/) | 20261020 | `apk add ca-certificates` | – | x86✅ᵛ a64✅ᵛ |
-| [`candb`](../ports/candb/) | 0.1-git-20210625 | `apk add candb` | – | x86✅ᵛ a64✅ᵛ |
+| [`candb`](../ports/candb/) | 0.1-git-20210625 | `apk add candb` | – | – |
 | [`capicxx-core-runtime`](../ports/capicxx-core-runtime/) | 3.2.4 | `apk add capicxx-core-runtime` | – | x86✅ᵛ a64✅ᵛ |
 | [`capstone`](../ports/capstone/) | 5.0.9 | `apk add capstone` | `qnx-test-capstone` | x86✅ᵛ a64✅ᵛ |
 | [`catch2`](../ports/catch2/) | 3.7.1 | `apk add catch2` | `qnx-test-catch2` | x86✅ᵛ a64✅ᵛ |
 | [`cereal`](../ports/cereal/) | 1.3.2 | `apk add cereal` | `qnx-test-cereal` | x86✅ᵛ a64✅ᵛ |
 | [`check`](../ports/check/) | 0.15.2 | `apk add check` | – | x86✅ᵛ a64✅ᵛ |
-| [`chrony`](../ports/chrony/) | 4.8-git-20260226 | `apk add chrony` | – | x86✅ᵛ a64✅ᵛ |
+| [`chrony`](../ports/chrony/) | 4.8-git-20260226 | `apk add chrony` | – | – |
 | [`cjson`](../ports/cjson/) | 1.7.18 | `apk add cjson` | `qnx-test-cjson` | x86✅ᵛ a64✅ᵛ |
 | [`clapack`](../ports/clapack/) | 3.2.1 | `apk add clapack` | – | x86✅ᵛ a64✅ᵛ |
 | [`cli11`](../ports/cli11/) | 2.4.2 | `apk add cli11` | `qnx-test-cli11` | x86✅ᵛ a64✅ᵛ |
 | [`computelibrary`](../ports/computelibrary/) | 53.0.0 | `apk add computelibrary` | – | a64✅ᵛ |
 | [`console_bridge`](../ports/console_bridge/) | 1.0.2 | `apk add console_bridge` | `qnx-test-console-bridge` | x86✅ᵛ a64✅ᵛ |
-| [`cpuinfo`](../ports/cpuinfo/) | 0-git-20240417 | `apk add cpuinfo` | – | x86✅ᵛ a64✅ᵛ |
+| [`cpuinfo`](../ports/cpuinfo/) | 0-git-20240417 | `apk add cpuinfo` | – | – |
 | [`csmith`](../ports/csmith/) | 2.3.0 | `apk add csmith` | – | x86✅ᵛ a64✅ᵛ |
-| [`cunit`](../ports/cunit/) | 2.1-3 | `apk add cunit` | – | x86✅ᵛ a64✅ᵛ |
+| [`cunit`](../ports/cunit/) | 2.1-3 | `apk add cunit` | – | – |
 | [`cyclonedds`](../ports/cyclonedds/) | 0.10.5 | `apk add cyclonedds` | `qnx-test-cyclonedds` | x86✅ᵛ a64✅ᵛ |
 | [`dav1d`](../ports/dav1d/) | 1.5.0 | `apk add dav1d` | `qnx-test-dav1d` | x86✅ᵛ a64✅ᵛ |
-| [`dnsmasq`](../ports/dnsmasq/) | 2.93test4 | `apk add dnsmasq` | – | x86✅ᵛ a64✅ᵛ |
+| [`dnsmasq`](../ports/dnsmasq/) | 2.93test4 | `apk add dnsmasq` | – | – |
 | [`docbook-xsl`](../ports/docbook-xsl/) | 1.79.2 | `apk add docbook-xsl` | `qnx-test-docbook-xsl` | x86✅ᵛ a64✅ᵛ |
 | [`double-conversion`](../ports/double-conversion/) | 3.3.0 | `apk add double-conversion` | `qnx-test-double-conversion` | x86✅ᵛ a64✅ᵛ |
 | [`duktape`](../ports/duktape/) | 2.7.0 | `apk add duktape` | `qnx-test-duktape` | x86✅ᵛ a64✅ᵛ |
@@ -173,7 +175,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`encodings`](../ports/encodings/) | 1.1.0 | `apk add encodings` | – | x86✅ᵛ a64✅ᵛ |
 | [`expat`](../ports/expat/) | 2.6.4 | `apk add expat` | `qnx-test-expat` | x86✅ᵛ a64✅ᵛ |
 | [`fakeroot`](../ports/fakeroot/) | 1.37.1.1 | `apk add fakeroot` | – | x86✅ᵛ a64✅ᵛ |
-| [`farmhash`](../ports/farmhash/) | 1.1-git-20190513 | `apk add farmhash` | – | x86✅ᵛ a64✅ᵛ |
+| [`farmhash`](../ports/farmhash/) | 1.1-git-20190513 | `apk add farmhash` | – | – |
 | [`fastcdr`](../ports/fastcdr/) | 2.2.6 | `apk add fastcdr` | `qnx-test-fastcdr` | x86✅ᵛ a64✅ᵛ |
 | [`fdk-aac`](../ports/fdk-aac/) | 2.0.3 | `apk add fdk-aac` | `qnx-test-fdk-aac` | x86✅ᵛ a64✅ᵛ |
 | [`flatbuffers`](../ports/flatbuffers/) | 24.3.25 | `apk add flatbuffers` | `qnx-test-flatbuffers` | x86✅ᵛ a64✅ᵛ |
@@ -187,16 +189,16 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`font-noto-sans-cjk`](../ports/font-noto-sans-cjk/) | 2.004 | `apk add font-noto-sans-cjk` | – | x86✅ᵛ a64✅ᵛ |
 | [`font-noto-serif-cjk`](../ports/font-noto-serif-cjk/) | 2.003 | `apk add font-noto-serif-cjk` | – | x86✅ᵛ a64✅ᵛ |
 | [`font-util`](../ports/font-util/) | 1.4.1 | `apk add font-util` | – | x86✅ᵛ a64✅ᵛ |
-| [`foonathan_memory`](../ports/foonathan_memory/) | 0.7-3 | `apk add foonathan_memory` | `qnx-test-foonathan-memory` | x86✅ᵛ a64✅ᵛ |
-| [`fp16`](../ports/fp16/) | 0-git-20260620 | `apk add fp16` | – | x86✅ᵛ a64✅ᵛ |
+| [`foonathan_memory`](../ports/foonathan_memory/) | 0.7-3 | `apk add foonathan_memory` | `qnx-test-foonathan-memory` | x86✅ a64✅ |
+| [`fp16`](../ports/fp16/) | 0-git-20260620 | `apk add fp16` | – | – |
 | [`freeimage`](../ports/freeimage/) | 3.18.0 | `apk add freeimage` | – | x86✅ᵛ a64✅ᵛ |
 | [`fribidi`](../ports/fribidi/) | 1.0.16 | `apk add fribidi` | – | x86✅ᵛ a64✅ᵛ |
-| [`fxdiv`](../ports/fxdiv/) | 0-git-20200417 | `apk add fxdiv` | – | x86✅ᵛ a64✅ᵛ |
+| [`fxdiv`](../ports/fxdiv/) | 0-git-20200417 | `apk add fxdiv` | – | – |
 | [`g3log`](../ports/g3log/) | 2.4 | `apk add g3log` | – | x86✅ᵛ a64✅ᵛ |
 | [`gdbm`](../ports/gdbm/) | 1.24 | `apk add gdbm` | `qnx-test-gdbm` | x86✅ᵛ a64✅ᵛ |
 | [`gflags`](../ports/gflags/) | 2.2.2 | `apk add gflags` | `qnx-test-gflags` | x86✅ᵛ a64✅ᵛ |
 | [`giflib`](../ports/giflib/) | 5.2.2 | `apk add giflib` | `qnx-test-giflib` | x86✅ᵛ a64✅ᵛ |
-| [`gklib`](../ports/gklib/) | 5.1.1-git-20230326 | `apk add gklib` | – | x86✅ᵛ a64✅ᵛ |
+| [`gklib`](../ports/gklib/) | 5.1.1-git-20230326 | `apk add gklib` | – | – |
 | [`glm`](../ports/glm/) | 1.0.1 | `apk add glm` | `qnx-test-glm` | x86✅ᵛ a64✅ᵛ |
 | [`gmp`](../ports/gmp/) | 6.3.0 | `apk add gmp` | `qnx-test-gmp` | x86✅ᵛ a64✅ᵛ |
 | [`googletest`](../ports/googletest/) | 1.17.0 | `apk add googletest` | `qnx-test-googletest` | x86✅ᵛ a64✅ᵛ |
@@ -212,7 +214,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`jansson`](../ports/jansson/) | 2.14 | `apk add jansson` | `qnx-test-jansson` | x86✅ᵛ a64✅ᵛ |
 | [`json-c`](../ports/json-c/) | 0.18 | `apk add json-c` | `qnx-test-json-c` | x86✅ᵛ a64✅ᵛ |
 | [`jsoncpp`](../ports/jsoncpp/) | 1.9.6 | `apk add jsoncpp` | `qnx-test-jsoncpp` | x86✅ᵛ a64✅ᵛ |
-| [`kineto`](../ports/kineto/) | 0-git-20250214 | `apk add kineto` | – | x86✅ᵛ a64✅ᵛ |
+| [`kineto`](../ports/kineto/) | 0-git-20250214 | `apk add kineto` | – | – |
 | [`lame`](../ports/lame/) | 3.100 | `apk add lame` | `qnx-test-lame` | x86✅ᵛ a64✅ᵛ |
 | [`lely-core`](../ports/lely-core/) | 2.3.4 | `apk add lely-core` | `qnx-test-lely-core` | x86✅ᵛ a64✅ᵛ |
 | [`libaec`](../ports/libaec/) | 1.1.7 | `apk add libaec` | `qnx-test-libaec` | x86✅ᵛ a64✅ᵛ |
@@ -231,7 +233,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libiconv`](../ports/libiconv/) | 1.18 | `apk add libiconv` | – | x86✅ᵛ a64✅ᵛ |
 | [`libinih`](../ports/libinih/) | 58 | `apk add libinih` | `qnx-test-libinih` | x86✅ᵛ a64✅ᵛ |
 | [`libjpeg-turbo`](../ports/libjpeg-turbo/) | 3.0.4 | `apk add libjpeg-turbo` | – | x86✅ᵛ a64✅ᵛ |
-| [`libjson`](../ports/libjson/) | 0.8-git-20260512 | `apk add libjson` | – | x86✅ᵛ a64✅ᵛ |
+| [`libjson`](../ports/libjson/) | 0.8-git-20260512 | `apk add libjson` | – | – |
 | [`libmd`](../ports/libmd/) | 1.1.0 | `apk add libmd` | `qnx-test-libmd` | x86✅ᵛ a64✅ᵛ |
 | [`libmetal`](../ports/libmetal/) | 2024.10.0 | `apk add libmetal` | – | x86✅ᵛ a64✅ᵛ |
 | [`libmicrohttpd`](../ports/libmicrohttpd/) | 1.0.1 | `apk add libmicrohttpd` | `qnx-test-libmicrohttpd` | x86✅ᵛ a64✅ᵛ |
@@ -239,11 +241,11 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libogg`](../ports/libogg/) | 1.3.5 | `apk add libogg` | – | x86✅ᵛ a64✅ᵛ |
 | [`libpcap`](../ports/libpcap/) | 1.10.5 | `apk add libpcap` | `qnx-test-libpcap` | x86✅ᵛ a64✅ᵛ |
 | [`libpipeline`](../ports/libpipeline/) | 1.5.8 | `apk add libpipeline` | – | x86✅ᵛ a64✅ᵛ |
-| [`libretro-2048`](../ports/libretro-2048/) | 0-git-20241227 | `apk add libretro-2048` | – | x86✅ᵛ a64✅ᵛ |
-| [`libretro-fake08`](../ports/libretro-fake08/) | 0-git-20260613 | `apk add libretro-fake08` | – | x86✅ᵛ a64✅ᵛ |
-| [`libretro-mrboom`](../ports/libretro-mrboom/) | 0-git-20260625 | `apk add libretro-mrboom` | – | x86✅ᵛ a64✅ᵛ |
-| [`libretro-retro8`](../ports/libretro-retro8/) | 0-git-20260912 | `apk add libretro-retro8` | – | x86✅ᵛ a64✅ᵛ |
-| [`libretro-samples`](../ports/libretro-samples/) | 0-git-20221110 | `apk add libretro-samples` | – | x86✅ᵛ a64✅ᵛ |
+| [`libretro-2048`](../ports/libretro-2048/) | 0-git-20241227 | `apk add libretro-2048` | – | – |
+| [`libretro-fake08`](../ports/libretro-fake08/) | 0-git-20260613 | `apk add libretro-fake08` | – | – |
+| [`libretro-mrboom`](../ports/libretro-mrboom/) | 0-git-20260625 | `apk add libretro-mrboom` | – | – |
+| [`libretro-retro8`](../ports/libretro-retro8/) | 0-git-20260912 | `apk add libretro-retro8` | – | – |
+| [`libretro-samples`](../ports/libretro-samples/) | 0-git-20221110 | `apk add libretro-samples` | – | – |
 | [`libsamplerate`](../ports/libsamplerate/) | 0.2.2 | `apk add libsamplerate` | `qnx-test-libsamplerate` | x86✅ᵛ a64✅ᵛ |
 | [`libsfdo`](../ports/libsfdo/) | 0.1.4 | `apk add libsfdo` | `qnx-test-libsfdo` | x86✅ᵛ a64✅ᵛ |
 | [`libsodium`](../ports/libsodium/) | 1.0.20 | `apk add libsodium` | `qnx-test-libsodium` | x86✅ᵛ a64✅ᵛ |
@@ -259,11 +261,11 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libxcvt`](../ports/libxcvt/) | 0.1.3 | `apk add libxcvt` | `qnx-test-xorg-libs` | x86✅ᵛ a64✅ᵛ |
 | [`libyaml`](../ports/libyaml/) | 0.2.5 | `apk add libyaml` | `qnx-test-libyaml` | x86✅ᵛ a64✅ᵛ |
 | [`linux-headers-input-codes`](../ports/linux-headers-input-codes/) | 6.12 | `apk add linux-headers-input-codes` | – | x86✅ᵛ a64✅ᵛ |
-| [`lmbench`](../ports/lmbench/) | 3.0-git-20260929 | `apk add lmbench` | – | x86✅ᵛ a64✅ᵛ |
+| [`lmbench`](../ports/lmbench/) | 3.0-git-20260929 | `apk add lmbench` | – | – |
 | [`lua`](../ports/lua/) | 5.4.7 | `apk add lua` | `qnx-test-lua` | x86✅ᵛ a64✅ᵛ |
 | [`lua5.1`](../ports/lua5.1/) | 5.1.5 | `apk add lua5.1` | – | x86✅ᵛ a64✅ᵛ |
 | [`lua5.3`](../ports/lua5.3/) | 5.3.6 | `apk add lua5.3` | – | x86✅ᵛ a64✅ᵛ |
-| [`luajit`](../ports/luajit/) | 2.1.c6ffc141 | `apk add luajit` | `qnx-test-luajit` | x86✅ᵛ a64✅ᵛ |
+| [`luajit`](../ports/luajit/) | 2.1.c6ffc141 | `apk add luajit` | `qnx-test-luajit` | x86✅ a64✅ |
 | [`lxde-icon-theme`](../ports/lxde-icon-theme/) | 0.5.2 | `apk add lxde-icon-theme` | – | x86✅ᵛ a64✅ᵛ |
 | [`lz4`](../ports/lz4/) | 1.10.0 | `apk add lz4` | `qnx-test-lz4` | x86✅ᵛ a64✅ᵛ |
 | [`lzip`](../ports/lzip/) | 1.26 | `apk add lzip` | `qnx-test-cli-tools` | x86✅ᵛ a64✅ᵛ |
@@ -276,8 +278,8 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`mpg123`](../ports/mpg123/) | 1.32.9 | `apk add mpg123` | `qnx-test-mpg123` | x86✅ᵛ a64✅ᵛ |
 | [`msgpack-c`](../ports/msgpack-c/) | 6.1.0 | `apk add msgpack-c` | `qnx-test-msgpack` | x86✅ᵛ a64✅ᵛ |
 | [`mujoco`](../ports/mujoco/) | 3.10.0 | `apk add mujoco` | `qnx-test-mujoco` | x86✅ᵛ a64✅ᵛ |
-| [`muslflt`](../ports/muslflt/) | 1.0-git-20240802 | `apk add muslflt` | – | x86✅ᵛ a64✅ᵛ |
-| [`nanosvg`](../ports/nanosvg/) | 0-git-20260709 | `apk add nanosvg` | – | x86✅ᵛ a64✅ᵛ |
+| [`muslflt`](../ports/muslflt/) | 1.0-git-20240802 | `apk add muslflt` | – | – |
+| [`nanosvg`](../ports/nanosvg/) | 0-git-20260709 | `apk add nanosvg` | – | – |
 | [`ncnn`](../ports/ncnn/) | 20260526 | `apk add ncnn` | `qnx-test-ncnn` | x86✅ᵛ a64✅ᵛ |
 | [`ncurses`](../ports/ncurses/) | 6.5 | `apk add ncurses` | `qnx-test-ncurses` | x86✅ᵛ a64✅ᵛ |
 | [`ninja`](../ports/ninja/) | 1.13.1 | `apk add ninja` | – | x86✅ᵛ a64✅ᵛ |
@@ -298,18 +300,18 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`patch`](../ports/patch/) | 2.8 | `apk add patch` | `qnx-test-cli-tools` | x86✅ᵛ a64✅ᵛ |
 | [`pax-utils`](../ports/pax-utils/) | 1.3.8 | `apk add pax-utils` | – | x86✅ᵛ a64✅ᵛ |
 | [`pcre`](../ports/pcre/) | 8.45 | `apk add pcre` | – | x86✅ᵛ a64✅ᵛ |
-| [`pdfium`](../ports/pdfium/) | 0-git-84a8011 | `apk add pdfium` | – | x86✅ᵛ a64✅ᵛ |
+| [`pdfium`](../ports/pdfium/) | 0-git-84a8011 | `apk add pdfium` | – | – |
 | [`picocom`](../ports/picocom/) | 3.1 | `apk add picocom` | – | x86✅ᵛ a64✅ᵛ |
 | [`pkgconf`](../ports/pkgconf/) | 2.3.0 | `apk add pkgconf` | – | x86✅ᵛ a64✅ᵛ |
 | [`protobuf-c`](../ports/protobuf-c/) | 1.5.0 | `apk add protobuf-c` | `qnx-test-protobuf-c` | x86✅ᵛ a64✅ᵛ |
 | [`pthread-stubs`](../ports/pthread-stubs/) | 0.5 | `apk add pthread-stubs` | – | x86✅ᵛ a64✅ᵛ |
 | [`pugixml`](../ports/pugixml/) | 1.14 | `apk add pugixml` | `qnx-test-pugixml` | x86✅ᵛ a64✅ᵛ |
 | [`quickjs-ng`](../ports/quickjs-ng/) | 0.8.0 | `apk add quickjs-ng` | `qnx-test-quickjs` | x86✅ᵛ a64✅ᵛ |
-| [`rapidjson`](../ports/rapidjson/) | 1.1.0-24b5e7a | `apk add rapidjson` | `qnx-test-rapidjson` | x86✅ᵛ a64✅ᵛ |
+| [`rapidjson`](../ports/rapidjson/) | 1.1.0-24b5e7a | `apk add rapidjson` | `qnx-test-rapidjson` | x86✅ a64✅ |
 | [`rust`](../ports/rust/) | 1.90.0 | `apk add rust` | – | x86✅ᵛ a64✅ᵛ |
 | [`simdjson`](../ports/simdjson/) | 3.11.3 | `apk add simdjson` | `qnx-test-simdjson` | x86✅ᵛ a64✅ᵛ |
 | [`simdutf`](../ports/simdutf/) | 6.4.2 | `apk add simdutf` | `qnx-test-simdutf` | x86✅ᵛ a64✅ᵛ |
-| [`sleef`](../ports/sleef/) | 3.8-git-20250214 | `apk add sleef` | – | x86✅ᵛ a64✅ᵛ |
+| [`sleef`](../ports/sleef/) | 3.8-git-20250214 | `apk add sleef` | – | – |
 | [`snappy`](../ports/snappy/) | 1.2.1 | `apk add snappy` | `qnx-test-snappy` | x86✅ᵛ a64✅ᵛ |
 | [`soxr`](../ports/soxr/) | 0.1.3 | `apk add soxr` | `qnx-test-soxr` | x86✅ᵛ a64✅ᵛ |
 | [`speexdsp`](../ports/speexdsp/) | 1.2.1 | `apk add speexdsp` | `qnx-test-speexdsp` | x86✅ᵛ a64✅ᵛ |
@@ -336,11 +338,11 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`uriparser`](../ports/uriparser/) | 0.9.8 | `apk add uriparser` | `qnx-test-uriparser` | x86✅ᵛ a64✅ᵛ |
 | [`utf8proc`](../ports/utf8proc/) | 2.11.3 | `apk add utf8proc` | `qnx-test-utf8proc` | x86✅ᵛ a64✅ᵛ |
 | [`vidstab`](../ports/vidstab/) | 1.1.1 | `apk add vidstab` | `qnx-test-vidstab` | x86✅ᵛ a64✅ᵛ |
-| [`webrtc`](../ports/webrtc/) | m132-afaf497 | `apk add webrtc` | – | x86✅ᵛ a64✅ᵛ |
+| [`webrtc`](../ports/webrtc/) | m132-afaf497 | `apk add webrtc` | – | – |
 | [`whisper.cpp`](../ports/whisper.cpp/) | 0_git20260728 | `apk add whisper.cpp` | `qnx-test-whisper` | x86✅ᵛ a64✅ᵛ |
-| [`wlr-protocols`](../ports/wlr-protocols/) | 0-git-20250702 | `apk add wlr-protocols` | – | x86✅ᵛ a64✅ᵛ |
+| [`wlr-protocols`](../ports/wlr-protocols/) | 0-git-20250702 | `apk add wlr-protocols` | – | – |
 | [`wolfssl`](../ports/wolfssl/) | 5.7.6 | `apk add wolfssl` | `qnx-test-wolfssl` | x86✅ᵛ a64✅ᵛ |
-| [`x264`](../ports/x264/) | stable | `apk add x264` | `qnx-test-x264` | x86✅ᵛ a64✅ᵛ |
+| [`x264`](../ports/x264/) | stable | `apk add x264` | `qnx-test-x264` | x86✅ a64✅ |
 | [`x265`](../ports/x265/) | 3.6 | `apk add x265` | `qnx-test-x265` | x86✅ᵛ a64✅ᵛ |
 | [`xcb-proto`](../ports/xcb-proto/) | 1.17.0 | `apk add xcb-proto` | – | x86✅ᵛ a64✅ᵛ |
 | [`xdg-utils`](../ports/xdg-utils/) | 1.2.1 | `apk add xdg-utils` | – | x86✅ᵛ a64✅ᵛ |
@@ -376,7 +378,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`aws-c-sdkutils`](../ports/aws-c-sdkutils/) | 0.2.4 | `apk add aws-c-sdkutils` | aws-c-common | aws-c-common | – | x86✅ᵛ a64✅ᵛ |
 | [`aws-checksums`](../ports/aws-checksums/) | 0.2.10 | `apk add aws-checksums` | aws-c-common | aws-c-common | – | x86✅ᵛ a64✅ᵛ |
 | [`aws-crt-cpp`](../ports/aws-crt-cpp/) | 0.38.5 | `apk add aws-crt-cpp` | aws-c-auth aws-c-cal aws-c-common aws-c-compression aws-c-event-stream aws-c-http aws-c-io aws-c-mqtt aws-c-s3 aws-c-sdkutils aws-checksums openssl s2n-tls | aws-c-auth aws-c-mqtt aws-c-event-stream aws-c-s3 | – | x86✅ᵛ a64✅ᵛ |
-| [`azure-iot-sdk-c`](../ports/azure-iot-sdk-c/) | LTS_08_2024 | `apk add azure-iot-sdk-c` | curl openssl | openssl curl | – | x86✅ᵛ a64✅ᵛ |
+| [`azure-iot-sdk-c`](../ports/azure-iot-sdk-c/) | LTS_08_2024 | `apk add azure-iot-sdk-c` | curl openssl | openssl curl | – | – |
 | [`bash`](../ports/bash/) | 5.2.37 | `apk add bash` | libiconv ncurses readline | ncurses readline libiconv | – | x86✅ᵛ a64✅ᵛ |
 | [`bc`](../ports/bc/) | 1.08.2 | `apk add bc` | ncurses readline | readline | – | x86✅ᵛ a64✅ᵛ |
 | [`binutils`](../ports/binutils/) | 2.43 | `apk add binutils` | zlib zstd | zlib zstd | – | x86✅ᵛ a64✅ᵛ |
@@ -393,9 +395,9 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`desktop-file-utils`](../ports/desktop-file-utils/) | 0.28 | `apk add desktop-file-utils` | gettext glib | glib | – | x86✅ᵛ a64✅ᵛ |
 | [`dlt-daemon`](../ports/dlt-daemon/) | 2.18.10 | `apk add dlt-daemon` | libjson | zlib libjson | – | x86✅ᵛ a64✅ᵛ |
 | [`doxygen`](../ports/doxygen/) | 1.17.0 | `apk add doxygen` | libiconv | libiconv | `qnx-test-doxygen` | x86✅ᵛ a64✅ᵛ |
-| [`dump1090`](../ports/dump1090/) | 0-git-20240121 | `apk add dump1090` | rtl-sdr | rtl-sdr | – | x86✅ᵛ a64✅ᵛ |
+| [`dump1090`](../ports/dump1090/) | 0-git-20240121 | `apk add dump1090` | rtl-sdr | rtl-sdr | – | – |
 | [`emacs`](../ports/emacs/) | 30.2 | `apk add emacs` | dbus gmp gnutls lcms2 libxml2 ncurses sqlite tree-sitter zlib | ncurses gnutls libxml2 zlib dbus lcms2 sqlite tree-sitter | – | x86✅ᵛ a64✅ᵛ |
-| [`emulationstation`](../ports/emulationstation/) | 2.11-git-20241212 | `apk add emulationstation` | curl freeimage freetype pugixml sdl2 vlc | sdl2 freeimage freetype curl pugixml rapidjson nanosvg vlc | – | x86✅ᵛ a64✅ᵛ |
+| [`emulationstation`](../ports/emulationstation/) | 2.11-git-20241212 | `apk add emulationstation` | curl freeimage freetype pugixml sdl2 vlc | sdl2 freeimage freetype curl pugixml rapidjson nanosvg vlc | – | – |
 | [`enchant`](../ports/enchant/) | 2.8.2 | `apk add enchant` | aspell gettext glib | glib aspell | `qnx-test-enchant` | x86✅ᵛ a64✅ᵛ |
 | [`epiphany`](../ports/epiphany/) | 43.1 | `apk add epiphany` | at-spi2-core cairo gcr gdk-pixbuf gettext glib gmp gtk3 json-glib libarchive libdazzle libhandy libportal libsecret libsoup libxml2 nettle pango sqlite webkitgtk | webkitgtk gtk3 libhandy libportal gcr libsecret json-glib sqlite nettle libarchive gsettings-desktop-schemas iso-codes libdazzle | – | x86✅ᵛ a64✅ᵛ |
 | [`exiv2`](../ports/exiv2/) | 0.28.5 | `apk add exiv2` | brotli expat libinih zlib | zlib expat brotli libinih | `qnx-test-exiv2` | x86✅ᵛ a64✅ᵛ |
@@ -458,10 +460,10 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libarchive`](../ports/libarchive/) | 3.7.7 | `apk add libarchive` | bzip2 expat lz4 openssl xz zlib zstd | zlib bzip2 xz zstd openssl libxml2 expat lz4 | `qnx-test-libarchive` | x86✅ᵛ a64✅ᵛ |
 | [`libass`](../ports/libass/) | 0.17.3 | `apk add libass` | fontconfig freetype fribidi harfbuzz | freetype fribidi harfbuzz fontconfig | `qnx-test-libass` | x86✅ᵛ a64✅ᵛ |
 | [`libavif`](../ports/libavif/) | 1.1.1 | `apk add libavif` | aom dav1d | aom dav1d libyuv | `qnx-test-libavif` | x86✅ᵛ a64✅ᵛ |
-| [`libcamera`](../ports/libcamera/) | 0.5.1+rpt20250722 | `apk add libcamera` | – | libyaml | – | a64✅ᵛ |
+| [`libcamera`](../ports/libcamera/) | 0.5.1+rpt20250722 | `apk add libcamera` | – | libyaml | – | – |
 | [`libcoap`](../ports/libcoap/) | 4.3.5 | `apk add libcoap` | openssl | openssl | `qnx-test-libcoap` | x86✅ᵛ a64✅ᵛ |
 | [`libdazzle`](../ports/libdazzle/) | 3.44.0 | `apk add libdazzle` | cairo gdk-pixbuf gettext glib gtk3 pango | glib gtk3 | – | x86✅ᵛ a64✅ᵛ |
-| [`libedit`](../ports/libedit/) | 20240808-3.1 | `apk add libedit` | ncurses | ncurses | `qnx-test-libedit` | x86✅ᵛ a64✅ᵛ |
+| [`libedit`](../ports/libedit/) | 20240808-3.1 | `apk add libedit` | ncurses | ncurses | `qnx-test-libedit` | x86✅ a64✅ |
 | [`libepoxy`](../ports/libepoxy/) | 1.5.10 | `apk add libepoxy` | – | libx11 | `qnx-test-libepoxy` | x86✅ᵛ a64✅ᵛ |
 | [`libevent`](../ports/libevent/) | 2.1.12 | `apk add libevent` | openssl | openssl | `qnx-test-libevent` | x86✅ᵛ a64✅ᵛ |
 | [`libgcrypt`](../ports/libgcrypt/) | 1.11.0 | `apk add libgcrypt` | libgpg-error | libgpg-error | `qnx-test-libgcrypt` | x86✅ᵛ a64✅ᵛ |
@@ -517,13 +519,13 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libxslt`](../ports/libxslt/) | 1.1.42 | `apk add libxslt` | libxml2 | libxml2 zlib | `qnx-test-libxslt` | x86✅ᵛ a64✅ᵛ |
 | [`libxt`](../ports/libxt/) | 1.3.1 | `apk add libxt` | libice libsm libx11 | libx11 libsm libice xorgproto | `qnx-test-xorg-libs` | x86✅ᵛ a64✅ᵛ |
 | [`libxtst`](../ports/libxtst/) | 1.2.5 | `apk add libxtst` | libx11 libxext libxi | libx11 libxext libxfixes libxi xorgproto | – | x86✅ᵛ a64✅ᵛ |
-| [`libyuv`](../ports/libyuv/) | stable | `apk add libyuv` | libjpeg-turbo | libjpeg-turbo | `qnx-test-libyuv` | x86✅ᵛ a64✅ᵛ |
+| [`libyuv`](../ports/libyuv/) | stable | `apk add libyuv` | libjpeg-turbo | libjpeg-turbo | `qnx-test-libyuv` | x86✅ a64✅ |
 | [`libzip`](../ports/libzip/) | 1.11.1 | `apk add libzip` | bzip2 openssl xz zlib zstd | zlib bzip2 xz zstd openssl | `qnx-test-libzip` | x86✅ᵛ a64✅ᵛ |
 | [`libzmq`](../ports/libzmq/) | 4.3.5 | `apk add libzmq` | libsodium | libsodium | `qnx-test-libzmq` | x86✅ᵛ a64✅ᵛ |
 | [`lighttpd`](../ports/lighttpd/) | 1.4.77 | `apk add lighttpd` | openssl pcre2 zlib | openssl pcre2 zlib | – | x86✅ᵛ a64✅ᵛ |
 | [`llvm`](../ports/llvm/) | 22.1.8 | `apk add llvm` | libxml2 zlib zstd | zlib zstd libffi libxml2 | – | x86✅ᵛ a64✅ᵛ |
 | [`lua-lpeg`](../ports/lua-lpeg/) | 1.1.0 | `apk add lua-lpeg` | – | luajit | – | x86✅ᵛ a64✅ᵛ |
-| [`luv`](../ports/luv/) | 1.51.0-1 | `apk add luv` | libuv | libuv luajit | – | x86✅ᵛ a64✅ᵛ |
+| [`luv`](../ports/luv/) | 1.51.0-1 | `apk add luv` | libuv | libuv luajit | – | – |
 | [`m4`](../ports/m4/) | 1.4.19 | `apk add m4` | libiconv | libiconv | – | x86✅ᵛ a64✅ᵛ |
 | [`mame`](../ports/mame/) | 0.281 | `apk add mame` | fontconfig freetype sdl2 sdl2-ttf zlib | sdl2 sdl2-ttf fontconfig freetype zlib | – | x86✅ᵛ a64✅ᵛ |
 | [`man-db`](../ports/man-db/) | 2.13.1 | `apk add man-db` | gdbm libiconv libpipeline zlib | libpipeline gdbm groff libiconv zlib | – | x86✅ᵛ a64✅ᵛ |
@@ -550,8 +552,8 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`open62541`](../ports/open62541/) | 1.4.8 | `apk add open62541` | openssl | openssl | `qnx-test-open62541` | x86✅ᵛ a64✅ᵛ |
 | [`opencv`](../ports/opencv/) | 4.10.0 | `apk add opencv` | zlib | zlib eigen | `qnx-test-opencv` | x86✅ᵛ a64✅ᵛ |
 | [`openjpeg`](../ports/openjpeg/) | 2.5.3 | `apk add openjpeg` | – | zlib libpng libtiff lcms2 | `qnx-test-openjpeg` | x86✅ᵛ a64✅ᵛ |
-| [`openssh`](../ports/openssh/) | 10.2p1 | `apk add openssh` | libxcrypt openssl zlib | openssl zlib libxcrypt | – | x86✅ᵛ a64✅ᵛ |
-| [`openttd`](../ports/openttd/) | 15.0-git-20250501 | `apk add openttd` | curl freetype libpng lzo sdl2 xz zlib | sdl2 zlib xz libpng freetype fontconfig curl lzo | – | x86✅ᵛ a64✅ᵛ |
+| [`openssh`](../ports/openssh/) | 10.2p1 | `apk add openssh` | libxcrypt openssl zlib | openssl zlib libxcrypt | – | – |
+| [`openttd`](../ports/openttd/) | 15.0-git-20250501 | `apk add openttd` | curl freetype libpng lzo sdl2 xz zlib | sdl2 zlib xz libpng freetype fontconfig curl lzo | – | – |
 | [`opusfile`](../ports/opusfile/) | 0.12 | `apk add opusfile` | libogg openssl opus | opus libogg openssl | `qnx-test-opusfile` | x86✅ᵛ a64✅ᵛ |
 | [`orocos-kdl`](../ports/orocos-kdl/) | 1.5.1 | `apk add orocos-kdl` | – | eigen | `qnx-test-orocos-kdl` | x86✅ᵛ a64✅ᵛ |
 | [`oss-desktop`](../ports/oss-desktop/) | 1.0 | `apk add oss-desktop` | – | labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu | `qnx-test-labwc` | x86✅ᵛ a64✅ᵛ |
@@ -570,14 +572,14 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`poppler`](../ports/poppler/) | 25.12.0 | `apk add poppler` | cairo fontconfig freetype gettext glib lcms2 libiconv libjpeg-turbo libpng libtiff openjpeg zlib | freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib | `qnx-test-poppler` | x86✅ᵛ a64✅ᵛ |
 | [`pqiv`](../ports/pqiv/) | 2.13.2 | `apk add pqiv` | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libx11 pango zlib | glib gtk3 gdk-pixbuf cairo | – | x86✅ᵛ a64✅ᵛ |
 | [`protobuf`](../ports/protobuf/) | 29.3 | `apk add protobuf` | abseil zlib | zlib abseil | `qnx-test-protobuf` | x86✅ᵛ a64✅ᵛ |
-| [`pthreadpool`](../ports/pthreadpool/) | 0-git-20250207 | `apk add pthreadpool` | – | fxdiv | – | x86✅ᵛ a64✅ᵛ |
+| [`pthreadpool`](../ports/pthreadpool/) | 0-git-20250207 | `apk add pthreadpool` | – | fxdiv | – | – |
 | [`python3`](../ports/python3/) | 3.14.0 | `apk add python3` | bzip2 expat gdbm gettext libffi ncurses openssl sqlite xz zlib zstd | zlib openssl libffi expat bzip2 xz sqlite ncurses readline gdbm zstd | `qnx-test-python` | x86✅ᵛ a64✅ᵛ |
 | [`python3-astor`](../ports/python3-astor/) | 0.8.1 | `apk add python3-astor` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-async-generator`](../ports/python3-async-generator/) | 1.10 | `apk add python3-async-generator` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-click`](../ports/python3-click/) | 8.5.0 | `apk add python3-click` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-coverage`](../ports/python3-coverage/) | 7.17.0 | `apk add python3-coverage` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-curio`](../ports/python3-curio/) | 1.6_git20251221 | `apk add python3-curio` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
-| [`python3-dateutil`](../ports/python3-dateutil/) | 2.9.0.post0 | `apk add python3-dateutil` | – | python3 python3-six | – | x86✅ᵛ a64✅ᵛ |
+| [`python3-dateutil`](../ports/python3-dateutil/) | 2.9.0.post0 | `apk add python3-dateutil` | – | python3 python3-six | – | – |
 | [`python3-idna`](../ports/python3-idna/) | 3.20 | `apk add python3-idna` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-iniconfig`](../ports/python3-iniconfig/) | 2.3.1 | `apk add python3-iniconfig` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-mypy-extensions`](../ports/python3-mypy-extensions/) | 1.1.0 | `apk add python3-mypy-extensions` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
@@ -602,15 +604,15 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-wheel`](../ports/python3-wheel/) | 0.46.1 | `apk add python3-wheel` | – | python3 python3-packaging | – | x86✅ᵛ a64✅ᵛ |
 | [`pytorch`](../ports/pytorch/) | 2.3.1 | `apk add pytorch` | abseil openblas protobuf | python3 protobuf openblas | `qnx-test-torch` | x86✅ᵛ a64✅ᵛ |
 | [`qt6`](../ports/qt6/) | 6.8.1 | `apk add qt6` | brotli double-conversion ffmpeg fontconfig freetype glib gst-plugins-bad gst-plugins-base gstreamer harfbuzz icu libjpeg-turbo libpng libtiff libwebp openssl pcre2 zlib zstd | zlib libpng libjpeg-turbo freetype harfbuzz pcre2 openssl icu double-conversion ffmpeg fontconfig gstreamer gst-plugins-base gst-plugins-bad libtiff libwebp zstd | `qnx-test-qt6` | x86✅ᵛ a64✅ᵛ |
-| [`re2`](../ports/re2/) | 2024-07-02 | `apk add re2` | abseil | abseil | `qnx-test-re2` | x86✅ᵛ a64✅ᵛ |
+| [`re2`](../ports/re2/) | 2024-07-02 | `apk add re2` | abseil | abseil | `qnx-test-re2` | x86✅ a64✅ |
 | [`readline`](../ports/readline/) | 8.2 | `apk add readline` | – | ncurses | `qnx-test-readline` | x86✅ᵛ a64✅ᵛ |
 | [`restbed`](../ports/restbed/) | 4.8 | `apk add restbed` | openssl | openssl asio | – | x86✅ᵛ a64✅ᵛ |
-| [`retroarch`](../ports/retroarch/) | 1.15-git-20230408 | `apk add retroarch` | fontconfig freetype fribidi libass libxkbcommon openssl zlib | sdl2 freetype zlib fontconfig fribidi libass openssl | – | x86✅ᵛ a64✅ᵛ |
+| [`retroarch`](../ports/retroarch/) | 1.15-git-20230408 | `apk add retroarch` | fontconfig freetype fribidi libass libxkbcommon openssl zlib | sdl2 freetype zlib fontconfig fribidi libass openssl | – | – |
 | [`retropie`](../ports/retropie/) | 0.3 | `apk add retropie` | – | retroarch emulationstation openttd libretro-2048 libretro-samples libretro-mrboom libretro-retro8 libretro-fake08 | – | x86✅ᵛ a64✅ᵛ |
 | [`ros2`](../ports/ros2/) | jazzy | `apk add ros2` | benchmark console_bridge curl cyclonedds fastcdr fastdds libyaml lz4 opencv python3 sqlite tinyxml2 yaml-cpp zstd | python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2 | `qnx-test-ros2` | x86✅ᵛ a64✅ᵛ |
 | [`rsync`](../ports/rsync/) | 3.3.0 | `apk add rsync` | lz4 openssl xxhash zstd | zstd lz4 xxhash openssl | – | x86✅ᵛ a64✅ᵛ |
 | [`rtl-sdr`](../ports/rtl-sdr/) | 2.0.2 | `apk add rtl-sdr` | libusb | libusb | – | x86✅ᵛ a64✅ᵛ |
-| [`ruy`](../ports/ruy/) | 0-git-20240321 | `apk add ruy` | – | cpuinfo | – | x86✅ᵛ a64✅ᵛ |
+| [`ruy`](../ports/ruy/) | 0-git-20240321 | `apk add ruy` | – | cpuinfo | – | – |
 | [`s2n-tls`](../ports/s2n-tls/) | 1.7.0 | `apk add s2n-tls` | openssl | openssl | – | x86✅ᵛ a64✅ᵛ |
 | [`sdl2`](../ports/sdl2/) | 2.32.10 | `apk add sdl2` | – | wayland libxkbcommon | `qnx-test-sdl2` | x86✅ᵛ a64✅ᵛ |
 | [`sdl2-compat`](../ports/sdl2-compat/) | 2.32.60 | `apk add sdl2-compat` | – | sdl3 | – | x86✅ᵛ a64✅ᵛ |
@@ -624,10 +626,10 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`sqlite_orm`](../ports/sqlite_orm/) | 1.9 | `apk add sqlite_orm` | – | sqlite | – | x86✅ᵛ a64✅ᵛ |
 | [`sscep`](../ports/sscep/) | 0.10.0 | `apk add sscep` | openssl | openssl | – | x86✅ᵛ a64✅ᵛ |
 | [`strongswan`](../ports/strongswan/) | 6.0.6 | `apk add strongswan` | openssl | openssl | – | x86✅ᵛ a64✅ᵛ |
-| [`sudo`](../ports/sudo/) | 1.9.17p2 | `apk add sudo` | libxcrypt openssl zlib | libxcrypt openssl zlib | – | x86✅ᵛ a64✅ᵛ |
+| [`sudo`](../ports/sudo/) | 1.9.17p2 | `apk add sudo` | libxcrypt openssl zlib | libxcrypt openssl zlib | – | – |
 | [`suitesparse`](../ports/suitesparse/) | 7.11.0 | `apk add suitesparse` | openblas | openblas | – | x86✅ᵛ a64✅ᵛ |
 | [`swaybg`](../ports/swaybg/) | 1.2.2 | `apk add swaybg` | cairo gdk-pixbuf glib wayland | wayland wayland-protocols cairo gdk-pixbuf glib | `qnx-test-labwc` | x86✅ᵛ a64✅ᵛ |
-| [`sysbench`](../ports/sysbench/) | 1.0.20-git-20250309 | `apk add sysbench` | luajit | luajit | – | x86✅ᵛ a64✅ᵛ |
+| [`sysbench`](../ports/sysbench/) | 1.0.20-git-20250309 | `apk add sysbench` | luajit | luajit | – | – |
 | [`taglib`](../ports/taglib/) | 2.0.2 | `apk add taglib` | zlib | zlib | `qnx-test-taglib` | x86✅ᵛ a64✅ᵛ |
 | [`tar`](../ports/tar/) | 1.35 | `apk add tar` | libiconv | libiconv | – | x86✅ᵛ a64✅ᵛ |
 | [`tftp-hpa`](../ports/tftp-hpa/) | 5.2 | `apk add tftp-hpa` | ncurses readline | readline ncurses | – | x86✅ᵛ a64✅ᵛ |
@@ -641,7 +643,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`vlc`](../ports/vlc/) | 3.0.21 | `apk add vlc` | bzip2 libiconv lz4 openssl xz zstd | bzip2 libiconv lz4 openssl xz zstd | – | x86✅ᵛ a64✅ᵛ |
 | [`vsomeip`](../ports/vsomeip/) | 3.5.6 | `apk add vsomeip` | boost | boost | `qnx-test-vsomeip` | x86✅ᵛ a64✅ᵛ |
 | [`vte`](../ports/vte/) | 0.78.2 | `apk add vte` | at-spi2-core cairo fribidi gdk-pixbuf gettext glib gnutls graphene gtk3 gtk4 icu lz4 pango pcre2 | gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4 | `qnx-test-vte` | x86✅ᵛ a64✅ᵛ |
-| [`wayland`](../ports/wayland/) | 1.24.0 | `apk add wayland` | libffi | libffi expat libxml2 | `qnx-test-wayland` | x86❌ᵛ a64❌ᵛ |
+| [`wayland`](../ports/wayland/) | 1.24.0 | `apk add wayland` | libffi | libffi expat libxml2 | `qnx-test-wayland` | x86✅ᵛ a64✅ᵛ |
 | [`wayland-protocols`](../ports/wayland-protocols/) | 1.47 | `apk add wayland-protocols` | – | wayland | – | x86✅ᵛ a64✅ᵛ |
 | [`webkitgtk`](../ports/webkitgtk/) | 2.44.4 | `apk add webkitgtk` | at-spi2-core cairo fontconfig freetype gdk-pixbuf gettext glib gst-plugins-bad gst-plugins-base gstreamer gtk3 harfbuzz hyphen icu lcms2 libavif libepoxy libgcrypt libgpg-error libjpeg-turbo libjxl libpng libsecret libsoup libtasn1 libwebp libxml2 libxslt pango sqlite woff2 zlib | gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret | – | x86✅ᵛ a64✅ᵛ |
 | [`wget`](../ports/wget/) | 1.25.0 | `apk add wget` | gnutls libiconv libpsl libunistring nettle pcre2 zlib | gnutls libidn2 zlib pcre2 libpsl | `qnx-test-cli-tools` | x86✅ᵛ a64✅ᵛ |
@@ -655,7 +657,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`xfce4-terminal`](../ports/xfce4-terminal/) | 1.1.5 | `apk add xfce4-terminal` | at-spi2-core cairo gdk-pixbuf glib gtk-layer-shell gtk3 libxfce4ui libxfce4util pango pcre2 vte xfconf | glib gtk3 libxfce4util libxfce4ui xfconf vte pcre2 gtk-layer-shell | – | x86✅ᵛ a64✅ᵛ |
 | [`xfconf`](../ports/xfconf/) | 4.20.0 | `apk add xfconf` | gettext glib libxfce4util | glib libxfce4util dbus | – | x86✅ᵛ a64✅ᵛ |
 | [`xkbcomp`](../ports/xkbcomp/) | 1.5.0 | `apk add xkbcomp` | libx11 libxkbfile | libx11 libxkbfile xorgproto | `qnx-test-xkbcomp` | x86✅ᵛ a64✅ᵛ |
-| [`xnnpack`](../ports/xnnpack/) | 0-git-20250209 | `apk add xnnpack` | pthreadpool | cpuinfo pthreadpool fxdiv | – | x86✅ᵛ a64✅ᵛ |
+| [`xnnpack`](../ports/xnnpack/) | 0-git-20250209 | `apk add xnnpack` | pthreadpool | cpuinfo pthreadpool fxdiv | – | – |
 | [`xwayland`](../ports/xwayland/) | 24.1.14 | `apk add xwayland` | libmd libxau libxcvt libxfont2 pixman wayland | wayland wayland-protocols pixman xorgproto xtrans libxau libxdmcp libxfont2 libxkbfile libxcvt libxshmfence libdrm-headers linux-headers-input-codes libmd xkbcomp xkeyboard-config font-util | `qnx-test-virtualgl` | x86✅ᵛ a64✅ᵛ |
 | [`xz`](../ports/xz/) | 5.6.3 | `apk add xz` | gettext | gettext | `qnx-test-xz` | x86✅ᵛ a64✅ᵛ |
 | [`zenoh-c`](../ports/zenoh-c/) | 1.2.1 | `apk add zenoh-c` | – | rust | `qnx-test-zenoh-c` | x86✅ᵛ a64✅ᵛ |

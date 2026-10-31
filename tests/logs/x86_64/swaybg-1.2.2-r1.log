@@ -1,0 +1,41 @@
+# swaybg 1.2.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:40:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swaybg qnx-test-labwc qnx-port-tests
+(1/9) Installing qnx-port-tests (1.0-r1)
+(2/9) Installing font-dejavu (2.37-r0)
+(3/9) Installing libsfdo (0.1.4-r0)
+(4/9) Installing lcms2 (2.16-r0)
+(5/9) Installing wlroots (0.20.2-r0)
+(6/9) Installing xkeyboard-config (2.43-r0)
+(7/9) Installing labwc (0.20.2-r1)
+(8/9) Installing swaybg (1.2.2-r1)
+(9/9) Installing qnx-test-labwc (1.0-r4)
+OK: 185 MiB in 61 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
+     == labwc ==
+       ok   XDG_RUNTIME_DIR
+       ok   labwc started
+       ok   labwc's Wayland socket wayland-0 appeared
+       ok   client connected to labwc
+       ok   global wl_compositor
+       ok   global wl_shm
+       ok   global wl_seat
+       ok   global xdg_wm_base
+       ok   global zwlr_layer_shell_v1
+       ok   global wl_data_device_manager
+     2026-10-31 04:40:53 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+       ok   swaybg running on labwc (background layer surface)
+       ok   labwc still running after its clients
+       ok   labwc exits on SIGTERM
+     PASS labwc
+PASS test_labwc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

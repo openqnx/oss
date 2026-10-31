@@ -1,0 +1,85 @@
+# gthumb 3.12.8.2-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:30:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gthumb
+( 1/40) Installing expat (2.6.4-r0)
+( 2/40) Installing bzip2 (1.0.8-r0)
+( 3/40) Installing freetype (2.13.3-r0)
+( 4/40) Installing fontconfig (2.15.0-r0)
+( 5/40) Installing libxau (1.0.11-r0)
+( 6/40) Installing libxdmcp (1.1.5-r0)
+( 7/40) Installing libxcb (1.17.0-r0)
+( 8/40) Installing libx11 (1.8.10-r0)
+( 9/40) Installing libxext (1.3.6-r0)
+(10/40) Installing libxrender (0.9.11-r0)
+(11/40) Installing lzo (2.10-r0)
+(12/40) Installing pixman (0.46.4-r0)
+(13/40) Installing cairo (1.18.2-r0)
+(14/40) Installing libinih (58-r0)
+(15/40) Installing exiv2 (0.28.5-r0)
+(16/40) Installing dbus (1.16.0-r0)
+(17/40) Installing libxi (1.8.2-r0)
+(18/40) Installing libxtst (1.2.5-r0)
+(19/40) Installing at-spi2-core (2.54.0-r0)
+(20/40) Installing fribidi (1.0.16-r0)
+(21/40) Installing graphite2 (1.3.14-r0)
+(22/40) Installing icu (76.1-r0)
+(23/40) Installing harfbuzz (<ip>-r0)
+(24/40) Installing libepoxy (1.5.10-r0)
+(25/40) Installing libxcomposite (0.4.6-r0)
+(26/40) Installing libxfixes (6.0.1-r0)
+(27/40) Installing libxcursor (1.2.2-r0)
+(28/40) Installing libxdamage (1.1.6-r0)
+(29/40) Installing libxinerama (1.1.5-r0)
+(30/40) Installing xz (5.6.3-r0)
+(31/40) Installing libxml2 (2.13.5-r0)
+(32/40) Installing libxkbcommon (1.8.1-r1)
+(33/40) Installing libxrandr (1.5.4-r0)
+(34/40) Installing libxft (2.3.8-r0)
+(35/40) Installing pango (1.54.0-r0)
+(36/40) Installing wayland (1.24.0-r0)
+(37/40) Installing gtk3 (3.24.43-r0)
+(38/40) Installing libwebp (1.4.0-r0)
+(39/40) Installing libtiff (4.7.0-r0)
+(40/40) Installing gthumb (3.12.8.2-r0)
+OK: 177 MiB in 69 packages
+
+$ ldd on every program and library apk info -L gthumb lists
+ok   loads: /data/oss/usr/local/bin/gthumb
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libbookmarks.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libcairo_io.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libcatalogs.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libchange_date.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libcomments.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libcontact_sheet.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libconvert_format.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libdesktop_background.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libedit_metadata.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libexiv2_tools.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libexport_tools.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libfile_manager.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libfile_tools.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libfile_viewer.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libfind_duplicates.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libimage_print.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libimage_rotation.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libimage_viewer.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libimporter.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libjpeg_utils.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/liblist_tools.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libopen_map.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libphoto_importer.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libred_eye_removal.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/librename_series.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libresize_images.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libsearch.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libselections.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libslideshow.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libterminal.so
+ok   loads: /data/oss/usr/local/lib/gthumb/extensions/libwebalbums.so
+
+RESULT: INSTALLED

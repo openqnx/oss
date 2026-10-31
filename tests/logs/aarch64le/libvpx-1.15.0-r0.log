@@ -1,0 +1,34 @@
+# libvpx 1.15.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libvpx qnx-test-libvpx qnx-port-tests
+(1/3) Installing libvpx (1.15.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libvpx (1.0-r6)
+OK: 57 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libvpx
+     == libvpx ==
+       info v1.15.0
+       ok   enc_config_default
+       ok   vpx_codec_enc_init
+       ok   vpx_codec_dec_init
+       ok   vpx_img_alloc
+       ok   vpx_codec_encode
+       ok   encode frame
+       ok   encode frame
+       ok   encode frame
+       ok   encode frame
+       ok   compressed packets produced
+       ok   frames decoded back at the right size
+       info 5 packet(s), 5 decoded frame(s)
+     PASS libvpx
+PASS test_libvpx
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

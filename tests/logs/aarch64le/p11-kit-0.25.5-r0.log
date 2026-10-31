@@ -1,0 +1,30 @@
+# p11-kit 0.25.5-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:47:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u p11-kit qnx-test-p11kit qnx-port-tests
+(1/3) Installing p11-kit (0.25.5-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-p11kit (1.0-r6)
+OK: 59 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p11kit
+     == p11-kit ==
+       ok   p11_kit_uri_new
+       ok   p11_kit_uri_parse
+       ok   token label decoded from percent-encoding
+       ok   object label attribute
+       ok   p11_kit_uri_format
+       info pkcs11:token=QNX%20Test;object=mykey;type=private
+       ok   a malformed URI is rejected
+       info 0 PKCS#11 module(s) configured
+       ok   p11_kit_modules_load_and_initialize
+     PASS p11-kit
+PASS test_p11kit
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

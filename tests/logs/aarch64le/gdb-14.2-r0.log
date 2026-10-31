@@ -1,0 +1,21 @@
+# gdb 14.2-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:27:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gdb
+(1/7) Installing expat (2.6.4-r0)
+(2/7) Installing gmp (6.3.0-r0)
+(3/7) Installing mpfr (4.2.1-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing xxhash (0.8.2-r0)
+(6/7) Installing xz (5.6.3-r0)
+(7/7) Installing gdb (14.2-r0)
+OK: 84 MiB in 36 packages
+
+$ ldd on every program and library apk info -L gdb lists
+ok   loads: /data/oss/usr/local/bin/gdb
+
+RESULT: INSTALLED

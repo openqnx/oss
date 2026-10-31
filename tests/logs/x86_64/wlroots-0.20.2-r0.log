@@ -1,0 +1,41 @@
+# wlroots 0.20.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u wlroots qnx-test-wlroots qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r1)
+(2/5) Installing lcms2 (2.16-r0)
+(3/5) Installing wlroots (0.20.2-r0)
+(4/5) Installing xkeyboard-config (2.43-r0)
+(5/5) Installing qnx-test-wlroots (1.0-r4)
+OK: 174 MiB in 57 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wlroots
+     == wlroots ==
+       ok   wl_display_create
+       ok   wlr_headless_backend_create
+       ok   wlr_renderer_autocreate (pixman)
+       ok   wlr_allocator_autocreate
+       ok   wlr_backend_start
+       ok   headless output announced
+       ok   wlr_output_init_render
+       ok   output enabled
+       ok   wlr_scene_rect_create
+       ok   wlr_scene_output_create
+       ok   scene rendered a frame
+       info format XR24, pixel(5,10)=ffff0000 pixel(50,10)=ff000000
+       ok   inside the rectangle: red
+       ok   outside the rectangle: not red
+       ok   frame committed
+     00:00:00.001 [ERROR] [backend/qnx-screen/backend.c:370] screen_create_context failed: No such file or directory
+       info no QNX Screen on this target -- backend creation refused cleanly
+       ok   QNX Screen backend: fails cleanly without Screen
+     PASS wlroots
+PASS test_wlroots
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,38 @@
+# wayland 1.24.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:17:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u wayland qnx-test-wayland qnx-port-tests
+(1/7) Installing qnx-port-tests (1.0-r1)
+(2/7) Installing xz (5.6.3-r0)
+(3/7) Installing libxml2 (2.13.5-r0)
+(4/7) Installing libxkbcommon (1.8.1-r1)
+(5/7) Installing wayland (1.24.0-r0)
+(6/7) Installing xkeyboard-config (2.43-r0)
+(7/7) Installing qnx-test-wayland (1.0-r8)
+OK: 65 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wayland
+     == wayland ==
+       ok   wl_display_create
+       ok   wl_display_get_event_loop
+       ok   wl_event_loop_dispatch (epoll shim works)
+       ok   wl_display_add_socket_auto
+       info listening socket wayland-0
+       ok   wl_display_destroy
+       ok   wl_display_connect fails cleanly with no compositor
+       ok   xkb_context_new
+       ok   keymap has modifiers
+       ok   xkb_state_new
+       info keycode 24 -> q
+       ok   keycode resolved to a keysym
+       info xkbcommon linked, wayland client+server linked
+     PASS wayland
+PASS test_wayland
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

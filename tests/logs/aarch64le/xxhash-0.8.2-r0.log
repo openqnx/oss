@@ -1,0 +1,26 @@
+# xxhash 0.8.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:32:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xxhash qnx-test-xxhash qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing xxhash (0.8.2-r0)
+(3/3) Installing qnx-test-xxhash (1.0-r6)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xxhash
+     == xxhash ==
+       ok   XXH64_createState
+       ok   streaming digest == one-shot digest
+       ok   XXH64("") reference vector
+       ok   XXH32("") reference vector
+       ok   XXH3 128-bit digest
+     PASS xxhash
+PASS test_xxhash
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,30 @@
+# gawk 5.3.2-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gawk
+(1/2) Installing readline (8.2-r0)
+(2/2) Installing gawk (5.3.2-r0)
+OK: 168 MiB in 54 packages
+
+$ ldd on every program and library apk info -L gawk lists
+ok   loads: /data/oss/usr/local/bin/awk
+ok   loads: /data/oss/usr/local/bin/gawk
+ok   loads: /data/oss/usr/local/bin/gawk-5.3.2
+ok   loads: /data/oss/usr/local/lib/gawk/filefuncs.so
+ok   loads: /data/oss/usr/local/lib/gawk/fnmatch.so
+ok   loads: /data/oss/usr/local/lib/gawk/fork.so
+ok   loads: /data/oss/usr/local/lib/gawk/inplace.so
+ok   loads: /data/oss/usr/local/lib/gawk/intdiv.so
+ok   loads: /data/oss/usr/local/lib/gawk/ordchr.so
+ok   loads: /data/oss/usr/local/lib/gawk/readdir.so
+ok   loads: /data/oss/usr/local/lib/gawk/readfile.so
+ok   loads: /data/oss/usr/local/lib/gawk/revoutput.so
+ok   loads: /data/oss/usr/local/lib/gawk/revtwoway.so
+ok   loads: /data/oss/usr/local/lib/gawk/rwarray.so
+ok   loads: /data/oss/usr/local/lib/gawk/time.so
+
+RESULT: INSTALLED

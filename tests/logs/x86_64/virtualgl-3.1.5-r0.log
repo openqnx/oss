@@ -1,0 +1,53 @@
+# virtualgl 3.1.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u virtualgl qnx-test-virtualgl qnx-port-tests
+( 1/16) Installing qnx-port-tests (1.0-r1)
+( 2/16) Installing font-dejavu (2.37-r0)
+( 3/16) Installing libsfdo (0.1.4-r0)
+( 4/16) Installing lcms2 (2.16-r0)
+( 5/16) Installing wlroots (0.20.2-r0)
+( 6/16) Installing xkeyboard-config (2.43-r0)
+( 7/16) Installing labwc (0.20.2-r1)
+( 8/16) Installing virtualgl (3.1.5-r0)
+( 9/16) Installing libmd (1.1.0-r0)
+(10/16) Installing libxcvt (0.1.3-r0)
+(11/16) Installing fontenc (1.1.8-r0)
+(12/16) Installing libxfont2 (2.0.7-r0)
+(13/16) Installing libxkbfile (1.2.0-r0)
+(14/16) Installing xkbcomp (1.5.0-r0)
+(15/16) Installing xwayland (24.1.14-r0)
+(16/16) Installing qnx-test-virtualgl (1.0-r0)
+OK: 188 MiB in 68 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_virtualgl
+     == virtualgl ==
+       ok   labwc up (Wayland compositor)
+       ok   Xwayland up (an X display on labwc)
+       ok   XOpenDisplay
+       info X server: The X.Org Foundation 12401014, screen 320x240 depth 24
+       info pixel 20a060 (want 20a060)
+       ok   X11: drawn colour read back exactly
+     
+     VirtualGL Client 64-bit v3.1.5 (Build 20261030)
+     Listening for connections on port 14448
+       ok+ +   Cvglclient listening (VGL transport)o
+     nnection from <ip>.
+       info vglclient speaks VGL 2.1
+       ok   version handshake (VGL 2.x)
+       ok   frame sent: JPEG tile + end of frame
+       info pixel c82864 (want c82864)
+       ok   vglclient drew the frame in the window
+     Error receiving data from server.  Server may have disconnected.
+     Listener exiting ...
+        (this is normal if the application exited.)
+     PASS virtualgl
+PASS test_virtualgl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

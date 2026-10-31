@@ -1,0 +1,26 @@
+# nlohmann_json 3.12.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nlohmann_json-dev qnx-test-nlohmann-json qnx-port-tests
+(1/3) Installing nlohmann_json-dev (3.12.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-nlohmann-json (1.0-r0)
+OK: 167 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nlohmann_json
+     == nlohmann_json ==
+       ok   string field
+       ok   array element
+       ok   bool field
+       ok   serialize
+       info nlohmann_json 3.12.0
+     PASS nlohmann_json
+PASS test_nlohmann_json
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

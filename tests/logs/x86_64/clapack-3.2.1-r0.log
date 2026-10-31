@@ -1,0 +1,19 @@
+# clapack 3.2.1-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u clapack
+(1/1) Installing clapack (3.2.1-r0)
+OK: 172 MiB in 53 packages
+
+$ ldd on every program and library apk info -L clapack lists
+ok   loads: /data/oss/usr/local/lib/libblas.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libf2c.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/liblapack.so
+
+RESULT: INSTALLED

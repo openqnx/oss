@@ -1,0 +1,18 @@
+# mkfontscale 1.2.3-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:40:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mkfontscale
+(1/4) Installing fontenc (1.1.8-r0)
+(2/4) Installing bzip2 (1.0.8-r0)
+(3/4) Installing freetype (2.13.3-r0)
+(4/4) Installing mkfontscale (1.2.3-r0)
+OK: 56 MiB in 33 packages
+
+$ ldd on every program and library apk info -L mkfontscale lists
+ok   loads: /data/oss/usr/local/bin/mkfontscale
+
+RESULT: INSTALLED

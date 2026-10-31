@@ -1,0 +1,20 @@
+# unbound 1.24.1-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u unbound
+(1/1) Installing unbound (1.24.1-r0)
+OK: 173 MiB in 53 packages
+
+$ ldd on every program and library apk info -L unbound lists
+ok   loads: /data/oss/usr/local/lib/libunbound.so.9
+ok   loads: /data/oss/usr/local/sbin/unbound
+ok   loads: /data/oss/usr/local/sbin/unbound-anchor
+ok   loads: /data/oss/usr/local/sbin/unbound-checkconf
+ok   loads: /data/oss/usr/local/sbin/unbound-control
+ok   loads: /data/oss/usr/local/sbin/unbound-host
+
+RESULT: INSTALLED

@@ -1,0 +1,33 @@
+# adwaita-icon-theme 51.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u adwaita-icon-theme qnx-test-adwaita qnx-port-tests
+(1/4) Installing hicolor-icon-theme (0.18-r0)
+(2/4) Installing adwaita-icon-theme (51.0-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-adwaita (1.0-r0)
+OK: 178 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_adwaita
+     == adwaita-icon-theme ==
+       ok   index.theme: Adwaita, inherits hicolor
+       ok   symbolic/actions/document-open-symbolic.svg
+       ok   symbolic/places/folder-symbolic.svg
+       ok   symbolic/ui/window-close-symbolic.svg
+       ok   symbolic/status/dialog-warning-symbolic.svg
+       ok   717 SVG icons
+       ok   cursor default
+       ok   cursor pointer
+       ok   cursor text
+       ok   cursor wait
+       ok   icons are SVG documents
+     PASS adwaita-icon-theme
+PASS test_adwaita
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

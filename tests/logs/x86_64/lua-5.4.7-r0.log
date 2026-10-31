@@ -1,0 +1,27 @@
+# lua 5.4.7-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lua qnx-test-lua qnx-port-tests
+(1/3) Installing lua (5.4.7-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-lua (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua
+     == lua ==
+       ok   luaL_newstate
+       ok   run script that calls a C function
+       ok   C function result reached Lua
+       info 42/Lua 5.4
+       ok   script error is reported
+       ok   string.format
+     PASS lua
+PASS test_lua
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

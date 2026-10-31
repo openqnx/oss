@@ -1,0 +1,15 @@
+# iso-codes 4.17.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:31:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u iso-codes
+(1/1) Installing iso-codes (4.17.0-r0)
+OK: 75 MiB in 30 packages
+
+$ ldd on every program and library apk info -L iso-codes lists
+
+
+RESULT: INSTALLED

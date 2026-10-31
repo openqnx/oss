@@ -1,0 +1,39 @@
+# capnproto 1.0.2-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u capnproto
+(1/1) Installing capnproto (1.0.2-r0)
+OK: 175 MiB in 53 packages
+
+$ ldd on every program and library apk info -L capnproto lists
+ok   loads: /data/oss/usr/local/bin/capnp
+ok   loads: /data/oss/usr/local/bin/capnpc
+ok   loads: /data/oss/usr/local/bin/capnpc-c++
+ok   loads: /data/oss/usr/local/bin/capnpc-capnp
+ok   loads: /data/oss/usr/local/lib/libcapnp-json.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libcapnp-rpc.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libcapnp-websocket.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libcapnp.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libcapnpc.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj-async.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj-gzip.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj-http.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj-test.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj-tls.so.1.0.2
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libkj.so.1.0.2
+
+RESULT: INSTALLED

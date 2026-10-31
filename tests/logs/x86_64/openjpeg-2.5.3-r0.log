@@ -1,0 +1,34 @@
+# openjpeg 2.5.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:27:07Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openjpeg qnx-test-openjpeg qnx-port-tests
+(1/3) Installing openjpeg (2.5.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-openjpeg (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openjpeg
+     == openjpeg ==
+       info OpenJPEG 2.5.3
+       ok   opj_image_create
+       ok   create temp file
+       ok   opj_setup_encoder
+       ok   create output stream
+       ok   encode
+       ok   create input stream
+       ok   opj_setup_decoder
+       ok   opj_read_header
+       ok   three components
+       ok   decoded dimensions match
+       ok   decode
+       ok   pixels survive the lossless round trip
+     PASS openjpeg
+PASS test_openjpeg
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

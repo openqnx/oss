@@ -1,0 +1,101 @@
+# oss-desktop 1.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:47:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
+( 1/69) Installing expat (2.6.4-r0)
+( 2/69) Installing dbus (1.16.0-r0)
+( 3/69) Installing font-dejavu (2.37-r0)
+( 4/69) Installing hicolor-icon-theme (0.18-r0)
+( 5/69) Installing bzip2 (1.0.8-r0)
+( 6/69) Installing freetype (2.13.3-r0)
+( 7/69) Installing fontconfig (2.15.0-r0)
+( 8/69) Installing libxau (1.0.11-r0)
+( 9/69) Installing libxdmcp (1.1.5-r0)
+(10/69) Installing libxcb (1.17.0-r0)
+(11/69) Installing libx11 (1.8.10-r0)
+(12/69) Installing libxext (1.3.6-r0)
+(13/69) Installing libxrender (0.9.11-r0)
+(14/69) Installing lzo (2.10-r0)
+(15/69) Installing pixman (0.46.4-r0)
+(16/69) Installing cairo (1.18.2-r0)
+(17/69) Installing libsfdo (0.1.4-r0)
+(18/69) Installing xz (5.6.3-r0)
+(19/69) Installing libxml2 (2.13.5-r0)
+(20/69) Installing libxkbcommon (1.8.1-r1)
+(21/69) Installing fribidi (1.0.16-r0)
+(22/69) Installing graphite2 (1.3.14-r0)
+(23/69) Installing icu (76.1-r0)
+(24/69) Installing harfbuzz (<ip>-r0)
+(25/69) Installing libxft (2.3.8-r0)
+(26/69) Installing pango (1.54.0-r0)
+(27/69) Installing wayland (1.24.0-r0)
+(28/69) Installing wlroots (0.20.2-r0)
+(29/69) Installing xkeyboard-config (2.43-r0)
+(30/69) Installing labwc (0.20.2-r1)
+(31/69) Installing lxde-icon-theme (0.5.2-r0)
+(32/69) Installing swaybg (1.2.2-r1)
+(33/69) Installing libxi (1.8.2-r0)
+(34/69) Installing libxtst (1.2.5-r0)
+(35/69) Installing at-spi2-core (2.54.0-r0)
+(36/69) Installing libepoxy (1.5.10-r0)
+(37/69) Installing libxcomposite (0.4.6-r0)
+(38/69) Installing libxfixes (6.0.1-r0)
+(39/69) Installing libxcursor (1.2.2-r0)
+(40/69) Installing libxdamage (1.1.6-r0)
+(41/69) Installing libxinerama (1.1.5-r0)
+(42/69) Installing libxrandr (1.5.4-r0)
+(43/69) Installing gtk3 (3.24.43-r0)
+(44/69) Installing libxfce4util (4.20.0-r0)
+(45/69) Installing xfconf (4.20.0-r0)
+(46/69) Installing libxfce4ui (4.20.0-r0)
+(47/69) Installing exo (4.20.0-r0)
+(48/69) Installing libexif (0.6.24-r0)
+(49/69) Installing garcon (4.20.0-r0)
+(50/69) Installing gtk-layer-shell (0.9.0-r0)
+(51/69) Installing libxfce4windowing (4.20.0-r0)
+(52/69) Installing xfce4-panel (4.20.0-r0)
+(53/69) Installing thunar (4.20.0-r0)
+(54/69) Installing xfce4-appfinder (4.20.0-r0)
+(55/69) Installing gmp (6.3.0-r0)
+(56/69) Installing libidn2 (2.3.7-r0)
+(57/69) Installing libtasn1 (4.19.0-r0)
+(58/69) Installing nettle (3.10.1-r0)
+(59/69) Installing gnutls (3.8.8-r0)
+(60/69) Installing graphene (1.10.8-r0)
+(61/69) Installing libwebp (1.4.0-r0)
+(62/69) Installing libtiff (4.7.0-r0)
+(63/69) Installing gtk4 (4.16.7-r0)
+(64/69) Installing lz4 (1.10.0-r0)
+(65/69) Installing vte (0.78.2-r0)
+(66/69) Installing xfce4-terminal (1.1.5-r0)
+(67/69) Installing oss-desktop (1.0-r0)
+(68/69) Installing qnx-port-tests (1.0-r1)
+(69/69) Installing qnx-test-labwc (1.0-r4)
+OK: 252 MiB in 98 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
+     == labwc ==
+       ok   XDG_RUNTIME_DIR
+       ok   labwc started
+       ok   labwc's Wayland socket wayland-0 appeared
+       ok   client connected to labwc
+       ok   global wl_compositor
+       ok   global wl_shm
+       ok   global wl_seat
+       ok   global xdg_wm_base
+       ok   global zwlr_layer_shell_v1
+       ok   global wl_data_device_manager
+     2026-10-31 05:47:48 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+       ok   swaybg running on labwc (background layer surface)
+       ok   labwc still running after its clients
+       ok   labwc exits on SIGTERM
+     PASS labwc
+PASS test_labwc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

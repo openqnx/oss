@@ -1,0 +1,33 @@
+# thunar 4.20.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u thunar
+( 1/11) Installing libxfce4util (4.20.0-r0)
+( 2/11) Installing xfconf (4.20.0-r0)
+( 3/11) Installing libxfce4ui (4.20.0-r0)
+( 4/11) Installing exo (4.20.0-r0)
+( 5/11) Installing libexif (0.6.24-r0)
+( 6/11) Installing libnotify (0.8.3-r0)
+( 7/11) Installing garcon (4.20.0-r0)
+( 8/11) Installing gtk-layer-shell (0.9.0-r0)
+( 9/11) Installing libxfce4windowing (4.20.0-r0)
+(10/11) Installing xfce4-panel (4.20.0-r0)
+(11/11) Installing thunar (4.20.0-r0)
+OK: 186 MiB in 63 packages
+
+$ ldd on every program and library apk info -L thunar lists
+ok   loads: /data/oss/usr/local/bin/Thunar
+ok   loads: /data/oss/usr/local/bin/thunar
+ok   loads: /data/oss/usr/local/lib/libthunarx-3.so.0
+ok   loads: /data/oss/usr/local/lib/Thunar/thunar-sendto-email
+ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-apr.so
+ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-sbr.so
+ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-uca.so
+ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-wallpaper-plugin.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libthunar-tpa.so
+
+RESULT: INSTALLED

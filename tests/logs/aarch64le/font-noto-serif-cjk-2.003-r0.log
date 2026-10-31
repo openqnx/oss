@@ -1,0 +1,15 @@
+# font-noto-serif-cjk 2.003-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:26:39Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u font-noto-serif-cjk
+(1/1) Installing font-noto-serif-cjk (2.003-r0)
+OK: 229 MiB in 30 packages
+
+$ ldd on every program and library apk info -L font-noto-serif-cjk lists
+
+
+RESULT: INSTALLED

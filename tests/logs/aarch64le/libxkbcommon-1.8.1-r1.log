@@ -1,0 +1,20 @@
+# libxkbcommon 1.8.1-r1 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:35:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxkbcommon
+(1/3) Installing xz (5.6.3-r0)
+(2/3) Installing libxml2 (2.13.5-r0)
+(3/3) Installing libxkbcommon (1.8.1-r1)
+OK: 58 MiB in 32 packages
+
+$ ldd on every program and library apk info -L libxkbcommon lists
+ok   loads: /data/oss/usr/local/lib/libxkbcommon.so.0
+ok   loads: /data/oss/usr/local/lib/libxkbcommon.so.0.8.1
+ok   loads: /data/oss/usr/local/lib/libxkbregistry.so.0
+ok   loads: /data/oss/usr/local/lib/libxkbregistry.so.0.8.1
+
+RESULT: INSTALLED

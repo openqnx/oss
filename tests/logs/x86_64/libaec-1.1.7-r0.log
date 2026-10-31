@@ -1,0 +1,27 @@
+# libaec 1.1.7-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libaec qnx-test-libaec qnx-port-tests
+(1/3) Installing libaec (1.1.7-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libaec (1.0-r3)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libaec
+     == libaec ==
+       ok   aec_buffer_encode
+       info 16384 -> 4489 bytes
+       ok   compressed to less than half
+       ok   decoded exactly
+       ok   SZ_BufftoBuffCompress
+       ok   SZIP API round trip
+     PASS libaec
+PASS test_libaec
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

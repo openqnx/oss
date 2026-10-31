@@ -1,0 +1,29 @@
+# ffmpegthumbnailer 2.2.3-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ffmpegthumbnailer
+( 1/12) Installing dav1d (1.5.0-r0)
+( 2/12) Installing lame (3.100-r0)
+( 3/12) Installing libogg (1.3.5-r0)
+( 4/12) Installing libtheora (1.1.1-r0)
+( 5/12) Installing libvorbis (1.3.7-r0)
+( 6/12) Installing libvpx (1.15.0-r0)
+( 7/12) Installing openh264 (2.5.0-r0)
+( 8/12) Installing opus (1.5.2-r0)
+( 9/12) Installing x264 (0_git-r0)
+(10/12) Installing x265 (3.6-r0)
+(11/12) Installing ffmpeg (7.1.1-r0)
+(12/12) Installing ffmpegthumbnailer (2.2.3-r0)
+OK: 204 MiB in 64 packages
+
+$ ldd on every program and library apk info -L ffmpegthumbnailer lists
+ok   loads: /data/oss/usr/local/bin/ffmpegthumbnailer
+ok   loads: /data/oss/usr/local/lib/libffmpegthumbnailer.so.4
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libffmpegthumbnailer.so.4.15.1
+
+RESULT: INSTALLED

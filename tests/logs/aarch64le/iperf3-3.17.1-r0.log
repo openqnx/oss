@@ -1,0 +1,16 @@
+# iperf3 3.17.1-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:31:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u iperf3
+(1/1) Installing iperf3 (3.17.1-r0)
+OK: 55 MiB in 30 packages
+
+$ ldd on every program and library apk info -L iperf3 lists
+ok   loads: /data/oss/usr/local/bin/iperf3
+ok   loads: /data/oss/usr/local/lib/libiperf.so.0
+
+RESULT: INSTALLED

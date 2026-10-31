@@ -1,0 +1,27 @@
+# aws-crt-cpp 0.38.5-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-crt-cpp
+( 1/13) Installing aws-c-common (0.12.6-r0)
+( 2/13) Installing aws-c-cal (0.9.13-r0)
+( 3/13) Installing aws-c-compression (0.3.2-r0)
+( 4/13) Installing s2n-tls (1.7.0-r0)
+( 5/13) Installing aws-c-io (0.26.1-r0)
+( 6/13) Installing aws-c-http (0.10.14-r0)
+( 7/13) Installing aws-c-sdkutils (0.2.4-r0)
+( 8/13) Installing aws-c-auth (0.10.1-r0)
+( 9/13) Installing aws-checksums (0.2.10-r0)
+(10/13) Installing aws-c-event-stream (0.7.0-r0)
+(11/13) Installing aws-c-mqtt (0.15.2-r0)
+(12/13) Installing aws-c-s3 (0.12.2-r0)
+(13/13) Installing aws-crt-cpp (0.38.5-r0)
+OK: 171 MiB in 65 packages
+
+$ ldd on every program and library apk info -L aws-crt-cpp lists
+ok   loads: /data/oss/usr/local/lib/libaws-crt-cpp.so
+
+RESULT: INSTALLED

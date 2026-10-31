@@ -1,0 +1,35 @@
+# gnutls 3.8.8-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gnutls qnx-test-gnutls qnx-port-tests
+(1/7) Installing gmp (6.3.0-r0)
+(2/7) Installing libidn2 (2.3.7-r0)
+(3/7) Installing libtasn1 (4.19.0-r0)
+(4/7) Installing nettle (3.10.1-r0)
+(5/7) Installing gnutls (3.8.8-r0)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-gnutls (1.0-r6)
+OK: 173 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gnutls
+     == gnutls ==
+       info gnutls 3.8.8
+       ok   gnutls_global_init
+       ok   gnutls_hash_fast
+       ok   SHA-256("abc") matches FIPS 180-2
+       ok   gnutls_rnd
+       ok   random bytes are not all zero
+       ok   gnutls_init(client)
+       ok   gnutls_set_default_priority
+       ok   allocate credentials
+       ok   credentials_set
+     PASS gnutls
+PASS test_gnutls
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,25 @@
+# aws-c-s3 0.12.2-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:22:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-s3
+( 1/10) Installing aws-c-common (0.12.6-r0)
+( 2/10) Installing aws-c-cal (0.9.13-r0)
+( 3/10) Installing aws-c-compression (0.3.2-r0)
+( 4/10) Installing s2n-tls (1.7.0-r0)
+( 5/10) Installing aws-c-io (0.26.1-r0)
+( 6/10) Installing aws-c-http (0.10.14-r0)
+( 7/10) Installing aws-c-sdkutils (0.2.4-r0)
+( 8/10) Installing aws-c-auth (0.10.1-r0)
+( 9/10) Installing aws-checksums (0.2.10-r0)
+(10/10) Installing aws-c-s3 (0.12.2-r0)
+OK: 58 MiB in 39 packages
+
+$ ldd on every program and library apk info -L aws-c-s3 lists
+ok   loads: /data/oss/usr/local/lib/libaws-c-s3.so.0unstable
+ok   loads: /data/oss/usr/local/lib/libaws-c-s3.so.1.0.0
+
+RESULT: INSTALLED

@@ -1,0 +1,33 @@
+# flac 1.4.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:47:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u flac qnx-test-flac qnx-port-tests
+(1/4) Installing libogg (1.3.5-r0)
+(2/4) Installing flac (1.4.3-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-flac (1.0-r6)
+OK: 10 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_flac
+     == flac ==
+       info FLAC 1.4.3
+       ok   create temp file
+       ok   FLAC__stream_encoder_new
+       ok   init_file
+       ok   encode samples
+       ok   finish
+       ok   FLAC__stream_decoder_new
+       ok   decoder init_file
+       ok   decode to end
+       ok   all samples decoded
+       ok   FLAC round trip is bit-exact
+     PASS flac
+PASS test_flac
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

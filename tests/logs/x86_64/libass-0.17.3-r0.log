@@ -1,0 +1,29 @@
+# libass 0.17.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libass qnx-test-libass qnx-port-tests
+(1/3) Installing libass (0.17.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libass (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libass
+     == libass ==
+       ok   ass_library_init
+       ok   ass_renderer_init
+       ok   ass_read_memory parsed the script
+       ok   one dialogue event
+       ok   at least one style
+       ok   play resolution
+       info no font available, nothing rasterised
+       ok   render reported no change rather than failing
+     PASS libass
+PASS test_libass
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

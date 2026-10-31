@@ -1,0 +1,20 @@
+# capicxx-someip-runtime 3.2.4-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:23:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u capicxx-someip-runtime
+(1/6) Installing capicxx-core-runtime (3.2.4-r0)
+(2/6) Installing bzip2 (1.0.8-r0)
+(3/6) Installing xz (5.6.3-r0)
+(4/6) Installing boost (1.86.0-r0)
+(5/6) Installing vsomeip (3.5.6-r0)
+(6/6) Installing capicxx-someip-runtime (3.2.4-r0)
+OK: 186 MiB in 35 packages
+
+$ ldd on every program and library apk info -L capicxx-someip-runtime lists
+ok   loads: /data/oss/usr/local/lib/libCommonAPI-SomeIP.so.3.2.4
+
+RESULT: INSTALLED

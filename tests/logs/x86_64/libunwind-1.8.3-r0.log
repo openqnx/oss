@@ -1,0 +1,38 @@
+# libunwind 1.8.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T05:10:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libunwind qnx-test-libunwind qnx-port-tests
+(1/3) Installing libunwind (1.8.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libunwind (1.0-r5)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libunwind
+     == libunwind ==
+       ok   unw_getcontext
+       ok   unw_init_local
+       info frame 0: level3+0x2a
+       info frame 1: level2+0x9
+       info frame 2: level1+0x9
+       info frame 3: main+0x6a
+       info frame 4: _start+0xd6
+       info unw_backtrace: 5 frames
+       ok   unw_backtrace saw the call chain
+       ok   frame 0 is level3
+       ok   frame 1 is level2
+       ok   frame 2 is level1
+       ok   frame 3 is main
+       info unw_backtrace from /data/oss/usr/local/opt/libunwind/lib/libunwind.so.10
+       ok   the opt/libunwind library answered
+       info headers: libunwind 1.8.3
+       ok   built against 1.8.3
+     PASS libunwind
+PASS test_libunwind
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

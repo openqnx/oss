@@ -31,7 +31,10 @@ def verified(n):
     t = ptest.get(n, f"pkg:{n}")
     marks = []
     for arch, short in (("x86_64", "x86"), ("aarch64le", "a64")):
-        rows = res.get((t, arch), [])
+        # Rows of an older version of this component are history, not its state.
+        cur = deps.get(n, {}).get("version", "")
+        rows = [r for r in res.get((t, arch), [])
+                if not (len(r) > 5 and r[5].split(" ")[0] == n and not r[5].split(" ")[1].startswith(cur + "-"))]
         if not rows:
             continue
         ok = all(r[1] == "PASS" for r in rows)

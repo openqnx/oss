@@ -1,0 +1,99 @@
+# pandas 2.3.3-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:50:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pandas
+(1/7) Installing bzip2 (1.0.8-r0)
+(2/7) Installing expat (2.6.4-r0)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing sqlite (3.47.2-r0)
+(5/7) Installing xz (5.6.3-r0)
+(6/7) Installing python3 (3.14.0-r0)
+(7/7) Installing pandas (2.3.3-r0)
+OK: 221 MiB in 36 packages
+
+$ ldd on every program and library apk info -L pandas lists
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/algos.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/arrays.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/byteswap.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/groupby.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/hashing.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/hashtable.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/index.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/indexing.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/internals.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/interval.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/join.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/json.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/lib.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/missing.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/ops.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/ops_dispatch.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/pandas_datetime.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/pandas_parser.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/parsers.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/properties.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/reshape.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/sas.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/sparse.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/testing.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslib.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/writers.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/base.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/ccalendar.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/conversion.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/dtypes.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/fields.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/nattype.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/np_datetime.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/offsets.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/parsing.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/period.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/strptime.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/timedeltas.cpython-314.so
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/timestamps.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/timezones.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/tzconversion.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/tslibs/vectorized.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/window/aggregations.cpython-314.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/python3.14/site-packages/pandas/_libs/window/indexers.cpython-314.so
+
+RESULT: INSTALLED

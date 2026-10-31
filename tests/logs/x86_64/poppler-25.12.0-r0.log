@@ -1,0 +1,36 @@
+# poppler 25.12.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:37:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u poppler qnx-test-poppler qnx-port-tests
+(1/8) Installing lcms2 (2.16-r0)
+(2/8) Installing libwebp (1.4.0-r0)
+(3/8) Installing libtiff (4.7.0-r0)
+(4/8) Installing openjpeg (2.5.3-r0)
+(5/8) Installing poppler (25.12.0-r0)
+(6/8) Installing qnx-port-tests (1.0-r1)
+(7/8) Installing font-dejavu (2.37-r0)
+(8/8) Installing qnx-test-poppler (1.0-r1)
+OK: 185 MiB in 60 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_poppler
+     == poppler ==
+       info poppler 25.12.0
+       ok   poppler_document_new_from_file
+       ok   one page
+       info page 298 x 420 pt
+       ok   page size 298 x 420 pt (A6)
+       info text: Hello QNX poppler
+       ok   text read back
+       ok   find_text QNX
+       info QNX at x 97..141, y 315..339
+       ok   found where it was drawn
+     PASS poppler
+PASS test_poppler
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

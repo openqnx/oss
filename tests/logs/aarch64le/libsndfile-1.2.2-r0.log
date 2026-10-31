@@ -1,0 +1,38 @@
+# libsndfile 1.2.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libsndfile qnx-test-libsndfile qnx-port-tests
+(1/7) Installing libogg (1.3.5-r0)
+(2/7) Installing flac (1.4.3-r0)
+(3/7) Installing libvorbis (1.3.7-r0)
+(4/7) Installing opus (1.5.2-r0)
+(5/7) Installing libsndfile (1.2.2-r0)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-libsndfile (1.0-r6)
+OK: 57 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libsndfile
+     == libsndfile ==
+       info libsndfile-1.2.2
+       ok   WAV/PCM16
+       ok   sf_write_short
+       ok   reopen for reading
+       ok   header round trip
+       ok   sf_read_short
+       ok   samples are bit-exact (lossless format)
+       ok   FLAC
+       ok   sf_write_short
+       ok   reopen for reading
+       ok   header round trip
+       ok   sf_read_short
+       ok   samples are bit-exact (lossless format)
+     PASS libsndfile
+PASS test_libsndfile
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

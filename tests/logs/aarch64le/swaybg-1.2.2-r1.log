@@ -1,0 +1,63 @@
+# swaybg 1.2.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:25:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swaybg qnx-test-labwc qnx-port-tests
+( 1/31) Installing qnx-port-tests (1.0-r1)
+( 2/31) Installing expat (2.6.4-r0)
+( 3/31) Installing bzip2 (1.0.8-r0)
+( 4/31) Installing freetype (2.13.3-r0)
+( 5/31) Installing fontconfig (2.15.0-r0)
+( 6/31) Installing libxau (1.0.11-r0)
+( 7/31) Installing libxdmcp (1.1.5-r0)
+( 8/31) Installing libxcb (1.17.0-r0)
+( 9/31) Installing libx11 (1.8.10-r0)
+(10/31) Installing libxext (1.3.6-r0)
+(11/31) Installing libxrender (0.9.11-r0)
+(12/31) Installing lzo (2.10-r0)
+(13/31) Installing pixman (0.46.4-r0)
+(14/31) Installing cairo (1.18.2-r0)
+(15/31) Installing font-dejavu (2.37-r0)
+(16/31) Installing libsfdo (0.1.4-r0)
+(17/31) Installing xz (5.6.3-r0)
+(18/31) Installing libxml2 (2.13.5-r0)
+(19/31) Installing libxkbcommon (1.8.1-r1)
+(20/31) Installing fribidi (1.0.16-r0)
+(21/31) Installing graphite2 (1.3.14-r0)
+(22/31) Installing icu (76.1-r0)
+(23/31) Installing harfbuzz (<ip>-r0)
+(24/31) Installing libxft (2.3.8-r0)
+(25/31) Installing pango (1.54.0-r0)
+(26/31) Installing wayland (1.24.0-r0)
+(27/31) Installing wlroots (0.20.2-r0)
+(28/31) Installing xkeyboard-config (2.43-r0)
+(29/31) Installing labwc (0.20.2-r1)
+(30/31) Installing swaybg (1.2.2-r1)
+(31/31) Installing qnx-test-labwc (1.0-r4)
+OK: 129 MiB in 60 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
+     == labwc ==
+       ok   XDG_RUNTIME_DIR
+       ok   labwc started
+       ok   labwc's Wayland socket wayland-0 appeared
+       ok   client connected to labwc
+       ok   global wl_compositor
+       ok   global wl_shm
+       ok   global wl_seat
+       ok   global xdg_wm_base
+       ok   global zwlr_layer_shell_v1
+       ok   global wl_data_device_manager
+     2026-10-31 06:25:02 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+       ok   swaybg running on labwc (background layer surface)
+       ok   labwc still running after its clients
+       ok   labwc exits on SIGTERM
+     PASS labwc
+PASS test_labwc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,66 @@
+# geany-plugins 2.1-r1 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:28:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u geany-plugins
+( 1/37) Installing expat (2.6.4-r0)
+( 2/37) Installing dbus (1.16.0-r0)
+( 3/37) Installing libxau (1.0.11-r0)
+( 4/37) Installing libxdmcp (1.1.5-r0)
+( 5/37) Installing libxcb (1.17.0-r0)
+( 6/37) Installing libx11 (1.8.10-r0)
+( 7/37) Installing libxext (1.3.6-r0)
+( 8/37) Installing libxi (1.8.2-r0)
+( 9/37) Installing libxtst (1.2.5-r0)
+(10/37) Installing at-spi2-core (2.54.0-r0)
+(11/37) Installing bzip2 (1.0.8-r0)
+(12/37) Installing freetype (2.13.3-r0)
+(13/37) Installing fontconfig (2.15.0-r0)
+(14/37) Installing libxrender (0.9.11-r0)
+(15/37) Installing lzo (2.10-r0)
+(16/37) Installing pixman (0.46.4-r0)
+(17/37) Installing cairo (1.18.2-r0)
+(18/37) Installing fribidi (1.0.16-r0)
+(19/37) Installing graphite2 (1.3.14-r0)
+(20/37) Installing icu (76.1-r0)
+(21/37) Installing harfbuzz (<ip>-r0)
+(22/37) Installing libepoxy (1.5.10-r0)
+(23/37) Installing libxcomposite (0.4.6-r0)
+(24/37) Installing libxfixes (6.0.1-r0)
+(25/37) Installing libxcursor (1.2.2-r0)
+(26/37) Installing libxdamage (1.1.6-r0)
+(27/37) Installing libxinerama (1.1.5-r0)
+(28/37) Installing xz (5.6.3-r0)
+(29/37) Installing libxml2 (2.13.5-r0)
+(30/37) Installing libxkbcommon (1.8.1-r1)
+(31/37) Installing libxrandr (1.5.4-r0)
+(32/37) Installing libxft (2.3.8-r0)
+(33/37) Installing pango (1.54.0-r0)
+(34/37) Installing wayland (1.24.0-r0)
+(35/37) Installing gtk3 (3.24.43-r0)
+(36/37) Installing geany (2.1-r0)
+(37/37) Installing geany-plugins (2.1-r1)
+OK: 177 MiB in 66 packages
+
+$ ldd on every program and library apk info -L geany-plugins lists
+ok   loads: /data/oss/usr/local/lib/libgeanypluginutils.so.0
+ok   loads: /data/oss/usr/local/lib/geany/addons.so
+ok   loads: /data/oss/usr/local/lib/geany/autoclose.so
+ok   loads: /data/oss/usr/local/lib/geany/automark.so
+ok   loads: /data/oss/usr/local/lib/geany/codenav.so
+ok   loads: /data/oss/usr/local/lib/geany/commander.so
+ok   loads: /data/oss/usr/local/lib/geany/defineformat.so
+ok   loads: /data/oss/usr/local/lib/geany/keyrecord.so
+ok   loads: /data/oss/usr/local/lib/geany/lineoperations.so
+ok   loads: /data/oss/usr/local/lib/geany/overview.so
+ok   loads: /data/oss/usr/local/lib/geany/pairtaghighlighter.so
+ok   loads: /data/oss/usr/local/lib/geany/projectorganizer.so
+ok   loads: /data/oss/usr/local/lib/geany/sendmail.so
+ok   loads: /data/oss/usr/local/lib/geany/shiftcolumn.so
+ok   loads: /data/oss/usr/local/lib/geany/treebrowser.so
+ok   loads: /data/oss/usr/local/lib/geany/xmlsnippets.so
+
+RESULT: INSTALLED

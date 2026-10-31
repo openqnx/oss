@@ -1,0 +1,37 @@
+# gtk3 3.24.43-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtk3 qnx-test-gtk3 qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r1)
+(2/2) Installing qnx-test-gtk3 (1.0-r6)
+OK: 166 MiB in 54 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtk3
+     == gtk3 ==
+       info GTK 3.24.43, gdk-pixbuf 2.42.12, ATK 2.54.0
+       ok   gdk_pixbuf_new
+       ok   pixbuf geometry
+       ok   pixbuf has an alpha channel
+       ok   gdk-pixbuf encoded a PNG in memory
+       ok   gdk-pixbuf decoded the PNG back
+       ok   GtkWidget type registered
+       ok   GtkButton type registered
+       ok   GtkButton derives from GtkWidget
+       ok   type name readback
+       ok   GdkDisplay type registered
+       ok   AtkObject instantiated
+       ok   ATK name round trip
+       info gtk_init_check -> no display
+       info widget layer not exercised: no display. Start broadwayd and set
+            GDK_BACKEND=broadway BROADWAY_DISPLAY=:5 to cover it.
+       ok   no default display, as expected
+     PASS gtk3
+PASS test_gtk3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

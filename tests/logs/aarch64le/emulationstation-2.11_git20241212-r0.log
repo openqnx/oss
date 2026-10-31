@@ -1,0 +1,26 @@
+# emulationstation 2.11_git20241212-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:25:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u emulationstation
+( 1/12) Installing c-ares (1.34.3-r0)
+( 2/12) Installing nghttp2 (1.64.0-r0)
+( 3/12) Installing curl (8.11.1-r0)
+( 4/12) Installing freeimage (3.18.0-r0)
+( 5/12) Installing bzip2 (1.0.8-r0)
+( 6/12) Installing freetype (2.13.3-r0)
+( 7/12) Installing pugixml (1.14-r0)
+( 8/12) Installing sdl2 (2.32.10-r0)
+( 9/12) Installing lz4 (1.10.0-r0)
+(10/12) Installing xz (5.6.3-r0)
+(11/12) Installing vlc (3.0.21-r0)
+(12/12) Installing emulationstation (2.11_git20241212-r0)
+OK: 614 MiB in 41 packages
+
+$ ldd on every program and library apk info -L emulationstation lists
+ok   loads: /data/oss/usr/local/bin/emulationstation
+
+RESULT: INSTALLED

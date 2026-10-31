@@ -1,0 +1,35 @@
+# jq 1.7.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:02:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u jq qnx-test-jq qnx-port-tests
+(1/4) Installing oniguruma (6.9.9-r0)
+(2/4) Installing jq (1.7.1-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-jq (1.0-r6)
+OK: 10 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_jq
+     == jq ==
+       ok   jq_init
+       ok   jq_compile
+       ok   jv_parse
+       ok   jq_next produced a result
+       ok   the program returned 2
+       ok   only one result
+       ok   compile a program using built-ins
+       ok   result is a string
+       ok   built-ins produced the expected string
+     jq: error: syntax error, unexpected IDENT, expecting end of file (Unix shell quoting issues?) at <top-level>, line 1:
+     this is not jq (((     
+     jq: 1 compile error
+       ok   a bad program fails to compile
+     PASS jq
+PASS test_jq
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

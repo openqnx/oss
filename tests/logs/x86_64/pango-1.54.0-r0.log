@@ -1,0 +1,24 @@
+# pango 1.54.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:27:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pango
+OK: 166 MiB in 52 packages
+
+$ ldd on every program and library apk info -L pango lists
+ok   loads: /data/oss/usr/local/bin/pango-list
+ok   loads: /data/oss/usr/local/bin/pango-segmentation
+ok   loads: /data/oss/usr/local/bin/pango-view
+ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0.5400.0
+
+RESULT: INSTALLED

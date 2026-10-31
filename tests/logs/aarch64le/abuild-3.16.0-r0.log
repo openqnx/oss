@@ -1,0 +1,22 @@
+# abuild 3.16.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:21:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u abuild
+(1/1) Installing abuild (3.16.0-r0)
+OK: 55 MiB in 30 packages
+
+$ ldd on every program and library apk info -L abuild lists
+ok   loads: /data/oss/usr/local/bin/abuild-addgroup
+ok   loads: /data/oss/usr/local/bin/abuild-adduser
+ok   loads: /data/oss/usr/local/bin/abuild-apk
+ok   loads: /data/oss/usr/local/bin/abuild-fetch
+ok   loads: /data/oss/usr/local/bin/abuild-gzsplit
+ok   loads: /data/oss/usr/local/bin/abuild-rmtemp
+ok   loads: /data/oss/usr/local/bin/abuild-sudo
+ok   loads: /data/oss/usr/local/bin/abuild-tar
+
+RESULT: INSTALLED

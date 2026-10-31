@@ -1,0 +1,53 @@
+# lighttpd 1.4.77-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:25:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lighttpd
+(1/1) Installing lighttpd (1.4.77-r0)
+OK: 167 MiB in 53 packages
+
+$ ldd on every program and library apk info -L lighttpd lists
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_accesslog.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_ajp13.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_auth.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_authn_file.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_cgi.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_deflate.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_dirlisting.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_extforward.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_h2.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_openssl.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_proxy.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_rrdtool.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_sockproxy.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_ssi.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_status.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_userdir.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_vhostdb.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_webdav.so
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/lighttpd/mod_wstunnel.so
+ok   loads: /data/oss/usr/local/sbin/lighttpd
+ok   loads: /data/oss/usr/local/sbin/lighttpd-angel
+
+RESULT: INSTALLED

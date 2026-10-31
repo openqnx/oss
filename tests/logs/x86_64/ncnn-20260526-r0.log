@@ -1,0 +1,27 @@
+# ncnn 20260526-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ncnn qnx-test-ncnn qnx-port-tests
+(1/3) Installing ncnn (20260526-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-ncnn (1.0-r1)
+OK: 180 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ncnn
+     == ncnn ==
+       ok   load_param_mem
+       ok   load_model (no weights needed)
+       ok   extract
+       info out 2x2x1: 5 7 13 12
+       ok   2x2 output
+       ok   max pool of ReLU = [5 7; 13 12]
+     PASS ncnn
+PASS test_ncnn
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

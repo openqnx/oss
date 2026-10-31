@@ -1,0 +1,25 @@
+# re2 2024.07.02-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:40:07Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u re2 qnx-test-re2 qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r1)
+(2/4) Installing abseil (20240722.0-r0)
+(3/4) Installing re2 (2024.07.02-r0)
+(4/4) Installing qnx-test-re2 (1.0-r6)
+OK: 169 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_re2
+     == re2 ==
+       ok   full match
+       ok   captures
+       ok   global replace
+     PASS re2
+PASS test_re2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,29 @@
+# soxr 0.1.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:40:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u soxr qnx-test-soxr qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing soxr (0.1.3-r0)
+(3/3) Installing qnx-test-soxr (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_soxr
+     == soxr ==
+       info libsoxr-0.1.3
+       ok   soxr_oneshot
+       ok   all input consumed
+       ok   output length is about half the input
+       ok   mean energy per sample is preserved
+       ok   soxr_create (stereo 48k -> 44.1k)
+       ok   soxr_engine names a resampler
+       info engine = cr32s
+     PASS soxr
+PASS test_soxr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

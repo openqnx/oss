@@ -1,0 +1,31 @@
+# pcl 1.14.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:51:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pcl qnx-test-pcl qnx-port-tests
+(1/8) Installing bzip2 (1.0.8-r0)
+(2/8) Installing xz (5.6.3-r0)
+(3/8) Installing boost (1.86.0-r0)
+(4/8) Installing lz4 (1.10.0-r0)
+(5/8) Installing flann (1.9.2-r0)
+(6/8) Installing pcl (1.14.1-r0)
+(7/8) Installing qnx-port-tests (1.0-r1)
+(8/8) Installing qnx-test-pcl (1.0-r6)
+OK: 209 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pcl
+     == pcl ==
+       ok   cloud populated
+       ok   getMinMax3D
+       ok   voxel grid downsampled
+       ok   kd-tree knn search returned 5 neighbours
+       ok   neighbours sorted by distance
+     PASS pcl
+PASS test_pcl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

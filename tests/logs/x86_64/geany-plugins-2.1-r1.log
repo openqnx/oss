@@ -1,0 +1,30 @@
+# geany-plugins 2.1-r1 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u geany-plugins
+(1/1) Installing geany-plugins (2.1-r1)
+OK: 168 MiB in 53 packages
+
+$ ldd on every program and library apk info -L geany-plugins lists
+ok   loads: /data/oss/usr/local/lib/libgeanypluginutils.so.0
+ok   loads: /data/oss/usr/local/lib/geany/addons.so
+ok   loads: /data/oss/usr/local/lib/geany/autoclose.so
+ok   loads: /data/oss/usr/local/lib/geany/automark.so
+ok   loads: /data/oss/usr/local/lib/geany/codenav.so
+ok   loads: /data/oss/usr/local/lib/geany/commander.so
+ok   loads: /data/oss/usr/local/lib/geany/defineformat.so
+ok   loads: /data/oss/usr/local/lib/geany/keyrecord.so
+ok   loads: /data/oss/usr/local/lib/geany/lineoperations.so
+ok   loads: /data/oss/usr/local/lib/geany/overview.so
+ok   loads: /data/oss/usr/local/lib/geany/pairtaghighlighter.so
+ok   loads: /data/oss/usr/local/lib/geany/projectorganizer.so
+ok   loads: /data/oss/usr/local/lib/geany/sendmail.so
+ok   loads: /data/oss/usr/local/lib/geany/shiftcolumn.so
+ok   loads: /data/oss/usr/local/lib/geany/treebrowser.so
+ok   loads: /data/oss/usr/local/lib/geany/xmlsnippets.so
+
+RESULT: INSTALLED

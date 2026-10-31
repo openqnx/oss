@@ -1,0 +1,49 @@
+# svt-av1 2.3.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:24:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u svt-av1 qnx-test-svt-av1 qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing svt-av1 (2.3.0-r0)
+(3/3) Installing qnx-test-svt-av1 (1.0-r6)
+OK: 59 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_svt_av1
+     == svt-av1 ==
+       info SVT-AV1 2.3.0
+     Svt[info]: -------------------------------------------
+     Svt[info]: SVT [version]:	SVT-AV1 Encoder Lib v2.3.0-dirty
+     Svt[info]: SVT [build]  :	GCC 12.2.0	 64 bit
+     Svt[info]: LIB Build date: Oct 27 2026 16:08:32
+     Svt[info]: -------------------------------------------
+       ok   svt_av1_enc_init_handle
+     Svt[warn]: Preset M12 is mapped to M11.
+     Svt[info]: Level of Parallelism: 3
+     Svt[info]: Number of PPCS 42
+     Svt[info]: [asm level on system : up to neon]
+     Svt[info]: [asm level selected : up to neon]
+     Svt[info]: -------------------------------------------
+     Svt[info]: SVT [config]: main profile	tier (auto)	level (auto)
+     Svt[info]: SVT [config]: width / height / fps numerator / fps denominator 		: 128 / 96 / 25 / 1
+     Svt[info]: SVT [config]: bit-depth / color format 					: 8 / YUV420
+     Svt[info]: SVT [config]: preset / tune / pred struct 					: 11 / PSNR / random access
+     Svt[info]: SVT [config]: gop size / mini-gop size / key-frame type 			: 161 / 16 / key frame
+     Svt[info]: SVT [config]: BRC mode / rate factor 					: CRF / 35 
+     Svt[info]: SVT [config]: AQ mode / variance boost 					: 2 / 0
+     Svt[info]: -------------------------------------------
+       ok   svt_av1_enc_set_parameter
+       ok   svt_av1_enc_init
+       ok   svt_av1_enc_stream_header
+       ok   sequence header bytes produced
+       ok   frames accepted by the encoder
+       ok   encoded packets returned
+       info 3 output packet(s)
+     PASS svt-av1
+PASS test_svt_av1
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

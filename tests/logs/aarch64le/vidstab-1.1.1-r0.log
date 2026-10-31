@@ -1,0 +1,35 @@
+# vidstab 1.1.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:26:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vidstab qnx-test-vidstab qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing vidstab (1.1.1-r0)
+(3/3) Installing qnx-test-vidstab (1.0-r6)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vidstab
+     == vidstab ==
+       ok   vsFrameInfoInit
+       ok   frame info records the geometry
+     Info:   (qnx-port-test):Fieldsize: 16, Maximal translation: 16 pixel
+     
+     Info:   (qnx-port-test):Number of used measurement fields: 15 out of 15
+     
+     Info:   (qnx-port-test):Fieldsize: 6, Maximal translation: 6 pixel
+     
+     Info:   (qnx-port-test):Number of used measurement fields: 48 out of 48
+     
+       ok   vsMotionDetectInit
+       ok   vsFrameAllocate
+       ok   vsMotionDetection over two frames
+       ok   cleanup
+     PASS vidstab
+PASS test_vidstab
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,31 @@
+# libedit 20240808.3.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:05:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libedit qnx-test-libedit qnx-port-tests
+(1/4) Installing ncurses (6.5-r1)
+(2/4) Installing libedit (20240808.3.1-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-libedit (1.0-r6)
+OK: 12 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libedit
+     == libedit ==
+       ok   history_init
+       ok   three entries stored
+       ok   H_FIRST returns the newest entry
+       ok   H_LAST returns the oldest entry
+       ok   H_PREV_STR (regex search)
+       ok   tok_init
+       ok   tok_str
+       ok   four tokens
+       ok   quoting is honoured
+     PASS libedit
+PASS test_libedit
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

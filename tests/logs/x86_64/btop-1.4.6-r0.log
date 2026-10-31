@@ -1,0 +1,33 @@
+# btop 1.4.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u btop qnx-test-monitors qnx-port-tests
+(1/4) Installing btop (1.4.6-r0)
+(2/4) Installing qnx-port-tests (1.0-r1)
+(3/4) Installing htop (3.5.0-r0)
+(4/4) Installing qnx-test-monitors (1.0-r4)
+OK: 168 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_monitors
+     == monitors ==
+       info htop drew 6694 bytes
+       ok   htop drew a screen
+       ok   htop: header and meters
+       ok   htop: lists sshd (QNX process table)
+       ok   htop: lists io-sock
+       ok   htop exits on q
+       info btop drew 35443 bytes
+       ok   btop drew a screen
+       ok   btop: cpu, mem, proc boxes
+       ok   btop: lists this target's processes
+       ok   btop exits on q
+     PASS monitors
+PASS test_monitors
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

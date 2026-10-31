@@ -1,0 +1,28 @@
+# protobuf 29.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T05:10:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u protobuf qnx-test-protobuf qnx-port-tests
+(1/4) Installing abseil (20240722.0-r0)
+(2/4) Installing protobuf (29.3-r0)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-protobuf (1.0-r7)
+OK: 180 MiB in 56 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_protobuf
+     == protobuf ==
+       ok   serialize Timestamp
+       ok   wire bytes produced
+       ok   parse Timestamp
+       ok   field round trip
+       ok   Struct map fields
+       ok   map value readback
+     PASS protobuf
+PASS test_protobuf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

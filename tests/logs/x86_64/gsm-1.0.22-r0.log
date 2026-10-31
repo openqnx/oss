@@ -1,0 +1,37 @@
+# gsm 1.0.22-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gsm qnx-test-misc-libs qnx-port-tests
+(1/6) Installing gsm (1.0.22-r0)
+(2/6) Installing qnx-port-tests (1.0-r1)
+(3/6) Installing enca (1.19-r0)
+(4/6) Installing hyphen (2.8.8-r0)
+(5/6) Installing libgsf (1.14.53-r0)
+(6/6) Installing qnx-test-misc-libs (1.0-r6)
+OK: 167 MiB in 58 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_misc_libs
+     == hyphen / enca / libgsf / gsm ==
+       ok   enca reports supported languages
+       info 15 language(s), first = be
+       ok   enca_analyser_alloc
+       info enca charset = 7bit ASCII characters
+       ok   enca identified the encoding
+       ok   gsf_output_memory_new
+       ok   gsf_output_write
+       ok   gsf_output_size
+       ok   bytes came back
+       ok   gsm_create
+       ok   gsm encode/decode round trip
+       ok   decoded frame carries signal energy
+       ok   hnj_hyphen_hyphenate2
+     PASS hyphen / enca / libgsf / gsm
+PASS test_misc_libs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

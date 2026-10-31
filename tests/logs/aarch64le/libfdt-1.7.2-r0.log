@@ -1,0 +1,33 @@
+# libfdt 1.7.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:06:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libfdt qnx-test-libfdt qnx-port-tests
+(1/3) Installing libfdt (1.7.2-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libfdt (1.0-r6)
+OK: 9 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libfdt
+     == libfdt ==
+       ok   allocate a blob
+       ok   fdt_create
+       ok   fdt_finish
+       ok   fdt_check_header
+       ok   magic number
+       ok   root compatible string
+       ok   fdt_path_offset(/cpus)
+       ok   fdt_path_offset(/cpus/cpu@0)
+       ok   reg property (byte order handled)
+       ok   device_type
+       ok   missing path reports NOTFOUND
+       ok   fdt_strerror
+     PASS libfdt
+PASS test_libfdt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,17 @@
+# g3log 2.4-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u g3log
+(1/1) Installing g3log (2.4-r0)
+OK: 166 MiB in 53 packages
+
+$ ldd on every program and library apk info -L g3log lists
+ok   loads: /data/oss/usr/local/lib/libg3log.so.2 (ldd: TLS teardown message)
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libg3log.so.2.4-0 (ldd: TLS teardown message)
+
+RESULT: INSTALLED

@@ -1,0 +1,68 @@
+# oss-desktop 1.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:27:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
+( 1/36) Installing font-dejavu (2.37-r0)
+( 2/36) Installing hicolor-icon-theme (0.18-r0)
+( 3/36) Installing libsfdo (0.1.4-r0)
+( 4/36) Installing lcms2 (2.16-r0)
+( 5/36) Installing wlroots (0.20.2-r0)
+( 6/36) Installing xkeyboard-config (2.43-r0)
+( 7/36) Installing labwc (0.20.2-r1)
+( 8/36) Installing lxde-icon-theme (0.5.2-r0)
+( 9/36) Installing swaybg (1.2.2-r1)
+(10/36) Installing libxfce4util (4.20.0-r0)
+(11/36) Installing xfconf (4.20.0-r0)
+(12/36) Installing libxfce4ui (4.20.0-r0)
+(13/36) Installing exo (4.20.0-r0)
+(14/36) Installing libexif (0.6.24-r0)
+(15/36) Installing libnotify (0.8.3-r0)
+(16/36) Installing garcon (4.20.0-r0)
+(17/36) Installing gtk-layer-shell (0.9.0-r0)
+(18/36) Installing libxfce4windowing (4.20.0-r0)
+(19/36) Installing xfce4-panel (4.20.0-r0)
+(20/36) Installing thunar (4.20.0-r0)
+(21/36) Installing xfce4-appfinder (4.20.0-r0)
+(22/36) Installing gmp (6.3.0-r0)
+(23/36) Installing libidn2 (2.3.7-r0)
+(24/36) Installing libtasn1 (4.19.0-r0)
+(25/36) Installing nettle (3.10.1-r0)
+(26/36) Installing gnutls (3.8.8-r0)
+(27/36) Installing graphene (1.10.8-r0)
+(28/36) Installing libwebp (1.4.0-r0)
+(29/36) Installing libtiff (4.7.0-r0)
+(30/36) Installing gtk4 (4.16.7-r0)
+(31/36) Installing lz4 (1.10.0-r0)
+(32/36) Installing vte (0.78.2-r0)
+(33/36) Installing xfce4-terminal (1.1.5-r0)
+(34/36) Installing oss-desktop (1.0-r0)
+(35/36) Installing qnx-port-tests (1.0-r1)
+(36/36) Installing qnx-test-labwc (1.0-r4)
+OK: 261 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
+     == labwc ==
+       ok   XDG_RUNTIME_DIR
+       ok   labwc started
+       ok   labwc's Wayland socket wayland-0 appeared
+       ok   client connected to labwc
+       ok   global wl_compositor
+       ok   global wl_shm
+       ok   global wl_seat
+       ok   global xdg_wm_base
+       ok   global zwlr_layer_shell_v1
+       ok   global wl_data_device_manager
+     2026-10-31 04:27:19 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+       ok   swaybg running on labwc (background layer surface)
+       ok   labwc still running after its clients
+       ok   labwc exits on SIGTERM
+     PASS labwc
+PASS test_labwc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

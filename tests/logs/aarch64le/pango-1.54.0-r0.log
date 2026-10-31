@@ -1,0 +1,43 @@
+# pango 1.54.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:51:05Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pango
+( 1/19) Installing expat (2.6.4-r0)
+( 2/19) Installing bzip2 (1.0.8-r0)
+( 3/19) Installing freetype (2.13.3-r0)
+( 4/19) Installing fontconfig (2.15.0-r0)
+( 5/19) Installing libxau (1.0.11-r0)
+( 6/19) Installing libxdmcp (1.1.5-r0)
+( 7/19) Installing libxcb (1.17.0-r0)
+( 8/19) Installing libx11 (1.8.10-r0)
+( 9/19) Installing libxext (1.3.6-r0)
+(10/19) Installing libxrender (0.9.11-r0)
+(11/19) Installing lzo (2.10-r0)
+(12/19) Installing pixman (0.46.4-r0)
+(13/19) Installing cairo (1.18.2-r0)
+(14/19) Installing fribidi (1.0.16-r0)
+(15/19) Installing graphite2 (1.3.14-r0)
+(16/19) Installing icu (76.1-r0)
+(17/19) Installing harfbuzz (<ip>-r0)
+(18/19) Installing libxft (2.3.8-r0)
+(19/19) Installing pango (1.54.0-r0)
+OK: 107 MiB in 48 packages
+
+$ ldd on every program and library apk info -L pango lists
+ok   loads: /data/oss/usr/local/bin/pango-list
+ok   loads: /data/oss/usr/local/bin/pango-segmentation
+ok   loads: /data/oss/usr/local/bin/pango-view
+ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0.5400.0
+ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0
+ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0.5400.0
+
+RESULT: INSTALLED

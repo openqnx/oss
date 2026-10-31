@@ -1,0 +1,20 @@
+# libxdamage 1.1.6-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:34:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxdamage
+(1/6) Installing libxau (1.0.11-r0)
+(2/6) Installing libxdmcp (1.1.5-r0)
+(3/6) Installing libxcb (1.17.0-r0)
+(4/6) Installing libx11 (1.8.10-r0)
+(5/6) Installing libxfixes (6.0.1-r0)
+(6/6) Installing libxdamage (1.1.6-r0)
+OK: 59 MiB in 35 packages
+
+$ ldd on every program and library apk info -L libxdamage lists
+ok   loads: /data/oss/usr/local/lib/libXdamage.so.1
+
+RESULT: INSTALLED

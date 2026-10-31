@@ -1,0 +1,35 @@
+# luajit 2.1_git-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:26:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u luajit qnx-test-luajit qnx-port-tests
+(1/5) Installing luajit (2.1_git-r0)
+(2/5) Installing qnx-port-tests (1.0-r1)
+(3/5) Installing libuv (1.51.0-r0)
+(4/5) Installing luv (1.51.0.1-r0)
+(5/5) Installing qnx-test-luajit (1.0-r6)
+OK: 168 MiB in 57 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_luajit
+     == luajit / luv ==
+       info LuaJIT 2.1.1788856981
+       ok   luaL_newstate
+       ok   trace compiler is enabled
+       info jit: x64 POSIX SSE3 SSE4.1 BMI2 fold cse dce fwd dse narrow loop abc sink fuse
+       ok   jit.os is POSIX (lj_arch.h saw __QNX__)
+       ok   hot loop computes the right answer
+       ok   the hot loop was compiled into a trace
+       ok   ffi calls strlen and getpid in libc
+       ok   require('luv')
+       info luv 1.51.0
+       ok   a libuv timer fired through luv
+       ok   uv.fs_stat('/') reports a directory
+     PASS luajit / luv
+PASS test_luajit
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

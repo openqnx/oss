@@ -1,0 +1,18 @@
+# libiconv 1.18-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:31:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libiconv
+OK: 55 MiB in 29 packages
+
+$ ldd on every program and library apk info -L libiconv lists
+ok   loads: /data/oss/usr/local/bin/iconv
+ok   loads: /data/oss/usr/local/lib/libcharset.so.1
+ok   loads: /data/oss/usr/local/lib/libcharset.so.1.0.0
+ok   loads: /data/oss/usr/local/lib/libiconv.so.2
+ok   loads: /data/oss/usr/local/lib/libiconv.so.2.7.0
+
+RESULT: INSTALLED

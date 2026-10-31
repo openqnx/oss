@@ -1,0 +1,26 @@
+# tinyxml2 <ip>-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:25:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tinyxml2 qnx-test-tinyxml2 qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing tinyxml2 (<ip>-r0)
+(3/3) Installing qnx-test-tinyxml2 (1.0-r6)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tinyxml2
+     == tinyxml2 ==
+       ok   parse
+       ok   element lookup
+       ok   int attribute
+       ok   string attribute
+       info tinyxml2 <ip>
+     PASS tinyxml2
+PASS test_tinyxml2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

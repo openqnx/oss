@@ -1,0 +1,64 @@
+# perl 5.40.2-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:53:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl
+(1/2) Installing libxcrypt (4.4.38-r0)
+(2/2) Installing perl (5.40.2-r0)
+OK: 118 MiB in 31 packages
+
+$ ldd on every program and library apk info -L perl lists
+ok   loads: /data/oss/usr/local/bin/perl
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/CORE/libperl.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/B/B.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Compress/Raw/Bzip2/Bzip2.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Compress/Raw/Zlib/Zlib.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Cwd/Cwd.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Data/Dumper/Dumper.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Devel/Peek/Peek.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Digest/MD5/MD5.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Digest/SHA/SHA.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/Encode.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/Byte/Byte.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/CN/CN.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/EBCDIC/EBCDIC.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/JP/JP.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/KR/KR.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/Symbol/Symbol.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/TW/TW.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Encode/Unicode/Unicode.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Fcntl/Fcntl.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/File/DosGlob/DosGlob.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/File/Glob/Glob.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Filter/Util/Call/Call.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Hash/Util/Util.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Hash/Util/FieldHash/FieldHash.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/I18N/Langinfo/Langinfo.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/IO/IO.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/List/Util/Util.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/MIME/Base64/Base64.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Math/BigInt/FastCalc/FastCalc.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Opcode/Opcode.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/POSIX/POSIX.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/PerlIO/encoding/encoding.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/PerlIO/mmap/mmap.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/PerlIO/via/via.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/SDBM_File/SDBM_File.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Socket/Socket.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Storable/Storable.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Sys/Hostname/Hostname.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Sys/Syslog/Syslog.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Time/HiRes/HiRes.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Time/Piece/Piece.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Unicode/Collate/Collate.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/Unicode/Normalize/Normalize.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/attributes/attributes.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/mro/mro.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/re/re.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/threads/threads.so
+ok   loads: /data/oss/usr/local/lib/perl5/5.40.2/aarch64-nto/auto/threads/shared/shared.so
+
+RESULT: INSTALLED

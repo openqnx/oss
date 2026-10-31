@@ -1,0 +1,24 @@
+# foonathan_memory 0.7.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:23:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u foonathan_memory qnx-test-foonathan-memory qnx-port-tests
+(1/3) Installing foonathan_memory (0.7.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-foonathan-memory (1.0-r6)
+OK: 166 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_foonathan_memory
+     == foonathan_memory ==
+       ok   two distinct nodes from pool
+       ok   node is writable for its full size
+       ok   node_size honours request
+     PASS foonathan_memory
+PASS test_foonathan_memory
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

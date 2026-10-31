@@ -1,0 +1,37 @@
+# xfce4-panel 4.20.0-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:41:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-panel
+(1/8) Installing libxfce4util (4.20.0-r0)
+(2/8) Installing xfconf (4.20.0-r0)
+(3/8) Installing libxfce4ui (4.20.0-r0)
+(4/8) Installing exo (4.20.0-r0)
+(5/8) Installing garcon (4.20.0-r0)
+(6/8) Installing gtk-layer-shell (0.9.0-r0)
+(7/8) Installing libxfce4windowing (4.20.0-r0)
+(8/8) Installing xfce4-panel (4.20.0-r0)
+OK: 177 MiB in 60 packages
+
+$ ldd on every program and library apk info -L xfce4-panel lists
+ok   loads: /data/oss/usr/local/bin/xfce4-panel
+ok   loads: /data/oss/usr/local/lib/libxfce4panel-2.0.so.4
+ok   loads: /data/oss/usr/local/lib/libxfce4panel-2.0.so.4.0.0
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/migrate
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/wrapper-2.0
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libactions.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libapplicationsmenu.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libclock.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libdirectorymenu.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/liblauncher.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libpager.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libseparator.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libshowdesktop.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libsystray.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libtasklist.so
+ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libwindowmenu.so
+
+RESULT: INSTALLED

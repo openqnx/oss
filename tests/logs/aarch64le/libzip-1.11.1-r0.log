@@ -1,0 +1,27 @@
+# libzip 1.11.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:36:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libzip qnx-test-libzip qnx-port-tests
+(1/5) Installing bzip2 (1.0.8-r0)
+(2/5) Installing xz (5.6.3-r0)
+(3/5) Installing libzip (1.11.1-r0)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-libzip (1.0-r6)
+OK: 56 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libzip
+     == libzip ==
+       ok   create archive
+       ok   add entry
+       ok   write (zstd)
+       ok   read back
+     PASS libzip
+PASS test_libzip
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

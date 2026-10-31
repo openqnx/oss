@@ -1,0 +1,29 @@
+# libnotify 0.8.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:32:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libnotify qnx-test-libnotify qnx-port-tests
+(1/1) Installing qnx-port-tests (1.0-r1)
+OK: 55 MiB in 30 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libnotify
+     == libnotify ==
+       ok   notify_init
+       ok   notify_is_initted
+       ok   app name
+       ok   notify_notification_new
+     
+     (process:163008533): libnotify-CRITICAL **: 05:32:02.661: notify_notification_add_action: assertion 'callback != NULL' failed
+       ok   notify_notification_update
+       info no notification daemon: Cannot spawn a message bus without a machine-id: Unable to load /var/local/lib/dbus/machine-id or /etc/machine-id: Failed to open file “/var/local/lib/dbus/machine-id”: No such file or directory
+       ok   the absence of a daemon is reported as an error
+       ok   notify_uninit
+     PASS libnotify
+PASS test_libnotify
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

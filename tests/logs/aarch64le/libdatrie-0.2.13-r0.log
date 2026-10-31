@@ -1,0 +1,33 @@
+# libdatrie 0.2.13-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:04:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libdatrie qnx-test-libdatrie qnx-port-tests
+(1/3) Installing libdatrie (0.2.13-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libdatrie (1.0-r6)
+OK: 9 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libdatrie
+     == libdatrie ==
+       ok   alpha_map_new
+       ok   add the a-z range
+       ok   trie_new
+       ok   trie_store(qnx)
+       ok   trie_store(qnode)
+       ok   trie_retrieve(qnx)
+       ok   trie_retrieve(qnode)
+       ok   an absent key is not found
+       ok   trie_enumerate
+       ok   enumeration visited both entries
+       ok   trie_delete
+       ok   the deleted key is gone
+     PASS libdatrie
+PASS test_libdatrie
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

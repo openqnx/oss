@@ -1,0 +1,35 @@
+# grpc 1.69.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u grpc qnx-test-grpc qnx-port-tests
+(1/7) Installing abseil (20240722.0-r0)
+(2/7) Installing c-ares (1.34.3-r0)
+(3/7) Installing protobuf (29.3-r0)
+(4/7) Installing re2 (2024.07.02-r0)
+(5/7) Installing grpc (1.69.0-r0)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-grpc (1.0-r6)
+OK: 210 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_grpc
+     == grpc ==
+       info grpc core 44.2.0
+       ok   InsecureChannelCredentials
+       ok   CreateChannel
+       ok   channel starts IDLE
+       ok   CreateCustomChannel with args
+     WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+     E0000 00:00:1793420659.185554       1 ssl_utils.cc:605] error loading file /usr/share/grpc/roots.pem: INTERNAL: Failed to load file: /usr/share/grpc/roots.pem due to error(fdopen): No such file or directory
+     E0000 00:00:1793420659.185602       1 ssl_credentials.cc:54] Could not get default pem root certs.
+     E0000 00:00:1793420659.185611       1 ssl_credentials.cc:193] Handshaker factory creation failed. pem_root_certs cannot be nullptr
+       ok   SslCredentials (TLS stack linked)
+     PASS grpc
+PASS test_grpc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

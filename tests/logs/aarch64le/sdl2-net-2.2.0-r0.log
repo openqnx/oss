@@ -1,0 +1,18 @@
+# sdl2-net 2.2.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:23:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2-net
+(1/2) Installing sdl2 (2.32.10-r0)
+(2/2) Installing sdl2-net (2.2.0-r0)
+OK: 56 MiB in 31 packages
+
+$ ldd on every program and library apk info -L sdl2-net lists
+ok   loads: /data/oss/usr/local/lib/libSDL2_net-2.0.so.0
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libSDL2_net-2.0.so.0.200.0
+
+RESULT: INSTALLED

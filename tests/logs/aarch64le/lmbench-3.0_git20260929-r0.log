@@ -1,0 +1,60 @@
+# lmbench 3.0_git20260929-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:38:05Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lmbench
+(1/1) Installing lmbench (3.0_git20260929-r0)
+OK: 58 MiB in 30 packages
+
+$ ldd on every program and library apk info -L lmbench lists
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_file_rd
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mem
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mem64
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mem64a
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mem64d
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mem64p
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_mmap_rd
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_pipe
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_tcp
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/bw_unix
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/disk
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/enough
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/flushdisk
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/hello
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_connect
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_ctx
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_fcntl
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_fifo
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_fs
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_http
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_mem_pingpong
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_mem_rd
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_mmap
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_ops
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_pagefault
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_pipe
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_proc
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_select
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_sig
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_syscall
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_tcp
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_udp
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_unix
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lat_unix_connect
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/line
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lmdd
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/lmhttp
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/loop_o
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/memsize
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/mhz
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/msleep
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/par_mem
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/par_ops
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/stream
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/timing_o
+ok   loads: /data/oss/usr/local/lib/lmbench/bin/tlb
+
+RESULT: INSTALLED

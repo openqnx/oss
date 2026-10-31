@@ -1,0 +1,20 @@
+# gtsam 4.2-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:24:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtsam
+(1/2) Installing boost (1.86.0-r0)
+(2/2) Installing gtsam (4.2-r0)
+OK: 185 MiB in 54 packages
+
+$ ldd on every program and library apk info -L gtsam lists
+ok   loads: /data/oss/usr/local/lib/libgtsam.so.4
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libgtsam.so.4.2.0
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libmetis-gtsam.so
+
+RESULT: INSTALLED

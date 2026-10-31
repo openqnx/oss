@@ -1,0 +1,39 @@
+# capstone 5.0.9-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:22:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u capstone qnx-test-capstone qnx-port-tests
+(1/3) Installing capstone (5.0.9-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-capstone (1.0-r3)
+OK: 184 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_capstone
+     == capstone ==
+       ok   cs_open x86-64
+       ok   4 instructions
+       info 0x1000 push rbp
+       info 0x1001 mov rbp, rsp
+       info 0x1004 xor eax, eax
+       info 0x1006 ret 
+       ok   push rbp
+       ok   mov rbp, rsp
+       ok   xor eax, eax
+       ok   ret at 0x1006
+       ok   cs_open AArch64
+       ok   3 instructions
+       info stp x29, x30, [sp, #-0x10]!
+       info mov w0, #0
+       info ret 
+       ok   stp x29, x30, [sp, #-0x10]!
+       ok   mov w0, #0
+       ok   ret
+     PASS capstone
+PASS test_capstone
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

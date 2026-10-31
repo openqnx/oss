@@ -1,0 +1,23 @@
+# sdl2-image 2.8.8-r0 -- INSTALLED
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:40:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2-image
+(1/7) Installing aom (3.12.1-r0)
+(2/7) Installing dav1d (1.5.0-r0)
+(3/7) Installing libavif (1.1.1-r0)
+(4/7) Installing libwebp (1.4.0-r0)
+(5/7) Installing libtiff (4.7.0-r0)
+(6/7) Installing sdl2 (2.32.10-r0)
+(7/7) Installing sdl2-image (2.8.8-r0)
+OK: 181 MiB in 59 packages
+
+$ ldd on every program and library apk info -L sdl2-image lists
+ok   loads: /data/oss/usr/local/lib/libSDL2_image-2.0.so.0
+cp: /tmp/.vot-ldd: Resource busy
+ok   loads: /data/oss/usr/local/lib/libSDL2_image-2.0.so.0.800.8
+
+RESULT: INSTALLED

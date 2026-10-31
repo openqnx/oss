@@ -1,0 +1,33 @@
+# libuv 1.51.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:33:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libuv qnx-test-libuv qnx-port-tests
+(1/3) Installing libuv (1.51.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libuv (1.0-r6)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libuv
+     == libuv ==
+       info libuv 1.51.0
+       ok   uv_default_loop
+       ok   uv_pipe
+       ok   uv_write
+       ok   uv_read_start
+       ok   timer fired once
+       ok   async handle woke the loop
+       ok   pipe delivered 3 bytes
+       ok   uv_fs_stat(/tmp)
+       ok   uv_get_total_memory
+       ok   uv_cpu_info
+       info 4 cpu(s), 2048 MiB RAM
+     PASS libuv
+PASS test_libuv
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

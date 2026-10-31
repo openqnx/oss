@@ -1,0 +1,50 @@
+# tumbler 4.20.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:26:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tumbler
+( 1/24) Installing c-ares (1.34.3-r0)
+( 2/24) Installing nghttp2 (1.64.0-r0)
+( 3/24) Installing curl (8.11.1-r0)
+( 4/24) Installing bzip2 (1.0.8-r0)
+( 5/24) Installing dav1d (1.5.0-r0)
+( 6/24) Installing lame (3.100-r0)
+( 7/24) Installing libogg (1.3.5-r0)
+( 8/24) Installing libtheora (1.1.1-r0)
+( 9/24) Installing libvorbis (1.3.7-r0)
+(10/24) Installing libvpx (1.15.0-r0)
+(11/24) Installing openh264 (2.5.0-r0)
+(12/24) Installing opus (1.5.2-r0)
+(13/24) Installing x264 (0_git-r0)
+(14/24) Installing x265 (3.6-r0)
+(15/24) Installing xz (5.6.3-r0)
+(16/24) Installing ffmpeg (7.1.1-r0)
+(17/24) Installing ffmpegthumbnailer (2.2.3-r0)
+(18/24) Installing freetype (2.13.3-r0)
+(19/24) Installing gstreamer (1.24.10-r0)
+(20/24) Installing gst-plugins-base (1.24.10-r0)
+(21/24) Installing libxml2 (2.13.5-r0)
+(22/24) Installing libgsf (1.14.53-r0)
+(23/24) Installing libxfce4util (4.20.0-r0)
+(24/24) Installing tumbler (4.20.0-r0)
+OK: 107 MiB in 53 packages
+
+$ ldd on every program and library apk info -L tumbler lists
+ok   loads: /data/oss/usr/local/lib/libtumbler-1.so.0
+ok   loads: /data/oss/usr/local/lib/libtumbler-1.so.0.0.0
+ok   loads: /data/oss/usr/local/lib/tumbler-1/tumblerd
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-cover-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-desktop-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-ffmpeg-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-font-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-gst-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-jpeg-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-odf-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/tumbler-pixbuf-thumbnailer.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/cache/tumbler-cache-plugin.so
+ok   loads: /data/oss/usr/local/lib/tumbler-1/plugins/cache/tumbler-xdg-cache.so
+
+RESULT: INSTALLED

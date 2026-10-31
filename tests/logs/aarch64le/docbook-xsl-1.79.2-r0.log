@@ -1,0 +1,55 @@
+# docbook-xsl 1.79.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T04:42:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u docbook-xsl qnx-test-docbook-xsl qnx-port-tests
+( 1/10) Installing libiconv (1.18-r0)
+( 2/10) Installing libunistring (1.3-r0)
+( 3/10) Installing ncurses (6.5-r1)
+( 4/10) Installing gettext (0.22.5-r0)
+( 5/10) Installing xz (5.6.3-r0)
+( 6/10) Installing libxml2 (2.13.5-r0)
+( 7/10) Installing libxslt (1.1.42-r0)
+( 8/10) Installing docbook-xsl (1.79.2-r0)
+( 9/10) Installing qnx-port-tests (1.0-r1)
+(10/10) Installing qnx-test-docbook-xsl (1.0-r2)
+OK: 40 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_docbook_xsl
+     == docbook-xsl ==
+       ok   work directory
+       ok   manpages/docbook.xsl installed
+       ok   stylesheet parsed (with its includes)
+       ok   DocBook source parsed
+     Note: namesp. add : added namespace before processing              qnxdemo
+     Note: meta source : no *info/productname or alternative            qnxdemo
+     Note: meta source : see http://www.docbook.org/tdg5/en/html/produ  qnxdemo
+     Note: meta source : no refentry/refmeta/refmiscinfo@class=source   qnxdemo
+     Note: meta source : see http://www.docbook.org/tdg5/en/html/refmi  qnxdemo
+     Note: meta version: no *info/productnumber or alternative          qnxdemo
+     Note: meta version: see http://www.docbook.org/tdg5/en/html/produ  qnxdemo
+     Note: meta version: no refentry/refmeta/refmiscinfo@class=version  qnxdemo
+     Note: meta version: see http://www.docbook.org/tdg5/en/html/refmi  qnxdemo
+     Warn: meta source : no fallback for source, so inserted a fixme    qnxdemo
+     Note: meta manual : no titled ancestor of refentry                 qnxdemo
+     Note: meta manual : no refentry/refmeta/refmiscinfo@class=manual   qnxdemo
+     Note: meta manual : see http://www.docbook.org/tdg5/en/html/refmi  qnxdemo
+     Warn: meta manual : no fallback for manual, so inserted a fixme    qnxdemo
+     Warn: meta author : no refentry/info/author                        qnxdemo
+     Note: meta author : see http://www.docbook.org/tdg5/en/html/autho  qnxdemo
+     Warn: meta author : no author data, so inserted a fixme            qnxdemo
+     Note: Writing qnxdemo.1
+       ok   xsltApplyStylesheet
+       ok   qnxdemo.1 written
+       info .TH "QNXDEMO" "1" "10/31/2026" "[FIXME: source]" "[FIXME: manual]"
+       ok   .TH QNXDEMO "1"
+       ok   NAME: qnxdemo \- demonstrate the stylesheets
+     PASS docbook-xsl
+PASS test_docbook_xsl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,74 @@
+# xwayland 24.1.14-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:32:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xwayland qnx-test-virtualgl qnx-port-tests
+( 1/37) Installing qnx-port-tests (1.0-r1)
+( 2/37) Installing expat (2.6.4-r0)
+( 3/37) Installing bzip2 (1.0.8-r0)
+( 4/37) Installing freetype (2.13.3-r0)
+( 5/37) Installing fontconfig (2.15.0-r0)
+( 6/37) Installing libxau (1.0.11-r0)
+( 7/37) Installing libxdmcp (1.1.5-r0)
+( 8/37) Installing libxcb (1.17.0-r0)
+( 9/37) Installing libx11 (1.8.10-r0)
+(10/37) Installing libxext (1.3.6-r0)
+(11/37) Installing libxrender (0.9.11-r0)
+(12/37) Installing lzo (2.10-r0)
+(13/37) Installing pixman (0.46.4-r0)
+(14/37) Installing cairo (1.18.2-r0)
+(15/37) Installing font-dejavu (2.37-r0)
+(16/37) Installing libsfdo (0.1.4-r0)
+(17/37) Installing xz (5.6.3-r0)
+(18/37) Installing libxml2 (2.13.5-r0)
+(19/37) Installing libxkbcommon (1.8.1-r1)
+(20/37) Installing fribidi (1.0.16-r0)
+(21/37) Installing graphite2 (1.3.14-r0)
+(22/37) Installing icu (76.1-r0)
+(23/37) Installing harfbuzz (<ip>-r0)
+(24/37) Installing libxft (2.3.8-r0)
+(25/37) Installing pango (1.54.0-r0)
+(26/37) Installing wayland (1.24.0-r0)
+(27/37) Installing wlroots (0.20.2-r0)
+(28/37) Installing xkeyboard-config (2.43-r0)
+(29/37) Installing labwc (0.20.2-r1)
+(30/37) Installing virtualgl (3.1.5-r0)
+(31/37) Installing libxcvt (0.1.3-r0)
+(32/37) Installing fontenc (1.1.8-r0)
+(33/37) Installing libxfont2 (2.0.7-r0)
+(34/37) Installing libxkbfile (1.2.0-r0)
+(35/37) Installing xkbcomp (1.5.0-r0)
+(36/37) Installing xwayland (24.1.14-r0)
+(37/37) Installing qnx-test-virtualgl (1.0-r0)
+OK: 132 MiB in 66 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_virtualgl
+     == virtualgl ==
+       ok   labwc up (Wayland compositor)
+       ok   Xwayland up (an X display on labwc)
+       ok   XOpenDisplay
+       info X server: The X.Org Foundation 12401014, screen 320x240 depth 24
+       info pixel 20a060 (want 20a060)
+       ok   X11: drawn colour read back exactly
+     
+     VirtualGL Client 64-bit v3.1.5 (Build 20261030)
+     Listening for connections on port 14267
+       ok + +  vglclient listening (VGL transport)C
+     onnection from <ip>.
+       info vglclient speaks VGL 2.1
+       ok   version handshake (VGL 2.x)
+       ok   frame sent: JPEG tile + end of frame
+       info pixel c82864 (want c82864)
+       ok   vglclient drew the frame in the window
+     Error receiving data from server.  Server may have disconnected.
+     Listener exiting ...
+        (this is normal if the application exited.)
+     PASS virtualgl
+PASS test_virtualgl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,25 @@
+# libdeflate 1.22-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:05:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libdeflate qnx-test-libdeflate qnx-port-tests
+(1/3) Installing libdeflate (1.22-r0)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libdeflate (1.0-r6)
+OK: 9 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libdeflate
+     == libdeflate ==
+       ok   compresses
+       ok   decompresses
+       ok   data intact
+       ok   crc32
+     PASS libdeflate
+PASS test_libdeflate
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

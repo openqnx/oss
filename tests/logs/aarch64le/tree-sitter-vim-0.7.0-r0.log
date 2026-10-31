@@ -1,0 +1,15 @@
+# tree-sitter-vim 0.7.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:26:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tree-sitter-vim
+(1/1) Installing tree-sitter-vim (0.7.0-r0)
+OK: 56 MiB in 30 packages
+
+$ ldd on every program and library apk info -L tree-sitter-vim lists
+ok   loads: /data/oss/usr/local/lib/tree-sitter/vim.so
+
+RESULT: INSTALLED

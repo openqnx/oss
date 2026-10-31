@@ -1,0 +1,65 @@
+# python3-pygments 2.21.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:14:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-pygments qnx-test-pymods qnx-port-tests
+( 1/29) Installing bzip2 (1.0.8-r0)
+( 2/29) Installing expat (2.6.4-r0)
+( 3/29) Installing gdbm (1.24-r0)
+( 4/29) Installing sqlite (3.47.2-r0)
+( 5/29) Installing xz (5.6.3-r0)
+( 6/29) Installing python3 (3.14.0-r0)
+( 7/29) Installing python3-pygments (2.21.0-r0)
+( 8/29) Installing qnx-port-tests (1.0-r1)
+( 9/29) Installing python3-astor (0.8.1-r0)
+(10/29) Installing python3-async-generator (1.10-r0)
+(11/29) Installing python3-click (8.5.0-r0)
+(12/29) Installing python3-coverage (7.17.0-r0)
+(13/29) Installing python3-curio (1.6_git20251221-r0)
+(14/29) Installing python3-idna (3.20-r0)
+(15/29) Installing python3-iniconfig (2.3.1-r0)
+(16/29) Installing python3-mypy-extensions (1.1.0-r0)
+(17/29) Installing python3-pluggy (1.7.0-r0)
+(18/29) Installing python3-pretend (1.0.9-r0)
+(19/29) Installing python3-packaging (25.0-r0)
+(20/29) Installing python3-pytest (9.2.0-r0)
+(21/29) Installing python3-pytest-cov (7.1.0-r0)
+(22/29) Installing python3-tornado (6.6-r0)
+(23/29) Installing python3-pytest-tornasync (0.6.0_p2-r0)
+(24/29) Installing python3-pytokens (0.4.1-r0)
+(25/29) Installing python3-sniffio (1.3.1-r0)
+(26/29) Installing python3-sortedcontainers (2.4.0-r0)
+(27/29) Installing python3-traitlets (5.16.1-r0)
+(28/29) Installing python3-versioneer (0.29-r0)
+(29/29) Installing qnx-test-pymods (1.0-r1)
+OK: 169 MiB in 58 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pymods
+     == pymods ==
+       ok   tornado: GET /hi/qnx -> 200 {"hello": "qnx"}
+       ok   curio: 5 tasks joined, results in order
+       ok   sniffio: detects curio
+       ok   pytest: 1 passed
+       ok   pytest-cov: coverage report, 100%
+       ok   click: command with an option
+       ok   idna: münchen.de -> xn--mnchen-3ya.de
+       ok   sortedcontainers: sorted, bisect
+       ok   astor: AST back to source
+       ok   traitlets: observed change
+       ok   traitlets: type checked
+       ok   pygments: Python highlighted to HTML
+       ok   pytokens: identifier, number
+       ok   coverage: this file measured
+       ok   async_generator: async for over it
+       ok   pretend: stub and call recorder
+       ok   mypy_extensions: trait, mypyc_attr
+       ok   versioneer: get_versions
+     PASS pymods
+PASS test_pymods
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

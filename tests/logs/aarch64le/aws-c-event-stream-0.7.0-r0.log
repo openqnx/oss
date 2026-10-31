@@ -1,0 +1,20 @@
+# aws-c-event-stream 0.7.0-r0 -- INSTALLED
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T05:22:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-event-stream
+(1/6) Installing aws-c-common (0.12.6-r0)
+(2/6) Installing aws-c-cal (0.9.13-r0)
+(3/6) Installing s2n-tls (1.7.0-r0)
+(4/6) Installing aws-c-io (0.26.1-r0)
+(5/6) Installing aws-checksums (0.2.10-r0)
+(6/6) Installing aws-c-event-stream (0.7.0-r0)
+OK: 57 MiB in 35 packages
+
+$ ldd on every program and library apk info -L aws-c-event-stream lists
+ok   loads: /data/oss/usr/local/lib/libaws-c-event-stream.so.1.0.0
+
+RESULT: INSTALLED

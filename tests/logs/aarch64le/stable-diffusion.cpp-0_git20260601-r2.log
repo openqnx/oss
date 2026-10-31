@@ -1,0 +1,25 @@
+# stable-diffusion.cpp 0_git20260601-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T06:24:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u stable-diffusion.cpp qnx-test-sdcpp qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing stable-diffusion.cpp (0_git20260601-r2)
+(3/3) Installing qnx-test-sdcpp (1.0-r1)
+OK: 112 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdcpp
+     == stable-diffusion.cpp ==
+       info stable-diffusion.cpp version unknown, commit 7948df8
+       ok   sd-cli --version: the commit built (7948df8)
+       ok   missing model refused (rc=1)
+       ok   the loader reports the missing file
+     PASS stable-diffusion.cpp
+PASS test_sdcpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

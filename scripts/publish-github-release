@@ -101,10 +101,12 @@ else:
     for comp, es in by.items():
         if mode == "only" and comp not in only:
             continue
+        # A header-only component has only <comp>-dev: its versions count too.
+        own = [e for e in es if e["P"] == comp] or es
         if mode == "verified":
-            vers = {e["V"] for e in es if e["P"] == comp and ("%s %s" % (comp, e["V"])) in passed}
+            vers = {e["V"] for e in own if ("%s %s" % (comp, e["V"])) in passed}
         else:
-            vers = {max((e["V"] for e in es if e["P"] == comp), key=vk, default=None)}
+            vers = {max((e["V"] for e in own), key=vk, default=None)}
         pick += [e for e in es if e["V"] in vers]
     # What target-bootstrap installs first is always published: apk-tools and
     # the CA bundle (every apk install on a target goes through them).

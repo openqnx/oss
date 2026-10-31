@@ -1,0 +1,92 @@
+#!/bin/bash
+# ci-release -- from built components to the published releases and site,
+# with an on-target test in between. What .github/workflows/release.yml runs
+# on the self-hosted runner; by hand it is the same.
+#
+#   scripts/ci-release [options] <component>... | --changed
+#
+#   <component>...  components already built (scripts/qnxbuild or
+#                   scripts/port-update); --changed: every component version
+#                   not yet verified on the targets
+#   --no-publish    stop after the on-target tests and the docs
+#   --commit        commit tests/results, tests/logs and the docs and push main
+#
+# Steps:
+#   1. the port tests are built and packaged (tests/build-tests.sh, qnxpkg --tests)
+#   2. the components are packaged and signed (qnxpkg; unchanged ones keep their bytes)
+#   3. dists/ and test_suites/ are served to the targets (scripts/serve-dists)
+#   4. each component is installed with apk on both QEMU targets and its test
+#      run (scripts/verify-on-target), one log per package in tests/logs/
+#   5. the docs are regenerated (gen-port-docs, gen-root-readme, gen-target-guide)
+#   6. what passed is published (publish-github-release --verified --changed),
+#      the releases are compared byte for byte with what was staged
+#      (scripts/check-release-sync) and the package site is redeployed
+#
+# Needs: QNX_SDP_ROOT, a signing key in keys/private/*.rsa, the two targets
+# set up with apk (docs/qemu-test-vms.md) and named by
+#   CI_TARGET_X86_64     e.g. 192.168.122.32
+#   CI_TARGET_AARCH64LE  e.g. 192.168.122.82
+# and gh logged in for publishing.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"
+PUBLISH=1; COMMIT=""; WHAT=()
+while [ $# -gt 0 ]; do case "$1" in
+  --no-publish) PUBLISH=""; shift ;;
+  --commit) COMMIT=1; shift ;;
+  -h|--help) sed -n '2,32p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) WHAT+=("$1"); shift ;;
+esac; done
+[ ${#WHAT[@]} -gt 0 ] || { echo "usage: $0 [--no-publish] [--commit] <component>... | --changed" >&2; exit 2; }
+: "${QNX_SDP_ROOT:?set QNX_SDP_ROOT}" "${CI_TARGET_X86_64:?set CI_TARGET_X86_64}" "${CI_TARGET_AARCH64LE:?set CI_TARGET_AARCH64LE}"
+KEY=$(ls keys/private/*.rsa 2>/dev/null | head -n 1)
+[ -n "$KEY" ] || { echo "no signing key in keys/private/" >&2; exit 1; }
+step() { echo; echo "######## $*  ($(date '+%F %T'))"; }
+
+step "1. port tests"
+tests/build-tests.sh
+(source env.sh x86_64 >/dev/null
+ for a in x86_64 aarch64le; do ./scripts/qnxpkg -a "$a" --key "$KEY" --tests; done)
+
+if [ "${WHAT[0]}" != --changed ]; then
+  step "2. packages: ${WHAT[*]}"
+  (source env.sh x86_64 >/dev/null
+   for a in x86_64 aarch64le; do
+     built=(); for c in "${WHAT[@]}"; do [ -d "pkgroot/$a/$c" ] && built+=("$c"); done
+     [ ${#built[@]} -eq 0 ] || ./scripts/qnxpkg -a "$a" --key "$KEY" "${built[@]}"
+   done)
+fi
+
+step "3. package server"
+if ! curl -fs -o /dev/null http://127.0.0.1:8000/dists/8.0/x86_64/INDEX; then
+  nohup ./scripts/serve-dists > logs/serve-dists.log 2>&1 &
+  sleep 3
+fi
+
+step "4. on-target tests"
+rc=0
+./scripts/verify-on-target -t "QEMU x86_64, vanilla mkqnximage image" "$CI_TARGET_X86_64" "${WHAT[@]}" || rc=1
+./scripts/verify-on-target -t "QEMU aarch64le, vanilla mkqnximage image" "$CI_TARGET_AARCH64LE" "${WHAT[@]}" || rc=1
+[ $rc -eq 0 ] || echo "!! some components failed on a target: they are not published (tests/results/*.tsv)"
+
+step "5. docs"
+./scripts/gen-port-docs >/dev/null; ./scripts/gen-root-readme; ./scripts/gen-target-guide
+
+if [ -n "$PUBLISH" ]; then
+  step "6. publish, check, site"
+  PUBLISH_OUT=${PUBLISH_OUT:-$WS/tmp/release-staging} QNXPUB_PAUSE=${QNXPUB_PAUSE:-120} \
+    ./scripts/publish-github-release --verified --changed --upload
+  ./scripts/check-release-sync || ./scripts/check-release-sync --fix
+  ./scripts/check-release-sync
+  ./scripts/deploy-pkg-site
+fi
+
+if [ -n "$COMMIT" ]; then
+  step "7. commit"
+  git add tests/results tests/logs README.md PORTS-INDEX.md docs ports
+  if ! git diff --cached --quiet; then
+    git -c user.name=openqnx-oss -c user.email=noreply@openqnx.invalid commit -q \
+      -m "On-target results: ${WHAT[*]}" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+    git push origin HEAD:main
+  fi
+fi
+exit $rc

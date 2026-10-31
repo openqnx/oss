@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""check-release-sync -- are the GitHub releases exactly what was staged?
+
+    scripts/check-release-sync [--fix] [release...]
+
+Every asset of the six releases (apk/packages/tests-8.0-<arch>) is compared
+with the staged file of the same name in PUBLISH_OUT (default
+tmp/release-staging, what scripts/publish-github-release staged): sha256 vs
+the digest GitHub reports. A differing asset means its index describes other
+bytes than the release serves (apk then refuses it). --fix re-uploads the
+differing and missing ones (--clobber), 25 per batch, PAUSE seconds (120)
+between batches, the indexes last. Exit status 1 when anything differs.
+Assets only on GitHub (older versions, not in the index) are listed.
+"""
+import hashlib, json, os, subprocess, sys, time
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ST = os.environ.get("PUBLISH_OUT", os.path.join(WS, "tmp", "release-staging"))
+REPO = "openqnx/oss"
+PAUSE = int(os.environ.get("PAUSE", "120"))
+fix = "--fix" in sys.argv
+only = [a for a in sys.argv[1:] if not a.startswith("--")]
+
+def sha(p):
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
+
+def assets(tag):
+    rid = subprocess.check_output(["gh", "api", f"repos/{REPO}/releases/tags/{tag}", "--jq", ".id"], text=True).strip()
+    out = subprocess.check_output(["gh", "api", "--paginate", f"repos/{REPO}/releases/{rid}/assets?per_page=100",
+                                   "--jq", ".[] | [.name, .digest] | @tsv"], text=True)
+    return dict(l.split("\t") for l in out.splitlines() if l)
+
+total = {}
+for tag in only or sorted(d for d in os.listdir(ST) if not d.startswith(".")):
+    gh = assets(tag)
+    local = set(n for n in os.listdir(os.path.join(ST, tag)) if not n.startswith("."))
+    bad = [n for n in sorted(gh) if n in local and gh[n] != "sha256:" + sha(os.path.join(ST, tag, n))]
+    missing = sorted(local - set(gh))
+    extra = sorted(set(gh) - local)
+    total[tag] = len(bad)
+    print(f"{tag}: {len(gh)} assets, {len(bad)} differ, {len(missing)} not uploaded, {len(extra)} only on GitHub", flush=True)
+    for n in extra:
+        print("   only on GitHub:", n)
+    if fix:
+        todo = bad + missing
+        # the indexes last: they describe the files
+        todo.sort(key=lambda n: n in ("INDEX", "APKINDEX.tar.gz"))
+        for i in range(0, len(todo), 25):
+            part = todo[i:i + 25]
+            for attempt in range(5):
+                r = subprocess.run(["gh", "release", "upload", "--clobber", "-R", REPO, tag] +
+                                   [os.path.join(ST, tag, n) for n in part])
+                if r.returncode == 0:
+                    break
+                time.sleep(PAUSE * (attempt + 1))
+            else:
+                sys.exit(f"{tag}: upload failed at {part[0]}")
+            print(f"   {tag}: {min(i + 25, len(todo))}/{len(todo)} uploaded  {time.strftime('%H:%M')}", flush=True)
+            if i + 25 < len(todo):
+                time.sleep(PAUSE)
+sys.exit(1 if any(total.values()) and not fix else 0)

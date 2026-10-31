@@ -57,8 +57,13 @@ jobs:
     if: ${{ inputs.port != '' }}
     runs-on: [self-hosted, qnx-sdp]
     steps:
-      - uses: actions/checkout@v4
+      - name: Workspace up to date with main
+        run: cd "$OSS_WS" && git fetch -q origin main && git merge --ff-only origin/main
       - name: Port the newer versions (the old ones are kept)
+        env:
+          PORT: ${{ inputs.port }}
         run: |
           set -e
-          for c in ${{ inputs.port }}; do ./scripts/port-update "$c"; done
+          cd "$OSS_WS"
+          for c in $PORT; do ./scripts/port-update "$c"; done
+          echo "Ported: $PORT. Next: Actions -> release -> Run workflow with these components." >> "$GITHUB_STEP_SUMMARY"

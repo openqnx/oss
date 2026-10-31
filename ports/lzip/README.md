@@ -156,14 +156,14 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/ed-1.22.5-r1.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/lzip-1.26-r0.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/patch-2.8-r0.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wget 1.25.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/wget-1.25.0-r0.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/ed-1.22.5-r1.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/lzip-1.26-r0.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/patch-2.8-r0.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wget 1.25.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/wget-1.25.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ed-1.22.5-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/lzip-1.26-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/patch-2.8-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wget 1.25.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/wget-1.25.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ed 1.22.5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ed-1.22.5-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lzip 1.26-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/lzip-1.26-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | patch 2.8-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/patch-2.8-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wget 1.25.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/wget-1.25.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

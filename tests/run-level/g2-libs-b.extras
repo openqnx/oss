@@ -1,0 +1,26 @@
+test_libxkbcommon	share/X11/xkb
+test_libxrender	bin/labwc bin/Xwayland
+test_libxft	bin/labwc bin/Xwayland share/fonts/font-dejavu/DejaVuSans.ttf
+test_libxext	bin/labwc bin/Xwayland
+test_libxrandr	bin/labwc bin/Xwayland
+test_libxi	bin/labwc bin/Xwayland
+test_libxcomposite	bin/labwc bin/Xwayland
+test_libxdamage	bin/labwc bin/Xwayland
+test_libxfixes	bin/labwc bin/Xwayland
+test_libxinerama	bin/labwc bin/Xwayland
+test_libxscrnsaver	bin/labwc bin/Xwayland
+test_libxtst	bin/labwc bin/Xwayland
+test_libxfce4windowing	bin/labwc share/X11/xkb
+test_sdl2_ttf	share/fonts/font-dejavu/DejaVuSansMono.ttf
+test_tumbler	lib/tumbler-1/plugins/tumbler-pixbuf-thumbnailer.so lib/tumbler-1/plugins/cache/tumbler-xdg-cache.so
+test_lighttpd	sbin/lighttpd
+test_unbound	sbin/unbound
+test_paho_mqtt_cpp	sbin/mosquitto
+test_lua_lpeg	bin/luajit lib/lua/5.1/lpeg.so share/lua/5.1/re.lua
+test_luv	bin/luajit lib/libluv.so
+test_tree_sitter_c	lib/tree-sitter/c.so lib/libtree-sitter.so.0.25
+test_tree_sitter_lua	lib/tree-sitter/lua.so lib/libtree-sitter.so.0.25
+test_tree_sitter_markdown	lib/tree-sitter/markdown.so lib/tree-sitter/markdown_inline.so lib/libtree-sitter.so.0.25
+test_tree_sitter_query	lib/tree-sitter/query.so lib/libtree-sitter.so.0.25
+test_tree_sitter_vim	lib/tree-sitter/vim.so lib/libtree-sitter.so.0.25
+test_tree_sitter_vimdoc	lib/tree-sitter/vimdoc.so lib/libtree-sitter.so.0.25

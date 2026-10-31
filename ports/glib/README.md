@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.82.4`) |
 | Build system | Meson |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`gettext`](../gettext/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,10 +64,11 @@ git clone --depth 1 -b 2.82.4 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/glib < ports/glib/patches/0001-qnx-fstab-mount-points.patch
+patch -p1 -d src/glib < ports/glib/patches/0002-qnx-credentials-cmsgcred.patch
 ```
 
 **[`0001-qnx-fstab-mount-points.patch`](patches/0001-qnx-fstab-mount-points.patch)** — GIO: use the fstab code for mount points on QNX.
@@ -78,6 +79,10 @@ patch -p1 -d src/glib < ports/glib/patches/0001-qnx-fstab-mount-points.patch
 > the file ends at "#error No g_get_mount_table() implementation".
 
 Touches: `gio/gunixmounts.c` · Upstream status: QNX-specific
+
+**[`0002-qnx-credentials-cmsgcred.patch`](patches/0002-qnx-credentials-cmsgcred.patch)** — QNX: GCredentials via SCM_CREDS/struct cmsgcred, as on FreeBSD (GDBus EXTERNAL)
+
+Touches: `gio/gcredentialsprivate.h` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -231,8 +236,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/glib-2.82.4-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/glib-2.82.4-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/glib-2.82.4-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/glib-2.82.4-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

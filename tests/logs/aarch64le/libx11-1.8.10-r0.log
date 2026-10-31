@@ -1,19 +1,52 @@
-# libx11 1.8.10-r0 -- INSTALLED
+# libx11 1.8.10-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:33:59Z   packages from: apk:local-dists
+# date: 2026-10-31T16:46:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libx11
-(1/4) Installing libxau (1.0.11-r0)
-(2/4) Installing libxdmcp (1.1.5-r0)
-(3/4) Installing libxcb (1.17.0-r0)
-(4/4) Installing libx11 (1.8.10-r0)
-OK: 59 MiB in 33 packages
+$ apk add -u libx11 qnx-test-libx11 qnx-port-tests
+(1/6) Installing libxau (1.0.11-r0)
+(2/6) Installing libxdmcp (1.1.5-r0)
+(3/6) Installing libxcb (1.17.0-r0)
+(4/6) Installing libx11 (1.8.10-r0)
+(5/6) Installing qnx-port-tests (1.0-r2)
+(6/6) Installing qnx-test-libx11 (1.0-r0)
+OK: 59 MiB in 34 packages
 
-$ ldd on every program and library apk info -L libx11 lists
-ok   loads: /data/oss/usr/local/lib/libX11-xcb.so.1
-ok   loads: /data/oss/usr/local/lib/libX11.so.6
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libx11
+     == libx11 ==
+       ok   XStringToKeysym: a, Return, F12, udiaeresis
+       ok   XKeysymToString: BackSpace, KP_Enter
+       ok   unknown keysym name -> NoSymbol
+       ok   XConvertCase: Latin, Latin-1 and Greek
+       ok   XrmGetStringDatabase parses a resource text
+       info xterm.vt100.font -> fixed
+       ok   exact resource name
+       info xterm.vt100.foreground -> white
+       ok   class-based wildcard match
+       info foo.bar.background -> gray20
+       ok   global * wildcard
+       info app.button.label -> Press me
+       ok   continued line joined
+       info app.ok.width -> 42
+       ok   class match on an inner component
+       ok   unmatched resource not found
+       info foo.background -> black
+       info new.thing -> yes
+       ok   XrmMergeDatabases overrides and adds
+       info xterm.vt100.font -> fixed
+       info foo.background -> black
+       ok   XrmPutFileDatabase / XrmGetFileDatabase round trip
+       ok   quarks are interned
+       ok   XParseGeometry 800x600+10-20
+       ok   region union bounding box 150x75
+       ok   XPointInRegion inside/outside the L shape
+       ok   XIntersectRegion
+       ok   XOpenDisplay(:97) with no server returns NULL
+     PASS libx11
+PASS test_libx11
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

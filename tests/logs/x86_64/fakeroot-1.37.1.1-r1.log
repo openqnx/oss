@@ -1,0 +1,39 @@
+# fakeroot 1.37.1.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:49:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fakeroot qnx-test-fakeroot qnx-port-tests
+(1/4) Installing fakeroot (1.37.1.1-r1)
+(2/4) Installing qnx-port-tests (1.0-r2)
+(3/4) Installing fakeroot-dev (1.37.1.1-r0)
+(4/4) Installing qnx-test-fakeroot (1.0-r1)
+OK: 93 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fakeroot
+     == fakeroot ==
+       info real ids: uid=0 euid=0
+       ok   /usr/local/lib/libfakeroot-0.so installed
+       info faked: 49676:977215531
+       ok   faked started and printed key:pid
+       info ids under fakeroot: 0 0 0 0
+       ok   getuid/geteuid/getgid/getegid are 0 under fakeroot
+       info chown under fakeroot: 0 1234 5678
+       ok   chown(1234:5678) succeeds and stat reports it
+       info mknod under fakeroot: 0 chr
+       ok   mknod(S_IFCHR) succeeds and stat reports a char device
+       ok   second process sees the faked owner (daemon state)
+       ok   second process sees the faked char device
+       ok   real file keeps its real owner
+       ok   real "device" is a plain file
+       ok   faked stopped
+       ok   fakeroot wrapper: #!/bin/sh, preloads libfakeroot-0.so
+       info no getopt(1) on this target -- the fakeroot wrapper script not run
+     PASS fakeroot
+PASS test_fakeroot
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,31 @@
+# libgcrypt 1.11.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:16:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libgcrypt qnx-test-libgcrypt qnx-port-tests
+(1/4) Installing libgpg-error (1.50-r0)
+(2/4) Installing libgcrypt (1.11.0-r1)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-libgcrypt (1.0-r6)
+OK: 96 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgcrypt
+     == libgcrypt ==
+       ok   gcry_check_version matches the headers
+       info libgcrypt 1.11.0
+       ok   initialisation finished
+       ok   SHA-256("abc") matches FIPS 180-2
+       ok   gcry_cipher_open AES-128-CBC
+       ok   encrypt
+       ok   decrypt
+       ok   AES-128-CBC round trip
+       ok   two random draws differ
+     PASS libgcrypt
+PASS test_libgcrypt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

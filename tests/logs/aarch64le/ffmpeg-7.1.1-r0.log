@@ -1,46 +1,42 @@
 # ffmpeg 7.1.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T04:46:35Z   packages from: apk:local-dists
+# date: 2026-10-31T16:27:29Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u ffmpeg qnx-test-ffmpeg qnx-port-tests
-( 1/19) Installing bzip2 (1.0.8-r0)
-( 2/19) Installing dav1d (1.5.0-r0)
-( 3/19) Installing lame (3.100-r0)
-( 4/19) Installing libogg (1.3.5-r0)
-( 5/19) Installing libtheora (1.1.1-r0)
-( 6/19) Installing libvorbis (1.3.7-r0)
-( 7/19) Installing libvpx (1.15.0-r0)
-( 8/19) Installing openh264 (2.5.0-r0)
-( 9/19) Installing opus (1.5.2-r0)
-(10/19) Installing x264 (0_git-r0)
-(11/19) Installing x265 (3.6-r0)
-(12/19) Installing libiconv (1.18-r0)
-(13/19) Installing libunistring (1.3-r0)
-(14/19) Installing ncurses (6.5-r1)
-(15/19) Installing gettext (0.22.5-r0)
-(16/19) Installing xz (5.6.3-r0)
-(17/19) Installing ffmpeg (7.1.1-r0)
-(18/19) Installing qnx-port-tests (1.0-r1)
-(19/19) Installing qnx-test-ffmpeg (1.0-r6)
-OK: 57 MiB in 24 packages
+( 1/15) Installing bzip2 (1.0.8-r0)
+( 2/15) Installing dav1d (1.5.0-r0)
+( 3/15) Installing lame (3.100-r0)
+( 4/15) Installing libogg (1.3.5-r0)
+( 5/15) Installing libtheora (1.1.1-r0)
+( 6/15) Installing libvorbis (1.3.7-r0)
+( 7/15) Installing libvpx (1.15.0-r0)
+( 8/15) Installing openh264 (2.5.0-r0)
+( 9/15) Installing opus (1.5.2-r0)
+(10/15) Installing x264 (0_git-r0)
+(11/15) Installing x265 (3.6-r0)
+(12/15) Installing xz (5.6.3-r0)
+(13/15) Installing ffmpeg (7.1.1-r0)
+(14/15) Installing qnx-port-tests (1.0-r2)
+(15/15) Installing qnx-test-ffmpeg (1.0-r6)
+OK: 86 MiB in 43 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ffmpeg
      == ffmpeg ==
        info libavcodec 61.19.101, libavformat 61.7.100
        ok   H.264 encoder is registered (libx264)
        ok   H.264 decoder is registered
-     [libx264 @ 20ce6e6e00] using cpu capabilities: ARMv8 NEON
-     [libx264 @ 20ce6e6e00] profile Constrained Baseline, level 1.3, 4:2:0, 8-bit
+     [libx264 @ 567eb12e00] using cpu capabilities: ARMv8 NEON
+     [libx264 @ 567eb12e00] profile Constrained Baseline, level 1.3, 4:2:0, 8-bit
        ok   avcodec_open2 (encoder)
        ok   avcodec_open2 (decoder)
        ok   av_frame_get_buffer
        ok   all frames encoded
        ok   at least one frame decoded back at the right size
        info encoded 10, decoded 10
-     [swscaler @ 1a2de33010] No accelerated colorspace conversion found from yuv420p to rgb24.
+     [swscaler @ 4352ca2010] No accelerated colorspace conversion found from yuv420p to rgb24.
        ok   sws_getContext
        ok   av_image_alloc
        ok   sws_scale converted every row
@@ -48,15 +44,15 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_f
        ok   swr_init
        ok   the mp4 muxer is registered
        ok   matroska muxer by filename
-     [libx264 @ 20ce6e6e00] frame I:2     Avg QP: 4.00  size:   444
-     [libx264 @ 20ce6e6e00] frame P:8     Avg QP: 1.50  size:   260
-     [libx264 @ 20ce6e6e00] mb I  I16..4: 100.0%  0.0%  0.0%
-     [libx264 @ 20ce6e6e00] mb P  I16..4: 98.2%  0.0%  0.0%  P16..4:  1.8%  0.0%  0.0%  0.0%  0.0%    skip: 0.0%
-     [libx264 @ 20ce6e6e00] final ratefactor: 5.13
-     [libx264 @ 20ce6e6e00] coded y,uvDC,uvAC intra: 0.0% 0.0% 0.0% inter: 100.0% 0.0% 0.0%
-     [libx264 @ 20ce6e6e00] i16 v,h,dc,p: 79%  0% 21%  0%
-     [libx264 @ 20ce6e6e00] i8c dc,h,v,p: 100%  0%  0%  0%
-     [libx264 @ 20ce6e6e00] kb/s:59.28
+     [libx264 @ 567eb12e00] frame I:2     Avg QP: 4.00  size:   444
+     [libx264 @ 567eb12e00] frame P:8     Avg QP: 1.50  size:   260
+     [libx264 @ 567eb12e00] mb I  I16..4: 100.0%  0.0%  0.0%
+     [libx264 @ 567eb12e00] mb P  I16..4: 98.2%  0.0%  0.0%  P16..4:  1.8%  0.0%  0.0%  0.0%  0.0%    skip: 0.0%
+     [libx264 @ 567eb12e00] final ratefactor: 5.13
+     [libx264 @ 567eb12e00] coded y,uvDC,uvAC intra: 0.0% 0.0% 0.0% inter: 100.0% 0.0% 0.0%
+     [libx264 @ 567eb12e00] i16 v,h,dc,p: 79%  0% 21%  0%
+     [libx264 @ 567eb12e00] i8c dc,h,v,p: 100%  0%  0%  0%
+     [libx264 @ 567eb12e00] kb/s:59.28
      PASS ffmpeg
 PASS test_ffmpeg
 --------------------------------------------

@@ -1,17 +1,40 @@
-# sleef 3.8_git20250214-r0 -- INSTALLED
+# sleef 3.8_git20250214-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:24:03Z   packages from: apk:local-dists
+# date: 2026-10-31T17:51:40Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sleef
-(1/1) Installing sleef (3.8_git20250214-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u sleef qnx-test-sleef qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing sleef (3.8_git20250214-r0)
+(3/3) Installing qnx-test-sleef (1.0-r0)
+OK: 56 MiB in 31 packages
 
-$ ldd on every program and library apk info -L sleef lists
-ok   loads: /data/oss/usr/local/lib/libsleef.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libsleef.so.3.9.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sleef
+     == sleef ==
+       ok   sin(1)
+       ok   cos(1)
+       ok   sin(1e6) (large-argument reduction)
+       ok   exp(1) = e
+       ok   log(10)
+       ok   pow(2, 0.5) = sqrt 2
+       ok   pow(3, 4) = 81 exactly
+       ok   4*atan2(1,1) = pi
+       ok   sinpi(1/6) = 0.5
+       ok   tgamma(5) = 24
+       ok   erf(0.5)
+       ok   cbrt(27) = 3
+       ok   sincos(0.5)
+       ok   special values: log(-1)=NaN, exp overflow/underflow
+       ok   float sinf/expf
+       info SIMD: AdvSIMD entry points
+       ok   Sleef_sind2_u10 (2 lanes)
+       ok   Sleef_expd2_u10 (2 lanes)
+       ok   Sleef_logf4_u10 (4 lanes)
+     PASS sleef
+PASS test_sleef
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,17 +1,62 @@
-# libxkbcommon 1.8.1-r1 -- INSTALLED
+# libxkbcommon 1.8.1-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:48Z   packages from: apk:local-dists
+# date: 2026-10-31T16:17:00Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxkbcommon
-OK: 166 MiB in 52 packages
+$ apk add -u libxkbcommon qnx-test-libxkbcommon qnx-port-tests
+(1/5) Installing libxml2 (2.13.5-r1)
+(2/5) Installing libxkbcommon (1.8.1-r1)
+(3/5) Installing qnx-port-tests (1.0-r2)
+(4/5) Installing xkeyboard-config (2.43-r0)
+(5/5) Installing qnx-test-libxkbcommon (1.0-r0)
+OK: 102 MiB in 34 packages
 
-$ ldd on every program and library apk info -L libxkbcommon lists
-ok   loads: /data/oss/usr/local/lib/libxkbcommon.so.0
-ok   loads: /data/oss/usr/local/lib/libxkbcommon.so.0.8.1
-ok   loads: /data/oss/usr/local/lib/libxkbregistry.so.0
-ok   loads: /data/oss/usr/local/lib/libxkbregistry.so.0.8.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxkbcommon
+     == libxkbcommon ==
+       ok   xkb_keysym_from_name
+       ok   case-insensitive lookup
+       ok   xkb_keysym_get_name KP_Enter
+       ok   keysym to UTF-8 / UTF-32
+       ok   case mapping and utf32_to_keysym
+       ok   xkb_context_new
+       info include path /usr/local/share/X11/xkb
+       ok   keymap compiled from xkeyboard-config (evdev, pc105, us,de)
+       ok   two layouts
+       info layouts: English (US) | German
+       ok   layout names English / German
+       ok   Shift and Control modifiers exist
+       ok   us: a, y, 1
+       ok   Shift: A, !
+       ok   Shift reported active
+       ok   key_get_utf8 with Shift
+       ok   Caps Lock latches upper case
+       ok   Caps Lock released
+       ok   German group: Y key gives z
+       ok   keymap serialised to text
+       ok   keymap recompiled from its own text
+       ok   recompiled keymap behaves the same
+       info serialised keymap: 70758 bytes
+       info expected: xkbcommon errors for a missing layout follow
+     xkbcommon: ERROR: [XKB-338] Couldn't find file "symbols/no-such-layout-qnx" in include paths
+     xkbcommon: ERROR: [XKB-338] 1 include paths searched:
+     xkbcommon: ERROR: [XKB-338] 	/usr/local/share/X11/xkb
+     xkbcommon: ERROR: [XKB-338] 3 include paths could not be added:
+     xkbcommon: ERROR: [XKB-338] 	/data/home/root/.config/xkb
+     xkbcommon: ERROR: [XKB-338] 	/data/home/root/.xkb
+     xkbcommon: ERROR: [XKB-338] 	/usr/local/etc/xkb
+     xkbcommon: ERROR: [XKB-769] Abandoning symbols file "(unnamed)"
+     xkbcommon: ERROR: Failed to compile xkb_symbols
+     xkbcommon: ERROR: [XKB-822] Failed to compile keymap
+       ok   unknown layout fails to compile
+       ok   xkbregistry parses the evdev ruleset
+       info us: English (US)
+       info 590 layouts in the registry
+       ok   registry lists layout 'us' among many
+     PASS libxkbcommon
+PASS test_libxkbcommon
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

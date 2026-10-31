@@ -7,3 +7,13 @@ BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 # The QNX patch changes configure.ac; regenerate configure from it.
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
+
+# itstool is a Python script that imports libxml2's bindings (libxml2.py,
+# libxml2mod.so in site-packages): no DT_NEEDED says so.
+RUNTIME_DEPS="python3 libxml2"
+# itstool's #! line is the build machine's python3 (configure's PYTHON);
+# the target's python3 is $PREFIX/bin/python3 (hazard 105).
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i "1s|^#!.*|#!$PREFIX/bin/python3 -s|" "$STAGE$PREFIX/bin/itstool"
+}

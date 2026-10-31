@@ -1,0 +1,56 @@
+#!/bin/sh
+# pkg-config for the QNX cross builds (env.sh puts it first on PATH and in
+# PKG_CONFIG; the meson cross files name it). docs/porting-hazards.md 128/129.
+#
+# PKG_CONFIG_SYSROOT_DIR is the staging tree. The build machine's pkg-config
+# is pkgconf, which puts that sysroot in front of *every* path it prints --
+# also of `--variable` results such as xkeyboard-config's xkb_base or
+# iso-codes' prefix. configure scripts and meson.build files take those as the
+# *target's* directories and compile them in (xkbcomp, Xwayland, GTK,
+# GStreamer, Epiphany looked for their data under the build machine's
+# workspace on the target). freedesktop.org pkg-config -- what upstream .pc
+# files and build files are written for -- prefixes only the -I/-L of
+# --cflags/--libs; a variable that names a build-time location says so with
+# ${pc_sysrootdir} (wayland-protocols' pkgdatadir, xcb-proto's xcbincludedir).
+# pkgconf has that behaviour too: PKG_CONFIG_FDO_SYSROOT_RULES. This wrapper
+# turns it on for --variable queries only; --cflags/--libs are unchanged.
+#
+# Exceptions keep the sysroot prefix, because the build itself uses the value
+# on the build machine:
+#   - variables naming a program the build runs (glib-mkenums, gdbus-codegen,
+#     g-ir-scanner, ...: the staged copies under ${bindir}). wayland-scanner
+#     is not one of them: the staged wayland-scanner.pc (ports/wayland) names
+#     the native scanner in hosttools/ by its absolute build-machine path,
+#     which only the freedesktop rules leave alone;
+#   - every variable queried from CMake: FindPkgConfig fills <P>_INCLUDEDIR,
+#     <P>_LIBDIR and <P>_PREFIX from --variable, and projects use those to
+#     compile and link. The toolchain files set QNX_PKG_CONFIG_VARIABLES=sysroot.
+# QNX_PKG_CONFIG_VARIABLES=sysroot (or a recipe exporting it) restores the old
+# behaviour for everything.
+real=${QNX_REAL_PKG_CONFIG:-/usr/bin/pkg-config}
+[ -n "${PKG_CONFIG_SYSROOT_DIR:-}" ] || exec "$real" "$@"
+[ "${QNX_PKG_CONFIG_VARIABLES:-}" = sysroot ] && exec "$real" "$@"
+
+var= skip=
+for a in "$@"; do
+  if [ -n "$skip" ]; then
+    [ "$skip" = var ] && var=$a
+    skip=; continue
+  fi
+  case $a in
+    --variable=*) var=${a#--variable=} ;;
+    --variable) skip=var ;;
+    --define-variable|--with-path|--atleast-pkgconfig-version|--exact-version|--max-version|--atleast-version|--env|--relocate|--log-file|--path-relocate) skip=1 ;;
+    -*) ;;
+  esac
+done
+[ -n "$var" ] || exec "$real" "$@"
+
+case $var in
+  glib_genmarshal|glib_mkenums|glib_compile_resources|glib_compile_schemas|\
+  gdbus_codegen|gobject_query|gio_querymodules|gdbus|gio|gresource|gsettings|\
+  g_ir_scanner|g_ir_compiler|g_ir_generate|\
+  gdk_pixbuf_csource|gdk_pixbuf_pixdata|gdk_pixbuf_query_loaders)
+    exec "$real" "$@" ;;
+esac
+PKG_CONFIG_FDO_SYSROOT_RULES=1 exec "$real" "$@"

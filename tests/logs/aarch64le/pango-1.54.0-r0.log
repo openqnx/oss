@@ -1,43 +1,72 @@
-# pango 1.54.0-r0 -- INSTALLED
+# pango 1.54.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:51:05Z   packages from: apk:local-dists
+# date: 2026-10-31T17:07:21Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u pango
-( 1/19) Installing expat (2.6.4-r0)
-( 2/19) Installing bzip2 (1.0.8-r0)
-( 3/19) Installing freetype (2.13.3-r0)
-( 4/19) Installing fontconfig (2.15.0-r0)
-( 5/19) Installing libxau (1.0.11-r0)
-( 6/19) Installing libxdmcp (1.1.5-r0)
-( 7/19) Installing libxcb (1.17.0-r0)
-( 8/19) Installing libx11 (1.8.10-r0)
-( 9/19) Installing libxext (1.3.6-r0)
-(10/19) Installing libxrender (0.9.11-r0)
-(11/19) Installing lzo (2.10-r0)
-(12/19) Installing pixman (0.46.4-r0)
-(13/19) Installing cairo (1.18.2-r0)
-(14/19) Installing fribidi (1.0.16-r0)
-(15/19) Installing graphite2 (1.3.14-r0)
-(16/19) Installing icu (76.1-r0)
-(17/19) Installing harfbuzz (<ip>-r0)
-(18/19) Installing libxft (2.3.8-r0)
-(19/19) Installing pango (1.54.0-r0)
-OK: 107 MiB in 48 packages
+$ apk add -u pango qnx-test-pango qnx-port-tests
+( 1/22) Installing expat (2.6.4-r0)
+( 2/22) Installing bzip2 (1.0.8-r0)
+( 3/22) Installing freetype (2.13.3-r0)
+( 4/22) Installing fontconfig (2.15.0-r0)
+( 5/22) Installing libxau (1.0.11-r0)
+( 6/22) Installing libxdmcp (1.1.5-r0)
+( 7/22) Installing libxcb (1.17.0-r0)
+( 8/22) Installing libx11 (1.8.10-r0)
+( 9/22) Installing libxext (1.3.6-r0)
+(10/22) Installing libxrender (0.9.11-r0)
+(11/22) Installing lzo (2.10-r0)
+(12/22) Installing pixman (0.46.4-r0)
+(13/22) Installing cairo (1.18.2-r0)
+(14/22) Installing fribidi (1.0.16-r0)
+(15/22) Installing graphite2 (1.3.14-r0)
+(16/22) Installing icu (76.1-r1)
+(17/22) Installing harfbuzz (<ip>-r0)
+(18/22) Installing libxft (2.3.8-r0)
+(19/22) Installing pango (1.54.0-r0)
+(20/22) Installing qnx-port-tests (1.0-r2)
+(21/22) Installing font-dejavu (2.37-r0)
+(22/22) Installing qnx-test-pango (1.0-r0)
+OK: 117 MiB in 50 packages
 
-$ ldd on every program and library apk info -L pango lists
-ok   loads: /data/oss/usr/local/bin/pango-list
-ok   loads: /data/oss/usr/local/bin/pango-segmentation
-ok   loads: /data/oss/usr/local/bin/pango-view
-ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libpango-1.0.so.0.5400.0
-ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libpangocairo-1.0.so.0.5400.0
-ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libpangoft2-1.0.so.0.5400.0
-ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libpangoxft-1.0.so.0.5400.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pango
+     == pango ==
+       info pango 1.54.0
+       ok   pangocairo font map
+       ok   pango_font_map_load_font(DejaVu Sans)
+       info resolved family: DejaVu Sans
+       ok   fontconfig found DejaVu Sans
+       info 8 font families
+       ok   font families listed
+       info "MMMMMMMMMM": logical 172.56 x 23.28 px, ink 168.64 px wide
+       ok   width = 10 x 1767/2048 x 20 px = 172.56 px
+       ok   one line
+       ok   no unknown glyphs
+       ok   ten glyphs shaped
+       info "Hello QNX": 101.46 px wide (unkerned advances sum to 101.45)
+       ok   "Hello QNX" ~101 px wide (kerning aside)
+       ok   xy_to_index(0,0) is the first character
+       info wrapped at 100 px: 6 lines, 76.2 px wide
+       ok   word wrap at 100 px gives >= 3 lines
+       ok   no line wider than 100 px
+       info rendered: 464 dark pixels, 0 outside the ink rect 100x19+1+3
+       ok   text was drawn
+       ok   every drawn pixel is inside the ink rectangle
+       info $ pango-segmentation --kind=word --text 'Hello QNX' -> 0
+       info output: |Hello| |QNX|
+       ok   pango-segmentation word boundaries |Hello| |QNX|
+       info $ pango-segmentation --kind=sentence --text 'One. Two.' -> 0
+       info output: |One. |Two.|
+       ok   pango-segmentation sentence boundaries
+       ok   scratch directory
+       info $ pango-view --backend=cairo -q --font='DejaVu Sans 20' --text='QNX pango' -o /tmp/qnxport-pango.itlh0d/v.png -> 0
+       info pango-view PNG 170x52
+       ok   pango-view wrote a PNG
+       ok   PNG is one line of 20 pt text
+     PASS pango
+PASS test_pango
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

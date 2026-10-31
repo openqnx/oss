@@ -162,7 +162,7 @@ PASS at-spi2-core
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_at_spi2_core`](../../tests/src/) -- a program linked against at-spi2-core the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - atk_role_get_name(PUSH_BUTTON)
+   - atk_role_get_name(BUTTON) (PUSH_BUTTON is its alias)
    - atk_role_for_name(\"check box\")
    - register a custom role
    - AtkObject name and role
@@ -173,7 +173,7 @@ PASS at-spi2-core
    - AtkStateSet AND
    - AtkStateSet XOR
    - state type name
-   - atspi_role_get_name(PUSH_BUTTON)
+   - atspi_role_get_name(BUTTON)
    - atspi_role_get_name(TABLE_CELL)
    - AtspiStateSet from an array
    - add + set_by_name(\"enabled\", FALSE)
@@ -186,7 +186,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

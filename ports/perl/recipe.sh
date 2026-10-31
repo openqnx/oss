@@ -23,15 +23,22 @@ do_fetch() {
   # perl first, perl-cross over it; patches/ then apply to the combined tree.
   tar xf "$tb" -C "$SRCROOT" --strip-components=1 && tar xf "$pc" -C "$SRCROOT" --strip-components=1
 }
-# The preprocessor is given without perl-cross's default -P: Errno_pm.PL
-# finds <errno.h> by the line markers in its output ("No error definitions
-# found" without them).
+# The preprocessor is the cross-GCC driver, not qcc: for qcc, -P means
+# "preprocess to a file" (try.i), not "no line markers". perl-cross's probes
+# run "$cpp -P" and read stdout, and Errno_pm.PL adds -P for GCC >= 5, so with
+# qcc every signal-name probe and every errno value came back empty: perl had
+# no %SIG names ("No such signal: SIGHUP") and an empty %! (hazard 131).
+# Errno_pm.PL's first pass needs line markers, hence cpprun/cppstdin
+# without -P. gccversion: perl-cross asks qcc and gets "0.0", so Errno_pm.PL
+# did not add -P to its second pass either, and GCC split each
+# '"EEXIST" [[17]]' line with line markers -- an empty %! again.
 do_configure() {
   cp -a "$S/." "$B/" && cd "$B" && \
   ./configure --target="$QNX_TRIPLE" --prefix="$PREFIX" -Dcc="qcc -V$QCC_TARGET" -Dld="qcc -V$QCC_TARGET" \
     -Dar="$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" -Dccflags="-D_QNX_SOURCE" -Duseshrplib -Dusethreads \
     -Dusrinc="$QNX_TARGET_SDP/usr/include" -Dincpth="$QNX_TARGET_SDP/usr/include" \
-    -Dcpprun="qcc -V$QCC_TARGET -E" -Dcppstdin="qcc -V$QCC_TARGET -E" \
+    -Dcpp="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E -P" -Dgccversion="$("$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc" -dumpversion)" \
+    -Dcpprun="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" -Dcppstdin="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
     -Dlibpth="$QNX_TARGET/$QNX_ARCH/lib $QNX_TARGET/$QNX_ARCH/usr/lib"
 }
 do_build() { make -C "$B" -j"$(nproc)"; }

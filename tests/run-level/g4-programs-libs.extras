@@ -1,0 +1,46 @@
+test_file	bin/file share/misc/magic.mgc
+test_gawk	bin/gawk bin/awk lib/gawk/ordchr.so lib/gawk/filefuncs.so share/awk/join.awk
+test_gettext	bin/msgfmt bin/gettext bin/ngettext bin/xgettext bin/msgunfmt bin/msgmerge bin/msggrep bin/msgcat bin/envsubst
+test_libiconv	bin/iconv
+test_pcre	bin/pcregrep bin/pcretest
+test_pkgconf	bin/pkgconf
+test_aspell	bin/aspell lib/aspell-0.60/iso-8859-1.cset lib/aspell-0.60/iso-8859-1.cmap
+test_man_db	bin/man bin/mandb bin/whatis bin/apropos bin/lexgrog bin/manpath etc/man_db.conf bin/nroff bin/groff bin/iconv
+test_fakeroot	bin/faked bin/fakeroot lib/libfakeroot-0.so
+test_csmith	bin/csmith
+test_libgpg_error	bin/gpg-error
+test_check	bin/checkmk bin/gawk
+test_llvm	bin/llvm-config bin/llvm-as bin/llvm-dis bin/lli bin/opt bin/llc bin/llvm-nm bin/llvm-objdump bin/llvm-readelf bin/llvm-mc bin/clang bin/llvm-strings bin/llvm-ar
+test_lua5_1	bin/lua5.1 bin/luac5.1
+test_lua5_3	bin/lua5.3 bin/luac5.3
+test_capnproto	bin/capnp bin/capnpc-c++ bin/capnpc-capnp
+test_metis	bin/gpmetis bin/graphchk bin/ndmetis lib/libGKlib.so
+test_libde265	bin/dec265
+test_libdisplay_info	bin/di-edid-decode
+test_apk_tools	bin/apk
+test_strongswan	bin/libstrongswan_tests bin/exchange_tests bin/pki sbin/swanctl libexec/ipsec/charon lib/ipsec/libtls.so.0 lib/ipsec/plugins/libstrongswan-openssl.so lib/ipsec/plugins/libstrongswan-x509.so lib/ipsec/plugins/libstrongswan-constraints.so lib/ipsec/plugins/libstrongswan-kernel-pfkey.so
+test_iperf3	bin/iperf3
+test_paho_mqtt_c	bin/MQTTVersion
+test_dlt_daemon	bin/dlt-daemon bin/dlt-receive bin/dlt-convert
+test_libjpeg_turbo	bin/cjpeg bin/djpeg bin/jpegtran bin/wrjpgcom bin/rdjpgcom
+test_gst_plugins_base	bin/gst-discoverer-1.0 libexec/gstreamer-1.0/gst-plugin-scanner lib/gstreamer-1.0/libgstcoreelements.so lib/gstreamer-1.0/libgstvideotestsrc.so lib/gstreamer-1.0/libgstvideoconvertscale.so lib/gstreamer-1.0/libgstaudiotestsrc.so lib/gstreamer-1.0/libgstaudioconvert.so lib/gstreamer-1.0/libgstaudioresample.so lib/gstreamer-1.0/libgstvolume.so lib/gstreamer-1.0/libgstapp.so lib/gstreamer-1.0/libgstvorbis.so lib/gstreamer-1.0/libgstogg.so lib/gstreamer-1.0/libgstplayback.so lib/gstreamer-1.0/libgsttypefindfunctions.so
+test_vlc	bin/vlc lib/vlc/plugins
+test_ffmpegthumbnailer	bin/ffmpegthumbnailer
+test_openal_soft	bin/openal-info
+test_sdl2_compat	lib/libSDL2-2.0.so.0.3200.60 lib/libSDL3.so.0
+test_rtl_sdr	bin/rtl_test bin/rtl_eeprom bin/rtl_sdr bin/rtl_fm
+test_pango	bin/pango-view bin/pango-segmentation share/fonts/font-dejavu
+test_gobject_introspection	bin/g-ir-compiler bin/g-ir-inspect bin/g-ir-generate
+test_libgsf	bin/gsf
+test_libproxy	bin/proxy lib/libproxy/libpxbackend-1.0.so
+test_gcr	bin/gcr-viewer
+test_webkitgtk	libexec/webkit2gtk-4.1/jsc bin/WebKitWebDriver
+test_epiphany	bin/epiphany libexec/epiphany/ephy-profile-migrator share/epiphany/default-bookmarks.rdf share/glib-2.0/schemas/org.gnome.epiphany.gschema.xml share/applications/org.gnome.Epiphany.desktop
+test_gthumb	bin/gthumb lib/gthumb/extensions/libcomments.so share/applications/org.gnome.gThumb.desktop bin/labwc
+test_geany	bin/geany share/geany/filetype_extensions.conf
+test_thunar	bin/thunar lib/thunarx-3/thunar-sbr.so lib/thunarx-3/thunar-apr.so lib/thunarx-3/thunar-uca.so lib/thunarx-3/thunar-wallpaper-plugin.so etc/xdg/Thunar/uca.xml
+test_xfce4_panel	bin/xfce4-panel lib/xfce4/panel/plugins/libclock.so share/xfce4/panel/plugins/clock.desktop etc/xdg/xfce4/panel/default.xml bin/labwc
+test_exo	bin/exo-open bin/labwc
+test_libxfce4ui	bin/xfce4-about share/applications/xfce4-about.desktop bin/labwc share/icons/hicolor/index.theme
+test_xfce4_settings	bin/xfsettingsd bin/xfce4-settings-manager bin/xfce4-mime-helper share/xfce4/helpers/firefox.desktop etc/xdg/xfce4/helpers.rc lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so bin/labwc
+test_xfconf	bin/xfconf-query lib/xfce4/xfconf/xfconfd bin/dbus-daemon

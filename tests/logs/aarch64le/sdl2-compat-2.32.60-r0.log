@@ -1,16 +1,67 @@
-# sdl2-compat 2.32.60-r0 -- INSTALLED
+# sdl2-compat 2.32.60-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:34Z   packages from: apk:local-dists
+# date: 2026-10-31T17:50:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sdl2-compat
-(1/1) Installing sdl2-compat (2.32.60-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u sdl2-compat qnx-test-sdl2-compat qnx-port-tests
+( 1/16) Installing qnx-port-tests (1.0-r2)
+( 2/16) Installing sdl2-compat (2.32.60-r0)
+( 3/16) Installing libxau (1.0.11-r0)
+( 4/16) Installing libxdmcp (1.1.5-r0)
+( 5/16) Installing libxcb (1.17.0-r0)
+( 6/16) Installing libx11 (1.8.10-r0)
+( 7/16) Installing libxfixes (6.0.1-r0)
+( 8/16) Installing libxrender (0.9.11-r0)
+( 9/16) Installing libxcursor (1.2.2-r0)
+(10/16) Installing libxext (1.3.6-r0)
+(11/16) Installing libxi (1.8.2-r0)
+(12/16) Installing libxrandr (1.5.4-r0)
+(13/16) Installing libxscrnsaver (1.2.4-r0)
+(14/16) Installing libxtst (1.2.5-r0)
+(15/16) Installing sdl3 (3.4.18-r0)
+(16/16) Installing qnx-test-sdl2-compat (1.0-r0)
+OK: 63 MiB in 44 packages
 
-$ ldd on every program and library apk info -L sdl2-compat lists
-ok   loads: /data/oss/usr/local/lib/libSDL2-2.0.so.0
-ok   loads: /data/oss/usr/local/lib/libSDL2-2.0.so.0.3200.60
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_compat
+     == sdl2-compat ==
+       ok   dlopen libSDL2-2.0.so.0
+       ok   all SDL2 entry points resolve
+       ok   sdl2-compat loaded libSDL3.so.0
+       info SDL_GetVersion: 2.32.60
+       ok   SDL2 API version 2.32.60
+       ok   scratch directory
+       ok   SDL_Init(VIDEO|AUDIO|EVENTS|TIMER)
+       info video driver dummy, audio driver disk
+       ok   video driver is dummy (SDL_VIDEODRIVER honoured)
+       ok   audio driver is disk (SDL_AUDIODRIVER honoured)
+       ok   64x48 ARGB8888 surface
+       ok   SDL_FillRect: blue background
+       ok   SDL_CreateSoftwareRenderer
+       ok   SDL_RenderFillRect: green square
+       ok   SDL_RenderReadPixels
+       info pixels: (2,2)=ff0000ff (16,16)=ffff0000 (48,16)=ff00ff00
+       ok   background pixel is blue
+       ok   SDL_FillRect square is red
+       ok   renderer square is green
+       ok   SDL_CreateWindow on the dummy driver
+       ok   window is 160x120
+       ok   window surface 160x120
+       ok   SDL_UpdateWindowSurface
+     CRITICAL: You are using the SDL disk i/o audio driver!
+     CRITICAL:  Writing to file [/tmp/qnxport-sdl2compat.1kP2eo/audio.raw], format=S16LE channels=2 freq=44100.
+       ok   SDL_OpenAudioDevice (callback, 44.1 kHz S16 stereo)
+       info obtained 44100 Hz, format 0x8010, 2 channel(s), 1024 samples
+       ok   obtained spec as requested
+       info callback produced 59392 samples in 770 ms
+       ok   the callback was pulled (>= 4 buffers)
+       info audio.raw: 61440 samples (2048 leading silence), 59392/59392 match the callback's
+       ok   the disk driver wrote the audio
+       ok   written samples are exactly the callback's
+     PASS sdl2-compat
+PASS test_sdl2_compat
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

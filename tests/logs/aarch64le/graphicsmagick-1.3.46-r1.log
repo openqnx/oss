@@ -1,0 +1,35 @@
+# graphicsmagick 1.3.46-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:34:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphicsmagick qnx-test-graphicsmagick qnx-port-tests
+( 1/10) Installing bzip2 (1.0.8-r0)
+( 2/10) Installing freetype (2.13.3-r0)
+( 3/10) Installing libwebp (1.4.0-r0)
+( 4/10) Installing xz (5.6.3-r0)
+( 5/10) Installing libtiff (4.7.0-r0)
+( 6/10) Installing libxml2 (2.13.5-r1)
+( 7/10) Installing libzip (1.11.1-r0)
+( 8/10) Installing graphicsmagick (1.3.46-r1)
+( 9/10) Installing qnx-port-tests (1.0-r2)
+(10/10) Installing qnx-test-graphicsmagick (1.0-r0)
+OK: 65 MiB in 38 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphicsmagick
+     == graphicsmagick ==
+       info GraphicsMagick 1.3.46 2025-10-29 Q16 http://www.GraphicsMagick.org/
+       ok   xc:red -> PNG 64x32
+       ok   resize 50% -> JPEG 32x16
+       ok   rotate 90 -> TIFF 32x64
+       ok   PNG -> WebP
+       info pixel (10,10): 0,0: (255,  0,  0) #FF0000
+       ok   pixel is red
+     PASS graphicsmagick
+PASS test_graphicsmagick
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

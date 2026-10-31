@@ -1,0 +1,39 @@
+# nanosvg 0_git20260709-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:58:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nanosvg-dev qnx-test-nanosvg qnx-port-tests
+(1/3) Installing nanosvg-dev (0_git20260709-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-nanosvg (1.0-r0)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nanosvg
+     == nanosvg ==
+       ok   nsvgParse
+       ok   image is 40x20
+       info 3 shapes, 3 paths
+       ok   three shapes
+       ok   rect fill red (ABGR 0xFF0000FF)
+       ok   circle fill rgb(0,0,255)
+       ok   circle bounds x 22..38
+       ok   path translated by the group to x 20..24
+       ok   path stroke, width 0.5
+       ok   path closed (Z)
+       ok   nsvgCreateRasterizer
+       info (10,10)=255,0,0,255 (30,10)=0,0,255,255 (39,0)=0
+       ok   pixel (10,10) is red
+       ok   pixel (30,10) is blue
+       ok   pixel (39,0) outside every shape is transparent
+       ok   pixel (22,1) inside the triangle is green
+       ok   the square's pixels (columns 0-18) are all solid red
+       ok   2x: (60,20) blue, (79,39) transparent
+     PASS nanosvg
+PASS test_nanosvg
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

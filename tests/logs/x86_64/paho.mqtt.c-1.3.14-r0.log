@@ -1,30 +1,56 @@
-# paho.mqtt.c 1.3.14-r0 -- INSTALLED
+# paho.mqtt.c 1.3.14-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:27:24Z   packages from: apk:local-dists
+# date: 2026-10-31T16:20:07Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u paho.mqtt.c
-(1/1) Installing paho.mqtt.c (1.3.14-r0)
-OK: 167 MiB in 53 packages
+$ apk add -u paho.mqtt.c qnx-test-paho-mqtt-c qnx-port-tests
+(1/3) Installing paho.mqtt.c (1.3.14-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-paho-mqtt-c (1.0-r1)
+OK: 94 MiB in 32 packages
 
-$ ldd on every program and library apk info -L paho.mqtt.c lists
-ok   loads: /data/oss/usr/local/bin/MQTTVersion
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3a.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3a.so.1.3.14
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3as.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3as.so.1.3.14
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3c.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3c.so.1.3.14
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3cs.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqtt3cs.so.1.3.14
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_paho_mqtt_c
+     == paho.mqtt.c ==
+       info paho.mqtt.c 1.3.14
+       ok   test broker listening on <ip>
+       info broker on port 45204
+       ok   broker thread started
+       ok   MQTTClient_create
+       ok   MQTTClient_connect (CONNACK accepted)
+       ok   MQTTClient_isConnected
+       ok   MQTTClient_subscribe at QoS 1 (SUBACK)
+       ok   MQTTClient_publishMessage QoS 1
+       ok   QoS 1 delivery completed (PUBACK)
+       info received on qnx/test/topic: "hello from QNX, qos 1" qos 1
+       ok   QoS 1 message echoed back to the subscriber
+       ok   echoed message carries QoS 1
+       ok   MQTTClient_publish QoS 0
+       info received on qnx/test/topic: "and again with qos 0" qos 0
+       ok   QoS 0 message echoed back
+       ok   MQTTClient_unsubscribe (UNSUBACK)
+       ok   MQTTClient_disconnect
+       ok   MQTTAsync_create
+       ok   MQTTAsync_connect -> onSuccess
+       ok   MQTTAsync_subscribe -> onSuccess
+       ok   MQTTAsync_sendMessage QoS 1 -> onSuccess
+       ok   messageArrived callback got "async payload"
+       info broker saw: 2 connect(s) [qnx-sync-client, qnx-async-client], level 4, keepalive 17, 2 subscribe(s), 3 publish(es), 2 puback(s) from clients, 1 unsubscribe(s), 2 disconnect(s), 0 bad
+       ok   broker: two CONNECTs with our client IDs
+       ok   broker: MQTT 3.1.1 (protocol level 4)
+       ok   broker: keepalive 17 s as set in the connect options
+       ok   broker: 2 SUBSCRIBE, 3 PUBLISH, 1 UNSUBSCRIBE
+       ok   broker: clients acknowledged the QoS 1 echoes
+       ok   broker: topic and payload bytes as sent
+       ok   broker: clean DISCONNECTs, no malformed packets
+       info MQTTVersion: MQTTVersion: print the version strings of an MQTT client library
+     Copyright (c) 2012, 2018 IBM Corp.
+     Specify a particular library name if it is not in the current directory, or not executable on this p
+       ok   MQTTVersion reports 1.3.14
+     PASS paho.mqtt.c
+PASS test_paho_mqtt_c
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

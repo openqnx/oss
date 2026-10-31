@@ -15,7 +15,9 @@ CONF_ENV=( ac_cv_func_dl_iterate_phdr=no )
 # LIBS: configure also links its build-machine compiler test with LIBS, and
 # the build machine has no libregex.
 LDFLAGS_APPEND="-lregex"
-CONF_ARGS_EXTRA=( --disable-nls --without-pam --with-env-editor )
+# sysconfdir under the prefix: packages install into the apk root
+# (/data/oss), so a sudoers in /etc would never be the one shipped.
+CONF_ARGS_EXTRA=( --disable-nls --without-pam --with-env-editor --sysconfdir="$PREFIX/etc" )
 # sudo's install chowns its files to root, which an unprivileged build cannot
 # do ("Operation not permitted"). Install without the owner flags: the modes,
 # setuid included, are kept, and scripts/qnxpkg records every file as root.

@@ -12,7 +12,7 @@
 | Build dependencies | [`paho.mqtt.c`](../paho.mqtt.c/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`paho.mqtt.c`](../paho.mqtt.c/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_paho_mqtt_cpp`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -23,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add paho.mqtt.cpp
 apk add paho.mqtt.cpp-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-paho-mqtt-cpp && /usr/local/bin/qnx-port-tests/test_paho_mqtt_cpp    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install paho.mqtt.cpp`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -130,16 +131,56 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/paho.mqtt
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_paho_mqtt_cpp`](../../tests/src/) links paho.mqtt.cpp the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-paho-mqtt-cpp`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-paho-mqtt-cpp
+/usr/local/bin/qnx-port-tests/test_paho_mqtt_cpp
+```
+
+```
+== paho.mqtt.cpp ==
+  ok   ...
+PASS paho.mqtt.cpp
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_paho_mqtt_cpp` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_paho_mqtt_cpp`](../../tests/src/) -- a program linked against paho.mqtt.cpp the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - mosquitto broker listening on 127.0.0.1
+   - message object
+   - client created, not connected
+   - connected to the broker
+   - subscribed to qnx/test/# at QoS 1
+   - QoS 1 publish acknowledged (PUBACK)
+   - own message received through the broker
+   - delivered at QoS 1
+   - binary payload (with NUL bytes) intact
+   - retained publish
+   - second client connected
+   - late subscriber receives the retained message
+   - second client disconnected
+   - disconnected
+   - connect to a port without a broker fails
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | paho.mqtt.cpp 1.5.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/paho.mqtt.cpp-1.5.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | paho.mqtt.cpp 1.5.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/paho.mqtt.cpp-1.5.2-r0.log) |
+| x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | paho.mqtt.cpp 1.5.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/paho.mqtt.cpp-1.5.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | paho.mqtt.cpp 1.5.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/paho.mqtt.cpp-1.5.2-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

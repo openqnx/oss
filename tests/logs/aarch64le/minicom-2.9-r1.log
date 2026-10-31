@@ -1,0 +1,32 @@
+# minicom 2.9-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:57:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u minicom qnx-test-minicom qnx-port-tests
+(1/5) Installing minicom (2.9-r1)
+(2/5) Installing qnx-port-tests (1.0-r2)
+(3/5) Installing libevent (2.1.12-r0)
+(4/5) Installing tmux (3.5a-r2)
+(5/5) Installing qnx-test-minicom (1.0-r0)
+OK: 57 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_minicom
+     == minicom ==
+       ok   --version: minicom version 2.9 (compiled Nov  1 2026)
+       ok   runscript: expect matched OK, took the good branch
+       ok   runscript: send wrote ATZ to the line
+       ok   runscript: timeout branch when the modem never says OK
+       ok   ascii-xfr -s: LF sent as CR LF
+       info pty pair /dev/ptyp1 / /dev/ttyp1
+       ok   minicom started on /dev/ttyp1 (welcome banner)
+       ok   text from the line shown in the minicom window
+       ok   keys typed in minicom reached the line
+     PASS minicom
+PASS test_minicom
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

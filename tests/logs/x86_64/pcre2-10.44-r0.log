@@ -1,14 +1,14 @@
 # pcre2 10.44-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:27:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:20:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pcre2 qnx-test-pcre2 qnx-port-tests
-(1/2) Installing qnx-port-tests (1.0-r1)
+(1/2) Installing qnx-port-tests (1.0-r2)
 (2/2) Installing qnx-test-pcre2 (1.0-r6)
-OK: 166 MiB in 54 packages
+OK: 93 MiB in 31 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pcre2
      == pcre2 ==

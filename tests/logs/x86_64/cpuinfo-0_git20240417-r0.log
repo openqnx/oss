@@ -1,15 +1,35 @@
-# cpuinfo 0_git20240417-r0 -- INSTALLED
+# cpuinfo 0_git20240417-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:07Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:42Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u cpuinfo
-(1/1) Installing cpuinfo (0_git20240417-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u cpuinfo qnx-test-cpuinfo qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-cpuinfo (1.0-r0)
+OK: 93 MiB in 31 packages
 
-$ ldd on every program and library apk info -L cpuinfo lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cpuinfo
+     == cpuinfo ==
+       ok   cpuinfo_initialize
+       info 4 processor(s), 1 core(s), 1 cluster(s), 1 package(s); syspage num_cpu 4, sysconf 4
+       ok   processor count = syspage num_cpu
+       ok   processor count = sysconf(_SC_NPROCESSORS_ONLN)
+       ok   1 <= packages <= clusters <= cores <= processors
+       ok   package 0 has processors
+       info package 0: "Intel 686 F6M165S2", 4 processor(s), 1 core(s)
+       ok   processors of all packages add up
+       ok   every processor has a core, cluster and package
+       info core 0: vendor 1, uarch 0x0, 2712139908 Hz
+       info current processor: found
+       ok   current processor is one of them
+       info L1d caches: 1 (32768 bytes, line 64), L2: 1, max cache 0 bytes
+       ok   x86_64: SSE2 and RDTSC
+       info AVX 1, AVX2 1, AVX512F 0
+     PASS cpuinfo
+PASS test_cpuinfo
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

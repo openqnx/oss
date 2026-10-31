@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/qnx-ports/muslflt.git |
 | Build system | custom (see recipe) |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,7 +55,15 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/muslflt < ports/muslflt/patches/0001-aarch64-qnx-rounding-mode-values.patch
+```
+
+**[`0001-aarch64-qnx-rounding-mode-values.patch`](patches/0001-aarch64-qnx-rounding-mode-values.patch)** — QNX's <fenv.h> values (the FPCR RMode field, not shifted into place):
+
+Touches: `fenv/aarch64le/bits/fenv.h`, `fenv/aarch64le/fenv.s`
 
 ### 4. Configure, build and install into the staging tree
 
@@ -203,7 +211,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | muslflt 1.0_git20240802-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/muslflt-1.0_git20240802-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | muslflt 1.0_git20240802-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/muslflt-1.0_git20240802-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | muslflt 1.0_git20240802-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/muslflt-1.0_git20240802-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | muslflt 1.0_git20240802-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/muslflt-1.0_git20240802-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

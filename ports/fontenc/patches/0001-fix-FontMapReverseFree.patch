@@ -1,0 +1,39 @@
+Fix FontMapReverseFree(): free the reverse map, not the record as a map.
+
+FontMapReverse() returns a malloc'd FontMapReverseRec whose ->data is the
+segment table. FontMapReverseFree() cast the record itself to the segment
+table, so it called free() on the record's function pointer and on
+whatever followed it: every caller crashed (QNX's allocator aborts). Free
+the segments and the table through ->data, then the record.
+
+Upstream-Status: Pending
+
+--- a/src/fontenc.c
++++ b/src/fontenc.c
+@@ -979,15 +979,20 @@
+ void
+ FontMapReverseFree(FontMapReversePtr delendum)
+ {
+-    unsigned int **map = (unsigned int **) delendum;
++    unsigned int **map;
+     int i;
+ 
+-    if (map == NULL)
++    if (delendum == NULL)
+         return;
+ 
+-    for (i = 0; i < FONTENC_SEGMENTS; i++)
+-        free(map[i]);
+-
+-    free(map);
++    /* The segment table hangs off ->data (see FontMapReverse); the record
++       itself is a separate allocation. */
++    map = (unsigned int **) delendum->data;
++    if (map != NULL) {
++        for (i = 0; i < FONTENC_SEGMENTS; i++)
++            free(map[i]);
++        free(map);
++    }
++    free(delendum);
+     return;
+ }

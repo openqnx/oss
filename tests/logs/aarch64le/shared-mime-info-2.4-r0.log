@@ -1,17 +1,33 @@
-# shared-mime-info 2.4-r0 -- INSTALLED
+# shared-mime-info 2.4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:53Z   packages from: apk:local-dists
+# date: 2026-10-31T17:51:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u shared-mime-info
-(1/3) Installing xz (5.6.3-r0)
-(2/3) Installing libxml2 (2.13.5-r0)
-(3/3) Installing shared-mime-info (2.4-r0)
-OK: 60 MiB in 32 packages
+$ apk add -u shared-mime-info qnx-test-shared-mime-info qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r2)
+(2/5) Installing xz (5.6.3-r0)
+(3/5) Installing libxml2 (2.13.5-r1)
+(4/5) Installing shared-mime-info (2.4-r0)
+(5/5) Installing qnx-test-shared-mime-info (1.0-r0)
+OK: 61 MiB in 33 packages
 
-$ ldd on every program and library apk info -L shared-mime-info lists
-ok   loads: /data/oss/usr/local/bin/update-mime-database
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_shared_mime_info
+     == shared-mime-info ==
+       info update-mime-database (shared-mime-info) 2.4
+       ok   update-mime-database on a custom package
+       ok   globs2: *.qnxt -> application/x-qnx-test
+       ok   magic: MIME-Magic file with the QNXTEST rule
+       ok   subclasses: x-qnx-test is text/plain
+       ok   per-type XML with the comment
+       ok   mime.cache: version 1.2 header
+       ok   full database from freedesktop.org.xml
+       ok   well-known globs: *.png, *.pdf
+       ok   types: 908 MIME types
+     PASS shared-mime-info
+PASS test_shared_mime_info
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

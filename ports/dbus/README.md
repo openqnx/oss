@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.freedesktop.org/dbus/dbus.git (tag `dbus-1.16.0`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`expat`](../expat/) |
 | Run-time dependencies | [`expat`](../expat/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,7 +59,15 @@ git clone --depth 1 -b dbus-1.16.0 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/dbus < ports/dbus/patches/0001-qnx-getpeereid-fallback.patch
+```
+
+**[`0001-qnx-getpeereid-fallback.patch`](patches/0001-qnx-getpeereid-fallback.patch)** — QNX: take the peer uid from getpeereid() when no SCM_CREDS came (GDBus clients)
+
+Touches: `dbus/dbus-sysdeps-unix.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -74,6 +82,8 @@ meson setup build/$QNX_ARCH/dbus src/dbus \
       -Dapparmor=disabled \
       -Dx11_autolaunch=disabled \
       -Ddoxygen_docs=disabled \
+      -Dinotify=disabled \
+      -Dkqueue=disabled \
       -Dducktype_docs=disabled \
       -Dxml_docs=disabled \
       -Dmodular_tests=disabled \
@@ -175,8 +185,12 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/dbus-1.16.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/dbus-1.16.0-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/dbus-1.16.0-r3.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/dbus-1.16.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/dbus-1.16.0-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | dbus 1.16.0-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/dbus-1.16.0-r3.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -191,9 +205,15 @@ VERSION=1.16.0; GIT=https://gitlab.freedesktop.org/dbus/dbus.git; REF=dbus-1.16.
 DEPS="expat"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Depoll=disabled -Dsystemd=disabled -Dselinux=disabled -Dapparmor=disabled
-                   -Dx11_autolaunch=disabled -Ddoxygen_docs=disabled
+                   -Dx11_autolaunch=disabled -Ddoxygen_docs=disabled -Dinotify=disabled -Dkqueue=disabled
                    -Dducktype_docs=disabled -Dxml_docs=disabled
                    -Dmodular_tests=disabled -Dtools=false -Dstats=false )
+# -Dinotify=disabled: QNX's inotify is an emulation through /dev/fsnotify,
+# and dbus-daemon's service-directory watcher blocked in it (state REPLY on
+# the fsnotify server) while activating a service -- a deadlock: the
+# activated service's authentication was never answered (hazard 136). The
+# default watcher does nothing; the daemon reads the service directories at
+# start and again when a requested service is not in its cache.
 ```
 </details>
 

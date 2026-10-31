@@ -1,15 +1,36 @@
-# linux-headers-input-codes 6.12-r0 -- INSTALLED
+# linux-headers-input-codes 6.12-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:36:23Z   packages from: apk:local-dists
+# date: 2026-10-31T16:51:14Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u linux-headers-input-codes-dev
-(1/1) Installing linux-headers-input-codes-dev (6.12-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u linux-headers-input-codes-dev qnx-test-linux-headers-input-codes qnx-port-tests
+(1/7) Installing linux-headers-input-codes-dev (6.12-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing xz (5.6.3-r0)
+(4/7) Installing libxml2 (2.13.5-r1)
+(5/7) Installing libxkbcommon (1.8.1-r1)
+(6/7) Installing xkeyboard-config (2.43-r0)
+(7/7) Installing qnx-test-linux-headers-input-codes (1.0-r0)
+OK: 65 MiB in 35 packages
 
-$ ldd on every program and library apk info -L linux-headers-input-codes-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_linux_headers_input_codes
+     == linux-headers-input-codes ==
+       ok   event types SYN KEY REL ABS, EV_MAX
+       ok   KEY_ESC 1, KEY_A 30, KEY_Z 44, ENTER 28, SPACE 57
+       ok   shift, F1, F12, KEY_MAX 0x2ff
+       ok   BTN_LEFT 0x110, BTN_TOUCH 0x14a, BTN_SOUTH = BTN_GAMEPAD
+       ok   REL_WHEEL 8, multitouch ABS_MT_* codes
+       ok   SYN, INPUT_PROP, SW, LED codes
+       ok   US keymap compiled
+       ok   KEY_A + 8 -> keysym a
+       ok   KEY_ENTER + 8 -> Return
+       ok   KEY_1 + 8 -> 1
+       ok   with KEY_LEFTSHIFT held: KEY_A -> A
+     PASS linux-headers-input-codes
+PASS test_linux_headers_input_codes
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

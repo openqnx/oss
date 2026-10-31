@@ -1,20 +1,40 @@
-# unbound 1.24.1-r0 -- INSTALLED
+# unbound 1.24.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:14Z   packages from: apk:local-dists
+# date: 2026-10-31T16:35:50Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u unbound
-(1/1) Installing unbound (1.24.1-r0)
-OK: 173 MiB in 53 packages
+$ apk add -u unbound qnx-test-unbound qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing unbound (1.24.1-r0)
+(3/3) Installing qnx-test-unbound (1.0-r0)
+OK: 100 MiB in 32 packages
 
-$ ldd on every program and library apk info -L unbound lists
-ok   loads: /data/oss/usr/local/lib/libunbound.so.9
-ok   loads: /data/oss/usr/local/sbin/unbound
-ok   loads: /data/oss/usr/local/sbin/unbound-anchor
-ok   loads: /data/oss/usr/local/sbin/unbound-checkconf
-ok   loads: /data/oss/usr/local/sbin/unbound-control
-ok   loads: /data/oss/usr/local/sbin/unbound-host
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_unbound
+     == unbound ==
+       ok   ub_ctx_create
+       ok   ub_ctx_hosts reads a hosts file
+       ok   add static local zone qnx.test.
+       ok   add A record
+       ok   add TXT record
+       info host.qnx.test A: rcode 0 havedata 1 nxdomain 0 first A 192.0.2.7
+       ok   A record from local data
+       ok   TXT record from local data
+       info missing.qnx.test A: rcode 3 havedata 0 nxdomain 1 first A -
+       ok   NXDOMAIN inside the static zone
+       info ecu-gw.vehicle.lan A: rcode 0 havedata 1 nxdomain 0 first A <ip>
+       ok   name from the hosts file
+       info daemon answered 198.51.100.9
+       ok   unbound daemon answers a UDP query on <ip>
+       ok   daemon returns NXDOMAIN for an unknown name
+       ok   libunbound forwards to the daemon
+       info ivi.vehicle.example A via daemon: rcode 0 havedata 1 nxdomain 0 first A 198.51.100.9
+       ok   A record resolved through the daemon
+       ok   TXT record resolved through the daemon
+     PASS unbound
+PASS test_unbound
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

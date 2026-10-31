@@ -1,0 +1,19 @@
+Give ninja an 8 MiB main stack: DepsLog::Load needs 512 KiB of it
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -209,6 +209,12 @@
+ if(NINJA_BUILD_BINARY)
+ 	add_executable(ninja src/ninja.cc)
+ 	target_link_libraries(ninja PRIVATE libninja libninja-re2c)
++	if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
++		# DepsLog::Load keeps a 512 KiB record buffer on the stack (and the
++		# build log reader 256 KiB); QNX's default main-thread stack is
++		# smaller, so every build crashed. Reserve 8 MiB like Linux.
++		target_link_options(ninja PRIVATE "-Wl,-z,stack-size=8388608")
++	endif()
+ 
+ 	if(WIN32)
+ 		target_sources(ninja PRIVATE windows/ninja.manifest)

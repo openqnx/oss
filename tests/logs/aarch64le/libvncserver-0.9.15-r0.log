@@ -1,6 +1,6 @@
 # libvncserver 0.9.15-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:17:45Z   packages from: apk:local-dists
+# date: 2026-10-31T16:46:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -14,116 +14,116 @@ $ apk add -u libvncserver qnx-test-libvncserver qnx-port-tests
 ( 6/10) Installing lzo (2.10-r0)
 ( 7/10) Installing sdl2 (2.32.10-r0)
 ( 8/10) Installing libvncserver (0.9.15-r0)
-( 9/10) Installing qnx-port-tests (1.0-r1)
+( 9/10) Installing qnx-port-tests (1.0-r2)
 (10/10) Installing qnx-test-libvncserver (1.0-r1)
-OK: 64 MiB in 39 packages
+OK: 64 MiB in 38 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libvncserver
      == libvncserver ==
        ok   rfbGetScreen
        ok   server listening on <ip>
-     31/10/2026 05:17:42 VNC server supports protocol version 3.8 (viewer 3.8)
-     31/10/2026 05:17:42 We have 1 security types to read
-     31/10/2026 05:17:42 0) Received security type 1
-     31/10/2026 05:17:42 Selecting security type 1 (0/1 in the list)
-     31/10/2026 05:17:42 Selected Security Scheme 1
-     31/10/2026 05:17:42 No authentication needed
-     31/10/2026 05:17:42 VNC authentication succeeded
-     31/10/2026 05:17:42 Desktop name "LibVNCServer"
-     31/10/2026 05:17:42 Connected to VNC server, using protocol version 3.8
-     31/10/2026 05:17:42 VNC server default format:
-     31/10/2026 05:17:42   32 bits per pixel.
-     31/10/2026 05:17:42   Least significant byte first in each pixel.
-     31/10/2026 05:17:42   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
-     31/10/2026 05:17:42 client2server supported messages (bit flags)
-     31/10/2026 05:17:42 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
-     31/10/2026 05:17:42 server2client supported messages (bit flags)
-     31/10/2026 05:17:42 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:42 Connected to Server "unknown (LibVNCServer 0.9.15)"
+     31/10/2026 16:46:07 VNC server supports protocol version 3.8 (viewer 3.8)
+     31/10/2026 16:46:07 We have 1 security types to read
+     31/10/2026 16:46:07 0) Received security type 1
+     31/10/2026 16:46:07 Selecting security type 1 (0/1 in the list)
+     31/10/2026 16:46:07 Selected Security Scheme 1
+     31/10/2026 16:46:07 No authentication needed
+     31/10/2026 16:46:07 VNC authentication succeeded
+     31/10/2026 16:46:07 Desktop name "LibVNCServer"
+     31/10/2026 16:46:07 Connected to VNC server, using protocol version 3.8
+     31/10/2026 16:46:07 VNC server default format:
+     31/10/2026 16:46:07   32 bits per pixel.
+     31/10/2026 16:46:07   Least significant byte first in each pixel.
+     31/10/2026 16:46:07   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
+     31/10/2026 16:46:07 client2server supported messages (bit flags)
+     31/10/2026 16:46:07 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
+     31/10/2026 16:46:07 server2client supported messages (bit flags)
+     31/10/2026 16:46:07 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:07 Connected to Server "unknown (LibVNCServer 0.9.15)"
        info raw: mean error 0.000
        ok   raw: the image, exactly
-     31/10/2026 05:17:42 VNC server supports protocol version 3.8 (viewer 3.8)
-     31/10/2026 05:17:42 We have 1 security types to read
-     31/10/2026 05:17:42 0) Received security type 1
-     31/10/2026 05:17:42 Selecting security type 1 (0/1 in the list)
-     31/10/2026 05:17:42 Selected Security Scheme 1
-     31/10/2026 05:17:42 No authentication needed
-     31/10/2026 05:17:42 VNC authentication succeeded
-     31/10/2026 05:17:42 Desktop name "LibVNCServer"
-     31/10/2026 05:17:42 Connected to VNC server, using protocol version 3.8
-     31/10/2026 05:17:42 VNC server default format:
-     31/10/2026 05:17:42   32 bits per pixel.
-     31/10/2026 05:17:42   Least significant byte first in each pixel.
-     31/10/2026 05:17:42   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
-     31/10/2026 05:17:42 client2server supported messages (bit flags)
-     31/10/2026 05:17:43 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
-     31/10/2026 05:17:43 server2client supported messages (bit flags)
-     31/10/2026 05:17:43 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 Connected to Server "unknown (LibVNCServer 0.9.15)"
+     31/10/2026 16:46:08 VNC server supports protocol version 3.8 (viewer 3.8)
+     31/10/2026 16:46:08 We have 1 security types to read
+     31/10/2026 16:46:08 0) Received security type 1
+     31/10/2026 16:46:08 Selecting security type 1 (0/1 in the list)
+     31/10/2026 16:46:08 Selected Security Scheme 1
+     31/10/2026 16:46:08 No authentication needed
+     31/10/2026 16:46:08 VNC authentication succeeded
+     31/10/2026 16:46:08 Desktop name "LibVNCServer"
+     31/10/2026 16:46:08 Connected to VNC server, using protocol version 3.8
+     31/10/2026 16:46:08 VNC server default format:
+     31/10/2026 16:46:08   32 bits per pixel.
+     31/10/2026 16:46:08   Least significant byte first in each pixel.
+     31/10/2026 16:46:08   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
+     31/10/2026 16:46:08 client2server supported messages (bit flags)
+     31/10/2026 16:46:08 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
+     31/10/2026 16:46:08 server2client supported messages (bit flags)
+     31/10/2026 16:46:08 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:08 Connected to Server "unknown (LibVNCServer 0.9.15)"
        info tight (lossless): mean error 0.000
        ok   Tight, lossless: the image, exactly
-     31/10/2026 05:17:43 VNC server supports protocol version 3.8 (viewer 3.8)
-     31/10/2026 05:17:43 We have 1 security types to read
-     31/10/2026 05:17:43 0) Received security type 1
-     31/10/2026 05:17:43 Selecting security type 1 (0/1 in the list)
-     31/10/2026 05:17:43 Selected Security Scheme 1
-     31/10/2026 05:17:43 No authentication needed
-     31/10/2026 05:17:43 VNC authentication succeeded
-     31/10/2026 05:17:43 Desktop name "LibVNCServer"
-     31/10/2026 05:17:43 Connected to VNC server, using protocol version 3.8
-     31/10/2026 05:17:43 VNC server default format:
-     31/10/2026 05:17:43   32 bits per pixel.
-     31/10/2026 05:17:43   Least significant byte first in each pixel.
-     31/10/2026 05:17:43   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
-     31/10/2026 05:17:43 client2server supported messages (bit flags)
-     31/10/2026 05:17:43 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
-     31/10/2026 05:17:43 server2client supported messages (bit flags)
-     31/10/2026 05:17:43 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:43 Connected to Server "unknown (LibVNCServer 0.9.15)"
+     31/10/2026 16:46:09 VNC server supports protocol version 3.8 (viewer 3.8)
+     31/10/2026 16:46:09 We have 1 security types to read
+     31/10/2026 16:46:09 0) Received security type 1
+     31/10/2026 16:46:09 Selecting security type 1 (0/1 in the list)
+     31/10/2026 16:46:09 Selected Security Scheme 1
+     31/10/2026 16:46:09 No authentication needed
+     31/10/2026 16:46:09 VNC authentication succeeded
+     31/10/2026 16:46:09 Desktop name "LibVNCServer"
+     31/10/2026 16:46:09 Connected to VNC server, using protocol version 3.8
+     31/10/2026 16:46:09 VNC server default format:
+     31/10/2026 16:46:09   32 bits per pixel.
+     31/10/2026 16:46:09   Least significant byte first in each pixel.
+     31/10/2026 16:46:09   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
+     31/10/2026 16:46:09 client2server supported messages (bit flags)
+     31/10/2026 16:46:09 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
+     31/10/2026 16:46:09 server2client supported messages (bit flags)
+     31/10/2026 16:46:09 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 Connected to Server "unknown (LibVNCServer 0.9.15)"
        info tight+jpeg q9: mean error 0.372
        ok   Tight+JPEG (TurboVNC's encoding): within JPEG error
-     31/10/2026 05:17:44 VNC server supports protocol version 3.8 (viewer 3.8)
-     31/10/2026 05:17:44 We have 1 security types to read
-     31/10/2026 05:17:44 0) Received security type 1
-     31/10/2026 05:17:44 Selecting security type 1 (0/1 in the list)
-     31/10/2026 05:17:44 Selected Security Scheme 1
-     31/10/2026 05:17:44 No authentication needed
-     31/10/2026 05:17:44 VNC authentication succeeded
-     31/10/2026 05:17:44 Desktop name "LibVNCServer"
-     31/10/2026 05:17:44 Connected to VNC server, using protocol version 3.8
-     31/10/2026 05:17:44 VNC server default format:
-     31/10/2026 05:17:44   32 bits per pixel.
-     31/10/2026 05:17:44   Least significant byte first in each pixel.
-     31/10/2026 05:17:44   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
-     31/10/2026 05:17:44 client2server supported messages (bit flags)
-     31/10/2026 05:17:44 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
-     31/10/2026 05:17:44 server2client supported messages (bit flags)
-     31/10/2026 05:17:44 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
-     31/10/2026 05:17:44 Connected to Server "unknown (LibVNCServer 0.9.15)"
+     31/10/2026 16:46:09 VNC server supports protocol version 3.8 (viewer 3.8)
+     31/10/2026 16:46:09 We have 1 security types to read
+     31/10/2026 16:46:09 0) Received security type 1
+     31/10/2026 16:46:09 Selecting security type 1 (0/1 in the list)
+     31/10/2026 16:46:09 Selected Security Scheme 1
+     31/10/2026 16:46:09 No authentication needed
+     31/10/2026 16:46:09 VNC authentication succeeded
+     31/10/2026 16:46:09 Desktop name "LibVNCServer"
+     31/10/2026 16:46:09 Connected to VNC server, using protocol version 3.8
+     31/10/2026 16:46:09 VNC server default format:
+     31/10/2026 16:46:09   32 bits per pixel.
+     31/10/2026 16:46:09   Least significant byte first in each pixel.
+     31/10/2026 16:46:09   TRUE colour: max red 255 green 255 blue 255, shift red 0 green 8 blue 16
+     31/10/2026 16:46:09 client2server supported messages (bit flags)
+     31/10/2026 16:46:09 00: 00ff 0081 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 18: 0000 0000 0000 0000 - 0000 0000 0000 0008
+     31/10/2026 16:46:09 server2client supported messages (bit flags)
+     31/10/2026 16:46:09 00: 001f 0080 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 08: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 10: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 18: 0000 0000 0000 0000 - 0000 0000 0000 0000
+     31/10/2026 16:46:09 Connected to Server "unknown (LibVNCServer 0.9.15)"
        ok   ZRLE: the image, exactly
      PASS libvncserver
 PASS test_libvncserver

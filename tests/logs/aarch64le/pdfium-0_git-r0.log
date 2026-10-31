@@ -1,15 +1,38 @@
-# pdfium 0_git-r0 -- INSTALLED
+# pdfium 0_git-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:51:37Z   packages from: apk:local-dists
+# date: 2026-10-31T17:07:59Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u pdfium-dev
-(1/1) Installing pdfium-dev (0_git-r0)
-OK: 170 MiB in 30 packages
+$ apk add -u pdfium-dev qnx-test-pdfium qnx-port-tests
+(1/3) Installing pdfium-dev (0_git-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-pdfium (1.0-r0)
+OK: 214 MiB in 31 packages
 
-$ ldd on every program and library apk info -L pdfium-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pdfium
+     == pdfium ==
+       ok   hand-written PDF loaded from memory
+       ok   one page
+       ok   page is 100x100 points
+       info text: "Hello QNX" (9 chars)
+       ok   text extracted: "Hello QNX"
+       ok   glyph 'H' box near (10, 70)
+       info (30,25) BGRA 0,0,255,255  (80,40) 255,255,255
+       ok   rendered: inside the rectangle is red
+       ok   outside it is white
+       info text line at 4x: 2343 red, 885 other non-white pixels, x 44..264; font "Helvetica"
+       ok   the text line is drawn in red (base-14 Helvetica), where it was placed
+       ok   new page: rectangle and text, content generated
+       ok   saved to memory as a PDF
+       info saved 983 bytes
+       ok   the saved PDF loads again
+       ok   re-rendered: blue rectangle at (50..90), white elsewhere
+       ok   its text reads "QNX"
+     PASS pdfium
+PASS test_pdfium
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

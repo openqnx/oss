@@ -1,21 +1,64 @@
-# geany 2.1-r0 -- INSTALLED
+# geany 2.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:59Z   packages from: apk:local-dists
+# date: 2026-10-31T16:14:00Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u geany
-OK: 166 MiB in 52 packages
+$ apk add -u geany qnx-test-geany qnx-port-tests
+( 1/27) Installing dbus (1.16.0-r1)
+( 2/27) Installing libxau (1.0.11-r0)
+( 3/27) Installing libxdmcp (1.1.5-r0)
+( 4/27) Installing libxcb (1.17.0-r0)
+( 5/27) Installing libx11 (1.8.10-r0)
+( 6/27) Installing libxext (1.3.6-r0)
+( 7/27) Installing libxi (1.8.2-r0)
+( 8/27) Installing libxtst (1.2.5-r0)
+( 9/27) Installing at-spi2-core (2.54.0-r0)
+(10/27) Installing libxrender (0.9.11-r0)
+(11/27) Installing cairo (1.18.2-r0)
+(12/27) Installing fribidi (1.0.16-r0)
+(13/27) Installing harfbuzz (<ip>-r0)
+(14/27) Installing libxcomposite (0.4.6-r0)
+(15/27) Installing libxfixes (6.0.1-r0)
+(16/27) Installing libxcursor (1.2.2-r0)
+(17/27) Installing libxdamage (1.1.6-r0)
+(18/27) Installing libxinerama (1.1.5-r0)
+(19/27) Installing libxml2 (2.13.5-r1)
+(20/27) Installing libxkbcommon (1.8.1-r1)
+(21/27) Installing libxrandr (1.5.4-r0)
+(22/27) Installing libxft (2.3.8-r0)
+(23/27) Installing pango (1.54.0-r0)
+(24/27) Installing gtk3 (3.24.43-r1)
+(25/27) Installing geany (2.1-r0)
+(26/27) Installing qnx-port-tests (1.0-r2)
+(27/27) Installing qnx-test-geany (1.0-r0)
+OK: 166 MiB in 56 packages
 
-$ ldd on every program and library apk info -L geany lists
-ok   loads: /data/oss/usr/local/bin/geany
-ok   loads: /data/oss/usr/local/lib/libgeany.so.0
-ok   loads: /data/oss/usr/local/lib/geany/classbuilder.so
-ok   loads: /data/oss/usr/local/lib/geany/export.so
-ok   loads: /data/oss/usr/local/lib/geany/filebrowser.so
-ok   loads: /data/oss/usr/local/lib/geany/htmlchars.so
-ok   loads: /data/oss/usr/local/lib/geany/saveactions.so
-ok   loads: /data/oss/usr/local/lib/geany/splitwindow.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_geany
+     == geany ==
+       ok   utils_str_casecmp
+       ok   utils_str_equal (NULL-safe)
+       ok   utils_remove_ext_from_filename
+       ok   utils_str_middle_truncate to 9 chars
+       ok   utils_string_replace_all (3 replacements)
+       ok   utils_str_remove_chars
+       ok   utils_get_initials
+       ok   utils_get_setting_* from a GKeyFile (with defaults)
+       ok   utils_strv_shorten_file_list: common prefix stripped, middle ellipsized
+       ok   utils_strv_shorten_file_list: longest common substring
+       info geany --version -> 0: geany 2.1 (built on 2026-10-27 with GTK 3.24.43, GLib 2.82.4)
+       ok   geany --version: geany 2.1, built with GTK 3
+       info geany --print-prefix -> 0: /usr/local
+       ok   geany --print-prefix: /usr/local
+       info geany --ft-names -> 0, 93 lines
+       ok   geany --ft-names
+       ok   built-in filetypes C, Python, Make, XML listed
+       ok   custom filetype from the -c config directory listed
+       ok   more than 50 filetypes
+     PASS geany
+PASS test_geany
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

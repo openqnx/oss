@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/pytorch/cpuinfo.git |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,10 +55,11 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/cpuinfo < ports/cpuinfo/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/cpuinfo < ports/cpuinfo/patches/0002-qnx-topology-and-current-cpu.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Import QNX port
@@ -78,6 +79,17 @@ patch -p1 -d src/cpuinfo < ports/cpuinfo/patches/0001-qnx-from-qnx-ports.patch
 >  create mode 100644 src/qnx/api.h
 
 Touches: `CMakeLists.txt`, `include/cpuinfo.h`, `src/api.c`, `src/init.c`, `src/qnx/api.c`, `src/qnx/api.h` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-qnx-topology-and-current-cpu.patch`](patches/0002-qnx-topology-and-current-cpu.patch)** — QNX: fill in the cluster, package, cache counts and the current processor.
+
+> The QNX layer left the cluster and package descriptions empty (TODO) and the
+> cache counts at zero, so cpuinfo_get_package(0) reported no processors and
+> cpuinfo_get_l1d_caches_count() returned 0 although the caches were filled in;
+> cpuinfo_get_current_processor() returned NULL. Describe the one cluster and
+> package the layer assumes, count the detected caches, and map the calling
+> thread to its processor with SchedGetCpuNum().
+
+Touches: `src/api.c`, `src/qnx/api.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -180,7 +192,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | cpuinfo 0_git20240417-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/cpuinfo-0_git20240417-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | cpuinfo 0_git20240417-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/cpuinfo-0_git20240417-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | cpuinfo 0_git20240417-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/cpuinfo-0_git20240417-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | cpuinfo 0_git20240417-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/cpuinfo-0_git20240417-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

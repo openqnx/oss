@@ -4,6 +4,9 @@ VERSION=0.5.1+rpt20250722; GIT=https://github.com/raspberrypi/libcamera.git; REF
 # built as librpi_camera_ipa with qnx-ports' own CMakeLists (files/), not
 # libcamera's Meson build (whose device layer is V4L2/Linux). patches/: the
 # QNX changes from qnx-ports/libcamera. Raspberry Pi 4/5 only: aarch64le.
+# Installs lib/librpi_camera_ipa.so and its C API header include/rpi_camera_ipa.h.
+# Run time: libyaml (the tuning-file parser) and the SDP's libslog2, both
+# recorded as NEEDED; rpiIpaStart() fails unless slogger2 is running.
 ARCHES_SUPPORTED="aarch64le"
 DEPS="libyaml"
 BUILDSYS=custom

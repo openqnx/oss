@@ -1,15 +1,39 @@
-# libxcrypt 4.4.38-r0 -- INSTALLED
+# libxcrypt 4.4.38-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:41Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxcrypt
-(1/1) Installing libxcrypt (4.4.38-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u libxcrypt qnx-test-libxcrypt qnx-port-tests
+(1/3) Installing libxcrypt (4.4.38-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libxcrypt (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L libxcrypt lists
-ok   loads: /data/oss/usr/local/lib/libcrypt.so.2
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxcrypt
+     == libxcrypt ==
+       ok   sha512crypt: reference hash reproduced
+       ok   sha256crypt: reference hash reproduced
+       ok   bcrypt 2a: reference hash reproduced
+       ok   bcrypt 2b: reference hash reproduced
+       ok   yescrypt: reference hash reproduced
+       ok   scrypt: reference hash reproduced
+       ok   md5crypt: reference hash reproduced
+       ok   descrypt: reference hash reproduced
+       ok   wrong password gives a different hash
+       ok   unknown method rejected (failure token)
+       info gensalt $y$ -> $y$j9T$UBXfo7PJDrTkRVPdbtUMj0
+       ok   crypt_gensalt_rn $y$ + hash + verify
+       info gensalt $2b$ -> $2b$05$rGaKOHXjQ4A/2GFBb6atq.
+       ok   crypt_gensalt_rn $2b$ + hash + verify
+       info gensalt $6$ -> $6$dBEGdE0YuHUW7mC9
+       ok   crypt_gensalt_rn $6$ + hash + verify
+       info preferred method $y$
+       ok   crypt_preferred_method
+     PASS libxcrypt
+PASS test_libxcrypt
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

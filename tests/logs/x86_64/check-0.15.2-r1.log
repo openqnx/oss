@@ -1,0 +1,37 @@
+# check 0.15.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:12:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u check qnx-test-check qnx-port-tests
+(1/5) Installing readline (8.2-r0)
+(2/5) Installing gawk (5.3.2-r1)
+(3/5) Installing check (0.15.2-r1)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-check (1.0-r0)
+OK: 95 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_check
+     == check ==
+       info check 0.15.2
+       ok   library version 0.15.2
+       info fork mode: 9 run, 2 failed
+       ok   fork mode: 9 tests run
+       ok   fork mode: 2 not passed (deliberate failure + abort)
+       ok   fork mode: 7 pass, 1 failure, 1 error
+       info error result: Received signal 6 (abort)
+       ok   failure message is "deliberate failure 42"
+       ok   abort() reported as an error by signal
+       info no-fork mode: 6 run, 1 failed
+       ok   no-fork mode: 6 run, 1 failed
+       info checkmk interpreter line: #! /usr/local/bin/awk -f
+       ok   checkmk's #! interpreter exists on the target
+       ok   checkmk generated suite, two START_TESTs, tcase_add_test and srunner_run_all
+     PASS check
+PASS test_check
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

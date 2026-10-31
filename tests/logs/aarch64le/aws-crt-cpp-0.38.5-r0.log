@@ -1,27 +1,53 @@
-# aws-crt-cpp 0.38.5-r0 -- INSTALLED
+# aws-crt-cpp 0.38.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:22:22Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:49Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-crt-cpp
-( 1/13) Installing aws-c-common (0.12.6-r0)
-( 2/13) Installing aws-c-cal (0.9.13-r0)
-( 3/13) Installing aws-c-compression (0.3.2-r0)
-( 4/13) Installing s2n-tls (1.7.0-r0)
-( 5/13) Installing aws-c-io (0.26.1-r0)
-( 6/13) Installing aws-c-http (0.10.14-r0)
-( 7/13) Installing aws-c-sdkutils (0.2.4-r0)
-( 8/13) Installing aws-c-auth (0.10.1-r0)
-( 9/13) Installing aws-checksums (0.2.10-r0)
-(10/13) Installing aws-c-event-stream (0.7.0-r0)
-(11/13) Installing aws-c-mqtt (0.15.2-r0)
-(12/13) Installing aws-c-s3 (0.12.2-r0)
-(13/13) Installing aws-crt-cpp (0.38.5-r0)
-OK: 60 MiB in 42 packages
+$ apk add -u aws-crt-cpp qnx-test-aws-crt-cpp qnx-port-tests
+( 1/15) Installing aws-c-common (0.12.6-r0)
+( 2/15) Installing aws-c-cal (0.9.13-r1)
+( 3/15) Installing aws-c-compression (0.3.2-r0)
+( 4/15) Installing s2n-tls (1.7.0-r0)
+( 5/15) Installing aws-c-io (0.26.1-r0)
+( 6/15) Installing aws-c-http (0.10.14-r0)
+( 7/15) Installing aws-c-sdkutils (0.2.4-r0)
+( 8/15) Installing aws-c-auth (0.10.1-r0)
+( 9/15) Installing aws-checksums (0.2.10-r0)
+(10/15) Installing aws-c-event-stream (0.7.0-r0)
+(11/15) Installing aws-c-mqtt (0.15.2-r0)
+(12/15) Installing aws-c-s3 (0.12.2-r0)
+(13/15) Installing aws-crt-cpp (0.38.5-r0)
+(14/15) Installing qnx-port-tests (1.0-r2)
+(15/15) Installing qnx-test-aws-crt-cpp (1.0-r0)
+OK: 60 MiB in 43 packages
 
-$ ldd on every program and library apk info -L aws-crt-cpp lists
-ok   loads: /data/oss/usr/local/lib/libaws-crt-cpp.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_crt_cpp
+     == aws-crt-cpp ==
+       ok   SHA-256("abc")
+       ok   MD5("")
+       ok   HMAC-SHA256 (RFC 4231 #2)
+       ok   streaming SHA-1 object
+       ok   Base64Encode
+       ok   Base64Decode round trip
+       info json {"name":"qnx","major":8,"rt":true,"arches":["x86_64","aarch64le"]}
+       ok   JSON written then parsed
+       ok   JSON members read back
+       ok   JSON array read back
+       ok   malformed JSON rejected
+       ok   UUID parse/format
+       ok   random UUIDs differ
+       ok   URI scheme, host and port
+       ok   URI path and query
+       ok   DateTime parses RFC 822
+       ok   EventLoopGroup with one thread
+       ok   ResolveHost started
+       info resolved to <ip> (err 0)
+       ok   loopback literal resolves to itself
+     PASS aws-crt-cpp
+PASS test_aws_crt_cpp
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

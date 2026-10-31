@@ -9,7 +9,7 @@
 | Upstream | https://www.sudo.ws/dist/sudo-1.9.17p2.tar.gz |
 | SHA-256 | `4a38a1ab3adb1199257edc2a7c4a2bd714665eb605b04368843b06dada2cfcfb` |
 | Build system | GNU Autotools |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -63,11 +63,12 @@ tar xf dist/$(basename $URL) -C src/sudo --strip-components=1
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/sudo < ports/sudo/patches/0001-export-compat-usershell.patch
 patch -p1 -d src/sudo < ports/sudo/patches/0002-qnx-pututline-void.patch
+patch -p1 -d src/sudo < ports/sudo/patches/0003-qnx-no-rlimit-fsize.patch
 ```
 
 **[`0001-export-compat-usershell.patch`](patches/0001-export-compat-usershell.patch)** — Export all three compat getusershell functions from libsudo_util.
@@ -91,6 +92,10 @@ Touches: `configure.ac`, `configure` · Upstream status: Pending (affects any sy
 
 Touches: `src/utmp.c` · Upstream status: QNX-specific
 
+**[`0003-qnx-no-rlimit-fsize.patch`](patches/0003-qnx-no-rlimit-fsize.patch)** — QNX rejects setrlimit(RLIMIT_FSIZE): do not try to raise it
+
+Touches: `src/limits.c` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -110,6 +115,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - QNX's <signal.h> has SA_RESTART commented out ("not supported yet"); sudo only asks for it as a convenience.
 - QNX's libc has dl_iterate_phdr() but no <link.h>; sudo only uses it as one more entropy source.
 - libsudo_util uses regcomp()/regexec(), which QNX keeps in libregex. Not via LIBS: configure also links its build-machine compiler test with LIBS, and the build machine has no libregex.
+- sysconfdir under the prefix: packages install into the apk root (/data/oss), so a sudoers in /etc would never be the one shipped.
 - sudo's install chowns its files to root, which an unprivileged build cannot do ("Operation not permitted"). Install without the owner flags: the modes, setuid included, are kept, and scripts/qnxpkg records every file as root.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sudo`.
@@ -192,7 +198,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sudo 1.9.17_p2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/sudo-1.9.17_p2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sudo 1.9.17_p2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/sudo-1.9.17_p2-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sudo 1.9.17_p2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/sudo-1.9.17_p2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sudo 1.9.17_p2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/sudo-1.9.17_p2-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -220,7 +228,9 @@ CONF_ENV=( ac_cv_func_dl_iterate_phdr=no )
 # LIBS: configure also links its build-machine compiler test with LIBS, and
 # the build machine has no libregex.
 LDFLAGS_APPEND="-lregex"
-CONF_ARGS_EXTRA=( --disable-nls --without-pam --with-env-editor )
+# sysconfdir under the prefix: packages install into the apk root
+# (/data/oss), so a sudoers in /etc would never be the one shipped.
+CONF_ARGS_EXTRA=( --disable-nls --without-pam --with-env-editor --sysconfdir="$PREFIX/etc" )
 # sudo's install chowns its files to root, which an unprivileged build cannot
 # do ("Operation not permitted"). Install without the owner flags: the modes,
 # setuid included, are kept, and scripts/qnxpkg records every file as root.

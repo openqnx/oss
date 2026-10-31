@@ -1,55 +1,43 @@
 # labwc 0.20.2-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:03:13Z   packages from: apk:local-dists
+# date: 2026-10-31T16:39:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u labwc qnx-test-labwc qnx-port-tests
-( 1/43) Installing expat (2.6.4-r0)
-( 2/43) Installing brotli (1.1.0-r0)
-( 3/43) Installing bzip2 (1.0.8-r0)
-( 4/43) Installing libpng (1.6.44-r0)
-( 5/43) Installing freetype (2.13.3-r0)
-( 6/43) Installing fontconfig (2.15.0-r0)
-( 7/43) Installing libiconv (1.18-r0)
-( 8/43) Installing libunistring (1.3-r0)
-( 9/43) Installing ncurses (6.5-r1)
-(10/43) Installing gettext (0.22.5-r0)
-(11/43) Installing libffi (3.4.6-r0)
-(12/43) Installing pcre2 (10.44-r0)
-(13/43) Installing glib (2.82.4-r0)
-(14/43) Installing libxau (1.0.11-r0)
-(15/43) Installing libxdmcp (1.1.5-r0)
-(16/43) Installing libxcb (1.17.0-r0)
-(17/43) Installing libx11 (1.8.10-r0)
-(18/43) Installing libxext (1.3.6-r0)
-(19/43) Installing libxrender (0.9.11-r0)
-(20/43) Installing lzo (2.10-r0)
-(21/43) Installing pixman (0.46.4-r0)
-(22/43) Installing cairo (1.18.2-r0)
-(23/43) Installing font-dejavu (2.37-r0)
-(24/43) Installing libsfdo (0.1.4-r0)
-(25/43) Installing xz (5.6.3-r0)
-(26/43) Installing libxml2 (2.13.5-r0)
-(27/43) Installing libxkbcommon (1.8.1-r1)
-(28/43) Installing fribidi (1.0.16-r0)
-(29/43) Installing graphite2 (1.3.14-r0)
-(30/43) Installing icu (76.1-r0)
-(31/43) Installing harfbuzz (<ip>-r0)
-(32/43) Installing libxft (2.3.8-r0)
-(33/43) Installing pango (1.54.0-r0)
-(34/43) Installing wayland (1.24.0-r0)
-(35/43) Installing lcms2 (2.16-r0)
-(36/43) Installing wlroots (0.20.2-r0)
-(37/43) Installing xkeyboard-config (2.43-r0)
-(38/43) Installing labwc (0.20.2-r1)
-(39/43) Installing qnx-port-tests (1.0-r1)
-(40/43) Installing libjpeg-turbo (3.0.4-r0)
-(41/43) Installing gdk-pixbuf (2.42.12-r0)
-(42/43) Installing swaybg (1.2.2-r1)
-(43/43) Installing qnx-test-labwc (1.0-r4)
-OK: 124 MiB in 48 packages
+( 1/31) Installing expat (2.6.4-r0)
+( 2/31) Installing bzip2 (1.0.8-r0)
+( 3/31) Installing freetype (2.13.3-r0)
+( 4/31) Installing fontconfig (2.15.0-r0)
+( 5/31) Installing libxau (1.0.11-r0)
+( 6/31) Installing libxdmcp (1.1.5-r0)
+( 7/31) Installing libxcb (1.17.0-r0)
+( 8/31) Installing libx11 (1.8.10-r0)
+( 9/31) Installing libxext (1.3.6-r0)
+(10/31) Installing libxrender (0.9.11-r0)
+(11/31) Installing lzo (2.10-r0)
+(12/31) Installing pixman (0.46.4-r0)
+(13/31) Installing cairo (1.18.2-r0)
+(14/31) Installing font-dejavu (2.37-r0)
+(15/31) Installing libsfdo (0.1.4-r0)
+(16/31) Installing xz (5.6.3-r0)
+(17/31) Installing libxml2 (2.13.5-r1)
+(18/31) Installing libxkbcommon (1.8.1-r1)
+(19/31) Installing fribidi (1.0.16-r0)
+(20/31) Installing graphite2 (1.3.14-r0)
+(21/31) Installing icu (76.1-r1)
+(22/31) Installing harfbuzz (<ip>-r0)
+(23/31) Installing libxft (2.3.8-r0)
+(24/31) Installing pango (1.54.0-r0)
+(25/31) Installing wayland (1.24.0-r0)
+(26/31) Installing wlroots (0.20.2-r0)
+(27/31) Installing xkeyboard-config (2.43-r0)
+(28/31) Installing labwc (0.20.2-r1)
+(29/31) Installing qnx-port-tests (1.0-r2)
+(30/31) Installing swaybg (1.2.2-r1)
+(31/31) Installing qnx-test-labwc (1.0-r4)
+OK: 130 MiB in 59 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
      == labwc ==
@@ -63,7 +51,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   global xdg_wm_base
        ok   global zwlr_layer_shell_v1
        ok   global wl_data_device_manager
-     2026-10-31 05:03:11 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+     2026-10-31 16:39:42 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
        ok   swaybg running on labwc (background layer surface)
        ok   labwc still running after its clients
        ok   labwc exits on SIGTERM

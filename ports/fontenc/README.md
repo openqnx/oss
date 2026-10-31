@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.freedesktop.org/xorg/lib/libfontenc.git (tag `libfontenc-1.1.8`) |
 | Build system | GNU Autotools |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`xorgproto`](../xorgproto/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,7 +59,21 @@ git clone --depth 1 -b libfontenc-1.1.8 --recurse-submodules --shallow-submodule
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/fontenc < ports/fontenc/patches/0001-fix-FontMapReverseFree.patch
+```
+
+**[`0001-fix-FontMapReverseFree.patch`](patches/0001-fix-FontMapReverseFree.patch)** — Fix FontMapReverseFree(): free the reverse map, not the record as a map.
+
+> FontMapReverse() returns a malloc'd FontMapReverseRec whose ->data is the
+> segment table. FontMapReverseFree() cast the record itself to the segment
+> table, so it called free() on the record's function pointer and on
+> whatever followed it: every caller crashed (QNX's allocator aborts). Free
+> the segments and the table through ->data, then the record.
+
+Touches: `src/fontenc.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -75,11 +89,16 @@ LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
 $OLDPWD/src/fontenc/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
-    --disable-static
+    --disable-static \
+    --with-fontrootdir="$PREFIX/share/fonts/X11"
 make -j$(nproc)
 make DESTDIR=$STAGE install
 cd -
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- XORG_FONTROOTDIR asks pkg-config for fontutil's fontrootdir, and the cross pkg-config prefixes variables with the sysroot: the build machine's stage/<arch>/... path was compiled in as the encodings directory, so FontEncFind() found nothing on a target. Give the target path.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fontenc`.
 
@@ -167,7 +186,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | fontenc 1.1.8-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/fontenc-1.1.8-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | fontenc 1.1.8-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/fontenc-1.1.8-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | fontenc 1.1.8-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/fontenc-1.1.8-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | fontenc 1.1.8-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/fontenc-1.1.8-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -181,7 +202,11 @@ This recipe builds **1.1.8**. Every version stays available: packages in `dists/
 VERSION=1.1.8; GIT=https://gitlab.freedesktop.org/xorg/lib/libfontenc.git; REF=libfontenc-1.1.8
 DEPS="xorgproto zlib"
 BUILDSYS=autotools
-CONF_ARGS_EXTRA=( --enable-shared --disable-static )
+# XORG_FONTROOTDIR asks pkg-config for fontutil's fontrootdir, and the
+# cross pkg-config prefixes variables with the sysroot: the build machine's
+# stage/<arch>/... path was compiled in as the encodings directory, so
+# FontEncFind() found nothing on a target. Give the target path.
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --with-fontrootdir="$PREFIX/share/fonts/X11" )
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
 ```
 </details>

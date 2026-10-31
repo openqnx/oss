@@ -1,15 +1,40 @@
-# xkeyboard-config 2.43-r0 -- INSTALLED
+# xkeyboard-config 2.43-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:42:04Z   packages from: apk:local-dists
+# date: 2026-10-31T16:38:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xkeyboard-config
-(1/1) Installing xkeyboard-config (2.43-r0)
-OK: 172 MiB in 53 packages
+$ apk add -u xkeyboard-config qnx-test-xkeyboard-config qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r2)
+(2/5) Installing libxml2 (2.13.5-r1)
+(3/5) Installing libxkbcommon (1.8.1-r1)
+(4/5) Installing xkeyboard-config (2.43-r0)
+(5/5) Installing qnx-test-xkeyboard-config (1.0-r0)
+OK: 102 MiB in 34 packages
 
-$ ldd on every program and library apk info -L xkeyboard-config lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xkeyboard_config
+     == xkeyboard-config ==
+       ok   XKB data (rules/evdev)
+       info /usr/local/share/X11/xkb
+       ok   xkb context with only this data
+       ok   keymaps us, de, fr, ru compiled
+       ok   us: a, A, semicolon
+       ok   us: shift+1 -> exclam
+       ok   us: one layout, Shift modifier
+       ok   de: QWERTZ (Y key -> z, Z key -> y)
+       ok   de: odiaeresis, dead_acute
+       ok   fr: AZERTY (Q key -> a, 1 -> ampersand)
+       ok   ru: Cyrillic ef, SHORTI
+       ok   us,de keymap: 2 layouts
+       info layout 1: German
+       ok   group 2 (de): Y key -> z
+       ok   keymap serialised to text
+       ok   and compiled back
+       ok   rules/evdev.xml lists us, de, fr
+     PASS xkeyboard-config
+PASS test_xkeyboard_config
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

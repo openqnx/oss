@@ -1,24 +1,29 @@
 # libxcvt 0.1.3-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libxcvt qnx-test-xorg-libs qnx-port-tests
-( 1/12) Installing libxcvt (0.1.3-r0)
-( 2/12) Installing qnx-port-tests (1.0-r1)
-( 3/12) Installing libice (1.1.2-r0)
-( 4/12) Installing libsm (1.2.6-r0)
-( 5/12) Installing fontenc (1.1.8-r0)
-( 6/12) Installing libxfont2 (2.0.7-r0)
-( 7/12) Installing libxkbfile (1.2.0-r0)
-( 8/12) Installing libxt (1.3.1-r0)
-( 9/12) Installing libxmu (1.3.1-r0)
-(10/12) Installing libxshmfence (1.3.3-r0)
-(11/12) Installing xcb-util (0.4.1-r0)
-(12/12) Installing qnx-test-xorg-libs (1.0-r5)
-OK: 167 MiB in 64 packages
+( 1/17) Installing libxcvt (0.1.3-r0)
+( 2/17) Installing qnx-port-tests (1.0-r2)
+( 3/17) Installing libice (1.1.2-r0)
+( 4/17) Installing libsm (1.2.6-r0)
+( 5/17) Installing libxau (1.0.11-r0)
+( 6/17) Installing libxdmcp (1.1.5-r0)
+( 7/17) Installing libxcb (1.17.0-r0)
+( 8/17) Installing libx11 (1.8.10-r0)
+( 9/17) Installing fontenc (1.1.8-r2)
+(10/17) Installing libxfont2 (2.0.7-r0)
+(11/17) Installing libxkbfile (1.2.0-r0)
+(12/17) Installing libxext (1.3.6-r0)
+(13/17) Installing libxt (1.3.1-r0)
+(14/17) Installing libxmu (1.3.1-r0)
+(15/17) Installing libxshmfence (1.3.3-r0)
+(16/17) Installing xcb-util (0.4.1-r0)
+(17/17) Installing qnx-test-xorg-libs (1.0-r5)
+OK: 98 MiB in 46 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xorg_libs
      == xorg-libs ==
@@ -36,7 +41,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_x
        ok   XmuCopyISOLatin1Lowered (incl. E-acute)
        ok   XmuCompareISOLatin1 ignores case
        ok   IceListenForConnections
-       info ICE listening: local/vanilla-x86_64:/tmp/.ICE-unix/137302038,inet6/vanilla-x86_64:57722,inet/vanilla-x86_64:49115
+       info ICE listening: local/vanilla-x86_64:/tmp/.ICE-unix/815095848,inet6/vanilla-x86_64:33220,inet/vanilla-x86_64:20645
        ok   network id list
        info SmcOpenConnection: SESSION_MANAGER environment variable not defined
        ok   no session manager: the documented error

@@ -1,24 +1,77 @@
-# gcr 3.41.2-r0 -- INSTALLED
+# gcr 3.41.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:56Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gcr
-(1/4) Installing libgpg-error (1.50-r0)
-(2/4) Installing libgcrypt (1.11.0-r0)
-(3/4) Installing p11-kit (0.25.5-r0)
-(4/4) Installing gcr (3.41.2-r0)
-OK: 176 MiB in 56 packages
+$ apk add -u gcr qnx-test-gcr qnx-port-tests
+( 1/30) Installing libxau (1.0.11-r0)
+( 2/30) Installing libxdmcp (1.1.5-r0)
+( 3/30) Installing libxcb (1.17.0-r0)
+( 4/30) Installing libx11 (1.8.10-r0)
+( 5/30) Installing libxext (1.3.6-r0)
+( 6/30) Installing libxrender (0.9.11-r0)
+( 7/30) Installing cairo (1.18.2-r0)
+( 8/30) Installing dbus (1.16.0-r1)
+( 9/30) Installing libxi (1.8.2-r0)
+(10/30) Installing libxtst (1.2.5-r0)
+(11/30) Installing at-spi2-core (2.54.0-r0)
+(12/30) Installing fribidi (1.0.16-r0)
+(13/30) Installing harfbuzz (<ip>-r0)
+(14/30) Installing libxcomposite (0.4.6-r0)
+(15/30) Installing libxfixes (6.0.1-r0)
+(16/30) Installing libxcursor (1.2.2-r0)
+(17/30) Installing libxdamage (1.1.6-r0)
+(18/30) Installing libxinerama (1.1.5-r0)
+(19/30) Installing libxml2 (2.13.5-r1)
+(20/30) Installing libxkbcommon (1.8.1-r1)
+(21/30) Installing libxrandr (1.5.4-r0)
+(22/30) Installing libxft (2.3.8-r0)
+(23/30) Installing pango (1.54.0-r0)
+(24/30) Installing gtk3 (3.24.43-r1)
+(25/30) Installing libgpg-error (1.50-r0)
+(26/30) Installing libgcrypt (1.11.0-r1)
+(27/30) Installing p11-kit (0.25.5-r0)
+(28/30) Installing gcr (3.41.2-r0)
+(29/30) Installing qnx-port-tests (1.0-r2)
+(30/30) Installing qnx-test-gcr (1.0-r0)
+OK: 159 MiB in 59 packages
 
-$ ldd on every program and library apk info -L gcr lists
-ok   loads: /data/oss/usr/local/bin/gcr-viewer
-ok   loads: /data/oss/usr/local/lib/libgck-1.so.0
-ok   loads: /data/oss/usr/local/lib/libgck-1.so.0.0.0
-ok   loads: /data/oss/usr/local/lib/libgcr-base-3.so.1
-ok   loads: /data/oss/usr/local/lib/libgcr-base-3.so.1.0.0
-ok   loads: /data/oss/usr/local/lib/libgcr-ui-3.so.1
-ok   loads: /data/oss/usr/local/lib/libgcr-ui-3.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gcr
+     == gcr ==
+       ok   gcr_parser_new
+       info parsed #1: Certificate, label "qnx-port-test.example", format 200
+       info parsed #2: Private Key, label "(null)", format 101
+       ok   gcr_parser_parse_data on a PEM certificate + key bundle
+       ok   two objects parsed
+       ok   one is a Certificate
+       ok   one is a Private Key
+       ok   certificate label is its subject CN
+       info DER certificate: 891 bytes
+       ok   PEM body decodes to the 891-byte DER certificate
+       ok   gcr_simple_certificate_new
+       info subject DN: C=CA, O=QNX Port Tests, OU=g4, CN=qnx-port-test.example
+       ok   subject CN
+       ok   issuer CN (self-signed)
+       ok   subject O
+       ok   subject OU
+       ok   subject C
+       ok   certificate is its own issuer
+       info serial: 1234ABCD
+       ok   serial number 1234ABCD
+       info key size: 2048 bits
+       ok   RSA key size 2048
+       info sha256: EA 71 7C C6 76 22 96 D3 E1 7E B5 E4 AA B8 C7 4F C8 21 EA 22 46 E3 1E 40 F6 5D BE 1D 40 E4 59 01
+       ok   SHA-1 fingerprint matches openssl
+       ok   SHA-256 fingerprint matches openssl
+       info expires 2046-10-26
+       ok   expiry year 2046 (20-year certificate)
+       info gcr-viewer --version -> 0: GCR Certificate and Key Viewer -- 3.41.2
+       ok   gcr-viewer --version: GCR Certificate and Key Viewer -- 3.41.2
+     PASS gcr
+PASS test_gcr
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

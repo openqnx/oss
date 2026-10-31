@@ -1,15 +1,45 @@
-# font-dejavu 2.37-r0 -- INSTALLED
+# font-dejavu 2.37-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u font-dejavu
-(1/1) Installing font-dejavu (2.37-r0)
-OK: 175 MiB in 53 packages
+$ apk add -u font-dejavu qnx-test-font-dejavu qnx-port-tests
+(1/3) Installing font-dejavu (2.37-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-font-dejavu (1.0-r0)
+OK: 102 MiB in 32 packages
 
-$ ldd on every program and library apk info -L font-dejavu lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_dejavu
+     == font-dejavu ==
+       ok   font directory share/fonts/font-dejavu
+       info /usr/local/share/fonts/font-dejavu/
+       info fontconfig 2.15.0
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 22 face(s) in 22 file(s)
+       ok   at least 20 font file(s) found (22)
+       info DejaVu Sans: 9 face(s): Oblique, Condensed Bold Oblique, Condensed Bold, ExtraLight, Book, Bold Oblique, Condensed Oblique, Condensed, Bold
+       ok   family "DejaVu Sans" listed
+       ok   "DejaVu Sans" covers U+03A9 (9/9 faces)
+       ok   "DejaVu Sans" has a bold face
+       info DejaVu Serif: 8 face(s): Bold Italic, Italic, Bold, Book, Condensed Bold, Condensed Bold Italic, Condensed Italic, Condensed
+       ok   family "DejaVu Serif" listed
+       ok   "DejaVu Serif" covers U+03A9 (8/8 faces)
+       info DejaVu Sans Mono: 4 face(s): Book, Oblique, Bold, Bold Oblique
+       ok   family "DejaVu Sans Mono" listed
+       ok   "DejaVu Sans Mono" covers U+03A9 (4/4 faces)
+       info match "DejaVu Sans" -> /usr/local/share/fonts/font-dejavu/DejaVuSans.ttf (index 0)
+       ok   FcFontMatch("DejaVu Sans") -> that family, a file of font-dejavu
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "DejaVu Sans" "Book", 6253 glyphs, scalable
+       ok   glyph for U+03A9 (index 830)
+       ok   rendered: 23x23, mode 2, 210 inked pixel(s)
+     PASS font-dejavu
+PASS test_font_dejavu
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,15 +1,41 @@
-# retropie 0.3-r0 -- INSTALLED
+# retropie 0.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:08Z   packages from: apk:local-dists
+# date: 2026-10-31T17:46:49Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u retropie
-(1/1) Installing retropie (0.3-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u retropie qnx-test-retropie qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r2)
+(2/5) Installing xz (5.6.3-r0)
+(3/5) Installing libxml2 (2.13.5-r1)
+(4/5) Installing retropie (0.3-r0)
+(5/5) Installing qnx-test-retropie (1.0-r0)
+OK: 59 MiB in 33 packages
 
-$ ldd on every program and library apk info -L retropie lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_retropie
+     == retropie ==
+       ok   share/retropie installed
+       ok   es_systems.cfg parses: <systemList>
+       info systems: retroarch picoeight openttd testsuite
+       ok   4 systems: retroarch, picoeight, openttd, testsuite
+       ok   each has a name, full name, extension and a %ROM% command
+       info 13 games in 4 gamelists, 9 cover references
+       ok   4 gamelists parse; every game has a path element and a name
+       ok   every referenced game cover is installed
+       ok   every PNG cover decodes (libpng)
+       ok   2048.png is 250x250
+       ok   openttd.svg is an SVG document
+       ok   es_settings.cfg: named settings parse
+       ok   es_input.cfg: a keyboard input configuration
+       info retroarch.cfg: 3144 settings, 0 malformed
+       ok   retroarch.cfg: 3000+ key = "value" settings, none malformed
+       ok   video_driver vulkan, input_driver qnx_input, menu_driver ozone
+       ok   target_scripts/backup.sh is valid shell (sh -n)
+       ok   target_scripts/uninstall.sh is valid shell (sh -n)
+     PASS retropie
+PASS test_retropie
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,44 @@
+# freeimage 3.18.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:29:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u freeimage qnx-test-freeimage qnx-port-tests
+(1/3) Installing freeimage (3.18.0-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-freeimage (1.0-r0)
+OK: 61 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_freeimage
+     == freeimage ==
+       info FreeImage 3.18.0
+       ok   allocate a 16x8 24-bit bitmap
+       ok   pixels set and read back
+       ok   PNG plugin reads and writes
+       info PNG: 106 bytes
+       ok   PNG: encoded stream is recognised as PNG
+       ok   PNG round trip is lossless
+       ok   BMP plugin reads and writes
+       info BMP: 438 bytes
+       ok   BMP: encoded stream is recognised as BMP
+       ok   BMP round trip is lossless
+       ok   TIFF plugin reads and writes
+       info TIFF: 338 bytes
+       ok   TIFF: encoded stream is recognised as TIFF
+       ok   TIFF round trip is lossless
+       ok   JPEG plugin reads and writes
+       info JPEG: 759 bytes
+       ok   JPEG: encoded stream is recognised as JPEG
+       ok   JPEG round trip (within JPEG tolerance)
+       ok   FlipHorizontal moves column 0 to column 15
+       info grey of pure red = 54
+       ok   greyscale of pure red uses luma weights (~54 Rec.709 / ~76 Rec.601)
+       ok   rescale a uniform image to 32x16 keeps its colour
+     PASS freeimage
+PASS test_freeimage
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,31 @@
+# xdg-utils 1.2.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:36:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xdg-utils qnx-test-xdg-utils qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing grep (3.11-r1)
+(3/4) Installing xdg-utils (1.2.1-r1)
+(4/4) Installing qnx-test-xdg-utils (1.0-r0)
+OK: 93 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xdg_utils
+     == xdg-utils ==
+       ok   xdg-open --version: xdg-open 1.2.1
+       ok   xdg-mime default: mimeapps.list has text/x-qnx=qnxview.desktop
+       ok   xdg-mime query default text/x-qnx: qnxview.desktop
+       info xdg-mime stderr: realpath: /proc/boot/sh: Bad file descriptor (toybox realpath on a /proc/boot program)
+       ok   query default for an unknown type: empty
+       ok   xdg-mime install --mode user: package copied
+       ok   xdg-icon-resource: hicolor/16x16/apps/qnxicon.png
+       ok   xdg-desktop-menu install: entry in applications/
+       ok   xdg-desktop-menu uninstall
+     PASS xdg-utils
+PASS test_xdg_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

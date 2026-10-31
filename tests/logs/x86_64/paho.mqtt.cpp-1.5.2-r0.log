@@ -1,18 +1,42 @@
-# paho.mqtt.cpp 1.5.2-r0 -- INSTALLED
+# paho.mqtt.cpp 1.5.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:27:25Z   packages from: apk:local-dists
+# date: 2026-10-31T16:20:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u paho.mqtt.cpp
-(1/2) Installing paho.mqtt.c (1.3.14-r0)
-(2/2) Installing paho.mqtt.cpp (1.5.2-r0)
-OK: 167 MiB in 54 packages
+$ apk add -u paho.mqtt.cpp qnx-test-paho-mqtt-cpp qnx-port-tests
+(1/6) Installing paho.mqtt.c (1.3.14-r0)
+(2/6) Installing paho.mqtt.cpp (1.5.2-r0)
+(3/6) Installing qnx-port-tests (1.0-r2)
+(4/6) Installing cjson (1.7.18-r0)
+(5/6) Installing mosquitto (2.0.20-r0)
+(6/6) Installing qnx-test-paho-mqtt-cpp (1.0-r1)
+OK: 95 MiB in 35 packages
 
-$ ldd on every program and library apk info -L paho.mqtt.cpp lists
-ok   loads: /data/oss/usr/local/lib/libpaho-mqttpp3.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libpaho-mqttpp3.so.1.5.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_paho_mqtt_cpp
+     == paho.mqtt.cpp ==
+     1793463603: Warning: Mosquitto should not be run as root/administrator.
+       ok   mosquitto broker listening on <ip>
+       ok   message object
+       ok   client created, not connected
+       ok   connected to the broker
+       ok   subscribed to qnx/test/# at QoS 1
+       ok   QoS 1 publish acknowledged (PUBACK)
+       info received qnx/test/speed = "88.5 km/h" (qos 1)
+       ok   own message received through the broker
+       ok   delivered at QoS 1
+       ok   binary payload (with NUL bytes) intact
+       ok   retained publish
+       ok   second client connected
+       ok   late subscriber receives the retained message
+       ok   second client disconnected
+       ok   disconnected
+       info expected failure: MQTT error [-1]: TCP/TLS connect failure
+       ok   connect to a port without a broker fails
+     PASS paho.mqtt.cpp
+PASS test_paho_mqtt_cpp
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

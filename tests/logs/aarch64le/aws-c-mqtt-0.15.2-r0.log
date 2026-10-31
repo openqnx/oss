@@ -1,21 +1,43 @@
-# aws-c-mqtt 0.15.2-r0 -- INSTALLED
+# aws-c-mqtt 0.15.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:22:10Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-c-mqtt
-(1/7) Installing aws-c-common (0.12.6-r0)
-(2/7) Installing aws-c-cal (0.9.13-r0)
-(3/7) Installing aws-c-compression (0.3.2-r0)
-(4/7) Installing s2n-tls (1.7.0-r0)
-(5/7) Installing aws-c-io (0.26.1-r0)
-(6/7) Installing aws-c-http (0.10.14-r0)
-(7/7) Installing aws-c-mqtt (0.15.2-r0)
-OK: 58 MiB in 36 packages
+$ apk add -u aws-c-mqtt qnx-test-aws-c-mqtt qnx-port-tests
+(1/9) Installing aws-c-common (0.12.6-r0)
+(2/9) Installing aws-c-cal (0.9.13-r1)
+(3/9) Installing aws-c-compression (0.3.2-r0)
+(4/9) Installing s2n-tls (1.7.0-r0)
+(5/9) Installing aws-c-io (0.26.1-r0)
+(6/9) Installing aws-c-http (0.10.14-r0)
+(7/9) Installing aws-c-mqtt (0.15.2-r0)
+(8/9) Installing qnx-port-tests (1.0-r2)
+(9/9) Installing qnx-test-aws-c-mqtt (1.0-r0)
+OK: 58 MiB in 37 packages
 
-$ ldd on every program and library apk info -L aws-c-mqtt lists
-ok   loads: /data/oss/usr/local/lib/libaws-c-mqtt.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_mqtt
+     == aws-c-mqtt ==
+       ok   test broker listening on <ip>
+       info broker port 20170
+       ok   MQTT client and connection objects
+       ok   connect started
+       ok   CONNACK accepted
+       ok   broker saw CONNECT: MQTT 3.1.1, clean session, client id, keep-alive 30
+       ok   subscribe queued
+       ok   SUBACK grants QoS 1
+       ok   broker saw SUBSCRIBE qnx/test/# at QoS 1
+       ok   publish queued
+       ok   PUBACK completes the QoS 1 publish
+       ok   broker saw PUBLISH with topic and payload
+       ok   echoed message delivered to the subscription
+       ok   delivered topic and payload
+       ok   disconnect completes
+       ok   broker saw DISCONNECT
+     PASS aws-c-mqtt
+PASS test_aws_c_mqtt
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

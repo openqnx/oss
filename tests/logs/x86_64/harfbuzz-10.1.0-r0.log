@@ -1,21 +1,43 @@
-# harfbuzz <ip>-r0 -- INSTALLED
+# harfbuzz <ip>-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:37Z   packages from: apk:local-dists
+# date: 2026-10-31T16:15:19Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u harfbuzz
-OK: 166 MiB in 52 packages
+$ apk add -u harfbuzz qnx-test-harfbuzz qnx-port-tests
+(1/4) Installing harfbuzz (<ip>-r0)
+(2/4) Installing qnx-port-tests (1.0-r2)
+(3/4) Installing font-dejavu (2.37-r0)
+(4/4) Installing qnx-test-harfbuzz (1.0-r0)
+OK: 106 MiB in 33 packages
 
-$ ldd on every program and library apk info -L harfbuzz lists
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-gobject.so.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-gobject.so.0.61010.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-icu.so.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-icu.so.0.61010.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-subset.so.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz-subset.so.0.61010.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz.so.0
-ok   loads: /data/oss/usr/local/lib/libharfbuzz.so.0.61010.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_harfbuzz
+     == harfbuzz ==
+       info HarfBuzz <ip>
+       ok   general categories
+       ok   mirroring and scripts
+       ok   hb_set range/delete
+       ok   language tags normalised
+       ok   DejaVuSans.ttf loaded
+       info 6253 glyphs, upem 2048
+       ok   glyph count 6253, 2048 units/em
+       ok   cmap: A -> 36, V -> 57
+       ok   unmapped private-use code point
+       ok   GSUB and GPOS present
+       info "office" -> 4 glyphs: 82@0 5044@1 70@4 72@5
+       ok   "office": ffi ligature (glyph 5044) spanning clusters 1-3
+       ok   LTR Latin guessed
+       ok   "office" with -liga keeps f f i
+       info A advance 1270 kerned, 1401 unkerned (font units)
+       ok   GPOS kerning tightens A-V
+       ok   Hebrew shaped RTL, clusters in visual order
+       ok   hb-subset produced a face
+       info subset has 3 glyphs
+       ok   subset: .notdef + A + V, B dropped
+     PASS harfbuzz
+PASS test_harfbuzz
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

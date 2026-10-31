@@ -83,6 +83,11 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 # named the real cause.  Never look for host programs in the staging tree.
 list(APPEND CMAKE_IGNORE_PATH "${QNX_STAGE}${QNX_PREFIX}/bin"
                               "${QNX_STAGE}${QNX_PREFIX}/sbin")
+# toolchain/bin/pkg-config answers `--variable` with the target's path
+# (/usr/local/...). FindPkgConfig fills <P>_INCLUDEDIR, <P>_LIBDIR and
+# <P>_PREFIX that way, and projects compile and link with them: CMake builds
+# keep the staging-tree answers.
+set(ENV{QNX_PKG_CONFIG_VARIABLES} sysroot)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)

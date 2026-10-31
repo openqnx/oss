@@ -63,23 +63,27 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-mkdir -p build/$QNX_ARCH/autoconf && cd build/$QNX_ARCH/autoconf
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/autoconf/configure --host=$QNX_TRIPLE --prefix=/usr/local
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/autoconf; B=build/$QNX_ARCH/autoconf; mkdir -p $B
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  local f
+  for f in "$STAGE$PREFIX"/bin/*; do
+    sed -i -e "1s|^#! */usr/bin/perl|#!$PREFIX/bin/perl|" -e "s|exec /usr/bin/perl |exec $PREFIX/bin/perl |g" \
+      -e "/^my \$m4 = /s|'[^']*';|'$PREFIX/bin/m4';|" "$f"
+  done
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - GNU Autoconf (configure script generator; needs perl and m4 on the target). Version as in the QNX Everywhere 8.0.4r1 image.
+- The scripts are generated with the build machine's perl and m4 paths (#! /usr/bin/perl, and the GNU m4 autom4te runs). A QNX target has neither: point them at the installed perl and m4 (hazard 105).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH autoconf`.
 
@@ -161,7 +165,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | autoconf 2.72-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/autoconf-2.72-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | autoconf 2.72-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/autoconf-2.72-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | autoconf 2.72-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/autoconf-2.72-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | autoconf 2.72-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/autoconf-2.72-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -178,6 +184,19 @@ TARBALL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz
 SHA256=ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
+
+# The scripts are generated with the build machine's perl and m4 paths
+# (#! /usr/bin/perl, and the GNU m4 autom4te runs). A QNX target has neither:
+# point them at the installed perl and m4 (hazard 105).
+RUNTIME_DEPS="perl m4"
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  local f
+  for f in "$STAGE$PREFIX"/bin/*; do
+    sed -i -e "1s|^#! */usr/bin/perl|#!$PREFIX/bin/perl|" -e "s|exec /usr/bin/perl |exec $PREFIX/bin/perl |g" \
+      -e "/^my \$m4 = /s|'[^']*';|'$PREFIX/bin/m4';|" "$f"
+  done
+}
 ```
 </details>
 

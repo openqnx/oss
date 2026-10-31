@@ -1,0 +1,32 @@
+# ninja 1.13.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:19:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ninja qnx-test-ninja qnx-port-tests
+(1/3) Installing ninja (1.13.1-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-ninja (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ninja
+     == ninja ==
+       info ninja 1.13.1
+       ok   first build
+       ok   all.txt = QNX ONE TWO
+       ok   second run: no work to do
+       ok   implicit dependency hdr.txt rebuilt b.up
+       ok   a.up left alone
+       ok   -t targets all
+       ok   -t query all.txt (inputs and outputs)
+       ok   -t commands a.up
+       ok   -t clean removed outputs
+       ok   -n dry run builds nothing
+     PASS ninja
+PASS test_ninja
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

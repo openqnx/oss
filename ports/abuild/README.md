@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/alpinelinux/abuild.git (tag `3.16.0`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`apk-tools`](../apk-tools/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,10 +64,11 @@ git clone --depth 1 -b 3.16.0 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/abuild < ports/abuild/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/abuild < ports/abuild/patches/0002-qnx-no-nproc.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — qnx: remove features not used by QNX
@@ -88,6 +89,10 @@ patch -p1 -d src/abuild < ports/abuild/patches/0001-qnx-from-qnx-ports.patch
 >  3 files changed, 107 insertions(+), 158 deletions(-)
 
 Touches: `abuild-sudo.c`, `abuild.in`, `functions.sh.in`, `abuild.in`, `abuild.in`, `default.conf` … · Upstream status: QNX-specific (from qnx-ports)
+
+**[`0002-qnx-no-nproc.patch`](patches/0002-qnx-no-nproc.patch)** — QNX has no nproc: take the CPU count from getconf
+
+Touches: `default.conf` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -204,7 +209,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/abuild-3.16.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/abuild-3.16.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

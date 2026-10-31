@@ -1,20 +1,41 @@
-# python3-setuptools 80.8.0-r0 -- INSTALLED
+# python3-setuptools 80.8.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:18:23Z   packages from: apk:local-dists
+# date: 2026-10-31T17:38:38Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-setuptools
-(1/1) Installing python3-setuptools (80.8.0-r0)
-OK: 59 MiB in 30 packages
+$ apk add -u python3-setuptools qnx-test-python3-setuptools qnx-port-tests
+( 1/10) Installing python3-setuptools (80.8.0-r0)
+( 2/10) Installing qnx-port-tests (1.0-r2)
+( 3/10) Installing bzip2 (1.0.8-r0)
+( 4/10) Installing expat (2.6.4-r0)
+( 5/10) Installing gdbm (1.24-r0)
+( 6/10) Installing readline (8.2-r0)
+( 7/10) Installing sqlite (3.47.2-r0)
+( 8/10) Installing xz (5.6.3-r0)
+( 9/10) Installing python3 (3.14.0-r2)
+(10/10) Installing qnx-test-python3-setuptools (1.0-r0)
+OK: 163 MiB in 38 packages
 
-$ ldd on every program and library apk info -L python3-setuptools lists
-head: /data/oss/usr/local/lib/python3.14/site-packages/setuptools/script: No such file or directory
-head: (dev).tmpl: No such file or directory
-head: /data/oss/usr/local/lib/python3.14/site-packages/setuptools/_vendor/jaraco/text/Lorem: No such file or directory
-head: ipsum.txt: No such file or directory
-head: /data/oss/usr/local/lib/python3.14/site-packages/setuptools/command/launcher: No such file or directory
-head: manifest.xml: No such file or directory
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_setuptools
+     == python3-setuptools ==
+       info setuptools 80.8.0
+       ok   setuptools 80.8.0 (importlib.metadata agrees)
+       ok   find_packages: qnxdemo, qnxdemo.sub
+       ok   setup.py --name --version
+       ok   shutil.rmtree removes a directory tree (used by bdist_wheel)
+       ok   setup.py build: packages and package data in build/lib
+       ok   sdist qnxdemo-1.2.3.tar.gz with setup.py, PKG-INFO
+       ok   bdist_wheel: qnxdemo-1.2.3-py3-none-any.whl
+       ok   wheel holds package data and RECORD
+       ok   METADATA: name, Requires-Dist, Requires-Python
+       ok   WHEEL tag py3-none-any
+       ok   pkg_resources.Requirement.parse
+       ok   parse_version ordering
+     PASS python3-setuptools
+PASS test_python3_setuptools
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

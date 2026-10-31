@@ -1,0 +1,77 @@
+# libxfce4ui 4.20.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:16:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxfce4ui qnx-test-libxfce4ui qnx-port-tests
+( 1/36) Installing dbus (1.16.0-r1)
+( 2/36) Installing libxau (1.0.11-r0)
+( 3/36) Installing libxdmcp (1.1.5-r0)
+( 4/36) Installing libxcb (1.17.0-r0)
+( 5/36) Installing libx11 (1.8.10-r0)
+( 6/36) Installing libxext (1.3.6-r0)
+( 7/36) Installing libxi (1.8.2-r0)
+( 8/36) Installing libxtst (1.2.5-r0)
+( 9/36) Installing at-spi2-core (2.54.0-r0)
+(10/36) Installing libxrender (0.9.11-r0)
+(11/36) Installing cairo (1.18.2-r0)
+(12/36) Installing fribidi (1.0.16-r0)
+(13/36) Installing harfbuzz (<ip>-r0)
+(14/36) Installing libxcomposite (0.4.6-r0)
+(15/36) Installing libxfixes (6.0.1-r0)
+(16/36) Installing libxcursor (1.2.2-r0)
+(17/36) Installing libxdamage (1.1.6-r0)
+(18/36) Installing libxinerama (1.1.5-r0)
+(19/36) Installing libxml2 (2.13.5-r1)
+(20/36) Installing libxkbcommon (1.8.1-r1)
+(21/36) Installing libxrandr (1.5.4-r0)
+(22/36) Installing libxft (2.3.8-r0)
+(23/36) Installing pango (1.54.0-r0)
+(24/36) Installing gtk3 (3.24.43-r1)
+(25/36) Installing hicolor-icon-theme (0.18-r0)
+(26/36) Installing libxfce4util (4.20.0-r0)
+(27/36) Installing xfconf (4.20.0-r1)
+(28/36) Installing libxfce4ui (4.20.0-r1)
+(29/36) Installing qnx-port-tests (1.0-r2)
+(30/36) Installing font-dejavu (2.37-r0)
+(31/36) Installing libsfdo (0.1.4-r0)
+(32/36) Installing lcms2 (2.16-r0)
+(33/36) Installing wlroots (0.20.2-r0)
+(34/36) Installing xkeyboard-config (2.43-r0)
+(35/36) Installing labwc (0.20.2-r1)
+(36/36) Installing qnx-test-libxfce4ui (1.0-r0)
+OK: 170 MiB in 65 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfce4ui
+     == libxfce4ui ==
+       info libxfce4ui 4.20.0
+       ok   libxfce4ui 4.20.0
+       ok   libxfce4ui_check_version
+       info xfce4-about.desktop Icon=org.xfce.about
+       ok   xfce_icon_name_from_desktop_id(xfce4-about) = org.xfce.about
+       ok   xfce_gtk_get_action_entry_by_id finds the entry (labels kept in the C locale)
+       info headless Wayland display: up
+       info xfce4-about --version -> 0: xfce4-about 4.20.0 (Xfce 4.20)
+       ok   xfce4-about --version: 4.20.0
+       ok   gtk_init_check on the headless display
+       ok   xfce_gicon_from_name: themed icon for a named icon
+       ok   themed icon names start with org.xfce.about
+       ok   desktop file with an absolute Icon path -> GFileIcon
+       ok   GFileIcon points at that path
+       ok   XfceTitledDialog with mixed buttons
+       ok   subtitle set and read back
+       ok   dialog title
+       ok   OK response button is "_Save"
+       ok   xfce_gtk_button_new_mixed
+       ok   xfce_gtk_frame_box_new returns a frame and its container
+       ok   menu item built from the action entry and appended
+       ok   activating the menu item runs the entry's callback
+       ok   xfce_spawn_command_line ran the child
+     PASS libxfce4ui
+PASS test_libxfce4ui
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

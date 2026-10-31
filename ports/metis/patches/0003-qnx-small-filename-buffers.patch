@@ -1,0 +1,37 @@
+Do not put a 1.28 MB file-name buffer on the stack.
+
+WritePartition() and WritePermutation() declare char filename[MAXLINE],
+where MAXLINE is 1280000. On Linux the 8 MB main-thread stack hides it;
+QNX's main thread stack is far smaller, so gpmetis and ndmetis died with
+SIGSEGV ("Memory fault") as soon as they wrote their result file, while
+gpmetis -nooutput worked. A 4 KB buffer with snprintf is ample for a file
+name.
+
+Upstream-Status: Pending
+
+--- a/programs/io.c	2026-10-31 21:42:35.588371637 +0900
++++ b/programs/io.c	2026-10-31 21:42:35.636736630 +0900
+@@ -426,9 +426,9 @@
+ {
+   FILE *fpout;
+   idx_t i;
+-  char filename[MAXLINE];
++  char filename[4096];
+ 
+-  sprintf(filename, "%s.part.%"PRIDX, fname, nparts);
++  snprintf(filename, sizeof filename, "%s.part.%"PRIDX, fname, nparts);
+ 
+   fpout = gk_fopen(filename, "w", __func__);
+ 
+@@ -478,9 +478,9 @@
+ {
+   FILE *fpout;
+   idx_t i;
+-  char filename[MAXLINE];
++  char filename[4096];
+ 
+-  sprintf(filename, "%s.iperm", fname);
++  snprintf(filename, sizeof filename, "%s.iperm", fname);
+ 
+   fpout = gk_fopen(filename, "w", __func__);
+ 

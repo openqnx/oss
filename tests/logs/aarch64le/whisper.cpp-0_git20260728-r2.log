@@ -1,15 +1,15 @@
 # whisper.cpp 0_git20260728-r2 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:20:14Z   packages from: apk:local-dists
+# date: 2026-10-31T18:04:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u whisper.cpp qnx-test-whisper qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r1)
+(1/3) Installing qnx-port-tests (1.0-r2)
 (2/3) Installing whisper.cpp (0_git20260728-r2)
 (3/3) Installing qnx-test-whisper (1.0-r2)
-OK: 62 MiB in 32 packages
+OK: 62 MiB in 31 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_whisper
      == whisper.cpp ==
@@ -44,7 +44,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_w
      whisper_vad_detect_speech_no_reset: n_chunks: 344
      whisper_vad_detect_speech_no_reset: props size: 344
      whisper_vad_detect_speech_no_reset: chunk_len: 384 < n_window: 512
-     whisper_vad_detect_speech_no_reset: vad time = 3785.42 ms processing 176000 samples
+     whisper_vad_detect_speech_no_reset: vad time = 4503.29 ms processing 176000 samples
      whisper_vad_segments_from_probs: detecting speech timestamps using 344 probabilities
      whisper_vad_segments_from_probs: Merged 1 adjacent segments, now have 4 segments
      whisper_vad_segments_from_probs: Final speech segments after filtering: 4

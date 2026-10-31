@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/RetroPie/RetroArch.git |
 | Build system | custom (see recipe) |
-| QNX patches | 2 |
+| QNX patches | 4 |
 | Build dependencies | [`sdl2`](../sdl2/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`fontconfig`](../fontconfig/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`openssl`](../openssl/) |
 | Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`libxkbcommon`](../libxkbcommon/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,11 +64,13 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/retroarch < ports/retroarch/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/retroarch < ports/retroarch/patches/0002-qnx-no-libstdcxx.patch
+patch -p1 -d src/retroarch < ports/retroarch/patches/0003-qnx-getopt-restart.patch
+patch -p1 -d src/retroarch < ports/retroarch/patches/0004-qnx-keep-config-option.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — updated drivers
@@ -102,6 +104,27 @@ Touches: `Makefile.common`, `frontend/drivers/platform_qnx.c`, `frontend/drivers
 > own exception handling and std:: types in one process. Leave it out on QNX.
 
 Touches: `Makefile.common` · Upstream status: QNX-specific
+
+**[`0003-qnx-getopt-restart.patch`](patches/0003-qnx-getopt-restart.patch)** — QNX getopt_long has no GNU "optind = 0" restart: --config was ignored
+
+> retroarch_parse_input_and_config() starts its first pass with optind = 0,
+> which glibc takes as "re-initialise". QNX's BSD-derived getopt_long does
+> not, so the first pass parsed no option at all, and the ones only it
+> handles (--config, --appendconfig) were silently ignored: RetroArch always
+> read <cwd>/rarch-shared/retroarch.cfg. Restart with optind = 1 and
+> optreset = 1 on QNX (both passes).
+
+Touches: `retroarch.c` · Upstream status: QNX-specific
+
+**[`0004-qnx-keep-config-option.patch`](patches/0004-qnx-keep-config-option.patch)** — Keep a --config path over the frontend default config path
+
+> config_set_defaults() runs after the first argument pass and sets
+> RARCH_PATH_CONFIG from g_defaults.path_config whenever the frontend filled
+> that in. The QNX frontend does (<cwd>/rarch-shared/retroarch.cfg), so
+> --config was always replaced and RetroArch said "Config not found" for its
+> own default. Only use the default when no path was given.
+
+Touches: `configuration.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -209,7 +232,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/retroarch-1.15_git20230408-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/retroarch-1.15_git20230408-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/retroarch-1.15_git20230408-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/retroarch-1.15_git20230408-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

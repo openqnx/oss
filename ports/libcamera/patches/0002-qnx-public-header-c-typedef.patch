@@ -1,0 +1,21 @@
+Make rpi_camera_ipa.h usable from C.
+
+The header declares an extern "C" API but names the handle type as plain
+RpiIpaHandle_t after only "struct RpiIpaHandle_t;", which is valid C++ but
+an unknown type name in C. Typedef it.
+
+Upstream-Status: QNX-specific (the qnx-ports public header)
+
+--- a/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
++++ b/src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h
+@@ -23,8 +23,8 @@
+     RPI5,
+ } rpiPlatform_t;
+ 
+-// Forward declaration
+-struct RpiIpaHandle_t;
++// Forward declaration (the typedef makes the header usable from C too)
++typedef struct RpiIpaHandle_t RpiIpaHandle_t;
+ 
+ /**
+  * @brief Start the image processing algorithm library

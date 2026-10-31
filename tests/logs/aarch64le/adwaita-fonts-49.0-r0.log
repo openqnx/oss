@@ -1,15 +1,46 @@
-# adwaita-fonts 49.0-r0 -- INSTALLED
+# adwaita-fonts 49.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:21:16Z   packages from: apk:local-dists
+# date: 2026-10-31T16:15:33Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u adwaita-fonts
-(1/1) Installing adwaita-fonts (49.0-r0)
-OK: 62 MiB in 30 packages
+$ apk add -u adwaita-fonts qnx-test-adwaita-fonts qnx-port-tests
+(1/7) Installing adwaita-fonts (49.0-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing expat (2.6.4-r0)
+(4/7) Installing bzip2 (1.0.8-r0)
+(5/7) Installing freetype (2.13.3-r0)
+(6/7) Installing fontconfig (2.15.0-r0)
+(7/7) Installing qnx-test-adwaita-fonts (1.0-r0)
+OK: 64 MiB in 35 packages
 
-$ ldd on every program and library apk info -L adwaita-fonts lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_adwaita_fonts
+     == adwaita-fonts ==
+       ok   font directory share/fonts/adwaita-fonts
+       info /usr/local/share/fonts/adwaita-fonts/
+       info fontconfig 2.15.0
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 24 face(s) in 6 file(s)
+       ok   at least 6 font file(s) found (6)
+       info Adwaita Sans: 20 face(s): Regular, Bold Italic, SemiBold Italic, SemiBold, ExtraLight Italic, Thin, ExtraLight, Medium, Black, Light Italic, Bold, ExtraBold, ExtraBold Italic, Medium Italic, Thin Italic, Italic, ...
+       ok   family "Adwaita Sans" listed
+       ok   "Adwaita Sans" covers U+0041 (20/20 faces)
+       ok   "Adwaita Sans" has a bold face
+       info Adwaita Mono: 4 face(s): Italic, Bold, Regular, Bold Italic
+       ok   family "Adwaita Mono" listed
+       ok   "Adwaita Mono" covers U+0041 (4/4 faces)
+       info match "Adwaita Sans" -> /usr/local/share/fonts/adwaita-fonts/AdwaitaSans-Regular.ttf (index 0)
+       ok   FcFontMatch("Adwaita Sans") -> that family, a file of adwaita-fonts
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "Adwaita Sans" "Regular", 2937 glyphs, scalable
+       ok   glyph for U+0041 (index 2)
+       ok   rendered: 22x24, mode 2, 164 inked pixel(s)
+     PASS adwaita-fonts
+PASS test_adwaita_fonts
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

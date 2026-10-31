@@ -1,0 +1,33 @@
+# libcamera 0.5.1_p20250722-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:40:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libcamera qnx-test-libcamera qnx-port-tests
+(1/4) Installing libyaml (0.2.5-r0)
+(2/4) Installing libcamera (0.5.1_p20250722-r1)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-libcamera (1.0-r0)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libcamera
+     == libcamera ==
+       ok   tuning file written
+       ok   missing tuning file rejected
+       ok   unknown sensor rejected
+       ok   IPA started: Pi 4, imx708, 1920x1080
+       info after 7 frame(s): rc 0, exposure 1122 lines, gain code 272, gains R 1999 G 1000 B 1500 (x1000)
+       ok   rpiIpaProcessData succeeds
+       ok   grey-world AWB: red gain ~2.0
+       ok   grey-world AWB: blue gain ~1.5
+       ok   green gain ~1.0
+       ok   AGC: exposure lines > 0, gain code within imx708's 112..960
+       ok   NULL statistics rejected
+     PASS libcamera
+PASS test_libcamera
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

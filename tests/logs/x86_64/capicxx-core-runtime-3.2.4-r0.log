@@ -1,15 +1,39 @@
-# capicxx-core-runtime 3.2.4-r0 -- INSTALLED
+# capicxx-core-runtime 3.2.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:55Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:25Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u capicxx-core-runtime
-(1/1) Installing capicxx-core-runtime (3.2.4-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u capicxx-core-runtime qnx-test-capicxx-core-runtime qnx-port-tests
+(1/3) Installing capicxx-core-runtime (3.2.4-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-capicxx-core-runtime (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L capicxx-core-runtime lists
-ok   loads: /data/oss/usr/local/lib/libCommonAPI.so.3.2.4
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_capicxx_core_runtime
+     == capicxx-core-runtime ==
+       ok   Runtime::get returns one singleton
+       info address local:com.qnx.test.Echo:v1_0:echo.instance
+       ok   address split into domain / interface / instance
+       ok   addresses compare equal
+       ok   setInstance changes the address
+       ok   Variant holds a string
+       ok   Variant re-assigned to double
+       ok   Variant equality
+       ok   onFirstListenerAdded called once
+       ok   both listeners notified in order
+       ok   unsubscribed listener no longer called
+       ok   onLastListenerRemoved called
+       ok   Version
+       ok   ByteBuffer
+       ok   IniFileReader loads a file
+       ok   ini values (whitespace trimmed)
+       ok   second section
+       ok   unknown section is null
+     PASS capicxx-core-runtime
+PASS test_capicxx_core_runtime
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

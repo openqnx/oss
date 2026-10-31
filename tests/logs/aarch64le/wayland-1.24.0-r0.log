@@ -1,19 +1,19 @@
 # wayland 1.24.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:17:21Z   packages from: apk:local-dists
+# date: 2026-10-31T18:02:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u wayland qnx-test-wayland qnx-port-tests
-(1/7) Installing qnx-port-tests (1.0-r1)
+(1/7) Installing qnx-port-tests (1.0-r2)
 (2/7) Installing xz (5.6.3-r0)
-(3/7) Installing libxml2 (2.13.5-r0)
+(3/7) Installing libxml2 (2.13.5-r1)
 (4/7) Installing libxkbcommon (1.8.1-r1)
 (5/7) Installing wayland (1.24.0-r0)
 (6/7) Installing xkeyboard-config (2.43-r0)
 (7/7) Installing qnx-test-wayland (1.0-r8)
-OK: 65 MiB in 36 packages
+OK: 65 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wayland
      == wayland ==

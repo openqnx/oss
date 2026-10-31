@@ -1,0 +1,36 @@
+# dbus 1.16.0-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T17:09:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dbus qnx-test-dbus qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-dbus (1.0-r6)
+OK: 95 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dbus
+     == dbus ==
+       info dbus 1.16.0
+       ok   dbus_message_new_method_call
+       ok   append a string argument
+       ok   append an int32 argument
+       ok   member name
+       ok   message type
+       ok   dbus_message_marshal
+       ok   demarshal_bytes_needed agrees with the marshalled size
+       ok   dbus_message_demarshal
+       ok   dbus_message_get_args
+       ok   arguments survive the round trip
+       ok   bus name validation
+       ok   invalid bus name rejected
+       ok   object path validation
+       ok   unreachable bus reports an error
+       info Failed to connect to socket /tmp/qnx-port-no-such-bus: No such file or directory
+     PASS dbus
+PASS test_dbus
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

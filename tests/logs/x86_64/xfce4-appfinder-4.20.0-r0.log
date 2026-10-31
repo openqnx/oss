@@ -1,20 +1,56 @@
-# xfce4-appfinder 4.20.0-r0 -- INSTALLED
+# xfce4-appfinder 4.20.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:58Z   packages from: apk:local-dists
+# date: 2026-10-31T17:09:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xfce4-appfinder
-(1/5) Installing libxfce4util (4.20.0-r0)
-(2/5) Installing xfconf (4.20.0-r0)
-(3/5) Installing libxfce4ui (4.20.0-r0)
-(4/5) Installing garcon (4.20.0-r0)
-(5/5) Installing xfce4-appfinder (4.20.0-r0)
-OK: 170 MiB in 57 packages
+$ apk add -u xfce4-appfinder qnx-test-xfce4-appfinder qnx-port-tests
+( 1/30) Installing qnx-port-tests (1.0-r2)
+( 2/30) Installing font-dejavu (2.37-r0)
+( 3/30) Installing libxau (1.0.11-r0)
+( 4/30) Installing libxdmcp (1.1.5-r0)
+( 5/30) Installing libxcb (1.17.0-r0)
+( 6/30) Installing libx11 (1.8.10-r0)
+( 7/30) Installing libxext (1.3.6-r0)
+( 8/30) Installing libxi (1.8.2-r0)
+( 9/30) Installing libxtst (1.2.5-r0)
+(10/30) Installing at-spi2-core (2.54.0-r0)
+(11/30) Installing libxrender (0.9.11-r0)
+(12/30) Installing cairo (1.18.2-r0)
+(13/30) Installing fribidi (1.0.16-r0)
+(14/30) Installing harfbuzz (<ip>-r0)
+(15/30) Installing libxcomposite (0.4.6-r0)
+(16/30) Installing libxfixes (6.0.1-r0)
+(17/30) Installing libxcursor (1.2.2-r0)
+(18/30) Installing libxdamage (1.1.6-r0)
+(19/30) Installing libxinerama (1.1.5-r0)
+(20/30) Installing libxml2 (2.13.5-r1)
+(21/30) Installing libxkbcommon (1.8.1-r1)
+(22/30) Installing libxrandr (1.5.4-r0)
+(23/30) Installing libxft (2.3.8-r0)
+(24/30) Installing pango (1.54.0-r0)
+(25/30) Installing gtk3 (3.24.43-r1)
+(26/30) Installing hicolor-icon-theme (0.18-r0)
+(27/30) Installing libxfce4ui (4.20.0-r1)
+(28/30) Installing garcon (4.20.0-r1)
+(29/30) Installing xfce4-appfinder (4.20.0-r0)
+(30/30) Installing qnx-test-xfce4-appfinder (1.0-r1)
+OK: 162 MiB in 62 packages
 
-$ ldd on every program and library apk info -L xfce4-appfinder lists
-ok   loads: /data/oss/usr/local/bin/xfce4-appfinder
-ok   loads: /data/oss/usr/local/bin/xfrun4
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_appfinder
+     == xfce4-appfinder ==
+       info 22 TrueType fonts under /usr/local/share/fonts
+       info private session bus at unix:path=/tmp/qnxport-appfinder.Sc1psF/bus
+       ok   GDBus client authenticated on the session bus (EXTERNAL)
+       ok   xfconfd activated through D-Bus (ListChannels answered)
+       ok   --version: xfce4-appfinder 4.20.0 (Xfce 4.20)
+       ok   --help lists --collapsed
+       ok   finder window ran 5 s on broadway display :21
+       ok   xfrun4 (run dialog) ran 4 s
+     PASS xfce4-appfinder
+PASS test_xfce4_appfinder
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

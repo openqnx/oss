@@ -61,12 +61,18 @@ current: it is the hand-over, not a history (that is `git log`).
    libsysv-ipc-shim). Aliases already here: clang/llvm22 (llvm),
    libxml2.13 (libxml2), ros2-jazzy (ros2), vte3 (vte), webkit2gtk-4.1
    (webkitgtk), python3-tz (python3-pytz), python3-pandas (pandas).
-5. **Compiled-in build-host paths**: some binaries carry the staging path --
-   mostly harmless RPATH entries and assert file names, but a few are data
-   paths (epiphany's iso-codes and locale directory; check's checkmk
-   shebang; lely-core's diagnostics print its source path, visible in
-   its test log). libxkbcommon 1.8.1 had one (fixed with -Dxkb-config-root).
-   A check for it belongs in `check-all`.
+5. **Compiled-in build-host paths** (2026-10-31): the cause of the data
+   paths into stage/ was pkgconf's sysroot on `--variable` answers; fixed in
+   `toolchain/bin/pkg-config` (porting-hazards 128) and xkbcomp, xwayland,
+   gtk3, gst-plugins-base, epiphany rebuilt (both arches, not yet
+   repackaged). Text files are sanitized at packaging (`scripts/qnxpkg`,
+   `scripts/lib/hostpaths.py`, hazard 129) -- the next `qnxpkg` run gives the
+   affected packages a new `-r` (about 30 components, ROS 2 among them).
+   `check-artifacts` now fails on classes A-C in pkgroot as packaged; open
+   items are in `scripts/lib/hostpath-allow` (qt6's host-Qt wrapper scripts
+   and CMake files, onnx's and gtsam's CMake files, VLC's contrib
+   fontconfig/gettext directories -- hazard 130). Not yet verified on a
+   target.
 6. **`$ORIGIN` is not expanded by QNX's loader** (porting-hazards 98):
    tensorflow-lite (94 files) and pytorch (4) rely on it and work only with
    their lib directory on LD_LIBRARY_PATH; give them absolute run paths.
@@ -75,8 +81,8 @@ current: it is the hand-over, not a history (that is `git log`).
    -dev .pc files named the old workspace (fixed). qnxpkg compares legacy
    index entries (no fingerprint) by archive contents now: it had rewritten
    published r0 names locally (repaired: those became r1).
-8. qnxpkg does not bump `-r` when only a package's dependencies change
-   (fingerprints cover contents): mind it for published packages.
+8. qnxpkg bumps `-r` when only a package's dependencies change (same
+   files, other RUNTIME_DEPS): fixed 2026-10-31, libxfce4ui -> hicolor-icon-theme.
 9. Components still not verified on a target are published later with
    `publish-github-release --changed` after `verify-on-target --changed`.
 10. qnxpkg kept the release number of unchanged packages but wrote their

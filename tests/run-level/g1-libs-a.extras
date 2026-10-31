@@ -1,0 +1,12 @@
+test_gst_libav	lib/gstreamer-1.0/libgstvideotestsrc.so lib/gstreamer-1.0/libgstaudiotestsrc.so lib/gstreamer-1.0/libgstvideoconvertscale.so lib/gstreamer-1.0/libgstaudioconvert.so lib/gstreamer-1.0/libgstapp.so
+test_gst_plugins_bad	lib/gstreamer-1.0/libgstvideotestsrc.so lib/gstreamer-1.0/libgstaudiotestsrc.so lib/gstreamer-1.0/libgstvideoconvertscale.so lib/gstreamer-1.0/libgstaudioconvert.so lib/gstreamer-1.0/libgstapp.so
+test_gst_plugins_ugly	lib/gstreamer-1.0/libgstvideotestsrc.so lib/gstreamer-1.0/libgstaudiotestsrc.so lib/gstreamer-1.0/libgstvideoconvertscale.so lib/gstreamer-1.0/libgstaudioconvert.so lib/gstreamer-1.0/libgstapp.so lib/gstreamer-1.0/libgstlibav.so lib/gstreamer-1.0/libgstvideoparsersbad.so
+test_harfbuzz	share/fonts/font-dejavu/DejaVuSans.ttf
+test_libportal	bin/dbus-daemon
+test_glib_networking	lib/gio/modules/libgiognutls.so
+test_geany_plugins	lib/geany
+test_libretro_samples	lib/libretro/test_libretro_qnx.so
+test_libretro_2048	lib/libretro/2048_libretro_qnx.so
+test_libretro_fake08	lib/libretro/fake08_libretro_qnx.so
+test_libretro_mrboom	lib/libretro/mrboom_libretro_qnx.so
+test_libretro_retro8	lib/libretro/retro8_libretro_qnx.so

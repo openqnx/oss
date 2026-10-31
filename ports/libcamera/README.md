@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/raspberrypi/libcamera.git (tag `v0.5.1+rpt20250722`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`libyaml`](../libyaml/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,10 +59,11 @@ git clone --depth 1 -b v0.5.1+rpt20250722 --recurse-submodules --shallow-submodu
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/libcamera < ports/libcamera/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/libcamera < ports/libcamera/patches/0002-qnx-public-header-c-typedef.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Port RPi image processing algorithms to QNX
@@ -143,6 +144,14 @@ patch -p1 -d src/libcamera < ports/libcamera/patches/0001-qnx-from-qnx-ports.pat
 
 Touches: `.gitignore`, `include/libcamera/base/log.h`, `include/libcamera/internal/yaml_parser.h`, `include/linux/bcm2835-isp.h`, `qnx/LICENSE.md`, `qnx/README.md` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
+**[`0002-qnx-public-header-c-typedef.patch`](patches/0002-qnx-public-header-c-typedef.patch)** — Make rpi_camera_ipa.h usable from C.
+
+> The header declares an extern "C" API but names the handle type as plain
+> RpiIpaHandle_t after only "struct RpiIpaHandle_t;", which is valid C++ but
+> an unknown type name in C. Typedef it.
+
+Touches: `src/ipa/rpi/qnx/public/include/rpi_camera_ipa.h` · Upstream status: QNX-specific (the qnx-ports public header)
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_configure`, `do_build`, `do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -169,7 +178,7 @@ do_install() { DESTDIR="$STAGE" cmake --install "$B"; }
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- libcamera's Raspberry Pi image processing algorithms (auto white balance, auto exposure) for the Camera Module 3 on QNX -- the part qnx-ports ports, built as librpi_camera_ipa with qnx-ports' own CMakeLists (files/), not libcamera's Meson build (whose device layer is V4L2/Linux). patches/: the QNX changes from qnx-ports/libcamera. Raspberry Pi 4/5 only: aarch64le.
+- libcamera's Raspberry Pi image processing algorithms (auto white balance, auto exposure) for the Camera Module 3 on QNX -- the part qnx-ports ports, built as librpi_camera_ipa with qnx-ports' own CMakeLists (files/), not libcamera's Meson build (whose device layer is V4L2/Linux). patches/: the QNX changes from qnx-ports/libcamera. Raspberry Pi 4/5 only: aarch64le. Installs lib/librpi_camera_ipa.so and its C API header include/rpi_camera_ipa.h. Run time: libyaml (the tuning-file parser) and the SDP's libslog2, both recorded as NEEDED; rpiIpaStart() fails unless slogger2 is running.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libcamera`.
 
@@ -257,6 +266,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libcamera 0.5.1_p20250722-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/libcamera-0.5.1_p20250722-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libcamera 0.5.1_p20250722-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/libcamera-0.5.1_p20250722-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -273,6 +283,9 @@ VERSION=0.5.1+rpt20250722; GIT=https://github.com/raspberrypi/libcamera.git; REF
 # built as librpi_camera_ipa with qnx-ports' own CMakeLists (files/), not
 # libcamera's Meson build (whose device layer is V4L2/Linux). patches/: the
 # QNX changes from qnx-ports/libcamera. Raspberry Pi 4/5 only: aarch64le.
+# Installs lib/librpi_camera_ipa.so and its C API header include/rpi_camera_ipa.h.
+# Run time: libyaml (the tuning-file parser) and the SDP's libslog2, both
+# recorded as NEEDED; rpiIpaStart() fails unless slogger2 is running.
 ARCHES_SUPPORTED="aarch64le"
 DEPS="libyaml"
 BUILDSYS=custom

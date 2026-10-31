@@ -1,0 +1,33 @@
+# xnnpack 0_git20250209-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:38:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xnnpack qnx-test-xnnpack qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing pthreadpool (0_git20250207-r0)
+(3/4) Installing xnnpack (0_git20250209-r1)
+(4/4) Installing qnx-test-xnnpack (1.0-r0)
+OK: 95 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xnnpack
+     == xnnpack ==
+       info xnn_initialize -> 0
+       ok   xnn_initialize (CPU recognised)
+       info add -> 11 22 33 14 25 36
+       ok   add [2,3] + [3] (broadcast)
+       ok   multiply [2,3] * [3] (broadcast)
+       ok   create fully_connected f32
+       info fc -> 1.25 0 0 2
+       ok   fully connected + bias + ReLU
+       info sqrt -> status 0: 0 0.99999994 1.99999988 2.99999976 1.49999988
+       ok   square root unary op (within 1e-6 relative)
+       ok   xnn_deinitialize
+     PASS xnnpack
+PASS test_xnnpack
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

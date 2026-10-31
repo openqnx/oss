@@ -1,17 +1,31 @@
-# less 668-r0 -- INSTALLED
+# less 668-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:20Z   packages from: apk:local-dists
+# date: 2026-10-31T16:40:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u less
-(1/1) Installing less (668-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u less qnx-test-less qnx-port-tests
+(1/5) Installing less (668-r0)
+(2/5) Installing qnx-port-tests (1.0-r2)
+(3/5) Installing libevent (2.1.12-r0)
+(4/5) Installing tmux (3.5a-r2)
+(5/5) Installing qnx-test-less (1.0-r0)
+OK: 57 MiB in 33 packages
 
-$ ldd on every program and library apk info -L less lists
-ok   loads: /data/oss/usr/local/bin/less
-ok   loads: /data/oss/usr/local/bin/lessecho
-ok   loads: /data/oss/usr/local/bin/lesskey
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_less
+     == less ==
+       info less 668 (no regular expressions)
+       ok   filter mode: output identical to input
+       ok   lesskey: compiled file with magic 00 4d 2b 47
+       ok   lessecho quoting
+       ok   pager: first screen with line numbers
+       ok   /needle: match at the top of the screen
+       ok   G: end of file
+       ok   q quits
+     PASS less
+PASS test_less
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

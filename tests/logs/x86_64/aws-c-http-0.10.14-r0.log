@@ -1,20 +1,44 @@
-# aws-c-http 0.10.14-r0 -- INSTALLED
+# aws-c-http 0.10.14-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:38Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-c-http
-(1/6) Installing aws-c-common (0.12.6-r0)
-(2/6) Installing aws-c-cal (0.9.13-r0)
-(3/6) Installing aws-c-compression (0.3.2-r0)
-(4/6) Installing s2n-tls (1.7.0-r0)
-(5/6) Installing aws-c-io (0.26.1-r0)
-(6/6) Installing aws-c-http (0.10.14-r0)
-OK: 168 MiB in 58 packages
+$ apk add -u aws-c-http qnx-test-aws-c-http qnx-port-tests
+(1/8) Installing aws-c-common (0.12.6-r0)
+(2/8) Installing aws-c-cal (0.9.13-r1)
+(3/8) Installing aws-c-compression (0.3.2-r0)
+(4/8) Installing s2n-tls (1.7.0-r0)
+(5/8) Installing aws-c-io (0.26.1-r0)
+(6/8) Installing aws-c-http (0.10.14-r0)
+(7/8) Installing qnx-port-tests (1.0-r2)
+(8/8) Installing qnx-test-aws-c-http (1.0-r0)
+OK: 95 MiB in 37 packages
 
-$ ldd on every program and library apk info -L aws-c-http lists
-ok   loads: /data/oss/usr/local/lib/libaws-c-http.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_http
+     == aws-c-http ==
+       ok   status text for 404
+       ok   header lookup is case-insensitive, first wins
+       ok   event loop, resolver and bootstraps
+       ok   HTTP server listening
+       info server on <ip>:64177
+       ok   ephemeral port assigned
+       ok   client connect started
+       ok   client connection set up
+       ok   request served and response received
+       ok   server saw PUT /objects/42?v=1
+       ok   server saw the X-Client header
+       ok   server received the request body
+       info response 201 "you sent 19 bytes to /objects/42?v=1"
+       ok   client got status 201
+       ok   client got the X-Server header
+       ok   client got the response body
+       ok   client connection shut down
+       ok   server destroyed
+     PASS aws-c-http
+PASS test_aws_c_http
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

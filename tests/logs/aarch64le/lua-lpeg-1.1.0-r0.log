@@ -1,15 +1,41 @@
-# lua-lpeg 1.1.0-r0 -- INSTALLED
+# lua-lpeg 1.1.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:38:11Z   packages from: apk:local-dists
+# date: 2026-10-31T16:52:29Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u lua-lpeg
-(1/1) Installing lua-lpeg (1.1.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u lua-lpeg qnx-test-lua-lpeg qnx-port-tests
+(1/4) Installing lua-lpeg (1.1.0-r0)
+(2/4) Installing qnx-port-tests (1.0-r2)
+(3/4) Installing luajit (2.1_git-r0)
+(4/4) Installing qnx-test-lua-lpeg (1.0-r0)
+OK: 56 MiB in 32 packages
 
-$ ldd on every program and library apk info -L lua-lpeg lists
-ok   loads: /data/oss/usr/local/lib/lua/5.1/lpeg.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua_lpeg
+     == lua-lpeg ==
+       ok   luajit interpreter found (/usr/local/bin/luajit)
+       ok   require 'lpeg' (lpeg.so)
+       info LPeg 1.1.0 on LuaJIT 2.1.1788856981
+       ok   literal match returns the end position (6)
+       ok   anchored literal does not match elsewhere
+       ok   grammar: 3 + 4 * (2 - 1) = 7
+       ok   grammar: 2*(3+4)*5 - -6/3 = 72
+       ok   grammar rejects '2 + * 3'
+       ok   CSV record: 4 fields incl. quoted comma and escaped quote
+       ok   Cs substitution uppercases vowels
+       ok   Ct collects words one|two|three
+       ok   require 're' (re.lua)
+       ok   re.match returns the first capture
+       ok   re.find locates 423 at 12
+       ok   re.gsub replaces
+       ok   re named group captures (2026-10-31)
+       ok   re grammar parses a list of 3 names
+       ok   re grammar rejects an empty item
+       ok   lua script ran to completion
+     PASS lua-lpeg
+PASS test_lua_lpeg
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

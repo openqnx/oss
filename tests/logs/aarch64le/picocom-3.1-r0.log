@@ -1,15 +1,28 @@
-# picocom 3.1-r0 -- INSTALLED
+# picocom 3.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:54:13Z   packages from: apk:local-dists
+# date: 2026-10-31T17:11:42Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u picocom
-(1/1) Installing picocom (3.1-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u picocom qnx-test-picocom qnx-port-tests
+(1/3) Installing picocom (3.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-picocom (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L picocom lists
-ok   loads: /data/oss/usr/local/bin/picocom
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_picocom
+     == picocom ==
+       ok   --help: picocom v3.1
+       info pty pair /dev/ptyp1 / /dev/ttyp1
+       ok   port configured: baudrate 115200
+       ok   8 data bits, no parity
+       ok   init string arrived at the master side
+       ok   master -> port -> picocom output: FROM-MASTER
+       ok   picocom input -> port -> master: TO-PORT
+     PASS picocom
+PASS test_picocom
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,17 +1,34 @@
-# bc 1.08.2-r0 -- INSTALLED
+# bc 1.08.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:43Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:12Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u bc
-(1/2) Installing readline (8.2-r0)
-(2/2) Installing bc (1.08.2-r0)
-OK: 166 MiB in 54 packages
+$ apk add -u bc qnx-test-bc qnx-port-tests
+(1/4) Installing readline (8.2-r0)
+(2/4) Installing bc (1.08.2-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-bc (1.0-r0)
+OK: 93 MiB in 33 packages
 
-$ ldd on every program and library apk info -L bc lists
-ok   loads: /data/oss/usr/local/bin/bc
-ok   loads: /data/oss/usr/local/bin/dc
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bc
+     == bc ==
+       info bc 1.08.2
+       ok   bc: pi (scale=20, 4*a(1)) = 3.14159265358979323844
+       ok   bc: 2^100 = 1267650600228229401496703205376
+       ok   bc: sqrt(2) (scale=10) = 1.4142135623
+       ok   bc: e^1 (scale=15) = 2.718281828459045
+       ok   bc: recursive factorial 25 = 15511210043330985984000000
+       ok   bc: obase=16 of 3735928559 = DEADBEEF
+       ok   bc: ibase=2 of 101010 = 42
+       ok   bc: integer division and modulo = 142857 4
+       ok   dc: 2 64 ^ = 18446744073709551616
+       ok   dc: stack sum 1..5 = 15
+       ok   dc: precision 10, 1/3 = .3333333333
+     PASS bc
+PASS test_bc
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,16 +1,51 @@
-# libgpg-error 1.50-r0 -- INSTALLED
+# libgpg-error 1.50-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:45Z   packages from: apk:local-dists
+# date: 2026-10-31T16:41:38Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libgpg-error
-(1/1) Installing libgpg-error (1.50-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u libgpg-error qnx-test-libgpg-error qnx-port-tests
+(1/3) Installing libgpg-error (1.50-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libgpg-error (1.0-r0)
+OK: 56 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libgpg-error lists
-ok   loads: /data/oss/usr/local/bin/gpg-error
-ok   loads: /data/oss/usr/local/lib/libgpg-error.so.37
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgpg_error
+     == libgpg-error ==
+       info gpgrt_check_version: 1.50
+       ok   library version 1.50
+       ok   check_version("1.40") satisfied
+       ok   check_version("9.0") not satisfied
+       ok   strerror(GPG_ERR_GENERAL) == "General error"
+       ok   strerror(GPG_ERR_BAD_SIGNATURE)
+       ok   strerror(0) == "Success"
+       ok   gpg_err_make: code and source round trip
+       ok   strsource(GCRYPT) == "gcrypt"
+       ok   strerror_r(GPG_ERR_NO_DATA)
+       ok   errno ENOENT -> GPG_ERR_ENOENT
+       ok   GPG_ERR_ENOENT -> errno ENOENT
+       ok   errno EINVAL -> GPG_ERR_EINVAL
+       info strerror(GPG_ERR_ENOENT): No such file or directory
+       ok   gpgrt_fopenmem
+       info read back: answer=42;  3.1;beef|
+       ok   fprintf to memory stream, rewind, fgets
+       ok   gpgrt_asprintf
+       ok   gpgrt_strconcat
+       ok   gpgrt_fnameconcat
+       ok   gpgrt_b64enc_start
+       ok   b64enc write/finish
+       info base64: aGVsbG8gUU5Y
+       ok   base64("hello QNX") == aGVsbG8gUU5Y
+       info gpg-error 8: 8 = (0, 8) = (GPG_ERR_SOURCE_UNKNOWN, GPG_ERR_BAD_SIGNATURE) = (Unspecified source, Bad signature)
+       ok   gpg-error 8 -> Bad signature
+       info gpg-error 16777224: 16777224 = (1, 8) = (GPG_ERR_SOURCE_GCRYPT, GPG_ERR_BAD_SIGNATURE) = (gcrypt, Bad signature)
+       ok   gpg-error decodes source and code of a combined value
+       info gpg-error GPG_ERR_NO_DATA: 58 = (0, 58) = (GPG_ERR_SOURCE_UNKNOWN, GPG_ERR_NO_DATA) = (Unspecified source, No data)
+       ok   gpg-error by symbol name
+     PASS libgpg-error
+PASS test_libgpg_error
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

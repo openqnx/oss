@@ -1,0 +1,23 @@
+Open mkpkg's subdirectories with O_DIRECTORY.
+
+mkpkg_process_dirent() opens each subdirectory of the -F tree with plain
+O_RDONLY and then walks it with fstatat()/openat(). On QNX 8 a directory
+descriptor is only accepted as an *at() base if it was opened with
+O_DIRECTORY (see 0003), so every package with a nested directory failed:
+"failed to process directory 'usr': -1" and "failed to create package:
+Operation not permitted". The top-level -F directory was already opened
+with O_DIRECTORY, which is why a flat file tree worked.
+
+Upstream-Status: QNX-specific
+
+--- a/src/app_mkpkg.c
++++ b/src/app_mkpkg.c
+@@ -308,7 +308,7 @@
+ 		break;
+ 	case S_IFDIR:
+ 		n = apk_pathbuilder_push(&ctx->pb, entry);
+-		r = mkpkg_process_directory(ctx, openat(dirfd, entry, O_RDONLY | O_CLOEXEC), &fi);
++		r = mkpkg_process_directory(ctx, openat(dirfd, entry, O_DIRECTORY | O_RDONLY | O_CLOEXEC), &fi);
+ 		apk_pathbuilder_pop(&ctx->pb, n);
+ 		return r;
+ 	default:

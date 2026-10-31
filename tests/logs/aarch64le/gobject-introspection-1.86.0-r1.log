@@ -1,0 +1,50 @@
+# gobject-introspection 1.86.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:33:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gobject-introspection qnx-test-gobject-introspection qnx-port-tests
+(1/3) Installing gobject-introspection (1.86.0-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-gobject-introspection (1.0-r0)
+OK: 56 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gobject_introspection
+     == gobject-introspection ==
+       ok   scratch directory
+       info $ g-ir-compiler --output=QnxTest-1.0.typelib QnxTest-1.0.gir -> 0
+       ok   g-ir-compiler compiled the GIR
+       ok   typelib has the GOBJ METADATA magic
+       ok   g_irepository_require(QnxTest 1.0)
+       info shared library: libglib-2.0.so.0
+       ok   shared-library recorded
+       info 4 info(s) in the namespace
+       ok   4 entries: constant, enum, 2 functions
+       ok   ANSWER is a constant
+       ok   ANSWER = 42
+       ok   Color is an enum
+       ok   Color has 3 members, blue = 7
+       ok   ascii_digit_value is a function
+       ok   symbol g_ascii_digit_value
+       ok   one argument
+       info invoke ascii_digit_value('7') = 7
+       ok   invoke: g_ascii_digit_value('7') = 7
+       ok   invoke: g_ascii_digit_value('x') = -1
+       ok   str_has_prefix found
+       ok   invoke: g_str_has_prefix("QNX ports", "QNX") = TRUE
+       ok   invoke: g_str_has_prefix("QNX ports", "ports") = FALSE
+       ok   return type tag is boolean
+       info $ g-ir-inspect --print-shlibs --print-typelibs --version=1.0 QnxTest -> 0
+       info output: shlib: libglib-2.0.so.0
+       ok   g-ir-inspect --print-shlibs
+       info $ g-ir-generate QnxTest-1.0.typelib -> 0
+       ok   g-ir-generate
+       ok   g-ir-generate reproduces namespace, function, constant and enum
+     PASS gobject-introspection
+PASS test_gobject_introspection
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

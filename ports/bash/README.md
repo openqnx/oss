@@ -101,6 +101,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv
+- regcomp/regexec live in libregex on QNX: without it configure finds no regexec and [[ string =~ regex ]] is compiled out ("conditional binary operator expected").
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH bash`.
 
@@ -177,7 +178,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | bash 5.2.37-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/bash-5.2.37-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | bash 5.2.37-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/bash-5.2.37-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | bash 5.2.37-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/bash-5.2.37-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | bash 5.2.37-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/bash-5.2.37-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -195,6 +198,10 @@ SHA256=9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff
 DEPS="ncurses readline libiconv"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --without-bash-malloc --disable-nls --with-installed-readline --with-curses )
+# regcomp/regexec live in libregex on QNX: without it configure finds no
+# regexec and [[ string =~ regex ]] is compiled out ("conditional binary
+# operator expected").
+LDFLAGS_APPEND="-lregex"
 ```
 </details>
 

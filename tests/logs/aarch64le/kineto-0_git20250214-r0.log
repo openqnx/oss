@@ -1,15 +1,33 @@
-# kineto 0_git20250214-r0 -- INSTALLED
+# kineto 0_git20250214-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:17Z   packages from: apk:local-dists
+# date: 2026-10-31T16:39:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u kineto-dev
-(1/1) Installing kineto-dev (0_git20250214-r0)
-OK: 58 MiB in 30 packages
+$ apk add -u kineto-dev qnx-test-kineto qnx-port-tests
+(1/3) Installing kineto-dev (0_git20250214-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-kineto (1.0-r0)
+OK: 59 MiB in 31 packages
 
-$ ldd on every program and library apk info -L kineto-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_kineto
+     == kineto ==
+       ok   profiler registered (CPU only)
+       ok   profiler initialised
+       ok   trace active after startTrace
+       ok   stopTrace returned a trace
+       info 4 activities: 3 CPU ops, 1 annotations
+       ok   the 3 CPU ops, by name
+       ok   each op lasted >= 1 ms (the sleeps)
+       ok   the user annotation
+       info /tmp/qnxport-kineto-743202837.json: 2324 bytes
+       ok   Chrome trace JSON saved (traceEvents)
+       ok   with the ops and the annotation
+       ok   and the op metadata
+     PASS kineto
+PASS test_kineto
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

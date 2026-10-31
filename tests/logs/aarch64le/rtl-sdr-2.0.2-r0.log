@@ -1,26 +1,49 @@
-# rtl-sdr 2.0.2-r0 -- INSTALLED
+# rtl-sdr 2.0.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:16Z   packages from: apk:local-dists
+# date: 2026-10-31T17:50:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u rtl-sdr
-(1/2) Installing libusb (1.0.27-r0)
-(2/2) Installing rtl-sdr (2.0.2-r0)
-OK: 55 MiB in 31 packages
+$ apk add -u rtl-sdr qnx-test-rtl-sdr qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing libusb (1.0.27-r0)
+(3/4) Installing rtl-sdr (2.0.2-r0)
+(4/4) Installing qnx-test-rtl-sdr (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L rtl-sdr lists
-ok   loads: /data/oss/usr/local/bin/rtl_adsb
-ok   loads: /data/oss/usr/local/bin/rtl_biast
-ok   loads: /data/oss/usr/local/bin/rtl_eeprom
-ok   loads: /data/oss/usr/local/bin/rtl_fm
-ok   loads: /data/oss/usr/local/bin/rtl_power
-ok   loads: /data/oss/usr/local/bin/rtl_sdr
-ok   loads: /data/oss/usr/local/bin/rtl_tcp
-ok   loads: /data/oss/usr/local/bin/rtl_test
-ok   loads: /data/oss/usr/local/lib/librtlsdr.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/librtlsdr.so.2.0.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_rtl_sdr
+     == rtl-sdr ==
+       info rtlsdr_get_device_count() = 0
+       ok   no RTL2832 devices on this target
+       ok   rtlsdr_get_device_name(0) is ""
+       info rtlsdr_get_device_usb_strings(0) = 0
+       ok   rtlsdr_get_device_usb_strings(0): no strings for a missing device
+       ok   get_index_by_serial(NULL) = -1
+       ok   get_index_by_serial: -2 (no devices)
+       info rtlsdr_open(0) = -1
+       ok   rtlsdr_open(0) fails without a device
+       ok   rtlsdr_close(NULL) is rejected
+       ok   set_center_freq(NULL) is rejected
+       info $ rtl_test -t -> status 0x100
+       info   No supported devices found.
+       ok   rtl_test: "No supported devices found."
+       ok   rtl_test exits 1
+       info $ rtl_eeprom -> status 0x100
+       info   No supported devices found.
+       ok   rtl_eeprom: "No supported devices found."
+       info $ rtl_sdr -h -> status 0x100
+       info   rtl_sdr: illegal option -- h
+       info   rtl_sdr, an I/Q recorder for RTL2832 based DVB-T receivers
+       info   
+       info   Usage:	 -f frequency_to_tune_to [Hz]
+       ok   rtl_sdr -h prints its usage
+       info $ rtl_fm -d 0 -f 100M /dev/null -> status 0x100
+       info   No supported devices found.
+       ok   rtl_fm: "No supported devices found."
+     PASS rtl-sdr
+PASS test_rtl_sdr
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

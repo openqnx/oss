@@ -1,15 +1,36 @@
-# python3-pip 25.1.1-r0 -- INSTALLED
+# python3-pip 25.1.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:38:48Z   packages from: apk:local-dists
+# date: 2026-10-31T16:32:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-pip
-(1/1) Installing python3-pip (25.1.1-r0)
-OK: 171 MiB in 53 packages
+$ apk add -u python3-pip qnx-test-python3-pip qnx-port-tests
+(1/7) Installing python3-pip (25.1.1-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing sqlite (3.47.2-r0)
+(6/7) Installing python3 (3.14.0-r2)
+(7/7) Installing qnx-test-python3-pip (1.0-r0)
+OK: 203 MiB in 36 packages
 
-$ ldd on every program and library apk info -L python3-pip lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pip
+     == python3-pip ==
+       info pip 25.1.1 from /usr/local/lib/python3.14/site-packages/pip (python 3.14)
+       ok   pip --version: pip 25.1.1, python 3.14
+       ok   pip list (JSON) includes pip 25.1.1 (1 distributions)
+       ok   pip show pip
+       ok   pip hash: sha256
+       ok   pip install --no-index --target site qnxdemo-0.1 wheel
+       ok   the installed package imports: 42 hello qnx
+       ok   RECORD and INSTALLER written
+       ok   pip list --path site shows qnxdemo 0.1
+       info pip install --no-index --target site2 no-such-package-qnx: rc 1: ['ERROR: No matching distribution found for no-such-package-qnx']
+       ok   --no-index install of an unknown package fails cleanly
+     PASS python3-pip
+PASS test_python3_pip
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

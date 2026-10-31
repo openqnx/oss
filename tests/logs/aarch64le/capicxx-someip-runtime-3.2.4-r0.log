@@ -1,20 +1,38 @@
-# capicxx-someip-runtime 3.2.4-r0 -- INSTALLED
+# capicxx-someip-runtime 3.2.4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:23:19Z   packages from: apk:local-dists
+# date: 2026-10-31T16:20:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u capicxx-someip-runtime
-(1/6) Installing capicxx-core-runtime (3.2.4-r0)
-(2/6) Installing bzip2 (1.0.8-r0)
-(3/6) Installing xz (5.6.3-r0)
-(4/6) Installing boost (1.86.0-r0)
-(5/6) Installing vsomeip (3.5.6-r0)
-(6/6) Installing capicxx-someip-runtime (3.2.4-r0)
-OK: 186 MiB in 35 packages
+$ apk add -u capicxx-someip-runtime qnx-test-capicxx-someip-runtime qnx-port-tests
+(1/8) Installing capicxx-core-runtime (3.2.4-r0)
+(2/8) Installing bzip2 (1.0.8-r0)
+(3/8) Installing xz (5.6.3-r0)
+(4/8) Installing boost (1.86.0-r0)
+(5/8) Installing vsomeip (3.5.6-r0)
+(6/8) Installing capicxx-someip-runtime (3.2.4-r0)
+(7/8) Installing qnx-port-tests (1.0-r2)
+(8/8) Installing qnx-test-capicxx-someip-runtime (1.0-r0)
+OK: 186 MiB in 36 packages
 
-$ ldd on every program and library apk info -L capicxx-someip-runtime lists
-ok   loads: /data/oss/usr/local/lib/libCommonAPI-SomeIP.so.3.2.4
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_capicxx_someip_runtime
+     [CAPI][INFO] Loading configuration file /etc//commonapi-someip.ini
+     == capicxx-someip-runtime ==
+       ok   AddressTranslator singleton
+       ok   CommonAPI address -> SOME/IP service 0x1234 instance 0x5678
+       ok   SOME/IP address -> CommonAPI address
+       ok   method call message for service 0x1234 method 0x0421
+       ok   serialise uint32, int32, bool, double, string
+       info payload (28 bytes) 01020304fffffffe013ff800000000000000000007efbbbf514e5800
+       ok   big-endian wire bytes for the fixed-size values
+       ok   string bytes present after its length field
+       ok   deserialise without error
+       ok   values read back unchanged
+       ok   response message mirrors method and session
+     PASS capicxx-someip-runtime
+PASS test_capicxx_someip_runtime
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,21 +1,34 @@
 # labwc 0.20.2-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:53Z   packages from: apk:local-dists
+# date: 2026-10-31T16:15:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u labwc qnx-test-labwc qnx-port-tests
-(1/9) Installing font-dejavu (2.37-r0)
-(2/9) Installing libsfdo (0.1.4-r0)
-(3/9) Installing lcms2 (2.16-r0)
-(4/9) Installing wlroots (0.20.2-r0)
-(5/9) Installing xkeyboard-config (2.43-r0)
-(6/9) Installing labwc (0.20.2-r1)
-(7/9) Installing qnx-port-tests (1.0-r1)
-(8/9) Installing swaybg (1.2.2-r1)
-(9/9) Installing qnx-test-labwc (1.0-r4)
-OK: 185 MiB in 61 packages
+( 1/22) Installing libxau (1.0.11-r0)
+( 2/22) Installing libxdmcp (1.1.5-r0)
+( 3/22) Installing libxcb (1.17.0-r0)
+( 4/22) Installing libx11 (1.8.10-r0)
+( 5/22) Installing libxext (1.3.6-r0)
+( 6/22) Installing libxrender (0.9.11-r0)
+( 7/22) Installing cairo (1.18.2-r0)
+( 8/22) Installing font-dejavu (2.37-r0)
+( 9/22) Installing libsfdo (0.1.4-r0)
+(10/22) Installing libxml2 (2.13.5-r1)
+(11/22) Installing libxkbcommon (1.8.1-r1)
+(12/22) Installing fribidi (1.0.16-r0)
+(13/22) Installing harfbuzz (<ip>-r0)
+(14/22) Installing libxft (2.3.8-r0)
+(15/22) Installing pango (1.54.0-r0)
+(16/22) Installing lcms2 (2.16-r0)
+(17/22) Installing wlroots (0.20.2-r0)
+(18/22) Installing xkeyboard-config (2.43-r0)
+(19/22) Installing labwc (0.20.2-r1)
+(20/22) Installing qnx-port-tests (1.0-r2)
+(21/22) Installing swaybg (1.2.2-r1)
+(22/22) Installing qnx-test-labwc (1.0-r4)
+OK: 125 MiB in 51 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
      == labwc ==
@@ -29,7 +42,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   global xdg_wm_base
        ok   global zwlr_layer_shell_v1
        ok   global wl_data_device_manager
-     2026-10-31 04:24:49 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+     2026-10-31 16:15:38 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
        ok   swaybg running on labwc (background layer surface)
        ok   labwc still running after its clients
        ok   labwc exits on SIGTERM

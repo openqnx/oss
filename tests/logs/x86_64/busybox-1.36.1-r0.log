@@ -1,15 +1,39 @@
-# busybox 1.36.1-r0 -- INSTALLED
+# busybox 1.36.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:52Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u busybox
-(1/1) Installing busybox (1.36.1-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u busybox qnx-test-busybox qnx-port-tests
+(1/3) Installing busybox (1.36.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-busybox (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L busybox lists
-ok   loads: /data/oss/usr/local/bin/busybox
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_busybox
+     == busybox ==
+       info BusyBox v1.36.1 (2026-10-28 00:59:33 KST) multi-call binary.
+       ok   --list: 140 applets
+       ok   ash: script (function, loop, case, expansions)
+       ok   sha256sum 'abc'
+       ok   md5sum 'abc'
+       ok   sort | uniq -c
+       ok   cut -d: -f2 and tac
+       ok   factor 360
+       ok   expr 7 \* 6
+       ok   seq 1 3 10
+       ok   tar -czf / -xzf round trip (diff -r identical)
+       ok   tar -tzf lists both files
+       ok   unxz of a known .xz
+       ok   gzip -9 / gunzip round trip
+       ok   bzip2 / bunzip2 round trip
+       ok   diff -u finds the changed line
+       ok   find -name '*.txt' | wc -l
+       ok   grep -E -o
+     PASS busybox
+PASS test_busybox
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

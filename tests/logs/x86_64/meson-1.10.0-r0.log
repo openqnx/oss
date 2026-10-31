@@ -1,15 +1,41 @@
-# meson 1.10.0-r0 -- INSTALLED
+# meson 1.10.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:26:27Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u meson
-(1/1) Installing meson (1.10.0-r0)
-OK: 170 MiB in 53 packages
+$ apk add -u meson qnx-test-meson qnx-port-tests
+(1/7) Installing meson (1.10.0-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing sqlite (3.47.2-r0)
+(6/7) Installing python3 (3.14.0-r2)
+(7/7) Installing qnx-test-meson (1.0-r0)
+OK: 202 MiB in 36 packages
 
-$ ldd on every program and library apk info -L meson lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_meson
+     == meson ==
+       info meson 1.10.0
+       ok   meson --version: 1.10.0
+       info Message: system=qnx cpu=x86_64
+       ok   meson setup --backend=none (no compiler needed)
+       ok   config.h: ANSWER 42 (run_command), FLAVOUR "plain", NWORDS 3
+       ok   configure_file substitution: hello ALPHA-BETA-GAMMA
+       ok   introspect --projectinfo: qnxdemo 1.2.3
+       ok   introspect --buildoptions: flavour plain of plain/spicy
+       ok   default buildtype debug
+       ok   meson configure -Dflavour=spicy
+       ok   reconfigured: config.h has FLAVOUR "spicy"
+       info meson configure build -Dflavour=sweet: rc 1:
+     
+     ERROR: Value "sweet" (of type "string") for option "flavour" is not one of the choices. Possible choices are (as string): "plain", "spicy".
+     
+       ok   a value outside the combo is rejected
+     PASS meson
+PASS test_meson
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

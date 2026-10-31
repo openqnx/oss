@@ -1,0 +1,38 @@
+# open-amp 2024.10.0-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:19:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u open-amp-dev qnx-test-open-amp qnx-port-tests
+(1/3) Installing open-amp-dev (2024.10.0-r2)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-open-amp (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_open_amp
+     == open-amp ==
+       ok   metal_init
+       ok   vrings fit their slots
+       ok   virtio driver and device created on one resource table
+       ok   both vrings set up on both sides
+       ok   host (driver) rpmsg device: buffers posted, DRIVER_OK
+       info rpmsg_init_vdev: host 0, remote 0; status 0x4, features 0x1
+       ok   remote (device) rpmsg device: saw the driver ready
+       ok   payload size 496 bytes
+       ok   remote endpoint qnx-echo created
+       ok   name service: host bound an endpoint to it
+       info echoed 3, replies 3, last "THIRD"
+       ok   3 messages host -> remote -> host, upper-cased
+       ok   remote learned the host's address
+       ok   40 more round trips: buffers recycled through the vrings
+       ok   destroying the remote endpoint unbound the host's
+     metal: warning:   rx_vq: freeing non-empty virtqueue
+     metal: warning:   tx_vq: freeing non-empty virtqueue
+     PASS open-amp
+PASS test_open_amp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

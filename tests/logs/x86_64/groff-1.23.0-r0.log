@@ -1,37 +1,29 @@
-# groff 1.23.0-r0 -- INSTALLED
+# groff 1.23.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:19Z   packages from: apk:local-dists
+# date: 2026-10-31T16:14:56Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u groff
-(1/1) Installing groff (1.23.0-r0)
-OK: 179 MiB in 53 packages
+$ apk add -u groff qnx-test-groff qnx-port-tests
+(1/3) Installing groff (1.23.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-groff (1.0-r0)
+OK: 106 MiB in 32 packages
 
-$ ldd on every program and library apk info -L groff lists
-ok   loads: /data/oss/usr/local/bin/addftinfo
-ok   loads: /data/oss/usr/local/bin/eqn
-ok   loads: /data/oss/usr/local/bin/grn
-ok   loads: /data/oss/usr/local/bin/grodvi
-ok   loads: /data/oss/usr/local/bin/groff
-ok   loads: /data/oss/usr/local/bin/grolbp
-ok   loads: /data/oss/usr/local/bin/grolj4
-ok   loads: /data/oss/usr/local/bin/grops
-ok   loads: /data/oss/usr/local/bin/grotty
-ok   loads: /data/oss/usr/local/bin/hpftodit
-ok   loads: /data/oss/usr/local/bin/indxbib
-ok   loads: /data/oss/usr/local/bin/lkbib
-ok   loads: /data/oss/usr/local/bin/lookbib
-ok   loads: /data/oss/usr/local/bin/pfbtops
-ok   loads: /data/oss/usr/local/bin/pic
-ok   loads: /data/oss/usr/local/bin/post-grohtml
-ok   loads: /data/oss/usr/local/bin/pre-grohtml
-ok   loads: /data/oss/usr/local/bin/preconv
-ok   loads: /data/oss/usr/local/bin/refer
-ok   loads: /data/oss/usr/local/bin/soelim
-ok   loads: /data/oss/usr/local/bin/tbl
-ok   loads: /data/oss/usr/local/bin/tfmtodit
-ok   loads: /data/oss/usr/local/bin/troff
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_groff
+     == groff ==
+       info GNU groff version 1.23.0
+       ok   -man -Tascii: header, NAME line, cross reference
+       ok   section headings NAME, DESCRIPTION
+       ok   tbl: boxed table rows
+       ok   eqn: equation set (x=a+b)
+       ok   -ms -Tutf8: title and paragraph
+       ok   -Tps: PostScript (6978 bytes)
+       ok   nroff: .ll 30 fills to 2 lines
+     PASS groff
+PASS test_groff
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

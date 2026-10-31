@@ -1,15 +1,31 @@
-# ruy 0_git20240321-r0 -- INSTALLED
+# ruy 0_git20240321-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:39Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u ruy-dev
-(1/1) Installing ruy-dev (0_git20240321-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u ruy-dev qnx-test-ruy qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing qnx-test-ruy (1.0-r0)
+(3/3) Installing ruy-dev (0_git20240321-r0)
+OK: 94 MiB in 32 packages
 
-$ ldd on every program and library apk info -L ruy-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ruy
+     == ruy ==
+       ok   float 2x2: [19 22; 43 50]
+       ok   column-major operand, same result
+       ok   per-row bias (+1, -100)
+       ok   clamp to [20, 40]
+       ok   int8 2x3 x 3x2 -> int32 [58 24; -83 10]
+       ok   uint8 with zero points 128, multiplier 0.5: 136
+       info 96x80x72 max |error| 0
+       ok   96x80 x 80x72 float product on 2 threads matches the naive loop
+       info kernel path 0x1
+       ok   a kernel path was selected
+     PASS ruy
+PASS test_ruy
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

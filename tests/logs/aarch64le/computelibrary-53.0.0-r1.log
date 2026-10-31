@@ -1,0 +1,27 @@
+# computelibrary 53.0.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:21:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u computelibrary qnx-test-computelibrary qnx-port-tests
+(1/3) Installing computelibrary (53.0.0-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-computelibrary (1.0-r0)
+OK: 70 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_computelibrary
+     == computelibrary ==
+       info c245aa08b328fe7ef1d356f40b89ebc587524dae, 1 scheduler thread(s)
+       ok   NEArithmeticAddition, 16 elements
+       ok   NEGEMM: [[1,2,3],[4,5,6]] x [[7,8],[9,10],[11,12]]
+       ok   NEActivationLayer ReLU
+       ok   NEPoolingLayer 2x2 max, stride 2
+       ok   NETranspose 2x3 -> 3x2
+     PASS computelibrary
+PASS test_computelibrary
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

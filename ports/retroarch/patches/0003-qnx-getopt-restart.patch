@@ -1,0 +1,46 @@
+QNX getopt_long has no GNU "optind = 0" restart: --config was ignored
+
+retroarch_parse_input_and_config() starts its first pass with optind = 0,
+which glibc takes as "re-initialise". QNX's BSD-derived getopt_long does
+not, so the first pass parsed no option at all, and the ones only it
+handles (--config, --appendconfig) were silently ignored: RetroArch always
+read <cwd>/rarch-shared/retroarch.cfg. Restart with optind = 1 and
+optreset = 1 on QNX (both passes).
+
+Upstream-Status: QNX-specific
+
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -5448,7 +5448,19 @@
+    global->cli_load_menu_on_error  = false;
+ 
+    /* Make sure we can call retroarch_parse_input several times ... */
++#ifdef __QNX__
++   /* QNX's (BSD-derived) getopt_long does not take the GNU "optind = 0
++    * means start over": the first pass then parsed nothing, and options
++    * that only it handles (--config, --appendconfig) were ignored.
++    * Restart the BSD way. */
++   {
++      extern int optreset;
++      optind                       = 1;
++      optreset                     = 1;
++   }
++#else
+    optind                          = 0;
++#endif
+    optstring                       = "hs:fvVS:A:U:DN:d:e:"
+       BSV_MOVIE_ARG NETPLAY_ARG DYNAMIC_ARG FFMPEG_RECORD_ARG CONFIG_FILE_ARG;
+ 
+@@ -5598,6 +5610,12 @@
+ 
+    /* Second pass: All other arguments override the config file */
+    optind = 1;
++#ifdef __QNX__
++   {
++      extern int optreset;
++      optreset = 1;
++   }
++#endif
+ 
+    if (argc)
+    {

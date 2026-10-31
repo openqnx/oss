@@ -1,0 +1,56 @@
+# libmetal 2024.10.0-r3 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:42:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libmetal-dev qnx-test-libmetal qnx-port-tests
+(1/3) Installing libmetal-dev (2024.10.0-r3)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libmetal (1.0-r0)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libmetal
+     == libmetal ==
+       info metal_init -> 0
+       ok   metal_init (IRQ channel, cache control, generic bus)
+       ok   I/O region of 4096 bytes
+       ok   typed writes read back (8/16/32/64 bit)
+       ok   a 32-bit write landed in memory
+       ok   block_write
+       ok   block_read gives it back
+       ok   block_set fills exactly 32 bytes
+       ok   offset <-> virtual address
+       ok   offset <-> physical address
+       ok   physical <-> virtual
+       ok   out of range -> NULL / BAD_OFFSET
+       info metal_shmem_open -> 0, 0
+       ok   metal_shmem_open twice, 8 KiB
+       ok   written through one mapping, read through the other
+       ok   new list is empty
+       ok   list: add_tail 1..4, delete 2 -> 1,3,4
+       ok   list_find_node
+       ok   bitmap set/test
+       ok   bitmap next set/clear bit
+       ok   log2, align_up, div_round_up
+       info counter 80000, spinlock counter 80000
+       ok   mutex and spinlock: 4 threads x 20000 increments each
+       ok   condition variable woke the waiter for all 4
+       info mutex owner word: free 0x0
+       ok   try_acquire on a free mutex
+       info mutex owner word: held 0x20150001
+       ok   is_acquired while held
+       info mutex owner word: released 0x0
+       ok   not is_acquired once released
+       ok   is_acquired left a free mutex free (try_acquire succeeds)
+       ok   metal_allocate_memory
+       ok   metal_sleep_usec(20 ms)
+       info metal_get_timestamp: 44626183563888 -> 44626210015632
+       ok   metal_get_timestamp advances (>= 15 ms in ns across the sleep)
+     PASS libmetal
+PASS test_libmetal
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,24 +1,42 @@
-# git 2.51.0-r0 -- INSTALLED
+# git 2.51.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:28:41Z   packages from: apk:local-dists
+# date: 2026-10-31T16:32:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u git
-(1/5) Installing c-ares (1.34.3-r0)
-(2/5) Installing nghttp2 (1.64.0-r0)
-(3/5) Installing curl (8.11.1-r0)
-(4/5) Installing expat (2.6.4-r0)
-(5/5) Installing git (2.51.0-r0)
-OK: 678 MiB in 34 packages
+$ apk add -u git qnx-test-git qnx-port-tests
+(1/7) Installing c-ares (1.34.3-r0)
+(2/7) Installing nghttp2 (1.64.0-r0)
+(3/7) Installing curl (8.11.1-r1)
+(4/7) Installing expat (2.6.4-r0)
+(5/7) Installing git (2.51.0-r0)
+(6/7) Installing qnx-port-tests (1.0-r2)
+(7/7) Installing qnx-test-git (1.0-r0)
+OK: 678 MiB in 35 packages
 
-$ ldd on every program and library apk info -L git lists
-ok   loads: /data/oss/usr/local/bin/git
-ok   loads: /data/oss/usr/local/bin/git-receive-pack
-ok   loads: /data/oss/usr/local/bin/git-shell
-ok   loads: /data/oss/usr/local/bin/git-upload-archive
-ok   loads: /data/oss/usr/local/bin/git-upload-pack
-ok   loads: /data/oss/usr/local/bin/scalar
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_git
+     == git ==
+       info git version 2.51.0 (exec-path /usr/local/libexec/git-core)
+       ok   hash-object of 'hello' = ce01362
+       ok   init
+       ok   commit 1
+       ok   diff --stat: 1 insertion
+       ok   commit -a
+       ok   branch feature + commit
+       ok   merge --no-ff
+       ok   annotated tag, describe = v1.0
+       ok   log --first-parent: merge, second, first
+       ok   rev-list --count = 4
+       ok   show HEAD~1:a.txt (3 lines)
+       ok   fsck --strict
+       ok   clone (local, via upload-pack)
+       ok   push back to the origin (receive-pack)
+       ok   archive of v1.0
+       ok   gc packed the objects
+     PASS git
+PASS test_git
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

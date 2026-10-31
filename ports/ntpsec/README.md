@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.com/NTPsec/ntpsec.git (tag `NTPsec_1_2_4`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 3 |
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,10 +59,12 @@ git clone --depth 1 -b NTPsec_1_2_4 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/ntpsec < ports/ntpsec/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/ntpsec < ports/ntpsec/patches/0002-pylib-load-libntpc-by-soname.patch
+patch -p1 -d src/ntpsec < ports/ntpsec/patches/0003-ntpdig-untrusted-reply.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add qnx-support
@@ -86,6 +88,27 @@ patch -p1 -d src/ntpsec < ports/ntpsec/patches/0001-qnx-from-qnx-ports.patch
 >  12 files changed, 115 insertions(+), 28 deletions(-)
 
 Touches: `include/ntp_refclock.h`, `include/ntp_syscall.h`, `include/ntp_tty.h`, `include/ntp_types.h`, `libntp/clockwork.c`, `libntp/ntp_c.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-pylib-load-libntpc-by-soname.patch`](patches/0002-pylib-load-libntpc-by-soname.patch)** — ntp.ntpc: load libntpc by its runtime soname (libntpc.so.1).
+
+> The Python library looked for libntpc.so only -- the unversioned
+> development symlink, which the QNX packages (like any distribution's) ship
+> in ntpsec-dev. With just ntpsec installed every ntp.* module failed to import
+> ("Can't find ntpc library"), and with it ntpdig, ntpq, ntpkeygen and the
+> other Python clients. Try libntpc.so.1 first in each place searched.
+
+Touches: `pylib/ntpc.py` · Upstream status: QNX-specific
+
+**[`0003-ntpdig-untrusted-reply.patch`](patches/0003-ntpdig-untrusted-reply.patch)** — ntpdig: mark a reply that fails MAC verification untrusted, instead of crashing.
+
+> read_append() set .trusted on its "packet" argument -- the request's bytes,
+> not a SyncPacket -- so a reply whose MAC did not verify raised
+> "AttributeError: 'bytes' object has no attribute 'trusted'" and ntpdig died
+> with a traceback instead of rejecting the reply ("request was authenticated
+> but server is untrusted"). Set the flag on the parsed reply; log with the
+> reply's address (the bytes have no .hostname either).
+
+Touches: `ntpclients/ntpdig.py` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -209,7 +232,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ntpsec 1.2.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/ntpsec-1.2.4-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ntpsec 1.2.4-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ntpsec-1.2.4-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ntpsec 1.2.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/ntpsec-1.2.4-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ntpsec 1.2.4-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ntpsec-1.2.4-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

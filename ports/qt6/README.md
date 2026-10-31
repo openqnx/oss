@@ -230,9 +230,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64 virt, vanilla mkqnximage image | apk:local-dists | qt6 6.8.1-r0 | ✅ PASS | 2026-10-30 | [log](../../tests/logs/aarch64le/qt6-6.8.1-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | qt6 6.8.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/qt6-6.8.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | qt6 6.8.1-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/qt6-6.8.1-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | qt6 6.8.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/qt6-6.8.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | qt6 6.8.1-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/qt6-6.8.1-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

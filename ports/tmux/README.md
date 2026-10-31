@@ -9,7 +9,7 @@
 | Upstream | https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz |
 | SHA-256 | `16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 3 |
 | Build dependencies | [`libevent`](../libevent/) [`ncurses`](../ncurses/) |
 | Run-time dependencies | [`libevent`](../libevent/) [`ncurses`](../ncurses/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -68,10 +68,12 @@ tar xf dist/$(basename $URL) -C src/tmux --strip-components=1
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/tmux < ports/tmux/patches/0001-qnx-sa-restart-iov-max.patch
+patch -p1 -d src/tmux < ports/tmux/patches/0002-qnx-daemon-keeps-fds.patch
+patch -p1 -d src/tmux < ports/tmux/patches/0003-qnx-event-no-epoll.patch
 ```
 
 **[`0001-qnx-sa-restart-iov-max.patch`](patches/0001-qnx-sa-restart-iov-max.patch)** — Provide SA_RESTART and IOV_MAX on QNX.
@@ -83,6 +85,14 @@ patch -p1 -d src/tmux < ports/tmux/patches/0001-qnx-sa-restart-iov-max.patch
 >   sizes arrays with it. Use the kernel limit, UIO_MAXIOV from <sys/uio.h>.
 
 Touches: `compat.h` · Upstream status: QNX-specific
+
+**[`0002-qnx-daemon-keeps-fds.patch`](patches/0002-qnx-daemon-keeps-fds.patch)** — QNX daemon(1, 0) closes all descriptors: keep the client socketpair
+
+Touches: `proc.c` · Upstream status: QNX-specific
+
+**[`0003-qnx-event-no-epoll.patch`](patches/0003-qnx-event-no-epoll.patch)** — QNX: run tmux's event loop on poll(), not libevent's epoll emulation
+
+Touches: `osdep-unknown.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -181,7 +191,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | tmux 3.5a-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/tmux-3.5a-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | tmux 3.5a-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/tmux-3.5a-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | tmux 3.5a-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/tmux-3.5a-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | tmux 3.5a-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/tmux-3.5a-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

@@ -1,0 +1,20 @@
+QNX rejects setrlimit(RLIMIT_FSIZE): do not try to raise it
+
+Upstream-Status: QNX-specific
+
+--- a/src/limits.c
++++ b/src/limits.c
+@@ -129,7 +129,13 @@
+     {
+ 	"rlimit_fsize",
+ 	RLIMIT_FSIZE,
++#ifdef __QNX__
++	/* QNX refuses every setrlimit(RLIMIT_FSIZE) with EINVAL -- even
++	 * the values getrlimit() returned -- so leave the limit alone. */
++	false,					/* override */
++#else
+ 	true,					/* override */
++#endif
+ 	false,					/* saved */
+ 	false,					/* policy */
+ 	false,					/* preserve */

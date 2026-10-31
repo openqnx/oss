@@ -9,3 +9,9 @@ CONF_ARGS_EXTRA=( --disable-nls )
 # The libiconv component's <iconv.h> renames iconv_open to libiconv_open, so
 # link that library explicitly.
 CONF_ENV=( LIBS="-liconv" )
+# gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd()
+# opens "." without O_DIRECTORY, and QNX then refuses fchdir()/openat() on
+# that descriptor with ENOTDIR (hazards 25, 120): every *at() emulation that
+# returns to the start directory died with "failed to return to initial
+# working directory: Not a directory".
+CFLAGS_APPEND="-DO_SEARCH=O_DIRECTORY"

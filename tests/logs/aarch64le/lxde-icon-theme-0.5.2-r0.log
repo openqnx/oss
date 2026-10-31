@@ -1,15 +1,38 @@
-# lxde-icon-theme 0.5.2-r0 -- INSTALLED
+# lxde-icon-theme 0.5.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:38:49Z   packages from: apk:local-dists
+# date: 2026-10-31T16:53:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u lxde-icon-theme
-(1/1) Installing lxde-icon-theme (0.5.2-r0)
-OK: 59 MiB in 30 packages
+$ apk add -u lxde-icon-theme qnx-test-lxde-icon-theme qnx-port-tests
+(1/3) Installing lxde-icon-theme (0.5.2-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-lxde-icon-theme (1.0-r0)
+OK: 59 MiB in 31 packages
 
-$ ldd on every program and library apk info -L lxde-icon-theme lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lxde_icon_theme
+     == lxde-icon-theme ==
+       ok   share/icons/nuoveXT2/index.theme installed
+       ok   index.theme parses as a key file
+       info Name=nuoveXT.2.2 Inherits=nuoveXT-1.6,Tango,gnome,crystalsvg
+       ok   Name nuoveXT.2.2, inherits gnome
+       info 90 directories listed, 90 sections, 90 present
+       ok   every listed directory has a section and exists
+       ok   each directory's Size matches its name (16x16 -> 16 ...)
+       ok   folder (Places, 48): found, loads as 48x48 RGBA
+       ok   folder (Places, 16): found, loads as 16x16 RGBA
+       ok   user-trash (Places, 48): found, loads as 48x48 RGBA
+       ok   document-open (Actions, 24): found, loads as 24x24 RGBA
+       ok   utilities-terminal (Applications, 32): found, loads as 32x32 RGBA
+       ok   computer (Devices, 128): found, loads as 128x128 RGBA
+       ok   dialog-warning (Status, 22): found, loads as 22x22 RGBA
+       ok   user-home (Places, 48): found, loads as 48x48 RGBA
+       info 6559 PNG icons, 5116 symlinks, 0 dangling
+       ok   6000+ PNG icons, no dangling symlink
+     PASS lxde-icon-theme
+PASS test_lxde_icon_theme
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,16 +1,33 @@
-# aws-checksums 0.2.10-r0 -- INSTALLED
+# aws-checksums 0.2.10-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:40Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-checksums
-(1/2) Installing aws-c-common (0.12.6-r0)
-(2/2) Installing aws-checksums (0.2.10-r0)
-OK: 166 MiB in 54 packages
+$ apk add -u aws-checksums qnx-test-aws-checksums qnx-port-tests
+(1/4) Installing aws-c-common (0.12.6-r0)
+(2/4) Installing aws-checksums (0.2.10-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-aws-checksums (1.0-r0)
+OK: 93 MiB in 33 packages
 
-$ ldd on every program and library apk info -L aws-checksums lists
-ok   loads: /data/oss/usr/local/lib/libaws-checksums.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_checksums
+     == aws-checksums ==
+       info crc32 cbf43926 crc32c e3069283 crc64nvme ae8b14860a799888
+       ok   CRC32 check value
+       ok   CRC32C check value
+       ok   CRC64/NVME check value
+       ok   CRC32 incremental
+       ok   CRC32C combine
+       ok   CRC64 combine
+       ok   CRC32C of 1 MiB matches a bitwise reference
+       ok   XXH64("abc")
+       ok   XXH3-64("")
+       ok   streaming XXH64
+     PASS aws-checksums
+PASS test_aws_checksums
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

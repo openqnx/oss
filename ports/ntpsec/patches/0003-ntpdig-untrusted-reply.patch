@@ -1,0 +1,36 @@
+ntpdig: mark a reply that fails MAC verification untrusted, instead of crashing.
+
+read_append() set .trusted on its "packet" argument -- the request's bytes,
+not a SyncPacket -- so a reply whose MAC did not verify raised
+"AttributeError: 'bytes' object has no attribute 'trusted'" and ntpdig died
+with a traceback instead of rejecting the reply ("request was authenticated
+but server is untrusted"). Set the flag on the parsed reply; log with the
+reply's address (the bytes have no .hostname either).
+
+Upstream-Status: QNX-specific
+
+--- a/ntpclients/ntpdig.py
++++ b/ntpclients/ntpdig.py
+@@ -63,18 +63,20 @@ def read_append(s, packets, packet, sockaddr):
+     d, a = s.recvfrom(1024)
+     if debug >= 2:
+         ntp.packet.dump_hex_printable(d)
++    trusted = True
+     if credentials:
+         if not ntp.packet.Authenticator.have_mac(d):
+             if debug:
+-                log("no MAC on reply from %s" % packet.hostname)
++                log("no MAC on reply from %s" % sockaddr[0])
+         if not credentials.verify_mac(d, packet_end=48, mac_begin=48):
+-            packet.trusted = False
++            trusted = False
+             log("MAC verification on reply from %s failed"
+                 % sockaddr[0])
+         elif debug:
+             log("MAC verification on reply from %s succeeded"
+                 % sockaddr[0])
+     pkt = ntp.packet.SyncPacket(d)
++    pkt.trusted = trusted
+     pkt.hostname = server
+     pkt.resolved = sockaddr[0]
+     packets.append(pkt)

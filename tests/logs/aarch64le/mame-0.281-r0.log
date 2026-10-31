@@ -1,24 +1,41 @@
-# mame 0.281-r0 -- INSTALLED
+# mame 0.281-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:39:35Z   packages from: apk:local-dists
+# date: 2026-10-31T16:54:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u mame
-( 1/10) Installing expat (2.6.4-r0)
-( 2/10) Installing bzip2 (1.0.8-r0)
-( 3/10) Installing freetype (2.13.3-r0)
-( 4/10) Installing fontconfig (2.15.0-r0)
-( 5/10) Installing sdl2 (2.32.10-r0)
-( 6/10) Installing graphite2 (1.3.14-r0)
-( 7/10) Installing icu (76.1-r0)
-( 8/10) Installing harfbuzz (<ip>-r0)
-( 9/10) Installing sdl2-ttf (2.24.0-r0)
-(10/10) Installing mame (0.281-r0)
-OK: 576 MiB in 39 packages
+$ apk add -u mame qnx-test-mame qnx-port-tests
+( 1/12) Installing expat (2.6.4-r0)
+( 2/12) Installing bzip2 (1.0.8-r0)
+( 3/12) Installing freetype (2.13.3-r0)
+( 4/12) Installing fontconfig (2.15.0-r0)
+( 5/12) Installing sdl2 (2.32.10-r0)
+( 6/12) Installing graphite2 (1.3.14-r0)
+( 7/12) Installing icu (76.1-r1)
+( 8/12) Installing harfbuzz (<ip>-r0)
+( 9/12) Installing sdl2-ttf (2.24.0-r0)
+(10/12) Installing mame (0.281-r0)
+(11/12) Installing qnx-port-tests (1.0-r2)
+(12/12) Installing qnx-test-mame (1.0-r0)
+OK: 576 MiB in 40 packages
 
-$ ldd on every program and library apk info -L mame lists
-ok   loads: /data/oss/usr/local/bin/mame
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mame
+     == mame ==
+       ok   -version: 0.281 (mame0281-dirty)
+       ok   -listfull pacman: pacman            "Pac-Man (Midway)"
+       ok   -listxml: <machine name="pacman">
+       ok   -listxml: Zilog Z80 CPU
+       ok   -listxml: ROM pacman.6e
+       ok   -listxml: 288x224 display
+       ok   -listroms pacman lists pacman.6e
+       ok   -listclones: pacman is a clone of puckman
+       ok   -listsource: pacman.cpp
+       ok   -verifyroms: missing ROM set reported (rc=2)
+       ok   -validate pacman: driver validity checks pass
+     PASS mame
+PASS test_mame
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

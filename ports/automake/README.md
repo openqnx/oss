@@ -63,23 +63,29 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-mkdir -p build/$QNX_ARCH/automake && cd build/$QNX_ARCH/automake
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/automake/configure --host=$QNX_TRIPLE --prefix=/usr/local
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/automake; B=build/$QNX_ARCH/automake; mkdir -p $B
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  local f
+  for f in "$STAGE$PREFIX"/bin/*; do sed -i "1s|^#! */usr/bin/perl|#!$PREFIX/bin/perl|" "$f"; done
+  # aclocal stops if the system macro directory share/aclocal does not exist.
+  # On a target it often does not: it holds only other packages' *.m4 files,
+  # which ship in their -dev packages. A missing one is not an error.
+  sed -i 's/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_ERROR, @system_includes);/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_SILENT, @system_includes);/' \
+    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-1.18"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - GNU Automake. Version as in the QNX Everywhere 8.0.4r1 image.
+- aclocal and automake are generated with the build machine's perl path (#!/usr/bin/perl), which a QNX target does not have (hazard 105).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH automake`.
 
@@ -158,7 +164,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | automake 1.18-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/automake-1.18-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | automake 1.18-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/automake-1.18-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | automake 1.18-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/automake-1.18-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | automake 1.18-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/automake-1.18-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -175,6 +183,20 @@ TARBALL=https://ftp.gnu.org/gnu/automake/automake-1.18.tar.xz
 SHA256=5bdccca96b007a7e344c24204b9b9ac12ecd17f5971931a9063bdee4887f4aaf
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
+
+# aclocal and automake are generated with the build machine's perl path
+# (#!/usr/bin/perl), which a QNX target does not have (hazard 105).
+RUNTIME_DEPS="perl autoconf"
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  local f
+  for f in "$STAGE$PREFIX"/bin/*; do sed -i "1s|^#! */usr/bin/perl|#!$PREFIX/bin/perl|" "$f"; done
+  # aclocal stops if the system macro directory share/aclocal does not exist.
+  # On a target it often does not: it holds only other packages' *.m4 files,
+  # which ship in their -dev packages. A missing one is not an error.
+  sed -i 's/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_ERROR, @system_includes);/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_SILENT, @system_includes);/' \
+    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-1.18"
+}
 ```
 </details>
 

@@ -1,13 +1,13 @@
 # oss-desktop 1.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:47:50Z   packages from: apk:local-dists
+# date: 2026-10-31T17:05:50Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
 ( 1/69) Installing expat (2.6.4-r0)
-( 2/69) Installing dbus (1.16.0-r0)
+( 2/69) Installing dbus (1.16.0-r1)
 ( 3/69) Installing font-dejavu (2.37-r0)
 ( 4/69) Installing hicolor-icon-theme (0.18-r0)
 ( 5/69) Installing bzip2 (1.0.8-r0)
@@ -24,11 +24,11 @@ $ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
 (16/69) Installing cairo (1.18.2-r0)
 (17/69) Installing libsfdo (0.1.4-r0)
 (18/69) Installing xz (5.6.3-r0)
-(19/69) Installing libxml2 (2.13.5-r0)
+(19/69) Installing libxml2 (2.13.5-r1)
 (20/69) Installing libxkbcommon (1.8.1-r1)
 (21/69) Installing fribidi (1.0.16-r0)
 (22/69) Installing graphite2 (1.3.14-r0)
-(23/69) Installing icu (76.1-r0)
+(23/69) Installing icu (76.1-r1)
 (24/69) Installing harfbuzz (<ip>-r0)
 (25/69) Installing libxft (2.3.8-r0)
 (26/69) Installing pango (1.54.0-r0)
@@ -48,15 +48,15 @@ $ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
 (40/69) Installing libxdamage (1.1.6-r0)
 (41/69) Installing libxinerama (1.1.5-r0)
 (42/69) Installing libxrandr (1.5.4-r0)
-(43/69) Installing gtk3 (3.24.43-r0)
+(43/69) Installing gtk3 (3.24.43-r1)
 (44/69) Installing libxfce4util (4.20.0-r0)
-(45/69) Installing xfconf (4.20.0-r0)
-(46/69) Installing libxfce4ui (4.20.0-r0)
+(45/69) Installing xfconf (4.20.0-r1)
+(46/69) Installing libxfce4ui (4.20.0-r1)
 (47/69) Installing exo (4.20.0-r0)
 (48/69) Installing libexif (0.6.24-r0)
-(49/69) Installing garcon (4.20.0-r0)
+(49/69) Installing garcon (4.20.0-r1)
 (50/69) Installing gtk-layer-shell (0.9.0-r0)
-(51/69) Installing libxfce4windowing (4.20.0-r0)
+(51/69) Installing libxfce4windowing (4.20.7-r1)
 (52/69) Installing xfce4-panel (4.20.0-r0)
 (53/69) Installing thunar (4.20.0-r0)
 (54/69) Installing xfce4-appfinder (4.20.0-r0)
@@ -70,12 +70,12 @@ $ apk add -u oss-desktop qnx-test-labwc qnx-port-tests
 (62/69) Installing libtiff (4.7.0-r0)
 (63/69) Installing gtk4 (4.16.7-r0)
 (64/69) Installing lz4 (1.10.0-r0)
-(65/69) Installing vte (0.78.2-r0)
+(65/69) Installing vte (0.78.2-r1)
 (66/69) Installing xfce4-terminal (1.1.5-r0)
 (67/69) Installing oss-desktop (1.0-r0)
-(68/69) Installing qnx-port-tests (1.0-r1)
+(68/69) Installing qnx-port-tests (1.0-r2)
 (69/69) Installing qnx-test-labwc (1.0-r4)
-OK: 252 MiB in 98 packages
+OK: 252 MiB in 97 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
      == labwc ==
@@ -89,7 +89,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   global xdg_wm_base
        ok   global zwlr_layer_shell_v1
        ok   global wl_data_device_manager
-     2026-10-31 05:47:48 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+     2026-10-31 17:05:48 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
        ok   swaybg running on labwc (background layer surface)
        ok   labwc still running after its clients
        ok   labwc exits on SIGTERM

@@ -1,15 +1,36 @@
-# encodings 1.1.0-r0 -- INSTALLED
+# encodings 1.1.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:25:05Z   packages from: apk:local-dists
+# date: 2026-10-31T16:25:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u encodings
-(1/1) Installing encodings (1.1.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u encodings qnx-test-encodings qnx-port-tests
+(1/4) Installing encodings (1.1.0-r0)
+(2/4) Installing qnx-port-tests (1.0-r2)
+(3/4) Installing fontenc (1.1.8-r2)
+(4/4) Installing qnx-test-encodings (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L encodings lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_encodings
+     == encodings ==
+       info FontEncDirectory() = /usr/local/share/fonts/X11/encodings/encodings.dir
+       ok   libfontenc's encodings.dir is installed
+       info encodings.dir: 62 listed, 62 entries, 62 files present
+       ok   encodings.dir: 60+ entries, every file present
+       ok   iso8859-13: 0xC0 -> U+0104 (A with ogonek)
+       ok   iso8859-13: 0xA1 -> U+201D, ASCII unchanged
+       ok   alias microsoft-ansi -> microsoft-cp1252: 0x80 -> U+20AC (euro)
+       ok   cp866 0x80, cp1251 0xC0 -> U+0410 (Cyrillic A)
+       ok   koi8-r (built in): 0xC1 -> U+0430
+       ok   large/gbk-0: 0x8140 -> U+4E02, 0xB0A1 -> U+554A
+       ok   large/jisx0208: 0x3021 -> U+4E9C, 0x2422 -> U+3042 (hiragana a)
+       ok   reverse cp1252: U+20AC -> 0x80, U+2122 -> 0x99
+       ok   encoding from an XLFD name
+       ok   FontEncIdentify(large/gbk-0.enc.gz) -> gbk-0
+     PASS encodings
+PASS test_encodings
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.gnome.org/GNOME/libxml2.git (tag `v2.13.5`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`xz`](../xz/) |
 | Run-time dependencies | [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,7 +64,15 @@ git clone --depth 1 -b v2.13.5 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/libxml2 < ports/libxml2/patches/0001-python-module-not-libpython.patch
+```
+
+**[`0001-python-module-not-libpython.patch`](patches/0001-python-module-not-libpython.patch)** — Python bindings as a plain extension module (no libpython NEEDED, no version suffix)
+
+Touches: `CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -74,7 +82,7 @@ cmake -S src/libxml2 -B build/$QNX_ARCH/libxml2 -G Ninja \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
       -DBUILD_SHARED_LIBS=ON \
-      -DLIBXML2_WITH_PYTHON=OFF \
+      -DLIBXML2_WITH_PYTHON=ON \
       -DLIBXML2_WITH_TESTS=OFF \
       -DLIBXML2_WITH_PROGRAMS=OFF \
       -DLIBXML2_WITH_ICONV=OFF \
@@ -84,6 +92,10 @@ cmake -S src/libxml2 -B build/$QNX_ARCH/libxml2 -G Ninja \
 cmake --build build/$QNX_ARCH/libxml2 -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/libxml2
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- Python bindings (libxml2.py + libxml2mod.so) for the target's python3, which itstool imports. The generator runs on the build host's Python of the same version; headers and library come from staging. They install into site-packages; the module links no libpython (patches/0001), so libxml2 itself does not depend on python3.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxml2`.
 
@@ -168,8 +180,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libxml2 2.13.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/libxml2-2.13.5-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libxml2 2.13.5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/libxml2-2.13.5-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libxml2 2.13.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/libxml2-2.13.5-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libxml2 2.13.5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/libxml2-2.13.5-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -181,11 +195,21 @@ This recipe builds **2.13.5**. Every version stays available: packages in `dists
 
 ```bash
 VERSION=2.13.5; GIT=https://gitlab.gnome.org/GNOME/libxml2.git; REF=v2.13.5
-DEPS="zlib xz"
-CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DLIBXML2_WITH_PYTHON=OFF
+DEPS="zlib xz python3"
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DLIBXML2_WITH_PYTHON=ON
                    -DLIBXML2_WITH_TESTS=OFF -DLIBXML2_WITH_PROGRAMS=OFF
                    -DLIBXML2_WITH_ICONV=OFF -DLIBXML2_WITH_LZMA=ON -DLIBXML2_WITH_ZLIB=ON
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+# Python bindings (libxml2.py + libxml2mod.so) for the target's python3, which
+# itstool imports. The generator runs on the build host's Python of the same
+# version; headers and library come from staging. They install into
+# site-packages; the module links no libpython (patches/0001), so libxml2
+# itself does not depend on python3.
+_pv=3.14
+CMAKE_ARGS_EXTRA+=( -DPython_EXECUTABLE="$WS/hosttools/bin/python$_pv"
+                    -DPython_INCLUDE_DIR="$STAGE$PREFIX/include/python$_pv"
+                    -DPython_LIBRARY="$STAGE$PREFIX/lib/libpython$_pv.so"
+                    -DLIBXML2_PYTHON_INSTALL_DIR="$PREFIX/lib/python$_pv/site-packages" )
 ```
 </details>
 

@@ -1,0 +1,31 @@
+QNX: a refused TIOCSCTTY is fine when the pty is already the controlling terminal
+
+Upstream-Status: QNX-specific
+
+--- a/src/spawn.cc
++++ b/src/spawn.cc
+@@ -33,6 +33,8 @@
+ #include <sys/ioctl.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <termios.h>
++#include <unistd.h>
+ 
+ #include <glib/gi18n-lib.h>
+ #include <glib-unix.h>
+@@ -411,7 +413,14 @@
+          * on *BSD, that doesn't happen, so we need this explicit ioctl here.
+          */
+         if (!(pty()->flags() & VTE_PTY_NO_CTTY)) {
+-                if (ioctl(peer_fd, TIOCSCTTY, peer_fd) != 0) {
++                if (ioctl(peer_fd, TIOCSCTTY, peer_fd) != 0
++#ifdef __QNX__
++                    /* QNX, like Linux, has already made the pty our controlling
++                     * terminal when it was opened after setsid(), and may then
++                     * refuse TIOCSCTTY: that is not a failure. */
++                    && tcgetsid(peer_fd) != getsid(0)
++#endif
++                    ) {
+                         auto errsv = vte::libc::ErrnoSaver{};
+                         _vte_debug_print(VTE_DEBUG_PTY, "%s failed: %s\n",
+                                          "ioctl(TIOCSCTTY)", g_strerror(errsv));

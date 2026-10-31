@@ -1,15 +1,31 @@
-# pthreadpool 0_git20250207-r0 -- INSTALLED
+# pthreadpool 0_git20250207-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:38:02Z   packages from: apk:local-dists
+# date: 2026-10-31T16:31:11Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u pthreadpool
-(1/1) Installing pthreadpool (0_git20250207-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u pthreadpool qnx-test-pthreadpool qnx-port-tests
+(1/3) Installing pthreadpool (0_git20250207-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-pthreadpool (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L pthreadpool lists
-ok   loads: /data/oss/usr/local/lib/libpthreadpool.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pthreadpool
+     == pthreadpool ==
+       ok   pthreadpool_create(0): one thread per CPU
+       info default pool: 4 threads
+       ok   4-thread pool
+       ok   parallelize_1d: sum of i^2 for i < 100000
+       ok   parallelize_2d: every cell of 37x53 visited once
+       ok   parallelize_2d_tile_2d (8x16 tiles): every cell once more
+       ok   parallelize_1d_tile_1d: tile sizes add up to the range
+       info thread mask f
+       ok   thread ids are within 0..3
+       ok   NULL pool runs serially
+     PASS pthreadpool
+PASS test_pthreadpool
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

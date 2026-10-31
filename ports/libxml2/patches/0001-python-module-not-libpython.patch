@@ -1,0 +1,26 @@
+Python bindings as a plain extension module (no libpython NEEDED, no version suffix)
+
+Upstream-Status: QNX-specific
+
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -561,14 +561,16 @@ if(LIBXML2_WITH_PYTHON)
+         PUBLIC
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/python>
+     )
+-    target_link_libraries(LibXml2Mod LibXml2 Python::Python)
++    # An extension module takes the Python C API from the interpreter that
++    # loads it (as CPython's own lib-dynload modules do), so link the module
++    # target, not libpython: libxml2 must not depend on Python.
++    target_link_libraries(LibXml2Mod LibXml2 Python::Module)
+     set_target_properties(
+         LibXml2Mod
+         PROPERTIES
+         IMPORT_PREFIX lib
+         OUTPUT_NAME xml2mod
+         PREFIX lib
+-        VERSION ${PROJECT_VERSION}
+     )
+     if (WIN32)
+         set_target_properties(LibXml2Mod PROPERTIES SUFFIX ".pyd")

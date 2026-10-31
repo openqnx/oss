@@ -1,18 +1,18 @@
 # vsomeip 3.5.6-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:28:40Z   packages from: apk:local-dists
+# date: 2026-10-31T18:02:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u vsomeip qnx-test-vsomeip qnx-port-tests
-(1/6) Installing qnx-port-tests (1.0-r1)
+(1/6) Installing qnx-port-tests (1.0-r2)
 (2/6) Installing bzip2 (1.0.8-r0)
 (3/6) Installing xz (5.6.3-r0)
 (4/6) Installing boost (1.86.0-r0)
 (5/6) Installing vsomeip (3.5.6-r0)
 (6/6) Installing qnx-test-vsomeip (1.0-r6)
-OK: 185 MiB in 35 packages
+OK: 185 MiB in 34 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vsomeip
      == vsomeip ==

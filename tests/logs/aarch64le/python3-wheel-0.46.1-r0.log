@@ -1,15 +1,39 @@
-# python3-wheel 0.46.1-r0 -- INSTALLED
+# python3-wheel 0.46.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:22:44Z   packages from: apk:local-dists
+# date: 2026-10-31T17:43:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-wheel
-(1/1) Installing python3-wheel (0.46.1-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u python3-wheel qnx-test-python3-wheel qnx-port-tests
+( 1/11) Installing python3-wheel (0.46.1-r0)
+( 2/11) Installing qnx-port-tests (1.0-r2)
+( 3/11) Installing bzip2 (1.0.8-r0)
+( 4/11) Installing expat (2.6.4-r0)
+( 5/11) Installing gdbm (1.24-r0)
+( 6/11) Installing readline (8.2-r0)
+( 7/11) Installing sqlite (3.47.2-r0)
+( 8/11) Installing xz (5.6.3-r0)
+( 9/11) Installing python3 (3.14.0-r2)
+(10/11) Installing python3-packaging (25.0-r0)
+(11/11) Installing qnx-test-python3-wheel (1.0-r0)
+OK: 160 MiB in 39 packages
 
-$ ldd on every program and library apk info -L python3-wheel lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_wheel
+     == python3-wheel ==
+       info wheel 0.46.1
+       ok   WheelFile wrote RECORD with the sha256 of each file
+       ok   WheelFile reads it back, hashes verified
+       ok   wheel unpack
+       ok   wheel pack after adding a file
+       ok   RECORD regenerated with the new file
+       info after tags: ['qnxdemo-0.1-py311.py312-none-any.whl']
+       ok   wheel tags --python-tag py311.py312
+       info rejected: Hash mismatch for file 'qnxdemo/__init__.py'
+       ok   a file whose hash no longer matches RECORD is rejected
+     PASS python3-wheel
+PASS test_python3_wheel
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

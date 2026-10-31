@@ -7,5 +7,11 @@ SHA256=34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924
 DEPS="perl"
 BUILDSYS=custom
 do_build() { :; }
-do_install() { install -d "$STAGE$PREFIX/lib/perl5/site_perl/Error" && install -m644 "$S/lib/Error.pm" "$STAGE$PREFIX/lib/perl5/site_perl/" && \
-  cp -a "$S/lib/Error/." "$STAGE$PREFIX/lib/perl5/site_perl/Error/"; }
+# Into Perl's site library, site_perl/<perl version>: the versionless
+# site_perl directory is not in @INC (the perl port has no inc_version_list),
+# and `perl -MError` did not find the module there.
+do_install() {
+  local pv; pv=$(sed -n 's/^VERSION=\([^;]*\).*/\1/p' "$WS/ports/perl/recipe.sh")
+  local d="$STAGE$PREFIX/lib/perl5/site_perl/$pv"
+  install -d "$d/Error" && install -m644 "$S/lib/Error.pm" "$d/" && cp -a "$S/lib/Error/." "$d/Error/"
+}

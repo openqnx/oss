@@ -1,55 +1,71 @@
-# mate-calc 1.28.0-r0 -- INSTALLED
+# mate-calc 1.28.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:39:51Z   packages from: apk:local-dists
+# date: 2026-10-31T16:55:06Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u mate-calc
-( 1/39) Installing expat (2.6.4-r0)
-( 2/39) Installing dbus (1.16.0-r0)
-( 3/39) Installing libxau (1.0.11-r0)
-( 4/39) Installing libxdmcp (1.1.5-r0)
-( 5/39) Installing libxcb (1.17.0-r0)
-( 6/39) Installing libx11 (1.8.10-r0)
-( 7/39) Installing libxext (1.3.6-r0)
-( 8/39) Installing libxi (1.8.2-r0)
-( 9/39) Installing libxtst (1.2.5-r0)
-(10/39) Installing at-spi2-core (2.54.0-r0)
-(11/39) Installing bzip2 (1.0.8-r0)
-(12/39) Installing freetype (2.13.3-r0)
-(13/39) Installing fontconfig (2.15.0-r0)
-(14/39) Installing libxrender (0.9.11-r0)
-(15/39) Installing lzo (2.10-r0)
-(16/39) Installing pixman (0.46.4-r0)
-(17/39) Installing cairo (1.18.2-r0)
-(18/39) Installing gmp (6.3.0-r0)
-(19/39) Installing fribidi (1.0.16-r0)
-(20/39) Installing graphite2 (1.3.14-r0)
-(21/39) Installing icu (76.1-r0)
-(22/39) Installing harfbuzz (<ip>-r0)
-(23/39) Installing libepoxy (1.5.10-r0)
-(24/39) Installing libxcomposite (0.4.6-r0)
-(25/39) Installing libxfixes (6.0.1-r0)
-(26/39) Installing libxcursor (1.2.2-r0)
-(27/39) Installing libxdamage (1.1.6-r0)
-(28/39) Installing libxinerama (1.1.5-r0)
-(29/39) Installing xz (5.6.3-r0)
-(30/39) Installing libxml2 (2.13.5-r0)
-(31/39) Installing libxkbcommon (1.8.1-r1)
-(32/39) Installing libxrandr (1.5.4-r0)
-(33/39) Installing libxft (2.3.8-r0)
-(34/39) Installing pango (1.54.0-r0)
-(35/39) Installing wayland (1.24.0-r0)
-(36/39) Installing gtk3 (3.24.43-r0)
-(37/39) Installing mpfr (4.2.1-r0)
-(38/39) Installing mpc (1.3.1-r0)
-(39/39) Installing mate-calc (1.28.0-r0)
-OK: 159 MiB in 68 packages
+$ apk add -u mate-calc qnx-test-mate-calc qnx-port-tests
+( 1/42) Installing expat (2.6.4-r0)
+( 2/42) Installing dbus (1.16.0-r1)
+( 3/42) Installing libxau (1.0.11-r0)
+( 4/42) Installing libxdmcp (1.1.5-r0)
+( 5/42) Installing libxcb (1.17.0-r0)
+( 6/42) Installing libx11 (1.8.10-r0)
+( 7/42) Installing libxext (1.3.6-r0)
+( 8/42) Installing libxi (1.8.2-r0)
+( 9/42) Installing libxtst (1.2.5-r0)
+(10/42) Installing at-spi2-core (2.54.0-r0)
+(11/42) Installing bzip2 (1.0.8-r0)
+(12/42) Installing freetype (2.13.3-r0)
+(13/42) Installing fontconfig (2.15.0-r0)
+(14/42) Installing libxrender (0.9.11-r0)
+(15/42) Installing lzo (2.10-r0)
+(16/42) Installing pixman (0.46.4-r0)
+(17/42) Installing cairo (1.18.2-r0)
+(18/42) Installing gmp (6.3.0-r0)
+(19/42) Installing fribidi (1.0.16-r0)
+(20/42) Installing graphite2 (1.3.14-r0)
+(21/42) Installing icu (76.1-r1)
+(22/42) Installing harfbuzz (<ip>-r0)
+(23/42) Installing libepoxy (1.5.10-r0)
+(24/42) Installing libxcomposite (0.4.6-r0)
+(25/42) Installing libxfixes (6.0.1-r0)
+(26/42) Installing libxcursor (1.2.2-r0)
+(27/42) Installing libxdamage (1.1.6-r0)
+(28/42) Installing libxinerama (1.1.5-r0)
+(29/42) Installing xz (5.6.3-r0)
+(30/42) Installing libxml2 (2.13.5-r1)
+(31/42) Installing libxkbcommon (1.8.1-r1)
+(32/42) Installing libxrandr (1.5.4-r0)
+(33/42) Installing libxft (2.3.8-r0)
+(34/42) Installing pango (1.54.0-r0)
+(35/42) Installing wayland (1.24.0-r0)
+(36/42) Installing gtk3 (3.24.43-r1)
+(37/42) Installing mpfr (4.2.1-r0)
+(38/42) Installing mpc (1.3.1-r0)
+(39/42) Installing mate-calc (1.28.0-r0)
+(40/42) Installing qnx-port-tests (1.0-r2)
+(41/42) Installing font-dejavu (2.37-r0)
+(42/42) Installing qnx-test-mate-calc (1.0-r0)
+OK: 169 MiB in 70 packages
 
-$ ldd on every program and library apk info -L mate-calc lists
-ok   loads: /data/oss/usr/local/bin/mate-calc
-ok   loads: /data/oss/usr/local/bin/mate-calc-cmd
-ok   loads: /data/oss/usr/local/bin/mate-calculator
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mate_calc
+     == mate-calc ==
+       ok   mate-calc-cmd from stdin: 42 65536
+       info /usr/local/share/glib-2.0/schemas has no gschemas.compiled (no package compiles the schemas): compiled here into the temp dir
+       info 22 TrueType fonts under /usr/local/share/fonts
+       ok   --version: mate-calc 1.28.0
+       ok   --solve '12*(3+4)' = 84
+       ok   --solve '2^10' = 1024
+       ok   --solve '100/8' = 12.5
+       ok   --solve '10!' = 3628800
+       ok   --solve 'sqrt(144)' = 12
+       ok   --solve 'sin(30)' = 0.5
+       ok   GTK window ran 5 s on broadway display :58
+     PASS mate-calc
+PASS test_mate_calc
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,35 @@
+# gtsam 4.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:15:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtsam qnx-test-gtsam qnx-port-tests
+(1/4) Installing boost (1.86.0-r0)
+(2/4) Installing gtsam (4.2-r1)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-gtsam (1.0-r0)
+OK: 112 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtsam
+     == gtsam ==
+       info GTSAM 4.2a9
+       ok   Pose2 compose
+       ok   Pose2 between is the inverse of compose
+       ok   Rot3::Rz(90 deg) maps x to y
+       ok   Pose3 transform and inverse
+       ok   Pose3 Expmap(Logmap(T)) == T
+       info error 1894.3326 -> 5.33e-22
+       ok   LM drives the graph error to ~0
+       ok   optimised poses are the square's corners
+       info var(x1)=1.00e-04 var(x3)=7.24e-02
+       ok   anchored pose 1 is more certain than pose 3
+       info iSAM2 vs batch: largest difference 4.87e-12
+       ok   iSAM2 incremental estimate matches the batch solution
+     PASS gtsam
+PASS test_gtsam
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

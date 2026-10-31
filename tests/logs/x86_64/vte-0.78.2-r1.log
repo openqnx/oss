@@ -1,0 +1,69 @@
+# vte 0.78.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:36:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vte qnx-test-vte qnx-port-tests
+( 1/37) Installing qnx-port-tests (1.0-r2)
+( 2/37) Installing dbus (1.16.0-r1)
+( 3/37) Installing libxau (1.0.11-r0)
+( 4/37) Installing libxdmcp (1.1.5-r0)
+( 5/37) Installing libxcb (1.17.0-r0)
+( 6/37) Installing libx11 (1.8.10-r0)
+( 7/37) Installing libxext (1.3.6-r0)
+( 8/37) Installing libxi (1.8.2-r0)
+( 9/37) Installing libxtst (1.2.5-r0)
+(10/37) Installing at-spi2-core (2.54.0-r0)
+(11/37) Installing libxrender (0.9.11-r0)
+(12/37) Installing cairo (1.18.2-r0)
+(13/37) Installing fribidi (1.0.16-r0)
+(14/37) Installing harfbuzz (<ip>-r0)
+(15/37) Installing libxcomposite (0.4.6-r0)
+(16/37) Installing libxfixes (6.0.1-r0)
+(17/37) Installing libxcursor (1.2.2-r0)
+(18/37) Installing libxdamage (1.1.6-r0)
+(19/37) Installing libxinerama (1.1.5-r0)
+(20/37) Installing libxml2 (2.13.5-r1)
+(21/37) Installing libxkbcommon (1.8.1-r1)
+(22/37) Installing libxrandr (1.5.4-r0)
+(23/37) Installing libxft (2.3.8-r0)
+(24/37) Installing pango (1.54.0-r0)
+(25/37) Installing gtk3 (3.24.43-r1)
+(26/37) Installing gmp (6.3.0-r0)
+(27/37) Installing libidn2 (2.3.7-r0)
+(28/37) Installing libtasn1 (4.19.0-r0)
+(29/37) Installing nettle (3.10.1-r0)
+(30/37) Installing gnutls (3.8.8-r0)
+(31/37) Installing graphene (1.10.8-r0)
+(32/37) Installing libwebp (1.4.0-r0)
+(33/37) Installing libtiff (4.7.0-r0)
+(34/37) Installing gtk4 (4.16.7-r0)
+(35/37) Installing lz4 (1.10.0-r0)
+(36/37) Installing vte (0.78.2-r1)
+(37/37) Installing qnx-test-vte (1.0-r6)
+OK: 197 MiB in 66 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vte
+     == vte ==
+       info VTE 0.78.2
+       ok   vte_get_major_version
+       ok   vte_terminal_get_type registered
+       ok   VteTerminal is a GtkWidget
+       info GType name = VteTerminal
+       ok   vte_pty_get_type registered
+       ok   vte_regex_get_type registered
+       ok   vte_regex_new_for_match compiled a URL pattern
+     PCRE2 library was built without JIT support
+       ok   vte_regex_jit answered
+       ok   vte_pty_new_sync opened a pty
+       info pty fd = 3
+       ok   vte_pty_get_fd
+       ok   vte_pty_set_size 24x80
+     PASS vte
+PASS test_vte
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

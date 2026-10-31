@@ -1,0 +1,25 @@
+Give aws/cal/hkdf.h an include guard of its own.
+
+hkdf.h reused ecc.h's guard (AWS_CAL_ECC_H), so a source that includes
+both headers silently loses whichever comes second: with hkdf.h first,
+none of the ECC API is declared; with ecc.h first, aws_hkdf_derive and
+HKDF_HMAC_SHA512 are missing.
+
+Upstream-Status: Pending
+
+--- a/include/aws/cal/hkdf.h
++++ b/include/aws/cal/hkdf.h
+@@ -1,5 +1,5 @@
+-#ifndef AWS_CAL_ECC_H
+-#define AWS_CAL_ECC_H
++#ifndef AWS_CAL_HKDF_H
++#define AWS_CAL_HKDF_H
+ /**
+  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  * SPDX-License-Identifier: Apache-2.0.
+@@ -52,4 +52,4 @@
+ AWS_EXTERN_C_END
+ AWS_POP_SANE_WARNING_LEVEL
+ 
+-#endif /* AWS_CAL_ECC_H */
++#endif /* AWS_CAL_HKDF_H */

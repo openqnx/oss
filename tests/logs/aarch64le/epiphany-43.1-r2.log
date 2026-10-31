@@ -1,0 +1,107 @@
+# epiphany 43.1-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T18:14:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u epiphany qnx-test-epiphany qnx-port-tests
+( 1/76) Installing expat (2.6.4-r0)
+( 2/76) Installing dbus (1.16.0-r3)
+( 3/76) Installing libxau (1.0.11-r0)
+( 4/76) Installing libxdmcp (1.1.5-r0)
+( 5/76) Installing libxcb (1.17.0-r0)
+( 6/76) Installing libx11 (1.8.10-r0)
+( 7/76) Installing libxext (1.3.6-r0)
+( 8/76) Installing libxi (1.8.2-r0)
+( 9/76) Installing libxtst (1.2.5-r0)
+(10/76) Installing at-spi2-core (2.54.0-r0)
+(11/76) Installing bzip2 (1.0.8-r0)
+(12/76) Installing freetype (2.13.3-r0)
+(13/76) Installing fontconfig (2.15.0-r0)
+(14/76) Installing libxrender (0.9.11-r0)
+(15/76) Installing lzo (2.10-r0)
+(16/76) Installing pixman (0.46.4-r0)
+(17/76) Installing cairo (1.18.2-r0)
+(18/76) Installing fribidi (1.0.16-r0)
+(19/76) Installing graphite2 (1.3.14-r0)
+(20/76) Installing icu (76.1-r1)
+(21/76) Installing harfbuzz (<ip>-r0)
+(22/76) Installing libepoxy (1.5.10-r0)
+(23/76) Installing libxcomposite (0.4.6-r0)
+(24/76) Installing libxfixes (6.0.1-r0)
+(25/76) Installing libxcursor (1.2.2-r0)
+(26/76) Installing libxdamage (1.1.6-r0)
+(27/76) Installing libxinerama (1.1.5-r0)
+(28/76) Installing xz (5.6.3-r0)
+(29/76) Installing libxml2 (2.13.5-r1)
+(30/76) Installing libxkbcommon (1.8.1-r1)
+(31/76) Installing libxrandr (1.5.4-r0)
+(32/76) Installing libxft (2.3.8-r0)
+(33/76) Installing pango (1.54.0-r0)
+(34/76) Installing wayland (1.24.0-r0)
+(35/76) Installing gtk3 (3.24.43-r1)
+(36/76) Installing libgpg-error (1.50-r0)
+(37/76) Installing libgcrypt (1.11.0-r1)
+(38/76) Installing p11-kit (0.25.5-r0)
+(39/76) Installing gcr (3.41.2-r0)
+(40/76) Installing gmp (6.3.0-r0)
+(41/76) Installing json-glib (1.10.6-r0)
+(42/76) Installing lz4 (1.10.0-r0)
+(43/76) Installing libarchive (3.7.7-r0)
+(44/76) Installing libdazzle (3.44.0-r0)
+(45/76) Installing libhandy (1.8.3-r0)
+(46/76) Installing libportal (0.8.1-r0)
+(47/76) Installing libsecret (0.21.4-r0)
+(48/76) Installing libidn2 (2.3.7-r0)
+(49/76) Installing libpsl (0.21.5-r0)
+(50/76) Installing nghttp2 (1.64.0-r0)
+(51/76) Installing sqlite (3.47.2-r0)
+(52/76) Installing libsoup (3.6.1-r0)
+(53/76) Installing nettle (3.10.1-r0)
+(54/76) Installing aom (3.12.1-r0)
+(55/76) Installing fdk-aac (2.0.3-r0)
+(56/76) Installing gstreamer (1.24.10-r0)
+(57/76) Installing libogg (1.3.5-r0)
+(58/76) Installing libtheora (1.1.1-r0)
+(59/76) Installing libvorbis (1.3.7-r0)
+(60/76) Installing opus (1.5.2-r0)
+(61/76) Installing gst-plugins-base (1.24.10-r1)
+(62/76) Installing libwebp (1.4.0-r0)
+(63/76) Installing openh264 (2.5.0-r0)
+(64/76) Installing svt-av1 (2.3.0-r0)
+(65/76) Installing x265 (3.6-r0)
+(66/76) Installing gst-plugins-bad (1.24.10-r0)
+(67/76) Installing hyphen (2.8.8-r0)
+(68/76) Installing dav1d (1.5.0-r0)
+(69/76) Installing libavif (1.1.1-r0)
+(70/76) Installing libtasn1 (4.19.0-r0)
+(71/76) Installing libxslt (1.1.42-r0)
+(72/76) Installing woff2 (1.0.2-r0)
+(73/76) Installing webkitgtk (2.44.4-r0)
+(74/76) Installing epiphany (43.1-r2)
+(75/76) Installing qnx-port-tests (1.0-r2)
+(76/76) Installing qnx-test-epiphany (1.0-r0)
+OK: 346 MiB in 104 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_epiphany
+     == epiphany ==
+       info epiphany --version -> 0: Web 43.1
+       ok   epiphany --version: Web 43.1
+       ok   epiphany --help lists its options
+       info -> 1: Cannot use --private-instance and --application-mode at the same time
+       ok   conflicting --private-instance/--application-mode rejected
+       ok   --automation-mode with --incognito-mode rejected
+       ok   --application-mode with a missing --profile directory rejected
+       ok   unknown option rejected by name
+       info ephy-profile-migrator -v 999 -> 1: Version mismatch, version 999 requested but our version is 37
+       ok   ephy-profile-migrator: migration version 37
+       ok   default bookmarks (RDF) installed
+       ok   GSettings schema org.gnome.Epiphany.web installed
+       ok   desktop entry runs epiphany
+     PASS epiphany
+PASS test_epiphany
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

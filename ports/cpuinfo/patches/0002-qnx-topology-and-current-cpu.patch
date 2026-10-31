@@ -1,0 +1,102 @@
+QNX: fill in the cluster, package, cache counts and the current processor.
+
+The QNX layer left the cluster and package descriptions empty (TODO) and the
+cache counts at zero, so cpuinfo_get_package(0) reported no processors and
+cpuinfo_get_l1d_caches_count() returned 0 although the caches were filled in;
+cpuinfo_get_current_processor() returned NULL. Describe the one cluster and
+package the layer assumes, count the detected caches, and map the calling
+thread to its processor with SchedGetCpuNum().
+
+Upstream-Status: QNX-specific
+
+--- a/src/api.c
++++ b/src/api.c
+@@ -418,6 +418,13 @@
+ 		return 0;
+ 	}
+ 	return cpuinfo_linux_cpu_to_processor_map[cpu];
++#elif defined(__QNXNTO__)
++	/* the CPU this thread runs on, as the kernel numbers it */
++	int cpu = SchedGetCpuNum();
++	if CPUINFO_UNLIKELY (cpu < 0 || (uint32_t)cpu >= cpuinfo_qnx_get_processors_count()) {
++		return NULL;
++	}
++	return &qnx_processors[cpu];
+ #else
+ 	return NULL;
+ #endif
+@@ -437,6 +444,8 @@
+ 		return 0;
+ 	}
+ 	return cpuinfo_linux_cpu_to_core_map[cpu];
++#elif defined(__QNXNTO__)
++	return cpuinfo_get_current_processor() ? qnx_core : NULL;
+ #else
+ 	return NULL;
+ #endif
+--- a/src/qnx/api.c
++++ b/src/qnx/api.c
+@@ -158,12 +158,36 @@
+     return 0;
+ }
+ 
+-void cpuinfo_qnx_fill_cluster_info(struct cpuinfo_core * cluster){
+-    // TODO
++void cpuinfo_qnx_fill_cluster_info(struct cpuinfo_core * core){
++    // One cluster holding the one core (and so every processor)
++    qnx_cluster->processor_start = 0;
++    qnx_cluster->processor_count = core->processor_count;
++    qnx_cluster->core_start = 0;
++    qnx_cluster->core_count = 1;
++    qnx_cluster->cluster_id = 0;
++    qnx_cluster->package = qnx_package;
++    qnx_cluster->vendor = core->vendor;
++    qnx_cluster->uarch = core->uarch;
++#if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
++    qnx_cluster->cpuid = core->cpuid;
++#elif CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64
++    qnx_cluster->midr = core->midr;
++#endif
++    qnx_cluster->frequency = core->frequency;
+ }
+ 
+-void cpuinfo_qnx_fill_package_info(struct cpuinfo_core * package){
+-    // TODO
++void cpuinfo_qnx_fill_package_info(struct cpuinfo_core * core){
++    // One package holding the one cluster; named after the system page's CPU name
++    const char * strings = (const char *)SYSPAGE_ENTRY(strings);
++    if ( strings != NULL ){
++        snprintf(qnx_package->name, CPUINFO_PACKAGE_NAME_MAX, "%s", &strings[SYSPAGE_ARRAY_IDX(cpuinfo,0)->name]);
++    }
++    qnx_package->processor_start = 0;
++    qnx_package->processor_count = core->processor_count;
++    qnx_package->core_start = 0;
++    qnx_package->core_count = 1;
++    qnx_package->cluster_start = 0;
++    qnx_package->cluster_count = 1;
+ }
+ 
+ int cpuinfo_qnx_fill_processors_info(struct cpuinfo_processor * processor_list){
+@@ -182,6 +206,8 @@
+         return -1;
+     }
+ 
++    cpuinfo_qnx_fill_cluster_info(qnx_core);
++    cpuinfo_qnx_fill_package_info(qnx_core);
+     cpuinfo_clusters_count = 1;
+     cpuinfo_packages_count = 1;
+ 
+@@ -234,6 +260,13 @@
+         }
+ #endif
+ 
++    // One shared instance of each cache level that was detected
++    cpuinfo_cache_count[cpuinfo_cache_level_1i] = qnx_cache[0].size != 0;
++    cpuinfo_cache_count[cpuinfo_cache_level_1d] = qnx_cache[1].size != 0;
++    cpuinfo_cache_count[cpuinfo_cache_level_2] = qnx_cache[2].size != 0;
++    cpuinfo_cache_count[cpuinfo_cache_level_3] = qnx_cache[3].size != 0;
++    cpuinfo_cache_count[cpuinfo_cache_level_4] = 0;
++
+     int i;
+     for( i=0; i<num_cpu && i<MAX_PROCESSOR; i++ ) {
+         processor_list[i].smt_id = SYSPAGE_ARRAY_IDX(cpuinfo,0)->smp_hwcoreid;

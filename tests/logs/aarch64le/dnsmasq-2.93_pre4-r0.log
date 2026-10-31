@@ -1,15 +1,32 @@
-# dnsmasq 2.93_pre4-r0 -- INSTALLED
+# dnsmasq 2.93_pre4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:24:05Z   packages from: apk:local-dists
+# date: 2026-10-31T16:23:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u dnsmasq
-(1/1) Installing dnsmasq (2.93_pre4-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u dnsmasq qnx-test-dnsmasq qnx-port-tests
+(1/3) Installing dnsmasq (2.93_pre4-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-dnsmasq (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L dnsmasq lists
-ok   loads: /data/oss/usr/local/sbin/dnsmasq
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dnsmasq
+     == dnsmasq ==
+       ok   sbin/dnsmasq installed
+       info /usr/local/sbin/dnsmasq on <ip>:27413
+       ok   started
+       ok   UDP: box.lan A <ip> (--host-record)
+       ok   deep.sub.qnx.test A <ip> (--address for the domain)
+       ok   PTR <ip> -> box.lan
+       ok   alias.lan: CNAME box.lan, then its A record
+       ok   info.lan TXT "hello from dnsmasq"
+       info nothing.lan: rcode 3, 0 answer(s)
+       ok   nothing.lan: NXDOMAIN (a --local domain, no upstream asked)
+       ok   TCP: box.lan A <ip>
+     PASS dnsmasq
+PASS test_dnsmasq
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

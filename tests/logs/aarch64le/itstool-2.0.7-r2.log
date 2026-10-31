@@ -1,0 +1,36 @@
+# itstool 2.0.7-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:39:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u itstool qnx-test-itstool qnx-port-tests
+( 1/11) Installing xz (5.6.3-r0)
+( 2/11) Installing libxml2 (2.13.5-r1)
+( 3/11) Installing bzip2 (1.0.8-r0)
+( 4/11) Installing expat (2.6.4-r0)
+( 5/11) Installing gdbm (1.24-r0)
+( 6/11) Installing readline (8.2-r0)
+( 7/11) Installing sqlite (3.47.2-r0)
+( 8/11) Installing python3 (3.14.0-r2)
+( 9/11) Installing itstool (2.0.7-r2)
+(10/11) Installing qnx-port-tests (1.0-r2)
+(11/11) Installing qnx-test-itstool (1.0-r0)
+OK: 162 MiB in 39 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_itstool
+     == itstool ==
+       ok   #! line: #!/usr/local/bin/python3 -s
+       ok   python3 imports libxml2 (the bindings itstool needs)
+       ok   --version: itstool 2.0.7
+       ok   extracted doc.pot
+       ok   POT has the title and the paragraph
+       ok   its:translate="no" element skipped
+       ok   merged French translation, untranslatable code kept
+     PASS itstool
+PASS test_itstool
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

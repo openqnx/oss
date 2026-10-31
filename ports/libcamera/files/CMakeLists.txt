@@ -45,8 +45,15 @@ set(SOURCE_CPP_FILES
     ${PROJECT_ROOT}/src/libcamera/base/utils.cpp
 )
 
+include(GNUInstallDirs)
+
 # Build shared library
 add_library(${PROJECT_NAME} SHARED ${SOURCE_CPP_FILES})
+
+# Logging goes to slog2 (log_handler.cpp) and tuning files are read with
+# libyaml (yaml_parser.cpp): record both as NEEDED, or every program using
+# the library has to know to link them.
+target_link_libraries(${PROJECT_NAME} PRIVATE slog2 yaml)
 
 # Header directories
 target_include_directories(${PROJECT_NAME}

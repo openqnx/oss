@@ -1,123 +1,67 @@
-# gst-plugins-bad 1.24.10-r0 -- INSTALLED
+# gst-plugins-bad 1.24.10-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:30:00Z   packages from: apk:local-dists
+# date: 2026-10-31T16:35:18Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gst-plugins-bad
-( 1/32) Installing aom (3.12.1-r0)
-( 2/32) Installing expat (2.6.4-r0)
-( 3/32) Installing bzip2 (1.0.8-r0)
-( 4/32) Installing freetype (2.13.3-r0)
-( 5/32) Installing fontconfig (2.15.0-r0)
-( 6/32) Installing libxau (1.0.11-r0)
-( 7/32) Installing libxdmcp (1.1.5-r0)
-( 8/32) Installing libxcb (1.17.0-r0)
-( 9/32) Installing libx11 (1.8.10-r0)
-(10/32) Installing libxext (1.3.6-r0)
-(11/32) Installing libxrender (0.9.11-r0)
-(12/32) Installing lzo (2.10-r0)
-(13/32) Installing pixman (0.46.4-r0)
-(14/32) Installing cairo (1.18.2-r0)
-(15/32) Installing fdk-aac (2.0.3-r0)
-(16/32) Installing gstreamer (1.24.10-r0)
-(17/32) Installing libogg (1.3.5-r0)
-(18/32) Installing libtheora (1.1.1-r0)
-(19/32) Installing libvorbis (1.3.7-r0)
-(20/32) Installing opus (1.5.2-r0)
-(21/32) Installing gst-plugins-base (1.24.10-r0)
-(22/32) Installing libwebp (1.4.0-r0)
-(23/32) Installing openh264 (2.5.0-r0)
-(24/32) Installing fribidi (1.0.16-r0)
-(25/32) Installing graphite2 (1.3.14-r0)
-(26/32) Installing icu (76.1-r0)
-(27/32) Installing harfbuzz (<ip>-r0)
-(28/32) Installing libxft (2.3.8-r0)
-(29/32) Installing pango (1.54.0-r0)
-(30/32) Installing svt-av1 (2.3.0-r0)
-(31/32) Installing x265 (3.6-r0)
-(32/32) Installing gst-plugins-bad (1.24.10-r0)
-OK: 143 MiB in 61 packages
+$ apk add -u gst-plugins-bad qnx-test-gst-plugins-bad qnx-port-tests
+( 1/34) Installing aom (3.12.1-r0)
+( 2/34) Installing expat (2.6.4-r0)
+( 3/34) Installing bzip2 (1.0.8-r0)
+( 4/34) Installing freetype (2.13.3-r0)
+( 5/34) Installing fontconfig (2.15.0-r0)
+( 6/34) Installing libxau (1.0.11-r0)
+( 7/34) Installing libxdmcp (1.1.5-r0)
+( 8/34) Installing libxcb (1.17.0-r0)
+( 9/34) Installing libx11 (1.8.10-r0)
+(10/34) Installing libxext (1.3.6-r0)
+(11/34) Installing libxrender (0.9.11-r0)
+(12/34) Installing lzo (2.10-r0)
+(13/34) Installing pixman (0.46.4-r0)
+(14/34) Installing cairo (1.18.2-r0)
+(15/34) Installing fdk-aac (2.0.3-r0)
+(16/34) Installing gstreamer (1.24.10-r0)
+(17/34) Installing libogg (1.3.5-r0)
+(18/34) Installing libtheora (1.1.1-r0)
+(19/34) Installing libvorbis (1.3.7-r0)
+(20/34) Installing opus (1.5.2-r0)
+(21/34) Installing gst-plugins-base (1.24.10-r1)
+(22/34) Installing libwebp (1.4.0-r0)
+(23/34) Installing openh264 (2.5.0-r0)
+(24/34) Installing fribidi (1.0.16-r0)
+(25/34) Installing graphite2 (1.3.14-r0)
+(26/34) Installing icu (76.1-r1)
+(27/34) Installing harfbuzz (<ip>-r0)
+(28/34) Installing libxft (2.3.8-r0)
+(29/34) Installing pango (1.54.0-r0)
+(30/34) Installing svt-av1 (2.3.0-r0)
+(31/34) Installing x265 (3.6-r0)
+(32/34) Installing gst-plugins-bad (1.24.10-r0)
+(33/34) Installing qnx-port-tests (1.0-r2)
+(34/34) Installing qnx-test-gst-plugins-bad (1.0-r0)
+OK: 143 MiB in 62 packages
 
-$ ldd on every program and library apk info -L gst-plugins-bad lists
-ok   loads: /data/oss/usr/local/lib/libgstadaptivedemux-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstadaptivedemux-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstanalytics-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstanalytics-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstbadaudio-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstbadaudio-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstbasecamerabinsrc-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstbasecamerabinsrc-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstcodecparsers-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstcodecparsers-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstcodecs-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstcodecs-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstinsertbin-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstinsertbin-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstisoff-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstisoff-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstmpegts-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstmpegts-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstmse-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstmse-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstphotography-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstphotography-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstplay-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstplay-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstplayer-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstplayer-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstsctp-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstsctp-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgsttranscoder-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgsturidownloader-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgsturidownloader-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/libgstwebrtc-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libgstwebrtc-1.0.so.0.2410.0
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstaom.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstaudiobuffersplit.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstaudiolatency.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstaudiomixmatrix.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstautoconvert.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstbayer.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstcamerabin.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstclosedcaption.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstcodecalpha.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstcodectimestamper.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstdebugutilsbad.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstfdkaac.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstfieldanalysis.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstfreeverb.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstgaudieffects.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstgeometrictransform.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstinter.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstinterlace.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstivfparse.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstivtc.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstjpegformat.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstlegacyrawparse.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstmpegpsmux.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstmpegtsdemux.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstmpegtsmux.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstmxf.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstopenh264.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstpcapparse.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstproxy.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstremovesilence.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsdpelem.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsegmentclip.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsiren.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsmooth.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstspeed.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsubenc.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstsvtav1.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgsttimecode.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstvideofiltersbad.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstvideoframe_audiolevel.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstvideoparsersbad.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstvideosignal.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstwebp.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstx265.so
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgsty4mdec.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gst_plugins_bad
+     == gst-plugins-bad ==
+       ok   openh264 elements
+       ok   videoparsersbad and MPEG-TS elements
+       ok   freeverb, y4mdec, x265enc
+     [OpenH264] this = 0x13511be480, Error:CWelsH264SVCEncoder::EncodeFrame(), cmInitParaError.
+       info encoded: 10 access unit(s), 8001 bytes
+       ok   10 H.264 access units
+       info SPS: profile_idc 66, 160x120
+       ok   codecparsers reads the SPS: 160x120
+       ok   baseline/main/high profile
+       ok   first access unit holds an IDR slice
+     [OpenH264] this = 0x13514c1660, Error:CWelsH264SVCEncoder::EncodeFrame(), cmInitParaError.
+       info decoded after TS: 10 frame(s)
+       ok   10 frames through mpegtsmux/tsdemux/openh264dec
+       ok   decoded 160x120
+       ok   freeverb: mono in, stereo out
+     PASS gst-plugins-bad
+PASS test_gst_plugins_bad
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

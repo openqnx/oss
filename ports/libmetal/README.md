@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/OpenAMP/libmetal.git (tag `v2024.10.0`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,10 +55,11 @@ git clone --depth 1 -b v2024.10.0 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/libmetal < ports/libmetal/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/libmetal < ports/libmetal/patches/0002-qnx-mutex-assert-timestamp.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX support
@@ -152,6 +153,23 @@ patch -p1 -d src/libmetal < ports/libmetal/patches/0001-qnx-from-qnx-ports.patch
 
 Touches: `lib/CMakeLists.txt`, `lib/system/qnx/CMakeLists.txt`, `lib/system/qnx/alloc.h`, `lib/system/qnx/assert.h`, `lib/system/qnx/cache.h`, `lib/system/qnx/condition.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
+**[`0002-qnx-mutex-assert-timestamp.patch`](patches/0002-qnx-mutex-assert-timestamp.patch)** — QNX: keep side effects out of metal_assert(); fix the timestamp and is_acquired.
+
+> The QNX layer wrote metal_assert(pthread_mutex_lock(mutex) == EOK) -- and
+> the same for pthread_mutex_init/destroy/unlock, pthread_cond_init and
+> mem_offset64(). metal_assert() is assert(), so in any build with NDEBUG (the
+> library's own Release build, and any consumer's) the calls themselves were
+> compiled out: metal_mutex_acquire()/release() did nothing, mutexes and
+> condition variables were never initialised. Make each call, then assert on
+> its result.
+>
+> metal_get_timestamp() computed CLOCK_MONOTONIC in nanoseconds and returned
+> 0. metal_mutex_is_acquired() probed with pthread_mutex_trylock() and kept
+> the lock when the probe succeeded; read the owner word of the mutex's
+> sync_t instead (held whenever an owner is recorded).
+
+Touches: `lib/system/qnx/condition.h`, `lib/system/qnx/mutex.h`, `lib/system/qnx/sys.h`, `lib/system/qnx/time.c` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 ```bash
@@ -175,7 +193,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/libmetal
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- libmetal builds with -Werror, and the QNX mutex stubs from the QNX patch leave parameters unused.
+- libmetal builds with -Werror, and inline functions of the QNX system layer leave parameters unused (patches/0002 keeps the calls out of metal_assert()).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libmetal`.
 
@@ -273,7 +291,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libmetal 2024.10.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/libmetal-2024.10.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libmetal 2024.10.0-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/libmetal-2024.10.0-r3.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libmetal 2024.10.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/libmetal-2024.10.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libmetal 2024.10.0-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/libmetal-2024.10.0-r3.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -285,8 +305,8 @@ This recipe builds **2024.10.0**. Every version stays available: packages in `di
 
 ```bash
 VERSION=2024.10.0; GIT=https://github.com/OpenAMP/libmetal.git; REF=v2024.10.0
-# libmetal builds with -Werror, and the QNX mutex stubs from the QNX patch
-# leave parameters unused.
+# libmetal builds with -Werror, and inline functions of the QNX system layer
+# leave parameters unused (patches/0002 keeps the calls out of metal_assert()).
 CMAKE_ARGS_EXTRA=( "-DCMAKE_C_FLAGS=-isystem $STAGE$PREFIX/include -Wno-error=unused-parameter" -DCMAKE_INSTALL_INCLUDEDIR=include -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DWITH_DOC=OFF -DWITH_EXAMPLES=OFF -DWITH_TESTS=OFF -DWITH_DEFAULT_LOGGER=ON )
 ```
 </details>

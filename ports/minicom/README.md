@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://salsa.debian.org/minicom-team/minicom.git (tag `2.9`) |
 | Build system | GNU Autotools |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`ncurses`](../ncurses/) [`libiconv`](../libiconv/) |
 | Run-time dependencies | [`libiconv`](../libiconv/) [`ncurses`](../ncurses/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,7 +59,15 @@ git clone --depth 1 -b 2.9 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/minicom < ports/minicom/patches/0001-ascii-xfr-stdin-eof.patch
+```
+
+**[`0001-ascii-xfr-stdin-eof.patch`](patches/0001-ascii-xfr-stdin-eof.patch)** — ascii-xfr: stop reading answers at end of stdin instead of spinning forever
+
+Touches: `src/ascii-xfr.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -164,7 +172,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | minicom 2.9-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/minicom-2.9-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | minicom 2.9-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/minicom-2.9-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | minicom 2.9-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/minicom-2.9-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | minicom 2.9-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/minicom-2.9-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

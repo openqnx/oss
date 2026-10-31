@@ -1,0 +1,39 @@
+# metis 5.2.1-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T18:16:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u metis qnx-test-metis qnx-port-tests
+(1/5) Installing gklib (5.1.1_git20230326-r1)
+(2/5) Installing metis (5.2.1-r2)
+(3/5) Installing qnx-port-tests (1.0-r2)
+(4/5) Installing gklib-dev (5.1.1_git20230326-r0)
+(5/5) Installing qnx-test-metis (1.0-r1)
+OK: 56 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_metis
+     == metis ==
+       info METIS 5.2.1, idx_t 32-bit
+       ok   graph built: 13 edges
+       info recursive: rc=1 edgecut=1 parts=00001111
+       ok   METIS_PartGraphRecursive returns METIS_OK
+       ok   bisection cuts exactly the one bridge edge
+       ok   each clique stays in one part
+       info k-way: rc=1 edgecut=1
+       ok   METIS_PartGraphKway finds the same 1-edge cut
+       ok   METIS_NodeND gives a permutation and its inverse
+       ok   scratch directory
+       ok   graphchk accepts the graph file
+       info gpmetis (no arguments) -> rc 0, usage printed
+       info gpmetis -nooutput -> rc 0, Edgecut 1
+       ok   gpmetis reports Edgecut: 1
+       ok   gpmetis wrote g.graph.part.2 splitting the cliques
+       ok   ndmetis writes g.graph.iperm
+     PASS metis
+PASS test_metis
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

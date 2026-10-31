@@ -1,26 +1,44 @@
-# aws-c-s3 0.12.2-r0 -- INSTALLED
+# aws-c-s3 0.12.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:39Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:07Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-c-s3
-( 1/10) Installing aws-c-common (0.12.6-r0)
-( 2/10) Installing aws-c-cal (0.9.13-r0)
-( 3/10) Installing aws-c-compression (0.3.2-r0)
-( 4/10) Installing s2n-tls (1.7.0-r0)
-( 5/10) Installing aws-c-io (0.26.1-r0)
-( 6/10) Installing aws-c-http (0.10.14-r0)
-( 7/10) Installing aws-c-sdkutils (0.2.4-r0)
-( 8/10) Installing aws-c-auth (0.10.1-r0)
-( 9/10) Installing aws-checksums (0.2.10-r0)
-(10/10) Installing aws-c-s3 (0.12.2-r0)
-OK: 169 MiB in 62 packages
+$ apk add -u aws-c-s3 qnx-test-aws-c-s3 qnx-port-tests
+( 1/12) Installing aws-c-common (0.12.6-r0)
+( 2/12) Installing aws-c-cal (0.9.13-r1)
+( 3/12) Installing aws-c-compression (0.3.2-r0)
+( 4/12) Installing s2n-tls (1.7.0-r0)
+( 5/12) Installing aws-c-io (0.26.1-r0)
+( 6/12) Installing aws-c-http (0.10.14-r0)
+( 7/12) Installing aws-c-sdkutils (0.2.4-r0)
+( 8/12) Installing aws-c-auth (0.10.1-r0)
+( 9/12) Installing aws-checksums (0.2.10-r0)
+(10/12) Installing aws-c-s3 (0.12.2-r0)
+(11/12) Installing qnx-port-tests (1.0-r2)
+(12/12) Installing qnx-test-aws-c-s3 (1.0-r0)
+OK: 96 MiB in 41 packages
 
-$ ldd on every program and library apk info -L aws-c-s3 lists
-ok   loads: /data/oss/usr/local/lib/libaws-c-s3.so.0unstable
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libaws-c-s3.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_s3
+     == aws-c-s3 ==
+       ok   S3 stand-in listening on <ip>
+       info endpoint http://<ip>:43937
+       ok   S3 client created (TLS off, SigV4 with test keys)
+       ok   GetObject meta request finished
+       info status 200 error AWS_ERROR_SUCCESS, 49 body bytes
+       ok   200 OK, no error
+       ok   object body delivered through body_callback
+       ok   server saw the request line
+       ok   request arrived SigV4-signed (Authorization: AWS4-HMAC-SHA256 ...)
+       ok   second meta request finished
+       info status 404 error AWS_ERROR_S3_INVALID_RESPONSE_STATUS
+       ok   404 reported as a failed meta request
+       ok   error response body handed to the caller
+       ok   client shut down cleanly
+     PASS aws-c-s3
+PASS test_aws_c_s3
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

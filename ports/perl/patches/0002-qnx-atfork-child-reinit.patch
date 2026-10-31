@@ -1,0 +1,59 @@
+QNX: re-initialise the atfork mutexes in the child instead of unlocking them
+
+On QNX the forked child's thread does not own the mutexes the parent's
+thread locked in Perl_atfork_lock() (the pthread_atfork prepare handler), so
+Perl_atfork_unlock() in the child failed with EPERM and MUTEX_UNLOCK panicked:
+every fork (backticks, system, open "-|") from a threaded perl died, and
+autoconf/automake hung. The child now re-initialises PL_perlio_mutex,
+PL_malloc_mutex and PL_op_mutex; the parent still unlocks them.
+No symbol or structure changes (the pid is a file-static).
+
+Upstream-Status: QNX-specific
+
+--- a/util.c
++++ b/util.c
+@@ -2833,6 +2833,14 @@
+ 
+ #endif /* !DOSISH */
+ 
++#if defined(USE_ITHREADS) && defined(__QNX__)
++/* QNX: the forked child's thread does not own the mutexes the parent's
++ * thread locked in atfork_lock(), so unlocking them there fails with EPERM
++ * (and MUTEX_UNLOCK panics). The child re-initialises them instead; it
++ * tells itself apart from the parent by the pid recorded here. */
++static Pid_t S_atfork_parent_pid = 0;
++#endif
++
+ /* this is called in parent before the fork() */
+ void
+ Perl_atfork_lock(void)
+@@ -2855,6 +2863,9 @@
+     MUTEX_LOCK(&PL_malloc_mutex);
+ #  endif
+     OP_REFCNT_LOCK;
++#  ifdef __QNX__
++    S_atfork_parent_pid = getpid();
++#  endif
+ #endif
+ }
+ 
+@@ -2872,6 +2883,19 @@
+ #endif
+ {
+ #if defined(USE_ITHREADS)
++#  ifdef __QNX__
++    if (S_atfork_parent_pid != 0 && getpid() != S_atfork_parent_pid) {
++        /* In the child: a fresh, unlocked copy of each mutex. */
++#    ifdef USE_PERLIO
++        MUTEX_INIT(&PL_perlio_mutex);
++#    endif
++#    ifdef MYMALLOC
++        MUTEX_INIT(&PL_malloc_mutex);
++#    endif
++        OP_REFCNT_INIT;
++        return;
++    }
++#  endif
+     /* locks must be released in same order as in atfork_lock() */
+ #  ifdef USE_PERLIO
+     MUTEX_UNLOCK(&PL_perlio_mutex);

@@ -528,6 +528,24 @@ install(PROGRAMS src/test_doxygen.sh DESTINATION bin/qnx-port-tests RENAME test_
 install(PROGRAMS src/test_graphicsmagick.sh DESTINATION bin/qnx-port-tests RENAME test_graphicsmagick)
 set(QNX_TESTS "${QNX_TESTS};test_ros2" CACHE INTERNAL "")
 
+# ---- run-level tests, one file per group: tests/run-level/<group>.cmake ----
+# Each holds port_test() (a C/C++ program) and port_script() (a shell test,
+# src/<name>.sh) calls. -DTEST_GROUPS="g1;g3" builds only those groups (all by
+# default). Which component each test checks: tests/run-level/<group>.tsv; what
+# a shell test needs installed: tests/run-level/<group>.extras (qnxpkg).
+function(port_script name)
+  install(PROGRAMS "src/${name}.sh" DESTINATION bin/qnx-port-tests RENAME ${name})
+endfunction()
+set(TEST_GROUPS "" CACHE STRING "run-level test groups to build (empty: all)")
+file(GLOB _groups "${CMAKE_CURRENT_SOURCE_DIR}/run-level/*.cmake")
+list(SORT _groups)
+foreach(_g ${_groups})
+  get_filename_component(_n "${_g}" NAME_WE)
+  if(NOT TEST_GROUPS OR _n IN_LIST TEST_GROUPS)
+    include("${_g}")
+  endif()
+endforeach()
+
 # A manifest the on-target runner reads, so it never guesses at binary names.
 # QNX_TESTS starts with a ";" from the first append, which would leave a blank
 # first line in the manifest.

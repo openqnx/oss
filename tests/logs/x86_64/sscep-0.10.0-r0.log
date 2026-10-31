@@ -1,15 +1,28 @@
-# sscep 0.10.0-r0 -- INSTALLED
+# sscep 0.10.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:49Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sscep
-(1/1) Installing sscep (0.10.0-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u sscep qnx-test-sscep qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing busybox (1.36.1-r0)
+(3/4) Installing sscep (0.10.0-r0)
+(4/4) Installing qnx-test-sscep (1.0-r0)
+OK: 93 MiB in 33 packages
 
-$ ldd on every program and library apk info -L sscep lists
-ok   loads: /data/oss/usr/local/bin/sscep
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sscep
+     == sscep ==
+       ok   usage: sscep version 0.10.0
+       ok   test CA made with OpenSSL 3.0.20
+       ok   sscep sent GetCACaps, then GetCACert
+       ok   fingerprint matches openssl: E9:...
+       ok   CA written as PEM: subject=CN = QNX SCEP Test CA, O = QNX Port Tests
+       ok   no server: fails cleanly (rc=95)
+     PASS sscep
+PASS test_sscep
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,23 @@
+# Build-machine paths that scripts/lib/check-hostpaths.py (scripts/check-artifacts)
+# lets through in packaged files.
+#   allow <component|*> <path glob in the package> <reason>    harmless (class D)
+#   open  <component|*> <path glob in the package> <reason>    a known defect still
+#                                                              to fix: listed, not failed
+# Keep "open" entries short-lived: fix the recipe, then delete the line.
+
+allow autoconf  usr/local/share/autoconf/*.m4f                      frozen m4 state records source file names for diagnostics; its strings are length-prefixed, so it is not rewritten
+allow gtsam     usr/local/include/gtsam/config.h                     GTSAM_SOURCE_TREE_DATASET_DIR: findExampleDataFile() tries it first and falls back to the installed datasets
+allow libevent  usr/local/lib/cmake/libevent/LibeventConfig.cmake    the "config for build tree" branch, taken only when the file is not in an installed prefix
+allow libcoap   usr/local/lib/cmake/libcoap/libcoapTargets.cmake     the tinydtls include sits in a generator expression that is false ($<BOOL:> empty)
+allow numpy     usr/local/lib/python3.14/site-packages/numpy/__config__.py   numpy.show_config(): what the build used, recorded
+allow pytorch   usr/local/opt/pytorch/include/caffe2/core/macros.h   CAFFE2 build options, recorded (torch.__config__.show())
+
+open  qt6       usr/local/bin/qmake*                                 cross-build wrapper scripts around the build machine's host Qt (hosttools/qt6-*): useless on a target
+open  qt6       usr/local/bin/qtpaths*                               cross-build wrapper scripts around the build machine's host Qt
+open  qt6       usr/local/bin/target_qt.conf                         qt.conf for the cross qmake: HostPrefix/Sysroot name the build machine
+open  qt6       usr/local/lib/cmake/Qt6/Qt6Dependencies.cmake        QT_HOST_PATH default is the build machine's host Qt
+open  qt6       usr/local/lib/cmake/Qt6/qt.toolchain.cmake           names the toolchain file of the cross build
+open  qt6       usr/local/lib/cmake/Qt6BuildInternals/QtBuildInternalsExtra.cmake   QT_SOURCE_TREE of the build
+open  gtsam     usr/local/lib/cmake/GTSAM/GTSAMConfig.cmake          GTSAM_INCLUDE_DIR cache default is the source tree
+open  onnx      usr/local/lib/cmake/ONNX/ONNXConfig.cmake            Protobuf_INCLUDE_DIR / CMAKE_PREFIX_PATH name the build machine's host protobuf
+open  vlc       usr/local/lib/*                                      contrib fontconfig/gettext compiled in <build>/vlc/<triple>/{etc/fonts,var/cache/fontconfig,share/locale}: subtitle fonts and translations are not found on a target

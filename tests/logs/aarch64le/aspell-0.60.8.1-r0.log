@@ -1,19 +1,40 @@
-# aspell 0.60.8.1-r0 -- INSTALLED
+# aspell 0.60.8.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:21:34Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:06Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aspell
-(1/1) Installing aspell (0.60.8.1-r0)
-OK: 60 MiB in 30 packages
+$ apk add -u aspell qnx-test-aspell qnx-port-tests
+(1/3) Installing aspell (0.60.8.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-aspell (1.0-r0)
+OK: 60 MiB in 31 packages
 
-$ ldd on every program and library apk info -L aspell lists
-ok   loads: /data/oss/usr/local/bin/aspell
-ok   loads: /data/oss/usr/local/bin/prezip-bin
-ok   loads: /data/oss/usr/local/bin/word-list-compress
-ok   loads: /data/oss/usr/local/lib/libaspell.so.18
-ok   loads: /data/oss/usr/local/lib/libpspell.so.18
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aspell
+     == aspell ==
+       info @(#) International Ispell Version 3.1.20 (but really Aspell 0.60.8.1)
+       ok   aspell --version: 0.60.8.1
+       ok   aspell create master: xx.rws compiled
+       ok   new_aspell_speller on the compiled dictionary
+       info speller lang: xx
+       ok   speller language is xx
+       ok   check("banana") == correct
+       ok   check("microkernel") == correct
+       ok   check("bananna") == misspelled
+       ok   check("linux") == unknown
+       info 1 suggestion(s) for bananna, first: banana
+       ok   suggest("bananna") -> "banana" first
+       ok   add_to_session("photon")
+       ok   session word now correct
+       info aspell list: bananna
+     qnz
+       ok   aspell list: exactly bananna, qnz
+       ok   aspell -a: '& cherri ... : cherry'
+       ok   aspell dump master: 7 words
+     PASS aspell
+PASS test_aspell
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

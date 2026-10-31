@@ -69,4 +69,6 @@ ld      = qnx_host_dir + '/usr/bin/ntoaarch64-ld'
 strip   = qnx_host_dir + '/usr/bin/ntoaarch64-strip'
 objcopy = qnx_host_dir + '/usr/bin/ntoaarch64-objcopy'
 ranlib  = qnx_host_dir + '/usr/bin/ntoaarch64-ranlib'
-pkg-config = 'pkg-config'
+# The wrapper: --variable answers with target paths (xkb_base, iso-codes'
+# prefix), --cflags/--libs keep the sysroot (porting-hazards 128).
+pkg-config = '@WS@/toolchain/bin/pkg-config'

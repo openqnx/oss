@@ -1,17 +1,47 @@
-# ada 3.4.4-r0 -- INSTALLED
+# ada 3.4.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:29Z   packages from: apk:local-dists
+# date: 2026-10-31T16:11:45Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u ada
-(1/1) Installing ada (3.4.4-r0)
-OK: 167 MiB in 53 packages
+$ apk add -u ada qnx-test-ada qnx-port-tests
+(1/3) Installing ada (3.4.4-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-ada (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L ada lists
-ok   loads: /data/oss/usr/local/lib/libada.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libada.so.3.4.4
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ada
+     == ada ==
+       info ada 3.4.4
+       ok   parse an absolute URL
+       info href https://user:pa%20ss@example.com/a/c?x=1&y=2#frag
+       ok   href is normalised (scheme, host, default port, dot segments)
+       ok   protocol
+       ok   hostname lower-cased
+       ok   default port dropped
+       ok   pathname
+       ok   search
+       ok   hash
+       ok   origin
+       ok   set_pathname percent-encodes
+       ok   relative URL resolved against a base
+       ok   IDNA: host converted to punycode
+       ok   IPv4 in hex shorthand normalised
+       ok   IPv6 compressed
+       ok   can_parse rejects garbage
+       ok   space in host is an error
+       ok   file URL accepted
+       ok   search params count
+       ok   search param decoded
+       ok   get_all
+       ok   sort + serialise
+       ok   C API: ada_parse
+       ok   C API: port
+       ok   C API: hostname
+     PASS ada
+PASS test_ada
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

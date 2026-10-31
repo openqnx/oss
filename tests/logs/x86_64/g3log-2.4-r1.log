@@ -1,0 +1,34 @@
+# g3log 2.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:13:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u g3log qnx-test-g3log qnx-port-tests
+(1/3) Installing g3log (2.4-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-g3log (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_g3log
+     == g3log ==
+       ok   logging initialised with two sinks
+       info log file /tmp/qnxport-g3log.g3log.20261031-161348.log
+     g3log g3FileSink shutdown at: 16:13:48 303809
+     Log file at: [/tmp/qnxport-g3log.g3log.20261031-161348.log]
+       info 103 record(s) captured
+       ok   103 records delivered (LOG_IF false suppressed)
+       ok   stream message and level
+       ok   file and line captured
+       ok   printf-style LOGF
+       ok   LOG_IF(true) logged at DEBUG
+       ok   100 messages arrive in order
+       ok   file sink wrote the messages
+       ok   suppressed message absent from the file
+     PASS g3log
+PASS test_g3log
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

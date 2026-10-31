@@ -1,19 +1,33 @@
-# ceres-solver 2.2.0-r0 -- INSTALLED
+# ceres-solver 2.2.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:59Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u ceres-solver
-(1/3) Installing gflags (2.2.2-r1)
-(2/3) Installing glog (0.7.1-r0)
-(3/3) Installing ceres-solver (2.2.0-r0)
-OK: 175 MiB in 55 packages
+$ apk add -u ceres-solver qnx-test-ceres-solver qnx-port-tests
+(1/5) Installing gflags (2.2.2-r1)
+(2/5) Installing glog (0.7.1-r0)
+(3/5) Installing ceres-solver (2.2.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-ceres-solver (1.0-r0)
+OK: 102 MiB in 34 packages
 
-$ ldd on every program and library apk info -L ceres-solver lists
-ok   loads: /data/oss/usr/local/lib/libceres.so.2.2.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libceres.so.4
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ceres_solver
+     == ceres-solver ==
+       info ceres 2.2.0
+       info m=0.300000000 c=0.100000000 after 18 iterations
+       ok   curve fit: solution usable
+       ok   curve fit recovers m = 0.3, c = 0.1
+       ok   curve fit residual ~ 0
+       info Rosenbrock -> (1.000000, 1.000000)
+       ok   Rosenbrock minimum at (1, 1) via L-BFGS
+       info robust line a=1.99999 b=-4.99963
+       ok   Cauchy loss ignores outliers: y = 2x - 5
+       ok   central-difference Jacobian matches the analytic one
+     PASS ceres-solver
+PASS test_ceres_solver
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

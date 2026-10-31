@@ -1,19 +1,38 @@
-# gdb 14.2-r0 -- INSTALLED
+# gdb 14.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:57Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:57Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gdb
-(1/5) Installing gmp (6.3.0-r0)
-(2/5) Installing mpfr (4.2.1-r0)
-(3/5) Installing readline (8.2-r0)
-(4/5) Installing xxhash (0.8.2-r0)
-(5/5) Installing gdb (14.2-r0)
-OK: 192 MiB in 57 packages
+$ apk add -u gdb qnx-test-gdb qnx-port-tests
+(1/9) Installing gmp (6.3.0-r0)
+(2/9) Installing mpfr (4.2.1-r0)
+(3/9) Installing readline (8.2-r0)
+(4/9) Installing xxhash (0.8.2-r0)
+(5/9) Installing gdb (14.2-r0)
+(6/9) Installing qnx-port-tests (1.0-r2)
+(7/9) Installing gstreamer (1.24.10-r0)
+(8/9) Installing m4 (1.4.19-r0)
+(9/9) Installing qnx-test-gdb (1.0-r0)
+OK: 125 MiB in 38 packages
 
-$ ldd on every program and library apk info -L gdb lists
-ok   loads: /data/oss/usr/local/bin/gdb
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gdb
+     == gdb ==
+       info GNU gdb (GDB) 14.2
+       ok   info functions finds define_macro (symbol table)
+       ok   info address main
+       ok   x/3i main disassembles
+       info m4 has no line-number information (stripped package)
+       ok   breakpoint set on define_macro
+       ok   run: stopped at the breakpoint
+       ok   bt: define_macro ... main
+       ok   program output after continue: forty-two
+       ok   inferior exited normally
+       ok   expression evaluator (print 6*7, print/x 255)
+     PASS gdb
+PASS test_gdb
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

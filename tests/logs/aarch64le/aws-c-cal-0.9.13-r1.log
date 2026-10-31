@@ -1,0 +1,36 @@
+# aws-c-cal 0.9.13-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:18:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-cal qnx-test-aws-c-cal qnx-port-tests
+(1/4) Installing aws-c-common (0.12.6-r0)
+(2/4) Installing aws-c-cal (0.9.13-r1)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-aws-c-cal (1.0-r0)
+OK: 55 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_cal
+     == aws-c-cal ==
+       ok   SHA-256("abc")
+       ok   SHA-1("abc")
+       ok   MD5("abc")
+       ok   streaming SHA-256
+       ok   HMAC-SHA256 (RFC 4231 #2)
+       ok   AES-256-CBC cipher created
+       ok   AES-256-CBC NIST vector
+       ok   AES-256-CBC decrypts back to the plaintext
+       ok   HKDF-SHA512 (RFC 5869 case 1 inputs, Python-computed answer)
+       ok   generate an ECDSA P-256 key pair
+       ok   ECDSA sign
+       ok   ECDSA signature verifies
+       ok   tampered digest is rejected
+       ok   P-256 public key coordinates are 32 bytes
+     PASS aws-c-cal
+PASS test_aws_c_cal
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

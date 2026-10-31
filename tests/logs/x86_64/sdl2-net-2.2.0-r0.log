@@ -1,18 +1,41 @@
-# sdl2-net 2.2.0-r0 -- INSTALLED
+# sdl2-net 2.2.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sdl2-net
-(1/2) Installing sdl2 (2.32.10-r0)
-(2/2) Installing sdl2-net (2.2.0-r0)
-OK: 167 MiB in 54 packages
+$ apk add -u sdl2-net qnx-test-sdl2-net qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing sdl2 (2.32.10-r0)
+(3/4) Installing sdl2-net (2.2.0-r0)
+(4/4) Installing qnx-test-sdl2-net (1.0-r0)
+OK: 94 MiB in 33 packages
 
-$ ldd on every program and library apk info -L sdl2-net lists
-ok   loads: /data/oss/usr/local/lib/libSDL2_net-2.0.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libSDL2_net-2.0.so.0.200.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_net
+     == sdl2-net ==
+       info SDL_net 2.2.0
+       ok   linked version matches header
+       ok   SDLNet_Init
+       ok   Write32/Read32 network byte order
+       ok   Write16/Read16
+       ok   ResolveHost <ip>
+       ok   address and port in network order
+       ok   TCP server socket listening
+       ok   TCP client connected to <ip>
+       ok   server accepted the connection
+       ok   peer address is <ip>
+       ok   client sent request
+       ok   server received it intact
+       ok   client received the reply
+       ok   client sees the server close the connection
+       ok   UDP sockets open
+       ok   UDP datagram sent
+       ok   UDP datagram received intact
+       ok   UDP source is <ip>
+     PASS sdl2-net
+PASS test_sdl2_net
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

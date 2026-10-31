@@ -1,17 +1,32 @@
-# libogg 1.3.5-r0 -- INSTALLED
+# libogg 1.3.5-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:18Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:14Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libogg
-(1/1) Installing libogg (1.3.5-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u libogg qnx-test-libogg qnx-port-tests
+(1/3) Installing libogg (1.3.5-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libogg (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L libogg lists
-ok   loads: /data/oss/usr/local/lib/libogg.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libogg.so.0.8.5
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libogg
+     == libogg ==
+       ok   packed 44 bits into 6 bytes
+       ok   LSb-first bit order (first bytes a5 91)
+       ok   bit reader returns the values
+       ok   MSb-first packer
+       info 50 packets -> 5 pages, 17605 bytes
+       ok   pages written, capture pattern OggS
+       ok   all packets re-read intact through the sync layer
+       ok   BOS/EOS flags and final granule position
+       info after corruption: 4 good page(s), 1 hole(s)
+       ok   corrupted page detected (CRC mismatch -> hole)
+       ok   all other pages still verified
+     PASS libogg
+PASS test_libogg
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

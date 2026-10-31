@@ -1,17 +1,41 @@
-# s2n-tls 1.7.0-r0 -- INSTALLED
+# s2n-tls 1.7.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:27Z   packages from: apk:local-dists
+# date: 2026-10-31T17:50:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u s2n-tls
-(1/1) Installing s2n-tls (1.7.0-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u s2n-tls qnx-test-s2n-tls qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing s2n-tls (1.7.0-r0)
+(3/3) Installing qnx-test-s2n-tls (1.0-r0)
+OK: 56 MiB in 31 packages
 
-$ ldd on every program and library apk info -L s2n-tls lists
-ok   loads: /data/oss/usr/local/lib/libs2n.so.1
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libs2n.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s2n_tls
+     == s2n-tls ==
+       ok   s2n_init
+       info libcrypto version 0x30500010
+       ok   certificate chain and ECDSA key loaded from PEM
+       ok   server policy default_tls13
+       ok   server certificate installed
+       ok   client trusts the self-signed certificate
+       ok   listen on <ip>
+       ok   TCP connect
+       ok   TLS handshake completes, peer certificate verified
+       info protocol 34, cipher TLS_AES_128_GCM_SHA256
+       ok   negotiated TLS 1.3
+       ok   an AEAD cipher suite
+       ok   client s2n_send
+       info client received "ACK:telemetry frame 42"
+       ok   server echo received over TLS
+       info untrusted negotiate (expected): Certificate is untrusted [Error encountered in /home/qnx/oss/src/s2n-tls/tls/s2n_x509_validator.c:543]
+       ok   untrusted certificate is rejected
+       info error type 5
+       ok   server decrypted the client's data
+       ok   s2n_cleanup
+     PASS s2n-tls
+PASS test_s2n_tls
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

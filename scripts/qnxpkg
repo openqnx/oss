@@ -23,11 +23,16 @@ component whose manifest provides it. Libraries the QNX SDP target image
 already carries are not dependencies. A recipe's RUNTIME_DEPS="..." adds the
 ones no binary shows (data such as CA certificates, programs run by name).
 
-Files installed into staging can carry the absolute staging path of the build
-host (a .pc file, a CMake package file). Those are rewritten to the on-target
-path, since the package is installed at / on the board.
+Files installed into staging can carry paths of the build machine (a .pc
+file, a CMake package file, a *-config script, a #! line, Python's sysconfig
+data). stage/ keeps them -- later cross builds read those files there -- and
+the packages get the target's paths: scripts/lib/hostpaths.py, sanitize().
+A file that exists for cross builds only (a .pc naming a hosttools/ program)
+is left out of the package.
 """
 import argparse, base64, glob, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, tempfile, time
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
+import hostpaths
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREFIX = os.environ.get("PREFIX", "/usr/local")
@@ -41,7 +46,10 @@ DEV_PATTERNS = [
     re.compile(r"^usr/local/lib/pkgconfig/"),
     re.compile(r"^usr/local/share/pkgconfig/"),
     re.compile(r"^usr/local/lib/cmake/"),
-    re.compile(r"^usr/local/share/cmake[^/]*/"),
+    # share/cmake/ and share/cmake<name>/ hold packages' CMake config files;
+    # share/cmake-<version>/ is CMake's own data (Modules/, Templates/), which
+    # the cmake program needs at run time.
+    re.compile(r"^usr/local/share/cmake(?!-\d)[^/]*/"),
     re.compile(r"^usr/local/lib/[^/]+/cmake/"),
     re.compile(r"^usr/local/share/aclocal/"),
     re.compile(r"^usr/local/share/(man|doc|info|gtk-doc|devhelp)/"),
@@ -167,7 +175,57 @@ def rewrite_bytes(data, stage):
     return data.replace(stage.encode(), b"")
 
 
-def tar_members(root, rels, stage, apk):
+def legacy_bytes(data, stage):
+    """What packages held before hostpaths.sanitize(): this workspace's
+    staging path removed from text files (a NUL-free first 8 KiB)."""
+    if data[:4] != b"\x7fELF" and b"\0" not in data[:8192]:
+        return rewrite_bytes(data, stage)
+    return data
+
+
+class Sanitizer:
+    """The packaged bytes of one component's files, build-machine paths
+    replaced by the target's (hostpaths.sanitize), cached per file."""
+
+    def __init__(self, stage, comp=None, arch=None, version="0"):
+        self.stage, self.comp, self.arch, self.version = stage, comp, arch, version
+        self.cache = {}
+        self.notes = {}
+
+    def content(self, full, rel):
+        hit = self.cache.get(full)
+        if hit is not None:
+            return hit
+        data = open(full, "rb").read()
+        n, notes = hostpaths.sanitize(rel, data, self.comp, self.arch, self.version)
+        n = legacy_bytes(n, self.stage)          # what the old rewrite still catches
+        if notes:
+            self.notes[rel] = notes
+        elif hostpaths.re_any.search(n) and hostpaths.skip_reason(rel, n):
+            self.notes[rel] = ["kept: " + hostpaths.skip_reason(rel, n)]
+        if len(data) < (32 << 20):
+            self.cache[full] = n
+        return n
+
+    def fp_body(self, full, rel):
+        """Fingerprint of one file: the raw file's hash while the package holds
+        what it always did, so unchanged packages keep their release."""
+        raw = open(full, "rb").read()
+        n = self.content(full, rel)
+        if n == legacy_bytes(raw, self.stage):
+            return hashlib.sha256(raw).hexdigest()
+        return "s:" + hashlib.sha256(n).hexdigest()
+
+    def summary(self):
+        c = {}
+        for notes in self.notes.values():
+            for x in notes:
+                k = x.split(":")[0] if not x.startswith("kept") else x
+                c[k] = c.get(k, 0) + 1
+        return c
+
+
+def tar_members(root, rels, san, apk):
     """Yield (TarInfo, bytes-or-None) for the selected files, host paths fixed."""
     for rel in rels:
         full = os.path.join(root, rel)
@@ -186,9 +244,7 @@ def tar_members(root, rels, stage, apk):
             if apk:
                 ti.pax_headers = {"APK-TOOLS.checksum.SHA1": hashlib.sha1(ti.linkname.encode()).hexdigest()}
         else:
-            data = open(full, "rb").read()
-            if data[:4] != b"\x7fELF" and b"\0" not in data[:8192]:
-                data = rewrite_bytes(data, stage)
+            data = san.content(full, rel)
             ti.size = len(data)
             if apk:
                 ti.pax_headers = {"APK-TOOLS.checksum.SHA1": hashlib.sha1(data).hexdigest()}
@@ -227,8 +283,8 @@ def sign(blob, key):
     return gz(write_tar([(ti, sig)], tarfile.USTAR_FORMAT, cut=True))
 
 
-def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, stage, key, outdir):
-    data = gz(write_tar(tar_members(root, rels, stage, apk=True), tarfile.PAX_FORMAT))
+def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, san, key, outdir):
+    data = gz(write_tar(tar_members(root, rels, san, apk=True), tarfile.PAX_FORMAT))
     size = sum(os.lstat(os.path.join(root, r)).st_size for r in rels
                if not os.path.isdir(os.path.join(root, r)))
     info = [
@@ -273,8 +329,8 @@ def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, stage, key, o
     return entry
 
 
-def make_tgz(name, root, rels, stage, outdir):
-    raw = write_tar(tar_members(root, rels, stage, apk=False), tarfile.GNU_FORMAT)
+def make_tgz(name, root, rels, san, outdir):
+    raw = write_tar(tar_members(root, rels, san, apk=False), tarfile.GNU_FORMAT)
     data = gz(raw)
     path = os.path.join(outdir, name + ".tar.gz")
     open(path, "wb").write(data)
@@ -290,8 +346,17 @@ def package(comp, arch, args, owner, outdir, existing=None):
     meta = recipe_meta(comp)
     meta["origin"] = comp
     ver = apk_version(meta["version"]) + "-r%d" % args.release
+    san = Sanitizer(stage, comp, arch, meta["version"])
     rels = collect(root)
     files = [r for r in rels if not os.path.isdir(os.path.join(root, r))]
+    # Files for the build machine's cross builds only (hostpaths.omit_reason)
+    for r in list(files):
+        full = os.path.join(root, r)
+        if os.path.isfile(full) and not os.path.islink(full) and r.endswith(".pc"):
+            why = hostpaths.omit_reason(r, open(full, "rb").read())
+            if why:
+                print("   %s: not packaged: %s -- %s" % (comp, r, why))
+                files.remove(r)
     # An unversioned lib*.so that is a *file* is the library itself, not the
     # -dev symlink to it: a Rust cdylib (libzenohc.so) or a library built
     # without an soname. It belongs in the runtime package.
@@ -341,7 +406,7 @@ def package(comp, arch, args, owner, outdir, existing=None):
         if not sel:
             continue
         rels_sel = with_dirs(sel)
-        fp = fingerprint(root, rels_sel)
+        fp = fingerprint(root, rels_sel, san=san)
         base = ver.rpartition("-r")[0]
         ver = "%s-r%d" % (base, choose_release(existing, pname, base, fp, args.release,
                                                fingerprint(root, rels_sel, v=1)))
@@ -354,25 +419,35 @@ def package(comp, arch, args, owner, outdir, existing=None):
             if os.path.exists(old_tgz):
                 tmpdir = tempfile.mkdtemp(dir=outdir)
                 try:
-                    new_tgz = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, tmpdir)[0]
+                    new_tgz = make_tgz("%s-%s" % (pname, ver), root, rels_sel, san, tmpdir)[0]
                     if archive_digest(old_tgz) != archive_digest(os.path.join(tmpdir, new_tgz)):
                         ver = "%s-r%d" % (base, int(ver.rpartition("-r")[2]) + 1)
                         print("   %s: contents differ from the published %s -> %s" % (pname, os.path.basename(old_tgz), ver))
                 finally:
                     shutil.rmtree(tmpdir, ignore_errors=True)
         same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels_sel, v=1))
+        if same and same[1].split("|")[2] != ",".join(pdeps):
+            # Same files, other dependencies (a RUNTIME_DEPS change): the
+            # published entry would keep the old ones, so a new release.
+            ver = "%s-r%d" % (base, int(ver.rpartition("-r")[2]) + 1)
+            print("   %s: dependencies changed -> %s" % (pname, ver))
+            same = None
         if same:
             entries.append(same[0]); lines.append(same[1])
             continue
-        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, outdir)
+        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, san, outdir)
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
         lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
         pm = dict(meta); pm["conflicts_pkg"] = conf
         entries.append(make_apk(pname, ver, arch, pm, root, rels_sel, pdeps,
-                                provides if pname == comp else [], stage, args.key, outdir))
+                                provides if pname == comp else [], san, args.key, outdir))
         entries[-1]["fp"] = fp
     print("== %s [%s] %s: %d runtime + %d dev files, depends: %s"
           % (comp, arch, ver, len(run), len(dev), " ".join(deps) or "-"))
+    s = san.summary()
+    if s:
+        print("   %s: build-machine paths rewritten: %s"
+              % (comp, ", ".join("%s %d" % (k, v) for k, v in sorted(s.items()))))
     return list(zip(entries, lines))
 
 
@@ -430,8 +505,18 @@ def package_tests(arch, args, owner, outdir):
     for comp in os.listdir(mdir):
         files_of[comp] = open(os.path.join(mdir, comp)).read().split("\n")
     def owners_of(path):
+        # The packages that hold the path: <comp>, or <comp>-dev when the
+        # matching files are development files (or the component ships only
+        # a -dev package, like rust or a header-only library).
         pre = "usr/local/" + path
-        return {c for c, fs in files_of.items() if any(f == pre or f.startswith(pre + "/") for f in fs)}
+        out = set()
+        for c, fs in files_of.items():
+            hit = [f for f in fs if f == pre or f.startswith(pre + "/")]
+            if not hit:
+                continue
+            runtime = [f for f in fs if f and not is_dev(f)]
+            out.add(c if runtime and not all(is_dev(f) for f in hit) else c + "-dev")
+        return out
     # tests/run-level/<group>.extras: "test_x<TAB>path path ..." -- what a
     # run-level test needs installed beyond what its binary links.
     run_level_extras = {}
@@ -441,6 +526,7 @@ def package_tests(arch, args, owner, outdir):
                 k, _, v = l.rstrip("\n").partition("\t")
                 run_level_extras.setdefault(k.strip(), []).extend(v.split())
     tool = readelf(arch)
+    san = Sanitizer(stage, None, arch)
     out = []
     db = os.path.join(outdir, ".index.json")
     existing = json.load(open(db)) if os.path.exists(db) else {}
@@ -451,17 +537,22 @@ def package_tests(arch, args, owner, outdir):
                 allr.add(r)
                 r = os.path.dirname(r)
         rels = sorted(allr)
-        fp = fingerprint(root, rels)
+        fp = fingerprint(root, rels, san=san)
         ver = "%s-r%d" % (TESTS_VERSION, choose_release(existing, pname, TESTS_VERSION, fp, args.release,
                                                         fingerprint(root, rels, v=1)))
         same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels, v=1))
+        if same and same[1].split("|")[2] != ",".join(deps):
+            # same files, other dependencies: a new release (as for components)
+            ver = "%s-r%d" % (TESTS_VERSION, int(ver.rpartition("-r")[2]) + 1)
+            print("   %s: dependencies changed -> %s" % (pname, ver))
+            same = None
         if same:
             out.append(same); return
         meta = {"version": TESTS_VERSION, "url": "https://github.com/openqnx/oss/tree/main/tests",
                 "desc": desc, "license": "see tests/", "origin": "qnx-port-tests", "conflicts": []}
-        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels, stage, outdir)
+        tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels, san, outdir)
         line = "|".join([pname, ver, ",".join(deps), tgz, sha, str(size), desc, ""])
-        e = make_apk(pname, ver, arch, meta, root, rels, deps, [], stage, args.key, outdir)
+        e = make_apk(pname, ver, arch, meta, root, rels, deps, [], san, args.key, outdir)
         e["fp"] = fp
         out.append((e, line))
     for n in sorted(os.listdir(os.path.join(stage, tdir))):
@@ -527,11 +618,13 @@ def write_indexes(outdir, key):
     open(os.path.join(outdir, "APKINDEX.tar.gz"), "wb").write(sign(body, key) + body)
 
 
-def fingerprint(root, rels, v=2):
+def fingerprint(root, rels, v=2, san=None):
     """What a package holds: path, type and link target of every member, and
     the contents of each file -- hashed when under 32 MB, size and mtime for
     bigger ones. Equal fingerprints -> the same package. v=1 is the first
-    form (size and mtime only), still recognised in existing indexes."""
+    form (size and mtime only), still recognised in existing indexes. With a
+    Sanitizer, a file whose packaged bytes now differ from what the old
+    rewrite produced counts with its new contents (Sanitizer.fp_body)."""
     h = hashlib.sha256()
     for r in rels:
         full = os.path.join(root, r)
@@ -540,7 +633,7 @@ def fingerprint(root, rels, v=2):
         if stat.S_ISDIR(st.st_mode):
             body = "0\0" + "0"
         elif v == 2 and stat.S_ISREG(st.st_mode) and st.st_size < (32 << 20):
-            body = hashlib.sha256(open(full, "rb").read()).hexdigest()
+            body = san.fp_body(full, r) if san else hashlib.sha256(open(full, "rb").read()).hexdigest()
         else:
             body = "%d\0%d" % (st.st_size, int(st.st_mtime))
         h.update(("%s\0%o\0%s\0%s\n" % (r, st.st_mode, body, tgt)).encode())

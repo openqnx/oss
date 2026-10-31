@@ -1,14 +1,63 @@
-# libxrender 0.9.11-r0 -- INSTALLED
+# libxrender 0.9.11-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:50Z   packages from: apk:local-dists
+# date: 2026-10-31T16:17:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxrender
-OK: 166 MiB in 52 packages
+$ apk add -u libxrender qnx-test-libxrender qnx-port-tests
+( 1/28) Installing libxau (1.0.11-r0)
+( 2/28) Installing libxdmcp (1.1.5-r0)
+( 3/28) Installing libxcb (1.17.0-r0)
+( 4/28) Installing libx11 (1.8.10-r0)
+( 5/28) Installing libxrender (0.9.11-r0)
+( 6/28) Installing qnx-port-tests (1.0-r2)
+( 7/28) Installing libxext (1.3.6-r0)
+( 8/28) Installing cairo (1.18.2-r0)
+( 9/28) Installing font-dejavu (2.37-r0)
+(10/28) Installing libsfdo (0.1.4-r0)
+(11/28) Installing libxml2 (2.13.5-r1)
+(12/28) Installing libxkbcommon (1.8.1-r1)
+(13/28) Installing fribidi (1.0.16-r0)
+(14/28) Installing harfbuzz (<ip>-r0)
+(15/28) Installing libxft (2.3.8-r0)
+(16/28) Installing pango (1.54.0-r0)
+(17/28) Installing lcms2 (2.16-r0)
+(18/28) Installing wlroots (0.20.2-r0)
+(19/28) Installing xkeyboard-config (2.43-r0)
+(20/28) Installing labwc (0.20.2-r1)
+(21/28) Installing libmd (1.1.0-r0)
+(22/28) Installing libxcvt (0.1.3-r0)
+(23/28) Installing fontenc (1.1.8-r2)
+(24/28) Installing libxfont2 (2.0.7-r0)
+(25/28) Installing libxkbfile (1.2.0-r0)
+(26/28) Installing xkbcomp (1.5.0-r1)
+(27/28) Installing xwayland (24.1.14-r1)
+(28/28) Installing qnx-test-libxrender (1.0-r0)
+OK: 128 MiB in 57 packages
 
-$ ldd on every program and library apk info -L libxrender lists
-ok   loads: /data/oss/usr/local/lib/libXrender.so.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxrender
+     == libxrender ==
+       ok   labwc up (headless Wayland compositor)
+       ok   Xwayland up (X display on labwc)
+       ok   XOpenDisplay
+       ok   RENDER extension present
+       ok   RENDER version >= 0.10
+       info RENDER 0.11
+       ok   ARGB32 format: depth 32, a@24 r@16
+       ok   RGB24 format: no alpha
+       ok   A8 format
+       ok   XRenderParseColor rgba:ff/80/00/ff (opaque)
+       info rgba:ff/80/00/40 -> r 4040 g 2040 b 0000 a 4040
+       ok   XRenderParseColor rgba:ff/80/00/40 (premultiplied)
+       info filled pixel 0000ff
+       ok   XRenderFillRectangle: solid blue read back
+       info composited pixel 80007f (want ~80007f), outside 0000ff
+       ok   Over: 50% red on blue -> (128,0,127)
+       ok   outside the composite rectangle unchanged
+     PASS libxrender
+PASS test_libxrender
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

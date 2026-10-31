@@ -1,0 +1,48 @@
+# automake 1.18-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:18:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u automake qnx-test-automake qnx-port-tests
+(1/9) Installing m4 (1.4.19-r0)
+(2/9) Installing libxcrypt (4.4.38-r0)
+(3/9) Installing perl (5.40.2-r2)
+(4/9) Installing autoconf (2.72-r1)
+(5/9) Installing automake (1.18-r2)
+(6/9) Installing qnx-port-tests (1.0-r2)
+(7/9) Installing grep (3.11-r1)
+(8/9) Installing make (4.4.1-r0)
+(9/9) Installing qnx-test-automake (1.0-r0)
+OK: 123 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_automake
+     == automake ==
+       ok   perl: runs
+       ok   perl: backticks (fork + exec + pipe)
+       ok   perl: system()
+       ok   perl: fork + waitpid
+       ok   perl: open -| (pipe from a child)
+       ok   perl: flock LOCK_EX
+       ok   perl: %ENV to a child
+       ok   perl: signal names (%SIG)
+       ok   perl: %! errno names
+       ok   perl: POSIX setlocale
+       ok   perl: File::Temp
+       info automake (GNU automake) 1.18
+       ok   aclocal: aclocal.m4
+       ok   automake --add-missing: Makefile.in, install-sh, test-driver
+       ok   Makefile.in has install-binSCRIPTS and check-TESTS
+       ok   autoconf: configure
+       ok   configure: Makefile generated
+       ok   make: qnxhello generated
+       ok   make check: 1 test passed (parallel harness)
+       ok   make install DESTDIR=: script and data installed
+       ok   installed script prints the greeting
+     PASS automake
+PASS test_automake
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

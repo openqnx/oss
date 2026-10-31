@@ -1,22 +1,33 @@
-# vim 9.1.0900-r0 -- INSTALLED
+# vim 9.1.0900-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:18Z   packages from: apk:local-dists
+# date: 2026-10-31T16:35:57Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u vim
-(1/2) Installing libsodium (1.0.20-r0)
-(2/2) Installing vim (9.1.0900-r0)
-OK: 198 MiB in 54 packages
+$ apk add -u vim qnx-test-vim qnx-port-tests
+(1/9) Installing qnx-port-tests (1.0-r2)
+(2/9) Installing c-ares (1.34.3-r0)
+(3/9) Installing nghttp2 (1.64.0-r0)
+(4/9) Installing curl (8.11.1-r1)
+(5/9) Installing libuv (1.51.0-r0)
+(6/9) Installing cmake (4.1.1-r1)
+(7/9) Installing libsodium (1.0.20-r0)
+(8/9) Installing vim (9.1.0900-r0)
+(9/9) Installing qnx-test-vim (1.0-r0)
+OK: 186 MiB in 38 packages
 
-$ ldd on every program and library apk info -L vim lists
-ok   loads: /data/oss/usr/local/bin/ex
-ok   loads: /data/oss/usr/local/bin/rview
-ok   loads: /data/oss/usr/local/bin/rvim
-ok   loads: /data/oss/usr/local/bin/view
-ok   loads: /data/oss/usr/local/bin/vim
-ok   loads: /data/oss/usr/local/bin/vimdiff
-ok   loads: /data/oss/usr/local/bin/xxd
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vim
+     == vim ==
+       info VIM - Vi IMproved 9.1 (2024 Jan 02, compiled Oct 28 2026 05:08:06)
+       ok   vim -es: substitute, :g delete, append, sort, write
+       ok   Vim script: map/range, recursion, dict, printf, writefile
+       ok   xxd -p: 514e5801ff
+       ok   xxd -r -p restores the bytes
+       ok   xxd dump line
+     PASS vim
+PASS test_vim
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

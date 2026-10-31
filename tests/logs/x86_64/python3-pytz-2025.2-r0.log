@@ -1,15 +1,40 @@
-# python3-pytz 2025.2-r0 -- INSTALLED
+# python3-pytz 2025.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:39:19Z   packages from: apk:local-dists
+# date: 2026-10-31T16:32:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-pytz
-(1/1) Installing python3-pytz (2025.2-r0)
-OK: 167 MiB in 53 packages
+$ apk add -u python3-pytz qnx-test-python3-pytz qnx-port-tests
+(1/7) Installing python3-pytz (2025.2-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing sqlite (3.47.2-r0)
+(6/7) Installing python3 (3.14.0-r2)
+(7/7) Installing qnx-test-python3-pytz (1.0-r0)
+OK: 199 MiB in 36 packages
 
-$ ldd on every program and library apk info -L python3-pytz lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pytz
+     == python3-pytz ==
+       info pytz 2025.2 (Olson 2025b)
+       ok   New York in July: EDT -04:00
+       ok   New York in January: EST -05:00
+       ok   12:00 EDT = 16:00 UTC
+       ok   -> London 17:00 BST
+       ok   UTC midnight = 05:30 in Kolkata
+       ok   Lord Howe: +11:00 summer, +10:30 winter (half-hour DST)
+       ok   normalize across spring forward: 01:30 EST + 1h = 03:30 EDT
+       ok   02:30 on 2024-03-10 does not exist (NonExistentTimeError)
+       ok   01:30 on 2024-11-03 is ambiguous (AmbiguousTimeError)
+       ok   the two 01:30s are an hour apart
+       ok   597 zones, 433 common
+       ok   country_timezones, country_names
+       ok   unknown zone rejected
+       ok   FixedOffset(+330 min)
+     PASS python3-pytz
+PASS test_python3_pytz
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

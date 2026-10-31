@@ -1,0 +1,26 @@
+xfconf_init(): report a failed D-Bus proxy instead of returning TRUE
+
+xfconf_init() created its proxy with a NULL GError and returned TRUE even
+when that failed (the daemon could not be activated, say). Every later
+property read then ran on a NULL proxy: GLib CRITICALs about NULL errors and
+proxies, and no word of the real cause. Pass the error on and fail.
+
+Upstream-Status: QNX-specific (bug is generic)
+
+--- a/xfconf/xfconf.c
++++ b/xfconf/xfconf.c
+@@ -132,7 +132,13 @@
+                                    XFCONF_SERVICE_PATH_PREFIX "/Xfconf",
+                                    XFCONF_SERVICE_NAME_PREFIX ".Xfconf",
+                                    NULL,
+-                                   NULL);
++                                   error);
++    if (!gproxy) {
++        /* Without the proxy every later call fails with a NULL GError
++         * (GLib CRITICALs, no message): report why it could not be made. */
++        g_clear_object(&gdbus);
++        return FALSE;
++    }
+ 
+     ++xfconf_refcnt;
+     return TRUE;

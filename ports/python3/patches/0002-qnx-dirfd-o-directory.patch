@@ -1,0 +1,51 @@
+QNX: open directory fds for scandir/*at with O_DIRECTORY (shutil.rmtree, os.fwalk)
+
+On QNX, *at() calls and fdopendir() on a directory fd that was opened
+without O_DIRECTORY fail with ENOTDIR (porting hazards 25, 103). The
+fd-based shutil.rmtree() opened each directory O_RDONLY | O_NONBLOCK and
+then scandir()ed and unlinkat()ed under it, so every rmtree() of a tree
+failed -- tempfile.TemporaryDirectory cleanup and setuptools' bdist_wheel
+("[Errno 20] Not a directory: '...egg-info'") with it. os.fwalk() opened
+its directories the same way. Add O_DIRECTORY to those opens on QNX
+(os.fwalk keeps returning nothing for a non-directory top, as before).
+glob already opens with O_DIRECTORY.
+
+Upstream-Status: QNX-specific
+
+--- a/Lib/os.py
++++ b/Lib/os.py
+@@ -510,7 +510,11 @@
+                     orig_st = stat(topname, follow_symlinks=False, dir_fd=dirfd)
+                 else:
+                     orig_st = entry.stat(follow_symlinks=False)
+-            topfd = open(topname, O_RDONLY | O_NONBLOCK, dir_fd=dirfd)
++            if not follow_symlinks and isroot and not st.S_ISDIR(orig_st.st_mode):
++                return      # a non-directory top yields nothing (before O_DIRECTORY refuses it)
++            # QNX: scandir() and the *at() functions need an O_DIRECTORY fd.
++            topfd = open(topname, O_RDONLY | O_NONBLOCK | (O_DIRECTORY if sys.platform.startswith("qnx") else 0),
++                         dir_fd=dirfd)
+         except OSError as err:
+             if isroot:
+                 raise
+--- a/Lib/shutil.py
++++ b/Lib/shutil.py
+@@ -762,7 +762,7 @@
+             orig_st = orig_entry.stat(follow_symlinks=False)
+ 
+         func = os.open  # For error reporting.
+-        topfd = os.open(name, os.O_RDONLY | os.O_NONBLOCK, dir_fd=dirfd)
++        topfd = os.open(name, os.O_RDONLY | os.O_NONBLOCK | _O_DIRFD, dir_fd=dirfd)
+ 
+         func = os.path.islink  # For error reporting.
+         try:
+@@ -801,6 +801,10 @@
+         err.filename = path
+         onexc(func, path, err)
+ 
++# QNX: a directory fd used with scandir() and the *at() functions must be
++# opened with O_DIRECTORY; without it they fail with ENOTDIR.
++_O_DIRFD = os.O_DIRECTORY if sys.platform.startswith("qnx") else 0
++
+ _use_fd_functions = ({os.open, os.stat, os.unlink, os.rmdir} <=
+                      os.supports_dir_fd and
+                      os.scandir in os.supports_fd and

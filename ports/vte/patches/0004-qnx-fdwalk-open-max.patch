@@ -1,0 +1,17 @@
+QNX: take the fd limit from sysconf(_SC_OPEN_MAX) so fdwalk() works and children spawn
+
+Upstream-Status: QNX-specific
+
+--- a/src/missing.cc
++++ b/src/missing.cc
+@@ -125,7 +125,9 @@
+ 
+ #endif /* HAVE_SYS_RESOURCE_H */
+ 
+-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
++/* QNX: neither Linux nor glibc, so without this the limit was "unknown",
++ * fdwalk() refused with ENFILE and every child spawn failed. */
++#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__) || defined(__QNX__)
+         /* Use sysconf() function provided by the system if it is known to be
+          * async-signal safe.
+          */

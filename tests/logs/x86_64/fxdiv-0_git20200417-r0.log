@@ -1,15 +1,27 @@
-# fxdiv 0_git20200417-r0 -- INSTALLED
+# fxdiv 0_git20200417-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:53Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:51Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u fxdiv-dev
-(1/1) Installing fxdiv-dev (0_git20200417-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u fxdiv-dev qnx-test-fxdiv qnx-port-tests
+(1/3) Installing fxdiv-dev (0_git20200417-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-fxdiv (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L fxdiv-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fxdiv
+     == fxdiv ==
+       ok   100 / 7 = 14 r 2
+       ok   UINT32_MAX / 7
+       ok   round 100 down to a multiple of 7 = 98
+       ok   uint32: 402800 divisions match the hardware divide
+       ok   uint64: 402800 divisions match
+       ok   size_t: 402800 divisions match
+     PASS fxdiv
+PASS test_fxdiv
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

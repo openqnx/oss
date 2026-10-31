@@ -72,7 +72,7 @@ do_build() { cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
   CFLAGS="-O2 -fPIC -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -fvisibility=hidden -std=gnu99 -DPNG_ARM_NEON_OPT=0" \
   CXXFLAGS="-O2 -fPIC -std=gnu++14 -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -fexceptions -fvisibility=hidden -Wno-ctor-dtor-privacy" \
-  make -f Makefile.gnu -j"$(nproc)" LIBRARIES="-lm"; }
+  make -f Makefile.gnu -j"$(nproc)" LIBRARIES="-lm -lc++"; }
 ```
 
 ```bash
@@ -83,7 +83,7 @@ do_install() { install -d "$STAGE$PREFIX/lib" "$STAGE$PREFIX/include" && install
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- Makefile.gnu appends its include paths with "CFLAGS += $(INCLUDE)", which a command-line CFLAGS would override; pass the flags through the environment. PNG_ARM_NEON_OPT=0: the bundled libpng turns its NEON row filters on for aarch64, but FreeImage's Makefile.gnu does not compile them (arm/*.c), so libfreeimage.so had png_init_filter_functions_neon undefined.
+- Makefile.gnu appends its include paths with "CFLAGS += $(INCLUDE)", which a command-line CFLAGS would override; pass the flags through the environment. PNG_ARM_NEON_OPT=0: the bundled libpng turns its NEON row filters on for aarch64, but FreeImage's Makefile.gnu does not compile them (arm/*.c), so libfreeimage.so had png_init_filter_functions_neon undefined. LIBRARIES: Makefile.gnu links the shared library with $(CC) and upstream's "-lstdc++"; QNX's C++ runtime is libc++, and without naming it the library recorded no NEEDED for it, so a C program linking libfreeimage.so failed on undefined C++ runtime symbols.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH freeimage`.
 
@@ -166,7 +166,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | freeimage 3.18.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/freeimage-3.18.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | freeimage 3.18.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/freeimage-3.18.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | freeimage 3.18.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/freeimage-3.18.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | freeimage 3.18.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/freeimage-3.18.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -187,11 +189,15 @@ do_fetch() { mkdir -p "$SRCROOT" "$WS/dist" && local z="$WS/dist/FreeImage3180.z
 # PNG_ARM_NEON_OPT=0: the bundled libpng turns its NEON row filters on for
 # aarch64, but FreeImage's Makefile.gnu does not compile them (arm/*.c), so
 # libfreeimage.so had png_init_filter_functions_neon undefined.
+# LIBRARIES: Makefile.gnu links the shared library with $(CC) and upstream's
+# "-lstdc++"; QNX's C++ runtime is libc++, and without naming it the library
+# recorded no NEEDED for it, so a C program linking libfreeimage.so failed on
+# undefined C++ runtime symbols.
 do_build() { cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
   CFLAGS="-O2 -fPIC -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -fvisibility=hidden -std=gnu99 -DPNG_ARM_NEON_OPT=0" \
   CXXFLAGS="-O2 -fPIC -std=gnu++14 -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -fexceptions -fvisibility=hidden -Wno-ctor-dtor-privacy" \
-  make -f Makefile.gnu -j"$(nproc)" LIBRARIES="-lm"; }
+  make -f Makefile.gnu -j"$(nproc)" LIBRARIES="-lm -lc++"; }
 do_install() { install -d "$STAGE$PREFIX/lib" "$STAGE$PREFIX/include" && install -m644 "$B/Source/FreeImage.h" "$STAGE$PREFIX/include/" && \
   install -m755 "$B"/libfreeimage-3.18.0.so "$STAGE$PREFIX/lib/" && ln -sfn libfreeimage-3.18.0.so "$STAGE$PREFIX/lib/libfreeimage.so.3" && \
   ln -sfn libfreeimage.so.3 "$STAGE$PREFIX/lib/libfreeimage.so"; }

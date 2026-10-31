@@ -9,7 +9,7 @@
 | Upstream | https://archive.xfce.org/src/xfce/xfconf/4.20/xfconf-4.20.0.tar.bz2 |
 | SHA-256 | `8bc43c60f1716b13cf35fc899e2a36ea9c6cdc3478a8f051220eef0f53567efd` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`glib`](../glib/) [`libxfce4util`](../libxfce4util/) [`dbus`](../dbus/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`glib`](../glib/) [`libxfce4util`](../libxfce4util/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -68,10 +68,11 @@ tar xf dist/$(basename $URL) -C src/xfconf --strip-components=1
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/xfconf < ports/xfconf/patches/0001-qnx-sa-restart.patch
+patch -p1 -d src/xfconf < ports/xfconf/patches/0002-init-report-proxy-failure.patch
 ```
 
 **[`0001-qnx-sa-restart.patch`](patches/0001-qnx-sa-restart.patch)** — Define SA_RESTART as 0 on QNX, where <signal.h> leaves it commented out.
@@ -82,6 +83,15 @@ patch -p1 -d src/xfconf < ports/xfconf/patches/0001-qnx-sa-restart.patch
 > already retry on EINTR, so 0 is a true no-op rather than a behaviour change.
 
 Touches: `xfconfd/main.c` · Upstream status: QNX-specific
+
+**[`0002-init-report-proxy-failure.patch`](patches/0002-init-report-proxy-failure.patch)** — xfconf_init(): report a failed D-Bus proxy instead of returning TRUE
+
+> xfconf_init() created its proxy with a NULL GError and returned TRUE even
+> when that failed (the daemon could not be activated, say). Every later
+> property read then ran on a NULL proxy: GLib CRITICALs about NULL errors and
+> proxies, and no word of the real cause. Pass the error on and fail.
+
+Touches: `xfconf/xfconf.c` · Upstream status: QNX-specific (bug is generic)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -211,7 +221,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xfconf 4.20.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/xfconf-4.20.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xfconf 4.20.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/xfconf-4.20.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xfconf 4.20.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/xfconf-4.20.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xfconf 4.20.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/xfconf-4.20.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

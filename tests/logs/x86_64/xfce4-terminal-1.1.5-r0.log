@@ -1,30 +1,70 @@
-# xfce4-terminal 1.1.5-r0 -- INSTALLED
+# xfce4-terminal 1.1.5-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:42:02Z   packages from: apk:local-dists
+# date: 2026-10-31T17:09:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xfce4-terminal
-( 1/16) Installing gtk-layer-shell (0.9.0-r0)
-( 2/16) Installing libxfce4util (4.20.0-r0)
-( 3/16) Installing xfconf (4.20.0-r0)
-( 4/16) Installing libxfce4ui (4.20.0-r0)
-( 5/16) Installing gmp (6.3.0-r0)
-( 6/16) Installing libidn2 (2.3.7-r0)
-( 7/16) Installing libtasn1 (4.19.0-r0)
-( 8/16) Installing nettle (3.10.1-r0)
-( 9/16) Installing gnutls (3.8.8-r0)
-(10/16) Installing graphene (1.10.8-r0)
-(11/16) Installing libwebp (1.4.0-r0)
-(12/16) Installing libtiff (4.7.0-r0)
-(13/16) Installing gtk4 (4.16.7-r0)
-(14/16) Installing lz4 (1.10.0-r0)
-(15/16) Installing vte (0.78.2-r0)
-(16/16) Installing xfce4-terminal (1.1.5-r0)
-OK: 219 MiB in 68 packages
+$ apk add -u xfce4-terminal qnx-test-xfce4-terminal qnx-port-tests
+( 1/42) Upgrading dbus (1.16.0-r2 -> 1.16.0-r3)
+( 2/42) Installing qnx-port-tests (1.0-r2)
+( 3/42) Installing font-dejavu (2.37-r0)
+( 4/42) Installing libxau (1.0.11-r0)
+( 5/42) Installing libxdmcp (1.1.5-r0)
+( 6/42) Installing libxcb (1.17.0-r0)
+( 7/42) Installing libx11 (1.8.10-r0)
+( 8/42) Installing libxext (1.3.6-r0)
+( 9/42) Installing libxi (1.8.2-r0)
+(10/42) Installing libxtst (1.2.5-r0)
+(11/42) Installing at-spi2-core (2.54.0-r0)
+(12/42) Installing libxrender (0.9.11-r0)
+(13/42) Installing cairo (1.18.2-r0)
+(14/42) Installing fribidi (1.0.16-r0)
+(15/42) Installing harfbuzz (<ip>-r0)
+(16/42) Installing libxcomposite (0.4.6-r0)
+(17/42) Installing libxfixes (6.0.1-r0)
+(18/42) Installing libxcursor (1.2.2-r0)
+(19/42) Installing libxdamage (1.1.6-r0)
+(20/42) Installing libxinerama (1.1.5-r0)
+(21/42) Installing libxml2 (2.13.5-r1)
+(22/42) Installing libxkbcommon (1.8.1-r1)
+(23/42) Installing libxrandr (1.5.4-r0)
+(24/42) Installing libxft (2.3.8-r0)
+(25/42) Installing pango (1.54.0-r0)
+(26/42) Installing gtk3 (3.24.43-r1)
+(27/42) Installing gtk-layer-shell (0.9.0-r0)
+(28/42) Installing hicolor-icon-theme (0.18-r0)
+(29/42) Installing libxfce4ui (4.20.0-r1)
+(30/42) Installing gmp (6.3.0-r0)
+(31/42) Installing libidn2 (2.3.7-r0)
+(32/42) Installing libtasn1 (4.19.0-r0)
+(33/42) Installing nettle (3.10.1-r0)
+(34/42) Installing gnutls (3.8.8-r0)
+(35/42) Installing graphene (1.10.8-r0)
+(36/42) Installing libwebp (1.4.0-r0)
+(37/42) Installing libtiff (4.7.0-r0)
+(38/42) Installing gtk4 (4.16.7-r0)
+(39/42) Installing lz4 (1.10.0-r0)
+(40/42) Installing vte (0.78.2-r2)
+(41/42) Installing xfce4-terminal (1.1.5-r0)
+(42/42) Installing qnx-test-xfce4-terminal (1.0-r1)
+OK: 212 MiB in 73 packages
 
-$ ldd on every program and library apk info -L xfce4-terminal lists
-ok   loads: /data/oss/usr/local/bin/xfce4-terminal
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_terminal
+     == xfce4-terminal ==
+       info 22 TrueType fonts under /usr/local/share/fonts
+       info private session bus at unix:path=/tmp/qnxport-xfterm.pPeQGj/bus
+       ok   GDBus client authenticated on the session bus (EXTERNAL)
+       ok   xfconfd activated through D-Bus (ListChannels answered)
+       ok   --version: xfce4-terminal 1.1.5 (Xfce 4.20)
+       ok   --help lists --disable-server
+       info the terminal's child process started
+       ok   command ran inside the terminal: tty=/dev/ttyp1 sum=42
+       ok   child had a pseudo-terminal
+       ok   window closed when the command ended (rc=0)
+     PASS xfce4-terminal
+PASS test_xfce4_terminal
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,15 +1,44 @@
-# python3-packaging 25.0-r0 -- INSTALLED
+# python3-packaging 25.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:38:45Z   packages from: apk:local-dists
+# date: 2026-10-31T16:31:59Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-packaging
-(1/1) Installing python3-packaging (25.0-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u python3-packaging qnx-test-python3-packaging qnx-port-tests
+(1/7) Installing python3-packaging (25.0-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing sqlite (3.47.2-r0)
+(6/7) Installing python3 (3.14.0-r2)
+(7/7) Installing qnx-test-python3-packaging (1.0-r0)
+OK: 198 MiB in 36 packages
 
-$ ldd on every program and library apk info -L python3-packaging lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_packaging
+     == python3-packaging ==
+       info packaging 25.0
+       ok   1.10.0 > 1.9.9; 2.0 == 2.0.0
+       ok   dev < alpha < beta < rc < final < post
+       ok   2.4.1rc2+qnx.8: pre-release, local qnx.8
+       ok   invalid version rejected
+       ok   >=1.0,<2.0,!=1.5.*
+       ok   filter a version list
+       ok   compatible release ~=1.4.0
+       ok   pre-releases excluded unless asked
+       ok   requirement: name, extras, specifier
+       ok   marker python_version >= 3.8 true here
+       info marker environment: platform_system=QNX sys_platform=qnx machine=x86pc
+       ok   markers for this platform
+       info 48 supported tags, first cp314-cp314-qnx_8_0_0_x86pc
+       ok   sys_tags includes py3-none-any
+       ok   first tag is for this CPython
+       ok   canonicalize_name
+       ok   parse_wheel_filename
+       ok   parse_sdist_filename
+     PASS python3-packaging
+PASS test_python3_packaging
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

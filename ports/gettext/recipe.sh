@@ -28,5 +28,11 @@ DEPS="ncurses libiconv libunistring"
 # reason.  QNX does support positional arguments; verified on the target:
 #   snprintf(b, n, "%2$s-%1$s", "a", "b")  ->  "b-a"
 CONF_ENV=( gt_cv_func_printf_posix=yes )
+# gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd()
+# and the fdopendir()/*at() emulations open directories without O_DIRECTORY,
+# which QNX then refuses with ENOTDIR (hazards 25, 120).  patches/0001 keeps
+# getcwd() off its openat("..") walk for the same reason: msgfmt -o could not
+# write any file ("error while opening ... for writing: Not a directory").
+CFLAGS_APPEND="-DO_SEARCH=O_DIRECTORY"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-java --disable-csharp
                   --enable-nls --without-emacs --disable-openmp --with-included-libxml )

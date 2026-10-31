@@ -1,0 +1,23 @@
+Link the bundled METIS (libmetis-gtsam) against libregex on QNX.
+
+METIS carries GKlib, whose string helpers call regcomp/regexec/regfree;
+QNX keeps those in libregex.so.1, not in libc. Without it
+libmetis-gtsam.so records no NEEDED for libregex (shared libraries link
+with undefined symbols allowed) and every program using GTSAM has to add
+-lregex itself. Same fix as ports/gklib/patches/0002.
+
+Upstream-Status: QNX-specific
+
+--- a/gtsam/3rdparty/metis/libmetis/CMakeLists.txt
++++ b/gtsam/3rdparty/metis/libmetis/CMakeLists.txt
+@@ -8,6 +8,10 @@
+ if(UNIX)
+   target_link_libraries(metis-gtsam m)
+ endif()
++if(QNX)
++  # GKlib's regex helpers use regcomp/regexec, which QNX keeps in libregex.
++  target_link_libraries(metis-gtsam regex)
++endif()
+ 
+ if(WIN32)
+ 		set_target_properties(metis-gtsam PROPERTIES

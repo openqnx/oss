@@ -1,23 +1,43 @@
-# nodejs 24.14.1-r0 -- INSTALLED
+# nodejs 24.14.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:41:43Z   packages from: apk:local-dists
+# date: 2026-10-31T16:59:25Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u nodejs
-(1/9) Installing ada (3.4.4-r0)
-(2/9) Installing c-ares (1.34.3-r0)
-(3/9) Installing icu (76.1-r0)
-(4/9) Installing libuv (1.51.0-r0)
-(5/9) Installing nghttp2 (1.64.0-r0)
-(6/9) Installing simdjson (3.11.3-r0)
-(7/9) Installing simdutf (6.4.2-r0)
-(8/9) Installing sqlite (3.47.2-r0)
-(9/9) Installing nodejs (24.14.1-r0)
-OK: 158 MiB in 38 packages
+$ apk add -u nodejs qnx-test-nodejs qnx-port-tests
+( 1/11) Installing ada (3.4.4-r0)
+( 2/11) Installing c-ares (1.34.3-r0)
+( 3/11) Installing icu (76.1-r1)
+( 4/11) Installing libuv (1.51.0-r0)
+( 5/11) Installing nghttp2 (1.64.0-r0)
+( 6/11) Installing simdjson (3.11.3-r0)
+( 7/11) Installing simdutf (6.4.2-r0)
+( 8/11) Installing sqlite (3.47.2-r0)
+( 9/11) Installing nodejs (24.14.1-r0)
+(10/11) Installing qnx-port-tests (1.0-r2)
+(11/11) Installing qnx-test-nodejs (1.0-r0)
+OK: 158 MiB in 39 packages
 
-$ ldd on every program and library apk info -L nodejs lists
-ok   loads: /data/oss/usr/local/bin/node
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nodejs
+     == nodejs ==
+       ok   node --version: v24.14.1
+       ok   BigInt 2n**100n
+       ok   JSON round trip
+       ok   regex named groups
+       ok   class + async/await
+       ok   crypto sha256('abc')
+       ok   crypto AES-256-GCM round trip
+       ok   zlib gzip round trip
+       ok   Intl.NumberFormat en-US (ICU)
+       ok   Intl de-DE
+       ok   fs write/read in /tmp
+       ok   child_process.execFileSync(sh)
+       ok   HTTP server + client on <ip>
+       info openssl 3.5.1, icu 76.1, uv 1.51.0
+     PASS nodejs
+PASS test_nodejs
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

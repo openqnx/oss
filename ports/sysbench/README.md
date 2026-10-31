@@ -120,6 +120,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - sysbench builds its bundled ConcurrencyKit with ConcurrencyKit's own configure, which recognises compilers by name and rejects "qcc". The GCC driver qcc runs is named like a GCC and works directly.
 - The QNX patch makes ConcurrencyKit's configure (run during "make") skip its run-time compiler probe when QNXENV=true is set -- a cross build cannot run what it compiles.
 - The patches change tests/Makefile.am; regenerate the build files.
+- LuaJIT's FFI (ffi.C.*) looks up sysbench's own functions in the executable, so they must be exported. sb_luajit.m4 adds -rdynamic only on Linux and FreeBSD; without it every Lua script died "Symbol not found" (hazard 122).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sysbench`.
 
@@ -195,7 +196,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sysbench 1.0.20_git20250309-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/sysbench-1.0.20_git20250309-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sysbench 1.0.20_git20250309-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/sysbench-1.0.20_git20250309-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sysbench 1.0.20_git20250309-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/sysbench-1.0.20_git20250309-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sysbench 1.0.20_git20250309-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/sysbench-1.0.20_git20250309-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sysbench 1.0.20_git20250309-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/sysbench-1.0.20_git20250309-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -220,6 +224,10 @@ CONF_ENV=( QNXENV=true CC="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc" LUAJIT_CFLAGS="-I$
 do_build() { QNXENV=true make -C "$B" -j"$(nproc)"; }
 # The patches change tests/Makefile.am; regenerate the build files.
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
+# LuaJIT's FFI (ffi.C.*) looks up sysbench's own functions in the executable,
+# so they must be exported. sb_luajit.m4 adds -rdynamic only on Linux and
+# FreeBSD; without it every Lua script died "Symbol not found" (hazard 122).
+LDFLAGS_APPEND="-Wl,--export-dynamic"
 ```
 </details>
 

@@ -1,15 +1,37 @@
-# iso-codes 4.17.0-r0 -- INSTALLED
+# iso-codes 4.17.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:10Z   packages from: apk:local-dists
+# date: 2026-10-31T16:38:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u iso-codes
-(1/1) Installing iso-codes (4.17.0-r0)
-OK: 75 MiB in 30 packages
+$ apk add -u iso-codes qnx-test-iso-codes qnx-port-tests
+(1/4) Installing iso-codes (4.17.0-r0)
+(2/4) Installing qnx-port-tests (1.0-r2)
+(3/4) Installing json-c (0.18-r0)
+(4/4) Installing qnx-test-iso-codes (1.0-r0)
+OK: 75 MiB in 32 packages
 
-$ ldd on every program and library apk info -L iso-codes lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_iso_codes
+     == iso-codes ==
+       ok   share/iso-codes/json installed
+       info ISO 3166-1: 249 countries
+       ok   ISO 3166-1: 249 or more countries
+       ok   DE: Germany, DEU, 276
+       ok   numeric 392 -> JP; CAN -> Canada
+       ok   FR official name: French Republic
+       ok   ISO 3166-2: DE-BY Bayern, US-CA California
+       ok   ISO 4217: EUR 978, JPY Yen
+       ok   ISO 639-2: fra = fr, fre, French
+       ok   ISO 639-3: 7000+ languages, deu German
+       ok   ISO 15924: Latn 215, Cyrl Cyrillic
+       info de: Germany -> Deutschland
+       ok   de catalogue: Germany -> Deutschland
+       ok   fr catalogue: German -> Allemand
+       ok   fr catalogue: Euro -> Euro
+     PASS iso-codes
+PASS test_iso_codes
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

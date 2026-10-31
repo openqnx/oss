@@ -1,15 +1,31 @@
-# fp16 0_git20260620-r0 -- INSTALLED
+# fp16 0_git20260620-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:51Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:49Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u fp16-dev
-(1/1) Installing fp16-dev (0_git20260620-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u fp16-dev qnx-test-fp16 qnx-port-tests
+(1/3) Installing fp16-dev (0_git20260620-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-fp16 (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L fp16-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fp16
+     == fp16 ==
+       ok   fp32 -> fp16: 13 known bit patterns
+       ok   fp16 0x3555 -> 0.333251953125
+       ok   fp16 0x0001 -> 2^-24 (subnormal)
+       ok   fp16 0xFBFF -> -65504
+       ok   fp16 +/-inf
+       ok   NaN both ways
+       ok   round trip of every non-NaN half: 63490/63490
+       ok   fp16_ieee_to_fp32_bits(1.0) = 0x3F800000
+       ok   alt half: 0x7C00 = 65536, max 131008
+       ok   alt half: 1.0 -> 0x3C00, 100000 -> 0x7E1A
+     PASS fp16
+PASS test_fp16
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

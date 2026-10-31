@@ -1,29 +1,39 @@
-# man-db 2.13.1-r0 -- INSTALLED
+# man-db 2.13.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:39:41Z   packages from: apk:local-dists
+# date: 2026-10-31T16:54:40Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u man-db
-(1/3) Installing gdbm (1.24-r0)
-(2/3) Installing libpipeline (1.5.8-r0)
-(3/3) Installing man-db (2.13.1-r0)
-OK: 57 MiB in 32 packages
+$ apk add -u man-db qnx-test-man-db qnx-port-tests
+(1/6) Installing gdbm (1.24-r0)
+(2/6) Installing libpipeline (1.5.8-r0)
+(3/6) Installing man-db (2.13.1-r0)
+(4/6) Installing qnx-port-tests (1.0-r2)
+(5/6) Installing groff (1.23.0-r0)
+(6/6) Installing qnx-test-man-db (1.0-r0)
+OK: 70 MiB in 34 packages
 
-$ ldd on every program and library apk info -L man-db lists
-ok   loads: /data/oss/usr/local/bin/apropos
-ok   loads: /data/oss/usr/local/bin/catman
-ok   loads: /data/oss/usr/local/bin/lexgrog
-ok   loads: /data/oss/usr/local/bin/man
-ok   loads: /data/oss/usr/local/bin/man-recode
-ok   loads: /data/oss/usr/local/bin/mandb
-ok   loads: /data/oss/usr/local/bin/manpath
-ok   loads: /data/oss/usr/local/bin/whatis
-ok   loads: /data/oss/usr/local/lib/man-db/libman-2.13.1.so
-ok   loads: /data/oss/usr/local/lib/man-db/libman.so
-ok   loads: /data/oss/usr/local/lib/man-db/libmandb-2.13.1.so
-ok   loads: /data/oss/usr/local/lib/man-db/libmandb.so
-ok   loads: /data/oss/usr/local/sbin/accessdb
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_man_db
+     == man-db ==
+       info man 2.13.1
+       ok   man --version: 2.13.1
+       info lexgrog: man/man1/qnxtest.1: "qnxtest - a QNX port test page"
+       ok   lexgrog parses the NAME section
+       ok   lexgrog -w: whatis info found
+       ok   mandb -c: index database created (index.db)
+       info whatis: qnxtest (1)          - a QNX port test page
+       ok   whatis from the index
+       ok   apropos 'port test'
+       ok   whatis of a missing page fails
+       ok   man -w locates the page
+       ok   man -w 1 qnxtest (by section)
+       ok   man -w 8 qnxtest: not found
+       ok   manpath honours MANPATH
+       ok   man -l formats the page through nroff (12 lines)
+     PASS man-db
+PASS test_man_db
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

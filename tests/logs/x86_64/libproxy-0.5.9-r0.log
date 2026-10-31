@@ -1,21 +1,51 @@
-# libproxy 0.5.9-r0 -- INSTALLED
+# libproxy 0.5.9-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:21Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:18Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libproxy
-(1/4) Installing c-ares (1.34.3-r0)
-(2/4) Installing nghttp2 (1.64.0-r0)
-(3/4) Installing curl (8.11.1-r0)
-(4/4) Installing libproxy (0.5.9-r0)
-OK: 168 MiB in 56 packages
+$ apk add -u libproxy qnx-test-libproxy qnx-port-tests
+(1/6) Installing c-ares (1.34.3-r0)
+(2/6) Installing nghttp2 (1.64.0-r0)
+(3/6) Installing curl (8.11.1-r1)
+(4/6) Installing libproxy (0.5.9-r0)
+(5/6) Installing qnx-port-tests (1.0-r2)
+(6/6) Installing qnx-test-libproxy (1.0-r0)
+OK: 95 MiB in 35 packages
 
-$ ldd on every program and library apk info -L libproxy lists
-ok   loads: /data/oss/usr/local/bin/proxy
-ok   loads: /data/oss/usr/local/lib/libproxy.so.0.5.9
-ok   loads: /data/oss/usr/local/lib/libproxy.so.1
-ok   loads: /data/oss/usr/local/lib/libproxy/libpxbackend-1.0.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libproxy
+     == libproxy ==
+       ok   px_proxy_factory_new
+       info http://www.qnx.com/ -> direct://
+       ok   no configuration -> direct://
+       info http://www.qnx.com/index.html -> http://proxy.example:3128
+       ok   http_proxy is used for http://
+       info https://www.qnx.com/ -> http://proxy.example:3128
+       ok   https:// falls back to http_proxy
+       info https://www.qnx.com/ -> http://secure.example:8443
+       ok   https_proxy is preferred for https://
+       info http://www.qnx.com/ -> http://proxy.example:3128
+       ok   http:// still uses http_proxy
+       info http://build.internal.example/x -> direct://
+       ok   no_proxy domain .internal.example -> direct://
+       info http://localhost:8080/ -> direct://
+       ok   no_proxy localhost -> direct://
+       info http://<ip>/ -> direct://
+       ok   no_proxy address -> direct://
+       info http://external.example/ -> http://proxy.example:3128
+       ok   hosts not in no_proxy still proxied
+       info http://www.qnx.com/ -> socks5://socks.example:1080
+       ok   SOCKS proxy URL passed through
+       info not a url -> direct://
+       ok   unparsable URL -> direct://
+       info $ proxy http://www.qnx.com/ http://a.internal.example/ -> 0
+       info http://proxy.example:3128
+     direct://
+       ok   proxy program: one answer per URL
+     PASS libproxy
+PASS test_libproxy
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

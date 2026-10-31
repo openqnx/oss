@@ -1,0 +1,115 @@
+QNX: keep side effects out of metal_assert(); fix the timestamp and is_acquired.
+
+The QNX layer wrote metal_assert(pthread_mutex_lock(mutex) == EOK) -- and
+the same for pthread_mutex_init/destroy/unlock, pthread_cond_init and
+mem_offset64(). metal_assert() is assert(), so in any build with NDEBUG (the
+library's own Release build, and any consumer's) the calls themselves were
+compiled out: metal_mutex_acquire()/release() did nothing, mutexes and
+condition variables were never initialised. Make each call, then assert on
+its result.
+
+metal_get_timestamp() computed CLOCK_MONOTONIC in nanoseconds and returned
+0. metal_mutex_is_acquired() probed with pthread_mutex_trylock() and kept
+the lock when the probe succeeded; read the owner word of the mutex's
+sync_t instead (held whenever an owner is recorded).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/system/qnx/condition.h
++++ b/lib/system/qnx/condition.h
+@@ -35,7 +35,10 @@
+ 
+ static inline void metal_condition_init(struct metal_condition *cv)
+ {
+-	metal_assert(pthread_cond_init(&cv->cond, NULL) == EOK);
++	int ret = pthread_cond_init(&cv->cond, NULL);
++
++	metal_assert(ret == EOK);
++	(void)ret;
+ }
+ 
+ static inline int metal_condition_signal(struct metal_condition *cv)
+--- a/lib/system/qnx/mutex.h
++++ b/lib/system/qnx/mutex.h
+@@ -35,12 +35,18 @@
+ 
+ static inline void __metal_mutex_init(metal_mutex_t *mutex)
+ {
+-	metal_assert(pthread_mutex_init(mutex, NULL) == EOK);
++	int ret = pthread_mutex_init(mutex, NULL);
++
++	metal_assert(ret == EOK);
++	(void)ret;
+ }
+ 
+ static inline void __metal_mutex_deinit(metal_mutex_t *mutex)
+ {
+-	metal_assert(pthread_mutex_destroy(mutex) == EOK);
++	int ret = pthread_mutex_destroy(mutex);
++
++	metal_assert(ret == EOK);
++	(void)ret;
+ }
+ 
+ static inline int __metal_mutex_try_acquire(metal_mutex_t *mutex)
+@@ -52,19 +58,32 @@
+ 
+ static inline void __metal_mutex_acquire(metal_mutex_t *mutex)
+ {
+-	metal_assert(pthread_mutex_lock(mutex) == EOK);
++	int ret = pthread_mutex_lock(mutex);
++
++	metal_assert(ret == EOK);
++	(void)ret;
+ }
+ 
+ static inline void __metal_mutex_release(metal_mutex_t *mutex)
+ {
+-	metal_assert(pthread_mutex_unlock(mutex) == EOK);
++	int ret = pthread_mutex_unlock(mutex);
++
++	metal_assert(ret == EOK);
++	(void)ret;
+ }
+ 
+ static inline int __metal_mutex_is_acquired(metal_mutex_t *mutex)
+ {
+-	int ret = pthread_mutex_trylock(mutex);
+-
+-	return (ret == EBUSY) ? 1 : 0;
++	/* Read the owner word of QNX's sync_t rather than probing with
++	 * pthread_mutex_trylock(): a probe that succeeds takes the lock, and
++	 * from the owning thread trylock does not reliably report "held".
++	 * _NTO_SYNC_MUTEX_FREE (0) is free; so are the markers of a mutex
++	 * not yet initialised or already destroyed. */
++	unsigned owner = ((volatile sync_t *)mutex)->__owner;
++
++	if (owner == _NTO_SYNC_INITIALIZER || owner == _NTO_SYNC_DESTROYED)
++		return 0;
++	return (owner & _NTO_SYNC_OWNER_MASK) != _NTO_SYNC_MUTEX_FREE;
+ }
+ 
+ #ifdef __cplusplus
+--- a/lib/system/qnx/sys.h
++++ b/lib/system/qnx/sys.h
+@@ -42,7 +42,9 @@
+ 
+ #define __qnx_get_physical_address(addr, len) ({ \
+ 	off64_t qnx_offset = 0; \
+-	metal_assert(mem_offset64(addr, NOFD, len, &qnx_offset, NULL) == 0); \
++	int qnx_ret = mem_offset64(addr, NOFD, len, &qnx_offset, NULL); \
++	metal_assert(qnx_ret == 0); \
++	(void)qnx_ret; \
+ 	(qnx_offset); \
+ })
+ 
+--- a/lib/system/qnx/time.c
++++ b/lib/system/qnx/time.c
+@@ -25,6 +25,6 @@
+ 	}
+ 	time = ts.tv_sec * NS_PER_S;
+ 	time += ts.tv_nsec;
+-	return 0;
++	return time;
+ }
+ 

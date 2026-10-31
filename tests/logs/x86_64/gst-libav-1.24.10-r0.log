@@ -1,28 +1,49 @@
-# gst-libav 1.24.10-r0 -- INSTALLED
+# gst-libav 1.24.10-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:23Z   packages from: apk:local-dists
+# date: 2026-10-31T16:15:00Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gst-libav
-( 1/14) Installing dav1d (1.5.0-r0)
-( 2/14) Installing lame (3.100-r0)
-( 3/14) Installing libogg (1.3.5-r0)
-( 4/14) Installing libtheora (1.1.1-r0)
-( 5/14) Installing libvorbis (1.3.7-r0)
-( 6/14) Installing libvpx (1.15.0-r0)
-( 7/14) Installing openh264 (2.5.0-r0)
-( 8/14) Installing opus (1.5.2-r0)
-( 9/14) Installing x264 (0_git-r0)
-(10/14) Installing x265 (3.6-r0)
-(11/14) Installing ffmpeg (7.1.1-r0)
-(12/14) Installing gstreamer (1.24.10-r0)
-(13/14) Installing gst-plugins-base (1.24.10-r0)
-(14/14) Installing gst-libav (1.24.10-r0)
-OK: 215 MiB in 66 packages
+$ apk add -u gst-libav qnx-test-gst-libav qnx-port-tests
+( 1/16) Installing dav1d (1.5.0-r0)
+( 2/16) Installing lame (3.100-r0)
+( 3/16) Installing libogg (1.3.5-r0)
+( 4/16) Installing libtheora (1.1.1-r0)
+( 5/16) Installing libvorbis (1.3.7-r0)
+( 6/16) Installing libvpx (1.15.0-r0)
+( 7/16) Installing openh264 (2.5.0-r0)
+( 8/16) Installing opus (1.5.2-r0)
+( 9/16) Installing x264 (0_git-r0)
+(10/16) Installing x265 (3.6-r0)
+(11/16) Installing ffmpeg (7.1.1-r0)
+(12/16) Installing gstreamer (1.24.10-r0)
+(13/16) Installing gst-plugins-base (1.24.10-r1)
+(14/16) Installing gst-libav (1.24.10-r0)
+(15/16) Installing qnx-port-tests (1.0-r2)
+(16/16) Installing qnx-test-gst-libav (1.0-r0)
+OK: 142 MiB in 45 packages
 
-$ ldd on every program and library apk info -L gst-libav lists
-ok   loads: /data/oss/usr/local/lib/gstreamer-1.0/libgstlibav.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gst_libav
+     == gst-libav ==
+       ok   libav plugin registered
+       info gst-libav 1.24.10
+       ok   MPEG-4 Part 2 encoder and decoder
+       ok   H.264 decoder, AAC encoder/decoder
+       ok   a libavformat muxer element
+       info video: 10 frame(s)
+       ok   10 frames encoded, decoded, EOS reached
+       ok   decoded caps 160x120
+       info mean luma 235.0
+       ok   decoded picture is white (Y ~ 235)
+       info audio: 44 buffer(s), 45056 samples
+       ok   AAC round trip keeps 44.1 kHz
+       ok   about 44032 samples come back
+       info audio peak 26549
+       ok   decoded audio is a real signal, not silence
+     PASS gst-libav
+PASS test_gst_libav
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

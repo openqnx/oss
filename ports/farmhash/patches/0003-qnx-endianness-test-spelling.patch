@@ -1,0 +1,25 @@
+Fix the misspelled byte-order test in farmhash.h.
+
+The installed header tests defined(__BYTE_ORDER__) but then compares
+__BYTE_ORDER (glibc's macro, undefined elsewhere, so 0) with
+__ORDER_LITTLE_ENDIAN__. On QNX, which has neither __LITTLE_ENDIAN__ nor
+<endian.h>, the test falls through to "#include <endian.h>" and every
+program that includes farmhash.h fails to compile. Compare the compiler's
+own __BYTE_ORDER__ instead.
+
+Upstream-Status: Pending
+
+--- a/src/farmhash.h
++++ b/src/farmhash.h
+@@ -299,9 +299,9 @@
+   #endif
+ #elif defined(__LITTLE_ENDIAN__)
+   // nothing for little-endian
+-#elif defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__)
++#elif defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+   // nothing for little-endian
+-#elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER == __ORDER_BIG_ENDIAN__)
++#elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+   #if !defined(FARMHASH_BIG_ENDIAN)
+     #define FARMHASH_BIG_ENDIAN
+   #endif

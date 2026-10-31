@@ -85,24 +85,29 @@ Touches: `configure.ac` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-mkdir -p build/$QNX_ARCH/itstool && cd build/$QNX_ARCH/itstool
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/itstool/configure --host=$QNX_TRIPLE --prefix=/usr/local
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/itstool; B=build/$QNX_ARCH/itstool; mkdir -p $B
+```
+
+```bash
+do_patch() { cd "$SRCROOT" && autoreconf -fi; }
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i "1s|^#!.*|#!$PREFIX/bin/python3 -s|" "$STAGE$PREFIX/bin/itstool"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - itstool (XML translation tool; Python). Version as in the QNX Everywhere 8.0.4r1 image.
 - The QNX patch changes configure.ac; regenerate configure from it.
+- itstool is a Python script that imports libxml2's bindings (libxml2.py, libxml2mod.so in site-packages): no DT_NEEDED says so.
+- itstool's #! line is the build machine's python3 (configure's PYTHON); the target's python3 is $PREFIX/bin/python3 (hazard 105).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH itstool`.
 
@@ -178,7 +183,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | itstool 2.0.7-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/itstool-2.0.7-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | itstool 2.0.7-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/itstool-2.0.7-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | itstool 2.0.7-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/itstool-2.0.7-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | itstool 2.0.7-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/itstool-2.0.7-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -198,6 +205,16 @@ BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 # The QNX patch changes configure.ac; regenerate configure from it.
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
+
+# itstool is a Python script that imports libxml2's bindings (libxml2.py,
+# libxml2mod.so in site-packages): no DT_NEEDED says so.
+RUNTIME_DEPS="python3 libxml2"
+# itstool's #! line is the build machine's python3 (configure's PYTHON);
+# the target's python3 is $PREFIX/bin/python3 (hazard 105).
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i "1s|^#!.*|#!$PREFIX/bin/python3 -s|" "$STAGE$PREFIX/bin/itstool"
+}
 ```
 </details>
 

@@ -1,15 +1,35 @@
-# tree-sitter-query 0.7.0-r0 -- INSTALLED
+# tree-sitter-query 0.7.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:26:17Z   packages from: apk:local-dists
+# date: 2026-10-31T18:00:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u tree-sitter-query
-(1/1) Installing tree-sitter-query (0.7.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u tree-sitter-query qnx-test-tree-sitter-query qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing tree-sitter (0.25.9-r0)
+(3/4) Installing tree-sitter-query (0.7.0-r0)
+(4/4) Installing qnx-test-tree-sitter-query (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L tree-sitter-query lists
-ok   loads: /data/oss/usr/local/lib/tree-sitter/query.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter_query
+     == tree-sitter-query ==
+       info tree-sitter runtime: language ABI 13..15
+       ok   query.so loads (dlopen)
+       ok   tree_sitter_query() entry point
+       info query: ABI 15, 50 symbols, 5 fields
+       ok   query: ABI 15 accepted by the runtime (13..15)
+       ok   query: sample parsed
+       ok   query: no syntax errors in the sample
+       info query tree: (program (named_node name: (identifier) (field_definition name: (identifier) (named_node name: (identifier) (capture name: (identifier))))) (grouping (named_node name: (identifier) (capture name: (identifier))) (predicate name: (identifier) type: (predicate_type) parameters: (parameters (capture name: (identifier)) (string (string_content))))))
+       ok   query: syntax tree is the expected one
+       ok   query: whole sample covered (0..82 bytes)
+       info query (capture name: (identifier) @cap) -> [name,c,c]
+       ok   query: query captures [name,c,c]
+       ok   query: malformed input is flagged (has_error)
+     PASS tree-sitter-query
+PASS test_tree_sitter_query
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

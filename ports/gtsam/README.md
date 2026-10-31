@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/borglab/gtsam.git (tag `4.2`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`boost`](../boost/) [`eigen`](../eigen/) |
 | Run-time dependencies | [`boost`](../boost/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,7 +64,21 @@ git clone --depth 1 -b 4.2 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/gtsam < ports/gtsam/patches/0001-qnx-metis-link-libregex.patch
+```
+
+**[`0001-qnx-metis-link-libregex.patch`](patches/0001-qnx-metis-link-libregex.patch)** — Link the bundled METIS (libmetis-gtsam) against libregex on QNX.
+
+> METIS carries GKlib, whose string helpers call regcomp/regexec/regfree;
+> QNX keeps those in libregex.so.1, not in libc. Without it
+> libmetis-gtsam.so records no NEEDED for libregex (shared libraries link
+> with undefined symbols allowed) and every program using GTSAM has to add
+> -lregex itself. Same fix as ports/gklib/patches/0002.
+
+Touches: `gtsam/3rdparty/metis/libmetis/CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -172,7 +186,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gtsam 4.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/gtsam-4.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gtsam 4.2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/gtsam-4.2-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gtsam 4.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/gtsam-4.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gtsam 4.2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/gtsam-4.2-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

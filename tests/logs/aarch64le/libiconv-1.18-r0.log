@@ -1,18 +1,41 @@
-# libiconv 1.18-r0 -- INSTALLED
+# libiconv 1.18-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:52Z   packages from: apk:local-dists
+# date: 2026-10-31T16:42:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libiconv
-OK: 55 MiB in 29 packages
+$ apk add -u libiconv qnx-test-libiconv qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-libiconv (1.0-r0)
+OK: 55 MiB in 30 packages
 
-$ ldd on every program and library apk info -L libiconv lists
-ok   loads: /data/oss/usr/local/bin/iconv
-ok   loads: /data/oss/usr/local/lib/libcharset.so.1
-ok   loads: /data/oss/usr/local/lib/libcharset.so.1.0.0
-ok   loads: /data/oss/usr/local/lib/libiconv.so.2
-ok   loads: /data/oss/usr/local/lib/libiconv.so.2.7.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libiconv
+     == libiconv ==
+       info _libiconv_version 0x112
+       ok   _libiconv_version is 1.18
+       info locale_charset() = UTF-8
+       ok   locale_charset() returns a name
+       info UTF-8 -> ISO-8859-1: 47 72 fc df 65 2c 20 63 61 66 e9
+       ok   UTF-8 -> ISO-8859-1: exact bytes
+       ok   ISO-8859-1 -> UTF-8: round trip identical
+       info UTF-8 -> UTF-16BE: 00 41 00 e9 20 ac
+       ok   UTF-8 -> UTF-16BE: A, e-acute, euro
+       ok   UTF-16 surrogate pair -> U+1F600 (UTF-32LE)
+       ok   euro sign to ISO-8859-1 fails with EILSEQ
+       info //TRANSLIT: "price 5EUR"
+       ok   //TRANSLIT turns the euro sign into EUR
+       ok   ASCII//TRANSLIT of cafe-acute
+       ok   CP1252 0x80 0x93 -> euro, left quote
+       ok   KOI8-R -> UTF-8 (Cyrillic word)
+       ok   unknown charset: EINVAL
+       info iconv(1) output: 47 72 fc df 65 2c 20 63 61 66 e9
+       ok   iconv -f UTF-8 -t ISO-8859-1 file
+       ok   iconv back to UTF-8 (stdin) identical
+       ok   iconv -l lists ISO-8859-1
+     PASS libiconv
+PASS test_libiconv
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

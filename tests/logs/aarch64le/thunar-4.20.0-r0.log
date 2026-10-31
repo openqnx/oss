@@ -1,67 +1,89 @@
-# thunar 4.20.0-r0 -- INSTALLED
+# thunar 4.20.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:25:37Z   packages from: apk:local-dists
+# date: 2026-10-31T17:59:11Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u thunar
-( 1/45) Installing expat (2.6.4-r0)
-( 2/45) Installing dbus (1.16.0-r0)
-( 3/45) Installing libxau (1.0.11-r0)
-( 4/45) Installing libxdmcp (1.1.5-r0)
-( 5/45) Installing libxcb (1.17.0-r0)
-( 6/45) Installing libx11 (1.8.10-r0)
-( 7/45) Installing libxext (1.3.6-r0)
-( 8/45) Installing libxi (1.8.2-r0)
-( 9/45) Installing libxtst (1.2.5-r0)
-(10/45) Installing at-spi2-core (2.54.0-r0)
-(11/45) Installing bzip2 (1.0.8-r0)
-(12/45) Installing freetype (2.13.3-r0)
-(13/45) Installing fontconfig (2.15.0-r0)
-(14/45) Installing libxrender (0.9.11-r0)
-(15/45) Installing lzo (2.10-r0)
-(16/45) Installing pixman (0.46.4-r0)
-(17/45) Installing cairo (1.18.2-r0)
-(18/45) Installing fribidi (1.0.16-r0)
-(19/45) Installing graphite2 (1.3.14-r0)
-(20/45) Installing icu (76.1-r0)
-(21/45) Installing harfbuzz (<ip>-r0)
-(22/45) Installing libepoxy (1.5.10-r0)
-(23/45) Installing libxcomposite (0.4.6-r0)
-(24/45) Installing libxfixes (6.0.1-r0)
-(25/45) Installing libxcursor (1.2.2-r0)
-(26/45) Installing libxdamage (1.1.6-r0)
-(27/45) Installing libxinerama (1.1.5-r0)
-(28/45) Installing xz (5.6.3-r0)
-(29/45) Installing libxml2 (2.13.5-r0)
-(30/45) Installing libxkbcommon (1.8.1-r1)
-(31/45) Installing libxrandr (1.5.4-r0)
-(32/45) Installing libxft (2.3.8-r0)
-(33/45) Installing pango (1.54.0-r0)
-(34/45) Installing wayland (1.24.0-r0)
-(35/45) Installing gtk3 (3.24.43-r0)
-(36/45) Installing libxfce4util (4.20.0-r0)
-(37/45) Installing xfconf (4.20.0-r0)
-(38/45) Installing libxfce4ui (4.20.0-r0)
-(39/45) Installing exo (4.20.0-r0)
-(40/45) Installing libexif (0.6.24-r0)
-(41/45) Installing garcon (4.20.0-r0)
-(42/45) Installing gtk-layer-shell (0.9.0-r0)
-(43/45) Installing libxfce4windowing (4.20.0-r0)
-(44/45) Installing xfce4-panel (4.20.0-r0)
-(45/45) Installing thunar (4.20.0-r0)
-OK: 177 MiB in 74 packages
+$ apk add -u thunar qnx-test-thunar qnx-port-tests
+( 1/48) Installing qnx-port-tests (1.0-r2)
+( 2/48) Installing expat (2.6.4-r0)
+( 3/48) Installing dbus (1.16.0-r1)
+( 4/48) Installing libxau (1.0.11-r0)
+( 5/48) Installing libxdmcp (1.1.5-r0)
+( 6/48) Installing libxcb (1.17.0-r0)
+( 7/48) Installing libx11 (1.8.10-r0)
+( 8/48) Installing libxext (1.3.6-r0)
+( 9/48) Installing libxi (1.8.2-r0)
+(10/48) Installing libxtst (1.2.5-r0)
+(11/48) Installing at-spi2-core (2.54.0-r0)
+(12/48) Installing bzip2 (1.0.8-r0)
+(13/48) Installing freetype (2.13.3-r0)
+(14/48) Installing fontconfig (2.15.0-r0)
+(15/48) Installing libxrender (0.9.11-r0)
+(16/48) Installing lzo (2.10-r0)
+(17/48) Installing pixman (0.46.4-r0)
+(18/48) Installing cairo (1.18.2-r0)
+(19/48) Installing fribidi (1.0.16-r0)
+(20/48) Installing graphite2 (1.3.14-r0)
+(21/48) Installing icu (76.1-r1)
+(22/48) Installing harfbuzz (<ip>-r0)
+(23/48) Installing libepoxy (1.5.10-r0)
+(24/48) Installing libxcomposite (0.4.6-r0)
+(25/48) Installing libxfixes (6.0.1-r0)
+(26/48) Installing libxcursor (1.2.2-r0)
+(27/48) Installing libxdamage (1.1.6-r0)
+(28/48) Installing libxinerama (1.1.5-r0)
+(29/48) Installing xz (5.6.3-r0)
+(30/48) Installing libxml2 (2.13.5-r1)
+(31/48) Installing libxkbcommon (1.8.1-r1)
+(32/48) Installing libxrandr (1.5.4-r0)
+(33/48) Installing libxft (2.3.8-r0)
+(34/48) Installing pango (1.54.0-r0)
+(35/48) Installing wayland (1.24.0-r0)
+(36/48) Installing gtk3 (3.24.43-r1)
+(37/48) Installing hicolor-icon-theme (0.18-r0)
+(38/48) Installing libxfce4util (4.20.0-r0)
+(39/48) Installing xfconf (4.20.0-r1)
+(40/48) Installing libxfce4ui (4.20.0-r1)
+(41/48) Installing exo (4.20.0-r0)
+(42/48) Installing libexif (0.6.24-r0)
+(43/48) Installing garcon (4.20.0-r1)
+(44/48) Installing gtk-layer-shell (0.9.0-r0)
+(45/48) Installing libxfce4windowing (4.20.7-r1)
+(46/48) Installing xfce4-panel (4.20.0-r0)
+(47/48) Installing thunar (4.20.0-r0)
+(48/48) Installing qnx-test-thunar (1.0-r0)
+OK: 177 MiB in 76 packages
 
-$ ldd on every program and library apk info -L thunar lists
-ok   loads: /data/oss/usr/local/bin/Thunar
-ok   loads: /data/oss/usr/local/bin/thunar
-ok   loads: /data/oss/usr/local/lib/libthunarx-3.so.0
-ok   loads: /data/oss/usr/local/lib/Thunar/thunar-sendto-email
-ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-apr.so
-ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-sbr.so
-ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-uca.so
-ok   loads: /data/oss/usr/local/lib/thunarx-3/thunar-wallpaper-plugin.so
-ok   loads: /data/oss/usr/local/lib/xfce4/panel/plugins/libthunar-tpa.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_thunar
+     == thunar ==
+       info libthunarx 4.20.0
+       ok   libthunarx 4.20.0
+       ok   thunarx_check_version(4.20.0) accepts
+       ok   thunarx_check_version(5.0.0): upstream stub, NULL
+       ok   thunarx_menu_item_new
+       ok   menu item properties read back
+       ok   sensitive by default
+       ok   set_sensitive(FALSE)
+       ok   "activate" emitted on each thunarx_menu_item_activate
+       ok   menu holds 3 items in order (prepend + 2 appends)
+       ok   submenu attached to an item
+       info renamer providers: ThunarSbrProvider
+       ok   thunar-sbr: ThunarSbrProvider (renamer provider) loaded
+       info property page providers: ThunarAprProvider
+       ok   thunar-apr: ThunarAprProvider (property page provider) loaded
+       info menu providers: TwpProvider ThunarUcaProvider
+       ok   thunar-uca: ThunarUcaProvider (custom actions) loaded
+       ok   thunar-wallpaper: TwpProvider loaded
+       info thunar --version -> 0: 
+       ok   thunar --version: thunar 4.20.0 (Xfce 4.20)
+       ok   Thunar -V (the compatibility name)
+       ok   thunar --help lists --bulk-rename, --daemon
+       ok   default custom actions (uca.xml) installed
+     PASS thunar
+PASS test_thunar
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

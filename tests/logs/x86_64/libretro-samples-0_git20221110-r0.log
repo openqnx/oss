@@ -1,15 +1,39 @@
-# libretro-samples 0_git20221110-r0 -- INSTALLED
+# libretro-samples 0_git20221110-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:24Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libretro-samples
-(1/1) Installing libretro-samples (0_git20221110-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u libretro-samples qnx-test-libretro-samples qnx-port-tests
+(1/3) Installing libretro-samples (0_git20221110-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libretro-samples (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L libretro-samples lists
-ok   loads: /data/oss/usr/local/lib/libretro/test_libretro_qnx.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libretro_samples
+     == libretro-samples ==
+       ok   core loads with dlopen
+       ok   all libretro entry points exported
+       ok   retro_api_version() == 1
+       info TestCore v1, extensions ""
+       ok   system info names the core
+       ok   core declares it runs without content
+       ok   retro_load_game(NULL)
+       info 320x240 (max 320x240), 60.00 fps, 30000 Hz audio, pixel format 1
+       ok   AV info: geometry and frame rate
+       info 120 run(s): 120 video callback(s) (0 dupes), last 320x240 pitch 1280, 60000 audio frame(s)
+       ok   video frames delivered
+       ok   frame size within the advertised geometry
+       ok   audio samples delivered
+       info 3 distinct colour(s) in the last frame
+       ok   the frame has content (several colours)
+       info save state 2 bytes
+       ok   save state written and restored
+       ok   unload + deinit returned
+     PASS libretro-samples
+PASS test_libretro_samples
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

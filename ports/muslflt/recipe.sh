@@ -22,7 +22,12 @@ do_build() {
     objs+=("$B/obj/$base.o"); n=$((n+1))
   done
   echo "muslflt: $n objects"
-  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
+  # -Bsymbolic: musl's functions call each other (snprintf -> vsnprintf,
+  # cexp -> exp, printf's %a -> frexpl). Through the PLT those calls bind to the
+  # first definition in the process, and QNX's libc/libm are always loaded
+  # before this library (libc.so is the first DT_NEEDED of every executable),
+  # so muslflt's snprintf ran QNX libc's vsnprintf. Bind them inside the library.
+  qcc -V$QCC_TARGET -shared -Wl,-soname,libmuslflt.so.1 -Wl,-Bsymbolic -o "$B/libmuslflt.so.1" "${objs[@]}" -lm || return 1
   "$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" rcs "$B/libmuslflt.a" "${objs[@]}"
 }
 do_install() {

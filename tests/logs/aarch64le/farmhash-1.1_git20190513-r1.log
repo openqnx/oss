@@ -1,0 +1,31 @@
+# farmhash 1.1_git20190513-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:27:05Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u farmhash qnx-test-farmhash qnx-port-tests
+(1/3) Installing farmhash (1.1_git20190513-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-farmhash (1.0-r0)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_farmhash
+     == farmhash ==
+       ok   Fingerprint32/64/128 of "" (len 0)
+       ok   Fingerprint32/64/128 of "a" (len 1)
+       ok   Fingerprint32/64/128 of "hello world" (len 11)
+       ok   Fingerprint32/64/128 of "The quick brown fox " (len 43)
+       ok   Fingerprint32/64 of a 1000-byte string (long-input code paths)
+       ok   Fingerprint(uint64)
+       ok   Hash32/Hash64 deterministic, string and pointer overloads agree
+       ok   seeded hashes depend on the seed
+       ok   one-bit input change changes Hash64
+       ok   no Hash32 collisions among neighbouring small integers
+     PASS farmhash
+PASS test_farmhash
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

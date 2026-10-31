@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/ARM-software/ComputeLibrary.git (tag `v53.0.0`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,10 +55,11 @@ git clone --depth 1 -b v53.0.0 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/computelibrary < ports/computelibrary/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/computelibrary < ports/computelibrary/patches/0002-qnx-link-libregex.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX Support
@@ -71,6 +72,16 @@ patch -p1 -d src/computelibrary < ports/computelibrary/patches/0001-qnx-from-qnx
 >  1 file changed, 6 insertions(+)
 
 Touches: `CMakeLists.txt`, `CMakeLists.txt` · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-qnx-link-libregex.patch`](patches/0002-qnx-link-libregex.patch)** — Link libarm_compute against libregex on QNX.
+
+> The CPU-info code (src/common/cpuinfo/CpuInfo.cpp) parses /proc/cpuinfo
+> with POSIX regcomp/regexec. QNX keeps those in libregex.so.1, not in libc,
+> so libarm_compute.so linked (undefined symbols are allowed in shared
+> libraries) but recorded no NEEDED for libregex, and every program had to
+> add -lregex itself.
+
+Touches: `CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -175,6 +186,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | computelibrary 53.0.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/computelibrary-53.0.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | computelibrary 53.0.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/computelibrary-53.0.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

@@ -1,0 +1,35 @@
+# cmake 4.1.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:12:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cmake qnx-test-cmake qnx-port-tests
+(1/8) Installing c-ares (1.34.3-r0)
+(2/8) Installing nghttp2 (1.64.0-r0)
+(3/8) Installing curl (8.11.1-r1)
+(4/8) Installing libuv (1.51.0-r0)
+(5/8) Installing cmake (4.1.1-r1)
+(6/8) Installing qnx-port-tests (1.0-r2)
+(7/8) Installing ninja (1.13.1-r1)
+(8/8) Installing qnx-test-cmake (1.0-r0)
+OK: 154 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cmake
+     == cmake ==
+       info cmake version 4.1.1
+       ok   cmake -P: list/string/math/regex/JSON/SHA256/file
+       ok   cmake -E sha256sum
+       ok   cmake -E tar czf/xzf round trip
+       ok   configure (Ninja generator, LANGUAGES NONE)
+       ok   build: custom command made gen.txt
+       ok   ctest: 2 tests, 100% passed (one WILL_FAIL)
+       ok   cmake --install
+       ok   cpack -G TGZ: package holds share/qnxdemo/gen.txt
+     PASS cmake
+PASS test_cmake
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

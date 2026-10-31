@@ -59,7 +59,7 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 | 🟢 Standalone | **223** — QNX SDP only, at build time and at run time |
 | 🟡 Build-deps only | **63** — need other components to build, run on their own |
 | 🔴 Dependent | **238** — need other components to build and to run |
-| QNX patches | **416**, one file per change, each with its reason |
+| QNX patches | **447**, one file per change, each with its reason |
 | On-target tests | **233** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 

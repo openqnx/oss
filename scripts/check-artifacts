@@ -3,6 +3,9 @@
 # architecture, no symlink may dangle, and no installed .pc/.la/config script
 # may point back into the build or host tree.
 #
+# It also audits the package trees (pkgroot/) for build-machine paths
+# (scripts/lib/check-hostpaths.py, classes A-C).
+#
 # This catches classes of error the other audits cannot see:
 #   - a host (Linux) binary installed into stage by a build that ran a native
 #     compiler where it should have cross-compiled
@@ -112,6 +115,24 @@ for arch in aarch64le x86_64; do
     echo "FAIL [$arch] build-machine paths inside package trees:"
     echo "$odd" | sed "s,^$WS/pkgroot/$arch/,    ," | head -20
     rc=1
+  fi
+
+  # --- build-machine paths in what gets packaged (classes A-C) -----------
+  # pkgroot read the way scripts/qnxpkg packages it (text files sanitized,
+  # cross-build-only files left out): A = an ELF with a compiled-in data path
+  # into stage/ or a build tree, B = a text file naming stage/, the link
+  # sysroot or the SDP, C = hosttools/ or build-tree paths, build-machine #!
+  # lines. RUNPATH, debug info, __FILE__, recorded configure lines, *.pyc and
+  # static archives pass (D), and so does scripts/lib/hostpath-allow.
+  if [ -d "$WS/pkgroot/$arch" ]; then
+    out=$(python3 "$WS/scripts/lib/check-hostpaths.py" "$arch" 2>&1); hp=$?
+    if [ $hp -ne 0 ]; then
+      echo "FAIL [$arch] build-machine paths in package trees:"
+      echo "$out" | sed 's,^,    ,'
+      rc=1
+    elif [ -n "$out" ]; then
+      echo "$out" | sed "s,^,    [$arch] ,"
+    fi
   fi
 
   [ $rc -eq 0 ] && echo "OK  [$arch] all staged ELFs are QNX/$want, no dangling links, no path leaks"

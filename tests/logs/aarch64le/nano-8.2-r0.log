@@ -1,19 +1,31 @@
-# nano 8.2-r0 -- INSTALLED
+# nano 8.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:41:00Z   packages from: apk:local-dists
+# date: 2026-10-31T16:58:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u nano
-(1/4) Installing bzip2 (1.0.8-r0)
-(2/4) Installing xz (5.6.3-r0)
-(3/4) Installing file (5.46-r0)
-(4/4) Installing nano (8.2-r0)
-OK: 67 MiB in 33 packages
+$ apk add -u nano qnx-test-nano qnx-port-tests
+(1/8) Installing bzip2 (1.0.8-r0)
+(2/8) Installing xz (5.6.3-r0)
+(3/8) Installing file (5.46-r0)
+(4/8) Installing nano (8.2-r0)
+(5/8) Installing qnx-port-tests (1.0-r2)
+(6/8) Installing libevent (2.1.12-r0)
+(7/8) Installing tmux (3.5a-r2)
+(8/8) Installing qnx-test-nano (1.0-r0)
+OK: 69 MiB in 36 packages
 
-$ ldd on every program and library apk info -L nano lists
-ok   loads: /data/oss/usr/local/bin/nano
-ok   loads: /data/oss/usr/local/bin/rnano
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nano
+     == nano ==
+       ok   --version: GNU nano, version 8.2
+       ok   nano shows the file in its window
+       ok   Ctrl-O, Ctrl-X: nano saved and exited
+       ok   file on disk holds both edits
+       ok   Ctrl-W search scrolled to line 121
+     PASS nano
+PASS test_nano
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

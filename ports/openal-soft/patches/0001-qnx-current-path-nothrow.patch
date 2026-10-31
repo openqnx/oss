@@ -1,0 +1,54 @@
+QNX: do not abort when the working directory cannot be queried.
+
+SearchDataFiles() called the throwing std::filesystem::current_path() outside
+any try block. libc++ on QNX sizes the getcwd buffer with
+pathconf(".", _PC_PATH_MAX); when that fails the exception is uncaught and
+the program aborts (openal-info died with SIGABRT while enumerating HRTFs).
+Use the error_code overload; an unknown cwd just means no app-local files.
+
+diff --git a/core/helpers.cpp b/core/helpers.cpp
+index 8464d53..5d09277 100644
+--- a/core/helpers.cpp
++++ b/core/helpers.cpp
+@@ -33,6 +33,23 @@ using namespace std::string_view_literals;
+ 
+ std::mutex gSearchLock;
+ 
++/* The throwing std::filesystem::current_path() aborts the program when the
++ * working directory cannot be queried: libc++ sizes its buffer with
++ * pathconf(".", _PC_PATH_MAX), which QNX path managers may refuse, and the
++ * exception is not caught here. An unknown cwd only means "no app-local data
++ * files". */
++auto CurrentPathNoThrow() -> std::filesystem::path
++{
++    auto ec = std::error_code{};
++    auto curpath = std::filesystem::current_path(ec);
++    if(ec)
++    {
++        WARN("Failed to get the current directory: %s\n", ec.message().c_str());
++        return std::filesystem::path{};
++    }
++    return curpath;
++}
++
+ void DirectorySearch(const std::filesystem::path &path, const std::string_view ext,
+     std::vector<std::string> *const results)
+ {
+@@ -149,7 +166,7 @@ auto SearchDataFiles(const std::string_view ext) -> std::vector<std::string>
+     auto results = std::vector<std::string>{};
+     if(auto localpath = al::getenv(L"ALSOFT_LOCAL_PATH"))
+         DirectorySearch(*localpath, ext, &results);
+-    else if(auto curpath = std::filesystem::current_path(); !curpath.empty())
++    else if(auto curpath = CurrentPathNoThrow(); !curpath.empty())
+         DirectorySearch(curpath, ext, &results);
+ 
+     return results;
+@@ -316,7 +333,7 @@ auto SearchDataFiles(const std::string_view ext) -> std::vector<std::string>
+     auto results = std::vector<std::string>{};
+     if(auto localpath = al::getenv("ALSOFT_LOCAL_PATH"))
+         DirectorySearch(*localpath, ext, &results);
+-    else if(auto curpath = std::filesystem::current_path(); !curpath.empty())
++    else if(auto curpath = CurrentPathNoThrow(); !curpath.empty())
+         DirectorySearch(curpath, ext, &results);
+ 
+     return results;

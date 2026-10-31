@@ -1057,3 +1057,379 @@ absolute run path of where the package installs (`/usr/local/opt/<name>/lib`).
 `(null)`; QNX's libc dereferences it in strlen. Log lines that print an
 optional string (labwc's theme name, swaybg's output description) crashed
 programs that work everywhere else -- found only by running them.
+
+**100. libc is the first `DT_NEEDED` of every executable, so it wins symbol
+interposition.** qcc links `libc.so.6` ahead of everything else, and the
+loader searches objects in that order. A library that defines libc or libm
+names itself and calls them internally through the PLT runs QNX's copies
+instead of its own: muslflt's `snprintf` called its `vsnprintf` and got QNX
+libc's (`%a` of 1.0 printed `0x8p-3`, not musl's `0x1p+0`). Link such a
+library with `-Wl,-Bsymbolic` so its internal calls bind inside it
+(`ports/muslflt/recipe.sh`).
+
+**101. `-export-dynamic` is often gated on the GNU compiler ID.** lighttpd
+finds its built-in modules with `dlsym(RTLD_DEFAULT, "mod_x_plugin_init")`,
+which needs the executable's symbols exported; its CMake adds
+`-Wl,-export-dynamic` only when `CMAKE_C_COMPILER_ID` is GNU or Clang, and qcc
+is `QCC` (hazard 4). The server then tried to `dlopen` `mod_indexfile.so`,
+which is never built, and refused every configuration
+(`ports/lighttpd/patches/0001-*`). A program that looks itself up with
+`dlsym` needs `nm -D` to show those symbols.
+
+**102. gnulib's `getcwd()` replacement walks `..` with `openat()` and
+`fdopendir()` (hazards 25, 120).** A cross build cannot run gnulib's getcwd
+probes, so it assumes the system getcwd is broken and replaces it with an
+implementation that `openat(fd, "..", O_RDONLY)`s its way to the root, which
+QNX refuses with `ENOTDIR`. gettext's `msgfmt -o` writes through
+`open_supersede()`, which canonicalizes the output name starting from
+`getcwd()`, so it could not write any file, even one in the current
+directory: "error while opening ... for writing: Not a directory".
+`xgettext -o` uses plain `fopen()` and worked, which hid the pattern.
+gettext's getcwd now calls the system getcwd on QNX
+(`ports/gettext/patches/0001-*`), and the recipe sets
+`-DO_SEARCH=O_DIRECTORY` for the rest of gnulib. An earlier guess, that
+`readlink()` returns another errno than EINVAL for a directory, was wrong.
+Look for `REPLACE_GETCWD` = 1 in `config.status`.
+
+**103. `fdopendir()` needs `O_DIRECTORY` as well (hazard 25).** A
+recursive walker that `openat(parent, name, O_RDONLY)`s each subdirectory
+and `fdopendir()`s it fails one level down. apk's `mkpkg` reported "failed
+to process directory 'usr': -1" (`ports/apk-tools/patches/0004-*`).
+
+**104. `--allow-shlib-undefined` hides missing `DT_NEEDED` entries.**
+A shared library links even when it never names the libraries it calls.
+libmetis.so had no NEEDED entry for libGKlib.so, and libGKlib.so had none for
+libregex, where QNX keeps `regcomp` (it is not in libc). Every consumer had
+to list the whole chain itself. Compare `readelf -d` of each library with its
+undefined symbols (`ports/metis/patches/0002-*`, `ports/gklib/patches/0002-*`).
+
+**105. Build-machine interpreter paths leak into installed scripts.**
+CMake's `find_program()` and autoconf's `@SHELL@` both run on the build
+machine. check's `checkmk` began with `#! <stage>/linkroot/.../usr/bin/awk -f`
+and the fakeroot wrapper with `#!/bin/bash`; a QNX target has neither path.
+Set the interpreter explicitly (`-DAWK_PATH=/usr/local/bin/awk`), declare
+the runtime dependency, and check the `#!` line of every installed script.
+
+**106. The unversioned `lib*.so` goes to the -dev package.** Code that
+dlopens or `LD_PRELOAD`s a library by its unversioned name works in the
+staging tree and fails on an installed target. The fakeroot wrapper preloaded
+`libfakeroot.so`, which ships in fakeroot-dev; the runtime file is
+`libfakeroot-0.so` (`ports/fakeroot/recipe.sh`).
+
+**107. `std::filesystem::current_path()` can throw.** QNX's libc++
+sizes its getcwd buffer with `pathconf(".", _PC_PATH_MAX)` and throws
+`filesystem_error` when that fails. An uncaught call aborts the program.
+The likely cause of openal-info dying with SIGABRT while enumerating HRTF
+data files (not yet confirmed on the target). Use the `error_code` overload
+(`ports/openal-soft/patches/0001-*`).
+
+**108. "Minimal plugin set" switches drop security features.**
+strongSwan's `--disable-defaults` also removed the `constraints` plugin, so
+X.509 name, path-length and policy constraints were not enforced, and with
+it the `revocation` plugin and the `pki` tool. The build and the load checks
+stayed clean. Only strongSwan's own `certnames` unit suite (0/10) showed it.
+When disabling defaults, list what they were and re-enable the security-
+relevant ones explicitly (`ports/strongswan/recipe.sh`).
+
+**109. A trylock is no way to ask whether a mutex is held.** libmetal's QNX
+`metal_mutex_is_acquired()` probed with `pthread_mutex_trylock()`: on a free
+mutex the probe *took* the lock (the next acquire deadlocked), and from the
+thread holding the mutex QNX's trylock did not fail with `EBUSY`, so a held
+mutex read as free. Read the owner word of the mutex's `sync_t` instead
+(`_NTO_SYNC_MUTEX_FREE` is free; `_NTO_SYNC_INITIALIZER`/`_DESTROYED` are
+markers, also free). The deeper bug was in the same header:
+`metal_assert(pthread_mutex_unlock(mutex) == EOK)` -- `metal_assert()` is
+`assert()`, so with `NDEBUG` (every Release build) lock, unlock, init and
+`pthread_cond_init` were compiled out and libmetal's mutexes did nothing.
+Never put the call itself inside an assert. `ports/libmetal/patches/0002`
+fixes both, and `metal_get_timestamp()` (it computed the time and returned
+0). Found by the run-level test, not by the build.
+
+**110. Perl's versionless `site_perl` is not in `@INC`.** The perl port has
+an empty `inc_version_list`, so `SITELIB_STEM` (`lib/perl5/site_perl`) is
+never searched; only `site_perl/<version>` and its arch directory are.
+perl-error installed `Error.pm` into the stem, and `perl -MError` failed on
+every target. Pure-Perl modules go into `site_perl/<perl VERSION>`, as
+perl-mozilla-ca does (`ports/perl-error/recipe.sh`).
+
+**111. ctypes loaders that name `lib*.so` (hazard 106) hide in Python.**
+ntpsec's `ntp.ntpc` loaded `libntpc.so` -- the development symlink in
+ntpsec-dev -- so with only ntpsec installed every `ntp.*` import, and with it
+ntpdig, ntpq and ntpkeygen, failed with "Can't find ntpc library". Grep
+Python packages for `CDLL`/`find_library` and try the runtime soname first
+(`ports/ntpsec/patches/0002`).
+
+**112. CPython's `shutil.rmtree()` walks the tree with directory fds opened
+without `O_DIRECTORY` (hazards 25, 103).** `_rmtree_safe_fd` does
+`os.open(name, O_RDONLY | O_NONBLOCK, dir_fd=...)` and then `os.scandir(fd)`
+and `*at()` calls under it, which QNX refuses with `ENOTDIR`. setuptools'
+`bdist_wheel` stops removing its egg-info ("[Errno 20] Not a directory:
+'build/bdist.qnx-.../qnxdemo-1.2.3-py3.14.egg-info'"). The fix belongs in the
+python3 port: `ports/python3/patches/0002` adds `O_DIRECTORY` to those opens
+(and to `os.fwalk`'s); `test_python3_setuptools` checks `shutil.rmtree`
+directly.
+
+**113. A test that links a static library by `-l<name>` is not relinked when
+the library changes.** CMake/ninja track `${LIB}/lib<name>.a` as a dependency
+only when it is named by path. cpuinfo's fix was in the rebuilt
+`libcpuinfo.a`, yet `test_cpuinfo` kept the old code (a static library has no
+run-time package to update either). Name static libraries by path in
+`port_test()` (`tests/run-level/g5-other.cmake`).
+
+**113. A C++ shared library linked by the C driver has no NEEDED for
+libc++ (hazard 104 again).** FreeImage's `Makefile.gnu` links
+`libfreeimage.so` with `$(CC)` and upstream's `-lstdc++`; the recipe had
+replaced that with `-lm`, so the library recorded no C++ runtime at all. It
+loaded only into C++ programs, and a C program linking it failed on
+`__cxa_*` and `operator new`. Name QNX's runtime explicitly (`-lc++`,
+`ports/freeimage/recipe.sh`). The same check found more libraries calling
+libraries they do not record: libmetis-gtsam (libregex, `ports/gtsam/patches/0001`),
+libarm_compute (libregex, `ports/computelibrary/patches/0002`) and
+librpi_camera_ipa (libslog2, libyaml; `ports/libcamera/files/CMakeLists.txt`).
+
+**114. `strings` can invent paths in x86_64 binaries.** GCC on x86_64
+builds a short constant string such as `GIO_MODULE_DIR`
+(`/usr/local/lib/gio/modules`) from two overlapping 16-byte SSE stores, so
+`.rodata.cst16` holds `/usr/local/lib/g` and `lib/gio/modules`, and
+`strings` runs them together as `/usr/local/lib/glib/gio/modules`. That path
+exists nowhere; the aarch64le build of the same file shows the real one. To
+audit a compiled-in path, check the `-D` in `build.ninja` or the aarch64le
+binary, or `objdump -s -j .rodata.cst16` the object, not `strings` on x86_64.
+It cost a glib rebuild here.
+
+**115. Header-only portability bugs show up only in consumers.** A recipe
+flag fixes the library's own compile but not the installed header. farmhash
+was built with `-D__LITTLE_ENDIAN__`, yet its `farmhash.h` compares glibc's
+`__BYTE_ORDER` (undefined on QNX, so 0) and then includes `<endian.h>`, which
+QNX does not have, so every program including it failed. Patch the header
+(`ports/farmhash/patches/0003`, which uses the compiler's `__BYTE_ORDER__`).
+Upstream header bugs belong here too: aws-c-cal's `hkdf.h` reused `ecc.h`'s
+include guard, and including both lost one (`ports/aws-c-cal/patches/0001`).
+
+**116. QNX's aarch64 `FE_*` rounding constants are not musl's or glibc's.**
+QNX's `<aarch64/fenv.h>` defines `FE_UPWARD` 1, `FE_DOWNWARD` 2 and
+`FE_TOWARDZERO` 3, the FPCR RMode field without its shift of 22. musl
+(and glibc) use the bits in place (`0x400000`, `0x800000`, `0xc00000`). On
+x86_64 the two agree. muslflt ships no headers, so its users pass QNX's
+values: its `fesetround(FE_UPWARD)` returned -1 on aarch64 only. Its aarch64
+`bits/fenv.h` and `fenv.s` now take and return QNX's values
+(`ports/muslflt/patches/0001-*`).
+
+**117. A call to a function that exists nowhere surfaces only at load time**
+(the toolchain's `--allow-shlib-undefined`, hazard 104).
+XNNPACK calls `cpuinfo_has_arm_sme()`, which is newer than the cpuinfo built
+here. GCC 12 only warns about the implicit declaration, the library linked,
+and every aarch64 program using it failed in the loader. Grep build logs for
+`implicit declaration`, and run `nm -D <lib> | grep ' U '` against what is
+staged (`ports/xnnpack/patches/0002-*`).
+
+**118. `daemon()` without `noclose` closes every descriptor, not only 0-2.**
+QNX implements it with `procmgr_daemon()`, which closes all open files
+unless `PROCMGR_DAEMON_NOCLOSE` is given; Linux and the BSDs only point
+0-2 at `/dev/null`. A server that forks, keeps a socketpair to its parent and
+then calls `daemon(1, 0)` loses the socketpair: tmux's client reported
+"server exited unexpectedly" and never created its socket, so tmux, and with
+it every test that drives a program in a tmux pane, failed. Use
+`daemon(nochdir, 1)` and redirect 0-2 yourself (`ports/tmux/patches/0002-*`).
+
+**119. The main thread's stack is small; big arrays on it crash.** Programs
+that keep large buffers on the stack -- ninja's `DepsLog::Load` declares a
+512 KiB record buffer, its build-log reader 256 KiB -- die with "Memory
+fault" on QNX before doing anything, while tools that never reach that
+function work, which makes it look like a logic bug. Link with
+`-Wl,-z,stack-size=8388608` (`ports/ninja/patches/0002-*`; BusyBox already
+needed 4 MiB). METIS's `gpmetis` and `ndmetis` declared a 1.28 MB
+`char filename[MAXLINE]` to build their output file name, and crashed only
+when they wrote a result: `gpmetis -nooutput` worked
+(`ports/metis/patches/0003-*`).
+
+**120. gnulib's `O_SEARCH` fallback is `O_RDONLY`, so `save_cwd()` opens
+`.` without `O_DIRECTORY` (hazard 25).** QNX has no `O_SEARCH`; gnulib then
+defines it as `O_RDONLY`, and every `fchdir()`/`*at()` on that descriptor
+fails with `ENOTDIR`. GNU tar died "failed to return to initial working
+directory: Not a directory" on every extraction; gettext's `msgfmt` cannot
+write its output file ("error while opening ... for writing: Not a
+directory") for the same reason. `-DO_SEARCH=O_DIRECTORY` fixes all users
+of the module (`ports/tar/recipe.sh`; gettext still needs it).
+
+**121. QNX's `/bin/sh` (pdksh) has no POSIX character classes in patterns.**
+`case "$f" in [[:alpha:]]*-*)` never matches, so xdg-desktop-menu refused
+every file name as having no vendor prefix. Spell classes out (`[a-zA-Z]`)
+in shell scripts that run on the target (`ports/xdg-utils/patches/0002-*`).
+
+**122. LuaJIT's FFI resolves `ffi.C.<name>` in the executable, which must
+export its symbols.** sysbench's configure adds `-rdynamic` only on Linux and
+FreeBSD; without it every Lua script stopped with "Symbol not found" at its
+first `ffi.C` reference. Link such programs with `-Wl,--export-dynamic`
+(`ports/sysbench/recipe.sh`).
+
+**123. `setrlimit(RLIMIT_FSIZE)` always fails with `EINVAL`**, even with the
+values `getrlimit()` just returned. sudo raises that limit at start-up and
+printed "setrlimit(rlimit_fsize): Invalid argument" on every run
+(`ports/sudo/patches/0003-*`).
+
+**124. `/etc` is not the package root's `etc`.** Packages install under the
+apk root (`/data/oss`), so a program built with `--sysconfdir=/etc` reads
+the base system's `/etc` and never sees the configuration its own package
+ships: sudo found no `/etc/sudoers`. Configure with
+`--sysconfdir=/usr/local/etc` (`ports/sudo/recipe.sh`).
+
+**125. qnxpkg's dev split takes CMake's own data directory.** The pattern
+`^usr/local/share/cmake[^/]*/` (CMake package files of libraries) also
+matches `share/cmake-4.1`, CMake's Modules: the cmake package ships without
+them and every cmake run stops "Could not find CMAKE_ROOT". The pattern
+now keeps `share/cmake-<version>/` in the runtime package (scripts/qnxpkg).
+
+**118. The SDP's `libbacktrace.so.1` needs `libunwind-nto.so.0`, which
+target images often lack.** Both are in the SDP, but a vanilla QNX 8.0 image
+ships libbacktrace without its unwinder. g3log's crash handler linked
+`-lbacktrace` (`ports/g3log/patches/0001`), so every program using g3log
+failed at start with "Could not load library libunwind-nto.so.0", only for a
+stack dump printed on a crash. Don't link optional crash-time helpers:
+dlopen them when needed (`ports/g3log/patches/0002`). `check-sdp-leak`
+allowlists libbacktrace; its dependency is the part that is missing.
+
+**126. A Python extension module must not link libpython.** libxml2's CMake
+links its `libxml2mod` with `Python::Python`, which puts `libpython3.14.so`
+in its NEEDED list -- and since the module ships in the libxml2 package,
+qnxpkg would make libxml2 (and everything that uses it) depend on python3.
+CPython's own `lib-dynload` modules take the C API from the interpreter that
+loads them; link `Python::Module` instead, and drop the version suffix so the
+file is the `libxml2mod.so` that `import` looks for
+(`ports/libxml2/patches/0001-*`).
+
+**127. A mutex locked in a `pthread_atfork()` prepare handler cannot be
+unlocked in the child.** The child's thread is not the owner on QNX:
+`pthread_mutex_unlock()` there returns `EPERM`. Threaded perl locks
+`PL_perlio_mutex` and `PL_op_mutex` before every fork and unlocks them in
+both processes, so every backtick, `system()` and pipe open panicked in the
+child ("panic: MUTEX_UNLOCK (1) [util.c:2877]") -- and autoconf/automake hung
+for good. Re-initialise such mutexes in the child handler instead
+(`ports/perl/patches/0002-*`); check any other code that follows the classic
+lock-in-prepare/unlock-in-child pattern.
+
+**128. `pkg-config --variable` returns sysroot-prefixed paths in a cross
+build.** (First filed as a second number 114.) X.Org's `XORG_FONTROOTDIR` takes fontutil's `fontrootdir` from
+pkg-config, and with `PKG_CONFIG_SYSROOT_DIR` set that is
+`<workspace>/stage/<arch>/usr/local/share/fonts/X11`. libfontenc compiled it
+in as its encodings directory, so on a target `FontEncDirectory()` pointed
+into the build machine and no encoding file was found. (A target that still
+had an older correct build hid it on x86_64.) Pass the target path
+explicitly: `--with-fontrootdir=$PREFIX/share/fonts/X11`
+(`ports/fontenc/recipe.sh`). `strings` on the staged library shows it.
+
+The cause is general, not fontenc's. The build machine's pkg-config is
+pkgconf, and with `PKG_CONFIG_SYSROOT_DIR` set pkgconf puts the sysroot in
+front of *every* path it prints, `--variable` answers included;
+freedesktop.org's pkg-config, which upstream build files are written for,
+prefixes only the `-I`/`-L` of `--cflags`/`--libs`, and a variable meant for
+the build machine says so itself with `${pc_sysrootdir}` (wayland-protocols'
+`pkgdatadir`, xcb-proto's `xcbincludedir`). configure scripts and meson.build
+files take the answers as the target's directories: xkbcomp compiled in
+xkeyboard-config's `xkb_base`, Xwayland fontutil's `fontrootdir` as its
+font path, GTK `x11`'s and iso-codes' `prefix`, gst-plugins-base gio's
+`giomoduledir`/`libdir`/`prefix` and iso-codes', Epiphany iso-codes' -- all
+as `<workspace>/stage/<arch>/usr/local/...`. `toolchain/bin/pkg-config` now
+wraps pkgconf (env.sh puts it first on PATH and in `PKG_CONFIG`, the meson
+cross files name it): for `--variable` it sets
+`PKG_CONFIG_FDO_SYSROOT_RULES=1`, so the answer is `/usr/local/...`;
+`--cflags`/`--libs` are unchanged. Exceptions keep the prefix: variables
+naming a program the build runs (`glib_mkenums`, `gdbus_codegen`,
+`g_ir_scanner`, ...), and every query from CMake, whose FindPkgConfig fills
+`<P>_INCLUDEDIR`/`_LIBDIR`/`_PREFIX` from `--variable` and projects compile
+with them (the toolchain files set `QNX_PKG_CONFIG_VARIABLES=sysroot`; a
+recipe can export the same). Check a compiled-in path in the build files
+(`config.h`, `build.ninja`): on x86_64 `strings` showed GTK's
+`/usr/local/share/X11/locale` as `/usr/local/sharehare/X11/locale`
+(hazard 114).
+
+**129. Packages must not name the build machine, but staging must.** Files
+in stage/ are read by later cross builds there: a CMake package file, a
+`*-config` script or Python's sysconfig data has to name the staging tree.
+The packages get the target's paths instead, at packaging time:
+`scripts/qnxpkg` passes every text file (no NUL byte) through
+`scripts/lib/hostpaths.py`: `<any prefix>/stage/<arch>/usr/local` becomes
+`/usr/local`; `-I`/`-L` into the link sysroot or the SDP and
+`-Wl,-rpath-link` into staging are dropped; any other link-sysroot/SDP path
+becomes the target's (`linkroot/<arch>/lib` -> `/lib`; in CMake files an SDP
+`.../lib/libm.so` becomes `m`); the SDP's cross compiler is named, not
+located (`qcc`); `#!` lines naming a build-machine interpreter get the
+target's (`/usr/local/bin/python3`, `/usr/local/bin/perl`, `/bin/sh`); ROS 2's
+colcon install tree (`build/<arch>/ros2/install`) becomes
+`/usr/local/opt/ros/jazzy`; Python's sysconfig loses the hosttools python and
+`-I`/`-L` into the source tree. Earlier workspaces of this machine are
+listed in `scripts/lib/build-prefixes` -- packages built there still name
+them. Two kinds of file are not rewritten: frozen m4 state (`*.m4f`, every
+string length-prefixed) and binary files; and a `.pc` naming a hosttools/
+program (wayland's `wayland-scanner.pc`) is not packaged at all. The package
+fingerprint covers the rewritten bytes, so a package whose contents change
+gets a new release. `scripts/check-artifacts` reads pkgroot the way qnxpkg
+packages it and fails on what is left (classes A-C,
+`scripts/lib/check-hostpaths.py`); harmless or not-yet-fixed leftovers are
+listed in `scripts/lib/hostpath-allow`.
+
+**130. A compiled-in data path can point into a build tree, too.** VLC's
+contribs are installed into `build/<arch>/vlc/<triple>/` and built with that
+as their prefix: the bundled fontconfig in libvlccore's subtitle renderers
+looks for `<build>/vlc/<triple>/etc/fonts` and
+`<build>/vlc/<triple>/var/cache/fontconfig`, gettext for
+`<build>/vlc/<triple>/share/locale`. No staging tree is involved, so
+neither the pkg-config fix nor the package sanitizer reaches it; the contribs
+need target directories (`--sysconfdir=/usr/local/etc`, `--localstatedir=/var`,
+`--localedir`) in their configure. Open (listed in hostpath-allow).
+
+**131. For qcc, `-P` means "preprocess to a file", not "no line markers".**
+`qcc -E -P x.c` writes `x.i` and prints nothing. perl-cross probes with
+`$cpp -P` and reads stdout, and perl's `Errno_pm.PL` adds `-P` for GCC 5 and
+later: with qcc, perl got no signal names ("No such signal: SIGHUP") and an
+empty `%!` (`$!{EEXIST}` false, so autom4te died "cannot create
+autom4te.cache: File exists"). perl-cross also asked qcc for `gccversion`
+and got "0.0". Preprocess with the cross-GCC driver (`<triple>-gcc -E`) and
+pass the real `gccversion` (`ports/perl/recipe.sh`).
+
+**132. QNX's `getopt_long` does not restart on `optind = 0`.** It is
+BSD-derived: `optind = 0` is the GNU spelling of "start over", which QNX
+does not honour, so a first parsing pass sees no options at all. RetroArch
+parses its arguments twice and handles `--config` only in the first pass:
+the option was silently ignored. Restart with `optind = 1; optreset = 1`
+(`ports/retroarch/patches/0003-*`).
+
+**133. Files in an IFS image (`/proc/boot`) carry no section headers.**
+Tools that work from sections -- `scanelf`'s soname and symbol search, `nm`
+-- report nothing for `/proc/boot/libc.so.6`, while header-only queries
+(ELF type) still work. Use a library from a package to test such tools.
+
+**134. D-Bus EXTERNAL authentication: libdbus expects SCM_CREDS, GDBus
+sends none (hazard 40).** QNX's socket layer is FreeBSD's, so libdbus is
+configured with `HAVE_CMSGCRED` and reads the peer uid only from an
+`SCM_CREDS` message the client must send. libdbus clients send one; GLib has
+no credentials type for QNX (`gcredentialsprivate.h` knows `__FreeBSD__`, not
+`__QNX__`), so GDBus clients send the bare nul byte, dbus-daemon learns no
+uid -- and worse, with no GCredentials support GDBus's EXTERNAL client sends
+`g_credentials_get_unix_user()`'s failure value, uid -1, as its identity, which
+no server accepts: "Exhausted all available authentication mechanisms (tried:
+EXTERNAL)" -- xfconf, and with it every Xfce program, could not reach the
+session bus. GLib now treats QNX like FreeBSD (`struct cmsgcred` sent as
+`SCM_CREDS`, `ports/glib/patches/0002-*`), and libdbus falls back to
+`getpeereid()` when a peer sends no credentials (`ports/dbus/patches/0001-*`).
+
+**135. "How many file descriptors can there be?" has no answer on QNX in
+code that knows only Linux, glibc and the BSDs.** VTE's `fdwalk()` fallback
+(copied from GLib) asks `prlimit()`/`getrlimit()` only under `__linux__` or
+`__GLIBC__` and `sysconf(_SC_OPEN_MAX)` only on the BSDs and macOS; anything
+else gets `RLIM_INFINITY`, and `fdwalk()` then refuses with `ENFILE`. VTE
+marks descriptors close-on-exec that way before every spawn, so no terminal
+child ever started: xfce4-terminal opened a window with no shell in it.
+Add `__QNX__` to the `sysconf()` branch (`ports/vte/patches/0004-*`).
+
+**136. QNX's inotify emulation (`/dev/fsnotify`) can block a single-threaded
+event loop.** During D-Bus service activation dbus-daemon was found blocked
+in the fsnotify server (state REPLY on `/dev/fsnotify`, its inotify fd), from
+its service-directory watcher (`bus/dir-watch-inotify.c`), while the
+activated xfconfd waited for the daemon to answer its authentication: a
+deadlock, and every activated service timed out. (At first it looked like
+the exec-error pipe; it is not.) dbus is now built with
+`-Dinotify=disabled -Dkqueue=disabled`: the default watcher does nothing,
+and the daemon reads the service directories at start and again on a cache
+miss (`bus/activation.c`, `update_service_cache`) (`ports/dbus/recipe.sh`).
+Treat inotify-based watchers on QNX as suspect in any event loop.

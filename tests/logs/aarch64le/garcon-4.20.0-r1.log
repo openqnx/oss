@@ -1,0 +1,73 @@
+# garcon 4.20.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:30:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u garcon qnx-test-garcon qnx-port-tests
+( 1/42) Installing expat (2.6.4-r0)
+( 2/42) Installing dbus (1.16.0-r1)
+( 3/42) Installing libxau (1.0.11-r0)
+( 4/42) Installing libxdmcp (1.1.5-r0)
+( 5/42) Installing libxcb (1.17.0-r0)
+( 6/42) Installing libx11 (1.8.10-r0)
+( 7/42) Installing libxext (1.3.6-r0)
+( 8/42) Installing libxi (1.8.2-r0)
+( 9/42) Installing libxtst (1.2.5-r0)
+(10/42) Installing at-spi2-core (2.54.0-r0)
+(11/42) Installing bzip2 (1.0.8-r0)
+(12/42) Installing freetype (2.13.3-r0)
+(13/42) Installing fontconfig (2.15.0-r0)
+(14/42) Installing libxrender (0.9.11-r0)
+(15/42) Installing lzo (2.10-r0)
+(16/42) Installing pixman (0.46.4-r0)
+(17/42) Installing cairo (1.18.2-r0)
+(18/42) Installing fribidi (1.0.16-r0)
+(19/42) Installing graphite2 (1.3.14-r0)
+(20/42) Installing icu (76.1-r1)
+(21/42) Installing harfbuzz (<ip>-r0)
+(22/42) Installing libepoxy (1.5.10-r0)
+(23/42) Installing libxcomposite (0.4.6-r0)
+(24/42) Installing libxfixes (6.0.1-r0)
+(25/42) Installing libxcursor (1.2.2-r0)
+(26/42) Installing libxdamage (1.1.6-r0)
+(27/42) Installing libxinerama (1.1.5-r0)
+(28/42) Installing xz (5.6.3-r0)
+(29/42) Installing libxml2 (2.13.5-r1)
+(30/42) Installing libxkbcommon (1.8.1-r1)
+(31/42) Installing libxrandr (1.5.4-r0)
+(32/42) Installing libxft (2.3.8-r0)
+(33/42) Installing pango (1.54.0-r0)
+(34/42) Installing wayland (1.24.0-r0)
+(35/42) Installing gtk3 (3.24.43-r1)
+(36/42) Installing hicolor-icon-theme (0.18-r0)
+(37/42) Installing libxfce4util (4.20.0-r0)
+(38/42) Installing xfconf (4.20.0-r1)
+(39/42) Installing libxfce4ui (4.20.0-r1)
+(40/42) Installing garcon (4.20.0-r1)
+(41/42) Installing qnx-port-tests (1.0-r2)
+(42/42) Installing qnx-test-garcon (1.0-r0)
+OK: 160 MiB in 70 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_garcon
+     == garcon ==
+       info garcon 4.20.0
+       ok   desktop file parsed
+       ok   Name / GenericName
+       ok   Exec / Icon
+       ok   Categories
+       ok   Keywords
+       ok   Terminal=false, displayed
+       ok   desktop action parsed
+       ok   NoDisplay=true honoured
+       ok   menu file loaded
+       ok   root menu holds the Development item only
+       ok   one sub-menu named Games
+       ok   Games holds the Game item
+     PASS garcon
+PASS test_garcon
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

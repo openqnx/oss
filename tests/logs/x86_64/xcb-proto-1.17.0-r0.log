@@ -1,15 +1,35 @@
-# xcb-proto 1.17.0-r0 -- INSTALLED
+# xcb-proto 1.17.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:56Z   packages from: apk:local-dists
+# date: 2026-10-31T16:36:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xcb-proto
-(1/1) Installing xcb-proto (1.17.0-r0)
-OK: 167 MiB in 53 packages
+$ apk add -u xcb-proto qnx-test-xcb-proto qnx-port-tests
+(1/7) Installing qnx-port-tests (1.0-r2)
+(2/7) Installing gdbm (1.24-r0)
+(3/7) Installing readline (8.2-r0)
+(4/7) Installing sqlite (3.47.2-r0)
+(5/7) Installing python3 (3.14.0-r2)
+(6/7) Installing xcb-proto (1.17.0-r0)
+(7/7) Installing qnx-test-xcb-proto (1.0-r0)
+OK: 199 MiB in 36 packages
 
-$ ldd on every program and library apk info -L xcb-proto lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xcb_proto
+     == xcb-proto ==
+       ok   32 protocol XML files parse, each an <xcb> description
+       info xproto: 120 requests, 34 events, 17 errors, 70 enums
+       ok   requests: CreateWindow 1, MapWindow 8, InternAtom 16, NoOperation 127
+       ok   InternAtom reply: atom
+       ok   events: Expose opcode 12, KeyPress
+       ok   errors: Window, Match, Value
+       ok   enum EventMask: ButtonPress bit 2, Exposure bit 15
+       ok   randr.xml: extension RANDR
+       ok   QueryVersion 0, GetScreenResources 8, GetCrtcInfo
+       ok   imports xproto and render resolved
+     PASS xcb-proto
+PASS test_xcb_proto
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

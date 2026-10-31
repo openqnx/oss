@@ -1,0 +1,17 @@
+ascii-xfr: stop reading answers at end of stdin instead of spinning forever
+
+Upstream-Status: QNX-specific
+
+--- a/src/ascii-xfr.c
++++ b/src/ascii-xfr.c
+@@ -129,7 +129,9 @@
+   tv.tv_usec = 0;
+   while (select (STDIN_FILENO + 1, &rfds, NULL, NULL, &tv) > 0) {
+     n = read (STDIN_FILENO, line, sizeof(line));
+-    if (write(STDERR_FILENO, line, n) == -1)
++    /* At end of input select() keeps reporting stdin readable and read()
++     * returns 0: without this check the loop never ends. */
++    if (n <= 0 || write(STDERR_FILENO, line, n) == -1)
+       break;
+     FD_ZERO(&rfds);
+     FD_SET(STDIN_FILENO, &rfds);

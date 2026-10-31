@@ -1,0 +1,25 @@
+Link libarm_compute against libregex on QNX.
+
+The CPU-info code (src/common/cpuinfo/CpuInfo.cpp) parses /proc/cpuinfo
+with POSIX regcomp/regexec. QNX keeps those in libregex.so.1, not in libc,
+so libarm_compute.so linked (undefined symbols are allowed in shared
+libraries) but recorded no NEEDED for libregex, and every program had to
+add -lregex itself.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -299,6 +299,12 @@
+ endif()
+ 
+ 
++# QNX keeps regcomp/regexec (used by src/common/cpuinfo/CpuInfo.cpp) in
++# libregex, not libc: record it as NEEDED of libarm_compute.so.
++if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
++  target_link_libraries(arm_compute PRIVATE regex)
++endif()
++
+ # Linking to arm_compute[_graph] should automatically bring includes and dependent libs with it
+ foreach(TARGET IN ITEMS arm_compute arm_compute_graph)
+   target_link_libraries(${TARGET} PUBLIC ${ARM_COMPUTE_LINK_LIBS})

@@ -1,12 +1,12 @@
 # sdl2 2.32.10-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:23:31Z   packages from: apk:local-dists
+# date: 2026-10-31T17:50:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u sdl2 qnx-test-sdl2 qnx-port-tests
-( 1/16) Installing qnx-port-tests (1.0-r1)
+( 1/16) Installing qnx-port-tests (1.0-r2)
 ( 2/16) Installing sdl2 (2.32.10-r0)
 ( 3/16) Installing libxau (1.0.11-r0)
 ( 4/16) Installing libxdmcp (1.1.5-r0)
@@ -22,7 +22,7 @@ $ apk add -u sdl2 qnx-test-sdl2 qnx-port-tests
 (14/16) Installing libxtst (1.2.5-r0)
 (15/16) Installing sdl3 (3.4.18-r0)
 (16/16) Installing qnx-test-sdl2 (1.0-r6)
-OK: 64 MiB in 45 packages
+OK: 64 MiB in 44 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2
      == sdl2 ==

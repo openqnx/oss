@@ -1,15 +1,47 @@
-# python3-dateutil 2.9.0_p0-r0 -- INSTALLED
+# python3-dateutil 2.9.0_p0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:38:32Z   packages from: apk:local-dists
+# date: 2026-10-31T16:31:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-dateutil
-(1/1) Installing python3-dateutil (2.9.0_p0-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u python3-dateutil qnx-test-python3-dateutil qnx-port-tests
+(1/8) Installing python3-dateutil (2.9.0_p0-r0)
+(2/8) Installing qnx-port-tests (1.0-r2)
+(3/8) Installing gdbm (1.24-r0)
+(4/8) Installing readline (8.2-r0)
+(5/8) Installing sqlite (3.47.2-r0)
+(6/8) Installing python3 (3.14.0-r2)
+(7/8) Installing python3-six (1.17.0-r0)
+(8/8) Installing qnx-test-python3-dateutil (1.0-r0)
+OK: 199 MiB in 37 packages
 
-$ ldd on every program and library apk info -L python3-dateutil lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_dateutil
+     == python3-dateutil ==
+       info dateutil 2.9.0.post0
+       ok   ISO 8601 with +05:30
+       ok   "March 5, 2021 4pm"
+       ok   dayfirst 05/04/2021 -> 5 April
+       ok   RFC 2822 date with GMT
+       ok   isoparse ISO week date 2024-W10-3
+       ok   garbage rejected
+       ok   Jan 31 + 1 month = Feb 29 (2024)
+       ok   Jan 31 + 1 month = Feb 28 (2023)
+       ok   relativedelta between dates: 34y 4m 16d
+       ok   next Friday
+       ok   weekly on Mon/Thu: Jan 1, 4, 8, 11
+       ok   last day of month: 31, 29, 31
+       ok   rrulestr FREQ=DAILY;INTERVAL=10
+       ok   Easter 2024, 2025
+       ok   tzoffset -02:00
+       ok   UTC
+       ok   bundled zoneinfo: Europe/Paris among 598 zones
+       ok   Paris in July: +02:00
+       ok   Paris in January: +01:00
+       ok   02:30 on 2024-03-31 does not exist in Paris (DST gap)
+     PASS python3-dateutil
+PASS test_python3_dateutil
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

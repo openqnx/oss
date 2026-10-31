@@ -1,15 +1,36 @@
-# python3-wheel 0.46.1-r0 -- INSTALLED
+# python3-wheel 0.46.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:39:48Z   packages from: apk:local-dists
+# date: 2026-10-31T16:33:09Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-wheel
-(1/1) Installing python3-wheel (0.46.1-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u python3-wheel qnx-test-python3-wheel qnx-port-tests
+(1/8) Installing python3-wheel (0.46.1-r0)
+(2/8) Installing qnx-port-tests (1.0-r2)
+(3/8) Installing gdbm (1.24-r0)
+(4/8) Installing readline (8.2-r0)
+(5/8) Installing sqlite (3.47.2-r0)
+(6/8) Installing python3 (3.14.0-r2)
+(7/8) Installing python3-packaging (25.0-r0)
+(8/8) Installing qnx-test-python3-wheel (1.0-r0)
+OK: 198 MiB in 37 packages
 
-$ ldd on every program and library apk info -L python3-wheel lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_wheel
+     == python3-wheel ==
+       info wheel 0.46.1
+       ok   WheelFile wrote RECORD with the sha256 of each file
+       ok   WheelFile reads it back, hashes verified
+       ok   wheel unpack
+       ok   wheel pack after adding a file
+       ok   RECORD regenerated with the new file
+       info after tags: ['qnxdemo-0.1-py311.py312-none-any.whl']
+       ok   wheel tags --python-tag py311.py312
+       info rejected: Hash mismatch for file 'qnxdemo/__init__.py'
+       ok   a file whose hash no longer matches RECORD is rejected
+     PASS python3-wheel
+PASS test_python3_wheel
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

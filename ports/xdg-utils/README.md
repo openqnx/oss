@@ -9,7 +9,7 @@
 | Upstream | https://gitlab.freedesktop.org/xdg/xdg-utils/-/archive/v1.2.1/xdg-utils-v1.2.1.tar.gz |
 | SHA-256 | `f6b648c064464c2636884c05746e80428110a576f8daacf46ef2e554dcfdae75` |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,10 +59,11 @@ tar xf dist/$(basename $URL) -C src/xdg-utils --strip-components=1
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/xdg-utils < ports/xdg-utils/patches/0001-aports-busybox-sed.patch
+patch -p1 -d src/xdg-utils < ports/xdg-utils/patches/0002-qnx-sh-no-char-classes.patch
 ```
 
 **[`0001-aports-busybox-sed.patch`](patches/0001-aports-busybox-sed.patch)** — QNX change from QNX's aports (extra/xdg-utils/busybox-sed.patch).
@@ -76,6 +77,10 @@ patch -p1 -d src/xdg-utils < ports/xdg-utils/patches/0001-aports-busybox-sed.pat
 > Ref https://gitlab.freedesktop.org/xdg/xdg-utils/-/merge_requests/126
 
 Touches: `scripts/xdg-screensaver.in` · Upstream status: QNX-specific
+
+**[`0002-qnx-sh-no-char-classes.patch`](patches/0002-qnx-sh-no-char-classes.patch)** — QNX's sh (pdksh) has no [[:alpha:]] in case patterns: spell the vendor-prefix check [a-zA-Z]
+
+Touches: `scripts/xdg-utils-common.in` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -184,7 +189,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xdg-utils 1.2.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/xdg-utils-1.2.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xdg-utils 1.2.1-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/xdg-utils-1.2.1-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xdg-utils 1.2.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/xdg-utils-1.2.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xdg-utils 1.2.1-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/xdg-utils-1.2.1-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

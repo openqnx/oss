@@ -1,24 +1,77 @@
-# libxft 2.3.8-r0 -- INSTALLED
+# libxft 2.3.8-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:35:12Z   packages from: apk:local-dists
+# date: 2026-10-31T16:48:57Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxft
-( 1/10) Installing expat (2.6.4-r0)
-( 2/10) Installing bzip2 (1.0.8-r0)
-( 3/10) Installing freetype (2.13.3-r0)
-( 4/10) Installing fontconfig (2.15.0-r0)
-( 5/10) Installing libxau (1.0.11-r0)
-( 6/10) Installing libxdmcp (1.1.5-r0)
-( 7/10) Installing libxcb (1.17.0-r0)
-( 8/10) Installing libx11 (1.8.10-r0)
-( 9/10) Installing libxrender (0.9.11-r0)
-(10/10) Installing libxft (2.3.8-r0)
-OK: 61 MiB in 39 packages
+$ apk add -u libxft qnx-test-libxft qnx-port-tests
+( 1/36) Installing expat (2.6.4-r0)
+( 2/36) Installing bzip2 (1.0.8-r0)
+( 3/36) Installing freetype (2.13.3-r0)
+( 4/36) Installing fontconfig (2.15.0-r0)
+( 5/36) Installing libxau (1.0.11-r0)
+( 6/36) Installing libxdmcp (1.1.5-r0)
+( 7/36) Installing libxcb (1.17.0-r0)
+( 8/36) Installing libx11 (1.8.10-r0)
+( 9/36) Installing libxrender (0.9.11-r0)
+(10/36) Installing libxft (2.3.8-r0)
+(11/36) Installing qnx-port-tests (1.0-r2)
+(12/36) Installing font-dejavu (2.37-r0)
+(13/36) Installing libxext (1.3.6-r0)
+(14/36) Installing lzo (2.10-r0)
+(15/36) Installing pixman (0.46.4-r0)
+(16/36) Installing cairo (1.18.2-r0)
+(17/36) Installing libsfdo (0.1.4-r0)
+(18/36) Installing xz (5.6.3-r0)
+(19/36) Installing libxml2 (2.13.5-r1)
+(20/36) Installing libxkbcommon (1.8.1-r1)
+(21/36) Installing fribidi (1.0.16-r0)
+(22/36) Installing graphite2 (1.3.14-r0)
+(23/36) Installing icu (76.1-r1)
+(24/36) Installing harfbuzz (<ip>-r0)
+(25/36) Installing pango (1.54.0-r0)
+(26/36) Installing wayland (1.24.0-r0)
+(27/36) Installing wlroots (0.20.2-r0)
+(28/36) Installing xkeyboard-config (2.43-r0)
+(29/36) Installing labwc (0.20.2-r1)
+(30/36) Installing libxcvt (0.1.3-r0)
+(31/36) Installing fontenc (1.1.8-r2)
+(32/36) Installing libxfont2 (2.0.7-r0)
+(33/36) Installing libxkbfile (1.2.0-r0)
+(34/36) Installing xkbcomp (1.5.0-r1)
+(35/36) Installing xwayland (24.1.14-r1)
+(36/36) Installing qnx-test-libxft (1.0-r0)
+OK: 133 MiB in 64 packages
 
-$ ldd on every program and library apk info -L libxft lists
-ok   loads: /data/oss/usr/local/lib/libXft.so.2
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxft
+     == libxft ==
+       info Xft 20308
+       ok   XftGetVersion matches the header
+       ok   XftNameParse: family
+       ok   XftNameParse: pixel size and weight
+       ok   XftNameUnparse
+       info unparsed: DejaVu Sans-12:weight=200:pixelsize=20
+       ok   DejaVuSans.ttf installed
+       ok   labwc up (headless Wayland compositor)
+       ok   Xwayland up (X display on labwc)
+       ok   XOpenDisplay
+       ok   XftFontOpenPattern(DejaVuSans.ttf, 24px)
+       info ascent 23 descent 6 height 28 max_advance 45
+       ok   ascent/descent plausible for 24px
+       ok   glyphs for A and the euro sign
+       info advance i=7 W=24 QNX=53
+       ok   text extents: W wider than i, QNX wider than W
+       ok   XftDrawCreate on a pixmap
+       ok   XftColorAllocValue
+       ok   XGetImage of the pixmap
+       info ink: 473 lit pixels (156 full white), 0 outside the text box; rect 20a060
+       ok   text drawn: glyph pixels lit inside the text box
+       ok   no ink outside the text box
+       ok   XftDrawRect colour exact
+     PASS libxft
+PASS test_libxft
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

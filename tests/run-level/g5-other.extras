@@ -1,0 +1,38 @@
+test_adwaita_fonts	share/fonts/adwaita-fonts lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_cantarell	share/fonts/font-cantarell lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_dejavu	share/fonts/font-dejavu lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_hack	share/fonts/font-hack lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_inter	share/fonts/font-inter lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_liberation	share/fonts/font-liberation lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_noto_emoji	share/fonts/font-noto-emoji lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_noto_sans_cjk	share/fonts/font-noto-sans-cjk lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_font_noto_serif_cjk	share/fonts/font-noto-serif-cjk lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_ca_certificates	ssl/cert.pem etc/ssl/certs/ca-certificates.crt lib/libcrypto.so.3
+test_dnsmasq	sbin/dnsmasq
+test_encodings	share/fonts/X11/encodings lib/libfontenc.so.1
+test_gsettings_desktop_schemas	share/glib-2.0/schemas/org.gnome.desktop.interface.gschema.xml share/glib-2.0/schemas/org.gnome.desktop.enums.xml bin/glib-compile-schemas bin/gsettings lib/libgio-2.0.so.0 lib/libgobject-2.0.so.0 lib/libglib-2.0.so.0 lib/libintl.so.12
+test_hicolor_icon_theme	share/icons/hicolor/index.theme lib/libglib-2.0.so.0 lib/libintl.so.12
+test_lxde_icon_theme	share/icons/nuoveXT2 lib/libgdk_pixbuf-2.0.so.0 lib/libgobject-2.0.so.0 lib/libglib-2.0.so.0 lib/libintl.so.12
+test_iso_codes	share/iso-codes share/locale/de/LC_MESSAGES/iso_3166-1.mo share/locale/fr/LC_MESSAGES/iso_639-2.mo lib/libjson-c.so.5
+test_retropie	share/retropie lib/libxml2.so.2 lib/libpng16.so.16
+test_webrtc	lib/webrtc/peerconnection_server
+test_xkeyboard_config	share/X11/xkb lib/libxkbcommon.so.0
+test_linux_headers_input_codes	share/X11/xkb lib/libxkbcommon.so.0
+test_wayland_protocols	share/wayland-protocols lib/libexpat.so.1 lib/libwayland-client.so.0
+test_wlr_protocols	share/wlr-protocols lib/libexpat.so.1
+test_rust	share/doc/rust-qnx
+test_numpy	bin/python3 lib/python3.14/site-packages/numpy
+test_pandas	bin/python3 lib/python3.14/site-packages/pandas lib/python3.14/site-packages/numpy lib/python3.14/site-packages/dateutil lib/python3.14/site-packages/pytz lib/python3.14/site-packages/tzdata lib/python3.14/site-packages/six.py
+test_python3_dateutil	bin/python3 lib/python3.14/site-packages/dateutil lib/python3.14/site-packages/six.py
+test_python3_packaging	bin/python3 lib/python3.14/site-packages/packaging
+test_python3_pip	bin/python3 lib/python3.14/site-packages/pip
+test_python3_pytz	bin/python3 lib/python3.14/site-packages/pytz
+test_python3_setuptools	bin/python3 lib/python3.14/site-packages/setuptools lib/python3.14/site-packages/pkg_resources
+test_python3_six	bin/python3 lib/python3.14/site-packages/six.py
+test_python3_tzdata	bin/python3 lib/python3.14/site-packages/tzdata
+test_python3_wheel	bin/python3 lib/python3.14/site-packages/wheel lib/python3.14/site-packages/packaging
+test_meson	bin/python3 bin/meson lib/python3.14/site-packages/mesonbuild
+test_ntpsec	bin/python3 bin/ntpdig bin/ntpkeygen sbin/ntpd lib/libntpc.so.1 lib/python3.14/site-packages/ntp
+test_xcb_proto	bin/python3 lib/python3.14/site-packages/xcbgen share/xcb
+test_perl_error	bin/perl lib/perl5/site_perl/5.40.2/Error.pm
+test_sqlite_orm	lib/libsqlite3.so.8

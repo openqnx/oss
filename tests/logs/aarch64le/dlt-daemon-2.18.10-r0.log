@@ -1,26 +1,50 @@
-# dlt-daemon 2.18.10-r0 -- INSTALLED
+# dlt-daemon 2.18.10-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:24:02Z   packages from: apk:local-dists
+# date: 2026-10-31T16:22:58Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u dlt-daemon
-(1/2) Installing libjson (0.8_git20260512-r0)
-(2/2) Installing dlt-daemon (2.18.10-r0)
-OK: 56 MiB in 31 packages
+$ apk add -u dlt-daemon qnx-test-dlt-daemon qnx-port-tests
+(1/4) Installing libjson (0.8_git20260512-r0)
+(2/4) Installing dlt-daemon (2.18.10-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-dlt-daemon (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L dlt-daemon lists
-ok   loads: /data/oss/usr/local/bin/dlt-adaptor-stdin
-ok   loads: /data/oss/usr/local/bin/dlt-adaptor-udp
-ok   loads: /data/oss/usr/local/bin/dlt-control
-ok   loads: /data/oss/usr/local/bin/dlt-convert
-ok   loads: /data/oss/usr/local/bin/dlt-daemon
-ok   loads: /data/oss/usr/local/bin/dlt-logstorage-ctrl
-ok   loads: /data/oss/usr/local/bin/dlt-passive-node-ctrl
-ok   loads: /data/oss/usr/local/bin/dlt-qnx-system
-ok   loads: /data/oss/usr/local/bin/dlt-receive
-ok   loads: /data/oss/usr/local/bin/dlt-sortbytimestamp
-ok   loads: /data/oss/usr/local/lib/libdlt.so.2
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dlt_daemon
+     == dlt-daemon ==
+       ok   scratch directory
+       ok   dlt-daemon listens on <ip> and created /tmp/dlt
+       info dlt-daemon pid 714801174 on port 13567
+       ok   five messages logged through libdlt
+       ok   dlt_file_open on the received file
+     [43455.157566]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.160944]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.164233]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.167737]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.171173]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.174423]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.177715]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.181234]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.184703]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.188218]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.191727]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.195156]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.198266]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.201688]~DLT~714797077~INFO     ~dlt_message_payload()
+     [43455.205280]~DLT~714797077~INFO     ~dlt_message_payload()
+       info 15 message(s) in the file, ours: 1 1 1 1 1
+       ok   each of qnx-dlt-msg 0..4 received exactly once
+       ok   app ID QNXT / context ID TCTX on our messages
+       info 11 2026/10/31 16:22:56.805072  434538982 003 QNX1 QNXT TCTX log info V 2 [qnx-dlt-msg 3
+       ok   dlt-convert -a prints "... QNXT TCTX log info ... qnx-dlt-msg 3"
+       info dlt-convert -c: Total number of messages: 15
+       ok   dlt-convert -c counts the messages
+     PASS dlt-daemon
+     [43455.445874]~DLT~714797077~WARNING  ~dlt_free: shutdown failed: Socket is not connected
+PASS test_dlt_daemon
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

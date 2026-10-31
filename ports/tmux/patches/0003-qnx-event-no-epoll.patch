@@ -1,0 +1,27 @@
+QNX: run tmux's event loop on poll(), not libevent's epoll emulation
+
+Upstream-Status: QNX-specific
+
+--- a/osdep-unknown.c
++++ b/osdep-unknown.c
+@@ -35,5 +35,20 @@
+ struct event_base *
+ osdep_event_init(void)
+ {
++#ifdef __QNX__
++	/*
++	 * libevent picks epoll, which QNX only emulates (libepoll), and the
++	 * server re-initialises its event base after fork(); use poll(),
++	 * which QNX implements natively for sockets and ptys. (tmux does the
++	 * same on macOS, for kqueue.)
++	 */
++	struct event_base	*base;
++
++	setenv("EVENT_NOEPOLL", "1", 1);
++	base = event_init();
++	unsetenv("EVENT_NOEPOLL");
++	return (base);
++#else
+ 	return (event_init());
++#endif
+ }

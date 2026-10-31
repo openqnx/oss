@@ -1,23 +1,45 @@
-# sdl2-image 2.8.8-r0 -- INSTALLED
+# sdl2-image 2.8.8-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:29Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sdl2-image
-(1/7) Installing aom (3.12.1-r0)
-(2/7) Installing dav1d (1.5.0-r0)
-(3/7) Installing libavif (1.1.1-r0)
-(4/7) Installing libwebp (1.4.0-r0)
-(5/7) Installing libtiff (4.7.0-r0)
-(6/7) Installing sdl2 (2.32.10-r0)
-(7/7) Installing sdl2-image (2.8.8-r0)
-OK: 181 MiB in 59 packages
+$ apk add -u sdl2-image qnx-test-sdl2-image qnx-port-tests
+(1/9) Installing qnx-port-tests (1.0-r2)
+(2/9) Installing sdl2 (2.32.10-r0)
+(3/9) Installing aom (3.12.1-r0)
+(4/9) Installing dav1d (1.5.0-r0)
+(5/9) Installing libavif (1.1.1-r0)
+(6/9) Installing libwebp (1.4.0-r0)
+(7/9) Installing libtiff (4.7.0-r0)
+(8/9) Installing sdl2-image (2.8.8-r0)
+(9/9) Installing qnx-test-sdl2-image (1.0-r0)
+OK: 108 MiB in 38 packages
 
-$ ldd on every program and library apk info -L sdl2-image lists
-ok   loads: /data/oss/usr/local/lib/libSDL2_image-2.0.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libSDL2_image-2.0.so.0.800.8
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_image
+     == sdl2-image ==
+       info SDL2_image 2.8.8
+       info IMG_Init: png=1 jpg=1 tif=1 webp=1 avif=1 jxl=0
+       ok   PNG and JPEG codecs available
+       ok   format sniffing: PNG
+       ok   IMG_Load_RW decodes the 1x1 PNG
+       ok   decoded pixel is pure red
+       ok   create 64x48 RGBA surface
+       ok   IMG_SavePNG to /tmp
+       ok   IMG_Load reads it back (64x48)
+       info PNG mismatched pixels: 0
+       ok   PNG round trip is lossless (RGBA)
+       ok   IMG_SaveJPG quality 95
+       ok   format sniffing: JPEG
+       info JPEG max channel error 2
+       ok   JPEG round trip within tolerance
+       ok   TGA decoded (2x1)
+       ok   TGA pixels: blue, green
+       ok   missing file -> NULL with an error
+     PASS sdl2-image
+PASS test_sdl2_image
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

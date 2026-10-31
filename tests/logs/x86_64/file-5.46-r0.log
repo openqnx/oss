@@ -1,16 +1,54 @@
-# file 5.46-r0 -- INSTALLED
+# file 5.46-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:39Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u file
-(1/1) Installing file (5.46-r0)
-OK: 176 MiB in 53 packages
+$ apk add -u file qnx-test-file qnx-port-tests
+(1/3) Installing file (5.46-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-file (1.0-r0)
+OK: 103 MiB in 32 packages
 
-$ ldd on every program and library apk info -L file lists
-ok   loads: /data/oss/usr/local/bin/file
-ok   loads: /data/oss/usr/local/lib/libmagic.so.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_file
+     == file ==
+       info libmagic version 546
+       ok   magic_version() == 546 (file 5.46)
+       info default magic path: /usr/local/share/misc/magic
+       ok   magic_open
+       ok   magic_load(default database)
+       info png  -> PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   PNG header identified with size and depth
+       info gz   -> gzip compressed data, from Unix
+       ok   gzip stream identified
+       info pdf  -> PDF document, version 1.4
+       ok   PDF 1.4 identified
+       info sh   -> POSIX shell script, ASCII text executable
+       ok   #!/bin/sh script identified
+       info txt  -> ASCII text
+       ok   plain ASCII text identified
+       info self -> ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /usr/lib/ldqnx-64.so.2, BuildID[md5/uuid]=bb83f0653f161450463fee6f3c62e79e, with debug_info, not stripped
+       ok   own binary: ELF 64-bit LSB
+       ok   own binary: x86-64
+       ok   magic_setflags(MAGIC_MIME_TYPE)
+       ok   MIME type of PNG is image/png
+       ok   MIME type of gzip is application/gzip
+       ok   MIME type of text is text/plain
+       ok   sample files written
+       info program: /usr/local/bin/file
+       info file -v: file-5.46
+       ok   file -v reports file-5.46
+       info file -b a.png: PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   file: PNG
+       info file -b b.gz: gzip compressed data, from Unix, original size modulo 2^32 0
+       ok   file: gzip
+       info file -b --mime-type c.txt: text/plain
+       ok   file --mime-type: text/plain
+       ok   file <path>: "<path>: ASCII text"
+     PASS file
+PASS test_file
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

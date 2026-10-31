@@ -1,12 +1,12 @@
 # virtualgl 3.1.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:27:18Z   packages from: apk:local-dists
+# date: 2026-10-31T18:01:38Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u virtualgl qnx-test-virtualgl qnx-port-tests
-( 1/37) Installing qnx-port-tests (1.0-r1)
+( 1/37) Installing qnx-port-tests (1.0-r2)
 ( 2/37) Installing expat (2.6.4-r0)
 ( 3/37) Installing bzip2 (1.0.8-r0)
 ( 4/37) Installing freetype (2.13.3-r0)
@@ -23,11 +23,11 @@ $ apk add -u virtualgl qnx-test-virtualgl qnx-port-tests
 (15/37) Installing font-dejavu (2.37-r0)
 (16/37) Installing libsfdo (0.1.4-r0)
 (17/37) Installing xz (5.6.3-r0)
-(18/37) Installing libxml2 (2.13.5-r0)
+(18/37) Installing libxml2 (2.13.5-r1)
 (19/37) Installing libxkbcommon (1.8.1-r1)
 (20/37) Installing fribidi (1.0.16-r0)
 (21/37) Installing graphite2 (1.3.14-r0)
-(22/37) Installing icu (76.1-r0)
+(22/37) Installing icu (76.1-r1)
 (23/37) Installing harfbuzz (<ip>-r0)
 (24/37) Installing libxft (2.3.8-r0)
 (25/37) Installing pango (1.54.0-r0)
@@ -37,13 +37,13 @@ $ apk add -u virtualgl qnx-test-virtualgl qnx-port-tests
 (29/37) Installing labwc (0.20.2-r1)
 (30/37) Installing virtualgl (3.1.5-r0)
 (31/37) Installing libxcvt (0.1.3-r0)
-(32/37) Installing fontenc (1.1.8-r0)
+(32/37) Installing fontenc (1.1.8-r2)
 (33/37) Installing libxfont2 (2.0.7-r0)
 (34/37) Installing libxkbfile (1.2.0-r0)
-(35/37) Installing xkbcomp (1.5.0-r0)
-(36/37) Installing xwayland (24.1.14-r0)
+(35/37) Installing xkbcomp (1.5.0-r1)
+(36/37) Installing xwayland (24.1.14-r1)
 (37/37) Installing qnx-test-virtualgl (1.0-r0)
-OK: 132 MiB in 66 packages
+OK: 133 MiB in 65 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_virtualgl
      == virtualgl ==
@@ -55,9 +55,9 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_v
        ok   X11: drawn colour read back exactly
      
      VirtualGL Client 64-bit v3.1.5 (Build 20261030)
-     Listening for connections on port 14675
-       ok + +  vglclient listening (VGL transport)C
-     onnection from <ip>.
+     Listening for connections on port 14595
+       ok+ +   Cvglclient listening (VGL transport)o
+     nnection from <ip>.
        info vglclient speaks VGL 2.1
        ok   version handshake (VGL 2.x)
        ok   frame sent: JPEG tile + end of frame
@@ -66,7 +66,6 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_v
      Error receiving data from server.  Server may have disconnected.
      Listener exiting ...
         (this is normal if the application exited.)
-     recv-- 282: Incomplete receive
      PASS virtualgl
 PASS test_virtualgl
 --------------------------------------------

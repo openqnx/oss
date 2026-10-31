@@ -1,15 +1,31 @@
-# wlr-protocols 0_git20250702-r0 -- INSTALLED
+# wlr-protocols 0_git20250702-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:30:03Z   packages from: apk:local-dists
+# date: 2026-10-31T18:04:20Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u wlr-protocols
-(1/1) Installing wlr-protocols (0_git20250702-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u wlr-protocols qnx-test-wlr-protocols qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing expat (2.6.4-r0)
+(3/4) Installing wlr-protocols (0_git20250702-r0)
+(4/4) Installing qnx-test-wlr-protocols (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L wlr-protocols lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wlr_protocols
+     == wlr-protocols ==
+       ok   share/wlr-protocols installed
+       info 10 XML files: 10 protocols, 25 interfaces, 79 requests, 58 events
+       ok   every protocol XML file parses (10 or more)
+       ok   each is a protocol with interfaces
+       ok   layer shell: zwlr_layer_shell_v1.get_layer_surface
+       ok   layers background 0, bottom 1, top 2, overlay 3
+       ok   layer surface: set_anchor, anchors top 1 .. right 8, configure
+       ok   screencopy: capture_output
+       ok   output management, foreign toplevel management
+     PASS wlr-protocols
+PASS test_wlr_protocols
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

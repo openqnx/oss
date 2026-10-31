@@ -1,15 +1,29 @@
-# trompeloeil 48-r0 -- INSTALLED
+# trompeloeil 48-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:12Z   packages from: apk:local-dists
+# date: 2026-10-31T16:35:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u trompeloeil-dev
-(1/1) Installing trompeloeil-dev (48-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u trompeloeil-dev qnx-test-trompeloeil qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing qnx-test-trompeloeil (1.0-r0)
+(3/3) Installing trompeloeil-dev (48-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L trompeloeil-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_trompeloeil
+     == trompeloeil ==
+       ok   REQUIRE_CALL get(3) returns _1*2, twice
+       ok   expectation met: no violation
+       ok   sequence a, b with side effects; ALLOW_CALL
+       ok   sequence respected: no violation
+       ok   matcher gt(10)
+       ok   FORBID_CALL reported (fatal)
+       ok   unexpected call get(5) reported
+       ok   unfulfilled expectation reported
+     PASS trompeloeil
+PASS test_trompeloeil
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

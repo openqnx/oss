@@ -1,0 +1,25 @@
+# bash 5.2.37-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:18:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bash qnx-test-bash qnx-port-tests
+(1/4) Installing readline (8.2-r0)
+(2/4) Installing bash (5.2.37-r2)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-bash (1.0-r0)
+OK: 57 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bash
+     == bash ==
+       ok   bash runs (BASH_VERSION 5.2.37(1)-release)
+       ok   script output matches (arrays, assoc arrays, functions, expansions)
+       ok   return status and pipefail
+     PASS bash
+PASS test_bash
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

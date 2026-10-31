@@ -1,15 +1,15 @@
 # x265 3.6-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:30:19Z   packages from: apk:local-dists
+# date: 2026-10-31T18:04:39Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u x265 qnx-test-x265 qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r1)
+(1/3) Installing qnx-port-tests (1.0-r2)
 (2/3) Installing x265 (3.6-r0)
 (3/3) Installing qnx-test-x265 (1.0-r6)
-OK: 57 MiB in 32 packages
+OK: 57 MiB in 31 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_x265
      == x265 ==

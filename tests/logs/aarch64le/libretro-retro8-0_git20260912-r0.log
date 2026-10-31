@@ -1,15 +1,37 @@
-# libretro-retro8 0_git20260912-r0 -- INSTALLED
+# libretro-retro8 0_git20260912-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:32:44Z   packages from: apk:local-dists
+# date: 2026-10-31T16:44:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libretro-retro8
-(1/1) Installing libretro-retro8 (0_git20260912-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u libretro-retro8 qnx-test-libretro-retro8 qnx-port-tests
+(1/3) Installing libretro-retro8 (0_git20260912-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libretro-retro8 (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libretro-retro8 lists
-ok   loads: /data/oss/usr/local/lib/libretro/retro8_libretro_qnx.so (ldd: TLS teardown message)
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libretro_retro8
+     == libretro-retro8 ==
+       ok   core loads with dlopen
+       ok   all libretro entry points exported
+       ok   retro_api_version() == 1
+       info retro-8 (alpha) 0.1b, extensions "p8|png"
+       ok   system info names the core
+       ok   retro_load_game with a PICO-8 cart
+       info 128x128 (max 128x128), 60.00 fps, 44100 Hz audio, pixel format 1
+       ok   AV info: geometry and frame rate
+       info 120 run(s): 120 video callback(s) (0 dupes), last 128x128 pitch 512, 88200 audio frame(s)
+       ok   video frames delivered
+       ok   frame size within the advertised geometry
+       ok   audio samples delivered
+       info centre pixel rgb(255,0,77)
+       ok   cls(8) painted the screen PICO-8 red (255,0,77)
+       info no save-state support
+       ok   unload + deinit returned
+     PASS libretro-retro8
+PASS test_libretro_retro8
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

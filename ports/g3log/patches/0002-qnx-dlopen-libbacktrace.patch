@@ -1,0 +1,88 @@
+Open QNX's libbacktrace at dump time instead of linking it.
+
+patches/0001 linked libg3log.so against libbacktrace.so.1, which needs
+libunwind-nto.so.0. That library is part of the SDP but missing from many
+QNX target images, where every program using g3log then failed to start
+("Could not load library libunwind-nto.so.0") -- for a library used only to
+print a stack dump on a crash. dlopen() it when a dump is wanted; without
+it the dump is empty and logging works as before.
+
+Upstream-Status: QNX-specific
+
+--- a/Build.cmake
++++ b/Build.cmake
+@@ -103,8 +103,8 @@
+ 
+ # check for backtrace and cxa_demangle only in non-Windows dev environments
+ IF(QNX)
+-	# QNX has no execinfo backtrace(); stack dumps use QNX's own libbacktrace.
+-	TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} backtrace)
++	# QNX has no execinfo backtrace(); stack dumps use QNX's own libbacktrace,
++	# opened with dlopen() when a dump is taken (crashhandler_unix.cpp).
+ ELSEIF(NOT(MSVC OR MINGW))
+ 	# the backtrace module does not provide a modern cmake target
+ 	FIND_PACKAGE(Backtrace REQUIRED)
+--- a/src/crashhandler_unix.cpp
++++ b/src/crashhandler_unix.cpp
+@@ -18,6 +18,7 @@
+ #include <cxxabi.h>
+ #if defined(__QNX__)
+ #include <backtrace.h>
++#include <dlfcn.h>
+ #else
+ #include <execinfo.h>
+ #endif
+@@ -144,27 +145,44 @@
+ #if defined(__QNX__)
+          // QNX: walk the stack with libbacktrace and print each frame as
+          // "address  object+offset"; symbolise offline with addr2line.
+-         // An accessor of our own: SDP 8's libbacktrace.so declares
+-         // bt_acc_self in <backtrace.h> but does not export it.
++         // libbacktrace is opened here, when a dump is wanted, not linked:
++         // it needs libunwind-nto.so.0, which many QNX images lack, and a
++         // link-time dependency made every g3log program fail to start on
++         // them. Without it the dump is just empty.
++         // (An accessor of our own: SDP 8's libbacktrace.so declares
++         // bt_acc_self in <backtrace.h> but does not export it.)
++         static void* bt = dlopen("libbacktrace.so.1", RTLD_NOW | RTLD_LOCAL);
++         std::ostringstream oss;
++         if (bt == nullptr) {
++            return oss.str();
++         }
++         auto init_accessor = reinterpret_cast<decltype(&bt_init_accessor)>(dlsym(bt, "bt_init_accessor"));
++         auto get_backtrace = reinterpret_cast<decltype(&bt_get_backtrace)>(dlsym(bt, "bt_get_backtrace"));
++         auto load_memmap = reinterpret_cast<decltype(&bt_load_memmap)>(dlsym(bt, "bt_load_memmap"));
++         auto sprnf_addrs = reinterpret_cast<decltype(&bt_sprnf_addrs)>(dlsym(bt, "bt_sprnf_addrs"));
++         auto unload_memmap = reinterpret_cast<decltype(&bt_unload_memmap)>(dlsym(bt, "bt_unload_memmap"));
++         auto release_accessor = reinterpret_cast<decltype(&bt_release_accessor)>(dlsym(bt, "bt_release_accessor"));
++         if (!init_accessor || !get_backtrace || !load_memmap || !sprnf_addrs || !unload_memmap || !release_accessor) {
++            return oss.str();
++         }
+          const int max_dump_size = 50;
+          bt_addr_t addrs[max_dump_size];
+          bt_accessor_t acc;
+-         std::ostringstream oss;
+-         if (bt_init_accessor(&acc, BT_SELF) != 0) {
++         if (init_accessor(&acc, BT_SELF) != 0) {
+             return oss.str();
+          }
+-         const int n = bt_get_backtrace(&acc, addrs, max_dump_size);
++         const int n = get_backtrace(&acc, addrs, max_dump_size);
+          bt_memmap_t memmap;
+-         if (n > 0 && bt_load_memmap(&acc, &memmap) == 0) {
++         if (n > 0 && load_memmap(&acc, &memmap) == 0) {
+             char line[512];
+             for (int idx = 1; idx < n; ++idx) {  // skip this frame
+-               if (bt_sprnf_addrs(&memmap, &addrs[idx], 1, const_cast<char*>("%a  %f+%o"), line, sizeof line, nullptr) > 0) {
++               if (sprnf_addrs(&memmap, &addrs[idx], 1, const_cast<char*>("%a  %f+%o"), line, sizeof line, nullptr) > 0) {
+                   oss << "\tstack dump [" << idx << "]  " << line << std::endl;
+                }
+             }
+-            bt_unload_memmap(&memmap);
++            unload_memmap(&memmap);
+          }
+-         bt_release_accessor(&acc);
++         release_accessor(&acc);
+          return oss.str();
+ #else
+          const size_t max_dump_size = 50;

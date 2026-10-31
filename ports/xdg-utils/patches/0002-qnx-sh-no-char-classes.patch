@@ -1,0 +1,15 @@
+QNX's sh (pdksh) has no [[:alpha:]] in case patterns: spell the vendor-prefix check [a-zA-Z]
+
+Upstream-Status: QNX-specific
+
+--- a/scripts/xdg-utils-common.in
++++ b/scripts/xdg-utils-common.in
+@@ -198,7 +198,7 @@
+     [ -n "$file_label" ] || file_label="filename"
+     file="$(basename "$1")"
+     case "$file" in
+-       [[:alpha:]]*-*)
++       [a-zA-Z]*-*)
+          return
+          ;;
+     esac

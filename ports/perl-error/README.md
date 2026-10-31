@@ -83,13 +83,17 @@ do_build() { :; }
 ```
 
 ```bash
-do_install() { install -d "$STAGE$PREFIX/lib/perl5/site_perl/Error" && install -m644 "$S/lib/Error.pm" "$STAGE$PREFIX/lib/perl5/site_perl/" && \
-  cp -a "$S/lib/Error/." "$STAGE$PREFIX/lib/perl5/site_perl/Error/"; }
+do_install() {
+  local pv; pv=$(sed -n 's/^VERSION=\([^;]*\).*/\1/p' "$WS/ports/perl/recipe.sh")
+  local d="$STAGE$PREFIX/lib/perl5/site_perl/$pv"
+  install -d "$d/Error" && install -m644 "$S/lib/Error.pm" "$d/" && cp -a "$S/lib/Error/." "$d/Error/"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Error.pm (try/catch exception objects for Perl; used by git's Perl scripts). Pure Perl, so the module files are installed as released into the target perl's library. Version as in the QNX Everywhere 8.0.4r1 image.
+- Into Perl's site library, site_perl/<perl version>: the versionless site_perl directory is not in @INC (the perl port has no inc_version_list), and `perl -MError` did not find the module there.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH perl-error`.
 
@@ -161,7 +165,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-error 0.17030-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/perl-error-0.17030-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-error 0.17030-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/perl-error-0.17030-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-error 0.17030-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/perl-error-0.17030-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-error 0.17030-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/perl-error-0.17030-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -181,8 +187,14 @@ SHA256=34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924
 DEPS="perl"
 BUILDSYS=custom
 do_build() { :; }
-do_install() { install -d "$STAGE$PREFIX/lib/perl5/site_perl/Error" && install -m644 "$S/lib/Error.pm" "$STAGE$PREFIX/lib/perl5/site_perl/" && \
-  cp -a "$S/lib/Error/." "$STAGE$PREFIX/lib/perl5/site_perl/Error/"; }
+# Into Perl's site library, site_perl/<perl version>: the versionless
+# site_perl directory is not in @INC (the perl port has no inc_version_list),
+# and `perl -MError` did not find the module there.
+do_install() {
+  local pv; pv=$(sed -n 's/^VERSION=\([^;]*\).*/\1/p' "$WS/ports/perl/recipe.sh")
+  local d="$STAGE$PREFIX/lib/perl5/site_perl/$pv"
+  install -d "$d/Error" && install -m644 "$S/lib/Error.pm" "$d/" && cp -a "$S/lib/Error/." "$d/Error/"
+}
 ```
 </details>
 

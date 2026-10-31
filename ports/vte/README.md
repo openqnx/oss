@@ -9,7 +9,7 @@
 | Upstream | https://download.gnome.org/sources/vte/0.78/vte-0.78.2.tar.xz |
 | SHA-256 | `35d7bcde07356846b4a12881c8e016705b70a9004a9082285eee5834ccc49890` |
 | Build system | Meson |
-| QNX patches | 3 |
+| QNX patches | 5 |
 | Build dependencies | [`gtk3`](../gtk3/) [`gtk4`](../gtk4/) [`pcre2`](../pcre2/) [`fribidi`](../fribidi/) [`icu`](../icu/) [`glib`](../glib/) [`gnutls`](../gnutls/) [`lz4`](../lz4/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`fribidi`](../fribidi/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gnutls`](../gnutls/) [`graphene`](../graphene/) [`gtk3`](../gtk3/) [`gtk4`](../gtk4/) [`icu`](../icu/) [`lz4`](../lz4/) [`pango`](../pango/) [`pcre2`](../pcre2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -68,12 +68,14 @@ tar xf dist/$(basename $URL) -C src/vte --strip-components=1
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/vte < ports/vte/patches/0001-qnx-no-floating-point-from-chars.patch
 patch -p1 -d src/vte < ports/vte/patches/0002-qnx-define-w-exitcode.patch
 patch -p1 -d src/vte < ports/vte/patches/0003-qnx-tiocpkt-defined-but-not-implemented.patch
+patch -p1 -d src/vte < ports/vte/patches/0004-qnx-fdwalk-open-max.patch
+patch -p1 -d src/vte < ports/vte/patches/0005-qnx-tiocsctty-already-ctty.patch
 ```
 
 **[`0001-qnx-no-floating-point-from-chars.patch`](patches/0001-qnx-no-floating-point-from-chars.patch)** — QNX 8.0's libc++ has no floating-point std::from_chars.
@@ -131,6 +133,14 @@ Touches: `src/widget.cc` · Upstream status: QNX-specific
 > ^S/^Q flow-control notification, not correctness.
 
 Touches: `src/pty.cc`, `src/vte.cc` · Upstream status: QNX-specific
+
+**[`0004-qnx-fdwalk-open-max.patch`](patches/0004-qnx-fdwalk-open-max.patch)** — QNX: take the fd limit from sysconf(_SC_OPEN_MAX) so fdwalk() works and children spawn
+
+Touches: `src/missing.cc` · Upstream status: QNX-specific
+
+**[`0005-qnx-tiocsctty-already-ctty.patch`](patches/0005-qnx-tiocsctty-already-ctty.patch)** — QNX: a refused TIOCSCTTY is fine when the pty is already the controlling terminal
+
+Touches: `src/spawn.cc` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -248,8 +258,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | vte 0.78.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/vte-0.78.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | vte 0.78.2-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/vte-0.78.2-r2.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | vte 0.78.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/vte-0.78.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | vte 0.78.2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/vte-0.78.2-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

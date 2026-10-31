@@ -1,16 +1,40 @@
-# libtool 2.5.4-r0 -- INSTALLED
+# libtool 2.5.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:32Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libtool
-(1/1) Installing libtool (2.5.4-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u libtool qnx-test-libtool qnx-port-tests
+(1/3) Installing libtool (2.5.4-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libtool (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L libtool lists
-ok   loads: /data/oss/usr/local/lib/libltdl.so.7
-ok   loads: /data/oss/usr/local/lib/libltdl.so.7.3.3
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libtool
+     == libtool ==
+       ok   lt_dlinit
+       ok   set + add search directories
+       info search path: /tmp/qnxport-ltdl-a:/tmp/qnxport-ltdl-b
+       ok   search path reads back
+       info opened libm.so.3
+       ok   lt_dlopen libm
+       ok   lt_dlsym cos + sqrt
+       info cos(0)=1 sqrt(2)=1.4142135623730951 cos(pi)=-1
+       ok   called through ltdl: known values
+       ok   lt_dlgetinfo: module refcount
+       info filename=libm.so.3 name=libm_so refs=1
+       ok   missing symbol -> NULL
+       ok   lt_dlerror explains a missing symbol
+       info Symbol not found
+       ok   lt_dlclose
+       ok   missing module -> NULL
+       ok   lt_dlerror explains a missing module
+       info file not found
+       ok   lt_dlexit
+     PASS libtool
+PASS test_libtool
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

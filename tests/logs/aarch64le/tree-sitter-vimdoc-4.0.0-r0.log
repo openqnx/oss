@@ -1,15 +1,34 @@
-# tree-sitter-vimdoc 4.0.0-r0 -- INSTALLED
+# tree-sitter-vimdoc 4.0.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:26:22Z   packages from: apk:local-dists
+# date: 2026-10-31T18:00:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u tree-sitter-vimdoc
-(1/1) Installing tree-sitter-vimdoc (4.0.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u tree-sitter-vimdoc qnx-test-tree-sitter-vimdoc qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing tree-sitter (0.25.9-r0)
+(3/4) Installing tree-sitter-vimdoc (4.0.0-r0)
+(4/4) Installing qnx-test-tree-sitter-vimdoc (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L tree-sitter-vimdoc lists
-ok   loads: /data/oss/usr/local/lib/tree-sitter/vimdoc.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter_vimdoc
+     == tree-sitter-vimdoc ==
+       info tree-sitter runtime: language ABI 13..15
+       ok   vimdoc.so loads (dlopen)
+       ok   tree_sitter_vimdoc() entry point
+       info vimdoc: ABI 15, 97 symbols, 2 fields
+       ok   vimdoc: ABI 15 accepted by the runtime (13..15)
+       ok   vimdoc: sample parsed
+       ok   vimdoc: no syntax errors in the sample
+       info vimdoc tree: (help_file (block (line (h3 (heading) (tag text: (word))))) (block (line (word) (taglink text: (word)) (word) (codespan text: (word)) (word))))
+       ok   vimdoc: syntax tree is the expected one
+       ok   vimdoc: whole sample covered (0..94 bytes)
+       info query (taglink text: (word) @link) -> [other-tag]
+       ok   vimdoc: query captures [other-tag]
+     PASS tree-sitter-vimdoc
+PASS test_tree_sitter_vimdoc
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

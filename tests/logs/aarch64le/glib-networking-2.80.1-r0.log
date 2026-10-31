@@ -1,25 +1,54 @@
-# glib-networking 2.80.1-r0 -- INSTALLED
+# glib-networking 2.80.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:28:48Z   packages from: apk:local-dists
+# date: 2026-10-31T16:32:56Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u glib-networking
-( 1/10) Installing gmp (6.3.0-r0)
-( 2/10) Installing libidn2 (2.3.7-r0)
-( 3/10) Installing libtasn1 (4.19.0-r0)
-( 4/10) Installing nettle (3.10.1-r0)
-( 5/10) Installing gnutls (3.8.8-r0)
-( 6/10) Installing c-ares (1.34.3-r0)
-( 7/10) Installing nghttp2 (1.64.0-r0)
-( 8/10) Installing curl (8.11.1-r0)
-( 9/10) Installing libproxy (0.5.9-r0)
-(10/10) Installing glib-networking (2.80.1-r0)
-OK: 65 MiB in 39 packages
+$ apk add -u glib-networking qnx-test-glib-networking qnx-port-tests
+( 1/12) Installing gmp (6.3.0-r0)
+( 2/12) Installing libidn2 (2.3.7-r0)
+( 3/12) Installing libtasn1 (4.19.0-r0)
+( 4/12) Installing nettle (3.10.1-r0)
+( 5/12) Installing gnutls (3.8.8-r0)
+( 6/12) Installing c-ares (1.34.3-r0)
+( 7/12) Installing nghttp2 (1.64.0-r0)
+( 8/12) Installing curl (8.11.1-r1)
+( 9/12) Installing libproxy (0.5.9-r0)
+(10/12) Installing glib-networking (2.80.1-r0)
+(11/12) Installing qnx-port-tests (1.0-r2)
+(12/12) Installing qnx-test-glib-networking (1.0-r0)
+OK: 65 MiB in 40 packages
 
-$ ldd on every program and library apk info -L glib-networking lists
-ok   loads: /data/oss/usr/local/lib/gio/modules/libgiognutls.so
-ok   loads: /data/oss/usr/local/lib/gio/modules/libgiolibproxy.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glib_networking
+     == glib-networking ==
+       info TLS backend GTlsBackendGnutls
+       ok   a TLS-capable backend is loaded
+       ok   it is glib-networking's GnuTLS backend
+       ok   certificate + key parsed from PEM
+       info subject CN=qnx-port-test
+       ok   certificate subject name
+       ok   listening on <ip>
+     
+     (process:731541525): GLib-Net-WARNING **: 16:32:55.807: Failed to load TLS database: Failed to load system trust store: GnuTLS was not configured with a system trust
+     
+     (process:731541525): GLib-Net-WARNING **: 16:32:55.812: Failed to load TLS database: Failed to load system trust store: GnuTLS was not configured with a system trust
+       info TLS 1.3, TLS_AES_256_GCM_SHA384; certificate errors 0x1
+       ok   TLS handshake completes
+       ok   self-signed certificate flagged as unknown CA
+       ok   ping/pong over TLS
+       ok   client sees the server's certificate
+       ok   TLS 1.2 or 1.3 negotiated
+       ok   file database with the certificate as anchor
+     
+     (process:731541525): GLib-Net-WARNING **: 16:32:56.002: Failed to load TLS database: Failed to load system trust store: GnuTLS was not configured with a system trust
+     
+     (process:731541525): GLib-Net-WARNING **: 16:32:56.003: Failed to load TLS database: Failed to load system trust store: GnuTLS was not configured with a system trust
+       ok   second session with the trust anchor
+       ok   certificate validates for localhost against the anchor
+     PASS glib-networking
+PASS test_glib_networking
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

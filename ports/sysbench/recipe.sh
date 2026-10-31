@@ -12,3 +12,7 @@ CONF_ENV=( QNXENV=true CC="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc" LUAJIT_CFLAGS="-I$
 do_build() { QNXENV=true make -C "$B" -j"$(nproc)"; }
 # The patches change tests/Makefile.am; regenerate the build files.
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
+# LuaJIT's FFI (ffi.C.*) looks up sysbench's own functions in the executable,
+# so they must be exported. sb_luajit.m4 adds -rdynamic only on Linux and
+# FreeBSD; without it every Lua script died "Symbol not found" (hazard 122).
+LDFLAGS_APPEND="-Wl,--export-dynamic"

@@ -1,19 +1,68 @@
-# libxfixes 6.0.1-r0 -- INSTALLED
+# libxfixes 6.0.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:35:03Z   packages from: apk:local-dists
+# date: 2026-10-31T16:48:39Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxfixes
-(1/5) Installing libxau (1.0.11-r0)
-(2/5) Installing libxdmcp (1.1.5-r0)
-(3/5) Installing libxcb (1.17.0-r0)
-(4/5) Installing libx11 (1.8.10-r0)
-(5/5) Installing libxfixes (6.0.1-r0)
-OK: 59 MiB in 34 packages
+$ apk add -u libxfixes qnx-test-libxfixes qnx-port-tests
+( 1/37) Installing libxau (1.0.11-r0)
+( 2/37) Installing libxdmcp (1.1.5-r0)
+( 3/37) Installing libxcb (1.17.0-r0)
+( 4/37) Installing libx11 (1.8.10-r0)
+( 5/37) Installing libxfixes (6.0.1-r0)
+( 6/37) Installing qnx-port-tests (1.0-r2)
+( 7/37) Installing expat (2.6.4-r0)
+( 8/37) Installing bzip2 (1.0.8-r0)
+( 9/37) Installing freetype (2.13.3-r0)
+(10/37) Installing fontconfig (2.15.0-r0)
+(11/37) Installing libxext (1.3.6-r0)
+(12/37) Installing libxrender (0.9.11-r0)
+(13/37) Installing lzo (2.10-r0)
+(14/37) Installing pixman (0.46.4-r0)
+(15/37) Installing cairo (1.18.2-r0)
+(16/37) Installing font-dejavu (2.37-r0)
+(17/37) Installing libsfdo (0.1.4-r0)
+(18/37) Installing xz (5.6.3-r0)
+(19/37) Installing libxml2 (2.13.5-r1)
+(20/37) Installing libxkbcommon (1.8.1-r1)
+(21/37) Installing fribidi (1.0.16-r0)
+(22/37) Installing graphite2 (1.3.14-r0)
+(23/37) Installing icu (76.1-r1)
+(24/37) Installing harfbuzz (<ip>-r0)
+(25/37) Installing libxft (2.3.8-r0)
+(26/37) Installing pango (1.54.0-r0)
+(27/37) Installing wayland (1.24.0-r0)
+(28/37) Installing wlroots (0.20.2-r0)
+(29/37) Installing xkeyboard-config (2.43-r0)
+(30/37) Installing labwc (0.20.2-r1)
+(31/37) Installing libxcvt (0.1.3-r0)
+(32/37) Installing fontenc (1.1.8-r2)
+(33/37) Installing libxfont2 (2.0.7-r0)
+(34/37) Installing libxkbfile (1.2.0-r0)
+(35/37) Installing xkbcomp (1.5.0-r1)
+(36/37) Installing xwayland (24.1.14-r1)
+(37/37) Installing qnx-test-libxfixes (1.0-r0)
+OK: 133 MiB in 65 packages
 
-$ ldd on every program and library apk info -L libxfixes lists
-ok   loads: /data/oss/usr/local/lib/libXfixes.so.3
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfixes
+     == libxfixes ==
+       info X server :49: The X.Org Foundation 12401014, screen 320x240 depth 24
+       ok   headless X server (labwc + Xwayland) up
+       ok   XFIXES extension present
+       ok   XFIXES version >= 4
+       info XFIXES 6.0
+       info union: 3 rects, bounds 15x15+0+0
+       ok   union of two squares: 3 bands, 15x15 bounds
+       ok   intersection is 5x5+5+5
+       ok   subtraction leaves an L of 2 rects in 10x10
+       info cursor name qnx-port-test
+       ok   cursor name set and read back
+       ok   XFixesSelectionNotify for the new owner
+       ok   XFixesHideCursor/ShowCursor accepted
+     PASS libxfixes
+PASS test_libxfixes
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

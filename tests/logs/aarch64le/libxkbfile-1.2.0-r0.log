@@ -1,6 +1,6 @@
 # libxkbfile 1.2.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:35:27Z   packages from: apk:local-dists
+# date: 2026-10-31T16:49:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -11,11 +11,11 @@ $ apk add -u libxkbfile qnx-test-xorg-libs qnx-port-tests
 ( 3/19) Installing libxcb (1.17.0-r0)
 ( 4/19) Installing libx11 (1.8.10-r0)
 ( 5/19) Installing libxkbfile (1.2.0-r0)
-( 6/19) Installing qnx-port-tests (1.0-r1)
+( 6/19) Installing qnx-port-tests (1.0-r2)
 ( 7/19) Installing libice (1.1.2-r0)
 ( 8/19) Installing libsm (1.2.6-r0)
 ( 9/19) Installing libxcvt (0.1.3-r0)
-(10/19) Installing fontenc (1.1.8-r0)
+(10/19) Installing fontenc (1.1.8-r2)
 (11/19) Installing bzip2 (1.0.8-r0)
 (12/19) Installing freetype (2.13.3-r0)
 (13/19) Installing libxfont2 (2.0.7-r0)
@@ -25,7 +25,7 @@ $ apk add -u libxkbfile qnx-test-xorg-libs qnx-port-tests
 (17/19) Installing libxshmfence (1.3.3-r0)
 (18/19) Installing xcb-util (0.4.1-r0)
 (19/19) Installing qnx-test-xorg-libs (1.0-r5)
-OK: 62 MiB in 48 packages
+OK: 62 MiB in 47 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xorg_libs
      == xorg-libs ==
@@ -43,7 +43,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_x
        ok   XmuCopyISOLatin1Lowered (incl. E-acute)
        ok   XmuCompareISOLatin1 ignores case
        ok   IceListenForConnections
-       info ICE listening: local/vanilla-a64:/tmp/.ICE-unix/176828437,inet6/vanilla-a64:15246,inet/vanilla-a64:55954
+       info ICE listening: local/vanilla-a64:/tmp/.ICE-unix/765210645,inet6/vanilla-a64:10635,inet/vanilla-a64:25404
        ok   network id list
        info SmcOpenConnection: SESSION_MANAGER environment variable not defined
        ok   no session manager: the documented error

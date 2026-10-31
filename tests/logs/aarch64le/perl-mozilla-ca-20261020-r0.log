@@ -1,17 +1,17 @@
 # perl-mozilla-ca 20261020-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:54:08Z   packages from: apk:local-dists
+# date: 2026-10-31T17:11:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-mozilla-ca qnx-test-perl-mozilla-ca qnx-port-tests
 (1/5) Installing libxcrypt (4.4.38-r0)
-(2/5) Installing perl (5.40.2-r0)
+(2/5) Installing perl (5.40.2-r2)
 (3/5) Installing perl-mozilla-ca (20261020-r0)
-(4/5) Installing qnx-port-tests (1.0-r1)
+(4/5) Installing qnx-port-tests (1.0-r2)
 (5/5) Installing qnx-test-perl-mozilla-ca (1.0-r0)
-OK: 119 MiB in 34 packages
+OK: 119 MiB in 33 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_mozilla_ca
      == perl-mozilla-ca ==

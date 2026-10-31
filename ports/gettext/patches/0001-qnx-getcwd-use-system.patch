@@ -1,0 +1,62 @@
+QNX: use the system getcwd in gnulib's getcwd replacement.
+
+Cross-compiled, gnulib cannot run its getcwd probes and replaces getcwd
+with an implementation that walks up the tree: openat(fd, "..", O_RDONLY)
+then fdopendir().  On QNX a directory fd opened without O_DIRECTORY makes
+openat()/fdopendir() fail with ENOTDIR, so every getcwd() call failed.
+msgfmt -o <anything> writes through open_supersede, which canonicalizes
+the output name starting from getcwd(): "error while opening ... for
+writing: Not a directory", even for a file in the current directory.
+
+diff -ru a/gettext-tools/gnulib-lib/getcwd.c b/gettext-tools/gnulib-lib/getcwd.c
+--- a/gettext-tools/gnulib-lib/getcwd.c	2026-10-31 21:41:01.425104129 +0900
++++ b/gettext-tools/gnulib-lib/getcwd.c	2026-10-31 21:41:01.453891243 +0900
+@@ -166,6 +166,48 @@
+ GETCWD_RETURN_TYPE
+ __getcwd_generic (char *buf, size_t size)
+ {
++#ifdef __QNX__
++  /* QNX: always use the system getcwd.  A cross build cannot run the
++     getcwd probes, so it assumes getcwd is broken and falls back to the
++     walk below, which openat()s ".." without O_DIRECTORY and then
++     fdopendir()s it -- on QNX that fails with ENOTDIR, so every caller
++     (msgfmt -o x.mo, through open_supersede -> canonicalize) failed with
++     "Not a directory".  QNX's getcwd works; only getcwd (NULL, ...) needs
++     the buffer allocated here.  */
++  {
++# undef getcwd
++    char *qnx_buf = buf;
++    size_t qnx_size = size;
++    if (buf == NULL)
++      {
++        if (qnx_size == 0)
++          qnx_size = 4096;
++        qnx_buf = malloc (qnx_size);
++        if (qnx_buf == NULL)
++          {
++            __set_errno (ENOMEM);
++            return NULL;
++          }
++      }
++    if (getcwd (qnx_buf, qnx_size) == NULL)
++      {
++        if (buf == NULL)
++          {
++            int qnx_errno = errno;
++            free (qnx_buf);
++            __set_errno (qnx_errno);
++          }
++        return NULL;
++      }
++    if (buf == NULL && size == 0)
++      {
++        char *qnx_shrunk = realloc (qnx_buf, strlen (qnx_buf) + 1);
++        if (qnx_shrunk != NULL)
++          qnx_buf = qnx_shrunk;
++      }
++    return qnx_buf;
++  }
++#endif
+   /* Lengths of big file name components and entire file names, and a
+      deep level of file name nesting.  These numbers are not upper
+      bounds; they are merely large values suitable for initial

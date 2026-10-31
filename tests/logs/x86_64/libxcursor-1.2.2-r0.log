@@ -1,14 +1,41 @@
-# libxcursor 1.2.2-r0 -- INSTALLED
+# libxcursor 1.2.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxcursor
-OK: 166 MiB in 52 packages
+$ apk add -u libxcursor qnx-test-libxcursor qnx-port-tests
+(1/9) Installing libxau (1.0.11-r0)
+(2/9) Installing libxdmcp (1.1.5-r0)
+(3/9) Installing libxcb (1.17.0-r0)
+(4/9) Installing libx11 (1.8.10-r0)
+(5/9) Installing libxfixes (6.0.1-r0)
+(6/9) Installing libxrender (0.9.11-r0)
+(7/9) Installing libxcursor (1.2.2-r0)
+(8/9) Installing qnx-port-tests (1.0-r2)
+(9/9) Installing qnx-test-libxcursor (1.0-r0)
+OK: 97 MiB in 38 packages
 
-$ ldd on every program and library apk info -L libxcursor lists
-ok   loads: /data/oss/usr/local/lib/libXcursor.so.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxcursor
+     == libxcursor ==
+       ok   XcursorImagesCreate / XcursorImageCreate
+       ok   XcursorFileSave (2 images + comment)
+       ok   file starts with the Xcur magic
+       ok   XcursorFileLoad
+       ok   both images read back identical
+       ok   comment read back
+       info best match for size 30: 32
+       ok   nearest size chosen (30 -> 32)
+       ok   XcursorFilenameSaveImages into a theme
+       info XcursorLibraryPath = /tmp/qnxport-xcursor-814895144/icons
+       ok   XcursorLibraryPath honours XCURSOR_PATH
+       ok   left_ptr resolved through Inherits= at size 24
+       ok   missing cursor name -> NULL
+       ok   XcursorLibraryShape maps names to cursorfont shapes
+     PASS libxcursor
+PASS test_libxcursor
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

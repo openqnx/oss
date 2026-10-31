@@ -1,14 +1,39 @@
-# ca-certificates 20261020-r0 -- INSTALLED
+# ca-certificates 20261020-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:23:01Z   packages from: apk:local-dists
+# date: 2026-10-31T16:19:47Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u ca-certificates
-OK: 55 MiB in 29 packages
+$ apk add -u ca-certificates qnx-test-ca-certificates qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-ca-certificates (1.0-r0)
+OK: 55 MiB in 30 packages
 
-$ ldd on every program and library apk info -L ca-certificates lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ca_certificates
+     == ca-certificates ==
+       info OpenSSL OpenSSL 3.5.1 1 Jul 2025; default cert file /usr/local/ssl/cert.pem, dir /usr/local/ssl/certs
+       ok   bundle /usr/local/ssl/cert.pem installed
+       ok   X509_STORE_load_file(bundle)
+       info 118 certificates in the bundle
+       ok   100 or more root certificates
+       ok   /usr/local/etc/ssl/certs/ca-certificates.crt: the same 118 certificates
+       ok   /usr/local/ssl/certs/ca-certificates.crt: the same 118 certificates
+       info default verify paths loaded 118 certificate(s)
+       ok   OpenSSL's default verify paths load this bundle
+       ok   every PEM block parses as a certificate
+       ok   ISRG Root X1 (Let's Encrypt) present
+       ok   ISRG Root X1: self-signed, RSA 4096, signature verifies
+       ok   ISRG Root X1 verifies as a trust anchor of the bundle
+       ok   made a CA (EC P-256) and a leaf it signed
+       info against the bundle alone: unable to get local issuer certificate
+       ok   leaf rejected by the bundle alone (issuer unknown)
+       info with the CA added: ok, chain depth 2
+       ok   accepted once the CA is trusted: chain leaf -> CA
+       ok   host name check: qnx.test, *.qnx.test, not example.org
+     PASS ca-certificates
+PASS test_ca_certificates
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

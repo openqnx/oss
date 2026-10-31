@@ -1,0 +1,56 @@
+# numpy 2.3.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:19:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u numpy qnx-test-numpy qnx-port-tests
+(1/8) Installing openblas (0.3.28-r0)
+(2/8) Installing gdbm (1.24-r0)
+(3/8) Installing readline (8.2-r0)
+(4/8) Installing sqlite (3.47.2-r0)
+(5/8) Installing python3 (3.14.0-r2)
+(6/8) Installing numpy (2.3.4-r1)
+(7/8) Installing qnx-port-tests (1.0-r2)
+(8/8) Installing qnx-test-numpy (1.0-r0)
+OK: 241 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_numpy
+     == numpy ==
+     /data/var/tmp/qnxport-numpy.eqLq20/t.py:45: RuntimeWarning: overflow encountered in cast
+       check(np.float16(65504) == 65504 and np.isinf(np.float16(65520)), "float16: max 65504, 65520 overflows")
+       info numpy 2.3.4, python 3.14.0
+       ok   solve [[3,1],[1,2]] x = [9,8] -> [2,3]
+       ok   det [[1,2],[3,4]] = -2
+       ok   inv(M) @ M = I
+       ok   eigenvalues of [[2,1],[1,2]] = 1, 3
+       ok   singular values of diag(3,-4) = 4, 3
+       ok   least squares fit of y = 2.5x - 1
+       ok   60x60 random matrix times its inverse = I
+       ok   QR decomposition reproduces the matrix
+       info BLAS: openblas
+       ok   fft of an impulse is flat
+       ok   fft [0,1,0,-1] = [0,-2j,0,2j]
+       ok   a 10-cycle sine peaks in bin 10
+       ok   ifft(fft(x)) = x
+       ok   reshape, transpose, sum over an axis
+       ok   broadcasting (3,1) x (4,) -> (3,4)
+       ok   int8 array summed as int64: 300
+       ok   uint8 arrays wrap around: 250 + 10 = 4
+       ok   float16: max 65504, 65520 overflows
+       ok   einsum matrix product
+       ok   sort, searchsorted
+       ok   median, std
+       ok   structured dtype
+       ok   standard normal: mean 0, std 1 (200k samples)
+       ok   same seed, same stream
+       ok   uniform [0,1)
+       ok   np.save / np.load round trip
+       ok   savetxt / loadtxt
+     PASS numpy
+PASS test_numpy
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

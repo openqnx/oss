@@ -1,0 +1,52 @@
+# xfconf 4.20.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T17:09:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfconf qnx-test-xfconf qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-xfconf (1.0-r0)
+OK: 95 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfconf
+     == xfconf ==
+       info xfconf-query --version -> 0: xfconf-query 4.20.0
+       ok   xfconf-query --version: 4.20.0
+       info xfconfd --version -> 0: Xfconfd 4.20.0
+       ok   xfconfd --version: 4.20.0
+       ok   private dbus-daemon listening on a UNIX socket
+       ok   xfconfd serves the seeded channel: /greeting
+       ok   seeded int /answer = 42
+       ok   seeded nested bool /nested/flag = true
+       ok   xfconf-query -n creates /app/name in a new channel
+       ok   string property created and read back
+       ok   int property created, then changed
+       ok   array property (2 strings)
+       ok   -l lists the channel's properties
+       info qnx-new.xml saved by xfconfd
+       info xfconf-query -l: Channels:   qnx-new   qnx-seed
+       ok   -l lists both channels (after the delayed save)
+       ok   -r resets a property (now reported missing)
+       ok   xfconf_init on the private bus
+       ok   libxfconf reads what xfconf-query wrote
+       ok   libxfconf get_int
+       ok   libxfconf set double/bool/uint
+       ok   xfconf-query reads the double back
+       ok   ... the bool
+       ok   ... the uint
+       ok   string list round trip
+       ok   has_property
+       ok   xfconf_list_channels includes qnx-seed
+       info property-changed seen 1 time(s), value "after"
+       ok   property-changed signal for xfconf-query's change
+       ok   xfconfd exits on SIGTERM
+       ok   qnx-new.xml written with the new values
+       ok   qnx-seed.xml saved without the reset /answer
+     PASS xfconf
+PASS test_xfconf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

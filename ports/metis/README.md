@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/KarypisLab/METIS.git (tag `v5.2.1`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`gklib`](../gklib/) |
 | Run-time dependencies | [`gklib`](../gklib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,11 +59,12 @@ git clone --depth 1 -b v5.2.1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/metis < ports/metis/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/metis < ports/metis/patches/0002-qnx-libmetis-needs-gklib.patch
+patch -p1 -d src/metis < ports/metis/patches/0003-qnx-small-filename-buffers.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Port METIS minus tests.
@@ -91,6 +92,17 @@ Touches: `conf/gkbuild.cmake`, `include/CMakeLists.txt`, `programs/CMakeLists.tx
 > undefined gk_* symbols, and only executables that list GKlib themselves work.
 
 Touches: `libmetis/CMakeLists.txt` · Upstream status: QNX-specific
+
+**[`0003-qnx-small-filename-buffers.patch`](patches/0003-qnx-small-filename-buffers.patch)** — Do not put a 1.28 MB file-name buffer on the stack.
+
+> WritePartition() and WritePermutation() declare char filename[MAXLINE],
+> where MAXLINE is 1280000. On Linux the 8 MB main-thread stack hides it;
+> QNX's main thread stack is far smaller, so gpmetis and ndmetis died with
+> SIGSEGV ("Memory fault") as soon as they wrote their result file, while
+> gpmetis -nooutput worked. A 4 KB buffer with snprintf is ample for a file
+> name.
+
+Touches: `programs/io.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -203,7 +215,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | metis 5.2.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/metis-5.2.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | metis 5.2.1-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/metis-5.2.1-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | metis 5.2.1-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/metis-5.2.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | metis 5.2.1-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/metis-5.2.1-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

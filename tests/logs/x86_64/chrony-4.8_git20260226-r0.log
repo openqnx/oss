@@ -1,16 +1,29 @@
-# chrony 4.8_git20260226-r0 -- INSTALLED
+# chrony 4.8_git20260226-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:00Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:32Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u chrony
-(1/1) Installing chrony (4.8_git20260226-r0)
-OK: 167 MiB in 53 packages
+$ apk add -u chrony qnx-test-chrony qnx-port-tests
+(1/3) Installing chrony (4.8_git20260226-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-chrony (1.0-r0)
+OK: 94 MiB in 32 packages
 
-$ ldd on every program and library apk info -L chrony lists
-ok   loads: /data/oss/usr/local/bin/chronyc
-ok   loads: /data/oss/usr/local/sbin/chronyd
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_chrony
+     == chrony ==
+       info chronyd (chrony) version DEVELOPMENT (+CMDMON -REFCLOCK -RTC -PRIVDROP -SCFILTER -SIGND -NTS -SECHASH +IPV6 -DEBUG)
+       ok   chronyd -p: config parsed and printed
+       ok   chronyc tracking: local reference 7F7F0101
+       ok   tracking: stratum 8
+       ok   chronyc sources over UDP (no upstream sources)
+       ok   chronyc serverstats over the Unix command socket
+       ok   chronyd -Q measured the offset over NTP: 2026-10-31T16:12:27Z System clock wrong by 0.000003 seconds (ignored)
+       ok   server counted 3 NTP packets from the client
+     PASS chrony
+PASS test_chrony
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

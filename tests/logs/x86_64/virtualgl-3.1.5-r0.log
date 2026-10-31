@@ -1,28 +1,41 @@
 # virtualgl 3.1.5-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:22Z   packages from: apk:local-dists
+# date: 2026-10-31T16:36:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u virtualgl qnx-test-virtualgl qnx-port-tests
-( 1/16) Installing qnx-port-tests (1.0-r1)
-( 2/16) Installing font-dejavu (2.37-r0)
-( 3/16) Installing libsfdo (0.1.4-r0)
-( 4/16) Installing lcms2 (2.16-r0)
-( 5/16) Installing wlroots (0.20.2-r0)
-( 6/16) Installing xkeyboard-config (2.43-r0)
-( 7/16) Installing labwc (0.20.2-r1)
-( 8/16) Installing virtualgl (3.1.5-r0)
-( 9/16) Installing libmd (1.1.0-r0)
-(10/16) Installing libxcvt (0.1.3-r0)
-(11/16) Installing fontenc (1.1.8-r0)
-(12/16) Installing libxfont2 (2.0.7-r0)
-(13/16) Installing libxkbfile (1.2.0-r0)
-(14/16) Installing xkbcomp (1.5.0-r0)
-(15/16) Installing xwayland (24.1.14-r0)
-(16/16) Installing qnx-test-virtualgl (1.0-r0)
-OK: 188 MiB in 68 packages
+( 1/29) Installing qnx-port-tests (1.0-r2)
+( 2/29) Installing libxau (1.0.11-r0)
+( 3/29) Installing libxdmcp (1.1.5-r0)
+( 4/29) Installing libxcb (1.17.0-r0)
+( 5/29) Installing libx11 (1.8.10-r0)
+( 6/29) Installing libxext (1.3.6-r0)
+( 7/29) Installing libxrender (0.9.11-r0)
+( 8/29) Installing cairo (1.18.2-r0)
+( 9/29) Installing font-dejavu (2.37-r0)
+(10/29) Installing libsfdo (0.1.4-r0)
+(11/29) Installing libxml2 (2.13.5-r1)
+(12/29) Installing libxkbcommon (1.8.1-r1)
+(13/29) Installing fribidi (1.0.16-r0)
+(14/29) Installing harfbuzz (<ip>-r0)
+(15/29) Installing libxft (2.3.8-r0)
+(16/29) Installing pango (1.54.0-r0)
+(17/29) Installing lcms2 (2.16-r0)
+(18/29) Installing wlroots (0.20.2-r0)
+(19/29) Installing xkeyboard-config (2.43-r0)
+(20/29) Installing labwc (0.20.2-r1)
+(21/29) Installing virtualgl (3.1.5-r0)
+(22/29) Installing libmd (1.1.0-r0)
+(23/29) Installing libxcvt (0.1.3-r0)
+(24/29) Installing fontenc (1.1.8-r2)
+(25/29) Installing libxfont2 (2.0.7-r0)
+(26/29) Installing libxkbfile (1.2.0-r0)
+(27/29) Installing xkbcomp (1.5.0-r1)
+(28/29) Installing xwayland (24.1.14-r1)
+(29/29) Installing qnx-test-virtualgl (1.0-r0)
+OK: 128 MiB in 58 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_virtualgl
      == virtualgl ==
@@ -34,8 +47,8 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_v
        ok   X11: drawn colour read back exactly
      
      VirtualGL Client 64-bit v3.1.5 (Build 20261030)
-     Listening for connections on port 14448
-       ok+ +   Cvglclient listening (VGL transport)o
+     Listening for connections on port 14258
+       o+k+    Cvglclient listening (VGL transport)o
      nnection from <ip>.
        info vglclient speaks VGL 2.1
        ok   version handshake (VGL 2.x)

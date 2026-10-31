@@ -107,6 +107,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - GNU tar. Version as in the QNX Everywhere 8.0.4r1 image.
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv
 - The libiconv component's <iconv.h> renames iconv_open to libiconv_open, so link that library explicitly.
+- gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd() opens "." without O_DIRECTORY, and QNX then refuses fchdir()/openat() on that descriptor with ENOTDIR (hazards 25, 120): every *at() emulation that returns to the start directory died with "failed to return to initial working directory: Not a directory".
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tar`.
 
@@ -182,7 +183,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | tar 1.35-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/tar-1.35-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | tar 1.35-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/tar-1.35-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | tar 1.35-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/tar-1.35-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | tar 1.35-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/tar-1.35-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -204,6 +207,12 @@ CONF_ARGS_EXTRA=( --disable-nls )
 # The libiconv component's <iconv.h> renames iconv_open to libiconv_open, so
 # link that library explicitly.
 CONF_ENV=( LIBS="-liconv" )
+# gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd()
+# opens "." without O_DIRECTORY, and QNX then refuses fchdir()/openat() on
+# that descriptor with ENOTDIR (hazards 25, 120): every *at() emulation that
+# returns to the start directory died with "failed to return to initial
+# working directory: Not a directory".
+CFLAGS_APPEND="-DO_SEARCH=O_DIRECTORY"
 ```
 </details>
 

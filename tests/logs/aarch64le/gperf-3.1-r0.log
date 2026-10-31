@@ -1,15 +1,32 @@
-# gperf 3.1-r0 -- INSTALLED
+# gperf 3.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:29:12Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:00Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gperf
-(1/1) Installing gperf (3.1-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u gperf qnx-test-gperf qnx-port-tests
+(1/3) Installing gperf (3.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-gperf (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L gperf lists
-ok   loads: /data/oss/usr/local/bin/gperf
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gperf
+     == gperf ==
+       info GNU gperf 3.1
+       ok   generated kw.c (123 lines)
+       ok   lookup function qnx_lookup (ANSI-C prototype)
+       ok   hash function qnx_hash
+       ok   TOTAL_KEYWORDS 6
+       ok   MIN_WORD_LENGTH 4
+       ok   MAX_WORD_LENGTH 8
+       ok   all 6 keyword entries in the table
+       ok   duplicate key refused without -D
+       ok   -D accepts duplicates
+       ok   keywords from stdin, -N is_colour
+     PASS gperf
+PASS test_gperf
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

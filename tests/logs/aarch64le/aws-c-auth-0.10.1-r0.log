@@ -1,22 +1,39 @@
-# aws-c-auth 0.10.1-r0 -- INSTALLED
+# aws-c-auth 0.10.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:21:49Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-c-auth
-(1/8) Installing aws-c-common (0.12.6-r0)
-(2/8) Installing aws-c-cal (0.9.13-r0)
-(3/8) Installing aws-c-compression (0.3.2-r0)
-(4/8) Installing s2n-tls (1.7.0-r0)
-(5/8) Installing aws-c-io (0.26.1-r0)
-(6/8) Installing aws-c-http (0.10.14-r0)
-(7/8) Installing aws-c-sdkutils (0.2.4-r0)
-(8/8) Installing aws-c-auth (0.10.1-r0)
-OK: 58 MiB in 37 packages
+$ apk add -u aws-c-auth qnx-test-aws-c-auth qnx-port-tests
+( 1/10) Installing aws-c-common (0.12.6-r0)
+( 2/10) Installing aws-c-cal (0.9.13-r1)
+( 3/10) Installing aws-c-compression (0.3.2-r0)
+( 4/10) Installing s2n-tls (1.7.0-r0)
+( 5/10) Installing aws-c-io (0.26.1-r0)
+( 6/10) Installing aws-c-http (0.10.14-r0)
+( 7/10) Installing aws-c-sdkutils (0.2.4-r0)
+( 8/10) Installing aws-c-auth (0.10.1-r0)
+( 9/10) Installing qnx-port-tests (1.0-r2)
+(10/10) Installing qnx-test-aws-c-auth (1.0-r0)
+OK: 58 MiB in 38 packages
 
-$ ldd on every program and library apk info -L aws-c-auth lists
-ok   loads: /data/oss/usr/local/lib/libaws-c-auth.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_auth
+     == aws-c-auth ==
+       ok   static credentials
+       ok   SigV4 header signing completes
+       info Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/service/aws4_request, SignedHeaders=host;x-amz-date, Signature=5fa00fa31553b73ebf1942676e86291e8372ff2a2260956d9b8aae1d763fbf31
+       ok   X-Amz-Date header added
+       ok   Authorization matches the AWS SigV4 test suite (get-vanilla)
+       ok   SigV4 query-string signing completes
+       info presigned path: /bucket/key.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIDEXAMPLE%2F...
+       ok   presigned query has algorithm, expiry and credential scope
+       ok   presigned query carries a 64-hex-digit signature
+       ok   static credentials provider
+       ok   environment credentials provider
+     PASS aws-c-auth
+PASS test_aws_c_auth
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

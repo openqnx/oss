@@ -1,15 +1,38 @@
-# libretro-2048 0_git20241227-r0 -- INSTALLED
+# libretro-2048 0_git20241227-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:32:36Z   packages from: apk:local-dists
+# date: 2026-10-31T16:43:18Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libretro-2048
-(1/1) Installing libretro-2048 (0_git20241227-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u libretro-2048 qnx-test-libretro-2048 qnx-port-tests
+(1/3) Installing libretro-2048 (0_git20241227-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libretro-2048 (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libretro-2048 lists
-ok   loads: /data/oss/usr/local/lib/libretro/2048_libretro_qnx.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libretro_2048
+     == libretro-2048 ==
+       ok   core loads with dlopen
+       ok   all libretro entry points exported
+       ok   retro_api_version() == 1
+       info 2048 v1.0 86e02d3, extensions ""
+       ok   system info names the core
+       ok   core declares it runs without content
+       ok   retro_load_game(NULL)
+       info 376x464 (max 376x464), 60.00 fps, 0 Hz audio, pixel format 1
+       ok   AV info: geometry and frame rate
+       info 120 run(s): 120 video callback(s) (0 dupes), last 376x464 pitch 1504, 0 audio frame(s)
+       ok   video frames delivered
+       ok   frame size within the advertised geometry
+       info 3 distinct colour(s) in the last frame
+       ok   the frame has content (several colours)
+       info save state 680 bytes
+       ok   save state written and restored
+       ok   unload + deinit returned
+     PASS libretro-2048
+PASS test_libretro_2048
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

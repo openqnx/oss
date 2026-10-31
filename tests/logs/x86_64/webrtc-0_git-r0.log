@@ -1,17 +1,32 @@
-# webrtc 0_git-r0 -- INSTALLED
+# webrtc 0_git-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:50Z   packages from: apk:local-dists
+# date: 2026-10-31T16:36:29Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u webrtc
-(1/1) Installing webrtc (0_git-r0)
-OK: 1273 MiB in 53 packages
+$ apk add -u webrtc qnx-test-webrtc qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing webrtc (0_git-r0)
+(3/3) Installing qnx-test-webrtc (1.0-r0)
+OK: 1199 MiB in 32 packages
 
-$ ldd on every program and library apk info -L webrtc lists
-ok   loads: /data/oss/usr/local/lib/webrtc/peerconnection_client
-ok   loads: /data/oss/usr/local/lib/webrtc/peerconnection_server
-ok   loads: /data/oss/usr/local/lib/webrtc/peerconnection_unittests
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_webrtc
+     == webrtc ==
+       ok   lib/webrtc/peerconnection_server installed
+       info /usr/local/lib/webrtc/peerconnection_server --port=36632
+       ok   alice signs in: 200, her id in Pragma and the peer list
+       ok   bob signs in: the list has bob and alice
+       ok   alice's /wait: bob is online
+       ok   alice posts a message to bob
+       info bob's /wait: 200, from 1, "{"type":"offer","sdp":"v=0"}"
+       ok   bob's /wait delivers it, from alice's id
+       ok   bob signs out
+       ok   alice is told bob went offline
+       ok   an unknown peer id is refused (500)
+     PASS webrtc
+PASS test_webrtc
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

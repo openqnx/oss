@@ -1,0 +1,31 @@
+# xkbcomp 1.5.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:38:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xkbcomp qnx-test-xkbcomp qnx-port-tests
+(1/9) Installing qnx-port-tests (1.0-r2)
+(2/9) Installing libxau (1.0.11-r0)
+(3/9) Installing libxdmcp (1.1.5-r0)
+(4/9) Installing libxcb (1.17.0-r0)
+(5/9) Installing libx11 (1.8.10-r0)
+(6/9) Installing libxkbfile (1.2.0-r0)
+(7/9) Installing xkbcomp (1.5.0-r1)
+(8/9) Installing xkeyboard-config (2.43-r0)
+(9/9) Installing qnx-test-xkbcomp (1.0-r4)
+OK: 104 MiB in 38 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xkbcomp
+     == xkbcomp ==
+       ok   xkeyboard-config data (/usr/local/share/X11/xkb)
+       ok   compiled to us.xkm (9952 bytes)
+       ok   us.xkm back to source
+       ok   key <AC01> is a/A
+     PASS xkbcomp
+PASS test_xkbcomp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

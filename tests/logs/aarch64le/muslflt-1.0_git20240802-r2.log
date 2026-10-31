@@ -1,0 +1,53 @@
+# muslflt 1.0_git20240802-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:57:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u muslflt qnx-test-muslflt qnx-port-tests
+(1/3) Installing muslflt (1.0_git20240802-r2)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-muslflt (1.0-r0)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_muslflt
+     == muslflt ==
+       ok   dlopen libmuslflt.so.1
+       ok   sqrt(2) correctly rounded
+       ok   exp(1)
+       ok   log(10)
+       ok   sin(1), cos(1)
+       ok   sin(1e22) (Payne-Hanek reduction)
+       ok   pow(2,10)=1024, pow(-8,1/3)=NaN
+       ok   cbrt(-27) = -3, hypot(3,4) = 5
+       ok   tgamma(5), lgamma(1/2) = log(sqrt(pi))
+       ok   erf(0.5)
+       ok   fma(0.1, 10, -1) is fused (5.55e-17)
+       ok   rint/round/trunc/floor
+       ok   fmod and remainder
+       ok   special values
+       ok   fesetround(FE_UPWARD)
+       ok   rint follows the rounding mode
+       info cexp(i*pi) = -1 +1.22e-16 i
+       ok   cexp(i*pi) = -1 (Euler)
+       ok   csqrt(-4) = 2i
+       ok   cabs(3+4i) = 5
+       info snprintf -> 0.10000000000000001|0x1p+0|1.235e+04|1e-05|-0003.14
+       ok   snprintf float formats
+       ok   snprintf %.20f
+       ok   snprintf ties-to-even and inf
+       ok   strtod hex float, end pointer
+       ok   strtod near DBL_MIN (correct rounding)
+       ok   strtod 2^53+1 rounds to even
+       ok   strtod underflow -> 0, ERANGE
+       ok   strtof FLT_MAX
+       ok   %.17g -> strtod round trips 199 values exactly
+       ok   all looked-up symbols present
+       ok   every looked-up symbol is defined in libmuslflt itself
+     PASS muslflt
+PASS test_muslflt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

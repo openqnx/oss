@@ -1,15 +1,15 @@
 # gdbm 1.24-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T04:49:58Z   packages from: apk:local-dists
+# date: 2026-10-31T16:30:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u gdbm qnx-test-gdbm qnx-port-tests
 (1/3) Installing gdbm (1.24-r0)
-(2/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing qnx-port-tests (1.0-r2)
 (3/3) Installing qnx-test-gdbm (1.0-r6)
-OK: 10 MiB in 8 packages
+OK: 55 MiB in 31 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gdbm
      == gdbm ==

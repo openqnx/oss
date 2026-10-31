@@ -1,21 +1,59 @@
-# libgsf 1.14.53-r0 -- INSTALLED
+# libgsf 1.14.53-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:49Z   packages from: apk:local-dists
+# date: 2026-10-31T16:41:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libgsf
-(1/4) Installing bzip2 (1.0.8-r0)
-(2/4) Installing xz (5.6.3-r0)
-(3/4) Installing libxml2 (2.13.5-r0)
-(4/4) Installing libgsf (1.14.53-r0)
-OK: 58 MiB in 33 packages
+$ apk add -u libgsf qnx-test-libgsf qnx-port-tests
+(1/6) Installing bzip2 (1.0.8-r0)
+(2/6) Installing xz (5.6.3-r0)
+(3/6) Installing libxml2 (2.13.5-r1)
+(4/6) Installing libgsf (1.14.53-r0)
+(5/6) Installing qnx-port-tests (1.0-r2)
+(6/6) Installing qnx-test-libgsf (1.0-r0)
+OK: 59 MiB in 34 packages
 
-$ ldd on every program and library apk info -L libgsf lists
-ok   loads: /data/oss/usr/local/bin/gsf
-ok   loads: /data/oss/usr/local/bin/gsf-office-thumbnailer
-ok   loads: /data/oss/usr/local/bin/gsf-vba-dump
-ok   loads: /data/oss/usr/local/lib/libgsf-1.so.114
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgsf
+     == libgsf ==
+       ok   scratch directory
+       ok   gsf_outfile_msole_new
+       ok   wrote Alpha (11 B) and Dir/Beta (10000 B)
+       ok   OLE2 signature D0CF11E0A1B11AE1
+       ok   gsf_infile_msole_new
+       info root has 2 children
+       ok   root has 2 children
+       ok   Alpha reads back
+       ok   Dir/Beta reads back (10000 B)
+       ok   missing member -> NULL
+       ok   gsf_outfile_zip_new
+       ok   wrote alpha.txt (stored) and big.txt (deflated)
+       info t.zip is 363 bytes for 10011 bytes of content
+       ok   ZIP local header signature
+       ok   deflate compressed the repetitive 10 kB member
+       ok   zip has 2 members
+       ok   alpha.txt reads back
+       ok   big.txt inflates back to 10000 B
+       info $ gsf list t.ole -> 0
+       info   t.ole:
+       info   d                                0 *root*
+       info   d                                0 Dir
+       info   f                            10000 Dir/Beta
+       info   f                               11 Alpha
+       ok   gsf list t.ole shows Alpha and Beta
+       info $ gsf cat t.ole Alpha -> 0
+       ok   gsf cat t.ole Alpha = "hello alpha"
+       info $ gsf list t.zip -> 0
+       info   t.zip:
+       info   d                                0 *root*
+       info   f  2026-10-31 00:41:42          11 alpha.txt
+       info   f  2026-10-31 00:41:42       10000 big.txt
+       ok   gsf list t.zip shows both members and the 10000 B size
+       info $ gsf cat t.zip big.txt -> 0
+       ok   gsf cat t.zip big.txt inflates exactly
+     PASS libgsf
+PASS test_libgsf
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

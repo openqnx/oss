@@ -119,7 +119,10 @@ _install_to_pkgroot() {
       # and the directories that leaves empty (rmdir stops at a non-empty one)
       rmdir -p --ignore-fail-on-non-empty "$(dirname "$STAGE/$f")" 2>/dev/null || true; done
   fi
-  cp -a "$root/." "$STAGE/"
+  # --remove-destination: a read-only file from an earlier build (libperl.so,
+  # bashbug) cannot be overwritten in place, and plain cp left the old one in
+  # stage while pkgroot had the new one.
+  cp -a --remove-destination "$root/." "$STAGE/"
   mkdir -p "$STAGE/.manifest"
   printf '%s\n' "$newlist" > "$STAGE/.manifest/$pkg"
   # A configure option that switches everything off still "builds" and

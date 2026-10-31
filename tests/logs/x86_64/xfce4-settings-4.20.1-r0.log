@@ -1,28 +1,84 @@
-# xfce4-settings 4.20.1-r0 -- INSTALLED
+# xfce4-settings 4.20.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:42:01Z   packages from: apk:local-dists
+# date: 2026-10-31T16:37:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xfce4-settings
-(1/7) Installing libxfce4util (4.20.0-r0)
-(2/7) Installing xfconf (4.20.0-r0)
-(3/7) Installing libxfce4ui (4.20.0-r0)
-(4/7) Installing exo (4.20.0-r0)
-(5/7) Installing garcon (4.20.0-r0)
-(6/7) Installing gtk-layer-shell (0.9.0-r0)
-(7/7) Installing xfce4-settings (4.20.1-r0)
-OK: 177 MiB in 59 packages
+$ apk add -u xfce4-settings qnx-test-xfce4-settings qnx-port-tests
+( 1/40) Installing qnx-port-tests (1.0-r2)
+( 2/40) Installing libxau (1.0.11-r0)
+( 3/40) Installing libxdmcp (1.1.5-r0)
+( 4/40) Installing libxcb (1.17.0-r0)
+( 5/40) Installing libx11 (1.8.10-r0)
+( 6/40) Installing libxext (1.3.6-r0)
+( 7/40) Installing libxrender (0.9.11-r0)
+( 8/40) Installing cairo (1.18.2-r0)
+( 9/40) Installing font-dejavu (2.37-r0)
+(10/40) Installing libsfdo (0.1.4-r0)
+(11/40) Installing libxml2 (2.13.5-r1)
+(12/40) Installing libxkbcommon (1.8.1-r1)
+(13/40) Installing fribidi (1.0.16-r0)
+(14/40) Installing harfbuzz (<ip>-r0)
+(15/40) Installing libxft (2.3.8-r0)
+(16/40) Installing pango (1.54.0-r0)
+(17/40) Installing lcms2 (2.16-r0)
+(18/40) Installing wlroots (0.20.2-r0)
+(19/40) Installing xkeyboard-config (2.43-r0)
+(20/40) Installing labwc (0.20.2-r1)
+(21/40) Installing dbus (1.16.0-r1)
+(22/40) Installing libxi (1.8.2-r0)
+(23/40) Installing libxtst (1.2.5-r0)
+(24/40) Installing at-spi2-core (2.54.0-r0)
+(25/40) Installing libxcomposite (0.4.6-r0)
+(26/40) Installing libxfixes (6.0.1-r0)
+(27/40) Installing libxcursor (1.2.2-r0)
+(28/40) Installing libxdamage (1.1.6-r0)
+(29/40) Installing libxinerama (1.1.5-r0)
+(30/40) Installing libxrandr (1.5.4-r0)
+(31/40) Installing gtk3 (3.24.43-r1)
+(32/40) Installing hicolor-icon-theme (0.18-r0)
+(33/40) Installing libxfce4util (4.20.0-r0)
+(34/40) Installing xfconf (4.20.0-r1)
+(35/40) Installing libxfce4ui (4.20.0-r1)
+(36/40) Installing exo (4.20.0-r0)
+(37/40) Installing garcon (4.20.0-r1)
+(38/40) Installing gtk-layer-shell (0.9.0-r0)
+(39/40) Installing xfce4-settings (4.20.1-r0)
+(40/40) Installing qnx-test-xfce4-settings (1.0-r0)
+OK: 179 MiB in 69 packages
 
-$ ldd on every program and library apk info -L xfce4-settings lists
-ok   loads: /data/oss/usr/local/bin/xfce4-appearance-settings
-ok   loads: /data/oss/usr/local/bin/xfce4-display-settings
-ok   loads: /data/oss/usr/local/bin/xfce4-mime-helper
-ok   loads: /data/oss/usr/local/bin/xfce4-mime-settings
-ok   loads: /data/oss/usr/local/bin/xfce4-settings-editor
-ok   loads: /data/oss/usr/local/bin/xfce4-settings-manager
-ok   loads: /data/oss/usr/local/bin/xfsettingsd
-ok   loads: /data/oss/usr/local/lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_settings
+     == xfce4-settings ==
+       info xfsettingsd --version -> 0: xfsettingsd 4.20.1 (Xfce 4.20)
+       ok   xfsettingsd --version: 4.20.1
+       ok   xfsettingsd --help lists --replace, --daemon
+       info 56 helper(s), 23 web browsers
+       ok   every helper .desktop: Type=X-XFCE-Helper, a known category, commands
+       ok   firefox helper is a WebBrowser
+       ok   helpers.rc defaults
+       ok   GTK module xfsettingsd-gtk-settings-sync loads (dlopen), exports gtk_module_init and g_module_check_init
+       info g_module_open without a session bus: GModule (/usr/local/lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so) initialization check failed: Could not connect: No such file or directory
+       ok   GModule refuses the module without a session bus (its xfconf_init check)
+       info headless Wayland display: up
+       info xfce4-settings-manager --version -> 0: xfce4-settings-manager 4.20.1 (Xfce 4.20)
+       ok   xfce4-settings-manager --version prints xfce4-settings-manager 4.20.1
+       info xfce4-settings-editor --version -> 0: xfce4-settings-editor 4.20.1 (Xfce 4.20)
+       ok   xfce4-settings-editor --version prints xfce4-settings-editor 4.20.1
+       info xfce4-mime-settings --version -> 0: xfce4-mime-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-mime-settings --version prints xfce4-mime-settings 4.20.1
+       info xfce4-appearance-settings --version -> 0: xfce4-appearance-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-appearance-settings --version prints xfce4-appearance-settings 4.20.1
+       info xfce4-display-settings --version -> 0: xfce4-display-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-display-settings --version prints xfce4-display-settings 4.20.1
+       info xfce4-mime-helper --version -> 0: xfce4-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-mime-helper --version prints xfce4-settings 4.20.1 (Xfce 4.20
+       info xfce4-mime-helper --query WebBrowser -> 0: qnxbrowser
+       ok   xfce4-mime-helper --query WebBrowser -> our qnxbrowser helper
+       ok   xfce4-mime-helper rejects an unknown helper type
+     PASS xfce4-settings
+PASS test_xfce4_settings
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

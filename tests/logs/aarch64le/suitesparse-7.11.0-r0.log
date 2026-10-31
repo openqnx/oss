@@ -1,68 +1,35 @@
-# suitesparse 7.11.0-r0 -- INSTALLED
+# suitesparse 7.11.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:24:48Z   packages from: apk:local-dists
+# date: 2026-10-31T17:55:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u suitesparse
-(1/2) Installing openblas (0.3.28-r0)
-(2/2) Installing suitesparse (7.11.0-r0)
-OK: 71 MiB in 31 packages
+$ apk add -u suitesparse qnx-test-suitesparse qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing openblas (0.3.28-r0)
+(3/4) Installing suitesparse (7.11.0-r0)
+(4/4) Installing qnx-test-suitesparse (1.0-r0)
+OK: 71 MiB in 32 packages
 
-$ ldd on every program and library apk info -L suitesparse lists
-ok   loads: /data/oss/usr/local/lib/libamd.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libamd.so.3.3.4
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libbtf.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libbtf.so.2.3.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcamd.so.3
-ok   loads: /data/oss/usr/local/lib/libcamd.so.3.3.5
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libccolamd.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libccolamd.so.3.3.5
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcholmod.so.5
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcholmod.so.5.3.4
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcolamd.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcolamd.so.3.3.5
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcxsparse.so.4
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcxsparse.so.4.4.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libklu.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libklu.so.2.3.6
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libklu_cholmod.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libklu_cholmod.so.2.3.6
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libldl.so.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libldl.so.3.3.3
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/librbio.so.4
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/librbio.so.4.3.5
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libspqr.so.4
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libspqr.so.4.3.5
-ok   loads: /data/oss/usr/local/lib/libsuitesparseconfig.so.7
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libsuitesparseconfig.so.7.11.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libumfpack.so.6
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libumfpack.so.6.3.6
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_suitesparse
+     == suitesparse ==
+       info SuiteSparse 7.11.0
+       ok   library version matches header
+       info umfpack status 0 x = 1 2 3 4 5
+       ok   UMFPACK solves Ax=b (x = 1..5)
+       ok   KLU solves the same system
+       info KLU rcond 0.561, 3 blocks
+       ok   CXSparse cs_lusol solves the same system
+       info AMD perm 5 4 3 2 1 0, nnz(L) 5
+       ok   AMD orders the dense arrow node last
+       ok   AMD ordering gives fill-free factor (nnz(L)=5)
+       info CHOLMOD status 0, ordering 2, is_super 0
+       ok   CHOLMOD analyze + factorize (SPD)
+       ok   CHOLMOD solve gives x = 1..50
+     PASS suitesparse
+PASS test_suitesparse
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

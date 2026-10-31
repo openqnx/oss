@@ -1,16 +1,56 @@
-# libxfce4util 4.20.0-r0 -- INSTALLED
+# libxfce4util 4.20.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:34:48Z   packages from: apk:local-dists
+# date: 2026-10-31T16:48:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libxfce4util
-(1/1) Installing libxfce4util (4.20.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u libxfce4util qnx-test-libxfce4util qnx-port-tests
+(1/3) Installing libxfce4util (4.20.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libxfce4util (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libxfce4util lists
-ok   loads: /data/oss/usr/local/lib/libxfce4util.so.7
-ok   loads: /data/oss/usr/local/sbin/xfce4-kiosk-query
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfce4util
+     == libxfce4util ==
+       info libxfce4util 4.20 (header 4.20.0)
+       ok   version >= 4.16
+       ok   xfce_mkdirhier a/b/c
+       ok   xfce_rc_simple_open (read-write, new file)
+       ok   rc dirty after writes
+       ok   clean after flush
+       ok   file on disk has [Panel] and size=48
+       info file:
+     [Panel]
+     name=QNX panel
+     size=48
+     autohide=true
+     plugins=launcher;clock;tasklist
+     
+     [Second]
+     negative=-7
+     
+       ok   reopen read-only
+       ok   both groups present
+       ok   string entry
+       ok   int entry
+       ok   bool entry
+       ok   list entry (3 items)
+       ok   default for a missing key
+       ok   negative int in second group
+       ok   parse a desktop file
+       ok   untranslated Name + Exec
+       info 2 entries in [Desktop Entry]
+       ok   xfce_rc_get_entries
+       ok   xfce_str_replace
+       info remove_controls -> "a b c"
+       ok   xfce_utf8_remove_controls replaces controls with spaces
+       ok   xfce_unescape_desktop_entry_value
+       info expand -> /opt/qnx/bin
+       ok   xfce_expand_variables $VAR
+     PASS libxfce4util
+PASS test_libxfce4util
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

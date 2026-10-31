@@ -1,15 +1,38 @@
-# xcb-proto 1.17.0-r0 -- INSTALLED
+# xcb-proto 1.17.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:30:23Z   packages from: apk:local-dists
+# date: 2026-10-31T18:05:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xcb-proto
-(1/1) Installing xcb-proto (1.17.0-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u xcb-proto qnx-test-xcb-proto qnx-port-tests
+( 1/10) Installing qnx-port-tests (1.0-r2)
+( 2/10) Installing bzip2 (1.0.8-r0)
+( 3/10) Installing expat (2.6.4-r0)
+( 4/10) Installing gdbm (1.24-r0)
+( 5/10) Installing readline (8.2-r0)
+( 6/10) Installing sqlite (3.47.2-r0)
+( 7/10) Installing xz (5.6.3-r0)
+( 8/10) Installing python3 (3.14.0-r2)
+( 9/10) Installing xcb-proto (1.17.0-r0)
+(10/10) Installing qnx-test-xcb-proto (1.0-r0)
+OK: 160 MiB in 38 packages
 
-$ ldd on every program and library apk info -L xcb-proto lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xcb_proto
+     == xcb-proto ==
+       ok   32 protocol XML files parse, each an <xcb> description
+       info xproto: 120 requests, 34 events, 17 errors, 70 enums
+       ok   requests: CreateWindow 1, MapWindow 8, InternAtom 16, NoOperation 127
+       ok   InternAtom reply: atom
+       ok   events: Expose opcode 12, KeyPress
+       ok   errors: Window, Match, Value
+       ok   enum EventMask: ButtonPress bit 2, Exposure bit 15
+       ok   randr.xml: extension RANDR
+       ok   QueryVersion 0, GetScreenResources 8, GetCrtcInfo
+       ok   imports xproto and render resolved
+     PASS xcb-proto
+PASS test_xcb_proto
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

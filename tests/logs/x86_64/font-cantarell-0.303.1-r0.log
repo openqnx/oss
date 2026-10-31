@@ -1,15 +1,39 @@
-# font-cantarell 0.303.1-r0 -- INSTALLED
+# font-cantarell 0.303.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:42Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u font-cantarell
-(1/1) Installing font-cantarell (0.303.1-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u font-cantarell qnx-test-font-cantarell qnx-port-tests
+(1/3) Installing font-cantarell (0.303.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-font-cantarell (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L font-cantarell lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_cantarell
+     == font-cantarell ==
+       ok   font directory share/fonts/font-cantarell
+       info /usr/local/share/fonts/font-cantarell/
+       info fontconfig 2.15.0
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 6 face(s) in 1 file(s)
+       ok   at least 1 font file(s) found (1)
+       info Cantarell: 6 face(s): Extra Bold, Light, Regular, Thin, Bold
+       ok   family "Cantarell" listed
+       ok   "Cantarell" covers U+0041 (6/6 faces)
+       ok   "Cantarell" has a bold face
+       info match "Cantarell" -> /usr/local/share/fonts/font-cantarell/Cantarell-VF.otf (index 0)
+       ok   FcFontMatch("Cantarell") -> that family, a file of font-cantarell
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "Cantarell" "Regular", 1322 glyphs, scalable
+       ok   glyph for U+0041 (index 1)
+       ok   rendered: 20x22, mode 2, 134 inked pixel(s)
+     PASS font-cantarell
+PASS test_font_cantarell
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

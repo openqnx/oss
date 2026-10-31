@@ -1,16 +1,38 @@
-# libde265 1.0.15-r0 -- INSTALLED
+# libde265 1.0.15-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:36Z   packages from: apk:local-dists
+# date: 2026-10-31T16:40:57Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libde265
-(1/1) Installing libde265 (1.0.15-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u libde265 qnx-test-libde265 qnx-port-tests
+(1/3) Installing libde265 (1.0.15-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libde265 (1.0-r0)
+OK: 56 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libde265 lists
-ok   loads: /data/oss/usr/local/bin/dec265
-ok   loads: /data/oss/usr/local/lib/libde265.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libde265
+     == libde265 ==
+       info libde265 1.0.15
+       ok   de265_get_version_number: 1.0.x
+       ok   de265_new_decoder
+       ok   de265_push_data
+       info decoded 3 frame(s), 0 sample mismatch(es), 0 hash error(s)
+       ok   3 pictures decoded
+       ok   32x32 8-bit 4:2:0 pictures
+       ok   every sample equals the generating formula (lossless)
+       ok   SEI MD5 picture hashes verified
+       ok   a stream cut inside the headers yields no pictures
+       ok   scratch directory
+       info dec265 rc=0: nFrames decoded: 3 (32x32 @ 453.79 fps)
+     
+       ok   dec265 -q -c exits 0
+       ok   dec265 reports no hash mismatch
+       info out.yuv: 4608 bytes
+       ok   dec265 -o: 4608 bytes, identical to the source frames
+     PASS libde265
+PASS test_libde265
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

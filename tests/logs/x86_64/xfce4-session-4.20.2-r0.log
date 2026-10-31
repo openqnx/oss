@@ -1,23 +1,59 @@
-# xfce4-session 4.20.2-r0 -- INSTALLED
+# xfce4-session 4.20.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:42:00Z   packages from: apk:local-dists
+# date: 2026-10-31T17:09:40Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u xfce4-session
-(1/6) Installing gtk-layer-shell (0.9.0-r0)
-(2/6) Installing libxfce4util (4.20.0-r0)
-(3/6) Installing xfconf (4.20.0-r0)
-(4/6) Installing libxfce4ui (4.20.0-r0)
-(5/6) Installing libxfce4windowing (4.20.0-r0)
-(6/6) Installing xfce4-session (4.20.2-r0)
-OK: 171 MiB in 58 packages
+$ apk add -u xfce4-session qnx-test-xfce4-session qnx-port-tests
+( 1/31) Installing qnx-port-tests (1.0-r2)
+( 2/31) Installing font-dejavu (2.37-r0)
+( 3/31) Installing libxau (1.0.11-r0)
+( 4/31) Installing libxdmcp (1.1.5-r0)
+( 5/31) Installing libxcb (1.17.0-r0)
+( 6/31) Installing libx11 (1.8.10-r0)
+( 7/31) Installing libxext (1.3.6-r0)
+( 8/31) Installing libxi (1.8.2-r0)
+( 9/31) Installing libxtst (1.2.5-r0)
+(10/31) Installing at-spi2-core (2.54.0-r0)
+(11/31) Installing libxrender (0.9.11-r0)
+(12/31) Installing cairo (1.18.2-r0)
+(13/31) Installing fribidi (1.0.16-r0)
+(14/31) Installing harfbuzz (<ip>-r0)
+(15/31) Installing libxcomposite (0.4.6-r0)
+(16/31) Installing libxfixes (6.0.1-r0)
+(17/31) Installing libxcursor (1.2.2-r0)
+(18/31) Installing libxdamage (1.1.6-r0)
+(19/31) Installing libxinerama (1.1.5-r0)
+(20/31) Installing libxml2 (2.13.5-r1)
+(21/31) Installing libxkbcommon (1.8.1-r1)
+(22/31) Installing libxrandr (1.5.4-r0)
+(23/31) Installing libxft (2.3.8-r0)
+(24/31) Installing pango (1.54.0-r0)
+(25/31) Installing gtk3 (3.24.43-r1)
+(26/31) Installing gtk-layer-shell (0.9.0-r0)
+(27/31) Installing hicolor-icon-theme (0.18-r0)
+(28/31) Installing libxfce4ui (4.20.0-r1)
+(29/31) Installing libxfce4windowing (4.20.7-r1)
+(30/31) Installing xfce4-session (4.20.2-r0)
+(31/31) Installing qnx-test-xfce4-session (1.0-r1)
+OK: 164 MiB in 63 packages
 
-$ ldd on every program and library apk info -L xfce4-session lists
-ok   loads: /data/oss/usr/local/bin/xfce4-session
-ok   loads: /data/oss/usr/local/bin/xfce4-session-logout
-ok   loads: /data/oss/usr/local/bin/xfce4-session-settings
-ok   loads: /data/oss/usr/local/lib/xfce4/session/xfsm-shutdown-helper
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_session
+     == xfce4-session ==
+       ok   xfce4-session-logout --version: xfce4-session 4.20.2 (Xfce 4.20)
+       ok   startxfce4 --help lists --wayland
+       ok   xflock4 parses (sh -n)
+       info 22 TrueType fonts under /usr/local/share/fonts
+       info private session bus at unix:path=/tmp/qnxport-xfsession.EQIw5L/bus
+       ok   GDBus client authenticated on the session bus (EXTERNAL)
+       ok   xfconfd activated through D-Bus (ListChannels answered)
+       ok   xfce4-session --version: xfce4-session 4.20.2 (Xfce 4.20)
+       ok   xfce4-session-settings --version: xfce4-session-settings 4.20.2 (Xfce 4.20)
+       ok   xfce4-session --help
+     PASS xfce4-session
+PASS test_xfce4_session
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

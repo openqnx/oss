@@ -1,30 +1,49 @@
-# at-spi2-core 2.54.0-r0 -- INSTALLED
+# at-spi2-core 2.54.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:21:39Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:11Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u at-spi2-core
-( 1/10) Installing expat (2.6.4-r0)
-( 2/10) Installing dbus (1.16.0-r0)
-( 3/10) Installing libxau (1.0.11-r0)
-( 4/10) Installing libxdmcp (1.1.5-r0)
-( 5/10) Installing libxcb (1.17.0-r0)
-( 6/10) Installing libx11 (1.8.10-r0)
-( 7/10) Installing libxext (1.3.6-r0)
-( 8/10) Installing libxi (1.8.2-r0)
-( 9/10) Installing libxtst (1.2.5-r0)
-(10/10) Installing at-spi2-core (2.54.0-r0)
-OK: 63 MiB in 39 packages
+$ apk add -u at-spi2-core qnx-test-at-spi2-core qnx-port-tests
+( 1/12) Installing expat (2.6.4-r0)
+( 2/12) Installing dbus (1.16.0-r1)
+( 3/12) Installing libxau (1.0.11-r0)
+( 4/12) Installing libxdmcp (1.1.5-r0)
+( 5/12) Installing libxcb (1.17.0-r0)
+( 6/12) Installing libx11 (1.8.10-r0)
+( 7/12) Installing libxext (1.3.6-r0)
+( 8/12) Installing libxi (1.8.2-r0)
+( 9/12) Installing libxtst (1.2.5-r0)
+(10/12) Installing at-spi2-core (2.54.0-r0)
+(11/12) Installing qnx-port-tests (1.0-r2)
+(12/12) Installing qnx-test-at-spi2-core (1.0-r0)
+OK: 63 MiB in 40 packages
 
-$ ldd on every program and library apk info -L at-spi2-core lists
-ok   loads: /data/oss/usr/local/lib/libatk-1.0.so.0
-ok   loads: /data/oss/usr/local/lib/libatk-1.0.so.0.25409.1
-ok   loads: /data/oss/usr/local/lib/libatk-bridge-2.0.so.0
-ok   loads: /data/oss/usr/local/lib/libatk-bridge-2.0.so.0.0.0
-ok   loads: /data/oss/usr/local/lib/libatspi.so.0
-ok   loads: /data/oss/usr/local/lib/libatspi.so.0.0.1
-ok   loads: /data/oss/usr/local/lib/gtk-2.0/modules/libatk-bridge.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_at_spi2_core
+     == at-spi2-core ==
+       info ATK 2.54.0, AT-SPI 2.54.0
+       ok   atk_role_get_name(BUTTON) (PUSH_BUTTON is its alias)
+       ok   atk_role_for_name("check box")
+       ok   register a custom role
+       ok   AtkObject name and role
+       ok   AtkObject description
+       ok   add LABELLED_BY relation
+       ok   relation target is the label
+       ok   relation type name
+       ok   AtkStateSet AND
+       ok   AtkStateSet XOR
+       ok   state type name
+       ok   atspi_role_get_name(BUTTON)
+       ok   atspi_role_get_name(TABLE_CELL)
+       ok   AtspiStateSet from an array
+       ok   add + set_by_name("enabled", FALSE)
+       ok   empty state set
+       ok   equal sets compare equal
+       ok   compare() returns the one differing state
+     PASS at-spi2-core
+PASS test_at_spi2_core
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

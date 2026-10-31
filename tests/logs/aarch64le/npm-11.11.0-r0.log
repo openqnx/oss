@@ -1,15 +1,40 @@
-# npm 11.11.0-r0 -- INSTALLED
+# npm 11.11.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:43:57Z   packages from: apk:local-dists
+# date: 2026-10-31T17:00:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u npm
-(1/1) Installing npm (11.11.0-r0)
-OK: 65 MiB in 30 packages
+$ apk add -u npm qnx-test-npm qnx-port-tests
+( 1/12) Installing npm (11.11.0-r0)
+( 2/12) Installing qnx-port-tests (1.0-r2)
+( 3/12) Installing ada (3.4.4-r0)
+( 4/12) Installing c-ares (1.34.3-r0)
+( 5/12) Installing icu (76.1-r1)
+( 6/12) Installing libuv (1.51.0-r0)
+( 7/12) Installing nghttp2 (1.64.0-r0)
+( 8/12) Installing simdjson (3.11.3-r0)
+( 9/12) Installing simdutf (6.4.2-r0)
+(10/12) Installing sqlite (3.47.2-r0)
+(11/12) Installing nodejs (24.14.1-r0)
+(12/12) Installing qnx-test-npm (1.0-r0)
+OK: 168 MiB in 40 packages
 
-$ ldd on every program and library apk info -L npm lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_npm
+     == npm ==
+       ok   npm --version: 11.11.0 (node v24.14.1)
+       ok   npm run answer: answer=42
+       ok   npm pkg get version: "1.2.3"
+       ok   npm pack: qnx-demo-1.2.3.tgz
+       ok   tarball holds package/{cli.js,index.js,package.json}
+       ok   npm install of the local tarball (offline)
+       ok   require('qnx-demo')(20, 22) = 42
+       ok   dependency recorded in package.json
+       info npx: sh: qnx-demo: No such file or directory
+       ok   npm ls: qnx-demo@1.2.3
+     PASS npm
+PASS test_npm
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

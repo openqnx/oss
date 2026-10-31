@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/awslabs/aws-c-cal.git (tag `v0.9.13`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`aws-c-common`](../aws-c-common/) [`openssl`](../openssl/) |
 | Run-time dependencies | [`aws-c-common`](../aws-c-common/) [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,7 +59,20 @@ git clone --depth 1 -b v0.9.13 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/aws-c-cal < ports/aws-c-cal/patches/0001-hkdf-include-guard.patch
+```
+
+**[`0001-hkdf-include-guard.patch`](patches/0001-hkdf-include-guard.patch)** — Give aws/cal/hkdf.h an include guard of its own.
+
+> hkdf.h reused ecc.h's guard (AWS_CAL_ECC_H), so a source that includes
+> both headers silently loses whichever comes second: with hkdf.h first,
+> none of the ECC API is declared; with ecc.h first, aws_hkdf_derive and
+> HKDF_HMAC_SHA512 are missing.
+
+Touches: `include/aws/cal/hkdf.h` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -169,7 +182,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | aws-c-cal 0.9.13-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/aws-c-cal-0.9.13-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | aws-c-cal 0.9.13-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/aws-c-cal-0.9.13-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | aws-c-cal 0.9.13-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/aws-c-cal-0.9.13-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | aws-c-cal 0.9.13-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/aws-c-cal-0.9.13-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

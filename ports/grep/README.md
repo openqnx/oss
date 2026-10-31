@@ -72,25 +72,24 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-mkdir -p build/$QNX_ARCH/grep && cd build/$QNX_ARCH/grep
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/grep/configure --host=$QNX_TRIPLE --prefix=/usr/local \
-    --disable-nls
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/grep; B=build/$QNX_ARCH/grep; mkdir -p $B
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i '1s|^#!.*|#!/bin/sh|' "$STAGE$PREFIX/bin/egrep" "$STAGE$PREFIX/bin/fgrep"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - GNU grep. Version as in the QNX Everywhere 8.0.4r1 image.
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv
+- egrep and fgrep are #!/bin/bash wrappers (configure's SHELL); a QNX target has no /bin/bash, and they shadow the base system's egrep/fgrep in PATH. They are POSIX sh scripts: run them with /bin/sh (hazard 105).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH grep`.
 
@@ -168,7 +167,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | grep 3.11-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/grep-3.11-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | grep 3.11-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/grep-3.11-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | grep 3.11-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/grep-3.11-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | grep 3.11-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/grep-3.11-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -187,6 +188,14 @@ SHA256=1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab
 DEPS="pcre2 libiconv"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls )
+
+# egrep and fgrep are #!/bin/bash wrappers (configure's SHELL); a QNX target
+# has no /bin/bash, and they shadow the base system's egrep/fgrep in PATH.
+# They are POSIX sh scripts: run them with /bin/sh (hazard 105).
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  sed -i '1s|^#!.*|#!/bin/sh|' "$STAGE$PREFIX/bin/egrep" "$STAGE$PREFIX/bin/fgrep"
+}
 ```
 </details>
 

@@ -1,26 +1,51 @@
-# libjpeg-turbo 3.0.4-r0 -- INSTALLED
+# libjpeg-turbo 3.0.4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:56Z   packages from: apk:local-dists
+# date: 2026-10-31T16:42:14Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libjpeg-turbo
-OK: 55 MiB in 29 packages
+$ apk add -u libjpeg-turbo qnx-test-libjpeg-turbo qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-libjpeg-turbo (1.0-r0)
+OK: 55 MiB in 30 packages
 
-$ ldd on every program and library apk info -L libjpeg-turbo lists
-ok   loads: /data/oss/usr/local/bin/cjpeg
-ok   loads: /data/oss/usr/local/bin/djpeg
-ok   loads: /data/oss/usr/local/bin/jpegtran
-ok   loads: /data/oss/usr/local/bin/rdjpgcom
-ok   loads: /data/oss/usr/local/bin/tjbench
-ok   loads: /data/oss/usr/local/bin/wrjpgcom
-ok   loads: /data/oss/usr/local/lib/libjpeg.so.62
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libjpeg.so.62.4.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libturbojpeg.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libturbojpeg.so.0.3.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libjpeg_turbo
+     == libjpeg-turbo ==
+       ok   scratch directory
+       ok   tj3Init(COMPRESS)
+       ok   tj3Compress8
+       info 64x48 RGB -> 1583 byte JPEG
+       ok   SOI/EOI markers
+       ok   tj3DecompressHeader
+       ok   header says 64x48
+       ok   header says 4:4:4
+       ok   tj3Decompress8
+       info mean |error| after q95 round trip: 0.475
+       ok   decoded pixels match the original (mean error < 2)
+       ok   jpeg_read_header
+       ok   libjpeg: 64x48x3
+       ok   libjpeg and TurboJPEG decode alike
+       info $ cjpeg -quality 95 -sample 1x1 -outfile a.jpg in.ppm -> 0
+       ok   cjpeg PPM -> JPEG
+       ok   cjpeg wrote a JPEG
+       ok   cjpeg output is 64x48 (read with TurboJPEG)
+       info $ djpeg -pnm -outfile out.ppm a.jpg -> 0
+       ok   djpeg JPEG -> PPM
+       ok   djpeg output is a 64x48 PPM
+       info cjpeg/djpeg mean |error|: 0.475
+       ok   cjpeg/djpeg round trip preserves the picture
+       info $ jpegtran -rotate 90 -perfect -outfile r.jpg a.jpg -> 0
+       ok   jpegtran -rotate 90
+       ok   rotated JPEG is 48x64
+       info $ wrjpgcom -comment 'QNX jpeg comment 42' a.jpg > c.jpg -> 0
+       ok   wrjpgcom
+       info $ rdjpgcom c.jpg > c.txt -> 0
+       ok   rdjpgcom
+       ok   rdjpgcom reads back the comment
+     PASS libjpeg-turbo
+PASS test_libjpeg_turbo
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,51 @@
+# ntpsec 1.2.4-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:19:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ntpsec qnx-test-ntpsec qnx-port-tests
+(1/7) Installing ntpsec (1.2.4-r2)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing gdbm (1.24-r0)
+(4/7) Installing readline (8.2-r0)
+(5/7) Installing sqlite (3.47.2-r0)
+(6/7) Installing python3 (3.14.0-r2)
+(7/7) Installing qnx-test-ntpsec (1.0-r0)
+OK: 200 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ntpsec
+     == ntpsec ==
+       info libntpc 1.2.4+NTPsec_1_2_4-dirty
+       ok   libntpc loaded through ctypes; version matches the module
+       ok   statustoa (system status word)
+       ok   statustoa (peer status word)
+       ok   lfptofloat 0xcfba1ce0.80000000 = 1276092000.5
+       ok   prettydate -> 2010-06-09T14:00:00.500Z
+       ok   MD5 MAC = md5(key || data)
+       ok   SHA1 MAC = sha1(key || data)
+       ok   AES-128-CMAC, RFC 4493 example 2
+       ok   AES-128 CMAC of an NTP packet (NTPsec test vector)
+       ok   checkname: AES known, NOPE not
+       ok   ntpkeygen wrote a key file and the ntp.keys link
+       ok   Authenticator loads 20 AES-128 keys
+       ok   packet signed with key 11 verifies (48 + 4 + 16 bytes)
+       ok   a flipped MAC bit does not
+       info ntpd ntpsec-1.2.4+NTPsec_1_2_4-dirty
+       ok   ntpd --version: ntpsec-1.2.4
+       info ntpdig: offset 100.000 s, stratum 2, host <ip>
+       ok   ntpdig against the loopback server: offset +100 s, stratum 2
+       info server saw (keyid, request MAC verifies): [(11, True)]
+       ok   the server verifies ntpdig's AES-CMAC request MAC (key 11)
+       ok   ntpdig -a 11 -k ntp.keys: AES-CMAC authenticated reply accepted
+       info ntpdig -a 11 -k ntp.keys: rc 1 ntpdig: MAC verification on reply from <ip> failed
+     ntpdig: <ip>: Response dropped: request was authenticated but server is untrusted
+     ntpdig: no eligible servers
+       ok   a reply with a wrong MAC is refused
+     PASS ntpsec
+PASS test_ntpsec
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,20 +1,40 @@
-# aws-c-event-stream 0.7.0-r0 -- INSTALLED
+# aws-c-event-stream 0.7.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:22:01Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u aws-c-event-stream
-(1/6) Installing aws-c-common (0.12.6-r0)
-(2/6) Installing aws-c-cal (0.9.13-r0)
-(3/6) Installing s2n-tls (1.7.0-r0)
-(4/6) Installing aws-c-io (0.26.1-r0)
-(5/6) Installing aws-checksums (0.2.10-r0)
-(6/6) Installing aws-c-event-stream (0.7.0-r0)
-OK: 57 MiB in 35 packages
+$ apk add -u aws-c-event-stream qnx-test-aws-c-event-stream qnx-port-tests
+(1/8) Installing aws-c-common (0.12.6-r0)
+(2/8) Installing aws-c-cal (0.9.13-r1)
+(3/8) Installing s2n-tls (1.7.0-r0)
+(4/8) Installing aws-c-io (0.26.1-r0)
+(5/8) Installing aws-checksums (0.2.10-r0)
+(6/8) Installing aws-c-event-stream (0.7.0-r0)
+(7/8) Installing qnx-port-tests (1.0-r2)
+(8/8) Installing qnx-test-aws-c-event-stream (1.0-r0)
+OK: 57 MiB in 36 packages
 
-$ ldd on every program and library apk info -L aws-c-event-stream lists
-ok   loads: /data/oss/usr/local/lib/libaws-c-event-stream.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_event_stream
+     == aws-c-event-stream ==
+       ok   encode an empty message
+       ok   empty message bytes (with both CRCs) known
+       ok   prelude and message CRC accessors
+       ok   encode a message with 4 headers
+       info encoded 118 bytes, headers 70
+       ok   payload length
+       ok   trailing message CRC is CRC32 of the rest
+       ok   streaming decoder accepts both messages
+       ok   2 preludes, 8 headers, 2 completions
+       ok   string and int32 header values
+       ok   payload reassembled
+       info decoder error 4100: CRC Mismatch. message_crc was 0x0883509306, but computed 0x087329DC03
+       ok   corrupted message is rejected (CRC mismatch)
+       ok   corrupted message does not complete
+     PASS aws-c-event-stream
+PASS test_aws_c_event_stream
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

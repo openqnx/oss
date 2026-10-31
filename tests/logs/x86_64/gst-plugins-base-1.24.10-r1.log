@@ -1,0 +1,55 @@
+# gst-plugins-base 1.24.10-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:15:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gst-plugins-base qnx-test-gst-plugins-base qnx-port-tests
+(1/8) Installing gstreamer (1.24.10-r0)
+(2/8) Installing libogg (1.3.5-r0)
+(3/8) Installing libtheora (1.1.1-r0)
+(4/8) Installing libvorbis (1.3.7-r0)
+(5/8) Installing opus (1.5.2-r0)
+(6/8) Installing gst-plugins-base (1.24.10-r1)
+(7/8) Installing qnx-port-tests (1.0-r2)
+(8/8) Installing qnx-test-gst-plugins-base (1.0-r0)
+OK: 106 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gst_plugins_base
+     == gst-plugins-base ==
+       info gst-plugins-base 1.24.10
+       ok   all base elements used here are registered
+       ok   video pipeline built
+       info caps: RGB 64x48
+       info buffer 9216 bytes, pixel(10,10) = 253,0,0
+       info 10 frame(s) pulled
+       ok   exactly num-buffers=10 frames arrive
+       ok   negotiated RGB 64x48
+       ok   frame size 64*3*48 = 9216 bytes
+       ok   pattern=red converts to RGB red
+       ok   appsink reached EOS
+       ok   audio pipeline built
+       info 9 buffer(s), 15999 stereo frames at 16 kHz, peak 0.400
+       ok   8000 samples @ 8 kHz resample to ~16000 @ 16 kHz
+       ok   volume 0.8 * 0.5 -> peak ~0.4
+       ok   mono upmixed to identical left/right
+       ok   scratch directory
+       ok   encoded 1 s of audio to Ogg/Vorbis
+       ok   file starts with OggS
+       info decoded 44101 samples
+       ok   decodebin (oggdemux + vorbisdec) returns ~44100 samples (1 s)
+       info discoverer: 0:00:01.000000000, 1 audio stream(s), 44100 Hz
+       ok   GstDiscoverer: duration 1.0 s
+       ok   GstDiscoverer: one 44100 Hz audio stream
+       info $ gst-discoverer-1.0 tone.ogg -> 0
+       ok   gst-discoverer-1.0 prints a 1 s duration
+       ok   gst-discoverer-1.0 names the Vorbis stream
+       info codec description of audio/x-vorbis: Vorbis
+       ok   pbutils codec description
+     PASS gst-plugins-base
+PASS test_gst_plugins_base
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

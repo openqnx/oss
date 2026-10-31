@@ -1,18 +1,49 @@
-# sdl2-ttf 2.24.0-r0 -- INSTALLED
+# sdl2-ttf 2.24.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:43Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sdl2-ttf
-(1/2) Installing sdl2 (2.32.10-r0)
-(2/2) Installing sdl2-ttf (2.24.0-r0)
-OK: 168 MiB in 54 packages
+$ apk add -u sdl2-ttf qnx-test-sdl2-ttf qnx-port-tests
+(1/6) Installing qnx-port-tests (1.0-r2)
+(2/6) Installing font-dejavu (2.37-r0)
+(3/6) Installing sdl2 (2.32.10-r0)
+(4/6) Installing harfbuzz (<ip>-r0)
+(5/6) Installing sdl2-ttf (2.24.0-r0)
+(6/6) Installing qnx-test-sdl2-ttf (1.0-r0)
+OK: 107 MiB in 35 packages
 
-$ ldd on every program and library apk info -L sdl2-ttf lists
-ok   loads: /data/oss/usr/local/lib/libSDL2_ttf-2.0.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libSDL2_ttf-2.0.so.0.2400.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_ttf
+     == sdl2-ttf ==
+       info SDL2_ttf 2.24.0, FreeType 0.0.0
+       ok   TTF_Init
+       ok   TTF_OpenFont DejaVuSansMono.ttf at 24 pt
+       info /usr/local/share/fonts/font-dejavu/DejaVuSansMono.ttf
+       info family "DejaVu Sans Mono" style "Book" height 28 ascent 23 descent -5
+       ok   family name DejaVu Sans Mono
+       ok   style name Book
+       ok   face is fixed width
+       ok   plausible vertical metrics for 24 pt
+       ok   glyph metrics for 'M'
+       info advance M=14 W=14, M box x 1..14 y 0..18
+       ok   monospace: equal advances
+       ok   TTF_SizeText
+       info "Hello QNX!" -> 140x28
+       ok   width = 10 advances (+-2 px), height = font height
+       ok   coverage: 'A' and Greek Omega yes, CJK no
+       ok   Solid render has the measured size
+       info solid: 677 set pixels
+       ok   Solid render has ink
+       ok   Blended render
+       info ink WWW=409 iii=210
+       ok   more ink for WWW than for iii
+       info UTF-8 width 70
+       ok   UTF-8 text (accents, Greek) renders: 5 advances wide
+       ok   style set to bold
+     PASS sdl2-ttf
+PASS test_sdl2_ttf
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

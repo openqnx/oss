@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/google/XNNPACK.git |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`cpuinfo`](../cpuinfo/) [`pthreadpool`](../pthreadpool/) [`fxdiv`](../fxdiv/) |
 | Run-time dependencies | [`pthreadpool`](../pthreadpool/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -59,10 +59,11 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/xnnpack < ports/xnnpack/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/xnnpack < ports/xnnpack/patches/0002-qnx-no-cpuinfo-sme.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Allow QNX build.
@@ -75,6 +76,10 @@ patch -p1 -d src/xnnpack < ports/xnnpack/patches/0001-qnx-from-qnx-ports.patch
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Touches: `CMakeLists.txt` · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-qnx-no-cpuinfo-sme.patch`](patches/0002-qnx-no-cpuinfo-sme.patch)** — if defined(__QNX__)
+
+Touches: `src/configs/hardware-config.c`
 
 ### 4. Configure, build and install into the staging tree
 
@@ -197,7 +202,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xnnpack 0_git20250209-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/xnnpack-0_git20250209-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | xnnpack 0_git20250209-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/xnnpack-0_git20250209-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xnnpack 0_git20250209-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/xnnpack-0_git20250209-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | xnnpack 0_git20250209-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/xnnpack-0_git20250209-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

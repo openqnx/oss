@@ -1,16 +1,33 @@
-# iperf3 3.17.1-r0 -- INSTALLED
+# iperf3 3.17.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:44Z   packages from: apk:local-dists
+# date: 2026-10-31T16:15:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u iperf3
-(1/1) Installing iperf3 (3.17.1-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u iperf3 qnx-test-iperf3 qnx-port-tests
+(1/3) Installing iperf3 (3.17.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-iperf3 (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L iperf3 lists
-ok   loads: /data/oss/usr/local/bin/iperf3
-ok   loads: /data/oss/usr/local/lib/libiperf.so.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_iperf3
+     == iperf3 ==
+       info iperf 3.17.1 (cJSON 1.7.15)
+       ok   iperf3 --version: 3.17.1
+       info server pid 794374185 on <ip>:15313
+       ok   TCP client run completed (after 0 retries)
+       ok   TCP: sum_sent is exactly 2097152 bytes
+       ok   TCP: sum_received is exactly 2097152 bytes
+       info TCP loopback throughput: ee16761041.594860962 bit/s
+       ok   TCP: JSON reports protocol TCP
+       ok   reverse mode (-R): server sent 1048576 bytes to the client
+       info UDP: 8 packet counters in the summary, lost_packets=0
+       ok   UDP: 256 datagrams of 1024 bytes in the summary
+       info server log: ----------------------------------------------------------- Server listening on 15313 (test #1) ----------------------------------------------------------- 
+     PASS iperf3
+PASS test_iperf3
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

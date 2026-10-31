@@ -1,13 +1,13 @@
 # lzip 1.26-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:39:03Z   packages from: apk:local-dists
+# date: 2026-10-31T16:53:40Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u lzip qnx-test-cli-tools qnx-port-tests
 ( 1/12) Installing lzip (1.26-r0)
-( 2/12) Installing qnx-port-tests (1.0-r1)
+( 2/12) Installing qnx-port-tests (1.0-r2)
 ( 3/12) Installing ed (1.22.5-r1)
 ( 4/12) Installing patch (2.8-r0)
 ( 5/12) Installing gmp (6.3.0-r0)
@@ -18,7 +18,7 @@ $ apk add -u lzip qnx-test-cli-tools qnx-port-tests
 (10/12) Installing libpsl (0.21.5-r0)
 (11/12) Installing wget (1.25.0-r0)
 (12/12) Installing qnx-test-cli-tools (1.0-r2)
-OK: 63 MiB in 41 packages
+OK: 63 MiB in 40 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cli_tools
      == cli-tools ==
@@ -28,7 +28,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   lzip: compressed (60890 -> 1313 bytes, LZIP magic)
        ok   lzip -t: integrity
        ok   lzip -d: identical
-       ok   wget: http://<ip>:8000/dists/8.0/aarch64/APKINDEX.tar.gz (75124 bytes, gzip)
+       ok   wget: http://<ip>:8000/dists/8.0/aarch64/APKINDEX.tar.gz (81706 bytes, gzip)
      PASS cli-tools
 PASS test_cli_tools
 --------------------------------------------

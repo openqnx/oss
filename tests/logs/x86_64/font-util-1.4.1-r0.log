@@ -1,16 +1,27 @@
-# font-util 1.4.1-r0 -- INSTALLED
+# font-util 1.4.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:49Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:47Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u font-util
-(1/1) Installing font-util (1.4.1-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u font-util qnx-test-font-util qnx-port-tests
+(1/3) Installing font-util (1.4.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-font-util (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L font-util lists
-ok   loads: /data/oss/usr/local/bin/bdftruncate
-ok   loads: /data/oss/usr/local/bin/ucs2any
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_util
+     == font-util ==
+       ok   ucs2any wrote q-ISO8859-1.bdf and q-ISO8859-2.bdf
+       ok   ISO8859-1: registry and XLFD rewritten
+       ok   ISO8859-1: A and eacute kept (233), Lstroke dropped
+       ok   ISO8859-2: Lstroke (U+0141) renumbered to 0xA3
+       ok   bdftruncate 0x3200: glyphs >= U+3200 unencoded (-1), the rest kept
+       ok   truncated font is complete (ENDFONT)
+     PASS font-util
+PASS test_font_util
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,15 +1,49 @@
-# font-liberation 2.1.5-r0 -- INSTALLED
+# font-liberation 2.1.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:26:16Z   packages from: apk:local-dists
+# date: 2026-10-31T16:28:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u font-liberation
-(1/1) Installing font-liberation (2.1.5-r0)
-OK: 59 MiB in 30 packages
+$ apk add -u font-liberation qnx-test-font-liberation qnx-port-tests
+(1/7) Installing font-liberation (2.1.5-r0)
+(2/7) Installing qnx-port-tests (1.0-r2)
+(3/7) Installing expat (2.6.4-r0)
+(4/7) Installing bzip2 (1.0.8-r0)
+(5/7) Installing freetype (2.13.3-r0)
+(6/7) Installing fontconfig (2.15.0-r0)
+(7/7) Installing qnx-test-font-liberation (1.0-r0)
+OK: 61 MiB in 35 packages
 
-$ ldd on every program and library apk info -L font-liberation lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_liberation
+     == font-liberation ==
+       ok   font directory share/fonts/font-liberation
+       info /usr/local/share/fonts/font-liberation/
+       info fontconfig 2.15.0
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 12 face(s) in 12 file(s)
+       ok   at least 12 font file(s) found (12)
+       info Liberation Sans: 4 face(s): Regular, Italic, Bold Italic, Bold
+       ok   family "Liberation Sans" listed
+       ok   "Liberation Sans" covers U+20AC (4/4 faces)
+       ok   "Liberation Sans" has a bold face
+       info Liberation Serif: 4 face(s): Italic, Regular, Bold Italic, Bold
+       ok   family "Liberation Serif" listed
+       ok   "Liberation Serif" covers U+20AC (4/4 faces)
+       info Liberation Mono: 4 face(s): Italic, Bold, Bold Italic, Regular
+       ok   family "Liberation Mono" listed
+       ok   "Liberation Mono" covers U+20AC (4/4 faces)
+       info match "Liberation Sans" -> /usr/local/share/fonts/font-liberation/LiberationSans-Regular.ttf (index 0)
+       ok   FcFontMatch("Liberation Sans") -> that family, a file of font-liberation
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "Liberation Sans" "Regular", 2620 glyphs, scalable
+       ok   glyph for U+20AC (index 2088)
+       ok   rendered: 18x22, mode 2, 143 inked pixel(s)
+     PASS font-liberation
+PASS test_font_liberation
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

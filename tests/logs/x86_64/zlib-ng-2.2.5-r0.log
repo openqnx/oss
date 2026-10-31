@@ -1,17 +1,38 @@
-# zlib-ng 2.2.5-r0 -- INSTALLED
+# zlib-ng 2.2.5-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:42:14Z   packages from: apk:local-dists
+# date: 2026-10-31T16:38:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u zlib-ng
-(1/1) Installing zlib-ng (2.2.5-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u zlib-ng qnx-test-zlib-ng qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r2)
+(2/3) Installing zlib-ng (2.2.5-r0)
+(3/3) Installing qnx-test-zlib-ng (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L zlib-ng lists
-ok   loads: /data/oss/usr/local/lib/libz-ng.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libz-ng.so.2.2.5
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zlib_ng
+     == zlib-ng ==
+       info zlib-ng 2.2.5 (header 2.2.5)
+       ok   library version matches header
+       info crc32("123456789") = cbf43926
+       ok   CRC-32 check value 0xCBF43926
+       ok   Adler-32("Wikipedia") = 0x11E60398
+       ok   zng_compress2 level 9
+       info 65536 -> 547 bytes
+       ok   repetitive data compresses well
+       ok   zng_uncompress restores the input exactly
+       ok   deflateInit2 (gzip)
+       ok   gzip stream with magic 1f 8b
+       ok   gzip trailer CRC matches zng_crc32 of input
+       ok   inflateInit2 (gzip)
+       ok   streaming gzip inflate round trip
+       info inflated reference stream: 24 bytes
+       ok   inflates a reference raw-deflate stream
+       ok   corrupted gzip stream is rejected
+     PASS zlib-ng
+PASS test_zlib_ng
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -9,7 +9,7 @@
 | Upstream | https://www.cpan.org/src/5.0/perl-5.40.2.tar.gz |
 | SHA-256 | `10d4647cfbb543a7f9ae3e5f6851ec49305232ea7621aed24c7cfbb0bef4b70d` |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`libxcrypt`](../libxcrypt/) |
 | Run-time dependencies | [`libxcrypt`](../libxcrypt/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -62,10 +62,11 @@ tar xf dist/$(basename $URL) -C src/perl --strip-components=1
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/perl < ports/perl/patches/0001-errno-target-osname.patch
+patch -p1 -d src/perl < ports/perl/patches/0002-qnx-atfork-child-reinit.patch
 ```
 
 **[`0001-errno-target-osname.patch`](patches/0001-errno-target-osname.patch)** — Errno_pm.PL: decide by the target OS, not the build host's.
@@ -76,6 +77,18 @@ patch -p1 -d src/perl < ports/perl/patches/0001-errno-target-osname.patch
 > no error definitions. $Config{osname} is the target's ("nto").
 
 Touches: `ext/Errno/Errno_pm.PL` · Upstream status: QNX-specific
+
+**[`0002-qnx-atfork-child-reinit.patch`](patches/0002-qnx-atfork-child-reinit.patch)** — QNX: re-initialise the atfork mutexes in the child instead of unlocking them
+
+> On QNX the forked child's thread does not own the mutexes the parent's
+> thread locked in Perl_atfork_lock() (the pthread_atfork prepare handler), so
+> Perl_atfork_unlock() in the child failed with EPERM and MUTEX_UNLOCK panicked:
+> every fork (backticks, system, open "-|") from a threaded perl died, and
+> autoconf/automake hung. The child now re-initialises PL_perlio_mutex,
+> PL_malloc_mutex and PL_op_mutex; the parent still unlocks them.
+> No symbol or structure changes (the pid is a file-static).
+
+Touches: `util.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -91,7 +104,8 @@ do_configure() {
   ./configure --target="$QNX_TRIPLE" --prefix="$PREFIX" -Dcc="qcc -V$QCC_TARGET" -Dld="qcc -V$QCC_TARGET" \
     -Dar="$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" -Dccflags="-D_QNX_SOURCE" -Duseshrplib -Dusethreads \
     -Dusrinc="$QNX_TARGET_SDP/usr/include" -Dincpth="$QNX_TARGET_SDP/usr/include" \
-    -Dcpprun="qcc -V$QCC_TARGET -E" -Dcppstdin="qcc -V$QCC_TARGET -E" \
+    -Dcpp="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E -P" -Dgccversion="$("$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc" -dumpversion)" \
+    -Dcpprun="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" -Dcppstdin="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
     -Dlibpth="$QNX_TARGET/$QNX_ARCH/lib $QNX_TARGET/$QNX_ARCH/usr/lib"
 }
 ```
@@ -108,7 +122,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): libxcrypt
 - Perl cannot cross compile with its own Configure (it runs probes on the target). perl-cross replaces Configure with a cross-capable one: its tree is unpacked over the perl source (do_fetch). perl-cross knows QNX (osname "nto", cnf/hints/nto) since 1.6.2 -- the change qnx-ports carried for 1.6.1 went upstream -- so only the perl patch in patches/ remains. This is the perl version the QNX Everywhere 8.0.4r1 image ships; it also covers qnx-ports' perl5 port.
-- The preprocessor is given without perl-cross's default -P: Errno_pm.PL finds <errno.h> by the line markers in its output ("No error definitions found" without them).
+- The preprocessor is the cross-GCC driver, not qcc: for qcc, -P means "preprocess to a file" (try.i), not "no line markers". perl-cross's probes run "$cpp -P" and read stdout, and Errno_pm.PL adds -P for GCC >= 5, so with qcc every signal-name probe and every errno value came back empty: perl had no %SIG names ("No such signal: SIGHUP") and an empty %! (hazard 131). Errno_pm.PL's first pass needs line markers, hence cpprun/cppstdin without -P. gccversion: perl-cross asks qcc and gets "0.0", so Errno_pm.PL did not add -P to its second pass either, and GCC split each '"EEXIST" [[17]]' line with line markers -- an empty %! again.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH perl`.
 
@@ -179,7 +193,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl 5.40.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/perl-5.40.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl 5.40.2-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/perl-5.40.2-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl 5.40.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/perl-5.40.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl 5.40.2-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/perl-5.40.2-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -215,15 +231,22 @@ do_fetch() {
   # perl first, perl-cross over it; patches/ then apply to the combined tree.
   tar xf "$tb" -C "$SRCROOT" --strip-components=1 && tar xf "$pc" -C "$SRCROOT" --strip-components=1
 }
-# The preprocessor is given without perl-cross's default -P: Errno_pm.PL
-# finds <errno.h> by the line markers in its output ("No error definitions
-# found" without them).
+# The preprocessor is the cross-GCC driver, not qcc: for qcc, -P means
+# "preprocess to a file" (try.i), not "no line markers". perl-cross's probes
+# run "$cpp -P" and read stdout, and Errno_pm.PL adds -P for GCC >= 5, so with
+# qcc every signal-name probe and every errno value came back empty: perl had
+# no %SIG names ("No such signal: SIGHUP") and an empty %! (hazard 131).
+# Errno_pm.PL's first pass needs line markers, hence cpprun/cppstdin
+# without -P. gccversion: perl-cross asks qcc and gets "0.0", so Errno_pm.PL
+# did not add -P to its second pass either, and GCC split each
+# '"EEXIST" [[17]]' line with line markers -- an empty %! again.
 do_configure() {
   cp -a "$S/." "$B/" && cd "$B" && \
   ./configure --target="$QNX_TRIPLE" --prefix="$PREFIX" -Dcc="qcc -V$QCC_TARGET" -Dld="qcc -V$QCC_TARGET" \
     -Dar="$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" -Dccflags="-D_QNX_SOURCE" -Duseshrplib -Dusethreads \
     -Dusrinc="$QNX_TARGET_SDP/usr/include" -Dincpth="$QNX_TARGET_SDP/usr/include" \
-    -Dcpprun="qcc -V$QCC_TARGET -E" -Dcppstdin="qcc -V$QCC_TARGET -E" \
+    -Dcpp="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E -P" -Dgccversion="$("$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc" -dumpversion)" \
+    -Dcpprun="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" -Dcppstdin="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
     -Dlibpth="$QNX_TARGET/$QNX_ARCH/lib $QNX_TARGET/$QNX_ARCH/usr/lib"
 }
 do_build() { make -C "$B" -j"$(nproc)"; }

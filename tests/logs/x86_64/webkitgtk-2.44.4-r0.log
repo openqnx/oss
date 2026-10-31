@@ -1,54 +1,106 @@
-# webkitgtk 2.44.4-r0 -- INSTALLED
+# webkitgtk 2.44.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:41:40Z   packages from: apk:local-dists
+# date: 2026-10-31T16:36:19Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u webkitgtk
-( 1/31) Installing aom (3.12.1-r0)
-( 2/31) Installing fdk-aac (2.0.3-r0)
-( 3/31) Installing gstreamer (1.24.10-r0)
-( 4/31) Installing libogg (1.3.5-r0)
-( 5/31) Installing libtheora (1.1.1-r0)
-( 6/31) Installing libvorbis (1.3.7-r0)
-( 7/31) Installing opus (1.5.2-r0)
-( 8/31) Installing gst-plugins-base (1.24.10-r0)
-( 9/31) Installing libwebp (1.4.0-r0)
-(10/31) Installing openh264 (2.5.0-r0)
-(11/31) Installing svt-av1 (2.3.0-r0)
-(12/31) Installing x265 (3.6-r0)
-(13/31) Installing gst-plugins-bad (1.24.10-r0)
-(14/31) Installing hyphen (2.8.8-r0)
-(15/31) Installing lcms2 (2.16-r0)
-(16/31) Installing dav1d (1.5.0-r0)
-(17/31) Installing libavif (1.1.1-r0)
-(18/31) Installing libgpg-error (1.50-r0)
-(19/31) Installing libgcrypt (1.11.0-r0)
-(20/31) Installing highway (1.2.0-r0)
-(21/31) Installing libjxl (0.11.1-r0)
-(22/31) Installing libsecret (0.21.4-r0)
-(23/31) Installing libidn2 (2.3.7-r0)
-(24/31) Installing libpsl (0.21.5-r0)
-(25/31) Installing nghttp2 (1.64.0-r0)
-(26/31) Installing sqlite (3.47.2-r0)
-(27/31) Installing libsoup (3.6.1-r0)
-(28/31) Installing libtasn1 (4.19.0-r0)
-(29/31) Installing libxslt (1.1.42-r0)
-(30/31) Installing woff2 (1.0.2-r0)
-(31/31) Installing webkitgtk (2.44.4-r0)
-OK: 349 MiB in 83 packages
+$ apk add -u webkitgtk qnx-test-webkitgtk qnx-port-tests
+( 1/57) Installing qnx-port-tests (1.0-r2)
+( 2/57) Installing dbus (1.16.0-r1)
+( 3/57) Installing libxau (1.0.11-r0)
+( 4/57) Installing libxdmcp (1.1.5-r0)
+( 5/57) Installing libxcb (1.17.0-r0)
+( 6/57) Installing libx11 (1.8.10-r0)
+( 7/57) Installing libxext (1.3.6-r0)
+( 8/57) Installing libxi (1.8.2-r0)
+( 9/57) Installing libxtst (1.2.5-r0)
+(10/57) Installing at-spi2-core (2.54.0-r0)
+(11/57) Installing libxrender (0.9.11-r0)
+(12/57) Installing cairo (1.18.2-r0)
+(13/57) Installing fribidi (1.0.16-r0)
+(14/57) Installing harfbuzz (<ip>-r0)
+(15/57) Installing libxcomposite (0.4.6-r0)
+(16/57) Installing libxfixes (6.0.1-r0)
+(17/57) Installing libxcursor (1.2.2-r0)
+(18/57) Installing libxdamage (1.1.6-r0)
+(19/57) Installing libxinerama (1.1.5-r0)
+(20/57) Installing libxml2 (2.13.5-r1)
+(21/57) Installing libxkbcommon (1.8.1-r1)
+(22/57) Installing libxrandr (1.5.4-r0)
+(23/57) Installing libxft (2.3.8-r0)
+(24/57) Installing pango (1.54.0-r0)
+(25/57) Installing gtk3 (3.24.43-r1)
+(26/57) Installing libidn2 (2.3.7-r0)
+(27/57) Installing libpsl (0.21.5-r0)
+(28/57) Installing nghttp2 (1.64.0-r0)
+(29/57) Installing sqlite (3.47.2-r0)
+(30/57) Installing libsoup (3.6.1-r0)
+(31/57) Installing aom (3.12.1-r0)
+(32/57) Installing fdk-aac (2.0.3-r0)
+(33/57) Installing gstreamer (1.24.10-r0)
+(34/57) Installing libogg (1.3.5-r0)
+(35/57) Installing libtheora (1.1.1-r0)
+(36/57) Installing libvorbis (1.3.7-r0)
+(37/57) Installing opus (1.5.2-r0)
+(38/57) Installing gst-plugins-base (1.24.10-r1)
+(39/57) Installing libwebp (1.4.0-r0)
+(40/57) Installing openh264 (2.5.0-r0)
+(41/57) Installing svt-av1 (2.3.0-r0)
+(42/57) Installing x265 (3.6-r0)
+(43/57) Installing gst-plugins-bad (1.24.10-r0)
+(44/57) Installing hyphen (2.8.8-r0)
+(45/57) Installing lcms2 (2.16-r0)
+(46/57) Installing dav1d (1.5.0-r0)
+(47/57) Installing libavif (1.1.1-r0)
+(48/57) Installing libgpg-error (1.50-r0)
+(49/57) Installing libgcrypt (1.11.0-r1)
+(50/57) Installing highway (1.2.0-r0)
+(51/57) Installing libjxl (0.11.1-r0)
+(52/57) Installing libsecret (0.21.4-r0)
+(53/57) Installing libtasn1 (4.19.0-r0)
+(54/57) Installing libxslt (1.1.42-r0)
+(55/57) Installing woff2 (1.0.2-r0)
+(56/57) Installing webkitgtk (2.44.4-r0)
+(57/57) Installing qnx-test-webkitgtk (1.0-r0)
+OK: 332 MiB in 86 packages
 
-$ ldd on every program and library apk info -L webkitgtk lists
-ok   loads: /data/oss/usr/local/bin/WebKitWebDriver
-ok   loads: /data/oss/usr/local/lib/libjavascriptcoregtk-4.1.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libjavascriptcoregtk-4.1.so.0.5.8
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libwebkit2gtk-4.1.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libwebkit2gtk-4.1.so.0.13.8
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/webkit2gtk-4.1/injected-bundle/libwebkit2gtkinjectedbundle.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_webkitgtk
+     == webkitgtk ==
+       info WebKitGTK 2.44.4, JavaScriptCoreGTK 2.44.4
+       ok   libwebkit2gtk-4.1 is 2.44.4
+       ok   libjavascriptcoregtk-4.1 is 2.44
+       ok   jsc_context_new
+       ok   6 * 7 = 42
+       ok   recursion: fib(20) = 6765
+       ok   strings and Array.sort
+       ok   JSON.stringify
+       ok   RegExp capture group
+       ok   Date.UTC / toISOString (leap day)
+       ok   Math.sqrt
+       ok   C callback called from JS (twice)
+       ok   object literal
+       ok   object property read from C
+       ok   property set from C, seen by JS
+       ok   TypeError reported as a JSCException
+       info exception: TypeError: null is not an object (evaluating 'null.x')
+       ok   exception name TypeError
+       ok   100k allocations, collected while running
+       info jsc t.js -> 0: sum=5050 squares=1,4,9
+       ok   libexec jsc runs a script file
+       info jsc -e -> 0: undefined 1024
+       ok   jsc -e evaluates an expression
+       ok   WebKitWebDriver --help
+       ok   WebKitWebDriver listens on <ip>
+       info GET /status: HTTP/1.1 200 OK | HTTP/1.1 200 OK
+       ok   GET /status -> HTTP 200
+       ok   status: ready true
+       ok   status: "No sessions"
+       info GET /session/<bogus>/url: HTTP/1.1 404 Not Found
+       ok   unknown session -> 404 invalid session id
+     PASS webkitgtk
+PASS test_webkitgtk
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

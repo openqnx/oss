@@ -184,7 +184,19 @@ def hook_bodies(txt):
     return out
 
 
+# tests/run-level/<group>.tsv: the run-level tests name their component
+# explicitly (one source can serve several, e.g. test_fonts.c for 9 fonts).
+RUN_LEVEL = {}
+for _f in sorted(glob.glob("tests/run-level/*.tsv")):
+    for _l in open(_f):
+        _c = _l.rstrip("\n").split("\t")
+        if len(_c) >= 2 and not _l.startswith("#"):
+            RUN_LEVEL[_c[0]] = _c[1]
+
+
 def tests_for(n):
+    if n in RUN_LEVEL:
+        return RUN_LEVEL[n]
     exact = f"tests/src/test_{n.replace('-', '_')}"
     for ext in (".c", ".cpp", ".sh"):
         if os.path.exists(exact + ext):

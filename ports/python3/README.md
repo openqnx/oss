@@ -9,7 +9,7 @@
 | Upstream | https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz |
 | SHA-256 | `2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`libffi`](../libffi/) [`expat`](../expat/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`sqlite`](../sqlite/) [`ncurses`](../ncurses/) [`readline`](../readline/) [`gdbm`](../gdbm/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -68,10 +68,11 @@ tar xf dist/$(basename $URL) -C src/python3 --strip-components=1
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/python3 < ports/python3/patches/0001-qnx-support.patch
+patch -p1 -d src/python3 < ports/python3/patches/0002-qnx-dirfd-o-directory.patch
 ```
 
 **[`0001-qnx-support.patch`](patches/0001-qnx-support.patch)** — CPython: build for QNX.
@@ -86,6 +87,20 @@ patch -p1 -d src/python3 < ports/python3/patches/0001-qnx-support.patch
 > configure is changed with configure.ac.
 
 Touches: `configure.ac`, `configure`, `Objects/mimalloc/prim/unix/prim.c`, `Include/internal/pycore_time.h`, `Modules/faulthandler.c`, `Modules/signalmodule.c` … · Upstream status: QNX-specific
+
+**[`0002-qnx-dirfd-o-directory.patch`](patches/0002-qnx-dirfd-o-directory.patch)** — QNX: open directory fds for scandir/*at with O_DIRECTORY (shutil.rmtree, os.fwalk)
+
+> On QNX, *at() calls and fdopendir() on a directory fd that was opened
+> without O_DIRECTORY fail with ENOTDIR (porting hazards 25, 103). The
+> fd-based shutil.rmtree() opened each directory O_RDONLY | O_NONBLOCK and
+> then scandir()ed and unlinkat()ed under it, so every rmtree() of a tree
+> failed -- tempfile.TemporaryDirectory cleanup and setuptools' bdist_wheel
+> ("[Errno 20] Not a directory: '...egg-info'") with it. os.fwalk() opened
+> its directories the same way. Add O_DIRECTORY to those opens on QNX
+> (os.fwalk keeps returning nothing for a non-directory top, as before).
+> glob already opens with O_DIRECTORY.
+
+Touches: `Lib/os.py`, `Lib/shutil.py` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -321,9 +336,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64 virt, vanilla mkqnximage image | apk:local-dists | python3 3.14.0-r0 | ✅ PASS | 2026-10-30 | [log](../../tests/logs/aarch64le/python3-3.14.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3 3.14.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/python3-3.14.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3 3.14.0-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/python3-3.14.0-r2.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3 3.14.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/python3-3.14.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3 3.14.0-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/python3-3.14.0-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

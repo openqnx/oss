@@ -66,20 +66,20 @@ tar xf dist/$(basename $URL) -C src/gettext --strip-components=1
 1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/gettext < ports/gettext/patches/0001-qnx-canonicalize-readlink-errno.patch
+patch -p1 -d src/gettext < ports/gettext/patches/0001-qnx-getcwd-use-system.patch
 ```
 
-**[`0001-qnx-canonicalize-readlink-errno.patch`](patches/0001-qnx-canonicalize-readlink-errno.patch)** — QNX: do not treat every non-EINVAL readlink() failure as an error.
+**[`0001-qnx-getcwd-use-system.patch`](patches/0001-qnx-getcwd-use-system.patch)** — QNX: use the system getcwd in gnulib's getcwd replacement.
 
-> gnulib canonicalize_filename_mode() and realpath() readlink() each path
-> component and accept only EINVAL as "not a symbolic link". On the QNX 8.0
-> target msgfmt -o loc/de/LC_MESSAGES/x.mo failed with "Not a directory"
-> (open_supersede -> canonicalize_filename_mode) while writing into the
-> current directory worked: QNX path managers answer readlink() of a
-> directory with another errno (ENOTDIR; ENOSYS where links are
-> unsupported). Fall back to lstat() to tell a real link from a plain file.
+> Cross-compiled, gnulib cannot run its getcwd probes and replaces getcwd
+> with an implementation that walks up the tree: openat(fd, "..", O_RDONLY)
+> then fdopendir().  On QNX a directory fd opened without O_DIRECTORY makes
+> openat()/fdopendir() fail with ENOTDIR, so every getcwd() call failed.
+> msgfmt -o <anything> writes through open_supersede, which canonicalizes
+> the output name starting from getcwd(): "error while opening ... for
+> writing: Not a directory", even for a file in the current directory.
 
-Touches: `gettext-runtime/gnulib-lib/canonicalize-lgpl.c`, `gettext-tools/gnulib-lib/canonicalize.c`, `gettext-tools/gnulib-lib/canonicalize-lgpl.c`
+Touches: `gettext-tools/gnulib-lib/getcwd.c`
 
 ### 4. Configure, build and install into the staging tree
 
@@ -110,6 +110,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - ncurses: libtextstyle links it for terminal styling. Undeclared, gettext built before ncurses in a from-scratch run and picked up the SDP's prebuilt copy (soname libncursesw.so.1 against our .so.6). ncurses itself needs nothing here, so there is no cycle. NOT libxml2: this builds --with-included-libxml, so gettext uses its own bundled copy and never links ours. Declaring it created the workspace's only dependency cycle -- xz -> gettext -> libxml2 -> xz -- which was invisible while everything was already built (the stamps short-circuit the recursion) and recursed until the shell segfaulted on the first from-scratch build on a new machine. Also linked at run time (found by scripts/gen-dependency-index): libiconv libunistring
 - --enable-nls (was --disable-nls): with NLS off, gettext installs no libintl at all, and 56 staged libraries silently linked the SDP's prebuilt libintl.so.1 instead -- the one thing this workspace must never do.  scripts/check-sdp-leak could not see it, because it only flagged sonames we had also staged; it now works from an allowlist of genuine OS libraries. gt_cv_func_printf_posix=yes: gettext asks whether printf supports positional arguments ("%2$s") by RUNNING a probe, which a cross build cannot do, so it assumes no and its <libintl.h> then does "#define printf libintl_printf". That macro renames members of any C++ class with a printf method -- WebKit's WTF::PrintStream fails to compile against the SDP's header for exactly this reason.  QNX does support positional arguments; verified on the target: snprintf(b, n, "%2$s-%1$s", "a", "b")  ->  "b-a"
+- gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd() and the fdopendir()/*at() emulations open directories without O_DIRECTORY, which QNX then refuses with ENOTDIR (hazards 25, 120).  patches/0001 keeps getcwd() off its openat("..") walk for the same reason: msgfmt -o could not write any file ("error while opening ... for writing: Not a directory").
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gettext`.
 
@@ -201,7 +202,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gettext 0.22.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/gettext-0.22.5-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gettext 0.22.5-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/gettext-0.22.5-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gettext 0.22.5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/gettext-0.22.5-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gettext 0.22.5-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/gettext-0.22.5-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -242,6 +245,12 @@ DEPS="ncurses libiconv libunistring"
 # reason.  QNX does support positional arguments; verified on the target:
 #   snprintf(b, n, "%2$s-%1$s", "a", "b")  ->  "b-a"
 CONF_ENV=( gt_cv_func_printf_posix=yes )
+# gnulib has no O_SEARCH on QNX and falls back to O_RDONLY, so save_cwd()
+# and the fdopendir()/*at() emulations open directories without O_DIRECTORY,
+# which QNX then refuses with ENOTDIR (hazards 25, 120).  patches/0001 keeps
+# getcwd() off its openat("..") walk for the same reason: msgfmt -o could not
+# write any file ("error while opening ... for writing: Not a directory").
+CFLAGS_APPEND="-DO_SEARCH=O_DIRECTORY"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-java --disable-csharp
                   --enable-nls --without-emacs --disable-openmp --with-included-libxml )
 ```

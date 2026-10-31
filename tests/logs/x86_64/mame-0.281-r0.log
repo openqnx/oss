@@ -1,17 +1,35 @@
-# mame 0.281-r0 -- INSTALLED
+# mame 0.281-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:26:23Z   packages from: apk:local-dists
+# date: 2026-10-31T16:18:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u mame
-(1/3) Installing sdl2 (2.32.10-r0)
-(2/3) Installing sdl2-ttf (2.24.0-r0)
-(3/3) Installing mame (0.281-r0)
-OK: 670 MiB in 55 packages
+$ apk add -u mame qnx-test-mame qnx-port-tests
+(1/6) Installing sdl2 (2.32.10-r0)
+(2/6) Installing harfbuzz (<ip>-r0)
+(3/6) Installing sdl2-ttf (2.24.0-r0)
+(4/6) Installing mame (0.281-r0)
+(5/6) Installing qnx-port-tests (1.0-r2)
+(6/6) Installing qnx-test-mame (1.0-r0)
+OK: 600 MiB in 35 packages
 
-$ ldd on every program and library apk info -L mame lists
-ok   loads: /data/oss/usr/local/bin/mame
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mame
+     == mame ==
+       ok   -version: 0.281 (mame0281-dirty)
+       ok   -listfull pacman: pacman            "Pac-Man (Midway)"
+       ok   -listxml: <machine name="pacman">
+       ok   -listxml: Zilog Z80 CPU
+       ok   -listxml: ROM pacman.6e
+       ok   -listxml: 288x224 display
+       ok   -listroms pacman lists pacman.6e
+       ok   -listclones: pacman is a clone of puckman
+       ok   -listsource: pacman.cpp
+       ok   -verifyroms: missing ROM set reported (rc=2)
+       ok   -validate pacman: driver validity checks pass
+     PASS mame
+PASS test_mame
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

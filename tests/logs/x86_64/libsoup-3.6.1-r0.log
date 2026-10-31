@@ -1,6 +1,6 @@
 # libsoup 3.6.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:25:28Z   packages from: apk:local-dists
+# date: 2026-10-31T16:16:26Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -11,16 +11,16 @@ $ apk add -u libsoup qnx-test-libsoup qnx-port-tests
 (3/7) Installing nghttp2 (1.64.0-r0)
 (4/7) Installing sqlite (3.47.2-r0)
 (5/7) Installing libsoup (3.6.1-r0)
-(6/7) Installing qnx-port-tests (1.0-r1)
+(6/7) Installing qnx-port-tests (1.0-r2)
 (7/7) Installing qnx-test-libsoup (1.0-r6)
-OK: 172 MiB in 59 packages
+OK: 99 MiB in 36 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libsoup
      == libsoup ==
        info libsoup 3.6.1
        ok   soup_server_new
        ok   soup_server_listen_local and a listening URI
-       info listening on http://<ip>:43408/
+       info listening on http://<ip>:48797/
        ok   soup_message_new
        ok   soup_session_send_and_read
        ok   HTTP 200

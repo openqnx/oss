@@ -1,15 +1,47 @@
-# python3-packaging 25.0-r0 -- INSTALLED
+# python3-packaging 25.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:11:35Z   packages from: apk:local-dists
+# date: 2026-10-31T17:30:49Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u python3-packaging
-(1/1) Installing python3-packaging (25.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u python3-packaging qnx-test-python3-packaging qnx-port-tests
+( 1/10) Installing python3-packaging (25.0-r0)
+( 2/10) Installing qnx-port-tests (1.0-r2)
+( 3/10) Installing bzip2 (1.0.8-r0)
+( 4/10) Installing expat (2.6.4-r0)
+( 5/10) Installing gdbm (1.24-r0)
+( 6/10) Installing readline (8.2-r0)
+( 7/10) Installing sqlite (3.47.2-r0)
+( 8/10) Installing xz (5.6.3-r0)
+( 9/10) Installing python3 (3.14.0-r2)
+(10/10) Installing qnx-test-python3-packaging (1.0-r0)
+OK: 160 MiB in 38 packages
 
-$ ldd on every program and library apk info -L python3-packaging lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_packaging
+     == python3-packaging ==
+       info packaging 25.0
+       ok   1.10.0 > 1.9.9; 2.0 == 2.0.0
+       ok   dev < alpha < beta < rc < final < post
+       ok   2.4.1rc2+qnx.8: pre-release, local qnx.8
+       ok   invalid version rejected
+       ok   >=1.0,<2.0,!=1.5.*
+       ok   filter a version list
+       ok   compatible release ~=1.4.0
+       ok   pre-releases excluded unless asked
+       ok   requirement: name, extras, specifier
+       ok   marker python_version >= 3.8 true here
+       info marker environment: platform_system=QNX sys_platform=qnx machine=QEMU_virt
+       ok   markers for this platform
+       info 48 supported tags, first cp314-cp314-qnx_8_0_0_qemu_virt
+       ok   sys_tags includes py3-none-any
+       ok   first tag is for this CPython
+       ok   canonicalize_name
+       ok   parse_wheel_filename
+       ok   parse_sdist_filename
+     PASS python3-packaging
+PASS test_python3_packaging
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

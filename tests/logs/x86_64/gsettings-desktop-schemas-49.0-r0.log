@@ -1,15 +1,46 @@
-# gsettings-desktop-schemas 49.0-r0 -- INSTALLED
+# gsettings-desktop-schemas 49.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:24:21Z   packages from: apk:local-dists
+# date: 2026-10-31T16:14:58Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u gsettings-desktop-schemas
-(1/1) Installing gsettings-desktop-schemas (49.0-r0)
-OK: 171 MiB in 53 packages
+$ apk add -u gsettings-desktop-schemas qnx-test-gsettings-desktop-schemas qnx-port-tests
+(1/3) Installing gsettings-desktop-schemas (49.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-gsettings-desktop-schemas (1.0-r0)
+OK: 98 MiB in 32 packages
 
-$ ldd on every program and library apk info -L gsettings-desktop-schemas lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gsettings_desktop_schemas
+     == gsettings-desktop-schemas ==
+       ok   share/glib-2.0/schemas/org.gnome.desktop.*.gschema.xml installed
+       ok   glib-compile-schemas available
+       info 32 schema files of the package
+       info glib-compile-schemas: Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+       ok   glib-compile-schemas --strict compiled them
+       ok   schema source loads gschemas.compiled
+       info 46 schemas, 6 relocatable
+       ok   30+ schemas, wm.preferences and system.proxy among them
+       ok   relocatable app-folders.folder
+       ok   GSettings for org.gnome.desktop.interface (memory backend)
+       info font-name 'Adwaita Sans 11', gtk-theme 'Adwaita'
+       ok   defaults: font-name 'Adwaita Sans 11', gtk-theme 'Adwaita'
+       ok   enum defaults match gdesktop-enums.h: 24h, default
+       ok   set color-scheme = G_DESKTOP_COLOR_SCHEME_PREFER_DARK
+       ok   reads back as nick 'prefer-dark'
+       ok   'neon' is not a valid color-scheme
+       ok   wm num-workspaces: range 1..36
+       ok   num-workspaces default 4
+       info gsettings get: 'Adwaita Sans 11'
+       ok   gsettings get org.gnome.desktop.interface font-name
+     PASS gsettings-desktop-schemas
+PASS test_gsettings_desktop_schemas
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

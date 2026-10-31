@@ -1,15 +1,35 @@
-# tree-sitter-lua 0.4.0-r0 -- INSTALLED
+# tree-sitter-lua 0.4.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:26:05Z   packages from: apk:local-dists
+# date: 2026-10-31T17:59:51Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u tree-sitter-lua
-(1/1) Installing tree-sitter-lua (0.4.0-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u tree-sitter-lua qnx-test-tree-sitter-lua qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing tree-sitter (0.25.9-r0)
+(3/4) Installing tree-sitter-lua (0.4.0-r0)
+(4/4) Installing qnx-test-tree-sitter-lua (1.0-r0)
+OK: 55 MiB in 32 packages
 
-$ ldd on every program and library apk info -L tree-sitter-lua lists
-ok   loads: /data/oss/usr/local/lib/tree-sitter/lua.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter_lua
+     == tree-sitter-lua ==
+       info tree-sitter runtime: language ABI 13..15
+       ok   lua.so loads (dlopen)
+       ok   tree_sitter_lua() entry point
+       info lua: ABI 15, 137 symbols, 21 fields
+       ok   lua: ABI 15 accepted by the runtime (13..15)
+       ok   lua: sample parsed
+       ok   lua: no syntax errors in the sample
+       info lua tree: (chunk local_declaration: (function_declaration name: (identifier) parameters: (parameters name: (identifier)) body: (block (return_statement (expression_list (binary_expression left: (identifier) right: (identifier)))))) (function_call name: (identifier) arguments: (arguments (function_call name: (identifier) arguments: (arguments (number))))))
+       ok   lua: syntax tree is the expected one
+       ok   lua: whole sample covered (0..51 bytes)
+       info query (function_call name: (identifier) @call) -> [print,sq]
+       ok   lua: query captures [print,sq]
+       ok   lua: malformed input is flagged (has_error)
+     PASS tree-sitter-lua
+PASS test_tree_sitter_lua
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

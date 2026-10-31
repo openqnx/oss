@@ -1,0 +1,44 @@
+QNX daemon(1, 0) closes all descriptors: keep the client socketpair
+
+Upstream-Status: QNX-specific
+
+--- a/proc.c
++++ b/proc.c
+@@ -22,6 +22,7 @@
+ #include <sys/utsname.h>
+ 
+ #include <errno.h>
++#include <fcntl.h>
+ #include <signal.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -371,8 +372,29 @@
+ 	case 0:
+ 		close(pair[0]);
+ 		*fd = pair[1];
++#ifdef __QNX__
++		/*
++		 * QNX's daemon() with noclose == 0 closes every descriptor,
++		 * not only 0-2 -- including the socketpair to the client, so
++		 * the new server could never answer. Keep the descriptors and
++		 * point 0-2 at /dev/null as other systems' daemon() does.
++		 */
++		if (daemon(1, 1) != 0)
++			fatal("daemon failed");
++		{
++			int nullfd = open("/dev/null", O_RDWR);
++			if (nullfd != -1) {
++				dup2(nullfd, STDIN_FILENO);
++				dup2(nullfd, STDOUT_FILENO);
++				dup2(nullfd, STDERR_FILENO);
++				if (nullfd > STDERR_FILENO)
++					close(nullfd);
++			}
++		}
++#else
+ 		if (daemon(1, 0) != 0)
+ 			fatal("daemon failed");
++#endif
+ 		return (0);
+ 	default:
+ 		close(pair[1]);

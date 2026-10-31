@@ -1,17 +1,35 @@
-# libjson 0.8_git20260512-r0 -- INSTALLED
+# libjson 0.8_git20260512-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:31:58Z   packages from: apk:local-dists
+# date: 2026-10-31T16:42:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u libjson
-(1/1) Installing libjson (0.8_git20260512-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u libjson qnx-test-libjson qnx-port-tests
+(1/3) Installing libjson (0.8_git20260512-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libjson (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L libjson lists
-ok   loads: /data/oss/usr/local/lib/libjson.so.1
-ok   loads: /data/oss/usr/local/lib/libjson.so.1.0
-ok   loads: /data/oss/usr/local/lib/libjson.so.1.0.0
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libjson
+     == libjson ==
+       ok   document parses
+       info 16 events
+       ok   event sequence: object, keys, string, int, floats, true, null
+       ok   key and value text
+       ok   escapes decoded (\" and \u00e9 -> UTF-8)
+       ok   parse into the raw printer
+       info reprinted {"k":[1,2,{"x":false}],"s":"v"}
+       ok   parse -> print_raw reproduces the compact text
+       ok   byte-at-a-time feeding
+       ok   C comments accepted when enabled
+       ok   comments rejected by default
+       ok   missing colon is an error
+       ok   nesting limit enforced
+       ok   truncated input is not done
+     PASS libjson
+PASS test_libjson
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

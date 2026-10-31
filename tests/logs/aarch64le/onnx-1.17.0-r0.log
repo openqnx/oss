@@ -1,19 +1,41 @@
-# onnx 1.17.0-r0 -- INSTALLED
+# onnx 1.17.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:45:42Z   packages from: apk:local-dists
+# date: 2026-10-31T17:03:13Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u onnx
-(1/3) Installing abseil (20240722.0-r0)
-(2/3) Installing protobuf (29.3-r0)
-(3/3) Installing onnx (1.17.0-r0)
-OK: 72 MiB in 32 packages
+$ apk add -u onnx qnx-test-onnx qnx-port-tests
+(1/5) Installing abseil (20240722.0-r0)
+(2/5) Installing protobuf (29.3-r0)
+(3/5) Installing onnx (1.17.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-onnx (1.0-r0)
+OK: 72 MiB in 33 packages
 
-$ ldd on every program and library apk info -L onnx lists
-ok   loads: /data/oss/usr/local/lib/libonnx.so
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libonnx_proto.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_onnx
+     == onnx ==
+       info IR version 10
+       ok   operator schema registry knows Add-17
+       ok   Add has 2 inputs, 1 output
+       ok   Conv-17 schema registered
+       ok   ModelProto serializes
+       info serialized model: 160 bytes
+       ok   ModelProto parses back
+       ok   parsed model has the same nodes
+       ok   checker accepts the valid model
+       ok   shape inference runs
+       info inferred Y rank 2 2 4
+       ok   Y inferred as [2,4]
+       ok   intermediate S inferred as [2,3] (broadcast)
+       ok   checker (full_check) accepts the model from a file
+       info rejected: Node(add0) with schema(::Add:14) has input size 1 not in range [min=2, max=2].
+     
+     ==> Context: Bad nod
+       ok   checker rejects Add with one input
+     PASS onnx
+PASS test_onnx
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,32 @@
+# tmux 3.5a-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T17:59:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tmux qnx-test-tmux qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing libevent (2.1.12-r0)
+(3/4) Installing tmux (3.5a-r2)
+(4/4) Installing qnx-test-tmux (1.0-r0)
+OK: 57 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tmux
+     == tmux ==
+       info tmux 3.5a
+       ok   new-session -d (100x30, /bin/sh)
+       ok   display-message format: qnx 100x30 sh
+       ok   send-keys ran a command; capture-pane shows sum=42
+       ok   list-windows: 2
+       ok   split-window: 2 panes in window 0
+       ok   second window's command output captured
+       ok   set-buffer / show-buffer
+       ok   rename-session / has-session
+       ok   kill-server
+     PASS tmux
+PASS test_tmux
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

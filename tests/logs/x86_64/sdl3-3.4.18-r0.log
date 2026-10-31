@@ -1,18 +1,62 @@
-# sdl3 3.4.18-r0 -- INSTALLED
+# sdl3 3.4.18-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:43Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u sdl3
-(1/2) Installing libxscrnsaver (1.2.4-r0)
-(2/2) Installing sdl3 (3.4.18-r0)
-OK: 169 MiB in 54 packages
+$ apk add -u sdl3 qnx-test-sdl3 qnx-port-tests
+( 1/15) Installing qnx-port-tests (1.0-r2)
+( 2/15) Installing libxau (1.0.11-r0)
+( 3/15) Installing libxdmcp (1.1.5-r0)
+( 4/15) Installing libxcb (1.17.0-r0)
+( 5/15) Installing libx11 (1.8.10-r0)
+( 6/15) Installing libxfixes (6.0.1-r0)
+( 7/15) Installing libxrender (0.9.11-r0)
+( 8/15) Installing libxcursor (1.2.2-r0)
+( 9/15) Installing libxext (1.3.6-r0)
+(10/15) Installing libxi (1.8.2-r0)
+(11/15) Installing libxrandr (1.5.4-r0)
+(12/15) Installing libxscrnsaver (1.2.4-r0)
+(13/15) Installing libxtst (1.2.5-r0)
+(14/15) Installing sdl3 (3.4.18-r0)
+(15/15) Installing qnx-test-sdl3 (1.0-r0)
+OK: 100 MiB in 44 packages
 
-$ ldd on every program and library apk info -L sdl3 lists
-ok   loads: /data/oss/usr/local/lib/libSDL3.so.0
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libSDL3.so.0.4.18
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl3
+     == sdl3 ==
+       info SDL 3.4.18 (SDL-3.4.18-release-3.4.18)
+       ok   SDL major version 3
+       ok   set video driver hint
+       ok   SDL_Init(EVENTS)
+       ok   SDL_RegisterEvents
+       ok   SDL_PushEvent
+       ok   user event polled back with its payload
+       ok   properties set/get (number, string, float, bool, default)
+       ok   hint round trip
+       info SDL_crc32("123456789") = cbf43926
+       ok   SDL_crc32 check value
+       ok   SDL_CreateSurface 32x16 RGBA8888
+       ok   fill rect + read pixels inside and outside
+       ok   scaled blit 2x, format conversion
+       ok   scaled pixel lands at 2x position
+       ok   SaveBMP into dynamic memory
+       info BMP 2186 bytes
+       ok   LoadBMP back (BM magic, 32x16)
+       ok   BMP round-trip pixel
+       ok   SDL_CreateAudioStream S16 mono -> F32 stereo
+       info converted 32 bytes: 0 0 | 0.5 0.5 | -0.5
+       ok   sample values converted and duplicated
+       ok   two threads, return codes, atomic sum 2000
+       info 4 logical CPU core(s)
+       info video driver: dummy
+       ok   video subsystem on the dummy driver
+       ok   window + renderer
+       info renderer software
+       ok   rendered pixels read back
+     PASS sdl3
+PASS test_sdl3
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

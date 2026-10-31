@@ -1,30 +1,54 @@
-# geany-plugins 2.1-r1 -- INSTALLED
+# geany-plugins 2.1-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:59Z   packages from: apk:local-dists
+# date: 2026-10-31T16:14:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u geany-plugins
-(1/1) Installing geany-plugins (2.1-r1)
-OK: 168 MiB in 53 packages
+$ apk add -u geany-plugins qnx-test-geany-plugins qnx-port-tests
+( 1/28) Installing dbus (1.16.0-r1)
+( 2/28) Installing libxau (1.0.11-r0)
+( 3/28) Installing libxdmcp (1.1.5-r0)
+( 4/28) Installing libxcb (1.17.0-r0)
+( 5/28) Installing libx11 (1.8.10-r0)
+( 6/28) Installing libxext (1.3.6-r0)
+( 7/28) Installing libxi (1.8.2-r0)
+( 8/28) Installing libxtst (1.2.5-r0)
+( 9/28) Installing at-spi2-core (2.54.0-r0)
+(10/28) Installing libxrender (0.9.11-r0)
+(11/28) Installing cairo (1.18.2-r0)
+(12/28) Installing fribidi (1.0.16-r0)
+(13/28) Installing harfbuzz (<ip>-r0)
+(14/28) Installing libxcomposite (0.4.6-r0)
+(15/28) Installing libxfixes (6.0.1-r0)
+(16/28) Installing libxcursor (1.2.2-r0)
+(17/28) Installing libxdamage (1.1.6-r0)
+(18/28) Installing libxinerama (1.1.5-r0)
+(19/28) Installing libxml2 (2.13.5-r1)
+(20/28) Installing libxkbcommon (1.8.1-r1)
+(21/28) Installing libxrandr (1.5.4-r0)
+(22/28) Installing libxft (2.3.8-r0)
+(23/28) Installing pango (1.54.0-r0)
+(24/28) Installing gtk3 (3.24.43-r1)
+(25/28) Installing geany (2.1-r0)
+(26/28) Installing geany-plugins (2.1-r1)
+(27/28) Installing qnx-port-tests (1.0-r2)
+(28/28) Installing qnx-test-geany-plugins (1.0-r0)
+OK: 168 MiB in 57 packages
 
-$ ldd on every program and library apk info -L geany-plugins lists
-ok   loads: /data/oss/usr/local/lib/libgeanypluginutils.so.0
-ok   loads: /data/oss/usr/local/lib/geany/addons.so
-ok   loads: /data/oss/usr/local/lib/geany/autoclose.so
-ok   loads: /data/oss/usr/local/lib/geany/automark.so
-ok   loads: /data/oss/usr/local/lib/geany/codenav.so
-ok   loads: /data/oss/usr/local/lib/geany/commander.so
-ok   loads: /data/oss/usr/local/lib/geany/defineformat.so
-ok   loads: /data/oss/usr/local/lib/geany/keyrecord.so
-ok   loads: /data/oss/usr/local/lib/geany/lineoperations.so
-ok   loads: /data/oss/usr/local/lib/geany/overview.so
-ok   loads: /data/oss/usr/local/lib/geany/pairtaghighlighter.so
-ok   loads: /data/oss/usr/local/lib/geany/projectorganizer.so
-ok   loads: /data/oss/usr/local/lib/geany/sendmail.so
-ok   loads: /data/oss/usr/local/lib/geany/shiftcolumn.so
-ok   loads: /data/oss/usr/local/lib/geany/treebrowser.so
-ok   loads: /data/oss/usr/local/lib/geany/xmlsnippets.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_geany_plugins
+     == geany-plugins ==
+       info 3 file(s), 2 folder(s)
+       ok   three matching files found
+       ok   main.c, main.h and sub/util.c listed
+       ok   ignored directory, ignored file and non-matching file left out
+       ok   ADD_DIRS lists directories too; NULL pattern matches every file
+       ok   single-path pattern check (whole-path patterns)
+       info 21 of 21 plugin module(s) loaded
+       ok   every plugin in /usr/local/lib/geany loads and exports a plugin entry point
+     PASS geany-plugins
+PASS test_geany_plugins
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

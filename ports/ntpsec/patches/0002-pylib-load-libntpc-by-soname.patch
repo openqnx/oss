@@ -1,0 +1,25 @@
+ntp.ntpc: load libntpc by its runtime soname (libntpc.so.1).
+
+The Python library looked for libntpc.so only -- the unversioned
+development symlink, which the QNX packages (like any distribution's) ship
+in ntpsec-dev. With just ntpsec installed every ntp.* module failed to import
+("Can't find ntpc library"), and with it ntpdig, ntpq, ntpkeygen and the
+other Python clients. Try libntpc.so.1 first in each place searched.
+
+Upstream-Status: QNX-specific
+
+--- a/pylib/ntpc.py
++++ b/pylib/ntpc.py
+@@ -40,6 +40,12 @@ def _importado():
+         "@LIBDIR@" + os.sep + library_basename,
+     ]
+ 
++    # The unversioned libntpc.so is a development symlink, which packagers
++    # (QNX's included) ship in the -dev package: try the runtime soname,
++    # libntpc.so.1, first in each place.
++    ntpc_paths = [v for p in ntpc_paths
++                  for v in ((p + ".1", p) if p.endswith(".so") else (p,))]
++
+     # Finally, check in ordinary library folders for production use.
+     ntpc_path = ctypes.util.find_library(LIB)
+     if ntpc_path:

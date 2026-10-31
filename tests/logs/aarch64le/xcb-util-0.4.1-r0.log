@@ -1,12 +1,12 @@
 # xcb-util 0.4.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:30:27Z   packages from: apk:local-dists
+# date: 2026-10-31T18:05:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u xcb-util qnx-test-xorg-libs qnx-port-tests
-( 1/19) Installing qnx-port-tests (1.0-r1)
+( 1/19) Installing qnx-port-tests (1.0-r2)
 ( 2/19) Installing libice (1.1.2-r0)
 ( 3/19) Installing libsm (1.2.6-r0)
 ( 4/19) Installing libxau (1.0.11-r0)
@@ -14,7 +14,7 @@ $ apk add -u xcb-util qnx-test-xorg-libs qnx-port-tests
 ( 6/19) Installing libxcb (1.17.0-r0)
 ( 7/19) Installing libx11 (1.8.10-r0)
 ( 8/19) Installing libxcvt (0.1.3-r0)
-( 9/19) Installing fontenc (1.1.8-r0)
+( 9/19) Installing fontenc (1.1.8-r2)
 (10/19) Installing bzip2 (1.0.8-r0)
 (11/19) Installing freetype (2.13.3-r0)
 (12/19) Installing libxfont2 (2.0.7-r0)
@@ -25,7 +25,7 @@ $ apk add -u xcb-util qnx-test-xorg-libs qnx-port-tests
 (17/19) Installing libxshmfence (1.3.3-r0)
 (18/19) Installing xcb-util (0.4.1-r0)
 (19/19) Installing qnx-test-xorg-libs (1.0-r5)
-OK: 62 MiB in 48 packages
+OK: 62 MiB in 47 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xorg_libs
      == xorg-libs ==
@@ -43,7 +43,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_x
        ok   XmuCopyISOLatin1Lowered (incl. E-acute)
        ok   XmuCompareISOLatin1 ignores case
        ok   IceListenForConnections
-       info ICE listening: local/vanilla-a64:/tmp/.ICE-unix/500133909,inet6/vanilla-a64:28256,inet/vanilla-a64:55522
+       info ICE listening: local/vanilla-a64:/tmp/.ICE-unix/908943381,inet6/vanilla-a64:48845,inet/vanilla-a64:33235
        ok   network id list
        info SmcOpenConnection: SESSION_MANAGER environment variable not defined
        ok   no session manager: the documented error

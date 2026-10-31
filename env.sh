@@ -21,6 +21,11 @@ if [ -n "$QNX_PORTS_BASE_ACLOCAL_PATH" ]; then export ACLOCAL_PATH="$QNX_PORTS_B
 source "$QNX_SDP_ROOT/qnxsdp-env.sh" >/dev/null
 
 export WS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# A source tree under src/ is not a git checkout; without this, a build's
+# `git describe` (meson vcs_tag, autotools version scripts) walks up and finds
+# this repository, and the package reports our commit as its version
+# (epiphany "Web 7567bf6+", sysbench "1.1.0-7567bf6").
+export GIT_CEILING_DIRECTORIES="$WS"
 [ -f "$WS/env.sh" ] || { echo "ERROR: env.sh could not locate its workspace (WS=$WS)"; return 1; }
 export SRC_DIR="${QNX_OSS_SRC_DIR:-$WS/src}"
 export BUILD_DIR="${QNX_OSS_BUILD_DIR:-$WS/build}"
@@ -43,6 +48,13 @@ export CMAKE_POLICY_VERSION_MINIMUM=3.5
 # host tools (uv-installed cmake/ninja live in ~/.local/bin)
 # Native helper tools (xgettext, msgfmt ...) that cross builds must *run*.
 export PATH="$WS/hosttools/bin:$HOME/.local/bin:$PATH"
+# The build machine's pkg-config (pkgconf), found before toolchain/bin goes on
+# PATH. toolchain/bin/pkg-config wraps it so that `--variable` answers with the
+# target's path (/usr/local/...), not the staging tree: see that file.
+QNX_REAL_PKG_CONFIG="$(command -v pkg-config)"
+case "$QNX_REAL_PKG_CONFIG" in ""|"$WS/toolchain/bin/"*) QNX_REAL_PKG_CONFIG=/usr/bin/pkg-config ;; esac
+export QNX_REAL_PKG_CONFIG
+export PATH="$WS/toolchain/bin:$PATH"
 # autoreconf looks for third-party m4 macros here. The X.Org libraries need
 # xorg-macros, which build-host-tools.sh installs into hosttools/.
 export ACLOCAL_PATH="$WS/hosttools/share/aclocal${ACLOCAL_PATH:+:$ACLOCAL_PATH}"
@@ -95,7 +107,8 @@ qnx_arch() {
   # holds a QNX pkgconf (the pkgconf component), and a project whose program
   # search reached stage/.../bin (EmulationStation) picked that, could not run
   # it, and reported PkgConfig missing. PATH here has no staging directory.
-  export PKG_CONFIG="$(command -v pkg-config)"
+  # It is the wrapper (toolchain/bin/pkg-config): --variable gives target paths.
+  export PKG_CONFIG="$WS/toolchain/bin/pkg-config"
   export PKG_CONFIG_LIBDIR="$STAGE$PREFIX/lib/pkgconfig:$STAGE$PREFIX/share/pkgconfig"
   unset PKG_CONFIG_PATH
   mkdir -p "$STAGE/$PREFIX"/{lib/pkgconfig,include,bin,share}

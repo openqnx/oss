@@ -1,0 +1,22 @@
+Link libGKlib against libregex on QNX.
+
+GKlib calls regcomp/regexec/regfree (gk_strstr_replace and friends), which
+QNX keeps in libregex.so.1, not in libc. Without it libGKlib.so carries no
+DT_NEEDED for libregex: it links only because shared libraries are linked
+with --allow-shlib-undefined, and every program that uses it has to know to
+add -lregex itself (METIS's programs do; anything else fails to load).
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -22,6 +22,9 @@
+ if(UNIX)
+   target_link_libraries(GKlib m)
+ endif(UNIX)
++if(QNX)
++  target_link_libraries(GKlib regex)
++endif(QNX)
+ 
+ if(BUILD_TESTING)
+   include_directories("test")

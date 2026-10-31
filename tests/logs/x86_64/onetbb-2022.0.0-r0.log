@@ -1,25 +1,34 @@
-# onetbb 2022.0.0-r0 -- INSTALLED
+# onetbb 2022.0.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:27:00Z   packages from: apk:local-dists
+# date: 2026-10-31T16:19:38Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u onetbb
-(1/1) Installing onetbb (2022.0.0-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u onetbb qnx-test-onetbb qnx-port-tests
+(1/3) Installing onetbb (2022.0.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-onetbb (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L onetbb lists
-ok   loads: /data/oss/usr/local/lib/libtbb.so.12
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libtbb.so.12.14
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libtbbmalloc.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libtbbmalloc.so.2.14
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libtbbmalloc_proxy.so.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libtbbmalloc_proxy.so.2.14
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_onetbb
+     == onetbb ==
+       info TBB 2022.0.0, interface 12140, max concurrency 4
+       ok   runtime interface version matches header
+       ok   task arena has workers
+       info sum of squares 1..1000000 = 333333833333500000
+       ok   parallel_reduce: sum of squares = n(n+1)(2n+1)/6
+       ok   parallel_for: every element written exactly once
+       ok   parallel_sort: 100000 LCG values sorted
+       ok   parallel_scan: prefix sums are triangular numbers
+       ok   concurrent_hash_map: 100 keys x 1000 increments each
+       ok   task_group: 64 tasks ran
+       ok   flow graph: sum of squares 1..100 = 338350
+       ok   scalable_malloc 1 MiB
+       ok   scalable memory usable
+     PASS onetbb
+PASS test_onetbb
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

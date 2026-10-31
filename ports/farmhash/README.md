@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/google/farmhash.git |
 | Build system | GNU Autotools |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -55,11 +55,12 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/farmhash < ports/farmhash/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/farmhash < ports/farmhash/patches/0002-qnx-bswap-builtins.patch
+patch -p1 -d src/farmhash < ports/farmhash/patches/0003-qnx-endianness-test-spelling.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Import farmhash port
@@ -79,6 +80,17 @@ Touches: `src/farmhash.cc`, `farmhash.patch` · Upstream status: QNX-specific (c
 > it would provide.
 
 Touches: `src/farmhash.cc` · Upstream status: QNX-specific
+
+**[`0003-qnx-endianness-test-spelling.patch`](patches/0003-qnx-endianness-test-spelling.patch)** — Fix the misspelled byte-order test in farmhash.h.
+
+> The installed header tests defined(__BYTE_ORDER__) but then compares
+> __BYTE_ORDER (glibc's macro, undefined elsewhere, so 0) with
+> __ORDER_LITTLE_ENDIAN__. On QNX, which has neither __LITTLE_ENDIAN__ nor
+> <endian.h>, the test falls through to "#include <endian.h>" and every
+> program that includes farmhash.h fails to compile. Compare the compiler's
+> own __BYTE_ORDER__ instead.
+
+Touches: `src/farmhash.h` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -102,7 +114,7 @@ cd -
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- farmhash.h's little-endian test misspells __BYTE_ORDER__ and falls through to <endian.h>, a glibc header. Both QNX targets are little endian; say so.
+- farmhash.h's little-endian test misspelled __BYTE_ORDER__ and fell through to <endian.h>, a glibc header: patches/0003 fixes the installed header, so programs that include it compile on QNX too (no -D__LITTLE_ENDIAN__).
 - The QNX patch touches configure.ac/Makefile.am; regenerate the build files (the tarball's were made with automake 1.14, which make then asks for).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH farmhash`.
@@ -186,7 +198,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | farmhash 1.1_git20190513-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/farmhash-1.1_git20190513-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | farmhash 1.1_git20190513-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/farmhash-1.1_git20190513-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | farmhash 1.1_git20190513-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/farmhash-1.1_git20190513-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | farmhash 1.1_git20190513-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/farmhash-1.1_git20190513-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -199,9 +213,9 @@ This recipe builds **1.1-git-20190513**. Every version stays available: packages
 ```bash
 VERSION=1.1-git-20190513; GIT=https://github.com/google/farmhash.git; COMMIT=0d859a811870d10f53a594927d0d0b97573ad06d
 BUILDSYS=autotools
-# farmhash.h's little-endian test misspells __BYTE_ORDER__ and falls through to
-# <endian.h>, a glibc header. Both QNX targets are little endian; say so.
-CFLAGS_APPEND="-D__LITTLE_ENDIAN__"
+# farmhash.h's little-endian test misspelled __BYTE_ORDER__ and fell through
+# to <endian.h>, a glibc header: patches/0003 fixes the installed header, so
+# programs that include it compile on QNX too (no -D__LITTLE_ENDIAN__).
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )
 # The QNX patch touches configure.ac/Makefile.am; regenerate the build files
 # (the tarball's were made with automake 1.14, which make then asks for).

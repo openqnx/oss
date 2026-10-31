@@ -1,0 +1,32 @@
+# fontenc 1.1.8-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:29:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fontenc qnx-test-fontenc qnx-port-tests
+(1/3) Installing fontenc (1.1.8-r2)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-fontenc (1.0-r0)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fontenc
+     == fontenc ==
+       ok   encoding name from an XLFD
+       ok   FONT_ENCODINGS_DIRECTORY honoured
+       ok   built-in iso8859-2 Unicode map
+       ok   iso8859-2: 0x41 -> U+0041
+       ok   iso8859-2: 0xA1 -> U+0104, 0xB9 -> U+0161
+       ok   reverse map: U+0158 -> 0xD8
+       ok   koi8-r: 0xC1 -> U+0430, 0xFF -> U+042A
+       ok   iso8859-15: 0xA4 -> euro sign
+       ok   FontEncFind: iso8859-5 is a 256-entry single-byte encoding
+       ok   FontEncIdentify reads name and alias from an encoding file
+       ok   own encoding loaded via encodings.dir and recodes
+     PASS fontenc
+PASS test_fontenc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

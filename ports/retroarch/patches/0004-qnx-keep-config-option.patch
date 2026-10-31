@@ -1,0 +1,25 @@
+Keep a --config path over the frontend default config path
+
+config_set_defaults() runs after the first argument pass and sets
+RARCH_PATH_CONFIG from g_defaults.path_config whenever the frontend filled
+that in. The QNX frontend does (<cwd>/rarch-shared/retroarch.cfg), so
+--config was always replaced and RetroArch said "Config not found" for its
+own default. Only use the default when no path was given.
+
+Upstream-Status: QNX-specific
+
+--- a/configuration.c
++++ b/configuration.c
+@@ -2968,7 +2968,11 @@
+             g_defaults.dirs[DEFAULT_DIR_RECORD_CONFIG],
+             sizeof(recording_st->config_dir));
+ 
+-   if (!string_is_empty(g_defaults.path_config))
++   /* A frontend default (the QNX frontend sets one) must not replace a
++    * config file given with --config, which the first argument pass has
++    * already stored. */
++   if (!string_is_empty(g_defaults.path_config)
++         && path_is_empty(RARCH_PATH_CONFIG))
+    {
+       char temp_str[PATH_MAX_LENGTH];
+ 

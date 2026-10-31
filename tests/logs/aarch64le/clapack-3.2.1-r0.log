@@ -1,18 +1,33 @@
-# clapack 3.2.1-r0 -- INSTALLED
+# clapack 3.2.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T05:23:37Z   packages from: apk:local-dists
+# date: 2026-10-31T16:20:51Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u clapack
-(1/1) Installing clapack (3.2.1-r0)
-OK: 60 MiB in 30 packages
+$ apk add -u clapack qnx-test-clapack qnx-port-tests
+(1/3) Installing clapack (3.2.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-clapack (1.0-r0)
+OK: 60 MiB in 31 packages
 
-$ ldd on every program and library apk info -L clapack lists
-ok   loads: /data/oss/usr/local/lib/libblas.so
-ok   loads: /data/oss/usr/local/lib/libf2c.so
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/liblapack.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_clapack
+     == clapack ==
+       ok   DGEMM: [[58,64],[139,154]]
+       ok   DDOT = 12
+       info DGESV x = (2, 3, -1), info 0
+       ok   DGESV solves to (2, 3, -1)
+       info det = -306
+       ok   DGETRF determinant = -306
+       ok   DPOTRF Cholesky factor
+       info eigenvalues 0.585786437627 2.000000000000 3.414213562373
+       ok   DSYEV eigenvalues
+       ok   DSYEV eigenvector for lambda = 2
+       ok   invalid N reported through INFO (XERBLA path)
+       info XERBLA called for "DGESV ", parameter 1
+     PASS clapack
+PASS test_clapack
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

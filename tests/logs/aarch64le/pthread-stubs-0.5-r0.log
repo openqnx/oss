@@ -1,15 +1,31 @@
-# pthread-stubs 0.5-r0 -- INSTALLED
+# pthread-stubs 0.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:04:41Z   packages from: apk:local-dists
+# date: 2026-10-31T17:22:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u pthread-stubs-dev
-(1/1) Installing pthread-stubs-dev (0.5-r0)
-OK: 55 MiB in 30 packages
+$ apk add -u pthread-stubs-dev qnx-test-pthread-stubs qnx-port-tests
+(1/3) Installing pthread-stubs-dev (0.5-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-pthread-stubs (1.0-r0)
+OK: 55 MiB in 31 packages
 
-$ ldd on every program and library apk info -L pthread-stubs-dev lists
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pthread_stubs
+     == pthread-stubs ==
+       ok   pthread_key_create
+       ok   pthread_barrier_init(4)
+       ok   4 threads created
+       ok   condition variable: all 4 signalled
+       ok   each thread saw its own thread-specific value
+       ok   mutex: 4 x 10000 increments = 40000
+       ok   pthread_once ran once
+       ok   rwlock-protected sum 6
+       ok   key destructor ran for each thread
+       ok   pthread_equal
+     PASS pthread-stubs
+PASS test_pthread_stubs
+--------------------------------------------
+passed: 1   failed: 0
 
-
-RESULT: INSTALLED
+RESULT: PASS

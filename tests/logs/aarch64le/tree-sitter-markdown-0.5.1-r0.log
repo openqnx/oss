@@ -1,16 +1,45 @@
-# tree-sitter-markdown 0.5.1-r0 -- INSTALLED
+# tree-sitter-markdown 0.5.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T06:26:11Z   packages from: apk:local-dists
+# date: 2026-10-31T17:59:57Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u tree-sitter-markdown
-(1/1) Installing tree-sitter-markdown (0.5.1-r0)
-OK: 56 MiB in 30 packages
+$ apk add -u tree-sitter-markdown qnx-test-tree-sitter-markdown qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r2)
+(2/4) Installing tree-sitter (0.25.9-r0)
+(3/4) Installing tree-sitter-markdown (0.5.1-r0)
+(4/4) Installing qnx-test-tree-sitter-markdown (1.0-r0)
+OK: 56 MiB in 32 packages
 
-$ ldd on every program and library apk info -L tree-sitter-markdown lists
-ok   loads: /data/oss/usr/local/lib/tree-sitter/markdown.so
-ok   loads: /data/oss/usr/local/lib/tree-sitter/markdown_inline.so
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter_markdown
+     == tree-sitter-markdown ==
+       info tree-sitter runtime: language ABI 13..15
+       ok   markdown.so loads (dlopen)
+       ok   tree_sitter_markdown() entry point
+       info markdown: ABI 15, 207 symbols, 1 fields
+       ok   markdown: ABI 15 accepted by the runtime (13..15)
+       ok   markdown: sample parsed
+       ok   markdown: no syntax errors in the sample
+       info markdown tree: (document (section (atx_heading (atx_h1_marker) heading_content: (inline)) (paragraph (inline)) (list (list_item (list_marker_minus) (paragraph (inline))) (list_item (list_marker_minus) (paragraph (inline))))))
+       ok   markdown: syntax tree is the expected one
+       ok   markdown: whole sample covered (0..44 bytes)
+       info query (list_item (paragraph (inline) @item)) -> [one,two]
+       ok   markdown: query captures [one,two]
+       ok   markdown_inline.so loads (dlopen)
+       ok   tree_sitter_markdown_inline() entry point
+       info markdown_inline: ABI 15, 153 symbols, 0 fields
+       ok   markdown_inline: ABI 15 accepted by the runtime (13..15)
+       ok   markdown_inline: sample parsed
+       ok   markdown_inline: no syntax errors in the sample
+       info markdown_inline tree: (inline (emphasis (emphasis_delimiter) (emphasis_delimiter)) (code_span (code_span_delimiter) (code_span_delimiter)))
+       ok   markdown_inline: syntax tree is the expected one
+       ok   markdown_inline: whole sample covered (0..27 bytes)
+       info query (code_span) @code -> [`code`]
+       ok   markdown_inline: query captures [`code`]
+     PASS tree-sitter-markdown
+PASS test_tree_sitter_markdown
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

@@ -1,0 +1,53 @@
+test_abuild	bin/abuild bin/abuild-tar bin/abuild-gzsplit bin/newapkbuild share/abuild bin/bash
+test_autoconf	bin/autoconf bin/autoheader bin/autom4te share/autoconf bin/m4 bin/perl bin/grep
+test_automake	bin/automake bin/aclocal share/automake-1.18 share/aclocal-1.18 bin/autoconf bin/autom4te share/autoconf bin/m4 bin/perl bin/make bin/grep
+test_bash	bin/bash
+test_bc	bin/bc bin/dc
+test_binutils	bin/as bin/ld bin/nm bin/objdump bin/readelf bin/size bin/strings bin/objcopy bin/addr2line bin/ar bin/ranlib bin/strip bin/c++filt
+test_busybox	bin/busybox
+test_chrony	sbin/chronyd bin/chronyc
+test_cmake	bin/cmake bin/ctest bin/cpack share/cmake-4.1 bin/ninja
+test_desktop_file_utils	bin/desktop-file-validate bin/desktop-file-install bin/desktop-file-edit bin/update-desktop-database
+test_dump1090	bin/dump1090
+test_emacs	bin/emacs bin/etags share/emacs libexec/emacs
+test_emulationstation	bin/emulationstation
+test_font_util	bin/ucs2any bin/bdftruncate share/fonts/X11/util
+test_gdb	bin/gdb share/gdb bin/m4
+test_git	bin/git libexec/git-core share/git-core
+test_godot	bin/godot-template-release-qnxscreen bin/godot-template-debug-qnxscreen
+test_gperf	bin/gperf
+test_grep	bin/grep
+test_groff	bin/groff bin/troff bin/grotty bin/grops bin/tbl bin/eqn bin/nroff share/groff
+test_itstool	bin/itstool share/itstool bin/python3 bin/msgfmt lib/python3.14/site-packages/libxml2.py lib/python3.14/site-packages/libxml2mod.so
+test_less	bin/less bin/lesskey bin/lessecho bin/tmux
+test_lmbench	lib/lmbench/bin
+test_m4	bin/m4
+test_make	bin/make
+test_mame	bin/mame
+test_mate_calc	bin/mate-calc bin/mate-calc-cmd share/glib-2.0/schemas/org.mate.calc.gschema.xml bin/glib-compile-schemas bin/broadwayd share/fonts/font-dejavu/DejaVuSans.ttf share/fonts/font-dejavu/DejaVuSansMono.ttf
+test_minicom	bin/minicom bin/runscript bin/ascii-xfr bin/tmux
+test_mkfontscale	bin/mkfontscale bin/mkfontdir
+test_nano	bin/nano bin/tmux
+test_neovim	bin/nvim share/nvim
+test_ninja	bin/ninja
+test_nodejs	bin/node
+test_npm	bin/npm lib/node_modules/npm bin/node
+test_openssh	bin/ssh bin/scp bin/ssh-keygen sbin/sshd libexec/sshd-session libexec/sshd-auth libexec/sftp-server
+test_pax_utils	bin/scanelf bin/dumpelf lib/libz.so.1
+test_picocom	bin/picocom
+test_pqiv	bin/pqiv bin/broadwayd share/fonts/font-dejavu/DejaVuSans.ttf share/fonts/font-dejavu/DejaVuSansMono.ttf
+test_retroarch	bin/retroarch lib/libretro/2048_libretro_qnx.so
+test_rsync	bin/rsync
+test_shared_mime_info	bin/update-mime-database share/mime/packages/freedesktop.org.xml
+test_sscep	bin/sscep bin/busybox
+test_sudo	bin/sudo bin/cvtsudoers sbin/visudo libexec/sudo
+test_sysbench	bin/sysbench share/sysbench
+test_tar	bin/tar
+test_tftp_hpa	bin/tftp sbin/in.tftpd
+test_tmux	bin/tmux
+test_vim	bin/vim bin/xxd share/vim
+test_xdg_utils	bin/xdg-open bin/xdg-mime bin/xdg-icon-resource bin/xdg-desktop-menu bin/grep
+test_xfce4_appfinder	bin/xfce4-appfinder bin/xfrun4 bin/broadwayd share/fonts/font-dejavu/DejaVuSans.ttf share/fonts/font-dejavu/DejaVuSansMono.ttf bin/dbus-daemon bin/gdbus share/dbus-1/session.conf share/dbus-1/services/org.xfce.Xfconf.service lib/xfce4/xfconf/xfconfd
+test_xfce4_session	bin/xfce4-session bin/xfce4-session-settings bin/xfce4-session-logout bin/startxfce4 bin/xflock4 bin/broadwayd share/fonts/font-dejavu/DejaVuSans.ttf share/fonts/font-dejavu/DejaVuSansMono.ttf bin/dbus-daemon bin/gdbus share/dbus-1/session.conf share/dbus-1/services/org.xfce.Xfconf.service lib/xfce4/xfconf/xfconfd
+test_xfce4_terminal	bin/xfce4-terminal bin/broadwayd share/fonts/font-dejavu/DejaVuSans.ttf share/fonts/font-dejavu/DejaVuSansMono.ttf bin/dbus-daemon bin/gdbus share/dbus-1/session.conf share/dbus-1/services/org.xfce.Xfconf.service lib/xfce4/xfconf/xfconfd
+test_zsh	bin/zsh share/zsh

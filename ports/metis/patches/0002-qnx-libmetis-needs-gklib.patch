@@ -1,0 +1,21 @@
+Link libmetis against GKlib.
+
+libmetis calls GKlib throughout (gk_malloc, gk_sigcatch's thread-local jump
+buffers, the random and sorting helpers) but its target links nothing, so
+libmetis.so has no DT_NEEDED for libGKlib.so. It links only because shared
+libraries are linked with --allow-shlib-undefined; an application that links
+just -lmetis, as METIS's documentation says to, then fails to load with
+undefined gk_* symbols, and only executables that list GKlib themselves work.
+
+Upstream-Status: QNX-specific
+
+--- a/libmetis/CMakeLists.txt
++++ b/libmetis/CMakeLists.txt
+@@ -6,6 +6,7 @@
+ 
+ # Build libmetis.
+ add_library(metis ${METIS_LIBRARY_TYPE} ${metis_sources})
++target_link_libraries(metis GKlib m)
+ 
+ if(METIS_INSTALL)
+   install(TARGETS metis

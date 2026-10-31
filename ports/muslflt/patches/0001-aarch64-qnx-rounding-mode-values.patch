@@ -1,0 +1,43 @@
+diff --git a/fenv/aarch64le/bits/fenv.h b/fenv/aarch64le/bits/fenv.h
+index 2f3279a..b4f128a 100644
+--- a/fenv/aarch64le/bits/fenv.h
++++ b/fenv/aarch64le/bits/fenv.h
+@@ -4,10 +4,13 @@
+ #define FE_UNDERFLOW  8
+ #define FE_INEXACT    16
+ #define FE_ALL_EXCEPT 31
++/* QNX's <fenv.h> values (the FPCR RMode field, not shifted into place):
++   programs that link muslflt are compiled against QNX's header, so its
++   fesetround/fegetround must take and return these, not musl's FPCR bits. */
+ #define FE_TONEAREST  0
+-#define FE_DOWNWARD   0x800000
+-#define FE_UPWARD     0x400000
+-#define FE_TOWARDZERO 0xc00000
++#define FE_UPWARD     1
++#define FE_DOWNWARD   2
++#define FE_TOWARDZERO 3
+ 
+ typedef unsigned int fexcept_t;
+ 
+diff --git a/fenv/aarch64le/fenv.s b/fenv/aarch64le/fenv.s
+index 8f3ec96..6f0b0ef 100644
+--- a/fenv/aarch64le/fenv.s
++++ b/fenv/aarch64le/fenv.s
+@@ -2,7 +2,7 @@
+ .type fegetround,%function
+ fegetround:
+ 	mrs x0, fpcr
+-	and w0, w0, #0xc00000
++	ubfx w0, w0, #22, #2
+ 	ret
+ 
+ .global __fesetround
+@@ -11,7 +11,7 @@ fegetround:
+ __fesetround:
+ 	mrs x1, fpcr
+ 	bic w1, w1, #0xc00000
+-	orr w1, w1, w0
++	orr w1, w1, w0, lsl #22
+ 	msr fpcr, x1
+ 	mov w0, #0
+ 	ret

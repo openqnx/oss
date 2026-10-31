@@ -1,39 +1,38 @@
-# capnproto 1.0.2-r0 -- INSTALLED
+# capnproto 1.0.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:22:57Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:27Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u capnproto
-(1/1) Installing capnproto (1.0.2-r0)
-OK: 175 MiB in 53 packages
+$ apk add -u capnproto qnx-test-capnproto qnx-port-tests
+(1/3) Installing capnproto (1.0.2-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-capnproto (1.0-r0)
+OK: 102 MiB in 32 packages
 
-$ ldd on every program and library apk info -L capnproto lists
-ok   loads: /data/oss/usr/local/bin/capnp
-ok   loads: /data/oss/usr/local/bin/capnpc
-ok   loads: /data/oss/usr/local/bin/capnpc-c++
-ok   loads: /data/oss/usr/local/bin/capnpc-capnp
-ok   loads: /data/oss/usr/local/lib/libcapnp-json.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcapnp-rpc.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcapnp-websocket.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcapnp.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libcapnpc.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj-async.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj-gzip.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj-http.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj-test.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj-tls.so.1.0.2
-cp: /tmp/.vot-ldd: Resource busy
-ok   loads: /data/oss/usr/local/lib/libkj.so.1.0.2
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_capnproto
+     == capnproto ==
+       info Cap'n Proto version 1.0.2
+       ok   capnp --version: 1.0.2
+       ok   eval origin: (x = 3, y = -4)
+       ok   eval greeting: "hello qnx"
+       ok   eval square.points: 4 points
+       ok   eval -o json: {"x": 3, "y": -4}
+       ok   encode: exact 24-byte message
+       ok   decode: (x = 1, y = 2)
+       ok   convert binary:json
+       ok   convert json:text
+       ok   packed encode/decode round trip of a struct with text and a list
+       info packed Shape message: 26 bytes
+       ok   default value: closed = true
+       ok   capnp id: @0x989e274261534797
+       ok   compile -oc++: s.capnp.h / s.capnp.c++ with Point and Shape
+       ok   compile -ocapnp echoes the schema
+       ok   invalid schema rejected: bad.capnp:1:1: error: File does not declare an ID.  I've generated one for you. 
+     PASS capnproto
+PASS test_capnproto
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

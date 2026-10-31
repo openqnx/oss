@@ -1,23 +1,34 @@
-# emulationstation 2.11_git20241212-r0 -- INSTALLED
+# emulationstation 2.11_git20241212-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:26Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u emulationstation
-(1/9) Installing c-ares (1.34.3-r0)
-(2/9) Installing nghttp2 (1.64.0-r0)
-(3/9) Installing curl (8.11.1-r0)
-(4/9) Installing freeimage (3.18.0-r0)
-(5/9) Installing pugixml (1.14-r0)
-(6/9) Installing sdl2 (2.32.10-r0)
-(7/9) Installing lz4 (1.10.0-r0)
-(8/9) Installing vlc (3.0.21-r0)
-(9/9) Installing emulationstation (2.11_git20241212-r0)
-OK: 763 MiB in 61 packages
+$ apk add -u emulationstation qnx-test-emulationstation qnx-port-tests
+( 1/11) Installing c-ares (1.34.3-r0)
+( 2/11) Installing nghttp2 (1.64.0-r0)
+( 3/11) Installing curl (8.11.1-r1)
+( 4/11) Installing freeimage (3.18.0-r1)
+( 5/11) Installing pugixml (1.14-r0)
+( 6/11) Installing sdl2 (2.32.10-r0)
+( 7/11) Installing lz4 (1.10.0-r0)
+( 8/11) Installing vlc (3.0.21-r0)
+( 9/11) Installing emulationstation (2.11_git20241212-r0)
+(10/11) Installing qnx-port-tests (1.0-r2)
+(11/11) Installing qnx-test-emulationstation (1.0-r0)
+OK: 690 MiB in 40 packages
 
-$ ldd on every program and library apk info -L emulationstation lists
-ok   loads: /data/oss/usr/local/bin/emulationstation
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_emulationstation
+     == emulationstation ==
+       ok   --help: Version 2.12.0rp-dev, built Oct 29 2026 - 00:49:30
+       ok   --help lists --resolution and --windowed
+       ok   started: es_log.txt has 'EmulationStation - v2.12.0rp-dev, built Oct 29 2026 - 00:49:30'
+       ok   stopped by itself without a display (rc=1)
+       info last log line: Oct 31 16:13:12 lvl0: 	Window failed to initialize!
+     PASS emulationstation
+PASS test_emulationstation
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

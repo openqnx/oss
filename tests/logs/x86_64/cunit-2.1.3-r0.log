@@ -1,15 +1,35 @@
-# cunit 2.1.3-r0 -- INSTALLED
+# cunit 2.1.3-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:08Z   packages from: apk:local-dists
+# date: 2026-10-31T16:12:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u cunit
-(1/1) Installing cunit (2.1.3-r0)
-OK: 166 MiB in 53 packages
+$ apk add -u cunit qnx-test-cunit qnx-port-tests
+(1/3) Installing cunit (2.1.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-cunit (1.0-r0)
+OK: 93 MiB in 32 packages
 
-$ ldd on every program and library apk info -L cunit lists
-ok   loads: /data/oss/usr/local/lib/libcunit.so.1
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cunit
+     == cunit ==
+       ok   registry initialised
+       ok   two suites added
+       ok   four tests added
+       ok   test without a function rejected
+       info CU_run_all_tests: 22 (Suite initialization function failed.)
+       info tests run 3 failed 1, asserts 6 failures 1, suites run 1 failed 1
+       ok   3 tests run, 1 failed (suite with failing init skipped)
+       ok   6 assertions evaluated
+       ok   1 suite run, 1 suite failed to initialise
+       ok   suite cleanup ran
+       info failure at line 16: 2 + 2 == 5
+       ok   failure record names the test, line and condition
+       ok   lookup by name
+       ok   registry cleaned up
+     PASS cunit
+PASS test_cunit
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: INSTALLED
+RESULT: PASS

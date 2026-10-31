@@ -1,6 +1,6 @@
 # fastdds 2.14.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:23:35Z   packages from: apk:local-dists
+# date: 2026-10-31T16:13:30Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -10,9 +10,9 @@ $ apk add -u fastdds qnx-test-fastdds qnx-port-tests
 (2/6) Installing foonathan_memory (0.7.3-r0)
 (3/6) Installing tinyxml2 (<ip>-r0)
 (4/6) Installing fastdds (2.14.4-r0)
-(5/6) Installing qnx-port-tests (1.0-r1)
+(5/6) Installing qnx-port-tests (1.0-r2)
 (6/6) Installing qnx-test-fastdds (1.0-r6)
-OK: 180 MiB in 58 packages
+OK: 107 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fastdds
      == fastdds ==

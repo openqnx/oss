@@ -1,15 +1,15 @@
 # stable-diffusion.cpp 0_git20260601-r2 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T04:40:51Z   packages from: apk:local-dists
+# date: 2026-10-31T16:34:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u stable-diffusion.cpp qnx-test-sdcpp qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r1)
+(1/3) Installing qnx-port-tests (1.0-r2)
 (2/3) Installing stable-diffusion.cpp (0_git20260601-r2)
 (3/3) Installing qnx-test-sdcpp (1.0-r1)
-OK: 224 MiB in 55 packages
+OK: 151 MiB in 32 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdcpp
      == stable-diffusion.cpp ==

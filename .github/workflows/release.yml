@@ -1,0 +1,68 @@
+name: release
+
+# The button: Actions -> release -> Run workflow.
+# Built components -> packaged and signed -> installed with apk and tested on
+# both QEMU targets -> published (what passed) -> releases checked byte for
+# byte -> package site redeployed. scripts/ci-release does the work.
+#
+# Runs only on the self-hosted runner (labels self-hosted, qnx-sdp), in the
+# maintainer's workspace $OSS_WS: it holds what git does not (the build trees,
+# dists/, the signing key) and is brought up to date with main first.
+# Only manual and scheduled triggers: nothing from a pull request or a fork
+# ever runs on that machine.
+#
+# Runner setup (once): its .env holds QNX_SDP_ROOT and OSS_WS; the repository
+# variables CI_TARGET_X86_64 / CI_TARGET_AARCH64LE name the two targets.
+on:
+  workflow_dispatch:
+    inputs:
+      components:
+        description: "Components (space separated), or --changed for every version not yet verified"
+        required: true
+        default: "--changed"
+      publish:
+        description: "Publish what passed (releases + package site)"
+        type: boolean
+        default: true
+      commit:
+        description: "Commit the results, logs and docs to main"
+        type: boolean
+        default: true
+
+concurrency:
+  group: qnx-targets
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: [self-hosted, qnx-sdp]
+    timeout-minutes: 1440
+    env:
+      CI_TARGET_X86_64: ${{ vars.CI_TARGET_X86_64 }}
+      CI_TARGET_AARCH64LE: ${{ vars.CI_TARGET_AARCH64LE }}
+    steps:
+      - name: Workspace up to date with main
+        run: |
+          cd "$OSS_WS"
+          git fetch -q origin main
+          git merge --ff-only origin/main
+      - name: Package, test on the targets, publish
+        env:
+          COMPONENTS: ${{ inputs.components }}
+        run: |
+          cd "$OSS_WS"
+          set -- $COMPONENTS
+          ./scripts/ci-release \
+            ${{ !inputs.publish && '--no-publish' || '' }} \
+            ${{ inputs.commit && '--commit' || '' }} "$@" 2>&1 | tee logs/ci-release.log
+      - name: Results
+        if: always()
+        run: |
+          cd "$OSS_WS"
+          {
+            echo "## On-target results"
+            grep -hE '^(PASS|FAIL|INSTALLED|== )' logs/ci-release.log | tail -n 200 | sed 's/^/    /'
+          } >> "$GITHUB_STEP_SUMMARY"

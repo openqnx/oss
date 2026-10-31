@@ -18,15 +18,22 @@ jobs:
   build:
     runs-on: [self-hosted, qnx-sdp]
     steps:
-      - uses: actions/checkout@v4
+      # The maintainer's workspace ($OSS_WS, from the runner's .env): the
+      # dependencies' staging trees live there, not in a fresh checkout.
+      - name: Workspace up to date with main
+        run: cd "$OSS_WS" && git fetch -q origin main && git merge --ff-only origin/main
       - name: Build
+        env:
+          PACKAGES: ${{ inputs.packages }}
+          ARCH: ${{ inputs.arch }}
         run: |
           set -e
-          pkgs="${{ inputs.packages }}"
+          cd "$OSS_WS"
+          pkgs="$PACKAGES"
           [ "$pkgs" = "all" ] && pkgs="$(ls ports)"
-          case "${{ inputs.arch }}" in
+          case "$ARCH" in
             both) ./scripts/qnxbuild $pkgs ;;
-            *)    ./scripts/qnxbuild -a "${{ inputs.arch }}" $pkgs ;;
+            *)    ./scripts/qnxbuild -a "$ARCH" $pkgs ;;
           esac
       - name: Audit the staging tree
         run: ./scripts/check-all

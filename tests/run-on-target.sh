@@ -71,11 +71,13 @@ free_kb=$(df -kP /tmp 2>/dev/null | awk 'NR==2 {print $4}')
   echo "!! only $((free_kb/1024)) MB free on /tmp -- tests that write files may fail"
 
 pass=0; fail=0; failed=""
-list="$DIR/tests.list"
-[ -f "$list" ] || list=$(ls "$DIR"/test_* 2>/dev/null | sed 's|.*/||')
 # Named tests only: run-on-target.sh test_zstd test_jq (scripts/verify-on-target).
-[ $# -gt 0 ] && list="$*"
-for t in $(cat "$list" 2>/dev/null || echo $list); do
+# Otherwise the manifest, or every test_* here. (A name is never read as a
+# file: run from a directory holding the test, that read the binary.)
+if [ $# -gt 0 ]; then names="$*"
+elif [ -f "$DIR/tests.list" ]; then names=$(cat "$DIR/tests.list")
+else names=$(ls "$DIR"/test_* 2>/dev/null | sed 's|.*/||'); fi
+for t in $names; do
   [ -x "$DIR/$t" ] || continue
   "$DIR/$t" > /tmp/$t.out 2>&1
   rc=$?

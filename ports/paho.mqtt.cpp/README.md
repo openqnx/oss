@@ -1,5 +1,7 @@
 # paho.mqtt.cpp 1.5.2
 
+> Eclipse Paho MQTT client library for C++
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

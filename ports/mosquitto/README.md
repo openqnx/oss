@@ -1,5 +1,7 @@
 # mosquitto 2.0.20
 
+> Eclipse Mosquitto MQTT broker, client libraries and pub/sub utilities
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

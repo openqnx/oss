@@ -1,5 +1,7 @@
 # libfdt 1.7.2
 
+> Device Tree Compiler (dtc) and libfdt for flat device trees
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

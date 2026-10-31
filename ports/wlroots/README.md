@@ -1,5 +1,7 @@
 # wlroots 0.20.2
 
+> Modular library for building Wayland compositors
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

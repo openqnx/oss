@@ -1,5 +1,7 @@
 # geany 2.1
 
+> Fast and lightweight IDE using GTK
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`pango`](../pango/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_geany`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add geany
 apk add geany-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-geany && /usr/local/bin/qnx-port-tests/test_geany    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install geany`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -149,10 +152,48 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/geany-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_geany`](../../tests/src/) links geany the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-geany`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-geany
+/usr/local/bin/qnx-port-tests/test_geany
+```
+
+```
+== geany ==
+  ok   ...
+PASS geany
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_geany` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_geany`](../../tests/src/) -- a program linked against geany the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - utils_str_casecmp
+   - utils_str_equal (NULL-safe)
+   - utils_remove_ext_from_filename
+   - utils_str_middle_truncate to 9 chars
+   - utils_string_replace_all (3 replacements)
+   - utils_str_remove_chars
+   - utils_get_initials
+   - utils_get_setting_* from a GKeyFile (with defaults)
+   - utils_strv_shorten_file_list: common prefix stripped, middle ellipsized
+   - utils_strv_shorten_file_list: longest common substring
+   - scratch directory
+   - geany --version: geany 2.1, built with GTK 3
+   - geany --print-prefix: /usr/local
+   - geany --ft-names
+   - built-in filetypes C, Python, Make, XML listed
+   - custom filetype from the -c config directory listed
+   - more than 50 filetypes
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

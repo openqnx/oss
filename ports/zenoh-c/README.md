@@ -1,5 +1,7 @@
 # zenoh-c 1.2.1
 
+> C bindings for Eclipse Zenoh pub/sub, storage and query protocol
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

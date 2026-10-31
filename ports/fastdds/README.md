@@ -1,5 +1,7 @@
 # fastdds 2.14.4
 
+> eProsima Fast DDS, C++ implementation of the OMG DDS standard
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

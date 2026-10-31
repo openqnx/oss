@@ -1,5 +1,7 @@
 # readline 8.2
 
+> GNU Readline library for command line editing and history
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

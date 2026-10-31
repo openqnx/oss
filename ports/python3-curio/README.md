@@ -1,5 +1,7 @@
 # python3-curio 1.6_git20251221
 
+> Coroutine-based Python library for concurrent systems programming
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

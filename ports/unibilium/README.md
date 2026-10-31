@@ -1,5 +1,7 @@
 # unibilium 2.1.2
 
+> Basic terminfo library for reading terminfo files and format strings
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

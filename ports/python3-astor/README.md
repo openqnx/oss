@@ -1,5 +1,7 @@
 # python3-astor 0.8.1
 
+> Python module for reading, rewriting and writing Python ASTs as source
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

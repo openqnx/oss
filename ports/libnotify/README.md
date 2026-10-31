@@ -1,5 +1,7 @@
 # libnotify 0.8.3
 
+> Library for sending desktop notifications
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

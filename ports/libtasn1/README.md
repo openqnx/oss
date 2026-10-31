@@ -1,5 +1,7 @@
 # libtasn1 4.19.0
 
+> GNU library for ASN.1 and DER manipulation
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

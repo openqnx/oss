@@ -1,5 +1,7 @@
 # wayland 1.24.0
 
+> Wayland display protocol client and server libraries
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # libice 1.1.2
 
+> X Inter-Client Exchange (ICE) protocol library
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

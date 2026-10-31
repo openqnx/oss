@@ -1,5 +1,7 @@
 # cppzmq 4.10.0
 
+> Header-only C++ binding for the ZeroMQ messaging library
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

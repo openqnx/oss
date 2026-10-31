@@ -1,5 +1,7 @@
 # taglib 2.0.2
 
+> Library for reading and editing audio file metadata tags
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

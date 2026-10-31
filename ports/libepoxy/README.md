@@ -1,5 +1,7 @@
 # libepoxy 1.5.10
 
+> Library for managing OpenGL, EGL and GLX function pointers
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

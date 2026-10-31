@@ -1,5 +1,7 @@
 # libxfont2 2.0.7
 
+> X font handling library for X servers and utilities
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # lzo 2.10
 
+> LZO real-time data compression library
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

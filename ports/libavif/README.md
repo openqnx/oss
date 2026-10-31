@@ -1,5 +1,7 @@
 # libavif 1.1.1
 
+> Library for encoding and decoding AVIF images
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # python3-mypy-extensions 1.1.0
 
+> Type system extensions for programs checked with mypy
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

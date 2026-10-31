@@ -1,5 +1,7 @@
 # font-noto-emoji 2.048
 
+> Noto Color Emoji font
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

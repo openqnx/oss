@@ -1,5 +1,7 @@
 # libzip 1.11.1
 
+> C library for reading, creating and modifying zip archives
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

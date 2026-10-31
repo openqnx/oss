@@ -1,5 +1,7 @@
 # python3-versioneer 0.29
 
+> Python tool for deriving version strings from version-control tags
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

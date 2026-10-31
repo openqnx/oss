@@ -1,5 +1,7 @@
 # fcl 0.7.0
 
+> Flexible Collision Library for collision and proximity queries
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # libsecret 0.21.4
 
+> GObject library for storing and retrieving secrets via Secret Service
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

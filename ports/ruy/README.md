@@ -1,5 +1,7 @@
 # ruy 0-git-20240321
 
+> Matrix multiplication library for neural network inference
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`cpuinfo`](../cpuinfo/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_ruy`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add ruy
 apk add ruy-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-ruy && /usr/local/bin/qnx-port-tests/test_ruy    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install ruy`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -128,10 +131,40 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/ruy-*-r0.
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_ruy`](../../tests/src/) links ruy the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-ruy`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-ruy
+/usr/local/bin/qnx-port-tests/test_ruy
+```
+
+```
+== ruy ==
+  ok   ...
+PASS ruy
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_ruy` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_ruy`](../../tests/src/) -- a program linked against ruy the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - float 2x2: [19 22; 43 50]
+   - column-major operand, same result
+   - per-row bias (+1, -100)
+   - clamp to [20, 40]
+   - int8 2x3 x 3x2 -> int32 [58 24; -83 10]
+   - uint8 with zero points 128, multiplier 0.5: 136
+   - 96x80 x 80x72 float product on 2 threads matches the naive loop
+   - a kernel path was selected
+   - NEON kernel path on aarch64
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

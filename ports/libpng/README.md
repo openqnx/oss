@@ -1,5 +1,7 @@
 # libpng 1.6.44
 
+> C library for reading and writing PNG images
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

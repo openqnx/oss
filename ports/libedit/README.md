@@ -1,5 +1,7 @@
 # libedit 20240808-3.1
 
+> Command line editor library: line editing, history and tokenization
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

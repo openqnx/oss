@@ -1,5 +1,7 @@
 # xfce4-panel 4.20.0
 
+> Xfce panel with launchers, menus and workspace switcher
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`garcon`](../garcon/) [`exo`](../exo/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_xfce4_panel`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add xfce4-panel
 apk add xfce4-panel-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-xfce4-panel && /usr/local/bin/qnx-port-tests/test_xfce4_panel    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install xfce4-panel`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -147,10 +150,46 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/xfce4-pan
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_xfce4_panel`](../../tests/src/) links xfce4-panel the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-xfce4-panel`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-xfce4-panel
+/usr/local/bin/qnx-port-tests/test_xfce4_panel
+```
+
+```
+== xfce4-panel ==
+  ok   ...
+PASS xfce4-panel
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_xfce4_panel` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_xfce4_panel`](../../tests/src/) -- a program linked against xfce4-panel the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - libxfce4panel 4.20.0
+   - libxfce4panel_check_version
+   - xfconf channel name xfce4-panel
+   - XfcePanelPluginMode enum: deskbar
+   - XfceScreenPosition enum: floating-v
+   - XfcePanelPlugin has its 14 documented properties
+   - all 11 plugins: .desktop -> module -> xfce_panel_module_init registers an XfcePanelPlugin type
+   - default panel layout (xfconf XML) installed
+   - scratch directory
+   - xfce4-panel --version: 4.20.0
+   - xfce4-panel --help lists --preferences, --add
+   - XfceArrowButton: arrow up
+   - XfceArrowButton: set arrow left, blinking
+   - gtk_init_check on the headless display
+   - without a display xfce4-panel stops at the display probe
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

@@ -1,5 +1,7 @@
 # gstreamer 1.24.10
 
+> GStreamer streaming media framework core
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

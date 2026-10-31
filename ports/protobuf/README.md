@@ -1,5 +1,7 @@
 # protobuf 29.3
 
+> Google's Protocol Buffers data serialization library and compiler
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

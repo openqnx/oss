@@ -1,5 +1,7 @@
 # python3-idna 3.20
 
+> Python support for internationalized domain names (IDNA 2008, UTS 46)
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

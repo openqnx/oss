@@ -1,5 +1,7 @@
 # python3-async-generator 1.10
 
+> Python async generators and async context managers backport
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

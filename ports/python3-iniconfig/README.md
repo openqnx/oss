@@ -1,5 +1,7 @@
 # python3-iniconfig 2.3.1
 
+> Minimal INI file parsing module for Python
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

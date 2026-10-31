@@ -1,5 +1,7 @@
 # font-dejavu 2.37
 
+> DejaVu font family (sans, serif, mono)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

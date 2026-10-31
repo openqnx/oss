@@ -1,5 +1,7 @@
 # cyclonedds 0.10.5
 
+> Eclipse Cyclone DDS, an implementation of the OMG DDS standard
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

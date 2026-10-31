@@ -1,5 +1,7 @@
 # libssh2 1.11.1
 
+> Client-side C library implementing the SSH2 protocol
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

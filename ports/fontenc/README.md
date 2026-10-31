@@ -1,5 +1,7 @@
 # fontenc 1.1.8
 
+> X.Org font encoding library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`xorgproto`](../xorgproto/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_fontenc`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add fontenc
 apk add fontenc-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-fontenc && /usr/local/bin/qnx-port-tests/test_fontenc    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install fontenc`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -123,10 +126,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/fontenc-*
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_fontenc`](../../tests/src/) links fontenc the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-fontenc`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-fontenc
+/usr/local/bin/qnx-port-tests/test_fontenc
+```
+
+```
+== fontenc ==
+  ok   ...
+PASS fontenc
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_fontenc` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_fontenc`](../../tests/src/) -- a program linked against fontenc the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - encoding name from an XLFD
+   - FONT_ENCODINGS_DIRECTORY honoured
+   - built-in iso8859-2 Unicode map
+   - iso8859-2: 0x41 -> U+0041
+   - iso8859-2: 0xA1 -> U+0104, 0xB9 -> U+0161
+   - reverse map: U+0158 -> 0xD8
+   - koi8-r: 0xC1 -> U+0430, 0xFF -> U+042A
+   - iso8859-15: 0xA4 -> euro sign
+   - FontEncFind: iso8859-5 is a 256-entry single-byte encoding
+   - FontEncIdentify reads name and alias from an encoding file
+   - own encoding loaded via encodings.dir and recodes
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

@@ -1,5 +1,7 @@
 # epiphany 43.1
 
+> GNOME Web, a WebKitGTK-based web browser
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`webkitgtk`](../webkitgtk/) [`gtk3`](../gtk3/) [`libhandy`](../libhandy/) [`libportal`](../libportal/) [`gcr`](../gcr/) [`libsecret`](../libsecret/) [`json-glib`](../json-glib/) [`sqlite`](../sqlite/) [`nettle`](../nettle/) [`libarchive`](../libarchive/) [`gsettings-desktop-schemas`](../gsettings-desktop-schemas/) [`iso-codes`](../iso-codes/) [`libdazzle`](../libdazzle/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gcr`](../gcr/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gmp`](../gmp/) [`gtk3`](../gtk3/) [`json-glib`](../json-glib/) [`libarchive`](../libarchive/) [`libdazzle`](../libdazzle/) [`libhandy`](../libhandy/) [`libportal`](../libportal/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libxml2`](../libxml2/) [`nettle`](../nettle/) [`pango`](../pango/) [`sqlite`](../sqlite/) [`webkitgtk`](../webkitgtk/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_epiphany`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add epiphany
 apk add epiphany-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-epiphany && /usr/local/bin/qnx-port-tests/test_epiphany    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install epiphany`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -181,10 +184,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/epiphany-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_epiphany`](../../tests/src/) links epiphany the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-epiphany`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-epiphany
+/usr/local/bin/qnx-port-tests/test_epiphany
+```
+
+```
+== epiphany ==
+  ok   ...
+PASS epiphany
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_epiphany` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_epiphany`](../../tests/src/) -- a program linked against epiphany the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - scratch directory
+   - epiphany --version: Web 43.1
+   - epiphany --help lists its options
+   - conflicting --private-instance/--application-mode rejected
+   - --automation-mode with --incognito-mode rejected
+   - --application-mode with a missing --profile directory rejected
+   - unknown option rejected by name
+   - ephy-profile-migrator: migration version 37
+   - default bookmarks (RDF) installed
+   - GSettings schema org.gnome.Epiphany.web installed
+   - desktop entry runs epiphany
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

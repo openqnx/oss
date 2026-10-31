@@ -1,5 +1,7 @@
 # python3-traitlets 5.16.1
 
+> Typed, validated and observable attributes for Python configuration
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

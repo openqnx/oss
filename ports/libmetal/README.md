@@ -1,5 +1,7 @@
 # libmetal 2024.10.0
 
+> Abstraction library for device access, interrupts and shared memory
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libmetal`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libmetal
 apk add libmetal-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libmetal && /usr/local/bin/qnx-port-tests/test_libmetal    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libmetal`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -214,10 +217,57 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libmetal-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libmetal`](../../tests/src/) links libmetal the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libmetal`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libmetal
+/usr/local/bin/qnx-port-tests/test_libmetal
+```
+
+```
+== libmetal ==
+  ok   ...
+PASS libmetal
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libmetal` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libmetal`](../../tests/src/) -- a program linked against libmetal the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - metal_init (IRQ channel, cache control, generic bus)
+   - I/O region of 4096 bytes
+   - typed writes read back (8/16/32/64 bit)
+   - a 32-bit write landed in memory
+   - block_write
+   - block_read gives it back
+   - block_set fills exactly 32 bytes
+   - offset <-> virtual address
+   - offset <-> physical address
+   - physical <-> virtual
+   - out of range -> NULL / BAD_OFFSET
+   - metal_shmem_open twice, 8 KiB
+   - written through one mapping, read through the other
+   - new list is empty
+   - list: add_tail 1..4, delete 2 -> 1,3,4
+   - list_find_node
+   - bitmap set/test
+   - bitmap next set/clear bit
+   - log2, align_up, div_round_up
+   - mutex and spinlock: 4 threads x 20000 increments each
+   - condition variable woke the waiter for all 4
+   - try_acquire on a free mutex
+   - is_acquired while held
+   - not is_acquired once released
+   - is_acquired left a free mutex free (try_acquire succeeds)
+   - ... and 3 more
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

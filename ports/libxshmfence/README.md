@@ -1,5 +1,7 @@
 # libxshmfence 1.3.3
 
+> Shared memory fence synchronization library for X
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

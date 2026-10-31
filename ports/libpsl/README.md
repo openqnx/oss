@@ -1,5 +1,7 @@
 # libpsl 0.21.5
 
+> C library for handling the Public Suffix List
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

@@ -1,5 +1,7 @@
 # glib 2.82.4
 
+> Low-level core C library of GTK and GNOME: data types, main loop, GIO
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

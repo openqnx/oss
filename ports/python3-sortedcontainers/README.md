@@ -1,5 +1,7 @@
 # python3-sortedcontainers 2.4.0
 
+> Sorted list, dict and set types in pure Python
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

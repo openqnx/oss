@@ -1,5 +1,7 @@
 # libjpeg-turbo 3.0.4
 
+> SIMD-accelerated JPEG codec library and tools (libjpeg, TurboJPEG APIs)
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libjpeg_turbo`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libjpeg-turbo
 apk add libjpeg-turbo-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libjpeg-turbo && /usr/local/bin/qnx-port-tests/test_libjpeg_turbo    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libjpeg-turbo`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -125,10 +128,54 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libjpeg-t
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libjpeg_turbo`](../../tests/src/) links libjpeg-turbo the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libjpeg-turbo`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libjpeg-turbo
+/usr/local/bin/qnx-port-tests/test_libjpeg_turbo
+```
+
+```
+== libjpeg-turbo ==
+  ok   ...
+PASS libjpeg-turbo
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libjpeg_turbo` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libjpeg_turbo`](../../tests/src/) -- a program linked against libjpeg-turbo the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - scratch directory
+   - tj3Init(COMPRESS)
+   - tj3Compress8
+   - SOI/EOI markers
+   - tj3DecompressHeader
+   - header says 64x48
+   - header says 4:4:4
+   - tj3Decompress8
+   - decoded pixels match the original (mean error < 2)
+   - jpeg_read_header
+   - libjpeg: 64x48x3
+   - libjpeg and TurboJPEG decode alike
+   - cjpeg PPM -> JPEG
+   - cjpeg wrote a JPEG
+   - cjpeg output is 64x48 (read with TurboJPEG)
+   - djpeg JPEG -> PPM
+   - djpeg output is a 64x48 PPM
+   - cjpeg/djpeg round trip preserves the picture
+   - jpegtran -rotate 90
+   - rotated JPEG is 48x64
+   - wrjpgcom
+   - rdjpgcom
+   - rdjpgcom reads back the comment
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

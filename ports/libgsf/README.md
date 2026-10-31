@@ -1,5 +1,7 @@
 # libgsf 1.14.53
 
+> Library for reading and writing structured files (MS OLE, Zip)
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`gettext`](../gettext/) [`glib`](../glib/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libgsf`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libgsf
 apk add libgsf-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libgsf && /usr/local/bin/qnx-port-tests/test_libgsf    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libgsf`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -138,10 +141,51 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libgsf-*-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libgsf`](../../tests/src/) links libgsf the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libgsf`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libgsf
+/usr/local/bin/qnx-port-tests/test_libgsf
+```
+
+```
+== libgsf ==
+  ok   ...
+PASS libgsf
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libgsf` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libgsf`](../../tests/src/) -- a program linked against libgsf the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - scratch directory
+   - gsf_outfile_msole_new
+   - wrote Alpha (11 B) and Dir/Beta (10000 B)
+   - OLE2 signature D0CF11E0A1B11AE1
+   - gsf_infile_msole_new
+   - root has 2 children
+   - Alpha reads back
+   - Dir/Beta reads back (10000 B)
+   - missing member -> NULL
+   - gsf_outfile_zip_new
+   - wrote alpha.txt (stored) and big.txt (deflated)
+   - ZIP local header signature
+   - deflate compressed the repetitive 10 kB member
+   - zip has 2 members
+   - alpha.txt reads back
+   - big.txt inflates back to 10000 B
+   - gsf list t.ole shows Alpha and Beta
+   - gsf cat t.ole Alpha = \"hello alpha\"
+   - gsf list t.zip shows both members and the 10000 B size
+   - gsf cat t.zip big.txt inflates exactly
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

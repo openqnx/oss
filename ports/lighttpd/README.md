@@ -1,16 +1,18 @@
 # lighttpd 1.4.77
 
+> Lightweight, flexible web server
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
 | Upstream | https://git.lighttpd.net/lighttpd/lighttpd1.4.git (tag `lighttpd-1.4.77`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_lighttpd`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add lighttpd
 apk add lighttpd-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-lighttpd && /usr/local/bin/qnx-port-tests/test_lighttpd    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install lighttpd`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -61,7 +64,15 @@ git clone --depth 1 -b lighttpd-1.4.77 --recurse-submodules --shallow-submodules
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/lighttpd < ports/lighttpd/patches/0001-qnx-export-builtin-modules.patch
+```
+
+**[`0001-qnx-export-builtin-modules.patch`](patches/0001-qnx-export-builtin-modules.patch)** — QNX: keep the build machine's path out of the __FILE__ names lighttpd
+
+Touches: `src/CMakeLists.txt`
 
 ### 4. Configure, build and install into the staging tree
 
@@ -124,10 +135,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/lighttpd-
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_lighttpd`](../../tests/src/) links lighttpd the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-lighttpd`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-lighttpd
+/usr/local/bin/qnx-port-tests/test_lighttpd
+```
+
+```
+== lighttpd ==
+  ok   ...
+PASS lighttpd
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_lighttpd` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_lighttpd`](../../tests/src/) -- a program linked against lighttpd the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - lighttpd -tt accepts the configuration
+   - lighttpd listening on 127.0.0.1
+   - GET /hello.txt -> 200
+   - Content-Length: 4096
+   - Content-Type from mimetype.assign
+   - body identical to the file
+   - GET / serves index.html
+   - missing file -> 404
+   - Range request -> 206 with the right bytes
+   - HEAD over HTTP/1.0: 200, no body
+   - lighttpd stops on SIGTERM
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

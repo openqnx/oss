@@ -1,5 +1,7 @@
 # poppler 25.12.0
 
+> PDF rendering library and command line tools
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

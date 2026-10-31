@@ -1,5 +1,7 @@
 # libuv 1.51.0
 
+> Multi-platform support library for asynchronous I/O
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

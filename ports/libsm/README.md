@@ -1,5 +1,7 @@
 # libsm 1.2.6
 
+> X Session Management library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

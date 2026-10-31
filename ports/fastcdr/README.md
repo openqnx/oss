@@ -1,5 +1,7 @@
 # fastcdr 2.2.6
 
+> eProsima Fast CDR, C++ serialization library for the CDR format
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

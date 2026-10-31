@@ -1,5 +1,7 @@
 # c-ares 1.34.3
 
+> Asynchronous DNS resolver library in C
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

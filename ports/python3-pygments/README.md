@@ -1,5 +1,7 @@
 # python3-pygments 2.21.0
 
+> Python syntax highlighter for many languages
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

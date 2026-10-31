@@ -304,6 +304,13 @@ def render_planned(n, f):
     return "\n".join(L)
 
 
+
+def describe(n):
+    """ports/<name>/DESCRIPTION: what the component is for, one line."""
+    p = os.path.join("ports", n, "DESCRIPTION")
+    return open(p).read().strip() if os.path.exists(p) else ""
+
+
 def render(n, f, d, patches, test):
     L = []
     A = L.append
@@ -312,6 +319,8 @@ def render(n, f, d, patches, test):
     badge, expl = CLASS_TEXT[cls]
     upstream = f.get("GIT") or f.get("TARBALL") or "see recipe.sh"
     A(f"# {n} {ver}\n")
+    if describe(n):
+        A(f"> {describe(n)}\n")
     A(f"**{badge}** — {expl}\n")
     A("| | |\n|---|---|")
     A(f"| Upstream | {upstream}" + (f" (tag `{f['REF']}`)" if f.get("REF") else "") + " |")

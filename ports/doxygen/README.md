@@ -1,5 +1,7 @@
 # doxygen 1.17.0
 
+> Documentation generator for C, C++ and other languages
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

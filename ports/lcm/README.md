@@ -1,5 +1,7 @@
 # lcm 1.5.2
 
+> Lightweight Communications and Marshalling: message passing for real time
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

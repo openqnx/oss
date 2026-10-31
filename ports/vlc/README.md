@@ -1,5 +1,7 @@
 # vlc 3.0.21
 
+> VLC media player and libvlc multimedia engine
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -10,7 +12,7 @@
 | Build dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_vlc`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add vlc
 apk add vlc-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-vlc && /usr/local/bin/qnx-port-tests/test_vlc    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install vlc`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -201,10 +204,50 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/vlc-*-r0.
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_vlc`](../../tests/src/) links vlc the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-vlc`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-vlc
+/usr/local/bin/qnx-port-tests/test_vlc
+```
+
+```
+== vlc ==
+  ok   ...
+PASS vlc
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_vlc` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_vlc`](../../tests/src/) -- a program linked against vlc the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - libvlc_get_version is 3.0.21
+   - scratch directory
+   - wrote 1 s 8 kHz mono WAV
+   - libvlc_new
+   - libvlc_media_new_path
+   - parse request
+   - media parsed
+   - duration is 1000 ms
+   - one audio track, 8000 Hz mono
+   - libvlc_media_player_new_from_media
+   - libvlc_media_player_play
+   - playback reached the end
+   - ~8000 samples reached the audio callback
+   - decoded peak is the generated 12000
+   - vlc -I dummy --aout=afile exits 0
+   - afile wrote an 8 kHz mono WAV
+   - afile output has a RIFF/WAVE header
+   - the vlc program decoded ~8000 samples
+   - PCM passed through unchanged
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

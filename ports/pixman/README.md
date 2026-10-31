@@ -1,5 +1,7 @@
 # pixman 0.46.4
 
+> Low-level pixel manipulation library (compositing, rasterization)
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

@@ -1,5 +1,7 @@
 # mcap-cpp 2.1.3
 
+> Header-only C++ library for the MCAP robotics message log format
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

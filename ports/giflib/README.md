@@ -1,5 +1,7 @@
 # giflib 5.2.2
 
+> Library and tools for reading and writing GIF images
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

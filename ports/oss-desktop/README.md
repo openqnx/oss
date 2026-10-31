@@ -1,5 +1,7 @@
 # oss-desktop 1.0
 
+> Desktop session with labwc, Xfce panel, terminal and file manager
+
 **🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |

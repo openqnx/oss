@@ -1,5 +1,7 @@
 # fontconfig 2.15.0
 
+> Library for font configuration, discovery and customization
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

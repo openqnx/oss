@@ -1,5 +1,7 @@
 # python3 3.14.0
 
+> Python 3 programming language interpreter and standard library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

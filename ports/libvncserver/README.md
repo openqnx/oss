@@ -1,5 +1,7 @@
 # libvncserver 0.9.15
 
+> C libraries for implementing VNC servers and clients
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

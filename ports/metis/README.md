@@ -1,16 +1,18 @@
 # metis 5.2.1
 
+> Programs and library for partitioning graphs and finite element meshes
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
 | Upstream | https://github.com/KarypisLab/METIS.git (tag `v5.2.1`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`gklib`](../gklib/) |
 | Run-time dependencies | [`gklib`](../gklib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_metis`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -21,6 +23,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add metis
 apk add metis-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-metis && /usr/local/bin/qnx-port-tests/test_metis    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install metis`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -56,10 +59,11 @@ git clone --depth 1 -b v5.2.1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/metis < ports/metis/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/metis < ports/metis/patches/0002-qnx-libmetis-needs-gklib.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Port METIS minus tests.
@@ -76,6 +80,17 @@ patch -p1 -d src/metis < ports/metis/patches/0001-qnx-from-qnx-ports.patch
 >  create mode 100644 test/CMakeLists.txt
 
 Touches: `conf/gkbuild.cmake`, `include/CMakeLists.txt`, `programs/CMakeLists.txt`, `test/CMakeLists.txt`, `programs/CMakeLists.txt` · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-qnx-libmetis-needs-gklib.patch`](patches/0002-qnx-libmetis-needs-gklib.patch)** — Link libmetis against GKlib.
+
+> libmetis calls GKlib throughout (gk_malloc, gk_sigcatch's thread-local jump
+> buffers, the random and sorting helpers) but its target links nothing, so
+> libmetis.so has no DT_NEEDED for libGKlib.so. It links only because shared
+> libraries are linked with --allow-shlib-undefined; an application that links
+> just -lmetis, as METIS's documentation says to, then fails to load with
+> undefined gk_* symbols, and only executables that list GKlib themselves work.
+
+Touches: `libmetis/CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -147,10 +162,42 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/metis-*-r
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_metis`](../../tests/src/) links metis the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-metis`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-metis
+/usr/local/bin/qnx-port-tests/test_metis
+```
+
+```
+== metis ==
+  ok   ...
+PASS metis
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_metis` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_metis`](../../tests/src/) -- a program linked against metis the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - graph built: 13 edges
+   - METIS_PartGraphRecursive returns METIS_OK
+   - bisection cuts exactly the one bridge edge
+   - each clique stays in one part
+   - METIS_PartGraphKway finds the same 1-edge cut
+   - METIS_NodeND gives a permutation and its inverse
+   - scratch directory
+   - graphchk accepts the graph file
+   - gpmetis reports Edgecut: 1
+   - gpmetis wrote g.graph.part.2 splitting the cliques
+   - ndmetis writes g.graph.iperm
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

@@ -1,5 +1,7 @@
 # libgpg-error 1.50
 
+> Common error values and runtime library for GnuPG components
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
@@ -11,7 +13,7 @@
 | Build dependencies | [`gettext`](../gettext/) |
 | Run-time dependencies | [`gettext`](../gettext/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
-| On-target test | none (no run-time code) |
+| On-target test | [`test_libgpg_error`](../../tests/src/) |
 
 ## Install the prebuilt package on a target
 
@@ -22,6 +24,7 @@ No build needed. With `apk` (set up once per target with [`scripts/target-bootst
 . /data/oss/etc/oss-env.sh
 apk add libgpg-error
 apk add libgpg-error-dev    # only for building on the target: headers, .pc, CMake files
+apk add qnx-test-libgpg-error && /usr/local/bin/qnx-port-tests/test_libgpg_error    # its on-target test
 ```
 
 Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install libgpg-error`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
@@ -140,10 +143,53 @@ ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/libgpg-er
 
 QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
 
+### Test
+
+[`test_libgpg_error`](../../tests/src/) links libgpg-error the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libgpg-error`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-libgpg-error
+/usr/local/bin/qnx-port-tests/test_libgpg_error
+```
+
+```
+== libgpg-error ==
+  ok   ...
+PASS libgpg-error
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_libgpg_error` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_libgpg_error`](../../tests/src/) -- a program linked against libgpg-error the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - library version 1.50
+   - check_version(\"1.40\") satisfied
+   - check_version(\"9.0\") not satisfied
+   - strerror(GPG_ERR_GENERAL) == \"General error\"
+   - strerror(GPG_ERR_BAD_SIGNATURE)
+   - strerror(0) == \"Success\"
+   - gpg_err_make: code and source round trip
+   - strsource(GCRYPT) == \"gcrypt\"
+   - strerror_r(GPG_ERR_NO_DATA)
+   - errno ENOENT -> GPG_ERR_ENOENT
+   - GPG_ERR_ENOENT -> errno ENOENT
+   - errno EINVAL -> GPG_ERR_EINVAL
+   - gpgrt_fopenmem
+   - gpgrt_asprintf
+   - gpgrt_strconcat
+   - gpgrt_fnameconcat
+   - gpgrt_b64enc_start
+   - b64enc write/finish
+   - base64(\"hello QNX\") == aGVsbG8gUU5Y
+   - gpg-error 8 -> Bad signature
+   - gpg-error decodes source and code of a combined value
+   - gpg-error by symbol name
+
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
 | Arch | Target | Installed from | Version | Result | Date | Log |

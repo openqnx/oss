@@ -1,5 +1,7 @@
 # re2 2024-07-02
 
+> Fast, safe, thread-friendly regular expression library
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

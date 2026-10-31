@@ -1,5 +1,7 @@
 # ros2 jazzy
 
+> ROS 2 Jazzy core: robotics middleware, client libraries and tools
+
 **🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |

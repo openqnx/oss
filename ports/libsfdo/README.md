@@ -1,5 +1,7 @@
 # libsfdo 0.1.4
 
+> Libraries implementing freedesktop.org desktop entry, icon and basedir specs
+
 **🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
 
 | | |

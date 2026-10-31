@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""detect-licenses -- ports/<name>/LICENSE.id for every component: the
+license(s) of its original source, as SPDX identifiers where possible.
+
+    scripts/detect-licenses [-f] [name...]
+
+Read from the original source (src/<name>/, else the untouched original in
+ported/<name>/<version>/<name>-<version>-orig.tar.gz), in this order:
+  1. what the project declares about itself: meson.build project(license:),
+     pyproject.toml / setup.cfg, package.json, Cargo.toml;
+  2. its top-level license files (LICENSE*, COPYING*, LICENCE*), recognised
+     by the standard texts' wording -- several files give several entries.
+Nothing recognised: no file is written (the package site then says "see
+upstream"). An existing LICENSE.id is kept unless -f: correct one by hand
+where the detection is wrong or incomplete, and it stays.
+
+The result is a pointer, not legal advice: the source's own files decide.
+"""
+import glob, json, os, re, sys, tarfile
+from concurrent.futures import ProcessPoolExecutor
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(WS)
+LICFILE = re.compile(r"^(licen[cs]e|copying|copyright|unlicense)([-_.][\w.-]*)?$", re.I)
+META = ("meson.build", "pyproject.toml", "setup.cfg", "package.json", "Cargo.toml")
+
+# (SPDX id, every one of these phrases, none of these) on lower-cased, space-collapsed text.
+TEXTS = [
+    ("Apache-2.0", ["apache license", "version 2.0"], []),
+    ("MPL-2.0", ["mozilla public license", "version 2.0"], []),
+    ("MPL-1.1", ["mozilla public license", "version 1.1"], []),
+    ("EPL-2.0", ["eclipse public license", "v 2.0"], []),
+    ("EPL-1.0", ["eclipse public license", "v 1.0"], []),
+    ("BSL-1.0", ["boost software license"], []),
+    ("OFL-1.1", ["sil open font license"], []),
+    ("CC0-1.0", ["cc0 1.0 universal"], []),
+    ("Unlicense", ["free and unencumbered software released into the public domain"], []),
+    ("PSF-2.0", ["python software foundation license version 2"], []),
+    ("Artistic-2.0", ["the artistic license 2.0"], []),
+    ("Zlib", ["altered source versions must be plainly marked"], ["redistribution and use in source and binary forms"]),
+    ("BSD-4-Clause", ["redistribution and use in source and binary forms", "advertising materials"], []),
+    ("BSD-3-Clause", ["redistribution and use in source and binary forms", "neither the name"], []),
+    ("BSD-3-Clause", ["redistribution and use in source and binary forms", "names of its contributors may not be used"], []),
+    ("BSD-2-Clause", ["redistribution and use in source and binary forms"], ["neither the name", "may not be used to endorse"]),
+    ("curl", ["permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies"], []),
+    ("ISC", ["permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted"], []),
+    ("MIT", ["permission is hereby granted, free of charge, to any person obtaining a copy"], []),
+    ("X11-style", ["permission to use, copy, modify, distribute, and sell this software"], []),
+]
+
+
+# The GNU texts name each other (GPL-3.0 mentions the Affero GPL, GPL-2.0
+# the Library GPL): the title that comes first is the file's own.
+GNU = [("gnu affero general public license", {"3": "AGPL-3.0"}),
+       ("gnu lesser general public license", {"3": "LGPL-3.0", "2.1": "LGPL-2.1"}),
+       ("gnu library general public license", {"2": "LGPL-2.0"}),
+       ("gnu general public license", {"3": "GPL-3.0", "2": "GPL-2.0", "1": "GPL-1.0"})]
+
+
+def classify(text):
+    t = " ".join(text.lower().split())
+    pos = [(t.find(title), title, vers) for title, vers in GNU if title in t]
+    if pos:
+        i, title, vers = min(pos)
+        m = re.match(r"\s*,?\s*version (\d(?:\.\d)?)", t[i + len(title):i + len(title) + 40])
+        if m and m.group(1) in vers:
+            return [vers[m.group(1)]]
+    found = []
+    for spdx, need, avoid in TEXTS:
+        if all(n in t for n in need) and not any(a in t for a in avoid) and spdx not in found:
+            found.append(spdx)
+    # A GPL text also names the LGPL in passing (and vice versa) -- the first
+    # match of each family is the file's own license.
+    return found[:1] if found else []
+
+
+def declared(name, text):
+    if name == "meson.build":
+        m = re.search(r"project\s*\((.*?)\n\)", text, re.S) or re.search(r"project\s*\((.*)", text, re.S)
+        if m:
+            m = re.search(r"license\s*:\s*(\[[^\]]*\]|'[^']*')", m.group(1))
+            if m:
+                ids = re.findall(r"'([^']+)'", m.group(1))
+                return ", ".join(ids) if ids else None
+    elif name == "pyproject.toml":
+        m = re.search(r'^\s*license\s*=\s*"([^"]+)"', text, re.M) or \
+            re.search(r'^\s*license\s*=\s*\{\s*text\s*=\s*"([^"]+)"', text, re.M)
+        return m.group(1) if m else None
+    elif name == "setup.cfg":
+        m = re.search(r"^\s*license\s*=\s*(\S.*)$", text, re.M)
+        return m.group(1).strip() if m else None
+    elif name == "package.json":
+        try:
+            v = json.loads(text).get("license")
+            return v if isinstance(v, str) else None
+        except ValueError:
+            return None
+    elif name == "Cargo.toml":
+        m = re.search(r'^\s*license\s*=\s*"([^"]+)"', text, re.M)
+        return m.group(1) if m else None
+
+
+def plausible(v):
+    # A declaration, not a file name or a sentence.
+    return v and len(v) < 80 and not re.search(r"file|see |http", v, re.I)
+
+
+def from_files(files):
+    """files: {relative name: text} at the top of the source tree."""
+    for m in META:
+        if m in files:
+            v = declared(m, files[m])
+            if plausible(v):
+                return v.strip(), m
+    ids, src = [], []
+    for n in sorted(files):
+        if n in META:
+            continue
+        for i in classify(files[n]):
+            if i not in ids:
+                ids.append(i); src.append(n)
+    return (", ".join(ids), ", ".join(src)) if ids else (None, None)
+
+
+def read_tree(d):
+    files = {}
+    for n in os.listdir(d):
+        p = os.path.join(d, n)
+        if os.path.isfile(p) and (LICFILE.match(n) or n in META):
+            try:
+                files[n] = open(p, errors="replace").read(200000)
+            except OSError:
+                pass
+    return files
+
+
+def read_tarball(tb):
+    files = {}
+    with tarfile.open(tb) as t:
+        for m in t:
+            parts = m.name.lstrip("./").split("/")
+            # the top directory of the archive, or no directory at all
+            rel = parts[1] if len(parts) == 2 else (parts[0] if len(parts) == 1 else None)
+            if m.isfile() and rel and (LICFILE.match(rel) or rel in META):
+                files[rel] = t.extractfile(m).read(200000).decode(errors="replace")
+    return files
+
+
+def detect(n):
+    d = os.path.join("src", n)
+    if os.path.isdir(d):
+        files, where = read_tree(d), d
+    else:
+        tbs = sorted(glob.glob(f"ported/{glob.escape(n)}/*/{glob.escape(n)}-*-orig.tar.gz"))
+        if not tbs:
+            return n, None, "no source"
+        try:
+            files, where = read_tarball(tbs[-1]), tbs[-1]
+        except (OSError, tarfile.TarError) as e:
+            return n, None, str(e)
+    lic, src = from_files(files)
+    return n, lic, f"{where}: {src}" if lic else f"{where}: nothing recognised"
+
+
+def main():
+    force = "-f" in sys.argv
+    names = [a for a in sys.argv[1:] if not a.startswith("-")] or sorted(
+        n for n in os.listdir("ports") if os.path.exists(f"ports/{n}/recipe.sh"))
+    todo = [n for n in names if force or not os.path.exists(f"ports/{n}/LICENSE.id")]
+    found = 0
+    with ProcessPoolExecutor(8) as ex:
+        for n, lic, why in ex.map(detect, todo):
+            print(f"{n:32} {lic or '-':28} {why}")
+            if lic:
+                open(f"ports/{n}/LICENSE.id", "w").write(lic + "\n")
+                found += 1
+    print(f"-- {found} of {len(todo)} detected", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

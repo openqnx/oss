@@ -36,4 +36,4 @@ jobs:
             *)    ./scripts/qnxbuild -a "$ARCH" $pkgs ;;
           esac
       - name: Audit the staging tree
-        run: ./scripts/check-all
+        run: cd "$OSS_WS" && ./scripts/check-all

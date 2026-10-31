@@ -1,0 +1,100 @@
+#!/bin/bash
+# update-all -- every component with a newer upstream release: port it, build
+# it for both architectures, test it on both QEMU targets, and publish what
+# passed. What the "update" workflow runs on the self-hosted runner (the
+# maintainer's button); by hand it is the same.
+#
+#   scripts/update-all [--check-only] [--no-publish] [--max N] [component...]
+#
+#   --check-only   only list what has a newer release (docs/UPDATES.md)
+#   --no-publish   port, build and test, but publish nothing
+#   --max N        at most N components this run (default 10)
+#   component...   only these (default: every component with an update)
+#
+# Per component: scripts/port-update (the version ported before is kept in
+# ports/<name>/versions/), then scripts/ci-release tests every ported one on
+# both targets and publishes those that passed. A component whose port fails
+# (a QNX patch no longer applies, the build breaks) or whose test fails on a
+# target goes back to its previous recipe and is rebuilt, so the repository
+# never describes an unpublished version; the run summary says what to do.
+# The summary is tmp/update-all/summary.md (and the workflow's run page).
+#
+# Needs what scripts/ci-release needs (QNX_SDP_ROOT, the signing key, the
+# targets in CI_TARGET_X86_64 / CI_TARGET_AARCH64LE, gh logged in).
+set -o pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"
+CHECK=""; PUBLISH=1; MAX=10; ONLY=()
+while [ $# -gt 0 ]; do case "$1" in
+  --check-only) CHECK=1; shift ;;
+  --no-publish) PUBLISH=""; shift ;;
+  --max) MAX=$2; shift 2 ;;
+  -h|--help) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) ONLY+=("$1"); shift ;;
+esac; done
+OUT=$WS/tmp/update-all; mkdir -p "$OUT"; S=$OUT/summary.md
+say() { echo "$*" | tee -a "$S"; }
+: > "$S"
+
+say "## Upstream check ($(date -u '+%F %H:%M UTC'))"
+./scripts/check-updates --markdown docs/UPDATES.md --json "$OUT/updates.json" "${ONLY[@]}" > "$OUT/check.log" 2>&1
+mapfile -t TODO < <(python3 - "$OUT/updates.json" "$MAX" <<'EOF'
+import json, sys
+rows = [r for r in json.load(open(sys.argv[1])) if r.get("status") == "update"]
+for r in rows[:int(sys.argv[2])]:
+    print("%s %s %s" % (r["component"], r["ported"], r["latest"]))
+EOF
+)
+n_all=$(python3 -c "import json,sys; print(sum(1 for r in json.load(open(sys.argv[1])) if r.get('status')=='update'))" "$OUT/updates.json")
+say "$n_all component(s) have a newer release; this run takes ${#TODO[@]} (--max $MAX)."
+say ""; say "| Component | Ported | Newer |"; say "|---|---|---|"
+for t in "${TODO[@]}"; do set -- $t; say "| $1 | $2 | $3 |"; done
+[ -z "$CHECK" ] || exit 0
+[ ${#TODO[@]} -gt 0 ] || { say ""; say "Nothing to do."; exit 0; }
+
+# Puts a component back on the recipe it had before this run, and rebuilds it,
+# so stage/ (what later builds compile against) matches the recipe again.
+rollback() {
+  git checkout -q -- "ports/$1" 2>/dev/null
+  git clean -fdq -- "ports/$1" 2>/dev/null
+  ./scripts/qnxbuild -f "$1" >> "$OUT/$1.rollback.log" 2>&1 || say "  !! $1: rebuilding the previous version failed (see $OUT/$1.rollback.log)"
+}
+
+say ""; say "## Port and build"
+PORTED=(); FAILED=()
+for t in "${TODO[@]}"; do
+  set -- $t; c=$1; v=$3
+  if ./scripts/port-update "$c" "$v" > "$OUT/$c.port.log" 2>&1; then
+    PORTED+=("$c"); say "- ✅ $c $2 → $v: ported and built (both architectures)"
+  else
+    FAILED+=("$c"); say "- ❌ $c $2 → $v: port failed, kept $2 — $(grep -m1 -iE 'error|no longer applies|failed' "$OUT/$c.port.log" | cut -c1-150)"
+    rollback "$c"
+  fi
+done
+[ ${#PORTED[@]} -gt 0 ] || { say ""; say "No component could be ported; nothing to test."; exit 1; }
+
+say ""; say "## Test on both targets$([ -n "$PUBLISH" ] && echo ', publish what passed')"
+# ci-release: test packages, packaging, apk install + test on both targets,
+# docs, then (unless --no-publish) publish what passed and redeploy the site.
+./scripts/ci-release $([ -n "$PUBLISH" ] || echo --no-publish) "${PORTED[@]}" > "$OUT/ci-release.log" 2>&1
+for c in "${PORTED[@]}"; do
+  v=$(sed -n 's/^VERSION=["]\{0,1\}\([^";]*\).*/\1/p' "ports/$c/recipe.sh" | head -n 1)
+  # verify-on-target prints "PASS test_x  (<comp> <ver>)" / "INSTALLED <comp>" /
+  # "FAIL ..." per target; both targets must pass, none may fail.
+  np=$(grep -cE "^(PASS .*\($c |INSTALLED $c )" "$OUT/ci-release.log")
+  nf=$(grep -cE "^FAIL .*(\($c |^FAIL $c:)" "$OUT/ci-release.log")
+  ok=""; [ "$np" -ge 2 ] && [ "$nf" -eq 0 ] && ok=1
+  if [ -n "$ok" ]; then say "- ✅ $c $v: passed on x86_64 and aarch64le$([ -n "$PUBLISH" ] && echo ', published')"
+  else say "- ❌ $c $v: failed on a target (tests/logs/<arch>/$c-*.log), back to the previous version"; FAILED+=("$c"); rollback "$c"
+       PORTED=("${PORTED[@]/$c}"); fi
+done
+
+say ""; say "## Commit"
+git add docs/UPDATES.md tests/results tests/logs README.md PORTS-INDEX.md docs ports 2>/dev/null
+if git diff --cached --quiet; then say "Nothing to commit."
+else
+  git -c user.name=openqnx-oss -c user.email=noreply@openqnx.invalid commit -q \
+    -m "Upstream updates: $(echo ${PORTED[@]} | tr -s ' ')" -m "Ported, built and tested on both QEMU targets by scripts/update-all.$([ ${#FAILED[@]} -gt 0 ] && echo " Not updated: ${FAILED[*]}.")" \
+    -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+  git push -q origin HEAD:main && say "Pushed $(git log -1 --format=%h)." || say "!! push failed"
+fi
+[ ${#FAILED[@]} -eq 0 ]

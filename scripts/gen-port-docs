@@ -11,10 +11,12 @@ ports/dependencies.json, so the READMEs are regenerated, never edited:
 
     ./scripts/gen-dependency-index && ./scripts/gen-port-docs
 """
-import glob, json, os, re
+import glob, json, os, re, sys
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(WS)
+sys.path.insert(0, os.path.join(WS, "scripts", "lib"))
+import shards
 
 CLASS_TEXT = {
     "standalone": ("🟢 Standalone",
@@ -323,6 +325,73 @@ def describe(n):
     return open(p).read().strip() if os.path.exists(p) else ""
 
 
+# The packages that exist (dists/8.0/x86_64/INDEX): a header-only component
+# has only <name>-dev.
+PUBLISHED = set()
+
+
+def load_published():
+    p = "dists/8.0/x86_64/INDEX"
+    for l in open(p) if os.path.exists(p) else []:
+        if not l.startswith("#") and "|" in l:
+            PUBLISHED.add(l.split("|", 1)[0])
+
+
+def render_install_remove(A, n, test, tpkg):
+    run, dev = n in PUBLISHED, f"{n}-dev" in PUBLISHED
+    if not (run or dev):
+        A("## Install and remove on a target\n")
+        A("Not published as a package yet: build it as below, then `scripts/qnxpkg` makes `" + n + "` and `" + n
+          + "-dev`, which install and remove like every other package ([INSTALL.md](../../INSTALL.md), "
+          "[docs/packages.md](../../docs/packages.md)).\n")
+        return
+    main = n if run else f"{n}-dev"
+    pk = [n] * run + [f"{n}-dev"] * dev
+    tag = "packages-8.0-<arch>" + shards.shard_of(main)
+    site = "https://openqnx.github.io/oss/package/<arch>/"
+    pages = " · ".join(f"[`{p}`]({site.replace('<arch>', 'x86_64')}{p}.html) "
+                       f"([aarch64]({site.replace('<arch>', 'aarch64')}{p}.html))" for p in pk)
+    A("## Install and remove on a target\n")
+    A("No build needed: prebuilt packages for `x86_64` and `aarch64`, installed under `/data/oss` "
+      "(with `/usr/local` linked to `/data/oss/usr/local`; [INSTALL.md](../../INSTALL.md) step 1 prepares a target). "
+      + (f"Packages: `{n}` (programs, shared libraries, run-time data) and `{n}-dev` "
+         "(headers, pkg-config/CMake files, static libraries; needs `" + n + "`)." if run and dev else
+         f"Package: `{main}`" + (" -- header-only: there is no run-time package, the -dev package is the whole "
+                                 "component (headers, pkg-config/CMake files)." if not run else "."))
+      + "\n")
+    A(f"Each package's page gives the exact file, URL, SHA-256 and dependencies per architecture: {pages}.\n")
+    A("| Method | Install | Remove |\n|---|---|---|")
+    A(f"| **A.** [apk](../../INSTALL.md#2a-install-with-apk) | `apk add {main}` (dependencies come along); "
+      f"one version: `apk add {main}=<version>` | `apk del {main}` (also removes dependencies nothing else needs) |")
+    A(f"| **B-1.** [oss-get](../../target/oss-get) | `oss-get update && oss-get install {main}` (dependencies first) "
+      f"| `oss-get remove {main}` (its files only: the dependencies stay) |")
+    A(f"| **B-2.** by hand | download, check, save the file list, unpack (below) | delete the listed files (below) |")
+    A("")
+    if run and dev:
+        A(f"`{n}-dev` the same way, by its own name (`apk add {n}-dev`, `oss-get install {n}-dev`, "
+          f"by hand with its own file and list `{n}-dev.list`); remove it before `{n}`, which it needs.\n")
+    A("```sh\n# on the QNX target, as root\n" + (f"apk add {' '.join(pk)}\n" if len(pk) > 1 else "")
+      + (f"apk add {tpkg} && /usr/local/bin/qnx-port-tests/{test}    # its on-target test\n" if tpkg else "")
+      + f"apk del {' '.join(pk)}" + (f" {tpkg}" if tpkg else "") + "\n```\n")
+    A(f"By hand (B-2), from the release `{tag}`; take `<file>` and `<sha256>` from the package's page "
+      f"(or its release's `INDEX`: `name|version|depends|file|sha256|...`), and install its dependencies first, the same way:\n")
+    A("```sh\nGH=https://github.com/openqnx/oss/releases/download\n"
+      "mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl\n"
+      f"curl -fsSLO $GH/{tag}/<file>\n"
+      "[ \"$(openssl dgst -sha256 <file> | sed 's/.*= *//')\" = <sha256> ] && echo OK || echo BAD\n"
+      f"gzip -dc <file> | tar -tf - | grep -v '/$' > /data/oss/var/lib/manual/{main}.list\n"
+      "gzip -dc <file> | (cd /data/oss && tar -xf -) && rm <file>\n"
+      f"# remove: exactly the files it installed\n"
+      f"cd /data/oss && while read -r f; do rm -f \"$f\"; done < var/lib/manual/{main}.list\n"
+      f"rm var/lib/manual/{main}.list\n```\n")
+    A("With B-1 and B-2 the dependencies stay installed after a remove: remove them too only if no other "
+      "installed package needs them (`oss-get remove` refuses one that is still needed). "
+      "Use one method per `/data/oss`: apk and oss-get do not know about files unpacked by hand. "
+      "Then `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)` sets `PATH` and `LD_LIBRARY_PATH`; "
+      "[docs/packages.md](../../docs/packages.md) has the details, and your own build can be served from `dists/` "
+      "([`scripts/serve-dists`](../../scripts/serve-dists)).\n")
+
+
 def render(n, f, d, patches, test):
     L = []
     A = L.append
@@ -351,18 +420,7 @@ def render(n, f, d, patches, test):
 
     # ---- quick install ------------------------------------------------------
     tpkg = ("qnx-test-" + test[len("test_"):].replace("_", "-")) if test else None
-    A("## Install the prebuilt package on a target\n")
-    A("No build needed. With `apk` (set up once per target with "
-      "[`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its "
-      "run-time dependencies are downloaded, signature-checked and installed:\n")
-    A(f"```sh\n# on the QNX target\n. /data/oss/etc/oss-env.sh\napk add {n}\n"
-      f"apk add {n}-dev    # only for building on the target: headers, .pc, CMake files\n"
-      + (f"apk add {tpkg} && /usr/local/bin/qnx-port-tests/{test}    # its on-target test\n" if tpkg else "")
-      + "```\n")
-    A(f"Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install {n}`. "
-      "Both read the GitHub releases by default, or your own build served from "
-      "`dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see "
-      "[docs/packages.md](../../docs/packages.md).\n")
+    render_install_remove(A, n, test, tpkg)
 
     # ---- build from upstream -------------------------------------------------
     A("## Build it from upstream\n")
@@ -525,6 +583,7 @@ def main():
     deps = json.load(open("ports/dependencies.json")) if os.path.exists("ports/dependencies.json") else {}
     names = sorted(os.path.basename(os.path.dirname(r)) for r in glob.glob("ports/*/recipe.sh"))
     load_results()
+    load_published()
     with open("tests/port-tests.tsv", "w") as m:   # read by scripts/verify-on-target
         m.write("# component\ttest\n")
         for n in names:

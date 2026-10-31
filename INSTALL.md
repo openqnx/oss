@@ -1,6 +1,6 @@
 # Getting started: install a package on QNX 8.0 and test it
 
-Three steps, shown with two representative components:
+Three steps, and a fourth to undo them, shown with two representative components:
 **zstd** (standalone: needs nothing else) and **curl** (dependent: needs six
 other packages). Every other package works the same way; its page on the
 [package site](https://openqnx.github.io/oss/) names its dependencies, its
@@ -11,6 +11,7 @@ test and the recorded run to compare with.
 | 1 | A QNX 8.0 target: a stock QEMU image from your SDP | [1](#1-prepare-a-target) |
 | 2 | Install: **A** with `apk`, or **B** by downloading the package archive | [2A](#2a-install-with-apk) / [2B](#2b-install-by-downloading-the-archive) |
 | 3 | Run the package's test, compare with the recorded log | [3](#3-test-it) |
+| 4 | Remove: **A** `apk del`, **B** `oss-get remove` or the file list saved at install | [4](#4-remove) |
 
 `host$` is your Linux machine, `qnx#` a root shell on the target.
 
@@ -110,7 +111,7 @@ signature, and installs the test packages from the tests repository:
 qnx# apk add zstd qnx-test-zstd qnx-port-tests            # standalone
 qnx# apk add curl qnx-test-curl                           # dependent: brotli c-ares nghttp2 openssl zlib zstd come along
 qnx# apk info -L curl                                     # what it installed
-qnx# apk del curl qnx-test-curl                           # remove again
+qnx# apk del curl qnx-test-curl                           # remove again (step 4)
 ```
 
 ## 2B. Install by downloading the archive
@@ -119,10 +120,11 @@ Without apk: each package is a `.tar.gz` of files under `usr/local/`, listed
 in its release's `INDEX` with its dependencies and SHA-256. There are two
 releases, `packages-8.0-$A` (names 0-9, a-l) and `packages-8.0-$A-m-z` (m-z),
 so read both indexes; a package's dependencies may be in the other one.
-Install the dependencies first, yourself:
+Install the dependencies first, yourself, and keep each archive's file list
+(in `/data/oss/var/lib/manual/<pkg>.list`) so that it can be removed again:
 
 ```sh
-qnx# mkdir -p /data/oss/dl && cd /data/oss/dl
+qnx# mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl
 qnx# curl -fsSL -o INDEX.a-l $GH/packages-8.0-$A/INDEX
 qnx# curl -fsSL -o INDEX.m-z $GH/packages-8.0-$A-m-z/INDEX
 qnx# { sed "s/\$/|packages-8.0-$A/" INDEX.a-l; sed "s/\$/|packages-8.0-$A-m-z/" INDEX.m-z; } |
@@ -133,12 +135,14 @@ qnx# for p in brotli c-ares nghttp2 openssl zlib zstd curl; do        # dependen
        l=$(grep "^$p|" INDEX | head -n 1); f=$(echo "$l" | cut -d'|' -f4); r=${l##*|}
        curl -fsSLO $GH/$r/$f
        [ "$(openssl dgst -sha256 $f | sed 's/.*= *//')" = "$(echo "$l" | cut -d'|' -f5)" ] \
+         && gzip -dc $f | tar -tf - | grep -v '/$' > /data/oss/var/lib/manual/$p.list \
          && gzip -dc $f | (cd /data/oss && tar -xf -) && echo "installed $p" || echo "BAD $f"
      done
 qnx# curl --version                                       # the ported curl
 ```
 
-(`target/oss-get` does this for you: `oss-get update` merges both indexes.)
+(`target/oss-get` does this for you, file lists included: `oss-get update` merges both
+indexes, `oss-get install curl` installs the dependencies first.)
 The tests come the same way from the `tests-8.0-$A` release (one release, its own `INDEX`):
 `qnx-port-tests` (the runner) and `qnx-test-curl`. Use one method per
 `/data/oss`: apk does not know about files unpacked by hand.
@@ -177,10 +181,52 @@ and on the package's page of the site, e.g.
 check name, `PASS`, `passed: 1 failed: 0`. These may differ: times,
 addresses and package counts in `info` lines and apk's output.
 
+## 4. Remove
+
+Remove with the method you installed with. Every package's page on the
+[package site](https://openqnx.github.io/oss/) shows all three for that
+package, with its exact file and SHA-256.
+
+**A. apk** removes the package and every dependency nothing else needs (one
+you added yourself, like `zstd` above, stays until you `apk del` it):
+
+```sh
+qnx# apk del curl qnx-test-curl                           # brotli c-ares nghttp2 openssl zlib go with it
+qnx# apk del zstd qnx-test-zstd qnx-port-tests
+```
+
+**B-1. oss-get** deletes the files it listed when it installed the package.
+The dependencies stay; `oss-get remove` refuses a package another installed
+one still needs, so remove the dependents first:
+
+```sh
+qnx# oss-get remove curl
+qnx# oss-get remove brotli c-ares nghttp2 openssl zlib zstd   # its dependencies, if nothing else needs them
+qnx# oss-get installed                                    # what is left
+```
+
+**B-2. By hand**: delete exactly the files in the list saved at install
+(2B), dependents first. Leave out a dependency another installed package
+still needs:
+
+```sh
+qnx# cd /data/oss && for p in qnx-test-curl qnx-test-zstd qnx-port-tests \
+                                 curl brotli c-ares nghttp2 openssl zlib zstd; do
+       [ -f var/lib/manual/$p.list ] || continue
+       while read -r f; do rm -f "$f"; done < var/lib/manual/$p.list
+       rm var/lib/manual/$p.list && echo "removed $p"
+     done
+```
+
+Packages without a saved list are skipped; for zstd alone:
+`for p in qnx-test-zstd qnx-port-tests zstd`. Empty directories stay. A `-dev`
+package (headers, pkg-config/CMake files, static libraries) is removed the
+same way, before the package it belongs to.
+
 ## Which package, which test
 
 - [Package site](https://openqnx.github.io/oss/): every package with its
-  install command, dependencies, test and recorded log.
+  install and remove commands (apk, oss-get, by hand), dependencies, test and recorded log.
 - [docs/target-guide.md](docs/target-guide.md): all components by kind
   (standalone first, then dependent), with their test packages.
 - To build a component yourself from upstream instead: `ports/<name>/README.md`.

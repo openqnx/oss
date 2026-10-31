@@ -118,6 +118,14 @@ else:
         else:
             vers = {max((e["V"] for e in own), key=vk, default=None)}
         pick += [e for e in es if e["V"] in vers]
+        # A subpackage (-dev) can have its own release number for the same
+        # upstream version (only its files changed): take its newest one for
+        # each chosen version, or it is never published.
+        for base in {v.rpartition("-r")[0] for v in vers if v}:
+            for p in {e["P"] for e in es} - {e["P"] for e in pick}:
+                cand = [e for e in es if e["P"] == p and e["V"].rpartition("-r")[0] == base]
+                if cand:
+                    pick.append(max(cand, key=lambda e: vk(e["V"])))
     # What target-bootstrap installs first is always published: apk-tools and
     # the CA bundle (every apk install on a target goes through them).
     for comp in ("apk-tools", "ca-certificates"):

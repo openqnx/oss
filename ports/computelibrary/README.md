@@ -14,19 +14,9 @@
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_computelibrary`](../../tests/src/) |
 
-## Install the prebuilt package on a target
+## Install and remove on a target
 
-No build needed. With `apk` (set up once per target with [`scripts/target-bootstrap`](../../scripts/target-bootstrap)), the package and its run-time dependencies are downloaded, signature-checked and installed:
-
-```sh
-# on the QNX target
-. /data/oss/etc/oss-env.sh
-apk add computelibrary
-apk add computelibrary-dev    # only for building on the target: headers, .pc, CMake files
-apk add qnx-test-computelibrary && /usr/local/bin/qnx-port-tests/test_computelibrary    # its on-target test
-```
-
-Or with [`oss-get`](../../target/oss-get), a single shell script: `oss-get install computelibrary`. Both read the GitHub releases by default, or your own build served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)); see [docs/packages.md](../../docs/packages.md).
+Not published as a package yet: build it as below, then `scripts/qnxpkg` makes `computelibrary` and `computelibrary-dev`, which install and remove like every other package ([INSTALL.md](../../INSTALL.md), [docs/packages.md](../../docs/packages.md)).
 
 ## Build it from upstream
 

@@ -78,6 +78,14 @@ current: it is the hand-over, not a history (that is `git log`).
    (fingerprints cover contents): mind it for published packages.
 9. Components still not verified on a target are published later with
    `publish-github-release --changed` after `verify-on-target --changed`.
+10. qnxpkg kept the release number of unchanged packages but wrote their
+   archives again (new gzip/tar times = new bytes under the same name);
+   `--changed` does not upload names already there, while the uploaded
+   indexes described the new bytes -- 683 GitHub assets stopped matching
+   their index (aarch64 `zstd` failed to install). Fixed: an unchanged
+   entry keeps its files and index line as they are (`unchanged()`), and
+   the release assets were re-uploaded. Check after every publish: every
+   asset's GitHub `digest` equals the staged file's sha256.
 
 ## Machine notes
 

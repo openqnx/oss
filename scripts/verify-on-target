@@ -21,7 +21,10 @@
 # record PASS/FAIL with the package version in tests/results/<arch>.tsv. A
 # component without a test is recorded as pkg:<name>, passed when apk
 # installed it and every program and library it ships loads (ldd). The
-# transcript of each run is kept in logs/verify-<arch>.txt.
+# transcript of each run is kept in logs/verify-<arch>.txt, and a log per
+# component and version -- what was installed, the test command, its full
+# output, the verdict -- in tests/logs/<arch>/<component>-<version>.log
+# (tracked; local addresses masked).
 #
 # scripts/publish-github-release --verified then publishes only what passed.
 set -o pipefail
@@ -82,6 +85,23 @@ EOF
 done
 [ ${#comps[@]} -gt 0 ] || { echo "nothing to verify"; exit 0; }
 LOG=$WS/logs/verify-$ARCH.txt; mkdir -p "$WS/logs"
+# One log per component and version (tracked: tests/logs/<arch>/): what was
+# installed, the command that tested it, its complete output, the verdict.
+# Local addresses are masked -- they would end up in the published repository.
+TLOGS=$WS/tests/logs/$ARCH; mkdir -p "$TLOGS"
+UNAME=$(on "uname -a" 2>/dev/null)
+mask() { sed -E "s/$(echo "$T" | sed 's/\./\\./g')/<target>/g; s/\b(10|127|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.[0-9]+\.[0-9]+(\.[0-9]+)?\b/<ip>/g"; }
+tlog() { # component version result apk-cmd apk-out test-cmd test-out
+  { echo "# $1 $2 -- $3"
+    echo "# target: $TARGET_DESC ($ARCH): $UNAME"
+    echo "# date: $(date -u +%FT%TZ)   packages from: $VIA"
+    echo "# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;"
+    echo "# a component without a test of its own passes when every program and"
+    echo "# library it installs loads (ldd: every dependency resolved)."
+    echo; echo "\$ apk add -u $4"; printf '%s\n' "$5"
+    echo; echo "\$ $6"; printf '%s\n' "$7"
+    echo; echo "RESULT: $3"; } | mask > "$TLOGS/$1-$2.log"
+}
 on "apk update >/dev/null 2>&1" || echo "!! apk update failed on $T (is scripts/serve-dists running?)" >&2
 echo "== $T ($ARCH, $TARGET_DESC): ${#comps[@]} component(s)" | tee -a "$LOG"
 # What is installed before the first test stays installed: apk-tools and what
@@ -97,12 +117,17 @@ for c in "${comps[@]}"; do
   [ -n "$v" ] || { echo "?? $c: not in $IDX" | tee -a "$LOG"; continue; }
   t=$(awk -F'\t' -v c="$c" '$1==c{print $2}' "$MAP")
   pkgs="$pk"; [ -n "$t" ] && pkgs="$pkgs qnx-test-$(echo "${t#test_}" | tr _ -) qnx-port-tests"
-  out=$(on "apk add -u $pkgs 2>&1" ) || { echo "FAIL $c: apk add $pkgs" | tee -a "$LOG"; echo "$out" | tail -5 | sed 's/^/    /' | tee -a "$LOG"
+  aout=$(on "apk add -u $pkgs 2>&1" ) || { out=$aout; echo "FAIL $c: apk add $pkgs" | tee -a "$LOG"; echo "$out" | tail -5 | sed 's/^/    /' | tee -a "$LOG"
+    tlog "$c" "$v" "FAIL (apk add)" "$pkgs" "$aout" "(not run)" ""
     printf 'FAIL %s\n' "${t:-pkg:$c}" | "$WS/scripts/record-results" -a "$ARCH" -t "$TARGET_DESC" -v "$VIA" -p "$c $v" >/dev/null
     fail=$((fail+1)); continue; }
   if [ -n "$t" ]; then
-    out=$(on "/usr/local/bin/qnx-port-tests/run-on-target.sh $t 2>&1" 2>&1)
+    tcmd="QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh $t"
+    out=$(on "$tcmd 2>&1" 2>&1)
     r=$(echo "$out" | grep -E "^(PASS|FAIL) $t\b" | head -n 1)
+    # A test whose output ends without a newline puts the runner's verdict
+    # mid-line; the runner's own count says the same.
+    [ -n "$r" ] || { echo "$out" | grep -q "^passed: 1 *failed: 0" && r="PASS $t"; }
     [ -n "$r" ] || r="FAIL $t"
   else
     # No test of its own: every ELF file it installs must load. QNX's ldd
@@ -112,10 +137,12 @@ for c in "${comps[@]}"; do
     # QNX's ldd loads a library with thread-local storage and then fails in
     # its own teardown ("Could not clean up dynamic TLS memory") -- after
     # every dependency resolved: that is a library that loads.
-    out=$(on "for d in /data/oss/usr/local/opt/*/lib /data/oss/usr/local/opt/ros/*/lib; do [ -d \$d ] && LD_LIBRARY_PATH=\$d:\$LD_LIBRARY_PATH; done; export LD_LIBRARY_PATH; apk info -L $pk 2>/dev/null | grep -E '(^|/)(s?bin|lib)/' | while read -r f; do f=/data/oss/\$f; [ -f \"\$f\" ] || continue; case \"\$(head -c 4 \$f | od -An -c | tr -d ' ')\" in 177ELF*) [ \"\$(od -An -tx1 -j16 -N1 \$f | tr -d ' ')\" = 01 ] && continue; g=\$f; if [ ! -x \"\$f\" ]; then g=/tmp/.vot-ldd; cp \"\$f\" \$g; chmod 755 \$g; fi; o=\$(ldd \"\$g\" 2>&1) || case \"\$o\" in *'Could not clean up dynamic TLS memory'*) ;; *) echo \"load failed: \$f\";; esac;; esac; done; rm -f /tmp/.vot-ldd" 2>&1)
+    out=$(on "for d in /data/oss/usr/local/opt/*/lib /data/oss/usr/local/opt/ros/*/lib; do [ -d \$d ] && LD_LIBRARY_PATH=\$d:\$LD_LIBRARY_PATH; done; export LD_LIBRARY_PATH; apk info -L $pk 2>/dev/null | grep -E '(^|/)(s?bin|lib)/' | while read -r f; do f=/data/oss/\$f; [ -f \"\$f\" ] || continue; case \"\$(head -c 4 \$f | od -An -c | tr -d ' ')\" in 177ELF*) [ \"\$(od -An -tx1 -j16 -N1 \$f | tr -d ' ')\" = 01 ] && continue; g=\$f; if [ ! -x \"\$f\" ]; then g=/tmp/.vot-ldd; cp \"\$f\" \$g; chmod 755 \$g; fi; o=\$(ldd \"\$g\" 2>&1) && echo \"ok   loads: \$f\" || case \"\$o\" in *'Could not clean up dynamic TLS memory'*) echo \"ok   loads: \$f (ldd: TLS teardown message)\";; *) echo \"load failed: \$f\"; echo \"\$o\" | head -3;; esac;; esac; done; rm -f /tmp/.vot-ldd" 2>&1)
+    tcmd="ldd on every program and library apk info -L $pk lists"
     case "$out" in *"load failed"*) r="FAIL $c" ;; *) r="INSTALLED $c" ;; esac
   fi
   echo "$r  ($c $v)" | tee -a "$LOG"
+  tlog "$c" "$v" "${r%% *}" "$pkgs" "$aout" "$tcmd" "$out"
   echo "$out" | grep -E '^\s+FAIL|load failed|Could not' | head -5 | sed 's/^/    /' | tee -a "$LOG"
   case "$r" in
     PASS*|INSTALLED*) pass=$((pass+1)) ;;

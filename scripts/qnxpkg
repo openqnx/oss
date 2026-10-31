@@ -360,6 +360,10 @@ def package(comp, arch, args, owner, outdir, existing=None):
                         print("   %s: contents differ from the published %s -> %s" % (pname, os.path.basename(old_tgz), ver))
                 finally:
                     shutil.rmtree(tmpdir, ignore_errors=True)
+        same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels_sel, v=1))
+        if same:
+            entries.append(same[0]); lines.append(same[1])
+            continue
         tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, stage, outdir)
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
         lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
@@ -442,6 +446,9 @@ def package_tests(arch, args, owner, outdir):
         fp = fingerprint(root, rels)
         ver = "%s-r%d" % (TESTS_VERSION, choose_release(existing, pname, TESTS_VERSION, fp, args.release,
                                                         fingerprint(root, rels, v=1)))
+        same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels, v=1))
+        if same:
+            out.append(same); return
         meta = {"version": TESTS_VERSION, "url": "https://github.com/openqnx/oss/tree/main/tests",
                 "desc": desc, "license": "see tests/", "origin": "qnx-port-tests", "conflicts": []}
         tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels, stage, outdir)
@@ -533,6 +540,23 @@ def fingerprint(root, rels, v=2):
 
 
 BUMP = False   # --bump: a new release even where the contents look the same
+
+
+def unchanged(existing, outdir, pname, ver, fp, fp1=None):
+    """The entry already in the repository for <pname>-<ver>, when it holds
+    these very contents and its files are there: then it is kept as it is.
+    Writing the archives again would give the same name new bytes (gzip and
+    tar record times), and a published copy would no longer match its index."""
+    prev = (existing or {}).get("%s-%s" % (pname, ver))
+    # The same test as choose_release's: no fingerprint (a legacy entry,
+    # its archive already compared by the caller), or either fingerprint.
+    if not prev or prev.get("fp") not in (None, fp, fp1):
+        return None
+    for ext in (".tar.gz", ".apk"):
+        if not os.path.exists(os.path.join(outdir, "%s-%s%s" % (pname, ver, ext))):
+            return None
+    e = dict(prev["apk"]); e["fp"] = fp
+    return e, prev["line"]
 
 
 def archive_digest(path):

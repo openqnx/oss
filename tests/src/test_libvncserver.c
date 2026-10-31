@@ -42,6 +42,8 @@ static int fetch(int port, const char *enc, int jpeg, const unsigned char *want,
 int main(void) {
   QT_BEGIN("libvncserver");
   int port = 5900 + 30 + getpid() % 60;
+  /* The library logs from its own threads, between this test's lines: quiet. */
+  rfbLogEnable(0);
   rfbScreenInfoPtr s = rfbGetScreen(NULL, NULL, W, H, 8, 3, 4);
   QT_CHECK(s != NULL, "rfbGetScreen");
   unsigned char *fb = malloc(W * H * 4);

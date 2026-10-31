@@ -13,7 +13,9 @@
 qnx_sdp_pc() {
   local d="$STAGE/.toolchain/sdp-pkgconfig" inc="$STAGE/.toolchain/sdp-include"
   mkdir -p "$d" "$inc"
-  ln -sfn "$QNX_TARGET/usr/include/libdrm" "$inc/libdrm"
+  # The SDP's own directory, not the workspace's linkroot: a link into the
+  # workspace breaks when the workspace moves (it did).
+  ln -sfn "${QNX_TARGET_SDP:-$QNX_TARGET}/usr/include/libdrm" "$inc/libdrm"
   # The SDP's libdrm.so with newer kernel interface headers in front of its
   # own (the libdrm-headers component, libdrm 2.4.129's; xf86drm.h stays the
   # SDP's). The SDP has two: libdrm.so.1, the old ABI that plain -ldrm

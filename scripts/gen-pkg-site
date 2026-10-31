@@ -149,6 +149,9 @@ dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{c
 pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
 footer{color:var(--mut);font-size:12px;padding:24px 16px}
 """
 
@@ -158,7 +161,7 @@ def page(title, body, depth):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)}</title><style>{CSS}</style></head><body>
 <header><div class="w"><b><a href="{up}index.html">QNX OSS packages</a></b><nav>
-<a href="{GH}">Repository</a><a href="{GH}/releases">Releases</a><a href="{GH}/blob/main/docs/target-guide.md">Install guide</a>
+<a href="{GH}">Repository</a><a href="{GH}/releases">Releases</a><a href="{GH}/blob/main/INSTALL.md">Getting started</a><a href="{GH}/blob/main/docs/target-guide.md">All packages by kind</a>
 <a href="{GH}/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
 <main class="w">{body}</main>
 <footer class="w">QNX SDP {SDP} &middot; generated {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())} from the release indexes
@@ -252,7 +255,27 @@ idx = [f"<h1>Packages for QNX SDP {SDP}</h1><p class=sum>{n_comp} components &mi
        + " &middot; ".join(f"{sum(1 for r in rows if r['a'] == a)} packages for {a}" for a, _ in ARCHES)
        + f" &middot; {tested} with a passing test on a target. Every package installs with "
        f"<code>apk add &lt;name&gt;</code> from the <a href=\"{GH}/releases\">GitHub releases</a>.</p>",
-       """<form onsubmit="return false"><input type=search id=q placeholder="Package name or description" autofocus>
+       f"""<details class=gsd open><summary><b>Getting started</b> -- set up a target, install, test
+(step by step with two samples: <a href="{GH}/blob/main/INSTALL.md">INSTALL.md</a>)</summary><div class=gs>
+<section><h3>1. A QNX 8.0 target</h3><p>A stock QEMU image from your QNX SDP 8.0
+(<a href="{GH}/blob/main/docs/qemu-test-vms.md">how</a>), plus a CA bundle and a few QNX run-time
+libraries from the SDP:</p><pre><code>mkqnximage --type=qemu \\
+  --arch=x86_64 --data-size=4000 \\
+  --run=-h
+scp cacert.pem root@$T:/data/oss-setup/</code></pre></section>
+<section><h3>2. Install</h3><p><b>A. apk</b> (dependencies and signatures handled):</p><pre><code>apk add curl qnx-test-curl qnx-port-tests</code></pre>
+<p><b>B. Download the archive</b> from the <code>packages-8.0-&lt;arch&gt;</code> release; its <code>INDEX</code>
+gives dependencies and SHA-256:</p><pre><code>curl -fsSLO $GH/packages-8.0-x86_64/\\
+  zstd-1.5.6-r0.tar.gz
+gzip -dc zstd-*.tar.gz |
+  (cd /data/oss &amp;&amp; tar -xf -)</code></pre></section>
+<section><h3>3. Test</h3><p>Every package has a test on the target; compare its output with the recorded log on the package's page:</p>
+<pre><code>cd /usr/local/bin/qnx-port-tests
+./run-on-target.sh test_curl
+...
+PASS test_curl
+passed: 1   failed: 0</code></pre></section></div></details>
+<form onsubmit="return false"><input type=search id=q placeholder="Package name or description" autofocus>
 <select id=a><option value="">All architectures</option><option>x86_64</option><option>aarch64</option></select>
 <select id=k><option value="">Any kind</option><option value=standalone>Standalone</option><option value=dependent>Dependent</option></select>
 <select id=t><option value="">Any test result</option><option value=PASS>Passed</option><option value=none>Not tested</option></select>

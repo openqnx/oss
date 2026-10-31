@@ -1,0 +1,44 @@
+name: runner-check
+
+# A quick, read-only check that the self-hosted runner can do its work:
+# the machine, the QNX SDP, the workspace, the two QEMU targets and the
+# package server. Changes nothing. Actions -> runner-check -> Run workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: [self-hosted, qnx-sdp]
+    timeout-minutes: 10
+    env:
+      CI_TARGET_X86_64: ${{ vars.CI_TARGET_X86_64 }}
+      CI_TARGET_AARCH64LE: ${{ vars.CI_TARGET_AARCH64LE }}
+    steps:
+      - name: Check
+        run: |
+          S=$GITHUB_STEP_SUMMARY; rc=0
+          ok()  { echo "| ✅ | $1 | $2 |" >> $S; }
+          bad() { echo "| ❌ | $1 | $2 |" >> $S; rc=1; }
+          echo "## Runner check ($(date -u '+%F %T UTC'))" >> $S
+          echo "| | Check | Result |" >> $S; echo "|---|---|---|" >> $S
+          ok "Runner" "$RUNNER_NAME on $(hostname), $(nproc) CPUs, $(free -g | awk '/Mem/{print $2}') GB RAM"
+          ok "Disk" "$(df -h "$OSS_WS" | awk 'NR==2{print $4 " free of " $2}')"
+          [ -f "$QNX_SDP_ROOT/qnxsdp-env.sh" ] && ok "QNX SDP" "$QNX_SDP_ROOT" || bad "QNX SDP" "not found at '$QNX_SDP_ROOT'"
+          if [ -d "$OSS_WS/.git" ]; then
+            ok "Workspace" "$OSS_WS at $(git -C "$OSS_WS" log -1 --format='%h %s' | cut -c1-60)"
+          else bad "Workspace" "not found at '$OSS_WS'"; fi
+          [ -n "$(ls "$OSS_WS"/keys/private/*.rsa 2>/dev/null)" ] && ok "Signing key" "present" || bad "Signing key" "missing"
+          cd "$OSS_WS" && . tests/ssh-opts.sh && mapfile -t O < <(qnxport_ssh_opts "$OSS_WS")
+          for t in "x86_64 $CI_TARGET_X86_64" "aarch64le $CI_TARGET_AARCH64LE"; do
+            set -- $t
+            if u=$(timeout 30 ssh "${O[@]}" "root@$2" 'uname -srm; df -h /data | tail -n 1' 2>&1); then
+              ok "Target $1" "$(echo "$u" | head -n 1), /data $(echo "$u" | tail -n 1 | awk '{print $4}') free"
+            else bad "Target $1" "no answer from the VM"; fi
+          done
+          curl -fs -o /dev/null http://127.0.0.1:8000/dists/8.0/x86_64/INDEX \
+            && ok "Package server" "serving dists/ on port 8000" || bad "Package server" "not running (scripts/serve-dists)"
+          cat $S
+          exit $rc

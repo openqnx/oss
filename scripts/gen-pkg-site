@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+"""gen-pkg-site -- a package browser for the GitHub releases, in the manner of
+pkgs.alpinelinux.org: a searchable list of every published package, and a
+page per package (version, upstream, license, dependencies and reverse
+dependencies, files, downloads, QNX patches, the on-target test and its log).
+
+    scripts/gen-pkg-site [-r RELEASES] [-o OUT]
+
+RELEASES (default tmp/release-staging) holds one directory per GitHub release
+as scripts/publish-github-release staged it: apk-8.0-<arch>/APKINDEX.tar.gz is
+what the site lists -- the very index on GitHub -- and packages-8.0-<arch>/
+gives each package's file list. Also read: ports/dependencies.json (kind),
+ports/<name>/patches/, tests/results/<arch>.tsv and tests/logs/<arch>/.
+OUT (default tmp/pkg-site) is a static site: open OUT/index.html, or serve it
+(GitHub Pages, any web server). Run it after every publish.
+"""
+import argparse, html, json, os, tarfile, time
+
+WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = "openqnx/oss"
+SDP = "8.0"
+ARCHES = (("x86_64", "x86_64"), ("aarch64", "aarch64le"))   # apk arch, QNX arch
+GH = "https://github.com/" + REPO
+E = html.escape
+
+ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+ap.add_argument("-r", "--releases", default=os.path.join(WS, "tmp", "release-staging"))
+ap.add_argument("-o", "--out", default=os.path.join(WS, "tmp", "pkg-site"))
+args = ap.parse_args()
+os.chdir(WS)
+
+from importlib.machinery import SourceFileLoader
+vkey = SourceFileLoader("qnxpkg", os.path.join(WS, "scripts", "qnxpkg")).load_module().apk_version_key
+
+
+def apkindex(path):
+    with tarfile.open(path) as t:
+        text = t.extractfile("APKINDEX").read().decode()
+    for rec in text.strip().split("\n\n"):
+        e = {}
+        for l in rec.splitlines():
+            if len(l) > 2 and l[1] == ":":
+                e[l[0]] = l[2:]
+        if "P" in e:
+            yield e
+
+
+def file_list(path):
+    try:
+        with tarfile.open(path) as t:
+            return sorted("/" + m.name.lstrip("./") for m in t.getmembers() if not m.isdir())
+    except (OSError, tarfile.TarError):
+        return None
+
+
+deps_json = json.load(open("ports/dependencies.json"))
+results = {}
+for _, qarch in ARCHES:
+    p = f"tests/results/{qarch}.tsv"
+    for l in open(p) if os.path.exists(p) else []:
+        f = l.rstrip("\n").split("\t")
+        if l.startswith("#") or len(f) < 6 or not f[5]:
+            continue
+        for nv in f[5].split(", "):
+            n, _, v = nv.partition(" ")
+            results[(qarch, n, v)] = (f[1], f[2], f[3], f[0])   # the last row wins: the newest
+
+pkgs = {}           # (arch, name) -> [entry, ...] newest first
+provides = {}       # (arch, so:x / name) -> name
+for arch, qarch in ARCHES:
+    idx = os.path.join(args.releases, f"apk-{SDP}-{arch}", "APKINDEX.tar.gz")
+    for e in apkindex(idx):
+        e["arch"], e["qarch"] = arch, qarch
+        pkgs.setdefault((arch, e["P"]), []).append(e)
+        provides[(arch, e["P"])] = e["P"]
+        for p in e.get("p", "").split():
+            provides[(arch, p.split("=")[0])] = e["P"]
+for k in pkgs:
+    pkgs[k].sort(key=lambda e: vkey(e["V"]), reverse=True)
+
+rdeps = {}
+for (arch, name), es in pkgs.items():
+    for d in es[0].get("D", "").split():
+        t = provides.get((arch, d.split("=")[0].split(">")[0].split("<")[0]))
+        if t and t != name:
+            rdeps.setdefault((arch, t), set()).add(name)
+
+
+def origin(e):
+    return e.get("o") or e["P"]
+
+
+def test_of(e):
+    o = origin(e)
+    return results.get((e["qarch"], o, e["V"])), f"tests/logs/{e['qarch']}/{o}-{e['V']}.log"
+
+
+def kind(e):
+    c = deps_json.get(origin(e), {}).get("class", "")
+    return "standalone" if c == "standalone" else ("dependent" if c else "")
+
+
+def size(n):
+    n = int(n or 0)
+    for u in ("B", "KiB", "MiB", "GiB"):
+        if n < 1024 or u == "GiB":
+            return f"{n:.0f} {u}" if u == "B" else f"{n:.1f} {u}"
+        n /= 1024
+
+
+def date(t):
+    return time.strftime("%Y-%m-%d", time.gmtime(int(t))) if t and t.isdigit() else ""
+
+
+def badge(r):
+    if not r:
+        return '<span class="b none">not tested</span>'
+    return f'<span class="b {"ok" if r[0] == "PASS" else "bad"}">{E(r[0])}</span>'
+
+
+CSS = """
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+"""
+
+
+def page(title, body, depth):
+    up = "../" * depth
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)}</title><style>{CSS}</style></head><body>
+<header><div class="w"><b><a href="{up}index.html">QNX OSS packages</a></b><nav>
+<a href="{GH}">Repository</a><a href="{GH}/releases">Releases</a><a href="{GH}/blob/main/docs/target-guide.md">Install guide</a>
+<a href="{GH}/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w">{body}</main>
+<footer class="w">QNX SDP {SDP} &middot; generated {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())} from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>"""
+
+
+def pkg_url(arch, name):
+    return f"package/{arch}/{name}.html"
+
+
+os.makedirs(args.out, exist_ok=True)
+rows = []
+for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])):
+    e = es[0]
+    r, logp = test_of(e)
+    rows.append({"n": name, "v": e["V"], "a": arch, "d": e.get("T", ""), "u": e.get("U", ""),
+                 "l": e.get("L", ""), "k": kind(e), "t": (r[0] if r else ""), "b": date(e.get("t")),
+                 "dev": name.endswith("-dev")})
+
+    # the package's own page
+    deps = e.get("D", "").split()
+    dl = [f'<a href="../../{pkg_url(arch, provides[(arch, d)])}">{E(d)}</a>' if (arch, d) in provides else E(d) for d in deps]
+    rd = sorted(rdeps.get((arch, name), ()))
+    o = origin(e)
+    pdir = f"ports/{o}/patches"
+    patches = sorted(f for f in os.listdir(pdir) if f.endswith(".patch")) if os.path.isdir(pdir) else []
+    tgz = os.path.join(args.releases, f"packages-{SDP}-{arch}", f"{name}-{e['V']}.tar.gz")
+    files = file_list(tgz)
+    rel_apk, rel_pkg = f"{GH}/releases/download/apk-{SDP}-{arch}", f"{GH}/releases/download/packages-{SDP}-{arch}"
+    other = [a for a, _ in ARCHES if a != arch and (a, name) in pkgs]
+    b = [f"<h1>{E(name)} <span class=mut>{E(e['V'])}</span></h1><p class=sum>{E(e.get('T', ''))}</p>"]
+    b.append("<dl>")
+    for k, v in (("Version", E(e["V"])), ("Architecture", E(arch) + (" &middot; also: " + ", ".join(
+                     f'<a href="../{a}/{E(name)}.html">{a}</a>' for a in other) if other else "")),
+                 ("Upstream", f'<a href="{E(e.get("U", ""))}">{E(e.get("U", ""))}</a>' if e.get("U") else "–"),
+                 ("License", E(e.get("L", "")) or "–"), ("Kind", E(kind(e)) or "–"),
+                 ("Origin", f'<a href="{GH}/tree/main/ports/{E(o)}">ports/{E(o)}</a>'),
+                 ("Package size", size(e.get("S"))), ("Installed size", size(e.get("I"))),
+                 ("Build date", date(e.get("t"))), ("Provides", E(e.get("p", "")) or "–"),
+                 ("Test on target", badge(r) + (f' <span class=mut>{E(r[1])} &middot; {E(r[2])}</span>' if r else ""))):
+        b.append(f"<dt>{k}</dt><dd>{v}</dd>")
+    b.append("</dl>")
+    b.append("<h2>Install</h2><pre><code>apk add " + E(name) + "</code></pre>"
+             f"<p class=mut>Downloads: <a href=\"{rel_apk}/{E(name)}-{E(e['V'])}.apk\">{E(name)}-{E(e['V'])}.apk</a> (apk) &middot; "
+             f"<a href=\"{rel_pkg}/{E(name)}-{E(e['V'])}.tar.gz\">{E(name)}-{E(e['V'])}.tar.gz</a> (oss-get, unpack under /data/oss). "
+             f"Setting up apk on a target: <a href=\"{GH}/blob/main/docs/target-guide.md\">install guide</a>.</p>")
+    b.append(f"<h2>Depends ({len(deps)})</h2>" + (", ".join(dl) if dl else "<span class=mut>nothing beyond the QNX target image</span>"))
+    b.append(f"<h2>Required by ({len(rd)})</h2>" + (", ".join(f'<a href="{E(x)}.html">{E(x)}</a>' for x in rd) or "<span class=mut>–</span>"))
+    b.append(f"<h2>QNX patches ({len(patches)})</h2>")
+    if patches:
+        b.append("<ul>" + "".join(f'<li><a href="{GH}/blob/main/{pdir}/{E(p)}">{E(p)}</a></li>' for p in patches) + "</ul>")
+    else:
+        b.append("<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>")
+    b.append(f'<p>Build it yourself: <a href="{GH}/blob/main/ports/{E(o)}/README.md">ports/{E(o)}/README.md</a></p>')
+    b.append("<h2>Test on target</h2>")
+    if r and os.path.exists(logp):
+        b.append(f'<p>{badge(r)} {E(r[3])} on {E(r[2])}, {E(r[1])} &middot; '
+                 f'<a href="{GH}/blob/main/{E(logp)}">{E(logp)}</a> &middot; '
+                 f'reproduce it: <a href="{GH}/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>')
+        b.append("<pre><code>" + E(open(logp, errors="replace").read()) + "</code></pre>")
+    elif r:
+        b.append(f"<p>{badge(r)} {E(r[3])} on {E(r[2])}, {E(r[1])}</p>")
+    else:
+        b.append("<p class=mut>No on-target result recorded for this version.</p>")
+    b.append(f"<h2>Files ({len(files) if files is not None else '?'})</h2>")
+    if files is None:
+        b.append("<p class=mut>File list not available.</p>")
+    elif len(files) > 60:
+        b.append("<details><summary>Show all files</summary><pre><code>" + E("\n".join(files)) + "</code></pre></details>")
+    else:
+        b.append("<pre><code>" + E("\n".join(files)) + "</code></pre>")
+    if len(es) > 1:
+        b.append(f"<h2>Other versions ({len(es) - 1})</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th>"
+                 "<th>Test</th><th>Download</th></tr></thead><tbody>")
+        for x in es[1:]:
+            rx, _ = test_of(x)
+            b.append(f"<tr><td class=n>{E(x['V'])}</td><td class=n>{date(x.get('t'))}</td><td>{badge(rx)}</td>"
+                     f"<td><a href=\"{rel_apk}/{E(name)}-{E(x['V'])}.apk\">.apk</a> &middot; "
+                     f"<a href=\"{rel_pkg}/{E(name)}-{E(x['V'])}.tar.gz\">.tar.gz</a> &middot; "
+                     f"<code>apk add {E(name)}={E(x['V'])}</code></td></tr>")
+        b.append("</tbody></table></div>")
+    out = os.path.join(args.out, pkg_url(arch, name))
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "w").write(page(f"{name} {e['V']} ({arch}) -- QNX OSS packages", "\n".join(b), 2))
+
+# the list
+n_comp = len({origin(es[0]) for es in pkgs.values()})
+tested = sum(1 for r in rows if r["t"] == "PASS")
+idx = [f"<h1>Packages for QNX SDP {SDP}</h1><p class=sum>{n_comp} components &middot; "
+       + " &middot; ".join(f"{sum(1 for r in rows if r['a'] == a)} packages for {a}" for a, _ in ARCHES)
+       + f" &middot; {tested} with a passing test on a target. Every package installs with "
+       f"<code>apk add &lt;name&gt;</code> from the <a href=\"{GH}/releases\">GitHub releases</a>.</p>",
+       """<form onsubmit="return false"><input type=search id=q placeholder="Package name or description" autofocus>
+<select id=a><option value="">All architectures</option><option>x86_64</option><option>aarch64</option></select>
+<select id=k><option value="">Any kind</option><option value=standalone>Standalone</option><option value=dependent>Dependent</option></select>
+<select id=t><option value="">Any test result</option><option value=PASS>Passed</option><option value=none>Not tested</option></select>
+<select id=dv><option value="">With -dev packages</option><option value=no>Without -dev</option><option value=only>Only -dev</option></select></form>
+<p class=mut id=cnt></p><div class=tw><table><thead><tr><th>Package</th><th>Version</th><th>Arch</th><th>Description</th>
+<th>License</th><th>Kind</th><th>Test</th><th>Build date</th></tr></thead><tbody id=rows></tbody></table></div>""",
+       "<script>const P=" + json.dumps(rows, separators=(",", ":")).replace("</", "<\\/") + ";",
+       r"""const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function badge(t){return t?'<span class="b '+(t=='PASS'?'ok':'bad')+'">'+esc(t)+'</span>':'<span class="b none">not tested</span>'}
+function show(){const q=$('q').value.trim().toLowerCase(),a=$('a').value,k=$('k').value,t=$('t').value,dv=$('dv').value;
+const m=P.filter(p=>(!q||p.n.toLowerCase().includes(q)||p.d.toLowerCase().includes(q))&&(!a||p.a==a)&&(!k||p.k==k)
+&&(!t||(t=='none'?!p.t:p.t==t))&&(!dv||(dv=='no'?!p.dev:p.dev)));
+$('cnt').textContent=m.length+' of '+P.length+' packages';
+$('rows').innerHTML=m.slice(0,1000).map(p=>'<tr><td class=n><a href="package/'+p.a+'/'+encodeURIComponent(p.n)+'.html">'+esc(p.n)
++'</a></td><td class=n>'+esc(p.v)+'</td><td>'+p.a+'</td><td>'+esc(p.d)+(p.u?' <a class=mut href="'+esc(p.u)+'">upstream</a>':'')
++'</td><td>'+esc(p.l)+'</td><td>'+esc(p.k)+'</td><td>'+badge(p.t)+'</td><td class=n>'+p.b+'</td></tr>').join('')
++(m.length>1000?'<tr><td colspan=8 class=mut>… narrow the search to see the rest</td></tr>':'');
+const u=new URLSearchParams();for(const x of['q','a','k','t','dv'])if($(x).value)u.set(x,$(x).value);
+history.replaceState(null,'',u.toString()?'?'+u:location.pathname)}
+const s=new URLSearchParams(location.search);for(const x of['q','a','k','t','dv'])if(s.get(x))$(x).value=s.get(x);
+for(const x of['q','a','k','t','dv'])$(x).addEventListener('input',show);show();</script>"""]
+open(os.path.join(args.out, "index.html"), "w").write(page("QNX OSS packages", "\n".join(idx), 0))
+open(os.path.join(args.out, ".nojekyll"), "w").close()
+print("%s: %d package pages, %d components, %d with a passing test"
+      % (os.path.relpath(args.out), len(rows), n_comp, tested))

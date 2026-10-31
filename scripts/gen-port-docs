@@ -256,11 +256,21 @@ def render_verified(A, n, d, test):
     if rows:
         A("Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, "
           "`scripts/verify-on-target`):\n")
-        A("| Arch | Target | Installed from | Version | Result | Date |\n|---|---|---|---|---|---|")
+        A("| Arch | Target | Installed from | Version | Result | Date | Log |\n|---|---|---|---|---|---|---|")
         for r in sorted(rows, key=lambda r: (r["arch"], r["target"], r["date"]), reverse=False):
+            # The run's log: what apk installed, the test command, its whole
+            # output, the verdict (scripts/verify-on-target writes it).
+            lg = "–"
+            if r["versions"]:
+                f = "tests/logs/%s/%s.log" % (r["arch"], r["versions"].replace(" ", "-"))
+                if os.path.exists(f):
+                    lg = "[log](../../%s)" % f
             A(f"| {r['arch']} | {r['target']} | {r['via']} | {r['versions'] or '–'} | "
-              f"{'✅ PASS' if r['result'] == 'PASS' else '❌ ' + r['result']} | {r['date']} |")
+              f"{'✅ PASS' if r['result'] == 'PASS' else '❌ ' + r['result']} | {r['date']} | {lg} |")
         A("")
+        A("The targets are stock QNX SDP 8.0 QEMU images; "
+          "[docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones "
+          "and run the same commands yourself.\n")
     elif test:
         A("Not run on a target yet: `scripts/verify-on-target -t \"<target>\" <target> " + n + "`.\n")
     else:

@@ -1,5 +1,9 @@
 # vanilla-vm -- every port on a vanilla QNX 8.0 QEMU image, in one go
 
+> These scripts automate [docs/qemu-test-vms.md](../docs/qemu-test-vms.md),
+> which explains every step to do by hand with your own QNX SDP 8.0 license.
+> Read that first; use these when you want it done in one command.
+
 Scripts that build a stock QNX image with `mkqnximage` (nothing from this
 repository inside it), boot it in QEMU, set it up for apk and then install
 and test the ported components the way a user would get them: from this

@@ -72,17 +72,19 @@ Every component reaches a target one of two ways, and is tested there the same w
 Any QNX 8.0 image with a network, `sshd` and a writable `/data` will do -- the
 packages are installed under `/data/oss` and need nothing else from the image.
 
-All of this in one command -- image, apk, every component installed and
-tested, or the desktop with graphics: [`vanilla-vm/`](../vanilla-vm/README.md)
-(`vanilla-vm/run-all both`, `vanilla-vm/desktop x86_64`).
+Step by step, with every option explained (QNX SDP 8.0 installation,
+host network, the exact `mkqnximage` options of the recorded results, what a
+stock image lacks): [docs/qemu-test-vms.md](qemu-test-vms.md). In short:
 
 ### x86_64 -- QEMU (vanilla mkqnximage image)
 
 ```bash
 source ~/qnx800/qnxsdp-env.sh
-mkdir -p ~/vm/qnx-x86_64 && cd ~/vm/qnx-x86_64
-mkqnximage --type=qemu --arch=x86_64 --ssh-ident=$HOME/.ssh/id_ed25519.pub \\
-           --data-size=3000 --data-inodes=60000 --run=-h      # 3 GB /data for the packages
+mkdir -p ~/vm/oss-vanilla-x86_64 && cd ~/vm/oss-vanilla-x86_64
+mkqnximage --type=qemu --arch=x86_64 --hostname=vanilla-x86 \\
+           --ssh-ident=$HOME/.ssh/qnx-target.pub \\
+           --data-size=4000 --data-inodes=80000 --ram=2G --cpu=4 \\
+           --run=-h                                           # the recorded results' options
 mkqnximage --getip                                             # the target's address
 ```
 

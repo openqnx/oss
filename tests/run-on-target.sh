@@ -79,7 +79,9 @@ for t in $(cat "$list" 2>/dev/null || echo $list); do
   [ -x "$DIR/$t" ] || continue
   "$DIR/$t" > /tmp/$t.out 2>&1
   rc=$?
-  if [ $rc -eq 0 ]; then pass=$((pass+1)); echo "PASS $t"
+  # QNX_PORT_TESTS_VERBOSE=1: every test's own output, not only the failing
+  # ones' (scripts/verify-on-target keeps it as the test's log).
+  if [ $rc -eq 0 ]; then pass=$((pass+1)); [ -n "$QNX_PORT_TESTS_VERBOSE" ] && { sed 's/^/     /' /tmp/$t.out; [ -z "$(tail -c 1 /tmp/$t.out)" ] || echo; }; echo "PASS $t"
   else fail=$((fail+1)); failed="$failed $t"; echo "FAIL $t (rc=$rc)"; sed 's/^/     /' /tmp/$t.out; fi
 done
 qnxport_clean_tmp

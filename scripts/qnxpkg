@@ -27,7 +27,7 @@ Files installed into staging can carry the absolute staging path of the build
 host (a .pc file, a CMake package file). Those are rewritten to the on-target
 path, since the package is installed at / on the board.
 """
-import argparse, base64, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, tempfile, time
+import argparse, base64, glob, gzip, hashlib, io, json, os, re, shutil, stat, subprocess, sys, tarfile, tempfile, time
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREFIX = os.environ.get("PREFIX", "/usr/local")
@@ -432,6 +432,14 @@ def package_tests(arch, args, owner, outdir):
     def owners_of(path):
         pre = "usr/local/" + path
         return {c for c, fs in files_of.items() if any(f == pre or f.startswith(pre + "/") for f in fs)}
+    # tests/run-level/<group>.extras: "test_x<TAB>path path ..." -- what a
+    # run-level test needs installed beyond what its binary links.
+    run_level_extras = {}
+    for f in sorted(glob.glob(os.path.join(WS, "tests", "run-level", "*.extras"))):
+        for l in open(f):
+            if l.strip() and not l.startswith("#"):
+                k, _, v = l.rstrip("\n").partition("\t")
+                run_level_extras.setdefault(k.strip(), []).extend(v.split())
     tool = readelf(arch)
     out = []
     db = os.path.join(outdir, ".index.json")
@@ -464,7 +472,7 @@ def package_tests(arch, args, owner, outdir):
         info = elf_info(os.path.join(stage, rel), tool)
         if info:
             deps |= {owner[s] for s in info[1] if s in owner}
-        for x in TEST_EXTRAS.get(n, []):
+        for x in TEST_EXTRAS.get(n, []) + run_level_extras.get(n, []):
             deps |= owners_of(x)
         pname = "qnx-test-" + n[len("test_"):].replace("_", "-")
         emit(pname, stage, [rel], sorted(deps), "QNX port test %s: checks its component on the target" % n)

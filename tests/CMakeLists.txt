@@ -19,6 +19,9 @@ set(LIB "${STAGE}/lib")
 # so the binaries -- and their packages -- do not change with the checkout's
 # path (they did when the workspace was reached through another mount path).
 add_compile_options("-fmacro-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}/=tests/")
+# Headers from the staging tree (boost's __FILE__) name their target path, not
+# the build machine's: the tests stay the same bytes wherever the workspace is.
+add_compile_options("-fmacro-prefix-map=$ENV{STAGE}/=/")
 
 # Tests find their headers and libraries the same way an application would.
 include_directories(SYSTEM "${INC}" "${CMAKE_CURRENT_SOURCE_DIR}")

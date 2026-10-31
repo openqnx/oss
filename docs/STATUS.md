@@ -88,6 +88,14 @@ current: it is the hand-over, not a history (that is `git log`).
    the release assets were re-uploaded. Check after every publish: every
    asset's GitHub `digest` equals the staged file's sha256.
 
+11. **Package site** (`scripts/gen-pkg-site` -> `tmp/pkg-site/`, static, ~34 MB):
+   a pkgs.alpinelinux.org-style browser built from the staged release
+   indexes (= GitHub's, checked by digest), with each package's files,
+   dependencies both ways, QNX patches, license (`ports/<name>/LICENSE.id`,
+   `scripts/detect-licenses`; 436 of 525 found, the rest "see upstream")
+   and its on-target test log. Regenerate after every publish. Not hosted
+   yet: GitHub Pages is the maintainer's decision.
+
 ## Machine notes
 
 - Targets used: vanilla QEMU VMs made by `vanilla-vm/make-vm` (`~/vm/oss-vanilla-<arch>`).

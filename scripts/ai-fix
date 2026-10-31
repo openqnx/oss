@@ -1,0 +1,133 @@
+#!/bin/bash
+# ai-fix -- let Claude Code port a component whose automatic update failed,
+# and hand the result to the maintainer as a pull request. Nothing is
+# published: the maintainer reviews the PR, merges it, and runs the release
+# workflow (with "build first") for the component.
+#
+#   scripts/ai-fix <component> <new-version> [<log>...]
+#
+# The component's recipe must be back on its previous version (scripts/
+# update-all rolls it back before calling this). Steps:
+#   1. Claude Code runs headless in this workspace with a fixed brief: port
+#      <component> to <new-version> (scripts/port-update, patches with
+#      scripts/mkpatch, the recipe), build both architectures, keep or extend
+#      its test (never weaken it), and pass scripts/verify-on-target on both
+#      QEMU targets. It writes its report to tmp/update-all/<component>.ai.md.
+#   2. If both targets passed: the changed files (ports/<component>, tests,
+#      docs/porting-hazards.md) go onto a new branch auto/<component>-<version>
+#      in a separate worktree, which is pushed, and a pull request is opened
+#      with the report and the on-target logs. Otherwise an issue with the
+#      report is opened (or updated).
+#   3. This workspace is put back: the files are restored from git and the
+#      component is rebuilt at its previous version, so stage/ matches main.
+#
+# Needs: the claude CLI logged in for this user (or ANTHROPIC_API_KEY), gh
+# logged in, and what scripts/ci-release needs (QNX_SDP_ROOT, CI_TARGET_*).
+# Limits: AI_FIX_TIMEOUT (seconds, default 7200), AI_FIX_MAX_TURNS (default 200).
+set -o pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"
+C=${1:?usage: $0 <component> <new-version> [<log>...]}; V=${2:?new version}; shift 2
+LOGS="$*"
+OUT=$WS/tmp/update-all; mkdir -p "$OUT"
+REPORT=$OUT/$C.ai.md; rm -f "$REPORT"
+REPO=openqnx/oss
+BR="auto/$C-$(echo "$V" | tr -c 'A-Za-z0-9._-' '-' | sed 's/-*$//')"
+: "${CI_TARGET_X86_64:?}" "${CI_TARGET_AARCH64LE:?}"
+command -v claude >/dev/null || { echo "ai-fix: no claude CLI" >&2; exit 2; }
+OLD=$(sed -n 's/^VERSION=["]\{0,1\}\([^";]*\).*/\1/p' "ports/$C/recipe.sh" | head -n 1)
+
+read -r -d '' BRIEF <<EOF
+You are porting the open-source component "$C" of this repository (QNX SDP 8.0
+ports, $WS) from version $OLD to $V for QNX SDP 8.0, x86_64 and aarch64le.
+The automatic update failed; its logs: ${LOGS:-none}.
+
+Do:
+1. Read README.md ("Adding a component"), docs/porting-hazards.md, ports/$C/
+   (recipe.sh, patches/, README.md) and the failure logs.
+2. Port: scripts/port-update $C $V (keeps $OLD in ports/$C/versions/$OLD), then
+   fix what breaks: refresh the QNX patches with scripts/mkpatch (each patch
+   keeps a header saying why), adjust ports/$C/recipe.sh (configure options,
+   new dependencies only if they are already ported here). Build both
+   architectures: export QNX_SDP_ROOT=\$QNX_SDP_ROOT; ./scripts/qnxbuild -f $C.
+3. Test: its test is in tests/port-tests.tsv. Keep every existing check; you
+   may add checks or adapt one only where $V changed documented behaviour
+   (say so in the report). Build tests: tests/build-tests.sh; package:
+   scripts/qnxpkg -a <arch> --key keys/private/*.rsa $C and --tests (both
+   archs); then scripts/verify-on-target -t "QEMU x86_64, vanilla mkqnximage
+   image" $CI_TARGET_X86_64 $C and -t "QEMU aarch64le, vanilla mkqnximage
+   image" $CI_TARGET_AARCH64LE $C. Both must PASS (or INSTALLED for a
+   component without a test). Fix and repeat until they pass, or stop when
+   it cannot work and explain why.
+4. New QNX pitfalls: add an entry to docs/porting-hazards.md.
+5. Write the report to $REPORT: the result (PASSED on both / NOT SOLVED),
+   the root causes, every change (files, patches, recipe options), the test
+   changes, and the verify-on-target result lines for both targets.
+
+Do not: touch other components' ports, run scripts/publish-github-release or
+anything that changes GitHub (no git commit, push, gh), edit scripts/ or
+.github/, or weaken a test to make it pass.
+EOF
+
+# What the workspace looks like before: only what changes from here on is
+# Claude's, to be put on the branch and then undone here (other work in the
+# workspace, tracked or not, is left alone).
+snap() { git status --porcelain --untracked-files=all -- ports tests docs/porting-hazards.md |
+         while read -r st f; do [ -e "$f" ] && echo "$st $(sha1sum < "$f" | cut -c1-12) $f" || echo "$st - $f"; done | sort; }
+snap > "$OUT/$C.before"
+echo "ai-fix: $C $OLD -> $V (claude headless, timeout ${AI_FIX_TIMEOUT:-7200}s)"
+timeout "${AI_FIX_TIMEOUT:-7200}" claude -p "$BRIEF" \
+  --permission-mode bypassPermissions --max-turns "${AI_FIX_MAX_TURNS:-200}" \
+  --output-format text > "$OUT/$C.ai.log" 2>&1
+rc=$?
+[ -f "$REPORT" ] || { echo "# $C $OLD -> $V: no report (claude exit $rc)"; tail -n 40 "$OUT/$C.ai.log"; } > "$REPORT"
+
+# Did both targets pass with the new version? (the results files are the record)
+apkv() { python3 -c "import sys; sys.path.insert(0,'scripts'); from importlib.machinery import SourceFileLoader as L; print(L('q','scripts/qnxpkg').load_module().apk_version(sys.argv[1]))" "$1"; }
+NEWV=$(sed -n 's/^VERSION=["]\{0,1\}\([^";]*\).*/\1/p' "ports/$C/recipe.sh" | head -n 1)
+pass=""
+if [ "$NEWV" != "$OLD" ]; then
+  av=$(apkv "$NEWV"); pass=1
+  for a in x86_64 aarch64le; do
+    awk -F'\t' -v c="$C" -v v="$av" '$2=="PASS" && index($6, c" "v"-r")==1 {f=1} END{exit !f}' "tests/results/$a.tsv" || pass=""
+  done
+fi
+
+snap > "$OUT/$C.after"
+CHANGED=$(comm -13 "$OUT/$C.before" "$OUT/$C.after" | awk '{print $3}' | sort -u)
+NEWFILES=$(comm -13 "$OUT/$C.before" "$OUT/$C.after" | awk '$1=="??" {print $3}')
+if [ -n "$pass" ] && [ -n "$CHANGED" ]; then
+  # The branch, from main, in a worktree of its own: this workspace stays on main.
+  W=$OUT/wt-$C; rm -rf "$W"; git worktree prune
+  git fetch -q origin main && git worktree add -q -b "$BR" "$W" origin/main
+  for f in $CHANGED; do if [ -e "$f" ]; then mkdir -p "$W/$(dirname "$f")"; cp -a "$f" "$W/$f"; else rm -f "$W/$f"; fi; done
+  (cd "$W" && git add -A -- $CHANGED &&
+   git -c user.name=openqnx-oss -c user.email=noreply@openqnx.invalid commit -q \
+     -m "$C: update to $V (ported by Claude, tested on both QEMU targets)" \
+     -m "Report: see the pull request." -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" &&
+   git push -q origin "$BR")
+  {
+    echo "Automatic update of **$C** from $OLD to $V failed; Claude Code ported it and it passed on both QEMU targets. **Nothing is published yet.**"
+    echo; echo "After review: merge, then Actions → release → components \`$C\`, build first ✓."
+    echo; echo "---"; cat "$REPORT"
+    echo; echo "### On-target logs"; for a in x86_64 aarch64le; do f=$(ls tests/logs/$a/$C-*.log 2>/dev/null | tail -n 1); [ -n "$f" ] && { echo "<details><summary>$f</summary>"; echo; echo '```'; tail -n 60 "$f"; echo '```'; echo "</details>"; }; done
+    echo; echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+  } > "$OUT/$C.pr.md"
+  url=$(gh pr create -R "$REPO" --head "$BR" --base main --title "$C: update to $V (AI-ported, needs review)" --body-file "$OUT/$C.pr.md" 2>&1 | tail -n 1)
+  echo "ai-fix: $C: pull request $url"
+  echo "$url" > "$OUT/$C.pr-url"
+  git worktree remove --force "$W"
+else
+  { echo "Automatic update of **$C** from $OLD to $V failed, and the AI attempt did not get it to pass on both targets."; echo; cat "$REPORT"; } > "$OUT/$C.issue.md"
+  n=$(gh issue list -R "$REPO" --state open --search "in:title \"Update $C to\"" --json number -q '.[0].number')
+  if [ -n "$n" ]; then gh issue comment -R "$REPO" "$n" --body-file "$OUT/$C.issue.md" >/dev/null; url="https://github.com/$REPO/issues/$n"
+  else url=$(gh issue create -R "$REPO" --title "Update $C to $V: needs manual porting" --body-file "$OUT/$C.issue.md" | tail -n 1); fi
+  echo "ai-fix: $C: not solved, $url"
+  echo "$url" > "$OUT/$C.issue-url"
+fi
+
+# Back to main's version of the component (files and build).
+for f in $CHANGED; do
+  if echo "$NEWFILES" | grep -qxF "$f"; then rm -f "$f"; else git checkout -q -- "$f" 2>/dev/null; fi
+done
+./scripts/qnxbuild -f "$C" > "$OUT/$C.restore.log" 2>&1 || echo "ai-fix: !! rebuilding $C $OLD failed ($OUT/$C.restore.log)"
+[ -n "$pass" ]

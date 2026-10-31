@@ -28,6 +28,10 @@ on:
         description: "Commit the results, logs and docs to main"
         type: boolean
         default: true
+      build:
+        description: "Build the components first (after merging an update pull request)"
+        type: boolean
+        default: false
 
 concurrency:
   group: qnx-targets
@@ -55,6 +59,9 @@ jobs:
         run: |
           cd "$OSS_WS"
           set -- $COMPONENTS
+          if [ "${{ inputs.build }}" = true ] && [ "$1" != --changed ]; then
+            ./scripts/qnxbuild -f "$@" 2>&1 | tee logs/ci-build.log
+          fi
           ./scripts/ci-release \
             ${{ !inputs.publish && '--no-publish' || '' }} \
             ${{ inputs.commit && '--commit' || '' }} "$@" 2>&1 | tee logs/ci-release.log

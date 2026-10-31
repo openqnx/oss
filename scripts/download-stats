@@ -4,7 +4,8 @@
     scripts/download-stats [-n TOP] [--csv FILE]
 
 GitHub only keeps counts, never who: this shows
-  - downloads per release (apk/packages/tests-8.0-<arch>) and in total,
+  - downloads per release (apk/packages-8.0-<arch> and their -m-z shards,
+    tests-8.0-<arch>; scripts/lib/shards.py) and in total,
   - the most downloaded packages (per component and version, both arches
     and both formats added up),
   - repository traffic over the last 14 days (views, unique visitors,
@@ -12,10 +13,12 @@ GitHub only keeps counts, never who: this shows
     access, so run it as the maintainer (gh logged in).
 --csv writes every asset's count, to compare with an earlier run.
 """
-import argparse, collections, csv, json, re, subprocess, sys
+import argparse, collections, csv, json, os, re, subprocess, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
+import shards
 
 REPO = "openqnx/oss"
-TAGS = [f"{k}-8.0-{a}" for k in ("apk", "packages", "tests") for a in ("x86_64", "aarch64")]
+TAGS = shards.tags()
 
 
 def gh(path, paginate=False):
@@ -37,7 +40,7 @@ rows, per_tag, per_pkg = [], {}, collections.Counter()
 for tag in TAGS:
     rel = gh(f"repos/{REPO}/releases/tags/{tag}")
     if not rel:
-        print(f"{tag}: not readable (gh logged in?)", file=sys.stderr)
+        print(f"{tag}: not readable (gh logged in? not created yet?)", file=sys.stderr)
         continue
     assets = gh(f"repos/{REPO}/releases/{rel['id']}/assets?per_page=100", paginate=True) or []
     per_tag[tag] = sum(a["download_count"] for a in assets)
@@ -50,8 +53,8 @@ for tag in TAGS:
 print("== Downloads per release")
 for tag in TAGS:
     if tag in per_tag:
-        print(f"  {tag:24} {per_tag[tag]:>7}")
-print(f"  {'total':24} {sum(per_tag.values()):>7}")
+        print(f"  {tag:26} {per_tag[tag]:>7}")
+print(f"  {'total':26} {sum(per_tag.values()):>7}")
 
 print(f"\n== Most downloaded packages (both arches, .apk + .tar.gz)")
 for name, n in per_pkg.most_common(args.n):

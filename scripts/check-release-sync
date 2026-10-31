@@ -3,17 +3,21 @@
 
     scripts/check-release-sync [--fix] [release...]
 
-Every asset of the six releases (apk/packages/tests-8.0-<arch>) is compared
-with the staged file of the same name in PUBLISH_OUT (default
+Every asset of the releases (apk/packages-8.0-<arch> and their other shards,
+apk/packages-8.0-<arch>-m-z, see scripts/lib/shards.py; tests-8.0-<arch>) that
+were staged is compared with the staged file of the same name in PUBLISH_OUT (default
 tmp/release-staging, what scripts/publish-github-release staged): sha256 vs
 the digest GitHub reports. A differing asset means its index describes other
 bytes than the release serves (apk then refuses it). --fix re-uploads the
 differing and missing ones (--clobber), 25 per batch, PAUSE seconds (120)
 between batches, the indexes last. Exit status 1 when anything differs.
-Assets only on GitHub (older versions, not in the index) are listed.
+Assets only on GitHub (older versions, not in the index, or packages of
+another shard left from before the split) are listed.
 """
 import hashlib, json, os, subprocess, sys, time
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(WS, "scripts", "lib"))
+import shards
 ST = os.environ.get("PUBLISH_OUT", os.path.join(WS, "tmp", "release-staging"))
 REPO = "openqnx/oss"
 PAUSE = int(os.environ.get("PAUSE", "120"))
@@ -34,7 +38,8 @@ def assets(tag):
     return dict(l.split("\t") for l in out.splitlines() if l)
 
 total = {}
-for tag in only or sorted(d for d in os.listdir(ST) if not d.startswith(".")):
+TAGS = shards.tags()
+for tag in only or [t for t in TAGS if os.path.isdir(os.path.join(ST, t))]:
     gh = assets(tag)
     local = set(n for n in os.listdir(os.path.join(ST, tag)) if not n.startswith("."))
     bad = [n for n in sorted(gh) if n in local and gh[n] != "sha256:" + sha(os.path.join(ST, tag, n))]

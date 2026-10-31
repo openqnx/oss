@@ -179,8 +179,9 @@ apk update
 
 `apk-setup` explains in its header what it does; in short: it fetches
 `apk-tools` (and `openssl zlib zstd ca-certificates`) from the
-`packages-8.0-<arch>` release, points apk at the `apk-8.0-<arch>` and
-`tests-8.0-<arch>` releases with the signing key, lets apk install itself into
+`packages-8.0-<arch>` and `packages-8.0-<arch>-m-z` releases, points apk at
+the `apk-8.0-<arch>`, `apk-8.0-<arch>-m-z` and `tests-8.0-<arch>` releases
+(three lines in `/data/oss/etc/apk/repositories`) with the signing key, lets apk install itself into
 `/data/oss`, and links `/usr/local` to `/data/oss/usr/local`.
 
 After every reboot of the target: `ln -sP /data/oss/usr/local /usr/local`.

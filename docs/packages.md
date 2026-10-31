@@ -50,13 +50,34 @@ Without a host, copy the same files to the board any way you like (USB,
 `apk-setup -h` lists the options: `-R` another root, `-r` another repository
 (your own mirror), `-u` an unsigned repository.
 
-The repository the target uses:
+The repositories the target uses (`/data/oss/etc/apk/repositories`, one per
+line):
 
 ```
-https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz
+https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz       packages 0-9, a-l
+https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>-m-z/APKINDEX.tar.gz   packages m-z
+https://github.com/openqnx/oss/releases/download/tests-8.0-<arch>/APKINDEX.tar.gz     the port tests
 ```
 
-with `<arch>` `x86_64` or `aarch64`. Use one package manager per root:
+with `<arch>` `x86_64` or `aarch64`. The packages are split over two releases
+by name because GitHub allows 1000 files per release (see
+[Publishing](#publishing-to-github-releases)); apk reads all of them as one
+repository, dependencies across them included. `apk-setup -r` with a
+`dists/8.0` tree (`scripts/serve-dists`) writes that one repository instead:
+the local layout is not split.
+
+**Targets set up before the split** (November 2026) have only the first line
+and do not see new packages named m-z. Add the second one and update:
+
+```sh
+echo https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>-m-z/APKINDEX.tar.gz \
+  >> /data/oss/etc/apk/repositories
+apk update
+```
+
+or run `apk-setup` again (it rewrites the file). oss-get's new default reads
+both releases; an `oss-get.conf` that sets `OSS_REPO` needs the
+`packages-8.0-@ARCH@-m-z` release added to it. Use one package manager per root:
 `apk-setup` refuses a root that `oss-get` already installed packages into.
 
 Tested on x86_64 and aarch64le mkqnximage VMs against a local stand-in for
@@ -88,7 +109,7 @@ library libeventfd.so.1`; add them to the image from your SDP
 chmod +x /data/oss-get
 export SSL_CERT_FILE=/data/cacert.pem # first time only, see above
 
-/data/oss-get update                 # fetch the index for this architecture
+/data/oss-get update                 # fetch the indexes for this architecture (both releases)
 /data/oss-get install ca-certificates
 /data/oss-get search json            # what is there
 /data/oss-get info mosquitto         # version, dependencies, size
@@ -100,7 +121,7 @@ export SSL_CERT_FILE=/data/cacert.pem # first time only, see above
 
 | Setting | Default | |
 |---|---|---|
-| `OSS_REPO` | `https://github.com/openqnx/oss/releases/download/packages-8.0-@ARCH@` | `@ARCH@` becomes `aarch64` or `x86_64`; without it `/<arch>` is appended |
+| `OSS_REPO` | `https://github.com/openqnx/oss/releases/download/packages-8.0-@ARCH@ https://github.com/openqnx/oss/releases/download/packages-8.0-@ARCH@-m-z` | one or more repositories, space-separated; `@ARCH@` becomes `aarch64` or `x86_64`; without it `/<arch>` is appended. `update` merges their `INDEX` files (the first repository that lists a name wins), `install` downloads each package from the repository that listed it |
 | `OSS_ROOT` | `/data/oss` | where packages are unpacked |
 | `OSS_ARCH` | from `uname -m` | override the detected architecture |
 
@@ -241,14 +262,26 @@ Tested on both architectures (x86_64 and aarch64le VMs).
 ## Publishing to GitHub releases
 
 GitHub allows at most 1000 assets per release, each under 2 GiB, and assets
-are flat (no directories). `dists/8.0/<arch>` holds about 1640 files, so each
-architecture gets three releases:
+are flat (no directories). `dists/8.0/<arch>` holds over 2000 package files
+(every version is kept), so each format gets its own release, and the
+packages are split again by the first character of their name -- 0-9 and a-l
+in the release names of before the split, m-z in `-m-z` ones. Each
+architecture gets five releases:
 
 | Release | Assets | Read by |
 |---|---|---|
-| `packages-8.0-<arch>` | `<pkg>-<ver>.tar.gz`, `INDEX` | `oss-get` (its default `OSS_REPO`) |
-| `apk-8.0-<arch>` | `<pkg>-<ver>.apk`, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>/APKINDEX.tar.gz`) |
-| `tests-8.0-<arch>` | the port tests `qnx-test-<name>` (`.apk`, `.tar.gz`, both indexes) | `apk`, as a second repository |
+| `packages-8.0-<arch>` | `<pkg>-<ver>.tar.gz` named 0-9, a-l, `INDEX` | `oss-get` (its default `OSS_REPO`) |
+| `packages-8.0-<arch>-m-z` | `<pkg>-<ver>.tar.gz` named m-z, `INDEX` | `oss-get` (its default `OSS_REPO`) |
+| `apk-8.0-<arch>` | `<pkg>-<ver>.apk` named 0-9, a-l, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>/APKINDEX.tar.gz`) |
+| `apk-8.0-<arch>-m-z` | `<pkg>-<ver>.apk` named m-z, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>-m-z/APKINDEX.tar.gz`) |
+| `tests-8.0-<arch>` | the port tests `qnx-test-<name>` (`.apk`, `.tar.gz`, both indexes) | `apk`, as a third repository |
+
+Each release is a complete repository with its own signed index, listing
+exactly its own files. The split rule lives in one place,
+`scripts/lib/shards.py` (`SHARDS`), which `publish-github-release`,
+`check-release-sync`, `download-stats` and `gen-pkg-site` all read: a third
+shard is one more line there, plus its repository line in the defaults of
+`target/apk-setup` and `target/oss-get`.
 
 ```bash
 source ./env.sh x86_64
@@ -261,7 +294,10 @@ Without `--upload` nothing leaves the machine. With it, `gh` (logged in, with
 write access to the repository) creates any missing release and uploads the
 packages first and the index last, so a target never sees an index naming a
 package that is not there yet; `--prune` then deletes assets no longer in
-`dists/` (superseded versions). `--repo owner/name` publishes to a fork.
+`dists/` (superseded versions) and, per release, the packages that belong to
+another shard once that shard's release has them (what the release held
+before the split). Every check -- the 1000 assets, `--changed`, `--prune` --
+is per release. `--repo owner/name` publishes to a fork.
 
 The signing key: the public half is `keys/<name>.rsa.pub` (tracked, and what
 `target-bootstrap` installs and `apk-setup` downloads by default); the

@@ -1,7 +1,7 @@
 #!/bin/sh
 # oss-get -- install QNX OSS packages on a QNX 8.0 target.
 #
-#   oss-get update                 fetch the package index
+#   oss-get update                 fetch the package index of every repository
 #   oss-get list | search <word>   what is available
 #   oss-get info <pkg>             version, dependencies, size
 #   oss-get install <pkg>...       download, verify (sha256) and unpack,
@@ -15,10 +15,15 @@
 # Needs only what a stock QNX 8.0 image has: sh (ksh), curl, tar, gzip and
 # openssl. Settings come from the environment or from /data/oss/etc/oss-get.conf:
 #
-#   OSS_REPO   where the packages are. "@ARCH@" in it is replaced with
-#              aarch64 or x86_64; without it, /<arch> is appended. Default:
-#              the openqnx/oss GitHub release for this architecture. Any
-#              web server or local directory laid out like dists/8.0/ works.
+#   OSS_REPO   where the packages are: one repository or several, separated
+#              by spaces. "@ARCH@" in each is replaced with aarch64 or x86_64;
+#              without it, /<arch> is appended. Default: the two openqnx/oss
+#              GitHub releases for this architecture, packages-8.0-@ARCH@
+#              (names 0-9, a-l) and packages-8.0-@ARCH@-m-z (m-z). Any web
+#              server or local directory laid out like dists/8.0/ works.
+#              "update" merges their INDEX files (where two list the same
+#              package, the first repository named wins); "install" downloads
+#              each file from the repository whose INDEX listed it.
 #   OSS_ROOT   where packages are unpacked (default /data/oss). Packages
 #              contain usr/local/..., so files land in $OSS_ROOT/usr/local.
 #   SSL_CERT_FILE  CA bundle for https:// (a stock image has none; after
@@ -32,7 +37,8 @@
 OSS_ROOT=${OSS_ROOT:-/data/oss}
 CONF=${OSS_CONF:-$OSS_ROOT/etc/oss-get.conf}
 [ -f "$CONF" ] && . "$CONF"
-OSS_REPO=${OSS_REPO:-https://github.com/openqnx/oss/releases/download/packages-8.0-@ARCH@}
+GHD=https://github.com/openqnx/oss/releases/download
+OSS_REPO=${OSS_REPO:-$GHD/packages-8.0-@ARCH@ $GHD/packages-8.0-@ARCH@-m-z}
 
 case "$(uname -m)" in
   aarch64*|QEMU_virt|*arm*|*RaspberryPi*) ARCH=aarch64 ;;
@@ -41,12 +47,14 @@ case "$(uname -m)" in
 esac
 ARCH=${OSS_ARCH:-$ARCH}
 
-repo_url() {
-  case "$OSS_REPO" in
-    *@ARCH@*) echo "$OSS_REPO" | sed "s/@ARCH@/$ARCH/g" ;;
-    *) echo "$OSS_REPO/$ARCH" ;;
+repo_url() { # repository as OSS_REPO names it -> its URL for this architecture
+  case "$1" in
+    *@ARCH@*) echo "$1" | sed "s/@ARCH@/$ARCH/g" ;;
+    *) echo "${1%/}/$ARCH" ;;
   esac
 }
+
+first_repo() { for r in $OSS_REPO; do repo_url "$r"; return; done; }
 
 DB=$OSS_ROOT/var/lib/oss-get
 CACHE=$OSS_ROOT/var/cache/oss-get
@@ -76,7 +84,8 @@ sha256() { openssl dgst -sha256 "$1" | sed 's/.*= *//'; }
 need_index() { [ -f "$INDEX" ] || die "no package index -- run: oss-get update"; }
 
 # One INDEX line: name|version|depends|file|sha256|size|description|conflicts
-# (an index without the last field has no conflicts)
+# (an index without the last field has no conflicts). The merged index here
+# adds a ninth field: the URL of the repository the line came from.
 # "<name>" is its newest version (the index lists those first), "<name>=<version>"
 # a specific one: every version stays in the repository.
 entry() { need_index
@@ -88,14 +97,25 @@ field() { echo "$1" | cut -d'|' -f"$2"; }
 
 cmd_update() {
   mkdir -p "$DB" "$CACHE" || die "cannot create $DB"
-  fetch "$(repo_url)/INDEX" "$INDEX.new" || die "cannot fetch $(repo_url)/INDEX"
+  echo "# name|version|depends|file|sha256|size|description|conflicts|repository" > "$INDEX.new"
+  for r in $OSS_REPO; do
+    u=$(repo_url "$r")
+    fetch "$u/INDEX" "$INDEX.one" || { rm -f "$INDEX.new" "$INDEX.one"; die "cannot fetch $u/INDEX"; }
+    # Each line padded to eight fields (an older index has no conflicts
+    # field), then the repository. In the order of OSS_REPO: entry() takes
+    # the first line of a name, so the first repository that has it wins.
+    ue=$(echo "$u" | sed 's/[#&\\]/\\&/g')
+    grep -v -e '^#' -e '^$' "$INDEX.one" |
+      sed -e '/^\([^|]*|\)\{7\}/!s/$/|/' -e "s#\$#|$ue#" >> "$INDEX.new"
+    say "$(grep -vc '^#' "$INDEX.one") packages for $ARCH from $u"
+    rm -f "$INDEX.one"
+  done
   mv "$INDEX.new" "$INDEX"
-  say "$(grep -vc '^#' "$INDEX") packages for $ARCH from $(repo_url)"
 }
 
 cmd_list() {
   need_index
-  grep -v '^#' "$INDEX" | while IFS='|' read -r n v d f s z t c; do
+  grep -v '^#' "$INDEX" | while IFS='|' read -r n v d f s z t c r; do
     m=" "; [ -f "$DB/$n.list" ] && m="i"
     printf "%s %-28s %-16s %s\n" "$m" "$n" "$v" "$t"
   done
@@ -141,8 +161,11 @@ install_one() {
     return 0
   fi
   f=$(field "$e" 4); sum=$(field "$e" 5)
+  # the repository the line came from (an index from before several
+  # repositories has none: the first one)
+  u=$(field "$e" 9); [ -n "$u" ] || u=$(first_repo)
   say "installing $1 $v"
-  fetch "$(repo_url)/$f" "$CACHE/$f" || die "download failed: $f"
+  fetch "$u/$f" "$CACHE/$f" || die "download failed: $u/$f"
   [ "$(sha256 "$CACHE/$f")" = "$sum" ] || { rm -f "$CACHE/$f"; die "checksum mismatch: $f"; }
   mkdir -p "$OSS_ROOT"
   gzip -dc "$CACHE/$f" | tar -tf - | grep -v '/$' > "$DB/$1.list.new" || die "corrupt archive: $f"

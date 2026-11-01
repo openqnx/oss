@@ -1,0 +1,223 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>gcr-dev 3.41.2-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>gcr-dev <span class=mut>3.41.2-r0</span></h1><p class=sum><b>GNOME library for displaying certificates and accessing key stores (development files)</b><br>gcr 3.41.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.41.2-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/gcr-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://gitlab.gnome.org/GNOME/gcr.git">https://gitlab.gnome.org/GNOME/gcr.git</a></dd>
+<dt>License</dt><dd>GPL2+ <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/gcr">ports/gcr</a></dd>
+<dt>Package size</dt><dd>33.2 KiB</dd>
+<dt>Installed size</dt><dd>256.8 KiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add gcr-dev
+apk add gcr-dev=3.41.2-r0   <span class=mut># this version</span>
+
+apk del gcr-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gcr-dev-3.41.2-r0.apk">gcr-dev-3.41.2-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install gcr-dev
+oss-get install gcr-dev=3.41.2-r0   <span class=mut># this version</span>
+
+oss-get remove gcr-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="gcr.html">gcr</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gcr-dev-3.41.2-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gcr-dev-3.41.2-r0.tar.gz</a> (28.8 KiB)</dd><dt>SHA-256</dt><dd><code>abf7636f81a9fa4990fc26c473499b60f7590f29b5c76e492df20dda3ebaa896</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="dbus.html">dbus</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="libgpg-error.html">libgpg-error</a>, <a href="libgcrypt.html">libgcrypt</a>, <a href="p11-kit.html">p11-kit</a>, <a href="gcr.html">gcr</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gcr-dev-3.41.2-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 gcr-dev-3.41.2-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = abf7636f81a9fa4990fc26c473499b60f7590f29b5c76e492df20dda3ebaa896 ] &amp;&amp; echo OK || echo BAD
+gzip -dc gcr-dev-3.41.2-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/gcr-dev.list
+gzip -dc gcr-dev-3.41.2-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm gcr-dev-3.41.2-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/gcr-dev.list
+rm var/lib/manual/gcr-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="dbus.html">dbus</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="libgpg-error.html">libgpg-error</a>, <a href="libgcrypt.html">libgcrypt</a>, <a href="p11-kit.html">p11-kit</a>, <a href="gcr.html">gcr</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="gcr.html">gcr</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/gcr.html">gcr</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/gcr/patches/0001-qnx-xopen-source-value.patch">0001-qnx-xopen-source-value.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/gcr/README.md">ports/gcr/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_gcr on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/gcr-3.41.2-r0.log">tests/logs/x86_64/gcr-3.41.2-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># gcr 3.41.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:13:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gcr qnx-test-gcr qnx-port-tests
+( 1/30) Installing libxau (1.0.11-r0)
+( 2/30) Installing libxdmcp (1.1.5-r0)
+( 3/30) Installing libxcb (1.17.0-r0)
+( 4/30) Installing libx11 (1.8.10-r0)
+( 5/30) Installing libxext (1.3.6-r0)
+( 6/30) Installing libxrender (0.9.11-r0)
+( 7/30) Installing cairo (1.18.2-r0)
+( 8/30) Installing dbus (1.16.0-r1)
+( 9/30) Installing libxi (1.8.2-r0)
+(10/30) Installing libxtst (1.2.5-r0)
+(11/30) Installing at-spi2-core (2.54.0-r0)
+(12/30) Installing fribidi (1.0.16-r0)
+(13/30) Installing harfbuzz (&lt;ip&gt;-r0)
+(14/30) Installing libxcomposite (0.4.6-r0)
+(15/30) Installing libxfixes (6.0.1-r0)
+(16/30) Installing libxcursor (1.2.2-r0)
+(17/30) Installing libxdamage (1.1.6-r0)
+(18/30) Installing libxinerama (1.1.5-r0)
+(19/30) Installing libxml2 (2.13.5-r1)
+(20/30) Installing libxkbcommon (1.8.1-r1)
+(21/30) Installing libxrandr (1.5.4-r0)
+(22/30) Installing libxft (2.3.8-r0)
+(23/30) Installing pango (1.54.0-r0)
+(24/30) Installing gtk3 (3.24.43-r1)
+(25/30) Installing libgpg-error (1.50-r0)
+(26/30) Installing libgcrypt (1.11.0-r1)
+(27/30) Installing p11-kit (0.25.5-r0)
+(28/30) Installing gcr (3.41.2-r0)
+(29/30) Installing qnx-port-tests (1.0-r2)
+(30/30) Installing qnx-test-gcr (1.0-r0)
+OK: 159 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gcr
+     == gcr ==
+       ok   gcr_parser_new
+       info parsed #1: Certificate, label &quot;qnx-port-test.example&quot;, format 200
+       info parsed #2: Private Key, label &quot;(null)&quot;, format 101
+       ok   gcr_parser_parse_data on a PEM certificate + key bundle
+       ok   two objects parsed
+       ok   one is a Certificate
+       ok   one is a Private Key
+       ok   certificate label is its subject CN
+       info DER certificate: 891 bytes
+       ok   PEM body decodes to the 891-byte DER certificate
+       ok   gcr_simple_certificate_new
+       info subject DN: C=CA, O=QNX Port Tests, OU=g4, CN=qnx-port-test.example
+       ok   subject CN
+       ok   issuer CN (self-signed)
+       ok   subject O
+       ok   subject OU
+       ok   subject C
+       ok   certificate is its own issuer
+       info serial: 1234ABCD
+       ok   serial number 1234ABCD
+       info key size: 2048 bits
+       ok   RSA key size 2048
+       info sha256: EA 71 7C C6 76 22 96 D3 E1 7E B5 E4 AA B8 C7 4F C8 21 EA 22 46 E3 1E 40 F6 5D BE 1D 40 E4 59 01
+       ok   SHA-1 fingerprint matches openssl
+       ok   SHA-256 fingerprint matches openssl
+       info expires 2046-10-26
+       ok   expiry year 2046 (20-year certificate)
+       info gcr-viewer --version -&gt; 0: GCR Certificate and Key Viewer -- 3.41.2
+       ok   gcr-viewer --version: GCR Certificate and Key Viewer -- 3.41.2
+     PASS gcr
+PASS test_gcr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-gcr qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-gcr-1.0-r0.apk">qnx-test-gcr-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (67)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/gck-1/gck/gck-deprecated.h
+/usr/local/include/gck-1/gck/gck-enum-types.h
+/usr/local/include/gck-1/gck/gck-version.h
+/usr/local/include/gck-1/gck/gck.h
+/usr/local/include/gck-1/gck/pkcs11.h
+/usr/local/include/gck-1/gck/pkcs11n.h
+/usr/local/include/gck-1/gck/pkcs11x.h
+/usr/local/include/gcr-3/gcr/gcr-base.h
+/usr/local/include/gcr-3/gcr/gcr-certificate-chain.h
+/usr/local/include/gcr-3/gcr/gcr-certificate-request.h
+/usr/local/include/gcr-3/gcr/gcr-certificate.h
+/usr/local/include/gcr-3/gcr/gcr-collection.h
+/usr/local/include/gcr-3/gcr/gcr-column.h
+/usr/local/include/gcr-3/gcr/gcr-comparable.h
+/usr/local/include/gcr-3/gcr/gcr-deprecated-base.h
+/usr/local/include/gcr-3/gcr/gcr-enum-types-base.h
+/usr/local/include/gcr-3/gcr/gcr-filter-collection.h
+/usr/local/include/gcr-3/gcr/gcr-fingerprint.h
+/usr/local/include/gcr-3/gcr/gcr-icons.h
+/usr/local/include/gcr-3/gcr/gcr-import-interaction.h
+/usr/local/include/gcr-3/gcr/gcr-importer.h
+/usr/local/include/gcr-3/gcr/gcr-library.h
+/usr/local/include/gcr-3/gcr/gcr-mock-prompter.h
+/usr/local/include/gcr-3/gcr/gcr-parser.h
+/usr/local/include/gcr-3/gcr/gcr-pkcs11-certificate.h
+/usr/local/include/gcr-3/gcr/gcr-prompt.h
+/usr/local/include/gcr-3/gcr/gcr-secret-exchange.h
+/usr/local/include/gcr-3/gcr/gcr-secure-memory.h
+/usr/local/include/gcr-3/gcr/gcr-simple-certificate.h
+/usr/local/include/gcr-3/gcr/gcr-simple-collection.h
+/usr/local/include/gcr-3/gcr/gcr-ssh-askpass.h
+/usr/local/include/gcr-3/gcr/gcr-system-prompt.h
+/usr/local/include/gcr-3/gcr/gcr-system-prompter.h
+/usr/local/include/gcr-3/gcr/gcr-trust.h
+/usr/local/include/gcr-3/gcr/gcr-types.h
+/usr/local/include/gcr-3/gcr/gcr-union-collection.h
+/usr/local/include/gcr-3/gcr/gcr-unlock-options.h
+/usr/local/include/gcr-3/gcr/gcr-version.h
+/usr/local/include/gcr-3/gcr/gcr.h
+/usr/local/include/gcr-3/ui/gcr-certificate-basics-widget.h
+/usr/local/include/gcr-3/ui/gcr-certificate-details-widget.h
+/usr/local/include/gcr-3/ui/gcr-certificate-renderer.h
+/usr/local/include/gcr-3/ui/gcr-certificate-widget.h
+/usr/local/include/gcr-3/ui/gcr-collection-model.h
+/usr/local/include/gcr-3/ui/gcr-combo-selector.h
+/usr/local/include/gcr-3/ui/gcr-deprecated.h
+/usr/local/include/gcr-3/ui/gcr-enum-types.h
+/usr/local/include/gcr-3/ui/gcr-failure-renderer.h
+/usr/local/include/gcr-3/ui/gcr-import-button.h
+/usr/local/include/gcr-3/ui/gcr-key-renderer.h
+/usr/local/include/gcr-3/ui/gcr-key-widget.h
+/usr/local/include/gcr-3/ui/gcr-list-selector.h
+/usr/local/include/gcr-3/ui/gcr-prompt-dialog.h
+/usr/local/include/gcr-3/ui/gcr-renderer.h
+/usr/local/include/gcr-3/ui/gcr-secure-entry-buffer.h
+/usr/local/include/gcr-3/ui/gcr-tree-selector.h
+/usr/local/include/gcr-3/ui/gcr-ui.h
+/usr/local/include/gcr-3/ui/gcr-unlock-options-widget.h
+/usr/local/include/gcr-3/ui/gcr-viewer-widget.h
+/usr/local/include/gcr-3/ui/gcr-viewer.h
+/usr/local/lib/libgck-1.so
+/usr/local/lib/libgcr-base-3.so
+/usr/local/lib/libgcr-ui-3.so
+/usr/local/lib/pkgconfig/gck-1.pc
+/usr/local/lib/pkgconfig/gcr-3.pc
+/usr/local/lib/pkgconfig/gcr-base-3.pc
+/usr/local/lib/pkgconfig/gcr-ui-3.pc</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

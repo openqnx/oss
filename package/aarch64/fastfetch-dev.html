@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>fastfetch-dev 2.66.1-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>fastfetch-dev <span class=mut>2.66.1-r0</span></h1><p class=sum><b>Like neofetch, but much faster because written in C (development files)</b><br>fastfetch 2.66.1 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>2.66.1-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/fastfetch-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/fastfetch-cli/fastfetch.git">https://github.com/fastfetch-cli/fastfetch.git</a></dd>
+<dt>License</dt><dd>MIT <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>standalone</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/fastfetch">ports/fastfetch</a></dd>
+<dt>Package size</dt><dd>5.6 KiB</dd>
+<dt>Installed size</dt><dd>15.8 KiB</dd>
+<dt>Build date</dt><dd>2026-11-01</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add fastfetch-dev
+apk add fastfetch-dev=2.66.1-r0   <span class=mut># this version</span>
+
+apk del fastfetch-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/fastfetch-dev-2.66.1-r0.apk">fastfetch-dev-2.66.1-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install fastfetch-dev
+oss-get install fastfetch-dev=2.66.1-r0   <span class=mut># this version</span>
+
+oss-get remove fastfetch-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="fastfetch.html">fastfetch</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fastfetch-dev-2.66.1-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fastfetch-dev-2.66.1-r0.tar.gz</a> (4.5 KiB)</dd><dt>SHA-256</dt><dd><code>7f5724ed6fe0af6a1d84084dda8bd5358b06542fc4d812c5e8d9f4c40fd60420</code></dd><dt>Install first</dt><dd><a href="fastfetch.html">fastfetch</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fastfetch-dev-2.66.1-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 fastfetch-dev-2.66.1-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 7f5724ed6fe0af6a1d84084dda8bd5358b06542fc4d812c5e8d9f4c40fd60420 ] &amp;&amp; echo OK || echo BAD
+gzip -dc fastfetch-dev-2.66.1-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/fastfetch-dev.list
+gzip -dc fastfetch-dev-2.66.1-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm fastfetch-dev-2.66.1-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/fastfetch-dev.list
+rm var/lib/manual/fastfetch-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="fastfetch.html">fastfetch</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="fastfetch.html">fastfetch</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/fastfetch.html">fastfetch</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (6)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0001-qnx-platform.patch">0001-qnx-platform.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0002-qnx-process-info.patch">0002-qnx-process-info.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0003-qnx-no-dirent-d-type.patch">0003-qnx-no-dirent-d-type.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0004-qnx-bsd-network-code.patch">0004-qnx-bsd-network-code.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0005-qnx-colors-min-max.patch">0005-qnx-colors-min-max.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/patches/0006-nosupport-signatures.patch">0006-nosupport-signatures.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/fastfetch/README.md">ports/fastfetch/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_fastfetch on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/fastfetch-2.66.1-r0.log">tests/logs/aarch64le/fastfetch-2.66.1-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># fastfetch 2.66.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:56:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fastfetch qnx-test-fastfetch qnx-port-tests
+(1/2) Installing fastfetch (2.66.1-r0)
+(2/2) Installing qnx-test-fastfetch (1.0-r0)
+OK: 125 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fastfetch
+     == fastfetch ==
+       ok   fastfetch --version: 2.66.1
+       ok   JSON output written
+       ok   OS: QNX 8.0.0
+       ok   OS build: 2026/06/05-16:21:14EDT
+       ok   Kernel release 8.0.0
+       info pidin: 4 CPUs at 0 MHz, FreeMem:1766MB/2048MB
+       ok   CPU: 4 logical cores, as pidin
+       ok   CPU: base frequency 0 MHz, as pidin
+       ok   Memory: total 2048 MB, as pidin
+       ok   Memory: used is between 0 and the total
+       ok   Uptime: 110237 s since boot
+       info boot time: fastfetch 2026-10-31T04:18:42.000+0000, pidin Oct 31 04:18:42
+       ok   Processes: 26 (/proc has 27)
+       ok   Disk /: 9428 KB total, as df -k
+       ok   Disk: mount point /
+       ok   Local IP: lo0 &lt;ip&gt;/8
+       info shell: fastfetch /bin/sh, this script /bin/sh
+       ok   Shell: /bin/sh (the shell running this test)
+       ok   text output with a format string: OS: QNX-8.0.0
+     PASS fastfetch
+PASS test_fastfetch
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-fastfetch qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-fastfetch-1.0-r0.apk">qnx-test-fastfetch-1.0-r0.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (1)</h2>
+<pre><code>/usr/local/share/man/man1/fastfetch.1</code></pre></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

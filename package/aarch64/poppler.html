@@ -1,0 +1,146 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>poppler 25.12.0-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>poppler <span class=mut>25.12.0-r0</span></h1><p class=sum><b>PDF rendering library and command line tools</b><br>poppler 25.12.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>25.12.0-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/poppler.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://gitlab.freedesktop.org/poppler/poppler.git">https://gitlab.freedesktop.org/poppler/poppler.git</a></dd>
+<dt>License</dt><dd>GPL-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/poppler">ports/poppler</a></dd>
+<dt>Package size</dt><dd>2.2 MiB</dd>
+<dt>Installed size</dt><dd>6.4 MiB</dd>
+<dt>Build date</dt><dd>2026-10-30</dd>
+<dt>Provides</dt><dd>so:libpoppler-cpp.so.2=25.12.0 so:libpoppler-glib.so.8=25.12.0 so:libpoppler.so.155=25.12.0</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add poppler
+apk add poppler=25.12.0-r0   <span class=mut># this version</span>
+
+apk del poppler   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/poppler-25.12.0-r0.apk">poppler-25.12.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install poppler
+oss-get install poppler=25.12.0-r0   <span class=mut># this version</span>
+
+oss-get remove poppler   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="cairo.html">cairo</a>, <a href="fontconfig.html">fontconfig</a>, <a href="freetype.html">freetype</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="lcms2.html">lcms2</a>, <a href="libiconv.html">libiconv</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="libpng.html">libpng</a>, <a href="libtiff.html">libtiff</a>, <a href="openjpeg.html">openjpeg</a>, <a href="zlib.html">zlib</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/poppler-25.12.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/poppler-25.12.0-r0.tar.gz</a> (2.2 MiB)</dd><dt>SHA-256</dt><dd><code>76e03fc5b2f1a6775694302b87460b9c45239223b50fb4306820fd5b4006c932</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="lcms2.html">lcms2</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="libwebp.html">libwebp</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="libtiff.html">libtiff</a>, <a href="openjpeg.html">openjpeg</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/poppler-25.12.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 poppler-25.12.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 76e03fc5b2f1a6775694302b87460b9c45239223b50fb4306820fd5b4006c932 ] &amp;&amp; echo OK || echo BAD
+gzip -dc poppler-25.12.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/poppler.list
+gzip -dc poppler-25.12.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm poppler-25.12.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/poppler.list
+rm var/lib/manual/poppler.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="lcms2.html">lcms2</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="libwebp.html">libwebp</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="libtiff.html">libtiff</a>, <a href="openjpeg.html">openjpeg</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (12)</h2><a href="../../package/aarch64/cairo.html">cairo</a>, <a href="../../package/aarch64/fontconfig.html">fontconfig</a>, <a href="../../package/aarch64/freetype.html">freetype</a>, <a href="../../package/aarch64/gettext.html">gettext</a>, <a href="../../package/aarch64/glib.html">glib</a>, <a href="../../package/aarch64/lcms2.html">lcms2</a>, <a href="../../package/aarch64/libiconv.html">libiconv</a>, <a href="../../package/aarch64/libjpeg-turbo.html">libjpeg-turbo</a>, <a href="../../package/aarch64/libpng.html">libpng</a>, <a href="../../package/aarch64/libtiff.html">libtiff</a>, <a href="../../package/aarch64/openjpeg.html">openjpeg</a>, <a href="../../package/aarch64/zlib.html">zlib</a>
+<h2>Required by (2)</h2><a href="cups-filters.html">cups-filters</a>, <a href="poppler-dev.html">poppler-dev</a>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/poppler/README.md">ports/poppler/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_poppler on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/poppler-25.12.0-r0.log">tests/logs/aarch64le/poppler-25.12.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># poppler 25.12.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T17:22:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u poppler qnx-test-poppler qnx-port-tests
+( 1/21) Installing expat (2.6.4-r0)
+( 2/21) Installing bzip2 (1.0.8-r0)
+( 3/21) Installing freetype (2.13.3-r0)
+( 4/21) Installing fontconfig (2.15.0-r0)
+( 5/21) Installing libxau (1.0.11-r0)
+( 6/21) Installing libxdmcp (1.1.5-r0)
+( 7/21) Installing libxcb (1.17.0-r0)
+( 8/21) Installing libx11 (1.8.10-r0)
+( 9/21) Installing libxext (1.3.6-r0)
+(10/21) Installing libxrender (0.9.11-r0)
+(11/21) Installing lzo (2.10-r0)
+(12/21) Installing pixman (0.46.4-r0)
+(13/21) Installing cairo (1.18.2-r0)
+(14/21) Installing libwebp (1.4.0-r0)
+(15/21) Installing xz (5.6.3-r0)
+(16/21) Installing libtiff (4.7.0-r0)
+(17/21) Installing openjpeg (2.5.3-r0)
+(18/21) Installing poppler (25.12.0-r0)
+(19/21) Installing qnx-port-tests (1.0-r2)
+(20/21) Installing font-dejavu (2.37-r0)
+(21/21) Installing qnx-test-poppler (1.0-r1)
+OK: 83 MiB in 49 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_poppler
+     == poppler ==
+       info poppler 25.12.0
+       ok   poppler_document_new_from_file
+       ok   one page
+       info page 298 x 420 pt
+       ok   page size 298 x 420 pt (A6)
+       info text: Hello QNX poppler
+       ok   text read back
+       ok   find_text QNX
+       info QNX at x 97..141, y 315..339
+       ok   found where it was drawn
+     PASS poppler
+PASS test_poppler
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-poppler qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-poppler-1.0-r1.apk">qnx-test-poppler-1.0-r1.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (18)</h2>
+<pre><code>/usr/local/bin/pdfattach
+/usr/local/bin/pdfdetach
+/usr/local/bin/pdffonts
+/usr/local/bin/pdfimages
+/usr/local/bin/pdfinfo
+/usr/local/bin/pdfseparate
+/usr/local/bin/pdftocairo
+/usr/local/bin/pdftohtml
+/usr/local/bin/pdftoppm
+/usr/local/bin/pdftops
+/usr/local/bin/pdftotext
+/usr/local/bin/pdfunite
+/usr/local/lib/libpoppler-cpp.so.2
+/usr/local/lib/libpoppler-cpp.so.2.2.0
+/usr/local/lib/libpoppler-glib.so.8
+/usr/local/lib/libpoppler-glib.so.8.31.0
+/usr/local/lib/libpoppler.so.155
+/usr/local/lib/libpoppler.so.155.0.0</code></pre></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

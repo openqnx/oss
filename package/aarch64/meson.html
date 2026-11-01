@@ -1,0 +1,378 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>meson 1.10.0-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>meson <span class=mut>1.10.0-r0</span></h1><p class=sum><b>Meson build system</b><br>meson 1.10.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>1.10.0-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/meson.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://files.pythonhosted.org/packages/32/4f/c398c6f06ece1c6c246e008d5dac3824c98f54d3eb3d8014f4910afd6d48/meson-1.10.0-py3-none-any.whl">https://files.pythonhosted.org/packages/32/4f/c398c6f06ece1c6c246e008d5dac3824c98f54d3eb3d8014f4910afd6d48/meson-1.10.0-py3-none-any.whl</a></dd>
+<dt>License</dt><dd>see upstream <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/meson">ports/meson</a></dd>
+<dt>Package size</dt><dd>904.8 KiB</dd>
+<dt>Installed size</dt><dd>3.9 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add meson
+apk add meson=1.10.0-r0   <span class=mut># this version</span>
+
+apk del meson   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/meson-1.10.0-r0.apk">meson-1.10.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install meson
+oss-get install meson=1.10.0-r0   <span class=mut># this version</span>
+
+oss-get remove meson   <span class=mut># its files only</span></code></pre></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/meson-1.10.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/meson-1.10.0-r0.tar.gz</a> (884.1 KiB)</dd><dt>SHA-256</dt><dd><code>23ec6d8862646573e2a659acbe6e1e69690793e67b0a5fd60a72879dfc53e309</code></dd><dt>Install first</dt><dd>nothing</dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/meson-1.10.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 meson-1.10.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 23ec6d8862646573e2a659acbe6e1e69690793e67b0a5fd60a72879dfc53e309 ] &amp;&amp; echo OK || echo BAD
+gzip -dc meson-1.10.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/meson.list
+gzip -dc meson-1.10.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm meson-1.10.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/meson.list
+rm var/lib/manual/meson.list</code></pre>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (0)</h2><span class=mut>nothing beyond the QNX target image</span>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/meson/README.md">ports/meson/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_meson on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/meson-1.10.0-r0.log">tests/logs/aarch64le/meson-1.10.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># meson 1.10.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:56:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u meson qnx-test-meson qnx-port-tests
+( 1/10) Installing meson (1.10.0-r0)
+( 2/10) Installing qnx-port-tests (1.0-r2)
+( 3/10) Installing bzip2 (1.0.8-r0)
+( 4/10) Installing expat (2.6.4-r0)
+( 5/10) Installing gdbm (1.24-r0)
+( 6/10) Installing readline (8.2-r0)
+( 7/10) Installing sqlite (3.47.2-r0)
+( 8/10) Installing xz (5.6.3-r0)
+( 9/10) Installing python3 (3.14.0-r2)
+(10/10) Installing qnx-test-meson (1.0-r0)
+OK: 163 MiB in 38 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_meson
+     == meson ==
+       info meson 1.10.0
+       ok   meson --version: 1.10.0
+       info Message: system=qnx cpu=aarch64
+       ok   meson setup --backend=none (no compiler needed)
+       ok   config.h: ANSWER 42 (run_command), FLAVOUR &quot;plain&quot;, NWORDS 3
+       ok   configure_file substitution: hello ALPHA-BETA-GAMMA
+       ok   introspect --projectinfo: qnxdemo 1.2.3
+       ok   introspect --buildoptions: flavour plain of plain/spicy
+       ok   default buildtype debug
+       ok   meson configure -Dflavour=spicy
+       ok   reconfigured: config.h has FLAVOUR &quot;spicy&quot;
+       info meson configure build -Dflavour=sweet: rc 1:
+     
+     ERROR: Value &quot;sweet&quot; (of type &quot;string&quot;) for option &quot;flavour&quot; is not one of the choices. Possible choices are (as string): &quot;plain&quot;, &quot;spicy&quot;.
+     
+       ok   a value outside the combo is rejected
+     PASS meson
+PASS test_meson
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-meson qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-meson-1.0-r0.apk">qnx-test-meson-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (255)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/meson
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.data/data/share/man/man1/meson.1
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.data/data/share/polkit-1/actions/com.mesonbuild.install.policy
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/METADATA
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/RECORD
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/WHEEL
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/entry_points.txt
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/licenses/COPYING
+/usr/local/lib/python3.14/site-packages/meson-1.10.0.dist-info/top_level.txt
+/usr/local/lib/python3.14/site-packages/mesonbuild/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/_pathlib.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/_typing.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/arglist.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/interpreter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/introspection.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/postprocess.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/printer.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/ast/visitor.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/backends.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/ninjabackend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/nonebackend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2010backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2012backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2013backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2015backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2017backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2019backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2022backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/vs2026backend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/backend/xcodebackend.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/build.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/builder.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/cfg.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/interpreter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/manifest.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/raw.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/toml.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cargo/version.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/common.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/data/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/data/preload.cmake
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/executor.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/fileapi.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/generator.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/interpreter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/toolchain.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/traceparser.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmake/tracetargets.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/cmdline.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/asm.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/c.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/c_function_attributes.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/compilers.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/cpp.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/cs.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/cuda.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/cython.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/d.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/detect.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/fortran.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/java.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/apple.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/arm.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/ccrx.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/clang.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/clike.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/compcert.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/elbrus.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/emscripten.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/gnu.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/intel.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/islinker.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/metrowerks.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/microchip.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/pgi.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/tasking.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/ti.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/mixins/visualstudio.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/objc.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/objcpp.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/rust.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/swift.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/compilers/vala.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/coredata.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/base.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/boost.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/cmake.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/coarrays.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/configtool.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/cuda.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/data/CMakeLists.txt
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/data/CMakeListsLLVM.txt
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/data/CMakePathInfo.txt
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/data/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/detect.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/dev.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/dub.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/factory.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/framework.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/hdf5.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/misc.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/mpi.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/pkgconfig.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/platform.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/python.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/qt.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/scalapack.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/dependencies/ui.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/depfile.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/envconfig.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/environment.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/compiler.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/dependencyfallbacks.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/interpreter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/interpreterobjects.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/kwargs.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/mesonmain.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/array.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/boolean.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/dict.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/integer.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/range.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/primitives/string.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreter/type_checking.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/_unholder.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/baseobjects.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/decorators.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/disabler.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/exceptions.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/helpers.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/interpreterbase.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/interpreterbase/operator.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/linkers/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/linkers/base.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/linkers/detect.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/linkers/linkers.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/machinefile.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mcompile.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mconf.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mdevenv.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mdist.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mesondata.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mesonlib.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mesonmain.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mformat.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/minit.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/minstall.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mintro.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mlog.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/_qt.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/cmake.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/codegen.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/cuda.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/dlang.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/external_project.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/fs.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/gnome.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/hotdoc.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/i18n.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/icestorm.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/java.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/keyval.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/modtest.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/pkgconfig.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/python.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/python3.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/qt4.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/qt5.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/qt6.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/rust.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/simd.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/snippets.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/sourceset.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/wayland.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/modules/windows.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mparser.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/msetup.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/msubprojects.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/mtest.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/munstable_coredata.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/optinterpreter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/options.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/programs.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/rewriter.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/clangformat.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/clangtidy.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/cleantrees.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/clippy.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/cmake_run_ctgt.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/cmd_or_ps.ps1
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/copy.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/coverage.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/delwithsuffix.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/depaccumulate.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/depfixer.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/depscan.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/dirchanger.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/env2mfile.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/externalproject.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/gettext.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/gtkdochelper.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/hotdochelper.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/itstool.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/meson_exe.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/msgfmthelper.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/pickle_env.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/pycompile.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/python_info.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/regen_checker.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/reprotest.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/run_tool.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/rustdoc.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/scanbuild.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/symbolextractor.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/tags.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/test_loaded_modules.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/uninstall.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/vcstagger.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/scripts/yasm.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/cpptemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/cstemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/ctemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/cudatemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/dlangtemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/fortrantemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/javatemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/mesontemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/objcpptemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/objctemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/rusttemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/samplefactory.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/sampleimpl.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/templates/valatemplates.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/tooldetect.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/utils/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/utils/core.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/utils/platform.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/utils/universal.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/utils/vsenv.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/wrap/__init__.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/wrap/wrap.py
+/usr/local/lib/python3.14/site-packages/mesonbuild/wrap/wraptool.py</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

@@ -1,0 +1,531 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>glm-dev 1.0.1-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>glm-dev <span class=mut>1.0.1-r0</span></h1><p class=sum><b>Header-only C++ mathematics library for graphics based on GLSL (development files)</b><br>glm 1.0.1 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>1.0.1-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/glm-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/g-truc/glm.git">https://github.com/g-truc/glm.git</a></dd>
+<dt>License</dt><dd>MIT <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>standalone</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/glm">ports/glm</a></dd>
+<dt>Package size</dt><dd>254.2 KiB</dd>
+<dt>Installed size</dt><dd>2.1 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add glm-dev
+apk add glm-dev=1.0.1-r0   <span class=mut># this version</span>
+
+apk del glm-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/glm-dev-1.0.1-r0.apk">glm-dev-1.0.1-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install glm-dev
+oss-get install glm-dev=1.0.1-r0   <span class=mut># this version</span>
+
+oss-get remove glm-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="glm.html">glm</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/glm-dev-1.0.1-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/glm-dev-1.0.1-r0.tar.gz</a> (231.8 KiB)</dd><dt>SHA-256</dt><dd><code>b8d564a05bca9ffa2130b15db67c61880f93b57ffb42ecfc6fcc27ff0557757a</code></dd><dt>Install first</dt><dd><a href="glm.html">glm</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/glm-dev-1.0.1-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 glm-dev-1.0.1-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = b8d564a05bca9ffa2130b15db67c61880f93b57ffb42ecfc6fcc27ff0557757a ] &amp;&amp; echo OK || echo BAD
+gzip -dc glm-dev-1.0.1-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/glm-dev.list
+gzip -dc glm-dev-1.0.1-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm glm-dev-1.0.1-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/glm-dev.list
+rm var/lib/manual/glm-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="glm.html">glm</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="glm.html">glm</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/glm.html">glm</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/glm/README.md">ports/glm/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_glm on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/glm-1.0.1-r0.log">tests/logs/aarch64le/glm-1.0.1-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># glm 1.0.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:32:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u glm qnx-test-glm qnx-port-tests
+(1/3) Installing glm (1.0.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-glm (1.0-r6)
+OK: 55 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glm
+     == glm ==
+       ok   translate
+       ok   rotate
+       ok   dot
+     PASS glm
+PASS test_glm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-glm qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-glm-1.0-r6.apk">qnx-test-glm-1.0-r6.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (428)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/glm/common.hpp
+/usr/local/include/glm/detail/_features.hpp
+/usr/local/include/glm/detail/_fixes.hpp
+/usr/local/include/glm/detail/_noise.hpp
+/usr/local/include/glm/detail/_swizzle.hpp
+/usr/local/include/glm/detail/_swizzle_func.hpp
+/usr/local/include/glm/detail/_vectorize.hpp
+/usr/local/include/glm/detail/compute_common.hpp
+/usr/local/include/glm/detail/compute_vector_decl.hpp
+/usr/local/include/glm/detail/compute_vector_relational.hpp
+/usr/local/include/glm/detail/func_common.inl
+/usr/local/include/glm/detail/func_common_simd.inl
+/usr/local/include/glm/detail/func_exponential.inl
+/usr/local/include/glm/detail/func_exponential_simd.inl
+/usr/local/include/glm/detail/func_geometric.inl
+/usr/local/include/glm/detail/func_geometric_simd.inl
+/usr/local/include/glm/detail/func_integer.inl
+/usr/local/include/glm/detail/func_integer_simd.inl
+/usr/local/include/glm/detail/func_matrix.inl
+/usr/local/include/glm/detail/func_matrix_simd.inl
+/usr/local/include/glm/detail/func_packing.inl
+/usr/local/include/glm/detail/func_packing_simd.inl
+/usr/local/include/glm/detail/func_trigonometric.inl
+/usr/local/include/glm/detail/func_trigonometric_simd.inl
+/usr/local/include/glm/detail/func_vector_relational.inl
+/usr/local/include/glm/detail/func_vector_relational_simd.inl
+/usr/local/include/glm/detail/glm.cpp
+/usr/local/include/glm/detail/qualifier.hpp
+/usr/local/include/glm/detail/setup.hpp
+/usr/local/include/glm/detail/type_float.hpp
+/usr/local/include/glm/detail/type_half.hpp
+/usr/local/include/glm/detail/type_half.inl
+/usr/local/include/glm/detail/type_mat2x2.hpp
+/usr/local/include/glm/detail/type_mat2x2.inl
+/usr/local/include/glm/detail/type_mat2x3.hpp
+/usr/local/include/glm/detail/type_mat2x3.inl
+/usr/local/include/glm/detail/type_mat2x4.hpp
+/usr/local/include/glm/detail/type_mat2x4.inl
+/usr/local/include/glm/detail/type_mat3x2.hpp
+/usr/local/include/glm/detail/type_mat3x2.inl
+/usr/local/include/glm/detail/type_mat3x3.hpp
+/usr/local/include/glm/detail/type_mat3x3.inl
+/usr/local/include/glm/detail/type_mat3x4.hpp
+/usr/local/include/glm/detail/type_mat3x4.inl
+/usr/local/include/glm/detail/type_mat4x2.hpp
+/usr/local/include/glm/detail/type_mat4x2.inl
+/usr/local/include/glm/detail/type_mat4x3.hpp
+/usr/local/include/glm/detail/type_mat4x3.inl
+/usr/local/include/glm/detail/type_mat4x4.hpp
+/usr/local/include/glm/detail/type_mat4x4.inl
+/usr/local/include/glm/detail/type_mat4x4_simd.inl
+/usr/local/include/glm/detail/type_quat.hpp
+/usr/local/include/glm/detail/type_quat.inl
+/usr/local/include/glm/detail/type_quat_simd.inl
+/usr/local/include/glm/detail/type_vec1.hpp
+/usr/local/include/glm/detail/type_vec1.inl
+/usr/local/include/glm/detail/type_vec2.hpp
+/usr/local/include/glm/detail/type_vec2.inl
+/usr/local/include/glm/detail/type_vec3.hpp
+/usr/local/include/glm/detail/type_vec3.inl
+/usr/local/include/glm/detail/type_vec4.hpp
+/usr/local/include/glm/detail/type_vec4.inl
+/usr/local/include/glm/detail/type_vec4_simd.inl
+/usr/local/include/glm/exponential.hpp
+/usr/local/include/glm/ext.hpp
+/usr/local/include/glm/ext/_matrix_vectorize.hpp
+/usr/local/include/glm/ext/matrix_clip_space.hpp
+/usr/local/include/glm/ext/matrix_clip_space.inl
+/usr/local/include/glm/ext/matrix_common.hpp
+/usr/local/include/glm/ext/matrix_common.inl
+/usr/local/include/glm/ext/matrix_double2x2.hpp
+/usr/local/include/glm/ext/matrix_double2x2_precision.hpp
+/usr/local/include/glm/ext/matrix_double2x3.hpp
+/usr/local/include/glm/ext/matrix_double2x3_precision.hpp
+/usr/local/include/glm/ext/matrix_double2x4.hpp
+/usr/local/include/glm/ext/matrix_double2x4_precision.hpp
+/usr/local/include/glm/ext/matrix_double3x2.hpp
+/usr/local/include/glm/ext/matrix_double3x2_precision.hpp
+/usr/local/include/glm/ext/matrix_double3x3.hpp
+/usr/local/include/glm/ext/matrix_double3x3_precision.hpp
+/usr/local/include/glm/ext/matrix_double3x4.hpp
+/usr/local/include/glm/ext/matrix_double3x4_precision.hpp
+/usr/local/include/glm/ext/matrix_double4x2.hpp
+/usr/local/include/glm/ext/matrix_double4x2_precision.hpp
+/usr/local/include/glm/ext/matrix_double4x3.hpp
+/usr/local/include/glm/ext/matrix_double4x3_precision.hpp
+/usr/local/include/glm/ext/matrix_double4x4.hpp
+/usr/local/include/glm/ext/matrix_double4x4_precision.hpp
+/usr/local/include/glm/ext/matrix_float2x2.hpp
+/usr/local/include/glm/ext/matrix_float2x2_precision.hpp
+/usr/local/include/glm/ext/matrix_float2x3.hpp
+/usr/local/include/glm/ext/matrix_float2x3_precision.hpp
+/usr/local/include/glm/ext/matrix_float2x4.hpp
+/usr/local/include/glm/ext/matrix_float2x4_precision.hpp
+/usr/local/include/glm/ext/matrix_float3x2.hpp
+/usr/local/include/glm/ext/matrix_float3x2_precision.hpp
+/usr/local/include/glm/ext/matrix_float3x3.hpp
+/usr/local/include/glm/ext/matrix_float3x3_precision.hpp
+/usr/local/include/glm/ext/matrix_float3x4.hpp
+/usr/local/include/glm/ext/matrix_float3x4_precision.hpp
+/usr/local/include/glm/ext/matrix_float4x2.hpp
+/usr/local/include/glm/ext/matrix_float4x2_precision.hpp
+/usr/local/include/glm/ext/matrix_float4x3.hpp
+/usr/local/include/glm/ext/matrix_float4x3_precision.hpp
+/usr/local/include/glm/ext/matrix_float4x4.hpp
+/usr/local/include/glm/ext/matrix_float4x4_precision.hpp
+/usr/local/include/glm/ext/matrix_int2x2.hpp
+/usr/local/include/glm/ext/matrix_int2x2_sized.hpp
+/usr/local/include/glm/ext/matrix_int2x3.hpp
+/usr/local/include/glm/ext/matrix_int2x3_sized.hpp
+/usr/local/include/glm/ext/matrix_int2x4.hpp
+/usr/local/include/glm/ext/matrix_int2x4_sized.hpp
+/usr/local/include/glm/ext/matrix_int3x2.hpp
+/usr/local/include/glm/ext/matrix_int3x2_sized.hpp
+/usr/local/include/glm/ext/matrix_int3x3.hpp
+/usr/local/include/glm/ext/matrix_int3x3_sized.hpp
+/usr/local/include/glm/ext/matrix_int3x4.hpp
+/usr/local/include/glm/ext/matrix_int3x4_sized.hpp
+/usr/local/include/glm/ext/matrix_int4x2.hpp
+/usr/local/include/glm/ext/matrix_int4x2_sized.hpp
+/usr/local/include/glm/ext/matrix_int4x3.hpp
+/usr/local/include/glm/ext/matrix_int4x3_sized.hpp
+/usr/local/include/glm/ext/matrix_int4x4.hpp
+/usr/local/include/glm/ext/matrix_int4x4_sized.hpp
+/usr/local/include/glm/ext/matrix_integer.hpp
+/usr/local/include/glm/ext/matrix_integer.inl
+/usr/local/include/glm/ext/matrix_projection.hpp
+/usr/local/include/glm/ext/matrix_projection.inl
+/usr/local/include/glm/ext/matrix_relational.hpp
+/usr/local/include/glm/ext/matrix_relational.inl
+/usr/local/include/glm/ext/matrix_transform.hpp
+/usr/local/include/glm/ext/matrix_transform.inl
+/usr/local/include/glm/ext/matrix_uint2x2.hpp
+/usr/local/include/glm/ext/matrix_uint2x2_sized.hpp
+/usr/local/include/glm/ext/matrix_uint2x3.hpp
+/usr/local/include/glm/ext/matrix_uint2x3_sized.hpp
+/usr/local/include/glm/ext/matrix_uint2x4.hpp
+/usr/local/include/glm/ext/matrix_uint2x4_sized.hpp
+/usr/local/include/glm/ext/matrix_uint3x2.hpp
+/usr/local/include/glm/ext/matrix_uint3x2_sized.hpp
+/usr/local/include/glm/ext/matrix_uint3x3.hpp
+/usr/local/include/glm/ext/matrix_uint3x3_sized.hpp
+/usr/local/include/glm/ext/matrix_uint3x4.hpp
+/usr/local/include/glm/ext/matrix_uint3x4_sized.hpp
+/usr/local/include/glm/ext/matrix_uint4x2.hpp
+/usr/local/include/glm/ext/matrix_uint4x2_sized.hpp
+/usr/local/include/glm/ext/matrix_uint4x3.hpp
+/usr/local/include/glm/ext/matrix_uint4x3_sized.hpp
+/usr/local/include/glm/ext/matrix_uint4x4.hpp
+/usr/local/include/glm/ext/matrix_uint4x4_sized.hpp
+/usr/local/include/glm/ext/quaternion_common.hpp
+/usr/local/include/glm/ext/quaternion_common.inl
+/usr/local/include/glm/ext/quaternion_common_simd.inl
+/usr/local/include/glm/ext/quaternion_double.hpp
+/usr/local/include/glm/ext/quaternion_double_precision.hpp
+/usr/local/include/glm/ext/quaternion_exponential.hpp
+/usr/local/include/glm/ext/quaternion_exponential.inl
+/usr/local/include/glm/ext/quaternion_float.hpp
+/usr/local/include/glm/ext/quaternion_float_precision.hpp
+/usr/local/include/glm/ext/quaternion_geometric.hpp
+/usr/local/include/glm/ext/quaternion_geometric.inl
+/usr/local/include/glm/ext/quaternion_relational.hpp
+/usr/local/include/glm/ext/quaternion_relational.inl
+/usr/local/include/glm/ext/quaternion_transform.hpp
+/usr/local/include/glm/ext/quaternion_transform.inl
+/usr/local/include/glm/ext/quaternion_trigonometric.hpp
+/usr/local/include/glm/ext/quaternion_trigonometric.inl
+/usr/local/include/glm/ext/scalar_common.hpp
+/usr/local/include/glm/ext/scalar_common.inl
+/usr/local/include/glm/ext/scalar_constants.hpp
+/usr/local/include/glm/ext/scalar_constants.inl
+/usr/local/include/glm/ext/scalar_int_sized.hpp
+/usr/local/include/glm/ext/scalar_integer.hpp
+/usr/local/include/glm/ext/scalar_integer.inl
+/usr/local/include/glm/ext/scalar_packing.hpp
+/usr/local/include/glm/ext/scalar_packing.inl
+/usr/local/include/glm/ext/scalar_reciprocal.hpp
+/usr/local/include/glm/ext/scalar_reciprocal.inl
+/usr/local/include/glm/ext/scalar_relational.hpp
+/usr/local/include/glm/ext/scalar_relational.inl
+/usr/local/include/glm/ext/scalar_uint_sized.hpp
+/usr/local/include/glm/ext/scalar_ulp.hpp
+/usr/local/include/glm/ext/scalar_ulp.inl
+/usr/local/include/glm/ext/vector_bool1.hpp
+/usr/local/include/glm/ext/vector_bool1_precision.hpp
+/usr/local/include/glm/ext/vector_bool2.hpp
+/usr/local/include/glm/ext/vector_bool2_precision.hpp
+/usr/local/include/glm/ext/vector_bool3.hpp
+/usr/local/include/glm/ext/vector_bool3_precision.hpp
+/usr/local/include/glm/ext/vector_bool4.hpp
+/usr/local/include/glm/ext/vector_bool4_precision.hpp
+/usr/local/include/glm/ext/vector_common.hpp
+/usr/local/include/glm/ext/vector_common.inl
+/usr/local/include/glm/ext/vector_double1.hpp
+/usr/local/include/glm/ext/vector_double1_precision.hpp
+/usr/local/include/glm/ext/vector_double2.hpp
+/usr/local/include/glm/ext/vector_double2_precision.hpp
+/usr/local/include/glm/ext/vector_double3.hpp
+/usr/local/include/glm/ext/vector_double3_precision.hpp
+/usr/local/include/glm/ext/vector_double4.hpp
+/usr/local/include/glm/ext/vector_double4_precision.hpp
+/usr/local/include/glm/ext/vector_float1.hpp
+/usr/local/include/glm/ext/vector_float1_precision.hpp
+/usr/local/include/glm/ext/vector_float2.hpp
+/usr/local/include/glm/ext/vector_float2_precision.hpp
+/usr/local/include/glm/ext/vector_float3.hpp
+/usr/local/include/glm/ext/vector_float3_precision.hpp
+/usr/local/include/glm/ext/vector_float4.hpp
+/usr/local/include/glm/ext/vector_float4_precision.hpp
+/usr/local/include/glm/ext/vector_int1.hpp
+/usr/local/include/glm/ext/vector_int1_sized.hpp
+/usr/local/include/glm/ext/vector_int2.hpp
+/usr/local/include/glm/ext/vector_int2_sized.hpp
+/usr/local/include/glm/ext/vector_int3.hpp
+/usr/local/include/glm/ext/vector_int3_sized.hpp
+/usr/local/include/glm/ext/vector_int4.hpp
+/usr/local/include/glm/ext/vector_int4_sized.hpp
+/usr/local/include/glm/ext/vector_integer.hpp
+/usr/local/include/glm/ext/vector_integer.inl
+/usr/local/include/glm/ext/vector_packing.hpp
+/usr/local/include/glm/ext/vector_packing.inl
+/usr/local/include/glm/ext/vector_reciprocal.hpp
+/usr/local/include/glm/ext/vector_reciprocal.inl
+/usr/local/include/glm/ext/vector_relational.hpp
+/usr/local/include/glm/ext/vector_relational.inl
+/usr/local/include/glm/ext/vector_uint1.hpp
+/usr/local/include/glm/ext/vector_uint1_sized.hpp
+/usr/local/include/glm/ext/vector_uint2.hpp
+/usr/local/include/glm/ext/vector_uint2_sized.hpp
+/usr/local/include/glm/ext/vector_uint3.hpp
+/usr/local/include/glm/ext/vector_uint3_sized.hpp
+/usr/local/include/glm/ext/vector_uint4.hpp
+/usr/local/include/glm/ext/vector_uint4_sized.hpp
+/usr/local/include/glm/ext/vector_ulp.hpp
+/usr/local/include/glm/ext/vector_ulp.inl
+/usr/local/include/glm/fwd.hpp
+/usr/local/include/glm/geometric.hpp
+/usr/local/include/glm/glm.cppm
+/usr/local/include/glm/glm.hpp
+/usr/local/include/glm/gtc/bitfield.hpp
+/usr/local/include/glm/gtc/bitfield.inl
+/usr/local/include/glm/gtc/color_space.hpp
+/usr/local/include/glm/gtc/color_space.inl
+/usr/local/include/glm/gtc/constants.hpp
+/usr/local/include/glm/gtc/constants.inl
+/usr/local/include/glm/gtc/epsilon.hpp
+/usr/local/include/glm/gtc/epsilon.inl
+/usr/local/include/glm/gtc/integer.hpp
+/usr/local/include/glm/gtc/integer.inl
+/usr/local/include/glm/gtc/matrix_access.hpp
+/usr/local/include/glm/gtc/matrix_access.inl
+/usr/local/include/glm/gtc/matrix_integer.hpp
+/usr/local/include/glm/gtc/matrix_inverse.hpp
+/usr/local/include/glm/gtc/matrix_inverse.inl
+/usr/local/include/glm/gtc/matrix_transform.hpp
+/usr/local/include/glm/gtc/matrix_transform.inl
+/usr/local/include/glm/gtc/noise.hpp
+/usr/local/include/glm/gtc/noise.inl
+/usr/local/include/glm/gtc/packing.hpp
+/usr/local/include/glm/gtc/packing.inl
+/usr/local/include/glm/gtc/quaternion.hpp
+/usr/local/include/glm/gtc/quaternion.inl
+/usr/local/include/glm/gtc/quaternion_simd.inl
+/usr/local/include/glm/gtc/random.hpp
+/usr/local/include/glm/gtc/random.inl
+/usr/local/include/glm/gtc/reciprocal.hpp
+/usr/local/include/glm/gtc/round.hpp
+/usr/local/include/glm/gtc/round.inl
+/usr/local/include/glm/gtc/type_aligned.hpp
+/usr/local/include/glm/gtc/type_precision.hpp
+/usr/local/include/glm/gtc/type_precision.inl
+/usr/local/include/glm/gtc/type_ptr.hpp
+/usr/local/include/glm/gtc/type_ptr.inl
+/usr/local/include/glm/gtc/ulp.hpp
+/usr/local/include/glm/gtc/ulp.inl
+/usr/local/include/glm/gtc/vec1.hpp
+/usr/local/include/glm/gtx/associated_min_max.hpp
+/usr/local/include/glm/gtx/associated_min_max.inl
+/usr/local/include/glm/gtx/bit.hpp
+/usr/local/include/glm/gtx/bit.inl
+/usr/local/include/glm/gtx/closest_point.hpp
+/usr/local/include/glm/gtx/closest_point.inl
+/usr/local/include/glm/gtx/color_encoding.hpp
+/usr/local/include/glm/gtx/color_encoding.inl
+/usr/local/include/glm/gtx/color_space.hpp
+/usr/local/include/glm/gtx/color_space.inl
+/usr/local/include/glm/gtx/color_space_YCoCg.hpp
+/usr/local/include/glm/gtx/color_space_YCoCg.inl
+/usr/local/include/glm/gtx/common.hpp
+/usr/local/include/glm/gtx/common.inl
+/usr/local/include/glm/gtx/compatibility.hpp
+/usr/local/include/glm/gtx/compatibility.inl
+/usr/local/include/glm/gtx/component_wise.hpp
+/usr/local/include/glm/gtx/component_wise.inl
+/usr/local/include/glm/gtx/dual_quaternion.hpp
+/usr/local/include/glm/gtx/dual_quaternion.inl
+/usr/local/include/glm/gtx/easing.hpp
+/usr/local/include/glm/gtx/easing.inl
+/usr/local/include/glm/gtx/euler_angles.hpp
+/usr/local/include/glm/gtx/euler_angles.inl
+/usr/local/include/glm/gtx/extend.hpp
+/usr/local/include/glm/gtx/extend.inl
+/usr/local/include/glm/gtx/extended_min_max.hpp
+/usr/local/include/glm/gtx/extended_min_max.inl
+/usr/local/include/glm/gtx/exterior_product.hpp
+/usr/local/include/glm/gtx/exterior_product.inl
+/usr/local/include/glm/gtx/fast_exponential.hpp
+/usr/local/include/glm/gtx/fast_exponential.inl
+/usr/local/include/glm/gtx/fast_square_root.hpp
+/usr/local/include/glm/gtx/fast_square_root.inl
+/usr/local/include/glm/gtx/fast_trigonometry.hpp
+/usr/local/include/glm/gtx/fast_trigonometry.inl
+/usr/local/include/glm/gtx/float_notmalize.inl
+/usr/local/include/glm/gtx/functions.hpp
+/usr/local/include/glm/gtx/functions.inl
+/usr/local/include/glm/gtx/gradient_paint.hpp
+/usr/local/include/glm/gtx/gradient_paint.inl
+/usr/local/include/glm/gtx/handed_coordinate_space.hpp
+/usr/local/include/glm/gtx/handed_coordinate_space.inl
+/usr/local/include/glm/gtx/hash.hpp
+/usr/local/include/glm/gtx/hash.inl
+/usr/local/include/glm/gtx/integer.hpp
+/usr/local/include/glm/gtx/integer.inl
+/usr/local/include/glm/gtx/intersect.hpp
+/usr/local/include/glm/gtx/intersect.inl
+/usr/local/include/glm/gtx/io.hpp
+/usr/local/include/glm/gtx/io.inl
+/usr/local/include/glm/gtx/log_base.hpp
+/usr/local/include/glm/gtx/log_base.inl
+/usr/local/include/glm/gtx/matrix_cross_product.hpp
+/usr/local/include/glm/gtx/matrix_cross_product.inl
+/usr/local/include/glm/gtx/matrix_decompose.hpp
+/usr/local/include/glm/gtx/matrix_decompose.inl
+/usr/local/include/glm/gtx/matrix_factorisation.hpp
+/usr/local/include/glm/gtx/matrix_factorisation.inl
+/usr/local/include/glm/gtx/matrix_interpolation.hpp
+/usr/local/include/glm/gtx/matrix_interpolation.inl
+/usr/local/include/glm/gtx/matrix_major_storage.hpp
+/usr/local/include/glm/gtx/matrix_major_storage.inl
+/usr/local/include/glm/gtx/matrix_operation.hpp
+/usr/local/include/glm/gtx/matrix_operation.inl
+/usr/local/include/glm/gtx/matrix_query.hpp
+/usr/local/include/glm/gtx/matrix_query.inl
+/usr/local/include/glm/gtx/matrix_transform_2d.hpp
+/usr/local/include/glm/gtx/matrix_transform_2d.inl
+/usr/local/include/glm/gtx/mixed_product.hpp
+/usr/local/include/glm/gtx/mixed_product.inl
+/usr/local/include/glm/gtx/norm.hpp
+/usr/local/include/glm/gtx/norm.inl
+/usr/local/include/glm/gtx/normal.hpp
+/usr/local/include/glm/gtx/normal.inl
+/usr/local/include/glm/gtx/normalize_dot.hpp
+/usr/local/include/glm/gtx/normalize_dot.inl
+/usr/local/include/glm/gtx/number_precision.hpp
+/usr/local/include/glm/gtx/optimum_pow.hpp
+/usr/local/include/glm/gtx/optimum_pow.inl
+/usr/local/include/glm/gtx/orthonormalize.hpp
+/usr/local/include/glm/gtx/orthonormalize.inl
+/usr/local/include/glm/gtx/pca.hpp
+/usr/local/include/glm/gtx/pca.inl
+/usr/local/include/glm/gtx/perpendicular.hpp
+/usr/local/include/glm/gtx/perpendicular.inl
+/usr/local/include/glm/gtx/polar_coordinates.hpp
+/usr/local/include/glm/gtx/polar_coordinates.inl
+/usr/local/include/glm/gtx/projection.hpp
+/usr/local/include/glm/gtx/projection.inl
+/usr/local/include/glm/gtx/quaternion.hpp
+/usr/local/include/glm/gtx/quaternion.inl
+/usr/local/include/glm/gtx/range.hpp
+/usr/local/include/glm/gtx/raw_data.hpp
+/usr/local/include/glm/gtx/raw_data.inl
+/usr/local/include/glm/gtx/rotate_normalized_axis.hpp
+/usr/local/include/glm/gtx/rotate_normalized_axis.inl
+/usr/local/include/glm/gtx/rotate_vector.hpp
+/usr/local/include/glm/gtx/rotate_vector.inl
+/usr/local/include/glm/gtx/scalar_multiplication.hpp
+/usr/local/include/glm/gtx/scalar_relational.hpp
+/usr/local/include/glm/gtx/scalar_relational.inl
+/usr/local/include/glm/gtx/spline.hpp
+/usr/local/include/glm/gtx/spline.inl
+/usr/local/include/glm/gtx/std_based_type.hpp
+/usr/local/include/glm/gtx/std_based_type.inl
+/usr/local/include/glm/gtx/string_cast.hpp
+/usr/local/include/glm/gtx/string_cast.inl
+/usr/local/include/glm/gtx/texture.hpp
+/usr/local/include/glm/gtx/texture.inl
+/usr/local/include/glm/gtx/transform.hpp
+/usr/local/include/glm/gtx/transform.inl
+/usr/local/include/glm/gtx/transform2.hpp
+/usr/local/include/glm/gtx/transform2.inl
+/usr/local/include/glm/gtx/type_aligned.hpp
+/usr/local/include/glm/gtx/type_aligned.inl
+/usr/local/include/glm/gtx/type_trait.hpp
+/usr/local/include/glm/gtx/type_trait.inl
+/usr/local/include/glm/gtx/vec_swizzle.hpp
+/usr/local/include/glm/gtx/vector_angle.hpp
+/usr/local/include/glm/gtx/vector_angle.inl
+/usr/local/include/glm/gtx/vector_query.hpp
+/usr/local/include/glm/gtx/vector_query.inl
+/usr/local/include/glm/gtx/wrap.hpp
+/usr/local/include/glm/gtx/wrap.inl
+/usr/local/include/glm/integer.hpp
+/usr/local/include/glm/mat2x2.hpp
+/usr/local/include/glm/mat2x3.hpp
+/usr/local/include/glm/mat2x4.hpp
+/usr/local/include/glm/mat3x2.hpp
+/usr/local/include/glm/mat3x3.hpp
+/usr/local/include/glm/mat3x4.hpp
+/usr/local/include/glm/mat4x2.hpp
+/usr/local/include/glm/mat4x3.hpp
+/usr/local/include/glm/mat4x4.hpp
+/usr/local/include/glm/matrix.hpp
+/usr/local/include/glm/packing.hpp
+/usr/local/include/glm/simd/common.h
+/usr/local/include/glm/simd/exponential.h
+/usr/local/include/glm/simd/geometric.h
+/usr/local/include/glm/simd/integer.h
+/usr/local/include/glm/simd/matrix.h
+/usr/local/include/glm/simd/neon.h
+/usr/local/include/glm/simd/packing.h
+/usr/local/include/glm/simd/platform.h
+/usr/local/include/glm/simd/trigonometric.h
+/usr/local/include/glm/simd/vector_relational.h
+/usr/local/include/glm/trigonometric.hpp
+/usr/local/include/glm/vec2.hpp
+/usr/local/include/glm/vec3.hpp
+/usr/local/include/glm/vec4.hpp
+/usr/local/include/glm/vector_relational.hpp</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

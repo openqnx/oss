@@ -1,0 +1,568 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>gtk3-dev 3.24.43-r1 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>gtk3-dev <span class=mut>3.24.43-r1</span></h1><p class=sum><b>GTK 3 multi-platform toolkit for graphical user interfaces (development files)</b><br>gtk3 3.24.43 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.24.43-r1</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/gtk3-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://gitlab.gnome.org/GNOME/gtk.git">https://gitlab.gnome.org/GNOME/gtk.git</a></dd>
+<dt>License</dt><dd>LGPL-2.1-or-later <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/gtk3">ports/gtk3</a></dd>
+<dt>Package size</dt><dd>5.2 MiB</dd>
+<dt>Installed size</dt><dd>20.7 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add gtk3-dev
+apk add gtk3-dev=3.24.43-r1   <span class=mut># this version</span>
+
+apk del gtk3-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gtk3-dev-3.24.43-r1.apk">gtk3-dev-3.24.43-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install gtk3-dev
+oss-get install gtk3-dev=3.24.43-r1   <span class=mut># this version</span>
+
+oss-get remove gtk3-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="gtk3.html">gtk3</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtk3-dev-3.24.43-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtk3-dev-3.24.43-r1.tar.gz</a> (5.1 MiB)</dd><dt>SHA-256</dt><dd><code>e1420a1566c4afd399d3597af66c08f9c2e5a2dc3a572d726b4a5812ace13384</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="fribidi.html">fribidi</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtk3-dev-3.24.43-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 gtk3-dev-3.24.43-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = e1420a1566c4afd399d3597af66c08f9c2e5a2dc3a572d726b4a5812ace13384 ] &amp;&amp; echo OK || echo BAD
+gzip -dc gtk3-dev-3.24.43-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/gtk3-dev.list
+gzip -dc gtk3-dev-3.24.43-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm gtk3-dev-3.24.43-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/gtk3-dev.list
+rm var/lib/manual/gtk3-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="fribidi.html">fribidi</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="gtk3.html">gtk3</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/gtk3.html">gtk3</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/gtk3/patches/0001-qnx-platform-fixes.patch">0001-qnx-platform-fixes.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/gtk3/README.md">ports/gtk3/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_gtk3 on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/gtk3-3.24.43-r1.log">tests/logs/x86_64/gtk3-3.24.43-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># gtk3 3.24.43-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:15:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtk3 qnx-test-gtk3 qnx-port-tests
+( 1/26) Installing dbus (1.16.0-r1)
+( 2/26) Installing libxau (1.0.11-r0)
+( 3/26) Installing libxdmcp (1.1.5-r0)
+( 4/26) Installing libxcb (1.17.0-r0)
+( 5/26) Installing libx11 (1.8.10-r0)
+( 6/26) Installing libxext (1.3.6-r0)
+( 7/26) Installing libxi (1.8.2-r0)
+( 8/26) Installing libxtst (1.2.5-r0)
+( 9/26) Installing at-spi2-core (2.54.0-r0)
+(10/26) Installing libxrender (0.9.11-r0)
+(11/26) Installing cairo (1.18.2-r0)
+(12/26) Installing fribidi (1.0.16-r0)
+(13/26) Installing harfbuzz (&lt;ip&gt;-r0)
+(14/26) Installing libxcomposite (0.4.6-r0)
+(15/26) Installing libxfixes (6.0.1-r0)
+(16/26) Installing libxcursor (1.2.2-r0)
+(17/26) Installing libxdamage (1.1.6-r0)
+(18/26) Installing libxinerama (1.1.5-r0)
+(19/26) Installing libxml2 (2.13.5-r1)
+(20/26) Installing libxkbcommon (1.8.1-r1)
+(21/26) Installing libxrandr (1.5.4-r0)
+(22/26) Installing libxft (2.3.8-r0)
+(23/26) Installing pango (1.54.0-r0)
+(24/26) Installing gtk3 (3.24.43-r1)
+(25/26) Installing qnx-port-tests (1.0-r2)
+(26/26) Installing qnx-test-gtk3 (1.0-r6)
+OK: 149 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtk3
+     == gtk3 ==
+       info GTK 3.24.43, gdk-pixbuf 2.42.12, ATK 2.54.0
+       ok   gdk_pixbuf_new
+       ok   pixbuf geometry
+       ok   pixbuf has an alpha channel
+       ok   gdk-pixbuf encoded a PNG in memory
+       ok   gdk-pixbuf decoded the PNG back
+       ok   GtkWidget type registered
+       ok   GtkButton type registered
+       ok   GtkButton derives from GtkWidget
+       ok   type name readback
+       ok   GdkDisplay type registered
+       ok   AtkObject instantiated
+       ok   ATK name round trip
+       info gtk_init_check -&gt; no display
+       info widget layer not exercised: no display. Start broadwayd and set
+            GDK_BACKEND=broadway BROADWAY_DISPLAY=:5 to cover it.
+       ok   no default display, as expected
+     PASS gtk3
+PASS test_gtk3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-gtk3 qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-gtk3-1.0-r6.apk">qnx-test-gtk3-1.0-r6.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (425)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/gail-3.0/libgail-util/gail-util.h
+/usr/local/include/gail-3.0/libgail-util/gailmisc.h
+/usr/local/include/gail-3.0/libgail-util/gailtextutil.h
+/usr/local/include/gtk-3.0/gdk/broadway/gdkbroadwaycursor.h
+/usr/local/include/gtk-3.0/gdk/broadway/gdkbroadwaydisplay.h
+/usr/local/include/gtk-3.0/gdk/broadway/gdkbroadwaymonitor.h
+/usr/local/include/gtk-3.0/gdk/broadway/gdkbroadwayvisual.h
+/usr/local/include/gtk-3.0/gdk/broadway/gdkbroadwaywindow.h
+/usr/local/include/gtk-3.0/gdk/deprecated/gdkcolor.h
+/usr/local/include/gtk-3.0/gdk/gdk-autocleanup.h
+/usr/local/include/gtk-3.0/gdk/gdk.h
+/usr/local/include/gtk-3.0/gdk/gdkapplaunchcontext.h
+/usr/local/include/gtk-3.0/gdk/gdkbroadway.h
+/usr/local/include/gtk-3.0/gdk/gdkcairo.h
+/usr/local/include/gtk-3.0/gdk/gdkconfig.h
+/usr/local/include/gtk-3.0/gdk/gdkcursor.h
+/usr/local/include/gtk-3.0/gdk/gdkdevice.h
+/usr/local/include/gtk-3.0/gdk/gdkdevicemanager.h
+/usr/local/include/gtk-3.0/gdk/gdkdevicepad.h
+/usr/local/include/gtk-3.0/gdk/gdkdevicetool.h
+/usr/local/include/gtk-3.0/gdk/gdkdisplay.h
+/usr/local/include/gtk-3.0/gdk/gdkdisplaymanager.h
+/usr/local/include/gtk-3.0/gdk/gdkdnd.h
+/usr/local/include/gtk-3.0/gdk/gdkdrawingcontext.h
+/usr/local/include/gtk-3.0/gdk/gdkenumtypes.h
+/usr/local/include/gtk-3.0/gdk/gdkevents.h
+/usr/local/include/gtk-3.0/gdk/gdkframeclock.h
+/usr/local/include/gtk-3.0/gdk/gdkframetimings.h
+/usr/local/include/gtk-3.0/gdk/gdkglcontext.h
+/usr/local/include/gtk-3.0/gdk/gdkkeys.h
+/usr/local/include/gtk-3.0/gdk/gdkkeysyms-compat.h
+/usr/local/include/gtk-3.0/gdk/gdkkeysyms.h
+/usr/local/include/gtk-3.0/gdk/gdkmain.h
+/usr/local/include/gtk-3.0/gdk/gdkmonitor.h
+/usr/local/include/gtk-3.0/gdk/gdkpango.h
+/usr/local/include/gtk-3.0/gdk/gdkpixbuf.h
+/usr/local/include/gtk-3.0/gdk/gdkprivate.h
+/usr/local/include/gtk-3.0/gdk/gdkproperty.h
+/usr/local/include/gtk-3.0/gdk/gdkrectangle.h
+/usr/local/include/gtk-3.0/gdk/gdkrgba.h
+/usr/local/include/gtk-3.0/gdk/gdkscreen.h
+/usr/local/include/gtk-3.0/gdk/gdkseat.h
+/usr/local/include/gtk-3.0/gdk/gdkselection.h
+/usr/local/include/gtk-3.0/gdk/gdktestutils.h
+/usr/local/include/gtk-3.0/gdk/gdkthreads.h
+/usr/local/include/gtk-3.0/gdk/gdktypes.h
+/usr/local/include/gtk-3.0/gdk/gdkversionmacros.h
+/usr/local/include/gtk-3.0/gdk/gdkvisual.h
+/usr/local/include/gtk-3.0/gdk/gdkwayland.h
+/usr/local/include/gtk-3.0/gdk/gdkwindow.h
+/usr/local/include/gtk-3.0/gdk/gdkx.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylanddevice.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylanddisplay.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylandglcontext.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylandmonitor.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylandselection.h
+/usr/local/include/gtk-3.0/gdk/wayland/gdkwaylandwindow.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11cursor.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11device-core.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11device-xi2.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11device.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11devicemanager-core.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11devicemanager-xi2.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11devicemanager.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11display.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11displaymanager.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11dnd.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11glcontext.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11keys.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11monitor.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11property.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11screen.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11selection.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11utils.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11visual.h
+/usr/local/include/gtk-3.0/gdk/x11/gdkx11window.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtk-a11y-autocleanups.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkarrowaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkbooleancellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkbuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcellaccessibleparent.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcheckmenuitemaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcomboboxaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcontaineraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkcontainercellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkentryaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkexpanderaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkfilechooserwidgetaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkflowboxaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkflowboxchildaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkframeaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkheaderbaraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkiconviewaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkimageaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkimagecellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklabelaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklevelbaraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklinkbuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklistboxaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklistboxrowaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtklockbuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkmenuaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkmenubuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkmenuitemaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkmenushellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtknotebookaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtknotebookpageaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkpanedaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkplugaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkpopoveraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkprogressbaraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkradiobuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkradiomenuitemaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkrangeaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkrenderercellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkscaleaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkscalebuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkscrolledwindowaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtksocketaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkspinbuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkspinneraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkstackaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkstatusbaraccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkswitchaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtktextcellaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtktextviewaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtktogglebuttonaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtktoplevelaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtktreeviewaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkwidgetaccessible.h
+/usr/local/include/gtk-3.0/gtk/a11y/gtkwindowaccessible.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkaction.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkactiongroup.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkactivatable.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkalignment.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkarrow.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkcolorsel.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkcolorseldialog.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkfontsel.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkgradient.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhandlebox.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhbbox.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhbox.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhpaned.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhscale.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhscrollbar.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhseparator.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkhsv.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkiconfactory.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkimagemenuitem.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkmisc.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtknumerableicon.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkradioaction.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkrc.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkrecentaction.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkstatusicon.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkstock.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkstyle.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkstyleproperties.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtksymboliccolor.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtktable.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtktearoffmenuitem.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkthemingengine.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtktoggleaction.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkuimanager.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvbbox.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvbox.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvpaned.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvscale.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvscrollbar.h
+/usr/local/include/gtk-3.0/gtk/deprecated/gtkvseparator.h
+/usr/local/include/gtk-3.0/gtk/gtk-a11y.h
+/usr/local/include/gtk-3.0/gtk/gtk-autocleanups.h
+/usr/local/include/gtk-3.0/gtk/gtk.h
+/usr/local/include/gtk-3.0/gtk/gtkaboutdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkaccelgroup.h
+/usr/local/include/gtk-3.0/gtk/gtkaccellabel.h
+/usr/local/include/gtk-3.0/gtk/gtkaccelmap.h
+/usr/local/include/gtk-3.0/gtk/gtkaccessible.h
+/usr/local/include/gtk-3.0/gtk/gtkactionable.h
+/usr/local/include/gtk-3.0/gtk/gtkactionbar.h
+/usr/local/include/gtk-3.0/gtk/gtkadjustment.h
+/usr/local/include/gtk-3.0/gtk/gtkappchooser.h
+/usr/local/include/gtk-3.0/gtk/gtkappchooserbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkappchooserdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkappchooserwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkapplication.h
+/usr/local/include/gtk-3.0/gtk/gtkapplicationwindow.h
+/usr/local/include/gtk-3.0/gtk/gtkaspectframe.h
+/usr/local/include/gtk-3.0/gtk/gtkassistant.h
+/usr/local/include/gtk-3.0/gtk/gtkbbox.h
+/usr/local/include/gtk-3.0/gtk/gtkbin.h
+/usr/local/include/gtk-3.0/gtk/gtkbindings.h
+/usr/local/include/gtk-3.0/gtk/gtkborder.h
+/usr/local/include/gtk-3.0/gtk/gtkbox.h
+/usr/local/include/gtk-3.0/gtk/gtkbuildable.h
+/usr/local/include/gtk-3.0/gtk/gtkbuilder.h
+/usr/local/include/gtk-3.0/gtk/gtkbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkcalendar.h
+/usr/local/include/gtk-3.0/gtk/gtkcellarea.h
+/usr/local/include/gtk-3.0/gtk/gtkcellareabox.h
+/usr/local/include/gtk-3.0/gtk/gtkcellareacontext.h
+/usr/local/include/gtk-3.0/gtk/gtkcelleditable.h
+/usr/local/include/gtk-3.0/gtk/gtkcelllayout.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrenderer.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrendereraccel.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrenderercombo.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrendererpixbuf.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrendererprogress.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrendererspin.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrendererspinner.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrenderertext.h
+/usr/local/include/gtk-3.0/gtk/gtkcellrenderertoggle.h
+/usr/local/include/gtk-3.0/gtk/gtkcellview.h
+/usr/local/include/gtk-3.0/gtk/gtkcheckbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkcheckmenuitem.h
+/usr/local/include/gtk-3.0/gtk/gtkclipboard.h
+/usr/local/include/gtk-3.0/gtk/gtkcolorbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkcolorchooser.h
+/usr/local/include/gtk-3.0/gtk/gtkcolorchooserdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkcolorchooserwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkcolorutils.h
+/usr/local/include/gtk-3.0/gtk/gtkcombobox.h
+/usr/local/include/gtk-3.0/gtk/gtkcomboboxtext.h
+/usr/local/include/gtk-3.0/gtk/gtkcontainer.h
+/usr/local/include/gtk-3.0/gtk/gtkcssprovider.h
+/usr/local/include/gtk-3.0/gtk/gtkcsssection.h
+/usr/local/include/gtk-3.0/gtk/gtkdebug.h
+/usr/local/include/gtk-3.0/gtk/gtkdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkdnd.h
+/usr/local/include/gtk-3.0/gtk/gtkdragdest.h
+/usr/local/include/gtk-3.0/gtk/gtkdragsource.h
+/usr/local/include/gtk-3.0/gtk/gtkdrawingarea.h
+/usr/local/include/gtk-3.0/gtk/gtkeditable.h
+/usr/local/include/gtk-3.0/gtk/gtkentry.h
+/usr/local/include/gtk-3.0/gtk/gtkentrybuffer.h
+/usr/local/include/gtk-3.0/gtk/gtkentrycompletion.h
+/usr/local/include/gtk-3.0/gtk/gtkenums.h
+/usr/local/include/gtk-3.0/gtk/gtkeventbox.h
+/usr/local/include/gtk-3.0/gtk/gtkeventcontroller.h
+/usr/local/include/gtk-3.0/gtk/gtkeventcontrollerkey.h
+/usr/local/include/gtk-3.0/gtk/gtkeventcontrollermotion.h
+/usr/local/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h
+/usr/local/include/gtk-3.0/gtk/gtkexpander.h
+/usr/local/include/gtk-3.0/gtk/gtkfilechooser.h
+/usr/local/include/gtk-3.0/gtk/gtkfilechooserbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkfilechooserdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkfilechoosernative.h
+/usr/local/include/gtk-3.0/gtk/gtkfilechooserwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkfilefilter.h
+/usr/local/include/gtk-3.0/gtk/gtkfixed.h
+/usr/local/include/gtk-3.0/gtk/gtkflowbox.h
+/usr/local/include/gtk-3.0/gtk/gtkfontbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkfontchooser.h
+/usr/local/include/gtk-3.0/gtk/gtkfontchooserdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkfontchooserwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkframe.h
+/usr/local/include/gtk-3.0/gtk/gtkgesture.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturedrag.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturelongpress.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturemultipress.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturepan.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturerotate.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturesingle.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturestylus.h
+/usr/local/include/gtk-3.0/gtk/gtkgestureswipe.h
+/usr/local/include/gtk-3.0/gtk/gtkgesturezoom.h
+/usr/local/include/gtk-3.0/gtk/gtkglarea.h
+/usr/local/include/gtk-3.0/gtk/gtkgrid.h
+/usr/local/include/gtk-3.0/gtk/gtkheaderbar.h
+/usr/local/include/gtk-3.0/gtk/gtkicontheme.h
+/usr/local/include/gtk-3.0/gtk/gtkiconview.h
+/usr/local/include/gtk-3.0/gtk/gtkimage.h
+/usr/local/include/gtk-3.0/gtk/gtkimcontext.h
+/usr/local/include/gtk-3.0/gtk/gtkimcontextinfo.h
+/usr/local/include/gtk-3.0/gtk/gtkimcontextsimple.h
+/usr/local/include/gtk-3.0/gtk/gtkimmodule.h
+/usr/local/include/gtk-3.0/gtk/gtkimmulticontext.h
+/usr/local/include/gtk-3.0/gtk/gtkinfobar.h
+/usr/local/include/gtk-3.0/gtk/gtkinvisible.h
+/usr/local/include/gtk-3.0/gtk/gtklabel.h
+/usr/local/include/gtk-3.0/gtk/gtklayout.h
+/usr/local/include/gtk-3.0/gtk/gtklevelbar.h
+/usr/local/include/gtk-3.0/gtk/gtklinkbutton.h
+/usr/local/include/gtk-3.0/gtk/gtklistbox.h
+/usr/local/include/gtk-3.0/gtk/gtkliststore.h
+/usr/local/include/gtk-3.0/gtk/gtklockbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkmain.h
+/usr/local/include/gtk-3.0/gtk/gtkmenu.h
+/usr/local/include/gtk-3.0/gtk/gtkmenubar.h
+/usr/local/include/gtk-3.0/gtk/gtkmenubutton.h
+/usr/local/include/gtk-3.0/gtk/gtkmenuitem.h
+/usr/local/include/gtk-3.0/gtk/gtkmenushell.h
+/usr/local/include/gtk-3.0/gtk/gtkmenutoolbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkmessagedialog.h
+/usr/local/include/gtk-3.0/gtk/gtkmodelbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkmodules.h
+/usr/local/include/gtk-3.0/gtk/gtkmountoperation.h
+/usr/local/include/gtk-3.0/gtk/gtknativedialog.h
+/usr/local/include/gtk-3.0/gtk/gtknotebook.h
+/usr/local/include/gtk-3.0/gtk/gtkoffscreenwindow.h
+/usr/local/include/gtk-3.0/gtk/gtkorientable.h
+/usr/local/include/gtk-3.0/gtk/gtkoverlay.h
+/usr/local/include/gtk-3.0/gtk/gtkpadcontroller.h
+/usr/local/include/gtk-3.0/gtk/gtkpagesetup.h
+/usr/local/include/gtk-3.0/gtk/gtkpaned.h
+/usr/local/include/gtk-3.0/gtk/gtkpapersize.h
+/usr/local/include/gtk-3.0/gtk/gtkplacessidebar.h
+/usr/local/include/gtk-3.0/gtk/gtkplug.h
+/usr/local/include/gtk-3.0/gtk/gtkpopover.h
+/usr/local/include/gtk-3.0/gtk/gtkpopovermenu.h
+/usr/local/include/gtk-3.0/gtk/gtkprintcontext.h
+/usr/local/include/gtk-3.0/gtk/gtkprintoperation.h
+/usr/local/include/gtk-3.0/gtk/gtkprintoperationpreview.h
+/usr/local/include/gtk-3.0/gtk/gtkprintsettings.h
+/usr/local/include/gtk-3.0/gtk/gtkprogressbar.h
+/usr/local/include/gtk-3.0/gtk/gtkradiobutton.h
+/usr/local/include/gtk-3.0/gtk/gtkradiomenuitem.h
+/usr/local/include/gtk-3.0/gtk/gtkradiotoolbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkrange.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentchooser.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentchooserdialog.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentchoosermenu.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentchooserwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentfilter.h
+/usr/local/include/gtk-3.0/gtk/gtkrecentmanager.h
+/usr/local/include/gtk-3.0/gtk/gtkrender.h
+/usr/local/include/gtk-3.0/gtk/gtkrevealer.h
+/usr/local/include/gtk-3.0/gtk/gtkscale.h
+/usr/local/include/gtk-3.0/gtk/gtkscalebutton.h
+/usr/local/include/gtk-3.0/gtk/gtkscrollable.h
+/usr/local/include/gtk-3.0/gtk/gtkscrollbar.h
+/usr/local/include/gtk-3.0/gtk/gtkscrolledwindow.h
+/usr/local/include/gtk-3.0/gtk/gtksearchbar.h
+/usr/local/include/gtk-3.0/gtk/gtksearchentry.h
+/usr/local/include/gtk-3.0/gtk/gtkselection.h
+/usr/local/include/gtk-3.0/gtk/gtkseparator.h
+/usr/local/include/gtk-3.0/gtk/gtkseparatormenuitem.h
+/usr/local/include/gtk-3.0/gtk/gtkseparatortoolitem.h
+/usr/local/include/gtk-3.0/gtk/gtksettings.h
+/usr/local/include/gtk-3.0/gtk/gtkshortcutlabel.h
+/usr/local/include/gtk-3.0/gtk/gtkshortcutsgroup.h
+/usr/local/include/gtk-3.0/gtk/gtkshortcutssection.h
+/usr/local/include/gtk-3.0/gtk/gtkshortcutsshortcut.h
+/usr/local/include/gtk-3.0/gtk/gtkshortcutswindow.h
+/usr/local/include/gtk-3.0/gtk/gtkshow.h
+/usr/local/include/gtk-3.0/gtk/gtksizegroup.h
+/usr/local/include/gtk-3.0/gtk/gtksizerequest.h
+/usr/local/include/gtk-3.0/gtk/gtksocket.h
+/usr/local/include/gtk-3.0/gtk/gtkspinbutton.h
+/usr/local/include/gtk-3.0/gtk/gtkspinner.h
+/usr/local/include/gtk-3.0/gtk/gtkstack.h
+/usr/local/include/gtk-3.0/gtk/gtkstacksidebar.h
+/usr/local/include/gtk-3.0/gtk/gtkstackswitcher.h
+/usr/local/include/gtk-3.0/gtk/gtkstatusbar.h
+/usr/local/include/gtk-3.0/gtk/gtkstylecontext.h
+/usr/local/include/gtk-3.0/gtk/gtkstyleprovider.h
+/usr/local/include/gtk-3.0/gtk/gtkswitch.h
+/usr/local/include/gtk-3.0/gtk/gtktestutils.h
+/usr/local/include/gtk-3.0/gtk/gtktextattributes.h
+/usr/local/include/gtk-3.0/gtk/gtktextbuffer.h
+/usr/local/include/gtk-3.0/gtk/gtktextbufferrichtext.h
+/usr/local/include/gtk-3.0/gtk/gtktextchild.h
+/usr/local/include/gtk-3.0/gtk/gtktextdisplay.h
+/usr/local/include/gtk-3.0/gtk/gtktextiter.h
+/usr/local/include/gtk-3.0/gtk/gtktextlayout.h
+/usr/local/include/gtk-3.0/gtk/gtktextmark.h
+/usr/local/include/gtk-3.0/gtk/gtktexttag.h
+/usr/local/include/gtk-3.0/gtk/gtktexttagtable.h
+/usr/local/include/gtk-3.0/gtk/gtktextview.h
+/usr/local/include/gtk-3.0/gtk/gtktogglebutton.h
+/usr/local/include/gtk-3.0/gtk/gtktoggletoolbutton.h
+/usr/local/include/gtk-3.0/gtk/gtktoolbar.h
+/usr/local/include/gtk-3.0/gtk/gtktoolbutton.h
+/usr/local/include/gtk-3.0/gtk/gtktoolitem.h
+/usr/local/include/gtk-3.0/gtk/gtktoolitemgroup.h
+/usr/local/include/gtk-3.0/gtk/gtktoolpalette.h
+/usr/local/include/gtk-3.0/gtk/gtktoolshell.h
+/usr/local/include/gtk-3.0/gtk/gtktooltip.h
+/usr/local/include/gtk-3.0/gtk/gtktreednd.h
+/usr/local/include/gtk-3.0/gtk/gtktreemodel.h
+/usr/local/include/gtk-3.0/gtk/gtktreemodelfilter.h
+/usr/local/include/gtk-3.0/gtk/gtktreemodelsort.h
+/usr/local/include/gtk-3.0/gtk/gtktreeselection.h
+/usr/local/include/gtk-3.0/gtk/gtktreesortable.h
+/usr/local/include/gtk-3.0/gtk/gtktreestore.h
+/usr/local/include/gtk-3.0/gtk/gtktreeview.h
+/usr/local/include/gtk-3.0/gtk/gtktreeviewcolumn.h
+/usr/local/include/gtk-3.0/gtk/gtktypebuiltins.h
+/usr/local/include/gtk-3.0/gtk/gtktypes.h
+/usr/local/include/gtk-3.0/gtk/gtkversion.h
+/usr/local/include/gtk-3.0/gtk/gtkviewport.h
+/usr/local/include/gtk-3.0/gtk/gtkvolumebutton.h
+/usr/local/include/gtk-3.0/gtk/gtkwidget.h
+/usr/local/include/gtk-3.0/gtk/gtkwidgetpath.h
+/usr/local/include/gtk-3.0/gtk/gtkwindow.h
+/usr/local/include/gtk-3.0/gtk/gtkwindowgroup.h
+/usr/local/include/gtk-3.0/gtk/gtkx-autocleanups.h
+/usr/local/include/gtk-3.0/gtk/gtkx.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkpagesetupunixdialog.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkprinter.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkprintjob.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkprintunixdialog.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkunixprint-autocleanups.h
+/usr/local/include/gtk-3.0/unix-print/gtk/gtkunixprint.h
+/usr/local/lib/libgailutil-3.a
+/usr/local/lib/libgailutil-3.so
+/usr/local/lib/libgdk-3.a
+/usr/local/lib/libgdk-3.so
+/usr/local/lib/libgtk-3.a
+/usr/local/lib/libgtk-3.so
+/usr/local/lib/pkgconfig/gail-3.0.pc
+/usr/local/lib/pkgconfig/gdk-3.0.pc
+/usr/local/lib/pkgconfig/gdk-broadway-3.0.pc
+/usr/local/lib/pkgconfig/gdk-wayland-3.0.pc
+/usr/local/lib/pkgconfig/gdk-x11-3.0.pc
+/usr/local/lib/pkgconfig/gtk+-3.0.pc
+/usr/local/lib/pkgconfig/gtk+-broadway-3.0.pc
+/usr/local/lib/pkgconfig/gtk+-unix-print-3.0.pc
+/usr/local/lib/pkgconfig/gtk+-wayland-3.0.pc
+/usr/local/lib/pkgconfig/gtk+-x11-3.0.pc
+/usr/local/share/aclocal/gtk-3.0.m4</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>3.24.43-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gtk3-dev-3.24.43-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtk3-dev-3.24.43-r0.tar.gz">.tar.gz</a> &middot; <code>apk add gtk3-dev=3.24.43-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

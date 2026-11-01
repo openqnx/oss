@@ -1,0 +1,599 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>bullet3-dev 3.25-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>bullet3-dev <span class=mut>3.25-r0</span></h1><p class=sum><b>Bullet real-time collision detection and multi-physics simulation library (development files)</b><br>bullet3 3.25 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.25-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/bullet3-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/bulletphysics/bullet3.git">https://github.com/bulletphysics/bullet3.git</a></dd>
+<dt>License</dt><dd>Zlib <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>standalone</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/bullet3">ports/bullet3</a></dd>
+<dt>Package size</dt><dd>647.8 KiB</dd>
+<dt>Installed size</dt><dd>3.2 MiB</dd>
+<dt>Build date</dt><dd>2026-11-01</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add bullet3-dev
+apk add bullet3-dev=3.25-r0   <span class=mut># this version</span>
+
+apk del bullet3-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/bullet3-dev-3.25-r0.apk">bullet3-dev-3.25-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install bullet3-dev
+oss-get install bullet3-dev=3.25-r0   <span class=mut># this version</span>
+
+oss-get remove bullet3-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="bullet3.html">bullet3</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/bullet3-dev-3.25-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/bullet3-dev-3.25-r0.tar.gz</a> (615.8 KiB)</dd><dt>SHA-256</dt><dd><code>1a868f411452f0bda9a68f47c9a5bed9d76c937b63a8913ed4bc052eb4178e99</code></dd><dt>Install first</dt><dd><a href="bullet3.html">bullet3</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/bullet3-dev-3.25-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 bullet3-dev-3.25-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 1a868f411452f0bda9a68f47c9a5bed9d76c937b63a8913ed4bc052eb4178e99 ] &amp;&amp; echo OK || echo BAD
+gzip -dc bullet3-dev-3.25-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/bullet3-dev.list
+gzip -dc bullet3-dev-3.25-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm bullet3-dev-3.25-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/bullet3-dev.list
+rm var/lib/manual/bullet3-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="bullet3.html">bullet3</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="bullet3.html">bullet3</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/bullet3.html">bullet3</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/bullet3/README.md">ports/bullet3/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_bullet3 on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/bullet3-3.25-r0.log">tests/logs/x86_64/bullet3-3.25-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># bullet3 3.25-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:24:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bullet3 qnx-test-bullet3 qnx-port-tests
+(1/3) Installing bullet3 (3.25-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-bullet3 (1.0-r0)
+OK: 99 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bullet3
+     == bullet3 ==
+       info Bullet 325 (single precision)
+       ok   quaternion: 90 deg about z maps x to y
+       ok   transform inverse undoes the transform
+       ok   dot and cross products
+       ok   sphere inertia is 2/5 m r^2
+       info height after 0.5 s: 3.7739 (free fall 3.7738)
+       ok   free fall follows 1/2 g t^2
+       ok   velocity after 0.5 s is about -g t
+       info rest height 0.5000 after 2.47 s more; state 2
+       ok   the sphere rests on the plane at its radius (0.5)
+       ok   the resting sphere is put to sleep
+       ok   and is not moving
+       ok   a vertical drop stays vertical
+       ok   ray cast hits the ground at y = 0 with normal +y
+       ok   a ray from above hits the resting sphere&#x27;s top (y = 1)
+       ok   contactPairTest: sphere and overlapping box are in contact
+       ok   contactPairTest: separated objects have no contact
+       info GJK distance 1.00000
+       ok   GJK: distance between spheres 3 apart is 1
+     PASS bullet3
+PASS test_bullet3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-bullet3 qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-bullet3-1.0-r0.apk">qnx-test-bullet3-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (480)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/bullet/Bullet2FileLoader/autogenerated/bullet2.h
+/usr/local/include/bullet/Bullet2FileLoader/b3BulletFile.h
+/usr/local/include/bullet/Bullet2FileLoader/b3Chunk.h
+/usr/local/include/bullet/Bullet2FileLoader/b3Common.h
+/usr/local/include/bullet/Bullet2FileLoader/b3DNA.h
+/usr/local/include/bullet/Bullet2FileLoader/b3Defines.h
+/usr/local/include/bullet/Bullet2FileLoader/b3File.h
+/usr/local/include/bullet/Bullet2FileLoader/b3Serializer.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/b3BroadphaseCallback.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/b3DynamicBvh.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/b3DynamicBvhBroadphase.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/b3OverlappingPair.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/b3OverlappingPairCache.h
+/usr/local/include/bullet/Bullet3Collision/BroadPhaseCollision/shared/b3Aabb.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3Config.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3Contact4.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3ConvexUtility.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3CpuNarrowPhase.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3RaycastInfo.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/b3RigidBodyCL.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3BvhSubtreeInfoData.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3BvhTraversal.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3ClipFaces.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3Collidable.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3Contact4Data.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3ContactConvexConvexSAT.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3ContactSphereSphere.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3ConvexPolyhedronData.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3FindConcaveSatAxis.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3FindSeparatingAxis.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3MprPenetration.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3NewContactReduction.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3QuantizedBvhNodeData.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3ReduceContacts.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3RigidBodyData.h
+/usr/local/include/bullet/Bullet3Collision/NarrowPhaseCollision/shared/b3UpdateAabbs.h
+/usr/local/include/bullet/Bullet3Common/b3AlignedAllocator.h
+/usr/local/include/bullet/Bullet3Common/b3AlignedObjectArray.h
+/usr/local/include/bullet/Bullet3Common/b3CommandLineArgs.h
+/usr/local/include/bullet/Bullet3Common/b3FileUtils.h
+/usr/local/include/bullet/Bullet3Common/b3HashMap.h
+/usr/local/include/bullet/Bullet3Common/b3Logging.h
+/usr/local/include/bullet/Bullet3Common/b3Matrix3x3.h
+/usr/local/include/bullet/Bullet3Common/b3MinMax.h
+/usr/local/include/bullet/Bullet3Common/b3PoolAllocator.h
+/usr/local/include/bullet/Bullet3Common/b3QuadWord.h
+/usr/local/include/bullet/Bullet3Common/b3Quaternion.h
+/usr/local/include/bullet/Bullet3Common/b3Random.h
+/usr/local/include/bullet/Bullet3Common/b3ResizablePool.h
+/usr/local/include/bullet/Bullet3Common/b3Scalar.h
+/usr/local/include/bullet/Bullet3Common/b3StackAlloc.h
+/usr/local/include/bullet/Bullet3Common/b3Transform.h
+/usr/local/include/bullet/Bullet3Common/b3TransformUtil.h
+/usr/local/include/bullet/Bullet3Common/b3Vector3.h
+/usr/local/include/bullet/Bullet3Common/shared/b3Float4.h
+/usr/local/include/bullet/Bullet3Common/shared/b3Int2.h
+/usr/local/include/bullet/Bullet3Common/shared/b3Int4.h
+/usr/local/include/bullet/Bullet3Common/shared/b3Mat3x3.h
+/usr/local/include/bullet/Bullet3Common/shared/b3PlatformDefinitions.h
+/usr/local/include/bullet/Bullet3Common/shared/b3Quat.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3ContactSolverInfo.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3FixedConstraint.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3Generic6DofConstraint.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3JacobianEntry.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3PgsJacobiSolver.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3Point2PointConstraint.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3SolverBody.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3SolverConstraint.h
+/usr/local/include/bullet/Bullet3Dynamics/ConstraintSolver/b3TypedConstraint.h
+/usr/local/include/bullet/Bullet3Dynamics/b3CpuRigidBodyPipeline.h
+/usr/local/include/bullet/Bullet3Dynamics/shared/b3ContactConstraint4.h
+/usr/local/include/bullet/Bullet3Dynamics/shared/b3ConvertConstraint4.h
+/usr/local/include/bullet/Bullet3Dynamics/shared/b3Inertia.h
+/usr/local/include/bullet/Bullet3Dynamics/shared/b3IntegrateTransforms.h
+/usr/local/include/bullet/Bullet3Geometry/b3AabbUtil.h
+/usr/local/include/bullet/Bullet3Geometry/b3ConvexHullComputer.h
+/usr/local/include/bullet/Bullet3Geometry/b3GeometryUtil.h
+/usr/local/include/bullet/Bullet3Geometry/b3GrahamScan2dConvexHull.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3GpuBroadphaseInterface.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3GpuGridBroadphase.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3GpuParallelLinearBvh.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3GpuParallelLinearBvhBroadphase.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3GpuSapBroadphase.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/b3SapAabb.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/kernels/gridBroadphaseKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/kernels/parallelLinearBvhKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/BroadphaseCollision/kernels/sapKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/Initialize/b3OpenCLInclude.h
+/usr/local/include/bullet/Bullet3OpenCL/Initialize/b3OpenCLUtils.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3BvhInfo.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3ContactCache.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3ConvexHullContact.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3ConvexPolyhedronCL.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3GjkEpa.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3OptimizedBvh.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3QuantizedBvh.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3StridingMeshInterface.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3SupportMappings.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3TriangleCallback.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3TriangleIndexVertexArray.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3VectorFloat4.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/b3VoronoiSimplexSolver.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/bvhTraversal.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/mprKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/primitiveContacts.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/satClipHullContacts.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/satConcaveKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/NarrowphaseCollision/kernels/satKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3BoundSearchCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3BufferInfoCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3FillCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3LauncherCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3OpenCLArray.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3PrefixScanCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3PrefixScanFloat4CL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/b3RadixSort32CL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/BoundSearchKernelsCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/CopyKernelsCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/FillKernelsCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/PrefixScanKernelsCL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/PrefixScanKernelsFloat4CL.h
+/usr/local/include/bullet/Bullet3OpenCL/ParallelPrimitives/kernels/RadixSort32KernelsCL.h
+/usr/local/include/bullet/Bullet3OpenCL/Raycast/b3GpuRaycast.h
+/usr/local/include/bullet/Bullet3OpenCL/Raycast/kernels/rayCastKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuConstraint4.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuGenericConstraint.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuJacobiContactSolver.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuNarrowPhase.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuNarrowPhaseInternalData.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuPgsConstraintSolver.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuPgsContactSolver.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuRigidBodyPipeline.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuRigidBodyPipelineInternalData.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuSolverBody.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3GpuSolverConstraint.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/b3Solver.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/batchingKernels.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/batchingKernelsNew.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/integrateKernel.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/jointSolver.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/solveContact.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/solveFriction.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/solverSetup.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/solverSetup2.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/solverUtils.h
+/usr/local/include/bullet/Bullet3OpenCL/RigidBody/kernels/updateAabbsKernel.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btAxisSweep3.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btAxisSweep3Internal.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btBroadphaseProxy.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btDbvt.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btDispatcher.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btOverlappingPairCache.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btOverlappingPairCallback.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btQuantizedBvh.h
+/usr/local/include/bullet/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/SphereTriangleDetector.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btActivatingCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btBoxBoxCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btBoxBoxDetector.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionConfiguration.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionCreateFunc.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionDispatcher.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionDispatcherMt.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionObject.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionWorld.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCollisionWorldImporter.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btCompoundCompoundCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btConvexConcaveCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btConvexPlaneCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btEmptyCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btGhostObject.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btHashedSimplePairCache.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btManifoldResult.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btSimulationIslandManager.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btSphereBoxCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btSphereSphereCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btSphereTriangleCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/CollisionDispatch/btUnionFind.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btBox2dShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btBoxShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btCapsuleShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btCollisionMargin.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btCollisionShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btCompoundShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConcaveShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConeShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvex2dShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexHullShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexInternalShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexPointCloudShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexPolyhedron.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btConvexTriangleMeshShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btCylinderShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btEmptyShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btMaterial.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btMiniSDF.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btMinkowskiSumShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btMultiSphereShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btMultimaterialTriangleMeshShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btOptimizedBvh.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btPolyhedralConvexShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btSdfCollisionShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btShapeHull.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btSphereShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btStridingMeshInterface.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTetrahedronShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleBuffer.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleCallback.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleIndexVertexMaterialArray.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleInfoMap.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleMesh.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleMeshShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btTriangleShape.h
+/usr/local/include/bullet/BulletCollision/CollisionShapes/btUniformScalingShape.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btBoxCollision.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btClipPolygon.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btCompoundFromGimpact.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btContactProcessing.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btContactProcessingStructs.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactBvh.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactBvhStructs.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactMassUtil.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactQuantizedBvh.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactQuantizedBvhStructs.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGImpactShape.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGenericPoolAllocator.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btGeometryOperations.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btQuantization.h
+/usr/local/include/bullet/BulletCollision/Gimpact/btTriangleShapeEx.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_array.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_basic_geometry_operations.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_bitset.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_box_collision.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_box_set.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_clip_polygon.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_contact.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_geom_types.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_geometry.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_hash_table.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_linear_math.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_math.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_memory.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_pair.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_radixsort.h
+/usr/local/include/bullet/BulletCollision/Gimpact/gim_tri_collision.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btComputeGjkEpaPenetration.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btContinuousConvexCollision.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btConvexCast.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btConvexPenetrationDepthSolver.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkCollisionDescription.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkConvexCast.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkEpa2.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkEpa3.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkEpaPenetrationDepthSolver.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btManifoldPoint.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btMprPenetration.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btPersistentManifold.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btPointCollector.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btSimplexSolverInterface.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.h
+/usr/local/include/bullet/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h
+/usr/local/include/bullet/BulletCollision/btBulletCollisionCommon.h
+/usr/local/include/bullet/BulletDynamics/Character/btCharacterControllerInterface.h
+/usr/local/include/bullet/BulletDynamics/Character/btKinematicCharacterController.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btBatchedConstraints.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btConstraintSolver.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btContactConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btContactSolverInfo.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btFixedConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btGearConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btHinge2Constraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btJacobianEntry.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSolverBody.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btSolverConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btTypedConstraint.h
+/usr/local/include/bullet/BulletDynamics/ConstraintSolver/btUniversalConstraint.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btActionInterface.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btDynamicsWorld.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btRigidBody.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btSimpleDynamicsWorld.h
+/usr/local/include/bullet/BulletDynamics/Dynamics/btSimulationIslandManagerMt.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBody.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyFixedConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyGearConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyInplaceSolverIslandCallback.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyJointFeedback.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyJointLimitConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyJointMotor.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyLink.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyLinkCollider.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodyPoint2Point.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodySliderConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodySolverConstraint.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodySphericalJointLimit.h
+/usr/local/include/bullet/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btDantzigLCP.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btDantzigSolver.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btLemkeAlgorithm.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btLemkeSolver.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btMLCPSolver.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btMLCPSolverInterface.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btPATHSolver.h
+/usr/local/include/bullet/BulletDynamics/MLCPSolvers/btSolveProjectedGaussSeidel.h
+/usr/local/include/bullet/BulletDynamics/Vehicle/btRaycastVehicle.h
+/usr/local/include/bullet/BulletDynamics/Vehicle/btVehicleRaycaster.h
+/usr/local/include/bullet/BulletDynamics/Vehicle/btWheelInfo.h
+/usr/local/include/bullet/BulletDynamics/btBulletDynamicsCommon.h
+/usr/local/include/bullet/BulletFileLoader/autogenerated/bullet.h
+/usr/local/include/bullet/BulletFileLoader/bChunk.h
+/usr/local/include/bullet/BulletFileLoader/bCommon.h
+/usr/local/include/bullet/BulletFileLoader/bDNA.h
+/usr/local/include/bullet/BulletFileLoader/bDefines.h
+/usr/local/include/bullet/BulletFileLoader/bFile.h
+/usr/local/include/bullet/BulletFileLoader/btBulletFile.h
+/usr/local/include/bullet/BulletInverseDynamics/btBulletCollisionCommon.h
+/usr/local/include/bullet/BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBody.h
+/usr/local/include/bullet/BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodyHelpers.h
+/usr/local/include/bullet/BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodySolver.h
+/usr/local/include/bullet/BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableContactConstraint.h
+/usr/local/include/bullet/BulletSoftBody/DeformableBodyInplaceSolverIslandCallback.h
+/usr/local/include/bullet/BulletSoftBody/btCGProjection.h
+/usr/local/include/bullet/BulletSoftBody/btConjugateGradient.h
+/usr/local/include/bullet/BulletSoftBody/btConjugateResidual.h
+/usr/local/include/bullet/BulletSoftBody/btDefaultSoftBodySolver.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableBackwardEulerObjective.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableBodySolver.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableContactConstraint.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableContactProjection.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableCorotatedForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableGravityForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableLagrangianForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableLinearElasticityForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableMassSpringForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableMousePickingForce.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableMultiBodyConstraintSolver.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableMultiBodyDynamicsWorld.h
+/usr/local/include/bullet/BulletSoftBody/btDeformableNeoHookeanForce.h
+/usr/local/include/bullet/BulletSoftBody/btKrylovSolver.h
+/usr/local/include/bullet/BulletSoftBody/btPreconditioner.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBody.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodyData.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodyHelpers.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodyInternals.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodySolverVertexBuffer.h
+/usr/local/include/bullet/BulletSoftBody/btSoftBodySolvers.h
+/usr/local/include/bullet/BulletSoftBody/btSoftMultiBodyDynamicsWorld.h
+/usr/local/include/bullet/BulletSoftBody/btSoftRigidCollisionAlgorithm.h
+/usr/local/include/bullet/BulletSoftBody/btSoftRigidDynamicsWorld.h
+/usr/local/include/bullet/BulletSoftBody/btSoftSoftCollisionAlgorithm.h
+/usr/local/include/bullet/BulletSoftBody/btSparseSDF.h
+/usr/local/include/bullet/BulletSoftBody/poly34.h
+/usr/local/include/bullet/BulletWorldImporter/btBulletWorldImporter.h
+/usr/local/include/bullet/BulletWorldImporter/btMultiBodyWorldImporter.h
+/usr/local/include/bullet/BulletWorldImporter/btWorldImporter.h
+/usr/local/include/bullet/BulletXmlWorldImporter/btBulletXmlWorldImporter.h
+/usr/local/include/bullet/BulletXmlWorldImporter/string_split.h
+/usr/local/include/bullet/ConvexDecomposition/ConvexBuilder.h
+/usr/local/include/bullet/ConvexDecomposition/ConvexDecomposition.h
+/usr/local/include/bullet/ConvexDecomposition/bestfit.h
+/usr/local/include/bullet/ConvexDecomposition/bestfitobb.h
+/usr/local/include/bullet/ConvexDecomposition/cd_hull.h
+/usr/local/include/bullet/ConvexDecomposition/cd_vector.h
+/usr/local/include/bullet/ConvexDecomposition/cd_wavefront.h
+/usr/local/include/bullet/ConvexDecomposition/concavity.h
+/usr/local/include/bullet/ConvexDecomposition/fitsphere.h
+/usr/local/include/bullet/ConvexDecomposition/float_math.h
+/usr/local/include/bullet/ConvexDecomposition/meshvolume.h
+/usr/local/include/bullet/ConvexDecomposition/planetri.h
+/usr/local/include/bullet/ConvexDecomposition/raytri.h
+/usr/local/include/bullet/ConvexDecomposition/splitplane.h
+/usr/local/include/bullet/ConvexDecomposition/vlookup.h
+/usr/local/include/bullet/GIMPACTUtils/btGImpactConvexDecompositionShape.h
+/usr/local/include/bullet/HACD/hacdCircularList.h
+/usr/local/include/bullet/HACD/hacdCircularList.inl
+/usr/local/include/bullet/HACD/hacdGraph.h
+/usr/local/include/bullet/HACD/hacdHACD.h
+/usr/local/include/bullet/HACD/hacdICHull.h
+/usr/local/include/bullet/HACD/hacdManifoldMesh.h
+/usr/local/include/bullet/HACD/hacdVector.h
+/usr/local/include/bullet/HACD/hacdVector.inl
+/usr/local/include/bullet/HACD/hacdVersion.h
+/usr/local/include/bullet/InverseDynamics/BulletInverseDynamicsUtilsCommon.h
+/usr/local/include/bullet/LinearMath/TaskScheduler/btThreadSupportInterface.h
+/usr/local/include/bullet/LinearMath/btAabbUtil2.h
+/usr/local/include/bullet/LinearMath/btAlignedAllocator.h
+/usr/local/include/bullet/LinearMath/btAlignedObjectArray.h
+/usr/local/include/bullet/LinearMath/btConvexHull.h
+/usr/local/include/bullet/LinearMath/btConvexHullComputer.h
+/usr/local/include/bullet/LinearMath/btCpuFeatureUtility.h
+/usr/local/include/bullet/LinearMath/btDefaultMotionState.h
+/usr/local/include/bullet/LinearMath/btGeometryUtil.h
+/usr/local/include/bullet/LinearMath/btGrahamScan2dConvexHull.h
+/usr/local/include/bullet/LinearMath/btHashMap.h
+/usr/local/include/bullet/LinearMath/btIDebugDraw.h
+/usr/local/include/bullet/LinearMath/btImplicitQRSVD.h
+/usr/local/include/bullet/LinearMath/btList.h
+/usr/local/include/bullet/LinearMath/btMatrix3x3.h
+/usr/local/include/bullet/LinearMath/btMatrixX.h
+/usr/local/include/bullet/LinearMath/btMinMax.h
+/usr/local/include/bullet/LinearMath/btModifiedGramSchmidt.h
+/usr/local/include/bullet/LinearMath/btMotionState.h
+/usr/local/include/bullet/LinearMath/btPolarDecomposition.h
+/usr/local/include/bullet/LinearMath/btPoolAllocator.h
+/usr/local/include/bullet/LinearMath/btQuadWord.h
+/usr/local/include/bullet/LinearMath/btQuaternion.h
+/usr/local/include/bullet/LinearMath/btQuickprof.h
+/usr/local/include/bullet/LinearMath/btRandom.h
+/usr/local/include/bullet/LinearMath/btReducedVector.h
+/usr/local/include/bullet/LinearMath/btScalar.h
+/usr/local/include/bullet/LinearMath/btSerializer.h
+/usr/local/include/bullet/LinearMath/btSpatialAlgebra.h
+/usr/local/include/bullet/LinearMath/btStackAlloc.h
+/usr/local/include/bullet/LinearMath/btThreads.h
+/usr/local/include/bullet/LinearMath/btTransform.h
+/usr/local/include/bullet/LinearMath/btTransformUtil.h
+/usr/local/include/bullet/LinearMath/btVector3.h
+/usr/local/include/bullet/btBulletCollisionCommon.h
+/usr/local/include/bullet/btBulletDynamicsCommon.h
+/usr/local/lib/cmake/bullet/BulletConfig.cmake
+/usr/local/lib/cmake/bullet/UseBullet.cmake
+/usr/local/lib/libBullet2FileLoader.so
+/usr/local/lib/libBullet3Collision.so
+/usr/local/lib/libBullet3Common.so
+/usr/local/lib/libBullet3Dynamics.so
+/usr/local/lib/libBullet3Geometry.so
+/usr/local/lib/libBullet3OpenCL_clew.so
+/usr/local/lib/libBulletCollision.so
+/usr/local/lib/libBulletDynamics.so
+/usr/local/lib/libBulletFileLoader.so
+/usr/local/lib/libBulletInverseDynamics.so
+/usr/local/lib/libBulletInverseDynamicsUtils.so
+/usr/local/lib/libBulletSoftBody.so
+/usr/local/lib/libBulletWorldImporter.so
+/usr/local/lib/libBulletXmlWorldImporter.so
+/usr/local/lib/libConvexDecomposition.so
+/usr/local/lib/libGIMPACTUtils.so
+/usr/local/lib/libHACD.so
+/usr/local/lib/libLinearMath.so
+/usr/local/lib/pkgconfig/bullet.pc</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

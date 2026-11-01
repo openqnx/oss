@@ -1,0 +1,230 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>nodejs-dev 24.14.1-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>nodejs-dev <span class=mut>24.14.1-r0</span></h1><p class=sum><b>Node.js cross-platform JavaScript runtime environment (development files)</b><br>nodejs 24.14.1 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>24.14.1-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/nodejs-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/nodejs/node.git">https://github.com/nodejs/node.git</a></dd>
+<dt>License</dt><dd>Apache-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/nodejs">ports/nodejs</a></dd>
+<dt>Package size</dt><dd>267.2 KiB</dd>
+<dt>Installed size</dt><dd>1.1 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add nodejs-dev
+apk add nodejs-dev=24.14.1-r0   <span class=mut># this version</span>
+
+apk del nodejs-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/nodejs-dev-24.14.1-r0.apk">nodejs-dev-24.14.1-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install nodejs-dev
+oss-get install nodejs-dev=24.14.1-r0   <span class=mut># this version</span>
+
+oss-get remove nodejs-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="nodejs.html">nodejs</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/nodejs-dev-24.14.1-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/nodejs-dev-24.14.1-r0.tar.gz</a> (258.1 KiB)</dd><dt>SHA-256</dt><dd><code>3fac2fc17cb212341091804821faa080612ceeb186bcddcf5b0650d25f2df8f4</code></dd><dt>Install first</dt><dd><a href="ada.html">ada</a>, <a href="brotli.html">brotli</a>, <a href="c-ares.html">c-ares</a>, <a href="icu.html">icu</a>, <a href="libuv.html">libuv</a>, <a href="nghttp2.html">nghttp2</a>, <a href="openssl.html">openssl</a>, <a href="simdjson.html">simdjson</a>, <a href="simdutf.html">simdutf</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="zstd.html">zstd</a>, <a href="nodejs.html">nodejs</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/nodejs-dev-24.14.1-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 nodejs-dev-24.14.1-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 3fac2fc17cb212341091804821faa080612ceeb186bcddcf5b0650d25f2df8f4 ] &amp;&amp; echo OK || echo BAD
+gzip -dc nodejs-dev-24.14.1-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/nodejs-dev.list
+gzip -dc nodejs-dev-24.14.1-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm nodejs-dev-24.14.1-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/nodejs-dev.list
+rm var/lib/manual/nodejs-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="ada.html">ada</a>, <a href="brotli.html">brotli</a>, <a href="c-ares.html">c-ares</a>, <a href="icu.html">icu</a>, <a href="libuv.html">libuv</a>, <a href="nghttp2.html">nghttp2</a>, <a href="openssl.html">openssl</a>, <a href="simdjson.html">simdjson</a>, <a href="simdutf.html">simdutf</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="zstd.html">zstd</a>, <a href="nodejs.html">nodejs</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="nodejs.html">nodejs</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/nodejs.html">nodejs</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (9)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0002-aports-remove-unused-openssl-config.patch">0002-aports-remove-unused-openssl-config.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0003-aports-v8-no-static-zlib.patch">0003-aports-v8-no-static-zlib.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0004-aports-v8-int64-lowering-reducer.patch">0004-aports-v8-int64-lowering-reducer.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0005-aports-node_sea.patch">0005-aports-node_sea.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0006-aports-node_snapshotable.patch">0006-aports-node_snapshotable.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0007-v8config-target-os-fallback-value.patch">0007-v8config-target-os-fallback-value.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0008-v8-wasm-objects-include-v8config-first.patch">0008-v8-wasm-objects-include-v8config-first.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/patches/0009-v8-gyp-host-trap-handler-for-qnx.patch">0009-v8-gyp-host-trap-handler-for-qnx.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/nodejs/README.md">ports/nodejs/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_nodejs on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/nodejs-24.14.1-r0.log">tests/logs/aarch64le/nodejs-24.14.1-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># nodejs 24.14.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:59:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nodejs qnx-test-nodejs qnx-port-tests
+( 1/11) Installing ada (3.4.4-r0)
+( 2/11) Installing c-ares (1.34.3-r0)
+( 3/11) Installing icu (76.1-r1)
+( 4/11) Installing libuv (1.51.0-r0)
+( 5/11) Installing nghttp2 (1.64.0-r0)
+( 6/11) Installing simdjson (3.11.3-r0)
+( 7/11) Installing simdutf (6.4.2-r0)
+( 8/11) Installing sqlite (3.47.2-r0)
+( 9/11) Installing nodejs (24.14.1-r0)
+(10/11) Installing qnx-port-tests (1.0-r2)
+(11/11) Installing qnx-test-nodejs (1.0-r0)
+OK: 158 MiB in 39 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nodejs
+     == nodejs ==
+       ok   node --version: v24.14.1
+       ok   BigInt 2n**100n
+       ok   JSON round trip
+       ok   regex named groups
+       ok   class + async/await
+       ok   crypto sha256(&#x27;abc&#x27;)
+       ok   crypto AES-256-GCM round trip
+       ok   zlib gzip round trip
+       ok   Intl.NumberFormat en-US (ICU)
+       ok   Intl de-DE
+       ok   fs write/read in /tmp
+       ok   child_process.execFileSync(sh)
+       ok   HTTP server + client on &lt;ip&gt;
+       info openssl 3.5.1, icu 76.1, uv 1.51.0
+     PASS nodejs
+PASS test_nodejs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-nodejs qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-nodejs-1.0-r0.apk">qnx-test-nodejs-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (108)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/node/common.gypi
+/usr/local/include/node/config.gypi
+/usr/local/include/node/cppgc/allocation.h
+/usr/local/include/node/cppgc/common.h
+/usr/local/include/node/cppgc/cross-thread-persistent.h
+/usr/local/include/node/cppgc/custom-space.h
+/usr/local/include/node/cppgc/default-platform.h
+/usr/local/include/node/cppgc/explicit-management.h
+/usr/local/include/node/cppgc/garbage-collected.h
+/usr/local/include/node/cppgc/heap-consistency.h
+/usr/local/include/node/cppgc/heap-handle.h
+/usr/local/include/node/cppgc/heap-state.h
+/usr/local/include/node/cppgc/heap-statistics.h
+/usr/local/include/node/cppgc/heap.h
+/usr/local/include/node/cppgc/internal/api-constants.h
+/usr/local/include/node/cppgc/internal/atomic-entry-flag.h
+/usr/local/include/node/cppgc/internal/base-page-handle.h
+/usr/local/include/node/cppgc/internal/caged-heap-local-data.h
+/usr/local/include/node/cppgc/internal/caged-heap.h
+/usr/local/include/node/cppgc/internal/compiler-specific.h
+/usr/local/include/node/cppgc/internal/conditional-stack-allocated.h
+/usr/local/include/node/cppgc/internal/finalizer-trait.h
+/usr/local/include/node/cppgc/internal/gc-info.h
+/usr/local/include/node/cppgc/internal/logging.h
+/usr/local/include/node/cppgc/internal/member-storage.h
+/usr/local/include/node/cppgc/internal/name-trait.h
+/usr/local/include/node/cppgc/internal/persistent-node.h
+/usr/local/include/node/cppgc/internal/pointer-policies.h
+/usr/local/include/node/cppgc/internal/write-barrier.h
+/usr/local/include/node/cppgc/liveness-broker.h
+/usr/local/include/node/cppgc/macros.h
+/usr/local/include/node/cppgc/member.h
+/usr/local/include/node/cppgc/name-provider.h
+/usr/local/include/node/cppgc/object-size-trait.h
+/usr/local/include/node/cppgc/persistent.h
+/usr/local/include/node/cppgc/platform.h
+/usr/local/include/node/cppgc/prefinalizer.h
+/usr/local/include/node/cppgc/process-heap-statistics.h
+/usr/local/include/node/cppgc/sentinel-pointer.h
+/usr/local/include/node/cppgc/source-location.h
+/usr/local/include/node/cppgc/testing.h
+/usr/local/include/node/cppgc/trace-trait.h
+/usr/local/include/node/cppgc/type-traits.h
+/usr/local/include/node/cppgc/visitor.h
+/usr/local/include/node/js_native_api.h
+/usr/local/include/node/js_native_api_types.h
+/usr/local/include/node/libplatform/libplatform-export.h
+/usr/local/include/node/libplatform/libplatform.h
+/usr/local/include/node/libplatform/v8-tracing.h
+/usr/local/include/node/node.h
+/usr/local/include/node/node_api.h
+/usr/local/include/node/node_api_types.h
+/usr/local/include/node/node_buffer.h
+/usr/local/include/node/node_object_wrap.h
+/usr/local/include/node/node_version.h
+/usr/local/include/node/v8-array-buffer.h
+/usr/local/include/node/v8-callbacks.h
+/usr/local/include/node/v8-container.h
+/usr/local/include/node/v8-context.h
+/usr/local/include/node/v8-cppgc.h
+/usr/local/include/node/v8-data.h
+/usr/local/include/node/v8-date.h
+/usr/local/include/node/v8-debug.h
+/usr/local/include/node/v8-embedder-heap.h
+/usr/local/include/node/v8-embedder-state-scope.h
+/usr/local/include/node/v8-exception.h
+/usr/local/include/node/v8-extension.h
+/usr/local/include/node/v8-external.h
+/usr/local/include/node/v8-forward.h
+/usr/local/include/node/v8-function-callback.h
+/usr/local/include/node/v8-function.h
+/usr/local/include/node/v8-handle-base.h
+/usr/local/include/node/v8-initialization.h
+/usr/local/include/node/v8-internal.h
+/usr/local/include/node/v8-isolate.h
+/usr/local/include/node/v8-json.h
+/usr/local/include/node/v8-local-handle.h
+/usr/local/include/node/v8-locker.h
+/usr/local/include/node/v8-maybe.h
+/usr/local/include/node/v8-memory-span.h
+/usr/local/include/node/v8-message.h
+/usr/local/include/node/v8-microtask-queue.h
+/usr/local/include/node/v8-microtask.h
+/usr/local/include/node/v8-object.h
+/usr/local/include/node/v8-persistent-handle.h
+/usr/local/include/node/v8-platform.h
+/usr/local/include/node/v8-primitive-object.h
+/usr/local/include/node/v8-primitive.h
+/usr/local/include/node/v8-profiler.h
+/usr/local/include/node/v8-promise.h
+/usr/local/include/node/v8-proxy.h
+/usr/local/include/node/v8-regexp.h
+/usr/local/include/node/v8-sandbox.h
+/usr/local/include/node/v8-script.h
+/usr/local/include/node/v8-snapshot.h
+/usr/local/include/node/v8-source-location.h
+/usr/local/include/node/v8-statistics.h
+/usr/local/include/node/v8-template.h
+/usr/local/include/node/v8-traced-handle.h
+/usr/local/include/node/v8-typed-array.h
+/usr/local/include/node/v8-unwinder.h
+/usr/local/include/node/v8-value-serializer.h
+/usr/local/include/node/v8-value.h
+/usr/local/include/node/v8-version.h
+/usr/local/include/node/v8-wasm.h
+/usr/local/include/node/v8-weak-callback-info.h
+/usr/local/include/node/v8.h
+/usr/local/include/node/v8config.h</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

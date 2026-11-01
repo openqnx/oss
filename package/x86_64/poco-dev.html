@@ -1,0 +1,763 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>poco-dev 1.15.4-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>poco-dev <span class=mut>1.15.4-r0</span></h1><p class=sum><b>Cross-platform C++ libraries for network-based applications (development files)</b><br>poco 1.15.4 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>1.15.4-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/poco-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/pocoproject/poco.git">https://github.com/pocoproject/poco.git</a></dd>
+<dt>License</dt><dd>BSL-1.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/poco">ports/poco</a></dd>
+<dt>Package size</dt><dd>603.1 KiB</dd>
+<dt>Installed size</dt><dd>3.2 MiB</dd>
+<dt>Build date</dt><dd>2026-11-01</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add poco-dev
+apk add poco-dev=1.15.4-r0   <span class=mut># this version</span>
+
+apk del poco-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/poco-dev-1.15.4-r0.apk">poco-dev-1.15.4-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install poco-dev
+oss-get install poco-dev=1.15.4-r0   <span class=mut># this version</span>
+
+oss-get remove poco-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="poco.html">poco</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/poco-dev-1.15.4-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/poco-dev-1.15.4-r0.tar.gz</a> (562.5 KiB)</dd><dt>SHA-256</dt><dd><code>e5fa2c69df6c6b86c9c0565e4cfee46c1f8b620d892aa433c3030888ae44fb7e</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="openssl.html">openssl</a>, <a href="pcre2.html">pcre2</a>, <a href="utf8proc.html">utf8proc</a>, <a href="zlib.html">zlib</a>, <a href="poco.html">poco</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/poco-dev-1.15.4-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 poco-dev-1.15.4-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = e5fa2c69df6c6b86c9c0565e4cfee46c1f8b620d892aa433c3030888ae44fb7e ] &amp;&amp; echo OK || echo BAD
+gzip -dc poco-dev-1.15.4-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/poco-dev.list
+gzip -dc poco-dev-1.15.4-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm poco-dev-1.15.4-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/poco-dev.list
+rm var/lib/manual/poco-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="openssl.html">openssl</a>, <a href="pcre2.html">pcre2</a>, <a href="utf8proc.html">utf8proc</a>, <a href="zlib.html">zlib</a>, <a href="poco.html">poco</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="poco.html">poco</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/poco.html">poco</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/poco/README.md">ports/poco/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_poco on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/poco-1.15.4-r0.log">tests/logs/x86_64/poco-1.15.4-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># poco 1.15.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:59:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u poco qnx-test-poco qnx-port-tests
+(1/3) Installing utf8proc (2.11.3-r0)
+(2/3) Installing poco (1.15.4-r0)
+(3/3) Installing qnx-test-poco (1.0-r0)
+OK: 103 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_poco
+     == poco ==
+       ok   MD5(abc)
+       ok   SHA1(abc)
+       ok   Crypto SHA-256(abc) via OpenSSL
+       ok   AES-256-CBC = openssl enc (base64 Q8r1+PKGrD6M+hU4mwup4w==)
+       ok   AES-256-CBC decrypt
+       ok   RSA-1024 SHA-256 signature verifies, not for other text
+       ok   DateTimeParser ISO 8601 -&gt; epoch 1234567890, Friday
+       ok   DateTimeFormatter HTTP format
+       ok   RegularExpression (PCRE2) captures
+       ok   UTF8::toUpper (utf8proc)
+       ok   gzip Deflating/InflatingStream round trip (5003 -&gt; &lt;200 bytes)
+       ok   FileOutputStream writes 12 bytes
+       ok   File::list
+       ok   File::remove(recursive)
+       ok   ThreadPool: 4 runnables x 1000 increments
+       ok   Util::PropertyFileConfiguration
+       ok   Util::XMLConfiguration paths
+       ok   XML DOMParser: elements, attribute, text
+       ok   JSON parse: string, number, array, bool
+       ok   JSON stringify
+       ok   HTTP GET on &lt;ip&gt;
+       ok   HTTP POST on the same keep-alive session
+       info DNS::resolve(&lt;ip&gt;): localhost, first ::1
+       ok   DNS::resolve(&lt;ip&gt;): a name, and only loopback addresses
+       ok   DNS::hostByName(&lt;ip&gt;) = &lt;ip&gt;
+     PASS poco
+PASS test_poco
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-poco qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64-m-z/qnx-test-poco-1.0-r0.apk">qnx-test-poco-1.0-r0.apk</a> (release tests-8.0-x86_64-m-z)</p>
+<h2>Files (638)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/Poco/ASCIIEncoding.h
+/usr/local/include/Poco/AbstractCache.h
+/usr/local/include/Poco/AbstractDelegate.h
+/usr/local/include/Poco/AbstractEvent.h
+/usr/local/include/Poco/AbstractObserver.h
+/usr/local/include/Poco/AbstractPriorityDelegate.h
+/usr/local/include/Poco/AbstractStrategy.h
+/usr/local/include/Poco/AccessExpirationDecorator.h
+/usr/local/include/Poco/AccessExpireCache.h
+/usr/local/include/Poco/AccessExpireLRUCache.h
+/usr/local/include/Poco/AccessExpireStrategy.h
+/usr/local/include/Poco/ActiveDispatcher.h
+/usr/local/include/Poco/ActiveMethod.h
+/usr/local/include/Poco/ActiveResult.h
+/usr/local/include/Poco/ActiveRunnable.h
+/usr/local/include/Poco/ActiveStarter.h
+/usr/local/include/Poco/ActiveThreadPool.h
+/usr/local/include/Poco/Activity.h
+/usr/local/include/Poco/Alignment.h
+/usr/local/include/Poco/Any.h
+/usr/local/include/Poco/ArchiveStrategy.h
+/usr/local/include/Poco/Array.h
+/usr/local/include/Poco/Ascii.h
+/usr/local/include/Poco/AsyncChannel.h
+/usr/local/include/Poco/AsyncNotificationCenter.h
+/usr/local/include/Poco/AsyncObserver.h
+/usr/local/include/Poco/AtomicCounter.h
+/usr/local/include/Poco/AtomicFlag.h
+/usr/local/include/Poco/AutoPtr.h
+/usr/local/include/Poco/AutoReleasePool.h
+/usr/local/include/Poco/Base32Decoder.h
+/usr/local/include/Poco/Base32Encoder.h
+/usr/local/include/Poco/Base64Decoder.h
+/usr/local/include/Poco/Base64Encoder.h
+/usr/local/include/Poco/BasicEvent.h
+/usr/local/include/Poco/BinaryReader.h
+/usr/local/include/Poco/BinaryWriter.h
+/usr/local/include/Poco/Buffer.h
+/usr/local/include/Poco/BufferAllocator.h
+/usr/local/include/Poco/BufferedBidirectionalStreamBuf.h
+/usr/local/include/Poco/BufferedStreamBuf.h
+/usr/local/include/Poco/Bugcheck.h
+/usr/local/include/Poco/ByteOrder.h
+/usr/local/include/Poco/Channel.h
+/usr/local/include/Poco/Checksum.h
+/usr/local/include/Poco/ClassLibrary.h
+/usr/local/include/Poco/ClassLoader.h
+/usr/local/include/Poco/Clock.h
+/usr/local/include/Poco/Condition.h
+/usr/local/include/Poco/Config.h
+/usr/local/include/Poco/Configurable.h
+/usr/local/include/Poco/ConsoleChannel.h
+/usr/local/include/Poco/CountingStream.h
+/usr/local/include/Poco/Crypto/Cipher.h
+/usr/local/include/Poco/Crypto/CipherFactory.h
+/usr/local/include/Poco/Crypto/CipherImpl.h
+/usr/local/include/Poco/Crypto/CipherKey.h
+/usr/local/include/Poco/Crypto/CipherKeyImpl.h
+/usr/local/include/Poco/Crypto/Crypto.h
+/usr/local/include/Poco/Crypto/CryptoException.h
+/usr/local/include/Poco/Crypto/CryptoStream.h
+/usr/local/include/Poco/Crypto/CryptoTransform.h
+/usr/local/include/Poco/Crypto/DigestEngine.h
+/usr/local/include/Poco/Crypto/ECDSADigestEngine.h
+/usr/local/include/Poco/Crypto/ECKey.h
+/usr/local/include/Poco/Crypto/ECKeyImpl.h
+/usr/local/include/Poco/Crypto/EVPCipherImpl.h
+/usr/local/include/Poco/Crypto/EVPPKey.h
+/usr/local/include/Poco/Crypto/Envelope.h
+/usr/local/include/Poco/Crypto/KeyPair.h
+/usr/local/include/Poco/Crypto/KeyPairImpl.h
+/usr/local/include/Poco/Crypto/OpenSSLInitializer.h
+/usr/local/include/Poco/Crypto/PKCS12Container.h
+/usr/local/include/Poco/Crypto/RSACipherImpl.h
+/usr/local/include/Poco/Crypto/RSADigestEngine.h
+/usr/local/include/Poco/Crypto/RSAKey.h
+/usr/local/include/Poco/Crypto/RSAKeyImpl.h
+/usr/local/include/Poco/Crypto/X509Certificate.h
+/usr/local/include/Poco/DOM/AbstractContainerNode.h
+/usr/local/include/Poco/DOM/AbstractNode.h
+/usr/local/include/Poco/DOM/Attr.h
+/usr/local/include/Poco/DOM/AttrMap.h
+/usr/local/include/Poco/DOM/AutoPtr.h
+/usr/local/include/Poco/DOM/CDATASection.h
+/usr/local/include/Poco/DOM/CharacterData.h
+/usr/local/include/Poco/DOM/ChildNodesList.h
+/usr/local/include/Poco/DOM/Comment.h
+/usr/local/include/Poco/DOM/DOMBuilder.h
+/usr/local/include/Poco/DOM/DOMException.h
+/usr/local/include/Poco/DOM/DOMImplementation.h
+/usr/local/include/Poco/DOM/DOMObject.h
+/usr/local/include/Poco/DOM/DOMParser.h
+/usr/local/include/Poco/DOM/DOMSerializer.h
+/usr/local/include/Poco/DOM/DOMWriter.h
+/usr/local/include/Poco/DOM/DTDMap.h
+/usr/local/include/Poco/DOM/Document.h
+/usr/local/include/Poco/DOM/DocumentEvent.h
+/usr/local/include/Poco/DOM/DocumentFragment.h
+/usr/local/include/Poco/DOM/DocumentType.h
+/usr/local/include/Poco/DOM/Element.h
+/usr/local/include/Poco/DOM/ElementsByTagNameList.h
+/usr/local/include/Poco/DOM/Entity.h
+/usr/local/include/Poco/DOM/EntityReference.h
+/usr/local/include/Poco/DOM/Event.h
+/usr/local/include/Poco/DOM/EventDispatcher.h
+/usr/local/include/Poco/DOM/EventException.h
+/usr/local/include/Poco/DOM/EventListener.h
+/usr/local/include/Poco/DOM/EventTarget.h
+/usr/local/include/Poco/DOM/MutationEvent.h
+/usr/local/include/Poco/DOM/NamedNodeMap.h
+/usr/local/include/Poco/DOM/Node.h
+/usr/local/include/Poco/DOM/NodeAppender.h
+/usr/local/include/Poco/DOM/NodeFilter.h
+/usr/local/include/Poco/DOM/NodeIterator.h
+/usr/local/include/Poco/DOM/NodeList.h
+/usr/local/include/Poco/DOM/Notation.h
+/usr/local/include/Poco/DOM/ProcessingInstruction.h
+/usr/local/include/Poco/DOM/Text.h
+/usr/local/include/Poco/DOM/TreeWalker.h
+/usr/local/include/Poco/DataURIStream.h
+/usr/local/include/Poco/DataURIStreamFactory.h
+/usr/local/include/Poco/DateTime.h
+/usr/local/include/Poco/DateTimeFormat.h
+/usr/local/include/Poco/DateTimeFormatter.h
+/usr/local/include/Poco/DateTimeParser.h
+/usr/local/include/Poco/Debugger.h
+/usr/local/include/Poco/DefaultStrategy.h
+/usr/local/include/Poco/DeflatingStream.h
+/usr/local/include/Poco/Delegate.h
+/usr/local/include/Poco/DigestEngine.h
+/usr/local/include/Poco/DigestStream.h
+/usr/local/include/Poco/DirectoryIterator.h
+/usr/local/include/Poco/DirectoryIteratorStrategy.h
+/usr/local/include/Poco/DirectoryIterator_UNIX.h
+/usr/local/include/Poco/DirectoryIterator_WIN32U.h
+/usr/local/include/Poco/DirectoryWatcher.h
+/usr/local/include/Poco/Dynamic/Pair.h
+/usr/local/include/Poco/Dynamic/Struct.h
+/usr/local/include/Poco/Dynamic/Var.h
+/usr/local/include/Poco/Dynamic/VarHolder.h
+/usr/local/include/Poco/Dynamic/VarIterator.h
+/usr/local/include/Poco/Dynamic/VarVisitor.h
+/usr/local/include/Poco/DynamicAny.h
+/usr/local/include/Poco/DynamicAnyHolder.h
+/usr/local/include/Poco/DynamicFactory.h
+/usr/local/include/Poco/DynamicStruct.h
+/usr/local/include/Poco/Environment.h
+/usr/local/include/Poco/Environment_UNIX.h
+/usr/local/include/Poco/Environment_VX.h
+/usr/local/include/Poco/Environment_WIN32U.h
+/usr/local/include/Poco/Error.h
+/usr/local/include/Poco/ErrorHandler.h
+/usr/local/include/Poco/Event.h
+/usr/local/include/Poco/EventArgs.h
+/usr/local/include/Poco/EventChannel.h
+/usr/local/include/Poco/EventLogChannel.h
+/usr/local/include/Poco/Event_POSIX.h
+/usr/local/include/Poco/Event_VX.h
+/usr/local/include/Poco/Event_WIN32.h
+/usr/local/include/Poco/Exception.h
+/usr/local/include/Poco/ExpirationDecorator.h
+/usr/local/include/Poco/Expire.h
+/usr/local/include/Poco/ExpireCache.h
+/usr/local/include/Poco/ExpireLRUCache.h
+/usr/local/include/Poco/ExpireStrategy.h
+/usr/local/include/Poco/FIFOBuffer.h
+/usr/local/include/Poco/FIFOBufferStream.h
+/usr/local/include/Poco/FIFOEvent.h
+/usr/local/include/Poco/FIFOStrategy.h
+/usr/local/include/Poco/FPEnvironment.h
+/usr/local/include/Poco/FPEnvironment_C99.h
+/usr/local/include/Poco/FPEnvironment_DEC.h
+/usr/local/include/Poco/FPEnvironment_DUMMY.h
+/usr/local/include/Poco/FPEnvironment_QNX.h
+/usr/local/include/Poco/FPEnvironment_SUN.h
+/usr/local/include/Poco/FPEnvironment_WIN32.h
+/usr/local/include/Poco/FastLogger.h
+/usr/local/include/Poco/File.h
+/usr/local/include/Poco/FileChannel.h
+/usr/local/include/Poco/FileStream.h
+/usr/local/include/Poco/FileStreamFactory.h
+/usr/local/include/Poco/FileStreamRWLock.h
+/usr/local/include/Poco/FileStreamRWLock_POSIX.h
+/usr/local/include/Poco/FileStreamRWLock_WIN32.h
+/usr/local/include/Poco/FileStream_POSIX.h
+/usr/local/include/Poco/FileStream_WIN32.h
+/usr/local/include/Poco/File_UNIX.h
+/usr/local/include/Poco/File_VX.h
+/usr/local/include/Poco/File_WIN32U.h
+/usr/local/include/Poco/Format.h
+/usr/local/include/Poco/Formatter.h
+/usr/local/include/Poco/FormattingChannel.h
+/usr/local/include/Poco/Foundation.h
+/usr/local/include/Poco/FunctionDelegate.h
+/usr/local/include/Poco/FunctionPriorityDelegate.h
+/usr/local/include/Poco/Glob.h
+/usr/local/include/Poco/HMACEngine.h
+/usr/local/include/Poco/Hash.h
+/usr/local/include/Poco/HashFunction.h
+/usr/local/include/Poco/HashMap.h
+/usr/local/include/Poco/HashSet.h
+/usr/local/include/Poco/HashStatistic.h
+/usr/local/include/Poco/HashTable.h
+/usr/local/include/Poco/HexBinaryDecoder.h
+/usr/local/include/Poco/HexBinaryEncoder.h
+/usr/local/include/Poco/IOLock.h
+/usr/local/include/Poco/InflatingStream.h
+/usr/local/include/Poco/Instantiator.h
+/usr/local/include/Poco/JSON/Array.h
+/usr/local/include/Poco/JSON/Handler.h
+/usr/local/include/Poco/JSON/JSON.h
+/usr/local/include/Poco/JSON/JSONException.h
+/usr/local/include/Poco/JSON/Object.h
+/usr/local/include/Poco/JSON/ParseHandler.h
+/usr/local/include/Poco/JSON/Parser.h
+/usr/local/include/Poco/JSON/ParserImpl.h
+/usr/local/include/Poco/JSON/PrintHandler.h
+/usr/local/include/Poco/JSON/Query.h
+/usr/local/include/Poco/JSON/Stringifier.h
+/usr/local/include/Poco/JSON/Template.h
+/usr/local/include/Poco/JSON/TemplateCache.h
+/usr/local/include/Poco/JSONFormatter.h
+/usr/local/include/Poco/JSONString.h
+/usr/local/include/Poco/KeyValueArgs.h
+/usr/local/include/Poco/LRUCache.h
+/usr/local/include/Poco/LRUStrategy.h
+/usr/local/include/Poco/Latin1Encoding.h
+/usr/local/include/Poco/Latin2Encoding.h
+/usr/local/include/Poco/Latin9Encoding.h
+/usr/local/include/Poco/LineEndingConverter.h
+/usr/local/include/Poco/LinearHashTable.h
+/usr/local/include/Poco/ListMap.h
+/usr/local/include/Poco/LocalDateTime.h
+/usr/local/include/Poco/LogFile.h
+/usr/local/include/Poco/LogStream.h
+/usr/local/include/Poco/Logger.h
+/usr/local/include/Poco/LoggingFactory.h
+/usr/local/include/Poco/LoggingRegistry.h
+/usr/local/include/Poco/MD4Engine.h
+/usr/local/include/Poco/MD5Engine.h
+/usr/local/include/Poco/MPSCQueue.h
+/usr/local/include/Poco/Manifest.h
+/usr/local/include/Poco/MemoryPool.h
+/usr/local/include/Poco/MemoryStream.h
+/usr/local/include/Poco/Message.h
+/usr/local/include/Poco/MetaObject.h
+/usr/local/include/Poco/MetaProgramming.h
+/usr/local/include/Poco/Mutex.h
+/usr/local/include/Poco/Mutex_POSIX.h
+/usr/local/include/Poco/Mutex_STD.h
+/usr/local/include/Poco/Mutex_VX.h
+/usr/local/include/Poco/Mutex_WIN32.h
+/usr/local/include/Poco/NObserver.h
+/usr/local/include/Poco/NamedEvent.h
+/usr/local/include/Poco/NamedEvent_Android.h
+/usr/local/include/Poco/NamedEvent_UNIX.h
+/usr/local/include/Poco/NamedEvent_WIN32U.h
+/usr/local/include/Poco/NamedMutex.h
+/usr/local/include/Poco/NamedMutex_Android.h
+/usr/local/include/Poco/NamedMutex_UNIX.h
+/usr/local/include/Poco/NamedMutex_WIN32U.h
+/usr/local/include/Poco/NamedTuple.h
+/usr/local/include/Poco/NestedDiagnosticContext.h
+/usr/local/include/Poco/Net/AbstractHTTPRequestHandler.h
+/usr/local/include/Poco/Net/DNS.h
+/usr/local/include/Poco/Net/DatagramSocket.h
+/usr/local/include/Poco/Net/DatagramSocketImpl.h
+/usr/local/include/Poco/Net/DialogSocket.h
+/usr/local/include/Poco/Net/EscapeHTMLStream.h
+/usr/local/include/Poco/Net/FTPClientSession.h
+/usr/local/include/Poco/Net/FTPStreamFactory.h
+/usr/local/include/Poco/Net/FilePartSource.h
+/usr/local/include/Poco/Net/HTMLForm.h
+/usr/local/include/Poco/Net/HTTPAuthenticationParams.h
+/usr/local/include/Poco/Net/HTTPBasicCredentials.h
+/usr/local/include/Poco/Net/HTTPBasicStreamBuf.h
+/usr/local/include/Poco/Net/HTTPBufferAllocator.h
+/usr/local/include/Poco/Net/HTTPChunkedStream.h
+/usr/local/include/Poco/Net/HTTPClientSession.h
+/usr/local/include/Poco/Net/HTTPCookie.h
+/usr/local/include/Poco/Net/HTTPCredentials.h
+/usr/local/include/Poco/Net/HTTPDigestCredentials.h
+/usr/local/include/Poco/Net/HTTPFixedLengthStream.h
+/usr/local/include/Poco/Net/HTTPHeaderStream.h
+/usr/local/include/Poco/Net/HTTPIOStream.h
+/usr/local/include/Poco/Net/HTTPMessage.h
+/usr/local/include/Poco/Net/HTTPNTLMCredentials.h
+/usr/local/include/Poco/Net/HTTPObserver.h
+/usr/local/include/Poco/Net/HTTPReactorServer.h
+/usr/local/include/Poco/Net/HTTPReactorServerSession.h
+/usr/local/include/Poco/Net/HTTPRequest.h
+/usr/local/include/Poco/Net/HTTPRequestHandler.h
+/usr/local/include/Poco/Net/HTTPRequestHandlerFactory.h
+/usr/local/include/Poco/Net/HTTPResponse.h
+/usr/local/include/Poco/Net/HTTPServer.h
+/usr/local/include/Poco/Net/HTTPServerConnection.h
+/usr/local/include/Poco/Net/HTTPServerConnectionFactory.h
+/usr/local/include/Poco/Net/HTTPServerParams.h
+/usr/local/include/Poco/Net/HTTPServerRequest.h
+/usr/local/include/Poco/Net/HTTPServerRequestImpl.h
+/usr/local/include/Poco/Net/HTTPServerResponse.h
+/usr/local/include/Poco/Net/HTTPServerResponseImpl.h
+/usr/local/include/Poco/Net/HTTPServerSession.h
+/usr/local/include/Poco/Net/HTTPSession.h
+/usr/local/include/Poco/Net/HTTPSessionFactory.h
+/usr/local/include/Poco/Net/HTTPSessionInstantiator.h
+/usr/local/include/Poco/Net/HTTPStream.h
+/usr/local/include/Poco/Net/HTTPStreamFactory.h
+/usr/local/include/Poco/Net/HostEntry.h
+/usr/local/include/Poco/Net/ICMPClient.h
+/usr/local/include/Poco/Net/ICMPEventArgs.h
+/usr/local/include/Poco/Net/ICMPPacket.h
+/usr/local/include/Poco/Net/ICMPPacketImpl.h
+/usr/local/include/Poco/Net/ICMPSocket.h
+/usr/local/include/Poco/Net/ICMPSocketImpl.h
+/usr/local/include/Poco/Net/ICMPv4PacketImpl.h
+/usr/local/include/Poco/Net/IPAddress.h
+/usr/local/include/Poco/Net/IPAddressImpl.h
+/usr/local/include/Poco/Net/MailMessage.h
+/usr/local/include/Poco/Net/MailRecipient.h
+/usr/local/include/Poco/Net/MailStream.h
+/usr/local/include/Poco/Net/MediaType.h
+/usr/local/include/Poco/Net/MessageHeader.h
+/usr/local/include/Poco/Net/MultiSocketPoller.h
+/usr/local/include/Poco/Net/MulticastSocket.h
+/usr/local/include/Poco/Net/MultipartReader.h
+/usr/local/include/Poco/Net/MultipartWriter.h
+/usr/local/include/Poco/Net/NTLMCredentials.h
+/usr/local/include/Poco/Net/NTPClient.h
+/usr/local/include/Poco/Net/NTPEventArgs.h
+/usr/local/include/Poco/Net/NTPPacket.h
+/usr/local/include/Poco/Net/NameValueCollection.h
+/usr/local/include/Poco/Net/Net.h
+/usr/local/include/Poco/Net/NetException.h
+/usr/local/include/Poco/Net/NetworkInterface.h
+/usr/local/include/Poco/Net/NullPartHandler.h
+/usr/local/include/Poco/Net/OAuth10Credentials.h
+/usr/local/include/Poco/Net/OAuth20Credentials.h
+/usr/local/include/Poco/Net/POP3ClientSession.h
+/usr/local/include/Poco/Net/ParallelSocketAcceptor.h
+/usr/local/include/Poco/Net/ParallelSocketReactor.h
+/usr/local/include/Poco/Net/PartHandler.h
+/usr/local/include/Poco/Net/PartSource.h
+/usr/local/include/Poco/Net/PartStore.h
+/usr/local/include/Poco/Net/PollSet.h
+/usr/local/include/Poco/Net/QuotedPrintableDecoder.h
+/usr/local/include/Poco/Net/QuotedPrintableEncoder.h
+/usr/local/include/Poco/Net/RawSocket.h
+/usr/local/include/Poco/Net/RawSocketImpl.h
+/usr/local/include/Poco/Net/RemoteSyslogChannel.h
+/usr/local/include/Poco/Net/RemoteSyslogListener.h
+/usr/local/include/Poco/Net/SMTPChannel.h
+/usr/local/include/Poco/Net/SMTPClientSession.h
+/usr/local/include/Poco/Net/SSPINTLMCredentials.h
+/usr/local/include/Poco/Net/ServerSocket.h
+/usr/local/include/Poco/Net/ServerSocketImpl.h
+/usr/local/include/Poco/Net/SingleSocketPoller.h
+/usr/local/include/Poco/Net/Socket.h
+/usr/local/include/Poco/Net/SocketAcceptor.h
+/usr/local/include/Poco/Net/SocketAddress.h
+/usr/local/include/Poco/Net/SocketAddressImpl.h
+/usr/local/include/Poco/Net/SocketConnector.h
+/usr/local/include/Poco/Net/SocketDefs.h
+/usr/local/include/Poco/Net/SocketImpl.h
+/usr/local/include/Poco/Net/SocketNotification.h
+/usr/local/include/Poco/Net/SocketNotifier.h
+/usr/local/include/Poco/Net/SocketProactor.h
+/usr/local/include/Poco/Net/SocketReactor.h
+/usr/local/include/Poco/Net/SocketStream.h
+/usr/local/include/Poco/Net/StreamSocket.h
+/usr/local/include/Poco/Net/StreamSocketImpl.h
+/usr/local/include/Poco/Net/StringPartSource.h
+/usr/local/include/Poco/Net/TCPReactorAcceptor.h
+/usr/local/include/Poco/Net/TCPReactorServer.h
+/usr/local/include/Poco/Net/TCPReactorServerConnection.h
+/usr/local/include/Poco/Net/TCPServer.h
+/usr/local/include/Poco/Net/TCPServerConnection.h
+/usr/local/include/Poco/Net/TCPServerConnectionFactory.h
+/usr/local/include/Poco/Net/TCPServerDispatcher.h
+/usr/local/include/Poco/Net/TCPServerParams.h
+/usr/local/include/Poco/Net/UDPClient.h
+/usr/local/include/Poco/Net/UDPHandler.h
+/usr/local/include/Poco/Net/UDPServer.h
+/usr/local/include/Poco/Net/UDPServerParams.h
+/usr/local/include/Poco/Net/UDPSocketReader.h
+/usr/local/include/Poco/Net/WebSocket.h
+/usr/local/include/Poco/Net/WebSocketImpl.h
+/usr/local/include/Poco/Notification.h
+/usr/local/include/Poco/NotificationCenter.h
+/usr/local/include/Poco/NotificationQueue.h
+/usr/local/include/Poco/NotificationStrategy.h
+/usr/local/include/Poco/NullChannel.h
+/usr/local/include/Poco/NullStream.h
+/usr/local/include/Poco/Nullable.h
+/usr/local/include/Poco/NumberFormatter.h
+/usr/local/include/Poco/NumberParser.h
+/usr/local/include/Poco/NumericString.h
+/usr/local/include/Poco/ObjectPool.h
+/usr/local/include/Poco/Observer.h
+/usr/local/include/Poco/Optional.h
+/usr/local/include/Poco/OrderedMap.h
+/usr/local/include/Poco/OrderedSet.h
+/usr/local/include/Poco/PBKDF2Engine.h
+/usr/local/include/Poco/PIDFile.h
+/usr/local/include/Poco/Path.h
+/usr/local/include/Poco/Path_UNIX.h
+/usr/local/include/Poco/Path_WIN32U.h
+/usr/local/include/Poco/PatternFormatter.h
+/usr/local/include/Poco/Pipe.h
+/usr/local/include/Poco/PipeImpl.h
+/usr/local/include/Poco/PipeImpl_DUMMY.h
+/usr/local/include/Poco/PipeImpl_POSIX.h
+/usr/local/include/Poco/PipeImpl_WIN32.h
+/usr/local/include/Poco/PipeStream.h
+/usr/local/include/Poco/Platform.h
+/usr/local/include/Poco/Platform_POSIX.h
+/usr/local/include/Poco/Platform_VX.h
+/usr/local/include/Poco/Platform_WIN32.h
+/usr/local/include/Poco/Poco.h
+/usr/local/include/Poco/PriorityDelegate.h
+/usr/local/include/Poco/PriorityEvent.h
+/usr/local/include/Poco/PriorityExpire.h
+/usr/local/include/Poco/PriorityNotificationQueue.h
+/usr/local/include/Poco/PriorityStrategy.h
+/usr/local/include/Poco/Process.h
+/usr/local/include/Poco/ProcessOptions.h
+/usr/local/include/Poco/ProcessRunner.h
+/usr/local/include/Poco/Process_UNIX.h
+/usr/local/include/Poco/Process_VX.h
+/usr/local/include/Poco/Process_WIN32U.h
+/usr/local/include/Poco/PurgeStrategy.h
+/usr/local/include/Poco/RWLock.h
+/usr/local/include/Poco/RWLock_Android.h
+/usr/local/include/Poco/RWLock_POSIX.h
+/usr/local/include/Poco/RWLock_VX.h
+/usr/local/include/Poco/RWLock_WIN32.h
+/usr/local/include/Poco/Random.h
+/usr/local/include/Poco/RandomStream.h
+/usr/local/include/Poco/RecursiveDirectoryIterator.h
+/usr/local/include/Poco/RecursiveDirectoryIteratorImpl.h
+/usr/local/include/Poco/RefCountedObject.h
+/usr/local/include/Poco/RegularExpression.h
+/usr/local/include/Poco/RotateStrategy.h
+/usr/local/include/Poco/Runnable.h
+/usr/local/include/Poco/RunnableAdapter.h
+/usr/local/include/Poco/SAX/Attributes.h
+/usr/local/include/Poco/SAX/AttributesImpl.h
+/usr/local/include/Poco/SAX/ContentHandler.h
+/usr/local/include/Poco/SAX/DTDHandler.h
+/usr/local/include/Poco/SAX/DeclHandler.h
+/usr/local/include/Poco/SAX/DefaultHandler.h
+/usr/local/include/Poco/SAX/EntityResolver.h
+/usr/local/include/Poco/SAX/EntityResolverImpl.h
+/usr/local/include/Poco/SAX/ErrorHandler.h
+/usr/local/include/Poco/SAX/InputSource.h
+/usr/local/include/Poco/SAX/LexicalHandler.h
+/usr/local/include/Poco/SAX/Locator.h
+/usr/local/include/Poco/SAX/LocatorImpl.h
+/usr/local/include/Poco/SAX/NamespaceSupport.h
+/usr/local/include/Poco/SAX/SAXException.h
+/usr/local/include/Poco/SAX/SAXParser.h
+/usr/local/include/Poco/SAX/WhitespaceFilter.h
+/usr/local/include/Poco/SAX/XMLFilter.h
+/usr/local/include/Poco/SAX/XMLFilterImpl.h
+/usr/local/include/Poco/SAX/XMLReader.h
+/usr/local/include/Poco/SHA1Engine.h
+/usr/local/include/Poco/SHA2Engine.h
+/usr/local/include/Poco/SPSCQueue.h
+/usr/local/include/Poco/ScopedLock.h
+/usr/local/include/Poco/ScopedUnlock.h
+/usr/local/include/Poco/Semaphore.h
+/usr/local/include/Poco/Semaphore_POSIX.h
+/usr/local/include/Poco/Semaphore_VX.h
+/usr/local/include/Poco/Semaphore_WIN32.h
+/usr/local/include/Poco/SharedLibrary.h
+/usr/local/include/Poco/SharedLibrary_HPUX.h
+/usr/local/include/Poco/SharedLibrary_UNIX.h
+/usr/local/include/Poco/SharedLibrary_VX.h
+/usr/local/include/Poco/SharedLibrary_WIN32U.h
+/usr/local/include/Poco/SharedMemory.h
+/usr/local/include/Poco/SharedMemory_DUMMY.h
+/usr/local/include/Poco/SharedMemory_POSIX.h
+/usr/local/include/Poco/SharedMemory_WIN32.h
+/usr/local/include/Poco/SharedPtr.h
+/usr/local/include/Poco/SignalHandler.h
+/usr/local/include/Poco/SimpleFileChannel.h
+/usr/local/include/Poco/SimpleHashTable.h
+/usr/local/include/Poco/SingletonHolder.h
+/usr/local/include/Poco/SortedDirectoryIterator.h
+/usr/local/include/Poco/SplitterChannel.h
+/usr/local/include/Poco/Stopwatch.h
+/usr/local/include/Poco/StrategyCollection.h
+/usr/local/include/Poco/StreamChannel.h
+/usr/local/include/Poco/StreamConverter.h
+/usr/local/include/Poco/StreamCopier.h
+/usr/local/include/Poco/StreamTokenizer.h
+/usr/local/include/Poco/StreamUtil.h
+/usr/local/include/Poco/String.h
+/usr/local/include/Poco/StringTokenizer.h
+/usr/local/include/Poco/SynchronizedObject.h
+/usr/local/include/Poco/SyslogChannel.h
+/usr/local/include/Poco/Task.h
+/usr/local/include/Poco/TaskManager.h
+/usr/local/include/Poco/TaskNotification.h
+/usr/local/include/Poco/TeeStream.h
+/usr/local/include/Poco/TemporaryFile.h
+/usr/local/include/Poco/TextBufferIterator.h
+/usr/local/include/Poco/TextConverter.h
+/usr/local/include/Poco/TextEncoding.h
+/usr/local/include/Poco/TextIterator.h
+/usr/local/include/Poco/Thread.h
+/usr/local/include/Poco/ThreadLocal.h
+/usr/local/include/Poco/ThreadPool.h
+/usr/local/include/Poco/ThreadTarget.h
+/usr/local/include/Poco/Thread_POSIX.h
+/usr/local/include/Poco/Thread_VX.h
+/usr/local/include/Poco/Thread_WIN32.h
+/usr/local/include/Poco/TimedNotificationQueue.h
+/usr/local/include/Poco/Timer.h
+/usr/local/include/Poco/Timespan.h
+/usr/local/include/Poco/Timestamp.h
+/usr/local/include/Poco/Timezone.h
+/usr/local/include/Poco/Token.h
+/usr/local/include/Poco/Tuple.h
+/usr/local/include/Poco/TypeList.h
+/usr/local/include/Poco/Types.h
+/usr/local/include/Poco/ULID.h
+/usr/local/include/Poco/ULIDGenerator.h
+/usr/local/include/Poco/URI.h
+/usr/local/include/Poco/URIStreamFactory.h
+/usr/local/include/Poco/URIStreamOpener.h
+/usr/local/include/Poco/UTF16Encoding.h
+/usr/local/include/Poco/UTF32Encoding.h
+/usr/local/include/Poco/UTF8Encoding.h
+/usr/local/include/Poco/UTF8String.h
+/usr/local/include/Poco/UTFString.h
+/usr/local/include/Poco/UUID.h
+/usr/local/include/Poco/UUIDGenerator.h
+/usr/local/include/Poco/UnWindows.h
+/usr/local/include/Poco/UnbufferedStreamBuf.h
+/usr/local/include/Poco/Unicode.h
+/usr/local/include/Poco/UnicodeConverter.h
+/usr/local/include/Poco/UniqueAccessExpireCache.h
+/usr/local/include/Poco/UniqueAccessExpireLRUCache.h
+/usr/local/include/Poco/UniqueAccessExpireStrategy.h
+/usr/local/include/Poco/UniqueExpireCache.h
+/usr/local/include/Poco/UniqueExpireLRUCache.h
+/usr/local/include/Poco/UniqueExpireStrategy.h
+/usr/local/include/Poco/Util/AbstractConfiguration.h
+/usr/local/include/Poco/Util/Application.h
+/usr/local/include/Poco/Util/ConfigurationMapper.h
+/usr/local/include/Poco/Util/ConfigurationView.h
+/usr/local/include/Poco/Util/FastLoggerConfigurator.h
+/usr/local/include/Poco/Util/FilesystemConfiguration.h
+/usr/local/include/Poco/Util/HelpFormatter.h
+/usr/local/include/Poco/Util/IniFileConfiguration.h
+/usr/local/include/Poco/Util/IntValidator.h
+/usr/local/include/Poco/Util/JSONConfiguration.h
+/usr/local/include/Poco/Util/LayeredConfiguration.h
+/usr/local/include/Poco/Util/LocalConfigurationView.h
+/usr/local/include/Poco/Util/LoggingConfigurator.h
+/usr/local/include/Poco/Util/LoggingSubsystem.h
+/usr/local/include/Poco/Util/MapConfiguration.h
+/usr/local/include/Poco/Util/Option.h
+/usr/local/include/Poco/Util/OptionCallback.h
+/usr/local/include/Poco/Util/OptionException.h
+/usr/local/include/Poco/Util/OptionProcessor.h
+/usr/local/include/Poco/Util/OptionSet.h
+/usr/local/include/Poco/Util/PropertyFileConfiguration.h
+/usr/local/include/Poco/Util/RegExpValidator.h
+/usr/local/include/Poco/Util/ServerApplication.h
+/usr/local/include/Poco/Util/Subsystem.h
+/usr/local/include/Poco/Util/SystemConfiguration.h
+/usr/local/include/Poco/Util/Timer.h
+/usr/local/include/Poco/Util/TimerTask.h
+/usr/local/include/Poco/Util/TimerTaskAdapter.h
+/usr/local/include/Poco/Util/Units.h
+/usr/local/include/Poco/Util/Util.h
+/usr/local/include/Poco/Util/Validator.h
+/usr/local/include/Poco/Util/WinRegistryConfiguration.h
+/usr/local/include/Poco/Util/WinRegistryKey.h
+/usr/local/include/Poco/Util/WinService.h
+/usr/local/include/Poco/Util/XMLConfiguration.h
+/usr/local/include/Poco/ValidArgs.h
+/usr/local/include/Poco/Version.h
+/usr/local/include/Poco/Void.h
+/usr/local/include/Poco/Windows1250Encoding.h
+/usr/local/include/Poco/Windows1251Encoding.h
+/usr/local/include/Poco/Windows1252Encoding.h
+/usr/local/include/Poco/WindowsConsoleChannel.h
+/usr/local/include/Poco/XML/Content.h
+/usr/local/include/Poco/XML/Name.h
+/usr/local/include/Poco/XML/NamePool.h
+/usr/local/include/Poco/XML/NamespaceStrategy.h
+/usr/local/include/Poco/XML/QName.h
+/usr/local/include/Poco/XML/ValueTraits.h
+/usr/local/include/Poco/XML/XML.h
+/usr/local/include/Poco/XML/XMLException.h
+/usr/local/include/Poco/XML/XMLStream.h
+/usr/local/include/Poco/XML/XMLStreamParser.h
+/usr/local/include/Poco/XML/XMLStreamParserException.h
+/usr/local/include/Poco/XML/XMLString.h
+/usr/local/include/Poco/XML/XMLWriter.h
+/usr/local/include/Poco/ordered_hash.h
+/usr/local/include/Poco/ordered_map.h
+/usr/local/include/Poco/ordered_set.h
+/usr/local/lib/cmake/Poco/PocoConfig.cmake
+/usr/local/lib/cmake/Poco/PocoConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoCryptoConfig.cmake
+/usr/local/lib/cmake/Poco/PocoCryptoConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoCryptoTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoCryptoTargets.cmake
+/usr/local/lib/cmake/Poco/PocoFoundationConfig.cmake
+/usr/local/lib/cmake/Poco/PocoFoundationConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoFoundationTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoFoundationTargets.cmake
+/usr/local/lib/cmake/Poco/PocoJSONConfig.cmake
+/usr/local/lib/cmake/Poco/PocoJSONConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoJSONTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoJSONTargets.cmake
+/usr/local/lib/cmake/Poco/PocoNetConfig.cmake
+/usr/local/lib/cmake/Poco/PocoNetConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoNetTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoNetTargets.cmake
+/usr/local/lib/cmake/Poco/PocoUtilConfig.cmake
+/usr/local/lib/cmake/Poco/PocoUtilConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoUtilTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoUtilTargets.cmake
+/usr/local/lib/cmake/Poco/PocoXMLConfig.cmake
+/usr/local/lib/cmake/Poco/PocoXMLConfigVersion.cmake
+/usr/local/lib/cmake/Poco/PocoXMLTargets-release.cmake
+/usr/local/lib/cmake/Poco/PocoXMLTargets.cmake
+/usr/local/lib/libPocoCrypto.so
+/usr/local/lib/libPocoFoundation.so
+/usr/local/lib/libPocoJSON.so
+/usr/local/lib/libPocoNet.so
+/usr/local/lib/libPocoUtil.so
+/usr/local/lib/libPocoXML.so</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

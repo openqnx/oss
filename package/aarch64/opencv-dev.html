@@ -1,0 +1,480 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>opencv-dev 4.10.0-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>opencv-dev <span class=mut>4.10.0-r0</span></h1><p class=sum><b>Open Source Computer Vision library (development files)</b><br>opencv 4.10.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>4.10.0-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/opencv-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/opencv/opencv.git">https://github.com/opencv/opencv.git</a></dd>
+<dt>License</dt><dd>Apache-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/opencv">ports/opencv</a></dd>
+<dt>Package size</dt><dd>1.3 MiB</dd>
+<dt>Installed size</dt><dd>8.1 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add opencv-dev
+apk add opencv-dev=4.10.0-r0   <span class=mut># this version</span>
+
+apk del opencv-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/opencv-dev-4.10.0-r0.apk">opencv-dev-4.10.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install opencv-dev
+oss-get install opencv-dev=4.10.0-r0   <span class=mut># this version</span>
+
+oss-get remove opencv-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="opencv.html">opencv</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/opencv-dev-4.10.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/opencv-dev-4.10.0-r0.tar.gz</a> (1.3 MiB)</dd><dt>SHA-256</dt><dd><code>1f0e37ee8c0216bc49bf75b167709b5183c563c425ee795cd57105c5420ee9ca</code></dd><dt>Install first</dt><dd><a href="zlib.html">zlib</a>, <a href="opencv.html">opencv</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/opencv-dev-4.10.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 opencv-dev-4.10.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 1f0e37ee8c0216bc49bf75b167709b5183c563c425ee795cd57105c5420ee9ca ] &amp;&amp; echo OK || echo BAD
+gzip -dc opencv-dev-4.10.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/opencv-dev.list
+gzip -dc opencv-dev-4.10.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm opencv-dev-4.10.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/opencv-dev.list
+rm var/lib/manual/opencv-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="zlib.html">zlib</a>, <a href="opencv.html">opencv</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="opencv.html">opencv</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/opencv.html">opencv</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/opencv/README.md">ports/opencv/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_opencv on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/opencv-4.10.0-r0.log">tests/logs/aarch64le/opencv-4.10.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># opencv 4.10.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T17:03:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u opencv qnx-test-opencv qnx-port-tests
+(1/3) Installing opencv (4.10.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-opencv (1.0-r7)
+OK: 94 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_opencv
+     == opencv ==
+       ok   Mat geometry
+       ok   rectangle drawn
+       ok   background untouched
+       ok   GaussianBlur preserves size
+       ok   Canny found edges
+       ok   determinant
+       info opencv 4.10.0
+     PASS opencv
+PASS test_opencv
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-opencv qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-opencv-1.0-r7.apk">qnx-test-opencv-1.0-r7.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (373)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/opencv4/opencv2/calib3d.hpp
+/usr/local/include/opencv4/opencv2/calib3d/calib3d.hpp
+/usr/local/include/opencv4/opencv2/calib3d/calib3d_c.h
+/usr/local/include/opencv4/opencv2/core.hpp
+/usr/local/include/opencv4/opencv2/core/affine.hpp
+/usr/local/include/opencv4/opencv2/core/async.hpp
+/usr/local/include/opencv4/opencv2/core/base.hpp
+/usr/local/include/opencv4/opencv2/core/bindings_utils.hpp
+/usr/local/include/opencv4/opencv2/core/bufferpool.hpp
+/usr/local/include/opencv4/opencv2/core/check.hpp
+/usr/local/include/opencv4/opencv2/core/core.hpp
+/usr/local/include/opencv4/opencv2/core/core_c.h
+/usr/local/include/opencv4/opencv2/core/cuda.hpp
+/usr/local/include/opencv4/opencv2/core/cuda.inl.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/block.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/border_interpolate.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/color.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/common.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/datamov_utils.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/color_detail.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/reduce.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/reduce_key_val.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/transform_detail.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/type_traits_detail.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/detail/vec_distance_detail.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/dynamic_smem.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/emulation.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/filters.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/funcattrib.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/functional.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/limits.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/reduce.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/saturate_cast.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/scan.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/simd_functions.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/transform.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/type_traits.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/utility.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/vec_distance.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/vec_math.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/vec_traits.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/warp.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/warp_reduce.hpp
+/usr/local/include/opencv4/opencv2/core/cuda/warp_shuffle.hpp
+/usr/local/include/opencv4/opencv2/core/cuda_stream_accessor.hpp
+/usr/local/include/opencv4/opencv2/core/cuda_types.hpp
+/usr/local/include/opencv4/opencv2/core/cv_cpu_dispatch.h
+/usr/local/include/opencv4/opencv2/core/cv_cpu_helper.h
+/usr/local/include/opencv4/opencv2/core/cvdef.h
+/usr/local/include/opencv4/opencv2/core/cvstd.hpp
+/usr/local/include/opencv4/opencv2/core/cvstd.inl.hpp
+/usr/local/include/opencv4/opencv2/core/cvstd_wrapper.hpp
+/usr/local/include/opencv4/opencv2/core/detail/async_promise.hpp
+/usr/local/include/opencv4/opencv2/core/detail/dispatch_helper.impl.hpp
+/usr/local/include/opencv4/opencv2/core/detail/exception_ptr.hpp
+/usr/local/include/opencv4/opencv2/core/directx.hpp
+/usr/local/include/opencv4/opencv2/core/dualquaternion.hpp
+/usr/local/include/opencv4/opencv2/core/dualquaternion.inl.hpp
+/usr/local/include/opencv4/opencv2/core/eigen.hpp
+/usr/local/include/opencv4/opencv2/core/fast_math.hpp
+/usr/local/include/opencv4/opencv2/core/hal/hal.hpp
+/usr/local/include/opencv4/opencv2/core/hal/interface.h
+/usr/local/include/opencv4/opencv2/core/hal/intrin.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_avx.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_avx512.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_cpp.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_forward.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_lasx.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_lsx.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_msa.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_neon.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv071.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv_010_compat_non-policy.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv_010_compat_overloaded-non-policy.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv_011_compat.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv_compat_overloaded.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_rvv_scalable.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_sse.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_sse_em.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_vsx.hpp
+/usr/local/include/opencv4/opencv2/core/hal/intrin_wasm.hpp
+/usr/local/include/opencv4/opencv2/core/hal/msa_macros.h
+/usr/local/include/opencv4/opencv2/core/hal/simd_utils.impl.hpp
+/usr/local/include/opencv4/opencv2/core/mat.hpp
+/usr/local/include/opencv4/opencv2/core/mat.inl.hpp
+/usr/local/include/opencv4/opencv2/core/matx.hpp
+/usr/local/include/opencv4/opencv2/core/matx.inl.hpp
+/usr/local/include/opencv4/opencv2/core/neon_utils.hpp
+/usr/local/include/opencv4/opencv2/core/ocl.hpp
+/usr/local/include/opencv4/opencv2/core/ocl_genbase.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/ocl_defs.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/opencl_info.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/opencl_svm.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_clblas.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_clfft.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_core.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_core_wrappers.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_gl.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/autogenerated/opencl_gl_wrappers.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_clblas.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_clfft.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_core.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_core_wrappers.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_gl.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_gl_wrappers.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_svm_20.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_svm_definitions.hpp
+/usr/local/include/opencv4/opencv2/core/opencl/runtime/opencl_svm_hsa_extension.hpp
+/usr/local/include/opencv4/opencv2/core/opengl.hpp
+/usr/local/include/opencv4/opencv2/core/operations.hpp
+/usr/local/include/opencv4/opencv2/core/optim.hpp
+/usr/local/include/opencv4/opencv2/core/ovx.hpp
+/usr/local/include/opencv4/opencv2/core/parallel/backend/parallel_for.openmp.hpp
+/usr/local/include/opencv4/opencv2/core/parallel/backend/parallel_for.tbb.hpp
+/usr/local/include/opencv4/opencv2/core/parallel/parallel_backend.hpp
+/usr/local/include/opencv4/opencv2/core/persistence.hpp
+/usr/local/include/opencv4/opencv2/core/quaternion.hpp
+/usr/local/include/opencv4/opencv2/core/quaternion.inl.hpp
+/usr/local/include/opencv4/opencv2/core/saturate.hpp
+/usr/local/include/opencv4/opencv2/core/simd_intrinsics.hpp
+/usr/local/include/opencv4/opencv2/core/softfloat.hpp
+/usr/local/include/opencv4/opencv2/core/sse_utils.hpp
+/usr/local/include/opencv4/opencv2/core/traits.hpp
+/usr/local/include/opencv4/opencv2/core/types.hpp
+/usr/local/include/opencv4/opencv2/core/types_c.h
+/usr/local/include/opencv4/opencv2/core/utility.hpp
+/usr/local/include/opencv4/opencv2/core/utils/allocator_stats.hpp
+/usr/local/include/opencv4/opencv2/core/utils/allocator_stats.impl.hpp
+/usr/local/include/opencv4/opencv2/core/utils/filesystem.hpp
+/usr/local/include/opencv4/opencv2/core/utils/fp_control_utils.hpp
+/usr/local/include/opencv4/opencv2/core/utils/instrumentation.hpp
+/usr/local/include/opencv4/opencv2/core/utils/logger.defines.hpp
+/usr/local/include/opencv4/opencv2/core/utils/logger.hpp
+/usr/local/include/opencv4/opencv2/core/utils/logtag.hpp
+/usr/local/include/opencv4/opencv2/core/utils/tls.hpp
+/usr/local/include/opencv4/opencv2/core/utils/trace.hpp
+/usr/local/include/opencv4/opencv2/core/va_intel.hpp
+/usr/local/include/opencv4/opencv2/core/version.hpp
+/usr/local/include/opencv4/opencv2/core/vsx_utils.hpp
+/usr/local/include/opencv4/opencv2/cvconfig.h
+/usr/local/include/opencv4/opencv2/dnn.hpp
+/usr/local/include/opencv4/opencv2/dnn/all_layers.hpp
+/usr/local/include/opencv4/opencv2/dnn/dict.hpp
+/usr/local/include/opencv4/opencv2/dnn/dnn.hpp
+/usr/local/include/opencv4/opencv2/dnn/dnn.inl.hpp
+/usr/local/include/opencv4/opencv2/dnn/layer.details.hpp
+/usr/local/include/opencv4/opencv2/dnn/layer.hpp
+/usr/local/include/opencv4/opencv2/dnn/shape_utils.hpp
+/usr/local/include/opencv4/opencv2/dnn/utils/debug_utils.hpp
+/usr/local/include/opencv4/opencv2/dnn/utils/inference_engine.hpp
+/usr/local/include/opencv4/opencv2/dnn/version.hpp
+/usr/local/include/opencv4/opencv2/features2d.hpp
+/usr/local/include/opencv4/opencv2/features2d/features2d.hpp
+/usr/local/include/opencv4/opencv2/features2d/hal/interface.h
+/usr/local/include/opencv4/opencv2/flann.hpp
+/usr/local/include/opencv4/opencv2/flann/all_indices.h
+/usr/local/include/opencv4/opencv2/flann/allocator.h
+/usr/local/include/opencv4/opencv2/flann/any.h
+/usr/local/include/opencv4/opencv2/flann/autotuned_index.h
+/usr/local/include/opencv4/opencv2/flann/composite_index.h
+/usr/local/include/opencv4/opencv2/flann/config.h
+/usr/local/include/opencv4/opencv2/flann/defines.h
+/usr/local/include/opencv4/opencv2/flann/dist.h
+/usr/local/include/opencv4/opencv2/flann/dummy.h
+/usr/local/include/opencv4/opencv2/flann/dynamic_bitset.h
+/usr/local/include/opencv4/opencv2/flann/flann.hpp
+/usr/local/include/opencv4/opencv2/flann/flann_base.hpp
+/usr/local/include/opencv4/opencv2/flann/general.h
+/usr/local/include/opencv4/opencv2/flann/ground_truth.h
+/usr/local/include/opencv4/opencv2/flann/hdf5.h
+/usr/local/include/opencv4/opencv2/flann/heap.h
+/usr/local/include/opencv4/opencv2/flann/hierarchical_clustering_index.h
+/usr/local/include/opencv4/opencv2/flann/index_testing.h
+/usr/local/include/opencv4/opencv2/flann/kdtree_index.h
+/usr/local/include/opencv4/opencv2/flann/kdtree_single_index.h
+/usr/local/include/opencv4/opencv2/flann/kmeans_index.h
+/usr/local/include/opencv4/opencv2/flann/linear_index.h
+/usr/local/include/opencv4/opencv2/flann/logger.h
+/usr/local/include/opencv4/opencv2/flann/lsh_index.h
+/usr/local/include/opencv4/opencv2/flann/lsh_table.h
+/usr/local/include/opencv4/opencv2/flann/matrix.h
+/usr/local/include/opencv4/opencv2/flann/miniflann.hpp
+/usr/local/include/opencv4/opencv2/flann/nn_index.h
+/usr/local/include/opencv4/opencv2/flann/object_factory.h
+/usr/local/include/opencv4/opencv2/flann/params.h
+/usr/local/include/opencv4/opencv2/flann/random.h
+/usr/local/include/opencv4/opencv2/flann/result_set.h
+/usr/local/include/opencv4/opencv2/flann/sampling.h
+/usr/local/include/opencv4/opencv2/flann/saving.h
+/usr/local/include/opencv4/opencv2/flann/simplex_downhill.h
+/usr/local/include/opencv4/opencv2/flann/timer.h
+/usr/local/include/opencv4/opencv2/gapi.hpp
+/usr/local/include/opencv4/opencv2/gapi/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/gcpukernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/imgproc.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/ot.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/stereo.hpp
+/usr/local/include/opencv4/opencv2/gapi/cpu/video.hpp
+/usr/local/include/opencv4/opencv2/gapi/fluid/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/fluid/gfluidbuffer.hpp
+/usr/local/include/opencv4/opencv2/gapi/fluid/gfluidkernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/fluid/imgproc.hpp
+/usr/local/include/opencv4/opencv2/gapi/garg.hpp
+/usr/local/include/opencv4/opencv2/gapi/garray.hpp
+/usr/local/include/opencv4/opencv2/gapi/gasync_context.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcall.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcommon.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcompiled.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcompiled_async.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcompoundkernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcomputation.hpp
+/usr/local/include/opencv4/opencv2/gapi/gcomputation_async.hpp
+/usr/local/include/opencv4/opencv2/gapi/gframe.hpp
+/usr/local/include/opencv4/opencv2/gapi/gkernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/gmat.hpp
+/usr/local/include/opencv4/opencv2/gapi/gmetaarg.hpp
+/usr/local/include/opencv4/opencv2/gapi/gopaque.hpp
+/usr/local/include/opencv4/opencv2/gapi/gproto.hpp
+/usr/local/include/opencv4/opencv2/gapi/gpu/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/gpu/ggpukernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/gpu/imgproc.hpp
+/usr/local/include/opencv4/opencv2/gapi/gscalar.hpp
+/usr/local/include/opencv4/opencv2/gapi/gstreaming.hpp
+/usr/local/include/opencv4/opencv2/gapi/gtransform.hpp
+/usr/local/include/opencv4/opencv2/gapi/gtype_traits.hpp
+/usr/local/include/opencv4/opencv2/gapi/gtyped.hpp
+/usr/local/include/opencv4/opencv2/gapi/imgproc.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/bindings_ie.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/bindings_onnx.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/bindings_ov.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/ie.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/onnx.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/ov.hpp
+/usr/local/include/opencv4/opencv2/gapi/infer/parsers.hpp
+/usr/local/include/opencv4/opencv2/gapi/media.hpp
+/usr/local/include/opencv4/opencv2/gapi/oak/infer.hpp
+/usr/local/include/opencv4/opencv2/gapi/oak/oak.hpp
+/usr/local/include/opencv4/opencv2/gapi/ocl/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/ocl/goclkernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/ocl/imgproc.hpp
+/usr/local/include/opencv4/opencv2/gapi/opencv_includes.hpp
+/usr/local/include/opencv4/opencv2/gapi/operators.hpp
+/usr/local/include/opencv4/opencv2/gapi/ot.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/assert.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/convert.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/cvdefs.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/exports.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/mat.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/saturate.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/scalar.hpp
+/usr/local/include/opencv4/opencv2/gapi/own/types.hpp
+/usr/local/include/opencv4/opencv2/gapi/plaidml/core.hpp
+/usr/local/include/opencv4/opencv2/gapi/plaidml/gplaidmlkernel.hpp
+/usr/local/include/opencv4/opencv2/gapi/plaidml/plaidml.hpp
+/usr/local/include/opencv4/opencv2/gapi/python/python.hpp
+/usr/local/include/opencv4/opencv2/gapi/render.hpp
+/usr/local/include/opencv4/opencv2/gapi/render/render.hpp
+/usr/local/include/opencv4/opencv2/gapi/render/render_types.hpp
+/usr/local/include/opencv4/opencv2/gapi/rmat.hpp
+/usr/local/include/opencv4/opencv2/gapi/s11n.hpp
+/usr/local/include/opencv4/opencv2/gapi/s11n/base.hpp
+/usr/local/include/opencv4/opencv2/gapi/stereo.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/cap.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/desync.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/format.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/gstreamer/gstreamerpipeline.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/gstreamer/gstreamersource.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/meta.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/accel_types.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/cfg_params.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/data_provider_interface.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/default.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/device_selector_interface.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/onevpl/source.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/queue_source.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/source.hpp
+/usr/local/include/opencv4/opencv2/gapi/streaming/sync.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/any.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/compiler_hints.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/copy_through_move.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/optional.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/throw.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/type_traits.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/util.hpp
+/usr/local/include/opencv4/opencv2/gapi/util/variant.hpp
+/usr/local/include/opencv4/opencv2/gapi/video.hpp
+/usr/local/include/opencv4/opencv2/highgui.hpp
+/usr/local/include/opencv4/opencv2/highgui/highgui.hpp
+/usr/local/include/opencv4/opencv2/highgui/highgui_c.h
+/usr/local/include/opencv4/opencv2/imgcodecs.hpp
+/usr/local/include/opencv4/opencv2/imgcodecs/imgcodecs.hpp
+/usr/local/include/opencv4/opencv2/imgcodecs/imgcodecs_c.h
+/usr/local/include/opencv4/opencv2/imgcodecs/ios.h
+/usr/local/include/opencv4/opencv2/imgcodecs/legacy/constants_c.h
+/usr/local/include/opencv4/opencv2/imgcodecs/macosx.h
+/usr/local/include/opencv4/opencv2/imgproc.hpp
+/usr/local/include/opencv4/opencv2/imgproc/bindings.hpp
+/usr/local/include/opencv4/opencv2/imgproc/detail/gcgraph.hpp
+/usr/local/include/opencv4/opencv2/imgproc/detail/legacy.hpp
+/usr/local/include/opencv4/opencv2/imgproc/hal/hal.hpp
+/usr/local/include/opencv4/opencv2/imgproc/hal/interface.h
+/usr/local/include/opencv4/opencv2/imgproc/imgproc.hpp
+/usr/local/include/opencv4/opencv2/imgproc/imgproc_c.h
+/usr/local/include/opencv4/opencv2/imgproc/segmentation.hpp
+/usr/local/include/opencv4/opencv2/imgproc/types_c.h
+/usr/local/include/opencv4/opencv2/ml.hpp
+/usr/local/include/opencv4/opencv2/ml/ml.hpp
+/usr/local/include/opencv4/opencv2/ml/ml.inl.hpp
+/usr/local/include/opencv4/opencv2/objdetect.hpp
+/usr/local/include/opencv4/opencv2/objdetect/aruco_board.hpp
+/usr/local/include/opencv4/opencv2/objdetect/aruco_detector.hpp
+/usr/local/include/opencv4/opencv2/objdetect/aruco_dictionary.hpp
+/usr/local/include/opencv4/opencv2/objdetect/barcode.hpp
+/usr/local/include/opencv4/opencv2/objdetect/charuco_detector.hpp
+/usr/local/include/opencv4/opencv2/objdetect/detection_based_tracker.hpp
+/usr/local/include/opencv4/opencv2/objdetect/face.hpp
+/usr/local/include/opencv4/opencv2/objdetect/graphical_code_detector.hpp
+/usr/local/include/opencv4/opencv2/objdetect/objdetect.hpp
+/usr/local/include/opencv4/opencv2/opencv.hpp
+/usr/local/include/opencv4/opencv2/opencv_modules.hpp
+/usr/local/include/opencv4/opencv2/photo.hpp
+/usr/local/include/opencv4/opencv2/photo/cuda.hpp
+/usr/local/include/opencv4/opencv2/photo/legacy/constants_c.h
+/usr/local/include/opencv4/opencv2/photo/photo.hpp
+/usr/local/include/opencv4/opencv2/stitching.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/autocalib.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/blenders.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/camera.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/exposure_compensate.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/matchers.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/motion_estimators.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/seam_finders.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/timelapsers.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/util.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/util_inl.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/warpers.hpp
+/usr/local/include/opencv4/opencv2/stitching/detail/warpers_inl.hpp
+/usr/local/include/opencv4/opencv2/stitching/warpers.hpp
+/usr/local/include/opencv4/opencv2/video.hpp
+/usr/local/include/opencv4/opencv2/video/background_segm.hpp
+/usr/local/include/opencv4/opencv2/video/detail/tracking.detail.hpp
+/usr/local/include/opencv4/opencv2/video/legacy/constants_c.h
+/usr/local/include/opencv4/opencv2/video/tracking.hpp
+/usr/local/include/opencv4/opencv2/video/video.hpp
+/usr/local/include/opencv4/opencv2/videoio.hpp
+/usr/local/include/opencv4/opencv2/videoio/cap_ios.h
+/usr/local/include/opencv4/opencv2/videoio/legacy/constants_c.h
+/usr/local/include/opencv4/opencv2/videoio/registry.hpp
+/usr/local/include/opencv4/opencv2/videoio/videoio.hpp
+/usr/local/include/opencv4/opencv2/videoio/videoio_c.h
+/usr/local/lib/cmake/opencv4/OpenCVConfig-version.cmake
+/usr/local/lib/cmake/opencv4/OpenCVConfig.cmake
+/usr/local/lib/cmake/opencv4/OpenCVModules-release.cmake
+/usr/local/lib/cmake/opencv4/OpenCVModules.cmake
+/usr/local/lib/libopencv_calib3d.so
+/usr/local/lib/libopencv_core.so
+/usr/local/lib/libopencv_dnn.so
+/usr/local/lib/libopencv_features2d.so
+/usr/local/lib/libopencv_flann.so
+/usr/local/lib/libopencv_gapi.so
+/usr/local/lib/libopencv_highgui.so
+/usr/local/lib/libopencv_imgcodecs.so
+/usr/local/lib/libopencv_imgproc.so
+/usr/local/lib/libopencv_ml.so
+/usr/local/lib/libopencv_objdetect.so
+/usr/local/lib/libopencv_photo.so
+/usr/local/lib/libopencv_stitching.so
+/usr/local/lib/libopencv_video.so
+/usr/local/lib/libopencv_videoio.so
+/usr/local/lib/pkgconfig/opencv4.pc</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

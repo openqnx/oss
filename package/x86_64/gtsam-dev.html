@@ -1,0 +1,473 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>gtsam-dev 4.2-r1 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>gtsam-dev <span class=mut>4.2-r1</span></h1><p class=sum><b>Georgia Tech Smoothing and Mapping library for robotics and SLAM (development files)</b><br>gtsam 4.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>4.2-r1</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/gtsam-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/borglab/gtsam.git">https://github.com/borglab/gtsam.git</a></dd>
+<dt>License</dt><dd>BSD-3-Clause <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/gtsam">ports/gtsam</a></dd>
+<dt>Package size</dt><dd>513.7 KiB</dd>
+<dt>Installed size</dt><dd>2.3 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add gtsam-dev
+apk add gtsam-dev=4.2-r1   <span class=mut># this version</span>
+
+apk del gtsam-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gtsam-dev-4.2-r1.apk">gtsam-dev-4.2-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install gtsam-dev
+oss-get install gtsam-dev=4.2-r1   <span class=mut># this version</span>
+
+oss-get remove gtsam-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="gtsam.html">gtsam</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtsam-dev-4.2-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtsam-dev-4.2-r1.tar.gz</a> (488.3 KiB)</dd><dt>SHA-256</dt><dd><code>5590a5ffecd4495bd1cd7976c79c12229b7120ab3b546d7b369309bd2e33c44b</code></dd><dt>Install first</dt><dd><a href="bzip2.html">bzip2</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zlib.html">zlib</a>, <a href="boost.html">boost</a>, <a href="gtsam.html">gtsam</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtsam-dev-4.2-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 gtsam-dev-4.2-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 5590a5ffecd4495bd1cd7976c79c12229b7120ab3b546d7b369309bd2e33c44b ] &amp;&amp; echo OK || echo BAD
+gzip -dc gtsam-dev-4.2-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/gtsam-dev.list
+gzip -dc gtsam-dev-4.2-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm gtsam-dev-4.2-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/gtsam-dev.list
+rm var/lib/manual/gtsam-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="bzip2.html">bzip2</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zlib.html">zlib</a>, <a href="boost.html">boost</a>, <a href="gtsam.html">gtsam</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="gtsam.html">gtsam</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/gtsam.html">gtsam</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/gtsam/patches/0001-qnx-metis-link-libregex.patch">0001-qnx-metis-link-libregex.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/gtsam/README.md">ports/gtsam/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_gtsam on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/gtsam-4.2-r1.log">tests/logs/x86_64/gtsam-4.2-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># gtsam 4.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:47:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtsam qnx-test-gtsam qnx-port-tests
+(1/3) Installing boost (1.86.0-r0)
+(2/3) Installing gtsam (4.2-r1)
+(3/3) Installing qnx-test-gtsam (1.0-r0)
+OK: 114 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtsam
+     == gtsam ==
+       info GTSAM 4.2a9
+       ok   Pose2 compose
+       ok   Pose2 between is the inverse of compose
+       ok   Rot3::Rz(90 deg) maps x to y
+       ok   Pose3 transform and inverse
+       ok   Pose3 Expmap(Logmap(T)) == T
+       info error 1894.3326 -&gt; 5.33e-22
+       ok   LM drives the graph error to ~0
+       ok   optimised poses are the square&#x27;s corners
+       info var(x1)=1.00e-04 var(x3)=7.24e-02
+       ok   anchored pose 1 is more certain than pose 3
+       info iSAM2 vs batch: largest difference 4.87e-12
+       ok   iSAM2 incremental estimate matches the batch solution
+     PASS gtsam
+PASS test_gtsam
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-gtsam qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-gtsam-1.0-r0.apk">qnx-test-gtsam-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (357)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/CppUnitLite/Failure.h
+/usr/local/include/CppUnitLite/Test.h
+/usr/local/include/CppUnitLite/TestHarness.h
+/usr/local/include/CppUnitLite/TestRegistry.h
+/usr/local/include/CppUnitLite/TestResult.h
+/usr/local/include/gtsam/3rdparty/CCOLAMD/ccolamd.h
+/usr/local/include/gtsam/3rdparty/SuiteSparse_config/SuiteSparse_config.h
+/usr/local/include/gtsam/3rdparty/ceres/autodiff.h
+/usr/local/include/gtsam/3rdparty/ceres/eigen.h
+/usr/local/include/gtsam/3rdparty/ceres/example.h
+/usr/local/include/gtsam/3rdparty/ceres/fixed_array.h
+/usr/local/include/gtsam/3rdparty/ceres/fpclassify.h
+/usr/local/include/gtsam/3rdparty/ceres/jet.h
+/usr/local/include/gtsam/3rdparty/ceres/macros.h
+/usr/local/include/gtsam/3rdparty/ceres/manual_constructor.h
+/usr/local/include/gtsam/3rdparty/ceres/rotation.h
+/usr/local/include/gtsam/3rdparty/ceres/variadic_evaluate.h
+/usr/local/include/gtsam/3rdparty/metis/metis.h
+/usr/local/include/gtsam/base/ConcurrentMap.h
+/usr/local/include/gtsam/base/DSFMap.h
+/usr/local/include/gtsam/base/DSFVector.h
+/usr/local/include/gtsam/base/FastDefaultAllocator.h
+/usr/local/include/gtsam/base/FastList.h
+/usr/local/include/gtsam/base/FastMap.h
+/usr/local/include/gtsam/base/FastSet.h
+/usr/local/include/gtsam/base/FastVector.h
+/usr/local/include/gtsam/base/GenericValue.h
+/usr/local/include/gtsam/base/Group.h
+/usr/local/include/gtsam/base/Lie.h
+/usr/local/include/gtsam/base/Manifold.h
+/usr/local/include/gtsam/base/Matrix.h
+/usr/local/include/gtsam/base/MatrixSerialization.h
+/usr/local/include/gtsam/base/OptionalJacobian.h
+/usr/local/include/gtsam/base/ProductLieGroup.h
+/usr/local/include/gtsam/base/SymmetricBlockMatrix.h
+/usr/local/include/gtsam/base/Testable.h
+/usr/local/include/gtsam/base/TestableAssertions.h
+/usr/local/include/gtsam/base/ThreadsafeException.h
+/usr/local/include/gtsam/base/Value.h
+/usr/local/include/gtsam/base/Vector.h
+/usr/local/include/gtsam/base/VectorSerialization.h
+/usr/local/include/gtsam/base/VectorSpace.h
+/usr/local/include/gtsam/base/VerticalBlockMatrix.h
+/usr/local/include/gtsam/base/WeightedSampler.h
+/usr/local/include/gtsam/base/chartTesting.h
+/usr/local/include/gtsam/base/cholesky.h
+/usr/local/include/gtsam/base/concepts.h
+/usr/local/include/gtsam/base/debug.h
+/usr/local/include/gtsam/base/lieProxies.h
+/usr/local/include/gtsam/base/make_shared.h
+/usr/local/include/gtsam/base/numericalDerivative.h
+/usr/local/include/gtsam/base/serialization.h
+/usr/local/include/gtsam/base/serializationTestHelpers.h
+/usr/local/include/gtsam/base/testLie.h
+/usr/local/include/gtsam/base/timing.h
+/usr/local/include/gtsam/base/treeTraversal-inst.h
+/usr/local/include/gtsam/base/treeTraversal/parallelTraversalTasks.h
+/usr/local/include/gtsam/base/treeTraversal/statistics.h
+/usr/local/include/gtsam/base/types.h
+/usr/local/include/gtsam/base/utilities.h
+/usr/local/include/gtsam/basis/Basis.h
+/usr/local/include/gtsam/basis/BasisFactors.h
+/usr/local/include/gtsam/basis/Chebyshev.h
+/usr/local/include/gtsam/basis/Chebyshev2.h
+/usr/local/include/gtsam/basis/FitBasis.h
+/usr/local/include/gtsam/basis/Fourier.h
+/usr/local/include/gtsam/basis/ParameterMatrix.h
+/usr/local/include/gtsam/config.h
+/usr/local/include/gtsam/discrete/AlgebraicDecisionTree.h
+/usr/local/include/gtsam/discrete/Assignment.h
+/usr/local/include/gtsam/discrete/DecisionTree-inl.h
+/usr/local/include/gtsam/discrete/DecisionTree.h
+/usr/local/include/gtsam/discrete/DecisionTreeFactor.h
+/usr/local/include/gtsam/discrete/DiscreteBayesNet.h
+/usr/local/include/gtsam/discrete/DiscreteBayesTree.h
+/usr/local/include/gtsam/discrete/DiscreteConditional.h
+/usr/local/include/gtsam/discrete/DiscreteDistribution.h
+/usr/local/include/gtsam/discrete/DiscreteEliminationTree.h
+/usr/local/include/gtsam/discrete/DiscreteFactor.h
+/usr/local/include/gtsam/discrete/DiscreteFactorGraph.h
+/usr/local/include/gtsam/discrete/DiscreteJunctionTree.h
+/usr/local/include/gtsam/discrete/DiscreteKey.h
+/usr/local/include/gtsam/discrete/DiscreteLookupDAG.h
+/usr/local/include/gtsam/discrete/DiscreteMarginals.h
+/usr/local/include/gtsam/discrete/DiscreteValues.h
+/usr/local/include/gtsam/discrete/Signature.h
+/usr/local/include/gtsam/dllexport.h
+/usr/local/include/gtsam/geometry/BearingRange.h
+/usr/local/include/gtsam/geometry/Cal3.h
+/usr/local/include/gtsam/geometry/Cal3Bundler.h
+/usr/local/include/gtsam/geometry/Cal3DS2.h
+/usr/local/include/gtsam/geometry/Cal3DS2_Base.h
+/usr/local/include/gtsam/geometry/Cal3Fisheye.h
+/usr/local/include/gtsam/geometry/Cal3Unified.h
+/usr/local/include/gtsam/geometry/Cal3_S2.h
+/usr/local/include/gtsam/geometry/Cal3_S2Stereo.h
+/usr/local/include/gtsam/geometry/CalibratedCamera.h
+/usr/local/include/gtsam/geometry/CameraSet.h
+/usr/local/include/gtsam/geometry/Cyclic.h
+/usr/local/include/gtsam/geometry/EssentialMatrix.h
+/usr/local/include/gtsam/geometry/Line3.h
+/usr/local/include/gtsam/geometry/OrientedPlane3.h
+/usr/local/include/gtsam/geometry/PinholeCamera.h
+/usr/local/include/gtsam/geometry/PinholePose.h
+/usr/local/include/gtsam/geometry/PinholeSet.h
+/usr/local/include/gtsam/geometry/Point2.h
+/usr/local/include/gtsam/geometry/Point3.h
+/usr/local/include/gtsam/geometry/Pose2.h
+/usr/local/include/gtsam/geometry/Pose3.h
+/usr/local/include/gtsam/geometry/Quaternion.h
+/usr/local/include/gtsam/geometry/Rot2.h
+/usr/local/include/gtsam/geometry/Rot3.h
+/usr/local/include/gtsam/geometry/SO3.h
+/usr/local/include/gtsam/geometry/SO4.h
+/usr/local/include/gtsam/geometry/SOn-inl.h
+/usr/local/include/gtsam/geometry/SOn.h
+/usr/local/include/gtsam/geometry/Similarity2.h
+/usr/local/include/gtsam/geometry/Similarity3.h
+/usr/local/include/gtsam/geometry/SimpleCamera.h
+/usr/local/include/gtsam/geometry/SphericalCamera.h
+/usr/local/include/gtsam/geometry/StereoCamera.h
+/usr/local/include/gtsam/geometry/StereoPoint2.h
+/usr/local/include/gtsam/geometry/Unit3.h
+/usr/local/include/gtsam/geometry/concepts.h
+/usr/local/include/gtsam/geometry/triangulation.h
+/usr/local/include/gtsam/global_includes.h
+/usr/local/include/gtsam/hybrid/GaussianMixture.h
+/usr/local/include/gtsam/hybrid/GaussianMixtureFactor.h
+/usr/local/include/gtsam/hybrid/HybridBayesNet.h
+/usr/local/include/gtsam/hybrid/HybridBayesTree.h
+/usr/local/include/gtsam/hybrid/HybridConditional.h
+/usr/local/include/gtsam/hybrid/HybridEliminationTree.h
+/usr/local/include/gtsam/hybrid/HybridFactor.h
+/usr/local/include/gtsam/hybrid/HybridFactorGraph.h
+/usr/local/include/gtsam/hybrid/HybridGaussianFactorGraph.h
+/usr/local/include/gtsam/hybrid/HybridGaussianISAM.h
+/usr/local/include/gtsam/hybrid/HybridJunctionTree.h
+/usr/local/include/gtsam/hybrid/HybridNonlinearFactorGraph.h
+/usr/local/include/gtsam/hybrid/HybridNonlinearISAM.h
+/usr/local/include/gtsam/hybrid/HybridSmoother.h
+/usr/local/include/gtsam/hybrid/HybridValues.h
+/usr/local/include/gtsam/hybrid/MixtureFactor.h
+/usr/local/include/gtsam/inference/BayesNet-inst.h
+/usr/local/include/gtsam/inference/BayesNet.h
+/usr/local/include/gtsam/inference/BayesTree-inst.h
+/usr/local/include/gtsam/inference/BayesTree.h
+/usr/local/include/gtsam/inference/BayesTreeCliqueBase-inst.h
+/usr/local/include/gtsam/inference/BayesTreeCliqueBase.h
+/usr/local/include/gtsam/inference/ClusterTree-inst.h
+/usr/local/include/gtsam/inference/ClusterTree.h
+/usr/local/include/gtsam/inference/Conditional-inst.h
+/usr/local/include/gtsam/inference/Conditional.h
+/usr/local/include/gtsam/inference/DotWriter.h
+/usr/local/include/gtsam/inference/EliminateableFactorGraph-inst.h
+/usr/local/include/gtsam/inference/EliminateableFactorGraph.h
+/usr/local/include/gtsam/inference/EliminationTree-inst.h
+/usr/local/include/gtsam/inference/EliminationTree.h
+/usr/local/include/gtsam/inference/Factor.h
+/usr/local/include/gtsam/inference/FactorGraph-inst.h
+/usr/local/include/gtsam/inference/FactorGraph.h
+/usr/local/include/gtsam/inference/ISAM-inst.h
+/usr/local/include/gtsam/inference/ISAM.h
+/usr/local/include/gtsam/inference/JunctionTree-inst.h
+/usr/local/include/gtsam/inference/JunctionTree.h
+/usr/local/include/gtsam/inference/Key.h
+/usr/local/include/gtsam/inference/LabeledSymbol.h
+/usr/local/include/gtsam/inference/MetisIndex-inl.h
+/usr/local/include/gtsam/inference/MetisIndex.h
+/usr/local/include/gtsam/inference/Ordering.h
+/usr/local/include/gtsam/inference/Symbol.h
+/usr/local/include/gtsam/inference/VariableIndex-inl.h
+/usr/local/include/gtsam/inference/VariableIndex.h
+/usr/local/include/gtsam/inference/VariableSlots.h
+/usr/local/include/gtsam/inference/graph-inl.h
+/usr/local/include/gtsam/inference/graph.h
+/usr/local/include/gtsam/inference/inference-inst.h
+/usr/local/include/gtsam/inference/inferenceExceptions.h
+/usr/local/include/gtsam/linear/AcceleratedPowerMethod.h
+/usr/local/include/gtsam/linear/BinaryJacobianFactor.h
+/usr/local/include/gtsam/linear/ConjugateGradientSolver.h
+/usr/local/include/gtsam/linear/Errors.h
+/usr/local/include/gtsam/linear/GaussianBayesNet.h
+/usr/local/include/gtsam/linear/GaussianBayesTree-inl.h
+/usr/local/include/gtsam/linear/GaussianBayesTree.h
+/usr/local/include/gtsam/linear/GaussianConditional-inl.h
+/usr/local/include/gtsam/linear/GaussianConditional.h
+/usr/local/include/gtsam/linear/GaussianDensity.h
+/usr/local/include/gtsam/linear/GaussianEliminationTree.h
+/usr/local/include/gtsam/linear/GaussianFactor.h
+/usr/local/include/gtsam/linear/GaussianFactorGraph.h
+/usr/local/include/gtsam/linear/GaussianISAM.h
+/usr/local/include/gtsam/linear/GaussianJunctionTree.h
+/usr/local/include/gtsam/linear/HessianFactor-inl.h
+/usr/local/include/gtsam/linear/HessianFactor.h
+/usr/local/include/gtsam/linear/IterativeSolver.h
+/usr/local/include/gtsam/linear/JacobianFactor-inl.h
+/usr/local/include/gtsam/linear/JacobianFactor.h
+/usr/local/include/gtsam/linear/KalmanFilter.h
+/usr/local/include/gtsam/linear/LossFunctions.h
+/usr/local/include/gtsam/linear/NoiseModel.h
+/usr/local/include/gtsam/linear/PCGSolver.h
+/usr/local/include/gtsam/linear/PowerMethod.h
+/usr/local/include/gtsam/linear/Preconditioner.h
+/usr/local/include/gtsam/linear/RegularHessianFactor.h
+/usr/local/include/gtsam/linear/RegularJacobianFactor.h
+/usr/local/include/gtsam/linear/Sampler.h
+/usr/local/include/gtsam/linear/Scatter.h
+/usr/local/include/gtsam/linear/SparseEigen.h
+/usr/local/include/gtsam/linear/SubgraphBuilder.h
+/usr/local/include/gtsam/linear/SubgraphPreconditioner.h
+/usr/local/include/gtsam/linear/SubgraphSolver.h
+/usr/local/include/gtsam/linear/VectorValues.h
+/usr/local/include/gtsam/linear/iterative-inl.h
+/usr/local/include/gtsam/linear/iterative.h
+/usr/local/include/gtsam/linear/linearAlgorithms-inst.h
+/usr/local/include/gtsam/linear/linearExceptions.h
+/usr/local/include/gtsam/navigation/AHRSFactor.h
+/usr/local/include/gtsam/navigation/AttitudeFactor.h
+/usr/local/include/gtsam/navigation/BarometricFactor.h
+/usr/local/include/gtsam/navigation/CombinedImuFactor.h
+/usr/local/include/gtsam/navigation/ConstantVelocityFactor.h
+/usr/local/include/gtsam/navigation/GPSFactor.h
+/usr/local/include/gtsam/navigation/ImuBias.h
+/usr/local/include/gtsam/navigation/ImuFactor.h
+/usr/local/include/gtsam/navigation/MagFactor.h
+/usr/local/include/gtsam/navigation/MagPoseFactor.h
+/usr/local/include/gtsam/navigation/ManifoldPreintegration.h
+/usr/local/include/gtsam/navigation/NavState.h
+/usr/local/include/gtsam/navigation/PreintegratedRotation.h
+/usr/local/include/gtsam/navigation/PreintegrationBase.h
+/usr/local/include/gtsam/navigation/PreintegrationParams.h
+/usr/local/include/gtsam/navigation/Scenario.h
+/usr/local/include/gtsam/navigation/ScenarioRunner.h
+/usr/local/include/gtsam/navigation/TangentPreintegration.h
+/usr/local/include/gtsam/navigation/expressions.h
+/usr/local/include/gtsam/nonlinear/AdaptAutoDiff.h
+/usr/local/include/gtsam/nonlinear/CustomFactor.h
+/usr/local/include/gtsam/nonlinear/DoglegOptimizer.h
+/usr/local/include/gtsam/nonlinear/DoglegOptimizerImpl.h
+/usr/local/include/gtsam/nonlinear/Expression-inl.h
+/usr/local/include/gtsam/nonlinear/Expression.h
+/usr/local/include/gtsam/nonlinear/ExpressionFactor.h
+/usr/local/include/gtsam/nonlinear/ExpressionFactorGraph.h
+/usr/local/include/gtsam/nonlinear/ExtendedKalmanFilter-inl.h
+/usr/local/include/gtsam/nonlinear/ExtendedKalmanFilter.h
+/usr/local/include/gtsam/nonlinear/FunctorizedFactor.h
+/usr/local/include/gtsam/nonlinear/GaussNewtonOptimizer.h
+/usr/local/include/gtsam/nonlinear/GncOptimizer.h
+/usr/local/include/gtsam/nonlinear/GncParams.h
+/usr/local/include/gtsam/nonlinear/GraphvizFormatting.h
+/usr/local/include/gtsam/nonlinear/ISAM2-impl.h
+/usr/local/include/gtsam/nonlinear/ISAM2.h
+/usr/local/include/gtsam/nonlinear/ISAM2Clique.h
+/usr/local/include/gtsam/nonlinear/ISAM2Params.h
+/usr/local/include/gtsam/nonlinear/ISAM2Result.h
+/usr/local/include/gtsam/nonlinear/ISAM2UpdateParams.h
+/usr/local/include/gtsam/nonlinear/LevenbergMarquardtOptimizer.h
+/usr/local/include/gtsam/nonlinear/LevenbergMarquardtParams.h
+/usr/local/include/gtsam/nonlinear/LinearContainerFactor.h
+/usr/local/include/gtsam/nonlinear/Marginals.h
+/usr/local/include/gtsam/nonlinear/NonlinearConjugateGradientOptimizer.h
+/usr/local/include/gtsam/nonlinear/NonlinearEquality.h
+/usr/local/include/gtsam/nonlinear/NonlinearFactor.h
+/usr/local/include/gtsam/nonlinear/NonlinearFactorGraph.h
+/usr/local/include/gtsam/nonlinear/NonlinearISAM.h
+/usr/local/include/gtsam/nonlinear/NonlinearOptimizer.h
+/usr/local/include/gtsam/nonlinear/NonlinearOptimizerParams.h
+/usr/local/include/gtsam/nonlinear/PriorFactor.h
+/usr/local/include/gtsam/nonlinear/Symbol.h
+/usr/local/include/gtsam/nonlinear/Values-inl.h
+/usr/local/include/gtsam/nonlinear/Values.h
+/usr/local/include/gtsam/nonlinear/WhiteNoiseFactor.h
+/usr/local/include/gtsam/nonlinear/expressionTesting.h
+/usr/local/include/gtsam/nonlinear/expressions.h
+/usr/local/include/gtsam/nonlinear/factorTesting.h
+/usr/local/include/gtsam/nonlinear/internal/CallRecord.h
+/usr/local/include/gtsam/nonlinear/internal/ExecutionTrace.h
+/usr/local/include/gtsam/nonlinear/internal/ExpressionNode.h
+/usr/local/include/gtsam/nonlinear/internal/JacobianMap.h
+/usr/local/include/gtsam/nonlinear/internal/LevenbergMarquardtState.h
+/usr/local/include/gtsam/nonlinear/internal/NonlinearOptimizerState.h
+/usr/local/include/gtsam/nonlinear/nonlinearExceptions.h
+/usr/local/include/gtsam/nonlinear/utilities.h
+/usr/local/include/gtsam/precompiled_header.h
+/usr/local/include/gtsam/sam/BearingFactor.h
+/usr/local/include/gtsam/sam/BearingRangeFactor.h
+/usr/local/include/gtsam/sam/RangeFactor.h
+/usr/local/include/gtsam/sfm/BinaryMeasurement.h
+/usr/local/include/gtsam/sfm/DsfTrackGenerator.h
+/usr/local/include/gtsam/sfm/MFAS.h
+/usr/local/include/gtsam/sfm/SfmData.h
+/usr/local/include/gtsam/sfm/SfmTrack.h
+/usr/local/include/gtsam/sfm/ShonanAveraging.h
+/usr/local/include/gtsam/sfm/ShonanFactor.h
+/usr/local/include/gtsam/sfm/ShonanGaugeFactor.h
+/usr/local/include/gtsam/sfm/TranslationFactor.h
+/usr/local/include/gtsam/sfm/TranslationRecovery.h
+/usr/local/include/gtsam/slam/AntiFactor.h
+/usr/local/include/gtsam/slam/BearingFactor.h
+/usr/local/include/gtsam/slam/BearingRangeFactor.h
+/usr/local/include/gtsam/slam/BetweenFactor.h
+/usr/local/include/gtsam/slam/BoundingConstraint.h
+/usr/local/include/gtsam/slam/EssentialMatrixConstraint.h
+/usr/local/include/gtsam/slam/EssentialMatrixFactor.h
+/usr/local/include/gtsam/slam/FrobeniusFactor.h
+/usr/local/include/gtsam/slam/GeneralSFMFactor.h
+/usr/local/include/gtsam/slam/InitializePose.h
+/usr/local/include/gtsam/slam/InitializePose3.h
+/usr/local/include/gtsam/slam/JacobianFactorQ.h
+/usr/local/include/gtsam/slam/JacobianFactorQR.h
+/usr/local/include/gtsam/slam/JacobianFactorSVD.h
+/usr/local/include/gtsam/slam/KarcherMeanFactor-inl.h
+/usr/local/include/gtsam/slam/KarcherMeanFactor.h
+/usr/local/include/gtsam/slam/OrientedPlane3Factor.h
+/usr/local/include/gtsam/slam/PoseRotationPrior.h
+/usr/local/include/gtsam/slam/PoseTranslationPrior.h
+/usr/local/include/gtsam/slam/PriorFactor.h
+/usr/local/include/gtsam/slam/ProjectionFactor.h
+/usr/local/include/gtsam/slam/RangeFactor.h
+/usr/local/include/gtsam/slam/ReferenceFrameFactor.h
+/usr/local/include/gtsam/slam/RegularImplicitSchurFactor.h
+/usr/local/include/gtsam/slam/RotateFactor.h
+/usr/local/include/gtsam/slam/SmartFactorBase.h
+/usr/local/include/gtsam/slam/SmartFactorParams.h
+/usr/local/include/gtsam/slam/SmartProjectionFactor.h
+/usr/local/include/gtsam/slam/SmartProjectionPoseFactor.h
+/usr/local/include/gtsam/slam/SmartProjectionRigFactor.h
+/usr/local/include/gtsam/slam/StereoFactor.h
+/usr/local/include/gtsam/slam/TriangulationFactor.h
+/usr/local/include/gtsam/slam/dataset.h
+/usr/local/include/gtsam/slam/expressions.h
+/usr/local/include/gtsam/slam/lago.h
+/usr/local/include/gtsam/symbolic/SymbolicBayesNet.h
+/usr/local/include/gtsam/symbolic/SymbolicBayesTree.h
+/usr/local/include/gtsam/symbolic/SymbolicConditional.h
+/usr/local/include/gtsam/symbolic/SymbolicEliminationTree.h
+/usr/local/include/gtsam/symbolic/SymbolicFactor-inst.h
+/usr/local/include/gtsam/symbolic/SymbolicFactor.h
+/usr/local/include/gtsam/symbolic/SymbolicFactorGraph.h
+/usr/local/include/gtsam/symbolic/SymbolicISAM.h
+/usr/local/include/gtsam/symbolic/SymbolicJunctionTree.h
+/usr/local/lib/cmake/GTSAM/GTSAM-exports-release.cmake
+/usr/local/lib/cmake/GTSAM/GTSAM-exports.cmake
+/usr/local/lib/cmake/GTSAM/GTSAMConfig.cmake
+/usr/local/lib/cmake/GTSAM/GTSAMConfigVersion.cmake
+/usr/local/lib/cmake/GTSAM/gtsam_extra.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/Config.cmake.in
+/usr/local/lib/cmake/GTSAMCMakeTools/FindNumPy.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/GTSAMCMakeToolsConfig.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/GtsamBuildTypes.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/GtsamMakeConfigFile.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/GtsamPrinting.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/GtsamTesting.cmake
+/usr/local/lib/cmake/GTSAMCMakeTools/README.html
+/usr/local/lib/cmake/GTSAMCMakeTools/dllexport.h.in
+/usr/local/lib/libCppUnitLite.a
+/usr/local/lib/libgtsam.so</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>4.2-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gtsam-dev-4.2-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gtsam-dev-4.2-r0.tar.gz">.tar.gz</a> &middot; <code>apk add gtsam-dev=4.2-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

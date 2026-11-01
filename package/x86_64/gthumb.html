@@ -1,0 +1,467 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>gthumb 3.12.8.2-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>gthumb <span class=mut>3.12.8.2-r0</span></h1><p class=sum><b>Image viewer and organizer for GNOME</b><br>gthumb 3.12.8.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.12.8.2-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/gthumb.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz">https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz</a></dd>
+<dt>License</dt><dd>GPL2+ <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/gthumb">ports/gthumb</a></dd>
+<dt>Package size</dt><dd>4.8 MiB</dd>
+<dt>Installed size</dt><dd>13.7 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>so:libbookmarks.so=3.12.8.2 so:libcairo_io.so=3.12.8.2 so:libcatalogs.so=3.12.8.2 so:libchange_date.so=3.12.8.2 so:libcomments.so=3.12.8.2 so:libcontact_sheet.so=3.12.8.2 so:libconvert_format.so=3.12.8.2 so:libdesktop_background.so=3.12.8.2 so:libedit_metadata.so=3.12.8.2 so:libexiv2_tools.so=3.12.8.2 so:libexport_tools.so=3.12.8.2 so:libfile_manager.so=3.12.8.2 so:libfile_tools.so=3.12.8.2 so:libfile_viewer.so=3.12.8.2 so:libfind_duplicates.so=3.12.8.2 so:libimage_print.so=3.12.8.2 so:libimage_rotation.so=3.12.8.2 so:libimage_viewer.so=3.12.8.2 so:libimporter.so=3.12.8.2 so:libjpeg_utils.so=3.12.8.2 so:liblist_tools.so=3.12.8.2 so:libopen_map.so=3.12.8.2 so:libphoto_importer.so=3.12.8.2 so:libred_eye_removal.so=3.12.8.2 so:librename_series.so=3.12.8.2 so:libresize_images.so=3.12.8.2 so:libsearch.so=3.12.8.2 so:libselections.so=3.12.8.2 so:libslideshow.so=3.12.8.2 so:libterminal.so=3.12.8.2 so:libwebalbums.so=3.12.8.2</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add gthumb
+apk add gthumb=3.12.8.2-r0   <span class=mut># this version</span>
+
+apk del gthumb   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/gthumb-3.12.8.2-r0.apk">gthumb-3.12.8.2-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install gthumb
+oss-get install gthumb=3.12.8.2-r0   <span class=mut># this version</span>
+
+oss-get remove gthumb   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="cairo.html">cairo</a>, <a href="exiv2.html">exiv2</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="gtk3.html">gtk3</a>, <a href="lcms2.html">lcms2</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="libpng.html">libpng</a>, <a href="libtiff.html">libtiff</a>, <a href="libwebp.html">libwebp</a>, <a href="pango.html">pango</a>, <a href="zlib.html">zlib</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gthumb-3.12.8.2-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gthumb-3.12.8.2-r0.tar.gz</a> (4.8 MiB)</dd><dt>SHA-256</dt><dd><code>7907f5ff3edb7981b513f0f0b00a7dc1e4ba0cb515c3d8048dc2d5d2e9aded5f</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libinih.html">libinih</a>, <a href="exiv2.html">exiv2</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="dbus.html">dbus</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="lcms2.html">lcms2</a>, <a href="libwebp.html">libwebp</a>, <a href="zstd.html">zstd</a>, <a href="libtiff.html">libtiff</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/gthumb-3.12.8.2-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 gthumb-3.12.8.2-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 7907f5ff3edb7981b513f0f0b00a7dc1e4ba0cb515c3d8048dc2d5d2e9aded5f ] &amp;&amp; echo OK || echo BAD
+gzip -dc gthumb-3.12.8.2-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/gthumb.list
+gzip -dc gthumb-3.12.8.2-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm gthumb-3.12.8.2-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/gthumb.list
+rm var/lib/manual/gthumb.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libinih.html">libinih</a>, <a href="exiv2.html">exiv2</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="dbus.html">dbus</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="lcms2.html">lcms2</a>, <a href="libwebp.html">libwebp</a>, <a href="zstd.html">zstd</a>, <a href="libtiff.html">libtiff</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (13)</h2><a href="../../package/x86_64/cairo.html">cairo</a>, <a href="../../package/x86_64/exiv2.html">exiv2</a>, <a href="../../package/x86_64/gdk-pixbuf.html">gdk-pixbuf</a>, <a href="../../package/x86_64/gettext.html">gettext</a>, <a href="../../package/x86_64/glib.html">glib</a>, <a href="../../package/x86_64/gtk3.html">gtk3</a>, <a href="../../package/x86_64/lcms2.html">lcms2</a>, <a href="../../package/x86_64/libjpeg-turbo.html">libjpeg-turbo</a>, <a href="../../package/x86_64/libpng.html">libpng</a>, <a href="../../package/x86_64/libtiff.html">libtiff</a>, <a href="../../package/x86_64/libwebp.html">libwebp</a>, <a href="../../package/x86_64/pango.html">pango</a>, <a href="../../package/x86_64/zlib.html">zlib</a>
+<h2>Required by (1)</h2><a href="gthumb-dev.html">gthumb-dev</a>
+<h2>QNX patches (4)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/gthumb/patches/0001-aports-001-fix-time_t-type.patch">0001-aports-001-fix-time_t-type.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/gthumb/patches/0002-aports-002-fix-xopen-source.patch">0002-aports-002-fix-xopen-source.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/gthumb/patches/0003-x11-check-compile-only.patch">0003-x11-check-compile-only.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/gthumb/patches/0004-help-only-with-itstool.patch">0004-help-only-with-itstool.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/gthumb/README.md">ports/gthumb/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_gthumb on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/gthumb-3.12.8.2-r0.log">tests/logs/x86_64/gthumb-3.12.8.2-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># gthumb 3.12.8.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:15:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gthumb qnx-test-gthumb qnx-port-tests
+( 1/37) Installing libxau (1.0.11-r0)
+( 2/37) Installing libxdmcp (1.1.5-r0)
+( 3/37) Installing libxcb (1.17.0-r0)
+( 4/37) Installing libx11 (1.8.10-r0)
+( 5/37) Installing libxext (1.3.6-r0)
+( 6/37) Installing libxrender (0.9.11-r0)
+( 7/37) Installing cairo (1.18.2-r0)
+( 8/37) Installing libinih (58-r0)
+( 9/37) Installing exiv2 (0.28.5-r0)
+(10/37) Installing dbus (1.16.0-r1)
+(11/37) Installing libxi (1.8.2-r0)
+(12/37) Installing libxtst (1.2.5-r0)
+(13/37) Installing at-spi2-core (2.54.0-r0)
+(14/37) Installing fribidi (1.0.16-r0)
+(15/37) Installing harfbuzz (&lt;ip&gt;-r0)
+(16/37) Installing libxcomposite (0.4.6-r0)
+(17/37) Installing libxfixes (6.0.1-r0)
+(18/37) Installing libxcursor (1.2.2-r0)
+(19/37) Installing libxdamage (1.1.6-r0)
+(20/37) Installing libxinerama (1.1.5-r0)
+(21/37) Installing libxml2 (2.13.5-r1)
+(22/37) Installing libxkbcommon (1.8.1-r1)
+(23/37) Installing libxrandr (1.5.4-r0)
+(24/37) Installing libxft (2.3.8-r0)
+(25/37) Installing pango (1.54.0-r0)
+(26/37) Installing gtk3 (3.24.43-r1)
+(27/37) Installing lcms2 (2.16-r0)
+(28/37) Installing libwebp (1.4.0-r0)
+(29/37) Installing libtiff (4.7.0-r0)
+(30/37) Installing gthumb (3.12.8.2-r0)
+(31/37) Installing qnx-port-tests (1.0-r2)
+(32/37) Installing font-dejavu (2.37-r0)
+(33/37) Installing libsfdo (0.1.4-r0)
+(34/37) Installing wlroots (0.20.2-r0)
+(35/37) Installing xkeyboard-config (2.43-r0)
+(36/37) Installing labwc (0.20.2-r1)
+(37/37) Installing qnx-test-gthumb (1.0-r0)
+OK: 188 MiB in 66 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gthumb
+     == gthumb ==
+       ok   gthumb --help lists --fullscreen, --slideshow, --import-photos
+       info headless Wayland display: up
+       info gthumb --version -&gt; 0: gthumb 3.12.8.2, Copyright © 2001-2010 Free Software Foundation, Inc.
+       ok   gthumb --version: gthumb 3.12.8.2
+       ok   gthumb --version exits 0 with a display
+       ok   extensions directory
+       info 31 extension(s), 31 complete
+       ok   at least 20 extensions
+       ok   every extension: key file parses, [Loader] API=3.12, Type=module, lib&lt;name&gt;.so present
+       ok   desktop entry runs gthumb
+     PASS gthumb
+PASS test_gthumb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-gthumb qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-gthumb-1.0-r0.apk">qnx-test-gthumb-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (323)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/gthumb
+/usr/local/lib/gthumb/extensions/bookmarks.extension
+/usr/local/lib/gthumb/extensions/cairo_io.extension
+/usr/local/lib/gthumb/extensions/catalogs.extension
+/usr/local/lib/gthumb/extensions/change_date.extension
+/usr/local/lib/gthumb/extensions/comments.extension
+/usr/local/lib/gthumb/extensions/contact_sheet.extension
+/usr/local/lib/gthumb/extensions/convert_format.extension
+/usr/local/lib/gthumb/extensions/desktop_background.extension
+/usr/local/lib/gthumb/extensions/edit_metadata.extension
+/usr/local/lib/gthumb/extensions/exiv2_tools.extension
+/usr/local/lib/gthumb/extensions/export_tools.extension
+/usr/local/lib/gthumb/extensions/file_manager.extension
+/usr/local/lib/gthumb/extensions/file_tools.extension
+/usr/local/lib/gthumb/extensions/file_viewer.extension
+/usr/local/lib/gthumb/extensions/find_duplicates.extension
+/usr/local/lib/gthumb/extensions/image_print.extension
+/usr/local/lib/gthumb/extensions/image_rotation.extension
+/usr/local/lib/gthumb/extensions/image_viewer.extension
+/usr/local/lib/gthumb/extensions/importer.extension
+/usr/local/lib/gthumb/extensions/jpeg_utils.extension
+/usr/local/lib/gthumb/extensions/libbookmarks.so
+/usr/local/lib/gthumb/extensions/libcairo_io.so
+/usr/local/lib/gthumb/extensions/libcatalogs.so
+/usr/local/lib/gthumb/extensions/libchange_date.so
+/usr/local/lib/gthumb/extensions/libcomments.so
+/usr/local/lib/gthumb/extensions/libcontact_sheet.so
+/usr/local/lib/gthumb/extensions/libconvert_format.so
+/usr/local/lib/gthumb/extensions/libdesktop_background.so
+/usr/local/lib/gthumb/extensions/libedit_metadata.so
+/usr/local/lib/gthumb/extensions/libexiv2_tools.so
+/usr/local/lib/gthumb/extensions/libexport_tools.so
+/usr/local/lib/gthumb/extensions/libfile_manager.so
+/usr/local/lib/gthumb/extensions/libfile_tools.so
+/usr/local/lib/gthumb/extensions/libfile_viewer.so
+/usr/local/lib/gthumb/extensions/libfind_duplicates.so
+/usr/local/lib/gthumb/extensions/libimage_print.so
+/usr/local/lib/gthumb/extensions/libimage_rotation.so
+/usr/local/lib/gthumb/extensions/libimage_viewer.so
+/usr/local/lib/gthumb/extensions/libimporter.so
+/usr/local/lib/gthumb/extensions/libjpeg_utils.so
+/usr/local/lib/gthumb/extensions/liblist_tools.so
+/usr/local/lib/gthumb/extensions/libopen_map.so
+/usr/local/lib/gthumb/extensions/libphoto_importer.so
+/usr/local/lib/gthumb/extensions/libred_eye_removal.so
+/usr/local/lib/gthumb/extensions/librename_series.so
+/usr/local/lib/gthumb/extensions/libresize_images.so
+/usr/local/lib/gthumb/extensions/libsearch.so
+/usr/local/lib/gthumb/extensions/libselections.so
+/usr/local/lib/gthumb/extensions/libslideshow.so
+/usr/local/lib/gthumb/extensions/libterminal.so
+/usr/local/lib/gthumb/extensions/libwebalbums.so
+/usr/local/lib/gthumb/extensions/list_tools.extension
+/usr/local/lib/gthumb/extensions/open_map.extension
+/usr/local/lib/gthumb/extensions/photo_importer.extension
+/usr/local/lib/gthumb/extensions/red_eye_removal.extension
+/usr/local/lib/gthumb/extensions/rename_series.extension
+/usr/local/lib/gthumb/extensions/resize_images.extension
+/usr/local/lib/gthumb/extensions/search.extension
+/usr/local/lib/gthumb/extensions/selections.extension
+/usr/local/lib/gthumb/extensions/slideshow.extension
+/usr/local/lib/gthumb/extensions/terminal.extension
+/usr/local/lib/gthumb/extensions/webalbums.extension
+/usr/local/share/applications/org.gnome.gThumb.Import.desktop
+/usr/local/share/applications/org.gnome.gThumb.desktop
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.catalogs.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.change-date.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.comments.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.contact-sheet.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.convert-format.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.crop.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.enums.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.file-manager.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.gstreamer-tools.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.image-print.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.image-viewer.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.importer.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.photo-importer.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.pixbuf-savers.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.rename-series.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.resize-images.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.resize.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.rotate.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.slideshow.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.terminal.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.gthumb.webalbums.gschema.xml
+/usr/local/share/gthumb/albumthemes/Classic/back.png
+/usr/local/share/gthumb/albumthemes/Classic/bot.png
+/usr/local/share/gthumb/albumthemes/Classic/image.gthtml
+/usr/local/share/gthumb/albumthemes/Classic/index.gthtml
+/usr/local/share/gthumb/albumthemes/Classic/layout.css
+/usr/local/share/gthumb/albumthemes/Classic/left.png
+/usr/local/share/gthumb/albumthemes/Classic/next.png
+/usr/local/share/gthumb/albumthemes/Classic/prev.png
+/usr/local/share/gthumb/albumthemes/Classic/preview.png
+/usr/local/share/gthumb/albumthemes/Classic/right.png
+/usr/local/share/gthumb/albumthemes/Classic/style.css
+/usr/local/share/gthumb/albumthemes/Classic/thumbnail.gthtml
+/usr/local/share/gthumb/albumthemes/Classic/top.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/back.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/bot.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/image.gthtml
+/usr/local/share/gthumb/albumthemes/ClassicClips/index.gthtml
+/usr/local/share/gthumb/albumthemes/ClassicClips/layout.css
+/usr/local/share/gthumb/albumthemes/ClassicClips/left.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/next.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/prev.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/preview.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/right.png
+/usr/local/share/gthumb/albumthemes/ClassicClips/style.css
+/usr/local/share/gthumb/albumthemes/ClassicClips/thumbnail.gthtml
+/usr/local/share/gthumb/albumthemes/ClassicClips/top.png
+/usr/local/share/gthumb/albumthemes/NeatRound/back.png
+/usr/local/share/gthumb/albumthemes/NeatRound/bot.png
+/usr/local/share/gthumb/albumthemes/NeatRound/image.gthtml
+/usr/local/share/gthumb/albumthemes/NeatRound/index.gthtml
+/usr/local/share/gthumb/albumthemes/NeatRound/layout.css
+/usr/local/share/gthumb/albumthemes/NeatRound/left.png
+/usr/local/share/gthumb/albumthemes/NeatRound/next.png
+/usr/local/share/gthumb/albumthemes/NeatRound/prev.png
+/usr/local/share/gthumb/albumthemes/NeatRound/preview.png
+/usr/local/share/gthumb/albumthemes/NeatRound/right.png
+/usr/local/share/gthumb/albumthemes/NeatRound/style.css
+/usr/local/share/gthumb/albumthemes/NeatRound/thumbnail.gthtml
+/usr/local/share/gthumb/albumthemes/NeatRound/top.png
+/usr/local/share/gthumb/albumthemes/Wiki/image.gthtml
+/usr/local/share/gthumb/albumthemes/Wiki/index.gthtml
+/usr/local/share/gthumb/albumthemes/Wiki/preview.png
+/usr/local/share/gthumb/albumthemes/Wiki/style.css
+/usr/local/share/gthumb/albumthemes/Wiki/thumbnail.gthtml
+/usr/local/share/gthumb/contactsheetthemes/default.cst
+/usr/local/share/gthumb/contactsheetthemes/minimalist.cst
+/usr/local/share/gthumb/contactsheetthemes/rainbow.cst
+/usr/local/share/gthumb/icons/filmholes.png
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/change-date-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/color-profile.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/comment-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/convert-format-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/curves-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/edit-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/emblem-flag-blue.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/emblem-flag-gray.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/emblem-flag-green.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/emblem-flag-red.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/emblem-flag-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/export-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/extension-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/eyedropper-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/file-catalog-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/file-library-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/file-search-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/filter-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/format-linear-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/format-logarithmic-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/histogram-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-adjust-colors-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-adjust-contrast-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-crop-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-equalize-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-flip-horizontal-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-flip-vertical-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-grayscale-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-invert-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-navigator-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-red-eye-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-resize-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-rotate-left-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-rotate-right-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-rotate-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/image-sharpen-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/lock-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/map-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/palette-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/pinned-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/presets-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/slideshow-pause.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/special-effects-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/swap-values-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/tag-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/tools-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/transparency-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-presentation-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-fit-height-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-fit-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-fit-width-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-in-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-original-symbolic.svg
+/usr/local/share/gthumb/icons/hicolor/scalable/actions/view-zoom-out-symbolic.svg
+/usr/local/share/gthumb/ui/add-to-catalog.ui
+/usr/local/share/gthumb/ui/adjust-colors-options.ui
+/usr/local/share/gthumb/ui/adjust-contrast-options.ui
+/usr/local/share/gthumb/ui/avif-options.ui
+/usr/local/share/gthumb/ui/browser-preferences.ui
+/usr/local/share/gthumb/ui/catalog-properties.ui
+/usr/local/share/gthumb/ui/change-date.ui
+/usr/local/share/gthumb/ui/code-selector.ui
+/usr/local/share/gthumb/ui/color-picker-options.ui
+/usr/local/share/gthumb/ui/comments-preferences.ui
+/usr/local/share/gthumb/ui/contact-sheet-theme-properties.ui
+/usr/local/share/gthumb/ui/contact-sheet.ui
+/usr/local/share/gthumb/ui/convert-format.ui
+/usr/local/share/gthumb/ui/crop-options.ui
+/usr/local/share/gthumb/ui/curve-preset-editor.ui
+/usr/local/share/gthumb/ui/curves-options.ui
+/usr/local/share/gthumb/ui/edit-comment-page.ui
+/usr/local/share/gthumb/ui/edit-exiv2-page.ui
+/usr/local/share/gthumb/ui/effects-options.ui
+/usr/local/share/gthumb/ui/extensions-preferences.ui
+/usr/local/share/gthumb/ui/favorite-properties.ui
+/usr/local/share/gthumb/ui/file-selection-info.ui
+/usr/local/share/gthumb/ui/filter-editor.ui
+/usr/local/share/gthumb/ui/find-duplicates-choose-folders.ui
+/usr/local/share/gthumb/ui/find-duplicates-dialog.ui
+/usr/local/share/gthumb/ui/find-duplicates.ui
+/usr/local/share/gthumb/ui/grayscale-options.ui
+/usr/local/share/gthumb/ui/histogram-info.ui
+/usr/local/share/gthumb/ui/image-viewer-preferences.ui
+/usr/local/share/gthumb/ui/image-wall.ui
+/usr/local/share/gthumb/ui/import-preferences.ui
+/usr/local/share/gthumb/ui/jpeg-options.ui
+/usr/local/share/gthumb/ui/location.ui
+/usr/local/share/gthumb/ui/organize-files-task.ui
+/usr/local/share/gthumb/ui/organize-files.ui
+/usr/local/share/gthumb/ui/overwrite-dialog.ui
+/usr/local/share/gthumb/ui/personalize-filters.ui
+/usr/local/share/gthumb/ui/png-options.ui
+/usr/local/share/gthumb/ui/preferences.ui
+/usr/local/share/gthumb/ui/print-layout.ui
+/usr/local/share/gthumb/ui/print-preferences.ui
+/usr/local/share/gthumb/ui/red-eye-removal-options.ui
+/usr/local/share/gthumb/ui/rename-series.ui
+/usr/local/share/gthumb/ui/resize-images.ui
+/usr/local/share/gthumb/ui/resize-options.ui
+/usr/local/share/gthumb/ui/rotate-options.ui
+/usr/local/share/gthumb/ui/save-options-preferences.ui
+/usr/local/share/gthumb/ui/search-editor.ui
+/usr/local/share/gthumb/ui/sharpen-options.ui
+/usr/local/share/gthumb/ui/shortcuts-preferences.ui
+/usr/local/share/gthumb/ui/slideshow-preferences.ui
+/usr/local/share/gthumb/ui/sort-order-folder-tree.ui
+/usr/local/share/gthumb/ui/sort-order.ui
+/usr/local/share/gthumb/ui/tag-chooser.ui
+/usr/local/share/gthumb/ui/template-editor-dialog.ui
+/usr/local/share/gthumb/ui/terminal-preferences.ui
+/usr/local/share/gthumb/ui/tga-options.ui
+/usr/local/share/gthumb/ui/tiff-options.ui
+/usr/local/share/gthumb/ui/web-album-exporter.ui
+/usr/local/share/gthumb/ui/webp-options.ui
+/usr/local/share/icons/hicolor/16x16/apps/org.gnome.gThumb.png
+/usr/local/share/icons/hicolor/256x256/apps/org.gnome.gThumb.png
+/usr/local/share/icons/hicolor/scalable/apps/org.gnome.gThumb-symbolic.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.gnome.gThumb.svg
+/usr/local/share/locale/am/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ar/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/az/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/be/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/bg/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/bs/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ca/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ca@valencia/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/cs/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/da/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/de/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/dz/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/el/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/en_CA/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/eo/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/es/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/et/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/eu/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/fa/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/fi/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/fr/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ga/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/gl/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/gu/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/he/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/hi/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/hr/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/hu/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/id/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ie/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/is/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/it/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ja/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ka/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/kn/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ko/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/lt/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/lv/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/mk/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ml/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ms/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/nb/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/nds/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ne/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/nl/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/nn/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/oc/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/pa/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/pl/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ps/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/pt/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ro/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/ru/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/rw/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sk/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sl/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sq/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sr/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sr@latin/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/sv/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/th/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/tr/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/uk/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/vi/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/xh/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/gthumb.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/gthumb.mo</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

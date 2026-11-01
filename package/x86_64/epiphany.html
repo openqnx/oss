@@ -1,0 +1,307 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>epiphany 43.1-r2 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>epiphany <span class=mut>43.1-r2</span></h1><p class=sum><b>GNOME Web, a WebKitGTK-based web browser</b><br>epiphany 43.1 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>43.1-r2</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/epiphany.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://download.gnome.org/sources/epiphany/43/epiphany-43.1.tar.xz">https://download.gnome.org/sources/epiphany/43/epiphany-43.1.tar.xz</a></dd>
+<dt>License</dt><dd>GPL3+ <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/epiphany">ports/epiphany</a></dd>
+<dt>Package size</dt><dd>3.2 MiB</dd>
+<dt>Installed size</dt><dd>8.8 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>so:libephymain.so=43.1 so:libephymisc.so=43.1 so:libephysync.so=43.1</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add epiphany
+apk add epiphany=43.1-r2   <span class=mut># this version</span>
+
+apk del epiphany   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/epiphany-43.1-r2.apk">epiphany-43.1-r2.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install epiphany
+oss-get install epiphany=43.1-r2   <span class=mut># this version</span>
+
+oss-get remove epiphany   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="at-spi2-core.html">at-spi2-core</a>, <a href="cairo.html">cairo</a>, <a href="gcr.html">gcr</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="gmp.html">gmp</a>, <a href="gtk3.html">gtk3</a>, <a href="json-glib.html">json-glib</a>, <a href="libarchive.html">libarchive</a>, <a href="libdazzle.html">libdazzle</a>, <a href="libhandy.html">libhandy</a>, <a href="libportal.html">libportal</a>, <a href="libsecret.html">libsecret</a>, <a href="libsoup.html">libsoup</a>, <a href="libxml2.html">libxml2</a>, <a href="nettle.html">nettle</a>, <a href="pango.html">pango</a>, <a href="sqlite.html">sqlite</a>, <a href="webkitgtk.html">webkitgtk</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/epiphany-43.1-r2.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/epiphany-43.1-r2.tar.gz</a> (3.2 MiB)</dd><dt>SHA-256</dt><dd><code>2ac6bc13826e1a4cfa294e6a2ee9201381053859d8c7576be3054e38185f9ce4</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="libgpg-error.html">libgpg-error</a>, <a href="libgcrypt.html">libgcrypt</a>, <a href="p11-kit.html">p11-kit</a>, <a href="gcr.html">gcr</a>, <a href="gmp.html">gmp</a>, <a href="json-glib.html">json-glib</a>, <a href="lz4.html">lz4</a>, <a href="openssl.html">openssl</a>, <a href="zstd.html">zstd</a>, <a href="libarchive.html">libarchive</a>, <a href="libdazzle.html">libdazzle</a>, <a href="libhandy.html">libhandy</a>, <a href="libportal.html">libportal</a>, <a href="libsecret.html">libsecret</a>, <a href="libidn2.html">libidn2</a>, <a href="libpsl.html">libpsl</a>, <a href="nghttp2.html">nghttp2</a>, <a href="sqlite.html">sqlite</a>, <a href="libsoup.html">libsoup</a>, <a href="nettle.html">nettle</a>, <a href="aom.html">aom</a>, <a href="fdk-aac.html">fdk-aac</a>, <a href="gstreamer.html">gstreamer</a>, <a href="libogg.html">libogg</a>, <a href="libtheora.html">libtheora</a>, <a href="libvorbis.html">libvorbis</a>, <a href="opus.html">opus</a>, <a href="gst-plugins-base.html">gst-plugins-base</a>, <a href="libwebp.html">libwebp</a>, <a href="openh264.html">openh264</a>, <a href="svt-av1.html">svt-av1</a>, <a href="x265.html">x265</a>, <a href="gst-plugins-bad.html">gst-plugins-bad</a>, <a href="hyphen.html">hyphen</a>, <a href="lcms2.html">lcms2</a>, <a href="dav1d.html">dav1d</a>, <a href="libavif.html">libavif</a>, <a href="highway.html">highway</a>, <a href="libjxl.html">libjxl</a>, <a href="libtasn1.html">libtasn1</a>, <a href="libxslt.html">libxslt</a>, <a href="woff2.html">woff2</a>, <a href="webkitgtk.html">webkitgtk</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/epiphany-43.1-r2.tar.gz
+[ &quot;$(openssl dgst -sha256 epiphany-43.1-r2.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 2ac6bc13826e1a4cfa294e6a2ee9201381053859d8c7576be3054e38185f9ce4 ] &amp;&amp; echo OK || echo BAD
+gzip -dc epiphany-43.1-r2.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/epiphany.list
+gzip -dc epiphany-43.1-r2.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm epiphany-43.1-r2.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/epiphany.list
+rm var/lib/manual/epiphany.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="libgpg-error.html">libgpg-error</a>, <a href="libgcrypt.html">libgcrypt</a>, <a href="p11-kit.html">p11-kit</a>, <a href="gcr.html">gcr</a>, <a href="gmp.html">gmp</a>, <a href="json-glib.html">json-glib</a>, <a href="lz4.html">lz4</a>, <a href="openssl.html">openssl</a>, <a href="zstd.html">zstd</a>, <a href="libarchive.html">libarchive</a>, <a href="libdazzle.html">libdazzle</a>, <a href="libhandy.html">libhandy</a>, <a href="libportal.html">libportal</a>, <a href="libsecret.html">libsecret</a>, <a href="libidn2.html">libidn2</a>, <a href="libpsl.html">libpsl</a>, <a href="nghttp2.html">nghttp2</a>, <a href="sqlite.html">sqlite</a>, <a href="libsoup.html">libsoup</a>, <a href="nettle.html">nettle</a>, <a href="aom.html">aom</a>, <a href="fdk-aac.html">fdk-aac</a>, <a href="gstreamer.html">gstreamer</a>, <a href="libogg.html">libogg</a>, <a href="libtheora.html">libtheora</a>, <a href="libvorbis.html">libvorbis</a>, <a href="opus.html">opus</a>, <a href="gst-plugins-base.html">gst-plugins-base</a>, <a href="libwebp.html">libwebp</a>, <a href="openh264.html">openh264</a>, <a href="svt-av1.html">svt-av1</a>, <a href="x265.html">x265</a>, <a href="gst-plugins-bad.html">gst-plugins-bad</a>, <a href="hyphen.html">hyphen</a>, <a href="lcms2.html">lcms2</a>, <a href="dav1d.html">dav1d</a>, <a href="libavif.html">libavif</a>, <a href="highway.html">highway</a>, <a href="libjxl.html">libjxl</a>, <a href="libtasn1.html">libtasn1</a>, <a href="libxslt.html">libxslt</a>, <a href="woff2.html">woff2</a>, <a href="webkitgtk.html">webkitgtk</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (20)</h2><a href="../../package/x86_64/at-spi2-core.html">at-spi2-core</a>, <a href="../../package/x86_64/cairo.html">cairo</a>, <a href="../../package/x86_64/gcr.html">gcr</a>, <a href="../../package/x86_64/gdk-pixbuf.html">gdk-pixbuf</a>, <a href="../../package/x86_64/gettext.html">gettext</a>, <a href="../../package/x86_64/glib.html">glib</a>, <a href="../../package/x86_64/gmp.html">gmp</a>, <a href="../../package/x86_64/gtk3.html">gtk3</a>, <a href="../../package/x86_64/json-glib.html">json-glib</a>, <a href="../../package/x86_64/libarchive.html">libarchive</a>, <a href="../../package/x86_64/libdazzle.html">libdazzle</a>, <a href="../../package/x86_64/libhandy.html">libhandy</a>, <a href="../../package/x86_64/libportal.html">libportal</a>, <a href="../../package/x86_64/libsecret.html">libsecret</a>, <a href="../../package/x86_64/libsoup.html">libsoup</a>, <a href="../../package/x86_64/libxml2.html">libxml2</a>, <a href="../../package/x86_64/nettle.html">nettle</a>, <a href="../../package/x86_64/pango.html">pango</a>, <a href="../../package/x86_64/sqlite.html">sqlite</a>, <a href="../../package/x86_64/webkitgtk.html">webkitgtk</a>
+<h2>Required by (1)</h2><a href="epiphany-dev.html">epiphany-dev</a>
+<h2>QNX patches (5)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/patches/0001-aports-001-fix-missing-function-getrandom.patch">0001-aports-001-fix-missing-function-getrandom.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/patches/0002-aports-002-fix-navigation-button-timeout-crash.patch">0002-aports-002-fix-navigation-button-timeout-crash.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/patches/0003-aports-003-use-posix-spawn-for-fork-safety.patch">0003-aports-003-use-posix-spawn-for-fork-safety.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/patches/0004-help-only-with-itstool.patch">0004-help-only-with-itstool.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/patches/0005-qnx-locale-objects.patch">0005-qnx-locale-objects.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/epiphany/README.md">ports/epiphany/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_epiphany on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/epiphany-43.1-r2.log">tests/logs/x86_64/epiphany-43.1-r2.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># epiphany 43.1-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:47:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u epiphany qnx-test-epiphany qnx-port-tests
+( 1/69) Installing dbus (1.16.0-r3)
+( 2/69) Installing libxau (1.0.11-r0)
+( 3/69) Installing libxdmcp (1.1.5-r0)
+( 4/69) Installing libxcb (1.17.0-r0)
+( 5/69) Installing libx11 (1.8.10-r0)
+( 6/69) Installing libxext (1.3.6-r0)
+( 7/69) Installing libxi (1.8.2-r0)
+( 8/69) Installing libxtst (1.2.5-r0)
+( 9/69) Installing at-spi2-core (2.54.0-r0)
+(10/69) Installing fontconfig (2.15.0-r0)
+(11/69) Installing libxrender (0.9.11-r0)
+(12/69) Installing cairo (1.18.2-r0)
+(13/69) Installing fribidi (1.0.16-r0)
+(14/69) Installing harfbuzz (&lt;ip&gt;-r0)
+(15/69) Installing libxcomposite (0.4.6-r0)
+(16/69) Installing libxfixes (6.0.1-r0)
+(17/69) Installing libxcursor (1.2.2-r0)
+(18/69) Installing libxdamage (1.1.6-r0)
+(19/69) Installing libxinerama (1.1.5-r0)
+(20/69) Installing libxml2 (2.13.5-r1)
+(21/69) Installing libxkbcommon (1.8.1-r1)
+(22/69) Installing libxrandr (1.5.4-r0)
+(23/69) Installing libxft (2.3.8-r0)
+(24/69) Installing pango (1.54.0-r0)
+(25/69) Installing wayland (1.24.0-r0)
+(26/69) Installing gtk3 (3.24.43-r1)
+(27/69) Installing libgpg-error (1.50-r0)
+(28/69) Installing libgcrypt (1.11.0-r1)
+(29/69) Installing p11-kit (0.25.5-r0)
+(30/69) Installing gcr (3.41.2-r0)
+(31/69) Installing gmp (6.3.0-r0)
+(32/69) Installing json-glib (1.10.6-r0)
+(33/69) Installing lz4 (1.10.0-r0)
+(34/69) Installing libarchive (3.7.7-r0)
+(35/69) Installing libdazzle (3.44.0-r0)
+(36/69) Installing libhandy (1.8.3-r0)
+(37/69) Installing libportal (0.8.1-r0)
+(38/69) Installing libsecret (0.21.4-r0)
+(39/69) Installing libidn2 (2.3.7-r0)
+(40/69) Installing libpsl (0.21.5-r0)
+(41/69) Installing nghttp2 (1.64.0-r0)
+(42/69) Installing sqlite (3.47.2-r0)
+(43/69) Installing libsoup (3.6.1-r0)
+(44/69) Installing nettle (3.10.1-r0)
+(45/69) Installing aom (3.12.1-r0)
+(46/69) Installing fdk-aac (2.0.3-r0)
+(47/69) Installing gstreamer (1.24.10-r0)
+(48/69) Installing libogg (1.3.5-r0)
+(49/69) Installing libtheora (1.1.1-r0)
+(50/69) Installing libvorbis (1.3.7-r0)
+(51/69) Installing opus (1.5.2-r0)
+(52/69) Installing gst-plugins-base (1.24.10-r1)
+(53/69) Installing libwebp (1.4.0-r0)
+(54/69) Installing openh264 (2.5.0-r0)
+(55/69) Installing svt-av1 (2.3.0-r0)
+(56/69) Installing x265 (3.6-r0)
+(57/69) Installing gst-plugins-bad (1.24.10-r0)
+(58/69) Installing hyphen (2.8.8-r0)
+(59/69) Installing lcms2 (2.16-r0)
+(60/69) Installing dav1d (1.5.0-r0)
+(61/69) Installing libavif (1.1.1-r0)
+(62/69) Installing highway (1.2.0-r0)
+(63/69) Installing libjxl (0.11.1-r0)
+(64/69) Installing libtasn1 (4.19.0-r0)
+(65/69) Installing libxslt (1.1.42-r0)
+(66/69) Installing woff2 (1.0.2-r0)
+(67/69) Installing webkitgtk (2.44.4-r0)
+(68/69) Installing epiphany (43.1-r2)
+(69/69) Installing qnx-test-epiphany (1.0-r0)
+OK: 360 MiB in 102 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_epiphany
+     == epiphany ==
+       info epiphany --version -&gt; 0: Web 43.1
+       ok   epiphany --version: Web 43.1
+       ok   epiphany --help lists its options
+       info -&gt; 1: Cannot use --private-instance and --application-mode at the same time
+       ok   conflicting --private-instance/--application-mode rejected
+       ok   --automation-mode with --incognito-mode rejected
+       ok   --application-mode with a missing --profile directory rejected
+       ok   unknown option rejected by name
+       info ephy-profile-migrator -v 999 -&gt; 1: Version mismatch, version 999 requested but our version is 37
+       ok   ephy-profile-migrator: migration version 37
+       ok   default bookmarks (RDF) installed
+       ok   GSettings schema org.gnome.Epiphany.web installed
+       ok   desktop entry runs epiphany
+     PASS epiphany
+PASS test_epiphany
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-epiphany qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-epiphany-1.0-r0.apk">qnx-test-epiphany-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (125)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/epiphany
+/usr/local/lib/epiphany/libephymain.so
+/usr/local/lib/epiphany/libephymisc.so
+/usr/local/lib/epiphany/libephysync.so
+/usr/local/lib/epiphany/web-process-extensions/libephywebextension.so
+/usr/local/lib/epiphany/web-process-extensions/libephywebprocessextension.so
+/usr/local/libexec/epiphany-search-provider
+/usr/local/libexec/epiphany-webapp-provider
+/usr/local/libexec/epiphany/ephy-profile-migrator
+/usr/local/share/applications/org.gnome.Epiphany.desktop
+/usr/local/share/dbus-1/services/org.gnome.Epiphany.SearchProvider.service
+/usr/local/share/dbus-1/services/org.gnome.Epiphany.WebAppProvider.service
+/usr/local/share/epiphany/default-bookmarks.rdf
+/usr/local/share/glib-2.0/schemas/org.gnome.Epiphany.enums.xml
+/usr/local/share/glib-2.0/schemas/org.gnome.epiphany.gschema.xml
+/usr/local/share/gnome-shell/search-providers/org.gnome.Epiphany.SearchProvider.ini
+/usr/local/share/icons/hicolor/scalable/apps/org.gnome.Epiphany.svg
+/usr/local/share/icons/hicolor/symbolic/apps/org.gnome.Epiphany-symbolic.svg
+/usr/local/share/locale/ab/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/af/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/am/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/an/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ar/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/as/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ast/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/az/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/be/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/be@latin/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/bg/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/bn/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/bn_IN/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/br/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/bs/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ca/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ca@valencia/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ckb/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/cs/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/cy/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/da/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/de/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/dz/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/el/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/en@shaw/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/en_CA/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/eo/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/es/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/et/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/eu/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/fa/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/fi/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/fr/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/fur/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/fy/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ga/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/gl/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/gu/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/gv/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/he/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/hi/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/hr/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/hu/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/hy/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/id/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ie/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ig/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/is/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/it/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ja/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ka/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/kk/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/km/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/kn/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ko/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ku/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/li/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/lt/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/lv/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mai/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mg/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mi/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mk/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ml/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mn/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/mr/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ms/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/nb/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/nds/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ne/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/nl/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/nn/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/oc/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/or/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/pa/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/pl/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ps/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/pt/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ro/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ru/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/rw/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/si/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sk/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sl/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sq/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sr/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sr@latin/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/sv/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ta/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/te/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/tg/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/th/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/tk/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/tr/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/ug/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/uk/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/uz/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/uz@cyrillic/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/vi/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/wa/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/yo/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/epiphany.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/epiphany.mo
+/usr/local/share/metainfo/org.gnome.Epiphany.appdata.xml</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>43.1-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/epiphany-43.1-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/epiphany-43.1-r0.tar.gz">.tar.gz</a> &middot; <code>apk add epiphany=43.1-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

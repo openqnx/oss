@@ -1,0 +1,481 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>pygame 2.6.1_git20251005-r1 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>pygame <span class=mut>2.6.1_git20251005-r1</span></h1><p class=sum><b>Python game development library on SDL2</b><br>pygame 2.6.1_git20251005 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>2.6.1_git20251005-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/pygame.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/pygame/pygame.git">https://github.com/pygame/pygame.git</a></dd>
+<dt>License</dt><dd>LGPL-2.1-or-later <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/pygame">ports/pygame</a></dd>
+<dt>Package size</dt><dd>2.6 MiB</dd>
+<dt>Installed size</dt><dd>7.1 MiB</dd>
+<dt>Build date</dt><dd>2026-11-01</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add pygame
+apk add pygame=2.6.1_git20251005-r1   <span class=mut># this version</span>
+
+apk del pygame   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/pygame-2.6.1_git20251005-r1.apk">pygame-2.6.1_git20251005-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install pygame
+oss-get install pygame=2.6.1_git20251005-r1   <span class=mut># this version</span>
+
+oss-get remove pygame   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="freetype.html">freetype</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="libpng.html">libpng</a>, <a href="python3.html">python3</a>, <a href="sdl2.html">sdl2</a>, <a href="sdl2-image.html">sdl2-image</a>, <a href="sdl2-mixer.html">sdl2-mixer</a>, <a href="sdl2-ttf.html">sdl2-ttf</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/pygame-2.6.1_git20251005-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/pygame-2.6.1_git20251005-r1.tar.gz</a> (2.6 MiB)</dd><dt>SHA-256</dt><dd><code>fc2ddce915f04b743dc2bfa456cf552f8502757b6397d10cf7c25817f6c22de1</code></dd><dt>Install first</dt><dd><a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a>, <a href="sdl2.html">sdl2</a>, <a href="aom.html">aom</a>, <a href="dav1d.html">dav1d</a>, <a href="libavif.html">libavif</a>, <a href="libwebp.html">libwebp</a>, <a href="libtiff.html">libtiff</a>, <a href="sdl2-image.html">sdl2-image</a>, <a href="libogg.html">libogg</a>, <a href="opus.html">opus</a>, <a href="opusfile.html">opusfile</a>, <a href="sdl2-mixer.html">sdl2-mixer</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="sdl2-ttf.html">sdl2-ttf</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/pygame-2.6.1_git20251005-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 pygame-2.6.1_git20251005-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = fc2ddce915f04b743dc2bfa456cf552f8502757b6397d10cf7c25817f6c22de1 ] &amp;&amp; echo OK || echo BAD
+gzip -dc pygame-2.6.1_git20251005-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/pygame.list
+gzip -dc pygame-2.6.1_git20251005-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm pygame-2.6.1_git20251005-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/pygame.list
+rm var/lib/manual/pygame.list</code></pre><p class=mut>Its dependencies stay installed: <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a>, <a href="sdl2.html">sdl2</a>, <a href="aom.html">aom</a>, <a href="dav1d.html">dav1d</a>, <a href="libavif.html">libavif</a>, <a href="libwebp.html">libwebp</a>, <a href="libtiff.html">libtiff</a>, <a href="sdl2-image.html">sdl2-image</a>, <a href="libogg.html">libogg</a>, <a href="opus.html">opus</a>, <a href="opusfile.html">opusfile</a>, <a href="sdl2-mixer.html">sdl2-mixer</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="sdl2-ttf.html">sdl2-ttf</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (8)</h2><a href="../../package/aarch64/freetype.html">freetype</a>, <a href="../../package/aarch64/libjpeg-turbo.html">libjpeg-turbo</a>, <a href="../../package/aarch64/libpng.html">libpng</a>, <a href="../../package/aarch64/python3.html">python3</a>, <a href="../../package/aarch64/sdl2.html">sdl2</a>, <a href="../../package/aarch64/sdl2-image.html">sdl2-image</a>, <a href="../../package/aarch64/sdl2-mixer.html">sdl2-mixer</a>, <a href="../../package/aarch64/sdl2-ttf.html">sdl2-ttf</a>
+<h2>Required by (1)</h2><a href="pygame-dev.html">pygame-dev</a>
+<h2>QNX patches (2)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/pygame/patches/0001-qnx-config-from-qnx-ports.patch">0001-qnx-config-from-qnx-ports.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/pygame/patches/0002-qnx-cross-build.patch">0002-qnx-cross-build.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/pygame/README.md">ports/pygame/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_pygame on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/pygame-2.6.1_git20251005-r1.log">tests/logs/aarch64le/pygame-2.6.1_git20251005-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># pygame 2.6.1_git20251005-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:39:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pygame qnx-test-pygame qnx-port-tests
+( 1/27) Installing bzip2 (1.0.8-r0)
+( 2/27) Installing freetype (2.13.3-r0)
+( 3/27) Installing expat (2.6.4-r0)
+( 4/27) Installing gdbm (1.24-r0)
+( 5/27) Installing readline (8.2-r0)
+( 6/27) Installing sqlite (3.47.2-r0)
+( 7/27) Installing xz (5.6.3-r0)
+( 8/27) Installing python3 (3.14.0-r2)
+( 9/27) Installing sdl2 (2.32.10-r0)
+(10/27) Installing aom (3.12.1-r0)
+(11/27) Installing dav1d (1.5.0-r0)
+(12/27) Installing libavif (1.1.1-r0)
+(13/27) Installing libwebp (1.4.0-r0)
+(14/27) Installing libtiff (4.7.0-r0)
+(15/27) Installing sdl2-image (2.8.8-r0)
+(16/27) Installing libogg (1.3.5-r0)
+(17/27) Installing opus (1.5.2-r0)
+(18/27) Installing opusfile (0.12-r0)
+(19/27) Installing sdl2-mixer (2.8.2-r1)
+(20/27) Installing graphite2 (1.3.14-r0)
+(21/27) Installing icu (76.1-r1)
+(22/27) Installing harfbuzz (&lt;ip&gt;-r0)
+(23/27) Installing sdl2-ttf (2.24.0-r0)
+(24/27) Installing pygame (2.6.1_git20251005-r1)
+(25/27) Installing openblas (0.3.28-r0)
+(26/27) Installing numpy (2.3.4-r1)
+(27/27) Installing qnx-test-pygame (1.0-r0)
+OK: 324 MiB in 66 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pygame
+     == pygame ==
+       info pygame 2.6.1, SDL 2.32.10
+       info pygame.init(): 5 modules up, 0 failed
+       ok   display.set_mode on the dummy driver: 64x48
+       ok   drawn rect on the display surface
+       ok   window caption
+       ok   circle: centre blue, corner white
+       ok   line on the last row
+       ok   blit at an offset
+       ok   transform.scale
+       ok   transform.rotate 90: 40x20 -&gt; 20x40
+       ok   transform.flip
+       ok   mask of the blue circle: 308 pixels (~pi*10^2)
+       ok   PNG save/load exact
+       ok   BMP save/load exact
+       ok   TGA save/load exact
+       ok   JPEG save/load (SDL_image) close to the original
+       ok   image.get_extended(): SDL_image formats available
+       ok   image.tobytes RGB
+       info font.size(&#x27;QNX&#x27;) = 37x16
+       ok   pygame.font (SDL_ttf): text size
+       ok   pygame.font render (anti-aliased, with alpha)
+       ok   pygame.freetype render
+       info mixer.get_init() = (22050, -16, 1)
+       ok   mixer on the dummy audio driver: 22050 Hz mono
+       ok   Sound from a buffer: 0.5 s, raw samples kept
+       ok   Sound.play() on a channel
+       ok   WAV file loaded by SDL_mixer: 0.5 s
+       ok   mixer.music plays the WAV
+       ok   sndarray: samples as numpy
+       ok   surfarray.array3d
+       ok   surfarray.make_surface
+       ok   Rect collide, clip, union
+       ok   math.Vector2/3
+       ok   event post/get
+       ok   time.wait(50)
+       ok   Color names, HSV
+     PASS pygame
+PASS test_pygame
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-pygame qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-pygame-1.0-r0.apk">qnx-test-pygame-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (321)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/lib/python3.14/site-packages/pygame-2.6.1.dist-info/METADATA
+/usr/local/lib/python3.14/site-packages/pygame-2.6.1.dist-info/RECORD
+/usr/local/lib/python3.14/site-packages/pygame-2.6.1.dist-info/WHEEL
+/usr/local/lib/python3.14/site-packages/pygame-2.6.1.dist-info/entry_points.txt
+/usr/local/lib/python3.14/site-packages/pygame-2.6.1.dist-info/top_level.txt
+/usr/local/lib/python3.14/site-packages/pygame/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/__init__.pyi
+/usr/local/lib/python3.14/site-packages/pygame/__pyinstaller/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/__pyinstaller/hook-pygame.py
+/usr/local/lib/python3.14/site-packages/pygame/_camera_opencv.py
+/usr/local/lib/python3.14/site-packages/pygame/_camera_vidcapture.py
+/usr/local/lib/python3.14/site-packages/pygame/_common.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_freetype.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/__init__.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/audio.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/audio.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/controller.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/controller.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/mixer.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/sdl2.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/sdl2.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/touch.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/touch.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/video.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/_sdl2/video.pyi
+/usr/local/lib/python3.14/site-packages/pygame/_sprite.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/base.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/base.pyi
+/usr/local/lib/python3.14/site-packages/pygame/bufferproxy.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/bufferproxy.pyi
+/usr/local/lib/python3.14/site-packages/pygame/camera.py
+/usr/local/lib/python3.14/site-packages/pygame/camera.pyi
+/usr/local/lib/python3.14/site-packages/pygame/color.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/color.pyi
+/usr/local/lib/python3.14/site-packages/pygame/colordict.py
+/usr/local/lib/python3.14/site-packages/pygame/constants.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/constants.pyi
+/usr/local/lib/python3.14/site-packages/pygame/cursors.py
+/usr/local/lib/python3.14/site-packages/pygame/cursors.pyi
+/usr/local/lib/python3.14/site-packages/pygame/display.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/display.pyi
+/usr/local/lib/python3.14/site-packages/pygame/docs/__main__.py
+/usr/local/lib/python3.14/site-packages/pygame/draw.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/draw.pyi
+/usr/local/lib/python3.14/site-packages/pygame/draw_py.py
+/usr/local/lib/python3.14/site-packages/pygame/event.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/event.pyi
+/usr/local/lib/python3.14/site-packages/pygame/examples/README.rst
+/usr/local/lib/python3.14/site-packages/pygame/examples/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/aacircle.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/aliens.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/arraydemo.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/audiocapture.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/blend_fill.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/blit_blends.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/camera.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/chimp.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/cursors.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/BGR.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien1.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien1.jpg
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien1.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien2.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien2.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien3.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/alien3.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/arraydemo.bmp
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/asprite.bmp
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/background.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/black.ppm
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/blue.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/blue.mpg
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/bomb.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/boom.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/brick.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/car_door.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/chimp.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/city.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/crimson.pnm
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/cursor.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/danger.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/explosion1.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/fist.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/green.pcx
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/grey.pgm
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/house_lo.mp3
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/house_lo.ogg
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/house_lo.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/laplacian.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/liquid.bmp
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/midikeys.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/player1.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/punch.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/purple.xpm
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/red.jpg
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/sans.ttf
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/scarlet.webp
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/secosmic_lo.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/shot.gif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/static.png
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/teal.svg
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/turquoise.tif
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/whiff.wav
+/usr/local/lib/python3.14/site-packages/pygame/examples/data/yellow.tga
+/usr/local/lib/python3.14/site-packages/pygame/examples/dropevent.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/eventlist.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/font_viewer.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/fonty.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/freetype_misc.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/glcube.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/go_over_there.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/grid.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/headless_no_windows_needed.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/joystick.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/liquid.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/mask.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/midi.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/moveit.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/music_drop_fade.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/pixelarray.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/playmus.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/resizing_new.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/scaletest.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/scrap_clipboard.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/scroll.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/setmodescale.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/sound.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/sound_array_demos.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/sprite_texture.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/stars.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/testsprite.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/textinput.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/vgrade.py
+/usr/local/lib/python3.14/site-packages/pygame/examples/video.py
+/usr/local/lib/python3.14/site-packages/pygame/fastevent.py
+/usr/local/lib/python3.14/site-packages/pygame/fastevent.pyi
+/usr/local/lib/python3.14/site-packages/pygame/font.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/font.pyi
+/usr/local/lib/python3.14/site-packages/pygame/freesansbold.ttf
+/usr/local/lib/python3.14/site-packages/pygame/freetype.py
+/usr/local/lib/python3.14/site-packages/pygame/freetype.pyi
+/usr/local/lib/python3.14/site-packages/pygame/ftfont.py
+/usr/local/lib/python3.14/site-packages/pygame/gfxdraw.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/gfxdraw.pyi
+/usr/local/lib/python3.14/site-packages/pygame/image.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/image.pyi
+/usr/local/lib/python3.14/site-packages/pygame/imageext.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/joystick.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/joystick.pyi
+/usr/local/lib/python3.14/site-packages/pygame/key.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/key.pyi
+/usr/local/lib/python3.14/site-packages/pygame/locals.py
+/usr/local/lib/python3.14/site-packages/pygame/locals.pyi
+/usr/local/lib/python3.14/site-packages/pygame/macosx.py
+/usr/local/lib/python3.14/site-packages/pygame/mask.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/mask.pyi
+/usr/local/lib/python3.14/site-packages/pygame/math.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/math.pyi
+/usr/local/lib/python3.14/site-packages/pygame/midi.py
+/usr/local/lib/python3.14/site-packages/pygame/midi.pyi
+/usr/local/lib/python3.14/site-packages/pygame/mixer.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/mixer.pyi
+/usr/local/lib/python3.14/site-packages/pygame/mixer_music.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/mixer_music.pyi
+/usr/local/lib/python3.14/site-packages/pygame/mouse.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/mouse.pyi
+/usr/local/lib/python3.14/site-packages/pygame/newbuffer.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/pixelarray.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/pixelarray.pyi
+/usr/local/lib/python3.14/site-packages/pygame/pixelcopy.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/pixelcopy.pyi
+/usr/local/lib/python3.14/site-packages/pygame/pkgdata.py
+/usr/local/lib/python3.14/site-packages/pygame/py.typed
+/usr/local/lib/python3.14/site-packages/pygame/pygame.ico
+/usr/local/lib/python3.14/site-packages/pygame/pygame_icon.bmp
+/usr/local/lib/python3.14/site-packages/pygame/pygame_icon.icns
+/usr/local/lib/python3.14/site-packages/pygame/pygame_icon_mac.bmp
+/usr/local/lib/python3.14/site-packages/pygame/rect.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/rect.pyi
+/usr/local/lib/python3.14/site-packages/pygame/rwobject.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/rwobject.pyi
+/usr/local/lib/python3.14/site-packages/pygame/scrap.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/scrap.pyi
+/usr/local/lib/python3.14/site-packages/pygame/sndarray.py
+/usr/local/lib/python3.14/site-packages/pygame/sndarray.pyi
+/usr/local/lib/python3.14/site-packages/pygame/sprite.py
+/usr/local/lib/python3.14/site-packages/pygame/sprite.pyi
+/usr/local/lib/python3.14/site-packages/pygame/surface.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/surface.pyi
+/usr/local/lib/python3.14/site-packages/pygame/surfarray.py
+/usr/local/lib/python3.14/site-packages/pygame/surfarray.pyi
+/usr/local/lib/python3.14/site-packages/pygame/surflock.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/surflock.pyi
+/usr/local/lib/python3.14/site-packages/pygame/sysfont.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/__main__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/base_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/blit_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/bufferproxy_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/camera_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/color_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/constants_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/controller_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/cursors_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/display_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/docs_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/draw_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/event_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/A_PyGameMono-8.png
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/PlayfairDisplaySemibold.ttf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/PyGameMono-18-100dpi.bdf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/PyGameMono-18-75dpi.bdf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/PyGameMono-8.bdf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/PyGameMono.otf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/test_fixed.otf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/test_sans.ttf
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/fonts/u13079_PyGameMono-8.png
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/xbm_cursors/white_sizing.xbm
+/usr/local/lib/python3.14/site-packages/pygame/tests/fixtures/xbm_cursors/white_sizing_mask.xbm
+/usr/local/lib/python3.14/site-packages/pygame/tests/font_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/freetype_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/freetype_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/ftfont_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/ftfont_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/gfxdraw_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/image__save_gl_surface_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/image_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/image_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/imageext_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/imageext_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/joystick_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/key_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/locals_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mask_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/math_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/midi_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mixer_music_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mixer_music_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mixer_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mixer_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/mouse_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/pixelarray_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/pixelcopy_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/rect_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/fake_4_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/fake_5_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/fake_6_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/no_assertions__ret_code_of_1__test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/all_ok/zero_tests_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/everything/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/everything/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/everything/incomplete_todo_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/everything/magic_tag_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/everything/sleep_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/exclude/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/exclude/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/exclude/invisible_tag_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/exclude/magic_tag_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/failures1/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/failures1/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/failures1/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/failures1/fake_4_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete_todo/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete_todo/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/incomplete_todo/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/infinite_loop/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/infinite_loop/fake_1_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/infinite_loop/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stderr/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stderr/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stderr/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stderr/fake_4_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stdout/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stdout/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stdout/fake_3_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/print_stdout/fake_4_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/run_tests__test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/timeout/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/timeout/fake_2_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/run_tests__tests/timeout/sleep_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/rwobject_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/scrap_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/scrap_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/sndarray_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/sndarray_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/sprite_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/surface_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/surfarray_tags.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/surfarray_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/surflock_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/sysfont_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/arrinter.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/async_sub.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/buftools.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/endian.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/png.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/run_tests.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/test_machinery.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/test_utils/test_runner.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/threads_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/time_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/touch_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/transform_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/version_test.py
+/usr/local/lib/python3.14/site-packages/pygame/tests/video_test.py
+/usr/local/lib/python3.14/site-packages/pygame/threads/__init__.py
+/usr/local/lib/python3.14/site-packages/pygame/time.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/time.pyi
+/usr/local/lib/python3.14/site-packages/pygame/transform.cpython-314.so
+/usr/local/lib/python3.14/site-packages/pygame/transform.pyi
+/usr/local/lib/python3.14/site-packages/pygame/version.py
+/usr/local/lib/python3.14/site-packages/pygame/version.pyi</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

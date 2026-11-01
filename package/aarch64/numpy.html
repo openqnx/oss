@@ -1,0 +1,1035 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>numpy 2.3.4-r1 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>numpy <span class=mut>2.3.4-r1</span></h1><p class=sum><b>Fundamental package for array computing in Python</b><br>numpy 2.3.4 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>2.3.4-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/numpy.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/numpy/numpy.git">https://github.com/numpy/numpy.git</a></dd>
+<dt>License</dt><dd>BSD-3 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/numpy">ports/numpy</a></dd>
+<dt>Package size</dt><dd>6.0 MiB</dd>
+<dt>Installed size</dt><dd>20.9 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add numpy
+apk add numpy=2.3.4-r1   <span class=mut># this version</span>
+
+apk del numpy   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/numpy-2.3.4-r1.apk">numpy-2.3.4-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install numpy
+oss-get install numpy=2.3.4-r1   <span class=mut># this version</span>
+
+oss-get remove numpy   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="openblas.html">openblas</a>, <a href="python3.html">python3</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/numpy-2.3.4-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/numpy-2.3.4-r1.tar.gz</a> (6.0 MiB)</dd><dt>SHA-256</dt><dd><code>01385216380f2c387dc32eaa5c6f2deb356547b4c62be0ea7f17bd4b340ed56b</code></dd><dt>Install first</dt><dd><a href="openblas.html">openblas</a>, <a href="bzip2.html">bzip2</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/numpy-2.3.4-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 numpy-2.3.4-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 01385216380f2c387dc32eaa5c6f2deb356547b4c62be0ea7f17bd4b340ed56b ] &amp;&amp; echo OK || echo BAD
+gzip -dc numpy-2.3.4-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/numpy.list
+gzip -dc numpy-2.3.4-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm numpy-2.3.4-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/numpy.list
+rm var/lib/manual/numpy.list</code></pre><p class=mut>Its dependencies stay installed: <a href="openblas.html">openblas</a>, <a href="bzip2.html">bzip2</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (2)</h2><a href="../../package/aarch64/openblas.html">openblas</a>, <a href="../../package/aarch64/python3.html">python3</a>
+<h2>Required by (4)</h2><a href="numpy-dev.html">numpy-dev</a>, <a href="python3-contourpy.html">python3-contourpy</a>, <a href="python3-matplotlib.html">python3-matplotlib</a>, <a href="python3-ml-dtypes.html">python3-ml-dtypes</a>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/numpy/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/numpy/README.md">ports/numpy/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_numpy on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/numpy-2.3.4-r1.log">tests/logs/aarch64le/numpy-2.3.4-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># numpy 2.3.4-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:35:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u numpy qnx-test-numpy qnx-port-tests
+( 1/10) Installing openblas (0.3.28-r0)
+( 2/10) Installing bzip2 (1.0.8-r0)
+( 3/10) Installing expat (2.6.4-r0)
+( 4/10) Installing gdbm (1.24-r0)
+( 5/10) Installing readline (8.2-r0)
+( 6/10) Installing sqlite (3.47.2-r0)
+( 7/10) Installing xz (5.6.3-r0)
+( 8/10) Installing python3 (3.14.0-r2)
+( 9/10) Installing numpy (2.3.4-r1)
+(10/10) Installing qnx-test-numpy (1.0-r0)
+OK: 262 MiB in 49 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_numpy
+     == numpy ==
+     /data/var/tmp/qnxport-numpy.9Sw9q9/t.py:45: RuntimeWarning: overflow encountered in cast
+       check(np.float16(65504) == 65504 and np.isinf(np.float16(65520)), &quot;float16: max 65504, 65520 overflows&quot;)
+       info numpy 2.3.4, python 3.14.0
+       ok   solve [[3,1],[1,2]] x = [9,8] -&gt; [2,3]
+       ok   det [[1,2],[3,4]] = -2
+       ok   inv(M) @ M = I
+       ok   eigenvalues of [[2,1],[1,2]] = 1, 3
+       ok   singular values of diag(3,-4) = 4, 3
+       ok   least squares fit of y = 2.5x - 1
+       ok   60x60 random matrix times its inverse = I
+       ok   QR decomposition reproduces the matrix
+       info BLAS: openblas
+       ok   fft of an impulse is flat
+       ok   fft [0,1,0,-1] = [0,-2j,0,2j]
+       ok   a 10-cycle sine peaks in bin 10
+       ok   ifft(fft(x)) = x
+       ok   reshape, transpose, sum over an axis
+       ok   broadcasting (3,1) x (4,) -&gt; (3,4)
+       ok   int8 array summed as int64: 300
+       ok   uint8 arrays wrap around: 250 + 10 = 4
+       ok   float16: max 65504, 65520 overflows
+       ok   einsum matrix product
+       ok   sort, searchsorted
+       ok   median, std
+       ok   structured dtype
+       ok   standard normal: mean 0, std 1 (200k samples)
+       ok   same seed, same stream
+       ok   uniform [0,1)
+       ok   np.save / np.load round trip
+       ok   savetxt / loadtxt
+     PASS numpy
+PASS test_numpy
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-numpy qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-numpy-1.0-r0.apk">qnx-test-numpy-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (895)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/lib/python3.14/site-packages/numpy-2.3.4.dist-info/LICENSE.txt
+/usr/local/lib/python3.14/site-packages/numpy-2.3.4.dist-info/METADATA
+/usr/local/lib/python3.14/site-packages/numpy-2.3.4.dist-info/RECORD
+/usr/local/lib/python3.14/site-packages/numpy-2.3.4.dist-info/WHEEL
+/usr/local/lib/python3.14/site-packages/numpy-2.3.4.dist-info/entry_points.txt
+/usr/local/lib/python3.14/site-packages/numpy/__config__.py
+/usr/local/lib/python3.14/site-packages/numpy/__config__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/__init__.cython-30.pxd
+/usr/local/lib/python3.14/site-packages/numpy/__init__.pxd
+/usr/local/lib/python3.14/site-packages/numpy/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_array_api_info.py
+/usr/local/lib/python3.14/site-packages/numpy/_array_api_info.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_configtool.py
+/usr/local/lib/python3.14/site-packages/numpy/_configtool.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_add_newdocs.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_add_newdocs.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_add_newdocs_scalars.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_add_newdocs_scalars.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_asarray.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_asarray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_dtype.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_dtype.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_dtype_ctypes.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_dtype_ctypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_exceptions.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_exceptions.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_internal.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_internal.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_machar.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_machar.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_methods.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_methods.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_multiarray_tests.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_multiarray_umath.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_operand_flag_tests.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_rational_tests.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_simd.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_simd.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_string_helpers.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_string_helpers.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_struct_ufunc_tests.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/_type_aliases.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_type_aliases.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_ufunc_config.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/_ufunc_config.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/_umath_tests.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/_core/arrayprint.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/arrayprint.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/cversions.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/defchararray.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/defchararray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/einsumfunc.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/einsumfunc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/fromnumeric.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/fromnumeric.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/function_base.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/function_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/getlimits.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/getlimits.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/__multiarray_api.c
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/__multiarray_api.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/__ufunc_api.c
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/__ufunc_api.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/_neighborhood_iterator_imp.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/_numpyconfig.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/_public_dtype_api_table.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/arrayobject.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/arrayscalars.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/dtype_api.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/halffloat.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/ndarrayobject.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/ndarraytypes.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_2_compat.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_2_complexcompat.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_3kcompat.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_common.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_cpu.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_endian.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_math.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_no_deprecated_api.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/npy_os.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/numpyconfig.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/random/LICENSE.txt
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/random/bitgen.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/random/distributions.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/random/libdivide.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/ufuncobject.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/include/numpy/utils.h
+/usr/local/lib/python3.14/site-packages/numpy/_core/lib/npy-pkg-config/mlib.ini
+/usr/local/lib/python3.14/site-packages/numpy/_core/lib/npy-pkg-config/npymath.ini
+/usr/local/lib/python3.14/site-packages/numpy/_core/lib/pkgconfig/numpy.pc
+/usr/local/lib/python3.14/site-packages/numpy/_core/memmap.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/memmap.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/multiarray.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/multiarray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/numeric.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/numeric.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/numerictypes.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/numerictypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/overrides.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/overrides.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/printoptions.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/printoptions.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/records.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/records.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/shape_base.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/shape_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/strings.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/strings.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/_locales.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/_natype.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/astype_copy.pkl
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/generate_umath_validation_data.cpp
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/recarray_from_file.fits
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arccos.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arccosh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arcsin.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arcsinh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arctan.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-arctanh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-cbrt.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-cos.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-cosh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-exp.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-exp2.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-expm1.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-log.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-log10.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-log1p.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-log2.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-sin.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-sinh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-tan.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/data/umath-validation-set-tanh.csv
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/cython/checks.pyx
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/cython/meson.build
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/cython/setup.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/limited_api/limited_api1.c
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/limited_api/limited_api2.pyx
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/limited_api/limited_api_latest.c
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/limited_api/meson.build
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/examples/limited_api/setup.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test__exceptions.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_abc.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_api.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_argparse.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_array_api_info.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_array_coercion.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_array_interface.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_arraymethod.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_arrayobject.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_arrayprint.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_casting_floatingpoint_errors.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_casting_unittests.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_conversion_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_cpu_dispatcher.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_cpu_features.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_custom_dtypes.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_cython.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_datetime.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_defchararray.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_deprecations.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_dlpack.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_dtype.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_einsum.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_errstate.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_extint128.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_function_base.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_getlimits.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_half.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_hashtable.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_indexerrors.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_indexing.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_item_selection.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_limited_api.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_longdouble.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_machar.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_mem_overlap.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_mem_policy.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_memmap.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_multiarray.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_multithreading.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_nditer.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_nep50_promotions.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_numeric.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_numerictypes.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_overrides.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_print.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_protocols.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_records.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalar_ctors.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalar_methods.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalarbuffer.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalarinherit.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalarmath.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_scalarprint.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_shape_base.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_simd.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_simd_module.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_stringdtype.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_strings.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_ufunc.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_umath.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_umath_accuracy.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_umath_complex.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/tests/test_unicode.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/umath.py
+/usr/local/lib/python3.14/site-packages/numpy/_core/umath.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_distributor_init.py
+/usr/local/lib/python3.14/site-packages/numpy/_distributor_init.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_expired_attrs_2_0.py
+/usr/local/lib/python3.14/site-packages/numpy/_expired_attrs_2_0.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_globals.py
+/usr/local/lib/python3.14/site-packages/numpy/_globals.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/hook-numpy.py
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/hook-numpy.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/tests/pyinstaller-smoke.py
+/usr/local/lib/python3.14/site-packages/numpy/_pyinstaller/tests/test_pyinstaller.py
+/usr/local/lib/python3.14/site-packages/numpy/_pytesttester.py
+/usr/local/lib/python3.14/site-packages/numpy/_pytesttester.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_typing/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_add_docstring.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_array_like.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_char_codes.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_dtype_like.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_extended_precision.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_nbit.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_nbit_base.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_nbit_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_nested_sequence.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_scalars.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_shape.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_ufunc.py
+/usr/local/lib/python3.14/site-packages/numpy/_typing/_ufunc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_utils/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/_utils/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_convertions.py
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_convertions.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_inspect.py
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_inspect.pyi
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_pep440.py
+/usr/local/lib/python3.14/site-packages/numpy/_utils/_pep440.pyi
+/usr/local/lib/python3.14/site-packages/numpy/char/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/char/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/conftest.py
+/usr/local/lib/python3.14/site-packages/numpy/core/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/core/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/core/_dtype.py
+/usr/local/lib/python3.14/site-packages/numpy/core/_dtype.pyi
+/usr/local/lib/python3.14/site-packages/numpy/core/_dtype_ctypes.py
+/usr/local/lib/python3.14/site-packages/numpy/core/_dtype_ctypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/core/_internal.py
+/usr/local/lib/python3.14/site-packages/numpy/core/_multiarray_umath.py
+/usr/local/lib/python3.14/site-packages/numpy/core/_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/core/arrayprint.py
+/usr/local/lib/python3.14/site-packages/numpy/core/defchararray.py
+/usr/local/lib/python3.14/site-packages/numpy/core/einsumfunc.py
+/usr/local/lib/python3.14/site-packages/numpy/core/fromnumeric.py
+/usr/local/lib/python3.14/site-packages/numpy/core/function_base.py
+/usr/local/lib/python3.14/site-packages/numpy/core/getlimits.py
+/usr/local/lib/python3.14/site-packages/numpy/core/multiarray.py
+/usr/local/lib/python3.14/site-packages/numpy/core/numeric.py
+/usr/local/lib/python3.14/site-packages/numpy/core/numerictypes.py
+/usr/local/lib/python3.14/site-packages/numpy/core/overrides.py
+/usr/local/lib/python3.14/site-packages/numpy/core/overrides.pyi
+/usr/local/lib/python3.14/site-packages/numpy/core/records.py
+/usr/local/lib/python3.14/site-packages/numpy/core/shape_base.py
+/usr/local/lib/python3.14/site-packages/numpy/core/umath.py
+/usr/local/lib/python3.14/site-packages/numpy/ctypeslib/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/ctypeslib/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/ctypeslib/_ctypeslib.py
+/usr/local/lib/python3.14/site-packages/numpy/ctypeslib/_ctypeslib.pyi
+/usr/local/lib/python3.14/site-packages/numpy/doc/ufuncs.py
+/usr/local/lib/python3.14/site-packages/numpy/dtypes.py
+/usr/local/lib/python3.14/site-packages/numpy/dtypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/exceptions.py
+/usr/local/lib/python3.14/site-packages/numpy/exceptions.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/__main__.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/__version__.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/__version__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_backend.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_backend.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_distutils.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_distutils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_meson.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/_meson.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_backends/meson.build.template
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_isocbind.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_isocbind.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_src_pyf.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/_src_pyf.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/auxfuncs.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/auxfuncs.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/capi_maps.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/capi_maps.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/cb_rules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/cb_rules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/cfuncs.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/cfuncs.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/common_rules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/common_rules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/crackfortran.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/crackfortran.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/diagnose.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/diagnose.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/f2py2e.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/f2py2e.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/f90mod_rules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/f90mod_rules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/func2subr.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/func2subr.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/rules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/rules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/setup.cfg
+/usr/local/lib/python3.14/site-packages/numpy/f2py/src/fortranobject.c
+/usr/local/lib/python3.14/site-packages/numpy/f2py/src/fortranobject.h
+/usr/local/lib/python3.14/site-packages/numpy/f2py/symbolic.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/symbolic.pyi
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/abstract_interface/foo.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/abstract_interface/gh18403_mod.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/array_from_pyobj/wrapmodule.c
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/assumed_shape/foo_free.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/assumed_shape/foo_mod.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/assumed_shape/foo_use.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/assumed_shape/precision.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/block_docstring/foo.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/foo.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/gh17797.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/gh18335.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/gh25211.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/gh25211.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/callback/gh26681.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/cli/gh_22819.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/cli/hi77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/cli/hiworld.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/common/block.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/common/gh19161.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/accesstype.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/common_with_division.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/data_common.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/data_multiplier.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/data_stmts.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/data_with_comments.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/foo_deps.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh15035.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh17859.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh22648.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh23533.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh23598.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh23598Warn.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh23879.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh27697.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/gh2848.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/operators.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/privatemod.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/publicmod.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/pubprivmod.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/crackfortran/unicode_comment.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/f2cmap/.f2py_f2cmap
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/f2cmap/isoFortranEnvMap.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/isocintrin/isoCtests.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/kind/foo.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/mixed/foo.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/mixed/foo_fixed.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/mixed/foo_free.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/gh25337/data.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/gh25337/use_data.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/gh26920/two_mods_with_no_public_entities.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/gh26920/two_mods_with_one_public_routine.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/module_data_docstring.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/modules/use_modules.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/negative_bounds/issue_20853.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_array.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_both.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_compound.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_integer.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_non_compound.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/parameter/constant_real.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/quoted_character/foo.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/AB.inc
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/assignOnlyModule.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/datonly.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/f77comments.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/f77fixedform.f95
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/f90continuation.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/incfile.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/inout.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/lower_f2py_fortran.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/regression/mod_derived_types.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_character/foo77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_character/foo90.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_complex/foo77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_complex/foo90.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_integer/foo77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_integer/foo90.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_logical/foo77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_logical/foo90.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_real/foo77.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/return_real/foo90.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/routines/funcfortranname.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/routines/funcfortranname.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/routines/subrout.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/routines/subrout.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/size/foo.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/char.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/fixed_string.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/gh24008.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/gh24662.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/gh25286.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/gh25286.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/gh25286_bc.pyf
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/scalar_string.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/string/string.f
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/src/value_attrspec/gh21665.f90
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_abstract_interface.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_array_from_pyobj.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_assumed_shape.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_block_docstring.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_callback.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_character.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_common.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_crackfortran.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_data.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_docs.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_f2cmap.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_f2py2e.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_isoc.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_kind.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_mixed.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_modules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_parameter.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_pyf_src.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_quoted_character.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_return_character.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_return_complex.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_return_integer.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_return_logical.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_return_real.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_routines.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_semicolon_split.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_size.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_string.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_symbolic.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/test_value_attrspec.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/tests/util.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/use_rules.py
+/usr/local/lib/python3.14/site-packages/numpy/f2py/use_rules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/fft/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/fft/_helper.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/_helper.pyi
+/usr/local/lib/python3.14/site-packages/numpy/fft/_pocketfft.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/_pocketfft.pyi
+/usr/local/lib/python3.14/site-packages/numpy/fft/_pocketfft_umath.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/fft/helper.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/helper.pyi
+/usr/local/lib/python3.14/site-packages/numpy/fft/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/tests/test_helper.py
+/usr/local/lib/python3.14/site-packages/numpy/fft/tests/test_pocketfft.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_array_utils_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_array_utils_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arraypad_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arraypad_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arraysetops_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arraysetops_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arrayterator_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_arrayterator_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_datasource.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_datasource.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_format_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_format_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_function_base_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_histograms_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_histograms_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_index_tricks_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_index_tricks_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_iotools.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_iotools.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_nanfunctions_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_nanfunctions_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_npyio_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_npyio_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_polynomial_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_polynomial_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_scimath_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_scimath_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_shape_base_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_shape_base_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_stride_tricks_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_stride_tricks_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_twodim_base_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_twodim_base_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_type_check_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_type_check_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_ufunclike_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_ufunclike_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_user_array_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_user_array_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_utils_impl.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_utils_impl.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/_version.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/_version.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/array_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/array_utils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/format.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/format.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/introspect.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/introspect.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/mixins.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/mixins.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/npyio.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/npyio.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/recfunctions.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/recfunctions.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/scimath.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/scimath.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/stride_tricks.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/stride_tricks.pyi
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/py2-np0-objarr.npy
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/py2-objarr.npy
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/py2-objarr.npz
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/py3-objarr.npy
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/py3-objarr.npz
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/python3.npy
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/data/win64python2.npy
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test__datasource.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test__iotools.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test__version.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_array_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_arraypad.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_arraysetops.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_arrayterator.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_format.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_function_base.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_histograms.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_index_tricks.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_io.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_loadtxt.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_mixins.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_nanfunctions.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_packbits.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_polynomial.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_recfunctions.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_shape_base.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_stride_tricks.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_twodim_base.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_type_check.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_ufunclike.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/tests/test_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/user_array.py
+/usr/local/lib/python3.14/site-packages/numpy/lib/user_array.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/_linalg.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/_linalg.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/_umath_linalg.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/linalg/_umath_linalg.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/lapack_lite.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/linalg/lapack_lite.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/linalg.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/linalg.pyi
+/usr/local/lib/python3.14/site-packages/numpy/linalg/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/tests/test_deprecations.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/tests/test_linalg.py
+/usr/local/lib/python3.14/site-packages/numpy/linalg/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/API_CHANGES.txt
+/usr/local/lib/python3.14/site-packages/numpy/ma/LICENSE
+/usr/local/lib/python3.14/site-packages/numpy/ma/README.rst
+/usr/local/lib/python3.14/site-packages/numpy/ma/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/ma/core.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/core.pyi
+/usr/local/lib/python3.14/site-packages/numpy/ma/extras.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/extras.pyi
+/usr/local/lib/python3.14/site-packages/numpy/ma/mrecords.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/mrecords.pyi
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_arrayobject.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_core.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_deprecations.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_extras.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_mrecords.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_old_ma.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/tests/test_subclassing.py
+/usr/local/lib/python3.14/site-packages/numpy/ma/testutils.py
+/usr/local/lib/python3.14/site-packages/numpy/matlib.py
+/usr/local/lib/python3.14/site-packages/numpy/matlib.pyi
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/defmatrix.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/defmatrix.pyi
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_defmatrix.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_interaction.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_masked_matrix.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_matrix_linalg.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_multiarray.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_numeric.py
+/usr/local/lib/python3.14/site-packages/numpy/matrixlib/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/_polybase.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/_polybase.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/_polytypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/chebyshev.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/chebyshev.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/hermite.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/hermite.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/hermite_e.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/hermite_e.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/laguerre.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/laguerre.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/legendre.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/legendre.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/polynomial.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/polynomial.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/polyutils.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/polyutils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_chebyshev.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_classes.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_hermite.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_hermite_e.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_laguerre.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_legendre.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_polynomial.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_polyutils.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_printing.py
+/usr/local/lib/python3.14/site-packages/numpy/polynomial/tests/test_symbol.py
+/usr/local/lib/python3.14/site-packages/numpy/py.typed
+/usr/local/lib/python3.14/site-packages/numpy/random/LICENSE.md
+/usr/local/lib/python3.14/site-packages/numpy/random/__init__.pxd
+/usr/local/lib/python3.14/site-packages/numpy/random/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/random/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_bounded_integers.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_bounded_integers.pxd
+/usr/local/lib/python3.14/site-packages/numpy/random/_bounded_integers.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_common.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_common.pxd
+/usr/local/lib/python3.14/site-packages/numpy/random/_common.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/cffi/extending.py
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/cffi/parse.py
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/cython/extending.pyx
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/cython/extending_distributions.pyx
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/cython/meson.build
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/numba/extending.py
+/usr/local/lib/python3.14/site-packages/numpy/random/_examples/numba/extending_distributions.py
+/usr/local/lib/python3.14/site-packages/numpy/random/_generator.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_generator.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_mt19937.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_mt19937.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_pcg64.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_pcg64.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_philox.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_philox.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_pickle.py
+/usr/local/lib/python3.14/site-packages/numpy/random/_pickle.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/_sfc64.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/_sfc64.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/bit_generator.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/bit_generator.pxd
+/usr/local/lib/python3.14/site-packages/numpy/random/bit_generator.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/c_distributions.pxd
+/usr/local/lib/python3.14/site-packages/numpy/random/mtrand.cpython-314.so
+/usr/local/lib/python3.14/site-packages/numpy/random/mtrand.pyi
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/generator_pcg64_np121.pkl.gz
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/generator_pcg64_np126.pkl.gz
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/mt19937-testset-1.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/mt19937-testset-2.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/pcg64-testset-1.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/pcg64-testset-2.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/pcg64dxsm-testset-1.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/pcg64dxsm-testset-2.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/philox-testset-1.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/philox-testset-2.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/sfc64-testset-1.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/sfc64-testset-2.csv
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/data/sfc64_np126.pkl.gz
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_direct.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_extending.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_generator_mt19937.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_generator_mt19937_regressions.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_random.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_randomstate.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_randomstate_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_regression.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_seed_sequence.py
+/usr/local/lib/python3.14/site-packages/numpy/random/tests/test_smoke.py
+/usr/local/lib/python3.14/site-packages/numpy/rec/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/rec/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/strings/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/strings/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/__init__.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/extbuild.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/extbuild.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/utils.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/_private/utils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/overrides.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/overrides.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/print_coercion_tables.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/print_coercion_tables.pyi
+/usr/local/lib/python3.14/site-packages/numpy/testing/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/testing/tests/test_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test__all__.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_configtool.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_ctypeslib.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_lazyloading.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_matlib.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_numpy_config.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_numpy_version.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_public_api.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_reloading.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_scripts.py
+/usr/local/lib/python3.14/site-packages/numpy/tests/test_warnings.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/mypy_plugin.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/__init__.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/arithmetic.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/array_constructors.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/array_like.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/array_pad.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/arrayprint.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/arrayterator.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/bitwise_ops.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/char.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/chararray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/comparisons.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/constants.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/datasource.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/dtype.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/einsumfunc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/flatiter.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/fromnumeric.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/histograms.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/index_tricks.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/lib_function_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/lib_polynomial.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/lib_utils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/lib_version.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/linalg.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ma.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/memmap.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/modules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/multiarray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ndarray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ndarray_misc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/nditer.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/nested_sequence.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/npyio.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/numerictypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/random.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/rec.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/scalars.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/shape.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/shape_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/stride_tricks.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/strings.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/testing.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/twodim_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/type_check.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ufunc_config.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ufunclike.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/ufuncs.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/fail/warnings_and_errors.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/misc/extended_precision.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/mypy.ini
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/arithmetic.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/array_constructors.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/array_like.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/arrayprint.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/arrayterator.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/bitwise_ops.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/comparisons.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/dtype.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/einsumfunc.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/flatiter.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/fromnumeric.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/index_tricks.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/lib_user_array.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/lib_utils.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/lib_version.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/literal.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ma.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/mod.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/modules.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/multiarray.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ndarray_conversion.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ndarray_misc.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ndarray_shape_manipulation.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/nditer.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/numeric.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/numerictypes.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/random.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/recfunctions.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/scalars.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/shape.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/simple.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/simple_py3.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ufunc_config.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ufunclike.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/ufuncs.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/pass/warnings_and_errors.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/arithmetic.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/array_api_info.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/array_constructors.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/arraypad.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/arrayprint.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/arraysetops.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/arrayterator.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/bitwise_ops.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/char.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/chararray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/comparisons.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/constants.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ctypeslib.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/datasource.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/dtype.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/einsumfunc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/emath.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/fft.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/flatiter.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/fromnumeric.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/getlimits.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/histograms.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/index_tricks.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/lib_function_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/lib_polynomial.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/lib_utils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/lib_version.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/linalg.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ma.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/matrix.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/memmap.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/mod.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/modules.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/multiarray.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/nbit_base_example.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ndarray_assignability.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ndarray_conversion.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ndarray_misc.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ndarray_shape_manipulation.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/nditer.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/nested_sequence.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/npyio.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/numeric.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/numerictypes.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/polynomial_polybase.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/polynomial_polyutils.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/polynomial_series.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/random.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/rec.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/scalars.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/shape.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/shape_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/stride_tricks.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/strings.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/testing.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/twodim_base.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/type_check.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ufunc_config.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ufunclike.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/ufuncs.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/data/reveal/warnings_and_errors.pyi
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/test_isfile.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/test_runtime.py
+/usr/local/lib/python3.14/site-packages/numpy/typing/tests/test_typing.py
+/usr/local/lib/python3.14/site-packages/numpy/version.py
+/usr/local/lib/python3.14/site-packages/numpy/version.pyi</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>2.3.4-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/numpy-2.3.4-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/numpy-2.3.4-r0.tar.gz">.tar.gz</a> &middot; <code>apk add numpy=2.3.4-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

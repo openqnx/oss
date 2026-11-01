@@ -1,0 +1,586 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>vlc 3.0.21-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>vlc <span class=mut>3.0.21-r0</span></h1><p class=sum><b>VLC media player and libvlc multimedia engine</b><br>vlc 3.0.21 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.0.21-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/vlc.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://code.videolan.org/videolan/vlc.git">https://code.videolan.org/videolan/vlc.git</a></dd>
+<dt>License</dt><dd>GPL-2.0, LGPL-2.1 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/vlc">ports/vlc</a></dd>
+<dt>Package size</dt><dd>220.5 MiB</dd>
+<dt>Installed size</dt><dd>544.7 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>so:libvlc.so.11=3.0.21 so:libvlccore.so.9=3.0.21 so:libaccess_concat_plugin.so=3.0.21 so:libaccess_imem_plugin.so=3.0.21 so:libaccess_mms_plugin.so=3.0.21 so:libaccess_srt_plugin.so=3.0.21 so:libattachment_plugin.so=3.0.21 so:libavio_plugin.so=3.0.21 so:libdcp_plugin.so=3.0.21 so:libdvdnav_plugin.so=3.0.21 so:libdvdread_plugin.so=3.0.21 so:libfilesystem_plugin.so=3.0.21 so:libftp_plugin.so=3.0.21 so:libhttp_plugin.so=3.0.21 so:libhttps_plugin.so=3.0.21 so:libidummy_plugin.so=3.0.21 so:libimem_plugin.so=3.0.21 so:liblive555_plugin.so=3.0.21 so:libnfs_plugin.so=3.0.21 so:librist_plugin.so=3.0.21 so:librtp_plugin.so=3.0.21 so:libsatip_plugin.so=3.0.21 so:libsdp_plugin.so=3.0.21 so:libshm_plugin.so=3.0.21 so:libtcp_plugin.so=3.0.21 so:libtimecode_plugin.so=3.0.21 so:libudp_plugin.so=3.0.21 so:libvdr_plugin.so=3.0.21 so:libvnc_plugin.so=3.0.21 so:libaccess_output_dummy_plugin.so=3.0.21 so:libaccess_output_file_plugin.so=3.0.21 so:libaccess_output_http_plugin.so=3.0.21 so:libaccess_output_livehttp_plugin.so=3.0.21 so:libaccess_output_rist_plugin.so=3.0.21 so:libaccess_output_shout_plugin.so=3.0.21 so:libaccess_output_srt_plugin.so=3.0.21 so:libaccess_output_udp_plugin.so=3.0.21 so:libaudio_format_plugin.so=3.0.21 so:libaudiobargraph_a_plugin.so=3.0.21 so:libchorus_flanger_plugin.so=3.0.21 so:libcompressor_plugin.so=3.0.21 so:libdolby_surround_decoder_plugin.so=3.0.21 so:libequalizer_plugin.so=3.0.21 so:libgain_plugin.so=3.0.21 so:libheadphone_channel_mixer_plugin.so=3.0.21 so:libkaraoke_plugin.so=3.0.21 so:libmad_plugin.so=3.0.21 so:libmono_plugin.so=3.0.21 so:libnormvol_plugin.so=3.0.21 so:libparam_eq_plugin.so=3.0.21 so:libremap_plugin.so=3.0.21 so:libsamplerate_plugin.so=3.0.21 so:libscaletempo_pitch_plugin.so=3.0.21 so:libscaletempo_plugin.so=3.0.21 so:libsimple_channel_mixer_plugin.so=3.0.21 so:libspatialaudio_plugin.so=3.0.21 so:libspatializer_plugin.so=3.0.21 so:libspeex_resampler_plugin.so=3.0.21 so:libstereo_widen_plugin.so=3.0.21 so:libtospdif_plugin.so=3.0.21 so:libtrivial_channel_mixer_plugin.so=3.0.21 so:libugly_resampler_plugin.so=3.0.21 so:libfloat_mixer_plugin.so=3.0.21 so:libinteger_mixer_plugin.so=3.0.21 so:libadummy_plugin.so=3.0.21 so:libafile_plugin.so=3.0.21 so:libamem_plugin.so=3.0.21 so:libadpcm_plugin.so=3.0.21 so:libaes3_plugin.so=3.0.21 so:libaom_plugin.so=3.0.21 so:libaraw_plugin.so=3.0.21 so:libaribsub_plugin.so=3.0.21 so:libavcodec_plugin.so=3.0.21 so:libcc_plugin.so=3.0.21 so:libcdg_plugin.so=3.0.21 so:libcvdsub_plugin.so=3.0.21 so:libdav1d_plugin.so=3.0.21 so:libdca_plugin.so=3.0.21 so:libddummy_plugin.so=3.0.21 so:libdvbsub_plugin.so=3.0.21 so:libedummy_plugin.so=3.0.21 so:libfaad_plugin.so=3.0.21 so:libflac_plugin.so=3.0.21 so:libg711_plugin.so=3.0.21 so:libjpeg_plugin.so=3.0.21 so:libkate_plugin.so=3.0.21 so:liblibass_plugin.so=3.0.21 so:liblibmpeg2_plugin.so=3.0.21 so:liblpcm_plugin.so=3.0.21 so:libmpg123_plugin.so=3.0.21 so:liboggspots_plugin.so=3.0.21 so:libopus_plugin.so=3.0.21 so:libpng_plugin.so=3.0.21 so:librawvideo_plugin.so=3.0.21 so:librtpvideo_plugin.so=3.0.21 so:libschroedinger_plugin.so=3.0.21 so:libscte18_plugin.so=3.0.21 so:libscte27_plugin.so=3.0.21 so:libspdif_plugin.so=3.0.21 so:libspeex_plugin.so=3.0.21 so:libspudec_plugin.so=3.0.21 so:libstl_plugin.so=3.0.21 so:libsubsdec_plugin.so=3.0.21 so:libsubstx3g_plugin.so=3.0.21 so:libsubsusf_plugin.so=3.0.21 so:libsvcdsub_plugin.so=3.0.21 so:libt140_plugin.so=3.0.21 so:libtelx_plugin.so=3.0.21 so:libtextst_plugin.so=3.0.21 so:libtheora_plugin.so=3.0.21 so:libttml_plugin.so=3.0.21 so:libtwolame_plugin.so=3.0.21 so:libuleaddvaudio_plugin.so=3.0.21 so:libvorbis_plugin.so=3.0.21 so:libwebvtt_plugin.so=3.0.21 so:libx26410b_plugin.so=3.0.21 so:libx264_plugin.so=3.0.21 so:libx265_plugin.so=3.0.21 so:libzvbi_plugin.so=3.0.21 so:libdummy_plugin.so=3.0.21 so:libgestures_plugin.so=3.0.21 so:libhotkeys_plugin.so=3.0.21 so:libmotion_plugin.so=3.0.21 so:libnetsync_plugin.so=3.0.21 so:liboldrc_plugin.so=3.0.21 so:libadaptive_plugin.so=3.0.21 so:libaiff_plugin.so=3.0.21 so:libasf_plugin.so=3.0.21 so:libau_plugin.so=3.0.21 so:libavformat_plugin.so=3.0.21 so:libavi_plugin.so=3.0.21 so:libcaf_plugin.so=3.0.21 so:libdemux_cdg_plugin.so=3.0.21 so:libdemux_chromecast_plugin.so=3.0.21 so:libdemux_stl_plugin.so=3.0.21 so:libdemuxdump_plugin.so=3.0.21 so:libdiracsys_plugin.so=3.0.21 so:libdirectory_demux_plugin.so=3.0.21 so:libes_plugin.so=3.0.21 so:libflacsys_plugin.so=3.0.21 so:libgme_plugin.so=3.0.21 so:libh26x_plugin.so=3.0.21 so:libimage_plugin.so=3.0.21 so:libmjpeg_plugin.so=3.0.21 so:libmkv_plugin.so=3.0.21 so:libmod_plugin.so=3.0.21 so:libmp4_plugin.so=3.0.21 so:libmpc_plugin.so=3.0.21 so:libmpgv_plugin.so=3.0.21 so:libnoseek_plugin.so=3.0.21 so:libnsc_plugin.so=3.0.21 so:libnsv_plugin.so=3.0.21 so:libnuv_plugin.so=3.0.21 so:libogg_plugin.so=3.0.21 so:libplaylist_plugin.so=3.0.21 so:libps_plugin.so=3.0.21 so:libpva_plugin.so=3.0.21 so:librawaud_plugin.so=3.0.21 so:librawdv_plugin.so=3.0.21 so:librawvid_plugin.so=3.0.21 so:libreal_plugin.so=3.0.21 so:libsid_plugin.so=3.0.21 so:libsmf_plugin.so=3.0.21 so:libsubtitle_plugin.so=3.0.21 so:libts_plugin.so=3.0.21 so:libtta_plugin.so=3.0.21 so:libty_plugin.so=3.0.21 so:libvc1_plugin.so=3.0.21 so:libvobsub_plugin.so=3.0.21 so:libvoc_plugin.so=3.0.21 so:libwav_plugin.so=3.0.21 so:libxa_plugin.so=3.0.21 so:libfile_keystore_plugin.so=3.0.21 so:libmemory_keystore_plugin.so=3.0.21 so:libconsole_logger_plugin.so=3.0.21 so:libfile_logger_plugin.so=3.0.21 so:libsyslog_plugin.so=3.0.21 so:libfolder_plugin.so=3.0.21 so:libtaglib_plugin.so=3.0.21 so:libaddonsfsstorage_plugin.so=3.0.21 so:libaddonsvorepository_plugin.so=3.0.21 so:libaudioscrobbler_plugin.so=3.0.21 so:libexport_plugin.so=3.0.21 so:libfingerprinter_plugin.so=3.0.21 so:libgnutls_plugin.so=3.0.21 so:liblogger_plugin.so=3.0.21 so:libstats_plugin.so=3.0.21 so:libvod_rtsp_plugin.so=3.0.21 so:libxml_plugin.so=3.0.21 so:libmux_asf_plugin.so=3.0.21 so:libmux_avi_plugin.so=3.0.21 so:libmux_dummy_plugin.so=3.0.21 so:libmux_mp4_plugin.so=3.0.21 so:libmux_mpjpeg_plugin.so=3.0.21 so:libmux_ogg_plugin.so=3.0.21 so:libmux_ps_plugin.so=3.0.21 so:libmux_ts_plugin.so=3.0.21 so:libmux_wav_plugin.so=3.0.21 so:libpacketizer_a52_plugin.so=3.0.21 so:libpacketizer_av1_plugin.so=3.0.21 so:libpacketizer_avparser_plugin.so=3.0.21 so:libpacketizer_copy_plugin.so=3.0.21 so:libpacketizer_dirac_plugin.so=3.0.21 so:libpacketizer_dts_plugin.so=3.0.21 so:libpacketizer_flac_plugin.so=3.0.21 so:libpacketizer_h264_plugin.so=3.0.21 so:libpacketizer_hevc_plugin.so=3.0.21 so:libpacketizer_mlp_plugin.so=3.0.21 so:libpacketizer_mpeg4audio_plugin.so=3.0.21 so:libpacketizer_mpeg4video_plugin.so=3.0.21 so:libpacketizer_mpegaudio_plugin.so=3.0.21 so:libpacketizer_mpegvideo_plugin.so=3.0.21 so:libpacketizer_vc1_plugin.so=3.0.21 so:libmediadirs_plugin.so=3.0.21 so:libmicrodns_plugin.so=3.0.21 so:libpodcast_plugin.so=3.0.21 so:libsap_plugin.so=3.0.21 so:libupnp_plugin.so=3.0.21 so:libaudiobargraph_v_plugin.so=3.0.21 so:libdynamicoverlay_plugin.so=3.0.21 so:liblogo_plugin.so=3.0.21 so:libmarq_plugin.so=3.0.21 so:libmosaic_plugin.so=3.0.21 so:libremoteosd_plugin.so=3.0.21 so:librss_plugin.so=3.0.21 so:libsubsdelay_plugin.so=3.0.21 so:libarchive_plugin.so=3.0.21 so:libadf_plugin.so=3.0.21 so:libcache_block_plugin.so=3.0.21 so:libcache_read_plugin.so=3.0.21 so:libdecomp_plugin.so=3.0.21 so:libhds_plugin.so=3.0.21 so:libinflate_plugin.so=3.0.21 so:libprefetch_plugin.so=3.0.21 so:librecord_plugin.so=3.0.21 so:libskiptags_plugin.so=3.0.21 so:libstream_out_autodel_plugin.so=3.0.21 so:libstream_out_bridge_plugin.so=3.0.21 so:libstream_out_chromaprint_plugin.so=3.0.21 so:libstream_out_chromecast_plugin.so=3.0.21 so:libstream_out_cycle_plugin.so=3.0.21 so:libstream_out_delay_plugin.so=3.0.21 so:libstream_out_description_plugin.so=3.0.21 so:libstream_out_display_plugin.so=3.0.21 so:libstream_out_dummy_plugin.so=3.0.21 so:libstream_out_duplicate_plugin.so=3.0.21 so:libstream_out_es_plugin.so=3.0.21 so:libstream_out_gather_plugin.so=3.0.21 so:libstream_out_mosaic_bridge_plugin.so=3.0.21 so:libstream_out_record_plugin.so=3.0.21 so:libstream_out_rtp_plugin.so=3.0.21 so:libstream_out_setid_plugin.so=3.0.21 so:libstream_out_smem_plugin.so=3.0.21 so:libstream_out_standard_plugin.so=3.0.21 so:libstream_out_stats_plugin.so=3.0.21 so:libstream_out_transcode_plugin.so=3.0.21 so:libfreetype_plugin.so=3.0.21 so:libtdummy_plugin.so=3.0.21 so:libchain_plugin.so=3.0.21 so:libgrey_yuv_plugin.so=3.0.21 so:libi420_10_p010_plugin.so=3.0.21 so:libi420_nv12_plugin.so=3.0.21 so:libi420_rgb_plugin.so=3.0.21 so:libi420_yuy2_plugin.so=3.0.21 so:libi422_i420_plugin.so=3.0.21 so:libi422_yuy2_plugin.so=3.0.21 so:librv32_plugin.so=3.0.21 so:libswscale_plugin.so=3.0.21 so:libyuvp_plugin.so=3.0.21 so:libyuy2_i420_plugin.so=3.0.21 so:libyuy2_i422_plugin.so=3.0.21 so:libadjust_plugin.so=3.0.21 so:libalphamask_plugin.so=3.0.21 so:libanaglyph_plugin.so=3.0.21 so:libantiflicker_plugin.so=3.0.21 so:libball_plugin.so=3.0.21 so:libblend_plugin.so=3.0.21 so:libblendbench_plugin.so=3.0.21 so:libbluescreen_plugin.so=3.0.21 so:libcanvas_plugin.so=3.0.21 so:libcolorthres_plugin.so=3.0.21 so:libcroppadd_plugin.so=3.0.21 so:libdeinterlace_plugin.so=3.0.21 so:libedgedetection_plugin.so=3.0.21 so:liberase_plugin.so=3.0.21 so:libextract_plugin.so=3.0.21 so:libfps_plugin.so=3.0.21 so:libfreeze_plugin.so=3.0.21 so:libgaussianblur_plugin.so=3.0.21 so:libgradfun_plugin.so=3.0.21 so:libgradient_plugin.so=3.0.21 so:libgrain_plugin.so=3.0.21 so:libhqdn3d_plugin.so=3.0.21 so:libinvert_plugin.so=3.0.21 so:libmagnify_plugin.so=3.0.21 so:libmirror_plugin.so=3.0.21 so:libmotionblur_plugin.so=3.0.21 so:libmotiondetect_plugin.so=3.0.21 so:liboldmovie_plugin.so=3.0.21 so:libposterize_plugin.so=3.0.21 so:libpostproc_plugin.so=3.0.21 so:libpsychedelic_plugin.so=3.0.21 so:libpuzzle_plugin.so=3.0.21 so:libripple_plugin.so=3.0.21 so:librotate_plugin.so=3.0.21 so:libscale_plugin.so=3.0.21 so:libscene_plugin.so=3.0.21 so:libsepia_plugin.so=3.0.21 so:libsharpen_plugin.so=3.0.21 so:libtransform_plugin.so=3.0.21 so:libvhs_plugin.so=3.0.21 so:libwave_plugin.so=3.0.21 so:libegl_qnx_plugin.so=3.0.21 so:libflaschen_plugin.so=3.0.21 so:libgles2_plugin.so=3.0.21 so:libvdummy_plugin.so=3.0.21 so:libvmem_plugin.so=3.0.21 so:libyuv_plugin.so=3.0.21 so:libclone_plugin.so=3.0.21 so:libwall_plugin.so=3.0.21 so:libgoom_plugin.so=3.0.21 so:libvisual_plugin.so=3.0.21</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add vlc
+apk add vlc=3.0.21-r0   <span class=mut># this version</span>
+
+apk del vlc   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/vlc-3.0.21-r0.apk">vlc-3.0.21-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install vlc
+oss-get install vlc=3.0.21-r0   <span class=mut># this version</span>
+
+oss-get remove vlc   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="bzip2.html">bzip2</a>, <a href="libiconv.html">libiconv</a>, <a href="lz4.html">lz4</a>, <a href="openssl.html">openssl</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/vlc-3.0.21-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/vlc-3.0.21-r0.tar.gz</a> (220.5 MiB)</dd><dt>SHA-256</dt><dd><code>b26df6301b57dd20395f00c5ef9fb37d0a5edbceb09db0822526bf8b16c5651b</code></dd><dt>Install first</dt><dd><a href="bzip2.html">bzip2</a>, <a href="libiconv.html">libiconv</a>, <a href="lz4.html">lz4</a>, <a href="openssl.html">openssl</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/vlc-3.0.21-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 vlc-3.0.21-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = b26df6301b57dd20395f00c5ef9fb37d0a5edbceb09db0822526bf8b16c5651b ] &amp;&amp; echo OK || echo BAD
+gzip -dc vlc-3.0.21-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/vlc.list
+gzip -dc vlc-3.0.21-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm vlc-3.0.21-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/vlc.list
+rm var/lib/manual/vlc.list</code></pre><p class=mut>Its dependencies stay installed: <a href="bzip2.html">bzip2</a>, <a href="libiconv.html">libiconv</a>, <a href="lz4.html">lz4</a>, <a href="openssl.html">openssl</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (6)</h2><a href="../../package/aarch64/bzip2.html">bzip2</a>, <a href="../../package/aarch64/libiconv.html">libiconv</a>, <a href="../../package/aarch64/lz4.html">lz4</a>, <a href="../../package/aarch64/openssl.html">openssl</a>, <a href="../../package/aarch64/xz.html">xz</a>, <a href="../../package/aarch64/zstd.html">zstd</a>
+<h2>Required by (2)</h2><a href="emulationstation.html">emulationstation</a>, <a href="vlc-dev.html">vlc-dev</a>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/vlc/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/vlc/README.md">ports/vlc/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_vlc on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/vlc-3.0.21-r0.log">tests/logs/aarch64le/vlc-3.0.21-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># vlc 3.0.21-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T18:02:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vlc qnx-test-vlc qnx-port-tests
+(1/6) Installing qnx-port-tests (1.0-r2)
+(2/6) Installing bzip2 (1.0.8-r0)
+(3/6) Installing lz4 (1.10.0-r0)
+(4/6) Installing xz (5.6.3-r0)
+(5/6) Installing vlc (3.0.21-r0)
+(6/6) Installing qnx-test-vlc (1.0-r0)
+OK: 601 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vlc
+     == vlc ==
+       info libvlc 3.0.21 Vetinari
+       ok   libvlc_get_version is 3.0.21
+       ok   scratch directory
+       ok   wrote 1 s 8 kHz mono WAV
+       ok   libvlc_new
+       ok   libvlc_media_new_path
+       ok   parse request
+       info parsed status 4 after 100 ms
+       ok   media parsed
+       info duration 1000 ms
+       ok   duration is 1000 ms
+       info audio track: 8000 Hz, 1 channel(s)
+       ok   one audio track, 8000 Hz mono
+       ok   libvlc_media_player_new_from_media
+       ok   libvlc_media_player_play
+       info state 6 after 150 ms: 8000 samples, peak 12000
+       ok   playback reached the end
+       ok   ~8000 samples reached the audio callback
+       ok   decoded peak is the generated 12000
+       info vlc exited with status 0x0 after 3100 ms
+       info vlc: [00000041cf063140] main interface error: no suitable interface module
+       info vlc: [000000377301a130] main libvlc error: interface &quot;globalhotkeys,none&quot; initialization failed
+       info vlc: [00000041cfc834a0] dummy interface: using the dummy interface module...
+       info vlc: [00000041cf062e50] idummy demux: command `quit&#x27;
+       info vlc: [00000041cedab1c0] main playlist: end of playlist, exiting
+       ok   vlc -I dummy --aout=afile exits 0
+       info out.wav: 8000 Hz, 1 channel(s)
+       ok   afile wrote an 8 kHz mono WAV
+       info out.wav: 8000 samples, 8000 identical to the input (max diff 0)
+       ok   the vlc program decoded ~8000 samples
+       ok   PCM passed through unchanged
+     PASS vlc
+PASS test_vlc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-vlc qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-vlc-1.0-r0.apk">qnx-test-vlc-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (452)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/cvlc
+/usr/local/bin/rvlc
+/usr/local/bin/vlc
+/usr/local/bin/vlc-wrapper
+/usr/local/lib/libvlc.so.11
+/usr/local/lib/libvlccore.so.9
+/usr/local/lib/vlc/plugins/access/libaccess_concat_plugin.so
+/usr/local/lib/vlc/plugins/access/libaccess_imem_plugin.so
+/usr/local/lib/vlc/plugins/access/libaccess_mms_plugin.so
+/usr/local/lib/vlc/plugins/access/libaccess_srt_plugin.so
+/usr/local/lib/vlc/plugins/access/libattachment_plugin.so
+/usr/local/lib/vlc/plugins/access/libavio_plugin.so
+/usr/local/lib/vlc/plugins/access/libdcp_plugin.so
+/usr/local/lib/vlc/plugins/access/libdvdnav_plugin.so
+/usr/local/lib/vlc/plugins/access/libdvdread_plugin.so
+/usr/local/lib/vlc/plugins/access/libfilesystem_plugin.so
+/usr/local/lib/vlc/plugins/access/libftp_plugin.so
+/usr/local/lib/vlc/plugins/access/libhttp_plugin.so
+/usr/local/lib/vlc/plugins/access/libhttps_plugin.so
+/usr/local/lib/vlc/plugins/access/libidummy_plugin.so
+/usr/local/lib/vlc/plugins/access/libimem_plugin.so
+/usr/local/lib/vlc/plugins/access/liblive555_plugin.so
+/usr/local/lib/vlc/plugins/access/libnfs_plugin.so
+/usr/local/lib/vlc/plugins/access/librist_plugin.so
+/usr/local/lib/vlc/plugins/access/librtp_plugin.so
+/usr/local/lib/vlc/plugins/access/libsatip_plugin.so
+/usr/local/lib/vlc/plugins/access/libsdp_plugin.so
+/usr/local/lib/vlc/plugins/access/libshm_plugin.so
+/usr/local/lib/vlc/plugins/access/libtcp_plugin.so
+/usr/local/lib/vlc/plugins/access/libtimecode_plugin.so
+/usr/local/lib/vlc/plugins/access/libudp_plugin.so
+/usr/local/lib/vlc/plugins/access/libvdr_plugin.so
+/usr/local/lib/vlc/plugins/access/libvnc_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_dummy_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_file_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_http_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_livehttp_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_rist_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_shout_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_srt_plugin.so
+/usr/local/lib/vlc/plugins/access_output/libaccess_output_udp_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libaudio_format_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libaudiobargraph_a_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libchorus_flanger_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libcompressor_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libdolby_surround_decoder_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libequalizer_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libgain_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libheadphone_channel_mixer_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libkaraoke_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libmad_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libmono_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libnormvol_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libparam_eq_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libremap_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libsamplerate_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libscaletempo_pitch_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libscaletempo_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libsimple_channel_mixer_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libspatialaudio_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libspatializer_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libspeex_resampler_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libstereo_widen_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libtospdif_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libtrivial_channel_mixer_plugin.so
+/usr/local/lib/vlc/plugins/audio_filter/libugly_resampler_plugin.so
+/usr/local/lib/vlc/plugins/audio_mixer/libfloat_mixer_plugin.so
+/usr/local/lib/vlc/plugins/audio_mixer/libinteger_mixer_plugin.so
+/usr/local/lib/vlc/plugins/audio_output/libadummy_plugin.so
+/usr/local/lib/vlc/plugins/audio_output/libafile_plugin.so
+/usr/local/lib/vlc/plugins/audio_output/libamem_plugin.so
+/usr/local/lib/vlc/plugins/codec/libadpcm_plugin.so
+/usr/local/lib/vlc/plugins/codec/libaes3_plugin.so
+/usr/local/lib/vlc/plugins/codec/libaom_plugin.so
+/usr/local/lib/vlc/plugins/codec/libaraw_plugin.so
+/usr/local/lib/vlc/plugins/codec/libaribsub_plugin.so
+/usr/local/lib/vlc/plugins/codec/libavcodec_plugin.so
+/usr/local/lib/vlc/plugins/codec/libcc_plugin.so
+/usr/local/lib/vlc/plugins/codec/libcdg_plugin.so
+/usr/local/lib/vlc/plugins/codec/libcvdsub_plugin.so
+/usr/local/lib/vlc/plugins/codec/libdav1d_plugin.so
+/usr/local/lib/vlc/plugins/codec/libdca_plugin.so
+/usr/local/lib/vlc/plugins/codec/libddummy_plugin.so
+/usr/local/lib/vlc/plugins/codec/libdvbsub_plugin.so
+/usr/local/lib/vlc/plugins/codec/libedummy_plugin.so
+/usr/local/lib/vlc/plugins/codec/libfaad_plugin.so
+/usr/local/lib/vlc/plugins/codec/libflac_plugin.so
+/usr/local/lib/vlc/plugins/codec/libg711_plugin.so
+/usr/local/lib/vlc/plugins/codec/libjpeg_plugin.so
+/usr/local/lib/vlc/plugins/codec/libkate_plugin.so
+/usr/local/lib/vlc/plugins/codec/liblibass_plugin.so
+/usr/local/lib/vlc/plugins/codec/liblibmpeg2_plugin.so
+/usr/local/lib/vlc/plugins/codec/liblpcm_plugin.so
+/usr/local/lib/vlc/plugins/codec/libmpg123_plugin.so
+/usr/local/lib/vlc/plugins/codec/liboggspots_plugin.so
+/usr/local/lib/vlc/plugins/codec/libopus_plugin.so
+/usr/local/lib/vlc/plugins/codec/libpng_plugin.so
+/usr/local/lib/vlc/plugins/codec/librawvideo_plugin.so
+/usr/local/lib/vlc/plugins/codec/librtpvideo_plugin.so
+/usr/local/lib/vlc/plugins/codec/libschroedinger_plugin.so
+/usr/local/lib/vlc/plugins/codec/libscte18_plugin.so
+/usr/local/lib/vlc/plugins/codec/libscte27_plugin.so
+/usr/local/lib/vlc/plugins/codec/libspdif_plugin.so
+/usr/local/lib/vlc/plugins/codec/libspeex_plugin.so
+/usr/local/lib/vlc/plugins/codec/libspudec_plugin.so
+/usr/local/lib/vlc/plugins/codec/libstl_plugin.so
+/usr/local/lib/vlc/plugins/codec/libsubsdec_plugin.so
+/usr/local/lib/vlc/plugins/codec/libsubstx3g_plugin.so
+/usr/local/lib/vlc/plugins/codec/libsubsusf_plugin.so
+/usr/local/lib/vlc/plugins/codec/libsvcdsub_plugin.so
+/usr/local/lib/vlc/plugins/codec/libt140_plugin.so
+/usr/local/lib/vlc/plugins/codec/libtelx_plugin.so
+/usr/local/lib/vlc/plugins/codec/libtextst_plugin.so
+/usr/local/lib/vlc/plugins/codec/libtheora_plugin.so
+/usr/local/lib/vlc/plugins/codec/libttml_plugin.so
+/usr/local/lib/vlc/plugins/codec/libtwolame_plugin.so
+/usr/local/lib/vlc/plugins/codec/libuleaddvaudio_plugin.so
+/usr/local/lib/vlc/plugins/codec/libvorbis_plugin.so
+/usr/local/lib/vlc/plugins/codec/libwebvtt_plugin.so
+/usr/local/lib/vlc/plugins/codec/libx26410b_plugin.so
+/usr/local/lib/vlc/plugins/codec/libx264_plugin.so
+/usr/local/lib/vlc/plugins/codec/libx265_plugin.so
+/usr/local/lib/vlc/plugins/codec/libzvbi_plugin.so
+/usr/local/lib/vlc/plugins/control/libdummy_plugin.so
+/usr/local/lib/vlc/plugins/control/libgestures_plugin.so
+/usr/local/lib/vlc/plugins/control/libhotkeys_plugin.so
+/usr/local/lib/vlc/plugins/control/libmotion_plugin.so
+/usr/local/lib/vlc/plugins/control/libnetsync_plugin.so
+/usr/local/lib/vlc/plugins/control/liboldrc_plugin.so
+/usr/local/lib/vlc/plugins/demux/libadaptive_plugin.so
+/usr/local/lib/vlc/plugins/demux/libaiff_plugin.so
+/usr/local/lib/vlc/plugins/demux/libasf_plugin.so
+/usr/local/lib/vlc/plugins/demux/libau_plugin.so
+/usr/local/lib/vlc/plugins/demux/libavformat_plugin.so
+/usr/local/lib/vlc/plugins/demux/libavi_plugin.so
+/usr/local/lib/vlc/plugins/demux/libcaf_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdemux_cdg_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdemux_chromecast_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdemux_stl_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdemuxdump_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdiracsys_plugin.so
+/usr/local/lib/vlc/plugins/demux/libdirectory_demux_plugin.so
+/usr/local/lib/vlc/plugins/demux/libes_plugin.so
+/usr/local/lib/vlc/plugins/demux/libflacsys_plugin.so
+/usr/local/lib/vlc/plugins/demux/libgme_plugin.so
+/usr/local/lib/vlc/plugins/demux/libh26x_plugin.so
+/usr/local/lib/vlc/plugins/demux/libimage_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmjpeg_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmkv_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmod_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmp4_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmpc_plugin.so
+/usr/local/lib/vlc/plugins/demux/libmpgv_plugin.so
+/usr/local/lib/vlc/plugins/demux/libnoseek_plugin.so
+/usr/local/lib/vlc/plugins/demux/libnsc_plugin.so
+/usr/local/lib/vlc/plugins/demux/libnsv_plugin.so
+/usr/local/lib/vlc/plugins/demux/libnuv_plugin.so
+/usr/local/lib/vlc/plugins/demux/libogg_plugin.so
+/usr/local/lib/vlc/plugins/demux/libplaylist_plugin.so
+/usr/local/lib/vlc/plugins/demux/libps_plugin.so
+/usr/local/lib/vlc/plugins/demux/libpva_plugin.so
+/usr/local/lib/vlc/plugins/demux/librawaud_plugin.so
+/usr/local/lib/vlc/plugins/demux/librawdv_plugin.so
+/usr/local/lib/vlc/plugins/demux/librawvid_plugin.so
+/usr/local/lib/vlc/plugins/demux/libreal_plugin.so
+/usr/local/lib/vlc/plugins/demux/libsid_plugin.so
+/usr/local/lib/vlc/plugins/demux/libsmf_plugin.so
+/usr/local/lib/vlc/plugins/demux/libsubtitle_plugin.so
+/usr/local/lib/vlc/plugins/demux/libts_plugin.so
+/usr/local/lib/vlc/plugins/demux/libtta_plugin.so
+/usr/local/lib/vlc/plugins/demux/libty_plugin.so
+/usr/local/lib/vlc/plugins/demux/libvc1_plugin.so
+/usr/local/lib/vlc/plugins/demux/libvobsub_plugin.so
+/usr/local/lib/vlc/plugins/demux/libvoc_plugin.so
+/usr/local/lib/vlc/plugins/demux/libwav_plugin.so
+/usr/local/lib/vlc/plugins/demux/libxa_plugin.so
+/usr/local/lib/vlc/plugins/keystore/libfile_keystore_plugin.so
+/usr/local/lib/vlc/plugins/keystore/libmemory_keystore_plugin.so
+/usr/local/lib/vlc/plugins/logger/libconsole_logger_plugin.so
+/usr/local/lib/vlc/plugins/logger/libfile_logger_plugin.so
+/usr/local/lib/vlc/plugins/logger/libsyslog_plugin.so
+/usr/local/lib/vlc/plugins/meta_engine/libfolder_plugin.so
+/usr/local/lib/vlc/plugins/meta_engine/libtaglib_plugin.so
+/usr/local/lib/vlc/plugins/misc/libaddonsfsstorage_plugin.so
+/usr/local/lib/vlc/plugins/misc/libaddonsvorepository_plugin.so
+/usr/local/lib/vlc/plugins/misc/libaudioscrobbler_plugin.so
+/usr/local/lib/vlc/plugins/misc/libexport_plugin.so
+/usr/local/lib/vlc/plugins/misc/libfingerprinter_plugin.so
+/usr/local/lib/vlc/plugins/misc/libgnutls_plugin.so
+/usr/local/lib/vlc/plugins/misc/liblogger_plugin.so
+/usr/local/lib/vlc/plugins/misc/libstats_plugin.so
+/usr/local/lib/vlc/plugins/misc/libvod_rtsp_plugin.so
+/usr/local/lib/vlc/plugins/misc/libxml_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_asf_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_avi_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_dummy_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_mp4_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_mpjpeg_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_ogg_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_ps_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_ts_plugin.so
+/usr/local/lib/vlc/plugins/mux/libmux_wav_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_a52_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_av1_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_avparser_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_copy_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_dirac_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_dts_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_flac_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_h264_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_hevc_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_mlp_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_mpeg4audio_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_mpeg4video_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_mpegaudio_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_mpegvideo_plugin.so
+/usr/local/lib/vlc/plugins/packetizer/libpacketizer_vc1_plugin.so
+/usr/local/lib/vlc/plugins/services_discovery/libmediadirs_plugin.so
+/usr/local/lib/vlc/plugins/services_discovery/libmicrodns_plugin.so
+/usr/local/lib/vlc/plugins/services_discovery/libpodcast_plugin.so
+/usr/local/lib/vlc/plugins/services_discovery/libsap_plugin.so
+/usr/local/lib/vlc/plugins/services_discovery/libupnp_plugin.so
+/usr/local/lib/vlc/plugins/spu/libaudiobargraph_v_plugin.so
+/usr/local/lib/vlc/plugins/spu/libdynamicoverlay_plugin.so
+/usr/local/lib/vlc/plugins/spu/liblogo_plugin.so
+/usr/local/lib/vlc/plugins/spu/libmarq_plugin.so
+/usr/local/lib/vlc/plugins/spu/libmosaic_plugin.so
+/usr/local/lib/vlc/plugins/spu/libremoteosd_plugin.so
+/usr/local/lib/vlc/plugins/spu/librss_plugin.so
+/usr/local/lib/vlc/plugins/spu/libsubsdelay_plugin.so
+/usr/local/lib/vlc/plugins/stream_extractor/libarchive_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libadf_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libcache_block_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libcache_read_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libdecomp_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libhds_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libinflate_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libprefetch_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/librecord_plugin.so
+/usr/local/lib/vlc/plugins/stream_filter/libskiptags_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_autodel_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_bridge_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_chromaprint_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_chromecast_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_cycle_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_delay_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_description_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_display_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_dummy_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_duplicate_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_es_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_gather_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_mosaic_bridge_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_record_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_rtp_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_setid_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_smem_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_standard_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_stats_plugin.so
+/usr/local/lib/vlc/plugins/stream_out/libstream_out_transcode_plugin.so
+/usr/local/lib/vlc/plugins/text_renderer/libfreetype_plugin.so
+/usr/local/lib/vlc/plugins/text_renderer/libtdummy_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libchain_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libgrey_yuv_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi420_10_p010_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi420_nv12_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi420_rgb_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi420_yuy2_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi422_i420_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libi422_yuy2_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/librv32_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libswscale_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libyuvp_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libyuy2_i420_plugin.so
+/usr/local/lib/vlc/plugins/video_chroma/libyuy2_i422_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libadjust_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libalphamask_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libanaglyph_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libantiflicker_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libball_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libblend_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libblendbench_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libbluescreen_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libcanvas_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libcolorthres_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libcroppadd_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libdeinterlace_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libedgedetection_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/liberase_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libextract_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libfps_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libfreeze_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libgaussianblur_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libgradfun_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libgradient_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libgrain_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libhqdn3d_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libinvert_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libmagnify_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libmirror_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libmotionblur_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libmotiondetect_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/liboldmovie_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libposterize_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libpostproc_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libpsychedelic_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libpuzzle_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libripple_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/librotate_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libscale_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libscene_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libsepia_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libsharpen_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libtransform_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libvhs_plugin.so
+/usr/local/lib/vlc/plugins/video_filter/libwave_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libegl_qnx_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libflaschen_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libgles2_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libvdummy_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libvmem_plugin.so
+/usr/local/lib/vlc/plugins/video_output/libyuv_plugin.so
+/usr/local/lib/vlc/plugins/video_splitter/libclone_plugin.so
+/usr/local/lib/vlc/plugins/video_splitter/libwall_plugin.so
+/usr/local/lib/vlc/plugins/visualization/libgoom_plugin.so
+/usr/local/lib/vlc/plugins/visualization/libvisual_plugin.so
+/usr/local/lib/vlc/vlc-cache-gen
+/usr/local/share/applications/vlc.desktop
+/usr/local/share/icons/hicolor/128x128/apps/vlc-kb.png
+/usr/local/share/icons/hicolor/128x128/apps/vlc-xmas.png
+/usr/local/share/icons/hicolor/128x128/apps/vlc.png
+/usr/local/share/icons/hicolor/16x16/apps/vlc.png
+/usr/local/share/icons/hicolor/16x16/apps/vlc.xpm
+/usr/local/share/icons/hicolor/256x256/apps/vlc.png
+/usr/local/share/icons/hicolor/32x32/apps/vlc-xmas.xpm
+/usr/local/share/icons/hicolor/32x32/apps/vlc.png
+/usr/local/share/icons/hicolor/32x32/apps/vlc.xpm
+/usr/local/share/icons/hicolor/48x48/apps/vlc-xmas.png
+/usr/local/share/icons/hicolor/48x48/apps/vlc.png
+/usr/local/share/kde4/apps/solid/actions/vlc-openbd.desktop
+/usr/local/share/kde4/apps/solid/actions/vlc-opencda.desktop
+/usr/local/share/kde4/apps/solid/actions/vlc-opendvd.desktop
+/usr/local/share/kde4/apps/solid/actions/vlc-openvcd.desktop
+/usr/local/share/locale/ach/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/af/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/am/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/am_ET/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/an/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ar/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/as_IN/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ast/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/be/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/bg/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/bn/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/bn_IN/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/br/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/brx/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/bs/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ca/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ca@valencia/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/cgg/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/co/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/cs/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/cy/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/da/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/de/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/el/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/eo/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/es/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/es_MX/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/et/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/eu/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/fa/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ff/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/fi/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/fr/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/fur/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/fy/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ga/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/gd/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/gl/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/gu/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/he/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/hi/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/hr/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/hu/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/hy/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/id/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ie/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/is/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/it/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ja/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ka/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/kab/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/kk/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/km/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/kn/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ko/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ks_IN/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ku_IQ/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ky/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/lg/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/lo/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/lt/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/lv/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/mai/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/mk/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ml/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/mn/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/mr/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ms/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/my/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/nb/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ne/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/nl/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/nn/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/oc/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/or_IN/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/pa/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/pl/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ps/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/pt_PT/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ro/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ru/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/si/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sk/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sl/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sm/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sq/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sr/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sv/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/sw/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ta/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/te/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/th/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/tr/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/tt/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/ug/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/uk/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/uz/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/vi/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/wa/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/vlc.mo
+/usr/local/share/locale/zu/LC_MESSAGES/vlc.mo
+/usr/local/share/metainfo/vlc.appdata.xml
+/usr/local/share/vlc/utils/audio-vlc-default.sh
+/usr/local/share/vlc/utils/gnome-vlc-default.sh
+/usr/local/share/vlc/utils/video-vlc-default.sh
+/usr/local/share/vlc/vlc.ico</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:58 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

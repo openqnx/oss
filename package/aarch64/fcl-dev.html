@@ -1,0 +1,424 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>fcl-dev 0.7.0-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>fcl-dev <span class=mut>0.7.0-r0</span></h1><p class=sum><b>Flexible Collision Library for collision and proximity queries (development files)</b><br>fcl 0.7.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>0.7.0-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/fcl-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/flexible-collision-library/fcl.git">https://github.com/flexible-collision-library/fcl.git</a></dd>
+<dt>License</dt><dd>BSD-3-Clause <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/fcl">ports/fcl</a></dd>
+<dt>Package size</dt><dd>326.9 KiB</dd>
+<dt>Installed size</dt><dd>2.4 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add fcl-dev
+apk add fcl-dev=0.7.0-r0   <span class=mut># this version</span>
+
+apk del fcl-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/fcl-dev-0.7.0-r0.apk">fcl-dev-0.7.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install fcl-dev
+oss-get install fcl-dev=0.7.0-r0   <span class=mut># this version</span>
+
+oss-get remove fcl-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="fcl.html">fcl</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fcl-dev-0.7.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fcl-dev-0.7.0-r0.tar.gz</a> (304.4 KiB)</dd><dt>SHA-256</dt><dd><code>5134fe43f37a941b5936671aa812b72e02f74eb2ef82edb8196f1b10c31a347b</code></dd><dt>Install first</dt><dd><a href="libccd.html">libccd</a>, <a href="octomap.html">octomap</a>, <a href="fcl.html">fcl</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/fcl-dev-0.7.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 fcl-dev-0.7.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 5134fe43f37a941b5936671aa812b72e02f74eb2ef82edb8196f1b10c31a347b ] &amp;&amp; echo OK || echo BAD
+gzip -dc fcl-dev-0.7.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/fcl-dev.list
+gzip -dc fcl-dev-0.7.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm fcl-dev-0.7.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/fcl-dev.list
+rm var/lib/manual/fcl-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="libccd.html">libccd</a>, <a href="octomap.html">octomap</a>, <a href="fcl.html">fcl</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="fcl.html">fcl</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/fcl.html">fcl</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/fcl/README.md">ports/fcl/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_fcl on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/fcl-0.7.0-r0.log">tests/logs/aarch64le/fcl-0.7.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># fcl 0.7.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:27:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fcl qnx-test-fcl qnx-port-tests
+(1/5) Installing libccd (2.1-r1)
+(2/5) Installing octomap (1.10.0-r0)
+(3/5) Installing fcl (0.7.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-fcl (1.0-r6)
+OK: 65 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fcl
+     == fcl ==
+       ok   overlapping boxes collide
+       ok   distance is 2
+     PASS fcl
+PASS test_fcl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-fcl qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-fcl-1.0-r6.apk">qnx-test-fcl-1.0-r6.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (320)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/fcl/broadphase/broadphase_SSaP-inl.h
+/usr/local/include/fcl/broadphase/broadphase_SSaP.h
+/usr/local/include/fcl/broadphase/broadphase_SaP-inl.h
+/usr/local/include/fcl/broadphase/broadphase_SaP.h
+/usr/local/include/fcl/broadphase/broadphase_bruteforce-inl.h
+/usr/local/include/fcl/broadphase/broadphase_bruteforce.h
+/usr/local/include/fcl/broadphase/broadphase_collision_manager-inl.h
+/usr/local/include/fcl/broadphase/broadphase_collision_manager.h
+/usr/local/include/fcl/broadphase/broadphase_continuous_collision_manager-inl.h
+/usr/local/include/fcl/broadphase/broadphase_continuous_collision_manager.h
+/usr/local/include/fcl/broadphase/broadphase_dynamic_AABB_tree-inl.h
+/usr/local/include/fcl/broadphase/broadphase_dynamic_AABB_tree.h
+/usr/local/include/fcl/broadphase/broadphase_dynamic_AABB_tree_array-inl.h
+/usr/local/include/fcl/broadphase/broadphase_dynamic_AABB_tree_array.h
+/usr/local/include/fcl/broadphase/broadphase_interval_tree-inl.h
+/usr/local/include/fcl/broadphase/broadphase_interval_tree.h
+/usr/local/include/fcl/broadphase/broadphase_spatialhash-inl.h
+/usr/local/include/fcl/broadphase/broadphase_spatialhash.h
+/usr/local/include/fcl/broadphase/default_broadphase_callbacks.h
+/usr/local/include/fcl/broadphase/detail/hierarchy_tree-inl.h
+/usr/local/include/fcl/broadphase/detail/hierarchy_tree.h
+/usr/local/include/fcl/broadphase/detail/hierarchy_tree_array-inl.h
+/usr/local/include/fcl/broadphase/detail/hierarchy_tree_array.h
+/usr/local/include/fcl/broadphase/detail/interval_tree-inl.h
+/usr/local/include/fcl/broadphase/detail/interval_tree.h
+/usr/local/include/fcl/broadphase/detail/interval_tree_node-inl.h
+/usr/local/include/fcl/broadphase/detail/interval_tree_node.h
+/usr/local/include/fcl/broadphase/detail/morton-inl.h
+/usr/local/include/fcl/broadphase/detail/morton.h
+/usr/local/include/fcl/broadphase/detail/node_base-inl.h
+/usr/local/include/fcl/broadphase/detail/node_base.h
+/usr/local/include/fcl/broadphase/detail/node_base_array-inl.h
+/usr/local/include/fcl/broadphase/detail/node_base_array.h
+/usr/local/include/fcl/broadphase/detail/simple_hash_table-inl.h
+/usr/local/include/fcl/broadphase/detail/simple_hash_table.h
+/usr/local/include/fcl/broadphase/detail/simple_interval-inl.h
+/usr/local/include/fcl/broadphase/detail/simple_interval.h
+/usr/local/include/fcl/broadphase/detail/sparse_hash_table-inl.h
+/usr/local/include/fcl/broadphase/detail/sparse_hash_table.h
+/usr/local/include/fcl/broadphase/detail/spatial_hash-inl.h
+/usr/local/include/fcl/broadphase/detail/spatial_hash.h
+/usr/local/include/fcl/common/detail/profiler.h
+/usr/local/include/fcl/common/exception.h
+/usr/local/include/fcl/common/profiler.h
+/usr/local/include/fcl/common/time.h
+/usr/local/include/fcl/common/types.h
+/usr/local/include/fcl/common/unused.h
+/usr/local/include/fcl/common/warning.h
+/usr/local/include/fcl/config.h
+/usr/local/include/fcl/export.h
+/usr/local/include/fcl/fcl.h
+/usr/local/include/fcl/geometry/bvh/BVH_internal.h
+/usr/local/include/fcl/geometry/bvh/BVH_model-inl.h
+/usr/local/include/fcl/geometry/bvh/BVH_model.h
+/usr/local/include/fcl/geometry/bvh/BVH_utility-inl.h
+/usr/local/include/fcl/geometry/bvh/BVH_utility.h
+/usr/local/include/fcl/geometry/bvh/BV_node-inl.h
+/usr/local/include/fcl/geometry/bvh/BV_node.h
+/usr/local/include/fcl/geometry/bvh/BV_node_base.h
+/usr/local/include/fcl/geometry/bvh/detail/BVH_front.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_fitter-inl.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_fitter.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_fitter_base.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_splitter-inl.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_splitter.h
+/usr/local/include/fcl/geometry/bvh/detail/BV_splitter_base.h
+/usr/local/include/fcl/geometry/collision_geometry-inl.h
+/usr/local/include/fcl/geometry/collision_geometry.h
+/usr/local/include/fcl/geometry/geometric_shape_to_BVH_model-inl.h
+/usr/local/include/fcl/geometry/geometric_shape_to_BVH_model.h
+/usr/local/include/fcl/geometry/octree/octree-inl.h
+/usr/local/include/fcl/geometry/octree/octree.h
+/usr/local/include/fcl/geometry/shape/box-inl.h
+/usr/local/include/fcl/geometry/shape/box.h
+/usr/local/include/fcl/geometry/shape/capsule-inl.h
+/usr/local/include/fcl/geometry/shape/capsule.h
+/usr/local/include/fcl/geometry/shape/cone-inl.h
+/usr/local/include/fcl/geometry/shape/cone.h
+/usr/local/include/fcl/geometry/shape/convex-inl.h
+/usr/local/include/fcl/geometry/shape/convex.h
+/usr/local/include/fcl/geometry/shape/cylinder-inl.h
+/usr/local/include/fcl/geometry/shape/cylinder.h
+/usr/local/include/fcl/geometry/shape/ellipsoid-inl.h
+/usr/local/include/fcl/geometry/shape/ellipsoid.h
+/usr/local/include/fcl/geometry/shape/halfspace-inl.h
+/usr/local/include/fcl/geometry/shape/halfspace.h
+/usr/local/include/fcl/geometry/shape/plane-inl.h
+/usr/local/include/fcl/geometry/shape/plane.h
+/usr/local/include/fcl/geometry/shape/shape_base-inl.h
+/usr/local/include/fcl/geometry/shape/shape_base.h
+/usr/local/include/fcl/geometry/shape/sphere-inl.h
+/usr/local/include/fcl/geometry/shape/sphere.h
+/usr/local/include/fcl/geometry/shape/triangle_p-inl.h
+/usr/local/include/fcl/geometry/shape/triangle_p.h
+/usr/local/include/fcl/geometry/shape/utility-inl.h
+/usr/local/include/fcl/geometry/shape/utility.h
+/usr/local/include/fcl/math/bv/AABB-inl.h
+/usr/local/include/fcl/math/bv/AABB.h
+/usr/local/include/fcl/math/bv/OBB-inl.h
+/usr/local/include/fcl/math/bv/OBB.h
+/usr/local/include/fcl/math/bv/OBBRSS-inl.h
+/usr/local/include/fcl/math/bv/OBBRSS.h
+/usr/local/include/fcl/math/bv/RSS-inl.h
+/usr/local/include/fcl/math/bv/RSS.h
+/usr/local/include/fcl/math/bv/kDOP-inl.h
+/usr/local/include/fcl/math/bv/kDOP.h
+/usr/local/include/fcl/math/bv/kIOS-inl.h
+/usr/local/include/fcl/math/bv/kIOS.h
+/usr/local/include/fcl/math/bv/utility-inl.h
+/usr/local/include/fcl/math/bv/utility.h
+/usr/local/include/fcl/math/constants.h
+/usr/local/include/fcl/math/detail/polysolver-inl.h
+/usr/local/include/fcl/math/detail/polysolver.h
+/usr/local/include/fcl/math/detail/project-inl.h
+/usr/local/include/fcl/math/detail/project.h
+/usr/local/include/fcl/math/detail/seed.h
+/usr/local/include/fcl/math/geometry-inl.h
+/usr/local/include/fcl/math/geometry.h
+/usr/local/include/fcl/math/motion/bv_motion_bound_visitor.h
+/usr/local/include/fcl/math/motion/interp_motion-inl.h
+/usr/local/include/fcl/math/motion/interp_motion.h
+/usr/local/include/fcl/math/motion/motion_base-inl.h
+/usr/local/include/fcl/math/motion/motion_base.h
+/usr/local/include/fcl/math/motion/screw_motion-inl.h
+/usr/local/include/fcl/math/motion/screw_motion.h
+/usr/local/include/fcl/math/motion/spline_motion-inl.h
+/usr/local/include/fcl/math/motion/spline_motion.h
+/usr/local/include/fcl/math/motion/taylor_model/interval-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/interval.h
+/usr/local/include/fcl/math/motion/taylor_model/interval_matrix-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/interval_matrix.h
+/usr/local/include/fcl/math/motion/taylor_model/interval_vector-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/interval_vector.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_matrix-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_matrix.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_model-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_model.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_vector-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/taylor_vector.h
+/usr/local/include/fcl/math/motion/taylor_model/time_interval-inl.h
+/usr/local/include/fcl/math/motion/taylor_model/time_interval.h
+/usr/local/include/fcl/math/motion/tbv_motion_bound_visitor-inl.h
+/usr/local/include/fcl/math/motion/tbv_motion_bound_visitor.h
+/usr/local/include/fcl/math/motion/translation_motion-inl.h
+/usr/local/include/fcl/math/motion/translation_motion.h
+/usr/local/include/fcl/math/motion/triangle_motion_bound_visitor-inl.h
+/usr/local/include/fcl/math/motion/triangle_motion_bound_visitor.h
+/usr/local/include/fcl/math/rng-inl.h
+/usr/local/include/fcl/math/rng.h
+/usr/local/include/fcl/math/sampler/sampler_base.h
+/usr/local/include/fcl/math/sampler/sampler_r-inl.h
+/usr/local/include/fcl/math/sampler/sampler_r.h
+/usr/local/include/fcl/math/sampler/sampler_se2-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se2.h
+/usr/local/include/fcl/math/sampler/sampler_se2_disk-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se2_disk.h
+/usr/local/include/fcl/math/sampler/sampler_se3_euler-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se3_euler.h
+/usr/local/include/fcl/math/sampler/sampler_se3_euler_ball-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se3_euler_ball.h
+/usr/local/include/fcl/math/sampler/sampler_se3_quat-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se3_quat.h
+/usr/local/include/fcl/math/sampler/sampler_se3_quat_ball-inl.h
+/usr/local/include/fcl/math/sampler/sampler_se3_quat_ball.h
+/usr/local/include/fcl/math/triangle.h
+/usr/local/include/fcl/math/variance3-inl.h
+/usr/local/include/fcl/math/variance3.h
+/usr/local/include/fcl/narrowphase/collision-inl.h
+/usr/local/include/fcl/narrowphase/collision.h
+/usr/local/include/fcl/narrowphase/collision_object-inl.h
+/usr/local/include/fcl/narrowphase/collision_object.h
+/usr/local/include/fcl/narrowphase/collision_request-inl.h
+/usr/local/include/fcl/narrowphase/collision_request.h
+/usr/local/include/fcl/narrowphase/collision_result-inl.h
+/usr/local/include/fcl/narrowphase/collision_result.h
+/usr/local/include/fcl/narrowphase/contact-inl.h
+/usr/local/include/fcl/narrowphase/contact.h
+/usr/local/include/fcl/narrowphase/contact_point-inl.h
+/usr/local/include/fcl/narrowphase/contact_point.h
+/usr/local/include/fcl/narrowphase/continuous_collision-inl.h
+/usr/local/include/fcl/narrowphase/continuous_collision.h
+/usr/local/include/fcl/narrowphase/continuous_collision_object-inl.h
+/usr/local/include/fcl/narrowphase/continuous_collision_object.h
+/usr/local/include/fcl/narrowphase/continuous_collision_request-inl.h
+/usr/local/include/fcl/narrowphase/continuous_collision_request.h
+/usr/local/include/fcl/narrowphase/continuous_collision_result-inl.h
+/usr/local/include/fcl/narrowphase/continuous_collision_result.h
+/usr/local/include/fcl/narrowphase/cost_source-inl.h
+/usr/local/include/fcl/narrowphase/cost_source.h
+/usr/local/include/fcl/narrowphase/detail/collision_func_matrix-inl.h
+/usr/local/include/fcl/narrowphase/detail/collision_func_matrix.h
+/usr/local/include/fcl/narrowphase/detail/conservative_advancement_func_matrix-inl.h
+/usr/local/include/fcl/narrowphase/detail/conservative_advancement_func_matrix.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/alloc.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/epa-inl.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/epa.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/gjk-inl.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/gjk.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/gjk_libccd-inl.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/gjk_libccd.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/list.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/minkowski_diff-inl.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/minkowski_diff.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/polytope.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/simplex.h
+/usr/local/include/fcl/narrowphase/detail/convexity_based_algorithm/support.h
+/usr/local/include/fcl/narrowphase/detail/distance_func_matrix-inl.h
+/usr/local/include/fcl/narrowphase/detail/distance_func_matrix.h
+/usr/local/include/fcl/narrowphase/detail/failed_at_this_configuration.h
+/usr/local/include/fcl/narrowphase/detail/gjk_solver_indep-inl.h
+/usr/local/include/fcl/narrowphase/detail/gjk_solver_indep.h
+/usr/local/include/fcl/narrowphase/detail/gjk_solver_libccd-inl.h
+/usr/local/include/fcl/narrowphase/detail/gjk_solver_libccd.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/box_box-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/box_box.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/capsule_capsule-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/capsule_capsule.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/halfspace-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/halfspace.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/plane-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/plane.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_box-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_box.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_capsule-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_capsule.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_cylinder-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_cylinder.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_sphere-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_sphere.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_triangle-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/sphere_triangle.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/triangle_distance-inl.h
+/usr/local/include/fcl/narrowphase/detail/primitive_shape_algorithm/triangle_distance.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/bvh_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/bvh_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/bvh_shape_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/bvh_shape_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/collision_traversal_node_base-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/collision_traversal_node_base.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/intersect-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/intersect.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_continuous_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_continuous_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_shape_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/mesh_shape_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_bvh_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_bvh_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_mesh_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision/shape_mesh_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/collision_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/bvh_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/bvh_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/bvh_shape_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/bvh_shape_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/conservative_advancement_stack_data-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/conservative_advancement_stack_data.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/distance_traversal_node_base-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/distance_traversal_node_base.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_conservative_advancement_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_conservative_advancement_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_shape_conservative_advancement_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_shape_conservative_advancement_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_shape_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/mesh_shape_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_bvh_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_bvh_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_conservative_advancement_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_conservative_advancement_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_mesh_conservative_advancement_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_mesh_conservative_advancement_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_mesh_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/distance/shape_mesh_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/mesh_octree_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/mesh_octree_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_mesh_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_mesh_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_shape_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/octree_shape_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/shape_octree_collision_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/collision/shape_octree_collision_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/mesh_octree_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/mesh_octree_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_mesh_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_mesh_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_shape_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/octree_shape_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/shape_octree_distance_traversal_node-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/distance/shape_octree_distance_traversal_node.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/octree_solver-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/octree/octree_solver.h
+/usr/local/include/fcl/narrowphase/detail/traversal/traversal_node_base-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/traversal_node_base.h
+/usr/local/include/fcl/narrowphase/detail/traversal/traversal_recurse-inl.h
+/usr/local/include/fcl/narrowphase/detail/traversal/traversal_recurse.h
+/usr/local/include/fcl/narrowphase/distance-inl.h
+/usr/local/include/fcl/narrowphase/distance.h
+/usr/local/include/fcl/narrowphase/distance_request-inl.h
+/usr/local/include/fcl/narrowphase/distance_request.h
+/usr/local/include/fcl/narrowphase/distance_result-inl.h
+/usr/local/include/fcl/narrowphase/distance_result.h
+/usr/local/include/fcl/narrowphase/gjk_solver_type.h
+/usr/local/lib/cmake/fcl/fcl-config-version.cmake
+/usr/local/lib/cmake/fcl/fcl-config.cmake
+/usr/local/lib/cmake/fcl/fcl-targets-release.cmake
+/usr/local/lib/cmake/fcl/fcl-targets.cmake
+/usr/local/lib/libfcl.so
+/usr/local/lib/pkgconfig/fcl.pc</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

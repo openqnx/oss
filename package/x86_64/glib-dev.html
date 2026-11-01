@@ -1,0 +1,449 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>glib-dev 2.82.4-r1 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>glib-dev <span class=mut>2.82.4-r1</span></h1><p class=sum><b>Low-level core C library of GTK and GNOME: data types, main loop, GIO (development files)</b><br>glib 2.82.4 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>2.82.4-r1</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/glib-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://gitlab.gnome.org/GNOME/glib.git">https://gitlab.gnome.org/GNOME/glib.git</a></dd>
+<dt>License</dt><dd>LGPL-2.1 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/glib">ports/glib</a></dd>
+<dt>Package size</dt><dd>2.7 MiB</dd>
+<dt>Installed size</dt><dd>11.3 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add glib-dev
+apk add glib-dev=2.82.4-r1   <span class=mut># this version</span>
+
+apk del glib-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/glib-dev-2.82.4-r1.apk">glib-dev-2.82.4-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install glib-dev
+oss-get install glib-dev=2.82.4-r1   <span class=mut># this version</span>
+
+oss-get remove glib-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="glib.html">glib</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/glib-dev-2.82.4-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/glib-dev-2.82.4-r1.tar.gz</a> (2.7 MiB)</dd><dt>SHA-256</dt><dd><code>6024c076b283734ec9cbc9e9d405e01a979aee36c291535759015f72141ae91e</code></dd><dt>Install first</dt><dd><a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/glib-dev-2.82.4-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 glib-dev-2.82.4-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 6024c076b283734ec9cbc9e9d405e01a979aee36c291535759015f72141ae91e ] &amp;&amp; echo OK || echo BAD
+gzip -dc glib-dev-2.82.4-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/glib-dev.list
+gzip -dc glib-dev-2.82.4-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm glib-dev-2.82.4-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/glib-dev.list
+rm var/lib/manual/glib-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="glib.html">glib</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/glib.html">glib</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (2)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/glib/patches/0001-qnx-fstab-mount-points.patch">0001-qnx-fstab-mount-points.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/glib/patches/0002-qnx-credentials-cmsgcred.patch">0002-qnx-credentials-cmsgcred.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/glib/README.md">ports/glib/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_glib on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/glib-2.82.4-r1.log">tests/logs/x86_64/glib-2.82.4-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># glib 2.82.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:14:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u glib qnx-test-glib qnx-port-tests
+(1/2) Installing qnx-port-tests (1.0-r2)
+(2/2) Installing qnx-test-glib (1.0-r6)
+OK: 93 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glib
+     == glib ==
+       info glib 2.82.4
+       ok   GLib 2.x
+       ok   default main context
+       ok   idle source ran
+       ok   timeout source ran and quit the loop
+       ok   g_thread_new
+       ok   thread returned its value
+       ok   thread ran
+       ok   g_object_new
+       ok   G_IS_OBJECT
+       ok   g_type_from_name
+       ok   g_utf8_strup
+       ok   GString formatting
+       ok   GHashTable insert
+       ok   GHashTable lookup
+       ok   g_file_new_for_path
+       ok   /tmp is reported as a directory
+       ok   g_file_test
+     PASS glib
+PASS test_glib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-glib qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-glib-1.0-r6.apk">qnx-test-glib-1.0-r6.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (329)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/gio-unix-2.0/gio/gdesktopappinfo.h
+/usr/local/include/gio-unix-2.0/gio/gfiledescriptorbased.h
+/usr/local/include/gio-unix-2.0/gio/gunixfdmessage.h
+/usr/local/include/gio-unix-2.0/gio/gunixinputstream.h
+/usr/local/include/gio-unix-2.0/gio/gunixmounts.h
+/usr/local/include/gio-unix-2.0/gio/gunixoutputstream.h
+/usr/local/include/glib-2.0/gio/gaction.h
+/usr/local/include/glib-2.0/gio/gactiongroup.h
+/usr/local/include/glib-2.0/gio/gactiongroupexporter.h
+/usr/local/include/glib-2.0/gio/gactionmap.h
+/usr/local/include/glib-2.0/gio/gappinfo.h
+/usr/local/include/glib-2.0/gio/gapplication.h
+/usr/local/include/glib-2.0/gio/gapplicationcommandline.h
+/usr/local/include/glib-2.0/gio/gasyncinitable.h
+/usr/local/include/glib-2.0/gio/gasyncresult.h
+/usr/local/include/glib-2.0/gio/gbufferedinputstream.h
+/usr/local/include/glib-2.0/gio/gbufferedoutputstream.h
+/usr/local/include/glib-2.0/gio/gbytesicon.h
+/usr/local/include/glib-2.0/gio/gcancellable.h
+/usr/local/include/glib-2.0/gio/gcharsetconverter.h
+/usr/local/include/glib-2.0/gio/gcontenttype.h
+/usr/local/include/glib-2.0/gio/gconverter.h
+/usr/local/include/glib-2.0/gio/gconverterinputstream.h
+/usr/local/include/glib-2.0/gio/gconverteroutputstream.h
+/usr/local/include/glib-2.0/gio/gcredentials.h
+/usr/local/include/glib-2.0/gio/gdatagrambased.h
+/usr/local/include/glib-2.0/gio/gdatainputstream.h
+/usr/local/include/glib-2.0/gio/gdataoutputstream.h
+/usr/local/include/glib-2.0/gio/gdbusactiongroup.h
+/usr/local/include/glib-2.0/gio/gdbusaddress.h
+/usr/local/include/glib-2.0/gio/gdbusauthobserver.h
+/usr/local/include/glib-2.0/gio/gdbusconnection.h
+/usr/local/include/glib-2.0/gio/gdbuserror.h
+/usr/local/include/glib-2.0/gio/gdbusinterface.h
+/usr/local/include/glib-2.0/gio/gdbusinterfaceskeleton.h
+/usr/local/include/glib-2.0/gio/gdbusintrospection.h
+/usr/local/include/glib-2.0/gio/gdbusmenumodel.h
+/usr/local/include/glib-2.0/gio/gdbusmessage.h
+/usr/local/include/glib-2.0/gio/gdbusmethodinvocation.h
+/usr/local/include/glib-2.0/gio/gdbusnameowning.h
+/usr/local/include/glib-2.0/gio/gdbusnamewatching.h
+/usr/local/include/glib-2.0/gio/gdbusobject.h
+/usr/local/include/glib-2.0/gio/gdbusobjectmanager.h
+/usr/local/include/glib-2.0/gio/gdbusobjectmanagerclient.h
+/usr/local/include/glib-2.0/gio/gdbusobjectmanagerserver.h
+/usr/local/include/glib-2.0/gio/gdbusobjectproxy.h
+/usr/local/include/glib-2.0/gio/gdbusobjectskeleton.h
+/usr/local/include/glib-2.0/gio/gdbusproxy.h
+/usr/local/include/glib-2.0/gio/gdbusserver.h
+/usr/local/include/glib-2.0/gio/gdbusutils.h
+/usr/local/include/glib-2.0/gio/gdebugcontroller.h
+/usr/local/include/glib-2.0/gio/gdebugcontrollerdbus.h
+/usr/local/include/glib-2.0/gio/gdrive.h
+/usr/local/include/glib-2.0/gio/gdtlsclientconnection.h
+/usr/local/include/glib-2.0/gio/gdtlsconnection.h
+/usr/local/include/glib-2.0/gio/gdtlsserverconnection.h
+/usr/local/include/glib-2.0/gio/gemblem.h
+/usr/local/include/glib-2.0/gio/gemblemedicon.h
+/usr/local/include/glib-2.0/gio/gfile.h
+/usr/local/include/glib-2.0/gio/gfileattribute.h
+/usr/local/include/glib-2.0/gio/gfileenumerator.h
+/usr/local/include/glib-2.0/gio/gfileicon.h
+/usr/local/include/glib-2.0/gio/gfileinfo.h
+/usr/local/include/glib-2.0/gio/gfileinputstream.h
+/usr/local/include/glib-2.0/gio/gfileiostream.h
+/usr/local/include/glib-2.0/gio/gfilemonitor.h
+/usr/local/include/glib-2.0/gio/gfilenamecompleter.h
+/usr/local/include/glib-2.0/gio/gfileoutputstream.h
+/usr/local/include/glib-2.0/gio/gfilterinputstream.h
+/usr/local/include/glib-2.0/gio/gfilteroutputstream.h
+/usr/local/include/glib-2.0/gio/gicon.h
+/usr/local/include/glib-2.0/gio/ginetaddress.h
+/usr/local/include/glib-2.0/gio/ginetaddressmask.h
+/usr/local/include/glib-2.0/gio/ginetsocketaddress.h
+/usr/local/include/glib-2.0/gio/ginitable.h
+/usr/local/include/glib-2.0/gio/ginputstream.h
+/usr/local/include/glib-2.0/gio/gio-autocleanups.h
+/usr/local/include/glib-2.0/gio/gio-visibility.h
+/usr/local/include/glib-2.0/gio/gio.h
+/usr/local/include/glib-2.0/gio/gioenums.h
+/usr/local/include/glib-2.0/gio/gioenumtypes.h
+/usr/local/include/glib-2.0/gio/gioerror.h
+/usr/local/include/glib-2.0/gio/giomodule.h
+/usr/local/include/glib-2.0/gio/gioscheduler.h
+/usr/local/include/glib-2.0/gio/giostream.h
+/usr/local/include/glib-2.0/gio/giotypes.h
+/usr/local/include/glib-2.0/gio/glistmodel.h
+/usr/local/include/glib-2.0/gio/gliststore.h
+/usr/local/include/glib-2.0/gio/gloadableicon.h
+/usr/local/include/glib-2.0/gio/gmemoryinputstream.h
+/usr/local/include/glib-2.0/gio/gmemorymonitor.h
+/usr/local/include/glib-2.0/gio/gmemoryoutputstream.h
+/usr/local/include/glib-2.0/gio/gmenu.h
+/usr/local/include/glib-2.0/gio/gmenuexporter.h
+/usr/local/include/glib-2.0/gio/gmenumodel.h
+/usr/local/include/glib-2.0/gio/gmount.h
+/usr/local/include/glib-2.0/gio/gmountoperation.h
+/usr/local/include/glib-2.0/gio/gnativesocketaddress.h
+/usr/local/include/glib-2.0/gio/gnativevolumemonitor.h
+/usr/local/include/glib-2.0/gio/gnetworkaddress.h
+/usr/local/include/glib-2.0/gio/gnetworking.h
+/usr/local/include/glib-2.0/gio/gnetworkmonitor.h
+/usr/local/include/glib-2.0/gio/gnetworkservice.h
+/usr/local/include/glib-2.0/gio/gnotification.h
+/usr/local/include/glib-2.0/gio/goutputstream.h
+/usr/local/include/glib-2.0/gio/gpermission.h
+/usr/local/include/glib-2.0/gio/gpollableinputstream.h
+/usr/local/include/glib-2.0/gio/gpollableoutputstream.h
+/usr/local/include/glib-2.0/gio/gpollableutils.h
+/usr/local/include/glib-2.0/gio/gpowerprofilemonitor.h
+/usr/local/include/glib-2.0/gio/gpropertyaction.h
+/usr/local/include/glib-2.0/gio/gproxy.h
+/usr/local/include/glib-2.0/gio/gproxyaddress.h
+/usr/local/include/glib-2.0/gio/gproxyaddressenumerator.h
+/usr/local/include/glib-2.0/gio/gproxyresolver.h
+/usr/local/include/glib-2.0/gio/gremoteactiongroup.h
+/usr/local/include/glib-2.0/gio/gresolver.h
+/usr/local/include/glib-2.0/gio/gresource.h
+/usr/local/include/glib-2.0/gio/gseekable.h
+/usr/local/include/glib-2.0/gio/gsettings.h
+/usr/local/include/glib-2.0/gio/gsettingsbackend.h
+/usr/local/include/glib-2.0/gio/gsettingsschema.h
+/usr/local/include/glib-2.0/gio/gsimpleaction.h
+/usr/local/include/glib-2.0/gio/gsimpleactiongroup.h
+/usr/local/include/glib-2.0/gio/gsimpleasyncresult.h
+/usr/local/include/glib-2.0/gio/gsimpleiostream.h
+/usr/local/include/glib-2.0/gio/gsimplepermission.h
+/usr/local/include/glib-2.0/gio/gsimpleproxyresolver.h
+/usr/local/include/glib-2.0/gio/gsocket.h
+/usr/local/include/glib-2.0/gio/gsocketaddress.h
+/usr/local/include/glib-2.0/gio/gsocketaddressenumerator.h
+/usr/local/include/glib-2.0/gio/gsocketclient.h
+/usr/local/include/glib-2.0/gio/gsocketconnectable.h
+/usr/local/include/glib-2.0/gio/gsocketconnection.h
+/usr/local/include/glib-2.0/gio/gsocketcontrolmessage.h
+/usr/local/include/glib-2.0/gio/gsocketlistener.h
+/usr/local/include/glib-2.0/gio/gsocketservice.h
+/usr/local/include/glib-2.0/gio/gsrvtarget.h
+/usr/local/include/glib-2.0/gio/gsubprocess.h
+/usr/local/include/glib-2.0/gio/gsubprocesslauncher.h
+/usr/local/include/glib-2.0/gio/gtask.h
+/usr/local/include/glib-2.0/gio/gtcpconnection.h
+/usr/local/include/glib-2.0/gio/gtcpwrapperconnection.h
+/usr/local/include/glib-2.0/gio/gtestdbus.h
+/usr/local/include/glib-2.0/gio/gthemedicon.h
+/usr/local/include/glib-2.0/gio/gthreadedsocketservice.h
+/usr/local/include/glib-2.0/gio/gtlsbackend.h
+/usr/local/include/glib-2.0/gio/gtlscertificate.h
+/usr/local/include/glib-2.0/gio/gtlsclientconnection.h
+/usr/local/include/glib-2.0/gio/gtlsconnection.h
+/usr/local/include/glib-2.0/gio/gtlsdatabase.h
+/usr/local/include/glib-2.0/gio/gtlsfiledatabase.h
+/usr/local/include/glib-2.0/gio/gtlsinteraction.h
+/usr/local/include/glib-2.0/gio/gtlspassword.h
+/usr/local/include/glib-2.0/gio/gtlsserverconnection.h
+/usr/local/include/glib-2.0/gio/gunixconnection.h
+/usr/local/include/glib-2.0/gio/gunixcredentialsmessage.h
+/usr/local/include/glib-2.0/gio/gunixfdlist.h
+/usr/local/include/glib-2.0/gio/gunixsocketaddress.h
+/usr/local/include/glib-2.0/gio/gvfs.h
+/usr/local/include/glib-2.0/gio/gvolume.h
+/usr/local/include/glib-2.0/gio/gvolumemonitor.h
+/usr/local/include/glib-2.0/gio/gzlibcompressor.h
+/usr/local/include/glib-2.0/gio/gzlibdecompressor.h
+/usr/local/include/glib-2.0/girepository/gi-visibility.h
+/usr/local/include/glib-2.0/girepository/giarginfo.h
+/usr/local/include/glib-2.0/girepository/gibaseinfo.h
+/usr/local/include/glib-2.0/girepository/gicallableinfo.h
+/usr/local/include/glib-2.0/girepository/gicallbackinfo.h
+/usr/local/include/glib-2.0/girepository/giconstantinfo.h
+/usr/local/include/glib-2.0/girepository/gienuminfo.h
+/usr/local/include/glib-2.0/girepository/gifieldinfo.h
+/usr/local/include/glib-2.0/girepository/giflagsinfo.h
+/usr/local/include/glib-2.0/girepository/gifunctioninfo.h
+/usr/local/include/glib-2.0/girepository/giinterfaceinfo.h
+/usr/local/include/glib-2.0/girepository/giobjectinfo.h
+/usr/local/include/glib-2.0/girepository/gipropertyinfo.h
+/usr/local/include/glib-2.0/girepository/giregisteredtypeinfo.h
+/usr/local/include/glib-2.0/girepository/girepository-autocleanups.h
+/usr/local/include/glib-2.0/girepository/girepository.h
+/usr/local/include/glib-2.0/girepository/girffi.h
+/usr/local/include/glib-2.0/girepository/gisignalinfo.h
+/usr/local/include/glib-2.0/girepository/gistructinfo.h
+/usr/local/include/glib-2.0/girepository/gitypeinfo.h
+/usr/local/include/glib-2.0/girepository/gitypelib.h
+/usr/local/include/glib-2.0/girepository/gitypes.h
+/usr/local/include/glib-2.0/girepository/giunioninfo.h
+/usr/local/include/glib-2.0/girepository/giunresolvedinfo.h
+/usr/local/include/glib-2.0/girepository/givalueinfo.h
+/usr/local/include/glib-2.0/girepository/givfuncinfo.h
+/usr/local/include/glib-2.0/glib-object.h
+/usr/local/include/glib-2.0/glib-unix.h
+/usr/local/include/glib-2.0/glib.h
+/usr/local/include/glib-2.0/glib/deprecated/gallocator.h
+/usr/local/include/glib-2.0/glib/deprecated/gcache.h
+/usr/local/include/glib-2.0/glib/deprecated/gcompletion.h
+/usr/local/include/glib-2.0/glib/deprecated/gmain.h
+/usr/local/include/glib-2.0/glib/deprecated/grel.h
+/usr/local/include/glib-2.0/glib/deprecated/gthread.h
+/usr/local/include/glib-2.0/glib/galloca.h
+/usr/local/include/glib-2.0/glib/garray.h
+/usr/local/include/glib-2.0/glib/gasyncqueue.h
+/usr/local/include/glib-2.0/glib/gatomic.h
+/usr/local/include/glib-2.0/glib/gbacktrace.h
+/usr/local/include/glib-2.0/glib/gbase64.h
+/usr/local/include/glib-2.0/glib/gbitlock.h
+/usr/local/include/glib-2.0/glib/gbookmarkfile.h
+/usr/local/include/glib-2.0/glib/gbytes.h
+/usr/local/include/glib-2.0/glib/gcharset.h
+/usr/local/include/glib-2.0/glib/gchecksum.h
+/usr/local/include/glib-2.0/glib/gconvert.h
+/usr/local/include/glib-2.0/glib/gdataset.h
+/usr/local/include/glib-2.0/glib/gdate.h
+/usr/local/include/glib-2.0/glib/gdatetime.h
+/usr/local/include/glib-2.0/glib/gdir.h
+/usr/local/include/glib-2.0/glib/genviron.h
+/usr/local/include/glib-2.0/glib/gerror.h
+/usr/local/include/glib-2.0/glib/gfileutils.h
+/usr/local/include/glib-2.0/glib/ggettext.h
+/usr/local/include/glib-2.0/glib/ghash.h
+/usr/local/include/glib-2.0/glib/ghmac.h
+/usr/local/include/glib-2.0/glib/ghook.h
+/usr/local/include/glib-2.0/glib/ghostutils.h
+/usr/local/include/glib-2.0/glib/gi18n-lib.h
+/usr/local/include/glib-2.0/glib/gi18n.h
+/usr/local/include/glib-2.0/glib/giochannel.h
+/usr/local/include/glib-2.0/glib/gkeyfile.h
+/usr/local/include/glib-2.0/glib/glib-autocleanups.h
+/usr/local/include/glib-2.0/glib/glib-typeof.h
+/usr/local/include/glib-2.0/glib/glib-visibility.h
+/usr/local/include/glib-2.0/glib/glist.h
+/usr/local/include/glib-2.0/glib/gmacros.h
+/usr/local/include/glib-2.0/glib/gmain.h
+/usr/local/include/glib-2.0/glib/gmappedfile.h
+/usr/local/include/glib-2.0/glib/gmarkup.h
+/usr/local/include/glib-2.0/glib/gmem.h
+/usr/local/include/glib-2.0/glib/gmessages.h
+/usr/local/include/glib-2.0/glib/gnode.h
+/usr/local/include/glib-2.0/glib/goption.h
+/usr/local/include/glib-2.0/glib/gpathbuf.h
+/usr/local/include/glib-2.0/glib/gpattern.h
+/usr/local/include/glib-2.0/glib/gpoll.h
+/usr/local/include/glib-2.0/glib/gprimes.h
+/usr/local/include/glib-2.0/glib/gprintf.h
+/usr/local/include/glib-2.0/glib/gqsort.h
+/usr/local/include/glib-2.0/glib/gquark.h
+/usr/local/include/glib-2.0/glib/gqueue.h
+/usr/local/include/glib-2.0/glib/grand.h
+/usr/local/include/glib-2.0/glib/grcbox.h
+/usr/local/include/glib-2.0/glib/grefcount.h
+/usr/local/include/glib-2.0/glib/grefstring.h
+/usr/local/include/glib-2.0/glib/gregex.h
+/usr/local/include/glib-2.0/glib/gscanner.h
+/usr/local/include/glib-2.0/glib/gsequence.h
+/usr/local/include/glib-2.0/glib/gshell.h
+/usr/local/include/glib-2.0/glib/gslice.h
+/usr/local/include/glib-2.0/glib/gslist.h
+/usr/local/include/glib-2.0/glib/gspawn.h
+/usr/local/include/glib-2.0/glib/gstdio.h
+/usr/local/include/glib-2.0/glib/gstrfuncs.h
+/usr/local/include/glib-2.0/glib/gstring.h
+/usr/local/include/glib-2.0/glib/gstringchunk.h
+/usr/local/include/glib-2.0/glib/gstrvbuilder.h
+/usr/local/include/glib-2.0/glib/gtestutils.h
+/usr/local/include/glib-2.0/glib/gthread.h
+/usr/local/include/glib-2.0/glib/gthreadpool.h
+/usr/local/include/glib-2.0/glib/gtimer.h
+/usr/local/include/glib-2.0/glib/gtimezone.h
+/usr/local/include/glib-2.0/glib/gtrashstack.h
+/usr/local/include/glib-2.0/glib/gtree.h
+/usr/local/include/glib-2.0/glib/gtypes.h
+/usr/local/include/glib-2.0/glib/gunicode.h
+/usr/local/include/glib-2.0/glib/guri.h
+/usr/local/include/glib-2.0/glib/gutils.h
+/usr/local/include/glib-2.0/glib/guuid.h
+/usr/local/include/glib-2.0/glib/gvariant.h
+/usr/local/include/glib-2.0/glib/gvarianttype.h
+/usr/local/include/glib-2.0/glib/gversion.h
+/usr/local/include/glib-2.0/glib/gversionmacros.h
+/usr/local/include/glib-2.0/gmodule.h
+/usr/local/include/glib-2.0/gmodule/gmodule-visibility.h
+/usr/local/include/glib-2.0/gobject/gbinding.h
+/usr/local/include/glib-2.0/gobject/gbindinggroup.h
+/usr/local/include/glib-2.0/gobject/gboxed.h
+/usr/local/include/glib-2.0/gobject/gclosure.h
+/usr/local/include/glib-2.0/gobject/genums.h
+/usr/local/include/glib-2.0/gobject/glib-enumtypes.h
+/usr/local/include/glib-2.0/gobject/glib-types.h
+/usr/local/include/glib-2.0/gobject/gmarshal.h
+/usr/local/include/glib-2.0/gobject/gobject-autocleanups.h
+/usr/local/include/glib-2.0/gobject/gobject-visibility.h
+/usr/local/include/glib-2.0/gobject/gobject.h
+/usr/local/include/glib-2.0/gobject/gobjectnotifyqueue.c
+/usr/local/include/glib-2.0/gobject/gparam.h
+/usr/local/include/glib-2.0/gobject/gparamspecs.h
+/usr/local/include/glib-2.0/gobject/gsignal.h
+/usr/local/include/glib-2.0/gobject/gsignalgroup.h
+/usr/local/include/glib-2.0/gobject/gsourceclosure.h
+/usr/local/include/glib-2.0/gobject/gtype.h
+/usr/local/include/glib-2.0/gobject/gtypemodule.h
+/usr/local/include/glib-2.0/gobject/gtypeplugin.h
+/usr/local/include/glib-2.0/gobject/gvalue.h
+/usr/local/include/glib-2.0/gobject/gvaluearray.h
+/usr/local/include/glib-2.0/gobject/gvaluecollector.h
+/usr/local/include/glib-2.0/gobject/gvaluetypes.h
+/usr/local/lib/libgio-2.0.a
+/usr/local/lib/libgio-2.0.so
+/usr/local/lib/libgirepository-2.0.a
+/usr/local/lib/libgirepository-2.0.so
+/usr/local/lib/libglib-2.0.a
+/usr/local/lib/libglib-2.0.so
+/usr/local/lib/libgmodule-2.0.a
+/usr/local/lib/libgmodule-2.0.so
+/usr/local/lib/libgobject-2.0.a
+/usr/local/lib/libgobject-2.0.so
+/usr/local/lib/libgthread-2.0.a
+/usr/local/lib/libgthread-2.0.so
+/usr/local/lib/pkgconfig/gio-2.0.pc
+/usr/local/lib/pkgconfig/gio-unix-2.0.pc
+/usr/local/lib/pkgconfig/girepository-2.0.pc
+/usr/local/lib/pkgconfig/glib-2.0.pc
+/usr/local/lib/pkgconfig/gmodule-2.0.pc
+/usr/local/lib/pkgconfig/gmodule-export-2.0.pc
+/usr/local/lib/pkgconfig/gmodule-no-export-2.0.pc
+/usr/local/lib/pkgconfig/gobject-2.0.pc
+/usr/local/lib/pkgconfig/gthread-2.0.pc
+/usr/local/share/aclocal/glib-2.0.m4
+/usr/local/share/aclocal/glib-gettext.m4
+/usr/local/share/aclocal/gsettings.m4</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>2.82.4-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/glib-dev-2.82.4-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/glib-dev-2.82.4-r0.tar.gz">.tar.gz</a> &middot; <code>apk add glib-dev=2.82.4-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

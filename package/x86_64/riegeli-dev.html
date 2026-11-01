@@ -1,0 +1,309 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>riegeli-dev 0_git20231212-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>riegeli-dev <span class=mut>0_git20231212-r0</span></h1><p class=sum><b>File format for storing a sequence of records, typically protocol buffers (development files)</b><br>riegeli 0_git20231212 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>0_git20231212-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/riegeli-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/google/riegeli.git">https://github.com/google/riegeli.git</a></dd>
+<dt>License</dt><dd>Apache-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/riegeli">ports/riegeli</a></dd>
+<dt>Package size</dt><dd>344.9 KiB</dd>
+<dt>Installed size</dt><dd>2.1 MiB</dd>
+<dt>Build date</dt><dd>2026-11-01</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add riegeli-dev
+apk add riegeli-dev=0_git20231212-r0   <span class=mut># this version</span>
+
+apk del riegeli-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/riegeli-dev-0_git20231212-r0.apk">riegeli-dev-0_git20231212-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install riegeli-dev
+oss-get install riegeli-dev=0_git20231212-r0   <span class=mut># this version</span>
+
+oss-get remove riegeli-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="riegeli.html">riegeli</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/riegeli-dev-0_git20231212-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/riegeli-dev-0_git20231212-r0.tar.gz</a> (329.1 KiB)</dd><dt>SHA-256</dt><dd><code>2eed27893afff7793b4aad7ef86010d0ac3b2b0c6776eef579793f25855cafea</code></dd><dt>Install first</dt><dd><a href="abseil.html">abseil</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="highwayhash.html">highwayhash</a>, <a href="lz4.html">lz4</a>, <a href="zlib.html">zlib</a>, <a href="protobuf.html">protobuf</a>, <a href="snappy.html">snappy</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="riegeli.html">riegeli</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/riegeli-dev-0_git20231212-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 riegeli-dev-0_git20231212-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 2eed27893afff7793b4aad7ef86010d0ac3b2b0c6776eef579793f25855cafea ] &amp;&amp; echo OK || echo BAD
+gzip -dc riegeli-dev-0_git20231212-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/riegeli-dev.list
+gzip -dc riegeli-dev-0_git20231212-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm riegeli-dev-0_git20231212-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/riegeli-dev.list
+rm var/lib/manual/riegeli-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="abseil.html">abseil</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="highwayhash.html">highwayhash</a>, <a href="lz4.html">lz4</a>, <a href="zlib.html">zlib</a>, <a href="protobuf.html">protobuf</a>, <a href="snappy.html">snappy</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="riegeli.html">riegeli</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="riegeli.html">riegeli</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/riegeli.html">riegeli</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (3)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/riegeli/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/riegeli/patches/0002-installed-header-paths.patch">0002-installed-header-paths.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/riegeli/patches/0003-protobuf-error-collector.patch">0003-protobuf-error-collector.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/riegeli/README.md">ports/riegeli/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_riegeli on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/riegeli-0_git20231212-r0.log">tests/logs/x86_64/riegeli-0_git20231212-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># riegeli 0_git20231212-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:08:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u riegeli qnx-test-riegeli qnx-port-tests
+(1/7) Installing abseil (20240722.0-r0)
+(2/7) Installing protobuf (29.3-r0)
+(3/7) Installing highwayhash (0_git20240418-r0)
+(4/7) Installing lz4 (1.10.0-r0)
+(5/7) Installing snappy (1.2.1-r0)
+(6/7) Installing riegeli (0_git20231212-r0)
+(7/7) Installing qnx-test-riegeli (1.0-r0)
+OK: 112 MiB in 40 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_riegeli
+     == riegeli ==
+       ok   CRC-32C(&quot;123456789&quot;) = 0xe3069283
+       info uncompressed 76944 bytes (records: 73890 bytes)
+       ok   uncompressed: 2000 records written and read back unchanged
+       info brotli       2717 bytes (records: 73890 bytes)
+       ok   brotli: 2000 records written and read back unchanged
+       ok   brotli: smaller than uncompressed
+       info zstd         3652 bytes (records: 73890 bytes)
+       ok   zstd: 2000 records written and read back unchanged
+       ok   zstd: smaller than uncompressed
+       info snappy       10542 bytes (records: 73890 bytes)
+       ok   snappy: 2000 records written and read back unchanged
+       ok   snappy: smaller than uncompressed
+       ok   100 proto records written, transposed
+       ok   file metadata read back
+       ok   100 proto records parsed back unchanged
+       ok   file written with FdWriter (small chunks)
+       ok   seek to the position of record 1234 and read it
+       ok   then record 1235 follows
+       ok   reader closed cleanly
+       ok   damaged file: reading without recovery fails
+       info with recovery: 1959 of 2000 records, 1 region(s) skipped
+       ok   with recovery: the damaged region is skipped, the rest read
+     PASS riegeli
+PASS test_riegeli
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-riegeli qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64-m-z/qnx-test-riegeli-1.0-r0.apk">qnx-test-riegeli-1.0-r0.apk</a> (release tests-8.0-x86_64-m-z)</p>
+<h2>Files (183)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/riegeli/base/any_dependency.h
+/usr/local/include/riegeli/base/arithmetic.h
+/usr/local/include/riegeli/base/assert.h
+/usr/local/include/riegeli/base/background_cleaning.h
+/usr/local/include/riegeli/base/binary_search.h
+/usr/local/include/riegeli/base/buffer.h
+/usr/local/include/riegeli/base/buffering.h
+/usr/local/include/riegeli/base/chain.h
+/usr/local/include/riegeli/base/closing_ptr.h
+/usr/local/include/riegeli/base/compact_string.h
+/usr/local/include/riegeli/base/compare.h
+/usr/local/include/riegeli/base/constexpr.h
+/usr/local/include/riegeli/base/cord_utils.h
+/usr/local/include/riegeli/base/dependency.h
+/usr/local/include/riegeli/base/errno_mapping.h
+/usr/local/include/riegeli/base/estimated_allocated_size.h
+/usr/local/include/riegeli/base/intrusive_ref_count.h
+/usr/local/include/riegeli/base/memory_estimator.h
+/usr/local/include/riegeli/base/new_aligned.h
+/usr/local/include/riegeli/base/no_destructor.h
+/usr/local/include/riegeli/base/object.h
+/usr/local/include/riegeli/base/options_parser.h
+/usr/local/include/riegeli/base/parallelism.h
+/usr/local/include/riegeli/base/port.h
+/usr/local/include/riegeli/base/recycling_pool.h
+/usr/local/include/riegeli/base/reset.h
+/usr/local/include/riegeli/base/shared_buffer.h
+/usr/local/include/riegeli/base/sized_shared_buffer.h
+/usr/local/include/riegeli/base/stable_dependency.h
+/usr/local/include/riegeli/base/status.h
+/usr/local/include/riegeli/base/string_utils.h
+/usr/local/include/riegeli/base/type_id.h
+/usr/local/include/riegeli/base/type_traits.h
+/usr/local/include/riegeli/base/types.h
+/usr/local/include/riegeli/base/unicode.h
+/usr/local/include/riegeli/base/zeros.h
+/usr/local/include/riegeli/brotli/brotli_allocator.h
+/usr/local/include/riegeli/brotli/brotli_dictionary.h
+/usr/local/include/riegeli/brotli/brotli_reader.h
+/usr/local/include/riegeli/brotli/brotli_writer.h
+/usr/local/include/riegeli/bytes/absl_stringify_writer.h
+/usr/local/include/riegeli/bytes/array_backward_writer.h
+/usr/local/include/riegeli/bytes/array_writer.h
+/usr/local/include/riegeli/bytes/backward_writer.h
+/usr/local/include/riegeli/bytes/buffer_options.h
+/usr/local/include/riegeli/bytes/buffered_reader.h
+/usr/local/include/riegeli/bytes/buffered_writer.h
+/usr/local/include/riegeli/bytes/cfile_dependency.h
+/usr/local/include/riegeli/bytes/cfile_internal.h
+/usr/local/include/riegeli/bytes/cfile_reader.h
+/usr/local/include/riegeli/bytes/cfile_writer.h
+/usr/local/include/riegeli/bytes/chain_backward_writer.h
+/usr/local/include/riegeli/bytes/chain_reader.h
+/usr/local/include/riegeli/bytes/chain_writer.h
+/usr/local/include/riegeli/bytes/compact_string_writer.h
+/usr/local/include/riegeli/bytes/copy_all.h
+/usr/local/include/riegeli/bytes/cord_backward_writer.h
+/usr/local/include/riegeli/bytes/cord_reader.h
+/usr/local/include/riegeli/bytes/cord_writer.h
+/usr/local/include/riegeli/bytes/fd_dependency.h
+/usr/local/include/riegeli/bytes/fd_internal.h
+/usr/local/include/riegeli/bytes/fd_internal_for_headers.h
+/usr/local/include/riegeli/bytes/fd_mmap_reader.h
+/usr/local/include/riegeli/bytes/fd_reader.h
+/usr/local/include/riegeli/bytes/fd_writer.h
+/usr/local/include/riegeli/bytes/file_mode_string.h
+/usr/local/include/riegeli/bytes/iostream_internal.h
+/usr/local/include/riegeli/bytes/istream_reader.h
+/usr/local/include/riegeli/bytes/joining_reader.h
+/usr/local/include/riegeli/bytes/limiting_backward_writer.h
+/usr/local/include/riegeli/bytes/limiting_reader.h
+/usr/local/include/riegeli/bytes/limiting_writer.h
+/usr/local/include/riegeli/bytes/null_backward_writer.h
+/usr/local/include/riegeli/bytes/null_writer.h
+/usr/local/include/riegeli/bytes/ostream_writer.h
+/usr/local/include/riegeli/bytes/position_shifting_reader.h
+/usr/local/include/riegeli/bytes/position_shifting_writer.h
+/usr/local/include/riegeli/bytes/prefix_limiting_reader.h
+/usr/local/include/riegeli/bytes/prefix_limiting_writer.h
+/usr/local/include/riegeli/bytes/pullable_reader.h
+/usr/local/include/riegeli/bytes/pushable_backward_writer.h
+/usr/local/include/riegeli/bytes/pushable_writer.h
+/usr/local/include/riegeli/bytes/read_all.h
+/usr/local/include/riegeli/bytes/reader.h
+/usr/local/include/riegeli/bytes/reader_factory.h
+/usr/local/include/riegeli/bytes/reader_istream.h
+/usr/local/include/riegeli/bytes/resizable_writer.h
+/usr/local/include/riegeli/bytes/restricted_chain_writer.h
+/usr/local/include/riegeli/bytes/splitting_writer.h
+/usr/local/include/riegeli/bytes/std_io.h
+/usr/local/include/riegeli/bytes/string_reader.h
+/usr/local/include/riegeli/bytes/string_writer.h
+/usr/local/include/riegeli/bytes/wrapped_reader.h
+/usr/local/include/riegeli/bytes/wrapped_writer.h
+/usr/local/include/riegeli/bytes/wrapping_backward_writer.h
+/usr/local/include/riegeli/bytes/wrapping_reader.h
+/usr/local/include/riegeli/bytes/wrapping_writer.h
+/usr/local/include/riegeli/bytes/write.h
+/usr/local/include/riegeli/bytes/write_int_internal.h
+/usr/local/include/riegeli/bytes/writer.h
+/usr/local/include/riegeli/bytes/writer_ostream.h
+/usr/local/include/riegeli/bzip2/bzip2_error.h
+/usr/local/include/riegeli/bzip2/bzip2_reader.h
+/usr/local/include/riegeli/bzip2/bzip2_writer.h
+/usr/local/include/riegeli/chunk_encoding/chunk.h
+/usr/local/include/riegeli/chunk_encoding/chunk_decoder.h
+/usr/local/include/riegeli/chunk_encoding/chunk_encoder.h
+/usr/local/include/riegeli/chunk_encoding/compressor.h
+/usr/local/include/riegeli/chunk_encoding/compressor_options.h
+/usr/local/include/riegeli/chunk_encoding/constants.h
+/usr/local/include/riegeli/chunk_encoding/decompressor.h
+/usr/local/include/riegeli/chunk_encoding/deferred_encoder.h
+/usr/local/include/riegeli/chunk_encoding/field_projection.h
+/usr/local/include/riegeli/chunk_encoding/hash.h
+/usr/local/include/riegeli/chunk_encoding/simple_decoder.h
+/usr/local/include/riegeli/chunk_encoding/simple_encoder.h
+/usr/local/include/riegeli/chunk_encoding/transpose_decoder.h
+/usr/local/include/riegeli/chunk_encoding/transpose_encoder.h
+/usr/local/include/riegeli/chunk_encoding/transpose_internal.h
+/usr/local/include/riegeli/containers/chunked_sorted_string_set.h
+/usr/local/include/riegeli/containers/linear_sorted_string_set.h
+/usr/local/include/riegeli/csv/csv_reader.h
+/usr/local/include/riegeli/csv/csv_record.h
+/usr/local/include/riegeli/csv/csv_writer.h
+/usr/local/include/riegeli/digests/adler32_digester.h
+/usr/local/include/riegeli/digests/crc32_digester.h
+/usr/local/include/riegeli/digests/crc32c_digester.h
+/usr/local/include/riegeli/digests/digester.h
+/usr/local/include/riegeli/digests/digesting_reader.h
+/usr/local/include/riegeli/digests/digesting_writer.h
+/usr/local/include/riegeli/endian/endian_internal.h
+/usr/local/include/riegeli/endian/endian_reading.h
+/usr/local/include/riegeli/endian/endian_writing.h
+/usr/local/include/riegeli/lines/line_reading.h
+/usr/local/include/riegeli/lines/line_writing.h
+/usr/local/include/riegeli/lines/newline.h
+/usr/local/include/riegeli/lines/text_reader.h
+/usr/local/include/riegeli/lines/text_writer.h
+/usr/local/include/riegeli/lz4/lz4_dictionary.h
+/usr/local/include/riegeli/lz4/lz4_reader.h
+/usr/local/include/riegeli/lz4/lz4_writer.h
+/usr/local/include/riegeli/messages/message_parse.h
+/usr/local/include/riegeli/messages/message_serialize.h
+/usr/local/include/riegeli/messages/message_wire_format.h
+/usr/local/include/riegeli/messages/text_parse.h
+/usr/local/include/riegeli/messages/text_print.h
+/usr/local/include/riegeli/ordered_varint/ordered_varint_internal.h
+/usr/local/include/riegeli/ordered_varint/ordered_varint_reading.h
+/usr/local/include/riegeli/ordered_varint/ordered_varint_writing.h
+/usr/local/include/riegeli/records/block.h
+/usr/local/include/riegeli/records/chunk_reader.h
+/usr/local/include/riegeli/records/chunk_writer.h
+/usr/local/include/riegeli/records/record_position.h
+/usr/local/include/riegeli/records/record_reader.h
+/usr/local/include/riegeli/records/record_writer.h
+/usr/local/include/riegeli/records/records_metadata.pb.h
+/usr/local/include/riegeli/records/records_metadata.proto
+/usr/local/include/riegeli/records/skipped_region.h
+/usr/local/include/riegeli/records/tools/riegeli_summary.proto
+/usr/local/include/riegeli/records/tools/tfrecord_recognizer.h
+/usr/local/include/riegeli/snappy/framed/framed_snappy_reader.h
+/usr/local/include/riegeli/snappy/framed/framed_snappy_writer.h
+/usr/local/include/riegeli/snappy/hadoop/hadoop_snappy_reader.h
+/usr/local/include/riegeli/snappy/hadoop/hadoop_snappy_writer.h
+/usr/local/include/riegeli/snappy/snappy_reader.h
+/usr/local/include/riegeli/snappy/snappy_streams.h
+/usr/local/include/riegeli/snappy/snappy_writer.h
+/usr/local/include/riegeli/text/ascii_align.h
+/usr/local/include/riegeli/text/write_int.h
+/usr/local/include/riegeli/varint/varint_internal.h
+/usr/local/include/riegeli/varint/varint_reading.h
+/usr/local/include/riegeli/varint/varint_writing.h
+/usr/local/include/riegeli/xz/xz_error.h
+/usr/local/include/riegeli/xz/xz_reader.h
+/usr/local/include/riegeli/xz/xz_writer.h
+/usr/local/include/riegeli/zlib/zlib_dictionary.h
+/usr/local/include/riegeli/zlib/zlib_error.h
+/usr/local/include/riegeli/zlib/zlib_reader.h
+/usr/local/include/riegeli/zlib/zlib_writer.h
+/usr/local/include/riegeli/zstd/zstd_dictionary.h
+/usr/local/include/riegeli/zstd/zstd_reader.h
+/usr/local/include/riegeli/zstd/zstd_writer.h
+/usr/local/lib/libriegeli.so</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:58 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

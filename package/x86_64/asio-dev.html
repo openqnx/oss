@@ -1,0 +1,733 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>asio-dev 1.30.2-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>asio-dev <span class=mut>1.30.2-r0</span></h1><p class=sum><b>Header-only C++ library for asynchronous network and low-level I/O (development files)</b><br>asio 1.30.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>1.30.2-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/asio-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/chriskohlhoff/asio.git">https://github.com/chriskohlhoff/asio.git</a></dd>
+<dt>License</dt><dd>see upstream <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>standalone</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/asio">ports/asio</a></dd>
+<dt>Package size</dt><dd>650.9 KiB</dd>
+<dt>Installed size</dt><dd>4.8 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add asio-dev
+apk add asio-dev=1.30.2-r0   <span class=mut># this version</span>
+
+apk del asio-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/asio-dev-1.30.2-r0.apk">asio-dev-1.30.2-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install asio-dev
+oss-get install asio-dev=1.30.2-r0   <span class=mut># this version</span>
+
+oss-get remove asio-dev   <span class=mut># its files only</span></code></pre></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/asio-dev-1.30.2-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/asio-dev-1.30.2-r0.tar.gz</a> (608.4 KiB)</dd><dt>SHA-256</dt><dd><code>bd44fb2626bb465d7b9e63eadc61d9ca763db56084b45fa728d823350dbfff09</code></dd><dt>Install first</dt><dd>nothing</dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/asio-dev-1.30.2-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 asio-dev-1.30.2-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = bd44fb2626bb465d7b9e63eadc61d9ca763db56084b45fa728d823350dbfff09 ] &amp;&amp; echo OK || echo BAD
+gzip -dc asio-dev-1.30.2-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/asio-dev.list
+gzip -dc asio-dev-1.30.2-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm asio-dev-1.30.2-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/asio-dev.list
+rm var/lib/manual/asio-dev.list</code></pre>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (here the whole component: it has no run-time package). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (0)</h2><span class=mut>nothing beyond the QNX target image</span>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/asio/patches/0001-qnx-no-sa-restart.patch">0001-qnx-no-sa-restart.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/asio/README.md">ports/asio/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_asio on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/asio-1.30.2-r0.log">tests/logs/x86_64/asio-1.30.2-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># asio 1.30.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:11:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u asio-dev qnx-test-asio qnx-port-tests
+(1/3) Installing asio-dev (1.30.2-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-asio (1.0-r0)
+OK: 98 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_asio
+     == asio ==
+       info asio 1.30.2
+       ok   acceptor bound to &lt;ip&gt;, ephemeral port
+       ok   client connected
+       ok   three messages echoed back upper-cased
+       ok   server accepted one connection
+       ok   UDP datagram received, sender port right
+       info timer fired after 50 ms
+       ok   steady_timer 50 ms
+       ok   100 handlers posted from another thread ran
+       ok   make_address(&lt;ip&gt;)
+       ok   make_address(::1) is v6 loopback
+       ok   make_address rejects 300.1.1.1
+     PASS asio
+PASS test_asio
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-asio qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-asio-1.0-r0.apk">qnx-test-asio-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (621)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/asio.hpp
+/usr/local/include/asio/any_completion_executor.hpp
+/usr/local/include/asio/any_completion_handler.hpp
+/usr/local/include/asio/any_io_executor.hpp
+/usr/local/include/asio/append.hpp
+/usr/local/include/asio/as_tuple.hpp
+/usr/local/include/asio/associated_allocator.hpp
+/usr/local/include/asio/associated_cancellation_slot.hpp
+/usr/local/include/asio/associated_executor.hpp
+/usr/local/include/asio/associated_immediate_executor.hpp
+/usr/local/include/asio/associator.hpp
+/usr/local/include/asio/async_result.hpp
+/usr/local/include/asio/awaitable.hpp
+/usr/local/include/asio/basic_datagram_socket.hpp
+/usr/local/include/asio/basic_deadline_timer.hpp
+/usr/local/include/asio/basic_file.hpp
+/usr/local/include/asio/basic_io_object.hpp
+/usr/local/include/asio/basic_random_access_file.hpp
+/usr/local/include/asio/basic_raw_socket.hpp
+/usr/local/include/asio/basic_readable_pipe.hpp
+/usr/local/include/asio/basic_seq_packet_socket.hpp
+/usr/local/include/asio/basic_serial_port.hpp
+/usr/local/include/asio/basic_signal_set.hpp
+/usr/local/include/asio/basic_socket.hpp
+/usr/local/include/asio/basic_socket_acceptor.hpp
+/usr/local/include/asio/basic_socket_iostream.hpp
+/usr/local/include/asio/basic_socket_streambuf.hpp
+/usr/local/include/asio/basic_stream_file.hpp
+/usr/local/include/asio/basic_stream_socket.hpp
+/usr/local/include/asio/basic_streambuf.hpp
+/usr/local/include/asio/basic_streambuf_fwd.hpp
+/usr/local/include/asio/basic_waitable_timer.hpp
+/usr/local/include/asio/basic_writable_pipe.hpp
+/usr/local/include/asio/bind_allocator.hpp
+/usr/local/include/asio/bind_cancellation_slot.hpp
+/usr/local/include/asio/bind_executor.hpp
+/usr/local/include/asio/bind_immediate_executor.hpp
+/usr/local/include/asio/buffer.hpp
+/usr/local/include/asio/buffer_registration.hpp
+/usr/local/include/asio/buffered_read_stream.hpp
+/usr/local/include/asio/buffered_read_stream_fwd.hpp
+/usr/local/include/asio/buffered_stream.hpp
+/usr/local/include/asio/buffered_stream_fwd.hpp
+/usr/local/include/asio/buffered_write_stream.hpp
+/usr/local/include/asio/buffered_write_stream_fwd.hpp
+/usr/local/include/asio/buffers_iterator.hpp
+/usr/local/include/asio/cancellation_signal.hpp
+/usr/local/include/asio/cancellation_state.hpp
+/usr/local/include/asio/cancellation_type.hpp
+/usr/local/include/asio/co_spawn.hpp
+/usr/local/include/asio/completion_condition.hpp
+/usr/local/include/asio/compose.hpp
+/usr/local/include/asio/connect.hpp
+/usr/local/include/asio/connect_pipe.hpp
+/usr/local/include/asio/consign.hpp
+/usr/local/include/asio/coroutine.hpp
+/usr/local/include/asio/deadline_timer.hpp
+/usr/local/include/asio/defer.hpp
+/usr/local/include/asio/deferred.hpp
+/usr/local/include/asio/detached.hpp
+/usr/local/include/asio/detail/array.hpp
+/usr/local/include/asio/detail/array_fwd.hpp
+/usr/local/include/asio/detail/assert.hpp
+/usr/local/include/asio/detail/atomic_count.hpp
+/usr/local/include/asio/detail/base_from_cancellation_state.hpp
+/usr/local/include/asio/detail/base_from_completion_cond.hpp
+/usr/local/include/asio/detail/bind_handler.hpp
+/usr/local/include/asio/detail/blocking_executor_op.hpp
+/usr/local/include/asio/detail/buffer_resize_guard.hpp
+/usr/local/include/asio/detail/buffer_sequence_adapter.hpp
+/usr/local/include/asio/detail/buffered_stream_storage.hpp
+/usr/local/include/asio/detail/call_stack.hpp
+/usr/local/include/asio/detail/chrono.hpp
+/usr/local/include/asio/detail/chrono_time_traits.hpp
+/usr/local/include/asio/detail/completion_handler.hpp
+/usr/local/include/asio/detail/composed_work.hpp
+/usr/local/include/asio/detail/concurrency_hint.hpp
+/usr/local/include/asio/detail/conditionally_enabled_event.hpp
+/usr/local/include/asio/detail/conditionally_enabled_mutex.hpp
+/usr/local/include/asio/detail/config.hpp
+/usr/local/include/asio/detail/consuming_buffers.hpp
+/usr/local/include/asio/detail/cstddef.hpp
+/usr/local/include/asio/detail/cstdint.hpp
+/usr/local/include/asio/detail/date_time_fwd.hpp
+/usr/local/include/asio/detail/deadline_timer_service.hpp
+/usr/local/include/asio/detail/dependent_type.hpp
+/usr/local/include/asio/detail/descriptor_ops.hpp
+/usr/local/include/asio/detail/descriptor_read_op.hpp
+/usr/local/include/asio/detail/descriptor_write_op.hpp
+/usr/local/include/asio/detail/dev_poll_reactor.hpp
+/usr/local/include/asio/detail/epoll_reactor.hpp
+/usr/local/include/asio/detail/event.hpp
+/usr/local/include/asio/detail/eventfd_select_interrupter.hpp
+/usr/local/include/asio/detail/exception.hpp
+/usr/local/include/asio/detail/executor_function.hpp
+/usr/local/include/asio/detail/executor_op.hpp
+/usr/local/include/asio/detail/fd_set_adapter.hpp
+/usr/local/include/asio/detail/fenced_block.hpp
+/usr/local/include/asio/detail/functional.hpp
+/usr/local/include/asio/detail/future.hpp
+/usr/local/include/asio/detail/global.hpp
+/usr/local/include/asio/detail/handler_alloc_helpers.hpp
+/usr/local/include/asio/detail/handler_cont_helpers.hpp
+/usr/local/include/asio/detail/handler_tracking.hpp
+/usr/local/include/asio/detail/handler_type_requirements.hpp
+/usr/local/include/asio/detail/handler_work.hpp
+/usr/local/include/asio/detail/hash_map.hpp
+/usr/local/include/asio/detail/impl/buffer_sequence_adapter.ipp
+/usr/local/include/asio/detail/impl/descriptor_ops.ipp
+/usr/local/include/asio/detail/impl/dev_poll_reactor.hpp
+/usr/local/include/asio/detail/impl/dev_poll_reactor.ipp
+/usr/local/include/asio/detail/impl/epoll_reactor.hpp
+/usr/local/include/asio/detail/impl/epoll_reactor.ipp
+/usr/local/include/asio/detail/impl/eventfd_select_interrupter.ipp
+/usr/local/include/asio/detail/impl/handler_tracking.ipp
+/usr/local/include/asio/detail/impl/io_uring_descriptor_service.ipp
+/usr/local/include/asio/detail/impl/io_uring_file_service.ipp
+/usr/local/include/asio/detail/impl/io_uring_service.hpp
+/usr/local/include/asio/detail/impl/io_uring_service.ipp
+/usr/local/include/asio/detail/impl/io_uring_socket_service_base.ipp
+/usr/local/include/asio/detail/impl/kqueue_reactor.hpp
+/usr/local/include/asio/detail/impl/kqueue_reactor.ipp
+/usr/local/include/asio/detail/impl/null_event.ipp
+/usr/local/include/asio/detail/impl/pipe_select_interrupter.ipp
+/usr/local/include/asio/detail/impl/posix_event.ipp
+/usr/local/include/asio/detail/impl/posix_mutex.ipp
+/usr/local/include/asio/detail/impl/posix_serial_port_service.ipp
+/usr/local/include/asio/detail/impl/posix_thread.ipp
+/usr/local/include/asio/detail/impl/posix_tss_ptr.ipp
+/usr/local/include/asio/detail/impl/reactive_descriptor_service.ipp
+/usr/local/include/asio/detail/impl/reactive_socket_service_base.ipp
+/usr/local/include/asio/detail/impl/resolver_service_base.ipp
+/usr/local/include/asio/detail/impl/scheduler.ipp
+/usr/local/include/asio/detail/impl/select_reactor.hpp
+/usr/local/include/asio/detail/impl/select_reactor.ipp
+/usr/local/include/asio/detail/impl/service_registry.hpp
+/usr/local/include/asio/detail/impl/service_registry.ipp
+/usr/local/include/asio/detail/impl/signal_set_service.ipp
+/usr/local/include/asio/detail/impl/socket_ops.ipp
+/usr/local/include/asio/detail/impl/socket_select_interrupter.ipp
+/usr/local/include/asio/detail/impl/strand_executor_service.hpp
+/usr/local/include/asio/detail/impl/strand_executor_service.ipp
+/usr/local/include/asio/detail/impl/strand_service.hpp
+/usr/local/include/asio/detail/impl/strand_service.ipp
+/usr/local/include/asio/detail/impl/thread_context.ipp
+/usr/local/include/asio/detail/impl/throw_error.ipp
+/usr/local/include/asio/detail/impl/timer_queue_ptime.ipp
+/usr/local/include/asio/detail/impl/timer_queue_set.ipp
+/usr/local/include/asio/detail/impl/win_event.ipp
+/usr/local/include/asio/detail/impl/win_iocp_file_service.ipp
+/usr/local/include/asio/detail/impl/win_iocp_handle_service.ipp
+/usr/local/include/asio/detail/impl/win_iocp_io_context.hpp
+/usr/local/include/asio/detail/impl/win_iocp_io_context.ipp
+/usr/local/include/asio/detail/impl/win_iocp_serial_port_service.ipp
+/usr/local/include/asio/detail/impl/win_iocp_socket_service_base.ipp
+/usr/local/include/asio/detail/impl/win_mutex.ipp
+/usr/local/include/asio/detail/impl/win_object_handle_service.ipp
+/usr/local/include/asio/detail/impl/win_static_mutex.ipp
+/usr/local/include/asio/detail/impl/win_thread.ipp
+/usr/local/include/asio/detail/impl/win_tss_ptr.ipp
+/usr/local/include/asio/detail/impl/winrt_ssocket_service_base.ipp
+/usr/local/include/asio/detail/impl/winrt_timer_scheduler.hpp
+/usr/local/include/asio/detail/impl/winrt_timer_scheduler.ipp
+/usr/local/include/asio/detail/impl/winsock_init.ipp
+/usr/local/include/asio/detail/initiate_defer.hpp
+/usr/local/include/asio/detail/initiate_dispatch.hpp
+/usr/local/include/asio/detail/initiate_post.hpp
+/usr/local/include/asio/detail/io_control.hpp
+/usr/local/include/asio/detail/io_object_impl.hpp
+/usr/local/include/asio/detail/io_uring_descriptor_read_at_op.hpp
+/usr/local/include/asio/detail/io_uring_descriptor_read_op.hpp
+/usr/local/include/asio/detail/io_uring_descriptor_service.hpp
+/usr/local/include/asio/detail/io_uring_descriptor_write_at_op.hpp
+/usr/local/include/asio/detail/io_uring_descriptor_write_op.hpp
+/usr/local/include/asio/detail/io_uring_file_service.hpp
+/usr/local/include/asio/detail/io_uring_null_buffers_op.hpp
+/usr/local/include/asio/detail/io_uring_operation.hpp
+/usr/local/include/asio/detail/io_uring_service.hpp
+/usr/local/include/asio/detail/io_uring_socket_accept_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_connect_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_recv_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_recvfrom_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_recvmsg_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_send_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_sendto_op.hpp
+/usr/local/include/asio/detail/io_uring_socket_service.hpp
+/usr/local/include/asio/detail/io_uring_socket_service_base.hpp
+/usr/local/include/asio/detail/io_uring_wait_op.hpp
+/usr/local/include/asio/detail/is_buffer_sequence.hpp
+/usr/local/include/asio/detail/is_executor.hpp
+/usr/local/include/asio/detail/keyword_tss_ptr.hpp
+/usr/local/include/asio/detail/kqueue_reactor.hpp
+/usr/local/include/asio/detail/limits.hpp
+/usr/local/include/asio/detail/local_free_on_block_exit.hpp
+/usr/local/include/asio/detail/memory.hpp
+/usr/local/include/asio/detail/mutex.hpp
+/usr/local/include/asio/detail/non_const_lvalue.hpp
+/usr/local/include/asio/detail/noncopyable.hpp
+/usr/local/include/asio/detail/null_event.hpp
+/usr/local/include/asio/detail/null_fenced_block.hpp
+/usr/local/include/asio/detail/null_global.hpp
+/usr/local/include/asio/detail/null_mutex.hpp
+/usr/local/include/asio/detail/null_reactor.hpp
+/usr/local/include/asio/detail/null_signal_blocker.hpp
+/usr/local/include/asio/detail/null_socket_service.hpp
+/usr/local/include/asio/detail/null_static_mutex.hpp
+/usr/local/include/asio/detail/null_thread.hpp
+/usr/local/include/asio/detail/null_tss_ptr.hpp
+/usr/local/include/asio/detail/object_pool.hpp
+/usr/local/include/asio/detail/old_win_sdk_compat.hpp
+/usr/local/include/asio/detail/op_queue.hpp
+/usr/local/include/asio/detail/operation.hpp
+/usr/local/include/asio/detail/pipe_select_interrupter.hpp
+/usr/local/include/asio/detail/pop_options.hpp
+/usr/local/include/asio/detail/posix_event.hpp
+/usr/local/include/asio/detail/posix_fd_set_adapter.hpp
+/usr/local/include/asio/detail/posix_global.hpp
+/usr/local/include/asio/detail/posix_mutex.hpp
+/usr/local/include/asio/detail/posix_serial_port_service.hpp
+/usr/local/include/asio/detail/posix_signal_blocker.hpp
+/usr/local/include/asio/detail/posix_static_mutex.hpp
+/usr/local/include/asio/detail/posix_thread.hpp
+/usr/local/include/asio/detail/posix_tss_ptr.hpp
+/usr/local/include/asio/detail/push_options.hpp
+/usr/local/include/asio/detail/reactive_descriptor_service.hpp
+/usr/local/include/asio/detail/reactive_null_buffers_op.hpp
+/usr/local/include/asio/detail/reactive_socket_accept_op.hpp
+/usr/local/include/asio/detail/reactive_socket_connect_op.hpp
+/usr/local/include/asio/detail/reactive_socket_recv_op.hpp
+/usr/local/include/asio/detail/reactive_socket_recvfrom_op.hpp
+/usr/local/include/asio/detail/reactive_socket_recvmsg_op.hpp
+/usr/local/include/asio/detail/reactive_socket_send_op.hpp
+/usr/local/include/asio/detail/reactive_socket_sendto_op.hpp
+/usr/local/include/asio/detail/reactive_socket_service.hpp
+/usr/local/include/asio/detail/reactive_socket_service_base.hpp
+/usr/local/include/asio/detail/reactive_wait_op.hpp
+/usr/local/include/asio/detail/reactor.hpp
+/usr/local/include/asio/detail/reactor_op.hpp
+/usr/local/include/asio/detail/reactor_op_queue.hpp
+/usr/local/include/asio/detail/recycling_allocator.hpp
+/usr/local/include/asio/detail/regex_fwd.hpp
+/usr/local/include/asio/detail/resolve_endpoint_op.hpp
+/usr/local/include/asio/detail/resolve_op.hpp
+/usr/local/include/asio/detail/resolve_query_op.hpp
+/usr/local/include/asio/detail/resolver_service.hpp
+/usr/local/include/asio/detail/resolver_service_base.hpp
+/usr/local/include/asio/detail/scheduler.hpp
+/usr/local/include/asio/detail/scheduler_operation.hpp
+/usr/local/include/asio/detail/scheduler_task.hpp
+/usr/local/include/asio/detail/scheduler_thread_info.hpp
+/usr/local/include/asio/detail/scoped_lock.hpp
+/usr/local/include/asio/detail/scoped_ptr.hpp
+/usr/local/include/asio/detail/select_interrupter.hpp
+/usr/local/include/asio/detail/select_reactor.hpp
+/usr/local/include/asio/detail/service_registry.hpp
+/usr/local/include/asio/detail/signal_blocker.hpp
+/usr/local/include/asio/detail/signal_handler.hpp
+/usr/local/include/asio/detail/signal_init.hpp
+/usr/local/include/asio/detail/signal_op.hpp
+/usr/local/include/asio/detail/signal_set_service.hpp
+/usr/local/include/asio/detail/socket_holder.hpp
+/usr/local/include/asio/detail/socket_ops.hpp
+/usr/local/include/asio/detail/socket_option.hpp
+/usr/local/include/asio/detail/socket_select_interrupter.hpp
+/usr/local/include/asio/detail/socket_types.hpp
+/usr/local/include/asio/detail/source_location.hpp
+/usr/local/include/asio/detail/static_mutex.hpp
+/usr/local/include/asio/detail/std_event.hpp
+/usr/local/include/asio/detail/std_fenced_block.hpp
+/usr/local/include/asio/detail/std_global.hpp
+/usr/local/include/asio/detail/std_mutex.hpp
+/usr/local/include/asio/detail/std_static_mutex.hpp
+/usr/local/include/asio/detail/std_thread.hpp
+/usr/local/include/asio/detail/strand_executor_service.hpp
+/usr/local/include/asio/detail/strand_service.hpp
+/usr/local/include/asio/detail/string_view.hpp
+/usr/local/include/asio/detail/thread.hpp
+/usr/local/include/asio/detail/thread_context.hpp
+/usr/local/include/asio/detail/thread_group.hpp
+/usr/local/include/asio/detail/thread_info_base.hpp
+/usr/local/include/asio/detail/throw_error.hpp
+/usr/local/include/asio/detail/throw_exception.hpp
+/usr/local/include/asio/detail/timer_queue.hpp
+/usr/local/include/asio/detail/timer_queue_base.hpp
+/usr/local/include/asio/detail/timer_queue_ptime.hpp
+/usr/local/include/asio/detail/timer_queue_set.hpp
+/usr/local/include/asio/detail/timer_scheduler.hpp
+/usr/local/include/asio/detail/timer_scheduler_fwd.hpp
+/usr/local/include/asio/detail/tss_ptr.hpp
+/usr/local/include/asio/detail/type_traits.hpp
+/usr/local/include/asio/detail/utility.hpp
+/usr/local/include/asio/detail/wait_handler.hpp
+/usr/local/include/asio/detail/wait_op.hpp
+/usr/local/include/asio/detail/win_event.hpp
+/usr/local/include/asio/detail/win_fd_set_adapter.hpp
+/usr/local/include/asio/detail/win_global.hpp
+/usr/local/include/asio/detail/win_iocp_file_service.hpp
+/usr/local/include/asio/detail/win_iocp_handle_read_op.hpp
+/usr/local/include/asio/detail/win_iocp_handle_service.hpp
+/usr/local/include/asio/detail/win_iocp_handle_write_op.hpp
+/usr/local/include/asio/detail/win_iocp_io_context.hpp
+/usr/local/include/asio/detail/win_iocp_null_buffers_op.hpp
+/usr/local/include/asio/detail/win_iocp_operation.hpp
+/usr/local/include/asio/detail/win_iocp_overlapped_op.hpp
+/usr/local/include/asio/detail/win_iocp_overlapped_ptr.hpp
+/usr/local/include/asio/detail/win_iocp_serial_port_service.hpp
+/usr/local/include/asio/detail/win_iocp_socket_accept_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_connect_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_recv_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_recvfrom_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_recvmsg_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_send_op.hpp
+/usr/local/include/asio/detail/win_iocp_socket_service.hpp
+/usr/local/include/asio/detail/win_iocp_socket_service_base.hpp
+/usr/local/include/asio/detail/win_iocp_thread_info.hpp
+/usr/local/include/asio/detail/win_iocp_wait_op.hpp
+/usr/local/include/asio/detail/win_mutex.hpp
+/usr/local/include/asio/detail/win_object_handle_service.hpp
+/usr/local/include/asio/detail/win_static_mutex.hpp
+/usr/local/include/asio/detail/win_thread.hpp
+/usr/local/include/asio/detail/win_tss_ptr.hpp
+/usr/local/include/asio/detail/winapp_thread.hpp
+/usr/local/include/asio/detail/wince_thread.hpp
+/usr/local/include/asio/detail/winrt_async_manager.hpp
+/usr/local/include/asio/detail/winrt_async_op.hpp
+/usr/local/include/asio/detail/winrt_resolve_op.hpp
+/usr/local/include/asio/detail/winrt_resolver_service.hpp
+/usr/local/include/asio/detail/winrt_socket_connect_op.hpp
+/usr/local/include/asio/detail/winrt_socket_recv_op.hpp
+/usr/local/include/asio/detail/winrt_socket_send_op.hpp
+/usr/local/include/asio/detail/winrt_ssocket_service.hpp
+/usr/local/include/asio/detail/winrt_ssocket_service_base.hpp
+/usr/local/include/asio/detail/winrt_timer_scheduler.hpp
+/usr/local/include/asio/detail/winrt_utils.hpp
+/usr/local/include/asio/detail/winsock_init.hpp
+/usr/local/include/asio/detail/work_dispatcher.hpp
+/usr/local/include/asio/detail/wrapped_handler.hpp
+/usr/local/include/asio/dispatch.hpp
+/usr/local/include/asio/error.hpp
+/usr/local/include/asio/error_code.hpp
+/usr/local/include/asio/execution.hpp
+/usr/local/include/asio/execution/allocator.hpp
+/usr/local/include/asio/execution/any_executor.hpp
+/usr/local/include/asio/execution/bad_executor.hpp
+/usr/local/include/asio/execution/blocking.hpp
+/usr/local/include/asio/execution/blocking_adaptation.hpp
+/usr/local/include/asio/execution/context.hpp
+/usr/local/include/asio/execution/context_as.hpp
+/usr/local/include/asio/execution/executor.hpp
+/usr/local/include/asio/execution/impl/bad_executor.ipp
+/usr/local/include/asio/execution/invocable_archetype.hpp
+/usr/local/include/asio/execution/mapping.hpp
+/usr/local/include/asio/execution/occupancy.hpp
+/usr/local/include/asio/execution/outstanding_work.hpp
+/usr/local/include/asio/execution/prefer_only.hpp
+/usr/local/include/asio/execution/relationship.hpp
+/usr/local/include/asio/execution_context.hpp
+/usr/local/include/asio/executor.hpp
+/usr/local/include/asio/executor_work_guard.hpp
+/usr/local/include/asio/experimental/append.hpp
+/usr/local/include/asio/experimental/as_single.hpp
+/usr/local/include/asio/experimental/as_tuple.hpp
+/usr/local/include/asio/experimental/awaitable_operators.hpp
+/usr/local/include/asio/experimental/basic_channel.hpp
+/usr/local/include/asio/experimental/basic_concurrent_channel.hpp
+/usr/local/include/asio/experimental/cancellation_condition.hpp
+/usr/local/include/asio/experimental/channel.hpp
+/usr/local/include/asio/experimental/channel_error.hpp
+/usr/local/include/asio/experimental/channel_traits.hpp
+/usr/local/include/asio/experimental/co_composed.hpp
+/usr/local/include/asio/experimental/co_spawn.hpp
+/usr/local/include/asio/experimental/concurrent_channel.hpp
+/usr/local/include/asio/experimental/coro.hpp
+/usr/local/include/asio/experimental/coro_traits.hpp
+/usr/local/include/asio/experimental/deferred.hpp
+/usr/local/include/asio/experimental/detail/channel_handler.hpp
+/usr/local/include/asio/experimental/detail/channel_message.hpp
+/usr/local/include/asio/experimental/detail/channel_operation.hpp
+/usr/local/include/asio/experimental/detail/channel_payload.hpp
+/usr/local/include/asio/experimental/detail/channel_receive_op.hpp
+/usr/local/include/asio/experimental/detail/channel_send_functions.hpp
+/usr/local/include/asio/experimental/detail/channel_send_op.hpp
+/usr/local/include/asio/experimental/detail/channel_service.hpp
+/usr/local/include/asio/experimental/detail/coro_completion_handler.hpp
+/usr/local/include/asio/experimental/detail/coro_promise_allocator.hpp
+/usr/local/include/asio/experimental/detail/has_signature.hpp
+/usr/local/include/asio/experimental/detail/impl/channel_service.hpp
+/usr/local/include/asio/experimental/detail/partial_promise.hpp
+/usr/local/include/asio/experimental/impl/as_single.hpp
+/usr/local/include/asio/experimental/impl/channel_error.ipp
+/usr/local/include/asio/experimental/impl/co_composed.hpp
+/usr/local/include/asio/experimental/impl/coro.hpp
+/usr/local/include/asio/experimental/impl/parallel_group.hpp
+/usr/local/include/asio/experimental/impl/promise.hpp
+/usr/local/include/asio/experimental/impl/use_coro.hpp
+/usr/local/include/asio/experimental/impl/use_promise.hpp
+/usr/local/include/asio/experimental/parallel_group.hpp
+/usr/local/include/asio/experimental/prepend.hpp
+/usr/local/include/asio/experimental/promise.hpp
+/usr/local/include/asio/experimental/use_coro.hpp
+/usr/local/include/asio/experimental/use_promise.hpp
+/usr/local/include/asio/file_base.hpp
+/usr/local/include/asio/generic/basic_endpoint.hpp
+/usr/local/include/asio/generic/datagram_protocol.hpp
+/usr/local/include/asio/generic/detail/endpoint.hpp
+/usr/local/include/asio/generic/detail/impl/endpoint.ipp
+/usr/local/include/asio/generic/raw_protocol.hpp
+/usr/local/include/asio/generic/seq_packet_protocol.hpp
+/usr/local/include/asio/generic/stream_protocol.hpp
+/usr/local/include/asio/handler_continuation_hook.hpp
+/usr/local/include/asio/high_resolution_timer.hpp
+/usr/local/include/asio/impl/any_completion_executor.ipp
+/usr/local/include/asio/impl/any_io_executor.ipp
+/usr/local/include/asio/impl/append.hpp
+/usr/local/include/asio/impl/as_tuple.hpp
+/usr/local/include/asio/impl/awaitable.hpp
+/usr/local/include/asio/impl/buffered_read_stream.hpp
+/usr/local/include/asio/impl/buffered_write_stream.hpp
+/usr/local/include/asio/impl/cancellation_signal.ipp
+/usr/local/include/asio/impl/co_spawn.hpp
+/usr/local/include/asio/impl/connect.hpp
+/usr/local/include/asio/impl/connect_pipe.hpp
+/usr/local/include/asio/impl/connect_pipe.ipp
+/usr/local/include/asio/impl/consign.hpp
+/usr/local/include/asio/impl/deferred.hpp
+/usr/local/include/asio/impl/detached.hpp
+/usr/local/include/asio/impl/error.ipp
+/usr/local/include/asio/impl/error_code.ipp
+/usr/local/include/asio/impl/execution_context.hpp
+/usr/local/include/asio/impl/execution_context.ipp
+/usr/local/include/asio/impl/executor.hpp
+/usr/local/include/asio/impl/executor.ipp
+/usr/local/include/asio/impl/io_context.hpp
+/usr/local/include/asio/impl/io_context.ipp
+/usr/local/include/asio/impl/multiple_exceptions.ipp
+/usr/local/include/asio/impl/prepend.hpp
+/usr/local/include/asio/impl/read.hpp
+/usr/local/include/asio/impl/read_at.hpp
+/usr/local/include/asio/impl/read_until.hpp
+/usr/local/include/asio/impl/redirect_error.hpp
+/usr/local/include/asio/impl/serial_port_base.hpp
+/usr/local/include/asio/impl/serial_port_base.ipp
+/usr/local/include/asio/impl/spawn.hpp
+/usr/local/include/asio/impl/src.hpp
+/usr/local/include/asio/impl/system_context.hpp
+/usr/local/include/asio/impl/system_context.ipp
+/usr/local/include/asio/impl/system_executor.hpp
+/usr/local/include/asio/impl/thread_pool.hpp
+/usr/local/include/asio/impl/thread_pool.ipp
+/usr/local/include/asio/impl/use_awaitable.hpp
+/usr/local/include/asio/impl/use_future.hpp
+/usr/local/include/asio/impl/write.hpp
+/usr/local/include/asio/impl/write_at.hpp
+/usr/local/include/asio/io_context.hpp
+/usr/local/include/asio/io_context_strand.hpp
+/usr/local/include/asio/io_service.hpp
+/usr/local/include/asio/io_service_strand.hpp
+/usr/local/include/asio/ip/address.hpp
+/usr/local/include/asio/ip/address_v4.hpp
+/usr/local/include/asio/ip/address_v4_iterator.hpp
+/usr/local/include/asio/ip/address_v4_range.hpp
+/usr/local/include/asio/ip/address_v6.hpp
+/usr/local/include/asio/ip/address_v6_iterator.hpp
+/usr/local/include/asio/ip/address_v6_range.hpp
+/usr/local/include/asio/ip/bad_address_cast.hpp
+/usr/local/include/asio/ip/basic_endpoint.hpp
+/usr/local/include/asio/ip/basic_resolver.hpp
+/usr/local/include/asio/ip/basic_resolver_entry.hpp
+/usr/local/include/asio/ip/basic_resolver_iterator.hpp
+/usr/local/include/asio/ip/basic_resolver_query.hpp
+/usr/local/include/asio/ip/basic_resolver_results.hpp
+/usr/local/include/asio/ip/detail/endpoint.hpp
+/usr/local/include/asio/ip/detail/impl/endpoint.ipp
+/usr/local/include/asio/ip/detail/socket_option.hpp
+/usr/local/include/asio/ip/host_name.hpp
+/usr/local/include/asio/ip/icmp.hpp
+/usr/local/include/asio/ip/impl/address.hpp
+/usr/local/include/asio/ip/impl/address.ipp
+/usr/local/include/asio/ip/impl/address_v4.hpp
+/usr/local/include/asio/ip/impl/address_v4.ipp
+/usr/local/include/asio/ip/impl/address_v6.hpp
+/usr/local/include/asio/ip/impl/address_v6.ipp
+/usr/local/include/asio/ip/impl/basic_endpoint.hpp
+/usr/local/include/asio/ip/impl/host_name.ipp
+/usr/local/include/asio/ip/impl/network_v4.hpp
+/usr/local/include/asio/ip/impl/network_v4.ipp
+/usr/local/include/asio/ip/impl/network_v6.hpp
+/usr/local/include/asio/ip/impl/network_v6.ipp
+/usr/local/include/asio/ip/multicast.hpp
+/usr/local/include/asio/ip/network_v4.hpp
+/usr/local/include/asio/ip/network_v6.hpp
+/usr/local/include/asio/ip/resolver_base.hpp
+/usr/local/include/asio/ip/resolver_query_base.hpp
+/usr/local/include/asio/ip/tcp.hpp
+/usr/local/include/asio/ip/udp.hpp
+/usr/local/include/asio/ip/unicast.hpp
+/usr/local/include/asio/ip/v6_only.hpp
+/usr/local/include/asio/is_applicable_property.hpp
+/usr/local/include/asio/is_contiguous_iterator.hpp
+/usr/local/include/asio/is_executor.hpp
+/usr/local/include/asio/is_read_buffered.hpp
+/usr/local/include/asio/is_write_buffered.hpp
+/usr/local/include/asio/local/basic_endpoint.hpp
+/usr/local/include/asio/local/connect_pair.hpp
+/usr/local/include/asio/local/datagram_protocol.hpp
+/usr/local/include/asio/local/detail/endpoint.hpp
+/usr/local/include/asio/local/detail/impl/endpoint.ipp
+/usr/local/include/asio/local/seq_packet_protocol.hpp
+/usr/local/include/asio/local/stream_protocol.hpp
+/usr/local/include/asio/multiple_exceptions.hpp
+/usr/local/include/asio/packaged_task.hpp
+/usr/local/include/asio/placeholders.hpp
+/usr/local/include/asio/posix/basic_descriptor.hpp
+/usr/local/include/asio/posix/basic_stream_descriptor.hpp
+/usr/local/include/asio/posix/descriptor.hpp
+/usr/local/include/asio/posix/descriptor_base.hpp
+/usr/local/include/asio/posix/stream_descriptor.hpp
+/usr/local/include/asio/post.hpp
+/usr/local/include/asio/prefer.hpp
+/usr/local/include/asio/prepend.hpp
+/usr/local/include/asio/query.hpp
+/usr/local/include/asio/random_access_file.hpp
+/usr/local/include/asio/read.hpp
+/usr/local/include/asio/read_at.hpp
+/usr/local/include/asio/read_until.hpp
+/usr/local/include/asio/readable_pipe.hpp
+/usr/local/include/asio/recycling_allocator.hpp
+/usr/local/include/asio/redirect_error.hpp
+/usr/local/include/asio/registered_buffer.hpp
+/usr/local/include/asio/require.hpp
+/usr/local/include/asio/require_concept.hpp
+/usr/local/include/asio/serial_port.hpp
+/usr/local/include/asio/serial_port_base.hpp
+/usr/local/include/asio/signal_set.hpp
+/usr/local/include/asio/signal_set_base.hpp
+/usr/local/include/asio/socket_base.hpp
+/usr/local/include/asio/spawn.hpp
+/usr/local/include/asio/ssl.hpp
+/usr/local/include/asio/ssl/context.hpp
+/usr/local/include/asio/ssl/context_base.hpp
+/usr/local/include/asio/ssl/detail/buffered_handshake_op.hpp
+/usr/local/include/asio/ssl/detail/engine.hpp
+/usr/local/include/asio/ssl/detail/handshake_op.hpp
+/usr/local/include/asio/ssl/detail/impl/engine.ipp
+/usr/local/include/asio/ssl/detail/impl/openssl_init.ipp
+/usr/local/include/asio/ssl/detail/io.hpp
+/usr/local/include/asio/ssl/detail/openssl_init.hpp
+/usr/local/include/asio/ssl/detail/openssl_types.hpp
+/usr/local/include/asio/ssl/detail/password_callback.hpp
+/usr/local/include/asio/ssl/detail/read_op.hpp
+/usr/local/include/asio/ssl/detail/shutdown_op.hpp
+/usr/local/include/asio/ssl/detail/stream_core.hpp
+/usr/local/include/asio/ssl/detail/verify_callback.hpp
+/usr/local/include/asio/ssl/detail/write_op.hpp
+/usr/local/include/asio/ssl/error.hpp
+/usr/local/include/asio/ssl/host_name_verification.hpp
+/usr/local/include/asio/ssl/impl/context.hpp
+/usr/local/include/asio/ssl/impl/context.ipp
+/usr/local/include/asio/ssl/impl/error.ipp
+/usr/local/include/asio/ssl/impl/host_name_verification.ipp
+/usr/local/include/asio/ssl/impl/rfc2818_verification.ipp
+/usr/local/include/asio/ssl/impl/src.hpp
+/usr/local/include/asio/ssl/rfc2818_verification.hpp
+/usr/local/include/asio/ssl/stream.hpp
+/usr/local/include/asio/ssl/stream_base.hpp
+/usr/local/include/asio/ssl/verify_context.hpp
+/usr/local/include/asio/ssl/verify_mode.hpp
+/usr/local/include/asio/static_thread_pool.hpp
+/usr/local/include/asio/steady_timer.hpp
+/usr/local/include/asio/strand.hpp
+/usr/local/include/asio/stream_file.hpp
+/usr/local/include/asio/streambuf.hpp
+/usr/local/include/asio/system_context.hpp
+/usr/local/include/asio/system_error.hpp
+/usr/local/include/asio/system_executor.hpp
+/usr/local/include/asio/system_timer.hpp
+/usr/local/include/asio/this_coro.hpp
+/usr/local/include/asio/thread.hpp
+/usr/local/include/asio/thread_pool.hpp
+/usr/local/include/asio/time_traits.hpp
+/usr/local/include/asio/traits/equality_comparable.hpp
+/usr/local/include/asio/traits/execute_member.hpp
+/usr/local/include/asio/traits/prefer_free.hpp
+/usr/local/include/asio/traits/prefer_member.hpp
+/usr/local/include/asio/traits/query_free.hpp
+/usr/local/include/asio/traits/query_member.hpp
+/usr/local/include/asio/traits/query_static_constexpr_member.hpp
+/usr/local/include/asio/traits/require_concept_free.hpp
+/usr/local/include/asio/traits/require_concept_member.hpp
+/usr/local/include/asio/traits/require_free.hpp
+/usr/local/include/asio/traits/require_member.hpp
+/usr/local/include/asio/traits/static_query.hpp
+/usr/local/include/asio/traits/static_require.hpp
+/usr/local/include/asio/traits/static_require_concept.hpp
+/usr/local/include/asio/ts/buffer.hpp
+/usr/local/include/asio/ts/executor.hpp
+/usr/local/include/asio/ts/internet.hpp
+/usr/local/include/asio/ts/io_context.hpp
+/usr/local/include/asio/ts/net.hpp
+/usr/local/include/asio/ts/netfwd.hpp
+/usr/local/include/asio/ts/socket.hpp
+/usr/local/include/asio/ts/timer.hpp
+/usr/local/include/asio/unyield.hpp
+/usr/local/include/asio/use_awaitable.hpp
+/usr/local/include/asio/use_future.hpp
+/usr/local/include/asio/uses_executor.hpp
+/usr/local/include/asio/version.hpp
+/usr/local/include/asio/wait_traits.hpp
+/usr/local/include/asio/windows/basic_object_handle.hpp
+/usr/local/include/asio/windows/basic_overlapped_handle.hpp
+/usr/local/include/asio/windows/basic_random_access_handle.hpp
+/usr/local/include/asio/windows/basic_stream_handle.hpp
+/usr/local/include/asio/windows/object_handle.hpp
+/usr/local/include/asio/windows/overlapped_handle.hpp
+/usr/local/include/asio/windows/overlapped_ptr.hpp
+/usr/local/include/asio/windows/random_access_handle.hpp
+/usr/local/include/asio/windows/stream_handle.hpp
+/usr/local/include/asio/writable_pipe.hpp
+/usr/local/include/asio/write.hpp
+/usr/local/include/asio/write_at.hpp
+/usr/local/include/asio/yield.hpp</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

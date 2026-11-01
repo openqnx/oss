@@ -1,0 +1,504 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>protobuf-dev 29.3-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>protobuf-dev <span class=mut>29.3-r0</span></h1><p class=sum><b>Google&#x27;s Protocol Buffers data serialization library and compiler (development files)</b><br>protobuf 29.3 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>29.3-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/protobuf-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/protocolbuffers/protobuf.git">https://github.com/protocolbuffers/protobuf.git</a></dd>
+<dt>License</dt><dd>BSD-3-Clause <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/protobuf">ports/protobuf</a></dd>
+<dt>Package size</dt><dd>890.1 KiB</dd>
+<dt>Installed size</dt><dd>4.9 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add protobuf-dev
+apk add protobuf-dev=29.3-r0   <span class=mut># this version</span>
+
+apk del protobuf-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/protobuf-dev-29.3-r0.apk">protobuf-dev-29.3-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install protobuf-dev
+oss-get install protobuf-dev=29.3-r0   <span class=mut># this version</span>
+
+oss-get remove protobuf-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="protobuf.html">protobuf</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/protobuf-dev-29.3-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/protobuf-dev-29.3-r0.tar.gz</a> (862.4 KiB)</dd><dt>SHA-256</dt><dd><code>37240062c050b79fd3f1a2ec4ace7dafa0e3866328f66a0c21c5abe4ff1f251b</code></dd><dt>Install first</dt><dd><a href="abseil.html">abseil</a>, <a href="zlib.html">zlib</a>, <a href="protobuf.html">protobuf</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/protobuf-dev-29.3-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 protobuf-dev-29.3-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 37240062c050b79fd3f1a2ec4ace7dafa0e3866328f66a0c21c5abe4ff1f251b ] &amp;&amp; echo OK || echo BAD
+gzip -dc protobuf-dev-29.3-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/protobuf-dev.list
+gzip -dc protobuf-dev-29.3-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm protobuf-dev-29.3-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/protobuf-dev.list
+rm var/lib/manual/protobuf-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="abseil.html">abseil</a>, <a href="zlib.html">zlib</a>, <a href="protobuf.html">protobuf</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="protobuf.html">protobuf</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/protobuf.html">protobuf</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/protobuf/README.md">ports/protobuf/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_protobuf on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/protobuf-29.3-r0.log">tests/logs/aarch64le/protobuf-29.3-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># protobuf 29.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T17:22:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u protobuf qnx-test-protobuf qnx-port-tests
+(1/4) Installing abseil (20240722.0-r0)
+(2/4) Installing protobuf (29.3-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-protobuf (1.0-r7)
+OK: 68 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_protobuf
+     == protobuf ==
+       ok   serialize Timestamp
+       ok   wire bytes produced
+       ok   parse Timestamp
+       ok   field round trip
+       ok   Struct map fields
+       ok   map value readback
+     PASS protobuf
+PASS test_protobuf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-protobuf qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-protobuf-1.0-r7.apk">qnx-test-protobuf-1.0-r7.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (397)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/google/protobuf/any.h
+/usr/local/include/google/protobuf/any.pb.h
+/usr/local/include/google/protobuf/any.proto
+/usr/local/include/google/protobuf/api.pb.h
+/usr/local/include/google/protobuf/api.proto
+/usr/local/include/google/protobuf/arena.h
+/usr/local/include/google/protobuf/arena_align.h
+/usr/local/include/google/protobuf/arena_allocation_policy.h
+/usr/local/include/google/protobuf/arena_cleanup.h
+/usr/local/include/google/protobuf/arenastring.h
+/usr/local/include/google/protobuf/arenaz_sampler.h
+/usr/local/include/google/protobuf/compiler/code_generator.h
+/usr/local/include/google/protobuf/compiler/code_generator_lite.h
+/usr/local/include/google/protobuf/compiler/command_line_interface.h
+/usr/local/include/google/protobuf/compiler/cpp/enum.h
+/usr/local/include/google/protobuf/compiler/cpp/extension.h
+/usr/local/include/google/protobuf/compiler/cpp/field.h
+/usr/local/include/google/protobuf/compiler/cpp/field_generators/generators.h
+/usr/local/include/google/protobuf/compiler/cpp/file.h
+/usr/local/include/google/protobuf/compiler/cpp/generator.h
+/usr/local/include/google/protobuf/compiler/cpp/helpers.h
+/usr/local/include/google/protobuf/compiler/cpp/ifndef_guard.h
+/usr/local/include/google/protobuf/compiler/cpp/message.h
+/usr/local/include/google/protobuf/compiler/cpp/message_layout_helper.h
+/usr/local/include/google/protobuf/compiler/cpp/names.h
+/usr/local/include/google/protobuf/compiler/cpp/namespace_printer.h
+/usr/local/include/google/protobuf/compiler/cpp/options.h
+/usr/local/include/google/protobuf/compiler/cpp/padding_optimizer.h
+/usr/local/include/google/protobuf/compiler/cpp/parse_function_generator.h
+/usr/local/include/google/protobuf/compiler/cpp/service.h
+/usr/local/include/google/protobuf/compiler/cpp/tracker.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_doc_comment.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_enum.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_enum_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_field_base.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_generator.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_helpers.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_map_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_message.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_message_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_options.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_primitive_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_reflection_class.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_repeated_enum_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_repeated_message_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_repeated_primitive_field.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_source_generator_base.h
+/usr/local/include/google/protobuf/compiler/csharp/csharp_wrapper_field.h
+/usr/local/include/google/protobuf/compiler/csharp/names.h
+/usr/local/include/google/protobuf/compiler/importer.h
+/usr/local/include/google/protobuf/compiler/java/context.h
+/usr/local/include/google/protobuf/compiler/java/doc_comment.h
+/usr/local/include/google/protobuf/compiler/java/field_common.h
+/usr/local/include/google/protobuf/compiler/java/file.h
+/usr/local/include/google/protobuf/compiler/java/full/enum.h
+/usr/local/include/google/protobuf/compiler/java/full/enum_field.h
+/usr/local/include/google/protobuf/compiler/java/full/extension.h
+/usr/local/include/google/protobuf/compiler/java/full/field_generator.h
+/usr/local/include/google/protobuf/compiler/java/full/generator_factory.h
+/usr/local/include/google/protobuf/compiler/java/full/make_field_gens.h
+/usr/local/include/google/protobuf/compiler/java/full/map_field.h
+/usr/local/include/google/protobuf/compiler/java/full/message.h
+/usr/local/include/google/protobuf/compiler/java/full/message_builder.h
+/usr/local/include/google/protobuf/compiler/java/full/message_field.h
+/usr/local/include/google/protobuf/compiler/java/full/primitive_field.h
+/usr/local/include/google/protobuf/compiler/java/full/service.h
+/usr/local/include/google/protobuf/compiler/java/full/string_field.h
+/usr/local/include/google/protobuf/compiler/java/generator.h
+/usr/local/include/google/protobuf/compiler/java/generator_common.h
+/usr/local/include/google/protobuf/compiler/java/generator_factory.h
+/usr/local/include/google/protobuf/compiler/java/helpers.h
+/usr/local/include/google/protobuf/compiler/java/internal_helpers.h
+/usr/local/include/google/protobuf/compiler/java/java_features.pb.h
+/usr/local/include/google/protobuf/compiler/java/lite/enum.h
+/usr/local/include/google/protobuf/compiler/java/lite/enum_field.h
+/usr/local/include/google/protobuf/compiler/java/lite/extension.h
+/usr/local/include/google/protobuf/compiler/java/lite/field_generator.h
+/usr/local/include/google/protobuf/compiler/java/lite/generator_factory.h
+/usr/local/include/google/protobuf/compiler/java/lite/make_field_gens.h
+/usr/local/include/google/protobuf/compiler/java/lite/map_field.h
+/usr/local/include/google/protobuf/compiler/java/lite/message.h
+/usr/local/include/google/protobuf/compiler/java/lite/message_builder.h
+/usr/local/include/google/protobuf/compiler/java/lite/message_field.h
+/usr/local/include/google/protobuf/compiler/java/lite/primitive_field.h
+/usr/local/include/google/protobuf/compiler/java/lite/string_field.h
+/usr/local/include/google/protobuf/compiler/java/message_serialization.h
+/usr/local/include/google/protobuf/compiler/java/name_resolver.h
+/usr/local/include/google/protobuf/compiler/java/names.h
+/usr/local/include/google/protobuf/compiler/java/options.h
+/usr/local/include/google/protobuf/compiler/java/shared_code_generator.h
+/usr/local/include/google/protobuf/compiler/kotlin/file.h
+/usr/local/include/google/protobuf/compiler/kotlin/generator.h
+/usr/local/include/google/protobuf/compiler/kotlin/message.h
+/usr/local/include/google/protobuf/compiler/objectivec/enum.h
+/usr/local/include/google/protobuf/compiler/objectivec/enum_field.h
+/usr/local/include/google/protobuf/compiler/objectivec/extension.h
+/usr/local/include/google/protobuf/compiler/objectivec/field.h
+/usr/local/include/google/protobuf/compiler/objectivec/file.h
+/usr/local/include/google/protobuf/compiler/objectivec/generator.h
+/usr/local/include/google/protobuf/compiler/objectivec/helpers.h
+/usr/local/include/google/protobuf/compiler/objectivec/import_writer.h
+/usr/local/include/google/protobuf/compiler/objectivec/line_consumer.h
+/usr/local/include/google/protobuf/compiler/objectivec/map_field.h
+/usr/local/include/google/protobuf/compiler/objectivec/message.h
+/usr/local/include/google/protobuf/compiler/objectivec/message_field.h
+/usr/local/include/google/protobuf/compiler/objectivec/names.h
+/usr/local/include/google/protobuf/compiler/objectivec/nsobject_methods.h
+/usr/local/include/google/protobuf/compiler/objectivec/oneof.h
+/usr/local/include/google/protobuf/compiler/objectivec/options.h
+/usr/local/include/google/protobuf/compiler/objectivec/primitive_field.h
+/usr/local/include/google/protobuf/compiler/objectivec/tf_decode_data.h
+/usr/local/include/google/protobuf/compiler/parser.h
+/usr/local/include/google/protobuf/compiler/php/names.h
+/usr/local/include/google/protobuf/compiler/php/php_generator.h
+/usr/local/include/google/protobuf/compiler/plugin.h
+/usr/local/include/google/protobuf/compiler/plugin.pb.h
+/usr/local/include/google/protobuf/compiler/plugin.proto
+/usr/local/include/google/protobuf/compiler/python/generator.h
+/usr/local/include/google/protobuf/compiler/python/helpers.h
+/usr/local/include/google/protobuf/compiler/python/pyi_generator.h
+/usr/local/include/google/protobuf/compiler/retention.h
+/usr/local/include/google/protobuf/compiler/ruby/ruby_generator.h
+/usr/local/include/google/protobuf/compiler/rust/accessors/accessor_case.h
+/usr/local/include/google/protobuf/compiler/rust/accessors/accessors.h
+/usr/local/include/google/protobuf/compiler/rust/accessors/default_value.h
+/usr/local/include/google/protobuf/compiler/rust/accessors/generator.h
+/usr/local/include/google/protobuf/compiler/rust/accessors/with_presence.h
+/usr/local/include/google/protobuf/compiler/rust/context.h
+/usr/local/include/google/protobuf/compiler/rust/crate_mapping.h
+/usr/local/include/google/protobuf/compiler/rust/enum.h
+/usr/local/include/google/protobuf/compiler/rust/generator.h
+/usr/local/include/google/protobuf/compiler/rust/message.h
+/usr/local/include/google/protobuf/compiler/rust/naming.h
+/usr/local/include/google/protobuf/compiler/rust/oneof.h
+/usr/local/include/google/protobuf/compiler/rust/relative_path.h
+/usr/local/include/google/protobuf/compiler/rust/rust_field_type.h
+/usr/local/include/google/protobuf/compiler/rust/rust_keywords.h
+/usr/local/include/google/protobuf/compiler/rust/upb_helpers.h
+/usr/local/include/google/protobuf/compiler/scc.h
+/usr/local/include/google/protobuf/compiler/subprocess.h
+/usr/local/include/google/protobuf/compiler/versions.h
+/usr/local/include/google/protobuf/compiler/zip_writer.h
+/usr/local/include/google/protobuf/cpp_edition_defaults.h
+/usr/local/include/google/protobuf/cpp_features.pb.h
+/usr/local/include/google/protobuf/cpp_features.proto
+/usr/local/include/google/protobuf/descriptor.h
+/usr/local/include/google/protobuf/descriptor.pb.h
+/usr/local/include/google/protobuf/descriptor.proto
+/usr/local/include/google/protobuf/descriptor.upb.h
+/usr/local/include/google/protobuf/descriptor.upb_minitable.h
+/usr/local/include/google/protobuf/descriptor_database.h
+/usr/local/include/google/protobuf/descriptor_legacy.h
+/usr/local/include/google/protobuf/descriptor_lite.h
+/usr/local/include/google/protobuf/descriptor_visitor.h
+/usr/local/include/google/protobuf/duration.pb.h
+/usr/local/include/google/protobuf/duration.proto
+/usr/local/include/google/protobuf/dynamic_message.h
+/usr/local/include/google/protobuf/empty.pb.h
+/usr/local/include/google/protobuf/empty.proto
+/usr/local/include/google/protobuf/endian.h
+/usr/local/include/google/protobuf/explicitly_constructed.h
+/usr/local/include/google/protobuf/extension_set.h
+/usr/local/include/google/protobuf/extension_set_inl.h
+/usr/local/include/google/protobuf/feature_resolver.h
+/usr/local/include/google/protobuf/field_access_listener.h
+/usr/local/include/google/protobuf/field_mask.pb.h
+/usr/local/include/google/protobuf/field_mask.proto
+/usr/local/include/google/protobuf/generated_enum_reflection.h
+/usr/local/include/google/protobuf/generated_enum_util.h
+/usr/local/include/google/protobuf/generated_message_bases.h
+/usr/local/include/google/protobuf/generated_message_reflection.h
+/usr/local/include/google/protobuf/generated_message_tctable_decl.h
+/usr/local/include/google/protobuf/generated_message_tctable_gen.h
+/usr/local/include/google/protobuf/generated_message_tctable_impl.h
+/usr/local/include/google/protobuf/generated_message_util.h
+/usr/local/include/google/protobuf/go_features.proto
+/usr/local/include/google/protobuf/has_bits.h
+/usr/local/include/google/protobuf/implicit_weak_message.h
+/usr/local/include/google/protobuf/inlined_string_field.h
+/usr/local/include/google/protobuf/internal_visibility.h
+/usr/local/include/google/protobuf/io/coded_stream.h
+/usr/local/include/google/protobuf/io/gzip_stream.h
+/usr/local/include/google/protobuf/io/io_win32.h
+/usr/local/include/google/protobuf/io/printer.h
+/usr/local/include/google/protobuf/io/strtod.h
+/usr/local/include/google/protobuf/io/tokenizer.h
+/usr/local/include/google/protobuf/io/zero_copy_sink.h
+/usr/local/include/google/protobuf/io/zero_copy_stream.h
+/usr/local/include/google/protobuf/io/zero_copy_stream_impl.h
+/usr/local/include/google/protobuf/io/zero_copy_stream_impl_lite.h
+/usr/local/include/google/protobuf/java_features.proto
+/usr/local/include/google/protobuf/json/internal/descriptor_traits.h
+/usr/local/include/google/protobuf/json/internal/lexer.h
+/usr/local/include/google/protobuf/json/internal/message_path.h
+/usr/local/include/google/protobuf/json/internal/parser.h
+/usr/local/include/google/protobuf/json/internal/parser_traits.h
+/usr/local/include/google/protobuf/json/internal/unparser.h
+/usr/local/include/google/protobuf/json/internal/unparser_traits.h
+/usr/local/include/google/protobuf/json/internal/untyped_message.h
+/usr/local/include/google/protobuf/json/internal/writer.h
+/usr/local/include/google/protobuf/json/internal/zero_copy_buffered_stream.h
+/usr/local/include/google/protobuf/json/json.h
+/usr/local/include/google/protobuf/map.h
+/usr/local/include/google/protobuf/map_entry.h
+/usr/local/include/google/protobuf/map_field.h
+/usr/local/include/google/protobuf/map_field_inl.h
+/usr/local/include/google/protobuf/map_field_lite.h
+/usr/local/include/google/protobuf/map_type_handler.h
+/usr/local/include/google/protobuf/message.h
+/usr/local/include/google/protobuf/message_lite.h
+/usr/local/include/google/protobuf/metadata.h
+/usr/local/include/google/protobuf/metadata_lite.h
+/usr/local/include/google/protobuf/parse_context.h
+/usr/local/include/google/protobuf/port.h
+/usr/local/include/google/protobuf/port_def.inc
+/usr/local/include/google/protobuf/port_undef.inc
+/usr/local/include/google/protobuf/raw_ptr.h
+/usr/local/include/google/protobuf/reflection.h
+/usr/local/include/google/protobuf/reflection_internal.h
+/usr/local/include/google/protobuf/reflection_mode.h
+/usr/local/include/google/protobuf/reflection_ops.h
+/usr/local/include/google/protobuf/reflection_visit_field_info.h
+/usr/local/include/google/protobuf/reflection_visit_fields.h
+/usr/local/include/google/protobuf/repeated_field.h
+/usr/local/include/google/protobuf/repeated_ptr_field.h
+/usr/local/include/google/protobuf/runtime_version.h
+/usr/local/include/google/protobuf/serial_arena.h
+/usr/local/include/google/protobuf/service.h
+/usr/local/include/google/protobuf/source_context.pb.h
+/usr/local/include/google/protobuf/source_context.proto
+/usr/local/include/google/protobuf/string_block.h
+/usr/local/include/google/protobuf/struct.pb.h
+/usr/local/include/google/protobuf/struct.proto
+/usr/local/include/google/protobuf/stubs/callback.h
+/usr/local/include/google/protobuf/stubs/common.h
+/usr/local/include/google/protobuf/stubs/platform_macros.h
+/usr/local/include/google/protobuf/stubs/port.h
+/usr/local/include/google/protobuf/stubs/status_macros.h
+/usr/local/include/google/protobuf/testing/file.h
+/usr/local/include/google/protobuf/text_format.h
+/usr/local/include/google/protobuf/thread_safe_arena.h
+/usr/local/include/google/protobuf/timestamp.pb.h
+/usr/local/include/google/protobuf/timestamp.proto
+/usr/local/include/google/protobuf/type.pb.h
+/usr/local/include/google/protobuf/type.proto
+/usr/local/include/google/protobuf/unknown_field_set.h
+/usr/local/include/google/protobuf/util/delimited_message_util.h
+/usr/local/include/google/protobuf/util/field_comparator.h
+/usr/local/include/google/protobuf/util/field_mask_util.h
+/usr/local/include/google/protobuf/util/json_util.h
+/usr/local/include/google/protobuf/util/message_differencer.h
+/usr/local/include/google/protobuf/util/time_util.h
+/usr/local/include/google/protobuf/util/type_resolver.h
+/usr/local/include/google/protobuf/util/type_resolver_util.h
+/usr/local/include/google/protobuf/varint_shuffle.h
+/usr/local/include/google/protobuf/wire_format.h
+/usr/local/include/google/protobuf/wire_format_lite.h
+/usr/local/include/google/protobuf/wrappers.pb.h
+/usr/local/include/google/protobuf/wrappers.proto
+/usr/local/include/upb/base/descriptor_constants.h
+/usr/local/include/upb/base/internal/endian.h
+/usr/local/include/upb/base/internal/log2.h
+/usr/local/include/upb/base/status.h
+/usr/local/include/upb/base/status.hpp
+/usr/local/include/upb/base/string_view.h
+/usr/local/include/upb/base/upcast.h
+/usr/local/include/upb/generated_code_support.h
+/usr/local/include/upb/hash/common.h
+/usr/local/include/upb/hash/int_table.h
+/usr/local/include/upb/hash/str_table.h
+/usr/local/include/upb/json/decode.h
+/usr/local/include/upb/json/encode.h
+/usr/local/include/upb/lex/atoi.h
+/usr/local/include/upb/lex/round_trip.h
+/usr/local/include/upb/lex/strtod.h
+/usr/local/include/upb/lex/unicode.h
+/usr/local/include/upb/mem/alloc.h
+/usr/local/include/upb/mem/arena.h
+/usr/local/include/upb/mem/arena.hpp
+/usr/local/include/upb/mem/internal/arena.h
+/usr/local/include/upb/message/accessors.h
+/usr/local/include/upb/message/array.h
+/usr/local/include/upb/message/compare.h
+/usr/local/include/upb/message/compat.h
+/usr/local/include/upb/message/copy.h
+/usr/local/include/upb/message/internal/accessors.h
+/usr/local/include/upb/message/internal/array.h
+/usr/local/include/upb/message/internal/compare_unknown.h
+/usr/local/include/upb/message/internal/extension.h
+/usr/local/include/upb/message/internal/iterator.h
+/usr/local/include/upb/message/internal/map.h
+/usr/local/include/upb/message/internal/map_entry.h
+/usr/local/include/upb/message/internal/map_sorter.h
+/usr/local/include/upb/message/internal/message.h
+/usr/local/include/upb/message/internal/tagged_ptr.h
+/usr/local/include/upb/message/internal/types.h
+/usr/local/include/upb/message/map.h
+/usr/local/include/upb/message/map_gencode_util.h
+/usr/local/include/upb/message/merge.h
+/usr/local/include/upb/message/message.h
+/usr/local/include/upb/message/tagged_ptr.h
+/usr/local/include/upb/message/value.h
+/usr/local/include/upb/mini_descriptor/build_enum.h
+/usr/local/include/upb/mini_descriptor/decode.h
+/usr/local/include/upb/mini_descriptor/internal/base92.h
+/usr/local/include/upb/mini_descriptor/internal/decoder.h
+/usr/local/include/upb/mini_descriptor/internal/encode.h
+/usr/local/include/upb/mini_descriptor/internal/encode.hpp
+/usr/local/include/upb/mini_descriptor/internal/modifiers.h
+/usr/local/include/upb/mini_descriptor/internal/wire_constants.h
+/usr/local/include/upb/mini_descriptor/link.h
+/usr/local/include/upb/mini_table/enum.h
+/usr/local/include/upb/mini_table/extension.h
+/usr/local/include/upb/mini_table/extension_registry.h
+/usr/local/include/upb/mini_table/field.h
+/usr/local/include/upb/mini_table/file.h
+/usr/local/include/upb/mini_table/internal/enum.h
+/usr/local/include/upb/mini_table/internal/extension.h
+/usr/local/include/upb/mini_table/internal/field.h
+/usr/local/include/upb/mini_table/internal/file.h
+/usr/local/include/upb/mini_table/internal/message.h
+/usr/local/include/upb/mini_table/internal/size_log2.h
+/usr/local/include/upb/mini_table/internal/sub.h
+/usr/local/include/upb/mini_table/message.h
+/usr/local/include/upb/mini_table/sub.h
+/usr/local/include/upb/port/atomic.h
+/usr/local/include/upb/port/def.inc
+/usr/local/include/upb/port/undef.inc
+/usr/local/include/upb/port/vsnprintf_compat.h
+/usr/local/include/upb/reflection/common.h
+/usr/local/include/upb/reflection/def.h
+/usr/local/include/upb/reflection/def.hpp
+/usr/local/include/upb/reflection/def_pool.h
+/usr/local/include/upb/reflection/def_type.h
+/usr/local/include/upb/reflection/descriptor_bootstrap.h
+/usr/local/include/upb/reflection/enum_def.h
+/usr/local/include/upb/reflection/enum_reserved_range.h
+/usr/local/include/upb/reflection/enum_value_def.h
+/usr/local/include/upb/reflection/extension_range.h
+/usr/local/include/upb/reflection/field_def.h
+/usr/local/include/upb/reflection/file_def.h
+/usr/local/include/upb/reflection/internal/def_pool.h
+/usr/local/include/upb/reflection/internal/desc_state.h
+/usr/local/include/upb/reflection/internal/enum_def.h
+/usr/local/include/upb/reflection/internal/enum_reserved_range.h
+/usr/local/include/upb/reflection/internal/enum_value_def.h
+/usr/local/include/upb/reflection/internal/extension_range.h
+/usr/local/include/upb/reflection/internal/field_def.h
+/usr/local/include/upb/reflection/internal/file_def.h
+/usr/local/include/upb/reflection/internal/message_def.h
+/usr/local/include/upb/reflection/internal/message_reserved_range.h
+/usr/local/include/upb/reflection/internal/method_def.h
+/usr/local/include/upb/reflection/internal/oneof_def.h
+/usr/local/include/upb/reflection/internal/service_def.h
+/usr/local/include/upb/reflection/internal/upb_edition_defaults.h
+/usr/local/include/upb/reflection/message.h
+/usr/local/include/upb/reflection/message.hpp
+/usr/local/include/upb/reflection/message_def.h
+/usr/local/include/upb/reflection/message_reserved_range.h
+/usr/local/include/upb/reflection/method_def.h
+/usr/local/include/upb/reflection/oneof_def.h
+/usr/local/include/upb/reflection/service_def.h
+/usr/local/include/upb/text/encode.h
+/usr/local/include/upb/text/internal/encode.h
+/usr/local/include/upb/text/options.h
+/usr/local/include/upb/util/def_to_proto.h
+/usr/local/include/upb/util/required_fields.h
+/usr/local/include/upb/wire/byte_size.h
+/usr/local/include/upb/wire/decode.h
+/usr/local/include/upb/wire/encode.h
+/usr/local/include/upb/wire/eps_copy_input_stream.h
+/usr/local/include/upb/wire/internal/decode_fast.h
+/usr/local/include/upb/wire/reader.h
+/usr/local/include/upb/wire/types.h
+/usr/local/include/upb_generator/common/names.h
+/usr/local/include/upb_generator/minitable/names.h
+/usr/local/include/upb_generator/minitable/names_internal.h
+/usr/local/include/utf8_range.h
+/usr/local/include/utf8_validity.h
+/usr/local/lib/cmake/protobuf/protobuf-config-version.cmake
+/usr/local/lib/cmake/protobuf/protobuf-config.cmake
+/usr/local/lib/cmake/protobuf/protobuf-generate.cmake
+/usr/local/lib/cmake/protobuf/protobuf-module.cmake
+/usr/local/lib/cmake/protobuf/protobuf-options.cmake
+/usr/local/lib/cmake/protobuf/protobuf-targets-release.cmake
+/usr/local/lib/cmake/protobuf/protobuf-targets.cmake
+/usr/local/lib/cmake/utf8_range/utf8_range-config.cmake
+/usr/local/lib/cmake/utf8_range/utf8_range-targets-release.cmake
+/usr/local/lib/cmake/utf8_range/utf8_range-targets.cmake
+/usr/local/lib/libprotobuf-lite.so
+/usr/local/lib/libprotobuf.so
+/usr/local/lib/libprotoc.so
+/usr/local/lib/libupb.a
+/usr/local/lib/pkgconfig/protobuf-lite.pc
+/usr/local/lib/pkgconfig/protobuf.pc
+/usr/local/lib/pkgconfig/upb.pc
+/usr/local/lib/pkgconfig/utf8_range.pc</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

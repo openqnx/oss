@@ -1,0 +1,572 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>llvm 22.1.8-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>llvm <span class=mut>22.1.8-r0</span></h1><p class=sum><b>LLVM compiler infrastructure with the Clang compiler and LLD linker</b><br>llvm 22.1.8 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>22.1.8-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/llvm.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/llvm/llvm-project.git">https://github.com/llvm/llvm-project.git</a></dd>
+<dt>License</dt><dd>Apache-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/llvm">ports/llvm</a></dd>
+<dt>Package size</dt><dd>133.4 MiB</dd>
+<dt>Installed size</dt><dd>386.1 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>so:libLLVM.so.22.1=22.1.8 so:libLTO.so.22.1=22.1.8 so:libRemarks.so.22.1=22.1.8 so:libclang-cpp.so.22.1=22.1.8 so:libclang.so.22.1=22.1.8</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add llvm
+apk add llvm=22.1.8-r0   <span class=mut># this version</span>
+
+apk del llvm   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/llvm-22.1.8-r0.apk">llvm-22.1.8-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install llvm
+oss-get install llvm=22.1.8-r0   <span class=mut># this version</span>
+
+oss-get remove llvm   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="libxml2.html">libxml2</a>, <a href="zlib.html">zlib</a>, <a href="zstd.html">zstd</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/llvm-22.1.8-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/llvm-22.1.8-r0.tar.gz</a> (133.3 MiB)</dd><dt>SHA-256</dt><dd><code>08d28481581ed94fdedfeb0d6a72c59d3e15f2356dee906b89cf0059e3cc256b</code></dd><dt>Install first</dt><dd><a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zlib.html">zlib</a>, <a href="libxml2.html">libxml2</a>, <a href="zstd.html">zstd</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/llvm-22.1.8-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 llvm-22.1.8-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 08d28481581ed94fdedfeb0d6a72c59d3e15f2356dee906b89cf0059e3cc256b ] &amp;&amp; echo OK || echo BAD
+gzip -dc llvm-22.1.8-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/llvm.list
+gzip -dc llvm-22.1.8-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm llvm-22.1.8-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/llvm.list
+rm var/lib/manual/llvm.list</code></pre><p class=mut>Its dependencies stay installed: <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="xz.html">xz</a>, <a href="zlib.html">zlib</a>, <a href="libxml2.html">libxml2</a>, <a href="zstd.html">zstd</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (3)</h2><a href="../../package/x86_64/libxml2.html">libxml2</a>, <a href="../../package/x86_64/zlib.html">zlib</a>, <a href="../../package/x86_64/zstd.html">zstd</a>
+<h2>Required by (2)</h2><a href="llvm-dev.html">llvm-dev</a>, <a href="mesa.html">mesa</a>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/llvm/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/llvm/README.md">ports/llvm/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_llvm on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/llvm-22.1.8-r0.log">tests/logs/x86_64/llvm-22.1.8-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># llvm 22.1.8-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:17:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u llvm qnx-test-llvm qnx-port-tests
+(1/4) Installing libxml2 (2.13.5-r1)
+(2/4) Installing llvm (22.1.8-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-llvm (1.0-r0)
+OK: 481 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_llvm
+     == llvm ==
+       info llvm-config --version: 22.1.8; host target x86_64-pc-qnx
+       ok   llvm-config --version is 22.1.x
+       ok   targets built include AArch64 and X86
+       ok   llvm-as: bitcode written (BC magic)
+       ok   llvm-dis: round trip keeps @add
+       ok   lli -force-interpreter: main() returns 42
+       ok   lli (JIT): main() returns 42
+       ok   opt instcombine folds 6*7 to ret i32 42
+       ok   llc x86_64-unknown-linux-gnu: ELF object
+       ok   llvm-nm x86_64-unknown-linux-gnu: T add / answer / main
+       ok   llvm-objdump -d x86_64-unknown-linux-gnu: elf64-x86-64, &lt;add&gt; disassembled
+       ok   llc aarch64-unknown-linux-gnu: ELF object
+       ok   llvm-nm aarch64-unknown-linux-gnu: T add / answer / main
+       ok   llvm-objdump -d aarch64-unknown-linux-gnu: elf64-littleaarch64, &lt;add&gt; disassembled
+       ok   llvm-readelf -h: Machine AArch64
+       ok   llc wasm32: asm object
+       ok   llc: x86_64 assembly text
+       ok   llvm-mc assembles the llc output
+       ok   clang -c: sum_squares (T) and qnx_banner (R)
+       ok   llvm-strings finds the banner
+       ok   clang -emit-llvm
+       ok   llvm-ar: archive with 2 members
+     PASS llvm
+PASS test_llvm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-llvm qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-llvm-1.0-r0.apk">qnx-test-llvm-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (449)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/FileCheck
+/usr/local/bin/UnicodeNameMappingGenerator
+/usr/local/bin/amdgpu-arch
+/usr/local/bin/analyze-build
+/usr/local/bin/bugpoint
+/usr/local/bin/clang
+/usr/local/bin/clang++
+/usr/local/bin/clang-22
+/usr/local/bin/clang-check
+/usr/local/bin/clang-cl
+/usr/local/bin/clang-cpp
+/usr/local/bin/clang-extdef-mapping
+/usr/local/bin/clang-format
+/usr/local/bin/clang-installapi
+/usr/local/bin/clang-linker-wrapper
+/usr/local/bin/clang-nvlink-wrapper
+/usr/local/bin/clang-offload-bundler
+/usr/local/bin/clang-offload-packager
+/usr/local/bin/clang-refactor
+/usr/local/bin/clang-repl
+/usr/local/bin/clang-scan-deps
+/usr/local/bin/clang-sycl-linker
+/usr/local/bin/clang-tblgen
+/usr/local/bin/count
+/usr/local/bin/diagtool
+/usr/local/bin/dsymutil
+/usr/local/bin/git-clang-format
+/usr/local/bin/hmaptool
+/usr/local/bin/intercept-build
+/usr/local/bin/ld.lld
+/usr/local/bin/ld64.lld
+/usr/local/bin/llc
+/usr/local/bin/lld
+/usr/local/bin/lld-link
+/usr/local/bin/lli
+/usr/local/bin/lli-child-target
+/usr/local/bin/llvm-PerfectShuffle
+/usr/local/bin/llvm-addr2line
+/usr/local/bin/llvm-ar
+/usr/local/bin/llvm-as
+/usr/local/bin/llvm-bcanalyzer
+/usr/local/bin/llvm-bitcode-strip
+/usr/local/bin/llvm-c-test
+/usr/local/bin/llvm-cas
+/usr/local/bin/llvm-cat
+/usr/local/bin/llvm-cfi-verify
+/usr/local/bin/llvm-cgdata
+/usr/local/bin/llvm-config
+/usr/local/bin/llvm-cov
+/usr/local/bin/llvm-ctxprof-util
+/usr/local/bin/llvm-cvtres
+/usr/local/bin/llvm-cxxdump
+/usr/local/bin/llvm-cxxfilt
+/usr/local/bin/llvm-cxxmap
+/usr/local/bin/llvm-debuginfo-analyzer
+/usr/local/bin/llvm-debuginfod
+/usr/local/bin/llvm-debuginfod-find
+/usr/local/bin/llvm-diff
+/usr/local/bin/llvm-dis
+/usr/local/bin/llvm-dlltool
+/usr/local/bin/llvm-dwarfdump
+/usr/local/bin/llvm-dwarfutil
+/usr/local/bin/llvm-dwp
+/usr/local/bin/llvm-exegesis
+/usr/local/bin/llvm-extract
+/usr/local/bin/llvm-gsymutil
+/usr/local/bin/llvm-ifs
+/usr/local/bin/llvm-install-name-tool
+/usr/local/bin/llvm-ir2vec
+/usr/local/bin/llvm-jitlink
+/usr/local/bin/llvm-jitlink-executor
+/usr/local/bin/llvm-lib
+/usr/local/bin/llvm-libtool-darwin
+/usr/local/bin/llvm-link
+/usr/local/bin/llvm-lipo
+/usr/local/bin/llvm-lto
+/usr/local/bin/llvm-lto2
+/usr/local/bin/llvm-mc
+/usr/local/bin/llvm-mca
+/usr/local/bin/llvm-ml
+/usr/local/bin/llvm-ml64
+/usr/local/bin/llvm-modextract
+/usr/local/bin/llvm-mt
+/usr/local/bin/llvm-nm
+/usr/local/bin/llvm-objcopy
+/usr/local/bin/llvm-objdump
+/usr/local/bin/llvm-offload-binary
+/usr/local/bin/llvm-offload-wrapper
+/usr/local/bin/llvm-opt-report
+/usr/local/bin/llvm-otool
+/usr/local/bin/llvm-pdbutil
+/usr/local/bin/llvm-profdata
+/usr/local/bin/llvm-profgen
+/usr/local/bin/llvm-ranlib
+/usr/local/bin/llvm-rc
+/usr/local/bin/llvm-readelf
+/usr/local/bin/llvm-readobj
+/usr/local/bin/llvm-readtapi
+/usr/local/bin/llvm-reduce
+/usr/local/bin/llvm-remarkutil
+/usr/local/bin/llvm-rtdyld
+/usr/local/bin/llvm-sim
+/usr/local/bin/llvm-size
+/usr/local/bin/llvm-split
+/usr/local/bin/llvm-stress
+/usr/local/bin/llvm-strings
+/usr/local/bin/llvm-strip
+/usr/local/bin/llvm-symbolizer
+/usr/local/bin/llvm-tblgen
+/usr/local/bin/llvm-test-mustache-spec
+/usr/local/bin/llvm-tli-checker
+/usr/local/bin/llvm-undname
+/usr/local/bin/llvm-windres
+/usr/local/bin/llvm-xray
+/usr/local/bin/not
+/usr/local/bin/nvptx-arch
+/usr/local/bin/obj2yaml
+/usr/local/bin/offload-arch
+/usr/local/bin/opt
+/usr/local/bin/reduce-chunk-list
+/usr/local/bin/sancov
+/usr/local/bin/sanstats
+/usr/local/bin/scan-build
+/usr/local/bin/scan-build-py
+/usr/local/bin/scan-view
+/usr/local/bin/split-file
+/usr/local/bin/verify-uselistorder
+/usr/local/bin/wasm-ld
+/usr/local/bin/yaml-bench
+/usr/local/bin/yaml2obj
+/usr/local/lib/clang/22/include/__clang_cuda_builtin_vars.h
+/usr/local/lib/clang/22/include/__clang_cuda_cmath.h
+/usr/local/lib/clang/22/include/__clang_cuda_complex_builtins.h
+/usr/local/lib/clang/22/include/__clang_cuda_device_functions.h
+/usr/local/lib/clang/22/include/__clang_cuda_intrinsics.h
+/usr/local/lib/clang/22/include/__clang_cuda_libdevice_declares.h
+/usr/local/lib/clang/22/include/__clang_cuda_math.h
+/usr/local/lib/clang/22/include/__clang_cuda_math_forward_declares.h
+/usr/local/lib/clang/22/include/__clang_cuda_runtime_wrapper.h
+/usr/local/lib/clang/22/include/__clang_cuda_texture_intrinsics.h
+/usr/local/lib/clang/22/include/__clang_hip_cmath.h
+/usr/local/lib/clang/22/include/__clang_hip_libdevice_declares.h
+/usr/local/lib/clang/22/include/__clang_hip_math.h
+/usr/local/lib/clang/22/include/__clang_hip_runtime_wrapper.h
+/usr/local/lib/clang/22/include/__clang_hip_stdlib.h
+/usr/local/lib/clang/22/include/__clang_spirv_builtins.h
+/usr/local/lib/clang/22/include/__float_float.h
+/usr/local/lib/clang/22/include/__float_header_macro.h
+/usr/local/lib/clang/22/include/__float_infinity_nan.h
+/usr/local/lib/clang/22/include/__stdarg___gnuc_va_list.h
+/usr/local/lib/clang/22/include/__stdarg___va_copy.h
+/usr/local/lib/clang/22/include/__stdarg_header_macro.h
+/usr/local/lib/clang/22/include/__stdarg_va_arg.h
+/usr/local/lib/clang/22/include/__stdarg_va_copy.h
+/usr/local/lib/clang/22/include/__stdarg_va_list.h
+/usr/local/lib/clang/22/include/__stddef_header_macro.h
+/usr/local/lib/clang/22/include/__stddef_max_align_t.h
+/usr/local/lib/clang/22/include/__stddef_null.h
+/usr/local/lib/clang/22/include/__stddef_nullptr_t.h
+/usr/local/lib/clang/22/include/__stddef_offsetof.h
+/usr/local/lib/clang/22/include/__stddef_ptrdiff_t.h
+/usr/local/lib/clang/22/include/__stddef_rsize_t.h
+/usr/local/lib/clang/22/include/__stddef_size_t.h
+/usr/local/lib/clang/22/include/__stddef_unreachable.h
+/usr/local/lib/clang/22/include/__stddef_wchar_t.h
+/usr/local/lib/clang/22/include/__stddef_wint_t.h
+/usr/local/lib/clang/22/include/__wmmintrin_aes.h
+/usr/local/lib/clang/22/include/__wmmintrin_pclmul.h
+/usr/local/lib/clang/22/include/adcintrin.h
+/usr/local/lib/clang/22/include/adxintrin.h
+/usr/local/lib/clang/22/include/altivec.h
+/usr/local/lib/clang/22/include/amdgpuintrin.h
+/usr/local/lib/clang/22/include/ammintrin.h
+/usr/local/lib/clang/22/include/amo.h
+/usr/local/lib/clang/22/include/amxavx512intrin.h
+/usr/local/lib/clang/22/include/amxcomplexintrin.h
+/usr/local/lib/clang/22/include/amxfp16intrin.h
+/usr/local/lib/clang/22/include/amxfp8intrin.h
+/usr/local/lib/clang/22/include/amxintrin.h
+/usr/local/lib/clang/22/include/amxmovrsintrin.h
+/usr/local/lib/clang/22/include/amxtf32intrin.h
+/usr/local/lib/clang/22/include/andes_vector.h
+/usr/local/lib/clang/22/include/arm64intr.h
+/usr/local/lib/clang/22/include/arm_acle.h
+/usr/local/lib/clang/22/include/arm_bf16.h
+/usr/local/lib/clang/22/include/arm_cde.h
+/usr/local/lib/clang/22/include/arm_cmse.h
+/usr/local/lib/clang/22/include/arm_fp16.h
+/usr/local/lib/clang/22/include/arm_mve.h
+/usr/local/lib/clang/22/include/arm_neon.h
+/usr/local/lib/clang/22/include/arm_neon_sve_bridge.h
+/usr/local/lib/clang/22/include/arm_sme.h
+/usr/local/lib/clang/22/include/arm_sve.h
+/usr/local/lib/clang/22/include/arm_vector_types.h
+/usr/local/lib/clang/22/include/armintr.h
+/usr/local/lib/clang/22/include/avx10_2_512bf16intrin.h
+/usr/local/lib/clang/22/include/avx10_2_512convertintrin.h
+/usr/local/lib/clang/22/include/avx10_2_512minmaxintrin.h
+/usr/local/lib/clang/22/include/avx10_2_512niintrin.h
+/usr/local/lib/clang/22/include/avx10_2_512satcvtdsintrin.h
+/usr/local/lib/clang/22/include/avx10_2_512satcvtintrin.h
+/usr/local/lib/clang/22/include/avx10_2bf16intrin.h
+/usr/local/lib/clang/22/include/avx10_2convertintrin.h
+/usr/local/lib/clang/22/include/avx10_2copyintrin.h
+/usr/local/lib/clang/22/include/avx10_2minmaxintrin.h
+/usr/local/lib/clang/22/include/avx10_2niintrin.h
+/usr/local/lib/clang/22/include/avx10_2satcvtdsintrin.h
+/usr/local/lib/clang/22/include/avx10_2satcvtintrin.h
+/usr/local/lib/clang/22/include/avx2intrin.h
+/usr/local/lib/clang/22/include/avx512bf16intrin.h
+/usr/local/lib/clang/22/include/avx512bitalgintrin.h
+/usr/local/lib/clang/22/include/avx512bwintrin.h
+/usr/local/lib/clang/22/include/avx512cdintrin.h
+/usr/local/lib/clang/22/include/avx512dqintrin.h
+/usr/local/lib/clang/22/include/avx512fintrin.h
+/usr/local/lib/clang/22/include/avx512fp16intrin.h
+/usr/local/lib/clang/22/include/avx512ifmaintrin.h
+/usr/local/lib/clang/22/include/avx512ifmavlintrin.h
+/usr/local/lib/clang/22/include/avx512vbmi2intrin.h
+/usr/local/lib/clang/22/include/avx512vbmiintrin.h
+/usr/local/lib/clang/22/include/avx512vbmivlintrin.h
+/usr/local/lib/clang/22/include/avx512vlbf16intrin.h
+/usr/local/lib/clang/22/include/avx512vlbitalgintrin.h
+/usr/local/lib/clang/22/include/avx512vlbwintrin.h
+/usr/local/lib/clang/22/include/avx512vlcdintrin.h
+/usr/local/lib/clang/22/include/avx512vldqintrin.h
+/usr/local/lib/clang/22/include/avx512vlfp16intrin.h
+/usr/local/lib/clang/22/include/avx512vlintrin.h
+/usr/local/lib/clang/22/include/avx512vlvbmi2intrin.h
+/usr/local/lib/clang/22/include/avx512vlvnniintrin.h
+/usr/local/lib/clang/22/include/avx512vlvp2intersectintrin.h
+/usr/local/lib/clang/22/include/avx512vnniintrin.h
+/usr/local/lib/clang/22/include/avx512vp2intersectintrin.h
+/usr/local/lib/clang/22/include/avx512vpopcntdqintrin.h
+/usr/local/lib/clang/22/include/avx512vpopcntdqvlintrin.h
+/usr/local/lib/clang/22/include/avxifmaintrin.h
+/usr/local/lib/clang/22/include/avxintrin.h
+/usr/local/lib/clang/22/include/avxneconvertintrin.h
+/usr/local/lib/clang/22/include/avxvnniint16intrin.h
+/usr/local/lib/clang/22/include/avxvnniint8intrin.h
+/usr/local/lib/clang/22/include/avxvnniintrin.h
+/usr/local/lib/clang/22/include/bmi2intrin.h
+/usr/local/lib/clang/22/include/bmiintrin.h
+/usr/local/lib/clang/22/include/builtins.h
+/usr/local/lib/clang/22/include/cet.h
+/usr/local/lib/clang/22/include/cetintrin.h
+/usr/local/lib/clang/22/include/cldemoteintrin.h
+/usr/local/lib/clang/22/include/clflushoptintrin.h
+/usr/local/lib/clang/22/include/clwbintrin.h
+/usr/local/lib/clang/22/include/clzerointrin.h
+/usr/local/lib/clang/22/include/cmpccxaddintrin.h
+/usr/local/lib/clang/22/include/cpuid.h
+/usr/local/lib/clang/22/include/crc32intrin.h
+/usr/local/lib/clang/22/include/cuda_wrappers/__utility/declval.h
+/usr/local/lib/clang/22/include/cuda_wrappers/algorithm
+/usr/local/lib/clang/22/include/cuda_wrappers/bits/basic_string.h
+/usr/local/lib/clang/22/include/cuda_wrappers/bits/basic_string.tcc
+/usr/local/lib/clang/22/include/cuda_wrappers/bits/c++config.h
+/usr/local/lib/clang/22/include/cuda_wrappers/bits/shared_ptr_base.h
+/usr/local/lib/clang/22/include/cuda_wrappers/cmath
+/usr/local/lib/clang/22/include/cuda_wrappers/complex
+/usr/local/lib/clang/22/include/cuda_wrappers/new
+/usr/local/lib/clang/22/include/emmintrin.h
+/usr/local/lib/clang/22/include/enqcmdintrin.h
+/usr/local/lib/clang/22/include/f16cintrin.h
+/usr/local/lib/clang/22/include/float.h
+/usr/local/lib/clang/22/include/fma4intrin.h
+/usr/local/lib/clang/22/include/fmaintrin.h
+/usr/local/lib/clang/22/include/fxsrintrin.h
+/usr/local/lib/clang/22/include/gfniintrin.h
+/usr/local/lib/clang/22/include/gpuintrin.h
+/usr/local/lib/clang/22/include/hexagon_circ_brev_intrinsics.h
+/usr/local/lib/clang/22/include/hexagon_protos.h
+/usr/local/lib/clang/22/include/hexagon_types.h
+/usr/local/lib/clang/22/include/hresetintrin.h
+/usr/local/lib/clang/22/include/htmintrin.h
+/usr/local/lib/clang/22/include/htmxlintrin.h
+/usr/local/lib/clang/22/include/hvx_hexagon_protos.h
+/usr/local/lib/clang/22/include/ia32intrin.h
+/usr/local/lib/clang/22/include/immintrin.h
+/usr/local/lib/clang/22/include/intrin.h
+/usr/local/lib/clang/22/include/intrin0.h
+/usr/local/lib/clang/22/include/inttypes.h
+/usr/local/lib/clang/22/include/invpcidintrin.h
+/usr/local/lib/clang/22/include/iso646.h
+/usr/local/lib/clang/22/include/keylockerintrin.h
+/usr/local/lib/clang/22/include/larchintrin.h
+/usr/local/lib/clang/22/include/lasxintrin.h
+/usr/local/lib/clang/22/include/limits.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/assert.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/ctype.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/inttypes.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/stdio.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/stdlib.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/string.h
+/usr/local/lib/clang/22/include/llvm_libc_wrappers/time.h
+/usr/local/lib/clang/22/include/llvm_offload_wrappers/__llvm_offload.h
+/usr/local/lib/clang/22/include/llvm_offload_wrappers/__llvm_offload_device.h
+/usr/local/lib/clang/22/include/llvm_offload_wrappers/__llvm_offload_host.h
+/usr/local/lib/clang/22/include/lsxintrin.h
+/usr/local/lib/clang/22/include/lwpintrin.h
+/usr/local/lib/clang/22/include/lzcntintrin.h
+/usr/local/lib/clang/22/include/mm3dnow.h
+/usr/local/lib/clang/22/include/mm_malloc.h
+/usr/local/lib/clang/22/include/mmintrin.h
+/usr/local/lib/clang/22/include/module.modulemap
+/usr/local/lib/clang/22/include/movdirintrin.h
+/usr/local/lib/clang/22/include/movrs_avx10_2_512intrin.h
+/usr/local/lib/clang/22/include/movrs_avx10_2intrin.h
+/usr/local/lib/clang/22/include/movrsintrin.h
+/usr/local/lib/clang/22/include/msa.h
+/usr/local/lib/clang/22/include/mwaitxintrin.h
+/usr/local/lib/clang/22/include/nmmintrin.h
+/usr/local/lib/clang/22/include/nvptxintrin.h
+/usr/local/lib/clang/22/include/opencl-c-base.h
+/usr/local/lib/clang/22/include/opencl-c.h
+/usr/local/lib/clang/22/include/openmp_wrappers/__clang_openmp_device_functions.h
+/usr/local/lib/clang/22/include/openmp_wrappers/cmath
+/usr/local/lib/clang/22/include/openmp_wrappers/complex
+/usr/local/lib/clang/22/include/openmp_wrappers/complex.h
+/usr/local/lib/clang/22/include/openmp_wrappers/complex_cmath.h
+/usr/local/lib/clang/22/include/openmp_wrappers/math.h
+/usr/local/lib/clang/22/include/openmp_wrappers/new
+/usr/local/lib/clang/22/include/pconfigintrin.h
+/usr/local/lib/clang/22/include/pkuintrin.h
+/usr/local/lib/clang/22/include/pmmintrin.h
+/usr/local/lib/clang/22/include/popcntintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/bmi2intrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/bmiintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/emmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/immintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/mm_malloc.h
+/usr/local/lib/clang/22/include/ppc_wrappers/mmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/nmmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/pmmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/smmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/tmmintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/x86gprintrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/x86intrin.h
+/usr/local/lib/clang/22/include/ppc_wrappers/xmmintrin.h
+/usr/local/lib/clang/22/include/prfchiintrin.h
+/usr/local/lib/clang/22/include/prfchwintrin.h
+/usr/local/lib/clang/22/include/ptrauth.h
+/usr/local/lib/clang/22/include/ptwriteintrin.h
+/usr/local/lib/clang/22/include/raointintrin.h
+/usr/local/lib/clang/22/include/rdpruintrin.h
+/usr/local/lib/clang/22/include/rdseedintrin.h
+/usr/local/lib/clang/22/include/riscv_bitmanip.h
+/usr/local/lib/clang/22/include/riscv_corev_alu.h
+/usr/local/lib/clang/22/include/riscv_crypto.h
+/usr/local/lib/clang/22/include/riscv_mips.h
+/usr/local/lib/clang/22/include/riscv_nds.h
+/usr/local/lib/clang/22/include/riscv_ntlh.h
+/usr/local/lib/clang/22/include/rtmintrin.h
+/usr/local/lib/clang/22/include/s390intrin.h
+/usr/local/lib/clang/22/include/serializeintrin.h
+/usr/local/lib/clang/22/include/sgxintrin.h
+/usr/local/lib/clang/22/include/sha512intrin.h
+/usr/local/lib/clang/22/include/shaintrin.h
+/usr/local/lib/clang/22/include/sifive_vector.h
+/usr/local/lib/clang/22/include/sm3intrin.h
+/usr/local/lib/clang/22/include/sm4evexintrin.h
+/usr/local/lib/clang/22/include/sm4intrin.h
+/usr/local/lib/clang/22/include/smmintrin.h
+/usr/local/lib/clang/22/include/spirvintrin.h
+/usr/local/lib/clang/22/include/stdalign.h
+/usr/local/lib/clang/22/include/stdarg.h
+/usr/local/lib/clang/22/include/stdatomic.h
+/usr/local/lib/clang/22/include/stdbool.h
+/usr/local/lib/clang/22/include/stdckdint.h
+/usr/local/lib/clang/22/include/stdcountof.h
+/usr/local/lib/clang/22/include/stddef.h
+/usr/local/lib/clang/22/include/stddefer.h
+/usr/local/lib/clang/22/include/stdint.h
+/usr/local/lib/clang/22/include/stdnoreturn.h
+/usr/local/lib/clang/22/include/tbmintrin.h
+/usr/local/lib/clang/22/include/tgmath.h
+/usr/local/lib/clang/22/include/tmmintrin.h
+/usr/local/lib/clang/22/include/tsxldtrkintrin.h
+/usr/local/lib/clang/22/include/uintrintrin.h
+/usr/local/lib/clang/22/include/unwind.h
+/usr/local/lib/clang/22/include/usermsrintrin.h
+/usr/local/lib/clang/22/include/vadefs.h
+/usr/local/lib/clang/22/include/vaesintrin.h
+/usr/local/lib/clang/22/include/varargs.h
+/usr/local/lib/clang/22/include/vecintrin.h
+/usr/local/lib/clang/22/include/velintrin.h
+/usr/local/lib/clang/22/include/velintrin_approx.h
+/usr/local/lib/clang/22/include/velintrin_gen.h
+/usr/local/lib/clang/22/include/vpclmulqdqintrin.h
+/usr/local/lib/clang/22/include/waitpkgintrin.h
+/usr/local/lib/clang/22/include/wasm_simd128.h
+/usr/local/lib/clang/22/include/wbnoinvdintrin.h
+/usr/local/lib/clang/22/include/wmmintrin.h
+/usr/local/lib/clang/22/include/x86gprintrin.h
+/usr/local/lib/clang/22/include/x86intrin.h
+/usr/local/lib/clang/22/include/xmmintrin.h
+/usr/local/lib/clang/22/include/xopintrin.h
+/usr/local/lib/clang/22/include/xsavecintrin.h
+/usr/local/lib/clang/22/include/xsaveintrin.h
+/usr/local/lib/clang/22/include/xsaveoptintrin.h
+/usr/local/lib/clang/22/include/xsavesintrin.h
+/usr/local/lib/clang/22/include/xtestintrin.h
+/usr/local/lib/clang/22/include/yvals_core.h
+/usr/local/lib/clang/22/include/zos_wrappers/builtins.h
+/usr/local/lib/libLLVM.so.22.1
+/usr/local/lib/libLTO.so.22.1
+/usr/local/lib/libRemarks.so.22.1
+/usr/local/lib/libclang-cpp.so.22.1
+/usr/local/lib/libclang.so.22.1
+/usr/local/lib/libclang.so.22.1.8
+/usr/local/lib/libear/__init__.py
+/usr/local/lib/libear/config.h.in
+/usr/local/lib/libear/ear.c
+/usr/local/lib/libscanbuild/__init__.py
+/usr/local/lib/libscanbuild/analyze.py
+/usr/local/lib/libscanbuild/arguments.py
+/usr/local/lib/libscanbuild/clang.py
+/usr/local/lib/libscanbuild/compilation.py
+/usr/local/lib/libscanbuild/intercept.py
+/usr/local/lib/libscanbuild/report.py
+/usr/local/lib/libscanbuild/resources/scanview.css
+/usr/local/lib/libscanbuild/resources/selectable.js
+/usr/local/lib/libscanbuild/resources/sorttable.js
+/usr/local/lib/libscanbuild/shell.py
+/usr/local/libexec/analyze-c++
+/usr/local/libexec/analyze-cc
+/usr/local/libexec/c++-analyzer
+/usr/local/libexec/ccc-analyzer
+/usr/local/libexec/intercept-c++
+/usr/local/libexec/intercept-cc
+/usr/local/share/clang/bash-autocomplete.sh
+/usr/local/share/clang/clang-format-bbedit.applescript
+/usr/local/share/clang/clang-format-diff.py
+/usr/local/share/clang/clang-format-sublime.py
+/usr/local/share/clang/clang-format.el
+/usr/local/share/clang/clang-format.py
+/usr/local/share/opt-viewer/opt-diff.py
+/usr/local/share/opt-viewer/opt-stats.py
+/usr/local/share/opt-viewer/opt-viewer.py
+/usr/local/share/opt-viewer/optpmap.py
+/usr/local/share/opt-viewer/optrecord.py
+/usr/local/share/opt-viewer/style.css
+/usr/local/share/scan-build/scanview.css
+/usr/local/share/scan-build/sorttable.js
+/usr/local/share/scan-view/Reporter.py
+/usr/local/share/scan-view/ScanView.py
+/usr/local/share/scan-view/bugcatcher.ico
+/usr/local/share/scan-view/startfile.py</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

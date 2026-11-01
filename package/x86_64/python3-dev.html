@@ -1,0 +1,451 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>python3-dev 3.14.0-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>python3-dev <span class=mut>3.14.0-r0</span></h1><p class=sum><b>Python 3 programming language interpreter and standard library (development files)</b><br>python3 3.14.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.14.0-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/python3-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz">https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tar.xz</a></dd>
+<dt>License</dt><dd>PSF-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/python3">ports/python3</a></dd>
+<dt>Package size</dt><dd>426.9 KiB</dd>
+<dt>Installed size</dt><dd>1.9 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-10-31 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add python3-dev
+apk add python3-dev=3.14.0-r0   <span class=mut># this version</span>
+
+apk del python3-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/python3-dev-3.14.0-r0.apk">python3-dev-3.14.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install python3-dev
+oss-get install python3-dev=3.14.0-r0   <span class=mut># this version</span>
+
+oss-get remove python3-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="python3.html">python3</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/python3-dev-3.14.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/python3-dev-3.14.0-r0.tar.gz</a> (406.5 KiB)</dd><dt>SHA-256</dt><dd><code>fe6ab88dbb8cac162ce3bfcc32853f94625f34226655072767c4f0301f23fc8d</code></dd><dt>Install first</dt><dd><a href="bzip2.html">bzip2</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/python3-dev-3.14.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 python3-dev-3.14.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = fe6ab88dbb8cac162ce3bfcc32853f94625f34226655072767c4f0301f23fc8d ] &amp;&amp; echo OK || echo BAD
+gzip -dc python3-dev-3.14.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/python3-dev.list
+gzip -dc python3-dev-3.14.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm python3-dev-3.14.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/python3-dev.list
+rm var/lib/manual/python3-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="bzip2.html">bzip2</a>, <a href="expat.html">expat</a>, <a href="gdbm.html">gdbm</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="openssl.html">openssl</a>, <a href="readline.html">readline</a>, <a href="zlib.html">zlib</a>, <a href="sqlite.html">sqlite</a>, <a href="xz.html">xz</a>, <a href="zstd.html">zstd</a>, <a href="python3.html">python3</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="python3.html">python3</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/python3.html">python3</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (2)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/python3/patches/0001-qnx-support.patch">0001-qnx-support.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/python3/patches/0002-qnx-dirfd-o-directory.patch">0002-qnx-dirfd-o-directory.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/python3/README.md">ports/python3/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_python on QEMU x86_64, vanilla mkqnximage image, 2026-10-31 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/python3-3.14.0-r0.log">tests/logs/x86_64/python3-3.14.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># python3 3.14.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T04:38:09Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3 qnx-test-python qnx-port-tests
+( 1/39) Installing gdbm (1.24-r0)
+( 2/39) Installing sqlite (3.47.2-r0)
+( 3/39) Installing python3 (3.14.0-r0)
+( 4/39) Installing qnx-port-tests (1.0-r1)
+( 5/39) Installing meson (1.10.0-r0)
+( 6/39) Installing ntpsec (1.2.4-r0)
+( 7/39) Installing openblas (0.3.28-r0)
+( 8/39) Installing numpy (2.3.4-r0)
+( 9/39) Installing pandas (2.3.3-r0)
+(10/39) Installing python3-astor (0.8.1-r0)
+(11/39) Installing python3-async-generator (1.10-r0)
+(12/39) Installing python3-click (8.5.0-r0)
+(13/39) Installing python3-coverage (7.17.0-r0)
+(14/39) Installing python3-curio (1.6_git20251221-r0)
+(15/39) Installing python3-dateutil (2.9.0_p0-r0)
+(16/39) Installing python3-idna (3.20-r0)
+(17/39) Installing python3-iniconfig (2.3.1-r0)
+(18/39) Installing python3-mypy-extensions (1.1.0-r0)
+(19/39) Installing python3-packaging (25.0-r0)
+(20/39) Installing python3-pip (25.1.1-r0)
+(21/39) Installing python3-pluggy (1.7.0-r0)
+(22/39) Installing python3-pretend (1.0.9-r0)
+(23/39) Installing python3-pygments (2.21.0-r0)
+(24/39) Installing python3-pytest (9.2.0-r0)
+(25/39) Installing python3-pytest-cov (7.1.0-r0)
+(26/39) Installing python3-tornado (6.6-r0)
+(27/39) Installing python3-pytest-tornasync (0.6.0_p2-r0)
+(28/39) Installing python3-pytokens (0.4.1-r0)
+(29/39) Installing python3-pytz (2025.2-r0)
+(30/39) Installing python3-setuptools (80.8.0-r0)
+(31/39) Installing python3-six (1.17.0-r0)
+(32/39) Installing python3-sniffio (1.3.1-r0)
+(33/39) Installing python3-sortedcontainers (2.4.0-r0)
+(34/39) Installing python3-traitlets (5.16.1-r0)
+(35/39) Installing python3-tzdata (2025.2-r0)
+(36/39) Installing python3-versioneer (0.29-r0)
+(37/39) Installing python3-wheel (0.46.1-r0)
+(38/39) Installing xcb-proto (1.17.0-r0)
+(39/39) Installing qnx-test-python (1.0-r6)
+OK: 404 MiB in 91 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python
+     == python3 ==
+       info 3.14.0 (main, Oct 28 2026, 05:14:27) [GCC 12.2.0]
+       ok   QNX_PORT_PYTHONHOME names the bundled stdlib
+       ok   Py_InitializeFromConfig
+       ok   Py_IsInitialized
+       ok   stdlib and extension modules all load from the bundle
+       ok   version is 3.14
+       ok   run a generator expression
+       ok   platform module
+       ok   zlib module round trip
+       ok   bz2 module
+       ok   lzma module
+       ok   hashlib SHA-256 vector
+       ok   ssl module (OpenSSL)
+       ok   sqlite3 module
+       ok   ctypes calling through libffi
+       ok   a ctypes callback (libffi closure -- executable memory)
+       ok   core extension modules import
+       ok   expat-backed XML parser
+       ok   unicodedata
+       ok   decimal (libmpdec)
+       ok   threads run and join
+       info stdlib: /usr/local/lib/python3.14
+       info platform: QNX x86pc
+       info ssl: OpenSSL 3.5.1 1 Jul 2025
+       ok   Py_FinalizeEx
+     PASS python3
+PASS test_python
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-python qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64-m-z/qnx-test-python-1.0-r8.apk">qnx-test-python-1.0-r8.apk</a> (release tests-8.0-x86_64-m-z)</p>
+<h2>Files (290)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/python3.14/Python.h
+/usr/local/include/python3.14/abstract.h
+/usr/local/include/python3.14/audit.h
+/usr/local/include/python3.14/bltinmodule.h
+/usr/local/include/python3.14/boolobject.h
+/usr/local/include/python3.14/bytearrayobject.h
+/usr/local/include/python3.14/bytesobject.h
+/usr/local/include/python3.14/ceval.h
+/usr/local/include/python3.14/codecs.h
+/usr/local/include/python3.14/compile.h
+/usr/local/include/python3.14/complexobject.h
+/usr/local/include/python3.14/cpython/abstract.h
+/usr/local/include/python3.14/cpython/audit.h
+/usr/local/include/python3.14/cpython/bytearrayobject.h
+/usr/local/include/python3.14/cpython/bytesobject.h
+/usr/local/include/python3.14/cpython/cellobject.h
+/usr/local/include/python3.14/cpython/ceval.h
+/usr/local/include/python3.14/cpython/classobject.h
+/usr/local/include/python3.14/cpython/code.h
+/usr/local/include/python3.14/cpython/compile.h
+/usr/local/include/python3.14/cpython/complexobject.h
+/usr/local/include/python3.14/cpython/context.h
+/usr/local/include/python3.14/cpython/critical_section.h
+/usr/local/include/python3.14/cpython/descrobject.h
+/usr/local/include/python3.14/cpython/dictobject.h
+/usr/local/include/python3.14/cpython/fileobject.h
+/usr/local/include/python3.14/cpython/fileutils.h
+/usr/local/include/python3.14/cpython/floatobject.h
+/usr/local/include/python3.14/cpython/frameobject.h
+/usr/local/include/python3.14/cpython/funcobject.h
+/usr/local/include/python3.14/cpython/genobject.h
+/usr/local/include/python3.14/cpython/import.h
+/usr/local/include/python3.14/cpython/initconfig.h
+/usr/local/include/python3.14/cpython/listobject.h
+/usr/local/include/python3.14/cpython/lock.h
+/usr/local/include/python3.14/cpython/longintrepr.h
+/usr/local/include/python3.14/cpython/longobject.h
+/usr/local/include/python3.14/cpython/memoryobject.h
+/usr/local/include/python3.14/cpython/methodobject.h
+/usr/local/include/python3.14/cpython/modsupport.h
+/usr/local/include/python3.14/cpython/monitoring.h
+/usr/local/include/python3.14/cpython/object.h
+/usr/local/include/python3.14/cpython/objimpl.h
+/usr/local/include/python3.14/cpython/odictobject.h
+/usr/local/include/python3.14/cpython/picklebufobject.h
+/usr/local/include/python3.14/cpython/pthread_stubs.h
+/usr/local/include/python3.14/cpython/pyatomic.h
+/usr/local/include/python3.14/cpython/pyatomic_gcc.h
+/usr/local/include/python3.14/cpython/pyatomic_msc.h
+/usr/local/include/python3.14/cpython/pyatomic_std.h
+/usr/local/include/python3.14/cpython/pyctype.h
+/usr/local/include/python3.14/cpython/pydebug.h
+/usr/local/include/python3.14/cpython/pyerrors.h
+/usr/local/include/python3.14/cpython/pyfpe.h
+/usr/local/include/python3.14/cpython/pyframe.h
+/usr/local/include/python3.14/cpython/pyhash.h
+/usr/local/include/python3.14/cpython/pylifecycle.h
+/usr/local/include/python3.14/cpython/pymem.h
+/usr/local/include/python3.14/cpython/pystate.h
+/usr/local/include/python3.14/cpython/pystats.h
+/usr/local/include/python3.14/cpython/pythonrun.h
+/usr/local/include/python3.14/cpython/pythread.h
+/usr/local/include/python3.14/cpython/pytime.h
+/usr/local/include/python3.14/cpython/setobject.h
+/usr/local/include/python3.14/cpython/traceback.h
+/usr/local/include/python3.14/cpython/tracemalloc.h
+/usr/local/include/python3.14/cpython/tupleobject.h
+/usr/local/include/python3.14/cpython/unicodeobject.h
+/usr/local/include/python3.14/cpython/warnings.h
+/usr/local/include/python3.14/cpython/weakrefobject.h
+/usr/local/include/python3.14/critical_section.h
+/usr/local/include/python3.14/datetime.h
+/usr/local/include/python3.14/descrobject.h
+/usr/local/include/python3.14/dictobject.h
+/usr/local/include/python3.14/dynamic_annotations.h
+/usr/local/include/python3.14/enumobject.h
+/usr/local/include/python3.14/errcode.h
+/usr/local/include/python3.14/exports.h
+/usr/local/include/python3.14/fileobject.h
+/usr/local/include/python3.14/fileutils.h
+/usr/local/include/python3.14/floatobject.h
+/usr/local/include/python3.14/frameobject.h
+/usr/local/include/python3.14/genericaliasobject.h
+/usr/local/include/python3.14/import.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc/atomic.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc/internal.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc/prim.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc/track.h
+/usr/local/include/python3.14/internal/mimalloc/mimalloc/types.h
+/usr/local/include/python3.14/internal/pycore_abstract.h
+/usr/local/include/python3.14/internal/pycore_asdl.h
+/usr/local/include/python3.14/internal/pycore_ast.h
+/usr/local/include/python3.14/internal/pycore_ast_state.h
+/usr/local/include/python3.14/internal/pycore_atexit.h
+/usr/local/include/python3.14/internal/pycore_audit.h
+/usr/local/include/python3.14/internal/pycore_backoff.h
+/usr/local/include/python3.14/internal/pycore_bitutils.h
+/usr/local/include/python3.14/internal/pycore_blocks_output_buffer.h
+/usr/local/include/python3.14/internal/pycore_brc.h
+/usr/local/include/python3.14/internal/pycore_bytes_methods.h
+/usr/local/include/python3.14/internal/pycore_bytesobject.h
+/usr/local/include/python3.14/internal/pycore_c_array.h
+/usr/local/include/python3.14/internal/pycore_call.h
+/usr/local/include/python3.14/internal/pycore_capsule.h
+/usr/local/include/python3.14/internal/pycore_cell.h
+/usr/local/include/python3.14/internal/pycore_ceval.h
+/usr/local/include/python3.14/internal/pycore_ceval_state.h
+/usr/local/include/python3.14/internal/pycore_code.h
+/usr/local/include/python3.14/internal/pycore_codecs.h
+/usr/local/include/python3.14/internal/pycore_compile.h
+/usr/local/include/python3.14/internal/pycore_complexobject.h
+/usr/local/include/python3.14/internal/pycore_condvar.h
+/usr/local/include/python3.14/internal/pycore_context.h
+/usr/local/include/python3.14/internal/pycore_critical_section.h
+/usr/local/include/python3.14/internal/pycore_crossinterp.h
+/usr/local/include/python3.14/internal/pycore_crossinterp_data_registry.h
+/usr/local/include/python3.14/internal/pycore_debug_offsets.h
+/usr/local/include/python3.14/internal/pycore_descrobject.h
+/usr/local/include/python3.14/internal/pycore_dict.h
+/usr/local/include/python3.14/internal/pycore_dict_state.h
+/usr/local/include/python3.14/internal/pycore_dtoa.h
+/usr/local/include/python3.14/internal/pycore_emscripten_signal.h
+/usr/local/include/python3.14/internal/pycore_emscripten_trampoline.h
+/usr/local/include/python3.14/internal/pycore_exceptions.h
+/usr/local/include/python3.14/internal/pycore_faulthandler.h
+/usr/local/include/python3.14/internal/pycore_fileutils.h
+/usr/local/include/python3.14/internal/pycore_fileutils_windows.h
+/usr/local/include/python3.14/internal/pycore_floatobject.h
+/usr/local/include/python3.14/internal/pycore_flowgraph.h
+/usr/local/include/python3.14/internal/pycore_format.h
+/usr/local/include/python3.14/internal/pycore_frame.h
+/usr/local/include/python3.14/internal/pycore_freelist.h
+/usr/local/include/python3.14/internal/pycore_freelist_state.h
+/usr/local/include/python3.14/internal/pycore_function.h
+/usr/local/include/python3.14/internal/pycore_gc.h
+/usr/local/include/python3.14/internal/pycore_genobject.h
+/usr/local/include/python3.14/internal/pycore_getopt.h
+/usr/local/include/python3.14/internal/pycore_gil.h
+/usr/local/include/python3.14/internal/pycore_global_objects.h
+/usr/local/include/python3.14/internal/pycore_global_objects_fini_generated.h
+/usr/local/include/python3.14/internal/pycore_global_strings.h
+/usr/local/include/python3.14/internal/pycore_hamt.h
+/usr/local/include/python3.14/internal/pycore_hashtable.h
+/usr/local/include/python3.14/internal/pycore_import.h
+/usr/local/include/python3.14/internal/pycore_importdl.h
+/usr/local/include/python3.14/internal/pycore_index_pool.h
+/usr/local/include/python3.14/internal/pycore_initconfig.h
+/usr/local/include/python3.14/internal/pycore_instruction_sequence.h
+/usr/local/include/python3.14/internal/pycore_instruments.h
+/usr/local/include/python3.14/internal/pycore_interp.h
+/usr/local/include/python3.14/internal/pycore_interp_structs.h
+/usr/local/include/python3.14/internal/pycore_interpframe.h
+/usr/local/include/python3.14/internal/pycore_interpframe_structs.h
+/usr/local/include/python3.14/internal/pycore_interpolation.h
+/usr/local/include/python3.14/internal/pycore_intrinsics.h
+/usr/local/include/python3.14/internal/pycore_jit.h
+/usr/local/include/python3.14/internal/pycore_list.h
+/usr/local/include/python3.14/internal/pycore_llist.h
+/usr/local/include/python3.14/internal/pycore_lock.h
+/usr/local/include/python3.14/internal/pycore_long.h
+/usr/local/include/python3.14/internal/pycore_magic_number.h
+/usr/local/include/python3.14/internal/pycore_memoryobject.h
+/usr/local/include/python3.14/internal/pycore_mimalloc.h
+/usr/local/include/python3.14/internal/pycore_modsupport.h
+/usr/local/include/python3.14/internal/pycore_moduleobject.h
+/usr/local/include/python3.14/internal/pycore_namespace.h
+/usr/local/include/python3.14/internal/pycore_object.h
+/usr/local/include/python3.14/internal/pycore_object_alloc.h
+/usr/local/include/python3.14/internal/pycore_object_deferred.h
+/usr/local/include/python3.14/internal/pycore_object_stack.h
+/usr/local/include/python3.14/internal/pycore_object_state.h
+/usr/local/include/python3.14/internal/pycore_obmalloc.h
+/usr/local/include/python3.14/internal/pycore_obmalloc_init.h
+/usr/local/include/python3.14/internal/pycore_opcode_metadata.h
+/usr/local/include/python3.14/internal/pycore_opcode_utils.h
+/usr/local/include/python3.14/internal/pycore_optimizer.h
+/usr/local/include/python3.14/internal/pycore_parking_lot.h
+/usr/local/include/python3.14/internal/pycore_parser.h
+/usr/local/include/python3.14/internal/pycore_pathconfig.h
+/usr/local/include/python3.14/internal/pycore_pyarena.h
+/usr/local/include/python3.14/internal/pycore_pyatomic_ft_wrappers.h
+/usr/local/include/python3.14/internal/pycore_pybuffer.h
+/usr/local/include/python3.14/internal/pycore_pyerrors.h
+/usr/local/include/python3.14/internal/pycore_pyhash.h
+/usr/local/include/python3.14/internal/pycore_pylifecycle.h
+/usr/local/include/python3.14/internal/pycore_pymath.h
+/usr/local/include/python3.14/internal/pycore_pymem.h
+/usr/local/include/python3.14/internal/pycore_pymem_init.h
+/usr/local/include/python3.14/internal/pycore_pystate.h
+/usr/local/include/python3.14/internal/pycore_pystats.h
+/usr/local/include/python3.14/internal/pycore_pythonrun.h
+/usr/local/include/python3.14/internal/pycore_pythread.h
+/usr/local/include/python3.14/internal/pycore_qsbr.h
+/usr/local/include/python3.14/internal/pycore_range.h
+/usr/local/include/python3.14/internal/pycore_runtime.h
+/usr/local/include/python3.14/internal/pycore_runtime_init.h
+/usr/local/include/python3.14/internal/pycore_runtime_init_generated.h
+/usr/local/include/python3.14/internal/pycore_runtime_structs.h
+/usr/local/include/python3.14/internal/pycore_semaphore.h
+/usr/local/include/python3.14/internal/pycore_setobject.h
+/usr/local/include/python3.14/internal/pycore_signal.h
+/usr/local/include/python3.14/internal/pycore_sliceobject.h
+/usr/local/include/python3.14/internal/pycore_stackref.h
+/usr/local/include/python3.14/internal/pycore_stats.h
+/usr/local/include/python3.14/internal/pycore_strhex.h
+/usr/local/include/python3.14/internal/pycore_structs.h
+/usr/local/include/python3.14/internal/pycore_structseq.h
+/usr/local/include/python3.14/internal/pycore_symtable.h
+/usr/local/include/python3.14/internal/pycore_sysmodule.h
+/usr/local/include/python3.14/internal/pycore_template.h
+/usr/local/include/python3.14/internal/pycore_time.h
+/usr/local/include/python3.14/internal/pycore_token.h
+/usr/local/include/python3.14/internal/pycore_traceback.h
+/usr/local/include/python3.14/internal/pycore_tracemalloc.h
+/usr/local/include/python3.14/internal/pycore_tstate.h
+/usr/local/include/python3.14/internal/pycore_tuple.h
+/usr/local/include/python3.14/internal/pycore_typedefs.h
+/usr/local/include/python3.14/internal/pycore_typeobject.h
+/usr/local/include/python3.14/internal/pycore_typevarobject.h
+/usr/local/include/python3.14/internal/pycore_ucnhash.h
+/usr/local/include/python3.14/internal/pycore_unicodeobject.h
+/usr/local/include/python3.14/internal/pycore_unicodeobject_generated.h
+/usr/local/include/python3.14/internal/pycore_unionobject.h
+/usr/local/include/python3.14/internal/pycore_uniqueid.h
+/usr/local/include/python3.14/internal/pycore_uop_ids.h
+/usr/local/include/python3.14/internal/pycore_uop_metadata.h
+/usr/local/include/python3.14/internal/pycore_warnings.h
+/usr/local/include/python3.14/internal/pycore_weakref.h
+/usr/local/include/python3.14/intrcheck.h
+/usr/local/include/python3.14/iterobject.h
+/usr/local/include/python3.14/listobject.h
+/usr/local/include/python3.14/lock.h
+/usr/local/include/python3.14/longobject.h
+/usr/local/include/python3.14/marshal.h
+/usr/local/include/python3.14/memoryobject.h
+/usr/local/include/python3.14/methodobject.h
+/usr/local/include/python3.14/modsupport.h
+/usr/local/include/python3.14/moduleobject.h
+/usr/local/include/python3.14/monitoring.h
+/usr/local/include/python3.14/object.h
+/usr/local/include/python3.14/objimpl.h
+/usr/local/include/python3.14/opcode.h
+/usr/local/include/python3.14/opcode_ids.h
+/usr/local/include/python3.14/osdefs.h
+/usr/local/include/python3.14/osmodule.h
+/usr/local/include/python3.14/patchlevel.h
+/usr/local/include/python3.14/py_curses.h
+/usr/local/include/python3.14/pyatomic.h
+/usr/local/include/python3.14/pybuffer.h
+/usr/local/include/python3.14/pycapsule.h
+/usr/local/include/python3.14/pyconfig.h
+/usr/local/include/python3.14/pydtrace.h
+/usr/local/include/python3.14/pyerrors.h
+/usr/local/include/python3.14/pyexpat.h
+/usr/local/include/python3.14/pyframe.h
+/usr/local/include/python3.14/pyhash.h
+/usr/local/include/python3.14/pylifecycle.h
+/usr/local/include/python3.14/pymacconfig.h
+/usr/local/include/python3.14/pymacro.h
+/usr/local/include/python3.14/pymath.h
+/usr/local/include/python3.14/pymem.h
+/usr/local/include/python3.14/pyport.h
+/usr/local/include/python3.14/pystate.h
+/usr/local/include/python3.14/pystats.h
+/usr/local/include/python3.14/pystrcmp.h
+/usr/local/include/python3.14/pystrtod.h
+/usr/local/include/python3.14/pythonrun.h
+/usr/local/include/python3.14/pythread.h
+/usr/local/include/python3.14/pytypedefs.h
+/usr/local/include/python3.14/rangeobject.h
+/usr/local/include/python3.14/refcount.h
+/usr/local/include/python3.14/setobject.h
+/usr/local/include/python3.14/sliceobject.h
+/usr/local/include/python3.14/structmember.h
+/usr/local/include/python3.14/structseq.h
+/usr/local/include/python3.14/sysmodule.h
+/usr/local/include/python3.14/traceback.h
+/usr/local/include/python3.14/tupleobject.h
+/usr/local/include/python3.14/typeslots.h
+/usr/local/include/python3.14/unicodeobject.h
+/usr/local/include/python3.14/warnings.h
+/usr/local/include/python3.14/weakrefobject.h
+/usr/local/lib/libpython3.14.so
+/usr/local/lib/pkgconfig/python-3.14-embed.pc
+/usr/local/lib/pkgconfig/python-3.14.pc
+/usr/local/lib/pkgconfig/python3-embed.pc
+/usr/local/lib/pkgconfig/python3.pc
+/usr/local/share/man/man1/python3.1
+/usr/local/share/man/man1/python3.14.1</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

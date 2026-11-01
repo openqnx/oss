@@ -1,0 +1,402 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>xfce4-settings 4.20.1-r0 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>xfce4-settings <span class=mut>4.20.1-r0</span></h1><p class=sum><b>Xfce settings daemon, manager and editor</b><br>xfce4-settings 4.20.1 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>4.20.1-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/xfce4-settings.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.1.tar.bz2">https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.1.tar.bz2</a></dd>
+<dt>License</dt><dd>GPL-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/xfce4-settings">ports/xfce4-settings</a></dd>
+<dt>Package size</dt><dd>2.2 MiB</dd>
+<dt>Installed size</dt><dd>6.5 MiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>so:libxfsettingsd-gtk-settings-sync.so=4.20.1</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add xfce4-settings
+apk add xfce4-settings=4.20.1-r0   <span class=mut># this version</span>
+
+apk del xfce4-settings   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/xfce4-settings-4.20.1-r0.apk">xfce4-settings-4.20.1-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install xfce4-settings
+oss-get install xfce4-settings=4.20.1-r0   <span class=mut># this version</span>
+
+oss-get remove xfce4-settings   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="at-spi2-core.html">at-spi2-core</a>, <a href="cairo.html">cairo</a>, <a href="exo.html">exo</a>, <a href="garcon.html">garcon</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="gtk-layer-shell.html">gtk-layer-shell</a>, <a href="gtk3.html">gtk3</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libxfce4ui.html">libxfce4ui</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="xfconf.html">xfconf</a>, <a href="zlib.html">zlib</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/xfce4-settings-4.20.1-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/xfce4-settings-4.20.1-r0.tar.gz</a> (2.2 MiB)</dd><dt>SHA-256</dt><dd><code>3e72e5f156195517bb06934b26430e652a90f4e4528dd0064671bb76bdf0122c</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="xfconf.html">xfconf</a>, <a href="libxfce4ui.html">libxfce4ui</a>, <a href="exo.html">exo</a>, <a href="garcon.html">garcon</a>, <a href="gtk-layer-shell.html">gtk-layer-shell</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/xfce4-settings-4.20.1-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 xfce4-settings-4.20.1-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 3e72e5f156195517bb06934b26430e652a90f4e4528dd0064671bb76bdf0122c ] &amp;&amp; echo OK || echo BAD
+gzip -dc xfce4-settings-4.20.1-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/xfce4-settings.list
+gzip -dc xfce4-settings-4.20.1-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm xfce4-settings-4.20.1-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/xfce4-settings.list
+rm var/lib/manual/xfce4-settings.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="xfconf.html">xfconf</a>, <a href="libxfce4ui.html">libxfce4ui</a>, <a href="exo.html">exo</a>, <a href="garcon.html">garcon</a>, <a href="gtk-layer-shell.html">gtk-layer-shell</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (16)</h2><a href="../../package/x86_64/at-spi2-core.html">at-spi2-core</a>, <a href="../../package/x86_64/cairo.html">cairo</a>, <a href="../../package/x86_64/exo.html">exo</a>, <a href="../../package/x86_64/garcon.html">garcon</a>, <a href="../../package/x86_64/gdk-pixbuf.html">gdk-pixbuf</a>, <a href="../../package/x86_64/gettext.html">gettext</a>, <a href="../../package/x86_64/glib.html">glib</a>, <a href="../../package/x86_64/gtk-layer-shell.html">gtk-layer-shell</a>, <a href="../../package/x86_64/gtk3.html">gtk3</a>, <a href="../../package/x86_64/harfbuzz.html">harfbuzz</a>, <a href="../../package/x86_64/libxfce4ui.html">libxfce4ui</a>, <a href="../../package/x86_64/libxfce4util.html">libxfce4util</a>, <a href="../../package/x86_64/pango.html">pango</a>, <a href="../../package/x86_64/wayland.html">wayland</a>, <a href="../../package/x86_64/xfconf.html">xfconf</a>, <a href="../../package/x86_64/zlib.html">zlib</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/xfce4-settings/README.md">ports/xfce4-settings/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_xfce4_settings on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/xfce4-settings-4.20.1-r0.log">tests/logs/x86_64/xfce4-settings-4.20.1-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># xfce4-settings 4.20.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-10-31T16:37:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-settings qnx-test-xfce4-settings qnx-port-tests
+( 1/40) Installing qnx-port-tests (1.0-r2)
+( 2/40) Installing libxau (1.0.11-r0)
+( 3/40) Installing libxdmcp (1.1.5-r0)
+( 4/40) Installing libxcb (1.17.0-r0)
+( 5/40) Installing libx11 (1.8.10-r0)
+( 6/40) Installing libxext (1.3.6-r0)
+( 7/40) Installing libxrender (0.9.11-r0)
+( 8/40) Installing cairo (1.18.2-r0)
+( 9/40) Installing font-dejavu (2.37-r0)
+(10/40) Installing libsfdo (0.1.4-r0)
+(11/40) Installing libxml2 (2.13.5-r1)
+(12/40) Installing libxkbcommon (1.8.1-r1)
+(13/40) Installing fribidi (1.0.16-r0)
+(14/40) Installing harfbuzz (&lt;ip&gt;-r0)
+(15/40) Installing libxft (2.3.8-r0)
+(16/40) Installing pango (1.54.0-r0)
+(17/40) Installing lcms2 (2.16-r0)
+(18/40) Installing wlroots (0.20.2-r0)
+(19/40) Installing xkeyboard-config (2.43-r0)
+(20/40) Installing labwc (0.20.2-r1)
+(21/40) Installing dbus (1.16.0-r1)
+(22/40) Installing libxi (1.8.2-r0)
+(23/40) Installing libxtst (1.2.5-r0)
+(24/40) Installing at-spi2-core (2.54.0-r0)
+(25/40) Installing libxcomposite (0.4.6-r0)
+(26/40) Installing libxfixes (6.0.1-r0)
+(27/40) Installing libxcursor (1.2.2-r0)
+(28/40) Installing libxdamage (1.1.6-r0)
+(29/40) Installing libxinerama (1.1.5-r0)
+(30/40) Installing libxrandr (1.5.4-r0)
+(31/40) Installing gtk3 (3.24.43-r1)
+(32/40) Installing hicolor-icon-theme (0.18-r0)
+(33/40) Installing libxfce4util (4.20.0-r0)
+(34/40) Installing xfconf (4.20.0-r1)
+(35/40) Installing libxfce4ui (4.20.0-r1)
+(36/40) Installing exo (4.20.0-r0)
+(37/40) Installing garcon (4.20.0-r1)
+(38/40) Installing gtk-layer-shell (0.9.0-r0)
+(39/40) Installing xfce4-settings (4.20.1-r0)
+(40/40) Installing qnx-test-xfce4-settings (1.0-r0)
+OK: 179 MiB in 69 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_settings
+     == xfce4-settings ==
+       info xfsettingsd --version -&gt; 0: xfsettingsd 4.20.1 (Xfce 4.20)
+       ok   xfsettingsd --version: 4.20.1
+       ok   xfsettingsd --help lists --replace, --daemon
+       info 56 helper(s), 23 web browsers
+       ok   every helper .desktop: Type=X-XFCE-Helper, a known category, commands
+       ok   firefox helper is a WebBrowser
+       ok   helpers.rc defaults
+       ok   GTK module xfsettingsd-gtk-settings-sync loads (dlopen), exports gtk_module_init and g_module_check_init
+       info g_module_open without a session bus: GModule (/usr/local/lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so) initialization check failed: Could not connect: No such file or directory
+       ok   GModule refuses the module without a session bus (its xfconf_init check)
+       info headless Wayland display: up
+       info xfce4-settings-manager --version -&gt; 0: xfce4-settings-manager 4.20.1 (Xfce 4.20)
+       ok   xfce4-settings-manager --version prints xfce4-settings-manager 4.20.1
+       info xfce4-settings-editor --version -&gt; 0: xfce4-settings-editor 4.20.1 (Xfce 4.20)
+       ok   xfce4-settings-editor --version prints xfce4-settings-editor 4.20.1
+       info xfce4-mime-settings --version -&gt; 0: xfce4-mime-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-mime-settings --version prints xfce4-mime-settings 4.20.1
+       info xfce4-appearance-settings --version -&gt; 0: xfce4-appearance-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-appearance-settings --version prints xfce4-appearance-settings 4.20.1
+       info xfce4-display-settings --version -&gt; 0: xfce4-display-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-display-settings --version prints xfce4-display-settings 4.20.1
+       info xfce4-mime-helper --version -&gt; 0: xfce4-settings 4.20.1 (Xfce 4.20)
+       ok   xfce4-mime-helper --version prints xfce4-settings 4.20.1 (Xfce 4.20
+       info xfce4-mime-helper --query WebBrowser -&gt; 0: qnxbrowser
+       ok   xfce4-mime-helper --query WebBrowser -&gt; our qnxbrowser helper
+       ok   xfce4-mime-helper rejects an unknown helper type
+     PASS xfce4-settings
+PASS test_xfce4_settings
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-xfce4-settings qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64-m-z/qnx-test-xfce4-settings-1.0-r0.apk">qnx-test-xfce4-settings-1.0-r0.apk</a> (release tests-8.0-x86_64-m-z)</p>
+<h2>Files (239)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/xfce4-appearance-settings
+/usr/local/bin/xfce4-display-settings
+/usr/local/bin/xfce4-mime-helper
+/usr/local/bin/xfce4-mime-settings
+/usr/local/bin/xfce4-settings-editor
+/usr/local/bin/xfce4-settings-manager
+/usr/local/bin/xfsettingsd
+/usr/local/etc/xdg/autostart/xfsettingsd.desktop
+/usr/local/etc/xdg/menus/xfce-settings-manager.menu
+/usr/local/etc/xdg/xfce4/helpers.rc
+/usr/local/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+/usr/local/lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so
+/usr/local/lib/xfce4/settings/appearance-install-theme
+/usr/local/lib/xfce4/xfce4-compose-mail
+/usr/local/share/applications/xfce-display-settings.desktop
+/usr/local/share/applications/xfce-settings-manager.desktop
+/usr/local/share/applications/xfce-ui-settings.desktop
+/usr/local/share/applications/xfce4-file-manager.desktop
+/usr/local/share/applications/xfce4-mail-reader.desktop
+/usr/local/share/applications/xfce4-mime-settings.desktop
+/usr/local/share/applications/xfce4-settings-editor.desktop
+/usr/local/share/applications/xfce4-terminal-emulator.desktop
+/usr/local/share/applications/xfce4-web-browser.desktop
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.filemanager.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.mailreader.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.accessibility.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.appearance.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.color.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.default-applications.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.display.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.editor.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.keyboard.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.manager.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.settings.mouse.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.terminalemulator.png
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.webbrowser.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-extend-down.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-extend-left.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-extend-right.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-extend-up.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-left.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-mirror.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-profile.png
+/usr/local/share/icons/hicolor/128x128/devices/xfce-display-right.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.filemanager.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.mailreader.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.accessibility.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.appearance.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.color.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.default-applications.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.display.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.editor.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.keyboard.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.manager.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.settings.mouse.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.terminalemulator.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.webbrowser.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.filemanager.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.mailreader.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.accessibility.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.appearance.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.color.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.default-applications.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.display.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.editor.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.keyboard.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.manager.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.settings.mouse.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.terminalemulator.png
+/usr/local/share/icons/hicolor/24x24/apps/org.xfce.webbrowser.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.filemanager.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.mailreader.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.accessibility.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.appearance.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.color.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.default-applications.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.display.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.editor.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.keyboard.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.manager.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.settings.mouse.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.terminalemulator.png
+/usr/local/share/icons/hicolor/32x32/apps/org.xfce.webbrowser.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.filemanager.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.mailreader.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.accessibility.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.appearance.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.color.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.default-applications.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.display.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.editor.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.keyboard.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.manager.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.settings.mouse.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.terminalemulator.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.webbrowser.png
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.filemanager.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.mailreader.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.accessibility.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.appearance.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.color.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.default-applications.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.display.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.editor.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.keyboard.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.manager.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.settings.mouse.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.terminalemulator.svg
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.webbrowser.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-extend-down.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-extend-left.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-extend-right.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-extend-up.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-left.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-mirror.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-profile.svg
+/usr/local/share/icons/hicolor/scalable/devices/xfce-display-right.svg
+/usr/local/share/locale/am/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ar/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ast/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/az/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/be/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/be@tarask/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/bg/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/bn/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ca/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/cs/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/da/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/de/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/el/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/en_AU/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/en_CA/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/es/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/et/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/eu/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/fi/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/fr/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/gl/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/he/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/hr/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/hu/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/hy_AM/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/hye/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/id/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ie/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/is/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/it/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ja/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ka/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/kab/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/kk/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ko/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/lt/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/lv/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ms/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/nb/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/nl/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/nn/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/oc/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/pa/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/pl/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/pt/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ro/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ru/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/si/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/sk/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/sl/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/sq/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/sr/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/sv/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/te/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/th/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/tr/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/tt/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ug/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/uk/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ur/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/ur_PK/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/xfce4-settings.mo
+/usr/local/share/xfce4/helpers/alacritty.desktop
+/usr/local/share/xfce4/helpers/aterm.desktop
+/usr/local/share/xfce4/helpers/balsa.desktop
+/usr/local/share/xfce4/helpers/brave.desktop
+/usr/local/share/xfce4/helpers/caja.desktop
+/usr/local/share/xfce4/helpers/chromium.desktop
+/usr/local/share/xfce4/helpers/debian-sensible-browser.desktop
+/usr/local/share/xfce4/helpers/debian-x-terminal-emulator.desktop
+/usr/local/share/xfce4/helpers/dillo.desktop
+/usr/local/share/xfce4/helpers/encompass.desktop
+/usr/local/share/xfce4/helpers/epiphany.desktop
+/usr/local/share/xfce4/helpers/eterm.desktop
+/usr/local/share/xfce4/helpers/evolution.desktop
+/usr/local/share/xfce4/helpers/firefox.desktop
+/usr/local/share/xfce4/helpers/galeon.desktop
+/usr/local/share/xfce4/helpers/geary.desktop
+/usr/local/share/xfce4/helpers/gnome-terminal.desktop
+/usr/local/share/xfce4/helpers/google-chrome.desktop
+/usr/local/share/xfce4/helpers/icecat.desktop
+/usr/local/share/xfce4/helpers/icedove.desktop
+/usr/local/share/xfce4/helpers/iceweasel.desktop
+/usr/local/share/xfce4/helpers/jumanji.desktop
+/usr/local/share/xfce4/helpers/kitty.desktop
+/usr/local/share/xfce4/helpers/kmail.desktop
+/usr/local/share/xfce4/helpers/konqueror.desktop
+/usr/local/share/xfce4/helpers/links.desktop
+/usr/local/share/xfce4/helpers/lynx.desktop
+/usr/local/share/xfce4/helpers/midori.desktop
+/usr/local/share/xfce4/helpers/mozilla-browser.desktop
+/usr/local/share/xfce4/helpers/mozilla-mailer.desktop
+/usr/local/share/xfce4/helpers/mutt.desktop
+/usr/local/share/xfce4/helpers/nautilus.desktop
+/usr/local/share/xfce4/helpers/netscape-navigator.desktop
+/usr/local/share/xfce4/helpers/nxterm.desktop
+/usr/local/share/xfce4/helpers/opera-browser.desktop
+/usr/local/share/xfce4/helpers/opera-mailer.desktop
+/usr/local/share/xfce4/helpers/pcmanfm-qt.desktop
+/usr/local/share/xfce4/helpers/pcmanfm.desktop
+/usr/local/share/xfce4/helpers/qterminal.desktop
+/usr/local/share/xfce4/helpers/qtfm.desktop
+/usr/local/share/xfce4/helpers/qupzilla.desktop
+/usr/local/share/xfce4/helpers/rodent.desktop
+/usr/local/share/xfce4/helpers/rox-filer.desktop
+/usr/local/share/xfce4/helpers/sakura.desktop
+/usr/local/share/xfce4/helpers/surf.desktop
+/usr/local/share/xfce4/helpers/sylpheed-claws.desktop
+/usr/local/share/xfce4/helpers/sylpheed.desktop
+/usr/local/share/xfce4/helpers/terminator.desktop
+/usr/local/share/xfce4/helpers/thunar.desktop
+/usr/local/share/xfce4/helpers/thunderbird.desktop
+/usr/local/share/xfce4/helpers/urxvt.desktop
+/usr/local/share/xfce4/helpers/vimprobable2.desktop
+/usr/local/share/xfce4/helpers/w3m.desktop
+/usr/local/share/xfce4/helpers/xfce4-terminal.desktop
+/usr/local/share/xfce4/helpers/xfe.desktop
+/usr/local/share/xfce4/helpers/xterm.desktop</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:58 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

@@ -1,0 +1,181 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>ceres-solver-dev 2.2.0-r0 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>ceres-solver-dev <span class=mut>2.2.0-r0</span></h1><p class=sum><b>C++ library for modeling and solving large optimization problems (development files)</b><br>ceres-solver 2.2.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>2.2.0-r0</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/ceres-solver-dev.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/ceres-solver/ceres-solver.git">https://github.com/ceres-solver/ceres-solver.git</a></dd>
+<dt>License</dt><dd>Apache-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/ceres-solver">ports/ceres-solver</a></dd>
+<dt>Package size</dt><dd>147.1 KiB</dd>
+<dt>Installed size</dt><dd>630.3 KiB</dd>
+<dt>Build date</dt><dd>2026-10-29</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add ceres-solver-dev
+apk add ceres-solver-dev=2.2.0-r0   <span class=mut># this version</span>
+
+apk del ceres-solver-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/ceres-solver-dev-2.2.0-r0.apk">ceres-solver-dev-2.2.0-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install ceres-solver-dev
+oss-get install ceres-solver-dev=2.2.0-r0   <span class=mut># this version</span>
+
+oss-get remove ceres-solver-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="ceres-solver.html">ceres-solver</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/ceres-solver-dev-2.2.0-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/ceres-solver-dev-2.2.0-r0.tar.gz</a> (139.9 KiB)</dd><dt>SHA-256</dt><dd><code>3f8355c284a352630176575501150714d3da404841f4603a969ab688d64916da</code></dd><dt>Install first</dt><dd><a href="gflags.html">gflags</a>, <a href="glog.html">glog</a>, <a href="ceres-solver.html">ceres-solver</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/ceres-solver-dev-2.2.0-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 ceres-solver-dev-2.2.0-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 3f8355c284a352630176575501150714d3da404841f4603a969ab688d64916da ] &amp;&amp; echo OK || echo BAD
+gzip -dc ceres-solver-dev-2.2.0-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/ceres-solver-dev.list
+gzip -dc ceres-solver-dev-2.2.0-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm ceres-solver-dev-2.2.0-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/ceres-solver-dev.list
+rm var/lib/manual/ceres-solver-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="gflags.html">gflags</a>, <a href="glog.html">glog</a>, <a href="ceres-solver.html">ceres-solver</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="ceres-solver.html">ceres-solver</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/aarch64/ceres-solver.html">ceres-solver</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/ceres-solver/README.md">ports/ceres-solver/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_ceres_solver on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/ceres-solver-2.2.0-r0.log">tests/logs/aarch64le/ceres-solver-2.2.0-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># ceres-solver 2.2.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:20:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ceres-solver qnx-test-ceres-solver qnx-port-tests
+(1/5) Installing gflags (2.2.2-r1)
+(2/5) Installing glog (0.7.1-r0)
+(3/5) Installing ceres-solver (2.2.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-ceres-solver (1.0-r0)
+OK: 63 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ceres_solver
+     == ceres-solver ==
+       info ceres 2.2.0
+       info m=0.300000000 c=0.100000000 after 18 iterations
+       ok   curve fit: solution usable
+       ok   curve fit recovers m = 0.3, c = 0.1
+       ok   curve fit residual ~ 0
+       info Rosenbrock -&gt; (1.000000, 1.000000)
+       ok   Rosenbrock minimum at (1, 1) via L-BFGS
+       info robust line a=1.99999 b=-4.99963
+       ok   Cauchy loss ignores outliers: y = 2x - 5
+       ok   central-difference Jacobian matches the analytic one
+     PASS ceres-solver
+PASS test_ceres_solver
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-ceres-solver qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-ceres-solver-1.0-r1.apk">qnx-test-ceres-solver-1.0-r1.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (69)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/ceres/autodiff_cost_function.h
+/usr/local/include/ceres/autodiff_first_order_function.h
+/usr/local/include/ceres/autodiff_manifold.h
+/usr/local/include/ceres/c_api.h
+/usr/local/include/ceres/ceres.h
+/usr/local/include/ceres/conditioned_cost_function.h
+/usr/local/include/ceres/constants.h
+/usr/local/include/ceres/context.h
+/usr/local/include/ceres/cost_function.h
+/usr/local/include/ceres/cost_function_to_functor.h
+/usr/local/include/ceres/covariance.h
+/usr/local/include/ceres/crs_matrix.h
+/usr/local/include/ceres/cubic_interpolation.h
+/usr/local/include/ceres/dynamic_autodiff_cost_function.h
+/usr/local/include/ceres/dynamic_cost_function.h
+/usr/local/include/ceres/dynamic_cost_function_to_functor.h
+/usr/local/include/ceres/dynamic_numeric_diff_cost_function.h
+/usr/local/include/ceres/evaluation_callback.h
+/usr/local/include/ceres/first_order_function.h
+/usr/local/include/ceres/gradient_checker.h
+/usr/local/include/ceres/gradient_problem.h
+/usr/local/include/ceres/gradient_problem_solver.h
+/usr/local/include/ceres/internal/array_selector.h
+/usr/local/include/ceres/internal/autodiff.h
+/usr/local/include/ceres/internal/config.h
+/usr/local/include/ceres/internal/disable_warnings.h
+/usr/local/include/ceres/internal/eigen.h
+/usr/local/include/ceres/internal/euler_angles.h
+/usr/local/include/ceres/internal/export.h
+/usr/local/include/ceres/internal/fixed_array.h
+/usr/local/include/ceres/internal/householder_vector.h
+/usr/local/include/ceres/internal/integer_sequence_algorithm.h
+/usr/local/include/ceres/internal/jet_traits.h
+/usr/local/include/ceres/internal/line_parameterization.h
+/usr/local/include/ceres/internal/memory.h
+/usr/local/include/ceres/internal/numeric_diff.h
+/usr/local/include/ceres/internal/parameter_dims.h
+/usr/local/include/ceres/internal/port.h
+/usr/local/include/ceres/internal/reenable_warnings.h
+/usr/local/include/ceres/internal/sphere_manifold_functions.h
+/usr/local/include/ceres/internal/variadic_evaluate.h
+/usr/local/include/ceres/iteration_callback.h
+/usr/local/include/ceres/jet.h
+/usr/local/include/ceres/jet_fwd.h
+/usr/local/include/ceres/line_manifold.h
+/usr/local/include/ceres/loss_function.h
+/usr/local/include/ceres/manifold.h
+/usr/local/include/ceres/manifold_test_utils.h
+/usr/local/include/ceres/normal_prior.h
+/usr/local/include/ceres/numeric_diff_cost_function.h
+/usr/local/include/ceres/numeric_diff_first_order_function.h
+/usr/local/include/ceres/numeric_diff_options.h
+/usr/local/include/ceres/ordered_groups.h
+/usr/local/include/ceres/problem.h
+/usr/local/include/ceres/product_manifold.h
+/usr/local/include/ceres/rotation.h
+/usr/local/include/ceres/sized_cost_function.h
+/usr/local/include/ceres/solver.h
+/usr/local/include/ceres/sphere_manifold.h
+/usr/local/include/ceres/tiny_solver.h
+/usr/local/include/ceres/tiny_solver_autodiff_function.h
+/usr/local/include/ceres/tiny_solver_cost_function_adapter.h
+/usr/local/include/ceres/types.h
+/usr/local/include/ceres/version.h
+/usr/local/lib/cmake/Ceres/CeresConfig.cmake
+/usr/local/lib/cmake/Ceres/CeresConfigVersion.cmake
+/usr/local/lib/cmake/Ceres/CeresTargets-release.cmake
+/usr/local/lib/cmake/Ceres/CeresTargets.cmake
+/usr/local/lib/libceres.so</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

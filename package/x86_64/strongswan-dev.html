@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>strongswan-dev 6.0.6-r1 (x86_64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>strongswan-dev <span class=mut>6.0.6-r1</span></h1><p class=sum><b>IPsec-based VPN solution (development files)</b><br>strongswan 6.0.6 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>6.0.6-r1</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/strongswan-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/strongswan/strongswan.git">https://github.com/strongswan/strongswan.git</a></dd>
+<dt>License</dt><dd>GPL-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/strongswan">ports/strongswan</a></dd>
+<dt>Package size</dt><dd>67.5 KiB</dd>
+<dt>Installed size</dt><dd>246.9 KiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add strongswan-dev
+apk add strongswan-dev=6.0.6-r1   <span class=mut># this version</span>
+
+apk del strongswan-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/strongswan-dev-6.0.6-r1.apk">strongswan-dev-6.0.6-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install strongswan-dev
+oss-get install strongswan-dev=6.0.6-r1   <span class=mut># this version</span>
+
+oss-get remove strongswan-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="strongswan.html">strongswan</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/strongswan-dev-6.0.6-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/strongswan-dev-6.0.6-r1.tar.gz</a> (65.1 KiB)</dd><dt>SHA-256</dt><dd><code>b046cd8995f51105094c6fb2cbe17acf7ebdab2a85b6fd807255dbb4981b6e4e</code></dd><dt>Install first</dt><dd><a href="openssl.html">openssl</a>, <a href="strongswan.html">strongswan</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/strongswan-dev-6.0.6-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 strongswan-dev-6.0.6-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = b046cd8995f51105094c6fb2cbe17acf7ebdab2a85b6fd807255dbb4981b6e4e ] &amp;&amp; echo OK || echo BAD
+gzip -dc strongswan-dev-6.0.6-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/strongswan-dev.list
+gzip -dc strongswan-dev-6.0.6-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm strongswan-dev-6.0.6-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/strongswan-dev.list
+rm var/lib/manual/strongswan-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="openssl.html">openssl</a>, <a href="strongswan.html">strongswan</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="strongswan.html">strongswan</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/strongswan.html">strongswan</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (2)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/strongswan/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/strongswan/patches/0005-file-logger-setvbuf.patch">0005-file-logger-setvbuf.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/strongswan/README.md">ports/strongswan/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_strongswan on QEMU x86_64, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/strongswan-6.0.6-r1.log">tests/logs/x86_64/strongswan-6.0.6-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># strongswan 6.0.6-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:10:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u strongswan qnx-test-strongswan qnx-port-tests
+(1/2) Installing strongswan (6.0.6-r1)
+(2/2) Installing qnx-test-strongswan (1.0-r0)
+OK: 100 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_strongswan
+     == strongswan ==
+       ok   libstrongswan: all 14 suites passed (chunk,enum,identification,asn1,host,printf,hasher,crypter,rsa,ecdsa,certnames,serial_gen,serial_parse,signature params)
+       info loaded plugins: sha2 random nonce x509 revocation constraints pubkey pkcs1 pem openssl pkcs8 hmac kdf
+       ok   chunk_from_fd: 8192 messages over a socketpair read back in order
+       ok   exchanges: all 4 suites passed (child create,ike rekey,child rekey,ike delete)
+       info pki: strongSwan 6.0.6 PKI tool
+       ok   pki --help: strongSwan 6.0.6 PKI tool
+       ok   pki --gen: ECDSA 256 key (PEM)
+       ok   pki --print key: ECDSA 256 bits
+       ok   pki --self: CA certificate
+       ok   CA subject: C=CH, O=QNX Test, CN=QNX Test CA
+       ok   CA issuer = subject
+       ok   CA serial 01:02:03:04:05
+       ok   CA flags:     CA CRLSign self-signed 
+       ok   CA pubkey: ECDSA 256 bits
+       ok   CA name constraint: permitted qnx.test
+       ok   pki --gen: RSA 2048 key
+       ok   pki --pub: public key extracted
+       ok   pki --issue: end-entity certificate
+       ok   EE subject: C=CH, O=QNX Test, CN=moon.qnx.test
+       ok   EE issuer: the CA
+       ok   EE altNames: moon.qnx.test
+       ok   EE flags: serverAuth, not CA
+       ok   EE pubkey: RSA 2048 bits
+       ok   pki --verify: certificate trusted, lifetimes valid
+       ok   pki --verify: CA against itself trusted
+       ok   pki --verify against another CA: untrusted (rc 1)
+       ok   pki --verify: SAN outside the CA&#x27;s name constraint untrusted (constraints plugin)
+       ok   charon started (pid 1279885353), answering over vici after 1s
+       ok   swanctl --version: strongSwan swanctl 6.0.6
+       ok   swanctl --version --daemon: strongSwan 6.0.6 charon (QNX, 8.0.0, x86pc)
+       ok   swanctl --stats: uptime and worker threads
+       ok   load-all: PSK secret loaded
+       ok   load-all: 1 connection loaded
+       ok   list-conns: qnxtest IKEv2, child remote &lt;ip&gt;/16, remote id sun.qnx.test
+       ok   list-sas: no SAs, rc 0
+       ok   charon still running after the vici checks
+     PASS strongswan
+PASS test_strongswan
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-strongswan qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64-m-z/qnx-test-strongswan-1.0-r1.apk">qnx-test-strongswan-1.0-r1.apk</a> (release tests-8.0-x86_64-m-z)</p>
+<h2>Files (21)</h2>
+<pre><code>/usr/local/share/man/man1/pki---acert.1
+/usr/local/share/man/man1/pki---dn.1
+/usr/local/share/man/man1/pki---est.1
+/usr/local/share/man/man1/pki---estca.1
+/usr/local/share/man/man1/pki---gen.1
+/usr/local/share/man/man1/pki---issue.1
+/usr/local/share/man/man1/pki---keyid.1
+/usr/local/share/man/man1/pki---ocsp.1
+/usr/local/share/man/man1/pki---pkcs7.1
+/usr/local/share/man/man1/pki---print.1
+/usr/local/share/man/man1/pki---pub.1
+/usr/local/share/man/man1/pki---req.1
+/usr/local/share/man/man1/pki---scep.1
+/usr/local/share/man/man1/pki---scepca.1
+/usr/local/share/man/man1/pki---self.1
+/usr/local/share/man/man1/pki---signcrl.1
+/usr/local/share/man/man1/pki---verify.1
+/usr/local/share/man/man1/pki.1
+/usr/local/share/man/man5/strongswan.conf.5
+/usr/local/share/man/man5/swanctl.conf.5
+/usr/local/share/man/man8/swanctl.8</code></pre>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>6.0.6-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64-m-z/strongswan-dev-6.0.6-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64-m-z/strongswan-dev-6.0.6-r0.tar.gz">.tar.gz</a> &middot; <code>apk add strongswan-dev=6.0.6-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:58 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

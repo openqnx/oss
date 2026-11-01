@@ -1,0 +1,149 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>labwc 0.20.2-r1 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>labwc <span class=mut>0.20.2-r1</span></h1><p class=sum><b>Stacking Wayland compositor (window manager) based on wlroots</b><br>labwc 0.20.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>0.20.2-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/labwc.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/labwc/labwc.git">https://github.com/labwc/labwc.git</a></dd>
+<dt>License</dt><dd>GPL-2.0-only <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/labwc">ports/labwc</a></dd>
+<dt>Package size</dt><dd>373.9 KiB</dd>
+<dt>Installed size</dt><dd>947.6 KiB</dd>
+<dt>Build date</dt><dd>2026-10-30</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add labwc
+apk add labwc=0.20.2-r1   <span class=mut># this version</span>
+
+apk del labwc   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/labwc-0.20.2-r1.apk">labwc-0.20.2-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install labwc
+oss-get install labwc=0.20.2-r1   <span class=mut># this version</span>
+
+oss-get remove labwc   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="cairo.html">cairo</a>, <a href="font-dejavu.html">font-dejavu</a>, <a href="glib.html">glib</a>, <a href="libpng.html">libpng</a>, <a href="libsfdo.html">libsfdo</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxml2.html">libxml2</a>, <a href="pango.html">pango</a>, <a href="pixman.html">pixman</a>, <a href="wayland.html">wayland</a>, <a href="wlroots.html">wlroots</a>, <a href="xkeyboard-config.html">xkeyboard-config</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/labwc-0.20.2-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/labwc-0.20.2-r1.tar.gz</a> (372.4 KiB)</dd><dt>SHA-256</dt><dd><code>873403d24faaa1d189205776bd9ec024ab1af6c38802b6bab7f1f0b32f771af4</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="font-dejavu.html">font-dejavu</a>, <a href="libsfdo.html">libsfdo</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="lcms2.html">lcms2</a>, <a href="wlroots.html">wlroots</a>, <a href="xkeyboard-config.html">xkeyboard-config</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/labwc-0.20.2-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 labwc-0.20.2-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 873403d24faaa1d189205776bd9ec024ab1af6c38802b6bab7f1f0b32f771af4 ] &amp;&amp; echo OK || echo BAD
+gzip -dc labwc-0.20.2-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/labwc.list
+gzip -dc labwc-0.20.2-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm labwc-0.20.2-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/labwc.list
+rm var/lib/manual/labwc.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="zlib.html">zlib</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="font-dejavu.html">font-dejavu</a>, <a href="libsfdo.html">libsfdo</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="lcms2.html">lcms2</a>, <a href="wlroots.html">wlroots</a>, <a href="xkeyboard-config.html">xkeyboard-config</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (12)</h2><a href="../../package/aarch64/cairo.html">cairo</a>, <a href="../../package/aarch64/font-dejavu.html">font-dejavu</a>, <a href="../../package/aarch64/glib.html">glib</a>, <a href="../../package/aarch64/libpng.html">libpng</a>, <a href="../../package/aarch64/libsfdo.html">libsfdo</a>, <a href="../../package/aarch64/libxkbcommon.html">libxkbcommon</a>, <a href="../../package/aarch64/libxml2.html">libxml2</a>, <a href="../../package/aarch64/pango.html">pango</a>, <a href="../../package/aarch64/pixman.html">pixman</a>, <a href="../../package/aarch64/wayland.html">wayland</a>, <a href="../../package/aarch64/wlroots.html">wlroots</a>, <a href="../../package/aarch64/xkeyboard-config.html">xkeyboard-config</a>
+<h2>Required by (2)</h2><a href="labwc-dev.html">labwc-dev</a>, <a href="oss-desktop.html">oss-desktop</a>
+<h2>QNX patches (2)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/labwc/patches/0001-qnx-from-qnx-ports.patch">0001-qnx-from-qnx-ports.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/labwc/patches/0002-no-theme-no-theme-dirs.patch">0002-no-theme-no-theme-dirs.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/labwc/README.md">ports/labwc/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_labwc on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/labwc-0.20.2-r1.log">tests/logs/aarch64le/labwc-0.20.2-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># labwc 0.20.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:39:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u labwc qnx-test-labwc qnx-port-tests
+( 1/31) Installing expat (2.6.4-r0)
+( 2/31) Installing bzip2 (1.0.8-r0)
+( 3/31) Installing freetype (2.13.3-r0)
+( 4/31) Installing fontconfig (2.15.0-r0)
+( 5/31) Installing libxau (1.0.11-r0)
+( 6/31) Installing libxdmcp (1.1.5-r0)
+( 7/31) Installing libxcb (1.17.0-r0)
+( 8/31) Installing libx11 (1.8.10-r0)
+( 9/31) Installing libxext (1.3.6-r0)
+(10/31) Installing libxrender (0.9.11-r0)
+(11/31) Installing lzo (2.10-r0)
+(12/31) Installing pixman (0.46.4-r0)
+(13/31) Installing cairo (1.18.2-r0)
+(14/31) Installing font-dejavu (2.37-r0)
+(15/31) Installing libsfdo (0.1.4-r0)
+(16/31) Installing xz (5.6.3-r0)
+(17/31) Installing libxml2 (2.13.5-r1)
+(18/31) Installing libxkbcommon (1.8.1-r1)
+(19/31) Installing fribidi (1.0.16-r0)
+(20/31) Installing graphite2 (1.3.14-r0)
+(21/31) Installing icu (76.1-r1)
+(22/31) Installing harfbuzz (&lt;ip&gt;-r0)
+(23/31) Installing libxft (2.3.8-r0)
+(24/31) Installing pango (1.54.0-r0)
+(25/31) Installing wayland (1.24.0-r0)
+(26/31) Installing wlroots (0.20.2-r0)
+(27/31) Installing xkeyboard-config (2.43-r0)
+(28/31) Installing labwc (0.20.2-r1)
+(29/31) Installing qnx-port-tests (1.0-r2)
+(30/31) Installing swaybg (1.2.2-r1)
+(31/31) Installing qnx-test-labwc (1.0-r4)
+OK: 130 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_labwc
+     == labwc ==
+       ok   XDG_RUNTIME_DIR
+       ok   labwc started
+       ok   labwc&#x27;s Wayland socket wayland-0 appeared
+       ok   client connected to labwc
+       ok   global wl_compositor
+       ok   global wl_shm
+       ok   global wl_seat
+       ok   global xdg_wm_base
+       ok   global zwlr_layer_shell_v1
+       ok   global wl_data_device_manager
+     2026-10-31 16:39:42 - [src/swaybg/main.c:332] Found config * for output HEADLESS-1 (-)
+       ok   swaybg running on labwc (background layer surface)
+       ok   labwc still running after its clients
+       ok   labwc exits on SIGTERM
+     PASS labwc
+PASS test_labwc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-labwc qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-labwc-1.0-r4.apk">qnx-test-labwc-1.0-r4.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (7)</h2>
+<pre><code>/usr/local/bin/lab-sensible-terminal
+/usr/local/bin/labnag
+/usr/local/bin/labwc
+/usr/local/share/icons/hicolor/scalable/apps/labwc-symbolic.svg
+/usr/local/share/icons/hicolor/scalable/apps/labwc.svg
+/usr/local/share/wayland-sessions/labwc.desktop
+/usr/local/share/xdg-desktop-portal/labwc-portals.conf</code></pre></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

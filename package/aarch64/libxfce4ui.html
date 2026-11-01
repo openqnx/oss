@@ -1,0 +1,247 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>libxfce4ui 4.20.0-r1 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>libxfce4ui <span class=mut>4.20.0-r1</span></h1><p class=sum><b>Shared widgets library for Xfce applications</b><br>libxfce4ui 4.20.0 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>4.20.0-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/libxfce4ui.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.0.tar.bz2">https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.0.tar.bz2</a></dd>
+<dt>License</dt><dd>LGPL-2.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/libxfce4ui">ports/libxfce4ui</a></dd>
+<dt>Package size</dt><dd>404.4 KiB</dd>
+<dt>Installed size</dt><dd>1.5 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>so:libxfce4kbd-private-3.so.0=4.20.0 so:libxfce4ui-2.so.0=4.20.0</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add libxfce4ui
+apk add libxfce4ui=4.20.0-r1   <span class=mut># this version</span>
+
+apk del libxfce4ui   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/libxfce4ui-4.20.0-r1.apk">libxfce4ui-4.20.0-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install libxfce4ui
+oss-get install libxfce4ui=4.20.0-r1   <span class=mut># this version</span>
+
+oss-get remove libxfce4ui   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="at-spi2-core.html">at-spi2-core</a>, <a href="cairo.html">cairo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="gtk3.html">gtk3</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="pango.html">pango</a>, <a href="xfconf.html">xfconf</a>, <a href="zlib.html">zlib</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/libxfce4ui-4.20.0-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/libxfce4ui-4.20.0-r1.tar.gz</a> (398.3 KiB)</dd><dt>SHA-256</dt><dd><code>8a7e0915045c65b0be751b45adb5b919c3ab578cc159c1f64dfcf3c5d71a9129</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="xfconf.html">xfconf</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/libxfce4ui-4.20.0-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 libxfce4ui-4.20.0-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 8a7e0915045c65b0be751b45adb5b919c3ab578cc159c1f64dfcf3c5d71a9129 ] &amp;&amp; echo OK || echo BAD
+gzip -dc libxfce4ui-4.20.0-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/libxfce4ui.list
+gzip -dc libxfce4ui-4.20.0-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm libxfce4ui-4.20.0-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/libxfce4ui.list
+rm var/lib/manual/libxfce4ui.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="fribidi.html">fribidi</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>, <a href="gtk3.html">gtk3</a>, <a href="hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="libxfce4util.html">libxfce4util</a>, <a href="xfconf.html">xfconf</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (12)</h2><a href="../../package/aarch64/at-spi2-core.html">at-spi2-core</a>, <a href="../../package/aarch64/cairo.html">cairo</a>, <a href="../../package/aarch64/gdk-pixbuf.html">gdk-pixbuf</a>, <a href="../../package/aarch64/gettext.html">gettext</a>, <a href="../../package/aarch64/glib.html">glib</a>, <a href="../../package/aarch64/gtk3.html">gtk3</a>, <a href="../../package/aarch64/harfbuzz.html">harfbuzz</a>, <a href="../../package/aarch64/hicolor-icon-theme.html">hicolor-icon-theme</a>, <a href="../../package/aarch64/libxfce4util.html">libxfce4util</a>, <a href="../../package/aarch64/pango.html">pango</a>, <a href="../../package/aarch64/xfconf.html">xfconf</a>, <a href="../../package/aarch64/zlib.html">zlib</a>
+<h2>Required by (9)</h2><a href="exo.html">exo</a>, <a href="garcon.html">garcon</a>, <a href="libxfce4ui-dev.html">libxfce4ui-dev</a>, <a href="thunar.html">thunar</a>, <a href="xfce4-appfinder.html">xfce4-appfinder</a>, <a href="xfce4-panel.html">xfce4-panel</a>, <a href="xfce4-session.html">xfce4-session</a>, <a href="xfce4-settings.html">xfce4-settings</a>, <a href="xfce4-terminal.html">xfce4-terminal</a>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/libxfce4ui/README.md">ports/libxfce4ui/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_libxfce4ui on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/libxfce4ui-4.20.0-r1.log">tests/logs/aarch64le/libxfce4ui-4.20.0-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># libxfce4ui 4.20.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:30:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxfce4ui qnx-test-libxfce4ui qnx-port-tests
+( 1/45) Installing expat (2.6.4-r0)
+( 2/45) Installing dbus (1.16.0-r3)
+( 3/45) Installing libxau (1.0.11-r0)
+( 4/45) Installing libxdmcp (1.1.5-r0)
+( 5/45) Installing libxcb (1.17.0-r0)
+( 6/45) Installing libx11 (1.8.10-r0)
+( 7/45) Installing libxext (1.3.6-r0)
+( 8/45) Installing libxi (1.8.2-r0)
+( 9/45) Installing libxtst (1.2.5-r0)
+(10/45) Installing at-spi2-core (2.54.0-r0)
+(11/45) Installing bzip2 (1.0.8-r0)
+(12/45) Installing freetype (2.13.3-r0)
+(13/45) Installing fontconfig (2.15.0-r0)
+(14/45) Installing libxrender (0.9.11-r0)
+(15/45) Installing lzo (2.10-r0)
+(16/45) Installing pixman (0.46.4-r0)
+(17/45) Installing cairo (1.18.2-r0)
+(18/45) Installing fribidi (1.0.16-r0)
+(19/45) Installing graphite2 (1.3.14-r0)
+(20/45) Installing icu (76.1-r1)
+(21/45) Installing harfbuzz (&lt;ip&gt;-r0)
+(22/45) Installing libepoxy (1.5.10-r0)
+(23/45) Installing libxcomposite (0.4.6-r0)
+(24/45) Installing libxfixes (6.0.1-r0)
+(25/45) Installing libxcursor (1.2.2-r0)
+(26/45) Installing libxdamage (1.1.6-r0)
+(27/45) Installing libxinerama (1.1.5-r0)
+(28/45) Installing xz (5.6.3-r0)
+(29/45) Installing libxml2 (2.13.5-r1)
+(30/45) Installing libxkbcommon (1.8.1-r1)
+(31/45) Installing libxrandr (1.5.4-r0)
+(32/45) Installing libxft (2.3.8-r0)
+(33/45) Installing pango (1.54.0-r0)
+(34/45) Installing wayland (1.24.0-r0)
+(35/45) Installing gtk3 (3.24.43-r1)
+(36/45) Installing hicolor-icon-theme (0.18-r0)
+(37/45) Installing libxfce4util (4.20.0-r0)
+(38/45) Installing xfconf (4.20.0-r1)
+(39/45) Installing libxfce4ui (4.20.0-r1)
+(40/45) Installing font-dejavu (2.37-r0)
+(41/45) Installing libsfdo (0.1.4-r0)
+(42/45) Installing wlroots (0.20.2-r0)
+(43/45) Installing xkeyboard-config (2.43-r0)
+(44/45) Installing labwc (0.20.2-r1)
+(45/45) Installing qnx-test-libxfce4ui (1.0-r0)
+OK: 247 MiB in 84 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfce4ui
+     == libxfce4ui ==
+       info libxfce4ui 4.20.0
+       ok   libxfce4ui 4.20.0
+       ok   libxfce4ui_check_version
+       info xfce4-about.desktop Icon=org.xfce.about
+       ok   xfce_icon_name_from_desktop_id(xfce4-about) = org.xfce.about
+       ok   xfce_gtk_get_action_entry_by_id finds the entry (labels kept in the C locale)
+       info headless Wayland display: up
+       info xfce4-about --version -&gt; 0: xfce4-about 4.20.0 (Xfce 4.20)
+       ok   xfce4-about --version: 4.20.0
+       ok   gtk_init_check on the headless display
+       ok   xfce_gicon_from_name: themed icon for a named icon
+       ok   themed icon names start with org.xfce.about
+       ok   desktop file with an absolute Icon path -&gt; GFileIcon
+       ok   GFileIcon points at that path
+       ok   XfceTitledDialog with mixed buttons
+       ok   subtitle set and read back
+       ok   dialog title
+       ok   OK response button is &quot;_Save&quot;
+       ok   xfce_gtk_button_new_mixed
+       ok   xfce_gtk_frame_box_new returns a frame and its container
+       ok   menu item built from the action entry and appended
+       ok   activating the menu item runs the entry&#x27;s callback
+       ok   xfce_spawn_command_line ran the child
+     PASS libxfce4ui
+PASS test_libxfce4ui
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-libxfce4ui qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-libxfce4ui-1.0-r0.apk">qnx-test-libxfce4ui-1.0-r0.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (79)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/xfce4-about
+/usr/local/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+/usr/local/lib/libxfce4kbd-private-3.so.0
+/usr/local/lib/libxfce4ui-2.so.0
+/usr/local/share/applications/xfce4-about.desktop
+/usr/local/share/icons/hicolor/128x128/apps/org.xfce.about.png
+/usr/local/share/icons/hicolor/128x128/apps/xfce4-logo.png
+/usr/local/share/icons/hicolor/16x16/apps/org.xfce.about.png
+/usr/local/share/icons/hicolor/16x16/apps/xfce4-logo.png
+/usr/local/share/icons/hicolor/48x48/apps/org.xfce.about.png
+/usr/local/share/icons/hicolor/48x48/apps/xfce4-logo.png
+/usr/local/share/icons/hicolor/scalable/apps/org.xfce.about.svg
+/usr/local/share/icons/hicolor/scalable/apps/xfce4-logo.svg
+/usr/local/share/locale/am/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ar/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ast/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/az/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/be/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/bg/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/bn/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ca/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/cs/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/cy/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/da/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/de/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/el/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/en_AU/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/es/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/et/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/eu/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/fa_IR/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/fi/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/fr/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/gl/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/he/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/hr/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/hu/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/hy/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/hy_AM/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/hye/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/id/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ie/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/is/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/it/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ja/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ka/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/kk/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ko/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/lt/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/lv/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ms/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/nb/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/nl/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/nn/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/oc/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/pa/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/pl/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/pt/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ro/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ru/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/si/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/sk/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/sl/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/sq/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/sr/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/sv/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/te/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/th/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/tr/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ug/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/uk/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ur/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/ur_PK/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/vi/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/libxfce4ui.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/libxfce4ui.mo</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>4.20.0-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/libxfce4ui-4.20.0-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/libxfce4ui-4.20.0-r0.tar.gz">.tar.gz</a> &middot; <code>apk add libxfce4ui=4.20.0-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

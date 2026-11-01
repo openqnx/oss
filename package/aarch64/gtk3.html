@@ -1,0 +1,453 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>gtk3 3.24.43-r1 (aarch64) -- QNX OSS packages</title><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>gtk3 <span class=mut>3.24.43-r1</span></h1><p class=sum><b>GTK 3 multi-platform toolkit for graphical user interfaces</b><br>gtk3 3.24.43 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>3.24.43-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/gtk3.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://gitlab.gnome.org/GNOME/gtk.git">https://gitlab.gnome.org/GNOME/gtk.git</a></dd>
+<dt>License</dt><dd>LGPL-2.1-or-later <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/gtk3">ports/gtk3</a></dd>
+<dt>Package size</dt><dd>13.5 MiB</dd>
+<dt>Installed size</dt><dd>40.5 MiB</dd>
+<dt>Build date</dt><dd>2026-10-31</dd>
+<dt>Provides</dt><dd>so:libgailutil-3.so.0=3.24.43 so:libgdk-3.so.0=3.24.43 so:libgtk-3.so.0=3.24.43</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-01 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add gtk3
+apk add gtk3=3.24.43-r1   <span class=mut># this version</span>
+
+apk del gtk3   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/gtk3-3.24.43-r1.apk">gtk3-3.24.43-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install gtk3
+oss-get install gtk3=3.24.43-r1   <span class=mut># this version</span>
+
+oss-get remove gtk3   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="at-spi2-core.html">at-spi2-core</a>, <a href="cairo.html">cairo</a>, <a href="fontconfig.html">fontconfig</a>, <a href="fribidi.html">fribidi</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="gettext.html">gettext</a>, <a href="glib.html">glib</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libx11.html">libx11</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxext.html">libxext</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxi.html">libxi</a>, <a href="libxinerama.html">libxinerama</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/gtk3-3.24.43-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/gtk3-3.24.43-r1.tar.gz</a> (13.5 MiB)</dd><dt>SHA-256</dt><dd><code>768dc7dc02aef9b3d184a8debd74cfd8b04b6ac281224fe2b7070731ac3c7227</code></dd><dt>Install first</dt><dd><a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="fribidi.html">fribidi</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/gtk3-3.24.43-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 gtk3-3.24.43-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 768dc7dc02aef9b3d184a8debd74cfd8b04b6ac281224fe2b7070731ac3c7227 ] &amp;&amp; echo OK || echo BAD
+gzip -dc gtk3-3.24.43-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/gtk3.list
+gzip -dc gtk3-3.24.43-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm gtk3-3.24.43-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/gtk3.list
+rm var/lib/manual/gtk3.list</code></pre><p class=mut>Its dependencies stay installed: <a href="expat.html">expat</a>, <a href="dbus.html">dbus</a>, <a href="libiconv.html">libiconv</a>, <a href="libunistring.html">libunistring</a>, <a href="ncurses.html">ncurses</a>, <a href="gettext.html">gettext</a>, <a href="libffi.html">libffi</a>, <a href="pcre2.html">pcre2</a>, <a href="zlib.html">zlib</a>, <a href="glib.html">glib</a>, <a href="libxau.html">libxau</a>, <a href="libxdmcp.html">libxdmcp</a>, <a href="libxcb.html">libxcb</a>, <a href="libx11.html">libx11</a>, <a href="libxext.html">libxext</a>, <a href="libxi.html">libxi</a>, <a href="libxtst.html">libxtst</a>, <a href="at-spi2-core.html">at-spi2-core</a>, <a href="brotli.html">brotli</a>, <a href="bzip2.html">bzip2</a>, <a href="libpng.html">libpng</a>, <a href="freetype.html">freetype</a>, <a href="fontconfig.html">fontconfig</a>, <a href="libxrender.html">libxrender</a>, <a href="lzo.html">lzo</a>, <a href="pixman.html">pixman</a>, <a href="cairo.html">cairo</a>, <a href="fribidi.html">fribidi</a>, <a href="libjpeg-turbo.html">libjpeg-turbo</a>, <a href="gdk-pixbuf.html">gdk-pixbuf</a>, <a href="graphite2.html">graphite2</a>, <a href="icu.html">icu</a>, <a href="harfbuzz.html">harfbuzz</a>, <a href="libepoxy.html">libepoxy</a>, <a href="libxcomposite.html">libxcomposite</a>, <a href="libxfixes.html">libxfixes</a>, <a href="libxcursor.html">libxcursor</a>, <a href="libxdamage.html">libxdamage</a>, <a href="libxinerama.html">libxinerama</a>, <a href="xz.html">xz</a>, <a href="libxml2.html">libxml2</a>, <a href="libxkbcommon.html">libxkbcommon</a>, <a href="libxrandr.html">libxrandr</a>, <a href="libxft.html">libxft</a>, <a href="pango.html">pango</a>, <a href="wayland.html">wayland</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (21)</h2><a href="../../package/aarch64/at-spi2-core.html">at-spi2-core</a>, <a href="../../package/aarch64/cairo.html">cairo</a>, <a href="../../package/aarch64/fontconfig.html">fontconfig</a>, <a href="../../package/aarch64/fribidi.html">fribidi</a>, <a href="../../package/aarch64/gdk-pixbuf.html">gdk-pixbuf</a>, <a href="../../package/aarch64/gettext.html">gettext</a>, <a href="../../package/aarch64/glib.html">glib</a>, <a href="../../package/aarch64/harfbuzz.html">harfbuzz</a>, <a href="../../package/aarch64/libepoxy.html">libepoxy</a>, <a href="../../package/aarch64/libx11.html">libx11</a>, <a href="../../package/aarch64/libxcomposite.html">libxcomposite</a>, <a href="../../package/aarch64/libxcursor.html">libxcursor</a>, <a href="../../package/aarch64/libxdamage.html">libxdamage</a>, <a href="../../package/aarch64/libxext.html">libxext</a>, <a href="../../package/aarch64/libxfixes.html">libxfixes</a>, <a href="../../package/aarch64/libxi.html">libxi</a>, <a href="../../package/aarch64/libxinerama.html">libxinerama</a>, <a href="../../package/aarch64/libxkbcommon.html">libxkbcommon</a>, <a href="../../package/aarch64/libxrandr.html">libxrandr</a>, <a href="../../package/aarch64/pango.html">pango</a>, <a href="../../package/aarch64/wayland.html">wayland</a>
+<h2>Required by (25)</h2><a href="epiphany.html">epiphany</a>, <a href="exo.html">exo</a>, <a href="garcon.html">garcon</a>, <a href="gcr.html">gcr</a>, <a href="geany.html">geany</a>, <a href="geany-plugins.html">geany-plugins</a>, <a href="gthumb.html">gthumb</a>, <a href="gtk-layer-shell.html">gtk-layer-shell</a>, <a href="gtk-vnc.html">gtk-vnc</a>, <a href="gtk3-dev.html">gtk3-dev</a>, <a href="libdazzle.html">libdazzle</a>, <a href="libhandy.html">libhandy</a>, <a href="libportal.html">libportal</a>, <a href="libxfce4ui.html">libxfce4ui</a>, <a href="libxfce4windowing.html">libxfce4windowing</a>, <a href="mate-calc.html">mate-calc</a>, <a href="pqiv.html">pqiv</a>, <a href="thunar.html">thunar</a>, <a href="vte.html">vte</a>, <a href="webkitgtk.html">webkitgtk</a>, <a href="xfce4-appfinder.html">xfce4-appfinder</a>, <a href="xfce4-panel.html">xfce4-panel</a>, <a href="xfce4-session.html">xfce4-session</a>, <a href="xfce4-settings.html">xfce4-settings</a>, <a href="xfce4-terminal.html">xfce4-terminal</a>
+<h2>QNX patches (1)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/gtk3/patches/0001-qnx-platform-fixes.patch">0001-qnx-platform-fixes.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/gtk3/README.md">ports/gtk3/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_gtk3 on QEMU aarch64le, vanilla mkqnximage image, 2026-11-01 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/gtk3-3.24.43-r1.log">tests/logs/aarch64le/gtk3-3.24.43-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># gtk3 3.24.43-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-10-31T16:37:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtk3 qnx-test-gtk3 qnx-port-tests
+( 1/37) Installing expat (2.6.4-r0)
+( 2/37) Installing dbus (1.16.0-r1)
+( 3/37) Installing libxau (1.0.11-r0)
+( 4/37) Installing libxdmcp (1.1.5-r0)
+( 5/37) Installing libxcb (1.17.0-r0)
+( 6/37) Installing libx11 (1.8.10-r0)
+( 7/37) Installing libxext (1.3.6-r0)
+( 8/37) Installing libxi (1.8.2-r0)
+( 9/37) Installing libxtst (1.2.5-r0)
+(10/37) Installing at-spi2-core (2.54.0-r0)
+(11/37) Installing bzip2 (1.0.8-r0)
+(12/37) Installing freetype (2.13.3-r0)
+(13/37) Installing fontconfig (2.15.0-r0)
+(14/37) Installing libxrender (0.9.11-r0)
+(15/37) Installing lzo (2.10-r0)
+(16/37) Installing pixman (0.46.4-r0)
+(17/37) Installing cairo (1.18.2-r0)
+(18/37) Installing fribidi (1.0.16-r0)
+(19/37) Installing graphite2 (1.3.14-r0)
+(20/37) Installing icu (76.1-r1)
+(21/37) Installing harfbuzz (&lt;ip&gt;-r0)
+(22/37) Installing libepoxy (1.5.10-r0)
+(23/37) Installing libxcomposite (0.4.6-r0)
+(24/37) Installing libxfixes (6.0.1-r0)
+(25/37) Installing libxcursor (1.2.2-r0)
+(26/37) Installing libxdamage (1.1.6-r0)
+(27/37) Installing libxinerama (1.1.5-r0)
+(28/37) Installing xz (5.6.3-r0)
+(29/37) Installing libxml2 (2.13.5-r1)
+(30/37) Installing libxkbcommon (1.8.1-r1)
+(31/37) Installing libxrandr (1.5.4-r0)
+(32/37) Installing libxft (2.3.8-r0)
+(33/37) Installing pango (1.54.0-r0)
+(34/37) Installing wayland (1.24.0-r0)
+(35/37) Installing gtk3 (3.24.43-r1)
+(36/37) Installing qnx-port-tests (1.0-r2)
+(37/37) Installing qnx-test-gtk3 (1.0-r6)
+OK: 157 MiB in 65 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtk3
+     == gtk3 ==
+       info GTK 3.24.43, gdk-pixbuf 2.42.12, ATK 2.54.0
+       ok   gdk_pixbuf_new
+       ok   pixbuf geometry
+       ok   pixbuf has an alpha channel
+       ok   gdk-pixbuf encoded a PNG in memory
+       ok   gdk-pixbuf decoded the PNG back
+       ok   GtkWidget type registered
+       ok   GtkButton type registered
+       ok   GtkButton derives from GtkWidget
+       ok   type name readback
+       ok   GdkDisplay type registered
+       ok   AtkObject instantiated
+       ok   ATK name round trip
+       info gtk_init_check -&gt; no display
+       info widget layer not exercised: no display. Start broadwayd and set
+            GDK_BACKEND=broadway BROADWAY_DISPLAY=:5 to cover it.
+       ok   no default display, as expected
+     PASS gtk3
+PASS test_gtk3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-gtk3 qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64/qnx-test-gtk3-1.0-r6.apk">qnx-test-gtk3-1.0-r6.apk</a> (release tests-8.0-aarch64)</p>
+<h2>Files (299)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/broadwayd
+/usr/local/bin/gtk-builder-tool
+/usr/local/bin/gtk-encode-symbolic-svg
+/usr/local/bin/gtk-launch
+/usr/local/bin/gtk-query-immodules-3.0
+/usr/local/bin/gtk-query-settings
+/usr/local/bin/gtk-update-icon-cache
+/usr/local/etc/gtk-3.0/im-multipress.conf
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-am-et.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-broadway.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-cedilla.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-cyrillic-translit.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-inuktitut.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-ipa.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-multipress.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-thai.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-ti-er.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-ti-et.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-viqr.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-wayland.so
+/usr/local/lib/gtk-3.0/3.0.0/immodules/im-xim.so
+/usr/local/lib/gtk-3.0/3.0.0/printbackends/libprintbackend-file.so
+/usr/local/lib/libgailutil-3.so.0
+/usr/local/lib/libgailutil-3.so.0.0.0
+/usr/local/lib/libgdk-3.so.0
+/usr/local/lib/libgdk-3.so.0.2411.32
+/usr/local/lib/libgtk-3.so.0
+/usr/local/lib/libgtk-3.so.0.2411.32
+/usr/local/share/gettext/its/gtkbuilder.its
+/usr/local/share/gettext/its/gtkbuilder.loc
+/usr/local/share/glib-2.0/schemas/org.gtk.Settings.ColorChooser.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gtk.Settings.Debug.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gtk.Settings.EmojiChooser.gschema.xml
+/usr/local/share/glib-2.0/schemas/org.gtk.Settings.FileChooser.gschema.xml
+/usr/local/share/gtk-3.0/emoji/bn.gresource
+/usr/local/share/gtk-3.0/emoji/da.gresource
+/usr/local/share/gtk-3.0/emoji/de.gresource
+/usr/local/share/gtk-3.0/emoji/es.gresource
+/usr/local/share/gtk-3.0/emoji/et.gresource
+/usr/local/share/gtk-3.0/emoji/fi.gresource
+/usr/local/share/gtk-3.0/emoji/fr.gresource
+/usr/local/share/gtk-3.0/emoji/hi.gresource
+/usr/local/share/gtk-3.0/emoji/hu.gresource
+/usr/local/share/gtk-3.0/emoji/it.gresource
+/usr/local/share/gtk-3.0/emoji/ja.gresource
+/usr/local/share/gtk-3.0/emoji/ko.gresource
+/usr/local/share/gtk-3.0/emoji/lt.gresource
+/usr/local/share/gtk-3.0/emoji/ms.gresource
+/usr/local/share/gtk-3.0/emoji/nb.gresource
+/usr/local/share/gtk-3.0/emoji/nl.gresource
+/usr/local/share/gtk-3.0/emoji/pl.gresource
+/usr/local/share/gtk-3.0/emoji/pt.gresource
+/usr/local/share/gtk-3.0/emoji/ru.gresource
+/usr/local/share/gtk-3.0/emoji/sv.gresource
+/usr/local/share/gtk-3.0/emoji/th.gresource
+/usr/local/share/gtk-3.0/emoji/uk.gresource
+/usr/local/share/gtk-3.0/emoji/zh.gresource
+/usr/local/share/gtk-3.0/gtkbuilder.rng
+/usr/local/share/gtk-3.0/valgrind/gtk.supp
+/usr/local/share/locale/ab/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ab/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/af/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/af/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/am/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/am/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/an/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/an/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ang/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ang/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ar/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ar/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/as/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/as/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ast/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ast/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/az/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/az/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/az_IR/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/az_IR/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/be/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/be/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/be@latin/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/be@latin/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/bg/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/bg/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/bn/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/bn/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/bn_IN/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/bn_IN/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/br/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/br/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/bs/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/bs/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ca/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ca/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ca@valencia/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ca@valencia/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ckb/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ckb/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/crh/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/crh/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/cs/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/cs/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/cy/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/cy/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/da/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/da/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/de/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/de/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/dz/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/dz/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/el/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/el/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/en/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/en/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/en@shaw/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/en@shaw/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/en_CA/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/en_CA/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/en_GB/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/eo/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/eo/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/es/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/es/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/et/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/et/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/eu/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/eu/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/fa/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/fa/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/fi/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/fi/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/fr/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/fr/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/fur/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/fur/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ga/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ga/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/gd/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/gd/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/gl/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/gl/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/gu/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/gu/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/he/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/he/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/hi/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/hi/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/hr/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/hr/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/hu/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/hu/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/hy/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/hy/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ia/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ia/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/id/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/id/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ie/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ie/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/io/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/io/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/is/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/is/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/it/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/it/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ja/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ja/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ka/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ka/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/kab/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/kab/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/kg/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/kg/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/kk/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/kk/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/km/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/km/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/kn/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/kn/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ko/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ko/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ku/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ku/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ky/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ky/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/lg/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/lg/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/li/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/li/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/lt/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/lt/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/lv/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/lv/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/mai/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/mai/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/mi/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/mi/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/mk/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/mk/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ml/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ml/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/mn/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/mn/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/mr/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/mr/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ms/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ms/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/my/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/my/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/nb/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/nb/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/nds/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/nds/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ne/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ne/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/nl/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/nl/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/nn/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/nn/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/nso/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/nso/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/oc/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/oc/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/or/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/or/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/pa/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/pa/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/pl/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/pl/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ps/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ps/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/pt/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/pt/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/pt_BR/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ro/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ro/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ru/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ru/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/rw/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/rw/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/si/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/si/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sk/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sk/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sl/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sl/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sq/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sq/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sr/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sr/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sr@ije/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sr@ije/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sr@latin/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sr@latin/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/sv/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/sv/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ta/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ta/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/te/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/te/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/tg/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/tg/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/th/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/th/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/tk/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/tk/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/tr/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/tr/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/tt/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/tt/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ug/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ug/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/uk/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/uk/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/ur/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/ur/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/uz/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/uz/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/uz@cyrillic/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/uz@cyrillic/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/vi/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/vi/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/wa/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/wa/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/xh/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/xh/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/yi/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/yi/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/zh_CN/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/zh_HK/LC_MESSAGES/gtk30.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/gtk30-properties.mo
+/usr/local/share/locale/zh_TW/LC_MESSAGES/gtk30.mo
+/usr/local/share/themes/Default/gtk-3.0/gtk-keys.css
+/usr/local/share/themes/Emacs/gtk-3.0/gtk-keys.css</code></pre></details>
+<h2>Other versions (1)</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th><th>Test</th><th>Download</th></tr></thead><tbody>
+<tr><td class=n>3.24.43-r0</td><td class=n>2026-10-29</td><td><span class="b ok">PASS</span></td><td><a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64/gtk3-3.24.43-r0.apk">.apk</a> &middot; <a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64/gtk3-3.24.43-r0.tar.gz">.tar.gz</a> &middot; <code>apk add gtk3=3.24.43-r0</code></td></tr>
+</tbody></table></div></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-01 20:57 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

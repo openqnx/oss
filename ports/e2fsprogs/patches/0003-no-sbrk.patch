@@ -1,0 +1,36 @@
+Leave out the sbrk()-based memory bookkeeping on QNX.
+
+e2fsck's and resize2fs's resource tracking (e2fsck -t, resize2fs -d 8)
+records the start of the heap with sbrk(0). QNX has no sbrk(): its heap is
+not a brk segment, and the programs fail to link. e2fsck's tracking is
+compiled out on QNX; resize2fs's memory figure already comes from
+mallinfo() there, so only its sbrk(0) bookkeeping is left out.
+
+Upstream-Status: QNX-specific
+
+--- a/e2fsck/e2fsck.h
++++ b/e2fsck/e2fsck.h
+@@ -145,7 +145,11 @@
+ 
+ struct encrypted_file_info;
+ 
++/* The resource tracking (e2fsck -t) measures memory with sbrk(), which QNX
++   does not have: its heap is not a brk segment. */
++#ifndef __QNX__
+ #define RESOURCE_TRACK
++#endif
+ 
+ #ifdef RESOURCE_TRACK
+ /*
+--- a/resize/resource_track.c
++++ b/resize/resource_track.c
+@@ -27,7 +27,9 @@
+ 	io_stats io_start = 0;
+ 
+ 	track->desc = desc;
++#ifndef __QNX__	/* no sbrk(): QNX's heap is not a brk segment (mallinfo() is used) */
+ 	track->brk_start = sbrk(0);
++#endif
+ 	gettimeofday(&track->time_start, 0);
+ #ifdef HAVE_GETRUSAGE
+ #ifdef sun

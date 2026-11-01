@@ -1,0 +1,50 @@
+From 4cba3a3a6ec56d872d23c995011e4a1a7c0f2e9f Mon Sep 17 00:00:00 2001
+From: Marcin Sochacki <msochacki@qnx.com>
+Date: Tue, 1 Sep 2026 17:56:49 +0200
+Subject: [PATCH 2/6] open the ioctl socket before the privsep chroot
+
+
+Imported from qnx-ports/lldpd (4cba3a3a6ec5, branch qnx-1.0.22, based on upstream 1.0.22);
+original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ src/daemon/lldpd.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/src/daemon/lldpd.c b/src/daemon/lldpd.c
+index 2b5d26a30..4f4072b48 100644
+--- a/src/daemon/lldpd.c
++++ b/src/daemon/lldpd.c
+@@ -1912,6 +1912,17 @@ lldpd_main(int argc, char *argv[], char *envp[])
+ 		lsb_release = lldpd_get_lsb_release();
+ 	}
+ 
++	/* Get ioctl socket. Must happen before priv_init() chroots: on QNX,
++	 * socket() is backed by a resource manager reachable only through the
++	 * filesystem (/dev/socket), so a fresh socket() call made after the
++	 * chroot cannot reach it and fails with EAFNOSUPPORT. An fd opened
++	 * before the chroot keeps working inside the jail since chroot() only
++	 * affects new pathname resolution, not already-open descriptors. */
++	log_debug("main", "get an ioctl socket");
++	int ioctl_sock;
++	if ((ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
++		fatal("main", "failed to get ioctl socket");
++
+ 	log_debug("main", "initialize privilege separation");
+ #ifdef ENABLE_PRIVSEP
+ 	priv_init(PRIVSEP_CHROOT, ctl, uid, gid, ctlname);
+@@ -1947,10 +1958,8 @@ lldpd_main(int argc, char *argv[], char *envp[])
+ 	cfg->g_config.c_bond_slave_src_mac_type =
+ 	    LLDP_BOND_SLAVE_SRC_MAC_TYPE_LOCALLY_ADMINISTERED;
+ 
+-	/* Get ioctl socket */
+-	log_debug("main", "get an ioctl socket");
+-	if ((cfg->g_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+-		fatal("main", "failed to get ioctl socket");
++	/* Socket was already obtained before priv_init()'s chroot; see above. */
++	cfg->g_sock = ioctl_sock;
+ 
+ 	/* Description */
+ 	if (!(cfg->g_config.c_advertise_version = advertise_version) && lsb_release &&
+

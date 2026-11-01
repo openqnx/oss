@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 """shards -- which GitHub release a package goes to.
 
-GitHub allows at most 1000 assets per release, so the apk and packages
+GitHub allows at most 1000 assets per release, so the apk, packages and tests
 releases of an architecture are split by the first character of the package
 name. The ONE place that says how: SHARDS below. Every script that names a
 release (publish-github-release, check-release-sync, download-stats,
-gen-pkg-site) asks this file; a third shard is one more line here (and a
-repository line in target/apk-setup and target/oss-get's defaults).
+gen-pkg-site, gen-port-docs) asks this file; a third shard is one more line
+here (and a repository line in target/apk-setup's APK_REPO and tests
+defaults and in target/oss-get's).
 
   (tag suffix, first characters)   -- a regular-expression character class
   the first shard keeps the tag names of before the split: apk-8.0-<arch>,
-  packages-8.0-<arch>; the others are apk-8.0-<arch><suffix>.
+  packages-8.0-<arch>, tests-8.0-<arch>; the others are apk-8.0-<arch><suffix>.
 
-The tests release (tests-8.0-<arch>) is not sharded.
+A port test qnx-test-<name> goes by its <name> (qnx-test-zlib: m-z), the
+test runner qnx-port-tests by "port-tests" (m-z, in that one shard only: apk
+must never see two packages of the same name and version). Nothing in the
+apk and packages releases is named qnx-*.
 
 From the shell:
   scripts/lib/shards.py tags [<sdp> [<arch>...]]  every release tag, one per line
@@ -27,17 +31,25 @@ SHARDS = [
     ("", "0-9a-l"),
     ("-m-z", "m-z"),
 ]
-KINDS = ("apk", "packages")       # the sharded releases
-UNSHARDED = ("tests",)
+KINDS = ("apk", "packages", "tests")   # the sharded releases (all of them)
 SDP = "8.0"
 ARCHES = ("x86_64", "aarch64")
 
 _RX = [(s, re.compile("[%s]" % c)) for s, c in SHARDS]
 
 
+def sort_name(name):
+    """The name a package is sharded by: qnx-test-<name> by <name>, qnx-port-tests by port-tests."""
+    if name.startswith("qnx-test-"):
+        return name[len("qnx-test-"):]
+    if name.startswith("qnx-port-tests"):
+        return name[len("qnx-"):]
+    return name
+
+
 def shard_of(name):
     """Tag suffix of the shard a package (or its file name) belongs to."""
-    c = name[:1].lower()
+    c = sort_name(name)[:1].lower()
     for s, rx in _RX:
         if rx.fullmatch(c):
             return s
@@ -51,12 +63,11 @@ def tag(kind, arch, name=None, sdp=SDP):
 
 
 def tags(sdp=SDP, arches=ARCHES):
-    """Every release tag: per architecture the shards of apk and packages, then tests."""
+    """Every release tag: per architecture the shards of apk, packages and tests."""
     out = []
     for a in arches:
         for k in KINDS:
             out += ["%s-%s-%s%s" % (k, sdp, a, s) for s, _ in SHARDS]
-        out += ["%s-%s-%s" % (k, sdp, a) for k in UNSHARDED]
     return out
 
 

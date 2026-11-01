@@ -1,0 +1,88 @@
+u_memstream without open_memstream() on QNX
+
+QNX's libc has no open_memstream() (nor fmemopen/fopencookie). Mesa's
+u_memstream (shader dumps, driconf, the GLSL printers) uses it. On QNX use
+an anonymous tmpfile() and read it back into the caller's buffer on flush
+and close -- the scheme the Windows path already uses -- keeping the write
+position at the end as open_memstream does.
+
+Upstream-Status: QNX-specific
+
+--- a/src/util/memstream.c
++++ b/src/util/memstream.c
+@@ -63,6 +63,16 @@
+    }
+ 
+    return success;
++#elif defined(__QNX__)
++   /* QNX's libc has no open_memstream: an anonymous temporary file, read
++    * back into the caller's buffer on flush and close, as on Windows. */
++   FILE *const f = tmpfile();
++   *bufp = NULL;
++   *sizep = 0;
++   mem->f = f;
++   mem->bufp = bufp;
++   mem->sizep = sizep;
++   return f != NULL;
+ #else
+    FILE *const f = open_memstream(bufp, sizep);
+    mem->f = f;
+@@ -70,7 +80,7 @@
+ #endif
+ }
+ 
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__QNX__)
+ static void
+ u_memstream_update_buffer(struct u_memstream *mem)
+ {
+@@ -84,18 +94,24 @@
+       fseek(f, 0, SEEK_SET);
+       fread(*mem->bufp, 1, size, f);
+       (*mem->bufp)[size] = '\0';
++#ifdef __QNX__
++      /* Writes continue at the end, as with open_memstream. */
++      fseek(f, 0, SEEK_END);
++#endif
+    }
+    *mem->sizep = size;
+ }
+-#endif /* _WIN32 */
++#endif /* _WIN32 || __QNX__ */
+ 
+ void
+ u_memstream_close(struct u_memstream *mem)
+ {
+    FILE *const f = mem->f;
+ 
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__QNX__)
+    u_memstream_update_buffer(mem);
++#endif
++#ifdef _WIN32
+    remove(mem->temp);
+ #endif
+ 
+@@ -105,9 +121,10 @@
+ int
+ u_memstream_flush(struct u_memstream *mem)
+ {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+    return fflush(mem->f);
+ #else
++   fflush(mem->f);
+    u_memstream_update_buffer(mem);
+    return 0;
+ #endif /* _WIN32 */
+--- a/src/util/memstream.h
++++ b/src/util/memstream.h
+@@ -46,7 +46,7 @@
+ struct u_memstream
+ {
+    FILE *f;
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__QNX__)
+    char **bufp;
+    size_t *sizep;
+    char temp[PATH_MAX];

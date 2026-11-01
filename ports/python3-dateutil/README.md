@@ -29,7 +29,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 
 ```sh
 # on the QNX target, as root
-apk add qnx-test-python3-dateutil && /usr/local/bin/qnx-port-tests/test_python3_dateutil    # its on-target test
+apk add qnx-test-python3-dateutil && /usr/local/bin/qnx-port-tests/test_python3_dateutil    # its on-target test, from tests-8.0-<arch>-m-z
 apk del python3-dateutil qnx-test-python3-dateutil
 ```
 
@@ -109,6 +109,7 @@ do_install() { qnx_py_install_pure; }
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - python-dateutil (run-time dependency of pandas). Pure Python: the published wheel is platform independent, so it is installed as released (see scripts/lib/pywheel.sh).
+- dateutil imports six at run time (dateutil/parser); pure Python, so no DT_NEEDED shows it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-dateutil`.
 
@@ -152,7 +153,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_python3_dateutil`](../../tests/src/) links python3-dateutil the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-python3-dateutil`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_python3_dateutil`](../../tests/src/) links python3-dateutil the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-python3-dateutil`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target
@@ -181,8 +182,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/python3-dateutil-2.9.0_p0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/python3-dateutil-2.9.0_p0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/python3-dateutil-2.9.0_p0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/python3-dateutil-2.9.0_p0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/python3-dateutil-2.9.0_p0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-dateutil 2.9.0_p0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/python3-dateutil-2.9.0_p0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -200,6 +203,9 @@ VERSION=2.9.0.post0
 TARBALL=https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl
 SHA256=a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
 DEPS="python3 python3-six"
+# dateutil imports six at run time (dateutil/parser); pure Python, so no
+# DT_NEEDED shows it.
+RUNTIME_DEPS="python3 python3-six"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"
 do_fetch() { qnx_py_fetch_wheel; }

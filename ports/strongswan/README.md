@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add strongswan strongswan-dev
-apk add qnx-test-strongswan && /usr/local/bin/qnx-port-tests/test_strongswan    # its on-target test
+apk add qnx-test-strongswan && /usr/local/bin/qnx-port-tests/test_strongswan    # its on-target test, from tests-8.0-<arch>-m-z
 apk del strongswan strongswan-dev qnx-test-strongswan
 ```
 
@@ -174,12 +174,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH strongswan`.
 
 ### 5. What it installs
 
-78 files under `/usr/local`, 5 programs.
+108 files under `/usr/local`, 7 programs.
 
 ```
 /usr/local/bin/exchange_tests
 /usr/local/bin/libcharon_tests
 /usr/local/bin/libstrongswan_tests
+/usr/local/bin/pki
+/usr/local/bin/tls_tests
 /usr/local/bin/vici_tests
 /usr/local/sbin/swanctl
 ```
@@ -220,7 +222,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_strongswan`](../../tests/src/) links strongswan the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-strongswan`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_strongswan`](../../tests/src/) links strongswan the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-strongswan`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target
@@ -249,8 +251,12 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/strongswan-6.0.6-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/strongswan-6.0.6-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r2 | ❌ FAIL | 2026-11-02 | [log](../../tests/logs/aarch64le/strongswan-6.0.6-r2.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r3 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/strongswan-6.0.6-r3.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/strongswan-6.0.6-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/strongswan-6.0.6-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/strongswan-6.0.6-r2.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | strongswan 6.0.6-r3 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/strongswan-6.0.6-r3.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

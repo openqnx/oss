@@ -1,0 +1,27 @@
+Make DEFAULT_BASEDIR settable from CMake.
+
+sys_main.c takes fs_basepath, where game data and modules are, from
+DEFAULT_BASEDIR, or else the directory argv[0] names: started from PATH
+or through a link, that is not the install directory. A packaged install
+needs the fixed path; the cache variable passes it (empty keeps the
+binary's directory).
+
+Upstream-Status: Pending
+
+diff --git a/cmake/platforms/unix.cmake b/cmake/platforms/unix.cmake
+--- a/cmake/platforms/unix.cmake
++++ b/cmake/platforms/unix.cmake
+@@ -6,6 +6,13 @@ endif()
+ 
+ list(APPEND SYSTEM_PLATFORM_SOURCES ${SOURCE_DIR}/sys/sys_unix.c)
+ 
++# Where the game data and modules are when they are not next to the binary
++# (sys_main.c falls back to the binary's directory without it).
++set(DEFAULT_BASEDIR "" CACHE STRING "Default fs_basepath (empty: the binary's directory)")
++if(DEFAULT_BASEDIR)
++    add_compile_definitions(DEFAULT_BASEDIR="${DEFAULT_BASEDIR}")
++endif()
++
+ if(EMSCRIPTEN)
+     list(APPEND SYSTEM_PLATFORM_SOURCES ${SOURCE_DIR}/sys/con_passive.c)
+ else()

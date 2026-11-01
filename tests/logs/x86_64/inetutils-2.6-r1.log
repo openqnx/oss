@@ -1,0 +1,30 @@
+# inetutils 2.6-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:32:17Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u inetutils qnx-test-inetutils qnx-port-tests
+(1/5) Installing libxcrypt (4.4.38-r0)
+(2/5) Installing readline (8.2-r0)
+(3/5) Installing inetutils (2.6-r1)
+(4/5) Installing qnx-test-inetutils-inetd (1.0-r0)
+(5/5) Installing qnx-test-inetutils (1.0-r1)
+OK: 90 MiB in 29 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_inetutils
+     == inetutils ==
+       ok   telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.6
+       ok   hostname = uname -n (vanilla-x86_64)
+       info telnet session: 48 s
+       ok   telnet connected to telnetd on <ip>:24385
+       ok   a command typed into telnet ran in telnetd's pty shell (echo TEL""NET-42 printed TELNET-42)
+       ok   ping -c 2 <ip>: 2 transmitted, 2 received
+       ok   traceroute <ip>: hop 1 is <ip>
+     PASS inetutils
+PASS test_inetutils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

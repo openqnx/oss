@@ -1,0 +1,23 @@
+Take the byte order from the compiler on QNX: there is no <endian.h>.
+
+QNX has no <endian.h> (its BSD byte-order names are in <sys/param.h>), so
+common.h did not compile. On QNX the byte order is taken from the
+compiler's own __BYTE_ORDER__, which GCC defines on every target.
+
+Upstream-Status: QNX-specific
+
+--- a/src/common.h
++++ b/src/common.h
+@@ -58,7 +58,11 @@
+ #if defined(_FREEBSD)
+ #include <sys/endian.h>
+ #endif
+-#if !defined(__APPLE__) && !defined(_WIN32) && !defined(_FREEBSD) && \
++#if defined(__QNX__)
++#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++#define IS_BIG_ENDIAN
++#endif
++#elif !defined(__APPLE__) && !defined(_WIN32) && !defined(_FREEBSD) && \
+     !defined(_AIX)
+ #include <endian.h>
+ #if BYTE_ORDER == __BIG_ENDIAN

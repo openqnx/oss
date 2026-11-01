@@ -1,0 +1,92 @@
+Reopen directories with O_DIRECTORY on QNX, for every open()/openat().
+
+Patch 0005 gave dirtree's own directory opens O_DIRECTORY, but toybox opens
+directories it then uses with *at() in many more places: ls (open() and
+openat() of each listed directory: "ls: d/a: Not a directory"), cp -r (the
+new target directory: "cp: e/a: Not a directory"), and others. On QNX,
+open()/openat() are wrapped: a directory opened read-only without
+O_DIRECTORY is reopened with it (same descriptor number, same
+close-on-exec flag), so every caller gets a descriptor *at() works with.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/portability.c
++++ b/lib/portability.c
+@@ -6,6 +6,56 @@
+ 
+ #include "toys.h"
+ 
++#ifdef __QNX__
++#undef open
++#undef openat
++
++// See portability.h: give directories opened read-only O_DIRECTORY.
++static int qnx_dirfix(int dirfd, const char *path, int flags, int fd)
++{
++  struct stat st;
++  int fd2;
++
++  if (fd<0 || (flags&(O_DIRECTORY|O_ACCMODE|O_CREAT)) || fstat(fd, &st)
++    || !S_ISDIR(st.st_mode)) return fd;
++  if ((fd2 = openat(dirfd, path, flags|O_DIRECTORY))<0) return fd;
++  // Same descriptor number as the first open, same close-on-exec flag.
++  if (dup2(fd2, fd)<0) {
++    close(fd2);
++    return fd;
++  }
++  close(fd2);
++  if (flags&O_CLOEXEC) fcntl(fd, F_SETFD, FD_CLOEXEC);
++  return fd;
++}
++
++int qnx_openat(int dirfd, const char *path, int flags, ...)
++{
++  va_list va;
++  mode_t mode = 0;
++
++  if (flags&O_CREAT) {
++    va_start(va, flags);
++    mode = va_arg(va, int);
++    va_end(va);
++  }
++  return qnx_dirfix(dirfd, path, flags, openat(dirfd, path, flags, mode));
++}
++
++int qnx_open(const char *path, int flags, ...)
++{
++  va_list va;
++  mode_t mode = 0;
++
++  if (flags&O_CREAT) {
++    va_start(va, flags);
++    mode = va_arg(va, int);
++    va_end(va);
++  }
++  return qnx_dirfix(AT_FDCWD, path, flags, open(path, flags, mode));
++}
++#endif
++
+ // We can't fork() on nommu systems, and vfork() requires an exec() or exit()
+ // before resuming the parent (because they share a heap until then). And no,
+ // we can't implement our own clone() call that does the equivalent of fork()
+--- a/lib/portability.h
++++ b/lib/portability.h
+@@ -317,6 +317,18 @@
+ #endif
+ #endif
+ 
++#ifdef __QNX__
++// On QNX a directory opened without O_DIRECTORY can be read and fstat()ed,
++// but every openat()/fstatat()/fdopendir() relative to it fails with
++// ENOTDIR -- and toybox opens directories for exactly that in many places
++// (ls, cp, rm, find...). These wrappers reopen a directory that was opened
++// read-only without O_DIRECTORY, with it.
++int qnx_open(const char *path, int flags, ...);
++int qnx_openat(int dirfd, const char *path, int flags, ...);
++#define open(...) qnx_open(__VA_ARGS__)
++#define openat(...) qnx_openat(__VA_ARGS__)
++#endif
++
+ // Glibc won't give you linux-kernel constants unless you say "no, a BUD lite"
+ // even though linux has nothing to do with the FSF and never has.
+ #ifndef F_SETPIPE_SZ

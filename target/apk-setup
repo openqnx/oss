@@ -8,7 +8,8 @@
 #   apk-setup -k <key.pub|url>     another signing key
 #   apk-setup -R <root>            another install root (default /data/oss)
 #   apk-setup -u                   repository is not signed (--allow-untrusted)
-#   apk-setup -T <tests-repo|none> the repository of the port tests (qnx-test-*);
+#   apk-setup -T <tests-repo|none> the repositories of the port tests (qnx-test-*;
+#                                  several: one quoted, space-separated -T);
 #                                  default: next to the package repository
 #   apk-setup -c <ca-bundle.pem>   CA bundle for the first https:// downloads:
 #                                  a stock QNX image has none (scripts/target-
@@ -37,10 +38,12 @@
 #              apk-8.0-@ARCH@ (packages named 0-9, a-l) and apk-8.0-@ARCH@-m-z
 #              (m-z) -- GitHub allows 1000 files per release, so the packages
 #              are split; apk resolves dependencies across both.
-#   APK_TESTS_REPO  the port tests' repository (apk add qnx-test-<name>):
-#              .../test_suites/8.0 next to a .../dists/8.0 repository (what
-#              scripts/serve-dists serves), the tests-8.0-@ARCH@ release for
-#              the GitHub default, none otherwise.
+#   APK_TESTS_REPO  the port tests' repositories (apk add qnx-test-<name>),
+#              separated by spaces like APK_REPO: .../test_suites/8.0 next to
+#              a .../dists/8.0 repository (what scripts/serve-dists serves);
+#              for the GitHub default the two releases tests-8.0-@ARCH@
+#              (qnx-test-<name> with <name> 0-9, a-l) and tests-8.0-@ARCH@-m-z
+#              (m-z, and the runner qnx-port-tests); none otherwise.
 #   APK_KEY    public key: a file on the target or a URL. Its file name must be
 #              the one the repository was signed with.
 #   OSS_REPO   where oss-get bootstraps apk-tools from (oss-get's default: the
@@ -84,7 +87,7 @@ REPO=$(echo "$APK_REPO" | sed "s/@ARCH@/$ARCH/g")
 FIRST=$(for r in $APK_REPO; do echo "$r"; break; done)
 if [ -z "$APK_TESTS_REPO" ]; then
   case "$FIRST" in
-    $GH/releases/download/apk-*) APK_TESTS_REPO=$GH/releases/download/tests-8.0-@ARCH@/APKINDEX.tar.gz ;;
+    $GH/releases/download/apk-*) APK_TESTS_REPO="$GH/releases/download/tests-8.0-@ARCH@/APKINDEX.tar.gz $GH/releases/download/tests-8.0-@ARCH@-m-z/APKINDEX.tar.gz" ;;
     *APKINDEX.tar.gz) APK_TESTS_REPO=none ;;
     */dists/8.0|*/dists/8.0/) APK_TESTS_REPO=${APK_REPO%/}; APK_TESTS_REPO=${APK_TESTS_REPO%/dists/8.0}/test_suites/8.0 ;;
     *) APK_TESTS_REPO=none ;;
@@ -125,7 +128,7 @@ BL=$B/usr/local
 mkdir -p "$APK_ROOT/etc/apk/keys" "$APK_ROOT/bin" || die "cannot write $APK_ROOT"
 : > "$APK_ROOT/etc/apk/repositories"
 for r in $REPO; do echo "$r" >> "$APK_ROOT/etc/apk/repositories"; done
-[ "$TESTS_REPO" = none ] || echo "$TESTS_REPO" >> "$APK_ROOT/etc/apk/repositories"
+[ "$TESTS_REPO" = none ] || for r in $TESTS_REPO; do echo "$r" >> "$APK_ROOT/etc/apk/repositories"; done
 if [ -n "$UNTRUSTED" ]; then
   say "repository is unsigned: apk will run with --allow-untrusted"
 else

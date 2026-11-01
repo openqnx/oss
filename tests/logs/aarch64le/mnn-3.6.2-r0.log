@@ -1,0 +1,32 @@
+# mnn 3.6.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:07:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mnn qnx-test-mnn qnx-port-tests
+(1/2) Installing mnn (3.6.2-r0)
+(2/2) Installing qnx-test-mnn (1.0-r0)
+OK: 128 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mnn
+     == MNN ==
+     The device supports: i8sdot:0, fp16:0, i8mm: 0, sve2: 0, sme2: 0, perfCores: 0
+       info expected 0.2907 0.3541 0.1590 0.1963
+       ok   graph computed: 4 outputs
+       info got      0.2907 0.3541 0.1590 0.1963
+       ok   conv + relu + sum + matmul + softmax match the reference
+       ok   softmax sums to 1
+       ok   graph serialized to an MNN model
+       ok   model loaded as a Module
+       ok   Module::onForward on a second input matches the reference
+       ok   model loaded by the Interpreter
+       ok   session ran (2 threads)
+       ok   Interpreter session output matches the reference
+     PASS MNN
+PASS test_mnn
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

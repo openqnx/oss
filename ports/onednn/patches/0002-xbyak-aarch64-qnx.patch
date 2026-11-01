@@ -1,0 +1,165 @@
+Xbyak_aarch64: CPU information on QNX from the system page.
+
+oneDNN's Arm JIT, Xbyak_aarch64, finds out the CPU's features, core count
+and caches with Linux's getauxval(AT_HWCAP) and /sys/devices/system/cpu,
+macOS's sysctl or Windows' API, and stops with #error "Unsupported OS"
+anywhere else, so oneDNN did not build for QNX on aarch64.
+
+On QNX the kernel describes every CPU in the system page
+(<sys/syspage.h>): cpuinfo.cpu holds MIDR_EL1 (the implementer), its flags
+the features (AARCH64_CPU_FLAG_SIMD, _LSE, _SVE in <aarch64/syspage.h>),
+_syspage_ptr->num_cpu the core count, and the cacheattr entries reached
+from cpuinfo.ins_cache/data_cache the cache hierarchy. util_impl_qnx.h
+(new) reads those. Features the system page does not report (FP16, BF16,
+SME, ...) count as absent, so oneDNN uses its Advanced SIMD (and, where
+the kernel reports it, SVE) code; the SVE vector length is read with
+CNTB. When the startup code describes no caches (QEMU's virt machine),
+64 KiB L1 caches and a shared 1 MiB L2 are assumed for oneDNN's blocking.
+
+Upstream-Status: QNX-specific
+
+--- a/third_party/xbyak_aarch64/src/util_impl.cpp
++++ b/third_party/xbyak_aarch64/src/util_impl.cpp
+@@ -31,6 +31,8 @@
+ #include "util_impl_mac.h"
+ #elif defined(_M_ARM64)
+ #include "util_impl_windows.h"
++#elif defined(__QNX__)
++#include "util_impl_qnx.h"
+ #else
+ #error "Unsupported OS"
+ #endif
+@@ -159,6 +161,8 @@
+   info.reset(new CpuInfoMac());
+ #elif defined(_M_ARM64)
+   info.reset(new CpuInfoWindows());
++#elif defined(__QNX__)
++  info.reset(new CpuInfoQnx());
+ #endif
+ }
+ 
+--- a/third_party/xbyak_aarch64/xbyak_aarch64/xbyak_aarch64_util.h
++++ b/third_party/xbyak_aarch64/xbyak_aarch64/xbyak_aarch64_util.h
+@@ -18,7 +18,7 @@
+ #ifndef XBYAK_AARCH64_UTIL_H_
+ #define XBYAK_AARCH64_UTIL_H_
+ 
+-#if !(defined(__linux__) || defined(__APPLE__) || defined(_M_ARM64))
++#if !(defined(__linux__) || defined(__APPLE__) || defined(_M_ARM64) || defined(__QNX__))
+ #error "Unsupported OS"
+ #endif
+ 
+--- /dev/null
++++ b/third_party/xbyak_aarch64/src/util_impl_qnx.h
+@@ -0,0 +1,111 @@
++/*******************************************************************************
++ * QNX Neutrino: CPU information from the system page.
++ *
++ * QNX has neither Linux's getauxval(AT_HWCAP) and /sys/devices/system/cpu
++ * nor macOS's sysctl. The kernel describes every CPU in the system page
++ * (<sys/syspage.h>): the MIDR_EL1 value (cpuinfo.cpu), feature flags
++ * (<aarch64/syspage.h>: AARCH64_CPU_FLAG_SIMD, _LSE, _SVE) and the cache
++ * hierarchy (cacheattr entries). Features QNX does not report (FP16, BF16,
++ * SME, ...) are treated as absent, so oneDNN uses its Advanced SIMD
++ * (and, where reported, SVE) code.
++ *******************************************************************************/
++#ifndef __QNX__
++#error "Something wrong"
++#endif
++
++#include <stdint.h>
++#include <string.h>
++
++#include <sys/syspage.h>
++#include <aarch64/syspage.h>
++
++#include "xbyak_aarch64_err.h"
++#include "xbyak_aarch64_util.h"
++
++namespace Xbyak_aarch64 {
++namespace util {
++
++struct GetSveLenCode : public CodeGenerator {
++  GetSveLenCode() {
++    cntb(x0);
++    ret();
++  }
++};
++
++class CpuInfoQnx : public CpuInfo {
++public:
++  CpuInfoQnx() {
++    init();
++    lastDataCacheLevel_ = 0;
++    const struct cpuinfo_entry *ci = SYSPAGE_ENTRY(cpuinfo);
++    cacheInfo_.midr_el1 = ci[0].cpu;
++    numCores_[0] = numCores_[1] = _syspage_ptr->num_cpu;
++    setHwCap(ci[0].flags);
++    setCacheHierarchy(ci[0]);
++    setImplementer();
++    setSmeLen();
++  }
++
++private:
++  void setHwCap(uint64_t flags) {
++    type_ |= (Type)XBYAK_AARCH64_HWCAP_FP; // mandatory in AArch64
++    if (flags & AARCH64_CPU_FLAG_SIMD)
++      type_ |= (Type)XBYAK_AARCH64_HWCAP_ADVSIMD;
++    if (flags & AARCH64_CPU_FLAG_LSE)
++      type_ |= (Type)XBYAK_AARCH64_HWCAP_ATOMIC;
++    if (flags & AARCH64_CPU_FLAG_SVE) {
++      type_ |= (Type)XBYAK_AARCH64_HWCAP_SVE;
++      GetSveLenCode code;
++      code.ready();
++      sveLen_ = code.getCode<uint64_t (*)()>()();
++    }
++  }
++
++  /* Each CPU's instruction and data cache lists start at cpuinfo's
++     ins_cache/data_cache and go outwards through cacheattr[].next (L1, L2,
++     ...). A unified level appears in both lists. */
++  void setCacheHierarchy(const struct cpuinfo_entry &ci) {
++    const struct cacheattr_entry *ca = SYSPAGE_ENTRY(cacheattr);
++    const unsigned n = _syspage_ptr->cacheattr.entry_size ? _syspage_ptr->cacheattr.entry_size / sizeof(*ca) : 0;
++    unsigned idx = ci.data_cache;
++    for (uint32_t lvl = 0; lvl < maxCacheLevel && idx != CACHE_LIST_END && idx < n; lvl++, idx = ca[idx].next) {
++      auto cache = &cacheInfo_.levelCache[lvl];
++      const uint32_t size = ca[idx].line_size * ca[idx].num_lines;
++      const uint32_t sharing = (ca[idx].flags & CACHE_FLAG_SHARED) ? numCores_[1] : 1;
++      if ((ca[idx].flags & CACHE_FLAG_UNIFIED) == CACHE_FLAG_UNIFIED) {
++        cache->type = UnifiedCache;
++        cache->size[2] = size;
++        cache->sharingCores[2] = sharing;
++      } else {
++        cache->type = DataCacheOnly;
++        cache->size[1] = size;
++        cache->sharingCores[1] = sharing;
++      }
++    }
++    idx = ci.ins_cache;
++    for (uint32_t lvl = 0; lvl < maxCacheLevel && idx != CACHE_LIST_END && idx < n; lvl++, idx = ca[idx].next) {
++      auto cache = &cacheInfo_.levelCache[lvl];
++      if ((ca[idx].flags & CACHE_FLAG_UNIFIED) == CACHE_FLAG_UNIFIED)
++        continue;
++      cache->type = (cache->type == DataCacheOnly) ? SeparateCache : InstCacheOnly;
++      cache->size[0] = ca[idx].line_size * ca[idx].num_lines;
++      cache->sharingCores[0] = (ca[idx].flags & CACHE_FLAG_SHARED) ? numCores_[1] : 1;
++    }
++    setLastDataCacheLevel();
++    if (lastDataCacheLevel_ == 0) {
++      /* The startup code described no caches (QEMU's virt machine, for
++         one): assume a common Arm core, 64 KiB L1 caches and a shared
++         1 MiB L2, for oneDNN's blocking decisions. */
++      cacheInfo_.levelCache[0].type = SeparateCache;
++      cacheInfo_.levelCache[0].size[0] = cacheInfo_.levelCache[0].size[1] = 64 * 1024;
++      cacheInfo_.levelCache[0].sharingCores[0] = cacheInfo_.levelCache[0].sharingCores[1] = 1;
++      cacheInfo_.levelCache[1].type = UnifiedCache;
++      cacheInfo_.levelCache[1].size[2] = 1024 * 1024;
++      cacheInfo_.levelCache[1].sharingCores[2] = numCores_[1];
++      lastDataCacheLevel_ = 2;
++    }
++  }
++};
++
++} // namespace util
++} // namespace Xbyak_aarch64

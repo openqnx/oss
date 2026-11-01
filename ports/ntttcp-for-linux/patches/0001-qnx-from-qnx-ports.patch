@@ -1,0 +1,81 @@
+From 37f18bdb1552910da950b96f4768cf05ac792d3a Mon Sep 17 00:00:00 2001
+From: nnarayanamurthy <nnarayanamurthy@blackberry.com>
+Date: Thu, 5 Jun 2025 12:25:40 +0530
+Subject: [PATCH] ntttcp: QNX build support for till CI-b483afe
+
+
+Imported from qnx-ports/ntttcp-for-linux (b483afe00b9b...37f18bdb1552, branch qnx-b483afe); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ src/CMakeLists.txt |  7 ++++++-
+ src/main.c         | 11 +++++++++++
+ src/tcpstream.c    |  3 +++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 2d41201..ef22568 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -20,7 +20,12 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W -O2 -fno-strict-aliasing")
+ include(GNUInstallDirs)
+ 
+ add_executable(${PROJECT_NAME} ${SRC_NTTTCP})
+-target_link_libraries(${PROJECT_NAME} pthread)
++
++if(QNX)
++    target_link_libraries(${PROJECT_NAME} epoll socket c)
++else()
++    target_link_libraries(${PROJECT_NAME} pthread)
++endif()
+ 
+ install(TARGETS ntttcp
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+diff --git a/src/main.c b/src/main.c
+index 33c4ba3..66550fe 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -6,6 +6,10 @@
+ 
+ #include "main.h"
+ 
++#ifdef __QNX__
++typedef unsigned long cpu_set_t;
++#define _NTO_TCTL_RUNMASK 4 
++#endif
+ /************************************************************/
+ //		ntttcp high level functions
+ /************************************************************/
+@@ -364,11 +368,18 @@ int main(int argc, char **argv)
+ 	turn_off_light();
+ 
+ 	if (test->cpu_affinity != -1) {
++	#ifndef __QNX__
+ 		CPU_ZERO(&cpuset);
+ 		CPU_SET(test->cpu_affinity, &cpuset);
+ 		PRINT_INFO("main: set cpu affinity");
+ 		if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) != 0)
+ 			PRINT_ERR("main: cannot set cpu affinity");
++	#else
++		if (ThreadCtl(_NTO_TCTL_RUNMASK, &test->cpu_affinity) == -1) {
++    	    perror("ThreadCtl failed to set CPU affinity");
++        	return 1;
++	}
++	#endif
+ 	}
+ 
+ 	if (test->daemon) {
+diff --git a/src/tcpstream.c b/src/tcpstream.c
+index 4ff41af..b08a9dd 100644
+--- a/src/tcpstream.c
++++ b/src/tcpstream.c
+@@ -8,6 +8,9 @@
+ 
+ #define MAX_IO_PER_POLL 32
+ 
++#ifdef __QNX__
++#define SOL_TCP 6
++#endif
+ /************************************************************/
+ //		ntttcp socket functions
+ /************************************************************/

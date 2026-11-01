@@ -1,26 +1,25 @@
 # sysbench 1.0.20_git20250309-r2 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:49:39Z   packages from: apk:local-dists
+# date: 2026-11-01T11:10:20Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u sysbench qnx-test-sysbench qnx-port-tests
-(1/4) Installing qnx-port-tests (1.0-r2)
-(2/4) Installing luajit (2.1_git-r0)
-(3/4) Installing sysbench (1.0.20_git20250309-r2)
-(4/4) Installing qnx-test-sysbench (1.0-r0)
-OK: 95 MiB in 33 packages
+(1/3) Installing luajit (2.1_git-r0)
+(2/3) Installing sysbench (1.0.20_git20250309-r2)
+(3/3) Installing qnx-test-sysbench (1.0-r0)
+OK: 97 MiB in 36 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sysbench
      == sysbench ==
        ok   --version: sysbench 1.1.0
-       ok   cpu: 11542.86 events/s
-       ok   memory: 16.00 MiB transferred (4906.57 MiB/sec)
-       ok   threads (2): 3429 events
+       ok   cpu: 12573.59 events/s
+       ok   memory: 16.00 MiB transferred (5870.62 MiB/sec)
+       ok   threads (2): 3720 events
        ok   mutex (2 threads): 1.0000 events per thread
        ok   fileio prepare: 2 files
-       ok   fileio rndrw run: read IOPS 4582.22, write IOPS 3054.81
+       ok   fileio rndrw run: read IOPS 4736.88, write IOPS 3157.92
        ok   fileio cleanup
        ok   Lua script prepare hook: prep-ok 42 1,4,9
        ok   Lua script run: exactly 1000 events

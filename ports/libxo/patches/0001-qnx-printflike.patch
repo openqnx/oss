@@ -1,0 +1,21 @@
+Define __printflike on QNX, as on Linux.
+
+xo.h marks its printf-style functions with the BSD __printflike() macro
+and defines it itself only on Linux. QNX's <sys/cdefs.h> has no
+__printflike either, so every XO_PRINTFLIKE(x, y) became a bare "(x, y)"
+and the header (installed, so every consumer too) did not compile. Define
+it the same way, as the GCC format attribute qcc understands.
+
+Upstream-Status: QNX-specific
+
+--- a/libxo/xo.h
++++ b/libxo/xo.h
+@@ -47,7 +47,7 @@
+  * others to turn it off where needed.  Not ideal, but functional.
+  */
+ #if !defined(NO_PRINTFLIKE)
+-#if defined(__linux) && !defined(__printflike)
++#if (defined(__linux) || defined(__QNX__)) && !defined(__printflike)
+ #define __printflike(_x, _y) __attribute__((__format__ (__printf__, _x, _y)))
+ #endif
+ #define XO_PRINTFLIKE(_x, _y) __printflike(_x, _y)

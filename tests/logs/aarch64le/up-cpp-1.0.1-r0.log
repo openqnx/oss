@@ -1,0 +1,48 @@
+# up-cpp 1.0.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:18:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u up-cpp qnx-test-up-cpp qnx-port-tests
+(1/5) Installing abseil (20240722.0-r0)
+(2/5) Installing protobuf (29.3-r0)
+(3/5) Installing up-core-api (1.6.0_alpha2-r0)
+(4/5) Installing up-cpp (1.0.1-r0)
+(5/5) Installing qnx-test-up-cpp (1.0-r0)
+OK: 137 MiB in 44 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_up_cpp
+     == up-cpp ==
+       ok   UUID msb = time<<16 | version 7 | rand_a
+       ok   UUID lsb = variant 10b | rand_b
+       ok   UUID string 018bcfe5-687b-7def-8123-456789abcdef
+       ok   UUID string parses back
+       ok   UUID as 16 bytes
+       ok   validator: version 7, variant 2
+       ok   validator: the time it was built with
+       ok   isUuid
+       ok   parse //vehicle1/110AB/3/80CD into authority, ue_id, version, resource
+       ok   and serialize it back
+       ok   resource 0x80CD is a valid publish topic
+       ok   instance id 0 (ue_id 0x10AB) is a wildcard, not a topic
+       ok   resource 0x0001 is not a topic
+       ok   but a valid RPC method
+       ok   a non-hex entity id is rejected
+       ok   built a PUBLISH message
+       ok   source is the topic
+       ok   priority CS2
+       ok   text payload
+       ok   message id is a UUIDv7
+       ok   isValidPublish
+       ok   not a valid RPC request
+       ok   protobuf-serialize the UMessage
+       ok   parse it back
+       ok   with id, source and payload intact
+     PASS up-cpp
+PASS test_up_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

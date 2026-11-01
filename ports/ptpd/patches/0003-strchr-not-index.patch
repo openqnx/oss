@@ -1,0 +1,19 @@
+Use strchr(), not the legacy index().
+
+index() was removed from POSIX in 2008 and QNX's libc does not have it
+(the link fails on an undefined reference). strchr() is the standard
+equivalent.
+
+Upstream-Status: QNX-specific
+
+--- a/src/dep/daemonconfig.c
++++ b/src/dep/daemonconfig.c
+@@ -2604,7 +2604,7 @@
+     for ( i=0; i<argc; i++) {
+ 
+ 	if( strlen(argv[i]) > 3 &&
+-	    index(argv[i],':') != NULL ) {
++	    strchr(argv[i],':') != NULL ) {
+ 	/* check if the option is passed as sec:key=value */
+ 	if (sscanf(argv[i],"--%[-_a-zA-Z0-9:]=%s",key,val)==2 ||
+ 	    sscanf(argv[i],"-%[-_a-zA-Z0-9:]=%s",key,val)==2) {

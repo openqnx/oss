@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add ros2 ros2-dev
-apk add qnx-test-ros2 && /usr/local/bin/qnx-port-tests/test_ros2    # its on-target test
+apk add qnx-test-ros2 && /usr/local/bin/qnx-port-tests/test_ros2    # its on-target test, from tests-8.0-<arch>-m-z
 apk del ros2 ros2-dev qnx-test-ros2
 ```
 
@@ -263,7 +263,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_ros2`](../../tests/src/) links ros2 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-ros2`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_ros2`](../../tests/src/) links ros2 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-ros2`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target
@@ -296,11 +296,13 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r1 | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r2 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/ros2-0_git-r2.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ros2-0_git-r3.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r4 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ros2-0_git-r4.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:github | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r1 | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r2 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/ros2-0_git-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ros2-0_git-r3.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r4 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ros2-0_git-r4.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

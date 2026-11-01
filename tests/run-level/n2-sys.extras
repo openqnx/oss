@@ -1,0 +1,10 @@
+test_libutempter	libexec/utempter/utempter
+test_avahi	sbin/avahi-daemon bin/avahi-browse bin/avahi-browse-domains bin/avahi-publish-service bin/avahi-publish-address bin/avahi-resolve share/dbus-1/system.d/avahi-dbus.conf bin/dbus-daemon
+test_cups	sbin/cupsd sbin/lpadmin sbin/cupsaccept sbin/cupsreject sbin/cupsenable sbin/cupsdisable sbin/cupsctl bin/lp bin/lpstat bin/cancel bin/lpoptions bin/ipptool lib/cups/filter/gziptoany lib/cups/daemon/cups-exec share/cups/mime/mime.types share/cups/mime/mime.convs
+test_7zip	bin/7zz
+test_xmlto	bin/xmlto bin/xmlif share/xmlto/format/docbook/man share/xmlto/format/docbook/xhtml-nochunks bin/xsltproc bin/xmllint bin/bash bin/busybox share/xml/docbook/xsl-stylesheets-1.79.2/manpages/docbook.xsl
+test_asciidoc	bin/asciidoc bin/a2x bin/python3 bin/xsltproc bin/xmllint share/xml/docbook/xsl-stylesheets-1.79.2/manpages/docbook.xsl
+test_xsltproc	bin/xsltproc
+test_libxml2_utils	bin/xmllint bin/xmlcatalog
+test_perl_io_tty	bin/perl lib/perl5/site_perl/5.40.2/x86_64-nto/IO/Pty.pm lib/perl5/site_perl/5.40.2/aarch64-nto/IO/Pty.pm
+test_fastfetch	bin/fastfetch

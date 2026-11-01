@@ -1,18 +1,17 @@
 # pytorch 2.3.1-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:33:21Z   packages from: apk:local-dists
+# date: 2026-11-01T11:07:42Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pytorch qnx-test-torch qnx-port-tests
-(1/6) Installing abseil (20240722.0-r0)
-(2/6) Installing openblas (0.3.28-r0)
-(3/6) Installing protobuf (29.3-r0)
-(4/6) Installing pytorch (2.3.1-r1)
-(5/6) Installing qnx-port-tests (1.0-r2)
-(6/6) Installing qnx-test-torch (1.0-r7)
-OK: 337 MiB in 35 packages
+(1/5) Installing abseil (20240722.0-r0)
+(2/5) Installing openblas (0.3.28-r0)
+(3/5) Installing protobuf (29.3-r0)
+(4/5) Installing pytorch (2.3.1-r1)
+(5/5) Installing qnx-test-torch (1.0-r7)
+OK: 339 MiB in 38 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_torch
      == pytorch ==

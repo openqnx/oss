@@ -1,0 +1,46 @@
+# mesa 26.2.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:06:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mesa qnx-test-mesa-wayland qnx-port-tests
+(1/7) Installing expat (2.6.4-r0)
+(2/7) Installing xz (5.6.3-r0)
+(3/7) Installing libxml2 (2.13.5-r1)
+(4/7) Installing llvm (22.1.8-r0)
+(5/7) Installing wayland (1.24.0-r0)
+(6/7) Installing mesa (26.2.6-r0)
+(7/7) Installing qnx-test-mesa-wayland (1.0-r0)
+OK: 530 MiB in 46 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mesa_wayland
+     == mesa_wayland ==
+       ok   runtime directory
+       ok   compositor socket
+       ok   compositor offers wl_shm
+       ok   client connects
+       ok   client binds wl_compositor
+       ok   EGL client extensions list EGL_EXT_platform_wayland
+       ok   EGL on the Wayland display initialises
+       ok   window config
+       ok   window surface current
+       renderer: llvmpipe (LLVM 22.1.8, 128 bits)
+       ok   renderer is llvmpipe
+       ok   eglSwapBuffers (frame 1)
+       ok   compositor received frame 1
+       ok   buffer is 64x64
+       ok   buffer is (A|X)RGB8888
+       red pixels: 1024
+       ok   1024 red pixels
+       ok   red is the bottom-left quarter (rows 32..63, columns 0..31), the rest blue
+       ok   eglSwapBuffers (frame 2)
+       ok   compositor received frame 2
+       ok   frame 2 is all green
+     PASS mesa_wayland
+PASS test_mesa_wayland
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

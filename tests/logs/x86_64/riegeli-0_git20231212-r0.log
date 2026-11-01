@@ -1,0 +1,47 @@
+# riegeli 0_git20231212-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:08:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u riegeli qnx-test-riegeli qnx-port-tests
+(1/7) Installing abseil (20240722.0-r0)
+(2/7) Installing protobuf (29.3-r0)
+(3/7) Installing highwayhash (0_git20240418-r0)
+(4/7) Installing lz4 (1.10.0-r0)
+(5/7) Installing snappy (1.2.1-r0)
+(6/7) Installing riegeli (0_git20231212-r0)
+(7/7) Installing qnx-test-riegeli (1.0-r0)
+OK: 112 MiB in 40 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_riegeli
+     == riegeli ==
+       ok   CRC-32C("123456789") = 0xe3069283
+       info uncompressed 76944 bytes (records: 73890 bytes)
+       ok   uncompressed: 2000 records written and read back unchanged
+       info brotli       2717 bytes (records: 73890 bytes)
+       ok   brotli: 2000 records written and read back unchanged
+       ok   brotli: smaller than uncompressed
+       info zstd         3652 bytes (records: 73890 bytes)
+       ok   zstd: 2000 records written and read back unchanged
+       ok   zstd: smaller than uncompressed
+       info snappy       10542 bytes (records: 73890 bytes)
+       ok   snappy: 2000 records written and read back unchanged
+       ok   snappy: smaller than uncompressed
+       ok   100 proto records written, transposed
+       ok   file metadata read back
+       ok   100 proto records parsed back unchanged
+       ok   file written with FdWriter (small chunks)
+       ok   seek to the position of record 1234 and read it
+       ok   then record 1235 follows
+       ok   reader closed cleanly
+       ok   damaged file: reading without recovery fails
+       info with recovery: 1959 of 2000 records, 1 region(s) skipped
+       ok   with recovery: the damaged region is skipped, the rest read
+     PASS riegeli
+PASS test_riegeli
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

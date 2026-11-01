@@ -1,0 +1,31 @@
+Do not export the source tree's FOLLY_CERTS_DIR.
+
+FOLLY_CERTS_DIR names the test certificates in the source tree, for the
+test utilities when folly's own tests are built. It was exported in the
+installed folly-targets.cmake too, so the package told consumers of
+Folly::folly_test_util to look for certificates at a path of the build
+machine. Keep the definition to the build tree ($<BUILD_INTERFACE:...>).
+
+Upstream-Status: Pending
+
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -321,7 +321,7 @@
+ if (TARGET folly_testing_test_util)
+   target_compile_definitions(
+     folly_testing_test_util
+-    INTERFACE FOLLY_CERTS_DIR="${FOLLY_DIR}/io/async/test/certs"
++    INTERFACE $<BUILD_INTERFACE:FOLLY_CERTS_DIR="${FOLLY_DIR}/io/async/test/certs">
+   )
+ endif ()
+ 
+@@ -336,7 +336,7 @@
+ add_library(Folly::folly_test_util ALIAS folly_test_util)
+ target_compile_definitions(
+   folly_test_util
+-  PUBLIC FOLLY_CERTS_DIR="${FOLLY_DIR}/io/async/test/certs"
++  PUBLIC $<BUILD_INTERFACE:FOLLY_CERTS_DIR="${FOLLY_DIR}/io/async/test/certs">
+ )
+ set_property(TARGET folly_test_util PROPERTY VERSION ${PACKAGE_VERSION})
+ target_link_libraries(folly_test_util PUBLIC folly ${LIBGMOCK_LIBRARIES})

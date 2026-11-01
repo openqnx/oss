@@ -1,0 +1,42 @@
+# avro-cpp 1.12.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:49:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u avro-cpp qnx-test-avro-cpp qnx-port-tests
+(1/3) Installing snappy (1.2.1-r0)
+(2/3) Installing avro-cpp (1.12.2-r0)
+(3/3) Installing qnx-test-avro-cpp (1.0-r0)
+OK: 125 MiB in 42 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_avro_cpp
+     == avro-cpp ==
+       ok   record schema with 10 fields compiled
+       ok   full name qnx.test.Reading
+       ok   binary encoding matches the spec (02 7f 04 61 62)
+       info record encodes to 57 bytes
+       ok   binary round trip of a generic record
+       ok   union branch string kept
+       info JSON: {"sensor":"temp-3","count":3,"stamp":1700000000003,"value":21.25,"ok":false,"samples":[30,31,32],"tags":{"site":"lab"},"note":{"string":"every third"},"level":"LOW","raw":"\u0000\u00ff\u0003"}
+       ok   JSON encoding (union as {"string": ...})
+       ok   JSON decode gives the same record
+       ok   resolving decoder: int promoted to long, default filled in
+       info null container file: 28020 bytes for 500 records
+       ok   container file with the null codec: 500 records read back intact
+       info deflate container file: 9816 bytes for 500 records
+       ok   container file with the deflate codec: 500 records read back intact
+       info snappy container file: 14287 bytes for 500 records
+       ok   container file with the snappy codec: 500 records read back intact
+       info zstd container file: 9351 bytes for 500 records
+       ok   container file with the zstd codec: 500 records read back intact
+       ok   avrogencpp generates a C++ struct and codec_traits
+       info rejected: Unknown type: nosuchtype
+       ok   unknown type in a schema: avro::Exception
+     PASS avro-cpp
+PASS test_avro_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

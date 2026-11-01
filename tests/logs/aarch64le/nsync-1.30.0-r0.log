@@ -1,0 +1,30 @@
+# nsync 1.30.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:15:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nsync qnx-test-nsync qnx-port-tests
+(1/2) Installing nsync (1.30.0-r0)
+(2/2) Installing qnx-test-nsync (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nsync
+     == nsync ==
+       ok   nsync_counter reaches 0 when 4 threads finish
+       ok   4 x 20000 increments under nsync_mu = 80000
+       ok   nsync_run_once from 4 threads runs once
+       ok   nsync_mu_trylock on a free lock
+       ok   two readers hold nsync_mu_rlock at the same time
+       ok   producer/consumer on nsync_cv: 1..100 sums to 5050
+       ok   nsync_mu_wait returns once its condition (count >= 50) holds
+       ok   nsync_cv_wait_with_deadline times out after ~100 ms
+       ok   nsync_counter_wait times out while the count is 1
+       ok   nsync_note_wait returns when another thread notifies
+     PASS nsync
+PASS test_nsync
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

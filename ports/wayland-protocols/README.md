@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add wayland-protocols wayland-protocols-dev
-apk add qnx-test-wayland-protocols && /usr/local/bin/qnx-port-tests/test_wayland_protocols    # its on-target test
+apk add qnx-test-wayland-protocols && /usr/local/bin/qnx-port-tests/test_wayland_protocols    # its on-target test, from tests-8.0-<arch>-m-z
 apk del wayland-protocols wayland-protocols-dev qnx-test-wayland-protocols
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (10 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (17 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild wayland
 ```
 
-<details><summary>Full build chain (10)</summary>
+<details><summary>Full build chain (17)</summary>
 
-[`expat`](../expat/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -147,7 +147,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_wayland_protocols`](../../tests/src/) links wayland-protocols the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-wayland-protocols`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_wayland_protocols`](../../tests/src/) links wayland-protocols the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-wayland-protocols`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

@@ -1,0 +1,30 @@
+configure: do not run the target's getopt when cross compiling
+
+configure runs $GETOPT on the build machine to check that it supports
+--longoptions. When cross compiling, the getopt named for the target (here
+BusyBox's, at its target path) cannot run there, and configure stopped.
+Skip that run-time check when cross compiling.
+
+Upstream-Status: Pending
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -25,6 +25,10 @@ AC_ARG_VAR([GETOPT], [Name of the `getopt' program (requires longopt support).])
+ AC_CHECK_PROG([GETOPT], [getopt],, [getopt])
+ 
+ AC_MSG_CHECKING([for long options support in $GETOPT])
++if test "$cross_compiling" = yes; then
++       dnl The target's getopt cannot run here: trust the one named.
++       AC_MSG_RESULT([assumed (cross compiling)])
++else
+ opts=`$GETOPT --longoptions=help x -x`
+ if test x"$opts" != x" -x --"; then
+        AC_MSG_RESULT([no])
+@@ -34,6 +38,7 @@ else some other implementation that supports --longoptions.
+ ])
+ fi
+ AC_MSG_RESULT([yes])
++fi
+ 
+ AC_ARG_VAR([PAPER_CONF], [Name and path of the `paperconf' (libpaper) program.])
+ AC_PATH_PROG([PAPER_CONF], [paperconf], [paperconf])

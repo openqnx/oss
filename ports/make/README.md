@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add make make-dev
-apk add qnx-test-make && /usr/local/bin/qnx-port-tests/test_make    # its on-target test
+apk add qnx-test-make && /usr/local/bin/qnx-port-tests/test_make    # its on-target test, from tests-8.0-<arch>-m-z
 apk del make make-dev qnx-test-make
 ```
 
@@ -152,7 +152,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_make`](../../tests/src/) links make the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-make`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_make`](../../tests/src/) links make the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-make`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

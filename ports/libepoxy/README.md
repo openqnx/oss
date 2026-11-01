@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libepoxy libepoxy-dev
-apk add qnx-test-libepoxy && /usr/local/bin/qnx-port-tests/test_libepoxy    # its on-target test
+apk add qnx-test-libepoxy && /usr/local/bin/qnx-port-tests/test_libepoxy    # its on-target test, from tests-8.0-<arch>
 apk del libepoxy libepoxy-dev qnx-test-libepoxy
 ```
 
@@ -157,7 +157,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libepoxy`](../../tests/src/) links libepoxy the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libepoxy`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libepoxy`](../../tests/src/) links libepoxy the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libepoxy`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

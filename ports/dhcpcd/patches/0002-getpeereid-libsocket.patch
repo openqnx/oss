@@ -1,0 +1,21 @@
+configure: link the getpeereid probe with -lsocket where needed.
+
+On QNX getpeereid() is in libsocket, not libc, like getifaddrs() and
+inet_ntoa(), whose probes already retry with -lsocket. The getpeereid probe
+linked without it, failed, and configure compiled compat/getpeereid.c, which
+stops with "OS has no getpeereid support!". Link the probe with the socket
+library found by the getifaddrs probe.
+
+Upstream-Status: QNX-specific
+
+--- a/configure
++++ b/configure
+@@ -952,7 +952,7 @@
+ 	return getpeereid(0, NULL, NULL);
+ }
+ EOF
+-	if $XCC _getpeereid.c -o _getpeereid 2>&3; then
++	if $XCC _getpeereid.c -o _getpeereid $LIBSOCKET 2>&3; then
+ 		GETPEEREID=yes
+ 	else
+ 		GETPEEREID=no

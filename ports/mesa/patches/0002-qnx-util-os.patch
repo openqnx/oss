@@ -1,0 +1,127 @@
+Teach Mesa's OS utilities about QNX
+
+QNX was not among the operating systems Mesa's utilities know:
+- detect_os.h: DETECT_OS_QNX, and DETECT_OS_POSIX for it, so the POSIX
+  paths (dlfcn.h/dladdr, clock_gettime, sysconf, process name) are taken
+  instead of "#error Unsupported OS";
+- u_endian.h: QNX has no <endian.h>; take the byte order from the
+  compiler's __BYTE_ORDER__;
+- os_misc.c: the POSIX headers, and the available memory from
+  sysconf(_SC_AVPHYS_PAGES) (no /proc/meminfo);
+- build_id.c: QNX declares dl_iterate_phdr() in <sys/link.h> (no
+  <link.h>), without the ElfW() macro, and passes the callback a const
+  struct dl_phdr_info *.
+
+Upstream-Status: QNX-specific
+
+--- a/src/util/build_id.c
++++ b/src/util/build_id.c
+@@ -27,6 +27,7 @@
+ #if HAVE_BUILD_ID
+ #include <dlfcn.h>
+ #include <stddef.h>
++#include <stdint.h>
+ #include <string.h>
+ 
+ #include "macros.h"
+@@ -38,7 +39,17 @@
+    const struct uuid_command uuid_cmd;
+ };
+ #else
++#ifdef __QNX__
++/* QNX declares dl_iterate_phdr() in <sys/link.h>, without ElfW(). */
++#include <sys/link.h>
++#if defined(__LP64__)
++#define ElfW(type) Elf64_##type
++#else
++#define ElfW(type) Elf32_##type
++#endif
++#else
+ #include <link.h>
++#endif
+ #ifndef NT_GNU_BUILD_ID
+ #define NT_GNU_BUILD_ID 3
+ #endif
+@@ -95,7 +106,12 @@
+ }
+ #else
+ static int
++#ifdef __QNX__
++/* QNX's dl_iterate_phdr() passes a const struct dl_phdr_info *. */
++build_id_find_nhdr_callback(const struct dl_phdr_info *info, size_t size, void *data_)
++#else
+ build_id_find_nhdr_callback(struct dl_phdr_info *info, size_t size, void *data_)
++#endif
+ {
+    struct callback_data *data = data_;
+ 
+--- a/src/util/detect_os.h
++++ b/src/util/detect_os.h
+@@ -86,6 +86,12 @@
+ #define DETECT_OS_POSIX 1
+ #endif
+ 
++/* QNX Neutrino: POSIX, no Linux kernel interfaces. */
++#if defined(__QNX__)
++#define DETECT_OS_QNX 1
++#define DETECT_OS_POSIX 1
++#endif
++
+ #if defined(__managarm__)
+ #define DETECT_OS_MANAGARM 1
+ #define DETECT_OS_POSIX 1
+@@ -134,6 +140,9 @@
+ #ifndef DETECT_OS_SOLARIS
+ #define DETECT_OS_SOLARIS 0
+ #endif
++#ifndef DETECT_OS_QNX
++#define DETECT_OS_QNX 0
++#endif
+ #ifndef DETECT_OS_POSIX
+ #define DETECT_OS_POSIX 0
+ #endif
+--- a/src/util/os_misc.c
++++ b/src/util/os_misc.c
+@@ -60,7 +60,7 @@
+ #  include <unistd.h>
+ #  include <android/log.h>
+ #  include <sys/system_properties.h>
+-#elif DETECT_OS_LINUX || DETECT_OS_CYGWIN || DETECT_OS_SOLARIS || DETECT_OS_HURD || DETECT_OS_MANAGARM
++#elif DETECT_OS_LINUX || DETECT_OS_CYGWIN || DETECT_OS_SOLARIS || DETECT_OS_HURD || DETECT_OS_MANAGARM || DETECT_OS_QNX
+ #  include <unistd.h>
+ #elif DETECT_OS_OPENBSD || DETECT_OS_FREEBSD
+ #  include <sys/resource.h>
+@@ -456,6 +456,14 @@
+ 
+    *size = MIN2(mem_available, rl.rlim_cur);
+    return true;
++#elif DETECT_OS_QNX
++   /* QNX: no /proc/meminfo; the free physical pages. */
++   const long pages = sysconf(_SC_AVPHYS_PAGES);
++   const long page_size = sysconf(_SC_PAGESIZE);
++   if (pages <= 0 || page_size <= 0)
++      return false;
++   *size = (uint64_t)pages * (uint64_t)page_size;
++   return true;
+ #elif DETECT_OS_WINDOWS
+    MEMORYSTATUSEX status;
+    BOOL ret;
+--- a/src/util/u_endian.h
++++ b/src/util/u_endian.h
+@@ -82,6 +82,16 @@
+ # define UTIL_ARCH_BIG_ENDIAN 1
+ #endif
+ 
++#elif defined(__QNX__)
++/* QNX has no <endian.h>; the compiler states the byte order. */
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
++# define UTIL_ARCH_LITTLE_ENDIAN 1
++# define UTIL_ARCH_BIG_ENDIAN 0
++#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++# define UTIL_ARCH_LITTLE_ENDIAN 0
++# define UTIL_ARCH_BIG_ENDIAN 1
++#endif
++
+ #elif defined(_WIN32) || defined(__ANDROID__)
+ 
+ #define UTIL_ARCH_LITTLE_ENDIAN 1

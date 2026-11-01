@@ -1,0 +1,28 @@
+# libxo 2.3.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxo qnx-test-libxo qnx-port-tests
+(1/3) Installing libxo (2.3.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libxo (1.0-r0)
+OK: 94 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxo
+     == libxo ==
+       ok   text output
+       ok   XML output
+       ok   JSON output
+       ok   JSON list as an array
+         json: {"top": {"name":"qnx","count":42, "port": [{"id":7}, {"id":8}]}}
+       ok   JSON pretty-printed (XOF_PRETTY)
+       ok   HTML output has the data div
+     PASS libxo
+PASS test_libxo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

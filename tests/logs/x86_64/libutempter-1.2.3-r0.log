@@ -1,0 +1,33 @@
+# libutempter 1.2.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libutempter qnx-test-libutempter qnx-port-tests
+(1/3) Installing libutempter (1.2.3-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libutempter (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libutempter
+     == libutempter ==
+       info /var/log/utmp did not exist: created for the test
+       ok   posix_openpt/grantpt/unlockpt
+       info slave /dev/ttyp1
+       ok   ptsname under /dev/
+       ok   utempter_add_record
+       ok   utmp has a record for the slave line
+       info record: type 7 pid 1144766504 user root line ttyp1
+       ok   record type USER_PROCESS
+       ok   record carries our PID
+       ok   record carries our user name
+       ok   utempter_remove_record
+       ok   record for the line is now DEAD_PROCESS
+     PASS libutempter
+PASS test_libutempter
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

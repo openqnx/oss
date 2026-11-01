@@ -1,0 +1,37 @@
+dirtree: use lstat information where dirent has no d_type.
+
+QNX's struct dirent has no d_type. dirtree used it to notice symlinks
+(for -L/-H style following) and, for entries it did not stat, as the file
+type; on QNX both come from fstatat(AT_SYMLINK_NOFOLLOW).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/dirtree.c
++++ b/lib/dirtree.c
+@@ -182,10 +182,26 @@
+     if ((flags&DIRTREE_PROC) && !isdigit(*entry->d_name)) continue;
+     if ((flags&DIRTREE_BREADTH) && isdotdot(entry->d_name)) continue;
+     if (!(new = dirtree_add_node(node, entry->d_name, flags))) continue;
++#ifdef __QNX__
++    // QNX's struct dirent has no d_type: ask lstat() what the entry is.
++    {
++      struct stat lst;
++
++      if (((flags&DIRTREE_SYMFOLLOW) || (!new->st.st_blksize && !new->st.st_mode))
++        && !fstatat(dirfd, entry->d_name, &lst, AT_SYMLINK_NOFOLLOW))
++      {
++        if ((flags&DIRTREE_SYMFOLLOW) && S_ISLNK(lst.st_mode)
++          && !S_ISLNK(new->st.st_mode)) new->again |= DIRTREE_SYMFOLLOW;
++        if (!new->st.st_blksize && !new->st.st_mode)
++          new->st.st_mode = lst.st_mode & S_IFMT;
++      }
++    }
++#else
+     if ((flags&DIRTREE_SYMFOLLOW) && entry->d_type==DT_LNK
+       && !S_ISLNK(new->st.st_mode)) new->again |= DIRTREE_SYMFOLLOW;
+     if (!new->st.st_blksize && !new->st.st_mode)
+       new->st.st_mode = entry->d_type<<12;
++#endif
+     new = dirtree_handle_callback(new, callback);
+     if (new == DIRTREE_ABORTVAL) goto done;
+     if (new) {

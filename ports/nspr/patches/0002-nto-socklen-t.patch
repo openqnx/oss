@@ -1,0 +1,29 @@
+Define HAVE_SOCKLEN_T for QNX (NTO).
+
+QNX has socklen_t, but NSPR's configure defines HAVE_SOCKLEN_T only for the
+systems it lists, and unix.c then falls through to "#error Cannot determine
+architecture" (its NTO branch below is mangled). Define it for *-nto*.
+
+Upstream-Status: QNX-specific
+
+--- a/nspr/configure
++++ b/nspr/configure
+@@ -7680,6 +7680,8 @@
+ 
+     printf "%s\n" "#define NTO 1" >>confdefs.h
+ 
++    printf "%s\n" "#define HAVE_SOCKLEN_T 1" >>confdefs.h
++
+     printf "%s\n" "#define _QNX_SOURCE 1" >>confdefs.h
+ 
+     printf "%s\n" "#define HAVE_POINTER_LOCALTIME_R 1" >>confdefs.h
+--- a/nspr/configure.in
++++ b/nspr/configure.in
+@@ -1726,6 +1726,7 @@
+ *-nto*)
+     AC_DEFINE(XP_UNIX)
+     AC_DEFINE(NTO)
++    AC_DEFINE(HAVE_SOCKLEN_T)
+     AC_DEFINE(_QNX_SOURCE)
+     AC_DEFINE(HAVE_POINTER_LOCALTIME_R)
+     MDCPUCFG_H=_nto.cfg

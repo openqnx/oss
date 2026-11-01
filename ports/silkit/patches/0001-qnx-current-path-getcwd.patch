@@ -1,0 +1,135 @@
+Do not use std::filesystem::current_path() on QNX.
+
+libc++'s current_path() sizes its getcwd() buffer with pathconf(".",
+_PC_PATH_MAX) and throws when that fails. On QNX 8.0 pathconf() fails
+with EINVAL when the working directory is "/" (the image filesystem), so
+every participant creation threw "filesystem error: in current_path: call
+to pathconf failed: Invalid argument" in a process started from "/"
+(VAsioConnection hashes the working directory into its local socket
+name). util/CurrentPath.hpp calls getcwd() with a PATH_MAX buffer on QNX
+and current_path() elsewhere; the four library uses go through it
+(std::filesystem::absolute() of a relative path calls current_path() too).
+
+Upstream-Status: Pending
+
+diff --git a/SilKit/source/config/ParticipantConfigurationFromXImpl.cpp b/SilKit/source/config/ParticipantConfigurationFromXImpl.cpp
+--- a/SilKit/source/config/ParticipantConfigurationFromXImpl.cpp
++++ b/SilKit/source/config/ParticipantConfigurationFromXImpl.cpp
+@@ -3,6 +3,7 @@
+ // SPDX-License-Identifier: MIT
+ 
+ #include "config/ParticipantConfiguration.hpp"
++#include "util/CurrentPath.hpp"
+ 
+ #include <filesystem>
+ #include <fstream>
+@@ -123,7 +124,7 @@ void Validate(const std::string& text)
+ std::string GetConfigParentPath(const std::string& configFile)
+ {
+     namespace fs = std::filesystem;
+-    const auto filePath = fs::current_path() / configFile;
++    const auto filePath = SilKit::Util::CurrentPath() / configFile;
+     return filePath.parent_path().string();
+ }
+ 
+diff --git a/SilKit/source/core/vasio/VAsioConnection.cpp b/SilKit/source/core/vasio/VAsioConnection.cpp
+--- a/SilKit/source/core/vasio/VAsioConnection.cpp
++++ b/SilKit/source/core/vasio/VAsioConnection.cpp
+@@ -3,6 +3,7 @@
+ // SPDX-License-Identifier: MIT
+ 
+ #include "core/vasio/VAsioConnection.hpp"
++#include "util/CurrentPath.hpp"
+ #include "core/vasio/VAsioProtocolVersion.hpp"
+ 
+ #include "core/vasio/SerializedMessage.hpp"
+@@ -75,7 +76,7 @@ auto makeLocalEndpoint(const std::string& participantName, const SilKit::Core::P
+     // NB keep the variable part as short as possible.
+ 
+     const auto unique_id =
+-        std::hash<std::string>{}(participantName + std::to_string(id) + uniqueValue + fs::current_path().string());
++        std::hash<std::string>{}(participantName + std::to_string(id) + uniqueValue + SilKit::Util::CurrentPath().string());
+ 
+     std::stringstream path;
+     path << fs::temp_directory_path().string() << fs::path::preferred_separator << bounded_name << std::hex << unique_id
+diff --git a/SilKit/source/extensions/SilKitExtensions.cpp b/SilKit/source/extensions/SilKitExtensions.cpp
+--- a/SilKit/source/extensions/SilKitExtensions.cpp
++++ b/SilKit/source/extensions/SilKitExtensions.cpp
+@@ -7,6 +7,7 @@
+ #endif
+ 
+ #include "extensions/SilKitExtensions.hpp"
++#include "util/CurrentPath.hpp"
+ 
+ #include <sstream>
+ #include <cstdlib> //getenv
+@@ -148,7 +149,7 @@ std::vector<std::string> FindLibrary(const std::string& name, const SilKit::Exte
+             const auto current = std::filesystem::path{dir} / path;
+             if (std::filesystem::exists(current))
+             {
+-                rv.push_back(std::filesystem::absolute(current).string());
++                rv.push_back((current.is_absolute() ? current : SilKit::Util::CurrentPath() / current).string());
+             }
+         }
+     }
+diff --git a/SilKit/source/util/CurrentPath.hpp b/SilKit/source/util/CurrentPath.hpp
+new file mode 100644
+--- /dev/null
++++ b/SilKit/source/util/CurrentPath.hpp
+@@ -0,0 +1,36 @@
++// SPDX-FileCopyrightText: 2026 openqnx-oss
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <filesystem>
++#include <system_error>
++
++#if defined(__QNX__)
++#include <cerrno>
++#include <climits>
++#include <unistd.h>
++#endif
++
++namespace SilKit {
++namespace Util {
++
++//! std::filesystem::current_path(), which does not throw on QNX when the
++//! working directory is "/": libc++ sizes its buffer with
++//! pathconf(".", _PC_PATH_MAX), and QNX answers EINVAL for the root of the
++//! image filesystem. getcwd() works there.
++inline auto CurrentPath() -> std::filesystem::path
++{
++#if defined(__QNX__)
++    char buffer[PATH_MAX];
++    if (::getcwd(buffer, sizeof(buffer)) == nullptr)
++    {
++        throw std::filesystem::filesystem_error("getcwd", std::error_code(errno, std::generic_category()));
++    }
++    return std::filesystem::path{buffer};
++#else
++    return std::filesystem::current_path();
++#endif
++}
++
++} // namespace Util
++} // namespace SilKit
+diff --git a/SilKit/source/util/Uri.cpp b/SilKit/source/util/Uri.cpp
+--- a/SilKit/source/util/Uri.cpp
++++ b/SilKit/source/util/Uri.cpp
+@@ -3,6 +3,7 @@
+ // SPDX-License-Identifier: MIT
+ 
+ #include "util/Uri.hpp"
++#include "util/CurrentPath.hpp"
+ 
+ #include <cctype>
+ #include <filesystem>
+@@ -162,7 +163,7 @@ auto Uri::Parse(std::string rawUri) -> Uri
+         {
+             // Make sure we always get a proper absolute Path
+             // Treat all relative paths as relative from CWD
+-            uri._path = fs::current_path() / rawUri;
++            uri._path = SilKit::Util::CurrentPath() / rawUri;
+         }
+         else
+         {

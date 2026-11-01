@@ -1,0 +1,102 @@
+QNX: executable path, process names and parents from /proc
+
+QNX's procfs is not Linux's: /proc/<pid>/exefile holds a process's
+executable path as text (there is no exe link or stat file), and the
+parent comes from devctl(DCMD_PROC_INFO) on /proc/<pid>/as. Used for
+fastfetch's own path (data files next to it) and for the shell and
+terminal detection, which walks up the process tree. procfs_info has no
+controlling terminal: tty is reported as -1.
+
+Upstream-Status: QNX-specific
+
+--- a/src/common/impl/FFPlatform_unix.c
++++ b/src/common/impl/FFPlatform_unix.c
+@@ -142,6 +142,13 @@ static void getExePath(FFPlatform* platform) {
+             break;
+         }
+     }
++#elif defined(__QNX__)
++    // QNX: /proc/self/exefile holds the executable's path as text
++    ssize_t exePathLen = ffReadFileData("/proc/self/exefile", sizeof(exePath) - 1, exePath);
++    if (exePathLen > 0) {
++        exePath[exePathLen] = '\0';
++        exePathLen = (ssize_t) strlen(exePath);
++    }
+ #endif
+     if (exePathLen > 0) {
+         ffStrbufEnsureFree(&platform->exePath, PATH_MAX);
+--- a/src/common/impl/processing_linux.c
++++ b/src/common/impl/processing_linux.c
+@@ -35,6 +35,9 @@
+ #elif defined(__HAIKU__)
+     #include <OS.h>
+     #include <image.h>
++#elif defined(__QNX__)
++    #include <devctl.h>
++    #include <sys/procfs.h>
+ #endif
+ 
+ #ifndef environ
+@@ -455,6 +458,19 @@ void ffProcessGetInfoLinux(pid_t pid, FFstrbuf* processName, FFstrbuf* exe, cons
+         break;
+     }
+ 
++#elif defined(__QNX__)
++
++    // /proc/<pid>/exefile holds the path of the executable as text
++    char filePath[64];
++    snprintf(filePath, sizeof(filePath), "/proc/%d/exefile", (int) pid);
++    if (ffReadFileBuffer(filePath, exe)) {
++        ffStrbufTrimRight(exe, '\0');
++        ffStrbufTrimRightSpace(exe);
++        if (exePath) {
++            ffStrbufSet(exePath, exe);
++        }
++    }
++
+ #endif
+ 
+     if (exe->length == 0) {
+@@ -662,6 +678,42 @@ const char* ffProcessGetBasicInfoLinux(pid_t pid, FFstrbuf* name, pid_t* ppid, i
+ 
+     FF_UNUSED(tty);
+ 
++#elif defined(__QNX__)
++
++    // The name: the base name of /proc/<pid>/exefile; the parent: DCMD_PROC_INFO
++    // on /proc/<pid>/as. QNX's procfs_info has no controlling terminal.
++    char path[64];
++    snprintf(path, sizeof(path), "/proc/%d/exefile", (int) pid);
++    FF_STRBUF_AUTO_DESTROY exe = ffStrbufCreate();
++    if (!ffReadFileBuffer(path, &exe)) {
++        return "ffReadFileBuffer(/proc/pid/exefile) failed";
++    }
++    ffStrbufTrimRight(&exe, '\0');
++    ffStrbufTrimRightSpace(&exe);
++    uint32_t slash = ffStrbufLastIndexC(&exe, '/');
++    ffStrbufSetS(name, slash < exe.length ? exe.chars + slash + 1 : exe.chars);
++    if (name->length == 0) {
++        return "process name is empty";
++    }
++
++    if (ppid) {
++        snprintf(path, sizeof(path), "/proc/%d/as", (int) pid);
++        int fd = open(path, O_RDONLY | O_CLOEXEC);
++        if (fd < 0) {
++            return "open(/proc/pid/as) failed";
++        }
++        procfs_info info;
++        int r = devctl(fd, DCMD_PROC_INFO, &info, sizeof(info), NULL);
++        close(fd);
++        if (r != EOK) {
++            return "devctl(DCMD_PROC_INFO) failed";
++        }
++        *ppid = info.parent;
++    }
++    if (tty) {
++        *tty = -1;
++    }
++
+ #else
+ 
+     return "Unsupported platform";

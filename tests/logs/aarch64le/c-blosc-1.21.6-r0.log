@@ -1,0 +1,75 @@
+# c-blosc 1.21.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:50:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u c-blosc qnx-test-c-blosc qnx-port-tests
+(1/3) Installing lz4 (1.10.0-r0)
+(2/3) Installing c-blosc (1.21.6-r0)
+(3/3) Installing qnx-test-c-blosc (1.0-r0)
+OK: 124 MiB in 42 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c_blosc
+     == c-blosc ==
+       info version 1.21.6, compressors: blosclz,lz4,lz4hc,zlib,zstd
+       ok   version 1.21.6
+       ok   compressor blosclz available
+       ok   compressor lz4 available
+       ok   compressor lz4hc available
+       ok   compressor zlib available
+       ok   compressor zstd available
+       ok   zstd codec is the Zstd library
+       info zstd: Zstd 1.5.6
+       ok   4 threads
+       info blosclz shuffle=0: 4194304 -> 4194320 bytes
+       ok   blosclz shuffle=0: round trip bit-exact, header sizes right
+       info blosclz shuffle=1: 4194304 -> 29376 bytes
+       ok   blosclz shuffle=1: round trip bit-exact, header sizes right
+       ok   blosclz shuffle=1: compresses a counting int32 array at least 10x
+       info blosclz shuffle=2: 4194304 -> 18888 bytes
+       ok   blosclz shuffle=2: round trip bit-exact, header sizes right
+       ok   blosclz shuffle=2: compresses a counting int32 array at least 10x
+       info lz4     shuffle=0: 4194304 -> 4194320 bytes
+       ok   lz4 shuffle=0: round trip bit-exact, header sizes right
+       info lz4     shuffle=1: 4194304 -> 35344 bytes
+       ok   lz4 shuffle=1: round trip bit-exact, header sizes right
+       ok   lz4 shuffle=1: compresses a counting int32 array at least 10x
+       info lz4     shuffle=2: 4194304 -> 96672 bytes
+       ok   lz4 shuffle=2: round trip bit-exact, header sizes right
+       ok   lz4 shuffle=2: compresses a counting int32 array at least 10x
+       info lz4hc   shuffle=0: 4194304 -> 4194320 bytes
+       ok   lz4hc shuffle=0: round trip bit-exact, header sizes right
+       info lz4hc   shuffle=1: 4194304 -> 34124 bytes
+       ok   lz4hc shuffle=1: round trip bit-exact, header sizes right
+       ok   lz4hc shuffle=1: compresses a counting int32 array at least 10x
+       info lz4hc   shuffle=2: 4194304 -> 17186 bytes
+       ok   lz4hc shuffle=2: round trip bit-exact, header sizes right
+       ok   lz4hc shuffle=2: compresses a counting int32 array at least 10x
+       info zlib    shuffle=0: 4194304 -> 1450497 bytes
+       ok   zlib shuffle=0: round trip bit-exact, header sizes right
+       info zlib    shuffle=1: 4194304 -> 16063 bytes
+       ok   zlib shuffle=1: round trip bit-exact, header sizes right
+       ok   zlib shuffle=1: compresses a counting int32 array at least 10x
+       info zlib    shuffle=2: 4194304 -> 15634 bytes
+       ok   zlib shuffle=2: round trip bit-exact, header sizes right
+       ok   zlib shuffle=2: compresses a counting int32 array at least 10x
+       info zstd    shuffle=0: 4194304 -> 2820608 bytes
+       ok   zstd shuffle=0: round trip bit-exact, header sizes right
+       info zstd    shuffle=1: 4194304 -> 12884 bytes
+       ok   zstd shuffle=1: round trip bit-exact, header sizes right
+       ok   zstd shuffle=1: compresses a counting int32 array at least 10x
+       info zstd    shuffle=2: 4194304 -> 6519 bytes
+       ok   zstd shuffle=2: round trip bit-exact, header sizes right
+       ok   zstd shuffle=2: compresses a counting int32 array at least 10x
+       ok   blosc_getitem: items 500000..500002 out of the middle
+       ok   context API (zstd, 2 threads) round trip
+       ok   cbuffer_validate accepts the real buffer
+       ok   cbuffer_validate rejects a truncated buffer
+     PASS c-blosc
+PASS test_c_blosc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,27 @@
+# onednn 3.14.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:18:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u onednn qnx-test-onednn qnx-port-tests
+(1/2) Installing onednn (3.14.1-r0)
+(2/2) Installing qnx-test-onednn (1.0-r0)
+OK: 169 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_onednn
+     == oneDNN ==
+       info oneDNN 3.14.1 (a190d4ab9b001e930d91a9c323089602b6c3d730), cpu isa: 1
+       ok   version 3.14.1
+       info matmul: kai
+       ok   matmul 16x24 * 24x20 + bias, ReLU = reference
+       info convolution: gemm:ref
+       ok   convolution 1x4x9x9 (*) 8x4x3x3 + bias = reference
+       ok   max pooling 2x2 = reference
+     PASS oneDNN
+PASS test_onednn
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

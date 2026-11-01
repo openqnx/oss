@@ -1,0 +1,76 @@
+# libpanel 1.10.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libpanel qnx-test-libpanel qnx-port-tests
+( 1/35) Installing fontconfig (2.15.0-r0)
+( 2/35) Installing libxau (1.0.11-r0)
+( 3/35) Installing libxdmcp (1.1.5-r0)
+( 4/35) Installing libxcb (1.17.0-r0)
+( 5/35) Installing libx11 (1.8.10-r0)
+( 6/35) Installing libxext (1.3.6-r0)
+( 7/35) Installing libxrender (0.9.11-r0)
+( 8/35) Installing cairo (1.18.2-r0)
+( 9/35) Installing graphene (1.10.8-r0)
+(10/35) Installing fribidi (1.0.16-r0)
+(11/35) Installing harfbuzz (<ip>-r0)
+(12/35) Installing libwebp (1.4.0-r0)
+(13/35) Installing libtiff (4.7.0-r0)
+(14/35) Installing libxml2 (2.13.5-r1)
+(15/35) Installing libxkbcommon (1.8.1-r1)
+(16/35) Installing libxft (2.3.8-r0)
+(17/35) Installing pango (1.54.0-r0)
+(18/35) Installing wayland (1.24.0-r0)
+(19/35) Installing gtk4 (4.16.7-r0)
+(20/35) Installing c-ares (1.34.3-r0)
+(21/35) Installing nghttp2 (1.64.0-r0)
+(22/35) Installing curl (8.11.1-r1)
+(23/35) Installing libxmlb (0.3.24-r0)
+(24/35) Installing libyaml (0.2.5-r0)
+(25/35) Installing appstream (1.0.6-r0)
+(26/35) Installing libadwaita (1.6.10-r0)
+(27/35) Installing libpanel (1.10.4-r0)
+(28/35) Installing qnx-port-tests (1.0-r2)
+(29/35) Installing font-dejavu (2.37-r0)
+(30/35) Installing libsfdo (0.1.4-r0)
+(31/35) Installing lcms2 (2.16-r0)
+(32/35) Installing wlroots (0.20.2-r0)
+(33/35) Installing xkeyboard-config (2.43-r0)
+(34/35) Installing labwc (0.20.2-r1)
+(35/35) Installing qnx-test-libpanel (1.0-r0)
+OK: 174 MiB in 64 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libpanel
+     == libpanel ==
+       info libpanel 1.10.4
+       ok   labwc (headless) Wayland socket appeared
+       ok   gtk_init_check on labwc
+     
+     (process:1143955496): GLib-GIO-CRITICAL **: 10:26:18.905: g_settings_schema_source_lookup: assertion 'source != NULL' failed
+       ok   panel types registered
+       info position: {'depth': <uint32 3>, 'column': <uint32 2>, 'area': <'start'>, 'row': <uint32 1>}
+       ok   PanelPosition round trip through a GVariant
+       ok   a new position is indeterminate, a set one is not
+       ok   PanelSession restored from its GVariant
+       ok   session item: module, metadata (uri, line) and position restored
+     
+     (process:1143955496): libpanel-WARNING **: 10:26:18.953: PanelDropControls added without a dock, this cannot work.
+     
+     (process:1143955496): libpanel-WARNING **: 10:26:18.953: PanelDropControls added without a dock, this cannot work.
+       ok   window with a dock, a grid and a frame mapped
+       info grid: 1 column(s), 1 frame(s)
+       ok   grid holds the widgets in frames
+       ok   widget title and modified flag
+       ok   frame with two pages
+       ok   frame switches to page A
+       ok   panel_widget_raise brings page B forward
+       ok   a closed page leaves the frame
+     PASS libpanel
+PASS test_libpanel
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

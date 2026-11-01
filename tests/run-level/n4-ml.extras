@@ -1,0 +1,3 @@
+# test_llama_cpp links llama.cpp's libraries in its own prefix, which carry no
+# so: provides (like whisper.cpp's)
+test_llama_cpp	opt/llama.cpp/lib

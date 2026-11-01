@@ -1,0 +1,38 @@
+Build DRI (for EGL on the software rasterizers) on QNX, which has no DRM
+
+Mesa builds its DRI interface, which is also how EGL reaches the software
+rasterizers, only for systems it lists as having DRM/KMS (Linux, the BSDs,
+Solaris, Android), or with zink. QNX has no DRM kernel interface, so EGL
+was refused ("EGL requires DRI, Haiku, Windows or Android") although
+llvmpipe/softpipe need none. On QNX, with a software gallium driver, build
+DRI as the GNU Hurd does ("pseudo-drm": dri2.c and the swrast screens,
+without libdrm), which gives EGL's surfaceless and wayland platforms on
+llvmpipe/softpipe. libdrm, GBM and kms_swrast stay off (system_has_kms_drm
+is still false).
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -361,7 +361,9 @@
+ ].contains(true)
+ 
+ with_dri = false
+-if with_gallium and (system_has_kms_drm or (with_gallium_zink and (freedreno_kmds.contains('kgsl') or host_machine.system() == 'darwin')))
++# QNX has no DRM/KMS, but the DRI interface is also how EGL reaches the
++# software rasterizers (swrast: llvmpipe/softpipe), surfaceless and wayland.
++if with_gallium and (system_has_kms_drm or (with_gallium_zink and (freedreno_kmds.contains('kgsl') or host_machine.system() == 'darwin')) or (host_machine.system() == 'qnx' and with_gallium_swrast))
+   _glx = get_option('glx')
+   _egl = get_option('egl')
+   if _glx == 'dri' or _egl.enabled() or (_glx == 'disabled' and _egl.allowed())
+@@ -424,6 +426,10 @@
+   with_dri_platform = 'drm'
+ elif host_machine.system() == 'gnu' or (freedreno_kmds.contains('kgsl') and with_gallium_zink)
+   with_dri_platform = 'pseudo-drm'
++elif host_machine.system() == 'qnx'
++  # As on the Hurd: the DRI interface without a DRM kernel driver (dri2.c
++  # builds without libdrm), for the software rasterizers.
++  with_dri_platform = 'pseudo-drm'
+ else
+   # FIXME: haiku doesn't use dri, and xlib doesn't use dri, probably should
+   # assert here that one of those cases has been met.

@@ -348,6 +348,7 @@ def render_install_remove(A, n, test, tpkg):
     main = n if run else f"{n}-dev"
     pk = [n] * run + [f"{n}-dev"] * dev
     tag = "packages-8.0-<arch>" + shards.shard_of(main)
+    ttag = "tests-8.0-<arch>" + shards.shard_of(tpkg) if tpkg else None   # its test's release
     site = "https://openqnx.github.io/oss/package/<arch>/"
     pages = " · ".join(f"[`{p}`]({site.replace('<arch>', 'x86_64')}{p}.html) "
                        f"([aarch64]({site.replace('<arch>', 'aarch64')}{p}.html))" for p in pk)
@@ -371,7 +372,7 @@ def render_install_remove(A, n, test, tpkg):
         A(f"`{n}-dev` the same way, by its own name (`apk add {n}-dev`, `oss-get install {n}-dev`, "
           f"by hand with its own file and list `{n}-dev.list`); remove it before `{n}`, which it needs.\n")
     A("```sh\n# on the QNX target, as root\n" + (f"apk add {' '.join(pk)}\n" if len(pk) > 1 else "")
-      + (f"apk add {tpkg} && /usr/local/bin/qnx-port-tests/{test}    # its on-target test\n" if tpkg else "")
+      + (f"apk add {tpkg} && /usr/local/bin/qnx-port-tests/{test}    # its on-target test, from {ttag}\n" if tpkg else "")
       + f"apk del {' '.join(pk)}" + (f" {tpkg}" if tpkg else "") + "\n```\n")
     A(f"By hand (B-2), from the release `{tag}`; take `<file>` and `<sha256>` from the package's page "
       f"(or its release's `INDEX`: `name|version|depends|file|sha256|...`), and install its dependencies first, the same way:\n")
@@ -545,7 +546,8 @@ def render(n, f, d, patches, test):
         A("### Test\n")
         A(f"[`{test}`](../../tests/src/) links {n} the way an application would and "
           f"checks its core API on the target. It is a package of its own, `{tpkg}`, "
-          "in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which "
+          "in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub "
+          f"the release `tests-8.0-<arch>{shards.shard_of(tpkg)}`), which "
           "apk-setup adds next to the package repository:\n")
         A(f"```sh\n# on the target\napk add {tpkg}\n/usr/local/bin/qnx-port-tests/{test}\n```\n")
         A(f"```\n== {n} ==\n  ok   ...\nPASS {n}\n```\n")

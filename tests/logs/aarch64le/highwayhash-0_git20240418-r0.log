@@ -1,0 +1,25 @@
+# highwayhash 0_git20240418-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:58:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u highwayhash qnx-test-highwayhash qnx-port-tests
+(1/2) Installing highwayhash (0_git20240418-r0)
+(2/2) Installing qnx-test-highwayhash (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_highwayhash
+     == highwayhash ==
+       info targets: Portable NEON
+       ok   HighwayHash-64, best target: 65 of 65 known values
+       ok   HighwayHash-64, portable target: 65 of 65 known values
+       ok   C binding HighwayHash64(): 65 of 65 known values
+       ok   SipHash-2-4 reference vector
+     PASS highwayhash
+PASS test_highwayhash
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

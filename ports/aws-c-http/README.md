@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add aws-c-http aws-c-http-dev
-apk add qnx-test-aws-c-http && /usr/local/bin/qnx-port-tests/test_aws_c_http    # its on-target test
+apk add qnx-test-aws-c-http && /usr/local/bin/qnx-port-tests/test_aws_c_http    # its on-target test, from tests-8.0-<arch>
 apk del aws-c-http aws-c-http-dev qnx-test-aws-c-http
 ```
 
@@ -154,7 +154,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_aws_c_http`](../../tests/src/) links aws-c-http the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-aws-c-http`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_aws_c_http`](../../tests/src/) links aws-c-http the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-aws-c-http`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

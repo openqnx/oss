@@ -1,0 +1,48 @@
+# toybox 0.8.15-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:10:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u toybox qnx-test-toybox qnx-port-tests
+(1/2) Installing toybox (0.8.15-r2)
+(2/2) Installing qnx-test-toybox (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_toybox
+     == toybox ==
+       ok   toybox --version: 0.8.15
+       ok   122 applets in the multicall binary
+       ok   printf: 03.14|ff|qnx|Z
+       ok   seq -s: 1 3 7
+       ok   sort -n | uniq -c
+       ok   sed: s///g and a back-reference
+       ok   cut -d: -f2 | wc -c = 9
+       ok   grep -c
+       ok   od -tx1
+       ok   xxd -p
+       ok   base64 foobar
+       ok   base64 -d
+       ok   md5sum abc (RFC 1321)
+       ok   sha256sum abc (FIPS 180-2)
+       ok   factor 360 1000003
+       ok   date -u -d @86400
+       ok   test 12 -gt 9, ! test -z x
+       ok   find -name (directory walk)
+       ok   find -type l (entry types without dirent d_type)
+       ok   ln -s / readlink
+       ok   realpath through .. and subdirectories
+       ok   ls -1
+       ok   cp -r (symlink kept)
+       ok   stat -c '%s %F'
+       ok   stat -f: filesystem type qnx6
+       ok   tar cf / tf
+       ok   tar xf round trip
+       ok   timeout 1 sleep 10: exit 124
+     PASS toybox
+PASS test_toybox
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

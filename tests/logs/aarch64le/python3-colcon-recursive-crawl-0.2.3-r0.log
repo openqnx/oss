@@ -1,0 +1,121 @@
+# python3-colcon-recursive-crawl 0.2.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T12:21:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-colcon-recursive-crawl qnx-test-python3-colcon-common-extensions qnx-port-tests
+( 1/49) Installing bzip2 (1.0.8-r0)
+( 2/49) Installing expat (2.6.4-r0)
+( 3/49) Installing gdbm (1.24-r0)
+( 4/49) Installing readline (8.2-r0)
+( 5/49) Installing sqlite (3.47.2-r0)
+( 6/49) Installing xz (5.6.3-r0)
+( 7/49) Installing python3 (3.14.0-r2)
+( 8/49) Installing python3-distlib (0.4.4-r0)
+( 9/49) Installing python3-empy (4.2.1-r0)
+(10/49) Installing python3-packaging (25.0-r0)
+(11/49) Installing python3-iniconfig (2.3.1-r0)
+(12/49) Installing python3-pluggy (1.7.0-r0)
+(13/49) Installing python3-pygments (2.21.0-r0)
+(14/49) Installing python3-pytest (9.2.0-r0)
+(15/49) Installing python3-coverage (7.17.0-r0)
+(16/49) Installing python3-pytest-cov (7.1.0-r0)
+(17/49) Installing python3-pytest-repeat (0.9.4-r0)
+(18/49) Installing python3-pytest-rerunfailures (16.7-r0)
+(19/49) Installing python3-setuptools (80.8.0-r0)
+(20/49) Installing python3-colcon-core (0.21.3-r0)
+(21/49) Installing python3-colcon-recursive-crawl (0.2.3-r0)
+(22/49) Installing python3-argcomplete (3.7.2-r0)
+(23/49) Installing python3-six (1.17.0-r0)
+(24/49) Installing python3-dateutil (2.9.0_p0-r1)
+(25/49) Installing python3-docutils (0.23-r0)
+(26/49) Installing python3-pyparsing (3.3.3-r0)
+(27/49) Installing python3-catkin-pkg (1.1.1-r0)
+(28/49) Installing python3-colcon-argcomplete (0.3.3-r0)
+(29/49) Installing python3-colcon-bash (0.5.0-r0)
+(30/49) Installing python3-colcon-package-information (0.4.1-r0)
+(31/49) Installing python3-colcon-cd (0.1.1-r0)
+(32/49) Installing python3-colcon-library-path (0.2.1-r0)
+(33/49) Installing python3-colcon-test-result (0.3.8-r0)
+(34/49) Installing python3-colcon-cmake (0.2.30-r0)
+(35/49) Installing python3-pyyaml (6.0.3-r0)
+(36/49) Installing python3-colcon-defaults (0.2.9-r0)
+(37/49) Installing python3-colcon-devtools (0.3.0-r0)
+(38/49) Installing python3-colcon-metadata (0.3.1-r0)
+(39/49) Installing python3-colcon-notification (0.3.3-r0)
+(40/49) Installing python3-colcon-output (0.2.15-r0)
+(41/49) Installing python3-colcon-package-selection (0.2.10-r0)
+(42/49) Installing python3-colcon-parallel-executor (0.4.0-r0)
+(43/49) Installing python3-colcon-powershell (0.5.0-r0)
+(44/49) Installing python3-colcon-python-setup-py (0.2.9-r0)
+(45/49) Installing python3-colcon-pkg-config (0.1.0-r0)
+(46/49) Installing python3-colcon-ros (0.5.0-r0)
+(47/49) Installing python3-colcon-zsh (0.5.0-r0)
+(48/49) Installing python3-colcon-common-extensions (0.3.0-r0)
+(49/49) Installing qnx-test-python3-colcon-common-extensions (1.0-r0)
+OK: 245 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_colcon_common_extensions
+     == python3-colcon-common-extensions ==
+       ok   argcomplete: --fo completes to --force, --format
+       ok   argcomplete: --format y completes to yaml
+       ok   PyYAML: safe_load of a mapping
+       ok   PyYAML: safe_dump
+       ok   docutils: reStructuredText to HTML
+       ok   pyparsing: 2+3*4 groups as 2+(3*4)
+       ok   empy: expression and conditional
+       ok   distlib: version order, markers
+       ok   catkin_pkg: name and version from package.xml
+       ok   catkin_pkg: conditional dependency, license
+       ok   pytest plugins import: repeat, rerunfailures, cov
+       ok   libraries underneath colcon
+       info qnx_core	src/qnx_core	(cmake)
+       info qnx_msgs	src/qnx_msgs	(ros.ament_cmake)
+       info qnx_tools	src/qnx_tools	(python)
+       ok   colcon list runs
+       ok   qnx_msgs identified as ros.ament_cmake (colcon-ros, catkin_pkg)
+       ok   qnx_core identified as cmake (colcon-cmake)
+       ok   qnx_tools identified as python (colcon-python-setup-py)
+       ok   three packages found (colcon-recursive-crawl)
+       info qnx_msgs   + *
+       info qnx_tools   + 
+       info qnx_core     +
+       ok   graph: qnx_msgs ordered before qnx_core (colcon.pkg dependency, colcon-metadata)
+       ok   --packages-up-to qnx_core selects qnx_msgs, qnx_core (colcon-package-selection)
+       ok   colcon info: version and build dependency (colcon-package-information)
+       ok   colcon extensions runs (colcon-devtools)
+       ok   extension argcomplete_completer cmake_args registered (colcon-argcomplete)
+       ok   extension shell bash registered (colcon-bash)
+       ok   extension shell zsh registered (colcon-zsh)
+       ok   extension shell powershell registered (colcon-powershell)
+       ok   extension task.build cmake registered (colcon-cmake)
+       ok   extension package_identification ros registered (colcon-ros)
+       ok   extension package_identification python_setup_py registered (colcon-python-setup-py)
+       ok   extension package_discovery recursive registered (colcon-recursive-crawl)
+       ok   extension argument_parser colcon registered (colcon-defaults)
+       ok   extension package_augmentation colcon_meta registered (colcon-metadata)
+       ok   extension event_handler terminal_title registered (colcon-notification)
+       ok   extension event_handler log registered (colcon-output)
+       ok   extension package_selection dependencies registered (colcon-package-selection)
+       ok   extension executor parallel registered (colcon-parallel-executor)
+       ok   extension environment library_path registered (colcon-library-path)
+       ok   extension environment pkg_config registered (colcon-pkg-config)
+       ok   colcon test-result verb (colcon-test-result)
+       ok   colcon-cd shell function installed (/usr/local/share/colcon_cd/function/colcon_cd.sh)
+       info Starting >>> qnx_tools
+       info Finished <<< qnx_tools [22.8s]
+       info 
+       info Summary: 1 package finished [30.9s]
+       ok   colcon build qnx_tools (setup.py package)
+       ok   qnx_tools installed into install/qnx_tools
+       ok   installed module imports: ANSWER = 42
+       ok   setup scripts generated (empy templates, colcon-bash)
+       ok   after sourcing install/setup.sh the package imports
+     PASS python3-colcon-common-extensions
+PASS test_python3_colcon_common_extensions
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

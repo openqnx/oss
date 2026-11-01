@@ -1,0 +1,27 @@
+# ptpd 2.3.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:22:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ptpd qnx-test-ptpd qnx-port-tests
+(1/2) Installing ptpd (2.3.1-r0)
+(2/2) Installing qnx-test-ptpd (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ptpd
+     == ptpd ==
+       ok   ptpd2 -v: version 2.3.1
+       ok   -O: default configuration (domain 0, multicast)
+       ok   -e ptpengine:domain: setting help
+       ok   -k: domain 500 rejected (allowed 0..127)
+       ok   -k: the unicast master configuration on lo0 is OK
+       ok   ptpd2 running: port in PTP_MASTER state after 11 s (status file)
+       ok   status: IPv4 unicast transport
+     PASS ptpd
+PASS test_ptpd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

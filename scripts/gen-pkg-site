@@ -10,9 +10,11 @@ RELEASES (default tmp/release-staging) holds one directory per GitHub release
 as scripts/publish-github-release staged it: the APKINDEX.tar.gz of every
 apk shard, apk-8.0-<arch> and apk-8.0-<arch>-m-z (scripts/lib/shards.py), is
 what the site lists -- the very indexes on GitHub -- and the packages-8.0-<arch>
-shards give each package's file list. Download links point at the release of
-the package's shard. Also read: ports/dependencies.json (kind),
-ports/<name>/patches/ and LICENSE.id, tests/results/<arch>.tsv and tests/logs/<arch>/.
+shards give each package's file list, the tests-8.0-<arch> shards (and their
+-m-z) each component's port test. Download links point at the release of the
+package's (or its test's) shard. Also read: ports/dependencies.json (kind),
+ports/<name>/patches/ and LICENSE.id, tests/port-tests.tsv (which test is a
+component's), tests/results/<arch>.tsv and tests/logs/<arch>/.
 OUT (default tmp/pkg-site) is a static site: open OUT/index.html, or serve it
 (GitHub Pages, any web server). Run it after every publish.
 """
@@ -104,6 +106,27 @@ for arch, _ in ARCHES:
             x["release"] = ptag
             tgz_index[(arch, x["name"], x["version"])] = x
             tgz_newest.setdefault((arch, x["name"]), x)      # the index lists the newest first
+
+
+# The port tests: the APKINDEX of every tests shard, and which test is a
+# component's (tests/port-tests.tsv). (arch, qnx-test-<name>) -> (newest, release).
+tests_newest = {}
+for arch, _ in ARCHES:
+    for sfx, _ in shards.SHARDS:
+        ttag = f"tests-{SDP}-{arch}{sfx}"
+        idx = os.path.join(args.releases, ttag, "APKINDEX.tar.gz")
+        if not os.path.exists(idx):
+            print(f"gen-pkg-site: no {idx} (not staged?)", file=sys.stderr)
+            continue
+        for e in apkindex(idx):
+            o = tests_newest.get((arch, e["P"]))
+            if not o or vkey(e["V"]) > vkey(o[0]["V"]):
+                tests_newest[(arch, e["P"])] = (e, ttag)
+test_pkg = {}       # component -> qnx-test-<name>
+for l in open("tests/port-tests.tsv") if os.path.exists("tests/port-tests.tsv") else []:
+    if not l.startswith("#") and "\t" in l:
+        c, t = l.split()[:2]
+        test_pkg[c] = "qnx-test-" + t[len("test_"):].replace("_", "-")
 
 
 def tgz_deps(x):
@@ -340,6 +363,13 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
         b.append(f"<p>{badge(r)} {E(r[3])} on {E(r[2])}, {E(r[1])}</p>")
     else:
         b.append("<p class=mut>No on-target result recorded for this version.</p>")
+    tp = tests_newest.get((arch, test_pkg.get(o, "")))
+    if tp:   # the test as a package, from its own tests shard
+        te, ttag = tp
+        b.append(f"<p>Run it yourself: <code>apk add {E(te['P'])} qnx-port-tests</code>, then "
+                 f"<code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package "
+                 f"<a href=\"{GH}/releases/download/{ttag}/{E(te['P'])}-{E(te['V'])}.apk\">{E(te['P'])}-{E(te['V'])}.apk</a> "
+                 f"(release {E(ttag)})</p>")
     b.append(f"<h2>Files ({len(files) if files is not None else '?'})</h2>")
     if files is None:
         b.append("<p class=mut>File list not available.</p>")

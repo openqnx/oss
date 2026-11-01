@@ -1,0 +1,22 @@
+telnet: do without SA_RESTART where the system lacks it.
+
+QNX's <signal.h> leaves SA_RESTART commented out ("not supported yet").
+telnet asks for restartable system calls only for its SIGWINCH/SIGINFO
+handlers; its main loop already treats EINTR from select() as "try again".
+
+Upstream-Status: QNX-specific
+
+--- a/telnet/sys_bsd.c
++++ b/telnet/sys_bsd.c
+@@ -1009,7 +1009,11 @@
+ {
+   struct sigaction sa;
+ 
++#ifdef SA_RESTART
+   sa.sa_flags = SA_RESTART;
++#else
++  sa.sa_flags = 0;	/* QNX: no SA_RESTART; the main loop retries EINTR */
++#endif
+   sigemptyset (&sa.sa_mask);
+ 
+   signal (SIGINT, intr);

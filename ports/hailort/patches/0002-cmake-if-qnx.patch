@@ -1,0 +1,111 @@
+CMake: test if(QNX), not CMAKE_SYSTEM_NAME STREQUAL QNX (which compares with the variable QNX's value).
+
+HailoRT picks its QNX sources with if(CMAKE_SYSTEM_NAME STREQUAL QNX).
+CMake defines a variable QNX (1) when it targets QNX, and an unquoted
+argument that names a variable is replaced by its value, so the test
+compared "QNX" with "1" and was false: the Linux event, driver-scan and
+PCIe sources were compiled instead of the QNX ones (eventfd/poll code that
+does not build against QNX's pevents handles), and libhailort was not
+linked with QNX's libpci. With these files' cmake_minimum_required(3.0)
+policies even a quoted "QNX" is dereferenced (CMP0054 OLD), so the tests
+use the QNX variable itself, as CMake intends: if(QNX), if(NOT QNX).
+
+Upstream-Status: QNX-specific
+
+--- a/hailort/CMakeLists.txt
++++ b/hailort/CMakeLists.txt
+@@ -96,7 +96,7 @@
+ add_subdirectory(external/DotWriter EXCLUDE_FROM_ALL)
+ add_subdirectory(external/spdlog EXCLUDE_FROM_ALL)
+ set_target_properties(spdlog PROPERTIES POSITION_INDEPENDENT_CODE ON)
+-if(CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(QNX)
+     add_library(pevents STATIC EXCLUDE_FROM_ALL external/pevents/src/pevents.cpp)
+     target_include_directories(pevents PUBLIC external/pevents/src)
+     target_compile_definitions(pevents PRIVATE -DWFMO)
+--- a/hailort/hailortcli/CMakeLists.txt
++++ b/hailort/hailortcli/CMakeLists.txt
+@@ -73,7 +73,7 @@
+ 
+ if(WIN32)
+     target_link_libraries(hailortcli Ws2_32 Iphlpapi Shlwapi winmm.lib)
+-elseif(CMAKE_SYSTEM_NAME STREQUAL QNX)
++elseif(QNX)
+     target_link_libraries(hailortcli pevents)
+ endif()
+ target_include_directories(hailortcli
+--- a/hailort/libhailort/bindings/CMakeLists.txt
++++ b/hailort/libhailort/bindings/CMakeLists.txt
+@@ -4,6 +4,6 @@
+ endif()
+ 
+ # QNX currently doesnt support GStreamer
+-if(HAILO_BUILD_GSTREAMER AND CMAKE_HOST_UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(HAILO_BUILD_GSTREAMER AND CMAKE_HOST_UNIX AND NOT QNX)
+     add_subdirectory(gstreamer)
+ endif()
+--- a/hailort/libhailort/examples/c/CMakeLists.txt
++++ b/hailort/libhailort/examples/c/CMakeLists.txt
+@@ -24,7 +24,7 @@
+     c_notification_callback_example
+ )
+ 
+-if(NOT CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(NOT QNX)
+     # TODO: HRT-10956 support QNX async examples
+     add_subdirectory(raw_async_streams_single_thread_example)
+     set(C_EXAMPLE_TARGETS ${C_EXAMPLE_TARGETS} c_raw_async_streams_single_thread_example)
+--- a/hailort/libhailort/examples/cpp/CMakeLists.txt
++++ b/hailort/libhailort/examples/cpp/CMakeLists.txt
+@@ -25,7 +25,7 @@
+     cpp_notification_callback_example
+ )
+ 
+-if(NOT CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(NOT QNX)
+     # TODO: HRT-10956 support QNX async examples
+     add_subdirectory(raw_async_streams_multi_thread_example)
+     add_subdirectory(raw_async_streams_single_thread_example)
+--- a/hailort/libhailort/src/CMakeLists.txt
++++ b/hailort/libhailort/src/CMakeLists.txt
+@@ -88,7 +88,7 @@
+     target_link_libraries(libhailort PRIVATE grpc++_unsecure)
+     target_link_libraries(libhailort PRIVATE hailort_rpc_grpc_proto)
+ endif()
+-if(CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(QNX)
+     target_link_libraries(libhailort PRIVATE pevents pci)
+ endif()
+ 
+--- a/hailort/libhailort/src/os/CMakeLists.txt
++++ b/hailort/libhailort/src/os/CMakeLists.txt
+@@ -5,7 +5,7 @@
+     set(HAILO_FULL_OS_DIR ${HAILO_OS_DIR})
+ elseif(UNIX)
+     set(HAILO_OS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/posix")
+-    if (CMAKE_SYSTEM_NAME STREQUAL QNX)
++    if (QNX)
+         set(HAILO_FULL_OS_DIR ${HAILO_OS_DIR}/qnx)
+     else()
+         set(HAILO_FULL_OS_DIR ${HAILO_OS_DIR}/linux)
+--- a/hailort/libhailort/src/os/posix/CMakeLists.txt
++++ b/hailort/libhailort/src/os/posix/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ cmake_minimum_required(VERSION 3.0.0)
+ 
+-if (CMAKE_SYSTEM_NAME STREQUAL QNX)
++if (QNX)
+     add_subdirectory(qnx)
+ else()
+     add_subdirectory(linux)
+--- a/hailort/tools/hw_debug/CMakeLists.txt
++++ b/hailort/tools/hw_debug/CMakeLists.txt
+@@ -35,7 +35,7 @@
+     ${DRIVER_INC_DIR}
+ )
+ 
+-if(CMAKE_SYSTEM_NAME STREQUAL QNX)
++if(QNX)
+     target_link_libraries(debalex PRIVATE pci)
+ endif()
+ 

@@ -1,0 +1,32 @@
+riegeli on QNX, from QNX's port (github.com/qnx-ports/riegeli, tag
+qnx-e54e4300-r0, commit 8eebcced): the CRC-32C digester computes with
+abseil's absl::ExtendCrc32c() instead of the standalone crc32c library,
+which is not ported to QNX; abseil is a dependency already, and QNX checked
+that the result matches absl::ComputeCrc32c() bit for bit.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/riegeli/digests/crc32c_digester.h b/riegeli/digests/crc32c_digester.h
+index c0ff54f..4766bac 100644
+--- a/riegeli/digests/crc32c_digester.h
++++ b/riegeli/digests/crc32c_digester.h
+@@ -17,8 +17,8 @@
+ 
+ #include <stdint.h>
+ 
++#include "absl/crc/crc32c.h"
+ #include "absl/strings/string_view.h"
+-#include "crc32c/crc32c.h"
+ #include "riegeli/base/arithmetic.h"
+ #include "riegeli/digests/digester.h"
+ 
+@@ -72,8 +72,7 @@ constexpr uint32_t UnmaskCrc32c(uint32_t masked) {
+ // Implementation details follow.
+ 
+ inline void Crc32cDigester::WriteImpl(absl::string_view src) {
+-  crc_ = crc32c::Extend(crc_, reinterpret_cast<const uint8_t*>(src.data()),
+-                        src.size());
++  crc_ = static_cast<uint32_t>(absl::ExtendCrc32c(absl::crc32c_t{crc_}, src));
+ }
+ 
+ }  // namespace riegeli

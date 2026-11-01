@@ -1,0 +1,76 @@
+# python3-contourpy 1.4.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T12:30:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-contourpy qnx-test-python3-matplotlib qnx-port-tests
+( 1/30) Installing openblas (0.3.28-r0)
+( 2/30) Installing bzip2 (1.0.8-r0)
+( 3/30) Installing expat (2.6.4-r0)
+( 4/30) Installing gdbm (1.24-r0)
+( 5/30) Installing readline (8.2-r0)
+( 6/30) Installing sqlite (3.47.2-r0)
+( 7/30) Installing xz (5.6.3-r0)
+( 8/30) Installing python3 (3.14.0-r2)
+( 9/30) Installing numpy (2.3.4-r1)
+(10/30) Installing python3-contourpy (1.4.0-r0)
+(11/30) Installing python3-cycler (0.12.1-r0)
+(12/30) Installing python3-six (1.17.0-r0)
+(13/30) Installing python3-dateutil (2.9.0_p0-r1)
+(14/30) Installing python3-fonttools (4.68.0-r0)
+(15/30) Installing python3-kiwisolver (1.5.1-r0)
+(16/30) Installing freetype (2.13.3-r0)
+(17/30) Installing fribidi (1.0.16-r0)
+(18/30) Installing graphite2 (1.3.14-r0)
+(19/30) Installing icu (76.1-r1)
+(20/30) Installing harfbuzz (<ip>-r0)
+(21/30) Installing libraqm (0.10.5-r0)
+(22/30) Installing python3-packaging (25.0-r0)
+(23/30) Installing libwebp (1.4.0-r0)
+(24/30) Installing libtiff (4.7.0-r0)
+(25/30) Installing openjpeg (2.5.3-r0)
+(26/30) Installing python3-pillow (13.0.0-r0)
+(27/30) Installing python3-pyparsing (3.3.3-r0)
+(28/30) Installing qhull (8.0.2-r0)
+(29/30) Installing python3-matplotlib (3.11.2-r1)
+(30/30) Installing qnx-test-python3-matplotlib (1.0-r0)
+OK: 337 MiB in 69 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_matplotlib
+     == python3-matplotlib ==
+     Matplotlib is building the font cache; this may take a moment.
+       info matplotlib 3.11.2, backend Agg
+       ok   4x3 in at 50 dpi -> 200x150 PNG
+       ok   left half red, right half blue
+       ok   line plot with title to PNG
+       ok   bundled DejaVu Sans found
+       info 'QNX' at 12 pt: 1664 x 672 (1/64 px)
+       ok   text extent grows with the string
+       ok   rendered text has dark pixels
+       ok   mathtext rendered
+       ok   pdf output
+       ok   svg output
+       ok   ps output
+       ok   eps output
+       ok   Delaunay of a square + centre: 4 triangles, 8 edges (Qhull)
+       ok   linear interpolation on the triangulation
+       ok   contourpy: one closed line at z = 0.25
+       ok   contourpy: the line is the circle r = 0.5
+       ok   contourpy: filled contour 0..0.25
+       ok   ax.contour levels
+       ok   kiwisolver: a+b=10, a-b=4 -> 7, 3
+       ok   kiwisolver: weak x == 2 loses to required x >= 5
+       ok   constrained layout separates the axes
+       ok   cycler product
+       ok   axes property cycle
+       ok   fontTools: DejaVu Sans, 2048 units/em
+       ok   fontTools: cmap and advance of 'A'
+       ok   matplotlib.dates epoch
+     PASS python3-matplotlib
+PASS test_python3_matplotlib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

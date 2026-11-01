@@ -1,0 +1,29 @@
+QNX: no d_type in struct dirent
+
+QNX's struct dirent has no d_type (nor DT_* constants): use the stat()
+path the code already has for Solaris and Haiku.
+
+Upstream-Status: QNX-specific
+
+--- a/src/common/impl/io_unix.c
++++ b/src/common/impl/io_unix.c
+@@ -280,7 +280,7 @@ void listFilesRecursively(uint32_t baseLength, FFstrbuf* folder, uint8_t indenta
+         }
+ 
+         bool isDir = false;
+-#if !defined(__sun) && !defined(__HAIKU__)
++#if !defined(__sun) && !defined(__HAIKU__) && !defined(__QNX__)
+         if (entry->d_type != DT_UNKNOWN && entry->d_type != DT_LNK) {
+             isDir = entry->d_type == DT_DIR;
+         } else
+--- a/src/detection/packages/packages.c
++++ b/src/detection/packages/packages.c
+@@ -96,7 +96,7 @@ uint32_t ffPackagesGetNumElements(const char* dirname, bool isdir) {
+         bool ok = false;
+ 
+         if (entry->d_name[0] != '.') {
+-    #if !defined(__sun) && !defined(__HAIKU__)
++    #if !defined(__sun) && !defined(__HAIKU__) && !defined(__QNX__)
+             if (entry->d_type != DT_UNKNOWN && entry->d_type != DT_LNK) {
+                 ok = entry->d_type == (isdir ? DT_DIR : DT_REG);
+             } else

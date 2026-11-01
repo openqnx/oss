@@ -1,0 +1,41 @@
+# quake3 1.36_git20261012-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:40:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u quake3 qnx-test-quake3 qnx-port-tests
+(1/3) Installing sdl2 (2.32.10-r0)
+(2/3) Installing quake3 (1.36_git20261012-r1)
+(3/3) Installing qnx-test-quake3 (1.0-r1)
+OK: 96 MiB in 27 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_quake3
+     == quake3 ==
+       ok   ioq3ded and baseq3/qagame.so are installed
+       ok   without game data the server exits by itself
+       ok   and says pak0.pk3 is missing
+       ok   the client engine (ioquake3) starts in dedicated mode and refuses missing data
+       ok   wrote a pk3 with default.cfg and maps/qnx.bsp
+       ok   linked the native game module into the game directory
+       ok   getstatus is answered (the map is running)
+       info statusResponse
+     \sv_hostname\qnx-q3-test\version\ioq3 1.36_g87a99d1 qnx-x86_64 Nov  1 2026\com_gamename\Quake3Arena\com_protocol\71\dmflags\0\fraglimit\20\timelimit\0\g_gametype\0\mapname\qnx\sv_privat
+       ok   status: mapname qnx
+       ok   status: sv_hostname from the pk3's default.cfg
+       ok   status: protocol 71, version string names QNX
+       ok   status: the game module answers (gamename baseq3)
+       ok   getinfo echoes the challenge, 0 clients, map qnx
+       ok   rcon with a wrong password is refused
+       ok   rcon with the password is accepted
+       ok   rcon changed sv_hostname
+       ok   server still running after the queries
+       ok   the native game module was initialised
+       ok   SIGTERM shuts the game down
+     PASS quake3
+PASS test_quake3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

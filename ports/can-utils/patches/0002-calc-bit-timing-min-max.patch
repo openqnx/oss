@@ -1,0 +1,23 @@
+can-calc-bit-timing: replace QNX's min()/max() macros.
+
+QNX's <stdlib.h> defines untyped min()/max() macros; compat.h then
+redefines them (with its type-checked versions), which GCC warns about.
+#undef them first so compat.h's definitions are the ones in effect, as on
+Linux.
+
+Upstream-Status: QNX-specific
+
+--- a/calc-bit-timing/compat.h
++++ b/calc-bit-timing/compat.h
+@@ -52,7 +52,11 @@ typedef __u32 u32;
+  * min()/max()/clamp() macros that also do
+  * strict type-checking.. See the
+  * "unnecessary" pointer comparison.
++ *
++ * QNX's <stdlib.h> defines its own (untyped) min()/max(): replace them.
+  */
++#undef min
++#undef max
+ #define min(x, y) ({				\
+ 	typeof(x) _min1 = (x);			\
+ 	typeof(y) _min2 = (y);			\

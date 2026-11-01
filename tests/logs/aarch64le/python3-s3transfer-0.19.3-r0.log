@@ -1,0 +1,62 @@
+# python3-s3transfer 0.19.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T12:59:07Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-s3transfer qnx-test-python3-boto3 qnx-port-tests
+( 1/15) Installing bzip2 (1.0.8-r0)
+( 2/15) Installing expat (2.6.4-r0)
+( 3/15) Installing gdbm (1.24-r0)
+( 4/15) Installing readline (8.2-r0)
+( 5/15) Installing sqlite (3.47.2-r0)
+( 6/15) Installing xz (5.6.3-r0)
+( 7/15) Installing python3 (3.14.0-r2)
+( 8/15) Installing python3-six (1.17.0-r0)
+( 9/15) Installing python3-dateutil (2.9.0_p0-r1)
+(10/15) Installing python3-jmespath (1.1.0-r0)
+(11/15) Installing python3-urllib3 (2.8.0-r0)
+(12/15) Installing python3-botocore (1.43.123-r0)
+(13/15) Installing python3-s3transfer (0.19.3-r0)
+(14/15) Installing python3-boto3 (1.43.123-r0)
+(15/15) Installing qnx-test-python3-boto3 (1.0-r0)
+OK: 250 MiB in 54 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_boto3
+     == python3-boto3 ==
+       info stub S3 at http://<ip>:52627
+       info boto3 1.43.123, botocore 1.43.123, s3transfer 0.19.3, jmespath 1.1.0, urllib3 2.8.0
+       ok   boto3 imported from site-packages
+       ok   botocore imported from site-packages
+       ok   s3transfer imported from site-packages
+       ok   jmespath imported from site-packages
+       ok   urllib3 imported from site-packages
+       ok   put_object: ETag is the MD5 of the body
+       ok   head_object: length and user metadata
+       ok   LastModified parsed to an aware datetime (dateutil)
+       ok   get_object returns the bytes and content type
+       ok   ranged get_object: 206 with bytes 6-9
+       ok   every request signed with SigV4 (5 requests)
+       ok   missing key: ClientError NoSuchKey (404)
+       ok   paginator: 7 keys in pages of 3, 3, 1
+       ok   paginator JMESPath search: keys with Size > 4
+       ok   delete_object removes the key
+       ok   upload_file: 6 MiB multipart upload stored intact
+       ok   multipart upload completed (no upload left open)
+       ok   download_file (ranged, concurrent) gives an identical copy
+       ok   resource API: Bucket.objects.filter
+       ok   Stubber: canned list_buckets response
+       ok   Stubber: canned ClientError
+       ok   Stubber: every queued response consumed
+       ok   service models load (dynamodb client built from botocore data)
+       ok   jmespath filter
+       ok   jmespath functions
+       ok   urllib3 PoolManager GET (connection reused)
+       ok   urllib3: 404 status
+     PASS python3-boto3
+PASS test_python3_boto3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,16 +1,15 @@
 # gawk 5.3.2-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:13:54Z   packages from: apk:local-dists
+# date: 2026-11-01T10:47:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u gawk qnx-test-gawk qnx-port-tests
-(1/4) Installing readline (8.2-r0)
-(2/4) Installing gawk (5.3.2-r1)
-(3/4) Installing qnx-port-tests (1.0-r2)
-(4/4) Installing qnx-test-gawk (1.0-r0)
-OK: 95 MiB in 33 packages
+(1/3) Installing readline (8.2-r0)
+(2/3) Installing gawk (5.3.2-r1)
+(3/3) Installing qnx-test-gawk (1.0-r0)
+OK: 97 MiB in 36 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gawk
      == gawk ==

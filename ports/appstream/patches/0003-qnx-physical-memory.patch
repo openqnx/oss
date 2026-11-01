@@ -1,0 +1,28 @@
+Determine the physical memory size on QNX with sysconf().
+
+as_get_physical_memory_total() has a branch per OS and #errors on any
+other. QNX's sysconf() answers _SC_PHYS_PAGES and _SC_PAGESIZE, which is
+what the Solaris branch uses: take that branch (and its <unistd.h>) on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/AppStream-1.0.6/src/as-system-info.c
++++ b/AppStream-1.0.6/src/as-system-info.c
+@@ -56,7 +56,7 @@
+ #include <mach/mach.h>
+ #include <mach/host_info.h>
+ #include <mach/mach_host.h>
+-#elif defined(__sun)
++#elif defined(__sun) || defined(__QNX__)
+ #include <unistd.h>
+ #endif
+ #ifdef HAVE_SYSTEMD
+@@ -513,7 +513,7 @@
+ 		return 0;
+ 	}
+ 	return hbi.memory_size / MB_IN_BYTES;
+-#elif defined(__sun)
++#elif defined(__sun) || defined(__QNX__)
+ 	long physpages = sysconf (_SC_PHYS_PAGES);
+ 	long pagesize = sysconf (_SC_PAGESIZE);
+ 	if (physpages > 0 && pagesize > 0)

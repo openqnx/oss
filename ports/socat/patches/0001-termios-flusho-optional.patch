@@ -1,0 +1,32 @@
+Only offer the flusho termios option where FLUSHO exists.
+
+QNX's <termios.h> has no FLUSHO local mode flag (nor ECHOPRT and PENDIN,
+which socat already guards). Leave the "flusho" termios option out where the
+flag does not exist, the way socat handles the other optional flags.
+
+Upstream-Status: QNX-specific
+
+--- a/xioopts.c
++++ b/xioopts.c
+@@ -600,7 +600,9 @@
+ #ifdef IPV4_FLOWINFO
+ 	IF_IP6    ("flowinfo",	&opt_ipv6_flowinfo)
+ #endif
++#ifdef FLUSHO
+ 	IF_TERMIOS("flusho",	&opt_flusho)
++#endif
+ 	IF_RETRY  ("forever",	&opt_forever)
+ 	IF_LISTEN ("fork",	&opt_fork)
+ #ifdef IP_FREEBIND
+--- a/xio-termios.c
++++ b/xio-termios.c
+@@ -230,7 +230,9 @@
+ const struct optdesc opt_echoprt = { "echoprt", NULL, OPT_ECHOPRT, GROUP_TERMIOS, PH_FD, TYPE_BOOL,  OFUNC_TERMIOS_FLAG, 3, ECHOPRT };
+ #endif
+ const struct optdesc opt_echoke  = { "echoke",  NULL, OPT_ECHOKE,  GROUP_TERMIOS, PH_FD, TYPE_BOOL,  OFUNC_TERMIOS_FLAG, 3, ECHOKE };
++#ifdef FLUSHO
+ const struct optdesc opt_flusho  = { "flusho",  NULL, OPT_FLUSHO,  GROUP_TERMIOS, PH_FD, TYPE_BOOL,  OFUNC_TERMIOS_FLAG, 3, FLUSHO };
++#endif
+ const struct optdesc opt_noflsh  = { "noflsh",  NULL, OPT_NOFLSH,  GROUP_TERMIOS, PH_FD, TYPE_BOOL,  OFUNC_TERMIOS_FLAG, 3, NOFLSH };
+ const struct optdesc opt_tostop  = { "tostop",  NULL, OPT_TOSTOP,  GROUP_TERMIOS, PH_FD, TYPE_BOOL,  OFUNC_TERMIOS_FLAG, 3, TOSTOP };
+ #ifdef PENDIN

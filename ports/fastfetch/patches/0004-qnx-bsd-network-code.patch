@@ -1,0 +1,69 @@
+QNX: use the BSD routing-socket and interface code
+
+QNX 8's network stack (io-sock) is FreeBSD's: the default route comes
+from the PF_ROUTE sysctl with FreeBSD's address alignment, and link-layer
+addresses are AF_LINK with <net/if_dl.h> and <net/if_media.h> -- there is
+no <netpacket/packet.h>. Take the FreeBSD branches on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/src/common/impl/netif_bsd.c
++++ b/src/common/impl/netif_bsd.c
+@@ -23,6 +23,10 @@
+ #elif __OpenBSD__
+     // https://github.com/openbsd/src/blob/ca647cfa4ec3ccb8360714bc0ebc32a394f7fb6a/regress/sys/netinet/bindconnect/bindconnect.c#L250
+     #define ROUNDUP(a) ROUNDUP2((a), sizeof(long))
++#elif __QNX__
++    // QNX 8's io-sock is FreeBSD's network stack: its routing socket aligns
++    // addresses the same way.
++    #define ROUNDUP(a) ROUNDUP2((a), sizeof(long))
+ #else
+     #error unknown platform
+ #endif
+--- a/src/detection/localip/localip_linux.c
++++ b/src/detection/localip/localip_linux.c
+@@ -26,7 +26,7 @@
+     #include <netinet6/in6_var.h>
+ #endif
+ 
+-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__APPLE__) || defined(__NetBSD__) || defined(__HAIKU__)
++#if defined(__FreeBSD__) || defined(__QNX__) || defined(__OpenBSD__) || defined(__APPLE__) || defined(__NetBSD__) || defined(__HAIKU__)
+     #include <net/if_media.h>
+     #include <net/if_dl.h>
+ #elif !defined(__GNU__)
+@@ -81,7 +81,7 @@ static const FFLocalIpNIFlag niFlagOptions[] = {
+     FF_LOCALIP_NIFLAG(DORMANT),
+     FF_LOCALIP_NIFLAG(ECHO),
+ #endif
+-#if defined(__FreeBSD__) || defined(__APPLE__) || defined(__OpenBSD__) || defined(__NetBSD__)
++#if defined(__FreeBSD__) || defined(__QNX__) || defined(__APPLE__) || defined(__OpenBSD__) || defined(__NetBSD__)
+     FF_LOCALIP_NIFLAG(OACTIVE),
+     FF_LOCALIP_NIFLAG(SIMPLEX),
+     FF_LOCALIP_NIFLAG(LINK0),
+@@ -365,7 +365,7 @@ const char* ffDetectLocalIps(const FFLocalIpOptions* options, FFlist* results) {
+                     FF_DEBUG("Added IPv6 entry for interface %s", ifa->ifa_name);
+                 }
+                 break;
+-#if __FreeBSD__ || __OpenBSD__ || __APPLE__ || __NetBSD__ || __HAIKU__
++#if __FreeBSD__ || __QNX__ || __OpenBSD__ || __APPLE__ || __NetBSD__ || __HAIKU__
+             case AF_LINK:
+                 adapter->mac = ifa;
+                 FF_DEBUG("Updated MAC entry for interface %s", ifa->ifa_name);
+@@ -519,7 +519,7 @@ const char* ffDetectLocalIps(const FFLocalIpOptions* options, FFlist* results) {
+ #if !defined(__sun) && !defined(__GNU__)
+         if (options->showType & FF_LOCALIP_TYPE_MAC_BIT) {
+             if (adapter->mac->ifa_addr) {
+-    #if __FreeBSD__ || __OpenBSD__ || __APPLE__ || __NetBSD__ || __HAIKU__
++    #if __FreeBSD__ || __QNX__ || __OpenBSD__ || __APPLE__ || __NetBSD__ || __HAIKU__
+                 uint8_t* ptr = (uint8_t*) LLADDR((struct sockaddr_dl*) adapter->mac->ifa_addr);
+     #else
+                 uint8_t* ptr = ((struct sockaddr_ll*) adapter->mac->ifa_addr)->sll_addr;
+@@ -578,7 +578,7 @@ const char* ffDetectLocalIps(const FFLocalIpOptions* options, FFlist* results) {
+                         // ethtool_cmd_speed is not available on Android
+                         FF_DEBUG("Failed to get speed for interface %s via ethtool", iface->name.chars);
+                     }
+-#elif __FreeBSD__ || __APPLE__ || __OpenBSD__ || __NetBSD__
++#elif __FreeBSD__ || __QNX__ || __APPLE__ || __OpenBSD__ || __NetBSD__
+                     struct ifmediareq ifmr = {};
+                     ffStrCopy(ifmr.ifm_name, iface->name.chars, IFNAMSIZ);
+                     if (ioctl(sockfd, SIOCGIFMEDIA, &ifmr) == 0 && (IFM_TYPE(ifmr.ifm_active) & IFM_ETHER)) {

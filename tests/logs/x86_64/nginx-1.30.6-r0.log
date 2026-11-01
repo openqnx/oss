@@ -1,0 +1,42 @@
+# nginx 1.30.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:56:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nginx qnx-test-nginx qnx-port-tests
+(1/3) Installing libxcrypt (4.4.38-r0)
+(2/3) Installing nginx (1.30.6-r0)
+(3/3) Installing qnx-test-nginx (1.0-r0)
+OK: 102 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nginx
+     == nginx ==
+       ok   nginx -V: version 1.30.6
+       ok   nginx -V: built with OpenSSL and the SSL module
+       info nginx version: nginx/1.30.6
+       ok   self-signed certificate written (OpenSSL)
+       ok   nginx -t accepts the configuration
+       ok   nginx -t rejects an unknown directive
+       ok   nginx is up and answering on <ip>
+       ok   GET /hello.txt: 200 and the file byte for byte
+       ok   Content-Type: text/plain
+       ok   Content-Length: 6000
+       ok   Server: nginx/1.30.6
+       ok   GET /nope.txt: 404
+       ok   return 200 with a body
+       ok   return 301: Location ends in /hello.txt
+       ok   PCRE rewrite /r/hello.text -> /hello.txt
+       ok   gzip on request: Content-Encoding gzip, gzip stream
+       ok   gzip: compressed response is smaller than the file
+       info HTTPS: TLSv1.3 TLS_AES_256_GCM_SHA384
+       ok   HTTPS GET /hello.txt: 200 and the file byte for byte
+       ok   HTTPS: TLS 1.3 negotiated
+       ok   graceful stop (SIGQUIT): exit 0
+     PASS nginx
+PASS test_nginx
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

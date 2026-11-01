@@ -1,0 +1,22 @@
+Take OS_STRING's release from QNX_RELEASE when cross-compiling.
+
+make-qnx.mk compiles `uname -r` into OS_STRING (reported by the service). In a
+cross build that is the build machine's kernel release ("QNX/7.0.0-42-generic"
+on a Linux host); a QNX_RELEASE variable lets the build name the target's.
+
+Upstream-Status: QNX-specific
+
+--- a/make-qnx.mk
++++ b/make-qnx.mk
+@@ -24,7 +24,10 @@
+ override DEFS+=-DZT_USE_MINIUPNPC
+ override DEFS+=-DMINIUPNP_STATICLIB -DMINIUPNPC_SET_SOCKET_TIMEOUT -DMINIUPNPC_GET_SRC_ADDR
+ override DEFS+=-D_BSD_SOURCE -D_DEFAULT_SOURCE
+-override DEFS+=-DOS_STRING="\"QNX/$(shell uname -r)\""
++# The release of the system the program runs on: uname -r names the build
++# machine's when cross-compiling, so a cross build passes QNX_RELEASE.
++QNX_RELEASE?=$(shell uname -r)
++override DEFS+=-DOS_STRING="\"QNX/$(QNX_RELEASE)\""
+ override DEFS+=-DMINIUPNPC_VERSION_STRING="\"2.0\""
+ override DEFS+=-DUPNP_VERSION_STRING="\"UPnP/1.1\""
+ override DEFS+=-DENABLE_STRNATPMPERR

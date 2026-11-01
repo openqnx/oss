@@ -1,0 +1,23 @@
+Use the epoll event loop on QNX.
+
+Without a known polling API Redis falls back to select(), and QNX's
+FD_SETSIZE is 256: ae_select.c refuses an event loop larger than that, and
+the server sizes its loop for maxclients (10000 by default) plus its own
+descriptors. QNX 8.0 provides epoll (libepoll) with level-triggered
+semantics, which is all ae_epoll.c uses (EPOLLIN/EPOLLOUT/EPOLLERR/EPOLLHUP,
+no EPOLLET or EPOLLONESHOT) -- the same basis the libev and libzmq ports use.
+The recipe links -lepoll.
+
+Upstream-Status: QNX-specific
+
+--- a/src/config.h
++++ b/src/config.h
+@@ -82,7 +82,7 @@
+ #endif
+ 
+ /* Test for polling API */
+-#ifdef __linux__
++#if defined(__linux__) || defined(__QNX__)
+ #define HAVE_EPOLL 1
+ #endif
+ 

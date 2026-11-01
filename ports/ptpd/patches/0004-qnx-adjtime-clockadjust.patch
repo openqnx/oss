@@ -1,0 +1,67 @@
+Slew the clock with ClockAdjust() on QNX.
+
+Without <sys/timex.h> ptpd corrects the clock with adjtime(), which QNX
+does not have. QNX's interface for slewing is ClockAdjust(): a per-tick
+increment applied for a number of ticks. adjTime() spreads the correction
+over about one second, at most 2% of the tick per tick (the limit ntp's
+QNX adjtime() emulation uses); a larger correction takes longer.
+
+Upstream-Status: QNX-specific
+
+--- a/src/dep/sys.c
++++ b/src/dep/sys.c
+@@ -2018,6 +2018,46 @@
+ 
+ #else /* SYS_TIMEX_H */
+ 
++#ifdef __QNX__
++#include <sys/neutrino.h>
++/*
++ * QNX has no adjtime(): slew the clock with ClockAdjust(), adding a
++ * per-tick increment over about one second (as adjtime() would), but by
++ * no more than 2% of the tick (the limit ntp's QNX adjtime() uses);
++ * a larger correction takes proportionally longer.
++ */
++void
++adjTime(Integer32 nanoseconds)
++{
++	struct _clockperiod period;
++	struct _clockadjust adj;
++	long ticks, inc, limit;
++	long long ns = nanoseconds;
++
++	if (ClockPeriod(CLOCK_REALTIME, NULL, &period, 0) == -1 || period.nsec == 0) {
++		PERROR("failed to read the clock period");
++		return;
++	}
++	ticks = 1000000000L / (long)period.nsec;
++	if (ticks < 1)
++		ticks = 1;
++	limit = (long)period.nsec / 50;
++	if (limit < 1)
++		limit = 1;
++	inc = (long)(ns / ticks);
++	if (inc > limit || inc < -limit) {
++		inc = (inc > 0) ? limit : -limit;
++		ticks = (long)(ns / inc);
++	} else if (inc == 0 && ns != 0) {
++		inc = (ns > 0) ? 1 : -1;
++		ticks = (long)(ns > 0 ? ns : -ns);
++	}
++	adj.tick_nsec_inc = inc;
++	adj.tick_count = (ns == 0) ? 0 : ticks;
++	if (ClockAdjust(CLOCK_REALTIME, &adj, NULL) == -1)
++		PERROR("failed to ClockAdjust");
++}
++#else /* __QNX__ */
+ void
+ adjTime(Integer32 nanoseconds)
+ {
+@@ -2031,6 +2071,7 @@
+ 		PERROR("failed to ajdtime");
+ 
+ }
++#endif /* __QNX__ */
+ 
+ #endif /* HAVE_SYS_TIMEX_H */
+ 

@@ -1,0 +1,54 @@
+# appstream 1.0.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:24:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u appstream qnx-test-appstream qnx-port-tests
+( 1/10) Installing c-ares (1.34.3-r0)
+( 2/10) Installing nghttp2 (1.64.0-r0)
+( 3/10) Installing curl (8.11.1-r1)
+( 4/10) Installing xz (5.6.3-r0)
+( 5/10) Installing libxml2 (2.13.5-r1)
+( 6/10) Installing libxmlb (0.3.24-r0)
+( 7/10) Installing libyaml (0.2.5-r0)
+( 8/10) Installing appstream (1.0.6-r0)
+( 9/10) Installing qnx-port-tests (1.0-r2)
+(10/10) Installing qnx-test-appstream (1.0-r0)
+OK: 65 MiB in 40 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_appstream
+     == appstream ==
+       info AppStream 1.0.6
+       ok   metainfo parsed
+       ok   component id and kind console-application
+       ok   name and summary
+       ok   developer name
+       ok   project license
+       ok   two releases, newest (1.10.0) first
+       ok   release date 2026-03-01 as a timestamp
+       ok   provides binary porttest
+       ok   homepage URL
+       ok   written back as metainfo XML
+       ok   catalog YAML (DEP-11) output
+       ok   version comparison: 1.10.0 > 1.9.2, 1.0~rc1 < 1.0
+       ok   SPDX license expressions
+       ok   free license check
+       ok   validator accepts the good file
+     
+     (process:1020190741): GLib-CRITICAL **: 10:24:39.901: g_str_has_suffix: assertion 'str != NULL' failed
+       info broken file: 9 issue(s), first: releases-info-missing
+       ok   validator rejects a file without an id, with issues listed
+       info appstreamcli validate: rc 0, I: org.qnx.porttest:6: description-first-para-too-short A test component for the AppStream port.
+     I: org.qnx.porttest:~: content-rating-missing
+     
+     ✔ Validation was successful: infos: 2
+       ok   appstreamcli validate --no-net: valid
+       ok   appstreamcli convert to YAML
+     PASS appstream
+PASS test_appstream
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

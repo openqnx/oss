@@ -1,0 +1,27 @@
+sound, swap: update the *_nosupport.c stubs to the current prototypes
+
+ffDetectSound() takes the module options and ffDetectSwap() a list since
+earlier releases, but the stubs for platforms without support still had
+the old signatures and did not compile (no platform in the tree used them
+until now).
+
+Upstream-Status: Pending
+
+--- a/src/detection/sound/sound_nosupport.c
++++ b/src/detection/sound/sound_nosupport.c
+@@ -1,5 +1,5 @@
+ #include "sound.h"
+ 
+-const char* ffDetectSound(FF_A_UNUSED FFlist* devices /* List of FFSoundDevice */) {
++const char* ffDetectSound(FF_A_UNUSED FFSoundOptions* options, FF_A_UNUSED FFlist* devices /* List of FFSoundDevice */) {
+     return "Not supported on this platform";
+ }
+--- a/src/detection/swap/swap_nosupport.c
++++ b/src/detection/swap/swap_nosupport.c
+@@ -1,5 +1,5 @@
+ #include "swap.h"
+ 
+-const char* ffDetectSwap(FFSwapResult* swap) {
++const char* ffDetectSwap(FF_A_UNUSED FFlist* result /* List of FFSwapResult */) {
+     return "Not supported on this platform";
+ }

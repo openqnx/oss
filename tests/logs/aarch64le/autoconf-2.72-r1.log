@@ -1,19 +1,13 @@
 # autoconf 2.72-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T16:17:03Z   packages from: apk:local-dists
+# date: 2026-11-01T13:21:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u autoconf qnx-test-autoconf qnx-port-tests
-(1/7) Installing m4 (1.4.19-r0)
-(2/7) Installing libxcrypt (4.4.38-r0)
-(3/7) Installing perl (5.40.2-r2)
-(4/7) Installing autoconf (2.72-r1)
-(5/7) Installing qnx-port-tests (1.0-r2)
-(6/7) Installing grep (3.11-r1)
-(7/7) Installing qnx-test-autoconf (1.0-r0)
-OK: 121 MiB in 35 packages
+(1/1) Installing qnx-test-autoconf (1.0-r0)
+OK: 123 MiB in 40 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_autoconf
      == autoconf ==

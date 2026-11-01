@@ -1,0 +1,37 @@
+scheduler: pass LD_LIBRARY_PATH to filters and backends on QNX
+
+cupsd, running as root, gives its filters, backends and helper programs a
+clean environment and refuses to pass on any LD_ variable. On QNX the
+libraries of anything installed outside the system directories (libcups
+itself under /usr/local/lib, and on a minimal image QNX's own
+libeventfd/libsocket companions in a separate directory) are only found
+through LD_LIBRARY_PATH, so no filter could start ("Could not load library
+libcups.so.2"). Pass LD_LIBRARY_PATH -- the one cupsd itself was started
+with -- on QNX; LD_PRELOAD and the other loader variables stay blocked.
+
+Upstream-Status: QNX-specific
+
+--- a/scheduler/env.c
++++ b/scheduler/env.c
+@@ -120,8 +120,21 @@
+   */
+ 
+ #if !CUPS_SNAP
++#  ifdef __QNX__
++ /*
++  * QNX: libraries installed outside the system's own directories (under
++  * /usr/local, say) are only found through LD_LIBRARY_PATH, so the search
++  * path cupsd was started with is passed on to its filters and backends;
++  * the other LD_ variables (LD_PRELOAD ...) are still not.
++  */
++
++  if (!RunUser && strcmp(name, "LD_LIBRARY_PATH") &&
++      (!strncmp(name, "DYLD_", 5) || !strncmp(name, "LD_", 3)))
++    return;
++#  else
+   if (!RunUser && (!strncmp(name, "DYLD_", 5) || !strncmp(name, "LD_", 3)))
+     return;
++#  endif /* __QNX__ */
+ #endif /* !CUPS_SNAP */
+ 
+  /*

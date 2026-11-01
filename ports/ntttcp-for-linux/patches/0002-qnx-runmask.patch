@@ -1,0 +1,51 @@
+Set CPU affinity on QNX with a proper ThreadCtl() run mask.
+
+qnx-ports' QNX change (0001) passes the CPU number from -m as the run mask
+of ThreadCtl(_NTO_TCTL_RUNMASK), by address, with _NTO_TCTL_RUNMASK
+hard-coded. The run mask is a bit mask of CPUs given as the pointer value
+itself: "-m 1,*,..." asked for nothing sensible and the call failed
+(ntttcp then exited). Take ThreadCtl() and the constant from
+<sys/neutrino.h>, pass 1 << cpu, and report a failure the way the Linux
+path does (an error message, the test goes on). Also drops the cpu_set_t
+variable that only the Linux path uses (an unused-variable warning).
+
+Upstream-Status: QNX-specific
+
+--- a/src/main.c
++++ b/src/main.c
+@@ -7,8 +7,7 @@
+ #include "main.h"
+ 
+ #ifdef __QNX__
+-typedef unsigned long cpu_set_t;
+-#define _NTO_TCTL_RUNMASK 4 
++#include <sys/neutrino.h>	/* ThreadCtl(), _NTO_TCTL_RUNMASK */
+ #endif
+ /************************************************************/
+ //		ntttcp high level functions
+@@ -316,7 +315,9 @@
+ int main(int argc, char **argv)
+ {
+ 	int err_code = NO_ERROR;
++#ifndef __QNX__
+ 	cpu_set_t cpuset;
++#endif
+ 	struct ntttcp_test *test;
+ 	struct ntttcp_test_endpoint *tep;
+ 
+@@ -375,10 +376,11 @@
+ 		if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) != 0)
+ 			PRINT_ERR("main: cannot set cpu affinity");
+ 	#else
+-		if (ThreadCtl(_NTO_TCTL_RUNMASK, &test->cpu_affinity) == -1) {
+-    	    perror("ThreadCtl failed to set CPU affinity");
+-        	return 1;
+-	}
++		/* The run mask is a bit mask of CPUs, not a CPU number. */
++		PRINT_INFO("main: set cpu affinity");
++		if (test->cpu_affinity < 0 || test->cpu_affinity >= 32 ||
++		    ThreadCtl(_NTO_TCTL_RUNMASK, (void *)(uintptr_t)(1u << test->cpu_affinity)) == -1)
++			PRINT_ERR("main: cannot set cpu affinity");
+ 	#endif
+ 	}
+ 

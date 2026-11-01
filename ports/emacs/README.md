@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add emacs emacs-dev
-apk add qnx-test-emacs && /usr/local/bin/qnx-port-tests/test_emacs    # its on-target test
+apk add qnx-test-emacs && /usr/local/bin/qnx-port-tests/test_emacs    # its on-target test, from tests-8.0-<arch>
 apk del emacs emacs-dev qnx-test-emacs
 ```
 
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (19 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (25 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild ncurses gnutls libxml2 zlib dbus lcms2 sqlite tree-sitter
 ```
 
-<details><summary>Full build chain (19)</summary>
+<details><summary>Full build chain (25)</summary>
 
-[`brotli`](../brotli/) [`dbus`](../dbus/) [`expat`](../expat/) [`gettext`](../gettext/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`lcms2`](../lcms2/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`sqlite`](../sqlite/) [`tree-sitter`](../tree-sitter/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`tree-sitter`](../tree-sitter/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -219,7 +219,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_emacs`](../../tests/src/) links emacs the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-emacs`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_emacs`](../../tests/src/) links emacs the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-emacs`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

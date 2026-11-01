@@ -1,0 +1,93 @@
+Build without syscall(2) on QNX.
+
+QNX has neither <sys/syscall.h> nor syscall(2): system calls are message
+passes to the kernel and have no numbers. folly/portability/SysSyscall.h
+now skips the header on QNX and its linux_syscall() wrapper fails with
+ENOSYS, as it does on Windows and wasi; every caller already takes another
+path off Linux (they test kIsLinux). What still named Linux syscall
+numbers on every platform is guarded: getOSThreadIDSlow() uses QNX's
+gettid() (<sys/process.h>), and Subprocess's set*id() use local constants
+like the setres*id ones next to them. (SignalHandler.cpp's Linux-only pidfd
+path is in the next patch, with the rest of that file.)
+
+Upstream-Status: Pending
+
+--- a/folly/portability/SysSyscall.h
++++ b/folly/portability/SysSyscall.h
+@@ -22,7 +22,7 @@
+ #include <folly/CPortability.h>
+ #include <folly/Portability.h>
+ 
+-#if !defined(_WIN32)
++#if !defined(_WIN32) && !defined(__QNX__)
+ 
+ #include <unistd.h>
+ 
+@@ -129,7 +129,7 @@
+ FOLLY_ERASE long linux_syscall(
+     [[maybe_unused]] long number, [[maybe_unused]] A... a) {
+ #if defined(_WIN32) || (defined(__EMSCRIPTEN__) && !defined(syscall)) || \
+-    defined(__wasi__) || FOLLY_APPLE_TVOS
++    defined(__wasi__) || FOLLY_APPLE_TVOS || defined(__QNX__)
+   errno = ENOSYS;
+   return -1;
+ #else
+--- a/folly/Subprocess.cpp
++++ b/folly/Subprocess.cpp
+@@ -1211,10 +1211,14 @@
+ #if defined(__linux__)
+   constexpr auto k_sys_setresgid = SYS_setresgid;
+   constexpr auto k_sys_setresuid = SYS_setresuid;
++  constexpr auto k_sys_setgid = SYS_setgid;
++  constexpr auto k_sys_setuid = SYS_setuid;
+ #else
+   // Unused
+   constexpr auto k_sys_setresgid = -1;
+   constexpr auto k_sys_setresuid = -1;
++  constexpr auto k_sys_setgid = -1;
++  constexpr auto k_sys_setuid = -1;
+ #endif
+   if (auto p = idval(args.egid); kIsLinux
+           ? p && 0 != linux_syscall(k_sys_setresgid, -1, *p, -1)
+@@ -1226,7 +1230,7 @@
+     }
+   }
+   if (auto p = idval(args.gid); kIsLinux
+-          ? p && 0 != linux_syscall(SYS_setgid, *p)
++          ? p && 0 != linux_syscall(k_sys_setgid, *p)
+           : p && 0 != ::setgid(*p)) {
+     if (auto out = args.gid->errout) {
+       *out = errno;
+@@ -1244,7 +1248,7 @@
+     }
+   }
+   if (auto p = idval(args.uid); kIsLinux
+-          ? p && 0 != linux_syscall(SYS_setuid, *p)
++          ? p && 0 != linux_syscall(k_sys_setuid, *p)
+           : p && 0 != ::setuid(*p)) {
+     if (auto out = args.uid->errout) {
+       *out = errno;
+--- a/folly/system/ThreadId.cpp
++++ b/folly/system/ThreadId.cpp
+@@ -34,6 +34,10 @@
+ #include <folly/synchronization/RelaxedAtomic.h>
+ #include <folly/system/AtFork.h>
+ 
++#if defined(__QNX__)
++#include <sys/process.h>
++#endif
++
+ namespace folly {
+ 
+ uint64_t getCurrentThreadID() {
+@@ -61,6 +65,10 @@
+   return uint64_t(tid);
+ #elif defined(__EMSCRIPTEN__)
+   return uint64_t(gettid());
++#elif defined(__QNX__)
++  // QNX: thread ids are per process and gettid() (<sys/process.h>) returns
++  // the calling thread's; there is no syscall() to ask with.
++  return uint64_t(gettid());
+ #elif defined(__wasi__)
+   // wasi has no syscalls and no kernel thread ids. This is pthread_self(), the
+   // same value getCurrentThreadID() returns: nonzero and distinct among live

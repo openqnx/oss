@@ -1,0 +1,34 @@
+# libxml2-utils 2.13.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:39Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxml2-utils qnx-test-libxml2-utils qnx-port-tests
+(1/4) Installing libxml2 (2.13.5-r1)
+(2/4) Installing libxml2-utils (2.13.5-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-libxml2-utils (1.0-r0)
+OK: 96 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxml2_utils
+     == libxml2-utils ==
+       info xmllint: using libxml version 21305
+       ok   xmllint uses libxml2 2.13.5
+       ok   malformed document: tag mismatch reported
+       ok   --valid: valid document accepted
+       ok   --valid: arch=mips rejected
+       ok   --schema: 7 valid, 70 above maxInclusive rejected
+       ok   --xpath count(//port) = 2
+       ok   --xpath string(//port[@arch=aarch64le]) = avahi
+       ok   --format indents children
+       ok   --c14n: sorted attributes, explicit end tag
+       ok   xmlcatalog: rewriteURI added and resolved
+       ok   xmllint --nonet reads http://example.org/qnx/flat.xml through the catalog
+     PASS libxml2-utils
+PASS test_libxml2_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

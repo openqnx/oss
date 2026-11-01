@@ -1,0 +1,37 @@
+Link libsocket on QNX, in the module and in setup.py's probes.
+
+QNX keeps getifaddrs(), getnameinfo() and the socket calls in libsocket, not
+in libc. setup.py's probes link test programs without it, so on QNX each
+probe failed and netifaces.c stopped with "You need to add code for your
+platform"; the module itself would also miss its NEEDED libsocket. Link
+libsocket on QNX (taken from sysconfig's platform, since sys.platform is
+the build machine's when cross compiling), and let the probes link the
+same libraries as the module.
+
+Upstream-Status: QNX-specific
+
+--- a/setup.py
++++ b/setup.py
+@@ -39,6 +39,12 @@
+     libraries = []
+     if mos.startswith('sunos'):
+         libraries = ['socket', 'nsl']
++    # QNX: sockets, getifaddrs() and getnameinfo() are in libsocket. When
++    # cross compiling, sys.platform is the build machine's; the target's
++    # platform is sysconfig's (_PYTHON_HOST_PLATFORM).
++    import sysconfig
++    if mos.startswith('qnx') or sysconfig.get_platform().startswith('qnx'):
++        libraries = ['socket']
+     def_macros = []
+ 
+ def_macros.append(("NETIFACES_VERSION", __version__))
+@@ -57,6 +63,9 @@
+ 
+     def test_build(self, contents, link=True, execute=False, libraries=None,
+                    include_dirs=None, library_dirs=None):
++        # The probes link like the module does (libsocket on QNX).
++        if libraries is None:
++            libraries = iface_mod.libraries
+         name = os.path.join(self.build_temp, 'conftest-%s.c' % self.conftestidx)
+         self.conftestidx += 1
+         if os.path.exists(name):

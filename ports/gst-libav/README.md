@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add gst-libav gst-libav-dev
-apk add qnx-test-gst-libav && /usr/local/bin/qnx-port-tests/test_gst_libav    # its on-target test
+apk add qnx-test-gst-libav && /usr/local/bin/qnx-port-tests/test_gst_libav    # its on-target test, from tests-8.0-<arch>
 apk del gst-libav gst-libav-dev qnx-test-gst-libav
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (25 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (32 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild gst-plugins-base ffmpeg
 ```
 
-<details><summary>Full build chain (25)</summary>
+<details><summary>Full build chain (32)</summary>
 
-[`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`ffmpeg`](../ffmpeg/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libogg`](../libogg/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`opus`](../opus/) [`orc`](../orc/) [`pcre2`](../pcre2/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`expat`](../expat/) [`ffmpeg`](../ffmpeg/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libogg`](../libogg/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -143,7 +143,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_gst_libav`](../../tests/src/) links gst-libav the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gst-libav`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_gst_libav`](../../tests/src/) links gst-libav the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gst-libav`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

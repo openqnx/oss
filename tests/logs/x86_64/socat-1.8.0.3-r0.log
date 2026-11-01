@@ -1,0 +1,34 @@
+# socat 1.8.0.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:09:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u socat qnx-test-socat qnx-port-tests
+(1/3) Installing readline (8.2-r0)
+(2/3) Installing socat (1.8.0.3-r0)
+(3/3) Installing qnx-test-socat (1.0-r0)
+OK: 96 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_socat
+     == socat ==
+       ok   socat -V: version 1.8.0.3
+       ok   built with OpenSSL
+       ok   built with readline
+       ok   TCP relay through tr: HELLO FROM QNX
+       ok   1 MiB file through TCP: identical
+       ok   UNIX socket relay through tr (rot13): nopqrs
+       ok   UDP: 3 datagrams received in order
+       ok   OpenSSL: verified TLS connection (pinned certificate), TLS SECRET
+       ok   OpenSSL: a wrong commonname is refused
+       ok   EXEC:cat on a pseudo-terminal
+       ok   procan: reports the process id
+       info filan:   FD  type	device	inode	mode	links	uid	gid	rdev	size	blksize	blocks	atime				mtime				ctime				cloexec	flags	sigown
+        0: chrdev	0,1	2	020666	1	0	0	4,0	0	0	0	Sun Nov  1 11:09:22 2026	Sun Nov  1 11:09:22 2026	Sun Nov  1 11:09:22 2026	0	x008000	-1	poll: IN,OUT,
+     PASS socat
+PASS test_socat
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

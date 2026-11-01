@@ -63,7 +63,8 @@ DEV_PATTERNS = [
 def recipe_meta(name):
     """VERSION / upstream / description out of a recipe, without running it."""
     path = os.path.join(WS, "ports", name, "recipe.sh")
-    meta = {"version": "0", "url": "", "desc": ""}
+    meta = {"version": "0", "url": "", "desc": "", "license": "see upstream",
+            "conflicts": [], "runtime_deps": []}
     if not os.path.exists(path):
         return meta
     text = open(path).read()
@@ -516,7 +517,15 @@ def package_tests(arch, args, owner, outdir):
                 continue
             runtime = [f for f in fs if f and not is_dev(f)]
             out.add(c if runtime and not all(is_dev(f) for f in hit) else c + "-dev")
-        return out
+        # Alternatives that hold the same file (sdl2 and sdl2-compat, which
+        # declare CONFLICTS with each other) cannot both be dependencies:
+        # apk could never install the test. Keep the first by name.
+        keep = set()
+        for p in sorted(out):
+            base = p[:-4] if p.endswith("-dev") else p
+            if not any(base in recipe_meta(k[:-4] if k.endswith("-dev") else k)["conflicts"] for k in keep):
+                keep.add(p)
+        return keep
     # tests/run-level/<group>.extras: "test_x<TAB>path path ..." -- what a
     # run-level test needs installed beyond what its binary links.
     run_level_extras = {}
@@ -555,7 +564,21 @@ def package_tests(arch, args, owner, outdir):
         e = make_apk(pname, ver, arch, meta, root, rels, deps, [], san, args.key, outdir)
         e["fp"] = fp
         out.append((e, line))
-    for n in sorted(os.listdir(os.path.join(stage, tdir))):
+    # Which components each test checks (tests/port-tests.tsv and the run-level
+    # groups). A test's helper programs -- test_bison_calc for test_bison,
+    # test_inetutils_inetd for test_inetutils -- are tests of the same
+    # component named <test>_*; the main test's package depends on theirs, so
+    # installing it brings them. (The shared component keeps test_python3 from
+    # pulling in every test_python3_<module>.)
+    comps_of = {}
+    for tsv in [os.path.join(WS, "tests", "port-tests.tsv")] + glob.glob(os.path.join(WS, "tests", "run-level", "*.tsv")):
+        if os.path.exists(tsv):
+            for l in open(tsv):
+                f = l.rstrip("\n").split("\t")
+                if len(f) >= 2 and not l.startswith("#"):
+                    comps_of.setdefault(f[1], set()).add(f[0])
+    names = sorted(os.listdir(os.path.join(stage, tdir)))
+    for n in names:
         if not n.startswith("test_"):
             continue
         rel = os.path.join(tdir, n)
@@ -565,6 +588,8 @@ def package_tests(arch, args, owner, outdir):
             deps |= {owner[s] for s in info[1] if s in owner}
         for x in TEST_EXTRAS.get(n, []) + run_level_extras.get(n, []):
             deps |= owners_of(x)
+        deps |= {"qnx-test-" + h[len("test_"):].replace("_", "-") for h in names
+                 if h.startswith(n + "_") and comps_of.get(h, set()) & comps_of.get(n, set())}
         pname = "qnx-test-" + n[len("test_"):].replace("_", "-")
         emit(pname, stage, [rel], sorted(deps), "QNX port test %s: checks its component on the target" % n)
     # The runner: a stand-alone copy, so it is packaged from a scratch root.

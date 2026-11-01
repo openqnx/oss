@@ -1,0 +1,21 @@
+colors: QNX's <stdlib.h> defines min() and max() macros
+
+With _QNX_SOURCE, QNX's <stdlib.h> defines min(a,b) and max(a,b) as
+macros, which turned colors.c's static inline min()/max() definitions into
+syntax errors. #undef them first.
+
+Upstream-Status: QNX-specific
+
+--- a/src/modules/colors/colors.c
++++ b/src/modules/colors/colors.c
+@@ -6,6 +6,10 @@
+ #include "logo/logo.h"
+ #include "modules/colors/colors.h"
+ 
++// QNX's <stdlib.h> defines min() and max() as macros
++#undef min
++#undef max
++
+ static inline uint8_t min(uint8_t a, uint8_t b) {
+     return a < b ? a : b;
+ }

@@ -1,0 +1,56 @@
+# cups-filters 1.28.17-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:24:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cups-filters qnx-test-cups-filters qnx-port-tests
+( 1/24) Installing dbus (1.16.0-r3)
+( 2/24) Installing libdaemon (0.14-r0)
+( 3/24) Installing avahi (0.9_rc3-r0)
+( 4/24) Installing libxcrypt (4.4.38-r0)
+( 5/24) Installing cups (2.4.16-r0)
+( 6/24) Installing fontconfig (2.15.0-r0)
+( 7/24) Installing lcms2 (2.16-r0)
+( 8/24) Installing libexif (0.6.24-r0)
+( 9/24) Installing libwebp (1.4.0-r0)
+(10/24) Installing libtiff (4.7.0-r0)
+(11/24) Installing libxau (1.0.11-r0)
+(12/24) Installing libxdmcp (1.1.5-r0)
+(13/24) Installing libxcb (1.17.0-r0)
+(14/24) Installing libx11 (1.8.10-r0)
+(15/24) Installing libxext (1.3.6-r0)
+(16/24) Installing libxrender (0.9.11-r0)
+(17/24) Installing cairo (1.18.2-r0)
+(18/24) Installing openjpeg (2.5.3-r0)
+(19/24) Installing poppler (25.12.0-r0)
+(20/24) Installing qpdf (11.10.1-r0)
+(21/24) Installing cups-filters (1.28.17-r0)
+(22/24) Installing qnx-port-tests (1.0-r2)
+(23/24) Installing font-dejavu (2.37-r0)
+(24/24) Installing qnx-test-cups-filters (1.0-r0)
+OK: 137 MiB in 53 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cups_filters
+     == cups-filters ==
+       ok   2-page input PDF (qpdf rebuilt its xref)
+       ok   pdftopdf: 2 pages through
+       ok   pdftopdf page-ranges=2: only "Page two"
+       ok   pdftopdf number-up=2: both pages on one sheet
+       ok   pdftops: PostScript, %%Pages: 2
+       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /LFTRY)
+       ok   imagetopdf: PPM image to a 1-page PDF
+       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.cLcwis/bus
+       ok   driverless: PPD generated from the IPP printer's attributes
+       ok   PPD: the printer's make, QNXTest
+       ok   PPD: cupsFilter2 image/pwg-raster (the printer's only format)
+       ok   PPD: page sizes
+       ok   pdftoraster: CUPS raster (3SaR)
+       ok   rastertopdf: the raster back to a 2-page PDF
+     PASS cups-filters
+PASS test_cups_filters
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

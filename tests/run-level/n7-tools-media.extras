@@ -1,0 +1,8 @@
+test_e2fsprogs	sbin/mke2fs sbin/dumpe2fs sbin/debugfs sbin/e2fsck sbin/tune2fs sbin/e2label sbin/resize2fs sbin/blkid
+test_socat	bin/socat bin/socat1 bin/procan bin/filan
+test_sshpass	bin/sshpass
+test_qpdf	bin/qpdf bin/zlib-flate
+test_cups_filters	lib/cups/filter/pdftopdf lib/cups/filter/pdftops lib/cups/filter/texttopdf lib/cups/filter/imagetopdf lib/cups/filter/pdftoraster lib/cups/filter/rastertopdf bin/driverless share/cups/charsets/pdf.utf-8.simple bin/qpdf bin/pdftops bin/pdftotext bin/ippeveprinter bin/ipptool share/cups/ipptool/get-printer-attributes.test share/fonts/font-dejavu/DejaVuSansMono.ttf etc/fonts/fonts.conf bin/dbus-daemon share/dbus-1/session.conf
+test_ippusbxd	sbin/ippusbxd bin/socat
+test_gpgme	bin/gpg bin/gpg-agent bin/gpgconf bin/gpgsm
+test_libhevc	bin/hevcdec

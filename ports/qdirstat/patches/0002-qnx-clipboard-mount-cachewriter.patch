@@ -1,0 +1,107 @@
+No clipboard on QNX Qt, mount(1) lookup, cache writer without URI::Escape
+
+Three changes for QNX on top of qnx-ports' (0001):
+
+ - MainWindow: the ported Qt 6 is built without the clipboard feature on
+   QNX (QT_FEATURE_clipboard -1 in qtgui-config.h), so QClipboard is an
+   incomplete type and "Copy path to clipboard" did not compile. Without a
+   clipboard, show the path in the status bar instead.
+ - MountPoints: qnx-ports runs /usr/bin/mount, which QNX images do not
+   necessarily have (it is in /bin or /proc/boot); look in the usual
+   places, and fall back to QStorageInfo when no mount command is found
+   rather than leaving the mount point list empty.
+ - qdirstat-cache-writer: it needs URI::Escape, which is not part of core
+   Perl (this tree's perl does not have it). Use it when installed, else an
+   equivalent of uri_escape() for the explicit character class the script
+   always passes.
+
+Upstream-Status: QNX-specific
+
+--- a/scripts/qdirstat-cache-writer
++++ b/scripts/qdirstat-cache-writer
+@@ -55,7 +55,23 @@
+ use Fcntl ':mode';
+ use Encode;
+ use Cwd;
+-use URI::Escape qw(uri_escape);
++# URI::Escape is not part of core Perl: use it if it is installed, else the
++# equivalent for the explicit character class this script always passes.
++BEGIN
++{
++    unless ( eval { require URI::Escape; URI::Escape->import( 'uri_escape' ); 1 } )
++    {
++	eval q{
++	    sub uri_escape
++	    {
++		my ( $str, $unsafe ) = @_;
++		return $str unless defined $str;
++		$str =~ s/([$unsafe])/sprintf( "%%%02X", ord( $1 ) )/ge;
++		return $str;
++	    }
++	};
++    }
++}
+ use vars qw( $opt_l $opt_1 $opt_2 $opt_m $opt_v $opt_d $opt_h $opt_i);
+ 
+ 
+--- a/src/MainWindow.cpp
++++ b/src/MainWindow.cpp
+@@ -952,10 +952,15 @@
+ 
+     if ( currentItem )
+     {
+-	QClipboard * clipboard = QApplication::clipboard();
+ 	QString path = currentItem->path();
++#if QT_CONFIG( clipboard )
++	QClipboard * clipboard = QApplication::clipboard();
+ 	clipboard->setText( path );
+ 	showProgress( tr( "Copied to system clipboard: %1" ).arg( path ) );
++#else
++	// Qt built without a clipboard (QNX): show the path instead
++	showProgress( path );
++#endif
+     }
+     else
+     {
+--- a/src/MountPoints.cpp
++++ b/src/MountPoints.cpp
+@@ -366,7 +366,8 @@
+     if ( ! _isPopulated )
+     {
+ #ifdef Q_OS_QNX
+-        readMountCommand();
++        if ( ! readMountCommand() )
++            readStorageInfo();
+ #else
+         readStorageInfo();
+ #endif
+@@ -531,8 +532,28 @@
+     //   /dev/hd0t179 on /data type qnx6
+     //   /dev/hd0t12 on /boot type dos (fat16)
+ 
++    // Where mount(1) is depends on the image: try the usual places.
++    QString mountCmd;
++
++    foreach ( const QString & candidate,
++              QStringList() << "/bin/mount" << "/usr/bin/mount"
++                            << "/sbin/mount" << "/proc/boot/mount" )
++    {
++        if ( SysUtil::haveCommand( candidate ) )
++        {
++            mountCmd = candidate;
++            break;
++        }
++    }
++
++    if ( mountCmd.isEmpty() )
++    {
++        logWarning() << "No mount command found" << endl;
++        return false;
++    }
++
+     int exitCode = -1;
+-    QString output = SysUtil::runCommand( "/usr/bin/mount", QStringList(), &exitCode );
++    QString output = SysUtil::runCommand( mountCmd, QStringList(), &exitCode );
+ 
+     if ( exitCode != 0 || output.isEmpty() )
+     {

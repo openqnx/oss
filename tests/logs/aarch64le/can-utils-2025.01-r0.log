@@ -1,0 +1,29 @@
+# can-utils 2025.01-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:50:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u can-utils qnx-test-can-utils qnx-port-tests
+(1/2) Installing can-utils (2025.01-r0)
+(2/2) Installing qnx-test-can-utils (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_can_utils
+     == can-utils ==
+       ok   log2long: 5 frames in long form (standard, extended, remote, FD, error)
+       ok   log2asc: 5 frames in Vector ASC
+       ok   log2asc: ASC header (hex, absolute timestamps)
+       ok   asc2log: the 5 frames back
+       ok   asc2log: first to last frame 40 ms apart
+       ok   bit timing: MCP2515, 8 MHz, 500 kbit/s -> CNF 0x00 0xb5 0x01, sample point 87.5%
+       ok   bit timing: MCP2518FD, 80 MHz, 1 Mbit/s + 5 Mbit/s data -> 0x003a1309 / 0x000a0301
+       ok   bit timing: 37 known controllers
+       ok   bit timing: unknown controller refused
+     PASS can-utils
+PASS test_can_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

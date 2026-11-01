@@ -1,0 +1,58 @@
+From f5baad1c19ad270c885b54b9618b6571477eec83 Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Tue, 10 Mar 2026 00:58:37 +0000
+Subject: [PATCH] qnx support
+
+Imported from qnx-ports/cups (branch qnx-2.4.x, 7523763f..f5baad1c); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ config-scripts/cups-sharedlibs.m4 | 2 +-
+ cups/http-addrlist.c              | 3 +++
+ scheduler/auth.c                  | 3 +++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/config-scripts/cups-sharedlibs.m4 b/config-scripts/cups-sharedlibs.m4
+index d4fb939b..0e5820be 100644
+--- a/config-scripts/cups-sharedlibs.m4
++++ b/config-scripts/cups-sharedlibs.m4
+@@ -84,7 +84,7 @@ AC_SUBST([LIBCUPSSTATIC])
+ AS_IF([test x$enable_shared = xno], [
+     LINKCUPS="../cups/lib$cupsbase.a \$(LIBS)"
+     EXTLINKCUPS="-lcups \$LIBS"
+-], [test "$host_os_name" = aix], [
++], [test "$host_os_name" = aix || test "$host_os_name" = nto-qnx], [
+     LINKCUPS="-L../cups -l${cupsbase} \$(LIBS)"
+     EXTLINKCUPS="-lcups \$LIBS"
+ ], [
+diff --git a/cups/http-addrlist.c b/cups/http-addrlist.c
+index 283d5c4b..d8fcfefb 100644
+--- a/cups/http-addrlist.c
++++ b/cups/http-addrlist.c
+@@ -25,6 +25,9 @@
+ #  include <fcntl.h>
+ #endif /* _WIN32 */
+ 
++#ifdef __QNX__
++#define s6_addr32 __u6_addr.__u6_addr32
++#endif
+ 
+ /*
+  * 'httpAddrConnect()' - Connect to any of the addresses in the list.
+diff --git a/scheduler/auth.c b/scheduler/auth.c
+index bd0d28a0..1f3b2b7a 100644
+--- a/scheduler/auth.c
++++ b/scheduler/auth.c
+@@ -60,6 +60,9 @@ typedef struct sockpeercred cupsd_ucred_t;
+ #  include <snapd-glib/snapd-glib.h>
+ #endif /* HAVE_LIBSNAPDGLIB */
+ 
++#ifdef __QNX__
++#define s6_addr32 __u6_addr.__u6_addr32
++#endif
+ 
+ /*
+  * Local functions...
+-- 
+2.43.0
+

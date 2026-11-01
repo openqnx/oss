@@ -1,0 +1,269 @@
+QNX changes from qnx-ports: directory entry names, mount points, sizes
+
+Imported from github.com/qnx-ports/qdirstat, branch john_qnx_support
+(commits 56294b5, b5491de, 8d261bb, 31e51ba; on top of master 952addb,
+applied here to the 2.0 release):
+
+ - DirReadJob: QNX declares struct dirent's d_name as char[1] (the name is
+   stored past the end); Qt 6's QString::fromUtf8() takes a char array by
+   reference with its compile-time size, so every name was read as its
+   first character. Pass a const char * instead.
+ - MountPoints: QNX has no /proc/mounts, and QStorageInfo::mountedVolumes()
+   returns an empty device for most volumes there: parse the output of
+   mount(1) instead. QStorageInfo's byte counts are wrong on QNX: take the
+   sizes from statvfs().
+ - Cleanup: on QNX, %terminal is xfce4-terminal.
+
+The rest of that branch is left out: a QRegExp compatibility shim for Qt
+builds without Qt5Compat (this tree's Qt 6 has Qt5Compat), a qmake mkspec
+for native QNX builds, and an apk package-manager backend (a new feature).
+
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+diff -ruN a/src/Cleanup.cpp b/src/Cleanup.cpp
+--- a/src/Cleanup.cpp
++++ b/src/Cleanup.cpp
+@@ -483,7 +483,10 @@
+ 
+     if ( apps.isEmpty() )
+     {
+-#ifdef Q_OS_MAC
++#ifdef Q_OS_QNX
++	apps[ "%terminal"    ] = "xfce4-terminal";
++	apps[ "%filemanager" ] = "xdg-open";
++#elif defined( Q_OS_MAC )
+ 	apps[ "%terminal"    ] = "open -a Terminal.app .";
+ 	apps[ "%filemanager" ] = "open";
+ #else
+diff -ruN a/src/DirReadJob.cpp b/src/DirReadJob.cpp
+--- a/src/DirReadJob.cpp
++++ b/src/DirReadJob.cpp
+@@ -256,7 +256,11 @@
+ 
+ 	while ( ( entry = readdir( diskDir ) ) )
+ 	{
+-	    QString entryName = QString::fromUtf8( entry->d_name );
++	    // Cast to const char* to avoid Qt 6's QByteArrayView template
++	    // constructor capturing the compile-time array size of d_name[1]
++	    // on QNX, which would cause only 1 character to be read.
++	    const char * rawName = entry->d_name;
++	    QString entryName = QString::fromUtf8( rawName );
+ 
+ 	    if ( entryName != "."  &&
+ 		 entryName != ".."   )
+diff -ruN a/src/MountPoints.cpp b/src/MountPoints.cpp
+--- a/src/MountPoints.cpp
++++ b/src/MountPoints.cpp
+@@ -16,8 +16,16 @@
+ #include "Logger.h"
+ #include "Exception.h"
+ 
++#ifdef Q_OS_QNX
++#  include <sys/statvfs.h>
++#endif
++
+ #define LSBLK_TIMEOUT_SEC       10
+-#define USE_PROC_MOUNTS         1
++#ifdef Q_OS_QNX
++#  define USE_PROC_MOUNTS       0
++#else
++#  define USE_PROC_MOUNTS       1
++#endif
+ 
+ using namespace QDirStat;
+ 
+@@ -130,35 +138,85 @@
+ }
+ 
+ 
++#ifdef Q_OS_QNX
++
++// QStorageInfo::bytesTotal/Free/Available return wrong values on QNX.
++// Use statvfs() directly instead.
++
++static bool qnxStatvfs( const QString & path, struct statvfs & out )
++{
++    return ::statvfs( path.toUtf8().constData(), &out ) == 0;
++}
++
+ FileSize MountPoint::totalSize()
+ {
++    struct statvfs s;
++    if ( qnxStatvfs( _path, s ) )
++        return (FileSize)s.f_blocks * s.f_frsize;
+     return storageInfo()->bytesTotal();
+ }
+ 
+-
+ FileSize MountPoint::usedSize()
+ {
++    struct statvfs s;
++    if ( qnxStatvfs( _path, s ) )
++        return (FileSize)( s.f_blocks - s.f_bfree ) * s.f_frsize;
+     return storageInfo()->bytesTotal() - storageInfo()->bytesFree();
+ }
+ 
+-
+ FileSize MountPoint::reservedSize()
+ {
++    struct statvfs s;
++    if ( qnxStatvfs( _path, s ) )
++        return (FileSize)( s.f_bfree - s.f_bavail ) * s.f_frsize;
+     return storageInfo()->bytesFree() - storageInfo()->bytesAvailable();
+ }
+ 
+-
+ FileSize MountPoint::freeSizeForUser()
+ {
++    struct statvfs s;
++    if ( qnxStatvfs( _path, s ) )
++        return (FileSize)s.f_bavail * s.f_frsize;
+     return storageInfo()->bytesAvailable();
+ }
+ 
++FileSize MountPoint::freeSizeForRoot()
++{
++    struct statvfs s;
++    if ( qnxStatvfs( _path, s ) )
++        return (FileSize)s.f_bfree * s.f_frsize;
++    return storageInfo()->bytesFree();
++}
++
++#else
++
++FileSize MountPoint::totalSize()
++{
++    return storageInfo()->bytesTotal();
++}
++
++FileSize MountPoint::usedSize()
++{
++    return storageInfo()->bytesTotal() - storageInfo()->bytesFree();
++}
++
++FileSize MountPoint::reservedSize()
++{
++    return storageInfo()->bytesFree() - storageInfo()->bytesAvailable();
++}
++
++FileSize MountPoint::freeSizeForUser()
++{
++    return storageInfo()->bytesAvailable();
++}
+ 
+ FileSize MountPoint::freeSizeForRoot()
+ {
+     return storageInfo()->bytesFree();
+ }
+ 
++#endif
++
+ 
+ 
+ 
+@@ -306,7 +364,13 @@
+ #endif
+ 
+     if ( ! _isPopulated )
++    {
++#ifdef Q_OS_QNX
++        readMountCommand();
++#else
+         readStorageInfo();
++#endif
++    }
+ 
+     _isPopulated = true; // don't try more than once
+     // dumpNormalMountPoints();
+@@ -459,6 +523,71 @@
+ }
+ 
+ 
++#ifdef Q_OS_QNX
++bool MountPoints::readMountCommand()
++{
++    // QNX 'mount' output format:
++    //   ifs on / type ifs
++    //   /dev/hd0t179 on /data type qnx6
++    //   /dev/hd0t12 on /boot type dos (fat16)
++
++    int exitCode = -1;
++    QString output = SysUtil::runCommand( "/usr/bin/mount", QStringList(), &exitCode );
++
++    if ( exitCode != 0 || output.isEmpty() )
++    {
++        logWarning() << "mount command failed or returned no output" << endl;
++        return false;
++    }
++
++    int count = 0;
++
++    foreach ( const QString & line, output.split( "\n" ) )
++    {
++        if ( line.isEmpty() )
++            continue;
++
++        // fields: device "on" path "type" fstype [options...]
++        QStringList fields = line.split( QRegularExpression( "\\s+" ), Qt::SkipEmptyParts );
++
++        if ( fields.size() < 4 )
++        {
++            logWarning() << "Skipping short mount line: " << line << endl;
++            continue;
++        }
++
++        QString device = fields[0];
++        // fields[1] == "on"
++        QString path   = fields[2];
++        // fields[3] == "type"
++        QString fsType = fields.size() >= 5 ? fields[4] : QString();
++
++        // Skip /dev/shmem and other non-real mounts
++        if ( path.startsWith( "/dev/" ) )
++            continue;
++
++        MountPoint * mountPoint = new MountPoint( device, path, fsType, QString() );
++        CHECK_NEW( mountPoint );
++
++        postProcess( mountPoint );
++        add( mountPoint );
++
++        if ( ! mountPoint->isDuplicate() )
++            ++count;
++    }
++
++    if ( count < 1 )
++    {
++        logWarning() << "No usable mount points from 'mount' command" << endl;
++        return false;
++    }
++
++    _isPopulated = true;
++    return true;
++}
++#endif
++
++
+ bool MountPoints::checkForBtrfs()
+ {
+     ensurePopulated();
+diff -ruN a/src/MountPoints.h b/src/MountPoints.h
+--- a/src/MountPoints.h
++++ b/src/MountPoints.h
+@@ -296,6 +296,16 @@
+          **/
+         bool readStorageInfo();
+ 
++#ifdef Q_OS_QNX
++        /**
++         * QNX-specific: parse the output of the 'mount' command to populate
++         * mount points.  QStorageInfo::mountedVolumes() is unreliable on QNX
++         * (returns an empty device string for most volumes).  Return 'true' if
++         * any mount point was found.
++         **/
++        bool readMountCommand();
++#endif
++
+         /**
+          * Post-process a mount point and add it to the internal list and map.
+          **/

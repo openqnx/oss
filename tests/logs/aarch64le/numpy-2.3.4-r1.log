@@ -1,27 +1,26 @@
 # numpy 2.3.4-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T17:02:10Z   packages from: apk:local-dists
+# date: 2026-11-01T13:35:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u numpy qnx-test-numpy qnx-port-tests
-( 1/11) Installing openblas (0.3.28-r0)
-( 2/11) Installing bzip2 (1.0.8-r0)
-( 3/11) Installing expat (2.6.4-r0)
-( 4/11) Installing gdbm (1.24-r0)
-( 5/11) Installing readline (8.2-r0)
-( 6/11) Installing sqlite (3.47.2-r0)
-( 7/11) Installing xz (5.6.3-r0)
-( 8/11) Installing python3 (3.14.0-r2)
-( 9/11) Installing numpy (2.3.4-r1)
-(10/11) Installing qnx-port-tests (1.0-r2)
-(11/11) Installing qnx-test-numpy (1.0-r0)
-OK: 193 MiB in 39 packages
+( 1/10) Installing openblas (0.3.28-r0)
+( 2/10) Installing bzip2 (1.0.8-r0)
+( 3/10) Installing expat (2.6.4-r0)
+( 4/10) Installing gdbm (1.24-r0)
+( 5/10) Installing readline (8.2-r0)
+( 6/10) Installing sqlite (3.47.2-r0)
+( 7/10) Installing xz (5.6.3-r0)
+( 8/10) Installing python3 (3.14.0-r2)
+( 9/10) Installing numpy (2.3.4-r1)
+(10/10) Installing qnx-test-numpy (1.0-r0)
+OK: 262 MiB in 49 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_numpy
      == numpy ==
-     /data/var/tmp/qnxport-numpy.5Em78A/t.py:45: RuntimeWarning: overflow encountered in cast
+     /data/var/tmp/qnxport-numpy.9Sw9q9/t.py:45: RuntimeWarning: overflow encountered in cast
        check(np.float16(65504) == 65504 and np.isinf(np.float16(65520)), "float16: max 65504, 65520 overflows")
        info numpy 2.3.4, python 3.14.0
        ok   solve [[3,1],[1,2]] x = [9,8] -> [2,3]

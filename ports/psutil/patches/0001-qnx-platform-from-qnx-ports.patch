@@ -1,0 +1,1247 @@
+QNX platform module for psutil, from qnx-ports
+
+Imported from github.com/qnx-ports/psutil, branch qnx-7.2.2 (commit
+00b09b8, release-7.2.2...qnx-7.2.2), restricted to the QNX changes: the
+_psutil_qnx extension (psutil/_psutil_qnx.c, psutil/arch/qnx/: CPU times
+and frequency from the system page, processes through /proc/<pid>/as
+devctls, network interfaces and their stats), the Python side
+(psutil/_psqnx.py, QNX in _common/__init__/_ntuples) and the QNX branches
+in the shared POSIX code and setup.py. The upstream-formatting changes the
+branch also carries for other platforms are left out.
+
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+diff --git a/psutil/__init__.py b/psutil/__init__.py
+index f10598e..1c3fe32 100644
+--- a/psutil/__init__.py
++++ b/psutil/__init__.py
+@@ -63,6 +63,7 @@ from ._common import OSX  # deprecated alias
+ from ._common import POSIX
+ from ._common import POWER_TIME_UNKNOWN
+ from ._common import POWER_TIME_UNLIMITED
++from ._common import QNX
+ from ._common import STATUS_DEAD
+ from ._common import STATUS_DISK_SLEEP
+ from ._common import STATUS_IDLE
+@@ -133,6 +134,11 @@ elif AIX:
+     # via sys.modules.
+     PROCFS_PATH = "/proc"
+ 
++elif QNX:
++    from . import _psqnx as _psplatform
++
++    PROCFS_PATH = "/proc"
++
+ else:  # pragma: no cover
+     msg = f"platform {sys.platform} is not supported"
+     raise NotImplementedError(msg)
+diff --git a/psutil/_common.py b/psutil/_common.py
+index 33b6282..e4f469e 100644
+--- a/psutil/_common.py
++++ b/psutil/_common.py
+@@ -37,7 +37,7 @@ _DEFAULT = object()
+ # fmt: off
+ __all__ = [
+     # OS constants
+-    'FREEBSD', 'BSD', 'LINUX', 'NETBSD', 'OPENBSD', 'MACOS', 'OSX', 'POSIX',
++    'FREEBSD', 'BSD', 'LINUX', 'NETBSD', 'OPENBSD', 'MACOS', 'OSX', 'POSIX', 'QNX'
+     'SUNOS', 'WINDOWS',
+     # connection constants
+     'CONN_CLOSE', 'CONN_CLOSE_WAIT', 'CONN_CLOSING', 'CONN_ESTABLISHED',
+@@ -80,6 +80,7 @@ NETBSD = sys.platform.startswith("netbsd")
+ BSD = FREEBSD or OPENBSD or NETBSD
+ SUNOS = sys.platform.startswith(("sunos", "solaris"))
+ AIX = sys.platform.startswith("aix")
++QNX = sys.platform.startswith("qnx")
+ 
+ 
+ # ===================================================================
+@@ -102,6 +103,8 @@ STATUS_LOCKED = "locked"  # FreeBSD
+ STATUS_WAITING = "waiting"  # FreeBSD
+ STATUS_SUSPENDED = "suspended"  # NetBSD
+ STATUS_PARKED = "parked"  # Linux
++STATUS_BLOCKED = "blocked"  # QNX
++STATUS_READY = "ready"  # QNX
+ 
+ # Process.net_connections() and psutil.net_connections()
+ CONN_ESTABLISHED = "ESTABLISHED"
+diff --git a/psutil/_ntuples.py b/psutil/_ntuples.py
+index f0ab039..4d1acb6 100644
+--- a/psutil/_ntuples.py
++++ b/psutil/_ntuples.py
+@@ -9,6 +9,7 @@ from ._common import BSD
+ from ._common import FREEBSD
+ from ._common import LINUX
+ from ._common import MACOS
++from ._common import QNX
+ from ._common import SUNOS
+ from ._common import WINDOWS
+ 
+@@ -427,3 +428,29 @@ elif AIX:
+ 
+     # psutil.virtual_memory()
+     svmem = nt("svmem", ("total", "available", "percent", "used", "free"))
++
++elif QNX:
++
++    # psutil.Process.memory_info()
++    pmem = nt("pmem", ("rss", "vms"))
++
++    # psutil.Process.memory_full_info()
++    pfullmem = nt(
++        "pfullmem",
++        pmem._fields
++        + (
++            "physical",
++            "shared",
++            "private",
++            "region",
++            "map",
++            "anon_rsv",
++            "rlimit_data",
++        ),
++    )
++
++    # psutil.Process.threads()
++    pthread = nt("pthread", ("id", "system_and_user_time"))
++
++    # psutil.virtual_memory()
++    svmem = nt("svmem", ("total", "available", "percent", "free"))
+diff --git a/psutil/_psqnx.py b/psutil/_psqnx.py
+new file mode 100644
+index 0000000..c2060a8
+--- /dev/null
++++ b/psutil/_psqnx.py
+@@ -0,0 +1,476 @@
++# Copyright (c) 2026, Giampaolo Rodola'. All rights reserved.
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++"""QNX platform implementation."""
++
++import errno
++import functools
++import os
++
++from . import _common
++from . import _ntuples as ntp
++from . import _psposix
++from . import _psutil_qnx as cext
++from ._common import ENCODING
++from ._common import AccessDenied
++from ._common import NoSuchProcess
++from ._common import ZombieProcess
++from ._common import get_procfs_path
++from ._common import memoize_when_activated
++
++__extra__all__ = [
++    "PROCFS_PATH",
++]
++
++# =====================================================================
++# --- globals
++# =====================================================================
++
++PAGESIZE = cext.getpagesize()
++CLOCK_TICKS = os.sysconf("SC_CLK_TCK")
++AF_LINK = cext.AF_LINK
++
++TCP_STATUSES = {
++    cext.TCPS_ESTABLISHED: _common.CONN_ESTABLISHED,
++    cext.TCPS_SYN_SENT: _common.CONN_SYN_SENT,
++    cext.TCPS_SYN_RECEIVED: _common.CONN_SYN_RECV,
++    cext.TCPS_FIN_WAIT_1: _common.CONN_FIN_WAIT1,
++    cext.TCPS_FIN_WAIT_2: _common.CONN_FIN_WAIT2,
++    cext.TCPS_TIME_WAIT: _common.CONN_TIME_WAIT,
++    cext.TCPS_CLOSED: _common.CONN_CLOSE,
++    cext.TCPS_CLOSE_WAIT: _common.CONN_CLOSE_WAIT,
++    cext.TCPS_LAST_ACK: _common.CONN_LAST_ACK,
++    cext.TCPS_LISTEN: _common.CONN_LISTEN,
++    cext.TCPS_CLOSING: _common.CONN_CLOSING,
++    cext.PSUTIL_CONN_NONE: _common.CONN_NONE,
++}
++
++PROC_STATUSES = {
++    0: "dead",
++    1: "running",
++    2: "ready",
++    3: "stopped",
++    4: "send",
++    5: "receive",
++    6: "reply",
++    7: "mq_send",
++    8: "mq_receive",
++    9: "waitpage",
++    10: "sigsuspend",
++    11: "sigwaitinfo",
++    12: "nanosleep",
++    13: "mutex",
++    14: "condvar",
++    15: "join",
++    16: "intr",
++    17: "sem",
++    18: "waitctx",
++    19: "rwlock_read",
++    20: "rwlock_write",
++    21: "barrier",
++    22: "pipe",
++}
++
++pidtaskinfo_map = dict(
++    cpuutime=0,
++    cpustime=1,
++    rss=2,
++    vms=3,
++    pfaults=4,
++    pageins=5,
++    numthreads=6,
++    volctxsw=7,
++)
++
++procbasicinfo_map = dict(
++    parent_pid=0,
++    start_time=1,
++    utime=2,
++    stime=3,
++    num_threads=4,
++    uid=5,
++    gid=6,
++    euid=7,
++    egid=8,
++    suid=9,
++    sgid=10,
++    status=11,
++)
++
++
++# =====================================================================
++# --- memory
++# =====================================================================
++
++
++def virtual_memory():
++    """System virtual memory as a namedtuple."""
++    stats = {}
++    with open(f"{get_procfs_path()}/vm/stats") as f:
++        for f_line in f:
++            line = f_line.strip()
++            if len(line) == 0:
++                continue
++            s1 = line.split("=")
++            if len(s1) < 2:
++                continue
++            key = s1[0]
++            s2 = s1[1].split(" ")
++            if s2[0].startswith("0x"):
++                val = int(s2[0], 16) * PAGESIZE
++            else:
++                val = int(s2[0])
++            stats[key] = val
++
++    total = stats.get("page_count", 0)
++    available = stats.get("vmem_avail", 0)
++
++    percent = (total - available) / total * 100 if total > 0 else 0
++    free = stats.get("pages_free", 0)
++
++    # Parse the stats
++    return ntp.svmem(total, available, percent, free)
++
++
++def swap_memory():
++    """Swap system memory as a (total, used, free, sin, sout) tuple."""
++    # There is no swap on QNX
++    return ntp.sswap(0, 0, 0, 0, 0, 0)
++
++
++# =====================================================================
++# --- CPU
++# =====================================================================
++
++
++def cpu_times():
++    """Return system CPU times as a namedtuple."""
++    # Not supported
++
++
++def per_cpu_times():
++    """Return system CPU times as a named tuple."""
++    # Not supported
++
++
++def cpu_count_logical():
++    """Return the number of logical CPUs in the system."""
++    return cext.cpu_count_logical()
++
++
++def cpu_count_cores():
++    """Return the number of CPU cores in the system."""
++    # Not supported
++    # QNX isn't aware of hyperthreaded cores
++
++
++def cpu_stats():
++    """Returns information about the CPU operations"""
++    # Not supported
++
++
++def cpu_freq():
++    return [ntp.scpufreq(x, y, z) for x, y, z in cext.cpu_freq()]
++
++
++# =====================================================================
++# --- disks
++# =====================================================================
++
++
++# disk_usage = _psposix.disk_usage
++# disk_io_counters = cext.disk_io_counters
++
++
++def disk_partitions(all=False):
++    """Return mounted disk partitions as a list of namedtuples."""
++    # Not supported
++
++
++# =====================================================================
++# --- sensors
++# =====================================================================
++
++
++def sensors_battery():
++    """Return battery information."""
++    # Not supported
++
++
++# =====================================================================
++# --- network
++# =====================================================================
++
++
++net_io_counters = cext.net_io_counters
++net_if_addrs = cext.net_if_addrs
++
++
++def net_if_stats():
++    """Get NIC stats (isup, duplex, speed, mtu)."""
++    names = net_io_counters().keys()
++    ret = {}
++    for name in names:
++        try:
++            mtu = cext.net_if_mtu(name)
++            flags = cext.net_if_flags(name)
++            duplex, speed = cext.net_if_duplex_speed(name)
++        except OSError as err:
++            # https://github.com/giampaolo/psutil/issues/1279
++            if err.errno != errno.ENODEV:
++                raise
++        else:
++            if hasattr(_common, 'NicDuplex'):
++                duplex = _common.NicDuplex(duplex)
++            output_flags = ','.join(flags)
++            isup = 'running' in flags
++            ret[name] = ntp.snicstats(isup, duplex, speed, mtu, output_flags)
++    return ret
++
++
++def net_connections(kind='inet'):
++    """System-wide network connections."""
++    # Not supported
++    # Technically possible to do, but requires headers unavailable in this
++    # current version
++    return []
++
++
++# =====================================================================
++# --- other system functions
++# =====================================================================
++
++
++def boot_time():
++    return cext.boot_time()
++
++
++def users():
++    """Return currently connected users as a list of namedtuples."""
++    # Not supported
++    return []
++
++
++# =====================================================================
++# --- processes
++# =====================================================================
++
++
++def pids():
++    """Returns a list of PIDs currently running on the system."""
++    path = get_procfs_path().encode(ENCODING)
++    return [int(x) for x in os.listdir(path) if x.isdigit()]
++
++
++pid_exists = _psposix.pid_exists
++
++
++def wrap_exceptions(fun):
++    """Decorator which translates bare OSError exceptions into
++    NoSuchProcess and AccessDenied.
++    """
++
++    @functools.wraps(fun)
++    def wrapper(self, *args, **kwargs):
++        pid, ppid, name = self.pid, self._ppid, self._name
++        try:
++            return fun(self, *args, **kwargs)
++        except ProcessLookupError as err:
++            if cext.proc_is_zombie(pid):
++                raise ZombieProcess(pid, name, ppid) from err
++            raise NoSuchProcess(pid, name) from err
++        except PermissionError as err:
++            raise AccessDenied(pid, name) from err
++        except cext.ZombieProcessError as err:
++            raise ZombieProcess(pid, name, ppid) from err
++
++    return wrapper
++
++
++class Process:
++    """Wrapper class around underlying C implementation."""
++
++    __slots__ = ["_cache", "_name", "_ppid", "_procfs_path", "pid"]
++
++    def __init__(self, pid):
++        self.pid = pid
++        self._name = None
++        self._ppid = None
++        self._procfs_path = get_procfs_path()
++
++    @wrap_exceptions
++    @memoize_when_activated
++    def _proc_basic_info(self):
++        return cext.proc_basic_info(self.pid)
++
++    @wrap_exceptions
++    @memoize_when_activated
++    def _proc_vmstats(self):
++        stats = {}
++        f = self._readfile(f"{self._procfs_path}/{self.pid}/vmstat")
++        for line in f.split("\n"):
++            if len(line) == 0:
++                continue
++            s1 = line.split("=")
++            if len(s1) < 2:
++                continue
++            s2 = s1[0].split(".")
++            if len(s1) < 2:
++                continue
++            key = s2[1]
++            s3 = s1[1].split(" ")
++            if s3[0].startswith("0x"):
++                val = int(s3[0], 16) * PAGESIZE
++            else:
++                val = int(s3[0])
++            stats[key] = val
++        return stats
++
++    def _readfile(self, path):
++        with open(path) as f:
++            return f.read().strip('\x00')
++
++    def oneshot_enter(self):
++        self._proc_basic_info.cache_activate(self)
++        self._proc_vmstats.cache_activate(self)
++
++    def oneshot_exit(self):
++        self._proc_basic_info.cache_deactivate(self)
++        self._proc_vmstats.cache_deactivate(self)
++
++    @wrap_exceptions
++    def name(self):
++        # POSSIBLE WITH DCMD_PROC_MAPDEBUG_BASE
++        return "UNIMPLEMENTED"
++
++    @wrap_exceptions
++    def exe(self):
++        return self._readfile(f"{self._procfs_path}/{self.pid}/exefile")
++
++    @wrap_exceptions
++    def cmdline(self):
++        return self._readfile(f"{self._procfs_path}/{self.pid}/cmdline")
++
++    @wrap_exceptions
++    def environ(self):
++        # Not supported
++        # Theres no way QNX let's us read someone elses ENV variables without
++        # root
++        return {}
++
++    @wrap_exceptions
++    def ppid(self):
++        self._ppid = self._proc_basic_info()[procbasicinfo_map['parent']]
++        return self._ppid
++
++    @wrap_exceptions
++    def cwd(self):
++        # Not supported
++        # We don't have this info
++        return ""
++
++    @wrap_exceptions
++    def uids(self):
++        rawtuple = self._proc_basic_info()
++        return ntp.puids(
++            rawtuple[procbasicinfo_map['uid']],
++            rawtuple[procbasicinfo_map['euid']],
++            rawtuple[procbasicinfo_map['suid']],
++        )
++
++    @wrap_exceptions
++    def gids(self):
++        rawtuple = self._proc_basic_info()
++        return ntp.puids(
++            rawtuple[procbasicinfo_map['gid']],
++            rawtuple[procbasicinfo_map['egid']],
++            rawtuple[procbasicinfo_map['sgid']],
++        )
++
++    @wrap_exceptions
++    def terminal(self):
++        # Not supported
++        return None
++
++    @wrap_exceptions
++    def memory_info(self):
++        rawdict = self._proc_vmstats()
++        return ntp.pmem(rawdict["rss"], rawdict["map_size"])
++
++    @wrap_exceptions
++    def memory_full_info(self):
++        rawdict = self._proc_vmstats()
++        return ntp.pfullmem(
++            rawdict["rss"],
++            rawdict["map_size"],
++            rawdict["map_phys"],
++            rawdict["map_shared"],
++            rawdict["map_private"],
++            rawdict["vm_region"],
++            rawdict["vm_map"],
++            rawdict["anon_rsv"],
++            rawdict["rlimit_data"],
++        )
++
++    @wrap_exceptions
++    def cpu_times(self):
++        rawtuple = self.proc_basic_info()
++        return ntp.pcputimes(
++            rawtuple[pidtaskinfo_map['utime'] / CLOCK_TICKS],
++            rawtuple[pidtaskinfo_map['stime'] / CLOCK_TICKS],
++            # children user / system times are not retrievable (set to 0)
++            0.0,
++            0.0,
++        )
++
++    @wrap_exceptions
++    def create_time(self, monotonic=False):
++        return self.self.proc_basic_info()[procbasicinfo_map['start_time']]
++
++    @wrap_exceptions
++    def num_ctx_switches(self):
++        # Doubt we have this information
++        return ntp.pctxsw(0, 0)
++
++    @wrap_exceptions
++    def num_threads(self):
++        return self.self.proc_basic_info()[procbasicinfo_map['num_threads']]
++
++    @wrap_exceptions
++    def open_files(self):
++        # Not supported
++        return []
++
++    @wrap_exceptions
++    def net_connections(self, kind='inet'):
++        # Not supported
++        # Technically possible to do, but requires headers unavailable in this
++        # current version
++        return []
++
++    @wrap_exceptions
++    def num_fds(self):
++        return 0
++
++    @wrap_exceptions
++    def wait(self, timeout=None):
++        return _psposix.wait_pid(self.pid, timeout)
++
++    @wrap_exceptions
++    def nice_get(self):
++        return cext.proc_priority_get(self.pid)
++
++    @wrap_exceptions
++    def nice_set(self, value):
++        return cext.proc_priority_set(self.pid, value)
++
++    @wrap_exceptions
++    def status(self):
++        code = self._proc_basic_info()[procbasicinfo_map["status"]]
++        # XXX is '?' legit? (we're not supposed to return it anyway)
++        return PROC_STATUSES.get(code, '?')
++
++    @wrap_exceptions
++    def threads(self):
++        return [ntp.pthread(x, y) for x, y in cext.proc_threads(self.pid)]
+diff --git a/psutil/_psutil_qnx.c b/psutil/_psutil_qnx.c
+new file mode 100644
+index 0000000..383da39
+--- /dev/null
++++ b/psutil/_psutil_qnx.c
+@@ -0,0 +1,95 @@
++/*
++ * Copyright (c) 2009, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++// QNX-specific functions.
++
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE 1
++#endif
++
++#include <Python.h>
++#include <sys/time.h>
++#include <sys/socket.h>
++#include <netinet/tcp_fsm.h>  // for TCP connection states
++
++#include "arch/all/init.h"
++
++static PyMethodDef mod_methods[] = {
++    {"check_pid_range", psutil_check_pid_range, METH_VARARGS},
++    {"set_debug", psutil_set_debug, METH_VARARGS},
++    {"boot_time", psutil_boot_time, METH_VARARGS},
++    {"cpu_count_logical", psutil_cpu_count_logical, METH_VARARGS},
++    {"cpu_freq", psutil_cpu_freq, METH_VARARGS},
++    {"proc_basic_info", psutil_proc_basic_info, METH_VARARGS},
++    {"proc_threads", psutil_proc_threads, METH_VARARGS},
++    {"proc_priority_get", psutil_proc_priority_get, METH_VARARGS},
++    {"proc_priority_set", psutil_proc_priority_set, METH_VARARGS},
++
++    {"net_io_counters", psutil_net_io_counters, METH_VARARGS},
++    {NULL, NULL, 0, NULL}
++};
++
++
++static struct PyModuleDef moduledef = {
++    PyModuleDef_HEAD_INIT,
++    "_psutil_qnx",
++    NULL,
++    -1,
++    mod_methods,
++    NULL,
++    NULL,
++    NULL,
++    NULL
++};
++
++
++PyObject *
++PyInit__psutil_qnx(void) {
++    PyObject *mod = PyModule_Create(&moduledef);
++    if (mod == NULL)
++        return NULL;
++
++#ifdef Py_GIL_DISABLED
++    if (PyUnstable_Module_SetGIL(mod, Py_MOD_GIL_NOT_USED))
++        return NULL;
++#endif
++
++    if (psutil_setup() != 0)
++        return NULL;
++    if (psutil_posix_add_constants(mod) != 0)
++        return NULL;
++    if (psutil_posix_add_methods(mod) != 0)
++        return NULL;
++
++    if (PyModule_AddIntConstant(mod, "version", PSUTIL_VERSION))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_CLOSED", TCPS_CLOSED))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_CLOSING", TCPS_CLOSING))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_CLOSE_WAIT", TCPS_CLOSE_WAIT))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_LISTEN", TCPS_LISTEN))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_ESTABLISHED", TCPS_ESTABLISHED))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_SYN_SENT", TCPS_SYN_SENT))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_SYN_RECEIVED", TCPS_SYN_RECEIVED))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_FIN_WAIT_1", TCPS_FIN_WAIT_1))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_FIN_WAIT_2", TCPS_FIN_WAIT_2))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_LAST_ACK", TCPS_LAST_ACK))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "TCPS_TIME_WAIT", TCPS_TIME_WAIT))
++        return NULL;
++    if (PyModule_AddIntConstant(mod, "PSUTIL_CONN_NONE", PSUTIL_CONN_NONE))
++        return NULL;
++
++    return mod;
++}
+diff --git a/psutil/arch/all/init.h b/psutil/arch/all/init.h
+index df0481f..ef109a9 100644
+--- a/psutil/arch/all/init.h
++++ b/psutil/arch/all/init.h
+@@ -33,6 +33,8 @@
+     #include "../../arch/netbsd/init.h"
+ #elif defined(PSUTIL_SUNOS)
+     #include "../../arch/sunos/init.h"
++#elif defined(PSUTIL_QNX)
++    #include "../../arch/qnx/init.h"
+ #endif
+ 
+ // print debug messages when set to 1
+diff --git a/psutil/arch/posix/init.c b/psutil/arch/posix/init.c
+index 503ae49..6bbeff2 100644
+--- a/psutil/arch/posix/init.c
++++ b/psutil/arch/posix/init.c
+@@ -52,12 +52,14 @@ static PyMethodDef posix_methods[] = {
+     {"net_if_flags", psutil_net_if_flags, METH_VARARGS},
+     {"net_if_is_running", psutil_net_if_is_running, METH_VARARGS},
+     {"net_if_mtu", psutil_net_if_mtu, METH_VARARGS},
++#if !defined(PSUTIL_QNX)
+     {"proc_priority_get", psutil_proc_priority_get, METH_VARARGS},
+     {"proc_priority_set", psutil_proc_priority_set, METH_VARARGS},
+-#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX)
++#endif  // !defined(PSUTIL_QNX)
++#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX) || defined(PSUTIL_QNX)
+     {"net_if_duplex_speed", psutil_net_if_duplex_speed, METH_VARARGS},
+ #endif
+-#if !defined(PSUTIL_OPENBSD) && !defined(PSUTIL_AIX)
++#if !defined(PSUTIL_OPENBSD) && !defined(PSUTIL_AIX) && !defined(PSUTIL_QNX)
+     {"users", psutil_users, METH_VARARGS},
+ #endif
+ #if defined(PSUTIL_OSX) || defined(PSUTIL_BSD)
+@@ -101,7 +103,7 @@ psutil_posix_add_constants(PyObject *mod) {
+         return -1;
+ 
+ #if defined(PSUTIL_BSD) || defined(PSUTIL_OSX) || defined(PSUTIL_SUNOS) \
+-    || defined(PSUTIL_AIX)
++    || defined(PSUTIL_AIX) || defined(PSUTIL_QNX)
+     if (PyModule_AddIntConstant(mod, "AF_LINK", AF_LINK))
+         return -1;
+ #endif
+@@ -159,7 +161,7 @@ psutil_posix_add_constants(PyObject *mod) {
+         return -1;
+ #endif
+ 
+-        // Linux specific
++    // Linux specific
+ 
+ #ifdef RLIMIT_LOCKS
+     if (PyModule_AddIntConstant(mod, "RLIMIT_LOCKS", RLIMIT_LOCKS))
+@@ -191,7 +193,7 @@ psutil_posix_add_constants(PyObject *mod) {
+         return -1;
+ #endif
+ 
+-        // Free specific
++    // Free specific
+ 
+ #ifdef RLIMIT_SWAP
+     if (PyModule_AddIntConstant(mod, "RLIMIT_SWAP", RLIMIT_SWAP))
+diff --git a/psutil/arch/posix/init.h b/psutil/arch/posix/init.h
+index ec4391a..dd1de0c 100644
+--- a/psutil/arch/posix/init.h
++++ b/psutil/arch/posix/init.h
+@@ -14,12 +14,12 @@ extern PyObject *ZombieProcessError;
+ #endif
+ 
+ // clang-format off
+-#if !defined(PSUTIL_OPENBSD) && !defined(PSUTIL_AIX)
++#if !defined(PSUTIL_OPENBSD) && !defined(PSUTIL_AIX) && !defined(PSUTIL_QNX)
+     #define PSUTIL_HAS_POSIX_USERS
+     PyObject *psutil_users(PyObject *self, PyObject *args);
+ #endif
+ 
+-#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX)
++#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX) || defined(PSUTIL_QNX)
+     #include <sys/types.h>
+     #define PSUTIL_HAS_SYSCTL
+     int psutil_sysctl(int *mib, u_int miblen, void *buf, size_t buflen);
+@@ -33,7 +33,7 @@ extern PyObject *ZombieProcessError;
+     #endif
+ #endif
+ 
+-#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX)
++#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX)  || defined(PSUTIL_QNX)
+     #define PSUTIL_HAS_NET_IF_DUPLEX_SPEED
+     PyObject *psutil_net_if_duplex_speed(PyObject *self, PyObject *args);
+ #endif
+@@ -54,8 +54,11 @@ PyObject *psutil_net_if_addrs(PyObject *self, PyObject *args);
+ PyObject *psutil_net_if_flags(PyObject *self, PyObject *args);
+ PyObject *psutil_net_if_is_running(PyObject *self, PyObject *args);
+ PyObject *psutil_net_if_mtu(PyObject *self, PyObject *args);
++#if !defined(PSUTIL_QNX)
++// QNX uses a different scheduling system, getpriority() always returns 0
+ PyObject *psutil_proc_priority_get(PyObject *self, PyObject *args);
+ PyObject *psutil_proc_priority_set(PyObject *self, PyObject *args);
++#endif // !defined(PSUTIL_QNX)
+ #if defined(PSUTIL_OSX) || defined(PSUTIL_BSD)
+ PyObject *psutil_proc_is_zombie(PyObject *self, PyObject *args);
+ #endif
+diff --git a/psutil/arch/posix/net.c b/psutil/arch/posix/net.c
+index ee8def6..989241d 100644
+--- a/psutil/arch/posix/net.c
++++ b/psutil/arch/posix/net.c
+@@ -25,7 +25,7 @@
+ #include <linux/if_packet.h>
+ #endif
+ 
+-#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX)
++#if defined(PSUTIL_BSD) || defined(PSUTIL_OSX) || defined(PSUTIL_QNX)
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <net/if_dl.h>
+@@ -43,6 +43,11 @@
+ #include <netdb.h>
+ #endif
+ 
++#if defined(PSUTIL_QNX)
++#include <netdb.h>
++#include <netinet/in.h>
++#endif
++
+ #include "../../arch/all/init.h"
+ 
+ 
+diff --git a/psutil/arch/posix/proc.c b/psutil/arch/posix/proc.c
+index f8cd7e6..3ebd4c4 100644
+--- a/psutil/arch/posix/proc.c
++++ b/psutil/arch/posix/proc.c
+@@ -49,6 +49,7 @@ psutil_raise_for_pid(pid_t pid, char *syscall) {
+ }
+ 
+ 
++#if !defined(PSUTIL_QNX)
+ // Get PID priority.
+ PyObject *
+ psutil_proc_priority_get(PyObject *self, PyObject *args) {
+@@ -89,3 +90,4 @@ psutil_proc_priority_set(PyObject *self, PyObject *args) {
+         return psutil_oserror();
+     Py_RETURN_NONE;
+ }
++#endif  // !defined(PSUTIL_QNX)
+diff --git a/psutil/arch/qnx/cpu.c b/psutil/arch/qnx/cpu.c
+new file mode 100644
+index 0000000..1350ab5
+--- /dev/null
++++ b/psutil/arch/qnx/cpu.c
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (c) 2026, Jay Loden, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++#include <Python.h>
++#include <sys/syspage.h>
++#include <stdio.h>
++
++#include "init.h"
++
++PyObject *
++psutil_cpu_count_logical(PyObject *self, PyObject *args) {
++    return Py_BuildValue("i", _syspage_ptr->num_cpu);
++}
++
++PyObject *
++psutil_cpu_freq(PyObject *self, PyObject *args) {
++    PyObject *py_tuple = NULL;
++    PyObject *py_retlist = PyList_New(0);
++
++    struct cpuinfo_entry *cpuinfo = (struct cpuinfo_entry *)_SYSPAGE_ENTRY(
++        _syspage_ptr, cpuinfo
++    );
++    ;
++    size_t cpuinfo_sz = _SYSPAGE_ELEMENT_SIZE(_syspage_ptr, cpuinfo);
++
++    struct cpuinfo_entry *cpu = cpuinfo;
++    int i = 0;
++    while (i < _syspage_ptr->num_cpu) {
++        py_tuple = Py_BuildValue(
++            "(Idd)", cpu->speed, (double)0.0, (double)0.0
++        );
++        if (!py_tuple) {
++            goto error;
++        }
++
++        if (PyList_Append(py_retlist, py_tuple)) {
++            goto error;
++        }
++        Py_CLEAR(py_tuple);
++
++        i++;
++        cpu = SYSPAGE_ARRAY_ADJ_OFFSET(cpuinfo, cpu, cpuinfo_sz);
++    }
++
++    return py_retlist;
++
++error:
++    Py_XDECREF(py_tuple);
++    Py_DECREF(py_retlist);
++    return NULL;
++}
+diff --git a/psutil/arch/qnx/init.h b/psutil/arch/qnx/init.h
+new file mode 100644
+index 0000000..e7d53fa
+--- /dev/null
++++ b/psutil/arch/qnx/init.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (c) 20026, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++#include <Python.h>
++#include <sys/types.h>
++
++PyObject *psutil_net_io_counters(PyObject *self, PyObject *args);
++PyObject *psutil_boot_time(PyObject *self, PyObject *args);
++PyObject *psutil_cpu_count_logical(PyObject *self, PyObject *args);
++PyObject *psutil_cpu_count_cores(PyObject *self, PyObject *args);
++PyObject *psutil_cpu_freq(PyObject *self, PyObject *args);
++PyObject *psutil_proc_basic_info(PyObject *self, PyObject *args);
++PyObject *psutil_proc_priority_get(PyObject *self, PyObject *args);
++PyObject *psutil_proc_priority_set(PyObject *self, PyObject *args);
++PyObject *psutil_proc_threads(PyObject *self, PyObject *args);
+diff --git a/psutil/arch/qnx/net.c b/psutil/arch/qnx/net.c
+new file mode 100644
+index 0000000..a7442ad
+--- /dev/null
++++ b/psutil/arch/qnx/net.c
+@@ -0,0 +1,92 @@
++/*
++ * Copyright (c) 2026, Jay Loden, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++#include <Python.h>
++#include <sys/sysctl.h>
++#include <string.h>
++#include <net/if.h>
++#include <net/if_dl.h>
++#include <net/route.h>
++#include <sys/socketvar.h>
++
++#include "../../arch/all/init.h"
++
++PyObject *
++psutil_net_io_counters(PyObject *self, PyObject *args) {
++    char *buf = NULL, *lim, *next;
++    struct if_msghdr *ifm;
++    int mib[6];
++    size_t len;
++    PyObject *py_retdict = PyDict_New();
++    PyObject *py_ifc_info = NULL;
++
++    if (py_retdict == NULL)
++        return NULL;
++
++    mib[0] = CTL_NET;  // networking subsystem
++    mib[1] = PF_ROUTE;  // type of information
++    mib[2] = 0;  // protocol (IPPROTO_xxx)
++    mib[3] = 0;  // address family
++    mib[4] = NET_RT_IFLIST;  // operation
++    mib[5] = 0;
++
++    if (psutil_sysctl_malloc(mib, 6, &buf, &len) != 0)
++        goto error;
++
++    lim = buf + len;
++
++    for (next = buf; next < lim;) {
++        py_ifc_info = NULL;
++        ifm = (struct if_msghdr *)next;
++        next += ifm->ifm_msglen;
++
++        if (ifm->ifm_type == RTM_IFINFO) {
++            struct if_msghdr *if2m = (struct if_msghdr *)ifm;
++            struct sockaddr_dl *sdl = (struct sockaddr_dl *)(if2m + 1);
++            char ifc_name[32];
++
++            strncpy(ifc_name, sdl->sdl_data, sdl->sdl_nlen);
++            ifc_name[sdl->sdl_nlen] = '\0';
++
++            // XXX: ignore usbus interfaces:
++            // http://lists.freebsd.org/pipermail/freebsd-current/
++            //     2011-October/028752.html
++            // 'ifconfig -a' doesn't show them, nor do we.
++            if (strncmp(ifc_name, "usbus", 5) == 0)
++                continue;
++
++            py_ifc_info = Py_BuildValue(
++                "(kkkkkkki)",
++                if2m->ifm_data.ifi_obytes,
++                if2m->ifm_data.ifi_ibytes,
++                if2m->ifm_data.ifi_opackets,
++                if2m->ifm_data.ifi_ipackets,
++                if2m->ifm_data.ifi_ierrors,
++                if2m->ifm_data.ifi_oerrors,
++                if2m->ifm_data.ifi_iqdrops,
++#ifdef _IFI_OQDROPS
++                if2m->ifm_data.ifi_oqdrops
++#else
++                0
++#endif
++            );
++            if (!py_ifc_info)
++                goto error;
++            if (PyDict_SetItemString(py_retdict, ifc_name, py_ifc_info) != 0)
++                goto error;
++            Py_CLEAR(py_ifc_info);
++        }
++    }
++
++    free(buf);
++    return py_retdict;
++
++error:
++    Py_XDECREF(py_ifc_info);
++    Py_DECREF(py_retdict);
++    free(buf);
++    return NULL;
++}
+diff --git a/psutil/arch/qnx/proc.c b/psutil/arch/qnx/proc.c
+new file mode 100644
+index 0000000..a6fd06b
+--- /dev/null
++++ b/psutil/arch/qnx/proc.c
+@@ -0,0 +1,161 @@
++/*
++ * Copyright (c) 2026, Jay Loden, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++#include <Python.h>
++#include <sys/procfs.h>
++#include <string.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <sys/mman.h>
++#include <sched.h>
++#include <errno.h>
++#include <sys/neutrino.h>
++
++#include "../../arch/all/init.h"
++
++PyObject *
++psutil_proc_basic_info(PyObject *self, PyObject *args) {
++    debug_process_t p_info;
++    debug_thread_t t_info;
++    int fd;
++    char fn[PATH_MAX];
++    int pid;
++
++    if (!PyArg_ParseTuple(args, "i", &pid))
++        return NULL;
++
++    snprintf(fn, sizeof fn, "/proc/%d/as", pid);
++
++    fd = open(fn, O_RDONLY);
++    if (fd == NOFD) {
++        psutil_oserror_ad("open");
++        return NULL;
++    }
++
++    errno = devctl(fd, DCMD_PROC_INFO, &p_info, sizeof p_info, 0);
++    if (errno != EOK) {
++        psutil_oserror_ad("devctl -> DMCD_PROC_INFO");
++        return NULL;
++    }
++
++    t_info.tid = 1;
++    errno = devctl(fd, DCMD_PROC_TIDSTATUS, &t_info, sizeof t_info, 0);
++    if (errno != EOK) {
++        psutil_oserror_ad("devctl -> DMCD_PROC_STATUS");
++        return NULL;
++    }
++
++    close(fd);
++
++    return Py_BuildValue(
++        "iKKKBiiiiiiB",
++        p_info.parent,
++        p_info.start_time,
++        p_info.utime,
++        p_info.stime,
++        p_info.num_threads,
++        p_info.uid,
++        p_info.gid,
++        p_info.euid,
++        p_info.egid,
++        p_info.suid,
++        p_info.sgid,
++        t_info.state
++    );
++}
++
++PyObject *
++psutil_proc_threads(PyObject *self, PyObject *args) {
++    debug_thread_t t_info;
++    int fd;
++    char fn[PATH_MAX];
++    int pid;
++    int tid;
++    PyObject *py_retlist = PyList_New(0);
++
++    if (!PyArg_ParseTuple(args, "i", &pid))
++        return NULL;
++
++    snprintf(fn, sizeof fn, "/proc/%d/as", pid);
++
++    fd = open(fn, O_RDONLY);
++    if (fd == NOFD) {
++        psutil_oserror_ad("open");
++        return NULL;
++    }
++
++    t_info.tid = tid = 1;
++    while (t_info.tid >= tid) {
++        errno = devctl(fd, DCMD_PROC_TIDSTATUS, &t_info, sizeof t_info, 0);
++        if (errno == ESRCH) {
++            // we exhausted all the thread IDs
++            break;
++        }
++        else if (errno != EOK) {
++            psutil_oserror_ad("devctl -> DCMD_PROC_TIDSTATUS");
++            goto error;
++        }
++
++        // we exhausted all the thread IDs
++        if (t_info.tid < tid) {
++            break;
++        }
++
++        if (PyList_Append(
++                py_retlist, Py_BuildValue("(iK)", t_info.tid, t_info.sutime)
++            ))
++        {
++            goto error;
++        }
++
++        tid = ++t_info.tid;
++
++        if (t_info.flags & _NTO_PF_ZOMBIE) {
++            continue;
++        }
++    }
++
++    close(fd);
++    return py_retlist;
++
++error:
++    close(fd);
++    Py_XDECREF(py_retlist);
++    return NULL;
++}
++
++// Get PID priority.
++PyObject *
++psutil_proc_priority_get(PyObject *self, PyObject *args) {
++    pid_t pid;
++    struct sched_param prio;
++
++    if (!PyArg_ParseTuple(args, _Py_PARSE_PID, &pid))
++        return NULL;
++
++    if (sched_getparam(pid, &prio))
++        return psutil_oserror();
++    return Py_BuildValue("i", prio.sched_curpriority);
++}
++
++
++// Set PID priority.
++PyObject *
++psutil_proc_priority_set(PyObject *self, PyObject *args) {
++    pid_t pid;
++    int priority;
++    struct sched_param prio;
++
++    if (!PyArg_ParseTuple(args, _Py_PARSE_PID "i", &pid, &priority))
++        return NULL;
++
++    prio.sched_priority = SCHED_PRIO_LIMIT_SATURATE(priority);
++
++    if (sched_setparam(pid, &prio))
++        return psutil_oserror();
++
++    Py_RETURN_NONE;
++}
+diff --git a/psutil/arch/qnx/sys.c b/psutil/arch/qnx/sys.c
+new file mode 100644
+index 0000000..c7bc9f8
+--- /dev/null
++++ b/psutil/arch/qnx/sys.c
+@@ -0,0 +1,21 @@
++/*
++ * Copyright (c) 2026, Jay Loden, Giampaolo Rodola'. All rights reserved.
++ * Use of this source code is governed by a BSD-style license that can be
++ * found in the LICENSE file.
++ */
++
++#include <Python.h>
++#include <sys/syspage.h>
++
++#include "../../arch/all/init.h"
++
++// Return a Python float indicating the system boot time expressed in
++// seconds since the epoch.
++PyObject *
++psutil_boot_time(PyObject *self, PyObject *args) {
++    time_t boot_time;
++
++    boot_time = _SYSPAGE_ENTRY(_syspage_ptr, qtime)->boot_time;
++
++    return Py_BuildValue("d", (double)boot_time);
++}
+diff --git a/setup.py b/setup.py
+index 9603b29..6f632ea 100755
+--- a/setup.py
++++ b/setup.py
+@@ -63,6 +63,7 @@ from _common import MACOS  # noqa: E402
+ from _common import NETBSD  # noqa: E402
+ from _common import OPENBSD  # noqa: E402
+ from _common import POSIX  # noqa: E402
++from _common import QNX  # noqa: E402
+ from _common import SUNOS  # noqa: E402
+ from _common import WINDOWS  # noqa: E402
+ from _common import hilite  # noqa: E402
+@@ -455,6 +456,23 @@ elif AIX:
+         **py_limited_api
+         # fmt: on
+     )
++elif QNX:
++    macros.append(("PSUTIL_QNX", 1))
++
++    ext = Extension(
++        'psutil._psutil_qnx',
++        sources=(
++            sources
++            + ["psutil/_psutil_qnx.c"]
++            + glob.glob("psutil/arch/qnx/*.c")
++        ),
++        libraries=["socket"],
++        define_macros=macros,
++        # fmt: off
++        # python 2.7 compatibility requires no comma
++        **py_limited_api
++        # fmt: on
++    )
+ 
+ else:
+     sys.exit("platform {} is not supported".format(sys.platform))

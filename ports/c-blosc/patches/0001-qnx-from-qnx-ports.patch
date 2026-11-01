@@ -1,0 +1,35 @@
+From b6abcce3f9e5b808b9d322b17280855127f0d484 Mon Sep 17 00:00:00 2001
+From: Cris Sinnott <csinnott@qnx.com>
+Date: Wed, 5 Aug 2026 21:12:13 +0000
+Subject: [PATCH] tests: recognize QNX in aligned-alloc feature-test guard
+
+Imported from qnx-ports/c-blosc (branch qnx-v1.21.6-r0, 616f4b7..b6abcce); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+blosc_test_malloc() picks its aligned-allocator implementation via an
+#if/#elif chain ending in a hard #error if nothing matches. QNX does
+implement posix_memalign (it's POSIX-compliant), the existing
+_POSIX_C_SOURCE/_XOPEN_SOURCE guard just isn't satisfied in this
+translation unit on QNX/clang -- a feature-test-macro gap, not a missing
+platform capability. Only affects the test suite; blosc.c/blosc.h
+(the shipped library) already build clean with zero changes.
+---
+ tests/test_common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/test_common.h b/tests/test_common.h
+index 3912d46..1914d11 100644
+--- a/tests/test_common.h
++++ b/tests/test_common.h
+@@ -68,7 +68,7 @@ static void* blosc_test_malloc(const size_t alignment, const size_t size)
+ #elif defined(_WIN32)
+   /* A (void *) cast needed for avoiding a warning with MINGW :-/ */
+   block = (void *)_aligned_malloc(size, alignment);
+-#elif _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600
++#elif _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__QNX__)
+   /* Platform does have an implementation of posix_memalign */
+   res = posix_memalign(&block, alignment, size);
+ #elif defined(__APPLE__)
+-- 
+2.43.0
+

@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libtasn1 libtasn1-dev
-apk add qnx-test-libtasn1 && /usr/local/bin/qnx-port-tests/test_libtasn1    # its on-target test
+apk add qnx-test-libtasn1 && /usr/local/bin/qnx-port-tests/test_libtasn1    # its on-target test, from tests-8.0-<arch>
 apk del libtasn1 libtasn1-dev qnx-test-libtasn1
 ```
 
@@ -153,7 +153,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libtasn1`](../../tests/src/) links libtasn1 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libtasn1`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libtasn1`](../../tests/src/) links libtasn1 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libtasn1`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

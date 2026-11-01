@@ -1,0 +1,36 @@
+# mosh 1.4.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:50:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mosh qnx-test-mosh qnx-port-tests
+(1/4) Installing abseil (20240722.0-r0)
+(2/4) Installing protobuf (29.3-r0)
+(3/4) Installing mosh (1.4.0-r0)
+(4/4) Installing qnx-test-mosh (1.0-r0)
+OK: 112 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mosh
+     == mosh ==
+       ok   mosh-server --version: mosh 1.4.0
+       ok   mosh-client usage names mosh 1.4.0
+       info mosh-client -c (xterm-256color): 256
+       ok   terminfo: xterm-256color has 256 colors
+       ok   terminfo: vt100 has no color count (-1)
+       ok   mosh-server new prints MOSH CONNECT
+       ok   MOSH CONNECT names the requested UDP port
+       ok   MOSH CONNECT carries a 22-character session key
+       ok   mosh-server detached and is running
+       ok   forkpty for mosh-client
+       ok   mosh-client shows the session's output (MOSH-QNX-42)
+       info client exited; last output: l-^ .].[0;37;44m                            ....[?25h.[0m.[0m.[1;3r.[?25l.[3;1H...[r.[2;1HMOSH-QNX-42...[?25h.[?1l.[0m.[?25h.[?1003l.[?1002l.[?1001l.[?1000l.[?1015l.[?1006l.[?1005l[mosh is exiting.]..
+       ok   Ctrl-^ . ends mosh-client (exit 0)
+       ok   mosh-server stopped
+     PASS mosh
+PASS test_mosh
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

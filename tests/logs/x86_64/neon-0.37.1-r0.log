@@ -1,0 +1,46 @@
+# neon 0.37.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:50:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u neon qnx-test-neon qnx-port-tests
+(1/2) Installing neon (0.37.1-r0)
+(2/2) Installing qnx-test-neon (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_neon
+     == neon ==
+       ok   test server listening on <ip>
+       ok   ne_sock_init
+       info neon 0.37.1: Library build, IPv6, Expat 2.6.4, zlib 1.3.1, OpenSSL 3.5.1 1 Jul 2025 (thread-safe).
+       ok   built with SSL and zlib support
+       ok   GET /hello: 200 OK
+       ok   GET /hello: body
+       ok   response header Content-Type
+       ok   two requests on one persistent connection
+       ok   gzip response decoded (zlib)
+       ok   ne_putbuf: 201 Created
+       ok   server received the exact bytes
+       ok   GET returns what was PUT
+       ok   ne_delete
+       ok   ne_mkcol: 201 Created
+       ok   dispatch of a missing resource: status 404
+       ok   ne_delete on 404: NE_ERROR naming the status
+       info error: 404 Not Found
+       ok   Basic auth after a 401 challenge
+       ok   credentials asked for once, for realm qnxtest
+       ok   PROPFIND: 207 with two resources
+       ok   PROPFIND: getcontentlength and displayname values
+       ok   ne_uri_parse
+       ok   ne_path_unescape
+       ok   ne_base64
+       ok   ne_rfc1123_parse
+       ok   ne_rfc1123_date
+     PASS neon
+PASS test_neon
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

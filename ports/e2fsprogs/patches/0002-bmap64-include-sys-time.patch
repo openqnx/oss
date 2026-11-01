@@ -1,0 +1,20 @@
+bmap64.h: include <sys/time.h> for struct timeval.
+
+struct ext2_bmap_statistics has a struct timeval member, but the header
+relied on <sys/time.h> having been included by whoever included it. On QNX
+nothing the libext2fs sources include before it declares struct timeval
+("field 'created' has incomplete type"). Include <sys/time.h> here.
+
+Upstream-Status: Pending
+
+--- a/lib/ext2fs/bmap64.h
++++ b/lib/ext2fs/bmap64.h
+@@ -9,6 +9,8 @@
+  * %End-Header%
+  */
+ 
++#include <sys/time.h>
++
+ struct ext2_bmap_statistics {
+ 	int		type;
+ 	struct timeval	created;

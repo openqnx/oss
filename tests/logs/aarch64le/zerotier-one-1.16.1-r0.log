@@ -1,0 +1,39 @@
+# zerotier-one 1.16.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:20:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zerotier-one qnx-test-zerotier-one qnx-port-tests
+(1/2) Installing zerotier-one (1.16.1-r0)
+(2/2) Installing qnx-test-zerotier-one (1.0-r0)
+OK: 125 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zerotier_one
+     == zerotier-one ==
+       info zerotier-one -v: 1.16.1
+       ok   zerotier-one -v: 1.16.1
+       ok   getpublic: the known public identity (address 3829c0566b)
+       ok   validate: the public identity is valid
+       ok   validate: a corrupted key fails (rc=1)
+       ok   sign: the known Ed25519 signature of msg.txt
+       ok   verify: signature valid for msg.txt
+       ok   verify: the same signature fails for another file
+       info generated identity a5bd0a4760
+       ok   generate: a 10-hex-digit address
+       ok   generate: getpublic of the new secret is the new public
+       ok   generate: the new identity validates
+       info zerotier-one pid 1197154329 on port 29346
+       ok   zerotier-cli info: 200 info 3829c0566b 1.16.1 OFFLINE
+       ok   the service wrote its API token (authtoken.secret)
+       ok   zerotier-cli -j info: JSON with the public identity
+       ok   listnetworks: no networks joined
+       ok   listpeers answered (4 peers known: the planet's roots)
+       ok   a wrong API token is refused (401)
+     PASS zerotier-one
+PASS test_zerotier_one
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add gsettings-desktop-schemas gsettings-desktop-schemas-dev
-apk add qnx-test-gsettings-desktop-schemas && /usr/local/bin/qnx-port-tests/test_gsettings_desktop_schemas    # its on-target test
+apk add qnx-test-gsettings-desktop-schemas && /usr/local/bin/qnx-port-tests/test_gsettings_desktop_schemas    # its on-target test, from tests-8.0-<arch>
 apk del gsettings-desktop-schemas gsettings-desktop-schemas-dev qnx-test-gsettings-desktop-schemas
 ```
 
@@ -147,7 +147,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_gsettings_desktop_schemas`](../../tests/src/) links gsettings-desktop-schemas the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gsettings-desktop-schemas`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_gsettings_desktop_schemas`](../../tests/src/) links gsettings-desktop-schemas the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-gsettings-desktop-schemas`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

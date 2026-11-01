@@ -1,0 +1,48 @@
+# urdfdom 4.0.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:18:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u urdfdom qnx-test-urdfdom qnx-port-tests
+(1/4) Installing console_bridge (1.0.2-r0)
+(2/4) Installing tinyxml2 (<ip>-r0)
+(3/4) Installing urdfdom (4.0.3-r0)
+(4/4) Installing qnx-test-urdfdom (1.0-r0)
+OK: 124 MiB in 43 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_urdfdom
+     == urdfdom ==
+       ok   string: robot name
+       ok   string: 4 links, 3 joints
+       ok   string: root base_link with child upper_arm
+       ok   string: tool hangs on slider by a fixed joint
+       ok   string: shoulder is revolute about y
+       ok   string: shoulder origin z 0.1, yaw 90 deg
+       ok   string: shoulder limits
+       ok   string: shoulder dynamics
+       ok   string: extend is prismatic, 0..0.25
+       ok   string: base_link inertial (mass 2.5, izz 0.03)
+       ok   string: base_link visual is a cylinder r 0.1 l 0.1
+       ok   string: material blue = rgba 0 0 0.8 1
+       ok   string: upper_arm collision mesh and scale
+       ok   wrote the URDF to a temporary file
+       ok   parseURDFFile reads the same model
+     Error:   Joint [j] is of type REVOLUTE but it does not specify limits
+              at line 461 in /home/qnx/claude-work/oss/src/urdfdom/urdf_parser/src/joint.cpp
+     Error:   joint xml is not initialized correctly
+              at line 234 in /home/qnx/claude-work/oss/src/urdfdom/urdf_parser/src/model.cpp
+       ok   a joint naming a missing link is rejected
+     Error:   Error=XML_ERROR_MISMATCHED_ELEMENT ErrorID=14 (0xe) Line number=1: XMLElement name=link
+              at line 101 in /home/qnx/claude-work/oss/src/urdfdom/urdf_parser/src/model.cpp
+       ok   malformed XML is rejected
+     Error:   Failed to find root link: Two root links found: [a] and [b]
+              at line 265 in /home/qnx/claude-work/oss/src/urdfdom/urdf_parser/src/model.cpp
+       ok   two links and no joint (no single root) is rejected
+     PASS urdfdom
+PASS test_urdfdom
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,10 @@
+# test_cartographer reads Cartographer's installed Lua configuration files
+test_cartographer	share/cartographer/configuration_files/map_builder.lua share/cartographer/configuration_files/trajectory_builder_2d.lua
+# test_silkit starts the registry as a separate process
+test_silkit	bin/sil-kit-registry
+# test_silkit_adapters_tap runs the adapter and a registry
+test_silkit_adapters_tap	bin/sil-kit-adapter-tap bin/sil-kit-registry
+# test_quake3 runs the dedicated server with the native game module
+test_quake3	opt/quake3/ioq3ded opt/quake3/ioquake3 opt/quake3/baseq3/qagame.so lib/libSDL2-2.0.so.0
+test_python3_lxml	bin/python3 lib/python3.14/site-packages/lxml lib/libxml2.so.2 lib/libxslt.so.1 lib/libexslt.so.0
+test_python3_netifaces	bin/python3 lib/python3.14/site-packages/netifaces.cpython-314.so

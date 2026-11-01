@@ -1,0 +1,18 @@
+lb: strchr() instead of index().
+
+index() is a legacy BSD function QNX's C library does not provide (the link
+fails with an undefined reference); strchr() is the standard equivalent.
+
+Upstream-Status: QNX-specific
+
+--- a/apps/lb/lb.c
++++ b/apps/lb/lb.c
+@@ -406,7 +406,7 @@ static void usage()
+ static int
+ parse_pipes(const char *spec)
+ {
+-	const char *end = index(spec, ':');
++	const char *end = strchr(spec, ':');
+ 	static int max_groups = 0;
+ 	struct group_des *g;
+ 

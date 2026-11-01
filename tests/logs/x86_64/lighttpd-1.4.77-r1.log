@@ -1,16 +1,15 @@
 # lighttpd 1.4.77-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:17:14Z   packages from: apk:local-dists
+# date: 2026-11-01T10:48:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u lighttpd qnx-test-lighttpd qnx-port-tests
-(1/4) Installing libxcrypt (4.4.38-r0)
-(2/4) Installing lighttpd (1.4.77-r1)
-(3/4) Installing qnx-port-tests (1.0-r2)
-(4/4) Installing qnx-test-lighttpd (1.0-r0)
-OK: 94 MiB in 33 packages
+(1/3) Installing libxcrypt (4.4.38-r0)
+(2/3) Installing lighttpd (1.4.77-r1)
+(3/3) Installing qnx-test-lighttpd (1.0-r0)
+OK: 96 MiB in 36 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lighttpd
      == lighttpd ==

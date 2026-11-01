@@ -4,8 +4,8 @@
     scripts/download-stats [-n TOP] [--csv FILE]
 
 GitHub only keeps counts, never who: this shows
-  - downloads per release (apk/packages-8.0-<arch> and their -m-z shards,
-    tests-8.0-<arch>; scripts/lib/shards.py) and in total,
+  - downloads per release (apk/packages/tests-8.0-<arch> and their -m-z
+    shards; scripts/lib/shards.py) and in total,
   - the most downloaded packages (per component and version, both arches
     and both formats added up),
   - repository traffic over the last 14 days (views, unique visitors,

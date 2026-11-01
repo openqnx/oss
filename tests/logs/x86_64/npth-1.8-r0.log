@@ -1,0 +1,36 @@
+# npth 1.8-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:56:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u npth qnx-test-npth qnx-port-tests
+(1/2) Installing npth (1.8-r0)
+(2/2) Installing qnx-test-npth (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_npth
+     == npth ==
+       ok   npth_init
+       ok   4 threads created
+       ok   join returns each thread's value (10+20+30+40 = 100)
+       info counter = 4000
+       ok   unlocked counter is exactly 4000 (one thread runs at a time)
+       ok   condition variable handshake delivers 42
+       ok   cond_timedwait with nobody signalling times out (ETIMEDOUT)
+       info npth_sleep(1) took 1.001 s
+       ok   npth_sleep(1) sleeps about one second
+       ok   rwlock: two read locks at once
+       info trywrlock while read-locked: 16
+       ok   rwlock: write lock refused while read-locked
+       ok   rwlock: write lock granted once released
+       ok   pipe
+       ok   npth_select wakes when another thread writes
+       ok   npth_read gets "npth"
+     PASS npth
+PASS test_npth
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

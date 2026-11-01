@@ -3,8 +3,8 @@
 
     scripts/check-release-sync [--fix] [release...]
 
-Every asset of the releases (apk/packages-8.0-<arch> and their other shards,
-apk/packages-8.0-<arch>-m-z, see scripts/lib/shards.py; tests-8.0-<arch>) that
+Every asset of the releases (apk/packages/tests-8.0-<arch> and their other
+shards, apk/packages/tests-8.0-<arch>-m-z, see scripts/lib/shards.py) that
 were staged is compared with the staged file of the same name in PUBLISH_OUT (default
 tmp/release-staging, what scripts/publish-github-release staged): sha256 vs
 the digest GitHub reports. A differing asset means its index describes other
@@ -12,7 +12,8 @@ bytes than the release serves (apk then refuses it). --fix re-uploads the
 differing and missing ones (--clobber), 25 per batch, PAUSE seconds (120)
 between batches, the indexes last. Exit status 1 when anything differs.
 Assets only on GitHub (older versions, not in the index, or packages of
-another shard left from before the split) are listed.
+another shard left from before the split) are listed. A staged release not
+on GitHub yet (a new shard) counts all its files as not uploaded.
 """
 import hashlib, json, os, subprocess, sys, time
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,7 +33,12 @@ def sha(p):
     return h.hexdigest()
 
 def assets(tag):
-    rid = subprocess.check_output(["gh", "api", f"repos/{REPO}/releases/tags/{tag}", "--jq", ".id"], text=True).strip()
+    r = subprocess.run(["gh", "api", f"repos/{REPO}/releases/tags/{tag}", "--jq", ".id"], capture_output=True, text=True)
+    if r.returncode:
+        if "404" not in r.stdout + r.stderr:
+            sys.exit(f"{tag}: {r.stderr.strip() or r.stdout.strip()}")
+        return None
+    rid = r.stdout.strip()
     out = subprocess.check_output(["gh", "api", "--paginate", f"repos/{REPO}/releases/{rid}/assets?per_page=100",
                                    "--jq", ".[] | [.name, .digest] | @tsv"], text=True)
     return dict(l.split("\t") for l in out.splitlines() if l)
@@ -42,6 +48,10 @@ TAGS = shards.tags()
 for tag in only or [t for t in TAGS if os.path.isdir(os.path.join(ST, t))]:
     gh = assets(tag)
     local = set(n for n in os.listdir(os.path.join(ST, tag)) if not n.startswith("."))
+    if gh is None:   # --fix does not create it: publish-github-release --upload does
+        print(f"{tag}: not on GitHub yet, {len(local)} not uploaded", flush=True)
+        total[tag] = len(local)
+        continue
     bad = [n for n in sorted(gh) if n in local and gh[n] != "sha256:" + sha(os.path.join(ST, tag, n))]
     missing = sorted(local - set(gh))
     extra = sorted(set(gh) - local)

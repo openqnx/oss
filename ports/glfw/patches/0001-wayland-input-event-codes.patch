@@ -1,0 +1,21 @@
+Wayland: take BTN_* from <linux/input-event-codes.h>
+
+wl_init.c includes <linux/input.h> for the BTN_* mouse button codes only,
+which are Wayland protocol constants (the values wl_pointer.button carries).
+QNX has no <linux/input.h>; the codes come with the
+linux-headers-input-codes component as <linux/input-event-codes.h> --
+the header wl_window.c already includes for the same purpose.
+
+Upstream-Status: QNX-specific
+
+--- a/src/wl_init.c
++++ b/src/wl_init.c
+@@ -30,7 +30,7 @@
+ 
+ #include <errno.h>
+ #include <limits.h>
+-#include <linux/input.h>
++#include <linux/input-event-codes.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>

@@ -1,0 +1,23 @@
+Treat QNX's qcc as GCC when picking the compiler's platform directory
+
+CMake identifies the QNX compiler driver as "QCC", not "GNU" (it is GCC
+12 underneath). nsync picks platform/gcc -- the GCC __atomic builtins
+behind its ATM_* macros -- only for "GNU", so with qcc no atomic.h was
+found and every ATM_LOAD/ATM_CAS call compiled as an implicit function
+declaration: a library that cannot link. qcc takes the same path as GCC.
+
+Upstream-Status: QNX-specific
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 70d88c3..f3434ae 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -182,7 +182,7 @@ else ()
+ endif ()
+ 
+ # Pick the include directory for the compiler.
+-if ("${CMAKE_C_COMPILER_ID}X" STREQUAL "GNUX")
++if (("${CMAKE_C_COMPILER_ID}X" STREQUAL "GNUX") OR ("${CMAKE_C_COMPILER_ID}X" STREQUAL "QCCX"))
+ 	include_directories ("${PROJECT_SOURCE_DIR}/platform/gcc")
+ 	set (THREADS_HAVE_PTHREAD_ARG ON)
+ elseif ("${CMAKE_C_COMPILER_ID}X" STREQUAL "ClangX")

@@ -1,0 +1,37 @@
+# openpam 20250531-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:58:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openpam qnx-test-openpam qnx-port-tests
+(1/2) Installing openpam (20250531-r0)
+(2/2) Installing qnx-test-openpam (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openpam
+     == openpam ==
+       info OpenPAM 20250531 (Zingiber), modules from /usr/local/lib
+       ok   temp dir
+       ok   pam_start with a policy file path
+       ok   pam_get_user asked the conversation ("login: ") and got alice
+       ok   pam_get_authtok: password through the conversation
+       ok   two conversation calls
+       ok   PAM_USER item
+       ok   set/get PAM_RHOST
+       ok   pam_putenv / pam_getenv
+       ok   pam_authenticate: pam_permit -> PAM_SUCCESS
+       ok   pam_acct_mgmt: pam_permit -> PAM_SUCCESS
+       ok   pam_end
+       ok   pam_authenticate: pam_deny -> PAM_AUTH_ERR
+       ok   pam_return error=PAM_USER_UNKNOWN (module option)
+       ok   pam_return error=PAM_ACCT_EXPIRED
+       ok   pam_start refuses a policy file that does not exist
+       ok   pam_strerror(PAM_AUTH_ERR) = "Authentication error"
+     PASS openpam
+PASS test_openpam
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

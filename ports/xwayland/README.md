@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add xwayland xwayland-dev
-apk add qnx-test-virtualgl && /usr/local/bin/qnx-port-tests/test_virtualgl    # its on-target test
+apk add qnx-test-virtualgl && /usr/local/bin/qnx-port-tests/test_virtualgl    # its on-target test, from tests-8.0-<arch>-m-z
 apk del xwayland xwayland-dev qnx-test-virtualgl
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (35 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (41 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild wayland wayland-protocols pixman xorgproto xtrans libxau libxdmcp libxfont2 libxkbfile libxcvt libxshmfence libdrm-headers linux-headers-input-codes libmd xkbcomp xkeyboard-config font-util
 ```
 
-<details><summary>Full build chain (35)</summary>
+<details><summary>Full build chain (41)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`font-util`](../font-util/) [`fontenc`](../fontenc/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`libdrm-headers`](../libdrm-headers/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libmd`](../libmd/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcvt`](../libxcvt/) [`libxdmcp`](../libxdmcp/) [`libxfont2`](../libxfont2/) [`libxkbfile`](../libxkbfile/) [`libxml2`](../libxml2/) [`libxshmfence`](../libxshmfence/) [`linux-headers-input-codes`](../linux-headers-input-codes/) [`ncurses`](../ncurses/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`xcb-proto`](../xcb-proto/) [`xkbcomp`](../xkbcomp/) [`xkeyboard-config`](../xkeyboard-config/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`font-util`](../font-util/) [`fontenc`](../fontenc/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libdrm-headers`](../libdrm-headers/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libmd`](../libmd/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcvt`](../libxcvt/) [`libxdmcp`](../libxdmcp/) [`libxfont2`](../libxfont2/) [`libxkbfile`](../libxkbfile/) [`libxml2`](../libxml2/) [`libxshmfence`](../libxshmfence/) [`linux-headers-input-codes`](../linux-headers-input-codes/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`xcb-proto`](../xcb-proto/) [`xkbcomp`](../xkbcomp/) [`xkeyboard-config`](../xkeyboard-config/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -202,7 +202,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_virtualgl`](../../tests/src/) links xwayland the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-virtualgl`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_virtualgl`](../../tests/src/) links xwayland the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-virtualgl`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

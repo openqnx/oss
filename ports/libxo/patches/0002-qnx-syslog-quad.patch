@@ -1,0 +1,36 @@
+Use <syslog.h> and int64_t on QNX.
+
+QNX keeps syslog definitions in the standard <syslog.h> only; there is no
+BSD-style <sys/syslog.h> (hazard 17). And it has no BSD quad_t: the %q
+length modifier the format skipper consumes is a 64-bit integer, int64_t.
+
+Upstream-Status: QNX-specific
+
+--- a/libxo/libxo.c
++++ b/libxo/libxo.c
+@@ -4398,7 +4398,11 @@
+ 		va_arg(xop->xo_vap, size_t);
+ 
+ 	    } else if (xfp->xf_qflag > 0) {
++#ifdef __QNX__
++		va_arg(xop->xo_vap, int64_t);	/* QNX has no quad_t */
++#else
+ 		va_arg(xop->xo_vap, quad_t);
++#endif
+ 
+ 	    } else {
+ 		va_arg(xop->xo_vap, int);
+--- a/libxo/xo_syslog.c
++++ b/libxo/xo_syslog.c
+@@ -41,7 +41,11 @@
+ 
+ #include <sys/types.h>
+ #include <sys/socket.h>
++#ifdef __QNX__
++#include <syslog.h>	/* QNX has no <sys/syslog.h> */
++#else
+ #include <sys/syslog.h>
++#endif
+ #include <sys/uio.h>
+ #include <sys/un.h>
+ #include <netinet/in.h>

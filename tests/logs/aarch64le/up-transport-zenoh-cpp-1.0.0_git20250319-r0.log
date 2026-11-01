@@ -1,0 +1,44 @@
+# up-transport-zenoh-cpp 1.0.0_git20250319-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:18:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u up-transport-zenoh-cpp qnx-test-up-transport-zenoh-cpp qnx-port-tests
+(1/9) Installing abseil (20240722.0-r0)
+(2/9) Installing protobuf (29.3-r0)
+(3/9) Installing up-core-api (1.6.0_alpha2-r0)
+(4/9) Installing up-cpp (1.0.1-r0)
+(5/9) Installing fmt (11.2.0-r0)
+(6/9) Installing spdlog (1.15.3-r0)
+(7/9) Installing zenoh-c (1.2.1-r0)
+(8/9) Installing up-transport-zenoh-cpp (1.0.0_git20250319-r0)
+(9/9) Installing qnx-test-up-transport-zenoh-cpp (1.0-r0)
+OK: 149 MiB in 48 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_up_transport_zenoh_cpp
+     == up-transport-zenoh-cpp ==
+       ok   write two Zenoh configuration files
+     [2026-11-01 13:18:22.721] [info] ZenohUTransport init
+       ok   transport A open (listening on tcp/<ip>:17450)
+     [2026-11-01 13:18:22.854] [info] ZenohUTransport init
+       ok   transport B open (connected to A)
+       ok   A's entity URI
+     [2026-11-01 13:18:22.865] [info] registerPublishNotificationListener_: up/vehicle1/110AB/1/8001/{}/{}/{}/{}
+       ok   subscribe to //vehicle1/110AB/1/8001 on B
+     [2026-11-01 13:18:22.882] [debug] sendPublishNotification_: up/vehicle1/110AB/1/8001/{}/{}/{}/{}: hello over zenoh
+       ok   publish on A returns OK
+       ok   B's subscriber received the message
+       ok   payload intact
+       ok   type PUBLISH
+       ok   source is the topic
+       ok   priority CS4
+       ok   payload format TEXT
+       ok   id is a UUIDv7
+     PASS up-transport-zenoh-cpp
+PASS test_up_transport_zenoh_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

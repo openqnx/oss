@@ -1,0 +1,51 @@
+# nss 3.131.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:56:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nss qnx-test-nss qnx-port-tests
+(1/5) Installing nspr (4.39-r0)
+(2/5) Installing sqlite (3.47.2-r0)
+(3/5) Installing nss (3.131.1-r0)
+(4/5) Installing nss-dev (3.131.1-r0)
+(5/5) Installing qnx-test-nss (1.0-r0)
+OK: 106 MiB in 38 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nss
+     == nss ==
+       info NSS 3.131.1
+       ok   NSS_VersionCheck(3.131)
+       ok   NSS_NoDB_Init
+       ok   PK11_HashBuf SHA-256
+       ok   SHA-256("abc") known digest
+       ok   SHA-1("abc") known digest
+       ok   internal (softoken) slot
+       ok   HMAC-SHA256 (RFC 4231 case 2)
+       ok   AES-128-CBC encrypt (SP 800-38A F.2.1)
+       ok   AES-128-CBC decrypt round trip
+       ok   EC P-256 key pair generated
+       ok   ECDSA sign (64-byte signature)
+       ok   ECDSA verify
+       ok   ECDSA verify rejects another digest
+       ok   PK11_GenerateRandom
+       ok   NSS_Shutdown
+       ok   certutil -N (new database, empty password)
+       ok   certutil -S (self-signed P-256 certificate)
+       ok   certutil -L lists qnxtest, trust CTu,Cu,Cu (u: own key)
+       ok   NSS_Init(sql:<dir>)
+       ok   CERT_FindCertByNickname(qnxtest)
+       ok   subject CN=QNX NSS Test,O=openqnx
+       ok   issuer == subject (self-signed)
+       ok   serial number 4242
+       ok   signature verifies with its own key
+       ok   CERT_VerifyCertNow: trusted CA (usage SSL CA)
+       ok   its EC private key is in the database
+       ok   NSS_Shutdown
+     PASS nss
+PASS test_nss
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

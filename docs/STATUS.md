@@ -5,7 +5,7 @@ current: it is the hand-over, not a history (that is `git log`).
 
 ## Done
 
-- 451 components ported for QNX SDP 8.0, x86_64 and aarch64le; recipes and
+- 676 components ported for QNX SDP 8.0, x86_64 and aarch64le; recipes and
   QNX patches in `ports/`, original + patched sources in `ported/`.
 - Packages (`dists/8.0/<arch>`, apk v2, signed with `keys/private/openqnx-oss-20261029.rsa`)
   and port tests (`test_suites/8.0/<arch>`); full suites 210/210 on both architectures.
@@ -14,19 +14,47 @@ current: it is the hand-over, not a history (that is `git log`).
 - Published: `main` on github.com/openqnx/oss; releases `packages-8.0-<arch>`,
   `apk-8.0-<arch>`, `tests-8.0-<arch>` hold the verified packages
   (`scripts/publish-github-release --verified --upload`).
-- **Releases split by package name** (2026-11, in the scripts, not yet
-  published): `packages-8.0-aarch64` needed 1025 assets, GitHub allows 1000
+- **Releases split by package name** (2026-11, published): `packages-8.0-aarch64` needed 1025 assets, GitHub allows 1000
   per release, and every version is kept. The apk and packages releases now
   hold the names 0-9, a-l (the old tag names, so existing URLs keep working
   for that half) and m-z in new `-m-z` releases (`apk-8.0-<arch>-m-z`,
   `packages-8.0-<arch>-m-z`), each a complete repository with its own signed
-  index; tests stays one release. Rule: `scripts/lib/shards.py`. apk-setup
-  writes three repository lines, oss-get merges several INDEX files.
-  Staged with `--verified`: a-l 613-621, m-z 404-408, tests 957/961 assets
-  per release. Next: publish with `--upload --prune` (creates the -m-z
-  releases, then removes the m-z packages from the old ones); targets set up
-  before need the m-z line (INSTALL.md, docs/packages.md). The tests release
-  is at 961 of 1000: the next to split.
+  index. Rule: `scripts/lib/shards.py`. apk-setup writes four repository
+  lines, oss-get merges several INDEX files.
+- **Tests release split too** (2026-11-02, published):
+  `tests-8.0-aarch64` needed 1175 assets. `tests-8.0-<arch>` (the old tag)
+  now holds `qnx-test-<name>` with `<name>` 0-9, a-l, `tests-8.0-<arch>-m-z`
+  the m-z ones and the runner `qnx-port-tests` (sorted as `port-tests`, in
+  that shard only), each with its own `APKINDEX.tar.gz` and `INDEX`.
+  Staged with `--verified`: aarch64 apk/packages a-l 720/719, m-z 549/548,
+  tests a-l 675, m-z 503; x86_64 apk/packages a-l 713/712, m-z 553/552,
+  tests a-l 671, m-z 503 assets per release.
+  Published with `--upload --prune`: the -m-z releases were created first,
+  then the m-z files that moved were removed from the old ones. Older
+  revisions of m-z tests stay on the old tests release, unindexed. Targets
+  set up before need the m-z lines (INSTALL.md, docs/packages.md).
+- **Batch of ~80 more components** (2026-11-01/02): libraries
+  (apr, poco, folly, rocksdb, log4cxx, ...), services and tools (redis, ntp,
+  tcpdump, inetutils, e2fsprogs, cups-filters, toybox, ...), mesa (llvmpipe,
+  lavapipe; in `opt/mesa`, renamed libraries so the SDP's EGL/GLES stay in
+  use), robotics/simulation (cartographer, bullet3, SIL Kit, ioquake3),
+  Python (boto3, lxml, matplotlib, ...), GNOME (libadwaita, libpanel). Each
+  passed its run-level test on both QEMU targets; the QNX problems the tests
+  found are hazards 137-151 in docs/porting-hazards.md.
+- **Looked at, not ported:**
+  - ndash: the public source (google/ndash, 2017) bundles a 2016 Chromium
+    base with much Linux-only code; nothing names it in the SDP.
+  - p-net: current public releases ship only the stack core (no build
+    files, no OS layer); the last complete release supports Linux only, so
+    QNX would need a new network and OS abstraction.
+  - valgrind: SDP 8.0 ships valgrind 3.17 (memcheck works on the QEMU
+    target; pass `--extra-debuginfo-path` with libc's .sym file); a newer
+    upstream needs a new OS port.
+  - Go / etcd: upstream Go has no QNX target; the one public fork covers
+    32-bit QNX 6.5 only. A qnx/amd64 + qnx/arm64 port is several weeks.
+  - Flutter: no public QNX engine/embedder; the Dart VM would need a port.
+  - perf: QNX has no perf_event_open. can-utils: built without the AF_CAN
+    tools (QNX has no SocketCAN).
 
 ## In progress / next
 

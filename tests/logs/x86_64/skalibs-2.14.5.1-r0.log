@@ -1,0 +1,46 @@
+# skalibs 2.14.5.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:09:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u skalibs qnx-test-skalibs qnx-port-tests
+(1/2) Installing skalibs (2.14.5.1-r0)
+(2/2) Installing qnx-test-skalibs (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_skalibs
+     == skalibs ==
+       ok   ulong_fmt(2^32) = 4294967296
+       ok   ulong_xfmt(0xdeadbeef)
+       ok   ulong_scan stops after 9 digits
+       ok   uint32_pack_big byte order
+       ok   uint32_unpack (little endian) of 01 02 03 04
+       ok   ip4_scan
+       ok   ip4_fmt round trip
+       ok   stralloc_cats
+       ok   stralloc contents and length
+       ok   SHA-256("abc") known answer
+       ok   scratch directory
+       ok   cdbmake: 3 records written
+       ok   cdb_init (mapped)
+       ok   cdb_find(os) = QNX
+       ok   cdb_findnext: two values for key arch
+       ok   cdb_find(missing) = 0
+       ok   openwritenclose_unsafe
+       ok   openslurpclose reads it back
+       ok   selfpipe_init
+       ok   selfpipe_trap(SIGUSR1)
+       ok   iopause: selfpipe readable
+       ok   selfpipe_read() = SIGUSR1
+       info iopause timeout after 200 ms
+       ok   iopause: times out at its deadline (~200 ms)
+       ok   child_spawn0
+       ok   child exit status 5
+     PASS skalibs
+PASS test_skalibs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

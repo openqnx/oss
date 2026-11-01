@@ -1,0 +1,53 @@
+Read the Armv8 crypto extensions from the QNX system page
+
+qnx-ports' OPENSSL_cpuid_setup() for QNX (patch 0001) reports NEON only,
+so on cores with the crypto extensions AES, GHASH (PMULL) and SHA ran in
+the slower NEON/generic code. QNX's startup records these features in
+the system page (SYSPAGE_ENTRY(cpuinfo)->flags, AARCH64_CPU_FLAG_AES,
+_PMULL, _SHA1, _SHA256, _SHA512, _SHA3), readable by every process without
+a kernel call: map them onto BoringSSL's ARMV8_* capability bits.
+
+Upstream-Status: QNX-specific
+
+diff --git a/crypto/cpu_aarch64_qnx.cc b/crypto/cpu_aarch64_qnx.cc
+index 55bc62c..f742bd1 100644
+--- a/crypto/cpu_aarch64_qnx.cc
++++ b/crypto/cpu_aarch64_qnx.cc
+@@ -20,9 +20,35 @@
+ #if defined(OPENSSL_AARCH64) && defined(OPENSSL_QNX) && \
+     !defined(OPENSSL_STATIC_ARMCAP) && !defined(OPENSSL_NO_ASM)
+ 
++#include <sys/syspage.h>
++
+ using namespace bssl;
+ 
+-// Every 64-bit Arm core QNX runs on has Advanced SIMD.
+-void bssl::OPENSSL_cpuid_setup() { OPENSSL_armcap_P |= ARMV7_NEON; }
++// Every 64-bit Arm core QNX runs on has Advanced SIMD. The Armv8 crypto
++// extensions are optional; the startup code records them in the system
++// page's CPU flags (AARCH64_CPU_FLAG_*, <aarch64/syspage.h>), which every
++// process can read.
++void bssl::OPENSSL_cpuid_setup() {
++  OPENSSL_armcap_P |= ARMV7_NEON;
++  const uint64_t flags = SYSPAGE_ENTRY(cpuinfo)->flags;
++  if (flags & AARCH64_CPU_FLAG_AES) {
++    OPENSSL_armcap_P |= ARMV8_AES;
++  }
++  if (flags & AARCH64_CPU_FLAG_PMULL) {
++    OPENSSL_armcap_P |= ARMV8_PMULL;
++  }
++  if (flags & AARCH64_CPU_FLAG_SHA1) {
++    OPENSSL_armcap_P |= ARMV8_SHA1;
++  }
++  if (flags & AARCH64_CPU_FLAG_SHA256) {
++    OPENSSL_armcap_P |= ARMV8_SHA256;
++  }
++  if (flags & AARCH64_CPU_FLAG_SHA512) {
++    OPENSSL_armcap_P |= ARMV8_SHA512;
++  }
++  if (flags & AARCH64_CPU_FLAG_SHA3) {
++    OPENSSL_armcap_P |= ARMV8_SHA3;
++  }
++}
+ 
+ #endif  // OPENSSL_AARCH64 && OPENSSL_QNX && !OPENSSL_STATIC_ARMCAP

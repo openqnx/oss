@@ -1,0 +1,134 @@
+Fill the QNX libc differences in folly/portability.
+
+Each change is guarded by __QNX__ or by the missing definition:
+ - IOV_MAX: QNX's <limits.h> does not define it; <sys/uio.h> has the same
+   limit as UIO_MAXIOV (folly/portability/IOVec.h).
+ - madvise(): QNX has only posix_madvise(), which returns the error number
+   instead of setting errno. SysMman.h maps MADV_NORMAL/SEQUENTIAL/RANDOM/
+   WILLNEED/DONTNEED to the POSIX_MADV_* values and defines madvise() over
+   posix_madvise() with errno set; advice QNX does not know (MADV_POPULATE_*,
+   MADV_COLLAPSE) fails with EINVAL, which the callers already handle.
+ - clearenv(): QNX's <stdlib.h> has it; folly's own replacement made the
+   call ambiguous (Stdlib.h/.cpp).
+ - recvmmsg()/sendmmsg(): QNX has both; folly's null function-pointer
+   stand-ins collided with the declarations (net/NetOps.cpp).
+ - SIGIO si_codes: QNX's <signal.h> has no POLL_IN..POLL_HUP; the fatal
+   signal reporter describes such codes generically there, and its
+   Linux-only pidfd path no longer names FOLLY_SYS_gettid, which QNX lacks.
+
+Upstream-Status: Pending
+
+--- a/folly/debugging/symbolizer/SignalHandler.cpp
++++ b/folly/debugging/symbolizer/SignalHandler.cpp
+@@ -203,7 +203,11 @@
+     // We could use PIDFD_SELF since linux-6.15 (released 2025-05-25), but that
+     // causes memory leaks on some kernels (see
+     // https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a2c1f82618b0b65f1ef615aa9cfdac8122537d69).
++#if defined(FOLLY_SYS_gettid)
+     auto const tid = linux_syscall(FOLLY_SYS_gettid);
++#else
++    long const tid = -1;   // no syscall numbers (QNX); this branch is Linux-only
++#endif
+     // pidfd_open introduced in linux-5.3 (released 2019-09-15)
+     int const fd = to_narrow(linux_syscall(nr_pidfd_open, tid, 0));
+     if (-1 == fd) {
+@@ -444,6 +448,7 @@
+   }
+ }
+ 
++#if defined(POLL_IN)
+ const char* sigio_reason(int si_code) {
+   switch (si_code) {
+     case POLL_IN:
+@@ -463,6 +468,12 @@
+       return generic_sicode_reason(si_code);
+   }
+ }
++#else
++// QNX's <signal.h> has no SIGIO si_codes (POLL_IN ... POLL_HUP).
++const char* sigio_reason(int si_code) {
++  return generic_sicode_reason(si_code);
++}
++#endif
+ 
+ const char* signal_reason(int signum, int si_code) {
+   switch (signum) {
+--- a/folly/net/NetOps.cpp
++++ b/folly/net/NetOps.cpp
+@@ -43,7 +43,8 @@
+ 
+ #if (defined(__linux__) && !defined(__ANDROID__)) ||                       \
+     (defined(__ANDROID__) && __ANDROID_API__ >= 21 /* released 2014 */) || \
+-    defined(__FreeBSD__) || defined(__SGX__) || defined(__EMSCRIPTEN__)
++    defined(__FreeBSD__) || defined(__SGX__) || defined(__EMSCRIPTEN__) || \
++    defined(__QNX__)
+ static_assert(std::is_function_v<decltype(::recvmmsg)>);
+ static_assert(std::is_function_v<decltype(::sendmmsg)>);
+ #else
+--- a/folly/portability/IOVec.h
++++ b/folly/portability/IOVec.h
+@@ -21,6 +21,10 @@
+ #ifndef _WIN32
+ #include <limits.h>
+ #include <sys/uio.h>
++// QNX's <limits.h> does not define IOV_MAX; <sys/uio.h> has it as UIO_MAXIOV.
++#if !defined(IOV_MAX) && defined(UIO_MAXIOV)
++#define IOV_MAX UIO_MAXIOV
++#endif
+ #else
+ #include <stdlib.h>
+ 
+--- a/folly/portability/Stdlib.cpp
++++ b/folly/portability/Stdlib.cpp
+@@ -146,7 +146,8 @@
+ 
+ #endif
+ 
+-#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__wasm__)
++#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__wasm__) && \
++    !defined(__QNX__)
+ 
+ #include <string>
+ #include <vector>
+--- a/folly/portability/Stdlib.h
++++ b/folly/portability/Stdlib.h
+@@ -57,7 +57,8 @@
+ namespace folly {
+ namespace portability {
+ namespace stdlib {
+-#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__wasm__)
++#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__wasm__) && \
++    !defined(__QNX__)
+ int clearenv();
+ #endif
+ 
+--- a/folly/portability/SysMman.h
++++ b/folly/portability/SysMman.h
+@@ -45,6 +45,27 @@
+ #define MAP_POPULATE 0
+ #endif
+ 
++#if defined(__QNX__) && !defined(MADV_NORMAL)
++// QNX has posix_madvise() but no madvise(). posix_madvise() returns the error
++// number instead of setting errno, which madvise()'s callers read; advice it
++// does not know (MADV_POPULATE_*, MADV_COLLAPSE) fails with EINVAL, as on a
++// kernel that predates it.
++#include <cerrno>
++#define MADV_NORMAL POSIX_MADV_NORMAL
++#define MADV_SEQUENTIAL POSIX_MADV_SEQUENTIAL
++#define MADV_RANDOM POSIX_MADV_RANDOM
++#define MADV_WILLNEED POSIX_MADV_WILLNEED
++#define MADV_DONTNEED POSIX_MADV_DONTNEED
++inline int madvise(void* addr, size_t len, int advice) {
++  int err = posix_madvise(addr, len, advice);
++  if (err != 0) {
++    errno = err;
++    return -1;
++  }
++  return 0;
++}
++#endif
++
+ #else //_WIN32
+ 
+ #include <cstdint>

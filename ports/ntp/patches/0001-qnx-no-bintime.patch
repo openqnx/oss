@@ -1,0 +1,21 @@
+Use SO_TIMESTAMP, not SO_BINTIME, for packet timestamps on QNX.
+
+QNX's io-sock defines SO_BINTIME and SCM_BINTIME (it is FreeBSD-derived),
+but declares struct bintime only in its driver headers (<devs/sys/time.h>),
+not for applications, so the BINTIME receive-timestamp path does not
+compile. Take the next one ntp knows: SO_TIMESTAMP (struct timeval), which
+QNX supports.
+
+Upstream-Status: QNX-specific
+
+--- a/ntpd/ntp_io.c
++++ b/ntpd/ntp_io.c
+@@ -107,7 +107,7 @@
+ nic_rule *nic_rule_list;
+ 
+ 
+-#if defined(SO_BINTIME) && defined(SCM_BINTIME) && defined(CMSG_FIRSTHDR)
++#if defined(SO_BINTIME) && defined(SCM_BINTIME) && defined(CMSG_FIRSTHDR) && !defined(__QNX__)
+ #  define HAVE_PACKET_TIMESTAMP
+ #  define HAVE_BINTIME
+ #  ifdef BINTIME_CTLMSGBUF_SIZE

@@ -1,0 +1,89 @@
+Add QNX aarch64 CPU capability setup (OPENSSL_cpuid_setup)
+
+Imported from qnx-ports/boringssl, branch qnx-mediapipe (commits
+cee76a8cc7ad "Add QNX aarch64 support." and cccbcd95cd98 "Add missing arm
+header.", Ethan Leir, on top of upstream c00d7ca810e9), adapted to this
+release: the file is C++ now (crypto/*.cc, bssl namespace), the sources are
+listed in gen/sources.cmake and build.json, and OPENSSL_QNX, which the
+qnx-ports file tests, is defined from __QNX__ in <openssl/target.h>.
+
+On aarch64 BoringSSL needs one OPENSSL_cpuid_setup() per OS (it reads the
+CPU features from getauxval, sysctl, ...); without one for QNX the library
+does not link. QNX's version reports Advanced SIMD, which every AArch64 core
+has.
+
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+diff --git a/build.json b/build.json
+index 3651498..18b5b67 100644
+--- a/build.json
++++ b/build.json
+@@ -233,6 +233,7 @@
+             "crypto/cpu_aarch64_fuchsia.cc",
+             "crypto/cpu_aarch64_linux.cc",
+             "crypto/cpu_aarch64_openbsd.cc",
++            "crypto/cpu_aarch64_qnx.cc",
+             "crypto/cpu_aarch64_sysreg.cc",
+             "crypto/cpu_aarch64_win.cc",
+             "crypto/cpu_arm_freebsd.cc",
+diff --git a/crypto/cpu_aarch64_qnx.cc b/crypto/cpu_aarch64_qnx.cc
+new file mode 100644
+index 0000000..55bc62c
+--- /dev/null
++++ b/crypto/cpu_aarch64_qnx.cc
+@@ -0,0 +1,28 @@
++// Copyright 2022 The BoringSSL Authors
++// Copyright (C) 2026 BlackBerry Limited
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++#include <openssl/cpu.h>
++
++#include "internal.h"
++
++#if defined(OPENSSL_AARCH64) && defined(OPENSSL_QNX) && \
++    !defined(OPENSSL_STATIC_ARMCAP) && !defined(OPENSSL_NO_ASM)
++
++using namespace bssl;
++
++// Every 64-bit Arm core QNX runs on has Advanced SIMD.
++void bssl::OPENSSL_cpuid_setup() { OPENSSL_armcap_P |= ARMV7_NEON; }
++
++#endif  // OPENSSL_AARCH64 && OPENSSL_QNX && !OPENSSL_STATIC_ARMCAP
+diff --git a/gen/sources.cmake b/gen/sources.cmake
+index 779c96e..cefeef2 100644
+--- a/gen/sources.cmake
++++ b/gen/sources.cmake
+@@ -378,6 +378,7 @@ set(
+   crypto/cpu_aarch64_fuchsia.cc
+   crypto/cpu_aarch64_linux.cc
+   crypto/cpu_aarch64_openbsd.cc
++  crypto/cpu_aarch64_qnx.cc
+   crypto/cpu_aarch64_sysreg.cc
+   crypto/cpu_aarch64_win.cc
+   crypto/cpu_arm_freebsd.cc
+diff --git a/include/openssl/target.h b/include/openssl/target.h
+index 2372a05..d84b08b 100644
+--- a/include/openssl/target.h
++++ b/include/openssl/target.h
+@@ -187,6 +187,10 @@
+ #define OPENSSL_OPENBSD
+ #endif
+ 
++#if defined(__QNX__)
++#define OPENSSL_QNX
++#endif
++
+ // BoringSSL requires platform's locking APIs to make internal global state
+ // thread-safe, including the PRNG. On some single-threaded embedded platforms,
+ // locking APIs may not exist, so this dependency may be disabled with the

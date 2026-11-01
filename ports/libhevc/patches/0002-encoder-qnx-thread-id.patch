@@ -1,0 +1,36 @@
+Encoder OS layer: no Linux headers, pthread_self() as thread id on QNX.
+
+The encoder's OS layer includes <linux/unistd.h> and <sys/syscall.h> and
+gets the current thread id with syscall(__NR_gettid) on everything but
+Darwin. QNX has neither header nor a gettid system call; its POSIX thread
+ids (pthread_self()) are small integers unique within the process, which is
+what the encoder uses the id for.
+
+Upstream-Status: QNX-specific
+
+--- a/encoder/osal_thread.c
++++ b/encoder/osal_thread.c
+@@ -66,10 +66,12 @@
+ #include <unistd.h>
+ #include <math.h>
+ #include <sched.h> /*for CPU_SET, etc.. */
+-#ifndef DARWIN
++#if !defined(DARWIN) && !defined(__QNX__)
+ #include<linux/unistd.h>
+ #endif
++#ifndef __QNX__
+ #include <sys/syscall.h>
++#endif
+ 
+ /* User include files */
+ #include "cast_types.h"
+@@ -714,6 +716,9 @@
+     uint64_t tid;
+     pthread_threadid_np(NULL, &tid);
+     return tid;
++#elif defined(__QNX__)
++    /* QNX thread ids are small integers, unique within the process */
++    return (WORD32)pthread_self();
+ #else
+     return syscall(__NR_gettid);
+ #endif

@@ -1,0 +1,97 @@
+From 686d44cef719143a61c7507ae47c29dcedb17c2d Mon Sep 17 00:00:00 2001
+From: Marcin Sochacki <msochacki@qnx.com>
+Date: Tue, 1 Sep 2026 17:59:21 +0200
+Subject: [PATCH 4/6] open the route socket before the privsep chroot
+
+
+Imported from qnx-ports/lldpd (686d44cef719, branch qnx-1.0.22, based on upstream 1.0.22);
+original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ src/daemon/interfaces-bsd.c | 12 ++++++++++++
+ src/daemon/lldpd.c          | 19 +++++++++++++++++++
+ src/daemon/lldpd.h          |  4 ++++
+ 3 files changed, 35 insertions(+)
+
+diff --git a/src/daemon/interfaces-bsd.c b/src/daemon/interfaces-bsd.c
+index 96183f02d..0e8e91288 100644
+--- a/src/daemon/interfaces-bsd.c
++++ b/src/daemon/interfaces-bsd.c
+@@ -624,11 +624,23 @@ interfaces_update(struct lldpd *cfg)
+ 
+ 	if (cfg->g_iface_event == NULL) {
+ 		int s;
++#if defined HOST_OS_QNX
++		/* Pre-opened before privsep chroot in main(); see priv_init() call
++		 * site in lldpd.c. A fresh socket(PF_ROUTE, ...) call here would
++		 * fail the same way the ioctl and getifaddrs() sockets did, since
++		 * it would run from inside the chroot jail. */
++		s = cfg->g_route_sock;
++		if (s < 0) {
++			log_warn("interfaces", "unable to open route socket");
++			goto end;
++		}
++#else
+ 		log_debug("interfaces", "subscribe to route socket notifications");
+ 		if ((s = socket(PF_ROUTE, SOCK_RAW, 0)) < 0) {
+ 			log_warn("interfaces", "unable to open route socket");
+ 			goto end;
+ 		}
++#endif
+ 
+ #ifdef ROUTE_MSGFILTER
+ 		unsigned int rtfilter;
+diff --git a/src/daemon/lldpd.c b/src/daemon/lldpd.c
+index 4f4072b48..ab8505f68 100644
+--- a/src/daemon/lldpd.c
++++ b/src/daemon/lldpd.c
+@@ -1923,6 +1923,22 @@ lldpd_main(int argc, char *argv[], char *envp[])
+ 	if ((ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+ 		fatal("main", "failed to get ioctl socket");
+ 
++#if defined HOST_OS_QNX
++	/* Same reasoning as the ioctl socket above: interfaces_update() in
++	 * interfaces-bsd.c opens this once (guarded by g_iface_event == NULL)
++	 * to subscribe to interface hotplug notifications. A fresh socket()
++	 * call for it from inside the privsep chroot would fail the same way
++	 * the ioctl socket did, so it is opened here too, before the chroot,
++	 * and handed to interfaces_update() via cfg->g_route_sock. Not fatal
++	 * on failure, matching the existing non-fatal handling in
++	 * interfaces_update() - losing this only disables hotplug
++	 * notifications, not the daemon's core function. */
++	log_debug("main", "get a route socket");
++	int route_sock = socket(PF_ROUTE, SOCK_RAW, 0);
++	if (route_sock == -1)
++		log_warn("main", "unable to open route socket before privsep chroot");
++#endif
++
+ 	log_debug("main", "initialize privilege separation");
+ #ifdef ENABLE_PRIVSEP
+ 	priv_init(PRIVSEP_CHROOT, ctl, uid, gid, ctlname);
+@@ -1960,6 +1976,9 @@ lldpd_main(int argc, char *argv[], char *envp[])
+ 
+ 	/* Socket was already obtained before priv_init()'s chroot; see above. */
+ 	cfg->g_sock = ioctl_sock;
++#if defined HOST_OS_QNX
++	cfg->g_route_sock = route_sock;
++#endif
+ 
+ 	/* Description */
+ 	if (!(cfg->g_config.c_advertise_version = advertise_version) && lsb_release &&
+diff --git a/src/daemon/lldpd.h b/src/daemon/lldpd.h
+index 3821c13df..01086072d 100644
+--- a/src/daemon/lldpd.h
++++ b/src/daemon/lldpd.h
+@@ -399,6 +399,10 @@ unsigned int bitmap_numbits(uint32_t *bmap);
+ 
+ struct lldpd {
+ 	int g_sock;
++#if defined HOST_OS_QNX
++	int g_route_sock; /* Pre-opened before privsep chroot; see priv_init()
++	                    * call site in lldpd.c main(). */
++#endif
+ 	struct event_base *g_base;
+ #ifdef USE_SNMP
+ #endif
+

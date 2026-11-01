@@ -1433,3 +1433,117 @@ the exec-error pipe; it is not.) dbus is now built with
 and the daemon reads the service directories at start and again on a cache
 miss (`bus/activation.c`, `update_service_cache`) (`ports/dbus/recipe.sh`).
 Treat inotify-based watchers on QNX as suspect in any event loop.
+**137. "localhost" is ::1 first on QNX.** A stock QNX 8.0 `/etc/hosts`
+lists `::1 localhost` before `127.0.0.1 localhost`, so `getaddrinfo("localhost")`
+returns the IPv6 loopback first, and so does any API that resolves an address
+by its name: POCO's `DNS::resolveOne("127.0.0.1")` looks up the name
+(localhost) and resolves it again, giving `::1`. Code that connects to
+"localhost" and a server bound to 127.0.0.1 only will not meet; bind both or
+connect to the address (`tests/src/test_poco.cpp`).
+
+**138. getopt has no optional arguments ("x::").** Two colons after an option
+letter are a GNU extension; QNX's POSIX getopt treats the option as taking a
+required argument and consumes the next word. `sshpass -e ssh host` read the
+variable name from "ssh". Detect a separate-word optarg for such an option and
+give it back (`ports/sshpass/patches/0001-*`).
+
+**139. Oversized socket buffers are refused, not capped.** Linux silently clamps
+SO_SNDBUF/SO_RCVBUF to net.core.[rw]mem_max; io-sock (BSD-derived) fails the
+setsockopt() with ENOBUFS above kern.ipc.maxsockbuf. uvgRTP asked for 4 MiB and
+treated the failure as fatal: no RTP stream could be created. Retry with
+smaller sizes (`ports/uvgrtp/patches/0001-*`).
+
+**140. An Avahi client needs a D-Bus system bus even with AVAHI_CLIENT_NO_FAIL.**
+NO_FAIL covers a missing avahi-daemon, not a missing bus. CUPS's ippeveprinter
+opens its Avahi client even with `-r off`, so on a target with no system bus it
+exits "Unable to initialize DNS-SD"; tests start a private dbus-daemon and
+point DBUS_SYSTEM_BUS_ADDRESS at it (`tests/src/test_cups_filters.sh`).
+
+**141. io-sock has no SIOCSPGRP, so SIGIO-driven sockets cannot be set up.**
+autoconf finds the BSD signal-driven I/O pieces (FIOASYNC, SIGIO) and ntp
+enables "signalled I/O"; ntpd then exits at startup with "ioctl(SIOCSPGRP)
+fails: Operation not supported". Use the program's select()/poll() loop
+instead (`--disable-signalled-io`, `ports/ntp/recipe.sh`).
+
+**142. Linux fallback values for missing O_ flags collide with QNX's.**
+Projects that `#define O_PATH 010000000` / `O_NOATIME 01000000` when the
+headers lack them (toybox) hand QNX its O_DIRFD and O_ANON. Define the missing
+flags as 0 on QNX, and open directories that later serve `*at()` calls with
+O_DIRECTORY (hazard 25): toybox's dirtree failed every recursive walk with
+"Not a directory" (`ports/toybox/patches/0005-*`).
+
+**143. crypt() is not in QNX's libc.** It lives in the SDP's static
+`liblogin.a`; a configure check for crypt in libc fails and inetutils then
+silently drops ftpd. Take it from the libxcrypt port (`DEPS=libxcrypt`).
+
+**144. A server that resolves its own host name can stall for many seconds.**
+A target's /etc/hosts usually names only localhost, so getaddrinfo() of the
+hostname goes to the DHCP-supplied DNS server (30 s to fail on the test
+VMs). telnetd does that before its first byte; a test that feeds the client
+on a fixed timer loses the session. Repeat the input until its output comes
+back (`tests/src/test_inetutils.sh`). And ntpd keeps its local clock driver
+out of selection for `orphanwait` (300 s) -- `tos orphanwait 1` in a test (0 means the default). Also: a
+setuid install (`install -o root -m 4755`) run unprivileged fails the chown
+and leaves the file mode 0600 -- pass the mode without the owner (inetutils'
+`SUIDMODE`, sudo's `INSTALL_OWNER=`).
+
+**145. `gettimeofday(NULL, &tz)` crashes on QNX.** QNX writes through the
+first argument unconditionally. Redis calls it that way to get the timezone
+offset on anything but Linux and Solaris, and every `redis-server` start --
+`--version` included -- died with SIGSEGV in `initServerConfig()`; the core
+from `/data/var/dumper` and `ntox86_64-gdb` named the line. Use the
+XSI `timezone` variable after `tzset()` (`ports/redis/patches/0005-*`).
+
+**146. QNX's libc++ runs on GCC's libsupc++, not on libc++abi.** `libc++.so.2`
+carries the GNU C++ ABI runtime (`__cxa_*`, `__cxxabiv1::__forced_unwind`)
+and has no `__cxa_increment_exception_refcount`; exception objects have
+libsupc++'s layout (`__cxa_refcounted_exception`) and `std::type_info` keeps
+libsupc++'s virtual `__do_catch` without libc++'s headers declaring it. Code
+that pokes at exception internals and chooses the layout by
+`_LIBCPP_VERSION` (folly's `lang/Exception.cpp`) fails to link or, worse,
+reads the wrong layout (`ports/folly/patches/0005-*`).
+
+**147. QNX's `<math.h>` defines no `double_t`/`float_t` when
+`__FLT_EVAL_METHOD__` is -1**, which is what GCC reports in C++ for x87
+arithmetic (`-mno-sse2` on x86_64); libc++'s `<cmath>` then fails with
+"'double_t' has not been declared". And a project macro named after a CPU
+(`#define x86_64 1`, farmhash) breaks QNX's own headers, which build
+CPU-specific include paths from that bare token (`x86_64/cpuinline.h`
+becomes `1/cpuinline.h`) -- include the system headers before such a macro
+(`ports/folly/patches/0003-*`, `0004-*`).
+
+**148. libc++'s `std::filesystem::current_path()` throws when the working
+directory is `/`.** It sizes its buffer with `pathconf(".", _PC_PATH_MAX)`,
+and QNX 8.0 answers `EINVAL` for the root of the image filesystem (`/tmp`,
+`/data` answer 1024). Every program started from `/` -- the test runner,
+ssh sessions, init scripts -- then fails with "filesystem error: in
+current_path: call to pathconf failed: Invalid argument"; so does
+`std::filesystem::absolute()` of a relative path, which calls it. SIL Kit
+hashed the working directory into each participant's socket name, so no
+participant could be created. Use `getcwd()` with a `PATH_MAX` buffer on QNX
+(`ports/silkit/patches/0001-*`).
+
+**149. QNX's printf family reads the format string as UTF-8.** At the
+first byte that is not valid UTF-8 (`\xff`, `\x80`) it stops, sets `errno`
+to `EILSEQ` -- and returns the count so far, not -1. glibc copies such bytes.
+`snprintf(buf, n, "\xff\xff\xff\xff%s", cmd)`, the usual way to build a
+Quake III out-of-band packet, produced a 1-byte packet; only the format is
+affected, `%s` arguments are copied as bytes. Build binary prefixes with
+`memcpy` (`tests/src/test_quake3.c`); grep ported code for `\x8`-`\xf`
+escapes in format strings.
+
+**150. `getifaddrs()` code gated on `__linux__`/`__APPLE__`/`__BSD__`
+falls back to resolving the machine's own name.** ioquake3 lists its local
+addresses with `getifaddrs()` on those systems and with
+`getaddrinfo(gethostname())` elsewhere -- on a QNX target whose name is not
+in `/etc/hosts` that went to DNS and waited out the resolver (30 s) before
+the server opened its socket. QNX has `getifaddrs()` in libsocket: add
+`__QNX__` to the guard (`ports/quake3/patches/0004-*`).
+
+**151. An io-sock tap interface was down once its device was opened.**
+`ifconfig tapN create` then `ifconfig tapN inet ... up`, then a program
+opening `/dev/tapN` (SIL Kit's TAP adapter): the program saw the interface
+down (`SIOCGIFFLAGS`), and the host stack sent nothing through it. Bring the
+interface up after the device is open (`tests/src/test_silkit_adapters_tap.cpp`);
+FreeBSD's if_tap, which io-sock's is, ties the link state to the device's
+open/close. Linux's TUNSETIFF leaves it alone.

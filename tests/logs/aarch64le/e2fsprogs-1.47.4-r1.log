@@ -1,0 +1,52 @@
+# e2fsprogs 1.47.4-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:24:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u e2fsprogs qnx-test-e2fsprogs qnx-port-tests
+(1/3) Installing libuuid (2.42.4-r0)
+(2/3) Installing e2fsprogs (1.47.4-r1)
+(3/3) Installing qnx-test-e2fsprogs (1.0-r0)
+OK: 128 MiB in 42 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_e2fsprogs
+     == e2fsprogs ==
+       ok   com_err: EXT2_ET_BAD_MAGIC = "Bad magic number in super-block"
+       ok   com_err: EXT2_ET_FILE_NOT_FOUND = "File not found by ext2_lookup"
+       ok   ss_create_invocation
+       ok   ss_execute_line: greet hello world
+       ok   ss_execute_line: alias with a quoted argument
+       ok   unknown command: SS_ET_COMMAND_NOT_FOUND
+       ok   16 MiB image file
+       ok   mke2fs -t ext4 -b 1024 -L qnxtest -U <uuid> on the image
+       ok   dumpe2fs -h
+       ok   dumpe2fs: volume name qnxtest
+       ok   dumpe2fs: the UUID given
+       ok   dumpe2fs: 16384 blocks of 1024 bytes
+       ok   dumpe2fs: ext4 features (extent, has_journal)
+       ok   ext2fs_open on the image
+       ok   libext2fs: magic 0xEF53, 16384 blocks, 1024-byte blocks, label qnxtest
+       ok   libext2fs: lost+found is inode 11
+       ok   ext2fs_open on something that is not a file system fails
+       info /dev/null: Attempt to read block from filesystem resulted in short read
+       ok   blkid: TYPE=ext4, LABEL=qnxtest, the UUID
+       ok   debugfs -w: write hello.txt, mkdir docs
+       ok   debugfs cat: the file reads back identical
+       ok   debugfs ls: hello.txt (10500 bytes) and docs
+       ok   libext2fs: ext2fs_file_read of hello.txt, 10500 bytes as written
+       ok   e2fsck -fn: clean (exit 0)
+       ok   e2fsck -fn after unlink: unattached inode, exit 4
+       ok   e2fsck -fy: repaired (exit 1)
+       ok   e2fsck -fn after repair: clean (exit 0)
+       ok   the file was reconnected in lost+found
+       ok   tune2fs -L relabel; e2label reads relabel
+       ok   resize2fs grows it to 32768 blocks
+       ok   e2fsck -fn after resize: clean
+     PASS e2fsprogs
+PASS test_e2fsprogs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

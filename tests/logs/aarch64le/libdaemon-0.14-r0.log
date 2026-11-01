@@ -1,0 +1,40 @@
+# libdaemon 0.14-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:01:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libdaemon qnx-test-libdaemon qnx-port-tests
+(1/2) Installing libdaemon (0.14-r0)
+(2/2) Installing qnx-test-libdaemon (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libdaemon
+     == libdaemon ==
+       ok   scratch directory
+       ok   no daemon running before the test
+       ok   daemon_retval_init
+       info daemon_fork returned 1074819095
+       ok   daemon_fork returns the daemon's PID in the parent
+       info daemon_retval_wait: 42
+       ok   daemon reported ready (retval 42)
+       ok   PID file names the daemon daemon_fork reported
+       ok   the daemon runs in a session of its own (setsid)
+       ok   daemon_pid_file_kill(SIGUSR1)
+       ok   daemon handled SIGUSR1 through its signal pipe
+       ok   daemon_pid_file_kill_wait(SIGTERM)
+       ok   daemon process gone
+       ok   daemon removed its PID file
+       ok   daemon_signal_init(SIGCHLD)
+     client: exec-output
+       ok   daemon_exec: child exit status 7
+       ok   pipe
+       ok   daemon_nonblock(1) sets O_NONBLOCK
+       ok   daemon_nonblock(0) clears it
+     PASS libdaemon
+PASS test_libdaemon
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

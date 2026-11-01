@@ -1,0 +1,43 @@
+Build the bundled farmhash on QNX.
+
+Two QNX problems in folly/external/farmhash/farmhash.cpp:
+ - QNX has no <byteswap.h>; the GCC builtins are used, as the farmhash
+   component's own port does.
+ - farmhash defines a macro named x86_64 (1 on x86-64), and QNX's headers
+   build CPU-specific include paths from that bare token (<sys/ntohdr.h>:
+   x86_64/cpuinline.h). <algorithm>, included after the macro, then asked
+   for "1/cpuinline.h". It is included before the macro on QNX.
+
+Upstream-Status: Pending
+
+--- a/folly/external/farmhash/farmhash.cpp
++++ b/folly/external/farmhash/farmhash.cpp
+@@ -177,6 +177,14 @@
+ #define bswap_64(x) bswap64(x)
+ #endif
+ 
++#elif defined(__QNX__)
++
++// QNX has no <byteswap.h>; the compiler builtins are what it would provide.
++#undef bswap_32
++#undef bswap_64
++#define bswap_32(x) __builtin_bswap32(x)
++#define bswap_64(x) __builtin_bswap64(x)
++
+ #else
+ 
+ #undef bswap_32
+@@ -279,6 +287,13 @@
+ 
+ // PLATFORM-SPECIFIC FUNCTIONS AND MACROS
+ 
++#if defined(__QNX__)
++// QNX's headers build CPU-specific include paths from the bare token x86_64
++// (<sys/ntohdr.h>: x86_64/cpuinline.h). With the macro below defined to 1,
++// any system header that reaches them afterwards -- <algorithm>, further
++// down -- asks for "1/cpuinline.h". Include it before the macro exists.
++#include <algorithm>
++#endif
+ #undef x86_64
+ #if defined (__x86_64) || defined (__x86_64__)
+ #define x86_64 1

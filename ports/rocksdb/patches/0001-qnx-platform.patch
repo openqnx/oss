@@ -1,0 +1,116 @@
+Support QNX as a POSIX platform (OS_QNX).
+
+RocksDB selects its platform code by OS_* macros derived from
+CMAKE_SYSTEM_NAME, and QNX is not one of them, so port_posix.h fell through
+to <endian.h>, which QNX does not have. This adds OS_QNX and, under it:
+ - the byte order from the compiler's __BYTE_ORDER__ (port/port_posix.h);
+ - fread/fwrite/fflush for the *_unlocked variants, which QNX's libc does
+   not provide (as on the BSDs, macOS, Solaris and AIX);
+ - no O_DIRECT in env/fs_posix.cc: QNX has none (as on macOS, OpenBSD and
+   Solaris); direct I/O requests then open the file normally;
+ - GetChildren() without struct dirent's d_type, which QNX lacks: "." and
+   ".." are recognised by name, and only the do_not_recurse case asks
+   stat() whether an entry is a directory.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -536,6 +536,8 @@
+   add_definitions(-DOS_DRAGONFLYBSD)
+ elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+   add_definitions(-DOS_ANDROID)
++elseif(CMAKE_SYSTEM_NAME MATCHES "QNX")
++  add_definitions(-DOS_QNX)
+ elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+   add_definitions(-DWIN32 -DOS_WIN -D_MBCS -DWIN64 -DNOMINMAX)
+   if(MINGW)
+--- a/env/fs_posix.cc
++++ b/env/fs_posix.cc
+@@ -268,7 +268,8 @@
+     FILE* file = nullptr;
+ 
+     if (options.use_direct_reads && !options.use_mmap_reads) {
+-#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS) && \
++    !defined(OS_QNX)
+       flags |= O_DIRECT;
+       TEST_SYNC_POINT_CALLBACK("NewSequentialFile:O_DIRECT", &flags);
+ #endif
+@@ -319,7 +320,8 @@
+     int flags = cloexec_flags(O_RDONLY, &options);
+ 
+     if (options.use_direct_reads && !options.use_mmap_reads) {
+-#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS) && \
++    !defined(OS_QNX)
+       flags |= O_DIRECT;
+       TEST_SYNC_POINT_CALLBACK("NewRandomAccessFile:O_DIRECT", &flags);
+ #endif
+@@ -401,7 +403,8 @@
+       // offset.
+       // More info here: https://linux.die.net/man/2/pwrite
+       flags |= O_WRONLY;
+-#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS) && \
++    !defined(OS_QNX)
+       flags |= O_DIRECT;
+ #endif
+       TEST_SYNC_POINT_CALLBACK("NewWritableFile:O_DIRECT", &flags);
+@@ -498,7 +501,8 @@
+     // Direct IO mode with O_DIRECT flag or F_NOCAHCE (MAC OSX)
+     if (options.use_direct_writes && !options.use_mmap_writes) {
+       flags |= O_WRONLY;
+-#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++#if !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_SOLARIS) && \
++    !defined(OS_QNX)
+       flags |= O_DIRECT;
+ #endif
+       TEST_SYNC_POINT_CALLBACK("NewWritableFile:O_DIRECT", &flags);
+@@ -703,8 +707,23 @@
+     while ((entry = readdir(d)) != nullptr) {
+       // filter out '.' and '..' directory entries
+       // which appear only on some platforms
++#if defined(OS_QNX)
++      // QNX's struct dirent has no d_type. "." and ".." are directories by
++      // definition; anything else is asked with stat() only when it matters.
++      bool is_dir = strcmp(entry->d_name, ".") == 0 ||
++                    strcmp(entry->d_name, "..") == 0;
++#ifndef ASSERT_STATUS_CHECKED
++      if (!is_dir && opts.do_not_recurse) {
++        struct stat st;
++        is_dir = stat((dir + "/" + entry->d_name).c_str(), &st) == 0 &&
++                 S_ISDIR(st.st_mode);
++      }
++#endif
++#else
++      const bool is_dir = entry->d_type == DT_DIR;
++#endif
+       const bool ignore =
+-          entry->d_type == DT_DIR &&
++          is_dir &&
+           (strcmp(entry->d_name, ".") == 0 ||
+            strcmp(entry->d_name, "..") == 0
+ #ifndef ASSERT_STATUS_CHECKED
+--- a/port/port_posix.h
++++ b/port/port_posix.h
+@@ -48,6 +48,10 @@
+ #include <sys/endian.h>
+ #include <sys/types.h>
+ #define PLATFORM_IS_LITTLE_ENDIAN (_BYTE_ORDER == _LITTLE_ENDIAN)
++#elif defined(OS_QNX)
++// QNX has no <endian.h>; the compiler states the byte order itself.
++#include <sys/types.h>
++#define PLATFORM_IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+ #else
+ #include <endian.h>
+ #endif
+@@ -64,7 +68,7 @@
+ 
+ #if defined(OS_MACOSX) || defined(OS_SOLARIS) || defined(OS_FREEBSD) ||      \
+     defined(OS_NETBSD) || defined(OS_OPENBSD) || defined(OS_DRAGONFLYBSD) || \
+-    defined(OS_ANDROID) || defined(CYGWIN) || defined(OS_AIX)
++    defined(OS_ANDROID) || defined(CYGWIN) || defined(OS_AIX) || defined(OS_QNX)
+ // Use fread/fwrite/fflush on platforms without _unlocked variants
+ #define fread_unlocked fread
+ #define fwrite_unlocked fwrite

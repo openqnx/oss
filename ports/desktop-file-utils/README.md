@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add desktop-file-utils desktop-file-utils-dev
-apk add qnx-test-desktop-file-utils && /usr/local/bin/qnx-port-tests/test_desktop_file_utils    # its on-target test
+apk add qnx-test-desktop-file-utils && /usr/local/bin/qnx-port-tests/test_desktop_file_utils    # its on-target test, from tests-8.0-<arch>
 apk del desktop-file-utils desktop-file-utils-dev qnx-test-desktop-file-utils
 ```
 
@@ -153,7 +153,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_desktop_file_utils`](../../tests/src/) links desktop-file-utils the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-desktop-file-utils`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_desktop_file_utils`](../../tests/src/) links desktop-file-utils the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-desktop-file-utils`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

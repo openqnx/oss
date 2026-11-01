@@ -1,0 +1,27 @@
+Use __builtin_alloca on QNX
+
+QNX's <alloca.h> defines alloca(n) as "stack check passes ? __builtin_alloca(n)
+: NULL". Mesa uses alloca's result unchecked (NIR_VLA_FILL memsets it), and
+GCC 12 then fails with -Werror=nonnull on the NULL branch. Use the compiler
+builtin, as on every other system Mesa builds for.
+
+Upstream-Status: QNX-specific
+
+--- a/include/c99_alloca.h
++++ b/include/c99_alloca.h
+@@ -39,6 +39,15 @@
+ 
+ #  include <alloca.h>
+ 
++#elif defined(__QNX__)
++
++/* QNX's alloca() checks the remaining stack and returns NULL when it is
++ * short; Mesa (like everyone) uses the result unchecked, and GCC rejects
++ * memset(alloca(n)) because of the NULL branch. The builtin, as elsewhere. */
++#  include <alloca.h>
++#  undef alloca
++#  define alloca(size) __builtin_alloca(size)
++
+ #else /* !defined(_MSC_VER) */
+ 
+ #  include <stdlib.h>

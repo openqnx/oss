@@ -29,7 +29,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 
 ```sh
 # on the QNX target, as root
-apk add qnx-test-linux-headers-input-codes && /usr/local/bin/qnx-port-tests/test_linux_headers_input_codes    # its on-target test
+apk add qnx-test-linux-headers-input-codes && /usr/local/bin/qnx-port-tests/test_linux_headers_input_codes    # its on-target test, from tests-8.0-<arch>
 apk del linux-headers-input-codes-dev qnx-test-linux-headers-input-codes
 ```
 
@@ -147,7 +147,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_linux_headers_input_codes`](../../tests/src/) links linux-headers-input-codes the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-linux-headers-input-codes`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_linux_headers_input_codes`](../../tests/src/) links linux-headers-input-codes the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-linux-headers-input-codes`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

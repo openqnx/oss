@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add harfbuzz harfbuzz-dev
-apk add qnx-test-harfbuzz && /usr/local/bin/qnx-port-tests/test_harfbuzz    # its on-target test
+apk add qnx-test-harfbuzz && /usr/local/bin/qnx-port-tests/test_harfbuzz    # its on-target test, from tests-8.0-<arch>
 apk del harfbuzz harfbuzz-dev qnx-test-harfbuzz
 ```
 
@@ -168,7 +168,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_harfbuzz`](../../tests/src/) links harfbuzz the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-harfbuzz`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_harfbuzz`](../../tests/src/) links harfbuzz the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-harfbuzz`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

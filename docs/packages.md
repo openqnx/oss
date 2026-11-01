@@ -54,23 +54,28 @@ The repositories the target uses (`/data/oss/etc/apk/repositories`, one per
 line):
 
 ```
-https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz       packages 0-9, a-l
-https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>-m-z/APKINDEX.tar.gz   packages m-z
-https://github.com/openqnx/oss/releases/download/tests-8.0-<arch>/APKINDEX.tar.gz     the port tests
+https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>/APKINDEX.tar.gz         packages 0-9, a-l
+https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>-m-z/APKINDEX.tar.gz     packages m-z
+https://github.com/openqnx/oss/releases/download/tests-8.0-<arch>/APKINDEX.tar.gz       port tests 0-9, a-l
+https://github.com/openqnx/oss/releases/download/tests-8.0-<arch>-m-z/APKINDEX.tar.gz   port tests m-z
 ```
 
-with `<arch>` `x86_64` or `aarch64`. The packages are split over two releases
-by name because GitHub allows 1000 files per release (see
-[Publishing](#publishing-to-github-releases)); apk reads all of them as one
-repository, dependencies across them included. `apk-setup -r` with a
+with `<arch>` `x86_64` or `aarch64`. The packages and the port tests are each
+split over two releases by name because GitHub allows 1000 files per release
+(see [Publishing](#publishing-to-github-releases)); a test `qnx-test-<name>`
+goes by its `<name>`, the runner `qnx-port-tests` by `port-tests` (m-z). apk
+reads all of them as one repository, dependencies across them included. `apk-setup -r` with a
 `dists/8.0` tree (`scripts/serve-dists`) writes that one repository instead:
 the local layout is not split.
 
-**Targets set up before the split** (November 2026) have only the first line
-and do not see new packages named m-z. Add the second one and update:
+**Targets set up before the split** (November 2026) have only the first and
+third lines and do not see new packages (or tests) named m-z. Add the other two
+and update:
 
 ```sh
 echo https://github.com/openqnx/oss/releases/download/apk-8.0-<arch>-m-z/APKINDEX.tar.gz \
+  >> /data/oss/etc/apk/repositories
+echo https://github.com/openqnx/oss/releases/download/tests-8.0-<arch>-m-z/APKINDEX.tar.gz \
   >> /data/oss/etc/apk/repositories
 apk update
 ```
@@ -303,8 +308,10 @@ GitHub allows at most 1000 assets per release, each under 2 GiB, and assets
 are flat (no directories). `dists/8.0/<arch>` holds over 2000 package files
 (every version is kept), so each format gets its own release, and the
 packages are split again by the first character of their name -- 0-9 and a-l
-in the release names of before the split, m-z in `-m-z` ones. Each
-architecture gets five releases:
+in the release names of before the split, m-z in `-m-z` ones. The port tests
+(over 1000 files too) are split the same way, by the name after `qnx-test-`;
+the runner `qnx-port-tests` counts as `port-tests`, so it is in `-m-z` only. Each
+architecture gets six releases:
 
 | Release | Assets | Read by |
 |---|---|---|
@@ -312,14 +319,15 @@ architecture gets five releases:
 | `packages-8.0-<arch>-m-z` | `<pkg>-<ver>.tar.gz` named m-z, `INDEX` | `oss-get` (its default `OSS_REPO`) |
 | `apk-8.0-<arch>` | `<pkg>-<ver>.apk` named 0-9, a-l, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>/APKINDEX.tar.gz`) |
 | `apk-8.0-<arch>-m-z` | `<pkg>-<ver>.apk` named m-z, `APKINDEX.tar.gz`, the public key | `apk` (`.../apk-8.0-<arch>-m-z/APKINDEX.tar.gz`) |
-| `tests-8.0-<arch>` | the port tests `qnx-test-<name>` (`.apk`, `.tar.gz`, both indexes) | `apk`, as a third repository |
+| `tests-8.0-<arch>` | the port tests `qnx-test-<name>`, `<name>` 0-9, a-l (`.apk`, `.tar.gz`, both indexes) | `apk`, as a third repository |
+| `tests-8.0-<arch>-m-z` | the port tests `qnx-test-<name>`, `<name>` m-z, and `qnx-port-tests` (`.apk`, `.tar.gz`, both indexes) | `apk`, as a fourth repository |
 
 Each release is a complete repository with its own signed index, listing
 exactly its own files. The split rule lives in one place,
 `scripts/lib/shards.py` (`SHARDS`), which `publish-github-release`,
-`check-release-sync`, `download-stats` and `gen-pkg-site` all read: a third
-shard is one more line there, plus its repository line in the defaults of
-`target/apk-setup` and `target/oss-get`.
+`check-release-sync`, `download-stats`, `gen-pkg-site` and `gen-port-docs` all
+read: a third shard is one more line there, plus its repository lines in the
+defaults of `target/apk-setup` (`APK_REPO` and the tests) and `target/oss-get`.
 
 ```bash
 source ./env.sh x86_64

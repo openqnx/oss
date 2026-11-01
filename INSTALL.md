@@ -39,7 +39,7 @@ host$ ssh root@$T 'mkdir -p /data/oss-setup /data/oss/qnx-runtime/lib'
 host$ scp /etc/ssl/certs/ca-certificates.crt root@$T:/data/oss-setup/cacert.pem
 # QNX's own run-time libraries that the image does not carry (from your SDP)
 host$ for l in libeventfd.so.1 libepoll.so.1 libsignalfd.so.1 libtimerfd.so.1 libasound.so.5 \
-               libscreen.so.1 libEGL.so.1 libGLESv2.so.1 libbacktrace.so.1 libdrm.so.1 libdrm.so.2 libgbm.so.1; do
+               libscreen.so.1 libEGL.so.1 libGLESv2.so.1 libbacktrace.so.1 libdrm.so.1 libdrm.so.2 libgbm.so.1 libnetmap.so.1; do
         f=$(ls ~/qnx800/target/qnx/x86_64/usr/lib/$l ~/qnx800/target/qnx/x86_64/lib/$l 2>/dev/null | head -n 1)
         [ -n "$f" ] && scp "$f" root@$T:/data/oss/qnx-runtime/lib/
       done
@@ -84,7 +84,8 @@ qnx# for p in zlib zstd openssl ca-certificates apk-tools; do
 qnx# mkdir -p /data/oss/etc/apk/keys
 qnx# echo "$GH/apk-8.0-$A/APKINDEX.tar.gz"     >  /data/oss/etc/apk/repositories   # 0-9, a-l
 qnx# echo "$GH/apk-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories   # m-z
-qnx# echo "$GH/tests-8.0-$A/APKINDEX.tar.gz"   >> /data/oss/etc/apk/repositories
+qnx# echo "$GH/tests-8.0-$A/APKINDEX.tar.gz"     >> /data/oss/etc/apk/repositories   # tests 0-9, a-l
+qnx# echo "$GH/tests-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories   # tests m-z
 qnx# curl -fsSL -o /data/oss/etc/apk/keys/openqnx-oss-20261029.rsa.pub \
        https://raw.githubusercontent.com/openqnx/oss/main/keys/openqnx-oss-20261029.rsa.pub
 qnx# LD_LIBRARY_PATH=root/usr/local/lib:$LD_LIBRARY_PATH \
@@ -94,14 +95,17 @@ qnx# alias apk='apk --root /data/oss'; export SSL_CERT_FILE=/usr/local/ssl/cert.
 ```
 
 (`target/apk-setup` in this repository does the same in one command.) apk
-reads the three repositories as one: a package in one may depend on packages
-in another.
+reads the four repositories as one: a package in one may depend on packages
+in another. The port tests are split the same way, by the name after
+`qnx-test-` (`qnx-test-curl` in `tests-8.0-$A`, `qnx-test-zstd` and the runner
+`qnx-port-tests` in `tests-8.0-$A-m-z`).
 
 A target set up before the split (November 2026) has only the
-`apk-8.0-$A` line and sees no new package named m-z: add the second line
+`apk-8.0-$A` and `tests-8.0-$A` lines and sees no new package named m-z
+(nor test): add the two `-m-z` lines
 (`echo "$GH/apk-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositories`,
-then `apk update`), or run `target/apk-setup` again. For oss-get, the new
-default `OSS_REPO` names both releases; a `/data/oss/etc/oss-get.conf` that
+the same for `tests-8.0-$A-m-z`, then `apk update`), or run
+`target/apk-setup` again. For oss-get, the new default `OSS_REPO` names both releases; a `/data/oss/etc/oss-get.conf` that
 sets `OSS_REPO` to the old release needs the `-m-z` one added (space-separated).
 
 Then install the samples. apk fetches the dependencies, checks every
@@ -143,8 +147,10 @@ qnx# curl --version                                       # the ported curl
 
 (`target/oss-get` does this for you, file lists included: `oss-get update` merges both
 indexes, `oss-get install curl` installs the dependencies first.)
-The tests come the same way from the `tests-8.0-$A` release (one release, its own `INDEX`):
-`qnx-port-tests` (the runner) and `qnx-test-curl`. Use one method per
+The tests come the same way from the `tests-8.0-$A` (0-9, a-l) and `tests-8.0-$A-m-z`
+(m-z) releases, each with its own `INDEX`, split by the name after `qnx-test-`:
+`qnx-test-curl` from `tests-8.0-$A`, `qnx-port-tests` (the runner, sorted as
+`port-tests`) from `tests-8.0-$A-m-z`. Use one method per
 `/data/oss`: apk does not know about files unpacked by hand.
 
 ## 3. Test it

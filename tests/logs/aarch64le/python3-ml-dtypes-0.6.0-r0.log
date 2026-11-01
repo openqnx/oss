@@ -1,0 +1,53 @@
+# python3-ml-dtypes 0.6.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T12:47:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-ml-dtypes qnx-test-python3-ml-dtypes qnx-port-tests
+( 1/11) Installing openblas (0.3.28-r0)
+( 2/11) Installing bzip2 (1.0.8-r0)
+( 3/11) Installing expat (2.6.4-r0)
+( 4/11) Installing gdbm (1.24-r0)
+( 5/11) Installing readline (8.2-r0)
+( 6/11) Installing sqlite (3.47.2-r0)
+( 7/11) Installing xz (5.6.3-r0)
+( 8/11) Installing python3 (3.14.0-r2)
+( 9/11) Installing numpy (2.3.4-r1)
+(10/11) Installing python3-ml-dtypes (0.6.0-r0)
+(11/11) Installing qnx-test-python3-ml-dtypes (1.0-r0)
+OK: 263 MiB in 50 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_ml_dtypes
+     == python3-ml-dtypes ==
+       info ml_dtypes 0.6.0, numpy 2.3.4
+       ok   bfloat16 rounding: 3.14159 -> 3.140625, 65504 -> 65536
+       ok   finfo(bfloat16): eps 2^-7, max 3.3895e38
+       ok   bfloat16 array multiply: 256 x 0.5 sums to 128
+       ok   bfloat16 overflow to inf
+       ok   dtype name bfloat16, 2 bytes
+       ok   float8 max: e4m3fn 448, e5m2 57344
+       ok   inf: e4m3fn has none (nan), e5m2 keeps it
+       ok   e4m3fn(0.3) = 0.3125
+       ok   fnuz variants: e4m3b11fnuz max 30
+       ok   float8 array addition
+       ok   float4_e2m1fn: the 15 representable values
+       ok   float6 max: e2m3fn 7.5, e3m2fn 28
+       ok   int4 -8..7, uint4 0..15
+       ok   int4 addition: 7+1 and -8-1 wrap around, 3+4 = 7
+       ok   uint4 sum, 1 byte per element
+       ok   int2 -2..1, uint2 0..3
+       ok   float64 -> bfloat16 -> float8_e5m2 -> float64
+       ok   bfloat16 -> int4 truncates
+       ok   sqrt on bfloat16
+       ok   sqrt(-1) is nan in bfloat16
+       ok   max, min, argmax
+       ok   bfloat16 matrix product
+       ok   nextafter(1, 2) = 1.0078125
+     PASS python3-ml-dtypes
+PASS test_python3_ml_dtypes
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

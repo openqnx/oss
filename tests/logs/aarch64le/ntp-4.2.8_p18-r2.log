@@ -1,0 +1,31 @@
+# ntp 4.2.8_p18-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:34:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ntp qnx-test-ntp qnx-port-tests
+(1/4) Installing libedit (20240808.3.1-r0)
+(2/4) Installing libevent (2.1.12-r0)
+(3/4) Installing ntp (4.2.8_p18-r2)
+(4/4) Installing qnx-test-ntp (1.0-r0)
+OK: 129 MiB in 43 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ntp
+     == ntp ==
+       info ntpq 4.2.8p18@1.4062 Sun Nov  1 09:21:42 UTC 2026 (1)
+       ok   ntpd --version: 4.2.8p18
+       ok   ntp-keygen -M: ntp.keys with MD5 key 1
+       ok   ntpq rv: the server answers mode 6 (version=ntpd 4.2.8p18)
+       ok   ntpq -p: the local clock <ip> .LOCL. stratum 10
+       ok   ntpdc sysinfo (mode 7)
+       ok   synchronised to the local clock after 14 s: stratum 11
+       ok   system refid: the local clock
+       ok   ntpdate -q: server <ip>, stratum 11, offset +0.000112, delay 0.02728
+     PASS ntp
+PASS test_ntp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

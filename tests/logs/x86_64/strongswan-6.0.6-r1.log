@@ -1,15 +1,14 @@
 # strongswan 6.0.6-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:35:05Z   packages from: apk:local-dists
+# date: 2026-11-01T11:10:14Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u strongswan qnx-test-strongswan qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r2)
-(2/3) Installing strongswan (6.0.6-r1)
-(3/3) Installing qnx-test-strongswan (1.0-r0)
-OK: 98 MiB in 32 packages
+(1/2) Installing strongswan (6.0.6-r1)
+(2/2) Installing qnx-test-strongswan (1.0-r0)
+OK: 100 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_strongswan
      == strongswan ==
@@ -40,7 +39,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
        ok   pki --verify: CA against itself trusted
        ok   pki --verify against another CA: untrusted (rc 1)
        ok   pki --verify: SAN outside the CA's name constraint untrusted (constraints plugin)
-       ok   charon started (pid 920195113), answering over vici after 1s
+       ok   charon started (pid 1279885353), answering over vici after 1s
        ok   swanctl --version: strongSwan swanctl 6.0.6
        ok   swanctl --version --daemon: strongSwan 6.0.6 charon (QNX, 8.0.0, x86pc)
        ok   swanctl --stats: uptime and worker threads

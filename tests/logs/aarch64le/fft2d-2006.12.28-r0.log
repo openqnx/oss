@@ -1,0 +1,29 @@
+# fft2d 2006.12.28-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:56:07Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fft2d qnx-test-fft2d qnx-port-tests
+(1/1) Installing qnx-test-fft2d (1.0-r0)
+OK: 123 MiB in 40 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fft2d
+     == fft2d ==
+       ok   rdft([1 2 3 4]) = 10, -2, -2, -2 (Ooura's layout and sign)
+       ok   cdft of an impulse: all ones
+       ok   rdft forward + inverse x 2/n = input
+       ok   ddct forward + inverse round trip
+       ok   ddst forward + inverse round trip
+       ok   cdft2d 4 x 4 complex forward + inverse / (n1 n2)
+       ok   ddct2d 4 x 8 forward + inverse round trip
+       ok   rdft3d 4x4x4 forward + inverse x 2/(n1 n2 n3)
+       ok   ddct8x8s: DC coefficient = sum / 8 (normalized DCT)
+       ok   ddct8x8s forward + inverse = input (orthonormal)
+     PASS fft2d
+PASS test_fft2d
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

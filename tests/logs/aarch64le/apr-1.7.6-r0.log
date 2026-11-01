@@ -1,0 +1,65 @@
+# apr 1.7.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:24:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u apr qnx-test-apr qnx-port-tests
+(1/3) Installing apr (1.7.6-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-apr (1.0-r0)
+OK: 56 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_apr
+     == apr ==
+       ok   apr_initialize()
+       ok   apr_pool_create()
+       info APR 1.7.6
+       ok   apr_psprintf with APR_INT64_T_FMT
+       ok   apr_strtok splits a,b,,c into 3 tokens
+       ok   apr_strnatcmp: file10 > file9
+       ok   apr_strfsize(1.5 MiB) = 1.5M
+       ok   apr_table_get is case-insensitive
+       ok   apr_table_merge joins with ', '
+       ok   apr_hash set/get/count
+       ok   apr_time_exp_gmt(1234567890) = Fri 2009-02-13 23:31:30
+       ok   apr_time_exp_gmt_get round trip
+       ok   apr_rfc822_date
+       ok   apr_temp_dir_get
+       ok   apr_dir_make_recursive
+       ok   apr_file_open for writing
+       ok   apr_stat: regular file of 18 bytes
+       ok   apr_file_gets reads the second line
+       ok   apr_file_seek + apr_file_read
+       ok   apr_file_mktemp
+       ok   apr_dir_read lists sub/ and data.txt with their types
+       ok   4 threads x 20000 mutex-protected increments = 80000
+       ok   apr_atomic_inc32 from 4 threads = 80000
+       ok   apr_atomic_cas32
+       ok   apr_shm_create (anonymous)
+       ok   apr_proc_mutex_create (default)
+       info default process lock: fcntl
+       ok   forked child exited 0
+       ok   child's write to shared memory is seen by the parent
+       ok   parent + child 1000 locked increments each = 2000
+       ok   apr_pencode_base64("QNX 8.0") = UU5YIDguMA==
+       ok   apr_generate_random_bytes gives different bytes twice
+       ok   apr_sockaddr_info_get(<ip>)
+       ok   bind + listen on port 0
+       ok   the listener got a port
+       ok   accept on a non-blocking listener with nothing pending: EAGAIN
+       ok   connect to the listener
+       info pollset method: poll
+       ok   pollset: the listener is readable
+       ok   accept the connection
+       info accepted socket: O_NONBLOCK set, APR thinks set
+       ok   APR's O_NONBLOCK bookkeeping of an accepted socket matches the socket
+       ok   send/recv 'hello' over the loopback
+       ok   recv with a 200 ms timeout and no data: TIMEUP
+     PASS apr
+PASS test_apr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

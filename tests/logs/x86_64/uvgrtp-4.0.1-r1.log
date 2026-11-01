@@ -1,0 +1,40 @@
+# uvgrtp 4.0.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:10:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u uvgrtp qnx-test-uvgrtp qnx-port-tests
+(1/2) Installing uvgrtp (4.0.1-r1)
+(2/2) Installing qnx-test-uvgrtp (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_uvgrtp
+     == uvgrtp ==
+       info uvgRTP 4.0.1-release
+       ok   version 4.0.1
+       ok   session on <ip>
+     [uvgRTP][[34mINFO[0m][::init_connection] Not binding, receiving is not possible
+     [uvgRTP][[34mINFO[0m][::init_connection] Sending disabled for this stream
+       ok   generic send and receive streams
+       ok   RCC_SSRC set on the sender
+       ok   3 generic frames received
+       ok   payloads intact (160 bytes each)
+       ok   consecutive sequence numbers
+       ok   timestamps 8000, 16000, 24000 as pushed
+       ok   SSRC 0x0051a7e5 on every packet
+       ok   RTP version 2, payload type 0 (PCMU/generic)
+     [uvgRTP][[34mINFO[0m][::init_connection] Not binding, receiving is not possible
+     [uvgRTP][[34mINFO[0m][::init_connection] Sending disabled for this stream
+       ok   9000-byte generic frame fragmented and reassembled intact
+     [uvgRTP][[34mINFO[0m][::init_connection] Not binding, receiving is not possible
+     [uvgRTP][[34mINFO[0m][::init_connection] Sending disabled for this stream
+       ok   H.265 access unit pushed (4 NAL units, 6000-byte slice fragmented)
+       ok   VPS, SPS, PPS and the 6000-byte IDR slice received intact, in order
+     PASS uvgrtp
+PASS test_uvgrtp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

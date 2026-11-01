@@ -1,0 +1,45 @@
+# nspr 4.39-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:56:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nspr qnx-test-nspr qnx-port-tests
+(1/2) Installing nspr (4.39-r0)
+(2/2) Installing qnx-test-nspr (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nspr
+     == nspr ==
+       ok   PR_Init
+       ok   PR_VersionCheck(4.39)
+       info NSPR 4.39
+       ok   PR_snprintf formats
+       ok   PR_smprintf allocates
+       ok   PR_ExplodeTime(1700000000) = Tue 2023-11-14 22:13:20 UTC
+       ok   PR_ImplodeTime round trip
+       ok   PR_ParseTimeString (RFC 1123 date)
+       ok   PR_FormatTimeUSEnglish
+       ok   PR_Now is after 2023
+       ok   PL_Base64Encode
+       ok   PL_Base64Decode
+       ok   PL_strcasecmp / PL_strlen
+       ok   PLHashTable lookup
+       ok   PLHashTable remove
+       ok   4 threads x 10000 locked increments = 40000
+       ok   condvar producer/consumer: 50 items, sum 1275
+       ok   TCP listen on <ip> (ephemeral port)
+       info listening on port 59377
+       ok   PR_Connect
+       ok   TCP echo round trip
+       ok   PR_Poll times out with no data
+       ok   EOF after the server closes
+       ok   PR_StringToNetAddr / PR_NetAddrToString
+       ok   PR_Cleanup
+     PASS nspr
+PASS test_nspr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

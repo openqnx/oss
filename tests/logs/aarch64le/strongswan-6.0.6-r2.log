@@ -1,0 +1,99 @@
+# strongswan 6.0.6-r2 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T16:42:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u strongswan qnx-test-strongswan qnx-port-tests
+(1/2) Installing strongswan (6.0.6-r2)
+(2/2) Installing qnx-test-strongswan (1.0-r0)
+OK: 129 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_strongswan
+FAIL test_strongswan (rc=1)
+     == strongswan ==
+       ok   libstrongswan: all 14 suites passed (chunk,enum,identification,asn1,host,printf,hasher,crypter,rsa,ecdsa,certnames,serial_gen,serial_parse,signature params)
+       info loaded plugins: sha2 random nonce x509 revocation constraints pubkey pkcs1 pem openssl pkcs8 hmac kdf
+       FAIL chunk_from_fd_huge: rc=143: Running 1 'libstrongswan' test suites: 
+       ok   exchanges: all 4 suites passed (child create,ike rekey,child rekey,ike delete)
+       info pki: strongSwan 6.0.6 PKI tool
+       ok   pki --help: strongSwan 6.0.6 PKI tool
+       ok   pki --gen: ECDSA 256 key (PEM)
+       ok   pki --print key: ECDSA 256 bits
+       ok   pki --self: CA certificate
+       ok   CA subject: C=CH, O=QNX Test, CN=QNX Test CA
+       ok   CA issuer = subject
+       ok   CA serial 01:02:03:04:05
+       ok   CA flags:     CA CRLSign self-signed 
+       ok   CA pubkey: ECDSA 256 bits
+       ok   CA name constraint: permitted qnx.test
+       ok   pki --gen: RSA 2048 key
+       ok   pki --pub: public key extracted
+       ok   pki --issue: end-entity certificate
+       ok   EE subject: C=CH, O=QNX Test, CN=moon.qnx.test
+       ok   EE issuer: the CA
+       ok   EE altNames: moon.qnx.test
+       ok   EE flags: serverAuth, not CA
+       ok   EE pubkey: RSA 2048 bits
+       ok   pki --verify: certificate trusted, lifetimes valid
+       ok   pki --verify: CA against itself trusted
+       ok   pki --verify against another CA: untrusted (rc 1)
+       ok   pki --verify: SAN outside the CA's name constraint untrusted (constraints plugin)
+       ok   charon started (pid 1299365910), answering over vici after 1s
+       ok   swanctl --version: strongSwan swanctl 6.0.6
+       ok   swanctl --version --daemon: strongSwan 6.0.6 charon (QNX, 8.0.0, QEMU_virt)
+       ok   swanctl --stats: uptime and worker threads
+       ok   load-all: PSK secret loaded
+       ok   load-all: 1 connection loaded
+       ok   list-conns: qnxtest IKEv2, child remote <ip>/16, remote id sun.qnx.test
+       ok   list-sas: no SAs, rc 0
+       ok   charon still running after the vici checks
+       info --- charon.out
+       info --- charon.log
+       info | 06[CFG]   remote_port = 500
+       info | 06[CFG]   send_certreq = 1
+       info | 06[CFG]   send_cert = CERT_SEND_IF_ASKED
+       info | 06[CFG]   ocsp = OCSP_SEND_REPLY
+       info | 06[CFG]   ppk_id = (null)
+       info | 06[CFG]   ppk_required = 0
+       info | 06[CFG]   mobike = 1
+       info | 06[CFG]   aggressive = 0
+       info | 06[CFG]   pull = 1
+       info | 06[CFG]   dscp = 0x00
+       info | 06[CFG]   encap = 0
+       info | 06[CFG]   dpd_delay = 0
+       info | 06[CFG]   dpd_timeout = 0
+       info | 06[CFG]   fragmentation = 2
+       info | 06[CFG]   childless = 0
+       info | 06[CFG]   unique = UNIQUE_NO
+       info | 06[CFG]   keyingtries = 1
+       info | 06[CFG]   reauth_time = 0
+       info | 06[CFG]   rekey_time = 14400
+       info | 06[CFG]   over_time = 1440
+       info | 06[CFG]   rand_time = 1440
+       info | 06[CFG]   proposals = IKE:AES_CBC_128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/MODP_2048
+       info | 06[CFG]   if_id_in = 0
+       info | 06[CFG]   if_id_out = 0
+       info | 06[CFG]   local:
+       info | 06[CFG]    id = moon.qnx.test
+       info | 06[CFG]    class = pre-shared key
+       info | 06[CFG]   remote:
+       info | 06[CFG]    id = sun.qnx.test
+       info | 06[CFG]    class = pre-shared key
+       info | 06[CFG] added vici connection: qnxtest
+       info | 10[CFG] vici client 4 disconnected
+       info | 12[CFG] vici client 5 connected
+       info | 14[CFG] vici client 5 registered for: list-conn
+       info | 07[CFG] vici client 5 requests: list-conns
+       info | 11[CFG] vici client 5 disconnected
+       info | 13[CFG] vici client 6 connected
+       info | 15[CFG] vici client 6 registered for: list-sa
+       info | 07[CFG] vici client 6 requests: list-sas
+       info | 11[CFG] vici client 6 disconnected
+     FAIL strongswan (1 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_strongswan
+
+RESULT: FAIL

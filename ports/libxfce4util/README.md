@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libxfce4util libxfce4util-dev
-apk add qnx-test-libxfce4util && /usr/local/bin/qnx-port-tests/test_libxfce4util    # its on-target test
+apk add qnx-test-libxfce4util && /usr/local/bin/qnx-port-tests/test_libxfce4util    # its on-target test, from tests-8.0-<arch>
 apk del libxfce4util libxfce4util-dev qnx-test-libxfce4util
 ```
 
@@ -179,7 +179,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libxfce4util`](../../tests/src/) links libxfce4util the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxfce4util`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libxfce4util`](../../tests/src/) links libxfce4util the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxfce4util`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

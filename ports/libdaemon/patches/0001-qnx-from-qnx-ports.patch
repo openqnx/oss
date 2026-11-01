@@ -1,0 +1,82 @@
+From ddad99d2cb6cd3f1e7c40a1cfb1d40d0ef174837 Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Wed, 25 Feb 2026 19:50:45 +0000
+Subject: [PATCH] initial qnx support
+
+Imported from qnx-ports/libdaemon (branch qnx-0.14, 8616602..ddad99d); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ examples/testd.c    | 2 +-
+ libdaemon/dexec.c   | 8 ++++++++
+ libdaemon/dfork.c   | 4 ++++
+ libdaemon/dsignal.c | 4 ++++
+ 4 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/examples/testd.c b/examples/testd.c
+index 9154f7b..eebbcae 100644
+--- a/examples/testd.c
++++ b/examples/testd.c
+@@ -26,9 +26,9 @@
+ #include <signal.h>
+ #include <errno.h>
+ #include <string.h>
++#include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
+-#include <sys/unistd.h>
+ #include <sys/select.h>
+ 
+ #include <libdaemon/dfork.h>
+diff --git a/libdaemon/dexec.c b/libdaemon/dexec.c
+index 7a89b62..e1fb786 100644
+--- a/libdaemon/dexec.c
++++ b/libdaemon/dexec.c
+@@ -48,6 +48,14 @@
+ 
+ #define MAX_ARGS 64
+ 
++#ifdef __QNX__
++#include <sys/select.h>
++#endif
++
++#ifndef SA_RESTART
++#define SA_RESTART 0
++#endif
++
+ int daemon_execv(const char *dir, int *ret, const char *prog, va_list ap) {
+     pid_t pid;
+     int p[2];
+diff --git a/libdaemon/dfork.c b/libdaemon/dfork.c
+index 783033f..ae6701d 100644
+--- a/libdaemon/dfork.c
++++ b/libdaemon/dfork.c
+@@ -55,6 +55,10 @@
+ # error "Unknown upper bound for signals"
+ #endif
+ 
++#ifndef SA_RESTART
++#define SA_RESTART 0
++#endif
++
+ static int _daemon_retval_pipe[2] = { -1, -1 };
+ 
+ static int _null_open(int f, int fd) {
+diff --git a/libdaemon/dsignal.c b/libdaemon/dsignal.c
+index e60fb38..8745a06 100644
+--- a/libdaemon/dsignal.c
++++ b/libdaemon/dsignal.c
+@@ -38,6 +38,10 @@
+ #include "dlog.h"
+ #include "dnonblock.h"
+ 
++#ifndef SA_RESTART
++#define SA_RESTART 0
++#endif
++
+ static int _signal_pipe[2] = { -1, -1 };
+ 
+ static void _sigfunc(int s) {
+-- 
+2.43.0
+

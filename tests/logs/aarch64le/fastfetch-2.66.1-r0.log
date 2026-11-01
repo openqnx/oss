@@ -1,0 +1,39 @@
+# fastfetch 2.66.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:56:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fastfetch qnx-test-fastfetch qnx-port-tests
+(1/2) Installing fastfetch (2.66.1-r0)
+(2/2) Installing qnx-test-fastfetch (1.0-r0)
+OK: 125 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fastfetch
+     == fastfetch ==
+       ok   fastfetch --version: 2.66.1
+       ok   JSON output written
+       ok   OS: QNX 8.0.0
+       ok   OS build: 2026/06/05-16:21:14EDT
+       ok   Kernel release 8.0.0
+       info pidin: 4 CPUs at 0 MHz, FreeMem:1766MB/2048MB
+       ok   CPU: 4 logical cores, as pidin
+       ok   CPU: base frequency 0 MHz, as pidin
+       ok   Memory: total 2048 MB, as pidin
+       ok   Memory: used is between 0 and the total
+       ok   Uptime: 110237 s since boot
+       info boot time: fastfetch 2026-10-31T04:18:42.000+0000, pidin Oct 31 04:18:42
+       ok   Processes: 26 (/proc has 27)
+       ok   Disk /: 9428 KB total, as df -k
+       ok   Disk: mount point /
+       ok   Local IP: lo0 <ip>/8
+       info shell: fastfetch /bin/sh, this script /bin/sh
+       ok   Shell: /bin/sh (the shell running this test)
+       ok   text output with a format string: OS: QNX-8.0.0
+     PASS fastfetch
+PASS test_fastfetch
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

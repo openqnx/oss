@@ -1,0 +1,32 @@
+Generate cups-notifier from the source directory's XML file.
+
+The rule that generates cups-notifier.[ch] with gdbus-codegen names its
+input as utils/org.cups.cupsd.Notifier.xml, relative to the current
+directory. In an out-of-tree (VPATH) build that is the build directory and
+gdbus-codegen fails with "No such file or directory". Take the file from
+$(srcdir) (Makefile.am and the generated Makefile.in alike).
+
+Upstream-Status: Pending
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -912,7 +912,7 @@
+ 	    --interface-prefix org.cups.cupsd \
+ 	    --c-namespace Cups \
+ 	    --generate-c-code cups-notifier \
+-	    utils/org.cups.cupsd.Notifier.xml
++	    $(srcdir)/utils/org.cups.cupsd.Notifier.xml
+ 
+ sbin_PROGRAMS = \
+ 	cups-browsed
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -5833,7 +5833,7 @@
+ 	    --interface-prefix org.cups.cupsd \
+ 	    --c-namespace Cups \
+ 	    --generate-c-code cups-notifier \
+-	    utils/org.cups.cupsd.Notifier.xml
++	    $(srcdir)/utils/org.cups.cupsd.Notifier.xml
+ 
+ distclean-local:
+ 	rm -rf *.cache *~

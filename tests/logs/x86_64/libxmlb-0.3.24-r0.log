@@ -1,0 +1,39 @@
+# libxmlb 0.3.24-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxmlb qnx-test-libxmlb qnx-port-tests
+(1/3) Installing libxmlb (0.3.24-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libxmlb (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxmlb
+     == libxmlb ==
+       ok   silo compiled from XML
+       ok   query components/component: 3 results
+       ok   attribute predicate: the two desktop ids
+       ok   text() predicate and .. find the shell component
+       ok   child text as an integer: priority 5
+       ok   parent element and its attribute
+       ok   next sibling
+       ok   no match: G_IO_ERROR_NOT_FOUND
+       ok   malformed query reported as an error
+       info failed to process components/component[@type=: predicate [@type= was unfinished, missing ']'
+       ok   silo saved to a file
+       ok   silo mapped back from the file
+       ok   same GUID after the round trip
+       ok   loaded silo answers queries
+       ok   gzip and xz source files written
+       ok   builder loads the gzip and the xz source
+       ok   compiled silo of both sources: 6 components
+       ok   node exported back to XML
+     PASS libxmlb
+PASS test_libxmlb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

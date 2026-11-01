@@ -1,0 +1,28 @@
+From d9a27fa825be9d8eb50b448095f921e442e2d922 Mon Sep 17 00:00:00 2001
+From: Abdulfatah Ahmoda <abahmoda@qnx.com>
+Date: Tue, 10 Mar 2026 04:36:45 +0000
+Subject: [PATCH] add sys/param.h in places to look for endianness
+
+Imported from qnx-ports/skalibs (branch qnx-release-v2.14.5.1, 8d27271..d9a27fa); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 453589f..f4f0ca2 100755
+--- a/configure
++++ b/configure
+@@ -223,7 +223,7 @@ trybasic () {
+ tryendianness () {
+   echo "Checking endianness..."
+   if iscached endianness ; then return ; fi
+-  for i in endian.h sys/endian.h machine/endian.h sys/machine.h ; do
++  for i in endian.h sys/endian.h machine/endian.h sys/machine.h sys/param.h ; do
+     cat > "$tmpc" <<EOF
+ #undef _POSIX_C_SOURCE
+ #undef _XOPEN_SOURCE
+-- 
+2.43.0
+

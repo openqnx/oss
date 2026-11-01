@@ -1,0 +1,38 @@
+Use SO_TIMESTAMP, not SO_BINTIME, for receive timestamps on QNX.
+
+QNX's io-sock defines SO_BINTIME and SCM_BINTIME, but has neither
+struct bintime for applications (it is only in the driver headers) nor
+bintime2timespec() in libc, so the BINTIME path does not link. ptpd falls
+back to SO_TIMESTAMP (struct timeval), which QNX supports.
+
+Upstream-Status: QNX-specific
+
+--- a/src/dep/net.c
++++ b/src/dep/net.c
+@@ -764,7 +764,7 @@
+ 		PERROR("netInitTimestamping: failed to enable SO_TIMESTAMPNS");
+ 		result = FALSE;
+ 	}
+-#elif defined(SO_BINTIME) /* FreeBSD */
++#elif defined(SO_BINTIME) && !defined(__QNX__) /* FreeBSD */
+ 	DBG("netInitTimestamping: trying to use SO_BINTIME\n");
+ 		
+ 	if (setsockopt(netPath->eventSock, SOL_SOCKET, SO_BINTIME, &val, sizeof(int)) < 0) {
+@@ -1446,7 +1446,7 @@
+ 
+ #if defined(SO_TIMESTAMPNS) || defined(SO_TIMESTAMPING)
+ 	struct timespec * ts;
+-#elif defined(SO_BINTIME)
++#elif defined(SO_BINTIME) && !defined(__QNX__)
+ 	struct bintime * bt;
+ 	struct timespec ts;
+ #endif
+@@ -1561,7 +1561,7 @@
+ 					     time->seconds, time->nanoseconds);
+ 					break;
+ 				}
+-#elif defined(SO_BINTIME)
++#elif defined(SO_BINTIME) && !defined(__QNX__)
+ 				if(cmsg->cmsg_type == SCM_BINTIME) {
+ 					bt = (struct bintime *)CMSG_DATA(cmsg);
+ 					bintime2timespec(bt, &ts);

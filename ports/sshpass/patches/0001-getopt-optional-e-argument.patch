@@ -1,0 +1,31 @@
+-e: do not take the next word as the variable name with a POSIX getopt.
+
+sshpass declares -e with an optional argument ("e::", the name of the
+environment variable, SSHPASS by default). Optional arguments are a GNU
+getopt extension; QNX's POSIX getopt treats "e::" as a required argument, so
+"sshpass -e ssh host" read the variable name from "ssh" and failed ('-e
+option given but "ssh" environment variable is not set'). When getopt hands
+-e a separate word, give it back: GNU getopt never does that for an
+optional argument, so the behaviour there is unchanged, and "-eNAME" still
+names the variable everywhere.
+
+Upstream-Status: QNX-specific
+
+--- a/main.c
++++ b/main.c
+@@ -166,6 +166,15 @@
+             VIRGIN_PWTYPE;
+ 
+             args.pwtype=PWT_PASS;
++            /* "e::" (an optional argument) is a GNU getopt extension. A POSIX
++             * getopt, QNX's, treats it as a required one and takes the next
++             * word ("-e ssh ...": the program name) as the variable name.
++             * GNU getopt never returns a separate word for an optional
++             * argument, so a separate word means it was not meant for -e. */
++            if( optarg!=NULL && optind>1 && optarg==argv[optind-1] ) {
++                optarg=NULL;
++                optind--;
++            }
+             if( optarg==NULL )
+                 optarg = "SSHPASS";
+             args.orig_password=getenv(optarg);

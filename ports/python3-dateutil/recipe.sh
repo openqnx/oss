@@ -5,6 +5,9 @@ VERSION=2.9.0.post0
 TARBALL=https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl
 SHA256=a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
 DEPS="python3 python3-six"
+# dateutil imports six at run time (dateutil/parser); pure Python, so no
+# DT_NEEDED shows it.
+RUNTIME_DEPS="python3 python3-six"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"
 do_fetch() { qnx_py_fetch_wheel; }

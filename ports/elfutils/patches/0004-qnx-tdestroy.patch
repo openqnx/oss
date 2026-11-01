@@ -1,0 +1,49 @@
+Free a search tree without tdestroy() on QNX.
+
+eu_tdestroy() frees a search tree with tdestroy(), a GNU extension QNX's
+libc does not have (libelf's elf_end() uses it for its raw-chunk tree).
+The QNX branch empties the tree with standard tdelete(): a comparison that
+always matches makes tdelete() remove the root node, and the key is the
+first member of a node (POSIX: what tsearch() returns points at it).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/eu-search.c
++++ b/lib/eu-search.c
+@@ -32,6 +32,15 @@
+ 
+ #include "eu-search.h"
+ 
++#ifdef __QNX__
++static int
++eu_search_match_root (const void *a __attribute__ ((unused)),
++		      const void *b __attribute__ ((unused)))
++{
++  return 0;
++}
++#endif
++
+ void *eu_tsearch (const void *key, search_tree *tree,
+ 		  int (*compare)(const void *, const void *))
+ {
+@@ -66,7 +75,20 @@
+ {
+   rwlock_wrlock (tree->lock);
+ 
++#ifdef __QNX__
++  /* QNX has no tdestroy (a GNU extension).  Delete the root node until
++     the tree is empty: a comparison that always matches makes tdelete
++     take the root, and a node's first member is its key (POSIX).  */
++  while (tree->root != NULL)
++    {
++      void *key = *(void **) tree->root;
++      tdelete (key, &tree->root, eu_search_match_root);
++      if (free_node != NULL)
++	free_node (key);
++    }
++#else
+   tdestroy (tree->root, free_node);
++#endif
+   tree->root = NULL;
+ 
+   rwlock_unlock (tree->lock);

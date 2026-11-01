@@ -1,0 +1,21 @@
+CpuArch: no getauxval() hardware-capability probe on QNX
+
+QNX ships <sys/auxv.h>, so the __has_include test below turned on
+USE_HWCAP, but it has neither getauxval() nor AT_HWCAP/HWCAP_*: the arm64
+build failed. On QNX the CPU feature checks return 0 (the hardware CRC32,
+SHA and AES code paths are not used; NEON is always on for arm64).
+
+Upstream-Status: Pending
+
+--- a/C/CpuArch.c
++++ b/C/CpuArch.c
+@@ -859,6 +859,9 @@
+ 
+ #if defined(__GLIBC__) && (__GLIBC__ * 100 + __GLIBC_MINOR__ >= 216)
+   #define Z7_GETAUXV_AVAILABLE
++#elif defined(__QNX__)
++  // QNX has <sys/auxv.h> but no getauxval()/AT_HWCAP: no hardware
++  // CRC32/SHA/AES detection, the portable code paths are used.
+ #else
+ // #pragma message("=== is not NEW GLIBC === ")
+   #if defined __has_include

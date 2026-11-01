@@ -1,0 +1,61 @@
+# python3-pillow 13.0.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:06:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-pillow qnx-test-python3-pillow qnx-port-tests
+( 1/13) Installing lcms2 (2.16-r0)
+( 2/13) Installing fribidi (1.0.16-r0)
+( 3/13) Installing harfbuzz (<ip>-r0)
+( 4/13) Installing libraqm (0.10.5-r0)
+( 5/13) Installing libwebp (1.4.0-r0)
+( 6/13) Installing libtiff (4.7.0-r0)
+( 7/13) Installing openjpeg (2.5.3-r0)
+( 8/13) Installing gdbm (1.24-r0)
+( 9/13) Installing readline (8.2-r0)
+(10/13) Installing sqlite (3.47.2-r0)
+(11/13) Installing python3 (3.14.0-r2)
+(12/13) Installing python3-pillow (13.0.0-r0)
+(13/13) Installing qnx-test-python3-pillow (1.0-r0)
+OK: 208 MiB in 46 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pillow
+     == python3-pillow ==
+       info Pillow 13.0.0
+       ok   feature zlib compiled in
+       ok   feature jpg compiled in
+       ok   feature libtiff compiled in
+       ok   feature freetype2 compiled in
+       ok   feature littlecms2 compiled in
+       ok   feature jpg_2000 compiled in
+       ok   feature raqm compiled in
+       ok   WebP module
+       ok   drawn pixels
+       ok   line on the last row
+       ok   histogram counts every pixel
+       ok   PNG round trip is exact
+       ok   TIFF round trip is exact
+       ok   WEBP round trip is exact
+       ok   JPEG2000 round trip is exact
+       ok   JPEG round trip close to the original
+       ok   BMP round trip is exact
+       ok   GIF round trip keeps the palette colours
+       ok   resize (nearest)
+       ok   rotate 90 with expand
+       ok   mirror
+       ok   box blur spreads 255 over 9 pixels
+       ok   RGB red to L: 76 (ITU-R 601)
+       ok   RGB to CMYK
+       ok   LittleCMS: sRGB white -> L*=100, a*=b*=0
+       info no DejaVu font file: Pillow's built-in font
+       info text bbox (5, 10, 46, 25)
+       ok   text drawn
+       ok   text length doubles with the string
+     PASS python3-pillow
+PASS test_python3_pillow
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

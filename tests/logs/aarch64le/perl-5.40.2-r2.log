@@ -1,14 +1,12 @@
 # perl 5.40.2-r2 -- INSTALLED
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T17:10:52Z   packages from: apk:local-dists
+# date: 2026-11-01T13:38:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl
-(1/2) Installing libxcrypt (4.4.38-r0)
-(2/2) Installing perl (5.40.2-r2)
-OK: 118 MiB in 30 packages
+OK: 123 MiB in 39 packages
 
 $ ldd on every program and library apk info -L perl lists
 ok   loads: /data/oss/usr/local/bin/perl

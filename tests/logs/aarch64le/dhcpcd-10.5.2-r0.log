@@ -1,0 +1,43 @@
+# dhcpcd <ip>-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:53:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dhcpcd qnx-test-dhcpcd qnx-port-tests
+(1/2) Installing dhcpcd (<ip>-r0)
+(2/2) Installing qnx-test-dhcpcd (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dhcpcd
+     == dhcpcd ==
+       info dhcpcd <ip>
+       ok   dhcpcd --version: <ip>
+       ok   compiled in: INET ARP INET6 DHCPv6
+       ok   -V lists the DHCPv4 and DHCPv6 option tables
+       ok   -V: options 3, 6, 121 are routers, domain_name_servers, classless_static_routes
+       ok   DHCPACK message built: 315 bytes
+       ok   dhcpcd -4 --dumplease - exits 0
+       ok   lease: ip_address=192.0.2.55
+       ok   lease: subnet_mask=255.255.255.0
+       ok   lease: subnet_cidr=24
+       ok   lease: broadcast_address=192.0.2.255
+       ok   lease: network_number=192.0.2.0
+       ok   lease: routers=192.0.2.1
+       ok   lease: domain_name_servers=192.0.2.53 192.0.2.54
+       ok   lease: host_name=qnxhost
+       ok   lease: domain_name=example.test
+       ok   lease: classless_static_routes=<ip>/8 192.0.2.254
+       ok   lease: ntp_servers=192.0.2.123
+       ok   lease: dhcp_lease_time=3600
+       ok   lease: dhcp_message_type=5
+       ok   lease: dhcp_server_identifier=192.0.2.1
+       ok   --dumplease without -4/-6 is refused
+       ok   -f config: unknown keyword reported, lease still decoded
+     PASS dhcpcd
+PASS test_dhcpcd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

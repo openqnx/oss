@@ -1,0 +1,307 @@
+Fix the QNX module: cross build, Process(), cpu_times
+
+Make the qnx-ports QNX module usable: as imported (0001), psutil.Process()
+raised AttributeError for every process (create_time() called
+self.self.proc_basic_info), and several other entry points could not work:
+
+ - setup.py chooses the platform from sys.platform, which in a cross build
+   is the build machine's: Linux's extension was compiled. Take it from
+   _PYTHON_HOST_PLATFORM when that names QNX.
+ - _common.__all__ lacked a comma after 'QNX', which glued it to 'SUNOS'.
+ - create_time(), num_threads(), cpu_times() and ppid() used wrong method
+   or field names; debug_process_t's times are nanoseconds, not clock ticks.
+ - gids() built a puids tuple; name() returned "UNIMPLEMENTED" (now the
+   executable's base name, from /proc/<pid>/exefile); cmdline() returned
+   one string with NULs inside instead of the argument list.
+ - A process that does not exist was reported as AccessDenied (every open
+   failure became EACCES) and leaked the descriptor on devctl errors; it is
+   now NoSuchProcess (ENOENT/ESRCH). wrap_exceptions() called
+   cext.proc_is_zombie, which only BSD and macOS have.
+ - System cpu_times() returned None, so cpu_percent() failed. QNX keeps no
+   per-CPU user/system split; it has the run time of procnto's idle
+   threads (process 1, one per CPU), which QNX's own hogs/top use: idle is
+   that, busy ("system") the time since boot less it.
+ - cpu_count(logical=False) returned None (QNX has no SMT notion: cores =
+   CPUs), disk_partitions() None (now []), and disk_usage was missing
+   (the POSIX statvfs implementation).
+ - proc_threads() leaked a reference per thread.
+
+Upstream-Status: QNX-specific
+
+--- a/psutil/arch/qnx/proc.c
++++ b/psutil/arch/qnx/proc.c
+@@ -31,21 +31,27 @@
+ 
+     fd = open(fn, O_RDONLY);
+     if (fd == NOFD) {
+-        psutil_oserror_ad("open");
+-        return NULL;
++        // no /proc/<pid>: no such process
++        if (errno == ENOENT)
++            return psutil_oserror_nsp("open");
++        return psutil_oserror();
+     }
+ 
+     errno = devctl(fd, DCMD_PROC_INFO, &p_info, sizeof p_info, 0);
+     if (errno != EOK) {
+-        psutil_oserror_ad("devctl -> DMCD_PROC_INFO");
+-        return NULL;
++        close(fd);
++        if (errno == ESRCH)
++            return psutil_oserror_nsp("devctl -> DCMD_PROC_INFO");
++        return psutil_oserror_ad("devctl -> DCMD_PROC_INFO");
+     }
+ 
+     t_info.tid = 1;
+     errno = devctl(fd, DCMD_PROC_TIDSTATUS, &t_info, sizeof t_info, 0);
+     if (errno != EOK) {
+-        psutil_oserror_ad("devctl -> DMCD_PROC_STATUS");
+-        return NULL;
++        close(fd);
++        if (errno == ESRCH)
++            return psutil_oserror_nsp("devctl -> DCMD_PROC_TIDSTATUS");
++        return psutil_oserror_ad("devctl -> DCMD_PROC_TIDSTATUS");
+     }
+ 
+     close(fd);
+@@ -74,6 +80,7 @@
+     char fn[PATH_MAX];
+     int pid;
+     int tid;
++    PyObject *py_tuple = NULL;
+     PyObject *py_retlist = PyList_New(0);
+ 
+     if (!PyArg_ParseTuple(args, "i", &pid))
+@@ -83,8 +90,10 @@
+ 
+     fd = open(fn, O_RDONLY);
+     if (fd == NOFD) {
+-        psutil_oserror_ad("open");
+-        return NULL;
++        Py_DECREF(py_retlist);
++        if (errno == ENOENT)
++            return psutil_oserror_nsp("open");
++        return psutil_oserror();
+     }
+ 
+     t_info.tid = tid = 1;
+@@ -104,12 +113,10 @@
+             break;
+         }
+ 
+-        if (PyList_Append(
+-                py_retlist, Py_BuildValue("(iK)", t_info.tid, t_info.sutime)
+-            ))
+-        {
++        py_tuple = Py_BuildValue("(iK)", t_info.tid, t_info.sutime);
++        if (py_tuple == NULL || PyList_Append(py_retlist, py_tuple))
+             goto error;
+-        }
++        Py_CLEAR(py_tuple);
+ 
+         tid = ++t_info.tid;
+ 
+@@ -123,6 +130,7 @@
+ 
+ error:
+     close(fd);
++    Py_XDECREF(py_tuple);
+     Py_XDECREF(py_retlist);
+     return NULL;
+ }
+--- a/psutil/_common.py
++++ b/psutil/_common.py
+@@ -37,7 +37,7 @@
+ # fmt: off
+ __all__ = [
+     # OS constants
+-    'FREEBSD', 'BSD', 'LINUX', 'NETBSD', 'OPENBSD', 'MACOS', 'OSX', 'POSIX', 'QNX'
++    'FREEBSD', 'BSD', 'LINUX', 'NETBSD', 'OPENBSD', 'MACOS', 'OSX', 'POSIX', 'QNX',
+     'SUNOS', 'WINDOWS',
+     # connection constants
+     'CONN_CLOSE', 'CONN_CLOSE_WAIT', 'CONN_CLOSING', 'CONN_ESTABLISHED',
+--- a/psutil/_ntuples.py
++++ b/psutil/_ntuples.py
+@@ -454,3 +454,6 @@
+ 
+     # psutil.virtual_memory()
+     svmem = nt("svmem", ("total", "available", "percent", "free"))
++
++    # psutil.cpu_times()
++    scputimes = nt("scputimes", ("user", "system", "idle"))
+--- a/psutil/_psqnx.py
++++ b/psutil/_psqnx.py
+@@ -7,6 +7,7 @@
+ import errno
+ import functools
+ import os
++import time
+ 
+ from . import _common
+ from . import _ntuples as ntp
+@@ -144,14 +145,29 @@
+ # =====================================================================
+ 
+ 
+-def cpu_times():
+-    """Return system CPU times as a namedtuple."""
+-    # Not supported
++def per_cpu_times():
++    """Return system CPU times as a list of namedtuples, one per CPU.
++
++    QNX keeps no per-CPU user/system accounting; what it has is the CPU
++    time of procnto's idle threads (process 1, threads 1..N, one per CPU),
++    which is how QNX's own top and hogs compute load. Busy time is the
++    elapsed time since boot less a CPU's idle time; it is reported as
++    "system" (user and system cannot be told apart).
++    """
++    ncpu = cext.cpu_count_logical()
++    idle = dict(cext.proc_threads(1))
++    elapsed = max(0.0, time.time() - cext.boot_time())
++    ret = []
++    for i in range(1, ncpu + 1):
++        it = idle.get(i, 0) / 1e9
++        ret.append(ntp.scputimes(0.0, max(0.0, elapsed - it), it))
++    return ret
+ 
+ 
+-def per_cpu_times():
+-    """Return system CPU times as a named tuple."""
+-    # Not supported
++def cpu_times():
++    """Return system CPU times as a namedtuple (sum over all CPUs)."""
++    percpu = per_cpu_times()
++    return ntp.scputimes(*[sum(x) for x in zip(*percpu)])
+ 
+ 
+ def cpu_count_logical():
+@@ -161,8 +177,8 @@
+ 
+ def cpu_count_cores():
+     """Return the number of CPU cores in the system."""
+-    # Not supported
+-    # QNX isn't aware of hyperthreaded cores
++    # QNX isn't aware of hyperthreaded cores: each CPU it runs on is a core
++    return cext.cpu_count_logical()
+ 
+ 
+ def cpu_stats():
+@@ -183,9 +199,13 @@
+ # disk_io_counters = cext.disk_io_counters
+ 
+ 
++disk_usage = _psposix.disk_usage
++
++
+ def disk_partitions(all=False):
+     """Return mounted disk partitions as a list of namedtuples."""
+     # Not supported
++    return []
+ 
+ 
+ # =====================================================================
+@@ -277,9 +297,12 @@
+         try:
+             return fun(self, *args, **kwargs)
+         except ProcessLookupError as err:
+-            if cext.proc_is_zombie(pid):
+-                raise ZombieProcess(pid, name, ppid) from err
+             raise NoSuchProcess(pid, name) from err
++        except FileNotFoundError as err:
++            # /proc/<pid>/... is gone with the process
++            if not os.path.exists(f"{self._procfs_path}/{pid}"):
++                raise NoSuchProcess(pid, name) from err
++            raise
+         except PermissionError as err:
+             raise AccessDenied(pid, name) from err
+         except cext.ZombieProcessError as err:
+@@ -341,8 +364,8 @@
+ 
+     @wrap_exceptions
+     def name(self):
+-        # POSSIBLE WITH DCMD_PROC_MAPDEBUG_BASE
+-        return "UNIMPLEMENTED"
++        # the base name of the executable, as ps shows it
++        return os.path.basename(self.exe())
+ 
+     @wrap_exceptions
+     def exe(self):
+@@ -350,7 +373,9 @@
+ 
+     @wrap_exceptions
+     def cmdline(self):
+-        return self._readfile(f"{self._procfs_path}/{self.pid}/cmdline")
++        # NUL-separated arguments, as on Linux
++        data = self._readfile(f"{self._procfs_path}/{self.pid}/cmdline")
++        return data.split("\x00") if data else []
+ 
+     @wrap_exceptions
+     def environ(self):
+@@ -361,7 +386,7 @@
+ 
+     @wrap_exceptions
+     def ppid(self):
+-        self._ppid = self._proc_basic_info()[procbasicinfo_map['parent']]
++        self._ppid = self._proc_basic_info()[procbasicinfo_map['parent_pid']]
+         return self._ppid
+ 
+     @wrap_exceptions
+@@ -382,7 +407,7 @@
+     @wrap_exceptions
+     def gids(self):
+         rawtuple = self._proc_basic_info()
+-        return ntp.puids(
++        return ntp.pgids(
+             rawtuple[procbasicinfo_map['gid']],
+             rawtuple[procbasicinfo_map['egid']],
+             rawtuple[procbasicinfo_map['sgid']],
+@@ -415,10 +440,11 @@
+ 
+     @wrap_exceptions
+     def cpu_times(self):
+-        rawtuple = self.proc_basic_info()
++        # debug_process_t times are nanoseconds
++        rawtuple = self._proc_basic_info()
+         return ntp.pcputimes(
+-            rawtuple[pidtaskinfo_map['utime'] / CLOCK_TICKS],
+-            rawtuple[pidtaskinfo_map['stime'] / CLOCK_TICKS],
++            rawtuple[procbasicinfo_map['utime']] / 1e9,
++            rawtuple[procbasicinfo_map['stime']] / 1e9,
+             # children user / system times are not retrievable (set to 0)
+             0.0,
+             0.0,
+@@ -426,7 +452,8 @@
+ 
+     @wrap_exceptions
+     def create_time(self, monotonic=False):
+-        return self.self.proc_basic_info()[procbasicinfo_map['start_time']]
++        # nanoseconds since the epoch
++        return self._proc_basic_info()[procbasicinfo_map['start_time']] / 1e9
+ 
+     @wrap_exceptions
+     def num_ctx_switches(self):
+@@ -435,7 +462,7 @@
+ 
+     @wrap_exceptions
+     def num_threads(self):
+-        return self.self.proc_basic_info()[procbasicinfo_map['num_threads']]
++        return self._proc_basic_info()[procbasicinfo_map['num_threads']]
+ 
+     @wrap_exceptions
+     def open_files(self):
+--- a/setup.py
++++ b/setup.py
+@@ -68,6 +68,13 @@
+ from _common import WINDOWS  # noqa: E402
+ from _common import hilite  # noqa: E402
+ 
++# Cross compiling for QNX: the platform flags above describe the build
++# machine; _PYTHON_HOST_PLATFORM names the target.
++if os.environ.get("_PYTHON_HOST_PLATFORM", "").startswith("qnx"):
++    AIX = BSD = FREEBSD = LINUX = MACOS = NETBSD = OPENBSD = False
++    SUNOS = WINDOWS = False
++    POSIX = QNX = True
++
+ PYPY = '__pypy__' in sys.builtin_module_names
+ PY36_PLUS = sys.version_info[:2] >= (3, 6)
+ PY37_PLUS = sys.version_info[:2] >= (3, 7)

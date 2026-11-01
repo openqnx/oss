@@ -1,0 +1,30 @@
+# sshpass 1.10-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:49:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sshpass qnx-test-sshpass qnx-port-tests
+(1/2) Installing sshpass (1.10-r1)
+(2/2) Installing qnx-test-sshpass (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sshpass
+     == sshpass ==
+       ok   sshpass -V: sshpass 1.10
+       ok   -p: password answered on the pty, accepted
+       ok   -f: password from a file
+       ok   -e: password from SSHPASS
+       ok   -d 3: password from a descriptor
+       ok   wrong password: prompted again, sshpass exits 5
+       ok   -P PIN: a custom prompt matched
+       ok   unknown host key question: sshpass exits 6
+       ok   the program's exit status (3) is passed through
+       ok   two password sources: exit 2 (conflicting arguments)
+     PASS sshpass
+PASS test_sshpass
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

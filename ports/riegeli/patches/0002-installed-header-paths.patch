@@ -1,0 +1,45 @@
+Include zlib's and LZ4's headers by their installed names, not Bazel paths.
+
+Two sources name a dependency's header by the path it has in riegeli's
+Bazel workspace rather than where the library installs it: the Adler-32
+and CRC-32 digesters include zlib's "src/zconf.h" (zlib_reader.cc and
+zlib_writer.cc already include "zconf.h"), and lz4_reader.h, a public
+header, includes "third_party/lz4/lib/lz4.h". Outside Bazel (this port
+builds with CMake, against the installed zlib and lz4) they are "zconf.h"
+and "lz4.h".
+
+Upstream-Status: Pending
+
+--- a/riegeli/digests/adler32_digester.cc
++++ b/riegeli/digests/adler32_digester.cc
+@@ -20,7 +20,7 @@
+ 
+ #include "absl/strings/string_view.h"
+ #include "riegeli/base/arithmetic.h"
+-#include "src/zconf.h"
++#include "zconf.h"
+ #include "zlib.h"
+ 
+ namespace riegeli {
+--- a/riegeli/digests/crc32_digester.cc
++++ b/riegeli/digests/crc32_digester.cc
+@@ -20,7 +20,7 @@
+ 
+ #include "absl/strings/string_view.h"
+ #include "riegeli/base/arithmetic.h"
+-#include "src/zconf.h"
++#include "zconf.h"
+ #include "zlib.h"
+ 
+ namespace riegeli {
+--- a/riegeli/lz4/lz4_reader.h
++++ b/riegeli/lz4/lz4_reader.h
+@@ -36,7 +36,7 @@
+ #include "riegeli/bytes/buffered_reader.h"
+ #include "riegeli/bytes/reader.h"
+ #include "riegeli/lz4/lz4_dictionary.h"  // IWYU pragma: export
+-#include "third_party/lz4/lib/lz4.h"
++#include "lz4.h"
+ 
+ namespace riegeli {
+ 

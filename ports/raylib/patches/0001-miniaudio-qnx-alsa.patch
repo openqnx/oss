@@ -1,0 +1,40 @@
+miniaudio: use the ALSA backend on QNX (libasound.so.5), not PulseAudio
+
+miniaudio (raudio's device layer) enables ALSA only for Linux and turns on
+PulseAudio and JACK for every other Unix, so on QNX it compiled the
+PulseAudio backend (which failed: "unknown type name 'int64_t'") and had no
+backend for the sound system QNX actually has. QNX 8.0 ships alsa-lib, as
+libasound.so.5: enable the ALSA backend on QNX instead of PulseAudio/JACK,
+and add that soname to the libraries the backend dlopens. Loading it at run
+time keeps libraylib loadable on images without libasound (InitAudioDevice
+then reports that there is no playback device).
+
+Upstream-Status: QNX-specific
+
+--- a/src/external/miniaudio.h
++++ b/src/external/miniaudio.h
+@@ -6612,12 +6612,12 @@
+     #endif
+ #endif
+ #if defined(MA_UNIX) && !defined(MA_ORBIS) && !defined(MA_PROSPERO)
+-    #if defined(MA_LINUX)
++    #if defined(MA_LINUX) || defined(__QNX__)   /* QNX 8 ships alsa-lib (libasound.so.5) */
+         #if !defined(MA_ANDROID) && !defined(MA_EMSCRIPTEN)   /* ALSA is not supported on Android. */
+             #define MA_SUPPORT_ALSA
+         #endif
+     #endif
+-    #if !defined(MA_BSD) && !defined(MA_ANDROID) && !defined(MA_EMSCRIPTEN)
++    #if !defined(MA_BSD) && !defined(MA_ANDROID) && !defined(MA_EMSCRIPTEN) && !defined(__QNX__)
+         #define MA_SUPPORT_PULSEAUDIO
+         #define MA_SUPPORT_JACK
+     #endif
+@@ -30007,6 +30007,9 @@
+ #ifndef MA_NO_RUNTIME_LINKING
+     const char* libasoundNames[] = {
+         "libasound.so.2",
++#if defined(__QNX__)
++        "libasound.so.5",
++#endif
+         "libasound.so"
+     };
+     size_t i;

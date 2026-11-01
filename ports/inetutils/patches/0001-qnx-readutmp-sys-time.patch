@@ -1,0 +1,20 @@
+Include <sys/time.h> for the sysctl boot-time fallback.
+
+readutmp.c includes <sys/sysctl.h> for the KERN_BOOTTIME fallback of
+boot-time-aux.h, which fills a struct timeval. On the BSDs <sys/sysctl.h>
+brings <sys/time.h> along; QNX's does not, so struct timeval was
+incomplete ("storage size of result is not known").
+
+Upstream-Status: QNX-specific
+
+--- a/lib/readutmp.c
++++ b/lib/readutmp.c
+@@ -45,6 +45,8 @@
+ #  include <sys/param.h>
+ # endif
+ # include <sys/sysctl.h>
++/* QNX: <sys/sysctl.h> does not declare struct timeval (KERN_BOOTTIME).  */
++# include <sys/time.h>
+ #endif
+ 
+ #if HAVE_OS_H

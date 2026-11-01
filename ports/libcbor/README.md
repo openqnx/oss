@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libcbor libcbor-dev
-apk add qnx-test-libcbor && /usr/local/bin/qnx-port-tests/test_libcbor    # its on-target test
+apk add qnx-test-libcbor && /usr/local/bin/qnx-port-tests/test_libcbor    # its on-target test, from tests-8.0-<arch>
 apk del libcbor libcbor-dev qnx-test-libcbor
 ```
 
@@ -142,7 +142,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libcbor`](../../tests/src/) links libcbor the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libcbor`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libcbor`](../../tests/src/) links libcbor the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libcbor`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

@@ -1,0 +1,56 @@
+# strongswan 6.0.6-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T16:49:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u strongswan qnx-test-strongswan qnx-port-tests
+(1/2) Installing strongswan (6.0.6-r3)
+(2/2) Installing qnx-test-strongswan (1.0-r1)
+OK: 93 MiB in 26 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_strongswan
+     == strongswan ==
+       ok   libstrongswan: all 14 suites passed (chunk,enum,identification,asn1,host,printf,hasher,crypter,rsa,ecdsa,certnames,serial_gen,serial_parse,signature params)
+       info loaded plugins: sha2 random nonce x509 revocation constraints pubkey pkcs1 pem openssl pkcs8 hmac kdf
+       ok   chunk_from_fd: 8192 messages over a socketpair read back in order
+       ok   exchanges: all 4 suites passed (child create,ike rekey,child rekey,ike delete)
+       info pki: strongSwan 6.0.6 PKI tool
+       ok   pki --help: strongSwan 6.0.6 PKI tool
+       ok   pki --gen: ECDSA 256 key (PEM)
+       ok   pki --print key: ECDSA 256 bits
+       ok   pki --self: CA certificate
+       ok   CA subject: C=CH, O=QNX Test, CN=QNX Test CA
+       ok   CA issuer = subject
+       ok   CA serial 01:02:03:04:05
+       ok   CA flags:     CA CRLSign self-signed 
+       ok   CA pubkey: ECDSA 256 bits
+       ok   CA name constraint: permitted qnx.test
+       ok   pki --gen: RSA 2048 key
+       ok   pki --pub: public key extracted
+       ok   pki --issue: end-entity certificate
+       ok   EE subject: C=CH, O=QNX Test, CN=moon.qnx.test
+       ok   EE issuer: the CA
+       ok   EE altNames: moon.qnx.test
+       ok   EE flags: serverAuth, not CA
+       ok   EE pubkey: RSA 2048 bits
+       ok   pki --verify: certificate trusted, lifetimes valid
+       ok   pki --verify: CA against itself trusted
+       ok   pki --verify against another CA: untrusted (rc 1)
+       ok   pki --verify: SAN outside the CA's name constraint untrusted (constraints plugin)
+       ok   charon started (pid 1307926569), answering over vici after 1s
+       ok   swanctl --version: strongSwan swanctl 6.0.6
+       ok   swanctl --version --daemon: strongSwan 6.0.6 charon (QNX, 8.0.0, x86pc)
+       ok   swanctl --stats: uptime and worker threads
+       ok   load-all: PSK secret loaded
+       ok   load-all: 1 connection loaded
+       ok   list-conns: qnxtest IKEv2, child remote <ip>/16, remote id sun.qnx.test
+       ok   list-sas: no SAs, rc 0
+       ok   charon still running after the vici checks
+     PASS strongswan
+PASS test_strongswan
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

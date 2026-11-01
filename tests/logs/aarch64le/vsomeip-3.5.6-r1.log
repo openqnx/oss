@@ -1,0 +1,39 @@
+# vsomeip 3.5.6-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:18:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vsomeip qnx-test-vsomeip qnx-port-tests
+(1/5) Installing bzip2 (1.0.8-r0)
+(2/5) Installing xz (5.6.3-r0)
+(3/5) Installing boost (1.86.0-r0)
+(4/5) Installing vsomeip (3.5.6-r1)
+(5/5) Installing qnx-test-vsomeip (1.0-r7)
+OK: 254 MiB in 44 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vsomeip
+     == vsomeip ==
+       ok   fork consumer process
+       ok   runtime::get
+       ok   create_payload
+       ok   payload length
+       ok   payload content
+       ok   create_request
+       ok   service id readback
+       ok   method id readback
+       ok   payload attached to message
+       ok   create_application
+       ok   application name readback
+       ok   init as routing manager
+       ok   SD OfferService seen on the multicast group
+       ok   consumer process subscribed over local routing
+       ok   consumer received all events in order and all method replies
+       ok   provider served every method call
+     PASS vsomeip
+PASS test_vsomeip
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

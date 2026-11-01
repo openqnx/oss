@@ -1,0 +1,24 @@
+Install the helper scripts from the source directory.
+
+The install rule took socat-chain.sh, socat-mux.sh and socat-broker.sh from
+the current directory, which is the build directory in an out-of-tree
+(VPATH) build such as this one: "cannot stat 'socat-chain.sh'". They are
+sources; take them from $(srcdir), as the rule already does for the manual.
+
+Upstream-Status: Pending
+
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -132,9 +132,9 @@
+ 	mkdir -p $(DESTDIR)$(BINDEST)
+ 	$(INSTALL) -m 755 socat $(DESTDIR)$(BINDEST)/socat1
+ 	ln -sf socat1 $(DESTDIR)$(BINDEST)/socat
+-	$(INSTALL) -m 755 socat-chain.sh  $(DESTDIR)$(BINDEST)
+-	$(INSTALL) -m 755 socat-mux.sh    $(DESTDIR)$(BINDEST)
+-	$(INSTALL) -m 755 socat-broker.sh $(DESTDIR)$(BINDEST)
++	$(INSTALL) -m 755 $(srcdir)/socat-chain.sh  $(DESTDIR)$(BINDEST)
++	$(INSTALL) -m 755 $(srcdir)/socat-mux.sh    $(DESTDIR)$(BINDEST)
++	$(INSTALL) -m 755 $(srcdir)/socat-broker.sh $(DESTDIR)$(BINDEST)
+ 	$(INSTALL) -m 755 procan $(DESTDIR)$(BINDEST)
+ 	$(INSTALL) -m 755 filan $(DESTDIR)$(BINDEST)
+ 	mkdir -p $(DESTDIR)$(MANDEST)/man1

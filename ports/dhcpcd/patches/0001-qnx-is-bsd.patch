@@ -1,0 +1,27 @@
+configure: define BSD on QNX, whose network stack is FreeBSD's.
+
+QNX 8.0's network stack, io-sock, is FreeBSD's: interfaces and addresses
+come from route sockets (struct rt_msghdr, RTM_NEWADDR, ...), link-level
+addresses are sockaddr_dl, and raw frames go through BPF. dhcpcd's if-bsd.c
+and bpf-bsd.c handle exactly that, but the rest of the code selects them
+with #ifdef BSD, which <sys/param.h> defines on the BSDs and QNX does not:
+the QNX case in configure already builds if-bsd.c, and without BSD the BSD
+parts of struct dhcpcd_ctx and struct priv are missing and if-bsd.c does
+not compile. Define BSD for QNX in configure.
+
+Upstream-Status: QNX-specific
+
+--- a/configure
++++ b/configure
+@@ -511,7 +511,10 @@
+ 	echo "PGP=		gpg2" >>$CONFIG_MK
+ 	;;
+ qnx*)
+-	echo "CPPFLAGS+=	-D__EXT" >>$CONFIG_MK
++	# QNX 8's network stack (io-sock) is FreeBSD's: route sockets, BPF,
++	# sockaddr_dl, struct rt_msghdr. dhcpcd keys all of that on BSD, which
++	# <sys/param.h> defines on the BSDs but not on QNX.
++	echo "CPPFLAGS+=	-D__EXT -DBSD" >>$CONFIG_MK
+ 	echo "DHCPCD_SRCS+=	if-bsd.c" >>$CONFIG_MK
+ 	;;
+ solaris*|sunos*)

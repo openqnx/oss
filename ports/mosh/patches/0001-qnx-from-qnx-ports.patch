@@ -1,0 +1,81 @@
+From 5d4b3382cb7178bf66d81f38667b658e35129a0b Mon Sep 17 00:00:00 2001
+From: Abdulfatah Ahmoda <abahmoda@qnx.com>
+Date: Thu, 26 Mar 2026 00:46:47 +0000
+Subject: [PATCH] Add QNX support
+
+Imported from qnx-ports/mosh (mosh-1.4.0...qnx-v1.4.0: a0d5332, 4927667,
+5d4b338); original authorship kept.
+
+QNX declares forkpty() in <unix.h> (there is no <pty.h>, <util.h> or
+<libutil.h>), and struct winsize comes from <sys/ioctl.h>. QNX's
+`stty -g` prints a format that must be passed back as separate words, so the
+80th-column emulation test restores it unquoted.
+
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+---
+diff --git a/src/examples/parse.cc b/src/examples/parse.cc
+index 2a9d0dc..73bc051 100644
+--- a/src/examples/parse.cc
++++ b/src/examples/parse.cc
+@@ -51,6 +51,8 @@
+ #include <util.h>
+ #elif HAVE_LIBUTIL_H
+ #include <libutil.h>
++#elif defined(__QNX__)
++#include <unix.h>
+ #endif
+ 
+ #include "parser.h"
+diff --git a/src/examples/termemu.cc b/src/examples/termemu.cc
+index 4c3cd04..f10cc54 100644
+--- a/src/examples/termemu.cc
++++ b/src/examples/termemu.cc
+@@ -58,6 +58,8 @@
+ #include <util.h>
+ #elif HAVE_LIBUTIL_H
+ #include <libutil.h>
++#elif defined(__QNX__)
++#include <unix.h>
+ #endif
+ 
+ #include "parser.h"
+diff --git a/src/frontend/mosh-server.cc b/src/frontend/mosh-server.cc
+index f6d2ff3..c68d4ab 100644
+--- a/src/frontend/mosh-server.cc
++++ b/src/frontend/mosh-server.cc
+@@ -73,6 +73,8 @@
+ #include <pty.h>
+ #elif HAVE_UTIL_H
+ #include <util.h>
++#elif defined(__QNX__)
++#include <unix.h>
+ #endif
+ 
+ #if FORKPTY_IN_LIBUTIL
+diff --git a/src/tests/emulation-80th-column.test b/src/tests/emulation-80th-column.test
+index b33cc44..38808e4 100755
+--- a/src/tests/emulation-80th-column.test
++++ b/src/tests/emulation-80th-column.test
+@@ -26,7 +26,7 @@ baseline()
+ {
+     # We need to control CR and LF individually for this test.
+     TERMIO=$(stty -g)
+-    trap 'stty "$TERMIO"' EXIT
++    trap 'stty $TERMIO' EXIT
+     stty raw
+     printf '\033[H\033[J'
+     for lines in $(seq 1 25); do
+diff --git a/src/tests/inpty.cc b/src/tests/inpty.cc
+index 100aee4..d4b4d3c 100644
+--- a/src/tests/inpty.cc
++++ b/src/tests/inpty.cc
+@@ -44,6 +44,9 @@
+ 
+ #if HAVE_PTY_H
+ #include <pty.h>
++#elif defined(__QNX__)
++#include <unix.h>
++#include <sys/ioctl.h> 
+ #elif HAVE_UTIL_H
+ #include <util.h>
+ #endif

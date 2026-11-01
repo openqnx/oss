@@ -1,0 +1,38 @@
+std::isnan/isinf/isfinite overloads for Eigen::half and bfloat16 on QNX libc++
+
+QNX's libc++ (from SDP 8.0) declares std::isnan, std::isinf and
+std::isfinite only as templates constrained to arithmetic types; there are
+no float/double overloads that a type converting to float could use.
+Eigen::half and Eigen::bfloat16 are such types, and the complex-number
+comparisons (include/complex_types.h) and integer casts (_src/intn_numpy.h)
+call std::isnan on them: "no matching function for call to
+'isnan(Eigen::half&)'". libstdc++ and newer libc++ accept it. Add the
+overloads for the two Eigen types, forwarding to Eigen::numext, the way
+ml_dtypes already provides std:: overloads for its own float8 types.
+
+Upstream-Status: QNX-specific
+
+--- a/ml_dtypes/_src/common.h
++++ b/ml_dtypes/_src/common.h
+@@ -28,6 +28,21 @@
+ 
+ #include "Eigen/Core"
+ 
++#if defined(__QNX__) && defined(_LIBCPP_VERSION)
++// QNX's libc++ declares std::isnan/isinf/isfinite only as templates
++// constrained to arithmetic types, with no float/double overloads that
++// Eigen::half and Eigen::bfloat16 could convert to. Give them overloads,
++// as ml_dtypes does for its own types (include/float8.h).
++namespace std {
++inline bool isnan(const Eigen::half& a) { return Eigen::numext::isnan(a); }
++inline bool isinf(const Eigen::half& a) { return Eigen::numext::isinf(a); }
++inline bool isfinite(const Eigen::half& a) { return Eigen::numext::isfinite(a); }
++inline bool isnan(const Eigen::bfloat16& a) { return Eigen::numext::isnan(a); }
++inline bool isinf(const Eigen::bfloat16& a) { return Eigen::numext::isinf(a); }
++inline bool isfinite(const Eigen::bfloat16& a) { return Eigen::numext::isfinite(a); }
++}  // namespace std
++#endif
++
+ namespace ml_dtypes {
+ 
+ using half = Eigen::half;

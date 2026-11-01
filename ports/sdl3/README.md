@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add sdl3 sdl3-dev
-apk add qnx-test-sdl3 && /usr/local/bin/qnx-port-tests/test_sdl3    # its on-target test
+apk add qnx-test-sdl3 && /usr/local/bin/qnx-port-tests/test_sdl3    # its on-target test, from tests-8.0-<arch>-m-z
 apk del sdl3 sdl3-dev qnx-test-sdl3
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (24 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (33 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild libx11 libxext libxcursor libxi libxfixes libxrandr libxrender libxscrnsaver libxkbcommon libiconv libxtst
 ```
 
-<details><summary>Full build chain (24)</summary>
+<details><summary>Full build chain (33)</summary>
 
-[`gettext`](../gettext/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcursor`](../libxcursor/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxi`](../libxi/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxscrnsaver`](../libxscrnsaver/) [`libxtst`](../libxtst/) [`ncurses`](../ncurses/) [`pthread-stubs`](../pthread-stubs/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcursor`](../libxcursor/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxi`](../libxi/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxscrnsaver`](../libxscrnsaver/) [`libxtst`](../libxtst/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -196,7 +196,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_sdl3`](../../tests/src/) links sdl3 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sdl3`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_sdl3`](../../tests/src/) links sdl3 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sdl3`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add hicolor-icon-theme hicolor-icon-theme-dev
-apk add qnx-test-hicolor-icon-theme && /usr/local/bin/qnx-port-tests/test_hicolor_icon_theme    # its on-target test
+apk add qnx-test-hicolor-icon-theme && /usr/local/bin/qnx-port-tests/test_hicolor_icon_theme    # its on-target test, from tests-8.0-<arch>
 apk del hicolor-icon-theme hicolor-icon-theme-dev qnx-test-hicolor-icon-theme
 ```
 
@@ -137,7 +137,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_hicolor_icon_theme`](../../tests/src/) links hicolor-icon-theme the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-hicolor-icon-theme`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_hicolor_icon_theme`](../../tests/src/) links hicolor-icon-theme the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-hicolor-icon-theme`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

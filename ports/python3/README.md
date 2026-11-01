@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`libffi`](../libffi/) [`expat`](../expat/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`sqlite`](../sqlite/) [`ncurses`](../ncurses/) [`readline`](../readline/) [`gdbm`](../gdbm/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_python`](../../tests/src/) |
 
@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add python3 python3-dev
-apk add qnx-test-python && /usr/local/bin/qnx-port-tests/test_python    # its on-target test
+apk add qnx-test-python && /usr/local/bin/qnx-port-tests/test_python    # its on-target test, from tests-8.0-<arch>-m-z
 apk del python3 python3-dev qnx-test-python
 ```
 
@@ -270,7 +270,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3`.
 
 ### 5. What it installs
 
-3025 files under `/usr/local`: 3 shared-library entries, 8 programs, 283 headers.
+3026 files under `/usr/local`: 3 shared-library entries, 8 programs, 283 headers.
 
 ```
 /usr/local/lib/libpython3.14.so
@@ -322,7 +322,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_python`](../../tests/src/) links python3 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-python`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_python`](../../tests/src/) links python3 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-python`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

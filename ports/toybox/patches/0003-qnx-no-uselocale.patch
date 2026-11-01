@@ -1,0 +1,22 @@
+Do not merge a UTF-8 locale on QNX.
+
+QNX has only the C locale and no newlocale()/uselocale() (no xlocale):
+skip merging in a UTF-8 locale's character types.
+
+Upstream-Status: QNX-specific
+
+--- a/main.c
++++ b/main.c
+@@ -220,9 +220,12 @@
+     // Try user's locale, but if that isn't UTF-8 merge in a UTF-8 locale's
+     // character type data. (Fall back to en_US for MacOS.)
+     setlocale(LC_CTYPE, "");
++#ifndef __QNX__
++    // (QNX has no newlocale/uselocale, and only the C locale.)
+     if (strcmp("UTF-8", nl_langinfo(CODESET)))
+       uselocale(newlocale(LC_CTYPE_MASK, "C.UTF-8", 0) ? :
+         newlocale(LC_CTYPE_MASK, "en_US.UTF-8", 0));
++#endif
+ 
+     if (which->flags & TOYFLAG_LINEBUF) btype = _IOLBF;
+     else if (which->flags & TOYFLAG_NOBUF) btype = _IONBF;

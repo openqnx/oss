@@ -1,0 +1,40 @@
+Make the googletest unit tests optional (ENABLE_TESTS).
+
+v1.8.5 fetches googletest (FetchContent, from github.com) at configure time
+and builds its unit tests unconditionally; a cross build for QNX can neither
+run them nor should it download anything while configuring. Put both behind
+an ENABLE_TESTS option (default ON, as upstream's development branch does
+since), which the recipe turns off.
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,8 @@
+ cmake_minimum_required(VERSION 3.10)
+ project(libhevc C CXX)
+ 
++option(ENABLE_TESTS "Enables gtest based unit tests" ON)
++
+ option(ENABLE_COVERAGE "Enable coverage" OFF)
+ if(ENABLE_COVERAGE)
+   add_compile_options(-O0 -g)
+@@ -58,7 +60,9 @@
+ include("${HEVC_ROOT}/cmake/utils.cmake")
+ 
+ libhevc_add_compile_options()
+-libhevc_add_gtest()
++if(ENABLE_TESTS)
++  libhevc_add_gtest()
++endif()
+ libhevc_add_definitions()
+ libhevc_set_link_libraries()
+ 
+@@ -72,4 +76,6 @@
+ include("${HEVC_ROOT}/fuzzer/hevc_dec_fuzzer.cmake")
+ include("${HEVC_ROOT}/fuzzer/hevc_enc_fuzzer.cmake")
+ 
+-include("${HEVC_ROOT}/tests/common/common.cmake")
++if(ENABLE_TESTS)
++  include("${HEVC_ROOT}/tests/common/common.cmake")
++endif()

@@ -1,15 +1,14 @@
 # openal-soft 1.24.1-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:19:43Z   packages from: apk:local-dists
+# date: 2026-11-01T10:58:54Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u openal-soft qnx-test-openal-soft qnx-port-tests
-(1/3) Installing openal-soft (1.24.1-r1)
-(2/3) Installing qnx-port-tests (1.0-r2)
-(3/3) Installing qnx-test-openal-soft (1.0-r0)
-OK: 95 MiB in 32 packages
+(1/2) Installing openal-soft (1.24.1-r1)
+(2/2) Installing qnx-test-openal-soft (1.0-r0)
+OK: 96 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openal_soft
      == openal-soft ==

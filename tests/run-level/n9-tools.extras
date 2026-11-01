@@ -1,0 +1,8 @@
+test_bison	bin/bison share/bison bin/m4
+test_elvis	bin/elvis bin/elvtags share/elvis
+test_tcpdump	bin/tcpdump
+test_ntp	opt/ntp/bin/ntpd opt/ntp/bin/ntpq opt/ntp/bin/ntpdc opt/ntp/bin/ntpdate opt/ntp/bin/ntp-keygen
+test_ptpd	sbin/ptpd2
+test_inetutils	bin/telnet bin/ftp bin/ping bin/traceroute bin/hostname bin/whois bin/logger libexec/telnetd libexec/ftpd
+test_openpam	lib/pam_permit.so.2 lib/pam_deny.so.2 lib/pam_return.so.2
+test_toybox	opt/toybox/bin/toybox

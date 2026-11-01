@@ -1,4 +1,29 @@
 {
+ "7zip": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/7zz"
+   ],
+   "files": 1,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "25.01"
+ },
  "abseil": {
   "build_closure": [],
   "build_deps": [],
@@ -445,6 +470,226 @@
   "unresolved": [],
   "version": "3.0.0_rc5"
  },
+ "appstream": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "c-ares",
+   "curl",
+   "expat",
+   "gdbm",
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxmlb",
+   "libyaml",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "curl",
+   "libxml2",
+   "libyaml",
+   "libxmlb",
+   "zstd"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/appstreamcli"
+   ],
+   "files": 99,
+   "headers": 40,
+   "libs": [
+    "usr/local/lib/libappstream.so",
+    "usr/local/lib/libappstream.so.1.0.6",
+    "usr/local/lib/libappstream.so.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "c-ares",
+   "curl",
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxmlb",
+   "libyaml",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pcre2",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "curl",
+   "gettext",
+   "glib",
+   "libxml2",
+   "libxmlb",
+   "libyaml",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0.6"
+ },
+ "apr": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/apr-1-config"
+   ],
+   "files": 52,
+   "headers": 41,
+   "libs": [
+    "usr/local/lib/libapr-1.so",
+    "usr/local/lib/libapr-1.so.0",
+    "usr/local/lib/libapr-1.so.0.7.6"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.7.6"
+ },
+ "apr-util": {
+  "build_closure": [
+   "apr",
+   "expat",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "sqlite",
+   "zlib"
+  ],
+  "build_deps": [
+   "apr",
+   "expat",
+   "openssl",
+   "sqlite",
+   "libiconv",
+   "libxcrypt"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/apu-1-config"
+   ],
+   "files": 45,
+   "headers": 35,
+   "libs": [
+    "usr/local/lib/libaprutil-1.so",
+    "usr/local/lib/libaprutil-1.so.0",
+    "usr/local/lib/libaprutil-1.so.0.6.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "apr",
+   "expat",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "sqlite",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "apr",
+   "expat",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "sqlite"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.6.5"
+ },
+ "asciidoc": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/a2x",
+    "usr/local/bin/asciidoc"
+   ],
+   "files": 118,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "10.2.1"
+ },
  "asio": {
   "build_closure": [],
   "build_deps": [],
@@ -519,6 +764,7 @@
    "bzip2",
    "dbus",
    "expat",
+   "gdbm",
    "gettext",
    "glib",
    "libffi",
@@ -534,13 +780,18 @@
    "libxml2",
    "libxtst",
    "ncurses",
+   "openssl",
    "pcre2",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -662,6 +913,112 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.18"
+ },
+ "avahi": {
+  "build_closure": [
+   "dbus",
+   "expat",
+   "libdaemon"
+  ],
+  "build_deps": [
+   "dbus",
+   "expat",
+   "libdaemon"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/avahi-browse",
+    "usr/local/bin/avahi-browse-domains",
+    "usr/local/bin/avahi-publish",
+    "usr/local/bin/avahi-publish-address",
+    "usr/local/bin/avahi-publish-service",
+    "usr/local/bin/avahi-resolve",
+    "usr/local/bin/avahi-resolve-address",
+    "usr/local/bin/avahi-resolve-host-name",
+    "usr/local/bin/avahi-set-host-name",
+    "usr/local/sbin/avahi-daemon",
+    "usr/local/sbin/avahi-dnsconfd"
+   ],
+   "files": 67,
+   "headers": 24,
+   "libs": [
+    "usr/local/lib/libavahi-client.so",
+    "usr/local/lib/libavahi-client.so.5",
+    "usr/local/lib/libavahi-common.so",
+    "usr/local/lib/libavahi-common.so.8",
+    "usr/local/lib/libavahi-core.so",
+    "usr/local/lib/libavahi-core.so.8",
+    "usr/local/lib/libdns_sd.so",
+    "usr/local/lib/libdns_sd.so.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "dbus",
+   "expat",
+   "libdaemon"
+  ],
+  "runtime_deps": [
+   "dbus",
+   "expat",
+   "libdaemon"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.9-rc3"
+ },
+ "avro-cpp": {
+  "build_closure": [
+   "fmt",
+   "snappy",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "fmt",
+   "zlib",
+   "snappy",
+   "zstd"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/avrogencpp"
+   ],
+   "files": 46,
+   "headers": 39,
+   "libs": [
+    "usr/local/lib/libavrocpp.so",
+    "usr/local/lib/libavrocpp.so.1.12.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "snappy",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "snappy",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.12.2"
  },
  "aws-c-auth": {
   "build_closure": [
@@ -1435,6 +1792,31 @@
   "unresolved": [],
   "version": "2.43"
  },
+ "bison": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/bison"
+   ],
+   "files": 88,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.8.2"
+ },
  "boost": {
   "build_closure": [
    "bzip2",
@@ -1561,6 +1943,31 @@
   "unresolved": [],
   "version": "1.86.0"
  },
+ "boringssl": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/bssl"
+   ],
+   "files": 114,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.20260929.0"
+ },
  "brotli": {
   "build_closure": [],
   "build_deps": [],
@@ -1623,6 +2030,66 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.4.6"
+ },
+ "bullet3": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 498,
+   "headers": 459,
+   "libs": [
+    "usr/local/lib/libBullet2FileLoader.so",
+    "usr/local/lib/libBullet2FileLoader.so.3.25",
+    "usr/local/lib/libBullet3Collision.so",
+    "usr/local/lib/libBullet3Collision.so.3.25",
+    "usr/local/lib/libBullet3Common.so",
+    "usr/local/lib/libBullet3Common.so.3.25",
+    "usr/local/lib/libBullet3Dynamics.so",
+    "usr/local/lib/libBullet3Dynamics.so.3.25",
+    "usr/local/lib/libBullet3Geometry.so",
+    "usr/local/lib/libBullet3Geometry.so.3.25",
+    "usr/local/lib/libBullet3OpenCL_clew.so",
+    "usr/local/lib/libBullet3OpenCL_clew.so.3.25",
+    "usr/local/lib/libBulletCollision.so",
+    "usr/local/lib/libBulletCollision.so.3.25",
+    "usr/local/lib/libBulletDynamics.so",
+    "usr/local/lib/libBulletDynamics.so.3.25",
+    "usr/local/lib/libBulletFileLoader.so",
+    "usr/local/lib/libBulletFileLoader.so.3.25",
+    "usr/local/lib/libBulletInverseDynamics.so",
+    "usr/local/lib/libBulletInverseDynamics.so.3.25",
+    "usr/local/lib/libBulletInverseDynamicsUtils.so",
+    "usr/local/lib/libBulletInverseDynamicsUtils.so.3.25",
+    "usr/local/lib/libBulletSoftBody.so",
+    "usr/local/lib/libBulletSoftBody.so.3.25",
+    "usr/local/lib/libBulletWorldImporter.so",
+    "usr/local/lib/libBulletWorldImporter.so.3.25",
+    "usr/local/lib/libBulletXmlWorldImporter.so",
+    "usr/local/lib/libBulletXmlWorldImporter.so.3.25",
+    "usr/local/lib/libConvexDecomposition.so",
+    "usr/local/lib/libConvexDecomposition.so.3.25",
+    "usr/local/lib/libGIMPACTUtils.so",
+    "usr/local/lib/libGIMPACTUtils.so.3.25",
+    "usr/local/lib/libHACD.so",
+    "usr/local/lib/libHACD.so.3.25",
+    "usr/local/lib/libLinearMath.so",
+    "usr/local/lib/libLinearMath.so.3.25"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.25"
  },
  "busybox": {
   "build_closure": [],
@@ -1709,6 +2176,49 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.34.3"
+ },
+ "c-blosc": {
+  "build_closure": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libblosc.so",
+    "usr/local/lib/libblosc.so.1",
+    "usr/local/lib/libblosc.so.1.21.6"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.21.6"
  },
  "ca-certificates": {
   "build_closure": [],
@@ -1837,6 +2347,34 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.18.2"
+ },
+ "can-utils": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/asc2log",
+    "usr/local/bin/can-calc-bit-timing",
+    "usr/local/bin/log2asc",
+    "usr/local/bin/log2long"
+   ],
+   "files": 4,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2025.01"
  },
  "candb": {
   "build_closure": [],
@@ -2035,6 +2573,122 @@
   "undeclared": [],
   "unresolved": [],
   "version": "5.0.9"
+ },
+ "cartographer": {
+  "build_closure": [
+   "abseil",
+   "boost",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "ceres-solver",
+   "eigen",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gettext",
+   "gflags",
+   "glib",
+   "glog",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxrender",
+   "lua5.3",
+   "lzo",
+   "ncurses",
+   "pcre2",
+   "pixman",
+   "protobuf",
+   "pthread-stubs",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib"
+  ],
+  "build_deps": [
+   "abseil",
+   "boost",
+   "ceres-solver",
+   "eigen",
+   "glog",
+   "gflags",
+   "lua5.3",
+   "protobuf",
+   "cairo"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/cartographer_autogenerate_ground_truth",
+    "usr/local/bin/cartographer_compute_relations_metrics",
+    "usr/local/bin/cartographer_pbstream",
+    "usr/local/bin/cartographer_print_configuration"
+   ],
+   "files": 149,
+   "headers": 129,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "boost",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "ceres-solver",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gettext",
+   "gflags",
+   "glib",
+   "glog",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxrender",
+   "lua5.3",
+   "lzo",
+   "ncurses",
+   "pcre2",
+   "pixman",
+   "protobuf",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "boost",
+   "cairo",
+   "ceres-solver",
+   "gflags",
+   "glog",
+   "lua5.3",
+   "protobuf"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.0.0"
  },
  "catch2": {
   "build_closure": [],
@@ -2360,6 +3014,29 @@
   "unresolved": [],
   "version": "4.1.1"
  },
+ "compiler-rt": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 4,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "22.1.8"
+ },
  "computelibrary": {
   "build_closure": [],
   "build_deps": [],
@@ -2524,6 +3201,241 @@
   "unresolved": [],
   "version": "2.1-3"
  },
+ "cups": {
+  "build_closure": [
+   "avahi",
+   "dbus",
+   "expat",
+   "libdaemon",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "zlib"
+  ],
+  "build_deps": [
+   "openssl",
+   "zlib",
+   "avahi",
+   "libiconv",
+   "libxcrypt"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/cancel",
+    "usr/local/bin/cups-config",
+    "usr/local/bin/cupstestppd",
+    "usr/local/bin/ippeveprinter",
+    "usr/local/bin/ippfind",
+    "usr/local/bin/ipptool",
+    "usr/local/bin/lp",
+    "usr/local/bin/lpoptions",
+    "usr/local/bin/lpq",
+    "usr/local/bin/lpr",
+    "usr/local/bin/lprm",
+    "usr/local/bin/lpstat",
+    "usr/local/bin/ppdc",
+    "usr/local/bin/ppdhtml",
+    "usr/local/bin/ppdi",
+    "usr/local/bin/ppdmerge",
+    "usr/local/bin/ppdpo",
+    "usr/local/sbin/cupsaccept",
+    "usr/local/sbin/cupsctl",
+    "usr/local/sbin/cupsd",
+    "usr/local/sbin/cupsdisable",
+    "usr/local/sbin/cupsenable",
+    "usr/local/sbin/cupsfilter",
+    "usr/local/sbin/cupsreject",
+    "usr/local/sbin/lpadmin",
+    "usr/local/sbin/lpc",
+    "usr/local/sbin/lpinfo",
+    "usr/local/sbin/lpmove"
+   ],
+   "files": 383,
+   "headers": 15,
+   "libs": [
+    "usr/local/lib/libcups.so",
+    "usr/local/lib/libcups.so.2",
+    "usr/local/lib/libcupsimage.so",
+    "usr/local/lib/libcupsimage.so.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "avahi",
+   "dbus",
+   "expat",
+   "libdaemon",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "avahi",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.4.16"
+ },
+ "cups-filters": {
+  "build_closure": [
+   "avahi",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "cups",
+   "dbus",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gettext",
+   "giflib",
+   "glib",
+   "lcms2",
+   "libdaemon",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcrypt",
+   "libxdmcp",
+   "libxext",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "openjpeg",
+   "openssl",
+   "pcre2",
+   "pixman",
+   "poppler",
+   "pthread-stubs",
+   "qpdf",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "cups",
+   "poppler",
+   "qpdf",
+   "fontconfig",
+   "freetype",
+   "lcms2",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "zlib",
+   "glib"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/driverless",
+    "usr/local/bin/driverless-fax",
+    "usr/local/sbin/cups-browsed"
+   ],
+   "files": 91,
+   "headers": 13,
+   "libs": [
+    "usr/local/lib/libcupsfilters.so",
+    "usr/local/lib/libcupsfilters.so.1",
+    "usr/local/lib/libfontembed.so",
+    "usr/local/lib/libfontembed.so.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "avahi",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "cups",
+   "dbus",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "gettext",
+   "glib",
+   "lcms2",
+   "libdaemon",
+   "libexif",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcrypt",
+   "libxdmcp",
+   "libxext",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "openjpeg",
+   "openssl",
+   "pcre2",
+   "pixman",
+   "poppler",
+   "qpdf",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "avahi",
+   "cups",
+   "fontconfig",
+   "freetype",
+   "gettext",
+   "glib",
+   "lcms2",
+   "libexif",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libxcrypt",
+   "openssl",
+   "poppler",
+   "qpdf",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [
+   "libexif"
+  ],
+  "unresolved": [],
+  "version": "1.28.17"
+ },
  "curl": {
   "build_closure": [
    "brotli",
@@ -2643,6 +3555,32 @@
   "unresolved": [],
   "version": "1.5.0"
  },
+ "davici": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 3,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libdavici.so",
+    "usr/local/lib/libdavici.so.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.6"
+ },
  "dbus": {
   "build_closure": [
    "expat"
@@ -2731,6 +3669,31 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.28"
+ },
+ "dhcpcd": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/dhcpcd"
+   ],
+   "files": 12,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "10.5.2"
  },
  "dlt-daemon": {
   "build_closure": [
@@ -2955,6 +3918,82 @@
   "unresolved": [],
   "version": "0-git-20240121"
  },
+ "e2fsprogs": {
+  "build_closure": [
+   "libuuid"
+  ],
+  "build_deps": [
+   "libuuid"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/chattr",
+    "usr/local/bin/compile_et",
+    "usr/local/bin/lsattr",
+    "usr/local/bin/mk_cmds",
+    "usr/local/sbin/badblocks",
+    "usr/local/sbin/blkid",
+    "usr/local/sbin/debugfs",
+    "usr/local/sbin/dumpe2fs",
+    "usr/local/sbin/e2freefrag",
+    "usr/local/sbin/e2fsck",
+    "usr/local/sbin/e2image",
+    "usr/local/sbin/e2label",
+    "usr/local/sbin/e2mmpstatus",
+    "usr/local/sbin/e2undo",
+    "usr/local/sbin/filefrag",
+    "usr/local/sbin/findfs",
+    "usr/local/sbin/fsck",
+    "usr/local/sbin/fsck.ext2",
+    "usr/local/sbin/fsck.ext3",
+    "usr/local/sbin/fsck.ext4",
+    "usr/local/sbin/logsave",
+    "usr/local/sbin/mke2fs",
+    "usr/local/sbin/mkfs.ext2",
+    "usr/local/sbin/mkfs.ext3",
+    "usr/local/sbin/mkfs.ext4",
+    "usr/local/sbin/mklost+found",
+    "usr/local/sbin/resize2fs",
+    "usr/local/sbin/tune2fs"
+   ],
+   "files": 112,
+   "headers": 18,
+   "libs": [
+    "usr/local/lib/libblkid.so",
+    "usr/local/lib/libblkid.so.1",
+    "usr/local/lib/libblkid.so.1.0",
+    "usr/local/lib/libcom_err.so",
+    "usr/local/lib/libcom_err.so.2",
+    "usr/local/lib/libcom_err.so.2.1",
+    "usr/local/lib/libe2p.so",
+    "usr/local/lib/libe2p.so.2",
+    "usr/local/lib/libe2p.so.2.3",
+    "usr/local/lib/libext2fs.so",
+    "usr/local/lib/libext2fs.so.2",
+    "usr/local/lib/libext2fs.so.2.4",
+    "usr/local/lib/libss.so",
+    "usr/local/lib/libss.so.2",
+    "usr/local/lib/libss.so.2.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libuuid"
+  ],
+  "runtime_deps": [
+   "libuuid"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.47.4"
+ },
  "ed": {
   "build_closure": [],
   "build_deps": [],
@@ -3007,15 +4046,85 @@
   "unresolved": [],
   "version": "3.4.0"
  },
+ "elfutils": {
+  "build_closure": [
+   "zlib"
+  ],
+  "build_deps": [
+   "zlib"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "zlib"
+  ],
+  "runtime_deps": [
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.193"
+ },
+ "elvis": {
+  "build_closure": [
+   "ncurses"
+  ],
+  "build_deps": [
+   "ncurses"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/elvfmt",
+    "usr/local/bin/elvis",
+    "usr/local/bin/elvtags",
+    "usr/local/bin/ref"
+   ],
+   "files": 101,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "ncurses"
+  ],
+  "runtime_deps": [
+   "ncurses"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.2.1-git-20240226"
+ },
  "emacs": {
   "build_closure": [
    "brotli",
+   "bzip2",
    "dbus",
    "expat",
+   "gdbm",
    "gettext",
    "gmp",
    "gnutls",
    "lcms2",
+   "libffi",
    "libiconv",
    "libidn2",
    "libtasn1",
@@ -3023,6 +4132,9 @@
    "libxml2",
    "ncurses",
    "nettle",
+   "openssl",
+   "python3",
+   "readline",
    "sqlite",
    "tree-sitter",
    "xz",
@@ -3105,6 +4217,7 @@
    "expat",
    "freeimage",
    "freetype",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
@@ -3118,8 +4231,11 @@
    "nghttp2",
    "openssl",
    "pugixml",
+   "python3",
    "rapidjson",
+   "readline",
    "sdl2",
+   "sqlite",
    "vlc",
    "wayland",
    "xz",
@@ -3313,6 +4429,7 @@
    "freetype",
    "fribidi",
    "gcr",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -3387,6 +4504,8 @@
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
    "sqlite",
    "svt-av1",
    "wayland",
@@ -3608,6 +4727,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -3642,10 +4762,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -3653,7 +4777,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -3835,6 +4960,29 @@
   "unresolved": [],
   "version": "1.1-git-20190513"
  },
+ "fast-float": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 12,
+   "headers": 9,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "8.0.2"
+ },
  "fastcdr": {
   "build_closure": [],
   "build_deps": [],
@@ -3916,6 +5064,31 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.14.4"
+ },
+ "fastfetch": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/fastfetch"
+   ],
+   "files": 43,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.66.1"
  },
  "fcl": {
   "build_closure": [
@@ -4182,6 +5355,32 @@
   "unresolved": [],
   "version": "2.2.3"
  },
+ "fft2d": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 5,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libfft2d.so",
+    "usr/local/lib/libfft2d.so.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2006.12.28"
+ },
  "file": {
   "build_closure": [
    "bzip2",
@@ -4374,6 +5573,112 @@
   "undeclared": [],
   "unresolved": [],
   "version": "11.2.0"
+ },
+ "folly": {
+  "build_closure": [
+   "boost",
+   "bzip2",
+   "fast-float",
+   "fmt",
+   "gettext",
+   "gflags",
+   "glog",
+   "libevent",
+   "libiconv",
+   "libsodium",
+   "libunistring",
+   "lz4",
+   "ncurses",
+   "openssl",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "boost",
+   "fast-float",
+   "fmt",
+   "gflags",
+   "glog",
+   "libevent",
+   "openssl",
+   "zlib",
+   "zstd",
+   "lz4",
+   "xz",
+   "bzip2",
+   "libsodium"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 1050,
+   "headers": 1026,
+   "libs": [
+    "usr/local/lib/libfolly.so",
+    "usr/local/lib/libfolly.so.2026.10.26.00",
+    "usr/local/lib/libfolly_benchmark_util.so",
+    "usr/local/lib/libfolly_benchmark_util.so.2026.10.26.00",
+    "usr/local/lib/libfolly_crypto_detail_math_operation_avx2_disable.so",
+    "usr/local/lib/libfolly_crypto_detail_math_operation_avx2_disable.so.2026.10.26.00",
+    "usr/local/lib/libfolly_crypto_detail_math_operation_sse2_disable.so",
+    "usr/local/lib/libfolly_crypto_detail_math_operation_sse2_disable.so.2026.10.26.00",
+    "usr/local/lib/libfolly_crypto_lt_hash_avx2.so",
+    "usr/local/lib/libfolly_crypto_lt_hash_avx2.so.2026.10.26.00",
+    "usr/local/lib/libfolly_crypto_lt_hash_sse2.so",
+    "usr/local/lib/libfolly_crypto_lt_hash_sse2.so.2026.10.26.00",
+    "usr/local/lib/libfolly_memcpy-use.so",
+    "usr/local/lib/libfolly_memcpy-use.so.2026.10.26.00",
+    "usr/local/lib/libfolly_memset-use.so",
+    "usr/local/lib/libfolly_memset-use.so.2026.10.26.00",
+    "usr/local/lib/libfolly_test_util.so",
+    "usr/local/lib/libfolly_test_util.so.2026.10.26.00",
+    "usr/local/lib/libfollybenchmark.so",
+    "usr/local/lib/libfollybenchmark.so.2026.10.26.00"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "boost",
+   "bzip2",
+   "fmt",
+   "gettext",
+   "gflags",
+   "glog",
+   "libevent",
+   "libiconv",
+   "libsodium",
+   "libunistring",
+   "lz4",
+   "ncurses",
+   "openssl",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "boost",
+   "bzip2",
+   "fmt",
+   "gflags",
+   "glog",
+   "libevent",
+   "libsodium",
+   "lz4",
+   "openssl",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2026.10.26.00"
  },
  "font-cantarell": {
   "build_closure": [],
@@ -4881,6 +6186,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -4915,10 +6221,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -4926,7 +6236,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -5075,6 +6386,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -5111,18 +6423,23 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "p11-kit",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -5406,6 +6723,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -5438,17 +6756,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -5548,6 +6871,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "geany",
    "gettext",
@@ -5581,17 +6905,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "geany"
@@ -5678,6 +7007,75 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.1"
+ },
+ "gemmlowp": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 66,
+   "headers": 66,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0-git-20231103"
+ },
+ "geographiclib": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/Cart3Convert",
+    "usr/local/bin/CartConvert",
+    "usr/local/bin/Conformal3Proj",
+    "usr/local/bin/ConicProj",
+    "usr/local/bin/GeoConvert",
+    "usr/local/bin/Geod3Solve",
+    "usr/local/bin/GeodSolve",
+    "usr/local/bin/GeodesicProj",
+    "usr/local/bin/GeoidEval",
+    "usr/local/bin/Gravity",
+    "usr/local/bin/IntersectTool",
+    "usr/local/bin/MagneticField",
+    "usr/local/bin/Planimeter",
+    "usr/local/bin/RhumbSolve",
+    "usr/local/bin/TransverseMercatorProj",
+    "usr/local/sbin/geographiclib-get-geoids",
+    "usr/local/sbin/geographiclib-get-gravity",
+    "usr/local/sbin/geographiclib-get-magnetic"
+   ],
+   "files": 102,
+   "headers": 55,
+   "libs": [
+    "usr/local/lib/libGeographicLib.so",
+    "usr/local/lib/libGeographicLib.so.26",
+    "usr/local/lib/libGeographicLib.so.26.2.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.7"
  },
  "gettext": {
   "build_closure": [
@@ -5916,6 +7314,57 @@
   "undeclared": [],
   "unresolved": [],
   "version": "5.1.1-git-20230326"
+ },
+ "glfw": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "linux-headers-input-codes",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "wayland",
+   "libxkbcommon",
+   "linux-headers-input-codes"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libglfw.so",
+    "usr/local/lib/libglfw.so.3",
+    "usr/local/lib/libglfw.so.3.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.5.1"
  },
  "glib": {
   "build_closure": [
@@ -6173,6 +7622,116 @@
   "unresolved": [],
   "version": "6.3.0"
  },
+ "gnupg": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "gettext",
+   "gmp",
+   "gnutls",
+   "libassuan",
+   "libgcrypt",
+   "libgpg-error",
+   "libiconv",
+   "libidn2",
+   "libksba",
+   "libtasn1",
+   "libunistring",
+   "ncurses",
+   "nettle",
+   "npth",
+   "readline",
+   "sqlite",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "libgpg-error",
+   "libgcrypt",
+   "libassuan",
+   "libksba",
+   "npth",
+   "gnutls",
+   "sqlite",
+   "zlib",
+   "bzip2",
+   "readline",
+   "libiconv"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/dirmngr",
+    "usr/local/bin/dirmngr-client",
+    "usr/local/bin/gpg",
+    "usr/local/bin/gpg-agent",
+    "usr/local/bin/gpg-card",
+    "usr/local/bin/gpg-connect-agent",
+    "usr/local/bin/gpg-mail-tube",
+    "usr/local/bin/gpg-wks-client",
+    "usr/local/bin/gpg-wks-server",
+    "usr/local/bin/gpgconf",
+    "usr/local/bin/gpgparsemail",
+    "usr/local/bin/gpgsm",
+    "usr/local/bin/gpgsplit",
+    "usr/local/bin/gpgtar",
+    "usr/local/bin/gpgv",
+    "usr/local/bin/kbxutil",
+    "usr/local/bin/watchgnupg",
+    "usr/local/sbin/addgnupghome",
+    "usr/local/sbin/applygnupgdefaults"
+   ],
+   "files": 30,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "gettext",
+   "gmp",
+   "gnutls",
+   "libassuan",
+   "libgcrypt",
+   "libgpg-error",
+   "libiconv",
+   "libidn2",
+   "libksba",
+   "libtasn1",
+   "libunistring",
+   "ncurses",
+   "nettle",
+   "npth",
+   "readline",
+   "sqlite",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "bzip2",
+   "gnutls",
+   "libassuan",
+   "libgcrypt",
+   "libgpg-error",
+   "libiconv",
+   "libksba",
+   "ncurses",
+   "npth",
+   "readline",
+   "sqlite",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.4.9"
+ },
  "gnutls": {
   "build_closure": [
    "brotli",
@@ -6312,7 +7871,9 @@
   "build_closure": [
    "brotli",
    "bzip2",
+   "expat",
    "freetype",
+   "gdbm",
    "gettext",
    "giflib",
    "glib",
@@ -6331,8 +7892,12 @@
    "libxkbcommon",
    "libxml2",
    "ncurses",
+   "openssl",
    "opus",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
    "zlib",
    "zstd"
@@ -6478,6 +8043,57 @@
   "unresolved": [],
   "version": "3.1"
  },
+ "gpgme": {
+  "build_closure": [
+   "gettext",
+   "libassuan",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "build_deps": [
+   "libgpg-error",
+   "libassuan"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/gnupg-key-manage",
+    "usr/local/bin/gpgme-config",
+    "usr/local/bin/gpgme-json",
+    "usr/local/bin/gpgme-tool"
+   ],
+   "files": 17,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libgpgme.so",
+    "usr/local/lib/libgpgme.so.47"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libassuan",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "runtime_deps": [
+   "libassuan",
+   "libgpg-error"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.2.0"
+ },
  "graphene": {
   "build_closure": [
    "bzip2",
@@ -6532,11 +8148,14 @@
   "build_closure": [
    "brotli",
    "bzip2",
+   "expat",
    "freetype",
+   "gdbm",
    "gettext",
    "giflib",
    "highway",
    "lcms2",
+   "libffi",
    "libiconv",
    "libjpeg-turbo",
    "libjxl",
@@ -6546,6 +8165,10 @@
    "libwebp",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
    "zlib",
    "zstd"
@@ -6955,7 +8578,9 @@
   "build_closure": [
    "bzip2",
    "dav1d",
+   "expat",
    "ffmpeg",
+   "gdbm",
    "gettext",
    "glib",
    "gst-plugins-base",
@@ -6971,13 +8596,18 @@
    "libxml2",
    "ncurses",
    "openh264",
+   "openssl",
    "opus",
    "orc",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "x264",
    "x265",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gst-plugins-base",
@@ -7043,6 +8673,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gettext",
    "giflib",
    "glib",
@@ -7078,13 +8709,17 @@
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "svt-av1",
    "x265",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gst-plugins-base",
@@ -7226,6 +8861,8 @@
  "gst-plugins-base": {
   "build_closure": [
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "gstreamer",
@@ -7237,11 +8874,16 @@
    "libvorbis",
    "libxml2",
    "ncurses",
+   "openssl",
    "opus",
    "orc",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gstreamer",
@@ -7342,6 +8984,7 @@
    "flac",
    "fontconfig",
    "freetype",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -7376,12 +9019,15 @@
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
    "sqlite",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gst-plugins-base",
@@ -7474,6 +9120,8 @@
  "gst-plugins-ugly": {
   "build_closure": [
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "gst-plugins-base",
@@ -7486,12 +9134,17 @@
    "libvorbis",
    "libxml2",
    "ncurses",
+   "openssl",
    "opus",
    "orc",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "x264",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gst-plugins-base",
@@ -7542,6 +9195,8 @@
  "gstreamer": {
   "build_closure": [
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "libffi",
@@ -7549,9 +9204,14 @@
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -7622,6 +9282,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -7663,10 +9324,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -7790,6 +9455,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -7822,17 +9488,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -7928,6 +9599,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -7967,10 +9639,14 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -8097,6 +9773,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -8128,17 +9805,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -8279,6 +9961,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -8306,10 +9989,14 @@
    "libxrender",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -8478,6 +10165,34 @@
   "unresolved": [],
   "version": "4.2"
  },
+ "hailort": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/hailortcli"
+   ],
+   "files": 27,
+   "headers": 20,
+   "libs": [
+    "usr/local/lib/libhailort.so",
+    "usr/local/lib/libhailort.so.4.14.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.14.0"
+ },
  "harfbuzz": {
   "build_closure": [
    "brotli",
@@ -8609,6 +10324,32 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.2.0"
+ },
+ "highwayhash": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 35,
+   "headers": 33,
+   "libs": [
+    "usr/local/lib/libhighwayhash.so",
+    "usr/local/lib/libhighwayhash.so.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0_git20240418"
  },
  "htop": {
   "build_closure": [
@@ -8770,6 +10511,80 @@
   "unresolved": [],
   "version": "76.1"
  },
+ "inetutils": {
+  "build_closure": [
+   "libxcrypt",
+   "ncurses",
+   "readline"
+  ],
+  "build_deps": [
+   "ncurses",
+   "readline",
+   "libxcrypt"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/dnsdomainname",
+    "usr/local/bin/ftp",
+    "usr/local/bin/hostname",
+    "usr/local/bin/logger",
+    "usr/local/bin/ping",
+    "usr/local/bin/ping6",
+    "usr/local/bin/telnet",
+    "usr/local/bin/traceroute",
+    "usr/local/bin/whois"
+   ],
+   "files": 23,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libxcrypt",
+   "ncurses",
+   "readline"
+  ],
+  "runtime_deps": [
+   "libxcrypt",
+   "ncurses",
+   "readline"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.6"
+ },
+ "iperf2": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/iperf"
+   ],
+   "files": 2,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.2.1"
+ },
  "iperf3": {
   "build_closure": [
    "openssl"
@@ -8805,6 +10620,80 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.17.1"
+ },
+ "ippusbxd": {
+  "build_closure": [
+   "avahi",
+   "bzip2",
+   "cups",
+   "dbus",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libdaemon",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libusb",
+   "libxcrypt",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "libusb",
+   "avahi",
+   "libxml2",
+   "cups"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/ippusbxd"
+   ],
+   "files": 2,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "avahi",
+   "cups",
+   "dbus",
+   "expat",
+   "gettext",
+   "libdaemon",
+   "libiconv",
+   "libunistring",
+   "libusb",
+   "libxcrypt",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "avahi",
+   "cups",
+   "libusb",
+   "libxml2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.34"
  },
  "iso-codes": {
   "build_closure": [],
@@ -9112,6 +11001,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -9136,10 +11026,14 @@
    "linux-headers-input-codes",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "wlroots",
@@ -9147,7 +11041,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wlroots",
@@ -9454,6 +11349,153 @@
   "unresolved": [],
   "version": "1.23"
  },
+ "libadwaita": {
+  "build_closure": [
+   "appstream",
+   "brotli",
+   "bzip2",
+   "c-ares",
+   "cairo",
+   "curl",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gdk-pixbuf",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphene",
+   "graphite2",
+   "gtk4",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxmlb",
+   "libxrender",
+   "libyaml",
+   "lzo",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "gtk4",
+   "fribidi",
+   "appstream"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 133,
+   "headers": 79,
+   "libs": [
+    "usr/local/lib/libadwaita-1.so",
+    "usr/local/lib/libadwaita-1.so.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "appstream",
+   "brotli",
+   "bzip2",
+   "c-ares",
+   "cairo",
+   "curl",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "graphene",
+   "graphite2",
+   "gtk4",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxmlb",
+   "libxrender",
+   "libyaml",
+   "lzo",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pango",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "appstream",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphene",
+   "gtk4",
+   "pango"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.6.10"
+ },
  "libaec": {
   "build_closure": [],
   "build_deps": [],
@@ -9488,13 +11530,18 @@
   "build_closure": [
    "bzip2",
    "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "lz4",
    "ncurses",
    "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
    "zlib",
    "zstd"
@@ -9630,6 +11677,50 @@
   "unresolved": [],
   "version": "0.17.3"
  },
+ "libassuan": {
+  "build_closure": [
+   "gettext",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "build_deps": [
+   "libgpg-error"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/libassuan-config"
+   ],
+   "files": 6,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libassuan.so",
+    "usr/local/lib/libassuan.so.9"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "runtime_deps": [
+   "libgpg-error"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.0.2"
+ },
  "libavif": {
   "build_closure": [
    "aom",
@@ -9684,11 +11775,11 @@
    "aarch64le": true,
    "x86_64": false
   },
-  "class": "runtime-standalone",
+  "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 3,
-   "headers": 0,
+   "files": 4,
+   "headers": 1,
    "libs": [
     "usr/local/lib/librpi_camera_ipa.so",
     "usr/local/lib/librpi_camera_ipa.so.0.5.1",
@@ -9696,8 +11787,12 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libyaml"
+  ],
+  "runtime_deps": [
+   "libyaml"
+  ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
@@ -9829,6 +11924,32 @@
   "unresolved": [],
   "version": "1.8.1"
  },
+ "libdaemon": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 12,
+   "headers": 7,
+   "libs": [
+    "usr/local/lib/libdaemon.so",
+    "usr/local/lib/libdaemon.so.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.14"
+ },
  "libdatrie": {
   "build_closure": [],
   "build_deps": [],
@@ -9869,6 +11990,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -9901,17 +12023,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -10471,6 +12598,8 @@
  "libgsf": {
   "build_closure": [
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "libffi",
@@ -10478,9 +12607,14 @@
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -10544,6 +12678,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -10576,17 +12711,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -10671,6 +12811,32 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.8.3"
+ },
+ "libhevc": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/hevcdec",
+    "usr/local/bin/hevcenc"
+   ],
+   "files": 11,
+   "headers": 7,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.8.5"
  },
  "libice": {
   "build_closure": [
@@ -10930,6 +13096,50 @@
   "unresolved": [],
   "version": "0.11.1"
  },
+ "libksba": {
+  "build_closure": [
+   "gettext",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "build_deps": [
+   "libgpg-error"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/ksba-config"
+   ],
+   "files": 6,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libksba.so",
+    "usr/local/lib/libksba.so.24"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libgpg-error",
+   "libiconv",
+   "libunistring",
+   "ncurses"
+  ],
+  "runtime_deps": [
+   "libgpg-error"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.8.1"
+ },
  "libmd": {
   "build_closure": [],
   "build_deps": [],
@@ -11118,6 +13328,154 @@
   "unresolved": [],
   "version": "1.3.5"
  },
+ "libpanel": {
+  "build_closure": [
+   "appstream",
+   "brotli",
+   "bzip2",
+   "c-ares",
+   "cairo",
+   "curl",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gdk-pixbuf",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphene",
+   "graphite2",
+   "gtk4",
+   "harfbuzz",
+   "icu",
+   "libadwaita",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxmlb",
+   "libxrender",
+   "libyaml",
+   "lzo",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "gtk4",
+   "libadwaita"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 98,
+   "headers": 36,
+   "libs": [
+    "usr/local/lib/libpanel-1.so",
+    "usr/local/lib/libpanel-1.so.1",
+    "usr/local/lib/libpanel-1.so.1.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "appstream",
+   "brotli",
+   "bzip2",
+   "c-ares",
+   "cairo",
+   "curl",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "graphene",
+   "graphite2",
+   "gtk4",
+   "harfbuzz",
+   "icu",
+   "libadwaita",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxkbcommon",
+   "libxml2",
+   "libxmlb",
+   "libxrender",
+   "libyaml",
+   "lzo",
+   "ncurses",
+   "nghttp2",
+   "openssl",
+   "pango",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "cairo",
+   "gettext",
+   "glib",
+   "graphene",
+   "gtk4",
+   "libadwaita"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.10.4"
+ },
  "libpcap": {
   "build_closure": [],
   "build_deps": [],
@@ -11218,6 +13576,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -11250,17 +13609,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -11459,6 +13823,75 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.21.5"
+ },
+ "libraqm": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libunistring",
+   "ncurses",
+   "pcre2",
+   "zlib"
+  ],
+  "build_deps": [
+   "freetype",
+   "harfbuzz",
+   "fribidi"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libraqm.so",
+    "usr/local/lib/libraqm.so.0",
+    "usr/local/lib/libraqm.so.0.10.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libunistring",
+   "ncurses",
+   "pcre2",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "freetype",
+   "fribidi",
+   "harfbuzz"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.10.5"
  },
  "libretro-2048": {
   "build_closure": [],
@@ -11808,6 +14241,8 @@
   "build_closure": [
    "brotli",
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "libffi",
@@ -11820,9 +14255,12 @@
    "nghttp2",
    "openssl",
    "pcre2",
+   "python3",
+   "readline",
    "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -12124,6 +14562,68 @@
   "unresolved": [],
   "version": "4.7.0"
  },
+ "libtomcrypt": {
+  "build_closure": [
+   "libtommath"
+  ],
+  "build_deps": [
+   "libtommath"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 17,
+   "headers": 13,
+   "libs": [
+    "usr/local/lib/libtomcrypt.so",
+    "usr/local/lib/libtomcrypt.so.1",
+    "usr/local/lib/libtomcrypt.so.1.0.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libtommath"
+  ],
+  "runtime_deps": [
+   "libtommath"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.18.2"
+ },
+ "libtommath": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 8,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libtommath.so",
+    "usr/local/lib/libtommath.so.1",
+    "usr/local/lib/libtommath.so.1.3.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.3.0"
+ },
  "libtool": {
   "build_closure": [],
   "build_deps": [],
@@ -12253,6 +14753,60 @@
   "unresolved": [],
   "version": "1.0.27"
  },
+ "libutempter": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 11,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libutempter.so",
+    "usr/local/lib/libutempter.so.0",
+    "usr/local/lib/libutempter.so.1.2.3"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.2.3"
+ },
+ "libuuid": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 17,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libuuid.so",
+    "usr/local/lib/libuuid.so.1",
+    "usr/local/lib/libuuid.so.1.3.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.42.4"
+ },
  "libuv": {
   "build_closure": [],
   "build_deps": [],
@@ -12283,7 +14837,9 @@
  "libvncserver": {
   "build_closure": [
    "brotli",
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "gmp",
    "gnutls",
@@ -12300,7 +14856,10 @@
    "ncurses",
    "nettle",
    "openssl",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
    "zlib",
@@ -12978,6 +15537,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -13011,10 +15571,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -13022,7 +15586,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -13183,6 +15748,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -13215,17 +15781,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -13241,7 +15812,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 63,
+   "files": 72,
    "headers": 15,
    "libs": [
     "usr/local/lib/libxfce4windowing-0.so",
@@ -13317,7 +15888,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.7"
  },
  "libxfixes": {
   "build_closure": [
@@ -13585,13 +16156,22 @@
  },
  "libxkbcommon": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "libxml2"
@@ -13681,16 +16261,26 @@
  },
  "libxml2": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "zlib",
-   "xz"
+   "xz",
+   "python3"
   ],
   "buildsys": "cmake",
   "built": {
@@ -13702,7 +16292,7 @@
    "bins": [
     "usr/local/bin/xml2-config"
    ],
-   "files": 118,
+   "files": 121,
    "headers": 46,
    "libs": [
     "usr/local/lib/libxml2.so",
@@ -13727,6 +16317,123 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.13.5"
+ },
+ "libxml2-utils": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "libxml2",
+   "zlib",
+   "xz"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/xmlcatalog",
+    "usr/local/bin/xmllint"
+   ],
+   "files": 2,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "ncurses",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libxml2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.13.5"
+ },
+ "libxmlb": {
+  "build_closure": [
+   "bzip2",
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "pcre2",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "xz",
+   "zstd"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/xb-tool"
+   ],
+   "files": 28,
+   "headers": 21,
+   "libs": [
+    "usr/local/lib/libxmlb.so",
+    "usr/local/lib/libxmlb.so.2",
+    "usr/local/lib/libxmlb.so.2.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "glib",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "pcre2",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "glib",
+   "xz",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.24"
  },
  "libxmu": {
   "build_closure": [
@@ -13788,6 +16495,43 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.3.1"
+ },
+ "libxo": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/libxo-config",
+    "usr/local/bin/xo",
+    "usr/local/bin/xo-logger",
+    "usr/local/bin/xohtml",
+    "usr/local/bin/xolint",
+    "usr/local/bin/xopo"
+   ],
+   "files": 70,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libxo.so",
+    "usr/local/lib/libxo.so.0",
+    "usr/local/lib/libxo.so.0.0.0",
+    "usr/local/lib/libxo_format.so",
+    "usr/local/lib/libxo_format.so.0",
+    "usr/local/lib/libxo_format.so.0.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.3.0"
  },
  "libxrandr": {
   "build_closure": [
@@ -13969,13 +16713,22 @@
  },
  "libxslt": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "libxml2",
@@ -14315,17 +17068,21 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libxcrypt",
    "openssl",
    "pcre2",
    "zlib"
   ],
   "runtime_deps": [
+   "libxcrypt",
    "openssl",
    "pcre2",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libxcrypt"
+  ],
   "unresolved": [],
   "version": "1.4.77"
  },
@@ -14352,14 +17109,109 @@
   "unresolved": [],
   "version": "6.12"
  },
+ "llama.cpp": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/llama-batched-bench",
+    "usr/local/bin/llama-bench",
+    "usr/local/bin/llama-cli",
+    "usr/local/bin/llama-completion",
+    "usr/local/bin/llama-cvector-generator",
+    "usr/local/bin/llama-debug-template-parser",
+    "usr/local/bin/llama-export-lora",
+    "usr/local/bin/llama-fit-params",
+    "usr/local/bin/llama-gguf-split",
+    "usr/local/bin/llama-imatrix",
+    "usr/local/bin/llama-mtmd-cli",
+    "usr/local/bin/llama-perplexity",
+    "usr/local/bin/llama-quantize",
+    "usr/local/bin/llama-results",
+    "usr/local/bin/llama-server",
+    "usr/local/bin/llama-template-analysis",
+    "usr/local/bin/llama-tokenize",
+    "usr/local/bin/llama-tts"
+   ],
+   "files": 83,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "openssl"
+  ],
+  "runtime_deps": [
+   "openssl"
+  ],
+  "standalone_verified": {},
+  "undeclared": [
+   "openssl"
+  ],
+  "unresolved": [],
+  "version": "0_b9006"
+ },
+ "lldpd": {
+  "build_closure": [
+   "libevent",
+   "openssl"
+  ],
+  "build_deps": [
+   "libevent"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/lldpcli",
+    "usr/local/sbin/lldpctl",
+    "usr/local/sbin/lldpd"
+   ],
+   "files": 20,
+   "headers": 3,
+   "libs": [
+    "usr/local/lib/liblldpctl.so",
+    "usr/local/lib/liblldpctl.so.14"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libevent",
+   "openssl"
+  ],
+  "runtime_deps": [
+   "libevent"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0.22"
+ },
  "llvm": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
    "zlib",
    "zstd"
@@ -14569,6 +17421,61 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.0-git-20260929"
+ },
+ "log4cxx": {
+  "build_closure": [
+   "apr",
+   "apr-util",
+   "expat",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "sqlite",
+   "zlib"
+  ],
+  "build_deps": [
+   "apr",
+   "apr-util",
+   "expat",
+   "libiconv"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 212,
+   "headers": 204,
+   "libs": [
+    "usr/local/lib/liblog4cxx.so",
+    "usr/local/lib/liblog4cxx.so.15",
+    "usr/local/lib/liblog4cxx.so.15.8.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "apr",
+   "apr-util",
+   "expat",
+   "libiconv",
+   "libxcrypt",
+   "openssl",
+   "sqlite",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "apr",
+   "apr-util",
+   "expat",
+   "libiconv"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.8.0"
  },
  "lua": {
   "build_closure": [],
@@ -14940,6 +17847,7 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -14952,12 +17860,17 @@
    "libxkbcommon",
    "libxml2",
    "ncurses",
+   "openssl",
    "pcre2",
+   "python3",
+   "readline",
    "sdl2",
    "sdl2-ttf",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "sdl2",
@@ -15080,6 +17993,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -15115,17 +18029,22 @@
    "mpc",
    "mpfr",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -15285,6 +18204,75 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.1.3"
+ },
+ "mesa": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "llvm",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "wayland",
+   "wayland-protocols",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "llvm",
+   "wayland",
+   "wayland-protocols",
+   "zlib",
+   "zstd",
+   "expat"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 43,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "expat",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "llvm",
+   "ncurses",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "expat",
+   "llvm",
+   "wayland",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "26.2.6"
  },
  "meson": {
   "build_closure": [
@@ -15511,6 +18499,82 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.2.3"
+ },
+ "mnn": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 22,
+   "headers": 20,
+   "libs": [
+    "usr/local/lib/libMNN.so",
+    "usr/local/lib/libMNN_Express.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.6.2"
+ },
+ "mosh": {
+  "build_closure": [
+   "abseil",
+   "ncurses",
+   "openssl",
+   "protobuf",
+   "zlib"
+  ],
+  "build_deps": [
+   "protobuf",
+   "ncurses",
+   "openssl",
+   "zlib"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/mosh",
+    "usr/local/bin/mosh-client",
+    "usr/local/bin/mosh-server"
+   ],
+   "files": 6,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "ncurses",
+   "openssl",
+   "protobuf",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "ncurses",
+   "openssl",
+   "protobuf",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.4.0"
  },
  "mosquitto": {
   "build_closure": [
@@ -15795,6 +18859,35 @@
   "unresolved": [],
   "version": "8.2"
  },
+ "nanomsg": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/nanocat"
+   ],
+   "files": 22,
+   "headers": 13,
+   "libs": [
+    "usr/local/lib/libnanomsg.so",
+    "usr/local/lib/libnanomsg.so.7",
+    "usr/local/lib/libnanomsg.so.7.0.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.3.0"
+ },
  "nanosvg": {
   "build_closure": [],
   "build_deps": [],
@@ -15889,6 +18982,51 @@
   "unresolved": [],
   "version": "6.5"
  },
+ "neon": {
+  "build_closure": [
+   "expat",
+   "openssl",
+   "zlib"
+  ],
+  "build_deps": [
+   "openssl",
+   "expat",
+   "zlib"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/neon-config"
+   ],
+   "files": 29,
+   "headers": 24,
+   "libs": [
+    "usr/local/lib/libneon.so",
+    "usr/local/lib/libneon.so.27",
+    "usr/local/lib/libneon.so.27.10.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "expat",
+   "openssl",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "expat",
+   "openssl",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.37.1"
+ },
  "neovim": {
   "build_closure": [
    "gettext",
@@ -15952,6 +19090,35 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.12.3"
+ },
+ "netmap": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/bridge",
+    "usr/local/bin/lb",
+    "usr/local/bin/nmreplay",
+    "usr/local/bin/pkt-gen",
+    "usr/local/bin/tlem"
+   ],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "14.0-git-20261027"
  },
  "nettle": {
   "build_closure": [
@@ -16029,6 +19196,52 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.64.0"
+ },
+ "nginx": {
+  "build_closure": [
+   "bzip2",
+   "libxcrypt",
+   "openssl",
+   "pcre2",
+   "zlib"
+  ],
+  "build_deps": [
+   "openssl",
+   "pcre2",
+   "zlib",
+   "libxcrypt"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/nginx"
+   ],
+   "files": 19,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libxcrypt",
+   "openssl",
+   "pcre2",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libxcrypt",
+   "openssl",
+   "pcre2",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.30.6"
  },
  "ninja": {
   "build_closure": [],
@@ -16226,6 +19439,192 @@
   "unresolved": [],
   "version": "11.11.0"
  },
+ "npth": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 5,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libnpth.so",
+    "usr/local/lib/libnpth.so.3"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.8"
+ },
+ "nspr": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/compile-et.pl",
+    "usr/local/bin/nspr-config",
+    "usr/local/bin/prerr.properties"
+   ],
+   "files": 78,
+   "headers": 67,
+   "libs": [
+    "usr/local/lib/libnspr4.so",
+    "usr/local/lib/libplc4.so",
+    "usr/local/lib/libplds4.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.39"
+ },
+ "nss": {
+  "build_closure": [
+   "nspr",
+   "sqlite",
+   "zlib"
+  ],
+  "build_deps": [
+   "nspr",
+   "sqlite",
+   "zlib"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/certutil",
+    "usr/local/bin/cmsutil",
+    "usr/local/bin/crlutil",
+    "usr/local/bin/modutil",
+    "usr/local/bin/nss-config",
+    "usr/local/bin/nssdefaults",
+    "usr/local/bin/pk12util",
+    "usr/local/bin/pwdecrypt",
+    "usr/local/bin/signtool",
+    "usr/local/bin/signver",
+    "usr/local/bin/ssltap",
+    "usr/local/bin/symkeyutil"
+   ],
+   "files": 133,
+   "headers": 113,
+   "libs": [
+    "usr/local/lib/libfreebl3.so",
+    "usr/local/lib/libnss3.so",
+    "usr/local/lib/libnssckbi.so",
+    "usr/local/lib/libnssutil3.so",
+    "usr/local/lib/libsmime3.so",
+    "usr/local/lib/libsoftokn3.so",
+    "usr/local/lib/libssl3.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "nspr",
+   "sqlite",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "nspr",
+   "sqlite",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.131.1"
+ },
+ "nsync": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 23,
+   "headers": 13,
+   "libs": [
+    "usr/local/lib/libnsync.so",
+    "usr/local/lib/libnsync.so.1",
+    "usr/local/lib/libnsync.so.1.30.0",
+    "usr/local/lib/libnsync_cpp.so",
+    "usr/local/lib/libnsync_cpp.so.1",
+    "usr/local/lib/libnsync_cpp.so.1.30.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.30.0"
+ },
+ "ntp": {
+  "build_closure": [
+   "libedit",
+   "libevent",
+   "ncurses",
+   "openssl"
+  ],
+  "build_deps": [
+   "libevent",
+   "libedit"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 264,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libedit",
+   "libevent",
+   "ncurses",
+   "openssl"
+  ],
+  "runtime_deps": [
+   "libedit",
+   "libevent"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.2.8p18"
+ },
  "ntpsec": {
   "build_closure": [
    "openssl"
@@ -16275,6 +19674,31 @@
   "unresolved": [],
   "version": "1.2.4"
  },
+ "ntttcp-for-linux": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/ntttcp"
+   ],
+   "files": 1,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.4.0-git-20230613"
+ },
  "numpy": {
   "build_closure": [
    "bzip2",
@@ -16323,6 +19747,7 @@
    "openblas",
    "openssl",
    "python3",
+   "readline",
    "sqlite",
    "xz",
    "zlib",
@@ -16375,6 +19800,33 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.10.0"
+ },
+ "onednn": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 73,
+   "headers": 58,
+   "libs": [
+    "usr/local/lib/libdnnl.so",
+    "usr/local/lib/libdnnl.so.3",
+    "usr/local/lib/libdnnl.so.3.14"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.14.1"
  },
  "onetbb": {
   "build_closure": [],
@@ -16787,6 +20239,65 @@
   "unresolved": [],
   "version": "2.5.3"
  },
+ "openmp": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 5,
+   "headers": 4,
+   "libs": [
+    "usr/local/lib/libomp.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "22.1.8"
+ },
+ "openpam": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/pamtest"
+   ],
+   "files": 17,
+   "headers": 7,
+   "libs": [
+    "usr/local/lib/libpam.so",
+    "usr/local/lib/libpam.so.2",
+    "usr/local/lib/pam_deny.so",
+    "usr/local/lib/pam_deny.so.2",
+    "usr/local/lib/pam_permit.so",
+    "usr/local/lib/pam_permit.so.2",
+    "usr/local/lib/pam_return.so",
+    "usr/local/lib/pam_return.so.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "20250531"
+ },
  "openssh": {
   "build_closure": [
    "libxcrypt",
@@ -16872,6 +20383,7 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
@@ -16883,7 +20395,10 @@
    "ncurses",
    "nghttp2",
    "openssl",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
    "zlib",
@@ -17157,6 +20672,7 @@
    "freetype",
    "fribidi",
    "garcon",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -17213,10 +20729,14 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "swaybg",
    "thunar",
    "vte",
@@ -17447,6 +20967,7 @@
    "ncurses",
    "openssl",
    "python3",
+   "readline",
    "sqlite",
    "xz",
    "zlib",
@@ -17936,6 +21457,34 @@
   "unresolved": [],
   "version": "0.17030"
  },
+ "perl-io-tty": {
+  "build_closure": [
+   "libxcrypt",
+   "perl"
+  ],
+  "build_deps": [
+   "perl"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.31"
+ },
  "perl-mozilla-ca": {
   "build_closure": [
    "libxcrypt",
@@ -18091,6 +21640,67 @@
   "unresolved": [],
   "version": "2.3.0"
  },
+ "poco": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "openssl",
+   "pcre2",
+   "utf8proc",
+   "zlib"
+  ],
+  "build_deps": [
+   "openssl",
+   "zlib",
+   "pcre2",
+   "utf8proc",
+   "expat"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 644,
+   "headers": 606,
+   "libs": [
+    "usr/local/lib/libPocoCrypto.so",
+    "usr/local/lib/libPocoCrypto.so.124",
+    "usr/local/lib/libPocoFoundation.so",
+    "usr/local/lib/libPocoFoundation.so.124",
+    "usr/local/lib/libPocoJSON.so",
+    "usr/local/lib/libPocoJSON.so.124",
+    "usr/local/lib/libPocoNet.so",
+    "usr/local/lib/libPocoNet.so.124",
+    "usr/local/lib/libPocoUtil.so",
+    "usr/local/lib/libPocoUtil.so.124",
+    "usr/local/lib/libPocoXML.so",
+    "usr/local/lib/libPocoXML.so.124"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "expat",
+   "openssl",
+   "pcre2",
+   "utf8proc",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "expat",
+   "openssl",
+   "pcre2",
+   "utf8proc",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.15.4"
+ },
  "poppler": {
   "build_closure": [
    "brotli",
@@ -18239,6 +21849,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -18271,17 +21882,22 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -18448,6 +22064,47 @@
   "unresolved": [],
   "version": "1.5.0"
  },
+ "psutil": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 17,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "7.2.2"
+ },
  "pthread-stubs": {
   "build_closure": [],
   "build_deps": [],
@@ -18500,6 +22157,31 @@
   "unresolved": [],
   "version": "0-git-20250207"
  },
+ "ptpd": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/ptpd2"
+   ],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.3.1"
+ },
  "pugixml": {
   "build_closure": [],
   "build_deps": [],
@@ -18526,6 +22208,149 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.14"
+ },
+ "pybind11": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 64,
+   "headers": 55,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.1.0"
+ },
+ "pygame": {
+  "build_closure": [
+   "aom",
+   "brotli",
+   "bzip2",
+   "dav1d",
+   "expat",
+   "freetype",
+   "gdbm",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "highway",
+   "icu",
+   "lcms2",
+   "libavif",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libjxl",
+   "libogg",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "libxkbcommon",
+   "libxml2",
+   "libyuv",
+   "ncurses",
+   "numpy",
+   "openblas",
+   "openssl",
+   "opus",
+   "opusfile",
+   "pcre2",
+   "python3",
+   "readline",
+   "sdl2",
+   "sdl2-image",
+   "sdl2-mixer",
+   "sdl2-ttf",
+   "sqlite",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "numpy",
+   "sdl2",
+   "sdl2-image",
+   "sdl2-ttf",
+   "sdl2-mixer",
+   "freetype",
+   "libpng",
+   "libjpeg-turbo"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 352,
+   "headers": 31,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "aom",
+   "brotli",
+   "bzip2",
+   "dav1d",
+   "freetype",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "libavif",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libogg",
+   "libpng",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "ncurses",
+   "openssl",
+   "opus",
+   "opusfile",
+   "pcre2",
+   "sdl2",
+   "sdl2-image",
+   "sdl2-mixer",
+   "sdl2-ttf",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "freetype",
+   "libjpeg-turbo",
+   "libpng",
+   "sdl2",
+   "sdl2-image",
+   "sdl2-mixer",
+   "sdl2-ttf"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.6.1_git20251005"
  },
  "python3": {
   "build_closure": [
@@ -18574,7 +22399,7 @@
     "usr/local/bin/python3.14",
     "usr/local/bin/python3.14-config"
    ],
-   "files": 3025,
+   "files": 3026,
    "headers": 283,
    "libs": [
     "usr/local/lib/libpython3.14.so",
@@ -18593,6 +22418,7 @@
    "libunistring",
    "ncurses",
    "openssl",
+   "readline",
    "sqlite",
    "xz",
    "zlib",
@@ -18606,6 +22432,7 @@
    "libffi",
    "ncurses",
    "openssl",
+   "readline",
    "sqlite",
    "xz",
    "zlib",
@@ -18615,6 +22442,47 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.14.0"
+ },
+ "python3-argcomplete": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 23,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.7.2"
  },
  "python3-astor": {
   "build_closure": [
@@ -18698,6 +22566,154 @@
   "unresolved": [],
   "version": "1.10"
  },
+ "python3-boto3": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-botocore",
+   "python3-dateutil",
+   "python3-jmespath",
+   "python3-s3transfer",
+   "python3-six",
+   "python3-urllib3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-botocore",
+   "python3-s3transfer",
+   "python3-jmespath"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 62,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.43.123"
+ },
+ "python3-botocore": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-dateutil",
+   "python3-jmespath",
+   "python3-six",
+   "python3-urllib3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-jmespath",
+   "python3-dateutil",
+   "python3-urllib3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 2019,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.43.123"
+ },
+ "python3-catkin-pkg": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-dateutil",
+   "python3-docutils",
+   "python3-packaging",
+   "python3-pyparsing",
+   "python3-six",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-dateutil",
+   "python3-docutils",
+   "python3-packaging",
+   "python3-pyparsing"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 37,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.1.1"
+ },
  "python3-click": {
   "build_closure": [
    "bzip2",
@@ -18738,6 +22754,1363 @@
   "undeclared": [],
   "unresolved": [],
   "version": "8.5.0"
+ },
+ "python3-colcon-argcomplete": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-argcomplete",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-argcomplete",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 13,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.3"
+ },
+ "python3-colcon-bash": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.5.0"
+ },
+ "python3-colcon-cd": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-colcon-package-information",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-colcon-package-information"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 8,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.1.1"
+ },
+ "python3-colcon-cmake": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-colcon-library-path",
+   "python3-colcon-test-result",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-colcon-library-path",
+   "python3-colcon-test-result",
+   "python3-packaging"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 23,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.30"
+ },
+ "python3-colcon-common-extensions": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-argcomplete",
+   "python3-catkin-pkg",
+   "python3-colcon-argcomplete",
+   "python3-colcon-bash",
+   "python3-colcon-cd",
+   "python3-colcon-cmake",
+   "python3-colcon-core",
+   "python3-colcon-defaults",
+   "python3-colcon-devtools",
+   "python3-colcon-library-path",
+   "python3-colcon-metadata",
+   "python3-colcon-notification",
+   "python3-colcon-output",
+   "python3-colcon-package-information",
+   "python3-colcon-package-selection",
+   "python3-colcon-parallel-executor",
+   "python3-colcon-pkg-config",
+   "python3-colcon-powershell",
+   "python3-colcon-python-setup-py",
+   "python3-colcon-recursive-crawl",
+   "python3-colcon-ros",
+   "python3-colcon-test-result",
+   "python3-colcon-zsh",
+   "python3-coverage",
+   "python3-dateutil",
+   "python3-distlib",
+   "python3-docutils",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pyparsing",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-pyyaml",
+   "python3-setuptools",
+   "python3-six",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-argcomplete",
+   "python3-colcon-bash",
+   "python3-colcon-cd",
+   "python3-colcon-cmake",
+   "python3-colcon-core",
+   "python3-colcon-defaults",
+   "python3-colcon-devtools",
+   "python3-colcon-library-path",
+   "python3-colcon-metadata",
+   "python3-colcon-notification",
+   "python3-colcon-output",
+   "python3-colcon-package-information",
+   "python3-colcon-package-selection",
+   "python3-colcon-parallel-executor",
+   "python3-colcon-powershell",
+   "python3-colcon-python-setup-py",
+   "python3-colcon-recursive-crawl",
+   "python3-colcon-ros",
+   "python3-colcon-test-result",
+   "python3-colcon-zsh"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.0"
+ },
+ "python3-colcon-core": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-distlib",
+   "python3-empy",
+   "python3-packaging",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/colcon"
+   ],
+   "files": 112,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.21.3"
+ },
+ "python3-colcon-defaults": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-pyyaml",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-pyyaml"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.9"
+ },
+ "python3-colcon-devtools": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-packaging"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 12,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.0"
+ },
+ "python3-colcon-library-path": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 11,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.1"
+ },
+ "python3-colcon-metadata": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-pyyaml",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-pyyaml"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 21,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.1"
+ },
+ "python3-colcon-notification": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 28,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.3"
+ },
+ "python3-colcon-output": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 15,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.15"
+ },
+ "python3-colcon-package-information": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-packaging"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.4.1"
+ },
+ "python3-colcon-package-selection": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 18,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.10"
+ },
+ "python3-colcon-parallel-executor": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.4.0"
+ },
+ "python3-colcon-pkg-config": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 11,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.1.0"
+ },
+ "python3-colcon-powershell": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 16,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.5.0"
+ },
+ "python3-colcon-python-setup-py": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core",
+   "python3-setuptools"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 12,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.9"
+ },
+ "python3-colcon-recursive-crawl": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.3"
+ },
+ "python3-colcon-ros": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-catkin-pkg",
+   "python3-colcon-cmake",
+   "python3-colcon-core",
+   "python3-colcon-library-path",
+   "python3-colcon-pkg-config",
+   "python3-colcon-python-setup-py",
+   "python3-colcon-recursive-crawl",
+   "python3-colcon-test-result",
+   "python3-coverage",
+   "python3-dateutil",
+   "python3-distlib",
+   "python3-docutils",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pyparsing",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "python3-six",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-catkin-pkg",
+   "python3-colcon-cmake",
+   "python3-colcon-core",
+   "python3-colcon-pkg-config",
+   "python3-colcon-python-setup-py",
+   "python3-colcon-recursive-crawl"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 33,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.5.0"
+ },
+ "python3-colcon-test-result": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 11,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3.8"
+ },
+ "python3-colcon-zsh": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-colcon-core",
+   "python3-coverage",
+   "python3-distlib",
+   "python3-empy",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "python3-pytest-cov",
+   "python3-pytest-repeat",
+   "python3-pytest-rerunfailures",
+   "python3-setuptools",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-colcon-core"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 13,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.5.0"
+ },
+ "python3-contourpy": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "numpy",
+   "openblas",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "numpy"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 24,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "python3"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.4.0"
  },
  "python3-coverage": {
   "build_closure": [
@@ -18821,6 +24194,47 @@
   "unresolved": [],
   "version": "1.6_git20251221"
  },
+ "python3-cycler": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.12.1"
+ },
  "python3-dateutil": {
   "build_closure": [
    "bzip2",
@@ -18863,6 +24277,172 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.9.0.post0"
+ },
+ "python3-distlib": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 24,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.4.4"
+ },
+ "python3-docutils": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 212,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.23"
+ },
+ "python3-empy": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/em.py"
+   ],
+   "files": 11,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.2.1"
+ },
+ "python3-fonttools": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 362,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.68.0"
  },
  "python3-idna": {
   "build_closure": [
@@ -18946,6 +24526,302 @@
   "unresolved": [],
   "version": "2.3.1"
  },
+ "python3-jmespath": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.1.0"
+ },
+ "python3-kiwisolver": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.5.1"
+ },
+ "python3-lxml": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxslt",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "libxml2",
+   "libxslt",
+   "zlib"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 97,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxslt",
+   "ncurses",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libxml2",
+   "libxslt",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "6.1.3"
+ },
+ "python3-matplotlib": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "expat",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "lcms2",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libraqm",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "ncurses",
+   "numpy",
+   "openblas",
+   "openjpeg",
+   "openssl",
+   "pcre2",
+   "python3",
+   "python3-contourpy",
+   "python3-cycler",
+   "python3-dateutil",
+   "python3-fonttools",
+   "python3-kiwisolver",
+   "python3-packaging",
+   "python3-pillow",
+   "python3-pyparsing",
+   "python3-six",
+   "qhull",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "numpy",
+   "freetype",
+   "libraqm",
+   "qhull",
+   "python3-contourpy",
+   "python3-cycler",
+   "python3-fonttools",
+   "python3-kiwisolver",
+   "python3-packaging",
+   "python3-pillow",
+   "python3-pyparsing",
+   "python3-dateutil"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 601,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "expat",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "libffi",
+   "libiconv",
+   "libpng",
+   "libraqm",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "pcre2",
+   "python3",
+   "qhull",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "freetype",
+   "libraqm",
+   "python3",
+   "qhull"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.11.2"
+ },
+ "python3-ml-dtypes": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "numpy",
+   "openblas",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "numpy"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.6.0"
+ },
  "python3-mypy-extensions": {
   "build_closure": [
    "bzip2",
@@ -18987,6 +24863,47 @@
   "unresolved": [],
   "version": "1.1.0"
  },
+ "python3-netifaces": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.11.0"
+ },
  "python3-packaging": {
   "build_closure": [
    "bzip2",
@@ -19027,6 +24944,105 @@
   "undeclared": [],
   "unresolved": [],
   "version": "25.0"
+ },
+ "python3-pillow": {
+  "build_closure": [
+   "brotli",
+   "bzip2",
+   "expat",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "lcms2",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libraqm",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "ncurses",
+   "openjpeg",
+   "openssl",
+   "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "zlib",
+   "libjpeg-turbo",
+   "freetype",
+   "libtiff",
+   "libwebp",
+   "lcms2",
+   "openjpeg",
+   "libraqm"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 118,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "lcms2",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libpng",
+   "libraqm",
+   "libtiff",
+   "libunistring",
+   "libwebp",
+   "ncurses",
+   "openjpeg",
+   "pcre2",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "freetype",
+   "lcms2",
+   "libjpeg-turbo",
+   "libraqm",
+   "libtiff",
+   "libwebp",
+   "openjpeg",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "13.0.0"
  },
  "python3-pip": {
   "build_closure": [
@@ -19192,6 +25208,47 @@
   "unresolved": [],
   "version": "2.21.0"
  },
+ "python3-pyparsing": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 23,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.3.3"
+ },
  "python3-pytest": {
   "build_closure": [
    "bzip2",
@@ -19290,6 +25347,101 @@
   "undeclared": [],
   "unresolved": [],
   "version": "7.1.0"
+ },
+ "python3-pytest-repeat": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-pytest"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 6,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.9.4"
+ },
+ "python3-pytest-rerunfailures": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-iniconfig",
+   "python3-packaging",
+   "python3-pluggy",
+   "python3-pygments",
+   "python3-pytest",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-packaging",
+   "python3-pytest"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "16.7"
  },
  "python3-pytest-tornasync": {
   "build_closure": [
@@ -19421,6 +25573,94 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2025.2"
+ },
+ "python3-pyyaml": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 23,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "6.0.3"
+ },
+ "python3-s3transfer": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-botocore",
+   "python3-dateutil",
+   "python3-jmespath",
+   "python3-six",
+   "python3-urllib3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-botocore"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 22,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.19.3"
  },
  "python3-setuptools": {
   "build_closure": [
@@ -19709,6 +25949,47 @@
   "unresolved": [],
   "version": "2025.2"
  },
+ "python3-urllib3": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 42,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.8.0"
+ },
  "python3-versioneer": {
   "build_closure": [
    "bzip2",
@@ -19848,7 +26129,7 @@
   "unresolved": [],
   "version": "2.3.1"
  },
- "qt6": {
+ "qdirstat": {
   "build_closure": [
    "aom",
    "brotli",
@@ -19862,6 +26143,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gettext",
    "giflib",
    "glib",
@@ -19901,6 +26183,245 @@
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "qt6",
+   "readline",
+   "sqlite",
+   "svt-av1",
+   "x264",
+   "x265",
+   "xcb-proto",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "qt6",
+   "zlib",
+   "gettext"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/qdirstat",
+    "usr/local/bin/qdirstat-cache-writer"
+   ],
+   "files": 32,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "aom",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dav1d",
+   "double-conversion",
+   "expat",
+   "fdk-aac",
+   "ffmpeg",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "gst-plugins-bad",
+   "gst-plugins-base",
+   "gstreamer",
+   "harfbuzz",
+   "icu",
+   "lame",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libogg",
+   "libpng",
+   "libtheora",
+   "libtiff",
+   "libunistring",
+   "libvorbis",
+   "libvpx",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "openh264",
+   "openssl",
+   "opus",
+   "pango",
+   "pcre2",
+   "pixman",
+   "qt6",
+   "svt-av1",
+   "x264",
+   "x265",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "gettext",
+   "qt6",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.0"
+ },
+ "qhull": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/qconvex",
+    "usr/local/bin/qdelaunay",
+    "usr/local/bin/qhalf",
+    "usr/local/bin/qhull",
+    "usr/local/bin/qvoronoi",
+    "usr/local/bin/rbox"
+   ],
+   "files": 112,
+   "headers": 49,
+   "libs": [
+    "usr/local/lib/libqhull_r.so",
+    "usr/local/lib/libqhull_r.so.8.0",
+    "usr/local/lib/libqhull_r.so.8.0.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "8.0.2"
+ },
+ "qpdf": {
+  "build_closure": [
+   "libjpeg-turbo",
+   "openssl",
+   "zlib"
+  ],
+  "build_deps": [
+   "zlib",
+   "libjpeg-turbo",
+   "openssl"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/fix-qdf",
+    "usr/local/bin/qpdf",
+    "usr/local/bin/zlib-flate"
+   ],
+   "files": 85,
+   "headers": 70,
+   "libs": [
+    "usr/local/lib/libqpdf.so",
+    "usr/local/lib/libqpdf.so.29",
+    "usr/local/lib/libqpdf.so.29.10.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libjpeg-turbo",
+   "openssl",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libjpeg-turbo",
+   "openssl",
+   "zlib"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "11.10.1"
+ },
+ "qt6": {
+  "build_closure": [
+   "aom",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dav1d",
+   "double-conversion",
+   "expat",
+   "fdk-aac",
+   "ffmpeg",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gettext",
+   "giflib",
+   "glib",
+   "graphite2",
+   "gst-plugins-bad",
+   "gst-plugins-base",
+   "gstreamer",
+   "harfbuzz",
+   "icu",
+   "lame",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libogg",
+   "libpng",
+   "libtheora",
+   "libtiff",
+   "libunistring",
+   "libvorbis",
+   "libvpx",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxml2",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "openh264",
+   "openssl",
+   "opus",
+   "orc",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "svt-av1",
    "x264",
    "x265",
@@ -20306,6 +26827,58 @@
   "unresolved": [],
   "version": "6.8.1"
  },
+ "quake3": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sdl2",
+   "sqlite",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "sdl2"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/ioq3ded",
+    "usr/local/bin/ioquake3"
+   ],
+   "files": 12,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "sdl2"
+  ],
+  "runtime_deps": [
+   "sdl2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.36-git-20261012"
+ },
  "quickjs-ng": {
   "build_closure": [],
   "build_deps": [],
@@ -20358,6 +26931,59 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.1.0-24b5e7a"
+ },
+ "raylib": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sdl2",
+   "sqlite",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "sdl2"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 12,
+   "headers": 4,
+   "libs": [
+    "usr/local/lib/libraylib.so",
+    "usr/local/lib/libraylib.so.6.2.0",
+    "usr/local/lib/libraylib.so.620"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "sdl2"
+  ],
+  "runtime_deps": [
+   "sdl2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "6.2"
  },
  "re2": {
   "build_closure": [
@@ -20428,6 +27054,44 @@
   "unresolved": [],
   "version": "8.2"
  },
+ "redis": {
+  "build_closure": [
+   "openssl"
+  ],
+  "build_deps": [
+   "openssl"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/redis-benchmark",
+    "usr/local/bin/redis-check-aof",
+    "usr/local/bin/redis-check-rdb",
+    "usr/local/bin/redis-cli",
+    "usr/local/bin/redis-sentinel",
+    "usr/local/bin/redis-server"
+   ],
+   "files": 8,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "openssl"
+  ],
+  "runtime_deps": [
+   "openssl"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "8.10.3"
+ },
  "restbed": {
   "build_closure": [
    "asio",
@@ -20473,6 +27137,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -20488,10 +27153,14 @@
    "ncurses",
    "openssl",
    "pcre2",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "sdl2",
@@ -20569,6 +27238,7 @@
    "freeimage",
    "freetype",
    "fribidi",
+   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -20595,9 +27265,12 @@
    "openttd",
    "pcre2",
    "pugixml",
+   "python3",
    "rapidjson",
+   "readline",
    "retroarch",
    "sdl2",
+   "sqlite",
    "vlc",
    "wayland",
    "xz",
@@ -20633,6 +27306,133 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.3"
+ },
+ "riegeli": {
+  "build_closure": [
+   "abseil",
+   "brotli",
+   "bzip2",
+   "gettext",
+   "highwayhash",
+   "libiconv",
+   "libunistring",
+   "lz4",
+   "ncurses",
+   "protobuf",
+   "snappy",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "abseil",
+   "protobuf",
+   "brotli",
+   "zstd",
+   "snappy",
+   "xz",
+   "zlib",
+   "bzip2",
+   "lz4",
+   "highwayhash"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/describe_riegeli_file"
+   ],
+   "files": 186,
+   "headers": 182,
+   "libs": [
+    "usr/local/lib/libriegeli.so",
+    "usr/local/lib/libriegeli.so.0",
+    "usr/local/lib/libriegeli.so.0.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "brotli",
+   "bzip2",
+   "gettext",
+   "highwayhash",
+   "libiconv",
+   "libunistring",
+   "lz4",
+   "ncurses",
+   "protobuf",
+   "snappy",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "brotli",
+   "bzip2",
+   "highwayhash",
+   "lz4",
+   "protobuf",
+   "snappy",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0_git20231212"
+ },
+ "rocksdb": {
+  "build_closure": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/ldb",
+    "usr/local/bin/sst_dump"
+   ],
+   "files": 139,
+   "headers": 119,
+   "libs": [
+    "usr/local/lib/librocksdb.so",
+    "usr/local/lib/librocksdb.so.11",
+    "usr/local/lib/librocksdb.so.11.8.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "runtime_deps": [
+   "lz4",
+   "zlib",
+   "zstd"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "11.8.1"
  },
  "ros2": {
   "build_closure": [
@@ -20723,6 +27523,7 @@
    "opencv",
    "openssl",
    "python3",
+   "readline",
    "sqlite",
    "tinyxml2",
    "xz",
@@ -20928,7 +27729,9 @@
  },
  "sdl2": {
   "build_closure": [
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
@@ -20936,9 +27739,14 @@
    "libxkbcommon",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wayland",
@@ -20973,7 +27781,11 @@
  },
  "sdl2-compat": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "libx11",
@@ -20991,13 +27803,18 @@
    "libxscrnsaver",
    "libxtst",
    "ncurses",
+   "openssl",
    "pthread-stubs",
+   "python3",
+   "readline",
    "sdl3",
+   "sqlite",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "sdl3"
@@ -21033,8 +27850,10 @@
   "build_closure": [
    "aom",
    "brotli",
+   "bzip2",
    "dav1d",
    "expat",
+   "gdbm",
    "gettext",
    "giflib",
    "highway",
@@ -21052,7 +27871,11 @@
    "libxml2",
    "libyuv",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
    "zlib",
@@ -21112,9 +27935,74 @@
   "unresolved": [],
   "version": "2.8.8"
  },
+ "sdl2-mixer": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libogg",
+   "libunistring",
+   "libxkbcommon",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "opus",
+   "opusfile",
+   "python3",
+   "readline",
+   "sdl2",
+   "sqlite",
+   "wayland",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "sdl2",
+   "opusfile"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 11,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libSDL2_mixer-2.0.so",
+    "usr/local/lib/libSDL2_mixer-2.0.so.0",
+    "usr/local/lib/libSDL2_mixer-2.0.so.0.800.2",
+    "usr/local/lib/libSDL2_mixer.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "libogg",
+   "openssl",
+   "opus",
+   "opusfile",
+   "sdl2"
+  ],
+  "runtime_deps": [
+   "opusfile",
+   "sdl2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.8.2"
+ },
  "sdl2-net": {
   "build_closure": [
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
@@ -21122,10 +28010,15 @@
    "libxkbcommon",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "sdl2"
@@ -21165,6 +28058,7 @@
    "bzip2",
    "expat",
    "freetype",
+   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -21177,11 +28071,16 @@
    "libxkbcommon",
    "libxml2",
    "ncurses",
+   "openssl",
    "pcre2",
+   "python3",
+   "readline",
    "sdl2",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "sdl2",
@@ -21236,7 +28135,11 @@
  },
  "sdl3": {
   "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
+   "libffi",
    "libiconv",
    "libunistring",
    "libx11",
@@ -21254,12 +28157,17 @@
    "libxscrnsaver",
    "libxtst",
    "ncurses",
+   "openssl",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "libx11",
@@ -21323,9 +28231,61 @@
   "unresolved": [],
   "version": "3.4.18"
  },
+ "sentencepiece": {
+  "build_closure": [
+   "abseil",
+   "protobuf",
+   "zlib"
+  ],
+  "build_deps": [
+   "protobuf",
+   "abseil"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/spm_decode",
+    "usr/local/bin/spm_encode",
+    "usr/local/bin/spm_export_vocab",
+    "usr/local/bin/spm_normalize",
+    "usr/local/bin/spm_train"
+   ],
+   "files": 17,
+   "headers": 3,
+   "libs": [
+    "usr/local/lib/libsentencepiece.so",
+    "usr/local/lib/libsentencepiece.so.0",
+    "usr/local/lib/libsentencepiece.so.0.0.0",
+    "usr/local/lib/libsentencepiece_train.so",
+    "usr/local/lib/libsentencepiece_train.so.0",
+    "usr/local/lib/libsentencepiece_train.so.0.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "protobuf",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "protobuf"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.2.1"
+ },
  "shared-mime-info": {
   "build_closure": [
    "bzip2",
+   "expat",
+   "gdbm",
    "gettext",
    "glib",
    "libffi",
@@ -21333,9 +28293,14 @@
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -21376,6 +28341,68 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.4"
+ },
+ "silkit": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/sil-kit-monitor",
+    "usr/local/bin/sil-kit-registry",
+    "usr/local/bin/sil-kit-system-controller"
+   ],
+   "files": 135,
+   "headers": 127,
+   "libs": [
+    "usr/local/lib/libSilKit.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "5.0.8"
+ },
+ "silkit-adapters-tap": {
+  "build_closure": [
+   "silkit"
+  ],
+  "build_deps": [
+   "silkit"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/sil-kit-adapter-tap"
+   ],
+   "files": 1,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "silkit"
+  ],
+  "runtime_deps": [
+   "silkit"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.2.0"
  },
  "simdjson": {
   "build_closure": [],
@@ -21431,6 +28458,33 @@
   "unresolved": [],
   "version": "6.4.2"
  },
+ "skalibs": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 103,
+   "headers": 90,
+   "libs": [
+    "usr/local/lib/libskarnet.so",
+    "usr/local/lib/libskarnet.so.2.14",
+    "usr/local/lib/libskarnet.so.2.14.5.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.14.5.1"
+ },
  "sleef": {
   "build_closure": [],
   "build_deps": [],
@@ -21484,6 +28538,85 @@
   "undeclared": [],
   "unresolved": [],
   "version": "1.2.1"
+ },
+ "socat": {
+  "build_closure": [
+   "ncurses",
+   "openssl",
+   "readline"
+  ],
+  "build_deps": [
+   "openssl",
+   "readline"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/filan",
+    "usr/local/bin/procan",
+    "usr/local/bin/socat",
+    "usr/local/bin/socat-broker.sh",
+    "usr/local/bin/socat-chain.sh",
+    "usr/local/bin/socat-mux.sh",
+    "usr/local/bin/socat1"
+   ],
+   "files": 9,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "ncurses",
+   "openssl",
+   "readline"
+  ],
+  "runtime_deps": [
+   "ncurses",
+   "openssl",
+   "readline"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.8.0.3"
+ },
+ "soem": {
+  "build_closure": [
+   "libpcap"
+  ],
+  "build_deps": [
+   "libpcap"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/ec_sample",
+    "usr/local/bin/eepromtool",
+    "usr/local/bin/firm_update",
+    "usr/local/bin/simple_ng",
+    "usr/local/bin/slaveinfo"
+   ],
+   "files": 27,
+   "headers": 15,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.0.1"
  },
  "soxr": {
   "build_closure": [],
@@ -21673,6 +28806,31 @@
   "unresolved": [],
   "version": "0.10.0"
  },
+ "sshpass": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/sshpass"
+   ],
+   "files": 2,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.10"
+ },
  "stable-diffusion.cpp": {
   "build_closure": [],
   "build_deps": [],
@@ -21699,6 +28857,32 @@
   "unresolved": [],
   "version": "0_git20260601"
  },
+ "stringencoders": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 20,
+   "headers": 17,
+   "libs": [
+    "usr/local/lib/libmodpbase64.so",
+    "usr/local/lib/libmodpbase64.so.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.10.3-git-20180306"
+ },
  "strongswan": {
   "build_closure": [
    "openssl"
@@ -21717,10 +28901,12 @@
     "usr/local/bin/exchange_tests",
     "usr/local/bin/libcharon_tests",
     "usr/local/bin/libstrongswan_tests",
+    "usr/local/bin/pki",
+    "usr/local/bin/tls_tests",
     "usr/local/bin/vici_tests",
     "usr/local/sbin/swanctl"
    ],
-   "files": 78,
+   "files": 108,
    "headers": 0,
    "libs": []
   },
@@ -21892,6 +29078,7 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -21909,16 +29096,21 @@
    "libxrender",
    "lzo",
    "ncurses",
+   "openssl",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wayland",
@@ -22087,6 +29279,36 @@
   "unresolved": [],
   "version": "1.35"
  },
+ "tcpdump": {
+  "build_closure": [
+   "libpcap"
+  ],
+  "build_deps": [
+   "libpcap"
+  ],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/tcpdump",
+    "usr/local/bin/tcpdump.4.99.5"
+   ],
+   "files": 3,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.99.5"
+ },
  "tensorflow-lite": {
   "build_closure": [],
   "build_deps": [],
@@ -22203,6 +29425,7 @@
    "freetype",
    "fribidi",
    "garcon",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -22241,10 +29464,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -22253,7 +29480,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -22373,6 +29601,33 @@
   "unresolved": [],
   "version": "4.20.0"
  },
+ "tinyxml": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 6,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libtinyxml.so",
+    "usr/local/lib/libtinyxml.so.0",
+    "usr/local/lib/libtinyxml.so.0.2.6.2"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.6.2"
+ },
  "tinyxml2": {
   "build_closure": [],
   "build_deps": [],
@@ -22461,6 +29716,29 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.4.0"
+ },
+ "toybox": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 1,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.8.15"
  },
  "tree": {
   "build_closure": [],
@@ -22778,6 +30056,7 @@
    "ffmpeg",
    "ffmpegthumbnailer",
    "freetype",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -22803,6 +30082,9 @@
    "opus",
    "orc",
    "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
    "x264",
    "x265",
    "xz",
@@ -22970,6 +30252,201 @@
   "unresolved": [],
   "version": "2.1.2"
  },
+ "up-core-api": {
+  "build_closure": [
+   "abseil",
+   "protobuf",
+   "zlib"
+  ],
+  "build_deps": [
+   "protobuf"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 29,
+   "headers": 11,
+   "libs": [
+    "usr/local/lib/libup-core-api.so",
+    "usr/local/lib/libup-core-api.so.1",
+    "usr/local/lib/libup-core-api.so.1.6.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "protobuf",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "protobuf"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.6.0-alpha2"
+ },
+ "up-cpp": {
+  "build_closure": [
+   "abseil",
+   "protobuf",
+   "up-core-api",
+   "zlib"
+  ],
+  "build_deps": [
+   "protobuf",
+   "up-core-api"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 26,
+   "headers": 19,
+   "libs": [
+    "usr/local/lib/libup-cpp.so",
+    "usr/local/lib/libup-cpp.so.1",
+    "usr/local/lib/libup-cpp.so.1.0.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "protobuf",
+   "up-core-api",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "protobuf",
+   "up-core-api"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0.1"
+ },
+ "up-transport-zenoh-cpp": {
+  "build_closure": [
+   "abseil",
+   "fmt",
+   "protobuf",
+   "rust",
+   "spdlog",
+   "up-core-api",
+   "up-cpp",
+   "zenoh-c",
+   "zenoh-cpp",
+   "zenoh-pico",
+   "zlib"
+  ],
+  "build_deps": [
+   "zenoh-cpp",
+   "zenoh-c",
+   "up-cpp",
+   "up-core-api",
+   "protobuf",
+   "spdlog"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [],
+   "files": 9,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/libup-transport-zenoh-cpp.so",
+    "usr/local/lib/libup-transport-zenoh-cpp.so.1",
+    "usr/local/lib/libup-transport-zenoh-cpp.so.1.0.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "abseil",
+   "fmt",
+   "protobuf",
+   "spdlog",
+   "up-core-api",
+   "up-cpp",
+   "zenoh-c",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "abseil",
+   "fmt",
+   "protobuf",
+   "spdlog",
+   "up-core-api",
+   "up-cpp",
+   "zenoh-c"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0.0-git-20250319"
+ },
+ "urdfdom": {
+  "build_closure": [
+   "console_bridge",
+   "tinyxml2",
+   "urdfdom_headers"
+  ],
+  "build_deps": [
+   "urdfdom_headers",
+   "console_bridge",
+   "tinyxml2"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/check_urdf",
+    "usr/local/bin/urdf_mem_test",
+    "usr/local/bin/urdf_to_graphviz"
+   ],
+   "files": 17,
+   "headers": 2,
+   "libs": [
+    "usr/local/lib/liburdfdom_model.so",
+    "usr/local/lib/liburdfdom_model.so.4.0",
+    "usr/local/lib/liburdfdom_sensor.so",
+    "usr/local/lib/liburdfdom_sensor.so.4.0",
+    "usr/local/lib/liburdfdom_world.so",
+    "usr/local/lib/liburdfdom_world.so.4.0"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "console_bridge",
+   "tinyxml2"
+  ],
+  "runtime_deps": [
+   "console_bridge",
+   "tinyxml2"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.0.3"
+ },
  "urdfdom_headers": {
   "build_closure": [],
   "build_deps": [],
@@ -23048,6 +30525,33 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.11.3"
+ },
+ "uvgrtp": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 21,
+   "headers": 12,
+   "libs": [
+    "usr/local/lib/libuvgrtp.so",
+    "usr/local/lib/libuvgrtp.so.4",
+    "usr/local/lib/libuvgrtp.so.4.0.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.0.1"
  },
  "vidstab": {
   "build_closure": [],
@@ -23312,6 +30816,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -23355,10 +30860,14 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -23483,15 +30992,22 @@
  },
  "wayland": {
   "build_closure": [
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "libffi",
@@ -23537,16 +31053,23 @@
  },
  "wayland-protocols": {
   "build_closure": [
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "libffi",
    "libiconv",
    "libunistring",
    "libxml2",
    "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wayland"
@@ -23585,6 +31108,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -23648,6 +31172,8 @@
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
    "sqlite",
    "svt-av1",
    "wayland",
@@ -23658,7 +31184,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "gtk3",
@@ -23996,7 +31523,9 @@
  },
  "wlroots": {
   "build_closure": [
+   "bzip2",
    "expat",
+   "gdbm",
    "gettext",
    "lcms2",
    "libdrm-headers",
@@ -24008,11 +31537,16 @@
    "libxml2",
    "linux-headers-input-codes",
    "ncurses",
+   "openssl",
    "pixman",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wayland",
@@ -24289,6 +31823,7 @@
    "freetype",
    "fribidi",
    "garcon",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -24323,10 +31858,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -24334,7 +31873,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -24441,6 +31981,7 @@
    "freetype",
    "fribidi",
    "garcon",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -24477,10 +32018,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -24488,7 +32033,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -24616,6 +32162,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -24652,10 +32199,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -24663,7 +32214,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -24778,6 +32330,7 @@
    "freetype",
    "fribidi",
    "garcon",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
@@ -24814,10 +32367,14 @@
    "libxtst",
    "lzo",
    "ncurses",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -24825,7 +32382,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "glib",
@@ -24948,6 +32506,7 @@
    "fontconfig",
    "freetype",
    "fribidi",
+   "gdbm",
    "gdk-pixbuf",
    "gettext",
    "giflib",
@@ -24994,10 +32553,14 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "vte",
    "wayland",
    "wayland-protocols",
@@ -25248,6 +32811,32 @@
   "unresolved": [],
   "version": "2.43"
  },
+ "xmlto": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "autotools",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/xmlif",
+    "usr/local/bin/xmlto"
+   ],
+   "files": 37,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.0.29"
+ },
  "xnnpack": {
   "build_closure": [
    "cpuinfo",
@@ -25308,6 +32897,87 @@
   "unresolved": [],
   "version": "2024.1"
  },
+ "xsltproc": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxslt",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "libxslt",
+   "libxml2"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/xsltproc"
+   ],
+   "files": 2,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "gettext",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "libxslt",
+   "ncurses",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "libxml2",
+   "libxslt"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.1.42"
+ },
+ "xtl": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 34,
+   "headers": 30,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.8.2"
+ },
  "xtrans": {
   "build_closure": [],
   "build_deps": [],
@@ -25366,6 +33036,7 @@
    "font-util",
    "fontenc",
    "freetype",
+   "gdbm",
    "gettext",
    "libdrm-headers",
    "libffi",
@@ -25384,8 +33055,12 @@
    "libxshmfence",
    "linux-headers-input-codes",
    "ncurses",
+   "openssl",
    "pixman",
    "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
    "wayland",
    "wayland-protocols",
    "xcb-proto",
@@ -25394,7 +33069,8 @@
    "xorgproto",
    "xtrans",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "wayland",
@@ -25606,6 +33282,88 @@
   "unresolved": [],
   "version": "1.2.1"
  },
+ "zenoh-cpp": {
+  "build_closure": [
+   "rust",
+   "zenoh-c",
+   "zenoh-pico"
+  ],
+  "build_deps": [
+   "zenoh-c",
+   "zenoh-pico"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 64,
+   "headers": 61,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.2.1"
+ },
+ "zenoh-pico": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 139,
+   "headers": 133,
+   "libs": [
+    "usr/local/lib/libzenohpico.so"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.2.1"
+ },
+ "zerotier-one": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/sbin/zerotier-cli",
+    "usr/local/sbin/zerotier-idtool",
+    "usr/local/sbin/zerotier-one"
+   ],
+   "files": 6,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.16.1"
+ },
  "zimg": {
   "build_closure": [],
   "build_deps": [],
@@ -25687,6 +33445,29 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2.2.5"
+ },
+ "zserio": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 82,
+   "headers": 81,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.20.0"
  },
  "zsh": {
   "build_closure": [

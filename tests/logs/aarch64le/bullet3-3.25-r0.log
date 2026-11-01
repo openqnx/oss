@@ -1,0 +1,39 @@
+# bullet3 3.25-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:50:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bullet3 qnx-test-bullet3 qnx-port-tests
+(1/2) Installing bullet3 (3.25-r0)
+(2/2) Installing qnx-test-bullet3 (1.0-r0)
+OK: 129 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bullet3
+     == bullet3 ==
+       info Bullet 325 (single precision)
+       ok   quaternion: 90 deg about z maps x to y
+       ok   transform inverse undoes the transform
+       ok   dot and cross products
+       ok   sphere inertia is 2/5 m r^2
+       info height after 0.5 s: 3.7739 (free fall 3.7738)
+       ok   free fall follows 1/2 g t^2
+       ok   velocity after 0.5 s is about -g t
+       info rest height 0.5000 after 2.47 s more; state 2
+       ok   the sphere rests on the plane at its radius (0.5)
+       ok   the resting sphere is put to sleep
+       ok   and is not moving
+       ok   a vertical drop stays vertical
+       ok   ray cast hits the ground at y = 0 with normal +y
+       ok   a ray from above hits the resting sphere's top (y = 1)
+       ok   contactPairTest: sphere and overlapping box are in contact
+       ok   contactPairTest: separated objects have no contact
+       info GJK distance 1.00000
+       ok   GJK: distance between spheres 3 apart is 1
+     PASS bullet3
+PASS test_bullet3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

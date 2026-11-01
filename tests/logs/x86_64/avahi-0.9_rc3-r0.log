@@ -1,0 +1,40 @@
+# avahi 0.9_rc3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:24:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u avahi qnx-test-avahi qnx-port-tests
+(1/5) Installing dbus (1.16.0-r3)
+(2/5) Installing libdaemon (0.14-r0)
+(3/5) Installing avahi (0.9_rc3-r0)
+(4/5) Installing qnx-port-tests (1.0-r2)
+(5/5) Installing qnx-test-avahi (1.0-r0)
+OK: 95 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_avahi
+     == avahi ==
+       ok   avahi D-Bus policy installed
+       ok   private D-Bus system bus listening
+       ok   avahi-daemon started: qnxtest-1119752232.local. Local service cookie is 226759792.
+       ok   joined the mDNS group on lo0 (<ip>)
+       info avahi-browse-domains 0.9-rc3
+       ok   client tools version 0.9-rc3
+       ok   avahi-publish-service: service established
+       info resolved: =;lo0;IPv4;QNX\032Test\032Service;_qnxtest._tcp;local;qnxtest-1119752232.local;<ip>;4242;"sdp=8.0" "board=qemu"
+       ok   avahi-browse -r: QNX Test Service at qnxtest-1119752232.local <ip>:4242
+       ok   TXT record board=qemu sdp=8.0
+       info avahi-resolve -n: qnxtest-1119752232.local	<ip>
+       ok   own host name resolves to <ip> over mDNS
+       ok   avahi-resolve -a <ip> -> qnxtest-1119752232.local
+       ok   published address record qnx-extra-1119752232.local resolves
+       ok   avahi-daemon exited cleanly on SIGTERM
+       ok   PID file removed
+       ok   avahi-publish-service quit cleanly on SIGTERM
+     PASS avahi
+PASS test_avahi
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

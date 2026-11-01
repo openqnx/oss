@@ -1,0 +1,47 @@
+# cups 2.4.16-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:24:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cups qnx-test-cups qnx-port-tests
+(1/7) Installing dbus (1.16.0-r3)
+(2/7) Installing libdaemon (0.14-r0)
+(3/7) Installing avahi (0.9_rc3-r0)
+(4/7) Installing libxcrypt (4.4.38-r0)
+(5/7) Installing cups (2.4.16-r0)
+(6/7) Installing qnx-port-tests (1.0-r2)
+(7/7) Installing qnx-test-cups (1.0-r0)
+OK: 103 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cups
+     == cups ==
+       ok   cupsd running (scheduler is running)
+       ok   lpadmin: raw queue qnxq on file:///tmp/qnxport-cups.ni1Ud8/out/out.prn
+       ok   lpstat -p: qnxq idle, enabled
+       ok   lpstat -v: device URI
+       ok   lpstat -a: accepting
+       info lp: request id is qnxq-1 (2 file(s))
+       ok   lp: job qnxq-1 queued (2 files)
+       ok   job printed: output file is both documents byte for byte
+       ok   lpstat -W completed lists qnxq-1
+       ok   held job qnxq-2 listed as pending
+       ok   cancel qnxq-2
+       ok   cupsreject: not accepting
+       ok   rejecting queue refuses lp
+       ok   cupsaccept: accepting again
+       ok   cupsdisable: stopped
+       ok   cupsenable: enabled
+       ok   lpoptions: media=A4 stored
+       ok   lpstat -d: qnxq is the default
+       ok   ipptool over IPP (HTTP on <ip>): printer attributes and the completed 2-document job, 2 tests PASS
+       ok   cupsctl reads the server settings
+       ok   lpadmin -x: queue removed
+       ok   cupsd shut down on SIGTERM
+     PASS cups
+PASS test_cups
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

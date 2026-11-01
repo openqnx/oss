@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libx11 libx11-dev
-apk add qnx-test-libx11 && /usr/local/bin/qnx-port-tests/test_libx11    # its on-target test
+apk add qnx-test-libx11 && /usr/local/bin/qnx-port-tests/test_libx11    # its on-target test, from tests-8.0-<arch>
 apk del libx11 libx11-dev qnx-test-libx11
 ```
 
@@ -167,7 +167,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libx11`](../../tests/src/) links libx11 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libx11`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libx11`](../../tests/src/) links libx11 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libx11`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

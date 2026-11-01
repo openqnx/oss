@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add fontenc fontenc-dev
-apk add qnx-test-fontenc && /usr/local/bin/qnx-port-tests/test_fontenc    # its on-target test
+apk add qnx-test-fontenc && /usr/local/bin/qnx-port-tests/test_fontenc    # its on-target test, from tests-8.0-<arch>
 apk del fontenc fontenc-dev qnx-test-fontenc
 ```
 
@@ -170,7 +170,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_fontenc`](../../tests/src/) links fontenc the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-fontenc`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_fontenc`](../../tests/src/) links fontenc the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-fontenc`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

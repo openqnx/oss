@@ -28,7 +28,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 
 ```sh
 # on the QNX target, as root
-apk add qnx-test-emulationstation && /usr/local/bin/qnx-port-tests/test_emulationstation    # its on-target test
+apk add qnx-test-emulationstation && /usr/local/bin/qnx-port-tests/test_emulationstation    # its on-target test, from tests-8.0-<arch>
 apk del emulationstation qnx-test-emulationstation
 ```
 
@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (27 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (31 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 freeimage freetype curl pugixml rapidjson nanosvg vlc
 ```
 
-<details><summary>Full build chain (27)</summary>
+<details><summary>Full build chain (31)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pugixml`](../pugixml/) [`rapidjson`](../rapidjson/) [`sdl2`](../sdl2/) [`vlc`](../vlc/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pugixml`](../pugixml/) [`python3`](../python3/) [`rapidjson`](../rapidjson/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`vlc`](../vlc/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -173,7 +173,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_emulationstation`](../../tests/src/) links emulationstation the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-emulationstation`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_emulationstation`](../../tests/src/) links emulationstation the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-emulationstation`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

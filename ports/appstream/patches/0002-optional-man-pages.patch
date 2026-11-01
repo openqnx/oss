@@ -1,0 +1,79 @@
+Make the manual pages optional when DocBook XSL is missing.
+
+docs/meson.build stops the configuration when xsltproc cannot load the
+DocBook manpages stylesheet from the local XML catalog, even with docs and
+apidocs off. The build machine here has xsltproc but not the DocBook XSL
+stylesheets. Build the appstreamcli manual page when the stylesheet is
+there, and otherwise warn and go on without it.
+
+Upstream-Status: QNX-specific
+
+--- a/AppStream-1.0.6/docs/meson.build
++++ b/AppStream-1.0.6/docs/meson.build
+@@ -10,32 +10,17 @@
+ # make manual pages
+ manpages_xsl = 'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl'
+ xsltproc = find_program('xsltproc')
+-if run_command([xsltproc, '--nonet', manpages_xsl],
+-                check: false).returncode() != 0
+-    error('Unable to find Docbook XSL stylesheets for man pages')
++have_manpages_xsl = run_command([xsltproc, '--nonet', manpages_xsl],
++                                 check: false).returncode() == 0
++if not have_manpages_xsl
++    warning('Docbook XSL stylesheets for man pages not found: no manual pages')
+ endif
+ 
+-custom_target('man-appstreamcli',
+-    input: 'xml/man/appstreamcli.1.xml',
+-    output: 'appstreamcli.1',
+-    install: true,
+-    install_dir: join_paths(get_option('mandir'), 'man1'),
+-    command: [
+-        xsltproc,
+-        '--nonet',
+-        '--stringparam', 'man.output.quietly', '1',
+-        '--stringparam', 'funcsynopsis.style', 'ansi',
+-        '--stringparam', 'man.th.extra1.suppress', '1',
+-        '-o', '@OUTPUT@',
+-        manpages_xsl,
+-        '@INPUT@'
+-    ]
+-)
++if have_manpages_xsl
+ 
+-if get_option('compose')
+-    custom_target('man-appstream-compose',
+-        input: 'xml/man/appstreamcli-compose.1.xml',
+-        output: 'appstreamcli-compose.1',
++    custom_target('man-appstreamcli',
++        input: 'xml/man/appstreamcli.1.xml',
++        output: 'appstreamcli.1',
+         install: true,
+         install_dir: join_paths(get_option('mandir'), 'man1'),
+         command: [
+@@ -49,6 +34,25 @@
+             '@INPUT@'
+         ]
+     )
++
++    if get_option('compose')
++        custom_target('man-appstream-compose',
++            input: 'xml/man/appstreamcli-compose.1.xml',
++            output: 'appstreamcli-compose.1',
++            install: true,
++            install_dir: join_paths(get_option('mandir'), 'man1'),
++            command: [
++                xsltproc,
++                '--nonet',
++                '--stringparam', 'man.output.quietly', '1',
++                '--stringparam', 'funcsynopsis.style', 'ansi',
++                '--stringparam', 'man.th.extra1.suppress', '1',
++                '-o', '@OUTPUT@',
++                manpages_xsl,
++                '@INPUT@'
++            ]
++        )
++    endif
+ endif
+ 
+ if get_option('docs') or get_option('apidocs')

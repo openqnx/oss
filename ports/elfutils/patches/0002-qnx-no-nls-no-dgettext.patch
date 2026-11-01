@@ -1,0 +1,29 @@
+Do not call dgettext when NLS is disabled on QNX.
+
+QNX's libc has no gettext, and libelf is built without NLS there. eu-config.h
+still routed every message through dgettext(); with the gettext port's
+<libintl.h> on the include path that became an undefined libintl_dgettext.
+Without NLS the messages are simply the untranslated strings.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/eu-config.h
++++ b/lib/eu-config.h
+@@ -31,10 +31,16 @@
+ 
+ #include "locks.h"
+ 
+-#include <libintl.h>
+ /* gettext helper macros.  */
+ #define N_(Str) Str
++#if defined(__QNX__) && !ENABLE_NLS
++/* QNX's libc has no gettext: without NLS the messages stay untranslated
++   rather than calling a dgettext that is not there.  */
++# define _(Str) (Str)
++#else
++#include <libintl.h>
+ #define _(Str) dgettext ("elfutils", Str)
++#endif
+ 
+ /* Compiler-specific definitions.  */
+ #define strong_alias(name, aliasname) \

@@ -1,0 +1,29 @@
+pdftoraster: no dynamic exception specification from C++17 on.
+
+pdftoraster replaces operator new/delete with throw(std::bad_alloc)
+specifications, spelled _GLIBCXX_THROW(std::bad_alloc) where libstdc++
+defines that macro, plain "throw" otherwise. QNX's C++ library is libc++,
+which has no _GLIBCXX_THROW, and C++17 (the compiler default here) removed
+dynamic exception specifications: "ISO C++17 does not allow dynamic
+exception specifications". From C++17 on, define the macro empty, as
+libstdc++ itself does.
+
+Upstream-Status: Pending (affects any libc++ build)
+
+--- a/filter/pdftoraster.cxx
++++ b/filter/pdftoraster.cxx
+@@ -2148,8 +2148,14 @@
+ /* For compatibility with g++ >= 4.7 compilers _GLIBCXX_THROW
+  *  should be used as a guard, otherwise use traditional definition */
+ #ifndef _GLIBCXX_THROW
++#if __cplusplus >= 201703L
++/* C++17 has no dynamic exception specifications (libc++, which has no
++   _GLIBCXX_THROW of its own) */
++#define _GLIBCXX_THROW(x)
++#else
+ #define _GLIBCXX_THROW throw
+ #endif
++#endif
+ 
+ void * operator new(size_t size) _GLIBCXX_THROW (std::bad_alloc)
+ {

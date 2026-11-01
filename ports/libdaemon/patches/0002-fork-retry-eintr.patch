@@ -1,0 +1,61 @@
+daemon_fork: retry interrupted system calls (no SA_RESTART on QNX)
+
+qnx-ports' patch 0001 defines SA_RESTART to 0 (QNX does not implement it),
+so the SIGCHLD handler daemon_fork() installs now interrupts the parent's
+waitpid() for the first child with EINTR, and daemon_fork() returned -1 in
+the parent although the daemon had started (avahi-daemon -D then reports
+that it failed to fork). Retry waitpid(), read(), write() and the select()
+in daemon_retval_wait() on EINTR, as daemon_exec() already does.
+
+Upstream-Status: QNX-specific
+
+--- a/libdaemon/dfork.c
++++ b/libdaemon/dfork.c
+@@ -80,6 +80,9 @@
+ 
+         if ((r = read(fd, d, l)) <= 0) {
+ 
++            if (r < 0 && errno == EINTR)
++                continue;
++
+             if (r < 0)
+                 return t > 0 ? t : -1;
+             else
+@@ -102,6 +105,9 @@
+ 
+         if ((r = write(fd, d, l)) <= 0) {
+ 
++            if (r < 0 && errno == EINTR)
++                continue;
++
+             if (r < 0)
+                 return t > 0 ? t : -1;
+             else
+@@ -317,7 +323,12 @@
+ 
+         close(pipe_fds[1]);
+ 
+-        if (waitpid(pid, NULL, WUNTRACED) < 0) {
++        int wr;
++
++        while ((wr = waitpid(pid, NULL, WUNTRACED)) < 0 && errno == EINTR)
++            ;
++
++        if (wr < 0) {
+             saved_errno = errno;
+             close(pipe_fds[0]);
+             sigaction(SIGCHLD, &sa_old, NULL);
+@@ -413,7 +424,12 @@
+         FD_ZERO(&fds);
+         FD_SET(_daemon_retval_pipe[0], &fds);
+ 
+-        if ((s = select(FD_SETSIZE, &fds, 0, 0, &tv)) != 1) {
++        while ((s = select(FD_SETSIZE, &fds, 0, 0, &tv)) < 0 && errno == EINTR) {
++            FD_ZERO(&fds);
++            FD_SET(_daemon_retval_pipe[0], &fds);
++        }
++
++        if (s != 1) {
+ 
+             if (s < 0)
+                 daemon_log(LOG_ERR, "select() failed while waiting for return value: %s", strerror(errno));

@@ -1,0 +1,58 @@
+# raylib 6.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:44:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u raylib qnx-test-raylib qnx-port-tests
+(1/3) Installing sdl2 (2.32.10-r0)
+(2/3) Installing raylib (6.2-r1)
+(3/3) Installing qnx-test-raylib (1.0-r0)
+OK: 127 MiB in 42 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_raylib
+     == raylib ==
+       info raylib 6.2
+       ok   temporary directory
+     INFO: RLSW: Software renderer initialized successfully
+       ok   InitWindow 160x120 on SDL's dummy driver
+       ok   screen 160x120
+       ok   LoadImageFromScreen: 160x120
+       ok   rectangle pixel red
+       ok   circle centre green
+       ok   background blue
+       info 232 white text pixels
+       ok   text drawn with the default font
+       ok   MeasureText with the default font
+       ok   GetTime/WaitTime
+       ok   ExportImage PNG
+       ok   PNG loaded back with the drawn pixels
+       ok   ImageResizeNN to 32x16
+       ok   ImageFlipHorizontal
+       ok   GenImageChecked
+       ok   x cross y = z
+       ok   distance (0,0)-(3,4) = 5
+       ok   rotate (1,0,0) 90 deg about z -> (0,1,0)
+       ok   translate then scale: (1,1,1) -> (4,6,8)
+       ok   quaternion 180 deg about z: (1,0,0) -> (-1,0,0)
+       ok   Clamp, Lerp, Remap
+       ok   TextFormat, TextToInteger
+       ok   TextSplit into 3
+       ok   CRC-32("123456789") = cbf43926
+       ok   MD5("abc") = 900150983cd24fb0d6963f7d28e17f72
+       ok   Base64("QNX!") = UU5YIQ==
+       ok   CompressData/DecompressData round trip
+       ok   LoadWaveFromMemory: 5512 frames, 22050 Hz, mono, 16 bit
+       ok   WaveFormat to 44100 Hz stereo: twice the frames
+       ok   ExportWave
+       ok   exported WAV loaded back
+     WARNING: AUDIO: Failed to initialize playback device
+       info audio device ready: 0
+       info no audio playback device: Sound playback not tested
+     PASS raylib
+PASS test_raylib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

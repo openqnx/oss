@@ -1,0 +1,21 @@
+Treat CMake's QCC compiler like GCC.
+
+CMake identifies QNX's qcc as "QCC", not "GNU", so gnu.cmake was skipped:
+no -fvisibility=hidden (every module then exports all its symbols, and the
+engine and game modules interpose each other's), no -fno-strict-aliasing
+(the code relies on union type punning), and no ftola/snapvector sources.
+
+Upstream-Status: Pending
+
+diff --git a/cmake/compilers/gnu.cmake b/cmake/compilers/gnu.cmake
+--- a/cmake/compilers/gnu.cmake
++++ b/cmake/compilers/gnu.cmake
+@@ -1,6 +1,7 @@
+ # GNU style (GCC/Clang) compiler specific settings
+ 
+-if(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_ID MATCHES "^(Apple)?Clang$")
++# QNX's qcc is GCC behind a driver; CMake calls it QCC.
++if(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_ID STREQUAL "QCC" AND NOT CMAKE_C_COMPILER_ID MATCHES "^(Apple)?Clang$")
+     return()
+ endif()
+ 

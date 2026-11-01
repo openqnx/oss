@@ -1,0 +1,34 @@
+# perl-io-tty 1.31-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:59:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-io-tty qnx-test-perl-io-tty qnx-port-tests
+(1/4) Installing perl-io-tty (1.31-r0)
+(2/4) Installing libxcrypt (4.4.38-r0)
+(3/4) Installing perl (5.40.2-r2)
+(4/4) Installing qnx-test-perl-io-tty (1.0-r0)
+OK: 158 MiB in 37 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_io_tty
+     == perl-io-tty ==
+       info IO::Tty 1.31, perl v5.40.2
+       ok   IO::Tty version 1.31
+       ok   IO::Pty->new
+       info slave /dev/ttyp1
+       ok   ttyname under /dev
+       ok   slave is a tty
+       ok   TIOCSWINSZ constant defined
+       ok   TIOCSWINSZ 33x101 on the slave
+       ok   TIOCGWINSZ on the master reads 33x101
+       ok   master reads the child's line with ONLCR applied (\r\n)
+       ok   child reads the master's line on its controlling terminal
+       ok   child exited 0
+     PASS perl-io-tty
+PASS test_perl_io_tty
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

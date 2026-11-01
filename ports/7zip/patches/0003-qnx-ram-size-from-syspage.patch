@@ -1,0 +1,49 @@
+System: the RAM size on QNX from the system page
+
+qnx-ports' GetRamSize() for QNX asks sysconf(_SC_PHYS_PAGES), which QNX 8
+does not implement (-1), and then reported a RAM size of 0 -- instead of
+the 4 GB the code otherwise assumes -- to everything that sizes threads,
+dictionaries and buffers by the available memory. Add up the "ram"
+entries of the system page's address-space table (what pidin info
+reports) when sysconf() has no answer.
+
+Upstream-Status: QNX-specific
+
+--- a/CPP/Windows/System.cpp
++++ b/CPP/Windows/System.cpp
+@@ -10,7 +10,9 @@
+ #include <sys/sysctl.h>
+ #elif defined(__QNX__)
+ #include <unistd.h>
++#include <string.h>
+ #include <sys/conf.h>
++#include <sys/syspage.h>
+ #else
+ #include <sys/sysinfo.h>
+ #endif
+@@ -344,10 +346,22 @@
+   #elif defined(__QNX__)
+     long pages = sysconf(_SC_PHYS_PAGES);
+     long page_size = sysconf(_SC_PAGESIZE);
+-    if (pages == -1 || page_size == -1)
+-      size64 = 0;
+-    else 
++    if (pages > 0 && page_size > 0)
+       size64 = (uint64_t)pages * (uint64_t)page_size;
++    else if (_syspage_ptr)
++    {
++      // QNX 8 does not implement _SC_PHYS_PAGES: add up the "ram" entries
++      // of the system page's address-space table instead
++      const struct asinfo_entry *as = SYSPAGE_ENTRY(asinfo);
++      const char *str = SYSPAGE_ENTRY(strings)->data;
++      const size_t n = _syspage_ptr->asinfo.entry_size / sizeof(*as);
++      UInt64 ram = 0;
++      for (size_t i = 0; i < n; i++)
++        if (strcmp(str + as[i].name, "ram") == 0)
++          ram += as[i].end - as[i].start + 1;
++      if (ram)
++        size64 = ram;
++    }
+   #elif 0 || defined(__sun)
+     #if defined(_SC_PHYS_PAGES) && defined(_SC_PAGESIZE)
+     // FreeBSD, Linux, OpenBSD, and Solaris.

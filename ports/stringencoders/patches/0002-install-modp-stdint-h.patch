@@ -1,0 +1,19 @@
+Install modp_stdint.h with the other headers
+
+modp_b64.h, modp_b16.h and the other installed headers include
+"modp_stdint.h", which upstream does not install: no installed header could
+be compiled. It is installed with them.
+
+Upstream-Status: Inappropriate (upstream archived)
+
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -4,7 +4,7 @@
+ 	modp_b16.h modp_b64.h modp_b64w.h modp_b64r.h \
+ 	modp_b85.h modp_burl.h modp_bjavascript.h \
+ 	modp_numtoa.h modp_ascii.h modp_b2.h \
+-	modp_qsiter.h modp_xml.h modp_html.h modp_json.h
++	modp_qsiter.h modp_xml.h modp_html.h modp_json.h modp_stdint.h
+ 
+ lib_LTLIBRARIES = libmodpbase64.la
+ libmodpbase64_la_SOURCES = \

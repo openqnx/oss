@@ -1,0 +1,36 @@
+# ntttcp-for-linux 1.4.0_git20230613-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:18:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ntttcp-for-linux qnx-test-ntttcp-for-linux qnx-port-tests
+(1/2) Installing ntttcp-for-linux (1.4.0_git20230613-r0)
+(2/2) Installing qnx-test-ntttcp-for-linux (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ntttcp_for_linux
+     == ntttcp-for-linux ==
+       ok   ntttcp -h: NTTTCP for Linux 1.4.0
+       ok   TCP sender exited 0
+       ok   TCP receiver finished the test and exited 0 by itself
+       ok   sender pinned to CPU 0 (-m 2,0,...)
+       info TCP: sender 132644864 bytes, receiver 128133168 bytes; 11:17:43 INFO: throughput :510.68Mbps
+       ok   TCP: the receiver got data, never more than the sender sent
+       ok   TCP: 4 connections tested (2 ports x 2 threads)
+       ok   both sides report 4 CPU core(s)
+       info errors logged: 11:17:43 ERR : select error at port: 15878 
+       ok   JSON: computername is vanilla-a64
+       ok   JSON: port 15877, runTime 2
+       ok   JSON: totalBytes 128.133168 MB = 128133168 bytes
+       ok   XML: ntttcpr result for vanilla-a64
+       info UDP: sender 2002944 bytes, receiver 2002944 bytes
+       ok   UDP: sender and receiver exited 0
+       ok   UDP: -B 8M limited 2 s to 2002944 bytes (<= 2.6 MB)
+     PASS ntttcp-for-linux
+PASS test_ntttcp_for_linux
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

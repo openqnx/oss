@@ -1,0 +1,84 @@
+QNX configuration: sys.platform 'qnx' and cross builds
+
+qnx-ports' configuration (0001) is selected for sys.platform 'qnx8' and
+searches /usr and /usr/local, as a build on the target does. This tree's
+Python reports sys.platform 'qnx', and it cross compiles: setup.py runs on
+the build machine, whose sys.platform is 'linux' (so the Linux
+configuration, with the V4L2 camera and X11 scrap, was chosen), and whose
+/usr/include and /usr/lib would be found -- last, so winning -- next to the
+staging tree given as LOCALBASE.
+
+Select the QNX configuration for any sys.platform starting with 'qnx', or
+when _PYTHON_HOST_PLATFORM names QNX (the cross build); then search only
+LOCALBASE/PYGAME_EXTRA_BASE, skip the multiarch probe of the build
+machine's gcc, and do not add /usr/X11R6/include to SDL's flags.
+
+Upstream-Status: QNX-specific
+
+--- a/buildconfig/config.py
++++ b/buildconfig/config.py
+@@ -154,6 +154,13 @@
+             if useit:
+                 newsetup.write(line)
+ 
++def is_qnx():
++    """QNX: sys.platform is 'qnx' (Python 3.14, 'qnx8' in qnx-ports'
++    build), or, cross compiling, _PYTHON_HOST_PLATFORM names QNX."""
++    return (sys.platform.startswith('qnx')
++            or os.environ.get('_PYTHON_HOST_PLATFORM', '').startswith('qnx'))
++
++
+ def main(auto=False):
+     additional_platform_setup = []
+     conan = "-conan" in sys.argv
+@@ -201,7 +208,7 @@
+             import config_emsdk as CFG
+         except ImportError:
+             import buildconfig.config_emsdk as CFG
+-    elif sys.platform == 'qnx8':
++    elif is_qnx():
+         print_('Using QNX configuration...\n')
+         try:
+             import config_qnx as CFG
+@@ -224,7 +231,7 @@
+     elif sysconfig.get_config_var('MACHDEP') == 'emscripten':
+         additional_platform_setup = open(
+             os.path.join(BASE_PATH, 'buildconfig', "Setup.Emscripten.SDL2.in")).readlines()
+-    elif sys.platform == 'qnx8':
++    elif is_qnx():
+         additional_platform_setup = open(
+             os.path.join(BASE_PATH, 'buildconfig', "Setup_QNX.in")).readlines()
+     else:
+--- a/buildconfig/config_qnx.py
++++ b/buildconfig/config_qnx.py
+@@ -17,7 +17,10 @@
+ if os.environ.get('LOCALBASE', ''):
+     extrabases.append(os.environ['LOCALBASE'])
+ 
+-extrabases.extend(("/usr", "/usr/local"))
++# Cross compiling, LOCALBASE is the target's tree: the build machine's own
++# /usr and /usr/local must not be searched (they would win, being last).
++if not os.environ.get('_PYTHON_HOST_PLATFORM', '').startswith('qnx'):
++    extrabases.extend(("/usr", "/usr/local"))
+ 
+ class DependencyProg:
+     def __init__(self, name, envname, exename, minver, defaultlibs, version_flag="--version"):
+@@ -53,9 +56,6 @@
+                     self.cflags += f + ' '
+                 elif f[:3] == '-Wl':
+                     self.cflags += '-Xlinker ' + f + ' '
+-            if self.name == 'SDL':
+-                inc = '-I' + '/usr/X11R6/include'
+-                self.cflags = inc + ' ' + self.cflags
+         except (ValueError, TypeError):
+             print(f'WARNING: "{command}" failed!')
+             self.found = 0
+@@ -147,7 +147,7 @@
+     # /lib/<multiarch-tuple>
+     # We have a few commands to get the correct <multiarch-tuple>, we try those
+     # one by one till we get something that works
+-    for cmd in (
++    for cmd in () if os.environ.get('_PYTHON_HOST_PLATFORM', '').startswith('qnx') else (
+         "dpkg-architecture -qDEB_HOST_MULTIARCH",
+         "gcc -print-multiarch",
+         "gcc -dumpmachine",

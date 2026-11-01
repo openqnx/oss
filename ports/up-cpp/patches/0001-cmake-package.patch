@@ -1,0 +1,94 @@
+CMake: install the up-cpp package, tests optional, no gcov in release builds
+
+up-cpp is built with Conan upstream: its CMakeLists installs the library and
+headers but no CMake package, links libgcov into every build, and always
+configures its unit tests (which need GoogleTest). Without Conan:
+- install up-cpp::up-cpp (up-cppConfig.cmake, finding protobuf and
+  up-core-api), which up-transport-zenoh-cpp's find_package(up-cpp) needs;
+- up-core-api and protobuf are PUBLIC link dependencies (up-cpp's headers
+  include the generated .pb.h files) instead of include directories that
+  would export the build machine's staging path;
+- the -Werror warning set is PRIVATE: as PUBLIC it was imposed on every
+  program built against up-cpp;
+- a versioned shared library (libup-cpp.so.1);
+- -lgcov only in the Coverage build, the tests only with BUILD_TESTING
+  (CTest's switch).
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -49,18 +49,19 @@
+ 
+ add_library(${PROJECT_NAME} ${SRC_FILES})
+ add_library(up-cpp::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
++set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
++include(GNUInstallDirs)
+ 
+ target_include_directories(${PROJECT_NAME}
+ 	PUBLIC
+ 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+ 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+-	$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+-	${up-core-api_INCLUDE_DIR}
+-	${protobuf_INCLUDE_DIR})
++	$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>)
+ 
+ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+ 
+-target_compile_options(${PROJECT_NAME} PUBLIC
++# Warnings for building up-cpp, not for the programs that use it.
++target_compile_options(${PROJECT_NAME} PRIVATE
+ 	-Wall
+ 	-Wswitch-enum
+ 	-Wcast-qual
+@@ -70,14 +71,41 @@
+ 	-Werror
+ )
+ 
++# up-cpp's headers include up-core-api's: it is part of the interface.
+ target_link_libraries(${PROJECT_NAME}
+-	PRIVATE
++	PUBLIC
+ 	up-core-api::up-core-api
+-	protobuf::libprotobuf
+-	gcov)
+-
+-enable_testing()
+-add_subdirectory(test)
+-
+-INSTALL(TARGETS ${PROJECT_NAME})
++	protobuf::libprotobuf)
++if(CMAKE_CXX_FLAGS MATCHES "-ftest-coverage")
++	target_link_libraries(${PROJECT_NAME} PRIVATE gcov)
++endif()
++
++include(CTest)
++if(BUILD_TESTING)
++	add_subdirectory(test)
++endif()
++
++INSTALL(TARGETS ${PROJECT_NAME} EXPORT up-cppTargets
++	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ INSTALL(DIRECTORY include DESTINATION .)
++
++# The CMake package Conan's CMakeDeps generates for up-cpp: up-cpp::up-cpp.
++include(CMakePackageConfigHelpers)
++set(_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/up-cpp)
++install(EXPORT up-cppTargets NAMESPACE up-cpp:: DESTINATION ${_cmakedir})
++file(WRITE ${CMAKE_BINARY_DIR}/up-cppConfig.cmake.in [=[
++@PACKAGE_INIT@
++include(CMakeFindDependencyMacro)
++find_dependency(protobuf CONFIG)
++find_dependency(up-core-api)
++include("${CMAKE_CURRENT_LIST_DIR}/up-cppTargets.cmake")
++set(up-cpp_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
++]=])
++configure_package_config_file(${CMAKE_BINARY_DIR}/up-cppConfig.cmake.in
++	${CMAKE_BINARY_DIR}/up-cppConfig.cmake INSTALL_DESTINATION ${_cmakedir})
++write_basic_package_version_file(${CMAKE_BINARY_DIR}/up-cppConfigVersion.cmake
++	COMPATIBILITY SameMajorVersion)
++install(FILES ${CMAKE_BINARY_DIR}/up-cppConfig.cmake ${CMAKE_BINARY_DIR}/up-cppConfigVersion.cmake
++	DESTINATION ${_cmakedir})

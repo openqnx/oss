@@ -1,0 +1,44 @@
+QNX: PATH_MAX from <limits.h>, and the XDG cache directory.
+
+QNX has no <sys/syslimits.h>, the header arg.cpp and download.cpp take
+PATH_MAX from on systems other than Linux, Windows and AIX; QNX's PATH_MAX
+is in <limits.h>. And fs_get_cache_directory() knew no cache directory for
+QNX and stopped the build with "#error Unknown architecture": QNX takes the
+XDG/HOME rule of Linux and the BSDs ($XDG_CACHE_HOME, else
+$HOME/.cache/llama.cpp), as the BSDs do, without the getpwuid() fallback.
+
+Upstream-Status: QNX-specific
+
+--- a/common/arg.cpp
++++ b/common/arg.cpp
+@@ -44,6 +44,8 @@
+ #   endif
+ #elif defined(_AIX)
+ #include <sys/limits.h>
++#elif defined(__QNX__)
++#include <limits.h>
+ #else
+ #include <sys/syslimits.h>
+ #endif
+--- a/common/common.cpp
++++ b/common/common.cpp
+@@ -950,7 +950,7 @@
+         cache_directory = std::getenv("LLAMA_CACHE");
+     } else {
+ #if defined(__linux__) || defined(__FreeBSD__) || defined(_AIX) || \
+-        defined(__OpenBSD__) || defined(__NetBSD__)
++        defined(__OpenBSD__) || defined(__NetBSD__) || defined(__QNX__)
+         if (std::getenv("XDG_CACHE_HOME")) {
+             cache_directory = std::getenv("XDG_CACHE_HOME");
+         } else if (std::getenv("HOME")) {
+--- a/common/download.cpp
++++ b/common/download.cpp
+@@ -32,6 +32,8 @@
+ #   endif
+ #elif defined(_AIX)
+ #include <sys/limits.h>
++#elif defined(__QNX__)
++#include <limits.h>
+ #else
+ #include <sys/syslimits.h>
+ #endif

@@ -1,0 +1,36 @@
+# llama.cpp 0_git-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u llama.cpp qnx-test-llama-cpp qnx-port-tests
+(1/3) Installing llama.cpp (0_git-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-llama-cpp (1.0-r0)
+OK: 119 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_llama_cpp
+     == llama.cpp ==
+       info CPU : LLAMAFILE = 1 | REPACK = 1 | 
+       ok   tiny GGUF model written with the gguf API
+       ok   model loaded (llama architecture, 2 blocks)
+       ok   hyperparameters read back (32 tokens, 32 wide, 2 layers)
+       info llama ?B all F32 (guessed)
+       ok   "abc" tokenized as "▁" a b c (ids 3 4 5 6)
+       ok   detokenized back to "abc"
+       ok   with special tokens: <s> first
+       ok   context created (KV cache for 64 tokens)
+       ok   prompt decoded
+       info logit[d] = 5.6559
+       ok   next-token logits: d = sqrt(32) = 5.657, every other token 0
+       info generated "defghijklmnopqrstuvwxyz."
+       ok   greedy decoding: "defghijklmnopqrstuvwxyz."
+       ok   generation stops at end of text (</s>)
+     PASS llama.cpp
+PASS test_llama_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

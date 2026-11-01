@@ -1,0 +1,47 @@
+Vulkan Wayland WSI without CLOCK_MONOTONIC_RAW
+
+QNX has no CLOCK_MONOTONIC_RAW (only CLOCK_REALTIME, CLOCK_MONOTONIC and
+the CPU-time clocks). The Vulkan Wayland WSI maps the compositor's
+presentation clock to Vulkan time domains; leave the MONOTONIC_RAW case out
+where the clock does not exist, as the Intel driver already does.
+
+Upstream-Status: QNX-specific
+
+--- a/src/vulkan/wsi/wsi_common_wayland.c
++++ b/src/vulkan/wsi/wsi_common_wayland.c
+@@ -287,8 +287,10 @@
+    switch (id) {
+       case CLOCK_MONOTONIC:
+          return VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR;
++#ifdef CLOCK_MONOTONIC_RAW  /* not on QNX */
+       case CLOCK_MONOTONIC_RAW:
+          return VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR;
++#endif
+       default:
+          /* Default fallback. Will likely not be used, but is safe to use. */
+          return VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR;
+@@ -301,8 +303,10 @@
+    switch (id) {
+       case VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR:
+          return CLOCK_MONOTONIC;
++#ifdef CLOCK_MONOTONIC_RAW
+       case VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR:
+          return CLOCK_MONOTONIC_RAW;
++#endif
+       default:
+          /* Default fallback. Will not be used. */
+          return 0;
+@@ -2128,8 +2132,13 @@
+          /* We could deal with esoteric clock domains by exposing VK_TIME_DOMAIN_SWAPCHAIN or PRESENT_STAGE_LOCAL,
+           * but that requires a lot more scaffolding, and there's no need to add extra complexity if we can
+           * get away with this. */
++#ifdef CLOCK_MONOTONIC_RAW
+          if (clock_id != CLOCK_MONOTONIC && clock_id != CLOCK_MONOTONIC_RAW)
+             break;
++#else
++         if (clock_id != CLOCK_MONOTONIC)
++            break;
++#endif
+ 
+          /* Presentation timing spec talks about the reported time targeting "pixel being visible".
+           * From presentation-time spec: "Note, that if the display path has a non-zero latency,

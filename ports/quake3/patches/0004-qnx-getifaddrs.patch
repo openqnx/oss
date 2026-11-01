@@ -1,0 +1,24 @@
+Find the local addresses with getifaddrs() on QNX too.
+
+NET_GetLocalAddress() uses getifaddrs() on Linux, macOS and the BSDs and
+otherwise resolves the machine's own host name with getaddrinfo(). On QNX
+that fallback went to DNS: a target whose name is not in /etc/hosts (a
+stock image) waited for the resolver's timeouts -- 30 s with no server
+running -- before the server opened its socket, and then knew only the
+addresses the name resolved to. QNX has getifaddrs() (libsocket), as on
+the BSDs its stack comes from.
+
+Upstream-Status: Pending
+
+diff --git a/code/qcommon/net_ip.c b/code/qcommon/net_ip.c
+--- a/code/qcommon/net_ip.c
++++ b/code/qcommon/net_ip.c
+@@ -1275,7 +1275,7 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
+ 	}
+ }
+ 
+-#if defined(__linux__) || defined(__APPLE__) || defined(__BSD__)
++#if defined(__linux__) || defined(__APPLE__) || defined(__BSD__) || defined(__QNX__)
+ static void NET_GetLocalAddress(void)
+ {
+ 	struct ifaddrs *ifap, *search;

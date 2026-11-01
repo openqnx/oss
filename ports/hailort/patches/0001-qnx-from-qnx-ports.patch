@@ -1,0 +1,22 @@
+hailort on QNX, from QNX's port (github.com/qnx-ports/hailort, branch
+qnx-4.14, commit 50d78d2c): HailoRT's CMake adds drivers/qnx, the QNX PCIe
+driver, when it builds for QNX, but the public repository has no
+drivers/qnx (the driver ships separately), so configuring for QNX stopped
+at the missing directory. QNX removed the line; libhailort talks to the
+installed driver through /dev/hailo*.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/hailort/CMakeLists.txt b/hailort/CMakeLists.txt
+index 5f790bf..542e02a 100644
+--- a/hailort/CMakeLists.txt
++++ b/hailort/CMakeLists.txt
+@@ -131,8 +131,3 @@ endif()
+ if(HAILO_SUPPORT_PACKAGING)
+     add_subdirectory(packaging)
+ endif()
+-
+-# Compile PCIe Driver if QNX
+-if(CMAKE_SYSTEM_NAME STREQUAL QNX)
+-    add_subdirectory(drivers/qnx)
+-endif()

@@ -1,0 +1,20 @@
+xmlto: allow a getopt command with arguments ("busybox getopt")
+
+QNX has no getopt(1); BusyBox's is the enhanced getopt xmlto needs, run
+as "busybox getopt". Quote the substituted value so that the assignment
+keeps both words; ${GETOPT} is expanded unquoted where it runs, so it is
+split back into command and argument.
+
+Upstream-Status: Pending
+
+--- a/xmlto.in
++++ b/xmlto.in
+@@ -20,7 +20,7 @@
+ FIND=@FIND@               # This must be GNU find (need -maxdepth)
+ MKTEMP=@MKTEMP@           # See http://www.mktemp.org if missing on your system
+ BASH=@XMLTO_BASH_PATH@    # GNU bash, for running the format scripts
+-GETOPT=@GETOPT@           # a getopt that supports --longoptions
++GETOPT="@GETOPT@"         # a getopt that supports --longoptions (may be "busybox getopt")
+ TAIL=@TAIL@               # a tail that supports -n (posix)
+ GREP=@GREP@               # GNU grep, for searching patterns
+ SED=@SED@                 # GNU sed, for modification of patterns

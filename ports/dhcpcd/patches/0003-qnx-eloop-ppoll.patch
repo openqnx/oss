@@ -1,0 +1,19 @@
+eloop: use ppoll(2) on QNX, which has no kqueue.
+
+eloop.c uses kqueue(2) whenever BSD is defined. QNX defines BSD for its
+FreeBSD network stack (previous patch) but has no kqueue (no <sys/event.h>);
+it has ppoll(2), dhcpcd's portable backend. Take that on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/src/eloop.c
++++ b/src/eloop.c
+@@ -36,7 +36,7 @@
+  * On Linux use epoll(7)
+  * Everywhere else use ppoll(2)
+  */
+-#if defined(BSD) || defined(__APPLE__)
++#if (defined(BSD) || defined(__APPLE__)) && !defined(__QNX__)
+ #include <sys/event.h>
+ #define USE_KQUEUE
+ #if defined(__NetBSD__)

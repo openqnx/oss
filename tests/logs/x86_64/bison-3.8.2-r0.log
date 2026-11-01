@@ -1,0 +1,33 @@
+# bison 3.8.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:31:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bison qnx-test-bison qnx-port-tests
+(1/4) Installing m4 (1.4.19-r0)
+(2/4) Installing bison (3.8.2-r0)
+(3/4) Installing qnx-test-bison-calc (1.0-r0)
+(4/4) Installing qnx-test-bison (1.0-r1)
+OK: 90 MiB in 28 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bison
+     == bison ==
+       info bison (GNU Bison) 3.8.2
+       ok   generated parser: precedence, right-assoc ^, unary minus
+       ok   semantic action error (YYERROR)
+       ok   syntax error reported
+       ok   bison generated calc.c (its skeletons expanded by m4)
+       ok   made by GNU Bison 3.8.2
+       ok   table sizes: YYFINAL 8, YYLAST 33, 13 tokens, 11 rules, 22 states
+       ok   yytable identical to the build-time parser's
+       ok   --report=state: 22 states in calc.output
+       ok   ambiguous grammar: 1 shift/reduce conflict reported
+       ok   a malformed grammar fails with a located error
+     PASS bison
+PASS test_bison
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

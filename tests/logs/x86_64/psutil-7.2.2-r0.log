@@ -1,0 +1,64 @@
+# psutil 7.2.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:59:17Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u psutil qnx-test-psutil qnx-port-tests
+(1/6) Installing gdbm (1.24-r0)
+(2/6) Installing readline (8.2-r0)
+(3/6) Installing sqlite (3.47.2-r0)
+(4/6) Installing python3 (3.14.0-r2)
+(5/6) Installing psutil (7.2.2-r0)
+(6/6) Installing qnx-test-psutil (1.0-r0)
+OK: 200 MiB in 39 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_psutil
+     == psutil ==
+       info psutil 7.2.2 on qnx
+       ok   cpu_count() = os.cpu_count() = 4
+       ok   cpu_count(logical=False) = 4
+       info booted 110427 s ago
+       ok   boot_time() is in the past
+       info memory: total 2047 MiB, available 1496 MiB
+       ok   virtual_memory(): total > 64 MiB, 0 < available <= total
+       ok   swap_memory(): QNX has no swap
+       info cpu_freq: [2712, 2712, 2712, 2712] MHz
+       ok   cpu_freq(): one entry per CPU
+       info cpu_times: scputimes(user=0.0, system=123338.4588288695, idle=318371.504039821)
+       ok   cpu_times(): idle + busy within uptime x CPUs
+       ok   cpu_percent(interval=0.5) = 28.4
+       ok   disk_usage('/') total = statvfs blocks x frsize
+       info interfaces: ['lo0', 'vtnet0']
+       ok   net_if_addrs(): <ip> on lo0
+       ok   net_io_counters(): counters for the loopback
+       ok   net_if_stats(): loopback is up, MTU 16384
+       ok   Process(): pid and ppid match os
+       ok   uids()/gids() match os
+       info exe /usr/local/bin/python3, name python3
+       ok   exe() is the Python interpreter
+       ok   name() is the executable's base name
+       info cmdline ['/usr/local/bin/python3', 't.py', 'qnx-arg']
+       ok   cmdline() ends with t.py qnx-arg
+       ok   create_time() within the last 2 minutes
+       ok   status() of itself: reply
+       ok   num_threads() 1 -> 2 with one more thread; threads() lists 2
+       info rss 19216 -> 84756 KiB, vms 84756 KiB
+       ok   memory_info(): rss grows by ~64 MiB for a 64 MiB buffer
+       ok   cpu_times() grows while computing
+       ok   memory_percent()
+       ok   child's ppid() is this process
+       ok   child in pids(), pid_exists()
+       ok   Process().children() lists it
+       ok   terminate() + wait(): exit status -15, gone
+       ok   Process(nonexistent) raises NoSuchProcess
+       ok   pids() has procnto (1) and this process
+       info 47 processes
+       ok   process_iter(['name']) finds python
+     PASS psutil
+PASS test_psutil
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

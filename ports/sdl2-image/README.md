@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add sdl2-image sdl2-image-dev
-apk add qnx-test-sdl2-image && /usr/local/bin/qnx-port-tests/test_sdl2_image    # its on-target test
+apk add qnx-test-sdl2-image && /usr/local/bin/qnx-port-tests/test_sdl2_image    # its on-target test, from tests-8.0-<arch>-m-z
 apk del sdl2-image sdl2-image-dev qnx-test-sdl2-image
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (26 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (32 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 libpng libjpeg-turbo libtiff libwebp libavif libjxl
 ```
 
-<details><summary>Full build chain (26)</summary>
+<details><summary>Full build chain (32)</summary>
 
-[`aom`](../aom/) [`brotli`](../brotli/) [`dav1d`](../dav1d/) [`expat`](../expat/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libyuv`](../libyuv/) [`ncurses`](../ncurses/) [`sdl2`](../sdl2/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libyuv`](../libyuv/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -155,7 +155,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_sdl2_image`](../../tests/src/) links sdl2-image the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sdl2-image`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_sdl2_image`](../../tests/src/) links sdl2-image the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-sdl2-image`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

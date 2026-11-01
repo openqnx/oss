@@ -1,0 +1,46 @@
+Fall back to a smaller default UDP buffer when the stack refuses 4 MiB.
+
+Every media stream asks for 4 MiB UDP send and receive buffers and fails
+to initialise when setsockopt() refuses. Linux silently caps the request at
+net.core.wmem_max/rmem_max; QNX's io-sock, like the BSD stacks it derives
+from, refuses a size above kern.ipc.maxsockbuf with ENOBUFS, so no stream
+could be created at all ("Failed to set socket options ... Failed to
+initialize media stream"). Halve the request until the stack accepts it
+(down to 64 KiB), which is what Linux ends up with in effect; a size the
+application sets with RCC_UDP_SND_BUF_SIZE/RCC_UDP_RCV_BUF_SIZE is still
+passed through unchanged.
+
+Upstream-Status: Pending
+
+--- a/src/media_stream_internal.cc
++++ b/src/media_stream_internal.cc
+@@ -158,16 +158,19 @@
+ 
+     /* Set the default UDP send/recv buffer sizes to 4MB as on Windows
+      * the default size is way too small for a larger video conference */
+-    int buf_size = 4 * 1024 * 1024;
+-
+-    if ((ret = socket_->setsockopt(SOL_SOCKET, SO_SNDBUF, (const char*)&buf_size, sizeof(int))) != RTP_OK)
+-    {
+-        return ret;
+-    }
+-
+-    if ((ret = socket_->setsockopt(SOL_SOCKET, SO_RCVBUF, (const char*)&buf_size, sizeof(int))) != RTP_OK)
+-    {
+-        return ret;
++    /* Linux silently caps the size at net.core.[rw]mem_max; BSD-derived
++     * stacks (QNX's io-sock) refuse a size above kern.ipc.maxsockbuf with
++     * ENOBUFS instead. Halve the request until the stack takes it. */
++    const int sockopts[2] = { SO_SNDBUF, SO_RCVBUF };
++    for (int opt : sockopts) {
++        int buf_size = 4 * 1024 * 1024;
++        while (::setsockopt(socket_->get_raw_socket(), SOL_SOCKET, opt, (const char*)&buf_size, sizeof(int)) < 0 &&
++               buf_size > 64 * 1024)
++            buf_size /= 2;
++        if ((ret = socket_->setsockopt(SOL_SOCKET, opt, (const char*)&buf_size, sizeof(int))) != RTP_OK)
++        {
++            return ret;
++        }
+     }
+ 
+     return ret;

@@ -1,0 +1,58 @@
+Install the CMake package, script and documents in standard places.
+
+The CMake package files went to <prefix>/cmake, eniconv.py to
+<prefix>/scripts and README.md/LICENSE.md to the prefix itself, i.e.
+/usr/local/README.md on a target. They go to lib/cmake/soem (where
+find_package(soem) looks), share/soem/scripts and share/doc/soem;
+AddENI.cmake also looks for eniconv.py in the new place.
+
+Upstream-Status: Pending
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 13cbd82..e8608e8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -127,7 +127,7 @@ install(
+ 
+ install(
+   EXPORT soemConfig
+-  DESTINATION cmake
++  DESTINATION lib/cmake/soem
+ )
+ 
+ install(FILES
+@@ -149,18 +149,18 @@ install(FILES
+ 
+ install(FILES
+   scripts/eniconv.py
+-  DESTINATION scripts
++  DESTINATION share/soem/scripts
+ )
+ 
+ install(FILES
+   cmake/AddENI.cmake
+-  DESTINATION cmake
++  DESTINATION lib/cmake/soem
+ )
+ 
+ install(FILES
+   README.md
+   LICENSE.md
+-  DESTINATION .
++  DESTINATION share/doc/soem
+ )
+ 
+ if(SOEM_BUILD_SAMPLES)
+diff --git a/cmake/AddENI.cmake b/cmake/AddENI.cmake
+index 177699b..d55ce2c 100644
+--- a/cmake/AddENI.cmake
++++ b/cmake/AddENI.cmake
+@@ -19,7 +19,7 @@ Helper function to run eniconv on ENI file.
+ 
+ #]=======================================================================]
+ find_package(Python3 REQUIRED)
+-find_program(ENICONV eniconv.py PATH_SUFFIXES scripts PATHS ${SOEM_SOURCE_DIR} REQUIRED)
++find_program(ENICONV eniconv.py PATH_SUFFIXES scripts PATHS ${SOEM_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR}/../../../share/soem REQUIRED)
+ 
+ function(add_eni target eni)
+   cmake_path(GET eni STEM _eni_name)

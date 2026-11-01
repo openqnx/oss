@@ -1,0 +1,55 @@
+# gnupg 2.4.9-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:25:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gnupg qnx-test-gnupg qnx-port-tests
+( 1/15) Installing gmp (6.3.0-r0)
+( 2/15) Installing libidn2 (2.3.7-r0)
+( 3/15) Installing libtasn1 (4.19.0-r0)
+( 4/15) Installing nettle (3.10.1-r0)
+( 5/15) Installing gnutls (3.8.8-r0)
+( 6/15) Installing libgpg-error (1.50-r0)
+( 7/15) Installing libassuan (3.0.2-r0)
+( 8/15) Installing libgcrypt (1.11.0-r1)
+( 9/15) Installing libksba (1.8.1-r0)
+(10/15) Installing npth (1.8-r0)
+(11/15) Installing readline (8.2-r0)
+(12/15) Installing sqlite (3.47.2-r0)
+(13/15) Installing gnupg (2.4.9-r0)
+(14/15) Installing qnx-port-tests (1.0-r2)
+(15/15) Installing qnx-test-gnupg (1.0-r0)
+OK: 117 MiB in 44 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gnupg
+     == gnupg ==
+       info gpg (GnuPG) 2.4.9 libgcrypt 1.11.0 
+       ok   gpg 2.4.9 on libgcrypt 1.11.0
+       ok   SHA256("abc") = ba7816bf...f20015ad
+       ok   symmetric AES256 encrypt/decrypt round trip
+       ok   wrong passphrase refused: Bad session key
+       ok   gpg-agent answers GETINFO version over Assuan: 2.4.9
+       ok   ed25519 primary key generated (no passphrase)
+       info fingerprint 3E109A393A659ECE575612259557EACD40B468C9
+       ok   cv25519 encryption subkey added
+       ok   key listing: pub ed25519 (algo 22), ultimately trusted
+       ok   key listing: sub cv25519 (algo 18) for encryption
+       ok   key listing: user id
+       ok   public-key encrypt to cv25519 subkey / decrypt round trip
+       info gpg: encrypted with cv25519 key, ID 08F41573B9D8584A, created 2026-11-01       "QNX Port Test <test@qnx.invalid>" 
+       ok   clear-signed message verifies: Good signature
+       ok   detached signature verifies
+       ok   tampered file: BAD signature
+       ok   gpgv verifies with the exported public key
+       ok   gpgtar create/extract round trip
+       ok   gpgsm: certificate imported, serial 1234ABCD
+       ok   gpgsm: subject CN=ksba.test,O=QNX Port Test,C=CA
+       ok   gpgsm: SHA-1 fingerprint CE6A7713...E89E232B
+     PASS gnupg
+PASS test_gnupg
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

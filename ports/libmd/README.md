@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libmd libmd-dev
-apk add qnx-test-libmd && /usr/local/bin/qnx-port-tests/test_libmd    # its on-target test
+apk add qnx-test-libmd && /usr/local/bin/qnx-port-tests/test_libmd    # its on-target test, from tests-8.0-<arch>
 apk del libmd libmd-dev qnx-test-libmd
 ```
 
@@ -153,7 +153,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libmd`](../../tests/src/) links libmd the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libmd`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libmd`](../../tests/src/) links libmd the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libmd`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

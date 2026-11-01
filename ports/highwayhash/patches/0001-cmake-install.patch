@@ -1,0 +1,69 @@
+CMake: a usable shared library (dispatch, soname, install); tests optional.
+
+The CMake build compiled a library nothing outside the source tree could
+use: it installed nothing, had no soname, and left out instruction_sets.cc
+(InstructionSets::Supported(), which the run-time dispatch to the AVX2,
+SSE4.1 or NEON code, InstructionSets::Run, calls) -- that file was only in
+the benchmarks' object library. This adds it to the library, gives the
+library the soname the Makefile gives it (libhighwayhash.so.0), and
+installs the library and every header under include/highwayhash/, as the
+Makefile's install target does.
+
+The tests, benchmarks and examples are built only with HH_BUILD_TESTS
+(default ON, as before): their os_specific.cc (thread affinity and
+priority for benchmarking) knows Windows, Linux, FreeBSD and macOS and
+stops with #error "port" anywhere else, QNX included.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,6 +6,8 @@
+ # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
+ # it prominent in the GUI.
+ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
++option(HH_BUILD_TESTS "Build the tests, benchmarks and examples." ON)
++include(GNUInstallDirs)
+ 
+ # Force PIC on unix when building shared libs
+ # see: https://en.wikipedia.org/wiki/Position-independent_code
+@@ -52,6 +54,7 @@
+   ${PROJECT_SOURCE_DIR}/highwayhash/c_bindings.cc
+   ${PROJECT_SOURCE_DIR}/highwayhash/hh_portable.cc
+   ${PROJECT_SOURCE_DIR}/highwayhash/arch_specific.cc
++  ${PROJECT_SOURCE_DIR}/highwayhash/instruction_sets.cc
+ 
+   ${PROJECT_SOURCE_DIR}/highwayhash/scalar_sip_tree_hash.cc
+   ${PROJECT_SOURCE_DIR}/highwayhash/sip_hash.cc
+@@ -125,7 +128,6 @@
+ 
+ 
+ add_library(highwayhash ${HH_INCLUDES} ${HH_SOURCES})
+-set_target_properties(highwayhash PROPERTIES PUBLIC_HEADER "${HH_INCLUDES}")
+ 
+ target_include_directories(highwayhash
+   PUBLIC  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+@@ -139,6 +141,18 @@
+ endif()
+ 
+ add_library(highwayhash::highwayhash ALIAS highwayhash)
++set_target_properties(highwayhash PROPERTIES SOVERSION 0)
++
++# Installed as the Makefile's install target does: every header, under
++# include/highwayhash/, and the library.
++install(TARGETS highwayhash
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++file(GLOB HH_ALL_HEADERS ${PROJECT_SOURCE_DIR}/highwayhash/*.h)
++install(FILES ${HH_ALL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/highwayhash)
++
++if(HH_BUILD_TESTS)
+ 
+ 
+ #
+@@ -242,3 +256,4 @@
+  )
+ target_link_libraries(example highwayhash)
+ 
++endif()  # HH_BUILD_TESTS

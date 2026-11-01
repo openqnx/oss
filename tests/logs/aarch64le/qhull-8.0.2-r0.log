@@ -1,0 +1,31 @@
+# qhull 8.0.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:03:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qhull qnx-test-qhull qnx-port-tests
+(1/2) Installing qhull (8.0.2-r0)
+(2/2) Installing qnx-test-qhull (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qhull
+     == qhull ==
+       info 2020.2.r 2020/08/31
+       ok   2-d hull computed
+       ok   square + 3 interior points: 4 vertices, 4 edges
+       ok   area 1, perimeter 4
+       ok   3-d hull computed
+       info cube: 8 vertices, 12 facets (triangulated)
+       ok   cube + centre: 8 vertices, 12 triangles
+       ok   volume 1, area 6
+       ok   Delaunay triangulation computed
+       ok   square + centre: 4 Delaunay triangles
+       ok   qhull Fx: hull points 0..3 of the square, not the centre
+     PASS qhull
+PASS test_qhull
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

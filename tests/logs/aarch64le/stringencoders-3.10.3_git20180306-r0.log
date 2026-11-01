@@ -1,0 +1,33 @@
+# stringencoders 3.10.3_git20180306-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:12:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u stringencoders qnx-test-stringencoders qnx-port-tests
+(1/1) Installing qnx-test-stringencoders (1.0-r0)
+OK: 123 MiB in 40 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_stringencoders
+     == stringencoders ==
+       ok   base64 encode/decode: the 7 RFC 4648 test vectors
+       ok   base64 decode of an invalid character returns -1
+       ok   base64 round trip of bytes 0..255
+       ok   base85 round trip of bytes 0..255
+       ok   base16 encode: 514E5801FF (upper case, as upstream documents)
+       ok   base16 decode (upper case)
+       ok   URL encode: a+b%26c%3Dd%2F%E9
+       ok   URL decode: + and %xx
+       ok   JavaScript string escaping
+       ok   modp_itoa10(INT32_MIN)
+       ok   modp_ulitoa10(UINT64_MAX)
+       ok   modp_dtoa(3.14159, 3) = 3.142
+       ok   modp_dtoa2(-0.5, 6) = -0.5
+       ok   modp_toupper
+     PASS stringencoders
+PASS test_stringencoders
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

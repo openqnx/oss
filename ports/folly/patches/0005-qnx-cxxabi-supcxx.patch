@@ -1,0 +1,136 @@
+Use the libsupc++ exception ABI on QNX (libc++ over libsupc++).
+
+folly reads and builds std::exception_ptr objects through the C++ ABI
+runtime's internal structures, and picks the structures by C++ library:
+libstdc++ means GCC's libsupc++, libc++ means llvm's libc++abi (or libcxxrt
+on FreeBSD). QNX pairs libc++ with libsupc++: its libc++.so carries GCC's
+ABI runtime (__cxa_*, __cxxabiv1::__forced_unwind, ...), with no
+__cxa_increment_exception_refcount, so libfolly.so did not link
+("undefined reference to __cxa_increment_exception_refcount"), and the
+libc++abi layout it would have read is not the one in memory. On QNX the
+libsupc++ definitions (__cxa_exception, __cxa_refcounted_exception) and
+code paths are used instead; std::current_exception() stays libc++'s.
+
+libc++'s std::type_info does not declare libsupc++'s virtual __do_catch,
+so exception_ptr_get_object_() calls it through a shim with libsupc++'s
+vtable order, as folly's FreeBSD (libcxxrt) path does.
+
+Upstream-Status: Pending
+
+
+--- a/folly/lang/Exception.cpp
++++ b/folly/lang/Exception.cpp
+@@ -23,6 +23,23 @@
+ #include <folly/lang/Align.h>
+ #include <folly/lang/New.h>
+ 
++//  QNX's C++ library is libc++, but its C++ ABI runtime (built into
++//  libc++.so) is GCC's libsupc++, not llvm's libc++abi: it exports no
++//  __cxa_increment_exception_refcount, and its exception objects have the
++//  libsupc++ layout (__cxa_refcounted_exception). The libsupc++ code paths
++//  below are therefore used there, not the libc++abi ones.
++#if defined(__GLIBCXX__) || (defined(__QNX__) && defined(_LIBCPP_VERSION))
++#define FOLLY_DETAIL_CXXABI_SUPCXX 1
++#else
++#define FOLLY_DETAIL_CXXABI_SUPCXX 0
++#endif
++#if FOLLY_DETAIL_CXXABI_SUPCXX && !defined(__GLIBCXX__)
++#ifndef _GLIBCXX_CDTOR_CALLABI
++#define _GLIBCXX_CDTOR_CALLABI
++#endif
++using _Atomic_word = int;
++#endif
++
+ #if defined(__GLIBCXX__) || defined(_LIBCPP_VERSION)
+ #include <cxxabi.h>
+ #if !defined(__FreeBSD__)
+@@ -40,7 +57,7 @@
+   unsigned int uncaughtExceptions;
+ };
+ 
+-#if defined(__GLIBCXX__)
++#if FOLLY_DETAIL_CXXABI_SUPCXX
+ extern "C" [[gnu::const]] __cxa_eh_globals* __cxa_get_globals() noexcept;
+ #else
+ extern "C" __cxa_eh_globals* __cxa_get_globals();
+@@ -84,7 +101,7 @@
+ 
+ //  imports ---
+ 
+-#if defined(__GLIBCXX__)
++#if FOLLY_DETAIL_CXXABI_SUPCXX
+ 
+ //  https://github.com/gcc-mirror/gcc/blob/releases/gcc-10.2.0/libstdc++-v3/libsupc++/unwind-cxx.h
+ 
+@@ -143,11 +160,28 @@
+   __cxa_exception exc;
+ };
+ 
++#if !defined(__GLIBCXX__)
++//  libsupc++'s std::type_info virtual functions, in vtable order
++//  (libstdc++ <typeinfo>), for a libc++ that runs on libsupc++ (QNX).
++class __folly_supcxx_type_info {
++ public:
++  virtual ~__folly_supcxx_type_info() = 0;
++  virtual bool __is_pointer_p() const = 0;
++  virtual bool __is_function_p() const = 0;
++  virtual bool __do_catch(
++      std::type_info const* thrown_type,
++      void** thrown_object,
++      unsigned outer) const = 0;
++  virtual bool __do_upcast(
++      void const* target, void** thrown_object) const = 0;
++};
++#endif
++
+ } // namespace __cxxabiv1
+ 
+ #endif // defined(__GLIBCXX__)
+ 
+-#if defined(_LIBCPP_VERSION) && !defined(__FreeBSD__)
++#if defined(_LIBCPP_VERSION) && !defined(__FreeBSD__) && !defined(__QNX__)
+ 
+ //  https://github.com/llvm/llvm-project/blob/llvmorg-11.1.0/libcxx/include/exception
+ //  https://github.com/llvm/llvm-project/blob/llvmorg-11.1.0/libcxxabi/src/cxa_exception.h
+@@ -355,7 +389,7 @@
+   return type_info_of(ex);
+ }
+ 
+-#if defined(__GLIBCXX__)
++#if FOLLY_DETAIL_CXXABI_SUPCXX
+ 
+ bool exception_ptr_access_rt_v_() noexcept {
+   static_assert(exception_ptr_access_ct, "mismatch");
+@@ -387,7 +421,14 @@
+   }
+   auto object = reinterpret_cast<void* const&>(ptr);
+   auto type = exception_ptr_get_type_(ptr);
++#if defined(__GLIBCXX__)
+   return !target || target->__do_catch(type, &object, 1) ? object : nullptr;
++#else
++  //  libc++'s std::type_info does not declare libsupc++'s virtual members;
++  //  the objects are libsupc++'s, so call through the same vtable layout.
++  auto starget = reinterpret_cast<abi::__folly_supcxx_type_info const*>(target);
++  return !target || starget->__do_catch(type, &object, 1) ? object : nullptr;
++#endif
+ }
+ 
+ std::size_t exception_ptr_use_count_(std::exception_ptr const& ptr) noexcept {
+@@ -401,7 +442,7 @@
+ 
+ #endif // defined(__GLIBCXX__)
+ 
+-#if defined(_LIBCPP_VERSION) && !defined(__FreeBSD__)
++#if defined(_LIBCPP_VERSION) && !defined(__FreeBSD__) && !defined(__QNX__)
+ 
+ bool exception_ptr_access_rt_v_() noexcept {
+   static_assert(exception_ptr_access_ct || kIsAppleIOS, "mismatch");
+@@ -771,7 +812,7 @@
+   return ptr;
+ }
+ 
+-#if defined(__GLIBCXX__)
++#if FOLLY_DETAIL_CXXABI_SUPCXX
+ 
+ std::exception_ptr make_exception_ptr_with_(
+     make_exception_ptr_with_arg_ const& arg, void* func) noexcept {

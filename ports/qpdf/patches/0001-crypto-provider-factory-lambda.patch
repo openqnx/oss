@@ -1,0 +1,23 @@
+Register crypto providers with a lambda, not &std::make_shared.
+
+QPDFCryptoProvider stores each implementation's factory as
+std::make_shared<T> taken as a function. With libc++ (QNX's C++ library)
+make_shared is an overload set (it also declares the array forms), so the
+name does not resolve to one function: "no match for 'operator=' ...
+'<unresolved overloaded function type>'". Taking the address of a standard
+library function is unspecified anyway; store a lambda that calls
+make_shared instead (qpdf 12 still does the same).
+
+Upstream-Status: Pending (affects any libc++ build)
+
+--- a/libqpdf/QPDFCryptoProvider.cc
++++ b/libqpdf/QPDFCryptoProvider.cc
+@@ -84,7 +84,7 @@
+ void
+ QPDFCryptoProvider::registerImpl_internal(std::string const& name)
+ {
+-    m->providers[name] = std::make_shared<T>;
++    m->providers[name] = [] { return std::make_shared<T>(); };
+ }
+ 
+ void

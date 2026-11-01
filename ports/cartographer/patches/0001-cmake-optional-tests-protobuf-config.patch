@@ -1,0 +1,120 @@
+Build without the unit tests; find protobuf through its CMake package.
+
+The unit tests (some 150 programs and a test library) are always built and
+need GMock: CARTOGRAPHER_BUILD_TESTS (default on, as before) turns them off.
+find_package(Ceres COMPONENTS SuiteSparse) fails against a Ceres built
+without SuiteSparse, which Cartographer does not use: ask for Ceres alone.
+protobuf 22 and later are built on abseil: their headers and the generated
+code call abseil inline, so linking the bare libprotobuf found by CMake's
+FindProtobuf module leaves abseil symbols undefined. Use protobuf's own
+package (protobuf::libprotobuf) when there is one; the installed
+cartographer-config.cmake finds protobuf and Boost too, since the exported
+target names their imported targets. The include directories of Ceres and
+Boost come from their imported targets: an empty CERES_INCLUDE_DIRS put the
+source directory into the installed package's include path.
+
+Upstream-Status: Pending
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,10 +24,13 @@ set(CARTOGRAPHER_SOVERSION ${CARTOGRAPHER_MAJOR_VERSION}.${CARTOGRAPHER_MINOR_VE
+ option(BUILD_GRPC "build Cartographer gRPC support" false)
+ set(CARTOGRAPHER_HAS_GRPC ${BUILD_GRPC})
+ option(BUILD_PROMETHEUS "build Prometheus monitoring support" false)
++option(CARTOGRAPHER_BUILD_TESTS "build the unit tests (needs GMock)" true)
+ 
+ include("${PROJECT_SOURCE_DIR}/cmake/functions.cmake")
+ google_initialize_cartographer_project()
+-google_enable_testing()
++if(CARTOGRAPHER_BUILD_TESTS)
++  google_enable_testing()
++endif()
+ 
+ find_package(absl REQUIRED)
+ set(BOOST_COMPONENTS iostreams)
+@@ -36,7 +39,7 @@ if(WIN32)
+   set(Boost_USE_STATIC_LIBS FALSE)
+ endif()
+ find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+-find_package(Ceres REQUIRED COMPONENTS SuiteSparse)
++find_package(Ceres REQUIRED)
+ find_package(Eigen3 REQUIRED)
+ find_package(LuaGoogle REQUIRED)
+ if(WIN32)
+@@ -44,7 +47,17 @@ if(WIN32)
+   set(protobuf_MODULE_COMPATIBLE TRUE CACHE INTERNAL "")
+   find_package(Protobuf 3.0.0 CONFIG)
+ else()
+-  find_package(Protobuf 3.0.0 REQUIRED)
++  # protobuf 22 and later need their CMake package: its targets carry the
++  # abseil libraries that the generated code and headers call inline.
++  find_package(protobuf CONFIG)
++  if(protobuf_FOUND)
++    set(PROTOBUF_LIBRARY protobuf::libprotobuf)
++    if(NOT PROTOBUF_PROTOC_EXECUTABLE)
++      set(PROTOBUF_PROTOC_EXECUTABLE protobuf::protoc)
++    endif()
++  else()
++    find_package(Protobuf 3.0.0 REQUIRED)
++  endif()
+ endif()
+ 
+ if (${BUILD_GRPC})
+@@ -228,16 +241,23 @@ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+   "${EIGEN3_INCLUDE_DIR}")
+ target_link_libraries(${PROJECT_NAME} PUBLIC ${EIGEN3_LIBRARIES})
+ 
+-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+-  "${CERES_INCLUDE_DIRS}")
++# Ceres' and Boost's CMake packages give imported targets that carry their
++# include directories; CERES_INCLUDE_DIRS is then empty, and "" exported the
++# source directory as an include directory of the installed package.
++if(CERES_INCLUDE_DIRS)
++  target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
++    "${CERES_INCLUDE_DIRS}")
++endif()
+ target_link_libraries(${PROJECT_NAME} PUBLIC ${CERES_LIBRARIES})
+ 
+ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+   "${LUA_INCLUDE_DIR}")
+ target_link_libraries(${PROJECT_NAME} PUBLIC ${LUA_LIBRARIES})
+ 
+-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+-  "${Boost_INCLUDE_DIRS}")
++if(NOT TARGET Boost::iostreams)
++  target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
++    "${Boost_INCLUDE_DIRS}")
++endif()
+ target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES})
+ 
+ if (WIN32)
+@@ -300,6 +320,7 @@ set(TARGET_COMPILE_FLAGS "${TARGET_COMPILE_FLAGS} ${GOOG_CXX_FLAGS}")
+ set_target_properties(${PROJECT_NAME} PROPERTIES
+   COMPILE_FLAGS ${TARGET_COMPILE_FLAGS})
+ 
++if(CARTOGRAPHER_BUILD_TESTS)
+ set(TEST_LIB
+   cartographer_test_library
+ )
+@@ -333,6 +354,7 @@ foreach(ABS_FIL ${ALL_TESTS})
+   endif()
+   target_link_libraries("${TEST_TARGET_NAME}" PUBLIC ${TEST_LIB})
+ endforeach()
++endif()
+ 
+ # Add the binary directory first, so that port.h is included after it has
+ # been generated.
+diff --git a/cartographer-config.cmake.in b/cartographer-config.cmake.in
+--- a/cartographer-config.cmake.in
++++ b/cartographer-config.cmake.in
+@@ -40,6 +40,9 @@ if (WIN32)
+     find_package(glog REQUIRED)
+ endif()
+ find_package(absl ${QUIET_OR_REQUIRED_OPTION})
++# The exported target names these packages' imported targets.
++find_package(protobuf CONFIG ${QUIET_OR_REQUIRED_OPTION})
++find_package(Boost ${QUIET_OR_REQUIRED_OPTION} COMPONENTS iostreams)
+ if(CARTOGRAPHER_HAS_GRPC)
+    find_package(async_grpc ${QUIET_OR_REQUIRED_OPTION})
+ endif()

@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add autoconf autoconf-dev
-apk add qnx-test-autoconf && /usr/local/bin/qnx-port-tests/test_autoconf    # its on-target test
+apk add qnx-test-autoconf && /usr/local/bin/qnx-port-tests/test_autoconf    # its on-target test, from tests-8.0-<arch>
 apk del autoconf autoconf-dev qnx-test-autoconf
 ```
 
@@ -160,7 +160,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_autoconf`](../../tests/src/) links autoconf the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-autoconf`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_autoconf`](../../tests/src/) links autoconf the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-autoconf`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

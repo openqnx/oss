@@ -1,0 +1,30 @@
+Take byte order and byte swaps from QNX's own headers.
+
+QNX has neither <byteswap.h> nor <endian.h>. The byte order macros
+(BYTE_ORDER, LITTLE_ENDIAN, BIG_ENDIAN) are in <sys/param.h> and the
+htobe64()/be64toh() family in <net/netbyte.h> (hazard 13); bswap_16/32/64
+are GCC builtins.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/system.h
++++ b/lib/system.h
+@@ -47,8 +47,18 @@
+ #include <stdlib.h>
+ 
+ /* System dependent headers */
++#ifdef __QNX__
++/* QNX has neither <byteswap.h> nor <endian.h>: BYTE_ORDER and
++   LITTLE_ENDIAN/BIG_ENDIAN come from <sys/param.h>, the swaps from GCC.  */
++# include <sys/param.h>
++# include <net/netbyte.h>	/* htobe64, be64toh, ... */
++# define bswap_16(x) __builtin_bswap16 (x)
++# define bswap_32(x) __builtin_bswap32 (x)
++# define bswap_64(x) __builtin_bswap64 (x)
++#else
+ #include <byteswap.h>
+ #include <endian.h>
++#endif
+ #include <sys/mman.h>
+ #include <sys/param.h>
+ #include <unistd.h>

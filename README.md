@@ -1,17 +1,17 @@
 # QNX OSS — open source for QNX SDP 8.0
 
-![ported](https://img.shields.io/badge/open_source_ported-524-blue)
-![verified](https://img.shields.io/badge/verified_on_QNX_targets-524-brightgreen)
+![ported](https://img.shields.io/badge/open_source_ported-675-blue)
+![verified](https://img.shields.io/badge/verified_on_QNX_targets-669-brightgreen)
 ![SDP](https://img.shields.io/badge/QNX_SDP-8.0-informational)
 ![arch](https://img.shields.io/badge/arch-x86__64_%7C_aarch64le-informational)
 
-**524 open source projects ported to QNX 8.0 · 524 of them verified on
+**675 open source projects ported to QNX 8.0 · 669 of them verified on
 QNX targets (x86_64 and aarch64le) and installable with `apk` from this
 repository's releases.** The numbers are counted from `ports/` and
 `tests/results/` each time this page is generated (`scripts/gen-root-readme`),
 so they follow every component added.
 
-Build files, QNX patches and step-by-step guides for **524 open source
+Build files, QNX patches and step-by-step guides for **675 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64** — and the same components as prebuilt packages
 a QNX target can download and install directly.
@@ -54,12 +54,12 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 
 | | |
 |---|---|
-| Components | **524** (524 build for every architecture they support -- both, but for a few aarch64-only ones) |
-| Verified on QNX targets | **524** -- installed with apk and tested on both architectures; these are the packages in the releases |
-| 🟢 Standalone | **223** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **63** — need other components to build, run on their own |
-| 🔴 Dependent | **238** — need other components to build and to run |
-| QNX patches | **447**, one file per change, each with its reason |
+| Components | **675** (675 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| Verified on QNX targets | **669** -- installed with apk and tested on both architectures; these are the packages in the releases |
+| 🟢 Standalone | **271** — QNX SDP only, at build time and at run time |
+| 🟡 Build-deps only | **110** — need other components to build, run on their own |
+| 🔴 Dependent | **294** — need other components to build and to run |
+| QNX patches | **610**, one file per change, each with its reason |
 | On-target tests | **233** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 

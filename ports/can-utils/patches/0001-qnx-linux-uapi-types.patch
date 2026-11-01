@@ -1,0 +1,47 @@
+QNX: the Linux UAPI types the shipped CAN headers need.
+
+can-utils builds against its own copies of the Linux UAPI headers
+(include/linux/can.h, ...), which include <linux/types.h>, <linux/socket.h>
+and <linux/stddef.h>. QNX has no <linux/...> headers: qnx/linux/ (put on the
+include path by the recipe) defines the kernel's __u8/__u32/... types from
+<stdint.h> and maps the other two onto QNX's <sys/socket.h> and <stddef.h>.
+Only the CAN frame definitions are used; nothing opens a CAN socket.
+
+Upstream-Status: QNX-specific
+
+--- /dev/null
++++ b/qnx/linux/socket.h
+@@ -0,0 +1,5 @@
++/*
++ * QNX: <linux/can.h> includes <linux/socket.h> (and then defines
++ * __kernel_sa_family_t itself); the socket definitions are QNX's own.
++ */
++#include <sys/socket.h>
+--- /dev/null
++++ b/qnx/linux/stddef.h
+@@ -0,0 +1,2 @@
++/* QNX: <linux/stddef.h> (offsetof, used by <linux/can.h>) is <stddef.h>. */
++#include <stddef.h>
+--- /dev/null
++++ b/qnx/linux/types.h
+@@ -0,0 +1,20 @@
++/*
++ * QNX: the Linux UAPI headers can-utils ships (include/linux/can.h, ...)
++ * include <linux/types.h> for the kernel's fixed-width types. QNX has no
++ * <linux/...> headers; these are the same types from <stdint.h>.
++ */
++#ifndef QNX_LINUX_TYPES_H
++#define QNX_LINUX_TYPES_H
++#include <stdint.h>
++typedef uint8_t  __u8;
++typedef int8_t   __s8;
++typedef uint16_t __u16;
++typedef int16_t  __s16;
++typedef uint32_t __u32;
++typedef int32_t  __s32;
++typedef uint64_t __u64;
++typedef int64_t  __s64;
++typedef uint16_t __le16, __be16;
++typedef uint32_t __le32, __be32;
++typedef uint64_t __le64, __be64;
++#endif

@@ -1,0 +1,70 @@
+Use the two-argument makedev() these callers mean on QNX.
+
+QNX's makedev() takes three arguments, (node, major, minor), and its
+<sys/types.h> defines it as a macro of that shape, so every two-argument
+makedev(major, minor) call fails to compile. Where QNX is the target, define
+the two-argument form these files mean: a device number on the local node,
+encoded the way QNX's own macro encodes major and minor.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/blkid/devname.c
++++ b/lib/blkid/devname.c
+@@ -39,6 +39,12 @@
+ #ifdef HAVE_SYS_SYSMACROS_H
+ #include <sys/sysmacros.h>
+ #endif
++#ifdef __QNX__
++/* QNX's makedev() takes (node, major, minor); these callers mean the
++   two-argument form, a device number on the local node. */
++#undef makedev
++#define makedev(ma, mi) ((dev_t)(((ma) << 10) | (mi)))
++#endif
+ #include <time.h>
+ 
+ #include "blkidP.h"
+--- a/lib/blkid/devno.c
++++ b/lib/blkid/devno.c
+@@ -34,6 +34,12 @@
+ #ifdef HAVE_SYS_SYSMACROS_H
+ #include <sys/sysmacros.h>
+ #endif
++#ifdef __QNX__
++/* QNX's makedev() takes (node, major, minor); these callers mean the
++   two-argument form, a device number on the local node. */
++#undef makedev
++#define makedev(ma, mi) ((dev_t)(((ma) << 10) | (mi)))
++#endif
+ 
+ #include "blkidP.h"
+ 
+--- a/lib/ext2fs/finddev.c
++++ b/lib/ext2fs/finddev.c
+@@ -34,6 +34,12 @@
+ #ifdef HAVE_SYS_SYSMACROS_H
+ #include <sys/sysmacros.h>
+ #endif
++#ifdef __QNX__
++/* QNX's makedev() takes (node, major, minor); these callers mean the
++   two-argument form, a device number on the local node. */
++#undef makedev
++#define makedev(ma, mi) ((dev_t)(((ma) << 10) | (mi)))
++#endif
+ 
+ #include "ext2_fs.h"
+ #include "ext2fs.h"
+--- a/debugfs/debugfs.c
++++ b/debugfs/debugfs.c
+@@ -40,6 +40,12 @@
+ #include "../version.h"
+ #include "jfs_user.h"
+ #include "support/plausible.h"
++#ifdef __QNX__
++/* QNX's makedev() takes (node, major, minor); these callers mean the
++   two-argument form, a device number on the local node. */
++#undef makedev
++#define makedev(ma, mi) ((dev_t)(((ma) << 10) | (mi)))
++#endif
+ 
+ #ifndef BUFSIZ
+ #define BUFSIZ 8192

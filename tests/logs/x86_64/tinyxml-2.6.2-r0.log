@@ -1,0 +1,37 @@
+# tinyxml 2.6.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:10:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tinyxml qnx-test-tinyxml qnx-port-tests
+(1/2) Installing tinyxml (2.6.2-r0)
+(2/2) Installing qnx-test-tinyxml (1.0-r0)
+OK: 95 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tinyxml
+     == tinyxml ==
+       ok   Parse() of a well-formed document
+       ok   root element is <config>
+       ok   typed attributes version=3, ratio=0.75
+       ok   a missing attribute: TIXML_NO_ATTRIBUTE
+       ok   two <item>s, entity &amp; decoded
+       ok   TiXmlHandle path to the second item
+       ok   declaration version 1.0
+       ok   the comment node
+       ok   mismatched tags: an error, with its row
+       info error: Error reading end tag. (row 3, col 1)
+       ok   TiXmlPrinter output, text escaped
+       ok   SaveFile
+       ok   LoadFile reads it back
+       ok   operator<< (STL interface)
+       ok   operator>> (STL interface)
+       ok   truncated UTF-8 lead byte: an error, no hang (CVE-2021-42260)
+       ok   cut-off XML declaration: no abort (CVE-2023-34194)
+     PASS tinyxml
+PASS test_tinyxml
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

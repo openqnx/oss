@@ -1,0 +1,55 @@
+Override protobuf's RecordError(), the error-collector hook since protobuf 22.
+
+protobuf 22 renamed the error-collector hooks and took string_view
+arguments: io::ErrorCollector::AddError(int, ColumnNumber, const string&)
+became RecordError(int, ColumnNumber, absl::string_view), and
+DescriptorPool::ErrorCollector::AddError(...) RecordError(...); the old
+names were removed in protobuf 26. This tree's protobuf is 29.3, so the
+two collectors riegeli defines (text parsing, records metadata) override
+the new names. Upstream riegeli made the same change later.
+
+Upstream-Status: Pending
+
+--- a/riegeli/messages/text_parse.cc
++++ b/riegeli/messages/text_parse.cc
+@@ -35,9 +35,9 @@ namespace riegeli {
+ 
+ namespace messages_internal {
+ 
+-void StringErrorCollector::AddError(int line,
+-                                    google::protobuf::io::ColumnNumber column,
+-                                    const std::string& message) {
++void StringErrorCollector::RecordError(int line,
++                                       google::protobuf::io::ColumnNumber column,
++                                       absl::string_view message) {
+   if (line >= 0) {
+     absl::StrAppend(&errors_, "\nAt ", line + 1, ":", column + 1, ": ",
+                     message);
+--- a/riegeli/messages/text_parse.h
++++ b/riegeli/messages/text_parse.h
+@@ -39,8 +39,8 @@ namespace messages_internal {
+ 
+ class StringErrorCollector : public google::protobuf::io::ErrorCollector {
+  public:
+-  void AddError(int line, google::protobuf::io::ColumnNumber column,
+-                const std::string& message) override;
++  void RecordError(int line, google::protobuf::io::ColumnNumber column,
++                   absl::string_view message) override;
+ 
+   absl::string_view errors() const { return errors_; }
+ 
+--- a/riegeli/records/record_reader.cc
++++ b/riegeli/records/record_reader.cc
+@@ -60,9 +60,9 @@ namespace riegeli {
+ class RecordsMetadataDescriptors::ErrorCollector
+     : public google::protobuf::DescriptorPool::ErrorCollector {
+  public:
+-  void AddError(const std::string& filename, const std::string& element_name,
+-                const google::protobuf::Message* descriptor,
+-                ErrorLocation location, const std::string& message) override {
++  void RecordError(absl::string_view filename, absl::string_view element_name,
++                   const google::protobuf::Message* descriptor,
++                   ErrorLocation location, absl::string_view message) override {
+     descriptors_->Fail(absl::InvalidArgumentError(
+         absl::StrCat("Error in file ", filename, ", element ", element_name,
+                      ": ", message)));

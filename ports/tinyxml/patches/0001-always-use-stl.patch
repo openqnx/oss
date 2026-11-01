@@ -1,0 +1,26 @@
+Always build and use the STL interface (TIXML_USE_STL)
+
+TIXML_USE_STL changes the layout of TiXmlString-holding classes (std::string
+instead of TinyXML's own TiXmlString) and adds std::string/iostream methods.
+The shared library is compiled with it, so a program that includes
+tinyxml.h without -DTIXML_USE_STL would use a different class layout than
+the library it links. The header now defines it itself, as the
+distributions' libtinyxml packages do.
+
+Upstream-Status: Inappropriate (packaging: upstream ships no library build)
+
+--- a/tinyxml.h	2011-05-15 11:24:57.000000000 +0900
++++ b/tinyxml.h	2026-11-01 12:51:14.618435590 +0900
+@@ -43,6 +43,12 @@
+ #define DEBUG
+ #endif
+ 
++/* This build of the library is compiled with the STL interface; every
++   user must see the same class layout. */
++#ifndef TIXML_USE_STL
++#define TIXML_USE_STL
++#endif
++
+ #ifdef TIXML_USE_STL
+ 	#include <string>
+  	#include <iostream>

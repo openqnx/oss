@@ -1,0 +1,21 @@
+avahi-common: find config.h in an out-of-tree build with nostdinc
+
+qnx-ports' patch 0001 sets AUTOMAKE_OPTIONS = nostdinc in avahi-common, so
+that avahi-common/malloc.h no longer shadows the system <malloc.h> that
+QNX's <stdlib.h> includes. nostdinc also drops -I$(top_builddir), which is
+where config.h is in an out-of-tree build (the fork builds in the source
+tree, where -I$(top_srcdir) happens to find it). Add it back explicitly.
+
+Upstream-Status: QNX-specific
+
+--- a/avahi-common/Makefile.am
++++ b/avahi-common/Makefile.am
+@@ -15,7 +15,7 @@
+ # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ # USA.
+ 
+-AM_CFLAGS=-I$(top_srcdir)
++AM_CFLAGS=-I$(top_srcdir) -I$(top_builddir)
+ 
+ # This cool debug trap works on i386/gcc only
+ AM_CFLAGS+='-DDEBUG_TRAP=__asm__("int $$3")'

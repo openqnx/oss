@@ -1,0 +1,4 @@
+# Mesa's libraries are in its own prefix and carry no so: provides (like
+# llama.cpp's); test_mesa also loads lavapipe (libvulkan_lvp.so) by dlopen.
+test_mesa	opt/mesa/lib
+test_mesa_wayland	opt/mesa/lib

@@ -1,0 +1,24 @@
+Makefile.PL: look for the terminal ioctls in <sys/ioctl.h> too
+
+Makefile.PL decides which terminal constants exist by compiling a test
+for each with the headers it found, and those are only termios.h,
+termio.h, pty.h and friends. On Linux <termios.h> pulls in the ioctl
+numbers; on QNX (and the BSDs) TIOCSWINSZ, TIOCGWINSZ, TIOCSCTTY,
+TIOCNOTTY ... are in <sys/ioctl.h>, so all of them came out undefined:
+IO::Pty could not set the window size and Pty.pm warned that TIOCSCTTY
+did not compile. Tty.xs already includes <sys/ioctl.h>; let the probes see
+it too.
+
+Upstream-Status: QNX-specific
+
+--- a/Makefile.PL
++++ b/Makefile.PL
+@@ -251,7 +251,7 @@
+ # find various headerfiles
+ 
+ my @headers = qw(termios.h termio.h libutil.h util.h pty.h
+-                 sys/stropts.h sys/ptyio.h sys/pty.h);
++                 sys/stropts.h sys/ptyio.h sys/pty.h sys/ioctl.h);
+ my %headers;
+ 
+ foreach my $h (sort @headers) {

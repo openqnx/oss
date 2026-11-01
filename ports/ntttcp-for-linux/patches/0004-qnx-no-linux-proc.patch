@@ -1,0 +1,73 @@
+Do not report Linux-only /proc files as errors on QNX.
+
+ntttcp samples Linux's /proc/stat, /proc/net/snmp, /proc/net/netstat,
+/proc/interrupts and /proc/cpuinfo before and after every test. QNX has
+none of them, so every run printed a dozen "ERR : failed to open file"
+lines although the test itself was fine, and reported "cpu cores: 0".
+On QNX a missing file is now not an error (its counters stay 0, as
+before), and the CPU count comes from sysconf(_SC_NPROCESSORS_ONLN).
+
+Upstream-Status: QNX-specific
+
+--- a/src/oscounter.c
++++ b/src/oscounter.c
+@@ -6,6 +6,16 @@
+ 
+ #include "oscounter.h"
+ 
++#ifdef __QNX__
++/* QNX has none of Linux's /proc/stat, /proc/net/snmp, /proc/net/netstat,
++   /proc/interrupts or /proc/cpuinfo: their counters stay 0 there, without an
++   error message for every file on every sample. */
++#include <unistd.h>	/* sysconf() */
++#define PROC_ABSENT_OK (errno == ENOENT)
++#else
++#define PROC_ABSENT_OK 0
++#endif
++
+ void get_cpu_usage(struct cpu_usage *cu)
+ {
+ 	struct timeval time;
+@@ -24,9 +34,13 @@
+ 	unsigned long long int user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice;
+ 	user = nice = system = idle = iowait = irq = softirq = steal = guest = guest_nice = 0;
+ 
++#ifdef __QNX__
++	cups->nproc = MAX((int)sysconf(_SC_NPROCESSORS_ONLN), 1);
++#endif
+ 	FILE *file = fopen(PROC_FILE_STAT, "r");
+ 	if (file == NULL) {
+-		PRINT_ERR("Cannot open /proc/stat");
++		if (!PROC_ABSENT_OK)
++			PRINT_ERR("Cannot open /proc/stat");
+ 		return;
+ 	}
+ 
+@@ -84,7 +98,8 @@
+ {
+ 	FILE *file = fopen(PROC_FILE_INTERRUPTS, "r");
+ 	if (file == NULL) {
+-		PRINT_ERR("Cannot open /proc/interrupts");
++		if (!PROC_ABSENT_OK)
++			PRINT_ERR("Cannot open /proc/interrupts");
+ 		return 0;
+ 	}
+ 	if (!strcmp(dev_name, ""))
+@@ -175,6 +190,8 @@
+ 
+ 	stream = fopen(file_name, "r");
+ 	if (!stream) {
++		if (PROC_ABSENT_OK)
++			return 0;
+ 		ASPRINTF(&log, "failed to open file: %s. errno = %d", file_name, errno);
+ 		PRINT_ERR_FREE(log);
+ 		return 0;
+@@ -246,6 +263,8 @@
+ 
+ 	stream = fopen(file_name, "r");
+ 	if (!stream) {
++		if (PROC_ABSENT_OK)
++			return 0;
+ 		ASPRINTF(&log, "failed to open file: %s. errno = %d", file_name, errno);
+ 		PRINT_ERR_FREE(log);
+ 		return 0;

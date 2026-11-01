@@ -1,0 +1,10 @@
+test_gnupg	bin/gpg bin/gpg-agent bin/gpgconf bin/gpg-connect-agent bin/gpgv bin/gpgtar bin/gpgsm
+test_mosh	bin/mosh-server bin/mosh-client share/terminfo/v/vt100 share/terminfo/x/xterm-256color
+test_zerotier_one	sbin/zerotier-one sbin/zerotier-cli sbin/zerotier-idtool
+test_boringssl	opt/boringssl/lib/libcrypto.so.0.20260929.0 opt/boringssl/lib/libssl.so.0.20260929.0
+test_nginx	sbin/nginx
+test_dhcpcd	sbin/dhcpcd
+test_lldpd	sbin/lldpd sbin/lldpcli lib/liblldpctl.so.14
+test_nss	bin/certutil lib/libsoftokn3.so lib/libfreebl3.so
+test_iperf2	bin/iperf
+test_ntttcp_for_linux	bin/ntttcp

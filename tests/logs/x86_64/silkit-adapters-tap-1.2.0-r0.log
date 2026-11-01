@@ -1,0 +1,32 @@
+# silkit-adapters-tap 1.2.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:09:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u silkit-adapters-tap qnx-test-silkit-adapters-tap qnx-port-tests
+(1/3) Installing silkit (5.0.8-r1)
+(2/3) Installing silkit-adapters-tap (1.2.0-r0)
+(3/3) Installing qnx-test-silkit-adapters-tap (1.0-r0)
+OK: 107 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_silkit_adapters_tap
+     == silkit-adapters-tap ==
+       ok   --help lists --tap-name and --registry-uri
+       ok   registry running on silkit://<ip>:18420
+       ok   a missing TAP device is refused with the adapter's hint
+       info tap120 is <ip>/24
+       ok   the adapter opened /dev/tapN
+       ok   tap interface brought up with the adapter attached
+       ok   the host's ARP request for .2 arrives on the SIL Kit network
+       ok   ARP request comes from the tap's address .1
+       ok   after the ARP reply the UDP datagram is sent to the simulated MAC
+       ok   UDP datagram to port 9 with its payload intact
+       ok   a datagram injected on the SIL Kit side reaches a host socket
+     PASS silkit-adapters-tap
+PASS test_silkit_adapters_tap
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

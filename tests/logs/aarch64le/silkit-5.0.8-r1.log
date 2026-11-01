@@ -1,0 +1,28 @@
+# silkit 5.0.8-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:48:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u silkit qnx-test-silkit qnx-port-tests
+(1/2) Installing silkit (5.0.8-r1)
+(2/2) Installing qnx-test-silkit (1.0-r0)
+OK: 134 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_silkit
+     == silkit ==
+       info SIL Kit 5.0.8
+       ok   sil-kit-registry is running on silkit://<ip>:18561
+       ok   two participants joined through the registry
+       ok   a late subscriber gets the publisher's history (the last value)
+       info received 50 of 50 messages
+       ok   50 messages arrive in order, byte for byte
+       ok   a subscriber with a different mandatory label gets nothing
+       ok   RPC: the server adds 40 + 2 and the client gets 42
+     PASS silkit
+PASS test_silkit
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,30 @@
+# netmap 14.0_git20261027-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:33:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u netmap qnx-test-netmap qnx-port-tests
+(1/2) Installing netmap (14.0_git20261027-r0)
+(2/2) Installing qnx-test-netmap (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_netmap
+     == netmap ==
+       ok   /dev/netmap (io-sock netmap)
+       ok   VALE: sent 1000 x 60 bytes
+       ok   VALE: received 1000 packets, 60000 bytes
+       ok   pipe: received 5000 packets, 640000 bytes
+       info txseq/rxseq: 1664944 packets in about 2 s
+       ok   txseq -> rxseq: 1664944 packets
+       ok   rxseq: no sequence gap or reordering
+       ok   pcap file: 5724 bytes (24 + 50 x (16 + 98))
+       ok   nmreplay: 1049 frames, all of 98 bytes
+       ok   missing interface: refused (No such device)
+     PASS netmap
+PASS test_netmap
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

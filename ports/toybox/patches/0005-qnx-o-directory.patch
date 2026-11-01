@@ -1,0 +1,72 @@
+Open directories with O_DIRECTORY; no O_PATH/O_NOATIME on QNX.
+
+On QNX, openat() under a directory descriptor that was opened without
+O_DIRECTORY fails with ENOTDIR (and fdopendir() of it too), so every
+recursive walk (find, ls -R, cp -r, tar, rm -r) stopped one level down:
+"find: .: Not a directory". dirtree opens only directories here, so it
+says so. xabspath() (realpath, readlink -f) likewise opens the directories
+it resolves through with O_DIRECTORY. And toybox's fallback values for
+O_PATH and O_NOATIME (010000000, 01000000) are QNX's O_DIRFD and O_ANON:
+on QNX they are 0.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/dirtree.c
++++ b/lib/dirtree.c
+@@ -126,7 +126,10 @@
+ 
+   if (S_ISDIR(new->st.st_mode) && (flags & df)) {
+     // TODO: check openat returned fd for errors... and do what about it?
+-    if (*new->name) fd = openat(dirtree_parentfd(new), new->name, O_CLOEXEC);
++    // O_DIRECTORY: on QNX, openat() under a directory fd opened without it
++    // fails with ENOTDIR (and so does fdopendir() of it).
++    if (*new->name)
++      fd = openat(dirtree_parentfd(new), new->name, O_CLOEXEC|O_DIRECTORY);
+     if (flags&DIRTREE_BREADTH) {
+       new->again |= DIRTREE_BREADTH;
+       if ((DIRTREE_ABORT & dirtree_recurse(new, 0, fd, flags)) ||
+--- a/lib/portability.h
++++ b/lib/portability.h
+@@ -18,6 +18,10 @@
+ #include <sys/statvfs.h>
+ #define statfs statvfs
+ #define fstatfs fstatvfs
++// No O_PATH or O_NOATIME: the generic fallbacks below (010000000 and
++// 01000000) are QNX's O_DIRFD and O_ANON, so they must not be used.
++#define O_PATH 0
++#define O_NOATIME 0
+ // No Linux system calls: the callers only reach syscall() for a system
+ // call number that does not exist here (copy_file_range: 0), so this
+ // stub never runs.
+--- a/lib/xwrap.c
++++ b/lib/xwrap.c
+@@ -612,14 +612,14 @@
+     str = (new = llist_pop(&todo))->str;
+     // track dirfd if this component must exist or we're resolving symlinks
+     track = ((flags>>!todo) & (ABS_PATH|ABS_KEEP)) ^ ABS_KEEP;
+-    if (!done && track) dirfd = open("/", O_PATH);
++    if (!done && track) dirfd = open("/", O_PATH|O_DIRECTORY);
+     if (*str=='.' && !str[1+((fd = str[1])=='.')]) {
+       free(new);
+       if (fd) {
+         if (done) free(llist_pop(&done));
+         if (missing) missing--;
+         else if (track) {
+-          if (-1 == (fd = openat(dirfd, "..", O_PATH))) goto error;
++          if (-1 == (fd = openat(dirfd, "..", O_PATH|O_DIRECTORY))) goto error;
+           close(dirfd);
+           dirfd = fd;
+         }
+@@ -639,7 +639,11 @@
+       if (errno == ENOENT && !(flags & (ABS_PATH<<!todo))) missing++;
+       else if (errno != EINVAL && (flags & (ABS_PATH<<!todo))) goto error;
+       else if (track) {
+-        if (-1 == (fd = openat(dirfd, new->str, O_PATH))) goto error;
++        // Directories (anything with components after it) say so: on QNX,
++        // where O_PATH is a plain open, *at() under a directory fd opened
++        // without O_DIRECTORY fails with ENOTDIR.
++        if (-1 == (fd = openat(dirfd, new->str, O_PATH|(todo ? O_DIRECTORY : 0))))
++          goto error;
+         close(dirfd);
+         dirfd = fd;
+       }

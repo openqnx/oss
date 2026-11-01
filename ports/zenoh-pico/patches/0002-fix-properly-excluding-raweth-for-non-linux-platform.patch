@@ -1,0 +1,41 @@
+From a579d755f681698e36936a5cc7f0bf515d188ae7 Mon Sep 17 00:00:00 2001
+From: Pavlo Kleymonov <pkleymonov@blackberry.com>
+Date: Mon, 30 Jun 2025 13:38:13 +0200
+Subject: [PATCH 2/2] fix properly excluding raweth for non-linux platforms
+
+
+raweth.c includes Linux-only headers (<linux/if_packet.h>) before its
+Z_FEATURE_RAWETH_TRANSPORT guard; move the guard above them so the file is
+empty on QNX, where the raw-ethernet transport is off.
+
+Upstream-Status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1)
+
+---
+ src/system/unix/link/raweth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/system/unix/link/raweth.c b/src/system/unix/link/raweth.c
+index 6e15cae..232ee86 100644
+--- a/src/system/unix/link/raweth.c
++++ b/src/system/unix/link/raweth.c
+@@ -14,6 +14,8 @@
+ 
+ #include "zenoh-pico/system/link/raweth.h"
+ 
++#if Z_FEATURE_RAWETH_TRANSPORT == 1
++
+ #include <arpa/inet.h>
+ #include <errno.h>
+ #include <ifaddrs.h>
+@@ -36,8 +38,6 @@
+ #include "zenoh-pico/utils/logging.h"
+ #include "zenoh-pico/utils/pointers.h"
+ 
+-#if Z_FEATURE_RAWETH_TRANSPORT == 1
+-
+ #if !defined(__linux)
+ #error "Raweth transport only supported on linux systems"
+ #else
+-- 
+2.43.0
+

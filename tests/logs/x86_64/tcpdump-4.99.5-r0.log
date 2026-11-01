@@ -1,0 +1,32 @@
+# tcpdump 4.99.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:32:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tcpdump qnx-test-tcpdump qnx-port-tests
+(1/3) Installing qnx-test-tcpdump-mkpcap (1.0-r0)
+(2/3) Installing tcpdump (4.99.5-r0)
+(3/3) Installing qnx-test-tcpdump (1.0-r1)
+OK: 91 MiB in 27 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tcpdump
+     == tcpdump ==
+       info tcpdump version 4.99.5 libpcap version 1.10.5 
+       ok   capture file written (248 bytes)
+       ok   three packets decoded: DNS A? qnx.example., ICMP echo, TCP SYN
+       ok   -vv: IP header fields, UDP and TCP checksums verified
+       ok   filter 'icmp': one packet
+       ok   filter on TCP flags and port
+       ok   -w: filtered capture written and read back
+       ok   -X hex dump of the TCP packet
+       ok   -e link-level header, -c 1
+       ok   -d: BPF program compiled
+       ok   missing file: error
+     PASS tcpdump
+PASS test_tcpdump
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,21 @@
+-e with an unset variable: report it, do not crash.
+
+When the variable -e names is not set, sshpass reports it and then still
+calls hide_password(), which copies args.orig_password -- NULL here -- and
+dies with SIGSEGV instead of exiting with its "invalid arguments" status.
+Only hide a password that exists.
+
+Upstream-Status: Pending
+
+--- a/main.c
++++ b/main.c
+@@ -185,7 +185,8 @@
+                 error=RETURN_INVALID_ARGUMENTS;
+             }
+ 
+-            hide_password();
++            if( args.orig_password!=NULL )
++                hide_password();
+             unsetenv(optarg);
+             break;
+         case '?':

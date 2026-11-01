@@ -1,0 +1,33 @@
+Build with -fno-strict-aliasing: the portable code type-puns, and GCC -O3 miscomputes it.
+
+hh_portable.h reads the input packets and lanes through pointer casts
+(reinterpret_cast of the byte buffer to HHPacket and uint64_t), which the
+C++ aliasing rules do not allow. GCC at -O3 -- the optimization the
+library is built with -- then reorders the loads, and the portable
+HighwayHash target (the one used where neither AVX2/SSE4.1 nor NEON is
+available, and HighwayHash<HH_TARGET_Portable> called directly) returns
+wrong hashes for every input longer than one 32-byte packet: for the test
+vector of 33 bytes 0xe224df579cf94ee5 instead of 0x2c90f73ca03181fc. Seen
+with GCC 12 (QNX SDP 8.0) and GCC 13 (Linux) alike; upstream's own test
+does not notice because it compiles its portable implementation in its
+own translation unit. With -fno-strict-aliasing all 65 reference values
+of highwayhash_test.cc match, for every target.
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -141,6 +141,13 @@
+ endif()
+ 
+ add_library(highwayhash::highwayhash ALIAS highwayhash)
++# The portable code reads the input through casts that break the strict
++# aliasing rules; GCC at -O3 then computes wrong hashes for inputs longer than
++# one 32-byte packet. Compiled without that assumption, the results are the
++# reference values.
++if(NOT MSVC)
++  target_compile_options(highwayhash PRIVATE -fno-strict-aliasing)
++endif()
+ set_target_properties(highwayhash PROPERTIES SOVERSION 0)
+ 
+ # Installed as the Makefile's install target does: every header, under

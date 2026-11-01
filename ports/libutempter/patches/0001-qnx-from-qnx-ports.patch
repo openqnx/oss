@@ -1,0 +1,138 @@
+From da4dbfb96d040489c8bc488919c9b4d84381f4d7 Mon Sep 17 00:00:00 2001
+From: Abdulfatah Ahmoda <abahmoda@qnx.com>
+Date: Tue, 17 Mar 2026 23:59:06 +0000
+Subject: [PATCH] QNX support from qnx-ports
+
+Imported from qnx-ports/libutempter (branch qnx-v1.2.3, 4caa8ab..da4dbfb); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+Commits:
+  c1348ea if on QNX include utmp.h
+  0e57a1c fixed qnx macro check
+  ee6ab90 unset SA_RESTART on QNX
+  bd674d3 Fixed EACCES fallback on QNX when redirecting stdin/stdout to master_d
+  56b937e fixed storing of timestamps for utmp/wtmp log entry
+  5f65cbd No longer try to store hostname in utmp records on QNX
+  08e5da2 fixed a return type mismatch error for pututline()
+  da4dbfb fixed call to undeclared function updwtmp() on QNX
+---
+ libutempter/iface.c    | 36 ++++++++++++++++++++++--------------
+ libutempter/utempter.c | 35 +++++++++++++++++++++++++++++------
+ 2 files changed, 51 insertions(+), 20 deletions(-)
+
+diff --git a/libutempter/iface.c b/libutempter/iface.c
+index 37c74a8..404ad00 100644
+--- a/libutempter/iface.c
++++ b/libutempter/iface.c
+@@ -22,6 +22,11 @@
+ # define _GNU_SOURCE	1
+ #endif
+ 
++#ifdef QNX
++#include <utmp.h>
++#define SA_RESTART 0
++#endif
++
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -62,21 +67,24 @@ do_child(int master_fd, const char *path, char *const *argv)
+ 
+ 	while (EACCES == errno) {
+ 		/* try saved group ID */
+-		gid_t rgid, egid, sgid;
+-
+-		if (getresgid(&rgid, &egid, &sgid))
+-			break;
+-
+-		if (sgid == egid)
+-			break;
+-
+-		if (setgid(sgid))
+-			break;
+-
+-		(void) execv(path, argv);
+-		break;
++        
++        #ifdef QNX
++            gid_t egid = getegid(); 
++            gid_t sgid = getgid();
++        #else 
++		    gid_t rgid, egid, sgid;
++            if (getresgid(&rgid, &egid, &sgid))
++                break;
++        #endif
++
++            if (sgid == egid)
++                break;
++            if (setgid(sgid))
++                break;
++        
++            (void) execv(path, argv);
++            break;
+ 	}
+-
+ 	_exit(EXIT_FAILURE);
+ }
+ 
+diff --git a/libutempter/utempter.c b/libutempter/utempter.c
+index 55dc790..7b9f3a0 100644
+--- a/libutempter/utempter.c
++++ b/libutempter/utempter.c
+@@ -91,10 +91,12 @@ write_uwtmp_record(const char *user, const char *term, const char *host,
+ 	len = strlen(user);
+ 	memcpy(ut.ut_name, user, MIN(sizeof(ut.ut_name), len));
+ 
+-	if (host) {
++	#ifndef QNX
++    if (host) {
+ 		len = strlen(host);
+ 		memcpy(ut.ut_host, host, MIN(sizeof(ut.ut_host), len));
+ 	}
++    #endif
+ 
+ 	len = strlen(term);
+ 	memcpy(ut.ut_line, term, MIN(sizeof(ut.ut_line), len));
+@@ -108,16 +110,37 @@ write_uwtmp_record(const char *user, const char *term, const char *host,
+ 		ut.ut_type = DEAD_PROCESS;
+ 
+ 	ut.ut_pid = pid;
+-
+-	ut.ut_tv.tv_sec = (__typeof__(ut.ut_tv.tv_sec)) tv.tv_sec;
+-	ut.ut_tv.tv_usec = (__typeof__(ut.ut_tv.tv_usec)) tv.tv_usec;
++    
++    #ifdef QNX
++        ut.ut_time = tv.tv_sec;
++    #else
++        ut.ut_tv.tv_sec = (__typeof__(ut.ut_tv.tv_sec)) tv.tv_sec;
++        ut.ut_tv.tv_usec = (__typeof__(ut.ut_tv.tv_usec)) tv.tv_usec;
++    #endif
+ 
+ 	setutent();
+-	if (!pututline(&ut))
+-		fatal_error("pututline: %s", strerror(errno));
++
++    #ifdef QNX
++        pututline(&ut);
++    #else
++        if (!pututline(&ut))
++            fatal_error("pututline: %s", strerror(errno));
++    #endif
+ 	endutent();
++    
++
++    #ifdef QNX
++        
++        utmpname(_PATH_WTMP);
++        setutent();
++
++        while (getutent());
+ 
++        pututline(&ut);
++        endutent();
++    #else
+ 	(void) updwtmp(_PATH_WTMP, &ut);
++    #endif
+ 
+ 	debug_msg("utmp/wtmp record %s for terminal '%s'",
+ 		  add ? "added" : "removed", term);

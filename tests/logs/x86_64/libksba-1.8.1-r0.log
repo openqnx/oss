@@ -1,0 +1,42 @@
+# libksba 1.8.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libksba qnx-test-libksba qnx-port-tests
+(1/4) Installing libgpg-error (1.50-r0)
+(2/4) Installing libksba (1.8.1-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-libksba (1.0-r0)
+OK: 94 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libksba
+     == libksba ==
+       info ksba_check_version: 1.8.1
+       ok   library version 1.8.1
+       ok   ksba_cert_new
+       ok   certificate (444 bytes DER) parsed
+       info subject: CN=ksba.test,O=QNX Port Test,C=CA
+       ok   subject DN (RFC 2253)
+       ok   issuer DN equals subject (self-signed)
+       ok   serial number 0x1234ABCD
+       ok   notBefore 20261031T230532
+       ok   notAfter 20361028T230532
+       info signature algorithm: 1.2.840.10045.4.3.2
+       ok   signature algorithm ecdsa-with-SHA256
+       ok   public key is an ECC point (65-byte uncompressed q)
+       ok   hash callback receives the exact 444-byte DER image
+       info is_ca: err=0 ca=1
+       ok   basicConstraints: CA (openssl req -x509 default)
+       ok   OID 1.2.840.113549.1.1.11 -> DER 2a864886f70d01010b
+       ok   DER -> OID string round trip
+       ok   DN "CN=Foo,O=Bar" is valid
+       ok   DN "CN=Foo" -> 16-byte DER
+     PASS libksba
+PASS test_libksba
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,31 @@
+# openmp 22.1.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:19:06Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openmp qnx-test-openmp qnx-port-tests
+(1/2) Installing openmp (22.1.8-r0)
+(2/2) Installing qnx-test-openmp (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openmp
+     == openmp ==
+       info omp_get_num_procs()=4 omp_get_max_threads()=4 _OPENMP=201511
+       ok   the runtime sees >= 1 processor
+       ok   serial part: not in parallel, thread 0
+       ok   parallel for reduction(+) over 1..1000000 = 500000500000
+       ok   a team of num_threads(4) has 4 threads
+       ok   thread numbers 0..3, each once (critical section)
+       ok   omp_in_parallel() inside the region
+       ok   schedule(dynamic,7): 1000 iterations, each exactly once (atomic)
+       ok   tasks: fib(20) = 6765
+       ok   omp_get_wtime / omp_get_wtick
+       ok   omp_set_num_threads(3) gives a team of 3
+     PASS openmp
+PASS test_openmp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

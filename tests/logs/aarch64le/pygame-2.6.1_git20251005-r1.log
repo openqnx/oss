@@ -1,0 +1,81 @@
+# pygame 2.6.1_git20251005-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:39:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pygame qnx-test-pygame qnx-port-tests
+( 1/27) Installing bzip2 (1.0.8-r0)
+( 2/27) Installing freetype (2.13.3-r0)
+( 3/27) Installing expat (2.6.4-r0)
+( 4/27) Installing gdbm (1.24-r0)
+( 5/27) Installing readline (8.2-r0)
+( 6/27) Installing sqlite (3.47.2-r0)
+( 7/27) Installing xz (5.6.3-r0)
+( 8/27) Installing python3 (3.14.0-r2)
+( 9/27) Installing sdl2 (2.32.10-r0)
+(10/27) Installing aom (3.12.1-r0)
+(11/27) Installing dav1d (1.5.0-r0)
+(12/27) Installing libavif (1.1.1-r0)
+(13/27) Installing libwebp (1.4.0-r0)
+(14/27) Installing libtiff (4.7.0-r0)
+(15/27) Installing sdl2-image (2.8.8-r0)
+(16/27) Installing libogg (1.3.5-r0)
+(17/27) Installing opus (1.5.2-r0)
+(18/27) Installing opusfile (0.12-r0)
+(19/27) Installing sdl2-mixer (2.8.2-r1)
+(20/27) Installing graphite2 (1.3.14-r0)
+(21/27) Installing icu (76.1-r1)
+(22/27) Installing harfbuzz (<ip>-r0)
+(23/27) Installing sdl2-ttf (2.24.0-r0)
+(24/27) Installing pygame (2.6.1_git20251005-r1)
+(25/27) Installing openblas (0.3.28-r0)
+(26/27) Installing numpy (2.3.4-r1)
+(27/27) Installing qnx-test-pygame (1.0-r0)
+OK: 324 MiB in 66 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pygame
+     == pygame ==
+       info pygame 2.6.1, SDL 2.32.10
+       info pygame.init(): 5 modules up, 0 failed
+       ok   display.set_mode on the dummy driver: 64x48
+       ok   drawn rect on the display surface
+       ok   window caption
+       ok   circle: centre blue, corner white
+       ok   line on the last row
+       ok   blit at an offset
+       ok   transform.scale
+       ok   transform.rotate 90: 40x20 -> 20x40
+       ok   transform.flip
+       ok   mask of the blue circle: 308 pixels (~pi*10^2)
+       ok   PNG save/load exact
+       ok   BMP save/load exact
+       ok   TGA save/load exact
+       ok   JPEG save/load (SDL_image) close to the original
+       ok   image.get_extended(): SDL_image formats available
+       ok   image.tobytes RGB
+       info font.size('QNX') = 37x16
+       ok   pygame.font (SDL_ttf): text size
+       ok   pygame.font render (anti-aliased, with alpha)
+       ok   pygame.freetype render
+       info mixer.get_init() = (22050, -16, 1)
+       ok   mixer on the dummy audio driver: 22050 Hz mono
+       ok   Sound from a buffer: 0.5 s, raw samples kept
+       ok   Sound.play() on a channel
+       ok   WAV file loaded by SDL_mixer: 0.5 s
+       ok   mixer.music plays the WAV
+       ok   sndarray: samples as numpy
+       ok   surfarray.array3d
+       ok   surfarray.make_surface
+       ok   Rect collide, clip, union
+       ok   math.Vector2/3
+       ok   event post/get
+       ok   time.wait(50)
+       ok   Color names, HSV
+     PASS pygame
+PASS test_pygame
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -2,7 +2,7 @@
 
 > Raspberry Pi camera image processing algorithms from libcamera
 
-**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`libyaml`](../libyaml/) |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`libyaml`](../libyaml/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libcamera`](../../tests/src/) |
 
@@ -174,7 +174,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libcamera`.
 
 ### 5. What it installs
 
-3 files under `/usr/local`: 3 shared-library entries.
+4 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/librpi_camera_ipa.so
@@ -218,7 +218,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libcamera`](../../tests/src/) links libcamera the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libcamera`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libcamera`](../../tests/src/) links libcamera the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libcamera`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

@@ -1,0 +1,29 @@
+# zenoh-pico 1.2.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:20:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zenoh-pico qnx-test-zenoh-pico qnx-port-tests
+(1/2) Installing zenoh-pico (1.2.1-r0)
+(2/2) Installing qnx-test-zenoh-pico (1.0-r0)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zenoh_pico
+     == zenoh-pico ==
+       ok   serialize/deserialize uint32 0xC0FFEE
+       ok   a uint32 serializes to 4 bytes
+       ok   open a peer session on udp/224.0.0.123:17448#iface=lo0
+       ok   open a second peer session on the same group
+       ok   the two sessions have different random ids
+       ok   key expression qnx/port-test/pico
+       ok   declare a subscriber
+       ok   the subscriber received a sample over UDP multicast
+       ok   with the payload intact
+     PASS zenoh-pico
+PASS test_zenoh_pico
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

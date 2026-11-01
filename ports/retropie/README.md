@@ -28,7 +28,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 
 ```sh
 # on the QNX target, as root
-apk add qnx-test-retropie && /usr/local/bin/qnx-port-tests/test_retropie    # its on-target test
+apk add qnx-test-retropie && /usr/local/bin/qnx-port-tests/test_retropie    # its on-target test, from tests-8.0-<arch>-m-z
 apk del retropie qnx-test-retropie
 ```
 
@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (44 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (48 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild retroarch emulationstation openttd libretro-2048 libretro-samples libretro-mrboom libretro-retro8 libretro-fake08
 ```
 
-<details><summary>Full build chain (44)</summary>
+<details><summary>Full build chain (48)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`emulationstation`](../emulationstation/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libass`](../libass/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libretro-2048`](../libretro-2048/) [`libretro-fake08`](../libretro-fake08/) [`libretro-mrboom`](../libretro-mrboom/) [`libretro-retro8`](../libretro-retro8/) [`libretro-samples`](../libretro-samples/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`openttd`](../openttd/) [`pcre2`](../pcre2/) [`pugixml`](../pugixml/) [`rapidjson`](../rapidjson/) [`retroarch`](../retroarch/) [`sdl2`](../sdl2/) [`vlc`](../vlc/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`emulationstation`](../emulationstation/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libass`](../libass/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libretro-2048`](../libretro-2048/) [`libretro-fake08`](../libretro-fake08/) [`libretro-mrboom`](../libretro-mrboom/) [`libretro-retro8`](../libretro-retro8/) [`libretro-samples`](../libretro-samples/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`openttd`](../openttd/) [`pcre2`](../pcre2/) [`pugixml`](../pugixml/) [`python3`](../python3/) [`rapidjson`](../rapidjson/) [`readline`](../readline/) [`retroarch`](../retroarch/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`vlc`](../vlc/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -149,7 +149,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_retropie`](../../tests/src/) links retropie the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-retropie`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_retropie`](../../tests/src/) links retropie the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-retropie`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

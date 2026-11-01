@@ -11,6 +11,7 @@ allow libevent  usr/local/lib/cmake/libevent/LibeventConfig.cmake    the "config
 allow libcoap   usr/local/lib/cmake/libcoap/libcoapTargets.cmake     the tinydtls include sits in a generator expression that is false ($<BOOL:> empty)
 allow numpy     usr/local/lib/python3.14/site-packages/numpy/__config__.py   numpy.show_config(): what the build used, recorded
 allow pytorch   usr/local/opt/pytorch/include/caffe2/core/macros.h   CAFFE2 build options, recorded (torch.__config__.show())
+allow python3-contourpy usr/local/lib/python3.14/site-packages/contourpy/util/_build_config.py   contourpy.util.build_config(): what the build used, recorded (as numpy's __config__.py)
 
 open  qt6       usr/local/bin/qmake*                                 cross-build wrapper scripts around the build machine's host Qt (hosttools/qt6-*): useless on a target
 open  qt6       usr/local/bin/qtpaths*                               cross-build wrapper scripts around the build machine's host Qt

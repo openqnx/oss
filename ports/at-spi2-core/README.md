@@ -32,7 +32,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add at-spi2-core at-spi2-core-dev
-apk add qnx-test-at-spi2-core && /usr/local/bin/qnx-port-tests/test_at_spi2_core    # its on-target test
+apk add qnx-test-at-spi2-core && /usr/local/bin/qnx-port-tests/test_at_spi2_core    # its on-target test, from tests-8.0-<arch>
 apk del at-spi2-core at-spi2-core-dev qnx-test-at-spi2-core
 ```
 
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (25 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (31 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild glib dbus libxml2 libx11 libxtst
 ```
 
-<details><summary>Full build chain (25)</summary>
+<details><summary>Full build chain (31)</summary>
 
-[`bzip2`](../bzip2/) [`dbus`](../dbus/) [`expat`](../expat/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxi`](../libxi/) [`libxml2`](../libxml2/) [`libxtst`](../libxtst/) [`ncurses`](../ncurses/) [`pcre2`](../pcre2/) [`pthread-stubs`](../pthread-stubs/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxi`](../libxi/) [`libxml2`](../libxml2/) [`libxtst`](../libxtst/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -163,7 +163,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_at_spi2_core`](../../tests/src/) links at-spi2-core the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-at-spi2-core`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_at_spi2_core`](../../tests/src/) links at-spi2-core the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-at-spi2-core`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

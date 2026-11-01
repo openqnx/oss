@@ -1,0 +1,426 @@
+Add QNX as a platform: build list and QNX detection code
+
+fastfetch knows each operating system by name and builds a source list of
+its own for it; QNX stopped at "Unsupported platform: QNX". This adds
+QNX (CMAKE_SYSTEM_NAME QNX) with
+- os_qnx.c: name, release and build from uname() (no os-release file);
+- cpu_qnx.c: CPU count and speed from the system page (cpuinfo), the
+  name from cpuid on x86 or the system page's string table;
+- memory_qnx.c: RAM from the system page's "ram" address-space entries
+  (sysconf(_SC_PHYS_PAGES) is not implemented on QNX), free memory as the
+  size procnto reports for /proc;
+- uptime_qnx.c: the boot time from the system page (qtime->boot_time);
+- processes_qnx.c: the numeric entries of /proc;
+- host_qnx.c: the board name (uname -m) and the architecture;
+- disk_qnx.c: QNX has no mount table, so "/" and every top-level
+  directory on a file system of its own (st_dev), with statvfs() and the
+  device from DCMD_FSYS_MOUNTED_ON;
+- displayserver_qnx.c: QNX Screen when /dev/screen exists;
+and the generic Unix parts (terminal, shell, locale, DNS, network
+interfaces through the PF_ROUTE socket) shared with the other ports;
+_QNX_SOURCE, and libm/libsocket for the link. Everything else is the
+existing *_nosupport.c.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,6 +45,8 @@ elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Haiku")
+     set(Haiku TRUE CACHE BOOL "..." FORCE)
+ elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "GNU")
+     set(GNU TRUE CACHE BOOL "..." FORCE)
++elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "QNX")
++    set(QNX TRUE CACHE BOOL "..." FORCE)
+ elseif(NOT APPLE AND NOT WIN32)
+     message(FATAL_ERROR "Unsupported platform: ${CMAKE_SYSTEM_NAME}")
+ endif()
+@@ -1287,6 +1289,79 @@ elseif(Haiku)
+         src/detection/wmtheme/wmtheme_haiku.cpp
+         src/detection/camera/camera_nosupport.c
+     )
++elseif(QNX)
++    # QNX Neutrino: the system page (CPU, boot time), /proc (processes, free
++    # memory, process names and parents through devctl), statvfs for the
++    # file systems; the generic POSIX parts (terminal, shell, locale, network
++    # interfaces through PF_ROUTE) are shared with the other Unix ports.
++    list(APPEND LIBFASTFETCH_SRC
++        src/common/impl/io_unix.c
++        src/common/impl/netif_bsd.c
++        src/common/impl/networking_linux.c
++        src/common/impl/processing_linux.c
++        src/common/impl/FFPlatform_unix.c
++        src/common/impl/binary_linux.c
++        src/common/impl/kmod_nosupport.c
++        src/detection/battery/battery_nosupport.c
++        src/detection/bios/bios_nosupport.c
++        src/detection/board/board_nosupport.c
++        src/detection/bootmgr/bootmgr_nosupport.c
++        src/detection/brightness/brightness_nosupport.c
++        src/detection/btrfs/btrfs_nosupport.c
++        src/detection/chassis/chassis_nosupport.c
++        src/detection/cpu/cpu_qnx.c
++        src/detection/cpucache/cpucache_nosupport.c
++        src/detection/cpuusage/cpuusage_nosupport.c
++        src/detection/cursor/cursor_nosupport.c
++        src/detection/bluetooth/bluetooth_nosupport.c
++        src/detection/bluetoothradio/bluetoothradio_nosupport.c
++        src/detection/codec/codec_linux.c
++        src/detection/disk/disk_qnx.c
++        src/detection/dns/dns_linux.c
++        src/detection/physicaldisk/physicaldisk_nosupport.c
++        src/detection/physicalmemory/physicalmemory_nosupport.c
++        src/detection/diskio/diskio_nosupport.c
++        src/detection/displayserver/displayserver_qnx.c
++        src/detection/font/font_nosupport.c
++        src/detection/gpu/gpu_nosupport.c
++        src/detection/gtk_qt/gtk.c
++        src/detection/host/host_qnx.c
++        src/detection/icons/icons_nosupport.c
++        src/detection/initsystem/initsystem_nosupport.c
++        src/detection/keyboard/keyboard_nosupport.c
++        src/detection/libc/libc_nosupport.c
++        src/detection/lm/lm_nosupport.c
++        src/detection/loadavg/loadavg_nosupport.c
++        src/detection/locale/locale_linux.c
++        src/detection/localip/localip_linux.c
++        src/detection/gamepad/gamepad_nosupport.c
++        src/detection/media/media_nosupport.c
++        src/detection/memory/memory_qnx.c
++        src/detection/mouse/mouse_nosupport.c
++        src/detection/netio/netio_nosupport.c
++        src/detection/opengl/opengl_linux.c
++        src/detection/os/os_qnx.c
++        src/detection/packages/packages_nosupport.c
++        src/detection/poweradapter/poweradapter_nosupport.c
++        src/detection/processes/processes_qnx.c
++        src/detection/gtk_qt/qt.c
++        src/detection/sound/sound_nosupport.c
++        src/detection/swap/swap_nosupport.c
++        src/detection/terminalfont/terminalfont_linux.c
++        src/detection/terminalshell/terminalshell_linux.c
++        src/detection/terminalsize/terminalsize_linux.c
++        src/detection/theme/theme_nosupport.c
++        src/detection/tpm/tpm_nosupport.c
++        src/detection/uptime/uptime_qnx.c
++        src/detection/users/users_nosupport.c
++        src/detection/wallpaper/wallpaper_nosupport.c
++        src/detection/wifi/wifi_nosupport.c
++        src/detection/wm/wm_nosupport.c
++        src/detection/de/de_nosupport.c
++        src/detection/wmtheme/wmtheme_nosupport.c
++        src/detection/camera/camera_nosupport.c
++        src/3rdparty/yyjson/yyjson.c
++    )
+ elseif(GNU)
+     list(APPEND LIBFASTFETCH_SRC
+         src/common/impl/dbus.c
+@@ -1529,6 +1604,9 @@ elseif(NetBSD)
+     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath,/usr/X11R7/lib -Wl,-rpath,/usr/pkg/lib") # ditto
+ elseif(Haiku)
+     target_compile_definitions(libfastfetch PUBLIC _GNU_SOURCE)
++elseif(QNX)
++    # _QNX_SOURCE: QNX keeps its extensions (and much of POSIX) behind it.
++    target_compile_definitions(libfastfetch PUBLIC _QNX_SOURCE _FILE_OFFSET_BITS=64)
+ elseif(GNU)
+     # On Hurd PATH_MAX is not defined. Set an arbitrary limit as workaround.
+     target_compile_definitions(libfastfetch PUBLIC _GNU_SOURCE PATH_MAX=4096 O_PATH=0)
+@@ -1948,6 +2026,11 @@ elseif(SunOS)
+         PRIVATE "proc"
+         PRIVATE "devinfo"
+     )
++elseif(QNX)
++    target_link_libraries(libfastfetch
++        PRIVATE "m"
++        PRIVATE "socket"
++    )
+ elseif(GNU)
+     target_link_libraries(libfastfetch
+         PRIVATE "m"
+--- /dev/null
++++ b/src/detection/cpu/cpu_qnx.c
+@@ -0,0 +1,37 @@
++#include "cpu.h"
++
++#include <sys/syspage.h>
++
++// QNX: the processors as the startup code recorded them in the system page
++// (cpuinfo: one entry per CPU, its speed in MHz and a name in the string
++// table); on x86 the brand string and vendor come from cpuid.
++const char* ffDetectCPUImpl(FF_A_UNUSED const FFCPUOptions* options, FFCPUResult* cpu) {
++    if (_syspage_ptr == NULL) {
++        return "No system page";
++    }
++
++    uint16_t n = (uint16_t) _syspage_ptr->num_cpu;
++    const struct cpuinfo_entry* ci = SYSPAGE_ENTRY(cpuinfo);
++    const char* strings = SYSPAGE_ENTRY(strings)->data;
++
++    uint32_t maxSpeed = 0;
++    for (uint16_t i = 0; i < n; i++) {
++        if (ci[i].speed > maxSpeed) {
++            maxSpeed = ci[i].speed;
++        }
++    }
++
++    cpu->coresLogical = cpu->coresOnline = cpu->coresPhysical = n;
++    cpu->packages = 1;
++    cpu->frequencyBase = maxSpeed; // MHz
++
++    ffCPUDetectByCpuid(cpu);
++
++    if (cpu->name.length == 0 && n > 0 && strings) {
++        ffStrbufSetS(&cpu->name, strings + ci[0].name);
++    }
++    if (cpu->frequencyBase < maxSpeed) {
++        cpu->frequencyBase = maxSpeed;
++    }
++    return NULL;
++}
+--- /dev/null
++++ b/src/detection/disk/disk_qnx.c
+@@ -0,0 +1,97 @@
++#include "disk.h"
++#include "common/io.h"
++#include "common/strutil.h"
++
++#include <devctl.h>
++#include <fcntl.h>
++#include <sys/dcmd_blk.h>
++#include <sys/stat.h>
++#include <sys/statvfs.h>
++#include <unistd.h>
++
++// QNX has no mount table (getmntent/getfsstat). The file systems mounted
++// are found the way they appear in the path space: "/" and every top-level
++// directory whose file system differs from the root's (st_dev), as in
++// a standard image's /system, /data, /boot. DCMD_FSYS_MOUNTED_ON names the
++// device behind each.
++static void addDisk(FFDiskOptions* options, FFlist* disks, const char* path) {
++    struct statvfs fs;
++    if (statvfs(path, &fs) != 0 || fs.f_blocks == 0) {
++        return;
++    }
++    if (options->hideFolders.length && ffDiskMatchesFolderPatterns(&options->hideFolders, path, FF_DISK_FOLDER_SEPARATOR)) {
++        return;
++    }
++    if (options->hideFS.length && ffStrbufSeparatedContainS(&options->hideFS, fs.f_basetype, ':')) {
++        return;
++    }
++
++    FFDisk* disk = FF_LIST_ADD(FFDisk, *disks);
++    uint64_t bs = fs.f_frsize ? fs.f_frsize : fs.f_bsize;
++    disk->bytesTotal = (uint64_t) fs.f_blocks * bs;
++    disk->bytesFree = (uint64_t) fs.f_bfree * bs;
++    disk->bytesAvailable = (uint64_t) fs.f_bavail * bs;
++    disk->bytesUsed = 0; // filled in by disk.c
++    disk->filesTotal = (uint32_t) fs.f_files;
++    disk->filesUsed = (uint32_t) (fs.f_files - fs.f_ffree);
++    ffStrbufInitS(&disk->mountpoint, path);
++    ffStrbufInitS(&disk->filesystem, fs.f_basetype);
++    ffStrbufInit(&disk->mountFrom);
++    ffStrbufInit(&disk->name);
++    disk->type = FF_DISK_VOLUME_TYPE_REGULAR_BIT;
++    if (fs.f_flag & ST_RDONLY) {
++        disk->type |= FF_DISK_VOLUME_TYPE_READONLY_BIT;
++    }
++    disk->createTime = 0;
++
++    int fd = open(path, O_RDONLY | O_CLOEXEC);
++    if (fd >= 0) {
++        char dev[256] = "";
++        if (devctl(fd, DCMD_FSYS_MOUNTED_ON, dev, sizeof(dev), NULL) == EOK && dev[0]) {
++            ffStrbufSetS(&disk->mountFrom, dev);
++        }
++        close(fd);
++    }
++}
++
++const char* ffDetectDisksImpl(FFDiskOptions* options, FFlist* disks) {
++    if (options->folders.length > 0) {
++        // --disk-folders: exactly the listed paths
++        FF_STRBUF_AUTO_DESTROY folder = ffStrbufCreate();
++        uint32_t start = 0;
++        while (start < options->folders.length) {
++            uint32_t end = ffStrbufNextIndexC(&options->folders, start, FF_DISK_FOLDER_SEPARATOR);
++            ffStrbufSetNS(&folder, end - start, options->folders.chars + start);
++            if (folder.length) {
++                addDisk(options, disks, folder.chars);
++            }
++            start = end + 1;
++        }
++        return NULL;
++    }
++
++    struct stat root;
++    if (stat("/", &root) != 0) {
++        return "stat(\"/\") failed";
++    }
++    addDisk(options, disks, "/");
++
++    FF_AUTO_CLOSE_DIR DIR* dir = opendir("/");
++    if (dir == NULL) {
++        return "opendir(\"/\") failed";
++    }
++    struct dirent* entry;
++    while ((entry = readdir(dir)) != NULL) {
++        if (entry->d_name[0] == '.' || ffStrEquals(entry->d_name, "proc") || ffStrEquals(entry->d_name, "dev")) {
++            continue;
++        }
++        char path[PATH_MAX];
++        snprintf(path, sizeof(path), "/%s", entry->d_name);
++        struct stat st;
++        if (lstat(path, &st) != 0 || !S_ISDIR(st.st_mode) || st.st_dev == root.st_dev) {
++            continue;
++        }
++        addDisk(options, disks, path);
++    }
++    return NULL;
++}
+--- /dev/null
++++ b/src/detection/displayserver/displayserver_qnx.c
+@@ -0,0 +1,13 @@
++#include "displayserver.h"
++
++#include <unistd.h>
++
++// QNX: the graphics system is QNX Screen (no X11, no Wayland compositor of
++// its own). It is reported when its resource manager is up; the displays
++// themselves are not enumerated.
++void ffConnectDisplayServerImpl(FFDisplayServerResult* ds) {
++    if (access("/dev/screen", F_OK) == 0) {
++        ffStrbufSetStatic(&ds->wmProcessName, "screen");
++        ffStrbufSetStatic(&ds->wmPrettyName, "QNX Screen");
++    }
++}
+--- /dev/null
++++ b/src/detection/host/host_qnx.c
+@@ -0,0 +1,20 @@
++#include "host.h"
++
++#include <sys/utsname.h>
++#include <sys/syspage.h>
++
++// QNX: the board name the BSP's startup code put in the system page (uname
++// -m: "x86pc", a board name on ARM), the CPU architecture as the family.
++const char* ffDetectHost(FFHostResult* host) {
++    struct utsname uts;
++    if (uname(&uts) != 0) {
++        return "uname() failed";
++    }
++    ffStrbufSetS(&host->name, uts.machine);
++#if defined(__aarch64__)
++    ffStrbufSetStatic(&host->family, "aarch64");
++#elif defined(__x86_64__)
++    ffStrbufSetStatic(&host->family, "x86_64");
++#endif
++    return NULL;
++}
+--- /dev/null
++++ b/src/detection/memory/memory_qnx.c
+@@ -0,0 +1,35 @@
++#include "memory.h"
++
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/syspage.h>
++
++// QNX: the RAM is what the startup code listed as "ram" in the system
++// page's address-space table (sysconf(_SC_PHYS_PAGES) is not implemented);
++// the free memory is the size procnto reports for /proc.
++const char* ffDetectMemory(FFMemoryResult* ram) {
++    if (_syspage_ptr == NULL) {
++        return "No system page";
++    }
++    const struct asinfo_entry* as = SYSPAGE_ENTRY(asinfo);
++    const char* strings = SYSPAGE_ENTRY(strings)->data;
++    size_t n = _syspage_ptr->asinfo.entry_size / sizeof(*as);
++    uint64_t total = 0;
++    for (size_t i = 0; i < n; i++) {
++        if (strcmp(strings + as[i].name, "ram") == 0) {
++            total += as[i].end - as[i].start + 1;
++        }
++    }
++    if (total == 0) {
++        return "No \"ram\" entries in the system page";
++    }
++    ram->bytesTotal = total;
++
++    struct stat st;
++    if (stat("/proc", &st) != 0) {
++        return "stat(\"/proc\") failed";
++    }
++    uint64_t freeBytes = (uint64_t) st.st_size;
++    ram->bytesUsed = freeBytes < ram->bytesTotal ? ram->bytesTotal - freeBytes : 0;
++    return NULL;
++}
+--- /dev/null
++++ b/src/detection/os/os_qnx.c
+@@ -0,0 +1,20 @@
++#include "os.h"
++#include "common/io.h"
++
++#include <sys/utsname.h>
++
++// QNX Neutrino: no os-release file; the release is the kernel's
++// (uname -r: "8.0.0" on SDP 8.0), the version string its build date.
++void ffDetectOSImpl(FFOSResult* os) {
++    ffStrbufSetStatic(&os->name, "QNX");
++    ffStrbufSetStatic(&os->id, "qnx");
++
++    struct utsname uts;
++    if (uname(&uts) == 0) {
++        ffStrbufSetS(&os->versionID, uts.release);
++        ffStrbufSetS(&os->version, uts.release);
++        ffStrbufSetS(&os->buildID, uts.version);
++    }
++    ffStrbufSetF(&os->prettyName, "QNX %s", os->version.length ? os->version.chars : "");
++    ffStrbufTrimRightSpace(&os->prettyName);
++}
+--- /dev/null
++++ b/src/detection/processes/processes_qnx.c
+@@ -0,0 +1,24 @@
++#include "processes.h"
++
++#include "common/io.h"
++#include "common/strutil.h"
++
++#include <dirent.h>
++
++// QNX: one directory per process under /proc (pid 1 is procnto itself).
++const char* ffDetectProcesses(uint32_t* result) {
++    FF_AUTO_CLOSE_DIR DIR* dir = opendir("/proc");
++    if (dir == NULL) {
++        return "opendir(\"/proc\") failed";
++    }
++
++    uint32_t n = 0;
++    struct dirent* entry;
++    while ((entry = readdir(dir)) != NULL) {
++        if (ffCharIsDigit(entry->d_name[0])) {
++            ++n;
++        }
++    }
++    *result = n;
++    return NULL;
++}
+--- /dev/null
++++ b/src/detection/uptime/uptime_qnx.c
+@@ -0,0 +1,18 @@
++#include "uptime.h"
++#include "common/time.h"
++
++#include <sys/syspage.h>
++
++// QNX: the boot time (seconds since the epoch) is in the system page.
++const char* ffDetectUptime(FFUptimeResult* result) {
++    if (_syspage_ptr == NULL) {
++        return "No system page";
++    }
++    uint64_t boot = SYSPAGE_ENTRY(qtime)->boot_time;
++    if (boot == 0) {
++        return "qtime->boot_time is 0";
++    }
++    result->bootTime = boot * 1000;
++    result->uptime = ffTimeGetNow() - result->bootTime;
++    return NULL;
++}

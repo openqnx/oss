@@ -1,0 +1,51 @@
+# apr-util 1.6.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:23:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u apr-util qnx-test-apr-util qnx-port-tests
+(1/6) Installing apr (1.7.6-r0)
+(2/6) Installing libxcrypt (4.4.38-r0)
+(3/6) Installing sqlite (3.47.2-r0)
+(4/6) Installing apr-util (1.6.5-r0)
+(5/6) Installing qnx-port-tests (1.0-r2)
+(6/6) Installing qnx-test-apr-util (1.0-r0)
+OK: 99 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_apr_util
+     == apr-util ==
+       info APR-util 1.6.5
+       ok   apr_base64_encode(QNX) = UU5Y
+       ok   apr_md5(abc)
+       ok   apr_sha1(abc)
+       ok   apr_md5_encode $apr1$ hash validates the right password only
+       ok   apr_password_validate: SHA-512 crypt hash from openssl passwd -6 (system crypt)
+       ok   apr_uuid_get + format: 36 characters
+       ok   apr_uuid_parse round trip
+       ok   two apr_uuid_get() differ
+       ok   apr_uri_parse splits scheme/user/host/port/path/query/fragment
+       ok   apr_date_parse_http(RFC 1123 date) = 784111777 s
+       ok   apr_xml parses a document, root <cfg>
+       ok   two <item> children, first text 'one', attribute version=2
+       ok   mismatched tags are an error
+       ok   apr_xlate_open(ISO-8859-1 <- UTF-8)
+       ok   UTF-8 'café!' -> 5 bytes Latin-1
+       ok   apr_dbm_open_ex(SDBM)
+       ok   apr_dbm_store
+       ok   reopen + apr_dbm_fetch
+       ok   apr_queue is FIFO
+       ok   apr_crypto_get_driver(openssl): module loaded from lib/apr-util-1
+       ok   AES-256-CBC key from a passphrase (PBKDF2, 4096 rounds), 16-byte IV
+       ok   ciphertext = openssl enc -aes-256-cbc with the same key and IV
+       ok   decrypts back to the message
+       ok   apr_dbd_get_driver(sqlite3): module loaded from lib/apr-util-1
+       ok   INSERT of 3 rows reports 3
+       ok   SELECT ... ORDER BY returns two,three
+     PASS apr-util
+PASS test_apr_util
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

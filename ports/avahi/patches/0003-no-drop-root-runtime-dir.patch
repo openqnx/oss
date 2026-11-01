@@ -1,0 +1,48 @@
+avahi-daemon: --no-drop-root does not need an avahi user for its runtime directory
+
+avahi-daemon creates its runtime directory (PID file, client socket) owned
+by the avahi user and group even with --no-drop-root, and fails when that
+user does not exist -- which is the case on a stock QNX system, so the
+daemon could not be started at all without creating accounts first. With
+--no-drop-root the daemon keeps the identity it was started with: create
+the directory (and its missing parents: under a /usr/local prefix var/run
+may not exist yet) owned by that user instead.
+
+Upstream-Status: QNX-specific
+
+--- a/avahi-daemon/main.c
++++ b/avahi-daemon/main.c
+@@ -1428,6 +1428,33 @@
+     struct group * gr;
+     struct stat st;
+ 
++    if (!config.drop_root) {
++        /* --no-drop-root: the daemon keeps running as the user who started
++         * it, so neither the avahi user nor its group has to exist (a stock
++         * QNX system has neither). Create the directory and the parents it
++         * lacks (under a /usr/local prefix, var/run itself may be missing),
++         * owned by us. */
++        char d[] = AVAHI_DAEMON_RUNTIME_DIR, *p;
++        for (p = d + 1; *p; p++)
++            if (*p == '/') {
++                *p = 0;
++                if (mkdir(d, 0755) < 0 && errno != EEXIST) {
++                    avahi_log_error("mkdir(\"%s\"): %s", d, strerror(errno));
++                    return -1;
++                }
++                *p = '/';
++            }
++        if (mkdir(d, 0755) < 0 && errno != EEXIST) {
++            avahi_log_error("mkdir(\"%s\"): %s", d, strerror(errno));
++            return -1;
++        }
++        if (stat(d, &st) < 0 || !S_ISDIR(st.st_mode) || st.st_uid != getuid()) {
++            avahi_log_error("Failed to create runtime directory "AVAHI_DAEMON_RUNTIME_DIR".");
++            return -1;
++        }
++        return 0;
++    }
++
+     if (!(pw = getpwnam(AVAHI_USER))) {
+         avahi_log_error( "Failed to find user '"AVAHI_USER"'.");
+         goto fail;

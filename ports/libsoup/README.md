@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libsoup libsoup-dev
-apk add qnx-test-libsoup && /usr/local/bin/qnx-port-tests/test_libsoup    # its on-target test
+apk add qnx-test-libsoup && /usr/local/bin/qnx-port-tests/test_libsoup    # its on-target test, from tests-8.0-<arch>
 apk del libsoup libsoup-dev qnx-test-libsoup
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (17 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild glib libxml2 sqlite nghttp2 libpsl brotli
 ```
 
-<details><summary>Full build chain (17)</summary>
+<details><summary>Full build chain (22)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libpsl`](../libpsl/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libpsl`](../libpsl/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -162,7 +162,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libsoup`](../../tests/src/) links libsoup the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libsoup`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libsoup`](../../tests/src/) links libsoup the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libsoup`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

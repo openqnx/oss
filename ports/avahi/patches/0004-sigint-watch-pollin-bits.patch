@@ -1,0 +1,21 @@
+avahi-utils: accept any POLLIN bit in the signal pipe watch
+
+QNX defines POLLIN as POLLRDNORM|POLLRDBAND, and poll() reports a pipe
+with data as POLLRDNORM alone. The tools' SIGINT/SIGTERM pipe watch asserted
+that the event was exactly AVAHI_WATCH_IN (== POLLIN), so avahi-browse,
+avahi-publish, avahi-resolve ... aborted with a core dump instead of
+exiting when interrupted or terminated. Test the bit instead.
+
+Upstream-Status: QNX-specific
+
+--- a/avahi-utils/sigint.c
++++ b/avahi-utils/sigint.c
+@@ -74,7 +74,7 @@
+ 
+     assert(w);
+     assert(fd == pipe_fds[0]);
+-    assert(event == AVAHI_WATCH_IN);
++    assert(event & AVAHI_WATCH_IN);
+ 
+     l = read(fd, &s, sizeof(s));
+     assert(l == sizeof(s));

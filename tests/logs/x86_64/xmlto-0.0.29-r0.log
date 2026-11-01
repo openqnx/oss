@@ -1,0 +1,41 @@
+# xmlto 0.0.29-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:11:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xmlto qnx-test-xmlto qnx-port-tests
+( 1/10) Installing readline (8.2-r0)
+( 2/10) Installing bash (5.2.37-r2)
+( 3/10) Installing busybox (1.36.1-r0)
+( 4/10) Installing libxml2 (2.13.5-r1)
+( 5/10) Installing libxslt (1.1.42-r0)
+( 6/10) Installing docbook-xsl (1.79.2-r0)
+( 7/10) Installing libxml2-utils (2.13.5-r0)
+( 8/10) Installing xsltproc (1.1.42-r0)
+( 9/10) Installing xmlto (0.0.29-r0)
+(10/10) Installing qnx-test-xmlto (1.0-r0)
+OK: 111 MiB in 43 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xmlto
+     == xmlto ==
+       ok   DocBook XSL stylesheets at /usr/local/share/xml/docbook/xsl-stylesheets-1.79.2
+       ok   xmlto --version: 0.0.29
+       ok   xmlto man: man/qnxdemo.8 written
+       ok   .TH "QNXDEMO" "8"
+       ok   NAME: qnxdemo \- show xmlto working on QNX
+       ok   OPTIONS section with -v
+       ok   unprofiled: both conditional paragraphs
+       info profiling not checked: the installed DocBook XSL has no profiling/ stylesheets
+       ok   xmlto xhtml-nochunks: qnxdemo.html
+       ok   XHTML: <title>qnxdemo</title>, option text
+       ok   unknown format refused
+       ok   xmlif condition=pdf: elif branch
+       ok   xmlif condition=foo: else branch
+     PASS xmlto
+PASS test_xmlto
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

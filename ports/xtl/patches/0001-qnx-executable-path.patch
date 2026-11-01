@@ -1,0 +1,46 @@
+executable_path(): read /proc/self/exefile on QNX
+
+xtl::executable_path() has branches for Linux (/proc/self/exe), Windows,
+macOS, FreeBSD and Solaris and returns an empty string anywhere else, so on
+QNX prefix_path() -- which xeus kernels use to find their share/ data --
+came out as "/". QNX has no /proc/self/exe symlink; the path of the running
+executable is the content of the file /proc/self/exefile.
+
+Upstream-Status: QNX-specific
+
+--- a/include/xtl/xsystem.hpp
++++ b/include/xtl/xsystem.hpp
+@@ -29,6 +29,10 @@
+ #if defined(__sun)
+ #  include <stdlib.h>
+ #endif
++#if defined(__QNX__)
++#  include <fcntl.h>
++#  include <unistd.h>
++#endif
+ #ifdef __FreeBSD__
+ #  include <sys/types.h>
+ #  include <sys/sysctl.h>
+@@ -103,6 +107,22 @@
+         }
+ #elif defined(__sun)
+         path = getexecname();
++#elif defined(__QNX__)
++        // QNX has no /proc/self/exe link: /proc/self/exefile is a file
++        // holding the executable's path.
++        int fd = open("/proc/self/exefile", O_RDONLY);
++        if (fd != -1)
++        {
++            ssize_t n = read(fd, buffer, sizeof(buffer) - 1);
++            close(fd);
++            if (n > 0)
++            {
++                buffer[n] = '\0';
++                path = buffer;
++                // the path may be followed by a newline or NULs
++                path = path.substr(0, path.find_first_of("\n"));
++            }
++        }
+ #endif
+         return path;
+     }

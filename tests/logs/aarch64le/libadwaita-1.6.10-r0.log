@@ -1,0 +1,92 @@
+# libadwaita 1.6.10-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T11:01:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libadwaita qnx-test-libadwaita qnx-port-tests
+( 1/41) Installing c-ares (1.34.3-r0)
+( 2/41) Installing nghttp2 (1.64.0-r0)
+( 3/41) Installing curl (8.11.1-r1)
+( 4/41) Installing xz (5.6.3-r0)
+( 5/41) Installing libxml2 (2.13.5-r1)
+( 6/41) Installing libxmlb (0.3.24-r0)
+( 7/41) Installing libyaml (0.2.5-r0)
+( 8/41) Installing appstream (1.0.6-r0)
+( 9/41) Installing fribidi (1.0.16-r0)
+(10/41) Installing graphene (1.10.8-r0)
+(11/41) Installing expat (2.6.4-r0)
+(12/41) Installing bzip2 (1.0.8-r0)
+(13/41) Installing freetype (2.13.3-r0)
+(14/41) Installing fontconfig (2.15.0-r0)
+(15/41) Installing libxau (1.0.11-r0)
+(16/41) Installing libxdmcp (1.1.5-r0)
+(17/41) Installing libxcb (1.17.0-r0)
+(18/41) Installing libx11 (1.8.10-r0)
+(19/41) Installing libxext (1.3.6-r0)
+(20/41) Installing libxrender (0.9.11-r0)
+(21/41) Installing lzo (2.10-r0)
+(22/41) Installing pixman (0.46.4-r0)
+(23/41) Installing cairo (1.18.2-r0)
+(24/41) Installing graphite2 (1.3.14-r0)
+(25/41) Installing icu (76.1-r1)
+(26/41) Installing harfbuzz (<ip>-r0)
+(27/41) Installing libepoxy (1.5.10-r0)
+(28/41) Installing libwebp (1.4.0-r0)
+(29/41) Installing libtiff (4.7.0-r0)
+(30/41) Installing libxkbcommon (1.8.1-r1)
+(31/41) Installing libxft (2.3.8-r0)
+(32/41) Installing pango (1.54.0-r0)
+(33/41) Installing wayland (1.24.0-r0)
+(34/41) Installing gtk4 (4.16.7-r0)
+(35/41) Installing libadwaita (1.6.10-r0)
+(36/41) Installing font-dejavu (2.37-r0)
+(37/41) Installing libsfdo (0.1.4-r0)
+(38/41) Installing wlroots (0.20.2-r0)
+(39/41) Installing xkeyboard-config (2.43-r0)
+(40/41) Installing labwc (0.20.2-r1)
+(41/41) Installing qnx-test-libadwaita (1.0-r0)
+OK: 248 MiB in 80 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libadwaita
+     == libadwaita ==
+       info libadwaita 1.6.10
+       ok   libadwaita 1.6
+       info condition: max-width: 400sp and min-aspect-ratio: 4/3
+       ok   breakpoint condition parsed and printed back
+       ok   adw_lerp(10, 20, 0.25) = 12.5
+       ok   spring params: damping ratio 1, mass 1, stiffness 100 -> damping 20
+       ok   labwc (headless) Wayland socket appeared
+       ok   gtk_init_check on labwc
+     GLib-GIO-Message: 11:01:24.683: Adding GResources overlay '/org/qnx/PortTest=/tmp/qnxport-adw-1074188309'
+     
+     (process:1074188309): GLib-GIO-CRITICAL **: 11:01:25.048: g_settings_schema_source_lookup: assertion 'source != NULL' failed
+       ok   adw_init
+       ok   72 pt = 96 px
+       info base.css: 336710 bytes
+       ok   Adwaita style sheet (compiled from SCSS) is in the library
+       ok   style manager: FORCE_DARK makes it dark
+       ok   style manager: FORCE_LIGHT makes it light
+       ok   AdwApplicationWindow mapped on the compositor
+       ok   view stack shows page two
+       ok   tab view with three pages
+       ok   closing a tab leaves two
+       ok   toast shown
+       ok   window was allocated a size
+       info window 640x480
+     
+     (process:1074188309): GLib-GIO-WARNING **: 11:01:27.735: Can't enumerate overlay directory '/tmp/qnxport-adw-1074188309/metainfo.xml': Error opening directory “/tmp/qnxport-adw-1074188309/metainfo.xml”: Not a directory
+     GLib-GIO-Message: 11:01:27.743: Mapped file '/tmp/qnxport-adw-1074188309/metainfo.xml' as a resource overlay
+     GLib-GIO-Message: 11:01:27.766: Opened file '/tmp/qnxport-adw-1074188309/metainfo.xml' as a resource overlay
+       ok   AdwAboutDialog from AppStream metainfo
+       info about: QNX Port Test 2.1 by QNX Porters, https://example.org/qnx
+       ok   metainfo: name, newest version, developer
+       ok   metainfo: license type and issue URL
+       ok   metainfo: release notes of 2.1
+     PASS libadwaita
+PASS test_libadwaita
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

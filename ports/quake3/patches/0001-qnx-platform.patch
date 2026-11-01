@@ -1,0 +1,56 @@
+Add QNX to q_platform.h.
+
+Without a platform block every file stops with "Operating system not
+supported" (and CMake's architecture probe fails first). QNX is a BSD-like
+Unix here: byte order from <sys/param.h>, .so modules, the x86_64 VM JIT;
+like Linux, aarch64 runs the VM interpreter.
+QNX's <sys/types.h> declares msg_t, a message-passing type, under
+_QNX_SOURCE; the engine's own msg_t (qcommon.h) is renamed by a macro on
+QNX so the two do not collide.
+
+Upstream-Status: Pending
+
+diff --git a/code/qcommon/q_platform.h b/code/qcommon/q_platform.h
+--- a/code/qcommon/q_platform.h
++++ b/code/qcommon/q_platform.h
+@@ -265,6 +265,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ 
+ #endif
+ 
++//=================================================================== QNX ===
++
++#ifdef __QNX__
++
++#include <sys/types.h>
++#include <sys/param.h>
++
++// <sys/types.h> declares msg_t (a message-passing type) on QNX; the
++// engine's own msg_t (qcommon.h) gets another name.
++#define msg_t q3_msg_t
++
++#define OS_STRING "qnx"
++#define ID_INLINE inline
++#define PATH_SEP '/'
++
++#if defined(__x86_64__)
++# define ARCH_STRING "x86_64"
++# define HAVE_VM_COMPILED
++# undef idx64
++# define idx64 1
++#elif defined(__aarch64__)
++# define ARCH_STRING "arm64"
++#endif
++
++#if BYTE_ORDER == BIG_ENDIAN
++#define Q3_BIG_ENDIAN
++#else
++#define Q3_LITTLE_ENDIAN
++#endif
++
++#define DLL_EXT ".so"
++
++#endif
++
+ //================================================================= SUNOS ===
+ 
+ #ifdef __sun

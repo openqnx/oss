@@ -1,0 +1,31 @@
+Keep SSE2 for LtHash's scalar fallback on QNX x86_64.
+
+MathOperation_Simple.cpp is compiled with -mno-avx -mno-avx2 -mno-sse2 to
+get a plain scalar variant. With x87 arithmetic GCC reports
+__FLT_EVAL_METHOD__ as -1 in C++, a value for which QNX's <math.h> declares
+no double_t or float_t, and libc++'s <cmath> fails ('double_t' has not been
+declared). On QNX the file keeps SSE2 (the x86-64 baseline) and loses only
+AVX: the code is the same scalar code, possibly vectorised by the compiler.
+
+Upstream-Status: QNX-specific
+
+--- a/folly/crypto/detail/CMakeLists.txt
++++ b/folly/crypto/detail/CMakeLists.txt
+@@ -31,13 +31,16 @@
+ )
+ 
+ # Apply SSE2/AVX2 compile flags on x86
++# Not -mno-sse2 on QNX: x87 arithmetic makes GCC report __FLT_EVAL_METHOD__
++# -1 in C++, for which QNX's <math.h> declares no double_t/float_t, and
++# libc++'s <cmath> then fails to compile.
+ if (IS_X86_64_ARCH)
+   target_compile_options(
+     folly_crypto_detail_math_operation_simple_obj
+     PRIVATE
+       -mno-avx
+       -mno-avx2
+-      -mno-sse2
++      $<$<NOT:$<STREQUAL:${CMAKE_SYSTEM_NAME},QNX>>:-mno-sse2>
+   )
+ endif ()
+ 

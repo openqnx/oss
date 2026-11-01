@@ -1,0 +1,41 @@
+rlReadScreenPixels: the software renderer's pixels are top-down BGRA
+
+With the software renderer (OPENGL_VERSION=Software), LoadImageFromScreen()
+and TakeScreenshot() returned the frame upside down with red and blue
+swapped. rlReadScreenPixels() treats glReadPixels() as OpenGL's (bottom row
+first, RGBA) and flips the rows; rlsw's swReadPixels() instead hands out
+the framebuffer the way it is presented -- rcore_desktop_sdl copies it to
+the SDL window surface with the same call -- top row first and, with
+RLSW_FRAMEBUFFER_OUTPUT_BGRA (the default), as BGRA. For the software
+renderer, swap red and blue back and do not flip. Found by this tree's
+raylib test, which draws a frame on SDL's dummy driver and reads it back;
+not QNX-specific.
+
+Upstream-Status: Pending
+
+--- a/src/rlgl.h
++++ b/src/rlgl.h
+@@ -3802,6 +3802,23 @@
+     // WARNING: Getting alpha channel! Be careful, it can be transparent if not cleared properly!
+     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+ 
++#if defined(GRAPHICS_API_OPENGL_SOFTWARE)
++    // rlsw hands out the framebuffer the way it is presented (rcore_desktop_sdl
++    // copies it to the window surface with the same call): top row first,
++    // and with red and blue swapped when RLSW_FRAMEBUFFER_OUTPUT_BGRA is set.
++    // Undo the swap; no vertical flip
++    for (int i = 0; i < width*height*4; i += 4)
++    {
++    #if RLSW_FRAMEBUFFER_OUTPUT_BGRA
++        unsigned char t = imgData[i];
++        imgData[i] = imgData[i + 2];
++        imgData[i + 2] = t;
++    #endif
++        imgData[i + 3] = 255;
++    }
++    return imgData;
++#endif
++
+     // Flip image vertically
+     // NOTE: Alpha value has already been applied to RGB in framebuffer, not needed anymore
+     for (int y = height - 1; y >= height/2; y--)

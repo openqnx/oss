@@ -1,0 +1,57 @@
+# gpgme 2.2.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:58:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gpgme qnx-test-gpgme qnx-port-tests
+( 1/16) Installing bzip2 (1.0.8-r0)
+( 2/16) Installing gmp (6.3.0-r0)
+( 3/16) Installing libidn2 (2.3.7-r0)
+( 4/16) Installing libtasn1 (4.19.0-r0)
+( 5/16) Installing nettle (3.10.1-r0)
+( 6/16) Installing gnutls (3.8.8-r0)
+( 7/16) Installing libgpg-error (1.50-r0)
+( 8/16) Installing libassuan (3.0.2-r0)
+( 9/16) Installing libgcrypt (1.11.0-r1)
+(10/16) Installing libksba (1.8.1-r0)
+(11/16) Installing npth (1.8-r0)
+(12/16) Installing readline (8.2-r0)
+(13/16) Installing sqlite (3.47.2-r0)
+(14/16) Installing gnupg (2.4.9-r0)
+(15/16) Installing gpgme (2.2.0-r0)
+(16/16) Installing qnx-test-gpgme (1.0-r0)
+OK: 148 MiB in 55 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gpgme
+     == gpgme ==
+       info gpgme 2.2.0
+       ok   gpgme_check_version: 2.2.0
+       ok   OpenPGP engine usable
+       info engine /usr/local/bin/gpg 2.4.9
+       ok   OpenPGP engine: gpg 2.4.9
+       ok   context on the first scratch home
+       info fingerprint EA250FF5CB00D1DCF022B51EF66C6B3A09A52B83
+       ok   ed25519 key created without passphrase (40-hex fingerprint)
+       ok   gpgme_get_key by fingerprint
+       ok   cv25519 encryption subkey added
+       ok   keylist: EdDSA signing primary, ECDH cv25519 encryption subkey
+       ok   keylist: the user id
+       ok   encrypted to the key (ASCII armour)
+       ok   decrypted: the plaintext back
+       ok   decrypt result: recipient is the cv25519 subkey
+       ok   detached signature made
+       ok   signature verifies: valid, by the key's fingerprint
+       ok   signature algorithm EdDSA
+       ok   altered data: GPG_ERR_BAD_SIGNATURE
+       ok   clear-text signature contains the message
+       ok   public key exported
+       ok   imported into the second home: 1 key, same fingerprint
+       ok   symmetric encryption (passphrase callback) decrypted in the other home
+     PASS gpgme
+PASS test_gpgme
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

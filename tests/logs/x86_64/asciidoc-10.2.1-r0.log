@@ -1,0 +1,44 @@
+# asciidoc <ip>-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:23:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u asciidoc qnx-test-asciidoc qnx-port-tests
+( 1/12) Installing libxml2 (2.13.5-r1)
+( 2/12) Installing libxslt (1.1.42-r0)
+( 3/12) Installing docbook-xsl (1.79.2-r0)
+( 4/12) Installing gdbm (1.24-r0)
+( 5/12) Installing readline (8.2-r0)
+( 6/12) Installing sqlite (3.47.2-r0)
+( 7/12) Installing python3 (3.14.0-r2)
+( 8/12) Installing xsltproc (1.1.42-r0)
+( 9/12) Installing asciidoc (<ip>-r0)
+(10/12) Installing qnx-port-tests (1.0-r2)
+(11/12) Installing libxml2-utils (2.13.5-r0)
+(12/12) Installing qnx-test-asciidoc (1.0-r0)
+OK: 214 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_asciidoc
+     == asciidoc ==
+       ok   asciidoc --version: <ip>
+       ok   html5 backend: doc.html written
+       ok   HTML <title>
+       ok   section heading with its id
+       ok   attribute {board} substituted
+       ok   two list items
+       ok   table: header cell and body cell
+       ok   listing block HTML-escaped
+       ok   docbook45 backend: article, section title, itemizedlist
+       ok   DocBook output is well-formed XML (xmllint)
+       ok   stdin to stdout, no header (-s): *QNX* -> <strong>
+       ok   a2x -f manpage: qnxtool.1 written
+       ok   man page .TH "QNXTOOL" "1"
+       ok   man page NAME section
+     PASS asciidoc
+PASS test_asciidoc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

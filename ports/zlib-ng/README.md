@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add zlib-ng zlib-ng-dev
-apk add qnx-test-zlib-ng && /usr/local/bin/qnx-port-tests/test_zlib_ng    # its on-target test
+apk add qnx-test-zlib-ng && /usr/local/bin/qnx-port-tests/test_zlib_ng    # its on-target test, from tests-8.0-<arch>-m-z
 apk del zlib-ng zlib-ng-dev qnx-test-zlib-ng
 ```
 
@@ -148,7 +148,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_zlib_ng`](../../tests/src/) links zlib-ng the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-zlib-ng`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_zlib_ng`](../../tests/src/) links zlib-ng the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-zlib-ng`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

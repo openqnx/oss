@@ -1,0 +1,184 @@
+From 5b70bac1b8616c39cd3756659b499935b9746aeb Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Thu, 5 Feb 2026 18:24:17 +0000
+Subject: [PATCH] QNX port
+
+Imported from qnx-ports/nss (NSS_3_131_1_RTM...5b70bac1b861, branch
+qnx-NSS_3_131_1_BRANCH); original authorship kept. The branch's other
+commit (60747ce8d83d, "update gtest to v1.17.0") only touches the gtests,
+which this port does not build, and is left out.
+
+gyp knows no OS "qnx": treat it like FreeBSD (BSD flock, the FREEBSD code
+paths), build freebl's AES/GHASH with -mpclmul -maes as on the other ELF
+systems, C++17 instead of C++11 (QNX's libc++ needs it), take the byte-order
+helpers from <net/netbyte.h> (QNX has no <endian.h>), and rename variables
+called "bool", which <stdbool.h> (pulled in by QNX's headers) defines as a macro.
+
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+---
+diff --git a/nss/cmd/multinit/multinit.c b/nss/cmd/multinit/multinit.c
+index c6c40e94d..85efc771b 100644
+--- a/nss/cmd/multinit/multinit.c
++++ b/nss/cmd/multinit/multinit.c
+@@ -282,13 +282,13 @@ appendString(char *string)
+  * append a bool, T= true, F=false
+  */
+ static void
+-appendBool(PRBool bool)
++appendBool(PRBool m_bool)
+ {
+     if (!buffer.data) {
+         return;
+     }
+ 
+-    if (bool) {
++    if (m_bool) {
+         appendLabel('t');
+     } else {
+         appendLabel('f');
+@@ -385,9 +385,9 @@ usage_long(const char *prog)
+ }
+ 
+ static const char *
+-bool2String(PRBool bool)
++bool2String(PRBool m_bool)
+ {
+-    return bool ? "true" : "false";
++    return m_bool ? "true" : "false";
+ }
+ 
+ /*
+diff --git a/nss/cmd/pwdecrypt/pwdecrypt.c b/nss/cmd/pwdecrypt/pwdecrypt.c
+index 486486770..77d70c27c 100644
+--- a/nss/cmd/pwdecrypt/pwdecrypt.c
++++ b/nss/cmd/pwdecrypt/pwdecrypt.c
+@@ -99,10 +99,12 @@ static unsigned char b64[256] = {
+     /*  78: */ 1, 1, 1, 0, 0, 0, 0, 0
+ };
+ 
++#if !defined(true) && !defined(false)
+ enum {
+     false = 0,
+     true = 1
+ } bool;
++#endif
+ 
+ #define isatobchar(c) (b64[c])
+ 
+diff --git a/nss/coreconf/config.gypi b/nss/coreconf/config.gypi
+index c93bc3ecc..ccb0cacec 100644
+--- a/nss/coreconf/config.gypi
++++ b/nss/coreconf/config.gypi
+@@ -401,7 +401,7 @@
+               'SDB_MEASURE_USE_TEMP_DIR', # use tmpdir for the access calls
+             ],
+           }],
+-          [ 'OS=="dragonfly" or OS=="freebsd"', {
++          [ 'OS=="dragonfly" or OS=="freebsd" or OS=="qnx"', {
+             'defines': [
+               'FREEBSD',
+             ],
+@@ -416,7 +416,7 @@
+               'OPENBSD',
+             ],
+           }],
+-          ['OS=="mac" or OS=="ios" or OS=="dragonfly" or OS=="freebsd" or OS=="netbsd" or OS=="openbsd"', {
++          ['OS=="mac" or OS=="ios" or OS=="dragonfly" or OS=="freebsd" or OS=="netbsd" or OS=="openbsd" or OS=="qnx"', {
+             'defines': [
+               'HAVE_BSD_FLOCK',
+             ],
+@@ -444,7 +444,7 @@
+               '-std=c99',
+             ],
+             'cflags_cc': [
+-              '-std=c++11',
++              '-std=c++17',
+             ],
+             'conditions': [
+               [ 'target_arch=="ia32"', {
+diff --git a/nss/coreconf/detect_host_arch.py b/nss/coreconf/detect_host_arch.py
+index afaeb3eb5..a6e8bc24e 100644
+--- a/nss/coreconf/detect_host_arch.py
++++ b/nss/coreconf/detect_host_arch.py
+@@ -10,7 +10,12 @@ import fnmatch
+ import platform
+ 
+ def main():
+-    host_arch = platform.machine().lower()
++    if platform.system() == 'QNX':
++        host_arch = platform.processor().lower()
++        if host_arch == "aarch64le":
++            host_arch = "aarch64"
++    else:
++        host_arch = platform.machine().lower()
+     if host_arch in ('amd64', 'x86_64'):
+         host_arch = 'x64'
+     elif fnmatch.fnmatch(host_arch, 'i?86') or host_arch == 'i86pc':
+diff --git a/nss/lib/dev/ckhelper.c b/nss/lib/dev/ckhelper.c
+index af0b6ca09..ebc8f01a1 100644
+--- a/nss/lib/dev/ckhelper.c
++++ b/nss/lib/dev/ckhelper.c
+@@ -188,13 +188,13 @@ nssCKObject_IsAttributeTrue(
+     NSSSlot *slot,
+     PRStatus *rvStatus)
+ {
+-    CK_BBOOL bool;
++    CK_BBOOL m_bool;
+     CK_ATTRIBUTE_PTR attr;
+     CK_ATTRIBUTE atemplate = { 0, NULL, 0 };
+     CK_RV ckrv;
+     void *epv = nssSlot_GetCryptokiEPV(slot);
+     attr = &atemplate;
+-    NSS_CK_SET_ATTRIBUTE_VAR(attr, attribute, bool);
++    NSS_CK_SET_ATTRIBUTE_VAR(attr, attribute, m_bool);
+     nssSession_EnterMonitor(session);
+     ckrv = CKAPI(epv)->C_GetAttributeValue(session->handle, object,
+                                            &atemplate, 1);
+@@ -204,7 +204,7 @@ nssCKObject_IsAttributeTrue(
+         return PR_FALSE;
+     }
+     *rvStatus = PR_SUCCESS;
+-    return (PRBool)(bool == CK_TRUE);
++    return (PRBool)(m_bool == CK_TRUE);
+ }
+ 
+ NSS_IMPLEMENT PRStatus
+diff --git a/nss/lib/freebl/freebl.gyp b/nss/lib/freebl/freebl.gyp
+index 9b3404f5b..ba70d1d98 100644
+--- a/nss/lib/freebl/freebl.gyp
++++ b/nss/lib/freebl/freebl.gyp
+@@ -103,7 +103,7 @@
+           ],
+         }],
+         [ 'OS=="linux" or OS=="android" or OS=="dragonfly" or OS=="freebsd" or \
+-           OS=="netbsd" or OS=="openbsd"', {
++           OS=="netbsd" or OS=="openbsd" or OS=="qnx"', {
+           'cflags': [
+             '-mpclmul',
+             '-maes',
+diff --git a/nss/lib/freebl/ghash.gyp b/nss/lib/freebl/ghash.gyp
+index 7de54e371..a1f125f59 100644
+--- a/nss/lib/freebl/ghash.gyp
++++ b/nss/lib/freebl/ghash.gyp
+@@ -22,7 +22,7 @@
+         '-mpclmul', '-maes'
+       ],
+       'conditions': [
+-        [ 'OS=="linux" or OS=="android" or OS=="dragonfly" or OS=="freebsd" or OS=="netbsd" or OS=="openbsd"', {
++        [ 'OS=="linux" or OS=="android" or OS=="dragonfly" or OS=="freebsd" or OS=="netbsd" or OS=="openbsd" or OS=="qnx"', {
+           'cflags': [
+             '-mpclmul', '-maes'
+           ],
+diff --git a/nss/lib/freebl/libcrux/karamel/krml/lowstar_endianness.h b/nss/lib/freebl/libcrux/karamel/krml/lowstar_endianness.h
+index 5a897cf64..3dd983a97 100644
+--- a/nss/lib/freebl/libcrux/karamel/krml/lowstar_endianness.h
++++ b/nss/lib/freebl/libcrux/karamel/krml/lowstar_endianness.h
+@@ -58,6 +58,8 @@
+ #include <sys/endian.h>
+ #elif defined(__OpenBSD__)
+ #include <endian.h>
++#elif defined(__QNX__)
++#include <net/netbyte.h>
+ 
+ /* ... for Windows (MSVC)... not targeting XBOX 360! */
+ #elif defined(_MSC_VER)

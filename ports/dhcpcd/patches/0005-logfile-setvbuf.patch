@@ -1,0 +1,19 @@
+logerr: line-buffer the log file with setvbuf(), not setlinebuf().
+
+setlinebuf() is a BSD function QNX's <stdio.h> does not declare (the C
+library exports it, so the implicit declaration linked). setvbuf() with
+_IOLBF is the standard spelling of the same thing.
+
+Upstream-Status: QNX-specific
+
+--- a/src/logerr.c
++++ b/src/logerr.c
+@@ -474,7 +474,7 @@
+ #ifndef SMALL
+ 	if ((ctx->log_file = fopen(path, "ae")) == NULL)
+ 		return -1;
+-	setlinebuf(ctx->log_file);
++	setvbuf(ctx->log_file, NULL, _IOLBF, 0);
+ 	return fileno(ctx->log_file);
+ #else
+ 	errno = ENOTSUP;

@@ -1,0 +1,32 @@
+Do not name a variable 'true'.
+
+tcp.c names a local variable "true" (the SO_REUSEADDR option value). On QNX
+<stdbool.h> is pulled in by the system headers and "true" is a macro there,
+so the declaration reads "int 1 = 1;". Rename the variable.
+
+Upstream-Status: Pending
+
+--- a/src/tcp.c
++++ b/src/tcp.c
+@@ -55,8 +55,8 @@
+      pending requests on shutdown of ippusbxd. Otherwise the port will stay
+      unavailable for a certain kernel-defined timeout. See also
+      http://stackoverflow.com/questions/10619952/how-to-completely-destroy-a-socket-connection-in-c */
+-  int true = 1;
+-  if (setsockopt(this->sd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int)) == -1) {
++  int one = 1;
++  if (setsockopt(this->sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(int)) == -1) {
+     ERR("IPv4 setting socket options failed");
+     goto error;
+   }
+@@ -133,8 +133,8 @@
+      pending requests on shutdown of ippusbxd. Otherwise the port will stay
+      unavailable for a certain kernel-defined timeout. See also
+      http://stackoverflow.com/questions/10619952/how-to-completely-destroy-a-socket-connection-in-c */
+-  int true = 1;
+-  if (setsockopt(this->sd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int)) == -1) {
++  int one = 1;
++  if (setsockopt(this->sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(int)) == -1) {
+     ERR("IPv6 setting socket options failed");
+     goto error;
+   }

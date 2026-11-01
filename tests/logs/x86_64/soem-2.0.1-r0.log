@@ -1,0 +1,48 @@
+# soem 2.0.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:09:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u soem qnx-test-soem qnx-port-tests
+(1/2) Installing soem (2.0.1-r0)
+(2/2) Installing qnx-test-soem (1.0-r0)
+OK: 97 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_soem
+     == soem ==
+       ok   ecx_init on a nonexistent interface fails
+       ok   ecx_close after the failed init
+       info adapter enc0
+       info adapter lo0
+       info adapter pflog0
+       info adapter pfsync0
+       info adapter vtnet0
+       ok   ec_find_adapters lists the interfaces, loopback among them
+       ok   slaveinfo on a nonexistent interface: No socket connection
+       ok   slaveinfo without arguments lists the adapters
+       ok   osal_usleep(20 ms) returns 0
+       info osal_usleep(20000) took 20.51 ms
+       ok   monotonic clock: at least 20 ms elapsed
+       ok   time difference normalised
+       ok   osal_time_diff borrows across seconds (1.2 s)
+       ok   a 50 ms timer has not expired at once
+       ok   the timer has expired after 70 ms
+       ok   osal_monotonic_sleep to an absolute time
+       ok   woke at or after the requested time
+       ok   osal_current_time is wall-clock time
+       ok   osal_thread_create (two threads)
+       ok   osal mutex: 2 x 10000 increments, none lost
+       ok   osal_malloc
+       ok   oshw_htons/oshw_ntohs
+       ok   ec_setupheader: ethertype 0x88A4
+       ok   ec_setupheader: broadcast destination
+       ok   AL status code 0x0011 text
+       ok   SDO abort code 0x06020000 text
+     PASS soem
+PASS test_soem
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

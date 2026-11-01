@@ -1,0 +1,41 @@
+# libhevc 1.8.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libhevc qnx-test-libhevc qnx-port-tests
+(1/3) Installing libhevc (1.8.5-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libhevc (1.0-r0)
+OK: 97 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libhevc
+     == libhevc ==
+       ok   decoder created (4:2:0 planar output)
+       info version: @(#)Id:HEVCDEC_production Ver:05.00 Released by ITTIAM Build: Nov  1 2026 @ 12:30:57
+       ok   IVD_CMD_CTL_GETVERSION names the HEVC decoder
+       ok   one core
+       ok   header decode mode
+       info headers: 81 bytes, picture 32x32
+       ok   header decode: 32x32 picture
+       ok   frame decode mode
+       ok   flush
+       info decoded 3 frame(s), 0 sample mismatch(es)
+       ok   3 pictures decoded
+       ok   every sample equals the generating formula (lossless)
+       ok   a stream cut inside the headers yields no pictures
+       ok   scratch directory
+       info hevcdec rc=0: Ittiam Decoder Version number: @(#)Id:HEVCDEC_production Ver:05.00 Released by ITTIAM Build: Nov  1 2026 @ 12:30:57
+     FrameNum:    1 TimeTaken(microsec):     91 AvgTime:     91 PeakAvgTimeMax:     11Output:  1 NumBytes:    461 
+     FrameNum:    2 TimeTaken(microsec):     21 AvgTime:     56 PeakAvgTimeMax:
+       ok   hevcdec exits 0
+       info out.yuv: 4608 bytes
+       ok   hevcdec output: 4608 bytes, identical to the source frames
+     PASS libhevc
+PASS test_libhevc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

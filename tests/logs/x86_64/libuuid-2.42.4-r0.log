@@ -1,0 +1,35 @@
+# libuuid 2.42.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:26:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libuuid qnx-test-libuuid qnx-port-tests
+(1/3) Installing libuuid (2.42.4-r0)
+(2/3) Installing qnx-port-tests (1.0-r2)
+(3/3) Installing qnx-test-libuuid (1.0-r0)
+OK: 93 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libuuid
+     == libuuid ==
+       ok   uuid_parse (the RFC 4122 DNS namespace)
+       ok   it is a version 1, DCE variant UUID
+       ok   uuid_unparse_upper
+       ok   uuid_parse rejects a short or malformed string
+       ok   uuid_get_template("dns") is the DNS namespace parsed above
+       ok   uuid_generate_md5(dns, www.example.com) = Python uuid3
+       ok   uuid_generate_sha1(dns, www.example.com) = Python uuid5
+       ok   1000 uuid_generate_random(): all version 4, all distinct
+       ok   uuid_generate_time: version 1, embedded time is now
+       ok   a second v1 UUID is not older
+       info uuid_generate_time_safe: -1 (0 = generated safely)
+       ok   uuid_generate_time_v7: version 7, time is now
+       ok   uuid_copy + uuid_compare
+       ok   uuid_clear -> uuid_is_null
+     PASS libuuid
+PASS test_libuuid
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add minicom minicom-dev
-apk add qnx-test-minicom && /usr/local/bin/qnx-port-tests/test_minicom    # its on-target test
+apk add qnx-test-minicom && /usr/local/bin/qnx-port-tests/test_minicom    # its on-target test, from tests-8.0-<arch>-m-z
 apk del minicom minicom-dev qnx-test-minicom
 ```
 
@@ -167,7 +167,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_minicom`](../../tests/src/) links minicom the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-minicom`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_minicom`](../../tests/src/) links minicom the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-minicom`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>-m-z`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

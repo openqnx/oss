@@ -1,0 +1,21 @@
+Define _XOPEN_SOURCE 700 on QNX.
+
+On anything but Linux, OpenBSD and NetBSD, fmacros.h defines _XOPEN_SOURCE
+with no value. QNX's <sys/platform.h> accepts only the X/Open versions it
+knows (500, 600, 700) and stops with "#error This version of XOPEN_SOURCE is
+not supported" in every file. QNX 8.0 implements POSIX.1-2008 / XPG7, the
+level Linux is given: define 700 for QNX as well.
+
+Upstream-Status: QNX-specific
+
+--- a/src/fmacros.h
++++ b/src/fmacros.h
+@@ -21,7 +21,7 @@
+ #define _ALL_SOURCE
+ #endif
+ 
+-#if defined(__linux__) || defined(__OpenBSD__)
++#if defined(__linux__) || defined(__OpenBSD__) || defined(__QNX__)
+ #define _XOPEN_SOURCE 700
+ /*
+  * On NetBSD, _XOPEN_SOURCE undefines _NETBSD_SOURCE and

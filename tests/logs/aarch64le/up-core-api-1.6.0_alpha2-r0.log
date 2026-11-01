@@ -1,0 +1,32 @@
+# up-core-api 1.6.0_alpha2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:18:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u up-core-api qnx-test-up-core-api qnx-port-tests
+(1/4) Installing abseil (20240722.0-r0)
+(2/4) Installing protobuf (29.3-r0)
+(3/4) Installing up-core-api (1.6.0_alpha2-r0)
+(4/4) Installing qnx-test-up-core-api (1.0-r0)
+OK: 137 MiB in 43 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_up_core_api
+     == up-core-api ==
+       ok   serialize a UUri
+       ok   UUri wire bytes 0a 01 61 10 01 18 02 20 81 80 02
+       ok   parse them back
+       ok   descriptor full name uprotocol.v1.UUri
+       ok   UCode NOT_FOUND = 5
+       ok   UStatus round trip
+       ok   UMessage round trip (attributes, id, payload)
+       ok   uSubscription option service_name = core.usubscription
+       ok   service_version_major = 3
+       ok   Subscribe method_id = 1
+     PASS up-core-api
+PASS test_up_core_api
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

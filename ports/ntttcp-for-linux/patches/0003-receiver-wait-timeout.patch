@@ -1,0 +1,42 @@
+Let the TCP receiver threads notice the end of a test.
+
+The TCP receiver threads leave their accept/receive loop only when they
+find the test finished at the top of the loop, and then block in select()
+or epoll_wait() with no timeout. When the sender's connections close before
+the receiver's own test timer has marked the test finished -- the usual
+order on QNX, where both sides' timers expire within the same
+millisecond -- the thread handles the EOFs, goes back to waiting on the
+listening socket alone and never wakes again: the receiver printed its
+results and then hung for good in pthread_join(). Wait at most one second,
+so the loop sees the finished state. (The UDP receiver already uses a
+receive timeout for the same reason.)
+
+Upstream-Status: Pending
+
+--- a/src/tcpstream.c
++++ b/src/tcpstream.c
+@@ -428,7 +428,9 @@
+ 		    ss->endpoint->state == TEST_FINISHED)
+ 			break;
+ 
+-		n_fds = epoll_wait(efd, events, MAX_EPOLL_EVENTS, -1);
++		/* Wake up at least once a second to see whether the test has
++		   finished: the last connection may close before it has. */
++		n_fds = epoll_wait(efd, events, MAX_EPOLL_EVENTS, 1000);
+ 		for (i = 0; i < n_fds; i++) {
+ 			current_fd = events[i].data.fd;
+ 
+@@ -570,8 +572,11 @@
+ 		memcpy(&read_set, &ss->read_set, sizeof(fd_set));
+ 		memcpy(&write_set, &ss->write_set, sizeof(fd_set));
+ 
+-		/* we are notified by select() */
+-		n_fds = select(ss->max_fd + 1, &read_set, NULL, NULL, NULL);
++		/* we are notified by select(); wake up at least once a second to
++		   see whether the test has finished: the last connection may
++		   close before it has. */
++		struct timeval tv = { 1, 0 };
++		n_fds = select(ss->max_fd + 1, &read_set, NULL, NULL, &tv);
+ 		if (n_fds < 0 && errno != EINTR) {
+ 			PRINT_ERR("error happened when select()");
+ 			err_code = ERROR_SELECT;

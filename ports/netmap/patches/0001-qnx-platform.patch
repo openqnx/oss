@@ -1,0 +1,100 @@
+QNX platform support for the netmap applications.
+
+QNX 8.0 has netmap in io-sock, but the applications only know Linux,
+FreeBSD, macOS and Windows. Adds apps/include/qnx_compat.h, which the
+recipe force-includes on QNX: thread affinity through the thread's run mask
+(ThreadCtl(_NTO_TCTL_RUNMASK); QNX has no pthread_setaffinity_np()/cpuset_t,
+and the applications only pin the calling thread), bzero()/bcopy() (not
+declared by QNX 8's <strings.h>), CLOCK_REALTIME_PRECISE, MAP_HUGETLB (0:
+QNX has no huge-page mmap flag, as on FreeBSD) and <net/if_dl.h> for the
+link addresses getifaddrs() returns. In pkt-gen: the CPU count from
+sysconf(_SC_NPROCESSORS_ONLN) (QNX has no CTL_HW/HW_NCPU sysctl), and the
+FreeBSD-style tap clone device.
+
+Upstream-Status: QNX-specific
+
+--- /dev/null
++++ b/apps/include/qnx_compat.h
+@@ -0,0 +1,59 @@
++/*
++ * QNX compatibility for the netmap applications, force-included (-include)
++ * when building for QNX.
++ *
++ * - Thread affinity: the applications pin threads with
++ *   pthread_setaffinity_np() and a cpuset_t (FreeBSD) or cpu_set_t (Linux).
++ *   QNX has neither: a thread's affinity is its run mask, which the thread
++ *   sets for itself with ThreadCtl(_NTO_TCTL_RUNMASK). The applications only
++ *   ever pin the calling thread, so that is all this supports (another
++ *   thread: ENOTSUP).
++ * - bzero()/bcopy(): QNX 8's <strings.h> does not declare them (the SDP's
++ *   <net/netmap_user.h> maps bzero to memset the same way).
++ * - CLOCK_REALTIME_PRECISE (FreeBSD) is CLOCK_REALTIME.
++ * - MAP_HUGETLB: QNX has no huge-page mmap flag; 0, as on FreeBSD (tlem
++ *   then simply maps normal pages).
++ * - struct sockaddr_dl / LLADDR (getifaddrs() link addresses): <net/if_dl.h>.
++ */
++#ifndef QNX_COMPAT_H
++#define QNX_COMPAT_H
++#ifdef __QNXNTO__
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <sys/mman.h>
++#include <errno.h>
++#include <pthread.h>
++#include <stdint.h>
++#include <string.h>
++#include <time.h>
++#include <sys/neutrino.h>
++#include <net/if_dl.h>
++
++#define cpuset_t        uint64_t
++static inline void CPU_ZERO(cpuset_t *p) { *p = 0; }
++static inline void CPU_SET(uint32_t i, cpuset_t *p) { *p |= (uint64_t)1 << (i & 0x3f); }
++static inline int
++pthread_setaffinity_np(pthread_t t, size_t sz, const cpuset_t *m)
++{
++	(void)sz;
++	if (!pthread_equal(t, pthread_self())) {
++		errno = ENOTSUP;
++		return -1;
++	}
++	return ThreadCtl(_NTO_TCTL_RUNMASK, (void *)(uintptr_t)*m) == -1 ? -1 : 0;
++}
++
++#ifndef bzero
++#define bzero(p, n)     memset((p), 0, (n))
++#endif
++#ifndef bcopy
++#define bcopy(s, d, n)  memmove((d), (s), (n))
++#endif
++#ifndef CLOCK_REALTIME_PRECISE
++#define CLOCK_REALTIME_PRECISE CLOCK_REALTIME
++#endif
++#ifndef MAP_HUGETLB
++#define MAP_HUGETLB     0
++#endif
++#endif /* __QNXNTO__ */
++#endif /* QNX_COMPAT_H */
+--- a/apps/pkt-gen/pkt-gen.c
++++ b/apps/pkt-gen/pkt-gen.c
+@@ -585,7 +585,7 @@ system_ncpus(void)
+ 	int mib[2] = { CTL_HW, HW_NCPU };
+ 	size_t len = sizeof(mib);
+ 	sysctl(mib, 2, &ncpus, &len, NULL, 0);
+-#elif defined(linux)
++#elif defined(linux) || defined(__QNXNTO__)
+ 	ncpus = sysconf(_SC_NPROCESSORS_ONLN);
+ #elif defined(_WIN32)
+ 	{
+@@ -613,6 +613,11 @@ system_ncpus(void)
+ #define TAP_CLONEDEV	"/dev/tap"
+ #endif /* __FreeBSD */
+ 
++#ifdef __QNXNTO__
++#include <net/if_tun.h>
++#define TAP_CLONEDEV	"/dev/tap"
++#endif /* __QNXNTO__ */
++
+ #ifdef __APPLE__
+ // #warning TAP not supported on apple ?
+ #include <net/if_utun.h>

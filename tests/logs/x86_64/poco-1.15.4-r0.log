@@ -1,0 +1,46 @@
+# poco 1.15.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:59:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u poco qnx-test-poco qnx-port-tests
+(1/3) Installing utf8proc (2.11.3-r0)
+(2/3) Installing poco (1.15.4-r0)
+(3/3) Installing qnx-test-poco (1.0-r0)
+OK: 103 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_poco
+     == poco ==
+       ok   MD5(abc)
+       ok   SHA1(abc)
+       ok   Crypto SHA-256(abc) via OpenSSL
+       ok   AES-256-CBC = openssl enc (base64 Q8r1+PKGrD6M+hU4mwup4w==)
+       ok   AES-256-CBC decrypt
+       ok   RSA-1024 SHA-256 signature verifies, not for other text
+       ok   DateTimeParser ISO 8601 -> epoch 1234567890, Friday
+       ok   DateTimeFormatter HTTP format
+       ok   RegularExpression (PCRE2) captures
+       ok   UTF8::toUpper (utf8proc)
+       ok   gzip Deflating/InflatingStream round trip (5003 -> <200 bytes)
+       ok   FileOutputStream writes 12 bytes
+       ok   File::list
+       ok   File::remove(recursive)
+       ok   ThreadPool: 4 runnables x 1000 increments
+       ok   Util::PropertyFileConfiguration
+       ok   Util::XMLConfiguration paths
+       ok   XML DOMParser: elements, attribute, text
+       ok   JSON parse: string, number, array, bool
+       ok   JSON stringify
+       ok   HTTP GET on <ip>
+       ok   HTTP POST on the same keep-alive session
+       info DNS::resolve(<ip>): localhost, first ::1
+       ok   DNS::resolve(<ip>): a name, and only loopback addresses
+       ok   DNS::hostByName(<ip>) = <ip>
+     PASS poco
+PASS test_poco
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

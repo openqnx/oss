@@ -1,0 +1,40 @@
+# davici 1.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T10:24:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u davici qnx-test-davici qnx-port-tests
+(1/4) Installing strongswan (6.0.6-r1)
+(2/4) Installing davici (1.6-r0)
+(3/4) Installing qnx-port-tests (1.0-r2)
+(4/4) Installing qnx-test-davici (1.0-r0)
+OK: 99 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_davici
+     == davici ==
+       ok   VICI server listening on a UNIX socket
+       ok   davici_connect_unix
+       ok   version command answered
+       ok   request on the wire: length 9, CMD_REQUEST, name "version", no elements
+       info response: daemon=charon version=6.0.6 sysname=QNX
+       ok   response parsed: daemon=charon version=6.0.6 sysname=QNX
+       ok   two requests queued
+       ok   both echo commands answered (in order)
+       ok   echoed message parses back: section, key-value, list of 2 (one scanf'd: 256/384), 3000-byte value, end
+       ok   davici_dump: the nested message as text
+       ok   unknown command: -ENOSYS
+       ok   event registration confirmed, 2 events received
+       ok   event payloads: msg="message 1", "message 2"
+       ok   event unregistration confirmed
+       ok   VICI server listening on <ip> (TCP)
+       ok   davici_connect_tcp to <ip>
+       ok   version command over TCP
+       ok   server saw only well-formed packets
+     PASS davici
+PASS test_davici
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

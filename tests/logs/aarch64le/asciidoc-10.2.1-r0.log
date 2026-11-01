@@ -1,0 +1,47 @@
+# asciidoc <ip>-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:25:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u asciidoc qnx-test-asciidoc qnx-port-tests
+( 1/15) Installing xz (5.6.3-r0)
+( 2/15) Installing libxml2 (2.13.5-r1)
+( 3/15) Installing libxslt (1.1.42-r0)
+( 4/15) Installing docbook-xsl (1.79.2-r0)
+( 5/15) Installing bzip2 (1.0.8-r0)
+( 6/15) Installing expat (2.6.4-r0)
+( 7/15) Installing gdbm (1.24-r0)
+( 8/15) Installing readline (8.2-r0)
+( 9/15) Installing sqlite (3.47.2-r0)
+(10/15) Installing python3 (3.14.0-r2)
+(11/15) Installing xsltproc (1.1.42-r0)
+(12/15) Installing asciidoc (<ip>-r0)
+(13/15) Installing qnx-port-tests (1.0-r2)
+(14/15) Installing libxml2-utils (2.13.5-r0)
+(15/15) Installing qnx-test-asciidoc (1.0-r0)
+OK: 175 MiB in 45 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_asciidoc
+     == asciidoc ==
+       ok   asciidoc --version: <ip>
+       ok   html5 backend: doc.html written
+       ok   HTML <title>
+       ok   section heading with its id
+       ok   attribute {board} substituted
+       ok   two list items
+       ok   table: header cell and body cell
+       ok   listing block HTML-escaped
+       ok   docbook45 backend: article, section title, itemizedlist
+       ok   DocBook output is well-formed XML (xmllint)
+       ok   stdin to stdout, no header (-s): *QNX* -> <strong>
+       ok   a2x -f manpage: qnxtool.1 written
+       ok   man page .TH "QNXTOOL" "1"
+       ok   man page NAME section
+     PASS asciidoc
+PASS test_asciidoc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,34 @@
+# compiler-rt 22.1.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T10:51:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u compiler-rt qnx-test-compiler-rt qnx-port-tests
+(1/2) Installing compiler-rt (22.1.8-r0)
+(2/2) Installing qnx-test-compiler-rt (1.0-r0)
+OK: 123 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_compiler_rt
+     == compiler-rt ==
+       ok   __udivti3/__umodti3: q*b + r == a, r < b
+       ok   (2^100+12345) / 1000000007 = 1267650591354675262013 r 976383630
+       ok   (2^128-1) / 3 = 0x5555...5555
+       ok   __divti3(-1000000, 7) = -142857 (truncates)
+       ok   __popcountdi2: 0 -> 0, -1 -> 64, 0x00F0F0F0F0F0F0F0 -> 28
+       ok   __clzdi2: 1 -> 63, 2^47 -> 16
+       ok   __ctzdi2: 0x100 -> 8, 2^63 -> 63
+       ok   __bswapsi2(0x11223344) = 0x44332211
+       ok   __ashldi3(3, 40) = 3298534883328
+       ok   __mulodi4(3037000499^2) = 9223372030926249001, no overflow
+       ok   __mulodi4(3037000500^2) overflows int64
+       ok   __muloti4(INT64_MAX^2) = 0x3FFF...FFFF_0000...0001, no overflow
+       ok   __muloti4(2^126 * 2) overflows int128
+       ok   __floatuntidf(2^64) = 18446744073709551616.0
+     PASS compiler-rt
+PASS test_compiler_rt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

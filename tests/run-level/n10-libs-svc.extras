@@ -1,0 +1,8 @@
+test_python3_boto3	bin/python3 lib/python3.14/site-packages/boto3 lib/python3.14/site-packages/botocore lib/python3.14/site-packages/s3transfer lib/python3.14/site-packages/jmespath lib/python3.14/site-packages/urllib3 lib/python3.14/site-packages/dateutil lib/python3.14/site-packages/six.py
+test_redis	bin/redis-server bin/redis-cli bin/redis-benchmark bin/redis-check-rdb
+test_avro_cpp	bin/avrogencpp
+test_rocksdb	bin/ldb bin/sst_dump
+test_soem	bin/slaveinfo
+test_appstream	bin/appstreamcli
+test_libadwaita	bin/labwc share/X11/xkb
+test_libpanel	bin/labwc share/X11/xkb

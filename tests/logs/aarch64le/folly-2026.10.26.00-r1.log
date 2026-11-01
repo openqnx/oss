@@ -1,0 +1,61 @@
+# folly 2026.<ip>-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-01T13:26:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u folly qnx-test-folly qnx-port-tests
+( 1/11) Installing bzip2 (1.0.8-r0)
+( 2/11) Installing xz (5.6.3-r0)
+( 3/11) Installing boost (1.86.0-r0)
+( 4/11) Installing fmt (11.2.0-r0)
+( 5/11) Installing gflags (2.2.2-r1)
+( 6/11) Installing glog (0.7.1-r0)
+( 7/11) Installing libevent (2.1.12-r0)
+( 8/11) Installing libsodium (1.0.20-r0)
+( 9/11) Installing lz4 (1.10.0-r0)
+(10/11) Installing folly (2026.<ip>-r1)
+(11/11) Installing qnx-test-folly (1.0-r0)
+OK: 289 MiB in 50 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_folly
+     == folly ==
+       ok   fbstring
+       ok   small_vector: inline, then on the heap
+       ok   F14FastMap: 1000 entries
+       ok   sorted_vector_map keeps order
+       ok   to<int>, to<string>
+       ok   double conversions (shortest round trip)
+       ok   tryTo<int>("12x") reports an error
+       ok   to<uint8_t>(300) throws ConversionError (overflow)
+       ok   split and join
+       ok   stringPrintf, trimWhitespace
+       ok   hexlify
+       ok   parseJson
+       ok   toJson with sorted keys
+       ok   JSON round trip
+       ok   Expected
+       ok   Optional
+       ok   Synchronized vector: 4 threads x 1000 pushes
+       ok   ConcurrentHashMap: 2000 entries from 4 threads
+       ok   via(pool).thenValue chain: 42
+       ok   collectAll of 10 futures: sum of squares 385
+       ok   exception caught by thenError
+       ok   get() with a 50 ms timeout throws FutureTimeout
+       ok   coroutine Task: ((1+2)+4)*6 = 42
+       ok   coroutine scheduled on the pool
+       info EventBase timer fired after 35 ms
+       ok   EventBase timer (30 ms) on its own thread
+       ok   runInEventBaseThreadAndWait runs on the loop thread
+       ok   IOBuf chain of 3, 18 bytes
+       ok   Cursor reads across the chain
+       ok   coalesce
+       info 59600 bytes compressed: zlib=490 gzip=502 zstd=191 lz4=553 lz4 frame=576 lzma2=260 bzip2=289
+       ok   7 codecs compress to under a quarter and uncompress exactly
+     PASS folly
+PASS test_folly
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

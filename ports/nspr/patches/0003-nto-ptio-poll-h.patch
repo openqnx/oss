@@ -1,0 +1,20 @@
+Include <poll.h> in ptio.c on QNX (NTO).
+
+ptio.c includes <poll.h> only under _PR_POLL_AVAILABLE, which is defined in
+the machine header that is read later (via primpl.h). On Linux and the BSDs
+other system headers pull in poll.h; on QNX nothing does, and struct pollfd
+and POLLIN are undeclared. Include it for NTO unconditionally.
+
+Upstream-Status: QNX-specific
+
+--- a/nspr/pr/src/pthreads/ptio.c
++++ b/nspr/pr/src/pthreads/ptio.c
+@@ -27,7 +27,7 @@
+ #  if defined(SOLARIS)
+ #    include <sys/filio.h> /* to pick up FIONREAD */
+ #  endif
+-#  ifdef _PR_POLL_AVAILABLE
++#  if defined(_PR_POLL_AVAILABLE) || defined(NTO)
+ #    include <poll.h>
+ #  endif
+ #  ifdef AIX

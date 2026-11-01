@@ -1,0 +1,112 @@
+CMake: zenoh-cpp's package, install a CMake package, tests optional
+
+up-transport-zenoh-cpp is built with Conan upstream, which supplies a
+"zenohcpp::lib" target and generates the CMake packages. Without Conan:
+- zenoh-cpp's own package: find_package(zenohc) + find_package(zenohcxx), and
+  the zenoh-c backend target zenohcxx::zenohc;
+- zenoh-cpp, up-cpp, up-core-api and protobuf are PUBLIC link dependencies
+  (ZenohUTransport.h includes zenoh.hxx and up-cpp's headers) instead of
+  include directories that would export the build machine's staging path;
+- install up-transport-zenoh-cpp::up-transport-zenoh-cpp
+  (up-transport-zenoh-cppConfig.cmake) and a versioned shared library;
+- the tests only with BUILD_TESTING (CTest's switch); they need GoogleTest;
+- ZenohUTransport.h defines ZENOHCXX_ZENOHC only when it is not defined yet:
+  zenohcxx::zenohc passes -DZENOHCXX_ZENOHC, and the redefinition is an error
+  under the project's -Werror.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,7 +16,8 @@ find_package(protobuf REQUIRED)
+ find_package(spdlog REQUIRED)
+ find_package(up-core-api REQUIRED)
+ find_package(up-cpp REQUIRED)
+-find_package(zenohcpp REQUIRED)
++find_package(zenohc REQUIRED)
++find_package(zenohcxx REQUIRED)
+ 
+ # TODO NEEDED?
+ #add_definitions(-DSPDLOG_FMT_EXTERNAL)
+@@ -45,31 +46,58 @@ file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+ 
+ add_library(${PROJECT_NAME} ${SRC_FILES})
+ add_library(up-cpp::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
++set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
++include(GNUInstallDirs)
+ 
+ target_include_directories(${PROJECT_NAME}
+ 	PUBLIC
+ 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+ 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+-	$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+-	${zenohcpp_INCLUDE_DIR}
+-	${up-cpp_INCLUDE_DIR}
+-	${up-core-api_INCLUDE_DIR}
+-	${protobuf_INCLUDE_DIR}
+-	${spdlog_INCLUDE_DIR})
++	$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>)
+ 
+ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+ 
++# ZenohUTransport.h includes zenoh.hxx and up-cpp's headers: those are part
++# of the interface. zenoh-cpp on zenoh-c (zenohcxx::zenohc).
+ target_link_libraries(${PROJECT_NAME}
+-	PRIVATE
+-	zenohcpp::lib
++	PUBLIC
++	zenohcxx::zenohc
+ 	up-cpp::up-cpp
+ 	up-core-api::up-core-api
+ 	protobuf::libprotobuf
++	PRIVATE
+ 	spdlog::spdlog
+ 	)
+ 
+-enable_testing()
+-add_subdirectory(test)
++include(CTest)
++if(BUILD_TESTING)
++	add_subdirectory(test)
++endif()
+ 
+-INSTALL(TARGETS ${PROJECT_NAME})
++INSTALL(TARGETS ${PROJECT_NAME} EXPORT up-transport-zenoh-cppTargets
++	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ INSTALL(DIRECTORY include DESTINATION .)
++
++# The CMake package Conan's CMakeDeps generates: up-transport-zenoh-cpp::up-transport-zenoh-cpp.
++include(CMakePackageConfigHelpers)
++set(_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/up-transport-zenoh-cpp)
++install(EXPORT up-transport-zenoh-cppTargets NAMESPACE up-transport-zenoh-cpp:: DESTINATION ${_cmakedir})
++file(WRITE ${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfig.cmake.in [=[
++@PACKAGE_INIT@
++include(CMakeFindDependencyMacro)
++find_dependency(protobuf CONFIG)
++find_dependency(up-core-api)
++find_dependency(up-cpp)
++find_dependency(zenohc)
++find_dependency(zenohcxx)
++include("${CMAKE_CURRENT_LIST_DIR}/up-transport-zenoh-cppTargets.cmake")
++set(up-transport-zenoh-cpp_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
++]=])
++configure_package_config_file(${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfig.cmake.in
++	${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfig.cmake INSTALL_DESTINATION ${_cmakedir})
++write_basic_package_version_file(${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfigVersion.cmake
++	COMPATIBILITY SameMajorVersion)
++install(FILES ${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfig.cmake
++	${CMAKE_BINARY_DIR}/up-transport-zenoh-cppConfigVersion.cmake DESTINATION ${_cmakedir})
+--- a/include/up-transport-zenoh-cpp/ZenohUTransport.h
++++ b/include/up-transport-zenoh-cpp/ZenohUTransport.h
+@@ -19,7 +19,9 @@
+ #include <optional>
+ #include <unordered_map>
+ 
++#ifndef ZENOHCXX_ZENOHC
+ #define ZENOHCXX_ZENOHC
++#endif
+ #include <zenoh.hxx>
+ 
+ #include "ThreadSafeMap.h"

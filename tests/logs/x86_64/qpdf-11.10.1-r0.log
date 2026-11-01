@@ -1,0 +1,38 @@
+# qpdf 11.10.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-01T11:07:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qpdf qnx-test-qpdf qnx-port-tests
+(1/2) Installing qpdf (11.10.1-r0)
+(2/2) Installing qnx-test-qpdf (1.0-r0)
+OK: 99 MiB in 35 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qpdf
+     == qpdf ==
+       info qpdf 11.10.1
+       ok   QPDF::QPDFVersion() 11.10.1
+       ok   3-page PDF written
+       ok   read back: 3 pages
+       ok   each page's decoded content stream is the text written
+       ok   PDF version 1.3 (emptyPDF)
+       ok   AES-256 (R6) encrypted copy written
+       ok   encrypted file without a password: qpdf_e_password
+       ok   opened with the user password: encrypted, R=6
+       ok   decrypted page 2 content intact
+       ok   C API: qpdf_read + qpdf_get_num_pages = 3
+       ok   qpdf --check: no syntax or stream encoding errors
+       ok   qpdf --show-npages: 3
+       ok   qpdf --pages 3,1: a 2-page file
+       ok   qpdf --show-encryption: R = 6, AESv3
+       ok   linearized copy: no linearization errors
+       ok   qpdf --decrypt: 3 pages
+       ok   zlib-flate -compress | -uncompress round trip
+     PASS qpdf
+PASS test_qpdf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,5 @@
+VERSION=1.8
+TARBALL=https://gnupg.org/ftp/gcrypt/npth/npth-1.8.tar.bz2
+SHA256=8bd24b4f23a3065d6e5b26e98aba9ce783ea4fd781069c1b35d149694e90ca3e
+BUILDSYS=autotools
+CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-tests )

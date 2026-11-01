@@ -1,0 +1,19 @@
+compat/arc4random.h: include <stddef.h> for size_t.
+
+compat/arc4random.h declares arc4random_buf(void *, size_t) after including
+only <stdint.h>, which does not define size_t. config.h includes it before
+anything else when the C library has no arc4random() (QNX), and every file
+then failed with "unknown type name 'size_t'". Include <stddef.h>.
+
+Upstream-Status: QNX-specific
+
+--- a/compat/arc4random.h
++++ b/compat/arc4random.h
+@@ -11,6 +11,7 @@
+ #ifndef ARC4RANDOM_H
+ #define ARC4RANDOM_H
+ 
++#include <stddef.h>
+ #include <stdint.h>
+ 
+ uint32_t arc4random(void);

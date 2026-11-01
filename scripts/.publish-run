@@ -16,7 +16,7 @@
 #   the port tests of the components published come along (test_suites/8.0),
 #   and with --only/--verified, apk-tools and ca-certificates always do: they
 #   are what target-bootstrap installs first
-#   --no-tests        leave the tests-<sdp>-<arch> releases alone
+#   --no-tests        leave the tests-<sdp>-<arch>[-m-z] releases alone
 #   --changed         upload only files the release does not have yet: a new
 #                     version or release of a package (a published
 #                     <name>-<version>-r<N> is never rewritten, see qnxpkg)
@@ -26,13 +26,14 @@
 # drops the others. --prune deletes assets that are no longer in dists/
 # (packages deleted locally on purpose); old versions are kept otherwise.
 #
-# Five releases per architecture, because GitHub allows at most 1000 assets
+# Six releases per architecture, because GitHub allows at most 1000 assets
 # per release (and each under 2 GiB):
 #   packages-8.0-<arch>[-m-z]  <pkg>.tar.gz + INDEX                    what oss-get reads
 #   apk-8.0-<arch>[-m-z]       <pkg>.apk + APKINDEX.tar.gz + public key what apk reads
-#   tests-8.0-<arch>           qnx-test-*.apk/.tar.gz + both indexes   apk, third repository
-# The apk and packages releases are split by the first character of the
-# package name (scripts/lib/shards.py, the one place that says how): 0-9 a-l
+#   tests-8.0-<arch>[-m-z]     qnx-test-*.apk/.tar.gz + both indexes   apk, two more repositories
+# All three are split by the first character of the package name
+# (scripts/lib/shards.py, the one place that says how; a test qnx-test-<name>
+# by its <name>, the runner qnx-port-tests as port-tests): 0-9 a-l
 # in the tags of before the split, m-z in the -m-z ones. Each is a complete
 # repository with its own indexes; a target reads all of them (target/apk-setup,
 # target/oss-get). Every check (asset count, --changed, --prune) is per release.
@@ -53,7 +54,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --verified) MODE=verified; shift ;;
   --only) MODE=only; shift; while [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; do ONLY+=("$1"); shift; done ;;
   --arch) ARCHES+=("$2"); shift 2 ;;
-  -h|--help) sed -n '2,43p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  -h|--help) sed -n '2,44p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
   aarch64|x86_64) ARCHES+=("$1"); shift ;;
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac; done
@@ -118,6 +119,14 @@ else:
         else:
             vers = {max((e["V"] for e in own), key=vk, default=None)}
         pick += [e for e in es if e["V"] in vers]
+        # A subpackage (-dev) can have its own release number for the same
+        # upstream version (only its files changed): take its newest one for
+        # each chosen version, or it is never published.
+        for base in {v.rpartition("-r")[0] for v in vers if v}:
+            for p in {e["P"] for e in es} - {e["P"] for e in pick}:
+                cand = [e for e in es if e["P"] == p and e["V"].rpartition("-r")[0] == base]
+                if cand:
+                    pick.append(max(cand, key=lambda e: vk(e["V"])))
     # What target-bootstrap installs first is always published: apk-tools and
     # the CA bundle (every apk install on a target goes through them).
     for comp in ("apk-tools", "ca-certificates"):
@@ -202,6 +211,7 @@ for a in "${ARCHES[@]}"; do
   mapfile -t tf < <(echo "$sel" | sed -n 's/^tests //p')
   echo "== $a ($MODE${ONLY:+: ${ONLY[*]}}): ${#mf[@]} package file(s), ${#tf[@]} test package file(s)"
   split=$(printf '%s\n' "${mf[@]}" | shards split)
+  tsplit=$(printf '%s\n' "${tf[@]}" | shards split)
   # The last shard first: with --prune, a package that moved to a new shard
   # is uploaded there before it is deleted from the release it was in.
   for ((i = ${#SHARDS[@]} - 1; i >= 0; i--)); do
@@ -209,8 +219,10 @@ for a in "${ARCHES[@]}"; do
     mapfile -t sf < <(echo "$split" | awk -v s="$sh" '$1 == s { print $2 }')
     stage packages-$SDP-$a$sfx "$src" tgz "$sh" "${sf[@]}"
     stage apk-$SDP-$a$sfx "$src" apk "$sh" "${sf[@]}"
+    # The tests: each shard its own repository (APKINDEX.tar.gz and INDEX).
+    mapfile -t sf < <(echo "$tsplit" | awk -v s="$sh" '$1 == s { print $2 }')
+    [ ${#tf[@]} -eq 0 ] || [ -n "$NOTESTS" ] || stage tests-$SDP-$a$sfx "$ts" both "$sh" "${sf[@]}"
   done
-  [ ${#tf[@]} -eq 0 ] || [ -n "$NOTESTS" ] || stage tests-$SDP-$a "$ts" both "" "${tf[@]}"
 done
 
 if [ -z "$UPLOAD" ]; then
@@ -236,12 +248,11 @@ paced_upload() { # tag, file names on stdin
   done
 }
 NOTICE=""; [ -f "$WS/NOTICE.md" ] && NOTICE=$'\n\n'"$(sed -n '3,12p' "$WS/NOTICE.md")"
-# tag -> "<arch> <kind> <suffix or -> <first characters>" (tests: "<arch> tests - -")
+# tag -> "<arch> <kind> <suffix or -> <first characters>"
 tag_info() {
   local a k e sfx
   for a in "${ARCHES[@]}"; do
-    [ "$1" = tests-$SDP-$a ] && { echo "$a tests - -"; return; }
-    for k in packages apk; do for e in "${SHARDS[@]}"; do
+    for k in packages apk tests; do for e in "${SHARDS[@]}"; do
       sfx=${e%% *}; [ "${e%% *}" = - ] && sfx=""
       [ "$1" = $k-$SDP-$a$sfx ] && { echo "$a $k $e"; return; }
     done; done
@@ -261,7 +272,8 @@ for tag in "${STAGED[@]}"; do
     case $kind in
       packages) title="QNX SDP $SDP packages for oss-get ($a, ${range})"
         notes="Install on target: target/oss-get install <package>. This release holds the $part; the others are in:$others. oss-get reads the INDEX of each (its default OSS_REPO)." ;;
-      tests) title="QNX SDP $SDP port tests ($a)"; notes="On target: apk add qnx-test-<package> (target/apk-setup adds this repository). Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
+      tests) title="QNX SDP $SDP port tests ($a, ${range})"
+        notes="On target: apk add qnx-test-<package> qnx-port-tests (target/apk-setup adds this repository). This repository holds the port tests qnx-test-<name> whose <name> starts with [$range] (the runner qnx-port-tests counts as port-tests); the others are in:$others. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
       apk) title="QNX SDP $SDP APK repository ($a, ${range})"
         notes="On target: target/apk-setup, then apk add <package>. This repository holds the $part; the others are in:$others -- /data/oss/etc/apk/repositories names each index. Index: https://github.com/$GHREPO/releases/download/$tag/APKINDEX.tar.gz" ;;
     esac

@@ -9,7 +9,7 @@
 | Upstream | https://gitlab.gnome.org/GNOME/libxml2.git (tag `v2.13.5`) |
 | Build system | CMake |
 | QNX patches | 1 |
-| Build dependencies | [`zlib`](../zlib/) [`xz`](../xz/) |
+| Build dependencies | [`zlib`](../zlib/) [`xz`](../xz/) [`python3`](../python3/) |
 | Run-time dependencies | [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libxml2`](../../tests/src/) |
@@ -31,7 +31,7 @@ Each package's page gives the exact file, URL, SHA-256 and dependencies per arch
 ```sh
 # on the QNX target, as root
 apk add libxml2 libxml2-dev
-apk add qnx-test-libxml2 && /usr/local/bin/qnx-port-tests/test_libxml2    # its on-target test
+apk add qnx-test-libxml2 && /usr/local/bin/qnx-port-tests/test_libxml2    # its on-target test, from tests-8.0-<arch>
 apk del libxml2 libxml2-dev qnx-test-libxml2
 ```
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (6 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (15 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild zlib xz
+./scripts/qnxbuild zlib xz python3
 ```
 
-<details><summary>Full build chain (6)</summary>
+<details><summary>Full build chain (15)</summary>
 
-[`gettext`](../gettext/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -124,7 +124,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxml2`.
 
 ### 5. What it installs
 
-118 files under `/usr/local`: 3 shared-library entries, 1 programs, 46 headers.
+121 files under `/usr/local`: 3 shared-library entries, 1 programs, 46 headers.
 
 ```
 /usr/local/lib/libxml2.so
@@ -169,7 +169,7 @@ QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-e
 
 ### Test
 
-[`test_libxml2`](../../tests/src/) links libxml2 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxml2`, in the tests repository (`dists/8.0/tests/`, `scripts/qnxpkg --tests`), which apk-setup adds next to the package repository:
+[`test_libxml2`](../../tests/src/) links libxml2 the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-libxml2`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
 
 ```sh
 # on the target

@@ -1,45 +1,46 @@
 # libxfce4windowing 4.20.7-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
-# date: 2026-10-31T16:16:53Z   packages from: apk:local-dists
+# date: 2026-11-01T10:48:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libxfce4windowing qnx-test-libxfce4windowing qnx-port-tests
-( 1/33) Installing dbus (1.16.0-r1)
-( 2/33) Installing libxau (1.0.11-r0)
-( 3/33) Installing libxdmcp (1.1.5-r0)
-( 4/33) Installing libxcb (1.17.0-r0)
-( 5/33) Installing libx11 (1.8.10-r0)
-( 6/33) Installing libxext (1.3.6-r0)
-( 7/33) Installing libxi (1.8.2-r0)
-( 8/33) Installing libxtst (1.2.5-r0)
-( 9/33) Installing at-spi2-core (2.54.0-r0)
-(10/33) Installing libxrender (0.9.11-r0)
-(11/33) Installing cairo (1.18.2-r0)
-(12/33) Installing fribidi (1.0.16-r0)
-(13/33) Installing harfbuzz (<ip>-r0)
-(14/33) Installing libxcomposite (0.4.6-r0)
-(15/33) Installing libxfixes (6.0.1-r0)
-(16/33) Installing libxcursor (1.2.2-r0)
-(17/33) Installing libxdamage (1.1.6-r0)
-(18/33) Installing libxinerama (1.1.5-r0)
-(19/33) Installing libxml2 (2.13.5-r1)
-(20/33) Installing libxkbcommon (1.8.1-r1)
-(21/33) Installing libxrandr (1.5.4-r0)
-(22/33) Installing libxft (2.3.8-r0)
-(23/33) Installing pango (1.54.0-r0)
-(24/33) Installing gtk3 (3.24.43-r1)
-(25/33) Installing libxfce4windowing (4.20.7-r1)
-(26/33) Installing qnx-port-tests (1.0-r2)
-(27/33) Installing font-dejavu (2.37-r0)
-(28/33) Installing libsfdo (0.1.4-r0)
-(29/33) Installing lcms2 (2.16-r0)
-(30/33) Installing wlroots (0.20.2-r0)
-(31/33) Installing xkeyboard-config (2.43-r0)
-(32/33) Installing labwc (0.20.2-r1)
-(33/33) Installing qnx-test-libxfce4windowing (1.0-r0)
-OK: 168 MiB in 62 packages
+( 1/34) Installing dbus (1.16.0-r3)
+( 2/34) Installing libxau (1.0.11-r0)
+( 3/34) Installing libxdmcp (1.1.5-r0)
+( 4/34) Installing libxcb (1.17.0-r0)
+( 5/34) Installing libx11 (1.8.10-r0)
+( 6/34) Installing libxext (1.3.6-r0)
+( 7/34) Installing libxi (1.8.2-r0)
+( 8/34) Installing libxtst (1.2.5-r0)
+( 9/34) Installing at-spi2-core (2.54.0-r0)
+(10/34) Installing fontconfig (2.15.0-r0)
+(11/34) Installing libxrender (0.9.11-r0)
+(12/34) Installing cairo (1.18.2-r0)
+(13/34) Installing fribidi (1.0.16-r0)
+(14/34) Installing harfbuzz (<ip>-r0)
+(15/34) Installing libxcomposite (0.4.6-r0)
+(16/34) Installing libxfixes (6.0.1-r0)
+(17/34) Installing libxcursor (1.2.2-r0)
+(18/34) Installing libxdamage (1.1.6-r0)
+(19/34) Installing libxinerama (1.1.5-r0)
+(20/34) Installing libxml2 (2.13.5-r1)
+(21/34) Installing libxkbcommon (1.8.1-r1)
+(22/34) Installing libxrandr (1.5.4-r0)
+(23/34) Installing libxft (2.3.8-r0)
+(24/34) Installing pango (1.54.0-r0)
+(25/34) Installing wayland (1.24.0-r0)
+(26/34) Installing gtk3 (3.24.43-r1)
+(27/34) Installing libxfce4windowing (4.20.7-r1)
+(28/34) Installing font-dejavu (2.37-r0)
+(29/34) Installing libsfdo (0.1.4-r0)
+(30/34) Installing lcms2 (2.16-r0)
+(31/34) Installing wlroots (0.20.2-r0)
+(32/34) Installing xkeyboard-config (2.43-r0)
+(33/34) Installing labwc (0.20.2-r1)
+(34/34) Installing qnx-test-libxfce4windowing (1.0-r0)
+OK: 170 MiB in 67 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfce4windowing
      == libxfce4windowing ==
@@ -48,7 +49,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   gtk_init_check on labwc
        info xfw_windowing_get = 2 (2 = Wayland)
        ok   windowing detected as Wayland
-     ** Message: 16:16:48.771: Window<->Workspace association is not available on your compositor
+     ** Message: 10:48:26.638: Window<->Workspace association is not available on your compositor
        ok   xfw_screen_get_default
        ok   mapped GTK window listed by xfw_screen_get_windows
        info 1 window(s) listed

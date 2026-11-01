@@ -1,0 +1,24 @@
+Fall back to UIO_MAXIOV where IOV_MAX is not defined.
+
+The connection layers size their writev() batches with IOV_MAX, which QNX's
+<limits.h> undefines; <sys/uio.h> carries the same limit (1024) as
+UIO_MAXIOV (hazard: tmux needed the same).
+
+Upstream-Status: QNX-specific
+
+--- a/src/connection.h
++++ b/src/connection.h
+@@ -15,6 +15,13 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <sys/uio.h>
++#include <limits.h>
++
++/* QNX's <limits.h> does not define IOV_MAX; <sys/uio.h> names the same
++ * limit UIO_MAXIOV. */
++#if !defined(IOV_MAX) && defined(UIO_MAXIOV)
++#define IOV_MAX UIO_MAXIOV
++#endif
+ 
+ #include "ae.h"
+ 

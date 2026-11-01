@@ -1,0 +1,25 @@
+Start the routing sender for TCP local routing on QNX.
+
+With TCP local routing ("routing": { "host": ..., "guests": ... }, as used
+between VMs or when UNIX domain sockets are not wanted), init() takes the
+non-Linux branch on QNX and creates the receiver and sender, but start()
+groups QNX with Linux and only starts the sender for UDS routing; the TCP
+branch, which on Linux starts the netlink link connector, does not exist
+on QNX. So a guest application never connects to the routing host. Use the
+Windows path on QNX, which starts the sender in both cases.
+
+Upstream-Status: Pending
+
+--- a/implementation/routing/src/routing_manager_client.cpp
++++ b/implementation/routing/src/routing_manager_client.cpp
+@@ -147,7 +147,9 @@
+ 
+ void routing_manager_client::start() {
+ 
+-#if defined(__linux__) || defined(ANDROID) || defined(__QNX__)
++    // QNX has no netlink connector: like Windows, init() already created the
++    // TCP receiver/sender, so start the sender for both kinds of local routing.
++#if defined(__linux__) || defined(ANDROID)
+     if (configuration_->is_local_routing()) {
+ #else
+     {

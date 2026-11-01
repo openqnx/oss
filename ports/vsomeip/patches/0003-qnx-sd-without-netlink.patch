@@ -1,0 +1,40 @@
+Send SD offers on QNX, which has no netlink route notification.
+
+With service discovery enabled, routing_manager_impl sends offers only when
+is_external_routing_ready(), which needs sd_route_set_. Only the netlink
+connector sets it (route to the SD multicast group reported up), and only
+the netlink callback calls init_pending_services() for offers made before
+routing started. QNX has no netlink: start_ip_routing() sets
+if_state_running_ but neither of the other two, so every offer stays in
+pending_sd_offers_ forever and nothing is ever offered on the network
+("Didn't receive a multicast SD message" on both sides). The
+wait_route_netlink_notification setting does not help: it only stops the
+route being cleared. On QNX, mark the SD route as set and flush the
+pending offers when IP routing starts.
+
+Upstream-Status: Pending
+
+--- a/implementation/routing/src/routing_manager_impl.cpp
++++ b/implementation/routing/src/routing_manager_impl.cpp
+@@ -3976,6 +3976,10 @@
+ #if defined(_WIN32) || defined(__QNX__)
+     if_state_running_ = true;
+ #endif
++#if defined(__QNX__)
++    // No netlink on QNX: the SD route is never reported, so treat it as set.
++    sd_route_set_ = true;
++#endif
+ 
+     if (routing_ready_handler_) {
+         routing_ready_handler_();
+@@ -3990,6 +3994,10 @@
+     }
+ 
+     routing_running_ = true;
++#if defined(__QNX__)
++    // On Linux the netlink callback sends the offers made before routing was ready.
++    init_pending_services();
++#endif
+     VSOMEIP_INFO << VSOMEIP_ROUTING_READY_MESSAGE;
+ }
+ 

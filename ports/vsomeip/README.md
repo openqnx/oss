@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/COVESA/vsomeip.git (tag `3.5.6`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 4 |
 | Build dependencies | [`boost`](../boost/) |
 | Run-time dependencies | [`boost`](../boost/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,10 +87,13 @@ git clone --depth 1 -b 3.5.6 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/vsomeip < ports/vsomeip/patches/0001-qnx8-native-accept4.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0002-qnx-uds-server-recvmsg.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0003-qnx-sd-without-netlink.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0004-qnx-tcp-local-routing-start.patch
 ```
 
 **[`0001-qnx8-native-accept4.patch`](patches/0001-qnx8-native-accept4.patch)** — vsomeip: use QNX 8.0's own accept4().
@@ -100,6 +103,47 @@ patch -p1 -d src/vsomeip < ports/vsomeip/patches/0001-qnx8-native-accept4.patch
 > <sys/sockmsg.h>, which the emulation needs; build it for pre-8.0 targets only.
 
 Touches: `implementation/utility/src/wrappers_qnx.cpp` · Upstream status: Pending
+
+**[`0002-qnx-uds-server-recvmsg.patch`](patches/0002-qnx-uds-server-recvmsg.patch)** — Read UNIX-domain-socket messages on QNX (recvmsg loop was Linux-only).
+
+> The routing host reads what local clients send it over the UNIX domain
+> socket in local_endpoint_receive_op::receive_cb(). The recvmsg() loop that
+> does the read sits under #if defined(__linux__), so on QNX the handler runs
+> with 0 bytes and no error after every readiness wake-up: nothing a client
+> sends is ever read, client-ID assignment never completes, and a second
+> application on the same host keeps logging "request client timeout".
+> Run the loop on QNX too, without the Linux-only SCM_CREDENTIALS ancillary
+> data (QNX has no struct ucred; uid/gid stay ANY, as with security off).
+
+Touches: `implementation/endpoints/include/local_server_endpoint_impl_receive_op.hpp` · Upstream status: Pending
+
+**[`0003-qnx-sd-without-netlink.patch`](patches/0003-qnx-sd-without-netlink.patch)** — Send SD offers on QNX, which has no netlink route notification.
+
+> With service discovery enabled, routing_manager_impl sends offers only when
+> is_external_routing_ready(), which needs sd_route_set_. Only the netlink
+> connector sets it (route to the SD multicast group reported up), and only
+> the netlink callback calls init_pending_services() for offers made before
+> routing started. QNX has no netlink: start_ip_routing() sets
+> if_state_running_ but neither of the other two, so every offer stays in
+> pending_sd_offers_ forever and nothing is ever offered on the network
+> ("Didn't receive a multicast SD message" on both sides). The
+> wait_route_netlink_notification setting does not help: it only stops the
+> route being cleared. On QNX, mark the SD route as set and flush the
+> pending offers when IP routing starts.
+
+Touches: `implementation/routing/src/routing_manager_impl.cpp` · Upstream status: Pending
+
+**[`0004-qnx-tcp-local-routing-start.patch`](patches/0004-qnx-tcp-local-routing-start.patch)** — Start the routing sender for TCP local routing on QNX.
+
+> With TCP local routing ("routing": { "host": ..., "guests": ... }, as used
+> between VMs or when UNIX domain sockets are not wanted), init() takes the
+> non-Linux branch on QNX and creates the receiver and sender, but start()
+> groups QNX with Linux and only starts the sender for UDS routing; the TCP
+> branch, which on Linux starts the netlink link connector, does not exist
+> on QNX. So a guest application never connects to the routing host. Use the
+> Windows path on QNX, which starts the sender in both cases.
+
+Touches: `implementation/routing/src/routing_manager_client.cpp` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -198,9 +242,8 @@ PASS vsomeip
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_vsomeip`](../../tests/src/) -- a program linked against vsomeip the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
+   - fork consumer process
    - runtime::get
-   - create_application
-   - application name readback
    - create_payload
    - payload length
    - payload content
@@ -208,6 +251,13 @@ PASS vsomeip
    - service id readback
    - method id readback
    - payload attached to message
+   - create_application
+   - application name readback
+   - init as routing manager
+   - SD OfferService seen on the multicast group
+   - consumer process subscribed over local routing
+   - consumer received all events in order and all method replies
+   - provider served every method call
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 

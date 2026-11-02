@@ -1,4 +1,4 @@
-# abseil 20240722.0
+# abseil 20260817.0
 
 > Collection of C++ libraries augmenting the C++ standard library
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/abseil/abseil-cpp.git (tag `20240722.0`) |
+| Upstream | https://github.com/abseil/abseil-cpp.git (tag `20260817.0`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
@@ -73,27 +73,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 20240722.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 20260817.0 --recurse-submodules --shallow-submodules \
     https://github.com/abseil/abseil-cpp.git src/abseil
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/abseil < ports/abseil/patches/0001-maskedpointer-default-ctor-libcxx.patch
-```
-
-**[`0001-maskedpointer-default-ctor-libcxx.patch`](patches/0001-maskedpointer-default-ctor-libcxx.patch)** — Give absl's MaskedPointer a default constructor (libc++).
-
-> std::atomic<T>'s default constructor value-initialises T under libc++, the
-> C++ library QNX ships, so std::atomic<MaskedPointer> in absl/flags needs T to
-> be default-constructible; libstdc++ does not require it. The constructor
-> makes a null pointer with no mask bits, which is what the atomic is always
-> assigned before first use.
-
-Touches: `absl/flags/internal/flag.h` · Upstream status: Pending (affects any libc++ build)
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -114,7 +100,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/abseil
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- One abseil for the whole tree.  protobuf and gRPC both vendor abseil and both used to install their copy -- 20240116 (sonames .2401) from protobuf, 20240722 (.2407) from gRPC -- so 86 libabsl_* libraries were staged twice, the unversioned symlinks pointed at whichever installed last, and a gRPC process mapped both.  scripts/check-dupes now catches that.  This is the version gRPC 1.69 pins, and the same one ONNX Runtime vendors (statically, so it does not take part in this). The patch is the libc++ fix gRPC and ORT already needed: MaskedPointer has no default constructor and libc++'s std::atomic<T> requires one.
+- One abseil for the whole tree.  protobuf and gRPC both vendor abseil and both used to install their copy -- 20240116 (sonames .2401) from protobuf, 20240722 (.2407) from gRPC -- so 86 libabsl_* libraries were staged twice, the unversioned symlinks pointed at whichever installed last, and a gRPC process mapped both.  scripts/check-dupes now catches that.  20240722 was the version gRPC 1.69 pins (kept in versions/20240722.0/); ONNX Runtime vendors its own copy statically, so it does not take part in this. No QNX patches since 20260817.0: the one 20240722.0 needed (a default constructor for absl's MaskedPointer, which libc++'s std::atomic<T> requires) is upstream now.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH abseil`.
 
@@ -233,30 +219,33 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/abseil-20240722.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/abseil-20240722.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/abseil-20260817.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/abseil-20240722.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/abseil-20240722.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/abseil-20260817.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **20240722.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add abseil=<version>`), sources in `ported/abseil/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates abseil`; port one with `scripts/port-update abseil`.
+This recipe builds **20260817.0**. Kept from earlier: `20240722.0` ([recipe and patches](versions/20240722.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add abseil=<version>`), sources in `ported/abseil/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates abseil`; port one with `scripts/port-update abseil`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=20240722.0; GIT=https://github.com/abseil/abseil-cpp.git; REF=20240722.0
+VERSION=20260817.0; GIT=https://github.com/abseil/abseil-cpp.git; REF=20260817.0
 BUILDSYS=cmake
 # One abseil for the whole tree.  protobuf and gRPC both vendor abseil and both
 # used to install their copy -- 20240116 (sonames .2401) from protobuf, 20240722
 # (.2407) from gRPC -- so 86 libabsl_* libraries were staged twice, the
 # unversioned symlinks pointed at whichever installed last, and a gRPC process
-# mapped both.  scripts/check-dupes now catches that.  This is the version gRPC
-# 1.69 pins, and the same one ONNX Runtime vendors (statically, so it does not
-# take part in this).
+# mapped both.  scripts/check-dupes now catches that.  20240722 was the version
+# gRPC 1.69 pins (kept in versions/20240722.0/); ONNX Runtime vendors its own
+# copy statically, so it does not take part in this.
 #
-# The patch is the libc++ fix gRPC and ORT already needed: MaskedPointer has no
-# default constructor and libc++'s std::atomic<T> requires one.
+# No QNX patches since 20260817.0: the one 20240722.0 needed (a default
+# constructor for absl's MaskedPointer, which libc++'s std::atomic<T> requires)
+# is upstream now.
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DABSL_BUILD_TESTING=OFF
                    -DABSL_PROPAGATE_CXX_STD=ON -DCMAKE_CXX_STANDARD=17
                    -DABSL_ENABLE_INSTALL=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

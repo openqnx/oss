@@ -1,4 +1,4 @@
-# btop 1.4.6
+# btop 1.4.8
 
 > Terminal resource monitor for CPU, memory, disks, network and processes
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/aristocratos/btop.git (tag `v1.4.6`) |
+| Upstream | https://github.com/aristocratos/btop.git (tag `v1.4.8`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -69,23 +69,25 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.4.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.4.8 --recurse-submodules --shallow-submodules \
     https://github.com/aristocratos/btop.git src/btop
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/btop < ports/btop/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/btop < ports/btop/patches/0002-xdg-dirs-not-constexpr.patch
+patch -p1 -d src/btop < ports/btop/patches/0003-qnx-collector-1.4.8-api.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — btop on QNX, from QNX's port (github.com/qnx-ports/btop, branch qnx-1.4.6):
 
 > a QNX collector (CPU, memory, processes, network from QNX's interfaces)
-> and the build changes that select it.
+> and the build changes that select it. Refreshed for 1.4.8: only the context
+> of the TTY-mode hunk in src/btop.cpp moved (upstream fixed its indentation).
 
 Touches: `CMakeLists.txt`, `Makefile`, `src/btop.cpp`, `src/btop_config.cpp`, `src/btop_draw.cpp`, `src/btop_shared.hpp` … · Upstream status: Inappropriate [QNX's port, kept as QNX published it]
 
@@ -98,6 +100,22 @@ Touches: `CMakeLists.txt`, `Makefile`, `src/btop.cpp`, `src/btop_config.cpp`, `s
 > called at run time: a plain function.
 
 Touches: `src/btop_config.cpp` · Upstream status: Pending
+
+**[`0003-qnx-collector-1.4.8-api.patch`](patches/0003-qnx-collector-1.4.8-api.patch)** — Follow btop 1.4.8's Logger and collapse-all interfaces in the QNX collector
+
+> btop 1.4.8 changed two interfaces every platform collector must follow; the
+> QNX collector (patch 0001, written for 1.4.6) followed neither:
+>
+> - Logger::error/warning/info/debug now take a compile-time fmt format string
+>   plus arguments (fmt::format_string<T...>). The collector built its messages
+>   by string concatenation, which fails to compile ("the value of 'e' is not
+>   usable in a constant expression"). The messages now use "{}" placeholders.
+> - The new "collapse all" key (btop_input.cpp) sets Proc::collapse_all, which
+>   each collector defines and acts on with toggle_tree_collapse(); without it
+>   btop does not link (undefined reference to Proc::collapse_all). Defined and
+>   handled as in the FreeBSD/Linux collectors.
+
+Touches: `src/qnx/btop_collect.cpp` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -120,7 +138,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH btop`.
 
 ### 5. What it installs
 
-40 files under `/usr/local`, 1 programs.
+45 files under `/usr/local`, 1 programs.
 
 ```
 /usr/local/bin/btop
@@ -200,21 +218,23 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | btop 1.4.6-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/btop-1.4.6-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | htop 3.5.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/htop-3.5.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | btop 1.4.8-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/btop-1.4.8-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | btop 1.4.6-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/btop-1.4.6-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | htop 3.5.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/htop-3.5.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | btop 1.4.8-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/btop-1.4.8-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **1.4.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add btop=<version>`), sources in `ported/btop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates btop`; port one with `scripts/port-update btop`.
+This recipe builds **1.4.8**. Kept from earlier: `1.4.6` ([recipe and patches](versions/1.4.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add btop=<version>`), sources in `ported/btop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates btop`; port one with `scripts/port-update btop`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # btop: resource monitor (CPU, memory, disks, network, processes), with QNX's
 # QNX collector (patches/0001, from github.com/qnx-ports/btop).
-VERSION=1.4.6; GIT=https://github.com/aristocratos/btop.git; REF=v1.4.6
+VERSION=1.4.8; GIT=https://github.com/aristocratos/btop.git; REF=v1.4.8
 DEPS=""
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBTOP_GPU=OFF -DBTOP_LTO=OFF )

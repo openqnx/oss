@@ -215,6 +215,25 @@ soname (LPeg's `lpeg.so`) puts the build host's path in the consumer's
 `DT_NEEDED`. Both fail at load on the target; `scripts/check-needed` audits
 every staged ELF file for them.
 
+**31. An out-of-tree platform backend misses upstream's interface changes.**
+btop's QNX collector (`src/qnx/btop_collect.cpp`, carried in a patch since
+upstream has no QNX support) is a whole file the upstream maintainers never
+compile. From 1.4.6 to 1.4.8, the patch still applied, but the build broke
+twice: the `Logger::` functions now take a compile-time `fmt::format_string`
+(string concatenation stops compiling), and every collector must define and
+handle the new `Proc::collapse_all`, which leaves an undefined reference at
+link time. Before refreshing such a backend, check what changed in the other
+platforms' collectors between the two tags
+(`git diff vOLD vNEW -- src/freebsd src/linux`) and make the same changes.
+
+**32. qcc stalls when it cannot write its license lock.** Each `qcc`/`q++` call
+takes `~/.qnx/license/licenses.lck`. When that directory is read-only
+(a sandboxed shell, a different user), every call waits about 10 s per
+attempt and then fails with "You don't have a valid license". CMake's
+compiler probes then run for many minutes and look hung, with nothing in the
+build log. Run builds where `~/.qnx/license` is writable;
+`build/<arch>/<name>/CMakeFiles/CMakeConfigureLog.yaml` shows the message.
+
 ---
 ## Port verification tests
 

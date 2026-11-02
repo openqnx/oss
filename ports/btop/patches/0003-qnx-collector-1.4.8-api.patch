@@ -1,0 +1,76 @@
+Follow btop 1.4.8's Logger and collapse-all interfaces in the QNX collector
+
+btop 1.4.8 changed two interfaces every platform collector must follow; the
+QNX collector (patch 0001, written for 1.4.6) followed neither:
+
+- Logger::error/warning/info/debug now take a compile-time fmt format string
+  plus arguments (fmt::format_string<T...>). The collector built its messages
+  by string concatenation, which fails to compile ("the value of 'e' is not
+  usable in a constant expression"). The messages now use "{}" placeholders.
+- The new "collapse all" key (btop_input.cpp) sets Proc::collapse_all, which
+  each collector defines and acts on with toggle_tree_collapse(); without it
+  btop does not link (undefined reference to Proc::collapse_all). Defined and
+  handled as in the FreeBSD/Linux collectors.
+
+Upstream-Status: QNX-specific
+
+--- a/src/qnx/btop_collect.cpp
++++ b/src/qnx/btop_collect.cpp
+@@ -253,7 +253,7 @@
+ 				//? Reduce size if there are more values than needed for graph
+ 				if (cpu.core_percent.at(i).size() > 40) cpu.core_percent.at(i).pop_front();
+ 			} catch (const std::exception &e) {
+-				Logger::error("Cpu::collect() : " + (string)e.what());
++				Logger::error("Cpu::collect() : {}", e.what());
+ 				throw std::runtime_error("collect() : " + (string)e.what());
+ 			}
+         }
+@@ -459,7 +459,7 @@
+ 			IfAddrsPtr if_addrs {};
+ 			if (if_addrs.get_status() != 0) {
+ 				errors++;
+-				Logger::error("Net::collect() -> getifaddrs() failed with id " + to_string(if_addrs.get_status()));
++				Logger::error("Net::collect() -> getifaddrs() failed with id {}", if_addrs.get_status());
+ 				redraw = true;
+ 				return empty_net;
+ 			}
+@@ -494,7 +494,7 @@
+ 							net[iface].ipv4 = ip;
+ 						} else {
+ 							int errsv = errno;
+-							Logger::error("Net::collect() -> Failed to convert IPv4 to string for iface " + string(iface) + ", errno: " + strerror(errsv));
++							Logger::error("Net::collect() -> Failed to convert IPv4 to string for iface {}, errno: {}", iface, strerror(errsv));
+ 						}
+ 					}
+ 				}
+@@ -505,7 +505,7 @@
+ 							net[iface].ipv6 = ip;
+ 						} else {
+ 							int errsv = errno;
+-							Logger::error("Net::collect() -> Failed to convert IPv6 to string for iface " + string(iface) + ", errno: " + strerror(errsv));
++							Logger::error("Net::collect() -> Failed to convert IPv6 to string for iface {}, errno: {}", iface, strerror(errsv));
+ 						}
+ 					}
+ 				}  //else, ignoring family==AF_LINK (see man 3 getifaddrs)
+@@ -660,7 +660,7 @@
+     bool current_rev = false;
+     bool is_tree_mode = false;
+ 
+-    int collapse = -1, expand = -1, toggle_children = -1;
++    int collapse = -1, expand = -1, toggle_children = -1, collapse_all = -1;
+     atomic<int> numpids = 0;
+     int filter_found = 0;
+ 
+@@ -1029,6 +1029,12 @@
+ 				}
+ 				collapse = expand = -1;
+ 			}
++
++			if (collapse_all != -1) {
++				toggle_tree_collapse(current_procs);
++				collapse_all = -1;
++				if (Config::ints.at("proc_selected") > 0) locate_selection = true;
++			}
+ 			if (should_filter or not filter.empty()) filter_found = 0;
+ 
+             vector<tree_proc> tree_procs;

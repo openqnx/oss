@@ -13,7 +13,7 @@ cd "$T" || exit 1
 
 V=$(apk --version 2>&1)
 echo "  info $V"
-case "$V" in *"3.0.0_rc5"*) ok "apk --version: 3.0.0_rc5" ;; *) bad "apk --version: $V" ;; esac
+case "$V" in *"3.0.8"*) ok "apk --version: 3.0.8" ;; *) bad "apk --version: $V" ;; esac
 
 vt() {
   r=$(apk version -t "$1" "$2" 2>&1)

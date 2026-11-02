@@ -1,4 +1,4 @@
-# apk-tools 3.0.0_rc5
+# apk-tools 3.0.8
 
 > Alpine Package Keeper (apk), the Alpine package manager
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/alpinelinux/apk-tools.git (tag `v3.0.0_rc5`) |
+| Upstream | https://github.com/alpinelinux/apk-tools.git (tag `v3.0.8`) |
 | Build system | Meson |
-| QNX patches | 4 |
+| QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,19 +76,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.0.0_rc5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.0.8 --recurse-submodules --shallow-submodules \
     https://github.com/alpinelinux/apk-tools.git src/apk-tools
 ```
 
 ### 3. Apply the QNX patches
 
-4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/apk-tools < ports/apk-tools/patches/0001-aports-qnx-compat.patch
-patch -p1 -d src/apk-tools < ports/apk-tools/patches/0002-portability-optional-sys-random-h.patch
-patch -p1 -d src/apk-tools < ports/apk-tools/patches/0003-qnx-openat-layer-dir-o-directory.patch
-patch -p1 -d src/apk-tools < ports/apk-tools/patches/0004-qnx-mkpkg-subdir-o-directory.patch
 ```
 
 **[`0001-aports-qnx-compat.patch`](patches/0001-aports-qnx-compat.patch)** — QNX compatibility for apk-tools (from QNX's aports core/apk-tools).
@@ -106,40 +103,6 @@ patch -p1 -d src/apk-tools < ports/apk-tools/patches/0004-qnx-mkpkg-subdir-o-dir
 >  3 files changed, 15 insertions(+), 3 deletions(-)
 
 Touches: `libfetch/common.c`, `src/apk_xattr.h`, `src/io.c` · Upstream status: QNX-specific
-
-**[`0002-portability-optional-sys-random-h.patch`](patches/0002-portability-optional-sys-random-h.patch)** — Do not require a system <sys/random.h>.
-
-> The portability wrapper always does #include_next <sys/random.h>, but its
-> whole purpose is systems without getrandom(): QNX 8 has neither the header
-> nor the function, and the build stops before the bundled getrandom.c (which
-> reads /dev/urandom) is used. Include the system header only if it exists.
-
-Touches: `portability/sys/random.h` · Upstream status: QNX-specific
-
-**[`0003-qnx-openat-layer-dir-o-directory.patch`](patches/0003-qnx-openat-layer-dir-o-directory.patch)** — Open the database layer directory with O_DIRECTORY.
-
-> apk_db_read_layer() opens lib/apk/db with plain O_RDONLY and then reads
-> installed, triggers and scripts.tar from it with openat(). On QNX 8 a
-> directory descriptor is only accepted as an openat() base if it was opened
-> with O_DIRECTORY; otherwise every openat() under it fails with ENOTDIR
-> (verified on the target). The first "apk --initdb add" works because the
-> directory does not exist yet, but every later apk command on that root stops
-> with "Unable to read database: Not a directory". Open the layer directory
-> with O_DIRECTORY, as apk already does for the root and cache directories.
-
-Touches: `src/database.c` · Upstream status: QNX-specific
-
-**[`0004-qnx-mkpkg-subdir-o-directory.patch`](patches/0004-qnx-mkpkg-subdir-o-directory.patch)** — Open mkpkg's subdirectories with O_DIRECTORY.
-
-> mkpkg_process_dirent() opens each subdirectory of the -F tree with plain
-> O_RDONLY and then walks it with fstatat()/openat(). On QNX 8 a directory
-> descriptor is only accepted as an *at() base if it was opened with
-> O_DIRECTORY (see 0003), so every package with a nested directory failed:
-> "failed to process directory 'usr': -1" and "failed to create package:
-> Operation not permitted". The top-level -F directory was already opened
-> with O_DIRECTORY, which is why a flat file tree worked.
-
-Touches: `src/app_mkpkg.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -243,14 +206,16 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.0_rc5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/apk-tools-3.0.0_rc5-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.0_rc5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/apk-tools-3.0.0_rc5-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.8-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/apk-tools-3.0.8-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.0_rc5-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/apk-tools-3.0.0_rc5-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.0_rc5-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/apk-tools-3.0.0_rc5-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | apk-tools 3.0.8-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/apk-tools-3.0.8-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **3.0.0_rc5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add apk-tools=<version>`), sources in `ported/apk-tools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates apk-tools`; port one with `scripts/port-update apk-tools`.
+This recipe builds **3.0.8**. Kept from earlier: `3.0.0_rc5` ([recipe and patches](versions/3.0.0_rc5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add apk-tools=<version>`), sources in `ported/apk-tools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates apk-tools`; port one with `scripts/port-update apk-tools`.
 
 <details><summary>recipe.sh</summary>
 
@@ -258,7 +223,7 @@ This recipe builds **3.0.0_rc5**. Every version stays available: packages in `di
 # apk-tools, the Alpine package manager the QNX Everywhere image (and
 # repo.oss.qnx.com) uses -- with it a target can install this repository's APK
 # packages. Version as in the image.
-VERSION=3.0.0_rc5; GIT=https://github.com/alpinelinux/apk-tools.git; REF=v3.0.0_rc5
+VERSION=3.0.8; GIT=https://github.com/alpinelinux/apk-tools.git; REF=v3.0.8
 DEPS="openssl zlib zstd"
 # Not linked, but needed to fetch from an https:// repository (the GitHub
 # releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.

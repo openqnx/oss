@@ -326,15 +326,24 @@ def describe(n):
 
 
 # The packages that exist (dists/8.0/x86_64/INDEX): a header-only component
-# has only <name>-dev.
+# has only <name>-dev. dists/ is not tracked, so the names are also kept in
+# ports/packages.txt (tracked): written here on a build host, read where there
+# is no dists/ (the docs check on GitHub's runners), so both write the same docs.
 PUBLISHED = set()
+PACKAGES_TXT = "ports/packages.txt"
 
 
 def load_published():
     p = "dists/8.0/x86_64/INDEX"
-    for l in open(p) if os.path.exists(p) else []:
-        if not l.startswith("#") and "|" in l:
-            PUBLISHED.add(l.split("|", 1)[0])
+    if os.path.exists(p):
+        for l in open(p):
+            if not l.startswith("#") and "|" in l:
+                PUBLISHED.add(l.split("|", 1)[0])
+        text = "".join(n + "\n" for n in sorted(PUBLISHED))
+        if not os.path.exists(PACKAGES_TXT) or open(PACKAGES_TXT).read() != text:
+            open(PACKAGES_TXT, "w").write(text)
+    elif os.path.exists(PACKAGES_TXT):
+        PUBLISHED.update(l.strip() for l in open(PACKAGES_TXT) if l.strip())
 
 
 def render_install_remove(A, n, test, tpkg):

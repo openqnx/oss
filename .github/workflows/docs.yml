@@ -20,8 +20,9 @@ jobs:
           for f in scripts/qnxbuild scripts/verify-standalone scripts/mkpatch env.sh docker/run.sh tests/*.sh; do bash -n "$f"; done
           python3 -m py_compile scripts/qnxpkg scripts/gen-port-docs scripts/gen-root-readme scripts/gen-dependency-index
       # ports/dependencies.json is produced on a build host (it reads the
-      # binaries); the READMEs and the index are derived from it and the
-      # recipes alone, so they can be checked here.
+      # binaries), and so is ports/packages.txt (the package names in dists/,
+      # written by gen-port-docs); the READMEs and the index are derived from
+      # them and the recipes alone, so they can be checked here.
       - name: Regenerate the component docs and index
         run: |
           ./scripts/gen-port-docs

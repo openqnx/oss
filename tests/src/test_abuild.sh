@@ -61,6 +61,16 @@ mkdir c; printf 'pkgname = qnxdemo\npkgver = 1.0-r0\n' > c/.PKGINFO
 gzip -c control.tar > control.gz; gzip -c data.tar > data.gz; cat control.gz data.gz > pkg.apk
 mkdir s; ( cd s && "$B/abuild-gzsplit" < ../pkg.apk ) 2> s.err && cmp -s s/control.tar.gz control.gz && cmp -s s/data.tar.gz data.gz \
   && ok "abuild-gzsplit: control.tar.gz and data.tar.gz split exactly" || { bad "abuild-gzsplit"; ls s; head -3 s.err; }
+# abuild-rm (new in 3.17.0; abuild's clean steps call it): removes a tree
+# even where a directory is read-only, removes a symlink without following
+# it, is quiet about a missing path, and takes only "-rf <path>".
+mkdir -p r/a/ro/deep keep; echo x > r/a/ro/deep/f; echo y > r/a/ro/g; echo z > keep/k
+ln -s ../keep r/a/link; chmod 0555 r/a/ro/deep r/a/ro
+"$B/abuild-rm" -rf r 2> rm.err && [ ! -e r ] && [ ! -h r ] && [ -f keep/k ] \
+  && ok "abuild-rm -rf: tree with read-only directories removed, symlink target kept" || { bad "abuild-rm -rf"; ls -lR r 2>&1 | head -8; head -3 rm.err; }
+chmod -R u+w r 2>/dev/null; rm -rf r
+"$B/abuild-rm" -rf no-such-dir && ok "abuild-rm -rf: missing path is not an error" || bad "abuild-rm -rf no-such-dir failed"
+"$B/abuild-rm" keep > /dev/null 2>&1; rc=$?; [ $rc -ne 0 ] && [ -f keep/k ] && ok "abuild-rm without -rf: refused (rc=$rc), nothing removed" || bad "abuild-rm without -rf (rc=$rc)"
 A=$(apk --print-arch 2>/dev/null); [ -n "$A" ] || case "$(uname -m)" in aarch64*|*arm*|QEMU_virt) A=aarch64 ;; *) A=x86_64 ;; esac
 CBUILD=$A; export CBUILD
 if [ -x "$BASH" ]; then

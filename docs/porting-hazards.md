@@ -1566,3 +1566,20 @@ down (`SIOCGIFFLAGS`), and the host stack sent nothing through it. Bring the
 interface up after the device is open (`tests/src/test_silkit_adapters_tap.cpp`);
 FreeBSD's if_tap, which io-sock's is, ties the link state to the device's
 open/close. Linux's TUNSETIFF leaves it alone.
+
+**152. A `BUILDSYS=custom` recipe that names its make targets breaks when
+upstream drops or adds a program, and a vendored patch *series* cannot be
+refreshed with `scripts/mkpatch`.** abuild 3.17.0 removed `buildlab`, which the
+recipe's `do_build` still asked make for and added the C
+helper `abuild-rm`, which abuild's clean steps now call. The package would
+have shipped without a binary its own script needs, and no audit would have
+flagged it. On an update, diff the upstream `Makefile`'s program lists
+(`git diff <old> <new> -- Makefile`) against the recipe. abuild's
+`0001-qnx-from-qnx-ports.patch` is six qnx-ports commits concatenated, and
+mkpatch first applies the existing patches to a clean tree, so it stops on the
+same reject. Fix the rejected hunk's context in place, keeping its header and
+what it removes or adds; then check that the series applies to the new tag
+with no reject and no fuzz (`ports/abuild/patches/0001-*`). On QNX 8.0,
+`fchmodat(..., AT_SYMLINK_NOFOLLOW)` on a directory and
+`openat(O_DIRECTORY|O_NOFOLLOW)` behave as on Linux: `abuild-rm` removes trees
+with read-only directories unpatched (`tests/src/test_abuild.sh`).

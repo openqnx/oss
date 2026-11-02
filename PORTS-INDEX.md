@@ -1,6 +1,6 @@
 # Component index
 
-676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 451 QNX patches between them.
+676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 452 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
@@ -57,7 +57,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [boost](ports/boost/README.md) | Boost peer-reviewed portable C++ source libraries | 1.86.0 | custom | archives.boost.io | 4 | 🔴 dependent | 3 | ✅ | ✅ |
 | [boringssl](ports/boringssl/README.md) | Fork of OpenSSL designed to meet Google's needs (libcrypto, libssl, bssl) | 0.20260929.0 | cmake | github.com | 4 | 🟢 standalone | — | ✅ | ✅ |
 | [brotli](ports/brotli/README.md) | Generic lossless compression library and tool using the Brotli format | 1.1.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [btop](ports/btop/README.md) | Terminal resource monitor for CPU, memory, disks, network and processes | 1.4.6 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
+| [btop](ports/btop/README.md) | Terminal resource monitor for CPU, memory, disks, network and processes | 1.4.8 | cmake | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
 | [bullet3](ports/bullet3/README.md) | Bullet real-time collision detection and multi-physics simulation library | 3.25 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [busybox](ports/busybox/README.md) | Tiny versions of many common UNIX utilities in a single executable | 1.36.1 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [bzip2](ports/bzip2/README.md) | Block-sorting file compressor and libbz2 library | 1.0.8 | custom | gitlab.com | — | 🟢 standalone | — | ✅ | ✅ |

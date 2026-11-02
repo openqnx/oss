@@ -147,7 +147,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`bison`](../ports/bison/) | The GNU general-purpose parser generator | 3.8.2 | `apk add bison` | `qnx-test-bison` | x86✅ᵛ a64✅ᵛ |
 | [`boringssl`](../ports/boringssl/) | Fork of OpenSSL designed to meet Google's needs (libcrypto, libssl, bssl) | 0.20260929.0 | `apk add boringssl` | `qnx-test-boringssl` | x86✅ᵛ a64✅ᵛ |
 | [`brotli`](../ports/brotli/) | Generic lossless compression library and tool using the Brotli format | 1.1.0 | `apk add brotli` | `qnx-test-brotli` | x86✅ᵛ a64✅ᵛ |
-| [`btop`](../ports/btop/) | Terminal resource monitor for CPU, memory, disks, network and processes | 1.4.6 | `apk add btop` | `qnx-test-monitors` | x86✅ᵛ a64✅ᵛ |
+| [`btop`](../ports/btop/) | Terminal resource monitor for CPU, memory, disks, network and processes | 1.4.8 | `apk add btop` | `qnx-test-monitors` | x86✅ᵛ a64✅ᵛ |
 | [`bullet3`](../ports/bullet3/) | Bullet real-time collision detection and multi-physics simulation library | 3.25 | `apk add bullet3` | `qnx-test-bullet3` | x86✅ᵛ a64✅ᵛ |
 | [`busybox`](../ports/busybox/) | Tiny versions of many common UNIX utilities in a single executable | 1.36.1 | `apk add busybox` | `qnx-test-busybox` | x86✅ᵛ a64✅ᵛ |
 | [`bzip2`](../ports/bzip2/) | Block-sorting file compressor and libbz2 library | 1.0.8 | `apk add bzip2` | `qnx-test-bzip2` | x86✅ᵛ a64✅ᵛ |

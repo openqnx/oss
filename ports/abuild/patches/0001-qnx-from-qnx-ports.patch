@@ -328,11 +328,13 @@ index 1dfcb1fe3f..a5efb5e8b6 100644
  is_function() {
  	type "$1" 2>&1 | head -n 1 | grep -E -q "is a (shell )?function"
  }
-@@ -2488,8 +2494,7 @@ rootbld_qemu_arch() {
+@@ -2529,10 +2535,9 @@ rootbld_qemu_arch() {
  	case "$CBUILD_ARCH" in
  	arm*) qarch="arm" ;;
  	x86)  qarch="i386" ;;
 -	loongarch*) qarch="loongarch" ;;
+ 	sh*eb) qarch="sh4eb" ;;
+ 	sh*) qarch="sh4" ;;
 -	*)    qarch="$CBUILD_ARCH" ;;
 +	*)	qarch="$CBUILD_ARCH" ;;
  	esac
@@ -469,9 +471,9 @@ diff --git a/abuild.in b/abuild.in
 index a5efb5e8b6..08e535d4a9 100644
 --- a/abuild.in
 +++ b/abuild.in
-@@ -1089,6 +1089,7 @@ prepare_metafiles() {
- 	[ -z "${name##* *}" ] && die "package name contains spaces"
- 	local pkg="$name-$pkgver-r$pkgrel.apk"
+@@ -1077,6 +1077,7 @@ prepare_metafiles() {
+ prepare_metafiles() {
+ 	local name=${subpkgname:-$pkgname}
  	local pkginfo="$controldir"/.PKGINFO
 +	local buildinfo="$controldir"/.BUILDINFO
  	local i size

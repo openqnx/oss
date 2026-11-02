@@ -7,8 +7,8 @@
 # stripped or built with -Werror. patches/0002: no getauxval() hardware
 # probe on QNX (arm64); 0003: the RAM size from the system page, since QNX
 # does not implement _SC_PHYS_PAGES (0001 reported 0 bytes).
-VERSION=25.01
-TARBALL=https://github.com/ip7z/7zip/releases/download/25.01/7z2501-src.tar.xz
+VERSION=26.05
+TARBALL=https://github.com/ip7z/7zip/releases/download/26.05/7z2501-src.tar.xz
 SHA256=ed087f83ee789c1ea5f39c464c55a5c9d4008deb0efe900814f2df262b82c36e
 BUILDSYS=custom
 # The source archive has no top-level directory, so the default fetch

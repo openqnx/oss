@@ -1,0 +1,27 @@
+Define SA_RESTART-based flag as 0 on QNX.
+
+QNX 8.0's <signal.h> has SA_RESTART commented out ("not supported yet"), so
+signal_set_base.hpp does not compile (restbed hits this). The same change as
+the boost port's Boost.Asio patch, for standalone Asio.
+
+Upstream-Status: QNX-specific
+
+--- a/asio/include/asio/detail/socket_types.hpp
++++ b/asio/include/asio/detail/socket_types.hpp
+@@ -411,7 +411,15 @@
+ // POSIX platforms are not required to define IOV_MAX.
+ const int max_iov_len = 16;
+ # endif
+-# define ASIO_OS_DEF_SA_RESTART SA_RESTART
++# if defined(__QNXNTO__) && !defined(SA_RESTART)
++// QNX 8.0 does not implement SA_RESTART -- <signal.h> keeps the definition
++// commented out as "not supported yet". Map it to 0 so signal_set_base::flags
++// still compiles; a zero bit simply means "do not request restart", which is
++// exactly the behaviour QNX provides.
++#  define ASIO_OS_DEF_SA_RESTART 0
++# else
++#  define ASIO_OS_DEF_SA_RESTART SA_RESTART
++# endif
+ # define ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
+ # define ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
+ #endif

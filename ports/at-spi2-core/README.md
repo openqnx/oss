@@ -1,4 +1,4 @@
-# at-spi2-core 2.54.0
+# at-spi2-core 2.54.2
 
 > Accessibility infrastructure: AT-SPI D-Bus interfaces, libatspi and ATK
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz |
-| SHA-256 | `d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079` |
+| Upstream | https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.2.tar.xz |
+| SHA-256 | `510e1760a27ce9ce27a300f116d9b8a7dc8eac1f78714915685833643cb36236` |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`dbus`](../dbus/) [`libxml2`](../libxml2/) [`libx11`](../libx11/) [`libxtst`](../libxtst/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz
+URL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.2.tar.xz
 mkdir -p dist src/at-spi2-core
 curl -fL -o dist/$(basename $URL) $URL
-echo "d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079  dist/$(basename $URL)" | sha256sum -c -
+echo "510e1760a27ce9ce27a300f116d9b8a7dc8eac1f78714915685833643cb36236  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/at-spi2-core --strip-components=1
 ```
 
@@ -210,21 +210,23 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.2-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.2-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **2.54.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add at-spi2-core=<version>`), sources in `ported/at-spi2-core/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates at-spi2-core`; port one with `scripts/port-update at-spi2-core`.
+This recipe builds **2.54.2**. Kept from earlier: `2.54.0` ([recipe and patches](versions/2.54.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add at-spi2-core=<version>`), sources in `ported/at-spi2-core/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates at-spi2-core`; port one with `scripts/port-update at-spi2-core`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.54.0
-TARBALL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz
-SHA256=d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079
+VERSION=2.54.2
+TARBALL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.2.tar.xz
+SHA256=510e1760a27ce9ce27a300f116d9b8a7dc8eac1f78714915685833643cb36236
 DEPS="glib dbus libxml2 libx11 libxtst"
 BUILDSYS=meson
 # The accessibility bus, the ATK bridge GTK loads as a module -- and ATK

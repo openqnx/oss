@@ -1,4 +1,4 @@
-# aom 3.12.1
+# aom 3.15.3
 
 > AV1 video codec library from the Alliance for Open Media
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://aomedia.googlesource.com/aom (tag `v3.12.1`) |
+| Upstream | https://aomedia.googlesource.com/aom (tag `v3.15.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,7 +73,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.12.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.15.3 --recurse-submodules --shallow-submodules \
     https://aomedia.googlesource.com/aom src/aom
 ```
 
@@ -201,19 +201,21 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | aom 3.12.1-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/aom-3.12.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | aom 3.15.3-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/aom-3.15.3-r0.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | aom 3.12.1-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/aom-3.12.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | aom 3.15.3-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/aom-3.15.3-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **3.12.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add aom=<version>`), sources in `ported/aom/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates aom`; port one with `scripts/port-update aom`.
+This recipe builds **3.15.3**. Kept from earlier: `3.12.1` ([recipe and patches](versions/3.12.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add aom=<version>`), sources in `ported/aom/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates aom`; port one with `scripts/port-update aom`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.12.1; GIT=https://aomedia.googlesource.com/aom; REF=v3.12.1
+VERSION=3.15.3; GIT=https://aomedia.googlesource.com/aom; REF=v3.15.3
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DENABLE_EXAMPLES=OFF
                    -DENABLE_TOOLS=OFF -DENABLE_DOCS=OFF -DCONFIG_PIC=1

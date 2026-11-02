@@ -16,22 +16,22 @@ Click a component for its source URL, its patches, the exact build commands and 
 
 | Component | What it is | Version | Build | Upstream | Patches | Class | Run-time deps | aarch64le | x86_64 |
 |---|---|---|---|---|---|---|---|---|---|
-| [7zip](ports/7zip/README.md) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 25.01 | custom | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
+| [7zip](ports/7zip/README.md) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 26.05 | custom | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
 | [abseil](ports/abseil/README.md) | Collection of C++ libraries augmenting the C++ standard library | 20240722.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [abuild](ports/abuild/README.md) | Alpine's tools for building APK packages | 3.16.0 | custom | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
-| [ada](ports/ada/README.md) | Fast WHATWG-compliant URL parser library for C++ | 3.4.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [ada](ports/ada/README.md) | Fast WHATWG-compliant URL parser library for C++ | 4.0.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [adwaita-fonts](ports/adwaita-fonts/README.md) | Adwaita Sans and Adwaita Mono, the GNOME fonts | 49.0 | custom | download.gnome.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [adwaita-icon-theme](ports/adwaita-icon-theme/README.md) | GNOME's Adwaita icon theme and default cursors | 51.0 | meson | download.gnome.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [amqp-cpp](ports/amqp-cpp/README.md) | C++ library for communicating with a RabbitMQ message broker | 4.3.27 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
-| [aom](ports/aom/README.md) | AV1 video codec library from the Alliance for Open Media | 3.12.1 | cmake | aomedia.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [aom](ports/aom/README.md) | AV1 video codec library from the Alliance for Open Media | 3.15.3 | cmake | aomedia.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [apk-tools](ports/apk-tools/README.md) | Alpine Package Keeper (apk), the Alpine package manager | 3.0.0_rc5 | meson | github.com | 4 | 🔴 dependent | 3 | ✅ | ✅ |
 | [appstream](ports/appstream/README.md) | Tools and libraries to work with AppStream metadata | 1.0.6 | meson | www.freedesktop.org | 3 | 🔴 dependent | 7 | ✅ | ✅ |
 | [apr-util](ports/apr-util/README.md) | Apache Portable Runtime utility library | 1.6.5 | autotools | archive.apache.org | — | 🔴 dependent | 6 | ✅ | ✅ |
 | [apr](ports/apr/README.md) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | autotools | archive.apache.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [asciidoc](ports/asciidoc/README.md) | Text document format for short documents, articles, books and UNIX man pages | 10.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [asio](ports/asio/README.md) | Header-only C++ library for asynchronous network and low-level I/O | 1.30.2 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
-| [aspell](ports/aspell/README.md) | GNU Aspell spell checker and library | 0.60.8.1 | autotools | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
-| [at-spi2-core](ports/at-spi2-core/README.md) | Accessibility infrastructure: AT-SPI D-Bus interfaces, libatspi and ATK | 2.54.0 | meson | download.gnome.org | — | 🔴 dependent | 6 | ✅ | ✅ |
+| [asio](ports/asio/README.md) | Header-only C++ library for asynchronous network and low-level I/O | 1-38-2 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [aspell](ports/aspell/README.md) | GNU Aspell spell checker and library | 0.60.8-20190921 | autotools | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [at-spi2-core](ports/at-spi2-core/README.md) | Accessibility infrastructure: AT-SPI D-Bus interfaces, libatspi and ATK | 2.54.2 | meson | download.gnome.org | — | 🔴 dependent | 6 | ✅ | ✅ |
 | [autoconf](ports/autoconf/README.md) | GNU tool for generating configure scripts from M4 macros | 2.72 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [automake](ports/automake/README.md) | GNU tool for generating portable Makefile.in files | 1.18 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [avahi](ports/avahi/README.md) | Multicast/unicast DNS-SD framework (mDNS daemon, client library and tools) | 0.9-rc3 | autotools | github.com | 4 | 🔴 dependent | 3 | ✅ | ✅ |

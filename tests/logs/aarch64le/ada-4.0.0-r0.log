@@ -1,0 +1,46 @@
+# ada 4.0.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-02T12:30:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ada qnx-test-ada qnx-port-tests
+(1/2) Installing ada (4.0.0-r0)
+(2/2) Installing qnx-test-ada (1.0-r5)
+OK: 124 MiB in 41 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ada
+     == ada ==
+       info ada 4.0.0
+       ok   parse an absolute URL
+       info href https://user:pa%20ss@example.com/a/c?x=1&y=2#frag
+       ok   href is normalised (scheme, host, default port, dot segments)
+       ok   protocol
+       ok   hostname lower-cased
+       ok   default port dropped
+       ok   pathname
+       ok   search
+       ok   hash
+       ok   origin
+       ok   set_pathname percent-encodes
+       ok   relative URL resolved against a base
+       ok   IDNA: host converted to punycode
+       ok   IPv4 in hex shorthand normalised
+       ok   IPv6 compressed
+       ok   can_parse rejects garbage
+       ok   space in host is an error
+       ok   file URL accepted
+       ok   search params count
+       ok   search param decoded
+       ok   get_all
+       ok   sort + serialise
+       ok   C API: ada_parse
+       ok   C API: port
+       ok   C API: hostname
+     PASS ada
+PASS test_ada
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

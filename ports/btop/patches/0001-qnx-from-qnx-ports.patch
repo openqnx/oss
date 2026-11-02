@@ -1,14 +1,15 @@
 btop on QNX, from QNX's port (github.com/qnx-ports/btop, branch qnx-1.4.6):
 a QNX collector (CPU, memory, processes, network from QNX's interfaces)
-and the build changes that select it.
+and the build changes that select it. Refreshed for 1.4.8: only the context
+of the TTY-mode hunk in src/btop.cpp moved (upstream fixed its indentation).
 
 Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7448d90a1..1f0a63c6e 100644
+index 2cbbccd..415dc41 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -78,6 +78,9 @@ elseif(LINUX)
+@@ -79,6 +79,9 @@ elseif(LINUX)
    if(BTOP_GPU)
      add_subdirectory(src/linux/intel_gpu_top)
    endif()
@@ -19,10 +20,10 @@ index 7448d90a1..1f0a63c6e 100644
    message(FATAL_ERROR "${CMAKE_SYSTEM_NAME} is not supported")
  endif()
 diff --git a/Makefile b/Makefile
-index d08a4ac7c..01ec6fb78 100755
+index d08b59a..56cdbcc 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -129,6 +129,11 @@ else ifeq ($(PLATFORM_LC),netbsd)
+@@ -194,6 +194,11 @@ else ifeq ($(PLATFORM_LC),netbsd)
  	override ADDFLAGS += -lkvm -lprop
  	export MAKE = gmake
  	SU_GROUP := wheel
@@ -32,13 +33,13 @@ index d08a4ac7c..01ec6fb78 100755
 +	override ADDFLAGS += -lsocket
 +	SU_GROUP := wheel
  else
- $(error $(shell printf "\033[1;91mERROR: \033[97mUnsupported platform ($(PLATFORM))\033[0m"))
+ $(error $(call red_i,ERROR: $(WHITE)Unsupported platform ($(PLATFORM))))
  endif
 diff --git a/src/btop.cpp b/src/btop.cpp
-index 9b7c3fa43..89ec7df69 100755
+index 01e20d9..91938a0 100644
 --- a/src/btop.cpp
 +++ b/src/btop.cpp
-@@ -213,7 +213,11 @@ void clean_quit(int sig) {
+@@ -219,7 +219,11 @@ void clean_quit(int sig) {
  		}
  	#else
  		constexpr struct timespec ts { .tv_sec = 5, .tv_nsec = 0 };
@@ -48,23 +49,18 @@ index 9b7c3fa43..89ec7df69 100755
  		if (pthread_timedjoin_np(Runner::runner_id, nullptr, &ts) != 0) {
 +		#endif
  			Logger::warning("Failed to join _runner thread on exit!");
- 			pthread_cancel(Runner::runner_id);
  		}
-@@ -826,11 +830,11 @@ static auto configure_tty_mode(std::optional<bool> force_tty) {
- 		Logger::debug("TTY mode set via command line");
-   	}
+ 	#endif
+@@ -812,7 +816,7 @@ static auto configure_tty_mode(std::optional<bool> force_tty) {
+ 		Logger::debug("TTY mode set via config");
+ 	}
  
 -#if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
 +#if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__QNX__)
  	else if (Term::current_tty.starts_with("/dev/tty")) {
  		Config::set("tty_mode", true);
  		Logger::debug("Auto detect real TTY");
--  	}
-+	}
- #endif
- 
- 	Logger::debug(fmt::format("TTY mode enabled: {}", Config::getB("tty_mode")));
-@@ -998,6 +1002,13 @@ static auto configure_tty_mode(std::optional<bool> force_tty) {
+@@ -988,6 +992,13 @@ static auto configure_tty_mode(std::optional<bool> force_tty) {
  				Logger::warning("Failed to set macos locale, continuing anyway.");
  			}
  		}
@@ -79,10 +75,10 @@ index 9b7c3fa43..89ec7df69 100755
  		if (found.empty() and cli.force_utf) {
  			Logger::warning("No UTF-8 locale detected! Forcing start with --force-utf argument.");
 diff --git a/src/btop_config.cpp b/src/btop_config.cpp
-index eaaa57793..d8b3b9069 100644
+index 3f0b0b0..8fa050e 100644
 --- a/src/btop_config.cpp
 +++ b/src/btop_config.cpp
-@@ -292,7 +292,12 @@ namespace Config {
+@@ -327,7 +327,12 @@ namespace Config {
  		{"proc_cpu_graphs", true},
  		{"proc_info_smaps", false},
  		{"proc_left", false},
@@ -96,10 +92,10 @@ index eaaa57793..d8b3b9069 100644
  		{"cpu_single_graph", false},
  		{"cpu_bottom", false},
 diff --git a/src/btop_draw.cpp b/src/btop_draw.cpp
-index 54a51d9b6..596ece698 100644
+index 1c3b1bc..d6963fd 100644
 --- a/src/btop_draw.cpp
 +++ b/src/btop_draw.cpp
-@@ -906,10 +906,15 @@ namespace Cpu {
+@@ -964,10 +964,15 @@ namespace Cpu {
  			string load_avg_pre = "Load avg:";
  			string load_avg;
  
@@ -118,10 +114,10 @@ index 54a51d9b6..596ece698 100644
  			out += Mv::to(b_y + cy, b_x + 1) + string(max(b_width - len - 2, 0), ' ') + Theme::c("main_fg") + Fx::b + load_avg_pre + Fx::ub + load_avg;
  		}
 diff --git a/src/btop_shared.hpp b/src/btop_shared.hpp
-index e18f4b218..739ae01ae 100644
+index 0abd18c..7bb64f4 100644
 --- a/src/btop_shared.hpp
 +++ b/src/btop_shared.hpp
-@@ -94,7 +94,7 @@ namespace Shared {
+@@ -96,7 +96,7 @@ namespace Shared {
  	//* Initialize platform specific needed variables and check for errors
  	void init();
  
@@ -130,7 +126,7 @@ index e18f4b218..739ae01ae 100644
  
  #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
  	struct KvmDeleter {
-@@ -201,7 +201,7 @@ namespace Gpu {
+@@ -208,7 +208,7 @@ namespace Gpu {
  namespace Cpu {
  	extern string box;
  	extern int x, y, width, height, min_width, min_height;
@@ -140,10 +136,10 @@ index e18f4b218..739ae01ae 100644
  	extern vector<string> available_fields;
  	extern vector<string> available_sensors;
 diff --git a/src/btop_tools.cpp b/src/btop_tools.cpp
-index 9549a0ad1..cd3ec7e04 100644
+index f0e0de6..4c86f11 100644
 --- a/src/btop_tools.cpp
 +++ b/src/btop_tools.cpp
-@@ -38,6 +38,9 @@ tab-size = 4
+@@ -37,6 +37,9 @@ tab-size = 4
  #include "btop_shared.hpp"
  #include "btop_tools.hpp"
  #include "btop_config.hpp"
@@ -154,10 +150,10 @@ index 9549a0ad1..cd3ec7e04 100644
  using std::cout;
  using std::floor;
 diff --git a/src/freebsd/btop_collect.cpp b/src/freebsd/btop_collect.cpp
-index 19920867c..a442006cf 100644
+index bf552e8..8236dcb 100644
 --- a/src/freebsd/btop_collect.cpp
 +++ b/src/freebsd/btop_collect.cpp
-@@ -79,7 +79,7 @@ namespace Cpu {
+@@ -82,7 +82,7 @@ namespace Cpu {
  	vector<string> available_fields = {"Auto", "total"};
  	vector<string> available_sensors = {"Auto"};
  	cpu_info current_cpu;
@@ -167,10 +163,10 @@ index 19920867c..a442006cf 100644
  	//* Populate found_sensors map
  	bool get_sensors();
 diff --git a/src/netbsd/btop_collect.cpp b/src/netbsd/btop_collect.cpp
-index a5533b371..6e9e72600 100755
+index ee64597..cfc5204 100644
 --- a/src/netbsd/btop_collect.cpp
 +++ b/src/netbsd/btop_collect.cpp
-@@ -86,7 +86,7 @@ namespace Cpu {
+@@ -89,7 +89,7 @@ namespace Cpu {
  	vector<string> available_fields = {"total"};
  	vector<string> available_sensors = {"Auto"};
  	cpu_info current_cpu;
@@ -180,10 +176,10 @@ index a5533b371..6e9e72600 100755
  	//* Populate found_sensors map
  	bool get_sensors();
 diff --git a/src/openbsd/btop_collect.cpp b/src/openbsd/btop_collect.cpp
-index d1a753ec9..35e17f8bf 100644
+index a89c60b..1a6d2ea 100644
 --- a/src/openbsd/btop_collect.cpp
 +++ b/src/openbsd/btop_collect.cpp
-@@ -84,7 +84,7 @@ namespace Cpu {
+@@ -87,7 +87,7 @@ namespace Cpu {
  	vector<string> available_fields = {"total"};
  	vector<string> available_sensors = {"Auto"};
  	cpu_info current_cpu;
@@ -193,10 +189,10 @@ index d1a753ec9..35e17f8bf 100644
  	//* Populate found_sensors map
  	bool get_sensors();
 diff --git a/src/osx/btop_collect.cpp b/src/osx/btop_collect.cpp
-index 0e3cab568..bc80bd09a 100644
+index d894069..d66cf0d 100644
 --- a/src/osx/btop_collect.cpp
 +++ b/src/osx/btop_collect.cpp
-@@ -79,7 +79,7 @@ namespace Cpu {
+@@ -169,7 +169,7 @@ namespace Cpu {
  	vector<string> available_fields = {"Auto", "total"};
  	vector<string> available_sensors = {"Auto"};
  	cpu_info current_cpu;
@@ -207,7 +203,7 @@ index 0e3cab568..bc80bd09a 100644
  	//* Populate found_sensors map
 diff --git a/src/qnx/btop_collect.cpp b/src/qnx/btop_collect.cpp
 new file mode 100644
-index 000000000..2c23265e1
+index 0000000..2c23265
 --- /dev/null
 +++ b/src/qnx/btop_collect.cpp
 @@ -0,0 +1,1085 @@

@@ -1566,3 +1566,19 @@ down (`SIOCGIFFLAGS`), and the host stack sent nothing through it. Bring the
 interface up after the device is open (`tests/src/test_silkit_adapters_tap.cpp`);
 FreeBSD's if_tap, which io-sock's is, ties the link state to the device's
 open/close. Linux's TUNSETIFF leaves it alone.
+
+**152. A new abseil LTS breaks the staged consumers' CMake packages, and with
+them the whole test suite.** abseil 20260817.0 dropped the `absl::if_constexpr`
+target (and changed every soname, `.2407` -> `.2608`). protobuf's installed
+`protobuf-targets.cmake` still names `absl::if_constexpr` in its link
+interface, so any `find_package(protobuf)` -- `tests/CMakeLists.txt` has one,
+unconditionally -- fails at configure ("the target was not found"), and
+`tests/build-tests.sh` builds nothing, for every component. abseil itself is
+fine (its own test passed on both targets); the consumers (`DEPS` naming
+abseil: protobuf, grpc, re2, riegeli, sentencepiece, cartographer,
+tensorflow-lite) must be rebuilt against the new LTS, in dependency order,
+before the suite configures again, and their binaries built against `.2407`
+no longer find their libraries once only `.2608` is installed. When updating
+abseil, plan the rebuild of everything above it; until then a single test can
+be built with a minimal CMake project carrying `tests/CMakeLists.txt`'s
+settings and its `port_test()` link line.

@@ -1,0 +1,187 @@
+From 318fd7299ab2f4e50f1af27efcf57255a22c91c6 Mon Sep 17 00:00:00 2001
+From: Terence Ang <taang@qnx.com>
+Date: Thu, 19 Mar 2026 16:37:36 -0400
+Subject: [PATCH] QNX support from qnx-ports
+
+Imported from qnx-ports/7zip (branch qnx-25.01, 67c101a..318fd72); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+Commits:
+  dce1857 Patched 25.01
+  318fd72 Merge pull request #2 from taang-qnx/mybranch
+---
+ C/Threads.c              |  6 +++---
+ C/Threads.h              |  1 +
+ CPP/7zip/7zip_gcc.mak    | 10 +++++-----
+ CPP/Windows/FileFind.cpp |  4 ++--
+ CPP/Windows/FileFind.h   |  6 +++---
+ CPP/Windows/System.cpp   | 10 ++++++++++
+ 6 files changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/C/Threads.c b/C/Threads.c
+index 2ce49c8..6f903d4 100755
+--- a/C/Threads.c
++++ b/C/Threads.c
+@@ -472,7 +472,7 @@ WRes Thread_Create_With_CpuSet(CThread *p, THREAD_FUNC_TYPE func, LPVOID param,
+       */
+ 
+       // ret2 =
+-      pthread_attr_setaffinity_np(&attr, sizeof(*cpuSet), cpuSet);
++      //pthread_attr_setaffinity_np(&attr, sizeof(*cpuSet), cpuSet);
+       // if (ret2) ret = ret2;
+ #endif
+     }
+@@ -482,14 +482,14 @@ WRes Thread_Create_With_CpuSet(CThread *p, THREAD_FUNC_TYPE func, LPVOID param,
+     if (!ret)
+     {
+       p->_created = 1;
+-      /*
+       if (cpuSet)
+       {
++#if defined(__linux__)
+         // ret2 =
+         pthread_setaffinity_np(p->_tid, sizeof(*cpuSet), cpuSet);
+         // if (ret2) ret = ret2;
++#endif
+       }
+-      */
+     }
+   }
+   // ret2 =
+diff --git a/C/Threads.h b/C/Threads.h
+index e788e32..9873be0 100755
+--- a/C/Threads.h
++++ b/C/Threads.h
+@@ -29,6 +29,7 @@ Z7_DIAGNOSTIC_IGNORE_END_RESERVED_MACRO_IDENTIFIER
+ #endif
+ 
+ #include <pthread.h>
++#include <sched.h>
+ 
+ #endif
+ 
+diff --git a/CPP/7zip/7zip_gcc.mak b/CPP/7zip/7zip_gcc.mak
+index 8fbef14..1974712 100755
+--- a/CPP/7zip/7zip_gcc.mak
++++ b/CPP/7zip/7zip_gcc.mak
+@@ -24,7 +24,7 @@ PROGPATH_STATIC = $(O)/$(PROG)s
+ 
+ 
+ ifneq ($(CC), xlc)
+-CFLAGS_WARN_WALL = -Werror -Wall -Wextra
++CFLAGS_WARN_WALL = -Wall -Wextra
+ endif
+ 
+ # for object file
+@@ -45,12 +45,12 @@ CFLAGS_DEBUG = -g
+ else
+ CFLAGS_DEBUG = -DNDEBUG
+ ifneq ($(CC), $(CROSS_COMPILE)clang)
+-LFLAGS_STRIP = -s
++LFLAGS_STRIP =
+ endif
+ endif
+ 
+ # CFLAGS_BASE_LIST = -S
+-CFLAGS_BASE = -O2 $(CFLAGS_BASE_LIST) $(CFLAGS_WARN_WALL) $(CFLAGS_WARN) \
++CFLAGS_BASE = $(CFLAGS_BASE_LIST) $(CFLAGS_WARN_WALL) $(CFLAGS_WARN) \
+  $(CFLAGS_DEBUG) -D_REENTRANT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
+  -fPIC
+ 
+@@ -169,7 +169,7 @@ endif
+ 
+ 
+ 
+-CFLAGS = $(MY_ARCH_2) $(LOCAL_FLAGS) $(CFLAGS_BASE2) $(CFLAGS_BASE) $(FLAGS_FLTO) $(CC_SHARED) -o $@
++CFLAGS += $(MY_ARCH_2) $(LOCAL_FLAGS) $(CFLAGS_BASE2) $(CFLAGS_BASE) $(FLAGS_FLTO) $(CC_SHARED) -o $@
+ 
+ 
+ ifdef IS_MINGW
+@@ -1361,7 +1361,7 @@ predef_cc:
+ 	$(CC) $(CFLAGS) -E $(SHOW_PREDEF)  ../../../../C/CpuArch.c > predef_cc_log
+ #	$(CC) $(CFLAGS) -E -dM -  < /dev/null
+ predef_cxx:
+-	$(CXX) $(CFLAGS) -E $(SHOW_PREDEF) ../../../Common/CrcReg.cpp  > predef_cxx_log
++	$(CXX) $(CXXFLAGS) -E $(SHOW_PREDEF) ../../../Common/CrcReg.cpp  > predef_cxx_log
+ 
+ predef: predef_cc predef_cxx
+ 
+diff --git a/CPP/Windows/FileFind.cpp b/CPP/Windows/FileFind.cpp
+index f3e982c..90d9749 100755
+--- a/CPP/Windows/FileFind.cpp
++++ b/CPP/Windows/FileFind.cpp
+@@ -1312,7 +1312,7 @@ bool CDirEntry::IsDots() const throw()
+   /* some systems (like CentOS 7.x on XFS) have (Type == DT_UNKNOWN)
+      we can call fstatat() for that case, but we use only (Name) check here */
+ 
+-#if !defined(_AIX) && !defined(__sun)
++#if !defined(_AIX) && !defined(__sun) && !defined(__QNX__)
+   if (Type != DT_DIR && Type != DT_UNKNOWN)
+     return false;
+ #endif
+@@ -1352,7 +1352,7 @@ bool CEnumerator::NextAny(CDirEntry &fi, bool &found)
+ 
+   fi.iNode = de->d_ino;
+   
+-#if !defined(_AIX) && !defined(__sun)
++#if !defined(_AIX) && !defined(__sun) && !defined(__QNX__)
+   fi.Type = de->d_type;
+   /* some systems (like CentOS 7.x on XFS) have (Type == DT_UNKNOWN)
+      we can set (Type) from fstatat() in that case.
+diff --git a/CPP/Windows/FileFind.h b/CPP/Windows/FileFind.h
+index d679245..504536c 100755
+--- a/CPP/Windows/FileFind.h
++++ b/CPP/Windows/FileFind.h
+@@ -277,13 +277,13 @@ typedef CFileInfo CDirEntry;
+ struct CDirEntry
+ {
+   ino_t iNode;
+-#if !defined(_AIX) && !defined(__sun)
++#if !defined(_AIX) && !defined(__sun) && !defined(__QNX__)
+   Byte Type;
+ #endif
+   FString Name;
+ 
+   /*
+-#if !defined(_AIX) && !defined(__sun)
++#if !defined(_AIX) && !defined(__sun) && !defined(__QNX__)
+   bool IsDir() const
+   {
+     // (Type == DT_UNKNOWN) on some systems
+@@ -310,7 +310,7 @@ public:
+   bool Fill_FileInfo(const CDirEntry &de, CFileInfo &fileInfo, bool followLink) const;
+   bool DirEntry_IsDir(const CDirEntry &de, bool followLink) const
+   {
+-#if !defined(_AIX) && !defined(__sun)
++#if !defined(_AIX) && !defined(__sun) && !defined(__QNX__)
+     if (de.Type == DT_DIR)
+       return true;
+     if (de.Type != DT_UNKNOWN)
+diff --git a/CPP/Windows/System.cpp b/CPP/Windows/System.cpp
+index 4bdc9a5..2e13fb0 100755
+--- a/CPP/Windows/System.cpp
++++ b/CPP/Windows/System.cpp
+@@ -8,6 +8,9 @@
+ #if defined(__APPLE__) || defined(__DragonFly__) || \
+     defined(BSD) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+ #include <sys/sysctl.h>
++#elif defined(__QNX__)
++#include <unistd.h>
++#include <sys/conf.h>
+ #else
+ #include <sys/sysinfo.h>
+ #endif
+@@ -338,6 +341,13 @@ bool GetRamSize(size_t &size)
+     #if defined(_SC_AIX_REALMEM) // AIX
+       size64 = (UInt64)sysconf(_SC_AIX_REALMEM) * 1024;
+     #endif
++  #elif defined(__QNX__)
++    long pages = sysconf(_SC_PHYS_PAGES);
++    long page_size = sysconf(_SC_PAGESIZE);
++    if (pages == -1 || page_size == -1)
++      size64 = 0;
++    else 
++      size64 = (uint64_t)pages * (uint64_t)page_size;
+   #elif 0 || defined(__sun)
+     #if defined(_SC_PHYS_PAGES) && defined(_SC_PAGESIZE)
+     // FreeBSD, Linux, OpenBSD, and Solaris.

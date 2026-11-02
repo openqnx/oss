@@ -1,4 +1,4 @@
-# asio 1.30.2
+# asio 1-38-2
 
 > Header-only C++ library for asynchronous network and low-level I/O
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/chriskohlhoff/asio.git (tag `asio-1-30-2`) |
+| Upstream | https://github.com/chriskohlhoff/asio.git (tag `asio-1-38-2`) |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b asio-1-30-2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b asio-1-38-2 --recurse-submodules --shallow-submodules \
     https://github.com/chriskohlhoff/asio.git src/asio
 ```
 
@@ -191,19 +191,21 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | asio 1.30.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/asio-1.30.2-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | asio 1.30.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/asio-1.30.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | asio 1.38.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/asio-1.38.2-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | asio 1.30.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/asio-1.30.2-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | asio 1.30.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/asio-1.30.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | asio 1.38.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/asio-1.38.2-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **1.30.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add asio=<version>`), sources in `ported/asio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates asio`; port one with `scripts/port-update asio`.
+This recipe builds **1-38-2**. Kept from earlier: `1.30.2` ([recipe and patches](versions/1.30.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add asio=<version>`), sources in `ported/asio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates asio`; port one with `scripts/port-update asio`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.30.2; GIT=https://github.com/chriskohlhoff/asio.git; REF=asio-1-30-2
+VERSION=1-38-2; GIT=https://github.com/chriskohlhoff/asio.git; REF=asio-1-38-2
 # Header-only (standalone, without Boost). Upstream's autotools only installs
 # headers, so they are copied directly.
 BUILDSYS=custom

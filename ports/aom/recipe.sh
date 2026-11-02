@@ -1,4 +1,4 @@
-VERSION=3.12.1; GIT=https://aomedia.googlesource.com/aom; REF=v3.12.1
+VERSION=3.15.3; GIT=https://aomedia.googlesource.com/aom; REF=v3.15.3
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_TESTS=OFF -DENABLE_EXAMPLES=OFF
                    -DENABLE_TOOLS=OFF -DENABLE_DOCS=OFF -DCONFIG_PIC=1

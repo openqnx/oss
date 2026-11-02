@@ -1,6 +1,6 @@
-VERSION=2.54.0
-TARBALL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz
-SHA256=d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079
+VERSION=2.54.2
+TARBALL=https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.2.tar.xz
+SHA256=510e1760a27ce9ce27a300f116d9b8a7dc8eac1f78714915685833643cb36236
 DEPS="glib dbus libxml2 libx11 libxtst"
 BUILDSYS=meson
 # The accessibility bus, the ATK bridge GTK loads as a module -- and ATK

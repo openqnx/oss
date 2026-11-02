@@ -4,26 +4,29 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 
 | | count |
 |---|---|
-| update | 339 |
-| current | 121 |
-| unknown | 25 |
-| error | 40 |
+| update | 369 |
+| current | 176 |
+| unknown | 32 |
+| error | 90 |
 | skipped | 9 |
 
 ## Updates available
 
 | Component | Ported | Upstream | Found via | Note |
 |---|---|---|---|---|
+| [`7zip`](../ports/7zip/) | 25.01 | **26.05** | tags | custom fetch: check the recipe |
 | [`abseil`](../ports/abseil/) | 20240722.0 | **20260817.0** | tags |  |
 | [`abuild`](../ports/abuild/) | 3.16.0 | **3.17.0** | tags |  |
 | [`ada`](../ports/ada/) | 3.4.4 | **4.0.0** | tags |  |
 | [`aom`](../ports/aom/) | 3.12.1 | **3.15.3** | tags |  |
 | [`apk-tools`](../ports/apk-tools/) | 3.0.0_rc5 | **3.0.8** | tags |  |
+| [`appstream`](../ports/appstream/) | 1.0.6 | **1.2.2** | listing |  |
 | [`asio`](../ports/asio/) | 1.30.2 | **1-38-2** | tags |  |
 | [`aspell`](../ports/aspell/) | 0.60.8.1 | **0.60.8-20190921** | tags |  |
 | [`at-spi2-core`](../ports/at-spi2-core/) | 2.54.0 | **2.54.2** | listing |  |
 | [`autoconf`](../ports/autoconf/) | 2.72 | **2.73** | listing |  |
 | [`automake`](../ports/automake/) | 1.18 | **1.19** | listing |  |
+| [`avahi`](../ports/avahi/) | 0.9-rc3 | **0.9-rc5** | tags |  |
 | [`aws-c-auth`](../ports/aws-c-auth/) | 0.10.1 | **1.0.2** | tags |  |
 | [`aws-c-cal`](../ports/aws-c-cal/) | 0.9.13 | **1.0.0** | tags |  |
 | [`aws-c-common`](../ports/aws-c-common/) | 0.12.6 | **1.0.5** | tags |  |
@@ -40,10 +43,11 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`bash`](../ports/bash/) | 5.2.37 | **5.3** | listing |  |
 | [`benchmark`](../ports/benchmark/) | 1.9.0 | **1.10.0** | tags |  |
 | [`binutils`](../ports/binutils/) | 2.43 | **2.47** | listing |  |
+| [`boringssl`](../ports/boringssl/) | 0.20260929.0 | **0.20261020.0** | tags |  |
 | [`brotli`](../ports/brotli/) | 1.1.0 | **1.2.1** | tags |  |
-| [`btop`](../ports/btop/) | 1.4.6 | **1.4.8** | tags |  |
 | [`busybox`](../ports/busybox/) | 1.36.1 | **1.38.0** | tags |  |
 | [`c-ares`](../ports/c-ares/) | 1.34.3 | **1.34.9** | tags |  |
+| [`c-blosc`](../ports/c-blosc/) | 1.21.6 | **1.21.7** | tags |  |
 | [`cairo`](../ports/cairo/) | 1.18.2 | **1.18.6** | tags |  |
 | [`capnproto`](../ports/capnproto/) | 1.0.2 | **1.5.0** | tags |  |
 | [`catch2`](../ports/catch2/) | 3.7.1 | **3.16.1** | tags |  |
@@ -54,6 +58,8 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`computelibrary`](../ports/computelibrary/) | 53.0.0 | **53.3.1** | tags |  |
 | [`cppzmq`](../ports/cppzmq/) | 4.10.0 | **4.11.0** | tags |  |
 | [`cpuinfo`](../ports/cpuinfo/) | 0-git-20240417 | **e9320ce33988** | branch | pinned commit 3c8b1533ac03 |
+| [`cups`](../ports/cups/) | 2.4.16 | **2.4.20** | tags |  |
+| [`cups-filters`](../ports/cups-filters/) | 1.28.17 | **2.0.1** | tags |  |
 | [`curl`](../ports/curl/) | 8.11.1 | **8.23.0** | tags |  |
 | [`cyclonedds`](../ports/cyclonedds/) | 0.10.5 | **11.0.1** | tags |  |
 | [`dav1d`](../ports/dav1d/) | 1.5.0 | **1.5.4** | tags |  |
@@ -72,8 +78,10 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`expat`](../ports/expat/) | 2.6.4 | **20000512** | tags |  |
 | [`fakeroot`](../ports/fakeroot/) | 1.37.1.1 | **2.1.4.orig** | listing |  |
 | [`farmhash`](../ports/farmhash/) | 1.1-git-20190513 | **9d99331eb762** | branch | pinned commit 0d859a811870 |
+| [`fast-float`](../ports/fast-float/) | 8.0.2 | **8.3.3** | tags |  |
 | [`fastcdr`](../ports/fastcdr/) | 2.2.6 | **2.4.0** | tags |  |
 | [`fastdds`](../ports/fastdds/) | 2.14.4 | **3.6.2.0** | tags |  |
+| [`fastfetch`](../ports/fastfetch/) | 2.66.1 | **2.70.0** | tags |  |
 | [`fdk-aac`](../ports/fdk-aac/) | 2.0.3 | **3.0.0** | tags |  |
 | [`ffmpegthumbnailer`](../ports/ffmpegthumbnailer/) | 2.2.3 | **2.4.1** | tags |  |
 | [`file`](../ports/file/) | 5.46 | **5.48** | listing |  |
@@ -117,11 +125,13 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`gtk3`](../ports/gtk3/) | 3.24.43 | **4.24.1** | tags |  |
 | [`gtk4`](../ports/gtk4/) | 4.16.7 | **4.16.13** | listing |  |
 | [`gtsam`](../ports/gtsam/) | 4.2 | **4.3.0** | tags |  |
+| [`hailort`](../ports/hailort/) | 4.14.0 | **5.5.0** | tags |  |
 | [`harfbuzz`](../ports/harfbuzz/) | 10.1.0 | **15.0.0** | tags |  |
 | [`highway`](../ports/highway/) | 1.2.0 | **1.4.0** | tags |  |
 | [`htop`](../ports/htop/) | 3.5.0 | **3.5.3** | tags |  |
 | [`iceoryx`](../ports/iceoryx/) | 2.0.6 | **2.95.8** | tags |  |
 | [`icu`](../ports/icu/) | 76.1 | **79.1** | tags |  |
+| [`inetutils`](../ports/inetutils/) | 2.6 | **2.8** | listing |  |
 | [`iperf3`](../ports/iperf3/) | 3.17.1 | **3.22** | tags |  |
 | [`jansson`](../ports/jansson/) | 2.14 | **2.15.1** | tags |  |
 | [`javascriptcore`](../ports/javascriptcore/) | 2.44.4 | **2.54.2** | listing |  |
@@ -151,12 +161,13 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`libgit2`](../ports/libgit2/) | 1.8.4 | **1.9.7** | tags |  |
 | [`libgpg-error`](../ports/libgpg-error/) | 1.50 | **1.61** | listing |  |
 | [`libgsf`](../ports/libgsf/) | 1.14.53 | **1.14.60** | tags |  |
+| [`libhevc`](../ports/libhevc/) | 1.8.5 | **1.8.7** | tags |  |
 | [`libiconv`](../ports/libiconv/) | 1.18 | **1.19.1** | listing |  |
 | [`libidn2`](../ports/libidn2/) | 2.3.7 | **2.3.8** | listing |  |
 | [`libjpeg-turbo`](../ports/libjpeg-turbo/) | 3.0.4 | **3.2.1** | tags |  |
 | [`libjxl`](../ports/libjxl/) | 0.11.1 | **0.12.0** | tags |  |
 | [`libmd`](../ports/libmd/) | 1.1.0 | **1.3.0** | listing |  |
-| [`libmetal`](../ports/libmetal/) | 2024.10.0 | **2026.04.0** | tags |  |
+| [`libmetal`](../ports/libmetal/) | 2024.10.0 | **2026.10.0** | tags |  |
 | [`libmicrohttpd`](../ports/libmicrohttpd/) | 1.0.1 | **1.0.10** | listing |  |
 | [`libmodbus`](../ports/libmodbus/) | 3.1.11 | **3.2.0** | tags |  |
 | [`libnotify`](../ports/libnotify/) | 0.8.3 | **0.8.9** | tags |  |
@@ -166,6 +177,7 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`libportal`](../ports/libportal/) | 0.8.1 | **0.11.0** | tags |  |
 | [`libproxy`](../ports/libproxy/) | 0.5.9 | **0.5.12** | tags |  |
 | [`libpsl`](../ports/libpsl/) | 0.21.5 | **0.23.3** | tags |  |
+| [`libraqm`](../ports/libraqm/) | 0.10.5 | **0.11.0** | tags |  |
 | [`libretro-2048`](../ports/libretro-2048/) | 0-git-20241227 | **39333f7b13dc** | branch | pinned commit 86e02d3c2dd7 |
 | [`libretro-fake08`](../ports/libretro-fake08/) | 0-git-20260613 | **0.0.2.20** | tags |  |
 | [`libretro-mrboom`](../ports/libretro-mrboom/) | 0-git-20260625 | **5.3** | tags |  |
@@ -203,6 +215,8 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`libxi`](../ports/libxi/) | 1.8.2 | **1.8.4** | tags |  |
 | [`libxinerama`](../ports/libxinerama/) | 1.1.5 | **1.1.6** | tags |  |
 | [`libxml2`](../ports/libxml2/) | 2.13.5 | **6.0** | tags |  |
+| [`libxml2-utils`](../ports/libxml2-utils/) | 2.13.5 | **2.15.4** | tags |  |
+| [`libxmlb`](../ports/libxmlb/) | 0.3.24 | **0.3.29** | tags |  |
 | [`libxrandr`](../ports/libxrandr/) | 1.5.4 | **1.5.5** | tags |  |
 | [`libxrender`](../ports/libxrender/) | 0.9.11 | **0.9.13** | tags |  |
 | [`libxscrnsaver`](../ports/libxscrnsaver/) | 1.2.4 | **1.2.5** | tags |  |
@@ -210,6 +224,7 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`libxtst`](../ports/libxtst/) | 1.2.5 | **1.2.6** | tags |  |
 | [`libzip`](../ports/libzip/) | 1.11.1 | **1.12.1** | tags |  |
 | [`lighttpd`](../ports/lighttpd/) | 1.4.77 | **1.4.85** | tags |  |
+| [`llama.cpp`](../ports/llama.cpp/) | 0_b9006 | **0.8.0** | tags |  |
 | [`lldpd`](../ports/lldpd/) | 1.0.22 | **1.0.23** | tags |  |
 | [`lua`](../ports/lua/) | 5.4.7 | **5.5.1** | listing |  |
 | [`lua5.1`](../ports/lua5.1/) | 5.1.5 | **5.5.1** | listing |  |
@@ -233,6 +248,7 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`neovim`](../ports/neovim/) | 0.12.3 | **0.12.6** | tags |  |
 | [`nettle`](../ports/nettle/) | 3.10.1 | **4.0** | listing |  |
 | [`nghttp2`](../ports/nghttp2/) | 1.64.0 | **1.70.0** | tags |  |
+| [`nginx`](../ports/nginx/) | 1.30.6 | **1.31.8** | listing |  |
 | [`ninja`](../ports/ninja/) | 1.13.1 | **120715** | tags |  |
 | [`nng`](../ports/nng/) | 1.9.0 | **2.1.0** | tags |  |
 | [`nodejs`](../ports/nodejs/) | 24.14.1 | **26.13.0** | tags |  |
@@ -243,7 +259,7 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`oniguruma`](../ports/oniguruma/) | 6.9.9 | **6.9.10** | tags |  |
 | [`onnx`](../ports/onnx/) | 1.17.0 | **1.23.2** | tags |  |
 | [`onnxruntime`](../ports/onnxruntime/) | 1.20.1 | **1.31.1** | tags |  |
-| [`open-amp`](../ports/open-amp/) | 2024.10.0 | **2026.04.0** | tags |  |
+| [`open-amp`](../ports/open-amp/) | 2024.10.0 | **2026.10.0** | tags |  |
 | [`open62541`](../ports/open62541/) | 1.4.8 | **1.5.10** | tags |  |
 | [`openal-soft`](../ports/openal-soft/) | 1.24.1 | **1.25.2** | tags |  |
 | [`openblas`](../ports/openblas/) | 0.3.28 | **0.3.34** | tags |  |
@@ -265,7 +281,7 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`pax-utils`](../ports/pax-utils/) | 1.3.8 | **1.3.9** | listing |  |
 | [`pcl`](../ports/pcl/) | 1.14.1 | **1.15.1** | tags |  |
 | [`pcre2`](../ports/pcre2/) | 10.44 | **10.49** | tags |  |
-| [`pdfium`](../ports/pdfium/) | 0-git-84a8011 | **5f092b52993b** | branch | pinned commit 84a8011ec69d |
+| [`pdfium`](../ports/pdfium/) | 0-git-84a8011 | **69856420ff40** | branch | pinned commit 84a8011ec69d |
 | [`perl`](../ports/perl/) | 5.40.2 | **5.45.4** | listing | custom fetch: check the recipe |
 | [`perl-error`](../ports/perl-error/) | 0.17030 | **0.17031** | listing |  |
 | [`pkgconf`](../ports/pkgconf/) | 2.3.0 | **3.0.10** | listing |  |
@@ -276,30 +292,38 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`pthreadpool`](../ports/pthreadpool/) | 0-git-20250207 | **15a6644ba1c4** | branch | pinned commit f94ab76fe997 |
 | [`pugixml`](../ports/pugixml/) | 1.14 | **1.16** | tags |  |
 | [`pytorch`](../ports/pytorch/) | 2.3.1 | **2.15.0** | tags | custom fetch: check the recipe |
-| [`quickjs-ng`](../ports/quickjs-ng/) | 0.8.0 | **0.17.0** | tags |  |
+| [`qhull`](../ports/qhull/) | 8.0.2 | **2020.2** | tags |  |
+| [`qpdf`](../ports/qpdf/) | 11.10.1 | **12.4.2** | tags |  |
+| [`quickjs-ng`](../ports/quickjs-ng/) | 0.8.0 | **0.18.0** | tags |  |
 | [`re2`](../ports/re2/) | 2024-07-02 | **2025-11-05** | tags |  |
 | [`readline`](../ports/readline/) | 8.2 | **8.3** | listing |  |
 | [`restbed`](../ports/restbed/) | 4.8 | **5.0.0** | tags |  |
-| [`rsync`](../ports/rsync/) | 3.3.0 | **3.5.1** | listing |  |
+| [`riegeli`](../ports/riegeli/) | 0_git20231212 | **ad7c2338440c** | branch | pinned commit e54e4300f61c |
+| [`rocksdb`](../ports/rocksdb/) | 11.8.1 | **11.12** | tags |  |
 | [`rtl-sdr`](../ports/rtl-sdr/) | 2.0.2 | **2.0.3** | tags |  |
 | [`ruy`](../ports/ruy/) | 0-git-20240321 | **226475377719** | branch | pinned commit c08ec529fc91 |
 | [`s2n-tls`](../ports/s2n-tls/) | 1.7.0 | **1.7.13** | tags |  |
 | [`sdl2`](../ports/sdl2/) | 2.32.10 | **3.4.18** | tags |  |
 | [`sdl2-compat`](../ports/sdl2-compat/) | 2.32.60 | **2.32.74** | tags |  |
 | [`sdl2-image`](../ports/sdl2-image/) | 2.8.8 | **3.4.8** | tags |  |
+| [`sdl2-mixer`](../ports/sdl2-mixer/) | 2.8.2 | **3.2.4** | tags |  |
 | [`sdl2-net`](../ports/sdl2-net/) | 2.2.0 | **3.2.0** | tags |  |
 | [`sdl2-ttf`](../ports/sdl2-ttf/) | 2.24.0 | **3.2.2** | tags |  |
-| [`simdjson`](../ports/simdjson/) | 3.11.3 | **5.1.0** | tags |  |
+| [`sentencepiece`](../ports/sentencepiece/) | 0.2.1 | **1.0.0** | tags |  |
+| [`simdjson`](../ports/simdjson/) | 3.11.3 | **5.1.1** | tags |  |
 | [`simdutf`](../ports/simdutf/) | 6.4.2 | **9.3.3** | tags |  |
+| [`skalibs`](../ports/skalibs/) | 2.14.5.1 | **2.16.0.0** | tags |  |
 | [`sleef`](../ports/sleef/) | 3.8-git-20250214 | **3.9.0** | tags |  |
 | [`snappy`](../ports/snappy/) | 1.2.1 | **1.3.1** | tags |  |
+| [`socat`](../ports/socat/) | 1.8.0.3 | **1.8.1.3** | listing |  |
 | [`spdlog`](../ports/spdlog/) | 1.15.3 | **1.17.0** | tags |  |
 | [`sqlite_orm`](../ports/sqlite_orm/) | 1.9 | **1.9.1** | tags |  |
-| [`stable-diffusion.cpp`](../ports/stable-diffusion.cpp/) | 0_git20260601 | **c6dfa9def12f** | branch | pinned commit 7948df8ac107 |
+| [`stable-diffusion.cpp`](../ports/stable-diffusion.cpp/) | 0_git20260601 | **290148d2e31c** | branch | pinned commit 7948df8ac107 |
 | [`strongswan`](../ports/strongswan/) | 6.0.6 | **6.1.0** | tags |  |
 | [`suitesparse`](../ports/suitesparse/) | 7.11.0 | **7.14.1** | tags |  |
-| [`svt-av1`](../ports/svt-av1/) | 2.3.0 | **4.2.0** | tags |  |
+| [`svt-av1`](../ports/svt-av1/) | 2.3.0 | **4.3.0** | tags |  |
 | [`taglib`](../ports/taglib/) | 2.0.2 | **2.3.2** | tags |  |
+| [`tcpdump`](../ports/tcpdump/) | 4.99.5 | **4.99.7** | listing |  |
 | [`tensorflow-lite`](../ports/tensorflow-lite/) | 2.16.1 | **2.21.0** | tags |  |
 | [`tftp-hpa`](../ports/tftp-hpa/) | 5.2 | **7.2** | tags |  |
 | [`thorvg`](../ports/thorvg/) | 0.15.8 | **1.1.3** | tags |  |
@@ -321,18 +345,21 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`tumbler`](../ports/tumbler/) | 4.20.0 | **4.20.2** | listing |  |
 | [`unbound`](../ports/unbound/) | 1.24.1 | **1.26.2** | tags |  |
 | [`unibilium`](../ports/unibilium/) | 2.1.2 | **2.1.4** | tags |  |
+| [`up-core-api`](../ports/up-core-api/) | 1.6.0-alpha2 | **1.6.0-alpha.7** | tags |  |
+| [`up-transport-zenoh-cpp`](../ports/up-transport-zenoh-cpp/) | 1.0.0-git-20250319 | **afae194aeee0** | branch | pinned commit 04678fc6035e |
+| [`urdfdom`](../ports/urdfdom/) | 4.0.3 | **6.0.2** | tags |  |
 | [`urdfdom_headers`](../ports/urdfdom_headers/) | 1.1.2 | **3.0.1** | tags |  |
 | [`uriparser`](../ports/uriparser/) | 0.9.8 | **1.0.3** | tags |  |
 | [`utf8proc`](../ports/utf8proc/) | 2.11.3 | **2.12.0** | tags |  |
 | [`vidstab`](../ports/vidstab/) | 1.1.1 | **1.1.2** | tags |  |
-| [`vim`](../ports/vim/) | 9.1.0900 | **9.2.1259** | tags |  |
+| [`vim`](../ports/vim/) | 9.1.0900 | **9.2.1276** | tags |  |
 | [`vlc`](../ports/vlc/) | 3.0.21 | **3.0.24** | tags |  |
 | [`vsomeip`](../ports/vsomeip/) | 3.5.6 | **3.7.6** | tags |  |
 | [`vte`](../ports/vte/) | 0.78.2 | **0.78.7** | listing |  |
 | [`wayland`](../ports/wayland/) | 1.24.0 | **1.26.0** | tags |  |
 | [`wayland-protocols`](../ports/wayland-protocols/) | 1.47 | **1.50** | tags |  |
 | [`webkitgtk`](../ports/webkitgtk/) | 2.44.4 | **2.54.2** | listing |  |
-| [`webrtc`](../ports/webrtc/) | m132-afaf497 | **977d8730b5cd** | branch | pinned commit afaf497805cb |
+| [`webrtc`](../ports/webrtc/) | m132-afaf497 | **483381d582ee** | branch | pinned commit afaf497805cb |
 | [`whisper.cpp`](../ports/whisper.cpp/) | 0_git20260728 | **1.9.5** | tags |  |
 | [`wlr-protocols`](../ports/wlr-protocols/) | 0-git-20250702 | **1106a4a1c575** | branch | pinned commit a5028afbe4a1 |
 | [`x265`](../ports/x265/) | 3.6 | **4.2** | tags |  |
@@ -340,15 +367,18 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | [`xfce4-session`](../ports/xfce4-session/) | 4.20.2 | **4.20.4** | listing |  |
 | [`xfce4-settings`](../ports/xfce4-settings/) | 4.20.1 | **4.20.5** | listing |  |
 | [`xkeyboard-config`](../ports/xkeyboard-config/) | 2.43 | **2.49** | tags |  |
-| [`xnnpack`](../ports/xnnpack/) | 0-git-20250209 | **1043ad9b2a1a** | branch | pinned commit e55b3998cadb |
+| [`xnnpack`](../ports/xnnpack/) | 0-git-20250209 | **80bc909ef742** | branch | pinned commit e55b3998cadb |
 | [`xorgproto`](../ports/xorgproto/) | 2024.1 | **2026.1** | tags |  |
+| [`xsltproc`](../ports/xsltproc/) | 1.1.42 | **1.1.45** | tags |  |
 | [`xtrans`](../ports/xtrans/) | 1.5.2 | **1.6.0** | tags |  |
 | [`xwayland`](../ports/xwayland/) | 24.1.14 | **26.0.99.903** | tags |  |
 | [`xxhash`](../ports/xxhash/) | 0.8.2 | **0.8.4** | tags |  |
 | [`xz`](../ports/xz/) | 5.6.3 | **5.8.4** | tags |  |
 | [`yaml-cpp`](../ports/yaml-cpp/) | 0.8.0 | **0.9.0** | tags |  |
 | [`zenoh-c`](../ports/zenoh-c/) | 1.2.1 | **1.10.2** | tags |  |
+| [`zenoh-cpp`](../ports/zenoh-cpp/) | 1.2.1 | **1.10.2** | tags | custom fetch: check the recipe |
 | [`zenoh-pico`](../ports/zenoh-pico/) | 1.2.1 | **1.10.2** | tags |  |
+| [`zerotier-one`](../ports/zerotier-one/) | 1.16.1 | **1.16.2** | tags |  |
 | [`zimg`](../ports/zimg/) | 3.0.5 | **3.0.6** | tags |  |
 | [`zlib`](../ports/zlib/) | 1.3.1 | **1.3.2** | tags |  |
 | [`zlib-ng`](../ports/zlib-ng/) | 2.2.5 | **2.3.3** | tags |  |
@@ -358,11 +388,16 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 
 | Component | Ported | Status | Note |
 |---|---|---|---|
+| `asciidoc` | 10.2.1 | error | HTTP Error 404: Not Found |
 | `boost` | 1.86.0 | unknown | versioned download directory: check https://archives.boost.io/release/1.86.0 |
 | `ca-certificates` | 20261020 | unknown | custom fetch: check the recipe |
+| `compiler-rt` | 22.1.8 | unknown | custom fetch: check the recipe |
 | `cunit` | 2.1-3 | error | HTTP Error 404: Not Found |
 | `docbook-xsl` | 1.79.2 | unknown | custom fetch: check the recipe |
 | `duktape` | 2.7.0 | unknown |  |
+| `e2fsprogs` | 1.47.4 | unknown | versioned download directory: check https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs |
+| `elfutils` | 0.193 | unknown | versioned download directory: check https://sourceware.org/elfutils/ftp |
+| `fft2d` | 2006.12.28 | unknown | custom fetch: check the recipe |
 | `font-dejavu` | 2.37 | unknown | custom fetch: check the recipe |
 | `font-liberation` | 2.1.5 | error | HTTP Error 404: Not Found |
 | `freeimage` | 3.18.0 | unknown | custom fetch: check the recipe |
@@ -370,12 +405,14 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | `godot` | 4.4.1 | unknown |  |
 | `graphicsmagick` | 1.3.46 | error | HTTP Error 404: Not Found |
 | `hyphen` | 2.8.8 | error | HTTP Error 404: Not Found |
+| `iperf2` | 2.2.1 | error | HTTP Error 404: Not Found |
 | `iso-codes` | 4.17.0 | unknown |  |
 | `itstool` | 2.0.7 | error | HTTP Error 404: Not Found |
 | `lame` | 3.100 | error | HTTP Error 404: Not Found |
 | `less` | 668 | unknown |  |
 | `libedit` | 20240808-3.1 | unknown |  |
 | `libinih` | 58 | unknown |  |
+| `libutempter` | 1.2.3 | unknown |  |
 | `libxkbcommon` | 1.8.1 | unknown |  |
 | `libyuv` | stable | unknown |  |
 | `linux-headers-input-codes` | 6.12 | unknown | custom fetch: check the recipe |
@@ -384,29 +421,75 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | `mame` | 0.281 | unknown |  |
 | `meson` | 1.10.0 | error | HTTP Error 404: Not Found |
 | `npm` | 11.11.0 | error | HTTP Error 404: Not Found |
+| `nspr` | 4.39 | unknown | versioned download directory: check https://ftp.mozilla.org/pub/nspr/releases/v4.39 |
+| `openmp` | 22.1.8 | unknown | custom fetch: check the recipe |
 | `openttd-opengfx` | 8.0 | unknown | custom fetch: check the recipe |
 | `openttd-openmsx` | 0.4.2 | unknown | custom fetch: check the recipe |
 | `openttd-opensfx` | 1.0.3 | unknown | custom fetch: check the recipe |
 | `pcre` | 8.45 | error | HTTP Error 404: Not Found |
 | `python3` | 3.14.0 | unknown | versioned download directory: check https://www.python.org/ftp/python |
+| `python3-argcomplete` | 3.7.2 | error | HTTP Error 404: Not Found |
 | `python3-astor` | 0.8.1 | error | HTTP Error 404: Not Found |
 | `python3-async-generator` | 1.10 | error | HTTP Error 404: Not Found |
+| `python3-boto3` | 1.43.123 | error | HTTP Error 404: Not Found |
+| `python3-botocore` | 1.43.123 | error | HTTP Error 404: Not Found |
+| `python3-catkin-pkg` | 1.1.1 | error | HTTP Error 404: Not Found |
 | `python3-click` | 8.5.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-argcomplete` | 0.3.3 | error | HTTP Error 404: Not Found |
+| `python3-colcon-bash` | 0.5.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-cd` | 0.1.1 | error | HTTP Error 404: Not Found |
+| `python3-colcon-cmake` | 0.2.30 | error | HTTP Error 404: Not Found |
+| `python3-colcon-common-extensions` | 0.3.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-core` | 0.21.3 | error | HTTP Error 404: Not Found |
+| `python3-colcon-defaults` | 0.2.9 | error | HTTP Error 404: Not Found |
+| `python3-colcon-devtools` | 0.3.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-library-path` | 0.2.1 | error | HTTP Error 404: Not Found |
+| `python3-colcon-metadata` | 0.3.1 | error | HTTP Error 404: Not Found |
+| `python3-colcon-notification` | 0.3.3 | error | HTTP Error 404: Not Found |
+| `python3-colcon-output` | 0.2.15 | error | HTTP Error 404: Not Found |
+| `python3-colcon-package-information` | 0.4.1 | error | HTTP Error 404: Not Found |
+| `python3-colcon-package-selection` | 0.2.10 | error | HTTP Error 404: Not Found |
+| `python3-colcon-parallel-executor` | 0.4.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-pkg-config` | 0.1.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-powershell` | 0.5.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-python-setup-py` | 0.2.9 | error | HTTP Error 404: Not Found |
+| `python3-colcon-recursive-crawl` | 0.2.3 | error | HTTP Error 404: Not Found |
+| `python3-colcon-ros` | 0.5.0 | error | HTTP Error 404: Not Found |
+| `python3-colcon-test-result` | 0.3.8 | error | HTTP Error 404: Not Found |
+| `python3-colcon-zsh` | 0.5.0 | error | HTTP Error 404: Not Found |
+| `python3-contourpy` | 1.4.0 | error | HTTP Error 404: Not Found |
 | `python3-coverage` | 7.17.0 | error | HTTP Error 404: Not Found |
+| `python3-cycler` | 0.12.1 | error | HTTP Error 404: Not Found |
 | `python3-dateutil` | 2.9.0.post0 | error | HTTP Error 404: Not Found |
+| `python3-distlib` | 0.4.4 | error | HTTP Error 404: Not Found |
+| `python3-docutils` | 0.23 | error | HTTP Error 404: Not Found |
+| `python3-empy` | 4.2.1 | error | HTTP Error 404: Not Found |
+| `python3-fonttools` | 4.68.0 | error | HTTP Error 404: Not Found |
 | `python3-idna` | 3.20 | error | HTTP Error 404: Not Found |
 | `python3-iniconfig` | 2.3.1 | error | HTTP Error 404: Not Found |
+| `python3-jmespath` | 1.1.0 | error | HTTP Error 404: Not Found |
+| `python3-kiwisolver` | 1.5.1 | error | HTTP Error 404: Not Found |
+| `python3-lxml` | 6.1.3 | error | HTTP Error 404: Not Found |
+| `python3-matplotlib` | 3.11.2 | error | HTTP Error 404: Not Found |
+| `python3-ml-dtypes` | 0.6.0 | error | HTTP Error 404: Not Found |
 | `python3-mypy-extensions` | 1.1.0 | error | HTTP Error 404: Not Found |
+| `python3-netifaces` | 0.11.0 | error | HTTP Error 404: Not Found |
 | `python3-packaging` | 25.0 | error | HTTP Error 404: Not Found |
+| `python3-pillow` | 13.0.0 | error | HTTP Error 404: Not Found |
 | `python3-pip` | 25.1.1 | error | HTTP Error 404: Not Found |
 | `python3-pluggy` | 1.7.0 | error | HTTP Error 404: Not Found |
 | `python3-pretend` | 1.0.9 | error | HTTP Error 404: Not Found |
 | `python3-pygments` | 2.21.0 | error | HTTP Error 404: Not Found |
+| `python3-pyparsing` | 3.3.3 | error | HTTP Error 404: Not Found |
 | `python3-pytest` | 9.2.0 | error | HTTP Error 404: Not Found |
 | `python3-pytest-cov` | 7.1.0 | error | HTTP Error 404: Not Found |
+| `python3-pytest-repeat` | 0.9.4 | error | HTTP Error 404: Not Found |
+| `python3-pytest-rerunfailures` | 16.7 | error | HTTP Error 404: Not Found |
 | `python3-pytest-tornasync` | 0.6.0.post2 | error | HTTP Error 404: Not Found |
 | `python3-pytokens` | 0.4.1 | error | HTTP Error 404: Not Found |
 | `python3-pytz` | 2025.2 | error | HTTP Error 404: Not Found |
+| `python3-pyyaml` | 6.0.3 | error | HTTP Error 404: Not Found |
+| `python3-s3transfer` | 0.19.3 | error | HTTP Error 404: Not Found |
 | `python3-setuptools` | 80.8.0 | error | HTTP Error 404: Not Found |
 | `python3-six` | 1.17.0 | error | HTTP Error 404: Not Found |
 | `python3-sniffio` | 1.3.1 | error | HTTP Error 404: Not Found |
@@ -414,12 +497,16 @@ Written by `scripts/check-updates`: the newest upstream release of every compone
 | `python3-tornado` | 6.6 | error | HTTP Error 404: Not Found |
 | `python3-traitlets` | 5.16.1 | error | HTTP Error 404: Not Found |
 | `python3-tzdata` | 2025.2 | error | HTTP Error 404: Not Found |
+| `python3-urllib3` | 2.8.0 | error | HTTP Error 404: Not Found |
 | `python3-versioneer` | 0.29 | error | HTTP Error 404: Not Found |
 | `python3-wheel` | 0.46.1 | error | HTTP Error 404: Not Found |
 | `qt6` | 6.8.1 | unknown | versioned download directory: check https://download.qt.io/archive/qt/6.8/6.8.1 |
+| `rsync` | 3.3.0 | error | The read operation timed out |
 | `rust` | 1.90.0 | error | HTTP Error 416: Requested Range Not Satisfiable |
 | `shared-mime-info` | 2.4 | unknown |  |
 | `sqlite` | 3.47.2 | error | HTTP Error 404: Not Found |
+| `sshpass` | 1.10 | error | HTTP Error 404: Not Found |
+| `tinyxml` | 2.6.2 | error | HTTP Error 404: Not Found |
 | `x264` | stable | unknown |  |
 | `xdg-utils` | 1.2.1 | unknown |  |
 | `zsh` | 5.9 | error | HTTP Error 404: Not Found |

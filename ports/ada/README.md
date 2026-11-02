@@ -1,4 +1,4 @@
-# ada 3.4.4
+# ada 4.0.0
 
 > Fast WHATWG-compliant URL parser library for C++
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ada-url/ada.git (tag `v3.4.4`) |
+| Upstream | https://github.com/ada-url/ada.git (tag `v4.0.0`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.4.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.0.0 --recurse-submodules --shallow-submodules \
     https://github.com/ada-url/ada.git src/ada
 ```
 
@@ -214,20 +214,22 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ada 3.4.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/ada-3.4.4-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ada 3.4.4-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ada-3.4.4-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ada 4.0.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/ada-4.0.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ada 3.4.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/ada-3.4.4-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ada 3.4.4-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ada-3.4.4-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ada 4.0.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/ada-4.0.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **3.4.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ada=<version>`), sources in `ported/ada/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ada`; port one with `scripts/port-update ada`.
+This recipe builds **4.0.0**. Kept from earlier: `3.4.4` ([recipe and patches](versions/3.4.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ada=<version>`), sources in `ported/ada/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ada`; port one with `scripts/port-update ada`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # ada: WHATWG URL parser (used by Node.js). Version as in the QNX Everywhere image.
-VERSION=3.4.4; GIT=https://github.com/ada-url/ada.git; REF=v3.4.4
+VERSION=4.0.0; GIT=https://github.com/ada-url/ada.git; REF=v4.0.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DADA_TESTING=OFF -DADA_TOOLS=OFF -DADA_BENCHMARKS=OFF )
 ```
 </details>

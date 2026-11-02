@@ -1,6 +1,6 @@
 # Component index
 
-676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 448 QNX patches between them.
+676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 449 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
@@ -386,7 +386,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [miniz](ports/miniz/README.md) | Single-file zlib/Deflate compression library with ZIP archive support | 3.1.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [mkfontscale](ports/mkfontscale/README.md) | Creates fonts.scale and fonts.dir index files for X11 font directories | 1.2.3 | autotools | www.x.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [mnn](ports/mnn/README.md) | Lightweight deep learning inference engine from Alibaba | 3.6.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [mosh](ports/mosh/README.md) | Mobile shell that supports roaming and intelligent local echo | 1.4.0 | autotools | github.com | 1 | 🔴 dependent | 5 | ✅ | ✅ |
+| [mosh](ports/mosh/README.md) | Mobile shell that supports roaming and intelligent local echo | 1.4.0 | autotools | github.com | 1 | 🔴 dependent | 6 | ✅ | ✅ |
 | [mosquitto](ports/mosquitto/README.md) | Eclipse Mosquitto MQTT broker, client libraries and pub/sub utilities | 2.0.20 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [mpc](ports/mpc/README.md) | GNU MPC library for complex number arithmetic with arbitrary precision | 1.3.1 | autotools | ftp.gnu.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [mpfr](ports/mpfr/README.md) | C library for multiple-precision floating-point computations | 4.2.1 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -467,7 +467,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [poppler](ports/poppler/README.md) | PDF rendering library and command line tools | 25.12.0 | cmake | gitlab.freedesktop.org | — | 🔴 dependent | 12 | ✅ | ✅ |
 | [pqiv](ports/pqiv/README.md) | Minimal command line image viewer based on GTK 3 | 2.13.2 | custom | github.com | 1 | 🔴 dependent | 10 | ✅ | ✅ |
 | [protobuf-c](ports/protobuf-c/README.md) | Protocol Buffers implementation in C (runtime library) | 1.5.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [protobuf](ports/protobuf/README.md) | Google's Protocol Buffers data serialization library and compiler | 29.3 | custom | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [protobuf](ports/protobuf/README.md) | Google's Protocol Buffers data serialization library and compiler | 29.3 | custom | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [psutil](ports/psutil/README.md) | Cross-platform process and system utilities module for Python | 7.2.2 | custom | github.com | 2 | 🟡 build-deps only | — | ✅ | ✅ |
 | [pthread-stubs](ports/pthread-stubs/README.md) | pkg-config file for pthread symbols needed by X libraries | 0.5 | autotools | xorg.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [pthreadpool](ports/pthreadpool/README.md) | Portable thread pool library in C | 0-git-20250207 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |

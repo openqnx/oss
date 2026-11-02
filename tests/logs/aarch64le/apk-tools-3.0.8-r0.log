@@ -1,14 +1,13 @@
 # apk-tools 3.0.8-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-11-02T15:23:11Z   packages from: apk:local-dists
+# date: 2026-11-02T22:16:32Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u apk-tools qnx-test-apk-tools qnx-port-tests
-(1/2) Upgrading apk-tools (3.0.0_rc5-r1 -> 3.0.8-r0)
-(2/2) Installing qnx-test-apk-tools (1.0-r6)
-OK: 123 MiB in 40 packages
+(1/1) Installing qnx-test-apk-tools (1.0-r6)
+OK: 123.8 MiB in 40 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_apk_tools
      == apk-tools ==

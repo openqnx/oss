@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`protobuf`](../protobuf/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`abseil`](../abseil/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`protobuf`](../protobuf/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`abseil`](../abseil/) [`libutempter`](../libutempter/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`protobuf`](../protobuf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_mosh`](../../tests/src/) |
 
@@ -227,7 +227,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | mosh 1.4.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/mosh-1.4.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | mosh 1.4.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/mosh-1.4.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | mosh 1.4.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/mosh-1.4.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | mosh 1.4.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/mosh-1.4.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

@@ -18,7 +18,7 @@ component's), tests/results/<arch>.tsv and tests/logs/<arch>/.
 OUT (default tmp/pkg-site) is a static site: open OUT/index.html, or serve it
 (GitHub Pages, any web server). Run it after every publish.
 """
-import argparse, html, json, os, sys, tarfile, time
+import argparse, html, json, os, re, sys, tarfile, time
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(WS, "scripts", "lib"))
@@ -163,6 +163,47 @@ def origin(e):
 def test_of(e):
     o = origin(e)
     return results.get((e["qarch"], o, e["V"])), f"tests/logs/{e['qarch']}/{o}-{e['V']}.log"
+
+
+def works_with(arch, e):
+    """Which versions of its dependencies a package version goes with.
+    Packages made since 2026-11 depend on the libraries they were built against
+    ("so:libada.so.4"): the dependency versions that provide them. Older ones
+    only name the component; for those, what its on-target test installed with
+    it (the "Installing <name> (<version>)" lines of its log)."""
+    out = []
+    for d in e.get("D", "").split():
+        if not d.startswith("so:"):
+            continue
+        p = provides.get((arch, d))
+        vs = [x["V"] for x in pkgs.get((arch, p), ()) if any(q.split("=")[0] == d for q in x.get("p", "").split())]
+        out.append((p or "?", ", ".join(vs) or "?", d[3:]))
+    if out:
+        return "requires", out
+    _, logp = test_of(e)
+    if os.path.exists(logp):
+        own = {e["P"], origin(e)}
+        for l in open(logp, errors="replace"):
+            m = re.search(r"Installing (\S+) \((\S+)\)", l)
+            if m and m.group(1) not in own and not m.group(1).startswith("qnx-"):
+                out.append((m.group(1), m.group(2), ""))
+        if out:
+            return "tested", out
+    return "", []
+
+
+def works_with_html(arch, e, short=False):
+    how, out = works_with(arch, e)
+    if not out:
+        return "<span class=mut>–</span>" if short else ""
+    item = lambda n, v, lib: (f'<a href="{E(n)}.html">{E(n)}</a> {E(v)}' + (f' <span class=mut>({E(lib)})</span>' if lib and not short else ""))
+    s = ", ".join(item(*x) for x in out)
+    if short:
+        return s
+    why = ("built against these libraries: apk installs only a version that provides them"
+           if how == "requires" else
+           "the versions its on-target test was installed with (packages before 2026-11 name only the component)")
+    return f"<p>{s}<br><span class=mut>{why}</span></p>"
 
 
 def license(e):
@@ -346,6 +387,9 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
     b.append("</dl>")
     b.append(install_remove(arch, name, e, rel_apk))
     b.append(f"<h2>Depends ({len(deps)})</h2>" + (", ".join(dl) if dl else "<span class=mut>nothing beyond the QNX target image</span>"))
+    ww = works_with_html(arch, e)
+    if ww:
+        b.append("<h2>Dependency versions it works with</h2>" + ww)
     b.append(f"<h2>Required by ({len(rd)})</h2>" + (", ".join(f'<a href="{E(x)}.html">{E(x)}</a>' for x in rd) or "<span class=mut>–</span>"))
     b.append(f"<h2>QNX patches ({len(patches)})</h2>")
     if patches:
@@ -379,10 +423,11 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
         b.append("<pre><code>" + E("\n".join(files)) + "</code></pre>")
     if len(es) > 1:
         b.append(f"<h2>Other versions ({len(es) - 1})</h2><div class=tw><table><thead><tr><th>Version</th><th>Build date</th>"
-                 "<th>Test</th><th>Download</th></tr></thead><tbody>")
+                 "<th>Test</th><th>Works with</th><th>Download</th></tr></thead><tbody>")
         for x in es[1:]:
             rx, _ = test_of(x)
             b.append(f"<tr><td class=n>{E(x['V'])}</td><td class=n>{date(x.get('t'))}</td><td>{badge(rx)}</td>"
+                     f"<td>{works_with_html(arch, x, short=True)}</td>"
                      f"<td><a href=\"{rel_apk}/{E(name)}-{E(x['V'])}.apk\">.apk</a> &middot; "
                      f"<a href=\"{rel_pkg}/{E(name)}-{E(x['V'])}.tar.gz\">.tar.gz</a> &middot; "
                      f"<code>apk add {E(name)}={E(x['V'])}</code></td></tr>")

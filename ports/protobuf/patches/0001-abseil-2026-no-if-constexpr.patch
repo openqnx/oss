@@ -1,0 +1,69 @@
+Build against abseil 20260817 (no absl::if_constexpr)
+
+abseil 20260817 removed absl/utility/internal/if_constexpr.h and its CMake
+target absl::if_constexpr. protobuf 29.3 still includes the header in the
+public arena.h (Arena::Create) and lists the target in
+cmake/abseil-cpp.cmake, so configure stops ("absl::if_constexpr ... target
+was not found") and every file that includes arena.h fails to compile.
+Keep the helper (a few lines, C++14) in protobuf's own internal namespace
+and drop the target from the list. Later protobuf releases no longer use it.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/abseil-cpp.cmake
++++ b/cmake/abseil-cpp.cmake
+@@ -72,7 +72,6 @@
+     absl::flat_hash_set
+     absl::function_ref
+     absl::hash
+-    absl::if_constexpr
+     absl::layout
+     absl::log_initialize
+     absl::log_globals
+--- a/src/google/protobuf/arena.h
++++ b/src/google/protobuf/arena.h
+@@ -15,6 +15,7 @@
+ #include <limits>
+ #include <new>  // IWYU pragma: keep for operator new().
+ #include <string>
++#include <tuple>
+ #include <type_traits>
+ #include <utility>
+ #include <vector>
+@@ -32,7 +33,6 @@
+ #include "absl/base/optimization.h"
+ #include "absl/base/prefetch.h"
+ #include "absl/log/absl_check.h"
+-#include "absl/utility/internal/if_constexpr.h"
+ #include "google/protobuf/arena_align.h"
+ #include "google/protobuf/arena_allocation_policy.h"
+ #include "google/protobuf/port.h"
+@@ -49,6 +49,19 @@
+ namespace google {
+ namespace protobuf {
+ 
++namespace internal {
++// abseil's utility_internal::IfConstexprElse (absl/utility/internal/
++// if_constexpr.h), which abseil 20260817 removed: calls true_func or
++// false_func with args, chosen at compile time, also before C++17.
++template <bool Condition, typename TrueFunc, typename FalseFunc, typename... Args>
++auto ArenaIfConstexprElse(TrueFunc&& true_func, FalseFunc&& false_func,
++                          Args&&... args) {
++  return std::get<Condition>(std::forward_as_tuple(
++      std::forward<FalseFunc>(false_func), std::forward<TrueFunc>(true_func)))(
++      std::forward<Args>(args)...);
++}
++}  // namespace internal
++
+ struct ArenaOptions;  // defined below
+ class Arena;    // defined below
+ class Message;  // defined in message.h
+@@ -214,7 +227,7 @@
+   // otherwise, returns a heap-allocated object.
+   template <typename T, typename... Args>
+   PROTOBUF_NDEBUG_INLINE static T* Create(Arena* arena, Args&&... args) {
+-    return absl::utility_internal::IfConstexprElse<
++    return internal::ArenaIfConstexprElse<
+         is_arena_constructable<T>::value>(
+         // Arena-constructable
+         [arena](auto&&... args) {

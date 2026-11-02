@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/protocolbuffers/protobuf.git (tag `v29.3`) |
 | Build system | custom (see recipe) |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`abseil`](../abseil/) |
 | Run-time dependencies | [`abseil`](../abseil/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,7 +82,23 @@ git clone --depth 1 -b v29.3 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/protobuf < ports/protobuf/patches/0001-abseil-2026-no-if-constexpr.patch
+```
+
+**[`0001-abseil-2026-no-if-constexpr.patch`](patches/0001-abseil-2026-no-if-constexpr.patch)** — Build against abseil 20260817 (no absl::if_constexpr)
+
+> abseil 20260817 removed absl/utility/internal/if_constexpr.h and its CMake
+> target absl::if_constexpr. protobuf 29.3 still includes the header in the
+> public arena.h (Arena::Create) and lists the target in
+> cmake/abseil-cpp.cmake, so configure stops ("absl::if_constexpr ... target
+> was not found") and every file that includes arena.h fails to compile.
+> Keep the helper (a few lines, C++14) in protobuf's own internal namespace
+> and drop the target from the list. Later protobuf releases no longer use it.
+
+Touches: `cmake/abseil-cpp.cmake`, `src/google/protobuf/arena.h` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -220,8 +236,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | protobuf 29.3-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/protobuf-29.3-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | protobuf 29.3-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/protobuf-29.3-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | protobuf 29.3-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/protobuf-29.3-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | protobuf 29.3-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/protobuf-29.3-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

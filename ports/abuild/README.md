@@ -1,4 +1,4 @@
-# abuild 3.16.0
+# abuild 3.17.0
 
 > Alpine's tools for building APK packages
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/alpinelinux/abuild.git (tag `3.16.0`) |
+| Upstream | https://github.com/alpinelinux/abuild.git (tag `3.17.0`) |
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`apk-tools`](../apk-tools/) |
@@ -78,7 +78,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.16.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.17.0 --recurse-submodules --shallow-submodules \
     https://github.com/alpinelinux/abuild.git src/abuild
 ```
 
@@ -127,7 +127,7 @@ do_configure() { cp -a "$S/." "$B/"; }
 ```
 
 ```bash
-do_build() { _mk abuild-tar abuild-gzsplit abuild-sudo abuild abuild-keygen abuild-sign newapkbuild abump apkgrel buildlab checkapk functions.sh; }
+do_build() { _mk abuild-tar abuild-gzsplit abuild-sudo abuild-rm abuild abuild-keygen abuild-sign newapkbuild abump apkgrel checkapk functions.sh; }
 ```
 
 ```bash
@@ -136,8 +136,9 @@ do_install() { _mk DESTDIR="$STAGE" install && rm -rf "$STAGE$PREFIX/share/man";
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- abuild: Alpine's APK package build tool (shell scripts plus small C helpers) "adapted for QNX": upstream 3.16.0 (GitHub mirror of gitlab.alpinelinux.org) with qnx-ports' QNX commits (patches/, the release QNX's aports builds, 3.16.0_p5; the image ships 3.15.0); the scripts expect a POSIX shell, apk-tools and the usual build utilities on the target.
+- abuild: Alpine's APK package build tool (shell scripts plus small C helpers) "adapted for QNX": upstream 3.17.0 (GitHub mirror of gitlab.alpinelinux.org) with qnx-ports' QNX commits (patches/, made for 3.16.0 -- the release QNX's aports builds as 3.16.0_p5 -- and refreshed for 3.17.0; the image ships 3.15.0); the scripts expect a POSIX shell, apk-tools and the usual build utilities on the target.
 - The man pages are made with scdoc, which the build host does not have; SCDOC=true leaves them empty, and they are not installed.
+- 3.17.0 dropped buildlab and added abuild-rm (C; abuild's clean steps call it to remove trees, read-only directories included).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH abuild`.
 
@@ -230,24 +231,27 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/abuild-3.17.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/abuild-3.16.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/abuild-3.16.0-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/abuild-3.17.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
-This recipe builds **3.16.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add abuild=<version>`), sources in `ported/abuild/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates abuild`; port one with `scripts/port-update abuild`.
+This recipe builds **3.17.0**. Kept from earlier: `3.16.0` ([recipe and patches](versions/3.16.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add abuild=<version>`), sources in `ported/abuild/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates abuild`; port one with `scripts/port-update abuild`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # abuild: Alpine's APK package build tool (shell scripts plus small C
-# helpers) "adapted for QNX": upstream 3.16.0 (GitHub mirror of
-# gitlab.alpinelinux.org) with qnx-ports' QNX commits (patches/, the release
-# QNX's aports builds, 3.16.0_p5; the image ships 3.15.0); the scripts expect a POSIX shell, apk-tools and the
-# usual build utilities on the target.
-VERSION=3.16.0; GIT=https://github.com/alpinelinux/abuild.git; REF=3.16.0
+# helpers) "adapted for QNX": upstream 3.17.0 (GitHub mirror of
+# gitlab.alpinelinux.org) with qnx-ports' QNX commits (patches/, made for
+# 3.16.0 -- the release QNX's aports builds as 3.16.0_p5 -- and refreshed for
+# 3.17.0; the image ships 3.15.0); the scripts expect a POSIX shell, apk-tools
+# and the usual build utilities on the target.
+VERSION=3.17.0; GIT=https://github.com/alpinelinux/abuild.git; REF=3.17.0
 DEPS="openssl zlib apk-tools"
 BUILDSYS=custom
 # The man pages are made with scdoc, which the build host does not have;
@@ -255,7 +259,9 @@ BUILDSYS=custom
 _mk() { make -C "$B" SCDOC=true CC="qcc -V$QCC_TARGET" CFLAGS="-O2 -D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   LDFLAGS="-L$STAGE$PREFIX/lib" prefix="$PREFIX" sysconfdir="$PREFIX/etc" "$@"; }
 do_configure() { cp -a "$S/." "$B/"; }
-do_build() { _mk abuild-tar abuild-gzsplit abuild-sudo abuild abuild-keygen abuild-sign newapkbuild abump apkgrel buildlab checkapk functions.sh; }
+# 3.17.0 dropped buildlab and added abuild-rm (C; abuild's clean steps call it
+# to remove trees, read-only directories included).
+do_build() { _mk abuild-tar abuild-gzsplit abuild-sudo abuild-rm abuild abuild-keygen abuild-sign newapkbuild abump apkgrel checkapk functions.sh; }
 do_install() { _mk DESTDIR="$STAGE" install && rm -rf "$STAGE$PREFIX/share/man"; }
 ```
 </details>

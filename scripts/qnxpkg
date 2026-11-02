@@ -392,6 +392,17 @@ def package(comp, arch, args, owner, outdir, existing=None):
     sonames_here = {p.split(":", 1)[1].split("=")[0] for p in provides}
     deps = sorted({owner[n] for n in needed if n in owner and n not in sonames_here and owner[n] != comp}
                   | set(meta["runtime_deps"]))
+    # The same dependencies by library: "so:libada.so.4" names the version
+    # this was built against (ada 4 provides it, ada 3 only so:libada.so.3),
+    # so apk never pairs it with an incompatible one. Only for a library that
+    # its component provides under that very soname (provides above); the
+    # INDEX keeps the component names (target/oss-get reads them).
+    sodeps = []
+    for n in sorted(needed):
+        if n in owner and n not in sonames_here and owner[n] != comp:
+            info = elf_info(os.path.join(stage, "usr/local/lib", n), tool)
+            if info and info[0] == n:
+                sodeps.append("so:" + n)
 
     def with_dirs(sel):
         out = set(sel)
@@ -440,7 +451,8 @@ def package(comp, arch, args, owner, outdir, existing=None):
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
         lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
         pm = dict(meta); pm["conflicts_pkg"] = conf
-        entries.append(make_apk(pname, ver, arch, pm, root, rels_sel, pdeps,
+        entries.append(make_apk(pname, ver, arch, pm, root, rels_sel,
+                                pdeps + (sodeps if pname == comp else []),
                                 provides if pname == comp else [], san, args.key, outdir))
         entries[-1]["fp"] = fp
     print("== %s [%s] %s: %d runtime + %d dev files, depends: %s"

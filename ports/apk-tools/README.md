@@ -133,11 +133,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH apk-tools`.
 
 ### 5. What it installs
 
-31 files under `/usr/local`: 2 shared-library entries, 1 programs, 26 headers.
+30 files under `/usr/local`: 2 shared-library entries, 1 programs, 25 headers.
 
 ```
 /usr/local/lib/libapk.so
-/usr/local/lib/libapk.so.3.0.0_rc5
+/usr/local/lib/libapk.so.3.0.0
 /usr/local/bin/apk
 ```
 

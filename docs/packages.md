@@ -157,6 +157,34 @@ the QNX SDP target are never dependencies. So `oss-get install` pulls in
 exactly what the program loads — see the run-time column in
 [DEPENDENCIES.md](../DEPENDENCIES.md).
 
+### Which dependency versions a package goes with
+
+Every version stays published, so an older package and a newer dependency
+can meet. When a library's soname changes — ada 3.4.4 (`libada.so.3`) → ada
+4.0.0 (`libada.so.4`), abseil 20240722 (`libabsl_*.so.2407`) → 20260817
+(`.2608`) — everything linking it is rebuilt as a new revision of the same
+version, and the old revision stays:
+
+| Package | Goes with |
+|---|---|
+| `nodejs-24.14.1-r0` | `ada-3.4.4-r0` |
+| `nodejs-24.14.1-r1` | `ada-4.0.0-r0` |
+| `protobuf-29.3-r0`, `grpc-1.69.0-r0`, `pytorch-2.3.1-r1`, ... | `abseil-20240722.0-r0` |
+| `protobuf-29.3-r1`, `grpc-1.69.0-r1`, `pytorch-2.3.1-r2`, ... | `abseil-20260817.0-r0` |
+
+- **apk:** packages made since 2026-11 also depend on the libraries they
+  were built against (`depend = so:libada.so.4`), which only a matching
+  version provides. `apk add -u nodejs ada` upgrades both together; asking
+  for `ada=3.4.4-r0` takes nodejs back to `24.14.1-r0`. A version pinned with
+  `<pkg>=<version>` stays until you pin or upgrade it again.
+- **oss-get and by hand:** the `INDEX` names only the component. Take each
+  dependency's version from the package's page on the
+  [package site](https://openqnx.github.io/oss/): "Dependency versions it
+  works with" lists them (for a package before 2026-11: the versions its
+  on-target test was installed with), and the "Other versions" table does
+  the same for every older revision. The newest of everything always goes
+  together.
+
 ## Installing and removing, by method
 
 Every package's page on the [package site](https://openqnx.github.io/oss/)

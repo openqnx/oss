@@ -117,12 +117,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ada`.
 
 ### 5. What it installs
 
-48 files under `/usr/local`: 3 shared-library entries, 40 headers.
+49 files under `/usr/local`: 3 shared-library entries, 41 headers.
 
 ```
 /usr/local/lib/libada.so
-/usr/local/lib/libada.so.3
-/usr/local/lib/libada.so.3.4.4
+/usr/local/lib/libada.so.4
+/usr/local/lib/libada.so.4.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/ada` after a build.

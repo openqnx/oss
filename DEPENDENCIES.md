@@ -31,13 +31,13 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 | Component | Version | Build system | Verified alone | Used by |
 |---|---|---|---|---|
-| [`7zip`](ports/7zip/) | 25.01 | custom | – | 0 |
-| [`abseil`](ports/abseil/) | 20240722.0 | cmake | aarch64le✅ x86_64✅ | 6 |
-| [`ada`](ports/ada/) | 3.4.4 | cmake | – | 1 |
+| [`7zip`](ports/7zip/) | 26.05 | custom | – | 0 |
+| [`abseil`](ports/abseil/) | 20260817.0 | cmake | aarch64le✅ x86_64✅ | 6 |
+| [`ada`](ports/ada/) | 4.0.0 | cmake | – | 1 |
 | [`adwaita-fonts`](ports/adwaita-fonts/) | 49.0 | custom | – | 0 |
-| [`aom`](ports/aom/) | 3.12.1 | cmake | aarch64le✅ x86_64✅ | 2 |
+| [`aom`](ports/aom/) | 3.15.3 | cmake | aarch64le✅ x86_64✅ | 2 |
 | [`apr`](ports/apr/) | 1.7.6 | autotools | – | 2 |
-| [`asio`](ports/asio/) | 1.30.2 | custom | – | 1 |
+| [`asio`](ports/asio/) | 1-38-2 | custom | – | 1 |
 | [`autoconf`](ports/autoconf/) | 2.72 | autotools | – | 0 |
 | [`automake`](ports/automake/) | 1.18 | autotools | – | 0 |
 | [`aws-c-common`](ports/aws-c-common/) | 0.12.6 | cmake | – | 5 |
@@ -45,7 +45,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`bison`](ports/bison/) | 3.8.2 | autotools | – | 0 |
 | [`boringssl`](ports/boringssl/) | 0.20260929.0 | cmake | – | 0 |
 | [`brotli`](ports/brotli/) | 1.1.0 | cmake | aarch64le✅ x86_64✅ | 10 |
-| [`btop`](ports/btop/) | 1.4.6 | cmake | – | 0 |
+| [`btop`](ports/btop/) | 1.4.8 | cmake | – | 0 |
 | [`bullet3`](ports/bullet3/) | 3.25 | cmake | – | 0 |
 | [`busybox`](ports/busybox/) | 1.36.1 | custom | – | 0 |
 | [`bzip2`](ports/bzip2/) | 1.0.8 | custom | aarch64le✅ x86_64✅ | 15 |
@@ -426,12 +426,12 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
-| [`abuild`](ports/abuild/) | 3.16.0 | openssl zlib apk-tools | openssl zlib | 2 |
-| [`apk-tools`](ports/apk-tools/) | 3.0.0_rc5 | openssl zlib zstd | openssl zlib zstd | 3 |
+| [`abuild`](ports/abuild/) | 3.17.0 | openssl zlib apk-tools | openssl zlib | 2 |
+| [`apk-tools`](ports/apk-tools/) | 3.0.8 | openssl zlib zstd | openssl zlib zstd | 3 |
 | [`appstream`](ports/appstream/) | 1.0.6 | glib curl libxml2 libyaml libxmlb zstd | curl gettext glib libxml2 libxmlb libyaml zstd | 18 |
 | [`apr-util`](ports/apr-util/) | 1.6.5 | apr expat openssl sqlite libiconv libxcrypt | apr expat libiconv libxcrypt openssl sqlite | 7 |
 | [`aspell`](ports/aspell/) | 0.60.8.1 | ncurses | ncurses | 1 |
-| [`at-spi2-core`](ports/at-spi2-core/) | 2.54.0 | glib dbus libxml2 libx11 libxtst | dbus gettext glib libx11 libxi libxtst | 17 |
+| [`at-spi2-core`](ports/at-spi2-core/) | 2.54.2 | glib dbus libxml2 libx11 libxtst | dbus gettext glib libx11 libxi libxtst | 17 |
 | [`avahi`](ports/avahi/) | 0.9-rc3 | dbus expat libdaemon | dbus expat libdaemon | 3 |
 | [`avro-cpp`](ports/avro-cpp/) | 1.12.2 | fmt zlib snappy zstd | snappy zlib zstd | 3 |
 | [`aws-c-auth`](ports/aws-c-auth/) | 0.10.1 | aws-c-http aws-c-sdkutils | aws-c-cal aws-c-common aws-c-compression aws-c-http aws-c-io aws-c-sdkutils openssl s2n-tls | 8 |
@@ -613,7 +613,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`metis`](ports/metis/) | 5.2.1 | gklib | gklib | 1 |
 | [`minicom`](ports/minicom/) | 2.9 | ncurses libiconv | libiconv ncurses | 2 |
 | [`mkfontscale`](ports/mkfontscale/) | 1.2.3 | freetype fontenc zlib | fontenc freetype zlib | 6 |
-| [`mosh`](ports/mosh/) | 1.4.0 | protobuf ncurses openssl zlib | abseil ncurses openssl protobuf zlib | 5 |
+| [`mosh`](ports/mosh/) | 1.4.0 | protobuf ncurses openssl zlib | abseil libutempter ncurses openssl protobuf zlib | 6 |
 | [`mosquitto`](ports/mosquitto/) | 2.0.20 | openssl cjson | cjson openssl | 2 |
 | [`mpc`](ports/mpc/) | 1.3.1 | gmp mpfr | gmp mpfr | 2 |
 | [`mpfr`](ports/mpfr/) | 4.2.1 | gmp | gmp | 1 |
@@ -729,6 +729,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`graphicsmagick`](ports/graphicsmagick/) | libzip | – | – |
 | [`lighttpd`](ports/lighttpd/) | libxcrypt | – | – |
 | [`llama.cpp`](ports/llama.cpp/) | openssl | – | – |
+| [`mosh`](ports/mosh/) | libutempter | – | – |
 
 ## Blocked
 

@@ -118,7 +118,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH at-spi2-core`.
 ```
 /usr/local/lib/libatk-1.0.so
 /usr/local/lib/libatk-1.0.so.0
-/usr/local/lib/libatk-1.0.so.0.25409.1
+/usr/local/lib/libatk-1.0.so.0.25411.1
 /usr/local/lib/libatk-bridge-2.0.so
 /usr/local/lib/libatk-bridge-2.0.so.0
 /usr/local/lib/libatk-bridge-2.0.so.0.0.0

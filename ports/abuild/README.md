@@ -154,6 +154,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH abuild`.
 /usr/local/bin/abuild-fetch
 /usr/local/bin/abuild-gzsplit
 /usr/local/bin/abuild-keygen
+/usr/local/bin/abuild-rm
 /usr/local/bin/abuild-rmtemp
 /usr/local/bin/abuild-sign
 /usr/local/bin/abuild-sudo
@@ -162,7 +163,6 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH abuild`.
 /usr/local/bin/apkbuild-cpan
 /usr/local/bin/apkbuild-gem-resolver
 /usr/local/bin/apkbuild-pypi
-/usr/local/bin/apkgrel
 ...
 ```
 
@@ -232,9 +232,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/abuild-3.16.0-r1.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/abuild-3.17.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/abuild-3.17.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/abuild-3.16.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.16.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/abuild-3.16.0-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/abuild-3.17.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abuild 3.17.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/abuild-3.17.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

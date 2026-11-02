@@ -1,0 +1,33 @@
+# abuild 3.17.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-02T22:16:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u abuild qnx-test-abuild qnx-port-tests
+(1/4) Installing abuild (3.17.0-r1)
+(2/4) Installing readline (8.2-r0)
+(3/4) Installing bash (5.2.37-r2)
+(4/4) Installing qnx-test-abuild (1.0-r5)
+OK: 126.0 MiB in 43 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_abuild
+     == abuild ==
+       ok   abuild-tar --hash: output grew by the PAX records
+       ok   PAX record APK-TOOLS.checksum.SHA1 present
+       ok   file data carried through
+       ok   abuild-tar --cut: end-of-archive removed (3584 -> 2560 bytes)
+       ok   abuild-gzsplit: control.tar.gz and data.tar.gz split exactly
+       ok   abuild-rm -rf: tree with read-only directories removed, symlink target kept
+       ok   abuild-rm -rf: missing path is not an error
+       ok   abuild-rm without -rf: refused (rc=1), nothing removed
+       ok   abuild -V: abuild 3.17.0
+       ok   abuild -A: aarch64
+       ok   newapkbuild -a: APKBUILD with name, version, description, license, url, autotools package()
+     PASS abuild
+PASS test_abuild
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

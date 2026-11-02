@@ -121,12 +121,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH aom`.
 
 ### 5. What it installs
 
-15 files under `/usr/local`: 3 shared-library entries, 10 headers.
+23 files under `/usr/local`: 3 shared-library entries, 2 programs, 12 headers.
 
 ```
 /usr/local/lib/libaom.so
 /usr/local/lib/libaom.so.3
-/usr/local/lib/libaom.so.3.12.1
+/usr/local/lib/libaom.so.3.15.3
+/usr/local/bin/aomdec
+/usr/local/bin/aomenc
 ```
 
 The complete list is `stage/<arch>/.manifest/aom` after a build.

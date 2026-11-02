@@ -1602,3 +1602,23 @@ with no reject and no fuzz (`ports/abuild/patches/0001-*`). On QNX 8.0,
 `fchmodat(..., AT_SYMLINK_NOFOLLOW)` on a directory and
 `openat(O_DIRECTORY|O_NOFOLLOW)` behave as on Linux: `abuild-rm` removes trees
 with read-only directories unpatched (`tests/src/test_abuild.sh`).
+
+**154. protobuf 29 includes an abseil header that abseil 20260817 removed.**
+`google/protobuf/arena.h` (a public header) includes
+`absl/utility/internal/if_constexpr.h` for `Arena::Create`, and
+`cmake/abseil-cpp.cmake` lists the `absl::if_constexpr` target; both are gone
+in abseil 20260817, so protobuf stops at configure, and anything including
+`arena.h` would not compile. `ports/protobuf/patches/0001-abseil-2026-no-if-constexpr.patch`
+keeps the few-line helper inside protobuf. Rebuilding the consumers in order
+(hazard 152) is not enough on its own: check each one's own sources for
+abseil internals before the abseil update (`grep -r if_constexpr src/<name>`).
+
+**155. Packaging the tests while the test build is broken bumps every test
+package.** While abseil and protobuf disagreed, `tests/build-tests.sh` built
+nothing; each `qnxpkg --tests` of that state, and again of the repaired one,
+was a change of contents, so every `qnx-test-*` gained a revision per run
+(r6 → r11 in one day, all unpublished, 1003 assets for a 1000-asset release).
+Check `build-tests.sh` succeeded before `qnxpkg --tests`. Revisions that were
+never published and hold what the published one holds can go: compare
+`archive_digest` with the newest published revision (what was done on
+2026-11-03; the moved files are in `tmp/stray/test_suites/`).

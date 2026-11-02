@@ -106,25 +106,25 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH abseil`.
 
 ### 5. What it installs
 
-756 files under `/usr/local`: 180 shared-library entries, 382 headers.
+816 files under `/usr/local`: 188 shared-library entries, 408 headers.
 
 ```
-/usr/local/lib/libabsl_bad_any_cast_impl.so
-/usr/local/lib/libabsl_bad_any_cast_impl.so.2407.0.0
-/usr/local/lib/libabsl_bad_optional_access.so
-/usr/local/lib/libabsl_bad_optional_access.so.2407.0.0
-/usr/local/lib/libabsl_bad_variant_access.so
-/usr/local/lib/libabsl_bad_variant_access.so.2407.0.0
 /usr/local/lib/libabsl_base.so
-/usr/local/lib/libabsl_base.so.2407.0.0
+/usr/local/lib/libabsl_base.so.2608.0.0
+/usr/local/lib/libabsl_base_cpu_detect.so
+/usr/local/lib/libabsl_base_cpu_detect.so.2608.0.0
 /usr/local/lib/libabsl_city.so
-/usr/local/lib/libabsl_city.so.2407.0.0
+/usr/local/lib/libabsl_city.so.2608.0.0
 /usr/local/lib/libabsl_civil_time.so
-/usr/local/lib/libabsl_civil_time.so.2407.0.0
+/usr/local/lib/libabsl_civil_time.so.2608.0.0
+/usr/local/lib/libabsl_clock_interface.so
+/usr/local/lib/libabsl_clock_interface.so.2608.0.0
 /usr/local/lib/libabsl_cord.so
-/usr/local/lib/libabsl_cord.so.2407.0.0
+/usr/local/lib/libabsl_cord.so.2608.0.0
 /usr/local/lib/libabsl_cord_internal.so
-/usr/local/lib/libabsl_cord_internal.so.2407.0.0
+/usr/local/lib/libabsl_cord_internal.so.2608.0.0
+/usr/local/lib/libabsl_cordz_functions.so
+/usr/local/lib/libabsl_cordz_functions.so.2608.0.0
 ...
 ```
 
@@ -219,10 +219,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/abseil-20240722.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/abseil-20240722.0-r0.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/abseil-20260817.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/abseil-20260817.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/abseil-20240722.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20240722.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/abseil-20240722.0-r0.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/abseil-20260817.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | abseil 20260817.0-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/abseil-20260817.0-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

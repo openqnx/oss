@@ -133,13 +133,13 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 
 | Component | What it is | Version | Install | Test package | Verified |
 |---|---|---|---|---|---|
-| [`7zip`](../ports/7zip/) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 25.01 | `apk add 7zip` | `qnx-test-7zip` | x86✅ᵛ a64✅ᵛ |
-| [`abseil`](../ports/abseil/) | Collection of C++ libraries augmenting the C++ standard library | 20240722.0 | `apk add abseil` | `qnx-test-abseil` | x86✅ᵛ a64✅ᵛ |
-| [`ada`](../ports/ada/) | Fast WHATWG-compliant URL parser library for C++ | 3.4.4 | `apk add ada` | `qnx-test-ada` | x86✅ᵛ a64✅ᵛ |
+| [`7zip`](../ports/7zip/) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 26.05 | `apk add 7zip` | `qnx-test-7zip` | x86✅ᵛ a64✅ᵛ |
+| [`abseil`](../ports/abseil/) | Collection of C++ libraries augmenting the C++ standard library | 20260817.0 | `apk add abseil` | `qnx-test-abseil` | x86✅ᵛ a64✅ᵛ |
+| [`ada`](../ports/ada/) | Fast WHATWG-compliant URL parser library for C++ | 4.0.0 | `apk add ada` | `qnx-test-ada` | x86✅ᵛ a64✅ᵛ |
 | [`adwaita-fonts`](../ports/adwaita-fonts/) | Adwaita Sans and Adwaita Mono, the GNOME fonts | 49.0 | `apk add adwaita-fonts` | `qnx-test-adwaita-fonts` | x86✅ᵛ a64✅ᵛ |
-| [`aom`](../ports/aom/) | AV1 video codec library from the Alliance for Open Media | 3.12.1 | `apk add aom` | `qnx-test-aom` | x86✅ᵛ a64✅ᵛ |
+| [`aom`](../ports/aom/) | AV1 video codec library from the Alliance for Open Media | 3.15.3 | `apk add aom` | `qnx-test-aom` | x86✅ᵛ a64✅ᵛ |
 | [`apr`](../ports/apr/) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | `apk add apr` | `qnx-test-apr` | x86✅ᵛ a64✅ᵛ |
-| [`asio`](../ports/asio/) | Header-only C++ library for asynchronous network and low-level I/O | 1.30.2 | `apk add asio` | `qnx-test-asio` | x86✅ᵛ a64✅ᵛ |
+| [`asio`](../ports/asio/) | Header-only C++ library for asynchronous network and low-level I/O | 1-38-2 | `apk add asio` | `qnx-test-asio` | – |
 | [`autoconf`](../ports/autoconf/) | GNU tool for generating configure scripts from M4 macros | 2.72 | `apk add autoconf` | `qnx-test-autoconf` | x86✅ᵛ a64✅ᵛ |
 | [`automake`](../ports/automake/) | GNU tool for generating portable Makefile.in files | 1.18 | `apk add automake` | `qnx-test-automake` | x86✅ᵛ a64✅ᵛ |
 | [`aws-c-common`](../ports/aws-c-common/) | Core C library of the AWS SDK: primitives, data structures, errors | 0.12.6 | `apk add aws-c-common` | `qnx-test-aws-c-common` | x86✅ᵛ a64✅ᵛ |
@@ -409,15 +409,15 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
-| [`abuild`](../ports/abuild/) | Alpine's tools for building APK packages | 3.16.0 | `apk add abuild` | openssl zlib | openssl zlib apk-tools | `qnx-test-abuild` | x86✅ᵛ a64✅ᵛ |
+| [`abuild`](../ports/abuild/) | Alpine's tools for building APK packages | 3.17.0 | `apk add abuild` | openssl zlib | openssl zlib apk-tools | `qnx-test-abuild` | x86✅ᵛ a64✅ᵛ |
 | [`adwaita-icon-theme`](../ports/adwaita-icon-theme/) | GNOME's Adwaita icon theme and default cursors | 51.0 | `apk add adwaita-icon-theme` | – | hicolor-icon-theme | `qnx-test-adwaita` | x86✅ᵛ a64✅ᵛ |
 | [`amqp-cpp`](../ports/amqp-cpp/) | C++ library for communicating with a RabbitMQ message broker | 4.3.27 | `apk add amqp-cpp` | – | openssl | `qnx-test-amqp-cpp` | x86✅ᵛ a64✅ᵛ |
-| [`apk-tools`](../ports/apk-tools/) | Alpine Package Keeper (apk), the Alpine package manager | 3.0.0_rc5 | `apk add apk-tools` | openssl zlib zstd | openssl zlib zstd | `qnx-test-apk-tools` | x86✅ᵛ a64✅ᵛ |
+| [`apk-tools`](../ports/apk-tools/) | Alpine Package Keeper (apk), the Alpine package manager | 3.0.8 | `apk add apk-tools` | openssl zlib zstd | openssl zlib zstd | `qnx-test-apk-tools` | x86✅ᵛ a64✅ᵛ |
 | [`appstream`](../ports/appstream/) | Tools and libraries to work with AppStream metadata | 1.0.6 | `apk add appstream` | curl gettext glib libxml2 libxmlb libyaml zstd | glib curl libxml2 libyaml libxmlb zstd | `qnx-test-appstream` | x86✅ᵛ a64✅ᵛ |
 | [`apr-util`](../ports/apr-util/) | Apache Portable Runtime utility library | 1.6.5 | `apk add apr-util` | apr expat libiconv libxcrypt openssl sqlite | apr expat openssl sqlite libiconv libxcrypt | `qnx-test-apr-util` | x86✅ᵛ a64✅ᵛ |
 | [`asciidoc`](../ports/asciidoc/) | Text document format for short documents, articles, books and UNIX man pages | 10.2.1 | `apk add asciidoc` | – | python3 | `qnx-test-asciidoc` | x86✅ᵛ a64✅ᵛ |
 | [`aspell`](../ports/aspell/) | GNU Aspell spell checker and library | 0.60.8.1 | `apk add aspell` | ncurses | ncurses | `qnx-test-aspell` | x86✅ᵛ a64✅ᵛ |
-| [`at-spi2-core`](../ports/at-spi2-core/) | Accessibility infrastructure: AT-SPI D-Bus interfaces, libatspi and ATK | 2.54.0 | `apk add at-spi2-core` | dbus gettext glib libx11 libxi libxtst | glib dbus libxml2 libx11 libxtst | `qnx-test-at-spi2-core` | x86✅ᵛ a64✅ᵛ |
+| [`at-spi2-core`](../ports/at-spi2-core/) | Accessibility infrastructure: AT-SPI D-Bus interfaces, libatspi and ATK | 2.54.2 | `apk add at-spi2-core` | dbus gettext glib libx11 libxi libxtst | glib dbus libxml2 libx11 libxtst | `qnx-test-at-spi2-core` | x86✅ᵛ a64✅ᵛ |
 | [`avahi`](../ports/avahi/) | Multicast/unicast DNS-SD framework (mDNS daemon, client library and tools) | 0.9-rc3 | `apk add avahi` | dbus expat libdaemon | dbus expat libdaemon | `qnx-test-avahi` | – |
 | [`avro-cpp`](../ports/avro-cpp/) | C++ library for Apache Avro, a data serialization system | 1.12.2 | `apk add avro-cpp` | snappy zlib zstd | fmt zlib snappy zstd | `qnx-test-avro-cpp` | x86✅ᵛ a64✅ᵛ |
 | [`aws-c-auth`](../ports/aws-c-auth/) | C library for AWS client-side authentication: credentials and signing | 0.10.1 | `apk add aws-c-auth` | aws-c-cal aws-c-common aws-c-compression aws-c-http aws-c-io aws-c-sdkutils openssl s2n-tls | aws-c-http aws-c-sdkutils | `qnx-test-aws-c-auth` | x86✅ᵛ a64✅ᵛ |
@@ -613,7 +613,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`metis`](../ports/metis/) | Programs and library for partitioning graphs and finite element meshes | 5.2.1 | `apk add metis` | gklib | gklib | `qnx-test-metis` | x86✅ᵛ a64✅ᵛ |
 | [`minicom`](../ports/minicom/) | Menu-driven serial communication program and terminal emulator | 2.9 | `apk add minicom` | libiconv ncurses | ncurses libiconv | `qnx-test-minicom` | x86✅ᵛ a64✅ᵛ |
 | [`mkfontscale`](../ports/mkfontscale/) | Creates fonts.scale and fonts.dir index files for X11 font directories | 1.2.3 | `apk add mkfontscale` | fontenc freetype zlib | freetype fontenc zlib | `qnx-test-mkfontscale` | x86✅ᵛ a64✅ᵛ |
-| [`mosh`](../ports/mosh/) | Mobile shell that supports roaming and intelligent local echo | 1.4.0 | `apk add mosh` | abseil ncurses openssl protobuf zlib | protobuf ncurses openssl zlib | `qnx-test-mosh` | x86✅ᵛ a64✅ᵛ |
+| [`mosh`](../ports/mosh/) | Mobile shell that supports roaming and intelligent local echo | 1.4.0 | `apk add mosh` | abseil libutempter ncurses openssl protobuf zlib | protobuf ncurses openssl zlib | `qnx-test-mosh` | x86✅ᵛ a64✅ᵛ |
 | [`mosquitto`](../ports/mosquitto/) | Eclipse Mosquitto MQTT broker, client libraries and pub/sub utilities | 2.0.20 | `apk add mosquitto` | cjson openssl | openssl cjson | `qnx-test-mosquitto` | x86✅ᵛ a64✅ᵛ |
 | [`mpc`](../ports/mpc/) | GNU MPC library for complex number arithmetic with arbitrary precision | 1.3.1 | `apk add mpc` | gmp mpfr | gmp mpfr | `qnx-test-mpc` | x86✅ᵛ a64✅ᵛ |
 | [`mpfr`](../ports/mpfr/) | C library for multiple-precision floating-point computations | 4.2.1 | `apk add mpfr` | gmp | gmp | `qnx-test-mpfr` | x86✅ᵛ a64✅ᵛ |

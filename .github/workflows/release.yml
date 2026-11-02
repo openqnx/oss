@@ -58,6 +58,7 @@ jobs:
           COMPONENTS: ${{ inputs.components }}
         run: |
           cd "$OSS_WS"
+          set -o pipefail     # a failing build or release must fail the step, not tee
           set -- $COMPONENTS
           if [ "${{ inputs.build }}" = true ] && [ "$1" != --changed ]; then
             ./scripts/qnxbuild -f "$@" 2>&1 | tee logs/ci-build.log

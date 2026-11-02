@@ -176,7 +176,8 @@ every node died with SIGSEGV before `main()`. Bound the length by
 opened plain `O_RDONLY` works with `read`/`fstat`, but every `openat()` under
 it fails with `ENOTDIR`. apk-tools opened its database directory that way, so
 any second `apk` command on a root failed "Unable to read database: Not a
-directory" (`ports/apk-tools/patches/0003-*`).
+directory" (`ports/apk-tools/versions/3.0.0_rc5/patches/0003-*`; apk-tools
+3.0.8 opens it with `O_DIRECTORY` upstream).
 
 **26. `--as-needed` can leave a library exporting its own libc.** When a
 shared library itself calls nothing in libc, `--as-needed` drops `libc.so`,
@@ -1113,7 +1114,9 @@ Look for `REPLACE_GETCWD` = 1 in `config.status`.
 **103. `fdopendir()` needs `O_DIRECTORY` as well (hazard 25).** A
 recursive walker that `openat(parent, name, O_RDONLY)`s each subdirectory
 and `fdopendir()`s it fails one level down. apk's `mkpkg` reported "failed
-to process directory 'usr': -1" (`ports/apk-tools/patches/0004-*`).
+to process directory 'usr': -1" (`ports/apk-tools/versions/3.0.0_rc5/patches/0004-*`;
+3.0.8 walks subdirectories through `apk_dir_foreach_file_sorted()`, which
+opens them with `O_DIRECTORY`).
 
 **104. `--allow-shlib-undefined` hides missing `DT_NEEDED` entries.**
 A shared library links even when it never names the libraries it calls.

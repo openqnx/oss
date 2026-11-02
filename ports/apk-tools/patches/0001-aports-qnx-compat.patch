@@ -17,10 +17,10 @@ Subject: [PATCH] qnx: compat
  3 files changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/libfetch/common.c b/libfetch/common.c
-index ea82d509..e16d2648 100644
+index b2db699..b4bb01e 100644
 --- a/libfetch/common.c
 +++ b/libfetch/common.c
-@@ -219,8 +219,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
+@@ -222,8 +222,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
  	if (verbose)
  		fetch_info("connecting to %s:%d", url->host, url->port);
  
@@ -31,7 +31,7 @@ index ea82d509..e16d2648 100644
  
  	/* try to connect */
  	for (sd = -1, res = res0; res; sd = -1, res = res->ai_next) {
-@@ -276,8 +278,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
+@@ -279,8 +281,10 @@ fetch_connect(struct url *cache_url, struct url *url, int af, int verbose)
  		return (NULL);
  	}
  
@@ -43,7 +43,7 @@ index ea82d509..e16d2648 100644
  	if ((conn = fetch_reopen(sd)) == NULL) {
  		fetch_syserr();
 diff --git a/src/apk_xattr.h b/src/apk_xattr.h
-index 595fe68d..42f8f8ac 100644
+index 595fe68..42f8f8a 100644
 --- a/src/apk_xattr.h
 +++ b/src/apk_xattr.h
 @@ -1,11 +1,15 @@
@@ -81,7 +81,7 @@ index 595fe68d..42f8f8ac 100644
  	return flistxattr(fd, namebuf, size);
  #endif
 diff --git a/src/io.c b/src/io.c
-index 50c2f771..511e5300 100644
+index 50c2f77..511e530 100644
 --- a/src/io.c
 +++ b/src/io.c
 @@ -1382,7 +1382,7 @@ static FILE *fopenat(int dirfd, const char *pathname)

@@ -5,16 +5,63 @@
 ![SDP](https://img.shields.io/badge/QNX_SDP-8.0-informational)
 ![arch](https://img.shields.io/badge/arch-x86__64_%7C_aarch64le-informational)
 
-**@TOTAL@ open source projects ported to QNX 8.0 · @VERIFIED@ of them verified on
-QNX targets (x86_64 and aarch64le) and installable with `apk` from this
-repository's releases.** The numbers are counted from `ports/` and
-`tests/results/` each time this page is generated (`scripts/gen-root-readme`),
-so they follow every component added.
+**@TOTAL@ open source projects ported to QNX SDP 8.0, for x86_64 and aarch64le.
+@VERIFIED@ of them are verified by running them on QNX targets and install with `apk`
+from this repository's releases.** From zlib and curl to Python, Qt 6, GTK,
+a Wayland desktop, ROS 2, PyTorch, MAME and VLC.
+
+![labwc and the Xfce panel on QNX Screen, fastfetch in a terminal](docs/screenshots/desktop-fastfetch.png)
+
+| | | | |
+|---|---|---|---|
+| [![Qt Quick](docs/screenshots/qt-quick.png)](docs/screenshots/README.md) | [![MAME](docs/screenshots/mame.png)](docs/screenshots/README.md) | [![RetroArch](docs/screenshots/retroarch.png)](docs/screenshots/README.md) | [![VLC](docs/screenshots/vlc.png)](docs/screenshots/README.md) |
+| Qt Quick on Screen | MAME (SDL2) | RetroArch (GLES) | VLC |
+
+More: **[screenshots](docs/screenshots/README.md)**, all real, taken on QNX 8.0 QEMU images.
+
+### Try it in a few minutes
+
+On a QNX 8.0 target (for example a `mkqnximage` QEMU image), from a Linux host with
+the SDP. The bootstrap copies a CA bundle and the QNX run-time libraries the
+packages need, then installs apk:
+
+```sh
+git clone https://github.com/openqnx/oss && cd oss
+scripts/target-bootstrap <target-ip>      # once per target
+ssh root@<target-ip>
+. /data/oss/etc/oss-env.sh                 # on the target, in every shell
+apk add curl python3 zstd                  # or anything from the package site
+```
+
+Step by step, without the bootstrap script: [INSTALL.md](INSTALL.md). Every package,
+with its files, dependencies and test log: **<https://openqnx.github.io/oss/>**.
+
+### What makes it different
+
+- **Tested by running it.** Every package is installed with apk on vanilla QEMU
+  images, x86_64 and aarch64le, and its own test runs there with known answers. The
+  log of each run is published with the package (`tests/logs/`). Graphical programs
+  are also checked on screen.
+- **Packages, not just build files.** Signed apk repositories and plain `.tar.gz`
+  archives, every version kept, with dependencies that name the library versions they
+  were built against.
+- **Kept current.** An update workflow checks every upstream release, ports, builds,
+  tests and publishes what passes. What fails is handed to Claude Code, which opens a
+  pull request for review.
+- **Everything reproducible.** Recipes, QNX patches (each with its reason), the
+  porting pitfalls ([docs/porting-hazards.md](docs/porting-hazards.md)) and the scripts
+  are here.
+
+> An independent community project: not affiliated with or endorsed by BlackBerry or
+> QNX. QNX is a trademark of BlackBerry Limited. Each component keeps its own license
+> (on its package page).
 
 Build files, QNX patches and step-by-step guides for **@TOTAL@ open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
-**aarch64le** and **x86_64** — and the same components as prebuilt packages
-a QNX target can download and install directly.
+**aarch64le** and **x86_64**, and the same components as prebuilt packages
+a QNX target can download and install directly. The numbers are counted from
+`ports/` and `tests/results/` each time this page is generated
+(`scripts/gen-root-readme`).
 
 ## Package site and getting started
 

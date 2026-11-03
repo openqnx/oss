@@ -1622,3 +1622,16 @@ Check `build-tests.sh` succeeded before `qnxpkg --tests`. Revisions that were
 never published and hold what the published one holds can go: compare
 `archive_digest` with the newest published revision (what was done on
 2026-11-03; the moved files are in `tmp/stray/test_suites/`).
+
+**156. Upstream QNX support can arrive in a form that does not work on QNX 8.**
+7-Zip 26.05 added `__QNXNTO__` cases of its own: the d_type and getauxval()
+exclusions qnx-ports carried (so those hunks and `patches/0002` went), but
+also QNX in the BSD branch of `GetRamSize()`, `sysctl(CTL_HW, HW_PHYSMEM)`.
+On QNX 8 `sysctl()` is not in libc (only libsocket, which 7zz does not link)
+and `HW_PHYSMEM` fails with ENOENT on both QEMU targets; `_SC_PHYS_PAGES`
+is -1 as well. Only the system page's "ram" entries give the size
+(`ports/7zip/patches/0003-*`), so 0001 takes QNX out of that branch again.
+When a refresh finds a hunk already upstream, try the upstream code on the
+target before dropping the patch (a few-line probe built with qcc will do),
+and keep a known-answer check in the test (`test_7zip.sh` compares the RAM
+size with `pidin info`).

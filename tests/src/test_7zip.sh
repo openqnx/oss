@@ -16,7 +16,7 @@ cd "$T" || exit 1
 
 V=$(7zz 2>&1 | grep -m1 '7-Zip')
 echo "  info $V"
-case "$V" in *"25.01"*) ok "7zz version 25.01" ;; *) bad "7zz version: $V" ;; esac
+case "$V" in *"26.05"*) ok "7zz version 26.05" ;; *) bad "7zz version: $V" ;; esac
 
 # The RAM size 7-Zip sizes its buffers by (the system page's, as pidin):
 # the benchmark header prints it; the benchmark itself is cut short.

@@ -193,6 +193,15 @@ _build_one_body() {
 
   # ---- fetch (shared across arches)
   SRCROOT="${SRCROOT:-$SRC_DIR/$pkg}"
+  # What the tree was fetched from, kept in it: a tree fetched for another
+  # VERSION/REF/COMMIT/TARBALL/SHA256 of the recipe is fetched again. Without
+  # this an update rebuilt the old source under the new version (7zip 26.05
+  # was 25.01: src/7zip was there, so nothing was downloaded).
+  local srcid="$VERSION|$GIT|$REF|$COMMIT|$TARBALL|$SHA256"
+  if [ -d "$SRCROOT" ] && [ -f "$SRCROOT/.qnxbuild-source" ] && [ "$(cat "$SRCROOT/.qnxbuild-source")" != "$srcid" ]; then
+    echo "-- the recipe's source changed: fetching $pkg again" | tee -a "$log"
+    rm -rf "${SRCROOT:?}"
+  fi
   if [ ! -d "$SRCROOT" ]; then
     if declare -F do_fetch >/dev/null; then do_fetch >>"$log" 2>&1
     elif [ -n "$GIT" ] && [ -n "$COMMIT" ]; then
@@ -247,6 +256,7 @@ _build_one_body() {
       done
     fi
     declare -F do_patch >/dev/null && { do_patch >>"$log" 2>&1 || { echo "!! do_patch failed: $pkg (see $log)"; rm -rf "$SRCROOT"; return 1; }; }
+    echo "$srcid" > "$SRCROOT/.qnxbuild-source"
   fi
 
   local S="$SRCROOT${SUBDIR:+/$SUBDIR}"

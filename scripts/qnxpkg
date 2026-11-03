@@ -438,6 +438,10 @@ def package(comp, arch, args, owner, outdir, existing=None):
                 finally:
                     shutil.rmtree(tmpdir, ignore_errors=True)
         same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels_sel, v=1))
+        if not BUMP and not same and (existing or {}).get("%s-%s" % (pname, ver)) is None:
+            sa = same_archive(existing, outdir, pname, base, root, rels_sel, san)
+            if sa:   # a new release only by its fingerprint: keep the existing one
+                ver = sa[0]; e0 = dict(sa[1]["apk"]); e0["fp"] = fp; same = (e0, sa[1]["line"])
         if same and same[1].split("|")[2] != ",".join(pdeps):
             # Same files, other dependencies (a RUNTIME_DEPS change): the
             # published entry would keep the old ones, so a new release.
@@ -562,6 +566,10 @@ def package_tests(arch, args, owner, outdir):
         ver = "%s-r%d" % (TESTS_VERSION, choose_release(existing, pname, TESTS_VERSION, fp, args.release,
                                                         fingerprint(root, rels, v=1)))
         same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels, v=1))
+        if not BUMP and not same and (existing or {}).get("%s-%s" % (pname, ver)) is None:
+            sa = same_archive(existing, outdir, pname, TESTS_VERSION, root, rels, san)
+            if sa:   # a new release only by its fingerprint: keep the existing one
+                ver = sa[0]; e0 = dict(sa[1]["apk"]); e0["fp"] = fp; same = (e0, sa[1]["line"])
         if same and same[1].split("|")[2] != ",".join(deps):
             # same files, other dependencies: a new release (as for components)
             ver = "%s-r%d" % (TESTS_VERSION, int(ver.rpartition("-r")[2]) + 1)
@@ -708,6 +716,33 @@ def archive_digest(path):
                 body = hashlib.sha256(tf.extractfile(m).read()).hexdigest()
             h.update(("%s\0%s\0%s\0%s\n" % (m.name, m.type, m.linkname, body)).encode())
     return h.hexdigest()
+
+
+def same_archive(existing, outdir, pname, base, root, rels, san):
+    """The newest existing <pname>-<base>-r<N>, when its archive holds exactly
+    what packaging these files now gives (archive_digest): (version, entry).
+    The fingerprint also records each file's mode as it is in staging, and a
+    build under another umask (the CI runner's) changes that without changing
+    the package, which made every test package a new release per rebuild."""
+    cand = []
+    for v in (existing or {}).values():
+        b, _, r = v["apk"]["V"].rpartition("-r")
+        if v["apk"]["P"] == pname and b == base and r.isdigit():
+            cand.append((int(r), v))
+    if not cand:
+        return None
+    n, prev = max(cand, key=lambda x: x[0])
+    ver = "%s-r%d" % (base, n)
+    old = os.path.join(outdir, "%s-%s.tar.gz" % (pname, ver))
+    if not (os.path.exists(old) and os.path.exists(os.path.join(outdir, "%s-%s.apk" % (pname, ver)))):
+        return None
+    tmp = tempfile.mkdtemp(dir=outdir)
+    try:
+        new = make_tgz("%s-%s" % (pname, ver), root, rels, san, tmp)[0]
+        same = archive_digest(old) == archive_digest(os.path.join(tmp, new))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return (ver, prev) if same else None
 
 
 def choose_release(existing, pname, base, fp, default, fp1=None):

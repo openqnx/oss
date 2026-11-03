@@ -60,7 +60,21 @@ if [ -n "$OLD_GIT" ]; then
   fi
 elif [ -n "$OLD_TARBALL" ]; then
   NEW_TARBALL=${OLD_TARBALL//$OLD_VERSION/$NEW}
+  # The version can also be in the file name without its dots or with
+  # underscores: 7-Zip's .../26.05/7z2605-src.tar.xz, Boost's 1_86_0.
+  # Replacing only "25.01" kept 7z2501-src.tar.xz -- a file that does not
+  # exist -- and the old one cached in dist/ was built as the new version.
+  for SEP in "" "_"; do
+    OLD_FORM=${OLD_VERSION//./$SEP}; NEW_FORM=${NEW//./$SEP}
+    [ "$OLD_FORM" != "$OLD_VERSION" ] && NEW_TARBALL=${NEW_TARBALL//$OLD_FORM/$NEW_FORM}
+  done
   [ "$NEW_TARBALL" != "$OLD_TARBALL" ] || { echo "!! the tarball URL does not contain the version; edit the recipe by hand" >&2; exit 1; }
+  [ "$(basename "$NEW_TARBALL")" != "$(basename "$OLD_TARBALL")" ] ||
+    { echo "!! the tarball's file name stays $(basename "$OLD_TARBALL") for $NEW (dist/ caches by name); edit the recipe by hand" >&2; exit 1; }
+  # A recipe's own do_fetch that names the old file would keep fetching it.
+  if grep -qF "$(basename "$OLD_TARBALL")" <(grep -v '^TARBALL=' "$R"); then
+    echo "!! $R names $(basename "$OLD_TARBALL") outside TARBALL= (its do_fetch?): edit the recipe by hand" >&2; exit 1
+  fi
   echo "   TARBALL $NEW_TARBALL"
 else
   echo "!! $C fetches with its own do_fetch: update its recipe by hand" >&2; exit 1
@@ -80,9 +94,12 @@ fi
 # 2. move the recipe
 if [ -n "$OLD_TARBALL" ]; then
   f=$WS/dist/$(basename "$NEW_TARBALL")
-  [ -f "$f" ] || curl -fsSL --retry 3 -o "$f" "$NEW_TARBALL" || { echo "!! download failed: $NEW_TARBALL" >&2; exit 1; }
+  [ -f "$f" ] || curl -fsSL --retry 3 -o "$f" "$NEW_TARBALL" || { rm -f "$f"; echo "!! download failed: $NEW_TARBALL" >&2; exit 1; }
   NEW_SHA=$(sha256sum "$f" | cut -d' ' -f1)
 fi
+# The old version's source tree must not be built as the new one: qnxbuild
+# fetches only when src/<name> is missing (or its .qnxbuild-source differs).
+rm -rf "${WS:?}/src/${C:?}"
 python3 -I - "$R" "$OLD_VERSION" "$NEW" "$OLD_REF" "$TAG" "$OLD_COMMIT" "${NEW_COMMIT:-}" "$OLD_TARBALL" "${NEW_TARBALL:-}" "$OLD_SHA256" "${NEW_SHA:-}" <<'EOF'
 import sys
 p, ov, nv, oref, tag, oc, nc, otb, ntb, osha, nsha = sys.argv[1:]

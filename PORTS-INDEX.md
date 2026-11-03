@@ -1,6 +1,6 @@
 # Component index
 
-676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 449 QNX patches between them.
+676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 448 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
@@ -16,7 +16,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 
 | Component | What it is | Version | Build | Upstream | Patches | Class | Run-time deps | aarch64le | x86_64 |
 |---|---|---|---|---|---|---|---|---|---|
-| [7zip](ports/7zip/README.md) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 26.05 | custom | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
+| [7zip](ports/7zip/README.md) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 26.05 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [abseil](ports/abseil/README.md) | Collection of C++ libraries augmenting the C++ standard library | 20260817.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [abuild](ports/abuild/README.md) | Alpine's tools for building APK packages | 3.17.0 | custom | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
 | [ada](ports/ada/README.md) | Fast WHATWG-compliant URL parser library for C++ | 4.0.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |

@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ip7z/7zip/releases/download/26.05/7z2501-src.tar.xz |
-| SHA-256 | `ed087f83ee789c1ea5f39c464c55a5c9d4008deb0efe900814f2df262b82c36e` |
+| Upstream | https://github.com/ip7z/7zip/releases/download/26.05/7z2605-src.tar.xz |
+| SHA-256 | `0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e` |
 | Build system | custom (see recipe) |
-| QNX patches | 3 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -70,20 +70,19 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/ip7z/7zip/releases/download/26.05/7z2501-src.tar.xz
+URL=https://github.com/ip7z/7zip/releases/download/26.05/7z2605-src.tar.xz
 mkdir -p dist src/7zip
 curl -fL -o dist/$(basename $URL) $URL
-echo "ed087f83ee789c1ea5f39c464c55a5c9d4008deb0efe900814f2df262b82c36e  dist/$(basename $URL)" | sha256sum -c -
+echo "0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/7zip --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/7zip < ports/7zip/patches/0001-qnx-from-qnx-ports.patch
-patch -p1 -d src/7zip < ports/7zip/patches/0002-qnx-no-getauxval.patch
 patch -p1 -d src/7zip < ports/7zip/patches/0003-qnx-ram-size-from-syspage.patch
 ```
 
@@ -94,25 +93,22 @@ patch -p1 -d src/7zip < ports/7zip/patches/0003-qnx-ram-size-from-syspage.patch
 > Commits:
 >   dce1857 Patched 25.01
 >   318fd72 Merge pull request #2 from taang-qnx/mybranch
+>
+> Refreshed for 7-Zip 26.05: upstream now excludes __QNXNTO__ from the
+> d_type code itself (CPP/Windows/FileFind.cpp and FileFind.h: entries are
+> typed through stat on QNX, as on AIX and Solaris), so those hunks are
+> dropped. 26.05 also sends QNX down the BSD sysctl(CTL_HW, HW_PHYSMEM)
+> path in System.cpp; QNX 8 has sysctl() only in libsocket, which 7zz does
+> not link, and HW_PHYSMEM fails there with ENOENT: QNX is taken out of that branch again and gets
+> the sysconf() branch this patch has always carried.
 > ---
->  C/Threads.c              |  6 +++---
->  C/Threads.h              |  1 +
->  CPP/7zip/7zip_gcc.mak    | 10 +++++-----
->  CPP/Windows/FileFind.cpp |  4 ++--
->  CPP/Windows/FileFind.h   |  6 +++---
->  CPP/Windows/System.cpp   | 10 ++++++++++
->  6 files changed, 24 insertions(+), 13 deletions(-)
+>  C/Threads.c            |  6 +++---
+>  C/Threads.h            |  1 +
+>  CPP/7zip/7zip_gcc.mak  | 10 +++++-----
+>  CPP/Windows/System.cpp | 16 ++++++++++++----
+>  4 files changed, 21 insertions(+), 12 deletions(-)
 
-Touches: `C/Threads.c`, `C/Threads.h`, `CPP/7zip/7zip_gcc.mak`, `CPP/Windows/FileFind.cpp`, `CPP/Windows/FileFind.h`, `CPP/Windows/System.cpp` · Upstream status: QNX-specific (carried in the qnx-ports fork)
-
-**[`0002-qnx-no-getauxval.patch`](patches/0002-qnx-no-getauxval.patch)** — CpuArch: no getauxval() hardware-capability probe on QNX
-
-> QNX ships <sys/auxv.h>, so the __has_include test below turned on
-> USE_HWCAP, but it has neither getauxval() nor AT_HWCAP/HWCAP_*: the arm64
-> build failed. On QNX the CPU feature checks return 0 (the hardware CRC32,
-> SHA and AES code paths are not used; NEON is always on for arm64).
-
-Touches: `C/CpuArch.c` · Upstream status: Pending
+Touches: `C/Threads.c`, `C/Threads.h`, `CPP/7zip/7zip_gcc.mak`, `CPP/Windows/System.cpp` · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 **[`0003-qnx-ram-size-from-syspage.patch`](patches/0003-qnx-ram-size-from-syspage.patch)** — System: the RAM size on QNX from the system page
 
@@ -147,7 +143,7 @@ do_install() { install -d "$STAGE$PREFIX/bin" && install -m755 "$B/CPP/7zip/Bund
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- 7-Zip 25.01: the 7zz command-line archiver (7z, xz, zip, tar, gzip, bzip2 ... create, list, test, extract; also reads many more formats), with qnx-ports' QNX support (patches/0001): no d_type in QNX's struct dirent (directory entries are typed through stat, as on AIX and Solaris), the RAM size from sysconf(_SC_PHYS_PAGES), no pthread affinity calls, and makefile changes so the cross build passes its own CFLAGS and is not stripped or built with -Werror. patches/0002: no getauxval() hardware probe on QNX (arm64); 0003: the RAM size from the system page, since QNX does not implement _SC_PHYS_PAGES (0001 reported 0 bytes).
+- 7-Zip 26.05: the 7zz command-line archiver (7z, xz, zip, tar, gzip, bzip2 ... create, list, test, extract; also reads many more formats), with qnx-ports' QNX support (patches/0001): no d_type in QNX's struct dirent (directory entries are typed through stat, as on AIX and Solaris), the RAM size from sysconf(_SC_PHYS_PAGES), no pthread affinity calls, and makefile changes so the cross build passes its own CFLAGS and is not stripped or built with -Werror (26.05 itself now skips d_type and getauxval() on QNX, so those hunks and the old patches/0002 are gone). patches/0003: the RAM size from the system page, since QNX does not implement _SC_PHYS_PAGES (0001 reported 0 bytes).
 - The source archive has no top-level directory, so the default fetch (--strip-components=1) would drop one level: unpack it as is.
 - Bundles/Alone2 is 7zz, the standalone 7-Zip with every codec built in (no 7z.so plugin). cmpl_gcc.mak: the portable C/C++ code, no assembler (the x86 .asm files need asmc/uasm). The patched makefile appends to CFLAGS but sets CXXFLAGS itself, so the optimisation goes in MY_ARCH, which both use. "-z noexecstack" goes through -Wl: qcc does not forward a bare -z. LIB2 (-lpthread -ldl) is empty: both are part of QNX's libc.
 
@@ -226,8 +222,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | 7zip 25.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/7zip-25.01-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | 7zip 26.05-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/7zip-26.05-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | 7zip 26.05-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/7zip-26.05-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | 7zip 25.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/7zip-25.01-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | 7zip 26.05-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/7zip-26.05-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | 7zip 26.05-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/7zip-26.05-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -238,23 +236,24 @@ This recipe builds **26.05**. Kept from earlier: `25.01` ([recipe and patches](v
 <details><summary>recipe.sh</summary>
 
 ```bash
-# 7-Zip 25.01: the 7zz command-line archiver (7z, xz, zip, tar, gzip,
+# 7-Zip 26.05: the 7zz command-line archiver (7z, xz, zip, tar, gzip,
 # bzip2 ... create, list, test, extract; also reads many more formats), with
 # qnx-ports' QNX support (patches/0001): no d_type in QNX's struct dirent
 # (directory entries are typed through stat, as on AIX and Solaris), the
 # RAM size from sysconf(_SC_PHYS_PAGES), no pthread affinity calls, and
 # makefile changes so the cross build passes its own CFLAGS and is not
-# stripped or built with -Werror. patches/0002: no getauxval() hardware
-# probe on QNX (arm64); 0003: the RAM size from the system page, since QNX
-# does not implement _SC_PHYS_PAGES (0001 reported 0 bytes).
+# stripped or built with -Werror (26.05 itself now skips d_type and
+# getauxval() on QNX, so those hunks and the old patches/0002 are gone).
+# patches/0003: the RAM size from the system page, since QNX does not
+# implement _SC_PHYS_PAGES (0001 reported 0 bytes).
 VERSION=26.05
-TARBALL=https://github.com/ip7z/7zip/releases/download/26.05/7z2501-src.tar.xz
-SHA256=ed087f83ee789c1ea5f39c464c55a5c9d4008deb0efe900814f2df262b82c36e
+TARBALL=https://github.com/ip7z/7zip/releases/download/26.05/7z2605-src.tar.xz
+SHA256=0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e
 BUILDSYS=custom
 # The source archive has no top-level directory, so the default fetch
 # (--strip-components=1) would drop one level: unpack it as is.
 do_fetch() {
-  local tb="$WS/dist/7z2501-src.tar.xz"; mkdir -p "$WS/dist" "$SRCROOT"
+  local tb="$WS/dist/$(basename "$TARBALL")"; mkdir -p "$WS/dist" "$SRCROOT"
   [ -f "$tb" ] || curl -fsSL -o "$tb" "$TARBALL" || return 1
   echo "$SHA256  $tb" | sha256sum -c --status || { echo "7zip checksum mismatch"; return 1; }
   tar xJf "$tb" -C "$SRCROOT"

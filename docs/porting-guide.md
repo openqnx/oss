@@ -56,6 +56,7 @@ CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DNNG_TESTS=OFF )
 | `CFLAGS_APPEND` / `LDFLAGS_APPEND` | added to the target's `CFLAGS`/`CXXFLAGS` or `LDFLAGS` (Autotools); unlike `LIBS=`, never reaches a configure check of the build machine's own compiler |
 | `COMMIT` | with `GIT`: fetch this exact commit (projects without release tags) |
 | `CONFLICTS` | components that install the same files (two implementations of one library); packages carry it and `oss-get` refuses to install both. Apart from these, `qnxbuild` refuses an install that would overwrite a file another component installed. A component that builds and installs its own copies of shared libraries (TensorFlow Lite, PyTorch) goes in a prefix of its own, `$PREFIX/opt/<name>` |
+| `APK_TRIGGERS` | directories on the target (`/usr/local/share/glib-2.0/schemas`) whose changes by any package run `ports/<name>/apk.trigger`: `qnxpkg` puts it into the component's apk as its `.trigger` script. apk passes the changed directories as root-relative paths and runs the script in the install root (`/data/oss`) with only `PATH` set; resolve paths against the current directory. oss-get has no triggers: document the manual command in `docs/packages.md`. glib uses it to compile GSettings schemas |
 | `ARCHES_SUPPORTED` | limit the component to these architectures, e.g. `"x86_64"` |
 | `DEPS` | components that must be built first, e.g. `DEPS="openssl zlib"` |
 | `SUBDIR` | the project lives in a subdirectory of the repository |

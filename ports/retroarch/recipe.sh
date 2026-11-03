@@ -10,7 +10,7 @@ do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
   CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
-  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
+  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg --enable-opengles; }
 # LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is
 # GNU libstdc++'s -- next to the libc++ every C++ object here is compiled
 # against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak).
@@ -19,6 +19,11 @@ do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
 # --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports
 # ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the
 # tree's FFmpeg is 7. It only provides the ffmpeg core and recording.
+# --enable-opengles: the "gl" video driver over GLES2 + EGL on QNX Screen (the
+# "egl_qnx" context). Off by default in RetroArch's configure (HAVE_OPENGLES=no),
+# so the build had only the Vulkan driver, which needs VK_QNX_screen_surface --
+# not offered by the screen VMs' virtio Vulkan ICD. GL is the default driver
+# once it is built.
 # --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in
 # deps/libz, whose prototypes clash with the staged zlib.h.
 # --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2.

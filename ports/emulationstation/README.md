@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/RetroPie/EmulationStation.git |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`curl`](../curl/) [`pugixml`](../pugixml/) [`rapidjson`](../rapidjson/) [`nanosvg`](../nanosvg/) [`vlc`](../vlc/) |
 | Run-time dependencies | [`curl`](../curl/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`pugixml`](../pugixml/) [`sdl2`](../sdl2/) [`vlc`](../vlc/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (31 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 freeimage freetype curl pugixml rapidjson nanosvg vlc
 ```
 
-<details><summary>Full build chain (31)</summary>
+<details><summary>Full build chain (22)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pugixml`](../pugixml/) [`python3`](../python3/) [`rapidjson`](../rapidjson/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`vlc`](../vlc/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`freeimage`](../freeimage/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`lz4`](../lz4/) [`nanosvg`](../nanosvg/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pugixml`](../pugixml/) [`rapidjson`](../rapidjson/) [`sdl2`](../sdl2/) [`vlc`](../vlc/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -84,10 +84,11 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/emulationstation < ports/emulationstation/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/emulationstation < ports/emulationstation/patches/0002-resources-in-share-display-size.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — QNX related changes to commandline and filesystem utils
@@ -103,35 +104,57 @@ patch -p1 -d src/emulationstation < ports/emulationstation/patches/0001-qnx-from
 
 Touches: `CMakeLists.txt`, `es-app/src/ScraperCmdLine.cpp`, `es-core/src/utils/FileSystemUtil.cpp`, `CMakeLists.txt`, `es-app/src/main.cpp`, `es-app/src/views/SystemView.cpp` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
+**[`0002-resources-in-share-display-size.patch`](patches/0002-resources-in-share-display-size.patch)** — EmulationStation: find resources/ in <prefix>/share; size from the display
+
+> EmulationStation finds its resources/ (fonts, icons, the help and busy
+> graphics) only in ~/.emulationstation, next to the executable and in the
+> working directory -- a RetroPie install keeps the binary and resources/
+> together in /opt/retropie/supplementary/emulationstation. Installed as a
+> package (bin/emulationstation, data in share/), none of those exist, and
+> the first Font it builds (Window::init) dereferences a face FreeType never
+> loaded ("Error - File type unknown!", then SIGSEGV in FT_Get_Char_Index).
+> Also look in <exe dir>/../share/emulationstation/resources, where the
+> recipe installs them -- with the executable's directory found on QNX too:
+> it has no /proc/self/exe link (the path is the contents of
+> /proc/self/exefile), and the argv[0] fallback of a program started through
+> PATH ("emulationstation") resolved against the working directory.
+>
+> And take the window and screen size from the display again (0 = SDL's
+> desktop mode), as upstream does: patch 0001 fixed them at 1920x1080 for a
+> Screen driver that reported no display mode. With SDL2's QNX driver now
+> reporting the real one, a fixed 1920x1080 made a fullscreen window the
+> display's size (1280x800 on the QEMU images) while ES laid out and set its
+> GL viewport for 1920x1080 -- everything off-centre and cut off.
+> --resolution W H still sets a size.
+
+Touches: `es-core/src/resources/ResourceManager.cpp`, `es-core/src/Settings.cpp`, `es-core/src/utils/FileSystemUtil.cpp` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-cmake -S src/emulationstation -B build/$QNX_ARCH/emulationstation -G Ninja \
-      -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
-      -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
-      -DGLES=ON \
-      -DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON \
-      -DCPU="$QNX_CPU" \
-      -DSDL2_LIBRARY="$STAGE$PREFIX/lib/libSDL2.so" \
-      -DSDL2_INCLUDE_DIR="$STAGE$PREFIX/include/SDL2" \
-      -DSDL2MAIN_LIBRARY="$STAGE$PREFIX/lib/libSDL2main.a" \
-      -DSDL2_NO_DEFAULT_PATH=ON \
-      -DFreeImage_LIBRARY="$STAGE$PREFIX/lib/libfreeimage.so" \
-      -DFreeImage_INCLUDE_DIR="$STAGE$PREFIX/include"
-cmake --build build/$QNX_ARCH/emulationstation -j$(nproc)
-DESTDIR=$STAGE cmake --install build/$QNX_ARCH/emulationstation
+S=src/emulationstation; B=build/$QNX_ARCH/emulationstation; mkdir -p $B
+```
+
+```bash
+do_install() {
+  DESTDIR="$STAGE" cmake --install "$B"
+  install -d "$STAGE$PREFIX/share/emulationstation"
+  cp -a "$S/resources" "$STAGE$PREFIX/share/emulationstation/"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - EmulationStation, RetroPie's game browser, at the upstream commit qnx-ports' port is based on (patches/: QNX support). Uses GLES2 (from the QNX SDP) and SDL2. Part of the RetroPie stack.
+- Its resources/ (fonts, icons, help and busy graphics: without them the first Font dereferences a face FreeType never loaded and ES crashes) go to share/emulationstation/, where patches/0002 makes it look.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH emulationstation`.
 
 ### 5. What it installs
 
-1 files under `/usr/local`, 1 programs.
+69 files under `/usr/local`, 1 programs.
 
 ```
 /usr/local/bin/emulationstation
@@ -202,8 +225,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/emulationstation-2.11_git20241212-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/emulationstation-2.11_git20241212-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r2 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/emulationstation-2.11_git20241212-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/emulationstation-2.11_git20241212-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/emulationstation-2.11_git20241212-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | emulationstation 2.11_git20241212-r2 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/emulationstation-2.11_git20241212-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -223,6 +248,14 @@ CMAKE_ARGS_EXTRA=( -DGLES=ON -DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON -DCPU="$QNX_CPU"
                    -DSDL2_LIBRARY="$STAGE$PREFIX/lib/libSDL2.so" -DSDL2_INCLUDE_DIR="$STAGE$PREFIX/include/SDL2"
                    -DSDL2MAIN_LIBRARY="$STAGE$PREFIX/lib/libSDL2main.a" -DSDL2_NO_DEFAULT_PATH=ON
                    -DFreeImage_LIBRARY="$STAGE$PREFIX/lib/libfreeimage.so" -DFreeImage_INCLUDE_DIR="$STAGE$PREFIX/include" )
+# Its resources/ (fonts, icons, help and busy graphics: without them the
+# first Font dereferences a face FreeType never loaded and ES crashes) go to
+# share/emulationstation/, where patches/0002 makes it look.
+do_install() {
+  DESTDIR="$STAGE" cmake --install "$B"
+  install -d "$STAGE$PREFIX/share/emulationstation"
+  cp -a "$S/resources" "$STAGE$PREFIX/share/emulationstation/"
+}
 ```
 </details>
 

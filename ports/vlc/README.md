@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://code.videolan.org/videolan/vlc.git (tag `3.0.21`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,10 +87,11 @@ git clone --depth 1 -b 3.0.21 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/vlc < ports/vlc/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/vlc < ports/vlc/patches/0002-qnx-screen-window.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — contrib: sidplay: Do not overwrite CXXFLAGS in
@@ -110,6 +111,26 @@ patch -p1 -d src/vlc < ports/vlc/patches/0001-qnx-from-qnx-ports.patch
 >  create mode 100644 contrib/src/sidplay2/sidplay2-cxxtest.patch
 
 Touches: `contrib/src/sidplay2/rules.mak`, `contrib/src/sidplay2/sidplay2-cxxtest.patch`, `modules/hw/d3d11/d3d11_deinterlace.c`, `modules/video_chroma/d3d11_fmt.c`, `modules/video_chroma/d3d11_fmt.h`, `modules/video_output/win32/direct3d11.c` … · Upstream status: QNX-specific (from qnx-ports)
+
+**[`0002-qnx-screen-window.patch`](patches/0002-qnx-screen-window.patch)** — A QNX Screen window provider, so the command-line player shows video
+
+> The QNX EGL/GLES2 video output (egl_qnx, from qnx-ports) draws into a
+> VOUT_WINDOW_TYPE_QNX window, and the only module that provided one was the Qt
+> GUI, which this port does not build: "vlc -I dummy <file>" (or cvlc) decoded
+> the video but no window appeared. qnx_window ("vout window") creates a
+> top-level Screen window -- the video's size, centred, or the whole display
+> for --fullscreen -- for egl_qnx + gles2 to draw into, and passes Screen's
+> close and key events on to VLC (hotkeys).
+>
+> egl_qnx took the first EGL config eglChooseConfig() returned: Mesa (the
+> virtio-gpu driver) lists the deepest first, RGBX1010102, which Screen cannot
+> make window buffers of, and the SDP 8 EGL accepts a window only in its
+> config's native visual ("can't create window buffers", EGL_BAD_NATIVE_WINDOW,
+> "cannot create EGL window surface"). It now takes an 8-bit config with an
+> RGBX/RGBA8888 visual and gives the window that format (recreating its
+> buffers when the format changes).
+
+Touches: `modules/video_output/Makefile.am`, `modules/video_output/opengl/egl.c`, `modules/video_output/qnx/window.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -157,7 +178,7 @@ do_configure() {
   "$S/configure" --host="$(_vlc_host)" --build=x86_64-linux-gnu --prefix="$PREFIX" \
     --with-contrib="$B/contrib/../$(_vlc_host)" --disable-a52 --disable-xcb --disable-sdl-image --enable-gles2 \
     --disable-qt --disable-skins2 --disable-lua --disable-vdpau \
-    --disable-alsa --disable-pulse --disable-sndio --disable-jack
+    --disable-alsa --disable-pulse --disable-sndio --disable-jack --enable-run-as-root
 }
 ```
 
@@ -174,13 +195,14 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - VLC 3.0.21 with qnx-ports' QNX support (patches/: a Screen + EGL/GLES2 video output, QNX fixes in the core and modules, and QNX recipes in VLC's contrib system). Built the way the fork's qnx/ makefiles do it: 1. ./bootstrap; fetch every contrib tarball (VLC's contrib system checks each one against its own SHA512 list); 2. build protoc natively from the contrib protobuf (the cross build of the protobuf contrib needs a matching protoc); 3. build the contribs for the target, then VLC against them. Audio output modules are off (ALSA's uses IEC958 rates QNX's alsa-lib does not define; Pulse, sndio and JACK do not exist on QNX). The Qt GUI is left out (it needs a Qt 5 contrib build): libvlc, the plugins and the command-line player (cvlc) are built. Audio output is not supported on QNX yet (upstream of this port). Beyond its contribs, VLC links these components' shared libraries (found on the toolchain's default library path), so its package depends on them.
 - The contribs find each other through the pkg-config paths VLC's contrib Makefile sets; env.sh's PKG_CONFIG_* (this tree's staging) must not apply -- its sysroot was prefixed to the contribs' own paths ("libopenjp2 >= 2.1.0 not found" for FFmpeg). SDL 1.2 and SDL_image are left out: they only serve the SDL image decoder module, and SDL_image's configure found no SDL.h for the contrib SDL 1.2. The contribs get -D_QNX_SOURCE through CFLAGS/CXXFLAGS (their Meson cross file and configure scripts take them from there): without it QNX's headers hide POSIX interfaces such as clock_gettime, and dav1d's configure stopped. The make that runs first in PATH may be the SDP's 4.4, which hands its children a "fifo:" jobserver; contribs built with CMake run gmake, which can be the build machine's 4.3 and stops on it ("invalid --jobserver-auth string"). The pipe style is understood by both.
+- --enable-run-as-root: QNX targets usually run everything as root, and vlc otherwise stops with "VLC is not supposed to be run as root". Video on QNX Screen: egl_qnx + gles2 draw into a window from qnx_window (patches/0002), the Screen window provider for the command-line player.
 - vlc-plugin.pc carries -L for the contrib tree in the build directory (where libintl/libiconv were found): meaningless on any other machine, and scripts/check-artifacts rejects build paths in installed metadata.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vlc`.
 
 ### 5. What it installs
 
-569 files under `/usr/local`: 4 shared-library entries, 4 programs, 98 headers.
+570 files under `/usr/local`: 4 shared-library entries, 4 programs, 98 headers.
 
 ```
 /usr/local/lib/libvlc.so
@@ -277,8 +299,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/vlc-3.0.21-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/vlc-3.0.21-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/vlc-3.0.21-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/vlc-3.0.21-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/vlc-3.0.21-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | vlc 3.0.21-r2 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/vlc-3.0.21-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -356,8 +380,12 @@ do_configure() {
   "$S/configure" --host="$(_vlc_host)" --build=x86_64-linux-gnu --prefix="$PREFIX" \
     --with-contrib="$B/contrib/../$(_vlc_host)" --disable-a52 --disable-xcb --disable-sdl-image --enable-gles2 \
     --disable-qt --disable-skins2 --disable-lua --disable-vdpau \
-    --disable-alsa --disable-pulse --disable-sndio --disable-jack
+    --disable-alsa --disable-pulse --disable-sndio --disable-jack --enable-run-as-root
 }
+# --enable-run-as-root: QNX targets usually run everything as root, and vlc
+# otherwise stops with "VLC is not supposed to be run as root".
+# Video on QNX Screen: egl_qnx + gles2 draw into a window from qnx_window
+# (patches/0002), the Screen window provider for the command-line player.
 do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR="$B/$(_vlc_host)/lib/pkgconfig" make -C "$B/build" -j"$(nproc)" $(_vlc_jobserver); }
 # vlc-plugin.pc carries -L for the contrib tree in the build directory (where
 # libintl/libiconv were found): meaningless on any other machine, and

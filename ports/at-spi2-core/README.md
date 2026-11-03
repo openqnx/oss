@@ -107,7 +107,7 @@ do_install() { DESTDIR="$STAGE" ninja -C "$B" install && rm -rf "$STAGE$PREFIX/l
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- The accessibility bus, the ATK bridge GTK loads as a module -- and ATK itself.  Upstream merged the standalone atk module into at-spi2-core at 2.52, so 2.54 installs libatk-1.0 and atk.pc from its own atk/ subdirectory. There was a separate atk recipe here (2.38.0) and building this one silently overwrote its library: two libatk-1.0.so.0.* files ended up in staging and whichever package built last won.  That recipe is retired, this one is the ATK provider, and every DEPS entry that said "atk" now says "at-spi2-core". The overwrite was visible only on target: ATK 2.54 makes ATK_ROLE_PUSH_BUTTON an alias of ATK_ROLE_BUTTON, so atk_role_get_name() started answering "button" where 2.38 answered "push button", and test_atk failed. -Dintrospection=no: gobject-introspection has to *run* the target's own binaries to scan them, which a cross build cannot do. systemd_user_dir takes a path ("no" became a directory named no); QNX has no systemd, so the unit installed there is removed again after the install. X11 stays on -- libXtst is what AT-SPI uses to synthesise events, and the whole X11 client stack is already staged.
+- The accessibility bus, the ATK bridge GTK loads as a module -- and ATK itself.  Upstream merged the standalone atk module into at-spi2-core at 2.52, so 2.54 installs libatk-1.0 and atk.pc from its own atk/ subdirectory. There was a separate atk recipe here (2.38.0) and building this one silently overwrote its library: two libatk-1.0.so.0.* files ended up in staging and whichever package built last won.  That recipe is retired, this one is the ATK provider, and every DEPS entry that said "atk" now says "at-spi2-core". The overwrite was visible only on target: ATK 2.54 makes ATK_ROLE_PUSH_BUTTON an alias of ATK_ROLE_BUTTON, so atk_role_get_name() started answering "button" where 2.38 answered "push button", and test_atk failed. -Dintrospection=no: gobject-introspection has to *run* the target's own binaries to scan them, which a cross build cannot do. systemd_user_dir takes a path ("no" became a directory named no); QNX has no systemd, so the unit installed there is removed again after the install. X11 stays on -- libXtst is what AT-SPI uses to synthesise events, and the whole X11 client stack is already staged. -Ddbus_daemon: left at "default", bus/meson.build looks for dbus-daemon on the *build host* and bakes that path (/usr/bin/dbus-daemon) into at-spi-bus-launcher; on QNX it is $PREFIX/bin/dbus-daemon, so the launcher failed with "Failed to spawn child process /usr/bin/dbus-daemon" and every GTK program printed "Unable to acquire the address of the accessibility bus". -Duse_systemd=false: likewise keep a host dbus-broker-launch out of it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH at-spi2-core`.
 
@@ -185,6 +185,8 @@ PASS at-spi2-core
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_at_spi2_core`](../../tests/src/) -- a program linked against at-spi2-core the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
+   - libexec/at-spi-bus-launcher installed
+   - launcher spawns /usr/local/bin/dbus-daemon
    - atk_role_get_name(BUTTON) (PUSH_BUTTON is its alias)
    - atk_role_for_name(\"check box\")
    - register a custom role
@@ -211,9 +213,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.0-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/at-spi2-core-2.54.2-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.0-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r0 | ✅ PASS | 2026-11-02 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | at-spi2-core 2.54.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/at-spi2-core-2.54.2-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -246,7 +250,13 @@ BUILDSYS=meson
 # systemd, so the unit installed there is removed again after the install.
 # X11 stays on -- libXtst is what AT-SPI uses to synthesise events, and the
 # whole X11 client stack is already staged.
-MESON_ARGS_EXTRA=( -Dintrospection=disabled -Ddocs=false -Dsystemd_user_dir=$PREFIX/lib/systemd/user
+# -Ddbus_daemon: left at "default", bus/meson.build looks for dbus-daemon on the
+# *build host* and bakes that path (/usr/bin/dbus-daemon) into
+# at-spi-bus-launcher; on QNX it is $PREFIX/bin/dbus-daemon, so the launcher
+# failed with "Failed to spawn child process /usr/bin/dbus-daemon" and every
+# GTK program printed "Unable to acquire the address of the accessibility bus".
+# -Duse_systemd=false: likewise keep a host dbus-broker-launch out of it.
+MESON_ARGS_EXTRA=( -Ddbus_daemon=$PREFIX/bin/dbus-daemon -Duse_systemd=false -Dintrospection=disabled -Ddocs=false -Dsystemd_user_dir=$PREFIX/lib/systemd/user
                    -Datk_only=false -Dx11=enabled )
 do_install() { DESTDIR="$STAGE" ninja -C "$B" install && rm -rf "$STAGE$PREFIX/lib/systemd"; }
 ```

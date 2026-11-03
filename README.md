@@ -57,9 +57,9 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 | Components | **675** (675 build for every architecture they support -- both, but for a few aarch64-only ones) |
 | Verified on QNX targets | **669** -- installed with apk and tested on both architectures; these are the packages in the releases |
 | 🟢 Standalone | **271** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **110** — need other components to build, run on their own |
-| 🔴 Dependent | **294** — need other components to build and to run |
-| QNX patches | **621**, one file per change, each with its reason |
+| 🟡 Build-deps only | **109** — need other components to build, run on their own |
+| 🔴 Dependent | **295** — need other components to build and to run |
+| QNX patches | **627**, one file per change, each with its reason |
 | On-target tests | **233** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 

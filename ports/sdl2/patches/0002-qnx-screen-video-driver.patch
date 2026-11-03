@@ -1,0 +1,1319 @@
+SDL2: make the QNX Screen video driver usable on QNX 8.0
+
+SDL's QNX Screen driver (src/video/qnx, contributed by BlackBerry in 2017)
+compiles on QNX 8.0 but cannot carry an application: no display mode
+(SDL_GetDesktopDisplayMode() is 0x0, so fullscreen and SDL_GetClosestDisplayMode
+fail), keyboard events only (no pointer, close or focus), letters missing from
+the key map and no text input, a software buffer that never follows a
+resize, and an OpenGL ES path the SDP 8 EGL rejects: it creates the window
+in a format derived from bit depths (EGL wants the config's native visual,
+else "can't create window buffers", EGL_BAD_NATIVE_WINDOW), takes the first
+config (on virgl a 10-bit RGBX1010102 one Screen cannot allocate, ENOTSUP),
+ignores SDL_GL_SetAttribute(), and resolves core GLES entry points through
+eglGetProcAddress() only. It also always creates a Screen context, so a
+headless target got an init failure instead of the next driver.
+
+This makes it a working driver: the context is probed in createDevice (no
+Screen: SDL moves on); one display with the size Screen reports (desktop
+mode, display modes, fullscreen windows); pointer, touch, wheel, close and
+focus events; key caps for all PC keys plus text input from the symbol;
+window position, title (ID string), resize of software and GLES buffers
+(EGL surface rebuilt); EGL configs chosen with the GL attributes, 8 bits per
+channel first, in their native visual; GLES 1/2/3 contexts by the requested
+version, shared contexts, desktop GL refused (ES only); libGLESv2.so.1 opened
+for the core functions; errors reported through SDL_SetError.
+
+Upstream-Status: QNX-specific
+
+--- a/src/video/qnx/gl.c
++++ b/src/video/qnx/gl.c
+@@ -21,8 +21,15 @@
+ 
+ #include "../../SDL_internal.h"
+ #include "sdl_qnx.h"
++#include <dlfcn.h>
+ 
+-static EGLDisplay   egl_disp;
++#ifndef EGL_OPENGL_ES3_BIT_KHR
++#define EGL_OPENGL_ES3_BIT_KHR 0x00000040
++#endif
++
++static EGLDisplay   egl_disp = EGL_NO_DISPLAY;
++static void         *gles_lib;      /* libGLESv2, for core entry points */
++static int          swap_interval = 1;
+ 
+ /**
+  * Detertmines the pixel format to use based on the current display and EGL
+@@ -32,15 +39,15 @@
+  */
+ static int chooseFormat(EGLConfig egl_conf)
+ {
+-    EGLint buffer_bit_depth;
+-    EGLint alpha_bit_depth;
++    EGLint buffer_bit_depth = 0;
++    EGLint alpha_bit_depth = 0;
+ 
+     eglGetConfigAttrib(egl_disp, egl_conf, EGL_BUFFER_SIZE, &buffer_bit_depth);
+     eglGetConfigAttrib(egl_disp, egl_conf, EGL_ALPHA_SIZE, &alpha_bit_depth);
+ 
+     switch (buffer_bit_depth) {
+         case 32:
+-            return SCREEN_FORMAT_RGBX8888;
++            return alpha_bit_depth ? SCREEN_FORMAT_RGBA8888 : SCREEN_FORMAT_RGBX8888;
+         case 24:
+             return SCREEN_FORMAT_RGB888;
+         case 16:
+@@ -57,77 +64,105 @@
+     }
+ }
+ 
++static EGLint renderableBit(_THIS)
++{
++    if (_this->gl_config.major_version >= 3) {
++        return EGL_OPENGL_ES3_BIT_KHR;
++    }
++    if (_this->gl_config.major_version == 1) {
++        return EGL_OPENGL_ES_BIT;
++    }
++    return EGL_OPENGL_ES2_BIT;
++}
++
+ /**
+- * Enumerates the supported EGL configurations and chooses a suitable one.
++ * Chooses an EGL configuration for a window, honouring the attributes the
++ * application set with SDL_GL_SetAttribute() (colour, depth, stencil,
++ * multisampling).
+  * @param[out]  pconf   The chosen configuration
+  * @param[out]  pformat The chosen pixel format
+  * @return 0 if successful, -1 on error
+  */
+-int glGetConfig(EGLConfig *pconf, int *pformat)
++int glGetConfig(_THIS, EGLConfig *pconf, int *pformat)
+ {
+-    EGLConfig egl_conf = (EGLConfig)0;
+-    EGLConfig *egl_configs;
+-    EGLint egl_num_configs;
+-    EGLint val;
+-    EGLBoolean rc;
+-    EGLint i;
+-
+-    // Determine the numbfer of configurations.
+-    rc = eglGetConfigs(egl_disp, NULL, 0, &egl_num_configs);
+-    if (rc != EGL_TRUE) {
+-        return -1;
+-    }
+-
+-    if (egl_num_configs == 0) {
+-        return -1;
+-    }
++    EGLConfig *configs = NULL;
++    EGLint attr[32];
++    EGLint n = 0, i, num = 0;
++    int pass;
+ 
+-    // Allocate enough memory for all configurations.
+-    egl_configs = SDL_malloc(egl_num_configs * sizeof(*egl_configs));
+-    if (!egl_configs) {
+-        return -1;
+-    }
+-
+-    // Get the list of configurations.
+-    rc = eglGetConfigs(egl_disp, egl_configs, egl_num_configs,
+-                       &egl_num_configs);
+-    if (rc != EGL_TRUE) {
+-        SDL_free(egl_configs);
+-        return -1;
++    if (egl_disp == EGL_NO_DISPLAY) {
++        return SDL_SetError("EGL not initialized");
+     }
+ 
+-    // Find a good configuration.
+-    for (i = 0; i < egl_num_configs; i++) {
+-        eglGetConfigAttrib(egl_disp, egl_configs[i], EGL_SURFACE_TYPE, &val);
+-        if (!(val & EGL_WINDOW_BIT)) {
+-            continue;
+-        }
+-
+-        eglGetConfigAttrib(egl_disp, egl_configs[i], EGL_RENDERABLE_TYPE, &val);
+-        if (!(val & EGL_OPENGL_ES2_BIT)) {
+-            continue;
++    attr[n++] = EGL_SURFACE_TYPE;    attr[n++] = EGL_WINDOW_BIT;
++    attr[n++] = EGL_RENDERABLE_TYPE; attr[n++] = renderableBit(_this);
++    attr[n++] = EGL_RED_SIZE;        attr[n++] = _this->gl_config.red_size;
++    attr[n++] = EGL_GREEN_SIZE;      attr[n++] = _this->gl_config.green_size;
++    attr[n++] = EGL_BLUE_SIZE;       attr[n++] = _this->gl_config.blue_size;
++    if (_this->gl_config.alpha_size) {
++        attr[n++] = EGL_ALPHA_SIZE;  attr[n++] = _this->gl_config.alpha_size;
++    }
++    attr[n++] = EGL_DEPTH_SIZE;      attr[n++] = _this->gl_config.depth_size;
++    if (_this->gl_config.stencil_size) {
++        attr[n++] = EGL_STENCIL_SIZE; attr[n++] = _this->gl_config.stencil_size;
++    }
++    if (_this->gl_config.multisamplebuffers) {
++        attr[n++] = EGL_SAMPLE_BUFFERS; attr[n++] = _this->gl_config.multisamplebuffers;
++        attr[n++] = EGL_SAMPLES;        attr[n++] = _this->gl_config.multisamplesamples;
++    }
++    attr[n++] = EGL_NONE;
++
++    if (eglChooseConfig(egl_disp, attr, NULL, 0, &num) != EGL_TRUE || num == 0) {
++        /* Retry with the bare minimum: a window surface the API can render to. */
++        attr[4] = EGL_NONE;
++        if (eglChooseConfig(egl_disp, attr, NULL, 0, &num) != EGL_TRUE || num == 0) {
++            return SDL_SetError("No EGL config for an OpenGL ES %d window", _this->gl_config.major_version);
+         }
+-
+-        eglGetConfigAttrib(egl_disp, egl_configs[i], EGL_DEPTH_SIZE, &val);
+-        if (val == 0) {
+-            continue;
++    }
++    configs = SDL_malloc(num * sizeof(*configs));
++    if (!configs) {
++        return SDL_OutOfMemory();
++    }
++    if (eglChooseConfig(egl_disp, attr, configs, num, &num) != EGL_TRUE) {
++        SDL_free(configs);
++        return SDL_SetError("eglChooseConfig failed (0x%x)", (unsigned)eglGetError());
++    }
++
++    /* A configuration Screen has a window format for: the config's native
++     * visual (a SCREEN_FORMAT_*; the SDP 8 EGL accepts a window only in that
++     * format), else one derived from its bit depths. EGL sorts deeper colour
++     * first, and on virgl that is RGBA/RGBX1010102 -- whose RGBX variant
++     * Screen cannot allocate buffers in (ENOTSUP) -- so the first pass takes
++     * 8 bits per channel. */
++    for (pass = 0; pass < 2; pass++) {
++        for (i = 0; i < num; i++) {
++            EGLint visual = 0, red = 0;
++            int format;
++            eglGetConfigAttrib(egl_disp, configs[i], EGL_NATIVE_VISUAL_ID, &visual);
++            eglGetConfigAttrib(egl_disp, configs[i], EGL_RED_SIZE, &red);
++            format = visual > 0 ? visual : chooseFormat(configs[i]);
++            if (!format) {
++                continue;
++            }
++            if (pass == 0 && !(red == 8 && (format == SCREEN_FORMAT_RGBA8888 || format == SCREEN_FORMAT_RGBX8888 ||
++                                            format == SCREEN_FORMAT_BGRA8888 || format == SCREEN_FORMAT_BGRX8888))) {
++                continue;
++            }
++            *pconf = configs[i];
++            *pformat = format;
++            SDL_free(configs);
++            return 0;
+         }
+-
+-        egl_conf = egl_configs[i];
+-        break;
+     }
+-
+-    SDL_free(egl_configs);
+-    *pconf = egl_conf;
+-    *pformat = chooseFormat(egl_conf);
+-
+-    return 0;
++    SDL_free(configs);
++    return SDL_SetError("No EGL config matches a Screen window format");
+ }
+ 
+ /**
+- * Initializes the EGL library.
++ * Initializes the EGL library, and opens the GLES library for the core entry
++ * points (eglGetProcAddress() is only required to return extensions).
+  * @param   _THIS
+- * @param   name    unused
++ * @param   name    the GLES library (default libGLESv2.so.1)
+  * @return  0 if successful, -1 on error
+  */
+ int glLoadLibrary(_THIS, const char *name)
+@@ -136,29 +171,57 @@
+ 
+     egl_disp = eglGetDisplay(disp_id);
+     if (egl_disp == EGL_NO_DISPLAY) {
+-        return -1;
++        return SDL_SetError("eglGetDisplay failed");
+     }
+ 
+     if (eglInitialize(egl_disp, NULL, NULL) == EGL_FALSE) {
+-        return -1;
++        egl_disp = EGL_NO_DISPLAY;
++        return SDL_SetError("eglInitialize failed (0x%x)", (unsigned)eglGetError());
+     }
++    eglBindAPI(EGL_OPENGL_ES_API);
+ 
++    if (!name || !*name) {
++        name = SDL_getenv("SDL_VIDEO_GL_DRIVER");
++    }
++    if (name && *name) {
++        gles_lib = dlopen(name, RTLD_NOW | RTLD_LOCAL);
++    }
++    if (!gles_lib) {
++        name = (_this->gl_config.major_version == 1) ? "libGLESv1_CM.so.1" : "libGLESv2.so.1";
++        gles_lib = dlopen(name, RTLD_NOW | RTLD_LOCAL);
++    }
++    if (!gles_lib) {
++        name = "libGLESv2.so";
++        gles_lib = dlopen(name, RTLD_NOW | RTLD_LOCAL);
++    }
++    if (gles_lib) {
++        SDL_strlcpy(_this->gl_config.driver_path, name, SDL_arraysize(_this->gl_config.driver_path));
++    }
+     return 0;
+ }
+ 
+ /**
+- * Finds the address of an EGL extension function.
++ * Finds the address of a GL function: the GLES library's export, else what
++ * eglGetProcAddress() returns (extensions).
+  * @param   proc    Function name
+  * @return  Function address
+  */
+ void *glGetProcAddress(_THIS, const char *proc)
+ {
+-    return eglGetProcAddress(proc);
++    void *p = NULL;
++
++    if (gles_lib) {
++        p = dlsym(gles_lib, proc);
++    }
++    if (!p) {
++        p = (void *)eglGetProcAddress(proc);
++    }
++    return p;
+ }
+ 
+ /**
+- * Associates the given window with the necessary EGL structures for drawing and
+- * displaying content.
++ * Creates an OpenGL ES context (the version the application asked for) and,
++ * the first time, the window's EGL surface.
+  * @param   _THIS
+  * @param   window  The SDL window to create the context for
+  * @return  A pointer to the created context, if successful, NULL on error
+@@ -167,39 +230,44 @@
+ {
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+     EGLContext      context;
+-    EGLSurface      surface;
+-
+-    struct {
+-        EGLint client_version[2];
+-        EGLint none;
+-    } egl_ctx_attr = {
+-        .client_version = { EGL_CONTEXT_CLIENT_VERSION, 2 },
+-        .none = EGL_NONE
+-    };
+-
+-    struct {
+-        EGLint render_buffer[2];
+-        EGLint none;
+-    } egl_surf_attr = {
+-        .render_buffer = { EGL_RENDER_BUFFER, EGL_BACK_BUFFER },
+-        .none = EGL_NONE
+-    };
++    EGLContext      share = EGL_NO_CONTEXT;
++    EGLint          ctx_attr[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
++    EGLint          surf_attr[] = { EGL_RENDER_BUFFER, EGL_BACK_BUFFER, EGL_NONE };
+ 
+-    context = eglCreateContext(egl_disp, impl->conf, EGL_NO_CONTEXT,
+-                               (EGLint *)&egl_ctx_attr);
+-    if (context == EGL_NO_CONTEXT) {
++    if (_this->gl_config.profile_mask != SDL_GL_CONTEXT_PROFILE_ES) {
++        SDL_SetError("QNX Screen provides OpenGL ES only (set SDL_GL_CONTEXT_PROFILE_ES)");
+         return NULL;
+     }
++    ctx_attr[1] = _this->gl_config.major_version > 0 ? _this->gl_config.major_version : 2;
+ 
+-    surface = eglCreateWindowSurface(egl_disp, impl->conf, impl->window,
+-                                     (EGLint *)&egl_surf_attr);
+-    if (surface == EGL_NO_SURFACE) {
++    if (_this->gl_config.share_with_current_context) {
++        share = (EGLContext)SDL_GL_GetCurrentContext();
++        if (!share) {
++            share = EGL_NO_CONTEXT;
++        }
++    }
++
++    context = eglCreateContext(egl_disp, impl->conf, share, ctx_attr);
++    if (context == EGL_NO_CONTEXT) {
++        SDL_SetError("eglCreateContext failed (0x%x)", (unsigned)eglGetError());
+         return NULL;
+     }
+ 
+-    eglMakeCurrent(egl_disp, surface, surface, context);
++    if (impl->surface == EGL_NO_SURFACE) {
++        impl->surface = eglCreateWindowSurface(egl_disp, impl->conf, impl->window, surf_attr);
++        if (impl->surface == EGL_NO_SURFACE) {
++            SDL_SetError("eglCreateWindowSurface failed (0x%x)", (unsigned)eglGetError());
++            eglDestroyContext(egl_disp, context);
++            return NULL;
++        }
++    }
+ 
+-    impl->surface = surface;
++    if (eglMakeCurrent(egl_disp, impl->surface, impl->surface, context) != EGL_TRUE) {
++        SDL_SetError("eglMakeCurrent failed (0x%x)", (unsigned)eglGetError());
++        eglDestroyContext(egl_disp, context);
++        return NULL;
++    }
++    eglSwapInterval(egl_disp, swap_interval);
+     return context;
+ }
+ 
+@@ -211,13 +279,18 @@
+  */
+ int glSetSwapInterval(_THIS, int interval)
+ {
+-    if (eglSwapInterval(egl_disp, interval) != EGL_TRUE) {
+-        return -1;
++    if (eglSwapInterval(egl_disp, interval < 0 ? -interval : interval) != EGL_TRUE) {
++        return SDL_SetError("eglSwapInterval failed");
+     }
+-
++    swap_interval = interval;
+     return 0;
+ }
+ 
++int glGetSwapInterval(_THIS)
++{
++    return swap_interval;
++}
++
+ /**
+  * Swaps the EGL buffers associated with the given window
+  * @param   _THIS
+@@ -226,9 +299,11 @@
+  */
+ int glSwapWindow(_THIS, SDL_Window *window)
+ {
+-    /* !!! FIXME: should we migrate this all over to use SDL_egl.c? */
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+-    return eglSwapBuffers(egl_disp, impl->surface) == EGL_TRUE ? 0 : -1;
++    if (eglSwapBuffers(egl_disp, impl->surface) != EGL_TRUE) {
++        return SDL_SetError("eglSwapBuffers failed (0x%x)", (unsigned)eglGetError());
++    }
++    return 0;
+ }
+ 
+ /**
+@@ -240,16 +315,22 @@
+  */
+ int glMakeCurrent(_THIS, SDL_Window *window, SDL_GLContext context)
+ {
+-    window_impl_t   *impl;
+-    EGLSurface      surface = NULL;
++    EGLSurface      surface = EGL_NO_SURFACE;
+ 
+-    if (window) {
+-        impl = (window_impl_t *)window->driverdata;
++    if (egl_disp == EGL_NO_DISPLAY) {
++        return context ? SDL_SetError("EGL not initialized") : 0;
++    }
++    if (window && context) {
++        window_impl_t *impl = (window_impl_t *)window->driverdata;
++        if (impl->surface == EGL_NO_SURFACE) {
++            EGLint surf_attr[] = { EGL_RENDER_BUFFER, EGL_BACK_BUFFER, EGL_NONE };
++            impl->surface = eglCreateWindowSurface(egl_disp, impl->conf, impl->window, surf_attr);
++        }
+         surface = impl->surface;
+     }
+ 
+-    if (eglMakeCurrent(egl_disp, surface, surface, context) != EGL_TRUE) {
+-        return -1;
++    if (eglMakeCurrent(egl_disp, surface, surface, context ? (EGLContext)context : EGL_NO_CONTEXT) != EGL_TRUE) {
++        return SDL_SetError("eglMakeCurrent failed (0x%x)", (unsigned)eglGetError());
+     }
+ 
+     return 0;
+@@ -262,14 +343,72 @@
+  */
+ void glDeleteContext(_THIS, SDL_GLContext context)
+ {
++    if (egl_disp == EGL_NO_DISPLAY || !context) {
++        return;
++    }
++    if (eglGetCurrentContext() == (EGLContext)context) {
++        eglMakeCurrent(egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
++    }
+     eglDestroyContext(egl_disp, context);
+ }
+ 
+ /**
++ * Destroys a window's EGL surface (before the window itself goes).
++ */
++void glDestroySurface(window_impl_t *impl)
++{
++    if (egl_disp == EGL_NO_DISPLAY || impl->surface == EGL_NO_SURFACE) {
++        return;
++    }
++    if (eglGetCurrentSurface(EGL_DRAW) == impl->surface) {
++        eglMakeCurrent(egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
++    }
++    eglDestroySurface(egl_disp, impl->surface);
++    impl->surface = EGL_NO_SURFACE;
++}
++
++/**
+  * Terminates access to the EGL library.
+  * @param   _THIS
+  */
+ void glUnloadLibrary(_THIS)
+ {
+-    eglTerminate(egl_disp);
++    if (egl_disp != EGL_NO_DISPLAY) {
++        eglMakeCurrent(egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
++        eglTerminate(egl_disp);
++        egl_disp = EGL_NO_DISPLAY;
++    }
++    if (gles_lib) {
++        dlclose(gles_lib);
++        gles_lib = NULL;
++    }
++}
++
++/**
++ * Resizes an OpenGL ES window: Screen cannot resize buffers in place, so the
++ * EGL surface is taken down, the buffers are reallocated at the new size, and
++ * the surface is put back (and made current again if it was).
++ */
++void glResizeWindow(window_impl_t *impl, int w, int h)
++{
++    int         size[2] = { w, h };
++    EGLContext  ctx = EGL_NO_CONTEXT;
++    int         was_current = 0;
++
++    if (impl->surface != EGL_NO_SURFACE) {
++        was_current = (eglGetCurrentSurface(EGL_DRAW) == impl->surface);
++        ctx = eglGetCurrentContext();
++        glDestroySurface(impl);
++    }
++    screen_destroy_window_buffers(impl->window);
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_BUFFER_SIZE, size);
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE, size);
++    screen_create_window_buffers(impl->window, 2);
++    if (was_current && egl_disp != EGL_NO_DISPLAY) {
++        EGLint surf_attr[] = { EGL_RENDER_BUFFER, EGL_BACK_BUFFER, EGL_NONE };
++        impl->surface = eglCreateWindowSurface(egl_disp, impl->conf, impl->window, surf_attr);
++        if (impl->surface != EGL_NO_SURFACE) {
++            eglMakeCurrent(egl_disp, impl->surface, impl->surface, ctx);
++        }
++    }
+ }
+--- a/src/video/qnx/keyboard.c
++++ b/src/video/qnx/keyboard.c
+@@ -27,106 +27,134 @@
+ #include <sys/keycodes.h>
+ 
+ /**
+- * A map thta translates Screen key names to SDL scan codes.
+- * This map is incomplete, but should include most major keys.
++ * Translates a Screen key cap (the unmodified symbol on the key: lower-case
++ * letters, digits, the KEYCODE_* of the PC keys) to an SDL scan code.
+  */
+-static int key_to_sdl[] = {
+-    [KEYCODE_SPACE] = SDL_SCANCODE_SPACE,
+-    [KEYCODE_APOSTROPHE] = SDL_SCANCODE_APOSTROPHE,
+-    [KEYCODE_COMMA] = SDL_SCANCODE_COMMA,
+-    [KEYCODE_MINUS] = SDL_SCANCODE_MINUS,
+-    [KEYCODE_PERIOD] = SDL_SCANCODE_PERIOD,
+-    [KEYCODE_SLASH] = SDL_SCANCODE_SLASH,
+-    [KEYCODE_ZERO] = SDL_SCANCODE_0,
+-    [KEYCODE_ONE] = SDL_SCANCODE_1,
+-    [KEYCODE_TWO] = SDL_SCANCODE_2,
+-    [KEYCODE_THREE] = SDL_SCANCODE_3,
+-    [KEYCODE_FOUR] = SDL_SCANCODE_4,
+-    [KEYCODE_FIVE] = SDL_SCANCODE_5,
+-    [KEYCODE_SIX] = SDL_SCANCODE_6,
+-    [KEYCODE_SEVEN] = SDL_SCANCODE_7,
+-    [KEYCODE_EIGHT] = SDL_SCANCODE_8,
+-    [KEYCODE_NINE] = SDL_SCANCODE_9,
+-    [KEYCODE_SEMICOLON] = SDL_SCANCODE_SEMICOLON,
+-    [KEYCODE_EQUAL] = SDL_SCANCODE_EQUALS,
+-    [KEYCODE_LEFT_BRACKET] = SDL_SCANCODE_LEFTBRACKET,
+-    [KEYCODE_BACK_SLASH] = SDL_SCANCODE_BACKSLASH,
+-    [KEYCODE_RIGHT_BRACKET] = SDL_SCANCODE_RIGHTBRACKET,
+-    [KEYCODE_GRAVE] = SDL_SCANCODE_GRAVE,
+-    [KEYCODE_A] = SDL_SCANCODE_A,
+-    [KEYCODE_B] = SDL_SCANCODE_B,
+-    [KEYCODE_C] = SDL_SCANCODE_C,
+-    [KEYCODE_D] = SDL_SCANCODE_D,
+-    [KEYCODE_E] = SDL_SCANCODE_E,
+-    [KEYCODE_F] = SDL_SCANCODE_F,
+-    [KEYCODE_G] = SDL_SCANCODE_G,
+-    [KEYCODE_H] = SDL_SCANCODE_H,
+-    [KEYCODE_I] = SDL_SCANCODE_I,
+-    [KEYCODE_J] = SDL_SCANCODE_J,
+-    [KEYCODE_K] = SDL_SCANCODE_K,
+-    [KEYCODE_L] = SDL_SCANCODE_L,
+-    [KEYCODE_M] = SDL_SCANCODE_M,
+-    [KEYCODE_N] = SDL_SCANCODE_N,
+-    [KEYCODE_O] = SDL_SCANCODE_O,
+-    [KEYCODE_P] = SDL_SCANCODE_P,
+-    [KEYCODE_Q] = SDL_SCANCODE_Q,
+-    [KEYCODE_R] = SDL_SCANCODE_R,
+-    [KEYCODE_S] = SDL_SCANCODE_S,
+-    [KEYCODE_T] = SDL_SCANCODE_T,
+-    [KEYCODE_U] = SDL_SCANCODE_U,
+-    [KEYCODE_V] = SDL_SCANCODE_V,
+-    [KEYCODE_W] = SDL_SCANCODE_W,
+-    [KEYCODE_X] = SDL_SCANCODE_X,
+-    [KEYCODE_Y] = SDL_SCANCODE_Y,
+-    [KEYCODE_Z] = SDL_SCANCODE_Z,
+-    [KEYCODE_UP] = SDL_SCANCODE_UP,
+-    [KEYCODE_DOWN] = SDL_SCANCODE_DOWN,
+-    [KEYCODE_LEFT] = SDL_SCANCODE_LEFT,
+-    [KEYCODE_PG_UP] = SDL_SCANCODE_PAGEUP,
+-    [KEYCODE_PG_DOWN] = SDL_SCANCODE_PAGEDOWN,
+-    [KEYCODE_RIGHT] = SDL_SCANCODE_RIGHT,
+-    [KEYCODE_RETURN] = SDL_SCANCODE_RETURN,
+-    [KEYCODE_TAB] = SDL_SCANCODE_TAB,
+-    [KEYCODE_ESCAPE] = SDL_SCANCODE_ESCAPE,
+-};
++static SDL_Scancode capToScancode(int cap)
++{
++    if (cap >= 'a' && cap <= 'z') {
++        return (SDL_Scancode)(SDL_SCANCODE_A + (cap - 'a'));
++    }
++    if (cap >= 'A' && cap <= 'Z') {
++        return (SDL_Scancode)(SDL_SCANCODE_A + (cap - 'A'));
++    }
++    if (cap >= '1' && cap <= '9') {
++        return (SDL_Scancode)(SDL_SCANCODE_1 + (cap - '1'));
++    }
++    switch (cap) {
++    case '0': return SDL_SCANCODE_0;
++    case ' ': return SDL_SCANCODE_SPACE;
++    case '\'': return SDL_SCANCODE_APOSTROPHE;
++    case ',': return SDL_SCANCODE_COMMA;
++    case '-': return SDL_SCANCODE_MINUS;
++    case '.': return SDL_SCANCODE_PERIOD;
++    case '/': return SDL_SCANCODE_SLASH;
++    case ';': return SDL_SCANCODE_SEMICOLON;
++    case '=': return SDL_SCANCODE_EQUALS;
++    case '[': return SDL_SCANCODE_LEFTBRACKET;
++    case '\\': return SDL_SCANCODE_BACKSLASH;
++    case ']': return SDL_SCANCODE_RIGHTBRACKET;
++    case '`': return SDL_SCANCODE_GRAVE;
++    case KEYCODE_ESCAPE: return SDL_SCANCODE_ESCAPE;
++    case KEYCODE_BACKSPACE: return SDL_SCANCODE_BACKSPACE;
++    case KEYCODE_TAB: return SDL_SCANCODE_TAB;
++    case KEYCODE_BACK_TAB: return SDL_SCANCODE_TAB;
++    case KEYCODE_RETURN: return SDL_SCANCODE_RETURN;
++    case KEYCODE_CAPS_LOCK: return SDL_SCANCODE_CAPSLOCK;
++    case KEYCODE_LEFT_SHIFT: return SDL_SCANCODE_LSHIFT;
++    case KEYCODE_RIGHT_SHIFT: return SDL_SCANCODE_RSHIFT;
++    case KEYCODE_LEFT_CTRL: return SDL_SCANCODE_LCTRL;
++    case KEYCODE_RIGHT_CTRL: return SDL_SCANCODE_RCTRL;
++    case KEYCODE_LEFT_ALT: return SDL_SCANCODE_LALT;
++    case KEYCODE_RIGHT_ALT: return SDL_SCANCODE_RALT;
++    case KEYCODE_LEFT_HYPER: return SDL_SCANCODE_LGUI;
++    case KEYCODE_RIGHT_HYPER: return SDL_SCANCODE_RGUI;
++    case KEYCODE_PC_KEYS + 0x67: return SDL_SCANCODE_APPLICATION;   /* menu */
++    case KEYCODE_PC_KEYS + 0x13: return SDL_SCANCODE_PAUSE;
++    case KEYCODE_SCROLL_LOCK: return SDL_SCANCODE_SCROLLLOCK;
++    case KEYCODE_PRINT: return SDL_SCANCODE_PRINTSCREEN;
++    case KEYCODE_SYSREQ: return SDL_SCANCODE_SYSREQ;
++    case KEYCODE_INSERT: return SDL_SCANCODE_INSERT;
++    case KEYCODE_HOME: return SDL_SCANCODE_HOME;
++    case KEYCODE_PG_UP: return SDL_SCANCODE_PAGEUP;
++    case KEYCODE_DELETE: return SDL_SCANCODE_DELETE;
++    case KEYCODE_END: return SDL_SCANCODE_END;
++    case KEYCODE_PG_DOWN: return SDL_SCANCODE_PAGEDOWN;
++    case KEYCODE_LEFT: return SDL_SCANCODE_LEFT;
++    case KEYCODE_RIGHT: return SDL_SCANCODE_RIGHT;
++    case KEYCODE_UP: return SDL_SCANCODE_UP;
++    case KEYCODE_DOWN: return SDL_SCANCODE_DOWN;
++    case KEYCODE_NUM_LOCK: return SDL_SCANCODE_NUMLOCKCLEAR;
++    case KEYCODE_KP_PLUS: return SDL_SCANCODE_KP_PLUS;
++    case KEYCODE_KP_MINUS: return SDL_SCANCODE_KP_MINUS;
++    case KEYCODE_KP_MULTIPLY: return SDL_SCANCODE_KP_MULTIPLY;
++    case KEYCODE_KP_DIVIDE: return SDL_SCANCODE_KP_DIVIDE;
++    case KEYCODE_KP_ENTER: return SDL_SCANCODE_KP_ENTER;
++    case KEYCODE_KP_HOME: return SDL_SCANCODE_KP_7;
++    case KEYCODE_KP_UP: return SDL_SCANCODE_KP_8;
++    case KEYCODE_KP_PG_UP: return SDL_SCANCODE_KP_9;
++    case KEYCODE_KP_LEFT: return SDL_SCANCODE_KP_4;
++    case KEYCODE_KP_FIVE: return SDL_SCANCODE_KP_5;
++    case KEYCODE_KP_RIGHT: return SDL_SCANCODE_KP_6;
++    case KEYCODE_KP_END: return SDL_SCANCODE_KP_1;
++    case KEYCODE_KP_DOWN: return SDL_SCANCODE_KP_2;
++    case KEYCODE_KP_PG_DOWN: return SDL_SCANCODE_KP_3;
++    case KEYCODE_KP_INSERT: return SDL_SCANCODE_KP_0;
++    case KEYCODE_KP_DELETE: return SDL_SCANCODE_KP_PERIOD;
++    case KEYCODE_F1: return SDL_SCANCODE_F1;
++    case KEYCODE_F2: return SDL_SCANCODE_F2;
++    case KEYCODE_F3: return SDL_SCANCODE_F3;
++    case KEYCODE_F4: return SDL_SCANCODE_F4;
++    case KEYCODE_F5: return SDL_SCANCODE_F5;
++    case KEYCODE_F6: return SDL_SCANCODE_F6;
++    case KEYCODE_F7: return SDL_SCANCODE_F7;
++    case KEYCODE_F8: return SDL_SCANCODE_F8;
++    case KEYCODE_F9: return SDL_SCANCODE_F9;
++    case KEYCODE_F10: return SDL_SCANCODE_F10;
++    case KEYCODE_F11: return SDL_SCANCODE_F11;
++    case KEYCODE_F12: return SDL_SCANCODE_F12;
++    default: return SDL_SCANCODE_UNKNOWN;
++    }
++}
+ 
+ /**
+  * Called from the event dispatcher when a keyboard event is encountered.
+- * Translates the event such that it can be handled by SDL.
++ * Translates the event such that it can be handled by SDL: a key press or
++ * release by its key cap, and, for a press, the text the symbol (the key
++ * with its modifiers applied) types.
+  * @param   event   Screen keyboard event
+  */
+ void handleKeyboardEvent(screen_event_t event)
+ {
+-    int             val;
+-    SDL_Scancode    scancode;
++    int             flags = 0, cap = 0, sym = 0, mods = 0;
++    SDL_Scancode    scancode = SDL_SCANCODE_UNKNOWN;
+ 
+-    // Get the key value.
+-    if (screen_get_event_property_iv(event, SCREEN_PROPERTY_SYM, &val) < 0) {
++    if (screen_get_event_property_iv(event, SCREEN_PROPERTY_FLAGS, &flags) < 0) {
+         return;
+     }
+-
+-    // Skip unrecognized keys.
+-    if ((val < 0) || (val >= SDL_TABLESIZE(key_to_sdl))) {
+-        return;
++    screen_get_event_property_iv(event, SCREEN_PROPERTY_MODIFIERS, &mods);
++    if (flags & KEY_CAP_VALID) {
++        screen_get_event_property_iv(event, SCREEN_PROPERTY_KEY_CAP, &cap);
++        scancode = capToScancode(cap);
+     }
+-
+-    // Translate to an SDL scan code.
+-    scancode = key_to_sdl[val];
+-    if (scancode == 0) {
+-        return;
++    if (flags & KEY_SYM_VALID) {
++        screen_get_event_property_iv(event, SCREEN_PROPERTY_SYM, &sym);
++        if (scancode == SDL_SCANCODE_UNKNOWN) {
++            scancode = capToScancode(sym);
++        }
+     }
+ 
+-    // Get event flags (key state).
+-    if (screen_get_event_property_iv(event, SCREEN_PROPERTY_FLAGS, &val) < 0) {
+-        return;
++    if (scancode != SDL_SCANCODE_UNKNOWN) {
++        SDL_SendKeyboardKey((flags & KEY_DOWN) ? SDL_PRESSED : SDL_RELEASED, scancode);
+     }
+ 
+-    // Propagate the event to SDL.
+-    // FIXME:
+-    // Need to handle more key states (such as key combinations).
+-    if (val & KEY_DOWN) {
+-        SDL_SendKeyboardKey(SDL_PRESSED, scancode);
+-    } else {
+-        SDL_SendKeyboardKey(SDL_RELEASED, scancode);
++    /* Text: printable symbols (not the private-use PC/consumer keys), not
++     * while Ctrl or Alt makes the key a shortcut. */
++    if ((flags & KEY_DOWN) && (flags & KEY_SYM_VALID) && sym >= 0x20 && sym != 0x7f &&
++        !(sym >= 0xE000 && sym <= 0xF8FF) && sym <= 0x10FFFF &&
++        !(mods & (KEYMOD_CTRL | KEYMOD_ALT))) {
++        char text[8];
++        *SDL_UCS4ToUTF8((Uint32)sym, text) = '\0';
++        SDL_SendKeyboardText(text);
+     }
+ }
+--- a/src/video/qnx/sdl_qnx.h
++++ b/src/video/qnx/sdl_qnx.h
+@@ -31,18 +31,23 @@
+     screen_window_t window;
+     EGLSurface      surface;
+     EGLConfig       conf;
++    int             is_gl;          /* created with SDL_WINDOW_OPENGL */
++    int             buf_size[2];    /* size of the software buffer, if any */
+ } window_impl_t;
+ 
+ extern void handleKeyboardEvent(screen_event_t event);
+ 
+-extern int glGetConfig(EGLConfig *pconf, int *pformat);
++extern int glGetConfig(_THIS, EGLConfig *pconf, int *pformat);
+ extern int glLoadLibrary(_THIS, const char *name);
+ void *glGetProcAddress(_THIS, const char *proc);
+ extern SDL_GLContext glCreateContext(_THIS, SDL_Window *window);
+ extern int glSetSwapInterval(_THIS, int interval);
++extern int glGetSwapInterval(_THIS);
+ extern int glSwapWindow(_THIS, SDL_Window *window);
+ extern int glMakeCurrent(_THIS, SDL_Window * window, SDL_GLContext context);
+ extern void glDeleteContext(_THIS, SDL_GLContext context);
+ extern void glUnloadLibrary(_THIS);
++extern void glDestroySurface(window_impl_t *impl);
++extern void glResizeWindow(window_impl_t *impl, int w, int h);
+ 
+ #endif
+--- a/src/video/qnx/video.c
++++ b/src/video/qnx/video.c
+@@ -18,44 +18,114 @@
+      misrepresented as being the original software.
+   3. This notice may not be removed or altered from any source distribution.
+ */
++
+ #include "../../SDL_internal.h"
+ #include "../SDL_sysvideo.h"
++#include "../../events/SDL_keyboard_c.h"
++#include "../../events/SDL_mouse_c.h"
++#include "../../events/SDL_windowevents_c.h"
+ #include "sdl_qnx.h"
++#include <errno.h>
+ 
+ static screen_context_t context;
+ static screen_event_t   event;
++static int              pointer_buttons;    /* last SCREEN_PROPERTY_BUTTONS */
++
++/* The size of the first display, for the desktop mode; 0 if Screen does not
++ * say (then the mode falls back to 1280x800, what the QEMU images run). */
++static void getDisplaySize(int *w, int *h, int *refresh)
++{
++    int count = 0;
++    screen_display_t *displays;
++
++    *w = *h = *refresh = 0;
++    if (screen_get_context_property_iv(context, SCREEN_PROPERTY_DISPLAY_COUNT, &count) < 0 || count < 1) {
++        return;
++    }
++    displays = SDL_calloc(count, sizeof(*displays));
++    if (!displays) {
++        return;
++    }
++    if (screen_get_context_property_pv(context, SCREEN_PROPERTY_DISPLAYS, (void **)displays) == 0) {
++        int size[2] = { 0, 0 };
++        if (screen_get_display_property_iv(displays[0], SCREEN_PROPERTY_SIZE, size) == 0) {
++            *w = size[0];
++            *h = size[1];
++        }
++    }
++    SDL_free(displays);
++}
+ 
+ /**
+  * Initializes the QNX video plugin.
+- * Creates the Screen context and event handles used for all window operations
+- * by the plugin.
++ * Creates the Screen event handle used for all window operations by the
++ * plugin (the context was created by createDevice()), and the one display
++ * with its desktop mode.
+  * @param   _THIS
+  * @return  0 if successful, -1 on error
+  */
+ static int videoInit(_THIS)
+ {
+     SDL_VideoDisplay display;
+-
+-    if (screen_create_context(&context, 0) < 0) {
+-        return -1;
+-    }
++    SDL_DisplayMode mode;
++    int w, h, refresh;
+ 
+     if (screen_create_event(&event) < 0) {
+-        return -1;
++        return SDL_SetError("screen_create_event failed");
+     }
+ 
++    getDisplaySize(&w, &h, &refresh);
++    SDL_zero(mode);
++    mode.format = SDL_PIXELFORMAT_RGB888;
++    mode.w = w > 0 ? w : 1280;
++    mode.h = h > 0 ? h : 800;
++    mode.refresh_rate = refresh > 0 ? refresh : 60;
++
+     SDL_zero(display);
++    display.name = (char *)"QNX Screen";
++    display.desktop_mode = mode;
++    display.current_mode = mode;
+ 
+     if (SDL_AddVideoDisplay(&display, SDL_FALSE) < 0) {
+         return -1;
+     }
+ 
+-    _this->num_displays = 1;
+     return 0;
+ }
+ 
+ static void videoQuit(_THIS)
+ {
++    if (event) {
++        screen_destroy_event(event);
++        event = NULL;
++    }
++}
++
++/* Screen has the one mode the display runs. */
++static void getDisplayModes(_THIS, SDL_VideoDisplay *display)
++{
++    SDL_AddDisplayMode(display, &display->desktop_mode);
++}
++
++static int setDisplayMode(_THIS, SDL_VideoDisplay *display, SDL_DisplayMode *mode)
++{
++    return 0;
++}
++
++static SDL_Window *findWindow(_THIS, screen_window_t sw)
++{
++    SDL_Window *window;
++
++    if (!sw) {
++        return NULL;
++    }
++    for (window = _this->windows; window; window = window->next) {
++        window_impl_t *impl = (window_impl_t *)window->driverdata;
++        if (impl && impl->window == sw) {
++            return window;
++        }
++    }
++    return NULL;
+ }
+ 
+ /**
+@@ -69,61 +139,84 @@
+ {
+     window_impl_t   *impl;
+     int             size[2];
++    int             pos[2];
+     int             numbufs;
+     int             format;
+     int             usage;
++    int             transparency = SCREEN_TRANSPARENCY_NONE;
+ 
+     impl = SDL_calloc(1, sizeof(*impl));
+     if (!impl) {
+-        return -1;
++        return SDL_OutOfMemory();
+     }
++    impl->surface = EGL_NO_SURFACE;
+ 
+     // Create a native window.
+     if (screen_create_window(&impl->window, context) < 0) {
+-        goto fail;
++        SDL_free(impl);
++        return SDL_SetError("screen_create_window failed");
+     }
+ 
+-    // Set the native window's size to match the SDL window.
++    // Set the native window's size and position to match the SDL window.
+     size[0] = window->w;
+     size[1] = window->h;
++    pos[0] = window->x;
++    pos[1] = window->y;
+ 
+-    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SIZE,
+-                                      size) < 0) {
++    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SIZE, size) < 0 ||
++        screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE, size) < 0 ||
++        screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_BUFFER_SIZE, size) < 0) {
++        SDL_SetError("Screen: cannot size the window");
+         goto fail;
+     }
+-
+-    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE,
+-                                      size) < 0) {
+-        goto fail;
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_POSITION, pos);
++    // An alpha channel in the buffer must not make the window see-through.
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_TRANSPARENCY, &transparency);
++    if (window->title) {
++        screen_set_window_property_cv(impl->window, SCREEN_PROPERTY_ID_STRING,
++                                      (int)SDL_strlen(window->title), window->title);
+     }
+ 
+     // Create window buffer(s).
+     if (window->flags & SDL_WINDOW_OPENGL) {
+-        if (glGetConfig(&impl->conf, &format) < 0) {
++        if (glGetConfig(_this, &impl->conf, &format) < 0) {
+             goto fail;
+         }
+         numbufs = 2;
+-
++        impl->is_gl = 1;
+         usage = SCREEN_USAGE_OPENGL_ES2;
+-        if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_USAGE,
+-                                          &usage) < 0) {
+-            return -1;
++        if (_this->gl_config.major_version >= 3) {
++            usage = SCREEN_USAGE_OPENGL_ES3;
+         }
+     } else {
+         format = SCREEN_FORMAT_RGBX8888;
+         numbufs = 1;
++        usage = SCREEN_USAGE_READ | SCREEN_USAGE_WRITE | SCREEN_USAGE_NATIVE;
++    }
++
++    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_USAGE, &usage) < 0) {
++        SDL_SetError("Screen: cannot set the window usage");
++        goto fail;
+     }
+ 
+     // Set pixel format.
+-    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_FORMAT,
+-                                      &format) < 0) {
++    if (screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_FORMAT, &format) < 0) {
++        SDL_SetError("Screen: cannot set the window format");
+         goto fail;
+     }
+ 
+-    // Create buffer(s).
++    // Create buffer(s): for an OpenGL ES window too -- the SDP 8 EGL
++    // renders into the window's buffers and does not allocate them ("can't
++    // create window buffers", EGL_BAD_NATIVE_WINDOW otherwise).
+     if (screen_create_window_buffers(impl->window, numbufs) < 0) {
++        SDL_SetError("screen_create_window_buffers failed (%dx%d, format %d, usage 0x%x, errno %d)",
++                     size[0], size[1], format, usage, errno);
+         goto fail;
+     }
++    if (!impl->is_gl) {
++        impl->buf_size[0] = size[0];
++        impl->buf_size[1] = size[1];
++    }
+ 
+     window->driverdata = impl;
+     return 0;
+@@ -138,8 +231,8 @@
+ }
+ 
+ /**
+- * Gets a pointer to the Screen buffer associated with the given window. Note
+- * that the buffer is actually created in createWindow().
++ * Gets a pointer to the Screen buffer associated with the given window,
++ * (re)allocating it at the window's current size.
+  * @param       _THIS
+  * @param       window  SDL window to get the buffer for
+  * @param[out]  pixles  Holds a pointer to the window's buffer
+@@ -152,22 +245,41 @@
+ {
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+     screen_buffer_t buffer;
++    int             w, h;
++
++    if (impl->is_gl) {
++        return SDL_SetError("Screen: an OpenGL ES window has no software framebuffer");
++    }
++
++    SDL_GetWindowSizeInPixels(window, &w, &h);
++    if (w != impl->buf_size[0] || h != impl->buf_size[1]) {
++        int size[2] = { w, h };
++        screen_destroy_window_buffers(impl->window);
++        screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_BUFFER_SIZE, size);
++        screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE, size);
++        if (screen_create_window_buffers(impl->window, 1) < 0) {
++            impl->buf_size[0] = impl->buf_size[1] = 0;
++            return SDL_SetError("screen_create_window_buffers failed");
++        }
++        impl->buf_size[0] = w;
++        impl->buf_size[1] = h;
++    }
+ 
+     // Get a pointer to the buffer's memory.
+-    if (screen_get_window_property_pv(impl->window, SCREEN_PROPERTY_BUFFERS,
++    if (screen_get_window_property_pv(impl->window, SCREEN_PROPERTY_RENDER_BUFFERS,
+                                       (void **)&buffer) < 0) {
+-        return -1;
++        return SDL_SetError("Screen: no render buffer");
+     }
+ 
+     if (screen_get_buffer_property_pv(buffer, SCREEN_PROPERTY_POINTER,
+                                       pixels) < 0) {
+-        return -1;
++        return SDL_SetError("Screen: the buffer cannot be mapped");
+     }
+ 
+     // Set format and pitch.
+     if (screen_get_buffer_property_iv(buffer, SCREEN_PROPERTY_STRIDE,
+                                       pitch) < 0) {
+-        return -1;
++        return SDL_SetError("Screen: no buffer stride");
+     }
+ 
+     *format = SDL_PIXELFORMAT_RGB888;
+@@ -188,16 +300,97 @@
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+     screen_buffer_t buffer;
+ 
+-    if (screen_get_window_property_pv(impl->window, SCREEN_PROPERTY_BUFFERS,
++    if (screen_get_window_property_pv(impl->window, SCREEN_PROPERTY_RENDER_BUFFERS,
+                                       (void **)&buffer) < 0) {
+-        return -1;
++        return SDL_SetError("Screen: no render buffer");
+     }
+ 
++    // SDL_Rect is {x, y, w, h}, the layout of Screen's dirty rectangles.
+     screen_post_window(impl->window, buffer, numrects, (int *)rects, 0);
+     screen_flush_context(context, 0);
+     return 0;
+ }
+ 
++static void destroyWindowFramebuffer(_THIS, SDL_Window *window)
++{
++    /* The buffer belongs to the window; createWindowFramebuffer() resizes it. */
++}
++
++static void handlePointerEvent(_THIS, screen_event_t ev, int touch_type)
++{
++    screen_window_t sw = NULL;
++    SDL_Window      *window;
++    int             pos[2] = { 0, 0 };
++    int             buttons = 0, wheel = 0, hwheel = 0;
++    int             changed, i;
++    static const struct { int bit; Uint8 sdl; } map[] = {
++        { SCREEN_LEFT_MOUSE_BUTTON, SDL_BUTTON_LEFT },
++        { SCREEN_MIDDLE_MOUSE_BUTTON, SDL_BUTTON_MIDDLE },
++        { SCREEN_RIGHT_MOUSE_BUTTON, SDL_BUTTON_RIGHT },
++    };
++
++    screen_get_event_property_pv(ev, SCREEN_PROPERTY_WINDOW, (void **)&sw);
++    window = findWindow(_this, sw);
++    if (!window) {
++        return;
++    }
++    screen_get_event_property_iv(ev, SCREEN_PROPERTY_SOURCE_POSITION, pos);
++
++    if (touch_type) {
++        /* A touch is a left button held down while it moves. */
++        buttons = (touch_type == SCREEN_EVENT_MTOUCH_RELEASE) ? 0 : SCREEN_LEFT_MOUSE_BUTTON;
++    } else {
++        screen_get_event_property_iv(ev, SCREEN_PROPERTY_BUTTONS, &buttons);
++        screen_get_event_property_iv(ev, SCREEN_PROPERTY_MOUSE_WHEEL, &wheel);
++        screen_get_event_property_iv(ev, SCREEN_PROPERTY_MOUSE_HORIZONTAL_WHEEL, &hwheel);
++    }
++
++    if (SDL_GetMouseFocus() != window) {
++        SDL_SetMouseFocus(window);
++    }
++    SDL_SendMouseMotion(window, 0, 0, pos[0], pos[1]);
++
++    changed = buttons ^ pointer_buttons;
++    for (i = 0; i < (int)SDL_arraysize(map); i++) {
++        if (changed & map[i].bit) {
++            SDL_SendMouseButton(window, 0, (buttons & map[i].bit) ? SDL_PRESSED : SDL_RELEASED, map[i].sdl);
++        }
++    }
++    pointer_buttons = buttons;
++
++    if (wheel || hwheel) {
++        /* Screen counts wheel steps away from the user as negative. */
++        SDL_SendMouseWheel(window, 0, (float)hwheel, (float)-wheel, SDL_MOUSEWHEEL_NORMAL);
++    }
++}
++
++static void handlePropertyEvent(_THIS, screen_event_t ev)
++{
++    int             name = 0, focus = 0;
++    screen_window_t sw = NULL;
++    SDL_Window      *window;
++
++    if (screen_get_event_property_iv(ev, SCREEN_PROPERTY_NAME, &name) < 0 ||
++        name != SCREEN_PROPERTY_FOCUS) {
++        return;
++    }
++    if (screen_get_event_property_pv(ev, SCREEN_PROPERTY_WINDOW, (void **)&sw) < 0) {
++        return;
++    }
++    window = findWindow(_this, sw);
++    if (!window) {
++        return;
++    }
++    if (screen_get_window_property_iv(sw, SCREEN_PROPERTY_FOCUS, &focus) < 0) {
++        return;
++    }
++    if (focus) {
++        SDL_SetKeyboardFocus(window);
++    } else if (SDL_GetKeyboardFocus() == window) {
++        SDL_SetKeyboardFocus(NULL);
++    }
++}
++
+ /**
+  * Runs the main event loop.
+  * @param   _THIS
+@@ -225,12 +418,48 @@
+             handleKeyboardEvent(event);
+             break;
+ 
++        case SCREEN_EVENT_POINTER:
++            handlePointerEvent(_this, event, 0);
++            break;
++
++        case SCREEN_EVENT_MTOUCH_TOUCH:
++        case SCREEN_EVENT_MTOUCH_MOVE:
++        case SCREEN_EVENT_MTOUCH_RELEASE:
++            handlePointerEvent(_this, event, type);
++            break;
++
++        case SCREEN_EVENT_PROPERTY:
++            handlePropertyEvent(_this, event);
++            break;
++
++        case SCREEN_EVENT_CLOSE: {
++            screen_window_t sw = NULL;
++            SDL_Window *window;
++            screen_get_event_property_pv(event, SCREEN_PROPERTY_WINDOW, (void **)&sw);
++            window = findWindow(_this, sw);
++            if (window) {
++                SDL_SendWindowEvent(window, SDL_WINDOWEVENT_CLOSE, 0, 0);
++            }
++            break;
++        }
++
+         default:
+             break;
+         }
+     }
+ }
+ 
++static void resizeNative(window_impl_t *impl, int w, int h)
++{
++    int size[2] = { w, h };
++
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SIZE, size);
++    if (impl->is_gl) {
++        glResizeWindow(impl, w, h);
++    }
++    /* A software buffer is reallocated by createWindowFramebuffer(). */
++}
++
+ /**
+  * Updates the size of the native window using the geometry of the SDL window.
+  * @param   _THIS
+@@ -238,15 +467,49 @@
+  */
+ static void setWindowSize(_THIS, SDL_Window *window)
+ {
++    resizeNative((window_impl_t *)window->driverdata, window->w, window->h);
++}
++
++static void setWindowPosition(_THIS, SDL_Window *window)
++{
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+-    int             size[2];
++    int             pos[2] = { window->x, window->y };
+ 
+-    size[0] = window->w;
+-    size[1] = window->h;
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_POSITION, pos);
++}
+ 
+-    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SIZE, size);
+-    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_SOURCE_SIZE,
+-                                  size);
++static void setWindowTitle(_THIS, SDL_Window *window)
++{
++    window_impl_t   *impl = (window_impl_t *)window->driverdata;
++
++    if (window->title) {
++        screen_set_window_property_cv(impl->window, SCREEN_PROPERTY_ID_STRING,
++                                      (int)SDL_strlen(window->title), window->title);
++    }
++}
++
++/**
++ * Covers the display (fullscreen) or goes back to the windowed geometry.
++ */
++static void setWindowFullscreen(_THIS, SDL_Window *window, SDL_VideoDisplay *display, SDL_bool fullscreen)
++{
++    window_impl_t   *impl = (window_impl_t *)window->driverdata;
++    int             pos[2], w, h;
++
++    if (fullscreen) {
++        pos[0] = pos[1] = 0;
++        w = display->current_mode.w;
++        h = display->current_mode.h;
++    } else {
++        pos[0] = window->windowed.x;
++        pos[1] = window->windowed.y;
++        w = window->windowed.w;
++        h = window->windowed.h;
++    }
++    screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_POSITION, pos);
++    resizeNative(impl, w, h);
++    SDL_SendWindowEvent(window, SDL_WINDOWEVENT_MOVED, pos[0], pos[1]);
++    SDL_SendWindowEvent(window, SDL_WINDOWEVENT_RESIZED, w, h);
+ }
+ 
+ /**
+@@ -261,6 +524,10 @@
+ 
+     screen_set_window_property_iv(impl->window, SCREEN_PROPERTY_VISIBLE,
+                                   &visible);
++    /* Screen gives a new window the input focus; it says so with a property
++     * event only on later changes. */
++    SDL_SetKeyboardFocus(window);
++    SDL_SetMouseFocus(window);
+ }
+ 
+ /**
+@@ -287,7 +554,9 @@
+     window_impl_t   *impl = (window_impl_t *)window->driverdata;
+ 
+     if (impl) {
++        glDestroySurface(impl);
+         screen_destroy_window(impl->window);
++        SDL_free(impl);
+         window->driverdata = NULL;
+     }
+ }
+@@ -298,30 +567,49 @@
+  */
+ static void deleteDevice(SDL_VideoDevice *device)
+ {
++    if (context) {
++        screen_destroy_context(context);
++        context = NULL;
++    }
+     SDL_free(device);
+ }
+ 
+ /**
+- * Creates the QNX video plugin used by SDL.
+- * @param   devindex    Unused
++ * Creates the QNX video plugin used by SDL. Without a running Screen (a
++ * headless target) there is no context to create: report the driver as
++ * unavailable so that SDL tries the next one.
+  * @return  Initialized device if successful, NULL otherwise
+  */
+-static SDL_VideoDevice *createDevice(int devindex)
++static SDL_VideoDevice *createDevice(void)
+ {
+     SDL_VideoDevice *device;
+ 
++    if (screen_create_context(&context, SCREEN_APPLICATION_CONTEXT) < 0) {
++        context = NULL;
++        return NULL;
++    }
++
+     device = (SDL_VideoDevice *)SDL_calloc(1, sizeof(SDL_VideoDevice));
+     if (!device) {
++        screen_destroy_context(context);
++        context = NULL;
++        SDL_OutOfMemory();
+         return NULL;
+     }
+ 
+     device->driverdata = NULL;
+     device->VideoInit = videoInit;
+     device->VideoQuit = videoQuit;
++    device->GetDisplayModes = getDisplayModes;
++    device->SetDisplayMode = setDisplayMode;
+     device->CreateSDLWindow = createWindow;
+     device->CreateWindowFramebuffer = createWindowFramebuffer;
+     device->UpdateWindowFramebuffer = updateWindowFramebuffer;
++    device->DestroyWindowFramebuffer = destroyWindowFramebuffer;
+     device->SetWindowSize = setWindowSize;
++    device->SetWindowPosition = setWindowPosition;
++    device->SetWindowTitle = setWindowTitle;
++    device->SetWindowFullscreen = setWindowFullscreen;
+     device->ShowWindow = showWindow;
+     device->HideWindow = hideWindow;
+     device->PumpEvents = pumpEvents;
+@@ -331,6 +619,7 @@
+     device->GL_GetProcAddress = glGetProcAddress;
+     device->GL_CreateContext = glCreateContext;
+     device->GL_SetSwapInterval = glSetSwapInterval;
++    device->GL_GetSwapInterval = glGetSwapInterval;
+     device->GL_SwapWindow = glSwapWindow;
+     device->GL_MakeCurrent = glMakeCurrent;
+     device->GL_DeleteContext = glDeleteContext;

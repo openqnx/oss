@@ -132,6 +132,7 @@ PC
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
+- QNX's Wayland EGL (/system/lib/libEGL.so.1 on graphics images) dlopen()s the unversioned names libwayland-client.so and libwayland-server.so (implib-gen shims; it never asks for libwayland-egl). Those are the -dev links, so without wayland-dev every EGL-on-Wayland client (GTK 4, wlroots) failed: "Failed to load wayland client shared object: libwayland-client.so". The runtime package keeps these two links (qnxpkg: RUNTIME_SOLINKS). Links, not copies: QNX's loader maps a symlinked name onto the object already loaded, while a copy under the unversioned name is loaded a second time (other wl_*_interface addresses; checked with dlopen/dlsym on the x86_64 VM).
 - wayland-scanner has to run on the build machine to turn the XML protocol definitions into C; hosttools/ supplies a native one.
 - -Dscanner=false means no wayland-scanner.pc is installed either, and packages ask for the scanner through pkg-config by name -- libxfce4windowing's configure stops at "dependencies missing: wayland-scanner >= 1.20". Publish a .pc in the staging tree that points at the native scanner in hosttools/, which is the one that must actually run.
 
@@ -233,9 +234,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wayland 1.23.1-r0 | ❌ FAIL | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wayland 1.24.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/wayland-1.24.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | wayland 1.24.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/wayland-1.24.0-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland 1.23.1-r0 | ❌ FAIL | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland 1.24.0-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/wayland-1.24.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | wayland 1.24.0-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/wayland-1.24.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -249,6 +252,16 @@ This recipe builds **1.24.0**. Kept from earlier: `1.23.1` ([recipe and patches]
 VERSION=1.24.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.24.0
 DEPS="libffi expat libxml2"
 BUILDSYS=meson
+# QNX's Wayland EGL (/system/lib/libEGL.so.1 on graphics images) dlopen()s the
+# unversioned names libwayland-client.so and libwayland-server.so (implib-gen
+# shims; it never asks for libwayland-egl). Those are the -dev links, so
+# without wayland-dev every EGL-on-Wayland client (GTK 4, wlroots) failed:
+# "Failed to load wayland client shared object: libwayland-client.so". The
+# runtime package keeps these two links (qnxpkg: RUNTIME_SOLINKS). Links, not
+# copies: QNX's loader maps a symlinked name onto the object already loaded,
+# while a copy under the unversioned name is loaded a second time (other
+# wl_*_interface addresses; checked with dlopen/dlsym on the x86_64 VM).
+RUNTIME_SOLINKS="libwayland-client.so libwayland-server.so"
 # wayland-scanner has to run on the build machine to turn the XML protocol
 # definitions into C; hosttools/ supplies a native one.
 MESON_ARGS_EXTRA=( -Dtests=false -Ddocumentation=false -Ddtd_validation=true

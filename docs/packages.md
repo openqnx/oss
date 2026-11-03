@@ -107,7 +107,11 @@ ones link `libasound.so.5`. They are part of QNX, not of these packages. A trimm
 default list, for one) fails every program at load with `Could not load
 library libeventfd.so.1`; add them to the image from your SDP
 (`target/qnx/<arch>/usr/lib`) — for mkqnximage, with
-[`tests/vm/system_files.custom`](../tests/vm/system_files.custom).
+[`tests/vm/system_files.custom`](../tests/vm/system_files.custom). The
+graphics stack (labwc / wlroots on QNX Screen) also needs the SDP's
+`usr/lib/dri_gbm.so`, which `libgbm.so.1` opens at run time ("Can't open 'dri'
+library!" without it); mkqnximage images lack it, `scripts/target-bootstrap`
+copies it.
 
 ```sh
 # copy it to the board once (from the host: scp target/oss-get root@<target>:/data/)
@@ -222,6 +226,38 @@ package needs it. A `-dev` package holds headers, pkg-config/CMake files and
 static libraries only (a header-only component has nothing else: just
 `<name>-dev`); remove it before the package it belongs to. Empty directories
 stay. [INSTALL.md](../INSTALL.md) walks through all of it with zstd and curl.
+
+### After installing: GSettings schemas and the MIME database
+
+Programs that use GSettings (mate-calc, epiphany, Thunar, the GTK file
+chooser) fail with "No GSettings schemas are installed" until the schemas in
+`/usr/local/share/glib-2.0/schemas` are compiled. **apk** does it by itself:
+glib's package carries an apk trigger on that directory, so every `apk add`,
+`apk upgrade` or `apk del` that changes it runs `glib-compile-schemas`
+("Executing glib-<ver>.trigger"). The trigger runs with apk's
+`--force-no-chroot`, which the `/data/oss/bin/apk` wrapper of a current
+`apk-setup` passes; on a target set up earlier, run `apk-setup` again or add
+`--force-no-chroot` after `--root /data/oss` in that wrapper (without it the
+trigger fails: the root has no `/bin/sh` to chroot into, and `apk` reports
+"1 error"; `apk fix glib` reruns it). With **oss-get** or **by hand**, run
+this once after installing or removing a package that ships a
+`*.gschema.xml`:
+
+```sh
+glib-compile-schemas /usr/local/share/glib-2.0/schemas
+```
+
+The MIME database works the same way: shared-mime-info's apk trigger on
+`/usr/local/share/mime/packages` runs `update-mime-database` (gthumb, Thunar
+and GIO's content types need it). With oss-get or by hand, after installing
+or removing a package that ships `share/mime/packages/*.xml`:
+
+```sh
+update-mime-database /usr/local/share/mime
+```
+
+(`/data/oss/usr/local/...` without the `/usr/local` link; `eval $(oss-get env)`
+first so the loader finds libglib.) See also docs/porting-hazards.md #161.
 
 ## Building packages
 

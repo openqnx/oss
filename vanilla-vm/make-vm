@@ -7,7 +7,7 @@
 #   --graphics    the image with graphics (mkqnximage --graphics=yes: QNX
 #                 Screen on QEMU's virtio GPU, keyboard and mouse through
 #                 io-hid), shown in a QEMU window on this desktop; its own
-#                 VM directory (~/vm/oss-desktop-<arch>), 4G RAM. QEMU's QMP
+#                 VM directory (lab/vm/oss-desktop-<arch>), 4G RAM. QEMU's QMP
 #                 socket <dir>/qmp.sock takes screenshots (vanilla-vm/screenshot).
 #   --data-size   /data in MB (default 4000; ~16000 for run-all --together)
 #   --ram         default 2G       --cpu   default 4
@@ -15,7 +15,7 @@
 #
 # The image is mkqnximage's standard one -- nothing from this repository is
 # put in it; run-all installs everything afterwards with apk, like on any
-# other target. VM directory: ~/vm/oss-vanilla-<arch> (VM_ROOT to change).
+# other target. VM directory: lab/vm/oss-vanilla-<arch> in this workspace (VM_ROOT to change).
 # Already running: just prints its address.
 set -eo pipefail
 . "$(dirname "$0")/common.sh"

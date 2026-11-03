@@ -1,15 +1,14 @@
 # quake3 1.36_git20261012-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-11-01T13:44:47Z   packages from: apk:local-dists
+# date: 2026-11-03T11:59:40Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u quake3 qnx-test-quake3 qnx-port-tests
-(1/3) Installing sdl2 (2.32.10-r0)
-(2/3) Installing quake3 (1.36_git20261012-r1)
-(3/3) Installing qnx-test-quake3 (1.0-r1)
-OK: 132 MiB in 42 packages
+(1/2) Installing quake3 (1.36_git20261012-r1)
+(2/2) Installing qnx-test-quake3 (1.0-r1)
+OK: 307.9 MiB in 97 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_quake3
      == quake3 ==

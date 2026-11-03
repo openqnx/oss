@@ -1,0 +1,29 @@
+# libepoxy 1.5.10-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-03T12:00:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libepoxy qnx-test-libepoxy qnx-port-tests
+(1/2) Upgrading libepoxy (1.5.10-r0 -> 1.5.10-r1)
+(2/2) Installing qnx-test-libepoxy (1.0-r7)
+OK: 301.1 MiB in 96 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libepoxy
+     == libepoxy ==
+       ok   finds a trailing extension
+       ok   finds a middle extension
+       ok   finds a leading extension
+       ok   rejects a prefix of a present name
+       ok   rejects an absent extension
+       ok   rejects against an empty list
+       info libepoxy loads libGLESv2.so.1
+       ok   epoxy asks for QNX's libGLESv2.so.1
+       ok   that library loads on this target
+     PASS libepoxy
+PASS test_libepoxy
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

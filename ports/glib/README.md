@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.82.4`) |
 | Build system | Meson |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`gettext`](../gettext/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,11 +87,12 @@ git clone --depth 1 -b 2.82.4 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/glib < ports/glib/patches/0001-qnx-fstab-mount-points.patch
 patch -p1 -d src/glib < ports/glib/patches/0002-qnx-credentials-cmsgcred.patch
+patch -p1 -d src/glib < ports/glib/patches/0003-qnx-inotify-spurious-wakeup-unmount.patch
 ```
 
 **[`0001-qnx-fstab-mount-points.patch`](patches/0001-qnx-fstab-mount-points.patch)** — GIO: use the fstab code for mount points on QNX.
@@ -106,6 +107,32 @@ Touches: `gio/gunixmounts.c` · Upstream status: QNX-specific
 **[`0002-qnx-credentials-cmsgcred.patch`](patches/0002-qnx-credentials-cmsgcred.patch)** — QNX: GCredentials via SCM_CREDS/struct cmsgcred, as on FreeBSD (GDBus EXTERNAL)
 
 Touches: `gio/gcredentialsprivate.h` · Upstream status: QNX-specific
+
+**[`0003-qnx-inotify-spurious-wakeup-unmount.patch`](patches/0003-qnx-inotify-spurious-wakeup-unmount.patch)** — QNX: inotify backend: tolerate spurious POLLIN on fork/dup close; drop IN_UNMOUNT from the watch mask
+
+> Two defects of the inotify file-monitor backend on QNX's inotify emulation
+> (libfsnotify over /dev/fsnotify, served by fsevmgr):
+>
+> 1. poll() on an inotify fd reports POLLIN with nothing to read (read() gives
+>    EAGAIN) when another descriptor for the same open -- a dup(), or the copy
+>    a fork()ed child inherits and closes at exec or exit -- is closed while the
+>    poll is armed. GLib's worker thread polls the fd; any g_spawn (fork+exec)
+>    in the program wakes it, ik_source_dispatch() reads 0 bytes while not in
+>    its "bored" state and aborted on g_assert (iks->is_bored): xfce4-panel,
+>    epiphany and at-spi-bus-launcher died. Treat it as a spurious wakeup: keep
+>    polling the fd (the existing code path for an empty read does that).
+>
+> 2. inotify_add_watch() rejects IN_UNMOUNT in the mask with EINVAL. GLib puts
+>    it in every directory watch (file monitors watch the parent directory), so
+>    no watch was ever added and no GFileMonitor event ever arrived; the
+>    "missing" list retried every 4 s. IN_UNMOUNT is output-only (Linux reports
+>    it unasked); leave it out on QNX.
+>
+> The backend is kept (rather than building GIO without inotify and falling
+> back to the poll monitor) because with these two fixes it works: events
+> arrive at once, moves are paired by cookie (docs/porting-hazards.md #160).
+
+Touches: `gio/inotify/inotify-kernel.c`, `gio/inotify/inotify-path.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -150,6 +177,10 @@ meson setup build/$QNX_ARCH/glib src/glib \
 ninja -C build/$QNX_ARCH/glib
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/glib install
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- apk: compile the GSettings schemas whenever a package changes this directory (ports/glib/apk.trigger; manual installs: docs/packages.md)
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glib`.
 
@@ -252,6 +283,11 @@ PASS glib
    - g_file_new_for_path
    - /tmp is reported as a directory
    - g_file_test
+   - g_dir_make_tmp
+   - g_file_monitor_directory
+   - monitor: file created
+   - monitor: rename paired as RENAMED
+   - monitor: file deleted
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
@@ -260,9 +296,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/glib-2.82.4-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/glib-2.82.4-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r3 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/glib-2.82.4-r3.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/glib-2.82.4-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/glib-2.82.4-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | glib 2.82.4-r3 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/glib-2.82.4-r3.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -275,6 +313,9 @@ This recipe builds **2.82.4**. Every version stays available: packages in `dists
 ```bash
 VERSION=2.82.4; GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.82.4
 DEPS="libffi pcre2 gettext zlib"
+# apk: compile the GSettings schemas whenever a package changes this directory
+# (ports/glib/apk.trigger; manual installs: docs/packages.md)
+APK_TRIGGERS="/usr/local/share/glib-2.0/schemas"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=(
   -Dtests=false

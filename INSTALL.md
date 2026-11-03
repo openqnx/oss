@@ -39,7 +39,8 @@ host$ ssh root@$T 'mkdir -p /data/oss-setup /data/oss/qnx-runtime/lib'
 host$ scp /etc/ssl/certs/ca-certificates.crt root@$T:/data/oss-setup/cacert.pem
 # QNX's own run-time libraries that the image does not carry (from your SDP)
 host$ for l in libeventfd.so.1 libepoll.so.1 libsignalfd.so.1 libtimerfd.so.1 libasound.so.5 \
-               libscreen.so.1 libEGL.so.1 libGLESv2.so.1 libbacktrace.so.1 libdrm.so.1 libdrm.so.2 libgbm.so.1 libnetmap.so.1; do
+               libscreen.so.1 libEGL.so.1 libGLESv2.so.1 libbacktrace.so.1 libdrm.so.1 libdrm.so.2 libgbm.so.1 libnetmap.so.1 \
+               dri_gbm.so; do
         f=$(ls ~/qnx800/target/qnx/x86_64/usr/lib/$l ~/qnx800/target/qnx/x86_64/lib/$l 2>/dev/null | head -n 1)
         [ -n "$f" ] && scp "$f" root@$T:/data/oss/qnx-runtime/lib/
       done
@@ -89,9 +90,9 @@ qnx# echo "$GH/tests-8.0-$A-m-z/APKINDEX.tar.gz" >> /data/oss/etc/apk/repositori
 qnx# curl -fsSL -o /data/oss/etc/apk/keys/openqnx-oss-20261029.rsa.pub \
        https://raw.githubusercontent.com/openqnx/oss/main/keys/openqnx-oss-20261029.rsa.pub
 qnx# LD_LIBRARY_PATH=root/usr/local/lib:$LD_LIBRARY_PATH \
-       root/usr/local/bin/apk --root /data/oss --initdb add apk-tools ca-certificates
+       root/usr/local/bin/apk --root /data/oss --force-no-chroot --initdb add apk-tools ca-certificates
 qnx# cd / && rm -rf /data/boot
-qnx# alias apk='apk --root /data/oss'; export SSL_CERT_FILE=/usr/local/ssl/cert.pem
+qnx# alias apk='apk --root /data/oss --force-no-chroot'; export SSL_CERT_FILE=/usr/local/ssl/cert.pem
 ```
 
 (`target/apk-setup` in this repository does the same in one command.) apk
@@ -240,6 +241,7 @@ same way, before the package it belongs to.
 | Problem | Fix |
 |---|---|
 | `curl: (60) SSL certificate problem` | `export SSL_CERT_FILE=...` (step 1) |
+| `apk add` says "1 error", `….trigger: exited with error 127` | a target set up before 2026-11-03: its apk lacks `--force-no-chroot` (glib and shared-mime-info now compile schemas and the MIME database with apk triggers). Run `apk-setup` again, or `sed -i 's#--root /data/oss#--root /data/oss --force-no-chroot#' /data/oss/bin/apk; apk fix` |
 | `... .so.1 not found` | the QNX run-time libraries (step 1), and `LD_LIBRARY_PATH` |
 | a program cannot find its data | `/usr/local` must point to `/data/oss/usr/local` |
 | `No space left on device` | `apk del` what you tested, or make `/data` larger (`--data-size`) |

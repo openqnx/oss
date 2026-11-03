@@ -2,15 +2,15 @@
 
 > Simple DirectMedia Layer 2, cross-platform multimedia and input library
 
-**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
 | Upstream | https://github.com/libsdl-org/SDL.git (tag `release-2.32.10`) |
 | Build system | CMake |
-| QNX patches | 1 |
-| Build dependencies | [`wayland`](../wayland/) [`libxkbcommon`](../libxkbcommon/) |
-| Run-time dependencies | none (QNX SDP only) |
+| QNX patches | 2 |
+| Build dependencies | [`libiconv`](../libiconv/) |
+| Run-time dependencies | [`libiconv`](../libiconv/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_sdl2`](../../tests/src/) |
 
@@ -67,16 +67,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (18 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild wayland libxkbcommon
+./scripts/qnxbuild libiconv
 ```
-
-<details><summary>Full build chain (18)</summary>
-
-[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
-</details>
 
 ### 2. Get the upstream source
 
@@ -87,10 +82,11 @@ git clone --depth 1 -b release-2.32.10 --recurse-submodules --shallow-submodules
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/sdl2 < ports/sdl2/patches/0001-qnx8-use-alsa-not-qsa.patch
+patch -p1 -d src/sdl2 < ports/sdl2/patches/0002-qnx-screen-video-driver.patch
 ```
 
 **[`0001-qnx8-use-alsa-not-qsa.patch`](patches/0001-qnx8-use-alsa-not-qsa.patch)** — SDL2: use the ALSA backend on QNX 8.0.
@@ -100,6 +96,33 @@ patch -p1 -d src/sdl2 < ports/sdl2/patches/0001-qnx8-use-alsa-not-qsa.patch
 > uses; keep QSA behind QNX_USE_QSA_AUDIO.
 
 Touches: `CMakeLists.txt` · Upstream status: QNX-specific
+
+**[`0002-qnx-screen-video-driver.patch`](patches/0002-qnx-screen-video-driver.patch)** — SDL2: make the QNX Screen video driver usable on QNX 8.0
+
+> SDL's QNX Screen driver (src/video/qnx, contributed by BlackBerry in 2017)
+> compiles on QNX 8.0 but cannot carry an application: no display mode
+> (SDL_GetDesktopDisplayMode() is 0x0, so fullscreen and SDL_GetClosestDisplayMode
+> fail), keyboard events only (no pointer, close or focus), letters missing from
+> the key map and no text input, a software buffer that never follows a
+> resize, and an OpenGL ES path the SDP 8 EGL rejects: it creates the window
+> in a format derived from bit depths (EGL wants the config's native visual,
+> else "can't create window buffers", EGL_BAD_NATIVE_WINDOW), takes the first
+> config (on virgl a 10-bit RGBX1010102 one Screen cannot allocate, ENOTSUP),
+> ignores SDL_GL_SetAttribute(), and resolves core GLES entry points through
+> eglGetProcAddress() only. It also always creates a Screen context, so a
+> headless target got an init failure instead of the next driver.
+>
+> This makes it a working driver: the context is probed in createDevice (no
+> Screen: SDL moves on); one display with the size Screen reports (desktop
+> mode, display modes, fullscreen windows); pointer, touch, wheel, close and
+> focus events; key caps for all PC keys plus text input from the symbol;
+> window position, title (ID string), resize of software and GLES buffers
+> (EGL surface rebuilt); EGL configs chosen with the GL attributes, 8 bits per
+> channel first, in their native visual; GLES 1/2/3 contexts by the requested
+> version, shared contexts, desktop GL refused (ES only); libGLESv2.so.1 opened
+> for the core functions; errors reported through SDL_SetError.
+
+Touches: `src/video/qnx/gl.c`, `src/video/qnx/keyboard.c`, `src/video/qnx/sdl_qnx.h`, `src/video/qnx/video.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -112,12 +135,11 @@ cmake -S src/sdl2 -B build/$QNX_ARCH/sdl2 -G Ninja \
       -DSDL_STATIC=OFF \
       -DSDL_TEST=OFF \
       -DSDL_X11=OFF \
-      -DSDL_WAYLAND=ON \
-      -DSDL_WAYLAND_SHARED=OFF \
+      -DSDL_WAYLAND=OFF \
       -DSDL_KMSDRM=OFF \
       -DSDL_RPI=OFF \
       -DSDL_OPENGL=OFF \
-      -DSDL_OPENGLES=OFF \
+      -DSDL_OPENGLES=ON \
       -DSDL_VULKAN=OFF \
       -DSDL_PULSEAUDIO=OFF \
       -DSDL_ALSA=ON \
@@ -135,6 +157,8 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/sdl2
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - sdl2-compat installs the same libSDL2-2.0 and headers: install one or the other.
+- SDL_iconv links the libiconv built here (libiconv.so.2).
+- Video: SDL's QNX Screen driver ("qnx"), with OpenGL ES 2 through the SDP's EGL/GLESv2 -- the way the SDP's own gles2-gears draws, on Screen directly, with or without a Wayland compositor running. CheckQNXScreen needs EGL (SDL_OPENGLES=ON finds the SDP's <EGL/egl.h>, <GLES2/gl2.h>); libSDL2 links libscreen.so.1 and libEGL.so.1 and loads libGLESv2.so.1 at run time (QNX OS libraries: the screen images have them in /system/lib, target-bootstrap copies them to the vanilla ones). Patch 0002 makes the 2017 driver usable (display mode, pointer/close/focus events, more keys and text input, resizable framebuffers, GLES entry points). Wayland stays off: SDL2's Wayland driver presents only through EGL on the wl_display, which the SDP's Screen-only EGL cannot do, and Mesa's EGL is renamed and kept out of library paths (ports/mesa/README.md); built, it would be picked first under labwc and fail at window creation. SDL_VIDEODRIVER=offscreen|dummy for headless use; with no Screen running the qnx driver steps aside.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sdl2`.
 
@@ -223,6 +247,7 @@ PASS sdl2
    - SDL_Swap32
    - SDL_GetCPUCount
    - at least one video driver is compiled in
+   - the QNX Screen video driver (\"qnx\") is built
    - at least one audio driver is compiled in
    - the ALSA backend is built (QNX 8 ships alsa-lib, not QSA)
 
@@ -233,9 +258,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64 virt, vanilla mkqnximage image | apk:local-dists | sdl2 2.32.10-r0 | ✅ PASS | 2026-10-30 | [log](../../tests/logs/aarch64le/sdl2-2.32.10-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sdl2 2.32.10-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/sdl2-2.32.10-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sdl2 2.32.10-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/sdl2-2.32.10-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sdl2 2.32.10-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/sdl2-2.32.10-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sdl2 2.32.10-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/sdl2-2.32.10-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -249,10 +276,25 @@ This recipe builds **2.32.10**. Every version stays available: packages in `dist
 VERSION=2.32.10; GIT=https://github.com/libsdl-org/SDL.git; REF=release-2.32.10
 # sdl2-compat installs the same libSDL2-2.0 and headers: install one or the other.
 CONFLICTS="sdl2-compat"
-DEPS="wayland libxkbcommon"
+# SDL_iconv links the libiconv built here (libiconv.so.2).
+DEPS="libiconv"
+# Video: SDL's QNX Screen driver ("qnx"), with OpenGL ES 2 through the SDP's
+# EGL/GLESv2 -- the way the SDP's own gles2-gears draws, on Screen directly,
+# with or without a Wayland compositor running. CheckQNXScreen needs EGL
+# (SDL_OPENGLES=ON finds the SDP's <EGL/egl.h>, <GLES2/gl2.h>); libSDL2 links
+# libscreen.so.1 and libEGL.so.1 and loads libGLESv2.so.1 at run time (QNX
+# OS libraries: the screen images have them in /system/lib, target-bootstrap
+# copies them to the vanilla ones). Patch 0002 makes the 2017 driver usable
+# (display mode, pointer/close/focus events, more keys and text input,
+# resizable framebuffers, GLES entry points). Wayland stays off: SDL2's
+# Wayland driver presents only through EGL on the wl_display, which the SDP's
+# Screen-only EGL cannot do, and Mesa's EGL is renamed and kept out of
+# library paths (ports/mesa/README.md); built, it would be picked first under
+# labwc and fail at window creation. SDL_VIDEODRIVER=offscreen|dummy for
+# headless use; with no Screen running the qnx driver steps aside.
 CMAKE_ARGS_EXTRA=( -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_TEST=OFF
-                   -DSDL_X11=OFF -DSDL_WAYLAND=ON -DSDL_WAYLAND_SHARED=OFF
-                   -DSDL_KMSDRM=OFF -DSDL_RPI=OFF -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF
+                   -DSDL_X11=OFF -DSDL_WAYLAND=OFF
+                   -DSDL_KMSDRM=OFF -DSDL_RPI=OFF -DSDL_OPENGL=OFF -DSDL_OPENGLES=ON
                    -DSDL_VULKAN=OFF -DSDL_PULSEAUDIO=OFF -DSDL_ALSA=ON -DSDL_ALSA_SHARED=OFF
                    -DSDL_JACK=OFF -DSDL_PIPEWIRE=OFF -DSDL_SNDIO=OFF
                    -DSDL_LIBUDEV=OFF -DSDL_DBUS=OFF -DSDL_IBUS=OFF )

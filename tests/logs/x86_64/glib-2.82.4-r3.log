@@ -1,0 +1,44 @@
+# glib 2.82.4-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-03T11:59:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u glib qnx-test-glib qnx-port-tests
+(1/1) Upgrading qnx-test-glib (1.0-r6 -> 1.0-r7)
+OK: 224.2 MiB in 75 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glib
+     == glib ==
+       info glib 2.82.4
+       ok   GLib 2.x
+       ok   default main context
+       ok   idle source ran
+       ok   timeout source ran and quit the loop
+       ok   g_thread_new
+       ok   thread returned its value
+       ok   thread ran
+       ok   g_object_new
+       ok   G_IS_OBJECT
+       ok   g_type_from_name
+       ok   g_utf8_strup
+       ok   GString formatting
+       ok   GHashTable insert
+       ok   GHashTable lookup
+       ok   g_file_new_for_path
+       ok   /tmp is reported as a directory
+       ok   g_file_test
+       ok   g_dir_make_tmp
+       ok   g_file_monitor_directory
+       info monitor GInotifyFileMonitor
+       info events created=1 renamed=2 deleted=1
+       ok   monitor: file created
+       ok   monitor: rename paired as RENAMED
+       ok   monitor: file deleted
+     PASS glib
+PASS test_glib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

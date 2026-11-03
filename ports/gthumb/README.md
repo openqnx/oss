@@ -156,6 +156,7 @@ DESTDIR=$STAGE ninja -C build/$QNX_ARCH/gthumb install
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - gThumb image viewer and organiser. Version as in the QNX Everywhere 8.0.4r1 image.
+- The org.gnome.desktop.{background,interface,privacy,thumbnailers} schemas it opens with g_settings_new(), which aborts when a schema is not installed; and the MIME database: gthumb lists a file by its content type, and without shared-mime-info every file is application/octet-stream ("No file").
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gthumb`.
 
@@ -241,8 +242,12 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/gthumb-3.12.8.2-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/gthumb-3.12.8.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/gthumb-3.12.8.2-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r2 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/gthumb-3.12.8.2-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/gthumb-3.12.8.2-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/gthumb-3.12.8.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/gthumb-3.12.8.2-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | gthumb 3.12.8.2-r2 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/gthumb-3.12.8.2-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -258,6 +263,11 @@ This recipe builds **3.12.8.2**. Every version stays available: packages in `dis
 VERSION=3.12.8.2
 TARBALL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz
 SHA256=abc57b1103165dd691535796f7dbdba7686217c7d069e974ed0f3d800fe88796
+# The org.gnome.desktop.{background,interface,privacy,thumbnailers} schemas it
+# opens with g_settings_new(), which aborts when a schema is not installed; and
+# the MIME database: gthumb lists a file by its content type, and without
+# shared-mime-info every file is application/octet-stream ("No file").
+RUNTIME_DEPS="gsettings-desktop-schemas shared-mime-info"
 DEPS="glib gtk3 gdk-pixbuf libjpeg-turbo libpng libtiff libwebp lcms2 exiv2 libsecret json-glib"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dlibtiff=true -Dlibwebp=true -Dlcms2=true -Dlibraw=false -Dlibheif=false -Dlibjxl=false -Dcolord=false -Dgstreamer=false -Dlibchamplain=false -Dlibbrasero=false -Dclutter=false -Dlibrsvg=false )

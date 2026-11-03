@@ -4225,30 +4225,21 @@
    "bzip2",
    "c-ares",
    "curl",
-   "expat",
    "freeimage",
    "freetype",
-   "gdbm",
    "gettext",
-   "libffi",
    "libiconv",
    "libpng",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "lz4",
    "nanosvg",
    "ncurses",
    "nghttp2",
    "openssl",
    "pugixml",
-   "python3",
    "rapidjson",
-   "readline",
    "sdl2",
-   "sqlite",
    "vlc",
-   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -4273,7 +4264,7 @@
    "bins": [
     "usr/local/bin/emulationstation"
    ],
-   "files": 1,
+   "files": 69,
    "headers": 0,
    "libs": []
   },
@@ -14848,31 +14839,20 @@
  "libvncserver": {
   "build_closure": [
    "brotli",
-   "bzip2",
-   "expat",
-   "gdbm",
    "gettext",
    "gmp",
    "gnutls",
-   "libffi",
    "libiconv",
    "libidn2",
    "libjpeg-turbo",
    "libpng",
    "libtasn1",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "lzo",
    "ncurses",
    "nettle",
    "openssl",
-   "python3",
-   "readline",
    "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
    "zlib",
    "zstd"
   ],
@@ -17858,7 +17838,6 @@
    "expat",
    "fontconfig",
    "freetype",
-   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -17868,20 +17847,11 @@
    "libiconv",
    "libpng",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "ncurses",
-   "openssl",
    "pcre2",
-   "python3",
-   "readline",
    "sdl2",
    "sdl2-ttf",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "zlib"
   ],
   "build_deps": [
    "sdl2",
@@ -20398,23 +20368,15 @@
    "expat",
    "fontconfig",
    "freetype",
-   "gdbm",
    "gettext",
-   "libffi",
    "libiconv",
    "libpng",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "lzo",
    "ncurses",
    "nghttp2",
    "openssl",
-   "python3",
-   "readline",
    "sdl2",
-   "sqlite",
-   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -22274,8 +22236,6 @@
    "libtiff",
    "libunistring",
    "libwebp",
-   "libxkbcommon",
-   "libxml2",
    "libyuv",
    "ncurses",
    "numpy",
@@ -22291,7 +22251,6 @@
    "sdl2-mixer",
    "sdl2-ttf",
    "sqlite",
-   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -26844,25 +26803,8 @@
  },
  "quake3": {
   "build_closure": [
-   "bzip2",
-   "expat",
-   "gdbm",
-   "gettext",
-   "libffi",
    "libiconv",
-   "libunistring",
-   "libxkbcommon",
-   "libxml2",
-   "ncurses",
-   "openssl",
-   "python3",
-   "readline",
-   "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "sdl2"
   ],
   "build_deps": [
    "sdl2"
@@ -26884,6 +26826,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libiconv",
    "sdl2"
   ],
   "runtime_deps": [
@@ -26949,25 +26892,8 @@
  },
  "raylib": {
   "build_closure": [
-   "bzip2",
-   "expat",
-   "gdbm",
-   "gettext",
-   "libffi",
    "libiconv",
-   "libunistring",
-   "libxkbcommon",
-   "libxml2",
-   "ncurses",
-   "openssl",
-   "python3",
-   "readline",
-   "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "sdl2"
   ],
   "build_deps": [
    "sdl2"
@@ -26990,6 +26916,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libiconv",
    "sdl2"
   ],
   "runtime_deps": [
@@ -27152,7 +27079,6 @@
    "fontconfig",
    "freetype",
    "fribidi",
-   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -27163,19 +27089,11 @@
    "libiconv",
    "libpng",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "ncurses",
    "openssl",
    "pcre2",
-   "python3",
-   "readline",
    "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "zlib"
   ],
   "build_deps": [
    "sdl2",
@@ -27237,7 +27155,9 @@
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libxkbcommon"
+  ],
   "unresolved": [],
   "version": "1.15-git-20230408"
  },
@@ -27253,7 +27173,6 @@
    "freeimage",
    "freetype",
    "fribidi",
-   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -27269,8 +27188,6 @@
    "libretro-retro8",
    "libretro-samples",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "lz4",
    "lzo",
    "nanosvg",
@@ -27280,14 +27197,10 @@
    "openttd",
    "pcre2",
    "pugixml",
-   "python3",
    "rapidjson",
-   "readline",
    "retroarch",
    "sdl2",
-   "sqlite",
    "vlc",
-   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -27744,35 +27657,17 @@
  },
  "sdl2": {
   "build_closure": [
-   "bzip2",
-   "expat",
-   "gdbm",
-   "gettext",
-   "libffi",
-   "libiconv",
-   "libunistring",
-   "libxkbcommon",
-   "libxml2",
-   "ncurses",
-   "openssl",
-   "python3",
-   "readline",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "libiconv"
   ],
   "build_deps": [
-   "wayland",
-   "libxkbcommon"
+   "libiconv"
   ],
   "buildsys": "cmake",
   "built": {
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "runtime-standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/sdl2-config"
@@ -27787,8 +27682,12 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libiconv"
+  ],
+  "runtime_deps": [
+   "libiconv"
+  ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
@@ -27865,16 +27764,12 @@
   "build_closure": [
    "aom",
    "brotli",
-   "bzip2",
    "dav1d",
-   "expat",
-   "gdbm",
    "gettext",
    "giflib",
    "highway",
    "lcms2",
    "libavif",
-   "libffi",
    "libiconv",
    "libjpeg-turbo",
    "libjxl",
@@ -27882,16 +27777,9 @@
    "libtiff",
    "libunistring",
    "libwebp",
-   "libxkbcommon",
-   "libxml2",
    "libyuv",
    "ncurses",
-   "openssl",
-   "python3",
-   "readline",
    "sdl2",
-   "sqlite",
-   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -27952,28 +27840,12 @@
  },
  "sdl2-mixer": {
   "build_closure": [
-   "bzip2",
-   "expat",
-   "gdbm",
-   "gettext",
-   "libffi",
    "libiconv",
    "libogg",
-   "libunistring",
-   "libxkbcommon",
-   "libxml2",
-   "ncurses",
    "openssl",
    "opus",
    "opusfile",
-   "python3",
-   "readline",
-   "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "sdl2"
   ],
   "build_deps": [
    "sdl2",
@@ -27998,6 +27870,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libiconv",
    "libogg",
    "openssl",
    "opus",
@@ -28015,25 +27888,8 @@
  },
  "sdl2-net": {
   "build_closure": [
-   "bzip2",
-   "expat",
-   "gdbm",
-   "gettext",
-   "libffi",
    "libiconv",
-   "libunistring",
-   "libxkbcommon",
-   "libxml2",
-   "ncurses",
-   "openssl",
-   "python3",
-   "readline",
-   "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "sdl2"
   ],
   "build_deps": [
    "sdl2"
@@ -28057,6 +27913,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libiconv",
    "sdl2"
   ],
   "runtime_deps": [
@@ -28071,9 +27928,7 @@
   "build_closure": [
    "brotli",
    "bzip2",
-   "expat",
    "freetype",
-   "gdbm",
    "gettext",
    "glib",
    "graphite2",
@@ -28083,19 +27938,10 @@
    "libiconv",
    "libpng",
    "libunistring",
-   "libxkbcommon",
-   "libxml2",
    "ncurses",
-   "openssl",
    "pcre2",
-   "python3",
-   "readline",
    "sdl2",
-   "sqlite",
-   "wayland",
-   "xz",
-   "zlib",
-   "zstd"
+   "zlib"
   ],
   "build_deps": [
    "sdl2",
@@ -30728,7 +30574,7 @@
     "usr/local/bin/vlc",
     "usr/local/bin/vlc-wrapper"
    ],
-   "files": 569,
+   "files": 570,
    "headers": 98,
    "libs": [
     "usr/local/lib/libvlc.so",

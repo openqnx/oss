@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (46 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (43 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild python3 numpy sdl2 sdl2-image sdl2-ttf sdl2-mixer freetype libpng libjpeg-turbo
 ```
 
-<details><summary>Full build chain (46)</summary>
+<details><summary>Full build chain (43)</summary>
 
-[`aom`](../aom/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`expat`](../expat/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`highway`](../highway/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libyuv`](../libyuv/) [`ncurses`](../ncurses/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`openssl`](../openssl/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sdl2-image`](../sdl2-image/) [`sdl2-mixer`](../sdl2-mixer/) [`sdl2-ttf`](../sdl2-ttf/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`expat`](../expat/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`highway`](../highway/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libyuv`](../libyuv/) [`ncurses`](../ncurses/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`openssl`](../openssl/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sdl2-image`](../sdl2-image/) [`sdl2-mixer`](../sdl2-mixer/) [`sdl2-ttf`](../sdl2-ttf/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -175,7 +175,7 @@ do_install() { qnx_py_install && qnx_py_install_data; }
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- pygame: Python game library on SDL2 -- surfaces, drawing, image load/save (SDL2_image), fonts (SDL2_ttf, FreeType), sound (SDL2_mixer), events, joysticks, and Wayland windows through SDL2's Wayland backend. The QNX build configuration is qnx-ports' (patches/0001), adapted for a cross build (0002). Built from the commit qnx-ports ported (pygame main after 2.6.1, which has the Python 3.12+ fixes 2.6.1 lacks); the Cython modules (_sdl2, pypm, _sprite) are generated from it on the build machine. Without portmidi (not ported) pygame.midi is left out; there is no camera module (Linux V4L2).
+- pygame: Python game library on SDL2 -- surfaces, drawing, image load/save (SDL2_image), fonts (SDL2_ttf, FreeType), sound (SDL2_mixer), events, joysticks, and windows on QNX Screen through SDL2's QNX driver. The QNX build configuration is qnx-ports' (patches/0001), adapted for a cross build (0002). Built from the commit qnx-ports ported (pygame main after 2.6.1, which has the Python 3.12+ fixes 2.6.1 lacks); the Cython modules (_sdl2, pypm, _sprite) are generated from it on the build machine. Without portmidi (not ported) pygame.midi is left out; there is no camera module (Linux V4L2).
 - numpy is optional at run time (pygame.surfarray, sndarray) but built against.
 - The wheel's .data/ (share/ files, scripts, headers) goes where pip puts it.
 - !/bin/sh
@@ -250,8 +250,8 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | pygame 2.6.1_git20251005-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/pygame-2.6.1_git20251005-r1.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | pygame 2.6.1_git20251005-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/pygame-2.6.1_git20251005-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | pygame 2.6.1_git20251005-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/pygame-2.6.1_git20251005-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | pygame 2.6.1_git20251005-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/pygame-2.6.1_git20251005-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -264,7 +264,7 @@ This recipe builds **2.6.1_git20251005**. Every version stays available: package
 ```bash
 # pygame: Python game library on SDL2 -- surfaces, drawing, image load/save
 # (SDL2_image), fonts (SDL2_ttf, FreeType), sound (SDL2_mixer), events,
-# joysticks, and Wayland windows through SDL2's Wayland backend.
+# joysticks, and windows on QNX Screen through SDL2's QNX driver.
 # The QNX build configuration is qnx-ports' (patches/0001), adapted for a
 # cross build (0002). Built from the commit qnx-ports ported (pygame main
 # after 2.6.1, which has the Python 3.12+ fixes 2.6.1 lacks); the Cython

@@ -1,6 +1,6 @@
 # pygame: Python game library on SDL2 -- surfaces, drawing, image load/save
 # (SDL2_image), fonts (SDL2_ttf, FreeType), sound (SDL2_mixer), events,
-# joysticks, and Wayland windows through SDL2's Wayland backend.
+# joysticks, and windows on QNX Screen through SDL2's QNX driver.
 # The QNX build configuration is qnx-ports' (patches/0001), adapted for a
 # cross build (0002). Built from the commit qnx-ports ported (pygame main
 # after 2.6.1, which has the Python 3.12+ fixes 2.6.1 lacks); the Cython

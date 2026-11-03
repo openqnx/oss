@@ -65,8 +65,12 @@ do_configure() {
   "$S/configure" --host="$(_vlc_host)" --build=x86_64-linux-gnu --prefix="$PREFIX" \
     --with-contrib="$B/contrib/../$(_vlc_host)" --disable-a52 --disable-xcb --disable-sdl-image --enable-gles2 \
     --disable-qt --disable-skins2 --disable-lua --disable-vdpau \
-    --disable-alsa --disable-pulse --disable-sndio --disable-jack
+    --disable-alsa --disable-pulse --disable-sndio --disable-jack --enable-run-as-root
 }
+# --enable-run-as-root: QNX targets usually run everything as root, and vlc
+# otherwise stops with "VLC is not supposed to be run as root".
+# Video on QNX Screen: egl_qnx + gles2 draw into a window from qnx_window
+# (patches/0002), the Screen window provider for the command-line player.
 do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR="$B/$(_vlc_host)/lib/pkgconfig" make -C "$B/build" -j"$(nproc)" $(_vlc_jobserver); }
 # vlc-plugin.pc carries -L for the contrib tree in the build directory (where
 # libintl/libiconv were found): meaningless on any other machine, and

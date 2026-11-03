@@ -753,7 +753,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`rtl-sdr`](../ports/rtl-sdr/) | Library and tools turning RTL2832 DVB dongles into SDR receivers | 2.0.2 | `apk add rtl-sdr` | libusb | libusb | `qnx-test-rtl-sdr` | x86✅ᵛ a64✅ᵛ |
 | [`ruy`](../ports/ruy/) | Matrix multiplication library for neural network inference | 0-git-20240321 | `apk add ruy` | – | cpuinfo | `qnx-test-ruy` | – |
 | [`s2n-tls`](../ports/s2n-tls/) | Small, fast C99 implementation of the TLS/SSL protocols from AWS | 1.7.0 | `apk add s2n-tls` | openssl | openssl | `qnx-test-s2n-tls` | x86✅ᵛ a64✅ᵛ |
-| [`sdl2`](../ports/sdl2/) | Simple DirectMedia Layer 2, cross-platform multimedia and input library | 2.32.10 | `apk add sdl2` | – | wayland libxkbcommon | `qnx-test-sdl2` | x86✅ᵛ a64✅ᵛ |
+| [`sdl2`](../ports/sdl2/) | Simple DirectMedia Layer 2, cross-platform multimedia and input library | 2.32.10 | `apk add sdl2` | libiconv | libiconv | `qnx-test-sdl2` | x86✅ᵛ a64✅ᵛ |
 | [`sdl2-compat`](../ports/sdl2-compat/) | SDL2 compatibility layer implemented on top of SDL3 | 2.32.60 | `apk add sdl2-compat` | – | sdl3 | `qnx-test-sdl2-compat` | x86✅ᵛ a64✅ᵛ |
 | [`sdl2-image`](../ports/sdl2-image/) | Image loading library for SDL2 | 2.8.8 | `apk add sdl2-image` | libavif libtiff libwebp sdl2 | sdl2 libpng libjpeg-turbo libtiff libwebp libavif libjxl | `qnx-test-sdl2-image` | x86✅ᵛ a64✅ᵛ |
 | [`sdl2-mixer`](../ports/sdl2-mixer/) | Audio mixer library for SDL2 (WAV, FLAC, MP3, Ogg Vorbis, Opus, MIDI) | 2.8.2 | `apk add sdl2-mixer` | opusfile sdl2 | sdl2 opusfile | `qnx-test-sdl2-mixer` | x86✅ᵛ a64✅ᵛ |

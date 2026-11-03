@@ -1635,3 +1635,97 @@ When a refresh finds a hunk already upstream, try the upstream code on the
 target before dropping the patch (a few-line probe built with qcc will do),
 and keep a known-answer check in the test (`test_7zip.sh` compares the RAM
 size with `pidin info`).
+
+**157. On QNX Screen, an EGL window must be in its config's native visual,
+and the first config eglChooseConfig() returns is the wrong one.** The SDP 8
+EGL (Mesa; virtio-gpu on the screen VMs) lists the deepest configs first --
+RGBX1010102 -- and Screen cannot allocate window buffers in that format
+(`screen_create_window_buffers()`: "Not supported"); a window whose
+`SCREEN_PROPERTY_FORMAT` differs from the config's `EGL_NATIVE_VISUAL_ID`
+fails in `eglCreateWindowSurface()` with EGL_BAD_NATIVE_WINDOW
+("dri2_qs_create_surface(): can't create window buffers"). Ask for all the
+configs (Mesa offers over 200 for GLES2; VLC took the first of 1, then of
+64, and missed every 8-bit one), take an 8-bit one whose visual is
+RGBX8888/RGBA8888, set that as the window's format, create the window's
+buffers yourself, then the surface (`ports/retroarch/patches/0005-*`,
+`ports/vlc/patches/0002-*`, SDL2's `glGetConfig()`). Code written for
+BlackBerry 10 also assumes the navigator: `getenv("ORIENTATION")` is NULL on
+a plain Screen session (atoi(NULL) crashed RetroArch); ask for
+`SCREEN_USAGE_ROTATION` only when the display is actually rotated.
+
+**158. A meson find_program() with absolute fallback paths finds the build
+host's program and bakes its path in.** at-spi2-core's `bus/meson.build`
+looks for `dbus-daemon` (PATH, then /usr/sbin, /usr/libexec, ...) when
+`-Ddbus_daemon` is left at "default", and compiles what it finds into
+at-spi-bus-launcher as `-DDBUS_DAEMON="/usr/bin/dbus-daemon"` -- the Linux
+host's. On QNX the launcher then fails ("Failed to spawn child process
+/usr/bin/dbus-daemon"), and every GTK program prints "Unable to acquire the
+address of the accessibility bus". Give such options the target path
+(`-Ddbus_daemon=$PREFIX/bin/dbus-daemon`) and grep `build.ninja` for
+`-D...="/usr/` or `/bin/` defines after a first build. Also: the launcher that
+failed stays registered on the session bus and keeps answering with the old
+error until it is killed (`slay -f at-spi-bus-launcher`); a package update
+alone does not fix a running session. (`test_at_spi2_core` reads the path out
+of the installed launcher.)
+
+**159. QNX's Wayland EGL dlopen()s unversioned library names, and libepoxy
+asks for Linux's GLES soname.** On the graphics images `/system/lib/libEGL.so.1`
+opens `libwayland-client.so` and `libwayland-server.so` (no `.0`; implib-gen
+shims). Those are -dev links, so without wayland-dev: "Failed to load wayland
+client shared object: libwayland-client.so". The wayland runtime package keeps
+the two links (`RUNTIME_SOLINKS` in its recipe). Links, not copies: QNX's
+loader maps a symlinked name onto the object already loaded, but loads a copy
+a second time (different `wl_display_interface` address). libepoxy then
+dlopen()ed `libGLESv2.so.2`, where QNX has `libGLESv2.so.1` ("Couldn't open
+libGLESv2.so.2: Library cannot be found", abort);
+`ports/libepoxy/patches/0001-*` uses QNX's names. With both fixed, GTK 4
+programs on labwc use GskNglRenderer on virgl (both screen VMs). Do not set
+`GDK_DEBUG=opengl` there: it calls eglQueryDisplayAttribEXT, which QNX's EGL
+lacks, and epoxy aborts. (Seen 2026-11-03 with vte-2.91-gtk4.)
+
+**160. QNX's inotify (libfsnotify, `/dev/fsnotify`) wakes poll() with nothing
+to read, and rejects IN_UNMOUNT.** Two differences from Linux, both found in
+GLib's GIO file monitor (probes 2026-11-03, both screen VMs):
+(1) when another descriptor for the same inotify open is closed while a
+poll() on it is armed -- a `dup()` closed, or the copy a `fork()`ed child
+inherits and closes at exec or `_exit` (posix_spawn does not do it) -- the
+poll returns POLLIN (revents 0x5) and `read()` then gives EAGAIN. GIO polls
+its inotify fd in the GLib worker thread, so every `g_spawn` woke it, and
+`ik_source_dispatch()` aborted on `g_assert (iks->is_bored)`: xfce4-panel,
+epiphany and at-spi-bus-launcher died ("assertion failed: (iks->is_bored)",
+or signal 5). Treat an empty read after POLLIN as a spurious wakeup.
+(2) `inotify_add_watch()` fails with EINVAL for IN_UNMOUNT (also for
+IN_Q_OVERFLOW, IN_ISDIR, IN_MASK_ADD, IN_ONESHOT, IN_EXCL_UNLINK,
+IN_MASK_CREATE: output-only or unsupported flags); GLib puts IN_UNMOUNT into
+every directory watch, so no GFileMonitor ever got an event. Without it,
+create/modify/delete/attrib events arrive at once and renames come as
+paired IN_MOVED_FROM/IN_MOVED_TO with one cookie
+(`ports/glib/patches/0003-*`, `tests/src/test_glib.c`). The inotify backend is
+kept: GIO has no fallback for local files without it (with inotify_init1
+failing, xfce4-panel logs "Unable to find default local file monitor type").
+Related: #136 (dbus blocked on `/dev/fsnotify`).
+
+**161. apk runs package scripts and triggers chrooted into `--root`.** With
+`apk --root /data/oss` a `.trigger` (or pre/post-install script) is executed
+after `chroot("/data/oss")`, where there is no `/bin/sh` and no QNX libc or
+loader: "execve: No such file or directory ... exited with error 127", the
+package is flagged (`f:s` in `lib/apk/db/installed`) and every later apk call
+reports "1 error" (exit 1) until `apk fix <pkg>` succeeds. The apk-setup
+wrapper (`/data/oss/bin/apk`) now passes `--force-no-chroot`: scripts run with
+the root as current directory and only `PATH=/usr/sbin:/usr/bin:/sbin:/bin`
+(no `/proc/boot`, so no `rm`/`ls` on a stock image). Scripts must resolve
+paths relative to `.` and set `PATH`/`LD_LIBRARY_PATH` themselves
+(`ports/glib/apk.trigger`, `ports/shared-mime-info/apk.trigger`). Targets
+set up before 2026-11-03: rerun `apk-setup`, or add `--force-no-chroot` to the
+wrapper, then `apk fix`.
+
+**162. QNX has no `/proc/self/exe`.** A program that finds its own files
+through `readlink("/proc/self/exe")` gets nothing on QNX and falls back to
+whatever it does without them: EmulationStation found no font and crashed in
+`FT_Get_Char_Index`. QNX has `/proc/self/exefile` (the path as text), so
+read that on `__QNX__` (`ports/emulationstation/patches/0002-*`). Related, from
+the same work: an SDL2 built without EGL has no QNX Screen driver at all
+(SDL's CheckQNXScreen needs it), and its Wayland driver needs EGL on the
+wl_display, which the SDP's Screen-only EGL does not provide; "wayland not
+available" only meant that a program asked for a driver the library did not
+have. ports/sdl2 now builds the Screen driver with GLES.

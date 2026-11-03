@@ -1,10 +1,11 @@
 /* GLib: the pieces a port most often breaks -- the main loop (which sits on
  * QNX's epoll shim), threads, timers, IO channels, GObject type registration,
- * and the filesystem/UTF-8 helpers. */
+ * the filesystem/UTF-8 helpers, and GFileMonitor (QNX's inotify emulation). */
 #include "common.h"
 #include <glib.h>
 #include <glib-object.h>
 #include <gio/gio.h>
+#include <glib/gstdio.h>
 static int timeout_fired, idle_fired;
 static gboolean on_timeout(gpointer data) {
   ++timeout_fired;
@@ -12,6 +13,28 @@ static gboolean on_timeout(gpointer data) {
   return G_SOURCE_REMOVE;
 }
 static gboolean on_idle(gpointer data) { ++idle_fired; return G_SOURCE_REMOVE; }
+/* GFileMonitor events seen, by GFileMonitorEvent */
+static int mon_seen[16];
+static gboolean mon_quit(gpointer data) { g_main_loop_quit((GMainLoop *)data); return G_SOURCE_REMOVE; }
+static void on_changed(GFileMonitor *m, GFile *f, GFile *o, GFileMonitorEvent e, gpointer loop) {
+  if ((unsigned)e < 16) mon_seen[e]++;
+  if (mon_seen[G_FILE_MONITOR_EVENT_DELETED]) g_main_loop_quit((GMainLoop *)loop);
+}
+static gboolean mon_step(gpointer dir) {
+  /* a child process (fork+exec) wakes the inotify fd's poll() on QNX
+   * (docs/porting-hazards.md #160), then a create, a rename, a delete */
+  static int step;
+  gchar *a = g_build_filename(dir, "a", NULL), *b = g_build_filename(dir, "b", NULL);
+  switch (step++) {
+  case 0: { gchar *argv[] = { "/bin/sh", "-c", "exit 0", NULL };
+            g_spawn_sync(NULL, argv, NULL, G_SPAWN_DEFAULT, NULL, NULL, NULL, NULL, NULL, NULL); break; }
+  case 1: g_file_set_contents(a, "x", 1, NULL); break;
+  case 2: g_rename(a, b); break;
+  case 3: g_unlink(b); break;
+  }
+  g_free(a); g_free(b);
+  return step < 4 ? G_SOURCE_CONTINUE : G_SOURCE_REMOVE;
+}
 static gpointer worker(gpointer data) {
   g_atomic_int_inc((gint *)data);
   return GINT_TO_POINTER(42);
@@ -72,5 +95,30 @@ int main(void) {
   if (fi) g_object_unref(fi);
   g_object_unref(f);
   QT_CHECK(g_file_test("/tmp", G_FILE_TEST_IS_DIR), "g_file_test");
+
+  /* --- GFileMonitor on QNX's inotify emulation (glib patch 0003) --- */
+  gchar *dir = g_dir_make_tmp("qnx-glib-mon-XXXXXX", NULL);
+  QT_CHECK(dir != NULL, "g_dir_make_tmp");
+  GFile *df = g_file_new_for_path(dir);
+  GFileMonitor *mon = g_file_monitor_directory(df, G_FILE_MONITOR_WATCH_MOVES, NULL, NULL);
+  QT_CHECK(mon != NULL, "g_file_monitor_directory");
+  printf("  info monitor %s\n", mon ? G_OBJECT_TYPE_NAME(mon) : "-");
+  GMainLoop *ml = g_main_loop_new(NULL, FALSE);
+  if (mon) {
+    g_signal_connect(mon, "changed", G_CALLBACK(on_changed), ml);
+    g_timeout_add(300, mon_step, dir);
+    g_timeout_add(15000, mon_quit, ml);
+    g_main_loop_run(ml);
+  }
+  printf("  info events created=%d renamed=%d deleted=%d\n", mon_seen[G_FILE_MONITOR_EVENT_CREATED],
+         mon_seen[G_FILE_MONITOR_EVENT_RENAMED], mon_seen[G_FILE_MONITOR_EVENT_DELETED]);
+  QT_CHECK(mon_seen[G_FILE_MONITOR_EVENT_CREATED] >= 1, "monitor: file created");
+  QT_CHECK(mon_seen[G_FILE_MONITOR_EVENT_RENAMED] >= 1, "monitor: rename paired as RENAMED");
+  QT_CHECK(mon_seen[G_FILE_MONITOR_EVENT_DELETED] >= 1, "monitor: file deleted");
+  if (mon) g_object_unref(mon);
+  g_main_loop_unref(ml);
+  g_object_unref(df);
+  g_rmdir(dir);
+  g_free(dir);
   QT_END();
 }

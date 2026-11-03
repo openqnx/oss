@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/anholt/libepoxy.git (tag `1.5.10`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`libx11`](../libx11/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,7 +87,23 @@ git clone --depth 1 -b 1.5.10 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/libepoxy < ports/libepoxy/patches/0001-qnx-gles-library-names.patch
+```
+
+**[`0001-qnx-gles-library-names.patch`](patches/0001-qnx-gles-library-names.patch)** — QNX: dlopen QNX's GLES library names (libGLESv2.so.1)
+
+> libepoxy dlopen()s the GLES 2 library by its Linux soname, libGLESv2.so.2.
+> QNX's GLES 2 library (Screen EGL, the SDP's usr/lib) is libGLESv2.so.1, so
+> every GTK 4 program that made a GL context on QNX aborted with
+> "Couldn't open libGLESv2.so.2: Library cannot be found". Use QNX's names
+> on __QNX__; libEGL.so.1 was already right. GLES 1 keeps libGLESv1_CM.so.1
+> (the SDP 8 ships none) and desktop GL keeps its names, which simply do not
+> load, as on any EGL-only system.
+
+Touches: `src/dispatch_common.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -185,6 +201,8 @@ PASS libepoxy
    - rejects a prefix of a present name
    - rejects an absent extension
    - rejects against an empty list
+   - epoxy asks for QNX's libGLESv2.so.1
+   - that library loads on this target
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
@@ -192,8 +210,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libepoxy 1.5.10-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/libepoxy-1.5.10-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libepoxy 1.5.10-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/libepoxy-1.5.10-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libepoxy 1.5.10-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/libepoxy-1.5.10-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libepoxy 1.5.10-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/libepoxy-1.5.10-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

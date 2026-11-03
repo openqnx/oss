@@ -1,0 +1,31 @@
+QNX: dlopen QNX's GLES library names (libGLESv2.so.1)
+
+libepoxy dlopen()s the GLES 2 library by its Linux soname, libGLESv2.so.2.
+QNX's GLES 2 library (Screen EGL, the SDP's usr/lib) is libGLESv2.so.1, so
+every GTK 4 program that made a GL context on QNX aborted with
+"Couldn't open libGLESv2.so.2: Library cannot be found". Use QNX's names
+on __QNX__; libEGL.so.1 was already right. GLES 1 keeps libGLESv1_CM.so.1
+(the SDP 8 ships none) and desktop GL keeps its names, which simply do not
+load, as on any EGL-only system.
+
+Upstream-Status: QNX-specific
+
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -183,6 +183,16 @@
+ #define EGL_LIB "libEGL.so"
+ #define GLES1_LIB "libGLESv1_CM.so"
+ #define GLES2_LIB "libGLESv2.so"
++#elif defined(__QNX__)
++/* QNX's own EGL and GLES (Screen): libEGL.so.1 and libGLESv2.so.1 -- not the
++ * Linux/Mesa sonames libGLESv2.so.2. No desktop GL (libGL/libOpenGL) exists, so
++ * GLX and desktop GL keep their names and simply fail to load. The SDP ships no
++ * libGLESv1_CM; .so.1 is what QNX 7 called it. */
++#define GLX_LIB "libGL.so.1"
++#define EGL_LIB "libEGL.so.1"
++#define GLES1_LIB "libGLESv1_CM.so.1"
++#define GLES2_LIB "libGLESv2.so.1"
++#define OPENGL_LIB "libOpenGL.so.0"
+ #elif defined(_WIN32)
+ #define EGL_LIB "libEGL.dll"
+ #define GLES1_LIB "libGLES_CM.dll"

@@ -1,6 +1,8 @@
 /* SDL2: initialise the subsystems that make sense headless, and exercise the
- * timer, event queue, RWops, endian and CPU-feature layers. Video is probed
- * but a target with no compositor running is a legitimate outcome. */
+ * timer, event queue, RWops, endian and CPU-feature layers. The QNX Screen
+ * video driver must be compiled in (without it no SDL2 program can open a
+ * window on QNX); video is probed, but a target with no Screen running is a
+ * legitimate outcome: the qnx driver then steps aside. */
 #include "common.h"
 #include <stdlib.h>
 #include <SDL2/SDL.h>
@@ -60,6 +62,10 @@ int main(int argc, char **argv) {
   for (int i = 0; i < nvid; ++i) printf(" %s", SDL_GetVideoDriver(i));
   printf("\n");
   QT_CHECK(nvid > 0, "at least one video driver is compiled in");
+  int has_qnx = 0;
+  for (int i = 0; i < nvid; ++i)
+    if (strcmp(SDL_GetVideoDriver(i), "qnx") == 0) has_qnx = 1;
+  QT_CHECK(has_qnx, "the QNX Screen video driver (\"qnx\") is built");
   int naud = SDL_GetNumAudioDrivers();
   printf("  info %d audio driver(s):", naud);
   for (int i = 0; i < naud; ++i) printf(" %s", SDL_GetAudioDriver(i));

@@ -86,6 +86,19 @@ def recipe_meta(name):
     # fetch over HTTPS).
     m = re.search(r'^RUNTIME_DEPS="([^"]*)"', text, re.M)
     meta["runtime_deps"] = m.group(1).split() if m else []
+    # RUNTIME_SOLINKS: unversioned lib*.so symlinks that belong in the runtime
+    # package, not -dev: QNX's libEGL.so.1 dlopens libwayland-client.so.
+    m = re.search(r'^RUNTIME_SOLINKS="([^"]*)"', text, re.M)
+    meta["runtime_solinks"] = m.group(1).split() if m else []
+    # APK_TRIGGERS: directories (as on the target, e.g. /usr/local/share/
+    # glib-2.0/schemas) whose changes by any package run ports/<name>/
+    # apk.trigger (apk's .trigger script; it gets the changed directories as
+    # arguments and runs in the install root).
+    m = re.search(r'^APK_TRIGGERS="([^"]*)"', text, re.M)
+    meta["triggers"] = m.group(1).split() if m else []
+    meta["trigger_script"] = None
+    if meta["triggers"]:
+        meta["trigger_script"] = open(os.path.join(WS, "ports", name, "apk.trigger"), "rb").read()
     lic = os.path.join(WS, "ports", name, "LICENSE.id")
     if os.path.exists(lic):
         meta["license"] = open(lic).read().strip()
@@ -304,6 +317,9 @@ def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, san, key, out
     info += ["depend = %s" % d for d in deps]
     info += ["depend = !%s" % c for c in meta.get("conflicts_pkg", [])]   # apk's conflict syntax
     info += ["provides = %s" % p for p in provides]
+    trig = meta.get("triggers") if pkgname == meta["origin"] else None
+    if trig:
+        info.append("triggers = %s" % " ".join(trig))
     info.append("datahash = %s" % hashlib.sha256(data).hexdigest())
     pkginfo = ("\n".join(info) + "\n").encode()
     ti = tarfile.TarInfo(".PKGINFO")
@@ -311,7 +327,15 @@ def make_apk(pkgname, ver, arch, meta, root, rels, deps, provides, san, key, out
     ti.mode = 0o644
     ti.mtime = int(time.time())
     ti.uname = ti.gname = "root"
-    control = gz(write_tar([(ti, pkginfo)], tarfile.USTAR_FORMAT, cut=True))
+    members = [(ti, pkginfo)]
+    if trig:
+        ts = tarfile.TarInfo(".trigger")
+        ts.size = len(meta["trigger_script"])
+        ts.mode = 0o755
+        ts.mtime = ti.mtime
+        ts.uname = ts.gname = "root"
+        members.append((ts, meta["trigger_script"]))
+    control = gz(write_tar(members, tarfile.USTAR_FORMAT, cut=True))
     fname = "%s-%s.apk" % (pkgname, ver)
     with open(os.path.join(outdir, fname), "wb") as f:
         f.write(sign(control, key) + control + data)
@@ -362,7 +386,8 @@ def package(comp, arch, args, owner, outdir, existing=None):
     # -dev symlink to it: a Rust cdylib (libzenohc.so) or a library built
     # without an soname. It belongs in the runtime package.
     unversioned_file = lambda r: (re.match(r"^usr/local/lib/lib[^/]*\.so$", r)
-                                  and not os.path.islink(os.path.join(root, r)))
+                                  and (not os.path.islink(os.path.join(root, r))
+                                       or os.path.basename(r) in meta.get("runtime_solinks", [])))
     dev = [r for r in files if is_dev(r) and not unversioned_file(r)]
     run = [r for r in files if r not in set(dev)]
 
@@ -413,15 +438,24 @@ def package(comp, arch, args, owner, outdir, existing=None):
                 d = os.path.dirname(d)
         return sorted(out)
 
+    # The trigger is in the control segment, not the files: it counts in the
+    # fingerprint of the package that carries it (only that one, so a package
+    # without APK_TRIGGERS keeps its fingerprint and its release).
+    trig_tag = ""
+    if meta["triggers"]:
+        trig_tag = ";trigger:" + hashlib.sha256(" ".join(meta["triggers"]).encode()
+                                                + b"\0" + meta["trigger_script"]).hexdigest()
+
     entries, lines = [], []
     for pname, sel, pdeps in ((comp, run, deps), (comp + "-dev", dev, [comp] if run else deps)):
         if not sel:
             continue
         rels_sel = with_dirs(sel)
-        fp = fingerprint(root, rels_sel, san=san)
+        tt = trig_tag if pname == comp else ""
+        fp = fingerprint(root, rels_sel, san=san) + tt
+        fp1 = fingerprint(root, rels_sel, v=1) + tt
         base = ver.rpartition("-r")[0]
-        ver = "%s-r%d" % (base, choose_release(existing, pname, base, fp, args.release,
-                                               fingerprint(root, rels_sel, v=1)))
+        ver = "%s-r%d" % (base, choose_release(existing, pname, base, fp, args.release, fp1))
         prev = (existing or {}).get("%s-%s" % (pname, ver))
         if prev is not None and prev.get("fp") is None:
             # A legacy entry (no fingerprint): choose_release took it as
@@ -437,9 +471,11 @@ def package(comp, arch, args, owner, outdir, existing=None):
                         print("   %s: contents differ from the published %s -> %s" % (pname, os.path.basename(old_tgz), ver))
                 finally:
                     shutil.rmtree(tmpdir, ignore_errors=True)
-        same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fingerprint(root, rels_sel, v=1))
+        same = not BUMP and unchanged(existing, outdir, pname, ver, fp, fp1)
         if not BUMP and not same and (existing or {}).get("%s-%s" % (pname, ver)) is None:
             sa = same_archive(existing, outdir, pname, base, root, rels_sel, san)
+            if sa and tt and not (sa[1].get("fp") or "").endswith(tt):
+                sa = None   # the same files, but not this trigger
             if sa:   # a new release only by its fingerprint: keep the existing one
                 ver = sa[0]; e0 = dict(sa[1]["apk"]); e0["fp"] = fp; same = (e0, sa[1]["line"])
         if same and same[1].split("|")[2] != ",".join(pdeps):

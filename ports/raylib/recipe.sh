@@ -4,9 +4,9 @@
 # (rlsw, OPENGL_VERSION=Software). QNX has no OpenGL for Wayland clients --
 # the SDP's EGL/GLES drive QNX Screen -- so raylib's GLFW and DRM platforms
 # could open no context; on SDL the software renderer draws into the SDL
-# window surface, which works on SDL2's Wayland backend (shared memory) and
-# on its dummy driver (headless). SDL3 is not used: here it is X11-only
-# (find_package would prefer it).
+# window surface, which works on SDL2's QNX Screen driver ("qnx": windows on
+# Screen, as on the screen images) and on its dummy driver (headless). SDL3
+# is not used: here it is X11-only (find_package would prefer it).
 VERSION=6.2; GIT=https://github.com/raysan5/raylib.git; REF=6.2
 DEPS="sdl2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_EXAMPLES=OFF

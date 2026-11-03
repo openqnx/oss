@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (6 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 opusfile
 ```
 
-<details><summary>Full build chain (22)</summary>
+<details><summary>Full build chain (6)</summary>
 
-[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libogg`](../libogg/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`libiconv`](../libiconv/) [`libogg`](../libogg/) [`openssl`](../openssl/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`sdl2`](../sdl2/)
 </details>
 
 ### 2. Get the upstream source

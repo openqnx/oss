@@ -20,7 +20,7 @@
 # QNX run-time libraries: the packages link QNX libraries a full image has
 # but a vanilla BSP / mkqnximage image may not (libeventfd, libepoll,
 # libsignalfd, libtimerfd, libfsnotify, libasound, libEGL, libGLESv2,
-# libscreen, ...). Those missing on the target are copied from the SDP
+# libscreen, ...) and the DRI module libgbm loads (dri_gbm.so). Those missing on the target are copied from the SDP
 # ($QNX_SDP_ROOT/target/qnx/<arch>) to /data/oss/qnx-runtime/lib, which
 # oss-env.sh and the apk wrapper put on LD_LIBRARY_PATH. --no-qnx-runtime
 # skips it. They are QNX's own libraries, under QNX's license.
@@ -63,6 +63,12 @@ if [ -n "$QRT" ]; then
         case "$f" in *.sym|*'*'*) continue ;; esac
         [ -f "$f" ] && files="$files $f"
       done
+    done
+    # Modules QNX libraries dlopen(), so no DT_NEEDED names them: libgbm.so.1
+    # opens the DRI backend dri_gbm.so ("Can't open 'dri' library!" without it;
+    # labwc/wlroots on Screen needs it). mkqnximage images do not carry it.
+    for f in "$SDPT/$QA"/usr/lib/dri_gbm.so; do
+      [ -f "$f" ] && files="$files $f"
     done
     have=$(ssh "${O[@]}" "$USER_@$T" "ls /proc/boot /system/lib /lib /usr/lib /lib/dll 2>/dev/null; true" | sort -u)
     need=""

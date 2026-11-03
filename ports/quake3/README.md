@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (19 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (2 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2
 ```
 
-<details><summary>Full build chain (19)</summary>
+<details><summary>Full build chain (2)</summary>
 
-[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`libiconv`](../libiconv/) [`sdl2`](../sdl2/)
 </details>
 
 ### 2. Get the upstream source
@@ -250,8 +250,8 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | quake3 1.36_git20261012-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/quake3-1.36_git20261012-r1.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | quake3 1.36_git20261012-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/quake3-1.36_git20261012-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | quake3 1.36_git20261012-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/quake3-1.36_git20261012-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | quake3 1.36_git20261012-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/quake3-1.36_git20261012-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

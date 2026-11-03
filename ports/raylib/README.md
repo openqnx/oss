@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (19 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (2 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2
 ```
 
-<details><summary>Full build chain (19)</summary>
+<details><summary>Full build chain (2)</summary>
 
-[`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`libiconv`](../libiconv/) [`sdl2`](../sdl2/)
 </details>
 
 ### 2. Get the upstream source
@@ -140,7 +140,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/raylib
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- raylib: a simple C library for videogames programming (2D/3D drawing, textures, text, models, audio, math). Platform layer: SDL2 (PLATFORM=SDL) with raylib's software renderer (rlsw, OPENGL_VERSION=Software). QNX has no OpenGL for Wayland clients -- the SDP's EGL/GLES drive QNX Screen -- so raylib's GLFW and DRM platforms could open no context; on SDL the software renderer draws into the SDL window surface, which works on SDL2's Wayland backend (shared memory) and on its dummy driver (headless). SDL3 is not used: here it is X11-only (find_package would prefer it).
+- raylib: a simple C library for videogames programming (2D/3D drawing, textures, text, models, audio, math). Platform layer: SDL2 (PLATFORM=SDL) with raylib's software renderer (rlsw, OPENGL_VERSION=Software). QNX has no OpenGL for Wayland clients -- the SDP's EGL/GLES drive QNX Screen -- so raylib's GLFW and DRM platforms could open no context; on SDL the software renderer draws into the SDL window surface, which works on SDL2's QNX Screen driver ("qnx": windows on Screen, as on the screen images) and on its dummy driver (headless). SDL3 is not used: here it is X11-only (find_package would prefer it).
 - Against the sdl2 component's own headers and CMake package (its package root), not whatever is in staging: sdl2-compat installs the same files, with a newer version number, over sdl2's there, and a program built against them refuses to run on the sdl2 it is packaged with ("SDL downgrade").
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH raylib`.
@@ -244,8 +244,8 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | raylib 6.2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/raylib-6.2-r1.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | raylib 6.2-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/raylib-6.2-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | raylib 6.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/raylib-6.2-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | raylib 6.2-r1 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/raylib-6.2-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -262,9 +262,9 @@ This recipe builds **6.2**. Every version stays available: packages in `dists/8.
 # (rlsw, OPENGL_VERSION=Software). QNX has no OpenGL for Wayland clients --
 # the SDP's EGL/GLES drive QNX Screen -- so raylib's GLFW and DRM platforms
 # could open no context; on SDL the software renderer draws into the SDL
-# window surface, which works on SDL2's Wayland backend (shared memory) and
-# on its dummy driver (headless). SDL3 is not used: here it is X11-only
-# (find_package would prefer it).
+# window surface, which works on SDL2's QNX Screen driver ("qnx": windows on
+# Screen, as on the screen images) and on its dummy driver (headless). SDL3
+# is not used: here it is X11-only (find_package would prefer it).
 VERSION=6.2; GIT=https://github.com/raysan5/raylib.git; REF=6.2
 DEPS="sdl2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_EXAMPLES=OFF

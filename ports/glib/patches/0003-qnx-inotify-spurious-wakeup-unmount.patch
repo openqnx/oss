@@ -1,0 +1,60 @@
+QNX: inotify backend: tolerate spurious POLLIN on fork/dup close; drop IN_UNMOUNT from the watch mask
+
+Two defects of the inotify file-monitor backend on QNX's inotify emulation
+(libfsnotify over /dev/fsnotify, served by fsevmgr):
+
+1. poll() on an inotify fd reports POLLIN with nothing to read (read() gives
+   EAGAIN) when another descriptor for the same open -- a dup(), or the copy
+   a fork()ed child inherits and closes at exec or exit -- is closed while the
+   poll is armed. GLib's worker thread polls the fd; any g_spawn (fork+exec)
+   in the program wakes it, ik_source_dispatch() reads 0 bytes while not in
+   its "bored" state and aborted on g_assert (iks->is_bored): xfce4-panel,
+   epiphany and at-spi-bus-launcher died. Treat it as a spurious wakeup: keep
+   polling the fd (the existing code path for an empty read does that).
+
+2. inotify_add_watch() rejects IN_UNMOUNT in the mask with EINVAL. GLib puts
+   it in every directory watch (file monitors watch the parent directory), so
+   no watch was ever added and no GFileMonitor event ever arrived; the
+   "missing" list retried every 4 s. IN_UNMOUNT is output-only (Linux reports
+   it unasked); leave it out on QNX.
+
+The backend is kept (rather than building GIO without inotify and falling
+back to the poll monitor) because with these two fixes it works: events
+arrive at once, moves are paired by cookie (docs/porting-hazards.md #160).
+
+Upstream-Status: QNX-specific
+
+--- a/gio/inotify/inotify-kernel.c
++++ b/gio/inotify/inotify-kernel.c
+@@ -305,8 +305,15 @@
+            *
+            * In that case, we need to switch back to polling the file
+            * descriptor in the usual way.
++           *
++           * On QNX, poll() also reports POLLIN with nothing to read when
++           * another descriptor for the same inotify open (a dup, or the
++           * copy a fork()ed child closes at exec or exit) is closed while
++           * the poll is armed: a spurious wakeup, not a boredom timer.
+            */
++#ifndef __QNX__
+           g_assert (iks->is_bored);
++#endif
+           interesting = TRUE;
+         }
+ 
+--- a/gio/inotify/inotify-path.c
++++ b/gio/inotify/inotify-path.c
+@@ -37,7 +37,13 @@
+ #include "inotify-path.h"
+ #include "inotify-missing.h"
+ 
++#ifdef __QNX__
++/* QNX's inotify (libfsnotify) rejects IN_UNMOUNT in a watch mask with EINVAL;
++ * it is an output-only flag (Linux reports it whether asked for or not). */
++#define IP_INOTIFY_DIR_MASK (IN_MODIFY|IN_ATTRIB|IN_MOVED_FROM|IN_MOVED_TO|IN_DELETE|IN_CREATE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CLOSE_WRITE)
++#else
+ #define IP_INOTIFY_DIR_MASK (IN_MODIFY|IN_ATTRIB|IN_MOVED_FROM|IN_MOVED_TO|IN_DELETE|IN_CREATE|IN_DELETE_SELF|IN_UNMOUNT|IN_MOVE_SELF|IN_CLOSE_WRITE)
++#endif
+ 
+ #define IP_INOTIFY_FILE_MASK (IN_MODIFY|IN_ATTRIB|IN_CLOSE_WRITE)
+ 

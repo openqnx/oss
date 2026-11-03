@@ -148,7 +148,7 @@ ARCH=x86_64                         # or aarch64le
 ssh -i ~/.ssh/qnx-target root@$T 'mkdir -p /data/oss/qnx-runtime/lib'
 for l in libeventfd.so.1 libepoll.so.1 libsignalfd.so.1 libtimerfd.so.1 libasound.so.5 \
          libscreen.so.1 libEGL.so.1 libGLESv2.so.1 libbacktrace.so.1 \
-         libdrm.so.1 libdrm.so.2 libgbm.so.1 libnetmap.so.1; do
+         libdrm.so.1 libdrm.so.2 libgbm.so.1 libnetmap.so.1 dri_gbm.so; do
   for d in ~/qnx800/target/qnx/$ARCH/usr/lib ~/qnx800/target/qnx/$ARCH/lib; do
     [ -f $d/$l ] && { scp -i ~/.ssh/qnx-target $d/$l root@$T:/data/oss/qnx-runtime/lib/; break; }
   done
@@ -157,6 +157,9 @@ done
 
 (A library the image already has -- `ls /proc/boot /system/lib /usr/lib /lib`
 on the target -- need not be copied.)
+`dri_gbm.so` is no dependency of any binary: QNX's `libgbm.so.1` opens it at
+run time (without it: "Can't open 'dri' library!"), and labwc / wlroots on
+QNX Screen need it. `scripts/target-bootstrap` copies all of these for you.
 
 ## 7. Set up apk on the target
 
@@ -219,3 +222,19 @@ mkqnximage --type=qemu --arch=x86_64 --hostname=desktop-x86 \
 ```
 
 Then steps 6-7, and on the target `apk add oss-desktop && oss-desktop`.
+
+What to know about the graphics image:
+
+- `--graphics=yes` needs QNX Screen's VirtIO support in the SDP (the
+  **Screen Board Support VirtIO** package, step 2); without it mkqnximage
+  cannot build a graphics image.
+- Run the x86_64 graphics VM with KVM; emulated (TCG), Screen and GL are too
+  slow to use. The aarch64le VM is always emulated, so give programs there
+  much longer to start.
+- QEMU's `screendump` (monitor) cannot read the GL (virgl) display: it shows
+  black or stale content. Take screenshots on the target with the SDP's
+  `screenshot` tool (copy it from `$QNX_TARGET/<arch>/usr/bin` when the image
+  lacks it) and copy the file back.
+- The `/usr/local` link (`ln -sP /data/oss/usr/local /usr/local`, step 7)
+  does not survive a reboot: make it again after every reboot (before
+  `oss-desktop` or any package's program).

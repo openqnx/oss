@@ -7,15 +7,15 @@ Two kinds, by whether anything else from this repository is needed:
 | 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **271** |
 | 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **404** |
 
-Dependent components split further by what they need at run time (110 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (109 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
 | **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **271** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **110** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **294** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **109** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **295** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -147,7 +147,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libfdt`](ports/libfdt/) | 1.7.2 | meson | – | 0 |
 | [`libffi`](ports/libffi/) | 3.4.6 | autotools | – | 6 |
 | [`libhevc`](ports/libhevc/) | 1.8.5 | cmake | – | 0 |
-| [`libiconv`](ports/libiconv/) | 1.18 | autotools | – | 21 |
+| [`libiconv`](ports/libiconv/) | 1.18 | autotools | – | 22 |
 | [`libinih`](ports/libinih/) | 58 | meson | – | 1 |
 | [`libjpeg-turbo`](ports/libjpeg-turbo/) | 3.0.4 | cmake | – | 21 |
 | [`libjson`](ports/libjson/) | 0.8-git-20260512 | custom | – | 1 |
@@ -305,7 +305,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Runtime-standalone
 
-110 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+109 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
@@ -409,9 +409,8 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-versioneer`](ports/python3-versioneer/) | 0.29 | python3 | 15 |
 | [`python3-wheel`](ports/python3-wheel/) | 0.46.1 | python3 python3-packaging | 16 |
 | [`readline`](ports/readline/) | 8.2 | ncurses | 1 |
-| [`retropie`](ports/retropie/) | 0.3 | retroarch emulationstation openttd libretro-2048 libretro-samples libretro-mrboom libretro-retro8 libretro-fake08 | 48 |
+| [`retropie`](ports/retropie/) | 0.3 | retroarch emulationstation openttd libretro-2048 libretro-samples libretro-mrboom libretro-retro8 libretro-fake08 | 41 |
 | [`ruy`](ports/ruy/) | 0-git-20240321 | cpuinfo | 1 |
-| [`sdl2`](ports/sdl2/) | 2.32.10 | wayland libxkbcommon | 18 |
 | [`sdl2-compat`](ports/sdl2-compat/) | 2.32.60 | sdl3 | 34 |
 | [`soem`](ports/soem/) | 2.0.1 | libpcap | 1 |
 | [`sqlite_orm`](ports/sqlite_orm/) | 1.9 | sqlite | 2 |
@@ -422,7 +421,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Dependent
 
-294 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+295 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -656,8 +655,8 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`qdirstat`](ports/qdirstat/) | 2.0 | qt6 zlib gettext | gettext qt6 zlib | 54 |
 | [`qpdf`](ports/qpdf/) | 11.10.1 | zlib libjpeg-turbo openssl | libjpeg-turbo openssl zlib | 3 |
 | [`qt6`](ports/qt6/) | 6.8.1 | zlib libpng libjpeg-turbo freetype harfbuzz pcre2 openssl icu double-conversion ffmpeg fontconfig gstreamer gst-plugins-base gst-plugins-bad libtiff libwebp zstd | brotli double-conversion ffmpeg fontconfig freetype glib gst-plugins-bad gst-plugins-base gstreamer harfbuzz icu libjpeg-turbo libpng libtiff libwebp openssl pcre2 zlib zstd | 53 |
-| [`quake3`](ports/quake3/) | 1.36-git-20261012 | sdl2 | sdl2 | 1 |
-| [`raylib`](ports/raylib/) | 6.2 | sdl2 | sdl2 | 1 |
+| [`quake3`](ports/quake3/) | 1.36-git-20261012 | sdl2 | sdl2 | 2 |
+| [`raylib`](ports/raylib/) | 6.2 | sdl2 | sdl2 | 2 |
 | [`re2`](ports/re2/) | 2024-07-02 | abseil | abseil | 1 |
 | [`redis`](ports/redis/) | 8.10.3 | openssl | openssl | 1 |
 | [`restbed`](ports/restbed/) | 4.8 | openssl asio | openssl | 1 |
@@ -668,9 +667,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`rsync`](ports/rsync/) | 3.3.0 | zstd lz4 xxhash openssl | lz4 openssl xxhash zstd | 4 |
 | [`rtl-sdr`](ports/rtl-sdr/) | 2.0.2 | libusb | libusb | 1 |
 | [`s2n-tls`](ports/s2n-tls/) | 1.7.0 | openssl | openssl | 1 |
+| [`sdl2`](ports/sdl2/) | 2.32.10 | libiconv | libiconv | 1 |
 | [`sdl2-image`](ports/sdl2-image/) | 2.8.8 | sdl2 libpng libjpeg-turbo libtiff libwebp libavif libjxl | libavif libtiff libwebp sdl2 | 14 |
-| [`sdl2-mixer`](ports/sdl2-mixer/) | 2.8.2 | sdl2 opusfile | opusfile sdl2 | 5 |
-| [`sdl2-net`](ports/sdl2-net/) | 2.2.0 | sdl2 | sdl2 | 1 |
+| [`sdl2-mixer`](ports/sdl2-mixer/) | 2.8.2 | sdl2 opusfile | opusfile sdl2 | 6 |
+| [`sdl2-net`](ports/sdl2-net/) | 2.2.0 | sdl2 | sdl2 | 2 |
 | [`sdl2-ttf`](ports/sdl2-ttf/) | 2.24.0 | sdl2 freetype harfbuzz | freetype harfbuzz sdl2 | 16 |
 | [`sdl3`](ports/sdl3/) | 3.4.18 | libx11 libxext libxcursor libxi libxfixes libxrandr libxrender libxscrnsaver libxkbcommon libiconv libxtst | libiconv libx11 libxcursor libxext libxfixes libxi libxrandr libxrender libxscrnsaver libxtst | 13 |
 | [`sentencepiece`](ports/sentencepiece/) | 0.2.1 | protobuf abseil | abseil protobuf | 3 |
@@ -730,6 +730,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`lighttpd`](ports/lighttpd/) | libxcrypt | – | – |
 | [`llama.cpp`](ports/llama.cpp/) | openssl | – | – |
 | [`mosh`](ports/mosh/) | libutempter | – | – |
+| [`retroarch`](ports/retroarch/) | libxkbcommon | – | – |
 
 ## Blocked
 

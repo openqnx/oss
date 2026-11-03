@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (28 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (17 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild zlib lzo libjpeg-turbo libpng gnutls openssl sdl2
 ```
 
-<details><summary>Full build chain (28)</summary>
+<details><summary>Full build chain (17)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`gettext`](../gettext/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`openssl`](../openssl/) [`sdl2`](../sdl2/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source

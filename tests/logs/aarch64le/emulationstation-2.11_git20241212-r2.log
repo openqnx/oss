@@ -1,0 +1,32 @@
+# emulationstation 2.11_git20241212-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-03T11:59:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u emulationstation qnx-test-emulationstation qnx-port-tests
+(1/9) Installing c-ares (1.34.3-r0)
+(2/9) Installing nghttp2 (1.64.0-r0)
+(3/9) Installing curl (8.11.1-r1)
+(4/9) Installing freeimage (3.18.0-r1)
+(5/9) Installing pugixml (1.14-r0)
+(6/9) Installing lz4 (1.10.0-r0)
+(7/9) Installing vlc (3.0.21-r1)
+(8/9) Installing emulationstation (2.11_git20241212-r2)
+(9/9) Installing qnx-test-emulationstation (1.0-r0)
+OK: 861.4 MiB in 104 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_emulationstation
+     == emulationstation ==
+       ok   --help: Version 2.12.0rp-dev, built Nov  3 2026 - 20:45:31
+       ok   --help lists --resolution and --windowed
+       ok   started: es_log.txt has 'EmulationStation - v2.12.0rp-dev, built Nov  3 2026 - 20:45:31'
+       ok   stopped by itself without a display (rc=1)
+       info last log line: Nov 03 11:59:23 lvl0: 	Window failed to initialize!
+     PASS emulationstation
+PASS test_emulationstation
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

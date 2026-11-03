@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/RetroPie/RetroArch.git |
 | Build system | custom (see recipe) |
-| QNX patches | 4 |
+| QNX patches | 5 |
 | Build dependencies | [`sdl2`](../sdl2/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`fontconfig`](../fontconfig/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`openssl`](../openssl/) |
 | Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`libass`](../libass/) [`libxkbcommon`](../libxkbcommon/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (30 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (21 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 freetype zlib fontconfig fribidi libass openssl
 ```
 
-<details><summary>Full build chain (30)</summary>
+<details><summary>Full build chain (21)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libass`](../libass/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libass`](../libass/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`sdl2`](../sdl2/) [`zlib`](../zlib/)
 </details>
 
 ### 2. Get the upstream source
@@ -87,13 +87,14 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/retroarch < ports/retroarch/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/retroarch < ports/retroarch/patches/0002-qnx-no-libstdcxx.patch
 patch -p1 -d src/retroarch < ports/retroarch/patches/0003-qnx-getopt-restart.patch
 patch -p1 -d src/retroarch < ports/retroarch/patches/0004-qnx-keep-config-option.patch
+patch -p1 -d src/retroarch < ports/retroarch/patches/0005-qnx-screen-contexts.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — updated drivers
@@ -149,6 +150,40 @@ Touches: `retroarch.c` · Upstream status: QNX-specific
 
 Touches: `configuration.c` · Upstream status: QNX-specific
 
+**[`0005-qnx-screen-contexts.patch`](patches/0005-qnx-screen-contexts.patch)** — QNX Screen contexts: the GLES context works on a plain Screen session, the Vulkan one fails cleanly
+
+> egl_qnx (gfx_ctx_qnx, the "gl" video driver over GLES2/EGL), written for the
+> BlackBerry navigator:
+> - ORIENTATION is set by the navigator only; atoi(getenv("ORIENTATION"))
+>   crashed on a plain QNX Screen session. Unset now means 0, and
+>   SCREEN_USAGE_ROTATION / SCREEN_PROPERTY_ROTATION are used only for a
+>   rotated display.
+> - The EGL config: eglChooseConfig() lists the deepest configs first, and on
+>   virtio-gpu (Mesa) that is RGBX1010102, which Screen cannot make window
+>   buffers of ("Not supported"). An 8-bit RGB config with an RGBX/RGBA8888
+>   native visual is chosen, and the window gets the config's native visual
+>   as its format -- the SDP 8 EGL accepts a window only in that format
+>   (EGL_BAD_NATIVE_WINDOW, "can't create window buffers").
+> - A window that reports no buffer size yet gets the display's.
+> - The error path passed the video driver's data to the context's destroy
+>   function and freed qnx twice; it now tears down the EGL state it made.
+>   The data is calloc'd (egl_destroy reads it).
+>
+> egl_common.c: egl_init_context_common() walked all of eglGetConfigs()'
+> count instead of the configs eglChooseConfig() matched -- uninitialised
+> entries once an accept callback rejects the first ones.
+>
+> qnx_vk (Vulkan on Screen): the data was malloc'd, and vulkan_context_init()
+> reads fields of it it expects zeroed: with an ICD that lacks
+> VK_QNX_screen_surface ("Instance does not support required extensions")
+> this attempt crashed (SIGSEGV) instead of failing. calloc, like the
+> khr_display context. The Screen context and window were created only when
+> they already existed (inverted test), so without a GL context before it the
+> code dereferenced NULL. Now the Vulkan driver fails cleanly ("Cannot open
+> video driver.. Exiting.", exit status 1).
+
+Touches: `gfx/common/egl_common.c`, `gfx/drivers_context/qnx_ctx.c`, `gfx/drivers_context/qnx_vk_ctx.c` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_configure`, `do_build`, `do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -163,7 +198,7 @@ do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
   CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
-  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
+  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg --enable-opengles; }
 ```
 
 ```bash
@@ -178,7 +213,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - RetroArch, the libretro frontend, as packaged by RetroPie, at the upstream commit qnx-ports' QNX port is based on (patches/: QNX platform support -- Screen/EGL video, input, QNX build settings). Part of the RetroPie stack.
 - RetroArch's configure is its own (not autoconf) and builds in the source tree.
-- LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is GNU libstdc++'s -- next to the libc++ every C++ object here is compiled against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak). PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use. --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the tree's FFmpeg is 7. It only provides the ffmpeg core and recording. --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in deps/libz, whose prototypes clash with the staged zlib.h. --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2. Its Wayland input maps Linux evdev key codes (<linux/input.h>); its X11 drivers include the XShm one, which needs SysV shared memory (<sys/shm.h>) that QNX does not have. EGL_LIBS=-lEGL: configure finds QNX's EGL (HAVE_EGL) through its headers but has no pkg-config file to take the library from, so the link missed it.
+- LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is GNU libstdc++'s -- next to the libc++ every C++ object here is compiled against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak). PKG_CONF_PATH: configure looks for <triple>-pkg-config; the tree's pkg-config (PKG_CONFIG_LIBDIR/SYSROOT from env.sh) is the one to use. --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the tree's FFmpeg is 7. It only provides the ffmpeg core and recording. --enable-opengles: the "gl" video driver over GLES2 + EGL on QNX Screen (the "egl_qnx" context). Off by default in RetroArch's configure (HAVE_OPENGLES=no), so the build had only the Vulkan driver, which needs VK_QNX_screen_surface -- not offered by the screen VMs' virtio Vulkan ICD. GL is the default driver once it is built. --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in deps/libz, whose prototypes clash with the staged zlib.h. --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2. Its Wayland input maps Linux evdev key codes (<linux/input.h>); its X11 drivers include the XShm one, which needs SysV shared memory (<sys/shm.h>) that QNX does not have. EGL_LIBS=-lEGL: configure finds QNX's EGL (HAVE_EGL) through its headers but has no pkg-config file to take the library from, so the link missed it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH retroarch`.
 
@@ -256,8 +291,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/retroarch-1.15_git20230408-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/retroarch-1.15_git20230408-r2.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r4 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/retroarch-1.15_git20230408-r4.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/retroarch-1.15_git20230408-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r2 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/retroarch-1.15_git20230408-r2.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | retroarch 1.15_git20230408-r4 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/retroarch-1.15_git20230408-r4.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -280,7 +317,7 @@ do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
   CXXFLAGS="-D_QNX_SOURCE -std=c++17 -V${QCC_TARGET}_cxx -Wno-deprecated-definitions -I$STAGE$PREFIX/include" \
   CPPFLAGS="-D_QNX_SOURCE" LDFLAGS="-V${QCC_TARGET}_cxx -L$STAGE$PREFIX/lib" \
   PKG_CONF_PATH=pkg-config \
-  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg; }
+  ./configure --host="$QNX_TRIPLE-" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --disable-x11 --disable-wayland --disable-builtinzlib --disable-ffmpeg --enable-opengles; }
 # LDFLAGS -V..._cxx: the program is linked by q++, and the plain -V variant is
 # GNU libstdc++'s -- next to the libc++ every C++ object here is compiled
 # against, so the binary loaded both C++ runtimes (scripts/check-sdp-leak).
@@ -289,6 +326,11 @@ do_configure() { cp -a "$S/." "$B/" && cd "$B" && \
 # --disable-ffmpeg: this RetroArch (2023, the RetroPie revision qnx-ports
 # ports) uses the FFmpeg API before 7.0 (AVCodecContext::channel_layout); the
 # tree's FFmpeg is 7. It only provides the ffmpeg core and recording.
+# --enable-opengles: the "gl" video driver over GLES2 + EGL on QNX Screen (the
+# "egl_qnx" context). Off by default in RetroArch's configure (HAVE_OPENGLES=no),
+# so the build had only the Vulkan driver, which needs VK_QNX_screen_surface --
+# not offered by the screen VMs' virtio Vulkan ICD. GL is the default driver
+# once it is built.
 # --disable-builtinzlib: the zlib component (a DEPS entry), not the copy in
 # deps/libz, whose prototypes clash with the staged zlib.h.
 # --disable-x11 --disable-wayland: on QNX RetroArch draws through Screen/SDL2.

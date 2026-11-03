@@ -1,12 +1,12 @@
 # Component index
 
-676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 448 QNX patches between them.
+676 components. **675** build for both `aarch64le` and `x86_64` from upstream source, carrying 454 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
 | 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **271** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **110** |
-| 🔴 **dependent** | needs other components to build and to run | **294** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **109** |
+| 🔴 **dependent** | needs other components to build and to run | **295** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -111,7 +111,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [elfutils](ports/elfutils/README.md) | Library to read and write ELF files (libelf from elfutils) | 0.193 | autotools | sourceware.org | 4 | 🔴 dependent | 1 | ✅ | ✅ |
 | [elvis](ports/elvis/README.md) | Clone of the ex/vi text editor | 2.2.1-git-20240226 | custom | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [emacs](ports/emacs/README.md) | GNU Emacs extensible text editor (terminal build) | 30.2 | custom | ftp.gnu.org | 4 | 🔴 dependent | 9 | ✅ | ✅ |
-| [emulationstation](ports/emulationstation/README.md) | Graphical front-end for browsing and launching emulated games | 2.11-git-20241212 | cmake | github.com | 1 | 🔴 dependent | 6 | ✅ | ✅ |
+| [emulationstation](ports/emulationstation/README.md) | Graphical front-end for browsing and launching emulated games | 2.11-git-20241212 | cmake | github.com | 2 | 🔴 dependent | 6 | ✅ | ✅ |
 | [enca](ports/enca/README.md) | Detects and converts the character encoding of text files | 1.19 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [enchant](ports/enchant/README.md) | Generic spell checking library wrapping several spell checker backends | 2.8.2 | autotools | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [encodings](ports/encodings/README.md) | X.Org font encoding tables for libfontenc | 1.1.0 | autotools | www.x.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -171,7 +171,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [gklib](ports/gklib/README.md) | Helper routines library used by METIS and related software | 5.1.1-git-20230326 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [glfw](ports/glfw/README.md) | Multi-platform library for OpenGL, OpenGL ES and Vulkan windowing | 3.5.1 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [glib-networking](ports/glib-networking/README.md) | TLS (GnuTLS) and proxy support modules for GLib's GIO | 2.80.1 | meson | gitlab.gnome.org | — | 🔴 dependent | 4 | ✅ | ✅ |
-| [glib](ports/glib/README.md) | Low-level core C library of GTK and GNOME: data types, main loop, GIO | 2.82.4 | meson | gitlab.gnome.org | 2 | 🔴 dependent | 5 | ✅ | ✅ |
+| [glib](ports/glib/README.md) | Low-level core C library of GTK and GNOME: data types, main loop, GIO | 2.82.4 | meson | gitlab.gnome.org | 3 | 🔴 dependent | 5 | ✅ | ✅ |
 | [glm](ports/glm/README.md) | Header-only C++ mathematics library for graphics based on GLSL | 1.0.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [glog](ports/glog/README.md) | Google's C++ application-level logging library | 0.7.1 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [gmp](ports/gmp/README.md) | GNU Multiple Precision arithmetic library | 6.3.0 | autotools | gmplib.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -250,7 +250,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libdisplay-info](ports/libdisplay-info/README.md) | EDID and DisplayID parsing library | 0.3.0 | meson | gitlab.freedesktop.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libdrm-headers](ports/libdrm-headers/README.md) | Headers for the DRM kernel interface and the libdrm API (headers only) | 2.4.129 | custom | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libedit](ports/libedit/README.md) | Command line editor library: line editing, history and tokenization | 20240808-3.1 | autotools | thrysoee.dk | 1 | 🔴 dependent | 1 | ✅ | ✅ |
-| [libepoxy](ports/libepoxy/README.md) | Library for managing OpenGL, EGL and GLX function pointers | 1.5.10 | meson | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [libepoxy](ports/libepoxy/README.md) | Library for managing OpenGL, EGL and GLX function pointers | 1.5.10 | meson | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [libev](ports/libev/README.md) | Full-featured event loop library for C | 4.33 | autotools | dist.schmorp.de | — | 🟢 standalone | — | ✅ | ✅ |
 | [libevent](ports/libevent/README.md) | Asynchronous event notification library | 2.1.12 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [libexif](ports/libexif/README.md) | Library for parsing, editing and saving EXIF data | 0.6.24 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -562,7 +562,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [readline](ports/readline/README.md) | GNU Readline library for command line editing and history | 8.2 | autotools | ftp.gnu.org | 2 | 🟡 build-deps only | — | ✅ | ✅ |
 | [redis](ports/redis/README.md) | Advanced key-value store (server and command-line client) | 8.10.3 | custom | github.com | 5 | 🔴 dependent | 1 | ✅ | ✅ |
 | [restbed](ports/restbed/README.md) | C++ framework for building HTTP and HTTPS client and server applications | 4.8 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
-| [retroarch](ports/retroarch/README.md) | RetroArch, the libretro frontend for emulators and games | 1.15-git-20230408 | custom | github.com | 4 | 🔴 dependent | 7 | ✅ | ✅ |
+| [retroarch](ports/retroarch/README.md) | RetroArch, the libretro frontend for emulators and games | 1.15-git-20230408 | custom | github.com | 5 | 🔴 dependent | 7 | ✅ | ✅ |
 | [retropie](ports/retropie/README.md) | RetroPie retro gaming stack: RetroArch, EmulationStation, cores, configs | 0.3 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [riegeli](ports/riegeli/README.md) | File format for storing a sequence of records, typically protocol buffers | 0_git20231212 | custom | github.com | 3 | 🔴 dependent | 10 | ✅ | ✅ |
 | [rocksdb](ports/rocksdb/README.md) | Embeddable, persistent key-value store for fast storage | 11.8.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
@@ -577,7 +577,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [sdl2-mixer](ports/sdl2-mixer/README.md) | Audio mixer library for SDL2 (WAV, FLAC, MP3, Ogg Vorbis, Opus, MIDI) | 2.8.2 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [sdl2-net](ports/sdl2-net/README.md) | Portable network library for SDL2 | 2.2.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [sdl2-ttf](ports/sdl2-ttf/README.md) | TrueType font rendering library for SDL2 using FreeType and HarfBuzz | 2.24.0 | cmake | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
-| [sdl2](ports/sdl2/README.md) | Simple DirectMedia Layer 2, cross-platform multimedia and input library | 2.32.10 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
+| [sdl2](ports/sdl2/README.md) | Simple DirectMedia Layer 2, cross-platform multimedia and input library | 2.32.10 | cmake | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [sdl3](ports/sdl3/README.md) | Simple DirectMedia Layer 3, cross-platform multimedia and input library | 3.4.18 | cmake | github.com | 1 | 🔴 dependent | 10 | ✅ | ✅ |
 | [sentencepiece](ports/sentencepiece/README.md) | Unsupervised text tokenizer for neural network-based text generation | 0.2.1 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [shared-mime-info](ports/shared-mime-info/README.md) | Freedesktop.org shared MIME type database and update-mime-database | 2.4 | meson | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
@@ -644,7 +644,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [vidstab](ports/vidstab/README.md) | Video stabilization library for FFmpeg and Transcode | 1.1.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [vim](ports/vim/README.md) | Vi IMproved, a highly configurable text editor | 9.1.0900 | autotools | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [virtualgl](ports/virtualgl/README.md) | VirtualGL client (vglclient) for displaying remotely rendered OpenGL | 3.1.5 | cmake | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
-| [vlc](ports/vlc/README.md) | VLC media player and libvlc multimedia engine | 3.0.21 | custom | code.videolan.org | 1 | 🔴 dependent | 6 | ✅ | ✅ |
+| [vlc](ports/vlc/README.md) | VLC media player and libvlc multimedia engine | 3.0.21 | custom | code.videolan.org | 2 | 🔴 dependent | 6 | ✅ | ✅ |
 | [vsomeip](ports/vsomeip/README.md) | COVESA SOME/IP protocol stack for automotive communication | 3.5.6 | cmake | github.com | 4 | 🔴 dependent | 1 | ✅ | ✅ |
 | [vte](ports/vte/README.md) | Virtual terminal widget library for GTK | 0.78.2 | meson | download.gnome.org | 5 | 🔴 dependent | 14 | ✅ | ✅ |
 | [wayland-protocols](ports/wayland-protocols/README.md) | Extension protocol definitions for Wayland (XML files) | 1.47 | meson | gitlab.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |

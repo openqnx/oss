@@ -1,0 +1,69 @@
+# gthumb 3.12.8.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-03T10:32:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gthumb qnx-test-gthumb qnx-port-tests
+( 1/41) Installing fontconfig (2.15.0-r0)
+( 2/41) Installing libxau (1.0.11-r0)
+( 3/41) Installing libxdmcp (1.1.5-r0)
+( 4/41) Installing libxcb (1.17.0-r0)
+( 5/41) Installing libx11 (1.8.10-r0)
+( 6/41) Installing libxext (1.3.6-r0)
+( 7/41) Installing libxrender (0.9.11-r0)
+( 8/41) Installing cairo (1.18.2-r0)
+( 9/41) Installing libinih (58-r0)
+(10/41) Installing exiv2 (0.28.5-r0)
+(11/41) Installing gdk-pixbuf (2.42.12-r0)
+(12/41) Installing gsettings-desktop-schemas (49.0-r0)
+(13/41) Installing dbus (1.16.0-r3)
+(14/41) Installing libxi (1.8.2-r0)
+(15/41) Installing libxtst (1.2.5-r0)
+(16/41) Installing at-spi2-core (2.54.2-r1)
+(17/41) Installing fribidi (1.0.16-r0)
+(18/41) Installing harfbuzz (<ip>-r0)
+(19/41) Installing libepoxy (1.5.10-r0)
+(20/41) Installing libxcomposite (0.4.6-r0)
+(21/41) Installing libxfixes (6.0.1-r0)
+(22/41) Installing libxcursor (1.2.2-r0)
+(23/41) Installing libxdamage (1.1.6-r0)
+(24/41) Installing libxinerama (1.1.5-r0)
+(25/41) Installing libxml2 (2.13.5-r1)
+(26/41) Installing libxkbcommon (1.8.1-r1)
+(27/41) Installing libxrandr (1.5.4-r0)
+(28/41) Installing libxft (2.3.8-r0)
+(29/41) Installing pango (1.54.0-r0)
+(30/41) Installing wayland (1.24.0-r0)
+(31/41) Installing gtk3 (3.24.43-r1)
+(32/41) Installing lcms2 (2.16-r0)
+(33/41) Installing libwebp (1.4.0-r0)
+(34/41) Installing libtiff (4.7.0-r0)
+(35/41) Installing gthumb (3.12.8.2-r1)
+(36/41) Installing font-dejavu (2.37-r0)
+(37/41) Installing libsfdo (0.1.4-r0)
+(38/41) Installing wlroots (0.20.2-r0)
+(39/41) Installing xkeyboard-config (2.43-r0)
+(40/41) Installing labwc (0.20.2-r1)
+(41/41) Installing qnx-test-gthumb (1.0-r0)
+OK: 193.7 MiB in 65 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gthumb
+     == gthumb ==
+       ok   gthumb --help lists --fullscreen, --slideshow, --import-photos
+       info headless Wayland display: up
+       info gthumb --version -> 0: gthumb 3.12.8.2, Copyright © 2001-2010 Free Software Foundation, Inc.
+       ok   gthumb --version: gthumb 3.12.8.2
+       ok   gthumb --version exits 0 with a display
+       ok   extensions directory
+       info 31 extension(s), 31 complete
+       ok   at least 20 extensions
+       ok   every extension: key file parses, [Loader] API=3.12, Type=module, lib<name>.so present
+       ok   desktop entry runs gthumb
+     PASS gthumb
+PASS test_gthumb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

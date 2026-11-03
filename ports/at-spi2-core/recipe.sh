@@ -20,6 +20,12 @@ BUILDSYS=meson
 # systemd, so the unit installed there is removed again after the install.
 # X11 stays on -- libXtst is what AT-SPI uses to synthesise events, and the
 # whole X11 client stack is already staged.
-MESON_ARGS_EXTRA=( -Dintrospection=disabled -Ddocs=false -Dsystemd_user_dir=$PREFIX/lib/systemd/user
+# -Ddbus_daemon: left at "default", bus/meson.build looks for dbus-daemon on the
+# *build host* and bakes that path (/usr/bin/dbus-daemon) into
+# at-spi-bus-launcher; on QNX it is $PREFIX/bin/dbus-daemon, so the launcher
+# failed with "Failed to spawn child process /usr/bin/dbus-daemon" and every
+# GTK program printed "Unable to acquire the address of the accessibility bus".
+# -Duse_systemd=false: likewise keep a host dbus-broker-launch out of it.
+MESON_ARGS_EXTRA=( -Ddbus_daemon=$PREFIX/bin/dbus-daemon -Duse_systemd=false -Dintrospection=disabled -Ddocs=false -Dsystemd_user_dir=$PREFIX/lib/systemd/user
                    -Datk_only=false -Dx11=enabled )
 do_install() { DESTDIR="$STAGE" ninja -C "$B" install && rm -rf "$STAGE$PREFIX/lib/systemd"; }

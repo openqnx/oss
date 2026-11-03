@@ -1,15 +1,46 @@
 /* at-spi2-core: the ATK interfaces it ships (objects, roles, states,
  * relations) and libatspi's client-side value types (role names, state sets
  * and their algebra), with known answers. Nothing here needs the
- * accessibility bus, which a vanilla target does not run. */
+ * accessibility bus, which a vanilla target does not run -- but the bus
+ * launcher must name the dbus-daemon this target has (it once carried the
+ * build host's /usr/bin/dbus-daemon, so no GTK program found the bus). */
 #include "common.h"
 #include <atk/atk.h>
 #include <atspi/atspi.h>
+#include <unistd.h>
+
+/* The dbus-daemon path compiled into at-spi-bus-launcher (the string ending in
+ * "/dbus-daemon" that starts with '/'), or NULL. */
+static char *launcher_daemon_path(const char *launcher) {
+  gchar *data = NULL; gsize len = 0;
+  if (!g_file_get_contents(launcher, &data, &len, NULL)) return NULL;
+  char *found = NULL;
+  for (gsize i = 0; i < len && !found; ) {
+    gsize n = strnlen(data + i, len - i);
+    if (n > 12 && data[i] == '/' && strcmp(data + i + n - 12, "/dbus-daemon") == 0) found = g_strndup(data + i, n);
+    i += n + 1;
+  }
+  g_free(data);
+  return found;
+}
 
 int main(void) {
   QT_BEGIN("at-spi2-core");
   printf("  info ATK %u.%u.%u, AT-SPI %u.%u.%u\n", atk_get_major_version(), atk_get_minor_version(),
          atk_get_micro_version(), ATSPI_MAJOR_VERSION, ATSPI_MINOR_VERSION, ATSPI_MICRO_VERSION);
+
+  /* ---- the bus launcher ---- */
+  const char *roots[] = { "/usr/local", "/data/oss/usr/local" };
+  char *launcher = NULL;
+  for (int i = 0; i < 2 && !launcher; i++) if (roots[i]) {
+    char *p = g_strdup_printf("%s/libexec/at-spi-bus-launcher", roots[i]);
+    if (access(p, X_OK) == 0) launcher = p; else g_free(p);
+  }
+  QT_CHECK(launcher != NULL, "libexec/at-spi-bus-launcher installed");
+  char *daemon = launcher ? launcher_daemon_path(launcher) : NULL;
+  printf("  info launcher spawns %s\n", daemon ? daemon : "(none)");
+  QT_CHECK(daemon && strcmp(daemon, "/usr/local/bin/dbus-daemon") == 0, "launcher spawns /usr/local/bin/dbus-daemon");
+  g_free(daemon); g_free(launcher);
 
   /* ---- ATK ---- */
   /* Since ATK 2.46 PUSH_BUTTON is an alias of BUTTON, named "button". */

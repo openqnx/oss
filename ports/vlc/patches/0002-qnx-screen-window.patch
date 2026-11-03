@@ -1,0 +1,381 @@
+A QNX Screen window provider, so the command-line player shows video
+
+The QNX EGL/GLES2 video output (egl_qnx, from qnx-ports) draws into a
+VOUT_WINDOW_TYPE_QNX window, and the only module that provided one was the Qt
+GUI, which this port does not build: "vlc -I dummy <file>" (or cvlc) decoded
+the video but no window appeared. qnx_window ("vout window") creates a
+top-level Screen window -- the video's size, centred, or the whole display
+for --fullscreen -- for egl_qnx + gles2 to draw into, and passes Screen's
+close and key events on to VLC (hotkeys).
+
+egl_qnx took the first EGL config eglChooseConfig() returned: Mesa (the
+virtio-gpu driver) lists the deepest first, RGBX1010102, which Screen cannot
+make window buffers of, and the SDP 8 EGL accepts a window only in its
+config's native visual ("can't create window buffers", EGL_BAD_NATIVE_WINDOW,
+"cannot create EGL window surface"). It now takes an 8-bit config with an
+RGBX/RGBA8888 visual and gives the window that format (recreating its
+buffers when the format changes).
+
+Upstream-Status: QNX-specific
+
+--- a/modules/video_output/Makefile.am
++++ b/modules/video_output/Makefile.am
+@@ -421,10 +421,14 @@
+ libegl_qnx_plugin_la_CFLAGS = $(AM_CFLAGS) $(EGL_CFLAGS) -DUSE_PLATFORM_QNX=1
+ libegl_qnx_plugin_la_LIBADD = $(EGL_LIBS) -lGLESv2
+ 
++libqnx_window_plugin_la_SOURCES = video_output/qnx/window.c
++libqnx_window_plugin_la_LIBADD = -lscreen
++
+ if HAVE_QNX
+ if HAVE_EGL
+ vout_LTLIBRARIES += libegl_qnx_plugin.la
+ endif
++vout_LTLIBRARIES += libqnx_window_plugin.la
+ endif
+ 
+ ### FrameBuffer ###
+--- a/modules/video_output/opengl/egl.c
++++ b/modules/video_output/opengl/egl.c
+@@ -461,17 +461,69 @@
+         EGL_RENDERABLE_TYPE, api->render_bit,
+         EGL_NONE
+     };
++#if defined (USE_PLATFORM_QNX)
++    /* all of them: Mesa lists well over a hundred, the 8-bit ones last */
++    EGLConfig cfgv[1024];
++#else
+     EGLConfig cfgv[1];
++#endif
+     EGLint cfgc;
+ 
+-    if (eglChooseConfig(sys->display, conf_attr, cfgv, 1, &cfgc) != EGL_TRUE
++    if (eglChooseConfig(sys->display, conf_attr, cfgv, (EGLint)(sizeof (cfgv) / sizeof (cfgv[0])), &cfgc) != EGL_TRUE
+      || cfgc == 0)
+     {
+         msg_Err (obj, "cannot choose EGL configuration");
+         goto error;
+     }
+ #if defined (USE_PLATFORM_QNX)
++    /* eglChooseConfig() lists the deepest configs first (RGBX1010102 on
++     * virtio-gpu, which Screen cannot make window buffers of), and the
++     * SDP 8 EGL takes a window only in its config's native visual
++     * (EGL_BAD_NATIVE_WINDOW, "can't create window buffers", otherwise):
++     * take an 8-bit config with an RGBX/RGBA8888 visual and give the window
++     * that format. */
++    EGLint visual = 0, chosen = 0;
++    for (EGLint i = 0; i < cfgc; i++)
++    {
++        EGLint r = 0, g = 0, b = 0, a = 0, v = 0;
++        eglGetConfigAttrib(sys->display, cfgv[i], EGL_RED_SIZE, &r);
++        eglGetConfigAttrib(sys->display, cfgv[i], EGL_GREEN_SIZE, &g);
++        eglGetConfigAttrib(sys->display, cfgv[i], EGL_BLUE_SIZE, &b);
++        eglGetConfigAttrib(sys->display, cfgv[i], EGL_ALPHA_SIZE, &a);
++        eglGetConfigAttrib(sys->display, cfgv[i], EGL_NATIVE_VISUAL_ID, &v);
++        if (r != 8 || g != 8 || b != 8)
++            continue;
++        if (v <= 0) /* no native visual: the format its depths make */
++            v = a ? SCREEN_FORMAT_RGBA8888 : SCREEN_FORMAT_RGBX8888;
++        if (v == SCREEN_FORMAT_RGBX8888 || v == SCREEN_FORMAT_RGBA8888)
++        {
++            cfgv[0] = cfgv[i];
++            visual = v;
++            chosen = i;
++            break;
++        }
++    }
++    if (visual == 0)
++        eglGetConfigAttrib(sys->display, cfgv[0], EGL_NATIVE_VISUAL_ID, &visual);
++    msg_Dbg(obj, "EGL config %d of %d, Screen format %d", chosen, cfgc, visual);
+     sys->cfg = cfgv[0];
++    {
++        int format = 0;
++        screen_get_window_property_iv(sys->window, SCREEN_PROPERTY_FORMAT, &format);
++        if (visual > 0 && visual != format)
++        {
++            int nbufs = 0;
++            screen_get_window_property_iv(sys->window, SCREEN_PROPERTY_RENDER_BUFFER_COUNT, &nbufs);
++            if (nbufs > 0)
++                screen_destroy_window_buffers(sys->window);
++            screen_set_window_property_iv(sys->window, SCREEN_PROPERTY_FORMAT, &visual);
++            if (nbufs > 0 && screen_create_window_buffers(sys->window, nbufs) != 0)
++            {
++                msg_Err (obj, "cannot create Screen window buffers in format %d", visual);
++                goto error;
++            }
++        }
++    }
+ #endif
+ 
+     /* Create a drawing surface */
+--- a/modules/video_output/qnx/window.c
++++ b/modules/video_output/qnx/window.c
+@@ -0,0 +1,268 @@
++/**
++ * @file window.c
++ * @brief QNX Screen window provider for VLC
++ *
++ * Creates a top-level window on QNX Screen for the EGL/GLES2 video output
++ * (egl_qnx), so the command-line player shows video without the Qt GUI,
++ * which is the only other provider of a VOUT_WINDOW_TYPE_QNX window.
++ */
++/*****************************************************************************
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation; either version 2.1 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
++ *****************************************************************************/
++
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#include <stdatomic.h>
++#include <stdlib.h>
++#include <screen/screen.h>
++
++#include <vlc_common.h>
++#include <vlc_plugin.h>
++#include <vlc_vout_window.h>
++#include <vlc_actions.h>
++
++/* From <sys/keycodes.h>, which cannot be included here: its KEY_DOWN (a
++ * key-event flag) clashes with VLC's KEY_DOWN (the down-arrow key). */
++#define QNX_KEY_DOWN      0x00000001
++#define QNX_KEY_SYM_VALID 0x00000040
++
++struct vout_window_sys_t
++{
++    screen_context_t ctx;
++    screen_window_t  win;
++    screen_event_t   ev;
++    int              display_size[2];
++    int              window_size[2];
++    vlc_thread_t     thread;
++    atomic_bool      stop;
++};
++
++/* Put the window at the given size, centred on the display. */
++static void Place(vout_window_t *wnd, int w, int h)
++{
++    vout_window_sys_t *sys = wnd->sys;
++
++    if (w <= 0 || h <= 0 || w > sys->display_size[0] || h > sys->display_size[1])
++    {
++        w = sys->display_size[0];
++        h = sys->display_size[1];
++    }
++    int size[2] = { w, h };
++    int pos[2] = { (sys->display_size[0] - w) / 2, (sys->display_size[1] - h) / 2 };
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_SIZE, size);
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_POSITION, pos);
++    sys->window_size[0] = w;
++    sys->window_size[1] = h;
++    screen_flush_context(sys->ctx, 0);
++    vout_window_ReportSize(wnd, w, h);
++}
++
++/* Screen's events for this context: closing, keys (handed to VLC's hotkeys). */
++static void *Thread(void *data)
++{
++    vout_window_t *wnd = data;
++    vout_window_sys_t *sys = wnd->sys;
++
++    while (!atomic_load(&sys->stop))
++    {
++        /* 100 ms: a blocking wait could not be interrupted at Close */
++        if (screen_get_event(sys->ctx, sys->ev, 100000000) != 0)
++            continue;
++        int type = SCREEN_EVENT_NONE;
++        screen_get_event_property_iv(sys->ev, SCREEN_PROPERTY_TYPE, &type);
++        switch (type)
++        {
++            case SCREEN_EVENT_CLOSE:
++                vout_window_ReportClose(wnd);
++                break;
++            case SCREEN_EVENT_KEYBOARD:
++            {
++                int flags = 0, sym = 0;
++                screen_get_event_property_iv(sys->ev, SCREEN_PROPERTY_FLAGS, &flags);
++                screen_get_event_property_iv(sys->ev, SCREEN_PROPERTY_SYM, &sym);
++                if (!(flags & QNX_KEY_DOWN) || !(flags & QNX_KEY_SYM_VALID))
++                    break;
++                uint_fast32_t key;
++                switch (sym)
++                {
++                    case 0xF01B: key = KEY_ESC; break;      /* KEYCODE_ESCAPE */
++                    case 0xF00D: key = KEY_ENTER; break;    /* KEYCODE_RETURN */
++                    case 0xF051: key = KEY_LEFT; break;     /* KEYCODE_LEFT */
++                    case 0xF053: key = KEY_RIGHT; break;    /* KEYCODE_RIGHT */
++                    case 0xF052: key = KEY_UP; break;       /* KEYCODE_UP */
++                    case 0xF054: key = KEY_DOWN; break;     /* KEYCODE_DOWN */
++                    default:
++                        if (sym >= 0x20 && sym < 0x7F)
++                            key = sym;
++                        else
++                            key = 0;
++                }
++                if (key)
++                    var_SetInteger(wnd->obj.libvlc, "key-pressed", key);
++                break;
++            }
++            default:
++                break;
++        }
++    }
++    return NULL;
++}
++
++static int Control(vout_window_t *wnd, int query, va_list ap)
++{
++    vout_window_sys_t *sys = wnd->sys;
++
++    switch (query)
++    {
++        case VOUT_WINDOW_SET_SIZE:
++        {
++            unsigned w = va_arg(ap, unsigned);
++            unsigned h = va_arg(ap, unsigned);
++            Place(wnd, w, h);
++            return VLC_SUCCESS;
++        }
++        case VOUT_WINDOW_SET_FULLSCREEN:
++        {
++            bool full = va_arg(ap, int);
++            if (full)
++                Place(wnd, sys->display_size[0], sys->display_size[1]);
++            return VLC_SUCCESS;
++        }
++        case VOUT_WINDOW_SET_STATE:
++        {
++            unsigned state = va_arg(ap, unsigned);
++            /* VOUT_WINDOW_STATE_NORMAL, _ABOVE, _BELOW (vlc_vout_display.h) */
++            int z = state == 1 ? 200 : state == 2 ? 1 : 100;
++            screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_ZORDER, &z);
++            screen_flush_context(sys->ctx, 0);
++            return VLC_SUCCESS;
++        }
++        case VOUT_WINDOW_HIDE_MOUSE:
++            return VLC_SUCCESS;
++        default:
++            msg_Warn(wnd, "unsupported control query %d", query);
++            return VLC_EGENERIC;
++    }
++}
++
++static void Close(vout_window_t *wnd)
++{
++    vout_window_sys_t *sys = wnd->sys;
++
++    atomic_store(&sys->stop, true);
++    vlc_join(sys->thread, NULL);
++    screen_destroy_event(sys->ev);
++    screen_destroy_window(sys->win);
++    screen_destroy_context(sys->ctx);
++    free(sys);
++}
++
++static int Open(vout_window_t *wnd, const vout_window_cfg_t *cfg)
++{
++    if (cfg->type != VOUT_WINDOW_TYPE_INVALID && cfg->type != VOUT_WINDOW_TYPE_QNX)
++        return VLC_EGENERIC;
++
++    vout_window_sys_t *sys = calloc(1, sizeof (*sys));
++    if (unlikely(sys == NULL))
++        return VLC_ENOMEM;
++    atomic_init(&sys->stop, false);
++    wnd->sys = sys;
++
++    if (screen_create_context(&sys->ctx, SCREEN_APPLICATION_CONTEXT) != 0)
++    {
++        msg_Err(wnd, "cannot connect to Screen: %s", vlc_strerror_c(errno));
++        free(sys);
++        return VLC_EGENERIC;
++    }
++    if (screen_create_window(&sys->win, sys->ctx) != 0
++     || screen_create_event(&sys->ev) != 0)
++    {
++        msg_Err(wnd, "cannot create a Screen window: %s", vlc_strerror_c(errno));
++        screen_destroy_context(sys->ctx);
++        free(sys);
++        return VLC_EGENERIC;
++    }
++
++    int format = SCREEN_FORMAT_RGBX8888;
++    int usage = SCREEN_USAGE_OPENGL_ES2;
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_FORMAT, &format);
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_USAGE, &usage);
++    screen_set_window_property_cv(sys->win, SCREEN_PROPERTY_ID_STRING,
++                                  sizeof ("vlc") - 1, "vlc");
++
++    /* The display the window is on: its size bounds the window. */
++    screen_display_t disp = NULL;
++    sys->display_size[0] = 1280;
++    sys->display_size[1] = 720;
++    if (screen_get_window_property_pv(sys->win, SCREEN_PROPERTY_DISPLAY,
++                                      (void **)&disp) == 0 && disp != NULL)
++        screen_get_display_property_iv(disp, SCREEN_PROPERTY_SIZE, sys->display_size);
++
++    int w = cfg->width, h = cfg->height;
++    if (cfg->is_fullscreen)
++        w = h = 0;
++    if (w <= 0 || h <= 0 || w > sys->display_size[0] || h > sys->display_size[1])
++    {
++        w = sys->display_size[0];
++        h = sys->display_size[1];
++    }
++    int size[2] = { w, h };
++    int pos[2] = { (sys->display_size[0] - w) / 2, (sys->display_size[1] - h) / 2 };
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_SIZE, size);
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_BUFFER_SIZE, size);
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_POSITION, pos);
++    sys->window_size[0] = w;
++    sys->window_size[1] = h;
++
++    /* Above other application windows (a desktop session's among them) */
++    int z = 100;
++    screen_set_window_property_iv(sys->win, SCREEN_PROPERTY_ZORDER, &z);
++
++    if (screen_create_window_buffers(sys->win, 2) != 0)
++    {
++        msg_Err(wnd, "cannot create the window's buffers: %s", vlc_strerror_c(errno));
++        goto error;
++    }
++
++    wnd->type = VOUT_WINDOW_TYPE_QNX;
++    wnd->handle.scrWin = sys->win;
++    wnd->control = Control;
++
++    if (vlc_clone(&sys->thread, Thread, wnd, VLC_THREAD_PRIORITY_LOW))
++        goto error;
++
++    msg_Dbg(wnd, "QNX Screen window %dx%d", w, h);
++    vout_window_ReportSize(wnd, w, h);
++    return VLC_SUCCESS;
++
++error:
++    screen_destroy_event(sys->ev);
++    screen_destroy_window(sys->win);
++    screen_destroy_context(sys->ctx);
++    free(sys);
++    return VLC_EGENERIC;
++}
++
++vlc_module_begin()
++    set_shortname(N_("QNX Screen"))
++    set_description(N_("QNX Screen window"))
++    set_category(CAT_VIDEO)
++    set_subcategory(SUBCAT_VIDEO_VOUT)
++    set_capability("vout window", 10)
++    set_callbacks(Open, Close)
++    add_shortcut("qnx-screen", "screen")
++vlc_module_end()

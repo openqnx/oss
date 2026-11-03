@@ -1,0 +1,28 @@
+# gthumb 3.12.8.2-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-03T12:00:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gthumb qnx-test-gthumb qnx-port-tests
+OK: 224.2 MiB in 75 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gthumb
+     == gthumb ==
+       ok   gthumb --help lists --fullscreen, --slideshow, --import-photos
+       info headless Wayland display: up
+       info gthumb --version -> 0: gthumb 3.12.8.2, Copyright © 2001-2010 Free Software Foundation, Inc.
+       ok   gthumb --version: gthumb 3.12.8.2
+       ok   gthumb --version exits 0 with a display
+       ok   extensions directory
+       info 31 extension(s), 31 complete
+       ok   at least 20 extensions
+       ok   every extension: key file parses, [Loader] API=3.12, Type=module, lib<name>.so present
+       ok   desktop entry runs gthumb
+     PASS gthumb
+PASS test_gthumb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

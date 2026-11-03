@@ -1,0 +1,240 @@
+QNX Screen contexts: the GLES context works on a plain Screen session, the Vulkan one fails cleanly
+
+egl_qnx (gfx_ctx_qnx, the "gl" video driver over GLES2/EGL), written for the
+BlackBerry navigator:
+- ORIENTATION is set by the navigator only; atoi(getenv("ORIENTATION"))
+  crashed on a plain QNX Screen session. Unset now means 0, and
+  SCREEN_USAGE_ROTATION / SCREEN_PROPERTY_ROTATION are used only for a
+  rotated display.
+- The EGL config: eglChooseConfig() lists the deepest configs first, and on
+  virtio-gpu (Mesa) that is RGBX1010102, which Screen cannot make window
+  buffers of ("Not supported"). An 8-bit RGB config with an RGBX/RGBA8888
+  native visual is chosen, and the window gets the config's native visual
+  as its format -- the SDP 8 EGL accepts a window only in that format
+  (EGL_BAD_NATIVE_WINDOW, "can't create window buffers").
+- A window that reports no buffer size yet gets the display's.
+- The error path passed the video driver's data to the context's destroy
+  function and freed qnx twice; it now tears down the EGL state it made.
+  The data is calloc'd (egl_destroy reads it).
+
+egl_common.c: egl_init_context_common() walked all of eglGetConfigs()'
+count instead of the configs eglChooseConfig() matched -- uninitialised
+entries once an accept callback rejects the first ones.
+
+qnx_vk (Vulkan on Screen): the data was malloc'd, and vulkan_context_init()
+reads fields of it it expects zeroed: with an ICD that lacks
+VK_QNX_screen_surface ("Instance does not support required extensions")
+this attempt crashed (SIGSEGV) instead of failing. calloc, like the
+khr_display context. The Screen context and window were created only when
+they already existed (inverted test), so without a GL context before it the
+code dereferenced NULL. Now the Vulkan driver fails cleanly ("Cannot open
+video driver.. Exiting.", exit status 1).
+
+Upstream-Status: QNX-specific
+
+--- a/gfx/common/egl_common.c
++++ b/gfx/common/egl_common.c
+@@ -530,7 +530,8 @@
+       return false;
+    }
+ 
+-   for (i = 0; i < *count; i++)
++   /* Only the first `matched` entries were filled in by eglChooseConfig */
++   for (i = 0; i < matched; i++)
+    {
+       if (!cb || cb(display_data, egl->dpy, configs[i]))
+       {
+@@ -541,7 +542,7 @@
+ 
+    free(configs);
+ 
+-   if (i == *count)
++   if (i == matched)
+    {
+       RARCH_ERR("[EGL]: No EGL config found which satifies requirements.\n");
+       return false;
+--- a/gfx/drivers_context/qnx_ctx.c
++++ b/gfx/drivers_context/qnx_ctx.c
+@@ -93,6 +93,22 @@
+    }
+ }
+ 
++#ifdef HAVE_EGL
++/* An 8-bit RGB config whose native visual Screen can make a window of:
++ * eglChooseConfig() lists the deepest configs first, and on virtio-gpu that
++ * is RGBX1010102, for which screen_create_window_buffers() fails ("Not
++ * supported"). */
++static bool gfx_ctx_qnx_accept_config(void *display_data, EGLDisplay dpy, EGLConfig config)
++{
++   EGLint visual = 0;
++   if (!egl_default_accept_config_cb(display_data, dpy, config))
++      return false;
++   if (!eglGetConfigAttrib(dpy, config, EGL_NATIVE_VISUAL_ID, &visual) || visual <= 0)
++      return true;
++   return visual == SCREEN_FORMAT_RGBX8888 || visual == SCREEN_FORMAT_RGBA8888;
++}
++#endif
++
+ /**
+  * gfx_ctx_qnx_init:
+  * Initializes the screen context.
+@@ -131,7 +147,7 @@
+    int screen_resolution[2];
+ 
+    /* Allocate screen context */
+-   qnx_ctx_data_t *qnx         = (qnx_ctx_data_t*)malloc(sizeof(*qnx));
++   qnx_ctx_data_t *qnx         = (qnx_ctx_data_t*)calloc(1, sizeof(*qnx));
+    if (qnx == NULL)
+    {
+       RARCH_ERR("malloc failed with errno %d (%s).\n", errno, strerror(errno));
+@@ -160,7 +176,7 @@
+ 
+ #ifdef HAVE_EGL
+    if (!egl_init_context(&qnx->egl, EGL_NONE, EGL_DEFAULT_DISPLAY, &major, &minor,
+-                         &n, attribs, NULL))
++                         &n, attribs, gfx_ctx_qnx_accept_config))
+    {
+       goto error;
+    }
+@@ -175,10 +191,8 @@
+       screen_win_qnx = (screen_window_t*) malloc(sizeof(screen_window_t));
+       if (screen_win_qnx == NULL)
+       {
+-         free(screen_ctx_qnx);
+-         screen_ctx_qnx = NULL;
+          RARCH_ERR("malloc failed with errno %d (%s).\n", errno, strerror(errno));
+-         return NULL;
++         goto error;
+       }
+       if (screen_create_window(screen_win_qnx, *screen_ctx_qnx) != 0)
+       {
+@@ -191,18 +205,38 @@
+       }
+    }
+ 
++   /* The window's format must be the EGL config's native visual (a
++    * SCREEN_FORMAT_*): the SDP 8 EGL accepts a window only in that format
++    * (EGL_BAD_NATIVE_WINDOW, "can't create window buffers", otherwise). */
+    format = SCREEN_FORMAT_RGBX8888;
++#ifdef HAVE_EGL
++   {
++      EGLint visual = 0;
++      if (eglGetConfigAttrib(qnx->egl.dpy, qnx->egl.config,
++               EGL_NATIVE_VISUAL_ID, &visual) && visual > 0)
++         format = visual;
++   }
++#endif
+    if (screen_set_window_property_iv(*screen_win_qnx, SCREEN_PROPERTY_FORMAT, &format))
+    {
+       RARCH_ERR("screen_set_window_property_iv [SCREEN_PROPERTY_FORMAT] failed with errno %d (%s).\n", errno, strerror(errno));
+       goto error;
+    }
+ 
++   /* SCREEN_USAGE_ROTATION only when the navigator asks for a rotated
++    * display: Screen drivers without rotation support (virtio-gpu) cannot
++    * allocate the window's buffers with it ("Not supported"). */
++   {
++      const char *orientation = getenv("ORIENTATION");
++      angle = orientation ? atoi(orientation) : 0;
++   }
+ #ifdef HAVE_OPENGLES2
+-   usage = SCREEN_USAGE_OPENGL_ES2 | SCREEN_USAGE_ROTATION;
++   usage = SCREEN_USAGE_OPENGL_ES2;
+ #elif HAVE_OPENGLES3
+-   usage = SCREEN_USAGE_OPENGL_ES3 | SCREEN_USAGE_ROTATION;
++   usage = SCREEN_USAGE_OPENGL_ES3;
+ #endif
++   if (angle != 0)
++      usage |= SCREEN_USAGE_ROTATION;
+    if (screen_set_window_property_iv(*screen_win_qnx, SCREEN_PROPERTY_USAGE, &usage))
+    {
+       RARCH_ERR("screen_set_window_property_iv [SCREEN_PROPERTY_USAGE] failed with errno %d (%s).\n", errno, strerror(errno));
+@@ -221,8 +255,9 @@
+       goto error;
+    }
+ 
+-   //STOPPED HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-   angle = atoi(getenv("ORIENTATION"));
++   /* angle: ORIENTATION, read above. It was set by the BlackBerry
++    * navigator; a plain QNX Screen session does not set it, and
++    * atoi(getenv("ORIENTATION")) crashed. */
+ 
+    if (screen_get_display_property_pv(qnx->screen_disp,
+                                       SCREEN_PROPERTY_MODE, (void**)&screen_mode))
+@@ -238,6 +273,13 @@
+       goto error;
+    }
+ 
++   /* A new window may report no buffer size yet: the display's then */
++   if (size[0] <= 0 || size[1] <= 0)
++   {
++      size[0] = screen_resolution[0];
++      size[1] = screen_resolution[1];
++   }
++
+    int buffer_size[2] = {size[0], size[1]};
+ 
+    if ((angle == 0) || (angle == 180))
+@@ -271,7 +313,7 @@
+       goto error;
+    }
+ 
+-   if (screen_set_window_property_iv(*screen_win_qnx,
++   if (angle != 0 && screen_set_window_property_iv(*screen_win_qnx,
+                                      SCREEN_PROPERTY_ROTATION, &angle))
+    {
+       RARCH_ERR("screen_set_window_property_iv [SCREEN_PROPERTY_ROTATION] failed with errno %d (%s).\n", errno, strerror(errno));
+@@ -280,7 +322,8 @@
+ 
+    if (screen_create_window_buffers(*screen_win_qnx, WINDOW_BUFFERS))
+    {
+-      RARCH_ERR("screen_create_window_buffers failed with errno %d (%s).\n", errno, strerror(errno));
++      RARCH_ERR("screen_create_window_buffers failed with errno %d (%s): %dx%d, format %d, usage 0x%x.\n",
++            errno, strerror(errno), buffer_size[0], buffer_size[1], format, usage);
+       goto error;
+    }
+ 
+@@ -293,7 +336,11 @@
+ 
+    error:
+    egl_report_error();
+-   gfx_ctx_qnx_destroy(video_driver);
++#ifdef HAVE_EGL
++   /* qnx, not the video driver's data: the EGL context made above */
++   if (qnx != NULL)
++      egl_destroy(&qnx->egl);
++#endif
+    screen_error:
+    if (qnx != NULL)
+    {
+--- a/gfx/drivers_context/qnx_vk_ctx.c
++++ b/gfx/drivers_context/qnx_vk_ctx.c
+@@ -368,7 +368,9 @@
+ static void *qnx_gfx_ctx_vk_init(void *video_driver)
+ {
+ #ifndef DEBUG
+-   qnx_ctx_data_vk_t *qnx = (qnx_ctx_data_vk_t*) malloc(sizeof(qnx_ctx_data_vk_t));
++   /* calloc: vulkan_context_init() reads fields of qnx->vk it expects
++    * zeroed (the khr_display context callocs its data the same way). */
++   qnx_ctx_data_vk_t *qnx = (qnx_ctx_data_vk_t*) calloc(1, sizeof(qnx_ctx_data_vk_t));
+    if(!qnx)
+    {
+       RARCH_ERR("[Screen/VK]: Fatal: Could not create a data pointer with errno %d (%s).\n", errno, strerror(errno));
+@@ -384,7 +386,7 @@
+    }
+ #endif
+ 
+-   if (screen_ctx_qnx != NULL)
++   if (screen_ctx_qnx == NULL)
+    {
+       screen_context_t* screen_ctx = (screen_context_t*) malloc(sizeof(screen_context_t));
+       if (screen_ctx == NULL)
+@@ -404,7 +406,7 @@
+       screen_ctx_qnx = screen_ctx;
+    }
+ 
+-   if (screen_win_qnx != NULL)
++   if (screen_win_qnx == NULL)
+    {
+       screen_window_t* screen_win = (screen_window_t*) malloc(sizeof(screen_window_t));
+       if (screen_win == NULL)

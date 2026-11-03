@@ -13,7 +13,7 @@ norm_arch() {
 
 # One directory per architecture (and one more for the graphics image:
 # vm_dir <arch> desktop); mkqnximage keeps local/ and output/ there.
-vm_dir() { echo "${VM_ROOT:-$HOME/vm}/oss-${2:-vanilla}-$1"; }
+vm_dir() { echo "${VM_ROOT:-$WS/lab/vm}/oss-${2:-vanilla}-$1"; }
 
 sdp_env() {
   # QNX_SDP_ROOT if set; else ~/qnx800 or ~/qnx805 (never a guess among other

@@ -1,0 +1,23 @@
+# retroarch 1.15_git20230408-r4 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-03T11:49:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u retroarch qnx-test-retroarch qnx-port-tests
+OK: 301.1 MiB in 95 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_retroarch
+     == retroarch ==
+       ok   --version: RetroArch: Frontend for libretro -- v1.15.0 -- d625ca3 --
+       ok   --features: list printed (zlib among them)
+       ok   --features: threads supported
+       ok   core 2048 loaded (-L /usr/local/lib/libretro/2048_libretro_qnx.so)
+       ok   ran 120 frames with null drivers and exited (rc=0)
+     PASS retroarch
+PASS test_retroarch
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

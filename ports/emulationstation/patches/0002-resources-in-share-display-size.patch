@@ -1,0 +1,76 @@
+EmulationStation: find resources/ in <prefix>/share; size from the display
+
+EmulationStation finds its resources/ (fonts, icons, the help and busy
+graphics) only in ~/.emulationstation, next to the executable and in the
+working directory -- a RetroPie install keeps the binary and resources/
+together in /opt/retropie/supplementary/emulationstation. Installed as a
+package (bin/emulationstation, data in share/), none of those exist, and
+the first Font it builds (Window::init) dereferences a face FreeType never
+loaded ("Error - File type unknown!", then SIGSEGV in FT_Get_Char_Index).
+Also look in <exe dir>/../share/emulationstation/resources, where the
+recipe installs them -- with the executable's directory found on QNX too:
+it has no /proc/self/exe link (the path is the contents of
+/proc/self/exefile), and the argv[0] fallback of a program started through
+PATH ("emulationstation") resolved against the working directory.
+
+And take the window and screen size from the display again (0 = SDL's
+desktop mode), as upstream does: patch 0001 fixed them at 1920x1080 for a
+Screen driver that reported no display mode. With SDL2's QNX driver now
+reporting the real one, a fixed 1920x1080 made a fullscreen window the
+display's size (1280x800 on the QEMU images) while ES laid out and set its
+GL viewport for 1920x1080 -- everything off-centre and cut off.
+--resolution W H still sets a size.
+
+Upstream-Status: QNX-specific
+
+--- a/es-core/src/resources/ResourceManager.cpp
++++ b/es-core/src/resources/ResourceManager.cpp
+@@ -41,6 +41,11 @@
+ 		test = Utils::FileSystem::getCWDPath() + "/resources/" + &path[2];
+ 		if(Utils::FileSystem::exists(test))
+ 			return test;
++
++		// check in the installed data directory (<prefix>/bin/../share)
++		test = Utils::FileSystem::getExePath() + "/../share/emulationstation/resources/" + &path[2];
++		if(Utils::FileSystem::exists(test))
++			return test;
+ 	}
+ 
+ 	// not a resource, return unmodified path
+--- a/es-core/src/Settings.cpp
++++ b/es-core/src/Settings.cpp
+@@ -172,10 +172,10 @@
+ 	mBoolMap["ForceKid"] = false;
+ 	mBoolMap["ForceDisableFilters"] = false;
+ 
+-	mIntMap["WindowWidth"]   = 1920;
+-	mIntMap["WindowHeight"]  = 1080;
+-	mIntMap["ScreenWidth"]   = 1920;
+-	mIntMap["ScreenHeight"]  = 1080;
++	mIntMap["WindowWidth"]   = 0;
++	mIntMap["WindowHeight"]  = 0;
++	mIntMap["ScreenWidth"]   = 0;
++	mIntMap["ScreenHeight"]  = 0;
+ 	mIntMap["ScreenOffsetX"] = 0;
+ 	mIntMap["ScreenOffsetY"] = 0;
+ 	mIntMap["ScreenRotate"]  = 0;
+--- a/es-core/src/utils/FileSystemUtil.cpp	2026-11-03 20:45:02.441886331 +0900
++++ b/es-core/src/utils/FileSystemUtil.cpp	2026-11-03 20:45:02.450275094 +0900
+@@ -230,6 +230,17 @@
+ 			std::wstring result(path_max, 0);
+ 			if(GetModuleFileNameW(nullptr, &result[0], path_max) != 0)
+ 				exePath = convertFromWideString(result);
++#elif defined(__QNX__)
++			// QNX has no /proc/self/exe link: /proc/self/exefile holds the path.
++			FILE* exefile = fopen("/proc/self/exefile", "r");
++			if(exefile)
++			{
++				char buf[4096];
++				size_t n = fread(buf, 1, sizeof(buf) - 1, exefile);
++				fclose(exefile);
++				buf[n] = '\0';
++				exePath = buf;
++			}
+ #else // _WIN32
+ 			std::string result(path_max, 0);
+ 			if(readlink("/proc/self/exe", &result[0], path_max) != -1)

@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (29 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (19 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild sdl2 sdl2-ttf fontconfig freetype zlib
 ```
 
-<details><summary>Full build chain (29)</summary>
+<details><summary>Full build chain (19)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`pcre2`](../pcre2/) [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`zlib`](../zlib/)
 </details>
 
 ### 2. Get the upstream source
@@ -241,9 +241,9 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/mame-0.281-r0.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/mame-0.281-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/aarch64le/mame-0.281-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/mame-0.281-r0.log) |
-| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/mame-0.281-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | mame 0.281-r0 | ✅ PASS | 2026-11-03 | [log](../../tests/logs/x86_64/mame-0.281-r0.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

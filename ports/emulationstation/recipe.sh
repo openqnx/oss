@@ -7,3 +7,12 @@ CMAKE_ARGS_EXTRA=( -DGLES=ON -DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON -DCPU="$QNX_CPU"
                    -DSDL2_LIBRARY="$STAGE$PREFIX/lib/libSDL2.so" -DSDL2_INCLUDE_DIR="$STAGE$PREFIX/include/SDL2"
                    -DSDL2MAIN_LIBRARY="$STAGE$PREFIX/lib/libSDL2main.a" -DSDL2_NO_DEFAULT_PATH=ON
                    -DFreeImage_LIBRARY="$STAGE$PREFIX/lib/libfreeimage.so" -DFreeImage_INCLUDE_DIR="$STAGE$PREFIX/include" )
+# Its resources/ (fonts, icons, help and busy graphics: without them the
+# first Font dereferences a face FreeType never loaded and ES crashes) go to
+# share/emulationstation/, where patches/0002 makes it look.
+do_install() {
+  DESTDIR="$STAGE" cmake --install "$B"
+  install -d "$STAGE$PREFIX/share/emulationstation"
+  cp -a "$S/resources" "$STAGE$PREFIX/share/emulationstation/"
+}
+

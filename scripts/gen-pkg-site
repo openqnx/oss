@@ -276,14 +276,22 @@ footer{color:var(--mut);font-size:12px;padding:24px 16px}
 """
 
 
-def page(title, body, depth):
+SITE = "https://openqnx.github.io/oss/"   # the deployed site (canonical addresses, sitemap)
+SITEMAP = []                              # every page written, for sitemap.xml
+
+
+def page(title, body, depth, desc="", path="", extra_css="", tail=""):
     up = "../" * depth
+    if path:
+        SITEMAP.append(path)
+    head = (f'<meta name="description" content="{E(desc)}">' if desc else "") + \
+           (f'<link rel="canonical" href="{SITE}{E(path)}">' if path else "")
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)}</title><style>{CSS}</style></head><body>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)}</title>{head}<style>{CSS}{extra_css}</style></head><body>
 <header><div class="w"><b><a href="{up}index.html">QNX OSS packages</a></b><nav>
-<a href="{GH}">Repository</a><a href="{GH}/releases">Releases</a><a href="{GH}/blob/main/INSTALL.md">Getting started</a><a href="{GH}/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="{up}guide/index.html">Guide</a><a href="{GH}">Repository</a><a href="{GH}/releases">Releases</a><a href="{GH}/blob/main/INSTALL.md">Getting started</a><a href="{GH}/blob/main/docs/target-guide.md">All packages by kind</a>
 <a href="{GH}/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
-<main class="w">{body}</main>
+<main class="w">{body}</main>{tail}
 <footer class="w">QNX SDP {SDP} &middot; generated {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())} from the release indexes
 by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
 </body></html>"""
@@ -434,7 +442,9 @@ for (arch, name), es in sorted(pkgs.items(), key=lambda kv: (kv[0][1], kv[0][0])
         b.append("</tbody></table></div>")
     out = os.path.join(args.out, pkg_url(arch, name))
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    open(out, "w").write(page(f"{name} {e['V']} ({arch}) -- QNX OSS packages", "\n".join(b), 2))
+    open(out, "w").write(page(f"{name} {e['V']} ({arch}) -- QNX OSS packages", "\n".join(b), 2,
+                              desc=f"{name} {e['V']} for QNX SDP {SDP} ({arch}): {purpose(e)}. Install with apk or as a .tar.gz.",
+                              path=pkg_url(arch, name)))
 
 # the list
 n_comp = len({origin(es[0]) for es in pkgs.values()})
@@ -488,7 +498,38 @@ const u=new URLSearchParams();for(const x of['q','a','k','t','dv'])if($(x).value
 history.replaceState(null,'',u.toString()?'?'+u:location.pathname)}
 const s=new URLSearchParams(location.search);for(const x of['q','a','k','t','dv'])if(s.get(x))$(x).value=s.get(x);
 for(const x of['q','a','k','t','dv'])$(x).addEventListener('input',show);show();</script>"""]
-open(os.path.join(args.out, "index.html"), "w").write(page("QNX OSS packages", "\n".join(idx), 0))
+open(os.path.join(args.out, "index.html"), "w").write(page(
+    "QNX OSS packages -- open source for QNX SDP 8.0", "\n".join(idx), 0, path="",
+    desc=f"{n_comp} open source components ported to QNX SDP {SDP} for x86_64 and aarch64le, "
+         "tested on QNX targets, as apk packages and .tar.gz archives."))
+SITEMAP.append("")
+
+# The guide (docs/guide/*.md, the same pages as the repository's Wiki): how to
+# make a QNX 8.0 QEMU image and install the packages with apk or as archives.
+import mdlite
+gdir = os.path.join(WS, "docs", "guide")
+if os.path.isdir(gdir):
+    gout = os.path.join(args.out, "guide"); os.makedirs(gout, exist_ok=True)
+    names = sorted(f[:-3] for f in os.listdir(gdir) if f.endswith(".md") and not f.startswith("_"))
+    for n in names:
+        text = open(os.path.join(gdir, n + ".md")).read()
+        # Wiki links "(Install-with-apk)" are pages here
+        text = re.sub(r"\]\((%s)\)" % "|".join(map(re.escape, names)), lambda m: "](%s.html)" % ("index" if m.group(1) == "Home" else m.group(1)), text)
+        title = (re.search(r"^# (.+)$", text, re.M) or [None, n])[1]
+        first = next((l for l in text.split("\n")[1:] if l.strip() and not l.startswith(("#", "|", "`", ">"))), "")
+        fname = "index.html" if n == "Home" else n + ".html"
+        open(os.path.join(gout, fname), "w").write(page(
+            f"{title} -- QNX OSS packages", mdlite.render(text), 1,
+            desc=re.sub(r"[*`]", "", re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", first))[:300], path="guide/" + fname,
+            extra_css=mdlite.COPY_CSS, tail=mdlite.COPY_JS))
+
+# For search engines: every page, and where the list is.
+with open(os.path.join(args.out, "sitemap.xml"), "w") as f:
+    f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+    for u in sorted(set(SITEMAP)):
+        f.write("<url><loc>%s%s</loc></url>\n" % (SITE, html.escape(u)))
+    f.write("</urlset>\n")
+open(os.path.join(args.out, "robots.txt"), "w").write("User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % SITE)
 open(os.path.join(args.out, ".nojekyll"), "w").close()
 print("%s: %d package pages, %d components, %d with a passing test"
       % (os.path.relpath(args.out), len(rows), n_comp, tested))

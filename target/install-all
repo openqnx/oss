@@ -1,0 +1,58 @@
+#!/bin/sh
+# install-all -- install every package of github.com/openqnx/oss on a QNX
+# 8.0 target without apk: download the newest .tar.gz of each package, check
+# its SHA-256, unpack it under the install root and keep its file list.
+#
+#   version 1.1 (2026-11-03)  descriptive variable names
+#   version 1.0 (2026-11-02)  first version
+#
+#   sh install-all <x86_64|aarch64> [<install root>]     (root: /data/oss)
+#
+# Run it on the target, as root. It needs only what a default mkqnximage image
+# has (curl, openssl, sed, awk, tar, gzip) plus a CA bundle for https
+# (SSL_CERT_FILE, default /data/oss-setup/cacert.pem). Space: about 8 GB and
+# 180000 files under the root (mkqnximage --data-size=16000 --data-inodes=320000).
+# Run it again to resume: a package whose file list exists is skipped.
+# ONLY=<regex> limits it to the package names that match (a trial run).
+ARCH=${1:?usage: sh install-all <x86_64|aarch64> [install root]}
+INSTALL_ROOT=${2:-/data/oss}
+GH_RELEASES=https://github.com/openqnx/oss/releases/download
+: "${SSL_CERT_FILE:=/data/oss-setup/cacert.pem}"; export SSL_CERT_FILE
+LIST_DIR=$INSTALL_ROOT/var/lib/manual          # <package>.list: the files it installed
+mkdir -p "$INSTALL_ROOT/dl" "$LIST_DIR" || exit 1
+cd "$INSTALL_ROOT/dl" || exit 1
+
+# The packages are split over two releases by the first letter of the name
+# (GitHub allows 1000 files per release): packages-8.0-<arch> (0-9, a-l) and
+# packages-8.0-<arch>-m-z. Each has an INDEX: name|version|depends|file|sha256|size|...
+# listing every version, newest first.
+for SHARD in "" -m-z; do
+  curl -fsSL -o "INDEX$SHARD" "$GH_RELEASES/packages-8.0-$ARCH$SHARD/INDEX" ||
+    { echo "cannot download INDEX$SHARD"; exit 1; }
+done
+# One line per package (its newest version), with the release suffix in front.
+# sdl2-compat is the alternative to sdl2 (the same files): left out.
+for SHARD in "" -m-z; do
+  grep -v '^#' "INDEX$SHARD" | awk -F'|' -v shard="$SHARD" 'NF >= 5 && !seen[$1]++ { print shard "|" $0 }'
+done | grep -vE '^[^|]*\|sdl2-compat(-dev)?\|' |
+  { if [ -n "$ONLY" ]; then grep -E "^[^|]*\|($ONLY)\|"; else cat; fi; } > all.list
+
+TOTAL=$(grep -c . all.list); COUNT=0; INSTALLED=0; SKIPPED=0; FAILED=0
+while IFS='|' read -r SHARD PKG VERSION DEPENDS PKG_FILE PKG_SHA256 REST; do
+  COUNT=$((COUNT + 1))
+  if [ -f "$LIST_DIR/$PKG.list" ]; then SKIPPED=$((SKIPPED + 1)); continue; fi
+  echo "[$COUNT/$TOTAL] $PKG $VERSION"
+  if ! curl -fsSLO "$GH_RELEASES/packages-8.0-$ARCH$SHARD/$PKG_FILE"; then
+    echo "   download failed: $PKG_FILE"; FAILED=$((FAILED + 1)); continue
+  fi
+  if [ "$(openssl dgst -sha256 "$PKG_FILE" | sed 's/.*= *//')" != "$PKG_SHA256" ]; then
+    echo "   sha256 mismatch: $PKG_FILE"; rm -f "$PKG_FILE"; FAILED=$((FAILED + 1)); continue
+  fi
+  gzip -dc "$PKG_FILE" | tar -tf - | grep -v '/$' > "$LIST_DIR/$PKG.list.new" &&
+    gzip -dc "$PKG_FILE" | (cd "$INSTALL_ROOT" && tar -xf -) &&
+    mv "$LIST_DIR/$PKG.list.new" "$LIST_DIR/$PKG.list" || { echo "   unpack failed: $PKG_FILE"; FAILED=$((FAILED + 1)); }
+  rm -f "$PKG_FILE"
+  [ -f "$LIST_DIR/$PKG.list" ] && INSTALLED=$((INSTALLED + 1))
+done < all.list
+echo "done: $INSTALLED installed, $SKIPPED already there, $FAILED failed (of $TOTAL)"
+[ "$FAILED" = 0 ]

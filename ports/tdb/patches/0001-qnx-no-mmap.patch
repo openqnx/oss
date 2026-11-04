@@ -1,0 +1,33 @@
+Never mmap the database on QNX; use pread/pwrite.
+
+On QNX 8.0 a MAP_SHARED mapping of a file is not coherent with write()s
+by other processes (lib/replace's incoherent_mmap probe, run on the
+target, on both /tmp and a qnx6 /data); tdb's answer to that,
+HAVE_INCOHERENT_MMAP, is "everyone must always mmap" -- and QNX refuses
+to map a file beyond its end (ENXIO), which Samba hit at once
+("tdb_mmap failed for size 16384 (No such device or address)": smbpasswd
+could not store the machine SID in secrets.tdb). The other coherent
+choice is that nobody maps: on QNX, tdb does all database I/O with
+pread/pwrite (as with TDB_NOMMAP), and the cross-answers say
+HAVE_INCOHERENT_MMAP: NO. The robust-mutex area (TDB_MUTEX_LOCKING) is
+mapped on its own and is unaffected.
+
+Upstream-Status: QNX-specific
+
+--- a/common/io.c
++++ b/common/io.c
+@@ -355,7 +355,13 @@
+ /* If mmap isn't coherent, *everyone* must always mmap. */
+ static bool should_mmap(const struct tdb_context *tdb)
+ {
+-#ifdef HAVE_INCOHERENT_MMAP
++#if defined(__QNX__)
++	/* QNX: a write() by another process is not seen through a MAP_SHARED
++	 * mapping, and mapping a file beyond its end fails (ENXIO). Nobody
++	 * maps the database, so all access goes through pread/pwrite and is
++	 * coherent. (The robust-mutex area is mapped separately.) */
++	return false;
++#elif defined(HAVE_INCOHERENT_MMAP)
+ 	return true;
+ #else
+ 	return !(tdb->flags & TDB_NOMMAP);

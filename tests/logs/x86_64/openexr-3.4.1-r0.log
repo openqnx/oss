@@ -1,0 +1,35 @@
+# openexr 3.4.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:18:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openexr qnx-test-openexr qnx-port-tests
+(1/5) Installing imath (3.2.2-r0)
+(2/5) Installing libdeflate (1.22-r0)
+(3/5) Installing openjph (0.24.1-r0)
+(4/5) Installing openexr (3.4.1-r0)
+(5/5) Installing qnx-test-openexr (1.0-r0)
+OK: 237.0 MiB in 86 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openexr
+     == openexr ==
+       ok   lossless round trip, compression none
+       ok   lossless round trip, compression RLE
+       ok   lossless round trip, compression ZIPS
+       ok   lossless round trip, compression ZIP
+       ok   lossless round trip, compression PIZ
+       ok   lossless round trip, compression HTJ2K (OpenJPH)
+       ok   lossy B44 round trip within tolerance
+       ok   tiled file has 4x2 tiles of 16x16
+       ok   tiled pixels read back
+       ok   exr_start_read opens the file (C core)
+       ok   core: one part, 64x32, ZIP
+       ok   core: channels A,B,G,R
+     PASS openexr
+PASS test_openexr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

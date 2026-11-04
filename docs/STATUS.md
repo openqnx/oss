@@ -58,6 +58,21 @@ current: it is the hand-over, not a history (that is `git log`).
 
 ## In progress / next
 
+0. **QNX-list gap** (2026-11-04/05, `reports/gap/qnx-oss-gap.tsv`, local): what QNX's
+   package lists have and this repository lacked. Batches run in parallel by agents
+   (`lab/agents/PORT-AGENT-RULES.txt`), each a run-level group `tests/run-level/gN-*`.
+   - Committed: g7 build tools, g8 math, g9 media/graphics, g10 net/system, g11 perl,
+     g12 languages, g14 python-a, g13 RViz2 (ros2-rviz, OGRE GLES2 on QNX Screen) +
+     assimp: 176 components, verify-on-target x86_64 all PASS; aarch64 in progress.
+   - Ported and trial-run, not yet committed: g15 robotics (+ ros2 fixes), g16 python-b,
+     g17 Qt6 modules (qt6 rebuilt with Wayland, r2).
+   - Left: heavy ones (bazel, openjdk, ROCm, xla, tvm, mediapipe, jax, ...) need a
+     feasibility check; then the 158 version updates (`scripts/check-updates`).
+   - Known check-all failures (before this work): avahi man links, libfolly.pc,
+     mesa embedded libc, hailort libpci. Found and not fixed: readline lacks a
+     DT_NEEDED on ncurses (tgoto/tgetent), python3 strptime without LANG
+     (hazard 204), RViz GLSL shaders (no point clouds / picking on GLES).
+
 1. **`vanilla-vm/`** (done, in use): `run-all` builds vanilla QEMU images, bootstraps
    apk and installs + tests every component. x86_64 full run: 419 passed; the
    failures it found were checker bugs (fixed in `verify-on-target`: apk-tools

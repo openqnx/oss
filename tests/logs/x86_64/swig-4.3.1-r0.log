@@ -1,0 +1,39 @@
+# swig 4.3.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:52:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swig qnx-test-swig qnx-port-tests
+(1/8) Installing gdbm (1.24-r0)
+(2/8) Installing readline (8.2-r0)
+(3/8) Installing sqlite (3.47.2-r0)
+(4/8) Installing python3 (3.14.0-r3)
+(5/8) Installing qnx-test-swig-c (1.0-r0)
+(6/8) Installing qnx-test-swig-py (1.0-r0)
+(7/8) Installing swig (4.3.1-r0)
+(8/8) Installing qnx-test-swig (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 342.5 MiB in 89 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swig
+     == swig ==
+       ok   swig -version: 4.3.1
+       ok   built with PCRE2 (+pcre)
+       ok   swig library: /usr/local/share/swig/4.3.1
+       ok   swig -python: py_wrap.c and qnxswig.py
+       ok   swig -c (experimental C target): c_wrap.c and c_wrap.h
+       ok   py_wrap.c identical to the build machine's swig output (cksum 3352411739 130999)
+       ok   qnxswig.py identical to the build machine's swig output (cksum 2676095911 2706)
+       ok   c_wrap.c identical to the build machine's swig output (cksum 3809040953 7257)
+       ok   c_wrap.h identical to the build machine's swig output (cksum 914484883 1238)
+       ok   PCRE2 %rename: qs_gcd is qnxswig_gcd (C) and gcd (Python)
+       ok   python3: the target-generated qnxswig.py over _qnxswig.so: gcd 21, crc8, reverse, struct, cvar
+       ok   syntax error reported at bad.i:2 (exit 1)
+     PASS swig
+PASS test_swig
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

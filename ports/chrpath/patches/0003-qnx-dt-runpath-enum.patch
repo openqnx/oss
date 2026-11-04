@@ -1,0 +1,26 @@
+Let chrpath see QNX's DT_RUNPATH, an enum constant, not a macro.
+
+chrpath compiles its DT_RUNPATH support -- listing, replacing and deleting a
+RUNPATH, and -c (convert RPATH to RUNPATH) -- only "#if defined(DT_RUNPATH)".
+QNX's <elfdefinitions.h> declares the DT_* tags as enum constants, not as
+macros, so the test is false although QNX has DT_RUNPATH (29), and chrpath
+then ignores every RUNPATH: "no rpath or runpath tag found" on a program
+that has one, and no -c. A macro that names the enum constant makes the
+test true and changes nothing else.
+
+Upstream-Status: QNX-specific
+
+--- a/protos.h
++++ b/protos.h
+@@ -27,6 +27,11 @@
+ #else
+ #include <elf.h>
+ #endif
++#if defined(__QNX__) && !defined(DT_RUNPATH)
++/* QNX's DT_* are enum constants, not macros: let "#if defined(DT_RUNPATH)"
++   see the one it has. */
++#define DT_RUNPATH DT_RUNPATH
++#endif
+ #include "config.h"
+ 
+ #ifdef WORDS_BIGENDIAN

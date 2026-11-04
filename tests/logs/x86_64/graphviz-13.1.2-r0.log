@@ -1,0 +1,48 @@
+# graphviz 13.1.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:14:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphviz qnx-test-graphviz qnx-port-tests
+( 1/14) Installing aom (3.15.3-r0)
+( 2/14) Installing dav1d (1.5.0-r0)
+( 3/14) Installing libavif (1.1.1-r0)
+( 4/14) Installing libde265 (1.0.15-r0)
+( 5/14) Installing openh264 (2.5.0-r0)
+( 6/14) Installing openjpeg (2.5.3-r0)
+( 7/14) Installing openjph (0.24.1-r0)
+( 8/14) Installing x265 (3.6-r0)
+( 9/14) Installing libheif (1.20.2-r0)
+(10/14) Installing gd (2.3.3-r0)
+(11/14) Installing libtool (2.5.4-r0)
+(12/14) Installing poppler (25.12.0-r0)
+(13/14) Installing graphviz (13.1.2-r0)
+(14/14) Installing qnx-test-graphviz (1.0-r0)
+Executing graphviz-13.1.2-r0.trigger
+OK: 265.7 MiB in 95 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphviz
+     == graphviz ==
+       info dot - graphviz version 13.1.2 (20250808.2320)
+       ok   dot -Tsvg: 6 nodes, 6 edges, 1 cluster
+       ok   SVG with the edge label 'skip'
+       ok   dot -Tpng: a PNG file (21292 bytes)
+       info PNG 468x247, layout + pad at 96 dpi 468x247 px
+       ok   PNG size matches the layout (cairo renderer)
+       ok   -Tplain: 6 node and 6 edge lines
+       ok   rankdir=LR: a is left of c
+       ok   neato: 6 nodes
+       ok   circo: 6 nodes
+       ok   fdp: 6 nodes
+       ok   twopi: 6 nodes
+       ok   dot -Tgif (the gd renderer)
+       ok   gc: 6 nodes, 6 edges
+       ok   acyclic: the cycle is found
+     PASS graphviz
+PASS test_graphviz
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

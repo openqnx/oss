@@ -1,0 +1,34 @@
+Pass the build's src/ directory with -I, not as a bare operand.
+
+libb2_la_CPPFLAGS lists the build's src/ directory without -I, so every
+compile line gets a stray "../src/" operand. GCC's driver ignores a
+directory operand when compiling; QNX's qcc driver counts it as a second
+input and refuses ("Can't specify -c ... with -o and have multiple files").
+Make it the include path it was meant to be (Makefile.am and the shipped
+Makefile.in alike).
+
+Upstream-Status: Pending
+
+
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -19,7 +19,7 @@
+ libb2_la_LIBADD = # -lgomp -lpthread
+ libb2_la_CPPFLAGS =  -DSUFFIX=  \
+                      $(LTDLINCL) \
+-                     ${top_builddir}/src/
++                     -I${top_builddir}/src/
+ 
+ include_HEADERS = blake2.h
+ 
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -725,7 +725,7 @@
+ libb2_la_LIBADD = $(am__append_1)
+ libb2_la_CPPFLAGS = -DSUFFIX=  \
+                      $(LTDLINCL) \
+-                     ${top_builddir}/src/
++                     -I${top_builddir}/src/
+ 
+ include_HEADERS = blake2.h
+ @USE_FAT_TRUE@noinst_LTLIBRARIES = libblake2b_ref.la \

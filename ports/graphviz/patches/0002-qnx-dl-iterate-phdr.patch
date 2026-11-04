@@ -1,0 +1,35 @@
+gvconfig: dl_iterate_phdr() from <sys/link.h> on QNX
+
+QNX declares dl_iterate_phdr() in <sys/link.h> (there is no <link.h>), and
+its callback type takes a const struct dl_phdr_info *. gvconfig.c uses it to
+find the plugin directory next to libgvc.so. Include the QNX header and
+declare the callback's parameter const there.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/gvc/gvconfig.c
++++ b/lib/gvc/gvconfig.c
+@@ -32,7 +32,14 @@
+ 
+ #ifdef ENABLE_LTDL
+ #ifdef HAVE_DL_ITERATE_PHDR
++#ifdef __QNX__
++/* QNX: dl_iterate_phdr() is in <sys/link.h>; its callback takes a const info */
++#include <sys/link.h>
++#define GV_PHDR_CONST const
++#else
+ #include <link.h>
++#define GV_PHDR_CONST
++#endif
+ #endif
+ #include	<sys/types.h>
+ #ifdef _WIN32
+@@ -270,7 +277,7 @@
+ #define DOTLIBS "/.libs"
+ 
+ #ifdef HAVE_DL_ITERATE_PHDR
+-static int line_callback(struct dl_phdr_info *info, size_t size, void *line)
++static int line_callback(GV_PHDR_CONST struct dl_phdr_info *info, size_t size, void *line)
+ {
+    const char *p = info->dlpi_name;
+    char *tmp = strstr(p, "/libgvc.");

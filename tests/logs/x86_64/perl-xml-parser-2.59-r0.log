@@ -1,0 +1,44 @@
+# perl-xml-parser 2.59-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:14:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-xml-parser qnx-test-perl-xml qnx-port-tests
+(1/6) Installing perl (5.40.2-r2)
+(2/6) Installing perl-class-inspector (1.36-r0)
+(3/6) Installing perl-file-sharedir (1.118-r0)
+(4/6) Installing perl-xml-parser (2.59-r0)
+(5/6) Installing perl-xml-simple (2.25-r0)
+(6/6) Installing qnx-test-perl-xml (1.0-r1)
+OK: 294.8 MiB in 87 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_xml
+     == perl-xml-parser, perl-xml-simple, perl-file-sharedir, perl-class-inspector ==
+       info XML::Parser 2.59, expat expat_2.6.4
+       ok   XML::Parser Tree style
+       ok   XML::Parser handler events, entities
+       ok   XML::Parser namespaces
+       ok   well-formedness error with its line (mismatched tag at line 3, column 2, byte 10 at /usr/local/lib/perl5/site_perl/5.40.2/x86_64-nto/XML/Parser.pm line 196.)
+       ok   ISO-8859-2 document decoded through share/iso-8859-2.enc
+       info XML-Parser share dir /usr/local/lib/perl5/site_perl/5.40.2/x86_64-nto/auto/share/dist/XML-Parser
+       ok   File::ShareDir dist_dir(XML-Parser) has the encoding maps
+       ok   File::ShareDir dist_file
+       ok   dist_dir of an unknown dist dies
+       ok   Class::Inspector loaded
+       ok   Class::Inspector installed
+       ok   Class::Inspector functions
+       ok   Class::Inspector resolved_filename
+       ok   XMLin attribute
+       ok   XMLin folds <server> by name
+       ok   XMLin repeated elements to an array
+       ok   XMLout/XMLin round trip
+       ok   XMLout escapes & and <
+       ok   XMLout to a file, XMLin from it
+     PASS perl-xml-parser
+PASS test_perl_xml
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

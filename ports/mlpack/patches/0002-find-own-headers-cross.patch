@@ -1,0 +1,22 @@
+Find mlpack's own source headers in a cross build.
+
+In a cross build the toolchain file sets CMAKE_FIND_ROOT_PATH_MODE_INCLUDE
+to ONLY, so find_path() re-roots every search path under the target
+sysroot -- including mlpack's own source tree, where the bindings look for
+mlpack.hpp -- and configuring failed with "mlpack not found!". The source
+tree is a build-machine path: search it as it is.
+
+Upstream-Status: Pending
+
+--- a/CMake/mlpack.cmake
++++ b/CMake/mlpack.cmake
+@@ -577,7 +577,8 @@
+     if (NOT MLPACK_INCLUDE_DIR)
+       find_path(MLPACK_INCLUDE_DIR
+         NAMES mlpack.hpp
+-        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/src/")
++        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/src/"
++        NO_CMAKE_FIND_ROOT_PATH)
+     endif()
+   endif()
+ 

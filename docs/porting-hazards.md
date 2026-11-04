@@ -1729,3 +1729,467 @@ the same work: an SDL2 built without EGL has no QNX Screen driver at all
 wl_display, which the SDP's Screen-only EGL does not provide; "wayland not
 available" only meant that a program asked for a driver the library did not
 have. ports/sdl2 now builds the Screen driver with GLES.
+
+**163. QNX libc's `execvp()`/`execvpe()` go through `spawn()` -- a program's
+own `spawn()` replaces it.** QNX implements the exec family with
+`spawnp(..., SPAWN_EXEC)`, which calls `spawn()` by its global name. foot
+defines a helper called `spawn()`; the executable's symbol bound libc's call
+to it, and the terminal's child died in `execvpe()` with SIGSEGV (in foot's
+`reaper_add()`) before the shell ever ran. Watch for programs defining
+`spawn`, `spawnp`, `spawnv` and the like: rename them
+(`ports/foot/patches/0006-*`). A core from `dumper` (`/data/var/dumper` on
+the VMs) and `ntox86_64-gdb` showed it at once.
+
+**164. A session leader's `open()` of a tty already makes it the controlling
+terminal; `TIOCSCTTY` then fails with EPERM.** Terminal emulators do
+`setsid(); open(pts); ioctl(pts, TIOCSCTTY)` and treat a failure as fatal
+("failed to configure controlling terminal: Operation not permitted"). On QNX
+accept it when `tcgetsid(pts) == getsid(0)` (`ports/foot/patches/0005-*`,
+`ports/vte/patches/0005-*`).
+
+**165. QNX's epoll and timerfd shims lack `epoll_pwait()` and
+`timerfd_gettime()`.** libepoll has `epoll_create1/ctl/wait` only, libtimerfd
+`timerfd_create/settime` only. A program that waits with a signal mask can
+set it with `sigprocmask()` around `epoll_wait()` and check its signal flag
+first (`ports/foot/patches/0001-*`).
+
+**166. Visibility is often gated on the compiler ID "GNU|Clang", and qcc is
+"QCC" (hazard 101 is the same gate for -export-dynamic).** libgme compiles
+with hidden visibility and marks its API `visibility("default")` only when
+the compiler is GNU or Clang: with qcc, libgme.so exported none of its
+functions and every consumer failed to link ("undefined reference to
+gme_open_data"), and its `-fwrapv` was dropped too
+(`ports/libgme/patches/0001-*`). Check `nm -D --defined-only` of every new
+library.
+
+**167. `aligned_alloc()` is declared only for C11/C++17 and later.**
+`<malloc.h>`/`<stdlib.h>` guard it with `__EXT_ANSIC_201112`, which C++14
+does not reach: "'aligned_alloc' was not declared in this scope" (OpenJPH,
+default C++14). Build as C++17 (`ports/openjph/recipe.sh`).
+
+**168. A cross linker does not follow a library's DT_RPATH to its
+dependencies.** When a shared library of the project reaches another one of
+the project only through a static helper (graphviz: libgvc -> libcommon.a ->
+libpathplan, libxdot), CMake passes no `-rpath-link` for the second's build
+directory, and linking the programs fails with "libgvc.so: undefined
+reference to `Pshortestpath'" -- a native build finds it through DT_RPATH. Give
+the linker the build tree's library directories (`ports/graphviz/recipe.sh`,
+`do_configure`). Related: QNX has `dl_iterate_phdr()` in `<sys/link.h>`, not
+`<link.h>`, with a const `dl_phdr_info` in the callback; and no
+`<sysexits.h>`.
+
+**169. `<stdlib.h>` defines `min()` and `max()` macros (C, not C++).** Code
+that defines its own (`#define min(x, y) ...`) gets "'min' redefined", an
+error under `-Werror` (fcft, foot). `#undef` them before the project's
+definition (`ports/fcft/patches/0001-*`, `ports/foot/patches/0002-*`).
+
+**170. Perl XS modules: MakeMaker writes `LD_RUN_PATH="$(LD_RUN_PATH)"` in front
+of the module's link line, set to every `-L` directory of `LIBS`.** For a
+cross build those are the staging tree (Net::SSLeay, XML::Parser): a
+build-machine RPATH. Passing `LD_RUN_PATH=` to make still left an empty
+`DT_RPATH` entry in the module. `scripts/lib/perl-module.sh` deletes the
+assignment from the generated Makefiles.
+
+**171. `Devel::CheckLib` (bundled in many CPAN distributions' `inc/`) compiles
+its probe with the build machine perl's `$Config{cc}` and then runs it.**
+Neither works for QNX: the build machine's compiler cannot link the staged
+QNX libexpat, so XML::Parser's Makefile.PL would report no expat and exit 0
+without writing a Makefile. `PERL_CROSS_CHECKLIB=1` (scripts/lib/perl-module.sh)
+loads `scripts/lib/perl-cross/Devel/CheckLib.pm` with `PERL5OPT` before the
+bundled copy: it compiles and links the same probes with qcc and runs
+nothing. Likewise a Makefile.PL that runs a bundled `configure` (FCGI) uses
+the build machine's compiler unless its output exists: run it as a cross
+configure first (`ports/perl-fcgi/recipe.sh`; it found `sockaddr_un.sun_len`,
+which Linux lacks and QNX has).
+
+**172. MakeMaker's "Checking if your kit is complete" walks the whole build
+directory, following symbolic links.** A link to the staging tree inside
+`$B` (Net::SSLeay's fake `OPENSSL_PREFIX`) made it die in File::Find
+("libgsm.so.1 is encountered a second time"): keep such helper trees next
+to the build directory (`ports/perl-net-ssleay/recipe.sh`).
+
+**173. `/` is not writable on QNX targets (mkdir there fails with ENOSYS).**
+Tests run over ssh start in `/`; ExtUtils::HasCompiler creates its
+temporary directory in the current directory when it is loaded and died
+there ("Could not create directory /HASCOMPILERxxxx: Function not
+implemented"). Run such code from a writable directory
+(`tests/src/test_perl_buildtools.sh`).
+
+**174. libtool relinks a library at install time against whatever the
+`-L` path finds first.** fftw's libfftw3_threads is relinked during
+`make install` with `-L$STAGE/usr/local/lib` (from LDFLAGS) ahead of the
+just-installed libfftw3; a copy of fftw staged by an earlier build with
+another soname (its CMake build's `libfftw3.so.3.6.9`, before the recipe moved
+to autotools) became its `DT_NEEDED`, and the test failed at load. When a
+component's soname changes, rebuild it once more (or clear its staged copy) and
+check `readelf -d` of the packaged libraries (`ports/fftw`).
+
+**175. Autoconf run-tests answer "no" in a cross build, and some
+projects then compile a bundled replacement.** log4cpp's "working snprintf"
+check made it use its own portable_vsnprintf, which dropped characters on QNX
+(`"hello %d"` came out `"hell42"`). QNX's own function is C99-conforming:
+answer the cache variable (`CONF_ENV=( ac_cv_func_snprintf=yes )`,
+`ports/log4cpp/recipe.sh`). Look for `checking for working ...` lines that
+end in "no" in a cross build's log.
+
+**176. doctest (and other headers) recognise libc++ only under clang.**
+QNX's C++ library is libc++ (`std::__2`) also with QNX's GCC. doctest probes
+for `_LIBCPP_VERSION` only `#if DOCTEST_CLANG`, so under GCC it forward-declared
+`std::tuple` and friends in `namespace std`, which names other types than
+libc++'s; every `TEST_CASE_TEMPLATE` failed with "template argument 1 is invalid"
+(`ports/doctest/patches/0001`). A header that forward-declares std types needs
+`__QNX__` added to its libc++ check.
+
+**177. mlpack treats every cross build as one for an embedded board.**
+With `CMAKE_CROSSCOMPILING` it adds `-Os -s -flto -fvisibility=hidden`,
+wants `TOOLCHAIN_PREFIX`, and downloads and statically builds OpenBLAS and
+Armadillo, ignoring the staged ones. `ports/mlpack/patches/0001` makes that
+mode an option (`CROSSCOMPILE_EMBEDDED`, default unchanged) which the recipe
+turns off.
+
+**178. `find_path()` on a build-machine directory in a cross build.** The
+toolchain files set `CMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY`, so a project's
+search for a header in its own source tree is re-rooted under the sysroot and
+finds nothing (mlpack: "mlpack not found!"). Such calls need
+`NO_CMAKE_FIND_ROOT_PATH` (`ports/mlpack/patches/0002`).
+
+**179. `qcc -MM` compiles and links instead of printing dependencies.**
+gcc takes `-MM` as "preprocess only"; qcc passes it on and then links, so
+every `$(CC) -MM ... > foo.d` rule fails with "undefined reference to main"
+from crt1.o. `$(CC) -E -Wp,-MM` gives the same output with gcc, clang and qcc
+(`ports/fio/patches/0001`).
+
+**180. QNX's `DT_*` tags are enum constants, not macros.**
+`<sys/elf.h>` (via `<elfdefinitions.h>`, QNX has no `<elf.h>`) declares
+DT_RUNPATH and the other tags with `_ELF_DEFINE_DT` as enum members, so
+`#if defined(DT_RUNPATH)` is false: chrpath compiled out its whole RUNPATH
+support and reported "no rpath or runpath tag found" on programs that have
+one. `#define DT_RUNPATH DT_RUNPATH` makes the test true
+(`ports/chrpath/patches/0003`).
+
+**181. An executable stays busy for a moment after its process exits.**
+Opening a program for writing right after running it fails with EBUSY
+("Resource busy") for a second or two; copying it to a new file (or waiting)
+works. Tools that edit binaries in place (chrpath, patchelf, strip) hit it in
+tests that run the program between edits (`tests/src/test_chrpath.sh`).
+
+**182. glibc-only symbol names in `dlsym(RTLD_NEXT, ...)`.** An
+LD_PRELOAD library that looks up glibc's internal aliases (datefudge:
+`__gettimeofday`) gets NULL from QNX's libc, which exports only the public
+name, and calls address 0. LD_PRELOAD itself and RTLD_NEXT work as on Linux
+(`ports/datefudge/patches/0002`).
+
+**183. A removed Python package leaves its `__pycache__`, and imports again.**
+Our packages ship no `.pyc`: the target's python3 writes `__pycache__/`
+into `site-packages` the first time a module is imported. `apk del` removes
+only the files the package listed, so `site-packages/numpy/` stays behind
+with nothing but `__pycache__` in it -- and `import numpy` then *succeeds*
+(an empty namespace package). Code that probes optional modules with
+`try: import numpy` takes the wrong branch: scikit-build-core's configure
+failed with "module 'numpy' has no attribute 'get_include'" on a test VM
+where numpy had been installed and removed. Tests export
+`PYTHONDONTWRITEBYTECODE=1` (tests/src/test_python3_pybuild.sh and the
+other g14-python-a tests). The fix: python3 (from 3.14.0-r3) has an apk
+trigger on `site-packages` (`ports/python3/apk.trigger`): after every
+transaction that touches it, the trigger removes each `.pyc` whose `.py` is
+gone, plus the directories that this leaves empty, so `apk del` cleans up.
+Installs without apk (archives) still need the leftover directories removed by
+hand.
+
+**184. `istream::putback()` after `read()` fails on QNX's libc++ `std::filebuf`.**
+Reading a few bytes from an `ifstream` with `read()` and putting them back
+(a byte-order-mark check) sets badbit: the filebuf read them straight into
+the caller's buffer and has no putback position. nuspell rejected every
+dictionary without a BOM ("There is no number", "Parsing error"). Peek at
+the first byte instead and read only when it matches
+(`ports/nuspell/patches/0001`). The standard does not promise putback after
+`read()`, so this is a portable fix.
+
+**185. QNX's libc reads zoneinfo (TZif) files, but only by path.**
+`TZ=/usr/local/share/zoneinfo/Europe/Berlin` (or `TZ=:<path>`) gives the zone's full
+history through `localtime()`/`mktime()`, past rules included; a bare
+`TZ=Europe/Berlin` is looked up in `/usr/share/zoneinfo`, which packages do
+not install into, and silently becomes GMT. tzdata installs into
+`share/zoneinfo`; programs and tests name the file
+(`tests/src/test_tzdata.c`), Python's zoneinfo takes `PYTHONTZPATH`.
+
+**186. A generated header shipped in the source tree shadows the configured one.**
+libsass and sassc ship `include/sass/version.h` / `sassc_version.h` saying
+"[NA]"; configure writes the real one into the build directory, but
+`-I$(top_srcdir)/...` finds the shipped one first in an out-of-tree build,
+so `libsass_version()` and `sassc -v` answered "[NA]". The recipes copy the
+generated header over the shipped one before `make`.
+
+**187. The SDP's `MAKEFLAGS=-I$QNX_TARGET/usr/include` reads as `make -n` to some tools.**
+qnxsdp-env.sh exports it; Ruby's installer (tool/rbinstall.rb) scans the
+single-letter make flags and finds the "n" in ".../qnx805/...": it ran as a
+dry run, printed every "installing ..." line, wrote nothing and reported
+"Installed under" an empty directory (also for the build machine's ruby
+built in the same environment). Run such installs with `env -u MAKEFLAGS`
+(`ports/ruby/recipe.sh`).
+
+**188. The bare cross `gcc` lacks the `__unix__`/`__unix` that `qcc` predefines.**
+qcc's driver adds `-D__unix__ -D__unix -D__LANGUAGE_C ...`; recipes that use
+`$QNX_TRIPLE-gcc` directly (to avoid qcc's option parsing, hazard 21) lose
+them, and code that picks its POSIX path by `__unix__` falls through to
+`#error` (valkey's vendored libvalkey: "No call-once implementation").
+Pass `-D__unix__ -D__unix` with such a `CC` (`ports/valkey/recipe.sh`).
+
+**189. Any mutex the parent held across `fork()` is unusable in the child, not
+only those locked in atfork handlers (hazard 127).** valkey locks its module
+GIL in `main()` and then daemonizes: the child's unlock fails with EPERM and
+its next lock blocks for good -- a daemonized server that accepts and never
+answers. Samba's tevent, pthreadpool and tfork child handlers `abort()` on
+the failed unlock. Re-initialise (`pthread_mutex_init`) and, where the
+parent's state was "locked", lock again in the child
+(`ports/valkey/patches/0007-*`, `ports/samba/patches/0004-*`).
+
+**190. QNX defines `LOCAL_CREDS` but authenticates UNIX-socket peers the
+FreeBSD way.** Code that sends `SCM_CREDS` only where `LOCAL_CREDS` is absent
+or on `__FreeBSD__` writes a bare byte on QNX, and a reader built with
+`HAVE_CMSGCRED` refuses it ("message from recvmsg() was not SCM_CREDS"):
+gnome-keyring's control socket. Treat `__QNX__` like `__FreeBSD__`; the
+kernel fills the sender's `struct cmsgcred` (pid, uid) as on FreeBSD
+(`ports/gnome-keyring/patches/0002-*`; see also hazard 134).
+
+**191. A `MAP_SHARED` file mapping does not see another process's `write()`,
+and a file cannot be mapped beyond its end.** lib/replace's
+`incoherent_mmap` probe, run on the targets, reports incoherent mmap on both
+/tmp and qnx6 /data; tdb's answer to that (`HAVE_INCOHERENT_MMAP`: everybody
+must always mmap) then failed at once in Samba with "tdb_mmap failed ...
+(No such device or address)" -- QNX refuses a mapping past EOF (ENXIO)
+where Linux maps it. The coherent choice on QNX is that nobody maps: tdb uses
+pread/pwrite only (`ports/tdb/patches/0001-*`). Watch for any database that
+mixes mmap readers with write() writers across processes.
+
+**192. QNX's libc can print `(null)` for a NULL `%s` -- if asked.** It has a
+hook for hazard 99: when `const char *output_for_percent_s_NULL` (a libc
+variable) points to a string, printf prints that instead of crashing.
+Setting it once from a constructor in a library every program links covers
+a whole code base (Samba's libreplace, `ports/samba/patches/0005-*`).
+
+**193. QNX has `wcwidth()` but no `wcswidth()`.** pinentry-curses failed to
+link. Implement it as POSIX does (sum of `wcwidth()`, -1 for a
+non-printable character) rather than as a character count
+(`ports/pinentry/patches/0001-*`).
+
+**194. `<net/netbyte.h>` defines `bswap16`/`bswap32`/`bswap64` as macros**, and
+the socket headers include it. Code that defines functions of those names
+(valkey's endianconv.h, Heimdal's roken) breaks or silently gets the macro;
+`#undef` them before such definitions (`ports/valkey/patches/0006-*`).
+
+**195. `struct timeval` is not in QNX's `<time.h>`** (glibc's has it). Headers
+that use it after including only `<time.h>` fail with "incomplete type";
+include `<sys/time.h>`, where POSIX puts it (`ports/samba/patches/0003-*`).
+
+**196. waf's `use_hostcc` does not use the host compiler.** Samba's build
+helpers (Heimdal's asn1_compile, compile_et) marked `use_hostcc=True` only get
+`-D_SAMBA_HOSTCC_` and are compiled for the target, then run on the build
+machine. Build them natively from the same source and point the cross build
+at them (`ports/samba/patches/0001-*`, `ports/samba/recipe.sh`). For waf's
+run-time configure questions, record `--cross-answers` once on the targets
+with `--cross-execute` and pin the files in the port (`ports/tdb`,
+`ports/samba`).
+
+**197. `fstatvfs()` of an `O_DIRECTORY` descriptor fails with ENOSYS.** The
+same directory opened plain `O_RDONLY` works, as does `statvfs()` of the
+path. Together with hazard 25 (the `*at()` functions want `O_DIRECTORY`)
+one descriptor cannot serve both: Samba's free-space query failed with
+NT_STATUS_NOT_SUPPORTED. Retry on `openat(fd, ".", O_RDONLY)`
+(`ports/samba/patches/0007-*`).
+
+**198. `nto-qnx` matches patterns meant for Windows NT (`nt*`).** Ruby's
+configure takes the first `ext/Setup.<os>` whose suffix starts `$target_os`:
+for `nto-qnx8.0.0` that is `Setup.nt`, Windows' list of extensions to link
+statically into the `ruby` program, and the link failed on their symbols.
+`--with-setup=Setup` (`ports/ruby/recipe.sh`). Look for `nt*` / `*nt*` case
+patterns when a project behaves as if it were on Windows.
+
+**199. CMake calls q++ "QCC": `CMAKE_COMPILER_IS_GNUCXX` is false on QNX.**
+Build logic keyed on it (or on `CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"`)
+takes the "other compiler" branch. OGRE 1.12 drops the `lib` prefix of its
+plugins only for GNU/Clang, so on QNX it built `libRenderSystem_GLES2.so`
+while its loader asks for `RenderSystem_GLES2.so` ("Library cannot be
+found"); `ports/ros2-rviz/ogre-patches/0100-*` adds `OR QNX`. Grep a
+project's CMake for `CMAKE_COMPILER_IS_GNU` when GCC-only flags or names go
+missing.
+
+**200. Drawing with your own EGL into a Qt window on QNX: make it an
+OpenGL-surface QWindow, and share EGL contexts.** On Qt's qnx platform a
+raster QWindow gets window buffers from Qt (and Qt posts its backing store
+into them); an `OpenGLSurface` one is left without buffers until a
+QOpenGLContext uses it. RViz hands `QWindow::winId()` (the screen_window_t)
+to OGRE, which creates the buffers and the EGL surface itself -- so its
+RenderWindow sets `QSurface::OpenGLSurface` on QNX (`ports/ros2-rviz/
+repo-patches/rviz-qnx-gles.patch`), and the buffers are recreated when Qt
+resizes the window (a swap on the old surface fails). Also OGRE 1.12's
+EGL layer created every window's context after the first *unshared*
+(`eglCreateContext(..., 0, ...)`), so a second window saw none of the
+first one's textures and programs; share with the main context.
+
+**201. qnx-ports' ROS 2 tree: vendored projects are installed twice, and
+the toolchain claims Eigen3_FOUND.** Its ament_cmake_vendor_package change
+installs an `ament_vendor()` project both to `opt/<vendor>/` and to the
+prefix itself: rviz_ogre_vendor would have shipped two copies of every OGRE
+soname (`ros2-rviz`'s do_install keeps the `opt/` one only). Its toolchain
+file sets `Eigen3_FOUND TRUE`, and ament's exported-dependency hooks skip
+`find_package()` for what is already "found": an overlay package then had
+no `Eigen3::Eigen` target for an exported interface ("the target was not
+found"); unset it after including the toolchain.
+
+**202. No `pthread_getattr_np()`: a thread's stack comes from `__tls()`.**
+Code that asks for the current thread's stack bounds (garbage collectors,
+VMs checking for stack overflow) finds none of pthread_getattr_np,
+pthread_attr_get_np, pthread_get_stackaddr_np on QNX. Ruby then refused to
+start any thread other than the main one, and crashed doing so. QNX keeps
+each thread's stack base and size in its thread-local storage
+(`<sys/storage.h>`: `__tls()->__stackaddr`, `__stacksize`), which sits at the
+top of the stack (`ports/ruby/patches/0005`).
+
+**203. GObject introspection data cannot be generated in the cross build,
+and a native build's GIR carries the build machine's poll() and socket
+constants.** g-ir-scanner runs a "dumper" linked against the library it
+describes, so the glib port has no typelibs and PyGObject could not reach
+GLib at all. `glib-typelibs` builds the same GLib release natively (GLib,
+then gobject-introspection's scanner, then GLib with introspection) only to
+describe it -- but GLib spells `G_IO_IN` & co. as `GLIB_SYSDEF_POLLIN`,
+`G_SOCKET_FAMILY_IPV6` as `GLIB_SYSDEF_AF_INET6`, and QNX's values differ
+from Linux's (POLLIN 5 not 1, POLLOUT 2 not 4, POLLNVAL 4096, AF_INET6 28
+not 10): a `GLib.io_add_watch(fd, GLib.IOCondition.IN, ...)` would have
+watched the wrong events. `ports/glib-typelibs/fix-constants.py` rewrites
+them from the target's staged `glibconfig.h` before `gi-compile-repository`;
+`test_python3_gobject3` compares them with Python's `select`/`socket` values
+and drives a pipe watch.
+
+**204. `datetime.strptime()` fails in python3 when no LC_ALL/LANG is set
+(open, python3 port).** QNX's `setlocale(LC_TIME, NULL)` answers with the
+composite name, `C;ctype:POSIX`, once Python's start-up has set LC_CTYPE;
+`locale.getlocale()` cannot parse that, so `_strptime` raises
+`ValueError: unknown locale: C;ctype:POSIX` -- `time.strptime`,
+`datetime.strptime` and everything on them (protobuf's
+`Timestamp.FromJsonString`, for one). With `LC_ALL=C` it works. Found by
+`test_python3_protobuf`, which therefore does not parse timestamps; the fix
+belongs in the python3 port (`locale.getlocale()`/`_parse_localename` for
+QNX's composite names).
+
+**205. `ctypes.util.find_library()` returns None on QNX.** It asks
+`/sbin/ldconfig -p`, gcc or ld, none of which a QNX target has: a Python
+package that looks up its C library that way (python-sounddevice:
+"PortAudio library not found") must fall back to the soname, which the
+runtime loader finds (`ports/python3-sounddevice/patches/0001`; see 111).
+It is also slow: every call spawns ldconfig, gcc and ld, each failing. Pythran's
+bundled `omp` module called it for three names on every import attempt --
+144 failed spawns, about 50 s of each `import pythran` on the x86_64 VM, and
+past the 15-minute test limit on the emulated aarch64 one
+(`ports/pythran/patches/0001` asks the loader by soname).
+
+**206. SDP 8's `SETIOV()` takes a `void *`: const buffers need
+`SETIOV_CONST()`.** `<unistd.h>` now defines `SETIOV` as an inline
+function (`__setiov(iov_t *, void *, size_t)`) and adds `SETIOV_CONST`
+(`iov_base_const`); SDP 7's macro cast the const away. Code that sends or
+replies from const data (`QByteArray::constData()`) stops at "invalid
+conversion from 'const void*' to 'void*'" -- Qt Remote Objects' QNX
+transport (`ports/qt6-remoteobjects/patches/0001`).
+
+**207. `_msg_info.msglen` is what `MsgReceive()` copied, not the
+length of the message.** A server that receives into a small buffer
+(`sizeof(struct _pulse)`, to tell pulses from messages) and then sizes
+the rest of the message from `msglen` cuts every message at that buffer:
+the length the client sent is `srcmsglen` (`MsgRead()` fetches the
+rest). Qt Remote Objects' qnx: transport read 22 of a 27-byte packet and
+its replicas never initialised (`ports/qt6-remoteobjects/patches/0003`;
+0002 is a Qt 6 change it also needed: it filled `QIODevicePrivate::buffer`,
+which is now QIODevice's own read buffer, from another thread).
+
+**208. A Qt module built on its own against the staged qt6 cannot find
+its host tools when the workspace is reached by another path.** The staged
+Qt records the host Qt's CMake directory it was configured with
+(`/home/qnx/oss/hosttools/...`, a symlink to this workspace); CMake's
+re-rooting then puts the build's own `QT_HOST_PATH` ahead of that
+different spelling, and `find_package(Qt6ScxmlTools)` looks for it under
+the staging tree: "Failed to find the host tool Qt6::qscxmlc" although
+hosttools has it. `scripts/lib/qt6-module.sh` passes
+`QT_HOST_PATH_CMAKE_DIR` with `QT_HOST_PATH` (moc, from Qt6CoreTools, is
+found another way and worked).
+
+**209. Qt 6.8's Qt Wayland client needs QtGui's `wayland` feature, and
+on QNX evaluates a qtbase feature 6.8 does not have.** QtGui must be
+configured with Wayland in staging (`ports/qt6`: DEPS wayland, `-feature-wayland`;
+QtGui only uses its headers), or qtwayland stops at "Qt Gui has been built
+without 'wayland' feature". Its `configure.cmake` then makes EGL on QNX depend
+on `QT_FEATURE_egl_extension_platform_wayland`, defined only by a later
+qtbase ("its definition is missing"): qtwayland's own `egl_1_5_wayland`
+compile test answers the same question (`ports/qt6-wayland/patches/0001`).
+
+**210. `if(${CMAKE_SYSTEM_NAME} STREQUAL "QNX")` is false on QNX.** CMake
+defines a variable named `QNX` (to 1) for QNX targets. The unquoted
+`${CMAKE_SYSTEM_NAME}` expands to `QNX`, which `if()` then reads as that
+variable's value: `1 STREQUAL "QNX"`. Linux tests written that way work
+because there is no variable `Linux`. Gloo's TCP transport stayed off with
+the condition extended this way (`ports/gloo`); write `if(QNX)` or
+`if(CMAKE_SYSTEM_NAME STREQUAL "QNX")`.
+
+**211. QNX's epoll has no `EPOLLONESHOT` (nor `EPOLLET`).** libepoll's
+`<sys/epoll.h>` defines the poll-style event bits only. Code that registers
+a descriptor one-shot and re-arms it from the handler (Gloo's TCP loop)
+gets level-triggered events that keep firing; defining the flag as 0 hides
+that. Emulate it: take the descriptor out of the set when its event is
+reported, before the handler runs, and treat `EPOLL_CTL_DEL` of one that
+already fired as success (`ports/gloo/patches/0001`).
+
+**212. `<sys/timerfd.h>` does not declare its functions `extern "C"`.** C++
+code that includes it calls `timerfd_create(int, int)` by its mangled name
+and fails to link against libtimerfd ("undefined reference to
+`timerfd_create(int, int)`"). Include it inside `extern "C" { }` and link
+`-ltimerfd` (`ports/gloo`).
+
+**213. QNX's `<unwind.h>` declares `_Unwind_Backtrace()` and
+`_Unwind_Trace_Fn` only under `_GNU_SOURCE`.** Stack-trace code
+(backward-cpp, `ports/ros2-jazzy-control`'s backward_ros) then fails with
+"'_Unwind_Backtrace' was not declared in this scope". libgcc_s has the
+function; declare the two (or build that file with `_GNU_SOURCE`).
+
+**214. No `RTLD_DEEPBIND`.** It is glibc's; QNX's `dlopen()` has
+`RTLD_GLOBAL`/`RTLD_LOCAL`/`RTLD_GROUP` but not that flag. CasADi uses it for
+its plugins by default: build it with `-DWITH_DEEPBIND=OFF` (`ports/casadi`).
+
+**215. Run-time data installed under `include/` lands in `-dev`.**
+qnxpkg puts `usr/local/include/` in the development package. ACADO
+installed its code generator's templates (`*.in`, read by `exportCode()`
+at run time) next to its headers, so a target with only `acado` exported
+incomplete solvers ("Unable to open the file .../acado_auxiliary_functions.h.in").
+Install such files under `share/` (`ports/acado/patches/0003`). On a
+rebuild, also mind that the component's own previously staged headers sit
+on the include path ahead of the build tree's generated ones: a changed
+generated header (ACADO's `templates.hpp`) was shadowed by the staged copy
+until that was removed.
+
+**216. The ROS 2 toolchain calls the aarch64 processor `aarch64le`.**
+qnx-ports' `qnx.nto.toolchain.cmake` (used by `ports/ros2` and every
+overlay) sets `CMAKE_SYSTEM_PROCESSOR` to the CPU directory name; this
+tree's own toolchain says `aarch64`. A package version file that checks the
+target when cross-compiling (GeographicLib's: "version: 2.7 (target =
+QNX-aarch64)") then rejects the staged package in ROS builds on aarch64
+only. robot_localization finds GeographicLib's header and library directly
+on QNX (`ports/ros2-jazzy-nav2/repo-patches`).
+
+**217. libc++ cannot copy-assign a `std::map` whose key type is declared
+`const`.** `std::map<const K, V>` works with libstdc++; libc++ assigns
+node values through a non-const pair reference ("no match for 'operator='
+... __nc_ref_pair_type"). Drop the redundant `const` (MoveIt's
+`collision_detection::DistanceMap`). Related libc++/GCC trip-ups seen in the
+same builds: `std::isnan()` of a `std::reference_wrapper<double>` (libc++'s
+is constrained to arithmetic types: call `.get()`), and `-Werror
+-Wnull-dereference` firing inside inlined libc++ `<regex>`/`<string>` code
+under GCC 12 (keep those two warnings non-fatal).
+
+**218. The ROS 2 toolchain's `CMAKE_CXX_FLAGS` carries `-std=c++14`.**
+qnx-ports' `qnx.nto.toolchain.cmake` puts `-std=c++14` into
+`CMAKE_CXX_FLAGS`; CMake's own `-std=c++17/20` (from `CXX_STANDARD` or
+compile features) comes after it and wins. A target that copies
+`CMAKE_CXX_FLAGS` into its `COMPILE_FLAGS` property (MoveIt's
+moveit_ompl_interface, for the OpenMP flags) puts `-std=c++14` last again
+and the build drops to C++14 ("'is_same_v' is not a member of 'std'" in
+rclcpp headers). Related: a FindOpenMP that fails leaves
+`OpenMP_CXX_FLAGS` set to `NOTFOUND`, which then lands on the command line
+as an input file. (`ports/ros2-jazzy-moveit2/repo-patches`.)

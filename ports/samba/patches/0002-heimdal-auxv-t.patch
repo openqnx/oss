@@ -1,0 +1,19 @@
+Probe for auxv_t (QNX's <sys/auxv.h> has one).
+
+roken's getauxval.h defines its own auxv_t unless HAVE_AUXV_T, which
+Heimdal's autoconf build probes for and Samba's waf build never does. QNX's
+<sys/auxv.h> defines auxv_t (included when HAVE_SYS_AUXV_H), so roken's
+definition conflicts: "conflicting types for 'auxv_t'". Probe it.
+
+Upstream-Status: QNX-specific
+
+--- a/third_party/heimdal_build/wscript_configure
++++ b/third_party/heimdal_build/wscript_configure
+@@ -42,6 +42,7 @@
+ conf.CHECK_FUNCS('bswap32')
+ 
+ conf.CHECK_TYPE('struct winsize', define='HAVE_STRUCT_WINSIZE', headers='sys/termios.h sys/ioctl.h')
++conf.CHECK_TYPE('auxv_t', define='HAVE_AUXV_T', headers='sys/auxv.h')
+ conf.CHECK_STRUCTURE_MEMBER('struct winsize', 'ws_xpixel',
+                     define='HAVE_WS_XPIXEL', headers='sys/termios.h sys/ioctl.h')
+ conf.CHECK_STRUCTURE_MEMBER('struct winsize', 'ws_ypixel',

@@ -1,0 +1,31 @@
+#undef QNX's <stdlib.h> min()/max() before defining fcft's own
+
+QNX's <stdlib.h> defines min() and max() macros (for C, under the default
+_QNX_SOURCE extensions); fcft.c and svg-backend-nanosvg.c define their own and the redefinition is an
+error under the project's -Werror. #undef them first; the definitions are the
+same expressions.
+
+Upstream-Status: QNX-specific
+
+--- a/fcft.c
++++ b/fcft.c
+@@ -46,6 +46,8 @@
+  #include "3rd-party/freetype-rsvg/rsvg-port.h"
+ #endif
+ 
++#undef min   /* QNX's <stdlib.h> defines min() and max() */
++#undef max
+ #define min(x, y) ((x) < (y) ? (x) : (y))
+ #define max(x, y) ((x) > (y) ? (x) : (y))
+ #define ALEN(v) (sizeof(v) / sizeof((v)[0]))
+--- a/svg-backend-nanosvg.c
++++ b/svg-backend-nanosvg.c
+@@ -11,6 +11,8 @@
+ #include <nanosvg/nanosvg.h>
+ #include <nanosvg/nanosvgrast.h>
+ 
++#undef min   /* QNX's <stdlib.h> defines min() and max() */
++#undef max
+ #define min(x, y) ((x) < (y) ? (x) : (y))
+ #define max(x, y) ((x) > (y) ? (x) : (y))
+ 

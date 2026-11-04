@@ -1,0 +1,47 @@
+# gnome-keyring 51.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:13:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gnome-keyring qnx-test-gnome-keyring qnx-port-tests
+(1/7) Installing libgpg-error (1.50-r0)
+(2/7) Installing libgcrypt (1.11.0-r1)
+(3/7) Installing p11-kit (0.25.5-r0)
+(4/7) Installing gcr (3.41.2-r0)
+(5/7) Installing gnome-keyring (51.1-r1)
+(6/7) Installing libsecret (0.21.4-r0)
+(7/7) Installing qnx-test-gnome-keyring (1.0-r0)
+Executing glib-2.82.4-r3.trigger
+* Warning: Schema “org.gnome.crypto.cache” has path “/desktop/gnome/crypto/cache/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.crypto.pgp” has path “/desktop/gnome/crypto/pgp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+Executing shared-mime-info-2.4-r1.trigger
+OK: 246.8 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gnome_keyring
+     == gnome-keyring ==
+       ok   private dbus-daemon
+       ok   gnome-keyring-daemon owns org.freedesktop.secrets
+       ok   secret-tool store (label, two attributes)
+       ok   secret-tool lookup returns the password
+       ok   lookup with another attribute value finds nothing
+       ok   secret-tool search: label and attributes
+       ok   keyring file written: login.keyring
+       ok   the keyring file holds no plain-text password
+       ok   --start reaches the running daemon over its control socket
+       ok   the daemon accepted the peer's SCM_CREDS credentials
+       ok   control socket in $XDG_RUNTIME_DIR/keyring
+       ok   secret-tool clear removes the item
+     PASS gnome-keyring
+PASS test_gnome_keyring
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

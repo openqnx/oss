@@ -1,0 +1,30 @@
+slave: a refused TIOCSCTTY is fine when the pty already is the controlling terminal (QNX)
+
+QNX makes a terminal the controlling terminal of a session leader that
+opens it (System V behaviour), so after setsid() and open() of the pty slave
+it already is, and ioctl(TIOCSCTTY) then fails with EPERM. foot treated that
+as fatal: the shell was never started ("failed to configure controlling
+terminal: Operation not permitted"). On QNX accept the refusal when the pty
+is this session's terminal already (tcgetsid() == getsid(0)), as the vte
+port does.
+
+Upstream-Status: QNX-specific
+
+--- a/slave.c
++++ b/slave.c
+@@ -240,7 +240,14 @@
+         goto err;
+     }
+ 
+-    if (ioctl(pts, TIOCSCTTY, 0) < 0) {
++    if (ioctl(pts, TIOCSCTTY, 0) < 0
++#if defined(__QNX__)
++        /* QNX has already made the pty the controlling terminal when it
++         * was opened after setsid(), and then refuses TIOCSCTTY (EPERM):
++         * not a failure */
++        && tcgetsid(pts) != getsid(0)
++#endif
++        ) {
+         LOG_ERRNO("failed to configure controlling terminal");
+         goto err;
+     }

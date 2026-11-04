@@ -1,0 +1,43 @@
+Send SCM_CREDS on QNX as on FreeBSD.
+
+egg_unix_credentials_write() sends its credentials byte with an SCM_CREDS
+control message only where LOCAL_CREDS is absent or on FreeBSD; elsewhere
+it writes the bare byte. QNX defines LOCAL_CREDS (<sys/un.h>) but its
+socket layer is FreeBSD's: the reader (built with HAVE_CMSGCRED) waits for
+the struct cmsgcred the kernel fills into an SCM_CREDS message, and every
+client was refused with "message from recvmsg() was not SCM_CREDS" --
+"gnome-keyring-daemon --start" could not reach a running daemon over its
+control socket. Send SCM_CREDS on QNX as on FreeBSD (libdbus and, with
+ports/glib's patch, GDBus do the same there, hazard 134).
+
+Upstream-Status: QNX-specific
+
+--- a/egg/egg-unix-credentials.c
++++ b/egg/egg-unix-credentials.c
+@@ -179,7 +179,7 @@
+ {
+ 	char buf;
+ 	int bytes_written;
+-#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__))
++#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__) || defined(__QNX__))
+ 	union {
+ 		struct cmsghdr hdr;
+ 		char cred[CMSG_SPACE (sizeof (struct cmsgcred))];
+@@ -190,7 +190,7 @@
+ 
+ 	buf = 0;
+ 
+-#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__))
++#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__) || defined(__QNX__))
+ 	iov.iov_base = &buf;
+ 	iov.iov_len = 1;
+ 
+@@ -208,7 +208,7 @@
+ 
+ again:
+ 
+-#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__))
++#if defined(HAVE_CMSGCRED) && (!defined(LOCAL_CREDS) || defined(__FreeBSD__) || defined(__QNX__))
+ 	bytes_written = sendmsg (socket, &msg, 0);
+ #else
+ 	bytes_written = write (socket, &buf, 1);

@@ -1,0 +1,40 @@
+Use the tmpfile() memory stream on QNX, which has no open_memstream().
+
+QNX has no open_memstream(), and none of funopen()/fopencookie() that
+libfyaml's macOS replacement is built on, so libfyaml.so had an undefined
+reference to open_memstream. fy_memstream_open/close (the only users) already
+have a tmpfile() variant for Windows: the stream is a temporary file, read
+back into a malloc'ed buffer at close. Use it on QNX too.
+
+Upstream-Status: Pending
+
+
+--- a/src/util/fy-utils.c
++++ b/src/util/fy-utils.c
+@@ -960,7 +960,7 @@
+ 	if (!fyms)
+ 		return NULL;
+ 	memset(fyms, 0, sizeof(*fyms));
+-#if !defined(_WIN32)
++#if !defined(_WIN32) && !defined(__QNX__)
+ 	fyms->fp = open_memstream(&fyms->buf, &fyms->size);
+ #else
+ 	fyms->fp = tmpfile();
+@@ -976,7 +976,7 @@
+ char *fy_memstream_close(struct fy_memstream *fyms, size_t *sizep)
+ {
+ 	char *buf;
+-#if defined(_WIN32)
++#if defined(_WIN32) || defined(__QNX__)
+ 	long sz;
+ #endif
+ 
+@@ -985,7 +985,7 @@
+ 		return NULL;
+ 	}
+ 
+-#if defined(_WIN32)
++#if defined(_WIN32) || defined(__QNX__)
+ 	if (fyms->fp && fflush(fyms->fp) == 0 &&
+ 	    (sz = ftell(fyms->fp)) >= 0 &&
+ 	    (fyms->buf = malloc((size_t)sz + 1)) != NULL) {

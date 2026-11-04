@@ -1,0 +1,22 @@
+Generate dependency files with -E -Wp,-MM: qcc links on a bare -MM.
+
+fio's Makefile writes each object's dependency file with "$(CC) -MM".
+QNX's compiler driver qcc does not treat -MM as "preprocess only" the way
+gcc does: it compiles and then links the file, so every object fails with
+"undefined reference to main" from crt1.o. "-E -Wp,-MM" asks for the
+preprocessor explicitly and hands -MM to it; gcc and clang produce the same
+dependency output with it, so the change is portable.
+
+Upstream-Status: Pending
+
+--- a/Makefile
++++ b/Makefile
+@@ -497,7 +497,7 @@
+ %.o : %.c
+ 	@mkdir -p $(dir $@)
+ 	$(QUIET_CC)$(CC) -o $@ $(CFLAGS) $(CPPFLAGS) -c $<
+-	@$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(SRCDIR)/$*.c > $*.d
++	@$(CC) -E -Wp,-MM $(CFLAGS) $(CPPFLAGS) $(SRCDIR)/$*.c > $*.d
+ 	@mv -f $*.d $*.d.tmp
+ 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+ 	@if type -p fmt >/dev/null 2>&1; then				\

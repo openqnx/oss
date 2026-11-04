@@ -1,0 +1,26 @@
+Look up libc's gettimeofday, not glibc's __gettimeofday, on QNX.
+
+datefudge's gettimeofday() calls __gettimeofday(), which finds the real
+function with dlsym(RTLD_NEXT, "__gettimeofday") -- glibc's internal alias.
+QNX's libc exports only gettimeofday, so the lookup returns NULL and every
+program that calls gettimeofday() under datefudge jumps to address 0. On
+QNX the next definition after the preloaded library is libc's
+gettimeofday itself.
+
+Upstream-Status: QNX-specific
+
+--- a/datefudge.c
++++ b/datefudge.c
+@@ -69,7 +69,12 @@
+     int res;
+ 
+     if(!libc_gettimeofday)
++#ifdef __QNX__
++        /* QNX's libc has no __gettimeofday: the next gettimeofday is libc's. */
++        libc_gettimeofday = (typeof(libc_gettimeofday))dlsym (RTLD_NEXT, "gettimeofday");
++#else
+         libc_gettimeofday = (typeof(libc_gettimeofday))dlsym (RTLD_NEXT, __func__);
++#endif
+     res = (*libc_gettimeofday)(x,y);
+     if(res) return res;
+     set_fudge(&x->tv_sec);

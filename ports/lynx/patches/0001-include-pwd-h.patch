@@ -1,0 +1,24 @@
+Include <pwd.h> for getpwnam() whenever it exists.
+
+LYUtils.c expands "~user/" paths with getpwnam() and reads pw->pw_dir, but
+includes <pwd.h> only inside its HAVE_UTMP block. On glibc another header
+drags <pwd.h> in; on QNX nothing does and the build stops with "invalid use
+of undefined type 'struct passwd'" (configure finds no utmp there). Include
+it whenever configure found it (HAVE_PWD_H) -- the same fix the QNX ports
+carry.
+
+Upstream-Status: QNX-specific
+
+--- a/src/LYUtils.c
++++ b/src/LYUtils.c
+@@ -101,6 +101,10 @@
+ #include <lib$routines.h>
+ #endif /* VMS */
+ 
++#if defined(HAVE_PWD_H) && !defined(HAVE_UTMP)
++#include <pwd.h>		/* getpwnam() for ~user paths */
++#endif
++
+ #ifdef HAVE_UTMP
+ #include <pwd.h>
+ #ifdef UTMPX_FOR_UTMP

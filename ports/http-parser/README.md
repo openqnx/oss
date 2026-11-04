@@ -1,0 +1,228 @@
+# http-parser 2.9.4
+
+> HTTP request/response parser library in C (from Node.js)
+
+**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+
+| | |
+|---|---|
+| Upstream | https://github.com/nodejs/http-parser.git (tag `v2.9.4`) |
+| Build system | custom (see recipe) |
+| QNX patches | 0 |
+| Build dependencies | none |
+| Run-time dependencies | none (QNX SDP only) |
+| Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
+| On-target test | [`test_http_parser`](../../tests/src/) |
+
+## Install and remove on a target
+
+No build needed: prebuilt packages for `x86_64` and `aarch64`, installed under `/data/oss` (with `/usr/local` linked to `/data/oss/usr/local`; [INSTALL.md](../../INSTALL.md) step 1 prepares a target). Packages: `http-parser` (programs, shared libraries, run-time data) and `http-parser-dev` (headers, pkg-config/CMake files, static libraries; needs `http-parser`).
+
+Each package's page gives the exact file, URL, SHA-256 and dependencies per architecture: [`http-parser`](https://openqnx.github.io/oss/package/x86_64/http-parser.html) ([aarch64](https://openqnx.github.io/oss/package/aarch64/http-parser.html)) · [`http-parser-dev`](https://openqnx.github.io/oss/package/x86_64/http-parser-dev.html) ([aarch64](https://openqnx.github.io/oss/package/aarch64/http-parser-dev.html)).
+
+| Method | Install | Remove |
+|---|---|---|
+| **A.** [apk](../../INSTALL.md#2a-install-with-apk) | `apk add http-parser` (dependencies come along); one version: `apk add http-parser=<version>` | `apk del http-parser` (also removes dependencies nothing else needs) |
+| **B-1.** [oss-get](../../target/oss-get) | `oss-get update && oss-get install http-parser` (dependencies first) | `oss-get remove http-parser` (its files only: the dependencies stay) |
+| **B-2.** by hand | download, check, save the file list, unpack (below) | delete the listed files (below) |
+
+`http-parser-dev` the same way, by its own name (`apk add http-parser-dev`, `oss-get install http-parser-dev`, by hand with its own file and list `http-parser-dev.list`); remove it before `http-parser`, which it needs.
+
+```sh
+# on the QNX target, as root
+apk add http-parser http-parser-dev
+apk add qnx-test-http-parser && /usr/local/bin/qnx-port-tests/test_http_parser    # its on-target test, from tests-8.0-<arch>
+apk del http-parser http-parser-dev qnx-test-http-parser
+```
+
+By hand (B-2), from the release `packages-8.0-<arch>`; take `<file>` and `<sha256>` from the package's page (or its release's `INDEX`: `name|version|depends|file|sha256|...`), and install its dependencies first, the same way:
+
+```sh
+GH=https://github.com/openqnx/oss/releases/download
+mkdir -p /data/oss/dl /data/oss/var/lib/manual && cd /data/oss/dl
+curl -fsSLO $GH/packages-8.0-<arch>/<file>
+[ "$(openssl dgst -sha256 <file> | sed 's/.*= *//')" = <sha256> ] && echo OK || echo BAD
+gzip -dc <file> | tar -tf - | grep -v '/$' > /data/oss/var/lib/manual/http-parser.list
+gzip -dc <file> | (cd /data/oss && tar -xf -) && rm <file>
+# remove: exactly the files it installed
+cd /data/oss && while read -r f; do rm -f "$f"; done < var/lib/manual/http-parser.list
+rm var/lib/manual/http-parser.list
+```
+
+With B-1 and B-2 the dependencies stay installed after a remove: remove them too only if no other installed package needs them (`oss-get remove` refuses one that is still needed). Use one method per `/data/oss`: apk and oss-get do not know about files unpacked by hand. Then `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)` sets `PATH` and `LD_LIBRARY_PATH`; [docs/packages.md](../../docs/packages.md) has the details, and your own build can be served from `dists/` ([`scripts/serve-dists`](../../scripts/serve-dists)).
+
+## Build it from upstream
+
+Every step below can be run by hand. `./scripts/qnxbuild http-parser` performs exactly the same steps (2–5) in one command.
+
+### 1. Build environment
+
+A Linux host with QNX SDP 8.0 installed and licensed — or the container in [`docker/`](../../docs/build-environment.md), which needs only the SDP mounted. Then, from the repository root:
+
+```bash
+export QNX_SDP_ROOT=$HOME/qnx800      # your SDP 8.0 installation
+./scripts/build-host-tools.sh          # once per machine
+source ./env.sh aarch64le              # or x86_64; once per shell
+```
+
+`env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
+
+No other component has to be built first.
+
+### 2. Get the upstream source
+
+```bash
+git clone --depth 1 -b v2.9.4 --recurse-submodules --shallow-submodules \
+    https://github.com/nodejs/http-parser.git src/http-parser
+```
+
+### 3. Apply the QNX patches
+
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+
+### 4. Configure, build and install into the staging tree
+
+This component uses its own build steps (`do_configure`, `do_build`, `do_install`), run with `S` = the source tree, `B` = the build directory:
+
+```bash
+S=src/http-parser; B=build/$QNX_ARCH/http-parser; mkdir -p $B
+```
+
+```bash
+do_configure() { cp -a "$S/." "$B/"; }
+```
+
+```bash
+do_build() { hp_make library; }
+```
+
+```bash
+do_install() { hp_make DESTDIR="$STAGE" install; }
+```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- http-parser: Node.js's original HTTP request/response parser in C (a callback parser that neither allocates nor copies; also a URL parser). Deprecated upstream in favour of llhttp; QNX ships it.
+- A plain Makefile that builds in the source directory: copy the tree to the build directory and build there. PLATFORM is set rather than taken from the build machine's uname (only darwin/wine differ). The shared library keeps upstream's Linux soname, libhttp_parser.so.2.9; built with HTTP_PARSER_STRICT=0 as upstream's "library" target does.
+
+Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH http-parser`.
+
+### 5. What it installs
+
+4 files under `/usr/local`: 3 shared-library entries, 1 headers.
+
+```
+/usr/local/lib/libhttp_parser.so
+/usr/local/lib/libhttp_parser.so.2.9
+/usr/local/lib/libhttp_parser.so.2.9.4
+```
+
+The complete list is `stage/<arch>/.manifest/http-parser` after a build.
+
+### 6. Package it for the target
+
+```bash
+./scripts/qnxpkg -a $QNX_ARCH --key keys/private/<key>.rsa http-parser
+ls dists/8.0/*/ | grep '^http-parser-'
+```
+
+This writes `http-parser-<ver>-r0.tar.gz` (run time) and `http-parser-dev-<ver>-r0.tar.gz` (headers, pkg-config, CMake files, static libraries), the matching `.apk` files, and updates the repository index. The run-time dependencies recorded in the package are computed from the binaries.
+
+## Run it on a target
+
+Serve your build from `dists/` and install it with apk:
+
+```bash
+./scripts/serve-dists &                                  # on the build host: http://<host>:8000
+./scripts/target-bootstrap <target> -r http://<host>:8000  # once per target
+```
+```sh
+# on the target
+. /data/oss/etc/oss-env.sh
+apk update && apk add http-parser
+```
+
+or copy the tarball and unpack it yourself:
+
+```bash
+scp dists/8.0/aarch64/http-parser-*-r0.tar.gz root@<target>:/data/
+ssh root@<target> 'mkdir -p /data/oss && cd /data/oss && tar xzf /data/http-parser-*-r0.tar.gz'
+```
+
+QNX has no `ld.so.conf`; make the libraries findable with `. /data/oss/etc/oss-env.sh` (apk) or `eval $(oss-get env)`.
+
+### Test
+
+[`test_http_parser`](../../tests/src/) links http-parser the way an application would and checks its core API on the target. It is a package of its own, `qnx-test-http-parser`, in the tests repository (`test_suites/8.0/<arch>/`, `scripts/qnxpkg --tests`; on GitHub the release `tests-8.0-<arch>`), which apk-setup adds next to the package repository:
+
+```sh
+# on the target
+apk add qnx-test-http-parser
+/usr/local/bin/qnx-port-tests/test_http_parser
+```
+
+```
+== http-parser ==
+  ok   ...
+PASS http-parser
+```
+
+`apk add qnx-port-tests` adds `run-on-target.sh`, which runs every installed test. Without apk: `./tests/build-tests.sh $QNX_ARCH`, copy `stage/$QNX_ARCH/usr/local/bin/qnx-port-tests/test_http_parser` over and run it with `LD_LIBRARY_PATH=/usr/local/lib`; `./tests/make-bundle.sh && ./tests/deploy-and-run.sh <arch> <target>` runs every test at once.
+
+## How it was verified
+
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
+3. **On the target**: [`test_http_parser`](../../tests/src/) -- a program linked against http-parser the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
+
+   - byte-by-byte POST parsed without error
+   - method POST
+   - URL /api/v1/items?id=42
+   - HTTP/1.1
+   - 14-byte body
+   - one message complete
+   - HTTP/1.1 keeps the connection alive
+   - chunked response parsed
+   - status 404 Not Found
+   - chunks reassembled: \"Hello, chunked!\"
+   - trailer header seen
+   - response complete
+   - two pipelined requests: /a then /b
+   - HTTP/1.0 without keep-alive closes
+   - bad Content-Length rejected (HPE_INVALID_CONTENT_LENGTH)
+   - URL parsed
+   - URL fields schema|user|host|path|query|fragment
+   - URL port 8443
+   - bad port rejected
+
+Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> http-parser`.
+
+## Versions
+
+This recipe builds **2.9.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add http-parser=<version>`), sources in `ported/http-parser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates http-parser`; port one with `scripts/port-update http-parser`.
+
+<details><summary>recipe.sh</summary>
+
+```bash
+# http-parser: Node.js's original HTTP request/response parser in C (a
+# callback parser that neither allocates nor copies; also a URL parser).
+# Deprecated upstream in favour of llhttp; QNX ships it.
+VERSION=2.9.4; GIT=https://github.com/nodejs/http-parser.git; REF=v2.9.4
+BUILDSYS=custom
+# A plain Makefile that builds in the source directory: copy the tree to the
+# build directory and build there. PLATFORM is set rather than taken from
+# the build machine's uname (only darwin/wine differ). The shared library
+# keeps upstream's Linux soname, libhttp_parser.so.2.9; built with
+# HTTP_PARSER_STRICT=0 as upstream's "library" target does.
+hp_make() {
+  make -C "$B" PLATFORM=qnx CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" AR="$QNX_HOST/usr/bin/$QNX_TRIPLE-ar" \
+    LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state" PREFIX="$PREFIX" "$@"
+}
+do_configure() { cp -a "$S/." "$B/"; }
+do_build() { hp_make library; }
+do_install() { hp_make DESTDIR="$STAGE" install; }
+```
+</details>
+
+---
+<sub>Generated by <code>scripts/gen-port-docs</code> from <code>recipe.sh</code>, <code>patches/</code> and the build manifest. Edit those, not this file.</sub>

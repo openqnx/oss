@@ -1,0 +1,68 @@
+Option to build against installed SPIRV-Tools and glslang
+
+shaderc builds SPIRV-Tools and glslang from source trees checked out into
+third_party/ (by utils/git-sync-deps). Distributions build it against the
+installed libraries instead; so does this port (spirv-tools and glslang are
+ports of their own, the same Vulkan SDK release). With
+-DSHADERC_USE_INSTALLED_DEPS=ON, third_party/ takes the targets from the
+installed CMake packages (glslang, SPIRV, SPIRV-Tools, SPIRV-Tools-opt) and
+the include root from glslang's, and build-version.inc names the installed
+versions instead of running git describe in source trees that are not there.
+
+Upstream-Status: Inappropriate (distribution build configuration; not QNX-specific)
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -139,11 +139,23 @@
+     add_subdirectory(examples)
+ endif()
+ 
++if(SHADERC_USE_INSTALLED_DEPS)
++  # No SPIRV-Tools/glslang source trees to describe: the versions of the
++  # installed packages, and shaderc's own from CHANGES.
++  file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/CHANGES _shaderc_v REGEX "^v[0-9]" LIMIT_COUNT 1)
++  string(REGEX REPLACE " .*" "" _shaderc_v "${_shaderc_v}")
++  list(GET SHADERC_INSTALLED_VERSIONS 0 _spvt_v)
++  list(GET SHADERC_INSTALLED_VERSIONS 1 _glslang_v)
++  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build-version.inc
++    "\"shaderc ${_shaderc_v}\\n\"\n\"spirv-tools ${_spvt_v}\\n\"\n\"glslang ${_glslang_v}\\n\"\n")
++  add_custom_target(build-version)
++else()
+ add_custom_target(build-version
+   ${Python_EXECUTABLE}
+   ${CMAKE_CURRENT_SOURCE_DIR}/utils/update_build_version.py
+   ${shaderc_SOURCE_DIR} ${spirv-tools_SOURCE_DIR} ${glslang_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/build-version.inc
+   COMMENT "Update build-version.inc in the Shaderc build directory (if necessary).")
++endif()
+ 
+ function(define_pkg_config_file NAME LIBS)
+   add_custom_target(${NAME}-pkg-config ALL
+--- a/third_party/CMakeLists.txt
++++ b/third_party/CMakeLists.txt
+@@ -38,6 +38,26 @@
+ check_cxx_compiler_flag(-fPIC COMPILER_SUPPORTS_PIC)
+ 
+ 
++# Build against installed SPIRV-Tools and glslang instead of source trees in
++# third_party/ (distribution builds): the targets the rest of the build links.
++option(SHADERC_USE_INSTALLED_DEPS "Use installed SPIRV-Tools and glslang" OFF)
++if (SHADERC_USE_INSTALLED_DEPS)
++  set(CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON)
++  find_package(SPIRV-Tools REQUIRED CONFIG)
++  find_package(SPIRV-Tools-opt REQUIRED CONFIG)
++  find_package(glslang REQUIRED CONFIG)
++  add_library(glslang INTERFACE IMPORTED GLOBAL)
++  set_property(TARGET glslang PROPERTY INTERFACE_LINK_LIBRARIES glslang::glslang glslang::glslang-default-resource-limits)
++  add_library(SPIRV INTERFACE IMPORTED GLOBAL)
++  set_property(TARGET SPIRV PROPERTY INTERFACE_LINK_LIBRARIES glslang::SPIRV)
++  # the sources include "glslang/Public/..." and "SPIRV/GlslangToSpv.h"
++  # ("glslang/..." is on the include path already, with the install prefix)
++  get_target_property(_glslang_inc glslang::glslang INTERFACE_INCLUDE_DIRECTORIES)
++  list(GET _glslang_inc 0 _glslang_inc)
++  set(glslang_SOURCE_DIR "${_glslang_inc}/glslang" CACHE INTERNAL "")
++  set(SHADERC_INSTALLED_VERSIONS "${SPIRV-Tools_VERSION};${glslang_VERSION}" CACHE INTERNAL "")
++endif()
++
+ if (IS_DIRECTORY ${SHADERC_SPIRV_HEADERS_DIR})
+   set(SPIRV_HEADERS_SKIP_EXAMPLES ON)
+   add_subdirectory(${SHADERC_SPIRV_HEADERS_DIR} spirv-headers)

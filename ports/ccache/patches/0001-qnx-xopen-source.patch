@@ -1,0 +1,22 @@
+Define _XOPEN_SOURCE as 700 on QNX, as on FreeBSD.
+
+config.h defines a bare "#define _XOPEN_SOURCE" (no value) on every system
+it does not know. QNX's <sys/platform.h> accepts only the values 500, 600
+and 700 and stops with "#error This version of XOPEN_SOURCE is not
+supported" otherwise. 700 is the X/Open level that goes with the
+_POSIX_C_SOURCE 200809L config.h asks for, and what QNX 8 implements; it is
+what FreeBSD gets already.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/config.h.in
++++ b/cmake/config.h.in
+@@ -39,7 +39,7 @@
+ 
+ #if defined(__SunOS_5_8) || defined(__SunOS_5_9) || defined(__SunOS_5_10)
+ #  define _XOPEN_SOURCE 500
+-#elif defined(__FreeBSD__)
++#elif defined(__FreeBSD__) || defined(__QNX__)
+ #  define _XOPEN_SOURCE 700
+ #elif defined(__ibmxl__) && defined(__clang__) // Compiler xlclang
+ #  define _XOPEN_SOURCE 600

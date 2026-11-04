@@ -1,0 +1,38 @@
+meson: link libregex when there is one (QNX)
+
+QNX keeps the POSIX regex functions (regcomp, regexec, regerror, regfree)
+in libregex, not in libc; foot (its configuration and URL mode) fails to
+link with "undefined reference to regcomp". Link libregex where the
+library exists (an optional find_library, as for stdthreads).
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -137,6 +137,8 @@
+ math = cc.find_library('m')
+ threads = [dependency('threads'), cc.find_library('stdthreads', required: false)]
+ libepoll = dependency('epoll-shim', required: false)
++# regcomp()/regexec(): in libregex on QNX, not in libc
++libregex = cc.find_library('regex', required: false)
+ pixman = dependency('pixman-1')
+ wayland_protocols = dependency('wayland-protocols', version: '>=1.41',
+                                fallback: 'wayland-protocols',
+@@ -293,7 +295,7 @@
+     'pgo',
+     'pgo/pgo.c',
+     wl_proto_src + wl_proto_headers,
+-    dependencies: [math, threads, libepoll, pixman, wayland_client, xkb, utf8proc, fcft, tllist],
++    dependencies: [math, threads, libepoll, libregex, pixman, wayland_client, xkb, utf8proc, fcft, tllist],
+     link_with: pgolib,
+   )
+ endif
+@@ -327,7 +329,7 @@
+   'wayland.c', 'wayland.h', 'shm-formats.h',
+   'xkbcommon-vmod.h',
+   srgb_funcs, wl_proto_src + wl_proto_headers, version,
+-  dependencies: [math, threads, libepoll, pixman, wayland_client, wayland_cursor, xkb, fontconfig, utf8proc,
++  dependencies: [math, threads, libepoll, libregex, pixman, wayland_client, wayland_cursor, xkb, fontconfig, utf8proc,
+                  tllist, fcft],
+   link_with: pgolib,
+   install: true)

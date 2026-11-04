@@ -1,0 +1,113 @@
+Rename foot's spawn() to foot_spawn(): it overrode QNX libc's spawn()
+
+foot names its helper for running programs spawn(). QNX's libc has a
+spawn() of its own (<spawn.h>), and implements execvp()/execvpe() through
+spawnp() -> spawn(): with foot's executable exporting a spawn symbol, the
+libc call binds to foot's function instead, and the terminal's child
+process crashed in execvpe() (in foot's reaper_add(), signal 11) before the
+shell ever ran. Rename the function foot_spawn().
+
+Upstream-Status: QNX-specific
+
+--- a/input.c
++++ b/input.c
+@@ -307,7 +307,7 @@
+             }
+         }
+ 
+-        if (spawn(term->reaper, term->cwd, binding->aux->pipe.args,
++        if (foot_spawn(term->reaper, term->cwd, binding->aux->pipe.args,
+                   pipe_fd[0], stdout_fd, stderr_fd, NULL, NULL, NULL) < 0)
+             goto pipe_err;
+ 
+--- a/notify.c
++++ b/notify.c
+@@ -569,7 +569,7 @@
+ 
+     /* Redirect stdin to /dev/null, but ignore failure to open */
+     int devnull = open("/dev/null", O_RDONLY);
+-    pid_t pid = spawn(
++    pid_t pid = foot_spawn(
+         term->reaper, NULL, argv, devnull, stdout_fds[1], -1,
+         track_notification ? &notif_done : NULL, (void *)term, NULL);
+ 
+@@ -649,7 +649,7 @@
+             }
+ 
+             int devnull = open("/dev/null", O_RDONLY);
+-            spawn(
++            foot_spawn(
+                 term->reaper, NULL, argv, devnull, -1, -1,
+                 NULL, (void *)term, NULL);
+ 
+--- a/spawn.c
++++ b/spawn.c
+@@ -16,7 +16,7 @@
+ #include "xmalloc.h"
+ 
+ pid_t
+-spawn(struct reaper *reaper, const char *cwd, char *const argv[],
++foot_spawn(struct reaper *reaper, const char *cwd, char *const argv[],
+       int stdin_fd, int stdout_fd, int stderr_fd, reaper_cb cb, void *cb_data,
+       const char *xdg_activation_token)
+ {
+--- a/spawn.h
++++ b/spawn.h
+@@ -6,7 +6,7 @@
+ #include "config.h"
+ #include "reaper.h"
+ 
+-pid_t spawn(struct reaper *reaper, const char *cwd, char *const argv[],
++pid_t foot_spawn(struct reaper *reaper, const char *cwd, char *const argv[],
+             int stdin_fd, int stdout_fd, int stderr_fd,
+             reaper_cb cb, void *cb_data, const char *xdg_activation_token);
+ 
+--- a/terminal.c
++++ b/terminal.c
+@@ -199,7 +199,7 @@
+         return true;
+ 
+     char *const argv[] = {conf->utmp_helper_path, UTMP_ADD, getenv("WAYLAND_DISPLAY"), NULL};
+-    return spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
++    return foot_spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
+ #else
+     return true;
+ #endif
+@@ -223,7 +223,7 @@
+         ;
+ 
+     char *const argv[] = {conf->utmp_helper_path, UTMP_DEL, del_argument, NULL};
+-    return spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
++    return foot_spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
+ #else
+     return true;
+ #endif
+@@ -3763,7 +3763,7 @@
+         (!term->kbd_focus || term->conf->bell.command_focused))
+     {
+         int devnull = open("/dev/null", O_RDONLY);
+-        spawn(term->reaper, NULL, term->conf->bell.command.argv.args,
++        foot_spawn(term->reaper, NULL, term->conf->bell.command.argv.args,
+               devnull, -1, -1, NULL, NULL, NULL);
+ 
+         if (devnull >= 0)
+@@ -3774,7 +3774,7 @@
+ bool
+ term_spawn_new(const struct terminal *term)
+ {
+-    return spawn(
++    return foot_spawn(
+         term->reaper, term->cwd, (char *const []){term->foot_exe, NULL},
+         -1, -1, -1, NULL, NULL, NULL) >= 0;
+ }
+--- a/url-mode.c
++++ b/url-mode.c
+@@ -76,7 +76,7 @@
+             (const char *[]){url, url},
+             &argc, &argv))
+     {
+-        ret = spawn(
++        ret = foot_spawn(
+             term->reaper, term->cwd, argv,
+             dev_null, dev_null, dev_null, NULL, NULL, xdg_activation_token) >= 0;
+ 

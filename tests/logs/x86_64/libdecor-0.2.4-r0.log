@@ -1,0 +1,31 @@
+# libdecor 0.2.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:15:39Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libdecor qnx-test-libdecor qnx-port-tests
+(1/2) Installing libdecor (0.2.4-r0)
+(2/2) Installing qnx-test-libdecor (1.0-r0)
+OK: 231.6 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libdecor
+     == libdecor ==
+       ok   labwc up (headless Wayland compositor)
+       ok   wl_display_connect
+       ok   wl_compositor bound
+     Failed to load plugin 'libdecor-gtk.so': failed to init
+       ok   libdecor_new (plugin loaded)
+       ok   libdecor_decorate a wl_surface
+       info configured 1 time(s), content 320x240
+       ok   the compositor's configure arrives and is committed
+       ok   the frame keeps its title
+       ok   the frame can be closed
+       ok   no libdecor errors
+     PASS libdecor
+PASS test_libdecor
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

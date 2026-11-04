@@ -1,0 +1,31 @@
+# icon-naming-utils 0.8.90-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:15:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u icon-naming-utils qnx-test-icon-naming-utils qnx-port-tests
+(1/7) Installing perl (5.40.2-r2)
+(2/7) Installing perl-class-inspector (1.36-r0)
+(3/7) Installing perl-file-sharedir (1.118-r0)
+(4/7) Installing perl-xml-parser (2.59-r0)
+(5/7) Installing perl-xml-simple (2.25-r0)
+(6/7) Installing icon-naming-utils (0.8.90-r0)
+(7/7) Installing qnx-test-icon-naming-utils (1.0-r0)
+OK: 294.9 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_icon_naming_utils
+     == icon_naming_utils ==
+       ok   icon-name-mapping -c actions ran
+       ok   gtk-new.png, stock_new-text.png, filenew.png -> document-new.png
+       ok   gtk-copy.svg -> edit-copy.svg (SVG icons too)
+       ok   no links for document-open (no icon)
+       ok   places: gnome-fs-directory.png -> folder.png
+       ok   no -c: usage, exit 1
+     PASS icon_naming_utils
+PASS test_icon_naming_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

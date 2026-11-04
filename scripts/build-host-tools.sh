@@ -238,7 +238,8 @@ fi
 # script, so a cross-built copy would be useless even if one existed.
 if [ ! -x "$HT/bin/xdt-gen-visibility" ]; then
   echo "== installing xfce4-dev-tools (xdt-gen-visibility) -> $HT"
-  src="$WS/src/xfce4-dev-tools"
+  # src/xfce4-dev-tools-host: src/xfce4-dev-tools is the xfce4-dev-tools port's.
+  src="$WS/src/xfce4-dev-tools-host"
   [ -d "$src" ] || git clone -q --depth 1 -b xfce4-dev-tools-4.20.0 \
       https://gitlab.xfce.org/xfce/xfce4-dev-tools.git "$src"
   # The package is autotools and builds a lot we do not need; the generator is a
@@ -317,6 +318,24 @@ if [ ! -x "$HT/bin/ruby" ]; then
       --with-opt-dir="$HT" \
     && make -j"$(nproc)" && make install ) > "$WS/logs/hosttools-ruby.log" 2>&1 \
     || { echo "!! native ruby failed -- see $WS/logs/hosttools-ruby.log"; exit 1; }
+fi
+
+# SWIG for the build machine: the swig port's run-level test (tests/run-level/
+# g7-buildtools.cmake) generates its C and Python wrappers at build time with
+# the same 4.3.1 that runs on the target, and compares the two outputs.
+if [ ! -x "$HT/bin/swig" ]; then
+  echo "== building native swig -> $HT"
+  src="$WS/src/swig-host"
+  if [ ! -d "$src" ]; then
+    mkdir -p "$src"
+    [ -f "$WS/dist/swig-4.3.1.tar.gz" ] || curl -fsSL --retry 3 -o "$WS/dist/swig-4.3.1.tar.gz" \
+      https://downloads.sourceforge.net/project/swig/swig/swig-4.3.1/swig-4.3.1.tar.gz
+    tar xf "$WS/dist/swig-4.3.1.tar.gz" -C "$src" --strip-components=1
+  fi
+  b="$WS/build/host/swig"; rm -rf "$b"; mkdir -p "$b"
+  ( cd "$b" && "$src/configure" --prefix="$HT" --without-alllang --disable-ccache \
+    && make -j"$(nproc)" && make install ) > "$WS/logs/hosttools-swig.log" 2>&1 \
+    || { echo "!! native swig failed -- see $WS/logs/hosttools-swig.log"; exit 1; }
 fi
 
 echo "host tools ready: $(ls "$HT/bin" | tr '\n' ' ')"

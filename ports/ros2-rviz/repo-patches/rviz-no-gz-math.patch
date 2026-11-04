@@ -1,0 +1,158 @@
+rviz_default_plugins: compute the inertia box with Eigen, not gz-math.
+
+RViz 14 uses gz-math (gz_math_vendor) for one thing: MassMatrix3d::
+EquivalentBox(), the box shown for a link's inertia. gz-math and the
+gz-cmake/gz-utils it needs are not part of this tree's ROS 2; the same
+computation (the inertia tensor's principal moments and axes, and the
+uniform-density box with those moments) is a few lines of Eigen, which RViz
+already depends on.
+
+Upstream-Status: Inappropriate [gz-math is available on RViz's platforms]
+---
+diff --git a/rviz_default_plugins/CMakeLists.txt b/rviz_default_plugins/CMakeLists.txt
+index c75b4d5..579fc82 100644
+--- a/rviz_default_plugins/CMakeLists.txt
++++ b/rviz_default_plugins/CMakeLists.txt
+@@ -68,8 +68,6 @@ endif()
+ 
+ find_package(geometry_msgs REQUIRED)
+ 
+-find_package(gz_math_vendor REQUIRED)
+-find_package(gz-math REQUIRED)
+ 
+ find_package(image_transport REQUIRED)
+ find_package(interactive_markers REQUIRED)
+@@ -274,7 +272,6 @@ target_link_libraries(rviz_default_plugins PUBLIC
+ )
+ 
+ target_link_libraries(rviz_default_plugins PRIVATE
+-  gz-math::core
+   resource_retriever::resource_retriever
+ )
+ 
+diff --git a/rviz_default_plugins/package.xml b/rviz_default_plugins/package.xml
+index ad34c5c..829bbe7 100644
+--- a/rviz_default_plugins/package.xml
++++ b/rviz_default_plugins/package.xml
+@@ -38,7 +38,6 @@
+   <exec_depend>rviz_ogre_vendor</exec_depend>
+ 
+   <depend>geometry_msgs</depend>
+-  <depend>gz_math_vendor</depend>
+   <depend>image_transport</depend>
+   <depend>interactive_markers</depend>
+   <depend>laser_geometry</depend>
+diff --git a/rviz_default_plugins/src/rviz_default_plugins/robot/robot_link.cpp b/rviz_default_plugins/src/rviz_default_plugins/robot/robot_link.cpp
+index 1a424ab..89bfabe 100644
+--- a/rviz_default_plugins/src/rviz_default_plugins/robot/robot_link.cpp
++++ b/rviz_default_plugins/src/rviz_default_plugins/robot/robot_link.cpp
+@@ -31,6 +31,7 @@
+ #include "rviz_default_plugins/robot/robot_link.hpp"
+ 
+ #define _USE_MATH_DEFINES
++#include <algorithm>
+ #include <cmath>
+ #include <map>
+ #include <memory>
+@@ -50,11 +51,7 @@
+ 
+ #include <QFileInfo>  // NOLINT cpplint cannot handle include order here
+ 
+-#include <gz/math/Inertial.hh>
+-#include <gz/math/MassMatrix3.hh>
+-#include <gz/math/Pose3.hh>
+-#include <gz/math/Quaternion.hh>
+-#include <gz/math/Vector3.hh>
++#include <Eigen/Dense>
+ 
+ #include "resource_retriever/retriever.hpp"
+ 
+@@ -874,22 +871,59 @@ void RobotLink::createMass(const urdf::LinkConstSharedPtr & link)
+   }
+ }
+ 
++namespace
++{
++// The box of uniform density with the given mass and inertia tensor: its
++// sides along the tensor's principal axes (box_rot), of lengths box_scale.
++// What gz::math::MassMatrix3d::EquivalentBox() computes; false for a mass
++// or tensor no rigid body can have (non-positive, or principal moments that
++// break the triangle inequality).
++bool equivalentInertiaBox(
++  double mass, const Eigen::Matrix3d & inertia,
++  Eigen::Vector3d & box_scale, Eigen::Quaterniond & box_rot)
++{
++  const double tolerance = 1e-6;
++  if (!(mass > 0.0)) {
++    return false;
++  }
++  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(inertia);
++  if (solver.info() != Eigen::Success) {
++    return false;
++  }
++  const Eigen::Vector3d moments = solver.eigenvalues();
++  Eigen::Matrix3d axes = solver.eigenvectors();
++  if (axes.determinant() < 0.0) {
++    axes.col(2) = -axes.col(2);
++  }
++  const double margin = tolerance * moments.cwiseAbs().maxCoeff();
++  if (moments.minCoeff() <= 0.0 ||
++    moments[0] + moments[1] < moments[2] - margin ||
++    moments[1] + moments[2] < moments[0] - margin ||
++    moments[2] + moments[0] < moments[1] - margin)
++  {
++    return false;
++  }
++  for (int i = 0; i < 3; ++i) {
++    const double sum = moments[(i + 1) % 3] + moments[(i + 2) % 3] - moments[i];
++    box_scale[i] = std::sqrt(6.0 * std::max(sum, 0.0) / mass);
++  }
++  box_rot = Eigen::Quaterniond(axes);
++  return true;
++}
++}  // namespace
++
+ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
+ {
+   if (link->inertial) {
+-    const gz::math::Vector3d i_xx_yy_zz(
+-      link->inertial->ixx,
+-      link->inertial->iyy,
+-      link->inertial->izz);
+-    const gz::math::Vector3d Ixyxzyz(
+-      link->inertial->ixy,
+-      link->inertial->ixz,
+-      link->inertial->iyz);
+-    gz::math::MassMatrix3d mass_matrix(link->inertial->mass, i_xx_yy_zz, Ixyxzyz);
+-
+-    gz::math::Vector3d box_scale;
+-    gz::math::Quaterniond box_rot;
+-    if (!mass_matrix.EquivalentBox(box_scale, box_rot)) {
++    Eigen::Matrix3d inertia;
++    inertia <<
++      link->inertial->ixx, link->inertial->ixy, link->inertial->ixz,
++      link->inertial->ixy, link->inertial->iyy, link->inertial->iyz,
++      link->inertial->ixz, link->inertial->iyz, link->inertial->izz;
++
++    Eigen::Vector3d box_scale;
++    Eigen::Quaterniond box_rot;
++    if (!equivalentInertiaBox(link->inertial->mass, inertia, box_scale, box_rot)) {
+       // Invalid inertia, load with default scale
+       if (link->parent_joint && link->parent_joint->type != urdf::Joint::FIXED) {
+         // Do not show error message for base link or static links
+@@ -908,13 +942,13 @@ void RobotLink::createInertia(const urdf::LinkConstSharedPtr & link)
+     link->inertial->origin.rotation.getQuaternion(x, y, z, w);
+     Ogre::Quaternion originRotate(w, x, y, z);
+ 
+-    Ogre::Quaternion rotate(box_rot.W(), box_rot.X(), box_rot.Y(), box_rot.Z());
++    Ogre::Quaternion rotate(box_rot.w(), box_rot.x(), box_rot.y(), box_rot.z());
+     Ogre::SceneNode * offset_node = inertia_node_->createChildSceneNode(
+       translate, originRotate * rotate);
+     inertia_shape_ = new Shape(Shape::Cube, scene_manager_, offset_node);
+ 
+     inertia_shape_->setColor(1, 0, 0, 1);
+-    inertia_shape_->setScale(Ogre::Vector3(box_scale.X(), box_scale.Y(), box_scale.Z()));
++    inertia_shape_->setScale(Ogre::Vector3(box_scale.x(), box_scale.y(), box_scale.z()));
+   }
+ }
+ 

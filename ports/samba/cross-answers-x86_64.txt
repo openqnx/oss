@@ -1,0 +1,43 @@
+# waf cross-answers for QNX 8.0 x86_64: recorded by running each configure
+# test program on a QNX 8.0 x86_64 target (waf --cross-execute), then edited
+# where the recording is an artefact of running a lone binary, as in
+# ports/tdb/cross-answers-*.txt: rpath and --version-script (OK: their test
+# libraries were not copied), getconf LFS_CFLAGS (NO: no getconf; off_t is
+# 64-bit), C99 vsnprintf (OK: the probe dies only on snprintf("%s", NULL),
+# hazard 99; Samba sets QNX's output_for_percent_s_NULL, patches), uname
+# (generic values) and HAVE_INCOHERENT_MMAP (measured incoherent, answered
+# NO: the ported tdb never maps its databases on QNX).
+# Measured and kept: no working strptime (replaced), no 2^63-1 time_t from
+# gmtime (TIME_T_MAX not defined), no GnuTLS FIPS mode.
+Checking uname sysname type: "QNX"
+Checking uname machine type: "x86_64"
+Checking uname release type: "8.0.0"
+Checking uname version type: ""
+rpath library support: OK
+-Wl,--version-script support: OK
+Checking getconf LFS_CFLAGS: NO
+Checking for large file support without additional flags: OK
+Checking for HAVE_LITTLE_ENDIAN - runtime: OK
+Checking for HAVE_BIG_ENDIAN - runtime: NO
+Checking correct behavior of strtoll: OK
+Checking for working strptime: NO
+Checking for C99 vsnprintf: OK
+Checking for HAVE_SHARED_MMAP: OK
+Checking for HAVE_INCOHERENT_MMAP: NO
+Checking for HAVE_SECURE_MKSTEMP: OK
+Checking for gnutls fips mode support: NO
+Checking value of NSIG: "57"
+Checking value of _NSIG: "57"
+Checking value of SIGRTMAX: "56"
+Checking value of SIGRTMIN: "41"
+Checking for a 64-bit host to support lmdb: OK
+Checking errno of iconv for illegal multibyte sequence: OK
+Checking if can we convert from CP850 to UCS-2LE: OK
+Checking if can we convert from UTF-8 to UCS-2LE: OK
+Checking whether setreuid is available: "OK"
+Checking whether fcntl locking is available: OK
+Checking for the maximum value of the 'time_t' type: NO
+Checking whether the realpath function allows a NULL argument: OK
+Checking for ftruncate extend: OK
+Checking for readlink breakage: NO
+getcwd takes a NULL argument: OK

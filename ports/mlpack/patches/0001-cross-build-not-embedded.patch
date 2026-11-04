@@ -1,0 +1,54 @@
+Make mlpack's embedded cross-compile mode an option.
+
+mlpack takes every cross build for one for a small embedded board: it adds
+size flags (-Os -s -flto -fvisibility=hidden -fno-unwind-tables ...),
+requires TOOLCHAIN_PREFIX, ignores the installed Armadillo/BLAS and
+downloads and statically builds OpenBLAS and Armadillo itself, and defaults
+to static libraries. A QNX target is a full OS with OpenBLAS, Armadillo,
+ensmallen and cereal installed. The new option CROSSCOMPILE_EMBEDDED
+(default: CMAKE_CROSSCOMPILING, so nothing changes for anyone else) selects
+that mode; the QNX build sets it OFF and is configured like a native one.
+
+Upstream-Status: Pending
+
+--- a/CMake/ConfigureCrossCompile.cmake
++++ b/CMake/ConfigureCrossCompile.cmake
+@@ -7,7 +7,7 @@
+ # by, e.g., setting ARCH_NAME (which will set OPENBLAS_TARGET in
+ # `flags-config.cmake`).
+ 
+-if (CMAKE_CROSSCOMPILING)
++if (CROSSCOMPILE_EMBEDDED)
+   include(CMake/crosscompile-arch-config.cmake)
+   if (NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
+     message(FATAL_ERROR "Neither CMAKE_SYSROOT nor TOOLCHAIN_PREFIX are set; please set both of them and try again.")
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,6 +2,9 @@
+ project(mlpack C CXX)
+ 
+ include(CMake/CheckHash.cmake)
++# A cross build is not necessarily one for an embedded board: with this OFF a
++# cross build finds its installed dependencies like a native one does.
++option(CROSSCOMPILE_EMBEDDED "Cross-compile in embedded mode (size flags, downloaded dependencies, static OpenBLAS)." ${CMAKE_CROSSCOMPILING})
+ include(CMake/ConfigureCrossCompile.cmake)
+ include(CMake/CheckAtomic.cmake)
+ include(CMake/mlpack.cmake)
+@@ -44,7 +47,7 @@
+ 
+   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
+-elseif(CMAKE_CROSSCOMPILING)
++elseif(CROSSCOMPILE_EMBEDDED)
+   option(BUILD_SHARED_LIBS
+       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+ else()
+@@ -270,7 +273,7 @@
+ endif ()
+ 
+ set(MLPACK_DONT_FIND_MLPACK 1)
+-if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
++if (CROSSCOMPILE_EMBEDDED OR DOWNLOAD_DEPENDENCIES)
+   fetch_mlpack(ON)
+ else()
+   find_mlpack()

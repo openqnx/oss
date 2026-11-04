@@ -1,0 +1,23 @@
+QNX 8 has O_BINARY/O_TEXT but no setmode(): make it a no-op.
+
+QNX's <fcntl.h> defines O_BINARY and O_TEXT (both 0), so io.c compiles
+its DOS text/binary mode switching, which calls setmode(). QNX 8's libc
+has no setmode() (unix.h no longer declares it): libruby failed to link.
+Both modes are the same on QNX, so setmode() is a no-op that reports
+binary mode.
+
+Upstream-Status: QNX-specific
+
+--- a/io.c
++++ b/io.c
+@@ -58,6 +58,10 @@
+ 
+ #ifdef __QNXNTO__
+ #include <unix.h>
++/* QNX defines O_BINARY and O_TEXT (both 0: there is no text mode), so the
++ * DOS-style code below is compiled in, but QNX 8's libc has no setmode().
++ * With no difference between the modes, switching is a no-op. */
++#define setmode(fd, mode) ((void)(fd), (void)(mode), O_BINARY)
+ #endif
+ 
+ #include <sys/types.h>

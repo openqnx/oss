@@ -1,0 +1,24 @@
+Define howmany() where <sys/param.h> lacks it (QNX).
+
+thread.c sizes its fd_set copies with howmany(), the BSD <sys/param.h>
+macro, which QNX's headers do not define: the link failed with undefined
+references to howmany. Define it, rounding up as BSD does, where it is
+missing (QNX's own port defines it as A/B + 1, which over-allocates by
+one word when the division is exact).
+
+Upstream-Status: Pending
+
+--- a/thread.c
++++ b/thread.c
+@@ -104,6 +104,11 @@
+ #include <sys/wait.h>
+ #endif
+ 
++#ifndef howmany
++/* the BSD <sys/param.h> macro (rounding up), which QNX does not define */
++#define howmany(x, y) (((x) + ((y) - 1)) / (y))
++#endif
++
+ #ifndef USE_NATIVE_THREAD_PRIORITY
+ #define USE_NATIVE_THREAD_PRIORITY 0
+ #define RUBY_THREAD_PRIORITY_MAX 3

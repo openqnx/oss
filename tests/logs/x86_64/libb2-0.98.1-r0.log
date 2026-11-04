@@ -1,0 +1,37 @@
+# libb2 0.98.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:15:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libb2 qnx-test-libb2 qnx-port-tests
+(1/2) Installing libb2 (0.98.1-r0)
+(2/2) Installing qnx-test-libb2 (1.0-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libb2
+     == libb2 ==
+       ok   BLAKE2b-512("abc") = RFC 7693 appendix A
+       ok   BLAKE2s-256("abc") = RFC 7693 appendix B
+       ok   BLAKE2b("")
+       ok   BLAKE2s(00..fe)
+       ok   keyed BLAKE2b(00 01 02)
+       ok   keyed BLAKE2b(00..fe)
+       ok   keyed BLAKE2s("")
+       ok   keyed BLAKE2s(00..fe)
+       ok   keyed BLAKE2bp(00..fe)
+       ok   keyed BLAKE2bp(00 01 02)
+       ok   keyed BLAKE2sp(00..fe)
+       ok   keyed BLAKE2sp("")
+       ok   BLAKE2b in 1+127+127 byte pieces = one-shot
+       ok   BLAKE2sp in 7-byte pieces = one-shot
+       ok   BLAKE2b-256 is not a prefix of BLAKE2b-512
+       ok   BLAKE2b-256("abc")
+       ok   BLAKE2s rejects a 33-byte key
+     PASS libb2
+PASS test_libb2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

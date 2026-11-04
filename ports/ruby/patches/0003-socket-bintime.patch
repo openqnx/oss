@@ -1,0 +1,31 @@
+Declare struct bintime for SCM_BINTIME on QNX.
+
+QNX 8's <sys/socket.h> (the io-sock network stack, from FreeBSD) defines
+SCM_BINTIME, so ancdata.c compiles its decoder for that timestamp control
+message, but struct bintime is declared only in the stack's own headers
+(<net/bpf.h>, <devs/sys/time.h>), which a socket program does not
+include: the socket extension failed to compile. Declare the struct with
+the layout of those headers. (QNX's own Ruby port carries the same
+definition.)
+
+Upstream-Status: QNX-specific
+
+--- a/ext/socket/ancdata.c
++++ b/ext/socket/ancdata.c
+@@ -2,6 +2,16 @@
+ 
+ #include <time.h>
+ 
++#if defined(__QNX__) && defined(SCM_BINTIME)
++/* QNX's <sys/socket.h> (io-sock) defines SCM_BINTIME, but struct bintime is
++ * only in its network-stack headers (<net/bpf.h>, <devs/sys/time.h>). The
++ * same layout, for decoding the control message. */
++struct bintime {
++    time_t sec;
++    uint64_t frac;
++};
++#endif
++
+ static VALUE sym_wait_readable, sym_wait_writable;
+ 
+ #if defined(HAVE_STRUCT_MSGHDR_MSG_CONTROL)

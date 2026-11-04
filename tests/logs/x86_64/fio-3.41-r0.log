@@ -1,0 +1,29 @@
+# fio 3.41-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fio qnx-test-fio qnx-port-tests
+(1/2) Installing fio (3.41-r0)
+(2/2) Installing qnx-test-fio (1.0-r0)
+OK: 236.0 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fio
+     == fio ==
+       info fio-3.41
+       ok   sequential write + read with verify=crc32c: exit 0
+       ok   report: seqwrite wrote 2048 KiB (and read them back to verify), seqread read 2048 KiB, error 0
+       ok   report: 32 I/Os of 64 KiB per direction
+       ok   fio.dat is 2097152 bytes
+       ok   blocks start with the verify header magic 0xacca
+       ok   a corrupted byte: crc32c verify failure at offset 196608 (exit 1)
+       ok   verify=pattern: the 64 KiB file is 0x5aa5c33c repeated, verified
+       ok   posixaio random writes (iodepth 8) and mmap reads, md5-verified: 1024 KiB each
+     PASS fio
+PASS test_fio
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,32 @@
+Detect the UTF-8 BOM with peek() instead of read() and putback().
+
+strip_utf8_bom() read the first three bytes of the .aff and .dic files and,
+when they were not a UTF-8 byte order mark, put them back with putback().
+With QNX's libc++ an istream::read() of a few bytes from a std::filebuf can
+go straight into the caller's buffer, leaving the filebuf no putback
+position: putback() then fails and sets badbit, and every dictionary
+without a BOM failed to load ("There is no number" in the .dic, "Parsing
+error"). The standard does not guarantee putback after read(), so peek at
+the first byte instead and only read the three bytes when it is the BOM's
+first byte (0xEF). Files with a BOM behave as before.
+
+Upstream-Status: Pending (portable: putback after read() is not guaranteed by the standard)
+
+--- a/src/nuspell/aff_data.cxx
++++ b/src/nuspell/aff_data.cxx
+@@ -297,6 +297,15 @@
+ {
+ 	if (!in.good())
+ 		return;
++	// Look before reading: only a stream that starts with the BOM's first
++	// byte has anything to strip. Putting back characters just read is
++	// not guaranteed to work (std::filebuf may have read them straight
++	// into our buffer, leaving no putback position), and a failed
++	// putback leaves the stream failed.
++	if (in.peek() != std::istream::traits_type::to_int_type('\xEF')) {
++		reset_failbit_istream(in);
++		return;
++	}
+ 	auto bom = string(3, '\0');
+ 	in.read(bom.data(), 3);
+ 	if (in && bom == "\xEF\xBB\xBF")

@@ -1,0 +1,54 @@
+Give a daemonized valkey-server a GIL its own thread owns.
+
+moduleInitModulesSystem() locks the modules' GIL early in main(), and the
+event loop unlocks it before every sleep and locks it again after. With
+--daemonize yes the server then fork()s, and the child goes on running the
+event loop. On QNX the child's thread does not own the mutex its parent
+locked: pthread_mutex_unlock() returns EPERM (hazard 127), and the next
+pthread_mutex_lock() in afterSleep() blocks for good -- a daemonized
+valkey-server accepted connections and never answered (seen with the static
+Lua module loaded, i.e. always). Re-initialise the GIL in the daemonized
+child and lock it again, which is the state the parent had.
+
+Upstream-Status: QNX-specific
+
+--- a/src/module.c
++++ b/src/module.c
+@@ -9337,6 +9337,17 @@
+     pthread_mutex_unlock(&moduleGIL);
+ }
+ 
++/* After fork() the child's main thread is not the owner of the GIL its
++ * parent held: on QNX, unlocking it then fails with EPERM and the next lock
++ * blocks for good. A child that goes on running the event loop (daemonize)
++ * takes a fresh, locked GIL. */
++void moduleResetGILAfterFork(void) {
++#ifdef __QNX__
++    pthread_mutex_init(&moduleGIL, NULL);
++    pthread_mutex_lock(&moduleGIL);
++#endif
++}
++
+ 
+ /* --------------------------------------------------------------------------
+  * ## Module Keyspace Notifications API
+--- a/src/module.h
++++ b/src/module.h
+@@ -210,6 +210,7 @@
+ void moduleAcquireGIL(void);
+ int moduleTryAcquireGIL(void);
+ void moduleReleaseGIL(void);
++void moduleResetGILAfterFork(void);
+ void moduleNotifyKeyspaceEvent(int type, const char *event, robj *key, int dbid);
+ unsigned long moduleNotifyKeyspaceSubscribersCnt(void);
+ void firePostExecutionUnitJobs(void);
+--- a/src/server.c
++++ b/src/server.c
+@@ -6894,6 +6894,7 @@
+ 
+     if (valkey_fork() != 0) exit(0); /* parent exits */
+     setsid();                        /* create a new session */
++    moduleResetGILAfterFork();       /* the parent's GIL is not ours (QNX) */
+ 
+     /* Every output goes to /dev/null. If the server is daemonized but
+      * the 'logfile' is set to 'stdout' in the configuration file

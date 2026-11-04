@@ -1,0 +1,29 @@
+# mlpack 4.8.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:17:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mlpack qnx-test-mlpack-cli qnx-port-tests
+(1/4) Installing openblas (0.3.28-r0)
+(2/4) Installing armadillo (15.6.2-r0)
+(3/4) Installing mlpack (4.8.0-r0)
+(4/4) Installing qnx-test-mlpack-cli (1.0-r0)
+OK: 340.4 MiB in 85 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mlpack_cli
+     == mlpack_cli ==
+       ok   --version: Simple Linear Regression and Prediction: part of mlpack 4.8.0.
+       ok   mlpack_kmeans --help lists --clusters
+       ok   linear regression trained, model saved
+       ok   model loaded, predictions 1 6 15
+       ok   k-means: each group in one cluster, two clusters
+       ok   centroids 0.20,-0.20;20.20,19.80;
+       ok   kNN: neighbours 12,13 at 0.1, 0.9
+     PASS mlpack_cli
+PASS test_mlpack_cli
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

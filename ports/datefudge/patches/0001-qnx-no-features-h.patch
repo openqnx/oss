@@ -1,0 +1,19 @@
+Do not include glibc's <features.h> on QNX.
+
+<features.h> is glibc's; QNX has none (its feature macros come with every
+standard header). datefudge includes it for nothing it uses.
+
+Upstream-Status: QNX-specific
+
+--- a/datefudge.c
++++ b/datefudge.c
+@@ -14,7 +14,9 @@
+ #include <stdlib.h>
+ #include <dlfcn.h>
+ #include <assert.h>
++#ifndef __QNX__
+ #include <features.h>
++#endif
+ #include <stdbool.h>
+ #include <unistd.h>
+ #include <time.h>

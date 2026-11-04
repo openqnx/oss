@@ -1,0 +1,34 @@
+Retry fstatvfs() on a plain descriptor when QNX refuses an O_DIRECTORY one.
+
+QNX's fstatvfs() fails with ENOSYS on a descriptor opened with
+O_DIRECTORY (checked on the targets: O_RDONLY works, O_RDONLY|O_DIRECTORY
+does not), and smbd asks for a share's free space through the directory
+handle it opened that way: every smbclient "ls" ended with "Error in
+dskattr: NT_STATUS_NOT_SUPPORTED" (and exit status 1). On ENOSYS, retry on
+a plain O_RDONLY descriptor of the same directory.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/util/statvfs.c
++++ b/lib/util/statvfs.c
+@@ -206,6 +206,20 @@
+ 	int ret;
+ 
+ 	ret = fstatvfs(fd, &statvfs_buf);
++#ifdef __QNX__
++	if (ret != 0 && errno == ENOSYS) {
++		/*
++		 * QNX: fstatvfs() of a descriptor opened with O_DIRECTORY
++		 * fails with ENOSYS; a plain O_RDONLY one of the same
++		 * directory works.
++		 */
++		int fd2 = openat(fd, ".", O_RDONLY);
++		if (fd2 != -1) {
++			ret = fstatvfs(fd2, &statvfs_buf);
++			close(fd2);
++		}
++	}
++#endif
+ 
+ 	if (ret != 0) {
+ 		return ret;

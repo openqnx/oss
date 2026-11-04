@@ -1,6 +1,8 @@
 #!/bin/bash
 # Cross-build the port test suite for one or both architectures.
 #   ./tests/build-tests.sh [aarch64le|x86_64]
+# TEST_GROUPS="g1;g3" in the environment builds only those run-level groups
+# (leave out groups still being ported).
 set -o pipefail
 WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ARCHES="${1:-aarch64le x86_64}"
@@ -14,6 +16,7 @@ for arch in $ARCHES; do
         -DCMAKE_TOOLCHAIN_FILE="$WS/toolchain/qnx-$arch.cmake" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+        ${TEST_GROUPS:+-DTEST_GROUPS="$TEST_GROUPS"} \
         >"$WS/logs/tests.$arch.log" 2>&1 \
     && cmake --build "$B" -j"$(nproc)" -- -k 0 >>"$WS/logs/tests.$arch.log" 2>&1 \
     && DESTDIR="$STAGE" cmake --install "$B" >>"$WS/logs/tests.$arch.log" 2>&1

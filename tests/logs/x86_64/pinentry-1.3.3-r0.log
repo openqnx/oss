@@ -1,0 +1,40 @@
+# pinentry 1.3.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:26:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pinentry qnx-test-pinentry qnx-port-tests
+(1/4) Installing libgpg-error (1.50-r0)
+(2/4) Installing libassuan (3.0.2-r0)
+(3/4) Installing pinentry (1.3.3-r0)
+(4/4) Installing qnx-test-pinentry (1.0-r0)
+OK: 232.5 MiB in 85 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pinentry
+     == pinentry ==
+       ok   pinentry-tty started (Assuan on pipes, dialog on a pty)
+       ok   Assuan greeting: OK Pleased to meet you
+       ok   GETINFO version: 1.3.3
+       ok   GETINFO flavor: tty
+       ok   SETDESC, SETPROMPT
+       ok   GETPIN: description and prompt shown on the terminal
+       ok   the typed PIN comes back percent-escaped: D s3cr3t%25x
+       ok   CONFIRM: the buttons prompt answered o -> OK
+       info buttons: [o]? o
+       ok   SETCANCEL: the prompt offers [oc]
+       ok   CONFIRM answered c -> ERR ... cancelled
+       info ERR 83886179 Operation cancelled <Pinentry>
+       ok   pinentry (-> pinentry-curses) started on a vt100 pty
+       ok   Assuan greeting
+       ok   GETINFO flavor: curses
+     pinentry-curses: no LC_CTYPE known - assuming UTF-8
+       ok   the curses dialog is drawn (description and the OK button label)
+       ok   the PIN typed into the dialog: D curses42
+     PASS pinentry
+PASS test_pinentry
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

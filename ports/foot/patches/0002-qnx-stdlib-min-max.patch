@@ -1,0 +1,19 @@
+util.h: #undef QNX's <stdlib.h> min()/max()
+
+QNX's <stdlib.h> defines min() and max() macros (C, default _QNX_SOURCE);
+util.h defines its own and the redefinition is an error under -Werror.
+#undef them first; the definitions are the same expressions.
+
+Upstream-Status: QNX-specific
+
+--- a/util.h
++++ b/util.h
+@@ -6,6 +6,8 @@
+ #include <threads.h>
+ 
+ #define ALEN(v) (sizeof(v) / sizeof((v)[0]))
++#undef min   /* QNX's <stdlib.h> defines min() and max() */
++#undef max
+ #define min(x, y) ((x) < (y) ? (x) : (y))
+ #define max(x, y) ((x) > (y) ? (x) : (y))
+ 

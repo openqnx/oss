@@ -1,0 +1,20 @@
+test_fio	bin/fio
+test_flex_scan	lib/libfl.so.2
+test_flex	bin/flex bin/m4 include/FlexLexer.h lib/libfl.so.2
+test_swig_py	bin/python3
+test_swig	bin/swig share/swig bin/python3
+test_nasm	bin/nasm bin/ndisasm
+test_unifdef	bin/unifdef
+test_chrpath	bin/chrpath
+test_scdoc	bin/scdoc
+test_ccache	bin/ccache
+test_texinfo	bin/makeinfo bin/texi2any bin/install-info bin/info bin/texindex share/texi2any bin/perl
+test_help2man	bin/help2man bin/perl
+test_rhash	bin/rhash bin/sfv-hash
+test_zip	bin/zip bin/zipnote bin/zipsplit
+test_datefudge	bin/datefudge lib/datefudge/datefudge.so
+test_util_macros	bin/aclocal bin/autoconf bin/m4 bin/perl bin/pkgconf share/aclocal/xorg-macros.m4 share/pkgconfig/xorg-macros.pc
+test_mate_common	bin/aclocal bin/autoconf bin/autoreconf bin/automake bin/m4 bin/perl bin/mate-autogen share/aclocal/mate-common.m4
+test_icon_naming_utils	libexec/icon-name-mapping share/icon-naming-utils bin/perl
+test_intltool	bin/intltool-merge bin/intltool-extract bin/intltoolize share/intltool share/aclocal/intltool.m4 bin/perl bin/aclocal bin/autoconf bin/m4
+test_xfce4_dev_tools	bin/xdt-csource bin/xdt-autogen share/aclocal/xdt-depends.m4 bin/aclocal bin/autoconf bin/autoreconf bin/automake bin/m4 bin/perl bin/pkgconf lib/pkgconfig/glib-2.0.pc bin/make share/aclocal/pkg.m4

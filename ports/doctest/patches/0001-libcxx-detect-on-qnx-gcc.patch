@@ -1,0 +1,34 @@
+Detect libc++ on QNX with GCC too, so std types are not forward-declared.
+
+doctest forward-declares std::ostream, std::tuple, ... itself unless it
+sees it is on libc++ (_LIBCPP_VERSION), and it includes <version>/<ciso646>
+to find that out only when the compiler is clang. QNX's C++ library is
+libc++ (its types live in std::__2) also with QNX's GCC, so with GCC the
+forward declarations named a different std::tuple and every
+TEST_CASE_TEMPLATE failed with "template argument 1 is invalid". Probe for
+libc++ on QNX too.
+
+Upstream-Status: Pending
+
+--- a/doctest/doctest.h
++++ b/doctest/doctest.h
+@@ -485,7 +485,7 @@
+ // which case we don't want to forward declare stuff from std - for reference:
+ // https://github.com/doctest/doctest/issues/126
+ // https://github.com/doctest/doctest/issues/356
+-#if DOCTEST_CLANG
++#if DOCTEST_CLANG || defined(__QNX__) // QNX: libc++ also with GCC
+ #if DOCTEST_CPLUSPLUS >= 201703L && __has_include(<version>)
+ #include <version>
+ #else
+--- a/doctest/parts/public/config.h
++++ b/doctest/parts/public/config.h
+@@ -176,7 +176,7 @@
+ // which case we don't want to forward declare stuff from std - for reference:
+ // https://github.com/doctest/doctest/issues/126
+ // https://github.com/doctest/doctest/issues/356
+-#if DOCTEST_CLANG
++#if DOCTEST_CLANG || defined(__QNX__) // QNX: libc++ also with GCC
+ #if DOCTEST_CPLUSPLUS >= 201703L && __has_include(<version>)
+ #include <version>
+ #else

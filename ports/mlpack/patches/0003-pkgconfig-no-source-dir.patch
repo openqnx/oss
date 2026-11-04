@@ -1,0 +1,28 @@
+Keep the source tree out of mlpack.pc's Cflags.
+
+mlpack.pc's Cflags are built from MLPACK_INCLUDE_DIRS, which during the
+build also holds mlpack's own source tree (src/, where the bindings find
+mlpack.hpp). The installed mlpack.pc then pointed consumers at the build
+machine's source directory (-I/home/.../src/mlpack/src) in front of the
+installed headers. Leave the source tree out; the install prefix's include
+directory is added right after.
+
+Upstream-Status: Pending
+
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -427,8 +427,11 @@
+   # Next, adapt the list of include directories.
+   list(REMOVE_DUPLICATES MLPACK_INCLUDE_DIRS)
+   foreach (incldir ${MLPACK_INCLUDE_DIRS})
+-    # Filter out some obviously unnecessary directories.
+-    if (NOT "${incldir}" STREQUAL "/usr/include")
++    # Filter out some obviously unnecessary directories, and the source tree:
++    # the installed headers are under the install prefix added below.
++    if (NOT "${incldir}" STREQUAL "/usr/include" AND
++        NOT "${incldir}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/src/" AND
++        NOT "${incldir}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/src")
+       set(MLPACK_INCLUDE_DIRS_STRING
+           "${MLPACK_INCLUDE_DIRS_STRING} -I${incldir}")
+     endif ()

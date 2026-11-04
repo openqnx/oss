@@ -102,10 +102,15 @@ INTERP = [
 
 # Build trees whose contents a component installs as they are: there a
 # build-tree path means the installed location.
+# ROS 2 overlays (ros2-rviz, ros2-jazzy-*, lanelet2) install into the ros2
+# component's prefix the same way, from their own colcon install/.
+ROS_OVERLAYS = ("lanelet2",)
+
+
 def build_tree_map(comp, arch, version):
-    if comp == "ros2":
-        ros = "%s/opt/ros/%s" % (TARGET_PREFIX, version)
-        b = r"(?:%s)/build/%s/ros2" % (WSP, arch)
+    if comp == "ros2" or comp.startswith("ros2-") or comp in ROS_OVERLAYS:
+        ros = "%s/opt/ros/%s" % (TARGET_PREFIX, version if comp == "ros2" else "jazzy")
+        b = r"(?:%s)/build/%s/%s" % (WSP, arch, re.escape(comp))
         return [(re.compile((b + r"/install(?=[/\"';:\s]|$)").encode()), ros.encode()),
                 # colcon's setup scripts run the python that built them
                 (re.compile((r"(?:%s)/build/host/ros2-venv[^/\s]*/bin/python[0-9.]*(?![\w.])" % WSP).encode()),

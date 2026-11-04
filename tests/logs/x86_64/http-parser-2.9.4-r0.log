@@ -1,0 +1,42 @@
+# http-parser 2.9.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:14:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u http-parser qnx-test-http-parser qnx-port-tests
+(1/2) Installing http-parser (2.9.4-r0)
+(2/2) Installing qnx-test-http-parser (1.0-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_http_parser
+     == http-parser ==
+       info http_parser 2.9.4
+       ok   byte-by-byte POST parsed without error
+       ok   method POST
+       ok   URL /api/v1/items?id=42
+       ok   HTTP/1.1
+       ok   three headers, split pieces joined
+       ok   14-byte body
+       ok   one message complete
+       ok   HTTP/1.1 keeps the connection alive
+       ok   chunked response parsed
+       ok   status 404 Not Found
+       ok   chunks reassembled: "Hello, chunked!"
+       ok   trailer header seen
+       ok   response complete
+       ok   two pipelined requests: /a then /b
+       ok   HTTP/1.0 without keep-alive closes
+       ok   bad Content-Length rejected (HPE_INVALID_CONTENT_LENGTH)
+       info error: HPE_INVALID_CONTENT_LENGTH
+       ok   URL parsed
+       ok   URL fields schema|user|host|path|query|fragment
+       ok   URL port 8443
+       ok   bad port rejected
+     PASS http-parser
+PASS test_http_parser
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

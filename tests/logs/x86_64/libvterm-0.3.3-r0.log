@@ -1,0 +1,35 @@
+# libvterm 0.3.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:16:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libvterm qnx-test-libvterm qnx-port-tests
+(1/2) Installing libvterm (0.3.3-r0)
+(2/2) Installing qnx-test-libvterm (1.0-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libvterm
+     == libvterm ==
+       ok   vterm_new(25, 80)
+       ok   vterm_get_size: 25x80
+       ok   text at row 0: "Hello"
+       ok   SGR 1;31: bold, red (palette index 1)
+       ok   SGR 0 resets the attributes
+       ok   CUP ESC[2;5H: X at row 1 col 4, cursor after it
+       ok   UTF-8 "\u00e9" is one cell
+       ok   CJK "\u4e2d" is two cells wide
+       ok   vterm_screen_get_text of row 0: "HelloRz"
+       ok   ED 2 (ESC[2J) clears the screen
+       ok   keyboard: Up -> ESC [ A
+       ok   keyboard: Ctrl-A -> 0x01
+       ok   keyboard with DECCKM: Up -> ESC O A
+       ok   DA query ESC[c answered with ESC[?...c
+       info DA reply: ESC[?1;2c
+     PASS libvterm
+PASS test_libvterm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

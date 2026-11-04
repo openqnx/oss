@@ -264,6 +264,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): zstd
+- Prune the byte code that removed packages leave in site-packages (apk.trigger).
 - Cross-building CPython needs a *native* interpreter of the same version: the build freezes its own stdlib modules and runs setup steps with it. scripts/build-host-tools.sh puts one in hosttools/.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3`.
@@ -380,6 +381,8 @@ SHA256=2299dae542d395ce3883aca00d3c910307cd68e0b2f7336098c8e7b7eee9f3e9
 # Also linked at run time (found by scripts/gen-dependency-index): zstd
 DEPS="zlib openssl libffi expat bzip2 xz sqlite ncurses readline gdbm zstd"
 BUILDSYS=autotools
+# Prune the byte code that removed packages leave in site-packages (apk.trigger).
+APK_TRIGGERS="/usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages/* /usr/local/lib/python3.14/site-packages/*/*"
 # Cross-building CPython needs a *native* interpreter of the same version: the
 # build freezes its own stdlib modules and runs setup steps with it.
 # scripts/build-host-tools.sh puts one in hosttools/.

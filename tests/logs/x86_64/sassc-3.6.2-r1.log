@@ -1,0 +1,27 @@
+# sassc 3.6.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:52:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sassc qnx-test-sassc qnx-port-tests
+(1/3) Installing libsass (3.6.6-r1)
+(2/3) Installing sassc (3.6.2-r1)
+(3/3) Installing qnx-test-sassc (1.0-r0)
+OK: 234.7 MiB in 84 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sassc
+     == sassc ==
+       ok   sassc -v
+       ok   nested style to stdout (-I for the @import)
+       ok   compressed style to an output file
+       ok   stdin (-s), --style expanded
+       ok   indented syntax (--sass)
+       ok   undefined variable: message with line:column, exit 65
+     PASS sassc
+PASS test_sassc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

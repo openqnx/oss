@@ -29,6 +29,7 @@ static const struct spec specs[] = {
   { "font-cantarell",      1, { "Cantarell" },                                          'A',     1, 0, 0 },
   { "font-dejavu",        20, { "DejaVu Sans", "DejaVu Serif", "DejaVu Sans Mono" },    0x03A9,  1, 0, 0 },
   { "font-hack",           4, { "Hack" },                                               '0',     1, 1, 0 },
+  { "font-inconsolata",   70, { "Inconsolata" },                                        '0',     1, 1, 0 },
   { "font-inter",         30, { "Inter", "Inter Display" },                             'A',     1, 0, 0 },
   { "font-liberation",    12, { "Liberation Sans", "Liberation Serif", "Liberation Mono" }, 0x20AC, 1, 0, 0 },
   { "font-noto-emoji",     1, { "Noto Color Emoji" },                                   0x1F600, 0, 0, 1 },

@@ -259,6 +259,17 @@ update-mime-database /usr/local/share/mime
 (`/data/oss/usr/local/...` without the `/usr/local` link; `eval $(oss-get env)`
 first so the loader finds libglib.) See also docs/porting-hazards.md #161.
 
+graphviz finds its renderers and layout engines (plugins in
+`/usr/local/lib/graphviz`) through a configuration file that `dot -c` writes;
+graphviz's apk trigger on that directory runs it. With oss-get or by hand,
+after installing graphviz (or anything that adds a graphviz plugin):
+
+```sh
+dot -c
+```
+
+Without it, dot reports `Format: "png" not recognized`.
+
 ## Building packages
 
 ```bash

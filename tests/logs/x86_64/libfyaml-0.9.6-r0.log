@@ -1,0 +1,41 @@
+# libfyaml 0.9.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:15:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libfyaml qnx-test-libfyaml qnx-port-tests
+(1/2) Installing libfyaml (0.9.6-r0)
+(2/2) Installing qnx-test-libfyaml (1.0-r0)
+OK: 232.4 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libfyaml
+     == libfyaml ==
+       info libfyaml 0.9.6
+       ok   document parsed
+       ok   /name = qnx-oss
+       ok   /arches/1 = aarch64le
+       ok   /arches has 2 items
+       ok   block literal keeps its newlines
+       ok   /service/host = localhost
+       ok   anchored /defaults/timeout = 30
+       ok   /count carries the !!int tag
+       ok   fy_document_scanf: 30, qnx-oss, 42
+       ok   emitted text keeps keys and the alias
+       ok   round trip: re-parsed tree equals the original
+       info flow: {a: 1, b: [x, "y z"], c: {k: v}}
+       info json: {"a": 1, "b": ["x", "y z"], "c": {"k": "v"}}
+       ok   one-line flow emission
+       ok   one-line JSON emission
+       ok   document built from code emits {list: [1, 2], key: value}
+     <memory-@4ac31f1c60-4ac31f1c6d>:2:4: error: mismatched flow mapping end
+     b: }
+        ^
+       ok   unterminated flow sequence is an error
+     PASS libfyaml
+PASS test_libfyaml
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

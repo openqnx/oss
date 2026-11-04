@@ -1,0 +1,26 @@
+Do not call libcaca's internal _caca_alloc2d() from img2txt/cacaview
+
+img2txt and cacaview (src/common-image.c) call _caca_alloc2d(), a function
+internal to libcaca that is not part of its API. libcaca is built with
+-fvisibility=hidden wherever the compiler supports it (QNX's GCC does), so the
+symbol is not exported from libcaca.so and the programs fail to link with
+"undefined reference to `_caca_alloc2d'". Allocate the pixel buffer in the
+program itself, with the same multiplication-overflow check.
+
+Upstream-Status: Pending (not QNX-specific: any build with -fvisibility=hidden)
+
+--- a/src/common-image.c
++++ b/src/common-image.c
+@@ -161,7 +161,11 @@
+     uint32_t depth = (bpp + 7) / 8;
+ 
+     /* Allocate the pixel buffer */
+-    im->pixels = _caca_alloc2d(im->w, im->h, depth);
++    /* _caca_alloc2d() is internal to libcaca (hidden by -fvisibility):
++     * allocate here, with the same overflow check. */
++    im->pixels = (im->w && im->h && (size_t)im->w * im->h / im->h == (size_t)im->w
++                  && (size_t)im->w * im->h * depth / depth == (size_t)im->w * im->h)
++                 ? malloc((size_t)im->w * im->h * depth) : NULL;
+     if (!im->pixels)
+     {
+         caca_file_close(f);

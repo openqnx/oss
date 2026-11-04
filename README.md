@@ -1,11 +1,11 @@
 # QNX OSS — open source for QNX SDP 8.0
 
-![ported](https://img.shields.io/badge/open_source_ported-675-blue)
+![ported](https://img.shields.io/badge/open_source_ported-904-blue)
 ![verified](https://img.shields.io/badge/verified_on_QNX_targets-669-brightgreen)
 ![SDP](https://img.shields.io/badge/QNX_SDP-8.0-informational)
 ![arch](https://img.shields.io/badge/arch-x86__64_%7C_aarch64le-informational)
 
-**675 open source projects ported to QNX SDP 8.0, for x86_64 and aarch64le.
+**904 open source projects ported to QNX SDP 8.0, for x86_64 and aarch64le.
 669 of them are verified by running them on QNX targets and install with `apk`
 from this repository's releases.** From zlib and curl to Python, Qt 6, GTK,
 a Wayland desktop, ROS 2, PyTorch, MAME and VLC.
@@ -56,7 +56,7 @@ with its files, dependencies and test log: **<https://openqnx.github.io/oss/>**.
 > QNX. QNX is a trademark of BlackBerry Limited. Each component keeps its own license
 > (on its package page).
 
-Build files, QNX patches and step-by-step guides for **675 open source
+Build files, QNX patches and step-by-step guides for **904 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64**, and the same components as prebuilt packages
 a QNX target can download and install directly. The numbers are counted from
@@ -101,12 +101,12 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 
 | | |
 |---|---|
-| Components | **675** (675 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| Components | **904** (869 build for every architecture they support -- both, but for a few aarch64-only ones) |
 | Verified on QNX targets | **669** -- installed with apk and tested on both architectures; these are the packages in the releases |
-| 🟢 Standalone | **271** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **109** — need other components to build, run on their own |
-| 🔴 Dependent | **295** — need other components to build and to run |
-| QNX patches | **627**, one file per change, each with its reason |
+| 🟢 Standalone | **318** — QNX SDP only, at build time and at run time |
+| 🟡 Build-deps only | **213** — need other components to build, run on their own |
+| 🔴 Dependent | **350** — need other components to build and to run |
+| QNX patches | **694**, one file per change, each with its reason |
 | On-target tests | **233** test programs |
 | Packages | runtime + `-dev` per component, `.tar.gz` and APK v2 |
 

@@ -644,6 +644,14 @@ def package_tests(arch, args, owner, outdir):
             deps |= {owner[s] for s in info[1] if s in owner}
         for x in TEST_EXTRAS.get(n, []) + run_level_extras.get(n, []):
             deps |= owners_of(x)
+        # A test that checks several components (test_perl_http: libwww, the
+        # HTTP modules, ...) needs every one of them: installing the test
+        # with any one of its components must bring the others.
+        if len(comps_of.get(n, ())) > 1:
+            for c in comps_of[n]:
+                fs = files_of.get(c)
+                if fs is not None:
+                    deps.add(c if any(f and not is_dev(f) for f in fs) else c + "-dev")
         deps |= {"qnx-test-" + h[len("test_"):].replace("_", "-") for h in names
                  if h.startswith(n + "_") and comps_of.get(h, set()) & comps_of.get(n, set())}
         pname = "qnx-test-" + n[len("test_"):].replace("_", "-")

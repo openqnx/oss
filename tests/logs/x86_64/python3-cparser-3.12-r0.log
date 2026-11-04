@@ -1,0 +1,40 @@
+# python3-cparser 3.12-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:19:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-cparser qnx-test-python3-cffi qnx-port-tests
+(1/7) Installing gdbm (1.24-r0)
+(2/7) Installing readline (8.2-r0)
+(3/7) Installing sqlite (3.47.2-r0)
+(4/7) Installing python3 (3.14.0-r3)
+(5/7) Installing python3-cparser (3.12-r0)
+(6/7) Installing python3-cffi (2.1.1-r0)
+(7/7) Installing qnx-test-python3-cffi (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 337.6 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_cffi
+     == python3-cffi ==
+       info cffi 2.1.1, pycparser 3.12, backend /usr/local/lib/python3.14/site-packages/_cffi_backend.cpython-314.so
+       ok   _cffi_backend is the compiled extension
+       ok   strlen() through ABI mode
+       ok   abs()
+       ok   snprintf() with varargs
+       ok   qsort() with a Python callback
+       ok   div() returns a struct by value
+       ok   struct size and type name
+       ok   ffi.new allocates, ffi.cast to integer
+       ok   bad cdef raises CDefError
+       ok   pycparser: typedef, struct, function definition
+       ok   pycparser: function name and parameters
+       ok   pycparser: operator precedence in the AST
+       ok   pycparser: C regenerated from the AST
+     PASS python3-cffi
+PASS test_python3_cffi
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,24 @@
+Byte-swap with GCC builtins on QNX, which has no <byteswap.h>.
+
+chrpath byte-swaps ELF fields when the file's byte order differs from the
+host's, with bswap_16/32/64 from glibc's <byteswap.h> or Solaris'
+<sys/byteorder.h>. QNX has neither (its <gulliver.h> has ENDIAN_* macros);
+without a declaration the calls are implicit and the link fails. GCC's
+__builtin_bswap* are the same operations.
+
+Upstream-Status: QNX-specific
+
+--- a/protos.h
++++ b/protos.h
+@@ -16,6 +16,11 @@
+ #define bswap_16 BSWAP_16
+ #define bswap_32 BSWAP_32
+ #define bswap_64 BSWAP_64
++#elif defined(__QNX__)
++/* QNX has neither <byteswap.h> nor <sys/byteorder.h>. */
++#define bswap_16 __builtin_bswap16
++#define bswap_32 __builtin_bswap32
++#define bswap_64 __builtin_bswap64
+ #endif
+ #ifdef __QNX__
+ #include <sys/elf.h>   /* QNX has no <elf.h> */

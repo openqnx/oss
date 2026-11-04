@@ -1,0 +1,28 @@
+# hwdata 0.413-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:14:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u hwdata qnx-test-hwdata qnx-port-tests
+(1/2) Installing hwdata (0.413-r0)
+(2/2) Installing qnx-test-hwdata (1.0-r0)
+OK: 241.6 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_hwdata
+     == hwdata ==
+       ok   PCI 8086:100e -> Intel Corporation / 82540EM Gigabit Ethernet Controller
+       ok   PCI 8086:1237 -> Intel Corporation / 440FX - 82441FX PMC [Natoma]
+       ok   PCI 1af4:1000 -> Red Hat, Inc. / Virtio network device
+       ok   PCI 10de:1b80 -> NVIDIA Corporation / GP104 [GeForce GTX 1080]
+       ok   USB 1d6b:0002 -> Linux Foundation / 2.0 root hub
+       ok   USB 046d:c52b -> Logitech, Inc. / Unifying Receiver
+       ok   pnp.ids: PNP -> Microsoft
+       ok   oui.txt: 00-00-0C -> Cisco Systems
+     PASS hwdata
+PASS test_hwdata
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

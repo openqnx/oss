@@ -10,6 +10,7 @@
 | apk: `sdl2 ... conflicts: sdl2-compat` | install only one of the two |
 | `apk add` says "1 error", `….trigger: exited with error 127` | a target set up before 2026-11-03: apk lacks `--force-no-chroot`. Run `sed -i 's#--root /data/oss#--root /data/oss --force-no-chroot#' /data/oss/bin/apk; apk fix`, or add the option to your alias |
 | GTK program: "No GSettings schemas are installed" | installed without apk: `glib-compile-schemas /usr/local/share/glib-2.0/schemas` |
+| a removed Python module still imports (empty, "has no attribute ...") | its `__pycache__` was left behind: with apk, update python3 to 3.14.0-r3 or later (a trigger cleans up); without apk, remove `/usr/local/lib/python3.14/site-packages/<module>` |
 | `404` from curl | the release does not match the name's first letter: a-l → `…-<ARCH>`, m-z → `…-<ARCH>-m-z` |
 | labwc: "Can't open 'dri' library" | `dri_gbm.so` from the SDP is missing in `/data/oss/qnx-runtime/lib` ([Base QEMU images](Base-QEMU-Images) 4 ②) |
 | graphics image, x86_64: `screen` crashes, "No virgl contexts available" | QEMU runs without KVM: the user must be in group `kvm` and `/dev/kvm` writable |

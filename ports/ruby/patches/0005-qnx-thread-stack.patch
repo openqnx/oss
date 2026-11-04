@@ -1,0 +1,40 @@
+Find a thread's stack on QNX through __tls(), so threads can start.
+
+Every Thread.new crashed on QNX ([BUG] Segmentation fault): a new native
+thread calls native_thread_init_stack(), which without STACKADDR_AVAILABLE
+raises NotImplementedError ("ruby engine can initialize only in the main
+thread") from a thread that has no Ruby context yet. QNX has none of the
+functions get_stack() knows (pthread_getattr_np, pthread_attr_get_np, ...),
+but every thread's local storage (<sys/storage.h>, __tls()) records its
+stack base and sits at the top of the stack: use that. With it threads
+start, and stack overflow in a thread raises SystemStackError.
+
+Upstream-Status: Pending
+
+--- a/thread_pthread.c
++++ b/thread_pthread.c
+@@ -1813,6 +1813,9 @@
+ #define STACKADDR_AVAILABLE 1
+ #elif defined __HAIKU__
+ #define STACKADDR_AVAILABLE 1
++#elif defined __QNX__
++#define STACKADDR_AVAILABLE 1
++#include <sys/storage.h>
+ #endif
+ 
+ #ifndef MAINSTACKADDR_AVAILABLE
+@@ -1900,6 +1903,14 @@
+     *addr = info.stack_base;
+     *size = (uintptr_t)info.stack_end - (uintptr_t)info.stack_base;
+     STACK_DIR_UPPER((void)0, (void)(*addr = (char *)*addr + *size));
++#elif defined __QNX__
++    /* QNX has no pthread_getattr_np(); the thread's own local storage
++     * (<sys/storage.h>) records its stack, and sits at the top of it. */
++    struct _thread_local_storage *tls = __tls();
++    STACK_GROW_DIR_DETECTION;
++    *addr = tls->__stackaddr;
++    *size = (uintptr_t)tls - (uintptr_t)tls->__stackaddr;
++    STACK_DIR_UPPER((void)0, (void)(*addr = (char *)*addr + *size));
+ #else
+ #error STACKADDR_AVAILABLE is defined but not implemented.
+ #endif

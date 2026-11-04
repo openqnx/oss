@@ -1,0 +1,37 @@
+Provide wcswidth() on QNX, which only has wcwidth().
+
+pinentry-curses measures prompts with wcswidth(), which QNX's C library
+does not have (it has wcwidth()): the link fails with "undefined reference
+to `wcswidth'". Provide it on QNX as POSIX defines it, the sum of the
+wcwidth() of each character, -1 for a non-printable one. (The QNX ports
+stub it as the character count, which mis-sizes double-width text.)
+
+Upstream-Status: QNX-specific
+
+--- a/pinentry/pinentry-curses.c
++++ b/pinentry/pinentry-curses.c
+@@ -95,6 +95,24 @@
+ 
+ #ifdef HAVE_NCURSESW
+ typedef wchar_t CH;
++#ifdef __QNX__
++/* QNX's C library has wcwidth() but no wcswidth(): the POSIX definition,
++   the sum of the widths, -1 if a character is not printable. */
++static int
++qnx_wcswidth (const wchar_t *s, size_t n)
++{
++  int w = 0;
++  for (; n > 0 && *s; s++, n--)
++    {
++      int c = wcwidth (*s);
++      if (c < 0)
++        return -1;
++      w += c;
++    }
++  return w;
++}
++#define wcswidth(s, n) qnx_wcswidth (s, n)
++#endif
+ #define STRLEN(x) wcslen (x)
+ #define STRWIDTH(x) wcswidth (x, wcslen (x))
+ #define ADDCH(x) addnwstr (&x, 1);

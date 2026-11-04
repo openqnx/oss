@@ -18,6 +18,11 @@ and the three deliverables `dists/` (packages), `ported/` (original source +
 QNX patches), `test_suites/` (tests). `keys/private/` holds the package
 signing key: never commit it, never serve it.
 
+Every file has one fixed place inside the workspace (`docs/workspace-layout.md`):
+all QEMU VMs in `lab/vm/oss-<kind>-<arch>/`, lab tools, locks and agent rules in
+`lab/{bin,locks,agents}/`, trial runs in `logs/run-level/`, reports in
+`reports/`, scratch in `tmp/<task>/`. Never `/tmp`, `$TMPDIR` or outside dirs.
+
 ## Moving to another PC
 
 `scripts/workspace-pack` packs what git does not carry (signing key, target

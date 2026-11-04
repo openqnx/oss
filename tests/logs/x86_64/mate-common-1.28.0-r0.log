@@ -1,0 +1,30 @@
+# mate-common 1.28.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:17:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mate-common qnx-test-mate-common qnx-port-tests
+(1/7) Installing m4 (1.4.19-r0)
+(2/7) Installing perl (5.40.2-r2)
+(3/7) Installing autoconf (2.72-r1)
+(4/7) Installing automake (1.18-r2)
+(5/7) Installing mate-common (1.28.0-r0)
+(6/7) Installing mate-common-dev (1.28.0-r0)
+(7/7) Installing qnx-test-mate-common (1.0-r0)
+OK: 298.3 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mate_common
+     == mate_common ==
+       ok   aclocal copied MATE_* macros from share/aclocal/mate-common.m4
+       ok   autoconf: MATE_MAINTAINER_MODE_DEFINES expanded
+       ok   maintainer mode: DISABLE_DEPRECATED has -DGTK_DISABLE_DEPRECATED ... -DMATE_DISABLE_DEPRECATED
+       ok   --disable-maintainer-mode: DISABLE_DEPRECATED empty
+       ok   mate-autogen: configure and Makefile.in generated
+     PASS mate_common
+PASS test_mate_common
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

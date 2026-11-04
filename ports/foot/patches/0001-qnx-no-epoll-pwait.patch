@@ -1,0 +1,49 @@
+fdm: epoll_wait() with the signal mask set around it on QNX (no epoll_pwait)
+
+QNX's epoll emulation (libepoll) has epoll_wait() but no epoll_pwait().
+foot keeps its signals blocked except while it waits, so that a signal
+(SIGCHLD from the shell, SIGINT, SIGTERM ...) interrupts the wait. On QNX
+set the wait mask with sigprocmask() around epoll_wait(); a signal that
+arrives between the unmask and the wait has already set got_signal, which is
+checked first, so it is not left pending until the next event. And where
+epoll_pwait() returns EINTR for a signal, QNX's epoll_wait() can return events
+as well: the signal handlers (SIGCHLD ends the terminal) then freed FD
+handlers those events pointed to, and foot crashed on exit (SIGSEGV in
+fdm_poll). Drop the events when a signal came in; they are level-triggered
+and are reported again.
+
+Upstream-Status: QNX-specific
+
+--- a/fdm.c
++++ b/fdm.c
+@@ -444,8 +444,30 @@ fdm_poll(struct fdm *fdm)
+ 
+     struct epoll_event events[tll_length(fdm->fds)];
+ 
++#if defined(__QNX__)
++    /* QNX's epoll has no epoll_pwait(): unblock the signals around a plain
++     * epoll_wait(). A signal that arrives before the wait starts sets
++     * got_signal and is handled below without waiting. */
++    sigset_t qnx_old_mask;
++    sigprocmask(SIG_SETMASK, &fdm->sigmask, &qnx_old_mask);
++    int r = got_signal
++        ? (errno = EINTR, -1)
++        : epoll_wait(fdm->epoll_fd, events, tll_length(fdm->fds), -1);
++    int qnx_errno = errno;
++    sigprocmask(SIG_SETMASK, &qnx_old_mask, NULL);
++    /* epoll_pwait() returns EINTR when a signal arrives; QNX's epoll_wait()
++     * may return events as well. The signal handlers below can remove (and
++     * free) FD handlers those events point to: drop the events, as
++     * epoll_pwait() would -- they are level-triggered and come again. */
++    if (r > 0 && got_signal) {
++        r = -1;
++        qnx_errno = EINTR;
++    }
++    errno = qnx_errno;
++#else
+     int r = epoll_pwait(
+         fdm->epoll_fd, events, tll_length(fdm->fds), -1, &fdm->sigmask);
++#endif
+ 
+     int errno_copy = errno;
+ 

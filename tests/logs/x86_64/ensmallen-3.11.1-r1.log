@@ -1,0 +1,31 @@
+# ensmallen 3.11.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ensmallen-dev qnx-test-ensmallen qnx-port-tests
+(1/5) Installing openblas (0.3.28-r0)
+(2/5) Installing armadillo (15.6.2-r0)
+(3/5) Installing armadillo-dev (15.6.2-r0)
+(4/5) Installing ensmallen-dev (3.11.1-r1)
+(5/5) Installing qnx-test-ensmallen (1.0-r0)
+OK: 254.9 MiB in 86 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ensmallen
+     == ensmallen ==
+       info ensmallen 3.11.1 (Sunny Day), armadillo 15.6.2 (Medium Roast Cortado)
+       info L-BFGS: f = 1.67e-21 at (1.000000, 1.000000) after 35 steps
+       ok   L-BFGS: Rosenbrock minimum (1, 1)
+       ok   callback saw the L-BFGS steps
+       ok   gradient descent: (x-3)^2 + (y+1)^2 minimum (3, -1)
+       ok   Adam: 4-D sphere function minimum 0 at the origin
+       info SA: f = 2.56e-11 at (1.0000, 3.0000), 1 tries
+       ok   simulated annealing: Booth minimum (1, 3)
+     PASS ensmallen
+PASS test_ensmallen
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

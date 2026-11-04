@@ -1,0 +1,16 @@
+test_tree_sitter_cpp	lib/tree-sitter/cpp.so lib/libtree-sitter.so.0.25
+test_font_inconsolata	share/fonts/font-inconsolata lib/libfontconfig.so.1 lib/libfreetype.so.6
+test_tzdata	share/zoneinfo
+test_tzdata_tools	bin/zdump bin/zic share/zoneinfo bin/python3
+test_docbook_xml	bin/xmllint bin/xmlcatalog etc/xml/catalog share/xml/docbook/xml-dtd-4.5
+test_lua5_2	bin/lua5.2 bin/luac5.2
+test_lua_compat53	lib/lua/5.1/compat53/string.so bin/lua5.1 bin/lua5.2 bin/lua5.3 bin/luajit
+test_luarocks	bin/luarocks bin/lua5.3 bin/lua5.2
+test_hunspell	bin/hunspell
+test_nuspell	bin/nuspell
+test_mythes	bin/th_gen_idx.pl bin/perl
+test_sassc	bin/sassc
+test_tcl	lib/tcl8.6
+test_tclsh	bin/tclsh8.6 bin/tclsh lib/sqlite3.50.4 lib/thread2.8.12 lib/itcl4.3.4 lib/tdbc1.1.12
+test_vala	bin/valac share/vala-0.56/vapi/gio-2.0.vapi
+test_ruby	bin/ruby bin/miniruby bin/rake bin/erb bin/gem

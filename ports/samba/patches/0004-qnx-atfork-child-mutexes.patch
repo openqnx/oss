@@ -1,0 +1,112 @@
+Re-initialise atfork-locked mutexes in the child on QNX.
+
+tevent, pthreadpool and tfork lock their mutexes in a pthread_atfork()
+prepare handler and unlock them in the parent and child handlers. On QNX
+the child's thread does not own a mutex its parent locked:
+pthread_mutex_unlock() returns EPERM (hazard 127), and these handlers
+abort()/assert on that -- every fork of a threaded Samba process (smbd
+forks one child per client) would die. In the child, re-initialise the
+mutex instead, which leaves it unlocked as intended (the QNX ports' Samba
+4.11 patch did the same).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/pthreadpool/pthreadpool.c
++++ b/lib/pthreadpool/pthreadpool.c
+@@ -329,6 +329,17 @@
+ 	assert(ret == 0);
+ }
+ 
++/*
++ * A mutex locked in the pthread_atfork() prepare handler is not owned by
++ * the child's thread on QNX: pthread_mutex_unlock() fails there with EPERM.
++ * The child takes a fresh, unlocked mutex instead.
++ */
++#ifdef __QNX__
++#define pthreadpool_child_mutex_unlock(m) pthread_mutex_init((m), NULL)
++#else
++#define pthreadpool_child_mutex_unlock(m) pthread_mutex_unlock(m)
++#endif
++
+ static void pthreadpool_child(void)
+ {
+ 	int ret;
+@@ -347,14 +358,14 @@
+ 		ret = pthread_cond_init(&pool->condvar, NULL);
+ 		assert(ret == 0);
+ 
+-		ret = pthread_mutex_unlock(&pool->mutex);
++		ret = pthreadpool_child_mutex_unlock(&pool->mutex);
+ 		assert(ret == 0);
+ 
+-		ret = pthread_mutex_unlock(&pool->fork_mutex);
++		ret = pthreadpool_child_mutex_unlock(&pool->fork_mutex);
+ 		assert(ret == 0);
+ 	}
+ 
+-	ret = pthread_mutex_unlock(&pthreadpools_mutex);
++	ret = pthreadpool_child_mutex_unlock(&pthreadpools_mutex);
+ 	assert(ret == 0);
+ }
+ 
+--- a/lib/tevent/tevent.c
++++ b/lib/tevent/tevent.c
+@@ -257,6 +257,17 @@
+ 	}
+ }
+ 
++/*
++ * A mutex locked in the pthread_atfork() prepare handler is not owned by
++ * the child's thread on QNX: pthread_mutex_unlock() fails there with EPERM.
++ * The child takes a fresh, unlocked mutex instead.
++ */
++#ifdef __QNX__
++#define tevent_child_mutex_unlock(m) pthread_mutex_init((m), NULL)
++#else
++#define tevent_child_mutex_unlock(m) pthread_mutex_unlock(m)
++#endif
++
+ static void tevent_atfork_child(void)
+ {
+ 	struct tevent_context *ev;
+@@ -272,7 +283,7 @@
+ 		     tctx = DLIST_PREV(tctx)) {
+ 			tctx->event_ctx = NULL;
+ 
+-			ret = pthread_mutex_unlock(&tctx->event_ctx_mutex);
++			ret = tevent_child_mutex_unlock(&tctx->event_ctx_mutex);
+ 			if (ret != 0) {
+ 				tevent_abort(
+ 					ev, "pthread_mutex_unlock failed");
+@@ -281,13 +292,13 @@
+ 
+ 		ev->threaded_contexts = NULL;
+ 
+-		ret = pthread_mutex_unlock(&ev->scheduled_mutex);
++		ret = tevent_child_mutex_unlock(&ev->scheduled_mutex);
+ 		if (ret != 0) {
+ 			tevent_abort(ev, "pthread_mutex_unlock failed");
+ 		}
+ 	}
+ 
+-	ret = pthread_mutex_unlock(&tevent_contexts_mutex);
++	ret = tevent_child_mutex_unlock(&tevent_contexts_mutex);
+ 	if (ret != 0) {
+ 		abort();
+ 	}
+--- a/lib/util/tfork.c
++++ b/lib/util/tfork.c
+@@ -225,7 +225,13 @@
+ 	int ret;
+ 
+ #ifdef HAVE_PTHREAD
++#ifdef __QNX__
++	/* the parent's prepare handler locked it; QNX's child thread is not
++	 * its owner, so unlocking fails with EPERM: start from a fresh one */
++	ret = pthread_mutex_init(&signal_state.mutex, NULL);
++#else
+ 	ret = pthread_mutex_unlock(&signal_state.mutex);
++#endif
+ 	assert(ret == 0);
+ 
+ 	ret = pthread_key_delete(tfork_global_key);

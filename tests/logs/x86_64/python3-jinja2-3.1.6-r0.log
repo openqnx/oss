@@ -1,0 +1,40 @@
+# python3-jinja2 3.1.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:38:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-jinja2 qnx-test-python3-jinja2 qnx-port-tests
+(1/7) Installing gdbm (1.24-r0)
+(2/7) Installing readline (8.2-r0)
+(3/7) Installing sqlite (3.47.2-r0)
+(4/7) Installing python3 (3.14.0-r3)
+(5/7) Installing python3-markupsafe (3.0.4-r0)
+(6/7) Installing python3-jinja2 (3.1.6-r0)
+(7/7) Installing qnx-test-python3-jinja2 (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 337.3 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_jinja2
+     == python3-jinja2 ==
+     /data/var/tmp/qnxport-jinja2.IOrezy/t.py:9: DeprecationWarning: The '__version__' attribute is deprecated and will be removed in MarkupSafe 3.1. Use feature detection, or `importlib.metadata.version("markupsafe")`, instead.
+       info("Jinja2 %s, MarkupSafe %s" % (jinja2.__version__, markupsafe.__version__))
+       info Jinja2 3.1.6, MarkupSafe 3.0.4
+       ok   markupsafe._speedups is the compiled extension
+       ok   escape() uses the C speedups
+       ok   escape() of HTML special characters
+       ok   Markup is left alone, formatting escapes
+       ok   striptags() unescapes
+       ok   inheritance, macro, sort/map/sum filters and autoescape render the expected page
+       ok   select/join/format filters and method calls
+       ok   StrictUndefined raises UndefinedError
+       ok   syntax error raises TemplateSyntaxError at line 1
+       ok   sandbox refuses __class__
+       ok   autoescape of a plain variable
+     PASS python3-jinja2
+PASS test_python3_jinja2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

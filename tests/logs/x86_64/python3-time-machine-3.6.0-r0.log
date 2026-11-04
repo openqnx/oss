@@ -1,0 +1,71 @@
+# python3-time-machine 3.6.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:43:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-time-machine qnx-test-python3-pytest-plugins qnx-port-tests
+( 1/15) Installing gdbm (1.24-r0)
+( 2/15) Installing readline (8.2-r0)
+( 3/15) Installing sqlite (3.47.2-r0)
+( 4/15) Installing python3 (3.14.0-r3)
+( 5/15) Installing python3-time-machine (3.6.0-r0)
+( 6/15) Installing python3-execnet (2.1.2-r0)
+( 7/15) Installing python3-iniconfig (2.3.1-r0)
+( 8/15) Installing python3-packaging (25.0-r0)
+( 9/15) Installing python3-pluggy (1.7.0-r0)
+(10/15) Installing python3-pygments (2.21.0-r0)
+(11/15) Installing python3-pytest (9.2.0-r0)
+(12/15) Installing python3-flaky (3.8.1-r0)
+(13/15) Installing python3-pytest-mock (3.17.0-r0)
+(14/15) Installing python3-pytest-xdist (3.8.0-r0)
+(15/15) Installing qnx-test-python3-pytest-plugins (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 343.3 MiB in 96 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pytest_plugins
+     == python3-pytest-plugins ==
+       | suite/test_suite.py::test_square[5] 
+       | [gw1] [ 38%] PASSED suite/test_suite.py::test_square[5] 
+       | suite/test_suite.py::test_square[7] 
+       | [gw0] [ 46%] PASSED suite/test_suite.py::test_square[4] 
+       | suite/test_suite.py::test_square[6] 
+       | [gw1] [ 53%] PASSED suite/test_suite.py::test_square[7] 
+       | [gw0] [ 61%] PASSED suite/test_suite.py::test_square[6] 
+       | suite/test_suite.py::test_mocker_spy 
+       | suite/test_suite.py::test_mocker_patch 
+       | [gw0] [ 69%] PASSED suite/test_suite.py::test_mocker_spy 
+       | suite/test_suite.py::test_time_machine 
+       | [gw0] [ 76%] PASSED suite/test_suite.py::test_time_machine 
+       | suite/test_suite.py::test_flaky_second_time 
+       | [gw1] [ 84%] PASSED suite/test_suite.py::test_mocker_patch 
+       | suite/test_suite.py::test_time_machine_fixture 
+       | [gw1] [ 92%] PASSED suite/test_suite.py::test_time_machine_fixture 
+       | suite/test_suite.py::test_flaky_second_time 
+       | [gw0] [100%] PASSED suite/test_suite.py::test_flaky_second_time 
+       | ===Flaky Test Report===
+       | 
+       | test_flaky_second_time failed (2 runs remaining out of 3).
+       | 	<class 'AssertionError'>
+       | 	fails on the first run
+       | assert 0 >= 1
+       | 	[<TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/runner.py:361>, <TracebackEntry /usr/local/lib/python3.14/site-packages/flaky/flaky_pytest_plugin.py:146>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_caller.py:197>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_manager.py:183>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:195>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:167>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/logging.py:878>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:167>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/capture.py:906>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:167>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/skipping.py:268>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:147>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/runner.py:184>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/python.py:1798>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_caller.py:197>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_manager.py:183>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:195>, <TracebackEntry /usr/local/lib/python3.14/site-packages/pluggy/_execution.py:147>, <TracebackEntry /usr/local/lib/python3.14/site-packages/_pytest/python.py:187>, <TracebackEntry /data/var/tmp/qnxport-pytestpl.JUN9dr/suite/test_suite.py:45>]
+       | test_flaky_second_time passed 1 out of the required 1 times. Success!
+       | 
+       | ===End Flaky Test Report===
+       | 
+       | ============================== 13 passed in 6.56s ==============================
+       ok   pytest -n 2 exits 0
+       ok   pytest-xdist created 2 workers
+       ok   13 passed (8 parametrized, 2 mocker, 2 time-machine, 1 flaky)
+       ok   tests ran on both gw0 and gw1
+       ok   flaky reran the failing test once (2 runs)
+       ok   flaky report names the rerun test
+       ok   execnet: a popen gateway computes sum(range(101)) = 5050 in another process
+     PASS python3-pytest-plugins
+PASS test_python3_pytest_plugins
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

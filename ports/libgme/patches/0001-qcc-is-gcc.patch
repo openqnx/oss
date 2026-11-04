@@ -1,0 +1,32 @@
+Treat qcc (compiler ID QCC) as GCC: export the API, keep -fwrapv
+
+QNX's compiler driver qcc is CMAKE_CXX_COMPILER_ID "QCC" (it runs GCC).
+The library is compiled with hidden visibility, and the public gme_*
+functions are marked visibility("default") only when LIBGME_VISIBILITY is
+defined -- which the build does for "GNU|Clang" only. With qcc, libgme.so
+exported none of its API (every program failed to link with "undefined
+reference to gme_open_data"), and -fwrapv, which protects the emulators
+from miscompiled signed overflow, was left out too. Treat QCC as GCC.
+
+Upstream-Status: QNX-specific
+
+--- a/gme/CMakeLists.txt
++++ b/gme/CMakeLists.txt
+@@ -328,7 +328,7 @@
+     set_property(TARGET ${gme_target} PROPERTY VISIBILITY_INLINES_HIDDEN TRUE)
+     set_property(TARGET ${gme_target} PROPERTY CXX_VISIBILITY_PRESET "hidden")
+ 
+-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
++    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|QCC")
+         target_compile_definitions(${gme_target} PRIVATE LIBGME_VISIBILITY)
+     endif()
+ 
+@@ -343,7 +343,7 @@
+     # This has caused miscompilation of code already and there are other
+     # potential uses; see https://bitbucket.org/mpyne/game-music-emu/issues/18/
+     #                    (https://github.com/libgme/game-music-emu/issues/20 )
+-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
++    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|QCC")
+         target_compile_options(${gme_target} PRIVATE -fwrapv)
+     endif()
+ 

@@ -1,0 +1,27 @@
+# dnssec-root 20241105-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dnssec-root qnx-test-dnssec-root qnx-port-tests
+(1/2) Installing dnssec-root (20241105-r0)
+(2/2) Installing qnx-test-dnssec-root (1.0-r0)
+OK: 231.4 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dnssec_root
+     == dnssec-root ==
+       ok   trusted-key.key is installed
+       info key tag 38696, 260-byte public key, DS SHA-256 683D2D0ACB8C9B71...
+       info key tag 20326, 260-byte public key, DS SHA-256 E06D44B80B8F1D39...
+       ok   two DNSKEY records for ".": flags 257 (KSK), protocol 3, algorithm 8
+       ok   KSK-2017: key tag 20326, DS digest E06D44B8...EC8D
+       ok   KSK-2024: key tag 38696, DS digest 683D2D0A...2B16
+       ok   root-anchors.xml lists the same DS digests
+     PASS dnssec-root
+PASS test_dnssec_root
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

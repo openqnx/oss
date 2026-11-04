@@ -1,0 +1,31 @@
+# libpaper 2.3.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:15:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libpaper qnx-test-libpaper qnx-port-tests
+(1/2) Installing libpaper (2.3.0-r0)
+(2/2) Installing qnx-test-libpaper (1.0-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libpaper
+     == libpaper ==
+       ok   paperinit reads paperspecs
+       ok   A4: 210x297 mm
+       ok   A4: 595x842 PostScript points
+       ok   "letter" (any case): Letter, 8.5x11 in
+       ok   paperwithsize(612, 792) -> Letter
+       ok   PAPERSIZE=legal: defaultpapername "legal", defaultpaper() is Legal (8.5x14 in)
+       ok   paperfirst() is A4
+       info 90 paper sizes
+       ok   iteration visits every size (Legal among them)
+       info paper --unit=mm a4: A4: 210x297 mm
+       ok   paper tool: A4 210x297 mm
+     PASS libpaper
+PASS test_libpaper
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

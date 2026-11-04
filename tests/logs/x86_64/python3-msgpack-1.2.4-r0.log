@@ -1,0 +1,46 @@
+# python3-msgpack 1.2.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:34:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-msgpack qnx-test-python3-msgpack-zstandard qnx-port-tests
+(1/7) Installing gdbm (1.24-r0)
+(2/7) Installing readline (8.2-r0)
+(3/7) Installing sqlite (3.47.2-r0)
+(4/7) Installing python3 (3.14.0-r3)
+(5/7) Installing python3-msgpack (1.2.4-r0)
+(6/7) Installing python3-zstandard (0.25.0-r0)
+(7/7) Installing qnx-test-python3-msgpack-zstandard (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 337.3 MiB in 88 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_msgpack_zstandard
+     == python3-msgpack-zstandard ==
+       info msgpack 1.2.4, extension /usr/local/lib/python3.14/site-packages/msgpack/_cmsgpack.cpython-314.so
+       ok   msgpack uses the C extension (_cmsgpack)
+       ok   packb({'a': 1}) == 81 a1 61 01
+       ok   fixint, negative fixint, uint16, uint64, nil, true
+       ok   float64 and bin8 encodings
+       ok   nested data round trips
+       ok   ext type round trips
+       ok   Unpacker streams 1000 objects
+       ok   truncated input raises ValueError
+       info zstandard 0.25.0, backend cext, libzstd 1.5.6
+       ok   zstandard uses the C extension backend
+       ok   frame starts with the zstd magic 28 b5 2f fd
+       ok   frame records the content size
+       ok   one-shot round trip, compressed below 10%
+       ok   round trip at level 1
+       ok   round trip at level 9
+       ok   round trip at level 19
+       ok   streaming compress and decompress
+       ok   dictionary trained, round trips with it
+       ok   corrupt frame raises ZstdError
+     PASS python3-msgpack-zstandard
+PASS test_python3_msgpack_zstandard
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,50 @@
+# perl-file-sharedir-install 0.14-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:08:05Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-file-sharedir-install qnx-test-perl-buildtools qnx-port-tests
+( 1/10) Installing perl (5.40.2-r2)
+( 2/10) Installing perl-file-sharedir-install (0.14-r0)
+( 3/10) Installing perl-extutils-config (0.010-r0)
+( 4/10) Installing perl-extutils-hascompiler (0.025-r0)
+( 5/10) Installing perl-cpan-requirements-dynamic (0.003-r0)
+( 6/10) Installing perl-extutils-helpers (0.028-r0)
+( 7/10) Installing perl-extutils-installpaths (0.015-r0)
+( 8/10) Installing perl-module-build (0.4234-r0)
+( 9/10) Installing perl-module-build-tiny (0.053-r0)
+(10/10) Installing qnx-test-perl-buildtools (1.0-r1)
+OK: 407.2 MiB in 112 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_buildtools
+     == perl-module-build, -build-tiny, perl-extutils-*, perl-cpan-requirements-dynamic, perl-file-sharedir-install ==
+       ok   ExtUtils::Config archname (x86_64-nto)
+       ok   ExtUtils::Config override
+       ok   split_like_shell
+       ok   man1_pagename
+       ok   man3_pagename
+       ok   make_executable
+       ok   InstallPaths site lib = installsitelib
+       ok   InstallPaths site arch = installsitearch
+       ok   InstallPaths install_base lib
+       ok   InstallPaths install_base bin
+     sh: qcc: cannot execute - No such file or directory
+     Couldn't execute qcc -Vgcc_ntox86_64 -D_QNX_SOURCE  "-I/usr/local/lib/perl5/5.40.2/x86_64-nto/CORE" -fPIC -Wno-unused-function -c /data/var/tmp/test_perl_buildtools.181891094/HASCOMPILERn4wS/TESTpEKz.c -o /data/var/tmp/test_perl_buildtools.181891094/HASCOMPILERn4wS/TESTpEKz.o: Inappropriate I/O control operation at /tmp/test_perl_buildtools.181891094/t.pl line 26.
+       info perl's cc 'qcc -Vgcc_ntox86_64' on PATH: no; can_compile_loadable_object: 0
+       ok   ExtUtils::HasCompiler agrees with the compiler's presence
+       ok   CPAN::Requirements::Dynamic evaluates conditions (nto)
+       ok   Module::Build 0.4234: Build.PL, Build, Build install
+       ok   Module::Build 0.4234: Build test passes
+       ok   Module::Build 0.4234: installed module loads from the destdir (/usr/local/lib/perl5/site_perl/5.40.2/QNX/Hello.pm)
+       ok   Module::Build::Tiny 0.053: Build.PL, Build, Build install
+       ok   Module::Build::Tiny 0.053: Build test passes
+       ok   Module::Build::Tiny 0.053: installed module loads from the destdir (/usr/local/lib/perl5/site_perl/5.40.2/QNX/Hello.pm)
+       ok   File::ShareDir::Install: the Makefile installs share/file.txt to auto/share/dist/$(DISTNAME)
+     PASS perl-build-tools
+PASS test_perl_buildtools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

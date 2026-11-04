@@ -1,0 +1,32 @@
+# publicsuffix-list 20261031-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:26:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u publicsuffix-list qnx-test-publicsuffix-list qnx-port-tests
+(1/3) Installing publicsuffix-list (20261031-r0)
+(2/3) Installing libpsl (0.21.5-r0)
+(3/3) Installing qnx-test-publicsuffix-list (1.0-r0)
+OK: 231.9 MiB in 84 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_publicsuffix_list
+     == publicsuffix-list ==
+       ok   psl_load_file(public_suffix_list.dat)
+       info 10388 suffixes, 8 exceptions
+       ok   more than 9000 rules
+       ok   co.uk and github.io are public suffixes, example.co.uk is not
+       ok   test_psl.txt is installed
+       info test_psl.txt: 78 passed, 0 failed
+       ok   every test_psl.txt check (registrable domains) passes
+       ok   effective_tld_names.dat loads the same list
+       info psl: www.bbc.co.uk: bbc.co.uk
+       info psl: foo.github.io: foo.github.io
+       ok   psl --load-psl-file: bbc.co.uk, foo.github.io
+     PASS publicsuffix-list
+PASS test_publicsuffix_list
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

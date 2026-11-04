@@ -1,0 +1,27 @@
+# nasm 2.16.03-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:18:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nasm qnx-test-nasm qnx-port-tests
+(1/2) Installing nasm (2.16.03-r0)
+(2/2) Installing qnx-test-nasm (1.0-r0)
+OK: 236.8 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nasm
+     == nasm ==
+       ok   nasm -v: 2.16.03
+       ok   -f bin: the 39 bytes are exactly the expected encoding
+       ok   listing file written (-l)
+       ok   ndisasm -b 64: the six instructions back
+       ok   -f elf64: ELF64 relocatable, machine x86-64 (62)
+       ok   ELF object identical to the build machine's nasm output (cksum 576074934 656)
+       ok   syntax error at bad.asm:2 (exit 1)
+     PASS nasm
+PASS test_nasm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

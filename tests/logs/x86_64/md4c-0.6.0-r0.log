@@ -1,0 +1,33 @@
+# md4c 0.6.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:17:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u md4c qnx-test-md4c qnx-port-tests
+(1/2) Installing md4c (0.6.0-r0)
+(2/2) Installing qnx-test-md4c (1.0-r0)
+OK: 231.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_md4c
+     == md4c ==
+       ok   heading, emphasis, strong, code span
+       ok   bullet and ordered lists
+       ok   link with title
+       ok   fenced code block: language class, <, & escaped
+       ok   entities: &copy; to UTF-8, quotes escaped
+       ok   setext heading and block quote
+       ok   table with left/right alignment
+       ok   no table without MD_FLAG_TABLES
+       ok   strikethrough
+       ok   task list
+       ok   md_parse ok
+       ok   SAX: 5 blocks, 2 spans
+       ok   SAX: heading levels 1, 2, 3 in order
+     PASS md4c
+PASS test_md4c
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

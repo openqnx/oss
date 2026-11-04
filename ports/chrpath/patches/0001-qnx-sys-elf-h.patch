@@ -1,0 +1,65 @@
+Include <sys/elf.h> on QNX, which has no <elf.h>.
+
+QNX has no <elf.h>: its ELF definitions (Elf32_Ehdr, Elf64_Dyn, DT_RPATH,
+DT_RUNPATH, ELFMAG, ...) are in <sys/elf.h>, which includes
+<elfdefinitions.h>. They are the standard names chrpath uses, so only the
+include changes.
+
+Upstream-Status: QNX-specific
+
+--- a/chrpath.c
++++ b/chrpath.c
+@@ -46,7 +46,11 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#ifdef __QNX__
++#include <sys/elf.h>   /* QNX has no <elf.h> */
++#else
+ #include <elf.h>
++#endif
+ #if defined(HAVE_LINK_H)
+ #  include <link.h>
+ #endif /* HAVE_LINK_H */
+--- a/elf.c
++++ b/elf.c
+@@ -11,7 +11,11 @@
+ #  include "config.h"
+ #endif
+ 
++#ifdef __QNX__
++#include <sys/elf.h>   /* QNX has no <elf.h> */
++#else
+ #include <elf.h>
++#endif
+ #if defined(HAVE_SYS_LINK_H)
+ #  include <sys/link.h> /* Find DT_RPATH on Solaris 2.6 */
+ #endif /*  HAVE_SYS_LINK_H */
+--- a/killrpath.c
++++ b/killrpath.c
+@@ -23,7 +23,11 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#ifdef __QNX__
++#include <sys/elf.h>   /* QNX has no <elf.h> */
++#else
+ #include <elf.h>
++#endif
+ #if defined(HAVE_LINK_H)
+ #  include <link.h>
+ #endif /* HAVE_LINK_H */
+--- a/protos.h
++++ b/protos.h
+@@ -17,7 +17,11 @@
+ #define bswap_32 BSWAP_32
+ #define bswap_64 BSWAP_64
+ #endif
++#ifdef __QNX__
++#include <sys/elf.h>   /* QNX has no <elf.h> */
++#else
+ #include <elf.h>
++#endif
+ #include "config.h"
+ 
+ #ifdef WORDS_BIGENDIAN

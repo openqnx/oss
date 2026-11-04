@@ -1,0 +1,334 @@
+RViz on QNX: OpenGL ES 2/3 on Screen through OGRE's GLES2 render system.
+
+QNX has no desktop OpenGL and no GLX/X11, only OpenGL ES through EGL on
+Screen.
+- rviz_ogre_vendor: build OGRE's GLES2 render system (with the QNX EGL
+  support of patches/0100-qnx-screen-egl-gles2.patch) instead of the GL one,
+  and the RTShader System; leave out the OGRE components RViz does not use.
+  Its CMake extras: no OpenGL/X11 link on QNX, and an imported
+  rviz_ogre_vendor::OgreRTShaderSystem target.
+- rviz_rendering: load RenderSystem_GLES2 and accept "OpenGL ES" as the
+  renderer; no GLX dummy context and no X11 headers. GL ES has no
+  fixed-function pipeline, and OGRE draws every viewport in the RTShader
+  System's scheme there, so initialise the shader generator (its shader
+  library is in rviz_ogre_vendor's share/OGRE/Media), resolve that scheme's
+  techniques from a material's default one (what OgreBites'
+  SGTechniqueResolverListener does), and register RViz's scene managers
+  with it. An ES 2.0 version maps to "GLSL 1.10": do not refuse to start.
+- RenderWindow is an OpenGL-surface QWindow on QNX: Qt's qnx platform gives
+  a raster window buffers of its own and draws into them; OGRE creates the
+  window's buffers and EGL surface itself (on the screen_window_t that
+  QWindow::winId() is).
+
+Upstream-Status: Pending
+---
+diff --git a/rviz_ogre_vendor/CMakeLists.txt b/rviz_ogre_vendor/CMakeLists.txt
+index 7f60ad5..92709bd 100644
+--- a/rviz_ogre_vendor/CMakeLists.txt
++++ b/rviz_ogre_vendor/CMakeLists.txt
+@@ -76,6 +76,30 @@ if(NOT WIN32)
+   list(APPEND OGRE_CMAKE_ARGS -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON)
+ endif()
+ 
++if(QNX)
++  # QNX has OpenGL ES 2/3 through EGL on Screen, no desktop GL: the GLES2
++  # render system (patches/0100-qnx-screen-egl-gles2.patch), with the RTShader
++  # System that writes the shaders ES needs for fixed-function materials.
++  # The components RViz does not use are left out.
++  list(APPEND OGRE_CMAKE_ARGS
++    -DOGRE_BUILD_RENDERSYSTEM_GLES2:BOOL=TRUE
++    -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_RTSHADERSYSTEM:BOOL=TRUE
++    -DOGRE_BUILD_COMPONENT_TERRAIN:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_PAGING:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_VOLUME:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_PROPERTY:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_MESHLODGENERATOR:BOOL=FALSE
++    -DOGRE_BUILD_COMPONENT_OVERLAY_IMGUI:BOOL=FALSE
++    -DOGRE_BUILD_PLUGIN_PCZ:BOOL=FALSE
++    -DOGRE_BUILD_PLUGIN_BSP:BOOL=FALSE
++    -DOGRE_BUILD_PLUGIN_FREEIMAGE:BOOL=FALSE
++    -DOGRE_BUILD_PLUGIN_ASSIMP:BOOL=FALSE)
++  set(OGRE_BUILD_RENDERSYSTEM_GL FALSE)
++else()
++  set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
++endif()
++
+ if(APPLE)
+   list(APPEND OGRE_CMAKE_ARGS -DOGRE_ENABLE_PRECOMPILED_HEADERS:BOOL=OFF)
+   list(APPEND OGRE_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64)
+@@ -102,7 +126,7 @@ ament_vendor(ogre_vendor
+     -DOGRE_BUILD_PLUGIN_DOT_SCENE:BOOL=FALSE
+     -DOGRE_BUILD_TOOLS:BOOL=FALSE
+     -DOGRE_CONFIG_ENABLE_ZIP:BOOL=ON
+-    -DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=TRUE
++    -DOGRE_BUILD_RENDERSYSTEM_GL:BOOL=${OGRE_BUILD_RENDERSYSTEM_GL}
+     -DOGRE_BUILD_RENDERSYSTEM_D3D11:BOOL=OFF
+     -DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF
+     -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
+diff --git a/rviz_ogre_vendor/rviz_ogre_vendor-extras.cmake.in b/rviz_ogre_vendor/rviz_ogre_vendor-extras.cmake.in
+index cb60126..1e8d4f3 100644
+--- a/rviz_ogre_vendor/rviz_ogre_vendor-extras.cmake.in
++++ b/rviz_ogre_vendor/rviz_ogre_vendor-extras.cmake.in
+@@ -121,10 +121,12 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
+     if (POLICY CMP0072)
+       cmake_policy(SET CMP0072 NEW)
+     endif()
+-    find_package(OpenGL REQUIRED)
+-    list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
++    if(NOT QNX)  # QNX: OpenGL ES, loaded by the GLES2 render system plugin
++      find_package(OpenGL REQUIRED)
++      list(APPEND _extra_interface_link_libraries ${OPENGL_LIBRARIES})
++    endif()
+     list(APPEND _extra_interface_link_libraries ${CMAKE_DL_LIBS})
+-    if(UNIX AND NOT APPLE)
++    if(UNIX AND NOT APPLE AND NOT QNX)
+       find_package(X11 REQUIRED)
+       list(APPEND _extra_interface_link_libraries ${X11_LIBRARIES} ${X11_Xt_LIB} ${X11_Xrandr_LIB})
+       find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+@@ -190,6 +192,26 @@ foreach(_lib IN LISTS OGRE_LIBRARIES)
+         "INTERFACE_LINK_LIBRARIES" "${_extra_interface_link_libraries}"
+     )
+   endif()
++  if("OgreRTShaderSystem" STREQUAL ${_lib})
++    # (QNX: RViz on OpenGL ES uses the RTShader System)
++    find_library(_ogre_rtss_library_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}
++      PATHS
++        ${OGRE_LIBRARY_DIRS}
++      NO_DEFAULT_PATH
++      NO_CMAKE_ENVIRONMENT_PATH
++      NO_CMAKE_PATH
++      NO_SYSTEM_ENVIRONMENT_PATH
++      NO_CMAKE_SYSTEM_PATH
++      NO_CMAKE_FIND_ROOT_PATH
++    )
++    add_library(rviz_ogre_vendor::OgreRTShaderSystem UNKNOWN IMPORTED)
++    set_target_properties(rviz_ogre_vendor::OgreRTShaderSystem
++      PROPERTIES
++        IMPORTED_LOCATION ${_ogre_rtss_library_abs}
++        INTERFACE_INCLUDE_DIRECTORIES "${OGRE_INCLUDE_DIRS};${OGRE_PREFIX_DIR}/include/OGRE/RTShaderSystem"
++        INTERFACE_LINK_LIBRARIES rviz_ogre_vendor::OgreMain
++    )
++  endif()
+   if("OgreGLSupportStatic" STREQUAL ${_lib} OR "OgreGLSupport" STREQUAL ${_lib})
+     find_library(_ogre_gl_support_static_library_abs ${_lib}${LIBRARY_MANGLING_SUFFIX}
+       PATHS
+diff --git a/rviz_rendering/CMakeLists.txt b/rviz_rendering/CMakeLists.txt
+index 77880dc..1d3daec 100644
+--- a/rviz_rendering/CMakeLists.txt
++++ b/rviz_rendering/CMakeLists.txt
+@@ -111,6 +111,10 @@ target_link_libraries(rviz_rendering PUBLIC
+   rviz_ogre_vendor::OgreMain
+   rviz_ogre_vendor::OgreOverlay
+ )
++if(QNX)
++  # OpenGL ES: fixed-function materials get their shaders from the RTSS
++  target_link_libraries(rviz_rendering PRIVATE rviz_ogre_vendor::OgreRTShaderSystem)
++endif()
+ if(TARGET Eigen3::Eigen)
+   # TODO(sloretz) require target to exist when https://github.com/ros2/choco-packages/issues/19 is addressed
+   target_link_libraries(rviz_rendering PUBLIC Eigen3::Eigen)
+diff --git a/rviz_rendering/include/rviz_rendering/render_system.hpp b/rviz_rendering/include/rviz_rendering/render_system.hpp
+index b36168c..07da7fb 100644
+--- a/rviz_rendering/include/rviz_rendering/render_system.hpp
++++ b/rviz_rendering/include/rviz_rendering/render_system.hpp
+@@ -37,11 +37,13 @@
+ 
+ #include <OgreRoot.h>
+ #include <Overlay/OgreOverlaySystem.h>  // NOLINT cpplint cannot handle include order here
++#ifndef __QNX__
+ #include <RenderSystems/GL/OgreGLPlugin.h>  // NOLINT cpplint cannot handle include order here
++#endif
+ 
+ #include <QDir>  // NOLINT cpplint cannot handle include order here
+ 
+-#if !defined(__APPLE__) && !defined(_WIN32)
++#if !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNX__)
+ 
+ #include <X11/Xutil.h>
+ #include <GL/glx.h>
+@@ -86,6 +88,12 @@ public:
+   void
+   prepareOverlays(Ogre::SceneManager * scene_manager);
+ 
++  // Register a scene manager with OGRE's RTShader System, which writes the
++  // shaders of fixed-function materials where the render system has no
++  // fixed-function pipeline (OpenGL ES on QNX); does nothing elsewhere.
++  void
++  prepareShaderGenerator(Ogre::SceneManager * scene_manager);
++
+   /// return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
+   int
+   getGlVersion();
+@@ -160,7 +168,7 @@ private:
+   bool stereo_supported_;
+   static bool force_no_stereo_;
+   rviz_rendering::OgreLogging * ogre_logging;
+-#if !defined(__APPLE__) && !defined(_WIN32)
++#if !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNX__)
+   void * dummyDisplay = nullptr;
+   void * dummyContext = nullptr;
+   XVisualInfo * dummyVisual = nullptr;
+diff --git a/rviz_rendering/src/rviz_rendering/ogre_render_window_impl.cpp b/rviz_rendering/src/rviz_rendering/ogre_render_window_impl.cpp
+index c40f82c..3fecd94 100644
+--- a/rviz_rendering/src/rviz_rendering/ogre_render_window_impl.cpp
++++ b/rviz_rendering/src/rviz_rendering/ogre_render_window_impl.cpp
+@@ -221,6 +221,7 @@ RenderWindowImpl::initialize()
+ 
+   if (!ogre_scene_manager_) {
+     ogre_scene_manager_ = ogre_root->createSceneManager();
++    render_system_->prepareShaderGenerator(ogre_scene_manager_);
+ 
+     ogre_directional_light_ = ogre_scene_manager_->createLight("MainDirectional");
+     ogre_directional_light_->setType(Ogre::Light::LT_DIRECTIONAL);
+diff --git a/rviz_rendering/src/rviz_rendering/render_system.cpp b/rviz_rendering/src/rviz_rendering/render_system.cpp
+index 24a20c6..16de9f8 100644
+--- a/rviz_rendering/src/rviz_rendering/render_system.cpp
++++ b/rviz_rendering/src/rviz_rendering/render_system.cpp
+@@ -49,6 +49,49 @@
+ 
+ #include "string_helper.hpp"
+ 
++#ifdef __QNX__
++#include <OgreMaterialManager.h>
++#include <OgreTechnique.h>
++#include <OgreRTShaderSystem.h>
++
++namespace
++{
++// QNX has OpenGL ES only (RenderSystem_GLES2), which has no fixed-function
++// pipeline: OGRE draws every viewport in the RTShader System's scheme, and
++// this listener has the shader generator make that scheme's technique
++// (shaders included) from a material's default one when it is first used --
++// what OgreBites' SGTechniqueResolverListener does for OGRE's own samples.
++class ShaderGeneratorTechniqueResolver : public Ogre::MaterialManager::Listener
++{
++public:
++  Ogre::Technique * handleSchemeNotFound(
++    unsigned short,  // NOLINT: Ogre decides the use of unsigned short
++    const Ogre::String & scheme_name, Ogre::Material * material,
++    unsigned short,  // NOLINT: Ogre decides the use of unsigned short
++    const Ogre::Renderable *) override
++  {
++    if (scheme_name != Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME) {
++      return nullptr;
++    }
++    auto * generator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
++    if (!generator || !generator->createShaderBasedTechnique(
++        *material, Ogre::MaterialManager::DEFAULT_SCHEME_NAME, scheme_name))
++    {
++      return nullptr;
++    }
++    generator->validateMaterial(scheme_name, material->getName(), material->getGroup());
++    for (auto * technique : material->getTechniques()) {
++      if (technique->getSchemeName() == scheme_name) {
++        return technique;
++      }
++    }
++    return nullptr;
++  }
++};
++ShaderGeneratorTechniqueResolver * shader_generator_resolver = nullptr;
++}  // namespace
++#endif
++
+ namespace rviz_rendering
+ {
+ 
+@@ -181,6 +224,18 @@ RenderSystem::prepareOverlays(Ogre::SceneManager * scene_manager)
+   }
+ }
+ 
++void
++RenderSystem::prepareShaderGenerator(Ogre::SceneManager * scene_manager)
++{
++#ifdef __QNX__
++  if (auto * generator = Ogre::RTShader::ShaderGenerator::getSingletonPtr()) {
++    generator->addSceneManager(scene_manager);
++  }
++#else
++  (void)scene_manager;
++#endif
++}
++
+ void
+ RenderSystem::setupDummyWindowId()
+ {
+@@ -224,6 +279,9 @@ RenderSystem::loadOgrePlugins()
+   std::string plugin_prefix = get_ogre_plugin_directory();
+ #if defined _WIN32 && !NDEBUG
+   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL_d");
++#elif defined(__QNX__)
++  // QNX: OpenGL ES 2/3 through EGL on Screen; there is no desktop GL.
++  ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GLES2");
+ #else
+   ogre_root_->loadPlugin(plugin_prefix + "RenderSystem_GL");
+ #endif
+@@ -269,6 +327,15 @@ RenderSystem::detectGlVersion()
+       }
+       break;
+   }
++#ifdef __QNX__
++  // An OpenGL ES version: ES 2.0 maps to "GLSL 1.10" above. RViz's own GLSL
++  // programs (point clouds, images, ...) are desktop GLSL that the ES render
++  // system does not take whatever the version; the shader generator covers
++  // the fixed-function materials. Do not refuse to start.
++  if (glsl_version_ < 120) {
++    glsl_version_ = 120;
++  }
++#endif
+   RVIZ_RENDERING_LOG_INFO_STREAM(
+     "OpenGl version: " << gl_version_ / 100.0 << " (GLSL " << glsl_version_ / 100.0 << ")"
+   );
+@@ -290,6 +357,9 @@ RenderSystem::setupRenderSystem()
+   std::vector<std::string> preferred_renderer_list = {
+     "OpenGL 3+",
+     "OpenGL"
++#ifdef __QNX__
++    , "OpenGL ES"
++#endif
+   };
+   for (auto renderer_token : preferred_renderer_list) {
+     for (const auto renderer : ogre_root_->getAvailableRenderers()) {
+@@ -341,6 +411,23 @@ void
+ RenderSystem::setupResources()
+ {
+   std::string rviz_path = get_resource_directory();
++#ifdef __QNX__
++  {
++    // The RTShader System's shader library, from the OGRE that
++    // rviz_ogre_vendor installs (<prefix>/opt/rviz_ogre_vendor/share/OGRE/Media).
++    std::string media = get_ogre_plugin_directory() + "../../share/OGRE/Media";
++    auto & rgm = Ogre::ResourceGroupManager::getSingleton();
++    rgm.addResourceLocation(media + "/ShadowVolume", "FileSystem", Ogre::RGN_INTERNAL);
++    rgm.addResourceLocation(media + "/RTShaderLib/GLSL", "FileSystem", Ogre::RGN_INTERNAL);
++    rgm.addResourceLocation(media + "/RTShaderLib/materials", "FileSystem", Ogre::RGN_INTERNAL);
++    if (Ogre::RTShader::ShaderGenerator::initialize()) {
++      shader_generator_resolver = new ShaderGeneratorTechniqueResolver();
++      Ogre::MaterialManager::getSingleton().addListener(shader_generator_resolver);
++    } else {
++      RVIZ_RENDERING_LOG_ERROR("Could not initialise the OGRE RTShader System");
++    }
++  }
++#endif
+   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+     rviz_path + "/ogre_media", "FileSystem", "rviz_rendering");
+   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+diff --git a/rviz_rendering/src/rviz_rendering/render_window.cpp b/rviz_rendering/src/rviz_rendering/render_window.cpp
+index 1ca58b2..ab6975c 100644
+--- a/rviz_rendering/src/rviz_rendering/render_window.cpp
++++ b/rviz_rendering/src/rviz_rendering/render_window.cpp
+@@ -66,6 +66,13 @@ RenderWindow::RenderWindow(QWindow * parent)
+ : QWindow(parent), impl_(new RenderWindowImpl(this)),
+   on_mouse_events_callback_(nullptr), on_wheel_events_callback_(nullptr)
+ {
++#ifdef __QNX__
++  // OGRE draws into this window's Screen window with EGL. Qt's qnx platform
++  // gives a raster window buffers of its own (and draws into them); an
++  // OpenGL one it leaves alone until a QOpenGLContext uses it, which never
++  // happens here.
++  setSurfaceType(QSurface::OpenGLSurface);
++#endif
+   this->installEventFilter(this);
+ }
+ 

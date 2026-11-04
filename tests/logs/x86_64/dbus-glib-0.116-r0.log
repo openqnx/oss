@@ -1,0 +1,33 @@
+# dbus-glib 0.116-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:09Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dbus-glib qnx-test-dbus-glib qnx-port-tests
+(1/2) Installing dbus-glib (0.116-r0)
+(2/2) Installing qnx-test-dbus-glib (1.0-r0)
+OK: 231.8 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dbus_glib
+     == dbus-glib ==
+       ok   private dbus-daemon listening on a UNIX socket
+       ok   dbus_g_bus_get(DBUS_BUS_SESSION)
+       ok   GetId: a 32-hex-digit bus id
+       ok   RequestName(org.qnx.DbusGlibTest) -> PRIMARY_OWNER (1)
+       ok   NameHasOwner: TRUE
+       ok   GetNameOwner: our own unique name
+       info unique name :1.0
+       ok   ListNames (G_TYPE_STRV) contains org.qnx.DbusGlibTest
+       ok   begin_call/end_call in the main loop: the same bus id
+       ok   ReleaseName -> NameOwnerChanged(org.qnx.DbusGlibTest, us, "") delivered to the signal handler
+       ok   a missing method: GError DBUS_GERROR_UNKNOWN_METHOD
+       info error 19: org.freedesktop.DBus does not understand message NoSuchMethod
+       ok   dbus-binding-tool --mode=glib-client: a stub org_qnx_Test_echo(proxy, IN_text, OUT_reply, ...)
+     PASS dbus-glib
+PASS test_dbus_glib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

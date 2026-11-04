@@ -1,0 +1,35 @@
+# yubico-c-client 2.15-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:55:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u yubico-c-client qnx-test-yubico-c-client qnx-port-tests
+(1/5) Installing c-ares (1.34.3-r0)
+(2/5) Installing nghttp2 (1.64.0-r0)
+(3/5) Installing curl (8.11.1-r1)
+(4/5) Installing yubico-c-client (2.15-r0)
+(5/5) Installing qnx-test-yubico-c-client (1.0-r0)
+OK: 233.3 MiB in 86 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_yubico_c_client
+     == yubico-c-client ==
+       ok   validation server listening on <ip>
+       ok   ykclient_global_init (libcurl)
+       ok   ykclient_init
+       ok   ykclient_set_client_b64 (id 1, 20-byte key)
+       ok   ykclient_set_url_bases (our server)
+       ok   signed status=OK -> YKCLIENT_OK
+       ok   the request named id, nonce, otp and carried a signature h=
+       ok   status=REPLAYED_OTP -> YKCLIENT_REPLAYED_OTP
+       ok   a forged response signature -> YKCLIENT_BAD_SERVER_SIGNATURE
+       ok   a response for another OTP -> YKCLIENT_HMAC_ERROR
+       ok   ykclient_strerror text
+       ok   ykclient tool: exit 0 (OTP verified)
+     PASS yubico-c-client
+PASS test_yubico_c_client
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,44 @@
+Reopen directory handles with O_DIRECTORY on QNX.
+
+On QNX, openat()/unlinkat()/renameat() and the other *at() functions
+reject a directory file descriptor that was not opened with O_DIRECTORY
+(ENOTDIR, hazard 25). smbd opens "pathref" handles of path components with
+plain O_RDONLY (Linux uses O_PATH, which QNX lacks) and then uses them as
+the dirfd of later *at() calls: deleting a file through SMB failed with
+NT_STATUS_NOT_A_DIRECTORY ("unlink failed with error Not a directory").
+When a read-only open without O_DIRECTORY yields a directory, reopen it
+with O_DIRECTORY on QNX.
+
+Upstream-Status: QNX-specific
+
+--- a/source3/modules/vfs_default.c
++++ b/source3/modules/vfs_default.c
+@@ -751,6 +751,28 @@
+ 			flags,
+ 			mode);
+ 
++#ifdef __QNX__
++	/*
++	 * QNX's *at() functions refuse a directory fd that was not opened
++	 * with O_DIRECTORY (ENOTDIR). Samba opens pathref handles of names
++	 * it has not stat'ed yet with plain O_RDONLY and later uses them as
++	 * the dirfd of unlinkat(), renameat(), openat()... When such a
++	 * handle turns out to be a directory, reopen it with O_DIRECTORY.
++	 */
++	if (result != -1 && !(flags & O_DIRECTORY) &&
++	    (flags & O_ACCMODE) == O_RDONLY && !(flags & O_CREAT)) {
++		struct stat qst;
++		if (fstat(result, &qst) == 0 && S_ISDIR(qst.st_mode)) {
++			int dfd = openat(dirfd, smb_fname->base_name,
++					 flags | O_DIRECTORY, mode);
++			if (dfd != -1) {
++				close(result);
++				result = dfd;
++			}
++		}
++	}
++#endif
++
+ 	if (became_root) {
+ 		int err = errno;
+ 		unbecome_root();

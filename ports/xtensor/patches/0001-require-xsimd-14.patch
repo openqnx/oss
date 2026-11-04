@@ -1,0 +1,20 @@
+Require xsimd 14, as upstream does after 0.27.1.
+
+xsimd's CMake package accepts only requests for its own major version, so
+xtensor 0.27.1's find_package(xsimd 13.2.0) rejects xsimd 14 (the version
+ported here and the one QNX ships). Upstream xtensor moved to xsimd 14
+right after 0.27.1 with exactly this change (37e4b58, "Upgraded to xsimd 14").
+
+Upstream-Status: Backport [https://github.com/xtensor-stack/xtensor/commit/37e4b5813d6df4bbbc8112be1c3fc6eff965792e]
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -70,7 +70,7 @@
+ endif()
+ 
+ if(XTENSOR_USE_XSIMD)
+-    set(xsimd_REQUIRED_VERSION 13.2.0)
++    set(xsimd_REQUIRED_VERSION 14.0.0)
+     if(TARGET xsimd)
+         set(xsimd_VERSION ${XSIMD_VERSION_MAJOR}.${XSIMD_VERSION_MINOR}.${XSIMD_VERSION_PATCH})
+         # Note: This is not SEMVER compatible comparison

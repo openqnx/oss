@@ -1,0 +1,40 @@
+# ruby 3.4.12-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:50:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ruby qnx-test-ruby qnx-port-tests
+(1/3) Installing libyaml (0.2.5-r0)
+(2/3) Installing ruby (3.4.12-r1)
+(3/3) Installing qnx-test-ruby (1.0-r0)
+OK: 269.4 MiB in 84 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ruby
+     == ruby ==
+       info ruby 3.4.12 (2026-10-23 revision 366f5fdc00) +PRISM [x86_64-nto-qnx]
+       ok   ruby -v
+       ok   RUBY_PLATFORM names QNX (x86_64-nto-qnx)
+       ok   ruby runs the core-classes script
+       ok   miniruby runs the same script, same output
+       ok   stack overflow in a thread raises SystemStackError
+       ok   C extensions: json zlib openssl psych stringio date digest socket etc fiddle io/console bigdecimal ripper
+       ok   gem list: json (...)
+       ok   gem list: minitest (...)
+       ok   gem list: rake (...)
+       ok   gem list: bigdecimal (...)
+       ok   gem list: bundler (...)
+       ok   gem list: psych (...)
+       ok   minitest: 2 runs, 1 failure (rc 1)
+       ok   rake runs a Rakefile with a dependency
+       ok   erb renders a template
+       ok   gem build: qnxgreet-1.2.3.gem
+       ok   gem install --local from the file
+       ok   the installed gem loads
+     PASS ruby
+PASS test_ruby
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

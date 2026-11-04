@@ -1,0 +1,32 @@
+# flex 2.6.4-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u flex qnx-test-flex qnx-port-tests
+(1/5) Installing m4 (1.4.19-r0)
+(2/5) Installing flex (2.6.4-r0)
+(3/5) Installing flex-dev (2.6.4-r0)
+(4/5) Installing qnx-test-flex-scan (1.0-r0)
+(5/5) Installing qnx-test-flex (1.0-r0)
+OK: 232.8 MiB in 86 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_flex
+     == flex ==
+       ok   flex --version: flex 2.6.4
+       ok   generated scanner self-check (libfl yywrap)
+       ok   tokens, line numbers, comment state, escaped string, summary
+       ok   flex generated scan.c (skeleton through m4)
+       ok   13 rules, 47 DFA states
+       ok   DFA tables identical to the build-time scanner's (cksum 1919225862 4638)
+       ok   flex -+: C++ yyFlexLexer scanner
+       ok   FlexLexer.h installed (flex-dev)
+       ok   unterminated action: bad.l:4 error, exit 1
+     PASS flex
+PASS test_flex
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

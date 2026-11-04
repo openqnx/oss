@@ -1,0 +1,45 @@
+# gd 2.3.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:13:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gd qnx-test-gd qnx-port-tests
+( 1/11) Installing aom (3.15.3-r0)
+( 2/11) Installing dav1d (1.5.0-r0)
+( 3/11) Installing libavif (1.1.1-r0)
+( 4/11) Installing libde265 (1.0.15-r0)
+( 5/11) Installing openh264 (2.5.0-r0)
+( 6/11) Installing openjpeg (2.5.3-r0)
+( 7/11) Installing openjph (0.24.1-r0)
+( 8/11) Installing x265 (3.6-r0)
+( 9/11) Installing libheif (1.20.2-r0)
+(10/11) Installing gd (2.3.3-r0)
+(11/11) Installing qnx-test-gd (1.0-r0)
+OK: 254.4 MiB in 92 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gd
+     == gd ==
+       info gd 2.3.3
+       ok   100x80 true-colour image
+       ok   filled rectangle: red inside, white outside
+       ok   line along y=50
+       ok   ellipse outline green, flood-filled blue inside
+       ok   PNG: written (475 bytes) and read back exactly
+       ok   GIF: written (310 bytes) and read back (lossy, red stays red)
+       ok   BMP: written (24054 bytes) and read back exactly
+     TIFFWriteDirectorySec: Warning, Creating TIFF with legacy Deflate codec identifier, COMPRESSION_ADOBE_DEFLATE is more widely supported.
+       ok   TIFF: written (2098 bytes) and read back exactly
+       ok   WebP: written (754 bytes) and read back (lossy, red stays red)
+       ok   JPEG: written (4281 bytes) and read back (lossy, red stays red)
+       ok   scaled to 50x40, the red square still red
+       ok   rotated 90 degrees: 80x100
+       ok   built with fontconfig
+       ok   FreeType text 'Hello' at 14 pt: 30-70 px wide, drawn
+     PASS gd
+PASS test_gd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,19 @@
+Include <sys/time.h> for struct timeval.
+
+lib/util/time.h declares functions and structures using struct timeval
+after including only <time.h>. glibc's <time.h> happens to define it; POSIX
+puts it in <sys/time.h>, and QNX's <time.h> does not have it ("field
+'start_time' has incomplete type" in auth/common_auth.h).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/util/time.h
++++ b/lib/util/time.h
+@@ -28,6 +28,7 @@
+ #include <stdint.h>
+ #include <talloc.h>
+ #include <time.h>
++#include <sys/time.h>	/* struct timeval: not in QNX's <time.h> */
+ 
+ #ifndef TIME_T_MIN
+ /* we use 0 here, because (time_t)-1 means error */

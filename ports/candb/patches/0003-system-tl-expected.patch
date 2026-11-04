@@ -1,0 +1,33 @@
+Use an installed tl-expected when there is one.
+
+CANdb's API returns tl::expected (parser.hpp: CanDbOrError), so the
+tl/expected.hpp a program compiles against must be the one the library was
+built with. CANdb only knew its bundled copy (tl-expected 1.0.1), which is
+not installed; with tl-expected installed on the system (here the
+tl-expected 1.3.1 port), build against that one, so the installed headers
+(patch 0004) have a matching tl/expected.hpp. Without an installed
+tl-expected nothing changes.
+
+Upstream-Status: Pending
+
+
+--- a/3rdParty/CMakeLists.txt
++++ b/3rdParty/CMakeLists.txt
+@@ -12,6 +12,15 @@
+ add_library(spdlog INTERFACE)
+ target_include_directories(spdlog INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include)
+ 
+-add_library(expected INTERFACE)
+-target_include_directories(expected INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/expected)
++# An installed tl-expected is used when there is one: tl/expected.hpp is
++# part of CANdb's installed API (CanDbOrError), so library and consumers
++# must agree on it.
++find_package(tl-expected QUIET)
++if(TARGET tl::expected)
++    add_library(expected INTERFACE)
++    target_link_libraries(expected INTERFACE tl::expected)
++else()
++    add_library(expected INTERFACE)
++    target_include_directories(expected INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/expected)
++endif()
+ add_library(tl-expected ALIAS expected)

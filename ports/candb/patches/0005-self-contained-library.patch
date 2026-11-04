@@ -1,0 +1,60 @@
+Make libCANdb self-contained: a default logger, header-only spdlog/fmt.
+
+Two things kept the now installed libCANdb (patch 0004) from being usable by
+a program of its own:
+
+- The parser logs through kDefaultLogger (log.hpp), which libCANdb declares
+  but leaves to the program to define, as a std::shared_ptr to a logger of
+  CANdb's bundled spdlog 1.8.5 -- which is not installed, so a program could
+  not provide it. Define a default in the library: errors to stderr,
+  CDB_LEVEL to change the level (as dbclint does). It is weak, so a
+  program's own definition (dbclint's) still takes precedence.
+- log.hpp includes spdlog/fmt/ostr.h before spdlog.h, so the bundled fmt 7
+  was compiled in its library mode: extern templates (basic_data<void>,
+  vformat_to) that nothing in libCANdb defines, and linking a program
+  against it failed with undefined fmt::v7 symbols. (dbclint linked only
+  because it instantiates them itself.) Build CANdb with the bundled spdlog
+  and fmt header-only, as private definitions.
+
+Upstream-Status: Pending
+
+
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -3,6 +3,7 @@
+   dbcparser.cpp
+   parsererror.cpp
+   stringutils.cpp
++  default_logger.cpp
+ )
+ 
+ file(READ ${CMAKE_CURRENT_SOURCE_DIR}/dbc_grammar.peg DBC_GRAMMAR)
+@@ -23,6 +24,11 @@
+ target_link_libraries(CANdb PUBLIC cpp-peglib spdlog tl-expected fmt)
+ #target_link_libraries(CANdb PUBLIC spdlog fmt)
+ target_compile_features(CANdb PUBLIC cxx_std_17)
++# The bundled spdlog and fmt are used header-only, completely inside the
++# library: log.hpp includes spdlog/fmt/ostr.h before spdlog.h, which
++# otherwise left fmt in its compiled-library mode (extern templates nobody
++# defines in a shared libCANdb).
++target_compile_definitions(CANdb PRIVATE SPDLOG_HEADER_ONLY FMT_HEADER_ONLY)
+ 
+ # Install the library and its API headers (dbcparser.h and what it
+ # includes) as include/CANdb/.
+--- a/src/default_logger.cpp
++++ b/src/default_logger.cpp
+@@ -0,0 +1,14 @@
++// The logger CANdb's parser writes to (log.hpp). A program may define its
++// own kDefaultLogger (dbclint does); this one is used otherwise, so that
++// using the library does not require the program to provide a logger.
++// Errors only, on stderr; CDB_LEVEL=debug|info|warn|... changes the level.
++#include "log.hpp"
++#include <cstdlib>
++#include <spdlog/sinks/stdout_sinks.h>
++
++__attribute__((weak)) std::shared_ptr<spdlog::logger> kDefaultLogger = []() {
++    auto logger = std::make_shared<spdlog::logger>("candb", std::make_shared<spdlog::sinks::stderr_sink_mt>());
++    const char* z = std::getenv("CDB_LEVEL");
++    logger->set_level(z ? spdlog::level::from_str(z) : spdlog::level::err);
++    return logger;
++}();

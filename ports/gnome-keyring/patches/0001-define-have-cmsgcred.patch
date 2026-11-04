@@ -1,0 +1,23 @@
+Define HAVE_CMSGCRED from meson's struct cmsgcred probe.
+
+meson.build probes for struct cmsgcred (have_struct_cmsgcred) but never
+puts the answer into config.h, so egg-unix-credentials.c never sees
+HAVE_CMSGCRED. On QNX -- whose socket layer is FreeBSD's: struct cmsgcred,
+SCM_CREDS, LOCAL_CREDS, no SO_PEERCRED -- the code then takes the
+LOCAL_CREDS branch, which does not even compile ("'fd' undeclared"). Define
+HAVE_CMSGCRED from the probe, as the autotools build did: the control
+socket's peer is then identified by the kernel-filled cmsgcred that the
+client sends with SCM_CREDS (the mechanism libdbus uses on QNX, hazard 134).
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -96,6 +96,7 @@
+ conf.set_quoted('VERSION', meson.project_version())
+ conf.set_quoted('LIBGCRYPT_VERSION', libgcrypt_dep.version())
+ conf.set('HAVE_LIBCAPNG', libcap_ng_dep.found())
++conf.set('HAVE_CMSGCRED', have_struct_cmsgcred)
+ conf.set('WITH_SELINUX', libselinux_dep.found())
+ conf.set('WITH_SYSTEMD', libsystemd_dep.found())
+ if get_option('ssh-agent')

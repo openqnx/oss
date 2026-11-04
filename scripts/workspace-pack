@@ -13,6 +13,8 @@
 #   dists.tar          dists/ and test_suites/ -- the published packages: qnxpkg
 #                      compares new builds against them (it never rewrites a
 #                      published <name>-<version>-r<N>), publish --changed too
+#   lab.tar            lab/bin, lab/agents (lab tools and agent rules) and
+#                      reports/ -- small; the VMs in lab/vm are made again
 # On request:
 #   --with-stage       stage/ (zstd): build one component without rebuilding
 #                      everything it depends on first (15 GB)
@@ -45,6 +47,7 @@ git bundle create "$D/oss.bundle" HEAD $refs
 tar cf "$D/secrets.tar" $(ls -d keys/private tests/ssh 2>/dev/null)
 chmod 600 "$D/secrets.tar"
 [ -n "$DISTS" ]  && tar cf "$D/dists.tar" $(ls -d dists test_suites 2>/dev/null)
+tar cf "$D/lab.tar" $(ls -d lab/bin lab/agents reports 2>/dev/null)
 [ -n "$STAGE" ]  && tar -I 'zstd -T0 -3' -cf "$D/stage.tar.zst" stage
 [ -n "$PORTED" ] && tar cf "$D/ported.tar" ported
 [ -n "$CACHE" ]  && tar -chf "$D/cache.tar" dist           # -h: dist/ may be a link

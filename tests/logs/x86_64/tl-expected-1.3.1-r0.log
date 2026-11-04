@@ -1,0 +1,36 @@
+# tl-expected 1.3.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:53:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tl-expected-dev qnx-test-tl-expected qnx-port-tests
+(1/2) Installing qnx-test-tl-expected (1.0-r0)
+(2/2) Installing tl-expected-dev (1.3.1-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tl_expected
+     == tl-expected ==
+       ok   parse("42") has value 42
+       ok   parse("4x2") has error not_a_number
+       ok   parse("") has error empty
+       ok   value_or(-1) on an error is -1
+       ok   and_then stops at non_negative(-5)
+       ok   parse(7) -> non_negative -> *6 = 42
+       ok   and_then is not called after an error
+       ok   map_error turns the error into a string
+       ok   or_else recovers with 0
+       ok   map changes the value type to string
+       ok   expected<void>: 4 is even
+       ok   expected<void>: error "odd: 3"
+       ok   value() on an error throws bad_expected_access carrying the error
+       ok   move-only value mapped (5 + 1)
+       ok   compares equal to a value
+       ok   compares equal to unexpected(empty)
+     PASS tl-expected
+PASS test_tl_expected
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

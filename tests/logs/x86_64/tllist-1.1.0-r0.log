@@ -1,0 +1,29 @@
+# tllist 1.1.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:53:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tllist-dev qnx-test-tllist qnx-port-tests
+(1/2) Installing qnx-test-tllist (1.0-r0)
+(2/2) Installing tllist-dev (1.1.0-r0)
+OK: 231.4 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tllist
+     == tllist ==
+       ok   a new list is empty
+       ok   six elements after five push_back and one push_front
+       ok   front is 5, back is 50
+       ok   foreach visits 5..50 in order (sum 155)
+       ok   remove while iterating drops 20 and 40
+       ok   remaining 5 10 30 50 sum to 95
+       ok   pop_front 5, pop_back 50, two left
+       ok   rforeach starts at the back (30)
+       ok   free empties the list
+     PASS tllist
+PASS test_tllist
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

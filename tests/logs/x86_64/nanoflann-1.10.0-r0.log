@@ -1,0 +1,30 @@
+# nanoflann 1.10.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:17:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nanoflann-dev qnx-test-nanoflann qnx-port-tests
+(1/2) Installing nanoflann-dev (1.10.0-r0)
+(2/2) Installing qnx-test-nanoflann (1.0-r0)
+OK: 231.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nanoflann
+     == nanoflann ==
+       info nanoflann 0x10a00
+       ok   nearest of (3.2,4.9,7.1) is (3,5,7)
+       ok   its squared distance is 0.06
+       ok   7-NN of (4,4,4): itself + 6 face neighbours at distance 1
+       ok   radius 1.01 finds 7 points
+       ok   radius sqrt(2) finds 19 points (1 + 6 + 12)
+       ok   radius 1 at the corner finds 4
+       ok   5-NN of 50 random queries = brute force over 2000 points
+       ok   dynamic index: added point (5,5,5) is nearest to (6,6,6)
+       ok   after removing it, (10,10,10) is nearest
+     PASS nanoflann
+PASS test_nanoflann
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

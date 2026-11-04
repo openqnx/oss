@@ -1,0 +1,18 @@
+diffimg: define EX_* on QNX (no <sysexits.h>)
+
+QNX has no <sysexits.h>. diffimg already defines the five EX_* codes it
+uses for Windows, with the BSD values; use them on QNX too.
+
+Upstream-Status: QNX-specific
+
+--- a/contrib/diffimg/diffimg.c
++++ b/contrib/diffimg/diffimg.c
+@@ -28,7 +28,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__QNX__)   /* no <sysexits.h> on QNX: the BSD values */
+ #define EX_USAGE		64
+ #define EX_DATAERR		65
+ #define EX_NOINPUT		66

@@ -1,0 +1,68 @@
+Use native asn1_compile/compile_et in cross builds.
+
+Heimdal's asn1_compile and compile_et generate sources while Samba builds,
+so they must run on the build machine. waf's use_hostcc only adds
+-D_SAMBA_HOSTCC_ -- it still compiles them with the target compiler -- so
+a cross build produces QNX executables it then tries to run. With
+SAMBA_NATIVE_HEIMDAL_TOOLS naming a directory that holds native builds of
+both (the recipe builds them from the same source with a native
+configure), those are used and the target ones are not built, the way a
+system Heimdal's tools are used (USING_SYSTEM_ASN1_COMPILE/COMPILE_ET).
+
+Upstream-Status: QNX-specific
+
+--- a/third_party/heimdal_build/wscript_build
++++ b/third_party/heimdal_build/wscript_build
+@@ -14,6 +14,12 @@
+ def heimdal_paths(ps):
+     return [heimdal_path(p) for p in TO_LIST(ps)]
+ 
++# Cross builds: asn1_compile and compile_et run on the build machine while
++# Samba builds, so the ones built here (for the target) cannot be used.
++# SAMBA_NATIVE_HEIMDAL_TOOLS names a directory holding native builds of
++# both (from the same source); they are used instead of building them.
++NATIVE_HEIMDAL_TOOLS = os.environ.get('SAMBA_NATIVE_HEIMDAL_TOOLS')
++
+ # waf build tool for building .et files with compile_et
+ def HEIMDAL_ASN1(name, source,
+                  options='',
+@@ -76,7 +82,7 @@
+         source.append(option_file)
+ 
+     deps = ''
+-    if not bld.CONFIG_SET('USING_SYSTEM_ASN1_COMPILE'):
++    if not (bld.CONFIG_SET('USING_SYSTEM_ASN1_COMPILE') or NATIVE_HEIMDAL_TOOLS):
+         deps = 'asn1_compile'
+ 
+     t = bld(rule=asn1_rule,
+@@ -139,7 +145,7 @@
+     sources = [source, 'et_compile_wrapper.sh']
+ 
+     deps = ''
+-    if not bld.CONFIG_SET('USING_SYSTEM_COMPILE_ET'):
++    if not (bld.CONFIG_SET('USING_SYSTEM_COMPILE_ET') or NATIVE_HEIMDAL_TOOLS):
+         deps = 'compile_et'
+ 
+     t = bld(rule='"${SRC[1].abspath(env)}" "${TGT[0].parent.abspath(env)}" "${COMPILE_ET}" "${SRC[0].abspath(env)}" ${TGT[0].bldpath(env)}',
+@@ -1096,7 +1102,11 @@
+         deps='roken replace')
+ 
+ 
+-if not bld.CONFIG_SET('USING_SYSTEM_ASN1_COMPILE'):
++if NATIVE_HEIMDAL_TOOLS:
++    bld.env['ASN1_COMPILE'] = os.path.join(NATIVE_HEIMDAL_TOOLS, 'asn1_compile')
++    bld.env['COMPILE_ET'] = os.path.join(NATIVE_HEIMDAL_TOOLS, 'compile_et')
++
++if not (bld.CONFIG_SET('USING_SYSTEM_ASN1_COMPILE') or NATIVE_HEIMDAL_TOOLS):
+     HEIMDAL_SUBSYSTEM('HEIMDAL_ASN1_GEN_HOSTCC',
+                       'lib/asn1/gen.c',
+                       includes='../heimdal/lib/asn1',
+@@ -1126,7 +1136,7 @@
+ 
+ 
+ 
+-if not bld.CONFIG_SET('USING_SYSTEM_COMPILE_ET'):
++if not (bld.CONFIG_SET('USING_SYSTEM_COMPILE_ET') or NATIVE_HEIMDAL_TOOLS):
+     HEIMDAL_BINARY('compile_et',
+         'lib/com_err/parse.y lib/com_err/lex.l lib/com_err/compile_et.c',
+         use_hostcc=True,

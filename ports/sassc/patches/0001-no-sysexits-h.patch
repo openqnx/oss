@@ -1,0 +1,55 @@
+Define the four EX_* exit codes where <sysexits.h> is missing.
+
+QNX has no <sysexits.h> (a BSD header that glibc and the BSDs ship).
+sassc only takes four exit codes from it; define them with their BSD values
+where the header is missing. Where it exists nothing changes.
+
+Upstream-Status: Pending (portable)
+
+--- a/sassc.c
++++ b/sassc.c
+@@ -15,17 +15,17 @@
+ #include "sassc_version.h"
+ 
+ #ifdef _MSC_VER
+-#include <crtdbg.h>
+-/// AvoidMessageBoxHook - Emulates hitting "retry" from an "abort, retry,
+-/// ignore" CRT debug report dialog. "retry" raises a regular exception.
+-static int AvoidMessageBoxHook(int ReportType, char* Message, int* Return) {
+-  // Set *Return to the retry code for the return value of _CrtDbgReport:
+-  // http://msdn.microsoft.com/en-us/library/8hyw4sy7(v=vs.71).aspx
+-  // This may also trigger just-in-time debugging via DebugBreak().
+-  if (Return)
+-    * Return = 1;
+-  // Don't call _CrtDbgReport.
+-  return true;
++#include <crtdbg.h>
++/// AvoidMessageBoxHook - Emulates hitting "retry" from an "abort, retry,
++/// ignore" CRT debug report dialog. "retry" raises a regular exception.
++static int AvoidMessageBoxHook(int ReportType, char* Message, int* Return) {
++  // Set *Return to the retry code for the return value of _CrtDbgReport:
++  // http://msdn.microsoft.com/en-us/library/8hyw4sy7(v=vs.71).aspx
++  // This may also trigger just-in-time debugging via DebugBreak().
++  if (Return)
++    * Return = 1;
++  // Don't call _CrtDbgReport.
++  return true;
+ }
+ #endif
+ 
+@@ -65,7 +65,15 @@
+ }
+ #else
+ #include <unistd.h>
++#if !defined(__has_include) || __has_include(<sysexits.h>)
+ #include <sysexits.h>
++#else
++/* the BSD values, for systems without <sysexits.h> (QNX) */
++#define EX_USAGE   64
++#define EX_DATAERR 65
++#define EX_OSERR   71
++#define EX_IOERR   74
++#endif
+ #endif
+ 
+ int output(int error_status, const char* error_message, const char* output_string, const char* outfile) {

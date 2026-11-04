@@ -36,7 +36,7 @@ endforeach()
 # Static libraries are named by path: a bare -l<name> is no file dependency,
 # and a rebuilt port's .a would not relink the test.
 port_test(test_asio               test_asio.cpp            socket)
-port_test(test_candb              test_candb.cpp)
+port_test(test_candb              test_candb.cpp           CANdb)
 port_test(test_cpuinfo            test_cpuinfo.c           "${LIB}/libcpuinfo.a")
 port_test(test_fp16               test_fp16.c              m)
 port_test(test_fxdiv              test_fxdiv.c)

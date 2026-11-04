@@ -1,0 +1,9 @@
+test_cython	bin/python3
+test_python3_cffi	bin/python3
+test_python3_jinja2	bin/python3
+test_python3_msgpack_zstandard	bin/python3
+test_python3_pexpect	bin/python3
+test_python3_pylibs	bin/python3
+test_python3_pybuild	bin/python3 bin/git bin/cmake bin/ninja bin/meson lib/python3.14/site-packages/setuptools
+test_python3_virtualenv	bin/python3
+test_python3_pytest_plugins	bin/python3 lib/python3.14/site-packages/pytest

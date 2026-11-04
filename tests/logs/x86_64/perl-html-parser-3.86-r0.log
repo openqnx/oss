@@ -1,0 +1,64 @@
+# perl-html-parser 3.86-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:21:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-html-parser qnx-test-perl-html qnx-port-tests
+( 1/12) Installing perl (5.40.2-r2)
+( 2/12) Installing perl-html-tagset (3.24-r0)
+( 3/12) Installing perl-clone (0.51-r0)
+( 4/12) Installing perl-encode-locale (1.05-r0)
+( 5/12) Installing perl-http-date (6.08-r0)
+( 6/12) Installing perl-io-html (1.004-r0)
+( 7/12) Installing perl-lwp-mediatypes (6.05-r0)
+( 8/12) Installing perl-mime-base32 (1.303-r0)
+( 9/12) Installing perl-uri (5.40-r0)
+(10/12) Installing perl-http-message (7.04-r0)
+(11/12) Installing perl-html-parser (3.86-r0)
+(12/12) Installing qnx-test-perl-html (1.0-r0)
+OK: 294.8 MiB in 93 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_html
+     == perl-html-parser, perl-html-tagset, perl-io-html, perl-encode-locale ==
+       ok   HTML::Parser event stream
+       ok   HTML::Parser version 3.86
+       ok   decode_entities
+       ok   encode_entities
+       ok   encode_entities with a character class
+       ok   HTML::LinkExtor absolute links
+       ok   HTML::HeadParser title
+       ok   HTML::HeadParser http-equiv
+       ok   HTML::HeadParser meta name
+       ok   HTML::TokeParser get_tag/get_trimmed_text
+       ok   Tagset emptyElement br, img (not p)
+       ok   Tagset isPhraseMarkup b (not div)
+       ok   Tagset linkElements img
+       ok   Tagset head/body elements
+       ok   find_charset_in meta charset
+       ok   find_charset_in http-equiv
+       ok   html_file decodes ISO-8859-2 by its <meta charset>
+       ok   sniff_encoding finds the UTF-8 BOM
+       info locale encoding UTF-8, fs UTF-8, console_in UTF-8
+       ok   Encode::Locale aliases locale, locale_fs, console_out
+       ok   decode(locale) of ASCII
+     perl: warning: Setting locale failed.
+     perl: warning: Please check that your locale settings:
+     	LC_ALL = "C.UTF-8",
+     	LC_CTYPE = (unset),
+     	LC_NUMERIC = (unset),
+     	LC_COLLATE = (unset),
+     	LC_TIME = (unset),
+     	LC_MESSAGES = (unset),
+     	LC_MONETARY = (unset),
+     	LANG = "C.UTF-8"
+         are supported and installed on your system.
+     perl: warning: Falling back to the standard locale ("C").
+       info locale encoding under C.UTF-8: utf-8-strict
+     PASS perl-html-parser
+PASS test_perl_html
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

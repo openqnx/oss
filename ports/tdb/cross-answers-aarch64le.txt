@@ -1,0 +1,32 @@
+# waf cross-answers for QNX 8.0 aarch64le: recorded by running each configure
+# test program on a QNX 8.0 aarch64le target (waf --cross-execute), then edited
+# where the recording is an artefact of running a lone binary:
+#  - rpath / --version-script: the probes need their test library next to
+#    the program; QNX's linker supports both.
+#  - getconf LFS_CFLAGS: no getconf on the target; off_t is 64-bit anyway
+#    (large file support without additional flags: OK).
+#  - C99 vsnprintf: QNX's vsnprintf is C99; the probe died (SIGSEGV) only on
+#    its snprintf("%s", NULL) case, which QNX's printf does not support
+#    (docs/porting-hazards.md 99). libreplace's own replacement is not
+#    linked into every tool, so the system one is used.
+#  - uname: generic values, not the recording machine's board name.
+# HAVE_INCOHERENT_MMAP was measured OK (incoherent: a pwrite() by another
+# process is not seen through a MAP_SHARED mapping) but is answered NO:
+# tdb on QNX never maps the database (patches/0001), so the "everyone must
+# mmap" rule that answer turns on does not apply.
+Checking uname sysname type: "QNX"
+Checking uname machine type: "aarch64"
+Checking uname release type: "8.0.0"
+Checking uname version type: ""
+rpath library support: OK
+-Wl,--version-script support: OK
+Checking getconf LFS_CFLAGS: NO
+Checking for large file support without additional flags: OK
+Checking for HAVE_LITTLE_ENDIAN - runtime: OK
+Checking for HAVE_BIG_ENDIAN - runtime: NO
+Checking correct behavior of strtoll: OK
+Checking for working strptime: NO
+Checking for C99 vsnprintf: OK
+Checking for HAVE_SHARED_MMAP: OK
+Checking for HAVE_INCOHERENT_MMAP: NO
+Checking for HAVE_SECURE_MKSTEMP: OK

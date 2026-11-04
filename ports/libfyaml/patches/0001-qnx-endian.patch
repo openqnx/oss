@@ -1,0 +1,31 @@
+Take the byte order macros from <sys/param.h> on QNX.
+
+The public header libfyaml-endian.h knows where each OS keeps its byte
+order macros and stops with "unsupported platform" elsewhere. QNX has
+them (BYTE_ORDER, LITTLE_ENDIAN, BIG_ENDIAN) in <sys/param.h>; the header
+already maps those spellings to __BYTE_ORDER and friends. (qnx-ports'
+libfyaml 0.9.5 has the same fix in the older internal fy-endian.h.)
+
+Upstream-Status: Pending
+
+
+--- a/include/libfyaml/libfyaml-endian.h
++++ b/include/libfyaml/libfyaml-endian.h
+@@ -30,6 +30,7 @@
+  * - Linux / Cygwin / OpenBSD / GNU Hurd / Emscripten — via ``<endian.h>``
+  * - macOS / iOS — via ``<libkern/OSByteOrder.h>`` + ``<machine/endian.h>``
+  * - NetBSD / FreeBSD / DragonFly BSD — via ``<sys/endian.h>``
++ * - QNX — via ``<sys/param.h>``
+  * - Windows (MSVC) — via ``<winsock2.h>`` (+ ``<sys/param.h>`` for MinGW)
+  *
+  * The non-standard ``BYTE_ORDER``, ``BIG_ENDIAN``, and ``LITTLE_ENDIAN``
+@@ -49,6 +50,9 @@
+ # include <machine/endian.h>
+ #elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+ # include <sys/endian.h>
++#elif defined(__QNX__)
++/* QNX: BYTE_ORDER, LITTLE_ENDIAN, BIG_ENDIAN (aliased below) */
++# include <sys/param.h>
+ #elif defined(_WIN32) || defined(_MSC_VER)
+ /* Windows is always little-endian on supported platforms */
+ # define __LITTLE_ENDIAN 1234

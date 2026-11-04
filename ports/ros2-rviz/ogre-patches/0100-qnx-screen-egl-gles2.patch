@@ -1,0 +1,856 @@
+OGRE 1.12.10: an OpenGL ES 2/3 render system on QNX Screen (EGL).
+
+QNX has no desktop OpenGL and no GLX: graphics is OpenGL ES 2/3 through EGL
+on Screen. OGRE's GLES2 render system runs on EGL, but its GLSupport layer
+knows EGL only on Android, Emscripten, Windows and X11. This adds a QNX one
+(RenderSystems/GLSupport/{include,src}/EGL/QNX): the default EGL display,
+and render windows on a Screen window -- one OGRE creates, or one handed
+over as "externalWindowHandle" (Qt's QWindow::winId() on its qnx platform
+is the screen_window_t). On QNX the window's buffers are the application's
+to create (screen_create_window_buffers) in the format of the EGL config's
+native visual before eglCreateWindowSurface, and to recreate at every size
+change; Screen allocates 8-bit RGBX/RGBA buffers only, while Mesa lists its
+10-bit configs first (docs/porting-hazards.md #157), so the window picks an
+8-bit config in one of those visuals itself. A swap that fails (the window
+was resized under the surface) makes the buffers and surface again; a
+hidden window (setHidden) is not visible, so OGRE does not draw and swap it.
+
+Also:
+- EGLSupport::createNewContext: share every context with the main one, as
+  OGRE's other GL platforms do. It created the second and later windows'
+  contexts unshared, so a window made after the first (RViz's views, after
+  its hidden 1x1 window) saw none of the textures, buffers and programs.
+- glesw/GLES2RenderSystem: take the core GL ES functions from libGLESv2.so.1
+  with dlsym (as on Android); eglGetProcAddress is only required to return
+  extension functions, and QNX images have no unversioned libGLESv2.so.
+- EGLContext::_updateInternalResources (Android only): also on QNX, to point
+  a context at a recreated surface.
+- CMake: plugins without the "lib" prefix (OGRE's loader asks for
+  RenderSystem_GLES2.so; CMake calls q++ "QCC", not GNU); no X11 and no
+  libpthread on QNX (threads are in libc).
+
+Upstream-Status: Pending
+---
+diff --git a/CMake/Dependencies.cmake b/CMake/Dependencies.cmake
+index c80f4de..1b52b86 100644
+--- a/CMake/Dependencies.cmake
++++ b/CMake/Dependencies.cmake
+@@ -244,7 +244,7 @@ find_package(Freetype)
+ macro_log_feature(FREETYPE_FOUND "freetype" "Portable font engine" "http://www.freetype.org" FALSE "" "")
+ 
+ # Find X11
+-if (UNIX AND NOT APPLE AND NOT ANDROID AND NOT EMSCRIPTEN)
++if (UNIX AND NOT APPLE AND NOT ANDROID AND NOT EMSCRIPTEN AND NOT QNX)
+   find_package(X11)
+   macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
+ endif ()
+diff --git a/CMake/Utils/OgreConfigTargets.cmake b/CMake/Utils/OgreConfigTargets.cmake
+index cce0512..fd03bd9 100644
+--- a/CMake/Utils/OgreConfigTargets.cmake
++++ b/CMake/Utils/OgreConfigTargets.cmake
+@@ -272,10 +272,11 @@ function(ogre_config_plugin PLUGINNAME)
+       set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
+     endif(APPLE_IOS)
+   else (OGRE_STATIC)
+-    if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++    # (QNX: q++ is GCC, but CMake calls it "QCC")
++    if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR QNX)
+       # disable "lib" prefix on Unix
+       set_target_properties(${PLUGINNAME} PROPERTIES PREFIX "")
+-    endif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++    endif ()
+   endif (OGRE_STATIC)
+   # export only if static
+   ogre_install_target(${PLUGINNAME} ${OGRE_PLUGIN_PATH} ${OGRE_STATIC})
+diff --git a/OgreMain/CMakeLists.txt b/OgreMain/CMakeLists.txt
+index 631a022..9a1d27c 100644
+--- a/OgreMain/CMakeLists.txt
++++ b/OgreMain/CMakeLists.txt
+@@ -69,7 +69,9 @@ elseif(ANDROID)
+ elseif (UNIX)
+   file(GLOB PLATFORM_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/GLX/*.cpp")
+ 
+-  set(PLATFORM_LIBS pthread)
++  if (NOT QNX)  # QNX: POSIX threads are in libc; there is no libpthread
++    set(PLATFORM_LIBS pthread)
++  endif ()
+ endif()
+ 
+ if(NOT WIN32)
+diff --git a/RenderSystems/GLES2/src/OgreGLES2RenderSystem.cpp b/RenderSystems/GLES2/src/OgreGLES2RenderSystem.cpp
+index 2c58e76..1e7a492 100644
+--- a/RenderSystems/GLES2/src/OgreGLES2RenderSystem.cpp
++++ b/RenderSystems/GLES2/src/OgreGLES2RenderSystem.cpp
+@@ -1655,7 +1655,8 @@ namespace Ogre {
+         if (mCurrentContext)
+             mCurrentContext->setCurrent();
+ 
+-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__QNX__)
++        // qnx: eglGetProcAddress is only required to return extension functions; take the core ones from libGLESv2.
+         // ios: EAGL2Support redirects to glesw for get_proc. Overwriting it there would create an infinite loop
+         // android: eglGetProcAddress fails in some cases (e.g. Virtual Device), whereas dlsym always works.
+         if (glGetError == NULL && gleswInit())
+diff --git a/RenderSystems/GLES2/src/glesw.c b/RenderSystems/GLES2/src/glesw.c
+index 205f1e7..3f86bf2 100644
+--- a/RenderSystems/GLES2/src/glesw.c
++++ b/RenderSystems/GLES2/src/glesw.c
+@@ -104,6 +104,11 @@ static void *libgl;
+ 
+ static void open_libgl(void)
+ {
++#ifdef __QNX__
++    /* QNX target images ship the versioned name only */
++    libgl = dlopen("libGLESv2.so.1", RTLD_LAZY | RTLD_GLOBAL);
++    if (!libgl)
++#endif
+     libgl = dlopen("libGLESv2.so", RTLD_LAZY | RTLD_GLOBAL);
+ }
+ 
+diff --git a/RenderSystems/GLSupport/CMakeLists.txt b/RenderSystems/GLSupport/CMakeLists.txt
+index e455d75..21689d0 100644
+--- a/RenderSystems/GLSupport/CMakeLists.txt
++++ b/RenderSystems/GLSupport/CMakeLists.txt
+@@ -48,6 +48,15 @@ elseif (WIN32)
+         set(PLATFORM_LIBS opengl32)
+     endif()
+   endif()
++elseif(QNX)
++  # QNX: EGL on Screen (OpenGL ES only; there is no desktop GL or GLX)
++  file(GLOB PLATFORM_HEADERS "include/EGL/QNX/*.h" "include/EGL/*.h")
++  file(GLOB PLATFORM_SOURCES "src/EGL/QNX/*.cpp" "src/EGL/*.cpp")
++
++  set(NATIVE_INCLUDES
++      ${CMAKE_CURRENT_SOURCE_DIR}/include/EGL
++      ${CMAKE_CURRENT_SOURCE_DIR}/include/EGL/QNX)
++  set(PLATFORM_LIBS ${EGL_LIBRARIES} screen)
+ elseif(APPLE_IOS)
+   # only works with GLES2 - no shared components here.
+ elseif (APPLE)
+diff --git a/RenderSystems/GLSupport/include/EGL/OgreEGLContext.h b/RenderSystems/GLSupport/include/EGL/OgreEGLContext.h
+index cc21346..960e362 100644
+--- a/RenderSystems/GLSupport/include/EGL/OgreEGLContext.h
++++ b/RenderSystems/GLSupport/include/EGL/OgreEGLContext.h
+@@ -53,7 +53,7 @@ namespace Ogre {
+             void _createInternalResources(EGLDisplay eglDisplay, ::EGLConfig glconfig, ::EGLSurface drawable, ::EGLContext shareContext);
+             void _destroyInternalResources();
+         
+-#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
++#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || defined(__QNX__)
+             void _updateInternalResources(EGLDisplay eglDisplay, ::EGLConfig glconfig, ::EGLSurface drawable);
+ #endif
+ 
+diff --git a/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLSupport.h b/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLSupport.h
+new file mode 100644
+index 0000000..26c5a7b
+--- /dev/null
++++ b/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLSupport.h
+@@ -0,0 +1,53 @@
++/*
++-----------------------------------------------------------------------------
++This source file is part of OGRE
++    (Object-oriented Graphics Rendering Engine)
++For the latest info, see http://www.ogre3d.org/
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++THE SOFTWARE.
++-----------------------------------------------------------------------------
++*/
++#ifndef __QNXEGLSupport_H__
++#define __QNXEGLSupport_H__
++
++#include "OgreEGLSupport.h"
++#include <screen/screen.h>
++
++namespace Ogre {
++    /** EGL on QNX Screen: the default EGL display, and a Screen context of
++        its own for the windows OGRE creates itself. */
++    class _OgrePrivate QNXEGLSupport : public EGLSupport
++    {
++        screen_context_t mScreenContext;
++    public:
++        QNXEGLSupport(int profile);
++        virtual ~QNXEGLSupport();
++
++        screen_context_t getScreenContext();
++
++        virtual void switchMode(uint& width, uint& height, short& frequency);
++
++        virtual RenderWindow* newWindow(const String& name,
++                                        unsigned int width, unsigned int height,
++                                        bool fullScreen,
++                                        const NameValuePairList *miscParams = 0);
++    };
++}
++
++#endif
+diff --git a/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLWindow.h b/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLWindow.h
+new file mode 100644
+index 0000000..73a66d5
+--- /dev/null
++++ b/RenderSystems/GLSupport/include/EGL/QNX/OgreQNXEGLWindow.h
+@@ -0,0 +1,74 @@
++/*
++-----------------------------------------------------------------------------
++This source file is part of OGRE
++    (Object-oriented Graphics Rendering Engine)
++For the latest info, see http://www.ogre3d.org/
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++THE SOFTWARE.
++-----------------------------------------------------------------------------
++*/
++#ifndef __QNXEGLWindow_H__
++#define __QNXEGLWindow_H__
++
++#include "OgreEGLWindow.h"
++#include "OgreQNXEGLSupport.h"
++
++namespace Ogre {
++    /** An EGL window surface on a QNX Screen window: either one OGRE
++        creates, or one handed over as "externalWindowHandle" (the
++        screen_window_t of, say, a Qt QWindow -- QWindow::winId() on Qt's
++        qnx platform). On QNX the application creates the window's buffers
++        (screen_create_window_buffers) before eglCreateWindowSurface, in
++        the format of the config's native visual, and again whenever the
++        window's size changes. */
++    class _OgrePrivate QNXEGLWindow : public EGLWindow
++    {
++        QNXEGLSupport* mQNXSupport;
++        bool mOwnWindow;
++        bool mOwnBuffers;
++        int mFSAA;
++        void createBuffers(uint width, uint height);
++        ::EGLSurface createSurface();
++        ::EGLConfig chooseConfig();
++        void recreateSurface(uint width, uint height);
++        bool queryWindowSize(uint& width, uint& height);
++    protected:
++        virtual void getLeftAndTopFromNativeWindow(int & left, int & top, uint width, uint height);
++        virtual void initNativeCreatedWindow(const NameValuePairList *miscParams);
++        virtual void createNativeWindow(int &left, int &top, uint &width, uint &height, String &title);
++        virtual void reposition(int left, int top);
++        virtual void resize(unsigned int width, unsigned int height);
++        virtual void windowMovedOrResized();
++        virtual void switchFullScreen(bool fullscreen);
++    public:
++        QNXEGLWindow(QNXEGLSupport* glsupport);
++        virtual ~QNXEGLWindow();
++        void create(const String& name, unsigned int width, unsigned int height,
++                    bool fullScreen, const NameValuePairList *miscParams);
++        void destroy(void);
++        void swapBuffers();
++        void setHidden(bool hidden);
++        bool isVisible() const { return mVisible && !mHidden; }
++        bool isHidden() const { return mHidden; }
++    private:
++        bool mHidden;
++    };
++}
++
++#endif
+diff --git a/RenderSystems/GLSupport/src/EGL/OgreEGLContext.cpp b/RenderSystems/GLSupport/src/EGL/OgreEGLContext.cpp
+index 35ee41f..f9001ce 100644
+--- a/RenderSystems/GLSupport/src/EGL/OgreEGLContext.cpp
++++ b/RenderSystems/GLSupport/src/EGL/OgreEGLContext.cpp
+@@ -99,18 +99,20 @@ namespace Ogre {
+         setCurrent();
+     }
+     
+-#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
++#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || defined(__QNX__)
+     void EGLContext::_updateInternalResources(EGLDisplay eglDisplay, ::EGLConfig glconfig, ::EGLSurface drawable)
+     {
+         mDrawable = drawable;
+         mConfig = glconfig;
+         mEglDisplay = eglDisplay;
+ 
++#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+         setCurrent();
+ 
+         // Initialise GL3W
+         if (gleswInit())
+             LogManager::getSingleton().logMessage("Failed to initialize GL3W");
++#endif
+     }
+ #endif
+ 
+diff --git a/RenderSystems/GLSupport/src/EGL/OgreEGLSupport.cpp b/RenderSystems/GLSupport/src/EGL/OgreEGLSupport.cpp
+index 1f5dd75..b169a8f 100755
+--- a/RenderSystems/GLSupport/src/EGL/OgreEGLSupport.cpp
++++ b/RenderSystems/GLSupport/src/EGL/OgreEGLSupport.cpp
+@@ -336,7 +336,15 @@ namespace Ogre {
+         }
+         else
+         {
++#ifdef __QNX__
++            // Share with the main context, as every other GL platform
++            // does: a render window created after the first (RViz makes a
++            // hidden one, then its views) must see the textures, buffers and
++            // shaders already loaded.
++            context = eglCreateContext(eglDisplay, glconfig, shareList, contextAttrs);
++#else
+             context = eglCreateContext(eglDisplay, glconfig, 0, contextAttrs);
++#endif
+             EGL_CHECK_ERROR
+         }
+ 
+diff --git a/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLSupport.cpp b/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLSupport.cpp
+new file mode 100644
+index 0000000..333a49a
+--- /dev/null
++++ b/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLSupport.cpp
+@@ -0,0 +1,102 @@
++/*
++-----------------------------------------------------------------------------
++This source file is part of OGRE
++    (Object-oriented Graphics Rendering Engine)
++For the latest info, see http://www.ogre3d.org/
++
++Copyright (c) 2000-2014 Torus Knot Software Ltd
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++THE SOFTWARE.
++-----------------------------------------------------------------------------
++*/
++
++#include "OgreException.h"
++#include "OgreLogManager.h"
++#include "OgreStringConverter.h"
++#include "OgreRoot.h"
++
++#include "OgreQNXEGLSupport.h"
++#include "OgreQNXEGLWindow.h"
++
++namespace Ogre {
++
++    GLNativeSupport* getGLSupport(int profile)
++    {
++        return new QNXEGLSupport(profile);
++    }
++
++    QNXEGLSupport::QNXEGLSupport(int profile) : EGLSupport(profile), mScreenContext(0)
++    {
++        mNativeDisplay = EGL_DEFAULT_DISPLAY;
++        mGLDisplay = getGLDisplay();
++
++        // The size of the first display, for the video mode list.
++        int w = 1280, h = 800;
++        screen_context_t ctx = getScreenContext();
++        int count = 0;
++        if (ctx && screen_get_context_property_iv(ctx, SCREEN_PROPERTY_DISPLAY_COUNT, &count) == 0 && count > 0)
++        {
++            screen_display_t* displays = new screen_display_t[count];
++            if (screen_get_context_property_pv(ctx, SCREEN_PROPERTY_DISPLAYS, (void**)displays) == 0)
++            {
++                int size[2] = {0, 0};
++                if (screen_get_display_property_iv(displays[0], SCREEN_PROPERTY_SIZE, size) == 0 && size[0] > 0)
++                {
++                    w = size[0];
++                    h = size[1];
++                }
++            }
++            delete[] displays;
++        }
++        mCurrentMode.width = w;
++        mCurrentMode.height = h;
++        mCurrentMode.refreshRate = 0;
++        mOriginalMode = mCurrentMode;
++        mVideoModes.push_back(mCurrentMode);
++    }
++
++    QNXEGLSupport::~QNXEGLSupport()
++    {
++        if (mScreenContext)
++            screen_destroy_context(mScreenContext);
++    }
++
++    screen_context_t QNXEGLSupport::getScreenContext()
++    {
++        if (!mScreenContext && screen_create_context(&mScreenContext, SCREEN_APPLICATION_CONTEXT) != 0)
++        {
++            mScreenContext = 0;
++            LogManager::getSingleton().logError("QNXEGLSupport: screen_create_context failed (is Screen running?)");
++        }
++        return mScreenContext;
++    }
++
++    void QNXEGLSupport::switchMode(uint& width, uint& height, short& frequency)
++    {
++        // Screen's display modes are the system's to set, not an application's.
++    }
++
++    RenderWindow* QNXEGLSupport::newWindow(const String &name, unsigned int width, unsigned int height,
++                                          bool fullScreen, const NameValuePairList *miscParams)
++    {
++        QNXEGLWindow* window = new QNXEGLWindow(this);
++        window->create(name, width, height, fullScreen, miscParams);
++        return window;
++    }
++}
+diff --git a/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLWindow.cpp b/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLWindow.cpp
+new file mode 100644
+index 0000000..55e5b89
+--- /dev/null
++++ b/RenderSystems/GLSupport/src/EGL/QNX/OgreQNXEGLWindow.cpp
+@@ -0,0 +1,415 @@
++/*
++-----------------------------------------------------------------------------
++This source file is part of OGRE
++    (Object-oriented Graphics Rendering Engine)
++For the latest info, see http://www.ogre3d.org/
++
++Copyright (c) 2000-2014 Torus Knot Software Ltd
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++THE SOFTWARE.
++-----------------------------------------------------------------------------
++*/
++
++#include "OgreRoot.h"
++#include "OgreException.h"
++#include "OgreLogManager.h"
++#include "OgreStringConverter.h"
++#include "OgreViewport.h"
++
++#include "OgreGLRenderSystemCommon.h"
++
++#include "OgreQNXEGLSupport.h"
++#include "OgreQNXEGLWindow.h"
++
++#include <errno.h>
++#include <string.h>
++#include <vector>
++
++namespace Ogre {
++    QNXEGLWindow::QNXEGLWindow(QNXEGLSupport *glsupport)
++        : EGLWindow(glsupport), mQNXSupport(glsupport), mOwnWindow(false), mOwnBuffers(false), mFSAA(0), mHidden(false)
++    {
++    }
++
++    QNXEGLWindow::~QNXEGLWindow()
++    {
++        destroy();
++    }
++
++    bool QNXEGLWindow::queryWindowSize(uint& width, uint& height)
++    {
++        int size[2] = {0, 0};
++        if (!mWindow || screen_get_window_property_iv(mWindow, SCREEN_PROPERTY_SIZE, size) != 0 ||
++            size[0] <= 0 || size[1] <= 0)
++            return false;
++        width = size[0];
++        height = size[1];
++        return true;
++    }
++
++    void QNXEGLWindow::createBuffers(uint width, uint height)
++    {
++        int usage = SCREEN_USAGE_OPENGL_ES2 | SCREEN_USAGE_OPENGL_ES3;
++        if (screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_USAGE, &usage) != 0)
++        {
++            usage = SCREEN_USAGE_OPENGL_ES2;
++            screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_USAGE, &usage);
++        }
++        // The window's format must be the config's native visual.
++        EGLint format = SCREEN_FORMAT_RGBX8888;
++        eglGetConfigAttrib(mEglDisplay, mEglConfig, EGL_NATIVE_VISUAL_ID, &format);
++        screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_FORMAT, &format);
++
++        // A window handed over may come with buffers already: drop them.
++        int count = 0;
++        screen_get_window_property_iv(mWindow, SCREEN_PROPERTY_RENDER_BUFFER_COUNT, &count);
++        if (count > 0)
++            screen_destroy_window_buffers(mWindow);
++
++        int size[2] = {(int)std::max(width, 1u), (int)std::max(height, 1u)};
++        screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_BUFFER_SIZE, size);
++        mWidth = size[0];
++        mHeight = size[1];
++    }
++
++    ::EGLSurface QNXEGLWindow::createSurface()
++    {
++        // On QNX the application creates the window's buffers before
++        // eglCreateWindowSurface (as Qt's qnx platform does); should a driver
++        // want to allocate them itself, try that too.
++        ::EGLSurface surface = EGL_NO_SURFACE;
++        if (screen_create_window_buffers(mWindow, 2) == 0)
++        {
++            mOwnBuffers = true;
++            surface = eglCreateWindowSurface(mEglDisplay, mEglConfig, mWindow, NULL);
++            if (surface == EGL_NO_SURFACE)
++            {
++                screen_destroy_window_buffers(mWindow);
++                mOwnBuffers = false;
++            }
++        }
++        else
++        {
++            LogManager::getSingleton().logWarning("QNXEGLWindow: screen_create_window_buffers: " + String(strerror(errno)));
++        }
++        if (surface == EGL_NO_SURFACE)
++            surface = eglCreateWindowSurface(mEglDisplay, mEglConfig, mWindow, NULL);
++        if (surface == EGL_NO_SURFACE)
++        {
++            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR,
++                        "eglCreateWindowSurface failed: EGL error " + StringConverter::toString(eglGetError()),
++                        "QNXEGLWindow::createSurface");
++        }
++        return surface;
++    }
++
++    ::EGLConfig QNXEGLWindow::chooseConfig()
++    {
++        // Screen allocates window buffers in 8-bit RGBX/RGBA only, and
++        // Mesa lists its deepest configs (RGBX1010102) first: take all the
++        // configs and pick an 8-bit one in one of those visuals, preferring
++        // the samples asked for, then a 24-bit depth and a stencil buffer.
++        EGLint renderable = mGLSupport->getContextProfile() == GLNativeSupport::CONTEXT_ES ? EGL_OPENGL_ES2_BIT : EGL_OPENGL_BIT;
++        EGLint attribs[] = {
++            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
++            EGL_RENDERABLE_TYPE, renderable,
++            EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8,
++            EGL_DEPTH_SIZE, 16,
++            EGL_NONE
++        };
++        EGLint n = 0;
++        if (!eglChooseConfig(mEglDisplay, attribs, NULL, 0, &n) || n <= 0)
++            return 0;
++        std::vector< ::EGLConfig> configs(n);
++        eglChooseConfig(mEglDisplay, attribs, &configs[0], n, &n);
++        ::EGLConfig best = 0;
++        int bestScore = -1;
++        for (EGLint i = 0; i < n; ++i)
++        {
++            EGLint r = 0, g = 0, b = 0, depth = 0, stencil = 0, samples = 0, visual = 0;
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_RED_SIZE, &r);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_GREEN_SIZE, &g);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_BLUE_SIZE, &b);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_DEPTH_SIZE, &depth);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_STENCIL_SIZE, &stencil);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_SAMPLES, &samples);
++            eglGetConfigAttrib(mEglDisplay, configs[i], EGL_NATIVE_VISUAL_ID, &visual);
++            if (r != 8 || g != 8 || b != 8)
++                continue;
++            if (visual != SCREEN_FORMAT_RGBX8888 && visual != SCREEN_FORMAT_RGBA8888)
++                continue;
++            int score = 0;
++            if (mFSAA > 1 ? samples == mFSAA : samples == 0) score += 100;
++            else if (samples == 0) score += 50;
++            if (depth >= 24) score += 10;
++            if (stencil >= 8) score += 5;
++            if (visual == SCREEN_FORMAT_RGBX8888) score += 1;
++            if (score > bestScore)
++            {
++                bestScore = score;
++                best = configs[i];
++            }
++        }
++        if (best)
++        {
++            EGLint samples = 0, depth = 0;
++            eglGetConfigAttrib(mEglDisplay, best, EGL_SAMPLES, &samples);
++            eglGetConfigAttrib(mEglDisplay, best, EGL_DEPTH_SIZE, &depth);
++            LogManager::getSingleton().logMessage("QNXEGLWindow: EGL config with " + StringConverter::toString(depth) +
++                                                  "-bit depth, " + StringConverter::toString(samples) + " samples");
++        }
++        return best;
++    }
++
++    void QNXEGLWindow::recreateSurface(uint width, uint height)
++    {
++        // The current context and surfaces, to restore afterwards: the GL
++        // render system keeps track of which context is current.
++        ::EGLContext oldContext = eglGetCurrentContext();
++        ::EGLSurface oldDraw = eglGetCurrentSurface(EGL_DRAW);
++        ::EGLSurface oldRead = eglGetCurrentSurface(EGL_READ);
++        bool wasOurs = (oldDraw == mEglSurface);
++
++        eglMakeCurrent(mEglDisplay, (::EGLSurface)0, (::EGLSurface)0, (::EGLContext)0);
++        eglDestroySurface(mEglDisplay, mEglSurface);
++        if (mOwnBuffers)
++        {
++            screen_destroy_window_buffers(mWindow);
++            mOwnBuffers = false;
++        }
++        createBuffers(width, height);
++        mEglSurface = createSurface();
++        static_cast<EGLContext*>(mContext)->_updateInternalResources(mEglDisplay, mEglConfig, mEglSurface);
++
++        if (wasOurs)
++            eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, oldContext);
++        else if (oldContext != (::EGLContext)0)
++            eglMakeCurrent(mEglDisplay, oldDraw, oldRead, oldContext);
++    }
++
++    void QNXEGLWindow::getLeftAndTopFromNativeWindow(int & left, int & top, uint width, uint height)
++    {
++        int pos[2] = {0, 0};
++        if (mWindow)
++            screen_get_window_property_iv(mWindow, SCREEN_PROPERTY_POSITION, pos);
++        left = pos[0];
++        top = pos[1];
++    }
++
++    void QNXEGLWindow::initNativeCreatedWindow(const NameValuePairList *miscParams)
++    {
++    }
++
++    void QNXEGLWindow::createNativeWindow(int &left, int &top, uint &width, uint &height, String &title)
++    {
++        screen_context_t ctx = mQNXSupport->getScreenContext();
++        if (!ctx || screen_create_window(&mWindow, ctx) != 0)
++        {
++            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR,
++                        "screen_create_window failed: " + String(strerror(errno)),
++                        "QNXEGLWindow::createNativeWindow");
++        }
++        mOwnWindow = true;
++        int size[2] = {(int)std::max(width, 1u), (int)std::max(height, 1u)};
++        screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_SIZE, size);
++        int pos[2] = {left, top};
++        screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_POSITION, pos);
++        if (!title.empty())
++            screen_set_window_property_cv(mWindow, SCREEN_PROPERTY_ID_STRING, (int)title.size(), title.c_str());
++    }
++
++    void QNXEGLWindow::reposition(int left, int top)
++    {
++        if (mClosed || !mOwnWindow)
++            return;
++        int pos[2] = {left, top};
++        screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_POSITION, pos);
++        mLeft = left;
++        mTop = top;
++    }
++
++    void QNXEGLWindow::resize(uint width, uint height)
++    {
++        if (mClosed)
++            return;
++        if (mOwnWindow)
++        {
++            int size[2] = {(int)std::max(width, 1u), (int)std::max(height, 1u)};
++            screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_SIZE, size);
++        }
++        uint w = width, h = height;
++        queryWindowSize(w, h);
++        if (w != mWidth || h != mHeight)
++            recreateSurface(w, h);
++        for (ViewportList::iterator it = mViewportList.begin(); it != mViewportList.end(); ++it)
++            it->second->_updateDimensions();
++    }
++
++    void QNXEGLWindow::windowMovedOrResized()
++    {
++        if (mClosed || !mWindow)
++            return;
++        uint w = mWidth, h = mHeight;
++        if (queryWindowSize(w, h) && (w != mWidth || h != mHeight))
++            recreateSurface(w, h);
++        for (ViewportList::iterator it = mViewportList.begin(); it != mViewportList.end(); ++it)
++            it->second->_updateDimensions();
++    }
++
++    void QNXEGLWindow::switchFullScreen(bool fullscreen)
++    {
++    }
++
++    void QNXEGLWindow::swapBuffers()
++    {
++        if (mClosed || mIsExternalGLControl)
++            return;
++        if (eglSwapBuffers(mEglDisplay, mEglSurface) == EGL_TRUE)
++            return;
++        // The window's size can change under the surface (Qt resizes it):
++        // make the buffers and the surface again, at the new size.
++        EGLint error = eglGetError();
++        LogManager::getSingleton().logWarning("QNXEGLWindow: " + mName + ": eglSwapBuffers failed, EGL error 0x" +
++                                              StringConverter::toString(error, 0, ' ', std::ios::hex) +
++                                              "; making the surface again");
++        uint w = mWidth, h = mHeight;
++        queryWindowSize(w, h);
++        recreateSurface(w, h);
++        if (eglSwapBuffers(mEglDisplay, mEglSurface) == EGL_FALSE)
++        {
++            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, "eglSwapBuffers failed: EGL error " +
++                        StringConverter::toString(eglGetError()), "QNXEGLWindow::swapBuffers");
++        }
++    }
++
++    void QNXEGLWindow::setHidden(bool hidden)
++    {
++        mHidden = hidden;
++        if (mOwnWindow && mWindow)
++        {
++            int visible = hidden ? 0 : 1;
++            screen_set_window_property_iv(mWindow, SCREEN_PROPERTY_VISIBLE, &visible);
++        }
++    }
++
++    void QNXEGLWindow::create(const String& name, uint width, uint height,
++                              bool fullScreen, const NameValuePairList *miscParams)
++    {
++        mName = name;
++        mWidth = width;
++        mHeight = height;
++        mLeft = 0;
++        mTop = 0;
++        mIsFullScreen = false;
++        String title = name;
++        bool hidden = false;
++
++        if (miscParams)
++        {
++            NameValuePairList::const_iterator opt;
++            NameValuePairList::const_iterator end = miscParams->end();
++
++            if ((opt = miscParams->find("externalWindowHandle")) != end)
++                mWindow = (EGLNativeWindowType)(Ogre::StringConverter::parseSizeT(opt->second));
++            if ((opt = miscParams->find("left")) != end)
++                mLeft = StringConverter::parseInt(opt->second);
++            if ((opt = miscParams->find("top")) != end)
++                mTop = StringConverter::parseInt(opt->second);
++            if ((opt = miscParams->find("title")) != end)
++                title = opt->second;
++            if ((opt = miscParams->find("FSAA")) != end)
++                mFSAA = StringConverter::parseInt(opt->second);
++            if ((opt = miscParams->find("hidden")) != end)
++                hidden = StringConverter::parseBool(opt->second);
++            if ((opt = miscParams->find("vsync")) != end)
++                mVSync = StringConverter::parseBool(opt->second);
++            if ((opt = miscParams->find("vsyncInterval")) != end)
++                mVSyncInterval = StringConverter::parseUnsignedInt(opt->second);
++            if ((opt = miscParams->find("gamma")) != end)
++                mHwGamma = StringConverter::parseBool(opt->second);
++        }
++
++        mIsExternal = (mWindow != 0);
++        mIsTopLevel = !mIsExternal;
++        if (!mWindow)
++            createNativeWindow(mLeft, mTop, mWidth, mHeight, title);
++
++        mEglDisplay = mGLSupport->getGLDisplay();
++
++        mEglConfig = chooseConfig();
++        if (!mEglConfig)
++        {
++            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, "No suitable EGL config", "QNXEGLWindow::create");
++        }
++
++        // The window's own size if it has one (a Qt window), else the one asked for.
++        uint w = mWidth, h = mHeight;
++        queryWindowSize(w, h);
++        createBuffers(w, h);
++
++        mHwGamma = false;
++        mEglSurface = createSurface();
++
++        mContext = createEGLContext();
++        mContext->setCurrent();
++
++        EGLint sw = mWidth, sh = mHeight;
++        eglQuerySurface(mEglDisplay, mEglSurface, EGL_WIDTH, &sw);
++        eglQuerySurface(mEglDisplay, mEglSurface, EGL_HEIGHT, &sh);
++        mWidth = sw;
++        mHeight = sh;
++
++        mActive = true;
++        mVisible = true;
++        mClosed = false;
++        setHidden(hidden);
++
++        LogManager::getSingleton().logMessage("QNXEGLWindow: " + mName + (mIsExternal ? " (external Screen window) " : " ") +
++                                              StringConverter::toString(mWidth) + "x" + StringConverter::toString(mHeight));
++    }
++
++    void QNXEGLWindow::destroy(void)
++    {
++        if (mClosed)
++            return;
++
++        if (mContext)
++        {
++            delete mContext;
++            mContext = 0;
++        }
++        if (mEglSurface)
++        {
++            eglDestroySurface(mEglDisplay, mEglSurface);
++            mEglSurface = 0;
++        }
++        if (mWindow)
++        {
++            if (mOwnWindow)
++                screen_destroy_window(mWindow);
++            else if (mOwnBuffers)
++                screen_destroy_window_buffers(mWindow);
++        }
++        mWindow = 0;
++        mOwnWindow = false;
++        mClosed = true;
++        mActive = false;
++        mVisible = false;
++    }
++}

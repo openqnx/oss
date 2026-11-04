@@ -1,0 +1,9 @@
+test_spirv_headers	include/spirv/unified1/spirv.core.grammar.json
+test_gd	share/fonts/font-dejavu/DejaVuSans.ttf
+test_fcft	share/fonts/font-dejavu/DejaVuSansMono.ttf
+test_graphviz	bin/dot bin/neato bin/circo bin/fdp bin/twopi bin/gc bin/acyclic
+test_libdecor	bin/labwc
+test_foot	bin/foot bin/labwc share/fonts/font-dejavu/DejaVuSansMono.ttf
+test_spirv_tools	bin/spirv-as bin/spirv-dis bin/spirv-val bin/spirv-opt bin/spirv-cfg bin/spirv-link
+test_glslang	bin/glslangValidator bin/spirv-val bin/spirv-dis
+test_shaderc	bin/glslc bin/spirv-val bin/spirv-dis

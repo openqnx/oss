@@ -1,0 +1,51 @@
+# hunspell 1.7.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:14:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u hunspell qnx-test-hunspell qnx-port-tests
+(1/2) Installing hunspell (1.7.2-r0)
+(2/2) Installing qnx-test-hunspell (1.0-r0)
+OK: 233.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_hunspell
+     == hunspell ==
+       ok   scratch directory
+       ok   dictionary qx.aff / qx.dic written
+       ok   Hunspell_create
+       ok   dictionary encoding UTF-8
+       ok   "cat" is correct
+       ok   "cats" is correct
+       ok   "dogs" is correct
+       ok   "tried" is correct
+       ok   "unhappy" is correct
+       ok   "waited" is correct
+       ok   "waits" is correct
+       ok   "graphs" is correct
+       ok   "cafés" is correct
+       ok   "catz" is misspelled
+       ok   "tryed" is misspelled
+       ok   "trys" is misspelled
+       ok   "unwait" is misspelled
+       ok   "grafs" is misspelled
+       ok   "dgo" is misspelled
+       ok   "happys" is misspelled
+       ok   suggest(grafs) has graphs (REP f->ph): [graphs]
+       ok   suggest(dgo) has dog: [dog]
+       ok   stem(tried) = try: [try]
+       ok   stem(unhappy) = happy: [happy]
+       ok   analyze(cats): st:cat po:noun is:plural [ st:cat po:noun is:plural]
+       ok   generate(dog like cats) = dogs: [dogs]
+       ok   "qnx" unknown before Hunspell_add
+       ok   after Hunspell_add_with_affix(qnx like cat): qnx, qnxs
+       ok   hunspell -l lists the six misspelled words (rc 0)
+       ok   hunspell -a (ispell pipe): banner, then * * & & * (rc 0)
+       ok   hunspell -s stems
+     PASS hunspell
+PASS test_hunspell
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

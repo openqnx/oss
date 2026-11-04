@@ -1,0 +1,30 @@
+# log4cpp 1.1.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:16:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u log4cpp qnx-test-log4cpp qnx-port-tests
+(1/2) Installing log4cpp (1.1.4-r1)
+(2/2) Installing qnx-test-log4cpp (1.0-r0)
+OK: 233.1 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_log4cpp
+     == log4cpp ==
+       ok   root: DEBUG dropped under INFO; printf-style message
+       ok   child category inherits the root appender; stream API
+       ok   child inherits priority INFO
+       ok   child priority DEBUG overrides the parent
+       ok   additivity off: nothing reaches the root appender
+       ok   FileAppender wrote "[req-7] to file only" (NDC in %x)
+       ok   RollingFileAppender rolled over to r.log.1
+       ok   current r.log holds the newest lines
+       ok   PropertyConfigurator read the file
+       ok   configured category wrote cfg|DEBUG|configured
+     PASS log4cpp
+PASS test_log4cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

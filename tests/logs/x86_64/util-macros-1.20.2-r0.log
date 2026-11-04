@@ -1,0 +1,33 @@
+# util-macros 1.20.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:54:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u util-macros qnx-test-util-macros qnx-port-tests
+(1/8) Installing m4 (1.4.19-r0)
+(2/8) Installing perl (5.40.2-r2)
+(3/8) Installing autoconf (2.72-r1)
+(4/8) Installing automake (1.18-r2)
+(5/8) Installing pkgconf (2.3.0-r0)
+(6/8) Installing util-macros (1.20.2-r0)
+(7/8) Installing util-macros-dev (1.20.2-r0)
+(8/8) Installing qnx-test-util-macros (1.0-r0)
+OK: 298.5 MiB in 89 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_util_macros
+     == util_macros ==
+       ok   aclocal copied the XORG_* macros from share/aclocal/xorg-macros.m4
+       ok   autoconf: every XORG_* macro expanded
+       ok   configure: PACKAGE_VERSION_MAJOR=3 MINOR=14 PATCHLEVEL=15
+       ok   XORG_ENABLE_DOCS: --disable-docs honoured
+       ok   XORG_WITH_PERL found /usr/local/bin/perl
+       ok   XORG_MACROS_VERSION(1.99): stops with 'version 1.99 or higher is required but 1.20.2 found'
+       ok   pkgconf: xorg-macros 1.20.2
+     PASS util_macros
+PASS test_util_macros
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

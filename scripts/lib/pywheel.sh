@@ -109,3 +109,34 @@ qnx_py_wheel_pure() {
     "$B/venv/bin/python" -m pip wheel --no-deps --no-build-isolation -q -w "$B/wheel" "$S" || return 1
   ls "$B"/wheel/*-none-any.whl >/dev/null 2>&1 || { echo "not a pure wheel: $(ls "$B/wheel")"; return 1; }
 }
+
+# qnx_py_scripts <wheel>...: the console scripts a wheel declares
+# (entry_points.txt, [console_scripts]) as launchers in $PREFIX/bin. pip
+# writes them at install time; unpacking a wheel does not. Call it after
+# qnx_py_install / qnx_py_install_pure with that wheel ("$SRCROOT"/*.whl or
+# "$B"/wheel/*.whl).
+qnx_py_scripts() {
+  mkdir -p "$STAGE$PREFIX/bin"
+  "$WS/hosttools/bin/python$QNX_PYV" - "$STAGE$PREFIX/bin" "$PREFIX/bin/python3" "$@" <<'PY'
+import configparser, os, sys, zipfile
+bindir, interp = sys.argv[1:3]
+for w in sys.argv[3:]:
+    z = zipfile.ZipFile(w)
+    for n in z.namelist():
+        if not n.endswith(".dist-info/entry_points.txt"):
+            continue
+        cp = configparser.ConfigParser(delimiters=("=",), interpolation=None)
+        cp.optionxform = str
+        cp.read_string(z.read(n).decode())
+        if not cp.has_section("console_scripts"):
+            continue
+        for name, ref in cp.items("console_scripts"):
+            mod, _, fn = ref.partition(":")
+            mod, fn = mod.strip(), fn.split("[")[0].strip()
+            p = os.path.join(bindir, name)
+            with open(p, "w") as f:
+                f.write("#!%s\nimport sys\nfrom %s import %s\nsys.exit(%s())\n" % (interp, mod, fn.split(".")[0], fn))
+            os.chmod(p, 0o755)
+            print("console script:", name)
+PY
+}

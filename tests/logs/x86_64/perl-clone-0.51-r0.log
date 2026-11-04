@@ -1,0 +1,39 @@
+# perl-clone 0.51-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T16:01:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-clone qnx-test-perl-xs-misc qnx-port-tests
+(1/5) Installing perl (5.40.2-r2)
+(2/5) Installing perl-clone (0.51-r0)
+(3/5) Installing perl-b-cow (0.007-r0)
+(4/5) Installing perl-fcgi (0.82-r0)
+(5/5) Installing qnx-test-perl-xs-misc (1.0-r1)
+OK: 406.9 MiB in 107 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_xs_misc
+     == perl-clone, perl-b-cow, perl-fcgi ==
+       ok   clone makes new containers
+       ok   the original is untouched
+       ok   circular reference points at the clone
+       ok   blessed object cloned with its class
+       ok   clone of a plain scalar
+       ok   Clone version 0.51
+       ok   can_cow: this perl has copy-on-write strings
+       ok   is_cow after a copy
+       ok   cowrefcnt counts three more copies
+       ok   an integer is not a COW string
+       ok   cowrefcnt_max 255
+       ok   connected to the FastCGI socket
+       ok   FastCGI STDOUT from the FCGI responder
+       ok   END_REQUEST, app status 0
+       ok   END_REQUEST, protocol status REQUEST_COMPLETE
+       ok   FCGI child exited 0
+     PASS perl-xs-misc
+PASS test_perl_xs_misc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

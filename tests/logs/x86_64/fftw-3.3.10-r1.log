@@ -1,0 +1,36 @@
+# fftw 3.3.10-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-04T14:12:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fftw qnx-test-fftw qnx-port-tests
+(1/2) Installing fftw (3.3.10-r1)
+(2/2) Installing qnx-test-fftw (1.0-r0)
+OK: 238.1 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fftw
+     == fftw ==
+       info fftw-3.3.10-sse2-avx-avx2-avx2_128
+       ok   cos(5): X[5] = N/2
+       ok   cos(5): X[N-5] = N/2
+       ok   cos(5): every other bin is 0
+       ok   forward then backward = N * input
+       ok   impulse: flat spectrum of 1
+       ok   shifted impulse: X[N/4] = -i
+       ok   r2c of constant 3: X[0] = 3N, others 0
+       ok   DCT-II of constant: Y[0] = 2N*c
+       ok   2-D 8x8: spikes of 32 at (1,2) and (7,6)
+       info N=1000 max |FFT - DFT| = 7.19e-14
+       ok   N=1000 (FFTW_MEASURE) matches the naive DFT
+       ok   fftw_init_threads
+       ok   4-thread plan matches the naive DFT
+       ok   float: cos(17) + 0.25 -> X[17] = N/2, X[0] = N/4, rest 0
+       ok   wisdom exported
+     PASS fftw
+PASS test_fftw
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

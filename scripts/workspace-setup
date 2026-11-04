@@ -22,7 +22,7 @@ if [ "$1" = --from ]; then
   cd "$W"
   git remote set-url origin https://github.com/openqnx/oss.git
   for b in $(git -C "$W" branch -r | grep -v HEAD | sed 's#origin/##'); do git branch -q --track "$b" "origin/$b" 2>/dev/null || true; done
-  for t in secrets.tar dists.tar ported.tar cache.tar; do [ -f "$P/$t" ] && { echo ">> $t"; tar xf "$P/$t"; }; done
+  for t in secrets.tar dists.tar lab.tar ported.tar cache.tar; do [ -f "$P/$t" ] && { echo ">> $t"; tar xf "$P/$t"; }; done
   [ -f "$P/stage.tar.zst" ] && { echo ">> stage.tar.zst"; tar -I zstd -xf "$P/stage.tar.zst"; }
   exec "$W/scripts/workspace-setup"
 fi

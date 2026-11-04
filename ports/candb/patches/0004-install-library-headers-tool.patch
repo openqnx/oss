@@ -1,0 +1,36 @@
+Install libCANdb, its API headers and dbclint.
+
+CANdb has no install rules: "make install" installed nothing of its own,
+only the bundled cxxopts' header and CMake package (which collide with the
+cxxopts port and are no longer installed, see recipe.sh). Install
+libCANdb (with a soname, libCANdb.so.0), the API headers dbcparser.h,
+parser.hpp, cantypes.hpp and parsererror.hpp as include/CANdb/, and the
+dbclint tool.
+
+Upstream-Status: Pending
+
+
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -23,3 +23,14 @@
+ target_link_libraries(CANdb PUBLIC cpp-peglib spdlog tl-expected fmt)
+ #target_link_libraries(CANdb PUBLIC spdlog fmt)
+ target_compile_features(CANdb PUBLIC cxx_std_17)
++
++# Install the library and its API headers (dbcparser.h and what it
++# includes) as include/CANdb/.
++set_target_properties(CANdb PROPERTIES VERSION 0.1 SOVERSION 0)
++include(GNUInstallDirs)
++install(TARGETS CANdb
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++install(FILES dbcparser.h parser.hpp cantypes.hpp parsererror.hpp
++    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/CANdb)
+--- a/tools/dbclint/CMakeLists.txt
++++ b/tools/dbclint/CMakeLists.txt
+@@ -3,3 +3,4 @@
+ add_executable(dbclint main.cpp)
+ target_link_libraries(dbclint cxxopts CANdb ${CMAKE_THREAD_LIBS_INIT} termcolor)
+ #target_link_libraries(dbclint CANdb ${CMAKE_THREAD_LIBS_INIT})
++install(TARGETS dbclint RUNTIME DESTINATION bin)

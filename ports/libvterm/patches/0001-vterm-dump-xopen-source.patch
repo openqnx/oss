@@ -1,0 +1,18 @@
+Give vterm-dump's _XOPEN_SOURCE a version QNX accepts.
+
+vterm-dump.c defines _XOPEN_SOURCE with no value to get getopt(3). QNX's
+<sys/platform.h> accepts only the X/Open versions it knows (500, 600, 700)
+and stops with "#error This version of XOPEN_SOURCE is not supported".
+Give it the value vterm-ctrl.c already uses (600, which declares getopt).
+
+Upstream-Status: QNX-specific
+
+--- a/bin/vterm-dump.c
++++ b/bin/vterm-dump.c
+@@ -1,5 +1,5 @@
+ // Require getopt(3)
+-#define _XOPEN_SOURCE
++#define _XOPEN_SOURCE 600
+ 
+ #include <stdio.h>
+ #include <string.h>

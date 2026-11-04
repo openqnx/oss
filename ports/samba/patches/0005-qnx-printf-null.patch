@@ -1,0 +1,30 @@
+Print NULL %s arguments as (null) on QNX.
+
+QNX's printf family dereferences a NULL "%s" argument (hazard 99) where
+glibc prints "(null)", and Samba's debug and error messages print optional
+strings that way. QNX's libc has a hook for this: when the variable
+output_for_percent_s_NULL points to a string, that string is printed
+instead. libreplace, which every Samba program and library links, sets it
+from a constructor (the QNX ports' Samba 4.11 defined it in smbd and nmbd).
+
+Upstream-Status: QNX-specific
+
+--- a/lib/replace/replace.c
++++ b/lib/replace/replace.c
+@@ -1395,3 +1395,16 @@
+ 
+ const char hexchars_lower[] = "0123456789abcdef";
+ const char hexchars_upper[] = "0123456789ABCDEF";
++
++#ifdef __QNX__
++/*
++ * QNX's printf family dereferences a NULL "%s" argument (and dies) where
++ * glibc prints "(null)"; Samba's debug and error messages rely on the
++ * latter. QNX's libc prints this string instead when the variable is set.
++ */
++extern const char *output_for_percent_s_NULL;
++static void __attribute__((constructor)) rep_qnx_printf_null(void)
++{
++	output_for_percent_s_NULL = "(null)";
++}
++#endif

@@ -1,0 +1,34 @@
+# tree-sitter-cpp 0.23.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:35:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tree-sitter-cpp qnx-test-tree-sitter-cpp qnx-port-tests
+(1/3) Installing tree-sitter (0.25.9-r0)
+(2/3) Installing tree-sitter-cpp (0.23.4-r0)
+(3/3) Installing qnx-test-tree-sitter-cpp (1.0-r0)
+OK: 977.7 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter_cpp
+     == tree-sitter-cpp ==
+       info tree-sitter runtime: language ABI 13..15
+       ok   cpp.so loads (dlopen)
+       ok   tree_sitter_cpp() entry point
+       info cpp: ABI 14, 543 symbols, 50 fields
+       ok   cpp: ABI 14 accepted by the runtime (13..15)
+       ok   cpp: sample parsed
+       ok   cpp: no syntax errors in the sample
+       info cpp tree: (translation_unit (namespace_definition name: (namespace_identifier) body: (declaration_list (template_declaration parameters: (template_parameter_list (type_parameter_declaration (type_identifier))) (struct_specifier name: (type_identifier) body: (field_declaration_list (field_declaration type: (type_identifier) declarator: (field_identifier) declarator: (field_identifier)) (function_definition type: (type_identifier) declarator: (function_declarator declarator: (field_identifier) parameters: (parameter_list (parameter_declaration (type_qualifier) type: (type_identifier) declarator: (reference_declarator (identifier)))) (type_qualifier)) body: (compound_statement (return_statement (binary_expression left: (binary_expression left: (identifier) right: (field_expression argument: (identifier) field: (field_identifier))) right: (binary_expression left: (identifier) right: (field_expression argument: (identifier) field: (field_identifier)))))))))))) (function_definition type: (primitive_type) declarator: (function_declarator declarator: (identifier) parameters: (parameter_list)) body: (compound_statement (declaration type: (placeholder_type_specifier (auto)) declarator: (init_declarator declarator: (identifier) value: (compound_literal_expression type: (qualified_identifier scope: (namespace_identifier) name: (template_type name: (type_identifier) arguments: (template_argument_list (type_descriptor type: (primitive_type))))) value: (initializer_list (number_literal) (number_literal))))) (return_statement (conditional_expression condition: (binary_expression left: (call_expression function: (field_expression argument: (identifier) field: (field_identifier)) arguments: (argument_list (identifier))) right: (number_literal)) consequence: (number_literal) alternative: (number_literal))))))
+       ok   cpp: syntax tree is the expected one
+       ok   cpp: whole sample covered (0..205 bytes)
+       info query (function_declarator declarator: (_) @fn) -> [dot,main]
+       ok   cpp: query captures [dot,main]
+       ok   cpp: malformed input is flagged (has_error)
+     PASS tree-sitter-cpp
+PASS test_tree_sitter_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

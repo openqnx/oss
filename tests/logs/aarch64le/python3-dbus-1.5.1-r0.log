@@ -1,0 +1,33 @@
+# python3-dbus 1.5.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:46:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-dbus qnx-test-python3-dbus qnx-port-tests
+(1/6) Installing python3-dbus (1.5.1-r0)
+(2/6) Installing glib-typelibs (2.82.4-r0)
+(3/6) Installing python3-cairo (1.29.2-r0)
+(4/6) Installing python3-gobject3 (3.58.1-r0)
+(5/6) Installing python3-pydbus (0.6.0-r0)
+(6/6) Installing qnx-test-python3-dbus (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 977.3 MiB in 152 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_dbus
+     == python3-dbus ==
+       ok   dbus-python: Add(2, 40) = 42 (an Int32)
+       ok   dbus-python: Upper("qnx")
+       ok   dbus-python: introspection XML of the service
+       ok   dbus-python: the service's signal arrives in the main loop
+       ok   missing method raises UnknownMethod
+       ok   pydbus: calls the dbus-python service
+       ok   pydbus: org.freedesktop.DBus.ListNames
+       ok   dbus-python calls the object pydbus published
+     PASS python3-dbus
+PASS test_python3_dbus
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,39 @@
+# font-inconsolata 3.000-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T20:04:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u font-inconsolata qnx-test-font-inconsolata qnx-port-tests
+(1/2) Installing font-inconsolata (3.000-r0)
+(2/2) Installing qnx-test-font-inconsolata (1.0-r0)
+OK: 978.0 MiB in 142 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_inconsolata
+     == font-inconsolata ==
+       ok   font directory share/fonts/font-inconsolata
+       info /usr/local/share/fonts/font-inconsolata/
+       info fontconfig 2.15.0
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 74 face(s) in 74 file(s)
+       ok   at least 70 font file(s) found (74)
+       info Inconsolata: 72 face(s): Semi Condensed Bold, Semi Expanded Medium, Semi Condensed Medium, Semi Expanded SemiBold, Semi Condensed ExtraLight, Ultra Condensed, Semi Expanded, Semi Expanded ExtraLight, Semi Expanded Light, ...
+       ok   family "Inconsolata" listed
+       ok   "Inconsolata" covers U+0030 (72/72 faces)
+       ok   "Inconsolata" has a bold face
+       ok   "Inconsolata" is monospaced
+       info match "Inconsolata" -> /usr/local/share/fonts/font-inconsolata/Inconsolata-Regular.otf (index 0)
+       ok   FcFontMatch("Inconsolata") -> that family, a file of font-inconsolata
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "Inconsolata" "Regular", 964 glyphs, scalable
+       ok   glyph for U+0030 (index 474)
+       ok   rendered: 14x22, mode 2, 115 inked pixel(s)
+     PASS font-inconsolata
+PASS test_font_inconsolata
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

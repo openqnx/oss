@@ -1,0 +1,44 @@
+# gd 2.3.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T21:00:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gd qnx-test-gd qnx-port-tests
+( 1/10) Installing aom (3.15.3-r0)
+( 2/10) Installing dav1d (1.5.0-r0)
+( 3/10) Installing libavif (1.1.1-r0)
+( 4/10) Installing libde265 (1.0.15-r0)
+( 5/10) Installing openh264 (2.5.0-r0)
+( 6/10) Installing openjpeg (2.5.3-r0)
+( 7/10) Installing x265 (3.6-r0)
+( 8/10) Installing libheif (1.20.2-r0)
+( 9/10) Installing gd (2.3.3-r0)
+(10/10) Installing qnx-test-gd (1.0-r0)
+OK: 991.2 MiB in 150 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gd
+     == gd ==
+       info gd 2.3.3
+       ok   100x80 true-colour image
+       ok   filled rectangle: red inside, white outside
+       ok   line along y=50
+       ok   ellipse outline green, flood-filled blue inside
+       ok   PNG: written (475 bytes) and read back exactly
+       ok   GIF: written (310 bytes) and read back (lossy, red stays red)
+       ok   BMP: written (24054 bytes) and read back exactly
+     TIFFWriteDirectorySec: Warning, Creating TIFF with legacy Deflate codec identifier, COMPRESSION_ADOBE_DEFLATE is more widely supported.
+       ok   TIFF: written (2098 bytes) and read back exactly
+       ok   WebP: written (754 bytes) and read back (lossy, red stays red)
+       ok   JPEG: written (4281 bytes) and read back (lossy, red stays red)
+       ok   scaled to 50x40, the red square still red
+       ok   rotated 90 degrees: 80x100
+       ok   built with fontconfig
+       ok   FreeType text 'Hello' at 14 pt: 30-70 px wide, drawn
+     PASS gd
+PASS test_gd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

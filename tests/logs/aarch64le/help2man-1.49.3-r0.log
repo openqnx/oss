@@ -1,0 +1,26 @@
+# help2man 1.49.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T21:43:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u help2man qnx-test-help2man qnx-port-tests
+(1/2) Installing help2man (1.49.3-r0)
+(2/2) Installing qnx-test-help2man (1.0-r0)
+OK: 973.7 MiB in 142 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_help2man
+     == help2man ==
+       ok   help2man --version: 1.49.3
+       ok   man page identical to the build machine's help2man output (cksum 1065383771 596)
+       ok   .TH: name, section, date, version
+       ok   option -n, --name=NAME as a .TP entry
+       ok   -n description and -i [EXAMPLES] include (cksum 2290595271 616)
+       ok   a program that cannot run: error (exit 126)
+     PASS help2man
+PASS test_help2man
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

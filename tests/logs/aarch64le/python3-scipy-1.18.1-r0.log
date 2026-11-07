@@ -1,0 +1,39 @@
+# python3-scipy 1.18.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:06:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-scipy qnx-test-python3-scipy qnx-port-tests
+(1/2) Installing python3-scipy (1.18.1-r0)
+(2/2) Installing qnx-test-python3-scipy (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 1049.6 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_scipy
+     == python3-scipy ==
+       info SciPy 1.18.1, NumPy 2.3.4
+       ok   linalg.solve: (1, -2, -2)
+       ok   linalg.eigh: 2-sqrt2, 2, 2+sqrt2
+       ok   linalg.lu and det
+       ok   optimize.minimize (BFGS) of Rosenbrock reaches (1, 1)
+       ok   optimize.minimize (L-BFGS-B, the C translation) reaches (1, 1)
+       ok   optimize.brentq: sqrt(2)
+       ok   fft of a cosine: peaks n/2 at bins 5 and n-5
+       ok   ifft inverts fft
+       ok   integrate.quad: sqrt(pi)
+       ok   integrate.solve_ivp: y' = -y gives exp(-2)
+       ok   special.gamma(5) = 24, erf(1)
+       ok   sparse CSR matrix-vector product
+       ok   sparse.linalg.spsolve (SuperLU)
+       ok   stats.norm.cdf(1.96)
+       ok   interpolate.CubicSpline of x^3
+       ok   a Pythran-built module loads (optimize._group_columns)
+       info scipy.odr absent (Fortran; not built)
+     PASS python3-scipy
+PASS test_python3_scipy
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

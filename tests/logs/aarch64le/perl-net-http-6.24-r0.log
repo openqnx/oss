@@ -1,0 +1,41 @@
+# perl-net-http 6.24-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T00:11:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-net-http qnx-test-perl-ssl qnx-port-tests
+(1/7) Installing perl-mime-base32 (1.303-r0)
+(2/7) Installing perl-uri (5.40-r0)
+(3/7) Installing perl-net-http (6.24-r0)
+(4/7) Installing perl-mozilla-ca (20261020-r0)
+(5/7) Installing perl-net-ssleay (1.96-r0)
+(6/7) Installing perl-io-socket-ssl (2.099-r0)
+(7/7) Installing qnx-test-perl-ssl (1.0-r1)
+OK: 976.4 MiB in 153 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_ssl
+     == perl-net-ssleay, perl-io-socket-ssl ==
+       info Net::SSLeay 1.96, OpenSSL 3.5.1 1 Jul 2025
+       ok   linked OpenSSL 3
+       ok   SHA-256('abc') through EVP
+       ok   RAND_bytes
+       ok   PEM certificate subject
+       ok   certificate SHA-256 fingerprint
+       info IO::Socket::SSL 2.099
+       ok   client verifies the server against its certificate
+       ok   line exchanged over TLS
+       info TLSv1_3 TLS_AES_256_GCM_SHA384
+       ok   TLS 1.2 or 1.3 negotiated
+       ok   peer certificate subject
+       ok   untrusted issuer rejected (Mozilla CA bundle)
+       ok   host name mismatch rejected
+       ok   Net::HTTPS GET over IO::Socket::SSL
+       ok   TLS server child exited 0
+     PASS perl-io-socket-ssl
+PASS test_perl_ssl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

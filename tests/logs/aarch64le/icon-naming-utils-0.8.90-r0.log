@@ -1,0 +1,21 @@
+# icon-naming-utils 0.8.90-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T21:51:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u icon-naming-utils qnx-test-icon-naming-utils qnx-port-tests
+(1/6) Installing perl-class-inspector (1.36-r0)
+(2/6) Installing perl-file-sharedir (1.118-r0)
+(3/6) Installing perl-xml-parser (2.59-r0)
+(4/6) Installing perl-xml-simple (2.25-r0)
+(5/6) Installing icon-naming-utils (0.8.90-r0)
+(6/6) Installing qnx-test-icon-naming-utils (1.0-r0)
+OK: 974.2 MiB in 146 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_icon_naming_utils
+Connection timed out during banner exchange
+Connection to <target> port 22 timed out
+
+RESULT: FAIL

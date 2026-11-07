@@ -1,0 +1,25 @@
+# ompl 1.7.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:43:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ompl qnx-test-ompl qnx-port-tests
+(1/1) Installing qnx-test-ompl (1.0-r0)
+OK: 974.3 MiB in 147 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ompl
+     == ompl ==
+       ok   RRTConnect finds an exact solution
+       ok   every state of the interpolated path is collision-free
+       ok   the path goes over the top of the wall
+       ok   length 2.4922 >= shortest way round 1.7232
+       ok   simplified: valid, length 1.7341 <= 2.4922, >= 1.7232
+       ok   with the wall closed there is no exact solution
+     PASS ompl
+PASS test_ompl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

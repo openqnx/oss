@@ -1,0 +1,48 @@
+# nuspell 5.1.9-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:43:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nuspell qnx-test-nuspell qnx-port-tests
+(1/2) Installing nuspell (5.1.9-r1)
+(2/2) Installing qnx-test-nuspell (1.0-r0)
+OK: 974.8 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nuspell
+     == nuspell ==
+       ok   scratch directory
+       ok   load_aff_dic(path)
+       ok   "cat" is correct
+       ok   "cats" is correct
+       ok   "dogs" is correct
+       ok   "tried" is correct
+       ok   "unhappy" is correct
+       ok   "waited" is correct
+       ok   "waits" is correct
+       ok   "graphs" is correct
+       ok   "cafés" is correct
+       ok   "Cats" is correct
+       ok   "CATS" is correct
+       ok   "CAFÉS" is correct
+       ok   "catz" is misspelled
+       ok   "tryed" is misspelled
+       ok   "trys" is misspelled
+       ok   "unwait" is misspelled
+       ok   "grafs" is misspelled
+       ok   "dgo" is misspelled
+       ok   "happys" is misspelled
+       ok   "cAts" is misspelled
+       ok   suggest(grafs) = [graphs] (got [graphs])
+       ok   suggest(dgo) = [dog] (got [dog])
+       ok   suggest(tryed) = [tried, try] (got [tried, try])
+       ok   load_aff_dic(istream, istream): waited / not waitted
+       ok   a dictionary with a UTF-8 BOM loads: cats, café / not catz
+       ok   nuspell -d qx.aff in.txt: six OK, six wrong with suggestions (rc 0)
+     PASS nuspell
+PASS test_nuspell
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

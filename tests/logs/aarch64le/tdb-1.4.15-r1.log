@@ -1,0 +1,38 @@
+# tdb 1.4.15-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:34:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tdb qnx-test-tdb qnx-port-tests
+(1/2) Installing tdb (1.4.15-r1)
+(2/2) Installing qnx-test-tdb (1.0-r0)
+OK: 974.4 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tdb
+     == tdb ==
+       info robust mutexes for TDB_MUTEX_LOCKING: no
+       ok   tdb_open creates the database
+       ok   store/fetch
+       ok   TDB_INSERT on an existing key: TDB_ERR_EXISTS
+       ok   tdb_append: a + bc = abc
+       ok   traverse: 102 records
+       ok   delete one, the others intact
+       ok   a cancelled transaction leaves nothing
+       ok   transaction start/store/commit
+       ok   a record locked by another process: tdb_chainlock_nonblock fails
+       ok   after the child unlocks, the lock is ours
+       ok   the child's write is seen by the parent
+       ok   tdb_check: consistent
+       ok   reopened: committed data persisted
+       ok   tdbdump prints the records
+       ok   tdbtool <db> show tx: 9 bytes, hex of "committed"
+       ok   tdbbackup: the copy has all 102 records
+       info tdbbackup/tdbdump count: 102
+     PASS tdb
+PASS test_tdb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

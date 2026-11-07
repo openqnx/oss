@@ -1,0 +1,27 @@
+# cgal 6.2.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:13:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cgal-dev qnx-test-cgal qnx-port-tests
+(1/3) Installing mpfr (4.2.1-r0)
+(2/3) Installing cgal-dev (6.2.1-r0)
+(3/3) Installing qnx-test-cgal (1.0-r0)
+OK: 274.3 MiB in 84 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cgal
+     == cgal ==
+       ok   2D hull of 236 points has 36 vertices (36)
+       ok   Delaunay of a 10x10 grid: 100 vertices, 162 triangles, 261 edges (100, 162, 261)
+       ok   3D hull of a cube + 300 inside: 8 vertices, 12 faces, volume 1.000000 (8, 12, 1)
+       ok   exact: the diagonals meet at exactly (1/2, 1/2)
+       ok   exact: 1/3 + 1/3 + 1/3 == 1
+       ok   exact: (0,0), (1/3,1/3), (1,1) are collinear
+     PASS cgal
+PASS test_cgal
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

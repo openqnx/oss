@@ -1,0 +1,26 @@
+# osqp 0.6.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:16:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u osqp qnx-test-osqp qnx-port-tests
+(1/2) Installing osqp (0.6.3-r0)
+(2/2) Installing qnx-test-osqp (1.0-r0)
+OK: 231.5 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_osqp
+     == osqp ==
+       ok   osqp_setup of the demo problem
+       ok   status: solved
+       ok   x* = (0.300000, 0.700000), expected (0.3, 0.7)
+       ok   objective 1.880000, expected 1.88
+       ok   osqp_setup of the infeasible variant
+       ok   x1 + x2 >= 2 with x <= 0.7: status primal infeasible
+     PASS osqp
+PASS test_osqp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

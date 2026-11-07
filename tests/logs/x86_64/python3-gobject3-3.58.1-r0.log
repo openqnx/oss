@@ -1,0 +1,40 @@
+# python3-gobject3 3.58.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:22:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-gobject3 qnx-test-python3-gobject3 qnx-port-tests
+(1/8) Installing glib-typelibs (2.82.4-r0)
+(2/8) Installing gdbm (1.24-r0)
+(3/8) Installing readline (8.2-r0)
+(4/8) Installing sqlite (3.47.2-r0)
+(5/8) Installing python3 (3.14.0-r3)
+(6/8) Installing python3-cairo (1.29.2-r0)
+(7/8) Installing python3-gobject3 (3.58.1-r0)
+(8/8) Installing qnx-test-python3-gobject3 (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 338.8 MiB in 89 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_gobject3
+     == python3-gobject3 ==
+       info PyGObject 3.58.1, GLib 2.82.4
+       ok   GLib typelib is the ported GLib 2.82.4
+       ok   GLib.IOCondition values are the target's poll() bits
+       ok   Gio.SocketFamily.IPV6 is the target's AF_INET6
+       ok   main loop: idle, timeout, then the pipe watch
+       ok   GObject subclass: own signal with an int argument
+       ok   GObject property notify
+       ok   the subclass is a registered GType
+       ok   GVariant print and unpack
+       ok   GLib.markup_escape_text
+       ok   Gio.File.load_contents
+       ok   GLib SHA-256 of "abc"
+       ok   cairo foreign struct support (gi._gi_cairo with pycairo)
+     PASS python3-gobject3
+PASS test_python3_gobject3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

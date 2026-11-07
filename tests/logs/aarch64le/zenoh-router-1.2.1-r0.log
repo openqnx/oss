@@ -1,0 +1,30 @@
+# zenoh-router 1.2.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:29:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zenoh-router qnx-test-zenoh-router qnx-port-tests
+(1/4) Installing zenoh-c (1.2.1-r0)
+(2/4) Installing zenoh-c-dev (1.2.1-r0)
+(3/4) Installing zenoh-router (1.2.1-r0)
+(4/4) Installing qnx-test-zenoh-router (1.0-r0)
+OK: 1023.6 MiB in 150 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zenoh_router
+     == zenoh-router ==
+       ok   start zenohd listening on tcp/<ip>:17457
+       ok   client session A connects to the router
+       ok   client session B connects to the router
+       ok   B subscribes to qnx/router-test/**
+       ok   A's sample reached B through the router, payload intact
+       ok   query the router's admin space @/*/router
+       ok   zenohd answered (@/acd4a1a87cd76087c1a53d2a564f2a8d/router) with its zid and listener tcp/<ip>:17457
+       ok   with zenohd stopped, nothing reaches B (no direct client-to-client path)
+     PASS zenoh-router
+PASS test_zenoh_router
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

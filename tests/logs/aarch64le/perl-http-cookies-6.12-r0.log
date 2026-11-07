@@ -1,0 +1,92 @@
+# perl-http-cookies 6.12-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T23:40:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-http-cookies qnx-test-perl-http qnx-port-tests
+( 1/21) Installing perl-http-date (6.08-r0)
+( 2/21) Installing perl-clone (0.51-r0)
+( 3/21) Installing perl-encode-locale (1.05-r0)
+( 4/21) Installing perl-io-html (1.004-r0)
+( 5/21) Installing perl-lwp-mediatypes (6.05-r0)
+( 6/21) Installing perl-mime-base32 (1.303-r0)
+( 7/21) Installing perl-uri (5.40-r0)
+( 8/21) Installing perl-http-message (7.04-r0)
+( 9/21) Installing perl-http-cookies (6.12-r0)
+(10/21) Installing perl-file-listing (6.16-r0)
+(11/21) Installing perl-http-cookiejar (0.014-r0)
+(12/21) Installing perl-http-daemon (6.17-r0)
+(13/21) Installing perl-http-negotiate (6.01-r0)
+(14/21) Installing perl-html-tagset (3.24-r0)
+(15/21) Installing perl-html-parser (3.86-r0)
+(16/21) Installing perl-net-http (6.24-r0)
+(17/21) Installing perl-try-tiny (0.32-r0)
+(18/21) Installing perl-www-robotrules (6.03-r0)
+(19/21) Installing perl-libwww (6.83-r0)
+(20/21) Installing perl-protocol-websocket (0.26-r0)
+(21/21) Installing qnx-test-perl-http (1.0-r1)
+OK: 975.3 MiB in 167 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_http
+     == perl-libwww and the HTTP modules ==
+       ok   URI canonical: scheme/host case, default port, unreserved unescaped
+       ok   URI new_abs resolves ../
+       ok   URI rel
+       ok   uri_escape
+       ok   uri_unescape
+       ok   URI query_form
+       ok   URI mailto
+       ok   MIME::Base32 encode foobar (RFC 4648)
+       ok   MIME::Base32 decode
+       ok   URI::otpauth secret (Base32-decoded)
+       ok   HTTP::Date time2str
+       ok   HTTP::Date str2time RFC 850
+       ok   HTTP::Date str2time ISO 8601
+       ok   HTTP::Date str2time asctime
+       ok   HTTP::Request as_string
+       ok   HTTP::Response parse
+       ok   decoded_content (UTF-8 charset)
+       ok   content_charset
+       ok   encode gzip sets Content-Encoding
+       ok   gzip content is smaller (35 bytes)
+       ok   gzip round trip
+       ok   HTTP::Request clone is independent
+       ok   HTTP::Headers multi-valued header
+       ok   guess_media_type index.html
+       ok   guess_media_type a.tar.gz (type, encoding)
+       ok   media_suffix image/png has png
+       ok   HTTP::Negotiate picks by Accept q
+       ok   HTTP::Negotiate picks by source quality
+       ok   HTTP::Cookies extract and send back
+       ok   HTTP::Cookies not sent to another domain
+       ok   HTTP::CookieJar domain match, expired dropped
+       ok   File::Listing parses two entries
+       ok   File::Listing name,type,size
+       ok   File::Listing directory type
+       ok   File::Listing mtime Mar 4 2021 GMT
+       ok   RobotRules: /nobots disallowed for TestBot
+       ok   RobotRules: TestBot record overrides *
+       ok   RobotRules: /ok allowed
+       ok   WebSocket server handshake parsed
+       ok   Sec-WebSocket-Accept (RFC 6455 example)
+       ok   WebSocket text frame bytes
+       ok   WebSocket frame parsed back
+       info daemon at http://<ip>:42897/
+       ok   HTTP::Daemon url
+       ok   LWP GET from HTTP::Daemon
+       ok   LWP response Content-Type
+       ok   LWP POST echoed by the daemon
+       ok   LWP 404 for an unknown path
+       ok   LWP follows a redirect
+       ok   LWP cookie jar round trip
+       ok   Net::HTTP raw request
+       ok   lwp-request script fetches from the daemon
+       ok   daemon child exited 0
+     PASS perl-libwww
+PASS test_perl_http
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

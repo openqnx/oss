@@ -1,0 +1,34 @@
+# lynx 2.9.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:26:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lynx qnx-test-lynx qnx-port-tests
+(1/3) Installing libidn2 (2.3.7-r0)
+(2/3) Installing lynx (2.9.2-r0)
+(3/3) Installing qnx-test-lynx (1.0-r0)
+OK: 977.2 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lynx
+     == lynx ==
+       info Lynx Version 2.9.2 (31 May 2024)
+       ok   lynx -version: 2.9.2
+       ok   -version names OpenSSL
+       ok   -dump: the <h1> heading
+       ok   paragraph wrapped within 60 columns
+       ok   list items as "* item"
+       ok   entities: &eacute; -> UTF-8 \u00e9, &amp; -> &
+       ok   link [1] and the References list
+       ok   table cells rendered
+       ok   -nolist: no References section
+       ok   -source: the file byte for byte
+       ok   -dump http://<ip>:<port>/page.html renders the served page
+       ok   the server saw GET /page.html with User-Agent Lynx/2.9.2
+     PASS lynx
+PASS test_lynx
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

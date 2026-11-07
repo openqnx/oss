@@ -1,0 +1,30 @@
+# lanelet2 1.2.3-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:43:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lanelet2 qnx-test-lanelet2 qnx-port-tests
+(1/3) Installing pugixml (1.14-r0)
+(2/3) Installing lanelet2 (1.2.3-r1)
+(3/3) Installing qnx-test-lanelet2 (1.0-r0)
+OK: 982.5 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lanelet2
+     == lanelet2 ==
+       ok   map: 3 lanelets, 8 points (3, 8)
+       ok   centreline of the first lanelet: 10.000000 m (10)
+       ok   write the map as OSM (lat/lon, UTM around 49 N 8 E)
+       ok   read back: 3 lanelets, 8 points, 0 errors
+       ok   points round-trip within 5.21e-07 m (< 1 mm)
+       ok   German vehicle rules: the road lanelet is passable
+       ok   shortest path first -> last: 3 lanelets (3)
+       ok   route length 30.000000 m (30)
+       ok   one-way: no path from the last lanelet back to the first
+     PASS lanelet2
+PASS test_lanelet2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,31 @@
+# python3-sounddevice 0.5.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:07:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-sounddevice qnx-test-python3-sounddevice qnx-port-tests
+(1/5) Installing portaudio (19.7.0-r0)
+(2/5) Installing python3-cparser (3.12-r0)
+(3/5) Installing python3-cffi (2.1.1-r0)
+(4/5) Installing python3-sounddevice (0.5.6-r0)
+(5/5) Installing qnx-test-python3-sounddevice (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 975.4 MiB in 151 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_sounddevice
+     == python3-sounddevice ==
+       info sounddevice 0.5.6, PortAudio V19.7.0-devel, revision unknown
+       ok   PortAudio 19.7.0
+       ok   the ALSA host API
+       info 0 device(s)
+       ok   query_devices() answers
+       ok   a missing device index is an error
+       ok   check_output_settings without a device is refused
+     PASS python3-sounddevice
+PASS test_python3_sounddevice
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

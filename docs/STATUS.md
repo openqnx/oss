@@ -65,7 +65,26 @@ current: it is the hand-over, not a history (that is `git log`).
      g12 languages, g14 python-a, g13 RViz2 (ros2-rviz, OGRE GLES2 on QNX Screen) +
      assimp: 176 components, verify-on-target x86_64 all PASS; aarch64 in progress.
    - Ported and trial-run, not yet committed: g15 robotics (+ ros2 fixes), g16 python-b,
-     g17 Qt6 modules (qt6 rebuilt with Wayland, r2).
+     g17 Qt6 modules (qt6 rebuilt with Wayland, r2): 68 components, x86_64 verified 67/68
+     (moveit2 failed).
+   - Paused 2026-11-05 (usage limit); PC rebooted 2026-11-08, so no job or VM is running.
+     aarch64 verify of the committed 176: 159 PASS, 4 FAIL (ensmallen, fcft,
+     icon-naming-utils, mate-common), 13 not run (VM unreachable); retry list
+     `tmp/session/verify-retry-a64.txt`. g15-g17 (68): aarch64 68/68, x86_64 67/68
+     (moveit2). Then: fix the failures, commit g15-g17, ask before publishing.
+     The step-by-step list: `tmp/session/RESUME.md` (local).
+   - Next after that: a native compiler on the target like QNX's Raspberry Pi 5 image
+     (clang + binutils + make/cmake there). llvm 22.1.8 (clang, lld) is ported but only
+     tested with `clang -c`; missing: QNX headers/crt/link libraries on the target (copied
+     from the user's SDP by target-bootstrap), cc/gcc wrappers and clang config, C++ on the
+     SDP's libc++.so.2 ABI, and a compile-link-run test.
+   - Then SocketCAN: QNX 8.0 has no AF_CAN, so can-utils lacks candump/cansend/cangen.
+     Look for a public SocketCAN layer for QNX 8 first; otherwise a compatibility library
+     over QNX's dev-can drivers plus a virtual CAN bus for tests; rebuild can-utils.
+   - Then the CAN ecosystem on top of it: python-can, cantools, canmatrix, opendbc,
+     CANopenNode, ros2_canopen, isotp-c, can-isotp, udsoncan, python-OBD, J1939,
+     libcanard (OpenCyphal), socketcand, cannelloni, libsocketcan, Wireshark/tshark,
+     SavvyCAN, Cangaroo, Scapy.
    - Left: heavy ones (bazel, openjdk, ROCm, xla, tvm, mediapipe, jax, ...) need a
      feasibility check; then the 158 version updates (`scripts/check-updates`).
    - Known check-all failures (before this work): avahi man links, libfolly.pc,

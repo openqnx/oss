@@ -1,0 +1,33 @@
+# shaderc 2026.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:32:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u shaderc qnx-test-shaderc qnx-port-tests
+(1/4) Installing spirv-tools (1.4.321.0-r0)
+(2/4) Installing glslang (1.4.321.0-r0)
+(3/4) Installing shaderc (2026.2-r0)
+(4/4) Installing qnx-test-shaderc (1.0-r0)
+OK: 990.1 MiB in 150 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_shaderc
+     == shaderc ==
+       info shaderc v2026.2
+       ok   glslc compiles a fragment shader (stage from the extension, -D macro)
+       ok   SPIR-V magic
+       ok   spirv-val: valid
+       ok   the -DSCALE=0.25 constant is in the module
+       ok   glslc -E preprocesses
+       ok   glslc -S emits SPIR-V assembly
+       ok   without -DSCALE: an error naming SCALE
+       ok   HLSL front end
+       ok   -O for Vulkan 1.2
+       ok   glslc -M: dependency output
+     PASS shaderc
+PASS test_shaderc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

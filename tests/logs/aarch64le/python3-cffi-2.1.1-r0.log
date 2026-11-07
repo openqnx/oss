@@ -1,0 +1,36 @@
+# python3-cffi 2.1.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T02:17:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-cffi qnx-test-python3-cffi qnx-port-tests
+(1/3) Installing python3-cparser (3.12-r0)
+(2/3) Installing python3-cffi (2.1.1-r0)
+(3/3) Installing qnx-test-python3-cffi (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 975.1 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_cffi
+     == python3-cffi ==
+       info cffi 2.1.1, pycparser 3.12, backend /usr/local/lib/python3.14/site-packages/_cffi_backend.cpython-314.so
+       ok   _cffi_backend is the compiled extension
+       ok   strlen() through ABI mode
+       ok   abs()
+       ok   snprintf() with varargs
+       ok   qsort() with a Python callback
+       ok   div() returns a struct by value
+       ok   struct size and type name
+       ok   ffi.new allocates, ffi.cast to integer
+       ok   bad cdef raises CDefError
+       ok   pycparser: typedef, struct, function definition
+       ok   pycparser: function name and parameters
+       ok   pycparser: operator precedence in the AST
+       ok   pycparser: C regenerated from the AST
+     PASS python3-cffi
+PASS test_python3_cffi
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

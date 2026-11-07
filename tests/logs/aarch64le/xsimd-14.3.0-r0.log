@@ -1,0 +1,36 @@
+# xsimd 14.3.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:38:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xsimd-dev qnx-test-xsimd qnx-port-tests
+(1/2) Installing qnx-test-xsimd (1.0-r0)
+(2/2) Installing xsimd-dev (14.3.0-r0)
+OK: 976.3 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xsimd
+     == xsimd ==
+       info xsimd 14.3.0, default arch arm64+neon, 4 floats per batch
+       ok   aarch64: a NEON architecture
+       ok   CPU reports NEON at run time
+       ok   batch widths >= 4 floats / 2 doubles
+       ok   add
+       ok   fma(x, y, 1)
+       ok   reduce_add = sum of lanes
+       ok   reduce_max
+       ok   select(x > 2.5, x, 0)
+       ok   any / all of a mask
+       info max error: exp 1.1e-07 log 9.2e-08 sin 6e-08 cos 6e-08 sqrt 1.2e-07
+       ok   exp, log within 1e-6 relative
+       ok   sin, cos within 1e-6 absolute
+       ok   sqrt within 2 ulp
+       ok   double sqrt of squares is exact
+       ok   int32 multiply and abs
+     PASS xsimd
+PASS test_xsimd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

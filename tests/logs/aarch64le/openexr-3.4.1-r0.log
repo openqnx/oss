@@ -1,0 +1,31 @@
+# openexr 3.4.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:44:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openexr qnx-test-openexr qnx-port-tests
+(1/1) Installing qnx-test-openexr (1.0-r1)
+OK: 974.3 MiB in 147 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openexr
+     == openexr ==
+       ok   lossless round trip, compression none
+       ok   lossless round trip, compression RLE
+       ok   lossless round trip, compression ZIPS
+       ok   lossless round trip, compression ZIP
+       ok   lossless round trip, compression PIZ
+       ok   lossless round trip, compression HTJ2K (OpenJPH)
+       ok   lossy B44 round trip within tolerance
+       ok   tiled file has 4x2 tiles of 16x16
+       ok   tiled pixels read back
+       ok   exr_start_read opens the file (C core)
+       ok   core: one part, 64x32, ZIP
+       ok   core: channels A,B,G,R
+     PASS openexr
+PASS test_openexr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

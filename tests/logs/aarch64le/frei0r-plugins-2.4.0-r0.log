@@ -1,0 +1,34 @@
+# frei0r-plugins 2.4.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T20:32:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u frei0r-plugins qnx-test-frei0r-plugins qnx-port-tests
+(1/2) Installing frei0r-plugins (2.4.0-r0)
+(2/2) Installing qnx-test-frei0r-plugins (1.0-r0)
+OK: 976.4 MiB in 142 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_frei0r_plugins
+     == frei0r-plugins ==
+       info 156 plugins in /usr/local/lib/frei0r-1
+       ok   over 100 plugins installed
+       ok   invert0r: a filter, frei0r API 1
+       ok   invert0r: every pixel 255-x per channel
+       ok   onecol0r: a source
+       info onecol0r pixel 0xffff7f00
+       info color model 0
+       ok   onecol0r: the whole frame is the colour (1, 0.5, 0)
+       ok   addition: a two-input mixer
+       ok   addition: channel sums, saturating at 255
+       info cairogradient: cairogradient by Janne Liljeblad
+       ok   cairogradient loads and initialises
+       info facedetect: opencvfacedetect by binarymillenium, ddennedy
+       ok   facedetect loads and initialises
+     PASS frei0r-plugins
+PASS test_frei0r_plugins
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,30 @@
+# zip 3.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:38:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zip qnx-test-zip qnx-port-tests
+(1/2) Installing zip (3.0-r0)
+(2/2) Installing qnx-test-zip (1.0-r0)
+OK: 974.8 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zip
+     == zip ==
+       ok   zip -v: Zip 3.0
+       ok   built with LARGE_FILE_SUPPORT and ZIP64_SUPPORT
+       ok   stored abc.txt: PK\3\4 header, CRC-32 352441c2 in it
+       ok   stored (-0): the data is in the archive verbatim
+       ok   deflate -9: two 37 KiB text files, archive 5706 bytes (deflated 94%)
+       ok   -sf lists abc.txt rep.txt sub/ sub/inner.txt sub/rep2.txt
+       ok   -d removes rep.txt
+       ok   -u: abc.txt updated
+       ok   zipnote -w: entry and archive comments written and read back
+       ok   zipsplit -n 40000: 2 parts, largest 39621 bytes
+     PASS zip
+PASS test_zip
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

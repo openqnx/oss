@@ -1,0 +1,28 @@
+# libasyncns 0.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T21:58:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libasyncns qnx-test-libasyncns qnx-port-tests
+(1/2) Installing libasyncns (0.8-r0)
+(2/2) Installing qnx-test-libasyncns (1.0-r0)
+OK: 974.3 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libasyncns
+     == libasyncns ==
+       ok   asyncns_new(2 workers)
+       ok   getaddrinfo(<ip>, 80): AF_INET <ip>:80
+       ok   getaddrinfo(localhost): a loopback address (from /etc/hosts)
+       ok   getnameinfo(<ip>:22, numeric) -> "<ip>", "22"
+       ok   three outstanding queries complete, each with its own answer (a fourth cancelled)
+       ok   no queries left outstanding
+       info no-such-host.invalid: 8 (Name does not resolve)
+       ok   a .invalid name fails with an EAI_ error
+     PASS libasyncns
+PASS test_libasyncns
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

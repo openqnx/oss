@@ -1,0 +1,59 @@
+# python3-gast 0.7.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:22:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-gast qnx-test-python3-pylibs-b qnx-port-tests
+( 1/19) Installing gdbm (1.24-r0)
+( 2/19) Installing readline (8.2-r0)
+( 3/19) Installing sqlite (3.47.2-r0)
+( 4/19) Installing python3 (3.14.0-r3)
+( 5/19) Installing python3-gast (0.7.0-r0)
+( 6/19) Installing openblas (0.3.28-r0)
+( 7/19) Installing numpy (2.3.4-r1)
+( 8/19) Installing python3-absl-py (2.5.1-r0)
+( 9/19) Installing python3-beniget (0.5.0-r0)
+(10/19) Installing python3-bracex (3.2.1-r0)
+(11/19) Installing python3-setuptools (80.8.0-r0)
+(12/19) Installing python3-cppy (1.3.1-r0)
+(13/19) Installing python3-distro (1.9.0-r0)
+(14/19) Installing python3-appdirs (1.4.4-r0)
+(15/19) Installing python3-six (1.17.0-r0)
+(16/19) Installing python3-fs (2.4.16-r0)
+(17/19) Installing python3-opt-einsum (3.4.0-r0)
+(18/19) Installing python3-py (1.11.0-r0)
+(19/19) Installing qnx-test-python3-pylibs-b (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 385.8 MiB in 100 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pylibs_b
+     == python3-pylibs-b ==
+       ok   absl.flags parses integer, string, boolean and enum flags
+       ok   absl.flags rejects a bad integer
+       ok   absl.logging verbosity
+       ok   gast: arguments are gast.Name nodes
+       ok   beniget: def-use chains of a, b and both definitions of c
+       ok   gast round trip through unparse
+       ok   bracex: sequence and list expansion
+       ok   bracex: nested braces
+       ok   bracex: zero padded step
+       ok   cppy.get_include() has cppy/cppy.h
+       ok   cppy/ptr.h is the C++ header
+       ok   fs: MemoryFS walk
+       ok   fs: file size from getinfo
+       ok   fs: copy_fs to an OS directory
+       ok   fs: TarFS written and read back
+       ok   opt_einsum: optimal path of a matrix chain
+       ok   opt_einsum: optimised FLOP count 400000
+       ok   opt_einsum.contract with numpy arrays: exact result
+       ok   py.path.local reads a file
+       info distro: id='qnx' name='QNX'
+       ok   distro answers (no os-release on QNX)
+     PASS python3-pylibs-b
+PASS test_python3_pylibs_b
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

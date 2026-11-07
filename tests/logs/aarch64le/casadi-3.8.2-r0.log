@@ -1,0 +1,25 @@
+# casadi 3.8.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:40:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u casadi qnx-test-casadi qnx-port-tests
+(1/2) Installing casadi (3.8.2-r0)
+(2/2) Installing qnx-test-casadi (1.0-r0)
+OK: 990.9 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_casadi
+     == casadi ==
+       ok   AD: d/dx x^2 sin x at 1 = 2.223244275484 (2 sin 1 + cos 1 = 2.223244275484)
+       ok   AD: Hessian of x^2 y + y^3 at (1,2) is [[4,2],[2,12]]
+       ok   NLP sqpmethod: Rosenbrock minimum at (1.000000, 1.000000), f = 1.12e-18 (1, 1, 0)
+       ok   NLP: min x^2+y^2, x+y>=1 -> (0.500000, 0.500000), f = 0.500000, lambda = -1.000000 (0.5, 0.5, 0.5, -1)
+       ok   CVODES: x' = -x, x(0) = 1 -> x(1) = 0.3678794412 (1/e = 0.3678794412)
+     PASS casadi
+PASS test_casadi
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

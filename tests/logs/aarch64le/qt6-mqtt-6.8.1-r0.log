@@ -1,0 +1,96 @@
+# qt6-mqtt 6.8.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:15:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qt6-mqtt qnx-test-qt6-mqtt qnx-port-tests
+( 1/23) Installing cjson (1.7.18-r0)
+( 2/23) Installing mosquitto (2.0.20-r0)
+( 3/23) Installing double-conversion (3.3.0-r0)
+( 4/23) Installing dav1d (1.5.0-r0)
+( 5/23) Installing lame (3.100-r0)
+( 6/23) Installing libogg (1.3.5-r0)
+( 7/23) Installing libtheora (1.1.1-r0)
+( 8/23) Installing libvorbis (1.3.7-r0)
+( 9/23) Installing libvpx (1.15.0-r0)
+(10/23) Installing openh264 (2.5.0-r0)
+(11/23) Installing opus (1.5.2-r0)
+(12/23) Installing x264 (0_git-r0)
+(13/23) Installing x265 (3.6-r0)
+(14/23) Installing ffmpeg (7.1.1-r0)
+(15/23) Installing aom (3.15.3-r0)
+(16/23) Installing fdk-aac (2.0.3-r0)
+(17/23) Installing gstreamer (1.24.10-r0)
+(18/23) Installing gst-plugins-base (1.24.10-r1)
+(19/23) Installing svt-av1 (2.3.0-r0)
+(20/23) Installing gst-plugins-bad (1.24.10-r0)
+(21/23) Installing qt6 (6.8.1-r2)
+(22/23) Installing qt6-mqtt (6.8.1-r0)
+(23/23) Installing qnx-test-qt6-mqtt (1.0-r0)
+OK: 1196.1 MiB in 169 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qt6_mqtt
+     == qt6-mqtt ==
+       ok   mosquitto broker found
+     1793852108: Warning: Mosquitto should not be run as root/administrator.
+     1793852108: mosquitto version 2.0.20 starting
+     1793852108: Config loaded from /data/var/tmp/qt6-mqtt-19371.conf.
+     1793852108: Opening ipv4 listen socket on port 19371.
+     1793852108: mosquitto version 2.0.20 running
+       ok 1793852108: New connection from <ip>:48965 on port 19371. 
+      broker listening
+     1793852108: New connection from <ip>:20089 on port 19371.
+     1793852108: Client <unknown> closed its connection.
+     1793852108: Client <unknown> closed its connection.
+     1793852108: New connection from <ip>:65497 on port 19371.
+     1793852108: New connection from <ip>:62586 on port 19371.
+     1793852108: New client connected from <ip>:65497 as qnx-a (p2, c1, k60).
+     1793852108: No will message specified.
+     1793852108: Sending CONNACK to qnx-a (0, 0)
+     1793852108: New client connected from <ip>:62586 as qnx-b (p5, c1, k60).
+     1793852108: No will message specified.
+     1793852108: Sending CONNACK to qnx-b (0, 0)
+       ok   both clients connected (3.1.1 and 5)
+     1793852108: Received SUBSCRIBE from qnx-b
+     1793852108: 	qnx/test/# (QoS 1)
+     1793852108: qnx-b 1 qnx/test/#
+     1793852108: Sending SUBACK to qnx-b
+       ok   wildcard subscription acknowledged
+     1793852108: Received PUBLISH from qnx-a (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
+     1793852108: Sending PUBLISH to qnx-b (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
+     1793852108: Received PUBLISH from qnx-a (d0, q1, r0, m3, 'qnx/test/q1', ... (3 bytes))
+     1793852108: Sending PUBLISH to qnx-b (d0, q1, r0, m1, 'qnx/test/q1', ... (3 bytes))
+     1793852108: Sending PUBACK to qnx-a (m3, rc0)
+       ok   QoS 1 publish acknowledged (PUBACK)
+      1793852108: Received PUBACK from qnx-b (Mid: 1, RC:0) 
+     ok   QoS 0 and 1 messages received
+       info got qnx/test/q0: zero
+       info got qnx/test/q1: one
+     1793852108: Received PUBLISH from qnx-b (d0, q1, r0, m4, 'qnx/test/v5', ... (4 bytes))
+     1793852108: Sending PUBLISH to qnx-b (d0, q1, r0, m2, 'qnx/test/v5', ... (4 bytes))
+     1793852108: Sending PUBACK to qnx-b (m4, rc0)
+     1793852108: Received PUBACK from qnx-b (Mid: 2, RC:0)
+       ok   MQTT 5 user property delivered
+     1793852109: Received PUBLISH from qnx-a (d0, q1, r1, m5, 'qnx/retained', ... (4 bytes))
+     1793852109: Sending PUBACK to qnx-a (m5, rc0)
+     1793852109: Received SUBSCRIBE from qnx-b
+     1793852109: 	qnx/retained (QoS 1)
+     1793852109: qnx-b 1 qnx/retained
+     1793852109: Sending SUBACK to qnx-b
+     1793852109: Sending PUBLISH to qnx-b (d0, q1, r1, m3, 'qnx/retained', ... (4 bytes))
+     1793852109: Received PUBACK from qnx-b (Mid: 3, RC:0)
+       ok   retained message delivered to a late subscriber
+     1793852109: Received DISCONNECT from qnx-a
+     1793852109: Client qnx-a disconnected.
+       ok1793852109: Received DISCONNECT from qnx-b 
+      1793852109: Client qnx-b disconnected. 
+     clean disconnect
+     1793852109: mosquitto version 2.0.20 terminating
+     PASS qt6-mqtt
+PASS test_qt6_mqtt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

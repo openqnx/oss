@@ -1,0 +1,38 @@
+# vala 0.56.18-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:36:39Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vala qnx-test-vala qnx-port-tests
+(1/2) Installing vala (0.56.18-r0)
+(2/2) Installing qnx-test-vala (1.0-r0)
+OK: 988.2 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vala
+     == vala ==
+       ok   valac --version
+       ok   valac -C --header --vapi demo.vala (rc 0, no diagnostics)
+       ok   demo.c is the build machine's valac 0.56.18 output (MD5)
+       ok   demo.h likewise
+       ok   demo.vapi likewise
+       ok   demo.c has: demo_rect_get_type
+       ok   demo.c has: g_signal_new ("resized"
+       ok   demo.c has: g_signal_emit (self, demo_rect_signals[DEMO_RECT_RESIZED_SIGNAL], 0, f)
+       ok   demo.c has: demo_shape_area (DemoShape* self)
+       ok   demo.c has: DEMO_COLOR_BLUE
+       ok   demo.c has: g_ptr_array_foreach (items
+       ok   demo.c has: g_regex_new (
+       ok   demo.c has: _vala_main (gchar** args
+       ok   demo.c has: g_object_new (object_type, "w", w, "h", h, NULL)
+       ok   demo.h declares demo_shape_area and demo_rect_new
+       ok   demo.vapi describes class Rect
+       ok   --pkg gio-2.0 (installed gio-2.0.vapi): g_file_new_for_path
+       ok   a type error: position, message, exit 1
+     PASS vala
+PASS test_vala
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

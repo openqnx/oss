@@ -1,0 +1,28 @@
+# ruckig 0.17.3-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:47:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ruckig qnx-test-ruckig qnx-port-tests
+(1/2) Installing ruckig (0.17.3-r1)
+(2/2) Installing qnx-test-ruckig (1.0-r0)
+OK: 231.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ruckig
+     == ruckig ==
+       ok   calculate() succeeds
+       ok   duration 3.174802 s, expected 4/cbrt(2) = 3.174802 s
+       ok   ends at 1 m, at rest
+       ok   at T/2: 0.500000 m (0.5), v 0.629961 (0.5^(2/3) = 0.629961)
+       ok   velocity and acceleration stay within their limits
+       ok   online update() loop reaches the 3-DoF target
+       ok   389 cycles of 10 ms for a 3.8934 s trajectory
+       ok   end state (5.000000, -2.000000, -3.500000), v (0.000, -0.500, -0.500), a3 0.500: expected (5, -2, -3.5), (0, -0.5, -0.5), 0.5
+     PASS ruckig
+PASS test_ruckig
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

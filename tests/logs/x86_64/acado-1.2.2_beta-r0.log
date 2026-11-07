@@ -1,0 +1,39 @@
+# acado 1.2.2_beta-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:12:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u acado qnx-test-acado qnx-port-tests
+(1/2) Installing acado (1.2.2_beta-r0)
+(2/2) Installing qnx-test-acado (1.0-r0)
+OK: 241.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_acado
+     == acado ==
+       ok   OCP x'=u, x(1)=1: objective 1.00000000, u in [1.000000, 1.000000] (1, u = 1)
+       ok   OCP x(1)=0.6, u<=0.8: objective 0.36000000, u in [0.600000, 0.600000] (0.36, u = 0.6)
+     
+     ACADO Toolkit::Code Generation Tool
+     Copyright (C) 2008-2014 by Boris Houska, Hans Joachim Ferreau,
+     Milan Vukov, Rien Quirynen, KU Leuven.
+     Developed within the Optimization in Engineering Center (OPTEC)
+     under supervision of Moritz Diehl. All rights reserved.
+     
+     ACADO Toolkit is distributed under the terms of the GNU Lesser
+     General Public License 3 in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     GNU Lesser General Public License for more details.
+     
+       ok   OCPexport::exportCode of a double-integrator MPC
+       ok   acado_solver.c written
+       ok   acado_common.h defines ACADO_N 20 and ACADO_NX 2
+       ok   the qpOASES interface was exported from the installed templates
+     PASS acado
+PASS test_acado
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,33 @@
+# litehtml 0.9-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:15:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u litehtml qnx-test-litehtml qnx-port-tests
+(1/3) Installing gumbo-parser (0.13.2-r0)
+(2/3) Installing litehtml (0.9-r0)
+(3/3) Installing qnx-test-litehtml (1.0-r0)
+OK: 975.7 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_litehtml
+     == litehtml ==
+       ok   document parsed (gumbo) and styled
+       info rendered width 200, height 222
+       ok   #a: 200x50 at (0,0)
+       ok   #f floats right: x 300, below #a
+       ok   the paragraph starts at y 50, one 20 px line
+       ok   'aaaa bbbb cccc dddd' in 100 px wraps to two lines (40 px)
+       ok   table cells 60 px wide, side by side
+       ok   select_all('li'): 3 items
+       ok   the <title> becomes the caption
+       ok   'hello' drawn on the paragraph's line
+       ok   'world' drawn upper-cased, blue, after 'hello ' (x 48)
+       ok   #a's red background drawn
+     PASS litehtml
+PASS test_litehtml
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

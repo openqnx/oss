@@ -1,0 +1,28 @@
+# apriltag 3.4.5-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:12:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u apriltag qnx-test-apriltag qnx-port-tests
+(1/2) Installing apriltag (3.4.5-r1)
+(2/2) Installing qnx-test-apriltag (1.0-r0)
+OK: 232.9 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_apriltag
+     == apriltag ==
+       ok   tag36h11 #42 rendered as 10x10 cells
+       ok   exactly one tag detected
+       ok   its ID is 42
+       ok   its family is tag36h11
+       ok   no bits corrected
+       ok   centre at (200.0, 150.0), expected (200, 150)
+       ok   the four corners are 80 px from the centre on each axis
+       ok   a blank image gives no detections
+     PASS apriltag
+PASS test_apriltag
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

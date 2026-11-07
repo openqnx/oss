@@ -1,0 +1,35 @@
+# python3-cairo 1.29.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:45:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-cairo qnx-test-python3-cairo qnx-port-tests
+(1/2) Installing python3-cairo (1.29.2-r0)
+(2/2) Installing qnx-test-python3-cairo (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 974.9 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_cairo
+     == python3-cairo ==
+       info pycairo 1.29.2, cairo 1.18.2
+       ok   linked against the ported cairo 1.18.2
+       ok   cairo._cairo is the compiled extension
+       ok   stride and size
+       ok   opaque red pixels
+       ok   half transparent blue, premultiplied
+       ok   write_to_png writes a PNG
+       ok   PNG read back has the same pixels
+       ok   PDF surface writes a PDF
+       ok   SVG surface writes SVG
+       ok   Matrix.transform_point
+       ok   Matrix.invert
+       ok   path extents
+       ok   the C API capsule (cairo.CAPI) for PyGObject
+     PASS python3-cairo
+PASS test_python3_cairo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

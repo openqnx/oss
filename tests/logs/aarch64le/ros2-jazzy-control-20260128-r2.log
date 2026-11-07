@@ -1,0 +1,33 @@
+# ros2-jazzy-control 20260128-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:23:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-control qnx-test-ros2-jazzy-control qnx-port-tests
+(1/1) Installing qnx-test-ros2-jazzy-control (1.0-r0)
+OK: 974.2 MiB in 147 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_control
+     == ros2-jazzy-control ==
+       ok   ament index has controller_manager
+       ok   ament index has hardware_interface
+       ok   ament index has joint_state_broadcaster
+       ok   ament index has forward_command_controller
+       ok   ament index has joint_trajectory_controller
+       ok   ament index has diff_drive_controller
+       ok   spawner loaded and activated joint_state_broadcaster and forward_position_controller
+       ok   load_controller + configure_controller: joint_trajectory_controller (inactive)
+       ok   list_controllers: [('forward_position_controller', 'active'), ('joint_state_broadcaster', 'active'), ('joint_trajectory_controller', 'inactive')]
+       ok   /joint_states reports joint1 at its initial 0.0
+       ok   forward command 0.5 -> joint1 at 0.500000
+       ok   switch_controller: forward_position_controller -> joint_trajectory_controller
+       ok   FollowJointTrajectory goal to -0.8 rad in 1 s succeeded
+       ok   joint_trajectory_controller -> joint1 at -0.800000 (-0.8)
+     PASS ros2-jazzy-control
+PASS test_ros2_jazzy_control
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

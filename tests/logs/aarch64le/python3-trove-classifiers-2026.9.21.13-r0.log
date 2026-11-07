@@ -1,0 +1,71 @@
+# python3-trove-classifiers 2026.9.21.13-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:25:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-trove-classifiers qnx-test-python3-pylibs qnx-port-tests
+( 1/12) Installing python3-trove-classifiers (2026.9.21.13-r0)
+( 2/12) Installing python3-appdirs (1.4.4-r0)
+( 3/12) Installing python3-attrs (26.1.0-r0)
+( 4/12) Installing python3-typing-extensions (4.16.0-r0)
+( 5/12) Installing python3-cattrs (26.2.1-r0)
+( 6/12) Installing python3-lark (1.3.1-r0)
+( 7/12) Installing python3-pathspec (1.1.1-r0)
+( 8/12) Installing python3-platformdirs (4.14.3-r0)
+( 9/12) Installing python3-ply (3.11-r0)
+(10/12) Installing python3-tomli (2.5.0-r0)
+(11/12) Installing python3-typeguard (4.6.0-r0)
+(12/12) Installing qnx-test-python3-pylibs (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 976.0 MiB in 158 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pylibs
+     == python3-pylibs ==
+       ok   lark lalr: tree shape sub(mul(..), neg(..))
+       ok   lark lalr: 2*(3+4)--1 evaluates to 15
+       ok   lark earley: tree shape sub(mul(..), neg(..))
+       ok   lark earley: 2*(3+4)--1 evaluates to 15
+       ok   lark: UnexpectedInput at column 5
+       info lark 1.3.1
+       ok   ply.lex: token stream
+       ok   ply.yacc: precedence, 12+3*(4+1) = 27
+       ok   tomli: tables, arrays of tables, values
+       ok   tomli: offset date-time
+       ok   tomli: duplicate key raises TOMLDecodeError
+       ok   pathspec: gitignore patterns, negation, anchoring, **
+       ok   trove-classifiers: real classifiers listed
+       ok   trove-classifiers: invented one absent, > 800 known
+       ok   typing_extensions: TypedDict with NotRequired
+       ok   typing_extensions: runtime-checkable Protocol
+       ok   typing_extensions: Annotated, Literal introspection
+       ok   attrs: __repr__ and __eq__ generated
+       ok   attrs: asdict, evolve
+       ok   attrs: validator rejects -1
+       ok   attrs: frozen instance refuses assignment
+       ok   cattrs: unstructure nested attrs classes
+       ok   cattrs: structure back to equal objects
+       ok   cattrs: '12' structured to int 12
+       ok   cattrs: missing field raises ClassValidationError
+       ok   typeguard: check_type passes a List[int]
+       ok   typeguard: Dict[str, int] with a str value raises TypeCheckError
+       ok   typeguard: @typechecked accepts valid calls
+       ok   typeguard: @typechecked rejects a float argument
+       info platformdirs 4.14.3: /data/home/root/.config/qnxapp/1.0, /data/home/root/.cache/qnxapp/1.0
+       ok   platformdirs: XDG config and cache directories
+       ok   platformdirs: user data directory
+       ok   platformdirs: XDG_CONFIG_HOME honoured
+       ok   appdirs: data directory, XDG_CONFIG_HOME
+       ok   filelock: acquired
+       ok   filelock: another process times out while it is held
+       ok   filelock: reentrant in the same thread
+       ok   filelock: released
+       ok   filelock: another process acquires it after release
+       info filelock 3.32.7, UnixFileLock
+     PASS python3-pylibs
+PASS test_python3_pylibs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,38 @@
+# pythran 0.19.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:09:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pythran qnx-test-python3-buildtools qnx-port-tests
+(1/9) Installing python3-gast (0.7.0-r0)
+(2/9) Installing python3-beniget (0.5.0-r0)
+(3/9) Installing python3-ply (3.11-r0)
+(4/9) Installing python3-setuptools (80.8.0-r0)
+(5/9) Installing pythran (0.19.0-r1)
+(6/9) Installing python3-packaging (25.0-r0)
+(7/9) Installing gyp (0.22.4-r0)
+(8/9) Installing scons (4.11.1-r0)
+(9/9) Installing qnx-test-python3-buildtools (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 1023.4 MiB in 155 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_buildtools
+     == python3-buildtools ==
+       ok   scons builds app from two sources with the fake compiler
+       ok   scons ran each step once
+       ok   second scons run: up to date, nothing run
+       ok   a changed source rebuilds exactly its object and the link
+       ok   scons -c removes the targets
+       ok   gyp --format=ninja: sources, define and the executable
+       ok   gyp --format=make: Makefile and hello.target.mk
+       ok   pythran -E translates the kernel to C++
+       ok   the kernel itself runs as Python (32.0)
+       ok   pythran-config --cflags names the installed headers
+     PASS python3-buildtools
+PASS test_python3_buildtools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

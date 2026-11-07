@@ -1,0 +1,32 @@
+# python3-ptyprocess 0.7.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:05:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-ptyprocess qnx-test-python3-pexpect qnx-port-tests
+(1/3) Installing python3-ptyprocess (0.7.0-r0)
+(2/3) Installing python3-pexpect (4.9.0-r0)
+(3/3) Installing qnx-test-python3-pexpect (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 974.5 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pexpect
+     == python3-pexpect ==
+       info pexpect 4.9.0, ptyprocess 0.7.0
+       ok   shell arithmetic echoed through the pty
+       ok   child sees the terminal size 30x100
+       ok   Ctrl-C interrupts a sleeping child
+       ok   exit status 3 from the shell
+       ok   pexpect.run(): output and exit status
+       ok   expect() times out with TIMEOUT
+       ok   ptyprocess: the child's stdin and stdout are terminals
+       ok   ptyprocess: written line read back by the child
+       ok   ptyprocess: child exit status 0
+     PASS python3-pexpect
+PASS test_python3_pexpect
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

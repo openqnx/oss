@@ -1,0 +1,31 @@
+# spirv-tools 1.4.321.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:33:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u spirv-tools qnx-test-spirv-tools qnx-port-tests
+(1/2) Installing spirv-tools (1.4.321.0-r0)
+(2/2) Installing qnx-test-spirv-tools (1.0-r0)
+OK: 985.7 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_spirv_tools
+     == spirv_tools ==
+       info SPIRV-Tools v2025.3 v2025.3-0-g33e0256
+       ok   spirv-as assembles the shader
+       ok   the binary starts with the SPIR-V magic 0x07230203
+       ok   spirv-val: valid for Vulkan 1.0
+       ok   spirv-dis: entry point and the 0.5 constant back
+       ok   spirv-dis names %main from its OpName
+       ok   spirv-val rejects a type-mismatched OpStore
+       ok   spirv-opt -O: still valid (296 -> 296 bytes)
+       ok   spirv-opt --strip-debug removes OpName
+       ok   spirv-cfg: a dot graph of the CFG
+       ok   spirv-link of one module validates
+     PASS spirv_tools
+PASS test_spirv_tools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

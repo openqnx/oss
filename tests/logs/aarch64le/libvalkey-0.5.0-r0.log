@@ -1,0 +1,44 @@
+# libvalkey 0.5.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:12:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libvalkey qnx-test-libvalkey qnx-port-tests
+(1/3) Installing libvalkey (0.5.0-r0)
+(2/3) Installing valkey (9.1.3-r1)
+(3/3) Installing qnx-test-libvalkey (1.0-r0)
+OK: 987.3 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libvalkey
+     == libvalkey ==
+       ok   reader: an incomplete reply yields nothing yet
+       ok   reader: array ["foo", 42, nil]
+       ok   valkeyFormatCommand: exact RESP bytes (binary %b)
+       ok   self-signed certificate for the TLS port
+       ok   valkeyConnect to valkey-server on <ip>, PING -> PONG
+       ok   SET of a binary value
+       ok   GET returns the 6 binary bytes
+       ok   INCR: 42
+       ok   GET of a missing key: nil
+       ok   INCR of a non-integer: error reply
+       ok   pipelining: three commands, replies in order
+       ok   RESP3: HELLO 3, HGETALL is a map reply
+       ok   valkeyConnectUnix: GET over the UNIX socket
+       ok   async API (poll adapter): SET and GET callbacks, then disconnect
+       ok   valkeyCreateTLSContext trusting the self-signed certificate
+       ok   TLS handshake with valkey-server's tls-port
+       ok   SET/GET over TLS
+       ok   CLUSTER ADDSLOTSRANGE 0 16383
+       ok   CLUSTER KEYSLOT foo = 12182
+       ok   cluster-mode valkey-server reaches cluster_state:ok
+       ok   valkeyClusterConnect fetched the slot map
+       ok   the cluster has one node
+       ok   valkeyClusterCommand: SET/GET of 20 keys routed by slot
+     PASS libvalkey
+PASS test_libvalkey
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

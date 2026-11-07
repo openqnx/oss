@@ -1,0 +1,56 @@
+# valkey 9.1.3-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:36:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u valkey qnx-test-valkey qnx-port-tests
+(1/2) Installing qnx-test-valkey (1.0-r0)
+(2/2) Installing valkey (9.1.3-r1)
+OK: 987.1 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_valkey
+     == valkey ==
+       ok   valkey-server answers PING on <ip>
+       ok   SET/GET
+       ok   binary-safe value (NUL, CR LF inside)
+       ok   GET of a missing key: nil
+       ok   INCR/INCRBY: 42
+       ok   INCR on a non-integer: error reply
+       ok   lists: RPUSH/LPUSH/LRANGE
+       ok   hashes: HSET/HGET/HLEN
+       ok   sorted set ordered by score
+       ok   EXPIRE/TTL
+       ok   a key with a 50 ms expiry is gone after 300 ms
+       ok   MULTI/EXEC
+       ok   EVAL Lua script (server.call): (42+8)*2 = 100
+       ok   Lua cjson library
+       ok   PUBLISH reaches one subscriber
+       ok   the subscriber receives the message
+       ok   INFO server: valkey_version 9.1.3
+       info os:QNX 8.0.0 QEMU_virt
+       ok   valkey-cli SET prints OK
+       ok   the key valkey-cli set is there
+       ok   valkey-cli formats a list reply
+       info valkey-benchmark: SET: 706.21 requests per second, p50=3.551 msec
+       ok   valkey-benchmark SET/GET run (1000 requests)
+       ok   SAVE
+       ok   dump.rdb written
+       ok   valkey-check-rdb: RDB looks OK
+       ok   BGSAVE started (forked child)
+       ok   BGSAVE completed (LASTSAVE advanced)
+       ok   rdb_last_bgsave_status:ok
+       ok   SHUTDOWN NOSAVE stops the server
+       ok   restarted valkey-server answers
+       ok   restart loads every key from dump.rdb
+       ok   values survive the restart (SAVE and BGSAVE data)
+       ok   valkey-server --daemonize yes: the parent exits 0
+       ok   the daemonized server answers PING, SET, GET
+       ok   SHUTDOWN stops the daemon (its pid file named it)
+     PASS valkey
+PASS test_valkey
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,33 @@
+# python3-virtualenv 20.39.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:27:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-virtualenv qnx-test-python3-virtualenv qnx-port-tests
+(1/4) Installing python3-distlib (0.4.4-r0)
+(2/4) Installing python3-platformdirs (4.14.3-r0)
+(3/4) Installing python3-virtualenv (20.39.1-r0)
+(4/4) Installing qnx-test-python3-virtualenv (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 981.5 MiB in 150 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_virtualenv
+     == python3-virtualenv ==
+       info virtualenv 20.39.1 from /usr/local/lib/python3.14/site-packages/virtualenv/__init__.py
+       ok   virtualenv env1 created (rc 0, bin/python)
+       ok   env python: sys.prefix is env1, base_prefix the installation, Python 3.14
+       ok   env pip is the environment's own: pip 26.0.1
+       ok   env does not see the installation's site-packages (filelock)
+       ok   env pip installs a local wheel into the environment
+       ok   the package stays in the environment (the installation does not see it)
+       ok   bin/activate: python and VIRTUAL_ENV point at env1
+       ok   --system-site-packages: the installation's filelock is visible
+       ok   --without-pip: no pip in env2
+     PASS python3-virtualenv
+PASS test_python3_virtualenv
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

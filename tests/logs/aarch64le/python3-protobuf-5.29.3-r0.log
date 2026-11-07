@@ -1,0 +1,34 @@
+# python3-protobuf 5.29.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:59:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-protobuf qnx-test-python3-protobuf qnx-port-tests
+(1/4) Installing python3-protobuf (5.29.3-r0)
+(2/4) Installing abseil (20260817.0-r0)
+(3/4) Installing protobuf (29.3-r1)
+(4/4) Installing qnx-test-python3-protobuf (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 988.8 MiB in 150 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_protobuf
+     == python3-protobuf ==
+       info protobuf 5.29.3, implementation upb
+       ok   runtime version 5.29.3 (protobuf 29.3)
+       ok   the upb C extension is in use
+       ok   serialised bytes are exactly the wire format
+       ok   parses back to an equal message
+       ok   int32 -1 is a ten-byte varint
+       ok   MessageToJson
+       ok   json_format.Parse
+       ok   text format
+       ok   Timestamp to RFC 3339
+       ok   protoc-generated qnx_pb2 imports and gives the same bytes
+     PASS python3-protobuf
+PASS test_python3_protobuf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,36 @@
+# portaudio 19.7.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T00:51:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u portaudio qnx-test-portaudio qnx-port-tests
+(1/2) Installing portaudio (19.7.0-r0)
+(2/2) Installing qnx-test-portaudio (1.0-r0)
+OK: 974.4 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_portaudio
+     == portaudio ==
+       info PortAudio V19.7.0-devel, revision unknown
+       ok   version 19.7.0
+       ok   error text for paInvalidDevice
+       ok   sample sizes 2/4/3 for int16/float32/int24
+       ok   Pa_Initialize
+       ok   the ALSA host API is there
+       ok   host API name 'ALSA'
+       info 0 device(s); default output -1, input -1
+       ok   device count is not an error
+       ok   every device has a name and channel counts
+       ok   no info for a device index past the end
+       ok   opening a device that does not exist: paInvalidDevice
+       ok   IsFormatSupported on it: paInvalidDevice
+       ok   no default output: opening one fails cleanly
+       ok   Pa_Terminate
+       ok   after Pa_Terminate, calls report paNotInitialized
+     PASS portaudio
+PASS test_portaudio
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

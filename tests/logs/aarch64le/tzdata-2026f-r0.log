@@ -1,0 +1,26 @@
+# tzdata 2026f-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:35:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tzdata qnx-test-tzdata-tools qnx-port-tests
+(1/2) Installing tzdata (2026f-r0)
+(2/2) Installing qnx-test-tzdata-tools (1.0-r0)
+OK: 975.2 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tzdata_tools
+     == tzdata-tools ==
+       ok   zdump installed
+       ok   zdump -V -c 2024,2025 Europe/Berlin: the two 2024 transitions
+       ok   zic compiles a zone source
+       ok   zdump of the zic-compiled zone: 2030 spring and autumn transitions
+       ok   its POSIX footer <+0330>-3:30<+0430>,M4.1.0,M10.1.0
+       ok   python3 zoneinfo on share/zoneinfo: Berlin across the 2024 switch, Sao Paulo 2018 DST, the zone list
+     PASS tzdata-tools
+PASS test_tzdata_tools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

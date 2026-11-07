@@ -1,0 +1,57 @@
+# lanelet2 1.2.3-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:15:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lanelet2 qnx-test-lanelet2 qnx-port-tests
+( 1/29) Installing boost (1.86.0-r0)
+( 2/29) Installing geographiclib (2.7-r0)
+( 3/29) Installing pugixml (1.14-r0)
+( 4/29) Installing benchmark (1.9.0-r0)
+( 5/29) Installing console_bridge (1.0.2-r0)
+( 6/29) Installing c-ares (1.34.3-r0)
+( 7/29) Installing nghttp2 (1.64.0-r0)
+( 8/29) Installing curl (8.11.1-r1)
+( 9/29) Installing cyclonedds (0.10.5-r0)
+(10/29) Installing fastcdr (2.2.6-r0)
+(11/29) Installing foonathan_memory (0.7.3-r0)
+(12/29) Installing tinyxml2 (<ip>-r0)
+(13/29) Installing fastdds (2.14.4-r0)
+(14/29) Installing libyaml (0.2.5-r0)
+(15/29) Installing lz4 (1.10.0-r0)
+(16/29) Installing openblas (0.3.28-r0)
+(17/29) Installing gdbm (1.24-r0)
+(18/29) Installing readline (8.2-r0)
+(19/29) Installing sqlite (3.47.2-r0)
+(20/29) Installing python3 (3.14.0-r3)
+(21/29) Installing numpy (2.3.4-r1)
+(22/29) Installing opencv (4.10.0-r0)
+(23/29) Installing orocos-kdl (1.5.1-r0)
+(24/29) Installing python3-pyyaml (6.0.3-r0)
+(25/29) Installing urdfdom (4.0.3-r0)
+(26/29) Installing yaml-cpp (0.8.0-r0)
+(27/29) Installing ros2 (0_git-r5)
+(28/29) Installing lanelet2 (1.2.3-r1)
+(29/29) Installing qnx-test-lanelet2 (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 672.0 MiB in 110 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lanelet2
+     == lanelet2 ==
+       ok   map: 3 lanelets, 8 points (3, 8)
+       ok   centreline of the first lanelet: 10.000000 m (10)
+       ok   write the map as OSM (lat/lon, UTM around 49 N 8 E)
+       ok   read back: 3 lanelets, 8 points, 0 errors
+       ok   points round-trip within 5.21e-07 m (< 1 mm)
+       ok   German vehicle rules: the road lanelet is passable
+       ok   shortest path first -> last: 3 lanelets (3)
+       ok   route length 30.000000 m (30)
+       ok   one-way: no path from the last lanelet back to the first
+     PASS lanelet2
+PASS test_lanelet2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

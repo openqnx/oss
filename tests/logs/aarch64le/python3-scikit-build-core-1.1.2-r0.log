@@ -1,0 +1,63 @@
+# python3-scikit-build-core 1.1.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:19:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-scikit-build-core qnx-test-python3-pybuild qnx-port-tests
+( 1/25) Installing python3-packaging (25.0-r0)
+( 2/25) Installing python3-pathspec (1.1.1-r0)
+( 3/25) Installing python3-scikit-build-core (1.1.2-r0)
+( 4/25) Installing libuv (1.51.0-r0)
+( 5/25) Installing cmake (4.1.1-r1)
+( 6/25) Installing git (2.51.0-r0)
+( 7/25) Installing meson (1.10.0-r0)
+( 8/25) Installing ninja (1.13.1-r1)
+( 9/25) Installing python3-pyproject-hooks (1.3.3-r0)
+(10/25) Installing python3-build (1.6.1-r0)
+(11/25) Installing python3-calver (2025.10.20-r0)
+(12/25) Installing python3-editables (0.6-r0)
+(13/25) Installing python3-flit-core (4.2.0-r0)
+(14/25) Installing python3-installer (1.1.0-r0)
+(15/25) Installing python3-gpep517 (23-r0)
+(16/25) Installing python3-pluggy (1.7.0-r0)
+(17/25) Installing python3-trove-classifiers (2026.9.21.13-r0)
+(18/25) Installing python3-hatchling (1.31.0-r0)
+(19/25) Installing python3-hatch-fancy-pypi-readme (25.1.0-r0)
+(20/25) Installing python3-setuptools (80.8.0-r0)
+(21/25) Installing python3-setuptools_scm (9.2.2-r0)
+(22/25) Installing python3-hatch-vcs (0.5.0-r0)
+(23/25) Installing python3-pyproject-metadata (0.12.1-r0)
+(24/25) Installing python3-meson-python (0.22.1-r0)
+(25/25) Installing qnx-test-python3-pybuild (1.0-r1)
+Executing python3-3.14.0-r3.trigger
+OK: 1658.6 MiB in 171 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pybuild
+     == python3-pybuild ==
+       ok   flitp: build makes qnxflit-1.2.0-py2.py3-none-any.whl
+       ok   flit-core: version and summary from the module
+       ok   installer: package and RECORD under the destination's site-packages
+       ok   installer: installed package imports, its metadata reads 1.2.0
+       ok   gpep517 + hatchling: version 2.5.1 from the git tag (hatch-vcs, setuptools-scm)
+       ok   hatch-fancy-pypi-readme: README from a text and a file fragment, with substitution
+       ok   hatchling: package from src/ in the wheel
+       ok   setuptools-scm: one commit after v2.5.1 is 2.5.2.dev1+g2d52762f2
+       ok   calp: build makes qnxcal-2000.1.1-py3-none-any.whl
+       ok   mesp: build makes qnxmes-0.3.0-py3-none-any.whl
+       ok   meson-python: source installed by meson is in the wheel
+       ok   skbp: build makes qnxskb-0.4.0-py3-none-any.whl
+       ok   scikit-build-core: file installed by CMake and the Python package in the wheel
+       ok   pyproject-metadata: canonical name and version
+       ok   pyproject-metadata: Requires-Dist, extras, Requires-Python in core metadata
+       ok   pyproject-metadata: License-Expression and Keywords
+       ok   pyproject-metadata: missing version is an error
+       ok   editables: .pth and import hook files
+       ok   editables: the package imports from its source tree
+     PASS python3-pybuild
+PASS test_python3_pybuild
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

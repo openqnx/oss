@@ -1,0 +1,54 @@
+# perl-test-fatal 0.019-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T00:22:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u perl-test-fatal qnx-test-perl-testmods qnx-port-tests
+(1/9) Installing perl-try-tiny (0.32-r0)
+(2/9) Installing perl-test-fatal (0.019-r0)
+(3/9) Installing perl-test-deep (1.205-r0)
+(4/9) Installing perl-test-leaktrace (0.17-r0)
+(5/9) Installing perl-test-needs (0.002010-r0)
+(6/9) Installing perl-test-requires (0.11-r0)
+(7/9) Installing perl-test-requiresinternet (0.05-r0)
+(8/9) Installing perl-test-warnings (0.038-r0)
+(9/9) Installing qnx-test-perl-testmods (1.0-r1)
+OK: 974.5 MiB in 155 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_testmods
+     == perl-test-deep, -fatal, -warnings, -needs, -requires, -requiresinternet, -leaktrace, perl-try-tiny ==
+       ok   deep: re() and num() match
+       ok   deep: bag() ignores order
+       ok   deep: a mismatch fails
+       ok   deep: the failure names the location
+       ok   deep: exit status 1
+       ok   fatal: exception { die }
+       ok   fatal: exception {} is undef when it lives
+       ok   fatal: exception returns the thrown ref
+       ok   fatal: exit status 0
+       ok   warnings: warning {}
+       ok   warnings: warnings {} counts
+       ok   warnings: had_no_warnings
+       ok   warnings: exit status 0
+       ok   warnings2: an unexpected warning fails the test
+       ok   needs: Test::Needs skips all for a missing module
+       ok   needs: the skip names the module
+       ok   needs: exit status 0
+       ok   needs2: Test::Needs runs when the module is present
+       ok   requires: Test::Requires skips all for a missing module
+       ok   requires2: Test::Requires loads a present module
+       ok   net: Test::RequiresInternet skips under NO_NETWORK_TESTING
+       ok   trytiny: catch gets the error in $_, finally runs
+       ok   trytiny: try returns its value
+       ok   trytiny: $@ is left alone
+       ok   trytiny: list context
+       ok   trytiny: rethrow from catch
+       ok   leak: a reference cycle leaks, a plain block does not
+     PASS perl-test-modules
+PASS test_perl_testmods
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

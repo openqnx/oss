@@ -1,0 +1,44 @@
+# ros2-jazzy-moveit2 20260128-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:25:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-moveit2 qnx-test-ros2-jazzy-moveit2 qnx-port-tests
+( 1/10) Installing qnx-test-ros2-jazzy-moveit2 (1.0-r0)
+( 2/10) Installing assimp (6.0.2-r0)
+( 3/10) Installing bullet3 (3.25-r0)
+( 4/10) Installing libccd (2.1-r1)
+( 5/10) Installing octomap (1.10.0-r0)
+( 6/10) Installing fcl (0.7.0-r0)
+( 7/10) Installing osqp (0.6.3-r0)
+( 8/10) Installing qhull (8.0.2-r0)
+( 9/10) Installing ruckig (0.17.3-r1)
+(10/10) Installing ros2-jazzy-moveit2 (20260128-r1)
+OK: 1104.3 MiB in 156 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_moveit2
+     == ros2-jazzy-moveit2 ==
+       ok   ament index has moveit_core
+       ok   ament index has moveit_ros_move_group
+       ok   ament index has moveit_planners_ompl
+       ok   ament index has pilz_industrial_motion_planner
+       ok   ament index has moveit_kinematics
+       ok   ament index has moveit_ros_planning_interface
+       ok   ament index has moveit_servo
+       ok   ament index has moveit_planners_chomp
+       ok   move_group is up; a 0.4 m box added at (1.5, 0, 0)
+       ok   check_state_validity: (0, 0) collides with the box
+       ok   check_state_validity: (0, pi/2) is collision-free
+       ok   Pilz PTP (0,0) -> (pi/2,0): 2.5708 s (trapezoid pi/2 + 1 = 2.5708 s), error code 1
+       ok   OMPL RRTConnect found a plan around the box (73 points, error code 1)
+       ok   it ends at the goal (1.2, 0) (got (1.2000, 0.0000))
+       ok   every trajectory point is collision-free (73 checked)
+       ok   it is time-parameterised: 7.191 s >= the 3.4 s straight-line minimum
+     PASS ros2-jazzy-moveit2
+PASS test_ros2_jazzy_moveit2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

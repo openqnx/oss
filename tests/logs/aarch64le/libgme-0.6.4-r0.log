@@ -1,0 +1,32 @@
+# libgme 0.6.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:05:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libgme qnx-test-libgme qnx-port-tests
+(1/2) Installing libgme (0.6.4-r0)
+(2/2) Installing qnx-test-libgme (1.0-r0)
+OK: 974.7 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgme
+     == libgme ==
+       ok   header identified as VGM
+       ok   gme_open_data opens it at 44.1 kHz
+       ok   one track
+       info length 1500 ms, system 'Sega SMS/Genesis'
+       ok   track length 1500 ms from the header
+       ok   start track 0
+       ok   1.5 s played
+       info tone rms 6741, 440.6 Hz; after it rms 0
+       ok   the first second is loud
+       ok   at 440 Hz (420-460)
+       ok   silent after the channel is switched off
+       ok   gme_tell is 1500 ms
+     PASS libgme
+PASS test_libgme
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

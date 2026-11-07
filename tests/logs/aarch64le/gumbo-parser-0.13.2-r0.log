@@ -1,0 +1,31 @@
+# gumbo-parser 0.13.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T21:41:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gumbo-parser qnx-test-gumbo-parser qnx-port-tests
+(1/2) Installing gumbo-parser (0.13.2-r0)
+(2/2) Installing qnx-test-gumbo-parser (1.0-r0)
+OK: 974.0 MiB in 142 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gumbo_parser
+     == gumbo-parser ==
+       ok   root is an implied <html>
+       ok   implied <head> and <body>
+       ok   <title> in head, &amp; decoded to 'T&Q'
+       ok   the unclosed <p> is closed: two sibling <p>
+       ok   unquoted attributes class=a id=first
+       ok   texts 'one' and 'two <3>'
+       ok   <a href=x.html>link</a> inside the second <p>
+       ok   source position of the first <p>
+       ok   foster parenting: stray table text moved before the table
+       ok   implied <tbody>
+       ok   tag names
+     PASS gumbo-parser
+PASS test_gumbo_parser
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

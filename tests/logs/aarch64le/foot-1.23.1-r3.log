@@ -1,0 +1,32 @@
+# foot 1.23.1-r3 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T20:30:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u foot qnx-test-foot qnx-port-tests
+(1/4) Installing utf8proc (2.11.3-r0)
+(2/4) Installing fcft (3.3.2-r0)
+(3/4) Installing foot (1.23.1-r3)
+(4/4) Installing qnx-test-foot (1.0-r0)
+OK: 975.0 MiB in 144 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_foot
+     == foot ==
+       info foot version: 1.23.1 (Nov 03 2026, branch 'HEAD') -pgo +ime +graphemes -assertions
+       ok   foot --version: 1.23.1
+       ok   --check-config accepts a valid file
+       ok   --check-config rejects an unknown key (names it)
+       ok   --check-config rejects a non-integer value
+       ok   labwc up (headless)
+       info terminal: 30 100, TERM=foot
+       ok   foot ran the command in a 100x30 terminal (pty size)
+       ok   TERM=foot inside the terminal
+       ok   foot exits with the command's status (7)
+     PASS foot
+PASS test_foot
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

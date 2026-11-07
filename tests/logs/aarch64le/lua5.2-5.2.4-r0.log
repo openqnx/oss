@@ -1,0 +1,48 @@
+# lua5.2 5.2.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-04T22:17:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lua5.2 qnx-test-lua5-2 qnx-port-tests
+(1/2) Installing lua5.2 (5.2.4-r0)
+(2/2) Installing qnx-test-lua5-2 (1.0-r0)
+OK: 974.7 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua5_2
+     == lua5.2 ==
+       ok   luaL_newstate
+       info header Lua 5.2.4
+       ok   _VERSION is Lua 5.2 (the 5.2 library is linked)
+       ok   closures keep upvalues
+       ok   table.sort / table.concat
+       ok   string.gsub with a function
+       ok   string.format
+       ok   coroutines yield and resume
+       ok   pcall catches error objects
+       ok   numbers are doubles (no integer subtype in 5.2)
+       ok   bit32 library
+       ok   load with an environment table
+       ok   _ENV as a local
+       ok   table.pack / table.unpack
+       ok   LUA_COMPAT_ALL: unpack, loadstring, math.pow
+       ok   rawlen and string.rep with a separator
+       ok   package.path has /usr/local/share/lua/5.2
+       ok   goto
+       ok   load
+       ok   a C function registered with lua_register
+       ok   string.rep
+       ok   scratch directory
+       ok   lua5.2 runs a script with the known output
+       ok   lua5.2 -e
+       ok   luac5.2 compiles the script
+       ok   bytecode has the Lua 5.2 header (ESC Lua 0x52)
+       ok   lua5.2 runs the bytecode with the same output
+       ok   luac5.2 -p reports a syntax error
+     PASS lua5.2
+PASS test_lua5_2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

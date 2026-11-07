@@ -1,0 +1,38 @@
+# ros2-jazzy-nav2 20260128-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T04:25:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-nav2 qnx-test-ros2-jazzy-nav2 qnx-port-tests
+(1/1) Installing qnx-test-ros2-jazzy-nav2 (1.0-r0)
+OK: 974.2 MiB in 147 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_nav2
+     == ros2-jazzy-nav2 ==
+       ok   ament index has nav2_map_server
+       ok   ament index has nav2_planner
+       ok   ament index has nav2_navfn_planner
+       ok   ament index has nav2_controller
+       ok   ament index has nav2_bt_navigator
+       ok   ament index has nav2_costmap_2d
+       ok   ament index has nav2_amcl
+       ok   ament index has nav2_mppi_controller
+       ok   ament index has nav2_smac_planner
+       ok   ament index has robot_localization
+       ok   ament index has behaviortree_cpp
+       ok   lifecycle_manager brought map_server and planner_server up
+       ok   compute_path_to_pose action server is there
+       ok   a path was planned (308 poses)
+       ok   it starts at (1, 1) and ends at (4, 1) (got (1.00, 1.00) .. (4.00, 1.00))
+       ok   it goes over the wall (highest y 4.34 m > 4)
+       ok   no pose inside the wall
+       ok   length 7.73 m >= the shortest way round, 6.82 m
+       ok   the navigator's default behaviour tree (BT.CPP 4 format) is installed
+     PASS ros2-jazzy-nav2
+PASS test_ros2_jazzy_nav2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

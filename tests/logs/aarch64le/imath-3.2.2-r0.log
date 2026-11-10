@@ -1,0 +1,33 @@
+# imath 3.2.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:54:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u imath qnx-test-imath qnx-port-tests
+(1/1) Installing qnx-test-imath (1.0-r0)
+OK: 974.3 MiB in 147 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_imath
+     == imath ==
+       ok   (1,2,3).(4,5,6) = 32
+       ok   (1,2,3)x(4,5,6) = (-3,6,-3)
+       ok   |(3,4,0)| = 5
+       ok   rotating (1,0,0) 90 deg about z gives (0,1,0)
+       ok   M * M^-1 = identity
+       ok   det(diag 2,4,8 with translation) = 64
+       ok   quaternion: 180 deg about y maps x to -x
+       ok   half(1.0) bits are 0x3c00
+       ok   half(1/3) rounds to 0.333251953125
+       ok   half max 65504 is 0x7bff
+       ok   1e6 overflows half to infinity
+       ok   succf/predf step one ulp
+       ok   Rand32 with one seed gives one sequence
+       ok   clamp and lerp
+     PASS imath
+PASS test_imath
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

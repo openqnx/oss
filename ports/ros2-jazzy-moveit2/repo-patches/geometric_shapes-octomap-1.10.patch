@@ -1,0 +1,23 @@
+geometric_shapes: accept octomap 1.10
+
+find_package(octomap 1.9.7...<1.10.0): ROS Jazzy's own octomap is 1.9.8;
+this tree's octomap component (which fcl is built with too) is 1.10.0, whose
+octomap/OcTree API MoveIt uses unchanged ("Could not find a configuration
+file for package octomap that is compatible with requested version range
+1.9.7...<1.10.0"). Accept 1.9.7 up to 1.10.x.
+
+Upstream-Status: Pending
+---
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3e70189..d00c3e2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,7 +45,7 @@ find_package(eigen_stl_containers REQUIRED)
+ find_package(geometry_msgs REQUIRED)
+ # Enforce the system package version on Ubuntu jammy and noble which is also used by libfcl-dev
+ # The version is fixed to prevent ABI conflicts with ros-octomap
+-find_package(octomap 1.9.7...<1.10.0 REQUIRED)
++find_package(octomap 1.9.7...<1.11.0 REQUIRED)
+ find_package(QHULL REQUIRED)
+ find_package(random_numbers REQUIRED)
+ find_package(rclcpp REQUIRED)

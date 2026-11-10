@@ -1,0 +1,23 @@
+QNX transport: read the length the replica sent (srcmsglen), not what MsgReceive copied
+
+The QNX transport's server sized each message a replica sends
+(REPLICA_TX_RECV) from _msg_info.msglen: the number of bytes MsgReceive()
+copied into its receive buffer, which is sizeof(struct _pulse) there. Any
+packet longer than that (24 bytes, less the message type) was cut short
+and the rest of the stream misparsed; a replica over qnx: never
+initialised (its AddObject packet arrived as 22 of 27 bytes). The length
+the client sent is srcmsglen; MsgRead() then fetches the whole message.
+
+Upstream-Status: Pending
+
+--- a/src/remoteobjects/qconnection_qnx_server.cpp
++++ b/src/remoteobjects/qconnection_qnx_server.cpp
+@@ -325,7 +325,7 @@
+ 
+             //Long-lock, use buffer+memcpy if we run into trouble
+             io->d_func()->ibLock.lockForWrite();
+-            qint32 toRead = msg_info.msglen-sizeof(MsgType);
++            qint32 toRead = msg_info.srcmsglen - sizeof(MsgType);
+             char *payload = io->d_func()->ibuffer.reserve(toRead);
+ 
+             const int res = MsgRead(rcvid, payload, toRead, sizeof(MsgType));

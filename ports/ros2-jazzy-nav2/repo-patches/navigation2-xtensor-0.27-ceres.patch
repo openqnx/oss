@@ -1,0 +1,324 @@
+navigation2: build with this tree's xtensor 0.27 and Ceres
+
+- nav2_mppi_controller includes xtensor's headers by their pre-0.26 paths
+  (xtensor/xtensor.hpp, xview.hpp, xmath.hpp, ...). xtensor 0.26 moved them
+  into subdirectories (containers/, views/, core/, generators/, io/, misc/,
+  reducers/); the xtensor component is 0.27.1: "xtensor/xtensor.hpp: No such
+  file or directory". Include them by their current paths (xtensor's
+  target also asks for C++20, which these sources build with).
+- nav2_constrained_smoother asks for Ceres with its SuiteSparse component;
+  the ceres-solver component is built without SuiteSparse ("Missing
+  requested Ceres components: [SuiteSparse]"), with Eigen's sparse
+  Cholesky, which serves the smoother's default SPARSE_NORMAL_CHOLESKY
+  solver. Require Ceres only.
+- nav2_mppi_controller's AckermannMotionModel assigns to an
+  xt::masked_view; with xtensor 0.27 and xtl 0.8 that assignment is
+  ambiguous (xtl::xmasked_value<float&> has two candidate operator=). Do the
+  same element by element.
+
+Upstream-Status: Pending
+---
+diff --git a/nav2_constrained_smoother/CMakeLists.txt b/nav2_constrained_smoother/CMakeLists.txt
+index c68732d..342c355 100644
+--- a/nav2_constrained_smoother/CMakeLists.txt
++++ b/nav2_constrained_smoother/CMakeLists.txt
+@@ -13,7 +13,7 @@ find_package(nav2_util REQUIRED)
+ find_package(nav2_msgs REQUIRED)
+ find_package(nav2_costmap_2d REQUIRED)
+ find_package(pluginlib REQUIRED)
+-find_package(Ceres REQUIRED COMPONENTS SuiteSparse)
++find_package(Ceres REQUIRED)
+ 
+ set(CMAKE_CXX_STANDARD 17)
+ 
+diff --git a/nav2_mppi_controller/benchmark/controller_benchmark.cpp b/nav2_mppi_controller/benchmark/controller_benchmark.cpp
+index 9a2cabb..f4de51d 100644
+--- a/nav2_mppi_controller/benchmark/controller_benchmark.cpp
++++ b/nav2_mppi_controller/benchmark/controller_benchmark.cpp
+@@ -24,9 +24,9 @@
+ #include <nav2_costmap_2d/costmap_2d_ros.hpp>
+ #include <nav2_core/goal_checker.hpp>
+ 
+-#include <xtensor/xarray.hpp>
+-#include <xtensor/xio.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xarray.hpp>
++#include <xtensor/io/xio.hpp>
++#include <xtensor/views/xview.hpp>
+ 
+ #include "nav2_mppi_controller/motion_models.hpp"
+ #include "nav2_mppi_controller/controller.hpp"
+diff --git a/nav2_mppi_controller/benchmark/optimizer_benchmark.cpp b/nav2_mppi_controller/benchmark/optimizer_benchmark.cpp
+index a7216bc..c624b8c 100644
+--- a/nav2_mppi_controller/benchmark/optimizer_benchmark.cpp
++++ b/nav2_mppi_controller/benchmark/optimizer_benchmark.cpp
+@@ -25,9 +25,9 @@
+ #include <nav2_costmap_2d/costmap_2d_ros.hpp>
+ #include <nav2_core/goal_checker.hpp>
+ 
+-#include <xtensor/xarray.hpp>
+-#include <xtensor/xio.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xarray.hpp>
++#include <xtensor/io/xio.hpp>
++#include <xtensor/views/xview.hpp>
+ 
+ #include "nav2_mppi_controller/optimizer.hpp"
+ #include "nav2_mppi_controller/motion_models.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/critic_data.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/critic_data.hpp
+index 8f06566..1a99bda 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/critic_data.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/critic_data.hpp
+@@ -22,7 +22,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "geometry_msgs/msg/pose_stamped.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/critic_manager.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/critic_manager.hpp
+index 7e09fcf..4ea6cb8 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/critic_manager.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/critic_manager.hpp
+@@ -24,7 +24,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "geometry_msgs/msg/twist.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/models/control_sequence.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/models/control_sequence.hpp
+index ad797e9..cb540af 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/models/control_sequence.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/models/control_sequence.hpp
+@@ -19,7 +19,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ namespace mppi::models
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/models/path.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/models/path.hpp
+index f1bab3f..a28ef6c 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/models/path.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/models/path.hpp
+@@ -19,7 +19,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ namespace mppi::models
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/models/state.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/models/state.hpp
+index 75f8c75..5524533 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/models/state.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/models/state.hpp
+@@ -19,7 +19,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include <geometry_msgs/msg/pose_stamped.hpp>
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/models/trajectories.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/models/trajectories.hpp
+index 0862c2c..b704ac9 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/models/trajectories.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/models/trajectories.hpp
+@@ -19,8 +19,8 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xtensor.hpp>
++#include <xtensor/views/xview.hpp>
+ #pragma GCC diagnostic pop
+ 
+ namespace mppi::models
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/motion_models.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/motion_models.hpp
+index 3cf15a2..62c2f1b 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/motion_models.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/motion_models.hpp
+@@ -26,10 +26,10 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xmath.hpp>
+-#include <xtensor/xmasked_view.hpp>
+-#include <xtensor/xview.hpp>
+-#include <xtensor/xnoalias.hpp>
++#include <xtensor/core/xmath.hpp>
++#include <xtensor/views/xmasked_view.hpp>
++#include <xtensor/views/xview.hpp>
++#include <xtensor/core/xnoalias.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "nav2_mppi_controller/tools/parameters_handler.hpp"
+@@ -173,8 +173,14 @@ public:
+     auto & vx = control_sequence.vx;
+     auto & wz = control_sequence.wz;
+ 
+-    auto view = xt::masked_view(wz, (xt::fabs(vx) / xt::fabs(wz)) < min_turning_r_);
+-    view = xt::sign(wz) * xt::fabs(vx) / min_turning_r_;
++    // Element by element: assigning to an xt::masked_view is ambiguous with
++    // xtensor 0.26+/xtl 0.8 (xmasked_value<float&> has two operator=).
++    for (size_t i = 0; i < wz.size(); ++i) {
++      if (std::fabs(vx(i)) / std::fabs(wz(i)) < min_turning_r_) {
++        const float sign = wz(i) > 0.0f ? 1.0f : (wz(i) < 0.0f ? -1.0f : 0.0f);
++        wz(i) = sign * std::fabs(vx(i)) / min_turning_r_;
++      }
++    }
+   }
+ 
+   /**
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/optimizer.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/optimizer.hpp
+index 0997634..b433b56 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/optimizer.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/optimizer.hpp
+@@ -22,8 +22,8 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xtensor.hpp>
++#include <xtensor/views/xview.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "rclcpp_lifecycle/lifecycle_node.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/tools/noise_generator.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/tools/noise_generator.hpp
+index f16bb90..7a37e48 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/tools/noise_generator.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/tools/noise_generator.hpp
+@@ -25,8 +25,8 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xtensor.hpp>
++#include <xtensor/views/xview.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "nav2_mppi_controller/models/optimizer_settings.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/tools/trajectory_visualizer.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/tools/trajectory_visualizer.hpp
+index 3284243..b4f1b80 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/tools/trajectory_visualizer.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/tools/trajectory_visualizer.hpp
+@@ -22,7 +22,7 @@
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xtensor.hpp>
++#include <xtensor/containers/xtensor.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "nav_msgs/msg/path.hpp"
+diff --git a/nav2_mppi_controller/include/nav2_mppi_controller/tools/utils.hpp b/nav2_mppi_controller/include/nav2_mppi_controller/tools/utils.hpp
+index 9f3c6bb..3bbcfd7 100644
+--- a/nav2_mppi_controller/include/nav2_mppi_controller/tools/utils.hpp
++++ b/nav2_mppi_controller/include/nav2_mppi_controller/tools/utils.hpp
+@@ -28,10 +28,10 @@
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+ #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+-#include <xtensor/xarray.hpp>
+-#include <xtensor/xnorm.hpp>
+-#include <xtensor/xmath.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xarray.hpp>
++#include <xtensor/reducers/xnorm.hpp>
++#include <xtensor/core/xmath.hpp>
++#include <xtensor/views/xview.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "angles/angles.h"
+diff --git a/nav2_mppi_controller/src/critics/path_follow_critic.cpp b/nav2_mppi_controller/src/critics/path_follow_critic.cpp
+index 74c2736..460139e 100644
+--- a/nav2_mppi_controller/src/critics/path_follow_critic.cpp
++++ b/nav2_mppi_controller/src/critics/path_follow_critic.cpp
+@@ -14,8 +14,8 @@
+ 
+ #include "nav2_mppi_controller/critics/path_follow_critic.hpp"
+ 
+-#include <xtensor/xmath.hpp>
+-#include <xtensor/xsort.hpp>
++#include <xtensor/core/xmath.hpp>
++#include <xtensor/misc/xsort.hpp>
+ 
+ namespace mppi::critics
+ {
+diff --git a/nav2_mppi_controller/src/noise_generator.cpp b/nav2_mppi_controller/src/noise_generator.cpp
+index b7c452a..5c839de 100644
+--- a/nav2_mppi_controller/src/noise_generator.cpp
++++ b/nav2_mppi_controller/src/noise_generator.cpp
+@@ -16,9 +16,9 @@
+ 
+ #include <memory>
+ #include <mutex>
+-#include <xtensor/xmath.hpp>
+-#include <xtensor/xrandom.hpp>
+-#include <xtensor/xnoalias.hpp>
++#include <xtensor/core/xmath.hpp>
++#include <xtensor/generators/xrandom.hpp>
++#include <xtensor/core/xnoalias.hpp>
+ 
+ namespace mppi
+ {
+diff --git a/nav2_mppi_controller/src/optimizer.cpp b/nav2_mppi_controller/src/optimizer.cpp
+index 5a57238..37f767a 100644
+--- a/nav2_mppi_controller/src/optimizer.cpp
++++ b/nav2_mppi_controller/src/optimizer.cpp
+@@ -20,9 +20,9 @@
+ #include <string>
+ #include <vector>
+ #include <cmath>
+-#include <xtensor/xmath.hpp>
+-#include <xtensor/xrandom.hpp>
+-#include <xtensor/xnoalias.hpp>
++#include <xtensor/core/xmath.hpp>
++#include <xtensor/generators/xrandom.hpp>
++#include <xtensor/core/xnoalias.hpp>
+ 
+ #include "nav2_core/controller_exceptions.hpp"
+ #include "nav2_costmap_2d/costmap_filters/filter_values.hpp"
+diff --git a/nav2_mppi_controller/test/optimizer_smoke_test.cpp b/nav2_mppi_controller/test/optimizer_smoke_test.cpp
+index b2210ee..53ede21 100644
+--- a/nav2_mppi_controller/test/optimizer_smoke_test.cpp
++++ b/nav2_mppi_controller/test/optimizer_smoke_test.cpp
+@@ -22,9 +22,9 @@
+ #include <nav2_costmap_2d/costmap_2d_ros.hpp>
+ #include <nav2_core/goal_checker.hpp>
+ 
+-#include <xtensor/xarray.hpp>
+-#include <xtensor/xio.hpp>
+-#include <xtensor/xview.hpp>
++#include <xtensor/containers/xarray.hpp>
++#include <xtensor/io/xio.hpp>
++#include <xtensor/views/xview.hpp>
+ 
+ #include "nav2_mppi_controller/optimizer.hpp"
+ #include "nav2_mppi_controller/tools/parameters_handler.hpp"
+diff --git a/nav2_mppi_controller/test/utils_test.cpp b/nav2_mppi_controller/test/utils_test.cpp
+index 1136e58..c95abf6 100644
+--- a/nav2_mppi_controller/test/utils_test.cpp
++++ b/nav2_mppi_controller/test/utils_test.cpp
+@@ -17,7 +17,7 @@
+ 
+ #pragma GCC diagnostic ignored "-Warray-bounds"
+ #pragma GCC diagnostic ignored "-Wstringop-overflow"
+-#include <xtensor/xrandom.hpp>
++#include <xtensor/generators/xrandom.hpp>
+ #pragma GCC diagnostic pop
+ 
+ #include "gtest/gtest.h"

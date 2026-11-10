@@ -1,0 +1,31 @@
+Open PortAudio by its soname on QNX, where find_library() finds nothing
+
+ctypes.util.find_library() asks ldconfig, gcc or ld, none of which a QNX
+target has, so sounddevice stopped with "PortAudio library not found".
+The runtime loader finds libportaudio.so by its soname.
+
+Upstream-Status: QNX-specific
+
+--- a/src/sounddevice.py
++++ b/src/sounddevice.py
+@@ -84,11 +84,17 @@
+             _libname = 'libportaudio' + _platform_suffix + '-asio.dll'
+         else:
+             _libname = 'libportaudio' + _platform_suffix + '.dll'
++    elif _sys.platform.startswith('qnx'):
++        # ctypes.util.find_library() finds nothing on QNX (it asks ldconfig,
++        # gcc or ld, which a QNX target does not have): the runtime loader
++        # finds the library by its soname.
++        _libname = 'libportaudio.so'
+     else:
+         raise
+-    import _sounddevice_data
+-    _libname = _os.path.join(
+-        next(iter(_sounddevice_data.__path__)), 'portaudio-binaries', _libname)
++    if not _sys.platform.startswith('qnx'):
++        import _sounddevice_data
++        _libname = _os.path.join(
++            next(iter(_sounddevice_data.__path__)), 'portaudio-binaries', _libname)
+     _lib: ... = _ffi.dlopen(_libname)
+ 
+ _sampleformats: ... = {

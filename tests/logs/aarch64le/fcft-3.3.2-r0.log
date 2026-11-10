@@ -1,6 +1,6 @@
-# fcft 3.3.2-r0 -- FAIL
+# fcft 3.3.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-11-04T19:02:47Z   packages from: apk:local-dists
+# date: 2026-11-10T08:56:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -9,9 +9,26 @@ $ apk add -u fcft qnx-test-fcft qnx-port-tests
 (1/3) Installing utf8proc (2.11.3-r0)
 (2/3) Installing fcft (3.3.2-r0)
 (3/3) Installing qnx-test-fcft (1.0-r0)
-OK: 974.1 MiB in 143 packages
+OK: 974.7 MiB in 149 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fcft
-sh: /usr/local/bin/qnx-port-tests/run-on-target.sh: cannot execute - No such file or directory
+     == fcft ==
+       ok   fcft_init
+       ok   built with grapheme and text-run shaping (HarfBuzz, utf8proc)
+       ok   built with SVG glyphs (nanosvg)
+       ok   fcft_from_name('DejaVu Sans Mono:pixelsize=20')
+       info font DejaVu Sans Mono: height 23 ascent 19 descent 5 max advance 12
+       ok   fontconfig resolved it to DejaVu Sans Mono
+       ok   monospace advance 12 px (0.602 em at 20 px)
+       ok   line height 20-26 px
+       ok   'A' rasterized: about 11x15 px
+       ok   'A' has ink in its pixman image
+       ok   'i' and 'W' advance alike, 'W' is wider ink
+       ok   precompose e + U+0301 = U+00E9
+       ok   text run 'QNX 8' shaped: 5 glyphs, 60 px
+     PASS fcft
+PASS test_fcft
+--------------------------------------------
+passed: 1   failed: 0
 
-RESULT: FAIL
+RESULT: PASS

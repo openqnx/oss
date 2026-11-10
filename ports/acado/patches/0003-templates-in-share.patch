@@ -1,0 +1,40 @@
+Code generation: install the templates as data (share/acado/templates)
+
+The code generator reads its templates (*.in) at run time, from the
+installed include/acado/code_generation/templates. Installed with the
+headers, they are packaged with them, in acado-dev: on a target with only
+acado, exportCode() could not open acado_auxiliary_functions.h.in and
+wrote an incomplete solver. Install them as data, to share/acado/templates,
+and look for them there (templates.hpp, the header naming the directory,
+stays with the headers).
+
+Upstream-Status: Pending
+
+--- a/acado/code_generation/templates/CMakeLists.txt
++++ b/acado/code_generation/templates/CMakeLists.txt
+@@ -74,7 +74,7 @@
+ #
+ 
+ SET( INSTALL_TEMPLATE_PATH
+-	${CMAKE_INSTALL_PREFIX}/${INSTALL_INCLUDE_DIR}/code_generation/templates
++	${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}/templates
+ )
+ 
+ IF( CMAKE_CROSSCOMPILING )
+@@ -105,8 +105,15 @@
+ 
+ INSTALL(
+ 	FILES
+-		${TEMPLATES}
+ 		"${CG_TEMPLATES_PATH}/templates.hpp"
+ 	DESTINATION
+ 		${INSTALL_INCLUDE_DIR}/code_generation/templates
+ )
++# The templates are what the code generator reads at run time: data, not
++# headers.
++INSTALL(
++	FILES
++		${TEMPLATES}
++	DESTINATION
++		${INSTALL_DATA_DIR}/templates
++)

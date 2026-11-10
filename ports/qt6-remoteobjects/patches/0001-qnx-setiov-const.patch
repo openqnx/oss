@@ -1,0 +1,48 @@
+Build the QNX transport with SDP 8's SETIOV_CONST for const buffers
+
+Qt Remote Objects has a QNX-native transport (qnx: URLs, over
+name_attach/MsgSendv/MsgReplyv). Its send and reply vectors point at
+const data (QByteArray::constData(), const locals). SDP 8's <unistd.h>
+makes SETIOV() an inline function taking void *, and adds SETIOV_CONST()
+for const buffers; with SETIOV the build stops at "invalid conversion
+from 'const void*' to 'void*'". Use SETIOV_CONST where the buffer is
+only read (what is sent or replied); SDP 7's macro cast the const away.
+
+Upstream-Status: Pending
+
+--- a/src/remoteobjects/qconnection_qnx_qiodevices.cpp
++++ b/src/remoteobjects/qconnection_qnx_qiodevices.cpp
+@@ -205,7 +205,7 @@
+             Q_ASSERT(len == payload.length());
+ 
+             msgType = MsgType::REPLICA_TX_RECV;
+-            SETIOV(tx_iov + 1, payload.constData(), size_t(len));
++            SETIOV_CONST(tx_iov + 1, payload.constData(), size_t(len));
+             if (MsgSendvs(serverId, tx_iov, 2, nullptr, 0) == -1) {
+                 WARNING(MsgSendvs);
+                 obLock.lockForWrite();
+--- a/src/remoteobjects/qconnection_qnx_server.cpp
++++ b/src/remoteobjects/qconnection_qnx_server.cpp
+@@ -271,8 +271,8 @@
+             Q_ASSERT(data.length() == static_cast<int>(msg_info.dstmsglen - sizeof(bytesLeft)));
+ 
+             iov_t reply_vector[2];
+-            SETIOV(reply_vector, &bytesLeft, sizeof(bytesLeft));
+-            SETIOV(reply_vector+1, data.data(), size_t(data.length()));
++            SETIOV_CONST(reply_vector, &bytesLeft, sizeof(bytesLeft));
++            SETIOV_CONST(reply_vector+1, data.data(), size_t(data.length()));
+ 
+             FATAL_ON_ERROR(MsgReplyv, rcvid, EOK, reply_vector, 2)
+         }
+@@ -308,9 +308,9 @@
+             const int buffers_taken = qba_array.length();
+ 
+             resp_repeat_iov.resize(buffers_taken+1);
+-            SETIOV(&resp_repeat_iov[0], &buffers_taken, sizeof(buffers_taken));
++            SETIOV_CONST(&resp_repeat_iov[0], &buffers_taken, sizeof(buffers_taken));
+             for (int i = 1; i <= buffers_taken; ++i)
+-                SETIOV(&resp_repeat_iov[i], qba_array.at(i-1).constData(), size_t(qba_array.at(i-1).length()));
++                SETIOV_CONST(&resp_repeat_iov[i], qba_array.at(i-1).constData(), size_t(qba_array.at(i-1).length()));
+             FATAL_ON_ERROR(MsgReplyv, rcvid, EOK, resp_repeat_iov.data(), buffers_taken+1)
+         }
+             break;

@@ -1,0 +1,33 @@
+# chrpath 0.18-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:50:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u chrpath qnx-test-chrpath qnx-port-tests
+(1/3) Installing chrpath (0.18-r1)
+(2/3) Installing qnx-test-chrpath-prog (1.0-r0)
+(3/3) Installing qnx-test-chrpath (1.0-r0)
+OK: 974.3 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_chrpath
+     == chrpath ==
+       ok   chrpath -v: 0.18
+       ok   -l: RPATH=/opt/qnx-chrpath-test/lib:/usr/local/lib
+       ok   -r /usr/local/lib: replaced
+       ok   -l after -r: RPATH=/usr/local/lib
+       ok   the edited program loads and runs
+       ok   a longer path is refused (exit 7): p: RPATH=/usr/local/lib
+       ok   -c: converted to RUNPATH
+       ok   the program runs with DT_RUNPATH
+       ok   -d: path deleted (-l: no rpath or runpath tag found)
+       ok   the program runs without a path
+       ok   a non-ELF file is an error (exit 1): `notelf' probably isn't an ELF file.
+     elf_open: Exec format error
+     PASS chrpath
+PASS test_chrpath
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

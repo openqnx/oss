@@ -183,7 +183,14 @@ PASS doctest
    - summary: 1 test case, 1 failed
    - summary: 2 assertions, 2 failed
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> doctest`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | doctest 2.5.3-r0 | ✅ PASS | 2026-11-10 | [log](../../tests/logs/aarch64le/doctest-2.5.3-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | doctest 2.5.3-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/doctest-2.5.3-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

@@ -1,0 +1,28 @@
+pilz_industrial_motion_planner: plain constructor name in PlanningContextBase
+
+PlanningContextBase<GeneratorT> declares its constructor as
+"PlanningContextBase<GeneratorT>(...)". A template-id is not a valid
+constructor declarator in C++20 (DR 2237), which GCC 12 enforces in C++20
+mode, and the package compiles as C++20 here (-std=c++20 on its command
+lines): "expected unqualified-id before 'const'". Use the injected class
+name.
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_planners/pilz_industrial_motion_planner/include/pilz_industrial_motion_planner/planning_context_base.hpp b/moveit_planners/pilz_industrial_motion_planner/include/pilz_industrial_motion_planner/planning_context_base.hpp
+index 0abba27..d30d982 100644
+--- a/moveit_planners/pilz_industrial_motion_planner/include/pilz_industrial_motion_planner/planning_context_base.hpp
++++ b/moveit_planners/pilz_industrial_motion_planner/include/pilz_industrial_motion_planner/planning_context_base.hpp
+@@ -56,9 +56,9 @@ template <typename GeneratorT>
+ class PlanningContextBase : public planning_interface::PlanningContext
+ {
+ public:
+-  PlanningContextBase<GeneratorT>(const std::string& name, const std::string& group,
+-                                  const moveit::core::RobotModelConstPtr& model,
+-                                  const pilz_industrial_motion_planner::LimitsContainer& limits)
++  PlanningContextBase(const std::string& name, const std::string& group,
++                      const moveit::core::RobotModelConstPtr& model,
++                      const pilz_industrial_motion_planner::LimitsContainer& limits)
+     : planning_interface::PlanningContext(name, group)
+     , terminated_(false)
+     , model_(model)

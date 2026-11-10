@@ -1,29 +1,32 @@
 # candb 0.1_git20210625-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-10-31T16:19:56Z   packages from: apk:local-dists
+# date: 2026-11-10T08:49:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
-$ apk add -u candb-dev qnx-test-candb qnx-port-tests
-(1/3) Installing candb-dev (0.1_git20210625-r0)
-(2/3) Installing qnx-port-tests (1.0-r2)
-(3/3) Installing qnx-test-candb (1.0-r0)
-OK: 55 MiB in 31 packages
+$ apk add -u candb qnx-test-candb qnx-port-tests
+(1/3) Installing tl-expected-dev (1.3.1-r0)
+(2/3) Installing candb (0.1_git20210625-r0)
+(3/3) Installing qnx-test-candb (1.0-r1)
+OK: 976.1 MiB in 149 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_candb
      == candb ==
-       info cxxopts 2.2.0
-       ok   -n 7 -> count 7
-       ok   bitrate default 500000, not given
-       ok   --name=can0
-       ok   -v -v counted twice
-       ok   --id repeated: 256, 512
-       ok   positionals a.dbc b.dbc
-       ok   help text lists --count
-       info rejected: Option ‘nope’ does not exist
-       ok   unknown option --nope rejected
-       ok   -n seven rejected as not an int
+       ok   DBC parsed
+       ok   VERSION "1.2.3"
+       ok   BU_: ECU1 ECU2 GATEWAY
+       ok   two messages
+       ok   BO_ 256 EngineData: 8 bytes from ECU1
+       ok   EngineSpeed: 0|16@1+ (Intel, unsigned)
+       ok   EngineSpeed: factor 0.25, range 0..16383.75 rpm
+       ok   EngineSpeed receivers ECU2, GATEWAY
+       ok   CoolantTemp: 16|8@1- (1,-40) degC
+       ok   BO_ 1024 BrakeStatus: one 1-bit Motorola signal
+       ok   VAL_TABLE_ GEARS: 4 entries, 3 = DRIVE
+     [2026-11-10 08:49:08.843] [candb] [error] [dbcparser.cpp@66] Parser log 3:15 syntax error, unexpected '8', expecting <s>.
+       ok   a broken DBC is an error, not a database
+       ok   empty input is an error
      PASS candb
 PASS test_candb
 --------------------------------------------

@@ -1,0 +1,27 @@
+backward_ros: declare _Unwind_Backtrace() on QNX
+
+backward.hpp walks the stack with _Unwind_Backtrace() from <unwind.h>.
+QNX's <unwind.h> declares it (and _Unwind_Trace_Fn) only under _GNU_SOURCE,
+which ROS builds do not define: "'_Unwind_Backtrace' was not declared in
+this scope". Declare the two for QNX; libgcc_s has the function.
+
+Upstream-Status: Pending
+---
+diff --git a/include/backward_ros/backward.hpp b/include/backward_ros/backward.hpp
+index 93037d5..86426ed 100644
+--- a/include/backward_ros/backward.hpp
++++ b/include/backward_ros/backward.hpp
+@@ -375,6 +375,13 @@ typedef SSIZE_T ssize_t;
+ #if BACKWARD_HAS_UNWIND == 1
+ 
+ #include <unwind.h>
++#if defined(__QNX__) && !defined(_GNU_SOURCE)
++// QNX's <unwind.h> declares _Unwind_Backtrace() only for _GNU_SOURCE.
++extern "C" {
++typedef _Unwind_Reason_Code (*_Unwind_Trace_Fn)(struct _Unwind_Context *, void *);
++extern _Unwind_Reason_Code _Unwind_Backtrace(_Unwind_Trace_Fn, void *);
++}
++#endif
+ // while gcc's unwind.h defines something like that:
+ //  extern _Unwind_Ptr _Unwind_GetIP (struct _Unwind_Context *);
+ //  extern _Unwind_Ptr _Unwind_GetIPInfo (struct _Unwind_Context *, int *);

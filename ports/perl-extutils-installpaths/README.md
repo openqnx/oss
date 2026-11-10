@@ -179,7 +179,28 @@ PASS perl-extutils-installpaths
 3. **On the target**: [`test_perl_buildtools`](../../tests/src/) -- a program linked against perl-extutils-installpaths the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> perl-extutils-installpaths`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-cpan-requirements-dynamic 0.003-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-cpan-requirements-dynamic-0.003-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-extutils-config 0.010-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-extutils-config-0.010-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-extutils-hascompiler 0.025-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-extutils-hascompiler-0.025-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-extutils-helpers 0.028-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-extutils-helpers-0.028-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-extutils-installpaths 0.015-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-extutils-installpaths-0.015-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-file-sharedir-install 0.14-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-file-sharedir-install-0.14-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-module-build 0.4234-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-module-build-0.4234-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-module-build-tiny 0.053-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-module-build-tiny-0.053-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-cpan-requirements-dynamic 0.003-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-cpan-requirements-dynamic-0.003-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-extutils-config 0.010-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-extutils-config-0.010-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-extutils-hascompiler 0.025-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-extutils-hascompiler-0.025-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-extutils-helpers 0.028-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-extutils-helpers-0.028-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-extutils-installpaths 0.015-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-extutils-installpaths-0.015-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-file-sharedir-install 0.14-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-file-sharedir-install-0.14-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-module-build 0.4234-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-module-build-0.4234-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-module-build-tiny 0.053-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-module-build-tiny-0.053-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

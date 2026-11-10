@@ -1,0 +1,22 @@
+warehouse_ros: tf2_ros/buffer.h with the ros2 component's tf2_ros
+
+transform_collection.h includes <tf2_ros/buffer.hpp> whenever
+tf2_geometry_msgs.hpp exists; that header came with later geometry2
+releases than the ros2 component's (0.36.9, qnx-ports' pin), which has
+tf2_geometry_msgs.hpp but buffer.h only (the same tf2_ros::Buffer).
+
+Upstream-Status: Pending
+---
+diff --git a/include/warehouse_ros/transform_collection.h b/include/warehouse_ros/transform_collection.h
+index 8d2541b..2f83b93 100644
+--- a/include/warehouse_ros/transform_collection.h
++++ b/include/warehouse_ros/transform_collection.h
+@@ -44,7 +44,7 @@
+ // TODO(v4hn): remove after EOL galactic
+ #if __has_include(<tf2_geometry_msgs/tf2_geometry_msgs.hpp>)
+ #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+-#include <tf2_ros/buffer.hpp>
++#include <tf2_ros/buffer.h>
+ #else
+ #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+ #include <tf2_ros/buffer.h>

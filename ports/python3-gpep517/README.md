@@ -180,7 +180,40 @@ PASS python3-gpep517
 3. **On the target**: [`test_python3_pybuild`](../../tests/src/) -- a program linked against python3-gpep517 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> python3-gpep517`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-build 1.6.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-build-1.6.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-calver 2025.10.20-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-calver-2025.10.20-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-editables 0.6-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-editables-0.6-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-flit-core 4.2.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-flit-core-4.2.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-gpep517 23-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-gpep517-23-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-hatch-fancy-pypi-readme 25.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-hatch-fancy-pypi-readme-25.1.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-hatch-vcs 0.5.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-hatch-vcs-0.5.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-hatchling 1.31.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-hatchling-1.31.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-installer 1.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-installer-1.1.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-meson-python 0.22.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-meson-python-0.22.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-pyproject-hooks 1.3.3-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-pyproject-hooks-1.3.3-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-pyproject-metadata 0.12.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-pyproject-metadata-0.12.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-scikit-build-core 1.1.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-scikit-build-core-1.1.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-setuptools_scm 9.2.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-setuptools_scm-9.2.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-build 1.6.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-build-1.6.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-calver 2025.10.20-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-calver-2025.10.20-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-editables 0.6-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-editables-0.6-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-flit-core 4.2.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-flit-core-4.2.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-gpep517 23-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-gpep517-23-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-hatch-fancy-pypi-readme 25.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-hatch-fancy-pypi-readme-25.1.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-hatch-vcs 0.5.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-hatch-vcs-0.5.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-hatchling 1.31.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-hatchling-1.31.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-installer 1.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-installer-1.1.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-meson-python 0.22.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-meson-python-0.22.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-pyproject-hooks 1.3.3-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-pyproject-hooks-1.3.3-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-pyproject-metadata 0.12.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-pyproject-metadata-0.12.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-scikit-build-core 1.1.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-scikit-build-core-1.1.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-setuptools_scm 9.2.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-setuptools_scm-9.2.2-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

@@ -1,0 +1,123 @@
+realtime_tools: QNX support in realtime_helpers
+
+realtime_helpers.cpp treats every Unix but macOS as Linux: it includes
+<sys/capability.h> and links libcap (Linux capabilities, which QNX does not
+have: "sys/capability.h: No such file or directory"), reads
+/sys/kernel/realtime, and sets affinity with cpu_set_t and
+pthread_setaffinity_np. On QNX:
+- has_realtime_kernel(): true -- Neutrino is a real-time microkernel;
+- configure_sched_fifo(): pthread_setschedparam() on the calling thread, as
+  on macOS (QNX schedules threads; sched_setscheduler(0) would change the
+  main thread's policy);
+- lock_memory(): mlockall() alone (it needs PROCMGR_AID_MEM_LOCK, which
+  root has), with strerror() for the reason it failed;
+- set_thread_affinity(): the thread's runmask, ThreadCtlExt(_NTO_TCTL_RUNMASK)
+  (a pthread_t is the thread ID).
+No libcap on QNX.
+
+Upstream-Status: Pending
+---
+diff --git a/realtime_tools/CMakeLists.txt b/realtime_tools/CMakeLists.txt
+index a9b5696..49a09ae 100644
+--- a/realtime_tools/CMakeLists.txt
++++ b/realtime_tools/CMakeLists.txt
+@@ -46,7 +46,7 @@ target_include_directories(realtime_tools PUBLIC
+   $<INSTALL_INTERFACE:include/realtime_tools>
+ )
+ target_link_libraries(realtime_tools PUBLIC rclcpp::rclcpp rclcpp_action::rclcpp_action rcpputils::rcpputils Threads::Threads Boost::boost)
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT QNX)
+   target_link_libraries(realtime_tools PUBLIC cap)
+ endif()
+ 
+@@ -60,7 +60,7 @@ target_include_directories(thread_priority PUBLIC
+   $<INSTALL_INTERFACE:include/realtime_tools>
+ )
+ target_link_libraries(thread_priority PUBLIC rclcpp::rclcpp rclcpp_action::rclcpp_action rcpputils::rcpputils Threads::Threads)
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT QNX)
+   target_link_libraries(thread_priority PUBLIC cap)
+ endif()
+ 
+diff --git a/realtime_tools/src/realtime_helpers.cpp b/realtime_tools/src/realtime_helpers.cpp
+index a13792a..e7254ed 100644
+--- a/realtime_tools/src/realtime_helpers.cpp
++++ b/realtime_tools/src/realtime_helpers.cpp
+@@ -32,7 +32,11 @@
+ #include <windows.h>
+ #else
+ #include <sched.h>
+-#if defined(__unix__)
++#if defined(__QNX__)
++#include <pthread.h>
++#include <sys/neutrino.h>
++#include <cstdint>
++#elif defined(__unix__)
+ #include <sys/capability.h>
+ #endif
+ #include <sys/mman.h>
+@@ -51,6 +55,10 @@ bool has_realtime_kernel()
+ #ifdef _WIN32
+   std::cerr << "Realtime kernel detection is not supported on Windows." << std::endl;
+   return false;
++#elif defined(__QNX__)
++  // QNX Neutrino is a real-time microkernel: priority-preemptive scheduling
++  // (SCHED_FIFO/SCHED_RR) is always there.
++  return true;
+ #else
+   std::ifstream realtime_file("/sys/kernel/realtime", std::ios::in);
+   bool has_realtime = false;
+@@ -76,8 +84,9 @@ bool configure_sched_fifo(int priority)
+ #ifdef _WIN32
+   HANDLE thread = GetCurrentThread();
+   return SetThreadPriority(thread, priority);
+-#elif defined(__APPLE__)
+-  // macOS implementation using pthread_setschedparam with SCHED_FIFO
++#elif defined(__APPLE__) || defined(__QNX__)
++  // macOS (and QNX, which schedules threads: sched_setscheduler() would
++  // change the process's main thread only) using pthread_setschedparam
+   pthread_t thread = pthread_self();
+   struct sched_param schedp;
+   memset(&schedp, 0, sizeof(schedp));
+@@ -109,6 +118,13 @@ std::pair<bool, std::string> lock_memory()
+ {
+ #if defined(_WIN32) || defined(__APPLE__)
+   return {false, "Memory locking is not supported on Windows or macOS."};
++#elif defined(__QNX__)
++  // No Linux capabilities on QNX: mlockall() needs the PROCMGR_AID_MEM_LOCK
++  // ability, which root has.
++  if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
++    return {false, std::string("mlockall failed: ") + std::strerror(errno)};
++  }
++  return {true, "Memory locked successfully!"};
+ #else
+   auto is_capable = [](cap_value_t v) -> bool {
+     bool rc = false;
+@@ -161,6 +177,27 @@ std::pair<bool, std::string> set_thread_affinity(
+ #if defined(_WIN32) || defined(__APPLE__)
+   message = "Thread affinity is not supported on Windows or macOS.";
+   return std::make_pair(false, message);
++#elif defined(__QNX__)
++  // QNX: the thread's runmask (one bit per CPU), set with
++  // ThreadCtlExt(_NTO_TCTL_RUNMASK); a pthread_t is the thread ID.
++  const auto number_of_cores = get_number_of_available_processors();
++  unsigned mask = 0;
++  if (cores.empty()) {
++    mask = number_of_cores >= 32 ? ~0u : ((1u << number_of_cores) - 1u);
++  } else {
++    for (const auto core : cores) {
++      if (core < 0 || core >= number_of_cores || core >= 32) {
++        return std::make_pair(false, "Invalid core number " + std::to_string(core) + " passed! The system has " +
++                                       std::to_string(number_of_cores) + " cores.");
++      }
++      mask |= 1u << core;
++    }
++  }
++  if (ThreadCtlExt(0, static_cast<int>(thread), _NTO_TCTL_RUNMASK,
++                   reinterpret_cast<void *>(static_cast<uintptr_t>(mask))) == -1) {
++    return std::make_pair(false, std::string("ThreadCtlExt(_NTO_TCTL_RUNMASK) failed: ") + std::strerror(errno));
++  }
++  return std::make_pair(true, std::string("Thread affinity set successfully!"));
+ #else
+   auto set_affinity_result_message = [](int result, std::string & msg) -> bool {
+     if (result == 0) {

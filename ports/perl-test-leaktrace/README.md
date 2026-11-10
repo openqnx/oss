@@ -182,7 +182,28 @@ PASS perl-test-leaktrace
 3. **On the target**: [`test_perl_testmods`](../../tests/src/) -- a program linked against perl-test-leaktrace the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> perl-test-leaktrace`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-deep 1.205-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-deep-1.205-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-fatal 0.019-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-fatal-0.019-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-leaktrace 0.17-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-leaktrace-0.17-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-needs 0.002010-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-needs-0.002010-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-requires 0.11-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-requires-0.11-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-requiresinternet 0.05-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-requiresinternet-0.05-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-test-warnings 0.038-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-test-warnings-0.038-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-try-tiny 0.32-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-try-tiny-0.32-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-deep 1.205-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-deep-1.205-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-fatal 0.019-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-fatal-0.019-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-leaktrace 0.17-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-leaktrace-0.17-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-needs 0.002010-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-needs-0.002010-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-requires 0.11-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-requires-0.11-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-requiresinternet 0.05-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-requiresinternet-0.05-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-test-warnings 0.038-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-test-warnings-0.038-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-try-tiny 0.32-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-try-tiny-0.32-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

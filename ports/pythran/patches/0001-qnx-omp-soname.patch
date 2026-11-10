@@ -1,0 +1,32 @@
+Look up OpenMP by soname on QNX instead of spawning ldconfig and ld
+
+The bundled omp module called ctypes.util.find_library() for omp, gomp
+and iomp5 on every import attempt; on QNX that spawns ldconfig, gcc and
+ld, none of which a target has (144 failed spawns, about 50 s of each
+"import pythran" on an x86_64 VM). The runtime loader is asked directly.
+
+Upstream-Status: QNX-specific
+
+--- a/omp/__init__.py
++++ b/omp/__init__.py
+@@ -119,6 +119,20 @@
+ 
+     def init_not_msvc(self):
+         """ Find OpenMP library and try to load if using ctype interface. """
++        if sys.platform.startswith('qnx'):
++            # ctypes.util.find_library() finds nothing on QNX and spawns
++            # ldconfig, gcc and ld (none of which a target has) for each
++            # name; there is no compiler to ask either. The runtime loader
++            # finds the library by its soname, if there is one.
++            for libomp_name in self.get_libomp_names():
++                for soname in ('lib%s.so' % libomp_name, 'lib%s.so.1' % libomp_name):
++                    try:
++                        self.libomp = ctypes.CDLL(soname)
++                    except OSError:
++                        continue
++                    self.version = 45
++                    return
++            raise ImportError("I can't find a shared library for libomp")
+         # find_library() does not automatically search LD_LIBRARY_PATH
+         # until Python 3.6+, so we explicitly add it.
+         # LD_LIBRARY_PATH is used on Linux, while macOS uses DYLD_LIBRARY_PATH

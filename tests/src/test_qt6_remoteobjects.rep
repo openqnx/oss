@@ -1,0 +1,8 @@
+// The interface test_qt6_remoteobjects shares: repc (the build machine's,
+// hosttools/qt6-<version>) turns it into a source and a replica class.
+class Counter
+{
+    PROP(int count = 0 READONLY)
+    SLOT(void increment(int by))
+    SIGNAL(reached(int value))
+};

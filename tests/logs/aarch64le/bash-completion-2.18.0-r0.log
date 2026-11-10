@@ -1,0 +1,30 @@
+# bash-completion 2.18.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:48:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bash-completion qnx-test-bash-completion qnx-port-tests
+(1/3) Installing bash (5.2.37-r2)
+(2/3) Installing bash-completion (2.18.0-r0)
+(3/3) Installing qnx-test-bash-completion (1.0-r0)
+OK: 976.5 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bash_completion
+     == bash-completion ==
+       ok   bash -i on a pseudo-terminal (forkpty)
+       ok   bash_completion sourced in an interactive bash
+       ok   ssh qnx<TAB><TAB>: qnxbox qnxother (from ~/.ssh/config)
+       ok   ssh's completion loaded on demand: complete -F _comp_cmd_ssh ssh
+       ok   kill -TER<TAB>: -TERM (bash's signal list)
+       ok   cd d/sub<TAB><TAB>: sub1/ sub2/ (directories only)
+       ok   cat d/fi<TAB>: d/file.txt (files for cat)
+       info 778 command completions
+       ok   more than 300 command completions installed
+     PASS bash-completion
+PASS test_bash_completion
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

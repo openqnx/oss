@@ -1,0 +1,20 @@
+Do not add -march=native when cross-compiling
+
+ACADO adds -march=native to the release flags of every GCC/Clang build.
+Cross-compiling, "native" is the build host, not the target: QNX's
+aarch64 compiler rejects it ("bad value 'native' for '-march='") and on
+x86_64 it would tune the target code for whatever CPU built it.
+
+Upstream-Status: Pending
+
+--- a/cmake/CompilerOptions.cmake
++++ b/cmake/CompilerOptions.cmake
+@@ -96,7 +96,7 @@
+ 		SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual" )
+ 	ENDIF()
+ 
+-	IF (NOT (APPLE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") AND (NOT MINGW))
++	IF (NOT (APPLE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") AND (NOT MINGW) AND (NOT CMAKE_CROSSCOMPILING))
+ 		SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+ 		SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
+ 	ENDIF()

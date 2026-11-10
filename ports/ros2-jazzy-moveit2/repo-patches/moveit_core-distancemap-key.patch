@@ -1,0 +1,23 @@
+moveit_core: DistanceMap without a const key type
+
+collision_detection::DistanceMap is std::map<const std::pair<std::string,
+std::string>, ...>. libstdc++ copies such a map; libc++ (QNX's) copy-assigns
+its nodes' key-value pairs, which a const key does not allow ("no match for
+'operator=' ... __nc_ref_pair_type"), and DistanceResult's copy assignment
+did not compile. A std::map's keys are const anyway: use the plain pair.
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_core/collision_detection/include/moveit/collision_detection/collision_common.hpp b/moveit_core/collision_detection/include/moveit/collision_detection/collision_common.hpp
+index 19777a0..f12f827 100644
+--- a/moveit_core/collision_detection/include/moveit/collision_detection/collision_common.hpp
++++ b/moveit_core/collision_detection/include/moveit/collision_detection/collision_common.hpp
+@@ -307,7 +307,7 @@ struct DistanceResultsData  // NOLINT(readability-identifier-naming) - suppress
+ };
+ 
+ /** \brief Mapping between the names of the collision objects and the DistanceResultData. */
+-using DistanceMap = std::map<const std::pair<std::string, std::string>, std::vector<DistanceResultsData> >;
++using DistanceMap = std::map<std::pair<std::string, std::string>, std::vector<DistanceResultsData> >;
+ 
+ /** \brief Result of a distance request. */
+ struct DistanceResult

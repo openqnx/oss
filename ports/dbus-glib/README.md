@@ -190,7 +190,14 @@ PASS dbus-glib
    - a missing method: GError DBUS_GERROR_UNKNOWN_METHOD
    - dbus-binding-tool --mode=glib-client: a stub org_qnx_Test_echo(proxy, IN_text, OUT_reply, ...)
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> dbus-glib`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | dbus-glib 0.116-r0 | ✅ PASS | 2026-11-10 | [log](../../tests/logs/aarch64le/dbus-glib-0.116-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | dbus-glib 0.116-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/dbus-glib-0.116-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

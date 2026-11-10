@@ -1,0 +1,9 @@
+# Qt 6 qtgraphs, the Qt version ports/qt6 builds, from Qt's own submodule tarball,
+# cross-built against the staged qt6 (scripts/lib/qt6-module.sh).
+VERSION=6.8.1
+TARBALL=https://download.qt.io/archive/qt/6.8/6.8.1/submodules/qtgraphs-everywhere-src-6.8.1.tar.xz
+SHA256=1e46e3de69936835652ab40ef8caf5824ea71e26871274561fb65ec142d54a80
+DEPS="qt6"
+BUILDSYS=custom
+source "$WS/scripts/lib/qt6-module.sh"
+do_configure() { qt6_module_configure; }

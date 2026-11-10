@@ -601,6 +601,7 @@ test_labwc	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists
 test_lame	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_lame	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lame 3.100-r0
 test_lanelet2	PASS	2026-11-05	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lanelet2 1.2.3-r1
+test_lanelet2	PASS	2026-11-10	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lanelet2 1.2.3-r2
 test_lcm	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lcm 1.5.2-r0
 test_lcms2	PASS	2026-10-30	QEMU x86_64 (mkqnximage image + SDP runtime libraries)	bundle	
 test_lcms2	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	lcms2 2.16-r0
@@ -1231,7 +1232,7 @@ test_ros2	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	
 test_ros2	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r4
 test_ros2	PASS	2026-11-05	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r5
 test_ros2_jazzy_control	PASS	2026-11-05	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-control 20260128-r2
-test_ros2_jazzy_moveit2	FAIL	2026-11-05	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-moveit2 20260128-r1
+test_ros2_jazzy_moveit2	PASS	2026-11-10	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-moveit2 20260128-r1
 test_ros2_jazzy_nav2	PASS	2026-11-05	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-nav2 20260128-r1
 test_ros2_rviz	PASS	2026-11-04	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	ros2-rviz 14.1.24-r3
 test_rsync	PASS	2026-11-01	QEMU x86_64, vanilla mkqnximage image	apk:local-dists	rsync 3.3.0-r0

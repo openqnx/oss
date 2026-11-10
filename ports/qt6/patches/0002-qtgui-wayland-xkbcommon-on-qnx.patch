@@ -1,0 +1,33 @@
+QtGui: look for Wayland and xkbcommon on QNX too
+
+QtGui looks for Wayland only on Linux and for xkbcommon only where X11 is
+supported, so on QNX its wayland and xkbcommon features cannot be enabled
+("Feature "wayland": Forcing to "ON" breaks its condition: TARGET
+Wayland::Client") although both libraries are there (ports/wayland,
+ports/libxkbcommon). QNX has Wayland compositors (labwc, the QNX
+desktop), and Qt Wayland's client plugin -- the way Qt programs run on
+them -- requires QtGui's wayland feature ("Qt Gui has been built without
+'wayland' feature") and maps keys with xkbcommon. Look for both on QNX too.
+
+Upstream-Status: QNX-specific
+
+--- a/qtbase/src/gui/configure.cmake
++++ b/qtbase/src/gui/configure.cmake
+@@ -69,7 +69,7 @@
+ qt_find_package(Tslib PROVIDED_TARGETS PkgConfig::Tslib MODULE_NAME gui QMAKE_LIB tslib)
+ qt_find_package(WrapVulkanHeaders PROVIDED_TARGETS WrapVulkanHeaders::WrapVulkanHeaders
+     MODULE_NAME gui QMAKE_LIB vulkan MARK_OPTIONAL)
+-if((LINUX) OR QT_FIND_ALL_PACKAGES_ALWAYS)
++if((LINUX OR QNX) OR QT_FIND_ALL_PACKAGES_ALWAYS)
+     qt_find_package(Wayland PROVIDED_TARGETS Wayland::Server MODULE_NAME gui QMAKE_LIB wayland_server)
+     qt_find_package(Wayland PROVIDED_TARGETS Wayland::Client MODULE_NAME gui QMAKE_LIB wayland_client)
+ endif()
+@@ -141,7 +141,7 @@
+     qt_find_package(XCB 1.12 COMPONENTS XINPUT PROVIDED_TARGETS XCB::XINPUT MODULE_NAME gui QMAKE_LIB xcb_xinput)
+ endif()
+ qt_add_qmake_lib_dependency(xcb_xinput xcb)
+-if((X11_SUPPORTED) OR QT_FIND_ALL_PACKAGES_ALWAYS)
++if((X11_SUPPORTED OR QNX) OR QT_FIND_ALL_PACKAGES_ALWAYS)
+     qt_find_package(XKB 0.5.0 PROVIDED_TARGETS XKB::XKB MODULE_NAME gui QMAKE_LIB xkbcommon)
+ endif()
+ if((X11_SUPPORTED) OR QT_FIND_ALL_PACKAGES_ALWAYS)

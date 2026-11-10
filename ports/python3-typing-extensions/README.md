@@ -176,7 +176,36 @@ PASS python3-typing-extensions
 3. **On the target**: [`test_python3_pylibs`](../../tests/src/) -- a program linked against python3-typing-extensions the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> python3-typing-extensions`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-appdirs 1.4.4-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-appdirs-1.4.4-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-attrs 26.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-attrs-26.1.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-cattrs 26.2.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-cattrs-26.2.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-filelock 3.32.7-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-filelock-3.32.7-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-lark 1.3.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-lark-1.3.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-pathspec 1.1.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-pathspec-1.1.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-platformdirs 4.14.3-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-platformdirs-4.14.3-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-ply 3.11-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-ply-3.11-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-tomli 2.5.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-tomli-2.5.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-trove-classifiers 2026.9.21.13-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-trove-classifiers-2026.9.21.13-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-typeguard 4.6.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-typeguard-4.6.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-typing-extensions 4.16.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-typing-extensions-4.16.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-appdirs 1.4.4-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-appdirs-1.4.4-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-attrs 26.1.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-attrs-26.1.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-cattrs 26.2.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-cattrs-26.2.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-filelock 3.32.7-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-filelock-3.32.7-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-lark 1.3.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-lark-1.3.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-pathspec 1.1.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-pathspec-1.1.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-platformdirs 4.14.3-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-platformdirs-4.14.3-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-ply 3.11-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-ply-3.11-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-tomli 2.5.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-tomli-2.5.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-trove-classifiers 2026.9.21.13-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-trove-classifiers-2026.9.21.13-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-typeguard 4.6.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-typeguard-4.6.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-typing-extensions 4.16.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-typing-extensions-4.16.0-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

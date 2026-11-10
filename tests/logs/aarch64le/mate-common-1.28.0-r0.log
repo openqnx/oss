@@ -1,6 +1,6 @@
-# mate-common 1.28.0-r0 -- FAIL
+# mate-common 1.28.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
-# date: 2026-11-04T22:33:29Z   packages from: apk:local-dists
+# date: 2026-11-10T09:00:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -12,20 +12,15 @@ $ apk add -u mate-common qnx-test-mate-common qnx-port-tests
 OK: 974.3 MiB in 149 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mate_common
-FAIL test_mate_common (rc=1)
      == mate_common ==
        ok   aclocal copied MATE_* macros from share/aclocal/mate-common.m4
        ok   autoconf: MATE_MAINTAINER_MODE_DEFINES expanded
-       FAIL configure (rc 124): dd= -DG_DISABLE_DEPRECATED -DG_DISABLE_SINGLE_INCLUDES -DATK_DISABLE_DEPRECATED -DATK_DISABLE_SINGLE_INCLUDES -DPANGO_DISABLE_DEPRECATED -DPANGO_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGDK_DISABLE_SINGLE_INCLUDES -DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED -DGTK_DISABLE_SINGLE_INCLUDES -DMATE_DISABLE_DEPRECATED -DMATE_DISABLE_SINGLE_INCLUDES -DLIBGLADE_DISABLE_DEPRECATED -DLIBGLADE_DISABLE_SINGLE_INCLUDES -DVTE_DISABLE_DEPRECATED -DVTE_DISABLE_SINGLE_INCLUDES -DWNCK_DISABLE_DEPRECATED -DWNCK_DISABLE_SINGLE_INCLUDES -DLIBSOUP_DISABLE_DEPRECATED -DLIBSOUP_DISABLE_SINGLE_INCLUDES
-     configure: creating ./config.status
-     config.status: creating out.txt
-     Terminated 
-     Terminated 
-       FAIL no maintainer mode (rc 124): dd=
-       FAIL watchdog: still running after 170 s -- stopped
-     FAIL test_mate_common (watchdog)
+       ok   maintainer mode: DISABLE_DEPRECATED has -DGTK_DISABLE_DEPRECATED ... -DMATE_DISABLE_DEPRECATED
+       ok   --disable-maintainer-mode: DISABLE_DEPRECATED empty
+       ok   mate-autogen: configure and Makefile.in generated
+     PASS mate_common
+PASS test_mate_common
 --------------------------------------------
-passed: 0   failed: 1
-failing: test_mate_common
+passed: 1   failed: 0
 
-RESULT: FAIL
+RESULT: PASS

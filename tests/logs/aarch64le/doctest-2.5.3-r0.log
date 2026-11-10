@@ -1,0 +1,28 @@
+# doctest 2.5.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:54:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u doctest-dev qnx-test-doctest qnx-port-tests
+(1/2) Installing doctest-dev (2.5.3-r0)
+(2/2) Installing qnx-test-doctest (1.0-r0)
+OK: 974.9 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_doctest
+     == doctest ==
+       info doctest 2.5.3
+       ok   all non-skipped test cases pass (run() = 0)
+       ok   both subcases ran
+       ok   templated test case ran for int8, int16, int32
+       ok   the failing test case makes run() non-zero
+       ok   failure report names the expression 1 == 2
+       ok   summary: 1 test case, 1 failed
+       ok   summary: 2 assertions, 2 failed
+     PASS doctest
+PASS test_doctest
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -219,7 +219,14 @@ PASS libheif
    - AVIF (aom): 64x48, pixels within 3/255
    - HEIF with JPEG 2000 (openjpeg): pixels within 3/255
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> libheif`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libheif 1.20.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/libheif-1.20.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libheif 1.20.2-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/libheif-1.20.2-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

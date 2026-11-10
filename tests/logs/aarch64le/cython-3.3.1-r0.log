@@ -1,0 +1,38 @@
+# cython 3.3.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:52:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cython qnx-test-cython qnx-port-tests
+(1/2) Installing cython (3.3.1-r0)
+(2/2) Installing qnx-test-cython (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 984.9 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cython
+     == cython ==
+       ok   temporary directory
+       ok   module written as qnxcy.so
+       info module 217112 bytes, interpreter /usr/local/bin/python3
+       info module /data/var/tmp/qnx-cython-5185557/qnxcy.so
+       ok   fib(): typed C loop, 64-bit result
+       ok   primes(): sieve over a memoryview
+       ok   norm(): double[:] buffer, libc sqrt
+       ok   clen(): libc strlen on bytes
+       ok   ValueError raised in C code, with its message
+       ok   TypeError for a non-int argument
+       ok   cdef class: public attribute, cpdef method
+       info Cython 3.3.1
+       ok   Cython compiler modules and refnanny are compiled extensions
+       ok   python3 imports the Cython-compiled module and every check in it passes
+       info Cython version 3.3.1
+       ok   cython --version reports Cython 3.x
+       ok   cython compiles tiny.pyx to C on the target (tiny.c defines PyInit_tiny)
+     PASS cython
+PASS test_cython
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

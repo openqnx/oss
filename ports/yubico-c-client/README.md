@@ -199,7 +199,14 @@ PASS yubico-c-client
    - ykclient_strerror text
    - ykclient tool: exit 0 (OTP verified)
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> yubico-c-client`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | yubico-c-client 2.15-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/yubico-c-client-2.15-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | yubico-c-client 2.15-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/yubico-c-client-2.15-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

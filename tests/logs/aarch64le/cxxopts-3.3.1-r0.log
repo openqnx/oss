@@ -1,0 +1,31 @@
+# cxxopts 3.3.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:50:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cxxopts-dev qnx-test-cxxopts qnx-port-tests
+(1/2) Installing cxxopts-dev (3.3.1-r0)
+(2/2) Installing qnx-test-cxxopts (1.0-r0)
+OK: 974.6 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cxxopts
+     == cxxopts ==
+       info cxxopts 3.3.1
+       ok   -vvv counted 3 times
+       ok   --count=7, -r 2.5
+       ok   default a.out, not given
+       ok   -I a -Ib -> [a, b]
+       ok   --color without value takes the implicit auto
+       ok   positional files x.c y.c, and -n after --
+       ok   -n after -- did not change --count
+       ok   unknown --nope throws no_such_option
+       ok   -n seven throws incorrect_argument_type
+       ok   help text: usage, description, -n, --count arg (default: 1)
+     PASS cxxopts
+PASS test_cxxopts
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

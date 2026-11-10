@@ -1,0 +1,50 @@
+moveit_planners_ompl: OpenMP optional
+
+ompl_interface/CMakeLists.txt requires OpenMP and puts OpenMP_CXX_FLAGS on
+moveit_ompl_interface and the tools' compile and link lines, but none of
+its sources uses OpenMP (no pragmas, no omp_* calls). FindOpenMP does not
+recognise QNX's qcc ("Could NOT find OpenMP_CXX"), which stopped the
+package. Look for OpenMP quietly; without it:
+- use no OpenMP flags: FindOpenMP leaves OpenMP_CXX_FLAGS set to "NOTFOUND",
+  which qcc took for an input file ("cannot find NOTFOUND");
+- do not set moveit_ompl_interface's COMPILE_FLAGS, a second copy of
+  CMAKE_CXX_FLAGS for the OpenMP flags' sake: with the ROS toolchain
+  (qnx-ports') that copy carries -std=c++14 after CMake's -std=c++20, and
+  rclcpp's headers then failed ("'is_same_v' is not a member of 'std'").
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_planners/ompl/ompl_interface/CMakeLists.txt b/moveit_planners/ompl/ompl_interface/CMakeLists.txt
+index e22c868..859f4ad 100644
+--- a/moveit_planners/ompl/ompl_interface/CMakeLists.txt
++++ b/moveit_planners/ompl/ompl_interface/CMakeLists.txt
+@@ -22,7 +22,13 @@ add_library(
+ set_target_properties(moveit_ompl_interface
+                       PROPERTIES VERSION "${${PROJECT_NAME}_VERSION}")
+ 
+-find_package(OpenMP REQUIRED)
++# Nothing in ompl_interface uses OpenMP: optional. Without it, no flags
++# (FindOpenMP leaves OpenMP_CXX_FLAGS set to NOTFOUND, which would end up on
++# the compile and link lines as a file name).
++find_package(OpenMP QUIET)
++if(NOT OpenMP_CXX_FOUND)
++  set(OpenMP_CXX_FLAGS "")
++endif()
+ 
+ ament_target_dependencies(
+   moveit_ompl_interface
+@@ -35,9 +41,11 @@ ament_target_dependencies(
+   tf2_eigen
+   tf2_ros
+   Boost)
+-set_target_properties(
+-  moveit_ompl_interface PROPERTIES COMPILE_FLAGS
+-                                   "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
++if(OpenMP_CXX_FOUND)
++  set_target_properties(
++    moveit_ompl_interface PROPERTIES COMPILE_FLAGS
++                                     "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
++endif()
+ set_target_properties(moveit_ompl_interface PROPERTIES LINK_FLAGS
+                                                        "${OpenMP_CXX_FLAGS}")
+ target_link_libraries(moveit_ompl_interface PUBLIC ompl::ompl)

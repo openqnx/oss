@@ -30,6 +30,11 @@ VERSION=jazzy
 # liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its
 # setup.sh does).
 DEPS="python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2"
+# What the Python side imports at run time, which NEEDED cannot show: rclpy
+# (its parameter and QoS code) imports yaml, and every generated message
+# module imports numpy (array fields) -- without them "import rclpy" and
+# "from std_msgs.msg import String" failed on a target with only ros2.
+RUNTIME_DEPS="python3 numpy python3-pyyaml"
 BUILDSYS=custom
 ROS_PREFIX="$PREFIX/opt/ros/$VERSION"
 _rosvenv() {

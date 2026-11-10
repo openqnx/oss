@@ -1,0 +1,33 @@
+mrt_cmake_modules: do not write the build machine's source path into the installed extras file
+
+mrt_cmake_modules-extras.cmake.in has a catkin "develspace" branch that sets
+MRT_CMAKE_MODULES_ROOT_PATH to @PROJECT_SOURCE_DIR@. With ament there is no
+develspace (@DEVELSPACE@ expands to nothing, so the branch is never taken),
+but the installed file still carries the absolute path of the source tree on
+the machine that built it. Keep only the install-space branch.
+
+Upstream-Status: Inappropriate [packaging]
+---
+diff --git a/cmake/mrt_cmake_modules-extras.cmake.in b/cmake/mrt_cmake_modules-extras.cmake.in
+index 0a4965f..b2b9863 100644
+--- a/cmake/mrt_cmake_modules-extras.cmake.in
++++ b/cmake/mrt_cmake_modules-extras.cmake.in
+@@ -11,15 +11,9 @@ if(MRT_PKG_VERSION AND MRT_PKG_VERSION VERSION_LESS _MRT_RECOMMENDED_VERSION )
+ endif()
+ 
+ # Set the cmake install path
+-if(@DEVELSPACE@)
+-    # cmake dir in develspace
+-    set(MRT_CMAKE_MODULES_ROOT_PATH "@PROJECT_SOURCE_DIR@")
+-    set(MRT_CMAKE_MODULES_CMAKE_PATH "@PROJECT_SOURCE_DIR@/cmake")
+-else()
+-    # cmake dir in installspace
+-    set(MRT_CMAKE_MODULES_ROOT_PATH "${mrt_cmake_modules_DIR}/..")
+-    set(MRT_CMAKE_MODULES_CMAKE_PATH "${mrt_cmake_modules_DIR}")
+-endif()
++# cmake dir in installspace
++set(MRT_CMAKE_MODULES_ROOT_PATH "${mrt_cmake_modules_DIR}/..")
++set(MRT_CMAKE_MODULES_CMAKE_PATH "${mrt_cmake_modules_DIR}")
+ 
+ list(APPEND CMAKE_MODULE_PATH "${MRT_CMAKE_MODULES_CMAKE_PATH}/Modules")
+ set(MCM_TEMPLATE_DIR "${MRT_CMAKE_MODULES_CMAKE_PATH}/Templates")

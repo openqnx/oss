@@ -166,7 +166,14 @@ PASS tree-sitter-cpp
 3. **On the target**: [`test_tree_sitter_cpp`](../../tests/src/) -- a program linked against tree-sitter-cpp the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> tree-sitter-cpp`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | tree-sitter-cpp 0.23.4-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/tree-sitter-cpp-0.23.4-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | tree-sitter-cpp 0.23.4-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/tree-sitter-cpp-0.23.4-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

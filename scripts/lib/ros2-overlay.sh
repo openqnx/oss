@@ -66,6 +66,9 @@ foreach(k EXE SHARED MODULE)
   endif()
 endforeach()
 TC
+  # Python3_EXECUTABLE is given: FindPython3 tries versioned names before
+  # "python3", so where the build host has a /usr/bin/python3.12 (a version
+  # this CMake knows, unlike 3.14) it took that one, which has no catkin_pkg.
   # colcon puts each installed package's lib directory on LD_LIBRARY_PATH;
   # they hold QNX libraries. Run the host's cmake and ctest without it.
   local w="$B/hostwrap" t
@@ -78,7 +81,7 @@ TC
     --event-handlers console_direct- --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/overlay-toolchain.cmake" \
       -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
       -DEIGEN3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/eigen3" -DEigen3_DIR="$STAGE_SYSROOT$PREFIX/share/eigen3/cmake" \
-      -DPython3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/python$pv" -DPython3_LIBRARY="$L/libpython$pv.so" \
+      -DPython3_EXECUTABLE="$v/bin/python3" -DPython3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/python$pv" -DPython3_LIBRARY="$L/libpython$pv.so" \
       -DPython3_NumPy_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/lib/python$pv/site-packages/numpy/_core/include" \
       -DTRACETOOLS_TRACEPOINTS_EXCLUDED=ON "${OVERLAY_CMAKE_ARGS[@]}" -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" )
 }

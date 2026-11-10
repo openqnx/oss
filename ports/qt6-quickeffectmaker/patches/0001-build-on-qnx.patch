@@ -1,0 +1,36 @@
+Build Qt Quick Effect Maker for QNX, cross-compiled
+
+Qt Quick Effect Maker (qqem) is skipped on QNX and in any cross build.
+Neither is needed: qqem is an ordinary Qt Quick application on Qt Quick,
+Qt Quick Controls and Qt Shader Tools (which ports/qt6 builds for the
+target), it compiles the shaders it edits at run time in-process
+(QShaderBaker), and the nodes it installs (qml/QtQuickEffectMaker/
+defaultnodes) are data files copied as they are -- nothing runs on the
+build machine. Let it build for QNX, cross-compiled.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -33,8 +33,8 @@
+     return()
+ endif()
+ 
+-if(INTEGRITY OR QNX OR VXWORKS OR WATCHOS)
+-    message(NOTICE "Skipping the build as the condition \"NOT INTEGRITY AND NOT QNX AND NOT VXWORKS AND NOT WATCHOS\" is not met.")
++if(INTEGRITY OR VXWORKS OR WATCHOS)
++    message(NOTICE "Skipping the build as the condition \"NOT INTEGRITY AND NOT VXWORKS AND NOT WATCHOS\" is not met.")
+     return()
+ endif()
+ 
+@@ -49,10 +49,6 @@
+     return()
+ endif()
+ 
+-if(CMAKE_CROSSCOMPILING)
+-    message(NOTICE "Skipping the build as the condition \"NOT CMAKE_CROSSCOMPILING\" is not met.")
+-    return()
+-endif()
+ 
+ # Copy nodes content
+ set(nodes_folders

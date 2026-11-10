@@ -1,0 +1,35 @@
+Decide Wayland EGL on QNX with qtwayland's own EGL test, not a qtbase feature 6.8 lacks
+
+On QNX, the wayland-egl client integration and the drm-egl server buffer
+are made conditional on the qtbase feature egl_extension_platform_wayland,
+which Qt 6.8's qtbase does not define (it arrived in a later qtbase):
+configure stops with "Attempting to evaluate feature
+egl_extension_platform_wayland but its definition is missing". What the
+condition asks -- does EGL know the Wayland platform
+(eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_EXT, ...)) -- is exactly
+qtwayland's own compile test egl_1_5_wayland: use that on QNX. SDP 8's
+EGL headers define EGL_PLATFORM_WAYLAND_EXT, and QNX's EGL on a
+graphics target accepts Wayland displays (GTK 4 and wlroots use it).
+
+Upstream-Status: QNX-specific
+
+--- a/src/configure.cmake
++++ b/src/configure.cmake
+@@ -211,7 +211,7 @@
+     LABEL "EGL"
+     CONDITION (QT_FEATURE_wayland_client OR QT_FEATURE_wayland_server)
+               AND QT_FEATURE_opengl AND QT_FEATURE_egl
+-              AND (NOT QNX OR QT_FEATURE_egl_extension_platform_wayland)
++              AND (NOT QNX OR TEST_egl_1_5_wayland)
+ )
+ qt_feature("wayland-brcm" PRIVATE
+     LABEL "Raspberry Pi"
+@@ -221,7 +221,7 @@
+     LABEL "DRM EGL"
+     CONDITION (QT_FEATURE_wayland_client OR QT_FEATURE_wayland_server) AND QT_FEATURE_opengl
+               AND QT_FEATURE_egl AND TEST_drm_egl_server
+-              AND (NOT QNX OR QT_FEATURE_egl_extension_platform_wayland)
++              AND (NOT QNX OR TEST_egl_1_5_wayland)
+ )
+ qt_feature("wayland-libhybris-egl-server-buffer" PRIVATE
+     LABEL "libhybris EGL"

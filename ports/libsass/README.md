@@ -181,7 +181,14 @@ PASS libsass
    - without the include path the @import fails
    - undefined variable: error with line:column
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> libsass`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libsass 3.6.6-r1 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/libsass-3.6.6-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libsass 3.6.6-r1 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/libsass-3.6.6-r1.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

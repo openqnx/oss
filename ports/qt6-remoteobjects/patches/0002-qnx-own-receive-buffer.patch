@@ -1,0 +1,163 @@
+QNX transport: keep received data out of QIODevice's own read buffer
+
+The QNX-native transport (qnx: URLs) put received data into
+QIODevicePrivate::buffer, from its connection thread under its own lock,
+and read it back in readData(). In Qt 6 that buffer is QIODevice's own read
+buffer: QIODevice::read() takes data from it directly (without that lock)
+before calling readData(), and during a read transaction -- which QtRO's
+packet parser uses -- it fills it from readData(), so readData() then
+reads from the very buffer it is writing to. The stream came out garbled
+on QNX 8 ("Request to attach to non-existent RemoteObjectSource:
+"qcount3\0"" for "qcounter"; a replica over qnx: never initialised).
+Keep received data in a ring buffer of the transport's own (ibuffer) and
+leave QIODevice's buffer to QIODevice; bytesAvailable() adds what
+QIODevice itself holds.
+
+Upstream-Status: Pending
+
+--- a/src/remoteobjects/qconnection_qnx_qiodevices.cpp
++++ b/src/remoteobjects/qconnection_qnx_qiodevices.cpp
+@@ -164,11 +164,11 @@
+             ibLock.lockForWrite();
+             iov_t reply_vector[2];
+             SETIOV(reply_vector, &bytesLeft, sizeof(bytesLeft));
+-            SETIOV(reply_vector+1, buffer.reserve(len), size_t(len));
++            SETIOV(reply_vector+1, ibuffer.reserve(len), size_t(len));
+             const int res = MsgSendv(serverId, tx_iov, 1, reply_vector, 2);
+ 
+             if (res == -1) {
+-                buffer.chop(len);
++                ibuffer.chop(len);
+                 ibLock.unlock();
+                 WARNING(MsgSendv);
+                 break;
+@@ -181,10 +181,10 @@
+                 msgType = MsgType::SOURCE_TX_RESP_REPEAT;
+                 ibLock.lockForWrite();
+                 SETIOV(reply_vector, &nTxRequestToIgnore, sizeof(nTxRequestToIgnore));
+-                SETIOV(reply_vector+1, buffer.reserve(bytesLeft), size_t(bytesLeft));
++                SETIOV(reply_vector+1, ibuffer.reserve(bytesLeft), size_t(bytesLeft));
+                 const int res = MsgSendv(serverId, tx_iov, 1, reply_vector, 2);
+                 if (res == -1) {
+-                    buffer.chop(bytesLeft);
++                    ibuffer.chop(bytesLeft);
+                     ibLock.unlock();
+                     WARNING(MsgSendv);
+                     break;
+@@ -351,7 +351,7 @@
+     d->stopThread();
+     //Don't need mutex since thread is stopped
+     d->obuffer->clear();
+-    d->buffer.clear();
++    d->ibuffer.clear();
+ 
+     d->state = QAbstractSocket::UnconnectedState;
+     emit stateChanged(d->state);
+@@ -368,10 +368,10 @@
+     Q_D(const QQnxNativeIo);
+ 
+     d->ibLock.lockForRead();
+-    qint64 size = d->buffer.size();
++    qint64 size = d->ibuffer.size();
+     d->ibLock.unlock();
+ 
+-    return size;
++    return size + QIODevice::bytesAvailable();
+ }
+ 
+ qint64 QQnxNativeIo::bytesToWrite() const
+@@ -404,7 +404,7 @@
+     d->teardownConnection();
+ 
+     d->obuffer->clear();
+-    d->buffer.clear();
++    d->ibuffer.clear();
+     QIODevice::close();
+ }
+ 
+@@ -443,7 +443,7 @@
+         return 0;
+ 
+     d->ibLock.lockForWrite(); //NAR (Not-An-Error)
+-    read = d->buffer.read(data, size);
++    read = d->ibuffer.read(data, size);
+     d->ibLock.unlock();
+ 
+     return read;
+@@ -502,10 +502,10 @@
+     Q_D(const QIOQnxSource);
+ 
+     d->ibLock.lockForRead();
+-    qint64 size = d->buffer.size();
++    qint64 size = d->ibuffer.size();
+     d->ibLock.unlock();
+ 
+-    return size;
++    return size + QIODevice::bytesAvailable();
+ }
+ 
+ qint64 QIOQnxSource::bytesToWrite() const
+@@ -545,7 +545,7 @@
+     emit stateChanged(d->state);
+ 
+     d->obuffer.clear();
+-    d->buffer.clear();
++    d->ibuffer.clear();
+     QIODevice::close();
+ }
+ 
+@@ -584,7 +584,7 @@
+         return 0;
+ 
+     d->ibLock.lockForWrite(); //NAR (Not-An-Error)
+-    read = d->buffer.read(data, size);
++    read = d->ibuffer.read(data, size);
+     d->ibLock.unlock();
+ 
+     return read;
+--- a/src/remoteobjects/qconnection_qnx_qiodevices_p.h
++++ b/src/remoteobjects/qconnection_qnx_qiodevices_p.h
+@@ -45,6 +45,11 @@
+     sigevent tx_pulse;
+     QAbstractSocket::SocketState state;
+     QScopedPointer<QRingBuffer> obuffer;
++    // Received data, filled by the connection thread (under ibLock) and
++    // drained by readData(). Not QIODevicePrivate::buffer: that is
++    // QIODevice's own read buffer, which QIODevice::read() uses without
++    // the lock (and fills from readData() during a transaction).
++    QRingBuffer ibuffer;
+     MsgType msgType;
+     iov_t tx_iov[3], rx_iov[2];
+     Thread<QQnxNativeIoPrivate> thread;
+@@ -66,6 +71,7 @@
+     MsgType msgType;
+     sigevent m_event;
+     QRingBuffer obuffer;
++    QRingBuffer ibuffer;   // received data (see QQnxNativeIoPrivate::ibuffer)
+     QAtomicInt m_serverClosing;
+ };
+ 
+--- a/src/remoteobjects/qconnection_qnx_server.cpp
++++ b/src/remoteobjects/qconnection_qnx_server.cpp
+@@ -326,18 +326,18 @@
+             //Long-lock, use buffer+memcpy if we run into trouble
+             io->d_func()->ibLock.lockForWrite();
+             qint32 toRead = msg_info.msglen-sizeof(MsgType);
+-            char *payload = io->d_func()->buffer.reserve(toRead);
++            char *payload = io->d_func()->ibuffer.reserve(toRead);
+ 
+             const int res = MsgRead(rcvid, payload, toRead, sizeof(MsgType));
+             if (-1 == res) {
+-                io->d_func()->buffer.chop(toRead);
++                io->d_func()->ibuffer.chop(toRead);
+                 io->d_func()->ibLock.unlock();
+                 qFatal("MsgRead");
+             }
+             Q_ASSERT(res == toRead);
+ 
+             if (res < toRead)
+-                io->d_func()->buffer.chop(toRead - res);
++                io->d_func()->ibuffer.chop(toRead - res);
+             io->d_func()->ibLock.unlock();
+ 
+             FATAL_ON_ERROR(MsgReply, rcvid, EOK, nullptr, 0)

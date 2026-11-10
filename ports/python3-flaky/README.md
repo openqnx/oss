@@ -176,7 +176,22 @@ PASS python3-flaky
 3. **On the target**: [`test_python3_pytest_plugins`](../../tests/src/) -- a program linked against python3-flaky the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> python3-flaky`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-execnet 2.1.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-execnet-2.1.2-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-flaky 3.8.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-flaky-3.8.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-pytest-mock 3.17.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-pytest-mock-3.17.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-pytest-xdist 3.8.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-pytest-xdist-3.8.0-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | python3-time-machine 3.6.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/python3-time-machine-3.6.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-execnet 2.1.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-execnet-2.1.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-flaky 3.8.1-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-flaky-3.8.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-pytest-mock 3.17.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-pytest-mock-3.17.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-pytest-xdist 3.8.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-pytest-xdist-3.8.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | python3-time-machine 3.6.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/python3-time-machine-3.6.0-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

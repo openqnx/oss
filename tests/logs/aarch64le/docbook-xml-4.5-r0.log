@@ -1,0 +1,34 @@
+# docbook-xml 4.5-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-10T08:53:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u docbook-xml qnx-test-docbook-xml qnx-port-tests
+(1/3) Installing docbook-xml (4.5-r0)
+(2/3) Installing libxml2-utils (2.13.5-r0)
+(3/3) Installing qnx-test-docbook-xml (1.0-r0)
+OK: 976.3 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_docbook_xml
+     == docbook-xml ==
+       ok   xmlcatalog and xmllint installed
+       ok   root catalog /usr/local/etc/xml/catalog
+       ok   public -//OASIS//DTD DocBook XML V4.5//EN
+       ok   public -//OASIS//ENTITIES DocBook Character Entities V4.5//EN
+       ok   public -//OASIS//DTD DocBook XML V4.2//EN
+       ok   public -//OASIS//DTD DocBook XML V4.1.2//EN
+       ok   system http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd
+       ok   system http://www.oasis-open.org/docbook/xml/4.4/ent/isonum.ent
+       ok   an unknown version does not resolve (rc 4)
+       ok   xmllint --valid --nonet ok45.xml (default catalog)
+       ok   xmllint --valid --nonet ok42.xml (default catalog)
+       ok   &mdash; expands to U+2014 (DocBook entity sets)
+       ok   an invalid document is rejected (validity errors, rc 3)
+     PASS docbook-xml
+PASS test_docbook_xml
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

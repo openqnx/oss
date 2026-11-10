@@ -168,7 +168,14 @@ PASS nanoflann
    - dynamic index: added point (5,5,5) is nearest to (6,6,6)
    - after removing it, (10,10,10) is nearest
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> nanoflann`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | nanoflann 1.10.0-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/nanoflann-1.10.0-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | nanoflann 1.10.0-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/nanoflann-1.10.0-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

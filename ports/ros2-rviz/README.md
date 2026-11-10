@@ -9,7 +9,7 @@
 | Upstream | see recipe.sh |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
-| Build dependencies | [`ros2`](../ros2/) [`qt6`](../qt6/) [`assimp`](../assimp/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`eigen`](../eigen/) |
+| Build dependencies | [`ros2`](../ros2/) [`qt6`](../qt6/) [`assimp`](../assimp/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`eigen`](../eigen/) [`orocos-kdl`](../orocos-kdl/) |
 | Run-time dependencies | [`assimp`](../assimp/) [`console_bridge`](../console_bridge/) [`freetype`](../freetype/) [`orocos-kdl`](../orocos-kdl/) [`qt6`](../qt6/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2_rviz`](../../tests/src/) |
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (84 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (87 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild ros2 qt6 assimp freetype zlib eigen
+./scripts/qnxbuild ros2 qt6 assimp freetype zlib eigen orocos-kdl
 ```
 
-<details><summary>Full build chain (84)</summary>
+<details><summary>Full build chain (87)</summary>
 
-[`aom`](../aom/) [`assimp`](../assimp/) [`benchmark`](../benchmark/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`cairo`](../cairo/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`dav1d`](../dav1d/) [`double-conversion`](../double-conversion/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fdk-aac`](../fdk-aac/) [`ffmpeg`](../ffmpeg/) [`fontconfig`](../fontconfig/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`qt6`](../qt6/) [`readline`](../readline/) [`ros2`](../ros2/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`tinyxml2`](../tinyxml2/) [`x264`](../x264/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`assimp`](../assimp/) [`benchmark`](../benchmark/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`cairo`](../cairo/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`dav1d`](../dav1d/) [`double-conversion`](../double-conversion/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fdk-aac`](../fdk-aac/) [`ffmpeg`](../ffmpeg/) [`fontconfig`](../fontconfig/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`orocos-kdl`](../orocos-kdl/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`qt6`](../qt6/) [`readline`](../readline/) [`ros2`](../ros2/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`tinyxml2`](../tinyxml2/) [`wayland`](../wayland/) [`x264`](../x264/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -262,7 +262,14 @@ PASS ros2-rviz
 3. **On the target**: [`test_ros2_rviz`](../../tests/src/) -- a program linked against ros2-rviz the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> ros2-rviz`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2-rviz 14.1.24-r3 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/ros2-rviz-14.1.24-r3.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2-rviz 14.1.24-r3 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/ros2-rviz-14.1.24-r3.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
@@ -292,7 +299,7 @@ VERSION=14.1.24
 #
 # Qt: this tree has Qt 6 (ports/qt6); Jazzy's RViz is Qt 5 only, so upstream's
 # Qt 6 support from rolling is backported (repo-patches/rviz-qt6.patch).
-DEPS="ros2 qt6 assimp freetype zlib eigen"
+DEPS="ros2 qt6 assimp freetype zlib eigen orocos-kdl"
 # ros2: the ROS libraries and setup.sh it runs on (not found from NEEDED: they
 # are in the ROS prefix, not /usr/local/lib).
 RUNTIME_DEPS="ros2"

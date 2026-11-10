@@ -187,7 +187,14 @@ PASS sassc
 3. **On the target**: [`test_sassc`](../../tests/src/) -- a program linked against sassc the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> sassc`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | sassc 3.6.2-r1 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/sassc-3.6.2-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | sassc 3.6.2-r1 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/sassc-3.6.2-r1.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

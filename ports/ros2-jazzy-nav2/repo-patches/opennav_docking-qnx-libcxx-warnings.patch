@@ -1,0 +1,43 @@
+opennav_docking: no -Werror for libc++'s null-dereference warnings on QNX
+
+opennav_docking and opennav_docking_bt compile with -Werror
+-Wnull-dereference. With QNX's GCC 12 (qcc) and libc++, inlined libc++ code
+(<regex> in the parameter handling, <vector>, <string>'s constexpr helpers)
+raises "potential null pointer dereference" and "argument 1 null where
+non-null expected" inside the library headers, not in Nav2, and both
+packages stopped there. Keep those two warnings non-fatal on QNX.
+
+Upstream-Status: Pending
+---
+diff --git a/nav2_docking/opennav_docking/CMakeLists.txt b/nav2_docking/opennav_docking/CMakeLists.txt
+index 9278234..57cdb39 100644
+--- a/nav2_docking/opennav_docking/CMakeLists.txt
++++ b/nav2_docking/opennav_docking/CMakeLists.txt
+@@ -26,6 +26,11 @@ find_package(opennav_docking_core REQUIRED)
+ # potentially replace with nav2_common, nav2_package()
+ set(CMAKE_CXX_STANDARD 17)
+ add_compile_options(-Wall -Wextra -Wpedantic -Werror -Wdeprecated -fPIC -Wshadow -Wnull-dereference)
++if(QNX)
++  # QNX's GCC 12 (qcc) with libc++: -Wnull-dereference and -Wnonnull fire
++  # inside inlined libc++ code (<regex>, <vector>, <string>); keep them warnings.
++  add_compile_options(-Wno-error=null-dereference -Wno-error=nonnull)
++endif()
+ 
+ include_directories(
+   include
+diff --git a/nav2_docking/opennav_docking_bt/CMakeLists.txt b/nav2_docking/opennav_docking_bt/CMakeLists.txt
+index c89330e..d2487ef 100644
+--- a/nav2_docking/opennav_docking_bt/CMakeLists.txt
++++ b/nav2_docking/opennav_docking_bt/CMakeLists.txt
+@@ -16,6 +16,11 @@ find_package(behaviortree_cpp REQUIRED)
+ # potentially replace with nav2_common, nav2_package()
+ set(CMAKE_CXX_STANDARD 17)
+ add_compile_options(-Wall -Wextra -Wpedantic -Werror -Wdeprecated -fPIC -Wshadow -Wnull-dereference)
++if(QNX)
++  # QNX's GCC 12 (qcc) with libc++: -Wnull-dereference and -Wnonnull fire
++  # inside inlined libc++ code (<regex>, <vector>, <string>); keep them warnings.
++  add_compile_options(-Wno-error=null-dereference -Wno-error=nonnull)
++endif()
+ 
+ include_directories(
+   include

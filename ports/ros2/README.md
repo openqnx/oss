@@ -96,7 +96,7 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 More QNX changes, outside the main source tree:
 
-- [`repo-patches/`](repo-patches/) — 35 one patch per repository of a multi-repository source (repo-patches/MAP)
+- [`repo-patches/`](repo-patches/) — 36 one patch per repository of a multi-repository source (repo-patches/MAP)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -218,6 +218,7 @@ do_install() { mkdir -p "$STAGE$ROS_PREFIX" && cp -a "$B/install/." "$STAGE$ROS_
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - ROS 2 Jazzy Jalisco: the core (rclcpp, rclpy, Fast DDS and Cyclone DDS RMWs, rosbag2, tf2, common interfaces, demos) -- 107 repositories at the versions pinned in ros2.repos. Taken from qnx-ports/build-files ports/ros2/ros2-jazzy (see qnx-ports/LICENSE): ros2.repos          the repository set and versions ros2-extra.repos    vision_opencv (cv_bridge), imported on top of it repo-patches/*.patch QNX changes, one per repository (repo-patches/MAP says where) COLCON_IGNORE.list  packages that are not built for QNX (rviz, gazebo, ...) qnx-ports/platform  the CMake toolchain file the ROS build uses qnx-ports/modules   find modules and vendor package overrides The ROS build tools (vcstool, colcon, the rosidl generator dependencies) run on the build host, in a venv of the host Python. Installs to /usr/local/opt/ros/jazzy on the target (source its setup.sh/local_setup.sh there). Built against this tree's Fast DDS, Fast CDR, Cyclone DDS, console_bridge, libyaml, yaml-cpp, zstd, Google Benchmark and tinyxml2 rather than copies of its own (the Fast-CDR/Fast-DDS/cyclonedds repositories are in COLCON_IGNORE.list; the *_vendor packages find the components through the <Pkg>_DIR arguments below). The copies carried the components' sonames into the ROS prefix, and QNX's loader takes whichever comes first on LD_LIBRARY_PATH: with /usr/local/lib first, Fast DDS nodes loaded the standalone libfastcdr and threw BadParamException registering their first type. One copy of each library now, whatever the search order -- except Orocos KDL: ROS's PyKDL needs a later commit than the orocos-kdl component's 1.5.1 (std::hash for its types), so orocos_kdl_vendor still builds its own liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its setup.sh does).
+- What the Python side imports at run time, which NEEDED cannot show: rclpy (its parameter and QoS code) imports yaml, and every generated message module imports numpy (array fields) -- without them "import rclpy" and "from std_msgs.msg import String" failed on a target with only ros2.
 - The qnx-ports toolchain file and patches read CPU, ARCH, CPUVARDIR and QNX_SDP_VERSION (qnx800; zstd_vendor's CMakeLists tests it) from the environment (ARCH names the archiver, nto<ARCH>-ar: without it "Error running link command" on the first static library). Eigen3_INCLUDE_DIRS: qnx-ports' orocos_kdl_vendor change forwards it to the orocos_kdl sub-build as EIGEN3_INCLUDE_DIR; unset, that was empty ("Eigen/Core: No such file or directory"). OpenCV_DIR: that toolchain's CMAKE_FIND_ROOT_PATH is the colcon install prefix and the SDP only, so the opencv component's config is out of reach (image_geometry, cv_bridge: "Could not find a package configuration file provided by OpenCV"). Name it alone rather than add the whole staging tree, which would let the vendor packages settle for staged copies of what they vendor. Boost likewise (cv_bridge: "Could NOT find Boost"), as headers through FindBoost's own search: BoostConfig.cmake finds its components by absolute path, which that find-root setup reroots out of reach ("Could not find a package configuration file provided by boost_headers"). cv_bridge is built without its Python bindings (CV_BRIDGE_DISABLE_PYTHON): they need Boost.Python, which the boost component leaves out. Python3_*: the target's Python is this tree's python3 (3.14), not the SDP's libpython3.11, whose headers the SDP does not ship ("Python3::Python includes non-existent path .../python3.11").
 - Their linker flags carry --as-needed: a library that calls nothing in libc itself (rcl_logging_noop, the generated *__rosidl_typesupport_c libraries) then lost libc.so and exported copies of libc functions from QNX's static libcS.a, which every other ROS library then called instead of libc's. Keep libc needed (toolchain/qnx-x86_64.cmake does the same for every other port).
 
@@ -225,7 +226,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2`.
 
 ### 5. What it installs
 
-24226 files under `/usr/local`.
+23983 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2` after a build.
 
@@ -297,12 +298,14 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r2 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/ros2-0_git-r2.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ros2-0_git-r3.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r4 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/ros2-0_git-r4.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r5 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/ros2-0_git-r5.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:github | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r1 | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r2 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/x86_64/ros2-0_git-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r3 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ros2-0_git-r3.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r4 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/ros2-0_git-r4.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | ros2 0_git-r5 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/ros2-0_git-r5.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -345,6 +348,11 @@ VERSION=jazzy
 # liborocos-kdl.so.1.5; keep /usr/local/opt/ros/jazzy/lib first for ROS (its
 # setup.sh does).
 DEPS="python3 numpy opencv curl lz4 fastcdr fastdds cyclonedds console_bridge libyaml yaml-cpp zstd benchmark tinyxml2"
+# What the Python side imports at run time, which NEEDED cannot show: rclpy
+# (its parameter and QoS code) imports yaml, and every generated message
+# module imports numpy (array fields) -- without them "import rclpy" and
+# "from std_msgs.msg import String" failed on a target with only ros2.
+RUNTIME_DEPS="python3 numpy python3-pyyaml"
 BUILDSYS=custom
 ROS_PREFIX="$PREFIX/opt/ros/$VERSION"
 _rosvenv() {

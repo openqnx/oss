@@ -1,0 +1,102 @@
+moveit2: shared_ptr::use_count() == 1 for shared_ptr::unique()
+
+std::shared_ptr::unique() was deprecated in C++17 and removed in C++20;
+QNX's libc++ drops it in C++20 mode, which some of these targets build with
+(kinematics_plugin_loader.cpp: "'kinematics::KinematicsBasePtr' has no member
+named 'unique'"); elsewhere it warns. use_count() == 1 is what unique()
+returned. (qnx-ports/aports' moveit2.patch makes the same change.)
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_core/collision_detection/src/world.cpp b/moveit_core/collision_detection/src/world.cpp
+index b2262f9..2886e38 100644
+--- a/moveit_core/collision_detection/src/world.cpp
++++ b/moveit_core/collision_detection/src/world.cpp
+@@ -130,7 +130,7 @@ World::ObjectConstPtr World::getObject(const std::string& object_id) const
+ 
+ void World::ensureUnique(ObjectPtr& obj)
+ {
+-  if (obj && !obj.unique())
++  if (obj && !(obj.use_count() == 1))
+     obj = std::make_shared<Object>(*obj);
+ }
+ 
+diff --git a/moveit_core/collision_detection_fcl/src/collision_common.cpp b/moveit_core/collision_detection_fcl/src/collision_common.cpp
+index ca76202..bc1d25d 100644
+--- a/moveit_core/collision_detection_fcl/src/collision_common.cpp
++++ b/moveit_core/collision_detection_fcl/src/collision_common.cpp
+@@ -782,7 +782,7 @@ FCLGeometryConstPtr createCollisionGeometry(const shapes::ShapeConstPtr& shape,
+         //        cache_it->second->collision_geometry_data_->getID().c_str());
+         return cache_it->second;
+       }
+-      else if (cache_it->second.unique())
++      else if ((cache_it->second.use_count() == 1))
+       {
+         const_cast<FCLGeometry*>(cache_it->second.get())->updateCollisionGeometryData(data, shape_index, false);
+         //          RCLCPP_DEBUG(getLogger(), "Collision data structures for object %s retrieved from
+@@ -806,7 +806,7 @@ FCLGeometryConstPtr createCollisionGeometry(const shapes::ShapeConstPtr& shape,
+     auto cache_it = othercache.map_.find(wptr);
+     if (cache_it != othercache.map_.end())
+     {
+-      if (cache_it->second.unique())
++      if ((cache_it->second.use_count() == 1))
+       {
+         // remove from old cache
+         FCLGeometryConstPtr obj_cache = cache_it->second;
+@@ -839,7 +839,7 @@ FCLGeometryConstPtr createCollisionGeometry(const shapes::ShapeConstPtr& shape,
+       auto cache_it = othercache.map_.find(wptr);
+       if (cache_it != othercache.map_.end())
+       {
+-        if (cache_it->second.unique())
++        if ((cache_it->second.use_count() == 1))
+         {
+           // remove from old cache
+           FCLGeometryConstPtr obj_cache = cache_it->second;
+diff --git a/moveit_core/robot_state/src/attached_body.cpp b/moveit_core/robot_state/src/attached_body.cpp
+index 3a606df..c824662 100644
+--- a/moveit_core/robot_state/src/attached_body.cpp
++++ b/moveit_core/robot_state/src/attached_body.cpp
+@@ -88,7 +88,7 @@ void AttachedBody::setScale(double scale)
+   for (shapes::ShapeConstPtr& shape : shapes_)
+   {
+     // if this shape is only owned here (and because this is a non-const function), we can safely const-cast:
+-    if (shape.unique())
++    if ((shape.use_count() == 1))
+     {
+       const_cast<shapes::Shape*>(shape.get())->scale(scale);
+     }
+@@ -122,7 +122,7 @@ void AttachedBody::setPadding(double padding)
+   for (shapes::ShapeConstPtr& shape : shapes_)
+   {
+     // if this shape is only owned here (and because this is a non-const function), we can safely const-cast:
+-    if (shape.unique())
++    if ((shape.use_count() == 1))
+     {
+       const_cast<shapes::Shape*>(shape.get())->padd(padding);
+     }
+diff --git a/moveit_planners/ompl/ompl_interface/src/planning_context_manager.cpp b/moveit_planners/ompl/ompl_interface/src/planning_context_manager.cpp
+index 8da1bb4..13a4ef0 100644
+--- a/moveit_planners/ompl/ompl_interface/src/planning_context_manager.cpp
++++ b/moveit_planners/ompl/ompl_interface/src/planning_context_manager.cpp
+@@ -353,7 +353,7 @@ PlanningContextManager::getPlanningContext(const planning_interface::PlannerConf
+     {
+       for (const ModelBasedPlanningContextPtr& cached_context : cached_contexts->second)
+       {
+-        if (cached_context.unique())
++        if ((cached_context.use_count() == 1))
+         {
+           RCLCPP_DEBUG(getLogger(), "Reusing cached planning context");
+           context = cached_context;
+diff --git a/moveit_ros/planning/kinematics_plugin_loader/src/kinematics_plugin_loader.cpp b/moveit_ros/planning/kinematics_plugin_loader/src/kinematics_plugin_loader.cpp
+index ead7aa0..fbc9828 100644
+--- a/moveit_ros/planning/kinematics_plugin_loader/src/kinematics_plugin_loader.cpp
++++ b/moveit_ros/planning/kinematics_plugin_loader/src/kinematics_plugin_loader.cpp
+@@ -197,7 +197,7 @@ public:
+   {
+     std::scoped_lock slock(cache_lock_);
+     kinematics::KinematicsBasePtr& cached = instances_[jmg];
+-    if (cached.unique())
++    if ((cached.use_count() == 1))
+       return std::move(cached);  // pass on unique instance
+ 
+     // create a new instance and store in instances_

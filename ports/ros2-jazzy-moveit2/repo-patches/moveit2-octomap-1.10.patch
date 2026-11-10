@@ -1,0 +1,36 @@
+moveit_core, moveit_ros_occupancy_map_monitor: accept octomap 1.10
+
+find_package(octomap 1.9.7...<1.10.0): ROS Jazzy's own octomap is 1.9.8;
+this tree's octomap component (which fcl is built with too) is 1.10.0, whose
+octomap/OcTree API MoveIt uses unchanged ("Could not find a configuration
+file for package octomap that is compatible with requested version range
+1.9.7...<1.10.0"). Accept 1.9.7 up to 1.10.x.
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_core/CMakeLists.txt b/moveit_core/CMakeLists.txt
+index ca30488..22ac38c 100644
+--- a/moveit_core/CMakeLists.txt
++++ b/moveit_core/CMakeLists.txt
+@@ -20,7 +20,7 @@ find_package(kdl_parser REQUIRED)
+ find_package(moveit_msgs REQUIRED)
+ # Enforce system version liboctomap-dev
+ # https://github.com/moveit/moveit2/issues/2862
+-find_package(octomap 1.9.7...<1.10.0 REQUIRED)
++find_package(octomap 1.9.7...<1.11.0 REQUIRED)
+ find_package(octomap_msgs REQUIRED)
+ find_package(osqp REQUIRED)
+ find_package(pluginlib REQUIRED)
+diff --git a/moveit_ros/occupancy_map_monitor/CMakeLists.txt b/moveit_ros/occupancy_map_monitor/CMakeLists.txt
+index b8dd549..bea7cc5 100644
+--- a/moveit_ros/occupancy_map_monitor/CMakeLists.txt
++++ b/moveit_ros/occupancy_map_monitor/CMakeLists.txt
+@@ -15,7 +15,7 @@ find_package(pluginlib REQUIRED)
+ find_package(Eigen3 REQUIRED)
+ # Enforce system version liboctomap-dev
+ # https://github.com/moveit/moveit2/issues/2862
+-find_package(octomap 1.9.7...<1.10.0 REQUIRED)
++find_package(octomap 1.9.7...<1.11.0 REQUIRED)
+ find_package(geometric_shapes REQUIRED)
+ find_package(tf2_ros REQUIRED)
+ 

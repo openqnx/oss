@@ -221,7 +221,14 @@ PASS lynx
    - -dump http://127.0.0.1:<port>/page.html renders the served page
    - the server saw GET /page.html with User-Agent Lynx/2.9.2
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> lynx`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | lynx 2.9.2-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/lynx-2.9.2-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | lynx 2.9.2-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/lynx-2.9.2-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

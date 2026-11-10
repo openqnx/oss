@@ -172,7 +172,14 @@ PASS icon-naming-utils
 
    - replace with a real check
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> icon-naming-utils`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | icon-naming-utils 0.8.90-r0 | ✅ PASS | 2026-11-10 | [log](../../tests/logs/aarch64le/icon-naming-utils-0.8.90-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | icon-naming-utils 0.8.90-r0 | ✅ PASS | 2026-11-04 | [log](../../tests/logs/x86_64/icon-naming-utils-0.8.90-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

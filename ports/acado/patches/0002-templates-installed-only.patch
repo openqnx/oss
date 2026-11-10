@@ -1,0 +1,27 @@
+Code generation: only the installed templates when cross-compiling
+
+The code generation tool looks for its templates in the source tree first,
+then in the installed include/acado/code_generation/templates, and the
+source tree's absolute path is compiled into libacado_toolkit_s. Cross-
+compiled, that is a path on the build host, which the target does not have
+(and a build-machine path in the shipped library): search the installed
+templates only.
+
+Upstream-Status: Pending
+
+--- a/acado/code_generation/templates/CMakeLists.txt
++++ b/acado/code_generation/templates/CMakeLists.txt
+@@ -77,7 +77,12 @@
+ 	${CMAKE_INSTALL_PREFIX}/${INSTALL_INCLUDE_DIR}/code_generation/templates
+ )
+ 
+-SET( TEMPLATE_PATHS ${CMAKE_CURRENT_SOURCE_DIR} ${INSTALL_TEMPLATE_PATH} )
++IF( CMAKE_CROSSCOMPILING )
++	# The build host's source tree is not on the target.
++	SET( TEMPLATE_PATHS ${INSTALL_TEMPLATE_PATH} )
++ELSE()
++	SET( TEMPLATE_PATHS ${CMAKE_CURRENT_SOURCE_DIR} ${INSTALL_TEMPLATE_PATH} )
++ENDIF()
+ 
+ #
+ # Configure templates

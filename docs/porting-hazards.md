@@ -2193,3 +2193,13 @@ and the build drops to C++14 ("'is_same_v' is not a member of 'std'" in
 rclcpp headers). Related: a FindOpenMP that fails leaves
 `OpenMP_CXX_FLAGS` set to `NOTFOUND`, which then lands on the command line
 as an input file. (`ports/ros2-jazzy-moveit2/repo-patches`.)
+
+**219. A library compiled with its bundled nlohmann/json, consumed with the
+nlohmann_json component.** nlohmann/json 3.11+ puts its version into an
+inline namespace (`json_abi_v3_12_0`). Ruckig's cloud client is built with
+the copy in `third_party/`, its consumers see the staged `<nlohmann/json.hpp>`
+first: MoveIt's trajectory library referenced a `CloudClient::post()` the
+Ruckig library did not have under that name, and failed to load on the
+target ("unknown symbol ... json_abi_v3_12_0 ..."), while linking on the
+host had passed. `ports/ruckig` builds without the (online-only) cloud
+client; elsewhere build such a library against the component's json.

@@ -179,7 +179,38 @@ PASS perl-protocol-websocket
 3. **On the target**: [`test_perl_http`](../../tests/src/) -- a program linked against perl-protocol-websocket the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> perl-protocol-websocket`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-file-listing 6.16-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-file-listing-6.16-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-cookiejar 0.014-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-cookiejar-0.014-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-cookies 6.12-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-cookies-6.12-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-daemon 6.17-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-daemon-6.17-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-date 6.08-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-date-6.08-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-message 7.04-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-message-7.04-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-http-negotiate 6.01-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-http-negotiate-6.01-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-libwww 6.83-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-libwww-6.83-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-lwp-mediatypes 6.05-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-lwp-mediatypes-6.05-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-mime-base32 1.303-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-mime-base32-1.303-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-protocol-websocket 0.26-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-protocol-websocket-0.26-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-uri 5.40-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-uri-5.40-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-www-robotrules 6.03-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-www-robotrules-6.03-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-file-listing 6.16-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-file-listing-6.16-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-cookiejar 0.014-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-cookiejar-0.014-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-cookies 6.12-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-cookies-6.12-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-daemon 6.17-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-daemon-6.17-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-date 6.08-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-date-6.08-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-message 7.04-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-message-7.04-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-http-negotiate 6.01-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-http-negotiate-6.01-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-libwww 6.83-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-libwww-6.83-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-lwp-mediatypes 6.05-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-lwp-mediatypes-6.05-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-mime-base32 1.303-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-mime-base32-1.303-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-protocol-websocket 0.26-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-protocol-websocket-0.26-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-uri 5.40-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-uri-5.40-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-www-robotrules 6.03-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-www-robotrules-6.03-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

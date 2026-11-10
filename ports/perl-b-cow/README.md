@@ -182,7 +182,18 @@ PASS perl-b-cow
 3. **On the target**: [`test_perl_xs_misc`](../../tests/src/) -- a program linked against perl-b-cow the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> perl-b-cow`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-b-cow 0.007-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-b-cow-0.007-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-clone 0.51-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-clone-0.51-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-fcgi 0.82-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-fcgi-0.82-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-b-cow 0.007-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-b-cow-0.007-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-clone 0.51-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-clone-0.51-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-fcgi 0.82-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-fcgi-0.82-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 

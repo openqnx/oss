@@ -1,0 +1,113 @@
+moveit2: rclcpp/event_handler.hpp for rclcpp/qos_event.hpp
+
+Several moveit_ros sources include <rclcpp/qos_event.hpp>, the name rclcpp
+releases before Jazzy used; Jazzy's rclcpp (the ros2 component's) has only
+<rclcpp/event_handler.hpp>, which declares the same QoS event handlers:
+"rclcpp/qos_event.hpp: No such file or directory".
+
+Upstream-Status: Pending
+---
+diff --git a/moveit_ros/occupancy_map_monitor/src/occupancy_map_server.cpp b/moveit_ros/occupancy_map_monitor/src/occupancy_map_server.cpp
+index 7cd0dbb..7120fce 100644
+--- a/moveit_ros/occupancy_map_monitor/src/occupancy_map_server.cpp
++++ b/moveit_ros/occupancy_map_monitor/src/occupancy_map_server.cpp
+@@ -50,7 +50,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/time.hpp>
+ #include <rclcpp/utilities.hpp>
+diff --git a/moveit_ros/perception/semantic_world/src/semantic_world.cpp b/moveit_ros/perception/semantic_world/src/semantic_world.cpp
+index fb9b659..3330c01 100644
+--- a/moveit_ros/perception/semantic_world/src/semantic_world.cpp
++++ b/moveit_ros/perception/semantic_world/src/semantic_world.cpp
+@@ -52,7 +52,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/subscription.hpp>
+ 
+diff --git a/moveit_ros/planning/planning_components_tools/src/publish_scene_from_text.cpp b/moveit_ros/planning/planning_components_tools/src/publish_scene_from_text.cpp
+index 5f4d419..bc5079c 100644
+--- a/moveit_ros/planning/planning_components_tools/src/publish_scene_from_text.cpp
++++ b/moveit_ros/planning/planning_components_tools/src/publish_scene_from_text.cpp
+@@ -46,7 +46,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/utilities.hpp>
+ 
+diff --git a/moveit_ros/planning/planning_components_tools/src/visualize_robot_collision_volume.cpp b/moveit_ros/planning/planning_components_tools/src/visualize_robot_collision_volume.cpp
+index 05e4516..4691253 100644
+--- a/moveit_ros/planning/planning_components_tools/src/visualize_robot_collision_volume.cpp
++++ b/moveit_ros/planning/planning_components_tools/src/visualize_robot_collision_volume.cpp
+@@ -44,7 +44,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/time.hpp>
+ #include <rclcpp/utilities.hpp>
+diff --git a/moveit_ros/planning/planning_scene_monitor/demos/demo_scene.cpp b/moveit_ros/planning/planning_scene_monitor/demos/demo_scene.cpp
+index e3ed5af..746c378 100644
+--- a/moveit_ros/planning/planning_scene_monitor/demos/demo_scene.cpp
++++ b/moveit_ros/planning/planning_scene_monitor/demos/demo_scene.cpp
+@@ -46,7 +46,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/time.hpp>
+ #include <rclcpp/utilities.hpp>
+diff --git a/moveit_ros/planning/planning_scene_monitor/src/current_state_monitor_middleware_handle.cpp b/moveit_ros/planning/planning_scene_monitor/src/current_state_monitor_middleware_handle.cpp
+index 33f1818..5cdc516 100644
+--- a/moveit_ros/planning/planning_scene_monitor/src/current_state_monitor_middleware_handle.cpp
++++ b/moveit_ros/planning/planning_scene_monitor/src/current_state_monitor_middleware_handle.cpp
+@@ -43,7 +43,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/subscription.hpp>
+ #include <rclcpp/time.hpp>
+diff --git a/moveit_ros/warehouse/src/broadcast.cpp b/moveit_ros/warehouse/src/broadcast.cpp
+index a070e10..3eb6725 100644
+--- a/moveit_ros/warehouse/src/broadcast.cpp
++++ b/moveit_ros/warehouse/src/broadcast.cpp
+@@ -52,7 +52,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/rate.hpp>
+ #include <rclcpp/utilities.hpp>
+diff --git a/moveit_ros/warehouse/src/save_to_warehouse.cpp b/moveit_ros/warehouse/src/save_to_warehouse.cpp
+index b837cec..a733c90 100644
+--- a/moveit_ros/warehouse/src/save_to_warehouse.cpp
++++ b/moveit_ros/warehouse/src/save_to_warehouse.cpp
+@@ -55,7 +55,7 @@
+ #if RCLCPP_VERSION_GTE(20, 0, 0)
+ #include <rclcpp/event_handler.hpp>
+ #else
+-#include <rclcpp/qos_event.hpp>
++#include <rclcpp/event_handler.hpp>
+ #endif
+ #include <rclcpp/subscription.hpp>
+ #include <rclcpp/utilities.hpp>

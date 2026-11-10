@@ -1,0 +1,239 @@
+Build the TCP transport on QNX (epoll in libepoll, EPOLLONESHOT emulated)
+
+Gloo compiles its TCP transport on Linux only, for epoll(2). QNX 8 has
+epoll in libepoll (and timerfd, pipe2), so build it there too and link
+libepoll and libsocket. What QNX's epoll lacks is EPOLLONESHOT, which the
+transport's one-shot read/write/connect helpers register with: emulate it
+in Loop (a one-shot descriptor is taken out of the epoll set when its event
+is reported, before its handler runs; unregistering one that already fired
+is not an error). Without that, level-triggered events would keep calling a
+helper that has finished. Also: HOST_NAME_MAX is _POSIX_HOST_NAME_MAX
+there, the debug trace prints pthread_self() for the gettid syscall, and
+thread names are set with pthread_setname_np. After qnx-ports/gloo's
+qnx-mediapipe branch, which defined EPOLLONESHOT as 0 instead.
+QNX's <sys/timerfd.h> does not declare timerfd_create/settime extern "C"
+(the timer referenced C++-mangled names): include it inside extern "C" and
+link libtimerfd. The interface's link speed and PCI bus ID are read from
+Linux's ethtool ioctl and sysfs (common/linux.cc, not built here): unknown
+(-1, "") on QNX.
+
+Upstream-Status: Pending
+
+--- a/gloo/CMakeLists.txt
++++ b/gloo/CMakeLists.txt
+@@ -73,8 +73,9 @@
+     )
+ endif()
+ 
+-# Compile TCP transport only on Linux (it uses epoll(2))
+-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++# Compile TCP transport only on Linux (it uses epoll(2)); QNX has epoll(2)
++# too, in libepoll.
++if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR QNX)
+   set(GLOO_HAVE_TRANSPORT_TCP 1)
+   if(${USE_TCP_OPENSSL_LINK} OR ${USE_TCP_OPENSSL_LOAD})
+     find_package(OpenSSL 1.1 REQUIRED EXACT)
+@@ -166,6 +167,9 @@
+ endif()
+ 
+ target_link_libraries(gloo PRIVATE ${gloo_DEPENDENCY_LIBS})
++if(QNX)
++  target_link_libraries(gloo PUBLIC epoll timerfd socket)
++endif()
+ 
+ # Add Interface include directories that are relocatable.
+ target_include_directories(gloo INTERFACE $<INSTALL_INTERFACE:include>)
+--- a/gloo/common/utils.cc
++++ b/gloo/common/utils.cc
+@@ -62,7 +62,7 @@
+ void setThreadName(const std::string& name) {
+   // Thread names are limited to 15 characters on Linux (plus null terminator)
+   std::string truncatedName = name.substr(0, THREAD_NAME_MAX_SIZE);
+-#if defined(__linux__)
++#if defined(__linux__) || defined(__QNX__)
+   pthread_setname_np(pthread_self(), truncatedName.c_str());
+ #elif defined(__APPLE__)
+   pthread_setname_np(truncatedName.c_str());
+--- a/gloo/transport/tcp/buffer.cc
++++ b/gloo/transport/tcp/buffer.cc
+@@ -9,7 +9,11 @@
+ #include "gloo/transport/tcp/buffer.h"
+ 
+ #include <string.h>
++#ifndef __QNX__
+ #include <sys/syscall.h>
++#else
++#include <pthread.h>
++#endif
+ #include <unistd.h>
+ 
+ #include <iostream>
+@@ -127,7 +131,13 @@
+   GLOO_ENFORCE_LE(offset + length, size_);
+ 
+   if (debug_) {
+-    std::cout << "[" << getpid() << ": " << syscall(SYS_gettid) << "] ";
++    std::cout << "[" << getpid() << ": " << 
++#ifndef __QNX__
++                                         syscall(SYS_gettid)
++#else
++                                         pthread_self()  // QNX: no gettid syscall
++#endif
++ << "] ";
+     std::cout << "send " << length << " bytes";
+     std::cout << " to " << pair_->peer().str();
+     std::cout << std::endl;
+--- a/gloo/transport/tcp/CMakeLists.txt
++++ b/gloo/transport/tcp/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
++if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT QNX)
+     message(WARNING "Gloo TCP transport is supported only on Linux(uses epoll API)")
+ else()
+     list(APPEND GLOO_TRANSPORT_SRCS
+--- a/gloo/transport/tcp/device.cc
++++ b/gloo/transport/tcp/device.cc
+@@ -16,13 +16,20 @@
+ #include <iostream>
+ 
+ #include "gloo/common/error.h"
++#ifndef __QNX__
+ #include "gloo/common/linux.h"
++#endif
+ #include "gloo/common/logging.h"
+ #include "gloo/common/utils.h"
+ #include "gloo/transport/tcp/context.h"
+ #include "gloo/transport/tcp/helpers.h"
+ #include "gloo/transport/tcp/pair.h"
+ 
++#if !defined(HOST_NAME_MAX) && defined(__QNX__)
++// QNX's <limits.h> has only POSIX's minimum, _POSIX_HOST_NAME_MAX (255).
++#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
++#endif
++
+ namespace gloo {
+ namespace transport {
+ namespace tcp {
+@@ -226,8 +233,16 @@
+       loop_(std::make_shared<Loop>()),
+       listener_(std::make_shared<Listener>(loop_, attr)),
+       interfaceName_(sockaddrToInterfaceName(attr_)),
++#ifndef __QNX__
+       interfaceSpeedMbps_(getInterfaceSpeedByName(interfaceName_)),
+       pciBusID_(interfaceToBusID(interfaceName_)) {}
++#else
++      // Link speed and PCI bus ID come from Linux's ethtool ioctl and sysfs
++      // (gloo/common/linux.cc); QNX has neither: unknown, as there when
++      // they cannot be read.
++      interfaceSpeedMbps_(-1),
++      pciBusID_() {}
++#endif
+ 
+ void Device::shutdown() {
+   // Shut down listener state before stopping the loop.
+--- a/gloo/transport/tcp/loop.cc
++++ b/gloo/transport/tcp/loop.cc
+@@ -9,6 +9,7 @@
+ #include <gloo/transport/tcp/loop.h>
+ #include <gloo/transport/tcp/timer.h>
+ 
++#include <errno.h>
+ #include <fcntl.h>
+ #include <string.h>
+ #include <unistd.h>
+@@ -153,6 +154,15 @@
+   }
+ 
+   struct epoll_event ev;
++#ifdef GLOO_EMULATE_EPOLLONESHOT
++  for (auto it = oneshot_.begin(); it != oneshot_.end();) {
++    it = it->second == fd ? oneshot_.erase(it) : std::next(it);
++  }
++  if (events & EPOLLONESHOT) {
++    oneshot_[h] = fd;
++    events &= ~EPOLLONESHOT;
++  }
++#endif
+   ev.events = events;
+   ev.data.ptr = h;
+ 
+@@ -172,6 +182,17 @@
+   }
+ 
+   auto rv = epoll_ctl(fd_, EPOLL_CTL_DEL, fd, nullptr);
++#ifdef GLOO_EMULATE_EPOLLONESHOT
++  // A one-shot descriptor that fired is already out of the set (on Linux it
++  // stays in, disabled).
++  auto os = oneshot_.find(h);
++  if (os != oneshot_.end()) {
++    oneshot_.erase(os);
++  }
++  if (rv == -1 && errno == ENOENT) {
++    rv = 0;
++  }
++#endif
+   GLOO_ENFORCE_NE(rv, -1, "epoll_ctl: ", strerror(errno));
+ 
+   // Wait for loop to tick before returning, to make sure the handler
+@@ -222,6 +243,16 @@
+ 
+     for (int i = 0; i < nfds; i++) {
+       Handler* h = reinterpret_cast<Handler*>(events[i].data.ptr);
++#ifdef GLOO_EMULATE_EPOLLONESHOT
++      {
++        std::lock_guard<std::mutex> guard(m_);
++        auto os = oneshot_.find(h);
++        if (os != oneshot_.end()) {
++          epoll_ctl(fd_, EPOLL_CTL_DEL, os->second, nullptr);
++          oneshot_.erase(os);
++        }
++      }
++#endif
+       h->handleEvents(*this, events[i].events);
+       TSAN_ANNOTATE_HAPPENS_BEFORE(h);
+     }
+--- a/gloo/transport/tcp/loop.h
++++ b/gloo/transport/tcp/loop.h
+@@ -19,6 +19,14 @@
+ 
+ #include <sys/epoll.h>
+ 
++#if !defined(EPOLLONESHOT) && defined(__QNX__)
++// QNX's epoll has no EPOLLONESHOT. Loop emulates it: a descriptor
++// registered with this bit is taken out of the epoll set when its event is
++// reported, before its handler runs (which may register it again).
++#define EPOLLONESHOT (1u << 30)
++#define GLOO_EMULATE_EPOLLONESHOT 1
++#endif
++
+ namespace gloo {
+ namespace transport {
+ namespace tcp {
+@@ -107,6 +115,10 @@
+   std::condition_variable cv_;
+   // Map of file descriptors to handlers for memory handling.
+   std::unordered_map<int, std::shared_ptr<Handler>> handlers_;
++#ifdef GLOO_EMULATE_EPOLLONESHOT
++  // Handlers registered one-shot, and the descriptor each one is for.
++  std::unordered_map<Handler*, int> oneshot_;
++#endif
+ };
+ 
+ } // namespace tcp
+--- a/gloo/transport/tcp/timer.cc
++++ b/gloo/transport/tcp/timer.cc
+@@ -9,7 +9,14 @@
+ #include <gloo/transport/tcp/timer.h>
+ 
+ #include <string.h>
++#ifdef __QNX__
++// QNX's <sys/timerfd.h> (libtimerfd) does not declare its functions extern "C".
++extern "C" {
+ #include <sys/timerfd.h>
++}
++#else
++#include <sys/timerfd.h>
++#endif
+ #include <unistd.h>
+ 
+ #include <gloo/common/error.h>

@@ -1,12 +1,12 @@
 # Component index
 
-905 components. **869** build for both `aarch64le` and `x86_64` from upstream source, carrying 516 QNX patches between them.
+916 components. **914** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
-| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **318** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **213** |
-| 🔴 **dependent** | needs other components to build and to run | **350** |
+| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **322** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **231** |
+| 🔴 **dependent** | needs other components to build and to run | **362** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -19,6 +19,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [7zip](ports/7zip/README.md) | File archiver with a high compression ratio (7-Zip command line, 7zz) | 26.05 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [abseil](ports/abseil/README.md) | Collection of C++ libraries augmenting the C++ standard library | 20260817.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [abuild](ports/abuild/README.md) | Alpine's tools for building APK packages | 3.17.0 | custom | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
+| [acado](ports/acado/README.md) | ACADO Toolkit: optimal control, MPC/MHE and embedded solver code generation | 1.2.2_beta | cmake | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
 | [ada](ports/ada/README.md) | Fast WHATWG-compliant URL parser library for C++ | 4.0.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [adwaita-fonts](ports/adwaita-fonts/README.md) | Adwaita Sans and Adwaita Mono, the GNOME fonts | 49.0 | custom | download.gnome.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [adwaita-icon-theme](ports/adwaita-icon-theme/README.md) | GNOME's Adwaita icon theme and default cursors | 51.0 | meson | download.gnome.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -28,7 +29,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [appstream](ports/appstream/README.md) | Tools and libraries to work with AppStream metadata | 1.0.6 | meson | www.freedesktop.org | 3 | 🔴 dependent | 7 | ✅ | ✅ |
 | [apr-util](ports/apr-util/README.md) | Apache Portable Runtime utility library | 1.6.5 | autotools | archive.apache.org | — | 🔴 dependent | 6 | ✅ | ✅ |
 | [apr](ports/apr/README.md) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | autotools | archive.apache.org | — | 🟢 standalone | — | ✅ | ✅ |
-| [apriltag](ports/apriltag/README.md) | AprilTag visual fiducial detection library (tag families 36h11, 25h9, 16h5, Standard, Circle) | 3.4.5 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [apriltag](ports/apriltag/README.md) | AprilTag visual fiducial detection library (tag families 36h11, 25h9, 16h5, Standard, Circle) | 3.4.5 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [armadillo](ports/armadillo/README.md) | C++ linear algebra library with a MATLAB-like API (on OpenBLAS) | 15.6.2 | cmake | downloads.sourceforge.net | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [asciidoc](ports/asciidoc/README.md) | Text document format for short documents, articles, books and UNIX man pages | 10.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [asio](ports/asio/README.md) | Header-only C++ library for asynchronous network and low-level I/O | 1-38-2 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
@@ -76,11 +77,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [capnproto](ports/capnproto/README.md) | Cap'n Proto data serialization format and capability-based RPC system | 1.0.2 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [capstone](ports/capstone/README.md) | Multi-architecture disassembly framework | 5.0.9 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [cartographer](ports/cartographer/README.md) | Real-time 2D and 3D SLAM library across multiple platforms and sensors | 2.0.0 | cmake | github.com | 3 | 🔴 dependent | 8 | ✅ | ✅ |
+| [casadi](ports/casadi/README.md) | CasADi: symbolic framework for nonlinear optimisation and algorithmic differentiation | 3.8.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [catch2](ports/catch2/README.md) | C++ unit testing framework with micro-benchmarking and BDD macros | 3.7.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [ccache](ports/ccache/README.md) | Compiler cache: speeds up recompilation by caching object files keyed on a hash of the input | 4.12.1 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [cereal](ports/cereal/README.md) | Header-only C++11 library for serialization | 1.3.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [ceres-solver](ports/ceres-solver/README.md) | C++ library for modeling and solving large optimization problems | 2.2.0 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
-| [cgal](ports/cgal/README.md) | — | 6.1.3 | cmake | github.com | — | — | — | ✅ | — |
+| [cgal](ports/cgal/README.md) | CGAL computational geometry library (header-only): hulls, triangulations, meshes, exact predicates | 6.2.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [check](ports/check/README.md) | Unit testing framework for C | 0.15.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [chrony](ports/chrony/README.md) | NTP client and server for synchronizing the system clock | 4.8-git-20260226 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [chrpath](ports/chrpath/README.md) | Lists, changes or deletes the RPATH/RUNPATH of ELF binaries | 0.18 | autotools | codeberg.org | 3 | 🟢 standalone | — | ✅ | ✅ |
@@ -199,6 +201,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [glib](ports/glib/README.md) | Low-level core C library of GTK and GNOME: data types, main loop, GIO | 2.82.4 | meson | gitlab.gnome.org | 3 | 🔴 dependent | 5 | ✅ | ✅ |
 | [glm](ports/glm/README.md) | Header-only C++ mathematics library for graphics based on GLSL | 1.0.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [glog](ports/glog/README.md) | Google's C++ application-level logging library | 0.7.1 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [gloo](ports/gloo/README.md) | Gloo collective communications library (allreduce, broadcast, barrier) with the TCP transport | 0_git20261104 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [glslang](ports/glslang/README.md) | Khronos reference front end for GLSL, ESSL and HLSL, and SPIR-V generator | 1.4.321.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [gmp](ports/gmp/README.md) | GNU Multiple Precision arithmetic library | 6.3.0 | autotools | gmplib.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [gnome-keyring](ports/gnome-keyring/README.md) | GNOME Keyring: the session secret store daemon (org.freedesktop.secrets) | 51.1 | meson | download.gnome.org | 2 | 🔴 dependent | 4 | ✅ | ✅ |
@@ -231,7 +234,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [gtk4](ports/gtk4/README.md) | GTK 4 multi-platform toolkit for graphical user interfaces | 4.16.7 | meson | download.gnome.org | 1 | 🔴 dependent | 15 | ✅ | ✅ |
 | [gtsam](ports/gtsam/README.md) | Georgia Tech Smoothing and Mapping library for robotics and SLAM | 4.2 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [gumbo-parser](ports/gumbo-parser/README.md) | HTML5 parsing library in pure C99 | 0.13.2 | meson | codeberg.org | — | 🟢 standalone | — | ✅ | ✅ |
-| [gyp](ports/gyp/README.md) | GYP meta-build system: generates Makefiles and Ninja files from .gyp files | 0.22.4 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [gyp](ports/gyp/README.md) | GYP meta-build system: generates Makefiles and Ninja files from .gyp files | 0.22.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [hailort](ports/hailort/README.md) | Light-weight, high-performance inference framework for Hailo devices | 4.14.0 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [harfbuzz](ports/harfbuzz/README.md) | OpenType text shaping engine | 10.1.0 | meson | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [help2man](ports/help2man/README.md) | Generates man pages from a program's --help and --version output | 1.49.3 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -264,6 +267,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [kineto](ports/kineto/README.md) | PyTorch profiler library (libkineto) for CPU performance tracing | 0-git-20250214 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [labwc](ports/labwc/README.md) | Stacking Wayland compositor (window manager) based on wlroots | 0.20.2 | meson | github.com | 2 | 🔴 dependent | 10 | ✅ | ✅ |
 | [lame](ports/lame/README.md) | LAME MP3 audio encoder and library | 3.100 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
+| [lanelet2](ports/lanelet2/README.md) | Lanelet2 HD map framework for automated driving: maps, OSM I/O, projection, traffic rules, routing | 1.2.3 | custom | custom | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [lcm](ports/lcm/README.md) | Lightweight Communications and Marshalling: message passing for real time | 1.5.2 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [lcms2](ports/lcms2/README.md) | Little CMS, small-footprint ICC color management engine | 2.16 | meson | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [lely-core](ports/lely-core/README.md) | Lely C/C++ libraries for CANopen, CAN, event loop and I/O | 2.3.4 | autotools | gitlab.com | 1 | 🟢 standalone | — | ✅ | ✅ |
@@ -482,7 +486,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [numpy](ports/numpy/README.md) | Fundamental package for array computing in Python | 2.3.4 | custom | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [nuspell](ports/nuspell/README.md) | Nuspell spell checking library and program for Hunspell dictionaries | 5.1.9 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [octomap](ports/octomap/README.md) | Probabilistic 3D mapping framework based on octrees | 1.10.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [ompl](ports/ompl/README.md) | — | 1.7.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [ompl](ports/ompl/README.md) | Open Motion Planning Library: sampling-based motion planners (RRT, PRM, KPIECE, BIT*) | 1.7.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [onednn](ports/onednn/README.md) | oneAPI Deep Neural Network Library | 3.14.1 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [onetbb](ports/onetbb/README.md) | oneAPI Threading Building Blocks, C++ library for parallel programming | 2022.0.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [oniguruma](ports/oniguruma/README.md) | Regular expression library | 6.9.9 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -510,7 +514,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [opusfile](ports/opusfile/README.md) | High-level library for decoding and seeking in Ogg Opus files | 0.12 | autotools | downloads.xiph.org | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [orc](ports/orc/README.md) | Oil Runtime Compiler library for optimized inner loops (SIMD) | 0.4.40 | meson | gitlab.freedesktop.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [orocos-kdl](ports/orocos-kdl/README.md) | Orocos Kinematics and Dynamics Library for robot kinematic chains | 1.5.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [osqp](ports/osqp/README.md) | — | 0.6.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [osqp](ports/osqp/README.md) | OSQP: operator splitting solver for convex quadratic programs (with QDLDL) | 0.6.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [oss-desktop](ports/oss-desktop/README.md) | Desktop session with labwc, Xfce panel, terminal and file manager | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [p11-kit](ports/p11-kit/README.md) | Library and proxy module for loading and sharing PKCS#11 modules | 0.25.5 | meson | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [paho.mqtt.c](ports/paho.mqtt.c/README.md) | Eclipse Paho MQTT client library for C | 1.3.14 | cmake | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
@@ -600,7 +604,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-botocore](ports/python3-botocore/README.md) | Low-level, data-driven core of boto 3 | 1.43.123 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-bracex](ports/python3-bracex/README.md) | Bash-style brace expansion for Python | 3.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-build](ports/python3-build/README.md) | A simple PEP 517 package builder (pyproject-build) | 1.6.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-cairo](ports/python3-cairo/README.md) | Python bindings for the cairo 2D graphics library | 1.29.2 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-cairo](ports/python3-cairo/README.md) | Python bindings for the cairo 2D graphics library | 1.29.2 | custom | files.pythonhosted.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [python3-calver](ports/python3-calver/README.md) | Calendar versioning for setuptools | 2025.10.20 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-catkin-pkg](ports/python3-catkin-pkg/README.md) | Library for catkin packages (package.xml parsing) | 1.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cattrs](ports/python3-cattrs/README.md) | Structuring and unstructuring of attrs classes and dataclasses | 26.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -635,9 +639,9 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-curio](ports/python3-curio/README.md) | Coroutine-based Python library for concurrent systems programming | 1.6_git20251221 | custom | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cycler](ports/python3-cycler/README.md) | Composable style cycles for Python (matplotlib's property cycler) | 0.12.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-dateutil](ports/python3-dateutil/README.md) | Python extensions to the standard datetime module | 2.9.0.post0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-dbus](ports/python3-dbus/README.md) | Python bindings for D-Bus (libdbus), with GLib main loop integration | 1.5.1 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-dbus](ports/python3-dbus/README.md) | Python bindings for D-Bus (libdbus), with GLib main loop integration | 1.5.1 | custom | files.pythonhosted.org | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [python3-distlib](ports/python3-distlib/README.md) | Distribution utilities | 0.4.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-distro](ports/python3-distro/README.md) | OS distribution information (name, version, ID) for Python | 1.9.0 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-distro](ports/python3-distro/README.md) | OS distribution information (name, version, ID) for Python | 1.9.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-docutils](ports/python3-docutils/README.md) | Python documentation utilities (reStructuredText processing) | 0.23 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-editables](ports/python3-editables/README.md) | Editable installs for build backends | 0.6 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-empy](ports/python3-empy/README.md) | Templating system for Python | 4.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -646,18 +650,18 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-flake8-blind-except](ports/python3-flake8-blind-except/README.md) | flake8 plugin that reports blind except clauses | 0.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flake8-builtins](ports/python3-flake8-builtins/README.md) | flake8 plugin that reports names shadowing Python builtins | 3.2.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flake8-class-newline](ports/python3-flake8-class-newline/README.md) | flake8 plugin requiring a blank line after a class definition | 1.6.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-flake8-comprehensions](ports/python3-flake8-comprehensions/README.md) | flake8 plugin that suggests better comprehensions | 3.17.0 | custom | files.pythonhosted.org | — | — | — | ✅ | — |
-| [python3-flake8-deprecated](ports/python3-flake8-deprecated/README.md) | flake8 plugin that reports deprecated method names | 2.4.0 | custom | files.pythonhosted.org | — | — | — | — | — |
-| [python3-flake8-docstrings](ports/python3-flake8-docstrings/README.md) | flake8 plugin running the pydocstyle docstring checks | 1.7.0 | custom | files.pythonhosted.org | — | — | — | — | — |
-| [python3-flake8-import-order](ports/python3-flake8-import-order/README.md) | flake8 plugin that checks the order of import statements | 0.19.2 | custom | files.pythonhosted.org | — | — | — | — | — |
-| [python3-flake8-quotes](ports/python3-flake8-quotes/README.md) | flake8 plugin that checks string quote consistency | 3.4.0 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-flake8-comprehensions](ports/python3-flake8-comprehensions/README.md) | flake8 plugin that suggests better comprehensions | 3.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flake8-deprecated](ports/python3-flake8-deprecated/README.md) | flake8 plugin that reports deprecated method names | 2.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flake8-docstrings](ports/python3-flake8-docstrings/README.md) | flake8 plugin running the pydocstyle docstring checks | 1.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flake8-import-order](ports/python3-flake8-import-order/README.md) | flake8 plugin that checks the order of import statements | 0.19.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flake8-quotes](ports/python3-flake8-quotes/README.md) | flake8 plugin that checks string quote consistency | 3.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flake8](ports/python3-flake8/README.md) | Python linter combining pyflakes, pycodestyle and mccabe, with plugins | 7.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flaky](ports/python3-flaky/README.md) | A pytest plugin that reruns flaky tests | 3.8.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flit-core](ports/python3-flit-core/README.md) | The PEP 517 build backend of Flit | 4.2.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-fonttools](ports/python3-fonttools/README.md) | Library to manipulate font files from Python | 4.68.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-fs](ports/python3-fs/README.md) | PyFilesystem2: a common interface to memory, OS, archive and other filesystems | 2.4.16 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-gast](ports/python3-gast/README.md) | Python AST that is the same across Python versions | 0.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-gobject3](ports/python3-gobject3/README.md) | Python bindings for GObject-based libraries through GObject introspection (PyGObject) | 3.58.1 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-gobject3](ports/python3-gobject3/README.md) | Python bindings for GObject-based libraries through GObject introspection (PyGObject) | 3.58.1 | custom | files.pythonhosted.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [python3-gpep517](ports/python3-gpep517/README.md) | A minimal PEP 517 backend runner for distribution packaging | 23 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-hatch-fancy-pypi-readme](ports/python3-hatch-fancy-pypi-readme/README.md) | README composition for hatchling | 25.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-hatch-vcs](ports/python3-hatch-vcs/README.md) | Version from version control for hatchling | 0.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -688,11 +692,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-pluggy](ports/python3-pluggy/README.md) | Plugin and hook calling mechanism for Python (used by pytest) | 1.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-ply](ports/python3-ply/README.md) | PLY: lex and yacc parsing tools for Python | 3.11 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pretend](ports/python3-pretend/README.md) | Python library for creating test stubs | 1.0.9 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-protobuf](ports/python3-protobuf/README.md) | Protocol Buffers runtime for Python, with the upb C extension | 5.29.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-ptyprocess](ports/python3-ptyprocess/README.md) | Runs a subprocess in a pseudo terminal | 0.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-py](ports/python3-py/README.md) | Legacy pylib: py.path local paths and related helpers | 1.11.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pycodestyle](ports/python3-pycodestyle/README.md) | PEP 8 style checker for Python code | 2.15.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-pydbus](ports/python3-pydbus/README.md) | Pythonic D-Bus library built on GDBus through PyGObject | 0.6.0 | custom | files.pythonhosted.org | — | — | — | — | — |
-| [python3-pydocstyle](ports/python3-pydocstyle/README.md) | PEP 257 docstring style checker | 6.3.0 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-pydbus](ports/python3-pydbus/README.md) | Pythonic D-Bus library built on GDBus through PyGObject | 0.6.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pydocstyle](ports/python3-pydocstyle/README.md) | PEP 257 docstring style checker | 6.3.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pyflakes](ports/python3-pyflakes/README.md) | Passive checker for errors in Python programs | 4.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pygments](ports/python3-pygments/README.md) | Python syntax highlighter for many languages | 2.21.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pyparsing](ports/python3-pyparsing/README.md) | Classes and methods to define and execute parsing grammars | 3.3.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -708,16 +713,18 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-pytokens](ports/python3-pytokens/README.md) | Fast spec-compliant Python 3.12+ tokenizer | 0.4.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pytz](ports/python3-pytz/README.md) | World timezone definitions for Python | 2025.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pyyaml](ports/python3-pyyaml/README.md) | YAML parser and emitter for Python | 6.0.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-rosdistro](ports/python3-rosdistro/README.md) | Library for ROS distribution files (index, distributions, caches) | 1.1.0 | custom | files.pythonhosted.org | — | — | — | — | — |
-| [python3-rospkg](ports/python3-rospkg/README.md) | ROS package library: package and stack lookup, OS detection | 1.6.3 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-rosdistro](ports/python3-rosdistro/README.md) | Library for ROS distribution files (index, distributions, caches) | 1.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-rospkg](ports/python3-rospkg/README.md) | ROS package library: package and stack lookup, OS detection | 1.6.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-s3transfer](ports/python3-s3transfer/README.md) | An Amazon S3 Transfer Manager | 0.19.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-scikit-build-core](ports/python3-scikit-build-core/README.md) | The PEP 517 build backend for CMake projects | 1.1.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-scipy](ports/python3-scipy/README.md) | Scientific computing for Python: linear algebra, optimisation, FFT, signal processing, statistics | 1.18.1 | custom | files.pythonhosted.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [python3-setuptools](ports/python3-setuptools/README.md) | Python library and tools for building and distributing packages | 80.8.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-setuptools_scm](ports/python3-setuptools_scm/README.md) | Package versions from git/hg metadata | 9.2.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-six](ports/python3-six/README.md) | Python 2 and 3 compatibility library | 1.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-sniffio](ports/python3-sniffio/README.md) | Detects which async library a Python program is running under | 1.3.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [python3-snowballstemmer](ports/python3-snowballstemmer/README.md) | Snowball stemming algorithms in pure Python | 3.1.1 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [python3-snowballstemmer](ports/python3-snowballstemmer/README.md) | Snowball stemming algorithms in pure Python | 3.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-sortedcontainers](ports/python3-sortedcontainers/README.md) | Sorted list, dict and set types in pure Python | 2.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-sounddevice](ports/python3-sounddevice/README.md) | Play and record sound with Python through PortAudio | 0.5.6 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-time-machine](ports/python3-time-machine/README.md) | Mocks the clock in Python tests (time-machine, a C extension) | 3.6.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tomli](ports/python3-tomli/README.md) | A TOML parser | 2.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tornado](ports/python3-tornado/README.md) | Python web framework and asynchronous networking library | 6.6 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -732,28 +739,28 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-wheel](ports/python3-wheel/README.md) | Command line tool and library for the Python wheel package format | 0.46.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-zstandard](ports/python3-zstandard/README.md) | Zstandard compression bindings for Python (C backend on the system zstd) | 0.25.0 | custom | files.pythonhosted.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [python3](ports/python3/README.md) | Python 3 programming language interpreter and standard library | 3.14.0 | autotools | www.python.org | 2 | 🔴 dependent | 12 | ✅ | ✅ |
-| [pythran](ports/pythran/README.md) | Ahead-of-time compiler of Python/numpy kernels to C++ extension modules | 0.19.0 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [pythran](ports/pythran/README.md) | Ahead-of-time compiler of Python/numpy kernels to C++ extension modules | 0.19.0 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [pytorch](ports/pytorch/README.md) | PyTorch tensor computation and deep learning library | 2.3.1 | custom | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qdirstat](ports/qdirstat/README.md) | Qt-based directory statistics: disk usage with a treemap | 2.0 | custom | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qhull](ports/qhull/README.md) | Computational geometry: convex hulls, Delaunay triangulation, Voronoi | 8.0.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [qpdf](ports/qpdf/README.md) | PDF Transformation System | 11.10.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
-| [qt6-3d](ports/qt6-3d/README.md) | Qt 6 3D: a 3D scene graph and rendering framework (Qt 3D) for C++ and QML | 6.8.1 | custom | download.qt.io | — | — | — | — | — |
-| [qt6-datavis3d](ports/qt6-datavis3d/README.md) | Qt 6 Data Visualization: 3D bar, scatter and surface graphs | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-graphs](ports/qt6-graphs/README.md) | Qt 6 Graphs: 2D and 3D graphs for Qt Quick, on Qt Quick 3D | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-httpserver](ports/qt6-httpserver/README.md) | Qt 6 HTTP Server: embed a small HTTP/1.1 server with routing in a Qt application | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-location](ports/qt6-location/README.md) | Qt 6 Location: maps, places, routing and geocoding from C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 2 | — | ✅ |
-| [qt6-lottie](ports/qt6-lottie/README.md) | Qt 6 Lottie Animation: render Bodymovin (After Effects) JSON animations in Qt Quick | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-mqtt](ports/qt6-mqtt/README.md) | Qt 6 MQTT: an MQTT 3.1, 3.1.1 and 5 client for Qt applications | 6.8.1 | custom | code.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-networkauth](ports/qt6-networkauth/README.md) | Qt 6 Network Authorization: OAuth 1 and OAuth 2 client support | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-positioning](ports/qt6-positioning/README.md) | Qt 6 Positioning: geographic coordinates, positions, areas and position sources | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-quickeffectmaker](ports/qt6-quickeffectmaker/README.md) | Qt 6 Quick Effect Maker: a tool to compose shader effects for Qt Quick, and its runtime module | 6.8.1 | custom | download.qt.io | — | 🟡 build-deps only | — | — | ✅ |
-| [qt6-remoteobjects](ports/qt6-remoteobjects/README.md) | Qt 6 Remote Objects: share QObjects' properties, signals and slots between processes and devices | 6.8.1 | custom | download.qt.io | — | — | — | — | — |
-| [qt6-scxml](ports/qt6-scxml/README.md) | Qt 6 SCXML and State Machine: state machines from SCXML documents and the QStateMachine framework | 6.8.1 | custom | download.qt.io | — | — | — | — | — |
-| [qt6-sensors](ports/qt6-sensors/README.md) | Qt 6 Sensors: access to sensor hardware (accelerometer, gyroscope, ...) from C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6-translations](ports/qt6-translations/README.md) | Qt 6 translations: the .qm message catalogs of Qt's own user-visible strings | 6.8.1 | custom | download.qt.io | — | 🟡 build-deps only | — | — | ✅ |
-| [qt6-wayland](ports/qt6-wayland/README.md) | Qt 6 Wayland: the wayland platform plugin, so Qt programs run on Wayland compositors (labwc) | 6.8.1 | custom | download.qt.io | — | — | — | — | — |
-| [qt6-webchannel](ports/qt6-webchannel/README.md) | Qt 6 WebChannel: expose QObjects to JavaScript clients (web pages, QML) over a transport | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | — | ✅ |
-| [qt6](ports/qt6/README.md) | Qt 6 cross-platform application and UI framework | 6.8.1 | custom | download.qt.io | 1 | 🔴 dependent | 19 | ✅ | ✅ |
+| [qt6-3d](ports/qt6-3d/README.md) | Qt 6 3D: a 3D scene graph and rendering framework (Qt 3D) for C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-datavis3d](ports/qt6-datavis3d/README.md) | Qt 6 Data Visualization: 3D bar, scatter and surface graphs | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-graphs](ports/qt6-graphs/README.md) | Qt 6 Graphs: 2D and 3D graphs for Qt Quick, on Qt Quick 3D | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-httpserver](ports/qt6-httpserver/README.md) | Qt 6 HTTP Server: embed a small HTTP/1.1 server with routing in a Qt application | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-location](ports/qt6-location/README.md) | Qt 6 Location: maps, places, routing and geocoding from C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [qt6-lottie](ports/qt6-lottie/README.md) | Qt 6 Lottie Animation: render Bodymovin (After Effects) JSON animations in Qt Quick | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-mqtt](ports/qt6-mqtt/README.md) | Qt 6 MQTT: an MQTT 3.1, 3.1.1 and 5 client for Qt applications | 6.8.1 | custom | code.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-networkauth](ports/qt6-networkauth/README.md) | Qt 6 Network Authorization: OAuth 1 and OAuth 2 client support | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-positioning](ports/qt6-positioning/README.md) | Qt 6 Positioning: geographic coordinates, positions, areas and position sources | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-quickeffectmaker](ports/qt6-quickeffectmaker/README.md) | Qt 6 Quick Effect Maker: a tool to compose shader effects for Qt Quick, and its runtime module | 6.8.1 | custom | download.qt.io | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-remoteobjects](ports/qt6-remoteobjects/README.md) | Qt 6 Remote Objects: share QObjects' properties, signals and slots between processes and devices | 6.8.1 | custom | download.qt.io | 3 | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-scxml](ports/qt6-scxml/README.md) | Qt 6 SCXML and State Machine: state machines from SCXML documents and the QStateMachine framework | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-sensors](ports/qt6-sensors/README.md) | Qt 6 Sensors: access to sensor hardware (accelerometer, gyroscope, ...) from C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6-translations](ports/qt6-translations/README.md) | Qt 6 translations: the .qm message catalogs of Qt's own user-visible strings | 6.8.1 | custom | download.qt.io | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [qt6-wayland](ports/qt6-wayland/README.md) | Qt 6 Wayland: the wayland platform plugin, so Qt programs run on Wayland compositors (labwc) | 6.8.1 | custom | download.qt.io | 1 | 🔴 dependent | 3 | ✅ | ✅ |
+| [qt6-webchannel](ports/qt6-webchannel/README.md) | Qt 6 WebChannel: expose QObjects to JavaScript clients (web pages, QML) over a transport | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [qt6](ports/qt6/README.md) | Qt 6 cross-platform application and UI framework | 6.8.1 | custom | download.qt.io | 2 | 🔴 dependent | 20 | ✅ | ✅ |
 | [quake3](ports/quake3/README.md) | ioquake3, the maintained open-source Quake III Arena engine | 1.36-git-20261012 | cmake | github.com | 4 | 🔴 dependent | 1 | ✅ | ✅ |
 | [quickjs-ng](ports/quickjs-ng/README.md) | Small and embeddable JavaScript engine | 0.8.0 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [rapidjson](ports/rapidjson/README.md) | Header-only fast JSON parser and generator for C++ (SAX and DOM APIs) | 1.1.0-24b5e7a | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -767,19 +774,22 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [rhash](ports/rhash/README.md) | Hash sum and magnet link tool (rhash) and the LibRHash library: CRC32, MD5, SHA-1/2/3, BLAKE2/3, TTH, BTIH and more | 1.4.5 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [riegeli](ports/riegeli/README.md) | File format for storing a sequence of records, typically protocol buffers | 0_git20231212 | custom | github.com | 3 | 🔴 dependent | 10 | ✅ | ✅ |
 | [rocksdb](ports/rocksdb/README.md) | Embeddable, persistent key-value store for fast storage | 11.8.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
+| [ros2-jazzy-control](ports/ros2-jazzy-control/README.md) | ros2_control and ros2_controllers for ROS 2 Jazzy: controller manager, hardware interfaces, standard controllers | 20260128 | custom | custom | — | 🔴 dependent | 7 | ✅ | ✅ |
+| [ros2-jazzy-moveit2](ports/ros2-jazzy-moveit2/README.md) | MoveIt 2 for ROS 2 Jazzy (headless core): motion planning (OMPL, Pilz, CHOMP, STOMP), kinematics, collision checking, move_group, Servo | 20260128 | custom | custom | — | 🔴 dependent | 17 | — | ✅ |
+| [ros2-jazzy-nav2](ports/ros2-jazzy-nav2/README.md) | Nav2 for ROS 2 Jazzy: navigation servers, planners, controllers, costmaps, BehaviorTree navigator | 20260128 | custom | custom | — | 🔴 dependent | 15 | ✅ | ✅ |
 | [ros2-rviz](ports/ros2-rviz/README.md) | RViz 2 for ROS 2 Jazzy: the 3D visualiser, drawn natively on QNX Screen (OGRE on OpenGL ES) | 14.1.24 | custom | custom | — | 🔴 dependent | 7 | ✅ | ✅ |
 | [ros2](ports/ros2/README.md) | ROS 2 Jazzy core: robotics middleware, client libraries and tools | jazzy | custom | custom | — | 🔴 dependent | 14 | ✅ | ✅ |
 | [rsync](ports/rsync/README.md) | Fast local and remote file copying tool using delta transfer | 3.3.0 | autotools | download.samba.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [rtl-sdr](ports/rtl-sdr/README.md) | Library and tools turning RTL2832 DVB dongles into SDR receivers | 2.0.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [ruby](ports/ruby/README.md) | Ruby programming language: interpreter, standard library, extensions and gems | 3.4.12 | autotools | cache.ruby-lang.org | 5 | 🔴 dependent | 6 | ✅ | ✅ |
-| [ruckig](ports/ruckig/README.md) | — | 0.17.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [ruckig](ports/ruckig/README.md) | Ruckig: time-optimal, jerk-limited online trajectory generation for robots | 0.17.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [rust](ports/rust/README.md) | Rust cross toolchain: rustc and cargo for the host, std for the targets | 1.90.0 | custom | static.rust-lang.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [ruy](ports/ruy/README.md) | Matrix multiplication library for neural network inference | 0-git-20240321 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [s2n-tls](ports/s2n-tls/README.md) | Small, fast C99 implementation of the TLS/SSL protocols from AWS | 1.7.0 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [samba](ports/samba/README.md) | SMB/CIFS file sharing: client tools, libsmbclient and the smbd/nmbd server | 4.25.1 | custom | download.samba.org | 7 | 🔴 dependent | 6 | ✅ | ✅ |
 | [sassc](ports/sassc/README.md) | SassC, the command-line Sass (SCSS) to CSS compiler over LibSass | 3.6.2 | autotools | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [scdoc](ports/scdoc/README.md) | Man page generator: scdoc markup to roff | 1.11.3 | custom | git.sr.ht | — | 🟢 standalone | — | ✅ | ✅ |
-| [scons](ports/scons/README.md) | Software construction tool with Python build scripts | 4.11.1 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [scons](ports/scons/README.md) | Software construction tool with Python build scripts | 4.11.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [sdl2-compat](ports/sdl2-compat/README.md) | SDL2 compatibility layer implemented on top of SDL3 | 2.32.60 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [sdl2-image](ports/sdl2-image/README.md) | Image loading library for SDL2 | 2.8.8 | cmake | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [sdl2-mixer](ports/sdl2-mixer/README.md) | Audio mixer library for SDL2 (WAV, FLAC, MP3, Ogg Vorbis, Opus, MIDI) | 2.8.2 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
@@ -864,7 +874,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [uvgrtp](ports/uvgrtp/README.md) | Open-source RTP library written in C++ (Ultra Video Group) | 4.0.1 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [vala](ports/vala/README.md) | Vala compiler (valac), translating Vala to C over GLib/GObject | 0.56.18 | autotools | download.gnome.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [valkey](ports/valkey/README.md) | High-performance key/value data store forked from Redis (server, client, benchmark) | 9.1.3 | custom | github.com | 7 | 🔴 dependent | 1 | ✅ | ✅ |
-| [vcstool](ports/vcstool/README.md) | Command-line tool for working with many version-controlled repositories | 0.3.0 | custom | files.pythonhosted.org | — | — | — | — | — |
+| [vcstool](ports/vcstool/README.md) | Command-line tool for working with many version-controlled repositories | 0.3.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [vidstab](ports/vidstab/README.md) | Video stabilization library for FFmpeg and Transcode | 1.1.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [vim](ports/vim/README.md) | Vi IMproved, a highly configurable text editor | 9.1.0900 | autotools | github.com | — | 🔴 dependent | 3 | ✅ | ✅ |
 | [virtualgl](ports/virtualgl/README.md) | VirtualGL client (vglclient) for displaying remotely rendered OpenGL | 3.1.5 | cmake | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
@@ -913,6 +923,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [zenoh-c](ports/zenoh-c/README.md) | C bindings for Eclipse Zenoh pub/sub, storage and query protocol | 1.2.1 | custom | github.com | 2 | 🟡 build-deps only | — | ✅ | ✅ |
 | [zenoh-cpp](ports/zenoh-cpp/README.md) | C++ bindings for Eclipse Zenoh (header-only, over zenoh-c or zenoh-pico) | 1.2.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [zenoh-pico](ports/zenoh-pico/README.md) | Eclipse Zenoh pub/sub, store/query and compute protocol for microcontrollers | 1.2.1 | cmake | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
+| [zenoh-router](ports/zenoh-router/README.md) | zenohd, the Eclipse Zenoh router (pub/sub, queries, liveliness across TCP/UDP/QUIC/TLS/WS) | 1.2.1 | custom | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [zerotier-one](ports/zerotier-one/README.md) | ZeroTier network virtualization service | 1.16.1 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [zimg](ports/zimg/README.md) | Library for image scaling, colorspace conversion and dithering | 3.0.5 | autotools | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [zip](ports/zip/README.md) | Info-ZIP zip: creates and updates .zip archives (zip, zipnote, zipsplit, zipcloak) | 3.0 | custom | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |

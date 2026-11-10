@@ -10,7 +10,7 @@
 | SHA-256 | `ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
-| Build dependencies | [`perl`](../perl/) [`openssl`](../openssl/) |
+| Build dependencies | [`perl`](../perl/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_perl_ssl`](../../tests/src/) |
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (3 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (4 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild perl openssl
+./scripts/qnxbuild perl openssl zlib
 ```
 
-<details><summary>Full build chain (3)</summary>
+<details><summary>Full build chain (4)</summary>
 
-[`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`perl`](../perl/)
+[`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`perl`](../perl/) [`zlib`](../zlib/)
 </details>
 
 ### 2. Get the upstream source
@@ -189,7 +189,18 @@ PASS perl-net-ssleay
 3. **On the target**: [`test_perl_ssl`](../../tests/src/) -- a program linked against perl-net-ssleay the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
 
-Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> perl-net-ssleay`.
+Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
+
+| Arch | Target | Installed from | Version | Result | Date | Log |
+|---|---|---|---|---|---|---|
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-io-socket-ssl 2.099-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-io-socket-ssl-2.099-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-net-http 6.24-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-net-http-6.24-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | perl-net-ssleay 1.96-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/aarch64le/perl-net-ssleay-1.96-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-io-socket-ssl 2.099-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-io-socket-ssl-2.099-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-net-http 6.24-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-net-http-6.24-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | perl-net-ssleay 1.96-r0 | ✅ PASS | 2026-11-05 | [log](../../tests/logs/x86_64/perl-net-ssleay-1.96-r0.log) |
+
+The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
 ## Versions
 
@@ -209,7 +220,7 @@ This recipe builds **1.96**. Every version stays available: packages in `dists/8
 VERSION=1.96
 TARBALL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.96.tar.gz
 SHA256=ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753
-DEPS="perl openssl"
+DEPS="perl openssl zlib"
 RUNTIME_DEPS="perl openssl"
 BUILDSYS=custom
 source "$WS/scripts/lib/perl-module.sh"

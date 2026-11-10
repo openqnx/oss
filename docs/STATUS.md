@@ -63,16 +63,22 @@ current: it is the hand-over, not a history (that is `git log`).
    (`lab/agents/PORT-AGENT-RULES.txt`), each a run-level group `tests/run-level/gN-*`.
    - Committed: g7 build tools, g8 math, g9 media/graphics, g10 net/system, g11 perl,
      g12 languages, g14 python-a, g13 RViz2 (ros2-rviz, OGRE GLES2 on QNX Screen) +
-     assimp: 176 components, verify-on-target x86_64 all PASS; aarch64 in progress.
-   - Ported and trial-run, not yet committed: g15 robotics (+ ros2 fixes), g16 python-b,
-     g17 Qt6 modules (qt6 rebuilt with Wayland, r2): 68 components, x86_64 verified 67/68
-     (moveit2 failed).
-   - Paused 2026-11-05 (usage limit); PC rebooted 2026-11-08, so no job or VM is running.
-     aarch64 verify of the committed 176: 159 PASS, 4 FAIL (ensmallen, fcft,
-     icon-naming-utils, mate-common), 13 not run (VM unreachable); retry list
-     `tmp/session/verify-retry-a64.txt`. g15-g17 (68): aarch64 68/68, x86_64 67/68
-     (moveit2). Then: fix the failures, commit g15-g17, ask before publishing.
-     The step-by-step list: `tmp/session/RESUME.md` (local).
+     assimp (176 components); g15 robotics (+ ros2 fixes), g16 python-b, g17 Qt6 modules
+     (qt6 rebuilt with Wayland, r2) (68 components). verify-on-target: 244/244 PASS on
+     x86_64 and on aarch64 (2026-11-10). The earlier aarch64 failures were the VM being
+     unreachable or slow; moveit2's test now plans again (up to 3 times) when the
+     randomised OMPL path is rejected by ValidateSolution.
+   - Not published yet: the 244 components' packages and tests, `main` (ask first).
+   - The work moved to another PC on 2026-11-10 (`scripts/workspace-pack`); the SDP there
+     is `~/claude-work/qnx800`, cmake 3.28.3 comes from `uv tool install` (`~/.local/bin`).
+     Pitfall: `TEST_GROUPS` takes full group names (`g15-robotics`, not `g15`); a wrong
+     name rebuilds only the base tests, shortens the staged `tests.list` and bumps
+     `qnx-test-ceres` (its binary is not reproducible).
+   - `scripts/check-all` on 2026-11-10: only the four known findings (avahi man links,
+     libfolly.pc, mesa's GLES libraries on aarch64le, libhailort's libpci). A fifth, new on
+     this PC, is fixed: lanelet2 1.2.3-r2 no longer installs the source tree's path
+     (mrt_cmake_modules), and overlay builds (`scripts/lib/ros2-overlay.sh`) name the
+     venv's Python (CMake took `/usr/bin/python3.12` here, which has no catkin_pkg).
    - Next after that: a native compiler on the target like QNX's Raspberry Pi 5 image
      (clang + binutils + make/cmake there). llvm 22.1.8 (clang, lld) is ported but only
      tested with `clang -c`; missing: QNX headers/crt/link libraries on the target (copied

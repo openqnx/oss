@@ -287,6 +287,7 @@ test_asio	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dis
 test_asio	PASS	2026-11-02	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	asio 1.38.2-r0
 test_aspell	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	aspell 0.60.8.1-r0
 test_aspell	FAIL	2026-11-02	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	aspell 0.60.8.20190921-r0
+test_assimp	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	assimp 6.0.2-r0
 test_at_spi2_core	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	at-spi2-core 2.54.0-r0
 test_at_spi2_core	PASS	2026-11-02	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	at-spi2-core 2.54.2-r0
 test_at_spi2_core	PASS	2026-11-03	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	at-spi2-core 2.54.2-r1
@@ -309,6 +310,7 @@ test_aws_checksums	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:
 test_aws_crt_cpp	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	aws-crt-cpp 0.38.5-r0
 test_azure_iot_sdk_c	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	azure-iot-sdk-c 0_git-r0
 test_bash	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	bash 5.2.37-r2
+test_bash_completion	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	bash-completion 2.18.0-r0
 test_bc	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	bc 1.08.2-r0
 test_benchmark	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_benchmark	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	benchmark 1.9.0-r0
@@ -330,7 +332,7 @@ test_c_blosc	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-
 test_ca_certificates	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ca-certificates 20261020-r0
 test_cairo	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cairo 1.18.2-r0
 test_can_utils	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	can-utils 2025.01-r0
-test_candb	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	candb 0.1_git20210625-r0
+test_candb	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	candb 0.1_git20210625-r0
 test_capicxx	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_capicxx_core_runtime	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	capicxx-core-runtime 3.2.4-r0
 test_capicxx_someip_runtime	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	capicxx-someip-runtime 3.2.4-r0
@@ -341,6 +343,7 @@ test_cartographer	PASS	2026-11-03	QEMU aarch64le, vanilla mkqnximage image	apk:l
 test_casadi	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	casadi 3.8.2-r0
 test_catch2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_catch2	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	catch2 3.7.1-r0
+test_ccache	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ccache 4.12.1-r0
 test_cereal	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_cereal	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cereal 1.3.2-r0
 test_ceres	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -348,6 +351,7 @@ test_ceres_solver	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:l
 test_cgal	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cgal 6.2.1-r0
 test_check	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	check 0.15.2-r1
 test_chrony	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	chrony 4.8_git20260226-r0
+test_chrpath	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	chrpath 0.18-r1
 test_civetweb	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_civetweb	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	civetweb 1.16-r0
 test_cjson	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -372,8 +376,11 @@ test_cups_filters	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:l
 test_curl	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_curl	PASS	2026-10-31	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	curl 8.11.1-r0
 test_curl	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	curl 8.11.1-r1
+test_cxxopts	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cxxopts 3.3.1-r0
 test_cyclonedds	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_cyclonedds	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cyclonedds 0.10.5-r0
+test_cython	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cython 3.3.1-r0
+test_datefudge	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	datefudge 1.24-r1
 test_dav1d	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_dav1d	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dav1d 1.5.0-r0
 test_davici	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	davici 1.6-r0
@@ -381,12 +388,16 @@ test_dbus	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libr
 test_dbus	PASS	2026-10-31	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dbus 1.16.0-r0
 test_dbus	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dbus 1.16.0-r1
 test_dbus	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dbus 1.16.0-r3
+test_dbus_glib	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dbus-glib 0.116-r0
 test_desktop_file_utils	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	desktop-file-utils 0.28-r0
 test_dhcpcd	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dhcpcd 10.5.2-r0
 test_dlt	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_dlt_daemon	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dlt-daemon 2.18.10-r0
 test_dnsmasq	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dnsmasq 2.93_pre4-r0
+test_dnssec_root	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	dnssec-root 20241105-r0
+test_docbook_xml	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	docbook-xml 4.5-r0
 test_docbook_xsl	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	docbook-xsl 1.79.2-r0
+test_doctest	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	doctest 2.5.3-r0
 test_double_conversion	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_double_conversion	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	double-conversion 3.3.0-r0
 test_doxygen	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	doxygen 1.17.0-r0
@@ -404,6 +415,7 @@ test_emulationstation	PASS	2026-11-03	QEMU aarch64le, vanilla mkqnximage image	a
 test_enchant	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_enchant	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	enchant 2.8.2-r0
 test_encodings	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	encodings 1.1.0-r0
+test_ensmallen	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ensmallen 3.11.1-r1
 test_epiphany	FAIL	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	epiphany 43.1-r1
 test_epiphany	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	epiphany 43.1-r2
 test_exiv2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
@@ -418,7 +430,7 @@ test_fastcdr	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-
 test_fastdds	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_fastdds	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	fastdds 2.14.4-r0
 test_fastfetch	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	fastfetch 2.66.1-r0
-test_fcft	FAIL	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	fcft 3.3.2-r0
+test_fcft	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	fcft 3.3.2-r0
 test_fcl	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_fcl	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	fcl 0.7.0-r0
 test_fcl	PASS	2026-10-31	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	libccd 2.1-r0
@@ -559,10 +571,11 @@ test_hunspell	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local
 test_hwdata	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	hwdata 0.413-r0
 test_iceoryx	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_iceoryx	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	iceoryx 2.0.6-r0
-test_icon_naming_utils	FAIL	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	icon-naming-utils 0.8.90-r0
+test_icon_naming_utils	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	icon-naming-utils 0.8.90-r0
 test_icu	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_icu	PASS	2026-10-31	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	icu 76.1-r0
 test_icu	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	icu 76.1-r1
+test_imath	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	imath 3.2.2-r0
 test_inetutils	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	inetutils 2.6-r1
 test_intltool	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	intltool 0.51.0-r0
 test_iperf2	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	iperf2 2.2.1-r0
@@ -590,6 +603,7 @@ test_labwc	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-di
 test_lame	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_lame	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	lame 3.100-r0
 test_lanelet2	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	lanelet2 1.2.3-r1
+test_lanelet2	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	lanelet2 1.2.3-r2
 test_lcm	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	lcm 1.5.2-r0
 test_lcms2	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_lcms2	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	lcms2 2.16-r0
@@ -812,7 +826,7 @@ test_make	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dis
 test_mame	PASS	2026-11-03	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mame 0.281-r0
 test_man_db	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	man-db 2.13.1-r0
 test_mate_calc	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mate-calc 1.28.0-r0
-test_mate_common	FAIL	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mate-common 1.28.0-r0
+test_mate_common	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mate-common 1.28.0-r0
 test_mbedtls	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_mbedtls	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mbedtls 3.6.2-r0
 test_mcap	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	mcap-cpp 2.1.3-r0
@@ -1222,7 +1236,7 @@ test_ros2	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dis
 test_ros2	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r4
 test_ros2	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2 0_git-r5
 test_ros2_jazzy_control	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-control 20260128-r2
-test_ros2_jazzy_moveit2	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-moveit2 20260128-r1
+test_ros2_jazzy_moveit2	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-moveit2 20260128-r1
 test_ros2_jazzy_nav2	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2-jazzy-nav2 20260128-r2
 test_ros2_rviz	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ros2-rviz 14.1.24-r3
 test_rsync	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	rsync 3.3.0-r0

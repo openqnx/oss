@@ -2509,28 +2509,45 @@
   "version": "1.18.2"
  },
  "can-utils": {
-  "build_closure": [],
-  "build_deps": [],
+  "build_closure": [
+   "qnx-socketcan"
+  ],
+  "build_deps": [
+   "qnx-socketcan"
+  ],
   "buildsys": "custom",
   "built": {
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/asc2log",
     "usr/local/bin/can-calc-bit-timing",
+    "usr/local/bin/canbusload",
+    "usr/local/bin/candump",
+    "usr/local/bin/canfdtest",
+    "usr/local/bin/cangen",
+    "usr/local/bin/canlogserver",
+    "usr/local/bin/canplayer",
+    "usr/local/bin/cansend",
+    "usr/local/bin/cansequence",
+    "usr/local/bin/cansniffer",
     "usr/local/bin/log2asc",
     "usr/local/bin/log2long"
    ],
-   "files": 4,
+   "files": 13,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "qnx-socketcan"
+  ],
+  "runtime_deps": [
+   "qnx-socketcan"
+  ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
@@ -34399,6 +34416,35 @@
   "undeclared": [],
   "unresolved": [],
   "version": "8.0.2"
+ },
+ "qnx-socketcan": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/qcanctl",
+    "usr/local/bin/qcand"
+   ],
+   "files": 15,
+   "headers": 7,
+   "libs": [
+    "usr/local/lib/libqsocketcan.so",
+    "usr/local/lib/libqsocketcan.so.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0"
  },
  "qpdf": {
   "build_closure": [

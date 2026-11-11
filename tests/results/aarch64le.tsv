@@ -332,6 +332,8 @@ test_c_blosc	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-
 test_ca_certificates	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	ca-certificates 20261020-r0
 test_cairo	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	cairo 1.18.2-r0
 test_can_utils	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	can-utils 2025.01-r0
+test_can_utils	PASS	2026-11-11	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	can-utils 2025.01-r1
+test_can_utils	PASS	2026-11-11	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	can-utils 2025.01-r2
 test_candb	PASS	2026-11-10	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	candb 0.1_git20210625-r0
 test_capicxx	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_capicxx_core_runtime	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	capicxx-core-runtime 3.2.4-r0
@@ -1187,6 +1189,9 @@ test_python3_virtualenv	PASS	2026-11-05	QEMU aarch64le, vanilla mkqnximage image
 test_python3_wheel	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	python3-wheel 0.46.1-r0
 test_qdirstat	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qdirstat 2.0-r0
 test_qhull	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qhull 8.0.2-r0
+test_qnx_socketcan	FAIL	2026-11-11	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qnx-socketcan 1.0-r0
+test_qnx_socketcan	FAIL	2026-11-11	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qnx-socketcan 1.0-r1
+test_qnx_socketcan	PASS	2026-11-11	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qnx-socketcan 1.0-r2
 test_qpdf	PASS	2026-11-01	QEMU aarch64le, vanilla mkqnximage image	apk:local-dists	qpdf 11.10.1-r0
 test_qt6	PASS	2026-10-30	QEMU aarch64 virt (mkqnximage image + SDP runtime libraries)	bundle	
 test_qt6	PASS	2026-10-30	QEMU aarch64 virt, vanilla mkqnximage image	apk:local-dists	qt6 6.8.1-r0

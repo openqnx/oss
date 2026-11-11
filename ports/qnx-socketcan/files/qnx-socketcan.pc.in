@@ -1,0 +1,9 @@
+prefix=@PREFIX@
+includedir=${prefix}/include/qnx-socketcan
+libdir=${prefix}/lib
+
+Name: qnx-socketcan
+Description: Linux SocketCAN (PF_CAN raw sockets, <linux/can.h>) for QNX programs
+Version: @VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lqsocketcan -lsocket

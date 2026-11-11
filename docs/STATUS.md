@@ -53,8 +53,8 @@ current: it is the hand-over, not a history (that is `git log`).
   - Go / etcd: upstream Go has no QNX target; the one public fork covers
     32-bit QNX 6.5 only. A qnx/amd64 + qnx/arm64 port is several weeks.
   - Flutter: no public QNX engine/embedder; the Dart VM would need a port.
-  - perf: QNX has no perf_event_open. can-utils: built without the AF_CAN
-    tools (QNX has no SocketCAN).
+  - perf: QNX has no perf_event_open. can-utils: the CAN_RAW tools run on
+    qnx-socketcan; the CAN_BCM, ISO-TP, J1939 and slcan tools are not built.
 
 ## In progress / next
 
@@ -93,13 +93,29 @@ current: it is the hand-over, not a history (that is `git log`).
      OS link libraries from the user's SDP (no package carries QNX files). C++ is libc++ on
      the SDP's libc++.so.2. `test_native_toolchain` (C, C++20, threads, shared/static
      libraries, lld, fmt through pkg-config, make, cmake + ninja) passes on both VMs.
-     Guide: `docs/guide/Native-compiler.md` (wiki page, not yet copied to the wiki).
+     Guide: `docs/guide/Native-compiler.md` (also on the wiki).
      Targets that run this test need `scripts/target-sysroot` once (the vanilla VMs have
      it, `vanilla-vm/run-all` calls it; the CI workflows do not yet). Not compared again with the
      Raspberry Pi 5 image (it refused SSH from this PC).
-   - Then SocketCAN: QNX 8.0 has no AF_CAN, so can-utils lacks candump/cansend/cangen.
-     Look for a public SocketCAN layer for QNX 8 first; otherwise a compatibility library
-     over QNX's dev-can drivers plus a virtual CAN bus for tests; rebuild can-utils.
+   - SocketCAN (2026-11-11, done, not published): `qnx-socketcan` 1.0 -- SocketCAN in user
+     space. `libqsocketcan` gives a program `socket(PF_CAN, SOCK_RAW, CAN_RAW)` with bind,
+     filters, loopback, receive-own, CAN FD, error filter, timestamps, `SIOCGIFINDEX` and
+     `if_nametoindex`, plus the `<linux/can.h>` headers (include/qnx-socketcan,
+     `pkg-config qnx-socketcan`); the daemon `qcand` carries the buses (virtual, as Linux's
+     vcan; `qcanctl list|add|del`). `can-utils` 2025.01 rebuilt on it: candump, cansend,
+     cangen, canplayer, cansniffer, canbusload, cansequence, canfdtest, canlogserver.
+     A CAN socket is a SOCK_SEQPACKET connection to qcand and a message on it is the
+     CAN frame as it is, so the library works in either link order: before libc (its own
+     read/write/close: exact errors, every frame's interface and time) or after it
+     (`-lc` first, as this workspace's CMake toolchain links: libc's read/write carry the
+     frames, `<linux/socket.h>` redirects ioctl; the differences are listed in
+     `files/src/qsocketcan.c`). A real PF_CAN domain under `/dev/socket` is not possible
+     with public headers (no `<sys/sockmsg.h>` in SDP 8.0).
+     Both tests pass on both VMs. Follow-ups: a bridge from a qcand bus to a QNX CAN
+     driver (`/dev/canN`; a public Linux-driver host for QNX exists, dev-can-linux,
+     GPL-2.0) -- today the buses are virtual only; CAN_BCM, CAN_ISOTP, CAN_J1939 and
+     CAN XL are not provided (socket() fails with EPROTONOSUPPORT). A program that is not
+     linked with libqsocketcan (python3's socket module) needs `LD_PRELOAD`.
    - Then the CAN ecosystem on top of it: python-can, cantools, canmatrix, opendbc,
      CANopenNode, ros2_canopen, isotp-c, can-isotp, udsoncan, python-OBD, J1939,
      libcanard (OpenCyphal), socketcand, cannelloni, libsocketcan, Wireshark/tshark,

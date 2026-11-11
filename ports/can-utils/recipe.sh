@@ -1,26 +1,38 @@
-# can-utils, the Linux SocketCAN user-space tools -- only the ones that do
-# not need a CAN socket. QNX 8.0 has no SocketCAN: io-sock has no PF_CAN /
-# AF_CAN protocol family (<sys/socket.h> stops at AF_DIVERT; no <linux/can.h>,
-# no can interfaces), and QNX's CAN stack is a resource manager instead
-# (dev-can-* drivers, /dev/canN/{rx,tx}M, devctl()s from <sys/can_dcmd.h>,
-# canctl) whose drivers come with board BSPs -- none in the SDP. candump,
-# cansend, cangen, canplayer, the ISO-TP and J1939 tools all open
-# socket(PF_CAN, ...), so they cannot run on QNX and are not built.
-# What is built works on CAN data, not on a CAN bus:
-#   asc2log, log2asc   convert between candump log files and Vector ASC
-#   log2long           print a candump log in the long (candump -ta) form
-#   can-calc-bit-timing  bit-timing registers for CAN controllers from a
-#                      bitrate and a clock (no device access)
+# can-utils, the Linux SocketCAN user-space tools.
+#
+# QNX 8.0 has no SocketCAN of its own (io-sock has no PF_CAN; QNX's CAN is a
+# resource manager per controller). The tools here run on qnx-socketcan:
+# its libqsocketcan gives them socket(PF_CAN, SOCK_RAW, CAN_RAW) and
+# <linux/can.h>, and its daemon qcand the CAN buses (virtual ones, as
+# Linux's vcan: start `qcand`, then `candump vcan0`, `cansend vcan0 123#11`).
+#
+# Built -- the CAN_RAW tools and the ones that work on CAN data:
+#   candump, cansend, cangen, canplayer, cansniffer, canbusload,
+#   cansequence, canfdtest, canlogserver
+#   asc2log, log2asc, log2long    candump log files <-> Vector ASC, long form
+#   can-calc-bit-timing           bit-timing registers for CAN controllers
+# Not built: what needs a Linux kernel protocol or driver that qnx-socketcan
+# does not provide -- bcmserver, cangw (CAN_BCM, CAN gateway via netlink),
+# isotp* (CAN_ISOTP), j1939*/testj1939/isobusfs (CAN_J1939), slcan*
+# (the slcan tty line discipline), mcp251xfd-dump.
 VERSION=2025.01; GIT=https://github.com/linux-can/can-utils.git; REF=v2025.01
+DEPS="qnx-socketcan"
 BUILDSYS=custom
-CU_TOOLS="asc2log log2asc log2long can-calc-bit-timing"
-# The tools include the Linux UAPI headers can-utils ships (include/linux/
-# can.h, ...), which need <linux/types.h>, <linux/socket.h> and
-# <linux/stddef.h>; qnx/linux/ (added by the patch) maps those onto QNX's
-# own types. Nothing here opens a socket.
-cu_cc() { "$QNX_HOST/usr/bin/qcc" -V"$QCC_TARGET" -D_QNX_SOURCE -O2 -Wall \
-            -I"$S/qnx" -I"$S/include" "$@"; }
+CU_SOCK_TOOLS="candump cansend cangen canplayer cansniffer canbusload cansequence canfdtest canlogserver"
+CU_TOOLS="$CU_SOCK_TOOLS asc2log log2asc log2long can-calc-bit-timing"
+# Include path: qnx/ (the patch: <sys/epoll.h> on poll()), qnx-socketcan's
+# <linux/types.h>, <linux/socket.h>, <linux/sockios.h>, then the Linux UAPI
+# CAN headers can-utils ships (include/linux/can.h, ...). libqsocketcan
+# goes before libsocket: it defines socket(), bind(), read(), ... for CAN
+# sockets and passes every other descriptor on.
+cu_cc() { "$QNX_HOST/usr/bin/qcc" -V"$QCC_TARGET" -D_QNX_SOURCE -D_GNU_SOURCE -O2 -Wall \
+            -include "$S/qnx/qnx-compat.h" -I"$S/qnx" -I"$STAGE$PREFIX/include/qnx-socketcan" -I"$S/include" "$@"; }
 do_build() {
+  local t
+  for t in $CU_SOCK_TOOLS; do
+    cu_cc "$S/$t.c" "$S/lib.c" "$S/canframelen.c" -o "$B/$t" \
+          -L"$STAGE$PREFIX/lib" -Wl,-rpath-link,"$STAGE$PREFIX/lib" -lqsocketcan -lsocket -lm || return 1
+  done
   cu_cc "$S/asc2log.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/asc2log"  || return 1
   cu_cc "$S/log2asc.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/log2asc"  || return 1
   cu_cc "$S/log2long.c" "$S/lib.c" "$S/canframelen.c" -o "$B/log2long" || return 1

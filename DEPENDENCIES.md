@@ -5,7 +5,7 @@ Two kinds, by whether anything else from this repository is needed:
 | Kind | Meaning | Components |
 |---|---|---|
 | 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **322** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **594** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **595** |
 
 Dependent components split further by what they need at run time (232 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
@@ -15,7 +15,7 @@ Every component is in exactly one of three classes. The class is computed by `sc
 |---|---|---|---|
 | **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **322** |
 | **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **232** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **362** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **363** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -54,7 +54,6 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`bzip2`](ports/bzip2/) | 1.0.8 | custom | aarch64le✅ x86_64✅ | 16 |
 | [`c-ares`](ports/c-ares/) | 1.34.3 | cmake | aarch64le✅ x86_64✅ | 3 |
 | [`ca-certificates`](ports/ca-certificates/) | 20261020 | custom | – | 0 |
-| [`can-utils`](ports/can-utils/) | 2025.01 | custom | – | 0 |
 | [`capicxx-core-runtime`](ports/capicxx-core-runtime/) | 3.2.4 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`capstone`](ports/capstone/) | 5.0.9 | cmake | – | 0 |
 | [`casadi`](ports/casadi/) | 3.8.2 | cmake | – | 0 |
@@ -278,6 +277,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`pugixml`](ports/pugixml/) | 1.14 | cmake | – | 2 |
 | [`pybind11`](ports/pybind11/) | 3.1.0 | cmake | – | 1 |
 | [`qhull`](ports/qhull/) | 8.0.2 | cmake | – | 2 |
+| [`qnx-socketcan`](ports/qnx-socketcan/) | 1.0 | custom | – | 1 |
 | [`quickjs-ng`](ports/quickjs-ng/) | 0.8.0 | cmake | – | 0 |
 | [`rapidjson`](ports/rapidjson/) | 1.1.0-24b5e7a | cmake | – | 2 |
 | [`rhash`](ports/rhash/) | 1.4.5 | custom | – | 0 |
@@ -595,7 +595,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Dependent
 
-362 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+363 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -627,6 +627,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`boost`](ports/boost/) | 1.86.0 | zlib bzip2 xz | bzip2 xz zlib | 7 |
 | [`c-blosc`](ports/c-blosc/) | 1.21.6 | lz4 zlib zstd | lz4 zlib zstd | 3 |
 | [`cairo`](ports/cairo/) | 1.18.2 | pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo | fontconfig freetype glib libpng libx11 libxext libxrender lzo pixman zlib | 22 |
+| [`can-utils`](ports/can-utils/) | 2025.01 | qnx-socketcan | qnx-socketcan | 1 |
 | [`capicxx-someip-runtime`](ports/capicxx-someip-runtime/) | 3.2.4 | capicxx-core-runtime vsomeip | capicxx-core-runtime vsomeip | 10 |
 | [`capnproto`](ports/capnproto/) | 1.0.2 | zlib openssl | openssl zlib | 2 |
 | [`cartographer`](ports/cartographer/) | 2.0.0 | abseil boost ceres-solver eigen glog gflags lua5.3 protobuf cairo | abseil boost cairo ceres-solver gflags glog lua5.3 protobuf | 31 |

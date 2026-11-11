@@ -1,0 +1,114 @@
+QNX: epoll on poll() for candump, and the libc bits Linux has.
+
+candump waits for its CAN sockets with epoll, which QNX does not have:
+qnx/sys/epoll.h (on the include path, set by the recipe) implements the
+epoll_create/epoll_ctl/epoll_wait candump uses on poll(). qnx/qnx-compat.h
+(included ahead of every source, -include) gives cangen a CLOCK_TAI (QNX's
+monotonic clock) and canbusload MIN/MAX, which <sys/param.h> does not
+define under _QNX_SOURCE.
+
+The Linux CAN socket API itself (PF_CAN sockets, <linux/types.h>,
+<linux/socket.h>, <linux/sockios.h>) comes from qnx-socketcan.
+
+Upstream-Status: QNX-specific
+
+--- /dev/null
++++ b/qnx/qnx-compat.h
+@@ -0,0 +1,21 @@
++/*
++ * QNX: what the CAN socket tools take from Linux's libc headers and QNX's
++ * do not have. Included ahead of every source file (-include).
++ */
++#ifndef QNX_CAN_UTILS_COMPAT_H
++#define QNX_CAN_UTILS_COMPAT_H
++#include <time.h>
++#include <sys/param.h>
++/* cangen paces itself on CLOCK_TAI (clock_gettime, clock_nanosleep). QNX has
++ * no TAI clock; the monotonic clock serves the same purpose there. */
++#ifndef CLOCK_TAI
++#define CLOCK_TAI CLOCK_MONOTONIC
++#endif
++/* canbusload: MIN and MAX come with <sys/param.h> on Linux. */
++#ifndef MIN
++#define MIN(a, b) ((a) < (b) ? (a) : (b))
++#endif
++#ifndef MAX
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++#endif
++#endif
+--- /dev/null
++++ b/qnx/sys/epoll.h
+@@ -0,0 +1,73 @@
++/*
++ * QNX: candump waits for its CAN sockets with epoll, which QNX has not.
++ * This is the part of <sys/epoll.h> candump uses, on poll(): one epoll
++ * instance per program, descriptors added with EPOLL_CTL_ADD, level-
++ * triggered EPOLLIN. The instance's descriptor is a real one (/dev/null),
++ * so close() on it works.
++ */
++#ifndef QNX_SYS_EPOLL_H
++#define QNX_SYS_EPOLL_H
++#include <errno.h>
++#include <fcntl.h>
++#include <poll.h>
++#include <stdint.h>
++
++#define EPOLLIN       POLLIN
++#define EPOLLERR      POLLERR
++#define EPOLLHUP      POLLHUP
++#define EPOLL_CTL_ADD 1
++#define EPOLL_CTL_DEL 2
++#define QNX_EPOLL_MAX 64
++
++typedef union epoll_data { void *ptr; int fd; uint32_t u32; uint64_t u64; } epoll_data_t;
++struct epoll_event { uint32_t events; epoll_data_t data; };
++
++static struct pollfd qnx_ep_fd[QNX_EPOLL_MAX];
++static epoll_data_t qnx_ep_data[QNX_EPOLL_MAX];
++static int qnx_ep_n;
++
++static inline int epoll_create(int size)
++{
++	(void)size;
++	qnx_ep_n = 0;
++	return open("/dev/null", O_RDONLY);
++}
++
++static inline int epoll_ctl(int epfd, int op, int fd, struct epoll_event *ev)
++{
++	int i;
++	(void)epfd;
++	for (i = 0; i < qnx_ep_n && qnx_ep_fd[i].fd != fd; i++)
++		;
++	if (op == EPOLL_CTL_ADD) {
++		if (i < qnx_ep_n) { errno = EEXIST; return -1; }
++		if (qnx_ep_n == QNX_EPOLL_MAX) { errno = ENOSPC; return -1; }
++		qnx_ep_fd[i].fd = fd; qnx_ep_fd[i].events = (short)ev->events; qnx_ep_data[i] = ev->data;
++		qnx_ep_n++;
++		return 0;
++	}
++	if (op == EPOLL_CTL_DEL) {
++		if (i == qnx_ep_n) { errno = ENOENT; return -1; }
++		qnx_ep_n--;
++		qnx_ep_fd[i] = qnx_ep_fd[qnx_ep_n]; qnx_ep_data[i] = qnx_ep_data[qnx_ep_n];
++		return 0;
++	}
++	errno = EINVAL;
++	return -1;
++}
++
++static inline int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
++{
++	int i, n = 0, r;
++	(void)epfd;
++	r = poll(qnx_ep_fd, qnx_ep_n, timeout);
++	if (r <= 0) return r;
++	for (i = 0; i < qnx_ep_n && n < maxevents; i++)
++		if (qnx_ep_fd[i].revents) {
++			events[n].events = (uint32_t)qnx_ep_fd[i].revents;
++			events[n].data = qnx_ep_data[i];
++			n++;
++		}
++	return n;
++}
++#endif

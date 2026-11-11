@@ -68,7 +68,13 @@ current: it is the hand-over, not a history (that is `git log`).
      x86_64 and on aarch64 (2026-11-10). The earlier aarch64 failures were the VM being
      unreachable or slow; moveit2's test now plans again (up to 3 times) when the
      randomised OMPL path is rejected by ValidateSolution.
-   - Not published yet: the 244 components' packages and tests, `main` (ask first).
+   - Published 2026-11-11: the 244 components' packages and tests
+     (`publish-github-release --verified --changed --upload`), `main`, the package site
+     and the Wiki. `PUBLISH_OUT=build/release scripts/check-release-sync`: 12 releases,
+     0 differ, 0 not uploaded. Pitfall: publish-github-release stages in `build/release`,
+     while check-release-sync and gen-pkg-site read `tmp/release-staging` by default --
+     pass `PUBLISH_OUT=build/release` / `gen-pkg-site -r build/release`, then
+     `deploy-pkg-site --no-gen` (a stale staging tree gave a site without the new ports).
    - The work moved to another PC on 2026-11-10 (`scripts/workspace-pack`); the SDP there
      is `~/claude-work/qnx800`, cmake 3.28.3 comes from `uv tool install` (`~/.local/bin`).
      Pitfall: `TEST_GROUPS` takes full group names (`g15-robotics`, not `g15`); a wrong

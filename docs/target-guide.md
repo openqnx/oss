@@ -125,7 +125,7 @@ unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
 ## Standalone and dependent
 
 
-**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **594 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
+**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **595 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
 
 Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, `ᵛ` on a vanilla image installed with apk; details per component in its README's *How it was verified*.
 
@@ -156,7 +156,6 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`bzip2`](../ports/bzip2/) | Block-sorting file compressor and libbz2 library | 1.0.8 | `apk add bzip2` | `qnx-test-bzip2` | x86✅ᵛ a64✅ᵛ |
 | [`c-ares`](../ports/c-ares/) | Asynchronous DNS resolver library in C | 1.34.3 | `apk add c-ares` | `qnx-test-c-ares` | x86✅ᵛ a64✅ᵛ |
 | [`ca-certificates`](../ports/ca-certificates/) | Mozilla's CA certificate bundle for TLS verification | 20261020 | `apk add ca-certificates` | `qnx-test-ca-certificates` | x86✅ᵛ a64✅ᵛ |
-| [`can-utils`](../ports/can-utils/) | CAN log converters (asc2log, log2asc, log2long), can-calc-bit-timing | 2025.01 | `apk add can-utils` | `qnx-test-can-utils` | x86✅ᵛ a64✅ᵛ |
 | [`capicxx-core-runtime`](../ports/capicxx-core-runtime/) | COVESA CommonAPI C++ core runtime for IPC interfaces | 3.2.4 | `apk add capicxx-core-runtime` | `qnx-test-capicxx-core-runtime` | x86✅ᵛ a64✅ᵛ |
 | [`capstone`](../ports/capstone/) | Multi-architecture disassembly framework | 5.0.9 | `apk add capstone` | `qnx-test-capstone` | x86✅ᵛ a64✅ᵛ |
 | [`casadi`](../ports/casadi/) | CasADi: symbolic framework for nonlinear optimisation and algorithmic differentiation | 3.8.2 | `apk add casadi` | `qnx-test-casadi` | x86✅ᵛ a64✅ᵛ |
@@ -380,6 +379,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`pugixml`](../ports/pugixml/) | Lightweight XML parser for C++ with XPath support | 1.14 | `apk add pugixml` | `qnx-test-pugixml` | x86✅ᵛ a64✅ᵛ |
 | [`pybind11`](../ports/pybind11/) | Seamless operability between C++11 and Python (header-only) | 3.1.0 | `apk add pybind11` | `qnx-test-pybind11` | – |
 | [`qhull`](../ports/qhull/) | Computational geometry: convex hulls, Delaunay triangulation, Voronoi | 8.0.2 | `apk add qhull` | `qnx-test-qhull` | x86✅ᵛ a64✅ᵛ |
+| [`qnx-socketcan`](../ports/qnx-socketcan/) | Linux SocketCAN for QNX programs: CAN_RAW sockets, <linux/can.h>, virtual CAN buses | 1.0 | `apk add qnx-socketcan` | `qnx-test-qnx-socketcan` | x86❌ᵛ a64❌ᵛ |
 | [`quickjs-ng`](../ports/quickjs-ng/) | Small and embeddable JavaScript engine | 0.8.0 | `apk add quickjs-ng` | `qnx-test-quickjs` | x86✅ᵛ a64✅ᵛ |
 | [`rapidjson`](../ports/rapidjson/) | Header-only fast JSON parser and generator for C++ (SAX and DOM APIs) | 1.1.0-24b5e7a | `apk add rapidjson` | `qnx-test-rapidjson` | x86✅ a64✅ |
 | [`rhash`](../ports/rhash/) | Hash sum and magnet link tool (rhash) and the LibRHash library: CRC32, MD5, SHA-1/2/3, BLAKE2/3, TTH, BTIH and more | 1.4.5 | `apk add rhash` | `qnx-test-rhash` | x86✅ᵛ a64✅ᵛ |
@@ -456,7 +456,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`zserio`](../ports/zserio/) | C++ runtime library of zserio, a serialization framework for binary data | 2.20.0 | `apk add zserio` | `qnx-test-zserio` | – |
 | [`zstd`](../ports/zstd/) | Fast real-time lossless compression library (Zstandard) | 1.5.6 | `apk add zstd` | `qnx-test-zstd` | x86✅ᵛ a64✅ᵛ |
 
-### Dependent (594)
+### Dependent (595)
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
@@ -491,6 +491,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`boost`](../ports/boost/) | Boost peer-reviewed portable C++ source libraries | 1.86.0 | `apk add boost` | bzip2 xz zlib | zlib bzip2 xz | `qnx-test-boost` | x86✅ᵛ a64✅ᵛ |
 | [`c-blosc`](../ports/c-blosc/) | Blocking, shuffling and lossless compression library | 1.21.6 | `apk add c-blosc` | lz4 zlib zstd | lz4 zlib zstd | `qnx-test-c-blosc` | x86✅ᵛ a64✅ᵛ |
 | [`cairo`](../ports/cairo/) | 2D vector graphics library with multiple output backends | 1.18.2 | `apk add cairo` | fontconfig freetype glib libpng libx11 libxext libxrender lzo pixman zlib | pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo | `qnx-test-cairo` | x86✅ᵛ a64✅ᵛ |
+| [`can-utils`](../ports/can-utils/) | SocketCAN tools: candump, cansend, cangen, canplayer, cansniffer, canbusload, log converters | 2025.01 | `apk add can-utils` | qnx-socketcan | qnx-socketcan | `qnx-test-can-utils` | x86✅ᵛ a64✅ᵛ |
 | [`candb`](../ports/candb/) | Library for parsing CAN bus database description formats | 0.1-git-20210625 | `apk add candb` | – | tl-expected | `qnx-test-candb` | – |
 | [`capicxx-someip-runtime`](../ports/capicxx-someip-runtime/) | COVESA CommonAPI C++ SOME/IP binding runtime | 3.2.4 | `apk add capicxx-someip-runtime` | capicxx-core-runtime vsomeip | capicxx-core-runtime vsomeip | `qnx-test-capicxx-someip-runtime` | x86✅ᵛ a64✅ᵛ |
 | [`capnproto`](../ports/capnproto/) | Cap'n Proto data serialization format and capability-based RPC system | 1.0.2 | `apk add capnproto` | openssl zlib | zlib openssl | `qnx-test-capnproto` | x86✅ᵛ a64✅ᵛ |

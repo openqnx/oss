@@ -1,0 +1,27 @@
+# qnx-socketcan 1.0-r1 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-11T10:59:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qnx-socketcan qnx-test-qnx-socketcan qnx-port-tests
+(1/2) Installing qnx-socketcan (1.0-r1)
+(2/2) Installing qnx-test-qnx-socketcan (1.0-r1)
+OK: 733.0 MiB in 96 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qnx_socketcan
+FAIL test_qnx_socketcan (rc=139)
+     == qnx-socketcan ==
+       note the program's read() is libc's (libc is ahead of libqsocketcan)
+       ok   no daemon: socket(PF_CAN) fails with ENETDOWN
+       ok   qcand is up; if_nametoindex finds tcan0 and tcan1
+       ok   if_indextoname
+       ok   if_nametoindex still finds lo0, and no nocan9
+       ok   CAN_BCM: EPROTONOSUPPORT
+     Memory fault (core dumped) 
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_qnx_socketcan
+
+RESULT: FAIL

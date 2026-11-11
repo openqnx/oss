@@ -1,12 +1,12 @@
 # Component index
 
-917 components. **915** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
+918 components. **916** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
 | 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **322** |
 | 🟡 **build-deps only** | needs other components to build, runs on its own | **232** |
-| 🔴 **dependent** | needs other components to build and to run | **362** |
+| 🔴 **dependent** | needs other components to build and to run | **363** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -70,7 +70,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [c-blosc](ports/c-blosc/README.md) | Blocking, shuffling and lossless compression library | 1.21.6 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [ca-certificates](ports/ca-certificates/README.md) | Mozilla's CA certificate bundle for TLS verification | 20261020 | custom | curl.se | — | 🟢 standalone | — | ✅ | ✅ |
 | [cairo](ports/cairo/README.md) | 2D vector graphics library with multiple output backends | 1.18.2 | meson | gitlab.freedesktop.org | 1 | 🔴 dependent | 10 | ✅ | ✅ |
-| [can-utils](ports/can-utils/README.md) | CAN log converters (asc2log, log2asc, log2long), can-calc-bit-timing | 2025.01 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
+| [can-utils](ports/can-utils/README.md) | SocketCAN tools: candump, cansend, cangen, canplayer, cansniffer, canbusload, log converters | 2025.01 | custom | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [candb](ports/candb/README.md) | Library for parsing CAN bus database description formats | 0.1-git-20210625 | cmake | github.com | 5 | 🟡 build-deps only | — | ✅ | ✅ |
 | [capicxx-core-runtime](ports/capicxx-core-runtime/README.md) | COVESA CommonAPI C++ core runtime for IPC interfaces | 3.2.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [capicxx-someip-runtime](ports/capicxx-someip-runtime/README.md) | COVESA CommonAPI C++ SOME/IP binding runtime | 3.2.4 | cmake | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
@@ -744,6 +744,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [pytorch](ports/pytorch/README.md) | PyTorch tensor computation and deep learning library | 2.3.1 | custom | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qdirstat](ports/qdirstat/README.md) | Qt-based directory statistics: disk usage with a treemap | 2.0 | custom | github.com | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qhull](ports/qhull/README.md) | Computational geometry: convex hulls, Delaunay triangulation, Voronoi | 8.0.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [qnx-socketcan](ports/qnx-socketcan/README.md) | Linux SocketCAN for QNX programs: CAN_RAW sockets, <linux/can.h>, virtual CAN buses | 1.0 | custom | custom | — | 🟢 standalone | — | ✅ | ✅ |
 | [qpdf](ports/qpdf/README.md) | PDF Transformation System | 11.10.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qt6-3d](ports/qt6-3d/README.md) | Qt 6 3D: a 3D scene graph and rendering framework (Qt 3D) for C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [qt6-datavis3d](ports/qt6-datavis3d/README.md) | Qt 6 Data Visualization: 3D bar, scatter and surface graphs | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 1 | ✅ | ✅ |

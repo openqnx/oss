@@ -1,16 +1,16 @@
 # can-utils 2025.01
 
-> CAN log converters (asc2log, log2asc, log2long), can-calc-bit-timing
+> SocketCAN tools: candump, cansend, cangen, canplayer, cansniffer, canbusload, log converters
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
 | Upstream | https://github.com/linux-can/can-utils.git (tag `v2025.01`) |
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
-| Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
+| Build dependencies | [`qnx-socketcan`](../qnx-socketcan/) |
+| Run-time dependencies | [`qnx-socketcan`](../qnx-socketcan/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_can_utils`](../../tests/src/) |
 
@@ -64,7 +64,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild qnx-socketcan
+```
 
 ### 2. Get the upstream source
 
@@ -78,20 +82,23 @@ git clone --depth 1 -b v2025.01 --recurse-submodules --shallow-submodules \
 2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/can-utils < ports/can-utils/patches/0001-qnx-linux-uapi-types.patch
+patch -p1 -d src/can-utils < ports/can-utils/patches/0001-qnx-epoll-and-libc-compat.patch
 patch -p1 -d src/can-utils < ports/can-utils/patches/0002-calc-bit-timing-min-max.patch
 ```
 
-**[`0001-qnx-linux-uapi-types.patch`](patches/0001-qnx-linux-uapi-types.patch)** — QNX: the Linux UAPI types the shipped CAN headers need.
+**[`0001-qnx-epoll-and-libc-compat.patch`](patches/0001-qnx-epoll-and-libc-compat.patch)** — QNX: epoll on poll() for candump, and the libc bits Linux has.
 
-> can-utils builds against its own copies of the Linux UAPI headers
-> (include/linux/can.h, ...), which include <linux/types.h>, <linux/socket.h>
-> and <linux/stddef.h>. QNX has no <linux/...> headers: qnx/linux/ (put on the
-> include path by the recipe) defines the kernel's __u8/__u32/... types from
-> <stdint.h> and maps the other two onto QNX's <sys/socket.h> and <stddef.h>.
-> Only the CAN frame definitions are used; nothing opens a CAN socket.
+> candump waits for its CAN sockets with epoll, which QNX does not have:
+> qnx/sys/epoll.h (on the include path, set by the recipe) implements the
+> epoll_create/epoll_ctl/epoll_wait candump uses on poll(). qnx/qnx-compat.h
+> (included ahead of every source, -include) gives cangen a CLOCK_TAI (QNX's
+> monotonic clock) and canbusload MIN/MAX, which <sys/param.h> does not
+> define under _QNX_SOURCE.
+>
+> The Linux CAN socket API itself (PF_CAN sockets, <linux/types.h>,
+> <linux/socket.h>, <linux/sockios.h>) comes from qnx-socketcan.
 
-Touches: `qnx/linux/socket.h`, `qnx/linux/stddef.h`, `qnx/linux/types.h` · Upstream status: QNX-specific
+Touches: `qnx/qnx-compat.h`, `qnx/sys/epoll.h` · Upstream status: QNX-specific
 
 **[`0002-calc-bit-timing-min-max.patch`](patches/0002-calc-bit-timing-min-max.patch)** — can-calc-bit-timing: replace QNX's min()/max() macros.
 
@@ -112,6 +119,11 @@ S=src/can-utils; B=build/$QNX_ARCH/can-utils; mkdir -p $B
 
 ```bash
 do_build() {
+  local t
+  for t in $CU_SOCK_TOOLS; do
+    cu_cc "$S/$t.c" "$S/lib.c" "$S/canframelen.c" -o "$B/$t" \
+          -L"$STAGE$PREFIX/lib" -Wl,-rpath-link,"$STAGE$PREFIX/lib" -lqsocketcan -lsocket -lm || return 1
+  done
   cu_cc "$S/asc2log.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/asc2log"  || return 1
   cu_cc "$S/log2asc.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/log2asc"  || return 1
   cu_cc "$S/log2long.c" "$S/lib.c" "$S/canframelen.c" -o "$B/log2long" || return 1
@@ -129,18 +141,27 @@ do_install() {
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- can-utils, the Linux SocketCAN user-space tools -- only the ones that do not need a CAN socket. QNX 8.0 has no SocketCAN: io-sock has no PF_CAN / AF_CAN protocol family (<sys/socket.h> stops at AF_DIVERT; no <linux/can.h>, no can interfaces), and QNX's CAN stack is a resource manager instead (dev-can-* drivers, /dev/canN/{rx,tx}M, devctl()s from <sys/can_dcmd.h>, canctl) whose drivers come with board BSPs -- none in the SDP. candump, cansend, cangen, canplayer, the ISO-TP and J1939 tools all open socket(PF_CAN, ...), so they cannot run on QNX and are not built. What is built works on CAN data, not on a CAN bus: asc2log, log2asc   convert between candump log files and Vector ASC log2long           print a candump log in the long (candump -ta) form can-calc-bit-timing  bit-timing registers for CAN controllers from a bitrate and a clock (no device access)
-- The tools include the Linux UAPI headers can-utils ships (include/linux/ can.h, ...), which need <linux/types.h>, <linux/socket.h> and <linux/stddef.h>; qnx/linux/ (added by the patch) maps those onto QNX's own types. Nothing here opens a socket.
+- can-utils, the Linux SocketCAN user-space tools. QNX 8.0 has no SocketCAN of its own (io-sock has no PF_CAN; QNX's CAN is a resource manager per controller). The tools here run on qnx-socketcan: its libqsocketcan gives them socket(PF_CAN, SOCK_RAW, CAN_RAW) and <linux/can.h>, and its daemon qcand the CAN buses (virtual ones, as Linux's vcan: start `qcand`, then `candump vcan0`, `cansend vcan0 123#11`). Built -- the CAN_RAW tools and the ones that work on CAN data: candump, cansend, cangen, canplayer, cansniffer, canbusload, cansequence, canfdtest, canlogserver asc2log, log2asc, log2long    candump log files <-> Vector ASC, long form can-calc-bit-timing           bit-timing registers for CAN controllers Not built: what needs a Linux kernel protocol or driver that qnx-socketcan does not provide -- bcmserver, cangw (CAN_BCM, CAN gateway via netlink), isotp* (CAN_ISOTP), j1939*/testj1939/isobusfs (CAN_J1939), slcan* (the slcan tty line discipline), mcp251xfd-dump.
+- Include path: qnx/ (the patch: <sys/epoll.h> on poll()), qnx-socketcan's <linux/types.h>, <linux/socket.h>, <linux/sockios.h>, then the Linux UAPI CAN headers can-utils ships (include/linux/can.h, ...). libqsocketcan goes before libsocket: it defines socket(), bind(), read(), ... for CAN sockets and passes every other descriptor on.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH can-utils`.
 
 ### 5. What it installs
 
-4 files under `/usr/local`, 4 programs.
+13 files under `/usr/local`, 13 programs.
 
 ```
 /usr/local/bin/asc2log
 /usr/local/bin/can-calc-bit-timing
+/usr/local/bin/canbusload
+/usr/local/bin/candump
+/usr/local/bin/canfdtest
+/usr/local/bin/cangen
+/usr/local/bin/canlogserver
+/usr/local/bin/canplayer
+/usr/local/bin/cansend
+/usr/local/bin/cansequence
+/usr/local/bin/cansniffer
 /usr/local/bin/log2asc
 /usr/local/bin/log2long
 ```
@@ -209,7 +230,11 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r1 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r2 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/can-utils-2025.01-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r1 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/x86_64/can-utils-2025.01-r1.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r2 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/x86_64/can-utils-2025.01-r2.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -220,29 +245,41 @@ This recipe builds **2025.01**. Every version stays available: packages in `dist
 <details><summary>recipe.sh</summary>
 
 ```bash
-# can-utils, the Linux SocketCAN user-space tools -- only the ones that do
-# not need a CAN socket. QNX 8.0 has no SocketCAN: io-sock has no PF_CAN /
-# AF_CAN protocol family (<sys/socket.h> stops at AF_DIVERT; no <linux/can.h>,
-# no can interfaces), and QNX's CAN stack is a resource manager instead
-# (dev-can-* drivers, /dev/canN/{rx,tx}M, devctl()s from <sys/can_dcmd.h>,
-# canctl) whose drivers come with board BSPs -- none in the SDP. candump,
-# cansend, cangen, canplayer, the ISO-TP and J1939 tools all open
-# socket(PF_CAN, ...), so they cannot run on QNX and are not built.
-# What is built works on CAN data, not on a CAN bus:
-#   asc2log, log2asc   convert between candump log files and Vector ASC
-#   log2long           print a candump log in the long (candump -ta) form
-#   can-calc-bit-timing  bit-timing registers for CAN controllers from a
-#                      bitrate and a clock (no device access)
+# can-utils, the Linux SocketCAN user-space tools.
+#
+# QNX 8.0 has no SocketCAN of its own (io-sock has no PF_CAN; QNX's CAN is a
+# resource manager per controller). The tools here run on qnx-socketcan:
+# its libqsocketcan gives them socket(PF_CAN, SOCK_RAW, CAN_RAW) and
+# <linux/can.h>, and its daemon qcand the CAN buses (virtual ones, as
+# Linux's vcan: start `qcand`, then `candump vcan0`, `cansend vcan0 123#11`).
+#
+# Built -- the CAN_RAW tools and the ones that work on CAN data:
+#   candump, cansend, cangen, canplayer, cansniffer, canbusload,
+#   cansequence, canfdtest, canlogserver
+#   asc2log, log2asc, log2long    candump log files <-> Vector ASC, long form
+#   can-calc-bit-timing           bit-timing registers for CAN controllers
+# Not built: what needs a Linux kernel protocol or driver that qnx-socketcan
+# does not provide -- bcmserver, cangw (CAN_BCM, CAN gateway via netlink),
+# isotp* (CAN_ISOTP), j1939*/testj1939/isobusfs (CAN_J1939), slcan*
+# (the slcan tty line discipline), mcp251xfd-dump.
 VERSION=2025.01; GIT=https://github.com/linux-can/can-utils.git; REF=v2025.01
+DEPS="qnx-socketcan"
 BUILDSYS=custom
-CU_TOOLS="asc2log log2asc log2long can-calc-bit-timing"
-# The tools include the Linux UAPI headers can-utils ships (include/linux/
-# can.h, ...), which need <linux/types.h>, <linux/socket.h> and
-# <linux/stddef.h>; qnx/linux/ (added by the patch) maps those onto QNX's
-# own types. Nothing here opens a socket.
-cu_cc() { "$QNX_HOST/usr/bin/qcc" -V"$QCC_TARGET" -D_QNX_SOURCE -O2 -Wall \
-            -I"$S/qnx" -I"$S/include" "$@"; }
+CU_SOCK_TOOLS="candump cansend cangen canplayer cansniffer canbusload cansequence canfdtest canlogserver"
+CU_TOOLS="$CU_SOCK_TOOLS asc2log log2asc log2long can-calc-bit-timing"
+# Include path: qnx/ (the patch: <sys/epoll.h> on poll()), qnx-socketcan's
+# <linux/types.h>, <linux/socket.h>, <linux/sockios.h>, then the Linux UAPI
+# CAN headers can-utils ships (include/linux/can.h, ...). libqsocketcan
+# goes before libsocket: it defines socket(), bind(), read(), ... for CAN
+# sockets and passes every other descriptor on.
+cu_cc() { "$QNX_HOST/usr/bin/qcc" -V"$QCC_TARGET" -D_QNX_SOURCE -D_GNU_SOURCE -O2 -Wall \
+            -include "$S/qnx/qnx-compat.h" -I"$S/qnx" -I"$STAGE$PREFIX/include/qnx-socketcan" -I"$S/include" "$@"; }
 do_build() {
+  local t
+  for t in $CU_SOCK_TOOLS; do
+    cu_cc "$S/$t.c" "$S/lib.c" "$S/canframelen.c" -o "$B/$t" \
+          -L"$STAGE$PREFIX/lib" -Wl,-rpath-link,"$STAGE$PREFIX/lib" -lqsocketcan -lsocket -lm || return 1
+  done
   cu_cc "$S/asc2log.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/asc2log"  || return 1
   cu_cc "$S/log2asc.c"  "$S/lib.c" "$S/canframelen.c" -o "$B/log2asc"  || return 1
   cu_cc "$S/log2long.c" "$S/lib.c" "$S/canframelen.c" -o "$B/log2long" || return 1

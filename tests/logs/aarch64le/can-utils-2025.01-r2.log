@@ -1,0 +1,42 @@
+# can-utils 2025.01-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-11T11:25:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u can-utils qnx-test-can-utils qnx-port-tests
+(1/3) Installing qnx-socketcan (1.0-r2)
+(2/3) Installing can-utils (2025.01-r2)
+(3/3) Installing qnx-test-can-utils (1.0-r1)
+OK: 974.8 MiB in 149 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_can_utils
+     == can-utils ==
+       ok   log2long: 5 frames in long form (standard, extended, remote, FD, error)
+       ok   log2asc: 5 frames in Vector ASC
+       ok   log2asc: ASC header (hex, absolute timestamps)
+       ok   asc2log: the 5 frames back
+       ok   asc2log: first to last frame 40 ms apart
+       ok   bit timing: MCP2515, 8 MHz, 500 kbit/s -> CNF 0x00 0xb5 0x01, sample point 87.5%
+       ok   bit timing: MCP2518FD, 80 MHz, 1 Mbit/s + 5 Mbit/s data -> 0x003a1309 / 0x000a0301
+       ok   bit timing: 37 known controllers
+       ok   bit timing: unknown controller refused
+       ok   cansend without qcand fails (rc=1: socket: Network is down)
+       ok   qcand is up
+       ok   candump receives on vcan0
+       ok   cansend: classic, extended, remote and CAN FD frames sent
+       ok   candump -L: the 4 frames, as sent
+       ok   candump vcan0 does not see vcan1 frames
+       ok   cansend: a CAN FD frame is refused on the classic bus vcan1
+       ok   candump filters: 300:700 on vcan0 and 321:7FF on vcan1 pass 345 and 321 only
+       ok   cangen: 20 frames on ID 042 received
+       ok   cangen -D i: the payload counts 0000 .. 1300 in order
+       ok   canplayer: the log replayed on vcan1, 20 frames in order
+       ok   cansequence: 50 frames sent and received in sequence
+     PASS can-utils
+PASS test_can_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

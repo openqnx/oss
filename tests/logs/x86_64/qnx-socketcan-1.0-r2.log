@@ -1,0 +1,77 @@
+# qnx-socketcan 1.0-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-11T11:24:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qnx-socketcan qnx-test-qnx-socketcan qnx-port-tests
+(1/2) Installing qnx-socketcan (1.0-r2)
+(2/2) Installing qnx-test-qnx-socketcan (1.0-r1)
+OK: 733.0 MiB in 96 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qnx_socketcan
+     == qnx-socketcan ==
+       note the program's read() is libc's (libc is ahead of libqsocketcan)
+       ok   no daemon: socket(PF_CAN) fails with ENETDOWN
+       ok   qcand is up; if_nametoindex finds tcan0 and tcan1
+       ok   if_indextoname
+       ok   if_nametoindex still finds lo0, and no nocan9
+       ok   CAN_BCM: EPROTONOSUPPORT
+       ok   three CAN_RAW sockets bound (two on tcan0, one on tcan1)
+       ok   bind to an unknown interface index: ENODEV
+       ok   ioctl SIOCGIFINDEX
+       ok   tcan0 MTU is 72 (CAN FD)
+       ok   tcan1 MTU is 16 (classic)
+       ok   SIOCGIFINDEX of an unknown name: ENODEV
+       ok   write a classic frame (16 bytes)
+       ok   the other socket of the bus reads 123#DEADBEEF
+       ok   the sender does not receive its own frame
+       ok   the socket on the other bus receives nothing
+       ok   SIOCGSTAMP: the frame's time
+       ok   an extended frame keeps its 29-bit id and flag
+       ok   a remote frame
+       ok   setsockopt CAN_RAW_RECV_OWN_MSGS, SO_TIMESTAMP
+       ok   recvmsg: the own frame, flagged MSG_CONFIRM, from tcan0
+       ok   recvmsg: an SCM_TIMESTAMP control message with the current time
+       ok   the other socket gets it without MSG_CONFIRM
+       ok   getsockopt: RECV_OWN_MSGS 0, LOOPBACK 1 (the default)
+       ok   setsockopt CAN_RAW_FILTER (200/700, 555/7FF)
+       ok   of 123 205 554 555 2FF the filter passes 205 555 2FF
+       ok   CAN_INV_FILTER: of 205 123 only 123
+       ok   CAN_RAW_JOIN_FILTERS: of 205 206 305 2F5 both filters match 205 2F5
+       ok   an empty filter set: nothing is received
+       ok   filter 0/0: everything again
+       ok   CAN_RAW_LOOPBACK off: local sockets do not receive the frame
+       ok   send: a CAN FD frame without CAN_RAW_FD_FRAMES: EINVAL
+       ok   libc's write: qcand drops the frame
+       ok   setsockopt CAN_RAW_FD_FRAMES on the sender and one receiver
+       ok   write a CAN FD frame (72 bytes)
+       ok   the CAN FD receiver reads 7FF##1 with its 12 bytes
+       ok   the classic-only receiver does not get the CAN FD frame
+       ok   a classic frame arrives as 16 bytes on both
+       ok   send: a CAN FD frame on the classic bus tcan1: EINVAL
+       ok   libc's write: qcand drops the frame
+       ok   a socket bound to any interface: recvfrom names tcan1
+       ok   and tcan1's own socket got the frame too
+       ok   send on the any-interface socket: ENXIO
+       ok   libc's write: qcand drops the frame
+       ok   sendto tcan0: arrives on tcan0 only
+       ok   a send of 5 bytes: EINVAL
+       ok   libc's write of 5 bytes: qcand drops it
+       ok   a non-blocking read with no frame: EAGAIN
+       ok   SOCK_NONBLOCK gives a non-blocking socket
+       ok   qcanctl add tcan2: the interface is there
+       ok   qcanctl list shows tcan0 with mtu 72
+       ok   qcanctl del tcan2: gone
+       ok   a pipe still reads and writes
+       ok   a UDP socket still sends and receives
+       ok   qcand stopped: libc's read on a CAN socket returns 0
+       ok   and recv fails with ENETDOWN
+       ok   qcand removed its socket
+     PASS qnx-socketcan
+PASS test_qnx_socketcan
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

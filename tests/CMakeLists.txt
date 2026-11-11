@@ -467,6 +467,9 @@ port_test(test_libmicrohttpd    test_libmicrohttpd.c     microhttpd)
 port_test(test_civetweb         test_civetweb.c          civetweb ssl crypto)
 port_test(test_libmodbus        test_libmodbus.c         modbus)
 target_include_directories(test_libmodbus PRIVATE "${INC}/modbus")
+# qsocketcan before socket: it defines socket(), bind(), read(), ... for CAN sockets.
+port_test(test_qnx_socketcan    test_qnx_socketcan.c     qsocketcan socket)
+target_include_directories(test_qnx_socketcan PRIVATE "${INC}/qnx-socketcan")
 port_test(test_libssh           test_libssh.c            ssh)
 port_test(test_libgit2          test_libgit2.c           git2)
 

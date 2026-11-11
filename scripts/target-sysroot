@@ -1,0 +1,92 @@
+#!/bin/bash
+# target-sysroot -- give a QNX 8.0 target what a native compiler needs from
+# the QNX SDP: headers, C start files and link libraries.
+#
+#   scripts/target-sysroot [-u user] [--all-libs] [--dir <dir>] <target>
+#
+#   scripts/target-sysroot 192.168.1.50
+#
+# The ported clang (llvm, native-toolchain) compiles on the target, but a
+# program also needs QNX's own headers (<stdio.h>, <sys/neutrino.h>, libc++'s
+# <vector>, ...), crt1.o/crti.o/crtn.o, gcc's crtbegin.o/crtend.o/libgcc and
+# the link names of the QNX libraries (libc.so, libm.so, libc++.so, ...). A
+# target image has none of them, and they are QNX's files under QNX's
+# license: no package here carries them. This script copies them from *your*
+# SDP ($QNX_SDP_ROOT, or QNX_TARGET/QNX_HOST from qnxsdp-env.sh) over SSH to
+#
+#   /data/oss/usr/local/qnx-sysroot/usr/include    $QNX_TARGET/usr/include
+#   /data/oss/usr/local/qnx-sysroot/usr/lib        start files, libgcc, libraries
+#
+# which is where native-toolchain's clang configuration (--sysroot) looks.
+# Do not pass the copy on: the SDP license covers your targets only.
+#
+# Libraries: by default the QNX OS libraries the ported packages link
+# (scripts/check-sdp-leak's list: libc, libm, libc++, libsocket, libscreen,
+# ...) as link name, shared object and static archive. --all-libs copies
+# every library of the SDP's lib and usr/lib (about 700 MB). libstdc++ and
+# its headers are left out: the packages and clang use libc++ (libc++.so.2).
+# Run it again after an SDP update; files are replaced, nothing is deleted.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+USER_=${TARGET_USER:-root}
+ALL=""; DIR=/data/oss/usr/local/qnx-sysroot
+while :; do
+  case "$1" in
+    -u) USER_=$2; shift 2 ;;
+    --all-libs) ALL=1; shift ;;
+    --dir) DIR=$2; shift 2 ;;
+    *) break ;;
+  esac
+done
+T=${1:?usage: $0 [-u user] [--all-libs] [--dir <dir>] <target>}
+. "$WS/tests/ssh-opts.sh"
+mapfile -t O < <(qnxport_ssh_opts "$WS")
+
+SDPT=${QNX_TARGET:-${QNX_SDP_ROOT:+$QNX_SDP_ROOT/target/qnx}}
+SDPH=${QNX_HOST:-${QNX_SDP_ROOT:+$QNX_SDP_ROOT/host/linux/x86_64}}
+[ -d "$SDPT/usr/include" ] && [ -d "$SDPH/usr/lib/gcc" ] || { echo "QNX SDP not found: set QNX_SDP_ROOT (or source qnxsdp-env.sh)" >&2; exit 1; }
+
+case "$(ssh "${O[@]}" "$USER_@$T" uname -m)" in
+  aarch64*|QEMU_virt|*arm*|*Raspberry*) QA=aarch64le; GT=aarch64-unknown-nto-qnx8.0.0 ;;
+  *) QA=x86_64; GT=x86_64-pc-nto-qnx8.0.0 ;;
+esac
+GCCDIR=$(ls -d "$SDPH/usr/lib/gcc/$GT"/*/ | sort -V | tail -1); GCCDIR=${GCCDIR%/}
+[ -f "$GCCDIR/crtbegin.o" ] || { echo "no crtbegin.o in $SDPH/usr/lib/gcc/$GT" >&2; exit 1; }
+
+W=$(mktemp -d "$WS/tmp/target-sysroot.XXXXXX"); trap 'rm -rf "$W"' EXIT
+L=$W/usr/lib; mkdir -p "$L"
+# Start files and libgcc.
+cp "$SDPT/$QA"/lib/crt1.o "$SDPT/$QA"/lib/crti.o "$SDPT/$QA"/lib/crtn.o "$L/"
+[ -f "$SDPT/$QA/lib/mcrt1.o" ] && cp "$SDPT/$QA/lib/mcrt1.o" "$L/"
+cp "$GCCDIR"/crtbegin.o "$GCCDIR"/crtend.o "$GCCDIR"/libgcc.a "$GCCDIR"/libgcc_eh.a "$L/"
+for f in crtbeginS.o crtendS.o crtbeginT.o libgcov.a; do [ -f "$GCCDIR/$f" ] && cp "$GCCDIR/$f" "$L/"; done
+# Libraries: lib/ and usr/lib/ of the SDP side by side in one usr/lib (clang's
+# QNX driver searches <sysroot>/usr/lib only). Link names stay symlinks.
+if [ -n "$ALL" ]; then
+  pat='lib*'
+else
+  pat=$(sed -n '/^QNX_OS_LIBS="/,/"$/p' "$WS/scripts/check-sdp-leak" | tr -d '"' | sed 's/QNX_OS_LIBS=//' | tr ' \n' '\n\n' | grep -vE '^(ldqnx-64|)$')
+  pat="$pat libcS libmS libsocketS libc++experimental libc++abi liblocale libgcc_s libintl libdl libpci libusbdi libhiddi libnbutil liblogin libutil libfdt libstartup libmq libaoi libcpp"
+fi
+for s in $pat; do
+  for d in "$SDPT/$QA/lib" "$SDPT/$QA/usr/lib"; do
+    for f in "$d"/$s.so "$d"/$s.so.[0-9]* "$d"/$s.a "$d"/${s}S.a; do
+      case "$f" in *.sym|*'*'*) continue ;; esac
+      case "$(basename "$f")" in libstdc++*|libsupc++*) continue ;; esac
+      [ -e "$f" ] || [ -L "$f" ] || continue
+      if [ -L "$f" ]; then
+        # A link name: keep it a link to the file name it resolves to.
+        ln -sf "$(basename "$(readlink -f "$f")")" "$L/$(basename "$f")"
+        r=$(readlink -f "$f"); [ -f "$r" ] && [ ! -e "$L/$(basename "$r")" ] && cp "$r" "$L/"
+      else
+        [ -e "$L/$(basename "$f")" ] || cp "$f" "$L/"
+      fi
+    done
+  done
+done
+n=$(ls "$L" | wc -l)
+echo "== $T ($QA): headers, start files and $n library files from $SDPT -> $DIR ($(du -sh "$W" | cut -f1) + headers)"
+ssh "${O[@]}" "$USER_@$T" "mkdir -p '$DIR/usr/include' '$DIR/usr/lib'"
+tar -C "$W" -cf - usr/lib | ssh "${O[@]}" "$USER_@$T" "cd '$DIR' && tar -xf -"
+tar -C "$SDPT" --exclude='usr/include/c++/[0-9]*' -cf - usr/include | gzip -1 | ssh "${O[@]}" "$USER_@$T" "cd '$DIR' && gzip -dc | tar -xf -"
+ssh "${O[@]}" "$USER_@$T" "ls '$DIR/usr/include/stdio.h' '$DIR/usr/lib/crt1.o' '$DIR/usr/lib/libc.so' >/dev/null && echo '== $T: sysroot ready: $DIR'"

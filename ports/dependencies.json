@@ -21894,6 +21894,63 @@
   "unresolved": [],
   "version": "2.16.03"
  },
+ "native-toolchain": {
+  "build_closure": [
+   "binutils",
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "llvm",
+   "make",
+   "ncurses",
+   "openssl",
+   "pkgconf",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "llvm",
+   "binutils",
+   "pkgconf",
+   "make"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/c++",
+    "usr/local/bin/cc",
+    "usr/local/bin/clang++.cfg",
+    "usr/local/bin/clang.cfg",
+    "usr/local/bin/g++",
+    "usr/local/bin/gcc",
+    "usr/local/bin/pkg-config"
+   ],
+   "files": 7,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0"
+ },
  "ncnn": {
   "build_closure": [],
   "build_deps": [],

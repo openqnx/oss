@@ -85,11 +85,18 @@ current: it is the hand-over, not a history (that is `git log`).
      this PC, is fixed: lanelet2 1.2.3-r2 no longer installs the source tree's path
      (mrt_cmake_modules), and overlay builds (`scripts/lib/ros2-overlay.sh`) name the
      venv's Python (CMake took `/usr/bin/python3.12` here, which has no catkin_pkg).
-   - Next after that: a native compiler on the target like QNX's Raspberry Pi 5 image
-     (clang + binutils + make/cmake there). llvm 22.1.8 (clang, lld) is ported but only
-     tested with `clang -c`; missing: QNX headers/crt/link libraries on the target (copied
-     from the user's SDP by target-bootstrap), cc/gcc wrappers and clang config, C++ on the
-     SDP's libc++.so.2 ABI, and a compile-link-run test.
+   - Native compiler on the target (2026-11-11, done, not published): `native-toolchain`
+     1.0-r1 -- cc/gcc/c++/g++ wrappers for the ported clang, `clang.cfg`/`clang++.cfg` next
+     to clang (`--sysroot=<prefix>/qnx-sysroot`, `/usr/local/include` and `/usr/local/lib`
+     first, `-rpath-link` for GNU ld, `-z noexecstack`), `pkg-config` -> pkgconf.
+     `scripts/target-sysroot <target>` copies QNX's headers, crt files, libgcc and the QNX
+     OS link libraries from the user's SDP (no package carries QNX files). C++ is libc++ on
+     the SDP's libc++.so.2. `test_native_toolchain` (C, C++20, threads, shared/static
+     libraries, lld, fmt through pkg-config, make, cmake + ninja) passes on both VMs.
+     Guide: `docs/guide/Native-compiler.md` (wiki page, not yet copied to the wiki).
+     Targets that run this test need `scripts/target-sysroot` once (the vanilla VMs have
+     it, `vanilla-vm/run-all` calls it; the CI workflows do not yet). Not compared again with the
+     Raspberry Pi 5 image (it refused SSH from this PC).
    - Then SocketCAN: QNX 8.0 has no AF_CAN, so can-utils lacks candump/cansend/cangen.
      Look for a public SocketCAN layer for QNX 8 first; otherwise a compatibility library
      over QNX's dev-can drivers plus a virtual CAN bus for tests; rebuild can-utils.

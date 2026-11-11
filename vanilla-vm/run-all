@@ -74,6 +74,12 @@ else
   echo ">> scripts/target-bootstrap $IP ${REPO[*]}"
   "$WS/scripts/target-bootstrap" "$IP" "${REPO[@]}" || exit 1
 fi
+# QNX's headers and link libraries for the native compiler (test_native_toolchain),
+# from the SDP; once per image.
+if ! on_vm "$IP" "test -f /data/oss/usr/local/qnx-sysroot/usr/lib/crt1.o" 2>/dev/null; then
+  echo ">> scripts/target-sysroot $IP"
+  "$WS/scripts/target-sysroot" "$IP" || exit 1
+fi
 
 DESC="QEMU $ARCH, vanilla mkqnximage image"
 # 2. every component (or --only), and its test

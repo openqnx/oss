@@ -97,7 +97,7 @@ current: it is the hand-over, not a history (that is `git log`).
      Targets that run this test need `scripts/target-sysroot` once (the vanilla VMs have
      it, `vanilla-vm/run-all` calls it; the CI workflows do not yet). Not compared again with the
      Raspberry Pi 5 image (it refused SSH from this PC).
-   - SocketCAN (2026-11-11, done, not published): `qnx-socketcan` 1.0 -- SocketCAN in user
+   - SocketCAN (2026-11-11, done, published 2026-11-11): `qnx-socketcan` 1.0 -- SocketCAN in user
      space. `libqsocketcan` gives a program `socket(PF_CAN, SOCK_RAW, CAN_RAW)` with bind,
      filters, loopback, receive-own, CAN FD, error filter, timestamps, `SIOCGIFINDEX` and
      `if_nametoindex`, plus the `<linux/can.h>` headers (include/qnx-socketcan,

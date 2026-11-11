@@ -1,0 +1,8 @@
+#!/bin/sh
+# gcc: the C compiler on the target -- clang, set up for QNX by clang.cfg
+# next to it (--sysroot=<prefix>/qnx-sysroot: QNX's headers, start files and
+# libraries, copied from your SDP by scripts/target-sysroot).
+# -Qunused-arguments: build systems pass gcc options clang only warns about.
+d=$(dirname "$0")
+[ -f "$d/../qnx-sysroot/usr/include/stdio.h" ] || echo "gcc: no QNX headers in $d/../qnx-sysroot -- run scripts/target-sysroot <this target> on the host with the QNX SDP (wiki: Native-compiler)" >&2
+exec "$d/clang" -Qunused-arguments "$@"

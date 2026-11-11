@@ -125,7 +125,7 @@ unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
 ## Standalone and dependent
 
 
-**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **593 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
+**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **594 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
 
 Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, `ᵛ` on a vanilla image installed with apk; details per component in its README's *How it was verified*.
 
@@ -456,7 +456,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`zserio`](../ports/zserio/) | C++ runtime library of zserio, a serialization framework for binary data | 2.20.0 | `apk add zserio` | `qnx-test-zserio` | – |
 | [`zstd`](../ports/zstd/) | Fast real-time lossless compression library (Zstandard) | 1.5.6 | `apk add zstd` | `qnx-test-zstd` | x86✅ᵛ a64✅ᵛ |
 
-### Dependent (593)
+### Dependent (594)
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
@@ -701,6 +701,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`mpfr`](../ports/mpfr/) | C library for multiple-precision floating-point computations | 4.2.1 | `apk add mpfr` | gmp | gmp | `qnx-test-mpfr` | x86✅ᵛ a64✅ᵛ |
 | [`mythes`](../ports/mythes/) | MyThes thesaurus library (OpenOffice/LibreOffice thesaurus format) | 1.2.4 | `apk add mythes` | – | hunspell | `qnx-test-mythes` | x86✅ᵛ a64✅ᵛ |
 | [`nano`](../ports/nano/) | GNU nano, a small and simple terminal text editor | 8.2 | `apk add nano` | file ncurses zlib | ncurses zlib file | `qnx-test-nano` | x86✅ᵛ a64✅ᵛ |
+| [`native-toolchain`](../ports/native-toolchain/) | cc, c++, gcc and g++ on the target: clang set up for QNX programs | 1.0 | `apk add native-toolchain` | – | llvm binutils pkgconf make | `qnx-test-native-toolchain` | x86✅ᵛ a64✅ᵛ |
 | [`neon`](../ports/neon/) | HTTP and WebDAV client library, with a C interface | 0.37.1 | `apk add neon` | expat openssl zlib | openssl expat zlib | `qnx-test-neon` | x86✅ᵛ a64✅ᵛ |
 | [`neovim`](../ports/neovim/) | Vim-based extensible text editor | 0.12.3 | `apk add neovim` | gettext libiconv luv tree-sitter unibilium utf8proc | luajit libuv utf8proc tree-sitter unibilium lua-lpeg luv libiconv gettext | `qnx-test-neovim` | x86✅ᵛ a64✅ᵛ |
 | [`nettle`](../ports/nettle/) | Low-level cryptographic library | 3.10.1 | `apk add nettle` | gmp | gmp | `qnx-test-nettle` | x86✅ᵛ a64✅ᵛ |

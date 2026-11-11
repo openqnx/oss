@@ -525,6 +525,7 @@ install(PROGRAMS src/test_openttd_sets.sh DESTINATION bin/qnx-port-tests RENAME 
 install(PROGRAMS src/test_adwaita.sh DESTINATION bin/qnx-port-tests RENAME test_adwaita)
 install(PROGRAMS src/test_perl_mozilla_ca.sh DESTINATION bin/qnx-port-tests RENAME test_perl_mozilla_ca)
 install(PROGRAMS src/test_doxygen.sh DESTINATION bin/qnx-port-tests RENAME test_doxygen)
+install(PROGRAMS src/test_native_toolchain.sh DESTINATION bin/qnx-port-tests RENAME test_native_toolchain)
 install(PROGRAMS src/test_graphicsmagick.sh DESTINATION bin/qnx-port-tests RENAME test_graphicsmagick)
 set(QNX_TESTS "${QNX_TESTS};test_ros2" CACHE INTERNAL "")
 

@@ -530,6 +530,7 @@ TEST_EXTRAS = {
                           "share/games/openttd/baseset/opensfx-1.0.3", "share/games/openttd/baseset/openmsx-0.4.2"],
     "test_adwaita": ["share/icons/Adwaita"],
     "test_doxygen": ["bin/doxygen"],
+    "test_native_toolchain": ["bin/cc", "bin/cmake", "bin/ninja", "include/fmt", "lib/pkgconfig/fmt.pc"],
     "test_virtualgl": ["bin/vglclient", "bin/Xwayland", "bin/labwc"],
     "test_graphicsmagick": ["bin/gm"],
     "test_poppler": ["share/fonts/font-dejavu"],

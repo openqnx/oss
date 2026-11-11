@@ -13,6 +13,7 @@ enough) on a Linux host. Everything else comes from this repository.
 | 1. Make a base QEMU image (x86_64 and/or aarch64le) and boot it | [Base QEMU images](Base-QEMU-Images) |
 | 2a. Install packages with **apk**: all of them, or only the ones you want | [Install with apk](Install-with-apk) |
 | 2b. Install the plain **`.tar.gz` archives** (no apk): all at once, or one by one | [Install the archives](Install-the-archives) |
+| 3. Optional: compile on the target itself (`cc`, `c++`, cmake) | [Compile on the target](Native-compiler) |
 | When something does not work | [Troubleshooting](Troubleshooting) |
 
 Use **one** of 2a and 2b per target: apk does not know about files unpacked by hand.

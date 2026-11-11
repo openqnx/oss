@@ -1,0 +1,52 @@
+# native-toolchain 1.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-11T06:06:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u native-toolchain qnx-test-native-toolchain qnx-port-tests
+(1/9) Installing binutils (2.43-r0)
+(2/9) Installing llvm (22.1.8-r0)
+(3/9) Installing pkgconf (2.3.0-r0)
+(4/9) Installing native-toolchain (1.0-r1)
+(5/9) Installing libuv (1.51.0-r0)
+(6/9) Installing cmake (4.1.1-r1)
+(7/9) Installing fmt-dev (11.2.0-r0)
+(8/9) Installing ninja (1.13.1-r1)
+(9/9) Installing qnx-test-native-toolchain (1.0-r0)
+OK: 1448.7 MiB in 155 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_native_toolchain
+     == native-toolchain ==
+       ok   cc is installed
+       ok   gcc is installed
+       ok   c++ is installed
+       ok   g++ is installed
+       ok   clang is installed
+       ok   ld is installed
+       ok   pkg-config is installed
+       ok   make is installed
+       ok   clang reads clang.cfg (aarch64-unknown-qnx)
+       ok   cc: C with a thread, libm and ClockTime: result=40 clock=1 qnx=1 clang=1
+       ok   gcc: C with a thread, libm and ClockTime: result=40 clock=1 qnx=1 clang=1
+       ok   cc -O2 -g -pthread ... -lm: same answer
+       ok   cc -c, then nm: T main
+       ok   c++ -std=c++20: sum=55 caught=boom libcxx=1 std=202002
+       ok   g++ -std=c++20: sum=55 caught=boom libcxx=1 std=202002
+       ok   the C++ program needs libc++.so.2 (the SDP's libc++)
+       ok   shared library (-fPIC -shared), linked and loaded: square(12) = 144
+       ok   static archive (ar rcs), linked: square(12) = 144
+       ok   cc -fuse-ld=lld links too
+       ok   pkg-config --cflags --libs fmt:  -lfmt
+       ok   a ported C++ library (fmt) through pkg-config: 42-qnx
+       ok   make: the built-in rules call cc; the program prints 144
+       ok   cmake -G Ninja configures (Clang 22.1.8)
+       ok   ninja builds a shared library and two programs
+       ok   the cmake-built programs run: 144, 42-qnx
+     PASS native-toolchain
+PASS test_native_toolchain
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

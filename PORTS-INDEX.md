@@ -1,11 +1,11 @@
 # Component index
 
-916 components. **914** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
+917 components. **915** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
 | 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **322** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **231** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **232** |
 | 🔴 **dependent** | needs other components to build and to run | **362** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
@@ -463,6 +463,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [nanomsg](ports/nanomsg/README.md) | Socket library that provides several common communication patterns | 1.3.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [nanosvg](ports/nanosvg/README.md) | Header-only SVG parser and rasterizer | 0-git-20260709 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [nasm](ports/nasm/README.md) | Netwide Assembler: x86 and x86-64 assembler and disassembler (ndisasm) | 2.16.03 | custom | www.nasm.us | — | 🟢 standalone | — | ✅ | ✅ |
+| [native-toolchain](ports/native-toolchain/README.md) | cc, c++, gcc and g++ on the target: clang set up for QNX programs | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [ncnn](ports/ncnn/README.md) | Neural network inference framework for mobile and embedded devices | 20260526 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [ncurses](ports/ncurses/README.md) | Terminal handling and text user interface library | 6.5 | autotools | ftp.gnu.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [neon](ports/neon/README.md) | HTTP and WebDAV client library, with a C interface | 0.37.1 | autotools | notroj.github.io | — | 🔴 dependent | 3 | ✅ | ✅ |

@@ -5,16 +5,16 @@ Two kinds, by whether anything else from this repository is needed:
 | Kind | Meaning | Components |
 |---|---|---|
 | 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **322** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **593** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **594** |
 
-Dependent components split further by what they need at run time (231 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (232 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
 | **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **322** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **231** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **232** |
 | **[Dependent](#dependent)** | needs other components first | needs other components installed | **362** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
@@ -222,7 +222,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`lzip`](ports/lzip/) | 1.26 | autotools | – | 0 |
 | [`lzo`](ports/lzo/) | 2.10 | autotools | – | 3 |
 | [`magic_enum`](ports/magic_enum/) | 0.9.6 | cmake | – | 0 |
-| [`make`](ports/make/) | 4.4.1 | autotools | – | 0 |
+| [`make`](ports/make/) | 4.4.1 | autotools | – | 1 |
 | [`mate-common`](ports/mate-common/) | 1.28.0 | autotools | – | 0 |
 | [`mbedtls`](ports/mbedtls/) | 3.6.2 | cmake | – | 0 |
 | [`md4c`](ports/md4c/) | 0.6.0 | cmake | – | 0 |
@@ -269,7 +269,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`pcre`](ports/pcre/) | 8.45 | autotools | – | 0 |
 | [`pdfium`](ports/pdfium/) | 0-git-84a8011 | custom | – | 0 |
 | [`picocom`](ports/picocom/) | 3.1 | custom | – | 0 |
-| [`pkgconf`](ports/pkgconf/) | 2.3.0 | meson | – | 0 |
+| [`pkgconf`](ports/pkgconf/) | 2.3.0 | meson | – | 1 |
 | [`portaudio`](ports/portaudio/) | 19.7.0 | cmake | – | 1 |
 | [`protobuf-c`](ports/protobuf-c/) | 1.5.0 | cmake | – | 0 |
 | [`pthread-stubs`](ports/pthread-stubs/) | 0.5 | autotools | – | 1 |
@@ -356,7 +356,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Runtime-standalone
 
-231 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+232 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
@@ -385,6 +385,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`mcap-cpp`](ports/mcap-cpp/) | 2.1.3 | lz4 zstd | 2 |
 | [`meson`](ports/meson/) | 1.10.0 | python3 | 15 |
 | [`mythes`](ports/mythes/) | 1.2.4 | hunspell | 2 |
+| [`native-toolchain`](ports/native-toolchain/) | 1.0 | llvm binutils pkgconf make | 20 |
 | [`nghttp2`](ports/nghttp2/) | 1.64.0 | zlib openssl | 2 |
 | [`npm`](ports/npm/) | 11.11.0 | nodejs | 13 |
 | [`open-amp`](ports/open-amp/) | 2024.10.0 | libmetal | 1 |

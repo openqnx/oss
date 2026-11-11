@@ -85,7 +85,7 @@ current: it is the hand-over, not a history (that is `git log`).
      this PC, is fixed: lanelet2 1.2.3-r2 no longer installs the source tree's path
      (mrt_cmake_modules), and overlay builds (`scripts/lib/ros2-overlay.sh`) name the
      venv's Python (CMake took `/usr/bin/python3.12` here, which has no catkin_pkg).
-   - Native compiler on the target (2026-11-11, done, not published): `native-toolchain`
+   - Native compiler on the target (2026-11-11, done, published 2026-11-11): `native-toolchain`
      1.0-r1 -- cc/gcc/c++/g++ wrappers for the ported clang, `clang.cfg`/`clang++.cfg` next
      to clang (`--sysroot=<prefix>/qnx-sysroot`, `/usr/local/include` and `/usr/local/lib`
      first, `-rpath-link` for GNU ld, `-z noexecstack`), `pkg-config` -> pkgconf.

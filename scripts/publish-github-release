@@ -63,6 +63,7 @@ SDP=8.0; MAX_ASSETS=1000; MAX_BYTES=$((2*1024*1024*1024 - 1))
 REPO_ROOT=${PUBLISH_REPO:-$WS/dists}
 TESTS_ROOT=${TESTS_ROOT:-$WS/test_suites}
 OUT=${PUBLISH_OUT:-$WS/build/release}   # staging only: hard links into dists/ where possible
+case "$OUT" in /*) ;; *) OUT=$PWD/$OUT ;; esac   # the upload step changes directory
 KEYFILE=$(ls "$WS"/keys/private/*.rsa 2>/dev/null | head -n 1)
 [ -n "$KEYFILE" ] || echo "!! no signing key in keys/private/: the indexes staged here are unsigned" >&2
 

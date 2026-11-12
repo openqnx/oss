@@ -1,0 +1,586 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>texinfo 7.2-r1 (aarch64) -- QNX OSS packages</title><meta name="description" content="texinfo 7.2-r1 for QNX SDP 8.0 (aarch64): GNU documentation system: makeinfo/texi2any, the info reader, install-info, texindex. Install with apk or as a .tar.gz."><link rel="canonical" href="https://openqnx.github.io/oss/package/aarch64/texinfo.html"><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="../../guide/index.html">Guide</a><a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>texinfo <span class=mut>7.2-r1</span></h1><p class=sum><b>GNU documentation system: makeinfo/texi2any, the info reader, install-info, texindex</b><br>texinfo 7.2 for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>7.2-r1</dd>
+<dt>Architecture</dt><dd>aarch64 &middot; also: <a href="../x86_64/texinfo.html">x86_64</a></dd>
+<dt>Upstream</dt><dd><a href="https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz">https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz</a></dd>
+<dt>License</dt><dd>GPL-3.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>dependent</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/texinfo">ports/texinfo</a></dd>
+<dt>Package size</dt><dd>1.2 MiB</dd>
+<dt>Installed size</dt><dd>7.2 MiB</dd>
+<dt>Build date</dt><dd>2026-11-03</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-05 &middot; QEMU aarch64le, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add texinfo
+apk add texinfo=7.2-r1   <span class=mut># this version</span>
+
+apk del texinfo   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-aarch64-m-z/texinfo-7.2-r1.apk">texinfo-7.2-r1.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install texinfo
+oss-get install texinfo=7.2-r1   <span class=mut># this version</span>
+
+oss-get remove texinfo   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="ncurses.html">ncurses</a>, <a href="perl.html">perl</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/texinfo-7.2-r1.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/texinfo-7.2-r1.tar.gz</a> (1.2 MiB)</dd><dt>SHA-256</dt><dd><code>c0d4e89e82622f928add4d6d211975e23f90172a417bbb831a9e63d659c22ff0</code></dd><dt>Install first</dt><dd><a href="ncurses.html">ncurses</a>, <a href="libxcrypt.html">libxcrypt</a>, <a href="perl.html">perl</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-aarch64-m-z/texinfo-7.2-r1.tar.gz
+[ &quot;$(openssl dgst -sha256 texinfo-7.2-r1.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = c0d4e89e82622f928add4d6d211975e23f90172a417bbb831a9e63d659c22ff0 ] &amp;&amp; echo OK || echo BAD
+gzip -dc texinfo-7.2-r1.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/texinfo.list
+gzip -dc texinfo-7.2-r1.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm texinfo-7.2-r1.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/texinfo.list
+rm var/lib/manual/texinfo.list</code></pre><p class=mut>Its dependencies stay installed: <a href="ncurses.html">ncurses</a>, <a href="libxcrypt.html">libxcrypt</a>, <a href="perl.html">perl</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs. Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (3)</h2><a href="../../package/aarch64/ncurses.html">ncurses</a>, <a href="../../package/aarch64/perl.html">perl</a>, <a href="../../package/aarch64/ncurses.html">so:libncursesw.so.6</a>
+<h2>Dependency versions it works with</h2><p><a href="ncurses.html">ncurses</a> 6.5-r2, 6.5-r1 <span class=mut>(libncursesw.so.6)</span><br><span class=mut>built against these libraries: apk installs only a version that provides them</span></p>
+<h2>Required by (1)</h2><a href="texinfo-dev.html">texinfo-dev</a>
+<h2>QNX patches (0)</h2>
+<p class=mut>None: the original source builds as it is; the QNX specifics are in the build configuration.</p>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/texinfo/README.md">ports/texinfo/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_texinfo on QEMU aarch64le, vanilla mkqnximage image, 2026-11-05 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/aarch64le/texinfo-7.2-r1.log">tests/logs/aarch64le/texinfo-7.2-r1.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># texinfo 7.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-05T03:34:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u texinfo qnx-test-texinfo qnx-port-tests
+(1/2) Installing texinfo (7.2-r1)
+(2/2) Installing qnx-test-texinfo (1.0-r0)
+OK: 981.4 MiB in 148 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_texinfo
+     == texinfo ==
+       ok   makeinfo --version: texi2any (GNU texinfo) 7.2
+       ok   makeinfo t.texi: t.info
+       ok   produced by makeinfo version 7.2
+       ok   Info: node headers, menu, @code/@var, *Note, example, list, index menu, tag table
+       ok   --plaintext: numbered, underlined chapter
+       ok   --html: chapter headings with ids
+       ok   reference to a missing node: t2.texi:25 error (exit 1)
+       ok   install-info: dir entry under Testing
+       ok   info -n Second -o -: the node printed
+       ok   texindex: sorted, case-folded, with initials
+     PASS texinfo
+PASS test_texinfo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-texinfo qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-aarch64-m-z/qnx-test-texinfo-1.0-r0.apk">qnx-test-texinfo-1.0-r0.apk</a> (release tests-8.0-aarch64-m-z)</p>
+<h2>Files (476)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/bin/info
+/usr/local/bin/install-info
+/usr/local/bin/makeinfo
+/usr/local/bin/pdftexi2dvi
+/usr/local/bin/pod2texi
+/usr/local/bin/texi2any
+/usr/local/bin/texi2dvi
+/usr/local/bin/texi2pdf
+/usr/local/bin/texindex
+/usr/local/share/texi2any/Pod-Simple-Texinfo/Pod/Simple/Texinfo.pm
+/usr/local/share/texi2any/Texinfo/Commands.pm
+/usr/local/share/texi2any/Texinfo/Commands.pod
+/usr/local/share/texi2any/Texinfo/Common.pm
+/usr/local/share/texi2any/Texinfo/Config.pm
+/usr/local/share/texi2any/Texinfo/Convert/ConvertXS.pm
+/usr/local/share/texi2any/Texinfo/Convert/Converter.pm
+/usr/local/share/texi2any/Texinfo/Convert/DocBook.pm
+/usr/local/share/texi2any/Texinfo/Convert/HTML.pm
+/usr/local/share/texi2any/Texinfo/Convert/IXIN.pm
+/usr/local/share/texi2any/Texinfo/Convert/IXINSXML.pm
+/usr/local/share/texi2any/Texinfo/Convert/Info.pm
+/usr/local/share/texi2any/Texinfo/Convert/LaTeX.pm
+/usr/local/share/texi2any/Texinfo/Convert/NodeNameNormalization.pm
+/usr/local/share/texi2any/Texinfo/Convert/Paragraph.pm
+/usr/local/share/texi2any/Texinfo/Convert/ParagraphNonXS.pm
+/usr/local/share/texi2any/Texinfo/Convert/PlainTexinfo.pm
+/usr/local/share/texi2any/Texinfo/Convert/Plaintext.pm
+/usr/local/share/texi2any/Texinfo/Convert/Texinfo.pm
+/usr/local/share/texi2any/Texinfo/Convert/TexinfoMarkup.pm
+/usr/local/share/texi2any/Texinfo/Convert/TexinfoSXML.pm
+/usr/local/share/texi2any/Texinfo/Convert/TexinfoXML.pm
+/usr/local/share/texi2any/Texinfo/Convert/Text.pm
+/usr/local/share/texi2any/Texinfo/Convert/TextContent.pm
+/usr/local/share/texi2any/Texinfo/Convert/Unicode.pm
+/usr/local/share/texi2any/Texinfo/Convert/Utils.pm
+/usr/local/share/texi2any/Texinfo/DebugTree.pm
+/usr/local/share/texi2any/Texinfo/Document.pm
+/usr/local/share/texi2any/Texinfo/DocumentXS.pm
+/usr/local/share/texi2any/Texinfo/Documentlanguages.pm
+/usr/local/share/texi2any/Texinfo/HTMLData.pm
+/usr/local/share/texi2any/Texinfo/Indices.pm
+/usr/local/share/texi2any/Texinfo/IndicesXS.pm
+/usr/local/share/texi2any/Texinfo/ManipulateTree.pm
+/usr/local/share/texi2any/Texinfo/MiscXS.pm
+/usr/local/share/texi2any/Texinfo/ModulePath.pm
+/usr/local/share/texi2any/Texinfo/Options.pm
+/usr/local/share/texi2any/Texinfo/OutputUnits.pm
+/usr/local/share/texi2any/Texinfo/Parser.pm
+/usr/local/share/texi2any/Texinfo/ParserNonXS.pm
+/usr/local/share/texi2any/Texinfo/Report.pm
+/usr/local/share/texi2any/Texinfo/StructTransfXS.pm
+/usr/local/share/texi2any/Texinfo/Structuring.pm
+/usr/local/share/texi2any/Texinfo/Tests.pm
+/usr/local/share/texi2any/Texinfo/Transformations.pm
+/usr/local/share/texi2any/Texinfo/Translations.pm
+/usr/local/share/texi2any/Texinfo/XSLoader.pm
+/usr/local/share/texi2any/ext/epub3.pm
+/usr/local/share/texi2any/ext/highlight_syntax.pm
+/usr/local/share/texi2any/ext/latex2html.pm
+/usr/local/share/texi2any/ext/tex4ht.pm
+/usr/local/share/texi2any/init/book.pm
+/usr/local/share/texi2any/init/chm.pm
+/usr/local/share/texi2any/init/documentation_examples.pm
+/usr/local/share/texi2any/init/html32.pm
+/usr/local/share/texi2any/init/sc_formatting_with_css.pm
+/usr/local/share/texi2any/js/info.css
+/usr/local/share/texi2any/js/info.js
+/usr/local/share/texi2any/js/modernizr.js
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x00.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x01.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x02.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x03.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x04.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x05.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x06.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x07.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x08.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x09.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x0f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x10.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x11.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x12.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x13.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x14.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x15.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x16.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x17.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x18.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x19.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x1f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x20.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x21.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x22.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x23.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x24.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x25.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x26.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x27.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x28.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x29.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x2f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x30.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x31.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x32.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x33.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x34.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x35.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x36.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x37.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x38.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x39.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x3f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x40.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x41.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x42.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x43.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x44.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x45.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x46.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x47.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x48.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x49.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x4f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x50.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x51.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x52.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x53.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x54.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x55.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x56.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x57.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x58.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x59.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x5f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x60.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x61.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x62.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x63.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x64.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x65.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x66.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x67.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x68.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x69.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x6f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x70.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x71.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x72.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x73.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x74.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x75.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x76.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x77.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x78.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x79.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x7f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x80.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x81.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x82.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x83.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x84.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x85.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x86.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x87.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x88.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x89.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x8f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x90.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x91.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x92.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x93.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x94.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x95.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x96.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x97.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x98.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x99.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9a.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9b.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9c.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9d.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9e.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/x9f.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xa9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xaa.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xab.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xac.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xad.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xae.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xaf.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xb9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xba.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xbb.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xbc.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xbd.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xbe.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xbf.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xc9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xca.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xcb.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xcc.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xcd.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xce.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xcf.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xd9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xda.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xdb.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xdc.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xdd.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xde.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xdf.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xe9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xea.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xeb.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xec.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xed.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xee.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xef.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf0.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf1.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf2.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf3.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf4.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf5.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf6.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf7.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf8.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xf9.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xfa.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xfb.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xfc.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xfd.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xfe.pm
+/usr/local/share/texi2any/lib/Text-Unidecode/lib/Text/Unidecode/xff.pm
+/usr/local/share/texi2any/lib/Unicode-EastAsianWidth/lib/Unicode/EastAsianWidth.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/Messages.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/Recode.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/Recode/_Aliases.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/Recode/_Conversions.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ASMO_449.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ATARI_ST.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ATARI_ST_EURO.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP10007.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1250.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1251.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1252.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1253.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1254.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1256.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CP1257.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CSN_369103.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/CWI.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/DEC_MCS.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_AT_DE.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_AT_DE_A.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_CA_FR.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_DK_NO.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_DK_NO_A.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_ES.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_ES_A.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_ES_S.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_FI_SE.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_FI_SE_A.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_FR.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_IS_FRISS.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_IT.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_PT.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_UK.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/EBCDIC_US.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ECMA_CYRILLIC.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GEORGIAN_ACADEMY.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GEORGIAN_PS.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GOST_19768_74.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GREEK7.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GREEK7_OLD.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/GREEK_CCITT.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/HP_ROMAN8.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM037.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM038.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM1004.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM1026.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM1047.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM256.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM273.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM274.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM275.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM277.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM278.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM280.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM281.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM284.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM285.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM290.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM297.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM420.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM423.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM424.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM437.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM500.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM850.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM851.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM852.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM855.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM857.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM860.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM861.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM862.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM863.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM864.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM865.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM866.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM868.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM869.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM870.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM871.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM874.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM875.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM880.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM891.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM903.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM904.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM905.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IBM918.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/IEC_P27_1.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/INIS.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/INIS_8.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/INIS_CYRILLIC.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_10367_BOX.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_2033_1983.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_5427.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_5427_EXT.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_5428.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_1.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_10.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_11.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_13.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_14.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_15.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_16.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_2.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_3.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_4.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_5.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_6.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_7.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_8.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/ISO_8859_9.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/KOI8_R.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/KOI8_RU.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/KOI8_T.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/KOI8_U.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/KOI_8.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/LATIN_GREEK.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/LATIN_GREEK_1.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACARABIC.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACCROATIAN.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACCYRILLIC.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACGREEK.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACHEBREW.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACICELAND.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACINTOSH.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACROMANIA.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACTHAI.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACTURKISH.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MACUKRAINE.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MAC_IS.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MAC_SAMI.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/MAC_UK.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/NATS_DANO.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/NATS_SEFI.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/NEXTSTEP.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/SAMI_WS2.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/TIS_620.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/US_ASCII.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/UTF_8.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/VISCII.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/RecodeData/_Encode.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/TextDomain.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/Util.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/gettext_dumb.pm
+/usr/local/share/texi2any/lib/libintl-perl/lib/Locale/gettext_pp.pm
+/usr/local/share/texinfo/htmlxref.cnf
+/usr/local/share/texinfo/texindex.awk
+/usr/local/share/texinfo/texinfo.dtd</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-12 09:50 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

@@ -1,0 +1,876 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>acado-dev 1.2.2_beta-r0 (x86_64) -- QNX OSS packages</title><meta name="description" content="acado-dev 1.2.2_beta-r0 for QNX SDP 8.0 (x86_64): ACADO Toolkit: optimal control, MPC/MHE and embedded solver code generation (development files). Install with apk or as a .tar.gz."><link rel="canonical" href="https://openqnx.github.io/oss/package/x86_64/acado-dev.html"><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+</style></head><body>
+<header><div class="w"><b><a href="../../index.html">QNX OSS packages</a></b><nav>
+<a href="../../guide/index.html">Guide</a><a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>acado-dev <span class=mut>1.2.2_beta-r0</span></h1><p class=sum><b>ACADO Toolkit: optimal control, MPC/MHE and embedded solver code generation (development files)</b><br>acado 1.2.2_beta for QNX SDP 8.0</p>
+<dl>
+<dt>Version</dt><dd>1.2.2_beta-r0</dd>
+<dt>Architecture</dt><dd>x86_64 &middot; also: <a href="../aarch64/acado-dev.html">aarch64</a></dd>
+<dt>Upstream</dt><dd><a href="https://github.com/acado/acado.git">https://github.com/acado/acado.git</a></dd>
+<dt>License</dt><dd>LGPL-3.0 <span class=mut>(from the original source's license files; they decide)</span></dd>
+<dt>Kind</dt><dd>standalone</dd>
+<dt>Origin</dt><dd><a href="https://github.com/openqnx/oss/tree/main/ports/acado">ports/acado</a></dd>
+<dt>Package size</dt><dd>1020.5 KiB</dd>
+<dt>Installed size</dt><dd>5.9 MiB</dd>
+<dt>Build date</dt><dd>2026-11-04</dd>
+<dt>Provides</dt><dd>–</dd>
+<dt>Test on target</dt><dd><span class="b ok">PASS</span> <span class=mut>2026-11-05 &middot; QEMU x86_64, vanilla mkqnximage image</span></dd>
+</dl>
+<h2>Install and remove</h2><div class=gs>
+<section><h3>A. apk</h3><p>Dependencies come along, signatures checked:</p><pre><code>apk add acado-dev
+apk add acado-dev=1.2.2_beta-r0   <span class=mut># this version</span>
+
+apk del acado-dev   <span class=mut># also drops dependencies nothing else needs</span></code></pre><p class=mut>Package: <a href="https://github.com/openqnx/oss/releases/download/apk-8.0-x86_64/acado-dev-1.2.2_beta-r0.apk">acado-dev-1.2.2_beta-r0.apk</a>. Setting up apk: <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#2a-install-with-apk">INSTALL.md 2A</a>.</p></section>
+<section><h3>B-1. oss-get</h3><p>No apk: <a href="https://github.com/openqnx/oss/blob/main/target/oss-get">target/oss-get</a> downloads, checks the SHA-256, installs the dependencies first and keeps a file list per package:</p><pre><code>oss-get update
+oss-get install acado-dev
+oss-get install acado-dev=1.2.2_beta-r0   <span class=mut># this version</span>
+
+oss-get remove acado-dev   <span class=mut># its files only</span></code></pre><p class=mut>Its dependencies stay installed: <a href="acado.html">acado</a>. Remove them too (<code>oss-get remove &lt;dep&gt;</code>) if nothing else needs them; oss-get refuses a package another installed one still needs.</p></section>
+<section style="grid-column:1/-1"><h3>B-2. By hand</h3>
+<dl><dt>Archive</dt><dd><a href="https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/acado-dev-1.2.2_beta-r0.tar.gz">https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/acado-dev-1.2.2_beta-r0.tar.gz</a> (965.9 KiB)</dd><dt>SHA-256</dt><dd><code>6acbdc7e4775f0e7303c2cf2e8821f513f4a611d4001896be462e18620b2a3f5</code></dd><dt>Install first</dt><dd><a href="acado.html">acado</a> <span class=mut>(in this order, each from its own page the same way; skip any already installed)</span></dd></dl>
+<p>Install: download, check, save the file list, unpack under <code>/data/oss</code>:</p><pre><code>mkdir -p /data/oss/dl /data/oss/var/lib/manual &amp;&amp; cd /data/oss/dl
+curl -fsSLO https://github.com/openqnx/oss/releases/download/packages-8.0-x86_64/acado-dev-1.2.2_beta-r0.tar.gz
+[ &quot;$(openssl dgst -sha256 acado-dev-1.2.2_beta-r0.tar.gz | sed &#x27;s/.*= *//&#x27;)&quot; = 6acbdc7e4775f0e7303c2cf2e8821f513f4a611d4001896be462e18620b2a3f5 ] &amp;&amp; echo OK || echo BAD
+gzip -dc acado-dev-1.2.2_beta-r0.tar.gz | tar -tf - | grep -v &#x27;/$&#x27; &gt; /data/oss/var/lib/manual/acado-dev.list
+gzip -dc acado-dev-1.2.2_beta-r0.tar.gz | (cd /data/oss &amp;&amp; tar -xf -) &amp;&amp; rm acado-dev-1.2.2_beta-r0.tar.gz</code></pre><p>Remove: delete exactly the files it installed, then the list:</p><pre><code>cd /data/oss &amp;&amp; while read -r f; do rm -f &quot;$f&quot;; done &lt; var/lib/manual/acado-dev.list
+rm var/lib/manual/acado-dev.list</code></pre><p class=mut>Its dependencies stay installed: <a href="acado.html">acado</a>. Remove each the same way, from its own page, if nothing else needs it.</p>
+<p class=mut>For a root shell on the target (QNX <code>sh</code> and the stock <code>curl</code>, <code>openssl</code>, <code>gzip</code>, <code>tar</code>; https needs <code>SSL_CERT_FILE</code>, see <a href="https://github.com/openqnx/oss/blob/main/INSTALL.md#1-prepare-a-target">INSTALL.md</a>). Empty directories stay. Don't remove a dependency another installed package still needs; a -dev package holds headers, pkg-config/CMake files and static libraries only (the run-time part is <a href="acado.html">acado</a>). Use one method per <code>/data/oss</code>: apk and oss-get do not know about files unpacked by hand.</p>
+</section></div>
+<h2>Depends (1)</h2><a href="../../package/x86_64/acado.html">acado</a>
+<h2>Required by (0)</h2><span class=mut>–</span>
+<h2>QNX patches (3)</h2>
+<ul><li><a href="https://github.com/openqnx/oss/blob/main/ports/acado/patches/0001-no-march-native-cross.patch">0001-no-march-native-cross.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/acado/patches/0002-templates-installed-only.patch">0002-templates-installed-only.patch</a></li><li><a href="https://github.com/openqnx/oss/blob/main/ports/acado/patches/0003-templates-in-share.patch">0003-templates-in-share.patch</a></li></ul>
+<p>Build it yourself: <a href="https://github.com/openqnx/oss/blob/main/ports/acado/README.md">ports/acado/README.md</a></p>
+<h2>Test on target</h2>
+<p><span class="b ok">PASS</span> test_acado on QEMU x86_64, vanilla mkqnximage image, 2026-11-05 &middot; <a href="https://github.com/openqnx/oss/blob/main/tests/logs/x86_64/acado-1.2.2_beta-r0.log">tests/logs/x86_64/acado-1.2.2_beta-r0.log</a> &middot; reproduce it: <a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">test VMs, step by step</a></p>
+<pre><code># acado 1.2.2_beta-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-05T00:12:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL &lt;test&gt;;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u acado qnx-test-acado qnx-port-tests
+(1/2) Installing acado (1.2.2_beta-r0)
+(2/2) Installing qnx-test-acado (1.0-r0)
+OK: 241.7 MiB in 83 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_acado
+     == acado ==
+       ok   OCP x&#x27;=u, x(1)=1: objective 1.00000000, u in [1.000000, 1.000000] (1, u = 1)
+       ok   OCP x(1)=0.6, u&lt;=0.8: objective 0.36000000, u in [0.600000, 0.600000] (0.36, u = 0.6)
+     
+     ACADO Toolkit::Code Generation Tool
+     Copyright (C) 2008-2014 by Boris Houska, Hans Joachim Ferreau,
+     Milan Vukov, Rien Quirynen, KU Leuven.
+     Developed within the Optimization in Engineering Center (OPTEC)
+     under supervision of Moritz Diehl. All rights reserved.
+     
+     ACADO Toolkit is distributed under the terms of the GNU Lesser
+     General Public License 3 in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     GNU Lesser General Public License for more details.
+     
+       ok   OCPexport::exportCode of a double-integrator MPC
+       ok   acado_solver.c written
+       ok   acado_common.h defines ACADO_N 20 and ACADO_NX 2
+       ok   the qpOASES interface was exported from the installed templates
+     PASS acado
+PASS test_acado
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS
+</code></pre>
+<p>Run it yourself: <code>apk add qnx-test-acado qnx-port-tests</code>, then <code>/usr/local/bin/qnx-port-tests/run-on-target.sh</code> &middot; package <a href="https://github.com/openqnx/oss/releases/download/tests-8.0-x86_64/qnx-test-acado-1.0-r0.apk">qnx-test-acado-1.0-r0.apk</a> (release tests-8.0-x86_64)</p>
+<h2>Files (758)</h2>
+<details><summary>Show all files</summary><pre><code>/usr/local/include/acado/acado_code_generation.hpp
+/usr/local/include/acado/acado_controller.hpp
+/usr/local/include/acado/acado_gnuplot.hpp
+/usr/local/include/acado/acado_integrators.hpp
+/usr/local/include/acado/acado_optimal_control.hpp
+/usr/local/include/acado/acado_toolkit.hpp
+/usr/local/include/acado/bindings/acado_csparse/acado_csparse.hpp
+/usr/local/include/acado/bindings/acado_gnuplot/gnuplot_window.hpp
+/usr/local/include/acado/bindings/acado_gnuplot/gnuplot_window.ipp
+/usr/local/include/acado/bindings/acado_qpoases/qp_solver_qpoases.hpp
+/usr/local/include/acado/bindings/acado_qpoases/qp_solver_qpoases.ipp
+/usr/local/include/acado/clock/clock.hpp
+/usr/local/include/acado/clock/clock.ipp
+/usr/local/include/acado/clock/real_clock.hpp
+/usr/local/include/acado/clock/real_clock.ipp
+/usr/local/include/acado/clock/simulation_clock.hpp
+/usr/local/include/acado/clock/simulation_clock.ipp
+/usr/local/include/acado/code_generation/code_generation.hpp
+/usr/local/include/acado/code_generation/export_acado_function.hpp
+/usr/local/include/acado/code_generation/export_algorithm.hpp
+/usr/local/include/acado/code_generation/export_algorithm_factory.hpp
+/usr/local/include/acado/code_generation/export_argument.hpp
+/usr/local/include/acado/code_generation/export_argument_internal.hpp
+/usr/local/include/acado/code_generation/export_argument_list.hpp
+/usr/local/include/acado/code_generation/export_arithmetic_statement.hpp
+/usr/local/include/acado/code_generation/export_auxiliary_functions.hpp
+/usr/local/include/acado/code_generation/export_cholesky_decomposition.hpp
+/usr/local/include/acado/code_generation/export_common_header.hpp
+/usr/local/include/acado/code_generation/export_data.hpp
+/usr/local/include/acado/code_generation/export_data_declaration.hpp
+/usr/local/include/acado/code_generation/export_data_internal.hpp
+/usr/local/include/acado/code_generation/export_exact_hessian_cn2.hpp
+/usr/local/include/acado/code_generation/export_exact_hessian_qpdunes.hpp
+/usr/local/include/acado/code_generation/export_file.hpp
+/usr/local/include/acado/code_generation/export_for_loop.hpp
+/usr/local/include/acado/code_generation/export_forces_generator.hpp
+/usr/local/include/acado/code_generation/export_forces_interface.hpp
+/usr/local/include/acado/code_generation/export_function.hpp
+/usr/local/include/acado/code_generation/export_function_call.hpp
+/usr/local/include/acado/code_generation/export_function_declaration.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_block_cn2.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_block_forces.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_block_qpdunes.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_cn2.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_cn2_factorization.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_condensed.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_forces.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_hpmpc.hpp
+/usr/local/include/acado/code_generation/export_gauss_newton_qpdunes.hpp
+/usr/local/include/acado/code_generation/export_hessian_regularization.hpp
+/usr/local/include/acado/code_generation/export_hpmpc_interface.hpp
+/usr/local/include/acado/code_generation/export_index.hpp
+/usr/local/include/acado/code_generation/export_index_node.hpp
+/usr/local/include/acado/code_generation/export_module.hpp
+/usr/local/include/acado/code_generation/export_nlp_solver.hpp
+/usr/local/include/acado/code_generation/export_qpdunes_interface.hpp
+/usr/local/include/acado/code_generation/export_qpoases3_interface.hpp
+/usr/local/include/acado/code_generation/export_qpoases_interface.hpp
+/usr/local/include/acado/code_generation/export_simulink_interface.hpp
+/usr/local/include/acado/code_generation/export_split_qpdunes_interface.hpp
+/usr/local/include/acado/code_generation/export_statement.hpp
+/usr/local/include/acado/code_generation/export_statement_block.hpp
+/usr/local/include/acado/code_generation/export_statement_string.hpp
+/usr/local/include/acado/code_generation/export_templated_file.hpp
+/usr/local/include/acado/code_generation/export_variable.hpp
+/usr/local/include/acado/code_generation/export_variable_internal.hpp
+/usr/local/include/acado/code_generation/integrators/dirk3_export.hpp
+/usr/local/include/acado/code_generation/integrators/dirk4_export.hpp
+/usr/local/include/acado/code_generation/integrators/dirk5_export.hpp
+/usr/local/include/acado/code_generation/integrators/dirk_export.hpp
+/usr/local/include/acado/code_generation/integrators/discrete_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk2_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk3_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk4_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk_3sweep_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk_adjoint_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk_export.hpp
+/usr/local/include/acado/code_generation/integrators/erk_export.ipp
+/usr/local/include/acado/code_generation/integrators/erk_fob_export.hpp
+/usr/local/include/acado/code_generation/integrators/explicit_euler_export.hpp
+/usr/local/include/acado/code_generation/integrators/export_auxiliary_sim_functions.hpp
+/usr/local/include/acado/code_generation/integrators/export_matlab_integrator.hpp
+/usr/local/include/acado/code_generation/integrators/gauss_legendre2_export.hpp
+/usr/local/include/acado/code_generation/integrators/gauss_legendre4_export.hpp
+/usr/local/include/acado/code_generation/integrators/gauss_legendre6_export.hpp
+/usr/local/include/acado/code_generation/integrators/gauss_legendre8_export.hpp
+/usr/local/include/acado/code_generation/integrators/integrator_export.hpp
+/usr/local/include/acado/code_generation/integrators/integrator_export_types.hpp
+/usr/local/include/acado/code_generation/integrators/integrator_generation.hpp
+/usr/local/include/acado/code_generation/integrators/irk_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_export.ipp
+/usr/local/include/acado/code_generation/integrators/irk_forward_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_lifted_adjoint_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_lifted_feedback_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_lifted_fob_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_lifted_forward_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_lifted_symmetric_export.hpp
+/usr/local/include/acado/code_generation/integrators/irk_symmetric_export.hpp
+/usr/local/include/acado/code_generation/integrators/lifted_erk_export.hpp
+/usr/local/include/acado/code_generation/integrators/narx_export.hpp
+/usr/local/include/acado/code_generation/integrators/radau_IIA1_export.hpp
+/usr/local/include/acado/code_generation/integrators/radau_IIA3_export.hpp
+/usr/local/include/acado/code_generation/integrators/radau_IIA5_export.hpp
+/usr/local/include/acado/code_generation/integrators/register_exported_integrators.hpp
+/usr/local/include/acado/code_generation/integrators/rk_export.hpp
+/usr/local/include/acado/code_generation/integrators/rk_sensitivities_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/export_cholesky_solver.hpp
+/usr/local/include/acado/code_generation/linear_solvers/gaussian_elimination_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/householder_qr_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/irk_3stage_simplified_newton_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/irk_3stage_single_newton_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/irk_4stage_simplified_newton_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/irk_4stage_single_newton_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/linear_solver_export.hpp
+/usr/local/include/acado/code_generation/linear_solvers/linear_solver_generation.hpp
+/usr/local/include/acado/code_generation/memory_allocator.hpp
+/usr/local/include/acado/code_generation/object_pool.hpp
+/usr/local/include/acado/code_generation/ocp_export.hpp
+/usr/local/include/acado/code_generation/register_nlp_solvers.hpp
+/usr/local/include/acado/code_generation/sim_export.hpp
+/usr/local/include/acado/code_generation/templates/templates.hpp
+/usr/local/include/acado/conic_program/banded_cp.hpp
+/usr/local/include/acado/conic_program/banded_cp.ipp
+/usr/local/include/acado/conic_program/dense_cp.hpp
+/usr/local/include/acado/conic_program/dense_cp.ipp
+/usr/local/include/acado/conic_solver/banded_cp_solver.hpp
+/usr/local/include/acado/conic_solver/banded_cp_solver.ipp
+/usr/local/include/acado/conic_solver/condensing_based_cp_solver.hpp
+/usr/local/include/acado/conic_solver/condensing_based_cp_solver.ipp
+/usr/local/include/acado/conic_solver/dense_cp_solver.hpp
+/usr/local/include/acado/conic_solver/dense_qp_solver.hpp
+/usr/local/include/acado/conic_solver/dense_qp_solver.ipp
+/usr/local/include/acado/constraint/algebraic_consistency_constraint.hpp
+/usr/local/include/acado/constraint/algebraic_consistency_constraint.ipp
+/usr/local/include/acado/constraint/boundary_constraint.hpp
+/usr/local/include/acado/constraint/boundary_constraint.ipp
+/usr/local/include/acado/constraint/box_constraint.hpp
+/usr/local/include/acado/constraint/box_constraint.ipp
+/usr/local/include/acado/constraint/constraint.hpp
+/usr/local/include/acado/constraint/constraint.ipp
+/usr/local/include/acado/constraint/constraint_element.hpp
+/usr/local/include/acado/constraint/constraint_element.ipp
+/usr/local/include/acado/constraint/coupled_path_constraint.hpp
+/usr/local/include/acado/constraint/coupled_path_constraint.ipp
+/usr/local/include/acado/constraint/path_constraint.hpp
+/usr/local/include/acado/constraint/path_constraint.ipp
+/usr/local/include/acado/constraint/point_constraint.hpp
+/usr/local/include/acado/constraint/point_constraint.ipp
+/usr/local/include/acado/control_law/clipping_functionality.hpp
+/usr/local/include/acado/control_law/clipping_functionality.ipp
+/usr/local/include/acado/control_law/control_law.hpp
+/usr/local/include/acado/control_law/control_law.ipp
+/usr/local/include/acado/control_law/feedforward_law.hpp
+/usr/local/include/acado/control_law/linear_state_feedback.hpp
+/usr/local/include/acado/control_law/pid_controller.hpp
+/usr/local/include/acado/control_law/pid_controller.ipp
+/usr/local/include/acado/controller/controller.hpp
+/usr/local/include/acado/controller/controller.ipp
+/usr/local/include/acado/curve/curve.hpp
+/usr/local/include/acado/curve/curve.ipp
+/usr/local/include/acado/dynamic_discretization/collocation_method.hpp
+/usr/local/include/acado/dynamic_discretization/collocation_method.ipp
+/usr/local/include/acado/dynamic_discretization/dynamic_discretization.hpp
+/usr/local/include/acado/dynamic_discretization/dynamic_discretization.ipp
+/usr/local/include/acado/dynamic_discretization/integration_algorithm.hpp
+/usr/local/include/acado/dynamic_discretization/shooting_method.hpp
+/usr/local/include/acado/dynamic_discretization/shooting_method.ipp
+/usr/local/include/acado/dynamic_system/dynamic_system.hpp
+/usr/local/include/acado/dynamic_system/dynamic_system.ipp
+/usr/local/include/acado/estimator/dynamic_estimator.hpp
+/usr/local/include/acado/estimator/dynamic_estimator.ipp
+/usr/local/include/acado/estimator/estimator.hpp
+/usr/local/include/acado/estimator/estimator.ipp
+/usr/local/include/acado/estimator/kalman_filter.hpp
+/usr/local/include/acado/external_packages/eigen3/COPYING.BSD
+/usr/local/include/acado/external_packages/eigen3/COPYING.GPL
+/usr/local/include/acado/external_packages/eigen3/COPYING.LGPL
+/usr/local/include/acado/external_packages/eigen3/COPYING.MINPACK
+/usr/local/include/acado/external_packages/eigen3/COPYING.MPL2
+/usr/local/include/acado/external_packages/eigen3/COPYING.README
+/usr/local/include/acado/external_packages/eigen3/Eigen/Array
+/usr/local/include/acado/external_packages/eigen3/Eigen/Cholesky
+/usr/local/include/acado/external_packages/eigen3/Eigen/CholmodSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/Core
+/usr/local/include/acado/external_packages/eigen3/Eigen/Dense
+/usr/local/include/acado/external_packages/eigen3/Eigen/Eigen
+/usr/local/include/acado/external_packages/eigen3/Eigen/Eigen2Support
+/usr/local/include/acado/external_packages/eigen3/Eigen/Eigenvalues
+/usr/local/include/acado/external_packages/eigen3/Eigen/Geometry
+/usr/local/include/acado/external_packages/eigen3/Eigen/Householder
+/usr/local/include/acado/external_packages/eigen3/Eigen/IterativeLinearSolvers
+/usr/local/include/acado/external_packages/eigen3/Eigen/Jacobi
+/usr/local/include/acado/external_packages/eigen3/Eigen/LU
+/usr/local/include/acado/external_packages/eigen3/Eigen/LeastSquares
+/usr/local/include/acado/external_packages/eigen3/Eigen/MetisSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/OrderingMethods
+/usr/local/include/acado/external_packages/eigen3/Eigen/PaStiXSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/PardisoSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/QR
+/usr/local/include/acado/external_packages/eigen3/Eigen/QtAlignedMalloc
+/usr/local/include/acado/external_packages/eigen3/Eigen/SPQRSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/SVD
+/usr/local/include/acado/external_packages/eigen3/Eigen/Sparse
+/usr/local/include/acado/external_packages/eigen3/Eigen/SparseCholesky
+/usr/local/include/acado/external_packages/eigen3/Eigen/SparseCore
+/usr/local/include/acado/external_packages/eigen3/Eigen/SparseLU
+/usr/local/include/acado/external_packages/eigen3/Eigen/SparseQR
+/usr/local/include/acado/external_packages/eigen3/Eigen/StdDeque
+/usr/local/include/acado/external_packages/eigen3/Eigen/StdList
+/usr/local/include/acado/external_packages/eigen3/Eigen/StdVector
+/usr/local/include/acado/external_packages/eigen3/Eigen/SuperLUSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/UmfPackSupport
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Cholesky/LDLT.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Cholesky/LLT.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Cholesky/LLT_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/CholmodSupport/CholmodSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Array.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/ArrayBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/ArrayWrapper.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Assign.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Assign_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/BandMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Block.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/BooleanRedux.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CommaInitializer.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CoreIterators.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CwiseBinaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CwiseNullaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CwiseUnaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/CwiseUnaryView.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/DenseBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/DenseCoeffsBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/DenseStorage.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Diagonal.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/DiagonalMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/DiagonalProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Dot.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/EigenBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Flagged.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/ForceAlignedAccess.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Functors.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Fuzzy.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/GeneralProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/GenericPacketMath.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/GlobalFunctions.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/IO.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Map.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/MapBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/MathFunctions.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Matrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/MatrixBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/NestByValue.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/NoAlias.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/NumTraits.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/PermutationMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/PlainObjectBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/ProductBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Random.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Redux.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Ref.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Replicate.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/ReturnByValue.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Reverse.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Select.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/SelfAdjointView.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/SolveTriangular.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/StableNorm.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Stride.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Swap.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Transpose.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Transpositions.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/TriangularMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/VectorBlock.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/VectorwiseOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/Visitor.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/AltiVec/Complex.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/Default/Settings.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/NEON/Complex.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/SSE/Complex.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/CoeffBasedProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralBlockPanelKernel.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/GeneralMatrixVector_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/Parallelizer.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularMatrixVector_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/BlasUtil.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/Constants.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/MKL_support.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/Macros.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/Memory.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/Meta.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/NonMPL2.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/StaticAssert.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Core/util/XprHelper.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Block.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Cwise.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/CwiseOperators.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/AlignedBox.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/All.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/AngleAxis.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Hyperplane.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Quaternion.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Rotation2D.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/RotationBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Scaling.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Transform.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Geometry/Translation.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/LU.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Lazy.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/LeastSquares.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Macros.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/MathFunctions.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Memory.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Meta.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/Minor.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/QR.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/SVD.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/TriangularSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigen2Support/VectorBlock.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/ComplexSchur_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/EigenSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/RealQZ.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/RealSchur.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/RealSchur_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Eigenvalues/Tridiagonalization.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/AlignedBox.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/AngleAxis.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/EulerAngles.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Homogeneous.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Hyperplane.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/OrthoMethods.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/ParametrizedLine.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Quaternion.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Rotation2D.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/RotationBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Scaling.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Transform.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Translation.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/Umeyama.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Geometry/arch/Geometry_SSE.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Householder/BlockHouseholder.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Householder/Householder.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Householder/HouseholderSequence.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/Jacobi/Jacobi.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/Determinant.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/FullPivLU.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/Inverse.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/PartialPivLU.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/PartialPivLU_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/LU/arch/Inverse_SSE.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/MetisSupport/MetisSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/OrderingMethods/Amd.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/OrderingMethods/Eigen_Colamd.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/OrderingMethods/Ordering.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/PaStiXSupport/PaStiXSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/PardisoSupport/PardisoSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/QR/ColPivHouseholderQR.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/QR/ColPivHouseholderQR_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/QR/FullPivHouseholderQR.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/QR/HouseholderQR.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/QR/HouseholderQR_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SPQRSupport/SuiteSparseQRSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SVD/JacobiSVD.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SVD/JacobiSVD_MKL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SVD/UpperBidiagonalization.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCholesky/SimplicialCholesky.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/AmbiVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/CompressedStorage.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/MappedSparseMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseBlock.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseColEtree.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseDenseProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseDiagonalProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseDot.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseFuzzy.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseMatrixBase.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparsePermutation.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseProduct.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseRedux.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseSelfAdjointView.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseTranspose.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseTriangularView.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseUtil.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/SparseView.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseCore/TriangularSolver.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLUImpl.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_Memory.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_Structs.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_Utils.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_column_bmod.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_column_dfs.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_panel_bmod.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_panel_dfs.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_pivotL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_pruneL.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseLU/SparseLU_relax_snode.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SparseQR/SparseQR.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/StlSupport/StdDeque.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/StlSupport/StdList.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/StlSupport/StdVector.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/StlSupport/details.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/SuperLUSupport/SuperLUSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/UmfPackSupport/UmfPackSupport.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/misc/Image.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/misc/Kernel.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/misc/Solve.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/misc/SparseSolve.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/misc/blas.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/BlockMethods.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
+/usr/local/include/acado/external_packages/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+/usr/local/include/acado/external_packages/eigen3/signature_of_eigen3_matrix_library
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/AdolcForward
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/AlignedVector3
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/AutoDiff
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/BVH
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/FFT
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/IterativeSolvers
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/KroneckerProduct
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/LevenbergMarquardt
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/MPRealSupport
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/MatrixFunctions
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/MoreVectorization
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/NonLinearOptimization
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/NumericalDiff
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/OpenGLSupport
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/Polynomials
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/Skyline
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/SparseExtra
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/Splines
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/AutoDiff/AutoDiffJacobian.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/AutoDiff/AutoDiffScalar.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/AutoDiff/AutoDiffVector.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/BVH/BVAlgorithms.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/BVH/KdBVH.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/FFT/ei_fftw_impl.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/FFT/ei_kissfft_impl.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/ConstrainedConjGrad.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/DGMRES.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/GMRES.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/IncompleteCholesky.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/IncompleteLU.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/IterationController.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/MINRES.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/IterativeSolvers/Scaling.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/KroneckerProduct/KroneckerTensorProduct.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixExponential.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixFunction.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixFunctionAtomic.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixLogarithm.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixPower.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixSquareRoot.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MatrixFunctions/StemFunction.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/MoreVectorization/MathFunctions.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/HybridNonLinearSolver.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/LevenbergMarquardt.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/chkder.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/covar.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/dogleg.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/fdjac1.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/lmpar.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/qrsolv.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/r1mpyq.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/r1updt.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NonLinearOptimization/rwupdt.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/NumericalDiff/NumericalDiff.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Polynomials/Companion.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Polynomials/PolynomialSolver.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Polynomials/PolynomialUtils.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineInplaceLU.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineMatrix.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineMatrixBase.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineProduct.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineStorage.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Skyline/SkylineUtil.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/SparseExtra/BlockOfDynamicSparseMatrix.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/SparseExtra/DynamicSparseMatrix.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/SparseExtra/MarketIO.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/SparseExtra/RandomSetter.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Splines/Spline.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Splines/SplineFitting.h
+/usr/local/include/acado/external_packages/eigen3/unsupported/Eigen/src/Splines/SplineFwd.h
+/usr/local/include/acado/function/c_function.hpp
+/usr/local/include/acado/function/c_operator.hpp
+/usr/local/include/acado/function/differential_equation.hpp
+/usr/local/include/acado/function/differential_equation.ipp
+/usr/local/include/acado/function/discretized_differential_equation.hpp
+/usr/local/include/acado/function/discretized_differential_equation.ipp
+/usr/local/include/acado/function/evaluation_point.hpp
+/usr/local/include/acado/function/evaluation_point.ipp
+/usr/local/include/acado/function/function.hpp
+/usr/local/include/acado/function/function.ipp
+/usr/local/include/acado/function/function_.hpp
+/usr/local/include/acado/function/function_evaluation_tree.hpp
+/usr/local/include/acado/function/function_evaluation_tree.ipp
+/usr/local/include/acado/function/function_fwd.hpp
+/usr/local/include/acado/function/ocp_iterate.hpp
+/usr/local/include/acado/function/ocp_iterate.ipp
+/usr/local/include/acado/function/output_fcn.hpp
+/usr/local/include/acado/function/output_fcn.ipp
+/usr/local/include/acado/function/t_evaluation_point.hpp
+/usr/local/include/acado/function/t_evaluation_point.ipp
+/usr/local/include/acado/function/transition.hpp
+/usr/local/include/acado/function/transition.ipp
+/usr/local/include/acado/integrator/integrator.hpp
+/usr/local/include/acado/integrator/integrator.ipp
+/usr/local/include/acado/integrator/integrator_bdf.hpp
+/usr/local/include/acado/integrator/integrator_bdf.ipp
+/usr/local/include/acado/integrator/integrator_discretized_ode.hpp
+/usr/local/include/acado/integrator/integrator_discretized_ode.ipp
+/usr/local/include/acado/integrator/integrator_fwd.hpp
+/usr/local/include/acado/integrator/integrator_lyapunov.hpp
+/usr/local/include/acado/integrator/integrator_lyapunov.ipp
+/usr/local/include/acado/integrator/integrator_lyapunov45.hpp
+/usr/local/include/acado/integrator/integrator_lyapunov45.ipp
+/usr/local/include/acado/integrator/integrator_runge_kutta.hpp
+/usr/local/include/acado/integrator/integrator_runge_kutta.ipp
+/usr/local/include/acado/integrator/integrator_runge_kutta12.hpp
+/usr/local/include/acado/integrator/integrator_runge_kutta12.ipp
+/usr/local/include/acado/integrator/integrator_runge_kutta23.hpp
+/usr/local/include/acado/integrator/integrator_runge_kutta23.ipp
+/usr/local/include/acado/integrator/integrator_runge_kutta45.hpp
+/usr/local/include/acado/integrator/integrator_runge_kutta45.ipp
+/usr/local/include/acado/integrator/integrator_runge_kutta78.hpp
+/usr/local/include/acado/integrator/integrator_runge_kutta78.ipp
+/usr/local/include/acado/matrix_vector/acado_mat_file.hpp
+/usr/local/include/acado/matrix_vector/block_matrix.hpp
+/usr/local/include/acado/matrix_vector/block_matrix.ipp
+/usr/local/include/acado/matrix_vector/matrix.hpp
+/usr/local/include/acado/matrix_vector/matrix_vector.hpp
+/usr/local/include/acado/matrix_vector/matrix_vector_tools.hpp
+/usr/local/include/acado/matrix_vector/t_matrix.hpp
+/usr/local/include/acado/matrix_vector/vector.hpp
+/usr/local/include/acado/nlp_derivative_approximation/bfgs_update.hpp
+/usr/local/include/acado/nlp_derivative_approximation/bfgs_update.ipp
+/usr/local/include/acado/nlp_derivative_approximation/constant_hessian.hpp
+/usr/local/include/acado/nlp_derivative_approximation/exact_hessian.hpp
+/usr/local/include/acado/nlp_derivative_approximation/gauss_newton_approximation.hpp
+/usr/local/include/acado/nlp_derivative_approximation/gauss_newton_approximation_bfgs.hpp
+/usr/local/include/acado/nlp_derivative_approximation/nlp_derivative_approximation.hpp
+/usr/local/include/acado/nlp_derivative_approximation/nlp_derivative_approximation.ipp
+/usr/local/include/acado/nlp_solver/ip_method.hpp
+/usr/local/include/acado/nlp_solver/ip_method.ipp
+/usr/local/include/acado/nlp_solver/nlp_solver.hpp
+/usr/local/include/acado/nlp_solver/nlp_solver.ipp
+/usr/local/include/acado/nlp_solver/scp_evaluation.hpp
+/usr/local/include/acado/nlp_solver/scp_evaluation.ipp
+/usr/local/include/acado/nlp_solver/scp_merit_function.hpp
+/usr/local/include/acado/nlp_solver/scp_method.hpp
+/usr/local/include/acado/nlp_solver/scp_method.ipp
+/usr/local/include/acado/nlp_solver/scp_step.hpp
+/usr/local/include/acado/nlp_solver/scp_step_fullstep.hpp
+/usr/local/include/acado/nlp_solver/scp_step_linesearch.hpp
+/usr/local/include/acado/noise/colored_noise.hpp
+/usr/local/include/acado/noise/colored_noise.ipp
+/usr/local/include/acado/noise/gaussian_noise.hpp
+/usr/local/include/acado/noise/gaussian_noise.ipp
+/usr/local/include/acado/noise/noise.hpp
+/usr/local/include/acado/noise/noise.ipp
+/usr/local/include/acado/noise/uniform_noise.hpp
+/usr/local/include/acado/noise/uniform_noise.ipp
+/usr/local/include/acado/objective/lagrange_term.hpp
+/usr/local/include/acado/objective/lagrange_term.ipp
+/usr/local/include/acado/objective/lsq_end_term.hpp
+/usr/local/include/acado/objective/lsq_end_term.ipp
+/usr/local/include/acado/objective/lsq_term.hpp
+/usr/local/include/acado/objective/lsq_term.ipp
+/usr/local/include/acado/objective/mayer_term.hpp
+/usr/local/include/acado/objective/mayer_term.ipp
+/usr/local/include/acado/objective/objective.hpp
+/usr/local/include/acado/objective/objective.ipp
+/usr/local/include/acado/objective/objective_element.hpp
+/usr/local/include/acado/objective/objective_element.ipp
+/usr/local/include/acado/ocp/model_container.hpp
+/usr/local/include/acado/ocp/model_data.hpp
+/usr/local/include/acado/ocp/multi_objective_functionality.hpp
+/usr/local/include/acado/ocp/multi_objective_functionality.ipp
+/usr/local/include/acado/ocp/nlp.hpp
+/usr/local/include/acado/ocp/ocp.hpp
+/usr/local/include/acado/optimization_algorithm/mhe_algorithm.hpp
+/usr/local/include/acado/optimization_algorithm/multi_objective_algorithm.hpp
+/usr/local/include/acado/optimization_algorithm/multi_objective_algorithm.ipp
+/usr/local/include/acado/optimization_algorithm/optimization_algorithm.hpp
+/usr/local/include/acado/optimization_algorithm/optimization_algorithm_base.hpp
+/usr/local/include/acado/optimization_algorithm/parameter_estimation_algorithm.hpp
+/usr/local/include/acado/optimization_algorithm/parameter_estimation_algorithm.ipp
+/usr/local/include/acado/optimization_algorithm/real_time_algorithm.hpp
+/usr/local/include/acado/optimization_algorithm/real_time_algorithm.ipp
+/usr/local/include/acado/optimization_algorithm/weight_generation.hpp
+/usr/local/include/acado/process/process.hpp
+/usr/local/include/acado/process/process.ipp
+/usr/local/include/acado/reference_trajectory/adaptive_reference_trajectory.hpp
+/usr/local/include/acado/reference_trajectory/adaptive_reference_trajectory.ipp
+/usr/local/include/acado/reference_trajectory/periodic_reference_trajectory.hpp
+/usr/local/include/acado/reference_trajectory/periodic_reference_trajectory.ipp
+/usr/local/include/acado/reference_trajectory/reference_trajectory.hpp
+/usr/local/include/acado/reference_trajectory/reference_trajectory.ipp
+/usr/local/include/acado/reference_trajectory/simulated_reference_trajectory.hpp
+/usr/local/include/acado/reference_trajectory/static_reference_trajectory.hpp
+/usr/local/include/acado/reference_trajectory/static_reference_trajectory.ipp
+/usr/local/include/acado/set_arithmetics/interval.hpp
+/usr/local/include/acado/set_arithmetics/interval.ipp
+/usr/local/include/acado/set_arithmetics/set_arithmetics.hpp
+/usr/local/include/acado/set_arithmetics/taylor_model.hpp
+/usr/local/include/acado/set_arithmetics/taylor_model.ipp
+/usr/local/include/acado/set_arithmetics/taylor_variable.hpp
+/usr/local/include/acado/set_arithmetics/taylor_variable.ipp
+/usr/local/include/acado/simulation_environment/simulation_block.hpp
+/usr/local/include/acado/simulation_environment/simulation_block.ipp
+/usr/local/include/acado/simulation_environment/simulation_environment.hpp
+/usr/local/include/acado/simulation_environment/simulation_environment.ipp
+/usr/local/include/acado/sparse_solver/conjugate_gradient_method.hpp
+/usr/local/include/acado/sparse_solver/conjugate_gradient_method.ipp
+/usr/local/include/acado/sparse_solver/normal_conjugate_gradient_method.hpp
+/usr/local/include/acado/sparse_solver/normal_conjugate_gradient_method.ipp
+/usr/local/include/acado/sparse_solver/sparse_solver.hpp
+/usr/local/include/acado/sparse_solver/sparse_solver.ipp
+/usr/local/include/acado/sparse_solver/symmetric_conjugate_gradient_method.hpp
+/usr/local/include/acado/sparse_solver/symmetric_conjugate_gradient_method.ipp
+/usr/local/include/acado/symbolic_expression/acado_syntax.hpp
+/usr/local/include/acado/symbolic_expression/constraint_component.hpp
+/usr/local/include/acado/symbolic_expression/constraint_component.ipp
+/usr/local/include/acado/symbolic_expression/expression.hpp
+/usr/local/include/acado/symbolic_expression/expression.ipp
+/usr/local/include/acado/symbolic_expression/lyapunov.hpp
+/usr/local/include/acado/symbolic_expression/symbolic_expression.hpp
+/usr/local/include/acado/symbolic_expression/variable_types.hpp
+/usr/local/include/acado/symbolic_operator/acos.hpp
+/usr/local/include/acado/symbolic_operator/addition.hpp
+/usr/local/include/acado/symbolic_operator/asin.hpp
+/usr/local/include/acado/symbolic_operator/atan.hpp
+/usr/local/include/acado/symbolic_operator/binary_operator.hpp
+/usr/local/include/acado/symbolic_operator/cos.hpp
+/usr/local/include/acado/symbolic_operator/doubleconstant.hpp
+/usr/local/include/acado/symbolic_operator/evaluation_base.hpp
+/usr/local/include/acado/symbolic_operator/evaluation_template.hpp
+/usr/local/include/acado/symbolic_operator/exp.hpp
+/usr/local/include/acado/symbolic_operator/logarithm.hpp
+/usr/local/include/acado/symbolic_operator/nonsmooth_operator.hpp
+/usr/local/include/acado/symbolic_operator/operator.hpp
+/usr/local/include/acado/symbolic_operator/power.hpp
+/usr/local/include/acado/symbolic_operator/powerint.hpp
+/usr/local/include/acado/symbolic_operator/product.hpp
+/usr/local/include/acado/symbolic_operator/projection.hpp
+/usr/local/include/acado/symbolic_operator/quotient.hpp
+/usr/local/include/acado/symbolic_operator/sin.hpp
+/usr/local/include/acado/symbolic_operator/smooth_operator.hpp
+/usr/local/include/acado/symbolic_operator/subtraction.hpp
+/usr/local/include/acado/symbolic_operator/symbolic_index_list.hpp
+/usr/local/include/acado/symbolic_operator/symbolic_index_list.ipp
+/usr/local/include/acado/symbolic_operator/symbolic_operator.hpp
+/usr/local/include/acado/symbolic_operator/symbolic_operator_fwd.hpp
+/usr/local/include/acado/symbolic_operator/tan.hpp
+/usr/local/include/acado/symbolic_operator/tree_projection.hpp
+/usr/local/include/acado/symbolic_operator/unary_operator.hpp
+/usr/local/include/acado/transfer_device/actuator.hpp
+/usr/local/include/acado/transfer_device/actuator.ipp
+/usr/local/include/acado/transfer_device/sensor.hpp
+/usr/local/include/acado/transfer_device/sensor.ipp
+/usr/local/include/acado/transfer_device/transfer_device.hpp
+/usr/local/include/acado/transfer_device/transfer_device.ipp
+/usr/local/include/acado/user_interaction/algorithmic_base.hpp
+/usr/local/include/acado/user_interaction/algorithmic_base.ipp
+/usr/local/include/acado/user_interaction/log_record.hpp
+/usr/local/include/acado/user_interaction/log_record.ipp
+/usr/local/include/acado/user_interaction/logging.hpp
+/usr/local/include/acado/user_interaction/logging.ipp
+/usr/local/include/acado/user_interaction/options.hpp
+/usr/local/include/acado/user_interaction/options_list.hpp
+/usr/local/include/acado/user_interaction/options_list.ipp
+/usr/local/include/acado/user_interaction/plot_collection.hpp
+/usr/local/include/acado/user_interaction/plot_collection.ipp
+/usr/local/include/acado/user_interaction/plot_window.hpp
+/usr/local/include/acado/user_interaction/plot_window.ipp
+/usr/local/include/acado/user_interaction/plot_window_subplot.hpp
+/usr/local/include/acado/user_interaction/plot_window_subplot.ipp
+/usr/local/include/acado/user_interaction/plotting.hpp
+/usr/local/include/acado/user_interaction/plotting.ipp
+/usr/local/include/acado/user_interaction/user_interaction.hpp
+/usr/local/include/acado/utils/acado_constants.hpp
+/usr/local/include/acado/utils/acado_debugging.hpp
+/usr/local/include/acado/utils/acado_default_options.hpp
+/usr/local/include/acado/utils/acado_io_utils.hpp
+/usr/local/include/acado/utils/acado_message_handling.hpp
+/usr/local/include/acado/utils/acado_message_handling.ipp
+/usr/local/include/acado/utils/acado_namespace_macros.hpp
+/usr/local/include/acado/utils/acado_types.hpp
+/usr/local/include/acado/utils/acado_utils.hpp
+/usr/local/include/acado/utils/matlab_acado_utils.hpp
+/usr/local/include/acado/validated_integrator/ellipsoidal_integrator.hpp
+/usr/local/include/acado/validated_integrator/ellipsoidal_integrator.ipp
+/usr/local/include/acado/variables_grid/grid.hpp
+/usr/local/include/acado/variables_grid/grid.ipp
+/usr/local/include/acado/variables_grid/matrix_variable.hpp
+/usr/local/include/acado/variables_grid/matrix_variable.ipp
+/usr/local/include/acado/variables_grid/matrix_variables_grid.hpp
+/usr/local/include/acado/variables_grid/matrix_variables_grid.ipp
+/usr/local/include/acado/variables_grid/variable_settings.hpp
+/usr/local/include/acado/variables_grid/variable_settings.ipp
+/usr/local/include/acado/variables_grid/variables_grid.hpp
+/usr/local/include/acado/variables_grid/variables_grid.ipp
+/usr/local/lib/libacado_toolkit_s.so</code></pre></details></main>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-12 09:49 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

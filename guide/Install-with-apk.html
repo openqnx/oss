@@ -1,0 +1,145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Install with apk -- QNX OSS packages</title><meta name="description" content="apk resolves dependencies, checks signatures, upgrades and removes. Do the base image"><link rel="canonical" href="https://openqnx.github.io/oss/guide/Install-with-apk.html"><style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5f6b7a;--line:#e3e7ec;--alt:#f6f8fa;--acc:#0b5cad;--hd:#0e2a47;--hdfg:#fff;
+--ok:#1a7f37;--okbg:#e6f4ea;--bad:#b42318;--badbg:#fdecea;--nbg:#eef1f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11151b;--fg:#dde3ea;--mut:#98a3b1;--line:#2a313b;--alt:#171c23;
+--acc:#6cb0f5;--hd:#0a1a2c;--ok:#5fd07c;--okbg:#14301d;--bad:#ff8a80;--badbg:#3a1714;--nbg:#222a33;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--hd);color:var(--hdfg);padding:12px 16px}header .w{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header a{color:var(--hdfg)}header b{font-size:18px}header nav{display:flex;gap:14px;font-size:13px;opacity:.9}
+.w{max-width:1200px;margin:0 auto}main{padding:16px}
+h1{font-size:22px;margin:8px 0 4px}h2{font-size:16px;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sum{color:var(--mut);margin:0 0 12px}
+form{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);
+border-radius:6px;background:var(--bg);color:var(--fg)}input[type=search]{flex:1 1 240px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--alt);font-weight:600;white-space:nowrap}tbody tr:nth-child(even){background:var(--alt)}
+td.n{white-space:nowrap}.mut{color:var(--mut)}
+.b{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.none{background:var(--nbg);color:var(--mut)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
+pre{background:var(--alt);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul.c{columns:3 220px;margin:0;padding-left:18px}details summary{cursor:pointer;color:var(--acc)}
+.gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px}
+.gs section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--alt)}
+.gs h3{margin:0 0 6px;font-size:14px}.gs pre{margin:6px 0;font-size:12px;background:var(--bg)}.gs p{margin:4px 0}
+footer{color:var(--mut);font-size:12px;padding:24px 16px}
+.code{position:relative;margin:12px 0}.code pre{margin:0}
+.cp{position:absolute;top:6px;right:6px;font:12px system-ui;padding:3px 9px;border:1px solid var(--line,#ccc);border-radius:6px;background:var(--bg,#fff);color:inherit;cursor:pointer}
+.cp.ok{border-color:#2e9b4f;color:#2e9b4f}</style></head><body>
+<header><div class="w"><b><a href="../index.html">QNX OSS packages</a></b><nav>
+<a href="../guide/index.html">Guide</a><a href="https://github.com/openqnx/oss">Repository</a><a href="https://github.com/openqnx/oss/releases">Releases</a><a href="https://github.com/openqnx/oss/blob/main/INSTALL.md">Getting started</a><a href="https://github.com/openqnx/oss/blob/main/docs/target-guide.md">All packages by kind</a>
+<a href="https://github.com/openqnx/oss/blob/main/docs/qemu-test-vms.md">Test VMs</a></nav></div></header>
+<main class="w"><h1>Install with apk</h1>
+<p>apk resolves dependencies, checks signatures, upgrades and removes. Do the <a href="Base-QEMU-Images.html">base image</a> steps first, including section 5 (the variables and the <code>/usr/local</code> link).</p>
+<h2>1. A temporary apk, once</h2>
+<p>apk is a package too. Unpack it by hand once, then let it install itself properly. apk-tools needs <code>zlib</code>, <code>zstd</code>, <code>openssl</code> and <code>ca-certificates</code>. Each is in the half of the release that its name&#x27;s first letter belongs to.</p>
+<div class=code><button class=cp data-i="1">Copy</button><pre id="c1">qnx# mkdir -p /data/boot/root &amp;&amp; cd /data/boot
+qnx# curl -fsSL -o INDEX     $GH_RELEASES/packages-8.0-$ARCH/INDEX       # names 0-9, a-l
+qnx# curl -fsSL -o INDEX-m-z $GH_RELEASES/packages-8.0-$ARCH-m-z/INDEX   # names m-z
+qnx# for PKG in zlib zstd openssl ca-certificates apk-tools; do
+       case $PKG in [0-9a-l]*) SHARD= ;; *) SHARD=-m-z ;; esac
+       PKG_FILE=$(grep -m1 &quot;^$PKG|&quot; INDEX$SHARD | cut -d&#x27;|&#x27; -f4)
+       PKG_SHA256=$(grep -m1 &quot;^$PKG|&quot; INDEX$SHARD | cut -d&#x27;|&#x27; -f5)
+       curl -fsSLO $GH_RELEASES/packages-8.0-$ARCH$SHARD/$PKG_FILE
+       [ &quot;$(openssl dgst -sha256 $PKG_FILE | sed &#x27;s/.*= *//&#x27;)&quot; = &quot;$PKG_SHA256&quot; ] &amp;&amp; echo &quot;ok  $PKG_FILE&quot; || echo &quot;BAD $PKG_FILE&quot;
+       gzip -dc $PKG_FILE | (cd /data/boot/root &amp;&amp; tar -xf -)
+     done
+qnx# ls /data/boot/root/usr/local/bin/apk</pre><textarea hidden id="t1">mkdir -p /data/boot/root &amp;&amp; cd /data/boot
+curl -fsSL -o INDEX     $GH_RELEASES/packages-8.0-$ARCH/INDEX       # names 0-9, a-l
+curl -fsSL -o INDEX-m-z $GH_RELEASES/packages-8.0-$ARCH-m-z/INDEX   # names m-z
+for PKG in zlib zstd openssl ca-certificates apk-tools; do
+       case $PKG in [0-9a-l]*) SHARD= ;; *) SHARD=-m-z ;; esac
+       PKG_FILE=$(grep -m1 &quot;^$PKG|&quot; INDEX$SHARD | cut -d&#x27;|&#x27; -f4)
+       PKG_SHA256=$(grep -m1 &quot;^$PKG|&quot; INDEX$SHARD | cut -d&#x27;|&#x27; -f5)
+       curl -fsSLO $GH_RELEASES/packages-8.0-$ARCH$SHARD/$PKG_FILE
+       [ &quot;$(openssl dgst -sha256 $PKG_FILE | sed &#x27;s/.*= *//&#x27;)&quot; = &quot;$PKG_SHA256&quot; ] &amp;&amp; echo &quot;ok  $PKG_FILE&quot; || echo &quot;BAD $PKG_FILE&quot;
+       gzip -dc $PKG_FILE | (cd /data/boot/root &amp;&amp; tar -xf -)
+     done
+ls /data/boot/root/usr/local/bin/apk</textarea></div>
+<p>Every line must say <code>ok</code>.</p>
+<h2>2. Repositories, signing key, apk</h2>
+<div class=code><button class=cp data-i="2">Copy</button><pre id="c2">qnx# mkdir -p /data/oss/etc/apk/keys
+qnx# echo &quot;$GH_RELEASES/apk-8.0-$ARCH/APKINDEX.tar.gz&quot;       &gt;  /data/oss/etc/apk/repositories
+qnx# echo &quot;$GH_RELEASES/apk-8.0-$ARCH-m-z/APKINDEX.tar.gz&quot;   &gt;&gt; /data/oss/etc/apk/repositories
+qnx# echo &quot;$GH_RELEASES/tests-8.0-$ARCH/APKINDEX.tar.gz&quot;     &gt;&gt; /data/oss/etc/apk/repositories
+qnx# echo &quot;$GH_RELEASES/tests-8.0-$ARCH-m-z/APKINDEX.tar.gz&quot; &gt;&gt; /data/oss/etc/apk/repositories
+qnx# curl -fsSL -o /data/oss/etc/apk/keys/openqnx-oss-20261029.rsa.pub \
+       https://raw.githubusercontent.com/openqnx/oss/main/keys/openqnx-oss-20261029.rsa.pub
+qnx# BOOT_APK=/data/boot/root/usr/local
+qnx# LD_LIBRARY_PATH=$BOOT_APK/lib:/data/oss/qnx-runtime/lib $BOOT_APK/bin/apk --root /data/oss --force-no-chroot --initdb add apk-tools ca-certificates
+qnx# cd /; rm -rf /data/boot</pre><textarea hidden id="t2">mkdir -p /data/oss/etc/apk/keys
+echo &quot;$GH_RELEASES/apk-8.0-$ARCH/APKINDEX.tar.gz&quot;       &gt;  /data/oss/etc/apk/repositories
+echo &quot;$GH_RELEASES/apk-8.0-$ARCH-m-z/APKINDEX.tar.gz&quot;   &gt;&gt; /data/oss/etc/apk/repositories
+echo &quot;$GH_RELEASES/tests-8.0-$ARCH/APKINDEX.tar.gz&quot;     &gt;&gt; /data/oss/etc/apk/repositories
+echo &quot;$GH_RELEASES/tests-8.0-$ARCH-m-z/APKINDEX.tar.gz&quot; &gt;&gt; /data/oss/etc/apk/repositories
+curl -fsSL -o /data/oss/etc/apk/keys/openqnx-oss-20261029.rsa.pub \
+       https://raw.githubusercontent.com/openqnx/oss/main/keys/openqnx-oss-20261029.rsa.pub
+BOOT_APK=/data/boot/root/usr/local
+LD_LIBRARY_PATH=$BOOT_APK/lib:/data/oss/qnx-runtime/lib $BOOT_APK/bin/apk --root /data/oss --force-no-chroot --initdb add apk-tools ca-certificates
+cd /; rm -rf /data/boot</textarea></div>
+<h2>3. Using apk (at every login, after the base settings)</h2>
+<div class=code><button class=cp data-i="3">Copy</button><pre id="c3">qnx# alias apk=&#x27;/usr/local/bin/apk --root /data/oss --force-no-chroot&#x27;
+qnx# export SSL_CERT_FILE=/usr/local/ssl/cert.pem    # now the one from the ca-certificates package
+qnx# apk update</pre><textarea hidden id="t3">alias apk=&#x27;/usr/local/bin/apk --root /data/oss --force-no-chroot&#x27;
+export SSL_CERT_FILE=/usr/local/ssl/cert.pem    # now the one from the ca-certificates package
+apk update</textarea></div>
+<p><code>--force-no-chroot</code> lets package triggers run (for example glib compiling GSettings schemas on install).</p>
+<h2>4. Particular packages only</h2>
+<div class=code><button class=cp data-i="4">Copy</button><pre id="c4">qnx# apk search -v curl                     # names and versions
+qnx# apk add curl                           # with its dependencies
+qnx# apk add curl=&lt;version&gt;                 # one version (apk search -v, or the package site)
+qnx# apk add curl-dev                       # headers, pkg-config, static libraries
+qnx# apk info -L curl                       # the files it installed
+qnx# apk del curl                           # remove (and dependencies nothing else needs)
+qnx# curl --version</pre><textarea hidden id="t4">apk search -v curl                     # names and versions
+apk add curl                           # with its dependencies
+apk add curl=&lt;version&gt;                 # one version (apk search -v, or the package site)
+apk add curl-dev                       # headers, pkg-config, static libraries
+apk info -L curl                       # the files it installed
+apk del curl                           # remove (and dependencies nothing else needs)
+curl --version</textarea></div>
+<p>Older revisions bring matching dependencies. For example, <code>apk add nodejs=24.14.1-r0</code> comes with ada 3.4.4, and the newest revision comes with ada 4.0.0. A package&#x27;s page on the <a href="https://openqnx.github.io/oss/">package site</a> lists the dependency versions each revision works with.</p>
+<h2>5. Every package at once</h2>
+<p>Make the image with the large <code>/data</code> (<a href="Base-QEMU-Images.html">Base QEMU images</a>, section 2) first.</p>
+<div class=code><button class=cp data-i="5">Copy</button><pre id="c5">qnx# mkdir -p /data/oss/dl &amp;&amp; cd /data/oss/dl
+qnx# curl -fsSL $GH_RELEASES/packages-8.0-$ARCH/INDEX $GH_RELEASES/packages-8.0-$ARCH-m-z/INDEX \
+       | grep -v &#x27;^#&#x27; | cut -d&#x27;|&#x27; -f1 | sort -u \
+       | grep -vxE &#x27;sdl2-compat(-dev)?&#x27; &gt; all-names.txt     # sdl2-compat cannot be installed with sdl2
+qnx# wc -l all-names.txt
+qnx# apk update
+qnx# apk add $(cat all-names.txt)                           # takes long, aarch64 especially
+qnx# apk info | wc -l</pre><textarea hidden id="t5">mkdir -p /data/oss/dl &amp;&amp; cd /data/oss/dl
+curl -fsSL $GH_RELEASES/packages-8.0-$ARCH/INDEX $GH_RELEASES/packages-8.0-$ARCH-m-z/INDEX \
+       | grep -v &#x27;^#&#x27; | cut -d&#x27;|&#x27; -f1 | sort -u \
+       | grep -vxE &#x27;sdl2-compat(-dev)?&#x27; &gt; all-names.txt     # sdl2-compat cannot be installed with sdl2
+wc -l all-names.txt
+apk update
+apk add $(cat all-names.txt)                           # takes long, aarch64 especially
+apk info | wc -l</textarea></div>
+<p>If it is interrupted, run the same <code>apk add</code> again. Remove everything: <code>apk del $(cat all-names.txt)</code>.</p>
+<h2>6. Run a package&#x27;s test</h2>
+<div class=code><button class=cp data-i="6">Copy</button><pre id="c6">qnx# apk add qnx-test-curl qnx-port-tests
+qnx# QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_curl</pre><textarea hidden id="t6">apk add qnx-test-curl qnx-port-tests
+QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_curl</textarea></div>
+<p>Every check says <code>ok</code>, and the run ends with <code>PASS test_curl</code> and <code>passed: 1   failed: 0</code>. The package site shows the same test&#x27;s recorded log for comparison.</p>
+<h2>7. Graphical programs (image with <code>--graphics=yes</code>)</h2>
+<div class=code><button class=cp data-i="7">Copy</button><pre id="c7">qnx# apk add oss-desktop                    # labwc, swaybg, the Xfce panel, terminal, file manager
+qnx# nohup oss-desktop &gt; /tmp/oss-desktop.out 2&gt;&amp;1 &amp;
+qnx# export XDG_RUNTIME_DIR=/tmp/xdg-runtime-0 WAYLAND_DISPLAY=wayland-0
+qnx# apk add geany &amp;&amp; geany &amp;               # a GTK program on the desktop
+qnx# apk add qdirstat &amp;&amp; QT_QPA_PLATFORM=qnx qdirstat &amp;   # Qt draws on QNX Screen directly
+qnx# apk add mame &amp;&amp; mame &amp;                 # SDL2 programs use QNX Screen</pre><textarea hidden id="t7">apk add oss-desktop                    # labwc, swaybg, the Xfce panel, terminal, file manager
+nohup oss-desktop &gt; /tmp/oss-desktop.out 2&gt;&amp;1 &amp;
+export XDG_RUNTIME_DIR=/tmp/xdg-runtime-0 WAYLAND_DISPLAY=wayland-0
+apk add geany &amp;&amp; geany &amp;               # a GTK program on the desktop
+apk add qdirstat &amp;&amp; QT_QPA_PLATFORM=qnx qdirstat &amp;   # Qt draws on QNX Screen directly
+apk add mame &amp;&amp; mame &amp;                 # SDL2 programs use QNX Screen</textarea></div>
+<p>Screenshots of what this looks like: <a href="https://github.com/openqnx/oss/blob/main/docs/screenshots/README.md">docs/screenshots</a>.</p></main><script>document.querySelectorAll('.cp').forEach(function(b){b.addEventListener('click',function(){
+var t=document.getElementById('t'+b.dataset.i).value;function d(){b.textContent='Copied';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},1500)}
+if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(d)}else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);d()}})});</script>
+<footer class="w">QNX SDP 8.0 &middot; generated 2026-11-12 09:51 UTC from the release indexes
+by <code>scripts/gen-pkg-site</code> &middot; QNX is a trademark of BlackBerry Limited; this site is not affiliated with it.</footer>
+</body></html>

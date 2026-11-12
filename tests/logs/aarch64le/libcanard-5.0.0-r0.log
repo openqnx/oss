@@ -1,0 +1,58 @@
+# libcanard 5.0.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T08:43:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libcanard qnx-test-libcanard qnx-port-tests
+(1/2) Installing libcanard (5.0.0-r0)
+(2/2) Installing qnx-test-libcanard (1.0-r0)
+OK: 979.9 MiB in 166 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libcanard
+     == libcanard ==
+       ok   canard_new: three nodes
+       ok   node-IDs 10, 20, 30
+       ok   the anonymous node-ID is refused
+       ok   node 20 subscribes to subject 1234 (13-bit)
+       ok   canard_find_subscription
+       ok   node 10 publishes 5 bytes, transfer-ID 7
+       ok   one frame on the bus
+       info frame id 0x1064D20A len 6 tail 0xE7
+       ok   CAN id 0x1064D20A: priority nominal, subject 1234, source node 10
+       ok   payload + tail byte 0xE7 (start, end, toggle, transfer-ID 7)
+       ok   the subscriber receives the 5 bytes
+       ok   source node 10, transfer-ID 7, priority nominal
+       ok   node 10 publishes 100 bytes
+       info 100 bytes: 15 classic frames
+       ok   15 classic frames (100 bytes + 2 bytes CRC, 7 per frame)
+       ok   the subscriber receives the 100 bytes, priority high
+       ok   node 10 publishes 100 bytes with CAN FD frames
+       ok   2 CAN FD frames, the first 64 bytes long
+       info CAN FD: second frame 48 bytes, received payload 108 bytes
+       ok   the subscriber receives the 100 bytes (and the padding of the last frame)
+       ok   a subscription with extent 16 gets the first 16 bytes
+       ok   node 20 subscribes to subject 1234 (16-bit, Cyphal v1.1)
+       ok   node 10 publishes on the 16-bit subject
+       ok   the 16-bit subscriber receives it
+       ok   the 13-bit subscriber of the same number does not
+       ok   node 10 requests service 77 of node 20
+       ok   node 20 receives the request from node 10, transfer-ID 3
+       ok   node 20 responds
+       ok   node 10 receives the response from node 20
+       ok   node 30 sees neither the request nor the response
+       ok   node 20 subscribes to the v0 data type 341 (NodeStatus)
+       ok   node 10 broadcasts a v0 NodeStatus (7 bytes)
+       ok   the v0 subscriber receives it
+       ok   publish with a 2 ms deadline on a busy bus
+       ok   the transfer expired and was not sent (err.tx_expiration)
+       ok   no out-of-memory or reassembly errors
+       info live allocations after destroy: 0
+       ok   nothing is left allocated
+     PASS libcanard
+PASS test_libcanard
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,5 @@
+test_python3_can	bin/python3 bin/qcand
+test_python3_canlibs	bin/python3 bin/qcand
+test_python3_canapps	bin/python3 bin/qcand lib/python3.14/site-packages/can/__init__.py
+test_cannelloni	bin/cannelloni bin/qcand bin/cansend bin/candump
+test_canopennode	bin/canopend bin/cocomm bin/qcand bin/candump

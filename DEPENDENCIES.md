@@ -4,18 +4,18 @@ Two kinds, by whether anything else from this repository is needed:
 
 | Kind | Meaning | Components |
 |---|---|---|
-| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **322** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **595** |
+| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **324** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **614** |
 
-Dependent components split further by what they need at run time (232 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (249 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
-| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **322** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **232** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **363** |
+| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **324** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **249** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **365** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -25,7 +25,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Standalone
 
-322 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
+324 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
 
 ✅ = built against an *empty* staging tree by `scripts/verify-standalone`, proving the build cannot have picked anything up from other components.
 
@@ -146,6 +146,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`intltool`](ports/intltool/) | 0.51.0 | autotools | – | 0 |
 | [`iperf2`](ports/iperf2/) | 2.2.1 | autotools | – | 0 |
 | [`iso-codes`](ports/iso-codes/) | 4.17.0 | autotools | – | 1 |
+| [`isotp-c`](ports/isotp-c/) | 1.9.3 | custom | – | 0 |
 | [`jansson`](ports/jansson/) | 2.14 | cmake | – | 0 |
 | [`json-c`](ports/json-c/) | 0.18 | cmake | – | 0 |
 | [`jsoncpp`](ports/jsoncpp/) | 1.9.6 | cmake | – | 0 |
@@ -155,6 +156,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libaec`](ports/libaec/) | 1.1.7 | cmake | – | 0 |
 | [`libasyncns`](ports/libasyncns/) | 0.8 | autotools | – | 0 |
 | [`libb2`](ports/libb2/) | 0.98.1 | autotools | – | 0 |
+| [`libcanard`](ports/libcanard/) | 5.0.0 | custom | – | 0 |
 | [`libcbor`](ports/libcbor/) | 0.11.0 | cmake | – | 0 |
 | [`libccd`](ports/libccd/) | 2.1 | cmake | – | 2 |
 | [`libconfig`](ports/libconfig/) | 1.8.1 | cmake | – | 0 |
@@ -277,7 +279,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`pugixml`](ports/pugixml/) | 1.14 | cmake | – | 2 |
 | [`pybind11`](ports/pybind11/) | 3.1.0 | cmake | – | 1 |
 | [`qhull`](ports/qhull/) | 8.0.2 | cmake | – | 2 |
-| [`qnx-socketcan`](ports/qnx-socketcan/) | 1.0 | custom | – | 1 |
+| [`qnx-socketcan`](ports/qnx-socketcan/) | 1.0 | custom | – | 4 |
 | [`quickjs-ng`](ports/quickjs-ng/) | 0.8.0 | cmake | – | 0 |
 | [`rapidjson`](ports/rapidjson/) | 1.1.0-24b5e7a | cmake | – | 2 |
 | [`rhash`](ports/rhash/) | 1.4.5 | custom | – | 0 |
@@ -356,7 +358,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Runtime-standalone
 
-232 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+249 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
@@ -443,15 +445,22 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-absl-py`](ports/python3-absl-py/) | 2.5.1 | python3 | 15 |
 | [`python3-appdirs`](ports/python3-appdirs/) | 1.4.4 | python3 | 15 |
 | [`python3-argcomplete`](ports/python3-argcomplete/) | 3.7.2 | python3 | 15 |
+| [`python3-argparse-addons`](ports/python3-argparse-addons/) | 0.12.0 | python3 | 15 |
 | [`python3-astor`](ports/python3-astor/) | 0.8.1 | python3 | 15 |
 | [`python3-async-generator`](ports/python3-async-generator/) | 1.10 | python3 | 15 |
 | [`python3-attrs`](ports/python3-attrs/) | 26.1.0 | python3 | 15 |
 | [`python3-beniget`](ports/python3-beniget/) | 0.5.0 | python3 python3-gast | 16 |
+| [`python3-bitstruct`](ports/python3-bitstruct/) | 8.24.0 | python3 | 15 |
 | [`python3-boto3`](ports/python3-boto3/) | 1.43.123 | python3 python3-botocore python3-s3transfer python3-jmespath | 21 |
 | [`python3-botocore`](ports/python3-botocore/) | 1.43.123 | python3 python3-jmespath python3-dateutil python3-urllib3 | 19 |
 | [`python3-bracex`](ports/python3-bracex/) | 3.2.1 | python3 | 15 |
 | [`python3-build`](ports/python3-build/) | 1.6.1 | python3 python3-packaging python3-pyproject-hooks | 17 |
 | [`python3-calver`](ports/python3-calver/) | 2025.10.20 | python3 | 15 |
+| [`python3-can`](ports/python3-can/) | 4.6.1 | python3 python3-wrapt python3-packaging python3-typing-extensions qnx-socketcan | 19 |
+| [`python3-can-isotp`](ports/python3-can-isotp/) | 2.0.7 | python3 python3-can | 20 |
+| [`python3-can-j1939`](ports/python3-can-j1939/) | 2.0.12 | python3 python3-can numpy | 22 |
+| [`python3-canmatrix`](ports/python3-canmatrix/) | 1.3.3 | python3 python3-attrs python3-click | 17 |
+| [`python3-cantools`](ports/python3-cantools/) | 45.1.2 | python3 python3-bitstruct python3-can python3-textparser python3-argparse-addons python3-crccheck | 24 |
 | [`python3-catkin-pkg`](ports/python3-catkin-pkg/) | 1.1.1 | python3 python3-dateutil python3-docutils python3-packaging python3-pyparsing | 20 |
 | [`python3-cattrs`](ports/python3-cattrs/) | 26.2.1 | python3 python3-attrs python3-typing-extensions | 17 |
 | [`python3-click`](ports/python3-click/) | 8.5.0 | python3 | 15 |
@@ -480,6 +489,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-coverage`](ports/python3-coverage/) | 7.17.0 | python3 | 15 |
 | [`python3-cparser`](ports/python3-cparser/) | 3.12 | python3 | 15 |
 | [`python3-cppy`](ports/python3-cppy/) | 1.3.1 | python3 python3-setuptools | 16 |
+| [`python3-crccheck`](ports/python3-crccheck/) | 1.3.1 | python3 | 15 |
 | [`python3-curio`](ports/python3-curio/) | 1.6_git20251221 | python3 | 15 |
 | [`python3-cycler`](ports/python3-cycler/) | 0.12.1 | python3 | 15 |
 | [`python3-dateutil`](ports/python3-dateutil/) | 2.9.0.post0 | python3 python3-six | 16 |
@@ -500,6 +510,8 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-flake8-import-order`](ports/python3-flake8-import-order/) | 0.19.2 | python3 python3-pycodestyle python3-setuptools python3-flake8 | 20 |
 | [`python3-flake8-quotes`](ports/python3-flake8-quotes/) | 3.4.0 | python3 python3-flake8 python3-setuptools | 20 |
 | [`python3-flaky`](ports/python3-flaky/) | 3.8.1 | python3 python3-pytest | 20 |
+| [`python3-flexcache`](ports/python3-flexcache/) | 0.3 | python3 python3-typing-extensions | 16 |
+| [`python3-flexparser`](ports/python3-flexparser/) | 0.4 | python3 python3-typing-extensions | 16 |
 | [`python3-flit-core`](ports/python3-flit-core/) | 4.2.0 | python3 | 15 |
 | [`python3-fonttools`](ports/python3-fonttools/) | 4.68.0 | python3 | 15 |
 | [`python3-fs`](ports/python3-fs/) | 2.4.16 | python3 python3-appdirs python3-setuptools python3-six | 18 |
@@ -522,10 +534,12 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-msgpack`](ports/python3-msgpack/) | 1.2.4 | python3 | 15 |
 | [`python3-mypy-extensions`](ports/python3-mypy-extensions/) | 1.1.0 | python3 | 15 |
 | [`python3-netifaces`](ports/python3-netifaces/) | 0.11.0 | python3 | 15 |
+| [`python3-obd`](ports/python3-obd/) | 0.7.3 | python3 python3-pyserial python3-pint | 21 |
 | [`python3-opt-einsum`](ports/python3-opt-einsum/) | 3.4.0 | python3 | 15 |
 | [`python3-packaging`](ports/python3-packaging/) | 25.0 | python3 | 15 |
 | [`python3-pathspec`](ports/python3-pathspec/) | 1.1.1 | python3 | 15 |
 | [`python3-pexpect`](ports/python3-pexpect/) | 4.9.0 | python3 python3-ptyprocess | 16 |
+| [`python3-pint`](ports/python3-pint/) | 0.24.4 | python3 python3-flexcache python3-flexparser python3-platformdirs python3-typing-extensions | 19 |
 | [`python3-pip`](ports/python3-pip/) | 25.1.1 | python3 | 15 |
 | [`python3-platformdirs`](ports/python3-platformdirs/) | 4.14.3 | python3 | 15 |
 | [`python3-pluggy`](ports/python3-pluggy/) | 1.7.0 | python3 | 15 |
@@ -542,6 +556,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-pyparsing`](ports/python3-pyparsing/) | 3.3.3 | python3 | 15 |
 | [`python3-pyproject-hooks`](ports/python3-pyproject-hooks/) | 1.3.3 | python3 | 15 |
 | [`python3-pyproject-metadata`](ports/python3-pyproject-metadata/) | 0.12.1 | python3 python3-packaging | 16 |
+| [`python3-pyserial`](ports/python3-pyserial/) | 3.5 | python3 | 15 |
 | [`python3-pytest`](ports/python3-pytest/) | 9.2.0 | python3 python3-iniconfig python3-packaging python3-pluggy python3-pygments | 19 |
 | [`python3-pytest-cov`](ports/python3-pytest-cov/) | 7.1.0 | python3 python3-pytest python3-coverage python3-pluggy | 21 |
 | [`python3-pytest-mock`](ports/python3-pytest-mock/) | 3.17.0 | python3 python3-pytest | 20 |
@@ -555,6 +570,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-rosdistro`](ports/python3-rosdistro/) | 1.1.0 | python3 python3-packaging python3-pyyaml python3-setuptools python3-catkin-pkg python3-rospkg | 25 |
 | [`python3-rospkg`](ports/python3-rospkg/) | 1.6.3 | python3 python3-catkin-pkg python3-pyyaml python3-distro | 23 |
 | [`python3-s3transfer`](ports/python3-s3transfer/) | 0.19.3 | python3 python3-botocore | 20 |
+| [`python3-scapy`](ports/python3-scapy/) | 2.8.0 | python3 | 15 |
 | [`python3-scikit-build-core`](ports/python3-scikit-build-core/) | 1.1.2 | python3 python3-packaging python3-pathspec | 17 |
 | [`python3-setuptools`](ports/python3-setuptools/) | 80.8.0 | python3 | 15 |
 | [`python3-setuptools_scm`](ports/python3-setuptools_scm/) | 9.2.2 | python3 python3-packaging python3-setuptools | 17 |
@@ -563,6 +579,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-snowballstemmer`](ports/python3-snowballstemmer/) | 3.1.1 | python3 | 15 |
 | [`python3-sortedcontainers`](ports/python3-sortedcontainers/) | 2.4.0 | python3 | 15 |
 | [`python3-sounddevice`](ports/python3-sounddevice/) | 0.5.6 | python3 portaudio python3-cffi | 18 |
+| [`python3-textparser`](ports/python3-textparser/) | 0.26.2 | python3 | 15 |
 | [`python3-time-machine`](ports/python3-time-machine/) | 3.6.0 | python3 | 15 |
 | [`python3-tomli`](ports/python3-tomli/) | 2.5.0 | python3 | 15 |
 | [`python3-tornado`](ports/python3-tornado/) | 6.6 | python3 | 15 |
@@ -571,10 +588,12 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`python3-typeguard`](ports/python3-typeguard/) | 4.6.0 | python3 python3-typing-extensions | 16 |
 | [`python3-typing-extensions`](ports/python3-typing-extensions/) | 4.16.0 | python3 | 15 |
 | [`python3-tzdata`](ports/python3-tzdata/) | 2025.2 | python3 | 15 |
+| [`python3-udsoncan`](ports/python3-udsoncan/) | 1.26.1 | python3 python3-can-isotp | 21 |
 | [`python3-urllib3`](ports/python3-urllib3/) | 2.8.0 | python3 | 15 |
 | [`python3-versioneer`](ports/python3-versioneer/) | 0.29 | python3 | 15 |
 | [`python3-virtualenv`](ports/python3-virtualenv/) | 20.39.1 | python3 python3-distlib python3-filelock python3-platformdirs | 18 |
 | [`python3-wheel`](ports/python3-wheel/) | 0.46.1 | python3 python3-packaging | 16 |
+| [`python3-wrapt`](ports/python3-wrapt/) | 2.5.2 | python3 | 15 |
 | [`pythran`](ports/pythran/) | 0.19.0 | python3 python3-ply python3-setuptools python3-gast python3-beniget numpy | 21 |
 | [`qt6-translations`](ports/qt6-translations/) | 6.8.1 | qt6 | 67 |
 | [`readline`](ports/readline/) | 8.2 | ncurses | 1 |
@@ -595,7 +614,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Dependent
 
-363 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+365 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -628,6 +647,8 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`c-blosc`](ports/c-blosc/) | 1.21.6 | lz4 zlib zstd | lz4 zlib zstd | 3 |
 | [`cairo`](ports/cairo/) | 1.18.2 | pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo | fontconfig freetype glib libpng libx11 libxext libxrender lzo pixman zlib | 22 |
 | [`can-utils`](ports/can-utils/) | 2025.01 | qnx-socketcan | qnx-socketcan | 1 |
+| [`cannelloni`](ports/cannelloni/) | 2.1.2 | qnx-socketcan | qnx-socketcan | 1 |
+| [`canopennode`](ports/canopennode/) | 4.0 | qnx-socketcan | qnx-socketcan | 1 |
 | [`capicxx-someip-runtime`](ports/capicxx-someip-runtime/) | 3.2.4 | capicxx-core-runtime vsomeip | capicxx-core-runtime vsomeip | 10 |
 | [`capnproto`](ports/capnproto/) | 1.0.2 | zlib openssl | openssl zlib | 2 |
 | [`cartographer`](ports/cartographer/) | 2.0.0 | abseil boost ceres-solver eigen glog gflags lua5.3 protobuf cairo | abseil boost cairo ceres-solver gflags glog lua5.3 protobuf | 31 |

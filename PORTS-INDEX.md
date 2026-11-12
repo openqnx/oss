@@ -1,12 +1,12 @@
 # Component index
 
-918 components. **916** build for both `aarch64le` and `x86_64` from upstream source, carrying 529 QNX patches between them.
+939 components. **937** build for both `aarch64le` and `x86_64` from upstream source, carrying 536 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
-| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **322** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **232** |
-| 🔴 **dependent** | needs other components to build and to run | **363** |
+| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **324** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **249** |
+| 🔴 **dependent** | needs other components to build and to run | **365** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -72,6 +72,8 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [cairo](ports/cairo/README.md) | 2D vector graphics library with multiple output backends | 1.18.2 | meson | gitlab.freedesktop.org | 1 | 🔴 dependent | 10 | ✅ | ✅ |
 | [can-utils](ports/can-utils/README.md) | SocketCAN tools: candump, cansend, cangen, canplayer, cansniffer, canbusload, log converters | 2025.01 | custom | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [candb](ports/candb/README.md) | Library for parsing CAN bus database description formats | 0.1-git-20210625 | cmake | github.com | 5 | 🟡 build-deps only | — | ✅ | ✅ |
+| [cannelloni](ports/cannelloni/README.md) | SocketCAN over Ethernet tunnel (UDP or TCP) between two CAN buses | 2.1.2 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [canopennode](ports/canopennode/README.md) | CANopen protocol stack with the canopend device and the cocomm command client (CiA 301, 305, 309-3) | 4.0 | custom | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [capicxx-core-runtime](ports/capicxx-core-runtime/README.md) | COVESA CommonAPI C++ core runtime for IPC interfaces | 3.2.4 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [capicxx-someip-runtime](ports/capicxx-someip-runtime/README.md) | COVESA CommonAPI C++ SOME/IP binding runtime | 3.2.4 | cmake | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
 | [capnproto](ports/capnproto/README.md) | Cap'n Proto data serialization format and capability-based RPC system | 1.0.2 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
@@ -257,6 +259,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [iperf3](ports/iperf3/README.md) | TCP, UDP and SCTP network bandwidth measurement tool | 3.17.1 | autotools | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [ippusbxd](ports/ippusbxd/README.md) | Daemon for IPP over USB printer support | 1.34 | cmake | github.com | 1 | 🔴 dependent | 4 | ✅ | ✅ |
 | [iso-codes](ports/iso-codes/README.md) | Lists of ISO country, language, script and currency codes with translations | 4.17.0 | autotools | salsa.debian.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [isotp-c](ports/isotp-c/README.md) | ISO 15765-2 (ISO-TP) transport protocol for CAN in C: segmentation, flow control, CAN FD | 1.9.3 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [itstool](ports/itstool/README.md) | Translates XML documents with PO files using W3C ITS rules | 2.0.7 | autotools | files.itstool.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [jansson](ports/jansson/README.md) | C library for encoding, decoding and manipulating JSON data | 2.14 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [javascriptcore](ports/javascriptcore/README.md) | WebKit's JavaScriptCore JavaScript engine (standalone JSCOnly port) | 2.44.4 | cmake | webkitgtk.org | 4 | 🔴 dependent | 1 | ✅ | ✅ |
@@ -283,6 +286,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libb2](ports/libb2/README.md) | BLAKE2 cryptographic hash library (BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp) | 0.98.1 | autotools | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libcaca](ports/libcaca/README.md) | Graphics library that outputs text instead of pixels | 0.99.beta20 | autotools | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [libcamera](ports/libcamera/README.md) | Raspberry Pi camera image processing algorithms from libcamera | 0.5.1+rpt20250722 | custom | github.com | 2 | 🔴 dependent | 1 | ✅ | n/a |
+| [libcanard](ports/libcanard/README.md) | OpenCyphal/CAN (formerly UAVCAN) protocol stack in C: transfers over classic CAN and CAN FD | 5.0.0 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libcbor](ports/libcbor/README.md) | C library for parsing and generating CBOR binary data | 0.11.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libccd](ports/libccd/README.md) | Library for collision detection between convex shapes | 2.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libcoap](ports/libcoap/README.md) | C implementation of the Constrained Application Protocol (CoAP) | 4.3.5 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
@@ -327,7 +331,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [libogg](ports/libogg/README.md) | Library for the Ogg multimedia bitstream container format | 1.3.5 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [libpanel](ports/libpanel/README.md) | Dock/panel library for GTK 4 | 1.10.4 | meson | download.gnome.org | — | 🔴 dependent | 6 | ✅ | ✅ |
 | [libpaper](ports/libpaper/README.md) | Paper size library and the paper command | 2.3.0 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [libpcap](ports/libpcap/README.md) | Portable network traffic capture library | 1.10.5 | autotools | www.tcpdump.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [libpcap](ports/libpcap/README.md) | Portable network traffic capture library | 1.10.5 | autotools | www.tcpdump.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [libpipeline](ports/libpipeline/README.md) | C library for setting up and running pipelines of processes | 1.5.8 | autotools | download.savannah.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [libpng](ports/libpng/README.md) | C library for reading and writing PNG images | 1.6.44 | autotools | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [libportal](ports/libportal/README.md) | GIO-style client library for XDG desktop portals | 0.8.1 | meson | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
@@ -597,16 +601,23 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-absl-py](ports/python3-absl-py/README.md) | Abseil Python common libraries: command-line flags, logging, app and test helpers | 2.5.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-appdirs](ports/python3-appdirs/README.md) | The platform's user data directories (platformdirs' predecessor) | 1.4.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-argcomplete](ports/python3-argcomplete/README.md) | Bash tab completion for argparse | 3.7.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-argparse-addons](ports/python3-argparse-addons/README.md) | Additional argparse types and actions for Python | 0.12.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-astor](ports/python3-astor/README.md) | Python module for reading, rewriting and writing Python ASTs as source | 0.8.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-async-generator](ports/python3-async-generator/README.md) | Python async generators and async context managers backport | 1.10 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-attrs](ports/python3-attrs/README.md) | Classes without boilerplate | 26.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-beniget](ports/python3-beniget/README.md) | Static analysis of Python code: definition-use chains on a gast tree | 0.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-bitstruct](ports/python3-bitstruct/README.md) | Pack and unpack values as bit fields into bytes for Python | 8.24.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-boto3](ports/python3-boto3/README.md) | The AWS SDK for Python | 1.43.123 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-botocore](ports/python3-botocore/README.md) | Low-level, data-driven core of boto 3 | 1.43.123 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-bracex](ports/python3-bracex/README.md) | Bash-style brace expansion for Python | 3.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-build](ports/python3-build/README.md) | A simple PEP 517 package builder (pyproject-build) | 1.6.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cairo](ports/python3-cairo/README.md) | Python bindings for the cairo 2D graphics library | 1.29.2 | custom | files.pythonhosted.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [python3-calver](ports/python3-calver/README.md) | Calendar versioning for setuptools | 2025.10.20 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-can-isotp](ports/python3-can-isotp/README.md) | ISO-TP (ISO 15765-2) transport protocol for Python | 2.0.7 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-can-j1939](ports/python3-can-j1939/README.md) | SAE J1939 protocol stack for Python | 2.0.12 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-can](ports/python3-can/README.md) | Controller Area Network interface module for Python (python-can), with a SocketCAN interface for QNX | 4.6.1 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-canmatrix](ports/python3-canmatrix/README.md) | CAN matrix (database) conversion and comparison for Python: canconvert, cancompare | 1.3.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-cantools](ports/python3-cantools/README.md) | CAN bus tools for Python: DBC, KCD, SYM, ARXML and CDD databases, message encoding and decoding | 45.1.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-catkin-pkg](ports/python3-catkin-pkg/README.md) | Library for catkin packages (package.xml parsing) | 1.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cattrs](ports/python3-cattrs/README.md) | Structuring and unstructuring of attrs classes and dataclasses | 26.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cffi](ports/python3-cffi/README.md) | C foreign function interface for Python (ABI and API mode, on libffi) | 2.1.1 | custom | files.pythonhosted.org | — | 🔴 dependent | 1 | ✅ | ✅ |
@@ -637,6 +648,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-coverage](ports/python3-coverage/README.md) | Code coverage measurement for Python | 7.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cparser](ports/python3-cparser/README.md) | C parser in pure Python (cffi parses C declarations with it) | 3.12 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cppy](ports/python3-cppy/README.md) | C++ helper headers for writing Python C extensions | 1.3.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-crccheck](ports/python3-crccheck/README.md) | CRC and checksum calculation library for Python | 1.3.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-curio](ports/python3-curio/README.md) | Coroutine-based Python library for concurrent systems programming | 1.6_git20251221 | custom | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-cycler](ports/python3-cycler/README.md) | Composable style cycles for Python (matplotlib's property cycler) | 0.12.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-dateutil](ports/python3-dateutil/README.md) | Python extensions to the standard datetime module | 2.9.0.post0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -658,6 +670,8 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-flake8-quotes](ports/python3-flake8-quotes/README.md) | flake8 plugin that checks string quote consistency | 3.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flake8](ports/python3-flake8/README.md) | Python linter combining pyflakes, pycodestyle and mccabe, with plugins | 7.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flaky](ports/python3-flaky/README.md) | A pytest plugin that reruns flaky tests | 3.8.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flexcache](ports/python3-flexcache/README.md) | Cache on disk for files converted by Python, keyed by modification time or content | 0.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-flexparser](ports/python3-flexparser/README.md) | Parsing made fun, using typing, for Python | 0.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-flit-core](ports/python3-flit-core/README.md) | The PEP 517 build backend of Flit | 4.2.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-fonttools](ports/python3-fonttools/README.md) | Library to manipulate font files from Python | 4.68.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-fs](ports/python3-fs/README.md) | PyFilesystem2: a common interface to memory, OS, archive and other filesystems | 2.4.16 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -683,11 +697,13 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-msgpack](ports/python3-msgpack/README.md) | MessagePack binary serialisation for Python, with its C extension | 1.2.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-mypy-extensions](ports/python3-mypy-extensions/README.md) | Type system extensions for programs checked with mypy | 1.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-netifaces](ports/python3-netifaces/README.md) | Portable network interface information for Python | 0.11.0 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-obd](ports/python3-obd/README.md) | OBD-II serial module for reading engine data through an ELM327 adapter (python-OBD) | 0.7.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-opt-einsum](ports/python3-opt-einsum/README.md) | Optimised tensor contraction order for einsum expressions | 3.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-packaging](ports/python3-packaging/README.md) | Core utilities for Python packages: versions, specifiers, markers | 25.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pathspec](ports/python3-pathspec/README.md) | Gitignore-style path pattern matching | 1.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pexpect](ports/python3-pexpect/README.md) | Drives interactive child programs through a pseudo terminal | 4.9.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pillow](ports/python3-pillow/README.md) | Python Imaging Library (fork): image processing and file formats | 13.0.0 | custom | files.pythonhosted.org | — | 🔴 dependent | 8 | ✅ | ✅ |
+| [python3-pint](ports/python3-pint/README.md) | Physical quantities for Python: units, conversions, dimensional analysis | 0.24.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pip](ports/python3-pip/README.md) | Python package installer | 25.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-platformdirs](ports/python3-platformdirs/README.md) | The platform's user and site data/config/cache directories | 4.14.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pluggy](ports/python3-pluggy/README.md) | Plugin and hook calling mechanism for Python (used by pytest) | 1.7.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -704,6 +720,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-pyparsing](ports/python3-pyparsing/README.md) | Classes and methods to define and execute parsing grammars | 3.3.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pyproject-hooks](ports/python3-pyproject-hooks/README.md) | Calls PEP 517 build backend hooks | 1.3.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pyproject-metadata](ports/python3-pyproject-metadata/README.md) | PEP 621 metadata from pyproject.toml | 0.12.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-pyserial](ports/python3-pyserial/README.md) | Python serial port extension | 3.5 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pytest-cov](ports/python3-pytest-cov/README.md) | pytest plugin for measuring code coverage | 7.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pytest-mock](ports/python3-pytest-mock/README.md) | The mocker fixture for pytest | 3.17.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-pytest-repeat](ports/python3-pytest-repeat/README.md) | pytest plugin for repeating tests | 0.9.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -717,6 +734,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-rosdistro](ports/python3-rosdistro/README.md) | Library for ROS distribution files (index, distributions, caches) | 1.1.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-rospkg](ports/python3-rospkg/README.md) | ROS package library: package and stack lookup, OS detection | 1.6.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-s3transfer](ports/python3-s3transfer/README.md) | An Amazon S3 Transfer Manager | 0.19.3 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-scapy](ports/python3-scapy/README.md) | Interactive packet manipulation program and library for Python | 2.8.0 | custom | files.pythonhosted.org | 2 | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-scikit-build-core](ports/python3-scikit-build-core/README.md) | The PEP 517 build backend for CMake projects | 1.1.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-scipy](ports/python3-scipy/README.md) | Scientific computing for Python: linear algebra, optimisation, FFT, signal processing, statistics | 1.18.1 | custom | files.pythonhosted.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [python3-setuptools](ports/python3-setuptools/README.md) | Python library and tools for building and distributing packages | 80.8.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -726,6 +744,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-snowballstemmer](ports/python3-snowballstemmer/README.md) | Snowball stemming algorithms in pure Python | 3.1.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-sortedcontainers](ports/python3-sortedcontainers/README.md) | Sorted list, dict and set types in pure Python | 2.4.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-sounddevice](ports/python3-sounddevice/README.md) | Play and record sound with Python through PortAudio | 0.5.6 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-textparser](ports/python3-textparser/README.md) | Text parser library for Python | 0.26.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-time-machine](ports/python3-time-machine/README.md) | Mocks the clock in Python tests (time-machine, a C extension) | 3.6.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tomli](ports/python3-tomli/README.md) | A TOML parser | 2.5.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tornado](ports/python3-tornado/README.md) | Python web framework and asynchronous networking library | 6.6 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -734,10 +753,12 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [python3-typeguard](ports/python3-typeguard/README.md) | Run-time type checking | 4.6.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-typing-extensions](ports/python3-typing-extensions/README.md) | Backported and experimental type hints (typing_extensions) | 4.16.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-tzdata](ports/python3-tzdata/README.md) | IANA time zone database as a Python package | 2025.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-udsoncan](ports/python3-udsoncan/README.md) | Unified Diagnostic Services (ISO 14229) client for Python | 1.26.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-urllib3](ports/python3-urllib3/README.md) | HTTP library with thread-safe connection pooling, file post, and more | 2.8.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-versioneer](ports/python3-versioneer/README.md) | Python tool for deriving version strings from version-control tags | 0.29 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-virtualenv](ports/python3-virtualenv/README.md) | Isolated Python environments | 20.39.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-wheel](ports/python3-wheel/README.md) | Command line tool and library for the Python wheel package format | 0.46.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [python3-wrapt](ports/python3-wrapt/README.md) | Module for decorators, wrappers and monkey patching | 2.5.2 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [python3-zstandard](ports/python3-zstandard/README.md) | Zstandard compression bindings for Python (C backend on the system zstd) | 0.25.0 | custom | files.pythonhosted.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [python3](ports/python3/README.md) | Python 3 programming language interpreter and standard library | 3.14.0 | autotools | www.python.org | 2 | 🔴 dependent | 12 | ✅ | ✅ |
 | [pythran](ports/pythran/README.md) | Ahead-of-time compiler of Python/numpy kernels to C++ extension modules | 0.19.0 | custom | files.pythonhosted.org | 1 | 🟡 build-deps only | — | ✅ | ✅ |

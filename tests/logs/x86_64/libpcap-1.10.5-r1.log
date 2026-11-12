@@ -1,0 +1,27 @@
+# libpcap 1.10.5-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-11T20:55:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libpcap qnx-test-libpcap qnx-port-tests
+(1/1) Installing qnx-test-libpcap (1.0-r7)
+OK: 887.4 MiB in 110 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libpcap
+     == libpcap ==
+       ok   pcap_lib_version
+       ok   pcap_findalldevs succeeds
+       info iface vtnet0
+       info iface lo0
+       info iface enc0
+       info iface pflog0
+       info iface pfsync0
+       info libpcap version 1.10.5
+     PASS libpcap
+PASS test_libpcap
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

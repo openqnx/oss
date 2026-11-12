@@ -125,11 +125,11 @@ unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
 ## Standalone and dependent
 
 
-**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **595 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
+**324 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **614 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
 
 Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, `ᵛ` on a vanilla image installed with apk; details per component in its README's *How it was verified*.
 
-### Standalone (322)
+### Standalone (324)
 
 | Component | What it is | Version | Install | Test package | Verified |
 |---|---|---|---|---|---|
@@ -248,6 +248,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`intltool`](../ports/intltool/) | Translation tools for non-C files: intltool-merge, -extract, -update, intltoolize | 0.51.0 | `apk add intltool` | `qnx-test-intltool` | x86✅ᵛ a64✅ᵛ |
 | [`iperf2`](../ports/iperf2/) | Tool for measuring network bandwidth, TCP and UDP performance (iperf 2) | 2.2.1 | `apk add iperf2` | `qnx-test-iperf2` | x86✅ᵛ a64✅ᵛ |
 | [`iso-codes`](../ports/iso-codes/) | Lists of ISO country, language, script and currency codes with translations | 4.17.0 | `apk add iso-codes` | `qnx-test-iso-codes` | x86✅ᵛ a64✅ᵛ |
+| [`isotp-c`](../ports/isotp-c/) | ISO 15765-2 (ISO-TP) transport protocol for CAN in C: segmentation, flow control, CAN FD | 1.9.3 | `apk add isotp-c` | `qnx-test-isotp-c` | x86✅ᵛ a64✅ᵛ |
 | [`jansson`](../ports/jansson/) | C library for encoding, decoding and manipulating JSON data | 2.14 | `apk add jansson` | `qnx-test-jansson` | x86✅ᵛ a64✅ᵛ |
 | [`json-c`](../ports/json-c/) | JSON implementation in C | 0.18 | `apk add json-c` | `qnx-test-json-c` | x86✅ᵛ a64✅ᵛ |
 | [`jsoncpp`](../ports/jsoncpp/) | C++ library for reading and writing JSON | 1.9.6 | `apk add jsoncpp` | `qnx-test-jsoncpp` | x86✅ᵛ a64✅ᵛ |
@@ -257,6 +258,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`libaec`](../ports/libaec/) | Adaptive Entropy Coding library for lossless compression, SZIP compatible | 1.1.7 | `apk add libaec` | `qnx-test-libaec` | x86✅ᵛ a64✅ᵛ |
 | [`libasyncns`](../ports/libasyncns/) | Asynchronous name service query library | 0.8 | `apk add libasyncns` | `qnx-test-libasyncns` | x86✅ᵛ a64✅ᵛ |
 | [`libb2`](../ports/libb2/) | BLAKE2 cryptographic hash library (BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp) | 0.98.1 | `apk add libb2` | `qnx-test-libb2` | x86✅ᵛ a64✅ᵛ |
+| [`libcanard`](../ports/libcanard/) | OpenCyphal/CAN (formerly UAVCAN) protocol stack in C: transfers over classic CAN and CAN FD | 5.0.0 | `apk add libcanard` | `qnx-test-libcanard` | x86✅ᵛ a64✅ᵛ |
 | [`libcbor`](../ports/libcbor/) | C library for parsing and generating CBOR binary data | 0.11.0 | `apk add libcbor` | `qnx-test-libcbor` | x86✅ᵛ a64✅ᵛ |
 | [`libccd`](../ports/libccd/) | Library for collision detection between convex shapes | 2.1 | `apk add libccd` | `qnx-test-fcl` | x86✅ᵛ a64✅ᵛ |
 | [`libconfig`](../ports/libconfig/) | C/C++ library for processing structured configuration files | 1.8.1 | `apk add libconfig` | `qnx-test-libconfig` | x86✅ᵛ a64✅ᵛ |
@@ -456,7 +458,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`zserio`](../ports/zserio/) | C++ runtime library of zserio, a serialization framework for binary data | 2.20.0 | `apk add zserio` | `qnx-test-zserio` | – |
 | [`zstd`](../ports/zstd/) | Fast real-time lossless compression library (Zstandard) | 1.5.6 | `apk add zstd` | `qnx-test-zstd` | x86✅ᵛ a64✅ᵛ |
 
-### Dependent (595)
+### Dependent (614)
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
@@ -493,6 +495,8 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`cairo`](../ports/cairo/) | 2D vector graphics library with multiple output backends | 1.18.2 | `apk add cairo` | fontconfig freetype glib libpng libx11 libxext libxrender lzo pixman zlib | pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo | `qnx-test-cairo` | x86✅ᵛ a64✅ᵛ |
 | [`can-utils`](../ports/can-utils/) | SocketCAN tools: candump, cansend, cangen, canplayer, cansniffer, canbusload, log converters | 2025.01 | `apk add can-utils` | qnx-socketcan | qnx-socketcan | `qnx-test-can-utils` | x86✅ᵛ a64✅ᵛ |
 | [`candb`](../ports/candb/) | Library for parsing CAN bus database description formats | 0.1-git-20210625 | `apk add candb` | – | tl-expected | `qnx-test-candb` | – |
+| [`cannelloni`](../ports/cannelloni/) | SocketCAN over Ethernet tunnel (UDP or TCP) between two CAN buses | 2.1.2 | `apk add cannelloni` | qnx-socketcan | qnx-socketcan | `qnx-test-cannelloni` | x86✅ᵛ a64✅ᵛ |
+| [`canopennode`](../ports/canopennode/) | CANopen protocol stack with the canopend device and the cocomm command client (CiA 301, 305, 309-3) | 4.0 | `apk add canopennode` | qnx-socketcan | qnx-socketcan | `qnx-test-canopennode` | x86✅ᵛ a64✅ᵛ |
 | [`capicxx-someip-runtime`](../ports/capicxx-someip-runtime/) | COVESA CommonAPI C++ SOME/IP binding runtime | 3.2.4 | `apk add capicxx-someip-runtime` | capicxx-core-runtime vsomeip | capicxx-core-runtime vsomeip | `qnx-test-capicxx-someip-runtime` | x86✅ᵛ a64✅ᵛ |
 | [`capnproto`](../ports/capnproto/) | Cap'n Proto data serialization format and capability-based RPC system | 1.0.2 | `apk add capnproto` | openssl zlib | zlib openssl | `qnx-test-capnproto` | x86✅ᵛ a64✅ᵛ |
 | [`cartographer`](../ports/cartographer/) | Real-time 2D and 3D SLAM library across multiple platforms and sensors | 2.0.0 | `apk add cartographer` | abseil boost cairo ceres-solver gflags glog lua5.3 protobuf | abseil boost ceres-solver eigen glog gflags lua5.3 protobuf cairo | `qnx-test-cartographer` | x86✅ᵛ a64✅ᵛ |
@@ -797,16 +801,23 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-absl-py`](../ports/python3-absl-py/) | Abseil Python common libraries: command-line flags, logging, app and test helpers | 2.5.1 | `apk add python3-absl-py` | – | python3 | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
 | [`python3-appdirs`](../ports/python3-appdirs/) | The platform's user data directories (platformdirs' predecessor) | 1.4.4 | `apk add python3-appdirs` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-argcomplete`](../ports/python3-argcomplete/) | Bash tab completion for argparse | 3.7.2 | `apk add python3-argcomplete` | – | python3 | `qnx-test-python3-colcon-common-extensions` | x86✅ᵛ a64✅ᵛ |
+| [`python3-argparse-addons`](../ports/python3-argparse-addons/) | Additional argparse types and actions for Python | 0.12.0 | `apk add python3-argparse-addons` | – | python3 | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-astor`](../ports/python3-astor/) | Python module for reading, rewriting and writing Python ASTs as source | 0.8.1 | `apk add python3-astor` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-async-generator`](../ports/python3-async-generator/) | Python async generators and async context managers backport | 1.10 | `apk add python3-async-generator` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-attrs`](../ports/python3-attrs/) | Classes without boilerplate | 26.1.0 | `apk add python3-attrs` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-beniget`](../ports/python3-beniget/) | Static analysis of Python code: definition-use chains on a gast tree | 0.5.0 | `apk add python3-beniget` | – | python3 python3-gast | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
+| [`python3-bitstruct`](../ports/python3-bitstruct/) | Pack and unpack values as bit fields into bytes for Python | 8.24.0 | `apk add python3-bitstruct` | – | python3 | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-boto3`](../ports/python3-boto3/) | The AWS SDK for Python | 1.43.123 | `apk add python3-boto3` | – | python3 python3-botocore python3-s3transfer python3-jmespath | `qnx-test-python3-boto3` | x86✅ᵛ a64✅ᵛ |
 | [`python3-botocore`](../ports/python3-botocore/) | Low-level, data-driven core of boto 3 | 1.43.123 | `apk add python3-botocore` | – | python3 python3-jmespath python3-dateutil python3-urllib3 | `qnx-test-python3-boto3` | x86✅ᵛ a64✅ᵛ |
 | [`python3-bracex`](../ports/python3-bracex/) | Bash-style brace expansion for Python | 3.2.1 | `apk add python3-bracex` | – | python3 | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
 | [`python3-build`](../ports/python3-build/) | A simple PEP 517 package builder (pyproject-build) | 1.6.1 | `apk add python3-build` | – | python3 python3-packaging python3-pyproject-hooks | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cairo`](../ports/python3-cairo/) | Python bindings for the cairo 2D graphics library | 1.29.2 | `apk add python3-cairo` | cairo python3 | python3 cairo | `qnx-test-python3-cairo` | x86✅ᵛ a64✅ᵛ |
 | [`python3-calver`](../ports/python3-calver/) | Calendar versioning for setuptools | 2025.10.20 | `apk add python3-calver` | – | python3 | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
+| [`python3-can`](../ports/python3-can/) | Controller Area Network interface module for Python (python-can), with a SocketCAN interface for QNX | 4.6.1 | `apk add python3-can` | – | python3 python3-wrapt python3-packaging python3-typing-extensions qnx-socketcan | `qnx-test-python3-can` | x86✅ᵛ a64✅ᵛ |
+| [`python3-can-isotp`](../ports/python3-can-isotp/) | ISO-TP (ISO 15765-2) transport protocol for Python | 2.0.7 | `apk add python3-can-isotp` | – | python3 python3-can | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
+| [`python3-can-j1939`](../ports/python3-can-j1939/) | SAE J1939 protocol stack for Python | 2.0.12 | `apk add python3-can-j1939` | – | python3 python3-can numpy | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
+| [`python3-canmatrix`](../ports/python3-canmatrix/) | CAN matrix (database) conversion and comparison for Python: canconvert, cancompare | 1.3.3 | `apk add python3-canmatrix` | – | python3 python3-attrs python3-click | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
+| [`python3-cantools`](../ports/python3-cantools/) | CAN bus tools for Python: DBC, KCD, SYM, ARXML and CDD databases, message encoding and decoding | 45.1.2 | `apk add python3-cantools` | – | python3 python3-bitstruct python3-can python3-textparser python3-argparse-addons python3-crccheck | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-catkin-pkg`](../ports/python3-catkin-pkg/) | Library for catkin packages (package.xml parsing) | 1.1.1 | `apk add python3-catkin-pkg` | – | python3 python3-dateutil python3-docutils python3-packaging python3-pyparsing | `qnx-test-python3-colcon-common-extensions` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cattrs`](../ports/python3-cattrs/) | Structuring and unstructuring of attrs classes and dataclasses | 26.2.1 | `apk add python3-cattrs` | – | python3 python3-attrs python3-typing-extensions | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cffi`](../ports/python3-cffi/) | C foreign function interface for Python (ABI and API mode, on libffi) | 2.1.1 | `apk add python3-cffi` | libffi | python3 libffi python3-cparser | `qnx-test-python3-cffi` | x86✅ᵛ a64✅ᵛ |
@@ -837,6 +848,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-coverage`](../ports/python3-coverage/) | Code coverage measurement for Python | 7.17.0 | `apk add python3-coverage` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cparser`](../ports/python3-cparser/) | C parser in pure Python (cffi parses C declarations with it) | 3.12 | `apk add python3-cparser` | – | python3 | `qnx-test-python3-cffi` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cppy`](../ports/python3-cppy/) | C++ helper headers for writing Python C extensions | 1.3.1 | `apk add python3-cppy` | – | python3 python3-setuptools | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
+| [`python3-crccheck`](../ports/python3-crccheck/) | CRC and checksum calculation library for Python | 1.3.1 | `apk add python3-crccheck` | – | python3 | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-curio`](../ports/python3-curio/) | Coroutine-based Python library for concurrent systems programming | 1.6_git20251221 | `apk add python3-curio` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-cycler`](../ports/python3-cycler/) | Composable style cycles for Python (matplotlib's property cycler) | 0.12.1 | `apk add python3-cycler` | – | python3 | `qnx-test-python3-matplotlib` | x86✅ᵛ a64✅ᵛ |
 | [`python3-dateutil`](../ports/python3-dateutil/) | Python extensions to the standard datetime module | 2.9.0.post0 | `apk add python3-dateutil` | – | python3 python3-six | `qnx-test-python3-dateutil` | – |
@@ -858,6 +870,8 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-flake8-import-order`](../ports/python3-flake8-import-order/) | flake8 plugin that checks the order of import statements | 0.19.2 | `apk add python3-flake8-import-order` | – | python3 python3-pycodestyle python3-setuptools python3-flake8 | `qnx-test-python3-flake8` | x86✅ᵛ a64✅ᵛ |
 | [`python3-flake8-quotes`](../ports/python3-flake8-quotes/) | flake8 plugin that checks string quote consistency | 3.4.0 | `apk add python3-flake8-quotes` | – | python3 python3-flake8 python3-setuptools | `qnx-test-python3-flake8` | x86✅ᵛ a64✅ᵛ |
 | [`python3-flaky`](../ports/python3-flaky/) | A pytest plugin that reruns flaky tests | 3.8.1 | `apk add python3-flaky` | – | python3 python3-pytest | `qnx-test-python3-pytest-plugins` | x86✅ᵛ a64✅ᵛ |
+| [`python3-flexcache`](../ports/python3-flexcache/) | Cache on disk for files converted by Python, keyed by modification time or content | 0.3 | `apk add python3-flexcache` | – | python3 python3-typing-extensions | `qnx-test-python3-canapps` | x86❌ᵛ a64❌ᵛ |
+| [`python3-flexparser`](../ports/python3-flexparser/) | Parsing made fun, using typing, for Python | 0.4 | `apk add python3-flexparser` | – | python3 python3-typing-extensions | `qnx-test-python3-canapps` | x86❌ᵛ a64❌ᵛ |
 | [`python3-flit-core`](../ports/python3-flit-core/) | The PEP 517 build backend of Flit | 4.2.0 | `apk add python3-flit-core` | – | python3 | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
 | [`python3-fonttools`](../ports/python3-fonttools/) | Library to manipulate font files from Python | 4.68.0 | `apk add python3-fonttools` | – | python3 | `qnx-test-python3-matplotlib` | x86✅ᵛ a64✅ᵛ |
 | [`python3-fs`](../ports/python3-fs/) | PyFilesystem2: a common interface to memory, OS, archive and other filesystems | 2.4.16 | `apk add python3-fs` | – | python3 python3-appdirs python3-setuptools python3-six | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
@@ -883,11 +897,13 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-msgpack`](../ports/python3-msgpack/) | MessagePack binary serialisation for Python, with its C extension | 1.2.4 | `apk add python3-msgpack` | – | python3 | `qnx-test-python3-msgpack-zstandard` | x86✅ᵛ a64✅ᵛ |
 | [`python3-mypy-extensions`](../ports/python3-mypy-extensions/) | Type system extensions for programs checked with mypy | 1.1.0 | `apk add python3-mypy-extensions` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-netifaces`](../ports/python3-netifaces/) | Portable network interface information for Python | 0.11.0 | `apk add python3-netifaces` | – | python3 | `qnx-test-python3-netifaces` | x86✅ᵛ a64✅ᵛ |
+| [`python3-obd`](../ports/python3-obd/) | OBD-II serial module for reading engine data through an ELM327 adapter (python-OBD) | 0.7.3 | `apk add python3-obd` | – | python3 python3-pyserial python3-pint | `qnx-test-python3-canapps` | x86❌ᵛ a64❌ᵛ |
 | [`python3-opt-einsum`](../ports/python3-opt-einsum/) | Optimised tensor contraction order for einsum expressions | 3.4.0 | `apk add python3-opt-einsum` | – | python3 | `qnx-test-python3-pylibs-b` | x86✅ᵛ a64✅ᵛ |
 | [`python3-packaging`](../ports/python3-packaging/) | Core utilities for Python packages: versions, specifiers, markers | 25.0 | `apk add python3-packaging` | – | python3 | `qnx-test-python3-packaging` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pathspec`](../ports/python3-pathspec/) | Gitignore-style path pattern matching | 1.1.1 | `apk add python3-pathspec` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pexpect`](../ports/python3-pexpect/) | Drives interactive child programs through a pseudo terminal | 4.9.0 | `apk add python3-pexpect` | – | python3 python3-ptyprocess | `qnx-test-python3-pexpect` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pillow`](../ports/python3-pillow/) | Python Imaging Library (fork): image processing and file formats | 13.0.0 | `apk add python3-pillow` | freetype lcms2 libjpeg-turbo libraqm libtiff libwebp openjpeg zlib | python3 zlib libjpeg-turbo freetype libtiff libwebp lcms2 openjpeg libraqm | `qnx-test-python3-pillow` | x86✅ᵛ a64✅ᵛ |
+| [`python3-pint`](../ports/python3-pint/) | Physical quantities for Python: units, conversions, dimensional analysis | 0.24.4 | `apk add python3-pint` | – | python3 python3-flexcache python3-flexparser python3-platformdirs python3-typing-extensions | `qnx-test-python3-canapps` | x86❌ᵛ a64❌ᵛ |
 | [`python3-pip`](../ports/python3-pip/) | Python package installer | 25.1.1 | `apk add python3-pip` | – | python3 | `qnx-test-python3-pip` | x86✅ᵛ a64✅ᵛ |
 | [`python3-platformdirs`](../ports/python3-platformdirs/) | The platform's user and site data/config/cache directories | 4.14.3 | `apk add python3-platformdirs` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pluggy`](../ports/python3-pluggy/) | Plugin and hook calling mechanism for Python (used by pytest) | 1.7.0 | `apk add python3-pluggy` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
@@ -904,6 +920,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-pyparsing`](../ports/python3-pyparsing/) | Classes and methods to define and execute parsing grammars | 3.3.3 | `apk add python3-pyparsing` | – | python3 | `qnx-test-python3-colcon-common-extensions` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pyproject-hooks`](../ports/python3-pyproject-hooks/) | Calls PEP 517 build backend hooks | 1.3.3 | `apk add python3-pyproject-hooks` | – | python3 | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pyproject-metadata`](../ports/python3-pyproject-metadata/) | PEP 621 metadata from pyproject.toml | 0.12.1 | `apk add python3-pyproject-metadata` | – | python3 python3-packaging | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
+| [`python3-pyserial`](../ports/python3-pyserial/) | Python serial port extension | 3.5 | `apk add python3-pyserial` | – | python3 | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pytest`](../ports/python3-pytest/) | Python testing framework | 9.2.0 | `apk add python3-pytest` | – | python3 python3-iniconfig python3-packaging python3-pluggy python3-pygments | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pytest-cov`](../ports/python3-pytest-cov/) | pytest plugin for measuring code coverage | 7.1.0 | `apk add python3-pytest-cov` | – | python3 python3-pytest python3-coverage python3-pluggy | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-pytest-mock`](../ports/python3-pytest-mock/) | The mocker fixture for pytest | 3.17.0 | `apk add python3-pytest-mock` | – | python3 python3-pytest | `qnx-test-python3-pytest-plugins` | x86✅ᵛ a64✅ᵛ |
@@ -917,6 +934,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-rosdistro`](../ports/python3-rosdistro/) | Library for ROS distribution files (index, distributions, caches) | 1.1.0 | `apk add python3-rosdistro` | – | python3 python3-packaging python3-pyyaml python3-setuptools python3-catkin-pkg python3-rospkg | `qnx-test-python3-ros-tools` | x86✅ᵛ a64✅ᵛ |
 | [`python3-rospkg`](../ports/python3-rospkg/) | ROS package library: package and stack lookup, OS detection | 1.6.3 | `apk add python3-rospkg` | – | python3 python3-catkin-pkg python3-pyyaml python3-distro | `qnx-test-python3-ros-tools` | x86✅ᵛ a64✅ᵛ |
 | [`python3-s3transfer`](../ports/python3-s3transfer/) | An Amazon S3 Transfer Manager | 0.19.3 | `apk add python3-s3transfer` | – | python3 python3-botocore | `qnx-test-python3-boto3` | x86✅ᵛ a64✅ᵛ |
+| [`python3-scapy`](../ports/python3-scapy/) | Interactive packet manipulation program and library for Python | 2.8.0 | `apk add python3-scapy` | – | python3 | `qnx-test-python3-canapps` | x86❌ᵛ a64❌ᵛ |
 | [`python3-scikit-build-core`](../ports/python3-scikit-build-core/) | The PEP 517 build backend for CMake projects | 1.1.2 | `apk add python3-scikit-build-core` | – | python3 python3-packaging python3-pathspec | `qnx-test-python3-pybuild` | x86✅ᵛ a64✅ᵛ |
 | [`python3-scipy`](../ports/python3-scipy/) | Scientific computing for Python: linear algebra, optimisation, FFT, signal processing, statistics | 1.18.1 | `apk add python3-scipy` | openblas python3 | numpy openblas pythran pybind11 | `qnx-test-python3-scipy` | x86✅ᵛ a64✅ᵛ |
 | [`python3-setuptools`](../ports/python3-setuptools/) | Python library and tools for building and distributing packages | 80.8.0 | `apk add python3-setuptools` | – | python3 | `qnx-test-python3-setuptools` | x86✅ᵛ a64✅ᵛ |
@@ -926,6 +944,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-snowballstemmer`](../ports/python3-snowballstemmer/) | Snowball stemming algorithms in pure Python | 3.1.1 | `apk add python3-snowballstemmer` | – | python3 | `qnx-test-python3-flake8` | x86✅ᵛ a64✅ᵛ |
 | [`python3-sortedcontainers`](../ports/python3-sortedcontainers/) | Sorted list, dict and set types in pure Python | 2.4.0 | `apk add python3-sortedcontainers` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-sounddevice`](../ports/python3-sounddevice/) | Play and record sound with Python through PortAudio | 0.5.6 | `apk add python3-sounddevice` | – | python3 portaudio python3-cffi | `qnx-test-python3-sounddevice` | x86✅ᵛ a64✅ᵛ |
+| [`python3-textparser`](../ports/python3-textparser/) | Text parser library for Python | 0.26.2 | `apk add python3-textparser` | – | python3 | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-time-machine`](../ports/python3-time-machine/) | Mocks the clock in Python tests (time-machine, a C extension) | 3.6.0 | `apk add python3-time-machine` | – | python3 | `qnx-test-python3-pytest-plugins` | x86✅ᵛ a64✅ᵛ |
 | [`python3-tomli`](../ports/python3-tomli/) | A TOML parser | 2.5.0 | `apk add python3-tomli` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-tornado`](../ports/python3-tornado/) | Python web framework and asynchronous networking library | 6.6 | `apk add python3-tornado` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
@@ -934,10 +953,12 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`python3-typeguard`](../ports/python3-typeguard/) | Run-time type checking | 4.6.0 | `apk add python3-typeguard` | – | python3 python3-typing-extensions | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-typing-extensions`](../ports/python3-typing-extensions/) | Backported and experimental type hints (typing_extensions) | 4.16.0 | `apk add python3-typing-extensions` | – | python3 | `qnx-test-python3-pylibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-tzdata`](../ports/python3-tzdata/) | IANA time zone database as a Python package | 2025.2 | `apk add python3-tzdata` | – | python3 | `qnx-test-python3-tzdata` | x86✅ᵛ a64✅ᵛ |
+| [`python3-udsoncan`](../ports/python3-udsoncan/) | Unified Diagnostic Services (ISO 14229) client for Python | 1.26.1 | `apk add python3-udsoncan` | – | python3 python3-can-isotp | `qnx-test-python3-canlibs` | x86✅ᵛ a64✅ᵛ |
 | [`python3-urllib3`](../ports/python3-urllib3/) | HTTP library with thread-safe connection pooling, file post, and more | 2.8.0 | `apk add python3-urllib3` | – | python3 | `qnx-test-python3-boto3` | x86✅ᵛ a64✅ᵛ |
 | [`python3-versioneer`](../ports/python3-versioneer/) | Python tool for deriving version strings from version-control tags | 0.29 | `apk add python3-versioneer` | – | python3 | `qnx-test-pymods` | x86✅ᵛ a64✅ᵛ |
 | [`python3-virtualenv`](../ports/python3-virtualenv/) | Isolated Python environments | 20.39.1 | `apk add python3-virtualenv` | – | python3 python3-distlib python3-filelock python3-platformdirs | `qnx-test-python3-virtualenv` | x86✅ᵛ a64✅ᵛ |
 | [`python3-wheel`](../ports/python3-wheel/) | Command line tool and library for the Python wheel package format | 0.46.1 | `apk add python3-wheel` | – | python3 python3-packaging | `qnx-test-python3-wheel` | x86✅ᵛ a64✅ᵛ |
+| [`python3-wrapt`](../ports/python3-wrapt/) | Module for decorators, wrappers and monkey patching | 2.5.2 | `apk add python3-wrapt` | – | python3 | `qnx-test-python3-can` | x86✅ᵛ a64✅ᵛ |
 | [`python3-zstandard`](../ports/python3-zstandard/) | Zstandard compression bindings for Python (C backend on the system zstd) | 0.25.0 | `apk add python3-zstandard` | zstd | python3 zstd | `qnx-test-python3-msgpack-zstandard` | x86✅ᵛ a64✅ᵛ |
 | [`pythran`](../ports/pythran/) | Ahead-of-time compiler of Python/numpy kernels to C++ extension modules | 0.19.0 | `apk add pythran` | – | python3 python3-ply python3-setuptools python3-gast python3-beniget numpy | `qnx-test-python3-buildtools` | x86✅ᵛ a64✅ᵛ |
 | [`pytorch`](../ports/pytorch/) | PyTorch tensor computation and deep learning library | 2.3.1 | `apk add pytorch` | abseil openblas protobuf | python3 protobuf openblas | `qnx-test-torch` | x86✅ᵛ a64✅ᵛ |

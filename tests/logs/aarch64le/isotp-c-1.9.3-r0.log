@@ -1,0 +1,49 @@
+# isotp-c 1.9.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T08:43:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u isotp-c qnx-test-isotp-c qnx-port-tests
+(1/2) Installing isotp-c (1.9.3-r0)
+(2/2) Installing qnx-test-isotp-c (1.0-r0)
+OK: 979.9 MiB in 166 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_isotp_c
+     == isotp-c ==
+       ok   isotp_receive on an idle link: ISOTP_RET_NO_DATA
+       ok   send 3 bytes
+       ok   one Single Frame 03 01 02 03, padded with AA, id 7E0
+       ok   the peer receives the 3 bytes
+       ok   send 20 bytes
+       ok   a second send during the transfer: ISOTP_RET_INPROGRESS
+       ok   four frames on the bus (FF, FC, CF, CF)
+       ok   First Frame 10 14 + 6 data bytes
+       ok   Flow Control 30 08 00 from the receiver (id 7E8)
+       ok   Consecutive Frame 21 + 7 data bytes
+       ok   Consecutive Frame 22 + the last 7 bytes
+       ok   the peer receives the 20 bytes
+       ok   the sender is idle again
+       ok   send 300 bytes A -> B
+       ok   B receives the 300 bytes
+       info 300 bytes: 49 frames, 6 Flow Control
+       ok   1 First Frame, 42 Consecutive Frames, 6 Flow Control frames (block size 8)
+       ok   send 300 bytes B -> A
+       ok   A receives the 300 bytes
+       ok   TX_DL 64 (CAN FD)
+       ok   TX_DL 9 is refused
+       ok   send 100 bytes with 64-byte frames
+       ok   one 64-byte First Frame 10 64 and one Consecutive Frame
+       ok   the peer receives the 100 bytes
+       ok   a message larger than the send buffer: ISOTP_RET_OVERFLOW
+       ok   send 50 bytes on a bus without a receiver
+       ok   still waiting for Flow Control after 50 ms
+       ok   after the timeout: ISOTP_SEND_STATUS_ERROR, ISOTP_PROTOCOL_RESULT_TIMEOUT_BS
+       ok   only the First Frame was sent
+     PASS isotp-c
+PASS test_isotp_c
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

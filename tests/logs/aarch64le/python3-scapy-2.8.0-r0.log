@@ -1,0 +1,26 @@
+# python3-scapy 2.8.0-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-11T20:59:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-scapy qnx-test-python3-canapps qnx-port-tests
+( 1/11) Installing libpcap (1.10.5-r1)
+( 2/11) Installing python3-scapy (2.8.0-r0)
+( 3/11) Installing python3-typing-extensions (4.16.0-r0)
+( 4/11) Installing python3-flexcache (0.3-r0)
+( 5/11) Installing python3-flexparser (0.4-r0)
+( 6/11) Installing python3-platformdirs (4.14.3-r0)
+( 7/11) Installing python3-pint (0.24.4-r0)
+( 8/11) Installing python3-pyserial (3.5-r0)
+( 9/11) Installing python3-obd (0.7.3-r0)
+(10/11) Installing qnx-socketcan (1.0-r2)
+(11/11) Installing qnx-test-python3-canapps (1.0-r0)
+Executing python3-3.14.0-r3.trigger
+OK: 986.6 MiB in 157 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canapps
+sh: /usr/local/bin/qnx-port-tests/run-on-target.sh: cannot execute - No such file or directory
+
+RESULT: FAIL

@@ -1,0 +1,67 @@
+socketcan interface on QNX: CAN sockets of qnx-socketcan, no CAN_BCM
+
+QNX 8.0 has no PF_CAN and Python no socket.AF_CAN. On QNX create_socket()
+returns can/interfaces/socketcan/qnx.py's CanSocket (added by the recipe from
+files/qnx.py: libqsocketcan through ctypes), find_available_interfaces() asks
+qcand, and send_periodic() uses the thread-based task (no CAN_BCM).
+
+Upstream-Status: QNX-specific
+
+--- a/can/interfaces/socketcan/socketcan.py
++++ b/can/interfaces/socketcan/socketcan.py
+@@ -12,6 +12,7 @@
+ import select
+ import socket
+ import struct
++import sys
+ import threading
+ import time
+ import warnings
+@@ -582,7 +583,13 @@
+     """Creates a raw CAN socket. The socket will
+     be returned unbound to any interface.
+     """
+-    sock = socket.socket(constants.PF_CAN, socket.SOCK_RAW, constants.CAN_RAW)
++    if sys.platform.startswith("qnx"):
++        # QNX: no PF_CAN in the network stack; the socket is qnx-socketcan's
++        from can.interfaces.socketcan.qnx import CanSocket
++
++        sock = CanSocket()
++    else:
++        sock = socket.socket(constants.PF_CAN, socket.SOCK_RAW, constants.CAN_RAW)
+ 
+     log.info("Created a socket")
+ 
+@@ -936,6 +943,17 @@
+             general the message will be sent at the given rate until at
+             least *duration* seconds.
+         """
++        if sys.platform.startswith("qnx"):
++            # QNX: qnx-socketcan has no CAN_BCM; python-can's own cyclic task
++            return BusABC._send_periodic_internal(
++                self,
++                msgs=msgs,
++                period=period,
++                duration=duration,
++                autostart=autostart,
++                modifier_callback=modifier_callback,
++            )
++
+         if modifier_callback is None:
+             msgs = LimitedDurationCyclicSendTaskABC._check_and_convert_messages(  # pylint: disable=protected-access
+                 msgs
+--- a/can/interfaces/socketcan/utils.py
++++ b/can/interfaces/socketcan/utils.py
+@@ -46,6 +46,12 @@
+ 
+     :return: The list of available and active CAN interfaces or an empty list of the command failed
+     """
++    if sys.platform.startswith("qnx"):
++        # QNX: the interfaces of qnx-socketcan's qcand
++        from can.interfaces.socketcan.qnx import find_interfaces
++
++        return find_interfaces()
++
+     if sys.platform != "linux":
+         return []
+ 

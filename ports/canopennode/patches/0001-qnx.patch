@@ -1,0 +1,186 @@
+QNX has no linux/net_tstamp.h, asm/socket.h, endian.h, linux/reboot.h, bits/getopt_core.h, EPOLLONESHOT or HOST_NAME_MAX, and its getopt() does not permute: take the receive time from SO_TIMESTAMP (qnx-socketcan), define the byte order, re-arm the command listener by hand, hand a reboot to shutdown, and accept the device name before the options.
+
+Upstream-Status: QNX-specific
+
+--- a/cocomm/cocomm.c
++++ b/cocomm/cocomm.c
+@@ -27,7 +27,9 @@
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <unistd.h>
++#ifndef __QNX__
+ #include <bits/getopt_core.h>
++#endif
+ #include <string.h>
+ #include <netdb.h>
+ #include <limits.h>
+@@ -38,6 +40,10 @@
+ #include <linux/can.h>
+ #include <signal.h>
+ 
++#ifndef HOST_NAME_MAX
++#define HOST_NAME_MAX 255 /* QNX: _POSIX_HOST_NAME_MAX only */
++#endif
++
+ #ifndef BUF_SIZE
+ #define BUF_SIZE 1000
+ #endif
+--- a/CO_driver.c
++++ b/CO_driver.c
+@@ -31,9 +31,11 @@
+ #include <syslog.h>
+ #include <linux/can/raw.h>
+ #include <linux/can/error.h>
+-#include <linux/net_tstamp.h>
+ #include <sys/socket.h>
++#ifndef __QNX__
++#include <linux/net_tstamp.h>
+ #include <asm/socket.h>
++#endif
+ #include <sys/eventfd.h>
+ #include <time.h>
+ 
+@@ -321,9 +323,15 @@
+ 
+     /* enable software time stamp mode (hardware timestamps do not work properly
+      * on all devices)*/
++#ifdef __QNX__
++    /* qnx-socketcan stamps frames in software: SO_TIMESTAMP, a struct timeval */
++    tmp = 1;
++    ret = setsockopt(interface->fd, SOL_SOCKET, SO_TIMESTAMP, &tmp, sizeof(tmp));
++#else
+     tmp = (SOF_TIMESTAMPING_SOFTWARE |
+            SOF_TIMESTAMPING_RX_SOFTWARE);
+     ret = setsockopt(interface->fd, SOL_SOCKET, SO_TIMESTAMPING, &tmp, sizeof(tmp));
++#endif
+     if (ret < 0) {
+         log_printf(LOG_DEBUG, DBG_ERRNO, "setsockopt(timestamping)");
+         return CO_ERROR_SYSCALL;
+@@ -855,10 +863,19 @@
+     for (cmsg = CMSG_FIRSTHDR(&msghdr);
+          cmsg && (cmsg->cmsg_level == SOL_SOCKET);
+          cmsg = CMSG_NXTHDR(&msghdr, cmsg)) {
++#ifdef __QNX__
++        if (cmsg->cmsg_type == SCM_TIMESTAMP || cmsg->cmsg_type == SO_TIMESTAMP) {
++            struct timeval tv;
++            memcpy(&tv, CMSG_DATA(cmsg), sizeof(tv));
++            timestamp->tv_sec = tv.tv_sec;
++            timestamp->tv_nsec = tv.tv_usec * 1000;
++        }
++#else
+         if (cmsg->cmsg_type == SO_TIMESTAMPING) {
+             /* this is system time, not monotonic time! */
+             *timestamp = ((struct timespec*)CMSG_DATA(cmsg))[0];
+         }
++#endif
+         else if (cmsg->cmsg_type == SO_RXQ_OVFL) {
+             dropped = *(uint32_t*)CMSG_DATA(cmsg);
+             if (dropped > CANmodule->rxDropCount) {
+--- a/CO_driver_target.h
++++ b/CO_driver_target.h
+@@ -37,7 +37,22 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
++#ifdef __QNX__
++/* QNX has no <endian.h>; its targets (x86_64, aarch64le) are little-endian */
++#include <sys/platform.h>
++#ifndef __LITTLE_ENDIAN
++#define __LITTLE_ENDIAN 1234
++#define __BIG_ENDIAN 4321
++#endif
++#ifndef __BYTE_ORDER
++#ifdef __BIGENDIAN__
++#error "big-endian QNX target not supported"
++#endif
++#define __BYTE_ORDER __LITTLE_ENDIAN
++#endif
++#else
+ #include <endian.h>
++#endif
+ #ifndef CO_SINGLE_THREAD
+ #include <pthread.h>
+ #endif
+--- a/CO_epoll_interface.c
++++ b/CO_epoll_interface.c
+@@ -380,6 +380,12 @@
+     return nWritten;
+ }
+ 
++#ifdef __QNX__
++/* QNX's epoll has no EPOLLONESHOT: the listening socket is taken out of the
++ * epoll set while a connection is open and added again afterwards. */
++#define EPOLLONESHOT 0
++#endif
++
+ static inline void socetAcceptEnableForEpoll(CO_epoll_gtw_t *epGtw) {
+     struct epoll_event ev;
+     int ret;
+@@ -387,6 +393,11 @@
+     ev.events = EPOLLIN | EPOLLONESHOT;
+     ev.data.fd = epGtw->gtwa_fdSocket;
+     ret = epoll_ctl(epGtw->epoll_fd, EPOLL_CTL_MOD, ev.data.fd, &ev);
++#ifdef __QNX__
++    if (ret < 0) {
++        ret = epoll_ctl(epGtw->epoll_fd, EPOLL_CTL_ADD, ev.data.fd, &ev);
++    }
++#endif
+     if (ret < 0) {
+         log_printf(LOG_CRIT, DBG_ERRNO, "epoll_ctl(gtwa_fdSocket)");
+     }
+@@ -598,6 +609,12 @@
+                     fail = true;
+                     log_printf(LOG_CRIT, DBG_ERRNO, "epoll_ctl(add, gtwa_fd)");
+                 }
++#ifdef __QNX__
++                else {
++                    (void)epoll_ctl(ep->epoll_fd, EPOLL_CTL_DEL,
++                                    epGtw->gtwa_fdSocket, NULL);
++                }
++#endif
+                 epGtw->socketTimeoutTmr_us = 0;
+             }
+ 
+--- a/CO_main_basic.c
++++ b/CO_main_basic.c
+@@ -34,8 +34,10 @@
+ #include <time.h>
+ #include <sys/epoll.h>
+ #include <net/if.h>
++#ifndef __QNX__
+ #include <linux/reboot.h>
+ #include <sys/reboot.h>
++#endif
+ 
+ #include "CANopen.h"
+ #include "OD.h"
+@@ -336,6 +338,15 @@
+         printUsage(argv[0]);
+         exit(EXIT_SUCCESS);
+     }
++#ifdef __QNX__
++    /* QNX's getopt() does not permute: "canopend <CAN device> [options]"
++     * would stop at the device name. Move a leading device name to the end. */
++    if (argc > 2 && argv[1][0] != '-') {
++        char *dev = argv[1];
++        for (int i = 1; i < argc - 1; i++) argv[i] = argv[i + 1];
++        argv[argc - 1] = dev;
++    }
++#endif
+     while((opt = getopt(argc, argv, "i:p:rc:T:s:")) != -1) {
+         switch (opt) {
+             case 'i': {
+@@ -777,7 +788,13 @@
+     /* Flush all buffers (and reboot) */
+     if(rebootEnable && reset == CO_RESET_APP) {
+         sync();
++#ifdef __QNX__
++        /* no reboot(2) on QNX: hand over to the system's shutdown utility */
++        execlp("shutdown", "shutdown", (char *)NULL);
++        {
++#else
+         if(reboot(LINUX_REBOOT_CMD_RESTART) != 0) {
++#endif
+             log_printf(LOG_CRIT, DBG_ERRNO, "reboot()");
+             exit(EXIT_FAILURE);
+         }

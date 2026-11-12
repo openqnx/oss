@@ -1,0 +1,80 @@
+# python3-can-isotp 2.0.7-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T08:24:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-can-isotp qnx-test-python3-canlibs qnx-port-tests
+OK: 979.9 MiB in 164 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canlibs
+     == python3-canlibs ==
+       ok   bitstruct: pack('u1u3u4s16', 1, 2, 3, -4) is a3fffc (Python and C)
+       ok   bitstruct: unpack gives (1, 2, 3, -4)
+       ok   bitstruct: float, text and raw fields; byteswap; calcsize
+       ok   bitstruct.c: a compiled format packs and unpacks
+       ok   crccheck: CRC-32 cbf43926, CRC-16/CCITT-FALSE 29b1, CRC-8 f4, CRC-16/MODBUS 4b37
+       ok   crccheck: incremental CRC, calcbytes, 8-bit checksum 221
+       ok   argparse_addons: Integer(0, 255) parses 0x10
+       ok   argparse_addons: 256 is refused (256 is not in the range 0..255)
+       ok   textparser: 'Hello, World!' parses into its tokens: ['Hello', [[',', 'World']], '!']
+       ok   textparser: a syntax error is reported at line 1, column 8 (Invalid syntax at line 1, column 8: "Hello, >>!<<!")
+       ok   cantools: the DBC loads: three messages, ExtMsg extended 18FEEEFE
+       ok   cantools: EngineData encodes to e02e82372f123400: e02e82372f123400
+       ok   cantools: and decodes back (3000 rpm, 90 degC, -100.5 Nm, Second, 0x1234)
+       ok   cantools: raw values 12000, 130, -201, 2
+       ok   cantools: multiplexed signals: mode 0 -> 00efbe00, mode 1 -> 01fe0000
+       ok   cantools: a value out of range is refused
+       ok   cantools: ExtMsg 3930 is 1234.5 l
+       ok   cantools decode prints the decoded candump line: 0 :: EngineData(EngineSpeed: 3000.0 rpm, CoolantTemp: 90 degC, Torque: -100.5 Nm, Gear: Second, Counter: 4660)
+       ok   cantools: a KCD dump loads again and encodes the same bytes
+       ok   canmatrix: the DBC loads: 3 frames, EngineSpeed 16 bits factor 0.25 rpm, Gear 15 = Reverse
+       ok   canmatrix: EngineData encodes (raw values) to e02e82372f123400: e02e82372f123400
+       ok   canmatrix: and decodes (3000.0, raw torque -201, Second)
+       ok   canconvert DBC -> JSON keeps the three messages INFO - convert - Importing t.dbc ...
+     INFO - convert - Import Done
+     INFO - convert - Exporting t.json ...
+     INFO - convert - 3 Frames found
+     INFO - convert - Export Done
+     
+       ok   canconvert DBC -> SYM and back keeps Torque (12 bits, signed, factor 0.5) INFO - convert - Importing t.dbc ...
+     INFO - convert - Import Done
+     INFO - convert - Exporting t.sym ...
+     INFO - convert - 3 Frames found
+     INFO - convert - Export Done
+     
+       ok   cancompare reports the changed CoolantTemp only
+       ok   isotp: 7 bytes cross as one single frame 7E0#0701020304050607
+       ok   isotp: a 300-byte message is reassembled
+       ok   isotp: on the wire: first frame 11 2C, 42 consecutive frames (21, 22, ...), 6 flow controls 30 08 01 (43/6)
+       ok   isotp: and 100 bytes the other way
+       ok   isotp: with CAN FD the 300 bytes take 5 frames of up to 64 bytes (5)
+       ok   isotp: 29-bit fixed addressing uses id 18DA10F1
+     Reception of FlowControl timed out. Stopping transmission
+       ok   isotp: without a receiver the sender reports FlowControlTimeoutError
+       ok   udsoncan: DiagnosticSessionControl(extended) answers 50 03, P2 2 s
+       ok   udsoncan: ReadDataByIdentifier F190 returns the 17-character VIN (segmented): WQNX0SOCKETCAN017
+       ok   udsoncan: identifier 0102 is 42
+       ok   udsoncan: WriteDataByIdentifier stores BEEF, read back
+       ok   udsoncan: ECUReset(hard) and TesterPresent are 11 01 and 3E 00 on the wire
+     [NegativeResponseException] : ReadDataByIdentifier service execution returned a negative response RequestOutOfRange (0x31)
+       ok   udsoncan: an unsupported identifier raises NegativeResponseException (RequestOutOfRange)
+       ok   j1939: PGN 65226 from source 80 arrives with priority 6 and its 8 bytes: [(6, 65226, 128, b'\x01\x02\x03\x04\x05\x06\x07\x08')]
+       ok   j1939: on the wire it is 18FECA80#0102030405060708
+       ok   j1939: a 20-byte PGN 65251 is reassembled from a BAM session
+       ok   j1939: TP.CM BAM 20 14 00 03 FF E3 FE 00 and three TP.DT frames on the wire
+       ok   j1939: a controller application claims address 90 (18EEFF90 with its NAME)
+       ok   pyserial: the loop:// port echoes
+       ok   pyserial: Serial(/dev/ttyp4, 115200) carries bytes both ways
+       ok   pyserial: 250000 baud (no termios name) is set on the terminal
+       ok   pyserial: rtscts sets and clears IHFLOW|OHFLOW
+       ok   pyserial: in_waiting is 5; read_until; a short read returns after the timeout
+       ok   pyserial: list_ports finds the /dev/ser* devices: ['/dev/ser1']
+     FAILS 0
+     PASS python3-canlibs
+PASS test_python3_canlibs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

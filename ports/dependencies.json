@@ -2586,6 +2586,77 @@
   "unresolved": [],
   "version": "0.1-git-20210625"
  },
+ "cannelloni": {
+  "build_closure": [
+   "qnx-socketcan"
+  ],
+  "build_deps": [
+   "qnx-socketcan"
+  ],
+  "buildsys": "cmake",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/cannelloni"
+   ],
+   "files": 4,
+   "headers": 0,
+   "libs": [
+    "usr/local/lib/libcannelloni-common.so",
+    "usr/local/lib/libcannelloni-common.so.0",
+    "usr/local/lib/libcannelloni-common.so.0.0.1"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "qnx-socketcan"
+  ],
+  "runtime_deps": [
+   "qnx-socketcan"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.1.2"
+ },
+ "canopennode": {
+  "build_closure": [
+   "qnx-socketcan"
+  ],
+  "build_deps": [
+   "qnx-socketcan"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/canopend",
+    "usr/local/bin/cocomm"
+   ],
+   "files": 5,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "qnx-socketcan"
+  ],
+  "runtime_deps": [
+   "qnx-socketcan"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.0"
+ },
  "capicxx-core-runtime": {
   "build_closure": [],
   "build_deps": [],
@@ -12636,6 +12707,29 @@
   "unresolved": [],
   "version": "4.17.0"
  },
+ "isotp-c": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 7,
+   "headers": 4,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.9.3"
+ },
  "itstool": {
   "build_closure": [
    "bzip2",
@@ -13898,6 +13992,32 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.5.1+rpt20250722"
+ },
+ "libcanard": {
+  "build_closure": [],
+  "build_deps": [],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "standalone",
+  "installs": {
+   "bins": [],
+   "files": 6,
+   "headers": 1,
+   "libs": [
+    "usr/local/lib/libcanard.so",
+    "usr/local/lib/libcanard.so.5"
+   ]
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "5.0.0"
  },
  "libcbor": {
   "build_closure": [],
@@ -15937,9 +16057,13 @@
    "bins": [
     "usr/local/bin/pcap-config"
    ],
-   "files": 101,
+   "files": 104,
    "headers": 18,
-   "libs": []
+   "libs": [
+    "usr/local/lib/libpcap.so",
+    "usr/local/lib/libpcap.so.1",
+    "usr/local/lib/libpcap.so.1.10.5"
+   ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
@@ -27231,6 +27355,47 @@
   "unresolved": [],
   "version": "3.7.2"
  },
+ "python3-argparse-addons": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 6,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.12.0"
+ },
  "python3-astor": {
   "build_closure": [
    "bzip2",
@@ -27396,6 +27561,47 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.5.0"
+ },
+ "python3-bitstruct": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "8.24.0"
  },
  "python3-boto3": {
   "build_closure": [
@@ -27718,6 +27924,263 @@
   "undeclared": [],
   "unresolved": [],
   "version": "2025.10.20"
+ },
+ "python3-can": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-packaging",
+   "python3-typing-extensions",
+   "python3-wrapt",
+   "qnx-socketcan",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-wrapt",
+   "python3-packaging",
+   "python3-typing-extensions",
+   "qnx-socketcan"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/can_bridge",
+    "usr/local/bin/can_logconvert",
+    "usr/local/bin/can_logger",
+    "usr/local/bin/can_player",
+    "usr/local/bin/can_viewer"
+   ],
+   "files": 104,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.6.1"
+ },
+ "python3-can-isotp": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-can",
+   "python3-packaging",
+   "python3-typing-extensions",
+   "python3-wrapt",
+   "qnx-socketcan",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-can"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.0.7"
+ },
+ "python3-can-j1939": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "numpy",
+   "openblas",
+   "openssl",
+   "python3",
+   "python3-can",
+   "python3-packaging",
+   "python3-typing-extensions",
+   "python3-wrapt",
+   "qnx-socketcan",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-can",
+   "numpy"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 16,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.0.12"
+ },
+ "python3-canmatrix": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-attrs",
+   "python3-click",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-attrs",
+   "python3-click"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/cancompare",
+    "usr/local/bin/canconvert"
+   ],
+   "files": 57,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.3.3"
+ },
+ "python3-cantools": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-argparse-addons",
+   "python3-bitstruct",
+   "python3-can",
+   "python3-crccheck",
+   "python3-packaging",
+   "python3-textparser",
+   "python3-typing-extensions",
+   "python3-wrapt",
+   "qnx-socketcan",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-bitstruct",
+   "python3-can",
+   "python3-textparser",
+   "python3-argparse-addons",
+   "python3-crccheck"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/cantools"
+   ],
+   "files": 71,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "45.1.2"
  },
  "python3-catkin-pkg": {
   "build_closure": [
@@ -29385,6 +29848,47 @@
   "unresolved": [],
   "version": "1.3.1"
  },
+ "python3-crccheck": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 10,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.3.1"
+ },
  "python3-curio": {
   "build_closure": [
    "bzip2",
@@ -30341,6 +30845,92 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.8.1"
+ },
+ "python3-flexcache": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-typing-extensions",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-typing-extensions"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 14,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.3"
+ },
+ "python3-flexparser": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-typing-extensions",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-typing-extensions"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 18,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.4"
  },
  "python3-flit-core": {
   "build_closure": [
@@ -31565,6 +32155,55 @@
   "unresolved": [],
   "version": "0.11.0"
  },
+ "python3-obd": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-flexcache",
+   "python3-flexparser",
+   "python3-pint",
+   "python3-platformdirs",
+   "python3-pyserial",
+   "python3-typing-extensions",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-pyserial",
+   "python3-pint"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 22,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.7.3"
+ },
  "python3-opt-einsum": {
   "build_closure": [
    "bzip2",
@@ -31829,6 +32468,57 @@
   "undeclared": [],
   "unresolved": [],
   "version": "13.0.0"
+ },
+ "python3-pint": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-flexcache",
+   "python3-flexparser",
+   "python3-platformdirs",
+   "python3-typing-extensions",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-flexcache",
+   "python3-flexparser",
+   "python3-platformdirs",
+   "python3-typing-extensions"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/pint-convert"
+   ],
+   "files": 124,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.24.4"
  },
  "python3-pip": {
   "build_closure": [
@@ -32519,6 +33209,50 @@
   "unresolved": [],
   "version": "0.12.1"
  },
+ "python3-pyserial": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/pyserial-miniterm",
+    "usr/local/bin/pyserial-ports"
+   ],
+   "files": 36,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "3.5"
+ },
  "python3-pytest": {
   "build_closure": [
    "bzip2",
@@ -33144,6 +33878,49 @@
   "unresolved": [],
   "version": "0.19.3"
  },
+ "python3-scapy": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/scapy"
+   ],
+   "files": 407,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.8.0"
+ },
  "python3-scikit-build-core": {
   "build_closure": [
    "bzip2",
@@ -33562,6 +34339,47 @@
   "unresolved": [],
   "version": "0.5.6"
  },
+ "python3-textparser": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 8,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "0.26.2"
+ },
  "python3-time-machine": {
   "build_closure": [
    "bzip2",
@@ -33894,6 +34712,54 @@
   "unresolved": [],
   "version": "2025.2"
  },
+ "python3-udsoncan": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "python3-can",
+   "python3-can-isotp",
+   "python3-packaging",
+   "python3-typing-extensions",
+   "python3-wrapt",
+   "qnx-socketcan",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3",
+   "python3-can-isotp"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 61,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.26.1"
+ },
  "python3-urllib3": {
   "build_closure": [
    "bzip2",
@@ -34067,6 +34933,47 @@
   "undeclared": [],
   "unresolved": [],
   "version": "0.46.1"
+ },
+ "python3-wrapt": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [],
+   "files": 21,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2.5.2"
  },
  "python3-zstandard": {
   "build_closure": [

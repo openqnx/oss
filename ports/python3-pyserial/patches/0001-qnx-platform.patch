@@ -1,0 +1,70 @@
+QNX: baud rates as numbers, break ioctls, IHFLOW/OHFLOW hardware flow control, stick parity, /dev/ser* port listing
+
+Upstream-Status: QNX-specific
+
+--- a/serial/serialposix.py
++++ b/serial/serialposix.py
+@@ -261,6 +261,35 @@
+             else:
+                 fcntl.ioctl(self.fd, PlatformSpecific.TIOCCBRK)
+ 
++elif plat[:3] == 'qnx':      # QNX 8
++    class ReturnBaudrate(object):
++        def __getitem__(self, key):
++            return key
++
++    # c_cflag bits of QNX's <termios.h>: stick (mark/space) parity and
++    # hardware flow control (input RTS, output CTS). Python's termios
++    # module does not name them.
++    CMSPAR = 0x00000004     # PARSTK
++    QNX_IHFLOW = 0x00000001
++    QNX_OHFLOW = 0x00000002
++
++    class PlatformSpecific(PlatformSpecificBase):
++        # QNX takes the baud rate as a number (B115200 == 115200), so
++        # rates termios has no name for are passed on as they are.
++        BAUDRATE_CONSTANTS = ReturnBaudrate()
++
++        TIOCSBRK = 0x747B   # _IO('t', 123)
++        TIOCCBRK = 0x747A   # _IO('t', 122)
++
++        def _update_break_state(self):
++            """\
++            Set break: Controls TXD. When active, no transmitting is possible.
++            """
++            if self._break_state:
++                fcntl.ioctl(self.fd, PlatformSpecific.TIOCSBRK)
++            else:
++                fcntl.ioctl(self.fd, PlatformSpecific.TIOCCBRK)
++
+ else:
+     class PlatformSpecific(PlatformSpecificBase):
+         pass
+@@ -501,6 +530,11 @@
+                 cflag |= (termios.CNEW_RTSCTS)
+             else:
+                 cflag &= ~(termios.CNEW_RTSCTS)
++        elif plat[:3] == 'qnx':                 # QNX: IHFLOW | OHFLOW
++            if self._rtscts:
++                cflag |= (QNX_IHFLOW | QNX_OHFLOW)
++            else:
++                cflag &= ~(QNX_IHFLOW | QNX_OHFLOW)
+         # XXX should there be a warning if setting up rtscts (and xonxoff etc) fails??
+ 
+         # buffer
+--- a/serial/tools/list_ports_posix.py
++++ b/serial/tools/list_ports_posix.py
+@@ -96,6 +96,13 @@
+             devices.extend(list_ports_common.list_links(devices))
+         return [list_ports_common.ListPortInfo(d) for d in devices]
+ 
++elif plat[:3] == 'qnx':      # QNX 8: devc-ser* drivers register /dev/ser<N>
++    def comports(include_links=False):
++        devices = sorted(glob.glob('/dev/ser[0-9]*') + glob.glob('/dev/serusb[0-9]*'))
++        if include_links:
++            devices.extend(list_ports_common.list_links(devices))
++        return [list_ports_common.ListPortInfo(d) for d in devices]
++
+ else:
+     # platform detection has failed...
+     import serial

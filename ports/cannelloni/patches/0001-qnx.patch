@@ -1,0 +1,167 @@
+QNX: build on qnx-socketcan; no timerfd_gettime() (keep the timer state), timerfd/signalfd headers without extern "C", socket address lengths as BSD stacks want them, TCP_WINDOW_CLAMP is Linux only, no -Werror
+
+Upstream-Status: QNX-specific
+
+--- a/cannelloni.cpp
++++ b/cannelloni.cpp
+@@ -35,7 +35,13 @@
+ #include <net/if.h>
+ #include <netinet/in.h>
+ 
++#ifdef __QNXNTO__ /* QNX: the header has no extern "C" */
++extern "C" {
+ #include <sys/signalfd.h>
++}
++#else
++#include <sys/signalfd.h>
++#endif
+ 
+ #include "cannelloni.h"
+ #include "config.h"
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,7 +18,7 @@
+ set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
++# QNX: no -Werror
+ 
+ if(SCTP_SUPPORT)
+   include(FindSCTP)
+--- a/inet_address.h
++++ b/inet_address.h
+@@ -12,4 +12,12 @@
+ bool parseAddress(const char *address_str, struct sockaddr *sock_addr, int addr_family);
+ 
+ SocketStringAddress getSocketAddress(const struct sockaddr_storage* addr);
+-std::string formatSocketAddress(const SocketStringAddress& socketAddress);
+\ No newline at end of file
++std::string formatSocketAddress(const SocketStringAddress& socketAddress);
++/* The length of the address in a sockaddr_storage. Linux accepts
++ * sizeof(struct sockaddr_storage) in bind(), connect() and sendto();
++ * BSD stacks (QNX io-sock) want the length of the address family. */
++#include <netinet/in.h>
++#include <sys/socket.h>
++static inline socklen_t socketAddressLength(const struct sockaddr_storage *addr) {
++  return addr->ss_family == AF_INET6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
++}
+--- a/tcp_client_thread.cpp
++++ b/tcp_client_thread.cpp
+@@ -49,7 +49,7 @@
+     return false;
+   }
+   linfo << "Connecting to " << formatSocketAddress(getSocketAddress(&m_remoteAddr)) << "..." << std::endl;
+-  if (connect(m_socket, (struct sockaddr *)&m_remoteAddr, sizeof(m_remoteAddr)) < 0) {
++  if (connect(m_socket, (struct sockaddr *)&m_remoteAddr, socketAddressLength(&m_remoteAddr)) < 0) {
+     close(m_socket);
+     linfo << "Connect failed." << std::endl;
+     return false;
+--- a/tcpthread.cpp
++++ b/tcpthread.cpp
+@@ -251,10 +251,14 @@
+ bool TCPThread::setupSocket() {
+   const int nagle = 0;
+   const int min_window_size = 1;
++#ifdef TCP_WINDOW_CLAMP /* Linux only */
+   if (setsockopt(m_socket, IPPROTO_TCP, TCP_WINDOW_CLAMP, &min_window_size, sizeof(min_window_size))) {
+     lerror << "Could not set window size to " << min_window_size << std::endl;
+     return false;
+   }
++#else
++  (void)min_window_size;
++#endif
+   /* Disable Nagle for this connection */
+   if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &nagle, sizeof(nagle))) {
+     lerror << "Could not disable Nagle." << std::endl;
+--- a/timer.cpp
++++ b/timer.cpp
+@@ -26,6 +26,41 @@
+ 
+ using namespace cannelloni;
+ 
++#ifdef __QNXNTO__
++/* QNX has timerfd_create() and timerfd_settime() but no timerfd_gettime():
++ * keep what was set and work out the remaining time from the clock. */
++#include <time.h>
++static uint64_t qnx_now_us() {
++  struct timespec t;
++  clock_gettime(CLOCK_MONOTONIC, &t);
++  return (uint64_t)t.tv_sec*1000000 + t.tv_nsec/1000;
++}
++
++int Timer::qnxSettime(const struct itimerspec *ts) {
++  uint64_t value = (uint64_t)ts->it_value.tv_sec*1000000 + ts->it_value.tv_nsec/1000;
++  m_interval = (uint64_t)ts->it_interval.tv_sec*1000000 + ts->it_interval.tv_nsec/1000;
++  m_deadline = value ? qnx_now_us() + value : 0;
++  return ::timerfd_settime(m_timerfd, 0, ts, NULL);
++}
++
++void Timer::qnxGettime(struct itimerspec *ts) {
++  uint64_t value = 0;
++  if (m_deadline) {
++    uint64_t now = qnx_now_us();
++    if (now < m_deadline)
++      value = m_deadline - now;
++    else if (m_interval)
++      value = m_interval - ((now - m_deadline) % m_interval);
++  }
++  ts->it_interval.tv_sec = m_interval/1000000;
++  ts->it_interval.tv_nsec = (m_interval%1000000)*1000;
++  ts->it_value.tv_sec = value/1000000;
++  ts->it_value.tv_nsec = (value%1000000)*1000;
++}
++#define timerfd_gettime(fd, ts) qnxGettime(ts)
++#define timerfd_settime(fd, flags, ts, old) qnxSettime(ts)
++#endif
++
+ Timer::Timer() {
+   /* Create timerfd */
+   m_timerfd = timerfd_create(CLOCK_REALTIME, 0);
+--- a/timer.h
++++ b/timer.h
+@@ -21,7 +21,13 @@
+ #pragma once
+ 
+ #include <stdint.h>
++#ifdef __QNXNTO__ /* QNX: the header has no extern "C" */
++extern "C" {
+ #include <sys/timerfd.h>
++}
++#else
++#include <sys/timerfd.h>
++#endif
+ 
+ namespace cannelloni {
+ 
+@@ -57,6 +63,12 @@
+     bool isEnabled();
+   private:
+     int m_timerfd;
++#ifdef __QNXNTO__
++    uint64_t m_interval = 0;
++    uint64_t m_deadline = 0;
++    int qnxSettime(const struct itimerspec *ts);
++    void qnxGettime(struct itimerspec *ts);
++#endif
+ };
+ 
+ }
+--- a/udpthread.cpp
++++ b/udpthread.cpp
+@@ -87,7 +87,7 @@
+       return -1;
+   }
+ 
+-  if (bind(m_socket, (struct sockaddr *)&m_localAddr, sizeof(m_localAddr)) < 0) {
++  if (bind(m_socket, (struct sockaddr *)&m_localAddr, socketAddressLength(&m_localAddr)) < 0) {
+     lerror << "Could not bind to address" << std::endl;
+     close(m_socket);
+     return -1;
+@@ -293,5 +293,5 @@
+ 
+ ssize_t UDPThread::sendBuffer(uint8_t *buffer, uint16_t len) {
+   return sendto(m_socket, buffer, len, 0,
+-               (struct sockaddr *) &m_remoteAddr, sizeof(m_remoteAddr));
++               (struct sockaddr *) &m_remoteAddr, socketAddressLength(&m_remoteAddr));
+ }

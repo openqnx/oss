@@ -231,7 +231,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r0.log) |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r1 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r1.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r2 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r2.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r2 | ✅ PASS | 2026-11-12 | [log](../../tests/logs/aarch64le/can-utils-2025.01-r2.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/can-utils-2025.01-r0.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r1 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/x86_64/can-utils-2025.01-r1.log) |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | can-utils 2025.01-r2 | ✅ PASS | 2026-11-11 | [log](../../tests/logs/x86_64/can-utils-2025.01-r2.log) |

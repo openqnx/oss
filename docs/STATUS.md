@@ -116,10 +116,24 @@ current: it is the hand-over, not a history (that is `git log`).
      GPL-2.0) -- today the buses are virtual only; CAN_BCM, CAN_ISOTP, CAN_J1939 and
      CAN XL are not provided (socket() fails with EPROTONOSUPPORT). A program that is not
      linked with libqsocketcan (python3's socket module) needs `LD_PRELOAD`.
-   - Then the CAN ecosystem on top of it: python-can, cantools, canmatrix, opendbc,
-     CANopenNode, ros2_canopen, isotp-c, can-isotp, udsoncan, python-OBD, J1939,
-     libcanard (OpenCyphal), socketcand, cannelloni, libsocketcan, Wireshark/tshark,
-     SavvyCAN, Cangaroo, Scapy.
+   - The CAN ecosystem on top of it (2026-11-12, done, not published): 21 ports.
+     Python (run with `LD_PRELOAD=libqsocketcan.so` and a running `qcand`): python3-can
+     4.6.1 (socketcan interface, logger/player/viewer), python3-cantools, python3-canmatrix,
+     python3-can-isotp (ISO-TP in user space over CAN_RAW), python3-udsoncan,
+     python3-can-j1939, python3-obd, python3-scapy 2.8.0 (CANSocket, sniffing through
+     libpcap) and their dependencies (wrapt, pyserial, bitstruct, textparser,
+     argparse-addons, crccheck, flexcache, flexparser, pint). C/C++: isotp-c 1.9.3,
+     libcanard 5.0.0 (OpenCyphal/CAN), cannelloni 2.1.2 (CAN over UDP/TCP/SCTP),
+     canopennode 4.0 (CANopenLinux: `canopend`, `cocomm`). libpcap is 1.10.5-r1.
+     Tests: test_python3_can, test_python3_canlibs, test_python3_canapps, test_isotp_c,
+     test_libcanard, test_cannelloni, test_canopennode -- pass on both VMs.
+     Not ported: socketcand (needs CAN_BCM), libsocketcan (netlink interface
+     configuration; `qcanctl` does that here), the CAN_BCM/ISO-TP/J1939 tools of
+     can-utils (no such sockets in qnx-socketcan), opendbc (large build-time
+     dependencies), Wireshark/tshark, SavvyCAN, Cangaroo (GUI, large), ros2_canopen.
+     Notes: Scapy needs patch 0002 because QNX's setlocale answers "C;ctype:POSIX";
+     on the emulated aarch64 VM Python starts slowly, so tests wait for a ready
+     signal and never for a fixed time.
    - Left: heavy ones (bazel, openjdk, ROCm, xla, tvm, mediapipe, jax, ...) need a
      feasibility check; then the 158 version updates (`scripts/check-updates`).
    - Known check-all failures (before this work): avahi man links, libfolly.pc,

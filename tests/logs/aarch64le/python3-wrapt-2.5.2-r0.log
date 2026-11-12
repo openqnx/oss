@@ -1,0 +1,48 @@
+# python3-wrapt 2.5.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T02:02:19Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-wrapt qnx-test-python3-can qnx-port-tests
+(1/1) Installing qnx-test-python3-can (1.0-r1)
+OK: 979.9 MiB in 165 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_can
+     == python3-can ==
+       info python-can 4.6.1, wrapt 2.5.2
+       ok   Message: id, dlc, data, equals()
+       ok   CAN FD: 64 data bytes are DLC 15, DLC 13 is 32 bytes
+       ok   virtual interface: a frame crosses between two buses
+       ok   CanutilsLogWriter writes candump's log format
+       ok   CanutilsLogReader reads the same four messages back
+       ok   ASC log round trips three frames
+       ok   BLF log round trips three frames
+       ok   socketcan without qcand fails ([Errno 250] Network is down)
+       ok   can.Bus('vcan0', interface='socketcan') opens (SocketcanBus, fd 4)
+       ok   a frame sent on vcan0 arrives on another vcan0 bus: Timestamp: 1794448914.866417    ID:      123    S Tx                DL:  4    de ad be ef                 Channel: vcan0
+       ok   its receive time is now (0.006 s off)
+       ok   nothing arrives on vcan1
+       ok   the sender does not receive its own frame
+       ok   receive_own_messages=True: the sender receives it
+       ok   an extended frame arrives as sent
+       ok   a remote frame arrives with its DLC
+       ok   a CAN FD frame with 64 bytes and BRS arrives as sent
+       ok   a CAN FD frame does not pass the classic bus vcan1
+       ok   filter 100/7F0 standard passes 100 and 10F only: [(256, False), (271, False)]
+       ok   set_filters: the extended 105 passes, the standard 105 does not
+       ok   recv(0.3) on a silent bus returns None after 0.30 s
+       ok   send_periodic at 50 ms for 0.5 s sends about 10 frames (11)
+       ok   a Notifier delivers five frames to a listener in order
+       ok   detect_available_configs('socketcan') lists vcan0 and vcan1: ['vcan0', 'vcan1']
+     Could not access SocketCAN device nocan9 ([Errno 19] no CAN interface 'nocan9' (is qcand running?))
+       ok   an unknown interface raises OSError ([Errno 19] no CAN interface 'nocan9' (is qcand running?))
+       ok   can.logger records three frames in candump format: ['vcan0 700#0000', 'vcan0 701#0101', 'vcan0 702#0202'] 
+     FAILS 0
+     PASS python3-can
+PASS test_python3_can
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

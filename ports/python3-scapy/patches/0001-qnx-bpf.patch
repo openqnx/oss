@@ -1,0 +1,143 @@
+QNX support: io-sock is the FreeBSD network stack, so QNX takes scapy's FreeBSD/BPF path (PF_ROUTE, /dev/bpf). Differences handled here: /dev/bpf is a cloning device (no /dev/bpfN); QNX's _IO() has no direction bits (BIOCPROMISC, BIOCFLUSH); a new BPF descriptor sees no packet until BIOCSETF was issued twice; ctypes.util.find_library() finds nothing, so libpcap is loaded by soname.
+
+Upstream-Status: QNX-specific
+
+--- a/scapy/arch/bpf/consts.py
++++ b/scapy/arch/bpf/consts.py
+@@ -10,6 +10,7 @@
+ import ctypes
+ 
+ from scapy.libs.structures import bpf_program
++from scapy.consts import QNX
+ from scapy.data import MTU
+ 
+ # Type hints
+@@ -24,7 +25,9 @@
+ # From sys/ioccom.h
+ 
+ IOCPARM_MASK = 0x1fff
+-IOC_VOID = 0x20000000
++# QNX's <sys/ioctl.h> encodes a request without parameters with no
++# direction bits at all (BIOCPROMISC is 0x4269, not 0x20004269).
++IOC_VOID = 0 if QNX else 0x20000000
+ IOC_OUT = 0x40000000
+ IOC_IN = 0x80000000
+ IOC_INOUT = IOC_IN | IOC_OUT
+--- a/scapy/arch/bpf/core.py
++++ b/scapy/arch/bpf/core.py
+@@ -8,6 +8,7 @@
+ """
+ 
+ 
++import ctypes
+ import fcntl
+ import os
+ import socket
+@@ -49,6 +50,18 @@
+     # type: () -> Tuple[int, int]
+     """Returns an opened BPF file object"""
+ 
++    # The cloning device (FreeBSD, QNX's io-sock): /dev/bpf, a new handle
++    # for every open. QNX has no numbered /dev/bpf<N> nodes at all.
++    try:
++        fd = os.open("/dev/bpf", os.O_RDWR)
++        return (fd, 0)
++    except OSError as ex:
++        if ex.errno == 13:  # Permission denied
++            raise Scapy_Exception(
++                "Permission denied: could not open /dev/bpf. "
++                "Make sure to be running Scapy as root ! (sudo)"
++            )
++
+     # Get the first available BPF handle
+     for bpf in range(256):
+         try:
+@@ -80,6 +93,23 @@
+     free_filter(bp)
+ 
+ 
++def qnx_enable_reader(fd):
++    # type: (int) -> None
++    """QNX io-sock keeps a new BPF descriptor on the interface's writer-only
++    list: it sees no packet until BIOCSETF has been issued twice (libpcap
++    does that as a side effect of pcap_open_live() + pcap_setfilter()).
++    Install an accept-all program twice; a real filter replaces it later."""
++    from scapy.libs.structures import bpf_insn, bpf_program
++    insn = (bpf_insn * 1)()
++    insn[0].code = 0x06  # BPF_RET | BPF_K
++    insn[0].k = 0x40000
++    bp = bpf_program()
++    bp.bf_len = 1
++    bp.bf_insns = ctypes.cast(insn, ctypes.POINTER(bpf_insn))
++    for _ in range(2):
++        fcntl.ioctl(fd, BIOCSETF, bp)
++
++
+ def in6_getifaddr():
+     # type: () -> List[Tuple[str, int, str]]
+     """
+--- a/scapy/arch/bpf/supersocket.py
++++ b/scapy/arch/bpf/supersocket.py
+@@ -19,7 +19,7 @@
+ import sys
+ import time
+ 
+-from scapy.arch.bpf.core import get_dev_bpf, attach_filter
++from scapy.arch.bpf.core import get_dev_bpf, attach_filter, qnx_enable_reader
+ from scapy.arch.bpf.consts import (
+     BIOCGBLEN,
+     BIOCGDLT,
+@@ -35,7 +35,7 @@
+     BPF_T_NANOTIME,
+ )
+ from scapy.config import conf
+-from scapy.consts import DARWIN, FREEBSD, NETBSD
++from scapy.consts import DARWIN, FREEBSD, NETBSD, QNX
+ from scapy.data import ETH_P_ALL, DLT_IEEE802_11_RADIO
+ from scapy.error import Scapy_Exception, warning
+ from scapy.interfaces import network_name, _GlobInterfaceType
+@@ -203,6 +203,9 @@
+             raise Scapy_Exception("BIOCSHDRCMPLT failed on /dev/bpf%i" %
+                                   self.dev_bpf)
+ 
++        if QNX:
++            qnx_enable_reader(self.bpf_fd)
++
+         # Configure the BPF filter
+         filter_attached = False
+         if not nofilter:
+--- a/scapy/consts.py
++++ b/scapy/consts.py
+@@ -17,6 +17,7 @@
+     "NETBSD",
+     "DARWIN",
+     "SOLARIS",
++    "QNX",
+     "WINDOWS",
+     "WINDOWS_XP",
+     "BSD",
+@@ -26,7 +27,10 @@
+ 
+ LINUX = platform.startswith("linux")
+ OPENBSD = platform.startswith("openbsd")
+-FREEBSD = "freebsd" in platform
++# QNX 8: io-sock is FreeBSD's network stack (BPF devices, PF_ROUTE messages
++# and their structures are FreeBSD's), so QNX takes the FreeBSD code paths.
++QNX = platform.startswith("qnx")
++FREEBSD = "freebsd" in platform or QNX
+ NETBSD = platform.startswith("netbsd")
+ DARWIN = platform.startswith("darwin")
+ SOLARIS = platform.startswith("sunos")
+--- a/scapy/libs/winpcapy.py
++++ b/scapy/libs/winpcapy.py
+@@ -37,6 +37,10 @@
+     # Try to load libpcap
+     SOCKET = c_int
+     _lib_name = find_library("pcap")
++    if not _lib_name and os.sys.platform.startswith("qnx"):
++        # ctypes.util.find_library() finds nothing on QNX: let the loader
++        # resolve the soname (LD_LIBRARY_PATH, /usr/local/lib).
++        _lib_name = "libpcap.so.1"
+     if not _lib_name:
+         raise OSError("Cannot find libpcap.so library")
+     _lib = CDLL(_lib_name)

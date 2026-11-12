@@ -1,0 +1,45 @@
+# python3-obd 0.7.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-12T08:12:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-obd qnx-test-python3-canapps qnx-port-tests
+OK: 900.4 MiB in 118 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canapps
+     == python3-canapps ==
+       ok   pint: 100 km/h is 62.137 mph
+       ok   pint: 3 m + 4 cm is 3040.0 millimeter
+       ok   pint: metre to second raises DimensionalityError
+       ok   pint: 25 degC is 298.15 K
+       ok   pint-convert 100 kph mph prints 62.137...: '100 kilometer_per_hour = 62.1371192237 mph'
+       ok   obd: connection on /dev/ttyp4 reaches 'Car Connected'
+       ok   obd: protocol 6, ISO 15765-4 (CAN 11/500)
+       ok   obd: the supported PID bitmap is decoded (44 commands)
+       ok   obd: RPM 2E E0 is 3000 rpm
+       ok   obd: SPEED 0x64 is 100 km/h, 62.137 mph
+       ok   obd: COOLANT_TEMP 0x7B is 83 degC
+       ok   obd: adapter voltage 12.5 V
+       ok   obd: an unsupported PID gives a null response
+       ok   obd: the adapter saw ATZ ATE0 ATH1 ATL0 ATRV ATSP0 ... 010C
+       ok   scapy: CAN 123#010203 builds and dissects
+       ok   scapy: extended frame 18FECA80 (flag bit 31)
+       ok   scapy: CAN FD frame with 12 bytes and BRS
+       ok   scapy: rdcandump reads two frames with their time stamps
+       ok   scapy: the frames cross a pcap file (LINKTYPE_CAN_SOCKETCAN)
+       ok   scapy: UDS ReadDataByIdentifier builds 22 F1 90; 62 F1 90 dissects as its positive response
+       ok   scapy: a 15-byte ISO-TP message fragments into FF 10 0F and two CFs
+       ok   scapy: CANSocket (python-can, qnx-socketcan) sends and receives 123#010203
+       ok   scapy: ISOTPSoftSocket pair: UDS request 22 F1 90, segmented 20-byte response
+       ok   scapy: interfaces ['enc0', 'lo0', 'pflog0', 'pfsync0', 'vtnet0'], <ip> is routed to lo0
+       ok   scapy: sr1 ICMP echo on lo0 through /dev/bpf is answered
+       ok   scapy: a sniffer with the filter "icmp" (libpcap) sees request and reply: ['Loopback / IP / ICMP <ip> > <ip> echo-request 0 / Raw', 'Loopback / IP / ICMP <ip> > <ip> echo-reply 0 / Raw'] None
+     FAILS 0
+     PASS python3-canapps
+PASS test_python3_canapps
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

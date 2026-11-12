@@ -9,7 +9,7 @@
 | Upstream | https://www.tcpdump.org/release/libpcap-1.10.5.tar.gz |
 | SHA-256 | `37ced90a19a302a7f32e458224a00c365c117905c2cd35ac544b6880a81488f0` |
 | Build system | GNU Autotools |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,7 +82,15 @@ tar xf dist/$(basename $URL) -C src/libpcap --strip-components=1
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/libpcap < ports/libpcap/patches/0001-qnx-shared-library.patch
+```
+
+**[`0001-qnx-shared-library.patch`](patches/0001-qnx-shared-library.patch)** — Build libpcap.so on QNX: configure only knows how to build a shared library on the systems it lists, so QNX got the static archive alone. QNX uses GCC and GNU ld conventions (-shared, -fpic, -Wl,-soname), same as Linux and the BSDs. ctypes users (scapy) need the shared object.
+
+Touches: `configure` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -113,9 +121,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libpcap`.
 
 ### 5. What it installs
 
-101 files under `/usr/local`, 1 programs, 18 headers.
+104 files under `/usr/local`: 3 shared-library entries, 1 programs, 18 headers.
 
 ```
+/usr/local/lib/libpcap.so
+/usr/local/lib/libpcap.so.1
+/usr/local/lib/libpcap.so.1.10.5
 /usr/local/bin/pcap-config
 ```
 
@@ -186,8 +197,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libpcap 1.10.5-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/libpcap-1.10.5-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | libpcap 1.10.5-r1 | ✅ PASS | 2026-11-12 | [log](../../tests/logs/aarch64le/libpcap-1.10.5-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libpcap 1.10.5-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/libpcap-1.10.5-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | libpcap 1.10.5-r1 | ✅ PASS | 2026-11-12 | [log](../../tests/logs/x86_64/libpcap-1.10.5-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 

@@ -55,6 +55,8 @@ ca-certificates	test_ca_certificates
 cairo	test_cairo
 can-utils	test_can_utils
 candb	test_candb
+cannelloni	test_cannelloni
+canopennode	test_canopennode
 capicxx-core-runtime	test_capicxx_core_runtime
 capicxx-someip-runtime	test_capicxx_someip_runtime
 capnproto	test_capnproto
@@ -240,6 +242,7 @@ iperf2	test_iperf2
 iperf3	test_iperf3
 ippusbxd	test_ippusbxd
 iso-codes	test_iso_codes
+isotp-c	test_isotp_c
 itstool	test_itstool
 jansson	test_jansson
 javascriptcore	test_javascriptcore
@@ -266,6 +269,7 @@ libavif	test_libavif
 libb2	test_libb2
 libcaca	test_libcaca
 libcamera	test_libcamera
+libcanard	test_libcanard
 libcbor	test_libcbor
 libccd	test_fcl
 libcoap	test_libcoap
@@ -579,16 +583,23 @@ python3	test_python
 python3-absl-py	test_python3_pylibs_b
 python3-appdirs	test_python3_pylibs
 python3-argcomplete	test_python3_colcon_common_extensions
+python3-argparse-addons	test_python3_canlibs
 python3-astor	test_pymods
 python3-async-generator	test_pymods
 python3-attrs	test_python3_pylibs
 python3-beniget	test_python3_pylibs_b
+python3-bitstruct	test_python3_canlibs
 python3-boto3	test_python3_boto3
 python3-botocore	test_python3_boto3
 python3-bracex	test_python3_pylibs_b
 python3-build	test_python3_pybuild
 python3-cairo	test_python3_cairo
 python3-calver	test_python3_pybuild
+python3-can	test_python3_can
+python3-can-isotp	test_python3_canlibs
+python3-can-j1939	test_python3_canlibs
+python3-canmatrix	test_python3_canlibs
+python3-cantools	test_python3_canlibs
 python3-catkin-pkg	test_python3_colcon_common_extensions
 python3-cattrs	test_python3_pylibs
 python3-cffi	test_python3_cffi
@@ -619,6 +630,7 @@ python3-contourpy	test_python3_matplotlib
 python3-coverage	test_pymods
 python3-cparser	test_python3_cffi
 python3-cppy	test_python3_pylibs_b
+python3-crccheck	test_python3_canlibs
 python3-curio	test_pymods
 python3-cycler	test_python3_matplotlib
 python3-dateutil	test_python3_dateutil
@@ -640,6 +652,8 @@ python3-flake8-docstrings	test_python3_flake8
 python3-flake8-import-order	test_python3_flake8
 python3-flake8-quotes	test_python3_flake8
 python3-flaky	test_python3_pytest_plugins
+python3-flexcache	test_python3_canapps
+python3-flexparser	test_python3_canapps
 python3-flit-core	test_python3_pybuild
 python3-fonttools	test_python3_matplotlib
 python3-fs	test_python3_pylibs_b
@@ -665,11 +679,13 @@ python3-ml-dtypes	test_python3_ml_dtypes
 python3-msgpack	test_python3_msgpack_zstandard
 python3-mypy-extensions	test_pymods
 python3-netifaces	test_python3_netifaces
+python3-obd	test_python3_canapps
 python3-opt-einsum	test_python3_pylibs_b
 python3-packaging	test_python3_packaging
 python3-pathspec	test_python3_pylibs
 python3-pexpect	test_python3_pexpect
 python3-pillow	test_python3_pillow
+python3-pint	test_python3_canapps
 python3-pip	test_python3_pip
 python3-platformdirs	test_python3_pylibs
 python3-pluggy	test_pymods
@@ -686,6 +702,7 @@ python3-pygments	test_pymods
 python3-pyparsing	test_python3_colcon_common_extensions
 python3-pyproject-hooks	test_python3_pybuild
 python3-pyproject-metadata	test_python3_pybuild
+python3-pyserial	test_python3_canlibs
 python3-pytest	test_pymods
 python3-pytest-cov	test_pymods
 python3-pytest-mock	test_python3_pytest_plugins
@@ -699,6 +716,7 @@ python3-pyyaml	test_python3_colcon_common_extensions
 python3-rosdistro	test_python3_ros_tools
 python3-rospkg	test_python3_ros_tools
 python3-s3transfer	test_python3_boto3
+python3-scapy	test_python3_canapps
 python3-scikit-build-core	test_python3_pybuild
 python3-scipy	test_python3_scipy
 python3-setuptools	test_python3_setuptools
@@ -708,6 +726,7 @@ python3-sniffio	test_pymods
 python3-snowballstemmer	test_python3_flake8
 python3-sortedcontainers	test_pymods
 python3-sounddevice	test_python3_sounddevice
+python3-textparser	test_python3_canlibs
 python3-time-machine	test_python3_pytest_plugins
 python3-tomli	test_python3_pylibs
 python3-tornado	test_pymods
@@ -716,10 +735,12 @@ python3-trove-classifiers	test_python3_pylibs
 python3-typeguard	test_python3_pylibs
 python3-typing-extensions	test_python3_pylibs
 python3-tzdata	test_python3_tzdata
+python3-udsoncan	test_python3_canlibs
 python3-urllib3	test_python3_boto3
 python3-versioneer	test_pymods
 python3-virtualenv	test_python3_virtualenv
 python3-wheel	test_python3_wheel
+python3-wrapt	test_python3_can
 python3-zstandard	test_python3_msgpack_zstandard
 pythran	test_python3_buildtools
 pytorch	test_torch

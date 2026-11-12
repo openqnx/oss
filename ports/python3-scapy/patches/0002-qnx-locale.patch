@@ -1,0 +1,21 @@
+QNX's setlocale() names the default locale "C;ctype:POSIX"; locale.getlocale() raises ValueError on it and every pcap_open_live() (sniffing with a filter) failed while decoding libpcap's empty error text. Fall back to UTF-8.
+
+Upstream-Status: QNX-specific
+
+--- a/scapy/utils.py
++++ b/scapy/utils.py
+@@ -914,7 +914,13 @@
+     Decode bytes into a string using the system locale.
+     Useful on Windows where it can be unusual (e.g. cp1252)
+     """
+-    return x.decode(encoding=locale.getlocale()[1] or "utf-8", errors="replace")
++    try:
++        enc = locale.getlocale()[1]
++    except ValueError:
++        # QNX: setlocale() names the default locale "C;ctype:POSIX", which
++        # locale.getlocale() cannot parse.
++        enc = None
++    return x.decode(encoding=enc or "utf-8", errors="replace")
+ 
+ 
+ class ContextManagerSubprocess(object):

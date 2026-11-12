@@ -1,0 +1,51 @@
+# canopennode 4.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-11T20:56:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u canopennode qnx-test-canopennode qnx-port-tests
+(1/2) Installing canopennode (4.0-r0)
+(2/2) Installing qnx-test-canopennode (1.0-r0)
+OK: 888.1 MiB in 111 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_canopennode
+     == canopennode ==
+       ok   qcand is up with vcan0
+       ok   canopend node 1 opened its command socket
+       ok   node 1 sends its boot-up message 701#00
+       ok   node 4 sends its boot-up message 704#00
+       ok   node 4 runs with the node id from -i
+       ok   SDO read 0x1017 of node 4: '[1] 0'
+       ok   SDO upload request 604#40 17 10 00 is on the bus
+       ok   SDO upload response 584#4B 17 10 00 (2 bytes, 0)
+       ok   SDO read device type 0x1000: '[1] 0'
+       ok   SDO write 0x1017 = 500: '[1] OK'
+       ok   SDO download request carries 0x01F4 little-endian
+       ok   SDO download is acknowledged (584#60)
+       ok   0x1017 reads back 500: '[1] 500'
+       ok   missing object 0x1008 is refused with abort 0x06020000: '[1] ERROR:0x06020000 #Object does not exist.'
+       ok   the SDO abort frame is on the bus
+       ok   node 1 answers for its own identity object (4 entries): '[1] 4'
+       ok   node 4 sends heartbeats every 500 ms in pre-operational (3 seen)
+       ok   NMT start node 4: '[1] OK'
+       ok   NMT command 000#01 04 is on the bus
+       ok   NMT enter pre-operational: '[1] OK'
+       ok   NMT command 000#80 04 is on the bus
+       ok   store parameters (0x1010 sub 1 = 'save'): '[1] OK'
+       ok   the parameter file od_comm.persist was written
+       ok   restarted node 4 boots again
+       ok   the saved heartbeat time survived the restart: '[1] 500'
+       ok   no storage emergency after the restart with saved parameters
+       ok   node 4 goes operational by itself (heartbeat 704#05)
+       ok   NMT reset communication: '[1] OK'
+       ok   reset communication produces a new boot-up message
+       ok   SIGTERM ends both devices with exit status 0 (0, 0)
+       ok   node 1 logs its shutdown
+     PASS canopennode
+PASS test_canopennode
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

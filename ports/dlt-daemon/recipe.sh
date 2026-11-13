@@ -1,5 +1,7 @@
 VERSION=2.18.10; GIT=https://github.com/COVESA/dlt-daemon.git; REF=v2.18.10
-# Also linked at run time (found by scripts/gen-dependency-index): libjson
+# dlt-qnx-system reads its slog2 context map with the libjson port (patch
+# 0002), not with the libjson of QNX: "-ljson" finds the port first, and
+# the ports use ported libraries rather than those of QNX where they can.
 DEPS="zlib libjson"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DWITH_DLT_QNX_SYSTEM=ON
                    -DWITH_DLT_CXX11_EXT=ON -DDLT_IPC=UNIX_SOCKET

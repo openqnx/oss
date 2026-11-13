@@ -2,6 +2,28 @@
 # QNX SDP 8.0 OSS porting workspace environment
 # usage: source env.sh [aarch64le|x86_64]
 
+# One workspace builds against one SDP. A workspace for another SDP release
+# (a second checkout next to this one, see docs/sdp-versions.md) says which in
+# an untracked file .sdp at its top:
+#     root=/path/to/that/sdp      the SDP it builds against
+#     version=8.0.6               what its packages are published as
+# Without .sdp: QNX_SDP_ROOT (default ~/qnx800), published as 8.0. Building
+# this workspace against an SDP other than its own is refused: the staging
+# tree would end up a mix of two SDPs.
+_sdp_file="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.sdp"
+if [ -f "$_sdp_file" ]; then
+  _sdp_root=$(sed -n 's/^root=//p' "$_sdp_file"); _sdp_root=${_sdp_root/#\~/$HOME}
+  if [ -n "$_sdp_root" ]; then
+    if [ -n "$QNX_SDP_ROOT" ] && [ "$(readlink -f "$QNX_SDP_ROOT")" != "$(readlink -f "$_sdp_root")" ]; then
+      echo "ERROR: this workspace builds against $_sdp_root ($_sdp_file), but QNX_SDP_ROOT=$QNX_SDP_ROOT" >&2; return 1
+    fi
+    export QNX_SDP_ROOT="$_sdp_root"
+  fi
+  _sdp_ver=$(sed -n 's/^version=//p' "$_sdp_file")
+  [ -n "$_sdp_ver" ] && export QNX_OSS_SDP_VERSION="$_sdp_ver"
+fi
+unset _sdp_file _sdp_root _sdp_ver
+export QNX_OSS_SDP_VERSION="${QNX_OSS_SDP_VERSION:-8.0}"
 export QNX_SDP_ROOT="${QNX_SDP_ROOT:-$HOME/qnx800}"
 [ -f "$QNX_SDP_ROOT/qnxsdp-env.sh" ] || { echo "ERROR: QNX SDP not found at $QNX_SDP_ROOT -- export QNX_SDP_ROOT=<your SDP 8.0 install>" >&2; return 1; }
 

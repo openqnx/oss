@@ -2,14 +2,48 @@
 
 How to build a QNX 8.0 target image in which QNX supplies only what the system
 needs to boot and run, and everything else comes from the components ported
-here. This is a design and a procedure; the image described has **not been
-built and booted yet** -- the steps marked "to verify" are the ones that need
-a trial on a VM first.
+here. `scripts/make-ported-image` builds such an image for QEMU; what was
+tried and what was not is in "What the trial showed" below. The steps still
+marked "to verify" have not been tried.
 
 The starting point is the image `mkqnximage` makes (the lab's vanilla VMs,
 `docs/qemu-test-vms.md`). Its file lists are in
 `lab/vm/oss-vanilla-<arch>/output/build/{ifs,system,data}.build`; the tables
 below were made from them (SDP 8.0.6, x86_64).
+
+## In short
+
+```bash
+source ./env.sh x86_64                    # the SDP of the image, docs/sdp-versions.md
+scripts/make-ported-image                 # the base set; or name the packages
+cd lab/vm/oss-ported-x86_64 && mkqnximage --run=-h && mkqnximage --getip
+ssh -i tests/ssh/qnx-target root@<ip>     # the ported sshd, the ported bash
+```
+
+The packages must be built and packaged first (`dists/<sdp>/<arch>/`).
+
+## What the trial showed
+
+One image, x86_64, SDP 8.0, QEMU, the base set (44 packages with their
+dependencies, 147 MB under `/usr/local`; system partition 254 MB used):
+
+- boots; the log-in over ssh is the ported `sshd` (port 22) into the ported
+  `bash`; `ls`, `cat`, `find`, `sed` are the ported toybox; `grep`, `tar`,
+  `awk`, `vim`, `less`, `curl`, `sqlite3`, `ping`, `htop`, `sudo`, `gdb` the
+  ported tools; `curl https://` works with the ported OpenSSL and CA bundle.
+- the ports need QNX libraries the stock image does not carry (`libepoll`,
+  `libeventfd`, `libsignalfd`, `libtimerfd`): `make-image-root` lists them
+  (`QNX-RUNTIME`) and the image script adds the missing ones to `/system/lib`.
+- symbolic links in the unpacked tree are kept by `[-followlink]`.
+- QNX's `sshd`, `dhcpcd`, `gdbserver`, `qconn` are still started by
+  `startup.sh`; `sshd` is replaced at the end of the boot, the others are
+  not yet.
+- still QNX's because no port puts the name in `PATH`: `sh` (the `ksh` of
+  the IFS), `openssl` (the command; the library is the port's), `top`.
+
+Not tried: aarch64le, SDP 8.0.6, a board, removing QNX's duplicates from the
+system partition (step 8), the port tests on this image, time
+synchronisation (`chronyd` is in the image, not started), PAM.
 
 ## The idea: three layers
 
@@ -112,6 +146,9 @@ stay apart, and `scripts/check-dupes` keeps one soname per tree.
 
 ## Procedure with mkqnximage (a VM, or to try the layout)
 
+`scripts/make-ported-image` does steps 2 to 7 and 9's build; the steps are
+written out for a board, or to change what the script does.
+
 1. **Build and package** the ports for the SDP of the image
    (`docs/sdp-versions.md`): `scripts/qnxbuild`, `scripts/qnxpkg --all`.
 2. **Choose the base set.** A start:
@@ -119,13 +156,15 @@ stay apart, and `scripts/check-dupes` keeps one soname per tree.
    tar xz bzip2 file libarchive ncurses dhcpcd chrony tcpdump iperf3 htop gdb
    sudo tzdata apk-tools` -- plus whatever the product needs. Dependencies
    come with them.
-3. **Make the root of layer 3 on the build host**: unpack the chosen packages
-   and their dependencies into one directory, `build/image-root/<arch>/usr/local/...`.
-   A package (`dists/<sdp>/<arch>/<name>-<ver>-r<N>.apk`) is a gzip tar of
-   its files, so this is `tar -xzf` per package into that directory; keep the
-   apk database with them (`lib/apk/db`) if packages are to be added on the
-   target later. A helper, `scripts/make-image-root <arch> <package>...`,
-   is the next thing to write (**not there yet**).
+3. **Make the root of layer 3 on the build host**:
+   `scripts/make-image-root <arch> <package>...` unpacks the chosen packages
+   and their dependencies into `build/image-root/<arch>/usr/local/...`, and
+   writes `PACKAGES` (what is in it) and `QNX-RUNTIME` (the SDP libraries
+   those programs need). The apk database is not made: packages added on
+   the target later go to the data partition (`docs/target-guide.md`).
+   toybox is packaged without command links; `make-ported-image` links its
+   commands in `/usr/local/opt/toybox/bin`, which comes after
+   `/usr/local/bin` in `PATH` -- the full tools win, toybox fills the rest.
 4. **Create the image directory** as for the lab VMs, with room for the
    ports:
 
@@ -156,11 +195,14 @@ stay apart, and `scripts/check-dupes` keeps one soname per tree.
 6. **Put the ports first** in `local/snippets/profile.custom`:
 
    ```
-   export PATH=/usr/local/bin:/usr/local/sbin:/system/bin:/proc/boot
+   export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
    export LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
-   export SHELL=/usr/local/bin/bash
-   export SSL_CERT_FILE=/usr/local/etc/ssl/cert.pem
+   export SSL_CERT_FILE=/usr/local/ssl/cert.pem
    ```
+
+   The profile is read by log-in shells only; the ported `sshd` gets the
+   same values in its configuration (`SetEnv`), and root's log-in shell is
+   set to `/usr/local/bin/bash` in `/data/var/etc/passwd`.
 
 7. **Start the ported services instead of QNX's.** `mkqnximage` starts QNX's
    `sshd`, `dhcpcd` and `gdbserver` from its own `startup.sh`, and has no
@@ -170,9 +212,12 @@ stay apart, and `scripts/check-dupes` keeps one soname per tree.
 
    ```
    slay -f sshd
-   /usr/local/sbin/sshd -f /usr/local/etc/ssh/sshd_config
-   /usr/local/sbin/chronyd
+   /usr/local/sbin/sshd -f /system/etc/ssh/sshd_config.ported
    ```
+
+   The ported `sshd` needs `/var/empty` (data partition) and a
+   configuration that names the image's host keys
+   (`/data/var/ssh/ssh_host_*_key`).
 
    The network must be up before `post_start` for this; `io-sock` and
    `ifconfig` stay QNX's.

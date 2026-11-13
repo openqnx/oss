@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+"""make-image-root -- unpack packages and what they depend on into one
+directory, to be put into a target image as /usr/local (docs/ported-first-image.md).
+
+  scripts/make-image-root [-o <dir>] [--dev] <arch> <package>...
+
+The packages come from this workspace's repository, dists/<sdp>/<arch>/; of
+each the newest build is taken, with every package its D: line names. The
+result is <dir>/usr/local/... (default build/image-root/<arch>) and
+<dir>/PACKAGES, the list of what is in it (name, version), and
+<dir>/QNX-RUNTIME, the libraries of the SDP that the unpacked programs need
+and the packages do not bring (host path of each): the image has to carry
+those too -- compare them with what the image already has. -dev packages
+(headers, static libraries) are left out unless named or --dev is given.
+The directory is made anew each time.
+"""
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import tarfile
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
+from sdpver import SDP, WS  # noqa: E402
+
+
+def read_index(repo):
+    """name -> newest entry {V, D[], t}."""
+    with tarfile.open(os.path.join(repo, "APKINDEX.tar.gz")) as t:
+        text = t.extractfile("APKINDEX").read().decode()
+    pkgs = {}
+    for block in text.split("\n\n"):
+        e = dict(l.split(":", 1) for l in block.splitlines() if ":" in l)
+        if "P" not in e:
+            continue
+        ent = {"V": e["V"], "D": e.get("D", "").split(), "t": int(e.get("t", 0))}
+        if e["P"] not in pkgs or ent["t"] > pkgs[e["P"]]["t"]:
+            pkgs[e["P"]] = ent
+    return pkgs
+
+
+def qnx_runtime(out, arch):
+    """(soname, path in the SDP) of what the ELF files under out need, the
+    packages do not have, and the SDP does -- followed through the SDP
+    libraries' own needs."""
+    target = os.path.join(os.environ.get("QNX_TARGET") or sys.exit("make-image-root: QNX_TARGET is not set (source env.sh)"), arch)
+    sdp = {}
+    for d in ("lib", "usr/lib", "lib/dll"):
+        for f in sorted(os.listdir(os.path.join(target, d))) if os.path.isdir(os.path.join(target, d)) else []:
+            sdp.setdefault(f, os.path.join(target, d, f))
+
+    def needed(path):
+        r = subprocess.run(["readelf", "-d", path], capture_output=True, text=True)
+        return [l.split("[")[1].split("]")[0] for l in r.stdout.splitlines() if "(NEEDED)" in l]
+
+    have, files = set(), []
+    for root, _, names in os.walk(out):
+        for n in names:
+            p = os.path.join(root, n)
+            have.add(n)
+            if not os.path.islink(p):
+                with open(p, "rb") as fh:
+                    if fh.read(4) == b"\x7fELF":
+                        files.append(p)
+    found, todo = {}, [n for p in files for n in needed(p)]
+    while todo:
+        n = todo.pop()
+        if n in have or n in found or n not in sdp:
+            continue
+        found[n] = sdp[n]
+        todo += needed(sdp[n])
+    return sorted(found.items())
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("-o", "--out")
+    ap.add_argument("--dev", action="store_true", help="also the -dev package of every package taken")
+    ap.add_argument("arch")
+    ap.add_argument("packages", nargs="+")
+    a = ap.parse_args()
+
+    repo = os.path.join(WS, "dists", SDP, a.arch)
+    out = os.path.abspath(a.out or os.path.join(WS, "build", "image-root", a.arch))
+    index = read_index(repo)
+
+    want, todo = {}, list(a.packages)
+    while todo:
+        name = todo.pop()
+        name = name.split("=")[0].split(">")[0].split("<")[0].lstrip("!")
+        if name in want:
+            continue
+        if name not in index:
+            sys.exit(f"make-image-root: no package '{name}' in {repo}")
+        want[name] = index[name]
+        todo += [d for d in index[name]["D"] if not d.startswith(("so:", "cmd:", "pc:", "/"))]
+        if a.dev and not name.endswith("-dev") and name + "-dev" in index:
+            todo.append(name + "-dev")
+
+    if os.path.isdir(out):
+        shutil.rmtree(out)
+    os.makedirs(out)
+    for name in sorted(want):
+        apk = os.path.join(repo, f"{name}-{want[name]['V']}.apk")
+        # A package is three gzip streams (signature, control, data) in one
+        # file; tar reads through them. The control files (.PKGINFO, the
+        # signature, install scripts) start with a dot and stay out.
+        r = subprocess.run(["tar", "-xzf", apk, "-C", out, "--exclude=.*", "--warning=no-unknown-keyword"],
+                           stderr=subprocess.PIPE, text=True)
+        if r.returncode:
+            sys.exit(f"make-image-root: {apk}: {r.stderr.strip()}")
+    with open(os.path.join(out, "PACKAGES"), "w") as f:
+        for name in sorted(want):
+            f.write(f"{name}\t{want[name]['V']}\n")
+    need = qnx_runtime(out, a.arch)
+    with open(os.path.join(out, "QNX-RUNTIME"), "w") as f:
+        f.write("".join(f"{n}\t{p}\n" for n, p in need))
+    size = subprocess.run(["du", "-sh", out], capture_output=True, text=True).stdout.split()[0]
+    print(f"{out}: {len(want)} packages, {size}, {len(need)} QNX run-time libraries (SDP {SDP}, {a.arch})")
+
+
+if __name__ == "__main__":
+    main()

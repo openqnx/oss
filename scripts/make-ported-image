@@ -1,0 +1,112 @@
+#!/bin/bash
+# make-ported-image -- a QEMU image (mkqnximage) that uses the ports first:
+# QNX supplies the boot layer and what has no port, everything else comes
+# from /usr/local. docs/ported-first-image.md explains the layout.
+#
+#   source ./env.sh <arch>
+#   scripts/make-ported-image [-n <vm-name>] [<package>...]
+#
+# Makes lab/vm/<vm-name> (default oss-ported-<arch>) with the given packages
+# and their dependencies (default: the base set below) in /system/usr/local.
+# Start it:  cd lab/vm/<vm-name> && mkqnximage --run=-h ; mkqnximage --getip
+# An existing VM directory of that name is rebuilt with the new contents.
+set -eo pipefail
+WS=$(cd "$(dirname "$0")/.." && pwd)
+[ -n "$QNX_ARCH" ] || { echo "source ./env.sh <arch> first" >&2; exit 1; }
+A=$QNX_ARCH; NAME=oss-ported-$A
+[ "$1" = -n ] && { NAME=$2; shift 2; }
+BASE="toybox bash openssh openssl curl ca-certificates sqlite gawk grep less vim tar xz bzip2 file
+      libarchive ncurses dhcpcd chrony tcpdump iperf3 htop gdb sudo tzdata apk-tools inetutils"
+[ $# -gt 0 ] || set -- $BASE
+PORTS_PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
+PORTS_LIBS=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
+
+# 1. The ports and their dependencies, unpacked.
+R=$WS/build/image-root/$A
+"$WS/scripts/make-image-root" -o "$R" "$A" "$@"
+
+# 2. toybox is packaged as one binary without command links (on a QNX image
+#    its names would collide with QNX's toybox); here the image is ours, so
+#    its commands are linked next to it, after the full tools in PATH.
+G=$WS/build/$A/toybox/generated; T=$R/usr/local/opt/toybox/bin
+if [ -x "$T/toybox" ] && [ -f "$G/newtoys.h" ]; then
+  python3 - "$G" "$T" <<'EOT'
+import os, re, sys
+g, t = sys.argv[1:]
+on = {m.group(1) for m in re.finditer(r'#define CFG_(\w+) 1', open(g + '/config.h').read())}
+for m in re.finditer(r'USE_(\w+)\((?:NEW|OLD)TOY\((\w+|\[)', open(g + '/newtoys.h').read()):
+    if m.group(1) in on and m.group(2) != 'toybox' and not os.path.lexists(f'{t}/{m.group(2)}'):
+        os.symlink('toybox', f'{t}/{m.group(2)}')
+EOT
+else
+  echo "note: no toybox command links (toybox not chosen, or build/$A/toybox is gone: scripts/qnxbuild -a $A -f toybox)" >&2
+fi
+
+# 3. The image directory, with room for the ports.
+V=$WS/lab/vm/$NAME; mkdir -p "$V" "$WS/logs"; cd "$V"; LOG=$WS/logs/make-ported-image-$NAME.log
+MB=$(( $(du -sm "$R" | cut -f1) * 3 / 2 + 300 ))
+SSHID=$WS/tests/ssh/qnx-target.pub; [ -f "$SSHID" ] || SSHID=none
+mkqnximage --noprompt --type=qemu --arch="$A" --hostname="${NAME#oss-}" --ssh-ident="$SSHID" \
+  --sys-size=$MB --sys-inodes=60000 --data-size=2000 --data-inodes=40000 --ram=2G --cpu=4 > "$LOG" 2>&1 \
+  || { tail -n 20 "$LOG" >&2; exit 1; }
+
+# 4. What this adds to the image: everything between the markers, replaced
+#    on every run.
+put() { # put <snippet> : stdin replaces the marked block of local/snippets/<snippet>
+  local f=local/snippets/$1
+  sed -i '/^# >>> ported-first/,/^# <<< ported-first/d' "$f"
+  { echo "# >>> ported-first (scripts/make-ported-image; docs/ported-first-image.md)"; cat; echo "# <<< ported-first"; } >> "$f"
+}
+{
+  echo "[uid=0 gid=0 dperms=755 type=dir] usr"
+  echo "[-followlink uid=0 gid=0 perms=* dperms=755] usr/local=$R/usr/local"
+  # QNX run-time libraries the ports need and the image does not carry.
+  while IFS=$'\t' read -r n p; do
+    grep -qE "(^|[/=])$(printf %s "$n" | sed 's/[.+]/\\&/g')(\$|=)" output/build/ifs.build output/build/system.build \
+      || echo "lib/$n=$p"
+  done < "$R/QNX-RUNTIME"
+  cat <<EOT
+[uid=0 gid=0 perms=444] etc/ssh/sshd_config.ported={
+# The ported OpenSSH (/usr/local/sbin/sshd); it takes the place of the sshd of QNX.
+Port 22
+HostKey /data/var/ssh/ssh_host_rsa_key
+HostKey /data/var/ssh/ssh_host_ed25519_key
+AuthorizedKeysFile	.ssh/authorized_keys
+PasswordAuthentication no
+PermitUserEnvironment yes
+PidFile none
+# Sessions that read no profile ("ssh host command") get the ports first too.
+SetEnv PATH=$PORTS_PATH LD_LIBRARY_PATH=$PORTS_LIBS SSL_CERT_FILE=/usr/local/ssl/cert.pem TERMINFO=/usr/local/share/terminfo
+Subsystem sftp /usr/local/libexec/sftp-server
+}
+[uid=0 gid=0 dperms=755 perms=555]
+EOT
+} | put system_files.custom
+put data_files.custom <<'EOT'
+# privilege separation directory of the ported sshd
+[uid=0 gid=0 type=dir dperms=755] var/empty
+EOT
+put profile.custom <<EOT
+export PATH=$PORTS_PATH
+export LD_LIBRARY_PATH=$PORTS_LIBS
+export SSL_CERT_FILE=/usr/local/ssl/cert.pem
+export TERMINFO=/usr/local/share/terminfo
+EOT
+put post_start.custom <<EOT
+ln -sP /system/usr/local /usr/local
+export PATH=$PORTS_PATH
+export LD_LIBRARY_PATH=$PORTS_LIBS
+# log-in shell of root: the ported bash (the account file is on /data)
+if [ -x /usr/local/bin/bash ]; then
+  grep -q '^root:.*:/usr/local/bin/bash\$' /data/var/etc/passwd || sed -i 's#^\\(root:.*\\):/bin/sh\$#\\1:/usr/local/bin/bash#' /data/var/etc/passwd
+fi
+# the ported sshd instead of the one startup.sh started
+if [ -x /usr/local/sbin/sshd ]; then
+  slay -f sshd 2>/dev/null
+  /usr/local/sbin/sshd -f /system/etc/ssh/sshd_config.ported
+fi
+EOT
+
+# 5. Build the image with them.
+mkqnximage --noprompt --build >> "$LOG" 2>&1 || { tail -n 20 "$LOG" >&2; exit 1; }
+echo "$V: image built ($(wc -l < "$R/PACKAGES") packages). Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"

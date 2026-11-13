@@ -7,6 +7,9 @@
 # an untracked file .sdp at its top:
 #     root=/path/to/that/sdp      the SDP it builds against
 #     version=8.0.6               what its packages are published as
+#     config=/path/to/.qnx        optional: where that SDP's licence and
+#                                 configuration are (QNX_CONFIGURATION), when
+#                                 not where its qnxsdp-env.sh says
 # Without .sdp: QNX_SDP_ROOT (default ~/qnx800), published as 8.0. Building
 # this workspace against an SDP other than its own is refused: the staging
 # tree would end up a mix of two SDPs.
@@ -21,6 +24,7 @@ if [ -f "$_sdp_file" ]; then
   fi
   _sdp_ver=$(sed -n 's/^version=//p' "$_sdp_file")
   [ -n "$_sdp_ver" ] && export QNX_OSS_SDP_VERSION="$_sdp_ver"
+  _sdp_conf=$(sed -n 's/^config=//p' "$_sdp_file"); _sdp_conf=${_sdp_conf/#\~/$HOME}
 fi
 unset _sdp_file _sdp_root _sdp_ver
 export QNX_OSS_SDP_VERSION="${QNX_OSS_SDP_VERSION:-8.0}"
@@ -41,6 +45,8 @@ export PATH="$QNX_PORTS_BASE_PATH"
 if [ -n "$QNX_PORTS_BASE_ACLOCAL_PATH" ]; then export ACLOCAL_PATH="$QNX_PORTS_BASE_ACLOCAL_PATH"; else unset ACLOCAL_PATH; fi
 
 source "$QNX_SDP_ROOT/qnxsdp-env.sh" >/dev/null
+if [ -n "$_sdp_conf" ]; then export QNX_CONFIGURATION="$_sdp_conf" QNX_CONFIGURATION_EXCLUSIVE="$_sdp_conf"; fi
+unset _sdp_conf
 
 export WS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # A source tree under src/ is not a git checkout; without this, a build's

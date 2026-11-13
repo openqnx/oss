@@ -29,6 +29,7 @@
 # from); CA_BUNDLE picks the CA bundle to copy.
 set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
+. "$WS/scripts/lib/sdp.sh"   # this workspace's SDP release (8.0, 8.0.6): which releases the target reads
 USER_=${TARGET_USER:-root}
 QRT=1
 [ "$1" = -u ] && { USER_=$2; shift 2; }
@@ -92,4 +93,4 @@ if [ -n "$key" ]; then
   kopt=(-k "$D/$(basename "$key")")
 fi
 echo "== $T: apk-setup ${kopt[*]} $*"
-ssh "${O[@]}" "$USER_@$T" "chmod +x $D/oss-get $D/apk-setup && ${OSS_REPO:+OSS_REPO='$OSS_REPO' }sh $D/apk-setup -c $D/cacert.pem ${kopt[*]} $*"
+ssh "${O[@]}" "$USER_@$T" "chmod +x $D/oss-get $D/apk-setup && OSS_SDP=$SDP ${OSS_REPO:+OSS_REPO='$OSS_REPO' }sh $D/apk-setup -c $D/cacert.pem ${kopt[*]} $*"

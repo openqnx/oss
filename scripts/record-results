@@ -57,7 +57,10 @@ def main():
     ap.add_argument("transcript", nargs="?")
     a = ap.parse_args()
     text = open(a.transcript).read() if a.transcript else sys.stdin.read()
-    path = os.path.join(WS, "tests", "results", a.arch + ".tsv")
+    sys.path.insert(0, os.path.join(WS, "scripts", "lib"))
+    import sdpver                      # another SDP release: tests/results/<sdp>/
+    os.makedirs(sdpver.results_dir(False), exist_ok=True)
+    path = os.path.join(sdpver.results_dir(False), a.arch + ".tsv")
     rows = load(path)
     n = 0
     for m in re.finditer(r"^(PASS|FAIL) (test_\w+|pkg:[\w.+-]+)", text, re.M):

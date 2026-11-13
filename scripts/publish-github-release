@@ -59,7 +59,9 @@ while [ $# -gt 0 ]; do case "$1" in
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac; done
 [ ${#ARCHES[@]} -gt 0 ] || ARCHES=(aarch64 x86_64)
-SDP=8.0; MAX_ASSETS=1000; MAX_BYTES=$((2*1024*1024*1024 - 1))
+. "$WS/scripts/lib/sdp.sh"   # this workspace's SDP release: the releases are <kind>-$SDP-<arch>
+export SDP_SUB
+MAX_ASSETS=1000; MAX_BYTES=$((2*1024*1024*1024 - 1))
 REPO_ROOT=${PUBLISH_REPO:-$WS/dists}
 TESTS_ROOT=${TESTS_ROOT:-$WS/test_suites}
 OUT=${PUBLISH_OUT:-$WS/build/release}   # staging only: hard links into dists/ where possible
@@ -96,7 +98,7 @@ if os.path.exists(mp):
         if not l.startswith("#") and "\t" in l:
             c, t = l.split()[:2]; ptests[c] = "qnx-test-" + t[5:].replace("_", "-")
 passed = set()   # "<component> <version>" that passed on a target
-rp = os.path.join(ws, "tests", "results", qarch + ".tsv")
+rp = os.path.join(ws, "tests", "results", os.environ.get("SDP_SUB", "").lstrip("/"), qarch + ".tsv")
 if os.path.exists(rp):
     for l in open(rp):
         f = l.rstrip("\n").split("\t")

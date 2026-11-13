@@ -38,7 +38,10 @@ OSS_ROOT=${OSS_ROOT:-/data/oss}
 CONF=${OSS_CONF:-$OSS_ROOT/etc/oss-get.conf}
 [ -f "$CONF" ] && . "$CONF"
 GHD=https://github.com/openqnx/oss/releases/download
-OSS_REPO=${OSS_REPO:-$GHD/packages-8.0-@ARCH@ $GHD/packages-8.0-@ARCH@-m-z}
+# The SDP release the packages were built against: 8.0, or 8.0.6 for a target
+# made with SDP 8.0.6 (OSS_SDP=8.0.6, here or in oss-get.conf).
+OSS_SDP=${OSS_SDP:-8.0}
+OSS_REPO=${OSS_REPO:-$GHD/packages-$OSS_SDP-@ARCH@ $GHD/packages-$OSS_SDP-@ARCH@-m-z}
 
 case "$(uname -m)" in
   aarch64*|QEMU_virt|*arm*|*RaspberryPi*) ARCH=aarch64 ;;

@@ -24,7 +24,8 @@ while getopts p:b:h o; do case $o in
   p) PORT=$OPTARG ;; b) BIND=$OPTARG ;;
   *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac; done
-D=$WS/dists/8.0; T=$WS/test_suites/8.0
+. "$WS/scripts/lib/sdp.sh"
+D=$WS/dists/$SDP; T=$WS/test_suites/$SDP
 [ -f "$D/x86_64/APKINDEX.tar.gz" ] || [ -f "$D/aarch64/APKINDEX.tar.gz" ] ||
   { echo "no repository in $D (run: scripts/qnxpkg --key <key> --all --tests)" >&2; exit 1; }
 for a in aarch64 x86_64; do
@@ -32,10 +33,10 @@ for a in aarch64 x86_64; do
     { [ -f "$T/$a/INDEX" ] && printf ', %d test packages' "$(grep -vc '^#' "$T/$a/INDEX")"; echo; }
 done
 R=$WS/build/serve-root; rm -rf "$R"; mkdir -p "$R/dists" "$R/test_suites"
-ln -s "$D" "$R/dists/8.0"; [ -d "$T" ] && ln -s "$T" "$R/test_suites/8.0"
+ln -s "$D" "$R/dists/$SDP"; [ -d "$T" ] && ln -s "$T" "$R/test_suites/$SDP"
 H=$( [ "$BIND" = 0.0.0.0 ] && hostname -I 2>/dev/null | awk '{print $1}' || echo "$BIND")
 U=http://${H:-<this-host>}:$PORT
-echo "serving $U/dists/8.0 and $U/test_suites/8.0"
-echo "  target setup (from here):  scripts/target-bootstrap <target> -r $U/dists/8.0"
-echo "  oss-get on a target:       OSS_REPO=$U/dists/8.0 oss-get update"
+echo "serving $U/dists/$SDP and $U/test_suites/$SDP"
+echo "  target setup (from here):  scripts/target-bootstrap <target> -r $U/dists/$SDP"
+echo "  oss-get on a target:       OSS_REPO=$U/dists/$SDP oss-get update"
 exec python3 -m http.server -d "$R" -b "$BIND" "$PORT"

@@ -36,7 +36,7 @@ import hostpaths
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREFIX = os.environ.get("PREFIX", "/usr/local")
-SDP = os.environ.get("QNX_OSS_SDP_VERSION", "8.0")
+from sdpver import SDP   # this workspace's SDP release: dists/<SDP>/<arch>
 APK_ARCH = {"aarch64le": "aarch64", "x86_64": "x86_64"}
 CPU = {"aarch64le": "aarch64", "x86_64": "x86_64"}
 
@@ -75,7 +75,7 @@ def recipe_meta(name):
     if m:
         meta["url"] = m.group(1).strip("\"'")
     readme = os.path.join(WS, "ports", name, "README.md")
-    meta["desc"] = "%s %s for QNX SDP 8.0" % (name, meta["version"])
+    meta["desc"] = "%s %s for QNX SDP %s" % (name, meta["version"], SDP)
     meta["license"] = "see upstream"
     # CONFLICTS: components that install the same files as this one (two
     # implementations of one library, e.g. sdl2 and sdl2-compat).

@@ -54,8 +54,9 @@ case "$(on 'head -n 1 /data/oss/etc/apk/repositories' 2>/dev/null)" in
   *) VIA=apk:local-dists ;;
 esac
 MAP=$WS/tests/port-tests.tsv          # component <TAB> test, written by scripts/gen-port-docs
-IDX=$WS/dists/8.0/$A/INDEX
-RES=$WS/tests/results/$ARCH.tsv
+. "$WS/scripts/lib/sdp.sh"            # this workspace's SDP release
+IDX=$WS/dists/$SDP/$A/INDEX
+RES=$WS/tests/results$SDP_SUB/$ARCH.tsv
 ver_of() { grep "^$1|" "$IDX" 2>/dev/null | head -n 1 | cut -d'|' -f2; }
 
 comps=()
@@ -88,7 +89,7 @@ LOG=$WS/logs/verify-$ARCH.txt; mkdir -p "$WS/logs"
 # One log per component and version (tracked: tests/logs/<arch>/): what was
 # installed, the command that tested it, its complete output, the verdict.
 # Local addresses are masked -- they would end up in the published repository.
-TLOGS=$WS/tests/logs/$ARCH; mkdir -p "$TLOGS"
+TLOGS=$WS/tests/logs$SDP_SUB/$ARCH; mkdir -p "$TLOGS"
 UNAME=$(on "uname -a" 2>/dev/null)
 mask() { sed -E "s/$(echo "$T" | sed 's/\./\\./g')/<target>/g; s/\b(10|127|172\.(1[6-9]|2[0-9]|3[01])|192\.168)\.[0-9]+\.[0-9]+(\.[0-9]+)?\b/<ip>/g"; }
 tlog() { # component version result apk-cmd apk-out test-cmd test-out
@@ -156,5 +157,5 @@ for c in "${comps[@]}"; do
     [ -n "$rm_" ] && on "apk del$rm_ >/dev/null 2>&1"
   fi
 done
-echo "== $T: $pass verified, $fail failed (results: tests/results/$ARCH.tsv, transcript: logs/verify-$ARCH.txt)" | tee -a "$LOG"
+echo "== $T: $pass verified, $fail failed (results: tests/results$SDP_SUB/$ARCH.tsv, transcript: logs/verify-$ARCH.txt)" | tee -a "$LOG"
 [ $fail -eq 0 ]

@@ -32,7 +32,7 @@ SHARDS = [
     ("-m-z", "m-z"),
 ]
 KINDS = ("apk", "packages", "tests")   # the sharded releases (all of them)
-SDP = "8.0"
+from sdpver import SDP   # this workspace's SDP release ("8.0", "8.0.6")
 ARCHES = ("x86_64", "aarch64")
 
 _RX = [(s, re.compile("[%s]" % c)) for s, c in SHARDS]

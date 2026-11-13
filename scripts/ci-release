@@ -28,7 +28,7 @@
 #   CI_TARGET_AARCH64LE  e.g. 192.168.122.82
 # and gh logged in for publishing.
 set -eo pipefail
-WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"
+WS=$(cd "$(dirname "$0")/.." && pwd); cd "$WS"; . "$WS/scripts/lib/sdp.sh"
 PUBLISH=1; COMMIT=""; WHAT=()
 while [ $# -gt 0 ]; do case "$1" in
   --no-publish) PUBLISH=""; shift ;;
@@ -57,7 +57,7 @@ if [ "${WHAT[0]}" != --changed ]; then
 fi
 
 step "3. package server"
-if ! curl -fs -o /dev/null http://127.0.0.1:8000/dists/8.0/x86_64/INDEX; then
+if ! curl -fs -o /dev/null http://127.0.0.1:8000/dists/$SDP/x86_64/INDEX; then
   nohup ./scripts/serve-dists > logs/serve-dists.log 2>&1 &
   sleep 3
 fi

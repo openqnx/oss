@@ -57,7 +57,9 @@
 GH=https://github.com/openqnx/oss
 RAW=https://raw.githubusercontent.com/openqnx/oss/main
 APK_ROOT=${APK_ROOT:-/data/oss}
-APK_REPO=${APK_REPO:-$GH/releases/download/apk-8.0-@ARCH@/APKINDEX.tar.gz $GH/releases/download/apk-8.0-@ARCH@-m-z/APKINDEX.tar.gz}
+# The SDP release the packages were built against (8.0, 8.0.6): OSS_SDP.
+OSS_SDP=${OSS_SDP:-8.0}; export OSS_SDP
+APK_REPO=${APK_REPO:-$GH/releases/download/apk-$OSS_SDP-@ARCH@/APKINDEX.tar.gz $GH/releases/download/apk-$OSS_SDP-@ARCH@-m-z/APKINDEX.tar.gz}
 APK_KEY=${APK_KEY:-$RAW/keys/openqnx-oss-20261029.rsa.pub}
 APK_TESTS_REPO=${APK_TESTS_REPO:-}
 OSS_GET_URL=${OSS_GET_URL:-$RAW/target/oss-get}
@@ -87,9 +89,9 @@ REPO=$(echo "$APK_REPO" | sed "s/@ARCH@/$ARCH/g")
 FIRST=$(for r in $APK_REPO; do echo "$r"; break; done)
 if [ -z "$APK_TESTS_REPO" ]; then
   case "$FIRST" in
-    $GH/releases/download/apk-*) APK_TESTS_REPO="$GH/releases/download/tests-8.0-@ARCH@/APKINDEX.tar.gz $GH/releases/download/tests-8.0-@ARCH@-m-z/APKINDEX.tar.gz" ;;
+    $GH/releases/download/apk-*) APK_TESTS_REPO="$GH/releases/download/tests-$OSS_SDP-@ARCH@/APKINDEX.tar.gz $GH/releases/download/tests-$OSS_SDP-@ARCH@-m-z/APKINDEX.tar.gz" ;;
     *APKINDEX.tar.gz) APK_TESTS_REPO=none ;;
-    */dists/8.0|*/dists/8.0/) APK_TESTS_REPO=${APK_REPO%/}; APK_TESTS_REPO=${APK_TESTS_REPO%/dists/8.0}/test_suites/8.0 ;;
+    */dists/8.[0-9]*) APK_TESTS_REPO=${APK_REPO%/}; _v=${APK_TESTS_REPO##*/}; APK_TESTS_REPO=${APK_TESTS_REPO%/dists/*}/test_suites/$_v ;;
     *) APK_TESTS_REPO=none ;;
   esac
 fi

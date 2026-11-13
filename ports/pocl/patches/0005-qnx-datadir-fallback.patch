@@ -1,0 +1,26 @@
+Fall back to the configured data directory when dladdr() gives no directory.
+
+libpocl finds its data (the kernel library bitcode in share/pocl) relative
+to its own file, which it asks dladdr() for. When the loader knows the
+library by a bare name only -- no directory in dli_fname -- the lookup
+gave up and returned an error, although the configured directory
+(POCL_INSTALL_PRIVATE_DATADIR) would have been right. On QNX fall back to
+the configured directory in that case, as when relocation is disabled.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/CL/pocl_util.c
++++ b/lib/CL/pocl_util.c
+@@ -1992,6 +1992,12 @@
+ {
+ #ifdef ENABLE_RELOCATION
+   const char *Path = pocl_dynlib_pathname ((void *)pocl_get_private_datadir);
++#ifdef __QNXNTO__
++  /* a name without a directory says nothing about where the library is:
++   * use the configured directory then */
++  if (Path && strchr (Path, POCL_PATH_SEPARATOR[0]) == NULL)
++    Path = NULL;
++#endif
+   if (Path)
+     {
+       strncpy (private_datadir, Path, POCL_MAX_PATHNAME_LENGTH);

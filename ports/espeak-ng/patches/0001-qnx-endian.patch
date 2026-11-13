@@ -1,0 +1,36 @@
+Byte order conversions on QNX from <gulliver.h>.
+
+QNX has no <endian.h> or <sys/endian.h>, so the compatibility header ended
+in "#error platform not supported". The le16toh() family is declared in
+<net/netbyte.h>, but only as functions that live in libsocket; the same
+conversions are macros in <gulliver.h> (ENDIAN_LE16() ...), part of libc's
+headers, so the source asks for nothing outside libc and libm.
+
+Upstream-Status: QNX-specific
+
+--- a/src/include/compat/endian.h
++++ b/src/include/compat/endian.h
+@@ -105,6 +105,23 @@
+ #	define __BIG_ENDIAN    BIG_ENDIAN
+ #	define __LITTLE_ENDIAN LITTLE_ENDIAN
+ #	define __PDP_ENDIAN    PDP_ENDIAN
++#elif defined(__QNX__) /* QNX Neutrino */
++#	include <gulliver.h>
++
++#	define htobe16(x) ENDIAN_BE16(x)
++#	define htole16(x) ENDIAN_LE16(x)
++#	define be16toh(x) ENDIAN_BE16(x)
++#	define le16toh(x) ENDIAN_LE16(x)
++
++#	define htobe32(x) ENDIAN_BE32(x)
++#	define htole32(x) ENDIAN_LE32(x)
++#	define be32toh(x) ENDIAN_BE32(x)
++#	define le32toh(x) ENDIAN_LE32(x)
++
++#	define htobe64(x) ENDIAN_BE64(x)
++#	define htole64(x) ENDIAN_LE64(x)
++#	define be64toh(x) ENDIAN_BE64(x)
++#	define le64toh(x) ENDIAN_LE64(x)
+ #elif defined(__sun) && defined(__SVR4) /* Solaris */
+ #   include <sys/byteorder.h>
+ 

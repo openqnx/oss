@@ -1,0 +1,79 @@
+Read ICD and layer files from the installation prefix's etc/OpenCL as well as /etc/OpenCL.
+
+The loader reads its ICD files (*.icd) from /etc/OpenCL/vendors and its
+layers from /etc/OpenCL/layers only. Components here are installed under a
+prefix of their own (/usr/local), and the base system's /etc is not where
+their packages put configuration: an OpenCL implementation installed from a
+package registers itself in <prefix>/etc/OpenCL/vendors, which the loader
+never looked at, so clGetPlatformIDs() found no platform.
+
+OPENCL_ICD_LOADER_EXTRA_CONFIG_DIR (a CMake cache entry, empty by default:
+upstream behaviour) names a second configuration directory. Its vendors/ is
+enumerated before /etc/OpenCL/vendors and its layers/ after
+/etc/OpenCL/layers; an ICD registered in both is loaded once (the loader
+already skips a library it has loaded). OCL_ICD_VENDORS and OPENCL_LAYER_PATH
+keep their meaning: when set they replace both directories.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -175,6 +175,16 @@
+     $<$<BOOL:${OPENCL_ICD_LOADER_BUILD_SHARED_LIBS}>:CL_SHARED_BUILD>
+ )
+ 
++# A second configuration directory, read in addition to /etc/OpenCL: the
++# vendors/ and layers/ directories of an installation prefix that is not "/".
++set (OPENCL_ICD_LOADER_EXTRA_CONFIG_DIR "" CACHE PATH
++    "Directory whose vendors/ and layers/ are read in addition to /etc/OpenCL")
++if (OPENCL_ICD_LOADER_EXTRA_CONFIG_DIR AND NOT WIN32)
++    list (APPEND OPENCL_COMPILE_DEFINITIONS
++        ICD_VENDOR_PATH_EXTRA="${OPENCL_ICD_LOADER_EXTRA_CONFIG_DIR}/vendors"
++        LAYER_PATH_EXTRA="${OPENCL_ICD_LOADER_EXTRA_CONFIG_DIR}/layers")
++endif ()
++
+ target_compile_definitions (OpenCL
+   PRIVATE
+     ${OPENCL_COMPILE_DEFINITIONS}
+--- a/loader/linux/icd_linux.c
++++ b/loader/linux/icd_linux.c
+@@ -214,17 +214,39 @@
+     }
+ }
+ 
++#if defined(ICD_VENDOR_PATH_EXTRA) || defined(LAYER_PATH_EXTRA)
++// whether an environment variable replaces the built-in directories
++static int khrIcdOsEnvIsSet(const char *env)
++{
++    char *val = khrIcd_secure_getenv(env);
++    if (NULL == val)
++        return 0;
++    khrIcd_free_getenv(val);
++    return 1;
++}
++#endif
++
+ // go through the list of vendors in the two configuration files
+ void khrIcdOsVendorsEnumerate(void)
+ {
+     khrIcdInitializeEnvOptions();
+     khrIcdVendorsEnumerateEnv();
+ 
++#if defined(ICD_VENDOR_PATH_EXTRA)
++    // the installation prefix's own configuration directory comes first;
++    // OCL_ICD_VENDORS replaces both directories, so it is read only once
++    if (!khrIcdOsEnvIsSet("OCL_ICD_VENDORS"))
++        khrIcdOsDirEnumerate(ICD_VENDOR_PATH_EXTRA, "OCL_ICD_VENDORS", ".icd", khrIcdVendorAdd, 0);
++#endif
+     khrIcdOsDirEnumerate(ICD_VENDOR_PATH, "OCL_ICD_VENDORS", ".icd", khrIcdVendorAdd, 0);
+ 
+ #if defined(CL_ENABLE_LAYERS)
+     // system layers should be closer to the driver
+     khrIcdOsDirEnumerate(LAYER_PATH, "OPENCL_LAYER_PATH", ".lay", khrIcdLayerAdd, 1);
++#if defined(LAYER_PATH_EXTRA)
++    if (!khrIcdOsEnvIsSet("OPENCL_LAYER_PATH"))
++        khrIcdOsDirEnumerate(LAYER_PATH_EXTRA, "OPENCL_LAYER_PATH", ".lay", khrIcdLayerAdd, 1);
++#endif
+ 
+     khrIcdLayersEnumerateEnv();
+ #endif // defined(CL_ENABLE_LAYERS)

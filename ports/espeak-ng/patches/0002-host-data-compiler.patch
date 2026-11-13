@@ -1,0 +1,67 @@
+Let a native espeak-ng compile the data in a cross build.
+
+The voice data (phontab, phondata, intonations, the dictionaries) is
+compiled during the build by running the espeak-ng program that was just
+built. In a cross build that is a QNX executable and cannot run on the
+build machine. ESPEAK_NG_HOST_BIN names a native espeak-ng of the same
+version that does the compiling instead; the files it writes are the same
+(little endian on the build machine and on both QNX targets). Without the
+option the build behaves as before.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/data.cmake
++++ b/cmake/data.cmake
+@@ -61,7 +61,15 @@
+ file(COPY "${PHONEME_SRC_DIR}" DESTINATION "${DATA_DIST_ROOT}")
+ 
+ set(ESPEAK_RUN_ENV ${CMAKE_COMMAND} -E env "ESPEAK_DATA_PATH=${DATA_DIST_ROOT}")
+-set(ESPEAK_RUN_CMD ${ESPEAK_RUN_ENV} $ENV{VALGRIND} "$<TARGET_FILE:espeak-ng-bin>")
++# Cross builds: the program just built cannot run on the build machine, so
++# the data is compiled by a native espeak-ng of the same version instead.
++set(ESPEAK_NG_HOST_BIN "" CACHE FILEPATH "Native espeak-ng that compiles the data (cross builds)")
++if (ESPEAK_NG_HOST_BIN)
++  set(ESPEAK_DATA_COMPILER "${ESPEAK_NG_HOST_BIN}")
++else()
++  set(ESPEAK_DATA_COMPILER "$<TARGET_FILE:espeak-ng-bin>")
++endif()
++set(ESPEAK_RUN_CMD ${ESPEAK_RUN_ENV} $ENV{VALGRIND} "${ESPEAK_DATA_COMPILER}")
+ 
+ add_custom_command(
+   OUTPUT "${DATA_DIST_DIR}/intonations"
+@@ -69,7 +77,7 @@
+   WORKING_DIRECTORY "${PHONEME_SRC_DIR}"
+   COMMENT "Compile intonations"
+   DEPENDS
+-    "$<TARGET_FILE:espeak-ng-bin>"
++    "${ESPEAK_DATA_COMPILER}"
+     "${PHONEME_SRC_DIR}/intonation"
+ )
+ 
+@@ -100,7 +108,7 @@
+   COMMENT "Compile phonemes"
+   DEPENDS
+     "${DATA_DIST_DIR}/intonations"
+-    "$<TARGET_FILE:espeak-ng-bin>"
++    "${ESPEAK_DATA_COMPILER}"
+     ${_phon_deps}
+ )
+ 
+@@ -136,7 +144,7 @@
+     COMMAND ${ESPEAK_RUN_CMD} --compile=${_dict_name}
+     WORKING_DIRECTORY "${DICT_TMP_DIR}"
+     DEPENDS
+-      "$<TARGET_FILE:espeak-ng-bin>"
++      "${ESPEAK_DATA_COMPILER}"
+       "${DATA_DIST_DIR}/phondata"
+       "${DATA_DIST_DIR}/intonations"
+       ${_dict_deps}
+@@ -153,7 +161,7 @@
+     add_custom_command(
+       OUTPUT "${_mbl_out}"
+       COMMAND ${ESPEAK_RUN_CMD} --compile-mbrola="${_mbl_src}"
+-      DEPENDS "$<TARGET_FILE:espeak-ng-bin>" "${_mbl_src}"
++      DEPENDS "${ESPEAK_DATA_COMPILER}" "${_mbl_src}"
+     )
+   endforeach(_mbl)
+ endif()

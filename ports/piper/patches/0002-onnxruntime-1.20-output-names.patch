@@ -1,0 +1,31 @@
+Read the model's output names with the API onnxruntime 1.20 has.
+
+Ort::Session::GetOutputNames() was added to the C++ API in onnxruntime
+1.22, the release upstream downloads. The onnxruntime component here is
+1.20.1, where the call does not compile. GetOutputCount() and
+GetOutputNameAllocated() return the same names and exist in both.
+
+Upstream-Status: QNX-specific
+
+--- a/libpiper/src/piper.cpp
++++ b/libpiper/src/piper.cpp
+@@ -672,7 +672,18 @@
+   std::array<const char *, 4> input_names = {"input", "input_lengths", "scales",
+                                              "sid"};
+ 
+-  std::vector<std::string> output_names_strs = synth->session->GetOutputNames();
++  // Session::GetOutputNames() needs onnxruntime 1.22; this works with older
++  // releases too.
++  std::vector<std::string> output_names_strs;
++  {
++    Ort::AllocatorWithDefaultOptions name_allocator;
++    const size_t num_outputs = synth->session->GetOutputCount();
++    output_names_strs.reserve(num_outputs);
++    for (size_t i = 0; i < num_outputs; i++) {
++      output_names_strs.emplace_back(
++          synth->session->GetOutputNameAllocated(i, name_allocator).get());
++    }
++  }
+   std::vector<const char *> output_names;
+   output_names.reserve(output_names_strs.size());
+   for (const auto &name : output_names_strs) {

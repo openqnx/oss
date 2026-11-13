@@ -1,0 +1,44 @@
+Export the generated OTLP protobuf classes when the compiler is QNX qcc.
+
+cmake/tools.cmake picks the symbol export declaration of the shared
+libraries (OPENTELEMETRY_PROTO_API and friends) by CMAKE_CXX_COMPILER_ID.
+QNX's qcc/q++ driver is GCC underneath but CMake identifies it as "QCC", so
+it fell through to the "unknown compiler" branch and the declaration was
+empty.  libopentelemetry_proto is compiled with -fvisibility=hidden and
+relies on that declaration to export the generated protobuf classes: the
+library built, but exported nothing, and everything that uses the OTLP
+classes (the OTLP exporters themselves at load time, and any application)
+ended with undefined opentelemetry::proto::... symbols.  QCC takes the same
+__attribute__((visibility("default"))) as GCC.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/tools.cmake
++++ b/cmake/tools.cmake
+@@ -224,7 +224,7 @@
+ endfunction()
+ 
+ function(project_build_tools_set_export_declaration OUTPUT_VARNAME)
+-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang|Intel|XL|XLClang")
++  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|QCC|Clang|AppleClang|Intel|XL|XLClang")
+     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+       set(${OUTPUT_VARNAME}
+           "__attribute__((__dllexport__))"
+@@ -260,7 +260,7 @@
+ endfunction()
+ 
+ function(project_build_tools_set_import_declaration OUTPUT_VARNAME)
+-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang|Intel|XL|XLClang")
++  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|QCC|Clang|AppleClang|Intel|XL|XLClang")
+     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+       set(${OUTPUT_VARNAME}
+           "__attribute__((__dllimport__))"
+@@ -307,7 +307,7 @@
+ endfunction()
+ 
+ function(project_build_tools_set_static_library_declaration DEFINITION_VARNAME)
+-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang|Intel|XL|XLClang")
++  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|QCC|Clang|AppleClang|Intel|XL|XLClang")
+     foreach(TARGET_NAME ${ARGN})
+       target_compile_definitions(
+         ${TARGET_NAME}

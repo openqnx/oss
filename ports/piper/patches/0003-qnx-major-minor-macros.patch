@@ -1,0 +1,28 @@
+Keep QNX's major()/minor() macros away from uni-algo's version class.
+
+QNX's <sys/types.h> defines major(device) and minor(device) as function-
+like macros. The bundled uni-algo header has member functions of those
+names in its version class, which the preprocessor rewrote into syntax
+errors ("expected unqualified-id before 'int'"). The macros are removed
+before the class; nothing in libpiper uses device numbers.
+
+Upstream-Status: QNX-specific
+
+--- a/libpiper/include/uni_algo.h
++++ b/libpiper/include/uni_algo.h
+@@ -64272,6 +64272,15 @@
+ 
+ namespace una::version {
+ 
++// <sys/types.h> of some systems (QNX; glibc before 2.28) defines major() and
++// minor() as macros for device numbers.
++#ifdef major
++#undef major
++#endif
++#ifdef minor
++#undef minor
++#endif
++
+ class library_v
+ {
+ private:

@@ -1,0 +1,26 @@
+Name libsz and libaec in hdf5.pc instead of libname-NOTFOUND.
+
+hdf5.pc lists the compression libraries in Libs.private by reading each
+CMake target's OUTPUT_NAME. The targets libaec's package files export
+(libaec::sz, libaec::aec) are imported targets and have none, so the
+installed file said "-llibname-NOTFOUND -llibname-NOTFOUND" and a static
+or --static pkg-config consumer got a link line that cannot work. Fall
+back to the target's own name, which for libaec is the library name
+(libsz, libaec). Not QNX specific: any build against an installed libaec
+shows it; QNX is where this port builds with SZIP enabled.
+
+Upstream-Status: Pending
+
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1204,6 +1204,10 @@
+ foreach (libs ${LINK_COMP_LIBS})
+ #  set (_PKG_CONFIG_REQUIRES_PRIVATE "${_PKG_CONFIG_REQUIRES_PRIVATE} -l${libs}")
+   get_target_property (libname ${libs} OUTPUT_NAME)
++  if (NOT libname)
++    # an imported target without OUTPUT_NAME (libaec::sz, libaec::aec)
++    string (REGEX REPLACE "^.*::" "" libname ${libs})
++  endif ()
+   set (_PKG_CONFIG_LIBS_PRIVATE "${_PKG_CONFIG_LIBS_PRIVATE} -l${libname}")
+ endforeach ()
+ 

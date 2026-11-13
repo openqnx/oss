@@ -1,0 +1,41 @@
+# tsl-robin-map 1.4.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T15:41:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tsl-robin-map-dev qnx-test-tsl-robin-map qnx-port-tests
+(1/2) Installing qnx-test-tsl-robin-map (1.0-r0)
+(2/2) Installing tsl-robin-map-dev (1.4.1-r0)
+OK: 980.1 MiB in 166 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tsl_robin_map
+     == tsl-robin-map ==
+       ok   a new map is empty
+       ok   10000 squares inserted; iteration visits each once
+       ok   lookups hit and miss correctly
+       ok   at() on a missing key throws std::out_of_range
+       ok   load factor within its maximum after growth
+       ok   insert of an existing key keeps the old value
+       ok   insert_or_assign overwrites
+       ok   try_emplace adds a new key
+       ok   5000 odd keys erased, all even keys still found
+       ok   erase through iterators removes the 2501 multiples of 4
+       ok   rehash keeps the contents
+       ok   clear empties the map
+       ok   50000 mixed operations leave the same contents as std::unordered_map
+       ok   a hash with only 4 distinct values still stores and erases correctly
+       ok   lookup by string_view without building a std::string
+       ok   it.value() modifies in place
+       ok   copy equals the moved-to map; the moved-from map is empty
+       ok   robin_set keeps 100 distinct values of 1000 inserts
+       ok   default growth policy: bucket count is a power of two
+       ok   prime growth policy: odd bucket count, contents intact
+       ok   serialize / deserialize restores 100 entries
+     PASS tsl-robin-map
+PASS test_tsl_robin_map
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

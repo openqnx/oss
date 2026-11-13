@@ -70,6 +70,7 @@ do_configure() {
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \
     -Donnxruntime_BUILD_BENCHMARKS=OFF \
     -Donnxruntime_ENABLE_PYTHON=OFF \
+    -DPYTHON_EXECUTABLE="$WS/hosttools/bin/python3" -DPython_EXECUTABLE="$WS/hosttools/bin/python3" -DPython3_EXECUTABLE="$WS/hosttools/bin/python3" \
     -Donnxruntime_USE_FULL_PROTOBUF=ON \
     -DONNX_CUSTOM_PROTOC_EXECUTABLE="$HOST_PROTOC" \
     -DProtobuf_PROTOC_EXECUTABLE="$HOST_PROTOC" \

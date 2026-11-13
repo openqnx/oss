@@ -1,0 +1,18 @@
+piper_create() is a C entry point: a missing or unreadable voice configuration made json::parse throw through it and the caller aborted. Return NULL as for the other load failures.
+
+Upstream-Status: QNX-specific
+
+--- a/libpiper/src/piper.cpp
++++ b/libpiper/src/piper.cpp
+@@ -89,7 +89,10 @@
+   }
+ 
+   std::ifstream config_stream(config_path_str);
+-  auto config = json::parse(config_stream);
++  auto config = json::parse(config_stream, nullptr, false);
++  if (config.is_discarded()) {
++    return nullptr;
++  }
+   PhonemeType phoneme_type = PhonemeType::Espeak;
+   if (config.contains("phoneme_type")) {
+     phoneme_type = config["phoneme_type"].get<PhonemeType>();

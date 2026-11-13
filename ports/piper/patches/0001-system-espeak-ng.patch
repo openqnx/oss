@@ -1,0 +1,141 @@
+Option to use the installed espeak-ng instead of building a private copy.
+
+libpiper's build downloads espeak-ng with git, builds a private static
+copy for the build machine's compiler and installs a second
+share/espeak-ng-data. In a cross build that espeak-ng could not compile
+its own data, and the workspace has espeak-ng as a component of its own.
+PIPER_USE_SYSTEM_ESPEAK_NG=ON takes the installed one through pkg-config
+(its shared library, nothing installed twice).
+
+The program looked for espeak-ng-data next to its executable, found
+through /proc/self/exe -- which QNX does not have (std::filesystem::
+canonical() threw before any option was looked at). With the installed
+espeak-ng there is nothing next to the executable: unless --espeak_data
+is given, no path is passed and espeak-ng uses its own data directory.
+Off by default, upstream's behaviour is unchanged.
+
+Upstream-Status: QNX-specific
+
+--- a/libpiper/CMakeLists.txt
++++ b/libpiper/CMakeLists.txt
+@@ -5,6 +5,15 @@
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
++# An espeak-ng that is already installed (found with pkg-config) instead of
++# a private static copy built here: its library is linked, its data is used
++# where it is installed, and nothing of it is installed again.
++option(PIPER_USE_SYSTEM_ESPEAK_NG "Use the installed espeak-ng (pkg-config) instead of building one" OFF)
++
++if(PIPER_USE_SYSTEM_ESPEAK_NG)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(ESPEAKNG REQUIRED IMPORTED_TARGET espeak-ng)
++else()
+ include(ExternalProject)
+ 
+ # Install location for espeak-ng
+@@ -65,6 +74,8 @@
+     ${ESPEAKNG_INSTALL_DIR}/include
+ )
+ 
++endif()
++
+ # ---- onnxruntime ---
+ 
+ find_package(onnxruntime QUIET)
+@@ -147,6 +158,17 @@
+ )
+ enable_clang_tidy(piper)
+ 
++if(PIPER_USE_SYSTEM_ESPEAK_NG)
++target_include_directories(piper PUBLIC
++    ${CMAKE_CURRENT_SOURCE_DIR}/include
++)
++target_link_libraries(piper
++    PkgConfig::ESPEAKNG
++    onnxruntime::onnxruntime
++)
++# The program then leaves the data directory to espeak-ng (src/main/main.cpp).
++add_compile_definitions(PIPER_USE_SYSTEM_ESPEAK_NG)
++else()
+ add_dependencies(piper espeak_ng_external)
+ target_include_directories(piper PUBLIC
+     ${ESPEAKNG_INSTALL_DIR}/include
+@@ -157,6 +179,7 @@
+     ${UCD_STATIC_LIB}
+     onnxruntime::onnxruntime
+ )
++endif()
+ 
+ # ---- piper exe ---
+ add_subdirectory(src/main)
+@@ -202,10 +225,12 @@
+ # Copy espeak-ng-data
+ set(ESPEAKNG_DATA_SRC ${CMAKE_BINARY_DIR}/espeak_ng-install/share/espeak-ng-data)
+ 
++if(NOT PIPER_USE_SYSTEM_ESPEAK_NG)
+ install(
+     DIRECTORY ${ESPEAKNG_DATA_SRC}
+     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+ )
++endif()
+ 
+ # ----------------
+ # Testing
+--- a/libpiper/src/main/main.cpp
++++ b/libpiper/src/main/main.cpp
+@@ -44,7 +44,10 @@
+ 
+     // Get the path to the piper executable so we can locate espeak-ng-data,
+     // etc. next to it.
+-#ifdef _MSC_VER
++#ifdef PIPER_USE_SYSTEM_ESPEAK_NG
++    // The installed espeak-ng knows where its data is: without
++    // --espeak_data the library is given no path at all.
++#elif defined(_MSC_VER)
+     auto exePath = []() -> filesystem::path {
+       wchar_t moduleFileName[MAX_PATH] = {0};
+       GetModuleFileNameW(nullptr, moduleFileName, std::size(moduleFileName));
+@@ -64,6 +67,7 @@
+ #endif
+ #endif
+ 
++#ifndef PIPER_USE_SYSTEM_ESPEAK_NG
+     if (runConfig.eSpeakDataPath) {
+       // User provided path
+       // No change needed, it's already a path
+@@ -77,17 +81,23 @@
+     if (!runConfig.eSpeakDataPath.has_value()) {
+       throw std::runtime_error("eSpeak data path not set");
+     }
++#endif
+ 
+     piper_create_options create_opts;
+     piper_init_create_options(&create_opts);
+     std::string model_path_str = runConfig.modelPath.string();
+     std::string config_path_str = runConfig.modelConfigPath.string();
+-    std::string espeak_path_str = runConfig.eSpeakDataPath.value().string();
++    std::string espeak_path_str;
++    const char *espeak_path = nullptr;
++    if (runConfig.eSpeakDataPath) {
++      espeak_path_str = runConfig.eSpeakDataPath.value().string();
++      espeak_path = espeak_path_str.c_str();
++    }
+     std::string data_dir_str;
+     std::string g2pw_dir_str;
+     create_opts.model_path = model_path_str.c_str();
+     create_opts.config_path = config_path_str.c_str();
+-    create_opts.espeak_data_path = espeak_path_str.c_str();
++    create_opts.espeak_data_path = espeak_path;
+     if (runConfig.dataDir) {
+       data_dir_str = runConfig.dataDir->string();
+       create_opts.data_dir = data_dir_str.c_str();
+@@ -100,7 +110,7 @@
+     if (!piper) {
+       // Fallback to legacy for compatibility
+       piper = piper_create(model_path_str.c_str(), config_path_str.c_str(),
+-                           espeak_path_str.c_str());
++                           espeak_path);
+     }
+ 
+     piper_synthesize_options options;

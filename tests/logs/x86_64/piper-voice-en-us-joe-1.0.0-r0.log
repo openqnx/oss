@@ -1,0 +1,54 @@
+# piper-voice-en-us-joe 1.0.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (x86_64): QNX vanilla-x86_64 8.0.0 2026/06/05-16:26:03EDT x86pc x86_64
+# date: 2026-11-12T16:47:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u piper-voice-en-us-joe qnx-test-piper qnx-port-tests
+(1/1) Installing qnx-test-piper (1.0-r1)
+OK: 1004.0 MiB in 123 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_piper
+     == piper ==
+       info libpiper 1.8.0
+       ok   piper_version() is 1.8.0
+       ok   voice en_US-joe-medium installed (piper-voice-en-us-joe)
+       ok   piper_exe installed
+       ok   a missing model is refused
+       ok   piper_create: model, configuration and espeak-ng data loaded
+       info defaults: length 1.00, noise 0.500, noise_w 0.333
+       ok   defaults from the voice's configuration (length 1, noise 0.5)
+       ok   two sentences: two chunks, the last with PIPER_DONE
+       info chunk 0: 28672 samples (1.30 s) at 22050 Hz, peak 0.501, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$
+       info chunk 1: 33024 samples (1.50 s) at 22050 Hz, peak 0.548, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$^ðɪs ɪz ɐ tˈɛst.$
+       ok   22050 Hz
+       ok   phonemes of "Hello world." (en-us, IPA)
+       ok   phonemes of "This is a test."
+       ok   begin and end marks around them
+       ok   phoneme ids: two per phoneme
+       ok   "Hello world.": between 0.4 s and 4 s
+       ok   "This is a test.": between 0.4 s and 4 s
+       ok   samples finite and within [-1.5, 1.5]
+       ok   real signal in both chunks
+       ok   one sentence at length_scale 2: one chunk
+       info length_scale 2: 51712 samples (2.35 s)
+       ok   clearly longer than at length_scale 1 (more than 1.4 times)
+       info piper_exe: /tmp/qnxport-piper-10055702.wav
+       ok   echo 'Hello world.' | piper_exe -m <voice> -f out.wav exits 0
+       ok   WAV file written
+       ok   RIFF / WAVE / fmt / data chunks
+       ok   IEEE float, mono, 32 bit
+       ok   22050 Hz, 88200 bytes per second, 4 bytes per frame
+       info 117804 bytes, RIFF length 0x7ffff024, data length 0x7ffff000
+       ok   stream header: length fields "unknown"
+       ok   the data is whole frames
+       info 29440 frames (1.34 s), peak 0.476, 9661 above 0.02
+       ok   between 0.4 s and 4 s of audio
+       ok   the WAV samples are finite and not silent
+     PASS piper
+PASS test_piper
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

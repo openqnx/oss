@@ -1,0 +1,45 @@
+MLAS x86_64 GEMM kernels: element counts without "/" (wrong results on QNX).
+
+The assembly SGEMM/DGEMM kernels (FMA3, AVX, AVX512F) take the number of
+elements per vector register from
+    .equ .LFgemmYmmElementCount, 32 / .LFgemmElementSize
+For x86 ELF targets other than Linux -- QNX among them -- the GNU assembler
+treats "/" as the start of a comment unless it is run with --divide. It
+gave no diagnostic: the three counts became 16, 32 and 64 instead of 4, 8
+and 16 (float), so the kernels compared and stepped the column count with
+the wrong constants. Every float or double matrix product with 16 or more
+columns that goes through these kernels (MatMul, Gemm, Conv, ...) returned
+unwritten or wrong output; with fewer columns only the masked tail path
+runs, which is why small cases passed. Found with Piper: a VITS voice
+failed in a different node on each run (GatherElements rank, Reshape) or
+produced garbage audio; a bare MatMul 16x16 * 16x16 is already wrong.
+
+The same values written with the shift count the kernels already define
+(.LFgemmElementShift), which every assembler evaluates: the object code is
+then byte for byte what the Linux assembler produces from the original
+source (checked for the six kernels). No other MLAS x86_64 source file
+uses "/" in an expression. aarch64 is not affected.
+
+Upstream-Status: Pending (not QNX-specific: any gas target where "/" is a comment character)
+
+--- a/onnxruntime/core/mlas/lib/x86_64/FgemmKernelCommon.h
++++ b/onnxruntime/core/mlas/lib/x86_64/FgemmKernelCommon.h
+@@ -35,9 +35,15 @@ Abstract:
+ // Define the number of elements per vector register.
+ //
+ 
+-        .equ    .LFgemmXmmElementCount, 16 / .LFgemmElementSize
+-        .equ    .LFgemmYmmElementCount, 32 / .LFgemmElementSize
+-        .equ    .LFgemmZmmElementCount, 64 / .LFgemmElementSize
++// Shifts, not "16 / .LFgemmElementSize": for x86 targets other than Linux
++// (QNX, Solaris, the BSDs' default) the GNU assembler takes "/" as the start
++// of a comment unless it is given --divide, and the counts silently became
++// 16, 32 and 64.
++//
++
++        .equ    .LFgemmXmmElementCount, 16 >> .LFgemmElementShift
++        .equ    .LFgemmYmmElementCount, 32 >> .LFgemmElementShift
++        .equ    .LFgemmZmmElementCount, 64 >> .LFgemmElementShift
+ 
+ //
+ // Define the typed instruction template.

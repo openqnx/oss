@@ -1,0 +1,32 @@
+# clinfo 3.1.26.09.26-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T16:47:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u clinfo qnx-test-clinfo qnx-port-tests
+(1/3) Installing opencl-icd-loader (2026.05.29-r0)
+(2/3) Installing clinfo (3.1.26.09.26-r0)
+(3/3) Installing qnx-test-clinfo (1.0-r0)
+OK: 1081.2 MiB in 171 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_clinfo
+     == clinfo ==
+       ok   --version: clinfo version 3.1.26.09.26
+       ok   --help: usage with --json and --list
+       ok   no platform: exit status 0
+       ok   no platform: "Number of platforms 0"
+       ok   ICD loader properties: Khronos OpenCL ICD Loader, Khronos Group
+       ok   ICD loader profile: OpenCL 3.1
+       ok   --raw: #PLATFORMS 0 and [OCLICD/*] CL_ICDL_NAME
+       ok   --json: empty platforms array and the icd_loader object
+       ok   --list: nothing to list
+       ok   an unknown option is reported and ignored
+       info pocl is not installed (/usr/local/etc/OpenCL/vendors/pocl.icd): platform and device output not checked
+     PASS clinfo
+PASS test_clinfo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

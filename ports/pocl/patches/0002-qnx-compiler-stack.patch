@@ -1,0 +1,286 @@
+Run the kernel compiler on an 8 MiB stack: QNX thread stacks are 256-512 KiB.
+
+On QNX the main thread's stack is 512 KiB and every other thread gets
+256 KiB unless it asks for more; on Linux both have 8 MiB. PoCL runs Clang
+(parser, semantic analysis, code generation), LLVM's optimisation passes
+and instruction selection, and lld inside the thread that calls
+clBuildProgram()/clCompileProgram()/clLinkProgram(), and again -- for the
+work-group function of each kernel -- inside its driver threads or, with
+the cpu-minimal driver, inside the thread that calls clFinish(). All of
+that code is recursive over the program it compiles and assumes the large
+stack (the clang program itself runs each compilation on a thread with
+8 MiB for this reason). On the QNX default stacks a build overflows the
+stack and the process dies with SIGSEGV, at a depth that depends on the
+kernel source.
+
+On QNX:
+ - the threads PoCL creates (POCL_CREATE_THREAD: the pthread driver's
+   workers) get an 8 MiB stack;
+ - compile_and_link_program() and the kernel code generation
+   (llvm_codegen()) are entered through pocl_run_with_large_stack(), which
+   calls the function directly when the calling thread already has 8 MiB
+   (its size is in the thread's local storage block, __tls()->__stacksize)
+   and otherwise runs it on a thread created for the call and waits for it.
+   The program build callback (pfn_notify) is then called from that thread,
+   which OpenCL allows;
+ - pocl_get_thread_stack_size() returns the real size instead of 0.
+Thread stacks are mapped lazily on QNX, so the larger limit costs memory
+only where it is used. Other systems are not changed.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/CL/devices/common.c
++++ b/lib/CL/devices/common.c
+@@ -375,6 +375,27 @@
+       return 0;
+     }
+ }
++
++#ifdef __QNXNTO__
++struct llvm_codegen_call
++{
++  char *output;
++  unsigned device_i;
++  cl_kernel kernel;
++  cl_device_id device;
++  _cl_command_node *command;
++  int specialize;
++  int result;
++};
++
++static void
++llvm_codegen_trampoline (void *data)
++{
++  struct llvm_codegen_call *c = (struct llvm_codegen_call *)data;
++  c->result = llvm_codegen (c->output, c->device_i, c->kernel, c->device,
++                            c->command, c->specialize);
++}
++#endif
+ #endif
+ 
+ 
+@@ -1113,8 +1134,18 @@
+     {
+ #ifdef ENABLE_LLVM
+       POCL_LOCK (pocl_llvm_codegen_lock);
++#ifdef __QNXNTO__
++      /* LLVM's code generation and lld need more stack than the thread of
++       * an application that runs the commands itself (the cpu-minimal
++       * driver) has on QNX */
++      struct llvm_codegen_call call
++        = { module_fn, dev_i, k, command->device, command, specialized, -1 };
++      pocl_run_with_large_stack (llvm_codegen_trampoline, &call);
++      int error = call.result;
++#else
+       int error = llvm_codegen (module_fn, dev_i, k, command->device, command,
+                                 specialized);
++#endif
+       POCL_UNLOCK (pocl_llvm_codegen_lock);
+       if (error)
+         {
+--- a/lib/CL/pocl_build.c
++++ b/lib/CL/pocl_build.c
+@@ -620,8 +620,8 @@
+     }
+ }
+ 
+-cl_int
+-compile_and_link_program(int compile_program,
++static cl_int
++compile_and_link_program_impl(int compile_program,
+                          int link_program,
+                          cl_program program,
+                          cl_uint num_devices,
+@@ -990,3 +990,68 @@
+ 
+   return errcode;
+ }
++
++#ifdef __QNXNTO__
++/* The build runs Clang and LLVM, which need more stack than a QNX thread
++ * has by default: see pocl_run_with_large_stack() in pocl_threads.c. */
++struct compile_and_link_call
++{
++  int compile_program;
++  int link_program;
++  cl_program program;
++  cl_uint num_devices;
++  const cl_device_id *device_list;
++  const char *options;
++  cl_uint num_input_headers;
++  const cl_program *input_headers;
++  const char **header_include_names;
++  cl_uint num_input_programs;
++  const cl_program *input_programs;
++  void (CL_CALLBACK *pfn_notify) (cl_program program, void *user_data);
++  void *user_data;
++  cl_int result;
++};
++
++static void
++compile_and_link_trampoline (void *data)
++{
++  struct compile_and_link_call *c = (struct compile_and_link_call *)data;
++  c->result = compile_and_link_program_impl (
++    c->compile_program, c->link_program, c->program, c->num_devices,
++    c->device_list, c->options, c->num_input_headers, c->input_headers,
++    c->header_include_names, c->num_input_programs, c->input_programs,
++    c->pfn_notify, c->user_data);
++}
++#endif
++
++cl_int
++compile_and_link_program(int compile_program,
++                         int link_program,
++                         cl_program program,
++                         cl_uint num_devices,
++                         const cl_device_id *device_list,
++                         const char *options,
++                         cl_uint num_input_headers,
++                         const cl_program *input_headers,
++                         const char **header_include_names,
++                         cl_uint num_input_programs,
++                         const cl_program *input_programs,
++                         void (CL_CALLBACK *pfn_notify) (cl_program program,
++                                                         void *user_data),
++                         void *user_data)
++{
++#ifdef __QNXNTO__
++  struct compile_and_link_call c
++    = { compile_program, link_program, program, num_devices, device_list,
++        options, num_input_headers, input_headers, header_include_names,
++        num_input_programs, input_programs, pfn_notify, user_data,
++        CL_OUT_OF_HOST_MEMORY };
++  pocl_run_with_large_stack (compile_and_link_trampoline, &c);
++  return c.result;
++#else
++  return compile_and_link_program_impl (
++    compile_program, link_program, program, num_devices, device_list, options,
++    num_input_headers, input_headers, header_include_names,
++    num_input_programs, input_programs, pfn_notify, user_data);
++#endif
++}
+--- a/lib/CL/pocl_threads.c
++++ b/lib/CL/pocl_threads.c
+@@ -30,6 +30,10 @@
+ #include <errno.h>
+ #include <time.h>
+ 
++#ifdef __QNXNTO__
++#include <sys/storage.h>
++#endif
++
+ pocl_lock_t pocl_init_lock = POCL_LOCK_INITIALIZER;
+ 
+ void
+@@ -63,6 +67,64 @@
+   PTHREAD_CHECK2 (ETIMEDOUT, pthread_cond_timedwait (c, m, &now));
+ }
+ 
++#ifdef __QNXNTO__
++/* QNX gives the main thread a stack of 512 KiB and every other thread
++ * 256 KiB by default, where Linux gives 8 MiB to both. Clang's parser and
++ * semantic analysis, LLVM's passes and instruction selection and lld are
++ * deeply recursive and are written for the larger stack (the clang program
++ * itself runs its compilations on a thread with 8 MiB). So on QNX the
++ * threads PoCL creates get 8 MiB, and the compiler is entered through
++ * pocl_run_with_large_stack() when the application's thread has less.
++ * The stack is mapped lazily: only what is used takes memory. */
++
++int
++pocl_create_thread_large_stack (pthread_t *thr, void *(*func) (void *),
++                                void *arg)
++{
++  pthread_attr_t attr;
++  int err = pthread_attr_init (&attr);
++  if (err)
++    return err;
++  err = pthread_attr_setstacksize (&attr, POCL_QNX_LARGE_STACK_SIZE);
++  if (err == 0)
++    err = pthread_create (thr, &attr, func, arg);
++  pthread_attr_destroy (&attr);
++  return err;
++}
++
++struct pocl_large_stack_call
++{
++  void (*func) (void *);
++  void *arg;
++};
++
++static void *
++pocl_large_stack_trampoline (void *data)
++{
++  struct pocl_large_stack_call *call = (struct pocl_large_stack_call *)data;
++  call->func (call->arg);
++  return NULL;
++}
++
++void
++pocl_run_with_large_stack (void (*func) (void *), void *arg)
++{
++  struct pocl_large_stack_call call = { func, arg };
++  pthread_t thr;
++
++  /* the thread's stack size is in its thread local storage block */
++  if (__tls ()->__stacksize >= POCL_QNX_LARGE_STACK_SIZE
++      || pocl_create_thread_large_stack (&thr, pocl_large_stack_trampoline,
++                                         &call)
++           != 0)
++    {
++      func (arg);
++      return;
++    }
++  pthread_join (thr, NULL);
++}
++#endif
++
+ int
+ pocl_set_thread_stack_size (size_t ThreadStackSize)
+ {
+@@ -93,6 +155,9 @@
+ #ifdef __APPLE__
+   ThreadStackSize = pthread_get_stacksize_np (pthread_self ());
+ #endif
++#ifdef __QNXNTO__
++  ThreadStackSize = __tls ()->__stacksize;
++#endif
+ #if DEBUG_PTHREADS
+   POCL_MSG_PRINT_INFO ("Thread %zu |||  stack size: %zu\n",
+                        (size_t)pthread_self (), ThreadStackSize);
+--- a/lib/CL/pocl_threads_c.h
++++ b/lib/CL/pocl_threads_c.h
+@@ -126,6 +126,19 @@
+ size_t pocl_get_thread_stack_size ();
+ 
+ #define POCL_SET_THREAD_STACK_SIZE(N) pocl_set_thread_stack_size (N)
++
++#ifdef __QNXNTO__
++/* The stack the compiler (Clang, LLVM's passes and code generators, lld)
++ * and the driver threads get on QNX; see pocl_threads.c. */
++#define POCL_QNX_LARGE_STACK_SIZE ((size_t)8 << 20)
++/* Calls func(arg) on a stack of at least POCL_QNX_LARGE_STACK_SIZE: directly
++ * when the calling thread has one, else on a thread created for the call. */
++POCL_EXPORT
++void pocl_run_with_large_stack (void (*func) (void *), void *arg);
++POCL_EXPORT
++int pocl_create_thread_large_stack (pthread_t *thr, void *(*func) (void *),
++                                    void *arg);
++#endif
+ #define POCL_GET_THREAD_STACK_SIZE() pocl_get_thread_stack_size ()
+ 
+ /* Generic functionality for handling different types of
+@@ -166,8 +179,13 @@
+ // unsigned long t = time in microseconds to wait
+ #define POCL_TIMEDWAIT_COND(c, m, t) pocl_timed_wait (&c, &m, t)
+ 
++#ifdef __QNXNTO__
++#define POCL_CREATE_THREAD(thr, func, arg)                                    \
++  PTHREAD_CHECK (pocl_create_thread_large_stack (&thr, func, arg))
++#else
+ #define POCL_CREATE_THREAD(thr, func, arg)                                    \
+   PTHREAD_CHECK (pthread_create (&thr, NULL, func, arg))
++#endif
+ #define POCL_JOIN_THREAD(thr) PTHREAD_CHECK (pthread_join (thr, NULL))
+ #define POCL_THREAD_SELF() pthread_self ()
+ 

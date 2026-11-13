@@ -1,0 +1,52 @@
+# opencl-headers 2026.05.29-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (aarch64le): QNX vanilla-a64 8.0.0 2026/06/05-16:21:14EDT QEMU_virt aarch64le
+# date: 2026-11-12T16:46:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u opencl-headers-dev qnx-test-opencl-headers qnx-port-tests
+(1/2) Installing opencl-headers-dev (2026.05.29-r0)
+(2/2) Installing qnx-test-opencl-headers (1.0-r0)
+OK: 1080.9 MiB in 170 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_opencl_headers
+     == opencl-headers ==
+       ok   half(1.0) = 0x3C00
+       ok   half(0.5) = 0x3800
+       ok   half(-2.0) = 0xC000
+       ok   half(65504) = 0x7BFF, the largest finite half
+       ok   half(0.1) = 0x2E66 to nearest, towards zero, downwards
+       ok   half(0.1) = 0x2E67 upwards
+       ok   half(1/3) = 0x3555 to nearest, 0x3556 upwards
+       ok   the tie 1 + 2^-11 rounds to even (0x3C00), upwards to 0x3C01
+       ok   overflow gives +infinity (0x7C00) to nearest and upwards
+       ok   overflow gives the largest finite half towards zero and downwards
+       ok   half(2^-24) = 0x0001, the smallest subnormal
+       ok   from double: 0.1 = 0x2E66, -65520 rounds to -infinity (0xFC00)
+       ok   half -> float: 0x3C00 = 1, 0xC000 = -2, 0xFBFF = -65504
+       ok   half -> float: 0x3555 = 0.333251953125
+       ok   half -> float: 0x0001 = 2^-24
+       ok   half -> float: 0x7C00 is infinity, 0x7E00 a NaN
+       ok   scalar types: 1, 2, 4, 8 bytes; cl_half 2
+       ok   vector types: cl_float4 16, cl_int3 16 (as int4), cl_double8 64, cl_uchar16 16 bytes
+       ok   cl_float4 and cl_long2 are aligned to 16 bytes
+       ok   vector components are reachable as .s[i]
+       ok   limits: CL_UINT_MAX, CL_LONG_MIN, CL_FLT_EPSILON = 2^-23
+       ok   CL_TARGET_OPENCL_VERSION 300 enables CL_VERSION_1_0 ... CL_VERSION_3_0
+       ok   CL_MAKE_VERSION(1, 2, 3) = 1<<22 | 2<<12 | 3 = 4202499
+       ok   CL_VERSION_MAJOR/MINOR/PATCH unpack 3.0.19
+       ok   cl_name_version: a cl_version and 64 bytes of name
+       ok   error codes (0, -1, -11, -30, -46, -1001)
+       ok   device type and memory flag bits
+       ok   query names (CL_PLATFORM_NAME, CL_DEVICE_NAME, CL_PROGRAM_BUILD_LOG, CL_PLATFORM_ICD_SUFFIX_KHR)
+       ok   cl_icd_dispatch has 150 entries
+       ok   OpenCL 1.0 slots: 0, 1, 14, 30, 59
+       ok   OpenCL 1.1 starts at slot 82, clCreateImage (1.2) is 96
+       ok   OpenCL 2.0, 2.1, 2.2 and 3.0 slots: 123, 137, 145, 146
+     PASS opencl-headers
+PASS test_opencl_headers
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

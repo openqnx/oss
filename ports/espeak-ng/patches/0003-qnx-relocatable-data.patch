@@ -1,0 +1,57 @@
+Find the data next to the library when the configured directory is missing.
+
+The data directory is compiled in (PATH_ESPEAK_DATA,
+/usr/local/share/espeak-ng-data). On QNX targets the packages are also
+installed under another root (/data/oss/usr/local), where that directory
+does not exist and every program using the library would need
+ESPEAK_DATA_PATH set. When the compiled-in directory is missing, the
+library now asks dladdr() -- in QNX's libc -- which file it was loaded
+from and uses <that file's prefix>/share/espeak-ng-data if it exists. An
+explicit path argument and ESPEAK_DATA_PATH keep their precedence.
+
+Upstream-Status: QNX-specific
+
+--- a/src/libespeak-ng/speech.c
++++ b/src/libespeak-ng/speech.c
+@@ -32,6 +32,9 @@
+ #include <time.h>
+ #include <unistd.h>
+ #include <wchar.h>
++#if defined(__QNX__)
++#include <dlfcn.h>
++#endif
+ 
+ #if USE_LIBPCAUDIO
+ #include <pcaudiolib/audio.h>
+@@ -335,6 +338,31 @@
+ 		return;
+ #endif
+ 
++#if defined(__QNX__)
++	// Packages are also installed under a root other than "/" (for example
++	// /data/oss/usr/local): when the configured directory does not exist, look
++	// for share/espeak-ng-data next to the lib/ (or bin/) this code was loaded from.
++	if (GetFileLength(PATH_ESPEAK_DATA) != -EISDIR) {
++		Dl_info info;
++		if (dladdr((void *)espeak_ng_InitializePath, &info) != 0 && info.dli_fname != NULL) {
++			char root[sizeof(path_home)-20];
++			char *sep;
++			int level;
++			snprintf(root, sizeof(root)-6, "%s", info.dli_fname);
++			for (level = 0; level < 2; level++) {
++				if ((sep = strrchr(root, '/')) == NULL)
++					break;
++				*sep = 0;
++			}
++			if (level == 2) {
++				strcat(root, "/share");
++				if (check_data_path(root, 0))
++					return;
++			}
++		}
++	}
++#endif
++
+ 	strcpy(path_home, PATH_ESPEAK_DATA);
+ }
+ 

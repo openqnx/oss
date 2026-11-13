@@ -1,0 +1,45 @@
+Let a cross build name the target's LLVM program directory (POCL_TARGET_LLVM_BINDIR).
+
+In a cross build PoCL looks for the target's clang, opt, llc ... in the
+directory LLVMConfig.cmake reports (LLVM_TOOLS_BINARY_DIR), requires them
+to exist there, and then strips CMAKE_SYSROOT from what it found to get
+the path on the target, which it compiles in (CLANGCC, the name the Clang
+driver is given). That assumes the target's LLVM is installed inside
+CMAKE_SYSROOT. Here CMAKE_SYSROOT is the QNX SDP and the target's LLVM is
+in a staging tree outside it; the toolchain file also keeps the staging
+tree's bin directory out of every program search, because the programs in
+it are QNX binaries that cannot run on the build machine. The configure
+step stopped with "clang executable not found in <stage>/usr/local/bin!",
+and had it found them the staging path would have been compiled into
+libpocl.
+
+POCL_TARGET_LLVM_BINDIR=<dir> names the directory the LLVM programs have on
+the target; the names are recorded without searching. Without it nothing
+changes.
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/LLVM.cmake
++++ b/cmake/LLVM.cmake
+@@ -224,7 +224,20 @@
+ endif()
+ 
+ 
+-if(CMAKE_CROSSCOMPILING)
++if(CMAKE_CROSSCOMPILING AND POCL_TARGET_LLVM_BINDIR)
++  # The directory the LLVM programs are in on the target, given by the user:
++  # for a target LLVM that is not installed below CMAKE_SYSROOT (a staging
++  # tree), where the search below cannot find the programs or cannot turn
++  # what it finds into the path on the target. Only the names are recorded.
++  message(STATUS "Target LLVM binaries are in ${POCL_TARGET_LLVM_BINDIR} on the target")
++  set(TARGET_CLANG "${POCL_TARGET_LLVM_BINDIR}/clang")
++  set(TARGET_CLANGXX "${POCL_TARGET_LLVM_BINDIR}/clang++")
++  set(TARGET_LLVM_OPT "${POCL_TARGET_LLVM_BINDIR}/opt")
++  set(TARGET_LLVM_LLC "${POCL_TARGET_LLVM_BINDIR}/llc")
++  set(TARGET_LLVM_AS "${POCL_TARGET_LLVM_BINDIR}/llvm-as")
++  set(TARGET_LLVM_DIS "${POCL_TARGET_LLVM_BINDIR}/llvm-dis")
++  set(TARGET_LLVM_LINK "${POCL_TARGET_LLVM_BINDIR}/llvm-link")
++elseif(CMAKE_CROSSCOMPILING)
+   message(STATUS "Searching for Target LLVM binaries in ${LLVM_BINDIR}")
+   # TODO how to handle LLVM_BINARY_SUFFIX ?
+   set(SAVED_LLVM_BINARY_SUFFIX ${LLVM_BINARY_SUFFIX})

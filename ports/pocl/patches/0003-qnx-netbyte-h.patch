@@ -1,0 +1,21 @@
+Take htole32() and friends from <net/netbyte.h> on QNX, which has no <endian.h>.
+
+pocl_cl.h includes <endian.h> for htole16() ... le64toh() on every system
+that is not macOS, FreeBSD or Windows. QNX has no <endian.h> ("fatal error:
+endian.h: No such file or directory" in every C++ file of lib/llvmopencl);
+it declares the same functions in <net/netbyte.h>.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/CL/pocl_cl.h
++++ b/lib/CL/pocl_cl.h
+@@ -2203,6 +2203,9 @@
+   #define le64toh(x) OSSwapLittleToHostInt64(x)
+ #elif defined(__FreeBSD__)
+   #include <sys/endian.h>
++#elif defined(__QNXNTO__)
++  /* no <endian.h>: htole16() ... le64toh() are in <net/netbyte.h> */
++  #include <net/netbyte.h>
+ #elif defined (_WIN32)
+     #ifndef htole64
+       #define htole64(x) (x)

@@ -226,6 +226,19 @@ current: it is the hand-over, not a history (that is `git log`).
    and its on-target test log. Live at https://openqnx.github.io/oss/
    (branch gh-pages): run `scripts/deploy-pkg-site` after every publish.
 
+- **Step 7b, batch 1 (2026-11-13, PAUSED for the SDP 8.0.6 rebuild, not published).**
+  Built for both architectures, packaged and passing on both VMs: hdf5 1.14.6, sophus
+  1.24.6, tsl-robin-map 1.4.1, kiss-icp 1.3.0, espeak-ng 1.52.0, piper 1.8.0 with one
+  English voice (piper-voice-en-us-joe), pinocchio 3.9.0 (collision off: coal is not
+  ported), opentelemetry-cpp 1.30.0, opencl-headers, opencl-icd-loader, clinfo.
+  onnxruntime 1.20.1-r1 fixes wrong float/double matrix products on x86_64 (hazard
+  220; the published r0 is defective); computelibrary 53.0.0-r1 leaves the OpenCL C
+  headers to opencl-headers. **Open: pocl 7.2 builds and is packaged, but `test_pocl`
+  fails on both VMs** (kernels build and run, results are wrong: squares, builtins,
+  work-item offsets; `tests/logs/<arch>/pocl-7.2-r0.log`). Still to do for the batch:
+  fix pocl, rerun the doc generators. Slow under emulation: one Piper sentence takes
+  about 3 minutes on the aarch64 VM.
+
 ## Machine notes
 
 - Targets used: vanilla QEMU VMs made by `vanilla-vm/make-vm` (`~/vm/oss-vanilla-<arch>`).

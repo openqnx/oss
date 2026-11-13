@@ -1,0 +1,6 @@
+test_hdf5	bin/h5dump bin/h5ls bin/h5repack bin/h5diff
+test_espeak_ng	bin/espeak-ng
+test_piper	bin/piper_exe share/piper-voices/en_US-joe-medium.onnx
+test_opencl_icd_loader	bin/cllayerinfo libexec/opencl-icd-loader/icd_loader_test
+test_clinfo	bin/clinfo lib/libOpenCL.so.1
+test_pocl	etc/OpenCL/vendors/pocl.icd

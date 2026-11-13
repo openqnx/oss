@@ -1,0 +1,67 @@
+Add an optional install step and a CMake package (KISS_ICP_INSTALL).
+
+Upstream's C++ core is written to be pulled into another CMake project with
+add_subdirectory() (its Python bindings and ROS wrapper do that) and
+installs nothing. A QNX package needs files: the three static libraries,
+the headers under include/kiss_icp/{core,metrics,pipeline}/ -- the layout
+the headers already use to include each other ("kiss_icp/core/...") and the
+one the targets' INSTALL_INTERFACE points at -- and a CMake package
+"kiss_icp" with the targets kiss_icp::core, kiss_icp::pipeline and
+kiss_icp::metrics that looks up Eigen3, Sophus, TBB and tsl-robin-map
+again for the consumer.
+
+It is an option (KISS_ICP_INSTALL, off by default) so that the
+add_subdirectory() use is unchanged, and it is refused when a dependency
+was fetched and built inside the project: an installed package cannot name
+such a target. GNUInstallDirs is included before the targets are defined
+because CompilerOptions.cmake uses CMAKE_INSTALL_INCLUDEDIR, which was
+empty until now.
+
+Upstream-Status: Pending
+
+--- a/cpp/kiss_icp/CMakeLists.txt
++++ b/cpp/kiss_icp/CMakeLists.txt
+@@ -45,9 +45,43 @@
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
++include(GNUInstallDirs)
+ include(3rdparty/find_dependencies.cmake)
+ include(cmake/CompilerOptions.cmake)
+ 
+ add_subdirectory(core)
+ add_subdirectory(metrics)
+ add_subdirectory(pipeline)
++
++# Install the libraries, their headers and a CMake package, when every
++# dependency is a pre-installed one: targets fetched and built as part of this
++# project cannot be named by an installed package.
++option(KISS_ICP_INSTALL "Install the kiss_icp libraries, headers and CMake package" OFF)
++if(KISS_ICP_INSTALL)
++  if(NOT (USE_SYSTEM_EIGEN3 AND USE_SYSTEM_SOPHUS AND USE_SYSTEM_TBB AND USE_SYSTEM_TSL-ROBIN-MAP))
++    message(FATAL_ERROR "KISS_ICP_INSTALL needs pre-installed Eigen3, Sophus, TBB and tsl-robin-map")
++  endif()
++  include(CMakePackageConfigHelpers)
++  set(KISS_ICP_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/kiss_icp)
++  set_target_properties(kiss_icp_core PROPERTIES EXPORT_NAME core)
++  set_target_properties(kiss_icp_metrics PROPERTIES EXPORT_NAME metrics)
++  set_target_properties(kiss_icp_pipeline PROPERTIES EXPORT_NAME pipeline)
++  install(TARGETS kiss_icp_core kiss_icp_metrics kiss_icp_pipeline EXPORT kiss_icpTargets
++          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
++  install(DIRECTORY core metrics pipeline DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kiss_icp
++          FILES_MATCHING PATTERN "*.hpp")
++  install(EXPORT kiss_icpTargets NAMESPACE kiss_icp:: DESTINATION ${KISS_ICP_CMAKE_DIR})
++  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/kiss_icpConfig.cmake
++       "include(CMakeFindDependencyMacro)
++find_dependency(Eigen3)
++find_dependency(Sophus)
++find_dependency(TBB)
++find_dependency(tsl-robin-map)
++include(\"\${CMAKE_CURRENT_LIST_DIR}/kiss_icpTargets.cmake\")
++")
++  write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/kiss_icpConfigVersion.cmake
++                                   VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
++  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kiss_icpConfig.cmake
++                ${CMAKE_CURRENT_BINARY_DIR}/kiss_icpConfigVersion.cmake DESTINATION ${KISS_ICP_CMAKE_DIR})
++  install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/kiss-icp)
++endif()

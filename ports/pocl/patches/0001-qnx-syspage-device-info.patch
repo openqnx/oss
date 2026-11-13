@@ -1,0 +1,163 @@
+Describe the CPU device from the QNX system page (CPUs, RAM, cache, CPU name and speed).
+
+The CPU device takes its description from Linux files: the number of CPUs
+from /sys/devices/system/cpu/possible, the memory size from /proc/meminfo,
+the cache size from /sys/devices/system/cpu/cpu0/cache, the CPU's name and
+clock frequency from /proc/cpuinfo. Without hwloc and off Linux it falls
+back to constants: 4 compute units and 2 GiB of memory whatever the machine
+has -- a pthread driver with 4 threads on a single-core board, and
+CL_DEVICE_GLOBAL_MEM_SIZE / CL_DEVICE_MAX_MEM_ALLOC_SIZE that have nothing
+to do with the RAM installed -- and no CPU name or frequency at all.
+
+QNX has none of those files; the same facts are in the system page
+(<sys/syspage.h>), which every process has mapped: num_cpu, the "ram"
+entries of the address space table (asinfo), each CPU's chain of data caches
+(cacheattr), and per CPU its speed in MHz and the name the startup program
+gave it (cpuinfo). The device now reports those: CL_DEVICE_MAX_COMPUTE_UNITS
+is the number of CPUs, the memory sizes follow the RAM, the device name is
+"cpu-<llvm cpu>-<CPU name>" as on Linux, CL_DEVICE_MAX_CLOCK_FREQUENCY the
+CPU's speed. The platform version string ends in "QNX" instead of "Unix".
+
+Upstream-Status: QNX-specific
+
+--- a/lib/CL/clGetPlatformInfo.c
++++ b/lib/CL/clGetPlatformInfo.c
+@@ -47,6 +47,8 @@
+                                      "  Apple"
+ #elif defined(__linux__)
+                                      "  Linux"
++#elif defined(__QNXNTO__)
++                                     "  QNX"
+ #elif defined(__unix__) // all unices not caught above
+                                      "  Unix"
+ #else
+--- a/lib/CL/devices/cpuinfo.c
++++ b/lib/CL/devices/cpuinfo.c
+@@ -34,6 +34,11 @@
+ #include "config.h"
+ #include "cpuinfo.h"
+ 
++#ifdef __QNXNTO__
++#include <sys/neutrino.h>
++#include <sys/syspage.h>
++#endif
++
+ static const char* cpuinfo = "/proc/cpuinfo";
+ #define MAX_CPUINFO_SIZE 64*1024
+ //#define DEBUG_POCL_CPUINFO
+@@ -112,7 +117,13 @@
+ pocl_cpuinfo_detect_max_clock_frequency()
+ {
+   int cpufreq=-1;
+-  
++
++#ifdef __QNXNTO__
++  /* no /proc/cpuinfo: the system page has each CPU's speed in MHz */
++  cpufreq = (int)SYSPAGE_ARRAY_IDX (cpuinfo, 0)->speed;
++  return cpufreq > 0 ? cpufreq : -1;
++#endif
++
+   // First try to get the result from cpufreq interface.
+   cpufreq = pocl_cpufreq_get_max();
+   if( cpufreq != -1 )
+@@ -308,6 +319,29 @@
+     device->vendor_id = pocl_get_int_option ("POCL_CPU_VENDOR_ID_OVERRIDE",
+                                              CL_KHRONOS_VENDOR_ID_POCL);
+ 
++#ifdef __QNXNTO__
++  /* no /proc/cpuinfo: the system page has the CPU's name, as the startup
++   * program identified it ("Intel ... Xeon ...", "Cortex-A72") */
++  {
++    const char *cpu_name
++      = SYSPAGE_ENTRY (strings)->data + SYSPAGE_ARRAY_IDX (cpuinfo, 0)->name;
++    if (cpu_name[0] != 0)
++      {
++        size_t qlen = strlen (device->short_name) + 1
++                      + (device->llvm_cpu ? strlen (device->llvm_cpu) : 0) + 1
++                      + strlen (cpu_name) + 1;
++        char *qname = (char *)malloc (qlen);
++        if (qname)
++          {
++            snprintf (qname, qlen, "%s-%s-%s", device->short_name,
++                      (device->llvm_cpu ? device->llvm_cpu : ""), cpu_name);
++            device->long_name = qname;
++          }
++      }
++    return;
++  }
++#endif
++
+   /* read contents of /proc/cpuinfo */
+   if (access (cpuinfo, R_OK) != 0)
+     return;
+--- a/lib/CL/devices/topology/pocl_topology.c
++++ b/lib/CL/devices/topology/pocl_topology.c
+@@ -292,6 +292,68 @@
+   return 0;
+ }
+ 
++#elif defined(__QNXNTO__)
++
++/* QNX has neither /sys nor /proc/meminfo: the system page describes the
++ * machine -- the number of CPUs, the "ram" address ranges and each CPU's
++ * chain of data caches. */
++
++#include <sys/neutrino.h>
++#include <sys/syspage.h>
++
++int
++pocl_topology_detect_device_info (cl_device_id device)
++{
++  const char *strings = SYSPAGE_ENTRY (strings)->data;
++  size_t i, count;
++
++  device->global_mem_cacheline_size = HOST_CPU_CACHELINE_SIZE;
++  device->global_mem_cache_type = CL_READ_WRITE_CACHE;
++
++  /* global mem cache size: the last (largest) level of CPU 0's data caches */
++  uint64_t cache_size = 0;
++  count = SYSPAGE_ENTRY_SIZE (cacheattr) / SYSPAGE_ELEMENT_SIZE (cacheattr);
++  size_t idx = SYSPAGE_ARRAY_IDX (cpuinfo, 0)->data_cache;
++  for (i = 0; idx != CACHE_LIST_END && idx < count && i < count; ++i)
++    {
++      struct cacheattr_entry *c = SYSPAGE_ARRAY_IDX (cacheattr, idx);
++      uint64_t size = (uint64_t)c->line_size * c->num_lines;
++      if (size > cache_size)
++        cache_size = size;
++      idx = c->next;
++    }
++  if (cache_size == 0)
++    {
++      POCL_MSG_WARN (
++        "Could not figure out CPU cache size, using bogus value\n");
++      cache_size = 1 << 20;
++    }
++  device->global_mem_cache_size = cache_size;
++
++  /* global_mem_size: the sum of the "ram" entries of the address space */
++  uint64_t ram = 0;
++  count = SYSPAGE_ENTRY_SIZE (asinfo) / SYSPAGE_ELEMENT_SIZE (asinfo);
++  for (i = 0; i < count; ++i)
++    {
++      struct asinfo_entry *as = SYSPAGE_ARRAY_IDX (asinfo, i);
++      if (strcmp (strings + as->name, "ram") == 0)
++        ram += as->end - as->start + 1;
++    }
++  if (ram == 0)
++    {
++      POCL_MSG_WARN ("Cannot get memory size\n");
++      ram = 256 << 20;
++    }
++  device->global_mem_size = ram;
++
++  /* max_compute_units */
++  device->max_compute_units = _syspage_ptr->num_cpu;
++  if (device->max_compute_units == 0)
++    device->max_compute_units = 1;
++
++  return 0;
++}
++
+ #else
+ 
+ int

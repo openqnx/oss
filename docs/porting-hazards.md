@@ -2203,3 +2203,25 @@ Ruckig library did not have under that name, and failed to load on the
 target ("unknown symbol ... json_abi_v3_12_0 ..."), while linking on the
 host had passed. `ports/ruckig` builds without the (online-only) cloud
 client; elsewhere build such a library against the component's json.
+
+**220. `/` in x86 assembly is a comment, silently.** For x86 ELF targets
+other than Linux -- QNX among them -- GNU as takes `/` as the start of a
+comment unless it runs with `--divide`. An expression such as
+`.equ COUNT, 32 / SIZE` then assembles without any diagnostic as
+`.equ COUNT, 32`. ONNX Runtime's MLAS SGEMM/DGEMM kernels (FMA3, AVX,
+AVX512F) got vector widths of 16/32/64 elements instead of 4/8/16: every
+float or double matrix product with 16 or more columns (MatMul, Gemm, Conv)
+was wrong on x86_64, while small ones and all of aarch64 were right, and the
+port's test, which loaded no model, passed. Found when the first real model
+(a Piper voice) ran. `ports/onnxruntime/patches/0002` writes the counts as
+shifts; `test_onnxruntime` now runs a MatMul model against a plain loop. In
+hand-written `.S` for x86 look for `/` in expressions (`grep -nE '^\s*\.(equ|set)[^#]*/'`), or assemble with `-Wa,--divide`; and a test of a
+numeric library has to compute something large enough to reach its
+optimized kernels.
+
+**221. CMake's old `FindPythonInterp` finds the target's Python.** The SDP
+carries a QNX `python3.13` under `usr/bin` of the target root; a project
+that still uses `find_package(PythonInterp)` (the ONNX sources inside ONNX
+Runtime) picks that one from the sysroot and fails to run it. Set
+`-DPYTHON_EXECUTABLE`, `-DPython_EXECUTABLE` and `-DPython3_EXECUTABLE` to
+`hosttools/bin/python3`.

@@ -75,6 +75,7 @@ civetweb	test_civetweb
 cjson	test_cjson
 clapack	test_clapack
 cli11	test_cli11
+clinfo	test_clinfo
 cmake	test_cmake
 compiler-rt	test_compiler_rt
 computelibrary	test_computelibrary
@@ -118,6 +119,7 @@ enchant	test_enchant
 encodings	test_encodings
 ensmallen	test_ensmallen
 epiphany	test_epiphany
+espeak-ng	test_espeak_ng
 exiv2	test_exiv2
 exo	test_exo
 expat	test_expat
@@ -222,6 +224,7 @@ gumbo-parser	test_gumbo_parser
 gyp	test_python3_buildtools
 hailort	test_hailort
 harfbuzz	test_harfbuzz
+hdf5	test_hdf5
 help2man	test_help2man
 hicolor-icon-theme	test_hicolor_icon_theme
 highway	test_highway
@@ -251,6 +254,7 @@ json-c	test_json_c
 json-glib	test_json_glib
 jsoncpp	test_jsoncpp
 kineto	test_kineto
+kiss-icp	test_kiss_icp
 labwc	test_labwc
 lame	test_lame
 lanelet2	test_lanelet2
@@ -484,6 +488,8 @@ open-amp	test_open_amp
 open62541	test_open62541
 openal-soft	test_openal_soft
 openblas	test_openblas
+opencl-headers	test_opencl_headers
+opencl-icd-loader	test_opencl_icd_loader
 opencv	test_opencv
 openexr	test_openexr
 openh264	test_openh264
@@ -494,6 +500,7 @@ openpam	test_openpam
 openresolv	test_openresolv
 openssh	test_openssh
 openssl	test_openssl
+opentelemetry-cpp	test_opentelemetry_cpp
 openttd-opengfx	test_openttd_sets
 openttd-openmsx	test_openttd_sets
 openttd-opensfx	test_openttd_sets
@@ -562,9 +569,13 @@ perl-xml-parser	test_perl_xml
 perl-xml-simple	test_perl_xml
 picocom	test_picocom
 pinentry	test_pinentry
+pinocchio	test_pinocchio
+piper	test_piper
+piper-voice-en-us-joe	test_piper
 pistache	test_pistache
 pixman	test_pixman
 pkgconf	test_pkgconf
+pocl	test_pocl
 poco	test_poco
 poppler	test_poppler
 portaudio	test_portaudio
@@ -813,6 +824,7 @@ sleef	test_sleef
 snappy	test_snappy
 socat	test_socat
 soem	test_soem
+sophus	test_sophus
 soxr	test_soxr
 spdlog	test_spdlog
 speexdsp	test_speexdsp
@@ -862,6 +874,7 @@ tree-sitter-query	test_tree_sitter_query
 tree-sitter-vim	test_tree_sitter_vim
 tree-sitter-vimdoc	test_tree_sitter_vimdoc
 trompeloeil	test_trompeloeil
+tsl-robin-map	test_tsl_robin_map
 tumbler	test_tumbler
 tzdata	test_tzdata_tools
 unbound	test_unbound

@@ -2,7 +2,15 @@
 """make-image-root -- unpack packages and what they depend on into one
 directory, to be put into a target image as /usr/local (docs/ported-first-image.md).
 
-  scripts/make-image-root [-o <dir>] [--dev] <arch> <package>...
+  scripts/make-image-root [-o <dir>] [--dev] [--github] [--seed-repo <dir>] <arch> <package>...
+
+--github takes the packages from the project's GitHub releases instead of
+this workspace (no build needed): the release indexes and the packages
+chosen are downloaded to dist/github/<sdp>/<arch>/<release>/ and kept there,
+so a second run downloads only what is new. --seed-repo <dir> also copies
+each index used and the packages taken to <dir>/<release>/: a repository
+apk on the target can install them from without a network (the indexes are
+the signed ones of the releases).
 
 The packages come from this workspace's repository, dists/<sdp>/<arch>/; of
 each the newest build is taken, with every package its D: line names. The
@@ -25,16 +33,40 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib
 from sdpver import SDP, WS  # noqa: E402
 
 
-def read_index(repo):
-    """name -> newest entry {V, D[], t}."""
+GH = "https://github.com/openqnx/oss/releases/download"
+
+
+def download(url, dest):
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    r = subprocess.run(["curl", "-fsSL", "--retry", "3", "-o", dest + ".part", url])
+    if r.returncode:
+        sys.exit(f"make-image-root: cannot download {url}")
+    os.replace(dest + ".part", dest)
+
+
+def github_repos(arch):
+    """The release directories under dist/github/, their indexes fetched anew."""
+    from shards import SHARDS
+    garch = "aarch64" if arch.startswith("aarch64") else arch
+    dirs = []
+    for suffix, _ in SHARDS:
+        tag = f"apk-{SDP}-{garch}{suffix}"
+        d = os.path.join(WS, "dist", "github", SDP, arch, tag)
+        download(f"{GH}/{tag}/APKINDEX.tar.gz", os.path.join(d, "APKINDEX.tar.gz"))
+        dirs.append((d, f"{GH}/{tag}"))
+    return dirs
+
+
+def read_index(repo, pkgs=None, url=None):
+    """name -> newest entry {V, D[], t, repo, url}; pkgs: entries of other repositories to add to."""
     with tarfile.open(os.path.join(repo, "APKINDEX.tar.gz")) as t:
         text = t.extractfile("APKINDEX").read().decode()
-    pkgs = {}
+    pkgs = {} if pkgs is None else pkgs
     for block in text.split("\n\n"):
         e = dict(l.split(":", 1) for l in block.splitlines() if ":" in l)
         if "P" not in e:
             continue
-        ent = {"V": e["V"], "D": e.get("D", "").split(), "t": int(e.get("t", 0))}
+        ent = {"V": e["V"], "D": e.get("D", "").split(), "t": int(e.get("t", 0)), "repo": repo, "url": url}
         if e["P"] not in pkgs or ent["t"] > pkgs[e["P"]]["t"]:
             pkgs[e["P"]] = ent
     return pkgs
@@ -44,7 +76,10 @@ def qnx_runtime(out, arch):
     """(soname, path in the SDP) of what the ELF files under out need, the
     packages do not have, and the SDP does -- followed through the SDP
     libraries' own needs."""
-    target = os.path.join(os.environ.get("QNX_TARGET") or sys.exit("make-image-root: QNX_TARGET is not set (source env.sh)"), arch)
+    # The SDP itself, not env.sh's QNX_TARGET (the build's link root, which
+    # leaves out the SDP libraries that have a port).
+    root = os.environ.get("QNX_SDP_ROOT") or sys.exit("make-image-root: QNX_SDP_ROOT is not set (source env.sh)")
+    target = os.path.join(root, "target", "qnx", arch)
     sdp = {}
     for d in ("lib", "usr/lib", "lib/dll"):
         for f in sorted(os.listdir(os.path.join(target, d))) if os.path.isdir(os.path.join(target, d)) else []:
@@ -77,13 +112,20 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-o", "--out")
     ap.add_argument("--dev", action="store_true", help="also the -dev package of every package taken")
+    ap.add_argument("--github", action="store_true", help="packages from the GitHub releases, not this workspace")
+    ap.add_argument("--seed-repo", help="copy the indexes and packages used to this directory")
     ap.add_argument("arch")
     ap.add_argument("packages", nargs="+")
     a = ap.parse_args()
 
-    repo = os.path.join(WS, "dists", SDP, a.arch)
     out = os.path.abspath(a.out or os.path.join(WS, "build", "image-root", a.arch))
-    index = read_index(repo)
+    if a.github:
+        repo, index = "the GitHub releases", {}
+        for d, url in github_repos(a.arch):
+            read_index(d, index, url)
+    else:
+        repo = os.path.join(WS, "dists", SDP, a.arch)
+        index = read_index(repo)
 
     want, todo = {}, list(a.packages)
     while todo:
@@ -98,11 +140,19 @@ def main():
         if a.dev and not name.endswith("-dev") and name + "-dev" in index:
             todo.append(name + "-dev")
 
-    if os.path.isdir(out):
-        shutil.rmtree(out)
+    for d in (out, a.seed_repo):
+        if d and os.path.isdir(d):
+            shutil.rmtree(d)
     os.makedirs(out)
     for name in sorted(want):
-        apk = os.path.join(repo, f"{name}-{want[name]['V']}.apk")
+        apk = os.path.join(want[name]["repo"], f"{name}-{want[name]['V']}.apk")
+        if want[name]["url"] and not os.path.exists(apk):
+            download(f"{want[name]['url']}/{os.path.basename(apk)}", apk)
+        if a.seed_repo:
+            d = os.path.join(os.path.abspath(a.seed_repo), os.path.basename(want[name]["repo"]))
+            os.makedirs(d, exist_ok=True)
+            shutil.copy2(apk, d)
+            shutil.copy2(os.path.join(want[name]["repo"], "APKINDEX.tar.gz"), d)
         # A package is three gzip streams (signature, control, data) in one
         # file; tar reads through them. The control files (.PKGINFO, the
         # signature, install scripts) start with a dot and stay out.

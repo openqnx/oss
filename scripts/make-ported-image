@@ -4,33 +4,62 @@
 # from /usr/local. docs/ported-first-image.md explains the layout.
 #
 #   source ./env.sh <arch>
-#   scripts/make-ported-image [-n <vm-name>] [<package>...]
+#   scripts/make-ported-image [-n <vm-name>] [--apk] [<package>...]
 #
-# Makes lab/vm/<vm-name> (default oss-ported-<arch>) with the given packages
-# and their dependencies (default: the base set below) in /system/usr/local.
+# Two kinds of image, with the given packages (default: the base set below):
+#   (default)  the packages of THIS workspace (dists/<sdp>/<arch>) and their
+#              dependencies are put into the image, read-only, as
+#              /system/usr/local. Nothing is downloaded, on the host or on
+#              the target.
+#   --apk      the image carries only apk-tools and what it needs, downloaded
+#              from the project's GitHub releases when the image is made
+#              (kept in dist/github/, used from there). At boot the target
+#              sets up apk from that copy and installs the packages from
+#              GitHub itself, into /data/oss (seen as /usr/local); later
+#              "apk add / upgrade" on the target, or edit
+#              /data/oss/etc/oss-packages and reboot. target/oss-boot.
+#
+# Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>).
 # Start it:  cd lab/vm/<vm-name> && mkqnximage --run=-h ; mkqnximage --getip
 # An existing VM directory of that name is rebuilt with the new contents.
 set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
+. "$WS/scripts/lib/sdp.sh"
 [ -n "$QNX_ARCH" ] || { echo "source ./env.sh <arch> first" >&2; exit 1; }
-A=$QNX_ARCH; NAME=oss-ported-$A
-[ "$1" = -n ] && { NAME=$2; shift 2; }
+A=$QNX_ARCH; NAME=""; APK=""
+while :; do case "$1" in
+  -n) NAME=$2; shift 2 ;;
+  --apk) APK=1; shift ;;
+  *) break ;;
+esac; done
+if [ -z "$NAME" ]; then if [ -n "$APK" ]; then NAME=oss-apk-$A; else NAME=oss-ported-$A; fi; fi
 BASE="toybox bash openssh openssl curl ca-certificates sqlite gawk grep less vim tar xz bzip2 file
       libarchive ncurses dhcpcd chrony tcpdump iperf3 htop gdb sudo tzdata apk-tools inetutils"
 [ $# -gt 0 ] || set -- $BASE
 PORTS_PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
 PORTS_LIBS=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
+# env.sh points QNX_TARGET at the build's link root, a view of the SDP without
+# the libraries that have a port; the image is made from the SDP itself.
+export QNX_TARGET=$QNX_SDP_ROOT/target/qnx
+SDPT=$QNX_TARGET/$A
 
-# 1. The ports and their dependencies, unpacked.
-R=$WS/build/image-root/$A
-"$WS/scripts/make-image-root" -o "$R" "$A" "$@"
-
-# 2. toybox is packaged as one binary without command links (on a QNX image
-#    its names would collide with QNX's toybox); here the image is ours, so
-#    its commands are linked next to it, after the full tools in PATH.
-G=$WS/build/$A/toybox/generated; T=$R/usr/local/opt/toybox/bin
-if [ -x "$T/toybox" ] && [ -f "$G/newtoys.h" ]; then
-  python3 - "$G" "$T" <<'EOT'
+if [ -n "$APK" ]; then
+  # 1. apk-tools and what it needs, from GitHub: unpacked (root/) and as a
+  #    repository apk can install itself from (repo/).
+  R=$WS/build/image-seed/$A
+  "$WS/scripts/make-image-root" --github --seed-repo "$R/repo" -o "$R/root" "$A" apk-tools ca-certificates
+  PORTS_PATH=/data/oss/bin:$PORTS_PATH
+  SYS_MB=150; DATA_MB=6000; DATA_INODES=200000
+else
+  # 1. The ports and their dependencies, unpacked.
+  R=$WS/build/image-root/$A
+  "$WS/scripts/make-image-root" -o "$R" "$A" "$@"
+  # 2. toybox is packaged as one binary without command links (on a QNX image
+  #    its names would collide with QNX's toybox); here the image is ours, so
+  #    its commands are linked next to it, after the full tools in PATH.
+  G=$WS/build/$A/toybox/generated; T=$R/usr/local/opt/toybox/bin
+  if [ -x "$T/toybox" ] && [ -f "$G/newtoys.h" ]; then
+    python3 - "$G" "$T" <<'EOT'
 import os, re, sys
 g, t = sys.argv[1:]
 on = {m.group(1) for m in re.finditer(r'#define CFG_(\w+) 1', open(g + '/config.h').read())}
@@ -38,16 +67,17 @@ for m in re.finditer(r'USE_(\w+)\((?:NEW|OLD)TOY\((\w+|\[)', open(g + '/newtoys.
     if m.group(1) in on and m.group(2) != 'toybox' and not os.path.lexists(f'{t}/{m.group(2)}'):
         os.symlink('toybox', f'{t}/{m.group(2)}')
 EOT
-else
-  echo "note: no toybox command links (toybox not chosen, or build/$A/toybox is gone: scripts/qnxbuild -a $A -f toybox)" >&2
+  else
+    echo "note: no toybox command links (toybox not chosen, or build/$A/toybox is gone: scripts/qnxbuild -a $A -f toybox)" >&2
+  fi
+  SYS_MB=$(( $(du -sm "$R" | cut -f1) * 3 / 2 + 300 )); DATA_MB=2000; DATA_INODES=40000
 fi
 
 # 3. The image directory, with room for the ports.
 V=$WS/lab/vm/$NAME; mkdir -p "$V" "$WS/logs"; cd "$V"; LOG=$WS/logs/make-ported-image-$NAME.log
-MB=$(( $(du -sm "$R" | cut -f1) * 3 / 2 + 300 ))
 SSHID=$WS/tests/ssh/qnx-target.pub; [ -f "$SSHID" ] || SSHID=none
 mkqnximage --noprompt --type=qemu --arch="$A" --hostname="${NAME#oss-}" --ssh-ident="$SSHID" \
-  --sys-size=$MB --sys-inodes=60000 --data-size=2000 --data-inodes=40000 --ram=2G --cpu=4 > "$LOG" 2>&1 \
+  --sys-size=$SYS_MB --sys-inodes=60000 --data-size=$DATA_MB --data-inodes=$DATA_INODES --ram=2G --cpu=4 > "$LOG" 2>&1 \
   || { tail -n 20 "$LOG" >&2; exit 1; }
 
 # 4. What this adds to the image: everything between the markers, replaced
@@ -57,14 +87,42 @@ put() { # put <snippet> : stdin replaces the marked block of local/snippets/<sni
   sed -i '/^# >>> ported-first/,/^# <<< ported-first/d' "$f"
   { echo "# >>> ported-first (scripts/make-ported-image; docs/ported-first-image.md)"; cat; echo "# <<< ported-first"; } >> "$f"
 }
+inimage() { grep -qE "(^|[/=])$(printf %s "$1" | sed 's/[.+]/\\&/g')(\$|=)" output/build/ifs.build output/build/system.build; }
 {
-  echo "[uid=0 gid=0 dperms=755 type=dir] usr"
-  echo "[-followlink uid=0 gid=0 perms=* dperms=755] usr/local=$R/usr/local"
-  # QNX run-time libraries the ports need and the image does not carry.
-  while IFS=$'\t' read -r n p; do
-    grep -qE "(^|[/=])$(printf %s "$n" | sed 's/[.+]/\\&/g')(\$|=)" output/build/ifs.build output/build/system.build \
-      || echo "lib/$n=$p"
-  done < "$R/QNX-RUNTIME"
+  if [ -n "$APK" ]; then
+    K=$(ls "$WS"/keys/*.rsa.pub | head -n 1)
+    cat <<EOT
+[uid=0 gid=0 dperms=755 type=dir] oss-seed
+[uid=0 gid=0 dperms=755 type=dir] oss-seed/usr
+[uid=0 gid=0 dperms=755 type=dir] oss-seed/keys
+[-followlink uid=0 gid=0 perms=* dperms=755] oss-seed/usr/local=$R/root/usr/local
+[uid=0 gid=0 perms=444 dperms=755] oss-seed/repo=$R/repo
+[uid=0 gid=0 perms=444] oss-seed/keys/$(basename "$K")=$K
+[uid=0 gid=0 perms=555] oss-seed/apk-setup=$WS/target/apk-setup
+[uid=0 gid=0 perms=555] oss-seed/oss-boot=$WS/target/oss-boot
+[uid=0 gid=0 perms=444] oss-seed/sdp={
+$SDP
+}
+[uid=0 gid=0 perms=444] oss-seed/packages={
+# The packages this target installs at boot (target/oss-boot). The copy in
+# use is /data/oss/etc/oss-packages.
+$*
+}
+EOT
+    # Every QNX library a package may link (scripts/check-sdp-leak), since
+    # what will be installed is not known here.
+    stems=$(sed -n '/^QNX_OS_LIBS="/,/"$/p' "$WS/scripts/check-sdp-leak" | tr -d '"' | sed 's/QNX_OS_LIBS=//')
+    for s in $stems; do
+      for f in "$SDPT"/lib/$s.so.[0-9] "$SDPT"/lib/$s.so.[0-9][0-9] "$SDPT"/usr/lib/$s.so.[0-9] "$SDPT"/usr/lib/$s.so.[0-9][0-9]; do
+        [ -f "$f" ] && ! inimage "$(basename "$f")" && echo "[uid=0 gid=0 perms=555] lib/$(basename "$f")=$f"
+      done
+    done
+  else
+    echo "[uid=0 gid=0 dperms=755 type=dir] usr"
+    echo "[-followlink uid=0 gid=0 perms=* dperms=755] usr/local=$R/usr/local"
+    # QNX run-time libraries the ports need and the image does not carry.
+    while IFS=$'\t' read -r n p; do inimage "$n" || echo "[uid=0 gid=0 perms=555] lib/$n=$p"; done < "$R/QNX-RUNTIME"
+  fi
   cat <<EOT
 [uid=0 gid=0 perms=444] etc/ssh/sshd_config.ported={
 # The ported OpenSSH (/usr/local/sbin/sshd); it takes the place of the sshd of QNX.
@@ -92,7 +150,14 @@ export LD_LIBRARY_PATH=$PORTS_LIBS
 export SSL_CERT_FILE=/usr/local/ssl/cert.pem
 export TERMINFO=/usr/local/share/terminfo
 EOT
-put post_start.custom <<EOT
+if [ -n "$APK" ]; then
+  put post_start.custom <<'EOT'
+# apk set-up and the packages from GitHub, in the background: the boot does
+# not wait for the network. Log: /data/oss/var/log/oss-boot.log
+/system/oss-seed/oss-boot &
+EOT
+else
+  put post_start.custom <<EOT
 ln -sP /system/usr/local /usr/local
 export PATH=$PORTS_PATH
 export LD_LIBRARY_PATH=$PORTS_LIBS
@@ -106,7 +171,8 @@ if [ -x /usr/local/sbin/sshd ]; then
   /usr/local/sbin/sshd -f /system/etc/ssh/sshd_config.ported
 fi
 EOT
+fi
 
 # 5. Build the image with them.
 mkqnximage --noprompt --build >> "$LOG" 2>&1 || { tail -n 20 "$LOG" >&2; exit 1; }
-echo "$V: image built ($(wc -l < "$R/PACKAGES") packages). Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"
+echo "$V: image built. Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"

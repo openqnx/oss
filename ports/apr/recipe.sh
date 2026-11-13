@@ -2,6 +2,10 @@ VERSION=1.7.6
 TARBALL=https://archive.apache.org/dist/apr/apr-1.7.6.tar.bz2
 SHA256=49030d92d2575da735791b496dc322f3ce5cff9494779ba8cc28c7f46c5deb32
 BUILDSYS=autotools
+# libxcrypt: with <crypt.h> staged, apr.h says APR_HAVE_CRYPT_H 1 and apr-util
+# (apr_password_validate, crypt_r) builds; without the dependency a clean
+# build configured apr before libxcrypt and apr-util then failed.
+DEPS="libxcrypt"
 # configure runs ~30 test programs, none of which can run in a cross build.
 # The answers, checked against the SDP 8.0 headers and QNX's behaviour:
 #  - /dev/zero exists and can be mapped shared; getaddrinfo/getnameinfo and

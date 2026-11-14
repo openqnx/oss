@@ -8,7 +8,7 @@ VERSION=1.28.17
 TARBALL=https://github.com/OpenPrinting/cups-filters/releases/download/1.28.17/cups-filters-1.28.17.tar.xz
 SHA256=270a3752a960368aa99d431fb5d34f4039b2ac943c576d840612d1d8185c9bb9
 BUILDSYS=autotools
-DEPS="cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib"
+DEPS="cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib libexif"
 RUNTIME_DEPS="cups"
 # Off: Ghostscript and MuPDF (not ported -- the Poppler-based pdftops and
 # pdftoraster take their place), Foomatic, Braille, LDAP, D-Bus colour

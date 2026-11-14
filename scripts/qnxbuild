@@ -198,7 +198,19 @@ _build_one_body() {
   # this an update rebuilt the old source under the new version (7zip 26.05
   # was 25.01: src/7zip was there, so nothing was downloaded).
   local srcid="$VERSION|$GIT|$REF|$COMMIT|$TARBALL|$SHA256"
-  if [ -d "$SRCROOT" ] && [ -f "$SRCROOT/.qnxbuild-source" ] && [ "$(cat "$SRCROOT/.qnxbuild-source")" != "$srcid" ]; then
+  # A recipe without a source of its own that names another component's tree
+  # (SRCROOT="$SRC_DIR/gstreamer" in gst-plugins-base) builds from that tree:
+  # it must neither take it for a stale one of its own and delete it, nor
+  # try to fetch it.
+  local borrowed=""
+  if [ -z "$GIT$TARBALL" ] && ! declare -F do_fetch >/dev/null && [ "$SRCROOT" != "$SRC_DIR/$pkg" ]; then
+    borrowed=$(basename "$SRCROOT")
+    if [ ! -d "$SRCROOT" ]; then
+      echo "!! $pkg builds from the source tree of $borrowed, which is not there: scripts/qnxbuild -a $arch -f $borrowed" | tee -a "$log"
+      return 1
+    fi
+  fi
+  if [ -z "$borrowed" ] && [ -d "$SRCROOT" ] && [ -f "$SRCROOT/.qnxbuild-source" ] && [ "$(cat "$SRCROOT/.qnxbuild-source")" != "$srcid" ]; then
     echo "-- the recipe's source changed: fetching $pkg again" | tee -a "$log"
     rm -rf "${SRCROOT:?}"
   fi

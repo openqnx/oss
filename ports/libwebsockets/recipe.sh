@@ -3,5 +3,8 @@ DEPS="openssl zlib"
 CMAKE_ARGS_EXTRA=( -DLWS_WITH_SHARED=ON -DLWS_WITH_STATIC=ON
                    -DLWS_WITHOUT_TESTAPPS=ON -DLWS_WITHOUT_TEST_SERVER=ON
                    -DLWS_WITH_MINIMAL_EXAMPLES=OFF
+                   # -Werror: SDP 8.0.6's headers define LITTLE_ENDIAN, which
+                   # the unix platform header defines again
+                   -DDISABLE_WERROR=ON
                    -DLWS_OPENSSL_LIBRARIES="$STAGE$PREFIX/lib/libssl.so;$STAGE$PREFIX/lib/libcrypto.so"
                    -DLWS_OPENSSL_INCLUDE_DIRS="$STAGE$PREFIX/include" )

@@ -31,3 +31,10 @@ CONF_ARGS_EXTRA=(
   # --no-drop-root (as root), or create the account.
   --with-avahi-user=avahi --with-avahi-group=avahi
 )
+# The man pages are off (no xmltoman), but "make install" still links the
+# alias names (avahi-publish-service.1 -> avahi-publish.1, ...) to them:
+# links to nothing. They are removed.
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  find "$STAGE$PREFIX/share/man" -xtype l -name 'avahi-*' -delete 2>/dev/null || true
+}

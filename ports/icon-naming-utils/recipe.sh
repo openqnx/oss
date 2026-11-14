@@ -5,7 +5,7 @@
 VERSION=0.8.90
 TARBALL=http://tango.freedesktop.org/releases/icon-naming-utils-0.8.90.tar.bz2
 SHA256=b1378679df4485b4459f609a3304238b3e92d91e43744c47b70abbe690d883d5
-DEPS=""
+DEPS="perl-xml-simple"     # configure runs the build machine's perl with it (CONF_ENV)
 # The script uses XML::Simple (which parses with XML::Parser) to read the
 # mapping.
 RUNTIME_DEPS="perl perl-xml-simple perl-xml-parser"

@@ -1,0 +1,25 @@
+opencv dnn: find the bundled flatbuffers headers first.
+
+The TFLite importer's generated schema header asserts the exact version of
+the flatbuffers headers OpenCV bundles. With the flatbuffers port staged,
+its (newer) headers were found first and the build stopped on
+"Non-compatible flatbuffers version included": OpenCV adds the bundled
+directory as a system include directory, and the prefix's include directory
+is one too and comes first. The bundled directory is now a plain -I, which
+is searched before every system directory (naming it a second time with -I
+does nothing: the compiler ignores -I for a directory it has as -isystem).
+
+Upstream-Status: QNX-specific
+
+--- a/cmake/OpenCVDetectFlatbuffers.cmake
++++ b/cmake/OpenCVDetectFlatbuffers.cmake
+@@ -3,6 +3,9 @@
+   set(flatbuffers_VERSION "23.5.9")
+   ocv_install_3rdparty_licenses(flatbuffers "${OpenCV_SOURCE_DIR}/3rdparty/flatbuffers/LICENSE.txt")
+   ocv_add_external_target(flatbuffers "${OpenCV_SOURCE_DIR}/3rdparty/flatbuffers/include" "" "HAVE_FLATBUFFERS=1")
++  # Not a system directory: it has to be searched before the install prefix,
++  # where another flatbuffers may be (the generated schema asserts the version).
++  set_target_properties(ocv.3rdparty.flatbuffers PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "")
+   set(CUSTOM_STATUS_flatbuffers "    Flatbuffers:" "builtin/3rdparty (${flatbuffers_VERSION})")
+ endif()
+ 

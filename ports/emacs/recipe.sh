@@ -18,7 +18,9 @@ do_configure() {
       "$S/configure" --without-x --without-sound --with-native-compilation=no --without-gnutls --without-xml2 \
       --without-all --with-modules=no && make -j"$(nproc)" ) || return 1
   fi
-  cd "$B" && CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CPPFLAGS="-I$STAGE$PREFIX/include" LDFLAGS="-L$STAGE$PREFIX/lib -lsocket" \
+  # The prefix is searched after Emacs's own lib/ (-idirafter, through -Wp: qcc does not take it itself): the md5.h and
+  # sha1.h of libmd, when staged, would hide the gnulib ones Emacs is written for.
+  cd "$B" && CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CPPFLAGS="-Wp,-idirafter,$STAGE$PREFIX/include" LDFLAGS="-L$STAGE$PREFIX/lib -lsocket" \
   "$S/configure" --host="$QNX_TRIPLE" --build=x86_64-pc-linux-gnu --prefix="$PREFIX" --without-x --without-sound \
     --without-file-notification --with-native-compilation=no --with-dumping=none --with-pdumper=no \
     --with-gnutls --with-xml2 --with-modules=no

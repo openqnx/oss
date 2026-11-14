@@ -15,12 +15,12 @@ WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 rc=0
 # Genuine QNX OS / toolchain libraries: the C runtime and its split-out pieces,
 # the C++ runtime, the unwinder, QNX's own logging and JSON, and the audio and
-# regex libraries QNX ships as part of the OS.  None has an upstream this
-# workspace builds.
+# regex libraries QNX ships as part of the OS (libpci: the client library of
+# QNX's PCI server, not pciutils).  None has an upstream this workspace builds.
 QNX_OS_LIBS="libc libc++ libgcc_s libm libsocket libeventfd libepoll libsignalfd
 libtimerfd libfsnotify libregex libunwind libslog2 libslog2parse libslog2shim
 libjson libasound libiconv libpps libscreen libEGL libGLESv2 libqh libcatalog
-libpam libsecpol libjail libcam libz_qnx libbacktrace libdrm libgbm libnetmap ldqnx-64"
+libpam libsecpol libjail libcam libz_qnx libbacktrace libdrm libgbm libnetmap libpci ldqnx-64"
 for arch in ${1:-aarch64le x86_64}; do
   source "$WS/env.sh" "$arch" >/dev/null || exit 1
   READELF="$QNX_HOST/usr/bin/nto${QNX_CPU}-readelf"

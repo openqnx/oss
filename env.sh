@@ -17,7 +17,7 @@ _sdp_file="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.sdp"
 if [ -f "$_sdp_file" ]; then
   _sdp_root=$(sed -n 's/^root=//p' "$_sdp_file"); _sdp_root=${_sdp_root/#\~/$HOME}
   if [ -n "$_sdp_root" ]; then
-    if [ -n "$QNX_SDP_ROOT" ] && [ "$(readlink -f "$QNX_SDP_ROOT")" != "$(readlink -f "$_sdp_root")" ]; then
+    if [ -n "${QNX_SDP_ROOT:-}" ] && [ "$(readlink -f "$QNX_SDP_ROOT")" != "$(readlink -f "$_sdp_root")" ]; then
       echo "ERROR: this workspace builds against $_sdp_root ($_sdp_file), but QNX_SDP_ROOT=$QNX_SDP_ROOT" >&2; return 1
     fi
     export QNX_SDP_ROOT="$_sdp_root"

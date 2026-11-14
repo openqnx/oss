@@ -32,7 +32,7 @@ WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 pkg=$1; name=$2; summary=$3; descfile=$4
 [ -n "$pkg" ] && [ -n "$name" ] && [ -n "$summary" ] || { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 rec="$WS/ports/$pkg/recipe.sh"; [ -f "$rec" ] || { echo "no recipe: $pkg" >&2; exit 1; }
-src="$WS/src/$pkg"; [ -d "$src" ] || { echo "no source tree: $src (run qnxbuild $pkg first)" >&2; exit 1; }
+src="${QNX_OSS_SRC_DIR:-$WS/src}/$pkg"; [ -d "$src" ] || { echo "no source tree: $src (run qnxbuild $pkg first)" >&2; exit 1; }
 
 # Recipe fields, read without running any hooks.
 field() { sed -n -E "s/^(.*;[[:space:]]*)?$1=([^;[:space:]]*).*/\2/p" "$rec" | head -1 | tr -d "\"'"; }

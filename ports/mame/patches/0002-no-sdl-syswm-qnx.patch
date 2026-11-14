@@ -1,0 +1,37 @@
+bgfx: drop the SDL_SYSWM_QNX cases, this SDL2 has no such subsystem
+
+qnx-ports' MAME expects its own SDL2, whose SDL_syswm.h has a QNX
+subsystem (SDL_SYSWM_QNX, info.qnx.window). The SDL2 of this tree has a
+QNX Screen video driver (SDL_VIDEO_DRIVER_QNX) but no such subsystem, so
+the two cases did not compile. Without them the bgfx renderer reports the
+window manager as unsupported on Screen; the soft, accel and OpenGL
+renderers do not use this code.
+
+Upstream-Status: QNX-specific
+
+--- a/src/osd/modules/render/drawbgfx.cpp
++++ b/src/osd/modules/render/drawbgfx.cpp
+@@ -450,12 +450,6 @@
+ 		platform_data.nwh = wmi.info.android.window;
+ 		break;
+ #endif
+-#if defined(SDL_VIDEO_DRIVER_QNX)
+-	case SDL_SYSWM_QNX:
+-		platform_data.ndt = nullptr;
+-		platform_data.nwh = (void *)wmi.info.qnx.window;
+-		break;
+-#endif
+ 	default:
+ 		osd_printf_error("BGFX: Unsupported SDL window manager type %u\n", wmi.subsystem);
+ 		return false;
+@@ -544,10 +538,6 @@
+ 	case SDL_SYSWM_ANDROID:
+ 		return std::make_pair(wmi.info.android.window, true);
+ #endif
+-#if defined(SDL_VIDEO_DRIVER_QNX)
+-	case SDL_SYSWM_QNX:
+-		return std::make_pair(wmi.info.qnx.window, true);
+-#endif
+ 	default:
+ 		return std::make_pair(nullptr, false);
+ 	}

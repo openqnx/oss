@@ -272,7 +272,9 @@ _build_one_body() {
   fi
 
   local S="$SRCROOT${SUBDIR:+/$SUBDIR}"
-  local B="$BUILD_DIR/$arch/$pkg"; rm -rf "$B"; mkdir -p "$B"
+  # QNXBUILD_KEEP_BUILD=1 keeps the build directory: a very long build (mame,
+  # llvm) that stopped late goes on from the objects it already has.
+  local B="$BUILD_DIR/$arch/$pkg"; [ -n "${QNXBUILD_KEEP_BUILD:-}" ] || rm -rf "$B"; mkdir -p "$B"
 
   if declare -F do_configure >/dev/null; then do_configure >>"$log" 2>&1 || { echo "!! configure failed: $pkg [$arch] -- $log"; return 1; }
   else

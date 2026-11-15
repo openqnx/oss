@@ -1,0 +1,79 @@
+#!/bin/sh
+# oss-boot -- run at the end of the boot of an image made by
+# "scripts/make-ported-image --apk" (docs/ported-first-image.md): sets up
+# apk from what the image carries, then lets apk fetch and install the
+# packages the image is configured for from the project's GitHub releases.
+#
+# In the image (read-only):  /system/oss-seed/
+#     usr/local/   apk-tools and what it needs, unpacked (never in PATH)
+#     repo/*/      the release indexes and those same packages: apk installs
+#                  itself into /data/oss from here, without a network
+#     keys/        the key the packages are signed with
+#     packages     the packages to install at boot, one or several per line
+#     sdp          the SDP release the image was made with (8.0, 8.0.6)
+# On the data partition (writable):  /data/oss, seen as /usr/local
+#     etc/oss-packages   the list in use: copied from the image at the first
+#                        boot; edit it and reboot (or run oss-boot) to change
+#                        what the target has
+#     etc/rc.local       run at the end, if executable (start your services)
+#     var/log/oss-boot.log
+#
+# Every boot: link /usr/local, "apk add" the list (nothing to do when all is
+# installed; no network: reported, the boot goes on), start the ported sshd
+# when it is installed. Safe to run by hand at any time.
+SEED=${OSS_SEED:-/system/oss-seed}
+ROOT=/data/oss
+LOG=$ROOT/var/log/oss-boot.log
+mkdir -p $ROOT/var/log $ROOT/etc
+exec >> $LOG 2>&1
+echo "== oss-boot $(date)"
+
+# 1. apk on /data/oss, from the image's own copy (first boot only)
+if ! $ROOT/bin/apk --version >/dev/null 2>&1; then
+  OSS_SDP=$(cat $SEED/sdp) sh $SEED/apk-setup -b $SEED/usr/local \
+    -s "$(echo $SEED/repo/*/APKINDEX.tar.gz)" -k "$(echo $SEED/keys/*.pub)" || echo "!! apk set-up failed"
+fi
+
+# 2. /usr/local and the environment of what follows
+[ -e /usr/local ] || ln -sP $ROOT/usr/local /usr/local
+PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
+LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
+export PATH LD_LIBRARY_PATH
+
+# 3. the packages this target is to have, from GitHub
+LIST=$ROOT/etc/oss-packages
+[ -f $LIST ] || cp $SEED/packages $LIST
+want=$(sed 's/#.*//' $LIST | tr '\n' ' ')
+if [ -n "$(echo $want)" ]; then
+  n=0
+  until $ROOT/bin/apk update >/dev/null 2>&1; do      # the network may not be up yet
+    n=$((n+1)); [ $n -ge 12 ] && break; sleep 5
+  done
+  if [ $n -lt 12 ]; then
+    $ROOT/bin/apk add $want && echo "packages installed: $want" || echo "!! apk add failed"
+  else
+    echo "!! no connection to the package repositories; installed packages stay as they are"
+  fi
+fi
+
+# 4. toybox comes without command links: make them (after the full tools in PATH)
+# (by the real path: links cannot be made through the /usr/local link)
+T=$ROOT/usr/local/opt/toybox/bin
+if [ -x $T/toybox ] && [ ! -e $T/ls ]; then
+  for a in $($T/toybox); do [ -e $T/$a ] || ln -s toybox $T/$a; done
+fi
+
+# 5. root logs in to the ported bash, over the ported sshd
+if [ -x /usr/local/bin/bash ]; then
+  if ! grep -q '^root:.*:/usr/local/bin/bash$' /data/var/etc/passwd; then
+    sed 's#^\(root:.*\):/bin/sh$#\1:/usr/local/bin/bash#' /data/var/etc/passwd > $ROOT/etc/passwd.new &&
+      cp $ROOT/etc/passwd.new /data/var/etc/passwd; rm -f $ROOT/etc/passwd.new
+  fi
+fi
+if [ -x /usr/local/sbin/sshd ] && ! pidin -F %n | grep -q usr/local/sbin/sshd; then
+  slay -f sshd 2>/dev/null
+  /usr/local/sbin/sshd -f /system/etc/ssh/sshd_config.ported && echo "ported sshd started"
+fi
+
+[ -x $ROOT/etc/rc.local ] && $ROOT/etc/rc.local
+echo "== oss-boot done $(date)"

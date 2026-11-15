@@ -14,6 +14,15 @@
 #   apk-setup -c <ca-bundle.pem>   CA bundle for the first https:// downloads:
 #                                  a stock QNX image has none (scripts/target-
 #                                  bootstrap copies one over from the host)
+#   apk-setup -b <prefix>          apk-tools is already there, unpacked under
+#                                  <prefix> (bin/apk, lib/...): no bootstrap
+#                                  with oss-get (an image that carries it,
+#                                  docs/ported-first-image.md)
+#   apk-setup -s <index>...        install apk-tools and ca-certificates into
+#                                  the root from these repositories (one
+#                                  quoted, space-separated) instead of the
+#                                  ones of -r: a copy inside the image, so
+#                                  that the set-up needs no network
 #
 # What it does, once, as root:
 #   1. bootstraps apk-tools with oss-get into a scratch directory (oss-get
@@ -57,7 +66,9 @@
 GH=https://github.com/openqnx/oss
 RAW=https://raw.githubusercontent.com/openqnx/oss/main
 APK_ROOT=${APK_ROOT:-/data/oss}
-APK_REPO=${APK_REPO:-$GH/releases/download/apk-8.0-@ARCH@/APKINDEX.tar.gz $GH/releases/download/apk-8.0-@ARCH@-m-z/APKINDEX.tar.gz}
+# The SDP release the packages were built against (8.0, 8.0.6): OSS_SDP.
+OSS_SDP=${OSS_SDP:-8.0}; export OSS_SDP
+APK_REPO=${APK_REPO:-$GH/releases/download/apk-$OSS_SDP-@ARCH@/APKINDEX.tar.gz $GH/releases/download/apk-$OSS_SDP-@ARCH@-m-z/APKINDEX.tar.gz}
 APK_KEY=${APK_KEY:-$RAW/keys/openqnx-oss-20261029.rsa.pub}
 APK_TESTS_REPO=${APK_TESTS_REPO:-}
 OSS_GET_URL=${OSS_GET_URL:-$RAW/target/oss-get}
@@ -73,6 +84,8 @@ while [ $# -gt 0 ]; do case "$1" in
   -u) UNTRUSTED=1; shift ;;
   -T) APK_TESTS_REPO=$2; shift 2 ;;
   -c) [ -f "$2" ] || die "no such CA bundle: $2"; export SSL_CERT_FILE=$2; shift 2 ;;
+  -b) SEED_PREFIX=$2; shift 2 ;;
+  -s) SEED_REPO=$2; shift 2 ;;
   *) sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac; done
 
@@ -87,9 +100,9 @@ REPO=$(echo "$APK_REPO" | sed "s/@ARCH@/$ARCH/g")
 FIRST=$(for r in $APK_REPO; do echo "$r"; break; done)
 if [ -z "$APK_TESTS_REPO" ]; then
   case "$FIRST" in
-    $GH/releases/download/apk-*) APK_TESTS_REPO="$GH/releases/download/tests-8.0-@ARCH@/APKINDEX.tar.gz $GH/releases/download/tests-8.0-@ARCH@-m-z/APKINDEX.tar.gz" ;;
+    $GH/releases/download/apk-*) APK_TESTS_REPO="$GH/releases/download/tests-$OSS_SDP-@ARCH@/APKINDEX.tar.gz $GH/releases/download/tests-$OSS_SDP-@ARCH@-m-z/APKINDEX.tar.gz" ;;
     *APKINDEX.tar.gz) APK_TESTS_REPO=none ;;
-    */dists/8.0|*/dists/8.0/) APK_TESTS_REPO=${APK_REPO%/}; APK_TESTS_REPO=${APK_TESTS_REPO%/dists/8.0}/test_suites/8.0 ;;
+    */dists/8.[0-9]*) APK_TESTS_REPO=${APK_REPO%/}; _v=${APK_TESTS_REPO##*/}; APK_TESTS_REPO=${APK_TESTS_REPO%/dists/*}/test_suites/$_v ;;
     *) APK_TESTS_REPO=none ;;
   esac
 fi
@@ -114,14 +127,21 @@ if [ -z "$OSS_GET" ]; then
 fi
 B=$APK_ROOT/var/cache/apk-bootstrap
 rm -rf "$B"; mkdir -p "$B" || die "cannot create $B"
-if [ -z "$OSS_GET" ]; then
+if [ -n "$SEED_PREFIX" ]; then
+  [ -x "$SEED_PREFIX/bin/apk" ] || die "no apk in $SEED_PREFIX/bin (-b)"
+  say "apk-tools ($ARCH) from $SEED_PREFIX"
+elif [ -z "$OSS_GET" ]; then
   OSS_GET=$B/oss-get
   fetch "$OSS_GET_URL" "$OSS_GET" || die "cannot fetch oss-get from $OSS_GET_URL"
 fi
+if [ -n "$SEED_PREFIX" ]; then
+  BL=$SEED_PREFIX
+else
 say "bootstrapping apk-tools ($ARCH) with $OSS_GET"
 sh "$OSS_GET" -R "$B" update >/dev/null || die "oss-get update failed (OSS_REPO=${OSS_REPO:-default})"
 sh "$OSS_GET" -R "$B" install apk-tools ca-certificates >/dev/null || die "oss-get install apk-tools failed"
 BL=$B/usr/local
+fi
 [ -x "$BL/bin/apk" ] || die "bootstrap did not produce $BL/bin/apk"
 
 # 2. repository and key
@@ -156,11 +176,17 @@ EOF
 chmod 755 "$APK_ROOT/bin/apk"
 
 # 3. apk installs itself into the root
-say "installing apk-tools into $APK_ROOT from" $REPO
+FROM=$REPO; SEEDF=""
+if [ -n "$SEED_REPO" ]; then
+  FROM=$SEED_REPO; SEEDF=$B/seed-repositories
+  : > "$SEEDF"; for r in $SEED_REPO; do echo "$r" >> "$SEEDF"; done
+fi
+say "installing apk-tools into $APK_ROOT from" $FROM
 LD_LIBRARY_PATH=$BL/lib:$APK_ROOT/qnx-runtime/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
 SSL_CERT_FILE=${SSL_CERT_FILE:-$BL/ssl/cert.pem} \
   "$BL/bin/apk" --root "$APK_ROOT" --initdb ${UNTRUSTED:+--allow-untrusted} \
-  add apk-tools ca-certificates || die "apk could not install from" $REPO
+  ${SEEDF:+--repositories-file "$SEEDF"} \
+  add apk-tools ca-certificates || die "apk could not install from" $FROM
 rm -rf "$B"
 "$APK_ROOT/bin/apk" --version >/dev/null || die "$APK_ROOT/bin/apk does not run"
 

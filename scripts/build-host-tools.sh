@@ -338,4 +338,21 @@ if [ ! -x "$HT/bin/swig" ]; then
     || { echo "!! native swig failed -- see $WS/logs/hosttools-swig.log"; exit 1; }
 fi
 
+# apk-tools builds its help text (apk --help, apk <command> --help) by running
+# a Lua script at build time. The distribution has no lua; the interpreter
+# alone is a small native build.
+if [ ! -x "$HT/bin/lua" ]; then
+  echo "== building native lua -> $HT"
+  src="$WS/src/lua-host"
+  if [ ! -d "$src" ]; then
+    mkdir -p "$src"
+    [ -f "$WS/dist/lua-5.4.7.tar.gz" ] || curl -fsSL --retry 3 -o "$WS/dist/lua-5.4.7.tar.gz" \
+      https://www.lua.org/ftp/lua-5.4.7.tar.gz
+    tar xf "$WS/dist/lua-5.4.7.tar.gz" -C "$src" --strip-components=1
+  fi
+  ( cd "$src" && make -j"$(nproc)" linux && install -m755 src/lua "$HT/bin/lua" ) \
+    > "$WS/logs/hosttools-lua.log" 2>&1 \
+    || { echo "!! native lua failed -- see $WS/logs/hosttools-lua.log"; exit 1; }
+fi
+
 echo "host tools ready: $(ls "$HT/bin" | tr '\n' ' ')"

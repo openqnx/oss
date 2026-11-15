@@ -7,4 +7,7 @@ DEPS="openssl zlib zstd"
 # releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.
 RUNTIME_DEPS="ca-certificates"
 BUILDSYS=meson
-MESON_ARGS_EXTRA=( -Ddocs=disabled -Dhelp=disabled -Dlua=disabled -Dpython=disabled -Dtests=disabled -Dcrypto_backend=openssl -Dzstd=true -Dc_args=-D_QNX_SOURCE -Dc_link_args=-lsocket )
+# help: "apk --help" and "apk <command> --help" print the text that a Lua
+# script builds in from doc/*.scd at build time (native lua: hosttools,
+# scripts/build-host-tools.sh). Not compressed: that would need lua-zlib there.
+MESON_ARGS_EXTRA=( -Ddocs=disabled -Dhelp=enabled -Dlua_bin=lua -Dcompressed-help=false -Dlua=disabled -Dpython=disabled -Dtests=disabled -Dcrypto_backend=openssl -Dzstd=true -Dc_args=-D_QNX_SOURCE -Dc_link_args=-lsocket )

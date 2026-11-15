@@ -15,6 +15,12 @@ V=$(apk --version 2>&1)
 echo "  info $V"
 case "$V" in *"3.0.8"*) ok "apk --version: 3.0.8" ;; *) bad "apk --version: $V" ;; esac
 
+# The help text is built in (it was once left out: "built without help").
+H=$(apk --help 2>&1)
+case "$H" in *"Usage: apk "*"add "*) ok "apk --help: usage and the command list" ;; *) bad "apk --help: $(echo "$H" | head -3)" ;; esac
+H=$(apk add --help 2>&1)
+case "$H" in *"Usage: apk add"*) ok "apk add --help" ;; *) bad "apk add --help: $(echo "$H" | head -3)" ;; esac
+
 vt() {
   r=$(apk version -t "$1" "$2" 2>&1)
   [ "$r" = "$3" ] && ok "apk version -t $1 $2: $3" || bad "apk version -t $1 $2: got '$r', want '$3'"

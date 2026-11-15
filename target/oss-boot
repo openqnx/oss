@@ -18,6 +18,9 @@
 #     etc/rc.local       run at the end, if executable (start your services)
 #     var/log/oss-boot.log
 #
+# Also used on a board image (a BSP's IFS with a data partition mounted at
+# /data and the seed at /system/oss-seed): the script that mounts /data runs it.
+#
 # Every boot: link /usr/local, "apk add" the list (nothing to do when all is
 # installed; no network: reported, the boot goes on), start the ported sshd
 # when it is installed. Safe to run by hand at any time.
@@ -36,15 +39,17 @@ fi
 
 # 2. /usr/local and the environment of what follows
 [ -e /usr/local ] || ln -sP $ROOT/usr/local /usr/local
-PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
-LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
+# (what the image started this with comes last: a BSP image keeps the QNX
+# commands in /bin, /usr/bin, ... instead of /system/bin)
+PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot${PATH:+:$PATH}
+LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export PATH LD_LIBRARY_PATH
 
 # 3. the packages this target is to have, from GitHub
 LIST=$ROOT/etc/oss-packages
 [ -f $LIST ] || cp $SEED/packages $LIST
-want=$(sed 's/#.*//' $LIST | tr '\n' ' ')
-if [ -n "$(echo $want)" ]; then
+want=$(echo $(sed 's/#.*//' $LIST))
+if [ -n "$want" ]; then
   n=0
   until $ROOT/bin/apk update >/dev/null 2>&1; do      # the network may not be up yet
     n=$((n+1)); [ $n -ge 12 ] && break; sleep 5
@@ -64,7 +69,8 @@ if [ -x $T/toybox ] && [ ! -e $T/ls ]; then
 fi
 
 # 5. root logs in to the ported bash, over the ported sshd
-if [ -x /usr/local/bin/bash ]; then
+# (an image whose account file is on /data: mkqnximage; elsewhere it stays)
+if [ -x /usr/local/bin/bash ] && [ -f /data/var/etc/passwd ]; then
   if ! grep -q '^root:.*:/usr/local/bin/bash$' /data/var/etc/passwd; then
     sed 's#^\(root:.*\):/bin/sh$#\1:/usr/local/bin/bash#' /data/var/etc/passwd > $ROOT/etc/passwd.new &&
       cp $ROOT/etc/passwd.new /data/var/etc/passwd; rm -f $ROOT/etc/passwd.new

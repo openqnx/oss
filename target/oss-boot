@@ -10,12 +10,15 @@
 #                  itself into /data/oss from here, without a network
 #     keys/        the key the packages are signed with
 #     packages     the packages to install at boot, one or several per line
+#     repo-first   a repository to use before GitHub (empty: GitHub only)
+#     desktop      not empty: start the desktop (oss-desktop) at the end
 #     sdp          the SDP release the image was made with (8.0, 8.0.6)
 # On the data partition (writable):  /data/oss, seen as /usr/local
 #     etc/oss-packages   the list in use: copied from the image at the first
 #                        boot; edit it and reboot (or run oss-boot) to change
 #                        what the target has
 #     etc/rc.local       run at the end, if executable (start your services)
+#     etc/no-desktop     when it exists the desktop is not started
 #     var/log/oss-boot.log
 #
 # Also used on a board image (a BSP's IFS with a data partition mounted at
@@ -44,6 +47,34 @@ fi
 PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot${PATH:+:$PATH}
 LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export PATH LD_LIBRARY_PATH
+
+# The desktop, on an image made for it (make-ported-image --desktop): the
+# session of root, started again when it ends (Log Out), like a display
+# manager with automatic log-in. Restart and Shut Down end the system.
+# Called before the packages are looked at (a later boot: the desktop is
+# there at once) and after (the first boot: when it has been installed).
+start_desktop() {
+  [ -n "$(cat $SEED/desktop 2>/dev/null)" ] && [ -x /usr/local/bin/oss-desktop ] && [ ! -e $ROOT/etc/no-desktop ] || return 0
+  [ -n "$DESKTOP_STARTED" ] && return 0
+  n=0; until [ -e /dev/screen ]; do n=$((n+1)); [ $n -ge 30 ] && break; sleep 1; done
+  if [ ! -e /dev/screen ]; then echo "!! QNX Screen is not running: no desktop"; return 0; fi
+  echo "starting the desktop"; DESKTOP_STARTED=1
+  ( export HOME=/data/home/root SHELL=/usr/local/bin/bash USER=root LOGNAME=root
+    export SSL_CERT_FILE=/usr/local/ssl/cert.pem
+    cd $HOME
+    while [ ! -e $ROOT/etc/no-desktop ]; do
+      /usr/local/bin/oss-desktop >> $ROOT/var/log/oss-desktop.log 2>&1
+      sleep 2
+    done ) &
+}
+start_desktop
+
+# 2b. a repository to take packages from before GitHub (make-ported-image --repo)
+first=$(cat $SEED/repo-first 2>/dev/null)
+if [ -n "$first" ] && [ -f $ROOT/etc/apk/repositories ] && ! grep -qxF "$first" $ROOT/etc/apk/repositories; then
+  { echo "$first"; cat $ROOT/etc/apk/repositories; } > $ROOT/etc/apk/repositories.new &&
+    mv $ROOT/etc/apk/repositories.new $ROOT/etc/apk/repositories
+fi
 
 # 3. the packages this target is to have, from GitHub
 LIST=$ROOT/etc/oss-packages
@@ -82,4 +113,6 @@ if [ -x /usr/local/sbin/sshd ] && ! pidin -F %n | grep -q usr/local/sbin/sshd; t
 fi
 
 [ -x $ROOT/etc/rc.local ] && $ROOT/etc/rc.local
+
+start_desktop
 echo "== oss-boot done $(date)"

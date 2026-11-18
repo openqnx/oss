@@ -19,7 +19,7 @@ export WLR_BACKENDS ${WLR_RENDERER:+WLR_RENDERER}
 : "${XDG_RUNTIME_DIR:=/tmp/xdg-runtime-$(id -u)}"; mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 : "${HOME:=/tmp}"
 export XDG_RUNTIME_DIR HOME
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/etc/xdg}"
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/share/oss-desktop/xdg:$P/etc/xdg}"
 export XDG_CURRENT_DESKTOP=XFCE XDG_SESSION_TYPE=wayland GDK_BACKEND=wayland
 export XCURSOR_PATH="$P/share/icons" GTK_THEME="${GTK_THEME:-Adwaita}"
 export FONTCONFIG_PATH="${FONTCONFIG_PATH:-$P/etc/fonts}"

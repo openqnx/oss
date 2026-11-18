@@ -1,14 +1,17 @@
 # oss-desktop: a desktop session on QNX Screen from the ported components, in
-# the spirit of QNX Everywhere's Developer Desktop -- labwc (window manager,
-# on wlroots' QNX Screen backend), swaybg (background), the Xfce panel with
-# an application menu, the Xfce terminal and file manager. The root menu
-# (right click on the background) lists every installed application
-# (.desktop entry) and runs the port test suite in a terminal.
-# This component is only the session: a start script, oss-desktop, and
-# labwc's configuration (files/); the programs are the components below.
-VERSION=1.0
-DEPS="labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu"
-RUNTIME_DEPS="labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu"
+# the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on
+# wlroots' QNX Screen backend), swaybg (background) and the Xfce session
+# (xfce4-session: settings daemon, the panel, Thunar): one panel at the top
+# with the Applications menu, launchers (terminal, files, web browser), the
+# clock and the log out / restart / shut down buttons. The root menu (right
+# click on the background) lists every installed application and runs the
+# port test suite in a terminal.
+# This component is only the session: a start script, oss-desktop, labwc's
+# configuration and the Xfce defaults (files/); the programs are the
+# components below. An image that boots into it: scripts/make-ported-image --desktop.
+VERSION=1.1
+DEPS="labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu"
+RUNTIME_DEPS="labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu"
 BUILDSYS=custom
 do_fetch() { mkdir -p "$SRCROOT" && cp -a "$RECIPE_DIR/oss-desktop/files/." "$SRCROOT/"; }
 do_build() { :; }

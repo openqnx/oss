@@ -5,7 +5,7 @@
 . "$(dirname "$0")/common.sh"
 ARCH=$(norm_arch "${1:-x86_64}") || exit 2
 OUT=${2:-$WS/logs/desktop-$ARCH.png}
-S=$(vm_dir "$ARCH" desktop)/qmp.sock
+S=${QMP_SOCK:-$(vm_dir "$ARCH" desktop)/qmp.sock}    # QMP_SOCK: another VM's socket (lab/vm/oss-qdd-<arch>/qmp.sock)
 [ -S "$S" ] || { echo "no QMP socket $S: is the desktop VM (vanilla-vm/desktop) running?" >&2; exit 1; }
 python3 -I - "$S" "$OUT" <<'PY'
 import json, os, socket, sys, tempfile, zlib, struct

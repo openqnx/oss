@@ -4,7 +4,7 @@
 # from /usr/local. docs/ported-first-image.md explains the layout.
 #
 #   source ./env.sh <arch>
-#   scripts/make-ported-image [-n <vm-name>] [--apk] [<package>...]
+#   scripts/make-ported-image [-n <vm-name>] [--apk | --desktop] [--repo <url>] [<package>...]
 #
 # Two kinds of image, with the given packages (default: the base set below):
 #   (default)  the packages of THIS workspace (dists/<sdp>/<arch>) and their
@@ -19,23 +19,48 @@
 #              "apk add / upgrade" on the target, or edit
 #              /data/oss/etc/oss-packages and reboot. target/oss-boot.
 #
-# Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>).
+#   --desktop  an --apk image with graphics that boots into the Xfce desktop,
+#              in the way of QNX Everywhere's Developer Desktop: QNX Screen,
+#              then oss-desktop (labwc, xfce4-session, the panel with the
+#              Applications menu and the log out / restart / shut down
+#              buttons, terminal, file manager), the web browser, editors and
+#              the compiler that runs on the target -- all installed from
+#              GitHub at the first boot (several minutes; the desktop comes up
+#              when that is done, and at once on later boots). Needs QNX's
+#              "Screen Board Support VirtIO" package in the SDP.
+#   --repo     (with --apk/--desktop) the target also takes packages from
+#              this repository, before GitHub: scripts/serve-dists on this
+#              machine (http://<host>:8000/dists/<sdp>), to try packages
+#              that are not published yet.
+#
+# Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>,
+# oss-qdd-<arch>).
 # Start it:  cd lab/vm/<vm-name> && mkqnximage --run=-h ; mkqnximage --getip
+#            (--desktop: mkqnximage --run, in a desktop session: QEMU opens a window)
 # An existing VM directory of that name is rebuilt with the new contents.
 set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
 . "$WS/scripts/lib/sdp.sh"
 [ -n "$QNX_ARCH" ] || { echo "source ./env.sh <arch> first" >&2; exit 1; }
-A=$QNX_ARCH; NAME=""; APK=""
+A=$QNX_ARCH; NAME=""; APK=""; DESKTOP=""; REPO=""
 while :; do case "$1" in
   -n) NAME=$2; shift 2 ;;
   --apk) APK=1; shift ;;
+  --desktop) APK=1; DESKTOP=1; shift ;;
+  --repo) REPO=$2; shift 2 ;;
   *) break ;;
 esac; done
-if [ -z "$NAME" ]; then if [ -n "$APK" ]; then NAME=oss-apk-$A; else NAME=oss-ported-$A; fi; fi
+if [ -z "$NAME" ]; then
+  if [ -n "$DESKTOP" ]; then NAME=oss-qdd-$A; elif [ -n "$APK" ]; then NAME=oss-apk-$A; else NAME=oss-ported-$A; fi
+fi
 BASE="toybox bash openssh openssl curl ca-certificates sqlite gawk grep less vim tar xz bzip2 file
       libarchive ncurses dhcpcd chrony tcpdump iperf3 htop gdb sudo tzdata apk-tools inetutils"
-[ $# -gt 0 ] || set -- $BASE
+# --desktop: the session, what the Developer Desktop comes with (browser,
+# editors, calculator, image viewer, GTK demos) and the tools to build on the target.
+DESKTOP_SET="oss-desktop xfce4-session xfce4-settings adwaita-icon-theme font-dejavu
+      epiphany geany emacs neovim mate-calc gthumb gtk3 gtk4 foot
+      llvm binutils make cmake ninja pkgconf git python3 nano"
+if [ $# -eq 0 ]; then set -- $BASE; [ -n "$DESKTOP" ] && set -- "$@" $DESKTOP_SET; fi
 PORTS_PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
 PORTS_LIBS=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
 # env.sh points QNX_TARGET at the build's link root, a view of the SDP without
@@ -50,6 +75,15 @@ if [ -n "$APK" ]; then
   "$WS/scripts/make-image-root" --github --seed-repo "$R/repo" -o "$R/root" "$A" apk-tools ca-certificates
   PORTS_PATH=/data/oss/bin:$PORTS_PATH
   SYS_MB=150; DATA_MB=6000; DATA_INODES=200000
+  if [ -n "$DESKTOP" ]; then
+    DATA_MB=16000; DATA_INODES=600000
+    # What the compiler on the target needs from QNX (headers, link-time
+    # files), from this SDP: in the image as /system/qnx-dev, seen as
+    # /usr/include and /usr/lib.
+    DEV=$WS/build/dev-sysroot/$A
+    "$WS/scripts/make-dev-sysroot" "$A" "$DEV"
+    SYS_MB=$(( SYS_MB + $(du -sm "$DEV" | cut -f1) * 5 / 4 + 100 ))
+  fi
 else
   # 1. The ports and their dependencies, unpacked.
   R=$WS/build/image-root/$A
@@ -76,8 +110,10 @@ fi
 # 3. The image directory, with room for the ports.
 V=$WS/lab/vm/$NAME; mkdir -p "$V" "$WS/logs"; cd "$V"; LOG=$WS/logs/make-ported-image-$NAME.log
 SSHID=$WS/tests/ssh/qnx-target.pub; [ -f "$SSHID" ] || SSHID=none
-mkqnximage --noprompt --type=qemu --arch="$A" --hostname="${NAME#oss-}" --ssh-ident="$SSHID" \
-  --sys-size=$SYS_MB --sys-inodes=60000 --data-size=$DATA_MB --data-inodes=$DATA_INODES --ram=2G --cpu=4 > "$LOG" 2>&1 \
+GFX=(--graphics=no --ram=2G); [ -n "$DESKTOP" ] && GFX=(--graphics=yes --ram=4G)
+SYS_INODES=60000; [ -n "$DESKTOP" ] && SYS_INODES=120000
+mkqnximage --noprompt --type=qemu --arch="$A" --hostname="${NAME#oss-}" --ssh-ident="$SSHID" "${GFX[@]}" \
+  --sys-size=$SYS_MB --sys-inodes=$SYS_INODES --data-size=$DATA_MB --data-inodes=$DATA_INODES --cpu=4 > "$LOG" 2>&1 \
   || { tail -n 20 "$LOG" >&2; exit 1; }
 
 # 4. What this adds to the image: everything between the markers, replaced
@@ -108,6 +144,12 @@ $SDP
 # use is /data/oss/etc/oss-packages.
 $*
 }
+[uid=0 gid=0 perms=444] oss-seed/repo-first={
+$REPO
+}
+[uid=0 gid=0 perms=444] oss-seed/desktop={
+$DESKTOP
+}
 EOT
     # Every QNX library a package may link (scripts/check-sdp-leak), since
     # what will be installed is not known here.
@@ -117,6 +159,13 @@ EOT
         [ -f "$f" ] && ! inimage "$(basename "$f")" && echo "[uid=0 gid=0 perms=555] lib/$(basename "$f")=$f"
       done
     done
+    if [ -n "$DESKTOP" ]; then
+      echo "[uid=0 gid=0 dperms=755 type=dir] qnx-dev"
+      echo "[-followlink uid=0 gid=0 perms=* dperms=755] qnx-dev/usr=$DEV/usr"
+    fi
+    # libgbm (wlroots' allocator) opens its DRI backend by name: dri_gbm.so
+    # ("Can't open 'dri' library!" without it; labwc does not start).
+    [ -f "$SDPT/usr/lib/dri_gbm.so" ] && ! inimage dri_gbm.so && echo "[uid=0 gid=0 perms=555] lib/dri_gbm.so=$SDPT/usr/lib/dri_gbm.so"
   else
     echo "[uid=0 gid=0 dperms=755 type=dir] usr"
     echo "[-followlink uid=0 gid=0 perms=* dperms=755] usr/local=$R/usr/local"
@@ -156,6 +205,10 @@ if [ -n "$APK" ]; then
 # not wait for the network. Log: /data/oss/var/log/oss-boot.log
 /system/oss-seed/oss-boot &
 EOT
+  [ -n "$DESKTOP" ] && sed -i '/^# <<< ported-first/i\
+# the headers and link-time files of QNX, where the compiler on the target looks\
+[ -d /system/qnx-dev/usr/include ] \&\& ln -sP /system/qnx-dev/usr/include /usr/include\
+[ -d /system/qnx-dev/usr/lib ] \&\& ln -sP /system/qnx-dev/usr/lib /usr/lib' local/snippets/post_start.custom
 else
   put post_start.custom <<EOT
 ln -sP /system/usr/local /usr/local
@@ -175,4 +228,9 @@ fi
 
 # 5. Build the image with them.
 mkqnximage --noprompt --build >> "$LOG" 2>&1 || { tail -n 20 "$LOG" >&2; exit 1; }
-echo "$V: image built. Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"
+if [ -n "$DESKTOP" ]; then
+  echo "$V: image built. Start (in a desktop session, QEMU opens a window): cd $V && mkqnximage --run; mkqnximage --getip"
+  echo "  first boot: the packages come from GitHub, then the desktop starts (log on the target: /data/oss/var/log/oss-boot.log)"
+else
+  echo "$V: image built. Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"
+fi

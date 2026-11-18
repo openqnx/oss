@@ -1,4 +1,4 @@
-# oss-desktop 1.0
+# oss-desktop 1.1
 
 > Desktop session with labwc, Xfce panel, terminal and file manager
 
@@ -9,7 +9,7 @@
 | Upstream | see recipe.sh |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
-| Build dependencies | [`labwc`](../labwc/) [`swaybg`](../swaybg/) [`xfce4-panel`](../xfce4-panel/) [`xfce4-terminal`](../xfce4-terminal/) [`thunar`](../thunar/) [`xfce4-appfinder`](../xfce4-appfinder/) [`dbus`](../dbus/) [`hicolor-icon-theme`](../hicolor-icon-theme/) [`lxde-icon-theme`](../lxde-icon-theme/) [`font-dejavu`](../font-dejavu/) |
+| Build dependencies | [`labwc`](../labwc/) [`swaybg`](../swaybg/) [`xfce4-panel`](../xfce4-panel/) [`xfce4-session`](../xfce4-session/) [`xfce4-settings`](../xfce4-settings/) [`xfce4-terminal`](../xfce4-terminal/) [`thunar`](../thunar/) [`xfce4-appfinder`](../xfce4-appfinder/) [`dbus`](../dbus/) [`adwaita-icon-theme`](../adwaita-icon-theme/) [`hicolor-icon-theme`](../hicolor-icon-theme/) [`lxde-icon-theme`](../lxde-icon-theme/) [`font-dejavu`](../font-dejavu/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_labwc`](../../tests/src/) |
@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (93 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (96 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu
+./scripts/qnxbuild labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu
 ```
 
-<details><summary>Full build chain (93)</summary>
+<details><summary>Full build chain (96)</summary>
 
-[`at-spi2-core`](../at-spi2-core/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`dbus`](../dbus/) [`exo`](../exo/) [`expat`](../expat/) [`font-dejavu`](../font-dejavu/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`garcon`](../garcon/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`graphene`](../graphene/) [`graphite2`](../graphite2/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`gtk4`](../gtk4/) [`harfbuzz`](../harfbuzz/) [`hicolor-icon-theme`](../hicolor-icon-theme/) [`icu`](../icu/) [`labwc`](../labwc/) [`lcms2`](../lcms2/) [`libdrm-headers`](../libdrm-headers/) [`libepoxy`](../libepoxy/) [`libexif`](../libexif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libnotify`](../libnotify/) [`libpng`](../libpng/) [`libsfdo`](../libsfdo/) [`libtasn1`](../libtasn1/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcomposite`](../libxcomposite/) [`libxcursor`](../libxcursor/) [`libxdamage`](../libxdamage/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`libxfixes`](../libxfixes/) [`libxft`](../libxft/) [`libxi`](../libxi/) [`libxinerama`](../libxinerama/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxtst`](../libxtst/) [`linux-headers-input-codes`](../linux-headers-input-codes/) [`lxde-icon-theme`](../lxde-icon-theme/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`openssl`](../openssl/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`swaybg`](../swaybg/) [`thunar`](../thunar/) [`vte`](../vte/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`wlroots`](../wlroots/) [`xcb-proto`](../xcb-proto/) [`xfce4-appfinder`](../xfce4-appfinder/) [`xfce4-panel`](../xfce4-panel/) [`xfce4-terminal`](../xfce4-terminal/) [`xfconf`](../xfconf/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`adwaita-icon-theme`](../adwaita-icon-theme/) [`at-spi2-core`](../at-spi2-core/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`dbus`](../dbus/) [`exo`](../exo/) [`expat`](../expat/) [`font-dejavu`](../font-dejavu/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`garcon`](../garcon/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`graphene`](../graphene/) [`graphite2`](../graphite2/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`gtk4`](../gtk4/) [`harfbuzz`](../harfbuzz/) [`hicolor-icon-theme`](../hicolor-icon-theme/) [`icu`](../icu/) [`labwc`](../labwc/) [`lcms2`](../lcms2/) [`libdrm-headers`](../libdrm-headers/) [`libepoxy`](../libepoxy/) [`libexif`](../libexif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libnotify`](../libnotify/) [`libpng`](../libpng/) [`libsfdo`](../libsfdo/) [`libtasn1`](../libtasn1/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcomposite`](../libxcomposite/) [`libxcursor`](../libxcursor/) [`libxdamage`](../libxdamage/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`libxfixes`](../libxfixes/) [`libxft`](../libxft/) [`libxi`](../libxi/) [`libxinerama`](../libxinerama/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxtst`](../libxtst/) [`linux-headers-input-codes`](../linux-headers-input-codes/) [`lxde-icon-theme`](../lxde-icon-theme/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nettle`](../nettle/) [`openssl`](../openssl/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`swaybg`](../swaybg/) [`thunar`](../thunar/) [`vte`](../vte/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`wlroots`](../wlroots/) [`xcb-proto`](../xcb-proto/) [`xfce4-appfinder`](../xfce4-appfinder/) [`xfce4-panel`](../xfce4-panel/) [`xfce4-session`](../xfce4-session/) [`xfce4-settings`](../xfce4-settings/) [`xfce4-terminal`](../xfce4-terminal/) [`xfconf`](../xfconf/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -109,13 +109,13 @@ do_install() {
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- oss-desktop: a desktop session on QNX Screen from the ported components, in the spirit of QNX Everywhere's Developer Desktop -- labwc (window manager, on wlroots' QNX Screen backend), swaybg (background), the Xfce panel with an application menu, the Xfce terminal and file manager. The root menu (right click on the background) lists every installed application (.desktop entry) and runs the port test suite in a terminal. This component is only the session: a start script, oss-desktop, and labwc's configuration (files/); the programs are the components below.
+- oss-desktop: a desktop session on QNX Screen from the ported components, in the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on wlroots' QNX Screen backend), swaybg (background) and the Xfce session (xfce4-session: settings daemon, the panel, Thunar): one panel at the top with the Applications menu, launchers (terminal, files, web browser), the clock and the log out / restart / shut down buttons. The root menu (right click on the background) lists every installed application and runs the port test suite in a terminal. This component is only the session: a start script, oss-desktop, labwc's configuration and the Xfce defaults (files/); the programs are the components below. An image that boots into it: scripts/make-ported-image --desktop.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH oss-desktop`.
 
 ### 5. What it installs
 
-5 files under `/usr/local`, 2 programs.
+9 files under `/usr/local`, 2 programs.
 
 ```
 /usr/local/bin/oss-desktop
@@ -203,22 +203,25 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add oss-desktop=<version>`), sources in `ported/oss-desktop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates oss-desktop`; port one with `scripts/port-update oss-desktop`.
+This recipe builds **1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add oss-desktop=<version>`), sources in `ported/oss-desktop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates oss-desktop`; port one with `scripts/port-update oss-desktop`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # oss-desktop: a desktop session on QNX Screen from the ported components, in
-# the spirit of QNX Everywhere's Developer Desktop -- labwc (window manager,
-# on wlroots' QNX Screen backend), swaybg (background), the Xfce panel with
-# an application menu, the Xfce terminal and file manager. The root menu
-# (right click on the background) lists every installed application
-# (.desktop entry) and runs the port test suite in a terminal.
-# This component is only the session: a start script, oss-desktop, and
-# labwc's configuration (files/); the programs are the components below.
-VERSION=1.0
-DEPS="labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu"
-RUNTIME_DEPS="labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu"
+# the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on
+# wlroots' QNX Screen backend), swaybg (background) and the Xfce session
+# (xfce4-session: settings daemon, the panel, Thunar): one panel at the top
+# with the Applications menu, launchers (terminal, files, web browser), the
+# clock and the log out / restart / shut down buttons. The root menu (right
+# click on the background) lists every installed application and runs the
+# port test suite in a terminal.
+# This component is only the session: a start script, oss-desktop, labwc's
+# configuration and the Xfce defaults (files/); the programs are the
+# components below. An image that boots into it: scripts/make-ported-image --desktop.
+VERSION=1.1
+DEPS="labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu"
+RUNTIME_DEPS="labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu"
 BUILDSYS=custom
 do_fetch() { mkdir -p "$SRCROOT" && cp -a "$RECIPE_DIR/oss-desktop/files/." "$SRCROOT/"; }
 do_build() { :; }

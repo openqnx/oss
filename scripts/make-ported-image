@@ -4,7 +4,7 @@
 # from /usr/local. docs/ported-first-image.md explains the layout.
 #
 #   source ./env.sh <arch>
-#   scripts/make-ported-image [-n <vm-name>] [--apk | --desktop] [--repo <url>] [<package>...]
+#   scripts/make-ported-image [-n <vm-name>] [--apk | --desktop] [<package>...]
 #
 # Two kinds of image, with the given packages (default: the base set below):
 #   (default)  the packages of THIS workspace (dists/<sdp>/<arch>) and their
@@ -28,9 +28,6 @@
 #              GitHub at the first boot (several minutes; the desktop comes up
 #              when that is done, and at once on later boots). Needs QNX's
 #              "Screen Board Support VirtIO" package in the SDP.
-#   --repo     (with --apk/--desktop, optional) a mirror the target asks
-#              before GitHub, given as the URL of its dists/<sdp> level.
-#              Without it everything comes from GitHub.
 #
 # Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>,
 # oss-qdd-<arch>).
@@ -41,12 +38,11 @@ set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
 . "$WS/scripts/lib/sdp.sh"
 [ -n "$QNX_ARCH" ] || { echo "source ./env.sh <arch> first" >&2; exit 1; }
-A=$QNX_ARCH; NAME=""; APK=""; DESKTOP=""; REPO=""
+A=$QNX_ARCH; NAME=""; APK=""; DESKTOP=""
 while :; do case "$1" in
   -n) NAME=$2; shift 2 ;;
   --apk) APK=1; shift ;;
   --desktop) APK=1; DESKTOP=1; shift ;;
-  --repo) REPO=$2; shift 2 ;;
   *) break ;;
 esac; done
 if [ -z "$NAME" ]; then
@@ -142,9 +138,6 @@ $SDP
 # The packages this target installs at boot (target/oss-boot). The copy in
 # use is /data/oss/etc/oss-packages.
 $*
-}
-[uid=0 gid=0 perms=444] oss-seed/repo-first={
-$REPO
 }
 [uid=0 gid=0 perms=444] oss-seed/desktop={
 $DESKTOP

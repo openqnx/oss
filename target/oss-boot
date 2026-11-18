@@ -10,7 +10,6 @@
 #                  itself into /data/oss from here, without a network
 #     keys/        the key the packages are signed with
 #     packages     the packages to install at boot, one or several per line
-#     repo-first   a repository to use before GitHub (empty: GitHub only)
 #     desktop      not empty: start the desktop (oss-desktop) at the end
 #     sdp          the SDP release the image was made with (8.0, 8.0.6)
 # On the data partition (writable):  /data/oss, seen as /usr/local
@@ -68,13 +67,6 @@ start_desktop() {
     done ) &
 }
 start_desktop
-
-# 2b. a repository to take packages from before GitHub (make-ported-image --repo)
-first=$(cat $SEED/repo-first 2>/dev/null)
-if [ -n "$first" ] && [ -f $ROOT/etc/apk/repositories ] && ! grep -qxF "$first" $ROOT/etc/apk/repositories; then
-  { echo "$first"; cat $ROOT/etc/apk/repositories; } > $ROOT/etc/apk/repositories.new &&
-    mv $ROOT/etc/apk/repositories.new $ROOT/etc/apk/repositories
-fi
 
 # 3. the packages this target is to have, from GitHub
 LIST=$ROOT/etc/oss-packages

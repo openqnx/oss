@@ -28,10 +28,9 @@
 #              GitHub at the first boot (several minutes; the desktop comes up
 #              when that is done, and at once on later boots). Needs QNX's
 #              "Screen Board Support VirtIO" package in the SDP.
-#   --repo     (with --apk/--desktop) the target also takes packages from
-#              this repository, before GitHub: scripts/serve-dists on this
-#              machine (http://<host>:8000/dists/<sdp>), to try packages
-#              that are not published yet.
+#   --repo     (with --apk/--desktop, optional) a mirror the target asks
+#              before GitHub, given as the URL of its dists/<sdp> level.
+#              Without it everything comes from GitHub.
 #
 # Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>,
 # oss-qdd-<arch>).

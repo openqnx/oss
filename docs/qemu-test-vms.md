@@ -223,6 +223,27 @@ mkqnximage --type=qemu --arch=x86_64 --hostname=desktop-x86 \
 
 Then steps 6-7, and on the target `apk add oss-desktop && oss-desktop`.
 
+### An image that boots into the desktop
+
+`scripts/make-ported-image --desktop` makes the whole VM in one step: a
+graphics image, in the way of QNX Everywhere's Developer Desktop, that
+installs everything from the project's GitHub releases at its first boot and
+then starts the Xfce session by itself -- the panel with the Applications
+menu and the log out / restart / shut down buttons, terminal, file manager,
+editors, and the compiler that runs on the target.
+
+```bash
+source ./env.sh x86_64                  # or aarch64le
+scripts/make-ported-image --desktop     # makes lab/vm/oss-qdd-x86_64
+cd lab/vm/oss-qdd-x86_64 && mkqnximage --run    # in a desktop session: QEMU opens a window
+```
+
+The VM needs Internet access (GitHub). The first boot downloads and installs
+the packages, which takes several minutes; the desktop appears when that is
+done, and at once on every later boot. Log in on the console as root.
+Add or remove packages with `apk add` / `apk del` on the target, or edit
+`/data/oss/etc/oss-packages` and reboot.
+
 What to know about the graphics image:
 
 - `--graphics=yes` needs QNX Screen's VirtIO support in the SDP (the

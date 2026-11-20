@@ -4,7 +4,7 @@
 # from /usr/local. docs/ported-first-image.md explains the layout.
 #
 #   source ./env.sh <arch>
-#   scripts/make-ported-image [-n <vm-name>] [--apk | --desktop] [<package>...]
+#   scripts/make-ported-image [-n <vm-name>] [--apk | --desktop [--screencast]] [<package>...]
 #
 # Two kinds of image, with the given packages (default: the base set below):
 #   (default)  the packages of THIS workspace (dists/<sdp>/<arch>) and their
@@ -28,6 +28,12 @@
 #              GitHub at the first boot (several minutes; the desktop comes up
 #              when that is done, and at once on later boots). Needs QNX's
 #              "Screen Board Support VirtIO" package in the SDP.
+#   --screencast  with --desktop (implies it): the desktop can be watched in
+#              a web browser, http://<address of the target>:8080/ -- the
+#              webrtc-screencast package (WebRTC, view only), started with
+#              the session. Its options, a --token among them, are in
+#              /data/oss/usr/local/etc/webrtc-screencast.conf on the target;
+#              without a token anyone who reaches the port can watch.
 #
 # Makes lab/vm/<vm-name> (default oss-ported-<arch>, oss-apk-<arch>,
 # oss-qdd-<arch>).
@@ -38,11 +44,12 @@ set -eo pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
 . "$WS/scripts/lib/sdp.sh"
 [ -n "$QNX_ARCH" ] || { echo "source ./env.sh <arch> first" >&2; exit 1; }
-A=$QNX_ARCH; NAME=""; APK=""; DESKTOP=""
+A=$QNX_ARCH; NAME=""; APK=""; DESKTOP=""; SCREENCAST=""
 while :; do case "$1" in
   -n) NAME=$2; shift 2 ;;
   --apk) APK=1; shift ;;
   --desktop) APK=1; DESKTOP=1; shift ;;
+  --screencast) APK=1; DESKTOP=1; SCREENCAST=1; shift ;;
   *) break ;;
 esac; done
 if [ -z "$NAME" ]; then
@@ -56,6 +63,7 @@ DESKTOP_SET="oss-desktop xfce4-session xfce4-settings adwaita-icon-theme font-de
       epiphany geany emacs neovim mate-calc gthumb gtk3 gtk4 foot
       llvm binutils make cmake ninja pkgconf git python3 nano"
 if [ $# -eq 0 ]; then set -- $BASE; [ -n "$DESKTOP" ] && set -- "$@" $DESKTOP_SET; fi
+[ -n "$SCREENCAST" ] && set -- "$@" webrtc-screencast
 PORTS_PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/bin:/proc/boot
 PORTS_LIBS=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot
 # env.sh points QNX_TARGET at the build's link root, a view of the SDP without
@@ -208,7 +216,11 @@ export PATH=$PORTS_PATH
 export LD_LIBRARY_PATH=$PORTS_LIBS
 # log-in shell of root: the ported bash (the account file is on /data)
 if [ -x /usr/local/bin/bash ]; then
-  grep -q '^root:.*:/usr/local/bin/bash\$' /data/var/etc/passwd || sed -i 's#^\\(root:.*\\):/bin/sh\$#\\1:/usr/local/bin/bash#' /data/var/etc/passwd
+  # (QNX's sed -i cannot move its temporary file from /dev/shmem to /data)
+  if ! grep -q '^root:.*:/usr/local/bin/bash\$' /data/var/etc/passwd; then
+    sed 's#^\\(root:.*\\):/bin/sh\$#\\1:/usr/local/bin/bash#' /data/var/etc/passwd > /data/var/etc/passwd.new &&
+      cp /data/var/etc/passwd.new /data/var/etc/passwd; rm -f /data/var/etc/passwd.new
+  fi
 fi
 # the ported sshd instead of the one startup.sh started
 if [ -x /usr/local/sbin/sshd ]; then
@@ -223,6 +235,7 @@ mkqnximage --noprompt --build >> "$LOG" 2>&1 || { tail -n 20 "$LOG" >&2; exit 1;
 if [ -n "$DESKTOP" ]; then
   echo "$V: image built. Start (in a desktop session, QEMU opens a window): cd $V && mkqnximage --run; mkqnximage --getip"
   echo "  first boot: the packages come from GitHub, then the desktop starts (log on the target: /data/oss/var/log/oss-boot.log)"
+  [ -n "$SCREENCAST" ] && echo "  the desktop in a browser, once it runs: http://<address of the target>:8080/ (mkqnximage --getip)"
 else
   echo "$V: image built. Start: cd $V && mkqnximage --run=-h; mkqnximage --getip"
 fi

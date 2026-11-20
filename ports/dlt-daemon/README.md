@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/COVESA/dlt-daemon.git (tag `v2.18.10`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`zlib`](../zlib/) [`libjson`](../libjson/) |
 | Run-time dependencies | [`libjson`](../libjson/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,10 +82,11 @@ git clone --depth 1 -b v2.18.10 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0001-qnx-syslog-header.patch
+patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0002-qnx-system-libjson.patch
 ```
 
 **[`0001-qnx-syslog-header.patch`](patches/0001-qnx-syslog-header.patch)** — DLT: include <syslog.h> on QNX.
@@ -94,6 +95,18 @@ patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0001-qnx-syslog-header.pa
 > <syslog.h>.
 
 Touches: `src/offlinelogstorage/dlt_offline_logstorage.c` · Upstream status: QNX-specific
+
+**[`0002-qnx-system-libjson.patch`](patches/0002-qnx-system-libjson.patch)** — dlt-qnx-system: read the slog2 context map with the libjson port.
+
+> dlt-qnx-system read dlt-slog2ctxt.json with the JSON decoder of the QNX
+> libjson (<sys/json.h>, json_decoder_*). The libjson port (a streaming
+> parser, <json.h>) has the same link name: "-ljson" finds it first
+> in the prefix, where the link then fails on json_decoder_*, and the ports
+> are to use ported libraries rather than those of QNX. The map is now read with the port's
+> parser. An entry without "name" or "description" is reported and skipped
+> (the QNX decoder version stopped reading at it).
+
+Touches: `src/dlt-qnx-system/dlt-qnx-slogger2-adapter.cpp` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -129,7 +142,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/dlt-daemon
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- Also linked at run time (found by scripts/gen-dependency-index): libjson
+- dlt-qnx-system reads its slog2 context map with the libjson port (patch 0002), not with the libjson of QNX: "-ljson" finds the port first, and the ports use ported libraries rather than those of QNX where they can.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH dlt-daemon`.
 
@@ -238,7 +251,9 @@ This recipe builds **2.18.10**. Every version stays available: packages in `dist
 
 ```bash
 VERSION=2.18.10; GIT=https://github.com/COVESA/dlt-daemon.git; REF=v2.18.10
-# Also linked at run time (found by scripts/gen-dependency-index): libjson
+# dlt-qnx-system reads its slog2 context map with the libjson port (patch
+# 0002), not with the libjson of QNX: "-ljson" finds the port first, and
+# the ports use ported libraries rather than those of QNX where they can.
 DEPS="zlib libjson"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DWITH_DLT_QNX_SYSTEM=ON
                    -DWITH_DLT_CXX11_EXT=ON -DDLT_IPC=UNIX_SOCKET

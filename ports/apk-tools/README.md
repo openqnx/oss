@@ -112,7 +112,9 @@ meson setup build/$QNX_ARCH/apk-tools src/apk-tools \
       --native-file $QNX_MESON_DIR/meson-native.ini \
       --prefix=/usr/local --buildtype=release --default-library=both \
       -Ddocs=disabled \
-      -Dhelp=disabled \
+      -Dhelp=enabled \
+      -Dlua_bin=lua \
+      -Dcompressed-help=false \
       -Dlua=disabled \
       -Dpython=disabled \
       -Dtests=disabled \
@@ -128,12 +130,13 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - apk-tools, the Alpine package manager the QNX Everywhere image (and repo.oss.qnx.com) uses -- with it a target can install this repository's APK packages. Version as in the image.
 - Not linked, but needed to fetch from an https:// repository (the GitHub releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.
+- help: "apk --help" and "apk <command> --help" print the text that a Lua script builds in from doc/*.scd at build time (native lua: hosttools, scripts/build-host-tools.sh). Not compressed: that would need lua-zlib there.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH apk-tools`.
 
 ### 5. What it installs
 
-30 files under `/usr/local`: 2 shared-library entries, 1 programs, 25 headers.
+32 files under `/usr/local`: 2 shared-library entries, 1 programs, 25 headers.
 
 ```
 /usr/local/lib/libapk.so
@@ -229,7 +232,10 @@ DEPS="openssl zlib zstd"
 # releases): the CA bundle at /usr/local/ssl/cert.pem, OpenSSL's default.
 RUNTIME_DEPS="ca-certificates"
 BUILDSYS=meson
-MESON_ARGS_EXTRA=( -Ddocs=disabled -Dhelp=disabled -Dlua=disabled -Dpython=disabled -Dtests=disabled -Dcrypto_backend=openssl -Dzstd=true -Dc_args=-D_QNX_SOURCE -Dc_link_args=-lsocket )
+# help: "apk --help" and "apk <command> --help" print the text that a Lua
+# script builds in from doc/*.scd at build time (native lua: hosttools,
+# scripts/build-host-tools.sh). Not compressed: that would need lua-zlib there.
+MESON_ARGS_EXTRA=( -Ddocs=disabled -Dhelp=enabled -Dlua_bin=lua -Dcompressed-help=false -Dlua=disabled -Dpython=disabled -Dtests=disabled -Dcrypto_backend=openssl -Dzstd=true -Dc_args=-D_QNX_SOURCE -Dc_link_args=-lsocket )
 ```
 </details>
 

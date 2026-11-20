@@ -1,12 +1,12 @@
 # Component index
 
-939 components. **937** build for both `aarch64le` and `x86_64` from upstream source, carrying 536 QNX patches between them.
+953 components. **951** build for both `aarch64le` and `x86_64` from upstream source, carrying 559 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
-| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **324** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **249** |
-| 🔴 **dependent** | needs other components to build and to run | **365** |
+| 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **325** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **255** |
+| 🔴 **dependent** | needs other components to build and to run | **372** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
 
@@ -28,7 +28,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [apk-tools](ports/apk-tools/README.md) | Alpine Package Keeper (apk), the Alpine package manager | 3.0.8 | meson | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [appstream](ports/appstream/README.md) | Tools and libraries to work with AppStream metadata | 1.0.6 | meson | www.freedesktop.org | 3 | 🔴 dependent | 7 | ✅ | ✅ |
 | [apr-util](ports/apr-util/README.md) | Apache Portable Runtime utility library | 1.6.5 | autotools | archive.apache.org | — | 🔴 dependent | 6 | ✅ | ✅ |
-| [apr](ports/apr/README.md) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | autotools | archive.apache.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [apr](ports/apr/README.md) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | autotools | archive.apache.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [apriltag](ports/apriltag/README.md) | AprilTag visual fiducial detection library (tag families 36h11, 25h9, 16h5, Standard, Circle) | 3.4.5 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [armadillo](ports/armadillo/README.md) | C++ linear algebra library with a MATLAB-like API (on OpenBLAS) | 15.6.2 | cmake | downloads.sourceforge.net | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [asciidoc](ports/asciidoc/README.md) | Text document format for short documents, articles, books and UNIX man pages | 10.2.1 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -92,9 +92,10 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [cjson](ports/cjson/README.md) | Lightweight JSON parser in ANSI C | 1.7.18 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [clapack](ports/clapack/README.md) | LAPACK linear algebra routines translated to C with f2c | 3.2.1 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [cli11](ports/cli11/README.md) | Header-only command line parser for C++11 and later | 2.4.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [clinfo](ports/clinfo/README.md) | Prints all properties of the available OpenCL platforms and devices (text, raw or JSON) | 3.1.26.09.26 | custom | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [cmake](ports/cmake/README.md) | Cross-platform build system generator | 4.1.1 | cmake | gitlab.kitware.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [compiler-rt](ports/compiler-rt/README.md) | LLVM compiler runtime: builtins and profiling libraries | 22.1.8 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [computelibrary](ports/computelibrary/README.md) | Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs | 53.0.0 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | n/a |
+| [computelibrary](ports/computelibrary/README.md) | Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs | 53.0.0 | cmake | github.com | 2 | 🟡 build-deps only | — | ✅ | n/a |
 | [console_bridge](ports/console_bridge/README.md) | ROS-independent C++ logging library mirroring rosconsole calls | 1.0.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [cppzmq](ports/cppzmq/README.md) | Header-only C++ binding for the ZeroMQ messaging library | 4.10.0 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [cpuinfo](ports/cpuinfo/README.md) | C library for detecting CPU features relevant to performance tuning | 0-git-20240417 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
@@ -113,7 +114,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [dbus](ports/dbus/README.md) | D-Bus message bus daemon and library for interprocess communication | 1.16.0 | meson | gitlab.freedesktop.org | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [desktop-file-utils](ports/desktop-file-utils/README.md) | Command line utilities for validating and installing .desktop files | 0.28 | meson | gitlab.freedesktop.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [dhcpcd](ports/dhcpcd/README.md) | DHCP, DHCPv6 and IPv4LL (ZeroConf) client | 10.5.2 | custom | github.com | 5 | 🟢 standalone | — | ✅ | ✅ |
-| [dlt-daemon](ports/dlt-daemon/README.md) | COVESA Diagnostic Log and Trace (DLT) daemon, library and tools | 2.18.10 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [dlt-daemon](ports/dlt-daemon/README.md) | COVESA Diagnostic Log and Trace (DLT) daemon, library and tools | 2.18.10 | cmake | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [dnsmasq](ports/dnsmasq/README.md) | Lightweight DNS forwarder and DHCP server | 2.93test4 | custom | thekelleys.org.uk | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [dnssec-root](ports/dnssec-root/README.md) | DNSSEC root zone trust anchors (the root KSKs) from IANA | 20241105 | custom | data.iana.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [docbook-xml](ports/docbook-xml/README.md) | DocBook XML DTDs 4.1.2 to 4.5 with XML catalogs, for validating and transforming DocBook documents offline | 4.5 | custom | archive.docbook.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -135,6 +136,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [encodings](ports/encodings/README.md) | X.Org font encoding tables for libfontenc | 1.1.0 | autotools | www.x.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [ensmallen](ports/ensmallen/README.md) | Header-only C++ numerical optimisation library on Armadillo | 3.11.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [epiphany](ports/epiphany/README.md) | GNOME Web, a WebKitGTK-based web browser | 43.1 | meson | download.gnome.org | 5 | 🔴 dependent | 20 | ✅ | ✅ |
+| [espeak-ng](ports/espeak-ng/README.md) | eSpeak NG speech synthesizer: library, espeak-ng program and voice data for 100+ languages | 1.52.0 | cmake | github.com | 4 | 🟢 standalone | — | ✅ | ✅ |
 | [exiv2](ports/exiv2/README.md) | C++ library and tool for reading and writing Exif, IPTC and XMP metadata | 0.28.5 | cmake | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [exo](ports/exo/README.md) | Extension library and helper applications for the Xfce desktop | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 11 | ✅ | ✅ |
 | [expat](ports/expat/README.md) | Stream-oriented XML parser library in C | 2.6.4 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -239,6 +241,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [gyp](ports/gyp/README.md) | GYP meta-build system: generates Makefiles and Ninja files from .gyp files | 0.22.4 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [hailort](ports/hailort/README.md) | Light-weight, high-performance inference framework for Hailo devices | 4.14.0 | cmake | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [harfbuzz](ports/harfbuzz/README.md) | OpenType text shaping engine | 10.1.0 | meson | github.com | — | 🔴 dependent | 4 | ✅ | ✅ |
+| [hdf5](ports/hdf5/README.md) | HDF5 library and tools for self-describing binary files of large numerical data (C, C++ and high-level APIs) | 1.14.6 | cmake | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [help2man](ports/help2man/README.md) | Generates man pages from a program's --help and --version output | 1.49.3 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [hicolor-icon-theme](ports/hicolor-icon-theme/README.md) | Freedesktop.org default fallback icon theme | 0.18 | meson | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [highway](ports/highway/README.md) | Performance-portable C++ SIMD/vector intrinsics library | 1.2.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -250,7 +253,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [hwdata](ports/hwdata/README.md) | Hardware identification databases (pci.ids, usb.ids, pnp.ids, OUI) | 0.413 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [hyphen](ports/hyphen/README.md) | Hyphenation library using converted TeX hyphenation patterns | 2.8.8 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
 | [iceoryx](ports/iceoryx/README.md) | Eclipse iceoryx, true zero-copy inter-process communication middleware | 2.0.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [icon-naming-utils](ports/icon-naming-utils/README.md) | Maps legacy GNOME/KDE icon names to the freedesktop.org icon naming specification | 0.8.90 | autotools | tango.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
+| [icon-naming-utils](ports/icon-naming-utils/README.md) | Maps legacy GNOME/KDE icon names to the freedesktop.org icon naming specification | 0.8.90 | autotools | tango.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [icu](ports/icu/README.md) | International Components for Unicode: Unicode and locale support libraries | 76.1 | custom | github.com | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [imath](ports/imath/README.md) | C++ library of 2D/3D vector, matrix and half-float math for computer graphics | 3.2.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [inetutils](ports/inetutils/README.md) | A collection of common network programs (GNU inetutils) | 2.6 | autotools | ftp.gnu.org | 2 | 🔴 dependent | 3 | ✅ | ✅ |
@@ -268,6 +271,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [json-glib](ports/json-glib/README.md) | JSON parser and generator library for GLib | 1.10.6 | meson | gitlab.gnome.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [jsoncpp](ports/jsoncpp/README.md) | C++ library for reading and writing JSON | 1.9.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [kineto](ports/kineto/README.md) | PyTorch profiler library (libkineto) for CPU performance tracing | 0-git-20250214 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [kiss-icp](ports/kiss-icp/README.md) | KISS-ICP LiDAR odometry C++ core: point-to-point ICP with adaptive threshold on a voxel hash map | 1.3.0 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
 | [labwc](ports/labwc/README.md) | Stacking Wayland compositor (window manager) based on wlroots | 0.20.2 | meson | github.com | 2 | 🔴 dependent | 10 | ✅ | ✅ |
 | [lame](ports/lame/README.md) | LAME MP3 audio encoder and library | 3.100 | autotools | downloads.sourceforge.net | — | 🟢 standalone | — | ✅ | ✅ |
 | [lanelet2](ports/lanelet2/README.md) | Lanelet2 HD map framework for automated driving: maps, OSM I/O, projection, traffic rules, routing | 1.2.3 | custom | custom | — | 🔴 dependent | 3 | ✅ | ✅ |
@@ -437,14 +441,14 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [m4](ports/m4/README.md) | GNU implementation of the Unix m4 macro processor | 1.4.19 | autotools | ftp.gnu.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [magic_enum](ports/magic_enum/README.md) | Header-only C++17 library for static reflection of enums | 0.9.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [make](ports/make/README.md) | GNU make build automation tool | 4.4.1 | autotools | ftp.gnu.org | — | 🟢 standalone | — | ✅ | ✅ |
-| [mame](ports/mame/README.md) | MAME multi-purpose arcade and computer emulator | 0.281 | custom | github.com | 1 | 🔴 dependent | 5 | ✅ | ✅ |
+| [mame](ports/mame/README.md) | MAME multi-purpose arcade and computer emulator | 0.281 | custom | github.com | 2 | 🔴 dependent | 5 | ✅ | ✅ |
 | [man-db](ports/man-db/README.md) | Manual page reader suite (man, apropos, whatis) | 2.13.1 | autotools | download.savannah.gnu.org | — | 🔴 dependent | 4 | ✅ | ✅ |
 | [mate-calc](ports/mate-calc/README.md) | MATE desktop calculator | 1.28.0 | autotools | pub.mate-desktop.org | 3 | 🔴 dependent | 13 | ✅ | ✅ |
 | [mate-common](ports/mate-common/README.md) | Autoconf macros and bootstrap scripts for MATE desktop modules | 1.28.0 | autotools | pub.mate-desktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [mbedtls](ports/mbedtls/README.md) | Small C library for cryptography, X.509 and TLS/DTLS | 3.6.2 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [mcap-cpp](ports/mcap-cpp/README.md) | Header-only C++ library for the MCAP robotics message log format | 2.1.3 | custom | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [md4c](ports/md4c/README.md) | CommonMark Markdown parser in C, with Markdown-to-HTML library and md2html | 0.6.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [mesa](ports/mesa/README.md) | Mesa 3D: software OpenGL, GLES, EGL (llvmpipe) and Vulkan (lavapipe) | 26.2.6 | meson | archive.mesa3d.org | 6 | 🔴 dependent | 5 | ✅ | ✅ |
+| [mesa](ports/mesa/README.md) | Mesa 3D: software OpenGL, GLES, EGL (llvmpipe) and Vulkan (lavapipe) | 26.2.6 | meson | archive.mesa3d.org | 6 | 🔴 dependent | 6 | ✅ | ✅ |
 | [meson](ports/meson/README.md) | Meson build system | 1.10.0 | custom | files.pythonhosted.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [metis](ports/metis/README.md) | Programs and library for partitioning graphs and finite element meshes | 5.2.1 | cmake | github.com | 3 | 🔴 dependent | 1 | ✅ | ✅ |
 | [mimalloc](ports/mimalloc/README.md) | Compact general-purpose memory allocator from Microsoft | 3.1.5 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
@@ -496,12 +500,14 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [onetbb](ports/onetbb/README.md) | oneAPI Threading Building Blocks, C++ library for parallel programming | 2022.0.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [oniguruma](ports/oniguruma/README.md) | Regular expression library | 6.9.9 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [onnx](ports/onnx/README.md) | Open Neural Network Exchange (ONNX) format library for AI models | 1.17.0 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
-| [onnxruntime](ports/onnxruntime/README.md) | Cross-platform machine learning inference engine for ONNX models | 1.20.1 | custom | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
+| [onnxruntime](ports/onnxruntime/README.md) | Cross-platform machine learning inference engine for ONNX models | 1.20.1 | custom | github.com | 2 | 🔴 dependent | 2 | ✅ | ✅ |
 | [open-amp](ports/open-amp/README.md) | OpenAMP framework for asymmetric multiprocessing (remoteproc, RPMsg) | 2024.10.0 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [open62541](ports/open62541/README.md) | C implementation of OPC UA (IEC 62541) clients and servers | 1.4.8 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [openal-soft](ports/openal-soft/README.md) | Cross-platform 3D audio library implementing the OpenAL API | 1.24.1 | cmake | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [openblas](ports/openblas/README.md) | Optimized BLAS linear algebra library based on GotoBLAS2 | 0.3.28 | cmake | github.com | 3 | 🟢 standalone | — | ✅ | ✅ |
-| [opencv](ports/opencv/README.md) | Open Source Computer Vision library | 4.10.0 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
+| [opencl-headers](ports/opencl-headers/README.md) | Khronos OpenCL C API headers (CL/cl.h and extensions, OpenCL 1.0 to 3.0) | 2026.05.29 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [opencl-icd-loader](ports/opencl-icd-loader/README.md) | Khronos OpenCL ICD loader (libOpenCL.so): dispatches OpenCL calls to the installed implementations | 2026.05.29 | cmake | github.com | 1 | 🟡 build-deps only | — | ✅ | ✅ |
+| [opencv](ports/opencv/README.md) | Open Source Computer Vision library | 4.10.0 | cmake | github.com | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [openexr](ports/openexr/README.md) | High dynamic-range (HDR) image file format library and tools | 3.4.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [openh264](ports/openh264/README.md) | H.264 video encoding and decoding library for real-time use | 2.5.0 | meson | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [openjpeg](ports/openjpeg/README.md) | JPEG 2000 image codec library and tools | 2.5.3 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
@@ -511,6 +517,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [openresolv](ports/openresolv/README.md) | resolvconf: manages resolv.conf from several DNS information sources | 3.17.4 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [openssh](ports/openssh/README.md) | OpenSSH client and server for secure remote login and file transfer | 10.2p1 | autotools | cdn.openbsd.org | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [openssl](ports/openssl/README.md) | Toolkit and libraries for TLS, DTLS, QUIC and general cryptography | 3.5.1 | custom | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [opentelemetry-cpp](ports/opentelemetry-cpp/README.md) | OpenTelemetry C++ client: tracing, metrics and logs API, SDK, OTLP (HTTP, gRPC, file), ostream and in-memory exporters | 1.30.0 | cmake | github.com | 1 | 🔴 dependent | 8 | ✅ | ✅ |
 | [openttd-opengfx](ports/openttd-opengfx/README.md) | OpenGFX, the free base graphics set for OpenTTD | 8.0 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [openttd-openmsx](ports/openttd-openmsx/README.md) | OpenMSX, the free base music set for OpenTTD | 0.4.2 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [openttd-opensfx](ports/openttd-opensfx/README.md) | OpenSFX, the free base sound set for OpenTTD | 1.0.3 | custom | cdn.openttd.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -520,7 +527,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [orc](ports/orc/README.md) | Oil Runtime Compiler library for optimized inner loops (SIMD) | 0.4.40 | meson | gitlab.freedesktop.org | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [orocos-kdl](ports/orocos-kdl/README.md) | Orocos Kinematics and Dynamics Library for robot kinematic chains | 1.5.1 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [osqp](ports/osqp/README.md) | OSQP: operator splitting solver for convex quadratic programs (with QDLDL) | 0.6.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [oss-desktop](ports/oss-desktop/README.md) | Desktop session with labwc, Xfce panel, terminal and file manager | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [oss-desktop](ports/oss-desktop/README.md) | Desktop session with labwc, Xfce panel, terminal and file manager | 1.1 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [p11-kit](ports/p11-kit/README.md) | Library and proxy module for loading and sharing PKCS#11 modules | 0.25.5 | meson | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [paho.mqtt.c](ports/paho.mqtt.c/README.md) | Eclipse Paho MQTT client library for C | 1.3.14 | cmake | github.com | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [paho.mqtt.cpp](ports/paho.mqtt.cpp/README.md) | Eclipse Paho MQTT client library for C++ | 1.5.2 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
@@ -581,9 +588,13 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [perl](ports/perl/README.md) | Perl 5 programming language interpreter | 5.40.2 | custom | www.cpan.org | 2 | 🔴 dependent | 1 | ✅ | ✅ |
 | [picocom](ports/picocom/README.md) | Minimal dumb-terminal emulator for serial ports | 3.1 | custom | github.com | 1 | 🟢 standalone | — | ✅ | ✅ |
 | [pinentry](ports/pinentry/README.md) | PIN and passphrase entry dialogs for GnuPG (curses and tty) | 1.3.3 | autotools | gnupg.org | 1 | 🔴 dependent | 4 | ✅ | ✅ |
+| [pinocchio](ports/pinocchio/README.md) | Rigid body dynamics library (kinematics, RNEA, CRBA, ABA, URDF models) on Eigen | 3.9.0 | cmake | github.com | — | 🔴 dependent | 2 | ✅ | ✅ |
+| [piper-voice-en-us-joe](ports/piper-voice-en-us-joe/README.md) | Piper voice en_US-joe-medium: U.S. English, male, 22050 Hz (CC0 recordings) | 1.0.0 | custom | custom | — | 🟢 standalone | — | ✅ | ✅ |
+| [piper](ports/piper/README.md) | Piper neural text to speech: libpiper (C API) and the piper_exe program, on ONNX Runtime and espeak-ng | 1.8.0 | cmake | github.com | 4 | 🔴 dependent | 2 | ✅ | ✅ |
 | [pistache](ports/pistache/README.md) | C++ REST framework for HTTP servers and clients | 0.4.26 | meson | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
 | [pixman](ports/pixman/README.md) | Low-level pixel manipulation library (compositing, rasterization) | 0.46.4 | meson | gitlab.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [pkgconf](ports/pkgconf/README.md) | Tool and library for managing compiler and linker flags (pkg-config) | 2.3.0 | meson | distfiles.ariadne.space | — | 🟢 standalone | — | ✅ | ✅ |
+| [pocl](ports/pocl/README.md) | Portable Computing Language: OpenCL 3.0 on the CPU, kernels compiled at run time with Clang/LLVM | 7.2 | custom | github.com | 5 | 🔴 dependent | 4 | ✅ | ✅ |
 | [poco](ports/poco/README.md) | Cross-platform C++ libraries for network-based applications | 1.15.4 | cmake | github.com | — | 🔴 dependent | 5 | ✅ | ✅ |
 | [poppler](ports/poppler/README.md) | PDF rendering library and command line tools | 25.12.0 | cmake | gitlab.freedesktop.org | — | 🔴 dependent | 12 | ✅ | ✅ |
 | [portaudio](ports/portaudio/README.md) | Portable cross-platform library for real-time audio input and output | 19.7.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -832,6 +843,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [snappy](ports/snappy/README.md) | Fast compression and decompression library | 1.2.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [socat](ports/socat/README.md) | Multipurpose relay for binary protocols (SOcket CAT) | 1.8.0.3 | autotools | www.dest-unreach.org | 2 | 🔴 dependent | 3 | ✅ | ✅ |
 | [soem](ports/soem/README.md) | Simple Open EtherCAT Master library and tools | 2.0.1 | cmake | github.com | 2 | 🟡 build-deps only | — | ✅ | ✅ |
+| [sophus](ports/sophus/README.md) | C++ Lie groups (SO2, SO3, SE2, SE3, Sim3) for 2D and 3D geometry on Eigen, header-only | 1.24.6 | cmake | github.com | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [soxr](ports/soxr/README.md) | SoX Resampler, high quality one-dimensional sample-rate conversion library | 0.1.3 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [spdlog](ports/spdlog/README.md) | Fast C++ logging library | 1.15.3 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [speexdsp](ports/speexdsp/README.md) | Speech processing DSP library for the Speex codec | 1.2.1 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
@@ -881,6 +893,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [tree-sitter](ports/tree-sitter/README.md) | Incremental parsing library for programming tools | 0.25.9 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tree](ports/tree/README.md) | Displays directory contents as an indented tree | 2.2.1 | custom | gitlab.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [trompeloeil](ports/trompeloeil/README.md) | Header-only C++14 mocking framework | 48 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
+| [tsl-robin-map](ports/tsl-robin-map/README.md) | tsl::robin_map and tsl::robin_set: fast C++ hash map and set with robin hood hashing, header-only | 1.4.1 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [tumbler](ports/tumbler/README.md) | D-Bus thumbnailing service for Xfce applications | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 13 | ✅ | ✅ |
 | [tzdata](ports/tzdata/README.md) | IANA time zone database (zoneinfo TZif files) with zic and zdump | 2026f | custom | data.iana.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [unbound](ports/unbound/README.md) | Validating, recursive and caching DNS resolver and library | 1.24.1 | autotools | github.com | 1 | 🔴 dependent | 2 | ✅ | ✅ |
@@ -907,6 +920,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [wayland-protocols](ports/wayland-protocols/README.md) | Extension protocol definitions for Wayland (XML files) | 1.47 | meson | gitlab.freedesktop.org | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [wayland](ports/wayland/README.md) | Wayland display protocol client and server libraries | 1.24.0 | meson | gitlab.freedesktop.org | 1 | 🔴 dependent | 1 | ✅ | ✅ |
 | [webkitgtk](ports/webkitgtk/README.md) | WebKitGTK web content engine for GTK applications | 2.44.4 | cmake | webkitgtk.org | 5 | 🔴 dependent | 32 | ✅ | ✅ |
+| [webrtc-screencast](ports/webrtc-screencast/README.md) | Watch the desktop in a web browser over WebRTC (view only) | 1.1 | custom | custom | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [webrtc](ports/webrtc/README.md) | WebRTC native C++ library for real-time audio, video and data | m132-afaf497 | custom | webrtc.googlesource.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [weston](ports/weston/README.md) | Weston, the reference Wayland compositor | 13.0.3 | — | gitlab.freedesktop.org | — | ⛔ blocked | — | — | — |
 | [wget](ports/wget/README.md) | GNU Wget, non-interactive HTTP, HTTPS and FTP downloader | 1.25.0 | autotools | ftp.gnu.org | — | 🔴 dependent | 7 | ✅ | ✅ |
@@ -916,14 +930,14 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [woff2](ports/woff2/README.md) | Library and tools for WOFF2 font compression and decompression | 1.0.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [wolfssl](ports/wolfssl/README.md) | Lightweight embedded SSL/TLS library in C | 5.7.6 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [x264](ports/x264/README.md) | H.264/MPEG-4 AVC video encoder library | stable | custom | code.videolan.org | 1 | 🟢 standalone | — | ✅ | ✅ |
-| [x265](ports/x265/README.md) | H.265/HEVC video encoder library | 3.6 | cmake | bitbucket.org | 1 | 🟢 standalone | — | ✅ | ✅ |
+| [x265](ports/x265/README.md) | H.265/HEVC video encoder library | 3.6 | cmake | bitbucket.org | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [xcb-proto](ports/xcb-proto/README.md) | XML-XCB protocol descriptions used to generate libxcb | 1.17.0 | autotools | gitlab.freedesktop.org | — | 🟢 standalone | — | ✅ | ✅ |
 | [xcb-util](ports/xcb-util/README.md) | XCB utility libraries: atom cache, events and convenience functions | 0.4.1 | autotools | xorg.freedesktop.org | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [xdg-utils](ports/xdg-utils/README.md) | Desktop integration scripts such as xdg-open | 1.2.1 | autotools | gitlab.freedesktop.org | 2 | 🟢 standalone | — | ✅ | ✅ |
 | [xfce4-appfinder](ports/xfce4-appfinder/README.md) | Xfce application finder and launcher | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 8 | ✅ | ✅ |
 | [xfce4-dev-tools](ports/xfce4-dev-tools/README.md) | Xfce build tools: XDT autoconf macros, xdt-autogen, xdt-csource | 4.21.0 | autotools | archive.xfce.org | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [xfce4-panel](ports/xfce4-panel/README.md) | Xfce panel with launchers, menus and workspace switcher | 4.20.0 | autotools | archive.xfce.org | — | 🔴 dependent | 17 | ✅ | ✅ |
-| [xfce4-session](ports/xfce4-session/README.md) | Xfce session manager | 4.20.2 | autotools | archive.xfce.org | 2 | 🔴 dependent | 11 | ✅ | ✅ |
+| [xfce4-session](ports/xfce4-session/README.md) | Xfce session manager | 4.20.2 | autotools | archive.xfce.org | 3 | 🔴 dependent | 11 | ✅ | ✅ |
 | [xfce4-settings](ports/xfce4-settings/README.md) | Xfce settings daemon, manager and editor | 4.20.1 | autotools | archive.xfce.org | — | 🔴 dependent | 16 | ✅ | ✅ |
 | [xfce4-terminal](ports/xfce4-terminal/README.md) | Xfce terminal emulator | 1.1.5 | meson | archive.xfce.org | 2 | 🔴 dependent | 12 | ✅ | ✅ |
 | [xfconf](ports/xfconf/README.md) | Hierarchical configuration storage system for Xfce | 4.20.0 | autotools | archive.xfce.org | 2 | 🔴 dependent | 3 | ✅ | ✅ |

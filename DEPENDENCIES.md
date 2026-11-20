@@ -4,18 +4,18 @@ Two kinds, by whether anything else from this repository is needed:
 
 | Kind | Meaning | Components |
 |---|---|---|
-| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **324** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **614** |
+| 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **325** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **627** |
 
-Dependent components split further by what they need at run time (249 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (255 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
-| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **324** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **249** |
-| **[Dependent](#dependent)** | needs other components first | needs other components installed | **365** |
+| **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **325** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **255** |
+| **[Dependent](#dependent)** | needs other components first | needs other components installed | **372** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
 
@@ -25,19 +25,18 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Standalone
 
-324 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
+325 components. Clone the upstream source, apply the patches in `ports/<name>/patches/`, build with the QNX toolchain files -- nothing else from this repository has to be built first, and the result runs on a stock QNX 8.0 target.
 
 ✅ = built against an *empty* staging tree by `scripts/verify-standalone`, proving the build cannot have picked anything up from other components.
 
 | Component | Version | Build system | Verified alone | Used by |
 |---|---|---|---|---|
 | [`7zip`](ports/7zip/) | 26.05 | custom | – | 0 |
-| [`abseil`](ports/abseil/) | 20260817.0 | cmake | aarch64le✅ x86_64✅ | 6 |
+| [`abseil`](ports/abseil/) | 20260817.0 | cmake | aarch64le✅ x86_64✅ | 7 |
 | [`acado`](ports/acado/) | 1.2.2_beta | cmake | – | 0 |
 | [`ada`](ports/ada/) | 4.0.0 | cmake | – | 1 |
 | [`adwaita-fonts`](ports/adwaita-fonts/) | 49.0 | custom | – | 0 |
 | [`aom`](ports/aom/) | 3.15.3 | cmake | aarch64le✅ x86_64✅ | 3 |
-| [`apr`](ports/apr/) | 1.7.6 | autotools | – | 2 |
 | [`apriltag`](ports/apriltag/) | 3.4.5 | cmake | – | 0 |
 | [`asio`](ports/asio/) | 1-38-2 | custom | – | 1 |
 | [`autoconf`](ports/autoconf/) | 2.72 | autotools | – | 0 |
@@ -52,7 +51,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`bullet3`](ports/bullet3/) | 3.25 | cmake | – | 1 |
 | [`busybox`](ports/busybox/) | 1.36.1 | custom | – | 0 |
 | [`bzip2`](ports/bzip2/) | 1.0.8 | custom | aarch64le✅ x86_64✅ | 16 |
-| [`c-ares`](ports/c-ares/) | 1.34.3 | cmake | aarch64le✅ x86_64✅ | 3 |
+| [`c-ares`](ports/c-ares/) | 1.34.3 | cmake | aarch64le✅ x86_64✅ | 4 |
 | [`ca-certificates`](ports/ca-certificates/) | 20261020 | custom | – | 0 |
 | [`capicxx-core-runtime`](ports/capicxx-core-runtime/) | 3.2.4 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`capstone`](ports/capstone/) | 5.0.9 | cmake | – | 0 |
@@ -66,8 +65,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`clapack`](ports/clapack/) | 3.2.1 | cmake | – | 0 |
 | [`cli11`](ports/cli11/) | 2.4.2 | cmake | aarch64le✅ x86_64✅ | 0 |
 | [`compiler-rt`](ports/compiler-rt/) | 22.1.8 | cmake | – | 0 |
-| [`computelibrary`](ports/computelibrary/) | 53.0.0 | cmake | – | 0 |
-| [`console_bridge`](ports/console_bridge/) | 1.0.2 | cmake | aarch64le✅ x86_64✅ | 2 |
+| [`console_bridge`](ports/console_bridge/) | 1.0.2 | cmake | aarch64le✅ x86_64✅ | 3 |
 | [`cpuinfo`](ports/cpuinfo/) | 0-git-20240417 | cmake | – | 2 |
 | [`csmith`](ports/csmith/) | 2.3.0 | cmake | – | 0 |
 | [`cunit`](ports/cunit/) | 2.1-3 | custom | – | 0 |
@@ -85,9 +83,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`double-conversion`](ports/double-conversion/) | 3.3.0 | cmake | aarch64le✅ x86_64✅ | 1 |
 | [`duktape`](ports/duktape/) | 2.7.0 | custom | aarch64le✅ x86_64✅ | 0 |
 | [`ed`](ports/ed/) | 1.22.5 | autotools | – | 0 |
-| [`eigen`](ports/eigen/) | 3.4.0 | cmake | aarch64le✅ x86_64✅ | 13 |
+| [`eigen`](ports/eigen/) | 3.4.0 | cmake | aarch64le✅ x86_64✅ | 16 |
 | [`enca`](ports/enca/) | 1.19 | autotools | aarch64le✅ x86_64✅ | 0 |
 | [`encodings`](ports/encodings/) | 1.1.0 | autotools | – | 0 |
+| [`espeak-ng`](ports/espeak-ng/) | 1.52.0 | cmake | – | 1 |
 | [`expat`](ports/expat/) | 2.6.4 | cmake | aarch64le✅ x86_64✅ | 18 |
 | [`fakeroot`](ports/fakeroot/) | 1.37.1.1 | autotools | – | 0 |
 | [`farmhash`](ports/farmhash/) | 1.1-git-20190513 | autotools | – | 0 |
@@ -140,7 +139,6 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`hwdata`](ports/hwdata/) | 0.413 | custom | – | 0 |
 | [`hyphen`](ports/hyphen/) | 2.8.8 | autotools | aarch64le✅ x86_64✅ | 1 |
 | [`iceoryx`](ports/iceoryx/) | 2.0.6 | cmake | aarch64le✅ x86_64✅ | 0 |
-| [`icon-naming-utils`](ports/icon-naming-utils/) | 0.8.90 | autotools | – | 0 |
 | [`icu`](ports/icu/) | 76.1 | custom | – | 8 |
 | [`imath`](ports/imath/) | 3.2.2 | cmake | – | 1 |
 | [`intltool`](ports/intltool/) | 0.51.0 | autotools | – | 0 |
@@ -153,7 +151,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`kineto`](ports/kineto/) | 0-git-20250214 | cmake | – | 0 |
 | [`lame`](ports/lame/) | 3.100 | autotools | – | 2 |
 | [`lely-core`](ports/lely-core/) | 2.3.4 | autotools | – | 0 |
-| [`libaec`](ports/libaec/) | 1.1.7 | cmake | – | 0 |
+| [`libaec`](ports/libaec/) | 1.1.7 | cmake | – | 1 |
 | [`libasyncns`](ports/libasyncns/) | 0.8 | autotools | – | 0 |
 | [`libb2`](ports/libb2/) | 0.98.1 | autotools | – | 0 |
 | [`libcanard`](ports/libcanard/) | 5.0.0 | custom | – | 0 |
@@ -167,7 +165,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libdisplay-info`](ports/libdisplay-info/) | 0.3.0 | meson | – | 0 |
 | [`libdrm-headers`](ports/libdrm-headers/) | 2.4.129 | custom | – | 2 |
 | [`libev`](ports/libev/) | 4.33 | autotools | – | 0 |
-| [`libexif`](ports/libexif/) | 0.6.24 | autotools | – | 1 |
+| [`libexif`](ports/libexif/) | 0.6.24 | autotools | – | 2 |
 | [`libfdt`](ports/libfdt/) | 1.7.2 | meson | – | 0 |
 | [`libffi`](ports/libffi/) | 3.4.6 | autotools | – | 9 |
 | [`libfyaml`](ports/libfyaml/) | 0.9.6 | cmake | – | 0 |
@@ -205,11 +203,11 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`libuv`](ports/libuv/) | 1.51.0 | cmake | – | 4 |
 | [`libvpx`](ports/libvpx/) | 1.15.0 | custom | – | 2 |
 | [`libvterm`](ports/libvterm/) | 0.3.3 | custom | – | 0 |
-| [`libxcrypt`](ports/libxcrypt/) | 4.4.38 | autotools | – | 9 |
+| [`libxcrypt`](ports/libxcrypt/) | 4.4.38 | autotools | – | 10 |
 | [`libxcvt`](ports/libxcvt/) | 0.1.3 | meson | – | 1 |
 | [`libxo`](ports/libxo/) | 2.3.0 | autotools | – | 0 |
 | [`libyaml`](ports/libyaml/) | 0.2.5 | cmake | – | 4 |
-| [`linux-headers-input-codes`](ports/linux-headers-input-codes/) | 6.12 | custom | – | 4 |
+| [`linux-headers-input-codes`](ports/linux-headers-input-codes/) | 6.12 | custom | – | 5 |
 | [`lmbench`](ports/lmbench/) | 3.0-git-20260929 | custom | – | 0 |
 | [`log4cpp`](ports/log4cpp/) | 1.1.4 | autotools | – | 0 |
 | [`lua`](ports/lua/) | 5.4.7 | custom | – | 0 |
@@ -242,7 +240,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`ncurses`](ports/ncurses/) | 6.5 | autotools | – | 25 |
 | [`netmap`](ports/netmap/) | 14.0-git-20261027 | custom | – | 0 |
 | [`ninja`](ports/ninja/) | 1.13.1 | cmake | – | 0 |
-| [`nlohmann_json`](ports/nlohmann_json/) | 3.12.0 | cmake | – | 1 |
+| [`nlohmann_json`](ports/nlohmann_json/) | 3.12.0 | cmake | – | 2 |
 | [`nng`](ports/nng/) | 1.9.0 | cmake | – | 0 |
 | [`npth`](ports/npth/) | 1.8 | autotools | – | 1 |
 | [`nspr`](ports/nspr/) | 4.39 | autotools | – | 1 |
@@ -250,15 +248,16 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`ntttcp-for-linux`](ports/ntttcp-for-linux/) | 1.4.0-git-20230613 | cmake | – | 0 |
 | [`octomap`](ports/octomap/) | 1.10.0 | cmake | – | 2 |
 | [`onednn`](ports/onednn/) | 3.14.1 | cmake | – | 0 |
-| [`onetbb`](ports/onetbb/) | 2022.0.0 | cmake | – | 0 |
+| [`onetbb`](ports/onetbb/) | 2022.0.0 | cmake | – | 1 |
 | [`oniguruma`](ports/oniguruma/) | 6.9.9 | cmake | – | 1 |
 | [`openal-soft`](ports/openal-soft/) | 1.24.1 | cmake | – | 0 |
 | [`openblas`](ports/openblas/) | 0.3.28 | cmake | – | 5 |
+| [`opencl-headers`](ports/opencl-headers/) | 2026.05.29 | cmake | – | 4 |
 | [`openh264`](ports/openh264/) | 2.5.0 | meson | – | 3 |
 | [`openmp`](ports/openmp/) | 22.1.8 | cmake | – | 0 |
 | [`openpam`](ports/openpam/) | 20250531 | autotools | – | 0 |
 | [`openresolv`](ports/openresolv/) | 3.17.4 | custom | – | 0 |
-| [`openssl`](ports/openssl/) | 3.5.1 | custom | – | 60 |
+| [`openssl`](ports/openssl/) | 3.5.1 | custom | – | 61 |
 | [`openttd-opengfx`](ports/openttd-opengfx/) | 8.0 | custom | – | 0 |
 | [`openttd-openmsx`](ports/openttd-openmsx/) | 0.4.2 | custom | – | 0 |
 | [`openttd-opensfx`](ports/openttd-opensfx/) | 1.0.3 | custom | – | 0 |
@@ -270,6 +269,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`pcre`](ports/pcre/) | 8.45 | autotools | – | 0 |
 | [`pdfium`](ports/pdfium/) | 0-git-84a8011 | custom | – | 0 |
 | [`picocom`](ports/picocom/) | 3.1 | custom | – | 0 |
+| [`piper-voice-en-us-joe`](ports/piper-voice-en-us-joe/) | 1.0.0 | custom | – | 0 |
 | [`pkgconf`](ports/pkgconf/) | 2.3.0 | meson | – | 1 |
 | [`portaudio`](ports/portaudio/) | 19.7.0 | cmake | – | 1 |
 | [`protobuf-c`](ports/protobuf-c/) | 1.5.0 | cmake | – | 0 |
@@ -302,7 +302,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`tdb`](ports/tdb/) | 1.4.15 | custom | – | 1 |
 | [`tensorflow-lite`](ports/tensorflow-lite/) | 2.16.1 | custom | – | 0 |
 | [`tinyxml`](ports/tinyxml/) | 2.6.2 | custom | – | 0 |
-| [`tinyxml2`](ports/tinyxml2/) | 10.0.0 | cmake | – | 6 |
+| [`tinyxml2`](ports/tinyxml2/) | 10.0.0 | cmake | – | 7 |
 | [`tl-expected`](ports/tl-expected/) | 1.3.1 | cmake | – | 2 |
 | [`tllist`](ports/tllist/) | 1.1.0 | meson | – | 2 |
 | [`tomlplusplus`](ports/tomlplusplus/) | 3.4.0 | cmake | – | 0 |
@@ -321,18 +321,19 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`tree-sitter-vim`](ports/tree-sitter-vim/) | 0.7.0 | custom | – | 0 |
 | [`tree-sitter-vimdoc`](ports/tree-sitter-vimdoc/) | 4.0.0 | custom | – | 0 |
 | [`trompeloeil`](ports/trompeloeil/) | 48 | cmake | – | 0 |
+| [`tsl-robin-map`](ports/tsl-robin-map/) | 1.4.1 | cmake | – | 1 |
 | [`tzdata`](ports/tzdata/) | 2026f | custom | – | 0 |
 | [`unibilium`](ports/unibilium/) | 2.1.2 | cmake | – | 2 |
 | [`unifdef`](ports/unifdef/) | 2.12 | custom | – | 0 |
-| [`urdfdom_headers`](ports/urdfdom_headers/) | 1.1.2 | cmake | – | 1 |
+| [`urdfdom_headers`](ports/urdfdom_headers/) | 1.1.2 | cmake | – | 2 |
 | [`uriparser`](ports/uriparser/) | 0.9.8 | cmake | – | 0 |
 | [`utf8proc`](ports/utf8proc/) | 2.11.3 | cmake | – | 4 |
 | [`util-macros`](ports/util-macros/) | 1.20.2 | autotools | – | 0 |
 | [`uvgrtp`](ports/uvgrtp/) | 4.0.1 | cmake | – | 0 |
 | [`vidstab`](ports/vidstab/) | 1.1.1 | cmake | – | 0 |
-| [`webrtc`](ports/webrtc/) | m132-afaf497 | custom | – | 0 |
+| [`webrtc`](ports/webrtc/) | m132-afaf497 | custom | – | 1 |
 | [`whisper.cpp`](ports/whisper.cpp/) | 0_git20260728 | cmake | – | 0 |
-| [`wlr-protocols`](ports/wlr-protocols/) | 0-git-20250702 | custom | – | 0 |
+| [`wlr-protocols`](ports/wlr-protocols/) | 0-git-20250702 | custom | – | 1 |
 | [`wolfssl`](ports/wolfssl/) | 5.7.6 | cmake | – | 0 |
 | [`x264`](ports/x264/) | stable | custom | – | 2 |
 | [`x265`](ports/x265/) | 3.6 | cmake | – | 3 |
@@ -351,22 +352,24 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`zerotier-one`](ports/zerotier-one/) | 1.16.1 | custom | – | 0 |
 | [`zimg`](ports/zimg/) | 3.0.5 | autotools | – | 0 |
 | [`zip`](ports/zip/) | 3.0 | custom | – | 0 |
-| [`zlib`](ports/zlib/) | 1.3.1 | cmake | aarch64le✅ | 96 |
+| [`zlib`](ports/zlib/) | 1.3.1 | cmake | aarch64le✅ | 99 |
 | [`zlib-ng`](ports/zlib-ng/) | 2.2.5 | cmake | – | 0 |
 | [`zserio`](ports/zserio/) | 2.20.0 | cmake | – | 0 |
-| [`zstd`](ports/zstd/) | 1.5.6 | cmake | – | 29 |
+| [`zstd`](ports/zstd/) | 1.5.6 | cmake | – | 30 |
 
 ## Runtime-standalone
 
-249 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+255 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
 | [`adwaita-icon-theme`](ports/adwaita-icon-theme/) | 51.0 | hicolor-icon-theme | 1 |
 | [`amqp-cpp`](ports/amqp-cpp/) | 4.3.27 | openssl | 1 |
+| [`apr`](ports/apr/) | 1.7.6 | libxcrypt | 1 |
 | [`asciidoc`](ports/asciidoc/) | 10.2.1 | python3 | 15 |
 | [`candb`](ports/candb/) | 0.1-git-20210625 | tl-expected | 1 |
 | [`cgal`](ports/cgal/) | 6.2.1 | gmp mpfr boost | 10 |
+| [`computelibrary`](ports/computelibrary/) | 53.0.0 | opencl-headers | 1 |
 | [`cppzmq`](ports/cppzmq/) | 4.10.0 | libzmq | 2 |
 | [`cython`](ports/cython/) | 3.3.1 | python3 | 15 |
 | [`ensmallen`](ports/ensmallen/) | 3.11.1 | armadillo | 2 |
@@ -374,7 +377,9 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`glib-typelibs`](ports/glib-typelibs/) | 2.82.4 | glib | 9 |
 | [`gsettings-desktop-schemas`](ports/gsettings-desktop-schemas/) | 49.0 | glib | 9 |
 | [`gyp`](ports/gyp/) | 0.22.4 | python3 python3-packaging python3-setuptools | 17 |
+| [`icon-naming-utils`](ports/icon-naming-utils/) | 0.8.90 | perl-xml-simple | 3 |
 | [`itstool`](ports/itstool/) | 2.0.7 | python3 libxml2 | 16 |
+| [`kiss-icp`](ports/kiss-icp/) | 1.3.0 | eigen sophus onetbb tsl-robin-map | 4 |
 | [`lcms2`](ports/lcms2/) | 2.16 | zlib | 1 |
 | [`libepoxy`](ports/libepoxy/) | 1.5.10 | libx11 | 8 |
 | [`libice`](ports/libice/) | 1.1.2 | xorgproto xtrans | 2 |
@@ -391,9 +396,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`nghttp2`](ports/nghttp2/) | 1.64.0 | zlib openssl | 2 |
 | [`npm`](ports/npm/) | 11.11.0 | nodejs | 13 |
 | [`open-amp`](ports/open-amp/) | 2024.10.0 | libmetal | 1 |
+| [`opencl-icd-loader`](ports/opencl-icd-loader/) | 2026.05.29 | opencl-headers | 1 |
 | [`openjpeg`](ports/openjpeg/) | 2.5.3 | zlib libpng libtiff lcms2 | 13 |
 | [`orocos-kdl`](ports/orocos-kdl/) | 1.5.1 | eigen | 1 |
-| [`oss-desktop`](ports/oss-desktop/) | 1.0 | labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu | 93 |
+| [`oss-desktop`](ports/oss-desktop/) | 1.1 | labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu | 96 |
 | [`pcre2`](ports/pcre2/) | 10.44 | zlib bzip2 | 2 |
 | [`perl-b-cow`](ports/perl-b-cow/) | 0.007 | perl | 2 |
 | [`perl-class-inspector`](ports/perl-class-inspector/) | 1.36 | perl | 2 |
@@ -602,6 +608,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`scons`](ports/scons/) | 4.11.1 | python3 | 15 |
 | [`sdl2-compat`](ports/sdl2-compat/) | 2.32.60 | sdl3 | 34 |
 | [`soem`](ports/soem/) | 2.0.1 | libpcap | 1 |
+| [`sophus`](ports/sophus/) | 1.24.6 | eigen | 1 |
 | [`spirv-tools`](ports/spirv-tools/) | 1.4.321.0 | spirv-headers | 1 |
 | [`sqlite_orm`](ports/sqlite_orm/) | 1.9 | sqlite | 2 |
 | [`tcpdump`](ports/tcpdump/) | 4.99.5 | libpcap | 1 |
@@ -614,7 +621,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Dependent
 
-365 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
+372 components. Both the build and the target need other components. *Runtime* is the set of components whose shared libraries these binaries load -- the packages `oss-get` installs with it.
 
 | Component | Version | Needs to build | Needs at run time | Run-time closure |
 |---|---|---|---|---|
@@ -655,9 +662,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`ccache`](ports/ccache/) | 4.12.1 | zstd xxhash | xxhash zstd | 2 |
 | [`ceres-solver`](ports/ceres-solver/) | 2.2.0 | eigen glog gflags | gflags glog | 2 |
 | [`civetweb`](ports/civetweb/) | 1.16 | openssl | openssl | 1 |
+| [`clinfo`](ports/clinfo/) | 3.1.26.09.26 | opencl-headers opencl-icd-loader | opencl-icd-loader | 1 |
 | [`cmake`](ports/cmake/) | 4.1.1 | openssl zlib curl libuv | curl libuv openssl zlib | 8 |
 | [`cups`](ports/cups/) | 2.4.16 | openssl zlib avahi libiconv libxcrypt | avahi libiconv libxcrypt openssl zlib | 8 |
-| [`cups-filters`](ports/cups-filters/) | 1.28.17 | cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib | avahi cups fontconfig freetype gettext glib lcms2 libexif libiconv libjpeg-turbo libpng libtiff libxcrypt openssl poppler qpdf zlib | 39 |
+| [`cups-filters`](ports/cups-filters/) | 1.28.17 | cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib libexif | avahi cups fontconfig freetype gettext glib lcms2 libexif libiconv libjpeg-turbo libpng libtiff libxcrypt openssl poppler qpdf zlib | 39 |
 | [`curl`](ports/curl/) | 8.11.1 | openssl zlib nghttp2 c-ares brotli zstd | brotli c-ares nghttp2 openssl zlib zstd | 6 |
 | [`dbus`](ports/dbus/) | 1.16.0 | expat | expat | 1 |
 | [`dbus-glib`](ports/dbus-glib/) | 0.116 | dbus glib expat | dbus expat gettext glib | 10 |
@@ -686,7 +694,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`folly`](ports/folly/) | 2026.10.26.00 | boost fast-float fmt gflags glog libevent openssl zlib zstd lz4 xz bzip2 libsodium | boost bzip2 fmt gflags glog libevent libsodium lz4 openssl xz zlib zstd | 16 |
 | [`fontconfig`](ports/fontconfig/) | 2.15.0 | freetype expat | expat freetype | 6 |
 | [`fontenc`](ports/fontenc/) | 1.1.8 | xorgproto zlib | zlib | 1 |
-| [`foot`](ports/foot/) | 1.23.1 | pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses | fcft fontconfig libxkbcommon pixman utf8proc wayland | 24 |
+| [`foot`](ports/foot/) | 1.23.1 | pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes | fcft fontconfig libxkbcommon pixman utf8proc wayland | 24 |
 | [`freetype`](ports/freetype/) | 2.13.3 | zlib bzip2 libpng brotli | brotli bzip2 libpng zlib | 4 |
 | [`frei0r-plugins`](ports/frei0r-plugins/) | 2.4.0 | cairo opencv freetype | cairo opencv | 24 |
 | [`garcon`](ports/garcon/) | 4.20.0 | glib gtk3 libxfce4util libxfce4ui | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libxfce4ui libxfce4util pango zlib | 50 |
@@ -728,6 +736,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`gtk4`](ports/gtk4/) | 4.16.7 | glib graphene cairo pango gdk-pixbuf harfbuzz fribidi libepoxy wayland wayland-protocols libxkbcommon libpng libjpeg-turbo libtiff | cairo fontconfig fribidi gdk-pixbuf gettext glib graphene harfbuzz libepoxy libjpeg-turbo libpng libtiff libxkbcommon pango wayland | 40 |
 | [`gtsam`](ports/gtsam/) | 4.2 | boost eigen | boost | 8 |
 | [`harfbuzz`](ports/harfbuzz/) | 10.1.0 | freetype glib icu graphite2 | freetype glib graphite2 icu | 14 |
+| [`hdf5`](ports/hdf5/) | 1.14.6 | zlib libaec | libaec zlib | 2 |
 | [`hiredis`](ports/hiredis/) | 1.5.0 | openssl | openssl | 1 |
 | [`htop`](ports/htop/) | 3.5.0 | ncurses | ncurses | 1 |
 | [`hunspell`](ports/hunspell/) | 1.7.2 | libiconv | libiconv | 1 |
@@ -827,7 +836,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`mame`](ports/mame/) | 0.281 | sdl2 sdl2-ttf fontconfig freetype zlib | fontconfig freetype sdl2 sdl2-ttf zlib | 19 |
 | [`man-db`](ports/man-db/) | 2.13.1 | libpipeline gdbm groff libiconv zlib | gdbm libiconv libpipeline zlib | 4 |
 | [`mate-calc`](ports/mate-calc/) | 1.28.0 | glib gtk3 libxml2 gmp mpfr mpc | at-spi2-core cairo gdk-pixbuf gettext glib gmp gtk3 harfbuzz libxml2 mpc mpfr pango zlib | 50 |
-| [`mesa`](ports/mesa/) | 26.2.6 | llvm wayland wayland-protocols zlib zstd expat | expat llvm wayland zlib zstd | 12 |
+| [`mesa`](ports/mesa/) | 26.2.6 | llvm wayland wayland-protocols zlib zstd expat | expat llvm spirv-tools wayland zlib zstd | 13 |
 | [`metis`](ports/metis/) | 5.2.1 | gklib | gklib | 1 |
 | [`minicom`](ports/minicom/) | 2.9 | ncurses libiconv | libiconv ncurses | 2 |
 | [`mkfontscale`](ports/mkfontscale/) | 1.2.3 | freetype fontenc zlib | fontenc freetype zlib | 6 |
@@ -849,12 +858,13 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`nuspell`](ports/nuspell/) | 5.1.9 | icu | icu | 1 |
 | [`ompl`](ports/ompl/) | 1.7.0 | boost eigen | boost | 8 |
 | [`onnx`](ports/onnx/) | 1.17.0 | protobuf | abseil protobuf | 3 |
-| [`onnxruntime`](ports/onnxruntime/) | 1.20.1 | protobuf | zlib | 1 |
+| [`onnxruntime`](ports/onnxruntime/) | 1.20.1 | protobuf | libiconv zlib | 2 |
 | [`open62541`](ports/open62541/) | 1.4.8 | openssl | openssl | 1 |
 | [`opencv`](ports/opencv/) | 4.10.0 | zlib eigen | zlib | 1 |
 | [`openexr`](ports/openexr/) | 3.4.1 | imath libdeflate openjph | imath libdeflate openjph | 13 |
 | [`openjph`](ports/openjph/) | 0.24.1 | libtiff | libtiff | 10 |
 | [`openssh`](ports/openssh/) | 10.2p1 | openssl zlib libxcrypt | libxcrypt openssl zlib | 3 |
+| [`opentelemetry-cpp`](ports/opentelemetry-cpp/) | 1.30.0 | protobuf grpc abseil curl nlohmann_json zlib openssl c-ares re2 | abseil c-ares curl grpc openssl protobuf re2 zlib | 11 |
 | [`openttd`](ports/openttd/) | 15.0-git-20250501 | sdl2 zlib xz libpng freetype fontconfig curl lzo | curl freetype libpng lzo sdl2 xz zlib | 17 |
 | [`opusfile`](ports/opusfile/) | 0.12 | opus libogg openssl | libogg openssl opus | 3 |
 | [`p11-kit`](ports/p11-kit/) | 0.25.5 | libffi libtasn1 | libffi | 1 |
@@ -867,7 +877,10 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`perl-net-ssleay`](ports/perl-net-ssleay/) | 1.96 | perl openssl zlib | openssl zlib | 2 |
 | [`perl-xml-parser`](ports/perl-xml-parser/) | 2.59 | perl expat perl-file-sharedir-install | expat | 1 |
 | [`pinentry`](ports/pinentry/) | 1.3.3 | libassuan libgpg-error ncurses libiconv | libassuan libgpg-error libiconv ncurses | 6 |
+| [`pinocchio`](ports/pinocchio/) | 3.9.0 | eigen boost urdfdom urdfdom_headers console_bridge tinyxml2 | boost urdfdom | 11 |
+| [`piper`](ports/piper/) | 1.8.0 | espeak-ng onnxruntime | espeak-ng onnxruntime | 4 |
 | [`pistache`](ports/pistache/) | 0.4.26 | libevent rapidjson openssl | libevent openssl | 2 |
+| [`pocl`](ports/pocl/) | 7.2 | llvm zlib zstd opencl-headers opencl-icd-loader | llvm opencl-icd-loader zlib zstd | 10 |
 | [`poco`](ports/poco/) | 1.15.4 | openssl zlib pcre2 utf8proc expat | expat openssl pcre2 utf8proc zlib | 5 |
 | [`poppler`](ports/poppler/) | 25.12.0 | freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib | cairo fontconfig freetype gettext glib lcms2 libiconv libjpeg-turbo libpng libtiff openjpeg zlib | 30 |
 | [`pqiv`](ports/pqiv/) | 2.13.2 | glib gtk3 gdk-pixbuf cairo | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libx11 pango zlib | 47 |
@@ -965,6 +978,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`vte`](ports/vte/) | 0.78.2 | gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4 | at-spi2-core cairo fribidi gdk-pixbuf gettext glib gnutls graphene gtk3 gtk4 icu lz4 pango pcre2 | 58 |
 | [`wayland`](ports/wayland/) | 1.24.0 | libffi expat libxml2 | libffi | 1 |
 | [`webkitgtk`](ports/webkitgtk/) | 2.44.4 | gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret | at-spi2-core cairo fontconfig freetype gdk-pixbuf gettext glib gst-plugins-bad gst-plugins-base gstreamer gtk3 harfbuzz hyphen icu lcms2 libavif libepoxy libgcrypt libgpg-error libjpeg-turbo libjxl libpng libsecret libsoup libtasn1 libwebp libxml2 libxslt pango sqlite woff2 zlib | 77 |
+| [`webrtc-screencast`](ports/webrtc-screencast/) | 1.1 | webrtc wayland wlr-protocols libxkbcommon | libxkbcommon wayland | 10 |
 | [`wget`](ports/wget/) | 1.25.0 | gnutls libidn2 zlib pcre2 libpsl | gnutls libiconv libpsl libunistring nettle pcre2 zlib | 14 |
 | [`wlroots`](ports/wlroots/) | 0.20.2 | wayland wayland-protocols pixman libxkbcommon lcms2 libdrm-headers linux-headers-input-codes | lcms2 libxkbcommon pixman wayland | 12 |
 | [`woff2`](ports/woff2/) | 1.0.2 | brotli | brotli | 1 |
@@ -988,11 +1002,12 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 | Component | Run-time dependency not declared in DEPS | Unresolved soname | Linked by the -dev name |
 |---|---|---|---|
-| [`cups-filters`](ports/cups-filters/) | libexif | – | – |
 | [`graphicsmagick`](ports/graphicsmagick/) | libzip | – | – |
 | [`lighttpd`](ports/lighttpd/) | libxcrypt | – | – |
 | [`llama.cpp`](ports/llama.cpp/) | openssl | – | – |
+| [`mesa`](ports/mesa/) | spirv-tools | – | – |
 | [`mosh`](ports/mosh/) | libutempter | – | – |
+| [`onnxruntime`](ports/onnxruntime/) | libiconv | – | – |
 | [`retroarch`](ports/retroarch/) | libxkbcommon | – | – |
 | [`ros2-jazzy-control`](ports/ros2-jazzy-control/) | orocos-kdl | libaction_msgs__rosidl_generator_c.so libaction_msgs__rosidl_typesupport_c.so libaction_msgs__rosidl_typesupport_cpp.so libaction_msgs__rosidl_typesupport_fastrtps_c.so libaction_msgs__rosidl_typesupport_introspection_c.so libament_index_cpp.so libbuiltin_interfaces__rosidl_generator_c.so libbuiltin_interfaces__rosidl_generator_py.so libbuiltin_interfaces__rosidl_typesupport_c.so libbuiltin_interfaces__rosidl_typesupport_fastrtps_c.so libbuiltin_interfaces__rosidl_typesupport_fastrtps_cpp.so libbuiltin_interfaces__rosidl_typesupport_introspection_c.so libbuiltin_interfaces__rosidl_typesupport_introspection_cpp.so libclass_loader.so libdiagnostic_msgs__rosidl_typesupport_cpp.so libgeometry_msgs__rosidl_generator_c.so libgeometry_msgs__rosidl_generator_py.so libgeometry_msgs__rosidl_typesupport_c.so libgeometry_msgs__rosidl_typesupport_cpp.so libgeometry_msgs__rosidl_typesupport_fastrtps_c.so libgeometry_msgs__rosidl_typesupport_fastrtps_cpp.so libgeometry_msgs__rosidl_typesupport_introspection_c.so libgeometry_msgs__rosidl_typesupport_introspection_cpp.so libkdl_parser.so liblibstatistics_collector.so liblifecycle_msgs__rosidl_generator_c.so liblifecycle_msgs__rosidl_generator_py.so liblifecycle_msgs__rosidl_typesupport_c.so liblifecycle_msgs__rosidl_typesupport_fastrtps_c.so liblifecycle_msgs__rosidl_typesupport_fastrtps_cpp.so liblifecycle_msgs__rosidl_typesupport_introspection_c.so liblifecycle_msgs__rosidl_typesupport_introspection_cpp.so libnav_msgs__rosidl_typesupport_cpp.so librcl.so librcl_action.so librcl_interfaces__rosidl_typesupport_cpp.so librclcpp.so librclcpp_action.so librclcpp_lifecycle.so librcpputils.so librcutils.so librmw.so librosidl_dynamic_typesupport.so librosidl_runtime_c.so librosidl_typesupport_c.so librosidl_typesupport_cpp.so librosidl_typesupport_fastrtps_c.so librosidl_typesupport_fastrtps_cpp.so librosidl_typesupport_introspection_c.so librosidl_typesupport_introspection_cpp.so libsensor_msgs__rosidl_generator_c.so libsensor_msgs__rosidl_generator_py.so libsensor_msgs__rosidl_typesupport_c.so libsensor_msgs__rosidl_typesupport_cpp.so libsensor_msgs__rosidl_typesupport_fastrtps_c.so libsensor_msgs__rosidl_typesupport_fastrtps_cpp.so libsensor_msgs__rosidl_typesupport_introspection_c.so libsensor_msgs__rosidl_typesupport_introspection_cpp.so libservice_msgs__rosidl_generator_c.so libservice_msgs__rosidl_generator_py.so libservice_msgs__rosidl_typesupport_c.so libservice_msgs__rosidl_typesupport_fastrtps_c.so libservice_msgs__rosidl_typesupport_fastrtps_cpp.so libservice_msgs__rosidl_typesupport_introspection_c.so libservice_msgs__rosidl_typesupport_introspection_cpp.so libstatistics_msgs__rosidl_typesupport_cpp.so libstd_msgs__rosidl_generator_c.so libstd_msgs__rosidl_generator_py.so libstd_msgs__rosidl_typesupport_c.so libstd_msgs__rosidl_typesupport_cpp.so libstd_msgs__rosidl_typesupport_fastrtps_c.so libstd_msgs__rosidl_typesupport_fastrtps_cpp.so libstd_msgs__rosidl_typesupport_introspection_c.so libstd_msgs__rosidl_typesupport_introspection_cpp.so libstd_srvs__rosidl_typesupport_cpp.so libtf2.so libtf2_eigen_kdl.so libtf2_msgs__rosidl_typesupport_cpp.so libtf2_ros.so libtrajectory_msgs__rosidl_generator_c.so libtrajectory_msgs__rosidl_generator_py.so libtrajectory_msgs__rosidl_typesupport_c.so libtrajectory_msgs__rosidl_typesupport_cpp.so libtrajectory_msgs__rosidl_typesupport_fastrtps_c.so libtrajectory_msgs__rosidl_typesupport_fastrtps_cpp.so libtrajectory_msgs__rosidl_typesupport_introspection_c.so libtrajectory_msgs__rosidl_typesupport_introspection_cpp.so libunique_identifier_msgs__rosidl_generator_c.so libunique_identifier_msgs__rosidl_generator_py.so libunique_identifier_msgs__rosidl_typesupport_c.so libunique_identifier_msgs__rosidl_typesupport_fastrtps_c.so libunique_identifier_msgs__rosidl_typesupport_fastrtps_cpp.so libunique_identifier_msgs__rosidl_typesupport_introspection_c.so libunique_identifier_msgs__rosidl_typesupport_introspection_cpp.so liburdf.so | – |
 | [`ros2-jazzy-moveit2`](ports/ros2-jazzy-moveit2/) | orocos-kdl urdfdom | libaction_msgs__rosidl_generator_c.so libaction_msgs__rosidl_typesupport_c.so libaction_msgs__rosidl_typesupport_cpp.so libaction_msgs__rosidl_typesupport_fastrtps_c.so libaction_msgs__rosidl_typesupport_introspection_c.so libament_index_cpp.so libbackward.so libbuiltin_interfaces__rosidl_generator_c.so libbuiltin_interfaces__rosidl_generator_py.so libbuiltin_interfaces__rosidl_typesupport_c.so libbuiltin_interfaces__rosidl_typesupport_fastrtps_c.so libbuiltin_interfaces__rosidl_typesupport_fastrtps_cpp.so libbuiltin_interfaces__rosidl_typesupport_introspection_c.so libbuiltin_interfaces__rosidl_typesupport_introspection_cpp.so libclass_loader.so libcontrol_msgs__rosidl_typesupport_cpp.so libcontroller_manager_msgs__rosidl_typesupport_cpp.so libgeometry_msgs__rosidl_generator_c.so libgeometry_msgs__rosidl_generator_py.so libgeometry_msgs__rosidl_typesupport_c.so libgeometry_msgs__rosidl_typesupport_cpp.so libgeometry_msgs__rosidl_typesupport_fastrtps_c.so libgeometry_msgs__rosidl_typesupport_fastrtps_cpp.so libgeometry_msgs__rosidl_typesupport_introspection_c.so libgeometry_msgs__rosidl_typesupport_introspection_cpp.so libkdl_parser.so liblibstatistics_collector.so librcl.so librcl_action.so librclcpp.so librclcpp_action.so librcpputils.so librcutils.so librealtime_tools.so libresource_retriever.so librmw.so librmw_implementation.so librosidl_dynamic_typesupport.so librosidl_runtime_c.so librosidl_typesupport_c.so librosidl_typesupport_cpp.so librosidl_typesupport_fastrtps_c.so librosidl_typesupport_fastrtps_cpp.so librosidl_typesupport_introspection_c.so librosidl_typesupport_introspection_cpp.so librsl.so libsensor_msgs__rosidl_generator_c.so libsensor_msgs__rosidl_generator_py.so libsensor_msgs__rosidl_typesupport_c.so libsensor_msgs__rosidl_typesupport_cpp.so libsensor_msgs__rosidl_typesupport_fastrtps_c.so libsensor_msgs__rosidl_typesupport_fastrtps_cpp.so libsensor_msgs__rosidl_typesupport_introspection_c.so libsensor_msgs__rosidl_typesupport_introspection_cpp.so libservice_msgs__rosidl_generator_c.so libservice_msgs__rosidl_generator_py.so libservice_msgs__rosidl_typesupport_c.so libservice_msgs__rosidl_typesupport_fastrtps_c.so libservice_msgs__rosidl_typesupport_fastrtps_cpp.so libservice_msgs__rosidl_typesupport_introspection_c.so libservice_msgs__rosidl_typesupport_introspection_cpp.so libshape_msgs__rosidl_generator_c.so libshape_msgs__rosidl_generator_py.so libshape_msgs__rosidl_typesupport_c.so libshape_msgs__rosidl_typesupport_fastrtps_c.so libshape_msgs__rosidl_typesupport_fastrtps_cpp.so libshape_msgs__rosidl_typesupport_introspection_c.so libshape_msgs__rosidl_typesupport_introspection_cpp.so libstatistics_msgs__rosidl_typesupport_cpp.so libstd_msgs__rosidl_generator_c.so libstd_msgs__rosidl_generator_py.so libstd_msgs__rosidl_typesupport_c.so libstd_msgs__rosidl_typesupport_cpp.so libstd_msgs__rosidl_typesupport_fastrtps_c.so libstd_msgs__rosidl_typesupport_fastrtps_cpp.so libstd_msgs__rosidl_typesupport_introspection_c.so libstd_msgs__rosidl_typesupport_introspection_cpp.so libstd_srvs__rosidl_typesupport_cpp.so libtf2.so libtf2_eigen_kdl.so libtf2_msgs__rosidl_typesupport_cpp.so libtf2_ros.so libtrajectory_msgs__rosidl_generator_c.so libtrajectory_msgs__rosidl_generator_py.so libtrajectory_msgs__rosidl_typesupport_c.so libtrajectory_msgs__rosidl_typesupport_cpp.so libtrajectory_msgs__rosidl_typesupport_fastrtps_c.so libtrajectory_msgs__rosidl_typesupport_fastrtps_cpp.so libtrajectory_msgs__rosidl_typesupport_introspection_c.so libtrajectory_msgs__rosidl_typesupport_introspection_cpp.so libunique_identifier_msgs__rosidl_generator_c.so libunique_identifier_msgs__rosidl_generator_py.so libunique_identifier_msgs__rosidl_typesupport_c.so libunique_identifier_msgs__rosidl_typesupport_fastrtps_c.so libunique_identifier_msgs__rosidl_typesupport_fastrtps_cpp.so libunique_identifier_msgs__rosidl_typesupport_introspection_c.so libunique_identifier_msgs__rosidl_typesupport_introspection_cpp.so liburdf.so libvisualization_msgs__rosidl_typesupport_cpp.so | – |

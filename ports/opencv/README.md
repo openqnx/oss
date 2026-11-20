@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/opencv/opencv.git (tag `4.10.0`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`eigen`](../eigen/) |
 | Run-time dependencies | [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,7 +82,24 @@ git clone --depth 1 -b 4.10.0 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/opencv < ports/opencv/patches/0001-dnn-bundled-flatbuffers-first.patch
+```
+
+**[`0001-dnn-bundled-flatbuffers-first.patch`](patches/0001-dnn-bundled-flatbuffers-first.patch)** — opencv dnn: find the bundled flatbuffers headers first.
+
+> The TFLite importer's generated schema header asserts the exact version of
+> the flatbuffers headers OpenCV bundles. With the flatbuffers port staged,
+> its (newer) headers were found first and the build stopped on
+> "Non-compatible flatbuffers version included": OpenCV adds the bundled
+> directory as a system include directory, and the prefix's include directory
+> is one too and comes first. The bundled directory is now a plain -I, which
+> is searched before every system directory (naming it a second time with -I
+> does nothing: the compiler ignores -I for a directory it has as -isystem).
+
+Touches: `cmake/OpenCVDetectFlatbuffers.cmake` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

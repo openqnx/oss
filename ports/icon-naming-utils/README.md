@@ -2,7 +2,7 @@
 
 > Maps legacy GNOME/KDE icon names to the freedesktop.org icon naming specification
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
@@ -10,7 +10,7 @@
 | SHA-256 | `b1378679df4485b4459f609a3304238b3e92d91e43744c47b70abbe690d883d5` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
-| Build dependencies | none |
+| Build dependencies | [`perl-xml-simple`](../perl-xml-simple/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_icon_naming_utils`](../../tests/src/) |
@@ -68,7 +68,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (3 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild perl-xml-simple
+```
+
+<details><summary>Full build chain (3)</summary>
+
+[`libxcrypt`](../libxcrypt/) [`perl`](../perl/) [`perl-xml-simple`](../perl-xml-simple/)
+</details>
 
 ### 2. Get the upstream source
 
@@ -195,7 +204,7 @@ This recipe builds **0.8.90**. Every version stays available: packages in `dists
 VERSION=0.8.90
 TARBALL=http://tango.freedesktop.org/releases/icon-naming-utils-0.8.90.tar.bz2
 SHA256=b1378679df4485b4459f609a3304238b3e92d91e43744c47b70abbe690d883d5
-DEPS=""
+DEPS="perl-xml-simple"     # configure runs the build machine's perl with it (CONF_ENV)
 # The script uses XML::Simple (which parses with XML::Parser) to read the
 # mapping.
 RUNTIME_DEPS="perl perl-xml-simple perl-xml-parser"

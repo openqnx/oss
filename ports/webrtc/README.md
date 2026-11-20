@@ -110,8 +110,20 @@ do_install() {
   # arguments: copy what is there (the check below requires something).
   { cp -a "$d"/*.a "$d"/*.so "$STAGE$PREFIX/lib/webrtc/" 2>/dev/null || true; }
   { cp -a "$d"/peerconnection_* "$STAGE$PREFIX/lib/webrtc/" 2>/dev/null || true; }
-  ( cd "$S" && find api rtc_base modules media pc call common_video system_wrappers -name '*.h' -print0 | \
+  ( cd "$S" && find api rtc_base modules media pc call common_video system_wrappers p2p logging video audio \
+        common_audio stats -name '*.h' -print0 | \
       cpio -0pdm "$STAGE$PREFIX/include/webrtc" ) 2>/dev/null || true   # find: some dirs vary by version
+  # The library itself, for programs built outside this tree (webrtc-screencast):
+  # obj/libwebrtc.a holds everything, its third-party code included (abseil,
+  # libyuv, libvpx, boringssl), so the headers of the two that WebRTC's own
+  # headers include come with it -- WebRTC's abseil, not the abseil component,
+  # whose version differs. Debug information is left out (1.2 GB with it).
+  if [ -f "$d/obj/libwebrtc.a" ]; then
+    cp "$d/obj/libwebrtc.a" "$STAGE$PREFIX/lib/webrtc/libwebrtc.a" && \
+    "$QNX_HOST/usr/bin/nto${QNX_CPU}-strip" --strip-debug "$STAGE$PREFIX/lib/webrtc/libwebrtc.a" && \
+    ( cd "$S" && find third_party/abseil-cpp/absl third_party/libyuv/include \( -name '*.h' -o -name '*.inc' \) -print0 | \
+        cpio -0pdm "$STAGE$PREFIX/include/webrtc" ) 2>/dev/null || return 1
+  fi
   [ -n "$(ls "$STAGE$PREFIX/lib/webrtc")" ]
 }
 ```
@@ -286,8 +298,20 @@ do_install() {
   # arguments: copy what is there (the check below requires something).
   { cp -a "$d"/*.a "$d"/*.so "$STAGE$PREFIX/lib/webrtc/" 2>/dev/null || true; }
   { cp -a "$d"/peerconnection_* "$STAGE$PREFIX/lib/webrtc/" 2>/dev/null || true; }
-  ( cd "$S" && find api rtc_base modules media pc call common_video system_wrappers -name '*.h' -print0 | \
+  ( cd "$S" && find api rtc_base modules media pc call common_video system_wrappers p2p logging video audio \
+        common_audio stats -name '*.h' -print0 | \
       cpio -0pdm "$STAGE$PREFIX/include/webrtc" ) 2>/dev/null || true   # find: some dirs vary by version
+  # The library itself, for programs built outside this tree (webrtc-screencast):
+  # obj/libwebrtc.a holds everything, its third-party code included (abseil,
+  # libyuv, libvpx, boringssl), so the headers of the two that WebRTC's own
+  # headers include come with it -- WebRTC's abseil, not the abseil component,
+  # whose version differs. Debug information is left out (1.2 GB with it).
+  if [ -f "$d/obj/libwebrtc.a" ]; then
+    cp "$d/obj/libwebrtc.a" "$STAGE$PREFIX/lib/webrtc/libwebrtc.a" && \
+    "$QNX_HOST/usr/bin/nto${QNX_CPU}-strip" --strip-debug "$STAGE$PREFIX/lib/webrtc/libwebrtc.a" && \
+    ( cd "$S" && find third_party/abseil-cpp/absl third_party/libyuv/include \( -name '*.h' -o -name '*.inc' \) -print0 | \
+        cpio -0pdm "$STAGE$PREFIX/include/webrtc" ) 2>/dev/null || return 1
+  fi
   [ -n "$(ls "$STAGE$PREFIX/lib/webrtc")" ]
 }
 ```

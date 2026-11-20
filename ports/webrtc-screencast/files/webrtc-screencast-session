@@ -1,0 +1,22 @@
+#!/bin/sh
+# webrtc-screencast-session -- started with the desktop session (XDG
+# autostart): runs webrtc-screencast with the options of
+# etc/webrtc-screencast.conf, and again when it ends, as long as the session
+# is there. To turn it off: create etc/no-screencast (under /data/oss on an
+# image made by make-ported-image, else under the prefix).
+P=$(cd "$(dirname "$0")/.." && pwd)
+for E in /data/oss/etc "$P/etc"; do [ -d "$E" ] && break; done
+case "$1" in -h|--help) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+R=${XDG_RUNTIME_DIR:-/tmp}
+LOG=$R/webrtc-screencast.log; PIDF=$R/webrtc-screencast.pid
+# One per session: a starter left over from the session before (the
+# compositor was started again) is stopped, with the program it runs.
+[ -f "$PIDF" ] && kill $(cat "$PIDF") 2>/dev/null
+while [ ! -e "$E/no-screencast" ] && [ -e "$R/${WAYLAND_DISPLAY:-wayland-0}" ]; do
+  # the first line that is not empty or a comment; the one under $E wins
+  OPTS=$(sed 's/#.*//' "$E/webrtc-screencast.conf" "$P/etc/webrtc-screencast.conf" 2>/dev/null | grep '[^ ]' | head -n 1)
+  "$P/bin/webrtc-screencast" $OPTS >> "$LOG" 2>&1 &
+  echo "$$ $!" > "$PIDF"
+  wait $!
+  sleep 3
+done

@@ -63,9 +63,9 @@ set(CMAKE_CXX_STANDARD_LIBRARIES_INIT "-lsocket -lm -leventfd -lepoll -lsignalfd
 # and the dynamic linker binds every later library's calls to them instead of
 # libc's (32 such libraries: glib's libgthread, GStreamer plugins, ROS 2's
 # typesupport libraries). scripts/check-embedded-libc audits for it.
-set(CMAKE_EXE_LINKER_FLAGS_INIT    "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
-set(CMAKE_SHARED_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
-set(CMAKE_MODULE_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+set(CMAKE_EXE_LINKER_FLAGS_INIT    "-Wl,--push-state,--no-as-needed,-lc,--pop-state -Wl,--build-id=md5 -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+set(CMAKE_SHARED_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed,-lc,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
+set(CMAKE_MODULE_LINKER_FLAGS_INIT "-Wl,--push-state,--no-as-needed,-lc,--pop-state -Wl,--build-id=md5 -Wl,--allow-shlib-undefined -L${QNX_STAGE}${QNX_PREFIX}/lib -Wl,-rpath-link,${QNX_STAGE}${QNX_PREFIX}/lib -L${QNX_TARGET}/x86_64/usr/lib -L${QNX_TARGET}/x86_64/lib")
 
 set(CMAKE_SYSROOT "${QNX_TARGET}")
 # Staging first. With the SDP ahead of it, find_library(ZLIB) resolved to the

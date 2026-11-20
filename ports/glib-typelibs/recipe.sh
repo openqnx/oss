@@ -34,9 +34,15 @@ _host() {
       PATH="$H/root/bin:$H/venv/bin:/usr/bin:/bin" PKG_CONFIG_PATH="$H/root/lib/pkgconfig" \
       LD_LIBRARY_PATH="$H/root/lib" "$@"
 }
+# (one at a time: both architectures use this directory, and two builds of
+# them may run side by side)
 _native() {
   H="$BUILD_DIR/host/glib-typelibs"
   [ -f "$H/done-$VERSION-$GI_REF" ] && return 0
+  mkdir -p "$BUILD_DIR/host"
+  ( flock 9; [ -f "$H/done-$VERSION-$GI_REF" ] || _native_build ) 9>"$H.lock"
+}
+_native_build() {
   rm -rf "$H" && mkdir -p "$H" || return 1
   /usr/bin/python3 -m venv "$H/venv" && "$H/venv/bin/pip" install -q "meson>=1.6,<1.9" setuptools packaging || return 1
   local common=( --prefix="$H/root" --libdir=lib --buildtype=release --wrap-mode=nodownload )

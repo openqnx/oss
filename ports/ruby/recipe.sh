@@ -21,12 +21,24 @@ CONF_ENV=( ac_cv_func_isnan=yes ac_cv_func_isinf=yes ac_cv_func_malloc_trim=no
 # only what that needs: no openssl extension (the build machine's OpenSSL
 # headers did not match what its configure found), no documentation.
 HOSTRUBY_DIR="$WS/build/host/ruby-$VERSION"
+# One build at a time (flock): the directory is shared by both architectures,
+# and two builds running side by side removed each other's tree.
 ruby_host_build() {
   [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] && return 0
+  mkdir -p "$WS/build/host"
+  ( flock 9; [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] && exit 0; _ruby_host_build ) 9>"$WS/build/host/.ruby-$VERSION.lock"
+}
+_ruby_host_build() {
   rm -rf "$HOSTRUBY_DIR"; mkdir -p "$HOSTRUBY_DIR/b"
-  ( cd "$HOSTRUBY_DIR/b" && env -u MAKEFLAGS -u CC -u CXX -u CFLAGS -u CPPFLAGS -u LDFLAGS -u PKG_CONFIG_PATH -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR \
-      "$S/configure" --prefix="$HOSTRUBY_DIR/inst" --disable-install-doc --disable-shared --with-out-ext=openssl \
-    && make -j"$(nproc)" && make install && [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] ) || { rm -rf "$HOSTRUBY_DIR"; return 1; }
+  # (each step says so when it fails: the log of a host build that stopped
+  # without a word was no help)
+  ( cd "$HOSTRUBY_DIR/b" || exit 1
+    h() { env -u MAKEFLAGS -u CC -u CXX -u CFLAGS -u CPPFLAGS -u LDFLAGS -u PKG_CONFIG_PATH -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR "$@"; }
+    h "$S/configure" --prefix="$HOSTRUBY_DIR/inst" --disable-install-doc --disable-shared --with-out-ext=openssl || { echo "!! host ruby: configure failed ($?)"; exit 1; }
+    h make -j"$(nproc)" || { echo "!! host ruby: make failed ($?)"; exit 1; }
+    h make install || { echo "!! host ruby: make install failed ($?)"; exit 1; }
+    [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] || { echo "!! host ruby: no $HOSTRUBY_DIR/inst/bin/ruby"; ls -la "$HOSTRUBY_DIR/inst/bin"; exit 1; }
+  ) || { mv "$HOSTRUBY_DIR" "$HOSTRUBY_DIR.failed" 2>/dev/null; return 1; }
 }
 do_configure() {
   ruby_host_build || return 1

@@ -44,7 +44,7 @@ _node_hostlibs() {
   mkdir -p "$H/src" || return 1
   for n in $NODE_HOST_LIBS; do
     echo "-- host library for node's build tools: $n"
-    ( GIT= REF= COMMIT= TARBALL= SHA256= CFLAGS_APPEND=; CONF_ARGS_EXTRA=(); source "$WS/ports/$n/recipe.sh"
+    ( GIT= REF= COMMIT= TARBALL= SHA256= SUBDIR= CFLAGS_APPEND=; CONF_ARGS_EXTRA=(); source "$WS/ports/$n/recipe.sh"
       d="$H/src/$n"; rm -rf "$d"
       if [ -n "$GIT" ]; then git clone -q --depth 1 --branch "$REF" "$GIT" "$d"
       else t="$WS/dist/$(basename "$TARBALL")"
@@ -58,7 +58,8 @@ _node_hostlibs() {
           -DSIMDUTF_TESTS=OFF -DSIMDUTF_TOOLS=OFF -DLIBUV_BUILD_TESTS=OFF -DCARES_BUILD_TOOLS=OFF && \
         _host ninja -C "$d/_b" install
       else
-        local c="$d"; [ -x "$d/icu4c/source/configure" ] && c="$d/icu4c/source"   # ICU keeps it there
+        # ICU keeps configure in a subdirectory: icu4c/source from git, source from the release tarball.
+        local c="$d" sub; for sub in icu4c/source "${SUBDIR:-.}"; do [ -x "$d/$sub/configure" ] && c="$d/$sub" && break; done
         # The component's own configure options and flags (sqlite: the session
         # extension node:sqlite needs), then the host prefix.
         ( cd "$c" && _host env CFLAGS="-O2 $CFLAGS_APPEND" ./configure "${CONF_ARGS_EXTRA[@]}" \

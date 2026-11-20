@@ -229,6 +229,20 @@ _build_one_body() {
       echo "-- clone $GIT ($REF)" | tee -a "$log"
       git clone --recurse-submodules --shallow-submodules ${REF:+--branch "$REF"} --depth 1 \
         "$GIT" "$SRCROOT" >>"$log" 2>&1
+      # An upstream repository can disappear (microsoft/onnxruntime answered
+      # 404 from 2026-11-20). The original source gen-ported keeps of every
+      # version (ported/<name>/<ver>/<name>-<ver>-orig.tar.gz, submodules
+      # included; a copy may be put in dist/) is that same tree.
+      if [ -z "$(ls -A "$SRCROOT" 2>/dev/null)" ]; then
+        local o
+        for o in "$WS/dist/$pkg-$VERSION-orig.tar.gz" "$WS/ported/$pkg/$VERSION/$pkg-$VERSION-orig.tar.gz"; do
+          [ -f "$o" ] || continue
+          echo "-- $GIT unavailable: the kept original source $(basename "$o")" | tee -a "$log"
+          rm -rf "$SRCROOT"; mkdir -p "$SRCROOT"
+          tar xf "$o" -C "$SRCROOT" --strip-components=1 >>"$log" 2>&1 || rm -rf "$SRCROOT"
+          break
+        done
+      fi
     elif [ -n "$TARBALL" ]; then
       # mkdir dist too: it holds the downloaded tarballs and is not tracked, so
       # on a fresh clone it does not exist and curl fails with "(23) Failure
@@ -276,7 +290,11 @@ _build_one_body() {
   # llvm) that stopped late goes on from the objects it already has.
   local B="$BUILD_DIR/$arch/$pkg"; [ -n "${QNXBUILD_KEEP_BUILD:-}" ] || rm -rf "$B"; mkdir -p "$B"
 
-  if declare -F do_configure >/dev/null; then do_configure >>"$log" 2>&1 || { echo "!! configure failed: $pkg [$arch] -- $log"; return 1; }
+  # QNXBUILD_SKIP_CONFIGURE=1 (with QNXBUILD_KEEP_BUILD=1): go on with the
+  # configuration that is there -- nodejs configures in its source tree, and
+  # configuring again makes it compile everything again.
+  if [ -n "${QNXBUILD_SKIP_CONFIGURE:-}" ]; then echo "-- configure skipped (QNXBUILD_SKIP_CONFIGURE)" >>"$log"
+  elif declare -F do_configure >/dev/null; then do_configure >>"$log" 2>&1 || { echo "!! configure failed: $pkg [$arch] -- $log"; return 1; }
   else
     case "$BUILDSYS" in
       cmake)
@@ -341,7 +359,7 @@ _build_one_body() {
           CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" \
           CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
           CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include $CFLAGS_APPEND" \
-          LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify $LDFLAGS_APPEND" \
+          LDFLAGS="-Wl,--push-state,--no-as-needed,-lc,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify $LDFLAGS_APPEND" \
           GDBUS_CODEGEN="$STAGE$PREFIX/bin/gdbus-codegen" \
           env "${CONF_ENV[@]}" \
           "$S/configure" --host="$QNX_TRIPLE" --prefix="$PREFIX" "${CONF_ARGS_EXTRA[@]}" ) >>"$log" 2>&1 ;;

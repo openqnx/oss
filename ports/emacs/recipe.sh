@@ -45,4 +45,8 @@ _emake() { local H; H=$(_hostemacs)
   PATH="$B/hostbin:$PATH" make -C "$B" -j"$(nproc)" libsrc="$H/lib-src" LIBS_SYSTEM="-lsocket -ltimerfd" \
     EMACS=emacs BOOTSTRAPEMACS="$H/src/bootstrap-emacs" "$@"; }
 do_build()   { _emake actual-all; }
-do_install() { _emake DESTDIR="$STAGE" install; }
+# Built without a window system (no X11/GTK), so emacs runs in a terminal:
+# the desktop entries must say so, or a menu starts it with no tty and it
+# exits with "standard input is not a tty".
+do_install() { _emake DESTDIR="$STAGE" install && \
+  sed -i 's/^Terminal=false/Terminal=true/' "$STAGE$PREFIX"/share/applications/emacs*.desktop; }

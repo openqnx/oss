@@ -75,5 +75,10 @@ do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR=
 # vlc-plugin.pc carries -L for the contrib tree in the build directory (where
 # libintl/libiconv were found): meaningless on any other machine, and
 # scripts/check-artifacts rejects build paths in installed metadata.
+# vlc.desktop starts "vlc", which looks for a graphical interface module; none
+# is built (the Qt interface needs Qt 5, skins2 needs X11), so from a menu or
+# a file manager it only printed "no suitable interface module" and exited.
+# Start cvlc there instead: it plays the file in a Screen window.
 do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
-  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc" && \
+  sed -i -E 's#^(Exec|TryExec)=(.*/)?vlc( |$)#\1=\2cvlc\3#' "$STAGE$PREFIX/share/applications/vlc.desktop"; }

@@ -4,7 +4,8 @@ BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Depoll=disabled -Dsystemd=disabled -Dselinux=disabled -Dapparmor=disabled
                    -Dx11_autolaunch=disabled -Ddoxygen_docs=disabled -Dinotify=disabled -Dkqueue=disabled
                    -Dducktype_docs=disabled -Dxml_docs=disabled
-                   -Dmodular_tests=disabled -Dtools=false -Dstats=false )
+                   -Dmodular_tests=disabled -Dtools=true -Dstats=false )
+# tools: dbus-send, dbus-monitor, dbus-run-session... -- scripts use them (thunar-settings calls dbus-send).
 # -Dinotify=disabled: QNX's inotify is an emulation through /dev/fsnotify,
 # and dbus-daemon's service-directory watcher blocked in it (state REPLY on
 # the fsnotify server) while activating a service -- a deadlock: the

@@ -86,6 +86,12 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  # Python3_EXECUTABLE names the venv's interpreter: where cmake itself runs
+  # from another Python environment (a pip-installed cmake), FindPython3 takes
+  # that one, which has no catkin_pkg ("No module named 'catkin_pkg'").
+  # vcs_EXECUTABLE likewise names the venv's vcs: with the vcstool component
+  # staged, ament_vendor's find_program took the target's script
+  # (<stage>/usr/local/bin/vcs, "#!/usr/local/bin/python3": "vcs: not found").
   # The underlay: the staged ros2 install, sourced from where it is staged
   # (COLCON_CURRENT_PREFIX) so ament finds its packages, and the host Python
   # its pure-Python build tools (ament_package, ...).
@@ -95,7 +101,7 @@ EOF
     --event-handlers console_direct- --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/rviz-toolchain.cmake" \
       -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/eigen3" -DEigen3_DIR="$STAGE_SYSROOT$PREFIX/share/eigen3/cmake" \
-      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" \
+      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" -DPython3_EXECUTABLE="$v/bin/python3" -Dvcs_EXECUTABLE="$v/bin/vcs" \
       -Dassimp_DIR="$(ls -d "$L"/cmake/assimp-* 2>/dev/null | head -1)" \
       -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" )
 }

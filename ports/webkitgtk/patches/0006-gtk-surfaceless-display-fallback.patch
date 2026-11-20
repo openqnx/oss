@@ -1,0 +1,38 @@
+gtk: fall back to a surfaceless PlatformDisplay without X11/Wayland
+
+With ENABLE_X11_TARGET=OFF and ENABLE_WAYLAND_TARGET=OFF (QNX: the only EGL is
+Screen's, whose EGLNativeDisplayType is an integer handle) createPlatformDisplay()
+had no display to return for the GTK port and hit RELEASE_ASSERT_NOT_REACHED, so
+every web view (Epiphany at start-up) aborted. Fall back to the surfaceless
+display, which the GTK sources already build: the web view then renders without
+accelerated compositing when EGL cannot provide it.
+
+Upstream-Status: QNX-specific
+
+--- a/Source/WebCore/platform/graphics/PlatformDisplay.cpp
++++ b/Source/WebCore/platform/graphics/PlatformDisplay.cpp
+@@ -51,6 +51,10 @@
+ #include "PlatformDisplaySurfaceless.h"
+ #endif
+ 
++#if PLATFORM(GTK) && !PLATFORM(WAYLAND) && !PLATFORM(X11) && USE(EGL)
++#include "PlatformDisplaySurfaceless.h"
++#endif
++
+ #if PLATFORM(GTK)
+ #include "GtkVersioning.h"
+ #endif
+@@ -161,6 +165,13 @@
+     return PlatformDisplayX11::create(nullptr);
+ #endif
+ 
++#if PLATFORM(GTK) && !PLATFORM(WAYLAND) && !PLATFORM(X11) && USE(EGL)
++    // Neither windowing target is built (QNX: its EGL is Screen's and takes no
++    // Display*/wl_display*): a display with no native connection, so the
++    // browser still runs; accelerated compositing is off if EGL refuses it.
++    return PlatformDisplaySurfaceless::create();
++#endif
++
+ #if PLATFORM(WPE)
+     if (s_useDMABufForRendering) {
+ #if USE(GBM)

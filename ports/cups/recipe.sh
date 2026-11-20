@@ -54,5 +54,7 @@ do_configure() {
     --with-icondir="$PREFIX/share/icons" --with-menudir="$PREFIX/share/applications"
 }
 do_build() { make -C "$B" -j"$(nproc)"; }
-# BUILDROOT is CUPS's DESTDIR.
-do_install() { make -C "$B" BUILDROOT="$STAGE" install; }
+# BUILDROOT is CUPS's DESTDIR. SYSTEMD_DIR=: --without-systemd leaves
+# SYSTEMD_DIR=no in Makedefs, and "make install" then put the systemd units in
+# "$BUILDROOT"no -- a directory next to the package's own (pkgroot/<arch>/cupsno).
+do_install() { make -C "$B" BUILDROOT="$STAGE" SYSTEMD_DIR= install; }

@@ -64,7 +64,8 @@ def recipe_meta(name):
     """VERSION / upstream / description out of a recipe, without running it."""
     path = os.path.join(WS, "ports", name, "recipe.sh")
     meta = {"version": "0", "url": "", "desc": "", "license": "see upstream",
-            "conflicts": [], "runtime_deps": []}
+            "conflicts": [], "runtime_deps": [], "runtime_solinks": [],
+            "triggers": [], "trigger_script": None}
     if not os.path.exists(path):
         return meta
     text = open(path).read()

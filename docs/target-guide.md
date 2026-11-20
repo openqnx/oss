@@ -125,11 +125,11 @@ unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
 ## Standalone and dependent
 
 
-**324 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **614 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
+**325 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **627 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
 
 Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, `ᵛ` on a vanilla image installed with apk; details per component in its README's *How it was verified*.
 
-### Standalone (324)
+### Standalone (325)
 
 | Component | What it is | Version | Install | Test package | Verified |
 |---|---|---|---|---|---|
@@ -139,7 +139,6 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`ada`](../ports/ada/) | Fast WHATWG-compliant URL parser library for C++ | 4.0.0 | `apk add ada` | `qnx-test-ada` | x86✅ᵛ a64✅ᵛ |
 | [`adwaita-fonts`](../ports/adwaita-fonts/) | Adwaita Sans and Adwaita Mono, the GNOME fonts | 49.0 | `apk add adwaita-fonts` | `qnx-test-adwaita-fonts` | x86✅ᵛ a64✅ᵛ |
 | [`aom`](../ports/aom/) | AV1 video codec library from the Alliance for Open Media | 3.15.3 | `apk add aom` | `qnx-test-aom` | x86✅ᵛ a64✅ᵛ |
-| [`apr`](../ports/apr/) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | `apk add apr` | `qnx-test-apr` | x86✅ᵛ a64✅ᵛ |
 | [`apriltag`](../ports/apriltag/) | AprilTag visual fiducial detection library (tag families 36h11, 25h9, 16h5, Standard, Circle) | 3.4.5 | `apk add apriltag` | `qnx-test-apriltag` | x86✅ᵛ a64✅ᵛ |
 | [`asio`](../ports/asio/) | Header-only C++ library for asynchronous network and low-level I/O | 1-38-2 | `apk add asio` | `qnx-test-asio` | – |
 | [`autoconf`](../ports/autoconf/) | GNU tool for generating configure scripts from M4 macros | 2.72 | `apk add autoconf` | `qnx-test-autoconf` | x86✅ᵛ a64✅ᵛ |
@@ -168,7 +167,6 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`clapack`](../ports/clapack/) | LAPACK linear algebra routines translated to C with f2c | 3.2.1 | `apk add clapack` | `qnx-test-clapack` | x86✅ᵛ a64✅ᵛ |
 | [`cli11`](../ports/cli11/) | Header-only command line parser for C++11 and later | 2.4.2 | `apk add cli11` | `qnx-test-cli11` | x86✅ᵛ a64✅ᵛ |
 | [`compiler-rt`](../ports/compiler-rt/) | LLVM compiler runtime: builtins and profiling libraries | 22.1.8 | `apk add compiler-rt` | `qnx-test-compiler-rt` | x86✅ᵛ a64✅ᵛ |
-| [`computelibrary`](../ports/computelibrary/) | Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs | 53.0.0 | `apk add computelibrary` | `qnx-test-computelibrary` | a64✅ᵛ |
 | [`console_bridge`](../ports/console_bridge/) | ROS-independent C++ logging library mirroring rosconsole calls | 1.0.2 | `apk add console_bridge` | `qnx-test-console-bridge` | x86✅ᵛ a64✅ᵛ |
 | [`cpuinfo`](../ports/cpuinfo/) | C library for detecting CPU features relevant to performance tuning | 0-git-20240417 | `apk add cpuinfo` | `qnx-test-cpuinfo` | – |
 | [`csmith`](../ports/csmith/) | Random generator of C programs for testing compilers | 2.3.0 | `apk add csmith` | `qnx-test-csmith` | x86✅ᵛ a64✅ᵛ |
@@ -190,6 +188,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`eigen`](../ports/eigen/) | Header-only C++ template library for linear algebra | 3.4.0 | `apk add eigen` | `qnx-test-eigen` | x86✅ᵛ a64✅ᵛ |
 | [`enca`](../ports/enca/) | Detects and converts the character encoding of text files | 1.19 | `apk add enca` | `qnx-test-misc-libs` | x86✅ᵛ a64✅ᵛ |
 | [`encodings`](../ports/encodings/) | X.Org font encoding tables for libfontenc | 1.1.0 | `apk add encodings` | `qnx-test-encodings` | x86✅ᵛ a64✅ᵛ |
+| [`espeak-ng`](../ports/espeak-ng/) | eSpeak NG speech synthesizer: library, espeak-ng program and voice data for 100+ languages | 1.52.0 | `apk add espeak-ng` | `qnx-test-espeak-ng` | x86✅ᵛ a64✅ᵛ |
 | [`expat`](../ports/expat/) | Stream-oriented XML parser library in C | 2.6.4 | `apk add expat` | `qnx-test-expat` | x86✅ᵛ a64✅ᵛ |
 | [`fakeroot`](../ports/fakeroot/) | Runs a command in an environment faking root privileges for packaging | 1.37.1.1 | `apk add fakeroot` | `qnx-test-fakeroot` | x86✅ᵛ a64✅ᵛ |
 | [`farmhash`](../ports/farmhash/) | Google's FarmHash family of hash functions for strings | 1.1-git-20190513 | `apk add farmhash` | `qnx-test-farmhash` | – |
@@ -242,7 +241,6 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`hwdata`](../ports/hwdata/) | Hardware identification databases (pci.ids, usb.ids, pnp.ids, OUI) | 0.413 | `apk add hwdata` | `qnx-test-hwdata` | x86✅ᵛ a64✅ᵛ |
 | [`hyphen`](../ports/hyphen/) | Hyphenation library using converted TeX hyphenation patterns | 2.8.8 | `apk add hyphen` | `qnx-test-misc-libs` | x86✅ᵛ a64✅ᵛ |
 | [`iceoryx`](../ports/iceoryx/) | Eclipse iceoryx, true zero-copy inter-process communication middleware | 2.0.6 | `apk add iceoryx` | `qnx-test-iceoryx` | x86✅ᵛ a64✅ᵛ |
-| [`icon-naming-utils`](../ports/icon-naming-utils/) | Maps legacy GNOME/KDE icon names to the freedesktop.org icon naming specification | 0.8.90 | `apk add icon-naming-utils` | `qnx-test-icon-naming-utils` | x86✅ᵛ a64✅ᵛ |
 | [`icu`](../ports/icu/) | International Components for Unicode: Unicode and locale support libraries | 76.1 | `apk add icu` | `qnx-test-icu` | x86✅ᵛ a64✅ᵛ |
 | [`imath`](../ports/imath/) | C++ library of 2D/3D vector, matrix and half-float math for computer graphics | 3.2.2 | `apk add imath` | `qnx-test-imath` | x86✅ᵛ a64✅ᵛ |
 | [`intltool`](../ports/intltool/) | Translation tools for non-C files: intltool-merge, -extract, -update, intltoolize | 0.51.0 | `apk add intltool` | `qnx-test-intltool` | x86✅ᵛ a64✅ᵛ |
@@ -356,6 +354,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`oniguruma`](../ports/oniguruma/) | Regular expression library | 6.9.9 | `apk add oniguruma` | `qnx-test-oniguruma` | x86✅ᵛ a64✅ᵛ |
 | [`openal-soft`](../ports/openal-soft/) | Cross-platform 3D audio library implementing the OpenAL API | 1.24.1 | `apk add openal-soft` | `qnx-test-openal-soft` | x86✅ᵛ a64✅ᵛ |
 | [`openblas`](../ports/openblas/) | Optimized BLAS linear algebra library based on GotoBLAS2 | 0.3.28 | `apk add openblas` | `qnx-test-openblas` | x86✅ᵛ a64✅ᵛ |
+| [`opencl-headers`](../ports/opencl-headers/) | Khronos OpenCL C API headers (CL/cl.h and extensions, OpenCL 1.0 to 3.0) | 2026.05.29 | `apk add opencl-headers` | `qnx-test-opencl-headers` | x86✅ᵛ a64✅ᵛ |
 | [`openh264`](../ports/openh264/) | H.264 video encoding and decoding library for real-time use | 2.5.0 | `apk add openh264` | `qnx-test-openh264` | x86✅ᵛ a64✅ᵛ |
 | [`openmp`](../ports/openmp/) | LLVM OpenMP runtime library (libomp) | 22.1.8 | `apk add openmp` | `qnx-test-openmp` | x86✅ᵛ a64✅ᵛ |
 | [`openpam`](../ports/openpam/) | BSD-licensed implementation of the Pluggable Authentication Modules API | 20250531 | `apk add openpam` | `qnx-test-openpam` | x86✅ᵛ a64✅ᵛ |
@@ -372,6 +371,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`pcre`](../ports/pcre/) | Perl compatible regular expressions library (legacy PCRE1 API) | 8.45 | `apk add pcre` | `qnx-test-pcre` | x86✅ᵛ a64✅ᵛ |
 | [`pdfium`](../ports/pdfium/) | PDFium, Chromium's PDF rendering library | 0-git-84a8011 | `apk add pdfium` | `qnx-test-pdfium` | – |
 | [`picocom`](../ports/picocom/) | Minimal dumb-terminal emulator for serial ports | 3.1 | `apk add picocom` | `qnx-test-picocom` | x86✅ᵛ a64✅ᵛ |
+| [`piper-voice-en-us-joe`](../ports/piper-voice-en-us-joe/) | Piper voice en_US-joe-medium: U.S. English, male, 22050 Hz (CC0 recordings) | 1.0.0 | `apk add piper-voice-en-us-joe` | `qnx-test-piper` | x86✅ᵛ a64✅ᵛ |
 | [`pkgconf`](../ports/pkgconf/) | Tool and library for managing compiler and linker flags (pkg-config) | 2.3.0 | `apk add pkgconf` | `qnx-test-pkgconf` | x86✅ᵛ a64✅ᵛ |
 | [`portaudio`](../ports/portaudio/) | Portable cross-platform library for real-time audio input and output | 19.7.0 | `apk add portaudio` | `qnx-test-portaudio` | x86✅ᵛ a64✅ᵛ |
 | [`protobuf-c`](../ports/protobuf-c/) | Protocol Buffers implementation in C (runtime library) | 1.5.0 | `apk add protobuf-c` | `qnx-test-protobuf-c` | x86✅ᵛ a64✅ᵛ |
@@ -423,6 +423,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`tree-sitter-vim`](../ports/tree-sitter-vim/) | Vimscript grammar for tree-sitter | 0.7.0 | `apk add tree-sitter-vim` | `qnx-test-tree-sitter-vim` | x86✅ᵛ a64✅ᵛ |
 | [`tree-sitter-vimdoc`](../ports/tree-sitter-vimdoc/) | Vim help file grammar for tree-sitter | 4.0.0 | `apk add tree-sitter-vimdoc` | `qnx-test-tree-sitter-vimdoc` | x86✅ᵛ a64✅ᵛ |
 | [`trompeloeil`](../ports/trompeloeil/) | Header-only C++14 mocking framework | 48 | `apk add trompeloeil` | `qnx-test-trompeloeil` | x86✅ᵛ a64✅ᵛ |
+| [`tsl-robin-map`](../ports/tsl-robin-map/) | tsl::robin_map and tsl::robin_set: fast C++ hash map and set with robin hood hashing, header-only | 1.4.1 | `apk add tsl-robin-map` | `qnx-test-tsl-robin-map` | x86✅ᵛ a64✅ᵛ |
 | [`tzdata`](../ports/tzdata/) | IANA time zone database (zoneinfo TZif files) with zic and zdump | 2026f | `apk add tzdata` | `qnx-test-tzdata-tools` | x86✅ᵛ a64✅ᵛ |
 | [`unibilium`](../ports/unibilium/) | Basic terminfo library for reading terminfo files and format strings | 2.1.2 | `apk add unibilium` | `qnx-test-unibilium` | x86✅ᵛ a64✅ᵛ |
 | [`unifdef`](../ports/unifdef/) | Removes preprocessor conditionals from C/C++ source for given symbols | 2.12 | `apk add unifdef` | `qnx-test-unifdef` | x86✅ᵛ a64✅ᵛ |
@@ -458,7 +459,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`zserio`](../ports/zserio/) | C++ runtime library of zserio, a serialization framework for binary data | 2.20.0 | `apk add zserio` | `qnx-test-zserio` | – |
 | [`zstd`](../ports/zstd/) | Fast real-time lossless compression library (Zstandard) | 1.5.6 | `apk add zstd` | `qnx-test-zstd` | x86✅ᵛ a64✅ᵛ |
 
-### Dependent (614)
+### Dependent (627)
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
@@ -467,6 +468,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`amqp-cpp`](../ports/amqp-cpp/) | C++ library for communicating with a RabbitMQ message broker | 4.3.27 | `apk add amqp-cpp` | – | openssl | `qnx-test-amqp-cpp` | x86✅ᵛ a64✅ᵛ |
 | [`apk-tools`](../ports/apk-tools/) | Alpine Package Keeper (apk), the Alpine package manager | 3.0.8 | `apk add apk-tools` | openssl zlib zstd | openssl zlib zstd | `qnx-test-apk-tools` | x86✅ᵛ a64✅ᵛ |
 | [`appstream`](../ports/appstream/) | Tools and libraries to work with AppStream metadata | 1.0.6 | `apk add appstream` | curl gettext glib libxml2 libxmlb libyaml zstd | glib curl libxml2 libyaml libxmlb zstd | `qnx-test-appstream` | x86✅ᵛ a64✅ᵛ |
+| [`apr`](../ports/apr/) | Apache Portable Runtime, a portable C API for system services | 1.7.6 | `apk add apr` | – | libxcrypt | `qnx-test-apr` | x86✅ᵛ a64✅ᵛ |
 | [`apr-util`](../ports/apr-util/) | Apache Portable Runtime utility library | 1.6.5 | `apk add apr-util` | apr expat libiconv libxcrypt openssl sqlite | apr expat openssl sqlite libiconv libxcrypt | `qnx-test-apr-util` | x86✅ᵛ a64✅ᵛ |
 | [`armadillo`](../ports/armadillo/) | C++ linear algebra library with a MATLAB-like API (on OpenBLAS) | 15.6.2 | `apk add armadillo` | openblas | openblas | `qnx-test-armadillo` | x86✅ᵛ a64✅ᵛ |
 | [`asciidoc`](../ports/asciidoc/) | Text document format for short documents, articles, books and UNIX man pages | 10.2.1 | `apk add asciidoc` | – | python3 | `qnx-test-asciidoc` | x86✅ᵛ a64✅ᵛ |
@@ -504,10 +506,12 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`ceres-solver`](../ports/ceres-solver/) | C++ library for modeling and solving large optimization problems | 2.2.0 | `apk add ceres-solver` | gflags glog | eigen glog gflags | `qnx-test-ceres-solver` | x86✅ᵛ a64✅ᵛ |
 | [`cgal`](../ports/cgal/) | CGAL computational geometry library (header-only): hulls, triangulations, meshes, exact predicates | 6.2.1 | `apk add cgal` | – | gmp mpfr boost | `qnx-test-cgal` | x86✅ᵛ a64✅ᵛ |
 | [`civetweb`](../ports/civetweb/) | Embeddable C/C++ web server with optional Lua and WebSocket support | 1.16 | `apk add civetweb` | openssl | openssl | `qnx-test-civetweb` | x86✅ᵛ a64✅ᵛ |
+| [`clinfo`](../ports/clinfo/) | Prints all properties of the available OpenCL platforms and devices (text, raw or JSON) | 3.1.26.09.26 | `apk add clinfo` | opencl-icd-loader | opencl-headers opencl-icd-loader | `qnx-test-clinfo` | x86✅ᵛ a64✅ᵛ |
 | [`cmake`](../ports/cmake/) | Cross-platform build system generator | 4.1.1 | `apk add cmake` | curl libuv openssl zlib | openssl zlib curl libuv | `qnx-test-cmake` | x86✅ᵛ a64✅ᵛ |
+| [`computelibrary`](../ports/computelibrary/) | Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs | 53.0.0 | `apk add computelibrary` | – | opencl-headers | `qnx-test-computelibrary` | a64✅ᵛ |
 | [`cppzmq`](../ports/cppzmq/) | Header-only C++ binding for the ZeroMQ messaging library | 4.10.0 | `apk add cppzmq` | – | libzmq | `qnx-test-libzmq` | x86✅ᵛ a64✅ᵛ |
 | [`cups`](../ports/cups/) | Standards-based printing system: scheduler, libcups and command-line tools | 2.4.16 | `apk add cups` | avahi libiconv libxcrypt openssl zlib | openssl zlib avahi libiconv libxcrypt | `qnx-test-cups` | x86✅ᵛ a64✅ᵛ |
-| [`cups-filters`](../ports/cups-filters/) | OpenPrinting CUPS filters | 1.28.17 | `apk add cups-filters` | avahi cups fontconfig freetype gettext glib lcms2 libexif libiconv libjpeg-turbo libpng libtiff libxcrypt openssl poppler qpdf zlib | cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib | `qnx-test-cups-filters` | x86✅ᵛ a64✅ᵛ |
+| [`cups-filters`](../ports/cups-filters/) | OpenPrinting CUPS filters | 1.28.17 | `apk add cups-filters` | avahi cups fontconfig freetype gettext glib lcms2 libexif libiconv libjpeg-turbo libpng libtiff libxcrypt openssl poppler qpdf zlib | cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib libexif | `qnx-test-cups-filters` | x86✅ᵛ a64✅ᵛ |
 | [`curl`](../ports/curl/) | Command line tool and library for transferring data with URLs | 8.11.1 | `apk add curl` | brotli c-ares nghttp2 openssl zlib zstd | openssl zlib nghttp2 c-ares brotli zstd | `qnx-test-curl` | x86✅ᵛ a64✅ᵛ |
 | [`cython`](../ports/cython/) | Cython: compiles Python and Cython code to C extension modules | 3.3.1 | `apk add cython` | – | python3 | `qnx-test-cython` | x86✅ᵛ a64✅ᵛ |
 | [`dbus`](../ports/dbus/) | D-Bus message bus daemon and library for interprocess communication | 1.16.0 | `apk add dbus` | expat | expat | `qnx-test-dbus` | x86✅ᵛ a64✅ᵛ |
@@ -538,7 +542,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`folly`](../ports/folly/) | Open-source C++ library developed and used at Facebook | 2026.10.26.00 | `apk add folly` | boost bzip2 fmt gflags glog libevent libsodium lz4 openssl xz zlib zstd | boost fast-float fmt gflags glog libevent openssl zlib zstd lz4 xz bzip2 libsodium | `qnx-test-folly` | x86✅ᵛ a64✅ᵛ |
 | [`fontconfig`](../ports/fontconfig/) | Library for font configuration, discovery and customization | 2.15.0 | `apk add fontconfig` | expat freetype | freetype expat | `qnx-test-fontconfig` | x86✅ᵛ a64✅ᵛ |
 | [`fontenc`](../ports/fontenc/) | X.Org font encoding library | 1.1.8 | `apk add fontenc` | zlib | xorgproto zlib | `qnx-test-fontenc` | x86✅ᵛ a64✅ᵛ |
-| [`foot`](../ports/foot/) | Fast, lightweight and minimalistic Wayland terminal emulator | 1.23.1 | `apk add foot` | fcft fontconfig libxkbcommon pixman utf8proc wayland | pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses | `qnx-test-foot` | x86✅ᵛ a64✅ᵛ |
+| [`foot`](../ports/foot/) | Fast, lightweight and minimalistic Wayland terminal emulator | 1.23.1 | `apk add foot` | fcft fontconfig libxkbcommon pixman utf8proc wayland | pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes | `qnx-test-foot` | x86✅ᵛ a64✅ᵛ |
 | [`freetype`](../ports/freetype/) | Portable font rendering engine library | 2.13.3 | `apk add freetype` | brotli bzip2 libpng zlib | zlib bzip2 libpng brotli | `qnx-test-freetype` | x86✅ᵛ a64✅ᵛ |
 | [`frei0r-plugins`](../ports/frei0r-plugins/) | Minimalistic plugin API and collection of video sources and filters | 2.4.0 | `apk add frei0r-plugins` | cairo opencv | cairo opencv freetype | `qnx-test-frei0r-plugins` | x86✅ᵛ a64✅ᵛ |
 | [`garcon`](../ports/garcon/) | Freedesktop.org compliant menu library for Xfce | 4.20.0 | `apk add garcon` | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libxfce4ui libxfce4util pango zlib | glib gtk3 libxfce4util libxfce4ui | `qnx-test-garcon` | x86✅ᵛ a64✅ᵛ |
@@ -584,9 +588,11 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`gtsam`](../ports/gtsam/) | Georgia Tech Smoothing and Mapping library for robotics and SLAM | 4.2 | `apk add gtsam` | boost | boost eigen | `qnx-test-gtsam` | x86✅ᵛ a64✅ᵛ |
 | [`gyp`](../ports/gyp/) | GYP meta-build system: generates Makefiles and Ninja files from .gyp files | 0.22.4 | `apk add gyp` | – | python3 python3-packaging python3-setuptools | `qnx-test-python3-buildtools` | x86✅ᵛ a64✅ᵛ |
 | [`harfbuzz`](../ports/harfbuzz/) | OpenType text shaping engine | 10.1.0 | `apk add harfbuzz` | freetype glib graphite2 icu | freetype glib icu graphite2 | `qnx-test-harfbuzz` | x86✅ᵛ a64✅ᵛ |
+| [`hdf5`](../ports/hdf5/) | HDF5 library and tools for self-describing binary files of large numerical data (C, C++ and high-level APIs) | 1.14.6 | `apk add hdf5` | libaec zlib | zlib libaec | `qnx-test-hdf5` | x86✅ᵛ a64✅ᵛ |
 | [`hiredis`](../ports/hiredis/) | Minimalistic C client library for Redis and Valkey | 1.5.0 | `apk add hiredis` | openssl | openssl | `qnx-test-hiredis` | x86✅ᵛ a64✅ᵛ |
 | [`htop`](../ports/htop/) | Interactive process viewer | 3.5.0 | `apk add htop` | ncurses | ncurses | `qnx-test-monitors` | x86✅ᵛ a64✅ᵛ |
 | [`hunspell`](../ports/hunspell/) | Hunspell spell checker and morphological analyzer library and program | 1.7.2 | `apk add hunspell` | libiconv | libiconv | `qnx-test-hunspell` | x86✅ᵛ a64✅ᵛ |
+| [`icon-naming-utils`](../ports/icon-naming-utils/) | Maps legacy GNOME/KDE icon names to the freedesktop.org icon naming specification | 0.8.90 | `apk add icon-naming-utils` | – | perl-xml-simple | `qnx-test-icon-naming-utils` | x86✅ᵛ a64✅ᵛ |
 | [`inetutils`](../ports/inetutils/) | A collection of common network programs (GNU inetutils) | 2.6 | `apk add inetutils` | libxcrypt ncurses readline | ncurses readline libxcrypt | `qnx-test-inetutils` | x86✅ᵛ a64✅ᵛ |
 | [`iperf3`](../ports/iperf3/) | TCP, UDP and SCTP network bandwidth measurement tool | 3.17.1 | `apk add iperf3` | openssl | openssl | `qnx-test-iperf3` | x86✅ᵛ a64✅ᵛ |
 | [`ippusbxd`](../ports/ippusbxd/) | Daemon for IPP over USB printer support | 1.34 | `apk add ippusbxd` | avahi cups libusb libxml2 | libusb avahi libxml2 cups | `qnx-test-ippusbxd` | x86✅ᵛ a64✅ᵛ |
@@ -594,6 +600,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`javascriptcore`](../ports/javascriptcore/) | WebKit's JavaScriptCore JavaScript engine (standalone JSCOnly port) | 2.44.4 | `apk add javascriptcore` | icu | icu | `qnx-test-javascriptcore` | x86✅ᵛ a64✅ᵛ |
 | [`jq`](../ports/jq/) | Command line JSON processor and libjq library | 1.7.1 | `apk add jq` | oniguruma | oniguruma | `qnx-test-jq` | x86✅ᵛ a64✅ᵛ |
 | [`json-glib`](../ports/json-glib/) | JSON parser and generator library for GLib | 1.10.6 | `apk add json-glib` | gettext glib | glib | `qnx-test-json-glib` | x86✅ᵛ a64✅ᵛ |
+| [`kiss-icp`](../ports/kiss-icp/) | KISS-ICP LiDAR odometry C++ core: point-to-point ICP with adaptive threshold on a voxel hash map | 1.3.0 | `apk add kiss-icp` | – | eigen sophus onetbb tsl-robin-map | `qnx-test-kiss-icp` | x86✅ᵛ a64✅ᵛ |
 | [`labwc`](../ports/labwc/) | Stacking Wayland compositor (window manager) based on wlroots | 0.20.2 | `apk add labwc` | cairo glib libpng libsfdo libxkbcommon libxml2 pango pixman wayland wlroots | wlroots wayland wayland-protocols libxkbcommon glib cairo pango libxml2 libsfdo libpng | `qnx-test-labwc` | x86✅ᵛ a64✅ᵛ |
 | [`lanelet2`](../ports/lanelet2/) | Lanelet2 HD map framework for automated driving: maps, OSM I/O, projection, traffic rules, routing | 1.2.3 | `apk add lanelet2` | boost geographiclib pugixml | ros2 boost eigen geographiclib pugixml | `qnx-test-lanelet2` | x86✅ᵛ a64✅ᵛ |
 | [`lcm`](../ports/lcm/) | Lightweight Communications and Marshalling: message passing for real time | 1.5.2 | `apk add lcm` | glib | glib | `qnx-test-lcm` | x86✅ᵛ a64✅ᵛ |
@@ -694,7 +701,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`man-db`](../ports/man-db/) | Manual page reader suite (man, apropos, whatis) | 2.13.1 | `apk add man-db` | gdbm libiconv libpipeline zlib | libpipeline gdbm groff libiconv zlib | `qnx-test-man-db` | x86✅ᵛ a64✅ᵛ |
 | [`mate-calc`](../ports/mate-calc/) | MATE desktop calculator | 1.28.0 | `apk add mate-calc` | at-spi2-core cairo gdk-pixbuf gettext glib gmp gtk3 harfbuzz libxml2 mpc mpfr pango zlib | glib gtk3 libxml2 gmp mpfr mpc | `qnx-test-mate-calc` | x86✅ᵛ a64✅ᵛ |
 | [`mcap-cpp`](../ports/mcap-cpp/) | Header-only C++ library for the MCAP robotics message log format | 2.1.3 | `apk add mcap-cpp` | – | lz4 zstd | `qnx-test-mcap` | x86✅ᵛ a64✅ᵛ |
-| [`mesa`](../ports/mesa/) | Mesa 3D: software OpenGL, GLES, EGL (llvmpipe) and Vulkan (lavapipe) | 26.2.6 | `apk add mesa` | expat llvm wayland zlib zstd | llvm wayland wayland-protocols zlib zstd expat | `qnx-test-mesa-wayland` | x86✅ᵛ a64✅ᵛ |
+| [`mesa`](../ports/mesa/) | Mesa 3D: software OpenGL, GLES, EGL (llvmpipe) and Vulkan (lavapipe) | 26.2.6 | `apk add mesa` | expat llvm spirv-tools wayland zlib zstd | llvm wayland wayland-protocols zlib zstd expat | `qnx-test-mesa-wayland` | x86✅ᵛ a64✅ᵛ |
 | [`meson`](../ports/meson/) | Meson build system | 1.10.0 | `apk add meson` | – | python3 | `qnx-test-meson` | x86✅ᵛ a64✅ᵛ |
 | [`metis`](../ports/metis/) | Programs and library for partitioning graphs and finite element meshes | 5.2.1 | `apk add metis` | gklib | gklib | `qnx-test-metis` | x86✅ᵛ a64✅ᵛ |
 | [`minicom`](../ports/minicom/) | Menu-driven serial communication program and terminal emulator | 2.9 | `apk add minicom` | libiconv ncurses | ncurses libiconv | `qnx-test-minicom` | x86✅ᵛ a64✅ᵛ |
@@ -721,18 +728,20 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`nuspell`](../ports/nuspell/) | Nuspell spell checking library and program for Hunspell dictionaries | 5.1.9 | `apk add nuspell` | icu | icu | `qnx-test-nuspell` | x86✅ᵛ a64✅ᵛ |
 | [`ompl`](../ports/ompl/) | Open Motion Planning Library: sampling-based motion planners (RRT, PRM, KPIECE, BIT*) | 1.7.0 | `apk add ompl` | boost | boost eigen | `qnx-test-ompl` | x86✅ᵛ a64✅ᵛ |
 | [`onnx`](../ports/onnx/) | Open Neural Network Exchange (ONNX) format library for AI models | 1.17.0 | `apk add onnx` | abseil protobuf | protobuf | `qnx-test-onnx` | x86✅ᵛ a64✅ᵛ |
-| [`onnxruntime`](../ports/onnxruntime/) | Cross-platform machine learning inference engine for ONNX models | 1.20.1 | `apk add onnxruntime` | zlib | protobuf | `qnx-test-onnxruntime` | x86✅ᵛ a64✅ᵛ |
+| [`onnxruntime`](../ports/onnxruntime/) | Cross-platform machine learning inference engine for ONNX models | 1.20.1 | `apk add onnxruntime` | libiconv zlib | protobuf | `qnx-test-onnxruntime` | x86✅ᵛ a64✅ᵛ |
 | [`open-amp`](../ports/open-amp/) | OpenAMP framework for asymmetric multiprocessing (remoteproc, RPMsg) | 2024.10.0 | `apk add open-amp` | – | libmetal | `qnx-test-open-amp` | x86✅ᵛ a64✅ᵛ |
 | [`open62541`](../ports/open62541/) | C implementation of OPC UA (IEC 62541) clients and servers | 1.4.8 | `apk add open62541` | openssl | openssl | `qnx-test-open62541` | x86✅ᵛ a64✅ᵛ |
+| [`opencl-icd-loader`](../ports/opencl-icd-loader/) | Khronos OpenCL ICD loader (libOpenCL.so): dispatches OpenCL calls to the installed implementations | 2026.05.29 | `apk add opencl-icd-loader` | – | opencl-headers | `qnx-test-opencl-icd-loader` | x86✅ᵛ a64✅ᵛ |
 | [`opencv`](../ports/opencv/) | Open Source Computer Vision library | 4.10.0 | `apk add opencv` | zlib | zlib eigen | `qnx-test-opencv` | x86✅ᵛ a64✅ᵛ |
 | [`openexr`](../ports/openexr/) | High dynamic-range (HDR) image file format library and tools | 3.4.1 | `apk add openexr` | imath libdeflate openjph | imath libdeflate openjph | `qnx-test-openexr` | x86✅ᵛ a64✅ᵛ |
 | [`openjpeg`](../ports/openjpeg/) | JPEG 2000 image codec library and tools | 2.5.3 | `apk add openjpeg` | – | zlib libpng libtiff lcms2 | `qnx-test-openjpeg` | x86✅ᵛ a64✅ᵛ |
 | [`openjph`](../ports/openjph/) | HTJ2K (High-Throughput JPEG 2000) encoder and decoder library | 0.24.1 | `apk add openjph` | libtiff | libtiff | `qnx-test-openexr` | x86✅ᵛ a64✅ᵛ |
 | [`openssh`](../ports/openssh/) | OpenSSH client and server for secure remote login and file transfer | 10.2p1 | `apk add openssh` | libxcrypt openssl zlib | openssl zlib libxcrypt | `qnx-test-openssh` | – |
+| [`opentelemetry-cpp`](../ports/opentelemetry-cpp/) | OpenTelemetry C++ client: tracing, metrics and logs API, SDK, OTLP (HTTP, gRPC, file), ostream and in-memory exporters | 1.30.0 | `apk add opentelemetry-cpp` | abseil c-ares curl grpc openssl protobuf re2 zlib | protobuf grpc abseil curl nlohmann_json zlib openssl c-ares re2 | `qnx-test-opentelemetry-cpp` | x86✅ᵛ a64✅ᵛ |
 | [`openttd`](../ports/openttd/) | OpenTTD, an open source simulation game based on Transport Tycoon Deluxe | 15.0-git-20250501 | `apk add openttd` | curl freetype libpng lzo sdl2 xz zlib | sdl2 zlib xz libpng freetype fontconfig curl lzo | – | – |
 | [`opusfile`](../ports/opusfile/) | High-level library for decoding and seeking in Ogg Opus files | 0.12 | `apk add opusfile` | libogg openssl opus | opus libogg openssl | `qnx-test-opusfile` | x86✅ᵛ a64✅ᵛ |
 | [`orocos-kdl`](../ports/orocos-kdl/) | Orocos Kinematics and Dynamics Library for robot kinematic chains | 1.5.1 | `apk add orocos-kdl` | – | eigen | `qnx-test-orocos-kdl` | x86✅ᵛ a64✅ᵛ |
-| [`oss-desktop`](../ports/oss-desktop/) | Desktop session with labwc, Xfce panel, terminal and file manager | 1.0 | `apk add oss-desktop` | – | labwc swaybg xfce4-panel xfce4-terminal thunar xfce4-appfinder dbus hicolor-icon-theme lxde-icon-theme font-dejavu | `qnx-test-labwc` | x86✅ᵛ a64✅ᵛ |
+| [`oss-desktop`](../ports/oss-desktop/) | Desktop session with labwc, Xfce panel, terminal and file manager | 1.1 | `apk add oss-desktop` | – | labwc swaybg xfce4-panel xfce4-session xfce4-settings xfce4-terminal thunar xfce4-appfinder dbus adwaita-icon-theme hicolor-icon-theme lxde-icon-theme font-dejavu | `qnx-test-labwc` | x86✅ᵛ a64✅ᵛ |
 | [`p11-kit`](../ports/p11-kit/) | Library and proxy module for loading and sharing PKCS#11 modules | 0.25.5 | `apk add p11-kit` | libffi | libffi libtasn1 | `qnx-test-p11kit` | x86✅ᵛ a64✅ᵛ |
 | [`paho.mqtt.c`](../ports/paho.mqtt.c/) | Eclipse Paho MQTT client library for C | 1.3.14 | `apk add paho.mqtt.c` | openssl | openssl | `qnx-test-paho-mqtt-c` | x86✅ᵛ a64✅ᵛ |
 | [`paho.mqtt.cpp`](../ports/paho.mqtt.cpp/) | Eclipse Paho MQTT client library for C++ | 1.5.2 | `apk add paho.mqtt.cpp` | openssl paho.mqtt.c | paho.mqtt.c | `qnx-test-paho-mqtt-cpp` | x86✅ᵛ a64✅ᵛ |
@@ -788,8 +797,11 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`perl-xml-parser`](../ports/perl-xml-parser/) | XML::Parser, the Perl interface to the Expat XML parser (XS) | 2.59 | `apk add perl-xml-parser` | expat | perl expat perl-file-sharedir-install | `qnx-test-perl-xml` | x86✅ᵛ a64✅ᵛ |
 | [`perl-xml-simple`](../ports/perl-xml-simple/) | XML::Simple, reads and writes XML as Perl data structures (on XML::Parser) | 2.25 | `apk add perl-xml-simple` | – | perl | `qnx-test-perl-xml` | x86✅ᵛ a64✅ᵛ |
 | [`pinentry`](../ports/pinentry/) | PIN and passphrase entry dialogs for GnuPG (curses and tty) | 1.3.3 | `apk add pinentry` | libassuan libgpg-error libiconv ncurses | libassuan libgpg-error ncurses libiconv | `qnx-test-pinentry` | x86✅ᵛ a64✅ᵛ |
+| [`pinocchio`](../ports/pinocchio/) | Rigid body dynamics library (kinematics, RNEA, CRBA, ABA, URDF models) on Eigen | 3.9.0 | `apk add pinocchio` | boost urdfdom | eigen boost urdfdom urdfdom_headers console_bridge tinyxml2 | `qnx-test-pinocchio` | x86✅ᵛ a64✅ᵛ |
+| [`piper`](../ports/piper/) | Piper neural text to speech: libpiper (C API) and the piper_exe program, on ONNX Runtime and espeak-ng | 1.8.0 | `apk add piper` | espeak-ng onnxruntime | espeak-ng onnxruntime | `qnx-test-piper` | x86✅ᵛ a64✅ᵛ |
 | [`pistache`](../ports/pistache/) | C++ REST framework for HTTP servers and clients | 0.4.26 | `apk add pistache` | libevent openssl | libevent rapidjson openssl | `qnx-test-pistache` | x86✅ᵛ a64✅ᵛ |
 | [`pixman`](../ports/pixman/) | Low-level pixel manipulation library (compositing, rasterization) | 0.46.4 | `apk add pixman` | – | libpng | `qnx-test-pixman` | x86✅ᵛ a64✅ᵛ |
+| [`pocl`](../ports/pocl/) | Portable Computing Language: OpenCL 3.0 on the CPU, kernels compiled at run time with Clang/LLVM | 7.2 | `apk add pocl` | llvm opencl-icd-loader zlib zstd | llvm zlib zstd opencl-headers opencl-icd-loader | `qnx-test-pocl` | x86❌ᵛ a64❌ᵛ |
 | [`poco`](../ports/poco/) | Cross-platform C++ libraries for network-based applications | 1.15.4 | `apk add poco` | expat openssl pcre2 utf8proc zlib | openssl zlib pcre2 utf8proc expat | `qnx-test-poco` | x86✅ᵛ a64✅ᵛ |
 | [`poppler`](../ports/poppler/) | PDF rendering library and command line tools | 25.12.0 | `apk add poppler` | cairo fontconfig freetype gettext glib lcms2 libiconv libjpeg-turbo libpng libtiff openjpeg zlib | freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib | `qnx-test-poppler` | x86✅ᵛ a64✅ᵛ |
 | [`pqiv`](../ports/pqiv/) | Minimal command line image viewer based on GTK 3 | 2.13.2 | `apk add pqiv` | at-spi2-core cairo gdk-pixbuf gettext glib gtk3 harfbuzz libx11 pango zlib | glib gtk3 gdk-pixbuf cairo | `qnx-test-pqiv` | x86✅ᵛ a64✅ᵛ |
@@ -1017,6 +1029,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`silkit-adapters-tap`](../ports/silkit-adapters-tap/) | SIL Kit adapter connecting TAP network devices to SIL Kit Ethernet networks | 1.2.0 | `apk add silkit-adapters-tap` | silkit | silkit | `qnx-test-silkit-adapters-tap` | x86✅ᵛ a64✅ᵛ |
 | [`socat`](../ports/socat/) | Multipurpose relay for binary protocols (SOcket CAT) | 1.8.0.3 | `apk add socat` | ncurses openssl readline | openssl readline | `qnx-test-socat` | x86✅ᵛ a64✅ᵛ |
 | [`soem`](../ports/soem/) | Simple Open EtherCAT Master library and tools | 2.0.1 | `apk add soem` | – | libpcap | `qnx-test-soem` | x86✅ᵛ a64✅ᵛ |
+| [`sophus`](../ports/sophus/) | C++ Lie groups (SO2, SO3, SE2, SE3, Sim3) for 2D and 3D geometry on Eigen, header-only | 1.24.6 | `apk add sophus` | – | eigen | `qnx-test-sophus` | x86✅ᵛ a64✅ᵛ |
 | [`spdlog`](../ports/spdlog/) | Fast C++ logging library | 1.15.3 | `apk add spdlog` | fmt | fmt | `qnx-test-spdlog` | x86✅ᵛ a64✅ᵛ |
 | [`spirv-tools`](../ports/spirv-tools/) | SPIR-V assembler, disassembler, validator, optimizer and linker | 1.4.321.0 | `apk add spirv-tools` | – | spirv-headers | `qnx-test-spirv-tools` | x86✅ᵛ a64✅ᵛ |
 | [`sqlite`](../ports/sqlite/) | SQLite embedded SQL database engine and command line shell | 3.47.2 | `apk add sqlite` | zlib | zlib | `qnx-test-sqlite` | x86✅ᵛ a64✅ᵛ |
@@ -1054,6 +1067,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`wayland`](../ports/wayland/) | Wayland display protocol client and server libraries | 1.24.0 | `apk add wayland` | libffi | libffi expat libxml2 | `qnx-test-wayland` | x86✅ᵛ a64✅ᵛ |
 | [`wayland-protocols`](../ports/wayland-protocols/) | Extension protocol definitions for Wayland (XML files) | 1.47 | `apk add wayland-protocols` | – | wayland | `qnx-test-wayland-protocols` | x86✅ᵛ a64✅ᵛ |
 | [`webkitgtk`](../ports/webkitgtk/) | WebKitGTK web content engine for GTK applications | 2.44.4 | `apk add webkitgtk` | at-spi2-core cairo fontconfig freetype gdk-pixbuf gettext glib gst-plugins-bad gst-plugins-base gstreamer gtk3 harfbuzz hyphen icu lcms2 libavif libepoxy libgcrypt libgpg-error libjpeg-turbo libjxl libpng libsecret libsoup libtasn1 libwebp libxml2 libxslt pango sqlite woff2 zlib | gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret | `qnx-test-webkitgtk` | x86✅ᵛ a64✅ᵛ |
+| [`webrtc-screencast`](../ports/webrtc-screencast/) | Watch the desktop in a web browser over WebRTC (view only) | 1.1 | `apk add webrtc-screencast` | libxkbcommon wayland | webrtc wayland wlr-protocols libxkbcommon | `qnx-test-webrtc-screencast` | – |
 | [`wget`](../ports/wget/) | GNU Wget, non-interactive HTTP, HTTPS and FTP downloader | 1.25.0 | `apk add wget` | gnutls libiconv libpsl libunistring nettle pcre2 zlib | gnutls libidn2 zlib pcre2 libpsl | `qnx-test-cli-tools` | x86✅ᵛ a64✅ᵛ |
 | [`wlroots`](../ports/wlroots/) | Modular library for building Wayland compositors | 0.20.2 | `apk add wlroots` | lcms2 libxkbcommon pixman wayland | wayland wayland-protocols pixman libxkbcommon lcms2 libdrm-headers linux-headers-input-codes | `qnx-test-wlroots` | x86✅ᵛ a64✅ᵛ |
 | [`woff2`](../ports/woff2/) | Library and tools for WOFF2 font compression and decompression | 1.0.2 | `apk add woff2` | brotli | brotli | `qnx-test-woff2` | x86✅ᵛ a64✅ᵛ |

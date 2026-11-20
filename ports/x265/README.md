@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://bitbucket.org/multicoreware/x265_git.git (tag `3.6`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -80,10 +80,11 @@ The project lives in the `source/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/x265 < ports/x265/patches/0001-cmake4-policies.patch
+patch -p1 -d src/x265 < ports/x265/patches/0002-cxx11.patch
 ```
 
 **[`0001-cmake4-policies.patch`](patches/0001-cmake4-policies.patch)** — x265: set CMP0025 and CMP0054 to NEW for CMake 4.
@@ -93,6 +94,14 @@ patch -p1 -d src/x265 < ports/x265/patches/0001-cmake4-policies.patch
 > default.
 
 Touches: `source/CMakeLists.txt` · Upstream status: Pending (not QNX-specific: CMake 4)
+
+**[`0002-cxx11.patch`](patches/0002-cxx11.patch)** — x265: compile as C++11, not C++98.
+
+> Without HDR10+ the build asks for -std=gnu++98. The libc++ of QNX SDP 8.0.6
+> no longer accepts C++03 from GCC ("libc++ only supports C++03 with
+> Clang-based compilers"); the sources are valid C++11.
+
+Touches: `source/CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

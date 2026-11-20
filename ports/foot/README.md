@@ -9,7 +9,7 @@
 | Upstream | https://codeberg.org/dnkl/foot.git (tag `1.23.1`) |
 | Build system | Meson |
 | QNX patches | 6 |
-| Build dependencies | [`pixman`](../pixman/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`fontconfig`](../fontconfig/) [`utf8proc`](../utf8proc/) [`tllist`](../tllist/) [`fcft`](../fcft/) [`ncurses`](../ncurses/) |
+| Build dependencies | [`pixman`](../pixman/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`fontconfig`](../fontconfig/) [`utf8proc`](../utf8proc/) [`tllist`](../tllist/) [`fcft`](../fcft/) [`ncurses`](../ncurses/) [`linux-headers-input-codes`](../linux-headers-input-codes/) |
 | Run-time dependencies | [`fcft`](../fcft/) [`fontconfig`](../fontconfig/) [`libxkbcommon`](../libxkbcommon/) [`pixman`](../pixman/) [`utf8proc`](../utf8proc/) [`wayland`](../wayland/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_foot`](../../tests/src/) |
@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (32 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (33 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses
+./scripts/qnxbuild pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes
 ```
 
-<details><summary>Full build chain (32)</summary>
+<details><summary>Full build chain (33)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fcft`](../fcft/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`tllist`](../tllist/) [`utf8proc`](../utf8proc/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`fcft`](../fcft/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libpng`](../libpng/) [`libunistring`](../libunistring/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`linux-headers-input-codes`](../linux-headers-input-codes/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`tllist`](../tllist/) [`utf8proc`](../utf8proc/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -275,7 +275,7 @@ This recipe builds **1.23.1**. Every version stays available: packages in `dists
 # foot: a fast, lightweight and minimalistic Wayland terminal emulator
 # (fcft fonts, pixman rendering, a server/client mode, sixel images).
 VERSION=1.23.1; GIT=https://codeberg.org/dnkl/foot.git; REF=1.23.1
-DEPS="pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses"
+DEPS="pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes"
 # The "foot" terminfo entries come with ncurses' terminfo database, so foot's
 # own copy is not installed (they would be the same files twice).
 RUNTIME_DEPS="ncurses"

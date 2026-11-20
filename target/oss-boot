@@ -10,12 +10,18 @@
 #                  itself into /data/oss from here, without a network
 #     keys/        the key the packages are signed with
 #     packages     the packages to install at boot, one or several per line
+#     desktop      not empty: start the desktop (oss-desktop) at the end
+#     install-once not empty: install the packages at the first boot only; on
+#                  later boots nothing is installed (apk add by hand)
 #     sdp          the SDP release the image was made with (8.0, 8.0.6)
 # On the data partition (writable):  /data/oss, seen as /usr/local
 #     etc/oss-packages   the list in use: copied from the image at the first
 #                        boot; edit it and reboot (or run oss-boot) to change
 #                        what the target has
 #     etc/rc.local       run at the end, if executable (start your services)
+#     etc/no-desktop     when it exists the desktop is not started
+#     etc/oss-installed  written when the first-boot install succeeded
+#                        (install-once): the install is not repeated
 #     var/log/oss-boot.log
 #
 # Also used on a board image (a BSP's IFS with a data partition mounted at
@@ -24,11 +30,18 @@
 # Every boot: link /usr/local, "apk add" the list (nothing to do when all is
 # installed; no network: reported, the boot goes on), start the ported sshd
 # when it is installed. Safe to run by hand at any time.
+#
+# Environment:
+#   OSS_BOOT_LOG=-        output on stdout instead of the log (a first boot
+#                         run in the foreground: the caller shows it and
+#                         appends it to the log with tee)
+#   OSS_BOOT_DESKTOP=no   do not start the desktop (such a foreground run:
+#                         QNX Screen starts after it)
 SEED=${OSS_SEED:-/system/oss-seed}
 ROOT=/data/oss
 LOG=$ROOT/var/log/oss-boot.log
 mkdir -p $ROOT/var/log $ROOT/etc
-exec >> $LOG 2>&1
+[ "$OSS_BOOT_LOG" = - ] || exec >> $LOG 2>&1
 echo "== oss-boot $(date)"
 
 # 1. apk on /data/oss, from the image's own copy (first boot only)
@@ -45,17 +58,46 @@ PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/toybox/bin:/system/
 LD_LIBRARY_PATH=/usr/local/lib:/system/lib:/system/lib/dll:/proc/boot${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export PATH LD_LIBRARY_PATH
 
+# The desktop, on an image made for it (make-ported-image --desktop): the
+# session of root, started again when it ends (Log Out), like a display
+# manager with automatic log-in. Restart and Shut Down end the system.
+# Called before the packages are looked at (a later boot: the desktop is
+# there at once) and after (the first boot: when it has been installed).
+start_desktop() {
+  [ "$OSS_BOOT_DESKTOP" != no ] && [ -n "$(cat $SEED/desktop 2>/dev/null)" ] && [ -x /usr/local/bin/oss-desktop ] && [ ! -e $ROOT/etc/no-desktop ] || return 0
+  [ -n "$DESKTOP_STARTED" ] && return 0
+  n=0; until [ -e /dev/screen ]; do n=$((n+1)); [ $n -ge 30 ] && break; sleep 1; done
+  if [ ! -e /dev/screen ]; then echo "!! QNX Screen is not running: no desktop"; return 0; fi
+  echo "starting the desktop"; DESKTOP_STARTED=1
+  ( export HOME=/data/home/root SHELL=/usr/local/bin/bash USER=root LOGNAME=root
+    export SSL_CERT_FILE=/usr/local/ssl/cert.pem
+    cd $HOME
+    while [ ! -e $ROOT/etc/no-desktop ]; do
+      /usr/local/bin/oss-desktop >> $ROOT/var/log/oss-desktop.log 2>&1
+      sleep 2
+    done ) >> $ROOT/var/log/oss-desktop.log 2>&1 &
+}
+start_desktop
+
 # 3. the packages this target is to have, from GitHub
 LIST=$ROOT/etc/oss-packages
 [ -f $LIST ] || cp $SEED/packages $LIST
 want=$(echo $(sed 's/#.*//' $LIST))
-if [ -n "$want" ]; then
+ONCE=$(cat $SEED/install-once 2>/dev/null)
+if [ -n "$ONCE" ] && [ -e $ROOT/etc/oss-installed ]; then
+  echo "packages: installed at the first boot ($(cat $ROOT/etc/oss-installed)); add more with: apk add <package>"
+elif [ -n "$want" ]; then
   n=0
   until $ROOT/bin/apk update >/dev/null 2>&1; do      # the network may not be up yet
     n=$((n+1)); [ $n -ge 12 ] && break; sleep 5
   done
   if [ $n -lt 12 ]; then
-    $ROOT/bin/apk add $want && echo "packages installed: $want" || echo "!! apk add failed"
+    if $ROOT/bin/apk add $want; then
+      echo "packages installed: $want"
+      [ -n "$ONCE" ] && date > $ROOT/etc/oss-installed
+    else
+      echo "!! apk add failed (the first-boot install is tried again at the next boot)"
+    fi
   else
     echo "!! no connection to the package repositories; installed packages stay as they are"
   fi
@@ -82,4 +124,6 @@ if [ -x /usr/local/sbin/sshd ] && ! pidin -F %n | grep -q usr/local/sbin/sshd; t
 fi
 
 [ -x $ROOT/etc/rc.local ] && $ROOT/etc/rc.local
+
+start_desktop
 echo "== oss-boot done $(date)"

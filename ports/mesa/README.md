@@ -11,7 +11,7 @@
 | Build system | Meson |
 | QNX patches | 6 |
 | Build dependencies | [`llvm`](../llvm/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`zlib`](../zlib/) [`zstd`](../zstd/) [`expat`](../expat/) |
-| Run-time dependencies | [`expat`](../expat/) [`llvm`](../llvm/) [`wayland`](../wayland/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`expat`](../expat/) [`llvm`](../llvm/) [`spirv-tools`](../spirv-tools/) [`wayland`](../wayland/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_mesa_wayland`](../../tests/src/) |
 

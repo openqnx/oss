@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/mamedev/mame.git (tag `mame0281`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -84,10 +84,11 @@ git clone --depth 1 -b mame0281 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/mame < ports/mame/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/mame < ports/mame/patches/0002-no-sdl-syswm-qnx.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Port mame to QNX 8.0
@@ -134,6 +135,17 @@ patch -p1 -d src/mame < ports/mame/patches/0001-qnx-from-qnx-ports.patch
 >  38 files changed, 514 insertions(+), 143 deletions(-)
 
 Touches: `3rdparty/asio/include/asio/detail/config.hpp`, `3rdparty/asio/include/asio/detail/impl/posix_thread.ipp`, `3rdparty/asio/include/asio/detail/socket_types.hpp`, `3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp`, `3rdparty/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp`, `3rdparty/asio/src/tests/unit/ip/multicast.cpp` … · Upstream status: QNX-specific (from qnx-ports)
+
+**[`0002-no-sdl-syswm-qnx.patch`](patches/0002-no-sdl-syswm-qnx.patch)** — bgfx: drop the SDL_SYSWM_QNX cases, this SDL2 has no such subsystem
+
+> qnx-ports' MAME expects its own SDL2, whose SDL_syswm.h has a QNX
+> subsystem (SDL_SYSWM_QNX, info.qnx.window). The SDL2 of this tree has a
+> QNX Screen video driver (SDL_VIDEO_DRIVER_QNX) but no such subsystem, so
+> the two cases did not compile. Without them the bgfx renderer reports the
+> window manager as unsupported on Screen; the soft, accel and OpenGL
+> renderers do not use this code.
+
+Touches: `src/osd/modules/render/drawbgfx.cpp` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

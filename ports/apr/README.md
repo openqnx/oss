@@ -2,7 +2,7 @@
 
 > Apache Portable Runtime, a portable C API for system services
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
@@ -10,7 +10,7 @@
 | SHA-256 | `49030d92d2575da735791b496dc322f3ce5cff9494779ba8cc28c7f46c5deb32` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
-| Build dependencies | none |
+| Build dependencies | [`libxcrypt`](../libxcrypt/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_apr`](../../tests/src/) |
@@ -68,7 +68,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild libxcrypt
+```
 
 ### 2. Get the upstream source
 
@@ -101,6 +105,7 @@ do_install() {
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
+- libxcrypt: with <crypt.h> staged, apr.h says APR_HAVE_CRYPT_H 1 and apr-util (apr_password_validate, crypt_r) builds; without the dependency a clean build configured apr before libxcrypt and apr-util then failed.
 - configure runs ~30 test programs, none of which can run in a cross build. The answers, checked against the SDP 8.0 headers and QNX's behaviour: - /dev/zero exists and can be mapped shared; getaddrinfo/getnameinfo and AI_ADDRCONFIG work; EAI_* codes are positive (BSD numbering); - QNX's socket layer is FreeBSD's: an accepted socket inherits TCP_NODELAY and O_NONBLOCK from the listener (the run-level test checks the latter); there is no TCP_CORK (TCP_NOPUSH instead) and no SCTP; - accept4() and SOCK_CLOEXEC exist (SDP 8.0), dup3() does not; - epoll is only a Linux-compatibility shim (libepoll): APR uses poll(); - POSIX semaphores, process-shared and recursive pthread mutexes work; robust mutexes are left out of the default cross-process lock choice, which is then fcntl() locking, APR's classic default; - GCC's 32/64-bit __sync and __atomic builtins; strerror_r returns int; 64-bit off_t already (no _LARGEFILE64_SOURCE); struct rlimit. QNX's libc has no crypt(), and nothing in apr calls it: configure's search would otherwise link (and export to every user) libxcrypt. Likewise libuuid: apr_os_uuid_get() is used only when there is one, and APR's own UUIDs (random bytes and the clock) need none, so it is not looked for.
 - The build files apr-util and others take from apr-1-config --installbuilddir (apr_rules.mk, libtool) go under share/, not upstream's $PREFIX/build-1.
 - apr-1-config names the source and build trees for use from an uninstalled build; installed (or run from staging, "crosscompile") it never uses them, and a package must not name the build machine.
@@ -223,6 +228,10 @@ VERSION=1.7.6
 TARBALL=https://archive.apache.org/dist/apr/apr-1.7.6.tar.bz2
 SHA256=49030d92d2575da735791b496dc322f3ce5cff9494779ba8cc28c7f46c5deb32
 BUILDSYS=autotools
+# libxcrypt: with <crypt.h> staged, apr.h says APR_HAVE_CRYPT_H 1 and apr-util
+# (apr_password_validate, crypt_r) builds; without the dependency a clean
+# build configured apr before libxcrypt and apr-util then failed.
+DEPS="libxcrypt"
 # configure runs ~30 test programs, none of which can run in a cross build.
 # The answers, checked against the SDP 8.0 headers and QNX's behaviour:
 #  - /dev/zero exists and can be mapped shared; getaddrinfo/getnameinfo and

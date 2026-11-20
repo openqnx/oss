@@ -10,7 +10,7 @@
 | SHA-256 | `270a3752a960368aa99d431fb5d34f4039b2ac943c576d840612d1d8185c9bb9` |
 | Build system | GNU Autotools |
 | QNX patches | 2 |
-| Build dependencies | [`cups`](../cups/) [`poppler`](../poppler/) [`qpdf`](../qpdf/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`zlib`](../zlib/) [`glib`](../glib/) |
+| Build dependencies | [`cups`](../cups/) [`poppler`](../poppler/) [`qpdf`](../qpdf/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`zlib`](../zlib/) [`glib`](../glib/) [`libexif`](../libexif/) |
 | Run-time dependencies | [`avahi`](../avahi/) [`cups`](../cups/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libexif`](../libexif/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`poppler`](../poppler/) [`qpdf`](../qpdf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_cups_filters`](../../tests/src/) |
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (43 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (44 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib
+./scripts/qnxbuild cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib libexif
 ```
 
-<details><summary>Full build chain (43)</summary>
+<details><summary>Full build chain (44)</summary>
 
-[`avahi`](../avahi/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`cups`](../cups/) [`dbus`](../dbus/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libdaemon`](../libdaemon/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcrypt`](../libxcrypt/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openjpeg`](../openjpeg/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`poppler`](../poppler/) [`pthread-stubs`](../pthread-stubs/) [`qpdf`](../qpdf/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`avahi`](../avahi/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`cups`](../cups/) [`dbus`](../dbus/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libdaemon`](../libdaemon/) [`libexif`](../libexif/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcrypt`](../libxcrypt/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openjpeg`](../openjpeg/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`poppler`](../poppler/) [`pthread-stubs`](../pthread-stubs/) [`qpdf`](../qpdf/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -263,7 +263,7 @@ VERSION=1.28.17
 TARBALL=https://github.com/OpenPrinting/cups-filters/releases/download/1.28.17/cups-filters-1.28.17.tar.xz
 SHA256=270a3752a960368aa99d431fb5d34f4039b2ac943c576d840612d1d8185c9bb9
 BUILDSYS=autotools
-DEPS="cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib"
+DEPS="cups poppler qpdf fontconfig freetype lcms2 libjpeg-turbo libpng libtiff zlib glib libexif"
 RUNTIME_DEPS="cups"
 # Off: Ghostscript and MuPDF (not ported -- the Poppler-based pdftops and
 # pdftoraster take their place), Foomatic, Braille, LDAP, D-Bus colour

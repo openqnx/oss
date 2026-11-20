@@ -6,6 +6,11 @@
 #   oss-desktop --headless      without a display (checks the session starts)
 #
 # Packages from github.com/openqnx/oss under /data/oss (apk-setup), or at /.
+# A boot environment may carry ENV (QNX's ksh reads it even when not
+# interactive: ENV=/etc/profile resets PATH in every shell this starts) and a
+# FONTCONFIG_FILE for QNX's own fontconfig, which the ported one cannot read
+# (every glyph a box). Neither belongs to this session.
+unset ENV FONTCONFIG_FILE
 P=$(cd "$(dirname "$0")/.." && pwd)
 [ -f /data/oss/etc/oss-env.sh ] && . /data/oss/etc/oss-env.sh
 case "$1" in
@@ -19,10 +24,11 @@ export WLR_BACKENDS ${WLR_RENDERER:+WLR_RENDERER}
 : "${XDG_RUNTIME_DIR:=/tmp/xdg-runtime-$(id -u)}"; mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 : "${HOME:=/tmp}"
 export XDG_RUNTIME_DIR HOME
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/etc/xdg}"
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/share/oss-desktop/xdg:$P/etc/xdg}"
 export XDG_CURRENT_DESKTOP=XFCE XDG_SESSION_TYPE=wayland GDK_BACKEND=wayland
 export XCURSOR_PATH="$P/share/icons" GTK_THEME="${GTK_THEME:-Adwaita}"
-export FONTCONFIG_PATH="${FONTCONFIG_PATH:-$P/etc/fonts}"
+[ -f "${FONTCONFIG_PATH:-/nonexistent}/fonts.conf" ] || FONTCONFIG_PATH=$P/etc/fonts
+export FONTCONFIG_PATH
 export TERMINFO="${TERMINFO:-$P/share/terminfo}"
 # GLib's helpers (gdk-pixbuf loaders, GIO modules) live under the prefix.
 [ -f "$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" ] && export GDK_PIXBUF_MODULE_FILE="$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"

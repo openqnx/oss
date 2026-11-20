@@ -9,7 +9,7 @@
 | Upstream | https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.2.tar.bz2 |
 | SHA-256 | `a0b80b7136515bc3c0c54fa859ad420365e29b715b6da0b58a2d2781bfbe73c3` |
 | Build system | GNU Autotools |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`xfconf`](../xfconf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -91,11 +91,12 @@ tar xf dist/$(basename $URL) -C src/xfce4-session --strip-components=1
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/xfce4-session < ports/xfce4-session/patches/0001-aports-0001-Fix-logout-shutdown-and-restart.patch
 patch -p1 -d src/xfce4-session < ports/xfce4-session/patches/0002-session-editor-only-with-x11.patch
+patch -p1 -d src/xfce4-session < ports/xfce4-session/patches/0003-qnx-shutdown-from-path.patch
 ```
 
 **[`0001-aports-0001-Fix-logout-shutdown-and-restart.patch`](patches/0001-aports-0001-Fix-logout-shutdown-and-restart.patch)** — QNX change from QNX's aports (extra/xfce4-session/0001-Fix-logout-shutdown-and-restart.patch).
@@ -127,6 +128,10 @@ Touches: `libxfsm/xfsm-shutdown-common.h`, `xfce4-session/main.c`, `xfce4-sessio
 > stays in the build and its contents are compiled only when ENABLE_X11 is set.
 
 Touches: `settings/main.c`, `settings/session-editor.c` · Upstream status: QNX-specific
+
+**[`0003-qnx-shutdown-from-path.patch`](patches/0003-qnx-shutdown-from-path.patch)** — Power off and restart: shutdown found in PATH, sudo only when not root
+
+Touches: `libxfsm/xfsm-shutdown-common.h` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

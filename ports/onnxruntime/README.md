@@ -8,9 +8,9 @@
 |---|---|
 | Upstream | https://github.com/microsoft/onnxruntime.git (tag `v1.20.1`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`protobuf`](../protobuf/) |
-| Run-time dependencies | [`zlib`](../zlib/) |
+| Run-time dependencies | [`libiconv`](../libiconv/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_onnxruntime`](../../tests/src/) |
 
@@ -87,10 +87,11 @@ git clone --depth 1 -b v1.20.1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/onnxruntime < ports/onnxruntime/patches/0001-qnx-platform-fixes.patch
+patch -p1 -d src/onnxruntime < ports/onnxruntime/patches/0002-mlas-gemm-kernels-no-divide.patch
 ```
 
 **[`0001-qnx-platform-fixes.patch`](patches/0001-qnx-platform-fixes.patch)** — ONNX Runtime: QNX platform fixes.
@@ -105,6 +106,30 @@ patch -p1 -d src/onnxruntime < ports/onnxruntime/patches/0001-qnx-platform-fixes
 > - cmake: qcc does not accept -Xlinker; use -Wl, for the version script.
 
 Touches: `onnxruntime/core/platform/path_lib.h`, `onnxruntime/core/common/logging/logging.cc`, `onnxruntime/core/platform/posix/env.cc`, `onnxruntime/core/common/threadpool.cc`, `onnxruntime/core/platform/posix/stacktrace.cc`, `cmake/onnxruntime.cmake` … · Upstream status: QNX-specific
+
+**[`0002-mlas-gemm-kernels-no-divide.patch`](patches/0002-mlas-gemm-kernels-no-divide.patch)** — MLAS x86_64 GEMM kernels: element counts without "/" (wrong results on QNX).
+
+> The assembly SGEMM/DGEMM kernels (FMA3, AVX, AVX512F) take the number of
+> elements per vector register from
+>     .equ .LFgemmYmmElementCount, 32 / .LFgemmElementSize
+> For x86 ELF targets other than Linux -- QNX among them -- the GNU assembler
+> treats "/" as the start of a comment unless it is run with --divide. It
+> gave no diagnostic: the three counts became 16, 32 and 64 instead of 4, 8
+> and 16 (float), so the kernels compared and stepped the column count with
+> the wrong constants. Every float or double matrix product with 16 or more
+> columns that goes through these kernels (MatMul, Gemm, Conv, ...) returned
+> unwritten or wrong output; with fewer columns only the masked tail path
+> runs, which is why small cases passed. Found with Piper: a VITS voice
+> failed in a different node on each run (GatherElements rank, Reshape) or
+> produced garbage audio; a bare MatMul 16x16 * 16x16 is already wrong.
+>
+> The same values written with the shift count the kernels already define
+> (.LFgemmElementShift), which every assembler evaluates: the object code is
+> then byte for byte what the Linux assembler produces from the original
+> source (checked for the six kernels). No other MLAS x86_64 source file
+> uses "/" in an expression. aarch64 is not affected.
+
+Touches: `onnxruntime/core/mlas/lib/x86_64/FgemmKernelCommon.h` · Upstream status: Pending (not QNX-specific: any gas target where "/" is a comment character)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -176,6 +201,7 @@ do_configure() {
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \
     -Donnxruntime_BUILD_BENCHMARKS=OFF \
     -Donnxruntime_ENABLE_PYTHON=OFF \
+    -DPYTHON_EXECUTABLE="$WS/hosttools/bin/python3" -DPython_EXECUTABLE="$WS/hosttools/bin/python3" -DPython3_EXECUTABLE="$WS/hosttools/bin/python3" \
     -Donnxruntime_USE_FULL_PROTOBUF=ON \
     -DONNX_CUSTOM_PROTOC_EXECUTABLE="$HOST_PROTOC" \
     -DProtobuf_PROTOC_EXECUTABLE="$HOST_PROTOC" \
@@ -298,6 +324,9 @@ PASS onnxruntime
    - tensor shape round trip
    - tensor data readback
    - at least one execution provider
+   - MatMul model from memory: 13 float products, 1x1 to 192x192 and 100x300x50, equal a plain loop
+   - the same products in double
+   - and with 4 intra-op threads
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
@@ -305,8 +334,10 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64 virt (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | onnxruntime 1.20.1-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/onnxruntime-1.20.1-r0.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | onnxruntime 1.20.1-r1 | ✅ PASS | 2026-11-13 | [log](../../tests/logs/aarch64le/onnxruntime-1.20.1-r1.log) |
 | x86_64 | QEMU x86_64 (mkqnximage image + SDP runtime libraries) | bundle | – | ✅ PASS | 2026-10-30 | – |
 | x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | onnxruntime 1.20.1-r0 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/x86_64/onnxruntime-1.20.1-r0.log) |
+| x86_64 | QEMU x86_64, vanilla mkqnximage image | apk:local-dists | onnxruntime 1.20.1-r1 | ✅ PASS | 2026-11-13 | [log](../../tests/logs/x86_64/onnxruntime-1.20.1-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -389,6 +420,7 @@ do_configure() {
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \
     -Donnxruntime_BUILD_BENCHMARKS=OFF \
     -Donnxruntime_ENABLE_PYTHON=OFF \
+    -DPYTHON_EXECUTABLE="$WS/hosttools/bin/python3" -DPython_EXECUTABLE="$WS/hosttools/bin/python3" -DPython3_EXECUTABLE="$WS/hosttools/bin/python3" \
     -Donnxruntime_USE_FULL_PROTOBUF=ON \
     -DONNX_CUSTOM_PROTOC_EXECUTABLE="$HOST_PROTOC" \
     -DProtobuf_PROTOC_EXECUTABLE="$HOST_PROTOC" \

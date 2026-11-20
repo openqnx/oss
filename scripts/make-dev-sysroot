@@ -1,0 +1,30 @@
+#!/bin/bash
+# make-dev-sysroot -- what a compiler running ON the target needs from QNX:
+# the SDP's headers and link-time files, collected from YOUR SDP installation
+# into <dir>/usr/include and <dir>/usr/lib (seen on the target as /usr/include
+# and /usr/lib, where the ported clang looks). QNX Everywhere's Developer
+# Desktop image carries the same; the packages of this project cannot (the
+# files are QNX's, under your SDP license: they stay on your machines).
+#
+#   scripts/make-dev-sysroot <x86_64|aarch64le> <dir>     (QNX_SDP_ROOT set)
+#
+# usr/lib: the C start-up objects (crt*.o, the compiler's crtbegin/crtend),
+# every shared library by its link name (libfoo.so), and the static libc,
+# libm, libgcc and libc++.
+set -eo pipefail
+A=${1:?usage: make-dev-sysroot <x86_64|aarch64le> <dir>}; D=${2:?usage: make-dev-sysroot <arch> <dir>}
+: "${QNX_SDP_ROOT:?set QNX_SDP_ROOT}"
+T=$QNX_SDP_ROOT/target/qnx; TA=$T/$A
+case "$A" in x86_64) trip=x86_64-pc-nto-qnx ;; aarch64le) trip=aarch64-unknown-nto-qnx ;; *) echo "unknown arch $A" >&2; exit 2 ;; esac
+G=$(ls -d "$QNX_SDP_ROOT"/host/linux/x86_64/usr/lib/gcc/$trip*/*/ | head -n 1)
+[ -f "$G/crtbegin.o" ] || { echo "no crtbegin.o under $G" >&2; exit 1; }
+rm -rf "$D"; mkdir -p "$D/usr/lib"
+cp -a "$T/usr/include" "$D/usr/include"
+cp "$TA"/lib/*.o "$G"/crtbegin*.o "$G"/crtend*.o "$G"/libgcc.a "$G"/libgcc_eh.a "$D/usr/lib/"
+for f in "$TA"/lib/lib*.so "$TA"/usr/lib/lib*.so; do
+  [ -e "$f" ] && cp -L "$f" "$D/usr/lib/"         # the link name, with the library's contents
+done
+for n in libc.a libcS.a libm.a libmS.a libc++.a libsocket.a; do
+  for d in "$TA/lib" "$TA/usr/lib"; do [ -f "$d/$n" ] && cp "$d/$n" "$D/usr/lib/"; done
+done
+echo "$D: $(du -sh "$D/usr/include" | cut -f1) headers, $(du -sh "$D/usr/lib" | cut -f1) link-time files ($(ls "$D/usr/lib" | wc -l) files, SDP $(basename "$QNX_SDP_ROOT"), $A)"

@@ -416,6 +416,9 @@ pkg_check_modules(WLROOTS REQUIRED IMPORTED_TARGET wlroots-0.20)
 port_test(test_wlroots          test_wlroots.c           PkgConfig::WLROOTS PkgConfig::WLSERVER)
 target_include_directories(test_wlroots PRIVATE "${INC}/libdrm-uapi")
 port_test(test_labwc            test_labwc.c             PkgConfig::WLCLIENT)
+# webrtc-screencast: the desktop in a browser (labwc headless + the program,
+# driven over HTTP like a browser does).
+port_test(test_webrtc_screencast test_webrtc_screencast.c)
 pkg_check_modules(SFDO REQUIRED IMPORTED_TARGET libsfdo-desktop libsfdo-basedir)
 port_test(test_libsfdo          test_libsfdo.c           PkgConfig::SFDO)
 

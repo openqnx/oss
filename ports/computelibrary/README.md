@@ -2,14 +2,14 @@
 
 > Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
 | Upstream | https://github.com/ARM-software/ComputeLibrary.git (tag `v53.0.0`) |
 | Build system | CMake |
 | QNX patches | 2 |
-| Build dependencies | none |
+| Build dependencies | [`opencl-headers`](../opencl-headers/) |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_computelibrary`](../../tests/src/) |
@@ -34,7 +34,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild opencl-headers
+```
 
 ### 2. Get the upstream source
 
@@ -75,32 +79,29 @@ Touches: `CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-cmake -S src/computelibrary -B build/$QNX_ARCH/computelibrary -G Ninja \
-      -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
-      -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
-      -DARM_COMPUTE_BUILD_SHARED_LIB=ON \
-      -DARM_COMPUTE_ENABLE_OPENMP=OFF \
-      -DARM_COMPUTE_BUILD_EXAMPLES=OFF \
-      -DARM_COMPUTE_BUILD_TESTING=OFF \
-      -DCMAKE_CXX_FLAGS=-std=gnu++17 \
-      -isystem \
-      $STAGE$PREFIX/include \
-      -D_QNX_SOURCE=1
-cmake --build build/$QNX_ARCH/computelibrary -j$(nproc)
-DESTDIR=$STAGE cmake --install build/$QNX_ARCH/computelibrary
+S=src/computelibrary; B=build/$QNX_ARCH/computelibrary; mkdir -p $B
+```
+
+```bash
+do_install() {
+  DESTDIR="$STAGE" cmake --install "$B" || return 1
+  find "$STAGE$PREFIX/include/CL" -type f ! -name opencl.hpp -delete
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Arm Compute Library: NEON/SVE kernels for Arm CPUs -- aarch64 only.
+- The library bundles a copy of the Khronos OpenCL headers and installs it as include/CL. The C headers are the opencl-headers component's (the same files, newer): only the C++ binding CL/opencl.hpp, which arm_compute/core/CL/OpenCL.h includes, stays here.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH computelibrary`.
 
 ### 5. What it installs
 
-2279 files under `/usr/local`: 2 shared-library entries, 2273 headers.
+2263 files under `/usr/local`: 2 shared-library entries, 2257 headers.
 
 ```
 /usr/local/lib/libarm_compute.so
@@ -176,7 +177,7 @@ Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-re
 | Arch | Target | Installed from | Version | Result | Date | Log |
 |---|---|---|---|---|---|---|
 | aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | computelibrary 53.0.0-r0 | ✅ PASS | 2026-10-31 | [log](../../tests/logs/aarch64le/computelibrary-53.0.0-r0.log) |
-| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | computelibrary 53.0.0-r1 | ✅ PASS | 2026-11-01 | [log](../../tests/logs/aarch64le/computelibrary-53.0.0-r1.log) |
+| aarch64le | QEMU aarch64le, vanilla mkqnximage image | apk:local-dists | computelibrary 53.0.0-r1 | ✅ PASS | 2026-11-13 | [log](../../tests/logs/aarch64le/computelibrary-53.0.0-r1.log) |
 
 The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../docs/qemu-test-vms.md) shows how to build the same ones and run the same commands yourself.
 
@@ -193,6 +194,15 @@ ARCHES_SUPPORTED="aarch64le"
 CMAKE_ARGS_EXTRA=( -DARM_COMPUTE_BUILD_SHARED_LIB=ON -DARM_COMPUTE_ENABLE_OPENMP=OFF
                    -DARM_COMPUTE_BUILD_EXAMPLES=OFF -DARM_COMPUTE_BUILD_TESTING=OFF
                    "-DCMAKE_CXX_FLAGS=-std=gnu++17 -isystem $STAGE$PREFIX/include -D_QNX_SOURCE=1" )
+# The library bundles a copy of the Khronos OpenCL headers and installs it as
+# include/CL. The C headers are the opencl-headers component's (the same
+# files, newer): only the C++ binding CL/opencl.hpp, which
+# arm_compute/core/CL/OpenCL.h includes, stays here.
+DEPS="opencl-headers"
+do_install() {
+  DESTDIR="$STAGE" cmake --install "$B" || return 1
+  find "$STAGE$PREFIX/include/CL" -type f ! -name opencl.hpp -delete
+}
 ```
 </details>
 

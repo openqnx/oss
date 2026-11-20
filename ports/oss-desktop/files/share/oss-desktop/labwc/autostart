@@ -1,3 +1,9 @@
 # Started by labwc when the session comes up.
 swaybg -c '#1d2a3a' -m solid_color >/dev/null 2>&1 &
-xfce4-panel >/dev/null 2>&1 &
+# The Xfce session (settings daemon, panel, file manager daemon). Logging out
+# ends xfce4-session, and the session with it. Without xfce4-session: the panel alone.
+if command -v xfce4-session >/dev/null 2>&1; then
+  ( xfce4-session > "$XDG_RUNTIME_DIR/xfce4-session.log" 2>&1; labwc --exit ) &
+else
+  xfce4-panel >/dev/null 2>&1 &
+fi

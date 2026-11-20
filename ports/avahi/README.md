@@ -138,99 +138,30 @@ Touches: `avahi-utils/sigint.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-# A git checkout has no ./configure yet
-( cd src/avahi && if [ -f autogen.sh ]; then NOCONFIGURE=1 ./autogen.sh; else autoreconf -fi; fi )
-mkdir -p build/$QNX_ARCH/avahi && cd build/$QNX_ARCH/avahi
-CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
-CPP="$QNX_HOST/usr/bin/$QNX_TRIPLE-gcc -E" \
-CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
-CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
-LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
-         -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
-$OLDPWD/src/avahi/configure --host=$QNX_TRIPLE --prefix=/usr/local \
-    --enable-shared \
-    --disable-static \
-    --with-distro=none \
-    --disable-nls \
-    --disable-glib \
-    --disable-gobject \
-    --disable-libevent \
-    --disable-qt3 \
-    --disable-qt4 \
-    --disable-qt5 \
-    --disable-gtk \
-    --disable-gtk3 \
-    --disable-python \
-    --disable-pygobject \
-    --disable-python-dbus \
-    --disable-mono \
-    --disable-monodoc \
-    --disable-gdbm \
-    --disable-dbm \
-    --disable-autoipd \
-    --disable-libsystemd \
-    --with-systemdsystemunitdir=no \
-    --disable-manpages \
-    --disable-xmltoman \
-    --disable-doxygen-doc \
-    --disable-tests \
-    --enable-compat-libdns_sd \
-    --disable-compat-howl \
-    --with-xml=expat \
-    --enable-dbus \
-    --enable-libdaemon \
-    # \
-    The \
-    system \
-    bus \
-    where \
-    the \
-    dbus \
-    port \
-    puts \
-    it \
-    (its \
-    system_bus_default_address). \
-    --with-dbus-system-address=unix:path=/var/local/run/dbus/system_bus_socket \
-    # \
-    A \
-    stock \
-    QNX \
-    target \
-    has \
-    no \
-    avahi \
-    account: \
-    run \
-    the \
-    daemon \
-    with \
-    # \
-    --no-drop-root \
-    (as \
-    root), \
-    or \
-    create \
-    the \
-    account. \
-    --with-avahi-user=avahi \
-    --with-avahi-group=avahi
-make -j$(nproc)
-make DESTDIR=$STAGE install
-cd -
+S=src/avahi; B=build/$QNX_ARCH/avahi; mkdir -p $B
+```
+
+```bash
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  find "$STAGE$PREFIX/share/man" -xtype l -name 'avahi-*' -delete 2>/dev/null || true
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Avahi mDNS/DNS-SD: avahi-daemon, libavahi-common/-core/-client, the avahi-browse/-publish/-resolve tools and the libdns_sd compatibility library. 0.9-rc3 with qnx-ports' QNX support (patches/0001: SA_RESTART, <stdint.h> types for the howl headers, avahi-common/malloc.h no longer shadowing <malloc.h>), the version that fork carries; 0002 makes 0001 work in an out-of-tree build, 0003 lets "avahi-daemon --no-drop-root" run without an avahi account (a stock QNX system has none), 0004 stops the client tools aborting on SIGINT/SIGTERM (QNX's POLLIN is two bits).
 - QNX's network stack is FreeBSD's: interfaces and addresses come from the PF_ROUTE socket (avahi-core/iface-pfroute.c; configure picks it from <net/route.h>, as on the BSDs). Netlink does not exist. Turned off: the GUI and language bindings (GTK, Qt, Python, Mono), the glib/libevent main-loop adapters, gdbm (the service-type name database avahi-browse uses for "human readable" names; the tools print the raw type), avahi-autoipd (IPv4LL through Linux packet sockets), systemd, and the man pages (xmltoman). --with-distro=none: no init scripts.
+- The man pages are off (no xmltoman), but "make install" still links the alias names (avahi-publish-service.1 -> avahi-publish.1, ...) to them: links to nothing. They are removed.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH avahi`.
 
 ### 5. What it installs
 
-67 files under `/usr/local`: 8 shared-library entries, 11 programs, 24 headers.
+62 files under `/usr/local`: 8 shared-library entries, 11 programs, 24 headers.
 
 ```
 /usr/local/lib/libavahi-client.so
@@ -360,6 +291,13 @@ CONF_ARGS_EXTRA=(
   # --no-drop-root (as root), or create the account.
   --with-avahi-user=avahi --with-avahi-group=avahi
 )
+# The man pages are off (no xmltoman), but "make install" still links the
+# alias names (avahi-publish-service.1 -> avahi-publish.1, ...) to them:
+# links to nothing. They are removed.
+do_install() {
+  make -C "$B" DESTDIR="$STAGE" install
+  find "$STAGE$PREFIX/share/man" -xtype l -name 'avahi-*' -delete 2>/dev/null || true
+}
 ```
 </details>
 

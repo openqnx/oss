@@ -79,8 +79,20 @@ def tarball_versions(url, name):
     if not stem:
         return {}, "listing"
     stem = stem.group(1)
-    req = urllib.request.Request(base + "/", headers={"User-Agent": "openqnx-oss check-updates"})
-    html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+    ua = {"User-Agent": "openqnx-oss check-updates"}
+    # PyPI's file hosts have no listing: its JSON API names every release
+    if re.match(r"https://files\.pythonhosted\.org/", url):
+        j = json.load(urllib.request.urlopen(urllib.request.Request(
+            "https://pypi.org/pypi/%s/json" % stem, headers=ua), timeout=30))
+        return {v: v for v, files in j.get("releases", {}).items() if files}, "pypi"
+    # SourceForge's download host has no listing either: the project's file RSS
+    m = re.match(r"https://(?:downloads\.sourceforge\.net|sourceforge\.net/projects)/(?:project/)?([^/]+)/", url)
+    if m:
+        base = "https://sourceforge.net/projects/%s/rss?path=/" % m.group(1)
+        html = urllib.request.urlopen(urllib.request.Request(base, headers=ua), timeout=30).read().decode("utf-8", "replace")
+    else:
+        req = urllib.request.Request(base + "/", headers=ua)
+        html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
     found = {}
     for f in set(re.findall(re.escape(stem) + r"[-_]v?(\d[\w.]*?)\.(?:tar\.(?:gz|xz|bz2|lz|zst)|tgz|zip)\b", html)):
         found[f] = f
@@ -108,6 +120,8 @@ def check(name):
             row.update(how="tags", latest=best or "", tag=tags.get(best, "") if best else "")
         elif r["TARBALL"]:
             vs, how = tarball_versions(r["TARBALL"], name)
+            if "." in cur:  # a listing also names other files (lame-398-2.tar.gz)
+                vs = {v: t for v, t in vs.items() if "." in v}
             best = newest(vs, allow_pre)
             row.update(how=how, latest=best or "", tag=vs.get(best, "") if best else "")
         else:

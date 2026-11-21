@@ -1,0 +1,38 @@
+# libjxl 0.11.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:45:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libjxl qnx-test-libjxl qnx-port-tests
+(1/6) Installing brotli (1.1.0-r0)
+(2/6) Installing highway (1.2.0-r0)
+(3/6) Installing lcms2 (2.16-r0)
+(4/6) Installing libjxl (0.11.1-r0)
+(5/6) Installing qnx-port-tests (1.0-r0)
+(6/6) Installing qnx-test-libjxl (1.0-r0)
+OK: 21.4 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libjxl
+     == libjxl ==
+       info libjxl 0.11.1
+       ok   JxlEncoderCreate
+       ok   SetBasicInfo
+       ok   SetColorEncoding
+       ok   SetFrameLossless
+       ok   JxlEncoderAddImageFrame
+       ok   JxlEncoderProcessOutput
+       ok   codestream bytes produced
+       ok   output carries a JXL signature
+       ok   JxlDecoderCreate
+       ok   SubscribeEvents
+       ok   basic info decoded with the right size
+       ok   full image decoded
+       ok   lossless round trip is byte-identical
+     PASS libjxl
+PASS test_libjxl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,41 @@
+# fast-float 8.0.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:19:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fast-float-dev qnx-test-fast-float qnx-port-tests
+(1/3) Installing fast-float-dev (8.0.2-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-fast-float (1.0-r0)
+OK: 10.1 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fast_float
+     == fast-float ==
+       ok   pi to 17 digits is M_PI exactly
+       ok   0.1 -> 0x1.999999999999ap-4
+       ok   2^53+1 rounds to even (2^53)
+       ok   2^53+3 rounds to even (2^53+4)
+       ok   smallest subnormal
+       ok   largest subnormal
+       ok   DBL_MAX
+       ok   -0 keeps its sign
+       ok   1e400 overflows to infinity
+       ok   float: 2^24+1 rounds to 2^24
+       ok   float: FLT_MAX
+       ok   partial parse stops after 12.5e3
+       ok   invalid input: invalid_argument
+       ok   chars_format::fixed ignores the exponent
+       ok   int: INT32_MIN
+       ok   int: 2^31 out of range
+       ok   base 16: ff = 255
+       ok   base 8: 777 = 511
+       info 4 of 7 hard cases agree bit for bit with the target's strtod
+       ok   1e23 and 2^56 as the compiler rounds them
+     PASS fast-float
+PASS test_fast_float
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

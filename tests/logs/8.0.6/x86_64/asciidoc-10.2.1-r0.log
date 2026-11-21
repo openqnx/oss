@@ -1,0 +1,53 @@
+# asciidoc <ip>-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:26:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u asciidoc qnx-test-asciidoc qnx-port-tests
+( 1/20) Installing libiconv (1.18-r0)
+( 2/20) Installing libunistring (1.3-r0)
+( 3/20) Installing ncurses (6.5-r0)
+( 4/20) Installing gettext (0.22.5-r0)
+( 5/20) Installing xz (5.6.3-r0)
+( 6/20) Installing libxml2 (2.13.5-r0)
+( 7/20) Installing libxslt (1.1.42-r0)
+( 8/20) Installing docbook-xsl (1.79.2-r0)
+( 9/20) Installing bzip2 (1.0.8-r0)
+(10/20) Installing expat (2.6.4-r0)
+(11/20) Installing gdbm (1.24-r0)
+(12/20) Installing libffi (3.4.6-r0)
+(13/20) Installing readline (8.2-r0)
+(14/20) Installing sqlite (3.47.2-r0)
+(15/20) Installing python3 (3.14.0-r0)
+(16/20) Installing xsltproc (1.1.42-r0)
+(17/20) Installing asciidoc (<ip>-r0)
+(18/20) Installing qnx-port-tests (1.0-r0)
+(19/20) Installing libxml2-utils (2.13.5-r0)
+(20/20) Installing qnx-test-asciidoc (1.0-r0)
+Executing python3-3.14.0-r0.trigger
+OK: 147.3 MiB in 25 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_asciidoc
+     == asciidoc ==
+       ok   asciidoc --version: <ip>
+       ok   html5 backend: doc.html written
+       ok   HTML <title>
+       ok   section heading with its id
+       ok   attribute {board} substituted
+       ok   two list items
+       ok   table: header cell and body cell
+       ok   listing block HTML-escaped
+       ok   docbook45 backend: article, section title, itemizedlist
+       ok   DocBook output is well-formed XML (xmllint)
+       ok   stdin to stdout, no header (-s): *QNX* -> <strong>
+       ok   a2x -f manpage: qnxtool.1 written
+       ok   man page .TH "QNXTOOL" "1"
+       ok   man page NAME section
+     PASS asciidoc
+PASS test_asciidoc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

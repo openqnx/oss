@@ -1,0 +1,39 @@
+# libxml2-utils 2.13.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:48:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxml2-utils qnx-test-libxml2-utils qnx-port-tests
+(1/9) Installing libiconv (1.18-r0)
+(2/9) Installing libunistring (1.3-r0)
+(3/9) Installing ncurses (6.5-r0)
+(4/9) Installing gettext (0.22.5-r0)
+(5/9) Installing xz (5.6.3-r0)
+(6/9) Installing libxml2 (2.13.5-r0)
+(7/9) Installing libxml2-utils (2.13.5-r0)
+(8/9) Installing qnx-port-tests (1.0-r0)
+(9/9) Installing qnx-test-libxml2-utils (1.0-r0)
+OK: 28.8 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxml2_utils
+     == libxml2-utils ==
+       info xmllint: using libxml version 21305
+       ok   xmllint uses libxml2 2.13.5
+       ok   malformed document: tag mismatch reported
+       ok   --valid: valid document accepted
+       ok   --valid: arch=mips rejected
+       ok   --schema: 7 valid, 70 above maxInclusive rejected
+       ok   --xpath count(//port) = 2
+       ok   --xpath string(//port[@arch=aarch64le]) = avahi
+       ok   --format indents children
+       ok   --c14n: sorted attributes, explicit end tag
+       ok   xmlcatalog: rewriteURI added and resolved
+       ok   xmllint --nonet reads http://example.org/qnx/flat.xml through the catalog
+     PASS libxml2-utils
+PASS test_libxml2_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

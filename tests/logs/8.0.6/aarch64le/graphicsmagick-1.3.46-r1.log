@@ -1,0 +1,53 @@
+# graphicsmagick 1.3.46-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:29:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphicsmagick qnx-test-graphicsmagick qnx-port-tests
+( 1/28) Installing bzip2 (1.0.8-r0)
+( 2/28) Installing brotli (1.1.0-r0)
+( 3/28) Installing libpng (1.6.44-r0)
+( 4/28) Installing freetype (2.13.3-r0)
+( 5/28) Installing lcms2 (2.16-r0)
+( 6/28) Installing aom (3.15.3-r0)
+( 7/28) Installing dav1d (1.5.0-r0)
+( 8/28) Installing libde265 (1.0.15-r0)
+( 9/28) Installing libjpeg-turbo (3.0.4-r0)
+(10/28) Installing libwebp (1.4.0-r0)
+(11/28) Installing libiconv (1.18-r0)
+(12/28) Installing libunistring (1.3-r0)
+(13/28) Installing ncurses (6.5-r0)
+(14/28) Installing gettext (0.22.5-r0)
+(15/28) Installing xz (5.6.3-r0)
+(16/28) Installing libtiff (4.7.0-r0)
+(17/28) Installing openh264 (2.5.0-r0)
+(18/28) Installing openjpeg (2.5.3-r0)
+(19/28) Installing openjph (0.24.1-r0)
+(20/28) Installing x265 (3.6-r0)
+(21/28) Installing libheif (1.20.2-r0)
+(22/28) Installing highway (1.2.0-r0)
+(23/28) Installing libjxl (0.11.1-r0)
+(24/28) Installing libxml2 (2.13.5-r0)
+(25/28) Installing libzip (1.11.1-r0)
+(26/28) Installing graphicsmagick (1.3.46-r1)
+(27/28) Installing qnx-port-tests (1.0-r0)
+(28/28) Installing qnx-test-graphicsmagick (1.0-r0)
+OK: 60.3 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphicsmagick
+     == graphicsmagick ==
+       info GraphicsMagick 1.3.46 2025-10-29 Q16 http://www.GraphicsMagick.org/
+       ok   xc:red -> PNG 64x32
+       ok   resize 50% -> JPEG 32x16
+       ok   rotate 90 -> TIFF 32x64
+       ok   PNG -> WebP
+       info pixel (10,10): 0,0: (255,  0,  0) #FF0000
+       ok   pixel is red
+     PASS graphicsmagick
+PASS test_graphicsmagick
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

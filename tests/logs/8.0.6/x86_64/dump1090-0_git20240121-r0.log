@@ -1,0 +1,29 @@
+# dump1090 0_git20240121-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:31:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dump1090 qnx-test-dump1090 qnx-port-tests
+(1/5) Installing libusb (1.0.27-r0)
+(2/5) Installing rtl-sdr (2.0.2-r0)
+(3/5) Installing dump1090 (0_git20240121-r0)
+(4/5) Installing qnx-port-tests (1.0-r0)
+(5/5) Installing qnx-test-dump1090 (1.0-r0)
+OK: 9.8 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dump1090
+     == dump1090 ==
+       ok   synthesised I/Q file: 2880 bytes
+       ok   --raw: *8d4840d6202cc371c32ce0576098; demodulated
+       ok   decoded ICAO address 4840D6
+       ok   decoded identification KLM1023
+       ok   CRC ok
+       ok   --stats: valid preamble, usable message counted
+     PASS dump1090
+PASS test_dump1090
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

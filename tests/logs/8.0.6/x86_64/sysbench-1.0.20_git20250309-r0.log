@@ -1,0 +1,32 @@
+# sysbench 1.0.20_git20250309-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:29:17Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sysbench qnx-test-sysbench qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing luajit (2.1_git-r0)
+(3/4) Installing sysbench (1.0.20_git20250309-r0)
+(4/4) Installing qnx-test-sysbench (1.0-r0)
+OK: 16.7 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sysbench
+     == sysbench ==
+       ok   --version: sysbench 1.1.0
+       ok   cpu: 9222.80 events/s
+       ok   memory: 16.00 MiB transferred (3892.14 MiB/sec)
+       ok   threads (2): 6634 events
+       ok   mutex (2 threads): 1.0000 events per thread
+       ok   fileio prepare: 2 files
+       ok   fileio rndrw run: read IOPS 2143.25, write IOPS 1428.83
+       ok   fileio cleanup
+       ok   Lua script prepare hook: prep-ok 42 1,4,9
+       ok   Lua script run: exactly 1000 events
+     PASS sysbench
+PASS test_sysbench
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,84 @@
+# graphviz 13.1.2-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-20T19:14:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphviz qnx-test-graphviz qnx-port-tests
+( 1/48) Installing expat (2.6.4-r0)
+( 2/48) Installing brotli (1.1.0-r0)
+( 3/48) Installing bzip2 (1.0.8-r0)
+( 4/48) Installing libpng (1.6.44-r0)
+( 5/48) Installing freetype (2.13.3-r0)
+( 6/48) Installing fontconfig (2.15.0-r0)
+( 7/48) Installing libiconv (1.18-r0)
+( 8/48) Installing libunistring (1.3-r0)
+( 9/48) Installing ncurses (6.5-r0)
+(10/48) Installing gettext (0.22.5-r0)
+(11/48) Installing libffi (3.4.6-r0)
+(12/48) Installing pcre2 (10.44-r0)
+(13/48) Installing glib (2.82.4-r0)
+(14/48) Installing libxau (1.0.11-r0)
+(15/48) Installing libxdmcp (1.1.5-r0)
+(16/48) Installing libxcb (1.17.0-r0)
+(17/48) Installing libx11 (1.8.10-r0)
+(18/48) Installing libxext (1.3.6-r0)
+(19/48) Installing libxrender (0.9.11-r0)
+(20/48) Installing lzo (2.10-r0)
+(21/48) Installing pixman (0.46.4-r0)
+(22/48) Installing cairo (1.18.2-r0)
+(23/48) Installing aom (3.15.3-r0)
+(24/48) Installing dav1d (1.5.0-r0)
+(25/48) Installing libavif (1.1.1-r0)
+(26/48) Installing libde265 (1.0.15-r0)
+(27/48) Installing libjpeg-turbo (3.0.4-r0)
+(28/48) Installing libwebp (1.4.0-r0)
+(29/48) Installing xz (5.6.3-r0)
+(30/48) Installing libtiff (4.7.0-r0)
+(31/48) Installing openh264 (2.5.0-r0)
+(32/48) Installing openjpeg (2.5.3-r0)
+(33/48) Installing openjph (0.24.1-r0)
+(34/48) Installing x265 (3.6-r0)
+(35/48) Installing libheif (1.20.2-r0)
+(36/48) Installing gd (2.3.3-r0)
+(37/48) Installing graphite2 (1.3.14-r0)
+(38/48) Installing icu (76.1-r0)
+(39/48) Installing harfbuzz (<ip>-r0)
+(40/48) Installing libtool (2.5.4-r0)
+(41/48) Installing fribidi (1.0.16-r0)
+(42/48) Installing libxft (2.3.8-r0)
+(43/48) Installing pango (1.54.0-r0)
+(44/48) Installing lcms2 (2.16-r0)
+(45/48) Installing poppler (25.12.0-r0)
+(46/48) Installing graphviz (13.1.2-r0)
+(47/48) Installing qnx-port-tests (1.0-r0)
+(48/48) Installing qnx-test-graphviz (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+Executing graphviz-13.1.2-r0.trigger
+OK: 131.4 MiB in 53 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphviz
+FAIL test_graphviz (rc=1)
+     == graphviz ==
+       info dot - graphviz version 13.1.2 (20250808.2320)
+       ok   dot -Tsvg: 6 nodes, 6 edges, 1 cluster
+       ok   SVG with the edge label 'skip'
+       ok   dot -Tpng: a PNG file (236 bytes)
+       info PNG 1x32767, layout + pad at 96 dpi 468x3645323 px
+       FAIL PNG size 1x32767 vs 468x3645323
+       ok   -Tplain: 6 node and 6 edge lines
+       ok   rankdir=LR: a is left of c
+       ok   neato: 6 nodes
+       ok   circo: 6 nodes
+       ok   fdp: 6 nodes
+       ok   twopi: 6 nodes
+       ok   dot -Tgif (the gd renderer)
+       ok   gc: 6 nodes, 6 edges
+       ok   acyclic: the cycle is found
+     FAIL graphviz (1 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_graphviz
+
+RESULT: FAIL

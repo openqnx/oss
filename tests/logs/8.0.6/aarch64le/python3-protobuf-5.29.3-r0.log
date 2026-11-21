@@ -1,0 +1,47 @@
+# python3-protobuf 5.29.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T11:38:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-protobuf qnx-test-python3-protobuf qnx-port-tests
+( 1/17) Installing bzip2 (1.0.8-r0)
+( 2/17) Installing expat (2.6.4-r0)
+( 3/17) Installing gdbm (1.24-r0)
+( 4/17) Installing libiconv (1.18-r0)
+( 5/17) Installing libunistring (1.3-r0)
+( 6/17) Installing ncurses (6.5-r0)
+( 7/17) Installing gettext (0.22.5-r0)
+( 8/17) Installing libffi (3.4.6-r0)
+( 9/17) Installing readline (8.2-r0)
+(10/17) Installing sqlite (3.47.2-r0)
+(11/17) Installing xz (5.6.3-r0)
+(12/17) Installing python3 (3.14.0-r0)
+(13/17) Installing python3-protobuf (5.29.3-r0)
+(14/17) Installing qnx-port-tests (1.0-r0)
+(15/17) Installing abseil (20260817.0-r0)
+(16/17) Installing protobuf (29.3-r0)
+(17/17) Installing qnx-test-python3-protobuf (1.0-r0)
+Executing python3-3.14.0-r0.trigger
+OK: 145.4 MiB in 22 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_protobuf
+     == python3-protobuf ==
+       info protobuf 5.29.3, implementation upb
+       ok   runtime version 5.29.3 (protobuf 29.3)
+       ok   the upb C extension is in use
+       ok   serialised bytes are exactly the wire format
+       ok   parses back to an equal message
+       ok   int32 -1 is a ten-byte varint
+       ok   MessageToJson
+       ok   json_format.Parse
+       ok   text format
+       ok   Timestamp to RFC 3339
+       ok   protoc-generated qnx_pb2 imports and gives the same bytes
+     PASS python3-protobuf
+PASS test_python3_protobuf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

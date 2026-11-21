@@ -1,0 +1,104 @@
+# libadwaita 1.6.10-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:39:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libadwaita qnx-test-libadwaita qnx-port-tests
+( 1/54) Installing brotli (1.1.0-r0)
+( 2/54) Installing c-ares (1.34.3-r0)
+( 3/54) Installing nghttp2 (1.64.0-r0)
+( 4/54) Installing curl (8.11.1-r0)
+( 5/54) Installing libiconv (1.18-r0)
+( 6/54) Installing libunistring (1.3-r0)
+( 7/54) Installing ncurses (6.5-r0)
+( 8/54) Installing gettext (0.22.5-r0)
+( 9/54) Installing libffi (3.4.6-r0)
+(10/54) Installing pcre2 (10.44-r0)
+(11/54) Installing glib (2.82.4-r0)
+(12/54) Installing xz (5.6.3-r0)
+(13/54) Installing libxml2 (2.13.5-r0)
+(14/54) Installing libxmlb (0.3.24-r0)
+(15/54) Installing libyaml (0.2.5-r0)
+(16/54) Installing appstream (1.0.6-r0)
+(17/54) Installing fribidi (1.0.16-r0)
+(18/54) Installing graphene (1.10.8-r0)
+(19/54) Installing expat (2.6.4-r0)
+(20/54) Installing bzip2 (1.0.8-r0)
+(21/54) Installing libpng (1.6.44-r0)
+(22/54) Installing freetype (2.13.3-r0)
+(23/54) Installing fontconfig (2.15.0-r0)
+(24/54) Installing libxau (1.0.11-r0)
+(25/54) Installing libxdmcp (1.1.5-r0)
+(26/54) Installing libxcb (1.17.0-r0)
+(27/54) Installing libx11 (1.8.10-r0)
+(28/54) Installing libxext (1.3.6-r0)
+(29/54) Installing libxrender (0.9.11-r0)
+(30/54) Installing lzo (2.10-r0)
+(31/54) Installing pixman (0.46.4-r0)
+(32/54) Installing cairo (1.18.2-r0)
+(33/54) Installing libjpeg-turbo (3.0.4-r0)
+(34/54) Installing gdk-pixbuf (2.42.12-r0)
+(35/54) Installing graphite2 (1.3.14-r0)
+(36/54) Installing icu (76.1-r0)
+(37/54) Installing harfbuzz (<ip>-r0)
+(38/54) Installing libepoxy (1.5.10-r0)
+(39/54) Installing libwebp (1.4.0-r0)
+(40/54) Installing libtiff (4.7.0-r0)
+(41/54) Installing libxkbcommon (1.8.1-r0)
+(42/54) Installing libxft (2.3.8-r0)
+(43/54) Installing pango (1.54.0-r0)
+(44/54) Installing wayland (1.24.0-r0)
+(45/54) Installing gtk4 (4.16.7-r0)
+(46/54) Installing libadwaita (1.6.10-r0)
+(47/54) Installing qnx-port-tests (1.0-r0)
+(48/54) Installing font-dejavu (2.37-r0)
+(49/54) Installing libsfdo (0.1.4-r0)
+(50/54) Installing lcms2 (2.16-r0)
+(51/54) Installing wlroots (0.20.2-r0)
+(52/54) Installing xkeyboard-config (2.43-r0)
+(53/54) Installing labwc (0.20.2-r0)
+(54/54) Installing qnx-test-libadwaita (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 175.9 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libadwaita
+     == libadwaita ==
+       info libadwaita 1.6.10
+       ok   libadwaita 1.6
+       info condition: max-width: 400sp and min-aspect-ratio: 4/3
+       ok   breakpoint condition parsed and printed back
+       ok   adw_lerp(10, 20, 0.25) = 12.5
+       ok   spring params: damping ratio 1, mass 1, stiffness 100 -> damping 20
+       ok   labwc (headless) Wayland socket appeared
+       ok   gtk_init_check on labwc
+     GLib-GIO-Message: 09:37:33.377: Adding GResources overlay '/org/qnx/PortTest=/tmp/qnxport-adw-23044118'
+       ok   adw_init
+       ok   72 pt = 96 px
+       info base.css: 336710 bytes
+       ok   Adwaita style sheet (compiled from SCSS) is in the library
+       ok   style manager: FORCE_DARK makes it dark
+       ok   style manager: FORCE_LIGHT makes it light
+       ok   AdwApplicationWindow mapped on the compositor
+       ok   view stack shows page two
+       ok   tab view with three pages
+       ok   closing a tab leaves two
+       ok   toast shown
+       ok   window was allocated a size
+       info window 640x480
+     
+     (process:23044118): GLib-GIO-WARNING **: 09:37:39.194: Can't enumerate overlay directory '/tmp/qnxport-adw-23044118/metainfo.xml': Error opening directory “/tmp/qnxport-adw-23044118/metainfo.xml”: Not a directory
+     GLib-GIO-Message: 09:37:39.214: Mapped file '/tmp/qnxport-adw-23044118/metainfo.xml' as a resource overlay
+     GLib-GIO-Message: 09:37:39.281: Opened file '/tmp/qnxport-adw-23044118/metainfo.xml' as a resource overlay
+       ok   AdwAboutDialog from AppStream metainfo
+       info about: QNX Port Test 2.1 by QNX Porters, https://example.org/qnx
+       ok   metainfo: name, newest version, developer
+       ok   metainfo: license type and issue URL
+       ok   metainfo: release notes of 2.1
+     PASS libadwaita
+PASS test_libadwaita
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

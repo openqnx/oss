@@ -1,0 +1,33 @@
+# ceres-solver 2.2.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:29:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ceres-solver qnx-test-ceres-solver qnx-port-tests
+(1/5) Installing gflags (2.2.2-r0)
+(2/5) Installing glog (0.7.1-r0)
+(3/5) Installing ceres-solver (2.2.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r0)
+(5/5) Installing qnx-test-ceres-solver (1.0-r0)
+OK: 18.8 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ceres_solver
+     == ceres-solver ==
+       info ceres 2.2.0
+       info m=0.300000000 c=0.100000000 after 18 iterations
+       ok   curve fit: solution usable
+       ok   curve fit recovers m = 0.3, c = 0.1
+       ok   curve fit residual ~ 0
+       info Rosenbrock -> (1.000000, 1.000000)
+       ok   Rosenbrock minimum at (1, 1) via L-BFGS
+       info robust line a=1.99999 b=-4.99963
+       ok   Cauchy loss ignores outliers: y = 2x - 5
+       ok   central-difference Jacobian matches the analytic one
+     PASS ceres-solver
+PASS test_ceres_solver
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

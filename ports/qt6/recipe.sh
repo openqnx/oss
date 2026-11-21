@@ -46,6 +46,10 @@ _qt_mkspec() { case "$QNX_ARCH" in aarch64le) echo qnx-aarch64le-qcc ;; x86_64) 
 # qdoc (and the libclang it needs) is off for the target as it is for the
 # host build: the target configure otherwise looks for the host's qdoc
 # ("Failed to find the host tool Qt6::qdoc").
+# -no-feature-mmrenderer: SDP 8.0.6 ships mm-renderer, and Qt then builds its
+# QNX media plugin, which includes the io-audio classes of QtMultimedia that
+# -feature-alsa replaces ("private/qqnxaudiodevice_p.h: No such file").
+# SDP 8.0 had no mm-renderer, so the plugin was never built there either.
 do_configure() {
   if [ ! -x "$QT_HOST/bin/qmake" ]; then
     local hb="$BUILD_DIR/host/qt6-$VERSION"; mkdir -p "$hb"
@@ -63,7 +67,7 @@ do_configure() {
   ( cd "$B" && "$S/configure" -prefix "$PREFIX" -qt-host-path "$QT_HOST" \
       -submodules "$QT_SUBMODULES" -release -nomake examples -nomake tests \
       -opengl es2 -qpa qnx -system-zlib -system-libpng -system-libjpeg -system-freetype -system-harfbuzz \
-      -system-pcre -openssl-linked -icu -no-feature-qdoc -no-feature-clang -no-feature-backtrace -no-eglfs -no-kms -feature-alsa -no-sbom \
+      -system-pcre -openssl-linked -icu -no-feature-qdoc -no-feature-clang -no-feature-backtrace -no-eglfs -no-kms -feature-alsa -no-feature-mmrenderer -no-sbom \
       -feature-wayland -xkbcommon -no-xcb -no-feature-gtk3 -no-feature-accessibility-atspi-bridge -no-libinput -no-mtdev -no-tslib -no-evdev \
       -no-feature-system-libb2 -no-feature-system-textmarkdownreader -no-feature-cups \
       -- -G Ninja -DCMAKE_TOOLCHAIN_FILE="$B/qt-toolchain.cmake" -DQT_QMAKE_TARGET_MKSPEC="$(_qt_mkspec)" \

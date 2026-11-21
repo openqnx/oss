@@ -1,0 +1,32 @@
+# less 668-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:43:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u less qnx-test-less qnx-port-tests
+(1/6) Installing ncurses (6.5-r0)
+(2/6) Installing less (668-r0)
+(3/6) Installing qnx-port-tests (1.0-r0)
+(4/6) Installing libevent (2.1.12-r0)
+(5/6) Installing tmux (3.5a-r0)
+(6/6) Installing qnx-test-less (1.0-r0)
+OK: 14.4 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_less
+     == less ==
+       info less 668 (no regular expressions)
+       ok   filter mode: output identical to input
+       ok   lesskey: compiled file with magic 00 4d 2b 47
+       ok   lessecho quoting
+       ok   pager: first screen with line numbers
+       ok   /needle: match at the top of the screen
+       ok   G: end of file
+       ok   q quits
+     PASS less
+PASS test_less
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

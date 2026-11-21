@@ -1,0 +1,41 @@
+# openttd-opensfx 1.0.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T10:01:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openttd-opensfx qnx-test-openttd-sets qnx-port-tests
+( 1/20) Installing brotli (1.1.0-r0)
+( 2/20) Installing c-ares (1.34.3-r0)
+( 3/20) Installing nghttp2 (1.64.0-r0)
+( 4/20) Installing curl (8.11.1-r0)
+( 5/20) Installing bzip2 (1.0.8-r0)
+( 6/20) Installing libpng (1.6.44-r0)
+( 7/20) Installing freetype (2.13.3-r0)
+( 8/20) Installing lzo (2.10-r0)
+( 9/20) Installing libiconv (1.18-r0)
+(10/20) Installing sdl2 (2.32.10-r0)
+(11/20) Installing libunistring (1.3-r0)
+(12/20) Installing ncurses (6.5-r0)
+(13/20) Installing gettext (0.22.5-r0)
+(14/20) Installing xz (5.6.3-r0)
+(15/20) Installing openttd (15.0_git20250501-r0)
+(16/20) Installing openttd-opensfx (1.0.3-r0)
+(17/20) Installing qnx-port-tests (1.0-r0)
+(18/20) Installing openttd-opengfx (8.0-r0)
+(19/20) Installing openttd-openmsx (0.4.2-r0)
+(20/20) Installing qnx-test-openttd-sets (1.0-r0)
+OK: 83.2 MiB in 25 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openttd_sets
+     == openttd-sets ==
+       ok   openttd lists OpenGFX 8.0
+       ok   openttd lists OpenSFX 1.0.3
+       ok   openttd lists OpenMSX 0.4.2
+     PASS openttd-sets
+PASS test_openttd_sets
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

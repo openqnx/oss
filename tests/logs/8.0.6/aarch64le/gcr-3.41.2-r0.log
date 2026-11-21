@@ -1,0 +1,101 @@
+# gcr 3.41.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:27:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gcr qnx-test-gcr qnx-port-tests
+( 1/52) Installing expat (2.6.4-r0)
+( 2/52) Installing brotli (1.1.0-r0)
+( 3/52) Installing bzip2 (1.0.8-r0)
+( 4/52) Installing libpng (1.6.44-r0)
+( 5/52) Installing freetype (2.13.3-r0)
+( 6/52) Installing fontconfig (2.15.0-r0)
+( 7/52) Installing libiconv (1.18-r0)
+( 8/52) Installing libunistring (1.3-r0)
+( 9/52) Installing ncurses (6.5-r0)
+(10/52) Installing gettext (0.22.5-r0)
+(11/52) Installing libffi (3.4.6-r0)
+(12/52) Installing pcre2 (10.44-r0)
+(13/52) Installing glib (2.82.4-r0)
+(14/52) Installing libxau (1.0.11-r0)
+(15/52) Installing libxdmcp (1.1.5-r0)
+(16/52) Installing libxcb (1.17.0-r0)
+(17/52) Installing libx11 (1.8.10-r0)
+(18/52) Installing libxext (1.3.6-r0)
+(19/52) Installing libxrender (0.9.11-r0)
+(20/52) Installing lzo (2.10-r0)
+(21/52) Installing pixman (0.46.4-r0)
+(22/52) Installing cairo (1.18.2-r0)
+(23/52) Installing libjpeg-turbo (3.0.4-r0)
+(24/52) Installing gdk-pixbuf (2.42.12-r0)
+(25/52) Installing dbus (1.16.0-r0)
+(26/52) Installing libxi (1.8.2-r0)
+(27/52) Installing libxtst (1.2.5-r0)
+(28/52) Installing at-spi2-core (2.54.2-r0)
+(29/52) Installing fribidi (1.0.16-r0)
+(30/52) Installing graphite2 (1.3.14-r0)
+(31/52) Installing icu (76.1-r0)
+(32/52) Installing harfbuzz (<ip>-r0)
+(33/52) Installing libepoxy (1.5.10-r0)
+(34/52) Installing libxcomposite (0.4.6-r0)
+(35/52) Installing libxfixes (6.0.1-r0)
+(36/52) Installing libxcursor (1.2.2-r0)
+(37/52) Installing libxdamage (1.1.6-r0)
+(38/52) Installing libxinerama (1.1.5-r0)
+(39/52) Installing xz (5.6.3-r0)
+(40/52) Installing libxml2 (2.13.5-r0)
+(41/52) Installing libxkbcommon (1.8.1-r0)
+(42/52) Installing libxrandr (1.5.4-r0)
+(43/52) Installing libxft (2.3.8-r0)
+(44/52) Installing pango (1.54.0-r0)
+(45/52) Installing wayland (1.24.0-r0)
+(46/52) Installing gtk3 (3.24.43-r0)
+(47/52) Installing libgpg-error (1.50-r0)
+(48/52) Installing libgcrypt (1.11.0-r0)
+(49/52) Installing p11-kit (0.25.5-r0)
+(50/52) Installing gcr (3.41.2-r0)
+(51/52) Installing qnx-port-tests (1.0-r0)
+(52/52) Installing qnx-test-gcr (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+* Warning: Schema “org.gnome.crypto.pgp” has path “/desktop/gnome/crypto/pgp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+OK: 163.7 MiB in 57 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gcr
+     == gcr ==
+       ok   gcr_parser_new
+       info parsed #1: Certificate, label "qnx-port-test.example", format 200
+       info parsed #2: Private Key, label "(null)", format 101
+       ok   gcr_parser_parse_data on a PEM certificate + key bundle
+       ok   two objects parsed
+       ok   one is a Certificate
+       ok   one is a Private Key
+       ok   certificate label is its subject CN
+       info DER certificate: 891 bytes
+       ok   PEM body decodes to the 891-byte DER certificate
+       ok   gcr_simple_certificate_new
+       info subject DN: C=CA, O=QNX Port Tests, OU=g4, CN=qnx-port-test.example
+       ok   subject CN
+       ok   issuer CN (self-signed)
+       ok   subject O
+       ok   subject OU
+       ok   subject C
+       ok   certificate is its own issuer
+       info serial: 1234ABCD
+       ok   serial number 1234ABCD
+       info key size: 2048 bits
+       ok   RSA key size 2048
+       info sha256: EA 71 7C C6 76 22 96 D3 E1 7E B5 E4 AA B8 C7 4F C8 21 EA 22 46 E3 1E 40 F6 5D BE 1D 40 E4 59 01
+       ok   SHA-1 fingerprint matches openssl
+       ok   SHA-256 fingerprint matches openssl
+       info expires 2046-10-26
+       ok   expiry year 2046 (20-year certificate)
+       info gcr-viewer --version -> 0: GCR Certificate and Key Viewer -- 3.41.2
+       ok   gcr-viewer --version: GCR Certificate and Key Viewer -- 3.41.2
+     PASS gcr
+PASS test_gcr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

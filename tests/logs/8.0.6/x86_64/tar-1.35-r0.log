@@ -1,0 +1,37 @@
+# tar 1.35-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:29:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tar qnx-test-tar qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing libiconv (1.18-r0)
+(3/4) Installing tar (1.35-r0)
+(4/4) Installing qnx-test-tar (1.0-r0)
+OK: 16.7 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tar
+     == tar ==
+       info tar (GNU tar) 1.35
+       ok   -cf created t.tar (30720 bytes)
+       ok   -tf lists 24 members
+       ok   -xf: extracted tree identical (diff -r)
+       ok   symlink restored
+       ok   empty directory restored
+       ok   -czf: gzip magic
+       ok   --exclude='*.log' left skip.log out
+       ok   -xzf: numbers.txt identical
+       ok   --transform renames members
+       ok   -rf appended extra.txt
+       ok   -df: archive matches file system
+       ok   -df detects the changed file
+       ok   --format=posix: ustar magic
+       ok   -xO of a >100-char path
+     PASS tar
+PASS test_tar
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

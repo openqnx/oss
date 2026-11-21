@@ -1,0 +1,36 @@
+# rsync 3.3.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T12:21:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u rsync qnx-test-rsync qnx-port-tests
+(1/6) Installing qnx-port-tests (1.0-r0)
+(2/6) Installing libiconv (1.18-r0)
+(3/6) Installing lz4 (1.10.0-r0)
+(4/6) Installing xxhash (0.8.2-r0)
+(5/6) Installing rsync (3.3.0-r0)
+(6/6) Installing qnx-test-rsync (1.0-r0)
+OK: 12.2 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_rsync
+     == rsync ==
+       info rsync  version 3.3.0  protocol version 31
+       ok   -a copy: tree identical (diff -r)
+       ok   symlink preserved
+       ok   incremental: only a.txt transferred
+       ok   a.txt updated
+       ok   dry run itemizes the deletion
+       ok   dry run changed nothing
+       ok   --delete removed b.txt, --exclude kept junk.tmp untouched
+       ok   --exclude='*.tmp' on a fresh copy
+       ok   --checksum finds same-size same-mtime change
+       ok   daemon on <ip>:24583 lists module qnx
+       ok   pull over rsync:// (big.txt identical)
+     PASS rsync
+PASS test_rsync
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

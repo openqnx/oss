@@ -1,0 +1,36 @@
+# aws-c-sdkutils 0.2.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:10:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-sdkutils qnx-test-aws-c-sdkutils qnx-port-tests
+(1/4) Installing aws-c-common (0.12.6-r0)
+(2/4) Installing aws-c-sdkutils (0.2.4-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-aws-c-sdkutils (1.0-r0)
+OK: 10.4 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_sdkutils
+     == aws-c-sdkutils ==
+       ok   config file parsed
+       ok   three profiles
+       ok   default.region = eu-west-1
+       ok   inline comment stripped from robot.region
+       ok   s3 sub-properties parsed
+       ok   ARN parsed
+       ok   ARN fields
+       ok   ARN serialised back identically
+       ok   malformed ARN rejected
+       ok   endpoints ruleset parsed
+       info resolved https://svc.ap-south-1.example.com
+       ok   rule engine: default rule with templated Region
+       info resolved https://svc-fips.us-gov-west-1.example.com
+       ok   rule engine: booleanEquals condition selects the FIPS rule
+     PASS aws-c-sdkutils
+PASS test_aws_c_sdkutils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,63 @@
+# espeak-ng 1.52.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:19:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u espeak-ng qnx-test-espeak-ng qnx-port-tests
+(1/3) Installing espeak-ng (1.52.0-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-espeak-ng (1.0-r0)
+OK: 28.0 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_espeak_ng
+     == espeak-ng ==
+       ok   espeak_Initialize: data found, 22050 Hz
+       info version 1.52.0, data /usr/local/share/espeak-ng-data
+       ok   espeak_Info: version 1.x
+       ok   en "hello world" -> h@l'oU w'3:ld
+       ok   en "hello world" -> həlˈəʊ wˈɜːld
+       ok   en "speech synthesis" -> sp'i:tS s'InT@s,Is
+       ok   en "one two three" -> w'0n t'u: Tr'i:
+       ok   en-us "The quick brown fox." -> D@2 kw'Ik br'aUn f'0ks
+       ok   de "guten Morgen" -> g'u:t@n m'Org@n
+       ok   fr "bonjour" -> bɔ̃ʒˈuʁ
+       ok   an unknown voice is refused
+       info clause 0:Iz It d'Vn (terminator 0x82028)
+       info clause 1:j'Es (terminator 0x41014)
+       info clause 2:It 'Iz (terminator 0x480028)
+       ok   three clauses in "Is it done? Yes, it is."
+       ok   terminators: question, comma, full stop
+       ok   espeak_Synth (synchronous)
+       info 16192 samples (0.73 s), peak 27667, 2 WORD, 0 MSG_TERMINATED
+       ok   "hello world": between 0.5 s and 4 s of audio
+       ok   the samples are not silent
+       ok   two WORD events
+       ok   default rate 175 words per minute
+       info at 350 wpm: 7819 samples
+       ok   twice the rate: clearly fewer samples
+       ok   espeak_Initialize (asynchronous retrieval)
+       ok   espeak_Synth (asynchronous)
+       ok   espeak_Synchronize: the queue drained
+       info asynchronous: 16187 samples, peak 27803
+       ok   as many samples as synchronously (within 5 %)
+       ok   asynchronous samples not silent, message terminated
+       ok   espeak-ng program installed
+       ok   espeak-ng -q -x 'hello world' -> h@l'oU w'3:ld
+       ok   espeak-ng -w file.wav exits 0
+       ok   WAV file written
+       ok   RIFF / WAVE / fmt / data chunks
+       ok   PCM, mono, 16 bit
+       ok   22050 Hz, 44100 bytes per second, 2 bytes per frame
+       info 45394 bytes, data 45350 bytes (1.03 s)
+       ok   RIFF and data lengths match the file size
+       info peak 27667, 10057 of 22675 samples above 500
+       ok   at least as long as the library's synthesis, less than twice
+       ok   the WAV samples are not silent
+     PASS espeak-ng
+PASS test_espeak_ng
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

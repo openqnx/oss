@@ -1,0 +1,74 @@
+# ros2-jazzy-control 20260128-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T12:40:29Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-control qnx-test-ros2-jazzy-control qnx-port-tests
+( 1/41) Installing qnx-port-tests (1.0-r0)
+( 2/41) Installing qnx-test-ros2-jazzy-control (1.0-r0)
+( 3/41) Installing console_bridge (1.0.2-r0)
+( 4/41) Installing brotli (1.1.0-r0)
+( 5/41) Installing c-ares (1.34.3-r0)
+( 6/41) Installing nghttp2 (1.64.0-r0)
+( 7/41) Installing curl (8.11.1-r0)
+( 8/41) Installing fastcdr (2.2.6-r0)
+( 9/41) Installing fmt (11.2.0-r0)
+(10/41) Installing orocos-kdl (1.5.1-r0)
+(11/41) Installing bzip2 (1.0.8-r0)
+(12/41) Installing expat (2.6.4-r0)
+(13/41) Installing gdbm (1.24-r0)
+(14/41) Installing libiconv (1.18-r0)
+(15/41) Installing libunistring (1.3-r0)
+(16/41) Installing ncurses (6.5-r0)
+(17/41) Installing gettext (0.22.5-r0)
+(18/41) Installing libffi (3.4.6-r0)
+(19/41) Installing readline (8.2-r0)
+(20/41) Installing sqlite (3.47.2-r0)
+(21/41) Installing xz (5.6.3-r0)
+(22/41) Installing python3 (3.14.0-r0)
+(23/41) Installing python3-filelock (3.32.7-r0)
+(24/41) Installing libxml2 (2.13.5-r0)
+(25/41) Installing libxslt (1.1.42-r0)
+(26/41) Installing python3-lxml (6.1.3-r0)
+(27/41) Installing python3-pyyaml (6.0.3-r0)
+(28/41) Installing benchmark (1.9.0-r0)
+(29/41) Installing cyclonedds (0.10.5-r0)
+(30/41) Installing foonathan_memory (0.7.3-r0)
+(31/41) Installing tinyxml2 (<ip>-r0)
+(32/41) Installing fastdds (2.14.4-r0)
+(33/41) Installing libyaml (0.2.5-r0)
+(34/41) Installing lz4 (1.10.0-r0)
+(35/41) Installing openblas (0.3.28-r0)
+(36/41) Installing numpy (2.3.4-r0)
+(37/41) Installing opencv (4.10.0-r0)
+(38/41) Installing urdfdom (4.0.3-r0)
+(39/41) Installing yaml-cpp (0.8.0-r0)
+(40/41) Installing ros2 (0_git-r0)
+(41/41) Installing ros2-jazzy-control (20260128-r0)
+Executing python3-3.14.0-r0.trigger
+OK: 502.3 MiB in 46 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_control
+     == ros2-jazzy-control ==
+       ok   ament index has controller_manager
+       ok   ament index has hardware_interface
+       ok   ament index has joint_state_broadcaster
+       ok   ament index has forward_command_controller
+       ok   ament index has joint_trajectory_controller
+       ok   ament index has diff_drive_controller
+       ok   spawner loaded and activated joint_state_broadcaster and forward_position_controller
+       ok   load_controller + configure_controller: joint_trajectory_controller (inactive)
+       ok   list_controllers: [('forward_position_controller', 'active'), ('joint_state_broadcaster', 'active'), ('joint_trajectory_controller', 'inactive')]
+       ok   /joint_states reports joint1 at its initial 0.0
+       ok   forward command 0.5 -> joint1 at 0.500000
+       ok   switch_controller: forward_position_controller -> joint_trajectory_controller
+       ok   FollowJointTrajectory goal to -0.8 rad in 1 s succeeded
+       ok   joint_trajectory_controller -> joint1 at -0.800000 (-0.8)
+     PASS ros2-jazzy-control
+PASS test_ros2_jazzy_control
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

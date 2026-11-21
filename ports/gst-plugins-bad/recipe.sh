@@ -1,7 +1,7 @@
 VERSION=1.24.10
 SRCROOT="$SRC_DIR/gstreamer"
 SUBDIR=subprojects/gst-plugins-bad
-DEPS="gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo"
+DEPS="gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo wayland wayland-protocols libdrm-headers"
 BUILDSYS=meson
 # This plugin set probes for well over a hundred optional dependencies, most of
 # them desktop-Linux only. Turn the auto-detection off and name what we ported.
@@ -25,4 +25,11 @@ MESON_ARGS_EXTRA=(
   -Dfreeverb=enabled -Dgaudieffects=enabled -Dgeometrictransform=enabled
   -Dinter=enabled -Dproxy=enabled -Drawparse=enabled -Dremovesilence=enabled
   -Dsmooth=enabled -Dspeed=enabled -Dvideosignal=enabled -Dwebrtcdsp=disabled
+  -Dwayland=enabled
 )
+# waylandsink (video in a window on the desktop: labwc / any Wayland
+# compositor) needs only drm_fourcc.h from libdrm; the SDP's libdrm.so is
+# found through scripts/lib/sdp-pc.sh, as for wlroots.
+source "$WS/scripts/lib/sdp-pc.sh"
+do_configure() { qnx_sdp_pc && qnx_meson_setup; }
+

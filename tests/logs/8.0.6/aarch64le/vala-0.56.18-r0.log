@@ -1,0 +1,47 @@
+# vala 0.56.18-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T12:38:43Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vala qnx-test-vala qnx-port-tests
+( 1/10) Installing qnx-port-tests (1.0-r0)
+( 2/10) Installing libiconv (1.18-r0)
+( 3/10) Installing libunistring (1.3-r0)
+( 4/10) Installing ncurses (6.5-r0)
+( 5/10) Installing gettext (0.22.5-r0)
+( 6/10) Installing libffi (3.4.6-r0)
+( 7/10) Installing pcre2 (10.44-r0)
+( 8/10) Installing glib (2.82.4-r0)
+( 9/10) Installing vala (0.56.18-r0)
+(10/10) Installing qnx-test-vala (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 58.4 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vala
+     == vala ==
+       ok   valac --version
+       ok   valac -C --header --vapi demo.vala (rc 0, no diagnostics)
+       ok   demo.c is the build machine's valac 0.56.18 output (MD5)
+       ok   demo.h likewise
+       ok   demo.vapi likewise
+       ok   demo.c has: demo_rect_get_type
+       ok   demo.c has: g_signal_new ("resized"
+       ok   demo.c has: g_signal_emit (self, demo_rect_signals[DEMO_RECT_RESIZED_SIGNAL], 0, f)
+       ok   demo.c has: demo_shape_area (DemoShape* self)
+       ok   demo.c has: DEMO_COLOR_BLUE
+       ok   demo.c has: g_ptr_array_foreach (items
+       ok   demo.c has: g_regex_new (
+       ok   demo.c has: _vala_main (gchar** args
+       ok   demo.c has: g_object_new (object_type, "w", w, "h", h, NULL)
+       ok   demo.h declares demo_shape_area and demo_rect_new
+       ok   demo.vapi describes class Rect
+       ok   --pkg gio-2.0 (installed gio-2.0.vapi): g_file_new_for_path
+       ok   a type error: position, message, exit 1
+     PASS vala
+PASS test_vala
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,51 @@
+# dlt-daemon 2.18.10-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:16:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dlt-daemon qnx-test-dlt-daemon qnx-port-tests
+(1/4) Installing libjson (0.8_git20260512-r0)
+(2/4) Installing dlt-daemon (2.18.10-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-dlt-daemon (1.0-r0)
+OK: 10.7 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dlt_daemon
+     == dlt-daemon ==
+       ok   scratch directory
+       ok   dlt-daemon listens on <ip> and created /tmp/dlt
+       info dlt-daemon pid 13221911 on port 13504
+       ok   five messages logged through libdlt
+       ok   dlt_file_open on the received file
+     [ 1715.451164]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.467192]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.482307]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.498631]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.513879]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.530351]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.546160]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.561546]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.579011]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.594352]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.610530]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.627659]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.650067]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.665597]~DLT~13217814~INFO     ~dlt_message_payload()
+     [ 1715.668367]~DLT~13217814~CRITICAL ~Housekeeper thread encountered error condition
+     [ 1715.686748]~DLT~13217814~INFO     ~dlt_message_payload()
+     [   1715i.n706727f]o~ D15L Tm~e13217814s~sINFO     a~gSocket /tmp/dlt cannot be opened (errno=2). Retrying later...
+     e(s) in the file, ours: 1 1 1 1 1
+       ok   each of qnx-dlt-msg 0..4 received exactly once
+       ok   app ID QNXT / context ID TCTX on our messages
+       info 11 2026/11/21 09:13:49.472884   17138125 003 QNX1 QNXT TCTX log info V 2 [qnx-dlt-msg 3
+       ok   dlt-convert -a prints "... QNXT TCTX log info ... qnx-dlt-msg 3"
+       info dlt-convert -c: Total number of messages: 15
+       ok   dlt-convert -c counts the messages
+     PASS dlt-daemon
+PASS test_dlt_daemon
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

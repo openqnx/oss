@@ -1,0 +1,32 @@
+# zenoh-cpp 1.2.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:35:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zenoh-cpp-dev qnx-test-zenoh-cpp qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing zenoh-c (1.2.1-r0)
+(3/4) Installing qnx-test-zenoh-cpp (1.0-r0)
+(4/4) Installing zenoh-cpp-dev (1.2.1-r0)
+OK: 27.2 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zenoh_cpp
+     == zenoh-cpp ==
+       ok   ext::serialize/deserialize pair<string,int32>
+       ok   Bytes from a string and back
+       ok   key expression qnx/a/b intersects qnx/*/b
+       ok   qnx/a/b does not intersect qnx/c/*
+       ok   open a session listening on TCP <ip>:17449
+       ok   open a second session connecting to it
+       ok   the sessions have different ids
+       ok   the subscriber received a sample over TCP
+       ok   with the payload intact
+       ok   get qnx/port-test/calc?a=19;b=23 replies 42
+     PASS zenoh-cpp
+PASS test_zenoh_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

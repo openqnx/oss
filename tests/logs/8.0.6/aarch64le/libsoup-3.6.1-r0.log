@@ -1,0 +1,43 @@
+# libsoup 3.6.1-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:46:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libsoup qnx-test-libsoup qnx-port-tests
+( 1/15) Installing brotli (1.1.0-r0)
+( 2/15) Installing libiconv (1.18-r0)
+( 3/15) Installing libunistring (1.3-r0)
+( 4/15) Installing ncurses (6.5-r0)
+( 5/15) Installing gettext (0.22.5-r0)
+( 6/15) Installing libffi (3.4.6-r0)
+( 7/15) Installing pcre2 (10.44-r0)
+( 8/15) Installing glib (2.82.4-r0)
+( 9/15) Installing libidn2 (2.3.7-r0)
+(10/15) Installing libpsl (0.21.5-r0)
+(11/15) Installing nghttp2 (1.64.0-r0)
+(12/15) Installing sqlite (3.47.2-r0)
+(13/15) Installing libsoup (3.6.1-r0)
+(14/15) Installing qnx-port-tests (1.0-r0)
+(15/15) Installing qnx-test-libsoup (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 51.4 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libsoup
+     == libsoup ==
+       info libsoup 3.6.1
+       ok   soup_server_new
+       ok   soup_server_listen_local and a listening URI
+       info listening on http://<ip>:55009/
+       ok   soup_message_new
+       ok   soup_session_send_and_read
+       ok   HTTP 200
+       ok   response body matches
+       ok   HTTP 404 for an unknown path
+     PASS libsoup
+PASS test_libsoup
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

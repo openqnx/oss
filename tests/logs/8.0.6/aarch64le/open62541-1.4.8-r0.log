@@ -1,0 +1,46 @@
+# open62541 1.4.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:58:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u open62541 qnx-test-open62541 qnx-port-tests
+(1/3) Installing open62541 (1.4.8-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-open62541 (1.0-r0)
+OK: 14.7 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_open62541
+     == open62541 ==
+     [2026-11-21 09:56:38.516 (UTC+0000)] [32minfo/eventloop[0m	Starting the EventLoop
+     [2026-11-21 09:56:38.627 (UTC+0000)] [33mwarn/server[0m	AccessControl: Unconfigured AccessControl. Users have all permissions.
+     [2026-11-21 09:56:38.732 (UTC+0000)] [32minfo/server[0m	AccessControl: Anonymous login is enabled
+     [2026-11-21 09:56:38.800 (UTC+0000)] [33mwarn/server[0m	x509 Certificate Authentication configured, but no encrypting SecurityPolicy. This can leak credentials on the network.
+     [2026-11-21 09:56:39.084 (UTC+0000)] [32minfo/session[0m	TCP 0	| SC 0	| Session "Administrator"	| AddNode (i=15303): No TypeDefinition. Use the default TypeDefinition for the Variable/Object
+     [2026-11-21 09:56:39.547 (UTC+0000)] [32minfo/session[0m	TCP 0	| SC 0	| Session "Administrator"	| AddNode (i=25451): No TypeDefinition. Use the default TypeDefinition for the Variable/Object
+       ok   server config
+     [2026-11-21 09:56:40.069 (UTC+0000)] [32minfo/eventloop[0m	Starting the EventLoop
+     [2026-11-21 09:56:40.128 (UTC+0000)] [33mwarn/client[0m	skip verifying ApplicationURI for the SecurityPolicy http://opcfoundation.org/UA/SecurityPolicy#None
+     [2026-11-21 09:56:40.214 (UTC+0000)] [32minfo/network[0m	TCP 7	| Opening a connection to "<ip>" on port 48400
+     [2026-11-21 09:56:40.319 (UTC+0000)] [32minfo/channel[0m	TCP 7	| SC 1	| SecureChannel opened with SecurityPolicy http://opcfoundation.org/UA/SecurityPolicy#None and a revised lifetime of 600.00s
+     [2026-11-21 09:56:40.436 (UTC+0000)] [32minfo/client[0m	Client Status: ChannelState: Open, SessionState: Closed, ConnectStatus: Good
+     [2026-11-21 09:56:40.537 (UTC+0000)] [33mwarn/client[0m	The server returned Endpoints with a different EndpointUrl opc.tcp://v806-a64:48400 than was used to initialize the connection: opc.tcp://<ip>:48400. Some servers require a complete match of the EndpointUrl/DiscoveryUrl (including the path) to return all endpoints.
+     [2026-11-21 09:56:40.764 (UTC+0000)] [32minfo/client[0m	Selected endpoint with EndpointUrl opc.tcp://<ip>:48400, SecurityMode None and SecurityPolicy http://opcfoundation.org/UA/SecurityPolicy#None
+     [2026-11-21 09:56:40.947 (UTC+0000)] [32minfo/client[0m	Client Status: ChannelState: Open, SessionState: Created, ConnectStatus: Good
+     [2026-11-21 09:56:41.044 (UTC+0000)] [32minfo/client[0m	Client Status: ChannelState: Open, SessionState: Activated, ConnectStatus: Good
+       ok   client connects
+       ok   reads ServerStatus/State
+     [2026-11-21 09:56:41.187 (UTC+0000)] [32minfo/channel[0m	TCP 7	| SC 1	| SecureChannel closed
+     [2026-11-21 09:56:41.254 (UTC+0000)] [32minfo/client[0m	Client Status: ChannelState: Fresh, SessionState: Closed, ConnectStatus: BadConnectionClosed
+     [2026-11-21 09:56:41.348 (UTC+0000)] [32minfo/network[0m	TCP 7	| Socket closed
+     [2026-11-21 09:56:41.408 (UTC+0000)] [32minfo/eventloop[0m	Stopping the EventLoop
+     [2026-11-21 09:56:41.459 (UTC+0000)] [32minfo/network[0m	UDP	| Shutting down the ConnectionManager
+     [2026-11-21 09:56:41.530 (UTC+0000)] [32minfo/network[0m	TCP	| Shutting down the ConnectionManager
+     [2026-11-21 09:56:41.602 (UTC+0000)] [32minfo/eventloop[0m	The EventLoop has stopped
+     PASS open62541
+PASS test_open62541
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

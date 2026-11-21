@@ -1,0 +1,32 @@
+# texinfo 7.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:29:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u texinfo qnx-test-texinfo qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing perl (5.40.2-r0)
+(3/4) Installing texinfo (7.2-r0)
+(4/4) Installing qnx-test-texinfo (1.0-r0)
+OK: 84.7 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_texinfo
+     == texinfo ==
+       ok   makeinfo --version: texi2any (GNU texinfo) 7.2
+       ok   makeinfo t.texi: t.info
+       ok   produced by makeinfo version 7.2
+       ok   Info: node headers, menu, @code/@var, *Note, example, list, index menu, tag table
+       ok   --plaintext: numbered, underlined chapter
+       ok   --html: chapter headings with ids
+       ok   reference to a missing node: t2.texi:25 error (exit 1)
+       ok   install-info: dir entry under Testing
+       ok   info -n Second -o -: the node printed
+       ok   texindex: sorted, case-folded, with initials
+     PASS texinfo
+PASS test_texinfo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

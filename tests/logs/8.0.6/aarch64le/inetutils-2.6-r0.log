@@ -1,0 +1,37 @@
+# inetutils 2.6-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:36:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u inetutils qnx-test-inetutils qnx-port-tests
+(1/7) Installing libxcrypt (4.4.38-r0)
+(2/7) Installing ncurses (6.5-r0)
+(3/7) Installing readline (8.2-r0)
+(4/7) Installing inetutils (2.6-r0)
+(5/7) Installing qnx-port-tests (1.0-r0)
+(6/7) Installing qnx-test-inetutils-inetd (1.0-r0)
+(7/7) Installing qnx-test-inetutils (1.0-r0)
+OK: 15.4 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_inetutils
+FAIL test_inetutils (rc=1)
+     == inetutils ==
+       ok   telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.6
+       ok   hostname = uname -n (v806-a64)
+       info telnet session: 6 s
+       ok   telnet connected to telnetd on <ip>:23551
+       FAIL telnet session
+     Trying <ip>...
+     Connected to <ip>.
+     Escape character is '^]'.
+     Connection closed by foreign host.
+       ok   ping -c 2 <ip>: 2 transmitted, 2 received
+       ok   traceroute <ip>: hop 1 is <ip>
+     FAIL inetutils (1 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_inetutils
+
+RESULT: FAIL

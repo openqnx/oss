@@ -1,0 +1,66 @@
+# pocl 7.2-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T10:16:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pocl qnx-test-pocl qnx-port-tests
+( 1/10) Installing libiconv (1.18-r0)
+( 2/10) Installing libunistring (1.3-r0)
+( 3/10) Installing gettext (0.22.5-r0)
+( 4/10) Installing xz (5.6.3-r0)
+( 5/10) Installing libxml2 (2.13.5-r0)
+( 6/10) Installing llvm (22.1.8-r0)
+( 7/10) Installing opencl-icd-loader (2026.05.29-r0)
+( 8/10) Installing pocl (7.2-r0)
+( 9/10) Installing qnx-port-tests (1.0-r0)
+(10/10) Installing qnx-test-pocl (1.0-r0)
+OK: 435.9 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pocl
+FAIL test_pocl (rc=1)
+     == pocl ==
+       ok   clGetPlatformIDs finds a platform
+       ok   the platform "Portable Computing Language" is there
+       ok   CL_PLATFORM_VERSION is "OpenCL <version> PoCL ..."
+       info OpenCL 3.0 PoCL 7.2  QNX, Release, RELOC, LLVM 22.1.8, SLEEF, POCL_DEBUG
+       ok   it has a CPU device
+       ok   CL_DEVICE_TYPE has CL_DEVICE_TYPE_CPU
+       ok   CL_DEVICE_MAX_COMPUTE_UNITS is at least 1
+       ok   the device and its compiler are available
+       info device "cpu-x86-64-Intel 686 F6M158S9", 4 compute unit(s)
+       ok   CL_DEVICE_OPENCL_C_VERSION is "OpenCL C <version> ..."
+       ok   clCreateContext
+       ok   clCreateCommandQueue
+     1 error generated.
+       ok   a source with an undeclared identifier: CL_BUILD_PROGRAM_FAILURE
+       ok   the build log has the compiler's error naming the identifier
+       ok   clCreateProgramWithSource
+       ok   clBuildProgram compiles five kernels
+       FAIL CL_PROGRAM_NUM_KERNELS is 5  (tests/src/test_pocl.c:168)
+       ok   an unknown kernel name: CL_INVALID_KERNEL_NAME
+       ok   clCreateKernel(saxpy)
+       ok   saxpy is enqueued and finishes
+       FAIL saxpy: y[i] = 3*i + (4096 - i) for all 4096 elements  (tests/src/test_pocl.c:188)
+       FAIL saxpy: y[1000] = 6096  (tests/src/test_pocl.c:189)
+       ok   copy + fill + map: 100 elements 2.5, the rest the copied saxpy result
+       FAIL squares: out[i] = i*i + 7 for 10000 work items  (tests/src/test_pocl.c:212)
+       FAIL squares: the sum is 333283405000  (tests/src/test_pocl.c:213)
+       ok   the builtins kernel runs
+       FAIL sqrt(i*i) = i for i = 0 .. 1023  (tests/src/test_pocl.c:232)
+       FAIL dot((1,2,3,i), (4,5,6,2)) = 32 + 2*i  (tests/src/test_pocl.c:234)
+       FAIL popcount(i); popcount(1023) = 10  (tests/src/test_pocl.c:236)
+       FAIL rotate(i + 0x80000001, 4); for i = 0 it is 0x18  (tests/src/test_pocl.c:238)
+       FAIL 64 x 48 work items with offset (5, 9): each wrote its own coordinates  (tests/src/test_pocl.c:252)
+       FAIL local size 16: group id * 16 + local id is the global id in all 64 groups  (tests/src/test_pocl.c:263)
+       ok   the program has a binary for the device
+       ok   clCreateProgramWithBinary accepts it
+       ok   the program from the binary builds
+       FAIL its squares kernel gives the same 10000 results  (tests/src/test_pocl.c:285)
+     FAIL pocl (12 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_pocl
+
+RESULT: FAIL

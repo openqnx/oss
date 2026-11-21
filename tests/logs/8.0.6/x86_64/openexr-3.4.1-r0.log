@@ -1,0 +1,43 @@
+# openexr 3.4.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:57:03Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openexr qnx-test-openexr qnx-port-tests
+( 1/13) Installing imath (3.2.2-r0)
+( 2/13) Installing libdeflate (1.22-r0)
+( 3/13) Installing libjpeg-turbo (3.0.4-r0)
+( 4/13) Installing libwebp (1.4.0-r0)
+( 5/13) Installing libiconv (1.18-r0)
+( 6/13) Installing libunistring (1.3-r0)
+( 7/13) Installing gettext (0.22.5-r0)
+( 8/13) Installing xz (5.6.3-r0)
+( 9/13) Installing libtiff (4.7.0-r0)
+(10/13) Installing openjph (0.24.1-r0)
+(11/13) Installing openexr (3.4.1-r0)
+(12/13) Installing qnx-port-tests (1.0-r0)
+(13/13) Installing qnx-test-openexr (1.0-r0)
+OK: 38.7 MiB in 24 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openexr
+     == openexr ==
+       ok   lossless round trip, compression none
+       ok   lossless round trip, compression RLE
+       ok   lossless round trip, compression ZIPS
+       ok   lossless round trip, compression ZIP
+       ok   lossless round trip, compression PIZ
+       ok   lossless round trip, compression HTJ2K (OpenJPH)
+       ok   lossy B44 round trip within tolerance
+       ok   tiled file has 4x2 tiles of 16x16
+       ok   tiled pixels read back
+       ok   exr_start_read opens the file (C core)
+       ok   core: one part, 64x32, ZIP
+       ok   core: channels A,B,G,R
+     PASS openexr
+PASS test_openexr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

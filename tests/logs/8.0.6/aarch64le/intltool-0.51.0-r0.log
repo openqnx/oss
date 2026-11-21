@@ -1,0 +1,37 @@
+# intltool 0.51.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:37:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u intltool qnx-test-intltool qnx-port-tests
+( 1/14) Installing libxcrypt (4.4.38-r0)
+( 2/14) Installing perl (5.40.2-r0)
+( 3/14) Installing expat (2.6.4-r0)
+( 4/14) Installing perl-class-inspector (1.36-r0)
+( 5/14) Installing perl-file-sharedir (1.118-r0)
+( 6/14) Installing perl-xml-parser (2.59-r0)
+( 7/14) Installing intltool (0.51.0-r0)
+( 8/14) Installing qnx-port-tests (1.0-r0)
+( 9/14) Installing libiconv (1.18-r0)
+(10/14) Installing m4 (1.4.19-r0)
+(11/14) Installing autoconf (2.72-r0)
+(12/14) Installing automake (1.18-r0)
+(13/14) Installing intltool-dev (0.51.0-r0)
+(14/14) Installing qnx-test-intltool (1.0-r0)
+OK: 79.6 MiB in 19 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_intltool
+     == intltool ==
+       ok   -d: hello.desktop with Name[de]=Hallo Welt and Comment[de]
+       ok   -x (XML::Parser): <name xml:lang="de">Hallo Welt</name>
+       ok   intltool-extract: app.xml.in.h with N_("Hello World")
+       ok   intltoolize: po/Makefile.in.in installed
+       ok   aclocal found IT_PROG_INTLTOOL (share/aclocal/intltool.m4)
+     PASS intltool
+PASS test_intltool
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

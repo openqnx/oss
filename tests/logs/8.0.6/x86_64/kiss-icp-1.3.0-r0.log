@@ -1,0 +1,53 @@
+# kiss-icp 1.3.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:41:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u kiss-icp qnx-test-kiss-icp qnx-port-tests
+(1/4) Installing kiss-icp (1.3.0-r0)
+(2/4) Installing qnx-port-tests (1.0-r0)
+(3/4) Installing onetbb (2022.0.0-r0)
+(4/4) Installing qnx-test-kiss-icp (1.0-r0)
+OK: 10.2 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_kiss_icp
+     == kiss-icp ==
+       ok   PointToVoxel floors towards minus infinity
+       ok   VoxelDownsample keeps one point in each of the 8 voxels
+       ok   a voxel per point keeps all 64; one big voxel keeps 1
+       ok   a new map is empty
+       ok   729 lattice points stored
+       ok   duplicates and points closer than the map resolution are not added
+       ok   closest neighbour of a displaced lattice point is that point, at the displacement's length
+       ok   no neighbour in the 27 voxels around a far query
+       ok   max_points_per_voxel limits a voxel to 3 points
+       ok   Update drops the voxel beyond max_distance 5 from the origin
+       ok   Update with a pose transforms the points and prunes around the new position
+       ok   range filter keeps the points between 1 m and 10 m
+       ok   deskewing moves points by the motion left until the end of the sweep
+       ok   threshold starts at its initial value
+       ok   a 3 m deviation gives sqrt((2^2 + 3^2)/2)
+       ok   a deviation below min_motion is ignored
+       ok   a rotation counts with its chord length at max range
+       registration error: 4.6e-17 m, 8.64e-19 rad
+       ok   ICP recovers the transform (0.06,-0.04,0.03 m; 0.004,-0.006,0.010 rad) to 1e-6
+       ok   against an empty map the initial guess is returned
+       pipeline: 5904 scene points, 12 frames, travelled 2.79 m; worst pose error 0.0019 m, 0.00011 rad; local map 11137 points
+       ok   final position within 5 cm of the truth after more than 2.5 m
+       ok   every frame's pose within 5 cm and 0.005 rad
+       ok   last frame-to-frame motion matches the true step
+       ok   the local map was built
+       ATE: 0.000779 rad, 0.000581 m
+       ok   absolute trajectory error below 5 cm / 0.01 rad
+       ok   Reset clears the map and the pose
+       ATE against itself: 5.29e-17 rad, 1.63e-16 m
+       ok   ATE of a trajectory against itself is 0
+       ok   ATE of a path turned by 90 degrees: rotation pi/2, translation 0
+     PASS kiss-icp
+PASS test_kiss_icp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

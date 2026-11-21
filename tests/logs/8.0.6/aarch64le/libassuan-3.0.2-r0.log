@@ -1,0 +1,44 @@
+# libassuan 3.0.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:38:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libassuan qnx-test-libassuan qnx-port-tests
+(1/8) Installing libiconv (1.18-r0)
+(2/8) Installing libunistring (1.3-r0)
+(3/8) Installing ncurses (6.5-r0)
+(4/8) Installing gettext (0.22.5-r0)
+(5/8) Installing libgpg-error (1.50-r0)
+(6/8) Installing libassuan (3.0.2-r0)
+(7/8) Installing qnx-port-tests (1.0-r0)
+(8/8) Installing qnx-test-libassuan (1.0-r0)
+OK: 27.1 MiB in 13 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libassuan
+     == libassuan ==
+       info assuan_check_version: 3.0.2
+       ok   library version 3.0.2
+       ok   ASSUAN_LINELENGTH is 1002
+       ok   socketpair
+       ok   server forked
+       ok   assuan_new (client)
+       ok   client connected; server greeting accepted
+       info ECHO -> data "hello QNX", status "ECHOED 1"
+       ok   ECHO returns "hello QNX" as data
+       ok   status line "ECHOED 1"
+       ok   a '%' survives the data line's percent-escaping
+       ok   INQUIRE NUMBER answered with 21; server replies 42
+       ok   built-in NOP is OK
+       ok   unknown command -> GPG_ERR_ASS_UNKNOWN_CMD
+       ok   handler error comes back as ERR (Not supported)
+       ok   BYE acknowledged
+       info server exit status 0
+       ok   server ended cleanly after BYE
+     PASS libassuan
+PASS test_libassuan
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

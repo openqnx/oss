@@ -32,6 +32,10 @@ SHARDS = [
     ("-m-z", "m-z"),
 ]
 KINDS = ("apk", "packages", "tests")   # the sharded releases (all of them)
+import os
+# run as "python3 -I" (scripts/publish-github-release): that leaves this
+# directory off sys.path, so put it back for sdpver
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sdpver import SDP   # this workspace's SDP release ("8.0", "8.0.6")
 ARCHES = ("x86_64", "aarch64")
 

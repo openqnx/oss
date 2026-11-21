@@ -1,0 +1,29 @@
+# tftp-hpa 5.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T14:02:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tftp-hpa qnx-test-tftp-hpa qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r0)
+(2/5) Installing ncurses (6.5-r0)
+(3/5) Installing readline (8.2-r0)
+(4/5) Installing tftp-hpa (5.2-r0)
+(5/5) Installing qnx-test-tftp-hpa (1.0-r1)
+OK: 13.4 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tftp_hpa
+     == tftp-hpa ==
+       info tftp-hpa 5.2, with readline
+       ok   in.tftpd listening on <ip>:18059
+       ok   get hello.txt
+       ok   get big.bin (124005 bytes, binary, multi-block)
+       ok   put up.txt (created on the server)
+       ok   missing file: server error reported (Error code 1: File not found)
+     PASS tftp-hpa
+PASS test_tftp_hpa
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

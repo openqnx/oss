@@ -1,0 +1,34 @@
+# xsltproc 1.1.42-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:35:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xsltproc qnx-test-xsltproc qnx-port-tests
+(1/9) Installing qnx-port-tests (1.0-r0)
+(2/9) Installing libiconv (1.18-r0)
+(3/9) Installing libunistring (1.3-r0)
+(4/9) Installing gettext (0.22.5-r0)
+(5/9) Installing xz (5.6.3-r0)
+(6/9) Installing libxml2 (2.13.5-r0)
+(7/9) Installing libxslt (1.1.42-r0)
+(8/9) Installing xsltproc (1.1.42-r0)
+(9/9) Installing qnx-test-xsltproc (1.0-r0)
+OK: 31.7 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xsltproc
+     == xsltproc ==
+       info Using libxml 21305, libxslt 10142 and libexslt 823
+       ok   xsltproc uses libxslt 1.1.42
+       ok   grouping, sorting, sum and --stringparam: known result
+       ok   EXSLT str:tokenize and math:max
+       ok   -o writes the result file
+       ok   --xinclude merges the included document
+       ok   malformed stylesheet refused
+     PASS xsltproc
+PASS test_xsltproc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

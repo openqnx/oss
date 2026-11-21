@@ -1,0 +1,49 @@
+# llvm 22.1.8-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:49:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u llvm qnx-test-llvm qnx-port-tests
+(1/9) Installing libiconv (1.18-r0)
+(2/9) Installing libunistring (1.3-r0)
+(3/9) Installing ncurses (6.5-r0)
+(4/9) Installing gettext (0.22.5-r0)
+(5/9) Installing xz (5.6.3-r0)
+(6/9) Installing libxml2 (2.13.5-r0)
+(7/9) Installing llvm (22.1.8-r0)
+(8/9) Installing qnx-port-tests (1.0-r0)
+(9/9) Installing qnx-test-llvm (1.0-r0)
+OK: 414.8 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_llvm
+     == llvm ==
+       info llvm-config --version: 22.1.8; host target x86_64-pc-qnx
+       ok   llvm-config --version is 22.1.x
+       ok   targets built include AArch64 and X86
+       ok   llvm-as: bitcode written (BC magic)
+       ok   llvm-dis: round trip keeps @add
+       ok   lli -force-interpreter: main() returns 42
+       ok   lli (JIT): main() returns 42
+       ok   opt instcombine folds 6*7 to ret i32 42
+       ok   llc x86_64-unknown-linux-gnu: ELF object
+       ok   llvm-nm x86_64-unknown-linux-gnu: T add / answer / main
+       ok   llvm-objdump -d x86_64-unknown-linux-gnu: elf64-x86-64, <add> disassembled
+       ok   llc aarch64-unknown-linux-gnu: ELF object
+       ok   llvm-nm aarch64-unknown-linux-gnu: T add / answer / main
+       ok   llvm-objdump -d aarch64-unknown-linux-gnu: elf64-littleaarch64, <add> disassembled
+       ok   llvm-readelf -h: Machine AArch64
+       ok   llc wasm32: asm object
+       ok   llc: x86_64 assembly text
+       ok   llvm-mc assembles the llc output
+       ok   clang -c: sum_squares (T) and qnx_banner (R)
+       ok   llvm-strings finds the banner
+       ok   clang -emit-llvm
+       ok   llvm-ar: archive with 2 members
+     PASS llvm
+PASS test_llvm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

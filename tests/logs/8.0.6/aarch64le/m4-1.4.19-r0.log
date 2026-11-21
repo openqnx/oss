@@ -1,0 +1,26 @@
+# m4 1.4.19-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:52:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u m4 qnx-test-m4 qnx-port-tests
+(1/4) Installing libiconv (1.18-r0)
+(2/4) Installing m4 (1.4.19-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-m4 (1.0-r0)
+OK: 11.6 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_m4
+     == m4 ==
+       info m4 (GNU M4) 1.4.19
+       ok   expansion matches (recursion, eval radix, include, divert, regexp, changequote)
+       ok   ifdef from stdin
+       ok   esyscmd runs a shell command
+     PASS m4
+PASS test_m4
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

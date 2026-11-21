@@ -1,0 +1,73 @@
+# cups-filters 1.28.17-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:20:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cups-filters qnx-test-cups-filters qnx-port-tests
+( 1/40) Installing expat (2.6.4-r0)
+( 2/40) Installing dbus (1.16.0-r0)
+( 3/40) Installing libdaemon (0.14-r0)
+( 4/40) Installing avahi (0.9_rc3-r1)
+( 5/40) Installing libiconv (1.18-r0)
+( 6/40) Installing libxcrypt (4.4.38-r0)
+( 7/40) Installing cups (2.4.16-r0)
+( 8/40) Installing brotli (1.1.0-r0)
+( 9/40) Installing bzip2 (1.0.8-r0)
+(10/40) Installing libpng (1.6.44-r0)
+(11/40) Installing freetype (2.13.3-r0)
+(12/40) Installing fontconfig (2.15.0-r0)
+(13/40) Installing libunistring (1.3-r0)
+(14/40) Installing ncurses (6.5-r0)
+(15/40) Installing gettext (0.22.5-r0)
+(16/40) Installing libffi (3.4.6-r0)
+(17/40) Installing pcre2 (10.44-r0)
+(18/40) Installing glib (2.82.4-r0)
+(19/40) Installing lcms2 (2.16-r0)
+(20/40) Installing libexif (0.6.24-r0)
+(21/40) Installing libjpeg-turbo (3.0.4-r0)
+(22/40) Installing libwebp (1.4.0-r0)
+(23/40) Installing xz (5.6.3-r0)
+(24/40) Installing libtiff (4.7.0-r0)
+(25/40) Installing libxau (1.0.11-r0)
+(26/40) Installing libxdmcp (1.1.5-r0)
+(27/40) Installing libxcb (1.17.0-r0)
+(28/40) Installing libx11 (1.8.10-r0)
+(29/40) Installing libxext (1.3.6-r0)
+(30/40) Installing libxrender (0.9.11-r0)
+(31/40) Installing lzo (2.10-r0)
+(32/40) Installing pixman (0.46.4-r0)
+(33/40) Installing cairo (1.18.2-r0)
+(34/40) Installing openjpeg (2.5.3-r0)
+(35/40) Installing poppler (25.12.0-r0)
+(36/40) Installing qpdf (11.10.1-r0)
+(37/40) Installing cups-filters (1.28.17-r0)
+(38/40) Installing qnx-port-tests (1.0-r0)
+(39/40) Installing font-dejavu (2.37-r0)
+(40/40) Installing qnx-test-cups-filters (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 100.3 MiB in 45 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cups_filters
+     == cups-filters ==
+       ok   2-page input PDF (qpdf rebuilt its xref)
+       ok   pdftopdf: 2 pages through
+       ok   pdftopdf page-ranges=2: only "Page two"
+       ok   pdftopdf number-up=2: both pages on one sheet
+       ok   pdftops: PostScript, %%Pages: 2
+       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /NQNMV)
+       ok   imagetopdf: PPM image to a 1-page PDF
+       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.wpHd5z/bus
+       ok   driverless: PPD generated from the IPP printer's attributes
+       ok   PPD: the printer's make, QNXTest
+       ok   PPD: cupsFilter2 image/pwg-raster (the printer's only format)
+       ok   PPD: page sizes
+       ok   pdftoraster: CUPS raster (3SaR)
+       ok   rastertopdf: the raster back to a 2-page PDF
+     PASS cups-filters
+PASS test_cups_filters
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

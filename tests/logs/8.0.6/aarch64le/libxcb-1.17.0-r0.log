@@ -1,0 +1,40 @@
+# libxcb 1.17.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:46:39Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxcb qnx-test-libxcb qnx-port-tests
+(1/5) Installing libxau (1.0.11-r0)
+(2/5) Installing libxdmcp (1.1.5-r0)
+(3/5) Installing libxcb (1.17.0-r0)
+(4/5) Installing qnx-port-tests (1.0-r0)
+(5/5) Installing qnx-test-libxcb (1.0-r0)
+OK: 11.4 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxcb
+     == libxcb ==
+       ok   xcb_parse_display qnxbox:12.3
+       ok   xcb_parse_display :0
+       ok   invalid display name rejected
+       info xcb_connect(:97) error 1
+       ok   no server on :97 -> XCB_CONN_ERROR, no crash
+       ok   socketpair
+       ok   xcb_connect_to_fd: setup accepted
+       ok   client setup request: byte order mark and protocol 11
+       info vendor QNXtest release 12345678
+       ok   setup reply parsed: vendor and release
+       ok   keycode range, version, zero screens
+       info generated ids 00a00000 00a00001
+       ok   xcb_generate_id inside base/mask
+       ok   request sequence numbers 1, 2
+       ok   InternAtom reply: atom 0x1234
+       ok   X error delivered: BadValue for request 2
+       ok   server saw both InternAtom requests with their names
+     PASS libxcb
+PASS test_libxcb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

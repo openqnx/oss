@@ -1,0 +1,87 @@
+# gnome-keyring 51.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:36:38Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gnome-keyring qnx-test-gnome-keyring qnx-port-tests
+( 1/54) Installing expat (2.6.4-r0)
+( 2/54) Installing brotli (1.1.0-r0)
+( 3/54) Installing bzip2 (1.0.8-r0)
+( 4/54) Installing libpng (1.6.44-r0)
+( 5/54) Installing freetype (2.13.3-r0)
+( 6/54) Installing fontconfig (2.15.0-r0)
+( 7/54) Installing libiconv (1.18-r0)
+( 8/54) Installing libunistring (1.3-r0)
+( 9/54) Installing ncurses (6.5-r0)
+(10/54) Installing gettext (0.22.5-r0)
+(11/54) Installing libffi (3.4.6-r0)
+(12/54) Installing pcre2 (10.44-r0)
+(13/54) Installing glib (2.82.4-r0)
+(14/54) Installing libxau (1.0.11-r0)
+(15/54) Installing libxdmcp (1.1.5-r0)
+(16/54) Installing libxcb (1.17.0-r0)
+(17/54) Installing libx11 (1.8.10-r0)
+(18/54) Installing libxext (1.3.6-r0)
+(19/54) Installing libxrender (0.9.11-r0)
+(20/54) Installing lzo (2.10-r0)
+(21/54) Installing pixman (0.46.4-r0)
+(22/54) Installing cairo (1.18.2-r0)
+(23/54) Installing libjpeg-turbo (3.0.4-r0)
+(24/54) Installing gdk-pixbuf (2.42.12-r0)
+(25/54) Installing dbus (1.16.0-r0)
+(26/54) Installing libxi (1.8.2-r0)
+(27/54) Installing libxtst (1.2.5-r0)
+(28/54) Installing at-spi2-core (2.54.2-r0)
+(29/54) Installing fribidi (1.0.16-r0)
+(30/54) Installing graphite2 (1.3.14-r0)
+(31/54) Installing icu (76.1-r0)
+(32/54) Installing harfbuzz (<ip>-r0)
+(33/54) Installing libepoxy (1.5.10-r0)
+(34/54) Installing libxcomposite (0.4.6-r0)
+(35/54) Installing libxfixes (6.0.1-r0)
+(36/54) Installing libxcursor (1.2.2-r0)
+(37/54) Installing libxdamage (1.1.6-r0)
+(38/54) Installing libxinerama (1.1.5-r0)
+(39/54) Installing xz (5.6.3-r0)
+(40/54) Installing libxml2 (2.13.5-r0)
+(41/54) Installing libxkbcommon (1.8.1-r0)
+(42/54) Installing libxrandr (1.5.4-r0)
+(43/54) Installing libxft (2.3.8-r0)
+(44/54) Installing pango (1.54.0-r0)
+(45/54) Installing wayland (1.24.0-r0)
+(46/54) Installing gtk3 (3.24.43-r0)
+(47/54) Installing libgpg-error (1.50-r0)
+(48/54) Installing libgcrypt (1.11.0-r0)
+(49/54) Installing p11-kit (0.25.5-r0)
+(50/54) Installing gcr (3.41.2-r0)
+(51/54) Installing gnome-keyring (51.1-r0)
+(52/54) Installing qnx-port-tests (1.0-r0)
+(53/54) Installing libsecret (0.21.4-r0)
+(54/54) Installing qnx-test-gnome-keyring (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+* Warning: Schema “org.gnome.crypto.cache” has path “/desktop/gnome/crypto/cache/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.crypto.pgp” has path “/desktop/gnome/crypto/pgp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+OK: 164.5 MiB in 59 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gnome_keyring
+     == gnome-keyring ==
+       ok   private dbus-daemon
+       ok   gnome-keyring-daemon owns org.freedesktop.secrets
+       ok   secret-tool store (label, two attributes)
+       ok   secret-tool lookup returns the password
+       ok   lookup with another attribute value finds nothing
+       ok   secret-tool search: label and attributes
+       ok   keyring file written: login.keyring
+       ok   the keyring file holds no plain-text password
+       ok   --start reaches the running daemon over its control socket
+       ok   the daemon accepted the peer's SCM_CREDS credentials
+       ok   control socket in $XDG_RUNTIME_DIR/keyring
+       ok   secret-tool clear removes the item
+     PASS gnome-keyring
+PASS test_gnome_keyring
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

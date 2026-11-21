@@ -1,0 +1,41 @@
+# man-db 2.13.1-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-20T20:48:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u man-db qnx-test-man-db qnx-port-tests
+(1/7) Installing gdbm (1.24-r0)
+(2/7) Installing libiconv (1.18-r0)
+(3/7) Installing libpipeline (1.5.8-r0)
+(4/7) Installing man-db (2.13.1-r0)
+(5/7) Installing qnx-port-tests (1.0-r0)
+(6/7) Installing groff (1.23.0-r0)
+(7/7) Installing qnx-test-man-db (1.0-r0)
+OK: 24.0 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_man_db
+FAIL test_man_db (rc=1)
+     == man-db ==
+       info man 2.13.1
+       ok   man --version: 2.13.1
+       info lexgrog: man/man1/qnxtest.1: "qnxtest - a QNX port test page"
+       ok   lexgrog parses the NAME section
+       ok   lexgrog -w: whatis info found
+       ok   mandb -c: index database created (index.db)
+       info whatis: qnxtest (1)          - a QNX port test page
+       ok   whatis from the index
+       ok   apropos 'port test'
+       ok   whatis of a missing page fails
+       FAIL man -w: No manual entry for qnxtest
+       FAIL man -w 1: No manual entry for qnxtest in section 1
+       ok   man -w 8 qnxtest: not found
+       ok   manpath honours MANPATH
+       FAIL man -l: man: badly formed configuration directive: ''
+     FAIL man-db (3 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_man_db
+
+RESULT: FAIL

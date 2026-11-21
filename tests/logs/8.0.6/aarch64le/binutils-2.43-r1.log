@@ -1,0 +1,43 @@
+# binutils 2.43-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:11:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u binutils qnx-test-binutils qnx-port-tests
+(1/6) Installing libiconv (1.18-r0)
+(2/6) Installing m4 (1.4.19-r0)
+(3/6) Installing flex (2.6.4-r0)
+(4/6) Installing binutils (2.43-r1)
+(5/6) Installing qnx-port-tests (1.0-r0)
+(6/6) Installing qnx-test-binutils (1.0-r0)
+OK: 73.6 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_binutils
+     == binutils ==
+       info GNU assembler (GNU Binutils) 2.43.0 20240804
+       info host binary machine: AArch64
+       ok   as (aarch64): t.o assembled
+       ok   nm: T qnx_add
+       ok   nm: D qnx_msg
+       ok   objdump -d: <qnx_add> with 'w0, w0, w1'
+       ok   readelf -h: relocatable
+       ok   readelf -s: qnx_add FUNC GLOBAL
+       ok   size: text = 8 bytes
+       ok   strings finds the marker
+       ok   objcopy -O binary: machine code 0000010bc0035fd6
+       ok   addr2line 0 -> t.s:5
+       ok   ar rc / ranlib / ar t
+       ok   nm -s: archive index has qnx_add
+       ok   ld -shared: libq.so
+       ok   libq.so exports qnx_add
+       ok   strip: smaller, dynamic symbols kept
+       ok   c++filt: qnx::kernel::start()
+       ok   readelf -l on objdump: QNX interpreter (ldqnx)
+     PASS binutils
+PASS test_binutils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

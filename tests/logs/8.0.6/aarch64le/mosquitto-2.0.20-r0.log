@@ -1,0 +1,27 @@
+# mosquitto 2.0.20-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:54:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mosquitto qnx-test-mosquitto qnx-port-tests
+(1/4) Installing cjson (1.7.18-r0)
+(2/4) Installing mosquitto (2.0.20-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-mosquitto (1.0-r0)
+OK: 10.8 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mosquitto
+     == mosquitto ==
+       ok   lib init
+       ok   libmosquitto 2.x
+       ok   client object
+       ok   TLS support compiled in
+       ok   connect to closed port fails cleanly
+     PASS mosquitto
+PASS test_mosquitto
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

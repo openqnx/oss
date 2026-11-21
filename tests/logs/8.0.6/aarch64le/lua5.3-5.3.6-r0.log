@@ -1,0 +1,47 @@
+# lua5.3 5.3.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:51:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lua5.3 qnx-test-lua5-3 qnx-port-tests
+(1/3) Installing lua5.3 (5.3.6-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-lua5-3 (1.0-r0)
+OK: 10.3 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua5_3
+     == lua5.3 ==
+       ok   luaL_newstate
+       info header Lua 5.3.6
+       ok   _VERSION is Lua 5.3 (the 5.3 library is linked)
+       ok   closures keep upvalues
+       ok   table.sort / table.concat
+       ok   string.gsub with a function
+       ok   string.format
+       ok   coroutines yield and resume
+       ok   pcall catches error objects
+       ok   integer and float arithmetic (//, /, ^)
+       ok   bitwise operators
+       ok   64-bit integers
+       ok   utf8 library
+       ok   string.pack / unpack
+       ok   goto
+       ok   table.unpack
+       ok   load
+       ok   a C function registered with lua_register
+       ok   string.rep
+       ok   scratch directory
+       ok   lua5.3 runs a script with the known output
+       ok   lua5.3 -e
+       ok   luac5.3 compiles the script
+       ok   bytecode has the Lua 5.3 header (ESC Lua 0x53)
+       ok   lua5.3 runs the bytecode with the same output
+       ok   luac5.3 -p reports a syntax error
+     PASS lua5.3
+PASS test_lua5_3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

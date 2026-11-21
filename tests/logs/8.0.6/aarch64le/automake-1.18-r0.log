@@ -1,0 +1,50 @@
+# automake 1.18-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:11:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u automake qnx-test-automake qnx-port-tests
+( 1/11) Installing libiconv (1.18-r0)
+( 2/11) Installing m4 (1.4.19-r0)
+( 3/11) Installing libxcrypt (4.4.38-r0)
+( 4/11) Installing perl (5.40.2-r0)
+( 5/11) Installing autoconf (2.72-r0)
+( 6/11) Installing automake (1.18-r0)
+( 7/11) Installing qnx-port-tests (1.0-r0)
+( 8/11) Installing pcre2 (10.44-r0)
+( 9/11) Installing grep (3.11-r0)
+(10/11) Installing make (4.4.1-r1)
+(11/11) Installing qnx-test-automake (1.0-r0)
+OK: 80.6 MiB in 16 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_automake
+     == automake ==
+       ok   perl: runs
+       ok   perl: backticks (fork + exec + pipe)
+       ok   perl: system()
+       ok   perl: fork + waitpid
+       ok   perl: open -| (pipe from a child)
+       ok   perl: flock LOCK_EX
+       ok   perl: %ENV to a child
+       ok   perl: signal names (%SIG)
+       ok   perl: %! errno names
+       ok   perl: POSIX setlocale
+       ok   perl: File::Temp
+       info automake (GNU automake) 1.18
+       ok   aclocal: aclocal.m4
+       ok   automake --add-missing: Makefile.in, install-sh, test-driver
+       ok   Makefile.in has install-binSCRIPTS and check-TESTS
+       ok   autoconf: configure
+       ok   configure: Makefile generated
+       ok   make: qnxhello generated
+       ok   make check: 1 test passed (parallel harness)
+       ok   make install DESTDIR=: script and data installed
+       ok   installed script prints the greeting
+     PASS automake
+PASS test_automake
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

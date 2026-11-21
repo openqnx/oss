@@ -1,0 +1,42 @@
+# libnotify 0.8.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:45:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libnotify qnx-test-libnotify qnx-port-tests
+( 1/13) Installing libiconv (1.18-r0)
+( 2/13) Installing libunistring (1.3-r0)
+( 3/13) Installing ncurses (6.5-r0)
+( 4/13) Installing gettext (0.22.5-r0)
+( 5/13) Installing libffi (3.4.6-r0)
+( 6/13) Installing pcre2 (10.44-r0)
+( 7/13) Installing glib (2.82.4-r0)
+( 8/13) Installing libjpeg-turbo (3.0.4-r0)
+( 9/13) Installing libpng (1.6.44-r0)
+(10/13) Installing gdk-pixbuf (2.42.12-r0)
+(11/13) Installing libnotify (0.8.3-r0)
+(12/13) Installing qnx-port-tests (1.0-r0)
+(13/13) Installing qnx-test-libnotify (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 47.3 MiB in 18 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libnotify
+     == libnotify ==
+       ok   notify_init
+       ok   notify_is_initted
+       ok   app name
+       ok   notify_notification_new
+     
+     (process:110907415): libnotify-CRITICAL **: 09:45:12.174: notify_notification_add_action: assertion 'callback != NULL' failed
+       ok   notify_notification_update
+       info no notification daemon: Cannot spawn a message bus without a machine-id: Unable to load /var/local/lib/dbus/machine-id or /etc/machine-id: Failed to open file “/var/local/lib/dbus/machine-id”: No such file or directory
+       ok   the absence of a daemon is reported as an error
+       ok   notify_uninit
+     PASS libnotify
+PASS test_libnotify
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

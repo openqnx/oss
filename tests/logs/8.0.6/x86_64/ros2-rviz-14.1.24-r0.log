@@ -1,0 +1,117 @@
+# ros2-rviz 14.1.24-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:25:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-rviz qnx-test-ros2-rviz qnx-port-tests
+( 1/80) Installing qnx-port-tests (1.0-r0)
+( 2/80) Installing benchmark (1.9.0-r0)
+( 3/80) Installing console_bridge (1.0.2-r0)
+( 4/80) Installing brotli (1.1.0-r0)
+( 5/80) Installing c-ares (1.34.3-r0)
+( 6/80) Installing nghttp2 (1.64.0-r0)
+( 7/80) Installing curl (8.11.1-r0)
+( 8/80) Installing cyclonedds (0.10.5-r0)
+( 9/80) Installing fastcdr (2.2.6-r0)
+(10/80) Installing foonathan_memory (0.7.3-r0)
+(11/80) Installing tinyxml2 (<ip>-r0)
+(12/80) Installing fastdds (2.14.4-r0)
+(13/80) Installing libyaml (0.2.5-r0)
+(14/80) Installing lz4 (1.10.0-r0)
+(15/80) Installing openblas (0.3.28-r0)
+(16/80) Installing bzip2 (1.0.8-r0)
+(17/80) Installing expat (2.6.4-r0)
+(18/80) Installing gdbm (1.24-r0)
+(19/80) Installing libiconv (1.18-r0)
+(20/80) Installing libunistring (1.3-r0)
+(21/80) Installing gettext (0.22.5-r0)
+(22/80) Installing libffi (3.4.6-r0)
+(23/80) Installing sqlite (3.47.2-r0)
+(24/80) Installing xz (5.6.3-r0)
+(25/80) Installing python3 (3.14.0-r0)
+(26/80) Installing numpy (2.3.4-r0)
+(27/80) Installing opencv (4.10.0-r0)
+(28/80) Installing orocos-kdl (1.5.1-r0)
+(29/80) Installing python3-pyyaml (6.0.3-r0)
+(30/80) Installing urdfdom (4.0.3-r0)
+(31/80) Installing yaml-cpp (0.8.0-r0)
+(32/80) Installing ros2 (0_git-r0)
+(33/80) Installing assimp (6.0.2-r0)
+(34/80) Installing libpng (1.6.44-r0)
+(35/80) Installing freetype (2.13.3-r0)
+(36/80) Installing double-conversion (3.3.0-r0)
+(37/80) Installing dav1d (1.5.0-r0)
+(38/80) Installing lame (3.100-r0)
+(39/80) Installing libogg (1.3.5-r0)
+(40/80) Installing libtheora (1.1.1-r0)
+(41/80) Installing libvorbis (1.3.7-r0)
+(42/80) Installing libvpx (1.15.0-r0)
+(43/80) Installing openh264 (2.5.0-r0)
+(44/80) Installing opus (1.5.2-r0)
+(45/80) Installing x264 (0_git-r0)
+(46/80) Installing x265 (3.6-r0)
+(47/80) Installing ffmpeg (7.1.1-r0)
+(48/80) Installing fontconfig (2.15.0-r0)
+(49/80) Installing pcre2 (10.44-r0)
+(50/80) Installing glib (2.82.4-r0)
+(51/80) Installing aom (3.15.3-r0)
+(52/80) Installing libxau (1.0.11-r0)
+(53/80) Installing libxdmcp (1.1.5-r0)
+(54/80) Installing libxcb (1.17.0-r0)
+(55/80) Installing libx11 (1.8.10-r0)
+(56/80) Installing libxext (1.3.6-r0)
+(57/80) Installing libxrender (0.9.11-r0)
+(58/80) Installing lzo (2.10-r0)
+(59/80) Installing pixman (0.46.4-r0)
+(60/80) Installing cairo (1.18.2-r0)
+(61/80) Installing fdk-aac (2.0.3-r0)
+(62/80) Installing gstreamer (1.24.10-r0)
+(63/80) Installing gst-plugins-base (1.24.10-r0)
+(64/80) Installing libwebp (1.4.0-r0)
+(65/80) Installing fribidi (1.0.16-r0)
+(66/80) Installing graphite2 (1.3.14-r0)
+(67/80) Installing icu (76.1-r0)
+(68/80) Installing harfbuzz (<ip>-r0)
+(69/80) Installing libxft (2.3.8-r0)
+(70/80) Installing pango (1.54.0-r0)
+(71/80) Installing svt-av1 (2.3.0-r0)
+(72/80) Installing wayland (1.24.0-r0)
+(73/80) Installing gst-plugins-bad (1.24.10-r0)
+(74/80) Installing libjpeg-turbo (3.0.4-r0)
+(75/80) Installing libtiff (4.7.0-r0)
+(76/80) Installing libxml2 (2.13.5-r0)
+(77/80) Installing libxkbcommon (1.8.1-r0)
+(78/80) Installing qt6 (6.8.1-r0)
+(79/80) Installing ros2-rviz (14.1.24-r0)
+(80/80) Installing qnx-test-ros2-rviz (1.0-r0)
+Executing python3-3.14.0-r0.trigger
+Executing glib-2.82.4-r0.trigger
+OK: 812.0 MiB in 91 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_rviz
+     == ros2-rviz ==
+       ok   setup.sh puts OGRE's libraries on LD_LIBRARY_PATH
+       ok   ament index has rviz2
+       ok   ament index has rviz_common
+       ok   ament index has rviz_rendering
+       ok   ament index has rviz_default_plugins
+       ok   ament index has rviz_ogre_vendor
+       ok   ament index has rviz_assimp_vendor
+       ok   ament index has interactive_markers
+       ok   rviz2 --help lists --display-config and --fixed-frame
+       ok   plugin rviz_default_plugins/Grid described
+       ok   plugin rviz_default_plugins/TF described
+       ok   plugin rviz_default_plugins/Marker described
+       ok   plugin rviz_default_plugins/PointCloud2 described
+       ok   librviz_default_plugins.so installed
+       ok   OGRE RenderSystem_GLES2 installed
+       ok   RTShader library installed
+       ok   no second libOgreMain in /usr/local/opt/ros/jazzy/lib
+     PASS ros2-rviz
+PASS test_ros2_rviz
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

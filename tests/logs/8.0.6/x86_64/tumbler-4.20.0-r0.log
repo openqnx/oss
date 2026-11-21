@@ -1,0 +1,93 @@
+# tumbler 4.20.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:30:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tumbler qnx-test-tumbler qnx-port-tests
+( 1/52) Installing qnx-port-tests (1.0-r0)
+( 2/52) Installing libiconv (1.18-r0)
+( 3/52) Installing libunistring (1.3-r0)
+( 4/52) Installing gettext (0.22.5-r0)
+( 5/52) Installing libffi (3.4.6-r0)
+( 6/52) Installing pcre2 (10.44-r0)
+( 7/52) Installing glib (2.82.4-r0)
+( 8/52) Installing libjpeg-turbo (3.0.4-r0)
+( 9/52) Installing libpng (1.6.44-r0)
+(10/52) Installing gdk-pixbuf (2.42.12-r0)
+(11/52) Installing expat (2.6.4-r0)
+(12/52) Installing brotli (1.1.0-r0)
+(13/52) Installing bzip2 (1.0.8-r0)
+(14/52) Installing freetype (2.13.3-r0)
+(15/52) Installing fontconfig (2.15.0-r0)
+(16/52) Installing libxau (1.0.11-r0)
+(17/52) Installing libxdmcp (1.1.5-r0)
+(18/52) Installing libxcb (1.17.0-r0)
+(19/52) Installing libx11 (1.8.10-r0)
+(20/52) Installing libxext (1.3.6-r0)
+(21/52) Installing libxrender (0.9.11-r0)
+(22/52) Installing lzo (2.10-r0)
+(23/52) Installing pixman (0.46.4-r0)
+(24/52) Installing cairo (1.18.2-r0)
+(25/52) Installing c-ares (1.34.3-r0)
+(26/52) Installing nghttp2 (1.64.0-r0)
+(27/52) Installing curl (8.11.1-r0)
+(28/52) Installing dav1d (1.5.0-r0)
+(29/52) Installing lame (3.100-r0)
+(30/52) Installing libogg (1.3.5-r0)
+(31/52) Installing libtheora (1.1.1-r0)
+(32/52) Installing libvorbis (1.3.7-r0)
+(33/52) Installing libvpx (1.15.0-r0)
+(34/52) Installing openh264 (2.5.0-r0)
+(35/52) Installing opus (1.5.2-r0)
+(36/52) Installing x264 (0_git-r0)
+(37/52) Installing x265 (3.6-r0)
+(38/52) Installing xz (5.6.3-r0)
+(39/52) Installing ffmpeg (7.1.1-r0)
+(40/52) Installing ffmpegthumbnailer (2.2.3-r0)
+(41/52) Installing gstreamer (1.24.10-r0)
+(42/52) Installing gst-plugins-base (1.24.10-r0)
+(43/52) Installing libxml2 (2.13.5-r0)
+(44/52) Installing libgsf (1.14.53-r0)
+(45/52) Installing libxfce4util (4.20.0-r0)
+(46/52) Installing lcms2 (2.16-r0)
+(47/52) Installing libwebp (1.4.0-r0)
+(48/52) Installing libtiff (4.7.0-r0)
+(49/52) Installing openjpeg (2.5.3-r0)
+(50/52) Installing poppler (25.12.0-r0)
+(51/52) Installing tumbler (4.20.0-r0)
+(52/52) Installing qnx-test-tumbler (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 126.9 MiB in 63 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tumbler
+     == tumbler ==
+       info tumbler 4.20.0
+       ok   source PNG written to /tmp
+       info 9 thumbnailer provider(s)
+       ok   thumbnailer provider plugins loaded
+       info 9 thumbnailer(s) in total; for image/png: PixbufThumbnailer
+       ok   a thumbnailer for image/png on file:// URIs
+       ok   XDG cache plugin loaded
+       ok   cache has the 'normal' flavour
+       info flavour normal: 128x128
+       ok   tumbler_file_info_load
+       ok   no thumbnail yet: needs update
+       info ready: pèlY
+       ok   thumbnailer reported ready
+       info expecting /tmp/qnxport-tumbler-413515799/cache/thumbnails/normal/cfeea79071f2466153dd5459308585e6.png
+       ok   thumbnail at $XDG_CACHE_HOME/thumbnails/normal/<md5(uri)>.png
+       ok   thumbnail decodes
+       info thumbnail 128x85, Thumb::URI file:///tmp/qnxport-tumbler-413515799/picture.png
+       ok   scaled to 128 wide, aspect kept
+       ok   Thumb::URI names the source
+       info left 220,0,0 right 0,0,220
+       ok   colours kept: red left, blue right
+       ok   after thumbnailing: up to date
+     PASS tumbler
+PASS test_tumbler
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,44 @@
+# dbus-glib 0.116-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:30:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dbus-glib qnx-test-dbus-glib qnx-port-tests
+( 1/12) Installing expat (2.6.4-r0)
+( 2/12) Installing dbus (1.16.0-r0)
+( 3/12) Installing libiconv (1.18-r0)
+( 4/12) Installing libunistring (1.3-r0)
+( 5/12) Installing ncurses (6.5-r0)
+( 6/12) Installing gettext (0.22.5-r0)
+( 7/12) Installing libffi (3.4.6-r0)
+( 8/12) Installing pcre2 (10.44-r0)
+( 9/12) Installing glib (2.82.4-r0)
+(10/12) Installing dbus-glib (0.116-r0)
+(11/12) Installing qnx-port-tests (1.0-r0)
+(12/12) Installing qnx-test-dbus-glib (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 43.7 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dbus_glib
+     == dbus-glib ==
+       ok   private dbus-daemon listening on a UNIX socket
+       ok   dbus_g_bus_get(DBUS_BUS_SESSION)
+       ok   GetId: a 32-hex-digit bus id
+       ok   RequestName(org.qnx.DbusGlibTest) -> PRIMARY_OWNER (1)
+       ok   NameHasOwner: TRUE
+       ok   GetNameOwner: our own unique name
+       info unique name :1.0
+       ok   ListNames (G_TYPE_STRV) contains org.qnx.DbusGlibTest
+       ok   begin_call/end_call in the main loop: the same bus id
+       ok   ReleaseName -> NameOwnerChanged(org.qnx.DbusGlibTest, us, "") delivered to the signal handler
+       ok   a missing method: GError DBUS_GERROR_UNKNOWN_METHOD
+       info error 19: org.freedesktop.DBus does not understand message NoSuchMethod
+       ok   dbus-binding-tool --mode=glib-client: a stub org_qnx_Test_echo(proxy, IN_text, OUT_reply, ...)
+     PASS dbus-glib
+PASS test_dbus_glib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

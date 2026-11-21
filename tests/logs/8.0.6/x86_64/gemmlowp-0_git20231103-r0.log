@@ -1,0 +1,29 @@
+# gemmlowp 0_git20231103-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:35:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gemmlowp-dev qnx-test-gemmlowp qnx-port-tests
+(1/3) Installing gemmlowp-dev (0_git20231103-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-gemmlowp (1.0-r0)
+OK: 11.7 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gemmlowp
+     == gemmlowp ==
+       ok   33x29 * 29x47 with offsets, int32 result = reference (1 thread)
+       ok   the same with 4 threads
+       info 0 of 1551 outputs saturated
+       ok   uint8 pipeline (quantize down by scale + saturating cast) = reference
+       info exp(-1) = 0.3678795, logistic(0) = 0.5000000, tanh(0.5) = 0.4621170
+       ok   fixed-point exp_on_negative_values(-1) = e^-1
+       ok   fixed-point logistic(0) = 0.5, tanh(0.5)
+       ok   Q0.31 multiply 0.25 * 0.5 = 0.125
+     PASS gemmlowp
+PASS test_gemmlowp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

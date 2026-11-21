@@ -1,0 +1,37 @@
+# cannelloni 2.1.2-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:12:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cannelloni qnx-test-cannelloni qnx-port-tests
+(1/5) Installing qnx-socketcan (1.0-r0)
+(2/5) Installing cannelloni (2.1.2-r0)
+(3/5) Installing qnx-port-tests (1.0-r0)
+(4/5) Installing can-utils (2025.01-r0)
+(5/5) Installing qnx-test-cannelloni (1.0-r0)
+OK: 10.6 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cannelloni
+     == cannelloni ==
+       ok   qcand is up with vcan0 and vcan1
+       ok   UDP: the tunnel vcan0 -> vcan1 carries a frame
+       ok   UDP: classic frame 123#DEADBEEF arrives on vcan1
+       ok   UDP: extended frame keeps its 29-bit id
+       ok   UDP: remote frame arrives as a remote frame
+       ok   UDP: CAN FD frame of 64 bytes arrives whole
+       ok   UDP: frame sent on vcan1 arrives on vcan0
+       ok   UDP: the frame is not echoed back (seen 1 time(s))
+       ok   UDP: 50 frames arrive, in order (50 received)
+       ok   SIGTERM ends cannelloni with status 0 (got 0)
+       ok   TCP: the tunnel vcan0 -> vcan1 carries a frame
+       ok   TCP: classic frame arrives on vcan1
+       ok   TCP: extended frame arrives on vcan1
+       ok   TCP: frame sent on vcan1 arrives on vcan0
+     PASS cannelloni
+PASS test_cannelloni
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

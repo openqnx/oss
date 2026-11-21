@@ -1,0 +1,61 @@
+# gd 2.3.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:25:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gd qnx-test-gd qnx-port-tests
+( 1/27) Installing expat (2.6.4-r0)
+( 2/27) Installing brotli (1.1.0-r0)
+( 3/27) Installing bzip2 (1.0.8-r0)
+( 4/27) Installing libpng (1.6.44-r0)
+( 5/27) Installing freetype (2.13.3-r0)
+( 6/27) Installing fontconfig (2.15.0-r0)
+( 7/27) Installing aom (3.15.3-r0)
+( 8/27) Installing dav1d (1.5.0-r0)
+( 9/27) Installing libavif (1.1.1-r0)
+(10/27) Installing libde265 (1.0.15-r0)
+(11/27) Installing libjpeg-turbo (3.0.4-r0)
+(12/27) Installing libwebp (1.4.0-r0)
+(13/27) Installing libiconv (1.18-r0)
+(14/27) Installing libunistring (1.3-r0)
+(15/27) Installing ncurses (6.5-r0)
+(16/27) Installing gettext (0.22.5-r0)
+(17/27) Installing xz (5.6.3-r0)
+(18/27) Installing libtiff (4.7.0-r0)
+(19/27) Installing openh264 (2.5.0-r0)
+(20/27) Installing openjpeg (2.5.3-r0)
+(21/27) Installing openjph (0.24.1-r0)
+(22/27) Installing x265 (3.6-r0)
+(23/27) Installing libheif (1.20.2-r0)
+(24/27) Installing gd (2.3.3-r0)
+(25/27) Installing qnx-port-tests (1.0-r0)
+(26/27) Installing font-dejavu (2.37-r0)
+(27/27) Installing qnx-test-gd (1.0-r0)
+OK: 61.1 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gd
+     == gd ==
+       info gd 2.3.3
+       ok   100x80 true-colour image
+       ok   filled rectangle: red inside, white outside
+       ok   line along y=50
+       ok   ellipse outline green, flood-filled blue inside
+       ok   PNG: written (475 bytes) and read back exactly
+       ok   GIF: written (310 bytes) and read back (lossy, red stays red)
+       ok   BMP: written (24054 bytes) and read back exactly
+     TIFFWriteDirectorySec: Warning, Creating TIFF with legacy Deflate codec identifier, COMPRESSION_ADOBE_DEFLATE is more widely supported.
+       ok   TIFF: written (2098 bytes) and read back exactly
+       ok   WebP: written (754 bytes) and read back (lossy, red stays red)
+       ok   JPEG: written (4281 bytes) and read back (lossy, red stays red)
+       ok   scaled to 50x40, the red square still red
+       ok   rotated 90 degrees: 80x100
+       ok   built with fontconfig
+       ok   FreeType text 'Hello' at 14 pt: 30-70 px wide, drawn
+     PASS gd
+PASS test_gd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

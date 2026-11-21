@@ -1,0 +1,95 @@
+# libpanel 1.10.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T09:45:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libpanel qnx-test-libpanel qnx-port-tests
+( 1/55) Installing expat (2.6.4-r0)
+( 2/55) Installing brotli (1.1.0-r0)
+( 3/55) Installing bzip2 (1.0.8-r0)
+( 4/55) Installing libpng (1.6.44-r0)
+( 5/55) Installing freetype (2.13.3-r0)
+( 6/55) Installing fontconfig (2.15.0-r0)
+( 7/55) Installing libiconv (1.18-r0)
+( 8/55) Installing libunistring (1.3-r0)
+( 9/55) Installing ncurses (6.5-r0)
+(10/55) Installing gettext (0.22.5-r0)
+(11/55) Installing libffi (3.4.6-r0)
+(12/55) Installing pcre2 (10.44-r0)
+(13/55) Installing glib (2.82.4-r0)
+(14/55) Installing libxau (1.0.11-r0)
+(15/55) Installing libxdmcp (1.1.5-r0)
+(16/55) Installing libxcb (1.17.0-r0)
+(17/55) Installing libx11 (1.8.10-r0)
+(18/55) Installing libxext (1.3.6-r0)
+(19/55) Installing libxrender (0.9.11-r0)
+(20/55) Installing lzo (2.10-r0)
+(21/55) Installing pixman (0.46.4-r0)
+(22/55) Installing cairo (1.18.2-r0)
+(23/55) Installing graphene (1.10.8-r0)
+(24/55) Installing fribidi (1.0.16-r0)
+(25/55) Installing libjpeg-turbo (3.0.4-r0)
+(26/55) Installing gdk-pixbuf (2.42.12-r0)
+(27/55) Installing graphite2 (1.3.14-r0)
+(28/55) Installing icu (76.1-r0)
+(29/55) Installing harfbuzz (<ip>-r0)
+(30/55) Installing libepoxy (1.5.10-r0)
+(31/55) Installing libwebp (1.4.0-r0)
+(32/55) Installing xz (5.6.3-r0)
+(33/55) Installing libtiff (4.7.0-r0)
+(34/55) Installing libxml2 (2.13.5-r0)
+(35/55) Installing libxkbcommon (1.8.1-r0)
+(36/55) Installing libxft (2.3.8-r0)
+(37/55) Installing pango (1.54.0-r0)
+(38/55) Installing wayland (1.24.0-r0)
+(39/55) Installing gtk4 (4.16.7-r0)
+(40/55) Installing c-ares (1.34.3-r0)
+(41/55) Installing nghttp2 (1.64.0-r0)
+(42/55) Installing curl (8.11.1-r0)
+(43/55) Installing libxmlb (0.3.24-r0)
+(44/55) Installing libyaml (0.2.5-r0)
+(45/55) Installing appstream (1.0.6-r0)
+(46/55) Installing libadwaita (1.6.10-r0)
+(47/55) Installing libpanel (1.10.4-r0)
+(48/55) Installing qnx-port-tests (1.0-r0)
+(49/55) Installing font-dejavu (2.37-r0)
+(50/55) Installing libsfdo (0.1.4-r0)
+(51/55) Installing lcms2 (2.16-r0)
+(52/55) Installing wlroots (0.20.2-r0)
+(53/55) Installing xkeyboard-config (2.43-r0)
+(54/55) Installing labwc (0.20.2-r0)
+(55/55) Installing qnx-test-libpanel (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 176.5 MiB in 60 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libpanel
+     == libpanel ==
+       info libpanel 1.10.4
+       ok   labwc (headless) Wayland socket appeared
+       ok   gtk_init_check on labwc
+       ok   panel types registered
+       info position: {'depth': <uint32 3>, 'column': <uint32 2>, 'area': <'start'>, 'row': <uint32 1>}
+       ok   PanelPosition round trip through a GVariant
+       ok   a new position is indeterminate, a set one is not
+       ok   PanelSession restored from its GVariant
+       ok   session item: module, metadata (uri, line) and position restored
+     
+     (process:19861526): libpanel-WARNING **: 09:43:05.085: PanelDropControls added without a dock, this cannot work.
+     
+     (process:19861526): libpanel-WARNING **: 09:43:05.093: PanelDropControls added without a dock, this cannot work.
+       ok   window with a dock, a grid and a frame mapped
+       info grid: 1 column(s), 1 frame(s)
+       ok   grid holds the widgets in frames
+       ok   widget title and modified flag
+       ok   frame with two pages
+       ok   frame switches to page A
+       ok   panel_widget_raise brings page B forward
+       ok   a closed page leaves the frame
+     PASS libpanel
+PASS test_libpanel
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

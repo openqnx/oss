@@ -1,0 +1,39 @@
+# make 4.4.1-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-20T18:00:14Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u make qnx-test-make qnx-port-tests
+(1/3) Installing make (4.4.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-make (1.0-r0)
+OK: 9885 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_make
+FAIL test_make (rc=1)
+     == make ==
+       info GNU Make 4.4.1
+       FAIL make -j3 (rc=139)
+     Memory fault (core dumped) 
+       FAIL total.txt content
+     cat: total.txt: No such file or directory
+       FAIL build log
+     Memory fault (core dumped) 
+     Memory fault (core dumped) 
+       FAIL second run rebuilt: 
+     Memory fault (core dumped) 
+       FAIL incremental: ''
+     sed: total.txt: No such file or directory
+       FAIL total.txt not updated
+     Memory fault (core dumped) 
+       FAIL make -n: 
+       FAIL make -n removed files
+       ok   makefile from stdin (if/filter/subst)
+     FAIL make (8 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_make
+
+RESULT: FAIL

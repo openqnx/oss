@@ -1,0 +1,34 @@
+# thorvg 0.15.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-21T12:29:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u thorvg qnx-test-thorvg qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r0)
+(2/5) Installing libjpeg-turbo (3.0.4-r0)
+(3/5) Installing libpng (1.6.44-r0)
+(4/5) Installing thorvg (0.15.8-r0)
+(5/5) Installing qnx-test-thorvg (1.0-r0)
+OK: 12.9 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_thorvg
+     == thorvg ==
+       ok   tvg_engine_init
+       ok   allocate the canvas buffer
+       ok   tvg_swcanvas_create
+       ok   set the render target
+       ok   tvg_shape_new
+       ok   set the fill colour
+       ok   push the shape
+       ok   tvg_canvas_draw
+       ok   tvg_canvas_sync
+       ok   centre pixel was filled red
+       ok   corner outside the shape is untouched
+     PASS thorvg
+PASS test_thorvg
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

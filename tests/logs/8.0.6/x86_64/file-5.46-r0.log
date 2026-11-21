@@ -1,0 +1,60 @@
+# file 5.46-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T09:33:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u file qnx-test-file qnx-port-tests
+(1/9) Installing bzip2 (1.0.8-r0)
+(2/9) Installing libiconv (1.18-r0)
+(3/9) Installing libunistring (1.3-r0)
+(4/9) Installing ncurses (6.5-r0)
+(5/9) Installing gettext (0.22.5-r0)
+(6/9) Installing xz (5.6.3-r0)
+(7/9) Installing file (5.46-r0)
+(8/9) Installing qnx-port-tests (1.0-r0)
+(9/9) Installing qnx-test-file (1.0-r0)
+OK: 36.5 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_file
+     == file ==
+       info libmagic version 546
+       ok   magic_version() == 546 (file 5.46)
+       info default magic path: /usr/local/share/misc/magic
+       ok   magic_open
+       ok   magic_load(default database)
+       info png  -> PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   PNG header identified with size and depth
+       info gz   -> gzip compressed data, from Unix
+       ok   gzip stream identified
+       info pdf  -> PDF document, version 1.4
+       ok   PDF 1.4 identified
+       info sh   -> POSIX shell script, ASCII text executable
+       ok   #!/bin/sh script identified
+       info txt  -> ASCII text
+       ok   plain ASCII text identified
+       info self -> ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /usr/lib/ldqnx-64.so.2, BuildID[md5/uuid]=bd7ee503a90e50ab933bad7df818bc28, with debug_info, not stripped
+       ok   own binary: ELF 64-bit LSB
+       ok   own binary: x86-64
+       ok   magic_setflags(MAGIC_MIME_TYPE)
+       ok   MIME type of PNG is image/png
+       ok   MIME type of gzip is application/gzip
+       ok   MIME type of text is text/plain
+       ok   sample files written
+       info program: /usr/local/bin/file
+       info file -v: file-5.46
+       ok   file -v reports file-5.46
+       info file -b a.png: PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   file: PNG
+       info file -b b.gz: gzip compressed data, from Unix, original size modulo 2^32 0
+       ok   file: gzip
+       info file -b --mime-type c.txt: text/plain
+       ok   file --mime-type: text/plain
+       ok   file <path>: "<path>: ASCII text"
+     PASS file
+PASS test_file
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,54 @@
+# riegeli 0_git20231212-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:16:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u riegeli qnx-test-riegeli qnx-port-tests
+( 1/14) Installing qnx-port-tests (1.0-r0)
+( 2/14) Installing abseil (20260817.0-r0)
+( 3/14) Installing protobuf (29.3-r0)
+( 4/14) Installing brotli (1.1.0-r0)
+( 5/14) Installing bzip2 (1.0.8-r0)
+( 6/14) Installing highwayhash (0_git20240418-r0)
+( 7/14) Installing lz4 (1.10.0-r0)
+( 8/14) Installing snappy (1.2.1-r0)
+( 9/14) Installing libiconv (1.18-r0)
+(10/14) Installing libunistring (1.3-r0)
+(11/14) Installing gettext (0.22.5-r0)
+(12/14) Installing xz (5.6.3-r0)
+(13/14) Installing riegeli (0_git20231212-r0)
+(14/14) Installing qnx-test-riegeli (1.0-r0)
+OK: 47.5 MiB in 25 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_riegeli
+     == riegeli ==
+       ok   CRC-32C("123456789") = 0xe3069283
+       info uncompressed 76944 bytes (records: 73890 bytes)
+       ok   uncompressed: 2000 records written and read back unchanged
+       info brotli       2717 bytes (records: 73890 bytes)
+       ok   brotli: 2000 records written and read back unchanged
+       ok   brotli: smaller than uncompressed
+       info zstd         3652 bytes (records: 73890 bytes)
+       ok   zstd: 2000 records written and read back unchanged
+       ok   zstd: smaller than uncompressed
+       info snappy       10542 bytes (records: 73890 bytes)
+       ok   snappy: 2000 records written and read back unchanged
+       ok   snappy: smaller than uncompressed
+       ok   100 proto records written, transposed
+       ok   file metadata read back
+       ok   100 proto records parsed back unchanged
+       ok   file written with FdWriter (small chunks)
+       ok   seek to the position of record 1234 and read it
+       ok   then record 1235 follows
+       ok   reader closed cleanly
+       ok   damaged file: reading without recovery fails
+       info with recovery: 1959 of 2000 records, 1 region(s) skipped
+       ok   with recovery: the damaged region is skipped, the rest read
+     PASS riegeli
+PASS test_riegeli
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

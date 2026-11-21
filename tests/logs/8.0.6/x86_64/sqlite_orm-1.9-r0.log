@@ -1,0 +1,35 @@
+# sqlite_orm 1.9-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-21T11:27:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sqlite_orm-dev qnx-test-sqlite-orm qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing sqlite (3.47.2-r0)
+(3/4) Installing qnx-test-sqlite-orm (1.0-r0)
+(4/4) Installing sqlite_orm-dev (1.9-r0)
+OK: 20.0 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sqlite_orm
+     == sqlite_orm ==
+       ok   sync_schema created both tables
+       ok   insert returns autoincrement ids 1,2,3
+       ok   count
+       ok   where age > 30 order by name
+       ok   sum(age) = 102
+       ok   max(age) = 41
+       ok   join + group by: alice has 2 pets
+       ok   update
+       ok   remove
+       ok   transaction rolled back
+       ok   transaction committed
+       ok   get of a missing id throws
+       ok   data persisted in the database file
+     PASS sqlite_orm
+PASS test_sqlite_orm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

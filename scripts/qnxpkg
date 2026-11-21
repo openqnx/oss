@@ -523,6 +523,7 @@ TEST_EXTRAS = {
     # programs the test runs: the compositor and a client of it
     "test_labwc": ["bin/labwc", "bin/swaybg", "share/X11/xkb"],
     "test_wlroots": ["share/X11/xkb"],
+    "test_webrtc_screencast": ["bin/labwc", "share/X11/xkb"],
     "test_libunwind": ["opt/libunwind/lib"],
     "test_xkbcomp": ["bin/xkbcomp", "share/X11/xkb"],
     "test_cli_tools": ["bin/ed", "bin/patch", "bin/lzip", "bin/wget"],

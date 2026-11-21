@@ -3,6 +3,9 @@
 # with libcgraph/libgvc for programs (doxygen draws its diagrams with dot).
 VERSION=13.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=13.1.2
 DEPS="gd cairo pango expat zlib libtool freetype fontconfig libwebp poppler glib libx11 libxrender"
+# A font to lay text out with: with no font at all, the pango text layout
+# returns garbage label heights (a 2x32767 PNG of a six-node graph).
+RUNTIME_DEPS="font-dejavu"
 BUILDSYS=cmake
 # Renderers: cairo/pango (PNG, SVG, PDF, PS), gd (GIF, JPEG, ...), webp, PDF
 # input (poppler), the X11 window output (-Txlib, Xwayland), and

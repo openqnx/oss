@@ -74,12 +74,14 @@ for s in $pat; do
       case "$f" in *.sym|*'*'*) continue ;; esac
       case "$(basename "$f")" in libstdc++*|libsupc++*) continue ;; esac
       [ -e "$f" ] || [ -L "$f" ] || continue
-      if [ -L "$f" ]; then
-        # A link name: keep it a link to the file name it resolves to.
+      if [ -L "$f" ] && [ "$(basename "$(readlink -f "$f")")" != "$(basename "$f")" ]; then
+        # A link name: keep it a link to the file name it resolves to. (A
+        # link to a file of its own name -- QNX_TARGET is the staging
+        # linkroot, where every SDP file is a link -- is copied below.)
         ln -sf "$(basename "$(readlink -f "$f")")" "$L/$(basename "$f")"
         r=$(readlink -f "$f"); [ -f "$r" ] && [ ! -e "$L/$(basename "$r")" ] && cp "$r" "$L/"
       else
-        [ -e "$L/$(basename "$f")" ] || cp "$f" "$L/"
+        [ -e "$L/$(basename "$f")" ] || cp -L "$f" "$L/"
       fi
     done
   done

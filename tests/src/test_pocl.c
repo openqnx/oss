@@ -164,7 +164,7 @@ int main(void) {
     s[0] = 0; clGetProgramBuildInfo(prog, dev, CL_PROGRAM_BUILD_LOG, sizeof s - 1, s, NULL); s[sizeof s - 1] = 0;
     printf("  info clBuildProgram: %d\n%s\n", rc, s); QT_END();
   }
-  { cl_uint nk = 0; clGetProgramInfo(prog, CL_PROGRAM_NUM_KERNELS, sizeof nk, &nk, NULL);
+  { size_t nk = 0; clGetProgramInfo(prog, CL_PROGRAM_NUM_KERNELS, sizeof nk, &nk, NULL); /* a size_t */
     QT_CHECK(nk == 5, "CL_PROGRAM_NUM_KERNELS is 5"); }
   k = clCreateKernel(prog, "no_such_kernel", &rc);
   QT_CHECK(k == NULL && rc == CL_INVALID_KERNEL_NAME, "an unknown kernel name: CL_INVALID_KERNEL_NAME");

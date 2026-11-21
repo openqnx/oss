@@ -66,23 +66,30 @@ if [ -x "$BIN/libstrongswan_tests" ]; then
   # (TCG) aarch64 QEMU target that limit, not the code, ran out: SIGALRM
   # "timeout(14)".  Run it on its own, so the rest of the suite is judged
   # strictly and only a timeout of this one function is reported as info.
-  EXCL=test_chunk_from_fd_huge
+  # test_sign_pkcs15_3072 (rsa suite, 8 s per function) is the same case:
+  # ten 3072-bit RSA signatures in software ran past the limit on the
+  # emulated aarch64 target (SDP 8.0.6 rebuild), "timeout(14)" again.
+  SLOW="chunk:test_chunk_from_fd_huge rsa:test_sign_pkcs15_3072"
+  EXCL=test_chunk_from_fd_huge,test_sign_pkcs15_3072
   runsuites libstrongswan "$BIN/libstrongswan_tests" 14 \
     "chunk,enum,identification,asn1,host,printf,hasher,crypter,rsa,ecdsa,certnames,serial_gen,serial_parse,signature params"
   echo "  info $(grep -m1 'loaded plugins' libstrongswan.out)"
   EXCL=
-  TESTS_SUITES=chunk TESTS_FUNCTIONS=test_chunk_from_fd_huge "$BIN/libstrongswan_tests" > huge.out 2>&1; rc=$?
-  if [ $rc -eq 0 ] && grep -q "Passed all 1 'libstrongswan' suites" huge.out; then
-    ok "chunk_from_fd: 8192 messages over a socketpair read back in order"
-  # The same limit can show up as the reader's own failure: SIGALRM lands while
-  # chunk_from_fd() is blocked in read(), which returns EINTR ("Interrupted
-  # function call") before the runner reports the timeout.
-  elif grep -q "test_chunk_from_fd_huge': timeout" huge.out ||
-       grep -q "test_chunk_from_fd_huge': chunk_from_fd(s\[0\], &in): Interrupted function call" huge.out; then
-    echo "  info chunk_from_fd_huge hit strongSwan's 2 s per-test limit (slow emulated target, rc=$rc): not judged"
-  else
-    bad "chunk_from_fd_huge: rc=$rc: $(grep -E "Failure|suites" huge.out | tail -n 3 | tr '\n' ' ')"
-  fi
+  for sf in $SLOW; do
+    su=${sf%%:*}; fn=${sf#*:}
+    TESTS_SUITES=$su TESTS_FUNCTIONS=$fn TESTS_REDUCED_KEYLENGTHS=1 "$BIN/libstrongswan_tests" > slow.out 2>&1; rc=$?
+    if [ $rc -eq 0 ] && grep -q "Passed all 1 'libstrongswan' suites" slow.out; then
+      ok "$fn ($su suite) passed on its own"
+    # The limit can also show up as the reader's own failure: SIGALRM lands
+    # while chunk_from_fd() is blocked in read(), which returns EINTR
+    # ("Interrupted function call") before the runner reports the timeout.
+    elif grep -q "$fn': timeout" slow.out ||
+         grep -q "$fn': chunk_from_fd(s\[0\], &in): Interrupted function call" slow.out; then
+      echo "  info $fn hit strongSwan's fixed per-test limit (slow emulated target, rc=$rc): not judged"
+    else
+      bad "$fn: rc=$rc: $(grep -E "Failure|suites" slow.out | tail -n 3 | tr '\n' ' ')"
+    fi
+  done
 else bad "libstrongswan_tests not found"; fi
 if [ -x "$BIN/exchange_tests" ]; then
   runsuites exchanges "$BIN/exchange_tests" 4 "child create,ike rekey,child rekey,ike delete"

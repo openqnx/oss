@@ -21,7 +21,7 @@ tests/results/ is tracked: it is the record of what was verified where, read
 by scripts/gen-port-docs (the "How it was verified" section of every
 component) and scripts/publish-github-release --verified.
 """
-import argparse, datetime, os, re, sys
+import argparse, datetime, fcntl, os, re, sys
 
 WS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLS = ["test", "result", "date", "target", "via", "versions"]
@@ -61,6 +61,12 @@ def main():
     import sdpver                      # another SDP release: tests/results/<sdp>/
     os.makedirs(sdpver.results_dir(False), exist_ok=True)
     path = os.path.join(sdpver.results_dir(False), a.arch + ".tsv")
+    # Several verify-on-target runs (one per target VM) record into the same
+    # file: read-modify-write under a lock, or one run's results overwrite
+    # another's.
+    os.makedirs(os.path.join(WS, "logs"), exist_ok=True)
+    lock = open(os.path.join(WS, "logs", ".record-results.lock"), "w")
+    fcntl.flock(lock, fcntl.LOCK_EX)
     rows = load(path)
     n = 0
     for m in re.finditer(r"^(PASS|FAIL) (test_\w+|pkg:[\w.+-]+)", text, re.M):

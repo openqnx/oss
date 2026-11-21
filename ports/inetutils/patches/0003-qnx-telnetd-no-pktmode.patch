@@ -1,0 +1,54 @@
+telnetd: work with a pty that has no packet mode (TIOCPKT)
+
+QNX SDP 8.0.6's devc-pty fails ioctl(TIOCPKT) and returns plain data.
+telnetd ignored the failure and took the first byte of every pty read as
+the packet header: the shell's output never reached the client (it lost
+"e" of "echo", took the rest as flow-control flags), and test_inetutils'
+telnet session got nothing back. Keep packet mode where the ioctl works;
+otherwise treat everything read from the pty as data.
+
+Upstream-Status: QNX-specific
+
+--- a/telnetd/telnetd.c
++++ b/telnetd/telnetd.c
+@@ -39,6 +39,8 @@
+ static void parse_debug_level (char *str);
+ static void telnetd_setup (int fd);
+ static int telnetd_run (void);
++/* Whether the pty reports in TIOCPKT packets (see telnetd_setup).  */
++static int pktmode = 1;
+ static void print_hostinfo (void);
+ static void chld_is_done (int sig);
+ 
+@@ -514,8 +516,10 @@
+   pty = startslave (remote_hostname, level, user_name);
+ 
+ #ifndef HAVE_STREAMSPTY
+-  /* Turn on packet mode */
+-  ioctl (pty, TIOCPKT, (char *) &on);
++  /* Turn on packet mode.  A pty that does not have it (QNX SDP 8.0.6's
++     devc-pty fails TIOCPKT) returns plain data: the first byte of every
++     read is then output, not a packet header.  */
++  pktmode = ioctl (pty, TIOCPKT, (char *) &on) == 0;
+ #endif
+   ioctl (pty, FIONBIO, (char *) &on);
+   ioctl (net, FIONBIO, (char *) &on);
+@@ -672,6 +676,10 @@
+ 	  if (pty_read () < 0)
+ 	    break;
+ 
++	  /* Without packet mode there is no preamble: all of it is data.  */
++	  if (!pktmode)
++	    goto pty_data;
++
+ 	  /* The first byte is now TIOCPKT data.  Peek at it.  */
+ 	  c = pty_get_char (1);
+ 
+@@ -712,6 +720,7 @@
+ 
+ 	  pty_get_char (0);	/* Discard the TIOCPKT preamble.  */
+ 	}
++    pty_data:
+ 
+       while (pty_input_level () > 0)
+ 	{

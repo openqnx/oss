@@ -41,7 +41,9 @@ trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 info "$("$TC" -V 2>&1 | head -n 1)"
 mkdir srv; echo "hello over TFTP from QNX" > srv/hello.txt
-i=0; while [ $i -lt 4000 ]; do printf 'block %05d of binary-ish data\n' $i; i=$((i+1)); done > srv/big.bin
+# One awk, not 4000 printf processes (printf is not a ksh builtin on QNX:
+# the loop took about 80 s on the emulated aarch64 VM, past the watchdog).
+awk 'BEGIN { for (i = 0; i < 4000; i++) printf "block %05d of binary-ish data\n", i }' > srv/big.bin
 printf '\000\001\002\377\376' >> srv/big.bin
 chmod 755 srv; chmod 644 srv/*
 P=$((16900 + $$ % 2000))

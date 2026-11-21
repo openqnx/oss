@@ -25,3 +25,8 @@ CONF_ARGS_EXTRA=( --disable-servers --disable-clients
 # owner flag; the mode, setuid included, is kept, and scripts/qnxpkg records
 # every file as root.
 do_install() { make -C "$B" DESTDIR="$STAGE" SUIDMODE="-m 4755" install; }
+# A patched telnetd.c makes man/telnetd.8 out of date, and the rule runs the
+# freshly built telnetd through help2man, which a cross build cannot do (and
+# the build image has no help2man): keep the tarball's pages -- the patches
+# change no --help text.
+CONF_ENV=( HELP2MAN=true )

@@ -1,0 +1,46 @@
+pocl: link kernel binaries QNX's runtime linker can load
+
+PoCL links each compiled kernel into a shared object with the lld built
+into libpocl and dlopen()s it in the same process. On QNX that dlopen()
+failed for every kernel, so PoCL ran none and every result was wrong
+(test_pocl on both architectures, SDP 8.0 and 8.0.6):
+
+ - lld pads PT_GNU_RELRO to the end of the page, over .bss past the file
+   contents, and QNX's runtime linker rejects that layout with ENOMEM
+   ("Not enough memory"); the same object without the RELRO header loads.
+   Link with -z norelro.
+ - lld writes its output through a shared mapping of the file, and QNX
+   refuses to load a file the process has mapped for writing: the open in
+   dlopen() failed with EBUSY ("Resource busy", DL_DEBUG=libs); QNX keeps
+   a file mapped for writing busy for a while after munmap() and close()
+   (the same object loads seconds later, and a copy loads at once). Ask for
+   the in-memory output buffer: in this lld that is --mmap-output-file
+   (FileOutputBuffer::F_mmap), the default only for links that name ldqnx
+   as the dynamic linker.
+
+Upstream-Status: QNX-specific
+
+--- a/lib/CL/pocl_llvm_build.cc
++++ b/lib/CL/pocl_llvm_build.cc
+@@ -1239,6 +1239,21 @@
+   Drivers = {{lld::Darwin, &lld::macho::link}};
+ #else
+   LinkerArgs = {"ld.lld", "--shared", "-o", OutFile, InFile};
++#ifdef __QNX__
++  // No PT_GNU_RELRO: lld pads it to the end of the page, over .bss, and
++  // QNX's runtime linker then fails dlopen() of every kernel binary with
++  // ENOMEM ("Not enough memory").
++  LinkerArgs.push_back("-z");
++  LinkerArgs.push_back("norelro");
++  // Write the output with write(), not through a shared mapping of the
++  // file: QNX keeps a file that was mapped for writing busy for a while
++  // after it is unmapped and closed, and the dlopen() that follows failed
++  // with EBUSY ("Resource busy"). In this lld --mmap-output-file selects the
++  // in-memory buffer written out on commit (FileOutputBuffer::F_mmap), and
++  // it is the default only when the link names ldqnx as dynamic linker,
++  // which a kernel binary does not.
++  LinkerArgs.push_back("--mmap-output-file");
++#endif
+   Drivers = {{lld::Gnu, &lld::elf::link}};
+ #endif
+ 

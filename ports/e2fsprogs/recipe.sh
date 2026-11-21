@@ -12,7 +12,7 @@ BUILDSYS=autotools
 # an aarch64le build linked one that a passing build had left there and no
 # package provides, and every program failed at load with "Could not load
 # library libblkid.so.1".
-DEPS="libuuid"
+DEPS="libuuid libarchive file"
 CONF_ARGS_EXTRA=( --enable-elf-shlibs --disable-nls --disable-fuse2fs --disable-uuidd --disable-libuuid --enable-libblkid
                   --disable-e2initrd-helper --disable-defrag --without-systemd-unit-dir
                   --without-udev-rules-dir --without-crond-dir )

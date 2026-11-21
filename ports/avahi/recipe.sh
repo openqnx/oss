@@ -7,7 +7,7 @@
 # without an avahi account (a stock QNX system has none), 0004 stops the
 # client tools aborting on SIGINT/SIGTERM (QNX's POLLIN is two bits).
 VERSION=0.9-rc3; GIT=https://github.com/avahi/avahi.git; REF=v0.9-rc3
-DEPS="dbus expat libdaemon"
+DEPS="dbus expat libdaemon gobject-introspection"
 BUILDSYS=autotools
 # QNX's network stack is FreeBSD's: interfaces and addresses come from the
 # PF_ROUTE socket (avahi-core/iface-pfroute.c; configure picks it from

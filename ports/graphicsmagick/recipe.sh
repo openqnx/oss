@@ -3,7 +3,7 @@
 VERSION=1.3.46
 TARBALL=https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.46/GraphicsMagick-1.3.46.tar.xz
 SHA256=c7c706a505e9c6c3764156bb94a0c9644d79131785df15a89c9f8721d1abd061
-DEPS="libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2"
+DEPS="libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2 libzip"
 BUILDSYS=autotools
 # QNX has a spawnvp() (process.h), which configure finds; GraphicsMagick's
 # spawnvp branch is the Windows one (_P_WAIT). The POSIX fork/exec one is

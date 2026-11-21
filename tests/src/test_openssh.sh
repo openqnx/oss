@@ -38,6 +38,7 @@ stopall() {
   qstop_hook 2>/dev/null
   for p in $(cat "$QP" 2>/dev/null); do kill "$p" 2>/dev/null; done
   : > "$QP"; [ -n "$T" ] && [ -d "$T" ] && { cd /; rm -rf "$T"; }
+  [ -n "$MADE_PRIVSEP" ] && rmdir /var/empty 2>/dev/null; MADE_PRIVSEP=
 }
 trap stopall EXIT
 trap 'exit 143' TERM
@@ -75,7 +76,19 @@ SshdAuthPath $L/libexec/sshd-auth
 Subsystem sftp $L/libexec/sftp-server
 LogLevel ERROR
 EOF
+# sshd starts sessions with a clean environment; on a target whose QNX
+# run-time libraries are not in the default path (a vanilla image:
+# libeventfd/libepoll under /data/oss/qnx-runtime/lib) sftp-server would
+# not load, so the sessions get this run's library path.
+[ -n "$LD_LIBRARY_PATH" ] && echo "SetEnv LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> sshd_config
 SSHD=$L/sbin/sshd
+# sshd wants its privilege-separation directory (--with-privsep-path=/var/empty),
+# which a vanilla image lacks; as root the test makes it for the run and
+# removes it again (the image's own sshd has the privsep user already).
+MADE_PRIVSEP=
+if [ ! -d /var/empty ] && [ "$(id -u)" = 0 ]; then
+  mkdir -p -m 755 /var/empty 2>/dev/null && MADE_PRIVSEP=1 && info "made /var/empty for the run (removed afterwards)"
+fi
 t=$("$SSHD" -t -f sshd_config 2>&1); rc=$?
 if [ $rc -ne 0 ]; then
   case "$t" in

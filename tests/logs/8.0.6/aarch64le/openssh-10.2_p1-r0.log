@@ -1,6 +1,6 @@
 # openssh 10.2_p1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:00:17Z   packages from: apk:local-dists
+# date: 2026-11-21T19:40:33Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -10,21 +10,25 @@ $ apk add -u openssh qnx-test-openssh qnx-port-tests
 (2/5) Installing libxcrypt (4.4.38-r0)
 (3/5) Installing openssh (10.2_p1-r0)
 (4/5) Installing qnx-port-tests (1.0-r0)
-(5/5) Installing qnx-test-openssh (1.0-r0)
+(5/5) Installing qnx-test-openssh (1.0-r2)
 OK: 20.3 MiB in 10 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openssh
      == openssh ==
        info OpenSSH_10.2p1, OpenSSL 3.5.1 1 Jul 2025
        ok   ssh-keygen -t ed25519
-       ok   fingerprint: SHA256:E2OYr/oUOm2kjZmYeTo2hYOcCcBRiA6515UMS+i/saI
+       ok   fingerprint: SHA256:IWyKWqb3XPECiUl5zYtxVv8HmRQMDA4UpNBJEbXprwQ
        ok   private and public key fingerprints agree
        ok   ssh-keygen -y re-derives the public key
        ok   ssh-keygen -t rsa -b 2048
        ok   -Y sign: msg.txt.sig
        ok   -Y verify: good signature
        ok   -Y verify rejects a tampered file
-       info sshd not run on loopback: Missing privilege separation directory: /var/empty
+       info made /var/empty for the run (removed afterwards)
+       ok   sshd -t: configuration valid
+       ok   ssh to <ip>:22535 ran a command (key auth): remote:42
+       ok   host key recorded in known_hosts
+       ok   scp (SFTP) copied a file
      PASS openssh
 PASS test_openssh
 --------------------------------------------

@@ -1,6 +1,6 @@
 # tree-sitter grammar: query. Installs lib/tree-sitter/query.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.7.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-query.git; REF=v0.7.0
+VERSION=0.8.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-query.git; REF=v0.8.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

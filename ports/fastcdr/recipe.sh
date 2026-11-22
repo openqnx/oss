@@ -1,2 +1,2 @@
-VERSION=2.2.6; GIT=https://github.com/eProsima/Fast-CDR.git; REF=v2.2.6
+VERSION=2.4.0; GIT=https://github.com/eProsima/Fast-CDR.git; REF=v2.4.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

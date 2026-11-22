@@ -7,7 +7,6 @@ Provide SA_RESTART and IOV_MAX on QNX.
   sizes arrays with it. Use the kernel limit, UIO_MAXIOV from <sys/uio.h>.
 
 Upstream-Status: QNX-specific
-
 --- a/compat.h
 +++ b/compat.h
 @@ -23,6 +23,8 @@
@@ -19,7 +18,7 @@ Upstream-Status: QNX-specific
  #include <stdio.h>
  #include <termios.h>
  #include <wchar.h>
-@@ -471,4 +473,18 @@
+@@ -477,4 +479,18 @@
  #define optreset           BSDoptreset
  #define optarg             BSDoptarg
  

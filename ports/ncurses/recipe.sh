@@ -1,6 +1,6 @@
-VERSION=6.5
-TARBALL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
-SHA256=136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6
+VERSION=6.6
+TARBALL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.6.tar.gz
+SHA256=355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11
 BUILDSYS=autotools
 # QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design -- the
 # header ends in "#error termio/termios incompatibility" when both are pulled

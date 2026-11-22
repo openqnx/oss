@@ -14,7 +14,7 @@ check() {  # check <what> <expected> <got>
 }
 v=$("$G" --version 2>&1 | head -n 1)
 echo "  info $v"
-case "$v" in "GNU Awk 5.3.2"*) ok "gawk --version: GNU Awk 5.3.2" ;; *) bad "gawk --version: $v" ;; esac
+case "$v" in "GNU Awk 5.4.2"*) ok "gawk --version: GNU Awk 5.4.2" ;; *) bad "gawk --version: $v" ;; esac
 
 printf 'alice 10 3\nbob 20 4\ncarol 30 5\nbob 5 1\n' > data.txt
 check "sum of column 2" "65" "$("$G" '{s+=$2} END{print s}' data.txt)"

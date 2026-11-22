@@ -1,4 +1,4 @@
-VERSION=10.44; GIT=https://github.com/PCRE2Project/pcre2.git; REF=pcre2-10.44
+VERSION=10.49; GIT=https://github.com/PCRE2Project/pcre2.git; REF=pcre2-10.49
 DEPS="zlib bzip2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DPCRE2_BUILD_PCRE2_8=ON
                    -DPCRE2_BUILD_PCRE2_16=ON -DPCRE2_BUILD_PCRE2_32=ON

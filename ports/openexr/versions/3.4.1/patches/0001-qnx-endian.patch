@@ -1,0 +1,26 @@
+OpenEXRCore: byte-order functions from <net/netbyte.h> on QNX
+
+QNX has no <endian.h> and no glibc __BYTE_ORDER/__LITTLE_ENDIAN, so the
+generic branch fails ("endian.h: No such file or directory"). QNX declares
+htole16() ... le64toh() in <net/netbyte.h> and the BSD BYTE_ORDER /
+LITTLE_ENDIAN in <sys/param.h>: a QNX branch takes them from there.
+
+Upstream-Status: QNX-specific
+
+--- a/src/lib/OpenEXRCore/internal_xdr.h
++++ b/src/lib/OpenEXRCore/internal_xdr.h
+@@ -69,6 +69,14 @@
+ #    include <sys/endian.h>
+ #    define EXR_HOST_IS_NOT_LITTLE_ENDIAN (__BYTE_ORDER != __LITTLE_ENDIAN)
+ 
++#elif defined(__QNX__)
++
++/* QNX: no <endian.h>; htole16() ... le64toh() are in <net/netbyte.h>, the BSD
++ * BYTE_ORDER / LITTLE_ENDIAN in <sys/param.h> */
++#    include <net/netbyte.h>
++#    include <sys/param.h>
++#    define EXR_HOST_IS_NOT_LITTLE_ENDIAN (BYTE_ORDER != LITTLE_ENDIAN)
++
+ #else
+ 
+ #    include <endian.h>

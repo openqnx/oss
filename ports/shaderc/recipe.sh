@@ -1,7 +1,7 @@
 # shaderc: Google's shader compiler collection -- glslc (a GCC/Clang-like
 # command line GLSL/HLSL -> SPIR-V compiler) and libshaderc, the API Vulkan
 # applications and ffmpeg/libplacebo/mpv compile shaders with.
-VERSION=2026.2; GIT=https://github.com/google/shaderc.git; REF=v2026.2
+VERSION=2026.4; GIT=https://github.com/google/shaderc.git; REF=v2026.4
 DEPS="glslang spirv-tools spirv-headers"
 BUILDSYS=cmake
 # Built against the staged glslang and SPIRV-Tools rather than source trees in

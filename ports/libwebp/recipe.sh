@@ -1,4 +1,4 @@
-VERSION=1.4.0; GIT=https://chromium.googlesource.com/webm/libwebp; REF=v1.4.0
+VERSION=1.6.0; GIT=https://chromium.googlesource.com/webm/libwebp; REF=v1.6.0
 DEPS="libpng libjpeg-turbo giflib"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF
                    -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF

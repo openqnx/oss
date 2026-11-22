@@ -52,7 +52,7 @@ int main(void) {
   setlocale(LC_ALL, "");
   const char *v = gpgme_check_version(NULL);
   printf("  info gpgme %s\n", v ? v : "(null)");
-  QT_CHECK(v && !strcmp(v, "2.2.0"), "gpgme_check_version: 2.2.0");
+  QT_CHECK(v && !strcmp(v, "2.3.1"), "gpgme_check_version: 2.3.1");
   QT_CHECK(gpgme_engine_check_version(GPGME_PROTOCOL_OpenPGP) == 0, "OpenPGP engine usable");
   if (!mkdtemp(home1) || !mkdtemp(home2)) { QT_CHECK(0, "scratch GNUPGHOMEs"); cleanup(); QT_END(); }
   atexit(cleanup);

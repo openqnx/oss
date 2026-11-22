@@ -8,10 +8,9 @@ preprocessor explicitly and hands -MM to it; gcc and clang produce the same
 dependency output with it, so the change is portable.
 
 Upstream-Status: Pending
-
 --- a/Makefile
 +++ b/Makefile
-@@ -497,7 +497,7 @@
+@@ -513,7 +513,7 @@
  %.o : %.c
  	@mkdir -p $(dir $@)
  	$(QUIET_CC)$(CC) -o $@ $(CFLAGS) $(CPPFLAGS) -c $<

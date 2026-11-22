@@ -1,6 +1,6 @@
 # libheif: HEIF and AVIF image file format decoder and encoder (ISO/IEC
 # 23008-12), with heif-dec, heif-enc, heif-info, heif-thumbnailer.
-VERSION=1.20.2; GIT=https://github.com/strukturag/libheif.git; REF=v1.20.2
+VERSION=1.23.7; GIT=https://github.com/strukturag/libheif.git; REF=v1.23.7
 DEPS="libde265 x265 aom dav1d openh264 libjpeg-turbo openjpeg openjph libwebp libpng libtiff zlib"
 BUILDSYS=cmake
 # Codecs, all built into libheif (no plugin directory to install and search):

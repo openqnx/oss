@@ -1,7 +1,7 @@
 # CMake for the target (to build software on the board). Built with the host
 # CMake and the QNX toolchain file; its bundled third-party libraries are used
 # except where this tree provides them. Version as in the QNX Everywhere image.
-VERSION=4.1.1; GIT=https://gitlab.kitware.com/cmake/cmake.git; REF=v4.1.1
+VERSION=4.5.1; GIT=https://gitlab.kitware.com/cmake/cmake.git; REF=v4.5.1
 DEPS="openssl zlib curl libuv"
 # CMake's own C++ feature probes treat any compiler output as failure, and
 # qcc always prints "cc: warning - lang-c++ is deprecated" (CMake's QCC module

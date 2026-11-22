@@ -1,4 +1,4 @@
-VERSION=1.15.3; GIT=https://github.com/gabime/spdlog.git; REF=v1.15.3
+VERSION=1.17.0; GIT=https://github.com/gabime/spdlog.git; REF=v1.17.0
 DEPS="fmt"
 CMAKE_ARGS_EXTRA=( -DSPDLOG_BUILD_EXAMPLE=OFF -DSPDLOG_BUILD_TESTS=OFF
                    -DSPDLOG_FMT_EXTERNAL=ON -DBUILD_SHARED_LIBS=ON

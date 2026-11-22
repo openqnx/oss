@@ -1,2 +1,2 @@
-VERSION=1.22; GIT=https://github.com/ebiggers/libdeflate.git; REF=v1.22
+VERSION=1.26; GIT=https://github.com/ebiggers/libdeflate.git; REF=v1.26
 CMAKE_ARGS_EXTRA=( -DLIBDEFLATE_BUILD_GZIP=ON -DLIBDEFLATE_BUILD_STATIC_LIB=OFF )

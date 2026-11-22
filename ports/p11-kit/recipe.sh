@@ -1,4 +1,4 @@
-VERSION=0.25.5; GIT=https://github.com/p11-glue/p11-kit.git; REF=0.25.5
+VERSION=0.26.6; GIT=https://github.com/p11-glue/p11-kit.git; REF=0.26.6
 DEPS="libffi libtasn1"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtrust_module=disabled -Dsystemd=disabled -Dbash_completion=disabled

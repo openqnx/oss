@@ -1,2 +1,2 @@
-VERSION=1.2.1; GIT=https://github.com/google/snappy.git; REF=1.2.1
+VERSION=1.3.1; GIT=https://github.com/google/snappy.git; REF=1.3.1
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF )

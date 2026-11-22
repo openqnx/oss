@@ -1,6 +1,6 @@
-VERSION=3.3.0
-TARBALL=https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz
-SHA256=7399e9a6708c32d678a72a63219e96f23be0be2336e50fd1348498d07041df90
+VERSION=3.5.2
+TARBALL=https://download.samba.org/pub/rsync/src/rsync-3.5.2.tar.gz
+SHA256=a10d591825251e070f74c98df3daad195def4ed81b4a2de16169026aea33f6c8
 DEPS="zstd lz4 xxhash openssl"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-md2man --disable-debug --with-included-popt --with-included-zlib )

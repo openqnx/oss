@@ -1,0 +1,27 @@
+# doxygen 1.18.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:38:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u doxygen qnx-test-doxygen qnx-port-tests
+(1/4) Installing libiconv (1.19.1-r0)
+(2/4) Installing doxygen (1.18.0-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-doxygen (1.0-r0)
+OK: 41.9 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_doxygen
+     == doxygen ==
+       ok   doxygen ran (1.18.0 (8e760943e5d9581a444cf327f43a0b4d20d29482*))
+       ok   XML: function qnx_add
+       ok   XML: brief description
+       ok   XML: parameter a
+       ok   HTML: index.html
+     PASS doxygen
+PASS test_doxygen
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

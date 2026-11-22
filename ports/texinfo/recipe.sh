@@ -2,9 +2,9 @@
 # DocBook, LaTeX), the stand-alone info reader, install-info, texindex and
 # the texi2dvi/texi2pdf drivers (which need TeX). Version as in QNX's own
 # package list.
-VERSION=7.2
-TARBALL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz
-SHA256=0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6
+VERSION=7.3
+TARBALL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.3.tar.xz
+SHA256=51f74eb0f51cfa9873b85264dfdd5d46e8957ec95b88f0fb762f63d9e164c72e
 # ncurses: the info reader's terminal handling (tgetent).
 DEPS="ncurses"
 # texi2any, makeinfo and pod2texi are Perl programs (with Text::Unidecode,

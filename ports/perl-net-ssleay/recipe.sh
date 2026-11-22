@@ -6,9 +6,9 @@
 # died in the staging tree's lib/): include/ and lib/ link to the staging
 # tree, and bin/openssl is a script that prints the staged headers'
 # OPENSSL_VERSION_TEXT (what the target's openssl version prints).
-VERSION=1.96
-TARBALL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.96.tar.gz
-SHA256=ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753
+VERSION=1.97_01
+TARBALL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.97_01.tar.gz
+SHA256=1b6463d0a5b736ecda393310c5e4bd05508314937117b7f49b4c90ecf1a46cde
 DEPS="perl openssl zlib"
 RUNTIME_DEPS="perl openssl"
 BUILDSYS=custom

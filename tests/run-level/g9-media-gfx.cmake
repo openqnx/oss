@@ -12,7 +12,14 @@ port_test(test_spirv_headers    test_spirv_headers.c)
 port_test(test_imath            test_imath.cpp           Imath-3_2)
 
 # ---- images ----
-port_test(test_openexr          test_openexr.cpp         OpenEXR-3_4 OpenEXRCore-3_4 IlmThread-3_4 Iex-3_4 Imath-3_2)
+# the library names carry the OpenEXR/Imath version (libOpenEXR-3_5.so): find them
+foreach(_l OpenEXR OpenEXRCore IlmThread Iex Imath)
+  file(GLOB _f "${LIB}/lib${_l}-[0-9]*_[0-9]*.so")
+  list(SORT _f)
+  list(GET _f -1 _f)
+  string(REGEX REPLACE ".*/lib(${_l}-[0-9]+_[0-9]+)\\.so$" "\\1" _exr_${_l} "${_f}")
+endforeach()
+port_test(test_openexr          test_openexr.cpp         ${_exr_OpenEXR} ${_exr_OpenEXRCore} ${_exr_IlmThread} ${_exr_Iex} ${_exr_Imath})
 target_include_directories(test_openexr PRIVATE "${INC}/OpenEXR" "${INC}/Imath")
 port_test(test_libheif          test_libheif.c           heif)
 port_test(test_gd               test_gd.c                gd)

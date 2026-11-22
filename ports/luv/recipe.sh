@@ -1,4 +1,4 @@
-VERSION=1.51.0-1; GIT=https://github.com/luvit/luv.git; REF=1.51.0-1
+VERSION=1.53.0-1; GIT=https://github.com/luvit/luv.git; REF=1.53.0-1
 DEPS="libuv luajit"
 BUILDSYS=cmake
 # libuv bindings for Lua -- the event loop under Neovim's Lua API.  Built as a

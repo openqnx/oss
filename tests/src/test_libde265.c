@@ -85,8 +85,8 @@ int main(void) {
   QT_BEGIN("libde265");
   const char *ver = de265_get_version();
   printf("  info libde265 %s\n", ver ? ver : "(null)");
-  QT_CHECK(de265_get_version_number_major() == 1 && de265_get_version_number_minor() == 0,
-           "de265_get_version_number: 1.0.x");
+  QT_CHECK(de265_get_version_number_major() == 1 && de265_get_version_number_minor() == 1,
+           "de265_get_version_number: 1.1.x");
   de265_init();
   de265_decoder_context *ctx = de265_new_decoder();
   QT_CHECK(ctx != NULL, "de265_new_decoder");

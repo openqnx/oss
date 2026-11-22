@@ -1,4 +1,4 @@
-VERSION=1.19; GIT=https://github.com/nijel/enca.git; REF=1.19
+VERSION=1.22; GIT=https://github.com/nijel/enca.git; REF=1.22
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-external )
 # tools/make_hash is compiled and then *run* to generate encodings.h. Built for

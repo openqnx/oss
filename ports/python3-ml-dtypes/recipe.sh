@@ -3,9 +3,9 @@
 # with Eigen (vendored in the source distribution) against the ported numpy.
 # Built from the source distribution, which carries the Eigen copy the
 # release was made with (the git tag has it as a submodule).
-VERSION=0.6.0
-TARBALL=https://files.pythonhosted.org/packages/12/72/307d7c4bd0600601c7133fba5cb78af7db968152951c1cd473abb1cda782/ml_dtypes-0.6.0.tar.gz
-SHA256=5e60251d32ced5598972e4d5e06a2f044341f9291402551a3f6f0ec44f9299b0
+VERSION=0.7.0
+TARBALL=https://files.pythonhosted.org/packages/bc/2d/4ce5532f433dfae6dc96ed4abd7a0e18106a63666bce8eb878d9ffdc0610/ml_dtypes-0.7.0.tar.gz
+SHA256=67fd890fb09d1e068cfe1b4dc8e204430ae7632102b4a4f854b093b6f02b3950
 DEPS="numpy"
 RUNTIME_DEPS="numpy"
 BUILDSYS=custom

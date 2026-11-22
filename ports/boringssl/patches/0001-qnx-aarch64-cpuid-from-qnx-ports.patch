@@ -13,12 +13,9 @@ does not link. QNX's version reports Advanced SIMD, which every AArch64 core
 has.
 
 Upstream-Status: QNX-specific (carried in the qnx-ports fork)
-
-diff --git a/build.json b/build.json
-index 3651498..18b5b67 100644
 --- a/build.json
 +++ b/build.json
-@@ -233,6 +233,7 @@
+@@ -345,6 +345,7 @@
              "crypto/cpu_aarch64_fuchsia.cc",
              "crypto/cpu_aarch64_linux.cc",
              "crypto/cpu_aarch64_openbsd.cc",
@@ -26,10 +23,7 @@ index 3651498..18b5b67 100644
              "crypto/cpu_aarch64_sysreg.cc",
              "crypto/cpu_aarch64_win.cc",
              "crypto/cpu_arm_freebsd.cc",
-diff --git a/crypto/cpu_aarch64_qnx.cc b/crypto/cpu_aarch64_qnx.cc
-new file mode 100644
-index 0000000..55bc62c
---- /dev/null
+--- a/crypto/cpu_aarch64_qnx.cc
 +++ b/crypto/cpu_aarch64_qnx.cc
 @@ -0,0 +1,28 @@
 +// Copyright 2022 The BoringSSL Authors
@@ -60,11 +54,9 @@ index 0000000..55bc62c
 +void bssl::OPENSSL_cpuid_setup() { OPENSSL_armcap_P |= ARMV7_NEON; }
 +
 +#endif  // OPENSSL_AARCH64 && OPENSSL_QNX && !OPENSSL_STATIC_ARMCAP
-diff --git a/gen/sources.cmake b/gen/sources.cmake
-index 779c96e..cefeef2 100644
 --- a/gen/sources.cmake
 +++ b/gen/sources.cmake
-@@ -378,6 +378,7 @@ set(
+@@ -378,6 +378,7 @@
    crypto/cpu_aarch64_fuchsia.cc
    crypto/cpu_aarch64_linux.cc
    crypto/cpu_aarch64_openbsd.cc
@@ -72,8 +64,6 @@ index 779c96e..cefeef2 100644
    crypto/cpu_aarch64_sysreg.cc
    crypto/cpu_aarch64_win.cc
    crypto/cpu_arm_freebsd.cc
-diff --git a/include/openssl/target.h b/include/openssl/target.h
-index 2372a05..d84b08b 100644
 --- a/include/openssl/target.h
 +++ b/include/openssl/target.h
 @@ -187,6 +187,10 @@

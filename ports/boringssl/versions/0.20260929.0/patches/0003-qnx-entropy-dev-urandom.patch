@@ -1,0 +1,58 @@
+Draw entropy from /dev/urandom on QNX (no getentropy)
+
+BoringSSL's default system entropy source for systems other than Linux,
+Windows, Apple and Trusty is getentropy() from <unistd.h>; QNX 8.0 has no
+getentropy() and no getrandom(). The Linux /dev/urandom backend
+(urandom.cc) is tied to <linux/random.h> and the getrandom syscall. Give the
+getentropy backend a local getentropy() that reads QNX's /dev/urandom
+(the random manager's pool; it does not block once the system is up),
+retrying on EINTR and short reads.
+
+Upstream-Status: QNX-specific
+
+diff --git a/crypto/rand/getentropy.cc b/crypto/rand/getentropy.cc
+index c39296b..ea6c647 100644
+--- a/crypto/rand/getentropy.cc
++++ b/crypto/rand/getentropy.cc
+@@ -31,6 +31,41 @@
+ #include <sys/random.h>
+ #endif
+ 
++#if defined(OPENSSL_QNX)
++#include <errno.h>
++#include <fcntl.h>
++
++// QNX has no getentropy(); its kernel entropy pool is /dev/urandom (served
++// by the random manager), which never blocks once the system is up. Same
++// contract: fill at most 256 bytes, 0 on success, -1 and errno on failure.
++static int getentropy(void *buf, size_t len) {
++  int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
++  if (fd < 0) {
++    return -1;
++  }
++  uint8_t *p = static_cast<uint8_t *>(buf);
++  while (len > 0) {
++    ssize_t n = read(fd, p, len);
++    if (n < 0 && errno == EINTR) {
++      continue;
++    }
++    if (n <= 0) {
++      if (n == 0) {
++        errno = EIO;
++      }
++      int saved = errno;
++      close(fd);
++      errno = saved;
++      return -1;
++    }
++    p += n;
++    len -= static_cast<size_t>(n);
++  }
++  close(fd);
++  return 0;
++}
++#endif
++
+ using namespace bssl;
+ 
+ void bssl::CRYPTO_init_sysrand() {}

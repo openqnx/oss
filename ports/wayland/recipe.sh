@@ -1,4 +1,4 @@
-VERSION=1.24.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.24.0
+VERSION=1.26.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.26.0
 DEPS="libffi expat libxml2"
 BUILDSYS=meson
 # QNX's Wayland EGL (/system/lib/libEGL.so.1 on graphics images) dlopen()s the

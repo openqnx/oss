@@ -1,4 +1,4 @@
-VERSION=9.1.0900; GIT=https://github.com/vim/vim.git; REF=v9.1.0900
+VERSION=9.2.1382; GIT=https://github.com/vim/vim.git; REF=v9.2.1382
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv libsodium
 DEPS="ncurses libiconv libsodium"
 BUILDSYS=autotools

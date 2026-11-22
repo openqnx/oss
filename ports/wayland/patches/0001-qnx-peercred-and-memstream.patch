@@ -7,7 +7,6 @@ WAYLAND_DEBUG log, gets the same write-then-read-back behaviour from a
 tmpfile().
 
 Upstream-Status: QNX-specific
-
 --- a/src/wayland-os.c
 +++ b/src/wayland-os.c
 @@ -125,6 +125,20 @@
@@ -33,7 +32,7 @@ Upstream-Status: QNX-specific
  #endif
 --- a/src/connection.c
 +++ b/src/connection.c
-@@ -1319,6 +1319,57 @@
+@@ -1334,6 +1334,57 @@
  	return buffer_size + 2;
  }
  
@@ -91,7 +90,7 @@ Upstream-Status: QNX-specific
  static int
  serialize_closure(struct wl_closure *closure, uint32_t *buffer,
  		  size_t buffer_count)
-@@ -1493,7 +1544,11 @@
+@@ -1552,7 +1603,11 @@
  	char *buffer;
  	size_t buffer_length;
  
@@ -103,9 +102,9 @@ Upstream-Status: QNX-specific
  	if (f == NULL)
  		return;
  
-@@ -1576,7 +1631,11 @@
+@@ -1660,7 +1715,11 @@
  
- 	fprintf(f, ")\n");
+ 	fprintf(f, ")%s\n", color ? WL_DEBUG_COLOR_RESET : "");
  
 +#if defined(__QNXNTO__)
 +	if (wl_qnx_memstream_close(f, &buffer, &buffer_length) == 0) {

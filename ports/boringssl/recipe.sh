@@ -2,7 +2,7 @@
 # at a release tag, with QNX's aarch64 CPU setup (patches/0001, from
 # github.com/qnx-ports/boringssl, branch qnx-mediapipe) and the QNX changes
 # around it (patches/0002-0004).
-VERSION=0.20260929.0; GIT=https://github.com/google/boringssl.git; REF=0.20260929.0
+VERSION=0.20261105.0; GIT=https://github.com/google/boringssl.git; REF=0.20261105.0
 DEPS=""
 BUILDSYS=cmake
 # It installs libcrypto/libssl and <openssl/*.h> under the same names as the

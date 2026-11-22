@@ -1,6 +1,6 @@
-VERSION=3.5a
-TARBALL=https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz
-SHA256=16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951
+VERSION=3.8
+TARBALL=https://github.com/tmux/tmux/releases/download/3.8/tmux-3.8.tar.gz
+SHA256=e79c699c7e949dccd0a4a125e17b8d1261e311b16979dbc8eb34542f3966d82e
 DEPS="libevent ncurses"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-utf8proc --enable-static=no )

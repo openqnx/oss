@@ -1,9 +1,9 @@
 # Error.pm (try/catch exception objects for Perl; used by git's Perl
 # scripts). Pure Perl, so the module files are installed as released into the
 # target perl's library. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=0.17030
-TARBALL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17030.tar.gz
-SHA256=34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924
+VERSION=0.17031
+TARBALL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17031.tar.gz
+SHA256=0a85374cf9cbde5a5075f16e62246e5d36abde63ec08c5c5694f128f4546852f
 DEPS="perl"
 BUILDSYS=custom
 do_build() { :; }

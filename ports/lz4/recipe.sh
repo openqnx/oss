@@ -1,4 +1,4 @@
-VERSION=1.10.0; GIT=https://github.com/lz4/lz4.git; REF=v1.10.0
+VERSION=1.11.1; GIT=https://github.com/lz4/lz4.git; REF=v1.11.1
 SUBDIR=build/cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=ON
                    -DLZ4_BUILD_CLI=OFF -DLZ4_BUILD_LEGACY_LZ4C=OFF

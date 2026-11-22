@@ -7,10 +7,9 @@ already selects a sensible buffer size. Also drop -I/usr/include/p11-kit-1,
 a path of the build host that has no business in a cross build.
 
 Upstream-Status: QNX-specific
-
 --- a/configure
 +++ b/configure
-@@ -455,7 +455,7 @@
+@@ -451,7 +451,7 @@
          try_lockmem=1
          feat_refclock=0
          try_recvmmsg=0 # Freebsd "bug" which we inherited. using regular recvmsg makes things work

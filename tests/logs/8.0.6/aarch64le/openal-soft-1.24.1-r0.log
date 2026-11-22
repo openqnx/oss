@@ -1,6 +1,6 @@
 # openal-soft 1.24.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:58:53Z   packages from: apk:local-dists
+# date: 2026-11-22T11:40:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -36,7 +36,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_o
        ok   configured frequency 22050 applied
        info source stopped after 500 ms
        ok   0.5 s buffer played to the end
-       info out.wav: 22050 Hz, 2 ch, 30000 samples, 21218 loud
+       info out.wav: 22050 Hz, 2 ch, 22062 samples, 21130 loud
        ok   wave backend wrote RIFF/WAVE
        ok   WAV header: 22050 Hz stereo
        ok   the tone is in the file (>0.25 s of loud stereo samples)

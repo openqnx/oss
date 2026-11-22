@@ -21,7 +21,7 @@ int main(void) {
   gpgrt_init();
   const char *v = gpgrt_check_version(NULL);
   printf("  info gpgrt_check_version: %s\n", v ? v : "(null)");
-  QT_CHECK(v && strcmp(v, "1.50") == 0, "library version 1.50");
+  QT_CHECK(v && strcmp(v, "1.61") == 0, "library version 1.61");
   QT_CHECK(gpgrt_check_version("1.40") != NULL, "check_version(\"1.40\") satisfied");
   QT_CHECK(gpgrt_check_version("9.0") == NULL, "check_version(\"9.0\") not satisfied");
 

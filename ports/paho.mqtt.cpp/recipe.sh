@@ -1,4 +1,4 @@
-VERSION=1.5.2; GIT=https://github.com/eclipse-paho/paho.mqtt.cpp.git; REF=v1.5.2
+VERSION=1.6.0; GIT=https://github.com/eclipse-paho/paho.mqtt.cpp.git; REF=v1.6.0
 DEPS="paho.mqtt.c"
 CMAKE_ARGS_EXTRA=( -DPAHO_BUILD_SHARED=ON -DPAHO_BUILD_STATIC=ON
                    -DPAHO_WITH_MQTT_C=OFF -DPAHO_WITH_SSL=ON

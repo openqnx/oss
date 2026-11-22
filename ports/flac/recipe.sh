@@ -1,4 +1,4 @@
-VERSION=1.4.3; GIT=https://github.com/xiph/flac.git; REF=1.4.3
+VERSION=1.5.0; GIT=https://github.com/xiph/flac.git; REF=1.5.0
 DEPS="libogg"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_CXXLIBS=ON -DBUILD_PROGRAMS=OFF
                    -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_DOCS=OFF

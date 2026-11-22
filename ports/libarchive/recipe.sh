@@ -1,4 +1,4 @@
-VERSION=3.7.7; GIT=https://github.com/libarchive/libarchive.git; REF=v3.7.7
+VERSION=3.8.11; GIT=https://github.com/libarchive/libarchive.git; REF=v3.8.11
 # Also linked at run time (found by scripts/gen-dependency-index): expat lz4
 DEPS="zlib bzip2 xz zstd openssl libxml2 expat lz4"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_TEST=OFF -DENABLE_CPIO=OFF

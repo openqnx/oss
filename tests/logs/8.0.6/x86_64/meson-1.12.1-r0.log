@@ -1,0 +1,51 @@
+# meson 1.12.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:41:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u meson qnx-test-meson qnx-port-tests
+( 1/16) Installing meson (1.12.1-r0)
+( 2/16) Installing qnx-port-tests (1.0-r0)
+( 3/16) Installing bzip2 (1.0.8-r0)
+( 4/16) Installing expat (2.6.4-r0)
+( 5/16) Installing gdbm (1.24-r0)
+( 6/16) Installing libiconv (1.19.1-r0)
+( 7/16) Installing libunistring (1.5-r0)
+( 8/16) Installing ncurses (6.6-r0)
+( 9/16) Installing gettext (0.22.5-r0)
+(10/16) Installing libffi (3.8.1-r0)
+(11/16) Installing libuuid (2.42.4-r0)
+(12/16) Installing readline (8.3-r0)
+(13/16) Installing sqlite (3.47.2-r0)
+(14/16) Installing xz (5.8.4-r0)
+(15/16) Installing python3 (3.14.0-r1)
+(16/16) Installing qnx-test-meson (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 135.7 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_meson
+     == meson ==
+       info meson 1.12.1
+       ok   meson --version: 1.12.1
+       info Message: system=qnx cpu=x86_64
+       ok   meson setup --backend=none (no compiler needed)
+       ok   config.h: ANSWER 42 (run_command), FLAVOUR "plain", NWORDS 3
+       ok   configure_file substitution: hello ALPHA-BETA-GAMMA
+       ok   introspect --projectinfo: qnxdemo 1.2.3
+       ok   introspect --buildoptions: flavour plain of plain/spicy
+       ok   default buildtype debug
+       ok   meson configure -Dflavour=spicy
+       ok   reconfigured: config.h has FLAVOUR "spicy"
+       info meson configure build -Dflavour=sweet: rc 1:
+     
+     ERROR: Value "sweet" (of type "string") for option "flavour" is not one of the choices. Possible choices are (as string): "plain", "spicy".
+     
+       ok   a value outside the combo is rejected
+     PASS meson
+PASS test_meson
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

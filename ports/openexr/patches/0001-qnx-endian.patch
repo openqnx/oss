@@ -6,10 +6,9 @@ htole16() ... le64toh() in <net/netbyte.h> and the BSD BYTE_ORDER /
 LITTLE_ENDIAN in <sys/param.h>: a QNX branch takes them from there.
 
 Upstream-Status: QNX-specific
-
 --- a/src/lib/OpenEXRCore/internal_xdr.h
 +++ b/src/lib/OpenEXRCore/internal_xdr.h
-@@ -69,6 +69,14 @@
+@@ -75,6 +75,14 @@
  #    include <sys/endian.h>
  #    define EXR_HOST_IS_NOT_LITTLE_ENDIAN (__BYTE_ORDER != __LITTLE_ENDIAN)
  

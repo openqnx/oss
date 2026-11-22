@@ -36,7 +36,7 @@ static void hex(const char *tag, const char *b, size_t n) {
 int main(void) {
   QT_BEGIN("libiconv");
   printf("  info _libiconv_version 0x%x\n", _libiconv_version);
-  QT_CHECK(_libiconv_version == 0x0112, "_libiconv_version is 1.18");
+  QT_CHECK(_libiconv_version == 0x0113, "_libiconv_version is 1.19");
   const char *cs = locale_charset();
   printf("  info locale_charset() = %s\n", cs ? cs : "(null)");
   QT_CHECK(cs != NULL && cs[0] != 0, "locale_charset() returns a name");

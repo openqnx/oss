@@ -1,8 +1,8 @@
-VERSION=1.50
+VERSION=1.61
 # Also linked at run time (found by scripts/gen-dependency-index): gettext
 DEPS="gettext"
-TARBALL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.50.tar.bz2
-SHA256=69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a
+TARBALL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.61.tar.bz2
+SHA256=7a85413f2bc354f4f8aa832b718af122e48965e9e0eb9012ee659c13c6385c93
 BUILDSYS=autotools
 # libgpg-error needs a syscfg/lock-obj-pub.<triplet>.h describing the target's
 # pthread_mutex_t layout, and ships none for QNX. The two under files/ were

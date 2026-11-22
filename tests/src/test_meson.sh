@@ -48,7 +48,7 @@ open("src/meson.options", "w").write("option('flavour', type : 'combo', choices 
 open("src/greeting.in", "w").write("hello @WHO@\n")
 def setup():
     p = meson("--version"); info("meson %s" % p.stdout.strip())
-    check(p.returncode == 0 and p.stdout.strip() == "1.10.0", "meson --version: 1.10.0")
+    check(p.returncode == 0 and p.stdout.strip() == "1.12.1", "meson --version: 1.12.1")
     p = meson("setup", "--backend=none", "build", "src")
     out = p.stdout
     for l in out.splitlines():

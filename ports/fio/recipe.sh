@@ -1,7 +1,7 @@
 # fio: the flexible I/O tester -- benchmarks and verifies storage with job
 # files (sequential/random reads and writes, many I/O engines, data
 # verification). Version as in QNX's own package list.
-VERSION=3.41; GIT=https://github.com/axboe/fio.git; REF=fio-3.41
+VERSION=3.43; GIT=https://github.com/axboe/fio.git; REF=fio-3.43
 # zlib: compressed I/O logs (log_compression) and the zlib buffer
 # compression test. Nothing else from staging: --disable-http leaves out the
 # http (WebDAV/S3/Swift) engine, which would link curl and OpenSSL.

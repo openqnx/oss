@@ -1,0 +1,31 @@
+# p11-kit 0.26.6-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:42:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u p11-kit qnx-test-p11kit qnx-port-tests
+(1/4) Installing libffi (3.8.1-r0)
+(2/4) Installing p11-kit (0.26.6-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-p11kit (1.0-r0)
+OK: 14.3 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p11kit
+     == p11-kit ==
+       ok   p11_kit_uri_new
+       ok   p11_kit_uri_parse
+       ok   token label decoded from percent-encoding
+       ok   object label attribute
+       ok   p11_kit_uri_format
+       info pkcs11:token=QNX%20Test;object=mykey;type=private
+       ok   a malformed URI is rejected
+       info 0 PKCS#11 module(s) configured
+       ok   p11_kit_modules_load_and_initialize
+     PASS p11-kit
+PASS test_p11kit
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

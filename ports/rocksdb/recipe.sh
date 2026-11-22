@@ -1,7 +1,7 @@
 # RocksDB: embeddable persistent key-value store (LSM tree) for fast storage,
 # with column families, transactions, snapshots, iterators, compaction and
 # backups; plus the ldb and sst_dump tools.
-VERSION=11.8.1; GIT=https://github.com/facebook/rocksdb.git; REF=v11.8.1
+VERSION=11.13.2; GIT=https://github.com/facebook/rocksdb.git; REF=v11.13.2
 # Compression: LZ4, zlib and ZSTD. Not snappy: the snappy component is built
 # as upstream builds it, without RTTI, and RocksDB (built with RTTI, which
 # its users need to derive from its classes) subclasses snappy::Sink, whose

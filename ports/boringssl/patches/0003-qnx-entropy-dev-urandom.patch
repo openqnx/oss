@@ -9,9 +9,6 @@ getentropy backend a local getentropy() that reads QNX's /dev/urandom
 retrying on EINTR and short reads.
 
 Upstream-Status: QNX-specific
-
-diff --git a/crypto/rand/getentropy.cc b/crypto/rand/getentropy.cc
-index c39296b..ea6c647 100644
 --- a/crypto/rand/getentropy.cc
 +++ b/crypto/rand/getentropy.cc
 @@ -31,6 +31,41 @@

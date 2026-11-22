@@ -1,9 +1,9 @@
 # GPGME, GnuPG Made Easy: the C library through which applications use GnuPG
 # (it runs gpg, gpgsm and gpgconf from the gnupg component and talks to them
 # over pipes and Assuan).
-VERSION=2.2.0
-TARBALL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.2.0.tar.bz2
-SHA256=7160e80e84dafd00d956c84891c533bb7ab16a6a54fbe1574b2f3acf0496977b
+VERSION=2.3.1
+TARBALL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.3.1.tar.bz2
+SHA256=2bf94e0e677e5a8fc31f79dd323f91c5416b36fb851058bc1e8bce39f2642434
 BUILDSYS=autotools
 DEPS="libgpg-error libassuan"
 RUNTIME_DEPS="gnupg"

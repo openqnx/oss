@@ -1,7 +1,6 @@
 QNX: run tmux's event loop on poll(), not libevent's epoll emulation
 
 Upstream-Status: QNX-specific
-
 --- a/osdep-unknown.c
 +++ b/osdep-unknown.c
 @@ -35,5 +35,20 @@

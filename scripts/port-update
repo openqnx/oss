@@ -51,7 +51,7 @@ echo "== $C: $OLD_VERSION -> $NEW"
 # The new pin, in the recipe's own form.
 if [ -n "$OLD_GIT" ]; then
   if [ -z "$TAG" ]; then   # a version given by hand: find its tag the way the old one was named
-    TAG=$(git ls-remote --tags --refs "$OLD_GIT" | sed 's|.*refs/tags/||' | grep -E "(^|[^0-9])${NEW//./[._]}$" | head -n 1)
+    TAG=$(git ls-remote --tags --refs "$OLD_GIT" | sed 's|.*refs/tags/||' | grep -E "(^|[^0-9._])${NEW//./[._]}$" | head -n 1)
   fi
   [ -n "$TAG" ] || { echo "!! no tag for $NEW in $OLD_GIT" >&2; exit 1; }
   if [ -n "$OLD_COMMIT" ]; then

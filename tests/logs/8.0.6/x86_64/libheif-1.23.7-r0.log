@@ -1,0 +1,48 @@
+# libheif 1.23.7-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:40:56Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libheif qnx-test-libheif qnx-port-tests
+( 1/17) Installing aom (3.15.3-r0)
+( 2/17) Installing dav1d (1.5.5-r0)
+( 3/17) Installing libde265 (1.1.3-r0)
+( 4/17) Installing libjpeg-turbo (3.2.1-r0)
+( 5/17) Installing libpng (1.6.59-r0)
+( 6/17) Installing libdeflate (1.26-r0)
+( 7/17) Installing libwebp (1.6.0-r0)
+( 8/17) Installing xz (5.8.4-r0)
+( 9/17) Installing libtiff (4.7.2-r0)
+(10/17) Installing openh264 (2.5.0-r0)
+(11/17) Installing openjpeg (2.5.4-r0)
+(12/17) Installing openjph (0.33.0-r0)
+(13/17) Installing x264 (0_git-r0)
+(14/17) Installing x265 (3.6-r0)
+(15/17) Installing libheif (1.23.7-r0)
+(16/17) Installing qnx-port-tests (1.0-r0)
+(17/17) Installing qnx-test-libheif (1.0-r1)
+OK: 39.0 MiB in 22 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libheif
+     == libheif ==
+       info libheif 1.23.7
+       ok   libheif 1.x
+       ok   HEVC decoder (libde265)
+       ok   HEVC encoder (x265)
+       ok   AV1 decoder (aom/dav1d)
+       ok   AV1 encoder (aom)
+       ok   JPEG 2000 decoder (openjpeg)
+       info HEVC mean abs error 1.533
+       ok   HEIF (x265 -> libde265): 64x48, Exif kept, pixels within 3/255
+       info AV1 mean abs error 1.653
+       ok   AVIF (aom): 64x48, pixels within 3/255
+       info JPEG 2000 mean abs error 0.328
+       ok   HEIF with JPEG 2000 (openjpeg): pixels within 3/255
+     PASS libheif
+PASS test_libheif
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

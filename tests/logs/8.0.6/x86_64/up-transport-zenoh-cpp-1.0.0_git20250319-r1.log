@@ -1,0 +1,45 @@
+# up-transport-zenoh-cpp 1.0.0_git20250319-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:48:07Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u up-transport-zenoh-cpp qnx-test-up-transport-zenoh-cpp qnx-port-tests
+( 1/10) Installing qnx-port-tests (1.0-r0)
+( 2/10) Installing abseil (20260817.0-r0)
+( 3/10) Installing protobuf (29.3-r0)
+( 4/10) Installing up-core-api (1.6.0_git-r0)
+( 5/10) Installing up-cpp (1.0.1-r0)
+( 6/10) Installing fmt (11.2.0-r0)
+( 7/10) Installing spdlog (1.17.0-r0)
+( 8/10) Installing zenoh-c (1.2.1-r0)
+( 9/10) Installing up-transport-zenoh-cpp (1.0.0_git20250319-r1)
+(10/10) Installing qnx-test-up-transport-zenoh-cpp (1.0-r0)
+OK: 37.4 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_up_transport_zenoh_cpp
+     == up-transport-zenoh-cpp ==
+       ok   write two Zenoh configuration files
+     [2026-11-22 11:47:58.338] [info] ZenohUTransport init
+       ok   transport A open (listening on tcp/<ip>:17450)
+     [2026-11-22 11:47:58.343] [info] ZenohUTransport init
+       ok   transport B open (connected to A)
+       ok   A's entity URI
+     [2026-11-22 11:47:58.343] [info] registerPublishNotificationListener_: up/vehicle1/110AB/1/8001/{}/{}/{}/{}
+       ok   subscribe to //vehicle1/110AB/1/8001 on B
+     [2026-11-22 11:47:58.344] [debug] sendPublishNotification_: up/vehicle1/110AB/1/8001/{}/{}/{}/{}: hello over zenoh
+       ok   publish on A returns OK
+       ok   B's subscriber received the message
+       ok   payload intact
+       ok   type PUBLISH
+       ok   source is the topic
+       ok   priority CS4
+       ok   payload format TEXT
+       ok   id is a UUIDv7
+     PASS up-transport-zenoh-cpp
+PASS test_up_transport_zenoh_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -2,9 +2,9 @@
 # library that shifts what time(), gettimeofday() and clock_gettime()
 # (CLOCK_REALTIME) return, and the datefudge wrapper script. Version as in
 # QNX's own package list (Debian's upstream).
-VERSION=1.24
-TARBALL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.24.tar.xz
-SHA256=80efab249232deeb142bf8a0ec66f2cf596c45560e4fdd28f3b5bdd290ac0385
+VERSION=1.27
+TARBALL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.27.tar.xz
+SHA256=0f7c0ca9bd2b0ef6aa01eaaf82e36b94b5424b6b70d49a8123478bf4cdfb2a2d
 DEPS=""
 # QNX's runtime linker honours LD_PRELOAD, and a preloaded library's
 # definitions interpose on the program's calls as on Linux. Calls libc

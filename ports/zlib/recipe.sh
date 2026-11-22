@@ -1,2 +1,2 @@
-VERSION=1.3.1; GIT=https://github.com/madler/zlib.git; REF=v1.3.1
+VERSION=1.4; GIT=https://github.com/madler/zlib.git; REF=v1.4
 CMAKE_ARGS_EXTRA=( -DZLIB_BUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=ON )

@@ -10,10 +10,9 @@ the include root from glslang's, and build-version.inc names the installed
 versions instead of running git describe in source trees that are not there.
 
 Upstream-Status: Inappropriate (distribution build configuration; not QNX-specific)
-
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -139,11 +139,23 @@
+@@ -144,11 +144,23 @@
      add_subdirectory(examples)
  endif()
  

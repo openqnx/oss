@@ -1,4 +1,4 @@
-VERSION=0.11.1; GIT=https://github.com/libjxl/libjxl.git; REF=v0.11.1
+VERSION=0.13.0; GIT=https://github.com/libjxl/libjxl.git; REF=v0.13.0
 DEPS="brotli highway lcms2 libpng giflib libjpeg-turbo"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
                    -DJPEGXL_ENABLE_TOOLS=OFF -DJPEGXL_ENABLE_EXAMPLES=OFF

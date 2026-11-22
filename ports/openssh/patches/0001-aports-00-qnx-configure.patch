@@ -4,12 +4,9 @@ Taken from qnx-ports/aports core/openssh -- the APKBUILD the QNX Everywhere 8.0.
 image's package is built from.
 
 Upstream-Status: QNX-specific
-
-diff --git a/configure.ac b/configure.ac
-index db52110..e99beb0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1397,6 +1397,8 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
+@@ -1416,6 +1416,8 @@
  	AC_DEFINE([DISABLE_LASTLOG])
  	AC_DEFINE([SSHD_ACQUIRES_CTTY])
  	AC_DEFINE([BROKEN_SHADOW_EXPIRE], [1], [QNX shadow support is broken])

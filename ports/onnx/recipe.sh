@@ -1,4 +1,4 @@
-VERSION=1.17.0; GIT=https://github.com/onnx/onnx.git; REF=v1.17.0
+VERSION=1.23.2; GIT=https://github.com/onnx/onnx.git; REF=v1.23.2
 DEPS="protobuf"
 # ONNX generates its schema sources with protoc while it builds, so it needs a
 # protoc that runs on the build host -- and protobuf 29 gencode compiles only

@@ -166,7 +166,7 @@ int main(void) {
   static char out[16384];
   const char *const v[] = { NGINX, "-V", NULL };
   int rc = run_capture(v, out, sizeof out);
-  QT_CHECK(rc == 0 && strstr(out, "nginx version: nginx/1.30.6"), "nginx -V: version 1.30.6");
+  QT_CHECK(rc == 0 && strstr(out, "nginx version: nginx/1.31.9"), "nginx -V: version 1.31.9");
   QT_CHECK(strstr(out, "--with-http_ssl_module") && strstr(out, "built with OpenSSL"),
            "nginx -V: built with OpenSSL and the SSL module");
   char *nl = strchr(out, '\n'); if (nl) *nl = 0;
@@ -255,7 +255,7 @@ int main(void) {
            "GET /hello.txt: 200 and the file byte for byte");
   QT_CHECK(n > 0 && header_is(resp, "Content-Type: ", "text/plain"), "Content-Type: text/plain");
   QT_CHECK(n > 0 && header_is(resp, "Content-Length: ", "6000\r"), "Content-Length: 6000");
-  QT_CHECK(n > 0 && header_is(resp, "Server: ", "nginx/1.30.6"), "Server: nginx/1.30.6");
+  QT_CHECK(n > 0 && header_is(resp, "Server: ", "nginx/1.31.9"), "Server: nginx/1.31.9");
 
   n = http(port, "GET /nope.txt HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n", resp, sizeof resp);
   QT_CHECK(n > 0 && status(resp) == 404, "GET /nope.txt: 404");

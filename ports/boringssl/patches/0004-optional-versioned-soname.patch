@@ -11,12 +11,9 @@ libssl.so.<v>, a name only BoringSSL's prefix holds. BoringSSL makes no
 ABI promise between releases, so the recipe passes the release version.
 
 Upstream-Status: QNX-specific
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 58dce62..805db18 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -679,6 +679,15 @@ set_property(TARGET ssl PROPERTY EXPORT_NAME SSL)
+@@ -679,6 +679,15 @@
  target_link_libraries(ssl crypto)
  target_compile_definitions(ssl PRIVATE -DBORINGSSL_IMPLEMENTATION)
  

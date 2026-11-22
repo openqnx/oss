@@ -1,4 +1,4 @@
-VERSION=8.11.1; GIT=https://github.com/curl/curl.git; REF=curl-8_11_1
+VERSION=8.23.0; GIT=https://github.com/curl/curl.git; REF=curl-8_23_0
 DEPS="openssl zlib nghttp2 c-ares brotli zstd"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_CURL_EXE=ON -DBUILD_TESTING=OFF
                    -DCURL_USE_OPENSSL=ON -DOPENSSL_ROOT_DIR="$STAGE$PREFIX"

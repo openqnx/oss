@@ -1,7 +1,7 @@
 # openexr: the OpenEXR high-dynamic-range image file format (ILM/ASWF) -- the
 # C core library, the C++ IlmImf/OpenEXR library, IlmThread and Iex, and the
 # exr* tools (exrinfo, exrheader, exrmaketiled, exrenvmap, exrstdattr ...).
-VERSION=3.4.1; GIT=https://github.com/AcademySoftwareFoundation/openexr.git; REF=v3.4.1
+VERSION=3.5.4; GIT=https://github.com/AcademySoftwareFoundation/openexr.git; REF=v3.5.4
 DEPS="imath libdeflate openjph"
 BUILDSYS=cmake
 # Built against the staged Imath, libdeflate and OpenJPH (HTJ2K compression):

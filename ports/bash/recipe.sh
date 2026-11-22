@@ -1,6 +1,6 @@
-VERSION=5.2.37
-TARBALL=https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz
-SHA256=9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff
+VERSION=5.3
+TARBALL=https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz
+SHA256=0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="ncurses readline libiconv"
 BUILDSYS=autotools

@@ -1,4 +1,4 @@
-VERSION=1.15.0; GIT=https://chromium.googlesource.com/webm/libvpx; REF=v1.15.0
+VERSION=1.17.0; GIT=https://chromium.googlesource.com/webm/libvpx; REF=v1.17.0
 BUILDSYS=custom
 # libvpx has a hand-written configure driven by a --target triple of its own.
 do_configure() {

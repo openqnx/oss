@@ -1,6 +1,6 @@
-VERSION=1.32.9
-TARBALL=https://www.mpg123.de/download/mpg123-1.32.9.tar.bz2
-SHA256=03b61e4004e960bacf2acdada03ed94d376e6aab27a601447bd4908d8407b291
+VERSION=1.33.7
+TARBALL=https://www.mpg123.de/download/mpg123-1.33.7.tar.bz2
+SHA256=31d0e35a4ca567ec9b5ebda6c3062bb4435d6d3eacd6ef0d95cadd7854dc03ee
 BUILDSYS=autotools
 # The decoder (libmpg123) and resampler (libsyn123) libraries only. QNX audio
 # goes through io-snd/libasound and mpg123 has no output module for it, so

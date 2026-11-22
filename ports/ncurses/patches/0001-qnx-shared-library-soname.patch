@@ -11,10 +11,9 @@ aclocal.m4 (CF_SHARED_OPTS) is changed with configure, so a regenerated
 configure keeps it.
 
 Upstream-Status: Pending
-
 --- a/configure
 +++ b/configure
-@@ -6979,7 +6979,17 @@
+@@ -7301,7 +7301,17 @@
  		CC_SHARED_OPTS=
  		MK_SHARED_LIB='${LD} -Wshared -Wxld=-export_all -o $@'
  		;;
@@ -35,7 +34,7 @@ Upstream-Status: Pending
  		test "$cf_cv_shlib_version" = auto && cf_cv_shlib_version=rel
 --- a/aclocal.m4
 +++ b/aclocal.m4
-@@ -7806,7 +7806,17 @@
+@@ -8007,7 +8007,17 @@
  		CC_SHARED_OPTS=
  		MK_SHARED_LIB='${LD} -Wshared -Wxld=-export_all -o $[@]'
  		;;

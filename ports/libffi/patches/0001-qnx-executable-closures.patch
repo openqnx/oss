@@ -5,10 +5,9 @@ faulted when called. Set FFI_MMAP_EXEC_WRIT so dlmmap() uses an anonymous
 PROT_EXEC|PROT_WRITE mapping, which QNX allows.
 
 Upstream-Status: QNX-specific
-
 --- a/src/closures.c
 +++ b/src/closures.c
-@@ -141,6 +141,17 @@
+@@ -147,6 +147,17 @@
     executable memory. */
  #  define FFI_MMAP_EXEC_WRIT 1
  # endif

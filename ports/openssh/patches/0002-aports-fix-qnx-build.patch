@@ -4,10 +4,8 @@ Taken from qnx-ports/aports core/openssh -- the APKBUILD the QNX Everywhere 8.0.
 image's package is built from.
 
 Upstream-Status: QNX-specific
-
-diff -Naur openssh-10.3p1.orig/includes.h openssh-10.3p1/includes.h
---- openssh-10.3p1.orig/includes.h	2026-06-10 21:19:48.000000000 +0000
-+++ openssh-10.3p1/includes.h	2026-06-10 21:20:34.000000000 +0000
+--- a/includes.h
++++ b/includes.h
 @@ -65,6 +65,9 @@
  #ifdef HAVE_LOGIN_H
  # include <login.h>
@@ -29,10 +27,9 @@ diff -Naur openssh-10.3p1.orig/includes.h openssh-10.3p1/includes.h
  #include "defines.h"
  
  #include "platform.h"
-diff -Naur openssh-10.3p1.orig/openbsd-compat/openbsd-compat.h openssh-10.3p1/openbsd-compat/openbsd-compat.h
---- openssh-10.3p1.orig/openbsd-compat/openbsd-compat.h	2026-06-10 21:19:48.000000000 +0000
-+++ openssh-10.3p1/openbsd-compat/openbsd-compat.h	2026-06-10 21:19:57.000000000 +0000
-@@ -107,7 +107,7 @@
+--- a/openbsd-compat/openbsd-compat.h
++++ b/openbsd-compat/openbsd-compat.h
+@@ -112,7 +112,7 @@
  #endif
  
  #ifndef HAVE_RRESVPORT_AF
@@ -41,9 +38,8 @@ diff -Naur openssh-10.3p1.orig/openbsd-compat/openbsd-compat.h openssh-10.3p1/op
  #endif
  
  #ifndef HAVE_STRLCPY
-diff -Naur openssh-10.3p1.orig/openbsd-compat/rresvport.c openssh-10.3p1/openbsd-compat/rresvport.c
---- openssh-10.3p1.orig/openbsd-compat/rresvport.c	2026-06-10 21:19:48.000000000 +0000
-+++ openssh-10.3p1/openbsd-compat/rresvport.c	2026-06-10 21:19:57.000000000 +0000
+--- a/openbsd-compat/rresvport.c
++++ b/openbsd-compat/rresvport.c
 @@ -55,7 +55,7 @@
  #endif
  
@@ -53,11 +49,9 @@ diff -Naur openssh-10.3p1.orig/openbsd-compat/rresvport.c openssh-10.3p1/openbsd
  {
  	struct sockaddr_storage ss;
  	struct sockaddr *sa;
-diff --git a/sshpty.c b/sshpty.c
-index 0a82b7d..8425508 100644
 --- a/sshpty.c
 +++ b/sshpty.c
-@@ -50,6 +50,10 @@
+@@ -46,6 +46,10 @@
  # endif
  #endif
  

@@ -1,6 +1,6 @@
-VERSION=1.11.0
-TARBALL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.0.tar.bz2
-SHA256=09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c
+VERSION=1.12.4
+TARBALL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.12.4.tar.bz2
+SHA256=d77f68f48879510e79a2f65977ccc68981781ea0923e5bdffac2a193ea3d660e
 BUILDSYS=autotools
 DEPS="libgpg-error"
 # configure probes PATH for gpgrt-config and would otherwise pick up the build

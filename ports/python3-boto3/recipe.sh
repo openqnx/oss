@@ -1,9 +1,9 @@
 # boto3: the AWS SDK for Python (resources, clients, S3 transfers).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=1.43.123
-TARBALL=https://files.pythonhosted.org/packages/96/b2/a7986c327f80aa6f1544f4cb8f2fa7da4e1fccd472379a21cad0508b8a0e/boto3-1.43.123-py3-none-any.whl
-SHA256=d18d66e1e13faa0c25d0b1b8c5ce946e29fb5fc0b6456b655a93a678ff4cc313
+VERSION=1.44.9
+TARBALL=https://files.pythonhosted.org/packages/9e/66/73c8c57119a8acf3688dfbe95c4648e8b3e4d6a7a3783b0619b65d201f02/boto3-1.44.9-py3-none-any.whl
+SHA256=aff889e8ca6f6006f0b5658b712941471d21e4675d6d48421974a20a5a17a918
 DEPS="python3 python3-botocore python3-s3transfer python3-jmespath"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-botocore python3-s3transfer python3-jmespath"

@@ -45,7 +45,7 @@ trap stopall EXIT
 trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 DF=$L/bin/datefudge
-r=$("$DF" --version 2>&1); echo "$r" | has "Version 1.24" && ok "datefudge --version: 1.24" || bad "version: $r"
+r=$("$DF" --version 2>&1); echo "$r" | has "Version 1.27" && ok "datefudge --version: 1.27" || bad "version: $r"
 HLP=$D/test_datefudge_clock
 [ -x "$HLP" ] || bad "test_datefudge_clock not found next to the test"
 now=$("$HLP" x | awk '{print $1}')

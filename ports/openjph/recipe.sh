@@ -2,7 +2,7 @@
 # library, with ojph_compress/ojph_expand. Added as a dependency of OpenEXR 3.4,
 # whose HTJ2K compression is built on it (otherwise OpenEXR downloads a copy at
 # configure time). 0.24.1 is the release OpenEXR 3.4.1 pins.
-VERSION=0.24.1; GIT=https://github.com/aous72/OpenJPH.git; REF=0.24.1
+VERSION=0.33.0; GIT=https://github.com/aous72/OpenJPH.git; REF=0.33.0
 DEPS="libtiff"
 BUILDSYS=cmake
 # Shared library and the two tools, with TIFF input/output (libtiff is here).

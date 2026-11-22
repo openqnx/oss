@@ -23,7 +23,7 @@ G="gpg --batch --no-tty --pinentry-mode loopback"
 
 V=$(gpg --version 2>&1 | head -n 2 | tr '\n' ' ')
 echo "  info $V"
-case "$V" in "gpg (GnuPG) 2.4.9 libgcrypt 1.11.0"*) ok "gpg 2.4.9 on libgcrypt 1.11.0" ;; *) bad "gpg --version: $V" ;; esac
+case "$V" in "gpg (GnuPG) 2.4.9 libgcrypt 1.12.4"*) ok "gpg 2.4.9 on libgcrypt 1.12.4" ;; *) bad "gpg --version: $V" ;; esac
 
 D=$(printf abc | gpg --with-colons --print-md SHA256 2>&1)
 case "$D" in *BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD*) ok "SHA256(\"abc\") = ba7816bf...f20015ad" ;; *) bad "print-md SHA256: $D" ;; esac

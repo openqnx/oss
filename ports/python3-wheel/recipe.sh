@@ -1,9 +1,9 @@
 # wheel (version as in the QNX Everywhere 8.0.4r1 image).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=0.46.1
-TARBALL=https://files.pythonhosted.org/packages/af/44/31d964a260fcda6bf2f59384231bbf4962ac796a5d36c554162b5411b8db/wheel-0.46.1-py3-none-any.whl
-SHA256=f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8
+VERSION=0.48.0
+TARBALL=https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl
+SHA256=3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab
 DEPS="python3 python3-packaging"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"

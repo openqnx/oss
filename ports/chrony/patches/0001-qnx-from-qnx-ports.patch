@@ -25,12 +25,9 @@ This pull request introduces source code changes to add QNX support for chrony 4
  create mode 100644 adjtime_qnx.h
  create mode 100644 sys_qnx.c
  create mode 100644 sys_qnx.h
-
-diff --git a/Makefile.in b/Makefile.in
-index 0edb91ec..b58bb63f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -68,7 +68,6 @@ chronyc : $(CLI_OBJS)
+@@ -68,7 +68,6 @@
  getdate.o: CFLAGS += $(GETDATE_CFLAGS)
  
  distclean : clean
@@ -38,7 +35,7 @@ index 0edb91ec..b58bb63f 100644
  	$(MAKE) -C test/unit distclean
  	-rm -f .DS_Store
  	-rm -f Makefile config.h config.log
-@@ -101,13 +100,6 @@ install: chronyd chronyc
+@@ -101,13 +100,6 @@
  	chmod 755 $(DESTDIR)$(SBINDIR)/chronyd
  	cp chronyc $(DESTDIR)$(BINDIR)/chronyc
  	chmod 755 $(DESTDIR)$(BINDIR)/chronyc
@@ -52,10 +49,7 @@ index 0edb91ec..b58bb63f 100644
  
  %.o : %.c config.h
  	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
-diff --git a/adjtime_qnx.h b/adjtime_qnx.h
-new file mode 100644
-index 00000000..3feeb2cc
---- /dev/null
+--- a/adjtime_qnx.h
 +++ b/adjtime_qnx.h
 @@ -0,0 +1,154 @@
 +#ifndef ADJTIME_QNX_H
@@ -212,11 +206,9 @@ index 00000000..3feeb2cc
 +#endif // ADJTIME_QNX_IMPLEMENTATION
 +
 +#endif // ADJTIME_QNX_H
-diff --git a/client.c b/client.c
-index 71db5677..9ea2d026 100644
 --- a/client.c
 +++ b/client.c
-@@ -287,7 +287,7 @@ open_unix_socket(char *server_path)
+@@ -288,7 +288,7 @@
      goto error1;
    }
  
@@ -225,7 +217,7 @@ index 71db5677..9ea2d026 100644
    if (dir_fd1 < 0 || fstat(dir_fd1, &st) < 0) {
      LOG(LOGS_ERR, "Could not open/stat %s : %s", sock_dir1, strerror(errno));
      goto error2;
-@@ -311,7 +311,7 @@ open_unix_socket(char *server_path)
+@@ -312,7 +312,7 @@
  
    if (chmod(sock_path, 0666) < 0 ||
        chmod(sock_dir2, 0711) < 0 ||
@@ -234,11 +226,9 @@ index 71db5677..9ea2d026 100644
      LOG(LOGS_ERR, "Could not change socket or directory permissions : %s", strerror(errno));
      SCK_RemoveSocket(s);
      SCK_CloseSocket(s);
-diff --git a/configure b/configure
-index 1c254435..5fa5209e 100755
 --- a/configure
 +++ b/configure
-@@ -448,6 +448,23 @@ case $OPERATINGSYSTEM in
+@@ -444,6 +444,23 @@
          add_def NETBSD
          echo "Configuring for $SYSTEM"
      ;;
@@ -262,11 +252,9 @@ index 1c254435..5fa5209e 100755
      OpenBSD)
          EXTRA_OBJECTS="sys_generic.o sys_openbsd.o sys_posix.o"
          try_setsched=1
-diff --git a/socket.c b/socket.c
-index ec1a5973..07fd4513 100644
 --- a/socket.c
 +++ b/socket.c
-@@ -1737,6 +1737,12 @@ SCK_RemoveSocket(int sock_fd)
+@@ -1738,6 +1738,12 @@
  
    saddr_len = sizeof (saddr);
  
@@ -279,8 +267,6 @@ index ec1a5973..07fd4513 100644
    if (getsockname(sock_fd, &saddr.sa, &saddr_len) < 0) {
      DEBUG_LOG("getsockname() failed : %s", strerror(errno));
      return 0;
-diff --git a/sys.c b/sys.c
-index 138f8fc2..94a5625c 100644
 --- a/sys.c
 +++ b/sys.c
 @@ -47,6 +47,9 @@
@@ -293,7 +279,7 @@ index 138f8fc2..94a5625c 100644
  #endif
  
  /* ================================================== */
-@@ -73,6 +76,8 @@ SYS_Initialise(int clock_control)
+@@ -73,6 +76,8 @@
    SYS_OpenBSD_Initialise();
  #elif defined(MACOSX)
    SYS_MacOSX_Initialise();
@@ -302,7 +288,7 @@ index 138f8fc2..94a5625c 100644
  #else
  #error Unknown system
  #endif
-@@ -97,6 +102,8 @@ SYS_Finalise(void)
+@@ -97,6 +102,8 @@
    SYS_OpenBSD_Finalise();
  #elif defined(MACOSX)
    SYS_MacOSX_Finalise();
@@ -311,7 +297,7 @@ index 138f8fc2..94a5625c 100644
  #else
  #error Unknown system
  #endif
-@@ -116,6 +123,8 @@ void SYS_DropRoot(uid_t uid, gid_t gid, SYS_ProcessContext context)
+@@ -116,6 +123,8 @@
    SYS_OpenBSD_DropRoot(uid, gid, context, !null_driver);
  #elif defined(MACOSX) && defined(FEAT_PRIVDROP)
    SYS_MacOSX_DropRoot(uid, gid, context);
@@ -320,10 +306,7 @@ index 138f8fc2..94a5625c 100644
  #else
    LOG_FATAL("dropping root privileges not supported");
  #endif
-diff --git a/sys_qnx.c b/sys_qnx.c
-new file mode 100644
-index 00000000..2ccd7d60
---- /dev/null
+--- a/sys_qnx.c
 +++ b/sys_qnx.c
 @@ -0,0 +1,399 @@
 +/*
@@ -725,10 +708,7 @@ index 00000000..2ccd7d60
 +
 +  clock_finalise();
 +}
-diff --git a/sys_qnx.h b/sys_qnx.h
-new file mode 100644
-index 00000000..e69b0024
---- /dev/null
+--- a/sys_qnx.h
 +++ b/sys_qnx.h
 @@ -0,0 +1,41 @@
 +/*
@@ -772,8 +752,6 @@ index 00000000..e69b0024
 +void SYS_QNX_Finalise(void);
 +
 +#endif
-diff --git a/sysincl.h b/sysincl.h
-index e26b2362..019147af 100644
 --- a/sysincl.h
 +++ b/sysincl.h
 @@ -53,7 +53,9 @@
@@ -786,8 +764,6 @@ index e26b2362..019147af 100644
  #include <sys/wait.h>
  #include <time.h>
  #include <unistd.h>
-diff --git a/test/unit/quantiles.c b/test/unit/quantiles.c
-index a6e3dbbd..050857b3 100644
 --- a/test/unit/quantiles.c
 +++ b/test/unit/quantiles.c
 @@ -17,6 +17,7 @@
@@ -798,8 +774,6 @@ index a6e3dbbd..050857b3 100644
  
  #include <local.h>
  #include "test.h"
-diff --git a/test/unit/samplefilt.c b/test/unit/samplefilt.c
-index 19d2f707..2b0fd18e 100644
 --- a/test/unit/samplefilt.c
 +++ b/test/unit/samplefilt.c
 @@ -17,6 +17,7 @@
@@ -810,11 +784,9 @@ index 19d2f707..2b0fd18e 100644
  
  #include <local.h>
  #include "test.h"
-diff --git a/test/unit/socket.c b/test/unit/socket.c
-index e3db0742..d6e64c77 100644
 --- a/test/unit/socket.c
 +++ b/test/unit/socket.c
-@@ -70,6 +70,7 @@ send_and_recv(int type, int is_stream, int is_client_bound, int server_fd, int c
+@@ -70,6 +70,7 @@
    UTI_GetRandomBytes(buf1, sizeof (buf1));
  
    TEST_CHECK(SCK_Send(client_fd, buf1, sizeof (buf1), 0) == sizeof (buf1));

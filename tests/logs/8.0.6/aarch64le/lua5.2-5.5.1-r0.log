@@ -1,0 +1,23 @@
+# lua5.2 5.5.1-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T11:40:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lua5.2 qnx-test-lua5-2 qnx-port-tests
+(1/3) Installing lua5.2 (5.5.1-r0)
+(2/3) Installing qnx-port-tests (1.0-r0)
+(3/3) Installing qnx-test-lua5-2 (1.0-r2)
+OK: 10.4 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua5_2
+FAIL test_lua5_2 (rc=1)
+     unknown symbol: luaL_openlibs referenced from test_lua5_2
+     unknown symbol: lua_insert referenced from test_lua5_2
+     ldd:FATAL: Could not resolve all symbols 
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_lua5_2
+
+RESULT: FAIL

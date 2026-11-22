@@ -1,0 +1,176 @@
+configure: support --crossbuild without running test programs
+
+nginx's configure compiles small test programs and runs them: for type
+sizes (auto/types/sizeof), byte order (auto/endianness) and the
+run-tests in auto/feature (ngx_feature_run=yes/bug/value). In a cross
+build none of them can run, so configure stops with "can not detect int
+size". --crossbuild=<system>:<release>:<machine> also set the machine to
+i386 regardless of the target.
+
+With --crossbuild=SYS:REL:MACHINE (three fields) configure now takes the
+machine from the third field and sets NGX_CROSSBUILD=YES, in which case:
+sizes are found at compile time (a negative array size does not compile),
+byte order from __BYTE_ORDER__, a run-test that compiles and links counts
+as working unless its name is in NGX_CROSS_NOT_WORKING, a "bug" probe as
+not affected, and a value probe takes NGX_CROSS_VALUE_<name> or counts as
+absent. Native builds are unchanged.
+
+Upstream-Status: QNX-specific
+
+--- a/auto/endianness
++++ b/auto/endianness
+@@ -31,7 +31,25 @@
+ 
+ eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1"
+ 
+-if [ -x $NGX_AUTOTEST ]; then
++if [ -x $NGX_AUTOTEST ] && [ "$NGX_CROSSBUILD" = YES ]; then
++    # Cross build: ask the compiler instead of running the program.
++    rm -rf $NGX_AUTOTEST*
++    cat << END > $NGX_AUTOTEST.c
++#if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
++#error big endian
++#endif
++int main(void) { return 0; }
++END
++    if eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1" && [ -x $NGX_AUTOTEST ]; then
++        echo " little endian (cross build)"
++        have=NGX_HAVE_LITTLE_ENDIAN . auto/have
++    else
++        echo " big endian (cross build)"
++    fi
++
++    rm -rf $NGX_AUTOTEST*
++
++elif [ -x $NGX_AUTOTEST ]; then
+     if $NGX_AUTOTEST >/dev/null 2>&1; then
+         echo " little endian"
+         have=NGX_HAVE_LITTLE_ENDIAN . auto/have
+--- a/auto/feature
++++ b/auto/feature
+@@ -47,9 +47,66 @@
+ eval "/bin/sh -c \"$ngx_test\" >> $NGX_AUTOCONF_ERR 2>&1"
+ 
+ 
+-if [ -x $NGX_AUTOTEST ]; then
++ngx_feature_run_mode=$ngx_feature_run
+ 
++if [ "$NGX_CROSSBUILD" = YES ]; then
++    # Cross build: the test program cannot run here. A feature that compiles
++    # and links is taken as working (yes), as not affected by the bug it
++    # probes (bug); one listed in NGX_CROSS_NOT_WORKING (feature names,
++    # space-separated) as broken. A value comes from the
++    # variable NGX_CROSS_VALUE_<name>, if set; otherwise the feature is
++    # taken as absent.
+     case "$ngx_feature_run" in
++        yes|bug)
++            ngx_feature_run_mode=cross
++            if test -n "$ngx_feature_name"; then
++                case " $NGX_CROSS_NOT_WORKING " in
++                    *" $ngx_feature_name "*)
++                        ngx_feature_run_mode=cross-broken
++                    ;;
++                esac
++            fi
++        ;;
++        value)
++            ngx_feature_run_mode=cross-value
++            eval "ngx_cross_value=\$NGX_CROSS_VALUE_$ngx_feature_name"
++        ;;
++    esac
++fi
++
++if [ -x $NGX_AUTOTEST ]; then
++
++    case "$ngx_feature_run_mode" in
++
++        cross)
++            echo " found (cross build: not run)"
++            ngx_found=yes
++
++            if test -n "$ngx_feature_name"; then
++                have=$ngx_have_feature . auto/have
++            fi
++        ;;
++
++        cross-broken)
++            echo " found but is not working (cross build: NGX_CROSS_NOT_WORKING)"
++        ;;
++
++        cross-value)
++            if test -n "$ngx_cross_value"; then
++                echo " found (cross build: $ngx_cross_value)"
++                ngx_found=yes
++
++                cat << END >> $NGX_AUTO_CONFIG_H
++
++#ifndef $ngx_feature_name
++#define $ngx_feature_name  $ngx_cross_value
++#endif
++
++END
++            else
++                echo " found but the value is unknown (cross build)"
++            fi
++        ;;
+ 
+         yes)
+             # /bin/sh is used to intercept "Killed" or "Abort trap" messages
+--- a/auto/types/sizeof
++++ b/auto/types/sizeof
+@@ -39,7 +39,35 @@
+ eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1"
+ 
+ 
+-if [ -x $NGX_AUTOTEST ]; then
++if [ "$NGX_CROSSBUILD" = YES ]; then
++    # Cross build: find the size at compile time instead, one candidate at
++    # a time (an array of negative size does not compile).
++    rm -rf $NGX_AUTOTEST*
++    for ngx_try in 1 2 4 8 16; do
++        sed -e "s/^    printf.*/    static char a[sizeof($ngx_type) == $ngx_try ? 1 : -1]; return a[0];/" \
++            -e '/^    return 0;/d' > $NGX_AUTOTEST.c << END
++#include <sys/types.h>
++#include <sys/time.h>
++$NGX_INCLUDE_UNISTD_H
++#include <signal.h>
++#include <stdio.h>
++#include <sys/resource.h>
++$NGX_INCLUDE_INTTYPES_H
++$NGX_INCLUDE_AUTO_CONFIG_H
++
++int main(void) {
++    printf("%d", (int) sizeof($ngx_type));
++    return 0;
++}
++END
++        if eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1" && [ -x $NGX_AUTOTEST ]; then
++            ngx_size=$ngx_try
++            break
++        fi
++    done
++    echo " $ngx_size bytes (cross build)"
++
++elif [ -x $NGX_AUTOTEST ]; then
+     ngx_size=`$NGX_AUTOTEST`
+     echo " $ngx_size bytes"
+ fi
+--- a/configure
++++ b/configure
+@@ -45,6 +45,16 @@
+     echo "building for $NGX_PLATFORM"
+     NGX_SYSTEM=$NGX_PLATFORM
+     NGX_MACHINE=i386
++
++    # --crossbuild=<system>:<release>:<machine>: the machine names the
++    # target CPU (alignment, cache line), and configure must not run the
++    # programs it compiles.
++    case "$NGX_PLATFORM" in
++        *:*:*)
++            NGX_MACHINE=`echo "$NGX_PLATFORM" | sed 's/^[^:]*:[^:]*://'`
++            NGX_CROSSBUILD=YES
++        ;;
++    esac
+ fi
+ 
+ . auto/cc/conf

@@ -1,4 +1,4 @@
-VERSION=2.13.3; GIT=https://gitlab.freedesktop.org/freetype/freetype.git; REF=VER-2-13-3
+VERSION=2-15-0; GIT=https://gitlab.freedesktop.org/freetype/freetype.git; REF=VER-2-15-0
 DEPS="zlib bzip2 libpng brotli"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DFT_DISABLE_HARFBUZZ=ON
                    -DFT_REQUIRE_ZLIB=ON -DFT_REQUIRE_PNG=ON -DFT_REQUIRE_BZIP2=ON

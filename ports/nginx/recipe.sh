@@ -4,9 +4,9 @@
 # answer the probes that would run a test program (type sizes and byte
 # order at compile time, run-tests taken from compile-and-link); 0002 is a
 # signedness fix for QNX's unsigned blkcnt_t.
-VERSION=1.30.6
-TARBALL=https://nginx.org/download/nginx-1.30.6.tar.gz
-SHA256=3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8
+VERSION=1.31.9
+TARBALL=https://nginx.org/download/nginx-1.31.9.tar.gz
+SHA256=a11c5eeee2e257f4478f0e649f84b0040787d277d2d3e5233952aa6b6dcb80ad
 BUILDSYS=custom
 # libxcrypt: crypt() for auth_basic password files; QNX's libc has none.
 DEPS="openssl pcre2 zlib libxcrypt"

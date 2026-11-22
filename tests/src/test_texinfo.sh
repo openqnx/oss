@@ -1,5 +1,5 @@
 #!/bin/sh
-# texinfo: the target's makeinfo (texi2any 7.2, pure Perl: no XS) turns a
+# texinfo: the target's makeinfo (texi2any 7.3, pure Perl: no XS) turns a
 # small manual (menu, chapters, @code/@var, @xref, @example, @enumerate,
 # an index, a dir entry) into Info -- node headers with Next/Prev/Up, the
 # menu, the cross reference, the index menu, the tag table --, plain text
@@ -44,7 +44,7 @@ trap stopall EXIT
 trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 MI=$L/bin/makeinfo
-r=$("$MI" --version 2>&1 | head -n 1); [ "$r" = "texi2any (GNU texinfo) 7.2" ] && ok "makeinfo --version: texi2any (GNU texinfo) 7.2" || bad "version: $r"
+r=$("$MI" --version 2>&1 | head -n 1); [ "$r" = "texi2any (GNU texinfo) 7.3" ] && ok "makeinfo --version: texi2any (GNU texinfo) 7.3" || bad "version: $r"
 cat > t.texi <<'EOT'
 \input texinfo
 @setfilename t.info
@@ -90,7 +90,7 @@ int main(void) @{ return 0; @}
 EOT
 r=$(to 120 "$MI" t.texi -o t.info 2>&1); rc=$?
 [ $rc -eq 0 ] && [ -s t.info ] && ok "makeinfo t.texi: t.info" || bad "makeinfo (rc $rc): $r"
-has "This is t.info, produced by makeinfo version 7.2 from t.texi." < t.info && ok "produced by makeinfo version 7.2" || bad "info header: $(head -n 1 t.info)"
+has "This is t.info, produced by makeinfo version 7.3 from t.texi." < t.info && ok "produced by makeinfo version 7.3" || bad "info header: $(head -n 1 t.info)"
 for l in "File: t.info,  Node: Top,  Next: Second,  Up: (dir)" "File: t.info,  Node: Second,  Next: Third,  Prev: Top,  Up: Top" \
          "File: t.info,  Node: Third,  Prev: Second,  Up: Top" "* Second::      The second chapter." \
          "The function ‘qnx_init’ returns STATUS.  *Note Third::, for more." "     int main(void) { return 0; }" \

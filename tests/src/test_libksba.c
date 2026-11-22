@@ -59,7 +59,7 @@ int main(void) {
   QT_BEGIN("libksba");
   const char *v = ksba_check_version(NULL);
   printf("  info ksba_check_version: %s\n", v ? v : "(null)");
-  QT_CHECK(v && strcmp(v, "1.8.1") == 0, "library version 1.8.1");
+  QT_CHECK(v && strcmp(v, "1.9.1") == 0, "library version 1.9.1");
 
   ksba_cert_t cert = NULL;
   QT_CHECK(ksba_cert_new(&cert) == 0, "ksba_cert_new");

@@ -1,0 +1,51 @@
+Install the shared-library symlinks on QNX.
+
+support/shlib-install knows how to make libreadline.so.M and libreadline.so
+only for the systems it lists; for QNX it makes none, and "-lreadline" then
+finds no library. Add QNX to the chmod case and a symlink case that copes
+with a two-component library name (no LINK2).
+
+Upstream-Status: QNX-specific
+
+--- a/support/shlib-install
++++ b/support/shlib-install
+@@ -71,7 +71,7 @@
+ # Cygwin installs both a dll (which must go in $BINDIR) and an implicit
+ # link library (in $libdir)
+ case "$host_os" in
+-hpux*|darwin*|macosx*|linux*|solaris2*)
++hpux*|darwin*|macosx*|linux*|solaris2*|nto-qnx*|nto*|qnx*)
+ 	if [ -z "$uninstall" ]; then
+ 		chmod 755 ${INSTALLDIR}/${LIBNAME}
+ 	fi ;;
+@@ -118,6 +118,30 @@
+ # Create symlinks to the installed library.  This section is incomplete.
+ #
+ case "$host_os-$host_vendor" in
++nto-qnx*|*-nto*|*nto-*|*qnx*)
++	# libname.so.M -> libname.so.M.N, when there is an M.N at all
++	if [ -n "$LINK2" ]; then
++		${echo} ${RM} ${INSTALLDIR}/$LINK2
++		if [ -z "$uninstall" ]; then
++			eval $INSTALL_LINK2
++		fi
++	fi
++
++	# libname.so -> the most specific name that exists.  This is the
++	# development symlink "-lname" needs; readline's soname has only two
++	# components, so LINK2 is empty and the link must point at LIBNAME.
++	if [ -n "$LINK1" ]; then
++		${echo} ${RM} ${INSTALLDIR}/$LINK1
++		if [ -z "$uninstall" ]; then
++			if [ -n "$LINK2" ]; then
++				${echo} cd $INSTALLDIR && ${echo} ${LN} $LINK2 $LINK1
++			else
++				eval $INSTALL_LINK1
++			fi
++		fi
++	fi
++	;;
++
+ *linux*|freebsd*|dragonfly*)
+ 	# libname.so.M -> libname.so.M.N
+ 	${echo} ${RM} ${INSTALLDIR}/$LINK2

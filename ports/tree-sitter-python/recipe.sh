@@ -1,6 +1,6 @@
 # tree-sitter grammar: python. Installs lib/tree-sitter/python.so (the parser
 # Neovim and the tree-sitter library load). Version as in QNX's repository.
-VERSION=0.23.6; GIT=https://github.com/tree-sitter/tree-sitter-python.git; REF=v0.23.6
+VERSION=0.25.0; GIT=https://github.com/tree-sitter/tree-sitter-python.git; REF=v0.25.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

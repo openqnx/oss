@@ -4,16 +4,15 @@ Do not include glibc's <features.h> on QNX.
 standard header). datefudge includes it for nothing it uses.
 
 Upstream-Status: QNX-specific
-
 --- a/datefudge.c
 +++ b/datefudge.c
-@@ -14,7 +14,9 @@
- #include <stdlib.h>
- #include <dlfcn.h>
+@@ -11,7 +11,9 @@
  #include <assert.h>
+ #include <dlfcn.h>
+ #include <fcntl.h>
 +#ifndef __QNX__
  #include <features.h>
 +#endif
  #include <stdbool.h>
- #include <unistd.h>
- #include <time.h>
+ #include <stdio.h>
+ #include <stdlib.h>

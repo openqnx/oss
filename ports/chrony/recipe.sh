@@ -1,7 +1,7 @@
 # chrony from upstream at the commit qnx-ports' QNX support is based on; the
 # patch adds a QNX system driver (sys_qnx.c: clock slewing through
 # ClockAdjust()) and a QNX case in configure.
-VERSION=4.8-git-20260226; GIT=https://github.com/mlichvar/chrony.git; COMMIT=d622b222a9acbda3a4c842beeb593e7075c32bec
+VERSION=4.9; GIT=https://github.com/mlichvar/chrony.git; COMMIT=091489b1c3d47f7aa0b0ac36f1e1eb74f4b3a4a7
 BUILDSYS=custom
 # chrony's configure is hand-written (not autoconf) and picks the system
 # driver from the OS name it is given.

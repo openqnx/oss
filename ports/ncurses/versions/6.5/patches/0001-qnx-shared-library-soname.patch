@@ -1,0 +1,56 @@
+Give QNX shared libraries an soname.
+
+configure builds QNX (nto-qnx*) shared libraries with the old BSD rule
+(${LD} -Bshareable), which sets no DT_SONAME. Programs linked against
+libncursesw.so then record that file name -- the -dev symlink -- instead of
+libncursesw.so.6, and fail to start where only the run-time library is
+installed ("Could not load library libtinfo.so"). Use the soname scheme
+of the Linux case: lib<name>.so.<ABI_VERSION>.
+
+aclocal.m4 (CF_SHARED_OPTS) is changed with configure, so a regenerated
+configure keeps it.
+
+Upstream-Status: Pending
+
+--- a/configure
++++ b/configure
+@@ -6979,7 +6979,17 @@
+ 		CC_SHARED_OPTS=
+ 		MK_SHARED_LIB='${LD} -Wshared -Wxld=-export_all -o $@'
+ 		;;
+-	(nto-qnx*|openbsd*|freebsd[12].*)
++	(nto-qnx*)
++		CC_SHARED_OPTS="$CC_SHARED_OPTS -fPIC"
++		test "$cf_cv_shlib_version" = auto && cf_cv_shlib_version=rel
++		if test "$cf_cv_shlib_version" = rel; then
++			cf_cv_shared_soname='`basename $@ .${REL_VERSION}`.${ABI_VERSION}'
++		else
++			cf_cv_shared_soname='`basename $@`'
++		fi
++		MK_SHARED_LIB='${CC} ${LDFLAGS} ${CFLAGS} -shared -Wl,-soname,'$cf_cv_shared_soname' -o $@'
++		;;
++	(openbsd*|freebsd[12].*)
+ 		CC_SHARED_OPTS="$CC_SHARED_OPTS -DPIC"
+ 		MK_SHARED_LIB='${LD} ${LDFLAGS} -Bshareable -o $@'
+ 		test "$cf_cv_shlib_version" = auto && cf_cv_shlib_version=rel
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -7806,7 +7806,17 @@
+ 		CC_SHARED_OPTS=
+ 		MK_SHARED_LIB='${LD} -Wshared -Wxld=-export_all -o $[@]'
+ 		;;
+-	(nto-qnx*|openbsd*|freebsd[[12]].*)
++	(nto-qnx*)
++		CC_SHARED_OPTS="$CC_SHARED_OPTS -fPIC"
++		test "$cf_cv_shlib_version" = auto && cf_cv_shlib_version=rel
++		if test "$cf_cv_shlib_version" = rel; then
++			cf_cv_shared_soname='`basename $@ .${REL_VERSION}`.${ABI_VERSION}'
++		else
++			cf_cv_shared_soname='`basename $@`'
++		fi
++		MK_SHARED_LIB='${CC} ${LDFLAGS} ${CFLAGS} -shared -Wl,-soname,'$cf_cv_shared_soname' -o $@'
++		;;
++	(openbsd*|freebsd[[12]].*)
+ 		CC_SHARED_OPTS="$CC_SHARED_OPTS -DPIC"
+ 		MK_SHARED_LIB='${LD} ${LDFLAGS} -Bshareable -o $[@]'
+ 		test "$cf_cv_shlib_version" = auto && cf_cv_shlib_version=rel

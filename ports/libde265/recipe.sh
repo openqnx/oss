@@ -1,4 +1,4 @@
-VERSION=1.0.15; GIT=https://github.com/strukturag/libde265.git; REF=v1.0.15
+VERSION=1.1.3; GIT=https://github.com/strukturag/libde265.git; REF=v1.1.3
 BUILDSYS=cmake
 # The other half of the HEVC pair: x265 (already staged) encodes, libde265
 # decodes.  No SDL/Qt example programs -- they pull in a display stack the

@@ -1,6 +1,6 @@
 # tree-sitter grammar: vimdoc. Installs lib/tree-sitter/vimdoc.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=4.0.0; GIT=https://github.com/neovim/tree-sitter-vimdoc.git; REF=v4.0.0
+VERSION=4.3.0; GIT=https://github.com/neovim/tree-sitter-vimdoc.git; REF=v4.3.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

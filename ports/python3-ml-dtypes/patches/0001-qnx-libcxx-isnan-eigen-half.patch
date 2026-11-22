@@ -11,12 +11,11 @@ overloads for the two Eigen types, forwarding to Eigen::numext, the way
 ml_dtypes already provides std:: overloads for its own float8 types.
 
 Upstream-Status: QNX-specific
-
 --- a/ml_dtypes/_src/common.h
 +++ b/ml_dtypes/_src/common.h
-@@ -28,6 +28,21 @@
- 
+@@ -27,6 +27,21 @@
  #include "Eigen/Core"
+ #include "ml_dtypes/_src/numpy.h"
  
 +#if defined(__QNX__) && defined(_LIBCPP_VERSION)
 +// QNX's libc++ declares std::isnan/isinf/isfinite only as templates

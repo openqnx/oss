@@ -1,0 +1,80 @@
+# lua-compat53 0.15.1-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:41:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lua-compat53 qnx-test-lua-compat53 qnx-port-tests
+(1/7) Installing lua-compat53 (0.15.1-r0)
+(2/7) Installing qnx-port-tests (1.0-r0)
+(3/7) Installing lua5.1 (5.1.5-r0)
+(4/7) Installing lua5.2 (5.5.1-r0)
+(5/7) Installing lua5.3 (5.3.6-r0)
+(6/7) Installing luajit (2.1_git-r0)
+(7/7) Installing qnx-test-lua-compat53 (1.0-r0)
+OK: 12.4 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua_compat53
+FAIL test_lua_compat53 (rc=1)
+     == lua-compat53 ==
+       ok   Lua 5.1: require compat53.module
+       ok   Lua 5.1: compat53.module leaves the globals alone
+       ok   Lua 5.1: require compat53
+       ok   Lua 5.1: string.pack/unpack (C module compat53.string)
+       ok   Lua 5.1: utf8.char / utf8.len (compat53.utf8)
+       ok   Lua 5.1: utf8.codes
+       ok   Lua 5.1: table.move
+       ok   Lua 5.1: math.tointeger / math.type
+       ok   Lua 5.1: table.unpack
+       ok   Lua 5.1: xpcall passes arguments
+       ok   Lua 5.1: load with mode and environment
+       ok   Lua 5.1: string.rep with a separator
+       ok   Lua 5.1: math.maxinteger / math.ult
+       ok   Lua 5.1: script ran to completion
+       FAIL Lua 5.5: require compat53.module
+       ok   Lua 5.5: compat53.module leaves the globals alone
+       FAIL Lua 5.5: require compat53 (module 'compat53' not found:
+     	no field package.preload['compat53']
+     	no file '/usr/local/share/lua/5.5/compat53.lua'
+     	no file '/usr/local/share/lua/5.5/compat53/init.lua'
+     	no file '/usr/local/lib/lua/5.5/compat53.lua'
+     	no file '/usr/local/lib/lua/5.5/compat53/init.lua'
+     	no file './compat53.lua'
+     	no file './compat53/init.lua'
+     	no file '/usr/local/lib/lua/5.5/compat53.so'
+     	no file '/usr/local/lib/lua/5.5/loadall.so'
+     	no file './compat53.so')
+       ok   Lua 5.5: string.pack/unpack (C module compat53.string)
+       ok   Lua 5.5: utf8.char / utf8.len (compat53.utf8)
+       ok   Lua 5.5: utf8.codes
+       ok   Lua 5.5: table.move
+       ok   Lua 5.5: math.tointeger / math.type
+       ok   Lua 5.5: table.unpack
+       ok   Lua 5.5: xpcall passes arguments
+       ok   Lua 5.5: load with mode and environment
+       ok   Lua 5.5: string.rep with a separator
+       ok   Lua 5.5: math.maxinteger / math.ult
+       ok   Lua 5.5: script ran to completion
+       FAIL lua5.2 (rc 1)
+       ok   LuaJIT 2.1.1788856981: require compat53.module
+       ok   LuaJIT 2.1.1788856981: compat53.module leaves the globals alone
+       ok   LuaJIT 2.1.1788856981: require compat53
+       ok   LuaJIT 2.1.1788856981: string.pack/unpack (C module compat53.string)
+       ok   LuaJIT 2.1.1788856981: utf8.char / utf8.len (compat53.utf8)
+       ok   LuaJIT 2.1.1788856981: utf8.codes
+       ok   LuaJIT 2.1.1788856981: table.move
+       ok   LuaJIT 2.1.1788856981: math.tointeger / math.type
+       ok   LuaJIT 2.1.1788856981: table.unpack
+       ok   LuaJIT 2.1.1788856981: xpcall passes arguments
+       ok   LuaJIT 2.1.1788856981: load with mode and environment
+       ok   LuaJIT 2.1.1788856981: string.rep with a separator
+       ok   LuaJIT 2.1.1788856981: math.maxinteger / math.ult
+       ok   LuaJIT 2.1.1788856981: script ran to completion
+       ok   lua5.3: require compat53 loads and changes nothing
+     FAIL lua-compat53 (1)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_lua_compat53
+
+RESULT: FAIL

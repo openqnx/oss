@@ -1,0 +1,60 @@
+# luarocks 3.13.0-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:41:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u luarocks qnx-test-luarocks qnx-port-tests
+(1/5) Installing lua5.3 (5.3.6-r0)
+(2/5) Installing luarocks (3.13.0-r0)
+(3/5) Installing qnx-port-tests (1.0-r0)
+(4/5) Installing lua5.2 (5.5.1-r0)
+(5/5) Installing qnx-test-luarocks (1.0-r0)
+OK: 11.0 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_luarocks
+FAIL test_luarocks (rc=1)
+     == luarocks ==
+       FAIL luarocks --version
+       info want: /usr/local/bin/luarocks 3.12.2
+       info got:  /usr/local/bin/luarocks 3.13.0
+       ok   luarocks config lua_version
+       ok   luarocks config variables.LUA
+       ok   luarocks list (system tree, rc 0)
+       ok   luarocks install from a local rockspec + .tar.gz: modules in share/lua/5.3
+       ok   luarocks list --porcelain shows it
+       ok   luarocks show qnxhello
+       ok   lua5.3 loads the rock through luarocks path
+       ok   luarocks remove: files and manifest entry gone
+       FAIL --lua-version=5.2 install (rc 1)
+     Error: Lua 5.2 interpreter not found at /usr/local
+     
+     Please set your Lua interpreter with:
+     
+        luarocks --lua-version=5.2 --local config variables.LUA </path/lua>
+       FAIL lua5.2 loads it
+       info want: hello, QNX (Lua 5.2)
+       info got:  /usr/local/bin/lua5.2: (command line):1: module 'qnxhello' not found:
+     	no field package.preload['qnxhello']
+     	no file '/tmp/luarocks-test.648007703/tree52/share/lua/5.2/qnxhello.lua'
+     	no file '/tmp/luarocks-test.648007703/tree52/share/lua/5.2/qnxhello/init.lua'
+     	no file '/usr/local/share/lua/5.5/qnxhello.lua'
+     	no file '/usr/local/share/lua/5.5/qnxhello/init.lua'
+     	no file '/usr/local/lib/lua/5.5/qnxhello.lua'
+     	no file '/usr/local/lib/lua/5.5/qnxhello/init.lua'
+     	no file './qnxhello.lua'
+     	no file './qnxhello/init.lua'
+     	no file '/usr/local/lib/lua/5.5/qnxhello.so'
+     	no file '/usr/local/lib/lua/5.5/loadall.so'
+     	no file './qnxhello.so'
+     stack traceback:
+     	[C]: in global 'require'
+     	(command line):1: in main chunk
+     	[C]: in ?
+     FAIL luarocks (3)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_luarocks
+
+RESULT: FAIL

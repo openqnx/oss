@@ -1,4 +1,4 @@
-VERSION=1.5.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtrans.git; REF=xtrans-1.5.2
+VERSION=1.6.0; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtrans.git; REF=xtrans-1.6.0
 BUILDSYS=autotools
 # Header-only: it is #included by libX11 and libxcb rather than linked.
 CONF_ARGS_EXTRA=( --disable-docs )

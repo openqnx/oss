@@ -1,6 +1,6 @@
 # tree-sitter grammar: lua. Installs lib/tree-sitter/lua.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.4.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-lua.git; REF=v0.4.0
+VERSION=0.5.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-lua.git; REF=v0.5.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

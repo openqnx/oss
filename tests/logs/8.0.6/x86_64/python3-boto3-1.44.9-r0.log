@@ -1,0 +1,70 @@
+# python3-boto3 1.44.9-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T11:44:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-boto3 qnx-test-python3-boto3 qnx-port-tests
+( 1/22) Installing bzip2 (1.0.8-r0)
+( 2/22) Installing expat (2.6.4-r0)
+( 3/22) Installing gdbm (1.24-r0)
+( 4/22) Installing libiconv (1.19.1-r0)
+( 5/22) Installing libunistring (1.5-r0)
+( 6/22) Installing ncurses (6.6-r0)
+( 7/22) Installing gettext (0.22.5-r0)
+( 8/22) Installing libffi (3.8.1-r0)
+( 9/22) Installing libuuid (2.42.4-r0)
+(10/22) Installing readline (8.3-r0)
+(11/22) Installing sqlite (3.47.2-r0)
+(12/22) Installing xz (5.8.4-r0)
+(13/22) Installing python3 (3.14.0-r1)
+(14/22) Installing python3-six (1.17.0-r0)
+(15/22) Installing python3-dateutil (2.9.0_p0-r0)
+(16/22) Installing python3-jmespath (1.1.0-r0)
+(17/22) Installing python3-urllib3 (2.8.0-r0)
+(18/22) Installing python3-botocore (1.44.9-r0)
+(19/22) Installing python3-s3transfer (0.19.3-r0)
+(20/22) Installing python3-boto3 (1.44.9-r0)
+(21/22) Installing qnx-port-tests (1.0-r0)
+(22/22) Installing qnx-test-python3-boto3 (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 154.3 MiB in 27 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_boto3
+     == python3-boto3 ==
+       info stub S3 at http://<ip>:29215
+       info boto3 1.44.9, botocore 1.44.9, s3transfer 0.19.3, jmespath 1.1.0, urllib3 2.8.0
+       ok   boto3 imported from site-packages
+       ok   botocore imported from site-packages
+       ok   s3transfer imported from site-packages
+       ok   jmespath imported from site-packages
+       ok   urllib3 imported from site-packages
+       ok   put_object: ETag is the MD5 of the body
+       ok   head_object: length and user metadata
+       ok   LastModified parsed to an aware datetime (dateutil)
+       ok   get_object returns the bytes and content type
+       ok   ranged get_object: 206 with bytes 6-9
+       ok   every request signed with SigV4 (5 requests)
+       ok   missing key: ClientError NoSuchKey (404)
+       ok   paginator: 7 keys in pages of 3, 3, 1
+       ok   paginator JMESPath search: keys with Size > 4
+       ok   delete_object removes the key
+       ok   upload_file: 6 MiB multipart upload stored intact
+       ok   multipart upload completed (no upload left open)
+       ok   download_file (ranged, concurrent) gives an identical copy
+       ok   resource API: Bucket.objects.filter
+       ok   Stubber: canned list_buckets response
+       ok   Stubber: canned ClientError
+       ok   Stubber: every queued response consumed
+       ok   service models load (dynamodb client built from botocore data)
+       ok   jmespath filter
+       ok   jmespath functions
+       ok   urllib3 PoolManager GET (connection reused)
+       ok   urllib3: 404 status
+     PASS python3-boto3
+PASS test_python3_boto3
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

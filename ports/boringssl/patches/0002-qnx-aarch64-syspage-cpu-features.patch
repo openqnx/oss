@@ -8,9 +8,6 @@ _PMULL, _SHA1, _SHA256, _SHA512, _SHA3), readable by every process without
 a kernel call: map them onto BoringSSL's ARMV8_* capability bits.
 
 Upstream-Status: QNX-specific
-
-diff --git a/crypto/cpu_aarch64_qnx.cc b/crypto/cpu_aarch64_qnx.cc
-index 55bc62c..f742bd1 100644
 --- a/crypto/cpu_aarch64_qnx.cc
 +++ b/crypto/cpu_aarch64_qnx.cc
 @@ -20,9 +20,35 @@

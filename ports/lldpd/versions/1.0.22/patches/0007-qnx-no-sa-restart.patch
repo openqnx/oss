@@ -1,0 +1,28 @@
+Define SA_RESTART to 0 where the system lacks it (QNX).
+
+QNX 8.0 does not implement SA_RESTART: <signal.h> keeps the flag commented
+out ("not supported yet"), so priv.c does not compile. Its SIGCHLD and
+forwarding handlers only reap children or pass the signal on; the privsep
+channel's must_read()/must_write() already retry on EINTR and libevent's
+loop does too, so defining the flag to 0 where it is missing keeps the
+behaviour correct.
+
+Upstream-Status: QNX-specific
+
+--- a/src/daemon/priv.c
++++ b/src/daemon/priv.c
+@@ -39,6 +39,14 @@
+ #include <netinet/if_ether.h>
+ #include <ifaddrs.h>
+ 
++/* QNX 8.0 has no SA_RESTART (<signal.h> keeps it commented out, "not
++ * supported yet"). The handlers below only reap children or forward the
++ * signal; every read/write on the privsep channel already retries on EINTR
++ * (privsep_io.c) and libevent does the same, so 0 is safe there. */
++#ifndef SA_RESTART
++#  define SA_RESTART 0
++#endif
++
+ #ifdef HAVE_LINUX_CAPABILITIES
+ #  include <sys/capability.h>
+ #  include <sys/prctl.h>

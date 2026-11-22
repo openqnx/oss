@@ -1,4 +1,4 @@
-VERSION=1.2.4; GIT=https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git; REF=libXScrnSaver-1.2.4
+VERSION=1.2.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git; REF=libXScrnSaver-1.2.5
 DEPS="libx11 libxext xorgproto"
 BUILDSYS=autotools
 # The MIT-SCREEN-SAVER extension client library.  Here because SDL3's X11

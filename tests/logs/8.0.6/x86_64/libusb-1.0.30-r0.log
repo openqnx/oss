@@ -1,0 +1,26 @@
+# libusb 1.0.30-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:47:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libusb qnx-test-libusb qnx-port-tests
+(1/2) Installing libusb (1.0.30-r0)
+(2/2) Installing qnx-test-libusb (1.0-r1)
+OK: 470.4 MiB in 30 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libusb
+     == libusb ==
+       info libusb 1.0.30
+       ok   libusb_init
+       ok   libusb_get_device_list
+       info 0 USB device(s) visible
+       ok   libusb_error_name
+       ok   capability query
+     PASS libusb
+PASS test_libusb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

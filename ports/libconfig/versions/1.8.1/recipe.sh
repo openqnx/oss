@@ -1,0 +1,3 @@
+VERSION=1.8.1; GIT=https://github.com/hyperrealm/libconfig.git; REF=v1.8.1
+BUILDSYS=cmake
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF )

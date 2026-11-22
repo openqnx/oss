@@ -1,8 +1,8 @@
 # gThumb image viewer and organiser.
 # Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=3.12.8.2
-TARBALL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz
-SHA256=abc57b1103165dd691535796f7dbdba7686217c7d069e974ed0f3d800fe88796
+VERSION=3.12.12
+TARBALL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.12.tar.xz
+SHA256=16fb2276e7f63dae533abe5c7163c5b0e4c3c787c3b1f26517fca69e543512a4
 # The org.gnome.desktop.{background,interface,privacy,thumbnailers} schemas it
 # opens with g_settings_new(), which aborts when a schema is not installed; and
 # the MIME database: gthumb lists a file by its content type, and without

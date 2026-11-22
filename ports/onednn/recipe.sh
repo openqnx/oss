@@ -5,7 +5,7 @@
 # qnx-openvino-2026.1.2) and a QNX CPU-information backend for Xbyak_aarch64
 # (patches/0002: features, cores and caches from the system page; without it
 # the Arm JIT does not build for QNX).
-VERSION=3.14.1; GIT=https://github.com/uxlfoundation/oneDNN.git; REF=v3.14.1
+VERSION=3.14.2; GIT=https://github.com/uxlfoundation/oneDNN.git; REF=v3.14.2
 DEPS=""
 BUILDSYS=cmake
 # Sequential CPU runtime: QNX's GCC has no OpenMP runtime and there is no TBB

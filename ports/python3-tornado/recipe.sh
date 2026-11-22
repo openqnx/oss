@@ -1,9 +1,9 @@
 # tornado: web framework and asynchronous networking (HTTP server and client, IOLoop, websockets).
 # Pure Python, published as a source distribution only: built into a
 # platform-independent wheel here (see scripts/lib/pywheel.sh).
-VERSION=6.6
-TARBALL=https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz
-SHA256=34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5
+VERSION=6.6.1
+TARBALL=https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz
+SHA256=28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

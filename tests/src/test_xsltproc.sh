@@ -14,7 +14,7 @@ cd "$T" || exit 1
 
 v=$(xsltproc --version 2>&1 | head -n 1)
 echo "  info $v"
-case "$v" in *"libxslt 10142"*) ok "xsltproc uses libxslt 1.1.42" ;; *) bad "version: $v" ;; esac
+case "$v" in *"libxslt 10145"*) ok "xsltproc uses libxslt 1.1.45" ;; *) bad "version: $v" ;; esac
 
 cat > in.xml <<'XEOF'
 <inventory>

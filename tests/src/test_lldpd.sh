@@ -26,8 +26,8 @@ trap cleanup EXIT
 trap 'exit 1' INT TERM HUP
 cd "$T" || exit 1
 
-V=$(lldpd -v 2>&1); [ "$V" = "1.0.22" ] && ok "lldpd -v: 1.0.22" || bad "lldpd -v: $V"
-V=$(lldpcli -v 2>&1); [ "$V" = "1.0.22" ] && ok "lldpcli -v: 1.0.22" || bad "lldpcli -v: $V"
+V=$(lldpd -v 2>&1); [ "$V" = "1.0.23" ] && ok "lldpd -v: 1.0.23" || bad "lldpd -v: $V"
+V=$(lldpcli -v 2>&1); [ "$V" = "1.0.23" ] && ok "lldpcli -v: 1.0.23" || bad "lldpcli -v: $V"
 lldpd -vv > vv.txt 2>&1
 grep -q "Privilege separation: *disabled" vv.txt && ok "lldpd -vv: built without privilege separation" \
   || bad "lldpd -vv: $(grep -i privilege vv.txt)"

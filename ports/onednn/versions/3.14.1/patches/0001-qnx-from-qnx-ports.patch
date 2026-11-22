@@ -1,0 +1,23 @@
+oneDNN on QNX, from QNX's port (github.com/qnx-ports/oneDNN, branch
+qnx-openvino-2026.1.2, commit 1a761da1 "Add QNX Support"): the OpenCL GPU
+runtime loads libOpenCL.so.1 on QNX as on Linux. Not built here (no OpenCL
+in the SDP: CPU only). QNX's other change on that branch (c1599bae, "Fix
+clang build": no -D_FORTIFY_SOURCE=2 on QNX) is for its clang build and is
+left out: QNX's GCC and C library support fortified builds (libc has the
+__*_chk functions).
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/src/xpu/ocl/utils.hpp b/src/xpu/ocl/utils.hpp
+index 746e2ed7d..dbe7a101b 100644
+--- a/src/xpu/ocl/utils.hpp
++++ b/src/xpu/ocl/utils.hpp
+@@ -79,7 +79,7 @@ const char *convert_cl_int_to_str(cl_int cl_status);
+ 
+ #if defined(_WIN32)
+ #define OCL_LIB_NAME "OpenCL.dll"
+-#elif defined(__linux__)
++#elif defined(__linux__) || defined(__QNX__)
+ #define OCL_LIB_NAME "libOpenCL.so.1"
+ #endif
+ 

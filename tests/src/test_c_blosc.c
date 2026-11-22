@@ -16,7 +16,7 @@ int main(void) {
   QT_BEGIN("c-blosc");
   blosc_init();
   printf("  info version %s, compressors: %s\n", blosc_get_version_string(), blosc_list_compressors());
-  QT_CHECK(!strcmp(blosc_get_version_string(), "1.21.6"), "version 1.21.6");
+  QT_CHECK(!strcmp(blosc_get_version_string(), "1.21.7"), "version 1.21.7");
   const char *codecs[] = { "blosclz", "lz4", "lz4hc", "zlib", "zstd" };
   for (int i = 0; i < 5; i++) {
     char what[96]; snprintf(what, sizeof what, "compressor %s available", codecs[i]);

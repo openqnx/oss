@@ -286,7 +286,7 @@ int main(void) {
 
   int rc = run("xfsettingsd --version", out, sizeof out, 30);
   printf("  info xfsettingsd --version -> %d: %s\n", rc, line1(out));
-  QT_CHECK(rc == 0 && strstr(out, "xfsettingsd 4.20.1 (Xfce 4.20"), "xfsettingsd --version: 4.20.1");
+  QT_CHECK(rc == 0 && strstr(out, "xfsettingsd 4.20.5 (Xfce 4.20"), "xfsettingsd --version: 4.20.5");
   rc = run("xfsettingsd --help", out, sizeof out, 30);
   QT_CHECK(rc == 0 && strstr(out, "--replace") && strstr(out, "--daemon"), "xfsettingsd --help lists --replace, --daemon");
 
@@ -355,12 +355,12 @@ int main(void) {
   printf("  info headless Wayland display: %s\n", disp ? "up" : "not available");
   if (disp) {
     const char *progs[][2] = {
-      { "xfce4-settings-manager --version", "xfce4-settings-manager 4.20.1" },
-      { "xfce4-settings-editor --version", "xfce4-settings-editor 4.20.1" },
-      { "xfce4-mime-settings --version", "xfce4-mime-settings 4.20.1" },
-      { "xfce4-appearance-settings --version", "xfce4-appearance-settings 4.20.1" },
-      { "xfce4-display-settings --version", "xfce4-display-settings 4.20.1" },
-      { "xfce4-mime-helper --version", "xfce4-settings 4.20.1 (Xfce 4.20" },
+      { "xfce4-settings-manager --version", "xfce4-settings-manager 4.20.5" },
+      { "xfce4-settings-editor --version", "xfce4-settings-editor 4.20.5" },
+      { "xfce4-mime-settings --version", "xfce4-mime-settings 4.20.5" },
+      { "xfce4-appearance-settings --version", "xfce4-appearance-settings 4.20.5" },
+      { "xfce4-display-settings --version", "xfce4-display-settings 4.20.5" },
+      { "xfce4-mime-helper --version", "xfce4-settings 4.20.5 (Xfce 4.20" },
     };
     for (size_t i = 0; i < G_N_ELEMENTS(progs); i++) {
       rc = run(progs[i][0], out, sizeof out, 60);

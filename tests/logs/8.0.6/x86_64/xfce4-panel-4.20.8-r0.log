@@ -1,0 +1,49 @@
+# xfce4-panel 4.20.8-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T01:37:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-panel qnx-test-xfce4-panel qnx-port-tests
+(1/1) Upgrading qnx-test-xfce4-panel (1.0-r2 -> 1.0-r3)
+OK: 906.4 MiB in 161 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_panel
+     == xfce4-panel ==
+       info libxfce4panel 4.20.8
+       ok   libxfce4panel 4.20.8
+       ok   libxfce4panel_check_version
+       ok   xfconf channel name xfce4-panel
+       ok   XfcePanelPluginMode enum: deskbar
+       ok   XfceScreenPosition enum: floating-v
+       ok   XfcePanelPlugin has its 14 documented properties
+       info actions          module actions, API 2.0 -> XfceActionsPlugin
+       info applicationsmenu module applicationsmenu, API 2.0 -> XfceApplicationsMenuPlugin
+       info clock            module clock, API 2.0 -> XfceClockPlugin
+       info directorymenu    module directorymenu, API 2.0 -> XfceDirectoryMenuPlugin
+       info launcher         module launcher, API 2.0 -> XfceLauncherPlugin
+       info pager            module pager, API 2.0 -> XfcePagerPlugin
+       info separator        module separator, API 2.0 -> XfceSeparatorPlugin
+       info showdesktop      module showdesktop, API 2.0 -> XfceShowDesktopPlugin
+       info systray          module systray, API 2.0 -> XfceSnPlugin
+       info tasklist         module tasklist, API 2.0 -> XfceTasklistPlugin
+       info windowmenu       module windowmenu, API 2.0 -> XfceWindowMenuPlugin
+       ok   all 11 plugins: .desktop -> module -> xfce_panel_module_init registers an XfcePanelPlugin type
+       ok   default panel layout (xfconf XML) installed
+       info headless Wayland display: up
+       info xfce4-panel --version -> 0: xfce4-panel 4.20.8 (Xfce 4.20)
+       ok   xfce4-panel --version: 4.20.8
+       ok   xfce4-panel --help lists --preferences, --add
+       ok   XfceArrowButton: arrow up
+     
+     (test_xfce4_panel:559505431): libxfce4panel-CRITICAL **: 01:37:53.764: IA__xfce_panel_plugin_block_autohide: assertion 'XFCE_IS_PANEL_PLUGIN (plugin)' failed
+       ok   XfceArrowButton: set arrow left, blinking
+     
+     (test_xfce4_panel:559505431): libxfce4panel-CRITICAL **: 01:37:53.765: IA__xfce_panel_plugin_block_autohide: assertion 'XFCE_IS_PANEL_PLUGIN (plugin)' failed
+     PASS xfce4-panel
+PASS test_xfce4_panel
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,138 @@
+From 9c1458ec9d914dafdc00403ceda68aa87b4a3611 Mon Sep 17 00:00:00 2001
+From: Marcin Sochacki <msochacki@qnx.com>
+Date: Tue, 1 Sep 2026 17:55:15 +0200
+Subject: [PATCH 1/6] recognize QNX, build the BSD-based network backend
+
+
+Imported from qnx-ports/lldpd (9c1458ec9d91, branch qnx-1.0.22, based on upstream 1.0.22);
+original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ configure.ac                | 11 +++++++++++
+ m4/os.m4                    |  1 +
+ src/daemon/Makefile.am      |  8 ++++++++
+ src/daemon/interfaces-bsd.c | 10 +++++-----
+ src/daemon/priv.c           |  4 ++--
+ 5 files changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 303907113..9c497f651 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -164,6 +164,17 @@ AC_ARG_ENABLE([fuzzer],
+     ])
+   ])
+ 
++AC_ARG_ENABLE([min-macro],
++  [AS_HELP_STRING([--enable-min-macro], [Define function-like macro MIN(a,b)])],
++  [enable_min_macro=yes],
++  [enable_min_macro=no])
++
++AH_TEMPLATE([MIN], [Define function-like macro MIN(a,b)])
++
++if test "x$enable_min_macro" = "xyes"; then
++  AC_DEFINE_UNQUOTED([MIN(a,b)], [(((a)<(b))?(a):(b))])
++fi
++
+ # Code coverage
+ AC_ARG_ENABLE([gcov],
+   AS_HELP_STRING([--enable-gcov],
+diff --git a/m4/os.m4 b/m4/os.m4
+index 9484d5caa..bd152f6f2 100644
+--- a/m4/os.m4
++++ b/m4/os.m4
+@@ -23,6 +23,7 @@ AC_DEFUN([lldp_CHECK_OS], [
+   lldp_DEFINE_OS(netbsd*, NetBSD, NETBSD)
+   lldp_DEFINE_OS(darwin*, macOS, OSX)
+   lldp_DEFINE_OS(solaris*, Solaris, SOLARIS)
++  lldp_DEFINE_OS(nto-qnx*, QNX, QNX)
+ 
+   AS_IF([test x"$os" = x], [
+      AC_MSG_RESULT(no)
+diff --git a/src/daemon/Makefile.am b/src/daemon/Makefile.am
+index 42240a411..dea489820 100644
+--- a/src/daemon/Makefile.am
++++ b/src/daemon/Makefile.am
+@@ -92,6 +92,14 @@ liblldpd_la_LDFLAGS += -framework Foundation
+ liblldpd_la_LDFLAGS += -framework CoreFoundation -framework IOKit
+ liblldpd_la_LDFLAGS += -framework IOKit
+ endif
++if HOST_OS_QNX
++liblldpd_la_SOURCES += \
++	forward-bsd.c \
++	interfaces-bpf.c \
++	interfaces-bsd.c \
++	dmi-dummy.c \
++	priv-bsd.c
++endif
+ if HOST_OS_SOLARIS
+ liblldpd_la_SOURCES += \
+ 	forward-solaris.c \
+diff --git a/src/daemon/interfaces-bsd.c b/src/daemon/interfaces-bsd.c
+index cd9d3c04c..6860ab9a8 100644
+--- a/src/daemon/interfaces-bsd.c
++++ b/src/daemon/interfaces-bsd.c
+@@ -28,7 +28,7 @@
+ #include <net/if_types.h>
+ #include <net/if_media.h>
+ #include <net/if_dl.h>
+-#if defined HOST_OS_FREEBSD
++#if defined HOST_OS_FREEBSD || defined HOST_OS_QNX
+ #  include <net/if_vlan_var.h>
+ #  include <net/if_bridgevar.h>
+ #  include <net/if_lagg.h>
+@@ -89,7 +89,7 @@ ifbsd_check_bridge(struct lldpd *cfg, struct interfaces_device_list *interfaces,
+ 	bifc.ifbic_req = req;
+ 
+ #if defined HOST_OS_FREEBSD || defined HOST_OS_NETBSD || defined HOST_OS_OSX || \
+-    defined HOST_OS_DRAGONFLY
++    defined HOST_OS_DRAGONFLY || defined HOST_OS_QNX
+ 	struct ifdrv ifd = { .ifd_cmd = BRDGGIFS,
+ 		.ifd_len = sizeof(bifc),
+ 		.ifd_data = &bifc };
+@@ -141,7 +141,7 @@ ifbsd_check_bond(struct lldpd *cfg, struct interfaces_device_list *interfaces,
+ #  define SIOCGLAGG SIOCGTRUNK
+ #  define LAGG_MAX_PORTS TRUNK_MAX_PORTS
+ #endif
+-#if defined HOST_OS_OPENBSD || defined HOST_OS_FREEBSD
++#if defined HOST_OS_OPENBSD || defined HOST_OS_FREEBSD || defined HOST_OS_QNX
+ 	struct lagg_reqport rpbuf[LAGG_MAX_PORTS];
+ 	struct lagg_reqall ra = { .ra_size = sizeof(rpbuf), .ra_port = rpbuf };
+ 	strlcpy(ra.ra_ifname, master->name, IFNAMSIZ);
+@@ -360,10 +360,10 @@ ifbsd_extract_device(struct lldpd *cfg, struct ifaddrs *ifaddr)
+ 
+ 		/* Grab description */
+ #ifdef SIOCGIFDESCR
+-#  if defined HOST_OS_FREEBSD || defined HOST_OS_OPENBSD
++#  if defined HOST_OS_FREEBSD || defined HOST_OS_OPENBSD || defined HOST_OS_QNX
+ 	iface->alias = malloc(IFDESCRSIZE);
+ 	if (iface->alias) {
+-#    if defined HOST_OS_FREEBSD
++#    if defined HOST_OS_FREEBSD || defined HOST_OS_QNX
+ 		struct ifreq ifr = { .ifr_buffer = { .buffer = iface->alias,
+ 					 .length = IFDESCRSIZE } };
+ #    else
+diff --git a/src/daemon/priv.c b/src/daemon/priv.c
+index f0f18ea87..2e0820e1a 100644
+--- a/src/daemon/priv.c
++++ b/src/daemon/priv.c
+@@ -43,7 +43,7 @@
+ #  include <sys/prctl.h>
+ #endif
+ 
+-#if defined HOST_OS_FREEBSD || defined HOST_OS_OSX || defined HOST_OS_DRAGONFLY
++#if defined HOST_OS_FREEBSD || defined HOST_OS_OSX || defined HOST_OS_DRAGONFLY || defined HOST_OS_QNX
+ #  include <net/if_dl.h>
+ #endif
+ #if defined HOST_OS_SOLARIS
+@@ -262,7 +262,7 @@ asroot_iface_multicast()
+ 	must_read(PRIV_PRIVILEGED, ifr.ifr_name, IFNAMSIZ);
+ #if defined HOST_OS_LINUX
+ 	must_read(PRIV_PRIVILEGED, ifr.ifr_hwaddr.sa_data, ETHER_ADDR_LEN);
+-#elif defined HOST_OS_FREEBSD || defined HOST_OS_OSX || defined HOST_OS_DRAGONFLY
++#elif defined HOST_OS_FREEBSD || defined HOST_OS_OSX || defined HOST_OS_DRAGONFLY || defined HOST_OS_QNX
+ 	/* Black magic from mtest.c */
+ 	struct sockaddr_dl *dlp = ALIGNED_CAST(struct sockaddr_dl *, &ifr.ifr_addr);
+ 	dlp->sdl_len = sizeof(struct sockaddr_dl);
+

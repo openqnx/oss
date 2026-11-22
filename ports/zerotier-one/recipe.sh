@@ -1,6 +1,6 @@
 # ZeroTier One from upstream 1.16.1 with qnx-ports' QNX support (make-qnx.mk,
 # a /dev/tap EthernetTap, BSD routing paths); see patches/0001.
-VERSION=1.16.1; GIT=https://github.com/zerotier/ZeroTierOne.git; REF=1.16.1
+VERSION=1.16.2; GIT=https://github.com/zerotier/ZeroTierOne.git; REF=1.16.2
 BUILDSYS=custom
 # The Makefile builds in the source tree and picks make-qnx.mk from OSTYPE,
 # which it otherwise takes from the build machine's uname.

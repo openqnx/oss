@@ -330,8 +330,8 @@ int main(int argc, char **argv) {
   prep_icon_files();
 
   printf("  info libxfce4ui %u.%u.%u\n", libxfce4ui_major_version, libxfce4ui_minor_version, libxfce4ui_micro_version);
-  QT_CHECK(libxfce4ui_major_version == 4 && libxfce4ui_minor_version == 20 && libxfce4ui_micro_version == 0,
-           "libxfce4ui 4.20.0");
+  QT_CHECK(libxfce4ui_major_version == 4 && libxfce4ui_minor_version == 20 && libxfce4ui_micro_version == 2,
+           "libxfce4ui 4.20.2");
   QT_CHECK(libxfce4ui_check_version(4, 20, 0) == NULL && libxfce4ui_check_version(4, 99, 0) != NULL,
            "libxfce4ui_check_version");
 
@@ -356,7 +356,7 @@ int main(int argc, char **argv) {
   int rc = run("xfce4-about --version", out, sizeof out, 60);
   printf("  info xfce4-about --version -> %d: %s\n", rc, line1(out));
   if (disp) {
-    QT_CHECK(rc == 0 && strstr(out, "xfce4-about 4.20.0 (Xfce 4.20"), "xfce4-about --version: 4.20.0");
+    QT_CHECK(rc == 0 && strstr(out, "xfce4-about 4.20.2 (Xfce 4.20"), "xfce4-about --version: 4.20.2");
     int gtk_ok = gtk_init_check(&argc, &argv);
     QT_CHECK(gtk_ok, "gtk_init_check on the headless display");
     if (gtk_ok) {
@@ -370,6 +370,8 @@ int main(int argc, char **argv) {
         QT_CHECK(st && strcmp(st, "a subtitle") == 0, "subtitle set and read back");
         QT_CHECK(g_strcmp0(gtk_window_get_title(GTK_WINDOW(dlg)), "QNX test") == 0, "dialog title");
         GtkWidget *ok = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+        printf("  info OK response widget: %s, label %s\n", ok ? G_OBJECT_TYPE_NAME(ok) : "(none)",
+               ok && GTK_IS_BUTTON(ok) && gtk_button_get_label(GTK_BUTTON(ok)) ? gtk_button_get_label(GTK_BUTTON(ok)) : "(none)");
         QT_CHECK(ok && g_strcmp0(gtk_button_get_label(GTK_BUTTON(ok)), "_Save") == 0, "OK response button is \"_Save\"");
         gtk_widget_destroy(dlg);
       }

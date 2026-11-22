@@ -1,0 +1,34 @@
+# neovim 0.12.6-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T00:50:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u neovim qnx-test-neovim qnx-port-tests
+( 1/12) Installing libiconv (1.18-r0)
+( 2/12) Installing libunistring (1.3-r0)
+( 3/12) Installing ncurses (6.5-r0)
+( 4/12) Installing gettext (0.22.5-r0)
+( 5/12) Installing libuv (1.51.0-r0)
+( 6/12) Installing luv (1.51.0.1-r0)
+( 7/12) Installing tree-sitter (0.25.9-r0)
+( 8/12) Installing unibilium (2.1.4-r0)
+( 9/12) Installing utf8proc (2.11.3-r0)
+(10/12) Installing neovim (0.12.6-r0)
+(11/12) Installing qnx-port-tests (1.0-r0)
+(12/12) Installing qnx-test-neovim (1.0-r0)
+OK: 54.7 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_neovim
+     == neovim ==
+       info NVIM v0.12.6
+       ok   headless ex edit: substitute, :g delete, sort, write
+       ok   Lua: nvim_buf_* API, vim.fn, vim.json, vim.split, LuaJIT
+       ok   vim.version(): 0.12
+     PASS neovim
+PASS test_neovim
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

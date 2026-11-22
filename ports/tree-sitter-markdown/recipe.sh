@@ -1,7 +1,7 @@
 # tree-sitter grammars: markdown and markdown_inline (one repository, two
 # parsers). Installs lib/tree-sitter/{markdown,markdown_inline}.so. Version as
 # in the QNX Everywhere 8.0.4r1 image.
-VERSION=0.5.1; GIT=https://github.com/tree-sitter-grammars/tree-sitter-markdown.git; REF=v0.5.1
+VERSION=0.5.4; GIT=https://github.com/tree-sitter-grammars/tree-sitter-markdown.git; REF=v0.5.4
 BUILDSYS=custom
 do_build() {
   local g d

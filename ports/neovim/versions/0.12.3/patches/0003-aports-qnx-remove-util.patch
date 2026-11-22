@@ -1,0 +1,21 @@
+QNX build fix from QNX's aports (extra/neovim/qnx-remove-util.patch).
+
+Taken from qnx-ports/aports extra/neovim, the APKBUILD the QNX Everywhere image's
+package is built from.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/nvim/CMakeLists.txt b/src/nvim/CMakeLists.txt
+index b8160fea4b..7631f9df60 100644
+--- a/src/nvim/CMakeLists.txt
++++ b/src/nvim/CMakeLists.txt
+@@ -156,7 +156,7 @@ if(UNIX)
+   if (CMAKE_SYSTEM_NAME STREQUAL "Haiku")
+     target_link_libraries(main_lib INTERFACE bsd)
+     target_link_libraries(nvim_bin PRIVATE -lnetwork)
+-  elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND NOT CMAKE_CROSSCOMPILING)
++  elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS" AND NOT CMAKE_CROSSCOMPILING AND NOT CMAKE_SYSTEM_NAME STREQUAL "QNX")
+     target_link_libraries(main_lib INTERFACE util)
+   endif()
+ endif()
+

@@ -1,0 +1,30 @@
+QNX: take the peer uid from getpeereid() when no SCM_CREDS came (GDBus clients)
+
+Upstream-Status: QNX-specific
+
+--- a/dbus/dbus-sysdeps-unix.c
++++ b/dbus/dbus-sysdeps-unix.c
+@@ -2500,6 +2500,23 @@
+ #endif
+   }
+ 
++#if defined(__QNX__) && defined(HAVE_GETPEEREID)
++  /* QNX: SCM_CREDS arrive only if the peer sends them, as libdbus does.
++   * GLib's GDBus has no credentials support on QNX and sends the nul byte
++   * alone, so the uid was unknown and EXTERNAL authentication failed for
++   * every GDBus client. getpeereid() gives the peer's euid either way. */
++  if (uid_read == DBUS_UID_UNSET)
++    {
++      uid_t euid;
++      gid_t egid;
++
++      if (getpeereid (client_fd.fd, &euid, &egid) == 0)
++        uid_read = euid;
++      else
++        _dbus_verbose ("Failed to getpeereid() credentials: %s\n", _dbus_strerror (errno));
++    }
++#endif
++
+   _dbus_verbose ("Credentials:"
+                  "  pid "DBUS_PID_FORMAT
+                  "  uid "DBUS_UID_FORMAT

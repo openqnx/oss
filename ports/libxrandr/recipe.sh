@@ -1,4 +1,4 @@
-VERSION=1.5.4; GIT=https://gitlab.freedesktop.org/xorg/lib/libxrandr.git; REF=libXrandr-1.5.4
+VERSION=1.5.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxrandr.git; REF=libXrandr-1.5.5
 DEPS="libx11 libxext libxrender xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

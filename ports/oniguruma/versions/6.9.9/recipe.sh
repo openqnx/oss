@@ -1,0 +1,3 @@
+VERSION=6.9.9; GIT=https://github.com/kkos/oniguruma.git; REF=v6.9.9
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TEST=OFF
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

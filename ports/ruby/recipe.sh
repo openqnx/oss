@@ -3,9 +3,9 @@
 # (json, zlib, openssl, psych over libyaml, fiddle over libffi, readline via
 # reline, io/console, socket, ...) and the default and bundled gems.
 # QNX's own package list has 3.4.7; this is the latest 3.4 release.
-VERSION=3.4.12
-TARBALL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.12.tar.gz
-SHA256=5e5d85ad93b0adcccbad47733680f4892bd0078e3342437f7babce01c1872479
+VERSION=3.4.13
+TARBALL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.13.tar.gz
+SHA256=d0d3bf3dd8c224a3c3b7ecd816a0f1b2cbcf4f87b5afcbdbe91d3fef177f351a
 BUILDSYS=autotools
 # libxcrypt: crypt() (String#crypt), which QNX's libc lacks.
 DEPS="zlib openssl libyaml libffi gmp libxcrypt"
@@ -50,6 +50,8 @@ do_configure() {
   # passed descriptor allocates one (it cannot run its test program in a
   # cross build, and stops): ext/socket/extconf.rb's test program, run on
   # QNX 8, says it does, as on Linux.
+  # --with-out-ext="-test-/*": ruby's own test extensions are not installed;
+  # 3.4's -test-/debug uses SA_RESTART, which QNX does not define.
   # --with-setup=Setup: configure picks the first ext/Setup.<os> whose name
   # starts $target_os, and "nto-qnx..." starts with "nt": it took Windows'
   # Setup.nt, which links a list of extensions statically into the ruby
@@ -64,7 +66,7 @@ do_configure() {
       --enable-shared --disable-rpath --disable-install-doc --enable-pthread \
       --with-coroutine=$cor --with-baseruby="$HOSTRUBY_DIR/inst/bin/ruby" \
       --with-opt-dir="$STAGE$PREFIX" --enable-close-fds-by-recvmsg-with-peek \
-      --with-setup=Setup )
+      --with-setup=Setup --with-out-ext="-test-/*" )
 }
 # The SDP's environment sets MAKEFLAGS=-I$QNX_TARGET/usr/include. Ruby's
 # installer (tool/rbinstall.rb) reads the single-letter make flags out of it

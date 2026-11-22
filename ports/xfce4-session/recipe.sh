@@ -1,9 +1,9 @@
 # xfce4-session: session manager.
 # The QNX Everywhere 8.0.4r1 image has the 4.21 development snapshot; the
 # 4.20 release is used here to match the Xfce 4.20 libraries in this tree.
-VERSION=4.20.2
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.2.tar.bz2
-SHA256=a0b80b7136515bc3c0c54fa859ad420365e29b715b6da0b58a2d2781bfbe73c3
+VERSION=4.20.4
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.4.tar.bz2
+SHA256=805c373378d080754d69dd2f20db95cdc066c89a4f024a41435ca0d66571c402
 # Also linked at run time (found by scripts/gen-dependency-index): gtk-layer-shell
 DEPS="glib gtk3 libxfce4util libxfce4ui xfconf libxfce4windowing gtk-layer-shell"
 BUILDSYS=autotools

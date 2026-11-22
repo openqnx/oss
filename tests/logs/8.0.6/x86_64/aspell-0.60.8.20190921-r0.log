@@ -1,0 +1,17 @@
+# aspell 0.60.8.20190921-r0 -- FAIL (apk add)
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T01:18:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aspell qnx-test-aspell qnx-port-tests
+(1/2) Installing aspell (0.60.8.20190921-r0)
+ERROR: aspell-0.60.8.20190921-r0: HTTP 404: Not Found
+(2/2) Installing qnx-test-aspell (1.0-r0)
+1 error; 470.3 MiB in 29 packages
+
+$ (not run)
+
+
+RESULT: FAIL (apk add)

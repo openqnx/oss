@@ -4,10 +4,12 @@
 # program with an interface, a class with construct properties and a
 # signal, an enum, a generic function with an owned delegate, lambdas
 # capturing locals, nullable strings and GLib.Regex translated with -C,
-# --header and --vapi to exactly the C, header and VAPI that the same valac
-# 0.56.18 writes on the build machine (MD5 below: that C was compiled
-# there with GLib and printed "area=48 seen=2 total=7 color=DEMO_COLOR_BLUE
-# maybe=none" and "15"), with the expected GObject boilerplate in it;
+# --header and --vapi to exactly the C, header and VAPI that valac 0.56.19
+# writes (MD5 below: recorded from 0.56.19 on the targets, the same on x86_64
+# and aarch64le; for 0.56.18 they were the build machine's output, whose C was
+# compiled there with GLib and printed "area=48 seen=2 total=7
+# color=DEMO_COLOR_BLUE maybe=none" and "15"), with the expected GObject
+# boilerplate in it;
 # --pkg gio-2.0 found in the installed VAPIs; and a type error reported
 # with its position and exit status 1.
 echo "== vala =="
@@ -19,7 +21,7 @@ bad() { echo "  FAIL $1"; fails=$((fails + 1)); }
 chk() { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1"; echo "  info want: $3"; echo "  info got:  $2"; fi; }
 md5() { md5sum < "$1" | cut -d' ' -f1; }
 [ -x "$V" ] || { echo "  FAIL valac installed ($V)"; echo "FAIL vala"; exit 1; }
-chk "valac --version" "$("$V" --version 2>&1)" "Vala 0.56.18"
+chk "valac --version" "$("$V" --version 2>&1)" "Vala 0.56.19"
 T=${TMPDIR:-/tmp}/vala-test.$$; mkdir -p "$T"; cd "$T" || exit 1
 cat > demo.vala <<'VALA'
 namespace Demo {
@@ -63,9 +65,9 @@ int main (string[] args) {
 VALA
 out=$("$V" -C --header=demo.h --vapi=demo.vapi demo.vala 2>&1); rc=$?
 [ $rc -eq 0 ] && [ -z "$out" ] && ok "valac -C --header --vapi demo.vala (rc 0, no diagnostics)" || { bad "valac -C (rc $rc)"; echo "$out" | head -10; }
-chk "demo.c is the build machine's valac 0.56.18 output (MD5)" "$(md5 demo.c)" "ec344784582f9492acc1c85e5b86e2a8"
-chk "demo.h likewise" "$(md5 demo.h)" "3d142e028c137b07b71e31e5a813975e"
-chk "demo.vapi likewise" "$(md5 demo.vapi)" "5affd97fb9929d6651990e42e54b6efe"
+chk "demo.c is valac 0.56.19's output (MD5)" "$(md5 demo.c)" "f3de87375623181dad8d220f17d2f6f5"
+chk "demo.h likewise" "$(md5 demo.h)" "45d4d780f5c6632917f47d8a3a36952e"
+chk "demo.vapi likewise" "$(md5 demo.vapi)" "7230bfb29157c99e962bcc8da07d8828"
 for s in "demo_rect_get_type" "g_signal_new (\"resized\"" "g_signal_emit (self, demo_rect_signals[DEMO_RECT_RESIZED_SIGNAL], 0, f)" \
          "demo_shape_area (DemoShape* self)" "DEMO_COLOR_BLUE" "g_ptr_array_foreach (items" "g_regex_new (" "_vala_main (gchar** args" \
          "g_object_new (object_type, \"w\", w, \"h\", h, NULL)"; do

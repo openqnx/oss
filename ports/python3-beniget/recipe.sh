@@ -1,9 +1,9 @@
 # beniget: def-use chains and scopes over a gast tree (pythran's analyses).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=0.5.0
-TARBALL=https://files.pythonhosted.org/packages/66/24/0bef8a8bbf403b536fb2368b6c3fb5f6669b3ef7fdbc2456a3affdd19836/beniget-0.5.0-py3-none-any.whl
-SHA256=909efcd083af1ac4a5db311f57c415df8cb05c4307eda345edeafac3cd930043
+VERSION=0.5.1
+TARBALL=https://files.pythonhosted.org/packages/33/40/6840c2e7d29b791702202c6e9da224cc189fdb3f28a72de43fa328c29753/beniget-0.5.1-py3-none-any.whl
+SHA256=c57375e04fa8c812d2f3650900bbb393615810e49673e9a62de329e1b3696938
 DEPS="python3 python3-gast"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-gast"

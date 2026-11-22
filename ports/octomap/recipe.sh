@@ -1,3 +1,3 @@
-VERSION=1.10.0; GIT=https://github.com/OctoMap/octomap.git; REF=v1.10.0
+VERSION=1.10.1; GIT=https://github.com/OctoMap/octomap.git; REF=v1.10.1
 SUBDIR=octomap
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DOCTOMAP_OMP=OFF )

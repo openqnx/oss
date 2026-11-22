@@ -1,5 +1,5 @@
 #!/bin/sh
-# socat 1.8.0.3, loopback only: the version and its features; a TCP relay
+# socat 1.8.1.3, loopback only: the version and its features; a TCP relay
 # (one connection through SYSTEM:"tr a-z A-Z", answer known) and a 1 MiB
 # file through a TCP relay compared byte for byte; a UNIX socket relay; UDP
 # datagrams to a receiver writing a file; OpenSSL (TLS) between socat's
@@ -27,7 +27,7 @@ waitport() { i=0; while [ $i -lt 15 ]; do socat -T1 /dev/null TCP:127.0.0.1:$1 2
 waitsock() { i=0; while [ $i -lt 15 ]; do [ -S "$1" ] && return 0; sleep 1; i=$((i+1)); done; return 1; }
 
 V=$(socat -V 2>&1)
-echo "$V" | grep -q "^socat version 1.8.0.3 " && ok "socat -V: version 1.8.0.3" || bad "socat -V: $(echo "$V" | sed -n 2p)"
+echo "$V" | grep -q "^socat version 1.8.1.3 " && ok "socat -V: version 1.8.1.3" || bad "socat -V: $(echo "$V" | sed -n 2p)"
 echo "$V" | grep -q "#define WITH_OPENSSL 1" && ok "built with OpenSSL" || bad "WITH_OPENSSL missing"
 echo "$V" | grep -q "#define WITH_READLINE 1" && ok "built with readline" || bad "WITH_READLINE missing"
 

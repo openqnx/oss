@@ -1,4 +1,4 @@
-VERSION=0.28.5; GIT=https://github.com/Exiv2/exiv2.git; REF=v0.28.5
+VERSION=0.28.9; GIT=https://github.com/Exiv2/exiv2.git; REF=v0.28.9
 DEPS="zlib expat brotli libinih"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DEXIV2_BUILD_SAMPLES=OFF
                    -DEXIV2_BUILD_UNIT_TESTS=OFF -DEXIV2_BUILD_EXIV2_COMMAND=OFF

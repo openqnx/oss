@@ -1,4 +1,4 @@
-VERSION=1.8.10; GIT=https://gitlab.freedesktop.org/xorg/lib/libx11.git; REF=libX11-1.8.10
+VERSION=1.8.14; GIT=https://gitlab.freedesktop.org/xorg/lib/libx11.git; REF=libX11-1.8.14
 DEPS="libxcb xorgproto xtrans"
 BUILDSYS=autotools
 # makekeys is a build-machine tool libX11 compiles and runs during the build;

@@ -1,6 +1,6 @@
-VERSION=1.0.22
-TARBALL=https://www.quut.com/gsm/gsm-1.0.22.tar.gz
-SHA256=f0072e91f6bb85a878b2f6dbf4a0b7c850c4deb8049d554c65340b3bf69df0ac
+VERSION=1.0.24
+TARBALL=https://www.quut.com/gsm/gsm-1.0.24.tar.gz
+SHA256=a3c40c6471928383f4abfcb2e8f24012a1f562be2f17b8d672145d5986681a92
 BUILDSYS=custom
 # The upstream Makefile hardcodes the host compiler and installs nowhere useful;
 # the library is eight objects, so build it directly.

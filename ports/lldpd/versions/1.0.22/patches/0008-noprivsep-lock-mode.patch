@@ -1,0 +1,30 @@
+Create the control lock file 0600 when built without privilege separation.
+
+lldpd creates the control socket's lock file with mode 0000 and, only when
+built with privilege separation, chowns it to the privsep user and chmods
+it 0770. Built with --disable-privsep (as here: a QNX image has no _lldpd
+user) the file keeps mode 0000, and every lldpcli "configure ..." command,
+including those lldpd itself runs from lldpd.conf at start, fails "cannot
+open lock ...: Permission denied" unless it runs as root. Create the file
+0600 in that build.
+
+Upstream-Status: QNX-specific
+
+--- a/src/daemon/lldpd.c
++++ b/src/daemon/lldpd.c
+@@ -1862,7 +1862,15 @@
+ 	int fd;
+ 	if (asprintf(&lockname, "%s.lock", ctlname) == -1)
+ 		fatal("main", "cannot build lock name");
++#ifdef ENABLE_PRIVSEP
+ 	if ((fd = open(lockname, O_CREAT | O_RDWR, 0000)) == -1)
++#else
++	/* Without privilege separation nothing chmods the lock file below:
++	 * create it readable and writable by its owner, or lldpcli (which
++	 * opens it O_RDWR before every command that changes the
++	 * configuration) fails with EACCES unless it runs as root. */
++	if ((fd = open(lockname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)) == -1)
++#endif
+ 		fatal("main", "cannot create lock file for control socket");
+ 	close(fd);
+ #ifdef ENABLE_PRIVSEP

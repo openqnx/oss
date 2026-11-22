@@ -4,9 +4,9 @@
 # unmunch for dictionary work. No dictionaries are included: they are
 # per-language data (share/hunspell/<lang>.aff + .dic). Version as in QNX's
 # own package list (also the latest release).
-VERSION=1.7.2
-TARBALL=https://github.com/hunspell/hunspell/releases/download/v1.7.2/hunspell-1.7.2.tar.gz
-SHA256=11ddfa39afe28c28539fe65fc4f1592d410c1e9b6dd7d8a91ca25d85e9ec65b8
+VERSION=1.7.6
+TARBALL=https://github.com/hunspell/hunspell/releases/download/v1.7.6/hunspell-1.7.6.tar.gz
+SHA256=9c650ace31d4d8cc1da925a9507c3de1d50f1a54857af2f72429f517d5d53467
 BUILDSYS=autotools
 # iconv (GNU libiconv: QNX libc has none) converts dictionaries in other
 # encodings than UTF-8.

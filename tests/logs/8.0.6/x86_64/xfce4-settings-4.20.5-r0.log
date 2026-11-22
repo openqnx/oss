@@ -1,0 +1,44 @@
+# xfce4-settings 4.20.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T01:21:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-settings qnx-test-xfce4-settings qnx-port-tests
+OK: 906.4 MiB in 161 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_settings
+     == xfce4-settings ==
+       info xfsettingsd --version -> 0: xfsettingsd 4.20.5 (Xfce 4.20)
+       ok   xfsettingsd --version: 4.20.5
+       ok   xfsettingsd --help lists --replace, --daemon
+       info 56 helper(s), 23 web browsers
+       ok   every helper .desktop: Type=X-XFCE-Helper, a known category, commands
+       ok   firefox helper is a WebBrowser
+       ok   helpers.rc defaults
+       ok   GTK module xfsettingsd-gtk-settings-sync loads (dlopen), exports gtk_module_init and g_module_check_init
+       info g_module_open without a session bus: GModule (/usr/local/lib/gtk-3.0/modules/libxfsettingsd-gtk-settings-sync.so) initialization check failed: Could not connect: No such file or directory
+       ok   GModule refuses the module without a session bus (its xfconf_init check)
+       info headless Wayland display: up
+       info xfce4-settings-manager --version -> 0: xfce4-settings-manager 4.20.5 (Xfce 4.20)
+       ok   xfce4-settings-manager --version prints xfce4-settings-manager 4.20.5
+       info xfce4-settings-editor --version -> 0: xfce4-settings-editor 4.20.5 (Xfce 4.20)
+       ok   xfce4-settings-editor --version prints xfce4-settings-editor 4.20.5
+       info xfce4-mime-settings --version -> 0: xfce4-mime-settings 4.20.5 (Xfce 4.20)
+       ok   xfce4-mime-settings --version prints xfce4-mime-settings 4.20.5
+       info xfce4-appearance-settings --version -> 0: xfce4-appearance-settings 4.20.5 (Xfce 4.20)
+       ok   xfce4-appearance-settings --version prints xfce4-appearance-settings 4.20.5
+       info xfce4-display-settings --version -> 0: xfce4-display-settings 4.20.5 (Xfce 4.20)
+       ok   xfce4-display-settings --version prints xfce4-display-settings 4.20.5
+       info xfce4-mime-helper --version -> 0: xfce4-settings 4.20.5 (Xfce 4.20)
+       ok   xfce4-mime-helper --version prints xfce4-settings 4.20.5 (Xfce 4.20
+       info xfce4-mime-helper --query WebBrowser -> 0: qnxbrowser
+       ok   xfce4-mime-helper --query WebBrowser -> our qnxbrowser helper
+       ok   xfce4-mime-helper rejects an unknown helper type
+     PASS xfce4-settings
+PASS test_xfce4_settings
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

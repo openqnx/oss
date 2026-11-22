@@ -1,5 +1,5 @@
-VERSION=1.0.20
-TARBALL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.20.tar.gz
-SHA256=ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19
+VERSION=1.0.22
+TARBALL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.22.tar.gz
+SHA256=adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --enable-static --disable-ssp )

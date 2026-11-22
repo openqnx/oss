@@ -1,4 +1,4 @@
-VERSION=1.18.2; GIT=https://gitlab.freedesktop.org/cairo/cairo.git; REF=1.18.2
+VERSION=1.18.6; GIT=https://gitlab.freedesktop.org/cairo/cairo.git; REF=1.18.6
 # Also linked at run time (found by scripts/gen-dependency-index): lzo
 DEPS="pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo"
 BUILDSYS=meson

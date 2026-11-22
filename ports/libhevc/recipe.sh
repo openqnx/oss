@@ -1,7 +1,7 @@
 # libhevc: Android's HEVC (H.265) video decoder and encoder libraries (from
 # Ittiam, the code behind Android's software HEVC codecs), with the hevcdec
 # and hevcenc example programs.
-VERSION=1.8.5; GIT=https://github.com/ittiam-systems/libhevc.git; REF=v1.8.5
+VERSION=1.8.7; GIT=https://github.com/ittiam-systems/libhevc.git; REF=v1.8.7
 BUILDSYS=cmake
 # SYSTEM_NAME/SYSTEM_PROCESSOR pick the SIMD code; they default to the build
 # machine's. aarch64: the NEON assembly and intrinsics; x86_64: the SSSE3/SSE4.2

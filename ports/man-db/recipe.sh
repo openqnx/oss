@@ -1,7 +1,7 @@
 # man-db, the man page reader. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.13.1
-TARBALL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz
-SHA256=8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9
+VERSION=2.13.3
+TARBALL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.3.tar.xz
+SHA256=7c10ac705433c740af91264fc29eee471090ead63a408541ab9736284a8c9deb
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv zlib
 DEPS="libpipeline gdbm groff libiconv zlib"
 BUILDSYS=autotools

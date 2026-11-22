@@ -1,0 +1,23 @@
+fcft: no <byteswap.h> on QNX.
+
+fcft.c swaps a 16-bit font table version with bswap_16() from glibc's
+<byteswap.h>, which QNX does not have: use the compiler builtin there.
+
+Upstream-Status: QNX-specific
+
+--- a/fcft.c
++++ b/fcft.c
+@@ -1,7 +1,13 @@
+ #include "fcft/fcft.h"
+ 
+ #include <assert.h>
++#if defined(__QNX__)
++/* QNX has no <byteswap.h>: the compiler's builtin does the same */
++#include <stdint.h>
++#define bswap_16(x) __builtin_bswap16(x)
++#else
+ #include <byteswap.h>
++#endif
+ #include <locale.h>
+ #include <math.h>
+ #include <stdbool.h>

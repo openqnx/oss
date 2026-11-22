@@ -1,4 +1,4 @@
-VERSION=1.8.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxi.git; REF=libXi-1.8.2
+VERSION=1.8.4; GIT=https://gitlab.freedesktop.org/xorg/lib/libxi.git; REF=libXi-1.8.4
 DEPS="libx11 libxext libxfixes xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

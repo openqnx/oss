@@ -1,0 +1,23 @@
+s2n-tls: no _XOPEN_SOURCE 500 on QNX.
+
+s2n_recv.c defines _XOPEN_SOURCE 500 before its includes; with the
+_POSIX_C_SOURCE the build sets, QNX's <sys/platform.h> stops with "This
+POSIX_C_SOURCE is unsuported with XOPEN_SOURCE". _QNX_SOURCE already
+exposes what the file uses.
+
+Upstream-Status: QNX-specific
+
+--- a/tls/s2n_recv.c
++++ b/tls/s2n_recv.c
+@@ -14,7 +14,11 @@
+  */
+ 
+ /* Use usleep */
++/* QNX's headers refuse _XOPEN_SOURCE 500 next to the build's newer
++ * _POSIX_C_SOURCE; _QNX_SOURCE already exposes what this file needs. */
++#if !defined(__QNX__)
+ #define _XOPEN_SOURCE 500
++#endif
+ #include <errno.h>
+ #include <unistd.h>
+ 

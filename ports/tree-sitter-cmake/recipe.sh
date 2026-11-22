@@ -1,6 +1,6 @@
 # tree-sitter grammar: cmake. Installs lib/tree-sitter/cmake.so (the parser
 # Neovim and the tree-sitter library load). Version as in QNX's repository.
-VERSION=0.7.2; GIT=https://github.com/uyha/tree-sitter-cmake.git; REF=v0.7.2
+VERSION=0.7.6; GIT=https://github.com/uyha/tree-sitter-cmake.git; REF=v0.7.6
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

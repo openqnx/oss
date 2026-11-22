@@ -1,6 +1,6 @@
 # tree-sitter grammar: c. Installs lib/tree-sitter/c.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.24.1; GIT=https://github.com/tree-sitter/tree-sitter-c.git; REF=v0.24.1
+VERSION=0.24.2; GIT=https://github.com/tree-sitter/tree-sitter-c.git; REF=v0.24.2
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

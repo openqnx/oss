@@ -1,0 +1,62 @@
+cairo-xlib: build without MIT-SHM where the platform has no SysV shm.
+
+Enabling cairo's Xlib surface on QNX 8.0 fails immediately:
+
+    src/cairo-xlib-surface-shm.c:156:10: fatal error: sys/shm.h: No such file or directory
+
+MIT-SHM is System V shared memory -- the client passes the X server the id
+that shmget() returned -- and QNX 8.0 has no SysV shared memory: libc exports
+shm_open and shm_create_handle but no shmget/shmat/shmdt/shmctl, and there is
+no <sys/shm.h>.  The extension cannot work on such a platform at all.
+
+cairo already has a complete stub implementation for servers without the
+extension.  This adds a sys/shm.h header check and takes that path when the
+header is missing, and stops cairo-xlib-surface.c including two headers it
+never uses.  On platforms that have SysV IPC nothing changes.
+
+Upstream-Status: Pending
+
+diff --git a/meson.build b/meson.build
+index 4051a7c..b62987c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -136,6 +136,7 @@ check_headers = [
+   ['fenv.h', {'check-funcs': ['feenableexcept', 'fedisableexcept', 'feclearexcept']}],
+   ['xlocale.h'],
+   ['sys/ioctl.h'],
++  ['sys/shm.h'],
+   ['intsafe.h'],
+   ['alloca.h'],
+ ]
+diff --git a/src/cairo-xlib-surface-shm.c b/src/cairo-xlib-surface-shm.c
+index 85a0369..8dde973 100644
+--- a/src/cairo-xlib-surface-shm.c
++++ b/src/cairo-xlib-surface-shm.c
+@@ -42,7 +42,11 @@
+ #include "cairo-xlib-private.h"
+ #include "cairo-xlib-surface-private.h"
+ 
+-#if !HAVE_X11_EXTENSIONS_XSHM_H || !(HAVE_X11_EXTENSIONS_SHMPROTO_H || HAVE_X11_EXTENSIONS_SHMSTR_H)
++/* MIT-SHM is System V shared memory: the X server attaches a segment by the id
++ * shmget() returned.  Platforms without SysV IPC -- QNX 8.0 has POSIX shm_open
++ * but no shmget/shmat and no <sys/shm.h> -- cannot offer it at all, so they
++ * take the same no-SHM path as a server without the extension. */
++#if !HAVE_SYS_SHM_H || !HAVE_X11_EXTENSIONS_XSHM_H || !(HAVE_X11_EXTENSIONS_SHMPROTO_H || HAVE_X11_EXTENSIONS_SHMSTR_H)
+ void _cairo_xlib_display_init_shm (cairo_xlib_display_t *display)
+ {
+     display->shm = NULL;
+diff --git a/src/cairo-xlib-surface.c b/src/cairo-xlib-surface.c
+index fac2911..e9930ee 100644
+--- a/src/cairo-xlib-surface.c
++++ b/src/cairo-xlib-surface.c
+@@ -78,8 +78,10 @@
+ #include <X11/Xutil.h> /* for XDestroyImage */
+ 
+ #include <X11/extensions/XShm.h>
++#if HAVE_SYS_SHM_H /* nothing below calls these; see cairo-xlib-surface-shm.c */
+ #include <sys/ipc.h>
+ #include <sys/shm.h>
++#endif
+ 
+ #define DEBUG 0
+ 

@@ -1,6 +1,6 @@
 # uvgRTP: RTP library (RFC 3550) in C++ with RTCP, and payload formats for
 # H.264, H.265, H.266 (VVC) and Opus, from Ultra Video Group.
-VERSION=4.0.1; GIT=https://github.com/ultravideo/uvgRTP.git; REF=v4.0.1
+VERSION=4.0.2; GIT=https://github.com/ultravideo/uvgRTP.git; REF=v4.0.2
 BUILDSYS=cmake
 # Shared library. SRTP/ZRTP need Crypto++, which is not ported: off. No unit
 # tests (they download googletest) and no examples.

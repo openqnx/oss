@@ -1,0 +1,29 @@
+# unibilium 2.1.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T00:52:53Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u unibilium qnx-test-unibilium qnx-port-tests
+(1/2) Installing unibilium (2.1.4-r0)
+(2/2) Installing qnx-test-unibilium (1.0-r0)
+OK: 15.5 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_unibilium
+     == unibilium ==
+       ok   unibi_from_term found a terminal description
+       info terminal = xterm terminal emulator (X Window System)
+       ok   unibi_get_name
+       ok   a numeric capability is readable
+       ok   a boolean capability
+       ok   unibi_dummy
+       ok   capabilities are writable
+       ok   unibi_name_str
+       ok   unibi_short_name_str
+     PASS unibilium
+PASS test_unibilium
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

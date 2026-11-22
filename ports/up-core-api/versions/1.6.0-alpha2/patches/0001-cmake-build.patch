@@ -1,0 +1,101 @@
+Add a CMake build: generate and compile the C++ sources, install a package
+
+up-spec ships only the .proto files. This is the CMakeLists.txt of
+uProtocol's Conan recipe (up-conan-recipes, up-core-api/CMakeLists.txt; the
+same file in qnx-ports' fork), changed for a build without Conan: an installed
+CMake package (up-core-api::up-core-api, up-core-api_INCLUDE_DIR -- what
+up-cpp and up-transport-zenoh-cpp look for, and what Conan's CMakeDeps would
+generate), a versioned shared library, the well-known protobuf types on
+protoc's import path, the .proto files installed to share/up-core-api, and
+UP_CORE_API_PROTOC to name a protoc that runs on the build machine (cross
+builds: the staged protoc is a QNX program).
+
+Upstream-Status: QNX-specific (from up-conan-recipes, github.com/qnx-ports/up-conan-recipes branch qnx-main)
+
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: Apache-2.0
++# Builds up-core-api (the uProtocol .proto files compiled for C++). From
++# up-conan-recipes' up-core-api/CMakeLists.txt, with an installed CMake
++# package (up-core-api::up-core-api) in place of the one Conan generates.
++cmake_minimum_required(VERSION 3.23)
++project(up-core-api VERSION 1.6.0 LANGUAGES CXX DESCRIPTION "uProtocol Core API")
++
++include(GNUInstallDirs)
++include(CMakePackageConfigHelpers)
++find_package(protobuf CONFIG REQUIRED)
++
++set(UP_PROTO_BASE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/up-core-api")
++# protoc that runs on the build machine (cross builds); default: the
++# package's own.
++set(UP_CORE_API_PROTOC "" CACHE FILEPATH "protoc to generate the C++ sources with")
++
++set(UP_PROTO_OUT_DIR ${CMAKE_BINARY_DIR}/protoc)
++file(MAKE_DIRECTORY ${UP_PROTO_OUT_DIR})
++
++set(PROTO_FILES
++	up-core-api/uprotocol/uoptions.proto
++	up-core-api/uprotocol/v1/file.proto
++	up-core-api/uprotocol/v1/uattributes.proto
++	up-core-api/uprotocol/v1/umessage.proto
++	up-core-api/uprotocol/v1/uri.proto
++	up-core-api/uprotocol/v1/ustatus.proto
++	up-core-api/uprotocol/v1/ucode.proto
++	up-core-api/uprotocol/v1/uuid.proto
++	up-core-api/uprotocol/core/udiscovery/v3/udiscovery.proto
++	up-core-api/uprotocol/core/usubscription/v3/usubscription.proto
++	up-core-api/uprotocol/core/utwin/v2/utwin.proto)
++
++add_library(up-core-api)
++add_library(up-core-api::up-core-api ALIAS up-core-api)
++set_target_properties(up-core-api PROPERTIES VERSION ${PROJECT_VERSION}
++	SOVERSION ${PROJECT_VERSION_MAJOR} POSITION_INDEPENDENT_CODE ON)
++
++# The well-known types (google/protobuf/*.proto) are in protobuf's include dir.
++get_target_property(_pb_inc protobuf::libprotobuf INTERFACE_INCLUDE_DIRECTORIES)
++set(_protoc_exe)
++if(UP_CORE_API_PROTOC)
++	set(_protoc_exe PROTOC_EXE "${UP_CORE_API_PROTOC}")
++endif()
++protobuf_generate(LANGUAGE cpp TARGET up-core-api
++	PROTOS ${PROTO_FILES}
++	OUT_VAR GENERATED_SRCS
++	IMPORT_DIRS ${UP_PROTO_BASE_PATH} ${_pb_inc}
++	PROTOC_OUT_DIR ${UP_PROTO_OUT_DIR}
++	${_protoc_exe})
++
++set(GENERATED_HDRS "${GENERATED_SRCS}")
++list(FILTER GENERATED_HDRS INCLUDE REGEX ".pb.h$")
++
++target_include_directories(up-core-api PUBLIC
++	$<BUILD_INTERFACE:${UP_PROTO_OUT_DIR}>
++	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
++target_link_libraries(up-core-api PUBLIC protobuf::libprotobuf)
++target_sources(up-core-api
++	PUBLIC FILE_SET public_headers TYPE HEADERS BASE_DIRS ${UP_PROTO_OUT_DIR} FILES ${GENERATED_HDRS})
++
++install(TARGETS up-core-api EXPORT up-core-apiTargets
++	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++	FILE_SET public_headers DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++# The .proto files, for code that imports them (up-cpp's users, other languages).
++install(DIRECTORY ${UP_PROTO_BASE_PATH}/uprotocol DESTINATION ${CMAKE_INSTALL_DATADIR}/up-core-api
++	FILES_MATCHING PATTERN "*.proto")
++
++set(_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/up-core-api)
++install(EXPORT up-core-apiTargets NAMESPACE up-core-api:: DESTINATION ${_cmakedir})
++file(WRITE ${CMAKE_BINARY_DIR}/up-core-apiConfig.cmake.in [=[
++@PACKAGE_INIT@
++include(CMakeFindDependencyMacro)
++find_dependency(protobuf CONFIG)
++include("${CMAKE_CURRENT_LIST_DIR}/up-core-apiTargets.cmake")
++set(up-core-api_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_INCLUDEDIR@")
++]=])
++configure_package_config_file(${CMAKE_BINARY_DIR}/up-core-apiConfig.cmake.in
++	${CMAKE_BINARY_DIR}/up-core-apiConfig.cmake INSTALL_DESTINATION ${_cmakedir})
++write_basic_package_version_file(${CMAKE_BINARY_DIR}/up-core-apiConfigVersion.cmake
++	COMPATIBILITY SameMinorVersion)
++install(FILES ${CMAKE_BINARY_DIR}/up-core-apiConfig.cmake ${CMAKE_BINARY_DIR}/up-core-apiConfigVersion.cmake
++	DESTINATION ${_cmakedir})

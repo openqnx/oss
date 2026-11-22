@@ -1,4 +1,4 @@
-VERSION=0.5.9; GIT=https://github.com/libproxy/libproxy.git; REF=0.5.9
+VERSION=0.5.12; GIT=https://github.com/libproxy/libproxy.git; REF=0.5.12
 DEPS="glib curl"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=false -Ddocs=false -Dintrospection=false -Dvapi=false

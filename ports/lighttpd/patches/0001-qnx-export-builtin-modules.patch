@@ -1,8 +1,7 @@
-diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index cf28807..6844776 100644
+
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -12,6 +12,12 @@ include(LighttpdMacros)
+@@ -12,6 +12,12 @@
  
  add_definitions(-D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGE_FILES -D_DEFAULT_SOURCE)
  
@@ -15,7 +14,7 @@ index cf28807..6844776 100644
  # default to ON
  set(CMAKE_POSITION_INDEPENDENT_CODE ON CACHE BOOL "Default value for ``POSITION_INDEPENDENT_CODE`` of targets.")
  
-@@ -1155,6 +1161,16 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+@@ -1185,6 +1191,16 @@
  	endif()
  endif()
  

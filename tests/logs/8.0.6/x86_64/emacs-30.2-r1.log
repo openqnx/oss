@@ -1,0 +1,44 @@
+# emacs 30.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:45:23Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u emacs qnx-test-emacs qnx-port-tests
+( 1/21) Installing dbus (1.16.4-r0)
+( 2/21) Installing brotli (1.1.0-r0)
+( 3/21) Installing libidn2 (2.3.8-r0)
+( 4/21) Installing libtasn1 (4.19.0-r0)
+( 5/21) Installing nettle (3.10.1-r0)
+( 6/21) Installing unbound (1.24.1-r0)
+( 7/21) Installing gnutls (3.8.14-r1)
+( 8/21) Installing lcms2 (2.16-r0)
+( 9/21) Installing sqlite (3.47.2-r0)
+(10/21) Installing tree-sitter (0.25.9-r0)
+(11/21) Installing emacs (30.2-r1)
+(12/21) Installing c-ares (1.34.9-r0)
+(13/21) Installing nghttp2 (1.64.0-r0)
+(14/21) Installing curl (8.11.1-r0)
+(15/21) Installing libuv (1.51.0-r0)
+(16/21) Installing cmake (4.1.1-r0)
+(17/21) Installing libffi (3.4.6-r0)
+(18/21) Installing pcre2 (10.44-r0)
+(19/21) Installing glib (2.82.4-r0)
+(20/21) Installing desktop-file-utils (0.28-r0)
+(21/21) Installing qnx-test-emacs (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 691.7 MiB in 49 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_emacs
+     == emacs ==
+       ok   --version: GNU Emacs 30.2
+       ok   batch edit: replace-match, sort-lines, save-buffer
+       ok   Emacs Lisp: bignum recursion, mapcar, regexp, native JSON, floats
+       ok   etags indexed qnx_add and helper
+     PASS emacs
+PASS test_emacs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

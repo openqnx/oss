@@ -1,7 +1,7 @@
 /* gthumb: the image viewer.  It is a GtkApplication whose option parser
  * includes GTK's own group, which opens the display, so the test starts a
  * private headless Wayland display (labwc) for it; --version must then
- * print "gthumb 3.12.8.2" and exit 0.  (Without one, gthumb still prints the
+ * print "gthumb 3.12.12" and exit 0.  (Without one, gthumb still prints the
  * version but exits 1 -- checked as such.)  --help needs no display.  The
  * extension set is checked as gthumb's loader reads it: every
  * lib/gthumb/extensions/<name>.extension is a key file naming a loadable
@@ -285,7 +285,7 @@ int main(void) {
   printf("  info headless Wayland display: %s\n", disp ? "up" : "not available");
   rc = run("gthumb --version", out, sizeof out, 60);
   printf("  info gthumb --version -> %d: %s\n", rc, line1(out));
-  QT_CHECK(strstr(out, "gthumb 3.12.8.2, Copyright") != NULL, "gthumb --version: gthumb 3.12.8.2");
+  QT_CHECK(strstr(out, "gthumb 3.12.12, Copyright") != NULL, "gthumb --version: gthumb 3.12.12");
   if (disp) QT_CHECK(rc == 0, "gthumb --version exits 0 with a display");
   else QT_CHECK(rc == 1, "without a display gthumb reports the failed GTK option parse (exit 1)");
   wl_down();

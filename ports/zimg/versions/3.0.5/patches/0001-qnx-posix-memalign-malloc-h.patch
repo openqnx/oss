@@ -1,0 +1,22 @@
+zimg: posix_memalign is declared in <malloc.h> on QNX.
+
+<stdlib.h> alone leaves it undeclared, and every translation unit failed.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/zimg/common/alloc.h b/src/zimg/common/alloc.h
+index df485a7..8e4247f 100644
+--- a/src/zimg/common/alloc.h
++++ b/src/zimg/common/alloc.h
+@@ -16,6 +16,11 @@
+   inline void zimg_x_aligned_free(void *ptr) { _aligned_free(ptr); }
+ #else
+   #include <stdlib.h>
++  #if defined(__QNX__) || defined(__QNXNTO__)
++    /* QNX declares posix_memalign in <malloc.h>; <stdlib.h> alone leaves it
++       undeclared and the build fails on every translation unit. */
++    #include <malloc.h>
++  #endif
+   inline void *zimg_x_aligned_malloc(size_t size, size_t alignment) { void *p; if (posix_memalign(&p, alignment, size)) return nullptr; else return p; }
+   inline void zimg_x_aligned_free(void *ptr) { free(ptr); }
+ #endif

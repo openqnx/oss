@@ -1,4 +1,4 @@
-VERSION=1.3.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxext.git; REF=libXext-1.3.6
+VERSION=1.3.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxext.git; REF=libXext-1.3.7
 DEPS="libx11 xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

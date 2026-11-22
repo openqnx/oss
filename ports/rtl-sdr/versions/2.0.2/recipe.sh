@@ -1,0 +1,3 @@
+VERSION=2.0.2; GIT=https://github.com/osmocom/rtl-sdr.git; REF=v2.0.2
+DEPS="libusb"
+CMAKE_ARGS_EXTRA=( -DINSTALL_UDEV_RULES=OFF -DDETACH_KERNEL_DRIVER=OFF )

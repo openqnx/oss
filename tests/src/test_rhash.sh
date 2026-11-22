@@ -43,7 +43,7 @@ trap stopall EXIT
 trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 RH=$L/bin/rhash
-r=$("$RH" --version 2>&1); [ "$r" = "RHash v1.4.5" ] && ok "rhash --version: v1.4.5" || bad "version: $r"
+r=$("$RH" --version 2>&1); [ "$r" = "RHash v1.4.6" ] && ok "rhash --version: v1.4.6" || bad "version: $r"
 printf 'abc' > abc.txt; printf 'The quick brown fox jumps over the lazy dog' > fox.txt
 r=$("$RH" --printf='%{crc32} %{md5} %{sha1}\n' abc.txt 2>&1)
 [ "$r" = "352441c2 900150983cd24fb0d6963f7d28e17f72 a9993e364706816aba3e25717850c26c9cd0d89d" ] && ok "abc: CRC32, MD5, SHA-1" || bad "abc: $r"

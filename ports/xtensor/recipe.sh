@@ -1,7 +1,7 @@
 # xtensor: header-only C++ library for multi-dimensional arrays with
 # NumPy-style broadcasting and lazy expression evaluation. Header-only:
 # installs include/xtensor, xtensor.pc and the CMake package.
-VERSION=0.27.1; GIT=https://github.com/xtensor-stack/xtensor.git; REF=0.27.1
+VERSION=0.27.2; GIT=https://github.com/xtensor-stack/xtensor.git; REF=0.27.2
 # xtl is required; xsimd turns on SIMD evaluation of expressions
 # (XTENSOR_USE_XSIMD): the installed xtensorConfig.cmake then finds xsimd
 # and defines XTENSOR_USE_XSIMD for consumers, as distribution builds do.

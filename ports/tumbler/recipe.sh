@@ -1,7 +1,7 @@
-VERSION=4.20.0
+VERSION=4.20.2
 # Release tarball, as with the rest of Xfce -- see README hazard 74.
-TARBALL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.0.tar.bz2
-SHA256=74b1647d55926547e98bfac70838ff63c5a84299a5e10c81c38d1fab90e25880
+TARBALL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.2.tar.bz2
+SHA256=aa77fd90a88b83467cd8d2b39d80e4518ba2903d2e4ca50d32d1b96996685015
 # Also linked at run time (found by scripts/gen-dependency-index): curl gst-plugins-base gstreamer
 DEPS="glib dbus gdk-pixbuf libgsf ffmpegthumbnailer libpng freetype libxfce4util curl gst-plugins-base gstreamer"
 BUILDSYS=autotools

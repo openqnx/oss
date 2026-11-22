@@ -1,5 +1,5 @@
 # lcm: Lightweight Communications and Marshalling -- message types (lcm-gen) and UDP multicast publish/subscribe.
-VERSION=1.5.2; GIT=https://github.com/lcm-proj/lcm.git; REF=v1.5.2
+VERSION=1.5.3; GIT=https://github.com/lcm-proj/lcm.git; REF=v1.5.3
 DEPS="glib"
 BUILDSYS=cmake
 # The C and C++ libraries and lcm-gen; no Python/Java/Lua/Go bindings.

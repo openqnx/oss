@@ -1,6 +1,6 @@
-VERSION=4.99.5
-TARBALL=https://www.tcpdump.org/release/tcpdump-4.99.5.tar.gz
-SHA256=8c75856e00addeeadf70dad67c9ff3dd368536b2b8563abf6854d7c764cd3adb
+VERSION=4.99.7
+TARBALL=https://www.tcpdump.org/release/tcpdump-4.99.7.tar.gz
+SHA256=8be364e28d3b745ef1459b385cd2f4bc0e1ebad7a5d2ebdf70071d6c9b5b9a54
 BUILDSYS=autotools
 # On the libpcap port (static libpcap.a, found through its pcap-config).
 DEPS="libpcap"

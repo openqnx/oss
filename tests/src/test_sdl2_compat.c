@@ -2,7 +2,7 @@
  * The library is dlopen()ed, not linked: libSDL2-2.0.so.0 is installed by
  * both sdl2 and sdl2-compat, so a link-time dependency could name either
  * package. sdl2-compat itself dlopen()s libSDL3.so.0.
- *  - version 2.32.60, SDL_Init with the dummy video and the disk audio drivers
+ *  - version 2.32.74, SDL_Init with the dummy video and the disk audio drivers
  *    (SDL2 environment names, translated to SDL3 hints by sdl2-compat);
  *  - surfaces: SDL_FillRect + a software renderer, pixels read back;
  *  - a window on the dummy driver with a window surface;
@@ -62,7 +62,7 @@ int main(void) {
 
   SDL_version v; p_SDL_GetVersion(&v);
   printf("  info SDL_GetVersion: %u.%u.%u\n", v.major, v.minor, v.patch);
-  QT_CHECK(v.major == 2 && v.minor == 32 && v.patch == 60, "SDL2 API version 2.32.60");
+  QT_CHECK(v.major == 2 && v.minor == 32 && v.patch == 74, "SDL2 API version 2.32.74");
 
   char dir[64] = "/tmp/qnxport-sdl2compat.XXXXXX";
   QT_CHECK(mkdtemp(dir) != NULL, "scratch directory");

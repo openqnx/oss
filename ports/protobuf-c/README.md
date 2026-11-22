@@ -1,4 +1,4 @@
-# protobuf-c 1.5.0
+# protobuf-c 1.5.2
 
 > Protocol Buffers implementation in C (runtime library)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/protobuf-c/protobuf-c.git (tag `v1.5.0`) |
+| Upstream | https://github.com/protobuf-c/protobuf-c.git (tag `v1.5.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.2 --recurse-submodules --shallow-submodules \
     https://github.com/protobuf-c/protobuf-c.git src/protobuf-c
 ```
 
@@ -185,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add protobuf-c=<version>`), sources in `ported/protobuf-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates protobuf-c`; port one with `scripts/port-update protobuf-c`.
+This recipe builds **1.5.2**. Kept from earlier: `1.5.0` ([recipe and patches](versions/1.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add protobuf-c=<version>`), sources in `ported/protobuf-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates protobuf-c`; port one with `scripts/port-update protobuf-c`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.0; GIT=https://github.com/protobuf-c/protobuf-c.git; REF=v1.5.0
+VERSION=1.5.2; GIT=https://github.com/protobuf-c/protobuf-c.git; REF=v1.5.2
 # The runtime library only. protoc-gen-c is a code generator for the build host.
 SUBDIR=build-cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_PROTOC=OFF -DBUILD_TESTS=OFF )

@@ -12,11 +12,19 @@ Upstream-Status: QNX-specific (carried in the qnx-ports fork)
  c++/src/kj/CMakeLists.txt    | 7 +++++++
  3 files changed, 13 insertions(+)
 
-diff --git a/c++/CMakeLists.txt b/c++/CMakeLists.txt
-index 5e5f508601..30e47ad2ee 100644
+Folded commits (same patch):
+
+  From: Deep Chordia <dchordia@blackberry.com>
+  Date: Thu, 24 Oct 2024 16:42:51 +0530
+  Subject: [PATCH 2/3] Port for QNX
+
+  From: Deep Chordia <dchordia@blackberry.com>
+  Date: Thu, 24 Oct 2024 18:54:34 +0530
+  Subject: [PATCH 3/3] Rectify syntax error
+
 --- a/c++/CMakeLists.txt
 +++ b/c++/CMakeLists.txt
-@@ -28,6 +28,7 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
+@@ -34,6 +34,7 @@
  
  option(EXTERNAL_CAPNP "Use the system capnp binary, or the one specified in $CAPNP, instead of using the compiled one." OFF)
  option(CAPNP_LITE "Compile Cap'n Proto in 'lite mode', in which all reflection APIs (schema.h, dynamic.h, etc.) are not included. Produces a smaller library at the cost of features. All programs built against the library must be compiled with -DCAPNP_LITE. Requires EXTERNAL_CAPNP." OFF)
@@ -24,11 +32,18 @@ index 5e5f508601..30e47ad2ee 100644
  
  # Check for invalid combinations of build options
  if(CAPNP_LITE AND BUILD_TESTING AND NOT EXTERNAL_CAPNP)
-diff --git a/c++/src/capnp/CMakeLists.txt b/c++/src/capnp/CMakeLists.txt
-index 9980fde617..eeaa4a7978 100644
+@@ -164,7 +165,7 @@
+     message(SEND_ERROR "Cap'n Proto requires compiler-specific extensions (e.g., -std=gnu++14). Please leave CMAKE_CXX_EXTENSIONS undefined or ON.")
+   endif()
+ 
+-  if (NOT ANDROID)
++  if (NOT ANDROID AND NOT QNX)
+     add_compile_options(-pthread)
+   endif()
+ endif()
 --- a/c++/src/capnp/CMakeLists.txt
 +++ b/c++/src/capnp/CMakeLists.txt
-@@ -277,6 +277,9 @@ if(BUILD_TESTING)
+@@ -277,6 +277,9 @@
    add_dependencies(capnp-tests test_capnp)
    add_dependencies(check capnp-tests)
    add_test(NAME capnp-tests-run COMMAND capnp-tests)
@@ -38,77 +53,19 @@ index 9980fde617..eeaa4a7978 100644
  
    if(NOT CAPNP_LITE)
      add_executable(capnp-heavy-tests
-@@ -316,6 +319,8 @@ if(BUILD_TESTING)
+@@ -316,6 +319,9 @@
      target_link_libraries(capnp-evolution-tests capnpc capnp kj)
      add_dependencies(check capnp-evolution-tests)
      add_test(NAME capnp-evolution-tests-run COMMAND capnp-evolution-tests)
 +    if(INSTALL_TESTS)
 +      install(TARGETS capnp-heavy-tests capnp-evolution-tests DESTINATION bin/)
-   endif()  # NOT CAPNP_LITE
- endif()  # BUILD_TESTING
- 
-diff --git a/c++/src/kj/CMakeLists.txt b/c++/src/kj/CMakeLists.txt
-index 980c53e34c..95ec0575bd 100644
---- a/c++/src/kj/CMakeLists.txt
-+++ b/c++/src/kj/CMakeLists.txt
-@@ -261,6 +261,10 @@ if(BUILD_TESTING)
-   target_link_libraries(kj-tests kj-test kj)
-   add_dependencies(check kj-tests)
-   add_test(NAME kj-tests-run COMMAND kj-tests)
-+  if(INSTALL_TESTS)
-+    install(TARGETS kj-tests DESTINATION bin/)
-+  endif()
-+
- 
-   if(NOT CAPNP_LITE)
-     add_executable(kj-heavy-tests
-@@ -310,5 +314,8 @@ if(BUILD_TESTING)
-     endif()
-     add_dependencies(check kj-heavy-tests)
-     add_test(NAME kj-heavy-tests-run COMMAND kj-heavy-tests)
-+    if(INSTALL_TESTS)
-+      install(TARGETS kj-heavy-tests DESTINATION bin/)
 +    endif()
    endif()  # NOT CAPNP_LITE
  endif()  # BUILD_TESTING
-
-From 01040dab805494b644b82c3a5a1ccf07adc77259 Mon Sep 17 00:00:00 2001
-From: Deep Chordia <dchordia@blackberry.com>
-Date: Thu, 24 Oct 2024 16:42:51 +0530
-Subject: [PATCH 2/3] Port for QNX
-
----
- c++/CMakeLists.txt                  |  2 +-
- c++/src/CMakeLists.txt              |  6 ++++--
- c++/src/kj/CMakeLists.txt           |  7 +++++--
- c++/src/kj/async-io-test.c++        |  4 ++++
- c++/src/kj/async-io-unix.c++        |  7 ++++---
- c++/src/kj/async-unix-test.c++      | 16 ++++++++++++++--
- c++/src/kj/exception.c++            |  8 ++++++--
- c++/src/kj/filesystem-disk-test.c++ | 16 ++++++++++++++--
- c++/src/kj/filesystem-disk-unix.c++ |  6 ++++--
- c++/src/kj/miniposix.h              |  4 ++++
- c++/src/kj/test-helpers.c++         |  2 +-
- 11 files changed, 61 insertions(+), 17 deletions(-)
-
-diff --git a/c++/CMakeLists.txt b/c++/CMakeLists.txt
-index 30e47ad2ee..9793d49a5c 100644
---- a/c++/CMakeLists.txt
-+++ b/c++/CMakeLists.txt
-@@ -159,7 +159,7 @@ else()
-     message(SEND_ERROR "Cap'n Proto requires compiler-specific extensions (e.g., -std=gnu++14). Please leave CMAKE_CXX_EXTENSIONS undefined or ON.")
-   endif()
  
--  if (NOT ANDROID)
-+  if (NOT ANDROID AND NOT QNX)
-     add_compile_options(-pthread)
-   endif()
- endif()
-diff --git a/c++/src/CMakeLists.txt b/c++/src/CMakeLists.txt
-index 3035301436..e458e1687d 100644
 --- a/c++/src/CMakeLists.txt
 +++ b/c++/src/CMakeLists.txt
-@@ -5,8 +5,10 @@ if(BUILD_TESTING)
+@@ -5,8 +5,10 @@
    include(CTest)
  
    if(EXTERNAL_CAPNP)
@@ -121,48 +78,23 @@ index 3035301436..e458e1687d 100644
      if(NOT CapnProto_FOUND)
        # No working installation of Cap'n Proto found, so fall back to searching the environment.
        #
-diff --git a/c++/src/kj/CMakeLists.txt b/c++/src/kj/CMakeLists.txt
-index 95ec0575bd..8a6b781ce1 100644
---- a/c++/src/kj/CMakeLists.txt
-+++ b/c++/src/kj/CMakeLists.txt
-@@ -81,9 +81,12 @@ add_library(CapnProto::kj ALIAS kj)
- # TODO(cleanup): Use cxx_std_14 once it's safe to require cmake 3.8.
- target_compile_features(kj PUBLIC cxx_generic_lambdas)
- 
--if(UNIX AND NOT ANDROID)
-+if(UNIX AND NOT (ANDROID OR QNX))
-   target_link_libraries(kj PUBLIC pthread)
- endif()
-+if(QNX)
-+  target_link_libraries(kj PUBLIC socket)
-+endif()
- #make sure the lite flag propagates to all users (internal + external) of this library
- target_compile_definitions(kj PUBLIC ${CAPNP_LITE_FLAG})
- #make sure external consumers don't need to manually set the include dirs
-@@ -150,7 +153,7 @@ if(NOT CAPNP_LITE)
-     target_compile_definitions(kj-async PUBLIC KJ_USE_FIBERS=0)
-   endif()
- 
--  if(UNIX)
-+  if(UNIX AND NOT QNX)
-     # external clients of this library need to link to pthreads
-     target_compile_options(kj-async INTERFACE "-pthread")
-   elseif(WIN32)
-diff --git a/c++/src/kj/async-io-test.c++ b/c++/src/kj/async-io-test.c++
-index e8892b79e6..1109ee371f 100644
 --- a/c++/src/kj/async-io-test.c++
 +++ b/c++/src/kj/async-io-test.c++
-@@ -378,7 +378,9 @@ bool systemSupportsAddress(StringPtr addr, StringPtr service = nullptr) {
+@@ -378,11 +378,13 @@
    struct addrinfo hints;
    hints.ai_family = AF_UNSPEC;
    hints.ai_socktype = 0;
 +#if !defined(__QNX__)
+ #if !defined(AI_V4MAPPED)
+   hints.ai_flags = AI_ADDRCONFIG;
+ #else
    hints.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
+ #endif
 +#endif
    hints.ai_protocol = 0;
    hints.ai_canonname = nullptr;
    hints.ai_addr = nullptr;
-@@ -2917,6 +2919,7 @@ KJ_TEST("Userspace TwoWayPipe whenWriteDisconnected()") {
+@@ -2921,6 +2923,7 @@
  
  #if !_WIN32  // We don't currently support detecting disconnect with IOCP.
  #if !__CYGWIN__  // TODO(someday): Figure out why whenWriteDisconnected() doesn't work on Cygwin.
@@ -170,7 +102,7 @@ index e8892b79e6..1109ee371f 100644
  
  KJ_TEST("OS OneWayPipe whenWriteDisconnected()") {
    auto io = setupAsyncIo();
-@@ -2956,6 +2959,7 @@ KJ_TEST("OS TwoWayPipe whenWriteDisconnected()") {
+@@ -2960,6 +2963,7 @@
  
    // Note: Reading any further in pipe.ends[0] would throw "connection reset".
  }
@@ -178,12 +110,10 @@ index e8892b79e6..1109ee371f 100644
  
  KJ_TEST("import socket FD that's already broken") {
    auto io = setupAsyncIo();
-diff --git a/c++/src/kj/async-io-unix.c++ b/c++/src/kj/async-io-unix.c++
-index 62ce21323e..58d543923c 100644
 --- a/c++/src/kj/async-io-unix.c++
 +++ b/c++/src/kj/async-io-unix.c++
-@@ -1239,7 +1239,8 @@ Promise<Array<SocketAddress>> SocketAddress::lookupHost(
- #if __BIONIC__
+@@ -1239,7 +1239,8 @@
+ #if __BIONIC__ || !defined(AI_V4MAPPED)
        // AI_V4MAPPED causes getaddrinfo() to fail on Bionic libc (Android).
        hints.ai_flags = AI_ADDRCONFIG;
 -#else
@@ -192,7 +122,7 @@ index 62ce21323e..58d543923c 100644
        hints.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
  #endif
        struct addrinfo* list;
-@@ -1357,8 +1358,8 @@ public:
+@@ -1357,8 +1358,8 @@
                ownFd.get(), IPPROTO_TCP, TCP_NODELAY, (char*)&one, sizeof(one))) {
            case EOPNOTSUPP:
            case ENOPROTOOPT: // (returned for AF_UNIX in cygwin)
@@ -203,11 +133,9 @@ index 62ce21323e..58d543923c 100644
  #endif
              break;
            default:
-diff --git a/c++/src/kj/async-unix-test.c++ b/c++/src/kj/async-unix-test.c++
-index 64190c430f..ac98074b55 100644
 --- a/c++/src/kj/async-unix-test.c++
 +++ b/c++/src/kj/async-unix-test.c++
-@@ -573,6 +573,17 @@ TEST(AsyncUnixTest, WriteObserver) {
+@@ -573,6 +573,17 @@
      KJ_NONBLOCKING_SYSCALL(n = write(outfd, "foo", 3));
    } while (n >= 0);
  
@@ -225,7 +153,7 @@ index 64190c430f..ac98074b55 100644
    bool writable = false;
    auto promise = observer.whenBecomesWritable()
        .then([&]() { writable = true; }).eagerlyEvaluate(nullptr);
-@@ -599,7 +610,7 @@ TEST(AsyncUnixTest, WriteObserver) {
+@@ -599,7 +610,7 @@
    EXPECT_TRUE(writable);
  }
  
@@ -234,7 +162,7 @@ index 64190c430f..ac98074b55 100644
  // Disabled on macOS due to https://github.com/capnproto/capnproto/issues/374.
  // Disabled on kqueue systems that lack EVFILT_EXCEPT because it doesn't work there.
  TEST(AsyncUnixTest, UrgentObserver) {
-@@ -978,6 +989,7 @@ KJ_TEST("UnixEventPort whenWriteDisconnected()") {
+@@ -978,6 +989,7 @@
    hupPromise.wait(waitScope);
  }
  
@@ -242,7 +170,7 @@ index 64190c430f..ac98074b55 100644
  KJ_TEST("UnixEventPort FdObserver(..., flags=0)::whenWriteDisconnected()") {
    // Verifies that given `0' as a `flags' argument,
    // FdObserver still observes whenWriteDisconnected().
-@@ -1004,7 +1016,7 @@ KJ_TEST("UnixEventPort FdObserver(..., flags=0)::whenWriteDisconnected()") {
+@@ -1004,7 +1016,7 @@
    KJ_ASSERT(hupPromise.poll(waitScope));
    hupPromise.wait(waitScope);
  }
@@ -251,8 +179,51 @@ index 64190c430f..ac98074b55 100644
  #endif
  
  KJ_TEST("UnixEventPort poll for signals") {
-diff --git a/c++/src/kj/exception.c++ b/c++/src/kj/exception.c++
-index 75e3179db4..678f64ead3 100644
+--- a/c++/src/kj/CMakeLists.txt
++++ b/c++/src/kj/CMakeLists.txt
+@@ -78,9 +78,12 @@
+ add_library(CapnProto::kj ALIAS kj)
+ target_compile_features(kj PUBLIC cxx_std_17)
+ 
+-if(UNIX AND NOT ANDROID)
++if(UNIX AND NOT (ANDROID OR QNX))
+   target_link_libraries(kj PUBLIC pthread)
+ endif()
++if(QNX)
++  target_link_libraries(kj PUBLIC socket)
++endif()
+ 
+ include(CheckCXXSourceCompiles)
+ check_cxx_source_compiles("#include <atomic>
+@@ -163,7 +166,7 @@
+     target_compile_definitions(kj-async PUBLIC KJ_USE_FIBERS=0)
+   endif()
+ 
+-  if(UNIX)
++  if(UNIX AND NOT QNX)
+     # external clients of this library need to link to pthreads
+     target_compile_options(kj-async INTERFACE "-pthread")
+   elseif(WIN32)
+@@ -274,6 +277,10 @@
+   target_link_libraries(kj-tests kj-test kj)
+   add_dependencies(check kj-tests)
+   add_test(NAME kj-tests-run COMMAND kj-tests)
++  if(INSTALL_TESTS)
++    install(TARGETS kj-tests DESTINATION bin/)
++  endif()
++
+ 
+   if(NOT CAPNP_LITE)
+     add_executable(kj-heavy-tests
+@@ -323,5 +330,8 @@
+     endif()
+     add_dependencies(check kj-heavy-tests)
+     add_test(NAME kj-heavy-tests-run COMMAND kj-heavy-tests)
++    if(INSTALL_TESTS)
++      install(TARGETS kj-heavy-tests DESTINATION bin/)
++    endif()
+   endif()  # NOT CAPNP_LITE
+ endif()  # BUILD_TESTING
 --- a/c++/src/kj/exception.c++
 +++ b/c++/src/kj/exception.c++
 @@ -49,6 +49,9 @@
@@ -265,7 +236,7 @@ index 75e3179db4..678f64ead3 100644
  #include "io.h"
  
  #if !KJ_NO_RTTI
-@@ -580,8 +583,9 @@ void printStackTraceOnCrash() {
+@@ -585,8 +588,9 @@
  #endif
  }
  
@@ -276,7 +247,7 @@ index 75e3179db4..678f64ead3 100644
  // try to catch SEH nor ctrl+C.
  
  void printStackTraceOnCrash() {
-@@ -1236,7 +1240,7 @@ struct FakeEhGlobals {
+@@ -1246,7 +1250,7 @@
  
  // LLVM's libstdc++ doesn't declare __cxa_get_globals in its cxxabi.h. GNU does. Because it is
  // extern "C", the compiler wills get upset if we re-declare it even in a different namespace.
@@ -285,11 +256,9 @@ index 75e3179db4..678f64ead3 100644
  extern "C" void* __cxa_get_globals();
  #else
  using abi::__cxa_get_globals;
-diff --git a/c++/src/kj/filesystem-disk-test.c++ b/c++/src/kj/filesystem-disk-test.c++
-index 5e7596efad..efd5350bd8 100644
 --- a/c++/src/kj/filesystem-disk-test.c++
 +++ b/c++/src/kj/filesystem-disk-test.c++
-@@ -235,7 +235,7 @@ public:
+@@ -235,7 +235,7 @@
  
    Own<Directory> get() {
      int fd;
@@ -298,7 +267,7 @@ index 5e7596efad..efd5350bd8 100644
      return newDiskDirectory(AutoCloseFd(fd));
    }
  
-@@ -346,6 +346,7 @@ KJ_TEST("DiskFile") {
+@@ -346,6 +346,7 @@
      KJ_EXPECT(kj::str(writableMapping->get().slice(0, 6).asChars()) == "fDobaz");
      KJ_EXPECT(kj::str(privateMapping.slice(0, 6).asChars()) == "Foobaz");
  
@@ -306,7 +275,7 @@ index 5e7596efad..efd5350bd8 100644
      file->write(0, StringPtr("qux").asBytes());
      KJ_EXPECT(kj::str(mapping.slice(0, 6).asChars()) == "quxbaz");
      KJ_EXPECT(kj::str(writableMapping->get().slice(0, 6).asChars()) == "quxbaz");
-@@ -353,6 +354,7 @@ KJ_TEST("DiskFile") {
+@@ -353,6 +354,7 @@
  
      file->write(12, StringPtr("corge").asBytes());
      KJ_EXPECT(kj::str(mapping.slice(12, 17).asChars()) == "corge");
@@ -314,7 +283,7 @@ index 5e7596efad..efd5350bd8 100644
  
  #if !_WIN32 && !__CYGWIN__  // Windows doesn't allow the file size to change while mapped.
      // Can shrink.
-@@ -370,9 +372,17 @@ KJ_TEST("DiskFile") {
+@@ -370,9 +372,17 @@
  
    file->truncate(6);
  
@@ -332,7 +301,7 @@ index 5e7596efad..efd5350bd8 100644
  }
  
  KJ_TEST("DiskFile::copy()") {
-@@ -765,7 +775,9 @@ KJ_TEST("DiskDirectory replaceSubdir()") {
+@@ -765,7 +775,9 @@
      KJ_EXPECT(!dir->exists(Path({"foo", "bar"})));
  
      replacer->commit();
@@ -342,7 +311,7 @@ index 5e7596efad..efd5350bd8 100644
      KJ_EXPECT(dir->openFile(Path({"foo", "bar"}))->readAllText() == "original");
    }
  
-@@ -985,7 +997,7 @@ KJ_TEST("DiskFilesystem::computeCurrentPath") {
+@@ -997,7 +1009,7 @@
      "some_path_longer_than_256_bytes"
    }), WriteMode::CREATE | WriteMode::CREATE_PARENT);
  
@@ -351,11 +320,9 @@ index 5e7596efad..efd5350bd8 100644
    KJ_SYSCALL(fchdir(KJ_ASSERT_NONNULL(subdir->getFd())));
    KJ_DEFER(KJ_SYSCALL(fchdir(origDir)));
  
-diff --git a/c++/src/kj/filesystem-disk-unix.c++ b/c++/src/kj/filesystem-disk-unix.c++
-index 67d7bf22c7..a945610592 100644
 --- a/c++/src/kj/filesystem-disk-unix.c++
 +++ b/c++/src/kj/filesystem-disk-unix.c++
-@@ -416,8 +416,8 @@ public:
+@@ -416,8 +416,8 @@
  
      static const byte ZEROS[4096] = { 0 };
  
@@ -366,7 +333,7 @@ index 67d7bf22c7..a945610592 100644
      while (size > sizeof(ZEROS)) {
        write(offset, ZEROS);
        size -= sizeof(ZEROS);
-@@ -672,8 +672,10 @@ public:
+@@ -672,8 +672,10 @@
    template <typename Func>
    auto list(bool needTypes, Func&& func) const
        -> Array<Decay<decltype(func(instance<StringPtr>(), instance<FsNode::Type>()))>> {
@@ -377,11 +344,9 @@ index 67d7bf22c7..a945610592 100644
  
      // Unfortunately, fdopendir() takes ownership of the file descriptor. Therefore we need to
      // make a duplicate.
-diff --git a/c++/src/kj/miniposix.h b/c++/src/kj/miniposix.h
-index e9ae848d38..09ce09761a 100644
 --- a/c++/src/kj/miniposix.h
 +++ b/c++/src/kj/miniposix.h
-@@ -132,6 +132,10 @@ static constexpr inline size_t iovMax() {
+@@ -132,6 +132,10 @@
  static constexpr inline size_t iovMax() {
    return UIO_MAX_IOV;
  }
@@ -392,11 +357,9 @@ index e9ae848d38..09ce09761a 100644
  #else
  #error "Please determine the appropriate constant for IOV_MAX on your system."
  #endif
-diff --git a/c++/src/kj/test-helpers.c++ b/c++/src/kj/test-helpers.c++
-index 6ae8cd3259..1a42c06aaf 100644
 --- a/c++/src/kj/test-helpers.c++
 +++ b/c++/src/kj/test-helpers.c++
-@@ -45,7 +45,7 @@ bool hasSubstring(StringPtr haystack, StringPtr needle) {
+@@ -45,7 +45,7 @@
      // Hell, doing a query for an embedded null & dispatching to strstr is still cheaper & only
      // marginally slower than the purely naiive implementation.
  
@@ -405,25 +368,3 @@ index 6ae8cd3259..1a42c06aaf 100644
      return memmem(haystack.begin(), haystack.size(), needle.begin(), needle.size()) != nullptr;
  #else
      // TODO(perf): This is not the best algorithm for substring matching. strstr can't be used
-
-From a60aaee41786d4ad4cf9079364550cf3ba4e18f4 Mon Sep 17 00:00:00 2001
-From: Deep Chordia <dchordia@blackberry.com>
-Date: Thu, 24 Oct 2024 18:54:34 +0530
-Subject: [PATCH 3/3] Rectify syntax error
-
----
- c++/src/capnp/CMakeLists.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/c++/src/capnp/CMakeLists.txt b/c++/src/capnp/CMakeLists.txt
-index eeaa4a7978..2145f36cc2 100644
---- a/c++/src/capnp/CMakeLists.txt
-+++ b/c++/src/capnp/CMakeLists.txt
-@@ -321,6 +321,7 @@ if(BUILD_TESTING)
-     add_test(NAME capnp-evolution-tests-run COMMAND capnp-evolution-tests)
-     if(INSTALL_TESTS)
-       install(TARGETS capnp-heavy-tests capnp-evolution-tests DESTINATION bin/)
-+    endif()
-   endif()  # NOT CAPNP_LITE
- endif()  # BUILD_TESTING
- 

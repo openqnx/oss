@@ -1,4 +1,4 @@
-# libxau 1.0.11
+# libxau 1.0.12
 
 > X authorization file management library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxau.git (tag `libXau-1.0.11`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxau.git (tag `libXau-1.0.12`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`xorgproto`](../xorgproto/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXau-1.0.11 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXau-1.0.12 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxau.git src/libxau
 ```
 
@@ -199,12 +199,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.11**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxau=<version>`), sources in `ported/libxau/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxau`; port one with `scripts/port-update libxau`.
+This recipe builds **1.0.12**. Kept from earlier: `1.0.11` ([recipe and patches](versions/1.0.11/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxau=<version>`), sources in `ported/libxau/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxau`; port one with `scripts/port-update libxau`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.11; GIT=https://gitlab.freedesktop.org/xorg/lib/libxau.git; REF=libXau-1.0.11
+VERSION=1.0.12; GIT=https://gitlab.freedesktop.org/xorg/lib/libxau.git; REF=libXau-1.0.12
 DEPS="xorgproto"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )

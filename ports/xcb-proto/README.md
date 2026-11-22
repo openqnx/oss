@@ -92,6 +92,7 @@ CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
 CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+am_cv_python_pythondir='${prefix}/lib/python3.14/site-packages' \
 $OLDPWD/src/xcb-proto/configure --host=$QNX_TRIPLE --prefix=/usr/local
 make -j$(nproc)
 make DESTDIR=$STAGE install
@@ -101,6 +102,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Pure XML + a Python module consumed by libxcb's generator at build time. It installs no target code, so it is built with the host Python.
+- xcbgen goes where the target's Python (the python3 port, 3.14) looks, not under the build host's Python version (3.12 in the clean build image: lib/python3.12, which the target never searches).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xcb-proto`.
 
@@ -190,6 +192,10 @@ VERSION=1.17.0; GIT=https://gitlab.freedesktop.org/xorg/proto/xcbproto.git; REF=
 # installs no target code, so it is built with the host Python.
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( )
+# xcbgen goes where the target's Python (the python3 port, 3.14) looks, not
+# under the build host's Python version (3.12 in the clean build image:
+# lib/python3.12, which the target never searches).
+CONF_ENV=( am_cv_python_pythondir='${prefix}/lib/python3.14/site-packages' )
 do_patch() { cd "$SRCROOT" && autoreconf -fi; }
 ```
 </details>

@@ -137,7 +137,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH webrtc`.
 
 ### 5. What it installs
 
-1579 files under `/usr/local`, 1575 headers.
+2231 files under `/usr/local`, 2226 headers.
 
 The complete list is `stage/<arch>/.manifest/webrtc` after a build.
 

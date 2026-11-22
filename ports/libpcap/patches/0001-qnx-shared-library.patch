@@ -4,16 +4,16 @@ Upstream-Status: QNX-specific
 
 --- a/configure
 +++ b/configure
-@@ -4782,7 +4782,7 @@
+@@ -4968,7 +4968,7 @@
  	    aix*)
  		    ;;
  
--	    freebsd*|netbsd*|openbsd*|dragonfly*|linux*|osf*|haiku*|midipix*)
-+	    freebsd*|netbsd*|openbsd*|dragonfly*|linux*|osf*|haiku*|midipix*|nto-qnx*)
+-	    freebsd*|netbsd*|openbsd*|dragonfly*|linux*|haiku*|midipix*|gnu*)
++	    freebsd*|netbsd*|openbsd*|dragonfly*|linux*|haiku*|midipix*|gnu*|nto-qnx*)
  		    #
  		    # Platforms where the C compiler is GCC or accepts
  		    # compatible command-line arguments, and the linker
-@@ -10120,7 +10120,7 @@
+@@ -9798,7 +9798,7 @@
  	MAN_MISC_INFO=5
  	;;
  

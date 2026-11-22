@@ -1,0 +1,32 @@
+EGL Wayland: wl_shm path directly when built without libdrm
+
+Without libdrm (QNX has no DRM kernel interface) EGL's Wayland platform
+can only present through wl_shm, but eglInitialize first tried the DRM
+path, then zink, and only then software: "failed to get driver name for
+fd -1" / "failed to create dri2 screen" warnings on every display. When
+Mesa is built without libdrm, initialise the Wayland display as a
+software one (as LIBGL_ALWAYS_SOFTWARE=1 does) and take the wl_shm path
+directly.
+
+Upstream-Status: QNX-specific
+
+--- a/src/egl/drivers/dri2/platform_wayland.c
++++ b/src/egl/drivers/dri2/platform_wayland.c
+@@ -3297,10 +3297,17 @@
+ EGLBoolean
+ dri2_initialize_wayland(_EGLDisplay *disp)
+ {
++#ifndef HAVE_LIBDRM
++   /* No DRM devices to render on (QNX): straight to the shm path, as a
++    * software display (as LIBGL_ALWAYS_SOFTWARE would make it). */
++   disp->Options.ForceSoftware = EGL_TRUE;
++   return dri2_initialize_wayland_swrast(disp);
++#else
+    if (disp->Options.ForceSoftware)
+       return dri2_initialize_wayland_swrast(disp);
+    else
+       return dri2_initialize_wayland_drm(disp);
++#endif
+ }
+ 
+ void

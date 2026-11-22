@@ -1,4 +1,4 @@
-# perl-error 0.17030
+# perl-error 0.17031
 
 > Error.pm, try/catch style exception handling for Perl
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17030.tar.gz |
-| SHA-256 | `34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924` |
+| Upstream | https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17031.tar.gz |
+| SHA-256 | `0a85374cf9cbde5a5075f16e62246e5d36abde63ec08c5c5694f128f4546852f` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`perl`](../perl/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17030.tar.gz
+URL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17031.tar.gz
 mkdir -p dist src/perl-error
 curl -fL -o dist/$(basename $URL) $URL
-echo "34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924  dist/$(basename $URL)" | sha256sum -c -
+echo "0a85374cf9cbde5a5075f16e62246e5d36abde63ec08c5c5694f128f4546852f  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/perl-error --strip-components=1
 ```
 
@@ -193,7 +193,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.17030**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-error=<version>`), sources in `ported/perl-error/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-error`; port one with `scripts/port-update perl-error`.
+This recipe builds **0.17031**. Kept from earlier: `0.17030` ([recipe and patches](versions/0.17030/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-error=<version>`), sources in `ported/perl-error/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-error`; port one with `scripts/port-update perl-error`.
 
 <details><summary>recipe.sh</summary>
 
@@ -201,9 +201,9 @@ This recipe builds **0.17030**. Every version stays available: packages in `dist
 # Error.pm (try/catch exception objects for Perl; used by git's Perl
 # scripts). Pure Perl, so the module files are installed as released into the
 # target perl's library. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=0.17030
-TARBALL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17030.tar.gz
-SHA256=34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924
+VERSION=0.17031
+TARBALL=https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/Error-0.17031.tar.gz
+SHA256=0a85374cf9cbde5a5075f16e62246e5d36abde63ec08c5c5694f128f4546852f
 DEPS="perl"
 BUILDSYS=custom
 do_build() { :; }

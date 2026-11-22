@@ -1,4 +1,4 @@
-# python3-coverage 7.17.0
+# python3-coverage 7.17.4
 
 > Code coverage measurement for Python
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/c9/17/48032919343afa2906112d458aceda2043afdb24a2ee8eb4c60904d8ddf1/coverage-7.17.0-py3-none-any.whl |
-| SHA-256 | `bac487dce0d2aff28ddf1a533a916f771416eee0e493960f611e49037b878e9d` |
+| Upstream | https://files.pythonhosted.org/packages/fb/b5/3039295337fcda9dfcaf6d4d294246c4400587d8f4a23b29b001c5cea588/coverage-7.17.4-py3-none-any.whl |
+| SHA-256 | `0f9547c30aeef70904ede391f4cb43d2ddd0a0d2d8fb4a96c75cc422f64afaac` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/c9/17/48032919343afa2906112d458aceda2043afdb24a2ee8eb4c60904d8ddf1/coverage-7.17.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/fb/b5/3039295337fcda9dfcaf6d4d294246c4400587d8f4a23b29b001c5cea588/coverage-7.17.4-py3-none-any.whl
 mkdir -p dist src/python3-coverage
 curl -fL -o dist/$(basename $URL) $URL
-echo "bac487dce0d2aff28ddf1a533a916f771416eee0e493960f611e49037b878e9d  dist/$(basename $URL)" | sha256sum -c -
+echo "0f9547c30aeef70904ede391f4cb43d2ddd0a0d2d8fb4a96c75cc422f64afaac  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-coverage --strip-components=1
 ```
 
@@ -225,7 +225,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **7.17.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-coverage=<version>`), sources in `ported/python3-coverage/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-coverage`; port one with `scripts/port-update python3-coverage`.
+This recipe builds **7.17.4**. Kept from earlier: `7.17.0` ([recipe and patches](versions/7.17.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-coverage=<version>`), sources in `ported/python3-coverage/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-coverage`; port one with `scripts/port-update python3-coverage`.
 
 <details><summary>recipe.sh</summary>
 
@@ -233,9 +233,9 @@ This recipe builds **7.17.0**. Every version stays available: packages in `dists
 # coverage: code coverage measurement for Python (the pure-Python tracer; no C tracer).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=7.17.0
-TARBALL=https://files.pythonhosted.org/packages/c9/17/48032919343afa2906112d458aceda2043afdb24a2ee8eb4c60904d8ddf1/coverage-7.17.0-py3-none-any.whl
-SHA256=bac487dce0d2aff28ddf1a533a916f771416eee0e493960f611e49037b878e9d
+VERSION=7.17.4
+TARBALL=https://files.pythonhosted.org/packages/fb/b5/3039295337fcda9dfcaf6d4d294246c4400587d8f4a23b29b001c5cea588/coverage-7.17.4-py3-none-any.whl
+SHA256=0f9547c30aeef70904ede391f4cb43d2ddd0a0d2d8fb4a96c75cc422f64afaac
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

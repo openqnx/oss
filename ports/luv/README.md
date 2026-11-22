@@ -1,4 +1,4 @@
-# luv 1.51.0-1
+# luv 1.53.0-1
 
 > libuv bindings for Lua and LuaJIT
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/luvit/luv.git (tag `1.51.0-1`) |
+| Upstream | https://github.com/luvit/luv.git (tag `1.53.0-1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libuv`](../libuv/) [`luajit`](../luajit/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.51.0-1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.53.0-1 --recurse-submodules --shallow-submodules \
     https://github.com/luvit/luv.git src/luv
 ```
 
@@ -118,7 +118,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH luv`.
 ```
 /usr/local/lib/libluv.so
 /usr/local/lib/libluv.so.1
-/usr/local/lib/libluv.so.1.51.0
+/usr/local/lib/libluv.so.1.53.0
 ```
 
 The complete list is `stage/<arch>/.manifest/luv` after a build.
@@ -194,12 +194,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.51.0-1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add luv=<version>`), sources in `ported/luv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates luv`; port one with `scripts/port-update luv`.
+This recipe builds **1.53.0-1**. Kept from earlier: `1.51.0-1` ([recipe and patches](versions/1.51.0-1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add luv=<version>`), sources in `ported/luv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates luv`; port one with `scripts/port-update luv`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.51.0-1; GIT=https://github.com/luvit/luv.git; REF=1.51.0-1
+VERSION=1.53.0-1; GIT=https://github.com/luvit/luv.git; REF=1.53.0-1
 DEPS="libuv luajit"
 BUILDSYS=cmake
 # libuv bindings for Lua -- the event loop under Neovim's Lua API.  Built as a

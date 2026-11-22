@@ -1,4 +1,4 @@
-# libgcrypt 1.11.0
+# libgcrypt 1.12.4
 
 > GNU general purpose cryptographic library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.0.tar.bz2 |
-| SHA-256 | `09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c` |
+| Upstream | https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.12.4.tar.bz2 |
+| SHA-256 | `d77f68f48879510e79a2f65977ccc68981781ea0923e5bdffac2a193ea3d660e` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libgpg-error`](../libgpg-error/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.0.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.12.4.tar.bz2
 mkdir -p dist src/libgcrypt
 curl -fL -o dist/$(basename $URL) $URL
-echo "09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c  dist/$(basename $URL)" | sha256sum -c -
+echo "d77f68f48879510e79a2f65977ccc68981781ea0923e5bdffac2a193ea3d660e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libgcrypt --strip-components=1
 ```
 
@@ -127,7 +127,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libgcrypt`.
 
 ```
 /usr/local/lib/libgcrypt.so
-/usr/local/lib/libgcrypt.so.25
+/usr/local/lib/libgcrypt.so.28
 /usr/local/bin/dumpsexp
 /usr/local/bin/hmac256
 /usr/local/bin/libgcrypt-config
@@ -216,14 +216,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.11.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgcrypt=<version>`), sources in `ported/libgcrypt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgcrypt`; port one with `scripts/port-update libgcrypt`.
+This recipe builds **1.12.4**. Kept from earlier: `1.11.0` ([recipe and patches](versions/1.11.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgcrypt=<version>`), sources in `ported/libgcrypt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgcrypt`; port one with `scripts/port-update libgcrypt`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.11.0
-TARBALL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.0.tar.bz2
-SHA256=09120c9867ce7f2081d6aaa1775386b98c2f2f246135761aae47d81f58685b9c
+VERSION=1.12.4
+TARBALL=https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.12.4.tar.bz2
+SHA256=d77f68f48879510e79a2f65977ccc68981781ea0923e5bdffac2a193ea3d660e
 BUILDSYS=autotools
 DEPS="libgpg-error"
 # configure probes PATH for gpgrt-config and would otherwise pick up the build

@@ -1,4 +1,4 @@
-# orc 0.4.40
+# orc 0.4.44
 
 > Oil Runtime Compiler library for optimized inner loops (SIMD)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/gstreamer/orc.git (tag `0.4.40`) |
+| Upstream | https://gitlab.freedesktop.org/gstreamer/orc.git (tag `0.4.44`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.4.40 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.4.44 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/gstreamer/orc.git src/orc
 ```
 
@@ -104,7 +104,7 @@ meson setup build/$QNX_ARCH/orc src/orc \
       -Dexamples=disabled \
       -Dtests=disabled \
       -Dtools=disabled \
-      -Dgtk_doc=disabled
+      -Dhotdoc=disabled
 ninja -C build/$QNX_ARCH/orc
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/orc install
 ```
@@ -113,12 +113,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH orc`.
 
 ### 5. What it installs
 
-37 files under `/usr/local`: 3 shared-library entries, 32 headers.
+45 files under `/usr/local`: 3 shared-library entries, 40 headers.
 
 ```
 /usr/local/lib/liborc-0.4.so
 /usr/local/lib/liborc-0.4.so.0
-/usr/local/lib/liborc-0.4.so.0.40.0
+/usr/local/lib/liborc-0.4.so.0.44.0
 ```
 
 The complete list is `stage/<arch>/.manifest/orc` after a build.
@@ -196,15 +196,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.4.40**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add orc=<version>`), sources in `ported/orc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates orc`; port one with `scripts/port-update orc`.
+This recipe builds **0.4.44**. Kept from earlier: `0.4.40` ([recipe and patches](versions/0.4.40/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add orc=<version>`), sources in `ported/orc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates orc`; port one with `scripts/port-update orc`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.4.40; GIT=https://gitlab.freedesktop.org/gstreamer/orc.git; REF=0.4.40
+VERSION=0.4.44; GIT=https://gitlab.freedesktop.org/gstreamer/orc.git; REF=0.4.44
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dorc-test=disabled -Dbenchmarks=disabled -Dexamples=disabled
-                   -Dtests=disabled -Dtools=disabled -Dgtk_doc=disabled )
+                   -Dtests=disabled -Dtools=disabled -Dhotdoc=disabled )
 ```
 </details>
 

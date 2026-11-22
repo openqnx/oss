@@ -1,4 +1,4 @@
-# libxdamage 1.1.6
+# libxdamage 1.1.7
 
 > X Damage extension client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxdamage.git (tag `libXdamage-1.1.6`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxdamage.git (tag `libXdamage-1.1.7`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxfixes`](../libxfixes/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXdamage-1.1.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXdamage-1.1.7 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxdamage.git src/libxdamage
 ```
 
@@ -206,12 +206,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxdamage=<version>`), sources in `ported/libxdamage/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxdamage`; port one with `scripts/port-update libxdamage`.
+This recipe builds **1.1.7**. Kept from earlier: `1.1.6` ([recipe and patches](versions/1.1.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxdamage=<version>`), sources in `ported/libxdamage/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxdamage`; port one with `scripts/port-update libxdamage`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxdamage.git; REF=libXdamage-1.1.6
+VERSION=1.1.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxdamage.git; REF=libXdamage-1.1.7
 DEPS="libx11 libxfixes xorgproto"
 BUILDSYS=autotools
 # Needed by GTK3's X11 backend (HAVE_XDAMAGE), which Thunar requires.

@@ -1,4 +1,4 @@
-# openttd 15.0-git-20250501
+# openttd 15.3
 
 > OpenTTD, an open source simulation game based on Transport Tycoon Deluxe
 
@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`zlib`](../zlib/) [`xz`](../xz/) [`libpng`](../libpng/) [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`curl`](../curl/) [`lzo`](../lzo/) |
-| Run-time dependencies | [`curl`](../curl/) [`freetype`](../freetype/) [`libpng`](../libpng/) [`lzo`](../lzo/) [`sdl2`](../sdl2/) [`xz`](../xz/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`curl`](../curl/) [`freetype`](../freetype/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`lzo`](../lzo/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`sdl2`](../sdl2/) [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | none (no run-time code) |
 
@@ -106,7 +106,7 @@ patch -p1 -d src/openttd < ports/openttd/patches/0002-qnx-link-libpng.patch
 >  src/os/unix/crashlog_unix.cpp |  7 ++++++-
 >  5 files changed, 40 insertions(+), 5 deletions(-)
 
-Touches: `CMakeLists.txt`, `cmake/CompileFlags.cmake`, `src/3rdparty/catch2/catch.hpp`, `src/music/CMakeLists.txt`, `src/os/unix/crashlog_unix.cpp` · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `cmake/CompileFlags.cmake`, `CMakeLists.txt`, `src/3rdparty/catch2/catch.hpp`, `src/music/CMakeLists.txt`, `src/os/unix/crashlog_unix.cpp` · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 **[`0002-qnx-link-libpng.patch`](patches/0002-qnx-link-libpng.patch)** — Link libpng on QNX as everywhere else.
 
@@ -131,12 +131,18 @@ do_configure() {
   local nat="$B/native"; mkdir -p "$nat"
   env -u CC -u CXX -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR cmake -S "$S" -B "$nat" -G Ninja -DOPTION_TOOLS_ONLY=ON && \
     cmake --build "$nat" --target tools || return 1
+  # -flifetime-dse=1: OpenTTD's pool allocator stores each item's index in
+  # operator new, before the constructor runs; GCC's default lifetime DSE
+  # drops that store, every Engine got a garbage index and the game crashed
+  # at start in ResetNewGRFData(). Upstream adds the flag for GCC, but the
+  # qnx-ports patch skips that check on QNX.
   # C++20 for every target: the toolchain's default flags say -std=gnu++17,
   # which openttd_test (no standard of its own) kept, and std::source_location
   # is C++20 ("source_location in namespace std does not name a type").
   cmake -S "$S" -B "$B/target" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$QNX_ARCH.cmake" -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_STANDARD=20 -DCMAKE_CXX_STANDARD_REQUIRED=ON \
-    -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DOPTION_TOOLS_ONLY=OFF -DHOST_BINARY_DIR="$nat" \
+    -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -flifetime-dse=1" \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DOPTION_TOOLS_ONLY=OFF -DHOST_BINARY_DIR="$nat" \
     -DCMAKE_DISABLE_FIND_PACKAGE_ICU=ON -DCPU="$QNX_CPU"
 }
 ```
@@ -151,13 +157,17 @@ do_install() { DESTDIR="$STAGE" cmake --install "$B/target"; }
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- OpenTTD (open source Transport Tycoon Deluxe), at the upstream commit qnx-ports' port is based on (patches/: QNX support); part of qnx-ports' RetroPie set. OpenTTD generates sources with tools it builds first, so a native build of those tools is made (HOST_BINARY_DIR).
+- OpenTTD (open source Transport Tycoon Deluxe), at the upstream commit qnx-ports' port is based on (patches/: QNX support); part of qnx-ports' RetroPie set. OpenTTD generates sources with tools it builds first, so a native build of those tools is made (HOST_BINARY_DIR). The binary goes to bin/ (OpenTTD defaults to games/, which is not on PATH, so the desktop entry's Exec=openttd failed).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openttd`.
 
 ### 5. What it installs
 
-153 files under `/usr/local`.
+154 files under `/usr/local`, 1 programs.
+
+```
+/usr/local/bin/openttd
+```
 
 The complete list is `stage/<arch>/.manifest/openttd` after a build.
 
@@ -208,7 +218,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **15.0-git-20250501**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openttd=<version>`), sources in `ported/openttd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openttd`; port one with `scripts/port-update openttd`.
+This recipe builds **15.3**. Kept from earlier: `15.0-git-20250501` ([recipe and patches](versions/15.0-git-20250501/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openttd=<version>`), sources in `ported/openttd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openttd`; port one with `scripts/port-update openttd`.
 
 <details><summary>recipe.sh</summary>
 
@@ -217,19 +227,27 @@ This recipe builds **15.0-git-20250501**. Every version stays available: package
 # qnx-ports' port is based on (patches/: QNX support); part of qnx-ports'
 # RetroPie set. OpenTTD generates sources with tools it builds first, so a
 # native build of those tools is made (HOST_BINARY_DIR).
-VERSION=15.0-git-20250501; GIT=https://github.com/OpenTTD/OpenTTD.git; COMMIT=41b113840a983e2e9b107a452f800eb94c662b23
+# The binary goes to bin/ (OpenTTD defaults to games/, which is not on PATH,
+# so the desktop entry's Exec=openttd failed).
+VERSION=15.3; GIT=https://github.com/OpenTTD/OpenTTD.git; COMMIT=14ec60f248547d4d062a1160f0fc26d742319888
 DEPS="sdl2 zlib xz libpng freetype fontconfig curl lzo"
 BUILDSYS=custom
 do_configure() {
   local nat="$B/native"; mkdir -p "$nat"
   env -u CC -u CXX -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR cmake -S "$S" -B "$nat" -G Ninja -DOPTION_TOOLS_ONLY=ON && \
     cmake --build "$nat" --target tools || return 1
+  # -flifetime-dse=1: OpenTTD's pool allocator stores each item's index in
+  # operator new, before the constructor runs; GCC's default lifetime DSE
+  # drops that store, every Engine got a garbage index and the game crashed
+  # at start in ResetNewGRFData(). Upstream adds the flag for GCC, but the
+  # qnx-ports patch skips that check on QNX.
   # C++20 for every target: the toolchain's default flags say -std=gnu++17,
   # which openttd_test (no standard of its own) kept, and std::source_location
   # is C++20 ("source_location in namespace std does not name a type").
   cmake -S "$S" -B "$B/target" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$QNX_ARCH.cmake" -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_STANDARD=20 -DCMAKE_CXX_STANDARD_REQUIRED=ON \
-    -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DOPTION_TOOLS_ONLY=OFF -DHOST_BINARY_DIR="$nat" \
+    -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -flifetime-dse=1" \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DOPTION_TOOLS_ONLY=OFF -DHOST_BINARY_DIR="$nat" \
     -DCMAKE_DISABLE_FIND_PACKAGE_ICU=ON -DCPU="$QNX_CPU"
 }
 do_build() { cmake --build "$B/target" -j"$(nproc)"; }

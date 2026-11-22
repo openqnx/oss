@@ -1,4 +1,4 @@
-# bash 5.2.37
+# bash 5.3
 
 > GNU Bourne Again shell
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz |
-| SHA-256 | `9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff` |
+| Upstream | https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz |
+| SHA-256 | `0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) [`libiconv`](../libiconv/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz
+URL=https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz
 mkdir -p dist src/bash
 curl -fL -o dist/$(basename $URL) $URL
-echo "9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff  dist/$(basename $URL)" | sha256sum -c -
+echo "0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/bash --strip-components=1
 ```
 
@@ -209,14 +209,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.2.37**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add bash=<version>`), sources in `ported/bash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates bash`; port one with `scripts/port-update bash`.
+This recipe builds **5.3**. Kept from earlier: `5.2.37` ([recipe and patches](versions/5.2.37/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add bash=<version>`), sources in `ported/bash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates bash`; port one with `scripts/port-update bash`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=5.2.37
-TARBALL=https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz
-SHA256=9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff
+VERSION=5.3
+TARBALL=https://ftp.gnu.org/gnu/bash/bash-5.3.tar.gz
+SHA256=0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="ncurses readline libiconv"
 BUILDSYS=autotools

@@ -1,4 +1,4 @@
-# libx11 1.8.10
+# libx11 1.8.14
 
 > Core X11 protocol client library (Xlib)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libx11.git (tag `libX11-1.8.10`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libx11.git (tag `libX11-1.8.14`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libxcb`](../libxcb/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libX11-1.8.10 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libX11-1.8.14 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libx11.git src/libx11
 ```
 
@@ -222,12 +222,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.10**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libx11=<version>`), sources in `ported/libx11/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libx11`; port one with `scripts/port-update libx11`.
+This recipe builds **1.8.14**. Kept from earlier: `1.8.10` ([recipe and patches](versions/1.8.10/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libx11=<version>`), sources in `ported/libx11/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libx11`; port one with `scripts/port-update libx11`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.8.10; GIT=https://gitlab.freedesktop.org/xorg/lib/libx11.git; REF=libX11-1.8.10
+VERSION=1.8.14; GIT=https://gitlab.freedesktop.org/xorg/lib/libx11.git; REF=libX11-1.8.14
 DEPS="libxcb xorgproto xtrans"
 BUILDSYS=autotools
 # makekeys is a build-machine tool libX11 compiles and runs during the build;

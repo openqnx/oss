@@ -536,6 +536,7 @@ TEST_EXTRAS = {
     "test_virtualgl": ["bin/vglclient", "bin/Xwayland", "bin/labwc"],
     "test_graphicsmagick": ["bin/gm"],
     "test_poppler": ["share/fonts/font-dejavu"],
+    "test_parole": ["bin/labwc", "share/X11/xkb", "bin/dbus-daemon", "bin/gst-launch-1.0"],
     "test_docbook_xsl": ["share/xml/docbook/xsl-stylesheets-1.79.2"],
     "test_perl_mozilla_ca": ["bin/perl", "lib/perl5/site_perl/5.40.2/Mozilla"],
     "test_whisper": ["opt/whisper.cpp/lib", "opt/whisper.cpp/share/models"],

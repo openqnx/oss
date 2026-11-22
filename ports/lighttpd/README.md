@@ -1,4 +1,4 @@
-# lighttpd 1.4.77
+# lighttpd 1.4.85
 
 > Lightweight, flexible web server
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://git.lighttpd.net/lighttpd/lighttpd1.4.git (tag `lighttpd-1.4.77`) |
+| Upstream | https://git.lighttpd.net/lighttpd/lighttpd1.4.git (tag `lighttpd-1.4.85`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b lighttpd-1.4.77 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b lighttpd-1.4.85 --recurse-submodules --shallow-submodules \
     https://git.lighttpd.net/lighttpd/lighttpd1.4.git src/lighttpd
 ```
 
@@ -104,6 +104,7 @@ cmake -S src/lighttpd -B build/$QNX_ARCH/lighttpd -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
+      -DCMAKE_DISABLE_FIND_PACKAGE_PCRE2=ON \
       -DWITH_OPENSSL=ON \
       -DWITH_PCRE2=ON \
       -DWITH_ZLIB=ON \
@@ -112,6 +113,10 @@ cmake -S src/lighttpd -B build/$QNX_ARCH/lighttpd -G Ninja \
 cmake --build build/$QNX_ARCH/lighttpd -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/lighttpd
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- lighttpd asks find_package(PCRE2) for no component, which pcre2's own config file refuses (a fatal error, not a quiet miss): take its pkg-config route.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH lighttpd`.
 
@@ -207,14 +212,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.77**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lighttpd=<version>`), sources in `ported/lighttpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lighttpd`; port one with `scripts/port-update lighttpd`.
+This recipe builds **1.4.85**. Kept from earlier: `1.4.77` ([recipe and patches](versions/1.4.77/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lighttpd=<version>`), sources in `ported/lighttpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lighttpd`; port one with `scripts/port-update lighttpd`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.4.77; GIT=https://git.lighttpd.net/lighttpd/lighttpd1.4.git; REF=lighttpd-1.4.77
+VERSION=1.4.85; GIT=https://git.lighttpd.net/lighttpd/lighttpd1.4.git; REF=lighttpd-1.4.85
 DEPS="openssl pcre2 zlib"
-CMAKE_ARGS_EXTRA=( -DWITH_OPENSSL=ON -DWITH_PCRE2=ON -DWITH_ZLIB=ON -DWITH_BZIP=OFF -DBUILD_STATIC=OFF )
+# lighttpd asks find_package(PCRE2) for no component, which pcre2's own config
+# file refuses (a fatal error, not a quiet miss): take its pkg-config route.
+CMAKE_ARGS_EXTRA=( -DCMAKE_DISABLE_FIND_PACKAGE_PCRE2=ON -DWITH_OPENSSL=ON -DWITH_PCRE2=ON -DWITH_ZLIB=ON -DWITH_BZIP=OFF -DBUILD_STATIC=OFF )
 ```
 </details>
 

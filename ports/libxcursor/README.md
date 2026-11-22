@@ -1,4 +1,4 @@
-# libxcursor 1.2.2
+# libxcursor 1.2.3
 
 > X cursor management library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxcursor.git (tag `libXcursor-1.2.2`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxcursor.git (tag `libXcursor-1.2.3`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxrender`](../libxrender/) [`libxfixes`](../libxfixes/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXcursor-1.2.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXcursor-1.2.3 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxcursor.git src/libxcursor
 ```
 
@@ -212,12 +212,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcursor=<version>`), sources in `ported/libxcursor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcursor`; port one with `scripts/port-update libxcursor`.
+This recipe builds **1.2.3**. Kept from earlier: `1.2.2` ([recipe and patches](versions/1.2.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcursor=<version>`), sources in `ported/libxcursor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcursor`; port one with `scripts/port-update libxcursor`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcursor.git; REF=libXcursor-1.2.2
+VERSION=1.2.3; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcursor.git; REF=libXcursor-1.2.3
 DEPS="libx11 libxrender libxfixes xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

@@ -1,4 +1,4 @@
-# onednn 3.14.1
+# onednn 3.14.2
 
 > oneAPI Deep Neural Network Library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/uxlfoundation/oneDNN.git (tag `v3.14.1`) |
+| Upstream | https://github.com/uxlfoundation/oneDNN.git (tag `v3.14.2`) |
 | Build system | CMake |
 | QNX patches | 2 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.14.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.14.2 --recurse-submodules --shallow-submodules \
     https://github.com/uxlfoundation/oneDNN.git src/onednn
 ```
 
@@ -226,7 +226,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.14.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add onednn=<version>`), sources in `ported/onednn/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates onednn`; port one with `scripts/port-update onednn`.
+This recipe builds **3.14.2**. Kept from earlier: `3.14.1` ([recipe and patches](versions/3.14.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add onednn=<version>`), sources in `ported/onednn/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates onednn`; port one with `scripts/port-update onednn`.
 
 <details><summary>recipe.sh</summary>
 
@@ -238,7 +238,7 @@ This recipe builds **3.14.1**. Every version stays available: packages in `dists
 # qnx-openvino-2026.1.2) and a QNX CPU-information backend for Xbyak_aarch64
 # (patches/0002: features, cores and caches from the system page; without it
 # the Arm JIT does not build for QNX).
-VERSION=3.14.1; GIT=https://github.com/uxlfoundation/oneDNN.git; REF=v3.14.1
+VERSION=3.14.2; GIT=https://github.com/uxlfoundation/oneDNN.git; REF=v3.14.2
 DEPS=""
 BUILDSYS=cmake
 # Sequential CPU runtime: QNX's GCC has no OpenMP runtime and there is no TBB

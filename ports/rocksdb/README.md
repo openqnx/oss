@@ -1,4 +1,4 @@
-# rocksdb 11.8.1
+# rocksdb 11.13.2
 
 > Embeddable, persistent key-value store for fast storage
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/facebook/rocksdb.git (tag `v11.8.1`) |
+| Upstream | https://github.com/facebook/rocksdb.git (tag `v11.13.2`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`lz4`](../lz4/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v11.8.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v11.13.2 --recurse-submodules --shallow-submodules \
     https://github.com/facebook/rocksdb.git src/rocksdb
 ```
 
@@ -130,12 +130,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH rocksdb`.
 
 ### 5. What it installs
 
-139 files under `/usr/local`: 3 shared-library entries, 2 programs, 119 headers.
+145 files under `/usr/local`: 3 shared-library entries, 2 programs, 125 headers.
 
 ```
 /usr/local/lib/librocksdb.so
 /usr/local/lib/librocksdb.so.11
-/usr/local/lib/librocksdb.so.11.8.1
+/usr/local/lib/librocksdb.so.11.13.2
 /usr/local/bin/ldb
 /usr/local/bin/sst_dump
 ```
@@ -236,7 +236,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **11.8.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rocksdb=<version>`), sources in `ported/rocksdb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rocksdb`; port one with `scripts/port-update rocksdb`.
+This recipe builds **11.13.2**. Kept from earlier: `11.8.1` ([recipe and patches](versions/11.8.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rocksdb=<version>`), sources in `ported/rocksdb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rocksdb`; port one with `scripts/port-update rocksdb`.
 
 <details><summary>recipe.sh</summary>
 
@@ -244,7 +244,7 @@ This recipe builds **11.8.1**. Every version stays available: packages in `dists
 # RocksDB: embeddable persistent key-value store (LSM tree) for fast storage,
 # with column families, transactions, snapshots, iterators, compaction and
 # backups; plus the ldb and sst_dump tools.
-VERSION=11.8.1; GIT=https://github.com/facebook/rocksdb.git; REF=v11.8.1
+VERSION=11.13.2; GIT=https://github.com/facebook/rocksdb.git; REF=v11.13.2
 # Compression: LZ4, zlib and ZSTD. Not snappy: the snappy component is built
 # as upstream builds it, without RTTI, and RocksDB (built with RTTI, which
 # its users need to derive from its classes) subclasses snappy::Sink, whose

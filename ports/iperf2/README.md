@@ -1,4 +1,4 @@
-# iperf2 2.2.1
+# iperf2 2.2.2
 
 > Tool for measuring network bandwidth, TCP and UDP performance (iperf 2)
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://downloads.sourceforge.net/project/iperf2/iperf-2.2.1.tar.gz |
-| SHA-256 | `754ab0a7e28033dbea81308ef424bc7df4d6e2fe31b60cc536b61b51fefbd8fb` |
+| Upstream | https://downloads.sourceforge.net/project/iperf2/iperf-2.2.2.tar.gz |
+| SHA-256 | `4008e1dc7cdeb68605747e11e954a5b25f4646ab6d71207d979acec5de7d385a` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -73,44 +73,16 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.1.tar.gz
+URL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.2.tar.gz
 mkdir -p dist src/iperf2
 curl -fL -o dist/$(basename $URL) $URL
-echo "754ab0a7e28033dbea81308ef424bc7df4d6e2fe31b60cc536b61b51fefbd8fb  dist/$(basename $URL)" | sha256sum -c -
+echo "4008e1dc7cdeb68605747e11e954a5b25f4646ab6d71207d979acec5de7d385a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/iperf2 --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/iperf2 < ports/iperf2/patches/0001-qnx-from-qnx-ports.patch
-```
-
-**[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — add support for QNX 7.1/8.0 with recv-mmsg/send-mmsg
-
-> Imported from qnx-ports/iperf2 (5fe98129177e...d4954fb61f7e, branch qnx-2-2-1); original authorship kept.
->
-> ---
->  include/Client.hpp   |   6 +-
->  include/Locale.h     |  10 +++
->  include/Reporter.h   |   7 ++
->  include/Server.hpp   |  18 +++-
->  include/Settings.hpp |  47 ++++++++++
->  include/payloads.h   |   4 +
->  src/Client.cpp       | 200 +++++++++++++++++++++++++++++++++++++++++--
->  src/Listener.cpp     |   7 ++
->  src/Locale.c         |  31 ++++++-
->  src/ReportOutputs.c  |  59 +++++++++----
->  src/Reports.c        |   7 ++
->  src/Server.cpp       | 127 ++++++++++++++++++++++++++-
->  src/Settings.cpp     |  81 ++++++++++++++++++
->  src/checksums.c      |   4 +
->  src/main.cpp         |   5 ++
->  15 files changed, 579 insertions(+), 34 deletions(-)
-
-Touches: `include/Client.hpp`, `include/Locale.h`, `include/Reporter.h`, `include/Server.hpp`, `include/Settings.hpp`, `include/payloads.h` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -130,7 +102,7 @@ cd -
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- iperf 2 (the iperf2 project on SourceForge, not esnet's iperf3; installs bin/iperf). The QNX support is qnx-ports/iperf2 (branch qnx-2-2-1, based on upstream's 2-2-1 branch = this release): QNX 7.1/8.0 cases for the recvmmsg()/sendmmsg() batched UDP paths and the headers they need.
+- iperf 2 (the iperf2 project on SourceForge, not esnet's iperf3; installs bin/iperf). No QNX patch since 2.2.2: upstream took qnx-ports/iperf2's recvmmsg()/sendmmsg() batched UDP paths, generalized under HAVE_RECVMMSG / HAVE_SENDMMSG (configure checks the functions), and the QNX uh_sum case.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH iperf2`.
 
@@ -212,18 +184,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iperf2=<version>`), sources in `ported/iperf2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iperf2`; port one with `scripts/port-update iperf2`.
+This recipe builds **2.2.2**. Kept from earlier: `2.2.1` ([recipe and patches](versions/2.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iperf2=<version>`), sources in `ported/iperf2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iperf2`; port one with `scripts/port-update iperf2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # iperf 2 (the iperf2 project on SourceForge, not esnet's iperf3; installs
-# bin/iperf). The QNX support is qnx-ports/iperf2 (branch qnx-2-2-1, based on
-# upstream's 2-2-1 branch = this release): QNX 7.1/8.0 cases for the
-# recvmmsg()/sendmmsg() batched UDP paths and the headers they need.
-VERSION=2.2.1
-TARBALL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.1.tar.gz
-SHA256=754ab0a7e28033dbea81308ef424bc7df4d6e2fe31b60cc536b61b51fefbd8fb
+# bin/iperf). No QNX patch since 2.2.2: upstream took qnx-ports/iperf2's
+# recvmmsg()/sendmmsg() batched UDP paths, generalized under HAVE_RECVMMSG /
+# HAVE_SENDMMSG (configure checks the functions), and the QNX uh_sum case.
+VERSION=2.2.2
+TARBALL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.2.tar.gz
+SHA256=4008e1dc7cdeb68605747e11e954a5b25f4646ab6d71207d979acec5de7d385a
 BUILDSYS=autotools
 ```
 </details>

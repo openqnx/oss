@@ -1,4 +1,4 @@
-# xkeyboard-config 2.43
+# xkeyboard-config 2.49
 
 > XKB keyboard configuration data: rules, layouts, symbols
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config.git (tag `xkeyboard-config-2.43`) |
+| Upstream | https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config.git (tag `xkeyboard-config-2.49`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b xkeyboard-config-2.43 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b xkeyboard-config-2.49 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config.git src/xkeyboard-config
 ```
 
@@ -101,7 +101,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xkeyboard-config
 
 ### 5. What it installs
 
-343 files under `/usr/local`.
+395 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/xkeyboard-config` after a build.
 
@@ -190,13 +190,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.43**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xkeyboard-config=<version>`), sources in `ported/xkeyboard-config/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xkeyboard-config`; port one with `scripts/port-update xkeyboard-config`.
+This recipe builds **2.49**. Kept from earlier: `2.43` ([recipe and patches](versions/2.43/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xkeyboard-config=<version>`), sources in `ported/xkeyboard-config/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xkeyboard-config`; port one with `scripts/port-update xkeyboard-config`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.43
-GIT=https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config.git; REF=xkeyboard-config-2.43
+VERSION=2.49
+GIT=https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config.git; REF=xkeyboard-config-2.49
 BUILDSYS=meson
 # Pure data: the XKB rules, symbols and geometry files libxkbcommon reads at
 # runtime. Nothing is compiled, so the cross file only decides where it lands.

@@ -1,4 +1,4 @@
-# enchant 2.8.2
+# enchant 2.8.21
 
 > Generic spell checking library wrapping several spell checker backends
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/AbiWord/enchant/releases/download/v2.8.2/enchant-2.8.2.tar.gz |
-| SHA-256 | `8f19535adb5577b83b00e02f330fe9b9eb40dd21f19e2899636fc4d3a7696375` |
+| Upstream | https://github.com/AbiWord/enchant/releases/download/v2.8.21/enchant-2.8.21.tar.gz |
+| SHA-256 | `dd2a762697c463148a8f59867089a5ebf2dd1449d869f93764b76c12bcf8acc0` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`aspell`](../aspell/) |
 | Run-time dependencies | [`aspell`](../aspell/) [`gettext`](../gettext/) [`glib`](../glib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,39 +82,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/AbiWord/enchant/releases/download/v2.8.2/enchant-2.8.2.tar.gz
+URL=https://github.com/AbiWord/enchant/releases/download/v2.8.21/enchant-2.8.21.tar.gz
 mkdir -p dist src/enchant
 curl -fL -o dist/$(basename $URL) $URL
-echo "8f19535adb5577b83b00e02f330fe9b9eb40dd21f19e2899636fc4d3a7696375  dist/$(basename $URL)" | sha256sum -c -
+echo "dd2a762697c463148a8f59867089a5ebf2dd1449d869f93764b76c12bcf8acc0  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/enchant --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/enchant < ports/enchant/patches/0001-qnx-find-shared-library-fullname-via-dladdr.patch
-```
-
-**[`0001-qnx-find-shared-library-fullname-via-dladdr.patch`](patches/0001-qnx-find-shared-library-fullname-via-dladdr.patch)** — Teach gnulib's relocatable.c how to find a shared library on QNX.
-
-> find_shared_library_fullname() is implemented only for Linux and Cygwin,
-> both by scanning /proc/self/maps.  QNX has no such file in that format, so
-> on QNX the function compiles to nothing, get_shared_library_fullname()
-> always returns NULL, and relocate() hands every path straight back.
->
-> That failure is silent and total: enchant dlopens its spell-checking
-> providers from a directory it composes from the configure-time PKGLIBDIR,
-> so with --enable-relocatable in effect but relocation not working, a
-> broker installed anywhere other than the configured prefix constructs
-> successfully and reports no providers at all.
->
-> dladdr() answers exactly the question the /proc scan is asking -- which
-> object contains this address -- and QNX 8.0 has it in libc, with Dl_info
-> exposed under __EXT_UNIX_MISC (which _QNX_SOURCE turns on).
-
-Touches: `libgnu/relocatable.c` · Upstream status: QNX-specific
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -239,18 +216,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.8.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add enchant=<version>`), sources in `ported/enchant/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates enchant`; port one with `scripts/port-update enchant`.
+This recipe builds **2.8.21**. Kept from earlier: `2.8.2` ([recipe and patches](versions/2.8.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add enchant=<version>`), sources in `ported/enchant/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates enchant`; port one with `scripts/port-update enchant`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.8.2
+VERSION=2.8.21
 # The release tarball, not the git tag.  Enchant's git tree carries gnulib and
 # gl-mod/bootstrap as submodules and expects ./bootstrap to run gnulib-tool;
 # the tarball ships a generated configure and the gnulib sources it uses, so
 # no submodule clone (and no gnulib-tool here) is needed.  README hazard 74.
-TARBALL=https://github.com/AbiWord/enchant/releases/download/v2.8.2/enchant-2.8.2.tar.gz
-SHA256=8f19535adb5577b83b00e02f330fe9b9eb40dd21f19e2899636fc4d3a7696375
+TARBALL=https://github.com/AbiWord/enchant/releases/download/v2.8.21/enchant-2.8.21.tar.gz
+SHA256=dd2a762697c463148a8f59867089a5ebf2dd1449d869f93764b76c12bcf8acc0
 DEPS="glib aspell"
 BUILDSYS=autotools
 # --enable-relocatable: enchant dlopens its providers from a path it composes

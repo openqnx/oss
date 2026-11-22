@@ -1,4 +1,4 @@
-# python3-mypy-extensions 1.1.0
+# python3-mypy-extensions 1.2.0
 
 > Type system extensions for programs checked with mypy
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl |
-| SHA-256 | `1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505` |
+| Upstream | https://files.pythonhosted.org/packages/b5/99/7b1adac7e97ce7bbda34792dc6e9b2f5cc5cffd1875883f78a818b2a2687/mypy_extensions-1.2.0-py3-none-any.whl |
+| SHA-256 | `993e7a20aa5671eb41a7132cf555af30062da99729601601b9a8382b11cae768` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/b5/99/7b1adac7e97ce7bbda34792dc6e9b2f5cc5cffd1875883f78a818b2a2687/mypy_extensions-1.2.0-py3-none-any.whl
 mkdir -p dist src/python3-mypy-extensions
 curl -fL -o dist/$(basename $URL) $URL
-echo "1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505  dist/$(basename $URL)" | sha256sum -c -
+echo "993e7a20aa5671eb41a7132cf555af30062da99729601601b9a8382b11cae768  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-mypy-extensions --strip-components=1
 ```
 
@@ -225,7 +225,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-mypy-extensions=<version>`), sources in `ported/python3-mypy-extensions/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-mypy-extensions`; port one with `scripts/port-update python3-mypy-extensions`.
+This recipe builds **1.2.0**. Kept from earlier: `1.1.0` ([recipe and patches](versions/1.1.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-mypy-extensions=<version>`), sources in `ported/python3-mypy-extensions/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-mypy-extensions`; port one with `scripts/port-update python3-mypy-extensions`.
 
 <details><summary>recipe.sh</summary>
 
@@ -233,9 +233,9 @@ This recipe builds **1.1.0**. Every version stays available: packages in `dists/
 # mypy_extensions: type system extensions for mypy (TypedDict-era helpers, trait, mypyc_attr).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=1.1.0
-TARBALL=https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl
-SHA256=1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505
+VERSION=1.2.0
+TARBALL=https://files.pythonhosted.org/packages/b5/99/7b1adac7e97ce7bbda34792dc6e9b2f5cc5cffd1875883f78a818b2a2687/mypy_extensions-1.2.0-py3-none-any.whl
+SHA256=993e7a20aa5671eb41a7132cf555af30062da99729601601b9a8382b11cae768
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

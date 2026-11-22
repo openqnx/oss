@@ -1,0 +1,74 @@
+# opentelemetry-cpp 1.30.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T16:45:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u opentelemetry-cpp qnx-test-opentelemetry-cpp qnx-port-tests
+( 1/16) Installing abseil (20260817.0-r0)
+( 2/16) Installing c-ares (1.34.9-r0)
+( 3/16) Installing brotli (1.2.1-r0)
+( 4/16) Installing libiconv (1.19.1-r0)
+( 5/16) Installing libunistring (1.5-r0)
+( 6/16) Installing ncurses (6.6-r0)
+( 7/16) Installing gettext (0.22.5-r0)
+( 8/16) Installing libidn2 (2.3.8-r0)
+( 9/16) Installing nghttp2 (1.71.0-r0)
+(10/16) Installing curl (8.23.0-r0)
+(11/16) Installing protobuf (29.3-r0)
+(12/16) Installing re2 (2024.07.02-r0)
+(13/16) Installing grpc (1.85.4-r0)
+(14/16) Installing opentelemetry-cpp (1.30.0-r1)
+(15/16) Installing qnx-port-tests (1.0-r0)
+(16/16) Installing qnx-test-opentelemetry-cpp (1.0-r1)
+OK: 90.2 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_opentelemetry_cpp
+     == opentelemetry-cpp ==
+       ok   span context valid, recording
+       ok   two spans exported
+       ok   span names, child ended first
+       ok   parent and child share the trace id
+       ok   child's parent span id is the parent's span id
+       ok   child has its own span id
+       ok   root span has no parent
+       ok   span kinds
+       ok   int attribute
+       ok   double attribute
+       ok   bool attribute
+       ok   string attribute given at start
+       ok   event with attribute
+       ok   status and description
+       ok   status unset by default
+       ok   parent lasts at least as long as the child
+       ok   resource service.name
+       ok   instrumentation scope
+       ok   traceparent header injected: version, trace id, span id
+       ok   traceparent header: sampled flag set
+       ok   traceparent header extracted
+       ok   tracer provider shut down
+       ok   metrics flushed
+       ok   counter: one point per attribute set
+       ok   counter: sums 3+4 = 7 and 5
+       ok   histogram: count 4, sum 100, min 2, max 70, buckets
+       ok   meter provider shut down
+       ok   ostream: span name printed
+       ok   ostream: attribute and resource printed
+       ok   OTLP/HTTP: loopback listener
+       ok   OTLP/HTTP: request received
+       ok   OTLP/HTTP: POST /v1/traces
+       ok   OTLP/HTTP: content type application/x-protobuf
+       ok   OTLP/HTTP: body is an ExportTraceServiceRequest
+       ok   OTLP/HTTP: span name, ids and scope in the body
+       ok   OTLP/HTTP: resource service.name in the body
+       ok   OTLP/gRPC: loopback collector
+       ok   OTLP/gRPC: one Export call received
+       ok   OTLP/gRPC: span name, trace id and attribute
+       ok   OTLP/gRPC: resource and scope
+     PASS opentelemetry-cpp
+PASS test_opentelemetry_cpp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

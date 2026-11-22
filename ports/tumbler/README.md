@@ -1,4 +1,4 @@
-# tumbler 4.20.0
+# tumbler 4.20.2
 
 > D-Bus thumbnailing service for Xfce applications
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.0.tar.bz2 |
-| SHA-256 | `74b1647d55926547e98bfac70838ff63c5a84299a5e10c81c38d1fab90e25880` |
+| Upstream | https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.2.tar.bz2 |
+| SHA-256 | `aa77fd90a88b83467cd8d2b39d80e4518ba2903d2e4ca50d32d1b96996685015` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`dbus`](../dbus/) [`gdk-pixbuf`](../gdk-pixbuf/) [`libgsf`](../libgsf/) [`ffmpegthumbnailer`](../ffmpegthumbnailer/) [`libpng`](../libpng/) [`freetype`](../freetype/) [`libxfce4util`](../libxfce4util/) [`curl`](../curl/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) |
-| Run-time dependencies | [`curl`](../curl/) [`ffmpegthumbnailer`](../ffmpegthumbnailer/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`libgsf`](../libgsf/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libxfce4util`](../libxfce4util/) [`libxml2`](../libxml2/) |
+| Run-time dependencies | [`cairo`](../cairo/) [`curl`](../curl/) [`ffmpegthumbnailer`](../ffmpegthumbnailer/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`libgsf`](../libgsf/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libxfce4util`](../libxfce4util/) [`poppler`](../poppler/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_tumbler`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.2.tar.bz2
 mkdir -p dist src/tumbler
 curl -fL -o dist/$(basename $URL) $URL
-echo "74b1647d55926547e98bfac70838ff63c5a84299a5e10c81c38d1fab90e25880  dist/$(basename $URL)" | sha256sum -c -
+echo "aa77fd90a88b83467cd8d2b39d80e4518ba2903d2e4ca50d32d1b96996685015  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/tumbler --strip-components=1
 ```
 
@@ -128,7 +128,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tumbler`.
 
 ### 5. What it installs
 
-97 files under `/usr/local`: 3 shared-library entries, 16 headers.
+98 files under `/usr/local`: 3 shared-library entries, 16 headers.
 
 ```
 /usr/local/lib/libtumbler-1.so
@@ -222,15 +222,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tumbler=<version>`), sources in `ported/tumbler/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tumbler`; port one with `scripts/port-update tumbler`.
+This recipe builds **4.20.2**. Kept from earlier: `4.20.0` ([recipe and patches](versions/4.20.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tumbler=<version>`), sources in `ported/tumbler/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tumbler`; port one with `scripts/port-update tumbler`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
+VERSION=4.20.2
 # Release tarball, as with the rest of Xfce -- see README hazard 74.
-TARBALL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.0.tar.bz2
-SHA256=74b1647d55926547e98bfac70838ff63c5a84299a5e10c81c38d1fab90e25880
+TARBALL=https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.2.tar.bz2
+SHA256=aa77fd90a88b83467cd8d2b39d80e4518ba2903d2e4ca50d32d1b96996685015
 # Also linked at run time (found by scripts/gen-dependency-index): curl gst-plugins-base gstreamer
 DEPS="glib dbus gdk-pixbuf libgsf ffmpegthumbnailer libpng freetype libxfce4util curl gst-plugins-base gstreamer"
 BUILDSYS=autotools

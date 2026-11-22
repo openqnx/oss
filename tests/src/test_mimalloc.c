@@ -7,7 +7,7 @@
 int main(void) {
   QT_BEGIN("mimalloc");
   printf("  info mimalloc %d\n", mi_version());
-  QT_CHECK(mi_version() == 315, "mimalloc 3.1.5");
+  QT_CHECK(mi_version() == 30700, "mimalloc 3.7.0");
   int ok = 1;
   for (size_t sz = 1; sz < (1u << 22); sz = sz * 3 + 1) {
     unsigned char *p = mi_malloc(sz);

@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   (void)argc;
   QT_BEGIN("file");
   printf("  info libmagic version %d\n", magic_version());
-  QT_CHECK(magic_version() == 546, "magic_version() == 546 (file 5.46)");
+  QT_CHECK(magic_version() == 548, "magic_version() == 548 (file 5.48)");
   printf("  info default magic path: %s\n", S(magic_getpath(NULL, 0)));
 
   magic_t m = magic_open(MAGIC_NONE);
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
   printf("  info program: %s\n", prog);
   int rc = run_file(prog, "-v", "/dev/null", out, sizeof out);
   printf("  info file -v: %s\n", out);
-  QT_CHECK(rc == 0 && has(out, "file-5.46"), "file -v reports file-5.46");
+  QT_CHECK(rc == 0 && has(out, "file-5.48"), "file -v reports file-5.48");
   rc = run_file(prog, "-b", pp, out, sizeof out);
   printf("  info file -b a.png: %s\n", out);
   QT_CHECK(rc == 0 && has(out, "PNG image data, 1 x 1"), "file: PNG");

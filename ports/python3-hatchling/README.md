@@ -1,4 +1,4 @@
-# python3-hatchling 1.31.0
+# python3-hatchling 1.33.0
 
 > The build backend of Hatch
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/64/e2/2c0af0a52d16be74a4f194564fcdc417521ed863e9b65e4bc9052dacba6f/hatchling-1.31.0-py3-none-any.whl |
-| SHA-256 | `aac80bec8b6fe35e8480f1c335be8910fa210a0e6f735a139be205dadcacb544` |
+| Upstream | https://files.pythonhosted.org/packages/32/64/4afe5dd77b2939a93e8c9513f8082dbd049ecba9c1484a379a0f6ae29d6b/hatchling-1.33.0-py3-none-any.whl |
+| SHA-256 | `415290b84f464d2884303fca8974d38e7b85579069fab02a15db0828fbb1446d` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-packaging`](../python3-packaging/) [`python3-pathspec`](../python3-pathspec/) [`python3-pluggy`](../python3-pluggy/) [`python3-trove-classifiers`](../python3-trove-classifiers/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/64/e2/2c0af0a52d16be74a4f194564fcdc417521ed863e9b65e4bc9052dacba6f/hatchling-1.31.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/32/64/4afe5dd77b2939a93e8c9513f8082dbd049ecba9c1484a379a0f6ae29d6b/hatchling-1.33.0-py3-none-any.whl
 mkdir -p dist src/python3-hatchling
 curl -fL -o dist/$(basename $URL) $URL
-echo "aac80bec8b6fe35e8480f1c335be8910fa210a0e6f735a139be205dadcacb544  dist/$(basename $URL)" | sha256sum -c -
+echo "415290b84f464d2884303fca8974d38e7b85579069fab02a15db0828fbb1446d  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-hatchling --strip-components=1
 ```
 
@@ -217,7 +217,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.31.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-hatchling=<version>`), sources in `ported/python3-hatchling/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-hatchling`; port one with `scripts/port-update python3-hatchling`.
+This recipe builds **1.33.0**. Kept from earlier: `1.31.0` ([recipe and patches](versions/1.31.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-hatchling=<version>`), sources in `ported/python3-hatchling/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-hatchling`; port one with `scripts/port-update python3-hatchling`.
 
 <details><summary>recipe.sh</summary>
 
@@ -227,9 +227,9 @@ This recipe builds **1.31.0**. Every version stays available: packages in `dists
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
 # Its console scripts are written as launchers (qnx_py_scripts).
-VERSION=1.31.0
-TARBALL=https://files.pythonhosted.org/packages/64/e2/2c0af0a52d16be74a4f194564fcdc417521ed863e9b65e4bc9052dacba6f/hatchling-1.31.0-py3-none-any.whl
-SHA256=aac80bec8b6fe35e8480f1c335be8910fa210a0e6f735a139be205dadcacb544
+VERSION=1.33.0
+TARBALL=https://files.pythonhosted.org/packages/32/64/4afe5dd77b2939a93e8c9513f8082dbd049ecba9c1484a379a0f6ae29d6b/hatchling-1.33.0-py3-none-any.whl
+SHA256=415290b84f464d2884303fca8974d38e7b85579069fab02a15db0828fbb1446d
 DEPS="python3 python3-packaging python3-pathspec python3-pluggy python3-trove-classifiers"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-packaging python3-pathspec python3-pluggy python3-trove-classifiers"

@@ -1,4 +1,4 @@
-VERSION=1.2.4; GIT=https://gitlab.com/NTPsec/ntpsec.git; REF=NTPsec_1_2_4
+VERSION=1.2.6; GIT=https://gitlab.com/NTPsec/ntpsec.git; REF=NTPsec_1_2_6
 DEPS="openssl"
 BUILDSYS=custom
 # NTPsec builds with waf (Python). Cross compiling is a waf feature: the

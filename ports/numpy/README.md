@@ -1,4 +1,4 @@
-# numpy 2.3.4
+# numpy 2.5.5
 
 > Fundamental package for array computing in Python
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/numpy/numpy.git (tag `v2.3.4`) |
+| Upstream | https://github.com/numpy/numpy.git (tag `v2.5.5`) |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
 | Build dependencies | [`python3`](../python3/) [`openblas`](../openblas/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.3.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.5.5 --recurse-submodules --shallow-submodules \
     https://github.com/numpy/numpy.git src/numpy
 ```
 
@@ -96,6 +96,9 @@ patch -p1 -d src/numpy < ports/numpy/patches/0001-qnx-from-qnx-ports.patch
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Port QNX changes made to v1.25.0
 
 > Imported from qnx-ports/numpy (v2.3.4...qnx_v2.3.4); original authorship kept.
+> Changed here (2.5.5): the numpy/distutils sections are dropped -- numpy 2.5
+> removed numpy.distutils (the build is meson-python); the test imports follow
+> the new import lines.
 >
 >
 > ---
@@ -110,7 +113,7 @@ patch -p1 -d src/numpy < ports/numpy/patches/0001-qnx-from-qnx-ports.patch
 >  numpy/tests/test_public_api.py         |  14 +-
 >  9 files changed, 403 insertions(+), 17 deletions(-)
 
-Touches: `numpy/_core/include/numpy/npy_endian.h`, `numpy/distutils/ccompiler.py`, `numpy/distutils/command/build_clib.py`, `numpy/distutils/command/build_ext.py`, `numpy/distutils/command/config.py`, `numpy/distutils/cpuinfo.py` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `numpy/_core/include/numpy/npy_endian.h`, `numpy/tests/test_public_api.py`, `numpy/f2py/tests/util.py`, `numpy/_core/tests/test_mem_policy.py`, `numpy/testing/__init__.pyi`, `numpy/testing/_private/utils.py` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -146,7 +149,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH numpy`.
 
 ### 5. What it installs
 
-897 files under `/usr/local`.
+923 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/numpy` after a build.
 
@@ -220,12 +223,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.3.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add numpy=<version>`), sources in `ported/numpy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates numpy`; port one with `scripts/port-update numpy`.
+This recipe builds **2.5.5**. Kept from earlier: `2.3.4` ([recipe and patches](versions/2.3.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add numpy=<version>`), sources in `ported/numpy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates numpy`; port one with `scripts/port-update numpy`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.3.4; GIT=https://github.com/numpy/numpy.git; REF=v2.3.4
+VERSION=2.5.5; GIT=https://github.com/numpy/numpy.git; REF=v2.5.5
 DEPS="python3 openblas"
 BUILDSYS=custom
 # A Python extension package, cross compiled the way qnx-ports does it:

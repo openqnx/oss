@@ -13,7 +13,6 @@ QNX was not among the operating systems Mesa's utilities know:
   struct dl_phdr_info *.
 
 Upstream-Status: QNX-specific
-
 --- a/src/util/build_id.c
 +++ b/src/util/build_id.c
 @@ -27,6 +27,7 @@
@@ -91,7 +90,7 @@ Upstream-Status: QNX-specific
  #  include <unistd.h>
  #elif DETECT_OS_OPENBSD || DETECT_OS_FREEBSD
  #  include <sys/resource.h>
-@@ -456,6 +456,14 @@
+@@ -464,6 +464,14 @@
  
     *size = MIN2(mem_available, rl.rlim_cur);
     return true;

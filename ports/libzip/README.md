@@ -1,4 +1,4 @@
-# libzip 1.11.1
+# libzip 1.12.1
 
 > C library for reading, creating and modifying zip archives
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/nih-at/libzip.git (tag `v1.11.1`) |
+| Upstream | https://github.com/nih-at/libzip.git (tag `v1.12.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) [`openssl`](../openssl/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.11.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.12.1 --recurse-submodules --shallow-submodules \
     https://github.com/nih-at/libzip.git src/libzip
 ```
 
@@ -113,12 +113,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libzip`.
 
 ### 5. What it installs
 
-16 files under `/usr/local`: 3 shared-library entries, 3 programs, 2 headers.
+17 files under `/usr/local`: 3 shared-library entries, 3 programs, 2 headers.
 
 ```
 /usr/local/lib/libzip.so
 /usr/local/lib/libzip.so.5
-/usr/local/lib/libzip.so.5.5
+/usr/local/lib/libzip.so.5.6
 /usr/local/bin/zipcmp
 /usr/local/bin/zipmerge
 /usr/local/bin/ziptool
@@ -200,12 +200,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.11.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libzip=<version>`), sources in `ported/libzip/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libzip`; port one with `scripts/port-update libzip`.
+This recipe builds **1.12.1**. Kept from earlier: `1.11.1` ([recipe and patches](versions/1.11.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libzip=<version>`), sources in `ported/libzip/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libzip`; port one with `scripts/port-update libzip`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.11.1; GIT=https://github.com/nih-at/libzip.git; REF=v1.11.1
+VERSION=1.12.1; GIT=https://github.com/nih-at/libzip.git; REF=v1.12.1
 DEPS="zlib bzip2 xz zstd openssl"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_DOC=OFF -DBUILD_EXAMPLES=OFF -DBUILD_REGRESS=OFF
                    -DBUILD_OSSFUZZ=OFF -DBUILD_TOOLS=ON -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=ON )

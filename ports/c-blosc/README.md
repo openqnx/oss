@@ -1,4 +1,4 @@
-# c-blosc 1.21.6
+# c-blosc 1.21.7
 
 > Blocking, shuffling and lossless compression library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/Blosc/c-blosc.git (tag `v1.21.6`) |
+| Upstream | https://github.com/Blosc/c-blosc.git (tag `v1.21.7`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`lz4`](../lz4/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.21.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.21.7 --recurse-submodules --shallow-submodules \
     https://github.com/Blosc/c-blosc.git src/c-blosc
 ```
 
@@ -140,7 +140,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH c-blosc`.
 ```
 /usr/local/lib/libblosc.so
 /usr/local/lib/libblosc.so.1
-/usr/local/lib/libblosc.so.1.21.6
+/usr/local/lib/libblosc.so.1.21.7
 ```
 
 The complete list is `stage/<arch>/.manifest/c-blosc` after a build.
@@ -201,7 +201,7 @@ PASS c-blosc
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_c_blosc`](../../tests/src/) -- a program linked against c-blosc the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - version 1.21.6
+   - version 1.21.7
    - zstd codec is the Zstd library
    - 4 threads
    - blosc_getitem: items 500000..500002 out of the middle
@@ -220,7 +220,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.21.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add c-blosc=<version>`), sources in `ported/c-blosc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates c-blosc`; port one with `scripts/port-update c-blosc`.
+This recipe builds **1.21.7**. Kept from earlier: `1.21.6` ([recipe and patches](versions/1.21.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add c-blosc=<version>`), sources in `ported/c-blosc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates c-blosc`; port one with `scripts/port-update c-blosc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -229,7 +229,7 @@ This recipe builds **1.21.6**. Every version stays available: packages in `dists
 # lz4, zlib, zstd codecs behind one API), with qnx-ports' QNX change
 # (patches/0001: its test suite's posix_memalign guard, which tests
 # _POSIX_C_SOURCE, recognises QNX -- hazard 16; only the tests use it).
-VERSION=1.21.6; GIT=https://github.com/Blosc/c-blosc.git; REF=v1.21.6
+VERSION=1.21.7; GIT=https://github.com/Blosc/c-blosc.git; REF=v1.21.7
 DEPS="lz4 zlib zstd"
 # The codecs come from this tree's lz4, zlib and zstd rather than the copies
 # bundled in internal-complibs/. Snappy stays off (upstream default: it would

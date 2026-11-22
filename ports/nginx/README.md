@@ -1,4 +1,4 @@
-# nginx 1.30.6
+# nginx 1.31.9
 
 > HTTP web server, reverse proxy, load balancer and TCP/UDP/mail proxy
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://nginx.org/download/nginx-1.30.6.tar.gz |
-| SHA-256 | `3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8` |
+| Upstream | https://nginx.org/download/nginx-1.31.9.tar.gz |
+| SHA-256 | `a11c5eeee2e257f4478f0e649f84b0040787d277d2d3e5233952aa6b6dcb80ad` |
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) [`libxcrypt`](../libxcrypt/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://nginx.org/download/nginx-1.30.6.tar.gz
+URL=https://nginx.org/download/nginx-1.31.9.tar.gz
 mkdir -p dist src/nginx
 curl -fL -o dist/$(basename $URL) $URL
-echo "3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8  dist/$(basename $URL)" | sha256sum -c -
+echo "a11c5eeee2e257f4478f0e649f84b0040787d277d2d3e5233952aa6b6dcb80ad  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/nginx --strip-components=1
 ```
 
@@ -257,7 +257,7 @@ PASS nginx
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_nginx`](../../tests/src/) -- a program linked against nginx the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - nginx -V: version 1.30.6
+   - nginx -V: version 1.31.9
    - nginx -V: built with OpenSSL and the SSL module
    - self-signed certificate written (OpenSSL)
    - nginx -t accepts the configuration
@@ -266,7 +266,7 @@ PASS nginx
    - GET /hello.txt: 200 and the file byte for byte
    - Content-Type: text/plain
    - Content-Length: 6000
-   - Server: nginx/1.30.6
+   - Server: nginx/1.31.9
    - GET /nope.txt: 404
    - return 200 with a body
    - return 301: Location ends in /hello.txt
@@ -288,7 +288,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.30.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nginx=<version>`), sources in `ported/nginx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nginx`; port one with `scripts/port-update nginx`.
+This recipe builds **1.31.9**. Kept from earlier: `1.30.6` ([recipe and patches](versions/1.30.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nginx=<version>`), sources in `ported/nginx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nginx`; port one with `scripts/port-update nginx`.
 
 <details><summary>recipe.sh</summary>
 
@@ -299,9 +299,9 @@ This recipe builds **1.30.6**. Every version stays available: packages in `dists
 # answer the probes that would run a test program (type sizes and byte
 # order at compile time, run-tests taken from compile-and-link); 0002 is a
 # signedness fix for QNX's unsigned blkcnt_t.
-VERSION=1.30.6
-TARBALL=https://nginx.org/download/nginx-1.30.6.tar.gz
-SHA256=3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8
+VERSION=1.31.9
+TARBALL=https://nginx.org/download/nginx-1.31.9.tar.gz
+SHA256=a11c5eeee2e257f4478f0e649f84b0040787d277d2d3e5233952aa6b6dcb80ad
 BUILDSYS=custom
 # libxcrypt: crypt() for auth_basic password files; QNX's libc has none.
 DEPS="openssl pcre2 zlib libxcrypt"

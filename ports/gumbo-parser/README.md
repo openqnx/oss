@@ -1,4 +1,4 @@
-# gumbo-parser 0.13.2
+# gumbo-parser 0.14.1
 
 > HTML5 parsing library in pure C99
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://codeberg.org/grisha/gumbo-parser.git (tag `0.13.2`) |
+| Upstream | https://codeberg.org/grisha/gumbo-parser.git (tag `0.14.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.13.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.14.1 --recurse-submodules --shallow-submodules \
     https://codeberg.org/grisha/gumbo-parser.git src/gumbo-parser
 ```
 
@@ -107,8 +107,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gumbo-parser`.
 
 ```
 /usr/local/lib/libgumbo.so
-/usr/local/lib/libgumbo.so.3
-/usr/local/lib/libgumbo.so.3.0.0
+/usr/local/lib/libgumbo.so.4
+/usr/local/lib/libgumbo.so.4.0.1
 ```
 
 The complete list is `stage/<arch>/.manifest/gumbo-parser` after a build.
@@ -192,7 +192,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.13.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gumbo-parser=<version>`), sources in `ported/gumbo-parser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gumbo-parser`; port one with `scripts/port-update gumbo-parser`.
+This recipe builds **0.14.1**. Kept from earlier: `0.13.2` ([recipe and patches](versions/0.13.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gumbo-parser=<version>`), sources in `ported/gumbo-parser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gumbo-parser`; port one with `scripts/port-update gumbo-parser`.
 
 <details><summary>recipe.sh</summary>
 
@@ -200,7 +200,7 @@ This recipe builds **0.13.2**. Every version stays available: packages in `dists
 # gumbo-parser: an HTML5 parsing library in pure C99 (the WHATWG parsing
 # algorithm), originally Google's, maintained on Codeberg. litehtml parses
 # its documents with it.
-VERSION=0.13.2; GIT=https://codeberg.org/grisha/gumbo-parser.git; REF=0.13.2
+VERSION=0.14.1; GIT=https://codeberg.org/grisha/gumbo-parser.git; REF=0.14.1
 DEPS=""
 BUILDSYS=meson
 # The shared library only: its tests need gtest, the examples are demos.

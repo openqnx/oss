@@ -7,10 +7,9 @@ and close -- the scheme the Windows path already uses -- keeping the write
 position at the end as open_memstream does.
 
 Upstream-Status: QNX-specific
-
 --- a/src/util/memstream.c
 +++ b/src/util/memstream.c
-@@ -63,6 +63,16 @@
+@@ -69,6 +69,16 @@
     }
  
     return success;
@@ -27,7 +26,7 @@ Upstream-Status: QNX-specific
  #else
     FILE *const f = open_memstream(bufp, sizep);
     mem->f = f;
-@@ -70,7 +80,7 @@
+@@ -76,7 +86,7 @@
  #endif
  }
  
@@ -36,7 +35,7 @@ Upstream-Status: QNX-specific
  static void
  u_memstream_update_buffer(struct u_memstream *mem)
  {
-@@ -84,18 +94,24 @@
+@@ -90,17 +100,21 @@
        fseek(f, 0, SEEK_SET);
        fread(*mem->bufp, 1, size, f);
        (*mem->bufp)[size] = '\0';
@@ -58,12 +57,9 @@ Upstream-Status: QNX-specific
 -#ifdef _WIN32
 +#if defined(_WIN32) || defined(__QNX__)
     u_memstream_update_buffer(mem);
-+#endif
-+#ifdef _WIN32
-    remove(mem->temp);
  #endif
  
-@@ -105,9 +121,10 @@
+@@ -114,9 +128,10 @@
  int
  u_memstream_flush(struct u_memstream *mem)
  {

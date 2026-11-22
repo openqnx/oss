@@ -1,4 +1,4 @@
-# cairo 1.18.2
+# cairo 1.18.6
 
 > 2D vector graphics library with multiple output backends
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/cairo/cairo.git (tag `1.18.2`) |
+| Upstream | https://gitlab.freedesktop.org/cairo/cairo.git (tag `1.18.6`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`pixman`](../pixman/) [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`libpng`](../libpng/) [`zlib`](../zlib/) [`glib`](../glib/) [`libx11`](../libx11/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.18.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.18.6 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/cairo/cairo.git src/cairo
 ```
 
@@ -222,13 +222,13 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cairo`.
 ```
 /usr/local/lib/libcairo-gobject.so
 /usr/local/lib/libcairo-gobject.so.2
-/usr/local/lib/libcairo-gobject.so.2.11802.2
+/usr/local/lib/libcairo-gobject.so.2.11806.6
 /usr/local/lib/libcairo-script-interpreter.so
 /usr/local/lib/libcairo-script-interpreter.so.2
-/usr/local/lib/libcairo-script-interpreter.so.2.11802.2
+/usr/local/lib/libcairo-script-interpreter.so.2.11806.6
 /usr/local/lib/libcairo.so
 /usr/local/lib/libcairo.so.2
-/usr/local/lib/libcairo.so.2.11802.2
+/usr/local/lib/libcairo.so.2.11806.6
 ```
 
 The complete list is `stage/<arch>/.manifest/cairo` after a build.
@@ -316,12 +316,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.18.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cairo=<version>`), sources in `ported/cairo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cairo`; port one with `scripts/port-update cairo`.
+This recipe builds **1.18.6**. Kept from earlier: `1.18.2` ([recipe and patches](versions/1.18.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cairo=<version>`), sources in `ported/cairo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cairo`; port one with `scripts/port-update cairo`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.18.2; GIT=https://gitlab.freedesktop.org/cairo/cairo.git; REF=1.18.2
+VERSION=1.18.6; GIT=https://gitlab.freedesktop.org/cairo/cairo.git; REF=1.18.6
 # Also linked at run time (found by scripts/gen-dependency-index): lzo
 DEPS="pixman freetype fontconfig libpng zlib glib libx11 libxext libxrender lzo"
 BUILDSYS=meson

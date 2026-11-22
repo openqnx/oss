@@ -1,4 +1,4 @@
-# imath 3.2.2
+# imath 3.2.3
 
 > C++ library of 2D/3D vector, matrix and half-float math for computer graphics
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/AcademySoftwareFoundation/Imath.git (tag `v3.2.2`) |
+| Upstream | https://github.com/AcademySoftwareFoundation/Imath.git (tag `v3.2.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.2.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.2.3 --recurse-submodules --shallow-submodules \
     https://github.com/AcademySoftwareFoundation/Imath.git src/imath
 ```
 
@@ -107,7 +107,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH imath`.
 ```
 /usr/local/lib/libImath-3_2.so
 /usr/local/lib/libImath-3_2.so.30
-/usr/local/lib/libImath-3_2.so.30.3.2.2
+/usr/local/lib/libImath-3_2.so.30.3.2.3
 /usr/local/lib/libImath.so
 ```
 
@@ -195,7 +195,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.2.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add imath=<version>`), sources in `ported/imath/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates imath`; port one with `scripts/port-update imath`.
+This recipe builds **3.2.3**. Kept from earlier: `3.2.2` ([recipe and patches](versions/3.2.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add imath=<version>`), sources in `ported/imath/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates imath`; port one with `scripts/port-update imath`.
 
 <details><summary>recipe.sh</summary>
 
@@ -203,7 +203,7 @@ This recipe builds **3.2.2**. Every version stays available: packages in `dists/
 # imath: C++ vector, matrix, quaternion and half-float math library (the one
 # OpenEXR is built on). Ported by request; see ports/imath/README.md.
 # Shared library only; no Python bindings (PyImath) -- they need boost-python.
-VERSION=3.2.2; GIT=https://github.com/AcademySoftwareFoundation/Imath.git; REF=v3.2.2
+VERSION=3.2.3; GIT=https://github.com/AcademySoftwareFoundation/Imath.git; REF=v3.2.3
 DEPS=""
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DPYTHON=OFF )

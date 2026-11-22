@@ -1,4 +1,4 @@
-# libwebp 1.4.0
+# libwebp 1.6.0
 
 > Library and tools for the WebP image format
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://chromium.googlesource.com/webm/libwebp (tag `v1.4.0`) |
+| Upstream | https://chromium.googlesource.com/webm/libwebp (tag `v1.6.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`giflib`](../giflib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.4.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.6.0 --recurse-submodules --shallow-submodules \
     https://chromium.googlesource.com/webm/libwebp src/libwebp
 ```
 
@@ -120,19 +120,19 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libwebp`.
 ```
 /usr/local/lib/libsharpyuv.so
 /usr/local/lib/libsharpyuv.so.0
-/usr/local/lib/libsharpyuv.so.0.1.0
+/usr/local/lib/libsharpyuv.so.0.1.2
 /usr/local/lib/libwebp.so
 /usr/local/lib/libwebp.so.7
-/usr/local/lib/libwebp.so.7.1.9
+/usr/local/lib/libwebp.so.7.2.0
 /usr/local/lib/libwebpdecoder.so
 /usr/local/lib/libwebpdecoder.so.3
-/usr/local/lib/libwebpdecoder.so.3.1.9
+/usr/local/lib/libwebpdecoder.so.3.2.0
 /usr/local/lib/libwebpdemux.so
 /usr/local/lib/libwebpdemux.so.2
-/usr/local/lib/libwebpdemux.so.2.0.15
+/usr/local/lib/libwebpdemux.so.2.0.17
 /usr/local/lib/libwebpmux.so
 /usr/local/lib/libwebpmux.so.3
-/usr/local/lib/libwebpmux.so.3.1.0
+/usr/local/lib/libwebpmux.so.3.1.2
 ```
 
 The complete list is `stage/<arch>/.manifest/libwebp` after a build.
@@ -212,12 +212,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libwebp=<version>`), sources in `ported/libwebp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libwebp`; port one with `scripts/port-update libwebp`.
+This recipe builds **1.6.0**. Kept from earlier: `1.4.0` ([recipe and patches](versions/1.4.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libwebp=<version>`), sources in `ported/libwebp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libwebp`; port one with `scripts/port-update libwebp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.4.0; GIT=https://chromium.googlesource.com/webm/libwebp; REF=v1.4.0
+VERSION=1.6.0; GIT=https://chromium.googlesource.com/webm/libwebp; REF=v1.6.0
 DEPS="libpng libjpeg-turbo giflib"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF
                    -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF

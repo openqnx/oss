@@ -1,4 +1,4 @@
-# dbus 1.16.0
+# dbus 1.16.4
 
 > D-Bus message bus daemon and library for interprocess communication
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/dbus/dbus.git (tag `dbus-1.16.0`) |
+| Upstream | https://gitlab.freedesktop.org/dbus/dbus.git (tag `dbus-1.16.4`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`expat`](../expat/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b dbus-1.16.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b dbus-1.16.4 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/dbus/dbus.git src/dbus
 ```
 
@@ -110,7 +110,7 @@ meson setup build/$QNX_ARCH/dbus src/dbus \
       -Dducktype_docs=disabled \
       -Dxml_docs=disabled \
       -Dmodular_tests=disabled \
-      -Dtools=false \
+      -Dtools=true \
       -Dstats=false
 ninja -C build/$QNX_ARCH/dbus
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/dbus install
@@ -120,13 +120,21 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH dbus`.
 
 ### 5. What it installs
 
-41 files under `/usr/local`: 3 shared-library entries, 1 programs, 17 headers.
+50 files under `/usr/local`: 3 shared-library entries, 9 programs, 17 headers.
 
 ```
 /usr/local/lib/libdbus-1.so
 /usr/local/lib/libdbus-1.so.3
-/usr/local/lib/libdbus-1.so.3.38.3
+/usr/local/lib/libdbus-1.so.3.38.5
+/usr/local/bin/dbus-cleanup-sockets
 /usr/local/bin/dbus-daemon
+/usr/local/bin/dbus-launch
+/usr/local/bin/dbus-monitor
+/usr/local/bin/dbus-run-session
+/usr/local/bin/dbus-send
+/usr/local/bin/dbus-test-tool
+/usr/local/bin/dbus-update-activation-environment
+/usr/local/bin/dbus-uuidgen
 ```
 
 The complete list is `stage/<arch>/.manifest/dbus` after a build.
@@ -219,18 +227,19 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.16.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dbus=<version>`), sources in `ported/dbus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dbus`; port one with `scripts/port-update dbus`.
+This recipe builds **1.16.4**. Kept from earlier: `1.16.0` ([recipe and patches](versions/1.16.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dbus=<version>`), sources in `ported/dbus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dbus`; port one with `scripts/port-update dbus`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.16.0; GIT=https://gitlab.freedesktop.org/dbus/dbus.git; REF=dbus-1.16.0
+VERSION=1.16.4; GIT=https://gitlab.freedesktop.org/dbus/dbus.git; REF=dbus-1.16.4
 DEPS="expat"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Depoll=disabled -Dsystemd=disabled -Dselinux=disabled -Dapparmor=disabled
                    -Dx11_autolaunch=disabled -Ddoxygen_docs=disabled -Dinotify=disabled -Dkqueue=disabled
                    -Dducktype_docs=disabled -Dxml_docs=disabled
-                   -Dmodular_tests=disabled -Dtools=false -Dstats=false )
+                   -Dmodular_tests=disabled -Dtools=true -Dstats=false )
+# tools: dbus-send, dbus-monitor, dbus-run-session... -- scripts use them (thunar-settings calls dbus-send).
 # -Dinotify=disabled: QNX's inotify is an emulation through /dev/fsnotify,
 # and dbus-daemon's service-directory watcher blocked in it (state REPLY on
 # the fsnotify server) while activating a service -- a deadlock: the

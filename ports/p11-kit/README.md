@@ -1,4 +1,4 @@
-# p11-kit 0.25.5
+# p11-kit 0.26.6
 
 > Library and proxy module for loading and sharing PKCS#11 modules
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/p11-glue/p11-kit.git (tag `0.25.5`) |
+| Upstream | https://github.com/p11-glue/p11-kit.git (tag `0.26.6`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`libffi`](../libffi/) [`libtasn1`](../libtasn1/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.25.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.26.6 --recurse-submodules --shallow-submodules \
     https://github.com/p11-glue/p11-kit.git src/p11-kit
 ```
 
@@ -107,12 +107,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH p11-kit`.
 
 ### 5. What it installs
 
-19 files under `/usr/local`: 4 shared-library entries, 1 programs, 9 headers.
+20 files under `/usr/local`: 4 shared-library entries, 1 programs, 9 headers.
 
 ```
 /usr/local/lib/libp11-kit.so
 /usr/local/lib/libp11-kit.so.0
-/usr/local/lib/libp11-kit.so.0.4.1
+/usr/local/lib/libp11-kit.so.0.4.12
 /usr/local/lib/p11-kit-proxy.so
 /usr/local/bin/p11-kit
 ```
@@ -197,12 +197,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.25.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add p11-kit=<version>`), sources in `ported/p11-kit/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates p11-kit`; port one with `scripts/port-update p11-kit`.
+This recipe builds **0.26.6**. Kept from earlier: `0.25.5` ([recipe and patches](versions/0.25.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add p11-kit=<version>`), sources in `ported/p11-kit/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates p11-kit`; port one with `scripts/port-update p11-kit`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.25.5; GIT=https://github.com/p11-glue/p11-kit.git; REF=0.25.5
+VERSION=0.26.6; GIT=https://github.com/p11-glue/p11-kit.git; REF=0.26.6
 DEPS="libffi libtasn1"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtrust_module=disabled -Dsystemd=disabled -Dbash_completion=disabled

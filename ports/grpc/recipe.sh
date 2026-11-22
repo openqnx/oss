@@ -1,4 +1,4 @@
-VERSION=1.69.0; GIT=https://github.com/grpc/grpc.git; REF=v1.69.0
+VERSION=1.85.4; GIT=https://github.com/grpc/grpc.git; REF=v1.85.4
 DEPS="zlib openssl c-ares abseil protobuf re2"
 BUILDSYS=custom
 # gRPC's build runs protoc and grpc_cpp_plugin to generate its own sources, so

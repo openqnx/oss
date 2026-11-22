@@ -1,4 +1,4 @@
-# autoconf 2.72
+# autoconf 2.73
 
 > GNU tool for generating configure scripts from M4 macros
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz |
-| SHA-256 | `ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a` |
+| Upstream | https://ftp.gnu.org/gnu/autoconf/autoconf-2.73.tar.xz |
+| SHA-256 | `9fd672b1c8425fac2fa67fa0477b990987268b90ff36d5f016dae57be0d6b52e` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz
+URL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.73.tar.xz
 mkdir -p dist src/autoconf
 curl -fL -o dist/$(basename $URL) $URL
-echo "ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a  dist/$(basename $URL)" | sha256sum -c -
+echo "9fd672b1c8425fac2fa67fa0477b990987268b90ff36d5f016dae57be0d6b52e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/autoconf --strip-components=1
 ```
 
@@ -112,7 +112,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH autoconf`.
 
 ### 5. What it installs
 
-63 files under `/usr/local`, 7 programs.
+64 files under `/usr/local`, 7 programs.
 
 ```
 /usr/local/bin/autoconf
@@ -196,15 +196,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.72**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add autoconf=<version>`), sources in `ported/autoconf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates autoconf`; port one with `scripts/port-update autoconf`.
+This recipe builds **2.73**. Kept from earlier: `2.72` ([recipe and patches](versions/2.72/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add autoconf=<version>`), sources in `ported/autoconf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates autoconf`; port one with `scripts/port-update autoconf`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU Autoconf (configure script generator; needs perl and m4 on the target). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.72
-TARBALL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.xz
-SHA256=ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a
+VERSION=2.73
+TARBALL=https://ftp.gnu.org/gnu/autoconf/autoconf-2.73.tar.xz
+SHA256=9fd672b1c8425fac2fa67fa0477b990987268b90ff36d5f016dae57be0d6b52e
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 

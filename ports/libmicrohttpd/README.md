@@ -1,4 +1,4 @@
-# libmicrohttpd 1.0.1
+# libmicrohttpd 1.0.11
 
 > GNU C library for embedding an HTTP server
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.1.tar.gz |
-| SHA-256 | `a89e09fc9b4de34dde19f4fcb4faaa1ce10299b9908db1132bbfa1de47882b94` |
+| Upstream | https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.11.tar.gz |
+| SHA-256 | `f227a044b75688e449b58ddedf0582255cc562899ff69f173a8ef76439744b4e` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.1.tar.gz
+URL=https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.11.tar.gz
 mkdir -p dist src/libmicrohttpd
 curl -fL -o dist/$(basename $URL) $URL
-echo "a89e09fc9b4de34dde19f4fcb4faaa1ce10299b9908db1132bbfa1de47882b94  dist/$(basename $URL)" | sha256sum -c -
+echo "f227a044b75688e449b58ddedf0582255cc562899ff69f173a8ef76439744b4e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libmicrohttpd --strip-components=1
 ```
 
@@ -116,11 +116,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libmicrohttpd`.
 
 ### 5. What it installs
 
-4 files under `/usr/local`: 2 shared-library entries, 1 headers.
+5 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libmicrohttpd.so
-/usr/local/lib/libmicrohttpd.so.74
+/usr/local/lib/libmicrohttpd.so.12
+/usr/local/lib/libmicrohttpd.so.12.62.8
 ```
 
 The complete list is `stage/<arch>/.manifest/libmicrohttpd` after a build.
@@ -198,14 +199,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmicrohttpd=<version>`), sources in `ported/libmicrohttpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmicrohttpd`; port one with `scripts/port-update libmicrohttpd`.
+This recipe builds **1.0.11**. Kept from earlier: `1.0.1` ([recipe and patches](versions/1.0.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmicrohttpd=<version>`), sources in `ported/libmicrohttpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmicrohttpd`; port one with `scripts/port-update libmicrohttpd`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.1
-TARBALL=https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.1.tar.gz
-SHA256=a89e09fc9b4de34dde19f4fcb4faaa1ce10299b9908db1132bbfa1de47882b94
+VERSION=1.0.11
+TARBALL=https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.11.tar.gz
+SHA256=f227a044b75688e449b58ddedf0582255cc562899ff69f173a8ef76439744b4e
 BUILDSYS=autotools
 # QNX 8 epoll (libepoll) has no EPOLLET or EPOLLRDHUP, both of which the epoll
 # backend relies on; the poll() backend is used instead.

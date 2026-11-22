@@ -1,4 +1,4 @@
-# python3-cantools 45.1.2
+# python3-cantools 45.2.0
 
 > CAN bus tools for Python: DBC, KCD, SYM, ARXML and CDD databases, message encoding and decoding
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/fc/2c/c5d032465c92adfa385eecfbab342d34fdd118f55acc1698bdc794d06610/cantools-45.1.2-py3-none-any.whl |
-| SHA-256 | `2522d53d21ca689168c5dfcb49894ae867b3f82b0c779b72602f0fd077c6076c` |
+| Upstream | https://files.pythonhosted.org/packages/6e/7a/baac7b7698df65c3362315a3e92a525a9496e7a88ea0dc0617cb0622cdcf/cantools-45.2.0-py3-none-any.whl |
+| SHA-256 | `6696219fc778da1b7377484fb7469e9908ec714294f88c1966017b80e72690fc` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-bitstruct`](../python3-bitstruct/) [`python3-can`](../python3-can/) [`python3-textparser`](../python3-textparser/) [`python3-argparse-addons`](../python3-argparse-addons/) [`python3-crccheck`](../python3-crccheck/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/fc/2c/c5d032465c92adfa385eecfbab342d34fdd118f55acc1698bdc794d06610/cantools-45.1.2-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/6e/7a/baac7b7698df65c3362315a3e92a525a9496e7a88ea0dc0617cb0622cdcf/cantools-45.2.0-py3-none-any.whl
 mkdir -p dist src/python3-cantools
 curl -fL -o dist/$(basename $URL) $URL
-echo "2522d53d21ca689168c5dfcb49894ae867b3f82b0c779b72602f0fd077c6076c  dist/$(basename $URL)" | sha256sum -c -
+echo "6696219fc778da1b7377484fb7469e9908ec714294f88c1966017b80e72690fc  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-cantools --strip-components=1
 ```
 
@@ -209,7 +209,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **45.1.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-cantools=<version>`), sources in `ported/python3-cantools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-cantools`; port one with `scripts/port-update python3-cantools`.
+This recipe builds **45.2.0**. Kept from earlier: `45.1.2` ([recipe and patches](versions/45.1.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-cantools=<version>`), sources in `ported/python3-cantools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-cantools`; port one with `scripts/port-update python3-cantools`.
 
 <details><summary>recipe.sh</summary>
 
@@ -220,9 +220,9 @@ This recipe builds **45.1.2**. Every version stays available: packages in `dists
 # plot). With python3-can: tester and monitor on a bus (on QNX the socketcan
 # interface on qnx-socketcan's buses). Pure Python: the published wheel is
 # installed as released (scripts/lib/pywheel.sh).
-VERSION=45.1.2
-TARBALL=https://files.pythonhosted.org/packages/fc/2c/c5d032465c92adfa385eecfbab342d34fdd118f55acc1698bdc794d06610/cantools-45.1.2-py3-none-any.whl
-SHA256=2522d53d21ca689168c5dfcb49894ae867b3f82b0c779b72602f0fd077c6076c
+VERSION=45.2.0
+TARBALL=https://files.pythonhosted.org/packages/6e/7a/baac7b7698df65c3362315a3e92a525a9496e7a88ea0dc0617cb0622cdcf/cantools-45.2.0-py3-none-any.whl
+SHA256=6696219fc778da1b7377484fb7469e9908ec714294f88c1966017b80e72690fc
 DEPS="python3 python3-bitstruct python3-can python3-textparser python3-argparse-addons python3-crccheck"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-bitstruct python3-can python3-textparser python3-argparse-addons python3-crccheck"

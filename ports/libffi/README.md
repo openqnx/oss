@@ -1,4 +1,4 @@
-# libffi 3.4.6
+# libffi 3.8.1
 
 > Portable foreign function interface library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz |
-| SHA-256 | `b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e` |
+| Upstream | https://github.com/libffi/libffi/releases/download/v3.8.1/libffi-3.8.1.tar.gz |
+| SHA-256 | `81e879c094cc5ec3186c48510c6385ac6b3e866192e8bc71a35245703757ee40` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz
+URL=https://github.com/libffi/libffi/releases/download/v3.8.1/libffi-3.8.1.tar.gz
 mkdir -p dist src/libffi
 curl -fL -o dist/$(basename $URL) $URL
-echo "b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e  dist/$(basename $URL)" | sha256sum -c -
+echo "81e879c094cc5ec3186c48510c6385ac6b3e866192e8bc71a35245703757ee40  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libffi --strip-components=1
 ```
 
@@ -120,11 +120,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libffi`.
 
 ### 5. What it installs
 
-9 files under `/usr/local`: 2 shared-library entries, 2 headers.
+10 files under `/usr/local`: 3 shared-library entries, 2 headers.
 
 ```
 /usr/local/lib/libffi.so
-/usr/local/lib/libffi.so.9
+/usr/local/lib/libffi.so.8
+/usr/local/lib/libffi.so.8.5.1
 ```
 
 The complete list is `stage/<arch>/.manifest/libffi` after a build.
@@ -207,14 +208,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.4.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libffi=<version>`), sources in `ported/libffi/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libffi`; port one with `scripts/port-update libffi`.
+This recipe builds **3.8.1**. Kept from earlier: `3.4.6` ([recipe and patches](versions/3.4.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libffi=<version>`), sources in `ported/libffi/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libffi`; port one with `scripts/port-update libffi`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.4.6
-TARBALL=https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz
-SHA256=b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e
+VERSION=3.8.1
+TARBALL=https://github.com/libffi/libffi/releases/download/v3.8.1/libffi-3.8.1.tar.gz
+SHA256=81e879c094cc5ec3186c48510c6385ac6b3e866192e8bc71a35245703757ee40
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-docs --disable-multi-os-directory )
 ```

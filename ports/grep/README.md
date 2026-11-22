@@ -1,4 +1,4 @@
-# grep 3.11
+# grep 3.12
 
 > GNU grep, searches files for lines matching a pattern
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/grep/grep-3.11.tar.xz |
-| SHA-256 | `1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab` |
+| Upstream | https://ftp.gnu.org/gnu/grep/grep-3.12.tar.xz |
+| SHA-256 | `2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`pcre2`](../pcre2/) [`libiconv`](../libiconv/) |
-| Run-time dependencies | [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) |
+| Run-time dependencies | [`pcre2`](../pcre2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_grep`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/grep/grep-3.11.tar.xz
+URL=https://ftp.gnu.org/gnu/grep/grep-3.12.tar.xz
 mkdir -p dist src/grep
 curl -fL -o dist/$(basename $URL) $URL
-echo "1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab  dist/$(basename $URL)" | sha256sum -c -
+echo "2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/grep --strip-components=1
 ```
 
@@ -198,15 +198,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.11**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add grep=<version>`), sources in `ported/grep/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates grep`; port one with `scripts/port-update grep`.
+This recipe builds **3.12**. Kept from earlier: `3.11` ([recipe and patches](versions/3.11/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add grep=<version>`), sources in `ported/grep/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates grep`; port one with `scripts/port-update grep`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU grep. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=3.11
-TARBALL=https://ftp.gnu.org/gnu/grep/grep-3.11.tar.xz
-SHA256=1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab
+VERSION=3.12
+TARBALL=https://ftp.gnu.org/gnu/grep/grep-3.12.tar.xz
+SHA256=2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="pcre2 libiconv"
 BUILDSYS=autotools

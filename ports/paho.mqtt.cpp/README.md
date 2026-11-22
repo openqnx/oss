@@ -1,4 +1,4 @@
-# paho.mqtt.cpp 1.5.2
+# paho.mqtt.cpp 1.6.0
 
 > Eclipse Paho MQTT client library for C++
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-paho/paho.mqtt.cpp.git (tag `v1.5.2`) |
+| Upstream | https://github.com/eclipse-paho/paho.mqtt.cpp.git (tag `v1.6.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`paho.mqtt.c`](../paho.mqtt.c/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.6.0 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-paho/paho.mqtt.cpp.git src/paho.mqtt.cpp
 ```
 
@@ -117,7 +117,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH paho.mqtt.cpp`.
 ```
 /usr/local/lib/libpaho-mqttpp3.so
 /usr/local/lib/libpaho-mqttpp3.so.1
-/usr/local/lib/libpaho-mqttpp3.so.1.5.1
+/usr/local/lib/libpaho-mqttpp3.so.1.6.0
 ```
 
 The complete list is `stage/<arch>/.manifest/paho.mqtt.cpp` after a build.
@@ -209,12 +209,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add paho.mqtt.cpp=<version>`), sources in `ported/paho.mqtt.cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates paho.mqtt.cpp`; port one with `scripts/port-update paho.mqtt.cpp`.
+This recipe builds **1.6.0**. Kept from earlier: `1.5.2` ([recipe and patches](versions/1.5.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add paho.mqtt.cpp=<version>`), sources in `ported/paho.mqtt.cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates paho.mqtt.cpp`; port one with `scripts/port-update paho.mqtt.cpp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.2; GIT=https://github.com/eclipse-paho/paho.mqtt.cpp.git; REF=v1.5.2
+VERSION=1.6.0; GIT=https://github.com/eclipse-paho/paho.mqtt.cpp.git; REF=v1.6.0
 DEPS="paho.mqtt.c"
 CMAKE_ARGS_EXTRA=( -DPAHO_BUILD_SHARED=ON -DPAHO_BUILD_STATIC=ON
                    -DPAHO_WITH_MQTT_C=OFF -DPAHO_WITH_SSL=ON

@@ -1,4 +1,4 @@
-# libexif 0.6.24
+# libexif 0.6.26
 
 > Library for parsing, editing and saving EXIF data
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libexif/libexif.git (tag `v0.6.24`) |
+| Upstream | https://github.com/libexif/libexif.git (tag `v0.6.26`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.6.24 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.6.26 --recurse-submodules --shallow-submodules \
     https://github.com/libexif/libexif.git src/libexif
 ```
 
@@ -92,6 +92,7 @@ CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
 CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+CPPFLAGS="-I$SRC_DIR/$NAME -D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" \
 $OLDPWD/src/libexif/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
     --disable-static \
@@ -101,6 +102,10 @@ make -j$(nproc)
 make DESTDIR=$STAGE install
 cd -
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- Its own headers (libexif/*.h, included as <libexif/...>) ahead of the staging tree's: on an update the installed headers of the version before would win (exif_convert_utf16_to_utf8 changed its arguments in 0.6.26).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libexif`.
 
@@ -192,14 +197,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.6.24**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libexif=<version>`), sources in `ported/libexif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libexif`; port one with `scripts/port-update libexif`.
+This recipe builds **0.6.26**. Kept from earlier: `0.6.24` ([recipe and patches](versions/0.6.24/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libexif=<version>`), sources in `ported/libexif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libexif`; port one with `scripts/port-update libexif`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.6.24; GIT=https://github.com/libexif/libexif.git; REF=v0.6.24
+VERSION=0.6.26; GIT=https://github.com/libexif/libexif.git; REF=v0.6.26
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-docs --disable-nls )
+# Its own headers (libexif/*.h, included as <libexif/...>) ahead of the
+# staging tree's: on an update the installed headers of the version before
+# would win (exif_convert_utf16_to_utf8 changed its arguments in 0.6.26).
+CONF_ENV=( CPPFLAGS="-I$SRC_DIR/$NAME -D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" )
 ```
 </details>
 

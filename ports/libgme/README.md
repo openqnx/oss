@@ -1,4 +1,4 @@
-# libgme 0.6.4
+# libgme 0.6.5
 
 > Video game music file emulation and playback library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libgme/game-music-emu.git (tag `0.6.4`) |
+| Upstream | https://github.com/libgme/game-music-emu.git (tag `0.6.5`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.6.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.6.5 --recurse-submodules --shallow-submodules \
     https://github.com/libgme/game-music-emu.git src/libgme
 ```
 
@@ -132,7 +132,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libgme`.
 ```
 /usr/local/lib/libgme.so
 /usr/local/lib/libgme.so.0
-/usr/local/lib/libgme.so.0.6.4
+/usr/local/lib/libgme.so.0.6.5
 ```
 
 The complete list is `stage/<arch>/.manifest/libgme` after a build.
@@ -215,7 +215,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.6.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgme=<version>`), sources in `ported/libgme/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgme`; port one with `scripts/port-update libgme`.
+This recipe builds **0.6.5**. Kept from earlier: `0.6.4` ([recipe and patches](versions/0.6.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgme=<version>`), sources in `ported/libgme/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgme`; port one with `scripts/port-update libgme`.
 
 <details><summary>recipe.sh</summary>
 
@@ -223,7 +223,7 @@ This recipe builds **0.6.4**. Every version stays available: packages in `dists/
 # libgme (Game_Music_Emu): emulates the sound chips of video game consoles to
 # play their music files -- NSF/NSFE (NES), SPC (SNES), GBS (Game Boy), VGM/VGZ
 # and GYM (Mega Drive), HES, KSS, AY, SAP -- into 16-bit PCM.
-VERSION=0.6.4; GIT=https://github.com/libgme/game-music-emu.git; REF=0.6.4
+VERSION=0.6.5; GIT=https://github.com/libgme/game-music-emu.git; REF=0.6.5
 DEPS="zlib"
 BUILDSYS=cmake
 # All emulators, zlib for compressed VGZ files; the shared library only, no

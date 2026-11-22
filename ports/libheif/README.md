@@ -1,4 +1,4 @@
-# libheif 1.20.2
+# libheif 1.23.7
 
 > HEIF and AVIF image file format decoder and encoder
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/strukturag/libheif.git (tag `v1.20.2`) |
+| Upstream | https://github.com/strukturag/libheif.git (tag `v1.23.7`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libde265`](../libde265/) [`x265`](../x265/) [`aom`](../aom/) [`dav1d`](../dav1d/) [`openh264`](../openh264/) [`libjpeg-turbo`](../libjpeg-turbo/) [`openjpeg`](../openjpeg/) [`openjph`](../openjph/) [`libwebp`](../libwebp/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`aom`](../aom/) [`dav1d`](../dav1d/) [`libde265`](../libde265/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`openh264`](../openh264/) [`openjpeg`](../openjpeg/) [`openjph`](../openjph/) [`x265`](../x265/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`aom`](../aom/) [`dav1d`](../dav1d/) [`libde265`](../libde265/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`openh264`](../openh264/) [`openjpeg`](../openjpeg/) [`openjph`](../openjph/) [`x264`](../x264/) [`x265`](../x265/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libheif`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.20.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.23.7 --recurse-submodules --shallow-submodules \
     https://github.com/strukturag/libheif.git src/libheif
 ```
 
@@ -137,12 +137,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libheif`.
 
 ### 5. What it installs
 
-41 files under `/usr/local`: 3 shared-library entries, 5 programs, 24 headers.
+45 files under `/usr/local`: 3 shared-library entries, 5 programs, 28 headers.
 
 ```
 /usr/local/lib/libheif.so
 /usr/local/lib/libheif.so.1
-/usr/local/lib/libheif.so.1.20.2
+/usr/local/lib/libheif.so.1.23.7
 /usr/local/bin/heif-convert
 /usr/local/bin/heif-dec
 /usr/local/bin/heif-enc
@@ -230,14 +230,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.20.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libheif=<version>`), sources in `ported/libheif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libheif`; port one with `scripts/port-update libheif`.
+This recipe builds **1.23.7**. Kept from earlier: `1.20.2` ([recipe and patches](versions/1.20.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libheif=<version>`), sources in `ported/libheif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libheif`; port one with `scripts/port-update libheif`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libheif: HEIF and AVIF image file format decoder and encoder (ISO/IEC
 # 23008-12), with heif-dec, heif-enc, heif-info, heif-thumbnailer.
-VERSION=1.20.2; GIT=https://github.com/strukturag/libheif.git; REF=v1.20.2
+VERSION=1.23.7; GIT=https://github.com/strukturag/libheif.git; REF=v1.23.7
 DEPS="libde265 x265 aom dav1d openh264 libjpeg-turbo openjpeg openjph libwebp libpng libtiff zlib"
 BUILDSYS=cmake
 # Codecs, all built into libheif (no plugin directory to install and search):

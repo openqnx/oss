@@ -42,7 +42,7 @@ trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 F=$L/bin/foot
 v=$("$F" --version 2>&1); info "$v"
-echo "$v" | grep -q '^foot version: 1\.23\.1' && ok "foot --version: 1.23.1" || bad "--version: $v"
+echo "$v" | grep -q '^foot version: 1\.28\.0' && ok "foot --version: 1.28.0" || bad "--version: $v"
 # --check-config: a valid configuration, then one with an unknown key and one with a bad value
 mkdir -p cfg
 cat > cfg/good.ini <<'EOS'
@@ -51,7 +51,7 @@ font=DejaVu Sans Mono:size=11
 pad=4x4
 [scrollback]
 lines=2000
-[colors]
+[colors-dark]
 background=101010
 foreground=e0e0e0
 EOS

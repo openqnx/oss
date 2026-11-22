@@ -1,4 +1,4 @@
-# libiconv 1.18
+# libiconv 1.19.1
 
 > GNU character set conversion library (iconv)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/libiconv/libiconv-1.18.tar.gz |
+| Upstream | https://ftp.gnu.org/gnu/libiconv/libiconv-1.19.1.tar.gz |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/libiconv/libiconv-1.18.tar.gz
+URL=https://ftp.gnu.org/gnu/libiconv/libiconv-1.19.1.tar.gz
 mkdir -p dist src/libiconv
 curl -fL -o dist/$(basename $URL) $URL
 tar xf dist/$(basename $URL) -C src/libiconv --strip-components=1
@@ -114,7 +114,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libiconv`.
 /usr/local/lib/libcharset.so.1.0.0
 /usr/local/lib/libiconv.so
 /usr/local/lib/libiconv.so.2
-/usr/local/lib/libiconv.so.2.7.0
+/usr/local/lib/libiconv.so.2.7.2
 /usr/local/bin/iconv
 ```
 
@@ -176,7 +176,7 @@ PASS libiconv
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_libiconv`](../../tests/src/) -- a program linked against libiconv the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - _libiconv_version is 1.18
+   - _libiconv_version is 1.19
    - locale_charset() returns a name
    - UTF-8 -> ISO-8859-1: exact bytes
    - ISO-8859-1 -> UTF-8: round trip identical
@@ -206,13 +206,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libiconv=<version>`), sources in `ported/libiconv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libiconv`; port one with `scripts/port-update libiconv`.
+This recipe builds **1.19.1**. Kept from earlier: `1.18` ([recipe and patches](versions/1.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libiconv=<version>`), sources in `ported/libiconv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libiconv`; port one with `scripts/port-update libiconv`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.18
-TARBALL=https://ftp.gnu.org/gnu/libiconv/libiconv-1.18.tar.gz
+VERSION=1.19.1
+TARBALL=https://ftp.gnu.org/gnu/libiconv/libiconv-1.19.1.tar.gz
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-nls --enable-extra-encodings )
 ```

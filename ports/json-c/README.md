@@ -1,4 +1,4 @@
-# json-c 0.18
+# json-c 0.19-20260627
 
 > JSON implementation in C
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/json-c/json-c.git (tag `json-c-0.18-20240915`) |
+| Upstream | https://github.com/json-c/json-c.git (tag `json-c-0.19-20260627`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b json-c-0.18-20240915 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b json-c-0.19-20260627 --recurse-submodules --shallow-submodules \
     https://github.com/json-c/json-c.git src/json-c
 ```
 
@@ -104,7 +104,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH json-c`.
 ```
 /usr/local/lib/libjson-c.so
 /usr/local/lib/libjson-c.so.5
-/usr/local/lib/libjson-c.so.5.4.0
+/usr/local/lib/libjson-c.so.5.5.0
 ```
 
 The complete list is `stage/<arch>/.manifest/json-c` after a build.
@@ -182,12 +182,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add json-c=<version>`), sources in `ported/json-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates json-c`; port one with `scripts/port-update json-c`.
+This recipe builds **0.19-20260627**. Kept from earlier: `0.18` ([recipe and patches](versions/0.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add json-c=<version>`), sources in `ported/json-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates json-c`; port one with `scripts/port-update json-c`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.18; GIT=https://github.com/json-c/json-c.git; REF=json-c-0.18-20240915
+VERSION=0.19-20260627; GIT=https://github.com/json-c/json-c.git; REF=json-c-0.19-20260627
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DDISABLE_WERROR=ON -DBUILD_APPS=OFF )
 ```
 </details>

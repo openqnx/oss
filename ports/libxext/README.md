@@ -1,4 +1,4 @@
-# libxext 1.3.6
+# libxext 1.3.7
 
 > X11 library for common protocol extensions
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxext.git (tag `libXext-1.3.6`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxext.git (tag `libXext-1.3.7`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXext-1.3.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXext-1.3.7 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxext.git src/libxext
 ```
 
@@ -209,12 +209,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxext=<version>`), sources in `ported/libxext/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxext`; port one with `scripts/port-update libxext`.
+This recipe builds **1.3.7**. Kept from earlier: `1.3.6` ([recipe and patches](versions/1.3.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxext=<version>`), sources in `ported/libxext/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxext`; port one with `scripts/port-update libxext`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxext.git; REF=libXext-1.3.6
+VERSION=1.3.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxext.git; REF=libXext-1.3.7
 DEPS="libx11 xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

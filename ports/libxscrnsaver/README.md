@@ -1,4 +1,4 @@
-# libxscrnsaver 1.2.4
+# libxscrnsaver 1.2.5
 
 > X11 Screen Saver (MIT-SCREEN-SAVER) extension client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git (tag `libXScrnSaver-1.2.4`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git (tag `libXScrnSaver-1.2.5`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxext`](../libxext/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXScrnSaver-1.2.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXScrnSaver-1.2.5 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git src/libxscrnsaver
 ```
 
@@ -210,12 +210,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxscrnsaver=<version>`), sources in `ported/libxscrnsaver/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxscrnsaver`; port one with `scripts/port-update libxscrnsaver`.
+This recipe builds **1.2.5**. Kept from earlier: `1.2.4` ([recipe and patches](versions/1.2.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxscrnsaver=<version>`), sources in `ported/libxscrnsaver/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxscrnsaver`; port one with `scripts/port-update libxscrnsaver`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.4; GIT=https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git; REF=libXScrnSaver-1.2.4
+VERSION=1.2.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git; REF=libXScrnSaver-1.2.5
 DEPS="libx11 libxext xorgproto"
 BUILDSYS=autotools
 # The MIT-SCREEN-SAVER extension client library.  Here because SDL3's X11

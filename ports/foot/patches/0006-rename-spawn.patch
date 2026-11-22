@@ -8,10 +8,9 @@ process crashed in execvpe() (in foot's reaper_add(), signal 11) before the
 shell ever ran. Rename the function foot_spawn().
 
 Upstream-Status: QNX-specific
-
 --- a/input.c
 +++ b/input.c
-@@ -307,7 +307,7 @@
+@@ -315,7 +315,7 @@
              }
          }
  
@@ -22,24 +21,24 @@ Upstream-Status: QNX-specific
  
 --- a/notify.c
 +++ b/notify.c
-@@ -569,7 +569,7 @@
+@@ -600,7 +600,7 @@
  
      /* Redirect stdin to /dev/null, but ignore failure to open */
      int devnull = open("/dev/null", O_RDONLY);
 -    pid_t pid = spawn(
 +    pid_t pid = foot_spawn(
          term->reaper, NULL, argv, devnull, stdout_fds[1], -1,
-         track_notification ? &notif_done : NULL, (void *)term, NULL);
+         track_notification ? &notif_done : NULL, ctx, NULL);
  
-@@ -649,7 +649,7 @@
+@@ -680,7 +680,7 @@
              }
  
              int devnull = open("/dev/null", O_RDONLY);
--            spawn(
-+            foot_spawn(
-                 term->reaper, NULL, argv, devnull, -1, -1,
-                 NULL, (void *)term, NULL);
+-            spawn(term->reaper, NULL, argv, devnull, -1, -1, NULL, NULL, NULL);
++            foot_spawn(term->reaper, NULL, argv, devnull, -1, -1, NULL, NULL, NULL);
  
+             if (devnull >= 0)
+                 close(devnull);
 --- a/spawn.c
 +++ b/spawn.c
 @@ -16,7 +16,7 @@
@@ -64,25 +63,25 @@ Upstream-Status: QNX-specific
  
 --- a/terminal.c
 +++ b/terminal.c
-@@ -199,7 +199,7 @@
+@@ -202,7 +202,7 @@
          return true;
  
      char *const argv[] = {conf->utmp_helper_path, UTMP_ADD, getenv("WAYLAND_DISPLAY"), NULL};
--    return spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
-+    return foot_spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
+-    return spawn(reaper, NULL, argv, ptmx, -1, -1, NULL, NULL, NULL) >= 0;
++    return foot_spawn(reaper, NULL, argv, ptmx, -1, -1, NULL, NULL, NULL) >= 0;
  #else
      return true;
  #endif
-@@ -223,7 +223,7 @@
+@@ -226,7 +226,7 @@
          ;
  
      char *const argv[] = {conf->utmp_helper_path, UTMP_DEL, del_argument, NULL};
--    return spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
-+    return foot_spawn(reaper, NULL, argv, ptmx, ptmx, -1, NULL, NULL, NULL) >= 0;
+-    return spawn(reaper, NULL, argv, ptmx, -1, -1, NULL, NULL, NULL) >= 0;
++    return foot_spawn(reaper, NULL, argv, ptmx, -1, -1, NULL, NULL, NULL) >= 0;
  #else
      return true;
  #endif
-@@ -3763,7 +3763,7 @@
+@@ -3804,7 +3804,7 @@
          (!term->kbd_focus || term->conf->bell.command_focused))
      {
          int devnull = open("/dev/null", O_RDONLY);
@@ -91,13 +90,13 @@ Upstream-Status: QNX-specific
                devnull, -1, -1, NULL, NULL, NULL);
  
          if (devnull >= 0)
-@@ -3774,7 +3774,7 @@
- bool
- term_spawn_new(const struct terminal *term)
- {
+@@ -3825,7 +3825,7 @@
+     }
+     argv[argc] = NULL;
+ 
 -    return spawn(
 +    return foot_spawn(
-         term->reaper, term->cwd, (char *const []){term->foot_exe, NULL},
+         term->reaper, term->cwd, argv,
          -1, -1, -1, NULL, NULL, NULL) >= 0;
  }
 --- a/url-mode.c

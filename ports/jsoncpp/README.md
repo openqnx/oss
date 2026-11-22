@@ -1,4 +1,4 @@
-# jsoncpp 1.9.6
+# jsoncpp 1.9.8
 
 > C++ library for reading and writing JSON
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/open-source-parsers/jsoncpp.git (tag `1.9.6`) |
+| Upstream | https://github.com/open-source-parsers/jsoncpp.git (tag `1.9.8`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.9.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.9.8 --recurse-submodules --shallow-submodules \
     https://github.com/open-source-parsers/jsoncpp.git src/jsoncpp
 ```
 
@@ -103,8 +103,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH jsoncpp`.
 
 ```
 /usr/local/lib/libjsoncpp.so
-/usr/local/lib/libjsoncpp.so.1.9.6
-/usr/local/lib/libjsoncpp.so.26
+/usr/local/lib/libjsoncpp.so.1.9.8
+/usr/local/lib/libjsoncpp.so.27
 ```
 
 The complete list is `stage/<arch>/.manifest/jsoncpp` after a build.
@@ -184,12 +184,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.9.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jsoncpp=<version>`), sources in `ported/jsoncpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jsoncpp`; port one with `scripts/port-update jsoncpp`.
+This recipe builds **1.9.8**. Kept from earlier: `1.9.6` ([recipe and patches](versions/1.9.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jsoncpp=<version>`), sources in `ported/jsoncpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jsoncpp`; port one with `scripts/port-update jsoncpp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.9.6; GIT=https://github.com/open-source-parsers/jsoncpp.git; REF=1.9.6
+VERSION=1.9.8; GIT=https://github.com/open-source-parsers/jsoncpp.git; REF=1.9.8
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DJSONCPP_WITH_TESTS=OFF
                    -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

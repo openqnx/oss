@@ -1,4 +1,4 @@
-# sqlite_orm 1.9
+# sqlite_orm 1.9.1
 
 > Header-only SQLite ORM library for modern C++
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/fnc12/sqlite_orm.git (tag `v1.9`) |
+| Upstream | https://github.com/fnc12/sqlite_orm.git (tag `v1.9.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`sqlite`](../sqlite/) |
@@ -78,7 +78,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.9.1 --recurse-submodules --shallow-submodules \
     https://github.com/fnc12/sqlite_orm.git src/sqlite_orm
 ```
 
@@ -193,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sqlite_orm=<version>`), sources in `ported/sqlite_orm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sqlite_orm`; port one with `scripts/port-update sqlite_orm`.
+This recipe builds **1.9.1**. Kept from earlier: `1.9` ([recipe and patches](versions/1.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sqlite_orm=<version>`), sources in `ported/sqlite_orm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sqlite_orm`; port one with `scripts/port-update sqlite_orm`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.9; GIT=https://github.com/fnc12/sqlite_orm.git; REF=v1.9
+VERSION=1.9.1; GIT=https://github.com/fnc12/sqlite_orm.git; REF=v1.9.1
 DEPS="sqlite"
 CMAKE_ARGS_EXTRA=( -DSQLITE_ORM_ENABLE_CXX_20=OFF -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF )
 ```

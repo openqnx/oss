@@ -1,4 +1,4 @@
-# libxft 2.3.8
+# libxft 2.3.9
 
 > X FreeType library for anti-aliased font rendering in X clients
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxft.git (tag `libXft-2.3.8`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxft.git (tag `libXft-2.3.9`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxrender`](../libxrender/) [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXft-2.3.8 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXft-2.3.9 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxft.git src/libxft
 ```
 
@@ -219,12 +219,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.3.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxft=<version>`), sources in `ported/libxft/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxft`; port one with `scripts/port-update libxft`.
+This recipe builds **2.3.9**. Kept from earlier: `2.3.8` ([recipe and patches](versions/2.3.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxft=<version>`), sources in `ported/libxft/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxft`; port one with `scripts/port-update libxft`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.3.8; GIT=https://gitlab.freedesktop.org/xorg/lib/libxft.git; REF=libXft-2.3.8
+VERSION=2.3.9; GIT=https://gitlab.freedesktop.org/xorg/lib/libxft.git; REF=libXft-2.3.9
 DEPS="libx11 libxrender freetype fontconfig xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

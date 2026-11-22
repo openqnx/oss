@@ -1,4 +1,4 @@
-# meson 1.10.0
+# meson 1.12.1
 
 > Meson build system
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/32/4f/c398c6f06ece1c6c246e008d5dac3824c98f54d3eb3d8014f4910afd6d48/meson-1.10.0-py3-none-any.whl |
-| SHA-256 | `4b27aafce281e652dcb437b28007457411245d975c48b5db3a797d3e93ae1585` |
+| Upstream | https://files.pythonhosted.org/packages/57/99/36cd25f9598eef70db97577440a70a360af505f6f01c2338a18d1556079c/meson-1.12.1-py3-none-any.whl |
+| SHA-256 | `930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/32/4f/c398c6f06ece1c6c246e008d5dac3824c98f54d3eb3d8014f4910afd6d48/meson-1.10.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/57/99/36cd25f9598eef70db97577440a70a360af505f6f01c2338a18d1556079c/meson-1.12.1-py3-none-any.whl
 mkdir -p dist src/meson
 curl -fL -o dist/$(basename $URL) $URL
-echo "4b27aafce281e652dcb437b28007457411245d975c48b5db3a797d3e93ae1585  dist/$(basename $URL)" | sha256sum -c -
+echo "930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/meson --strip-components=1
 ```
 
@@ -117,7 +117,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH meson`.
 
 ### 5. What it installs
 
-255 files under `/usr/local`, 1 programs.
+257 files under `/usr/local`, 1 programs.
 
 ```
 /usr/local/bin/meson
@@ -195,7 +195,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add meson=<version>`), sources in `ported/meson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates meson`; port one with `scripts/port-update meson`.
+This recipe builds **1.12.1**. Kept from earlier: `1.10.0` ([recipe and patches](versions/1.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add meson=<version>`), sources in `ported/meson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates meson`; port one with `scripts/port-update meson`.
 
 <details><summary>recipe.sh</summary>
 
@@ -203,9 +203,9 @@ This recipe builds **1.10.0**. Every version stays available: packages in `dists
 # Meson, the build system, for the target (runs on the target's Python).
 # Pure Python: the published wheel is installed as released. Version as in the
 # QNX Everywhere 8.0.4r1 image.
-VERSION=1.10.0
-TARBALL=https://files.pythonhosted.org/packages/32/4f/c398c6f06ece1c6c246e008d5dac3824c98f54d3eb3d8014f4910afd6d48/meson-1.10.0-py3-none-any.whl
-SHA256=4b27aafce281e652dcb437b28007457411245d975c48b5db3a797d3e93ae1585
+VERSION=1.12.1
+TARBALL=https://files.pythonhosted.org/packages/57/99/36cd25f9598eef70db97577440a70a360af505f6f01c2338a18d1556079c/meson-1.12.1-py3-none-any.whl
+SHA256=930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02
 DEPS="python3"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"

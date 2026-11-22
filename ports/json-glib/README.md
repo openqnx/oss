@@ -1,4 +1,4 @@
-# json-glib 1.10.6
+# json-glib 1.10.8
 
 > JSON parser and generator library for GLib
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/json-glib.git (tag `1.10.6`) |
+| Upstream | https://gitlab.gnome.org/GNOME/json-glib.git (tag `1.10.8`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.10.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.10.8 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/json-glib.git src/json-glib
 ```
 
@@ -108,12 +108,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH json-glib`.
 
 ### 5. What it installs
 
-82 files under `/usr/local`: 3 shared-library entries, 2 programs, 13 headers.
+83 files under `/usr/local`: 3 shared-library entries, 2 programs, 13 headers.
 
 ```
 /usr/local/lib/libjson-glib-1.0.so
 /usr/local/lib/libjson-glib-1.0.so.0
-/usr/local/lib/libjson-glib-1.0.so.0.1000.6
+/usr/local/lib/libjson-glib-1.0.so.0.1000.8
 /usr/local/bin/json-glib-format
 /usr/local/bin/json-glib-validate
 ```
@@ -196,12 +196,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add json-glib=<version>`), sources in `ported/json-glib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates json-glib`; port one with `scripts/port-update json-glib`.
+This recipe builds **1.10.8**. Kept from earlier: `1.10.6` ([recipe and patches](versions/1.10.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add json-glib=<version>`), sources in `ported/json-glib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates json-glib`; port one with `scripts/port-update json-glib`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.10.6; GIT=https://gitlab.gnome.org/GNOME/json-glib.git; REF=1.10.6
+VERSION=1.10.8; GIT=https://gitlab.gnome.org/GNOME/json-glib.git; REF=1.10.8
 DEPS="glib"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dintrospection=disabled -Dgtk_doc=disabled -Dtests=false

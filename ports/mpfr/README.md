@@ -1,4 +1,4 @@
-# mpfr 4.2.1
+# mpfr 4.2.2
 
 > C library for multiple-precision floating-point computations
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz |
-| SHA-256 | `277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2` |
+| Upstream | https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.xz |
+| SHA-256 | `b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`gmp`](../gmp/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz
+URL=https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.xz
 mkdir -p dist src/mpfr
 curl -fL -o dist/$(basename $URL) $URL
-echo "277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2  dist/$(basename $URL)" | sha256sum -c -
+echo "b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/mpfr --strip-components=1
 ```
 
@@ -111,11 +111,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mpfr`.
 
 ### 5. What it installs
 
-20 files under `/usr/local`: 2 shared-library entries, 2 headers.
+21 files under `/usr/local`: 3 shared-library entries, 2 headers.
 
 ```
 /usr/local/lib/libmpfr.so
-/usr/local/lib/libmpfr.so.8
+/usr/local/lib/libmpfr.so.6
+/usr/local/lib/libmpfr.so.6.2.2
 ```
 
 The complete list is `stage/<arch>/.manifest/mpfr` after a build.
@@ -195,13 +196,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpfr=<version>`), sources in `ported/mpfr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpfr`; port one with `scripts/port-update mpfr`.
+This recipe builds **4.2.2**. Kept from earlier: `4.2.1` ([recipe and patches](versions/4.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpfr=<version>`), sources in `ported/mpfr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpfr`; port one with `scripts/port-update mpfr`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.2.1; TARBALL=https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz
-SHA256=277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2
+VERSION=4.2.2
+TARBALL=https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.xz
+SHA256=b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01
 DEPS="gmp"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --with-gmp="$STAGE$PREFIX" )

@@ -37,3 +37,4 @@ target_include_directories(test_nss PRIVATE "${INC}/nss" "${INC}/nspr")
 # ---- iperf2, ntttcp-for-linux ----
 port_script(test_iperf2)
 port_script(test_ntttcp_for_linux)
+port_script(test_yt_dlp)

@@ -1,4 +1,4 @@
-# libjpeg-turbo 3.0.4
+# libjpeg-turbo 3.2.1
 
 > SIMD-accelerated JPEG codec library and tools (libjpeg, TurboJPEG APIs)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libjpeg-turbo/libjpeg-turbo.git (tag `3.0.4`) |
+| Upstream | https://github.com/libjpeg-turbo/libjpeg-turbo.git (tag `3.2.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.0.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.2.1 --recurse-submodules --shallow-submodules \
     https://github.com/libjpeg-turbo/libjpeg-turbo.git src/libjpeg-turbo
 ```
 
@@ -100,7 +100,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libjpeg-turbo`.
 
 ### 5. What it installs
 
-39 files under `/usr/local`: 6 shared-library entries, 6 programs, 5 headers.
+41 files under `/usr/local`: 6 shared-library entries, 6 programs, 5 headers.
 
 ```
 /usr/local/lib/libjpeg.so
@@ -108,7 +108,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libjpeg-turbo`.
 /usr/local/lib/libjpeg.so.62.4.0
 /usr/local/lib/libturbojpeg.so
 /usr/local/lib/libturbojpeg.so.0
-/usr/local/lib/libturbojpeg.so.0.3.0
+/usr/local/lib/libturbojpeg.so.0.5.0
 /usr/local/bin/cjpeg
 /usr/local/bin/djpeg
 /usr/local/bin/jpegtran
@@ -212,12 +212,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.0.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libjpeg-turbo=<version>`), sources in `ported/libjpeg-turbo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libjpeg-turbo`; port one with `scripts/port-update libjpeg-turbo`.
+This recipe builds **3.2.1**. Kept from earlier: `3.0.4` ([recipe and patches](versions/3.0.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libjpeg-turbo=<version>`), sources in `ported/libjpeg-turbo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libjpeg-turbo`; port one with `scripts/port-update libjpeg-turbo`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.0.4; GIT=https://github.com/libjpeg-turbo/libjpeg-turbo.git; REF=3.0.4
+VERSION=3.2.1; GIT=https://github.com/libjpeg-turbo/libjpeg-turbo.git; REF=3.2.1
 CMAKE_ARGS_EXTRA=( -DENABLE_SHARED=ON -DENABLE_STATIC=ON -DWITH_TURBOJPEG=ON
                    -DWITH_JAVA=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

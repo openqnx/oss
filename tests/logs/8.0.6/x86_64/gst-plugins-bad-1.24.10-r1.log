@@ -1,0 +1,78 @@
+# gst-plugins-bad 1.24.10-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T16:26:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gst-plugins-bad qnx-test-gst-plugins-bad qnx-port-tests
+( 1/44) Installing aom (3.15.3-r0)
+( 2/44) Installing expat (2.6.4-r0)
+( 3/44) Installing brotli (1.2.1-r0)
+( 4/44) Installing bzip2 (1.0.8-r0)
+( 5/44) Installing libpng (1.6.59-r0)
+( 6/44) Installing freetype (2.15.0-r0)
+( 7/44) Installing fontconfig (2.15.0-r0)
+( 8/44) Installing libiconv (1.19.1-r0)
+( 9/44) Installing libunistring (1.5-r0)
+(10/44) Installing ncurses (6.6-r0)
+(11/44) Installing gettext (0.22.5-r0)
+(12/44) Installing libffi (3.4.6-r0)
+(13/44) Installing pcre2 (10.49-r0)
+(14/44) Installing glib (2.82.4-r0)
+(15/44) Installing libxau (1.0.12-r0)
+(16/44) Installing libxdmcp (1.1.5-r0)
+(17/44) Installing libxcb (1.17.0-r0)
+(18/44) Installing libx11 (1.8.14-r0)
+(19/44) Installing libxext (1.3.7-r0)
+(20/44) Installing libxrender (0.9.13-r0)
+(21/44) Installing lzo (2.10-r0)
+(22/44) Installing pixman (0.46.4-r0)
+(23/44) Installing cairo (1.18.6-r0)
+(24/44) Installing fdk-aac (2.0.3-r0)
+(25/44) Installing gstreamer (1.24.10-r0)
+(26/44) Installing libogg (1.3.6-r0)
+(27/44) Installing libtheora (1.1.1-r0)
+(28/44) Installing libvorbis (1.3.7-r0)
+(29/44) Installing opus (1.6.1-r0)
+(30/44) Installing gst-plugins-base (1.24.10-r0)
+(31/44) Installing libwebp (1.6.0-r0)
+(32/44) Installing openh264 (2.7.0-r0)
+(33/44) Installing fribidi (1.0.18-r0)
+(34/44) Installing graphite2 (1.3.15-r0)
+(35/44) Installing icu (76.1-r0)
+(36/44) Installing harfbuzz (<ip>-r0)
+(37/44) Installing libxft (2.3.9-r0)
+(38/44) Installing pango (1.54.0-r0)
+(39/44) Installing svt-av1 (2.3.0-r0)
+(40/44) Installing wayland (1.24.0-r0)
+(41/44) Installing x265 (3.6-r0)
+(42/44) Installing gst-plugins-bad (1.24.10-r1)
+(43/44) Installing qnx-port-tests (1.0-r0)
+(44/44) Installing qnx-test-gst-plugins-bad (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 139.8 MiB in 49 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gst_plugins_bad
+     == gst-plugins-bad ==
+       ok   openh264 elements
+       ok   videoparsersbad and MPEG-TS elements
+       ok   freeverb, y4mdec, x265enc
+     [OpenH264] this = 0x33efc071e0, Error:CWelsH264SVCEncoder::EncodeFrame(), cmInitParaError.
+       info encoded: 10 access unit(s), 8001 bytes
+       ok   10 H.264 access units
+       info SPS: profile_idc 66, 160x120
+       ok   codecparsers reads the SPS: 160x120
+       ok   baseline/main/high profile
+       ok   first access unit holds an IDR slice
+     [OpenH264] this = 0x33efbe10d0, Error:CWelsH264SVCEncoder::EncodeFrame(), cmInitParaError.
+       info decoded after TS: 10 frame(s)
+       ok   10 frames through mpegtsmux/tsdemux/openh264dec
+       ok   decoded 160x120
+       ok   freeverb: mono in, stereo out
+     PASS gst-plugins-bad
+PASS test_gst_plugins_bad
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

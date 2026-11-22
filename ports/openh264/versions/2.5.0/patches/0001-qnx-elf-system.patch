@@ -1,0 +1,20 @@
+openh264: treat QNX like Linux in meson.build.
+
+QNX is an ELF platform built with GNU as; meson.build otherwise stops at
+"FIXME: Unhandled system qnx".
+
+Upstream-Status: Pending
+
+--- a/meson.build
++++ b/meson.build
+@@ -59,7 +59,9 @@
+ libm_dep = cpp.find_library('m', required : false)
+ deps += [libm_dep]
+ 
+-if ['linux', 'android', 'ios', 'darwin'].contains(system)
++# QNX is an ELF platform built with GNU as, so it belongs on the same branch
++# as Linux; meson otherwise reaches "FIXME: Unhandled system qnx".
++if ['linux', 'android', 'ios', 'darwin', 'qnx'].contains(system)
+   asm_format32 = 'elf'
+   asm_format64 = 'elf64'
+   if ['ios', 'darwin'].contains(system)

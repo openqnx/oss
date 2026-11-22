@@ -1,4 +1,4 @@
-# datefudge 1.24
+# datefudge 1.27
 
 > Runs a program with a faked current time (LD_PRELOAD library and wrapper)
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.24.tar.xz |
-| SHA-256 | `80efab249232deeb142bf8a0ec66f2cf596c45560e4fdd28f3b5bdd290ac0385` |
+| Upstream | https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.27.tar.xz |
+| SHA-256 | `0f7c0ca9bd2b0ef6aa01eaaf82e36b94b5424b6b70d49a8123478bf4cdfb2a2d` |
 | Build system | custom (see recipe) |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -73,37 +73,25 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.24.tar.xz
+URL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.27.tar.xz
 mkdir -p dist src/datefudge
 curl -fL -o dist/$(basename $URL) $URL
-echo "80efab249232deeb142bf8a0ec66f2cf596c45560e4fdd28f3b5bdd290ac0385  dist/$(basename $URL)" | sha256sum -c -
+echo "0f7c0ca9bd2b0ef6aa01eaaf82e36b94b5424b6b70d49a8123478bf4cdfb2a2d  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/datefudge --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/datefudge < ports/datefudge/patches/0001-qnx-no-features-h.patch
-patch -p1 -d src/datefudge < ports/datefudge/patches/0002-qnx-gettimeofday-lookup.patch
 ```
 
 **[`0001-qnx-no-features-h.patch`](patches/0001-qnx-no-features-h.patch)** — Do not include glibc's <features.h> on QNX.
 
 > <features.h> is glibc's; QNX has none (its feature macros come with every
 > standard header). datefudge includes it for nothing it uses.
-
-Touches: `datefudge.c` · Upstream status: QNX-specific
-
-**[`0002-qnx-gettimeofday-lookup.patch`](patches/0002-qnx-gettimeofday-lookup.patch)** — Look up libc's gettimeofday, not glibc's __gettimeofday, on QNX.
-
-> datefudge's gettimeofday() calls __gettimeofday(), which finds the real
-> function with dlsym(RTLD_NEXT, "__gettimeofday") -- glibc's internal alias.
-> QNX's libc exports only gettimeofday, so the lookup returns NULL and every
-> program that calls gettimeofday() under datefudge jumps to address 0. On
-> QNX the next definition after the preloaded library is libc's
-> gettimeofday itself.
 
 Touches: `datefudge.c` · Upstream status: QNX-specific
 
@@ -219,7 +207,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.24**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add datefudge=<version>`), sources in `ported/datefudge/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates datefudge`; port one with `scripts/port-update datefudge`.
+This recipe builds **1.27**. Kept from earlier: `1.24` ([recipe and patches](versions/1.24/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add datefudge=<version>`), sources in `ported/datefudge/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates datefudge`; port one with `scripts/port-update datefudge`.
 
 <details><summary>recipe.sh</summary>
 
@@ -228,9 +216,9 @@ This recipe builds **1.24**. Every version stays available: packages in `dists/8
 # library that shifts what time(), gettimeofday() and clock_gettime()
 # (CLOCK_REALTIME) return, and the datefudge wrapper script. Version as in
 # QNX's own package list (Debian's upstream).
-VERSION=1.24
-TARBALL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.24.tar.xz
-SHA256=80efab249232deeb142bf8a0ec66f2cf596c45560e4fdd28f3b5bdd290ac0385
+VERSION=1.27
+TARBALL=https://deb.debian.org/debian/pool/main/d/datefudge/datefudge_1.27.tar.xz
+SHA256=0f7c0ca9bd2b0ef6aa01eaaf82e36b94b5424b6b70d49a8123478bf4cdfb2a2d
 DEPS=""
 # QNX's runtime linker honours LD_PRELOAD, and a preloaded library's
 # definitions interpose on the program's calls as on Linux. Calls libc

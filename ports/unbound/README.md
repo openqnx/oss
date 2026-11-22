@@ -1,4 +1,4 @@
-# unbound 1.24.1
+# unbound 1.26.2
 
 > Validating, recursive and caching DNS resolver and library
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/NLnetLabs/unbound.git (tag `release-1.24.1`) |
+| Upstream | https://github.com/NLnetLabs/unbound.git (tag `release-1.26.2`) |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | [`openssl`](../openssl/) [`expat`](../expat/) |
 | Run-time dependencies | [`expat`](../expat/) [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,40 +76,13 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b release-1.24.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b release-1.26.2 --recurse-submodules --shallow-submodules \
     https://github.com/NLnetLabs/unbound.git src/unbound
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/unbound < ports/unbound/patches/0001-qnx-from-qnx-ports.patch
-```
-
-**[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — QNX Porting support for unbound branch-1.24.1
-
-> Imported from qnx-ports/unbound (a33f0638e1da...qnx-release-1.24.1); original authorship kept.
->
->
-> * qnx Porting support for version release-1.24.1
->
-> * updating __QNXNTO__ with __QNX__
-> ---
->  compat/arc4random.c        |  7 +++++++
->  compat/getentropy_linux.c  | 20 ++++++++++++++++++++
->  services/outside_network.h |  4 ++++
->  testcode/replay.h          |  4 ++++
->  testcode/unitldns.c        |  4 ++++
->  testcode/unitmsgparse.c    |  4 ++++
->  testcode/unitverify.c      |  5 ++++-
->  testcode/unitzonemd.c      |  4 ++++
->  util/data/msgreply.h       |  4 ++++
->  util/timehist.h            |  4 ++++
->  10 files changed, 59 insertions(+), 1 deletion(-)
-
-Touches: `compat/arc4random.c`, `compat/getentropy_linux.c`, `services/outside_network.h`, `testcode/replay.h`, `testcode/unitldns.c`, `testcode/unitmsgparse.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -245,12 +218,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.24.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add unbound=<version>`), sources in `ported/unbound/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates unbound`; port one with `scripts/port-update unbound`.
+This recipe builds **1.26.2**. Kept from earlier: `1.24.1` ([recipe and patches](versions/1.24.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add unbound=<version>`), sources in `ported/unbound/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates unbound`; port one with `scripts/port-update unbound`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.24.1; GIT=https://github.com/NLnetLabs/unbound.git; REF=release-1.24.1
+VERSION=1.26.2; GIT=https://github.com/NLnetLabs/unbound.git; REF=release-1.26.2
 DEPS="openssl expat"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --with-ssl="$STAGE$PREFIX" --with-libexpat="$STAGE$PREFIX" --disable-static --enable-shared

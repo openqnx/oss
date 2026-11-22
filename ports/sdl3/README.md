@@ -1,4 +1,4 @@
-# sdl3 3.4.18
+# sdl3 3.4.20
 
 > Simple DirectMedia Layer 3, cross-platform multimedia and input library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libsdl-org/SDL.git (tag `release-3.4.18`) |
+| Upstream | https://github.com/libsdl-org/SDL.git (tag `release-3.4.20`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`libx11`](../libx11/) [`libxext`](../libxext/) [`libxcursor`](../libxcursor/) [`libxi`](../libxi/) [`libxfixes`](../libxfixes/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxscrnsaver`](../libxscrnsaver/) [`libxkbcommon`](../libxkbcommon/) [`libiconv`](../libiconv/) [`libxtst`](../libxtst/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b release-3.4.18 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b release-3.4.20 --recurse-submodules --shallow-submodules \
     https://github.com/libsdl-org/SDL.git src/sdl3
 ```
 
@@ -157,7 +157,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sdl3`.
 ```
 /usr/local/lib/libSDL3.so
 /usr/local/lib/libSDL3.so.0
-/usr/local/lib/libSDL3.so.0.4.18
+/usr/local/lib/libSDL3.so.0.4.20
 ```
 
 The complete list is `stage/<arch>/.manifest/sdl3` after a build.
@@ -254,12 +254,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.4.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sdl3=<version>`), sources in `ported/sdl3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sdl3`; port one with `scripts/port-update sdl3`.
+This recipe builds **3.4.20**. Kept from earlier: `3.4.18` ([recipe and patches](versions/3.4.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sdl3=<version>`), sources in `ported/sdl3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sdl3`; port one with `scripts/port-update sdl3`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.4.18; GIT=https://github.com/libsdl-org/SDL.git; REF=release-3.4.18
+VERSION=3.4.20; GIT=https://github.com/libsdl-org/SDL.git; REF=release-3.4.20
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv libxtst
 DEPS="libx11 libxext libxcursor libxi libxfixes libxrandr libxrender libxscrnsaver libxkbcommon libiconv libxtst"
 BUILDSYS=cmake

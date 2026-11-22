@@ -1,4 +1,4 @@
-# libdeflate 1.22
+# libdeflate 1.26
 
 > Fast library for DEFLATE, zlib and gzip compression and decompression
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ebiggers/libdeflate.git (tag `v1.22`) |
+| Upstream | https://github.com/ebiggers/libdeflate.git (tag `v1.26`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.22 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.26 --recurse-submodules --shallow-submodules \
     https://github.com/ebiggers/libdeflate.git src/libdeflate
 ```
 
@@ -182,12 +182,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.22**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdeflate=<version>`), sources in `ported/libdeflate/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdeflate`; port one with `scripts/port-update libdeflate`.
+This recipe builds **1.26**. Kept from earlier: `1.22` ([recipe and patches](versions/1.22/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdeflate=<version>`), sources in `ported/libdeflate/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdeflate`; port one with `scripts/port-update libdeflate`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.22; GIT=https://github.com/ebiggers/libdeflate.git; REF=v1.22
+VERSION=1.26; GIT=https://github.com/ebiggers/libdeflate.git; REF=v1.26
 CMAKE_ARGS_EXTRA=( -DLIBDEFLATE_BUILD_GZIP=ON -DLIBDEFLATE_BUILD_STATIC_LIB=OFF )
 ```
 </details>

@@ -11,7 +11,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 4 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`xz`](../xz/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_boost`](../../tests/src/) |
 

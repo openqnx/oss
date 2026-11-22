@@ -1,4 +1,4 @@
-# python3-wheel 0.46.1
+# python3-wheel 0.48.0
 
 > Command line tool and library for the Python wheel package format
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/af/44/31d964a260fcda6bf2f59384231bbf4962ac796a5d36c554162b5411b8db/wheel-0.46.1-py3-none-any.whl |
-| SHA-256 | `f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8` |
+| Upstream | https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl |
+| SHA-256 | `3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-packaging`](../python3-packaging/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/af/44/31d964a260fcda6bf2f59384231bbf4962ac796a5d36c554162b5411b8db/wheel-0.46.1-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl
 mkdir -p dist src/python3-wheel
 curl -fL -o dist/$(basename $URL) $URL
-echo "f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8  dist/$(basename $URL)" | sha256sum -c -
+echo "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-wheel --strip-components=1
 ```
 
@@ -114,7 +114,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-wheel`.
 
 ### 5. What it installs
 
-17 files under `/usr/local`.
+20 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/python3-wheel` after a build.
 
@@ -188,7 +188,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.46.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-wheel=<version>`), sources in `ported/python3-wheel/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-wheel`; port one with `scripts/port-update python3-wheel`.
+This recipe builds **0.48.0**. Kept from earlier: `0.46.1` ([recipe and patches](versions/0.46.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-wheel=<version>`), sources in `ported/python3-wheel/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-wheel`; port one with `scripts/port-update python3-wheel`.
 
 <details><summary>recipe.sh</summary>
 
@@ -196,9 +196,9 @@ This recipe builds **0.46.1**. Every version stays available: packages in `dists
 # wheel (version as in the QNX Everywhere 8.0.4r1 image).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=0.46.1
-TARBALL=https://files.pythonhosted.org/packages/af/44/31d964a260fcda6bf2f59384231bbf4962ac796a5d36c554162b5411b8db/wheel-0.46.1-py3-none-any.whl
-SHA256=f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8
+VERSION=0.48.0
+TARBALL=https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl
+SHA256=3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab
 DEPS="python3 python3-packaging"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"

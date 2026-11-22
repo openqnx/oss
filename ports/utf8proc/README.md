@@ -1,4 +1,4 @@
-# utf8proc 2.11.3
+# utf8proc 2.12.0
 
 > C library for Unicode normalization, case-folding and UTF-8 processing
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/JuliaStrings/utf8proc.git (tag `v2.11.3`) |
+| Upstream | https://github.com/JuliaStrings/utf8proc.git (tag `v2.12.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.11.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.12.0 --recurse-submodules --shallow-submodules \
     https://github.com/JuliaStrings/utf8proc.git src/utf8proc
 ```
 
@@ -107,7 +107,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH utf8proc`.
 ```
 /usr/local/lib/libutf8proc.so
 /usr/local/lib/libutf8proc.so.3
-/usr/local/lib/libutf8proc.so.3.2.3
+/usr/local/lib/libutf8proc.so.3.3.0
 ```
 
 The complete list is `stage/<arch>/.manifest/utf8proc` after a build.
@@ -188,12 +188,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.11.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add utf8proc=<version>`), sources in `ported/utf8proc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates utf8proc`; port one with `scripts/port-update utf8proc`.
+This recipe builds **2.12.0**. Kept from earlier: `2.11.3` ([recipe and patches](versions/2.11.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add utf8proc=<version>`), sources in `ported/utf8proc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates utf8proc`; port one with `scripts/port-update utf8proc`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.11.3; GIT=https://github.com/JuliaStrings/utf8proc.git; REF=v2.11.3
+VERSION=2.12.0; GIT=https://github.com/JuliaStrings/utf8proc.git; REF=v2.12.0
 # 2.11 for Neovim 0.12, which uses ambiguous_width (the version Neovim bundles).
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DUTF8PROC_ENABLE_TESTING=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

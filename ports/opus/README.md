@@ -1,4 +1,4 @@
-# opus 1.5.2
+# opus 1.6.1
 
 > Opus interactive speech and audio codec library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/xiph/opus.git (tag `v1.5.2`) |
+| Upstream | https://github.com/xiph/opus.git (tag `v1.6.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.6.1 --recurse-submodules --shallow-submodules \
     https://github.com/xiph/opus.git src/opus
 ```
 
@@ -104,7 +104,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH opus`.
 ```
 /usr/local/lib/libopus.so
 /usr/local/lib/libopus.so.0
-/usr/local/lib/libopus.so.0.10.1
+/usr/local/lib/libopus.so.0.11.1
 ```
 
 The complete list is `stage/<arch>/.manifest/opus` after a build.
@@ -188,12 +188,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add opus=<version>`), sources in `ported/opus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates opus`; port one with `scripts/port-update opus`.
+This recipe builds **1.6.1**. Kept from earlier: `1.5.2` ([recipe and patches](versions/1.5.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add opus=<version>`), sources in `ported/opus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates opus`; port one with `scripts/port-update opus`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.2; GIT=https://github.com/xiph/opus.git; REF=v1.5.2
+VERSION=1.6.1; GIT=https://github.com/xiph/opus.git; REF=v1.6.1
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DOPUS_BUILD_TESTING=OFF
                    -DOPUS_BUILD_PROGRAMS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

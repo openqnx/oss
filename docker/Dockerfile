@@ -49,9 +49,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m venv /opt/hosttools-venv \
     && /opt/hosttools-venv/bin/pip install --no-cache-dir \
          "meson==1.3.2" "cmake==3.28.3" "ninja==1.11.1.4"
+# Newer Meson / CMake / Ninja beside them, for the components whose release
+# needs one (recipe: HOSTTOOLS_NEW=1, scripts/qnxbuild). Not on PATH: the
+# pinned ones above stay the default for everything else.
+RUN python3 -m venv /opt/hosttools-new \
+    && /opt/hosttools-new/bin/pip install --no-cache-dir \
+         "meson==1.12.1" "cmake==3.31.10" "ninja==1.13.2"
 ENV PATH=/opt/hosttools-venv/bin:$PATH \
     LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     QNX_SDP_ROOT=/opt/qnx800
+
+# dbus-binding-tool (dbus-glib's code generator) runs on the build machine
+# while building parole: the build host's, as glib-compile-resources.
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      libdbus-glib-1-dev-bin \
+    && rm -rf /var/lib/apt/lists/*
 
 # run.sh passes the caller's uid/gid so files written to the bind-mounted
 # workspace stay owned by the user who ran it.

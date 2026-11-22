@@ -1,4 +1,4 @@
-# unibilium 2.1.2
+# unibilium 2.1.4
 
 > Basic terminfo library for reading terminfo files and format strings
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/neovim/unibilium.git (tag `v2.1.2`) |
+| Upstream | https://github.com/neovim/unibilium.git (tag `v2.1.4`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,29 +72,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.1.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.1.4 --recurse-submodules --shallow-submodules \
     https://github.com/neovim/unibilium.git src/unibilium
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/unibilium < ports/unibilium/patches/0001-cmake-libtool-compatible-soname.patch
-```
-
-**[`0001-cmake-libtool-compatible-soname.patch`](patches/0001-cmake-libtool-compatible-soname.patch)** — Give the shared library the soname of the libtool build: libunibilium.so.4.
-
-> The CMake build names the library version "${VERSION_MAJOR}.${VERSION_MINOR}",
-> two variables nothing defines (project() sets PROJECT_VERSION_MAJOR), so the
-> library came out as "libunibilium.so.." with that as its soname, and every
-> program linking it -- neovim -- needed a file called "libunibilium.so..".
-> Use what the Makefile build of the same release produces (-version-info
-> 4:1:0): libunibilium.so.4.0.1, soname libunibilium.so.4, as distributions
-> ship it.
-
-Touches: `CMakeLists.txt` · Upstream status: Pending
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -117,12 +101,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH unibilium`.
 
 ### 5. What it installs
 
-4 files under `/usr/local`: 3 shared-library entries, 1 headers.
+58 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libunibilium.so
 /usr/local/lib/libunibilium.so.4
-/usr/local/lib/libunibilium.so.4.0.1
+/usr/local/lib/libunibilium.so.4.0.2
 ```
 
 The complete list is `stage/<arch>/.manifest/unibilium` after a build.
@@ -205,12 +189,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.1.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add unibilium=<version>`), sources in `ported/unibilium/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates unibilium`; port one with `scripts/port-update unibilium`.
+This recipe builds **2.1.4**. Kept from earlier: `2.1.2` ([recipe and patches](versions/2.1.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add unibilium=<version>`), sources in `ported/unibilium/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates unibilium`; port one with `scripts/port-update unibilium`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.1.2; GIT=https://github.com/neovim/unibilium.git; REF=v2.1.2
+VERSION=2.1.4; GIT=https://github.com/neovim/unibilium.git; REF=v2.1.4
 BUILDSYS=cmake
 # TERMINFO_DIRS: the compiled-in search path. Left alone, CMakeLists asks the
 # BUILD HOST's ncurses6-config and bakes in the host's directories

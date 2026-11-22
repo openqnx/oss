@@ -1,4 +1,4 @@
-# glm 1.0.1
+# glm 1.0.3
 
 > Header-only C++ mathematics library for graphics based on GLSL
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/g-truc/glm.git (tag `1.0.1`) |
+| Upstream | https://github.com/g-truc/glm.git (tag `1.0.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_glm`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.0.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.0.3 --recurse-submodules --shallow-submodules \
     https://github.com/g-truc/glm.git src/glm
 ```
 
@@ -99,7 +98,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glm`.
 
 ### 5. What it installs
 
-430 files under `/usr/local`, 428 headers.
+434 files under `/usr/local`, 432 headers.
 
 The complete list is `stage/<arch>/.manifest/glm` after a build.
 
@@ -156,7 +155,6 @@ PASS glm
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_glm`](../../tests/src/) -- a program linked against glm the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -177,12 +175,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glm=<version>`), sources in `ported/glm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glm`; port one with `scripts/port-update glm`.
+This recipe builds **1.0.3**. Kept from earlier: `1.0.1` ([recipe and patches](versions/1.0.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glm=<version>`), sources in `ported/glm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glm`; port one with `scripts/port-update glm`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.1; GIT=https://github.com/g-truc/glm.git; REF=1.0.1
+VERSION=1.0.3; GIT=https://github.com/g-truc/glm.git; REF=1.0.3
 CMAKE_ARGS_EXTRA=( -DGLM_BUILD_TESTS=OFF -DGLM_BUILD_LIBRARY=OFF -DGLM_BUILD_INSTALL=ON )
 ```
 </details>

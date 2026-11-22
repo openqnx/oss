@@ -160,7 +160,8 @@ do_build()   { _emake actual-all; }
 ```
 
 ```bash
-do_install() { _emake DESTDIR="$STAGE" install; }
+do_install() { _emake DESTDIR="$STAGE" install && \
+  sed -i 's/^Terminal=false/Terminal=true/' "$STAGE$PREFIX"/share/applications/emacs*.desktop; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
@@ -169,6 +170,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - Also linked at run time (found by scripts/gen-dependency-index): dbus lcms2 sqlite tree-sitter
 - Emacs runs what it builds: lib-src's make-docfile (the DOC file, globals.h) and Emacs itself (byte-compiling, generated Lisp). Those come from the build host's Emacs made above -- libsrc= for the lib-src tools, EMACS= for Emacs; with --with-dumping=none there is no dump to make with the QNX binary.
 - timerfd_create() is in QNX's libtimerfd, not libc. configure finds it (via other libraries) but temacs is linked with LIBS_SYSTEM, which the aports configure patch sets to -lsocket alone: "DSO missing from command line". "make all" is actual-all followed by a sanity check that runs the new emacs -- a QNX binary. Build actual-all; the check belongs on the target. install depends on actual-all too, so it gets the same host tools. EMACS means two things: the program lisp/ runs, and at the top level the name to install the binary as. Pass the top level's own value ("emacs") and let PATH resolve it to the host build -- an absolute path there became the name of the installed symlink.
+- Built without a window system (no X11/GTK), so emacs runs in a terminal: the desktop entries must say so, or a menu starts it with no tty and it exits with "standard input is not a tty".
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH emacs`.
 
@@ -309,7 +311,11 @@ _emake() { local H; H=$(_hostemacs)
   PATH="$B/hostbin:$PATH" make -C "$B" -j"$(nproc)" libsrc="$H/lib-src" LIBS_SYSTEM="-lsocket -ltimerfd" \
     EMACS=emacs BOOTSTRAPEMACS="$H/src/bootstrap-emacs" "$@"; }
 do_build()   { _emake actual-all; }
-do_install() { _emake DESTDIR="$STAGE" install; }
+# Built without a window system (no X11/GTK), so emacs runs in a terminal:
+# the desktop entries must say so, or a menu starts it with no tty and it
+# exits with "standard input is not a tty".
+do_install() { _emake DESTDIR="$STAGE" install && \
+  sed -i 's/^Terminal=false/Terminal=true/' "$STAGE$PREFIX"/share/applications/emacs*.desktop; }
 ```
 </details>
 

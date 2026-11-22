@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (25 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild libusb avahi libxml2 cups
 ```
 
-<details><summary>Full build chain (22)</summary>
+<details><summary>Full build chain (25)</summary>
 
-[`avahi`](../avahi/) [`bzip2`](../bzip2/) [`cups`](../cups/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libdaemon`](../libdaemon/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libusb`](../libusb/) [`libxcrypt`](../libxcrypt/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`avahi`](../avahi/) [`bzip2`](../bzip2/) [`cups`](../cups/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`gobject-introspection`](../gobject-introspection/) [`libdaemon`](../libdaemon/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libusb`](../libusb/) [`libxcrypt`](../libxcrypt/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source

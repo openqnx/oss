@@ -1,4 +1,4 @@
-# perl-html-parser 3.86
+# perl-html-parser 3.87
 
 > HTML::Parser, an event-driven HTML parser for Perl (XS), with HTML::Entities and HTML::LinkExtor
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.86.tar.gz |
-| SHA-256 | `5305e1d5faa70ee0aa282d85a5c9aa93911e8c7afa590ad1ced5703a544e20f6` |
+| Upstream | https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.87.tar.gz |
+| SHA-256 | `04342b30b3b1675041b28cfecb693a3d3a0c051587cc40b746a7f9a72a7e3b8a` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`perl`](../perl/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.86.tar.gz
+URL=https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.87.tar.gz
 mkdir -p dist src/perl-html-parser
 curl -fL -o dist/$(basename $URL) $URL
-echo "5305e1d5faa70ee0aa282d85a5c9aa93911e8c7afa590ad1ced5703a544e20f6  dist/$(basename $URL)" | sha256sum -c -
+echo "04342b30b3b1675041b28cfecb693a3d3a0c051587cc40b746a7f9a72a7e3b8a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/perl-html-parser --strip-components=1
 ```
 
@@ -199,15 +199,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.86**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-html-parser=<version>`), sources in `ported/perl-html-parser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-html-parser`; port one with `scripts/port-update perl-html-parser`.
+This recipe builds **3.87**. Kept from earlier: `3.86` ([recipe and patches](versions/3.86/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-html-parser=<version>`), sources in `ported/perl-html-parser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-html-parser`; port one with `scripts/port-update perl-html-parser`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # perl-html-parser: HTML::Parser, an event-driven HTML parser for Perl (XS), with HTML::Entities and HTML::LinkExtor.
-VERSION=3.86
-TARBALL=https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.86.tar.gz
-SHA256=5305e1d5faa70ee0aa282d85a5c9aa93911e8c7afa590ad1ced5703a544e20f6
+VERSION=3.87
+TARBALL=https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Parser-3.87.tar.gz
+SHA256=04342b30b3b1675041b28cfecb693a3d3a0c051587cc40b746a7f9a72a7e3b8a
 DEPS="perl"
 RUNTIME_DEPS="perl perl-html-tagset perl-http-message perl-uri"
 BUILDSYS=custom

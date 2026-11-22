@@ -1,4 +1,4 @@
-# font-noto-emoji 2.048
+# font-noto-emoji 2.051
 
 > Noto Color Emoji font
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.048.tar.gz |
-| SHA-256 | `e6396642172e3d5031bef5f381cc047a007588e73b26209ba1c47b3d1f8faa60` |
+| Upstream | https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.051.tar.gz |
+| SHA-256 | `04f3d1e5605edebebac00a7a0becb390a4a3ead015066905b27935b30c18e745` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -70,10 +70,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.048.tar.gz
+URL=https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.051.tar.gz
 mkdir -p dist src/font-noto-emoji
 curl -fL -o dist/$(basename $URL) $URL
-echo "e6396642172e3d5031bef5f381cc047a007588e73b26209ba1c47b3d1f8faa60  dist/$(basename $URL)" | sha256sum -c -
+echo "04f3d1e5605edebebac00a7a0becb390a4a3ead015066905b27935b30c18e745  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/font-noto-emoji --strip-components=1
 ```
 
@@ -179,16 +179,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.048**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add font-noto-emoji=<version>`), sources in `ported/font-noto-emoji/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates font-noto-emoji`; port one with `scripts/port-update font-noto-emoji`.
+This recipe builds **2.051**. Kept from earlier: `2.048` ([recipe and patches](versions/2.048/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add font-noto-emoji=<version>`), sources in `ported/font-noto-emoji/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates font-noto-emoji`; port one with `scripts/port-update font-noto-emoji`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # Noto Color Emoji. Font files only. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.048
-TARBALL=https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.048.tar.gz
-SHA256=e6396642172e3d5031bef5f381cc047a007588e73b26209ba1c47b3d1f8faa60
-FETCH_NAME=noto-emoji-2.048.tar.gz
+VERSION=2.051
+TARBALL=https://github.com/googlefonts/noto-emoji/archive/refs/tags/v2.051.tar.gz
+SHA256=04f3d1e5605edebebac00a7a0becb390a4a3ead015066905b27935b30c18e745
+FETCH_NAME=noto-emoji-$VERSION.tar.gz
 FONT_FILTER='*/fonts/NotoColorEmoji.ttf'
 BUILDSYS=custom
 source "$WS/scripts/lib/fonts.sh"

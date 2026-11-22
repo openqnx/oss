@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`ros2`](../ros2/) [`ros2-jazzy-control`](../ros2-jazzy-control/) [`boost`](../boost/) [`eigen`](../eigen/) [`tinyxml2`](../tinyxml2/) [`geographiclib`](../geographiclib/) [`graphicsmagick`](../graphicsmagick/) [`xtensor`](../xtensor/) [`xtl`](../xtl/) [`xsimd`](../xsimd/) [`nanoflann`](../nanoflann/) [`nlohmann_json`](../nlohmann_json/) [`libzmq`](../libzmq/) [`cppzmq`](../cppzmq/) [`sqlite`](../sqlite/) [`libuuid`](../libuuid/) [`ceres-solver`](../ceres-solver/) [`suitesparse`](../suitesparse/) [`ompl`](../ompl/) [`glog`](../glog/) [`opencv`](../opencv/) |
-| Run-time dependencies | [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`fastcdr`](../fastcdr/) [`geographiclib`](../geographiclib/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`libuuid`](../libuuid/) [`libzmq`](../libzmq/) [`ompl`](../ompl/) [`opencv`](../opencv/) [`orocos-kdl`](../orocos-kdl/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) |
+| Run-time dependencies | [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`fastcdr`](../fastcdr/) [`geographiclib`](../geographiclib/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`libuuid`](../libuuid/) [`libzmq`](../libzmq/) [`ompl`](../ompl/) [`opencv`](../opencv/) [`orocos-kdl`](../orocos-kdl/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2_jazzy_nav2`](../../tests/src/) |
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (64 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (65 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild ros2 ros2-jazzy-control boost eigen tinyxml2 geographiclib graphicsmagick xtensor xtl xsimd nanoflann nlohmann_json libzmq cppzmq sqlite libuuid ceres-solver suitesparse ompl glog opencv
 ```
 
-<details><summary>Full build chain (64)</summary>
+<details><summary>Full build chain (65)</summary>
 
-[`benchmark`](../benchmark/) [`boost`](../boost/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`cppzmq`](../cppzmq/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fmt`](../fmt/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`geographiclib`](../geographiclib/) [`gettext`](../gettext/) [`gflags`](../gflags/) [`giflib`](../giflib/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsodium`](../libsodium/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libuuid`](../libuuid/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libyaml`](../libyaml/) [`libzmq`](../libzmq/) [`lz4`](../lz4/) [`nanoflann`](../nanoflann/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`nlohmann_json`](../nlohmann_json/) [`numpy`](../numpy/) [`ompl`](../ompl/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`ros2`](../ros2/) [`ros2-jazzy-control`](../ros2-jazzy-control/) [`sqlite`](../sqlite/) [`suitesparse`](../suitesparse/) [`tinyxml2`](../tinyxml2/) [`tl-expected`](../tl-expected/) [`xsimd`](../xsimd/) [`xtensor`](../xtensor/) [`xtl`](../xtl/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`benchmark`](../benchmark/) [`boost`](../boost/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`cppzmq`](../cppzmq/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fmt`](../fmt/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`geographiclib`](../geographiclib/) [`gettext`](../gettext/) [`gflags`](../gflags/) [`giflib`](../giflib/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsodium`](../libsodium/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libuuid`](../libuuid/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libyaml`](../libyaml/) [`libzip`](../libzip/) [`libzmq`](../libzmq/) [`lz4`](../lz4/) [`nanoflann`](../nanoflann/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`nlohmann_json`](../nlohmann_json/) [`numpy`](../numpy/) [`ompl`](../ompl/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`ros2`](../ros2/) [`ros2-jazzy-control`](../ros2-jazzy-control/) [`sqlite`](../sqlite/) [`suitesparse`](../suitesparse/) [`tinyxml2`](../tinyxml2/) [`tl-expected`](../tl-expected/) [`xsimd`](../xsimd/) [`xtensor`](../xtensor/) [`xtl`](../xtl/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -106,7 +106,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2-jazzy-nav2`
 
 ### 5. What it installs
 
-5395 files under `/usr/local`.
+5407 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2-jazzy-nav2` after a build.
 

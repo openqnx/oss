@@ -1,4 +1,4 @@
-# doxygen 1.17.0
+# doxygen 1.18.0
 
 > Documentation generator for C, C++ and other languages
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/doxygen/doxygen.git (tag `Release_1_17_0`) |
+| Upstream | https://github.com/doxygen/doxygen.git (tag `Release_1_18_0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libiconv`](../libiconv/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b Release_1_17_0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b Release_1_18_0 --recurse-submodules --shallow-submodules \
     https://github.com/doxygen/doxygen.git src/doxygen
 ```
 
@@ -184,7 +184,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.17.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add doxygen=<version>`), sources in `ported/doxygen/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates doxygen`; port one with `scripts/port-update doxygen`.
+This recipe builds **1.18.0**. Kept from earlier: `1.17.0` ([recipe and patches](versions/1.17.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add doxygen=<version>`), sources in `ported/doxygen/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates doxygen`; port one with `scripts/port-update doxygen`.
 
 <details><summary>recipe.sh</summary>
 
@@ -192,7 +192,7 @@ This recipe builds **1.17.0**. Every version stays available: packages in `dists
 # doxygen: documentation generator for C, C++ and more (HTML, XML, LaTeX, man
 # pages from annotated sources). No doxywizard (needs Qt widgets), no clang
 # assisted parsing; its lexers are generated with the build machine's flex/bison.
-VERSION=1.17.0; GIT=https://github.com/doxygen/doxygen.git; REF=Release_1_17_0
+VERSION=1.18.0; GIT=https://github.com/doxygen/doxygen.git; REF=Release_1_18_0
 DEPS="libiconv"
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -Dbuild_wizard=OFF -Dbuild_search=OFF -Dbuild_doc=OFF -Duse_libclang=OFF -Duse_sys_sqlite3=OFF )

@@ -12,9 +12,9 @@
 # library or a Mesa client the SDP's. Applications link Mesa through its
 # pkg-config files (egl.pc, glesv2.pc in opt/mesa/lib/pkgconfig), or load
 # libEGL_mesa.so.1 by path (SDL: SDL_VIDEO_EGL_DRIVER).
-VERSION=26.2.6
-TARBALL=https://archive.mesa3d.org/mesa-26.2.6.tar.xz
-SHA256=b9436b3e1a8be76fbd4823dc884f90596ab7c6ac5e1867a305e66ffccfb31a92
+VERSION=26.3.1
+TARBALL=https://archive.mesa3d.org/mesa-26.3.1.tar.xz
+SHA256=4e4e438eac7b840a9383988cbb7c08dad8041da544b9319fc26d319fa7348961
 DEPS="llvm wayland wayland-protocols zlib zstd expat"
 BUILDSYS=meson
 OPT="$PREFIX/opt/mesa"

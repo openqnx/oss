@@ -1,0 +1,78 @@
+gRPC: QNX platform definition for the POSIX socket code.
+
+Without a GPR_<platform> symbol the sockaddr and iomgr headers do not treat
+QNX as POSIX and every socket type is undeclared. Define GPR_QNX and select the
+features SDP 8.0 has (getifaddrs, AF_UNIX, SO_NOSIGPIPE, IPV6_RECVPKTINFO);
+with no native epoll, the poll engine and the pipe wakeup fd are used.
+
+Upstream-Status: QNX-specific
+
+--- a/include/grpc/support/port_platform.h
++++ b/include/grpc/support/port_platform.h
+@@ -504,6 +504,9 @@
+ #endif /* _LP64 */
+ #elif defined(__QNX__) || defined(__QNXNTO__)
+ #define GPR_PLATFORM_STRING "qnx"
++// Without a GPR_<platform> symbol the sockaddr and iomgr headers cannot tell
++// that QNX is a POSIX target, and every socket type they use goes undeclared.
++#define GPR_QNX 1
+ #define GPR_CPU_POSIX 1
+ #define GPR_GCC_ATOMIC 1
+ #define GPR_POSIX_LOG 1
+--- a/include/grpc/event_engine/port.h
++++ b/include/grpc/event_engine/port.h
+@@ -20,7 +20,7 @@
+ #if defined(GPR_ANDROID) || defined(GPR_LINUX) || defined(GPR_APPLE) ||     \
+     defined(GPR_FREEBSD) || defined(GPR_OPENBSD) || defined(GPR_SOLARIS) || \
+     defined(GPR_AIX) || defined(GPR_NACL) || defined(GPR_FUCHSIA) ||        \
+-    defined(GRPC_POSIX_SOCKET) || defined(GPR_NETBSD)
++    defined(GRPC_POSIX_SOCKET) || defined(GPR_NETBSD) || defined(GPR_QNX)
+ #define GRPC_EVENT_ENGINE_POSIX
+ #include <arpa/inet.h>
+ #include <netdb.h>
+--- a/src/core/lib/iomgr/port.h
++++ b/src/core/lib/iomgr/port.h
+@@ -163,6 +163,21 @@
+ #define GRPC_POSIX_SOCKET 1
+ #define GRPC_POSIX_SOCKETUTILS 1
+ #define GRPC_POSIX_WAKEUP_FD 1
++#elif defined(GPR_QNX)
++// Verified present in SDP 8.0: <ifaddrs.h>/getifaddrs, <arpa/nameser.h>,
++// AF_UNIX with sockaddr_un, SO_NOSIGPIPE, IPV6_RECVPKTINFO. QNX has no epoll,
++// so the poll-based engine and the pipe-based wakeup fd are the right choices.
++// GRPC_POSIX_FORK is deliberately omitted: fork() on QNX does not carry over
++// threads, and gRPC's fork handlers assume it does.
++#define GRPC_HAVE_ARPA_NAMESER 1
++#define GRPC_HAVE_IFADDRS 1
++#define GRPC_HAVE_IPV6_RECVPKTINFO 1
++#define GRPC_HAVE_SO_NOSIGPIPE 1
++#define GRPC_HAVE_UNIX_SOCKET 1
++#define GRPC_POSIX_NO_SPECIAL_WAKEUP_FD 1
++#define GRPC_POSIX_SOCKET 1
++#define GRPC_POSIX_SOCKETUTILS 1
++#define GRPC_POSIX_WAKEUP_FD 1
+ #elif defined(GPR_AIX)
+ #define GRPC_HAVE_UNIX_SOCKET 1
+ #define GRPC_POSIX_NO_SPECIAL_WAKEUP_FD 1
+--- a/src/core/util/posix/directory_reader.cc
++++ b/src/core/util/posix/directory_reader.cc
+@@ -24,8 +24,12 @@
+ #include "absl/status/status.h"
+ #include "absl/strings/string_view.h"
+ 
++// QNX belongs here too: the implementation below uses only opendir/readdir/
++// closedir and dirent::d_name, all of which QNX provides. Without it
++// MakeDirectoryReader is never compiled and libgrpc.so ships with an
++// unresolved reference that only bites when an application links against it.
+ #if defined(GPR_LINUX) || defined(GPR_ANDROID) || defined(GPR_FREEBSD) || \
+-    defined(GPR_APPLE) || defined(GPR_NETBSD)
++    defined(GPR_APPLE) || defined(GPR_NETBSD) || defined(GPR_QNX)
+ 
+ #include <dirent.h>
+ 
+@@ -79,4 +83,4 @@
+ }
+ }  // namespace grpc_core
+ 
+-#endif  // GPR_LINUX || GPR_ANDROID || GPR_FREEBSD || GPR_APPLE
++#endif  // GPR_LINUX || GPR_ANDROID || GPR_FREEBSD || GPR_APPLE || GPR_QNX

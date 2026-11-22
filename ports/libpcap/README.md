@@ -1,4 +1,4 @@
-# libpcap 1.10.5
+# libpcap 1.11.0
 
 > Portable network traffic capture library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://www.tcpdump.org/release/libpcap-1.10.5.tar.gz |
-| SHA-256 | `37ced90a19a302a7f32e458224a00c365c117905c2cd35ac544b6880a81488f0` |
+| Upstream | https://www.tcpdump.org/release/libpcap-1.11.0.tar.gz |
+| SHA-256 | `596389bc8560ea027dff9db8aaf6c173d992366d9aef4baf5d7c6d180b4d49ad` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.tcpdump.org/release/libpcap-1.10.5.tar.gz
+URL=https://www.tcpdump.org/release/libpcap-1.11.0.tar.gz
 mkdir -p dist src/libpcap
 curl -fL -o dist/$(basename $URL) $URL
-echo "37ced90a19a302a7f32e458224a00c365c117905c2cd35ac544b6880a81488f0  dist/$(basename $URL)" | sha256sum -c -
+echo "596389bc8560ea027dff9db8aaf6c173d992366d9aef4baf5d7c6d180b4d49ad  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libpcap --strip-components=1
 ```
 
@@ -126,7 +126,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libpcap`.
 ```
 /usr/local/lib/libpcap.so
 /usr/local/lib/libpcap.so.1
-/usr/local/lib/libpcap.so.1.10.5
+/usr/local/lib/libpcap.so.1.11.0
 /usr/local/bin/pcap-config
 ```
 
@@ -206,14 +206,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpcap=<version>`), sources in `ported/libpcap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpcap`; port one with `scripts/port-update libpcap`.
+This recipe builds **1.11.0**. Kept from earlier: `1.10.5` ([recipe and patches](versions/1.10.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpcap=<version>`), sources in `ported/libpcap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpcap`; port one with `scripts/port-update libpcap`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.10.5
-TARBALL=https://www.tcpdump.org/release/libpcap-1.10.5.tar.gz
-SHA256=37ced90a19a302a7f32e458224a00c365c117905c2cd35ac544b6880a81488f0
+VERSION=1.11.0
+TARBALL=https://www.tcpdump.org/release/libpcap-1.11.0.tar.gz
+SHA256=596389bc8560ea027dff9db8aaf6c173d992366d9aef4baf5d7c6d180b4d49ad
 BUILDSYS=autotools
 # QNX has no SocketCAN/netlink; the BPF-based capture path is the right one.
 CONF_ARGS_EXTRA=( --enable-shared --with-pcap=bpf --disable-dbus

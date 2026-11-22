@@ -1,4 +1,4 @@
-# cjson 1.7.18
+# cjson 1.7.19
 
 > Lightweight JSON parser in ANSI C
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/DaveGamble/cJSON.git (tag `v1.7.18`) |
+| Upstream | https://github.com/DaveGamble/cJSON.git (tag `v1.7.19`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_cjson`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.7.18 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.7.19 --recurse-submodules --shallow-submodules \
     https://github.com/DaveGamble/cJSON.git src/cjson
 ```
 
@@ -104,7 +103,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cjson`.
 ```
 /usr/local/lib/libcjson.so
 /usr/local/lib/libcjson.so.1
-/usr/local/lib/libcjson.so.1.7.18
+/usr/local/lib/libcjson.so.1.7.19
 ```
 
 The complete list is `stage/<arch>/.manifest/cjson` after a build.
@@ -162,7 +161,6 @@ PASS cjson
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_cjson`](../../tests/src/) -- a program linked against cjson the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -185,12 +183,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.7.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cjson=<version>`), sources in `ported/cjson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cjson`; port one with `scripts/port-update cjson`.
+This recipe builds **1.7.19**. Kept from earlier: `1.7.18` ([recipe and patches](versions/1.7.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cjson=<version>`), sources in `ported/cjson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cjson`; port one with `scripts/port-update cjson`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.7.18; GIT=https://github.com/DaveGamble/cJSON.git; REF=v1.7.18
+VERSION=1.7.19; GIT=https://github.com/DaveGamble/cJSON.git; REF=v1.7.19
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_AND_STATIC_LIBS=OFF -DENABLE_CJSON_TEST=OFF
                    -DENABLE_CUSTOM_COMPILER_FLAGS=OFF )

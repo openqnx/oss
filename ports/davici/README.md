@@ -1,4 +1,4 @@
-# davici 1.6
+# davici 1.7
 
 > Decoupled Asynchronous VICI client library for strongSwan
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/strongswan/davici.git (tag `v1.6`) |
+| Upstream | https://github.com/strongswan/davici.git (tag `v1.7`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.7 --recurse-submodules --shallow-submodules \
     https://github.com/strongswan/davici.git src/davici
 ```
 
@@ -202,7 +202,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add davici=<version>`), sources in `ported/davici/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates davici`; port one with `scripts/port-update davici`.
+This recipe builds **1.7**. Kept from earlier: `1.6` ([recipe and patches](versions/1.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add davici=<version>`), sources in `ported/davici/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates davici`; port one with `scripts/port-update davici`.
 
 <details><summary>recipe.sh</summary>
 
@@ -210,7 +210,7 @@ This recipe builds **1.6**. Every version stays available: packages in `dists/8.
 # davici: decoupled asynchronous client library for strongSwan's VICI
 # protocol (the charon daemon's control interface), LGPL, without
 # libstrongswan or threads: the caller's poll() loop drives it.
-VERSION=1.6; GIT=https://github.com/strongswan/davici.git; REF=v1.6
+VERSION=1.7; GIT=https://github.com/strongswan/davici.git; REF=v1.7
 BUILDSYS=autotools
 RUNTIME_DEPS="strongswan"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )

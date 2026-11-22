@@ -1,4 +1,4 @@
-# libconfig 1.8.1
+# libconfig 1.8.3
 
 > C/C++ library for processing structured configuration files
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/hyperrealm/libconfig.git (tag `v1.8.1`) |
+| Upstream | https://github.com/hyperrealm/libconfig.git (tag `v1.8.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.8.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.8.3 --recurse-submodules --shallow-submodules \
     https://github.com/hyperrealm/libconfig.git src/libconfig
 ```
 
@@ -103,10 +103,10 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libconfig`.
 ```
 /usr/local/lib/libconfig++.so
 /usr/local/lib/libconfig++.so.15
-/usr/local/lib/libconfig++.so.15.0.0
+/usr/local/lib/libconfig++.so.15.0.1
 /usr/local/lib/libconfig.so
 /usr/local/lib/libconfig.so.15
-/usr/local/lib/libconfig.so.15.0.0
+/usr/local/lib/libconfig.so.15.0.1
 ```
 
 The complete list is `stage/<arch>/.manifest/libconfig` after a build.
@@ -185,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libconfig=<version>`), sources in `ported/libconfig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libconfig`; port one with `scripts/port-update libconfig`.
+This recipe builds **1.8.3**. Kept from earlier: `1.8.1` ([recipe and patches](versions/1.8.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libconfig=<version>`), sources in `ported/libconfig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libconfig`; port one with `scripts/port-update libconfig`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.8.1; GIT=https://github.com/hyperrealm/libconfig.git; REF=v1.8.1
+VERSION=1.8.3; GIT=https://github.com/hyperrealm/libconfig.git; REF=v1.8.3
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF )
 ```

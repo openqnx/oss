@@ -1,4 +1,4 @@
-# ruckig 0.17.3
+# ruckig 0.19.4
 
 > Ruckig: time-optimal, jerk-limited online trajectory generation for robots
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/pantor/ruckig.git (tag `v0.17.3`) |
+| Upstream | https://github.com/pantor/ruckig.git (tag `v0.19.4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.17.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.19.4 --recurse-submodules --shallow-submodules \
     https://github.com/pantor/ruckig.git src/ruckig
 ```
 
@@ -185,7 +185,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.17.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ruckig=<version>`), sources in `ported/ruckig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ruckig`; port one with `scripts/port-update ruckig`.
+This recipe builds **0.19.4**. Kept from earlier: `0.17.3` ([recipe and patches](versions/0.17.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ruckig=<version>`), sources in `ported/ruckig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ruckig`; port one with `scripts/port-update ruckig`.
 
 <details><summary>recipe.sh</summary>
 
@@ -202,7 +202,7 @@ This recipe builds **0.17.3**. Every version stays available: packages in `dists
 # nlohmann_json component's (another ABI tag): MoveIt's
 # libmoveit_trajectory_processing then failed to load ("unknown symbol:
 # ruckig::CloudClient::post(nlohmann::json_abi_v3_12_0::...)").
-VERSION=0.17.3; GIT=https://github.com/pantor/ruckig.git; REF=v0.17.3
+VERSION=0.19.4; GIT=https://github.com/pantor/ruckig.git; REF=v0.19.4
 DEPS=""
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARK=OFF -DBUILD_PYTHON_MODULE=OFF -DBUILD_CLOUD_CLIENT=OFF -DBUILD_SHARED_LIBS=ON )

@@ -1,4 +1,4 @@
-# fribidi 1.0.16
+# fribidi 1.0.18
 
 > Implementation of the Unicode Bidirectional Algorithm
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/fribidi/fribidi.git (tag `v1.0.16`) |
+| Upstream | https://github.com/fribidi/fribidi.git (tag `v1.0.18`) |
 | Build system | Meson |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,25 +72,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.0.16 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.0.18 --recurse-submodules --shallow-submodules \
     https://github.com/fribidi/fribidi.git src/fribidi
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/fribidi < ports/fribidi/patches/0001-qnx-no-ansi-c90.patch
-```
-
-**[`0001-qnx-no-ansi-c90.patch`](patches/0001-qnx-no-ansi-c90.patch)** — fribidi: do not build in C90 (-ansi) mode on QNX.
-
-> -ansi means C90, where "inline" is not a keyword, and QNX's own headers use
-> "static inline" (stdlib.h declares atexit that way): the build failed inside
-> the system headers.
-
-Touches: `meson.build` · Upstream status: QNX-specific
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -201,12 +189,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.16**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fribidi=<version>`), sources in `ported/fribidi/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fribidi`; port one with `scripts/port-update fribidi`.
+This recipe builds **1.0.18**. Kept from earlier: `1.0.16` ([recipe and patches](versions/1.0.16/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fribidi=<version>`), sources in `ported/fribidi/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fribidi`; port one with `scripts/port-update fribidi`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.16; GIT=https://github.com/fribidi/fribidi.git; REF=v1.0.16
+VERSION=1.0.18; GIT=https://github.com/fribidi/fribidi.git; REF=v1.0.18
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Ddocs=false -Dbin=false -Dtests=false )
 ```

@@ -1,4 +1,4 @@
-VERSION=1.24.1; GIT=https://github.com/NLnetLabs/unbound.git; REF=release-1.24.1
+VERSION=1.26.2; GIT=https://github.com/NLnetLabs/unbound.git; REF=release-1.26.2
 DEPS="openssl expat"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --with-ssl="$STAGE$PREFIX" --with-libexpat="$STAGE$PREFIX" --disable-static --enable-shared

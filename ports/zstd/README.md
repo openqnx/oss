@@ -1,4 +1,4 @@
-# zstd 1.5.6
+# zstd 1.5.7
 
 > Fast real-time lossless compression library (Zstandard)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/facebook/zstd.git (tag `v1.5.6`) |
+| Upstream | https://github.com/facebook/zstd.git (tag `v1.5.7`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.7 --recurse-submodules --shallow-submodules \
     https://github.com/facebook/zstd.git src/zstd
 ```
 
@@ -107,7 +107,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH zstd`.
 ```
 /usr/local/lib/libzstd.so
 /usr/local/lib/libzstd.so.1
-/usr/local/lib/libzstd.so.1.5.6
+/usr/local/lib/libzstd.so.1.5.7
 ```
 
 The complete list is `stage/<arch>/.manifest/zstd` after a build.
@@ -191,12 +191,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zstd=<version>`), sources in `ported/zstd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zstd`; port one with `scripts/port-update zstd`.
+This recipe builds **1.5.7**. Kept from earlier: `1.5.6` ([recipe and patches](versions/1.5.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zstd=<version>`), sources in `ported/zstd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zstd`; port one with `scripts/port-update zstd`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.6; GIT=https://github.com/facebook/zstd.git; REF=v1.5.6
+VERSION=1.5.7; GIT=https://github.com/facebook/zstd.git; REF=v1.5.7
 SUBDIR=build/cmake
 CMAKE_ARGS_EXTRA=( -DZSTD_BUILD_SHARED=ON -DZSTD_BUILD_STATIC=ON -DZSTD_BUILD_PROGRAMS=OFF
                    -DZSTD_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

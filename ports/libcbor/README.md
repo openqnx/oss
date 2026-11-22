@@ -1,4 +1,4 @@
-# libcbor 0.11.0
+# libcbor 0.15.0
 
 > C library for parsing and generating CBOR binary data
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/PJK/libcbor.git (tag `v0.11.0`) |
+| Upstream | https://github.com/PJK/libcbor.git (tag `v0.15.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.11.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.15.0 --recurse-submodules --shallow-submodules \
     https://github.com/PJK/libcbor.git src/libcbor
 ```
 
@@ -98,12 +98,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libcbor`.
 
 ### 5. What it installs
 
-28 files under `/usr/local`: 3 shared-library entries, 22 headers.
+32 files under `/usr/local`: 3 shared-library entries, 24 headers.
 
 ```
 /usr/local/lib/libcbor.so
-/usr/local/lib/libcbor.so.0.11
-/usr/local/lib/libcbor.so.0.11.0
+/usr/local/lib/libcbor.so.0.15
+/usr/local/lib/libcbor.so.0.15.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libcbor` after a build.
@@ -181,12 +181,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.11.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libcbor=<version>`), sources in `ported/libcbor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libcbor`; port one with `scripts/port-update libcbor`.
+This recipe builds **0.15.0**. Kept from earlier: `0.11.0` ([recipe and patches](versions/0.11.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libcbor=<version>`), sources in `ported/libcbor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libcbor`; port one with `scripts/port-update libcbor`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.11.0; GIT=https://github.com/PJK/libcbor.git; REF=v0.11.0
+VERSION=0.15.0; GIT=https://github.com/PJK/libcbor.git; REF=v0.15.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DWITH_EXAMPLES=OFF -DWITH_TESTS=OFF )
 ```
 </details>

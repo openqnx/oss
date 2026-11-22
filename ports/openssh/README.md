@@ -1,4 +1,4 @@
-# openssh 10.2p1
+# openssh 10.6p2
 
 > OpenSSH client and server for secure remote login and file transfer
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.2p1.tar.gz |
-| SHA-256 | `ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2` |
+| Upstream | https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz |
+| SHA-256 | `9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b` |
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`libxcrypt`](../libxcrypt/) |
-| Run-time dependencies | [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`libmd`](../libmd/) [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_openssh`](../../tests/src/) |
 
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.2p1.tar.gz
+URL=https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz
 mkdir -p dist src/openssh
 curl -fL -o dist/$(basename $URL) $URL
-echo "ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2  dist/$(basename $URL)" | sha256sum -c -
+echo "9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/openssh --strip-components=1
 ```
 
@@ -105,7 +105,7 @@ Touches: `configure.ac` · Upstream status: QNX-specific
 > Taken from qnx-ports/aports core/openssh -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
 
-Touches: `openssh-10.3p1/includes.h`, `openssh-10.3p1/openbsd-compat/openbsd-compat.h`, `openssh-10.3p1/openbsd-compat/rresvport.c`, `sshpty.c` · Upstream status: QNX-specific
+Touches: `includes.h`, `openbsd-compat/openbsd-compat.h`, `openbsd-compat/rresvport.c`, `sshpty.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -226,16 +226,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **10.2p1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openssh=<version>`), sources in `ported/openssh/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openssh`; port one with `scripts/port-update openssh`.
+This recipe builds **10.6p2**. Kept from earlier: `10.2p1` ([recipe and patches](versions/10.2p1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openssh=<version>`), sources in `ported/openssh/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openssh`; port one with `scripts/port-update openssh`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # OpenSSH client and server. Version as in the QNX Everywhere 8.0.4r1 image.
 # (The QNX SDP ships its own OpenSSH; this one installs under /usr/local.)
-VERSION=10.2p1
-TARBALL=https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.2p1.tar.gz
-SHA256=ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2
+VERSION=10.6p2
+TARBALL=https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz
+SHA256=9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b
 # Also linked at run time (found by scripts/gen-dependency-index): libxcrypt
 DEPS="openssl zlib libxcrypt"
 BUILDSYS=autotools

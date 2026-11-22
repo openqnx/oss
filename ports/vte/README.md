@@ -1,4 +1,4 @@
-# vte 0.78.2
+# vte 0.78.7
 
 > Virtual terminal widget library for GTK
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.gnome.org/sources/vte/0.78/vte-0.78.2.tar.xz |
-| SHA-256 | `35d7bcde07356846b4a12881c8e016705b70a9004a9082285eee5834ccc49890` |
+| Upstream | https://download.gnome.org/sources/vte/0.78/vte-0.78.7.tar.xz |
+| SHA-256 | `6fd1edc332d9f9519ce4c0f07135fdf72d64dfd990dc4fabc6ce91b1b7e83dd0` |
 | Build system | Meson |
 | QNX patches | 5 |
 | Build dependencies | [`gtk3`](../gtk3/) [`gtk4`](../gtk4/) [`pcre2`](../pcre2/) [`fribidi`](../fribidi/) [`icu`](../icu/) [`glib`](../glib/) [`gnutls`](../gnutls/) [`lz4`](../lz4/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.gnome.org/sources/vte/0.78/vte-0.78.2.tar.xz
+URL=https://download.gnome.org/sources/vte/0.78/vte-0.78.7.tar.xz
 mkdir -p dist src/vte
 curl -fL -o dist/$(basename $URL) $URL
-echo "35d7bcde07356846b4a12881c8e016705b70a9004a9082285eee5834ccc49890  dist/$(basename $URL)" | sha256sum -c -
+echo "6fd1edc332d9f9519ce4c0f07135fdf72d64dfd990dc4fabc6ce91b1b7e83dd0  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/vte --strip-components=1
 ```
 
@@ -201,7 +201,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vte`.
 /usr/local/lib/libvte-2.91-gtk4.so.0
 /usr/local/lib/libvte-2.91.so
 /usr/local/lib/libvte-2.91.so.0
-/usr/local/lib/libvte-2.91.so.0.7800.2
+/usr/local/lib/libvte-2.91.so.0.7800.7
 /usr/local/bin/vte-2.91
 /usr/local/bin/vte-2.91-gtk4
 ```
@@ -291,14 +291,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.78.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vte=<version>`), sources in `ported/vte/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vte`; port one with `scripts/port-update vte`.
+This recipe builds **0.78.7**. Kept from earlier: `0.78.2` ([recipe and patches](versions/0.78.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vte=<version>`), sources in `ported/vte/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vte`; port one with `scripts/port-update vte`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.78.2
-TARBALL=https://download.gnome.org/sources/vte/0.78/vte-0.78.2.tar.xz
-SHA256=35d7bcde07356846b4a12881c8e016705b70a9004a9082285eee5834ccc49890
+VERSION=0.78.7
+TARBALL=https://download.gnome.org/sources/vte/0.78/vte-0.78.7.tar.xz
+SHA256=6fd1edc332d9f9519ce4c0f07135fdf72d64dfd990dc4fabc6ce91b1b7e83dd0
 # Also linked at run time (found by scripts/gen-dependency-index): lz4
 DEPS="gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4"
 BUILDSYS=meson

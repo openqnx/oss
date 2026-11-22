@@ -1,4 +1,4 @@
-VERSION=53.0.0; GIT=https://github.com/ARM-software/ComputeLibrary.git; REF=v53.0.0
+VERSION=53.3.2; GIT=https://github.com/ARM-software/ComputeLibrary.git; REF=v53.3.2
 # Arm Compute Library: NEON/SVE kernels for Arm CPUs -- aarch64 only.
 ARCHES_SUPPORTED="aarch64le"
 CMAKE_ARGS_EXTRA=( -DARM_COMPUTE_BUILD_SHARED_LIB=ON -DARM_COMPUTE_ENABLE_OPENMP=OFF

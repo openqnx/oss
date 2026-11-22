@@ -1,4 +1,4 @@
-# libthai 0.1.29
+# libthai 0.1.30
 
 > Thai language support library (word breaking, input, sorting)
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tlwg/libthai.git (tag `v0.1.29`) |
+| Upstream | https://github.com/tlwg/libthai.git (tag `v0.1.30`) |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | [`libdatrie`](../libdatrie/) |
 | Run-time dependencies | [`libdatrie`](../libdatrie/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,25 +76,13 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.1.29 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.1.30 --recurse-submodules --shallow-submodules \
     https://github.com/tlwg/libthai.git src/libthai
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/libthai < ports/libthai/patches/0001-drop-ax-compare-version.patch
-```
-
-**[`0001-drop-ax-compare-version.patch`](patches/0001-drop-ax-compare-version.patch)** — libthai: do not use AX_COMPARE_VERSION in configure.
-
-> The macro comes from autoconf-archive, which is not a build dependency, and
-> the shipped configure contains it unexpanded, so the shell cannot parse
-> configure even with the doxygen docs off. The docs are not built here.
-
-Touches: `configure.ac` · Upstream status: Pending
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -211,12 +199,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.1.29**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libthai=<version>`), sources in `ported/libthai/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libthai`; port one with `scripts/port-update libthai`.
+This recipe builds **0.1.30**. Kept from earlier: `0.1.29` ([recipe and patches](versions/0.1.29/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libthai=<version>`), sources in `ported/libthai/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libthai`; port one with `scripts/port-update libthai`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.1.29; GIT=https://github.com/tlwg/libthai.git; REF=v0.1.29
+VERSION=0.1.30; GIT=https://github.com/tlwg/libthai.git; REF=v0.1.30
 DEPS="libdatrie"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doxygen-doc )

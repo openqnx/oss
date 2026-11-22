@@ -1,4 +1,4 @@
-# libgpg-error 1.50
+# libgpg-error 1.61
 
 > Common error values and runtime library for GnuPG components
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.50.tar.bz2 |
-| SHA-256 | `69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a` |
+| Upstream | https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.61.tar.bz2 |
+| SHA-256 | `7a85413f2bc354f4f8aa832b718af122e48965e9e0eb9012ee659c13c6385c93` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`gettext`](../gettext/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.50.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.61.tar.bz2
 mkdir -p dist src/libgpg-error
 curl -fL -o dist/$(basename $URL) $URL
-echo "69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a  dist/$(basename $URL)" | sha256sum -c -
+echo "7a85413f2bc354f4f8aa832b718af122e48965e9e0eb9012ee659c13c6385c93  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libgpg-error --strip-components=1
 ```
 
@@ -127,7 +127,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libgpg-error`.
 
 ```
 /usr/local/lib/libgpg-error.so
-/usr/local/lib/libgpg-error.so.37
+/usr/local/lib/libgpg-error.so.42
 /usr/local/bin/gpg-error
 /usr/local/bin/gpgrt-config
 ```
@@ -190,7 +190,7 @@ PASS libgpg-error
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_libgpg_error`](../../tests/src/) -- a program linked against libgpg-error the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - library version 1.50
+   - library version 1.61
    - check_version(\"1.40\") satisfied
    - check_version(\"9.0\") not satisfied
    - strerror(GPG_ERR_GENERAL) == \"General error\"
@@ -226,16 +226,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.50**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgpg-error=<version>`), sources in `ported/libgpg-error/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgpg-error`; port one with `scripts/port-update libgpg-error`.
+This recipe builds **1.61**. Kept from earlier: `1.50` ([recipe and patches](versions/1.50/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgpg-error=<version>`), sources in `ported/libgpg-error/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgpg-error`; port one with `scripts/port-update libgpg-error`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.50
+VERSION=1.61
 # Also linked at run time (found by scripts/gen-dependency-index): gettext
 DEPS="gettext"
-TARBALL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.50.tar.bz2
-SHA256=69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a
+TARBALL=https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.61.tar.bz2
+SHA256=7a85413f2bc354f4f8aa832b718af122e48965e9e0eb9012ee659c13c6385c93
 BUILDSYS=autotools
 # libgpg-error needs a syscfg/lock-obj-pub.<triplet>.h describing the target's
 # pthread_mutex_t layout, and ships none for QNX. The two under files/ were

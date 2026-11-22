@@ -1,4 +1,4 @@
-# gtk4 4.16.7
+# gtk4 4.16.13
 
 > GTK 4 multi-platform toolkit for graphical user interfaces
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.gnome.org/sources/gtk/4.16/gtk-4.16.7.tar.xz |
-| SHA-256 | `5303c7624e15a48880591b9ddd43389afba3de4fb92a219719519bb1642ce3dc` |
+| Upstream | https://download.gnome.org/sources/gtk/4.16/gtk-4.16.13.tar.xz |
+| SHA-256 | `ddf3d9e12b848139a945d191d5ca56b78d0647f53b55b8bca5f9902b61624498` |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) [`graphene`](../graphene/) [`cairo`](../cairo/) [`pango`](../pango/) [`gdk-pixbuf`](../gdk-pixbuf/) [`harfbuzz`](../harfbuzz/) [`fribidi`](../fribidi/) [`libepoxy`](../libepoxy/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libtiff`](../libtiff/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.gnome.org/sources/gtk/4.16/gtk-4.16.7.tar.xz
+URL=https://download.gnome.org/sources/gtk/4.16/gtk-4.16.13.tar.xz
 mkdir -p dist src/gtk4
 curl -fL -o dist/$(basename $URL) $URL
-echo "5303c7624e15a48880591b9ddd43389afba3de4fb92a219719519bb1642ce3dc  dist/$(basename $URL)" | sha256sum -c -
+echo "ddf3d9e12b848139a945d191d5ca56b78d0647f53b55b8bca5f9902b61624498  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gtk4 --strip-components=1
 ```
 
@@ -150,7 +150,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gtk4`.
 ```
 /usr/local/lib/libgtk-4.so
 /usr/local/lib/libgtk-4.so.1
-/usr/local/lib/libgtk-4.so.1.1600.7
+/usr/local/lib/libgtk-4.so.1.1600.13
 /usr/local/bin/gtk4-broadwayd
 /usr/local/bin/gtk4-builder-tool
 /usr/local/bin/gtk4-encode-symbolic-svg
@@ -245,19 +245,19 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.16.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk4=<version>`), sources in `ported/gtk4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk4`; port one with `scripts/port-update gtk4`.
+This recipe builds **4.16.13**. Kept from earlier: `4.16.7` ([recipe and patches](versions/4.16.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk4=<version>`), sources in `ported/gtk4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk4`; port one with `scripts/port-update gtk4`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.16.7
+VERSION=4.16.13
 # The release tarball, not the git tag. gtk/meson.build says it outright --
 # "For git checkouts, but not for tarballs..." -- and from git it compiles the
 # CSS themes with sassc, a *build-machine* program it falls back to building as
 # a subproject and then running, which a cross build cannot do ("An exe_wrapper
 # is needed but was not found"). The tarball ships the compiled themes.
-TARBALL=https://download.gnome.org/sources/gtk/4.16/gtk-4.16.7.tar.xz
-SHA256=5303c7624e15a48880591b9ddd43389afba3de4fb92a219719519bb1642ce3dc
+TARBALL=https://download.gnome.org/sources/gtk/4.16/gtk-4.16.13.tar.xz
+SHA256=ddf3d9e12b848139a945d191d5ca56b78d0647f53b55b8bca5f9902b61624498
 SRCROOT="$SRC_DIR/gtk4"
 DEPS="glib graphene cairo pango gdk-pixbuf harfbuzz fribidi libepoxy
       wayland wayland-protocols libxkbcommon libpng libjpeg-turbo libtiff"

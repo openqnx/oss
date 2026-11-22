@@ -1,4 +1,4 @@
-# libgit2 1.8.4
+# libgit2 1.9.7
 
 > Portable C library implementing the Git core methods
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libgit2/libgit2.git (tag `v1.8.4`) |
+| Upstream | https://github.com/libgit2/libgit2.git (tag `v1.9.7`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`pcre2`](../pcre2/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.8.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.9.7 --recurse-submodules --shallow-submodules \
     https://github.com/libgit2/libgit2.git src/libgit2
 ```
 
@@ -95,11 +95,13 @@ patch -p1 -d src/libgit2 < ports/libgit2/patches/0001-qnx-build-as-c99.patch
 
 **[`0001-qnx-build-as-c99.patch`](patches/0001-qnx-build-as-c99.patch)** — Build as C99 on QNX.
 
-> libgit2 sets C_STANDARD 90 on its targets, so CMake passes -std=c90. QNX's
-> <time.h>, <stdlib.h> and <sys/process.h> declare static inline helpers, and
-> every file fails with "unknown type name 'inline'". Use C99 on QNX only.
+> libgit2 builds as C90 (CMAKE_C_STANDARD 90, and C_STANDARD 90 on the
+> libgit2package target), so CMake passes -std=c90. QNX's <time.h>,
+> <stdlib.h> and <sys/process.h> declare static inline helpers, and every
+> file fails with "unknown type name 'inline'". Use C99 on QNX only, the
+> way upstream already does for Android.
 
-Touches: `CMakeLists.txt`, `fuzzers/CMakeLists.txt`, `src/libgit2/CMakeLists.txt`, `src/util/CMakeLists.txt`, `examples/CMakeLists.txt`, `tests/libgit2/CMakeLists.txt` … · Upstream status: QNX-specific
+Touches: `CMakeLists.txt`, `src/libgit2/CMakeLists.txt` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -125,12 +127,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libgit2`.
 
 ### 5. What it installs
 
-98 files under `/usr/local`: 3 shared-library entries, 94 headers.
+101 files under `/usr/local`: 3 shared-library entries, 93 headers.
 
 ```
 /usr/local/lib/libgit2.so
-/usr/local/lib/libgit2.so.1.8
-/usr/local/lib/libgit2.so.1.8.4
+/usr/local/lib/libgit2.so.1.9
+/usr/local/lib/libgit2.so.1.9.7
 ```
 
 The complete list is `stage/<arch>/.manifest/libgit2` after a build.
@@ -210,12 +212,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgit2=<version>`), sources in `ported/libgit2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgit2`; port one with `scripts/port-update libgit2`.
+This recipe builds **1.9.7**. Kept from earlier: `1.8.4` ([recipe and patches](versions/1.8.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgit2=<version>`), sources in `ported/libgit2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgit2`; port one with `scripts/port-update libgit2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.8.4; GIT=https://github.com/libgit2/libgit2.git; REF=v1.8.4
+VERSION=1.9.7; GIT=https://github.com/libgit2/libgit2.git; REF=v1.9.7
 DEPS="openssl zlib pcre2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTS=OFF -DBUILD_CLI=OFF -DUSE_SSH=OFF
                    -DUSE_HTTPS=OpenSSL -DREGEX_BACKEND=pcre2 -DUSE_HTTP_PARSER=builtin -DUSE_GSSAPI=OFF

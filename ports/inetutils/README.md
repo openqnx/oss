@@ -9,7 +9,7 @@
 | Upstream | https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz |
 | SHA-256 | `68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca` |
 | Build system | GNU Autotools |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) [`libxcrypt`](../libxcrypt/) |
 | Run-time dependencies | [`libxcrypt`](../libxcrypt/) [`ncurses`](../ncurses/) [`readline`](../readline/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -86,11 +86,12 @@ tar xf dist/$(basename $URL) -C src/inetutils --strip-components=1
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/inetutils < ports/inetutils/patches/0001-qnx-readutmp-sys-time.patch
 patch -p1 -d src/inetutils < ports/inetutils/patches/0002-qnx-telnet-sa-restart.patch
+patch -p1 -d src/inetutils < ports/inetutils/patches/0003-qnx-telnetd-no-pktmode.patch
 ```
 
 **[`0001-qnx-readutmp-sys-time.patch`](patches/0001-qnx-readutmp-sys-time.patch)** — Include <sys/time.h> for the sysctl boot-time fallback.
@@ -110,6 +111,17 @@ Touches: `lib/readutmp.c` · Upstream status: QNX-specific
 
 Touches: `telnet/sys_bsd.c` · Upstream status: QNX-specific
 
+**[`0003-qnx-telnetd-no-pktmode.patch`](patches/0003-qnx-telnetd-no-pktmode.patch)** — telnetd: work with a pty that has no packet mode (TIOCPKT)
+
+> QNX SDP 8.0.6's devc-pty fails ioctl(TIOCPKT) and returns plain data.
+> telnetd ignored the failure and took the first byte of every pty read as
+> the packet header: the shell's output never reached the client (it lost
+> "e" of "echo", took the rest as flow-control flags), and test_inetutils'
+> telnet session got nothing back. Keep packet mode where the ioctl works;
+> otherwise treat everything read from the pty as data.
+
+Touches: `telnetd/telnetd.c` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -127,6 +139,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - crypt() for ftpd: QNX keeps it in its static liblogin.a, not libc, so libxcrypt (libcrypt.so.2) supplies it; without it configure drops ftpd.
 - The subset of GNU inetutils that builds and works on QNX: telnet and telnetd, ftp and ftpd, ping/ping6, traceroute, whois, hostname, dnsdomainname, logger. Not built: tftp/tftpd (tftp-hpa is ported and owns those names), inetd, syslogd, rsh/rlogin/rexec/rcp and their daemons, talk, uucpd, ifconfig (whose interface code is Linux/BSD ioctl-specific). telnetd starts QNX's own /bin/login (inetutils would take $bindir/login, /usr/local/bin/login, which nothing installs). telnetd and ftpd are inetd-style servers (the connection on stdin).
 - ping, ping6 and traceroute are installed setuid root with "install -o root -m 4755", which an unprivileged build cannot do: the chown fails and leaves the files mode 0600 (not executable). Install them without the owner flag; the mode, setuid included, is kept, and scripts/qnxpkg records every file as root.
+- A patched telnetd.c makes man/telnetd.8 out of date, and the rule runs the freshly built telnetd through help2man, which a cross build cannot do (and the build image has no help2man): keep the tarball's pages -- the patches change no --help text.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH inetutils`.
 
@@ -248,6 +261,11 @@ CONF_ARGS_EXTRA=( --disable-servers --disable-clients
 # owner flag; the mode, setuid included, is kept, and scripts/qnxpkg records
 # every file as root.
 do_install() { make -C "$B" DESTDIR="$STAGE" SUIDMODE="-m 4755" install; }
+# A patched telnetd.c makes man/telnetd.8 out of date, and the rule runs the
+# freshly built telnetd through help2man, which a cross build cannot do (and
+# the build image has no help2man): keep the tarball's pages -- the patches
+# change no --help text.
+CONF_ENV=( HELP2MAN=true )
 ```
 </details>
 

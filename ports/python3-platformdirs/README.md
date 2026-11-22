@@ -1,4 +1,4 @@
-# python3-platformdirs 4.14.3
+# python3-platformdirs 4.14.8
 
 > The platform's user and site data/config/cache directories
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/93/41/f0aa003909ee77a9e7e55f8659abb635ca23ab0d022a449bbb18da87a1ef/platformdirs-4.14.3-py3-none-any.whl |
-| SHA-256 | `cba2d05fe5e18b26b1fa6f376b8e6234c012abe1f8696c486fface7d0054e931` |
+| Upstream | https://files.pythonhosted.org/packages/5b/be/373cc7341f53bfd3acba3e5db62433fd960a45fcf73ad64a5f4d27e74910/platformdirs-4.14.8-py3-none-any.whl |
+| SHA-256 | `1e34af590de4d978631b751eb2202f2fee4497537a17c1720b12fcf57b331392` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/93/41/f0aa003909ee77a9e7e55f8659abb635ca23ab0d022a449bbb18da87a1ef/platformdirs-4.14.3-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/5b/be/373cc7341f53bfd3acba3e5db62433fd960a45fcf73ad64a5f4d27e74910/platformdirs-4.14.8-py3-none-any.whl
 mkdir -p dist src/python3-platformdirs
 curl -fL -o dist/$(basename $URL) $URL
-echo "cba2d05fe5e18b26b1fa6f376b8e6234c012abe1f8696c486fface7d0054e931  dist/$(basename $URL)" | sha256sum -c -
+echo "1e34af590de4d978631b751eb2202f2fee4497537a17c1720b12fcf57b331392  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-platformdirs --strip-components=1
 ```
 
@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-platform
 
 ### 5. What it installs
 
-18 files under `/usr/local`.
+22 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/python3-platformdirs` after a build.
 
@@ -209,7 +209,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.14.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-platformdirs=<version>`), sources in `ported/python3-platformdirs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-platformdirs`; port one with `scripts/port-update python3-platformdirs`.
+This recipe builds **4.14.8**. Kept from earlier: `4.14.3` ([recipe and patches](versions/4.14.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-platformdirs=<version>`), sources in `ported/python3-platformdirs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-platformdirs`; port one with `scripts/port-update python3-platformdirs`.
 
 <details><summary>recipe.sh</summary>
 
@@ -217,9 +217,9 @@ This recipe builds **4.14.3**. Every version stays available: packages in `dists
 # platformdirs: the platform's user and site data/config/cache directories.
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=4.14.3
-TARBALL=https://files.pythonhosted.org/packages/93/41/f0aa003909ee77a9e7e55f8659abb635ca23ab0d022a449bbb18da87a1ef/platformdirs-4.14.3-py3-none-any.whl
-SHA256=cba2d05fe5e18b26b1fa6f376b8e6234c012abe1f8696c486fface7d0054e931
+VERSION=4.14.8
+TARBALL=https://files.pythonhosted.org/packages/5b/be/373cc7341f53bfd3acba3e5db62433fd960a45fcf73ad64a5f4d27e74910/platformdirs-4.14.8-py3-none-any.whl
+SHA256=1e34af590de4d978631b751eb2202f2fee4497537a17c1720b12fcf57b331392
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

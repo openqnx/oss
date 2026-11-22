@@ -1,4 +1,4 @@
-# libmd 1.1.0
+# libmd 1.3.0
 
 > Message digest functions from BSD systems (MD5, SHA-1, SHA-2, RIPEMD)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://libbsd.freedesktop.org/releases/libmd-1.1.0.tar.xz |
-| SHA-256 | `1bd6aa42275313af3141c7cf2e5b964e8b1fd488025caf2f971f43b00776b332` |
+| Upstream | https://libbsd.freedesktop.org/releases/libmd-1.3.0.tar.xz |
+| SHA-256 | `fc0f1eb6b6766470326f2c014693809190e67dba84274a6fbae9d4912d066706` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://libbsd.freedesktop.org/releases/libmd-1.1.0.tar.xz
+URL=https://libbsd.freedesktop.org/releases/libmd-1.3.0.tar.xz
 mkdir -p dist src/libmd
 curl -fL -o dist/$(basename $URL) $URL
-echo "1bd6aa42275313af3141c7cf2e5b964e8b1fd488025caf2f971f43b00776b332  dist/$(basename $URL)" | sha256sum -c -
+echo "fc0f1eb6b6766470326f2c014693809190e67dba84274a6fbae9d4912d066706  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libmd --strip-components=1
 ```
 
@@ -110,11 +110,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libmd`.
 
 ### 5. What it installs
 
-91 files under `/usr/local`: 2 shared-library entries, 10 headers.
+132 files under `/usr/local`: 3 shared-library entries, 11 headers.
 
 ```
 /usr/local/lib/libmd.so
 /usr/local/lib/libmd.so.0
+/usr/local/lib/libmd.so.0.3.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libmd` after a build.
@@ -191,15 +192,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmd=<version>`), sources in `ported/libmd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmd`; port one with `scripts/port-update libmd`.
+This recipe builds **1.3.0**. Kept from earlier: `1.1.0` ([recipe and patches](versions/1.1.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmd=<version>`), sources in `ported/libmd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmd`; port one with `scripts/port-update libmd`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libmd: message digest functions from BSD systems (MD5, SHA-1, SHA-2, RIPEMD-160; libbsd's companion).
-VERSION=1.1.0
-TARBALL=https://libbsd.freedesktop.org/releases/libmd-1.1.0.tar.xz
-SHA256=1bd6aa42275313af3141c7cf2e5b964e8b1fd488025caf2f971f43b00776b332
+VERSION=1.3.0
+TARBALL=https://libbsd.freedesktop.org/releases/libmd-1.3.0.tar.xz
+SHA256=fc0f1eb6b6766470326f2c014693809190e67dba84274a6fbae9d4912d066706
 DEPS=""
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )

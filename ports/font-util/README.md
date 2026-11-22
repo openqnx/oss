@@ -1,4 +1,4 @@
-# font-util 1.4.1
+# font-util 1.4.2
 
 > X.Org font utilities and autoconf macros for building font packages
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://www.x.org/releases/individual/font/font-util-1.4.1.tar.xz |
-| SHA-256 | `5c9f64123c194b150fee89049991687386e6ff36ef2af7b80ba53efaf368cc95` |
+| Upstream | https://www.x.org/releases/individual/font/font-util-1.4.2.tar.xz |
+| SHA-256 | `02e4f8afdcf03cc8372ca9c37aa104b1e36b47722dbc79531be08f0a4c622999` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.x.org/releases/individual/font/font-util-1.4.1.tar.xz
+URL=https://www.x.org/releases/individual/font/font-util-1.4.2.tar.xz
 mkdir -p dist src/font-util
 curl -fL -o dist/$(basename $URL) $URL
-echo "5c9f64123c194b150fee89049991687386e6ff36ef2af7b80ba53efaf368cc95  dist/$(basename $URL)" | sha256sum -c -
+echo "02e4f8afdcf03cc8372ca9c37aa104b1e36b47722dbc79531be08f0a4c622999  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/font-util --strip-components=1
 ```
 
@@ -187,16 +187,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add font-util=<version>`), sources in `ported/font-util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates font-util`; port one with `scripts/port-update font-util`.
+This recipe builds **1.4.2**. Kept from earlier: `1.4.1` ([recipe and patches](versions/1.4.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add font-util=<version>`), sources in `ported/font-util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates font-util`; port one with `scripts/port-update font-util`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # X.Org font utilities (bdftruncate, ucs2any) and the fontutil m4 macros.
 # Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=1.4.1
-TARBALL=https://www.x.org/releases/individual/font/font-util-1.4.1.tar.xz
-SHA256=5c9f64123c194b150fee89049991687386e6ff36ef2af7b80ba53efaf368cc95
+VERSION=1.4.2
+TARBALL=https://www.x.org/releases/individual/font/font-util-1.4.2.tar.xz
+SHA256=02e4f8afdcf03cc8372ca9c37aa104b1e36b47722dbc79531be08f0a4c622999
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 ```

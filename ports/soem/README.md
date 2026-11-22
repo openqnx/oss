@@ -2,7 +2,7 @@
 
 > Simple Open EtherCAT Master library and tools
 
-**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 2 |
 | Build dependencies | [`libpcap`](../libpcap/) |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`libpcap`](../libpcap/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_soem`](../../tests/src/) |
 

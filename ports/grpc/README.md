@@ -1,4 +1,4 @@
-# grpc 1.69.0
+# grpc 1.85.4
 
 > Remote procedure call (RPC) framework from Google
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/grpc/grpc.git (tag `v1.69.0`) |
+| Upstream | https://github.com/grpc/grpc.git (tag `v1.85.4`) |
 | Build system | custom (see recipe) |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`c-ares`](../c-ares/) [`abseil`](../abseil/) [`protobuf`](../protobuf/) [`re2`](../re2/) |
 | Run-time dependencies | [`abseil`](../abseil/) [`c-ares`](../c-ares/) [`openssl`](../openssl/) [`protobuf`](../protobuf/) [`re2`](../re2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,26 +76,17 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.69.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.85.4 --recurse-submodules --shallow-submodules \
     https://github.com/grpc/grpc.git src/grpc
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/grpc < ports/grpc/patches/0001-absl-maskedpointer-default-ctor-libcxx.patch
 patch -p1 -d src/grpc < ports/grpc/patches/0002-qnx-platform-socket-support.patch
 ```
-
-**[`0001-absl-maskedpointer-default-ctor-libcxx.patch`](patches/0001-absl-maskedpointer-default-ctor-libcxx.patch)** — gRPC's bundled abseil: default constructor for MaskedPointer (libc++).
-
-> The same change as ports/abseil/patches/0001, for the abseil copy gRPC
-> builds: under libc++, the C++ library QNX ships, std::atomic<T> requires a
-> default-constructible T.
-
-Touches: `third_party/abseil-cpp/absl/flags/internal/flag.h` · Upstream status: Pending (affects any libc++ build)
 
 **[`0002-qnx-platform-socket-support.patch`](patches/0002-qnx-platform-socket-support.patch)** — gRPC: QNX platform definition for the POSIX socket code.
 
@@ -104,7 +95,7 @@ Touches: `third_party/abseil-cpp/absl/flags/internal/flag.h` · Upstream status:
 > features SDP 8.0 has (getifaddrs, AF_UNIX, SO_NOSIGPIPE, IPV6_RECVPKTINFO);
 > with no native epoll, the poll engine and the pipe wakeup fd are used.
 
-Touches: `include/grpc/support/port_platform.h`, `include/grpc/event_engine/port.h`, `src/core/lib/iomgr/port.h`, `src/core/util/posix/directory_reader.cc` · Upstream status: QNX-specific
+Touches: `include/grpc/event_engine/port.h`, `include/grpc/support/port_platform.h`, `src/core/lib/iomgr/port.h`, `src/core/util/posix/directory_reader.cc` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -175,24 +166,24 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH grpc`.
 
 ### 5. What it installs
 
-357 files under `/usr/local`: 54 shared-library entries, 289 headers.
+379 files under `/usr/local`: 69 shared-library entries, 297 headers.
 
 ```
 /usr/local/lib/libaddress_sorting.so
-/usr/local/lib/libaddress_sorting.so.44
-/usr/local/lib/libaddress_sorting.so.44.2.0
+/usr/local/lib/libaddress_sorting.so.58
+/usr/local/lib/libaddress_sorting.so.58.0.0
 /usr/local/lib/libgpr.so
-/usr/local/lib/libgpr.so.44
-/usr/local/lib/libgpr.so.44.2.0
+/usr/local/lib/libgpr.so.58
+/usr/local/lib/libgpr.so.58.0.0
 /usr/local/lib/libgrpc++.so
-/usr/local/lib/libgrpc++.so.1.69
-/usr/local/lib/libgrpc++.so.1.69.0
+/usr/local/lib/libgrpc++.so.1.85
+/usr/local/lib/libgrpc++.so.1.85.4
 /usr/local/lib/libgrpc++_alts.so
-/usr/local/lib/libgrpc++_alts.so.1.69
-/usr/local/lib/libgrpc++_alts.so.1.69.0
+/usr/local/lib/libgrpc++_alts.so.1.85
+/usr/local/lib/libgrpc++_alts.so.1.85.4
 /usr/local/lib/libgrpc++_error_details.so
-/usr/local/lib/libgrpc++_error_details.so.1.69
-/usr/local/lib/libgrpc++_error_details.so.1.69.0
+/usr/local/lib/libgrpc++_error_details.so.1.85
+/usr/local/lib/libgrpc++_error_details.so.1.85.4
 /usr/local/lib/libgrpc++_unsecure.so
 ...
 ```
@@ -276,12 +267,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.69.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add grpc=<version>`), sources in `ported/grpc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates grpc`; port one with `scripts/port-update grpc`.
+This recipe builds **1.85.4**. Kept from earlier: `1.69.0` ([recipe and patches](versions/1.69.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add grpc=<version>`), sources in `ported/grpc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates grpc`; port one with `scripts/port-update grpc`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.69.0; GIT=https://github.com/grpc/grpc.git; REF=v1.69.0
+VERSION=1.85.4; GIT=https://github.com/grpc/grpc.git; REF=v1.85.4
 DEPS="zlib openssl c-ares abseil protobuf re2"
 BUILDSYS=custom
 # gRPC's build runs protoc and grpc_cpp_plugin to generate its own sources, so

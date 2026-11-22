@@ -1,17 +1,17 @@
-# libunistring 1.3
+# libunistring 1.5
 
 > GNU library for manipulating Unicode strings
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/libunistring/libunistring-1.3.tar.gz |
-| SHA-256 | `8ea8ccf86c09dd801c8cac19878e804e54f707cf69884371130d20bde68386b7` |
+| Upstream | https://ftp.gnu.org/gnu/libunistring/libunistring-1.5.tar.gz |
+| SHA-256 | `5b0ecd46cbf225375f20ab4056197e66a7ac590e2684c069af407ae3383c9d81` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`libiconv`](../libiconv/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libunistring`](../../tests/src/) |
 
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/libunistring/libunistring-1.3.tar.gz
+URL=https://ftp.gnu.org/gnu/libunistring/libunistring-1.5.tar.gz
 mkdir -p dist src/libunistring
 curl -fL -o dist/$(basename $URL) $URL
-echo "8ea8ccf86c09dd801c8cac19878e804e54f707cf69884371130d20bde68386b7  dist/$(basename $URL)" | sha256sum -c -
+echo "5b0ecd46cbf225375f20ab4056197e66a7ac590e2684c069af407ae3383c9d81  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libunistring --strip-components=1
 ```
 
@@ -112,7 +112,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libunistring`.
 ```
 /usr/local/lib/libunistring.so
 /usr/local/lib/libunistring.so.5
-/usr/local/lib/libunistring.so.5.2.0
+/usr/local/lib/libunistring.so.5.2.2
 ```
 
 The complete list is `stage/<arch>/.manifest/libunistring` after a build.
@@ -193,14 +193,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libunistring=<version>`), sources in `ported/libunistring/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libunistring`; port one with `scripts/port-update libunistring`.
+This recipe builds **1.5**. Kept from earlier: `1.3` ([recipe and patches](versions/1.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libunistring=<version>`), sources in `ported/libunistring/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libunistring`; port one with `scripts/port-update libunistring`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3
-TARBALL=https://ftp.gnu.org/gnu/libunistring/libunistring-1.3.tar.gz
-SHA256=8ea8ccf86c09dd801c8cac19878e804e54f707cf69884371130d20bde68386b7
+VERSION=1.5
+TARBALL=https://ftp.gnu.org/gnu/libunistring/libunistring-1.5.tar.gz
+SHA256=5b0ecd46cbf225375f20ab4056197e66a7ac590e2684c069af407ae3383c9d81
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doc )
 ```

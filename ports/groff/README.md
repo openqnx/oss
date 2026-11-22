@@ -114,7 +114,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH groff`.
 
 ### 5. What it installs
 
-667 files under `/usr/local`, 39 programs.
+598 files under `/usr/local`, 39 programs.
 
 ```
 /usr/local/bin/addftinfo

@@ -1,4 +1,4 @@
-# mesa 26.2.6
+# mesa 26.3.1
 
 > Mesa 3D: software OpenGL, GLES, EGL (llvmpipe) and Vulkan (lavapipe)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.mesa3d.org/mesa-26.2.6.tar.xz |
-| SHA-256 | `b9436b3e1a8be76fbd4823dc884f90596ab7c6ac5e1867a305e66ffccfb31a92` |
+| Upstream | https://archive.mesa3d.org/mesa-26.3.1.tar.xz |
+| SHA-256 | `4e4e438eac7b840a9383988cbb7c08dad8041da544b9319fc26d319fa7348961` |
 | Build system | Meson |
 | QNX patches | 6 |
 | Build dependencies | [`llvm`](../llvm/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`zlib`](../zlib/) [`zstd`](../zstd/) [`expat`](../expat/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.mesa3d.org/mesa-26.2.6.tar.xz
+URL=https://archive.mesa3d.org/mesa-26.3.1.tar.xz
 mkdir -p dist src/mesa
 curl -fL -o dist/$(basename $URL) $URL
-echo "b9436b3e1a8be76fbd4823dc884f90596ab7c6ac5e1867a305e66ffccfb31a92  dist/$(basename $URL)" | sha256sum -c -
+echo "4e4e438eac7b840a9383988cbb7c08dad8041da544b9319fc26d319fa7348961  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/mesa --strip-components=1
 ```
 
@@ -313,7 +313,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **26.2.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mesa=<version>`), sources in `ported/mesa/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mesa`; port one with `scripts/port-update mesa`.
+This recipe builds **26.3.1**. Kept from earlier: `26.2.6` ([recipe and patches](versions/26.2.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mesa=<version>`), sources in `ported/mesa/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mesa`; port one with `scripts/port-update mesa`.
 
 <details><summary>recipe.sh</summary>
 
@@ -332,9 +332,9 @@ This recipe builds **26.2.6**. Every version stays available: packages in `dists
 # library or a Mesa client the SDP's. Applications link Mesa through its
 # pkg-config files (egl.pc, glesv2.pc in opt/mesa/lib/pkgconfig), or load
 # libEGL_mesa.so.1 by path (SDL: SDL_VIDEO_EGL_DRIVER).
-VERSION=26.2.6
-TARBALL=https://archive.mesa3d.org/mesa-26.2.6.tar.xz
-SHA256=b9436b3e1a8be76fbd4823dc884f90596ab7c6ac5e1867a305e66ffccfb31a92
+VERSION=26.3.1
+TARBALL=https://archive.mesa3d.org/mesa-26.3.1.tar.xz
+SHA256=4e4e438eac7b840a9383988cbb7c08dad8041da544b9319fc26d319fa7348961
 DEPS="llvm wayland wayland-protocols zlib zstd expat"
 BUILDSYS=meson
 OPT="$PREFIX/opt/mesa"

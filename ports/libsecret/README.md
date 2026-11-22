@@ -1,4 +1,4 @@
-# libsecret 0.21.4
+# libsecret 0.21.8.2
 
 > GObject library for storing and retrieving secrets via Secret Service
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/libsecret.git (tag `0.21.4`) |
+| Upstream | https://gitlab.gnome.org/GNOME/libsecret.git (tag `0.21.8.2`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) [`libgcrypt`](../libgcrypt/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.21.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.21.8.2 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/libsecret.git src/libsecret
 ```
 
@@ -108,6 +108,7 @@ meson setup build/$QNX_ARCH/libsecret src/libsecret \
       --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
       --native-file $QNX_MESON_DIR/meson-native.ini \
       --prefix=/usr/local --buildtype=release --default-library=both \
+      --default-library=shared \
       -Dintrospection=false \
       -Dgtk_doc=false \
       -Dmanpage=false \
@@ -119,11 +120,15 @@ ninja -C build/$QNX_ARCH/libsecret
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/libsecret install
 ```
 
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- 0.21.8 builds its own static secret-1 for the tests next to library(): with --default-library=both (qnxbuild's) the two collide, so shared only.
+
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libsecret`.
 
 ### 5. What it installs
 
-83 files under `/usr/local`: 3 shared-library entries, 1 programs, 16 headers.
+89 files under `/usr/local`: 3 shared-library entries, 1 programs, 16 headers.
 
 ```
 /usr/local/lib/libsecret-1.so
@@ -211,15 +216,17 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.21.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsecret=<version>`), sources in `ported/libsecret/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsecret`; port one with `scripts/port-update libsecret`.
+This recipe builds **0.21.8.2**. Kept from earlier: `0.21.4` ([recipe and patches](versions/0.21.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsecret=<version>`), sources in `ported/libsecret/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsecret`; port one with `scripts/port-update libsecret`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.21.4; GIT=https://gitlab.gnome.org/GNOME/libsecret.git; REF=0.21.4
+VERSION=0.21.8.2; GIT=https://gitlab.gnome.org/GNOME/libsecret.git; REF=0.21.8.2
 DEPS="glib libgcrypt"
 BUILDSYS=meson
-MESON_ARGS_EXTRA=( -Dintrospection=false -Dgtk_doc=false -Dmanpage=false
+# 0.21.8 builds its own static secret-1 for the tests next to library():
+# with --default-library=both (qnxbuild's) the two collide, so shared only.
+MESON_ARGS_EXTRA=( --default-library=shared -Dintrospection=false -Dgtk_doc=false -Dmanpage=false
                    -Dvapi=false -Dcrypto=libgcrypt -Dtpm2=false -Dbash_completion=disabled )
 ```
 </details>

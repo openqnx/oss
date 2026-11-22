@@ -1,4 +1,4 @@
-# readline 8.2
+# readline 8.3
 
 > GNU Readline library for command line editing and history
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz |
-| SHA-256 | `3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35` |
+| Upstream | https://ftp.gnu.org/gnu/readline/readline-8.3.tar.gz |
+| SHA-256 | `fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc` |
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`ncurses`](../ncurses/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
+URL=https://ftp.gnu.org/gnu/readline/readline-8.3.tar.gz
 mkdir -p dist src/readline
 curl -fL -o dist/$(basename $URL) $URL
-echo "3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35  dist/$(basename $URL)" | sha256sum -c -
+echo "fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/readline --strip-components=1
 ```
 
@@ -136,15 +136,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH readline`.
 
 ### 5. What it installs
 
-24 files under `/usr/local`: 6 shared-library entries, 8 headers.
+27 files under `/usr/local`: 6 shared-library entries, 8 headers.
 
 ```
 /usr/local/lib/libhistory.so
 /usr/local/lib/libhistory.so.8
-/usr/local/lib/libhistory.so.8.2
+/usr/local/lib/libhistory.so.8.3
 /usr/local/lib/libreadline.so
 /usr/local/lib/libreadline.so.8
-/usr/local/lib/libreadline.so.8.2
+/usr/local/lib/libreadline.so.8.3
 ```
 
 The complete list is `stage/<arch>/.manifest/readline` after a build.
@@ -231,14 +231,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **8.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add readline=<version>`), sources in `ported/readline/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates readline`; port one with `scripts/port-update readline`.
+This recipe builds **8.3**. Kept from earlier: `8.2` ([recipe and patches](versions/8.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add readline=<version>`), sources in `ported/readline/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates readline`; port one with `scripts/port-update readline`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=8.2
-TARBALL=https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
-SHA256=3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
+VERSION=8.3
+TARBALL=https://ftp.gnu.org/gnu/readline/readline-8.3.tar.gz
+SHA256=fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 BUILDSYS=autotools
 DEPS="ncurses"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --with-curses )

@@ -136,7 +136,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH hailort`.
 
 ### 5. What it installs
 
-27 files under `/usr/local`: 2 shared-library entries, 1 programs, 20 headers.
+28 files under `/usr/local`: 2 shared-library entries, 1 programs, 20 headers.
 
 ```
 /usr/local/lib/libhailort.so

@@ -1,4 +1,4 @@
-# octomap 1.10.0
+# octomap 1.10.1
 
 > Probabilistic 3D mapping framework based on octrees
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/OctoMap/octomap.git (tag `v1.10.0`) |
+| Upstream | https://github.com/OctoMap/octomap.git (tag `v1.10.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.10.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.10.1 --recurse-submodules --shallow-submodules \
     https://github.com/OctoMap/octomap.git src/octomap
 ```
 
@@ -105,10 +105,10 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH octomap`.
 ```
 /usr/local/lib/liboctomap.so
 /usr/local/lib/liboctomap.so.1.10
-/usr/local/lib/liboctomap.so.1.10.0
+/usr/local/lib/liboctomap.so.1.10.1
 /usr/local/lib/liboctomath.so
 /usr/local/lib/liboctomath.so.1.10
-/usr/local/lib/liboctomath.so.1.10.0
+/usr/local/lib/liboctomath.so.1.10.1
 /usr/local/bin/binvox2bt
 /usr/local/bin/bt2vrml
 /usr/local/bin/compare_octrees
@@ -194,12 +194,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add octomap=<version>`), sources in `ported/octomap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates octomap`; port one with `scripts/port-update octomap`.
+This recipe builds **1.10.1**. Kept from earlier: `1.10.0` ([recipe and patches](versions/1.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add octomap=<version>`), sources in `ported/octomap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates octomap`; port one with `scripts/port-update octomap`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.10.0; GIT=https://github.com/OctoMap/octomap.git; REF=v1.10.0
+VERSION=1.10.1; GIT=https://github.com/OctoMap/octomap.git; REF=v1.10.1
 SUBDIR=octomap
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DOCTOMAP_OMP=OFF )
 ```

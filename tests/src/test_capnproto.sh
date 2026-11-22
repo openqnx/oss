@@ -12,7 +12,7 @@ cd "$T" || exit 1
 
 V=$(capnp --version 2>&1)
 echo "  info $V"
-case "$V" in *"1.0.2"*) ok "capnp --version: 1.0.2" ;; *) bad "capnp --version: $V" ;; esac
+case "$V" in *"1.5.0"*) ok "capnp --version: 1.5.0" ;; *) bad "capnp --version: $V" ;; esac
 
 cat > s.capnp <<'EOF'
 @0xbf5147cbbecf40c1;

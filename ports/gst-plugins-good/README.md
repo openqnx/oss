@@ -9,8 +9,8 @@
 | Upstream | see recipe.sh |
 | Build system | Meson |
 | QNX patches | 0 |
-| Build dependencies | [`gst-plugins-base`](../gst-plugins-base/) [`flac`](../flac/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libvpx`](../libvpx/) [`lame`](../lame/) [`zlib`](../zlib/) [`cairo`](../cairo/) [`libsoup`](../libsoup/) [`gdk-pixbuf`](../gdk-pixbuf/) [`bzip2`](../bzip2/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`flac`](../flac/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`lame`](../lame/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libsoup`](../libsoup/) [`libvpx`](../libvpx/) [`zlib`](../zlib/) |
+| Build dependencies | [`gst-plugins-base`](../gst-plugins-base/) [`flac`](../flac/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libvpx`](../libvpx/) [`lame`](../lame/) [`zlib`](../zlib/) [`cairo`](../cairo/) [`libsoup`](../libsoup/) [`gdk-pixbuf`](../gdk-pixbuf/) [`bzip2`](../bzip2/) [`gtk3`](../gtk3/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`flac`](../flac/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`lame`](../lame/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libsoup`](../libsoup/) [`libvpx`](../libvpx/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gst_plugins_good`](../../tests/src/) |
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (51 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (72 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild gst-plugins-base flac libpng libjpeg-turbo libvpx lame zlib cairo libsoup gdk-pixbuf bzip2
+./scripts/qnxbuild gst-plugins-base flac libpng libjpeg-turbo libvpx lame zlib cairo libsoup gdk-pixbuf bzip2 gtk3
 ```
 
-<details><summary>Full build chain (51)</summary>
+<details><summary>Full build chain (72)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`expat`](../expat/) [`flac`](../flac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libpsl`](../libpsl/) [`libsoup`](../libsoup/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`at-spi2-core`](../at-spi2-core/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`dbus`](../dbus/) [`expat`](../expat/) [`flac`](../flac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lame`](../lame/) [`libepoxy`](../libepoxy/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libpsl`](../libpsl/) [`libsoup`](../libsoup/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcomposite`](../libxcomposite/) [`libxcursor`](../libxcursor/) [`libxdamage`](../libxdamage/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxft`](../libxft/) [`libxi`](../libxi/) [`libxinerama`](../libxinerama/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxtst`](../libxtst/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -123,7 +123,7 @@ meson setup build/$QNX_ARCH/gst-plugins-good src/gst-plugins-good/subprojects/gs
       -Dpulse=disabled \
       -Djack=disabled \
       -Dximagesrc=disabled \
-      -Dgtk3=disabled \
+      -Dgtk3=enabled \
       -Dqt5=disabled \
       -Dqt6=disabled \
       -Dwaveform=disabled \
@@ -142,7 +142,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gst-plugins-good
 
 ### 5. What it installs
 
-213 files under `/usr/local`.
+216 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/gst-plugins-good` after a build.
 
@@ -233,7 +233,7 @@ This recipe builds **1.24.10**. Every version stays available: packages in `dist
 VERSION=1.24.10
 SRCROOT="$SRC_DIR/gstreamer"
 SUBDIR=subprojects/gst-plugins-good
-DEPS="gst-plugins-base flac libpng libjpeg-turbo libvpx lame zlib cairo libsoup gdk-pixbuf bzip2"
+DEPS="gst-plugins-base flac libpng libjpeg-turbo libvpx lame zlib cairo libsoup gdk-pixbuf bzip2 gtk3"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=(
   -Dtests=disabled -Dexamples=disabled -Ddoc=disabled -Dnls=enabled
@@ -241,7 +241,7 @@ MESON_ARGS_EXTRA=(
   -Dflac=enabled -Dpng=enabled -Djpeg=enabled -Dvpx=enabled -Dlame=enabled
   # Linux-kernel or desktop-only subsystems QNX does not have
   -Dv4l2=disabled -Doss=disabled -Doss4=disabled -Dpulse=disabled
-  -Djack=disabled -Dximagesrc=disabled -Dgtk3=disabled -Dqt5=disabled -Dqt6=disabled
+  -Djack=disabled -Dximagesrc=disabled -Dgtk3=enabled -Dqt5=disabled -Dqt6=disabled
   -Dwaveform=disabled -Ddirectsound=disabled -Dosxaudio=disabled -Dosxvideo=disabled
   # not ported (yet)
   -Dcairo=enabled -Dsoup=enabled -Dwavpack=disabled

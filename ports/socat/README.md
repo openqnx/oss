@@ -1,4 +1,4 @@
-# socat 1.8.0.3
+# socat 1.8.1.3
 
 > Multipurpose relay for binary protocols (SOcket CAT)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | http://www.dest-unreach.org/socat/download/socat-1.8.0.3.tar.gz |
-| SHA-256 | `a9f9eb6cfb9aa6b1b4b8fe260edbac3f2c743f294db1e362b932eb3feca37ba4` |
+| Upstream | http://www.dest-unreach.org/socat/download/socat-1.8.1.3.tar.gz |
+| SHA-256 | `06602ffd591e98c75b3dc1d66f0f19136cc666b0b2d95caad987d6ab2cb28097` |
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`readline`](../readline/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=http://www.dest-unreach.org/socat/download/socat-1.8.0.3.tar.gz
+URL=http://www.dest-unreach.org/socat/download/socat-1.8.1.3.tar.gz
 mkdir -p dist src/socat
 curl -fL -o dist/$(basename $URL) $URL
-echo "a9f9eb6cfb9aa6b1b4b8fe260edbac3f2c743f294db1e362b932eb3feca37ba4  dist/$(basename $URL)" | sha256sum -c -
+echo "06602ffd591e98c75b3dc1d66f0f19136cc666b0b2d95caad987d6ab2cb28097  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/socat --strip-components=1
 ```
 
@@ -223,16 +223,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.0.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add socat=<version>`), sources in `ported/socat/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates socat`; port one with `scripts/port-update socat`.
+This recipe builds **1.8.1.3**. Kept from earlier: `1.8.0.3` ([recipe and patches](versions/1.8.0.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add socat=<version>`), sources in `ported/socat/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates socat`; port one with `scripts/port-update socat`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # socat: relays bytes between two addresses of almost any kind (TCP, UDP,
 # UNIX sockets, files, pipes, ptys, programs, OpenSSL connections).
-VERSION=1.8.0.3
-TARBALL=http://www.dest-unreach.org/socat/download/socat-1.8.0.3.tar.gz
-SHA256=a9f9eb6cfb9aa6b1b4b8fe260edbac3f2c743f294db1e362b932eb3feca37ba4
+VERSION=1.8.1.3
+TARBALL=http://www.dest-unreach.org/socat/download/socat-1.8.1.3.tar.gz
+SHA256=06602ffd591e98c75b3dc1d66f0f19136cc666b0b2d95caad987d6ab2cb28097
 BUILDSYS=autotools
 DEPS="openssl readline"
 # regcomp()/regexec() (socat's address matching) are in QNX's libregex, not

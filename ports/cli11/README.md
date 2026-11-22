@@ -1,4 +1,4 @@
-# cli11 2.4.2
+# cli11 2.7.2
 
 > Header-only command line parser for C++11 and later
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/CLIUtils/CLI11.git (tag `v2.4.2`) |
+| Upstream | https://github.com/CLIUtils/CLI11.git (tag `v2.7.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_cli11`](../../tests/src/) |
 
@@ -70,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.4.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.7.2 --recurse-submodules --shallow-submodules \
     https://github.com/CLIUtils/CLI11.git src/cli11
 ```
 
@@ -96,7 +95,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cli11`.
 
 ### 5. What it installs
 
-29 files under `/usr/local`, 26 headers.
+33 files under `/usr/local`, 29 headers.
 
 The complete list is `stage/<arch>/.manifest/cli11` after a build.
 
@@ -153,7 +152,6 @@ PASS cli11
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_cli11`](../../tests/src/) -- a program linked against cli11 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -173,12 +171,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.4.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cli11=<version>`), sources in `ported/cli11/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cli11`; port one with `scripts/port-update cli11`.
+This recipe builds **2.7.2**. Kept from earlier: `2.4.2` ([recipe and patches](versions/2.4.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cli11=<version>`), sources in `ported/cli11/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cli11`; port one with `scripts/port-update cli11`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.4.2; GIT=https://github.com/CLIUtils/CLI11.git; REF=v2.4.2
+VERSION=2.7.2; GIT=https://github.com/CLIUtils/CLI11.git; REF=v2.7.2
 CMAKE_ARGS_EXTRA=( -DCLI11_BUILD_TESTS=OFF -DCLI11_BUILD_EXAMPLES=OFF -DCLI11_BUILD_DOCS=OFF )
 ```
 </details>

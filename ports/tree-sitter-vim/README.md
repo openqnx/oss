@@ -1,4 +1,4 @@
-# tree-sitter-vim 0.7.0
+# tree-sitter-vim 0.8.1
 
 > Vimscript grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-vim.git (tag `v0.7.0`) |
+| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-vim.git (tag `v0.8.1`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.7.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.8.1 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter-grammars/tree-sitter-vim.git src/tree-sitter-vim
 ```
 
@@ -179,14 +179,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.7.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-vim=<version>`), sources in `ported/tree-sitter-vim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-vim`; port one with `scripts/port-update tree-sitter-vim`.
+This recipe builds **0.8.1**. Kept from earlier: `0.7.0` ([recipe and patches](versions/0.7.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-vim=<version>`), sources in `ported/tree-sitter-vim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-vim`; port one with `scripts/port-update tree-sitter-vim`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: vim. Installs lib/tree-sitter/vim.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.7.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-vim.git; REF=v0.7.0
+VERSION=0.8.1; GIT=https://github.com/tree-sitter-grammars/tree-sitter-vim.git; REF=v0.8.1
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

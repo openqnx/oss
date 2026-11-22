@@ -1,4 +1,4 @@
-# yaml-cpp 0.8.0
+# yaml-cpp 0.9.0
 
 > YAML parser and emitter for C++
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/jbeder/yaml-cpp.git (tag `0.8.0`) |
+| Upstream | https://github.com/jbeder/yaml-cpp.git (tag `yaml-cpp-0.9.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.8.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b yaml-cpp-0.9.0 --recurse-submodules --shallow-submodules \
     https://github.com/jbeder/yaml-cpp.git src/yaml-cpp
 ```
 
@@ -99,12 +99,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH yaml-cpp`.
 
 ### 5. What it installs
 
-45 files under `/usr/local`: 3 shared-library entries, 37 headers.
+46 files under `/usr/local`: 3 shared-library entries, 38 headers.
 
 ```
 /usr/local/lib/libyaml-cpp.so
-/usr/local/lib/libyaml-cpp.so.0.8
-/usr/local/lib/libyaml-cpp.so.0.8.0
+/usr/local/lib/libyaml-cpp.so.0.9
+/usr/local/lib/libyaml-cpp.so.0.9.0
 ```
 
 The complete list is `stage/<arch>/.manifest/yaml-cpp` after a build.
@@ -184,12 +184,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.8.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add yaml-cpp=<version>`), sources in `ported/yaml-cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates yaml-cpp`; port one with `scripts/port-update yaml-cpp`.
+This recipe builds **0.9.0**. Kept from earlier: `0.8.0` ([recipe and patches](versions/0.8.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add yaml-cpp=<version>`), sources in `ported/yaml-cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates yaml-cpp`; port one with `scripts/port-update yaml-cpp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.8.0; GIT=https://github.com/jbeder/yaml-cpp.git; REF=0.8.0
+VERSION=0.9.0; GIT=https://github.com/jbeder/yaml-cpp.git; REF=yaml-cpp-0.9.0
 CMAKE_ARGS_EXTRA=( -DYAML_CPP_BUILD_TESTS=OFF -DYAML_CPP_BUILD_TOOLS=OFF
                    -DYAML_BUILD_SHARED_LIBS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

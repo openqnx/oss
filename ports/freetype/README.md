@@ -1,4 +1,4 @@
-# freetype 2.13.3
+# freetype 2-15-0
 
 > Portable font rendering engine library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/freetype/freetype.git (tag `VER-2-13-3`) |
+| Upstream | https://gitlab.freedesktop.org/freetype/freetype.git (tag `VER-2-15-0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`libpng`](../libpng/) [`brotli`](../brotli/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b VER-2-13-3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b VER-2-15-0 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/freetype/freetype.git src/freetype
 ```
 
@@ -111,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH freetype`.
 ```
 /usr/local/lib/libfreetype.so
 /usr/local/lib/libfreetype.so.6
-/usr/local/lib/libfreetype.so.6.20.2
+/usr/local/lib/libfreetype.so.6.20.7
 ```
 
 The complete list is `stage/<arch>/.manifest/freetype` after a build.
@@ -196,12 +196,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.13.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add freetype=<version>`), sources in `ported/freetype/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates freetype`; port one with `scripts/port-update freetype`.
+This recipe builds **2-15-0**. Kept from earlier: `2.13.3` ([recipe and patches](versions/2.13.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add freetype=<version>`), sources in `ported/freetype/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates freetype`; port one with `scripts/port-update freetype`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.13.3; GIT=https://gitlab.freedesktop.org/freetype/freetype.git; REF=VER-2-13-3
+VERSION=2-15-0; GIT=https://gitlab.freedesktop.org/freetype/freetype.git; REF=VER-2-15-0
 DEPS="zlib bzip2 libpng brotli"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DFT_DISABLE_HARFBUZZ=ON
                    -DFT_REQUIRE_ZLIB=ON -DFT_REQUIRE_PNG=ON -DFT_REQUIRE_BZIP2=ON

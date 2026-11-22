@@ -1,4 +1,4 @@
-# openjph 0.24.1
+# openjph 0.33.0
 
 > HTJ2K (High-Throughput JPEG 2000) encoder and decoder library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/aous72/OpenJPH.git (tag `0.24.1`) |
+| Upstream | https://github.com/aous72/OpenJPH.git (tag `0.33.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libtiff`](../libtiff/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.24.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.33.0 --recurse-submodules --shallow-submodules \
     https://github.com/aous72/OpenJPH.git src/openjph
 ```
 
@@ -118,8 +118,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openjph`.
 
 ```
 /usr/local/lib/libopenjph.so
-/usr/local/lib/libopenjph.so.0.24
-/usr/local/lib/libopenjph.so.0.24.1
+/usr/local/lib/libopenjph.so.0.33
+/usr/local/lib/libopenjph.so.0.33.0
 /usr/local/bin/ojph_compress
 /usr/local/bin/ojph_expand
 ```
@@ -204,7 +204,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.24.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openjph=<version>`), sources in `ported/openjph/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openjph`; port one with `scripts/port-update openjph`.
+This recipe builds **0.33.0**. Kept from earlier: `0.24.1` ([recipe and patches](versions/0.24.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openjph=<version>`), sources in `ported/openjph/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openjph`; port one with `scripts/port-update openjph`.
 
 <details><summary>recipe.sh</summary>
 
@@ -213,7 +213,7 @@ This recipe builds **0.24.1**. Every version stays available: packages in `dists
 # library, with ojph_compress/ojph_expand. Added as a dependency of OpenEXR 3.4,
 # whose HTJ2K compression is built on it (otherwise OpenEXR downloads a copy at
 # configure time). 0.24.1 is the release OpenEXR 3.4.1 pins.
-VERSION=0.24.1; GIT=https://github.com/aous72/OpenJPH.git; REF=0.24.1
+VERSION=0.33.0; GIT=https://github.com/aous72/OpenJPH.git; REF=0.33.0
 DEPS="libtiff"
 BUILDSYS=cmake
 # Shared library and the two tools, with TIFF input/output (libtiff is here).

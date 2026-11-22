@@ -1,4 +1,4 @@
-# gnutls 3.8.8
+# gnutls 3.8.14
 
 > GNU TLS/SSL protocol implementation library
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.8.tar.xz |
-| SHA-256 | `ac4f020e583880b51380ed226e59033244bc536cad2623f2e26f5afa2939d8fb` |
+| Upstream | https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.14.tar.xz |
+| SHA-256 | `7e2d258071f5db9620aa7ff34259331d004f7beafa3eb18560cfaf60acfbf02a` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`nettle`](../nettle/) [`gmp`](../gmp/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`libidn2`](../libidn2/) [`zlib`](../zlib/) [`brotli`](../brotli/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`gmp`](../gmp/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`nettle`](../nettle/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`gmp`](../gmp/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`nettle`](../nettle/) [`unbound`](../unbound/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gnutls`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.8.tar.xz
+URL=https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.14.tar.xz
 mkdir -p dist src/gnutls
 curl -fL -o dist/$(basename $URL) $URL
-echo "ac4f020e583880b51380ed226e59033244bc536cad2623f2e26f5afa2939d8fb  dist/$(basename $URL)" | sha256sum -c -
+echo "7e2d258071f5db9620aa7ff34259331d004f7beafa3eb18560cfaf60acfbf02a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gnutls --strip-components=1
 ```
 
@@ -103,6 +103,7 @@ CPPFLAGS="-D_QNX_SOURCE -I$STAGE/usr/local/include -I$QNX_TARGET/usr/include" \
 CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
+ac_cv_func_dl_iterate_phdr=no \
 $OLDPWD/src/gnutls/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
     --disable-static \
@@ -123,16 +124,21 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): brotli zstd
+- 3.8.12 includes <link.h> where configure found dl_iterate_phdr; QNX has the function but declares it in <sys/link.h>. gnutls uses it only for the FIPS self-check of its own library file (not enabled here): say it is missing.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gnutls`.
 
 ### 5. What it installs
 
-20 files under `/usr/local`: 2 shared-library entries, 17 headers.
+27 files under `/usr/local`: 6 shared-library entries, 19 headers.
 
 ```
+/usr/local/lib/libgnutls-dane.so
+/usr/local/lib/libgnutls-dane.so.0
+/usr/local/lib/libgnutls-dane.so.0.4.1
 /usr/local/lib/libgnutls.so
-/usr/local/lib/libgnutls.so.70
+/usr/local/lib/libgnutls.so.30
+/usr/local/lib/libgnutls.so.30.43.0
 ```
 
 The complete list is `stage/<arch>/.manifest/gnutls` after a build.
@@ -216,20 +222,24 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.8.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gnutls=<version>`), sources in `ported/gnutls/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gnutls`; port one with `scripts/port-update gnutls`.
+This recipe builds **3.8.14**. Kept from earlier: `3.8.8` ([recipe and patches](versions/3.8.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gnutls=<version>`), sources in `ported/gnutls/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gnutls`; port one with `scripts/port-update gnutls`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.8.8
-TARBALL=https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.8.tar.xz
-SHA256=ac4f020e583880b51380ed226e59033244bc536cad2623f2e26f5afa2939d8fb
+VERSION=3.8.14
+TARBALL=https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.14.tar.xz
+SHA256=7e2d258071f5db9620aa7ff34259331d004f7beafa3eb18560cfaf60acfbf02a
 BUILDSYS=autotools
 # Also linked at run time (found by scripts/gen-dependency-index): brotli zstd
 DEPS="nettle gmp libtasn1 libunistring libidn2 zlib brotli zstd"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doc --disable-tests
                   --disable-tools --disable-cxx --without-p11-kit --with-included-libtasn1=no
                   --disable-guile --disable-nls --with-included-unistring=no )
+# 3.8.12 includes <link.h> where configure found dl_iterate_phdr; QNX has the
+# function but declares it in <sys/link.h>. gnutls uses it only for the FIPS
+# self-check of its own library file (not enabled here): say it is missing.
+CONF_ENV=( ac_cv_func_dl_iterate_phdr=no )
 ```
 </details>
 

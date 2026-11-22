@@ -28,7 +28,7 @@ def lib():
     import ntp.ntpc, ntp.util, ntp.poly
     v = ctypes.c_char_p.in_dll(ntp.ntpc._ntpc, "version").value
     info("libntpc %s" % v.decode())
-    check(v == b"1.2.4+NTPsec_1_2_4-dirty" and ntp.util.stdversion() == "ntpsec-1.2.4+NTPsec_1_2_4-dirty", "libntpc loaded through ctypes; version matches the module")
+    check(v == b"1.2.6+NTPsec_1_2_6-dirty" and ntp.util.stdversion() == "ntpsec-1.2.6+NTPsec_1_2_6-dirty", "libntpc loaded through ctypes; version matches the module")
     check(ntp.ntpc.statustoa(ntp.ntpc.TYPE_SYS, 0x12345678) == "leap_add_sec, sync_22, 7 events, no_sys_peer", "statustoa (system status word)")
     check(ntp.ntpc.statustoa(ntp.ntpc.TYPE_PEER, 0x12345678) == "authenb, reach, sel_sys.peer, 7 events, access_denied", "statustoa (peer status word)")
     check(abs(ntp.ntpc.lfptofloat("0xcfba1ce0.80000000") - 1276092000.5) < 1e-6, "lfptofloat 0xcfba1ce0.80000000 = 1276092000.5")
@@ -61,7 +61,7 @@ def keys():
 def daemon():
     p = subprocess.run([BIN.replace("/bin", "/sbin") + "/ntpd", "--version"], capture_output=True, text=True)
     info((p.stdout + p.stderr).strip())
-    check(p.returncode == 0 and "ntpsec-1.2.4" in p.stdout + p.stderr, "ntpd --version: ntpsec-1.2.4")
+    check(p.returncode == 0 and "ntpsec-1.2.6" in p.stdout + p.stderr, "ntpd --version: ntpsec-1.2.6")
 def sntp():
     import ntp.packet
     try:

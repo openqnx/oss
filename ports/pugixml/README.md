@@ -1,4 +1,4 @@
-# pugixml 1.14
+# pugixml 1.16
 
 > Lightweight XML parser for C++ with XPath support
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/zeux/pugixml.git (tag `v1.14`) |
+| Upstream | https://github.com/zeux/pugixml.git (tag `v1.16`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.14 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.16 --recurse-submodules --shallow-submodules \
     https://github.com/zeux/pugixml.git src/pugixml
 ```
 
@@ -102,7 +102,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH pugixml`.
 ```
 /usr/local/lib/libpugixml.so
 /usr/local/lib/libpugixml.so.1
-/usr/local/lib/libpugixml.so.1.14
+/usr/local/lib/libpugixml.so.1.16
 ```
 
 The complete list is `stage/<arch>/.manifest/pugixml` after a build.
@@ -181,12 +181,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.14**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pugixml=<version>`), sources in `ported/pugixml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pugixml`; port one with `scripts/port-update pugixml`.
+This recipe builds **1.16**. Kept from earlier: `1.14` ([recipe and patches](versions/1.14/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pugixml=<version>`), sources in `ported/pugixml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pugixml`; port one with `scripts/port-update pugixml`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.14; GIT=https://github.com/zeux/pugixml.git; REF=v1.14
+VERSION=1.16; GIT=https://github.com/zeux/pugixml.git; REF=v1.16
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DPUGIXML_BUILD_TESTS=OFF )
 ```
 </details>

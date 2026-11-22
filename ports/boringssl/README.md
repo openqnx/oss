@@ -1,4 +1,4 @@
-# boringssl 0.20260929.0
+# boringssl 0.20261105.0
 
 > Fork of OpenSSL designed to meet Google's needs (libcrypto, libssl, bssl)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/boringssl.git (tag `0.20260929.0`) |
+| Upstream | https://github.com/google/boringssl.git (tag `0.20261105.0`) |
 | Build system | CMake |
 | QNX patches | 4 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.20260929.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.20261105.0 --recurse-submodules --shallow-submodules \
     https://github.com/google/boringssl.git src/boringssl
 ```
 
@@ -163,7 +163,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH boringssl`.
 
 ### 5. What it installs
 
-114 files under `/usr/local`, 1 programs.
+115 files under `/usr/local`, 1 programs.
 
 ```
 /usr/local/bin/bssl
@@ -260,7 +260,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.20260929.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add boringssl=<version>`), sources in `ported/boringssl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates boringssl`; port one with `scripts/port-update boringssl`.
+This recipe builds **0.20261105.0**. Kept from earlier: `0.20260929.0` ([recipe and patches](versions/0.20260929.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add boringssl=<version>`), sources in `ported/boringssl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates boringssl`; port one with `scripts/port-update boringssl`.
 
 <details><summary>recipe.sh</summary>
 
@@ -269,7 +269,7 @@ This recipe builds **0.20260929.0**. Every version stays available: packages in 
 # at a release tag, with QNX's aarch64 CPU setup (patches/0001, from
 # github.com/qnx-ports/boringssl, branch qnx-mediapipe) and the QNX changes
 # around it (patches/0002-0004).
-VERSION=0.20260929.0; GIT=https://github.com/google/boringssl.git; REF=0.20260929.0
+VERSION=0.20261105.0; GIT=https://github.com/google/boringssl.git; REF=0.20261105.0
 DEPS=""
 BUILDSYS=cmake
 # It installs libcrypto/libssl and <openssl/*.h> under the same names as the

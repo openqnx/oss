@@ -1,4 +1,4 @@
-# cmake 4.1.1
+# cmake 4.5.1
 
 > Cross-platform build system generator
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.kitware.com/cmake/cmake.git (tag `v4.1.1`) |
+| Upstream | https://gitlab.kitware.com/cmake/cmake.git (tag `v4.5.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`curl`](../curl/) [`libuv`](../libuv/) |
-| Run-time dependencies | [`curl`](../curl/) [`libuv`](../libuv/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`curl`](../curl/) [`libiconv`](../libiconv/) [`libuv`](../libuv/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_cmake`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v4.1.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.5.1 --recurse-submodules --shallow-submodules \
     https://gitlab.kitware.com/cmake/cmake.git src/cmake
 ```
 
@@ -122,7 +122,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cmake`.
 
 ### 5. What it installs
 
-3907 files under `/usr/local`, 3 programs.
+4283 files under `/usr/local`, 3 programs.
 
 ```
 /usr/local/bin/cmake
@@ -202,7 +202,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cmake=<version>`), sources in `ported/cmake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cmake`; port one with `scripts/port-update cmake`.
+This recipe builds **4.5.1**. Kept from earlier: `4.1.1` ([recipe and patches](versions/4.1.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add cmake=<version>`), sources in `ported/cmake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates cmake`; port one with `scripts/port-update cmake`.
 
 <details><summary>recipe.sh</summary>
 
@@ -210,7 +210,7 @@ This recipe builds **4.1.1**. Every version stays available: packages in `dists/
 # CMake for the target (to build software on the board). Built with the host
 # CMake and the QNX toolchain file; its bundled third-party libraries are used
 # except where this tree provides them. Version as in the QNX Everywhere image.
-VERSION=4.1.1; GIT=https://gitlab.kitware.com/cmake/cmake.git; REF=v4.1.1
+VERSION=4.5.1; GIT=https://gitlab.kitware.com/cmake/cmake.git; REF=v4.5.1
 DEPS="openssl zlib curl libuv"
 # CMake's own C++ feature probes treat any compiler output as failure, and
 # qcc always prints "cc: warning - lang-c++ is deprecated" (CMake's QCC module

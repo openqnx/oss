@@ -1,0 +1,22 @@
+Link libpng on QNX as everywhere else.
+
+The QNX patch (0001) leaves link_package(PNG) out on QNX, but the PNG
+screenshot and heightmap code is still compiled whenever FindPNG succeeds,
+and the openttd link then fails: "undefined reference to symbol
+png_write_row@@PNG16_0" (DSO missing from command line). This tree has
+libpng (the libpng component); link it.
+
+Upstream-Status: QNX-specific
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -325,9 +325,7 @@
+ set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+ 
+ include(LinkPackage)
+-if(NOT QNX)
+ link_package(PNG TARGET PNG::PNG ENCOURAGED)
+-endif()
+ link_package(ZLIB TARGET ZLIB::ZLIB ENCOURAGED)
+ link_package(LIBLZMA TARGET LibLZMA::LibLZMA ENCOURAGED)
+ link_package(LZO)

@@ -1,4 +1,4 @@
-# hiredis 1.5.0
+# hiredis 1.5.1
 
 > Minimalistic C client library for Redis and Valkey
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/redis/hiredis.git (tag `v1.5.0`) |
+| Upstream | https://github.com/redis/hiredis.git (tag `v1.5.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.1 --recurse-submodules --shallow-submodules \
     https://github.com/redis/hiredis.git src/hiredis
 ```
 
@@ -113,10 +113,10 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH hiredis`.
 ```
 /usr/local/lib/libhiredis.so
 /usr/local/lib/libhiredis.so.1
-/usr/local/lib/libhiredis.so.1.5.0
+/usr/local/lib/libhiredis.so.1.5.1
 /usr/local/lib/libhiredis_ssl.so
 /usr/local/lib/libhiredis_ssl.so.1
-/usr/local/lib/libhiredis_ssl.so.1.5.0
+/usr/local/lib/libhiredis_ssl.so.1.5.1
 ```
 
 The complete list is `stage/<arch>/.manifest/hiredis` after a build.
@@ -206,14 +206,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add hiredis=<version>`), sources in `ported/hiredis/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates hiredis`; port one with `scripts/port-update hiredis`.
+This recipe builds **1.5.1**. Kept from earlier: `1.5.0` ([recipe and patches](versions/1.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add hiredis=<version>`), sources in `ported/hiredis/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates hiredis`; port one with `scripts/port-update hiredis`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # hiredis: the minimalistic C client library for Redis (and Valkey), with its
 # TLS layer (libhiredis_ssl) built against the staged OpenSSL.
-VERSION=1.5.0; GIT=https://github.com/redis/hiredis.git; REF=v1.5.0
+VERSION=1.5.1; GIT=https://github.com/redis/hiredis.git; REF=v1.5.1
 DEPS="openssl"
 BUILDSYS=cmake
 # Tests off: they need a running redis-server on the build machine. No NuGet

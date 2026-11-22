@@ -1,4 +1,4 @@
-# silkit-adapters-tap 1.2.0
+# silkit-adapters-tap 1.2.1
 
 > SIL Kit adapter connecting TAP network devices to SIL Kit Ethernet networks
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/vectorgrp/sil-kit-adapters-tap.git (tag `v1.2.0`) |
+| Upstream | https://github.com/vectorgrp/sil-kit-adapters-tap.git (tag `v1.2.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`silkit`](../silkit/) |
@@ -73,7 +73,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.2.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.2.1 --recurse-submodules --shallow-submodules \
     https://github.com/vectorgrp/sil-kit-adapters-tap.git src/silkit-adapters-tap
 ```
 
@@ -189,7 +189,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add silkit-adapters-tap=<version>`), sources in `ported/silkit-adapters-tap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates silkit-adapters-tap`; port one with `scripts/port-update silkit-adapters-tap`.
+This recipe builds **1.2.1**. Kept from earlier: `1.2.0` ([recipe and patches](versions/1.2.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add silkit-adapters-tap=<version>`), sources in `ported/silkit-adapters-tap/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates silkit-adapters-tap`; port one with `scripts/port-update silkit-adapters-tap`.
 
 <details><summary>recipe.sh</summary>
 
@@ -202,7 +202,7 @@ This recipe builds **1.2.0**. Every version stays available: packages in `dists/
 # component (SILKIT_PACKAGE_DIR: otherwise its CMake downloads a SIL Kit
 # release); asio is the adapter's bundled copy (git submodule). Not built:
 # the demos (a Linux shell-script ping demo and an ICMP echo device).
-VERSION=1.2.0; GIT=https://github.com/vectorgrp/sil-kit-adapters-tap.git; REF=v1.2.0
+VERSION=1.2.1; GIT=https://github.com/vectorgrp/sil-kit-adapters-tap.git; REF=v1.2.1
 DEPS="silkit"
 CMAKE_ARGS_EXTRA=( -DSILKIT_PACKAGE_DIR="$STAGE$PREFIX" -DBUILD_LINUX_PACKAGE=OFF )
 ```

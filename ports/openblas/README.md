@@ -1,4 +1,4 @@
-# openblas 0.3.28
+# openblas 0.3.34
 
 > Optimized BLAS linear algebra library based on GotoBLAS2
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/OpenMathLib/OpenBLAS.git (tag `v0.3.28`) |
+| Upstream | https://github.com/OpenMathLib/OpenBLAS.git (tag `v0.3.34`) |
 | Build system | CMake |
 | QNX patches | 3 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.3.28 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.3.34 --recurse-submodules --shallow-submodules \
     https://github.com/OpenMathLib/OpenBLAS.git src/openblas
 ```
 
@@ -90,7 +90,14 @@ patch -p1 -d src/openblas < ports/openblas/patches/0003-qnx-cap-threads-at-cpu-c
 
 > Imported from qnx-ports/OpenBLAS (5ef8b1964658...qnx-0.3.28); original authorship kept.
 >
->
+> Rebased onto 0.3.34: upstream moved the C11 atomics block to the top of
+> common.h, restructured cpp_thread_test/CMakeLists.txt (a new
+> dgemm_thread_safety_mixed test gets the same install rule) and moved the
+> OpenMP lookup to cmake/system.cmake, which now links OpenMP:: imported
+> targets. Not carried from PATCH 4/6: the QNX override of find_package(OpenMP)
+> in cmake/arch.cmake (this port builds with USE_OPENMP=0) and the explicit
+> gomp link of the thread-safety tests (upstream links OpenMP::OpenMP_CXX there
+> when CPP_THREAD_SAFETY_USE_OPENMP is set).
 > ---
 >  ctest/CMakeLists.txt | 8 ++++----
 >  utest/CMakeLists.txt | 2 +-
@@ -243,12 +250,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.3.28**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openblas=<version>`), sources in `ported/openblas/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openblas`; port one with `scripts/port-update openblas`.
+This recipe builds **0.3.34**. Kept from earlier: `0.3.28` ([recipe and patches](versions/0.3.28/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openblas=<version>`), sources in `ported/openblas/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openblas`; port one with `scripts/port-update openblas`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.3.28; GIT=https://github.com/OpenMathLib/OpenBLAS.git; REF=v0.3.28
+VERSION=0.3.34; GIT=https://github.com/OpenMathLib/OpenBLAS.git; REF=v0.3.34
 # Built with OpenBLAS's CMake build, as qnx-ports does: the Makefile build
 # queries the compiler with -dumpversion, which qcc does not answer (and then
 # fails with "expr: syntax error"). No Fortran: LAPACK comes from its C

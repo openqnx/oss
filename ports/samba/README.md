@@ -192,7 +192,9 @@ S=src/samba; B=build/$QNX_ARCH/samba; mkdir -p $B
 
 ```bash
 do_build() {
-  mkdir -p "$_SMB_NATIVE" && ( _smb_yapp ) && ( _smb_native ) || return 1
+  # One native build at a time (flock): the directory is shared by both
+  # architectures.
+  mkdir -p "$_SMB_NATIVE" && ( flock 9; ( _smb_yapp ) && ( _smb_native ) ) 9>"$_SMB_NATIVE.lock" || return 1
   rm -rf "$B" && cp -a "$S" "$B" && cd "$B" &&
   cp "$WS/ports/samba/cross-answers-$QNX_ARCH.txt" "$B/cross-answers.txt" &&
   _smb_env ./configure --prefix="$PREFIX" --enable-fhs --sysconfdir="$PREFIX/etc" --localstatedir="$PREFIX/var" \
@@ -228,7 +230,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH samba`.
 
 ### 5. What it installs
 
-359 files under `/usr/local`: 41 shared-library entries, 43 programs, 74 headers.
+467 files under `/usr/local`: 41 shared-library entries, 43 programs, 74 headers.
 
 ```
 /usr/local/lib/libdcerpc-binding.so
@@ -397,7 +399,9 @@ _smb_env() {
     SAMBA_NATIVE_HEIMDAL_TOOLS="$_SMB_NATIVE/src/bin/default/third_party/heimdal_build" "$@"
 }
 do_build() {
-  mkdir -p "$_SMB_NATIVE" && ( _smb_yapp ) && ( _smb_native ) || return 1
+  # One native build at a time (flock): the directory is shared by both
+  # architectures.
+  mkdir -p "$_SMB_NATIVE" && ( flock 9; ( _smb_yapp ) && ( _smb_native ) ) 9>"$_SMB_NATIVE.lock" || return 1
   rm -rf "$B" && cp -a "$S" "$B" && cd "$B" &&
   cp "$WS/ports/samba/cross-answers-$QNX_ARCH.txt" "$B/cross-answers.txt" &&
   _smb_env ./configure --prefix="$PREFIX" --enable-fhs --sysconfdir="$PREFIX/etc" --localstatedir="$PREFIX/var" \

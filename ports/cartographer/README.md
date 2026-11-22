@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 3 |
 | Build dependencies | [`abseil`](../abseil/) [`boost`](../boost/) [`ceres-solver`](../ceres-solver/) [`eigen`](../eigen/) [`glog`](../glog/) [`gflags`](../gflags/) [`lua5.3`](../lua5.3/) [`protobuf`](../protobuf/) [`cairo`](../cairo/) |
-| Run-time dependencies | [`abseil`](../abseil/) [`boost`](../boost/) [`cairo`](../cairo/) [`ceres-solver`](../ceres-solver/) [`gflags`](../gflags/) [`glog`](../glog/) [`lua5.3`](../lua5.3/) [`protobuf`](../protobuf/) |
+| Run-time dependencies | [`abseil`](../abseil/) [`boost`](../boost/) [`cairo`](../cairo/) [`ceres-solver`](../ceres-solver/) [`glog`](../glog/) [`lua5.3`](../lua5.3/) [`protobuf`](../protobuf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_cartographer`](../../tests/src/) |
 

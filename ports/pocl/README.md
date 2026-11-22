@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/pocl/pocl.git (tag `v7.2`) |
 | Build system | custom (see recipe) |
-| QNX patches | 5 |
+| QNX patches | 6 |
 | Build dependencies | [`llvm`](../llvm/) [`zlib`](../zlib/) [`zstd`](../zstd/) [`opencl-headers`](../opencl-headers/) [`opencl-icd-loader`](../opencl-icd-loader/) |
 | Run-time dependencies | [`llvm`](../llvm/) [`opencl-icd-loader`](../opencl-icd-loader/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,7 +87,7 @@ git clone --depth 1 -b v7.2 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+6 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/pocl < ports/pocl/patches/0001-qnx-syspage-device-info.patch
@@ -95,6 +95,7 @@ patch -p1 -d src/pocl < ports/pocl/patches/0002-qnx-compiler-stack.patch
 patch -p1 -d src/pocl < ports/pocl/patches/0003-qnx-netbyte-h.patch
 patch -p1 -d src/pocl < ports/pocl/patches/0004-cross-target-llvm-bindir.patch
 patch -p1 -d src/pocl < ports/pocl/patches/0005-qnx-datadir-fallback.patch
+patch -p1 -d src/pocl < ports/pocl/patches/0006-qnx-kernel-link.patch
 ```
 
 **[`0001-qnx-syspage-device-info.patch`](patches/0001-qnx-syspage-device-info.patch)** — Describe the CPU device from the QNX system page (CPUs, RAM, cache, CPU name and speed).
@@ -190,6 +191,28 @@ Touches: `cmake/LLVM.cmake` · Upstream status: QNX-specific
 > the configured directory in that case, as when relocation is disabled.
 
 Touches: `lib/CL/pocl_util.c` · Upstream status: QNX-specific
+
+**[`0006-qnx-kernel-link.patch`](patches/0006-qnx-kernel-link.patch)** — pocl: link kernel binaries QNX's runtime linker can load
+
+> PoCL links each compiled kernel into a shared object with the lld built
+> into libpocl and dlopen()s it in the same process. On QNX that dlopen()
+> failed for every kernel, so PoCL ran none and every result was wrong
+> (test_pocl on both architectures, SDP 8.0 and 8.0.6):
+>
+>  - lld pads PT_GNU_RELRO to the end of the page, over .bss past the file
+>    contents, and QNX's runtime linker rejects that layout with ENOMEM
+>    ("Not enough memory"); the same object without the RELRO header loads.
+>    Link with -z norelro.
+>  - lld writes its output through a shared mapping of the file, and QNX
+>    refuses to load a file the process has mapped for writing: the open in
+>    dlopen() failed with EBUSY ("Resource busy", DL_DEBUG=libs); QNX keeps
+>    a file mapped for writing busy for a while after munmap() and close()
+>    (the same object loads seconds later, and a copy loads at once). Ask for
+>    the in-memory output buffer: in this lld that is --mmap-output-file
+>    (FileOutputBuffer::F_mmap), the default only for links that name ldqnx
+>    as the dynamic linker.
+
+Touches: `lib/CL/pocl_llvm_build.cc` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

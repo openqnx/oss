@@ -1,4 +1,4 @@
-# foot 1.23.1
+# foot 1.28.0
 
 > Fast, lightweight and minimalistic Wayland terminal emulator
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://codeberg.org/dnkl/foot.git (tag `1.23.1`) |
+| Upstream | https://codeberg.org/dnkl/foot.git (tag `1.28.0`) |
 | Build system | Meson |
 | QNX patches | 6 |
 | Build dependencies | [`pixman`](../pixman/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`fontconfig`](../fontconfig/) [`utf8proc`](../utf8proc/) [`tllist`](../tllist/) [`fcft`](../fcft/) [`ncurses`](../ncurses/) [`linux-headers-input-codes`](../linux-headers-input-codes/) |
@@ -78,7 +78,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.23.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.28.0 --recurse-submodules --shallow-submodules \
     https://codeberg.org/dnkl/foot.git src/foot
 ```
 
@@ -190,7 +190,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH foot`.
 
 ### 5. What it installs
 
-97 files under `/usr/local`, 2 programs.
+100 files under `/usr/local`, 2 programs.
 
 ```
 /usr/local/bin/foot
@@ -267,14 +267,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.23.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add foot=<version>`), sources in `ported/foot/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates foot`; port one with `scripts/port-update foot`.
+This recipe builds **1.28.0**. Kept from earlier: `1.23.1` ([recipe and patches](versions/1.23.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add foot=<version>`), sources in `ported/foot/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates foot`; port one with `scripts/port-update foot`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # foot: a fast, lightweight and minimalistic Wayland terminal emulator
 # (fcft fonts, pixman rendering, a server/client mode, sixel images).
-VERSION=1.23.1; GIT=https://codeberg.org/dnkl/foot.git; REF=1.23.1
+VERSION=1.28.0; GIT=https://codeberg.org/dnkl/foot.git; REF=1.28.0
 DEPS="pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes"
 # The "foot" terminfo entries come with ncurses' terminfo database, so foot's
 # own copy is not installed (they would be the same files twice).

@@ -1,4 +1,4 @@
-# 7-Zip 26.05: the 7zz command-line archiver (7z, xz, zip, tar, gzip,
+# 7-Zip 26.06: the 7zz command-line archiver (7z, xz, zip, tar, gzip,
 # bzip2 ... create, list, test, extract; also reads many more formats), with
 # qnx-ports' QNX support (patches/0001): no d_type in QNX's struct dirent
 # (directory entries are typed through stat, as on AIX and Solaris), the
@@ -8,9 +8,9 @@
 # getauxval() on QNX, so those hunks and the old patches/0002 are gone).
 # patches/0003: the RAM size from the system page, since QNX does not
 # implement _SC_PHYS_PAGES (0001 reported 0 bytes).
-VERSION=26.05
-TARBALL=https://github.com/ip7z/7zip/releases/download/26.05/7z2605-src.tar.xz
-SHA256=0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e
+VERSION=26.06
+TARBALL=https://github.com/ip7z/7zip/releases/download/26.06/7z2606-src.tar.xz
+SHA256=a4e374c8f864f51df48c2cfd0e1413ec3b2ea030deae852d6a655402ebb61ac4
 BUILDSYS=custom
 # The source archive has no top-level directory, so the default fetch
 # (--strip-components=1) would drop one level: unpack it as is.

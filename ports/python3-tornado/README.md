@@ -1,4 +1,4 @@
-# python3-tornado 6.6
+# python3-tornado 6.6.1
 
 > Python web framework and asynchronous networking library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz |
-| SHA-256 | `34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5` |
+| Upstream | https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz |
+| SHA-256 | `28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz
+URL=https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz
 mkdir -p dist src/python3-tornado
 curl -fL -o dist/$(basename $URL) $URL
-echo "34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5  dist/$(basename $URL)" | sha256sum -c -
+echo "28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-tornado --strip-components=1
 ```
 
@@ -226,7 +226,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-tornado=<version>`), sources in `ported/python3-tornado/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-tornado`; port one with `scripts/port-update python3-tornado`.
+This recipe builds **6.6.1**. Kept from earlier: `6.6` ([recipe and patches](versions/6.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-tornado=<version>`), sources in `ported/python3-tornado/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-tornado`; port one with `scripts/port-update python3-tornado`.
 
 <details><summary>recipe.sh</summary>
 
@@ -234,9 +234,9 @@ This recipe builds **6.6**. Every version stays available: packages in `dists/8.
 # tornado: web framework and asynchronous networking (HTTP server and client, IOLoop, websockets).
 # Pure Python, published as a source distribution only: built into a
 # platform-independent wheel here (see scripts/lib/pywheel.sh).
-VERSION=6.6
-TARBALL=https://files.pythonhosted.org/packages/d0/02/5f549b1ad5da6267ed1e1fac2eef69257b1979cc812497002499b7895ff9/tornado-6.6.tar.gz
-SHA256=34c4aa916d7f2b2d5cadee2c6850f5a4a7f3d688cbf58399ea9bd3057af4abd5
+VERSION=6.6.1
+TARBALL=https://files.pythonhosted.org/packages/64/2b/8ff2b41620cbba0eeb0862fed21dcaa5a2ad36c6dd9bb465f9ff7a147be2/tornado-6.6.1.tar.gz
+SHA256=28e6311402af59c8b02e3fa0f5e7d8eb465b25081381803b127d97e6a4395d5a
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

@@ -27,7 +27,7 @@ diff --git a/configure.ac b/configure.ac
 index 370bad009fa..2a5e56c830e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1920,7 +1920,7 @@ AM_CONDITIONAL(USE_PYTHON_WHEELS, test x$python_wheels = xtrue)
+@@ -1791,7 +1791,7 @@
  AM_CONDITIONAL(USE_PERL_CPAN, test x$perl_cpan = xtrue)
  AM_CONDITIONAL(USE_TOX, test "x$TOX" != x)
  AM_CONDITIONAL(USE_PY_TEST, test "x$PY_TEST" != x -a "x$TOX" = x)
@@ -40,7 +40,7 @@ diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libch
 index abf85fdbd57..dc53ca45ebb 100644
 --- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
 +++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
-@@ -513,6 +513,13 @@ struct policy_entry_t {
+@@ -513,6 +513,13 @@
  		uint8_t mask;
  		/** Protocol */
  		uint8_t proto;
@@ -54,7 +54,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  	} src, dst;
  
  	/** Associated route installed for this policy */
-@@ -539,6 +546,17 @@ static policy_entry_t *create_policy_entry(traffic_selector_t *src_ts,
+@@ -539,6 +546,17 @@
  	src_ts->to_subnet(src_ts, &policy->src.net, &policy->src.mask);
  	dst_ts->to_subnet(dst_ts, &policy->dst.net, &policy->dst.mask);
  
@@ -72,7 +72,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  	/* src or dest proto may be "any" (0), use more restrictive one */
  	proto = max(src_ts->get_protocol(src_ts), dst_ts->get_protocol(dst_ts));
  	/* map the ports to ICMP type/code how the Linux kernel expects them, that
-@@ -602,6 +620,16 @@ CALLBACK(policy_entry_equals, bool,
+@@ -602,6 +620,16 @@
  		   current->dst.proto == policy->dst.proto &&
  		   current->src.mask == policy->src.mask &&
  		   current->dst.mask == policy->dst.mask &&
@@ -89,7 +89,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  		   current->src.net->equals(current->src.net, policy->src.net) &&
  		   current->dst.net->equals(current->dst.net, policy->dst.net);
  }
-@@ -693,7 +721,7 @@ struct pfkey_msg_t
+@@ -693,7 +721,7 @@
  			struct sadb_x_kmprivate *x_kmprivate;	/* SADB_X_EXT_KMPRIVATE */
  			struct sadb_x_policy *x_policy;			/* SADB_X_EXT_POLICY */
  			struct sadb_x_sa2 *x_sa2;				/* SADB_X_EXT_SA2 */
@@ -98,7 +98,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  			struct sadb_x_nat_t_type *x_natt_type;	/* SADB_X_EXT_NAT_T_TYPE */
  			struct sadb_x_nat_t_port *x_natt_sport;	/* SADB_X_EXT_NAT_T_SPORT */
  			struct sadb_x_nat_t_port *x_natt_dport;	/* SADB_X_EXT_NAT_T_DPORT */
-@@ -713,7 +741,7 @@ struct pfkey_msg_t
+@@ -713,7 +741,7 @@
  #endif
  #endif
  #endif /* __linux__ */
@@ -107,14 +107,14 @@ index abf85fdbd57..dc53ca45ebb 100644
  		} __attribute__((__packed__));
  	};
  };
-@@ -762,14 +790,38 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+@@ -762,14 +790,38 @@
  	"SADB_X_EXT_NAT_T_OAI",
  	"SADB_X_EXT_NAT_T_OAR",
  	"SADB_X_EXT_NAT_T_FRAG",
 +#ifndef __QNX__
-+	"SADB_X_EXT_SA_REPLAY",
-+	"SADB_X_EXT_NEW_ADDRESS_SRC",
-+	"SADB_X_EXT_NEW_ADDRESS_DST",
+ 	"SADB_X_EXT_SA_REPLAY",
+ 	"SADB_X_EXT_NEW_ADDRESS_SRC",
+ 	"SADB_X_EXT_NEW_ADDRESS_DST",
 +#else
 +#ifdef SADB_X_EXT_IF_INNER
 +	"SADB_X_EXT_IF_INNER",
@@ -123,13 +123,13 @@ index abf85fdbd57..dc53ca45ebb 100644
 +	"SADB_X_EXT_IF_OUTER",
 +#endif
 +#ifdef SADB_X_EXT_SA_REPLAY
- 	"SADB_X_EXT_SA_REPLAY",
++	"SADB_X_EXT_SA_REPLAY",
 +#endif
 +#ifdef SADB_X_EXT_NEW_ADDRESS_SRC 
- 	"SADB_X_EXT_NEW_ADDRESS_SRC",
++	"SADB_X_EXT_NEW_ADDRESS_SRC",
 +#endif
 +#ifdef SADB_X_EXT_NEW_ADDRESS_DST 
- 	"SADB_X_EXT_NEW_ADDRESS_DST",
++	"SADB_X_EXT_NEW_ADDRESS_DST",
 +#endif
 +#ifdef SADB_X_EXT_PORT_RANGE_SRC
 +	"SADB_X_EXT_PORT_RANGE_SRC",
@@ -146,7 +146,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  #endif /* __linux__ */
  #endif /* __APPLE__ */
  );
-@@ -929,6 +981,13 @@ static kernel_algorithm_t encryption_algs[] = {
+@@ -929,6 +981,13 @@
  /*  {ENCR_AES_CCM_ICV8,			SADB_X_EALG_AES_CCM_ICV8	}, */
  /*	{ENCR_AES_CCM_ICV12,		SADB_X_EALG_AES_CCM_ICV12	}, */
  /*	{ENCR_AES_CCM_ICV16,		SADB_X_EALG_AES_CCM_ICV16	}, */
@@ -160,23 +160,22 @@ index abf85fdbd57..dc53ca45ebb 100644
  #ifdef SADB_X_EALG_AES_GCM_ICV8 /* assume the others are defined too */
  	{ENCR_AES_GCM_ICV8,			SADB_X_EALG_AES_GCM_ICV8	},
  	{ENCR_AES_GCM_ICV12,		SADB_X_EALG_AES_GCM_ICV12	},
-@@ -941,6 +1000,11 @@ static kernel_algorithm_t encryption_algs[] = {
- #endif
+@@ -942,6 +1001,11 @@
  #ifdef SADB_X_EALG_CHACHA20POLY1305
  	{ENCR_CHACHA20_POLY1305,	SADB_X_EALG_CHACHA20POLY1305},
-+#endif
+ #endif
 +#ifdef __QNX__
 +#ifdef SADB_X_EALG_AESGMAC
 +	{ENCR_NULL_AUTH_AES_GMAC,	SADB_X_EALG_AESGMAC		},
 +#endif
- #endif
++#endif
  	{END_OF_LIST,				0							},
  };
-@@ -958,6 +1022,20 @@ static kernel_algorithm_t integrity_algs[] = {
- /*	{AUTH_KPDK_MD5,				0,							}, */
+ 
+@@ -959,6 +1023,20 @@
  #ifdef SADB_X_AALG_AES_XCBC_MAC
  	{AUTH_AES_XCBC_96,			SADB_X_AALG_AES_XCBC_MAC,	},
-+#endif
+ #endif
 +#ifdef __QNX__
 +#ifdef SADB_X_AALG_AES128GMAC
 +	{AUTH_AES_128_GMAC,			SADB_X_AALG_AES128GMAC,	},
@@ -190,10 +189,11 @@ index abf85fdbd57..dc53ca45ebb 100644
 +#ifdef SADB_X_AALG_AES_CMAC
 +	{AUTH_AES_CMAC_96,			SADB_X_AALG_AES_CMAC,	},
 +#endif
- #endif
++#endif
  	{END_OF_LIST,				0,							},
  };
-@@ -1070,6 +1148,24 @@ static void add_addr_ext(struct sadb_msg *msg, host_t *host, uint16_t type,
+ 
+@@ -1070,6 +1148,24 @@
  	PFKEY_EXT_ADD(msg, addr);
  }
  
@@ -218,7 +218,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  #ifdef HAVE_NATT
  /**
   * add udp encap extensions to a sadb_msg
-@@ -2161,10 +2257,17 @@ METHOD(kernel_ipsec_t, update_sa, status_t,
+@@ -2176,10 +2272,17 @@
  	return status;
  }
  
@@ -236,7 +236,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  {
  	unsigned char request[PFKEY_BUFFER_SIZE];
  	struct sadb_msg *msg, *out;
-@@ -2223,11 +2326,20 @@ METHOD(kernel_ipsec_t, query_sa, status_t,
+@@ -2238,11 +2341,20 @@
  		/* at least on Linux and FreeBSD this contains the number of packets */
  		*packets = response.lft_current->sadb_lifetime_allocations;
  	}
@@ -258,7 +258,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  #else /* !__APPLE__ */
  		/* on Linux and FreeBSD, sadb_lifetime_usetime is set to the "first"
  		 * time of use, which is actually correct according to PF_KEY. We have
-@@ -2730,6 +2842,14 @@ static status_t add_policy_internal(private_kernel_pfkey_ipsec_t *this,
+@@ -2746,6 +2858,14 @@
  				 policy->src.mask, TRUE);
  	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
  				 policy->dst.mask, TRUE);
@@ -273,7 +273,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  
  #ifdef __FreeBSD__
  	{	/* on FreeBSD a lifetime has to be defined to be able to later query
-@@ -2959,6 +3079,14 @@ METHOD(kernel_ipsec_t, query_policy, status_t,
+@@ -2975,6 +3095,14 @@
  				 policy->src.mask, TRUE);
  	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
  				 policy->dst.mask, TRUE);
@@ -288,7 +288,7 @@ index abf85fdbd57..dc53ca45ebb 100644
  
  	this->mutex->unlock(this->mutex);
  
-@@ -3129,6 +3257,14 @@ METHOD(kernel_ipsec_t, del_policy, status_t,
+@@ -3145,6 +3273,14 @@
  				 policy->src.mask, TRUE);
  	add_addr_ext(msg, policy->dst.net, SADB_EXT_ADDRESS_DST, policy->dst.proto,
  				 policy->dst.mask, TRUE);
@@ -323,7 +323,7 @@ index a34bf81a255..ca6cef80f2f 100644
  /* these are not defined on some platforms */
  #ifndef SOL_IP
  #define SOL_IP IPPROTO_IP
-@@ -463,11 +472,19 @@ static ssize_t send_msg_v4(private_socket_default_socket_t *this,
+@@ -463,11 +472,19 @@
  static ssize_t send_msg_v6(private_socket_default_socket_t *this, int skt,
  						   struct msghdr *msg, host_t *src)
  {
@@ -347,7 +347,7 @@ diff --git a/src/libcharon/plugins/vici/Makefile.am b/src/libcharon/plugins/vici
 index 1cb03a12dc3..b79217fd085 100644
 --- a/src/libcharon/plugins/vici/Makefile.am
 +++ b/src/libcharon/plugins/vici/Makefile.am
-@@ -47,9 +47,13 @@ libvici_la_SOURCES = \
+@@ -47,9 +47,13 @@
  libvici_la_LIBADD = $(top_builddir)/src/libstrongswan/libstrongswan.la
  
  
@@ -395,7 +395,7 @@ diff --git a/src/libstrongswan/networking/tun_device.c b/src/libstrongswan/netwo
 index 49cb54f4ebc..d9464aaeba7 100644
 --- a/src/libstrongswan/networking/tun_device.c
 +++ b/src/libstrongswan/networking/tun_device.c
-@@ -62,7 +62,9 @@ tun_device_t *tun_device_create(const char *name_tmpl)
+@@ -62,7 +62,9 @@
  #include <linux/ipv6.h>
  #else
  #include <net/if_tun.h>
@@ -409,7 +409,7 @@ diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongsw
 index 728860ecbb5..f0aead68eab 100644
 --- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
 +++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
-@@ -195,6 +195,7 @@ static sshkey_public_key_t *load_from_stream(FILE *file)
+@@ -195,6 +195,7 @@
  /**
   * Load SSH key from a blob of data (most likely the content of a file)
   */
@@ -417,7 +417,7 @@ index 728860ecbb5..f0aead68eab 100644
  static sshkey_public_key_t *load_from_blob(chunk_t blob)
  {
  	FILE *stream;
-@@ -206,6 +207,63 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+@@ -206,6 +207,63 @@
  	}
  	return load_from_stream(stream);
  }
@@ -485,7 +485,7 @@ diff --git a/src/libstrongswan/tests/Makefile.am b/src/libstrongswan/tests/Makef
 index e04a793e473..c4bab49a78c 100644
 --- a/src/libstrongswan/tests/Makefile.am
 +++ b/src/libstrongswan/tests/Makefile.am
-@@ -13,10 +13,14 @@ libtest_la_LIBADD = \
+@@ -13,10 +13,14 @@
    $(top_builddir)/src/libstrongswan/libstrongswan.la \
    $(PTHREADLIB) $(ATOMICLIB)
  
@@ -505,7 +505,7 @@ diff --git a/src/libstrongswan/tests/suites/test_threading.c b/src/libstrongswan
 index cd0101a517e..63434ee97ee 100644
 --- a/src/libstrongswan/tests/suites/test_threading.c
 +++ b/src/libstrongswan/tests/suites/test_threading.c
-@@ -52,7 +52,12 @@ static inline void time_is_at_least(timeval_t *expected, timeval_t *actual)
+@@ -52,7 +52,12 @@
  #else /* WIN32 */
  static inline void time_is_at_least(timeval_t *expected, timeval_t *actual)
  {
@@ -592,7 +592,7 @@ diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libch
 index dc53ca45ebb..606a7a4af3d 100644
 --- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
 +++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
-@@ -778,6 +778,20 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+@@ -778,6 +778,20 @@
  	"SADB_EXT_MIGRATE_ADDRESS_SRC",
  	"SADB_EXT_MIGRATE_ADDRESS_DST",
  	"SADB_X_EXT_MIGRATE_IPSECIF",
@@ -613,7 +613,7 @@ index dc53ca45ebb..606a7a4af3d 100644
  #else
  	"SADB_X_EXT_NAT_T_TYPE",
  	"SADB_X_EXT_NAT_T_SPORT",
-@@ -790,38 +804,14 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+@@ -790,38 +804,14 @@
  	"SADB_X_EXT_NAT_T_OAI",
  	"SADB_X_EXT_NAT_T_OAR",
  	"SADB_X_EXT_NAT_T_FRAG",
@@ -652,7 +652,7 @@ index dc53ca45ebb..606a7a4af3d 100644
  #endif /* __linux__ */
  #endif /* __APPLE__ */
  );
-@@ -2257,17 +2247,10 @@ METHOD(kernel_ipsec_t, update_sa, status_t,
+@@ -2272,17 +2262,10 @@
  	return status;
  }
  
@@ -670,7 +670,7 @@ index dc53ca45ebb..606a7a4af3d 100644
  {
  	unsigned char request[PFKEY_BUFFER_SIZE];
  	struct sadb_msg *msg, *out;
-@@ -2326,19 +2309,11 @@ METHOD(kernel_ipsec_t, query_sa, status_t,
+@@ -2341,19 +2324,11 @@
  		/* at least on Linux and FreeBSD this contains the number of packets */
  		*packets = response.lft_current->sadb_lifetime_allocations;
  	}
@@ -695,7 +695,7 @@ diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongsw
 index f0aead68eab..287add856c1 100644
 --- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
 +++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
-@@ -208,60 +208,61 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+@@ -208,60 +208,61 @@
  	return load_from_stream(stream);
  }
  #else
@@ -751,12 +751,7 @@ index f0aead68eab..287add856c1 100644
 -	enumerator_t *enumerator;
 -	u_char line[MAX_LINE], *token;
 -	size_t start = 0;
-+sshkey_public_key_t *public = NULL;
-+chunk_t blob = chunk_empty;
-+enumerator_t *enumerator;
-+u_char line[1024], *token;
-+size_t start = 0;
- 
+-
 -	while (!public && getstr(line, sizeof(line), b, &start))
 -	{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
 -		if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
@@ -776,20 +771,26 @@ index f0aead68eab..287add856c1 100644
 -			public = parse_public_key(blob);
 -			chunk_free(&blob);
 -		}
++sshkey_public_key_t *public = NULL;
++chunk_t blob = chunk_empty;
++enumerator_t *enumerator;
++u_char line[1024], *token;
++size_t start = 0;
++
 +while (!public && getstr(line, sizeof(line), b, &start))
 +{	/* the format is: ssh-<key-type> <key(base64)> <identifier> */
 +	if (!strpfx(line, "ssh-rsa") && !strpfx(line, ECDSA_PREFIX) &&
 +		!strpfx(line, "ssh-ed25519") && !strpfx(line, "ssh-ed448"))
 +	{
 +		continue;
- 	}
--	return public;
++	}
 +	enumerator = enumerator_create_token(line, " ", " ");
 +	if (enumerator->enumerate(enumerator, &token) &&
 +		enumerator->enumerate(enumerator, &token))
 +	{
 +		blob = chunk_from_base64(chunk_from_str(token), NULL);
-+	}
+ 	}
+-	return public;
 +	enumerator->destroy(enumerator);
 +	if (blob.ptr)
 +	{
@@ -816,7 +817,7 @@ diff --git a/src/libcharon/plugins/socket_default/socket_default_socket.c b/src/
 index ca6cef80f2f..f07fe41ce19 100644
 --- a/src/libcharon/plugins/socket_default/socket_default_socket.c
 +++ b/src/libcharon/plugins/socket_default/socket_default_socket.c
-@@ -475,16 +475,13 @@ static ssize_t send_msg_v6(private_socket_default_socket_t *this, int skt,
+@@ -475,16 +475,13 @@
  #ifndef __QNX__
  	char buf[CMSG_SPACE(sizeof(struct in6_pktinfo))] = {};
  #else
@@ -839,7 +840,7 @@ diff --git a/src/libstrongswan/plugins/sshkey/sshkey_builder.c b/src/libstrongsw
 index 287add856c1..17d5553bf83 100644
 --- a/src/libstrongswan/plugins/sshkey/sshkey_builder.c
 +++ b/src/libstrongswan/plugins/sshkey/sshkey_builder.c
-@@ -195,7 +195,7 @@ static sshkey_public_key_t *load_from_stream(FILE *file)
+@@ -195,7 +195,7 @@
  /**
   * Load SSH key from a blob of data (most likely the content of a file)
   */
@@ -848,7 +849,7 @@ index 287add856c1..17d5553bf83 100644
  static sshkey_public_key_t *load_from_blob(chunk_t blob)
  {
  	FILE *stream;
-@@ -210,59 +210,59 @@ static sshkey_public_key_t *load_from_blob(chunk_t blob)
+@@ -210,59 +210,59 @@
  #else
  static u_char *getstr(u_char *line, size_t len, chunk_t b, size_t *start)
  {
@@ -969,7 +970,7 @@ diff --git a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c b/src/libch
 index 606a7a4af3d..a803b49b55c 100644
 --- a/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
 +++ b/src/libcharon/plugins/kernel_pfkey/kernel_pfkey_ipsec.c
-@@ -784,14 +784,18 @@ ENUM(sadb_ext_type_names, SADB_EXT_RESERVED, SADB_EXT_MAX,
+@@ -784,14 +784,18 @@
  	"SADB_X_EXT_NAT_T_DPORT",         
  	"SADB_X_EXT_NAT_T_OAI",           
  	"SADB_X_EXT_NAT_T_OAR",           

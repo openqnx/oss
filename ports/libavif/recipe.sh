@@ -1,4 +1,4 @@
-VERSION=1.1.1; GIT=https://github.com/AOMediaCodec/libavif.git; REF=v1.1.1
+VERSION=1.4.2; GIT=https://github.com/AOMediaCodec/libavif.git; REF=v1.4.2
 DEPS="aom dav1d libyuv"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DAVIF_CODEC_AOM=SYSTEM
                    -DAVIF_CODEC_DAV1D=SYSTEM -DAVIF_LIBYUV=LOCAL

@@ -1,8 +1,8 @@
 # iperf 2 (the iperf2 project on SourceForge, not esnet's iperf3; installs
-# bin/iperf). The QNX support is qnx-ports/iperf2 (branch qnx-2-2-1, based on
-# upstream's 2-2-1 branch = this release): QNX 7.1/8.0 cases for the
-# recvmmsg()/sendmmsg() batched UDP paths and the headers they need.
-VERSION=2.2.1
-TARBALL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.1.tar.gz
-SHA256=754ab0a7e28033dbea81308ef424bc7df4d6e2fe31b60cc536b61b51fefbd8fb
+# bin/iperf). No QNX patch since 2.2.2: upstream took qnx-ports/iperf2's
+# recvmmsg()/sendmmsg() batched UDP paths, generalized under HAVE_RECVMMSG /
+# HAVE_SENDMMSG (configure checks the functions), and the QNX uh_sum case.
+VERSION=2.2.2
+TARBALL=https://downloads.sourceforge.net/project/iperf2/iperf-2.2.2.tar.gz
+SHA256=4008e1dc7cdeb68605747e11e954a5b25f4646ab6d71207d979acec5de7d385a
 BUILDSYS=autotools

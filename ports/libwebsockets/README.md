@@ -134,10 +134,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libwebsockets`.
 
 ### 5. What it installs
 
-94 files under `/usr/local`: 1 shared-library entries, 85 headers.
+95 files under `/usr/local`: 2 shared-library entries, 85 headers.
 
 ```
 /usr/local/lib/libwebsockets.so
+/usr/local/lib/libwebsockets.so.19
 ```
 
 The complete list is `stage/<arch>/.manifest/libwebsockets` after a build.

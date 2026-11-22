@@ -1,4 +1,4 @@
-# snappy 1.2.1
+# snappy 1.3.1
 
 > Fast compression and decompression library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/snappy.git (tag `1.2.1`) |
+| Upstream | https://github.com/google/snappy.git (tag `1.3.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.2.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.3.1 --recurse-submodules --shallow-submodules \
     https://github.com/google/snappy.git src/snappy
 ```
 
@@ -103,7 +103,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH snappy`.
 ```
 /usr/local/lib/libsnappy.so
 /usr/local/lib/libsnappy.so.1
-/usr/local/lib/libsnappy.so.1.2.1
+/usr/local/lib/libsnappy.so.1.3.1
 ```
 
 The complete list is `stage/<arch>/.manifest/snappy` after a build.
@@ -180,12 +180,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add snappy=<version>`), sources in `ported/snappy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates snappy`; port one with `scripts/port-update snappy`.
+This recipe builds **1.3.1**. Kept from earlier: `1.2.1` ([recipe and patches](versions/1.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add snappy=<version>`), sources in `ported/snappy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates snappy`; port one with `scripts/port-update snappy`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.1; GIT=https://github.com/google/snappy.git; REF=1.2.1
+VERSION=1.3.1; GIT=https://github.com/google/snappy.git; REF=1.3.1
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF )
 ```
 </details>

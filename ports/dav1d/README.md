@@ -1,4 +1,4 @@
-# dav1d 1.5.0
+# dav1d 1.5.5
 
 > Fast cross-platform AV1 video decoder library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://code.videolan.org/videolan/dav1d.git (tag `1.5.0`) |
+| Upstream | https://code.videolan.org/videolan/dav1d.git (tag `1.5.5`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.5.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.5.5 --recurse-submodules --shallow-submodules \
     https://code.videolan.org/videolan/dav1d.git src/dav1d
 ```
 
@@ -184,12 +184,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dav1d=<version>`), sources in `ported/dav1d/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dav1d`; port one with `scripts/port-update dav1d`.
+This recipe builds **1.5.5**. Kept from earlier: `1.5.0` ([recipe and patches](versions/1.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dav1d=<version>`), sources in `ported/dav1d/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dav1d`; port one with `scripts/port-update dav1d`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.0; GIT=https://code.videolan.org/videolan/dav1d.git; REF=1.5.0
+VERSION=1.5.5; GIT=https://code.videolan.org/videolan/dav1d.git; REF=1.5.5
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Denable_tools=false -Denable_tests=false -Denable_examples=false )
 ```

@@ -1,6 +1,6 @@
 # foot: a fast, lightweight and minimalistic Wayland terminal emulator
 # (fcft fonts, pixman rendering, a server/client mode, sixel images).
-VERSION=1.23.1; GIT=https://codeberg.org/dnkl/foot.git; REF=1.23.1
+VERSION=1.28.0; GIT=https://codeberg.org/dnkl/foot.git; REF=1.28.0
 DEPS="pixman wayland wayland-protocols libxkbcommon fontconfig utf8proc tllist fcft ncurses linux-headers-input-codes"
 # The "foot" terminfo entries come with ncurses' terminfo database, so foot's
 # own copy is not installed (they would be the same files twice).

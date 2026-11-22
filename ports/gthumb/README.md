@@ -1,4 +1,4 @@
-# gthumb 3.12.8.2
+# gthumb 3.12.12
 
 > Image viewer and organizer for GNOME
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz |
-| SHA-256 | `abc57b1103165dd691535796f7dbdba7686217c7d069e974ed0f3d800fe88796` |
+| Upstream | https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.12.tar.xz |
+| SHA-256 | `16fb2276e7f63dae533abe5c7163c5b0e4c3c787c3b1f26517fca69e543512a4` |
 | Build system | Meson |
 | QNX patches | 4 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`gdk-pixbuf`](../gdk-pixbuf/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`lcms2`](../lcms2/) [`exiv2`](../exiv2/) [`libsecret`](../libsecret/) [`json-glib`](../json-glib/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz
+URL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.12.tar.xz
 mkdir -p dist src/gthumb
 curl -fL -o dist/$(basename $URL) $URL
-echo "abc57b1103165dd691535796f7dbdba7686217c7d069e974ed0f3d800fe88796  dist/$(basename $URL)" | sha256sum -c -
+echo "16fb2276e7f63dae533abe5c7163c5b0e4c3c787c3b1f26517fca69e543512a4  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gthumb --strip-components=1
 ```
 
@@ -162,7 +162,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gthumb`.
 
 ### 5. What it installs
 
-444 files under `/usr/local`, 1 programs, 118 headers.
+1202 files under `/usr/local`, 1 programs, 118 headers.
 
 ```
 /usr/local/bin/gthumb
@@ -228,7 +228,7 @@ PASS gthumb
 
    - scratch directory
    - gthumb --help lists --fullscreen, --slideshow, --import-photos
-   - gthumb --version: gthumb 3.12.8.2
+   - gthumb --version: gthumb 3.12.12
    - gthumb --version exits 0 with a display
    - without a display gthumb reports the failed GTK option parse (exit 1)
    - extensions directory
@@ -253,16 +253,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.12.8.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gthumb=<version>`), sources in `ported/gthumb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gthumb`; port one with `scripts/port-update gthumb`.
+This recipe builds **3.12.12**. Kept from earlier: `3.12.8.2` ([recipe and patches](versions/3.12.8.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gthumb=<version>`), sources in `ported/gthumb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gthumb`; port one with `scripts/port-update gthumb`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # gThumb image viewer and organiser.
 # Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=3.12.8.2
-TARBALL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.8.2.tar.xz
-SHA256=abc57b1103165dd691535796f7dbdba7686217c7d069e974ed0f3d800fe88796
+VERSION=3.12.12
+TARBALL=https://download.gnome.org/sources/gthumb/3.12/gthumb-3.12.12.tar.xz
+SHA256=16fb2276e7f63dae533abe5c7163c5b0e4c3c787c3b1f26517fca69e543512a4
 # The org.gnome.desktop.{background,interface,privacy,thumbnailers} schemas it
 # opens with g_settings_new(), which aborts when a schema is not installed; and
 # the MIME database: gthumb lists a file by its content type, and without

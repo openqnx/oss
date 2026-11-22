@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`eigen`](../eigen/) [`glog`](../glog/) [`gflags`](../gflags/) |
-| Run-time dependencies | [`gflags`](../gflags/) [`glog`](../glog/) |
+| Run-time dependencies | [`glog`](../glog/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ceres_solver`](../../tests/src/) |
 

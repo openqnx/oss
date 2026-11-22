@@ -1,4 +1,4 @@
-# chrony 4.8-git-20260226
+# chrony 4.9
 
 > NTP client and server for synchronizing the system clock
 
@@ -229,7 +229,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.8-git-20260226**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add chrony=<version>`), sources in `ported/chrony/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates chrony`; port one with `scripts/port-update chrony`.
+This recipe builds **4.9**. Kept from earlier: `4.8-git-20260226` ([recipe and patches](versions/4.8-git-20260226/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add chrony=<version>`), sources in `ported/chrony/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates chrony`; port one with `scripts/port-update chrony`.
 
 <details><summary>recipe.sh</summary>
 
@@ -237,7 +237,7 @@ This recipe builds **4.8-git-20260226**. Every version stays available: packages
 # chrony from upstream at the commit qnx-ports' QNX support is based on; the
 # patch adds a QNX system driver (sys_qnx.c: clock slewing through
 # ClockAdjust()) and a QNX case in configure.
-VERSION=4.8-git-20260226; GIT=https://github.com/mlichvar/chrony.git; COMMIT=d622b222a9acbda3a4c842beeb593e7075c32bec
+VERSION=4.9; GIT=https://github.com/mlichvar/chrony.git; COMMIT=091489b1c3d47f7aa0b0ac36f1e1eb74f4b3a4a7
 BUILDSYS=custom
 # chrony's configure is hand-written (not autoconf) and picks the system
 # driver from the OS name it is given.

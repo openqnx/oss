@@ -1,4 +1,4 @@
-# hunspell 1.7.2
+# hunspell 1.7.6
 
 > Hunspell spell checker and morphological analyzer library and program
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/hunspell/hunspell/releases/download/v1.7.2/hunspell-1.7.2.tar.gz |
-| SHA-256 | `11ddfa39afe28c28539fe65fc4f1592d410c1e9b6dd7d8a91ca25d85e9ec65b8` |
+| Upstream | https://github.com/hunspell/hunspell/releases/download/v1.7.6/hunspell-1.7.6.tar.gz |
+| SHA-256 | `9c650ace31d4d8cc1da925a9507c3de1d50f1a54857af2f72429f517d5d53467` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libiconv`](../libiconv/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/hunspell/hunspell/releases/download/v1.7.2/hunspell-1.7.2.tar.gz
+URL=https://github.com/hunspell/hunspell/releases/download/v1.7.6/hunspell-1.7.6.tar.gz
 mkdir -p dist src/hunspell
 curl -fL -o dist/$(basename $URL) $URL
-echo "11ddfa39afe28c28539fe65fc4f1592d410c1e9b6dd7d8a91ca25d85e9ec65b8  dist/$(basename $URL)" | sha256sum -c -
+echo "9c650ace31d4d8cc1da925a9507c3de1d50f1a54857af2f72429f517d5d53467  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/hunspell --strip-components=1
 ```
 
@@ -117,11 +117,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH hunspell`.
 
 ### 5. What it installs
 
-27 files under `/usr/local`: 2 shared-library entries, 12 programs, 5 headers.
+30 files under `/usr/local`: 3 shared-library entries, 12 programs, 6 headers.
 
 ```
 /usr/local/lib/libhunspell-1.7.so
 /usr/local/lib/libhunspell-1.7.so.0
+/usr/local/lib/libhunspell-1.7.so.0.2.2
 /usr/local/bin/affixcompress
 /usr/local/bin/analyze
 /usr/local/bin/chmorph
@@ -213,7 +214,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.7.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add hunspell=<version>`), sources in `ported/hunspell/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates hunspell`; port one with `scripts/port-update hunspell`.
+This recipe builds **1.7.6**. Kept from earlier: `1.7.2` ([recipe and patches](versions/1.7.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add hunspell=<version>`), sources in `ported/hunspell/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates hunspell`; port one with `scripts/port-update hunspell`.
 
 <details><summary>recipe.sh</summary>
 
@@ -224,9 +225,9 @@ This recipe builds **1.7.2**. Every version stays available: packages in `dists/
 # unmunch for dictionary work. No dictionaries are included: they are
 # per-language data (share/hunspell/<lang>.aff + .dic). Version as in QNX's
 # own package list (also the latest release).
-VERSION=1.7.2
-TARBALL=https://github.com/hunspell/hunspell/releases/download/v1.7.2/hunspell-1.7.2.tar.gz
-SHA256=11ddfa39afe28c28539fe65fc4f1592d410c1e9b6dd7d8a91ca25d85e9ec65b8
+VERSION=1.7.6
+TARBALL=https://github.com/hunspell/hunspell/releases/download/v1.7.6/hunspell-1.7.6.tar.gz
+SHA256=9c650ace31d4d8cc1da925a9507c3de1d50f1a54857af2f72429f517d5d53467
 BUILDSYS=autotools
 # iconv (GNU libiconv: QNX libc has none) converts dictionaries in other
 # encodings than UTF-8.

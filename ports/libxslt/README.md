@@ -1,4 +1,4 @@
-# libxslt 1.1.42
+# libxslt 1.1.45
 
 > XSLT processor library based on libxml2, with EXSLT extensions
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/libxslt.git (tag `v1.1.42`) |
+| Upstream | https://gitlab.gnome.org/GNOME/libxslt.git (tag `v1.1.45`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libxml2`](../libxml2/) [`zlib`](../zlib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.42 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.45 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/libxslt.git src/libxslt
 ```
 
@@ -110,15 +110,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxslt`.
 
 ### 5. What it installs
 
-104 files under `/usr/local`: 6 shared-library entries, 1 programs, 24 headers.
+105 files under `/usr/local`: 6 shared-library entries, 1 programs, 25 headers.
 
 ```
 /usr/local/lib/libexslt.so
 /usr/local/lib/libexslt.so.0
-/usr/local/lib/libexslt.so.0.8.23
+/usr/local/lib/libexslt.so.0.8.25
 /usr/local/lib/libxslt.so
 /usr/local/lib/libxslt.so.1
-/usr/local/lib/libxslt.so.1.1.42
+/usr/local/lib/libxslt.so.1.1.45
 /usr/local/bin/xslt-config
 ```
 
@@ -199,12 +199,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.42**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxslt=<version>`), sources in `ported/libxslt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxslt`; port one with `scripts/port-update libxslt`.
+This recipe builds **1.1.45**. Kept from earlier: `1.1.42` ([recipe and patches](versions/1.1.42/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxslt=<version>`), sources in `ported/libxslt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxslt`; port one with `scripts/port-update libxslt`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.42; GIT=https://gitlab.gnome.org/GNOME/libxslt.git; REF=v1.1.42
+VERSION=1.1.45; GIT=https://gitlab.gnome.org/GNOME/libxslt.git; REF=v1.1.45
 DEPS="libxml2 zlib"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DLIBXSLT_WITH_PYTHON=OFF
                    -DLIBXSLT_WITH_TESTS=OFF -DLIBXSLT_WITH_PROGRAMS=OFF

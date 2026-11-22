@@ -1,4 +1,4 @@
-# fio 3.41
+# fio 3.43
 
 > Flexible I/O tester: storage benchmark and data verification with job files
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/axboe/fio.git (tag `fio-3.41`) |
+| Upstream | https://github.com/axboe/fio.git (tag `fio-3.43`) |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b fio-3.41 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b fio-3.43 --recurse-submodules --shallow-submodules \
     https://github.com/axboe/fio.git src/fio
 ```
 
@@ -228,7 +228,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.41**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fio=<version>`), sources in `ported/fio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fio`; port one with `scripts/port-update fio`.
+This recipe builds **3.43**. Kept from earlier: `3.41` ([recipe and patches](versions/3.41/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fio=<version>`), sources in `ported/fio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fio`; port one with `scripts/port-update fio`.
 
 <details><summary>recipe.sh</summary>
 
@@ -236,7 +236,7 @@ This recipe builds **3.41**. Every version stays available: packages in `dists/8
 # fio: the flexible I/O tester -- benchmarks and verifies storage with job
 # files (sequential/random reads and writes, many I/O engines, data
 # verification). Version as in QNX's own package list.
-VERSION=3.41; GIT=https://github.com/axboe/fio.git; REF=fio-3.41
+VERSION=3.43; GIT=https://github.com/axboe/fio.git; REF=fio-3.43
 # zlib: compressed I/O logs (log_compression) and the zlib buffer
 # compression test. Nothing else from staging: --disable-http leaves out the
 # http (WebDAV/S3/Swift) engine, which would link curl and OpenSSL.

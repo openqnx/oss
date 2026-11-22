@@ -7,18 +7,6 @@ with no native epoll, the poll engine and the pipe wakeup fd are used.
 
 Upstream-Status: QNX-specific
 
---- a/include/grpc/support/port_platform.h
-+++ b/include/grpc/support/port_platform.h
-@@ -504,6 +504,9 @@
- #endif /* _LP64 */
- #elif defined(__QNX__) || defined(__QNXNTO__)
- #define GPR_PLATFORM_STRING "qnx"
-+// Without a GPR_<platform> symbol the sockaddr and iomgr headers cannot tell
-+// that QNX is a POSIX target, and every socket type they use goes undeclared.
-+#define GPR_QNX 1
- #define GPR_CPU_POSIX 1
- #define GPR_GCC_ATOMIC 1
- #define GPR_POSIX_LOG 1
 --- a/include/grpc/event_engine/port.h
 +++ b/include/grpc/event_engine/port.h
 @@ -20,7 +20,7 @@
@@ -30,6 +18,18 @@ Upstream-Status: QNX-specific
  #define GRPC_EVENT_ENGINE_POSIX
  #include <arpa/inet.h>
  #include <netdb.h>
+--- a/include/grpc/support/port_platform.h
++++ b/include/grpc/support/port_platform.h
+@@ -507,6 +507,9 @@
+ #endif /* _LP64 */
+ #elif defined(__QNX__) || defined(__QNXNTO__)
+ #define GPR_PLATFORM_STRING "qnx"
++// Without a GPR_<platform> symbol the sockaddr and iomgr headers cannot tell
++// that QNX is a POSIX target, and every socket type they use goes undeclared.
++#define GPR_QNX 1
+ #define GPR_CPU_POSIX 1
+ #define GPR_GCC_ATOMIC 1
+ #define GPR_POSIX_LOG 1
 --- a/src/core/lib/iomgr/port.h
 +++ b/src/core/lib/iomgr/port.h
 @@ -163,6 +163,21 @@
@@ -56,7 +56,7 @@ Upstream-Status: QNX-specific
  #define GRPC_POSIX_NO_SPECIAL_WAKEUP_FD 1
 --- a/src/core/util/posix/directory_reader.cc
 +++ b/src/core/util/posix/directory_reader.cc
-@@ -24,8 +24,12 @@
+@@ -24,8 +24,13 @@
  #include "absl/status/status.h"
  #include "absl/strings/string_view.h"
  
@@ -65,14 +65,15 @@ Upstream-Status: QNX-specific
 +// MakeDirectoryReader is never compiled and libgrpc.so ships with an
 +// unresolved reference that only bites when an application links against it.
  #if defined(GPR_LINUX) || defined(GPR_ANDROID) || defined(GPR_FREEBSD) || \
--    defined(GPR_APPLE) || defined(GPR_NETBSD)
-+    defined(GPR_APPLE) || defined(GPR_NETBSD) || defined(GPR_QNX)
+-    defined(GPR_APPLE) || defined(GPR_NETBSD) || defined(GPR_OPENBSD)
++    defined(GPR_APPLE) || defined(GPR_NETBSD) || defined(GPR_OPENBSD) ||  \
++    defined(GPR_QNX)
  
  #include <dirent.h>
  
-@@ -79,4 +83,4 @@
- }
+@@ -80,4 +85,4 @@
  }  // namespace grpc_core
  
--#endif  // GPR_LINUX || GPR_ANDROID || GPR_FREEBSD || GPR_APPLE
-+#endif  // GPR_LINUX || GPR_ANDROID || GPR_FREEBSD || GPR_APPLE || GPR_QNX
+ #endif  // GPR_LINUX || GPR_ANDROID || GPR_FREEBSD || GPR_APPLE ||
+-        // GPR_NETBSD || GPR_OPENBSD
++        // GPR_NETBSD || GPR_OPENBSD || GPR_QNX

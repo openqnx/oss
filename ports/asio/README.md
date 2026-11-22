@@ -1,4 +1,4 @@
-# asio 1-38-2
+# asio 1-39-0
 
 > Header-only C++ library for asynchronous network and low-level I/O
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/chriskohlhoff/asio.git (tag `asio-1-38-2`) |
+| Upstream | https://github.com/chriskohlhoff/asio.git (tag `asio-1-39-0`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -69,25 +69,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b asio-1-38-2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b asio-1-39-0 --recurse-submodules --shallow-submodules \
     https://github.com/chriskohlhoff/asio.git src/asio
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/asio < ports/asio/patches/0001-qnx-no-sa-restart.patch
-```
-
-**[`0001-qnx-no-sa-restart.patch`](patches/0001-qnx-no-sa-restart.patch)** — Define SA_RESTART-based flag as 0 on QNX.
-
-> QNX 8.0's <signal.h> has SA_RESTART commented out ("not supported yet"), so
-> signal_set_base.hpp does not compile (restbed hits this). The same change as
-> the boost port's Boost.Asio patch, for standalone Asio.
-
-Touches: `asio/include/asio/detail/socket_types.hpp` · Upstream status: QNX-specific
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -113,7 +101,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH asio`.
 
 ### 5. What it installs
 
-635 files under `/usr/local`, 635 headers.
+683 files under `/usr/local`, 683 headers.
 
 The complete list is `stage/<arch>/.manifest/asio` after a build.
 
@@ -200,12 +188,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1-38-2**. Kept from earlier: `1.30.2` ([recipe and patches](versions/1.30.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add asio=<version>`), sources in `ported/asio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates asio`; port one with `scripts/port-update asio`.
+This recipe builds **1-39-0**. Kept from earlier: `1-38-2` ([recipe and patches](versions/1-38-2/)), `1.30.2` ([recipe and patches](versions/1.30.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add asio=<version>`), sources in `ported/asio/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates asio`; port one with `scripts/port-update asio`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1-38-2; GIT=https://github.com/chriskohlhoff/asio.git; REF=asio-1-38-2
+VERSION=1-39-0; GIT=https://github.com/chriskohlhoff/asio.git; REF=asio-1-39-0
 # Header-only (standalone, without Boost). Upstream's autotools only installs
 # headers, so they are copied directly.
 BUILDSYS=custom

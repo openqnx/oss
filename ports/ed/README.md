@@ -1,4 +1,4 @@
-# ed 1.22.5
+# ed 1.22.6
 
 > GNU ed, the POSIX line-oriented text editor
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/ed/ed-1.22.5.tar.lz |
-| SHA-256 | `56e107ddc2f29dad6690376c15bf9751509e1ee3b8241710e44edbe5c3a158cc` |
+| Upstream | https://ftp.gnu.org/gnu/ed/ed-1.22.6.tar.lz |
+| SHA-256 | `3f33b22135219c39c3c695f7b7171c2567d3e2a17c798c0a90607320cbb268f2` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/ed/ed-1.22.5.tar.lz
+URL=https://ftp.gnu.org/gnu/ed/ed-1.22.6.tar.lz
 mkdir -p dist src/ed
 curl -fL -o dist/$(basename $URL) $URL
-echo "56e107ddc2f29dad6690376c15bf9751509e1ee3b8241710e44edbe5c3a158cc  dist/$(basename $URL)" | sha256sum -c -
+echo "3f33b22135219c39c3c695f7b7171c2567d3e2a17c798c0a90607320cbb268f2  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/ed --strip-components=1
 ```
 
@@ -195,15 +195,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.22.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ed=<version>`), sources in `ported/ed/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ed`; port one with `scripts/port-update ed`.
+This recipe builds **1.22.6**. Kept from earlier: `1.22.5` ([recipe and patches](versions/1.22.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ed=<version>`), sources in `ported/ed/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ed`; port one with `scripts/port-update ed`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # ed: the POSIX line editor (scripts and the shell's fc use it; QNX ships it too).
-VERSION=1.22.5
-TARBALL=https://ftp.gnu.org/gnu/ed/ed-1.22.5.tar.lz
-SHA256=56e107ddc2f29dad6690376c15bf9751509e1ee3b8241710e44edbe5c3a158cc
+VERSION=1.22.6
+TARBALL=https://ftp.gnu.org/gnu/ed/ed-1.22.6.tar.lz
+SHA256=3f33b22135219c39c3c695f7b7171c2567d3e2a17c798c0a90607320cbb268f2
 DEPS=""
 BUILDSYS=autotools
 # Its own configure (not autoconf) ignores --host and the environment and

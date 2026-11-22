@@ -1,4 +1,4 @@
-# python3-pyyaml 6.0.3
+# python3-pyyaml 6.0.4
 
 > YAML parser and emitter for Python
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz |
-| SHA-256 | `d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f` |
+| Upstream | https://files.pythonhosted.org/packages/76/b8/c0b780928e2fb1c87e9e375818c6f121da2398b071012d1747be300b83f4/pyyaml-6.0.4.tar.gz |
+| SHA-256 | `e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz
+URL=https://files.pythonhosted.org/packages/76/b8/c0b780928e2fb1c87e9e375818c6f121da2398b071012d1747be300b83f4/pyyaml-6.0.4.tar.gz
 mkdir -p dist src/python3-pyyaml
 curl -fL -o dist/$(basename $URL) $URL
-echo "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f  dist/$(basename $URL)" | sha256sum -c -
+echo "e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-pyyaml --strip-components=1
 ```
 
@@ -247,7 +247,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.0.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pyyaml=<version>`), sources in `ported/python3-pyyaml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pyyaml`; port one with `scripts/port-update python3-pyyaml`.
+This recipe builds **6.0.4**. Kept from earlier: `6.0.3` ([recipe and patches](versions/6.0.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pyyaml=<version>`), sources in `ported/python3-pyyaml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pyyaml`; port one with `scripts/port-update python3-pyyaml`.
 
 <details><summary>recipe.sh</summary>
 
@@ -258,9 +258,9 @@ This recipe builds **6.0.3**. Every version stays available: packages in `dists/
 # Cython on the build machine; yaml.load/dump do not use it unless asked.
 # Built from the source distribution into a platform-independent wheel
 # (scripts/lib/pywheel.sh).
-VERSION=6.0.3
-TARBALL=https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz
-SHA256=d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f
+VERSION=6.0.4
+TARBALL=https://files.pythonhosted.org/packages/76/b8/c0b780928e2fb1c87e9e375818c6f121da2398b071012d1747be300b83f4/pyyaml-6.0.4.tar.gz
+SHA256=e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

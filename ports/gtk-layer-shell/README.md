@@ -1,4 +1,4 @@
-# gtk-layer-shell 0.9.0
+# gtk-layer-shell 0.10.1
 
 > Library for using the Wayland layer shell protocol with GTK 3
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/wmww/gtk-layer-shell.git (tag `v0.9.0`) |
+| Upstream | https://github.com/wmww/gtk-layer-shell.git (tag `v0.10.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) |
-| Run-time dependencies | [`cairo`](../cairo/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`wayland`](../wayland/) |
+| Run-time dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`wayland`](../wayland/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gtk_layer_shell`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.9.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.10.1 --recurse-submodules --shallow-submodules \
     https://github.com/wmww/gtk-layer-shell.git src/gtk-layer-shell
 ```
 
@@ -114,7 +114,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gtk-layer-shell`
 ```
 /usr/local/lib/libgtk-layer-shell.so
 /usr/local/lib/libgtk-layer-shell.so.0
-/usr/local/lib/libgtk-layer-shell.so.0.9.0
+/usr/local/lib/libgtk-layer-shell.so.0.10.1
 ```
 
 The complete list is `stage/<arch>/.manifest/gtk-layer-shell` after a build.
@@ -191,12 +191,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.9.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk-layer-shell=<version>`), sources in `ported/gtk-layer-shell/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk-layer-shell`; port one with `scripts/port-update gtk-layer-shell`.
+This recipe builds **0.10.1**. Kept from earlier: `0.9.0` ([recipe and patches](versions/0.9.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk-layer-shell=<version>`), sources in `ported/gtk-layer-shell/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk-layer-shell`; port one with `scripts/port-update gtk-layer-shell`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.9.0; GIT=https://github.com/wmww/gtk-layer-shell.git; REF=v0.9.0
+VERSION=0.10.1; GIT=https://github.com/wmww/gtk-layer-shell.git; REF=v0.10.1
 DEPS="glib gtk3 wayland wayland-protocols"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=false -Dexamples=false -Ddocs=false

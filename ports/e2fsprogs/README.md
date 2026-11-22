@@ -10,7 +10,7 @@
 | SHA-256 | `fd5bf388cbdbe006a3d3b318d983b2948382440acc85a87f1e7d108653e8db0b` |
 | Build system | GNU Autotools |
 | QNX patches | 3 |
-| Build dependencies | [`libuuid`](../libuuid/) |
+| Build dependencies | [`libuuid`](../libuuid/) [`libarchive`](../libarchive/) [`file`](../file/) |
 | Run-time dependencies | [`libuuid`](../libuuid/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_e2fsprogs`](../../tests/src/) |
@@ -68,11 +68,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (20 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild libuuid
+./scripts/qnxbuild libuuid libarchive file
 ```
+
+<details><summary>Full build chain (20)</summary>
+
+[`bzip2`](../bzip2/) [`expat`](../expat/) [`file`](../file/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libarchive`](../libarchive/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libuuid`](../libuuid/) [`libxml2`](../libxml2/) [`lz4`](../lz4/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+</details>
 
 ### 2. Get the upstream source
 
@@ -299,7 +304,7 @@ BUILDSYS=autotools
 # an aarch64le build linked one that a passing build had left there and no
 # package provides, and every program failed at load with "Could not load
 # library libblkid.so.1".
-DEPS="libuuid"
+DEPS="libuuid libarchive file"
 CONF_ARGS_EXTRA=( --enable-elf-shlibs --disable-nls --disable-fuse2fs --disable-uuidd --disable-libuuid --enable-libblkid
                   --disable-e2initrd-helper --disable-defrag --without-systemd-unit-dir
                   --without-udev-rules-dir --without-crond-dir )

@@ -132,6 +132,7 @@ do_configure() {
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - graphviz: graph layout and drawing -- dot, neato, circo, fdp, sfdp, twopi, osage, patchwork and the graph tools (gvpr, gc, acyclic, tred, ccomps ...), with libcgraph/libgvc for programs (doxygen draws its diagrams with dot).
+- A font to lay text out with: with no font at all, the pango text layout returns garbage label heights (a 2x32767 PNG of a six-node graph).
 - Renderers: cairo/pango (PNG, SVG, PDF, PS), gd (GIF, JPEG, ...), webp, PDF input (poppler), the X11 window output (-Txlib, Xwayland), and the core ones (SVG, dot, json, plain). Plugins are loaded with libltdl (libtool) from lib/graphviz, listed in its config file: `dot -c` writes that file on the target -- the apk trigger (apk.trigger) does it whenever a package changes lib/graphviz; after an oss-get install, run `dot -c` once. No GUIs (smyrna, gvedit: GTK2/Qt+OpenGL), no GDK plugin, no language bindings (SWIG, Tcl ...). Python runs the build's generator scripts.
 - libgvc reaches libpathplan and libxdot through a static helper library, so CMake does not pass their build directories to the linker as -rpath-link, and the cross linker (which does not follow libgvc's DT_RPATH, as a native one would) cannot resolve libgvc's references when it links dot, gvpr ...: "libgvc.so: undefined reference to `Pshortestpath'". Name every library directory of the build tree for it (LDFLAGS from the environment goes in front of the toolchain's linker flags). Otherwise qnxbuild's own configure.
 
@@ -241,6 +242,9 @@ This recipe builds **13.1.2**. Every version stays available: packages in `dists
 # with libcgraph/libgvc for programs (doxygen draws its diagrams with dot).
 VERSION=13.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=13.1.2
 DEPS="gd cairo pango expat zlib libtool freetype fontconfig libwebp poppler glib libx11 libxrender"
+# A font to lay text out with: with no font at all, the pango text layout
+# returns garbage label heights (a 2x32767 PNG of a six-node graph).
+RUNTIME_DEPS="font-dejavu"
 BUILDSYS=cmake
 # Renderers: cairo/pango (PNG, SVG, PDF, PS), gd (GIF, JPEG, ...), webp, PDF
 # input (poppler), the X11 window output (-Txlib, Xwayland), and

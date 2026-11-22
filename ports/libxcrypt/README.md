@@ -1,4 +1,4 @@
-# libxcrypt 4.4.38
+# libxcrypt 4.5.2
 
 > Extended crypt library for one-way password hashing
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/besser82/libxcrypt/releases/download/v4.4.38/libxcrypt-4.4.38.tar.xz |
-| SHA-256 | `80304b9c306ea799327f01d9a7549bdb28317789182631f1b54f4511b4206dd6` |
+| Upstream | https://github.com/besser82/libxcrypt/releases/download/v4.5.2/libxcrypt-4.5.2.tar.xz |
+| SHA-256 | `71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/besser82/libxcrypt/releases/download/v4.4.38/libxcrypt-4.4.38.tar.xz
+URL=https://github.com/besser82/libxcrypt/releases/download/v4.5.2/libxcrypt-4.5.2.tar.xz
 mkdir -p dist src/libxcrypt
 curl -fL -o dist/$(basename $URL) $URL
-echo "80304b9c306ea799327f01d9a7549bdb28317789182631f1b54f4511b4206dd6  dist/$(basename $URL)" | sha256sum -c -
+echo "71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libxcrypt --strip-components=1
 ```
 
@@ -122,11 +122,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxcrypt`.
 
 ### 5. What it installs
 
-16 files under `/usr/local`: 2 shared-library entries, 1 headers.
+17 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libcrypt.so
 /usr/local/lib/libcrypt.so.2
+/usr/local/lib/libcrypt.so.2.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libxcrypt` after a build.
@@ -204,15 +205,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.4.38**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcrypt=<version>`), sources in `ported/libxcrypt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcrypt`; port one with `scripts/port-update libxcrypt`.
+This recipe builds **4.5.2**. Kept from earlier: `4.4.38` ([recipe and patches](versions/4.4.38/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcrypt=<version>`), sources in `ported/libxcrypt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcrypt`; port one with `scripts/port-update libxcrypt`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libxcrypt (modern crypt() hashes). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=4.4.38
-TARBALL=https://github.com/besser82/libxcrypt/releases/download/v4.4.38/libxcrypt-4.4.38.tar.xz
-SHA256=80304b9c306ea799327f01d9a7549bdb28317789182631f1b54f4511b4206dd6
+VERSION=4.5.2
+TARBALL=https://github.com/besser82/libxcrypt/releases/download/v4.5.2/libxcrypt-4.5.2.tar.xz
+SHA256=71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-werror --enable-hashes=strong,glibc --enable-obsolete-api=no )
 ```

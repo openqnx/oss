@@ -1,4 +1,4 @@
-# fcft 3.3.2
+# fcft 3.3.3
 
 > Font loading and glyph rasterization library on FontConfig, FreeType and pixman
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://codeberg.org/dnkl/fcft.git (tag `3.3.2`) |
+| Upstream | https://codeberg.org/dnkl/fcft.git (tag `3.3.3`) |
 | Build system | Meson |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`tllist`](../tllist/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`harfbuzz`](../harfbuzz/) [`utf8proc`](../utf8proc/) [`pixman`](../pixman/) |
 | Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`harfbuzz`](../harfbuzz/) [`pixman`](../pixman/) [`utf8proc`](../utf8proc/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,17 +81,18 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.3.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.3.3 --recurse-submodules --shallow-submodules \
     https://codeberg.org/dnkl/fcft.git src/fcft
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/fcft < ports/fcft/patches/0001-qnx-stdlib-min-max.patch
 patch -p1 -d src/fcft < ports/fcft/patches/0002-qnx-no-xlocale.patch
+patch -p1 -d src/fcft < ports/fcft/patches/0003-qnx-no-byteswap-h.patch
 ```
 
 **[`0001-qnx-stdlib-min-max.patch`](patches/0001-qnx-stdlib-min-max.patch)** — #undef QNX's <stdlib.h> min()/max() before defining fcft's own
@@ -109,6 +110,13 @@ Touches: `fcft.c`, `svg-backend-nanosvg.c` · Upstream status: QNX-specific
 > fcft switches LC_NUMERIC to "C" around FcNameParse() so fontconfig parses
 > floating point sizes ("monospace:size=10.5") in any locale. QNX only has the
 > "C" locale, so the numeric locale is always "C" already: skip the switch.
+
+Touches: `fcft.c` · Upstream status: QNX-specific
+
+**[`0003-qnx-no-byteswap-h.patch`](patches/0003-qnx-no-byteswap-h.patch)** — fcft: no <byteswap.h> on QNX.
+
+> fcft.c swaps a 16-bit font table version with bswap_16() from glibc's
+> <byteswap.h>, which QNX does not have: use the compiler builtin there.
 
 Touches: `fcft.c` · Upstream status: QNX-specific
 
@@ -142,7 +150,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fcft`.
 ```
 /usr/local/lib/libfcft.so
 /usr/local/lib/libfcft.so.4
-/usr/local/lib/libfcft.so.4.3.2
+/usr/local/lib/libfcft.so.4.3.3
 ```
 
 The complete list is `stage/<arch>/.manifest/fcft` after a build.
@@ -227,7 +235,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.3.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fcft=<version>`), sources in `ported/fcft/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fcft`; port one with `scripts/port-update fcft`.
+This recipe builds **3.3.3**. Kept from earlier: `3.3.2` ([recipe and patches](versions/3.3.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fcft=<version>`), sources in `ported/fcft/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fcft`; port one with `scripts/port-update fcft`.
 
 <details><summary>recipe.sh</summary>
 
@@ -235,7 +243,7 @@ This recipe builds **3.3.2**. Every version stays available: packages in `dists/
 # fcft: font loading and glyph rasterization on fontconfig, FreeType and
 # pixman, with HarfBuzz/utf8proc text shaping -- the font library of the foot
 # terminal.
-VERSION=3.3.2; GIT=https://codeberg.org/dnkl/fcft.git; REF=3.3.2
+VERSION=3.3.3; GIT=https://codeberg.org/dnkl/fcft.git; REF=3.3.3
 DEPS="tllist fontconfig freetype harfbuzz utf8proc pixman"
 BUILDSYS=meson
 # - grapheme and run shaping on (foot uses both; HarfBuzz and utf8proc are here);

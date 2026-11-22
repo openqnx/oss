@@ -1,4 +1,4 @@
-# double-conversion 3.3.0
+# double-conversion 3.4.0
 
 > C++ routines for binary-decimal conversion of IEEE doubles
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/double-conversion.git (tag `v3.3.0`) |
+| Upstream | https://github.com/google/double-conversion.git (tag `v3.4.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_double_conversion`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.3.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.4.0 --recurse-submodules --shallow-submodules \
     https://github.com/google/double-conversion.git src/double-conversion
 ```
 
@@ -93,16 +92,20 @@ cmake --build build/$QNX_ARCH/double-conversion -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/double-conversion
 ```
 
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- double-conversion 3.4.0 needs a newer Meson/CMake than the build image's default
+
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH double-conversion`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 3 shared-library entries, 11 headers.
+20 files under `/usr/local`: 3 shared-library entries, 12 headers.
 
 ```
 /usr/local/lib/libdouble-conversion.so
 /usr/local/lib/libdouble-conversion.so.3
-/usr/local/lib/libdouble-conversion.so.3.3.0
+/usr/local/lib/libdouble-conversion.so.3.4.0
 ```
 
 The complete list is `stage/<arch>/.manifest/double-conversion` after a build.
@@ -160,7 +163,6 @@ PASS double-conversion
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_double_conversion`](../../tests/src/) -- a program linked against double-conversion the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -180,13 +182,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.3.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add double-conversion=<version>`), sources in `ported/double-conversion/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates double-conversion`; port one with `scripts/port-update double-conversion`.
+This recipe builds **3.4.0**. Kept from earlier: `3.3.0` ([recipe and patches](versions/3.3.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add double-conversion=<version>`), sources in `ported/double-conversion/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates double-conversion`; port one with `scripts/port-update double-conversion`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.3.0; GIT=https://github.com/google/double-conversion.git; REF=v3.3.0
+VERSION=3.4.0; GIT=https://github.com/google/double-conversion.git; REF=v3.4.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON )
+# double-conversion 3.4.0 needs a newer Meson/CMake than the build image's default
+HOSTTOOLS_NEW=1
 ```
 </details>
 

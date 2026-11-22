@@ -1,4 +1,4 @@
-# libxfce4util 4.20.0
+# libxfce4util 4.20.1
 
 > Non-GUI utility library for the Xfce desktop
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.0.tar.bz2 |
-| SHA-256 | `21493f9c9995a282823db93839f6b9f06ae31edb094191ba9acf04d932a2b592` |
+| Upstream | https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.1.tar.bz2 |
+| SHA-256 | `84bfc4daab9e466193540c3665eee42b2cf4d24e3f38fc3e8d1e0a2bebe3b8f1` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.1.tar.bz2
 mkdir -p dist src/libxfce4util
 curl -fL -o dist/$(basename $URL) $URL
-echo "21493f9c9995a282823db93839f6b9f06ae31edb094191ba9acf04d932a2b592  dist/$(basename $URL)" | sha256sum -c -
+echo "84bfc4daab9e466193540c3665eee42b2cf4d24e3f38fc3e8d1e0a2bebe3b8f1  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libxfce4util --strip-components=1
 ```
 
@@ -135,11 +135,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxfce4util`.
 
 ### 5. What it installs
 
-88 files under `/usr/local`: 2 shared-library entries, 1 programs, 17 headers.
+89 files under `/usr/local`: 3 shared-library entries, 1 programs, 17 headers.
 
 ```
 /usr/local/lib/libxfce4util.so
 /usr/local/lib/libxfce4util.so.7
+/usr/local/lib/libxfce4util.so.7.0.0
 /usr/local/sbin/xfce4-kiosk-query
 ```
 
@@ -236,18 +237,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4util=<version>`), sources in `ported/libxfce4util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4util`; port one with `scripts/port-update libxfce4util`.
+This recipe builds **4.20.1**. Kept from earlier: `4.20.0` ([recipe and patches](versions/4.20.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4util=<version>`), sources in `ported/libxfce4util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4util`; port one with `scripts/port-update libxfce4util`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
+VERSION=4.20.1
 # The release tarball, not the git tag: Xfce keeps its generated sources
 # (*-alias.h, *-aliasdef.c, the .ui C sources) out of git and behind
 # "if MAINTAINER_MODE", and regenerating them needs xdt-csource, which
 # xfce4-dev-tools 4.20 no longer ships. The tarball has them all.
-TARBALL=https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.0.tar.bz2
-SHA256=21493f9c9995a282823db93839f6b9f06ae31edb094191ba9acf04d932a2b592
+TARBALL=https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.1.tar.bz2
+SHA256=84bfc4daab9e466193540c3665eee42b2cf4d24e3f38fc3e8d1e0a2bebe3b8f1
 DEPS="glib"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-gtk-doc

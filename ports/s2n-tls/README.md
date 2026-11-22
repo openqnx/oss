@@ -1,4 +1,4 @@
-# s2n-tls 1.7.0
+# s2n-tls 1.7.14
 
 > Small, fast C99 implementation of the TLS/SSL protocols from AWS
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/aws/s2n-tls.git (tag `v1.7.0`) |
+| Upstream | https://github.com/aws/s2n-tls.git (tag `v1.7.14`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,16 +76,17 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.7.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.7.14 --recurse-submodules --shallow-submodules \
     https://github.com/aws/s2n-tls.git src/s2n-tls
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/s2n-tls < ports/s2n-tls/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/s2n-tls < ports/s2n-tls/patches/0002-qnx-no-xopen-500.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX Support
@@ -127,7 +128,16 @@ patch -p1 -d src/s2n-tls < ports/s2n-tls/patches/0001-qnx-from-qnx-ports.patch
 >  utils/s2n_random.c                             |  3 +++
 >  32 files changed, 131 insertions(+), 1 deletion(-)
 
-Touches: `CMakeLists.txt`, `crypto/s2n_drbg.c`, `stuffer/s2n_stuffer.c`, `tls/extensions/s2n_client_psk.c`, `tls/extensions/s2n_client_supported_versions.c`, `tls/extensions/s2n_supported_versions.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `CMakeLists.txt`, `stuffer/s2n_stuffer.c`, `tls/extensions/s2n_client_psk.c`, `tls/extensions/s2n_client_supported_versions.c`, `tls/extensions/s2n_supported_versions.c`, `tls/s2n_alerts.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+
+**[`0002-qnx-no-xopen-500.patch`](patches/0002-qnx-no-xopen-500.patch)** — s2n-tls: no _XOPEN_SOURCE 500 on QNX.
+
+> s2n_recv.c defines _XOPEN_SOURCE 500 before its includes; with the
+> _POSIX_C_SOURCE the build sets, QNX's <sys/platform.h> stops with "This
+> POSIX_C_SOURCE is unsuported with XOPEN_SOURCE". _QNX_SOURCE already
+> exposes what the file uses.
+
+Touches: `tls/s2n_recv.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -151,7 +161,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH s2n-tls`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 3 shared-library entries, 11 headers.
+19 files under `/usr/local`: 3 shared-library entries, 12 headers.
 
 ```
 /usr/local/lib/libs2n.so
@@ -246,13 +256,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.7.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add s2n-tls=<version>`), sources in `ported/s2n-tls/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates s2n-tls`; port one with `scripts/port-update s2n-tls`.
+This recipe builds **1.7.14**. Kept from earlier: `1.7.0` ([recipe and patches](versions/1.7.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add s2n-tls=<version>`), sources in `ported/s2n-tls/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates s2n-tls`; port one with `scripts/port-update s2n-tls`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # The release aws-crt-cpp v0.38.5 pins as its submodule.
-VERSION=1.7.0; GIT=https://github.com/aws/s2n-tls.git; REF=v1.7.0
+VERSION=1.7.14; GIT=https://github.com/aws/s2n-tls.git; REF=v1.7.14
 DEPS="openssl"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF -DBUILD_TESTING=OFF )
 ```

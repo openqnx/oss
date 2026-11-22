@@ -1,4 +1,4 @@
-# python3-typeguard 4.6.0
+# python3-typeguard 4.6.1
 
 > Run-time type checking
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/8f/eb/461d5f167b6f5c7d97696f397c82f82e3480e003fce3f0a1cd1dd26e2eb2/typeguard-4.6.0-py3-none-any.whl |
-| SHA-256 | `79878165bb86f2cf5d41d159a0ff1792a796cf496882d2fe1b1c6c7049b9cdd7` |
+| Upstream | https://files.pythonhosted.org/packages/04/d5/ab99dd595bd3cc307346c9c644556b627ca0bd273d3ee23041e8ac4f20dd/typeguard-4.6.1-py3-none-any.whl |
+| SHA-256 | `aca1f365124873d5325b18aad1a3689d62f7184abe32d899413562cf51729d02` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-typing-extensions`](../python3-typing-extensions/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/8f/eb/461d5f167b6f5c7d97696f397c82f82e3480e003fce3f0a1cd1dd26e2eb2/typeguard-4.6.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/04/d5/ab99dd595bd3cc307346c9c644556b627ca0bd273d3ee23041e8ac4f20dd/typeguard-4.6.1-py3-none-any.whl
 mkdir -p dist src/python3-typeguard
 curl -fL -o dist/$(basename $URL) $URL
-echo "79878165bb86f2cf5d41d159a0ff1792a796cf496882d2fe1b1c6c7049b9cdd7  dist/$(basename $URL)" | sha256sum -c -
+echo "aca1f365124873d5325b18aad1a3689d62f7184abe32d899413562cf51729d02  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-typeguard --strip-components=1
 ```
 
@@ -209,7 +209,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.6.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-typeguard=<version>`), sources in `ported/python3-typeguard/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-typeguard`; port one with `scripts/port-update python3-typeguard`.
+This recipe builds **4.6.1**. Kept from earlier: `4.6.0` ([recipe and patches](versions/4.6.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-typeguard=<version>`), sources in `ported/python3-typeguard/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-typeguard`; port one with `scripts/port-update python3-typeguard`.
 
 <details><summary>recipe.sh</summary>
 
@@ -217,9 +217,9 @@ This recipe builds **4.6.0**. Every version stays available: packages in `dists/
 # typeguard: run-time type checking.
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=4.6.0
-TARBALL=https://files.pythonhosted.org/packages/8f/eb/461d5f167b6f5c7d97696f397c82f82e3480e003fce3f0a1cd1dd26e2eb2/typeguard-4.6.0-py3-none-any.whl
-SHA256=79878165bb86f2cf5d41d159a0ff1792a796cf496882d2fe1b1c6c7049b9cdd7
+VERSION=4.6.1
+TARBALL=https://files.pythonhosted.org/packages/04/d5/ab99dd595bd3cc307346c9c644556b627ca0bd273d3ee23041e8ac4f20dd/typeguard-4.6.1-py3-none-any.whl
+SHA256=aca1f365124873d5325b18aad1a3689d62f7184abe32d899413562cf51729d02
 DEPS="python3 python3-typing-extensions"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-typing-extensions"

@@ -135,7 +135,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tdb`.
 
 ### 5. What it installs
 
-9 files under `/usr/local`: 3 shared-library entries, 4 programs, 1 headers.
+13 files under `/usr/local`: 3 shared-library entries, 4 programs, 1 headers.
 
 ```
 /usr/local/lib/libtdb.so

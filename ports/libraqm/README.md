@@ -1,4 +1,4 @@
-# libraqm 0.10.5
+# libraqm 0.11.0
 
 > Library for complex text layout (bidirectional text, shaping)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/HOST-Oman/libraqm.git (tag `v0.10.5`) |
+| Upstream | https://github.com/HOST-Oman/libraqm.git (tag `v0.11.0`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`freetype`](../freetype/) [`harfbuzz`](../harfbuzz/) [`fribidi`](../fribidi/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.10.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.11.0 --recurse-submodules --shallow-submodules \
     https://github.com/HOST-Oman/libraqm.git src/libraqm
 ```
 
@@ -116,7 +116,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libraqm`.
 ```
 /usr/local/lib/libraqm.so
 /usr/local/lib/libraqm.so.0
-/usr/local/lib/libraqm.so.0.10.5
+/usr/local/lib/libraqm.so.0.11.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libraqm` after a build.
@@ -203,7 +203,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.10.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libraqm=<version>`), sources in `ported/libraqm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libraqm`; port one with `scripts/port-update libraqm`.
+This recipe builds **0.11.0**. Kept from earlier: `0.10.5` ([recipe and patches](versions/0.10.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libraqm=<version>`), sources in `ported/libraqm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libraqm`; port one with `scripts/port-update libraqm`.
 
 <details><summary>recipe.sh</summary>
 
@@ -211,7 +211,7 @@ This recipe builds **0.10.5**. Every version stays available: packages in `dists
 # libraqm: complex text layout (bidirectional text, shaping, script
 # itemization) on FreeType, HarfBuzz and FriBidi -- what matplotlib 3.11
 # lays text out with.
-VERSION=0.10.5; GIT=https://github.com/HOST-Oman/libraqm.git; REF=v0.10.5
+VERSION=0.11.0; GIT=https://github.com/HOST-Oman/libraqm.git; REF=v0.11.0
 DEPS="freetype harfbuzz fribidi"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Ddocs=false -Dtests=false -Dsheenbidi=false )

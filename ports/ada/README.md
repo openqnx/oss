@@ -1,4 +1,4 @@
-# ada 4.0.0
+# ada 4.1.1
 
 > Fast WHATWG-compliant URL parser library for C++
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ada-url/ada.git (tag `v4.0.0`) |
+| Upstream | https://github.com/ada-url/ada.git (tag `v4.1.1`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v4.0.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.1.1 --recurse-submodules --shallow-submodules \
     https://github.com/ada-url/ada.git src/ada
 ```
 
@@ -117,12 +117,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ada`.
 
 ### 5. What it installs
 
-49 files under `/usr/local`: 3 shared-library entries, 41 headers.
+51 files under `/usr/local`: 3 shared-library entries, 43 headers.
 
 ```
 /usr/local/lib/libada.so
 /usr/local/lib/libada.so.4
-/usr/local/lib/libada.so.4.0.0
+/usr/local/lib/libada.so.4.1.1
 ```
 
 The complete list is `stage/<arch>/.manifest/ada` after a build.
@@ -223,13 +223,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.0.0**. Kept from earlier: `3.4.4` ([recipe and patches](versions/3.4.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ada=<version>`), sources in `ported/ada/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ada`; port one with `scripts/port-update ada`.
+This recipe builds **4.1.1**. Kept from earlier: `3.4.4` ([recipe and patches](versions/3.4.4/)), `4.0.0` ([recipe and patches](versions/4.0.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ada=<version>`), sources in `ported/ada/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ada`; port one with `scripts/port-update ada`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # ada: WHATWG URL parser (used by Node.js). Version as in the QNX Everywhere image.
-VERSION=4.0.0; GIT=https://github.com/ada-url/ada.git; REF=v4.0.0
+VERSION=4.1.1; GIT=https://github.com/ada-url/ada.git; REF=v4.1.1
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DADA_TESTING=OFF -DADA_TOOLS=OFF -DADA_BENCHMARKS=OFF )
 ```
 </details>

@@ -1,4 +1,4 @@
-# wayland-protocols 1.47
+# wayland-protocols 1.50
 
 > Extension protocol definitions for Wayland (XML files)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/wayland/wayland-protocols.git (tag `1.47`) |
+| Upstream | https://gitlab.freedesktop.org/wayland/wayland-protocols.git (tag `1.50`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`wayland`](../wayland/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.47 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.50 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/wayland/wayland-protocols.git src/wayland-protocols
 ```
 
@@ -109,7 +109,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH wayland-protocol
 
 ### 5. What it installs
 
-118 files under `/usr/local`, 60 headers.
+125 files under `/usr/local`, 66 headers.
 
 The complete list is `stage/<arch>/.manifest/wayland-protocols` after a build.
 
@@ -195,13 +195,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.47**. Kept from earlier: `1.38` ([recipe and patches](versions/1.38/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland-protocols=<version>`), sources in `ported/wayland-protocols/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland-protocols`; port one with `scripts/port-update wayland-protocols`.
+This recipe builds **1.50**. Kept from earlier: `1.38` ([recipe and patches](versions/1.38/)), `1.47` ([recipe and patches](versions/1.47/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland-protocols=<version>`), sources in `ported/wayland-protocols/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland-protocols`; port one with `scripts/port-update wayland-protocols`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.47
-GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.47
+VERSION=1.50
+GIT=https://gitlab.freedesktop.org/wayland/wayland-protocols.git; REF=1.50
 DEPS="wayland"
 BUILDSYS=meson
 # Data only: the XML protocol definitions that wayland-scanner turns into C in

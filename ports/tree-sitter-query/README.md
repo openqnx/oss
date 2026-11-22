@@ -1,4 +1,4 @@
-# tree-sitter-query 0.7.0
+# tree-sitter-query 0.8.0
 
 > Tree-sitter query file grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-query.git (tag `v0.7.0`) |
+| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-query.git (tag `v0.8.0`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.7.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.8.0 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter-grammars/tree-sitter-query.git src/tree-sitter-query
 ```
 
@@ -179,14 +179,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.7.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-query=<version>`), sources in `ported/tree-sitter-query/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-query`; port one with `scripts/port-update tree-sitter-query`.
+This recipe builds **0.8.0**. Kept from earlier: `0.7.0` ([recipe and patches](versions/0.7.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-query=<version>`), sources in `ported/tree-sitter-query/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-query`; port one with `scripts/port-update tree-sitter-query`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: query. Installs lib/tree-sitter/query.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.7.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-query.git; REF=v0.7.0
+VERSION=0.8.0; GIT=https://github.com/tree-sitter-grammars/tree-sitter-query.git; REF=v0.8.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

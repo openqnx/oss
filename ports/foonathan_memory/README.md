@@ -1,4 +1,4 @@
-# foonathan_memory 0.7-3
+# foonathan_memory 0.7-4
 
 > C++ memory allocator library improving on the STL allocator model
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/foonathan/memory.git (tag `v0.7-3`) |
+| Upstream | https://github.com/foonathan/memory.git (tag `v0.7-4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_foonathan_memory`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.7-3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.7-4 --recurse-submodules --shallow-submodules \
     https://github.com/foonathan/memory.git src/foonathan_memory
 ```
 
@@ -112,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH foonathan_memory
 51 files under `/usr/local`: 1 shared-library entries, 45 headers.
 
 ```
-/usr/local/lib/libfoonathan_memory-0.7.3.so
+/usr/local/lib/libfoonathan_memory-0.7.4.so
 ```
 
 The complete list is `stage/<arch>/.manifest/foonathan_memory` after a build.
@@ -170,7 +169,6 @@ PASS foonathan_memory
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_foonathan_memory`](../../tests/src/) -- a program linked against foonathan_memory the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -191,12 +189,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.7-3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add foonathan_memory=<version>`), sources in `ported/foonathan_memory/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates foonathan_memory`; port one with `scripts/port-update foonathan_memory`.
+This recipe builds **0.7-4**. Kept from earlier: `0.7-3` ([recipe and patches](versions/0.7-3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add foonathan_memory=<version>`), sources in `ported/foonathan_memory/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates foonathan_memory`; port one with `scripts/port-update foonathan_memory`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.7-3; GIT=https://github.com/foonathan/memory.git; REF=v0.7-3
+VERSION=0.7-4; GIT=https://github.com/foonathan/memory.git; REF=v0.7-4
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=OFF
                    -DFOONATHAN_MEMORY_BUILD_TESTS=OFF
                    # nodesize_dbg links -static; QNX ships no libsocket.a

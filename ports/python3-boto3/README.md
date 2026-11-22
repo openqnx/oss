@@ -1,4 +1,4 @@
-# python3-boto3 1.43.123
+# python3-boto3 1.44.9
 
 > The AWS SDK for Python
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/96/b2/a7986c327f80aa6f1544f4cb8f2fa7da4e1fccd472379a21cad0508b8a0e/boto3-1.43.123-py3-none-any.whl |
-| SHA-256 | `d18d66e1e13faa0c25d0b1b8c5ce946e29fb5fc0b6456b655a93a678ff4cc313` |
+| Upstream | https://files.pythonhosted.org/packages/9e/66/73c8c57119a8acf3688dfbe95c4648e8b3e4d6a7a3783b0619b65d201f02/boto3-1.44.9-py3-none-any.whl |
+| SHA-256 | `aff889e8ca6f6006f0b5658b712941471d21e4675d6d48421974a20a5a17a918` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-botocore`](../python3-botocore/) [`python3-s3transfer`](../python3-s3transfer/) [`python3-jmespath`](../python3-jmespath/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/96/b2/a7986c327f80aa6f1544f4cb8f2fa7da4e1fccd472379a21cad0508b8a0e/boto3-1.43.123-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/9e/66/73c8c57119a8acf3688dfbe95c4648e8b3e4d6a7a3783b0619b65d201f02/boto3-1.44.9-py3-none-any.whl
 mkdir -p dist src/python3-boto3
 curl -fL -o dist/$(basename $URL) $URL
-echo "d18d66e1e13faa0c25d0b1b8c5ce946e29fb5fc0b6456b655a93a678ff4cc313  dist/$(basename $URL)" | sha256sum -c -
+echo "aff889e8ca6f6006f0b5658b712941471d21e4675d6d48421974a20a5a17a918  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-boto3 --strip-components=1
 ```
 
@@ -195,7 +195,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.43.123**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-boto3=<version>`), sources in `ported/python3-boto3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-boto3`; port one with `scripts/port-update python3-boto3`.
+This recipe builds **1.44.9**. Kept from earlier: `1.43.123` ([recipe and patches](versions/1.43.123/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-boto3=<version>`), sources in `ported/python3-boto3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-boto3`; port one with `scripts/port-update python3-boto3`.
 
 <details><summary>recipe.sh</summary>
 
@@ -203,9 +203,9 @@ This recipe builds **1.43.123**. Every version stays available: packages in `dis
 # boto3: the AWS SDK for Python (resources, clients, S3 transfers).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=1.43.123
-TARBALL=https://files.pythonhosted.org/packages/96/b2/a7986c327f80aa6f1544f4cb8f2fa7da4e1fccd472379a21cad0508b8a0e/boto3-1.43.123-py3-none-any.whl
-SHA256=d18d66e1e13faa0c25d0b1b8c5ce946e29fb5fc0b6456b655a93a678ff4cc313
+VERSION=1.44.9
+TARBALL=https://files.pythonhosted.org/packages/9e/66/73c8c57119a8acf3688dfbe95c4648e8b3e4d6a7a3783b0619b65d201f02/boto3-1.44.9-py3-none-any.whl
+SHA256=aff889e8ca6f6006f0b5658b712941471d21e4675d6d48421974a20a5a17a918
 DEPS="python3 python3-botocore python3-s3transfer python3-jmespath"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-botocore python3-s3transfer python3-jmespath"

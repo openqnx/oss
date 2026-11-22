@@ -1,4 +1,4 @@
-# zimg 3.0.5
+# zimg 3.0.6
 
 > Library for image scaling, colorspace conversion and dithering
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/sekrit-twc/zimg.git (tag `release-3.0.5`) |
+| Upstream | https://github.com/sekrit-twc/zimg.git (tag `release-3.0.6`) |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b release-3.0.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b release-3.0.6 --recurse-submodules --shallow-submodules \
     https://github.com/sekrit-twc/zimg.git src/zimg
 ```
 
@@ -199,12 +199,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.0.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zimg=<version>`), sources in `ported/zimg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zimg`; port one with `scripts/port-update zimg`.
+This recipe builds **3.0.6**. Kept from earlier: `3.0.5` ([recipe and patches](versions/3.0.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zimg=<version>`), sources in `ported/zimg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zimg`; port one with `scripts/port-update zimg`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.0.5; GIT=https://github.com/sekrit-twc/zimg.git; REF=release-3.0.5
+VERSION=3.0.6; GIT=https://github.com/sekrit-twc/zimg.git; REF=release-3.0.6
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )
 do_patch() { cd "$SRCROOT" && git submodule update --init --recursive >/dev/null 2>&1; autoreconf -fi; }

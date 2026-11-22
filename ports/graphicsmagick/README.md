@@ -10,8 +10,8 @@
 | SHA-256 | `c7c706a505e9c6c3764156bb94a0c9644d79131785df15a89c9f8721d1abd061` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
-| Build dependencies | [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libjxl`](../libjxl/) [`freetype`](../freetype/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) [`lcms2`](../lcms2/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libzip`](../libzip/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Build dependencies | [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libjxl`](../libjxl/) [`freetype`](../freetype/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) [`lcms2`](../lcms2/) [`libzip`](../libzip/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libheif`](../libheif/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libzip`](../libzip/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_graphicsmagick`](../../tests/src/) |
 
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (26 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (27 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2
+./scripts/qnxbuild libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2 libzip
 ```
 
-<details><summary>Full build chain (26)</summary>
+<details><summary>Full build chain (27)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`freetype`](../freetype/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libzip`](../libzip/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -229,7 +229,7 @@ This recipe builds **1.3.46**. Every version stays available: packages in `dists
 VERSION=1.3.46
 TARBALL=https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.46/GraphicsMagick-1.3.46.tar.xz
 SHA256=c7c706a505e9c6c3764156bb94a0c9644d79131785df15a89c9f8721d1abd061
-DEPS="libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2"
+DEPS="libpng libjpeg-turbo libtiff libwebp libjxl freetype libxml2 zlib bzip2 xz zstd lcms2 libzip"
 BUILDSYS=autotools
 # QNX has a spawnvp() (process.h), which configure finds; GraphicsMagick's
 # spawnvp branch is the Windows one (_P_WAIT). The POSIX fork/exec one is

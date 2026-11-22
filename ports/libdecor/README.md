@@ -1,4 +1,4 @@
-# libdecor 0.2.4
+# libdecor 0.2.5
 
 > Client-side decorations library for Wayland clients
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/libdecor/libdecor.git (tag `0.2.4`) |
+| Upstream | https://gitlab.freedesktop.org/libdecor/libdecor.git (tag `0.2.5`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`cairo`](../cairo/) [`pango`](../pango/) [`dbus`](../dbus/) [`gtk3`](../gtk3/) [`linux-headers-input-codes`](../linux-headers-input-codes/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.2.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.2.5 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/libdecor/libdecor.git src/libdecor
 ```
 
@@ -132,7 +132,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libdecor`.
 ```
 /usr/local/lib/libdecor-0.so
 /usr/local/lib/libdecor-0.so.0
-/usr/local/lib/libdecor-0.so.0.200.4
+/usr/local/lib/libdecor-0.so.0.200.5
 ```
 
 The complete list is `stage/<arch>/.manifest/libdecor` after a build.
@@ -215,14 +215,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.2.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdecor=<version>`), sources in `ported/libdecor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdecor`; port one with `scripts/port-update libdecor`.
+This recipe builds **0.2.5**. Kept from earlier: `0.2.4` ([recipe and patches](versions/0.2.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdecor=<version>`), sources in `ported/libdecor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdecor`; port one with `scripts/port-update libdecor`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libdecor: client-side window decorations for Wayland clients whose compositor
 # does not draw them (SDL, GLFW, imv ...): a library and its plugins.
-VERSION=0.2.4; GIT=https://gitlab.freedesktop.org/libdecor/libdecor.git; REF=0.2.4
+VERSION=0.2.5; GIT=https://gitlab.freedesktop.org/libdecor/libdecor.git; REF=0.2.5
 DEPS="wayland wayland-protocols cairo pango dbus gtk3 linux-headers-input-codes"
 BUILDSYS=meson
 # - both plugins: cairo (pango-drawn title bars) and GTK 3;

@@ -1,4 +1,4 @@
-# computelibrary 53.0.0
+# computelibrary 53.3.2
 
 > Arm Compute Library of optimized NEON/SVE kernels for Arm CPUs
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ARM-software/ComputeLibrary.git (tag `v53.0.0`) |
+| Upstream | https://github.com/ARM-software/ComputeLibrary.git (tag `v53.3.2`) |
 | Build system | CMake |
 | QNX patches | 2 |
 | Build dependencies | [`opencl-headers`](../opencl-headers/) |
@@ -43,7 +43,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v53.0.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v53.3.2 --recurse-submodules --shallow-submodules \
     https://github.com/ARM-software/ComputeLibrary.git src/computelibrary
 ```
 
@@ -101,7 +101,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH computelibrary`.
 
 ### 5. What it installs
 
-2263 files under `/usr/local`: 2 shared-library entries, 2257 headers.
+2262 files under `/usr/local`: 2 shared-library entries, 2256 headers.
 
 ```
 /usr/local/lib/libarm_compute.so
@@ -183,12 +183,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **53.0.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add computelibrary=<version>`), sources in `ported/computelibrary/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates computelibrary`; port one with `scripts/port-update computelibrary`.
+This recipe builds **53.3.2**. Kept from earlier: `53.0.0` ([recipe and patches](versions/53.0.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add computelibrary=<version>`), sources in `ported/computelibrary/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates computelibrary`; port one with `scripts/port-update computelibrary`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=53.0.0; GIT=https://github.com/ARM-software/ComputeLibrary.git; REF=v53.0.0
+VERSION=53.3.2; GIT=https://github.com/ARM-software/ComputeLibrary.git; REF=v53.3.2
 # Arm Compute Library: NEON/SVE kernels for Arm CPUs -- aarch64 only.
 ARCHES_SUPPORTED="aarch64le"
 CMAKE_ARGS_EXTRA=( -DARM_COMPUTE_BUILD_SHARED_LIB=ON -DARM_COMPUTE_ENABLE_OPENMP=OFF

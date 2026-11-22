@@ -1,4 +1,4 @@
-# up-core-api 1.6.0-alpha2
+# up-core-api 1.6.0-alpha.7
 
 > uProtocol data model and core service APIs (protobuf, compiled for C++)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-uprotocol/up-spec.git (tag `v1.6.0-alpha.2`) |
+| Upstream | https://github.com/eclipse-uprotocol/up-spec.git (tag `v1.6.0-alpha.7`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`protobuf`](../protobuf/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.6.0-alpha.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.6.0-alpha.7 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-uprotocol/up-spec.git src/up-core-api
 ```
 
@@ -134,7 +134,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH up-core-api`.
 
 ### 5. What it installs
 
-29 files under `/usr/local`: 3 shared-library entries, 11 headers.
+31 files under `/usr/local`: 3 shared-library entries, 11 headers.
 
 ```
 /usr/local/lib/libup-core-api.so
@@ -224,12 +224,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.6.0-alpha2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add up-core-api=<version>`), sources in `ported/up-core-api/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates up-core-api`; port one with `scripts/port-update up-core-api`.
+This recipe builds **1.6.0-alpha.7**. Kept from earlier: `1.6.0-alpha2` ([recipe and patches](versions/1.6.0-alpha2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add up-core-api=<version>`), sources in `ported/up-core-api/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates up-core-api`; port one with `scripts/port-update up-core-api`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.6.0-alpha2; GIT=https://github.com/eclipse-uprotocol/up-spec.git; REF=v1.6.0-alpha.2
+VERSION=1.6.0-alpha.7; GIT=https://github.com/eclipse-uprotocol/up-spec.git; REF=v1.6.0-alpha.7
 # The uProtocol data model (UUri, UUID, UAttributes, UMessage, UStatus) and
 # core service interfaces (uSubscription, uDiscovery, uTwin) as Protocol
 # Buffers, compiled for C++: the "up-core-api" library up-cpp builds on. The

@@ -1,4 +1,4 @@
-# taglib 2.0.2
+# taglib 2.3.2
 
 > Library for reading and editing audio file metadata tags
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/taglib/taglib.git (tag `v2.0.2`) |
+| Upstream | https://github.com/taglib/taglib.git (tag `v2.3.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.0.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.3.2 --recurse-submodules --shallow-submodules \
     https://github.com/taglib/taglib.git src/taglib
 ```
 
@@ -103,15 +103,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH taglib`.
 
 ### 5. What it installs
 
-126 files under `/usr/local`: 6 shared-library entries, 1 programs, 113 headers.
+156 files under `/usr/local`: 6 shared-library entries, 1 programs, 140 headers.
 
 ```
 /usr/local/lib/libtag.so
 /usr/local/lib/libtag.so.2
-/usr/local/lib/libtag.so.2.0.2
+/usr/local/lib/libtag.so.2.3.2
 /usr/local/lib/libtag_c.so
 /usr/local/lib/libtag_c.so.2
-/usr/local/lib/libtag_c.so.2.0.2
+/usr/local/lib/libtag_c.so.2.3.2
 /usr/local/bin/taglib-config
 ```
 
@@ -190,12 +190,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add taglib=<version>`), sources in `ported/taglib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates taglib`; port one with `scripts/port-update taglib`.
+This recipe builds **2.3.2**. Kept from earlier: `2.0.2` ([recipe and patches](versions/2.0.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add taglib=<version>`), sources in `ported/taglib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates taglib`; port one with `scripts/port-update taglib`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.0.2; GIT=https://github.com/taglib/taglib.git; REF=v2.0.2
+VERSION=2.3.2; GIT=https://github.com/taglib/taglib.git; REF=v2.3.2
 DEPS="zlib"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=ON )
 ```

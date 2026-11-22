@@ -1,4 +1,4 @@
-# sdl2-compat 2.32.60
+# sdl2-compat 2.32.74
 
 > SDL2 compatibility layer implemented on top of SDL3
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libsdl-org/sdl2-compat.git (tag `release-2.32.60`) |
+| Upstream | https://github.com/libsdl-org/sdl2-compat.git (tag `release-2.32.74`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`sdl3`](../sdl3/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b release-2.32.60 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b release-2.32.74 --recurse-submodules --shallow-submodules \
     https://github.com/libsdl-org/sdl2-compat.git src/sdl2-compat
 ```
 
@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sdl2-compat`.
 ```
 /usr/local/lib/libSDL2-2.0.so
 /usr/local/lib/libSDL2-2.0.so.0
-/usr/local/lib/libSDL2-2.0.so.0.3200.60
+/usr/local/lib/libSDL2-2.0.so.0.3200.74
 /usr/local/lib/libSDL2.so
 /usr/local/bin/sdl2-config
 ```
@@ -181,7 +181,7 @@ PASS sdl2-compat
    - dlopen libSDL2-2.0.so.0
    - all SDL2 entry points resolve
    - sdl2-compat loaded libSDL3.so.0
-   - SDL2 API version 2.32.60
+   - SDL2 API version 2.32.74
    - scratch directory
    - SDL_Init(VIDEO|AUDIO|EVENTS|TIMER)
    - video driver is dummy (SDL_VIDEODRIVER honoured)
@@ -217,14 +217,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.32.60**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sdl2-compat=<version>`), sources in `ported/sdl2-compat/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sdl2-compat`; port one with `scripts/port-update sdl2-compat`.
+This recipe builds **2.32.74**. Kept from earlier: `2.32.60` ([recipe and patches](versions/2.32.60/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sdl2-compat=<version>`), sources in `ported/sdl2-compat/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sdl2-compat`; port one with `scripts/port-update sdl2-compat`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # sdl2-compat: the SDL2 API implemented on top of SDL3 (the image's SDL2).
 # Installs libSDL2-2.0 like the sdl2 component, so use one or the other.
-VERSION=2.32.60; GIT=https://github.com/libsdl-org/sdl2-compat.git; REF=release-2.32.60
+VERSION=2.32.74; GIT=https://github.com/libsdl-org/sdl2-compat.git; REF=release-2.32.74
 DEPS="sdl3"
 CONFLICTS="sdl2"
 CMAKE_ARGS_EXTRA=( -DSDL2COMPAT_TESTS=OFF -DSDL2COMPAT_INSTALL_TESTS=OFF )

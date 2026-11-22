@@ -9,7 +9,7 @@
 | Upstream | https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz |
 | SHA-256 | `2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796` |
 | Build system | CMake |
-| QNX patches | 5 |
+| QNX patches | 6 |
 | Build dependencies | [`gtk3`](../gtk3/) [`glib`](../glib/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`libgcrypt`](../libgcrypt/) [`libtasn1`](../libtasn1/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libepoxy`](../libepoxy/) [`libxml2`](../libxml2/) [`libpng`](../libpng/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`libwebp`](../libwebp/) [`libxslt`](../libxslt/) [`libsoup`](../libsoup/) [`gstreamer`](../gstreamer/) [`gst-plugins-base`](../gst-plugins-base/) [`hyphen`](../hyphen/) [`woff2`](../woff2/) [`libx11`](../libx11/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`at-spi2-core`](../at-spi2-core/) [`gst-plugins-bad`](../gst-plugins-bad/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libjxl`](../libjxl/) [`libsecret`](../libsecret/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libepoxy`](../libepoxy/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libxslt`](../libxslt/) [`pango`](../pango/) [`sqlite`](../sqlite/) [`woff2`](../woff2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (90 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (91 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret
 ```
 
-<details><summary>Full build chain (90)</summary>
+<details><summary>Full build chain (91)</summary>
 
-[`aom`](../aom/) [`at-spi2-core`](../at-spi2-core/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`dav1d`](../dav1d/) [`dbus`](../dbus/) [`expat`](../expat/) [`fdk-aac`](../fdk-aac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`highway`](../highway/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libepoxy`](../libepoxy/) [`libffi`](../libffi/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libpsl`](../libpsl/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcomposite`](../libxcomposite/) [`libxcursor`](../libxcursor/) [`libxdamage`](../libxdamage/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxft`](../libxft/) [`libxi`](../libxi/) [`libxinerama`](../libxinerama/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxslt`](../libxslt/) [`libxtst`](../libxtst/) [`libyuv`](../libyuv/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`woff2`](../woff2/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`at-spi2-core`](../at-spi2-core/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`dav1d`](../dav1d/) [`dbus`](../dbus/) [`expat`](../expat/) [`fdk-aac`](../fdk-aac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`highway`](../highway/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libdrm-headers`](../libdrm-headers/) [`libepoxy`](../libepoxy/) [`libffi`](../libffi/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libpsl`](../libpsl/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxcomposite`](../libxcomposite/) [`libxcursor`](../libxcursor/) [`libxdamage`](../libxdamage/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxft`](../libxft/) [`libxi`](../libxi/) [`libxinerama`](../libxinerama/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrandr`](../libxrandr/) [`libxrender`](../libxrender/) [`libxslt`](../libxslt/) [`libxtst`](../libxtst/) [`libyuv`](../libyuv/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`woff2`](../woff2/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -91,7 +91,7 @@ tar xf dist/$(basename $URL) -C src/webkitgtk --strip-components=1
 
 ### 3. Apply the QNX patches
 
-5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+6 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0001-cmake4-quote-framework-vars.patch
@@ -99,6 +99,7 @@ patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0002-icu76-cplusplus-header
 patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0003-gtk-qnx-memorypressure.patch
 patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0004-qnx-structure-heap-128mb.patch
 patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0005-glib-pidsocket-linux-only-arg.patch
+patch -p1 -d src/webkitgtk < ports/webkitgtk/patches/0006-gtk-surfaceless-display-fallback.patch
 ```
 
 **[`0001-cmake4-quote-framework-vars.patch`](patches/0001-cmake4-quote-framework-vars.patch)** — Quote the framework variables in _WEBKIT_TARGET_LINK_FRAMEWORK.
@@ -179,6 +180,17 @@ Touches: `Source/JavaScriptCore/runtime/StructureID.h` · Upstream status: QNX-s
 > hits this.
 
 Touches: `Source/WebKit/UIProcess/Launcher/glib/ProcessLauncherGLib.cpp` · Upstream status: Pending
+
+**[`0006-gtk-surfaceless-display-fallback.patch`](patches/0006-gtk-surfaceless-display-fallback.patch)** — gtk: fall back to a surfaceless PlatformDisplay without X11/Wayland
+
+> With ENABLE_X11_TARGET=OFF and ENABLE_WAYLAND_TARGET=OFF (QNX: the only EGL is
+> Screen's, whose EGLNativeDisplayType is an integer handle) createPlatformDisplay()
+> had no display to return for the GTK port and hit RELEASE_ASSERT_NOT_REACHED, so
+> every web view (Epiphany at start-up) aborted. Fall back to the surfaceless
+> display, which the GTK sources already build: the web view then renders without
+> accelerated compositing when EGL cannot provide it.
+
+Touches: `Source/WebCore/platform/graphics/PlatformDisplay.cpp` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

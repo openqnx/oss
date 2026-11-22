@@ -1,4 +1,4 @@
-# libxfont2 2.0.7
+# libxfont2 2.0.10
 
 > X font handling library for X servers and utilities
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.7.tar.xz |
-| SHA-256 | `8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb` |
+| Upstream | https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.10.tar.xz |
+| SHA-256 | `cef1f4ad9cd69f439bb1ac484bdc8f9d7f8e70215b92d8ca86b96e31513e5f9c` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`freetype`](../freetype/) [`zlib`](../zlib/) [`fontenc`](../fontenc/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.7.tar.xz
+URL=https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.10.tar.xz
 mkdir -p dist src/libxfont2
 curl -fL -o dist/$(basename $URL) $URL
-echo "8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb  dist/$(basename $URL)" | sha256sum -c -
+echo "cef1f4ad9cd69f439bb1ac484bdc8f9d7f8e70215b92d8ca86b96e31513e5f9c  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libxfont2 --strip-components=1
 ```
 
@@ -123,11 +123,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxfont2`.
 
 ### 5. What it installs
 
-4 files under `/usr/local`: 2 shared-library entries, 1 headers.
+5 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libXfont2.so
 /usr/local/lib/libXfont2.so.2
+/usr/local/lib/libXfont2.so.2.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libxfont2` after a build.
@@ -241,7 +242,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfont2=<version>`), sources in `ported/libxfont2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfont2`; port one with `scripts/port-update libxfont2`.
+This recipe builds **2.0.10**. Kept from earlier: `2.0.7` ([recipe and patches](versions/2.0.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfont2=<version>`), sources in `ported/libxfont2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfont2`; port one with `scripts/port-update libxfont2`.
 
 <details><summary>recipe.sh</summary>
 
@@ -249,9 +250,9 @@ This recipe builds **2.0.7**. Every version stays available: packages in `dists/
 # libxfont2: X font rendering (PCF, BDF, FreeType fonts) as X servers and Xwayland use it.
 # --disable-fc: the xfs font-server client (fslibos.h) needs NOFILES_MAX and
 # fd_set internals QNX does not have; font servers are a relic, local fonts work.
-VERSION=2.0.7
-TARBALL=https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.7.tar.xz
-SHA256=8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb
+VERSION=2.0.10
+TARBALL=https://xorg.freedesktop.org/releases/individual/lib/libXfont2-2.0.10.tar.xz
+SHA256=cef1f4ad9cd69f439bb1ac484bdc8f9d7f8e70215b92d8ca86b96e31513e5f9c
 DEPS="freetype zlib fontenc xorgproto xtrans"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-fc --without-xmlto --without-fop --disable-devel-docs )

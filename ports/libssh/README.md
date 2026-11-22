@@ -1,4 +1,4 @@
-# libssh 0.11.1
+# libssh 0.11.5
 
 > C library implementing the SSH client and server protocols
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://www.libssh.org/files/0.11/libssh-0.11.1.tar.xz |
-| SHA-256 | `14b7dcc72e91e08151c58b981a7b570ab2663f630e7d2837645d5a9c612c1b79` |
+| Upstream | https://www.libssh.org/files/0.11/libssh-0.11.5.tar.xz |
+| SHA-256 | `6898ba9dd836d618b71dc7a4bb786a502c173cef5cafbf20fe5e0567ba4ea30c` |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.libssh.org/files/0.11/libssh-0.11.1.tar.xz
+URL=https://www.libssh.org/files/0.11/libssh-0.11.5.tar.xz
 mkdir -p dist src/libssh
 curl -fL -o dist/$(basename $URL) $URL
-echo "14b7dcc72e91e08151c58b981a7b570ab2663f630e7d2837645d5a9c612c1b79  dist/$(basename $URL)" | sha256sum -c -
+echo "6898ba9dd836d618b71dc7a4bb786a502c173cef5cafbf20fe5e0567ba4ea30c  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libssh --strip-components=1
 ```
 
@@ -124,7 +124,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libssh`.
 ```
 /usr/local/lib/libssh.so
 /usr/local/lib/libssh.so.4
-/usr/local/lib/libssh.so.4.10.1
+/usr/local/lib/libssh.so.4.10.5
 ```
 
 The complete list is `stage/<arch>/.manifest/libssh` after a build.
@@ -206,14 +206,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.11.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libssh=<version>`), sources in `ported/libssh/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libssh`; port one with `scripts/port-update libssh`.
+This recipe builds **0.11.5**. Kept from earlier: `0.11.1` ([recipe and patches](versions/0.11.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libssh=<version>`), sources in `ported/libssh/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libssh`; port one with `scripts/port-update libssh`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.11.1
-TARBALL=https://www.libssh.org/files/0.11/libssh-0.11.1.tar.xz
-SHA256=14b7dcc72e91e08151c58b981a7b570ab2663f630e7d2837645d5a9c612c1b79
+VERSION=0.11.5
+TARBALL=https://www.libssh.org/files/0.11/libssh-0.11.5.tar.xz
+SHA256=6898ba9dd836d618b71dc7a4bb786a502c173cef5cafbf20fe5e0567ba4ea30c
 DEPS="openssl zlib"
 CMAKE_ARGS_EXTRA=( -DWITH_EXAMPLES=OFF -DUNIT_TESTING=OFF -DWITH_GSSAPI=OFF -DWITH_SERVER=ON -DWITH_ZLIB=ON )
 ```

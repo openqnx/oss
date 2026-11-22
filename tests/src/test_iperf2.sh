@@ -30,7 +30,7 @@ field() { grep -E "$2" "$1" | cut -d, -f"$3"; }
 
 V=$(iperf -v 2>&1 | head -n 1)
 echo "  info $V"
-case "$V" in "iperf version 2.2.1 "*) ok "iperf -v: 2.2.1" ;; *) bad "iperf -v: $V" ;; esac
+case "$V" in "iperf 2.2.2 "*|"iperf version 2.2.2 "*) ok "iperf -v: 2.2.2" ;; *) bad "iperf -v: $V" ;; esac
 
 PORT=$((15401 + $$ % 200))
 iperf -s -B 127.0.0.1 -p $PORT -y C > tcp-server.csv 2> tcp-server.err &

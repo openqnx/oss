@@ -1,0 +1,28 @@
+selection: no timerfd_gettime() on QNX; restart the auto-scroll timer
+
+QNX's timerfd (libtimerfd) implements timerfd_create() and
+timerfd_settime() but not timerfd_gettime(). The selection auto-scroll reads
+the timer only to keep a running timer's remaining time when the scroll
+speed changes; on QNX the timer is restarted to fire at once instead (the
+next scroll step comes immediately, then at the new interval).
+
+Upstream-Status: QNX-specific
+
+--- a/selection.c
++++ b/selection.c
+@@ -1729,10 +1729,15 @@
+     }
+ 
+     struct itimerspec timer;
++#if defined(__QNX__)
++    /* no timerfd_gettime() on QNX: (re)start the timer at once */
++    memset(&timer, 0, sizeof(timer));
++#else
+     if (timerfd_gettime(term->selection.auto_scroll.fd, &timer) < 0) {
+         LOG_ERRNO("failed to get current selection scroll timer value");
+         goto err;
+     }
++#endif
+ 
+     if (timer.it_value.tv_sec == 0 && timer.it_value.tv_nsec == 0)
+         timer.it_value.tv_nsec = 1;

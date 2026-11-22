@@ -1,4 +1,4 @@
-# neovim 0.12.3
+# neovim 0.12.6
 
 > Vim-based extensible text editor
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/neovim/neovim.git (tag `v0.12.3`) |
+| Upstream | https://github.com/neovim/neovim.git (tag `v0.12.6`) |
 | Build system | custom (see recipe) |
 | QNX patches | 4 |
 | Build dependencies | [`luajit`](../luajit/) [`libuv`](../libuv/) [`utf8proc`](../utf8proc/) [`tree-sitter`](../tree-sitter/) [`unibilium`](../unibilium/) [`lua-lpeg`](../lua-lpeg/) [`luv`](../luv/) [`libiconv`](../libiconv/) [`gettext`](../gettext/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.12.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.12.6 --recurse-submodules --shallow-submodules \
     https://github.com/neovim/neovim.git src/neovim
 ```
 
@@ -244,12 +244,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.12.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add neovim=<version>`), sources in `ported/neovim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates neovim`; port one with `scripts/port-update neovim`.
+This recipe builds **0.12.6**. Kept from earlier: `0.12.3` ([recipe and patches](versions/0.12.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add neovim=<version>`), sources in `ported/neovim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates neovim`; port one with `scripts/port-update neovim`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.12.3; GIT=https://github.com/neovim/neovim.git; REF=v0.12.3
+VERSION=0.12.6; GIT=https://github.com/neovim/neovim.git; REF=v0.12.6
 # Neovim with the QNX changes of QNX's aports (patches/), using this tree's
 # libraries (USE_BUNDLED=OFF) as the QNX Everywhere image does.
 #

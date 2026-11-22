@@ -1,4 +1,4 @@
-# brotli 1.1.0
+# brotli 1.2.1
 
 > Generic lossless compression library and tool using the Brotli format
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/brotli.git (tag `v1.1.0`) |
+| Upstream | https://github.com/google/brotli.git (tag `go/brotli/v1.2.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_brotli`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b go/brotli/v1.2.1 --recurse-submodules --shallow-submodules \
     https://github.com/google/brotli.git src/brotli
 ```
 
@@ -99,18 +98,18 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH brotli`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 9 shared-library entries, 1 programs, 5 headers.
+23 files under `/usr/local`: 9 shared-library entries, 1 programs, 5 headers.
 
 ```
 /usr/local/lib/libbrotlicommon.so
 /usr/local/lib/libbrotlicommon.so.1
-/usr/local/lib/libbrotlicommon.so.1.1.0
+/usr/local/lib/libbrotlicommon.so.1.2.1
 /usr/local/lib/libbrotlidec.so
 /usr/local/lib/libbrotlidec.so.1
-/usr/local/lib/libbrotlidec.so.1.1.0
+/usr/local/lib/libbrotlidec.so.1.2.1
 /usr/local/lib/libbrotlienc.so
 /usr/local/lib/libbrotlienc.so.1
-/usr/local/lib/libbrotlienc.so.1.1.0
+/usr/local/lib/libbrotlienc.so.1.2.1
 /usr/local/bin/brotli
 ```
 
@@ -169,7 +168,6 @@ PASS brotli
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_brotli`](../../tests/src/) -- a program linked against brotli the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -192,12 +190,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add brotli=<version>`), sources in `ported/brotli/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates brotli`; port one with `scripts/port-update brotli`.
+This recipe builds **1.2.1**. Kept from earlier: `1.1.0` ([recipe and patches](versions/1.1.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add brotli=<version>`), sources in `ported/brotli/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates brotli`; port one with `scripts/port-update brotli`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.0; GIT=https://github.com/google/brotli.git; REF=v1.1.0
+VERSION=1.2.1; GIT=https://github.com/google/brotli.git; REF=go/brotli/v1.2.1
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBROTLI_DISABLE_TESTS=ON
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

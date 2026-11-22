@@ -1,4 +1,4 @@
-# perl-class-inspector 1.36
+# perl-class-inspector 1.37_01
 
 > Class::Inspector, information about loaded Perl classes and their methods
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz |
-| SHA-256 | `cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e` |
+| Upstream | https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.37_01.tar.gz |
+| SHA-256 | `e426844233416a0f14a6d9ba7ef98851c7ea9971e69a03467b90bb5dd511f278` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`perl`](../perl/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz
+URL=https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.37_01.tar.gz
 mkdir -p dist src/perl-class-inspector
 curl -fL -o dist/$(basename $URL) $URL
-echo "cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e  dist/$(basename $URL)" | sha256sum -c -
+echo "e426844233416a0f14a6d9ba7ef98851c7ea9971e69a03467b90bb5dd511f278  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/perl-class-inspector --strip-components=1
 ```
 
@@ -196,7 +196,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.36**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-class-inspector=<version>`), sources in `ported/perl-class-inspector/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-class-inspector`; port one with `scripts/port-update perl-class-inspector`.
+This recipe builds **1.37_01**. Kept from earlier: `1.36` ([recipe and patches](versions/1.36/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-class-inspector=<version>`), sources in `ported/perl-class-inspector/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-class-inspector`; port one with `scripts/port-update perl-class-inspector`.
 
 <details><summary>recipe.sh</summary>
 
@@ -205,9 +205,9 @@ This recipe builds **1.36**. Every version stays available: packages in `dists/8
 # Not in the gap list itself: perl-file-sharedir needs it.
 # Pure Perl: lib/ as released into the target perl's site library
 # (scripts/lib/perl-module.sh).
-VERSION=1.36
-TARBALL=https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz
-SHA256=cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e
+VERSION=1.37_01
+TARBALL=https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.37_01.tar.gz
+SHA256=e426844233416a0f14a6d9ba7ef98851c7ea9971e69a03467b90bb5dd511f278
 DEPS="perl"
 RUNTIME_DEPS="perl"
 BUILDSYS=custom

@@ -1,0 +1,29 @@
+# yt-dlp 2026.10.26-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T17:48:40Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u yt-dlp qnx-test-yt-dlp qnx-port-tests
+(1/6) Upgrading libffi (3.4.6-r0 -> 3.8.1-r0)
+(2/6) Installing libuuid (2.42.4-r0)
+(3/6) Upgrading python3 (3.14.0-r0 -> 3.14.0-r1)
+(4/6) Installing qnx-port-tests (1.0-r0)
+(5/6) Installing qnx-test-yt-dlp (1.0-r1)
+(6/6) Installing yt-dlp (2026.10.26-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 141.8 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_yt_dlp
+     == yt-dlp ==
+       ok   yt-dlp --version: 2026.10.26
+       info 1755 extractors
+       ok   extractors: 1755, youtube/vimeo/generic among them
+       ok   generic extractor downloaded http://<ip>/clip.mp4 byte for byte
+     PASS yt-dlp
+PASS test_yt_dlp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

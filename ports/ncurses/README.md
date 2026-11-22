@@ -1,4 +1,4 @@
-# ncurses 6.5
+# ncurses 6.6
 
 > Terminal handling and text user interface library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz |
-| SHA-256 | `136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6` |
+| Upstream | https://ftp.gnu.org/gnu/ncurses/ncurses-6.6.tar.gz |
+| SHA-256 | `355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
+URL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.6.tar.gz
 mkdir -p dist src/ncurses
 curl -fL -o dist/$(basename $URL) $URL
-echo "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6  dist/$(basename $URL)" | sha256sum -c -
+echo "355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/ncurses --strip-components=1
 ```
 
@@ -144,25 +144,25 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ncurses`.
 
 ### 5. What it installs
 
-2932 files under `/usr/local`: 18 shared-library entries, 1 programs, 17 headers.
+2960 files under `/usr/local`: 18 shared-library entries, 1 programs, 17 headers.
 
 ```
 /usr/local/lib/libform.so
 /usr/local/lib/libformw.so
 /usr/local/lib/libformw.so.6
-/usr/local/lib/libformw.so.6.5
+/usr/local/lib/libformw.so.6.6
 /usr/local/lib/libmenu.so
 /usr/local/lib/libmenuw.so
 /usr/local/lib/libmenuw.so.6
-/usr/local/lib/libmenuw.so.6.5
+/usr/local/lib/libmenuw.so.6.6
 /usr/local/lib/libncurses.so
 /usr/local/lib/libncursesw.so
 /usr/local/lib/libncursesw.so.6
-/usr/local/lib/libncursesw.so.6.5
+/usr/local/lib/libncursesw.so.6.6
 /usr/local/lib/libpanel.so
 /usr/local/lib/libpanelw.so
 /usr/local/lib/libpanelw.so.6
-/usr/local/lib/libpanelw.so.6.5
+/usr/local/lib/libpanelw.so.6.6
 ...
 ```
 
@@ -252,14 +252,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ncurses=<version>`), sources in `ported/ncurses/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ncurses`; port one with `scripts/port-update ncurses`.
+This recipe builds **6.6**. Kept from earlier: `6.5` ([recipe and patches](versions/6.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ncurses=<version>`), sources in `ported/ncurses/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ncurses`; port one with `scripts/port-update ncurses`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.5
-TARBALL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz
-SHA256=136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6
+VERSION=6.6
+TARBALL=https://ftp.gnu.org/gnu/ncurses/ncurses-6.6.tar.gz
+SHA256=355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11
 BUILDSYS=autotools
 # QNX's <sys/termio.h> and <termios.h> are mutually exclusive by design -- the
 # header ends in "#error termio/termios incompatibility" when both are pulled

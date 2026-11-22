@@ -6,10 +6,9 @@ link with "undefined reference to regcomp". Link libregex where the
 library exists (an optional find_library, as for stdthreads).
 
 Upstream-Status: QNX-specific
-
 --- a/meson.build
 +++ b/meson.build
-@@ -137,6 +137,8 @@
+@@ -145,6 +145,8 @@
  math = cc.find_library('m')
  threads = [dependency('threads'), cc.find_library('stdthreads', required: false)]
  libepoll = dependency('epoll-shim', required: false)
@@ -18,7 +17,7 @@ Upstream-Status: QNX-specific
  pixman = dependency('pixman-1')
  wayland_protocols = dependency('wayland-protocols', version: '>=1.41',
                                 fallback: 'wayland-protocols',
-@@ -293,7 +295,7 @@
+@@ -310,7 +312,7 @@
      'pgo',
      'pgo/pgo.c',
      wl_proto_src + wl_proto_headers,
@@ -27,7 +26,7 @@ Upstream-Status: QNX-specific
      link_with: pgolib,
    )
  endif
-@@ -327,7 +329,7 @@
+@@ -344,7 +346,7 @@
    'wayland.c', 'wayland.h', 'shm-formats.h',
    'xkbcommon-vmod.h',
    srgb_funcs, wl_proto_src + wl_proto_headers, version,

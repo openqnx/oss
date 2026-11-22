@@ -1,4 +1,4 @@
-# gsm 1.0.22
+# gsm 1.0.24
 
 > GSM 06.10 lossy speech compression library
 
@@ -6,13 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://www.quut.com/gsm/gsm-1.0.22.tar.gz |
-| SHA-256 | `f0072e91f6bb85a878b2f6dbf4a0b7c850c4deb8049d554c65340b3bf69df0ac` |
+| Upstream | https://www.quut.com/gsm/gsm-1.0.24.tar.gz |
+| SHA-256 | `a3c40c6471928383f4abfcb2e8f24012a1f562be2f17b8d672145d5986681a92` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_misc_libs`](../../tests/src/) |
 
@@ -74,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.quut.com/gsm/gsm-1.0.22.tar.gz
+URL=https://www.quut.com/gsm/gsm-1.0.24.tar.gz
 mkdir -p dist src/gsm
 curl -fL -o dist/$(basename $URL) $URL
-echo "f0072e91f6bb85a878b2f6dbf4a0b7c850c4deb8049d554c65340b3bf69df0ac  dist/$(basename $URL)" | sha256sum -c -
+echo "a3c40c6471928383f4abfcb2e8f24012a1f562be2f17b8d672145d5986681a92  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gsm --strip-components=1
 ```
 
@@ -188,7 +187,6 @@ PASS gsm
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_misc_libs`](../../tests/src/) -- a program linked against gsm the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -222,14 +220,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.22**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gsm=<version>`), sources in `ported/gsm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gsm`; port one with `scripts/port-update gsm`.
+This recipe builds **1.0.24**. Kept from earlier: `1.0.22` ([recipe and patches](versions/1.0.22/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gsm=<version>`), sources in `ported/gsm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gsm`; port one with `scripts/port-update gsm`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.22
-TARBALL=https://www.quut.com/gsm/gsm-1.0.22.tar.gz
-SHA256=f0072e91f6bb85a878b2f6dbf4a0b7c850c4deb8049d554c65340b3bf69df0ac
+VERSION=1.0.24
+TARBALL=https://www.quut.com/gsm/gsm-1.0.24.tar.gz
+SHA256=a3c40c6471928383f4abfcb2e8f24012a1f562be2f17b8d672145d5986681a92
 BUILDSYS=custom
 # The upstream Makefile hardcodes the host compiler and installs nowhere useful;
 # the library is eight objects, so build it directly.

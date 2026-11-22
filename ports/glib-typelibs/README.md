@@ -123,6 +123,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - glib-typelibs: the GObject introspection data of the ported GLib -- GLib-2.0, GObject-2.0, Gio-2.0, GModule-2.0, GLibUnix-2.0, GioUnix-2.0 and GIRepository-3.0 (.typelib for lib/girepository-1.0, .gir for share/gir-1.0) -- which PyGObject (python3-gobject3) loads to reach GLib from Python. The glib port cannot make them (-Dintrospection=disabled): g-ir-scanner runs a "dumper" program linked against the library it describes, and a QNX program does not run on the build machine. So the same GLib release is built a second time natively, on the build machine, only to describe it: 1. GLib (no introspection), 2. gobject-introspection's g-ir-scanner against it, 3. GLib again with -Dintrospection=enabled, all in build/host/glib-typelibs, once for both architectures. The API description is the same on QNX (same sources, same version); both QNX targets are LP64 little endian like the build machine, so the sizes and offsets g-ir-compiler computes match. What does differ are the values glibconfig.h gives the GLIB_SYSDEF_* constants (AF_INET6, MSG_*): those are taken from the target's staged glibconfig.h before the .typelibs are compiled (fix-constants.py).
 - The native builds: the build machine's compiler, pkg-config and libraries (libffi, pcre2, zlib, libmount), nothing of the cross environment.
+- (one at a time: both architectures use this directory, and two builds of them may run side by side)
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glib-typelibs`.
 
@@ -243,9 +244,15 @@ _host() {
       PATH="$H/root/bin:$H/venv/bin:/usr/bin:/bin" PKG_CONFIG_PATH="$H/root/lib/pkgconfig" \
       LD_LIBRARY_PATH="$H/root/lib" "$@"
 }
+# (one at a time: both architectures use this directory, and two builds of
+# them may run side by side)
 _native() {
   H="$BUILD_DIR/host/glib-typelibs"
   [ -f "$H/done-$VERSION-$GI_REF" ] && return 0
+  mkdir -p "$BUILD_DIR/host"
+  ( flock 9; [ -f "$H/done-$VERSION-$GI_REF" ] || _native_build ) 9>"$H.lock"
+}
+_native_build() {
   rm -rf "$H" && mkdir -p "$H" || return 1
   /usr/bin/python3 -m venv "$H/venv" && "$H/venv/bin/pip" install -q "meson>=1.6,<1.9" setuptools packaging || return 1
   local common=( --prefix="$H/root" --libdir=lib --buildtype=release --wrap-mode=nodownload )

@@ -9,10 +9,9 @@ software one (as LIBGL_ALWAYS_SOFTWARE=1 does) and take the wl_shm path
 directly.
 
 Upstream-Status: QNX-specific
-
 --- a/src/egl/drivers/dri2/platform_wayland.c
 +++ b/src/egl/drivers/dri2/platform_wayland.c
-@@ -3297,10 +3297,17 @@
+@@ -3338,10 +3338,17 @@
  EGLBoolean
  dri2_initialize_wayland(_EGLDisplay *disp)
  {

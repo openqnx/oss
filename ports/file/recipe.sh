@@ -1,7 +1,7 @@
 # file(1) and libmagic. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=5.46
-TARBALL=https://astron.com/pub/file/file-5.46.tar.gz
-SHA256=c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088
+VERSION=5.48
+TARBALL=https://astron.com/pub/file/file-5.48.tar.gz
+SHA256=ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283
 DEPS="zlib bzip2 xz zstd"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-libseccomp )

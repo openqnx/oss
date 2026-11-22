@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`libb2`](../libb2/) [`libiconv`](../libiconv/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_vlc`](../../tests/src/) |
 
@@ -188,7 +188,8 @@ do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR=
 
 ```bash
 do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
-  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc" && \
+  sed -i -E 's#^(Exec|TryExec)=(.*/)?vlc( |$)#\1=\2cvlc\3#' "$STAGE$PREFIX/share/applications/vlc.desktop"; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
@@ -196,7 +197,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - VLC 3.0.21 with qnx-ports' QNX support (patches/: a Screen + EGL/GLES2 video output, QNX fixes in the core and modules, and QNX recipes in VLC's contrib system). Built the way the fork's qnx/ makefiles do it: 1. ./bootstrap; fetch every contrib tarball (VLC's contrib system checks each one against its own SHA512 list); 2. build protoc natively from the contrib protobuf (the cross build of the protobuf contrib needs a matching protoc); 3. build the contribs for the target, then VLC against them. Audio output modules are off (ALSA's uses IEC958 rates QNX's alsa-lib does not define; Pulse, sndio and JACK do not exist on QNX). The Qt GUI is left out (it needs a Qt 5 contrib build): libvlc, the plugins and the command-line player (cvlc) are built. Audio output is not supported on QNX yet (upstream of this port). Beyond its contribs, VLC links these components' shared libraries (found on the toolchain's default library path), so its package depends on them.
 - The contribs find each other through the pkg-config paths VLC's contrib Makefile sets; env.sh's PKG_CONFIG_* (this tree's staging) must not apply -- its sysroot was prefixed to the contribs' own paths ("libopenjp2 >= 2.1.0 not found" for FFmpeg). SDL 1.2 and SDL_image are left out: they only serve the SDL image decoder module, and SDL_image's configure found no SDL.h for the contrib SDL 1.2. The contribs get -D_QNX_SOURCE through CFLAGS/CXXFLAGS (their Meson cross file and configure scripts take them from there): without it QNX's headers hide POSIX interfaces such as clock_gettime, and dav1d's configure stopped. The make that runs first in PATH may be the SDP's 4.4, which hands its children a "fifo:" jobserver; contribs built with CMake run gmake, which can be the build machine's 4.3 and stops on it ("invalid --jobserver-auth string"). The pipe style is understood by both.
 - --enable-run-as-root: QNX targets usually run everything as root, and vlc otherwise stops with "VLC is not supposed to be run as root". Video on QNX Screen: egl_qnx + gles2 draw into a window from qnx_window (patches/0002), the Screen window provider for the command-line player.
-- vlc-plugin.pc carries -L for the contrib tree in the build directory (where libintl/libiconv were found): meaningless on any other machine, and scripts/check-artifacts rejects build paths in installed metadata.
+- vlc-plugin.pc carries -L for the contrib tree in the build directory (where libintl/libiconv were found): meaningless on any other machine, and scripts/check-artifacts rejects build paths in installed metadata. vlc.desktop starts "vlc", which looks for a graphical interface module; none is built (the Qt interface needs Qt 5, skins2 needs X11), so from a menu or a file manager it only printed "no suitable interface module" and exited. Start cvlc there instead: it plays the file in a Screen window.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vlc`.
 
@@ -390,8 +391,13 @@ do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR=
 # vlc-plugin.pc carries -L for the contrib tree in the build directory (where
 # libintl/libiconv were found): meaningless on any other machine, and
 # scripts/check-artifacts rejects build paths in installed metadata.
+# vlc.desktop starts "vlc", which looks for a graphical interface module; none
+# is built (the Qt interface needs Qt 5, skins2 needs X11), so from a menu or
+# a file manager it only printed "no suitable interface module" and exited.
+# Start cvlc there instead: it plays the file in a Screen window.
 do_install() { make -C "$B/build" DESTDIR="$STAGE" install && \
-  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc"; }
+  sed -i "s|-L$B/$(_vlc_host)/lib *||g" "$STAGE$PREFIX/lib/pkgconfig/vlc-plugin.pc" && \
+  sed -i -E 's#^(Exec|TryExec)=(.*/)?vlc( |$)#\1=\2cvlc\3#' "$STAGE$PREFIX/share/applications/vlc.desktop"; }
 ```
 </details>
 

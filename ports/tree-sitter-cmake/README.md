@@ -1,4 +1,4 @@
-# tree-sitter-cmake 0.7.2
+# tree-sitter-cmake 0.7.6
 
 > CMake grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/uyha/tree-sitter-cmake.git (tag `v0.7.2`) |
+| Upstream | https://github.com/uyha/tree-sitter-cmake.git (tag `v0.7.6`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.7.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.7.6 --recurse-submodules --shallow-submodules \
     https://github.com/uyha/tree-sitter-cmake.git src/tree-sitter-cmake
 ```
 
@@ -183,14 +183,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.7.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-cmake=<version>`), sources in `ported/tree-sitter-cmake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-cmake`; port one with `scripts/port-update tree-sitter-cmake`.
+This recipe builds **0.7.6**. Kept from earlier: `0.7.2` ([recipe and patches](versions/0.7.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-cmake=<version>`), sources in `ported/tree-sitter-cmake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-cmake`; port one with `scripts/port-update tree-sitter-cmake`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: cmake. Installs lib/tree-sitter/cmake.so (the parser
 # Neovim and the tree-sitter library load). Version as in QNX's repository.
-VERSION=0.7.2; GIT=https://github.com/uyha/tree-sitter-cmake.git; REF=v0.7.2
+VERSION=0.7.6; GIT=https://github.com/uyha/tree-sitter-cmake.git; REF=v0.7.6
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

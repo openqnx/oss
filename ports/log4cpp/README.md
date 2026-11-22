@@ -1,4 +1,4 @@
-# log4cpp 1.1.4
+# log4cpp 1.1.6
 
 > C++ logging library modelled on log4j
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.4.tar.gz |
-| SHA-256 | `696113659e426540625274a8b251052cc04306d8ee5c42a0c7639f39ca90c9d6` |
+| Upstream | https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.6.tar.gz |
+| SHA-256 | `a036bc6bd6044479e6c456de7edd042b060ea5c843e47beb75f59baea9b20e3a` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.4.tar.gz
+URL=https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.6.tar.gz
 mkdir -p dist src/log4cpp
 curl -fL -o dist/$(basename $URL) $URL
-echo "696113659e426540625274a8b251052cc04306d8ee5c42a0c7639f39ca90c9d6  dist/$(basename $URL)" | sha256sum -c -
+echo "a036bc6bd6044479e6c456de7edd042b060ea5c843e47beb75f59baea9b20e3a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/log4cpp --strip-components=1
 ```
 
@@ -206,7 +206,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add log4cpp=<version>`), sources in `ported/log4cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates log4cpp`; port one with `scripts/port-update log4cpp`.
+This recipe builds **1.1.6**. Kept from earlier: `1.1.4` ([recipe and patches](versions/1.1.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add log4cpp=<version>`), sources in `ported/log4cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates log4cpp`; port one with `scripts/port-update log4cpp`.
 
 <details><summary>recipe.sh</summary>
 
@@ -214,9 +214,9 @@ This recipe builds **1.1.4**. Every version stays available: packages in `dists/
 # log4cpp: a C++ logging library after log4j -- categories, appenders
 # (file, rolling file, syslog, ostream, remote), layouts and configuration
 # files. (Not log4cxx, which is ported separately.)
-VERSION=1.1.4
-TARBALL=https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.4.tar.gz
-SHA256=696113659e426540625274a8b251052cc04306d8ee5c42a0c7639f39ca90c9d6
+VERSION=1.1.6
+TARBALL=https://downloads.sourceforge.net/log4cpp/log4cpp-1.1.6.tar.gz
+SHA256=a036bc6bd6044479e6c456de7edd042b060ea5c843e47beb75f59baea9b20e3a
 # The tarball's top directory is log4cpp/.
 SUBDIR=log4cpp
 BUILDSYS=autotools

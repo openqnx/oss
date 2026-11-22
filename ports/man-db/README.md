@@ -1,4 +1,4 @@
-# man-db 2.13.1
+# man-db 2.13.3
 
 > Manual page reader suite (man, apropos, whatis)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz |
-| SHA-256 | `8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9` |
+| Upstream | https://download.savannah.gnu.org/releases/man-db/man-db-2.13.3.tar.xz |
+| SHA-256 | `7c10ac705433c740af91264fc29eee471090ead63a408541ab9736284a8c9deb` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libpipeline`](../libpipeline/) [`gdbm`](../gdbm/) [`groff`](../groff/) [`libiconv`](../libiconv/) [`zlib`](../zlib/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz
+URL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.3.tar.xz
 mkdir -p dist src/man-db
 curl -fL -o dist/$(basename $URL) $URL
-echo "8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9  dist/$(basename $URL)" | sha256sum -c -
+echo "7c10ac705433c740af91264fc29eee471090ead63a408541ab9736284a8c9deb  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/man-db --strip-components=1
 ```
 
@@ -108,6 +108,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - man-db, the man page reader. Version as in the QNX Everywhere 8.0.4r1 image.
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv zlib
+- The formatters are the groff port's programs on the target; configure looks for them on the build host, and a host without groff (the clean build image) left them empty -- man then rejected its own man_db.conf ("badly formed configuration directive"). Give the answers a host with groff gives.
 - The "manual" directory typesets man-db's user guide with groff's -me macros on the build host, where they are often not installed (Debian's groff-base lacks them). The guide is not needed to run man; leave that directory out of the generated top-level Makefile. (Not with SUBDIRS=... on the make command line: that reaches every sub-make too, and gl/lib then looks for "docs".)
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH man-db`.
@@ -200,19 +201,27 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.13.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add man-db=<version>`), sources in `ported/man-db/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates man-db`; port one with `scripts/port-update man-db`.
+This recipe builds **2.13.3**. Kept from earlier: `2.13.1` ([recipe and patches](versions/2.13.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add man-db=<version>`), sources in `ported/man-db/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates man-db`; port one with `scripts/port-update man-db`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # man-db, the man page reader. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.13.1
-TARBALL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz
-SHA256=8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9
+VERSION=2.13.3
+TARBALL=https://download.savannah.gnu.org/releases/man-db/man-db-2.13.3.tar.xz
+SHA256=7c10ac705433c740af91264fc29eee471090ead63a408541ab9736284a8c9deb
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv zlib
 DEPS="libpipeline gdbm groff libiconv zlib"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls --disable-setuid --without-libseccomp --disable-cache-owner --with-systemdtmpfilesdir=no --with-systemdsystemunitdir=no )
+# The formatters are the groff port's programs on the target; configure
+# looks for them on the build host, and a host without groff (the clean
+# build image) left them empty -- man then rejected its own man_db.conf
+# ("badly formed configuration directive"). Give the answers a host with
+# groff gives.
+CONF_ENV=( nroff=nroff troff=groff eqn=eqn neqn=neqn tbl=tbl col=col pic=pic preconv=preconv
+  man_cv_prog_gnu_nroff=yes man_cv_prog_heirloom_nroff=no man_cv_prog_nroff_macro=-mandoc
+  man_cv_prog_troff_options=-mandoc man_cv_prog_nroff_warnings=yes man_cv_tbl_x_format=yes )
 # The "manual" directory typesets man-db's user guide with groff's -me macros
 # on the build host, where they are often not installed (Debian's groff-base
 # lacks them). The guide is not needed to run man; leave that directory out of

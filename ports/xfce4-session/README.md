@@ -1,4 +1,4 @@
-# xfce4-session 4.20.2
+# xfce4-session 4.20.4
 
 > Xfce session manager
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.2.tar.bz2 |
-| SHA-256 | `a0b80b7136515bc3c0c54fa859ad420365e29b715b6da0b58a2d2781bfbe73c3` |
+| Upstream | https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.4.tar.bz2 |
+| SHA-256 | `805c373378d080754d69dd2f20db95cdc066c89a4f024a41435ca0d66571c402` |
 | Build system | GNU Autotools |
 | QNX patches | 3 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) |
-| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`xfconf`](../xfconf/) |
+| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_xfce4_session`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.2.tar.bz2
+URL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.4.tar.bz2
 mkdir -p dist src/xfce4-session
 curl -fL -o dist/$(basename $URL) $URL
-echo "a0b80b7136515bc3c0c54fa859ad420365e29b715b6da0b58a2d2781bfbe73c3  dist/$(basename $URL)" | sha256sum -c -
+echo "805c373378d080754d69dd2f20db95cdc066c89a4f024a41435ca0d66571c402  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/xfce4-session --strip-components=1
 ```
 
@@ -249,7 +249,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-session=<version>`), sources in `ported/xfce4-session/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-session`; port one with `scripts/port-update xfce4-session`.
+This recipe builds **4.20.4**. Kept from earlier: `4.20.2` ([recipe and patches](versions/4.20.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-session=<version>`), sources in `ported/xfce4-session/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-session`; port one with `scripts/port-update xfce4-session`.
 
 <details><summary>recipe.sh</summary>
 
@@ -257,9 +257,9 @@ This recipe builds **4.20.2**. Every version stays available: packages in `dists
 # xfce4-session: session manager.
 # The QNX Everywhere 8.0.4r1 image has the 4.21 development snapshot; the
 # 4.20 release is used here to match the Xfce 4.20 libraries in this tree.
-VERSION=4.20.2
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.2.tar.bz2
-SHA256=a0b80b7136515bc3c0c54fa859ad420365e29b715b6da0b58a2d2781bfbe73c3
+VERSION=4.20.4
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-session/4.20/xfce4-session-4.20.4.tar.bz2
+SHA256=805c373378d080754d69dd2f20db95cdc066c89a4f024a41435ca0d66571c402
 # Also linked at run time (found by scripts/gen-dependency-index): gtk-layer-shell
 DEPS="glib gtk3 libxfce4util libxfce4ui xfconf libxfce4windowing gtk-layer-shell"
 BUILDSYS=autotools

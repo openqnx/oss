@@ -1,4 +1,4 @@
-# jq 1.7.1
+# jq 1.8.2
 
 > Command line JSON processor and libjq library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-1.7.1.tar.gz |
-| SHA-256 | `478c9ca129fd2e3443fe27314b455e211e0d8c60bc8ff7df703873deeee580c2` |
+| Upstream | https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-1.8.2.tar.gz |
+| SHA-256 | `71b8d6e8f5fe81f6c6d0d110e3892251f6ce76ed095abd315e26e6e1193af3af` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`oniguruma`](../oniguruma/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-1.7.1.tar.gz
+URL=https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-1.8.2.tar.gz
 mkdir -p dist src/jq
 curl -fL -o dist/$(basename $URL) $URL
-echo "478c9ca129fd2e3443fe27314b455e211e0d8c60bc8ff7df703873deeee580c2  dist/$(basename $URL)" | sha256sum -c -
+echo "71b8d6e8f5fe81f6c6d0d110e3892251f6ce76ed095abd315e26e6e1193af3af  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/jq --strip-components=1
 ```
 
@@ -219,12 +219,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.7.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jq=<version>`), sources in `ported/jq/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jq`; port one with `scripts/port-update jq`.
+This recipe builds **1.8.2**. Kept from earlier: `1.7.1` ([recipe and patches](versions/1.7.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jq=<version>`), sources in `ported/jq/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jq`; port one with `scripts/port-update jq`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.7.1
+VERSION=1.8.2
 # The release tarball, not the git tag: jq's lexer.c and parser.c are generated
 # by flex and bison, and the generator only runs under maintainer mode, which
 # this build disables. A git checkout therefore has neither file and the build
@@ -233,8 +233,8 @@ VERSION=1.7.1
 #
 # This never surfaced on the machine the port was developed on, because an
 # earlier build there had left the generated files behind in src/jq.
-TARBALL=https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-1.7.1.tar.gz
-SHA256=478c9ca129fd2e3443fe27314b455e211e0d8c60bc8ff7df703873deeee580c2
+TARBALL=https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-1.8.2.tar.gz
+SHA256=71b8d6e8f5fe81f6c6d0d110e3892251f6ce76ed095abd315e26e6e1193af3af
 DEPS="oniguruma"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-docs --disable-maintainer-mode

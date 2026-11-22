@@ -1,4 +1,4 @@
-# lcm 1.5.2
+# lcm 1.5.3
 
 > Lightweight Communications and Marshalling: message passing for real time
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/lcm-proj/lcm.git (tag `v1.5.2`) |
+| Upstream | https://github.com/lcm-proj/lcm.git (tag `v1.5.3`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.3 --recurse-submodules --shallow-submodules \
     https://github.com/lcm-proj/lcm.git src/lcm
 ```
 
@@ -135,7 +135,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH lcm`.
 ```
 /usr/local/lib/liblcm.so
 /usr/local/lib/liblcm.so.1
-/usr/local/lib/liblcm.so.1.5.2
+/usr/local/lib/liblcm.so.1.5.3
 /usr/local/bin/lcm-gen
 /usr/local/bin/lcm-logger
 /usr/local/bin/lcm-logplayer
@@ -218,13 +218,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lcm=<version>`), sources in `ported/lcm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lcm`; port one with `scripts/port-update lcm`.
+This recipe builds **1.5.3**. Kept from earlier: `1.5.2` ([recipe and patches](versions/1.5.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lcm=<version>`), sources in `ported/lcm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lcm`; port one with `scripts/port-update lcm`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # lcm: Lightweight Communications and Marshalling -- message types (lcm-gen) and UDP multicast publish/subscribe.
-VERSION=1.5.2; GIT=https://github.com/lcm-proj/lcm.git; REF=v1.5.2
+VERSION=1.5.3; GIT=https://github.com/lcm-proj/lcm.git; REF=v1.5.3
 DEPS="glib"
 BUILDSYS=cmake
 # The C and C++ libraries and lcm-gen; no Python/Java/Lua/Go bindings.

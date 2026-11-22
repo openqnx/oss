@@ -169,7 +169,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH appstream`.
 
 ### 5. What it installs
 
-99 files under `/usr/local`: 3 shared-library entries, 1 programs, 40 headers.
+100 files under `/usr/local`: 3 shared-library entries, 1 programs, 40 headers.
 
 ```
 /usr/local/lib/libappstream.so

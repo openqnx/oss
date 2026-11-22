@@ -1,4 +1,4 @@
-# libdisplay-info 0.3.0
+# libdisplay-info 0.4.0
 
 > EDID and DisplayID parsing library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/emersion/libdisplay-info.git (tag `0.3.0`) |
+| Upstream | https://gitlab.freedesktop.org/emersion/libdisplay-info.git (tag `0.4.0`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.3.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.4.0 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/emersion/libdisplay-info.git src/libdisplay-info
 ```
 
@@ -114,12 +114,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libdisplay-info`
 
 ### 5. What it installs
 
-14 files under `/usr/local`: 3 shared-library entries, 1 programs, 8 headers.
+16 files under `/usr/local`: 3 shared-library entries, 1 programs, 10 headers.
 
 ```
 /usr/local/lib/libdisplay-info.so
-/usr/local/lib/libdisplay-info.so.0.3.0
-/usr/local/lib/libdisplay-info.so.3
+/usr/local/lib/libdisplay-info.so.0.4.0
+/usr/local/lib/libdisplay-info.so.4
 /usr/local/bin/di-edid-decode
 ```
 
@@ -213,13 +213,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.3.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdisplay-info=<version>`), sources in `ported/libdisplay-info/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdisplay-info`; port one with `scripts/port-update libdisplay-info`.
+This recipe builds **0.4.0**. Kept from earlier: `0.3.0` ([recipe and patches](versions/0.3.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdisplay-info=<version>`), sources in `ported/libdisplay-info/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdisplay-info`; port one with `scripts/port-update libdisplay-info`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libdisplay-info: EDID/DisplayID parsing. Version as in the QNX Everywhere image.
-VERSION=0.3.0; GIT=https://gitlab.freedesktop.org/emersion/libdisplay-info.git; REF=0.3.0
+VERSION=0.4.0; GIT=https://gitlab.freedesktop.org/emersion/libdisplay-info.git; REF=0.4.0
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( )
 ```

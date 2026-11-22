@@ -1,4 +1,4 @@
-# mpg123 1.32.9
+# mpg123 1.33.7
 
 > MPEG audio (MP3) decoder library and signal synthesis library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://www.mpg123.de/download/mpg123-1.32.9.tar.bz2 |
-| SHA-256 | `03b61e4004e960bacf2acdada03ed94d376e6aab27a601447bd4908d8407b291` |
+| Upstream | https://www.mpg123.de/download/mpg123-1.33.7.tar.bz2 |
+| SHA-256 | `31d0e35a4ca567ec9b5ebda6c3062bb4435d6d3eacd6ef0d95cadd7854dc03ee` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.mpg123.de/download/mpg123-1.32.9.tar.bz2
+URL=https://www.mpg123.de/download/mpg123-1.33.7.tar.bz2
 mkdir -p dist src/mpg123
 curl -fL -o dist/$(basename $URL) $URL
-echo "03b61e4004e960bacf2acdada03ed94d376e6aab27a601447bd4908d8407b291  dist/$(basename $URL)" | sha256sum -c -
+echo "31d0e35a4ca567ec9b5ebda6c3062bb4435d6d3eacd6ef0d95cadd7854dc03ee  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/mpg123 --strip-components=1
 ```
 
@@ -118,7 +118,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mpg123`.
 
 ```
 /usr/local/lib/libmpg123.so
-/usr/local/lib/libmpg123.so.48
+/usr/local/lib/libmpg123.so.49
 /usr/local/lib/libsyn123.so
 /usr/local/lib/libsyn123.so.2
 ```
@@ -199,14 +199,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.32.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpg123=<version>`), sources in `ported/mpg123/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpg123`; port one with `scripts/port-update mpg123`.
+This recipe builds **1.33.7**. Kept from earlier: `1.32.9` ([recipe and patches](versions/1.32.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpg123=<version>`), sources in `ported/mpg123/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpg123`; port one with `scripts/port-update mpg123`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.32.9
-TARBALL=https://www.mpg123.de/download/mpg123-1.32.9.tar.bz2
-SHA256=03b61e4004e960bacf2acdada03ed94d376e6aab27a601447bd4908d8407b291
+VERSION=1.33.7
+TARBALL=https://www.mpg123.de/download/mpg123-1.33.7.tar.bz2
+SHA256=31d0e35a4ca567ec9b5ebda6c3062bb4435d6d3eacd6ef0d95cadd7854dc03ee
 BUILDSYS=autotools
 # The decoder (libmpg123) and resampler (libsyn123) libraries only. QNX audio
 # goes through io-snd/libasound and mpg123 has no output module for it, so

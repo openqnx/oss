@@ -1,4 +1,4 @@
-# libxfce4ui 4.20.0
+# libxfce4ui 4.20.2
 
 > Shared widgets library for Xfce applications
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.0.tar.bz2 |
-| SHA-256 | `75e8996984f20375aadecd5c16f5147c211ed0bd26d7861ab0257561eb76eaee` |
+| Upstream | https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.2.tar.bz2 |
+| SHA-256 | `5d3d67b1244a10cee0e89b045766c05fe1035f7938f0410ac6a3d8222b5df907` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`xfconf`](../xfconf/) [`libepoxy`](../libepoxy/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.2.tar.bz2
 mkdir -p dist src/libxfce4ui
 curl -fL -o dist/$(basename $URL) $URL
-echo "75e8996984f20375aadecd5c16f5147c211ed0bd26d7861ab0257561eb76eaee  dist/$(basename $URL)" | sha256sum -c -
+echo "5d3d67b1244a10cee0e89b045766c05fe1035f7938f0410ac6a3d8222b5df907  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libxfce4ui --strip-components=1
 ```
 
@@ -125,13 +125,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxfce4ui`.
 
 ### 5. What it installs
 
-100 files under `/usr/local`: 4 shared-library entries, 1 programs, 17 headers.
+104 files under `/usr/local`: 6 shared-library entries, 1 programs, 17 headers.
 
 ```
 /usr/local/lib/libxfce4kbd-private-3.so
 /usr/local/lib/libxfce4kbd-private-3.so.0
+/usr/local/lib/libxfce4kbd-private-3.so.0.0.0
 /usr/local/lib/libxfce4ui-2.so
 /usr/local/lib/libxfce4ui-2.so.0
+/usr/local/lib/libxfce4ui-2.so.0.0.0
 /usr/local/bin/xfce4-about
 ```
 
@@ -198,11 +200,11 @@ PASS libxfce4ui
    - desktop file with an absolute Icon path -> GFileIcon
    - GFileIcon points at that path
    - scratch directory
-   - libxfce4ui 4.20.0
+   - libxfce4ui 4.20.2
    - libxfce4ui_check_version
    - xfce_icon_name_from_desktop_id(xfce4-about) = org.xfce.about
    - xfce_gtk_get_action_entry_by_id finds the entry (labels kept in the C locale)
-   - xfce4-about --version: 4.20.0
+   - xfce4-about --version: 4.20.2
    - gtk_init_check on the headless display
    - XfceTitledDialog with mixed buttons
    - subtitle set and read back
@@ -228,18 +230,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4ui=<version>`), sources in `ported/libxfce4ui/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4ui`; port one with `scripts/port-update libxfce4ui`.
+This recipe builds **4.20.2**. Kept from earlier: `4.20.0` ([recipe and patches](versions/4.20.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfce4ui=<version>`), sources in `ported/libxfce4ui/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfce4ui`; port one with `scripts/port-update libxfce4ui`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
+VERSION=4.20.2
 # The release tarball, not the git tag: Xfce keeps its generated sources
 # (*-alias.h, *-aliasdef.c, the .ui C sources) out of git and behind
 # "if MAINTAINER_MODE", and regenerating them needs xdt-csource, which
 # xfce4-dev-tools 4.20 no longer ships. The tarball has them all.
-TARBALL=https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.0.tar.bz2
-SHA256=75e8996984f20375aadecd5c16f5147c211ed0bd26d7861ab0257561eb76eaee
+TARBALL=https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.2.tar.bz2
+SHA256=5d3d67b1244a10cee0e89b045766c05fe1035f7938f0410ac6a3d8222b5df907
 DEPS="glib gtk3 libxfce4util xfconf libepoxy"
 # hicolor-icon-theme at run time: libxfce4ui installs its icons (org.xfce.about
 # and friends) under share/icons/hicolor, but GTK finds nothing there without

@@ -1,4 +1,4 @@
-# pqiv 2.13.2
+# pqiv 2.13.3
 
 > Minimal command line image viewer based on GTK 3
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.2.tar.gz |
-| SHA-256 | `154cbbe0a62be12cee23b0a46a86b2305d8128fd19924308ad5e9d22fa5ad4f7` |
+| Upstream | https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.3.tar.gz |
+| SHA-256 | `f0ffaa33e93299b38058c507da2945976a4b350c92cf1c4b3649586444395dfd` |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`gdk-pixbuf`](../gdk-pixbuf/) [`cairo`](../cairo/) |
 | Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libx11`](../libx11/) [`pango`](../pango/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,27 +82,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.2.tar.gz
+URL=https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.3.tar.gz
 mkdir -p dist src/pqiv
 curl -fL -o dist/$(basename $URL) $URL
-echo "154cbbe0a62be12cee23b0a46a86b2305d8128fd19924308ad5e9d22fa5ad4f7  dist/$(basename $URL)" | sha256sum -c -
+echo "f0ffaa33e93299b38058c507da2945976a4b350c92cf1c4b3649586444395dfd  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/pqiv --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/pqiv < ports/pqiv/patches/0001-aports-remove-avclose.patch
-```
-
-**[`0001-aports-remove-avclose.patch`](patches/0001-aports-remove-avclose.patch)** — QNX change from QNX's aports (extra/pqiv/remove-avclose.patch).
-
-> Taken from qnx-ports/aports extra/pqiv -- the APKBUILD the QNX Everywhere 8.0.4r1
-> image's package is built from.
-
-Touches: `backends/libav.c` · Upstream status: QNX-specific
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -213,16 +202,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.13.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pqiv=<version>`), sources in `ported/pqiv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pqiv`; port one with `scripts/port-update pqiv`.
+This recipe builds **2.13.3**. Kept from earlier: `2.13.2` ([recipe and patches](versions/2.13.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pqiv=<version>`), sources in `ported/pqiv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pqiv`; port one with `scripts/port-update pqiv`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # pqiv, a minimalist image viewer (GTK3).
 # Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.13.2
-TARBALL=https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.2.tar.gz
-SHA256=154cbbe0a62be12cee23b0a46a86b2305d8128fd19924308ad5e9d22fa5ad4f7
+VERSION=2.13.3
+TARBALL=https://github.com/phillipberndt/pqiv/archive/refs/tags/2.13.3.tar.gz
+SHA256=f0ffaa33e93299b38058c507da2945976a4b350c92cf1c4b3649586444395dfd
 DEPS="glib gtk3 gdk-pixbuf cairo"
 BUILDSYS=custom
 # pqiv's configure is hand-written; it takes the compiler and the backends.

@@ -1,4 +1,4 @@
-# lldpd 1.0.22
+# lldpd 1.0.23
 
 > Implementation of IEEE 802.1ab (LLDP)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/lldpd/lldpd.git (tag `1.0.22`) |
+| Upstream | https://github.com/lldpd/lldpd.git (tag `1.0.23`) |
 | Build system | GNU Autotools |
 | QNX patches | 8 |
 | Build dependencies | [`libevent`](../libevent/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.0.22 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.0.23 --recurse-submodules --shallow-submodules \
     https://github.com/lldpd/lldpd.git src/lldpd
 ```
 
@@ -320,7 +320,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.22**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lldpd=<version>`), sources in `ported/lldpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lldpd`; port one with `scripts/port-update lldpd`.
+This recipe builds **1.0.23**. Kept from earlier: `1.0.22` ([recipe and patches](versions/1.0.22/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lldpd=<version>`), sources in `ported/lldpd/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lldpd`; port one with `scripts/port-update lldpd`.
 
 <details><summary>recipe.sh</summary>
 
@@ -330,7 +330,7 @@ This recipe builds **1.0.22**. Every version stays available: packages in `dists
 # (route socket, BPF on the single /dev/bpf clone device, getifaddrs()).
 # From git rather than the release tarball: patch 0001 changes configure.ac,
 # m4/os.m4 and Makefile.am, so configure has to be regenerated (autogen.sh).
-VERSION=1.0.22; GIT=https://github.com/lldpd/lldpd.git; REF=1.0.22
+VERSION=1.0.23; GIT=https://github.com/lldpd/lldpd.git; REF=1.0.23
 BUILDSYS=autotools
 DEPS="libevent"
 # --disable-privsep: privilege separation needs a dedicated "_lldpd" user and

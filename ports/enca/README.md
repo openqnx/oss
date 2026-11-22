@@ -1,17 +1,16 @@
-# enca 1.19
+# enca 1.22
 
 > Detects and converts the character encoding of text files
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://github.com/nijel/enca.git (tag `1.19`) |
+| Upstream | https://github.com/nijel/enca.git (tag `1.22`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
+| Run-time dependencies | [`libiconv`](../libiconv/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_misc_libs`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.19 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.22 --recurse-submodules --shallow-submodules \
     https://github.com/nijel/enca.git src/enca
 ```
 
@@ -113,7 +112,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH enca`.
 
 ### 5. What it installs
 
-21 files under `/usr/local`: 2 shared-library entries, 2 programs, 1 headers.
+13 files under `/usr/local`: 2 shared-library entries, 2 programs, 1 headers.
 
 ```
 /usr/local/lib/libenca.so
@@ -177,7 +176,6 @@ PASS enca
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_misc_libs`](../../tests/src/) -- a program linked against enca the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -211,12 +209,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.19**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add enca=<version>`), sources in `ported/enca/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates enca`; port one with `scripts/port-update enca`.
+This recipe builds **1.22**. Kept from earlier: `1.19` ([recipe and patches](versions/1.19/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add enca=<version>`), sources in `ported/enca/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates enca`; port one with `scripts/port-update enca`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.19; GIT=https://github.com/nijel/enca.git; REF=1.19
+VERSION=1.22; GIT=https://github.com/nijel/enca.git; REF=1.22
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-external )
 # tools/make_hash is compiled and then *run* to generate encodings.h. Built for

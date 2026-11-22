@@ -1,4 +1,4 @@
-# patch 2.8
+# patch 2.8.1
 
 > GNU patch, applies diff files to original files
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz |
-| SHA-256 | `f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3` |
+| Upstream | https://ftp.gnu.org/gnu/patch/patch-2.8.1.tar.xz |
+| SHA-256 | `3240c7959c5347c8ed347e3c4201c0337bf4240d5cf09d68889e58eeaba30e17` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz
+URL=https://ftp.gnu.org/gnu/patch/patch-2.8.1.tar.xz
 mkdir -p dist src/patch
 curl -fL -o dist/$(basename $URL) $URL
-echo "f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3  dist/$(basename $URL)" | sha256sum -c -
+echo "3240c7959c5347c8ed347e3c4201c0337bf4240d5cf09d68889e58eeaba30e17  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/patch --strip-components=1
 ```
 
@@ -191,15 +191,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add patch=<version>`), sources in `ported/patch/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates patch`; port one with `scripts/port-update patch`.
+This recipe builds **2.8.1**. Kept from earlier: `2.8` ([recipe and patches](versions/2.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add patch=<version>`), sources in `ported/patch/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates patch`; port one with `scripts/port-update patch`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # patch: GNU patch -- applies diff files to originals (on the target, for building there).
-VERSION=2.8
-TARBALL=https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz
-SHA256=f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3
+VERSION=2.8.1
+TARBALL=https://ftp.gnu.org/gnu/patch/patch-2.8.1.tar.xz
+SHA256=3240c7959c5347c8ed347e3c4201c0337bf4240d5cf09d68889e58eeaba30e17
 DEPS=""
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-xattr )

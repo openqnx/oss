@@ -1,4 +1,4 @@
-# xfce4-settings 4.20.1
+# xfce4-settings 4.20.5
 
 > Xfce settings daemon, manager and editor
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.1.tar.bz2 |
-| SHA-256 | `fd0d602853ea75d94024e5baae2d2bf5ca8f8aa4dad7bfd5d08f9ff8afee77b2` |
+| Upstream | https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.5.tar.bz2 |
+| SHA-256 | `a5fbe0e511cce29d603320ade575ad4001bd570e60f37760233237ba478affe8` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`garcon`](../garcon/) [`exo`](../exo/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) |
-| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_xfce4_settings`](../../tests/src/) |
 
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.1.tar.bz2
+URL=https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.5.tar.bz2
 mkdir -p dist src/xfce4-settings
 curl -fL -o dist/$(basename $URL) $URL
-echo "fd0d602853ea75d94024e5baae2d2bf5ca8f8aa4dad7bfd5d08f9ff8afee77b2  dist/$(basename $URL)" | sha256sum -c -
+echo "a5fbe0e511cce29d603320ade575ad4001bd570e60f37760233237ba478affe8  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/xfce4-settings --strip-components=1
 ```
 
@@ -101,6 +101,7 @@ CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
 WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" \
+GLIB_COMPILE_RESOURCES=/usr/bin/glib-compile-resources \
 $OLDPWD/src/xfce4-settings/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
     --disable-static \
@@ -121,12 +122,13 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - xfce4-settings: the settings manager and dialogs. The QNX Everywhere 8.0.4r1 image has the 4.21 development snapshot; the 4.20 release is used here to match the Xfce 4.20 libraries in this tree.
 - Also linked at run time (found by scripts/gen-dependency-index): gtk-layer-shell
+- glib-compile-resources runs at build time: the build host's, not the staged QNX one that gio-2.0.pc names (4.20.x asks pkg-config for it).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xfce4-settings`.
 
 ### 5. What it installs
 
-239 files under `/usr/local`, 7 programs.
+241 files under `/usr/local`, 7 programs.
 
 ```
 /usr/local/bin/xfce4-appearance-settings
@@ -197,7 +199,7 @@ PASS xfce4-settings
 3. **On the target**: [`test_xfce4_settings`](../../tests/src/) -- a program linked against xfce4-settings the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
    - scratch directory
-   - xfsettingsd --version: 4.20.1
+   - xfsettingsd --version: 4.20.5
    - xfsettingsd --help lists --replace, --daemon
    - every helper .desktop: Type=X-XFCE-Helper, a known category, commands
    - firefox helper is a WebBrowser
@@ -221,7 +223,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-settings=<version>`), sources in `ported/xfce4-settings/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-settings`; port one with `scripts/port-update xfce4-settings`.
+This recipe builds **4.20.5**. Kept from earlier: `4.20.1` ([recipe and patches](versions/4.20.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-settings=<version>`), sources in `ported/xfce4-settings/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-settings`; port one with `scripts/port-update xfce4-settings`.
 
 <details><summary>recipe.sh</summary>
 
@@ -229,13 +231,15 @@ This recipe builds **4.20.1**. Every version stays available: packages in `dists
 # xfce4-settings: the settings manager and dialogs.
 # The QNX Everywhere 8.0.4r1 image has the 4.21 development snapshot; the
 # 4.20 release is used here to match the Xfce 4.20 libraries in this tree.
-VERSION=4.20.1
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.1.tar.bz2
-SHA256=fd0d602853ea75d94024e5baae2d2bf5ca8f8aa4dad7bfd5d08f9ff8afee77b2
+VERSION=4.20.5
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-settings/4.20/xfce4-settings-4.20.5.tar.bz2
+SHA256=a5fbe0e511cce29d603320ade575ad4001bd570e60f37760233237ba478affe8
 # Also linked at run time (found by scripts/gen-dependency-index): gtk-layer-shell
 DEPS="glib gtk3 libxfce4util libxfce4ui xfconf garcon exo libxfce4windowing gtk-layer-shell"
 BUILDSYS=autotools
-CONF_ENV=( WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" )
+# glib-compile-resources runs at build time: the build host's, not the staged QNX
+# one that gio-2.0.pc names (4.20.x asks pkg-config for it).
+CONF_ENV=( WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" GLIB_COMPILE_RESOURCES=/usr/bin/glib-compile-resources )
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-gtk-doc --disable-x11 --enable-wayland --disable-xrandr --disable-xcursor --disable-libnotify --disable-colord --disable-upower-glib )
 ```
 </details>

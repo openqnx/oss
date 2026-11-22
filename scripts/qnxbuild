@@ -156,7 +156,7 @@ _build_one_body() {
   _load_recipe() {
     NAME="$pkg"; VERSION=""; GIT=""; REF=""; TARBALL=""; SUBDIR=""
     BUILDSYS="cmake"; CMAKE_ARGS_EXTRA=(); MESON_ARGS_EXTRA=(); CONF_ARGS_EXTRA=()
-    DEPS=""; SRCROOT=""; CFLAGS_APPEND=""; LDFLAGS_APPEND=""; CONF_ENV=(); SHA256=""; COMMIT=""; ARCHES_SUPPORTED=""
+    DEPS=""; SRCROOT=""; CFLAGS_APPEND=""; LDFLAGS_APPEND=""; CONF_ENV=(); SHA256=""; COMMIT=""; ARCHES_SUPPORTED=""; HOSTTOOLS_NEW=""
     unset -f do_fetch do_patch do_configure do_build do_install 2>/dev/null
     source "$rec"
   }
@@ -289,6 +289,15 @@ _build_one_body() {
   # QNXBUILD_KEEP_BUILD=1 keeps the build directory: a very long build (mame,
   # llvm) that stopped late goes on from the objects it already has.
   local B="$BUILD_DIR/$arch/$pkg"; [ -n "${QNXBUILD_KEEP_BUILD:-}" ] || rm -rf "$B"; mkdir -p "$B"
+
+  # HOSTTOOLS_NEW=1 in a recipe: the newer Meson/CMake/Ninja of the build image
+  # (/opt/hosttools-new, docker/Dockerfile) for this component only -- a release
+  # that needs a newer one than the pinned default (fontconfig: meson >= 1.11,
+  # double-conversion: cmake >= 3.29). Every other component keeps the default.
+  if [ -n "$HOSTTOOLS_NEW" ]; then
+    [ -x /opt/hosttools-new/bin/meson ] || { echo "!! $pkg needs /opt/hosttools-new (rebuild the build image)"; return 1; }
+    local -x PATH="/opt/hosttools-new/bin:$PATH"
+  fi
 
   # QNXBUILD_SKIP_CONFIGURE=1 (with QNXBUILD_KEEP_BUILD=1): go on with the
   # configuration that is there -- nodejs configures in its source tree, and

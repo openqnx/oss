@@ -1,4 +1,4 @@
-# tree-sitter-vimdoc 4.0.0
+# tree-sitter-vimdoc 4.3.0
 
 > Vim help file grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/neovim/tree-sitter-vimdoc.git (tag `v4.0.0`) |
+| Upstream | https://github.com/neovim/tree-sitter-vimdoc.git (tag `v4.3.0`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v4.0.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.3.0 --recurse-submodules --shallow-submodules \
     https://github.com/neovim/tree-sitter-vimdoc.git src/tree-sitter-vimdoc
 ```
 
@@ -179,14 +179,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.0.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-vimdoc=<version>`), sources in `ported/tree-sitter-vimdoc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-vimdoc`; port one with `scripts/port-update tree-sitter-vimdoc`.
+This recipe builds **4.3.0**. Kept from earlier: `4.0.0` ([recipe and patches](versions/4.0.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-vimdoc=<version>`), sources in `ported/tree-sitter-vimdoc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-vimdoc`; port one with `scripts/port-update tree-sitter-vimdoc`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: vimdoc. Installs lib/tree-sitter/vimdoc.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=4.0.0; GIT=https://github.com/neovim/tree-sitter-vimdoc.git; REF=v4.0.0
+VERSION=4.3.0; GIT=https://github.com/neovim/tree-sitter-vimdoc.git; REF=v4.3.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

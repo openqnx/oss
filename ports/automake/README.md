@@ -1,4 +1,4 @@
-# automake 1.18
+# automake 1.20
 
 > GNU tool for generating portable Makefile.in files
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/automake/automake-1.18.tar.xz |
-| SHA-256 | `5bdccca96b007a7e344c24204b9b9ac12ecd17f5971931a9063bdee4887f4aaf` |
+| Upstream | https://ftp.gnu.org/gnu/automake/automake-1.20.tar.xz |
+| SHA-256 | `f6f34dad4cbe395715762b0710f7c511e39bd5cf777e6b95818ccbecf7714248` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/automake/automake-1.18.tar.xz
+URL=https://ftp.gnu.org/gnu/automake/automake-1.20.tar.xz
 mkdir -p dist src/automake
 curl -fL -o dist/$(basename $URL) $URL
-echo "5bdccca96b007a7e344c24204b9b9ac12ecd17f5971931a9063bdee4887f4aaf  dist/$(basename $URL)" | sha256sum -c -
+echo "f6f34dad4cbe395715762b0710f7c511e39bd5cf777e6b95818ccbecf7714248  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/automake --strip-components=1
 ```
 
@@ -101,7 +101,7 @@ do_install() {
   # On a target it often does not: it holds only other packages' *.m4 files,
   # which ship in their -dev packages. A missing one is not an error.
   sed -i 's/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_ERROR, @system_includes);/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_SILENT, @system_includes);/' \
-    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-1.18"
+    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-$(echo "$VERSION" | cut -d. -f1,2)"
 }
 ```
 
@@ -114,13 +114,13 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH automake`.
 
 ### 5. What it installs
 
-125 files under `/usr/local`, 4 programs.
+128 files under `/usr/local`, 4 programs.
 
 ```
 /usr/local/bin/aclocal
-/usr/local/bin/aclocal-1.18
+/usr/local/bin/aclocal-1.20
 /usr/local/bin/automake
-/usr/local/bin/automake-1.18
+/usr/local/bin/automake-1.20
 ```
 
 The complete list is `stage/<arch>/.manifest/automake` after a build.
@@ -195,15 +195,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add automake=<version>`), sources in `ported/automake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates automake`; port one with `scripts/port-update automake`.
+This recipe builds **1.20**. Kept from earlier: `1.18` ([recipe and patches](versions/1.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add automake=<version>`), sources in `ported/automake/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates automake`; port one with `scripts/port-update automake`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU Automake. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=1.18
-TARBALL=https://ftp.gnu.org/gnu/automake/automake-1.18.tar.xz
-SHA256=5bdccca96b007a7e344c24204b9b9ac12ecd17f5971931a9063bdee4887f4aaf
+VERSION=1.20
+TARBALL=https://ftp.gnu.org/gnu/automake/automake-1.20.tar.xz
+SHA256=f6f34dad4cbe395715762b0710f7c511e39bd5cf777e6b95818ccbecf7714248
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 
@@ -218,7 +218,7 @@ do_install() {
   # On a target it often does not: it holds only other packages' *.m4 files,
   # which ship in their -dev packages. A missing one is not an error.
   sed -i 's/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_ERROR, @system_includes);/scan_m4_dirs (FT_SYSTEM, SCAN_M4_DIRS_SILENT, @system_includes);/' \
-    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-1.18"
+    "$STAGE$PREFIX/bin/aclocal" "$STAGE$PREFIX/bin/aclocal-$(echo "$VERSION" | cut -d. -f1,2)"
 }
 ```
 </details>

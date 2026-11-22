@@ -1,4 +1,4 @@
-# libxrandr 1.5.4
+# libxrandr 1.5.5
 
 > X Resize, Rotate and Reflect (RandR) extension client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxrandr.git (tag `libXrandr-1.5.4`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxrandr.git (tag `libXrandr-1.5.5`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXrandr-1.5.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXrandr-1.5.5 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxrandr.git src/libxrandr
 ```
 
@@ -210,12 +210,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxrandr=<version>`), sources in `ported/libxrandr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxrandr`; port one with `scripts/port-update libxrandr`.
+This recipe builds **1.5.5**. Kept from earlier: `1.5.4` ([recipe and patches](versions/1.5.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxrandr=<version>`), sources in `ported/libxrandr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxrandr`; port one with `scripts/port-update libxrandr`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.4; GIT=https://gitlab.freedesktop.org/xorg/lib/libxrandr.git; REF=libXrandr-1.5.4
+VERSION=1.5.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxrandr.git; REF=libXrandr-1.5.5
 DEPS="libx11 libxext libxrender xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

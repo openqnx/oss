@@ -1,4 +1,4 @@
-# graphite2 1.3.14
+# graphite2 1.3.15
 
 > Font rendering engine for complex scripts (SIL Graphite smart fonts)
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/silnrsi/graphite.git (tag `1.3.14`) |
+| Upstream | https://github.com/silnrsi/graphite.git (tag `1.3.15`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_graphite2`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.3.14 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.3.15 --recurse-submodules --shallow-submodules \
     https://github.com/silnrsi/graphite.git src/graphite2
 ```
 
@@ -106,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH graphite2`.
 ```
 /usr/local/lib/libgraphite2.so
 /usr/local/lib/libgraphite2.so.3
-/usr/local/lib/libgraphite2.so.3.2.1
+/usr/local/lib/libgraphite2.so.3.3.1
 /usr/local/bin/gr2fonttest
 ```
 
@@ -165,7 +164,6 @@ PASS graphite2
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_graphite2`](../../tests/src/) -- a program linked against graphite2 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -187,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.14**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add graphite2=<version>`), sources in `ported/graphite2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates graphite2`; port one with `scripts/port-update graphite2`.
+This recipe builds **1.3.15**. Kept from earlier: `1.3.14` ([recipe and patches](versions/1.3.14/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add graphite2=<version>`), sources in `ported/graphite2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates graphite2`; port one with `scripts/port-update graphite2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3.14; GIT=https://github.com/silnrsi/graphite.git; REF=1.3.14
+VERSION=1.3.15; GIT=https://github.com/silnrsi/graphite.git; REF=1.3.15
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DGRAPHITE2_COMPARE_RENDERER=OFF
                    -DGRAPHITE2_NTRACING=ON -DGRAPHITE2_TESTS=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

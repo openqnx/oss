@@ -1,4 +1,4 @@
-# orocos-kdl 1.5.1
+# orocos-kdl 1.5.4
 
 > Orocos Kinematics and Dynamics Library for robot kinematic chains
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/orocos/orocos_kinematics_dynamics.git (tag `v1.5.1`) |
+| Upstream | https://github.com/orocos/orocos_kinematics_dynamics.git (tag `1.5.4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`eigen`](../eigen/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.5.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.5.4 --recurse-submodules --shallow-submodules \
     https://github.com/orocos/orocos_kinematics_dynamics.git src/orocos-kdl
 ```
 
@@ -104,12 +104,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH orocos-kdl`.
 
 ### 5. What it installs
 
-103 files under `/usr/local`: 3 shared-library entries, 93 headers.
+104 files under `/usr/local`: 3 shared-library entries, 94 headers.
 
 ```
 /usr/local/lib/liborocos-kdl.so
 /usr/local/lib/liborocos-kdl.so.1.5
-/usr/local/lib/liborocos-kdl.so.1.5.1
+/usr/local/lib/liborocos-kdl.so.1.5.4
 ```
 
 The complete list is `stage/<arch>/.manifest/orocos-kdl` after a build.
@@ -186,12 +186,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add orocos-kdl=<version>`), sources in `ported/orocos-kdl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates orocos-kdl`; port one with `scripts/port-update orocos-kdl`.
+This recipe builds **1.5.4**. Kept from earlier: `1.5.1` ([recipe and patches](versions/1.5.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add orocos-kdl=<version>`), sources in `ported/orocos-kdl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates orocos-kdl`; port one with `scripts/port-update orocos-kdl`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.1; GIT=https://github.com/orocos/orocos_kinematics_dynamics.git; REF=v1.5.1
+VERSION=1.5.4; GIT=https://github.com/orocos/orocos_kinematics_dynamics.git; REF=1.5.4
 DEPS="eigen"
 SUBDIR=orocos_kdl
 CMAKE_ARGS_EXTRA=( -DENABLE_TESTS=OFF -DENABLE_EXAMPLES=OFF -DEigen3_DIR="$STAGE$PREFIX/share/eigen3/cmake" )

@@ -113,7 +113,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ncnn`.
 ```
 /usr/local/lib/libncnn.so
 /usr/local/lib/libncnn.so.1
-/usr/local/lib/libncnn.so.1.0.20261030
+/usr/local/lib/libncnn.so.1.0.20261119
 ```
 
 The complete list is `stage/<arch>/.manifest/ncnn` after a build.

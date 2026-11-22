@@ -1,4 +1,4 @@
-# libtiff 4.7.0
+# libtiff 4.7.2
 
 > Library for reading and writing TIFF images
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.com/libtiff/libtiff.git (tag `v4.7.0`) |
+| Upstream | https://gitlab.com/libtiff/libtiff.git (tag `v4.7.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`xz`](../xz/) [`zstd`](../zstd/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) |
-| Run-time dependencies | [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`libdeflate`](../libdeflate/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libtiff`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v4.7.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.7.2 --recurse-submodules --shallow-submodules \
     https://gitlab.com/libtiff/libtiff.git src/libtiff
 ```
 
@@ -116,10 +116,10 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libtiff`.
 ```
 /usr/local/lib/libtiff.so
 /usr/local/lib/libtiff.so.6
-/usr/local/lib/libtiff.so.6.1.0
+/usr/local/lib/libtiff.so.6.3.0
 /usr/local/lib/libtiffxx.so
 /usr/local/lib/libtiffxx.so.6
-/usr/local/lib/libtiffxx.so.6.1.0
+/usr/local/lib/libtiffxx.so.6.3.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libtiff` after a build.
@@ -203,12 +203,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.7.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtiff=<version>`), sources in `ported/libtiff/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtiff`; port one with `scripts/port-update libtiff`.
+This recipe builds **4.7.2**. Kept from earlier: `4.7.0` ([recipe and patches](versions/4.7.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtiff=<version>`), sources in `ported/libtiff/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtiff`; port one with `scripts/port-update libtiff`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.7.0; GIT=https://gitlab.com/libtiff/libtiff.git; REF=v4.7.0
+VERSION=4.7.2; GIT=https://gitlab.com/libtiff/libtiff.git; REF=v4.7.2
 DEPS="zlib xz zstd libjpeg-turbo libwebp"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -Dtiff-tools=OFF -Dtiff-tests=OFF
                    -Dtiff-docs=OFF -Dtiff-contrib=OFF -Dlerc=OFF

@@ -1,4 +1,4 @@
-# perl-net-ssleay 1.96
+# perl-net-ssleay 1.97_01
 
 > Net::SSLeay, Perl bindings to OpenSSL's libssl and libcrypto (XS)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.96.tar.gz |
-| SHA-256 | `ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753` |
+| Upstream | https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.97_01.tar.gz |
+| SHA-256 | `1b6463d0a5b736ecda393310c5e4bd05508314937117b7f49b4c90ecf1a46cde` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`perl`](../perl/) [`openssl`](../openssl/) [`zlib`](../zlib/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.96.tar.gz
+URL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.97_01.tar.gz
 mkdir -p dist src/perl-net-ssleay
 curl -fL -o dist/$(basename $URL) $URL
-echo "ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753  dist/$(basename $URL)" | sha256sum -c -
+echo "1b6463d0a5b736ecda393310c5e4bd05508314937117b7f49b4c90ecf1a46cde  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/perl-net-ssleay --strip-components=1
 ```
 
@@ -204,7 +204,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.96**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-net-ssleay=<version>`), sources in `ported/perl-net-ssleay/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-net-ssleay`; port one with `scripts/port-update perl-net-ssleay`.
+This recipe builds **1.97_01**. Kept from earlier: `1.96` ([recipe and patches](versions/1.96/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-net-ssleay=<version>`), sources in `ported/perl-net-ssleay/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-net-ssleay`; port one with `scripts/port-update perl-net-ssleay`.
 
 <details><summary>recipe.sh</summary>
 
@@ -217,9 +217,9 @@ This recipe builds **1.96**. Every version stays available: packages in `dists/8
 # died in the staging tree's lib/): include/ and lib/ link to the staging
 # tree, and bin/openssl is a script that prints the staged headers'
 # OPENSSL_VERSION_TEXT (what the target's openssl version prints).
-VERSION=1.96
-TARBALL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.96.tar.gz
-SHA256=ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753
+VERSION=1.97_01
+TARBALL=https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-1.97_01.tar.gz
+SHA256=1b6463d0a5b736ecda393310c5e4bd05508314937117b7f49b4c90ecf1a46cde
 DEPS="perl openssl zlib"
 RUNTIME_DEPS="perl openssl"
 BUILDSYS=custom

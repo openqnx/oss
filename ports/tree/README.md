@@ -1,4 +1,4 @@
-# tree 2.2.1
+# tree 2.3.2
 
 > Displays directory contents as an indented tree
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.com/OldManProgrammer/unix-tree.git (tag `2.2.1`) |
+| Upstream | https://gitlab.com/OldManProgrammer/unix-tree.git (tag `2.3.2`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.2.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.3.2 --recurse-submodules --shallow-submodules \
     https://gitlab.com/OldManProgrammer/unix-tree.git src/tree
 ```
 
@@ -183,12 +183,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree=<version>`), sources in `ported/tree/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree`; port one with `scripts/port-update tree`.
+This recipe builds **2.3.2**. Kept from earlier: `2.2.1` ([recipe and patches](versions/2.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree=<version>`), sources in `ported/tree/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree`; port one with `scripts/port-update tree`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.2.1; GIT=https://gitlab.com/OldManProgrammer/unix-tree.git; REF=2.2.1
+VERSION=2.3.2; GIT=https://gitlab.com/OldManProgrammer/unix-tree.git; REF=2.3.2
 BUILDSYS=custom
 do_build() { cp -a "$S/." "$B/" && make -C "$B" CC="qcc -V$QCC_TARGET" CFLAGS="-O2 -D_QNX_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" LDFLAGS=""; }
 do_install() { install -d "$STAGE$PREFIX/bin" && install -m755 "$B/tree" "$STAGE$PREFIX/bin/"; }

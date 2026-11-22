@@ -64,15 +64,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (20 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (21 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild llvm binutils pkgconf make
 ```
 
-<details><summary>Full build chain (20)</summary>
+<details><summary>Full build chain (21)</summary>
 
-[`binutils`](../binutils/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`llvm`](../llvm/) [`make`](../make/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pkgconf`](../pkgconf/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`binutils`](../binutils/) [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`llvm`](../llvm/) [`make`](../make/) [`msgpack-c`](../msgpack-c/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pkgconf`](../pkgconf/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source

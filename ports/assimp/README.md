@@ -1,4 +1,4 @@
-# assimp 6.0.2
+# assimp 6.0.6
 
 > Open Asset Import Library: loads 3D model formats (OBJ, STL, COLLADA, glTF, FBX, ...)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/assimp/assimp.git (tag `v6.0.2`) |
+| Upstream | https://github.com/assimp/assimp.git (tag `v6.0.6`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v6.0.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v6.0.6 --recurse-submodules --shallow-submodules \
     https://github.com/assimp/assimp.git src/assimp
 ```
 
@@ -129,7 +129,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH assimp`.
 ```
 /usr/local/lib/libassimp.so
 /usr/local/lib/libassimp.so.6
-/usr/local/lib/libassimp.so.6.0.2
+/usr/local/lib/libassimp.so.6.0.6
 /usr/local/bin/assimp
 ```
 
@@ -216,7 +216,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.0.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add assimp=<version>`), sources in `ported/assimp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates assimp`; port one with `scripts/port-update assimp`.
+This recipe builds **6.0.6**. Kept from earlier: `6.0.2` ([recipe and patches](versions/6.0.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add assimp=<version>`), sources in `ported/assimp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates assimp`; port one with `scripts/port-update assimp`.
 
 <details><summary>recipe.sh</summary>
 
@@ -228,7 +228,7 @@ This recipe builds **6.0.2**. Every version stays available: packages in `dists/
 # ASSIMP_WARNINGS_AS_ERRORS off: GCC 12's -Wstringop-truncation fires on
 # assimp's own strncpy calls (EmbedTexturesProcess.cpp), which are bounded
 # correctly. The `assimp` command-line tool is built too (info, export).
-VERSION=6.0.2; GIT=https://github.com/assimp/assimp.git; REF=v6.0.2
+VERSION=6.0.6; GIT=https://github.com/assimp/assimp.git; REF=v6.0.6
 DEPS="zlib"
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DASSIMP_BUILD_TESTS=OFF -DASSIMP_BUILD_SAMPLES=OFF

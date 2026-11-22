@@ -1,4 +1,4 @@
-VERSION=1.0.2; GIT=https://github.com/capnproto/capnproto.git; REF=v1.0.2
+VERSION=1.5.0; GIT=https://github.com/capnproto/capnproto.git; REF=v1.5.0
 DEPS="zlib openssl"
 # Cap'n Proto names its C++ sources *.c++. qcc/q++ do not recognise that
 # extension and silently produce no object at all (the link then fails with

@@ -1,4 +1,4 @@
-# tree-sitter-markdown 0.5.1
+# tree-sitter-markdown 0.5.4
 
 > Markdown and inline Markdown grammars for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-markdown.git (tag `v0.5.1`) |
+| Upstream | https://github.com/tree-sitter-grammars/tree-sitter-markdown.git (tag `v0.5.4`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.5.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.5.4 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter-grammars/tree-sitter-markdown.git src/tree-sitter-markdown
 ```
 
@@ -181,7 +181,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.5.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-markdown=<version>`), sources in `ported/tree-sitter-markdown/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-markdown`; port one with `scripts/port-update tree-sitter-markdown`.
+This recipe builds **0.5.4**. Kept from earlier: `0.5.1` ([recipe and patches](versions/0.5.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-markdown=<version>`), sources in `ported/tree-sitter-markdown/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-markdown`; port one with `scripts/port-update tree-sitter-markdown`.
 
 <details><summary>recipe.sh</summary>
 
@@ -189,7 +189,7 @@ This recipe builds **0.5.1**. Every version stays available: packages in `dists/
 # tree-sitter grammars: markdown and markdown_inline (one repository, two
 # parsers). Installs lib/tree-sitter/{markdown,markdown_inline}.so. Version as
 # in the QNX Everywhere 8.0.4r1 image.
-VERSION=0.5.1; GIT=https://github.com/tree-sitter-grammars/tree-sitter-markdown.git; REF=v0.5.1
+VERSION=0.5.4; GIT=https://github.com/tree-sitter-grammars/tree-sitter-markdown.git; REF=v0.5.4
 BUILDSYS=custom
 do_build() {
   local g d

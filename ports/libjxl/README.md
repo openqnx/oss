@@ -1,4 +1,4 @@
-# libjxl 0.11.1
+# libjxl 0.13.0
 
 > JPEG XL image format reference library and tools
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libjxl/libjxl.git (tag `v0.11.1`) |
+| Upstream | https://github.com/libjxl/libjxl.git (tag `v0.13.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`brotli`](../brotli/) [`highway`](../highway/) [`lcms2`](../lcms2/) [`libpng`](../libpng/) [`giflib`](../giflib/) [`libjpeg-turbo`](../libjpeg-turbo/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.11.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.13.0 --recurse-submodules --shallow-submodules \
     https://github.com/libjxl/libjxl.git src/libjxl
 ```
 
@@ -124,14 +124,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libjxl`.
 
 ```
 /usr/local/lib/libjxl.so
-/usr/local/lib/libjxl.so.0.11
-/usr/local/lib/libjxl.so.0.11.1
+/usr/local/lib/libjxl.so.0.13
+/usr/local/lib/libjxl.so.0.13.0
 /usr/local/lib/libjxl_cms.so
-/usr/local/lib/libjxl_cms.so.0.11
-/usr/local/lib/libjxl_cms.so.0.11.1
+/usr/local/lib/libjxl_cms.so.0.13
+/usr/local/lib/libjxl_cms.so.0.13.0
 /usr/local/lib/libjxl_threads.so
-/usr/local/lib/libjxl_threads.so.0.11
-/usr/local/lib/libjxl_threads.so.0.11.1
+/usr/local/lib/libjxl_threads.so.0.13
+/usr/local/lib/libjxl_threads.so.0.13.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libjxl` after a build.
@@ -219,12 +219,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.11.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libjxl=<version>`), sources in `ported/libjxl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libjxl`; port one with `scripts/port-update libjxl`.
+This recipe builds **0.13.0**. Kept from earlier: `0.11.1` ([recipe and patches](versions/0.11.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libjxl=<version>`), sources in `ported/libjxl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libjxl`; port one with `scripts/port-update libjxl`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.11.1; GIT=https://github.com/libjxl/libjxl.git; REF=v0.11.1
+VERSION=0.13.0; GIT=https://github.com/libjxl/libjxl.git; REF=v0.13.0
 DEPS="brotli highway lcms2 libpng giflib libjpeg-turbo"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
                    -DJPEGXL_ENABLE_TOOLS=OFF -DJPEGXL_ENABLE_EXAMPLES=OFF

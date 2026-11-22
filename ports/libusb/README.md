@@ -1,4 +1,4 @@
-# libusb 1.0.27
+# libusb 1.0.30
 
 > C library for accessing USB devices from user space
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libusb/libusb.git (tag `v1.0.27`) |
+| Upstream | https://github.com/libusb/libusb.git (tag `v1.0.30`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.0.27 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.0.30 --recurse-submodules --shallow-submodules \
     https://github.com/libusb/libusb.git src/libusb
 ```
 
@@ -111,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libusb`.
 
 ```
 /usr/local/lib/libusb-1.0.so
-/usr/local/lib/libusb-1.0.so.4
+/usr/local/lib/libusb-1.0.so.6
 ```
 
 The complete list is `stage/<arch>/.manifest/libusb` after a build.
@@ -190,12 +190,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.27**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libusb=<version>`), sources in `ported/libusb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libusb`; port one with `scripts/port-update libusb`.
+This recipe builds **1.0.30**. Kept from earlier: `1.0.27` ([recipe and patches](versions/1.0.27/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libusb=<version>`), sources in `ported/libusb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libusb`; port one with `scripts/port-update libusb`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.27; GIT=https://github.com/libusb/libusb.git; REF=v1.0.27
+VERSION=1.0.30; GIT=https://github.com/libusb/libusb.git; REF=v1.0.30
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-udev --disable-tests
                   --disable-examples )

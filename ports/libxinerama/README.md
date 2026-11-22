@@ -1,4 +1,4 @@
-# libxinerama 1.1.5
+# libxinerama 1.1.6
 
 > Xinerama extension client library for multi-monitor X displays
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxinerama.git (tag `libXinerama-1.1.5`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxinerama.git (tag `libXinerama-1.1.6`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxext`](../libxext/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXinerama-1.1.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXinerama-1.1.6 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxinerama.git src/libxinerama
 ```
 
@@ -206,12 +206,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxinerama=<version>`), sources in `ported/libxinerama/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxinerama`; port one with `scripts/port-update libxinerama`.
+This recipe builds **1.1.6**. Kept from earlier: `1.1.5` ([recipe and patches](versions/1.1.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxinerama=<version>`), sources in `ported/libxinerama/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxinerama`; port one with `scripts/port-update libxinerama`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxinerama.git; REF=libXinerama-1.1.5
+VERSION=1.1.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxinerama.git; REF=libXinerama-1.1.6
 DEPS="libx11 libxext xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

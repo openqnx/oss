@@ -1,4 +1,4 @@
-# gflags 2.2.2
+# gflags 2.3.1
 
 > C++ library for command line flags processing
 
@@ -6,12 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/gflags/gflags.git (tag `v2.2.2`) |
+| Upstream | https://github.com/gflags/gflags.git (tag `v2.3.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
-| Built alone (empty stage) | aarch64le ✅ x86_64 ✅ |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gflags`](../../tests/src/) |
 
@@ -73,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.2.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.3.1 --recurse-submodules --shallow-submodules \
     https://github.com/gflags/gflags.git src/gflags
 ```
 
@@ -110,11 +109,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gflags`.
 
 ```
 /usr/local/lib/libgflags.so
-/usr/local/lib/libgflags.so.2.2
-/usr/local/lib/libgflags.so.2.2.2
+/usr/local/lib/libgflags.so.2.3
+/usr/local/lib/libgflags.so.2.3.0
 /usr/local/lib/libgflags_nothreads.so
-/usr/local/lib/libgflags_nothreads.so.2.2
-/usr/local/lib/libgflags_nothreads.so.2.2.2
+/usr/local/lib/libgflags_nothreads.so.2.3
+/usr/local/lib/libgflags_nothreads.so.2.3.0
 /usr/local/bin/gflags_completions.sh
 ```
 
@@ -173,7 +172,6 @@ PASS gflags
 ## How it was verified
 
 1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
-   Built again against an *empty* staging tree (`scripts/verify-standalone`): aarch64le passed, x86_64 passed -- it cannot have picked anything up from other components.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_gflags`](../../tests/src/) -- a program linked against gflags the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -195,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gflags=<version>`), sources in `ported/gflags/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gflags`; port one with `scripts/port-update gflags`.
+This recipe builds **2.3.1**. Kept from earlier: `2.2.2` ([recipe and patches](versions/2.2.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gflags=<version>`), sources in `ported/gflags/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gflags`; port one with `scripts/port-update gflags`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.2.2; GIT=https://github.com/gflags/gflags.git; REF=v2.2.2
+VERSION=2.3.1; GIT=https://github.com/gflags/gflags.git; REF=v2.3.1
 # REGISTER_*: gflags installs a CMake user-registry entry into $HOME/.cmake
 # (packaged as home/<user>/.cmake/packages/gflags/...); not on a target.
 CMAKE_ARGS_EXTRA=( -DREGISTER_INSTALL_PREFIX=OFF -DREGISTER_BUILD_DIR=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_gflags_LIB=ON

@@ -1,16 +1,16 @@
-# libdatrie 0.2.13
+# libdatrie 0.2.14
 
 > Double-array trie data structure library
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://github.com/tlwg/libdatrie.git (tag `v0.2.13`) |
+| Upstream | https://github.com/tlwg/libdatrie.git (tag `v0.2.14`) |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`libiconv`](../libiconv/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libdatrie`](../../tests/src/) |
 
@@ -72,25 +72,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.2.13 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.2.14 --recurse-submodules --shallow-submodules \
     https://github.com/tlwg/libdatrie.git src/libdatrie
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/libdatrie < ports/libdatrie/patches/0001-drop-ax-compare-version.patch
-```
-
-**[`0001-drop-ax-compare-version.patch`](patches/0001-drop-ax-compare-version.patch)** — libdatrie: do not use AX_COMPARE_VERSION in configure.
-
-> The macro comes from autoconf-archive, which is not a build dependency, and
-> the shipped configure contains it unexpanded, so the shell cannot parse
-> configure even with the doxygen docs off. The docs are not built here.
-
-Touches: `configure.ac` · Upstream status: Pending
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -214,12 +202,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.2.13**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdatrie=<version>`), sources in `ported/libdatrie/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdatrie`; port one with `scripts/port-update libdatrie`.
+This recipe builds **0.2.14**. Kept from earlier: `0.2.13` ([recipe and patches](versions/0.2.13/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libdatrie=<version>`), sources in `ported/libdatrie/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libdatrie`; port one with `scripts/port-update libdatrie`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.2.13; GIT=https://github.com/tlwg/libdatrie.git; REF=v0.2.13
+VERSION=0.2.14; GIT=https://github.com/tlwg/libdatrie.git; REF=v0.2.14
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doxygen-doc )
 # Two problems, both from autoconf-archive not being installed here:

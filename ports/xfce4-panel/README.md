@@ -1,4 +1,4 @@
-# xfce4-panel 4.20.0
+# xfce4-panel 4.20.8
 
 > Xfce panel with launchers, menus and workspace switcher
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.0.tar.bz2 |
-| SHA-256 | `ff33cd5f5d16c2193fe305f4878d82cd8d2feea92f2594bcd27b2b5c392d43b8` |
+| Upstream | https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.8.tar.bz2 |
+| SHA-256 | `d69cb1f377953aeb1fb9bdbcef12c246bea66586e3f2868f3b758e0e8ce3d3fe` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`garcon`](../garcon/) [`exo`](../exo/) [`libxfce4windowing`](../libxfce4windowing/) [`gtk-layer-shell`](../gtk-layer-shell/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) |
-| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`garcon`](../garcon/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk-layer-shell`](../gtk-layer-shell/) [`gtk3`](../gtk3/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`libxfce4windowing`](../libxfce4windowing/) [`pango`](../pango/) [`wayland`](../wayland/) [`xfconf`](../xfconf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_xfce4_panel`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.8.tar.bz2
 mkdir -p dist src/xfce4-panel
 curl -fL -o dist/$(basename $URL) $URL
-echo "ff33cd5f5d16c2193fe305f4878d82cd8d2feea92f2594bcd27b2b5c392d43b8  dist/$(basename $URL)" | sha256sum -c -
+echo "d69cb1f377953aeb1fb9bdbcef12c246bea66586e3f2868f3b758e0e8ce3d3fe  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/xfce4-panel --strip-components=1
 ```
 
@@ -104,6 +104,7 @@ CFLAGS="$CPPFLAGS" CXXFLAGS="$CPPFLAGS" \
 LDFLAGS="-L$STAGE/usr/local/lib -Wl,-rpath-link,$STAGE/usr/local/lib \
          -lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify" \
 WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" \
+GLIB_COMPILE_RESOURCES=/usr/bin/glib-compile-resources \
 $OLDPWD/src/xfce4-panel/configure --host=$QNX_TRIPLE --prefix=/usr/local \
     --enable-shared \
     --disable-static \
@@ -121,13 +122,13 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Release tarball, as for every Xfce package here -- see README hazard 74.
-- Wayland only, matching libxfce4windowing, which was built --disable-x11: the panel's X11 half needs libwnck, and libwnck's window tracking is X11 through and through.  gtk-layer-shell is what lets the panel anchor itself to a screen edge under a wlroots-style compositor.
+- Wayland only, matching libxfce4windowing, which was built --disable-x11: the panel's X11 half needs libwnck, and libwnck's window tracking is X11 through and through.  gtk-layer-shell is what lets the panel anchor itself to a screen edge under a wlroots-style compositor. glib-compile-resources runs at build time: the build host's, not the staged QNX one that gio-2.0.pc names (4.20.x asks pkg-config for it).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xfce4-panel`.
 
 ### 5. What it installs
 
-204 files under `/usr/local`: 3 shared-library entries, 4 programs, 10 headers.
+208 files under `/usr/local`: 3 shared-library entries, 4 programs, 10 headers.
 
 ```
 /usr/local/lib/libxfce4panel-2.0.so
@@ -197,7 +198,7 @@ PASS xfce4-panel
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_xfce4_panel`](../../tests/src/) -- a program linked against xfce4-panel the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - libxfce4panel 4.20.0
+   - libxfce4panel 4.20.8
    - libxfce4panel_check_version
    - xfconf channel name xfce4-panel
    - XfcePanelPluginMode enum: deskbar
@@ -206,7 +207,7 @@ PASS xfce4-panel
    - all 11 plugins: .desktop -> module -> xfce_panel_module_init registers an XfcePanelPlugin type
    - default panel layout (xfconf XML) installed
    - scratch directory
-   - xfce4-panel --version: 4.20.0
+   - xfce4-panel --version: 4.20.8
    - xfce4-panel --help lists --preferences, --add
    - XfceArrowButton: arrow up
    - XfceArrowButton: set arrow left, blinking
@@ -226,22 +227,24 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-panel=<version>`), sources in `ported/xfce4-panel/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-panel`; port one with `scripts/port-update xfce4-panel`.
+This recipe builds **4.20.8**. Kept from earlier: `4.20.0` ([recipe and patches](versions/4.20.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-panel=<version>`), sources in `ported/xfce4-panel/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-panel`; port one with `scripts/port-update xfce4-panel`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
+VERSION=4.20.8
 # Release tarball, as for every Xfce package here -- see README hazard 74.
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.0.tar.bz2
-SHA256=ff33cd5f5d16c2193fe305f4878d82cd8d2feea92f2594bcd27b2b5c392d43b8
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-panel/4.20/xfce4-panel-4.20.8.tar.bz2
+SHA256=d69cb1f377953aeb1fb9bdbcef12c246bea66586e3f2868f3b758e0e8ce3d3fe
 DEPS="glib gtk3 libxfce4util libxfce4ui xfconf garcon exo libxfce4windowing gtk-layer-shell wayland wayland-protocols"
 BUILDSYS=autotools
 # Wayland only, matching libxfce4windowing, which was built --disable-x11: the
 # panel's X11 half needs libwnck, and libwnck's window tracking is X11 through
 # and through.  gtk-layer-shell is what lets the panel anchor itself to a screen
 # edge under a wlroots-style compositor.
-CONF_ENV=( WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" )
+# glib-compile-resources runs at build time: the build host's, not the staged QNX
+# one that gio-2.0.pc names (4.20.x asks pkg-config for it).
+CONF_ENV=( WAYLAND_SCANNER="$WS/hosttools/bin/wayland-scanner" GLIB_COMPILE_RESOURCES=/usr/bin/glib-compile-resources )
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-gtk-doc
                   --disable-introspection --disable-vala --disable-x11
                   --enable-wayland --enable-gtk-layer-shell )

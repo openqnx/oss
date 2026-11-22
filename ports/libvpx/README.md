@@ -1,4 +1,4 @@
-# libvpx 1.15.0
+# libvpx 1.17.0
 
 > WebM VP8/VP9 video codec library and tools
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://chromium.googlesource.com/webm/libvpx (tag `v1.15.0`) |
+| Upstream | https://chromium.googlesource.com/webm/libvpx (tag `v1.17.0`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.15.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.17.0 --recurse-submodules --shallow-submodules \
     https://chromium.googlesource.com/webm/libvpx src/libvpx
 ```
 
@@ -136,9 +136,9 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libvpx`.
 
 ```
 /usr/local/lib/libvpx.so
-/usr/local/lib/libvpx.so.9
-/usr/local/lib/libvpx.so.9.1
-/usr/local/lib/libvpx.so.9.1.0
+/usr/local/lib/libvpx.so.12
+/usr/local/lib/libvpx.so.12.1
+/usr/local/lib/libvpx.so.12.1.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libvpx` after a build.
@@ -219,12 +219,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.15.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libvpx=<version>`), sources in `ported/libvpx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libvpx`; port one with `scripts/port-update libvpx`.
+This recipe builds **1.17.0**. Kept from earlier: `1.15.0` ([recipe and patches](versions/1.15.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libvpx=<version>`), sources in `ported/libvpx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libvpx`; port one with `scripts/port-update libvpx`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.15.0; GIT=https://chromium.googlesource.com/webm/libvpx; REF=v1.15.0
+VERSION=1.17.0; GIT=https://chromium.googlesource.com/webm/libvpx; REF=v1.17.0
 BUILDSYS=custom
 # libvpx has a hand-written configure driven by a --target triple of its own.
 do_configure() {

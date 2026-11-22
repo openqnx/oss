@@ -1,4 +1,4 @@
-# gpgme 2.2.0
+# gpgme 2.3.1
 
 > GnuPG Made Easy
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.2.0.tar.bz2 |
-| SHA-256 | `7160e80e84dafd00d956c84891c533bb7ab16a6a54fbe1574b2f3acf0496977b` |
+| Upstream | https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.3.1.tar.bz2 |
+| SHA-256 | `2bf94e0e677e5a8fc31f79dd323f91c5416b36fb851058bc1e8bce39f2642434` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libgpg-error`](../libgpg-error/) [`libassuan`](../libassuan/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.2.0.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.3.1.tar.bz2
 mkdir -p dist src/gpgme
 curl -fL -o dist/$(basename $URL) $URL
-echo "7160e80e84dafd00d956c84891c533bb7ab16a6a54fbe1574b2f3acf0496977b  dist/$(basename $URL)" | sha256sum -c -
+echo "2bf94e0e677e5a8fc31f79dd323f91c5416b36fb851058bc1e8bce39f2642434  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gpgme --strip-components=1
 ```
 
@@ -131,7 +131,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gpgme`.
 
 ```
 /usr/local/lib/libgpgme.so
-/usr/local/lib/libgpgme.so.47
+/usr/local/lib/libgpgme.so.48
 /usr/local/bin/gnupg-key-manage
 /usr/local/bin/gpgme-config
 /usr/local/bin/gpgme-json
@@ -196,7 +196,7 @@ PASS gpgme
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_gpgme`](../../tests/src/) -- a program linked against gpgme the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - gpgme_check_version: 2.2.0
+   - gpgme_check_version: 2.3.1
    - OpenPGP engine usable
    - scratch GNUPGHOMEs
    - OpenPGP engine: gpg 2.4.9
@@ -231,7 +231,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gpgme=<version>`), sources in `ported/gpgme/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gpgme`; port one with `scripts/port-update gpgme`.
+This recipe builds **2.3.1**. Kept from earlier: `2.2.0` ([recipe and patches](versions/2.2.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gpgme=<version>`), sources in `ported/gpgme/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gpgme`; port one with `scripts/port-update gpgme`.
 
 <details><summary>recipe.sh</summary>
 
@@ -239,9 +239,9 @@ This recipe builds **2.2.0**. Every version stays available: packages in `dists/
 # GPGME, GnuPG Made Easy: the C library through which applications use GnuPG
 # (it runs gpg, gpgsm and gpgconf from the gnupg component and talks to them
 # over pipes and Assuan).
-VERSION=2.2.0
-TARBALL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.2.0.tar.bz2
-SHA256=7160e80e84dafd00d956c84891c533bb7ab16a6a54fbe1574b2f3acf0496977b
+VERSION=2.3.1
+TARBALL=https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.3.1.tar.bz2
+SHA256=2bf94e0e677e5a8fc31f79dd323f91c5416b36fb851058bc1e8bce39f2642434
 BUILDSYS=autotools
 DEPS="libgpg-error libassuan"
 RUNTIME_DEPS="gnupg"

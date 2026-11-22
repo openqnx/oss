@@ -1,4 +1,4 @@
-# zlib-ng 2.2.5
+# zlib-ng 2.3.3
 
 > zlib data compression library for next generation systems, native API
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/zlib-ng/zlib-ng.git (tag `2.2.5`) |
+| Upstream | https://github.com/zlib-ng/zlib-ng.git (tag `2.3.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.2.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.3.3 --recurse-submodules --shallow-submodules \
     https://github.com/zlib-ng/zlib-ng.git src/zlib-ng
 ```
 
@@ -109,7 +109,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH zlib-ng`.
 ```
 /usr/local/lib/libz-ng.so
 /usr/local/lib/libz-ng.so.2
-/usr/local/lib/libz-ng.so.2.2.5
+/usr/local/lib/libz-ng.so.2.3.3
 ```
 
 The complete list is `stage/<arch>/.manifest/zlib-ng` after a build.
@@ -197,14 +197,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zlib-ng=<version>`), sources in `ported/zlib-ng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zlib-ng`; port one with `scripts/port-update zlib-ng`.
+This recipe builds **2.3.3**. Kept from earlier: `2.2.5` ([recipe and patches](versions/2.2.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zlib-ng=<version>`), sources in `ported/zlib-ng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zlib-ng`; port one with `scripts/port-update zlib-ng`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # zlib-ng (zlib with SIMD optimisations), its native API (libz-ng) next to
 # the zlib component. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.2.5; GIT=https://github.com/zlib-ng/zlib-ng.git; REF=2.2.5
+VERSION=2.3.3; GIT=https://github.com/zlib-ng/zlib-ng.git; REF=2.3.3
 CMAKE_ARGS_EXTRA=( -DZLIB_COMPAT=OFF -DZLIB_ENABLE_TESTS=OFF -DZLIBNG_ENABLE_TESTS=OFF -DWITH_GTEST=OFF -DBUILD_SHARED_LIBS=ON )
 ```
 </details>

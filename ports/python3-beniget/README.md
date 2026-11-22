@@ -1,4 +1,4 @@
-# python3-beniget 0.5.0
+# python3-beniget 0.5.1
 
 > Static analysis of Python code: definition-use chains on a gast tree
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/66/24/0bef8a8bbf403b536fb2368b6c3fb5f6669b3ef7fdbc2456a3affdd19836/beniget-0.5.0-py3-none-any.whl |
-| SHA-256 | `909efcd083af1ac4a5db311f57c415df8cb05c4307eda345edeafac3cd930043` |
+| Upstream | https://files.pythonhosted.org/packages/33/40/6840c2e7d29b791702202c6e9da224cc189fdb3f28a72de43fa328c29753/beniget-0.5.1-py3-none-any.whl |
+| SHA-256 | `c57375e04fa8c812d2f3650900bbb393615810e49673e9a62de329e1b3696938` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-gast`](../python3-gast/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/66/24/0bef8a8bbf403b536fb2368b6c3fb5f6669b3ef7fdbc2456a3affdd19836/beniget-0.5.0-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/33/40/6840c2e7d29b791702202c6e9da224cc189fdb3f28a72de43fa328c29753/beniget-0.5.1-py3-none-any.whl
 mkdir -p dist src/python3-beniget
 curl -fL -o dist/$(basename $URL) $URL
-echo "909efcd083af1ac4a5db311f57c415df8cb05c4307eda345edeafac3cd930043  dist/$(basename $URL)" | sha256sum -c -
+echo "c57375e04fa8c812d2f3650900bbb393615810e49673e9a62de329e1b3696938  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-beniget --strip-components=1
 ```
 
@@ -203,7 +203,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-beniget=<version>`), sources in `ported/python3-beniget/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-beniget`; port one with `scripts/port-update python3-beniget`.
+This recipe builds **0.5.1**. Kept from earlier: `0.5.0` ([recipe and patches](versions/0.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-beniget=<version>`), sources in `ported/python3-beniget/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-beniget`; port one with `scripts/port-update python3-beniget`.
 
 <details><summary>recipe.sh</summary>
 
@@ -211,9 +211,9 @@ This recipe builds **0.5.0**. Every version stays available: packages in `dists/
 # beniget: def-use chains and scopes over a gast tree (pythran's analyses).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=0.5.0
-TARBALL=https://files.pythonhosted.org/packages/66/24/0bef8a8bbf403b536fb2368b6c3fb5f6669b3ef7fdbc2456a3affdd19836/beniget-0.5.0-py3-none-any.whl
-SHA256=909efcd083af1ac4a5db311f57c415df8cb05c4307eda345edeafac3cd930043
+VERSION=0.5.1
+TARBALL=https://files.pythonhosted.org/packages/33/40/6840c2e7d29b791702202c6e9da224cc189fdb3f28a72de43fa328c29753/beniget-0.5.1-py3-none-any.whl
+SHA256=c57375e04fa8c812d2f3650900bbb393615810e49673e9a62de329e1b3696938
 DEPS="python3 python3-gast"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-gast"

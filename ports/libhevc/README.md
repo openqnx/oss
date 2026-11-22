@@ -1,4 +1,4 @@
-# libhevc 1.8.5
+# libhevc 1.8.7
 
 > Android's HEVC (H.265) video decoder and encoder libraries
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ittiam-systems/libhevc.git (tag `v1.8.5`) |
+| Upstream | https://github.com/ittiam-systems/libhevc.git (tag `v1.8.7`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,28 +72,17 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.8.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.8.7 --recurse-submodules --shallow-submodules \
     https://github.com/ittiam-systems/libhevc.git src/libhevc
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/libhevc < ports/libhevc/patches/0001-cmake-enable-tests-option.patch
 patch -p1 -d src/libhevc < ports/libhevc/patches/0002-encoder-qnx-thread-id.patch
 ```
-
-**[`0001-cmake-enable-tests-option.patch`](patches/0001-cmake-enable-tests-option.patch)** — Make the googletest unit tests optional (ENABLE_TESTS).
-
-> v1.8.5 fetches googletest (FetchContent, from github.com) at configure time
-> and builds its unit tests unconditionally; a cross build for QNX can neither
-> run them nor should it download anything while configuring. Put both behind
-> an ENABLE_TESTS option (default ON, as upstream's development branch does
-> since), which the recipe turns off.
-
-Touches: `CMakeLists.txt` · Upstream status: Pending
 
 **[`0002-encoder-qnx-thread-id.patch`](patches/0002-encoder-qnx-thread-id.patch)** — Encoder OS layer: no Linux headers, pthread_self() as thread id on QNX.
 
@@ -224,7 +213,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libhevc=<version>`), sources in `ported/libhevc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libhevc`; port one with `scripts/port-update libhevc`.
+This recipe builds **1.8.7**. Kept from earlier: `1.8.5` ([recipe and patches](versions/1.8.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libhevc=<version>`), sources in `ported/libhevc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libhevc`; port one with `scripts/port-update libhevc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -232,7 +221,7 @@ This recipe builds **1.8.5**. Every version stays available: packages in `dists/
 # libhevc: Android's HEVC (H.265) video decoder and encoder libraries (from
 # Ittiam, the code behind Android's software HEVC codecs), with the hevcdec
 # and hevcenc example programs.
-VERSION=1.8.5; GIT=https://github.com/ittiam-systems/libhevc.git; REF=v1.8.5
+VERSION=1.8.7; GIT=https://github.com/ittiam-systems/libhevc.git; REF=v1.8.7
 BUILDSYS=cmake
 # SYSTEM_NAME/SYSTEM_PROCESSOR pick the SIMD code; they default to the build
 # machine's. aarch64: the NEON assembly and intrinsics; x86_64: the SSSE3/SSE4.2

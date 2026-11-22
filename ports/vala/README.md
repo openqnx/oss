@@ -1,4 +1,4 @@
-# vala 0.56.18
+# vala 0.56.19
 
 > Vala compiler (valac), translating Vala to C over GLib/GObject
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.gnome.org/sources/vala/0.56/vala-0.56.18.tar.xz |
-| SHA-256 | `f2affe7d40ab63db8e7b9ecc3f6bdc9c2fc7e3134c84ff2d795f482fe926a382` |
+| Upstream | https://download.gnome.org/sources/vala/0.56/vala-0.56.19.tar.xz |
+| SHA-256 | `5ad7cbbfcc0de61b403d6797c9ef60455bfbebd8e162aec33b5b0b097adfb9d5` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gettext`](../gettext/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.gnome.org/sources/vala/0.56/vala-0.56.18.tar.xz
+URL=https://download.gnome.org/sources/vala/0.56/vala-0.56.19.tar.xz
 mkdir -p dist src/vala
 curl -fL -o dist/$(basename $URL) $URL
-echo "f2affe7d40ab63db8e7b9ecc3f6bdc9c2fc7e3134c84ff2d795f482fe926a382  dist/$(basename $URL)" | sha256sum -c -
+echo "5ad7cbbfcc0de61b403d6797c9ef60455bfbebd8e162aec33b5b0b097adfb9d5  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/vala --strip-components=1
 ```
 
@@ -204,7 +204,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.56.18**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vala=<version>`), sources in `ported/vala/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vala`; port one with `scripts/port-update vala`.
+This recipe builds **0.56.19**. Kept from earlier: `0.56.18` ([recipe and patches](versions/0.56.18/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vala=<version>`), sources in `ported/vala/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vala`; port one with `scripts/port-update vala`.
 
 <details><summary>recipe.sh</summary>
 
@@ -216,9 +216,9 @@ This recipe builds **0.56.18**. Every version stays available: packages in `dist
 # Vala needed. On a QNX target without a C compiler, valac -C (and
 # --header, --vapi) produce the C sources to build elsewhere. Version as in
 # QNX's own package list.
-VERSION=0.56.18
-TARBALL=https://download.gnome.org/sources/vala/0.56/vala-0.56.18.tar.xz
-SHA256=f2affe7d40ab63db8e7b9ecc3f6bdc9c2fc7e3134c84ff2d795f482fe926a382
+VERSION=0.56.19
+TARBALL=https://download.gnome.org/sources/vala/0.56/vala-0.56.19.tar.xz
+SHA256=5ad7cbbfcc0de61b403d6797c9ef60455bfbebd8e162aec33b5b0b097adfb9d5
 BUILDSYS=autotools
 DEPS="glib gettext"
 # valadoc needs graphviz (libgvc); not built.

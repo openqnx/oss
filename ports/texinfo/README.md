@@ -1,4 +1,4 @@
-# texinfo 7.2
+# texinfo 7.3
 
 > GNU documentation system: makeinfo/texi2any, the info reader, install-info, texindex
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz |
-| SHA-256 | `0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6` |
+| Upstream | https://ftp.gnu.org/gnu/texinfo/texinfo-7.3.tar.xz |
+| SHA-256 | `51f74eb0f51cfa9873b85264dfdd5d46e8957ec95b88f0fb762f63d9e164c72e` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`ncurses`](../ncurses/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz
+URL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.3.tar.xz
 mkdir -p dist src/texinfo
 curl -fL -o dist/$(basename $URL) $URL
-echo "0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6  dist/$(basename $URL)" | sha256sum -c -
+echo "51f74eb0f51cfa9873b85264dfdd5d46e8957ec95b88f0fb762f63d9e164c72e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/texinfo --strip-components=1
 ```
 
@@ -119,7 +119,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH texinfo`.
 
 ### 5. What it installs
 
-495 files under `/usr/local`, 9 programs.
+517 files under `/usr/local`, 9 programs.
 
 ```
 /usr/local/bin/info
@@ -203,7 +203,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **7.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add texinfo=<version>`), sources in `ported/texinfo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates texinfo`; port one with `scripts/port-update texinfo`.
+This recipe builds **7.3**. Kept from earlier: `7.2` ([recipe and patches](versions/7.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add texinfo=<version>`), sources in `ported/texinfo/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates texinfo`; port one with `scripts/port-update texinfo`.
 
 <details><summary>recipe.sh</summary>
 
@@ -212,9 +212,9 @@ This recipe builds **7.2**. Every version stays available: packages in `dists/8.
 # DocBook, LaTeX), the stand-alone info reader, install-info, texindex and
 # the texi2dvi/texi2pdf drivers (which need TeX). Version as in QNX's own
 # package list.
-VERSION=7.2
-TARBALL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz
-SHA256=0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6
+VERSION=7.3
+TARBALL=https://ftp.gnu.org/gnu/texinfo/texinfo-7.3.tar.xz
+SHA256=51f74eb0f51cfa9873b85264dfdd5d46e8957ec95b88f0fb762f63d9e164c72e
 # ncurses: the info reader's terminal handling (tgetent).
 DEPS="ncurses"
 # texi2any, makeinfo and pod2texi are Perl programs (with Text::Unidecode,

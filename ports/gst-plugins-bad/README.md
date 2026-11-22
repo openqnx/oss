@@ -9,8 +9,8 @@
 | Upstream | see recipe.sh |
 | Build system | Meson |
 | QNX patches | 0 |
-| Build dependencies | [`gst-plugins-base`](../gst-plugins-base/) [`x265`](../x265/) [`openh264`](../openh264/) [`aom`](../aom/) [`svt-av1`](../svt-av1/) [`fdk-aac`](../fdk-aac/) [`libwebp`](../libwebp/) [`openssl`](../openssl/) [`pango`](../pango/) [`cairo`](../cairo/) |
-| Run-time dependencies | [`aom`](../aom/) [`cairo`](../cairo/) [`fdk-aac`](../fdk-aac/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`libwebp`](../libwebp/) [`openh264`](../openh264/) [`pango`](../pango/) [`svt-av1`](../svt-av1/) [`x265`](../x265/) |
+| Build dependencies | [`gst-plugins-base`](../gst-plugins-base/) [`x265`](../x265/) [`openh264`](../openh264/) [`aom`](../aom/) [`svt-av1`](../svt-av1/) [`fdk-aac`](../fdk-aac/) [`libwebp`](../libwebp/) [`openssl`](../openssl/) [`pango`](../pango/) [`cairo`](../cairo/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libdrm-headers`](../libdrm-headers/) |
+| Run-time dependencies | [`aom`](../aom/) [`cairo`](../cairo/) [`fdk-aac`](../fdk-aac/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`libwebp`](../libwebp/) [`openh264`](../openh264/) [`pango`](../pango/) [`svt-av1`](../svt-av1/) [`wayland`](../wayland/) [`x265`](../x265/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gst_plugins_bad`](../../tests/src/) |
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (56 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (59 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo
+./scripts/qnxbuild gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo wayland wayland-protocols libdrm-headers
 ```
 
-<details><summary>Full build chain (56)</summary>
+<details><summary>Full build chain (59)</summary>
 
-[`aom`](../aom/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`expat`](../expat/) [`fdk-aac`](../fdk-aac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`expat`](../expat/) [`fdk-aac`](../fdk-aac/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libdrm-headers`](../libdrm-headers/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -90,94 +90,26 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_configure`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-meson setup build/$QNX_ARCH/gst-plugins-bad src/gst-plugins-bad/subprojects/gst-plugins-bad \
-      --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
-      --native-file $QNX_MESON_DIR/meson-native.ini \
-      --prefix=/usr/local --buildtype=release --default-library=both \
-      -Dtests=disabled \
-      -Dexamples=disabled \
-      -Ddoc=disabled \
-      -Dnls=enabled \
-      -Dauto_features=disabled \
-      -Dgpl=enabled \
-      # \
-      codecs \
-      we \
-      built \
-      from \
-      source \
-      in \
-      this \
-      workspace \
-      -Dx265=enabled \
-      -Dopenh264=enabled \
-      -Daom=enabled \
-      -Dsvtav1=enabled \
-      -Dfdkaac=enabled \
-      -Dwebp=enabled \
-      # \
-      pure-C \
-      element \
-      sets \
-      with \
-      no \
-      external \
-      dependency \
-      -Dvideoparsers=enabled \
-      -Dmpegtsdemux=enabled \
-      -Dmpegtsmux=enabled \
-      -Dmpegpsmux=enabled \
-      -Dclosedcaption=enabled \
-      -Dcodecalpha=enabled \
-      -Dcodectimestamper=enabled \
-      -Dinterlace=enabled \
-      -Divfparse=enabled \
-      -Divtc=enabled \
-      -Djpegformat=enabled \
-      -Dmxf=enabled \
-      -Dpcapparse=enabled \
-      -Dsdp=enabled \
-      -Dsegmentclip=enabled \
-      -Dsiren=enabled \
-      -Dspeed=enabled \
-      -Dsubenc=enabled \
-      -Dtimecode=enabled \
-      -Dvideofilters=enabled \
-      -Dvideoframe_audiolevel=enabled \
-      -Dy4m=enabled \
-      -Daudiobuffersplit=enabled \
-      -Daudiolatency=enabled \
-      -Daudiomixmatrix=enabled \
-      -Dautoconvert=enabled \
-      -Dbayer=enabled \
-      -Dcamerabin2=enabled \
-      -Ddebugutils=enabled \
-      -Dfieldanalysis=enabled \
-      -Dfreeverb=enabled \
-      -Dgaudieffects=enabled \
-      -Dgeometrictransform=enabled \
-      -Dinter=enabled \
-      -Dproxy=enabled \
-      -Drawparse=enabled \
-      -Dremovesilence=enabled \
-      -Dsmooth=enabled \
-      -Dspeed=enabled \
-      -Dvideosignal=enabled \
-      -Dwebrtcdsp=disabled
-ninja -C build/$QNX_ARCH/gst-plugins-bad
-DESTDIR=$STAGE ninja -C build/$QNX_ARCH/gst-plugins-bad install
+S=src/gst-plugins-bad/subprojects/gst-plugins-bad; B=build/$QNX_ARCH/gst-plugins-bad; mkdir -p $B
+```
+
+```bash
+do_configure() { qnx_sdp_pc && qnx_meson_setup; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - This plugin set probes for well over a hundred optional dependencies, most of them desktop-Linux only. Turn the auto-detection off and name what we ported.
+- waylandsink (video in a window on the desktop: labwc / any Wayland compositor) needs only drm_fourcc.h from libdrm; the SDP's libdrm.so is found through scripts/lib/sdp-pc.sh, as for wlroots.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gst-plugins-bad`.
 
 ### 5. What it installs
 
-366 files under `/usr/local`: 50 shared-library entries, 95 headers.
+385 files under `/usr/local`: 53 shared-library entries, 106 headers.
 
 ```
 /usr/local/lib/libgstadaptivedemux-1.0.so
@@ -290,7 +222,7 @@ This recipe builds **1.24.10**. Every version stays available: packages in `dist
 VERSION=1.24.10
 SRCROOT="$SRC_DIR/gstreamer"
 SUBDIR=subprojects/gst-plugins-bad
-DEPS="gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo"
+DEPS="gst-plugins-base x265 openh264 aom svt-av1 fdk-aac libwebp openssl pango cairo wayland wayland-protocols libdrm-headers"
 BUILDSYS=meson
 # This plugin set probes for well over a hundred optional dependencies, most of
 # them desktop-Linux only. Turn the auto-detection off and name what we ported.
@@ -314,7 +246,13 @@ MESON_ARGS_EXTRA=(
   -Dfreeverb=enabled -Dgaudieffects=enabled -Dgeometrictransform=enabled
   -Dinter=enabled -Dproxy=enabled -Drawparse=enabled -Dremovesilence=enabled
   -Dsmooth=enabled -Dspeed=enabled -Dvideosignal=enabled -Dwebrtcdsp=disabled
+  -Dwayland=enabled
 )
+# waylandsink (video in a window on the desktop: labwc / any Wayland
+# compositor) needs only drm_fourcc.h from libdrm; the SDP's libdrm.so is
+# found through scripts/lib/sdp-pc.sh, as for wlroots.
+source "$WS/scripts/lib/sdp-pc.sh"
+do_configure() { qnx_sdp_pc && qnx_meson_setup; }
 ```
 </details>
 

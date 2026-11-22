@@ -1,4 +1,4 @@
-# apr-util 1.6.5
+# apr-util 1.6.6
 
 > Apache Portable Runtime utility library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.apache.org/dist/apr/apr-util-1.6.5.tar.bz2 |
-| SHA-256 | `96de1dd6f6a0476d2d2e7964926d8c1ddc3bb0e210e1b1812d3ba5a454a392e2` |
+| Upstream | https://archive.apache.org/dist/apr/apr-util-1.6.6.tar.bz2 |
+| SHA-256 | `aa77dd25f036731b7246abbfbebe6cc813b42799b62c874bc82bd4e1f90f2918` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`apr`](../apr/) [`expat`](../expat/) [`openssl`](../openssl/) [`sqlite`](../sqlite/) [`libiconv`](../libiconv/) [`libxcrypt`](../libxcrypt/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.apache.org/dist/apr/apr-util-1.6.5.tar.bz2
+URL=https://archive.apache.org/dist/apr/apr-util-1.6.6.tar.bz2
 mkdir -p dist src/apr-util
 curl -fL -o dist/$(basename $URL) $URL
-echo "96de1dd6f6a0476d2d2e7964926d8c1ddc3bb0e210e1b1812d3ba5a454a392e2  dist/$(basename $URL)" | sha256sum -c -
+echo "aa77dd25f036731b7246abbfbebe6cc813b42799b62c874bc82bd4e1f90f2918  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/apr-util --strip-components=1
 ```
 
@@ -130,7 +130,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH apr-util`.
 ```
 /usr/local/lib/libaprutil-1.so
 /usr/local/lib/libaprutil-1.so.0
-/usr/local/lib/libaprutil-1.so.0.6.5
+/usr/local/lib/libaprutil-1.so.0.6.6
 /usr/local/bin/apu-1-config
 ```
 
@@ -230,14 +230,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.6.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add apr-util=<version>`), sources in `ported/apr-util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates apr-util`; port one with `scripts/port-update apr-util`.
+This recipe builds **1.6.6**. Kept from earlier: `1.6.5` ([recipe and patches](versions/1.6.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add apr-util=<version>`), sources in `ported/apr-util/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates apr-util`; port one with `scripts/port-update apr-util`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.6.5
-TARBALL=https://archive.apache.org/dist/apr/apr-util-1.6.5.tar.bz2
-SHA256=96de1dd6f6a0476d2d2e7964926d8c1ddc3bb0e210e1b1812d3ba5a454a392e2
+VERSION=1.6.6
+TARBALL=https://archive.apache.org/dist/apr/apr-util-1.6.6.tar.bz2
+SHA256=aa77dd25f036731b7246abbfbebe6cc813b42799b62c874bc82bd4e1f90f2918
 BUILDSYS=autotools
 DEPS="apr expat openssl sqlite libiconv libxcrypt"
 # apr-1-config run from staging answers with staging paths (its

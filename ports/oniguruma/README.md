@@ -1,4 +1,4 @@
-# oniguruma 6.9.9
+# oniguruma 6.9.10
 
 > Regular expression library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/kkos/oniguruma.git (tag `v6.9.9`) |
+| Upstream | https://github.com/kkos/oniguruma.git (tag `v6.9.10`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v6.9.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v6.9.10 --recurse-submodules --shallow-submodules \
     https://github.com/kkos/oniguruma.git src/oniguruma
 ```
 
@@ -103,7 +103,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH oniguruma`.
 ```
 /usr/local/lib/libonig.so
 /usr/local/lib/libonig.so.5
-/usr/local/lib/libonig.so.5.4.0
+/usr/local/lib/libonig.so.5.5.0
 /usr/local/bin/onig-config
 ```
 
@@ -184,12 +184,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.9.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add oniguruma=<version>`), sources in `ported/oniguruma/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates oniguruma`; port one with `scripts/port-update oniguruma`.
+This recipe builds **6.9.10**. Kept from earlier: `6.9.9` ([recipe and patches](versions/6.9.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add oniguruma=<version>`), sources in `ported/oniguruma/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates oniguruma`; port one with `scripts/port-update oniguruma`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.9.9; GIT=https://github.com/kkos/oniguruma.git; REF=v6.9.9
+VERSION=6.9.10; GIT=https://github.com/kkos/oniguruma.git; REF=v6.9.10
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TEST=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

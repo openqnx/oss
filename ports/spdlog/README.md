@@ -1,4 +1,4 @@
-# spdlog 1.15.3
+# spdlog 1.17.0
 
 > Fast C++ logging library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/gabime/spdlog.git (tag `v1.15.3`) |
+| Upstream | https://github.com/gabime/spdlog.git (tag `v1.17.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`fmt`](../fmt/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.15.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.17.0 --recurse-submodules --shallow-submodules \
     https://github.com/gabime/spdlog.git src/spdlog
 ```
 
@@ -108,8 +108,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH spdlog`.
 
 ```
 /usr/local/lib/libspdlog.so
-/usr/local/lib/libspdlog.so.1.15
-/usr/local/lib/libspdlog.so.1.15.3
+/usr/local/lib/libspdlog.so.1.17
+/usr/local/lib/libspdlog.so.1.17.0
 ```
 
 The complete list is `stage/<arch>/.manifest/spdlog` after a build.
@@ -186,12 +186,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.15.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add spdlog=<version>`), sources in `ported/spdlog/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates spdlog`; port one with `scripts/port-update spdlog`.
+This recipe builds **1.17.0**. Kept from earlier: `1.15.3` ([recipe and patches](versions/1.15.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add spdlog=<version>`), sources in `ported/spdlog/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates spdlog`; port one with `scripts/port-update spdlog`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.15.3; GIT=https://github.com/gabime/spdlog.git; REF=v1.15.3
+VERSION=1.17.0; GIT=https://github.com/gabime/spdlog.git; REF=v1.17.0
 DEPS="fmt"
 CMAKE_ARGS_EXTRA=( -DSPDLOG_BUILD_EXAMPLE=OFF -DSPDLOG_BUILD_TESTS=OFF
                    -DSPDLOG_FMT_EXTERNAL=ON -DBUILD_SHARED_LIBS=ON

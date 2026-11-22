@@ -1,4 +1,4 @@
-# libgsf 1.14.53
+# libgsf 1.14.60
 
 > Library for reading and writing structured files (MS OLE, Zip)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/libgsf.git (tag `LIBGSF_1_14_53`) |
+| Upstream | https://gitlab.gnome.org/GNOME/libgsf.git (tag `LIBGSF_1_14_60`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b LIBGSF_1_14_53 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b LIBGSF_1_14_60 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/libgsf.git src/libgsf
 ```
 
@@ -120,7 +120,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libgsf`.
 
 ### 5. What it installs
 
-109 files under `/usr/local`: 2 shared-library entries, 3 programs, 49 headers.
+110 files under `/usr/local`: 2 shared-library entries, 3 programs, 49 headers.
 
 ```
 /usr/local/lib/libgsf-1.so
@@ -222,12 +222,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.14.53**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgsf=<version>`), sources in `ported/libgsf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgsf`; port one with `scripts/port-update libgsf`.
+This recipe builds **1.14.60**. Kept from earlier: `1.14.53` ([recipe and patches](versions/1.14.53/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libgsf=<version>`), sources in `ported/libgsf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libgsf`; port one with `scripts/port-update libgsf`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.14.53; GIT=https://gitlab.gnome.org/GNOME/libgsf.git; REF=LIBGSF_1_14_53
+VERSION=1.14.60; GIT=https://gitlab.gnome.org/GNOME/libgsf.git; REF=LIBGSF_1_14_60
 DEPS="glib libxml2 zlib bzip2"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --without-gdk-pixbuf

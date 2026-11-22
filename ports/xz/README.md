@@ -1,16 +1,16 @@
-# xz 5.6.3
+# xz 5.8.4
 
 > XZ Utils, LZMA compression library and tools
 
-**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
+**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
 
 | | |
 |---|---|
-| Upstream | https://github.com/tukaani-project/xz.git (tag `v5.6.3`) |
+| Upstream | https://github.com/tukaani-project/xz.git (tag `v5.8.4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`gettext`](../gettext/) |
-| Run-time dependencies | [`gettext`](../gettext/) |
+| Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_xz`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v5.6.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v5.8.4 --recurse-submodules --shallow-submodules \
     https://github.com/tukaani-project/xz.git src/xz
 ```
 
@@ -108,12 +108,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xz`.
 
 ### 5. What it installs
 
-110 files under `/usr/local`: 3 shared-library entries, 23 programs, 15 headers.
+87 files under `/usr/local`: 3 shared-library entries, 23 programs, 15 headers.
 
 ```
 /usr/local/lib/liblzma.so
 /usr/local/lib/liblzma.so.5
-/usr/local/lib/liblzma.so.5.6.3
+/usr/local/lib/liblzma.so.5.8.4
 /usr/local/bin/lzcat
 /usr/local/bin/lzcmp
 /usr/local/bin/lzdiff
@@ -207,12 +207,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.6.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xz=<version>`), sources in `ported/xz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xz`; port one with `scripts/port-update xz`.
+This recipe builds **5.8.4**. Kept from earlier: `5.6.3` ([recipe and patches](versions/5.6.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xz=<version>`), sources in `ported/xz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xz`; port one with `scripts/port-update xz`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=5.6.3; GIT=https://github.com/tukaani-project/xz.git; REF=v5.6.3
+VERSION=5.8.4; GIT=https://github.com/tukaani-project/xz.git; REF=v5.8.4
 DEPS="gettext"   # links -lintl; undeclared, it found the SDP's libintl
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
                    -DXZ_NLS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

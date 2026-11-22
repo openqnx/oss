@@ -1,4 +1,4 @@
-# xxhash 0.8.2
+# xxhash 0.8.4
 
 > Fast non-cryptographic hash algorithm library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/Cyan4973/xxHash.git (tag `v0.8.2`) |
+| Upstream | https://github.com/Cyan4973/xxHash.git (tag `v0.8.4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,11 +72,11 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.8.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.8.4 --recurse-submodules --shallow-submodules \
     https://github.com/Cyan4973/xxHash.git src/xxhash
 ```
 
-The project lives in the `cmake_unofficial/` subdirectory of the repository.
+The project lives in the `build/cmake/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
@@ -85,7 +85,7 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 ### 4. Configure, build and install into the staging tree
 
 ```bash
-cmake -S src/xxhash/cmake_unofficial -B build/$QNX_ARCH/xxhash -G Ninja \
+cmake -S src/xxhash/build/cmake -B build/$QNX_ARCH/xxhash -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
@@ -105,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH xxhash`.
 ```
 /usr/local/lib/libxxhash.so
 /usr/local/lib/libxxhash.so.0
-/usr/local/lib/libxxhash.so.0.8.2
+/usr/local/lib/libxxhash.so.0.8.4
 ```
 
 The complete list is `stage/<arch>/.manifest/xxhash` after a build.
@@ -185,13 +185,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.8.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xxhash=<version>`), sources in `ported/xxhash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xxhash`; port one with `scripts/port-update xxhash`.
+This recipe builds **0.8.4**. Kept from earlier: `0.8.2` ([recipe and patches](versions/0.8.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xxhash=<version>`), sources in `ported/xxhash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xxhash`; port one with `scripts/port-update xxhash`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.8.2; GIT=https://github.com/Cyan4973/xxHash.git; REF=v0.8.2
-SUBDIR=cmake_unofficial
+VERSION=0.8.4; GIT=https://github.com/Cyan4973/xxHash.git; REF=v0.8.4
+SUBDIR=build/cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DXXHASH_BUILD_XXHSUM=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

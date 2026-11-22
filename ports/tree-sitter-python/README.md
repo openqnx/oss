@@ -1,4 +1,4 @@
-# tree-sitter-python 0.23.6
+# tree-sitter-python 0.25.0
 
 > Python grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter/tree-sitter-python.git (tag `v0.23.6`) |
+| Upstream | https://github.com/tree-sitter/tree-sitter-python.git (tag `v0.25.0`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.23.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.25.0 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter/tree-sitter-python.git src/tree-sitter-python
 ```
 
@@ -183,14 +183,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.23.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-python=<version>`), sources in `ported/tree-sitter-python/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-python`; port one with `scripts/port-update tree-sitter-python`.
+This recipe builds **0.25.0**. Kept from earlier: `0.23.6` ([recipe and patches](versions/0.23.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-python=<version>`), sources in `ported/tree-sitter-python/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-python`; port one with `scripts/port-update tree-sitter-python`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: python. Installs lib/tree-sitter/python.so (the parser
 # Neovim and the tree-sitter library load). Version as in QNX's repository.
-VERSION=0.23.6; GIT=https://github.com/tree-sitter/tree-sitter-python.git; REF=v0.23.6
+VERSION=0.25.0; GIT=https://github.com/tree-sitter/tree-sitter-python.git; REF=v0.25.0
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

@@ -1,4 +1,4 @@
-# libogg 1.3.5
+# libogg 1.3.6
 
 > Library for the Ogg multimedia bitstream container format
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/xiph/ogg.git (tag `v1.3.5`) |
+| Upstream | https://github.com/xiph/ogg.git (tag `v1.3.6`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.3.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.3.6 --recurse-submodules --shallow-submodules \
     https://github.com/xiph/ogg.git src/libogg
 ```
 
@@ -104,7 +104,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libogg`.
 ```
 /usr/local/lib/libogg.so
 /usr/local/lib/libogg.so.0
-/usr/local/lib/libogg.so.0.8.5
+/usr/local/lib/libogg.so.0.8.6
 ```
 
 The complete list is `stage/<arch>/.manifest/libogg` after a build.
@@ -188,12 +188,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libogg=<version>`), sources in `ported/libogg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libogg`; port one with `scripts/port-update libogg`.
+This recipe builds **1.3.6**. Kept from earlier: `1.3.5` ([recipe and patches](versions/1.3.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libogg=<version>`), sources in `ported/libogg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libogg`; port one with `scripts/port-update libogg`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3.5; GIT=https://github.com/xiph/ogg.git; REF=v1.3.5
+VERSION=1.3.6; GIT=https://github.com/xiph/ogg.git; REF=v1.3.6
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DINSTALL_DOCS=OFF -DBUILD_TESTING=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
 ```

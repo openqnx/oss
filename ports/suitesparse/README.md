@@ -1,4 +1,4 @@
-# suitesparse 7.11.0
+# suitesparse 7.14.1
 
 > Suite of sparse matrix algorithms and factorization libraries
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/DrTimothyAldenDavis/SuiteSparse.git (tag `v7.11.0`) |
+| Upstream | https://github.com/DrTimothyAldenDavis/SuiteSparse.git (tag `v7.14.1`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`openblas`](../openblas/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v7.11.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v7.14.1 --recurse-submodules --shallow-submodules \
     https://github.com/DrTimothyAldenDavis/SuiteSparse.git src/suitesparse
 ```
 
@@ -88,37 +88,21 @@ git clone --depth 1 -b v7.11.0 --recurse-submodules --shallow-submodules \
 patch -p1 -d src/suitesparse < ports/suitesparse/patches/0001-qnx-from-qnx-ports.patch
 ```
 
-**[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Bump actions/checkout from 4 to 5
+**[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX Support
 
 > Imported from qnx-ports/SuiteSparse (b35a1f9318f4...qnx-v7.11.0); original authorship kept.
 >
+> Folded commits (same patch):
 >
-> Bumps [actions/checkout](https://github.com/actions/checkout) from 4 to 5.
-> - [Release notes](https://github.com/actions/checkout/releases)
-> - [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
-> - [Commits](https://github.com/actions/checkout/compare/v4...v5)
+>   From: felixlionardo <flionardo@blackberry.com>
+>   Date: Wed, 18 Mar 2026 11:07:23 -0400
+>   Subject: [PATCH 3/3] APK test fix
 >
-> ---
-> updated-dependencies:
-> - dependency-name: actions/checkout
->   dependency-version: '5'
->   dependency-type: direct:production
->   update-type: version-update:semver-major
-> ...
->
-> Signed-off-by: dependabot[bot] <support@github.com>
-> ---
->  .github/workflows/build-arch-emu.yaml       | 2 +-
->  .github/workflows/build-mingw.yaml          | 2 +-
->  .github/workflows/build.yaml                | 2 +-
->  .github/workflows/codeql-analysis.yaml      | 4 ++--
->  .github/workflows/cross-compile.yaml        | 2 +-
->  .github/workflows/macos.yaml                | 2 +-
->  .github/workflows/root-cmakelists-msvc.yaml | 2 +-
->  .github/workflows/root-cmakelists.yaml      | 2 +-
->  8 files changed, 9 insertions(+), 9 deletions(-)
+> The fork's first commit (dependabot: bump actions/checkout 4 -> 5 in
+> .github/workflows) was dropped on the rebase to 7.14.1: upstream CI files
+> only, upstream uses actions/checkout@v7 now.
 
-Touches: `.github/workflows/build-arch-emu.yaml`, `.github/workflows/build-mingw.yaml`, `.github/workflows/build.yaml`, `.github/workflows/codeql-analysis.yaml`, `.github/workflows/cross-compile.yaml`, `.github/workflows/macos.yaml` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `GraphBLAS/Source/cpu/GB_cpu_features.h`, `LAGraph/experimental/algorithm/LAGr_EdgeBetweennessCentrality.c`, `LAGraph/experimental/algorithm/LAGr_MarkovClustering.c`, `LAGraph/experimental/algorithm/LAGr_MaxFlow.c`, `LAGraph/experimental/algorithm/LAGr_MaximumMatching.c`, `LAGraph/experimental/algorithm/LAGr_Modularity.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -144,7 +128,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH suitesparse`.
 
 ### 5. What it installs
 
-177 files under `/usr/local`: 42 shared-library entries, 16 headers.
+181 files under `/usr/local`: 42 shared-library entries, 16 headers.
 
 ```
 /usr/local/lib/libamd.so
@@ -161,7 +145,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH suitesparse`.
 /usr/local/lib/libccolamd.so.3.3.5
 /usr/local/lib/libcholmod.so
 /usr/local/lib/libcholmod.so.5
-/usr/local/lib/libcholmod.so.5.3.4
+/usr/local/lib/libcholmod.so.5.3.5
 /usr/local/lib/libcolamd.so
 ...
 ```
@@ -246,12 +230,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **7.11.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add suitesparse=<version>`), sources in `ported/suitesparse/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates suitesparse`; port one with `scripts/port-update suitesparse`.
+This recipe builds **7.14.1**. Kept from earlier: `7.11.0` ([recipe and patches](versions/7.11.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add suitesparse=<version>`), sources in `ported/suitesparse/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates suitesparse`; port one with `scripts/port-update suitesparse`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=7.11.0; GIT=https://github.com/DrTimothyAldenDavis/SuiteSparse.git; REF=v7.11.0
+VERSION=7.14.1; GIT=https://github.com/DrTimothyAldenDavis/SuiteSparse.git; REF=v7.14.1
 DEPS="openblas"
 CMAKE_ARGS_EXTRA=( -DSUITESPARSE_USE_FORTRAN=OFF -DSUITESPARSE_USE_CUDA=OFF -DSUITESPARSE_USE_OPENMP=OFF
                    -DBLA_VENDOR=OpenBLAS -DBLAS_LIBRARIES="$STAGE$PREFIX/lib/libopenblas.so" -DLAPACK_LIBRARIES="$STAGE$PREFIX/lib/libopenblas.so"

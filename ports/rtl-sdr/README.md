@@ -1,4 +1,4 @@
-# rtl-sdr 2.0.2
+# rtl-sdr 2.0.3
 
 > Library and tools turning RTL2832 DVB dongles into SDR receivers
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/osmocom/rtl-sdr.git (tag `v2.0.2`) |
+| Upstream | https://github.com/osmocom/rtl-sdr.git (tag `v2.0.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libusb`](../libusb/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.0.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.0.3 --recurse-submodules --shallow-submodules \
     https://github.com/osmocom/rtl-sdr.git src/rtl-sdr
 ```
 
@@ -106,7 +106,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH rtl-sdr`.
 ```
 /usr/local/lib/librtlsdr.so
 /usr/local/lib/librtlsdr.so.0
-/usr/local/lib/librtlsdr.so.2.0.1
+/usr/local/lib/librtlsdr.so.2.0.3
 /usr/local/bin/rtl_adsb
 /usr/local/bin/rtl_biast
 /usr/local/bin/rtl_eeprom
@@ -202,12 +202,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rtl-sdr=<version>`), sources in `ported/rtl-sdr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rtl-sdr`; port one with `scripts/port-update rtl-sdr`.
+This recipe builds **2.0.3**. Kept from earlier: `2.0.2` ([recipe and patches](versions/2.0.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rtl-sdr=<version>`), sources in `ported/rtl-sdr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rtl-sdr`; port one with `scripts/port-update rtl-sdr`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.0.2; GIT=https://github.com/osmocom/rtl-sdr.git; REF=v2.0.2
+VERSION=2.0.3; GIT=https://github.com/osmocom/rtl-sdr.git; REF=v2.0.3
 DEPS="libusb"
 CMAKE_ARGS_EXTRA=( -DINSTALL_UDEV_RULES=OFF -DDETACH_KERNEL_DRIVER=OFF )
 ```

@@ -15,7 +15,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index b302a0488d6..a42f54d705c 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -373,6 +373,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+@@ -401,6 +401,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
        $<BUILD_INTERFACE:${ARM_COMPUTE_PUBLIC_INCLUDE}>
        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      )
@@ -25,7 +25,7 @@ index b302a0488d6..a42f54d705c 100644
    endforeach()
  
    # NEON Examples
-@@ -386,6 +389,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+@@ -414,6 +417,9 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
        $<BUILD_INTERFACE:${ARM_COMPUTE_PUBLIC_INCLUDE}>
        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      )
@@ -49,7 +49,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index a42f54d705c..08662f273e6 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -346,7 +346,7 @@ if(ARM_COMPUTE_BUILD_TESTING)
+@@ -374,7 +374,7 @@ if(ARM_COMPUTE_BUILD_TESTING)
      COMPILE_OPTIONS "${ARM_COMPUTE_ARCH};${ARM_COMPUTE_COMMON_CCXX_FLAGS}"
      INCLUDE_DIRECTORIES "${ARM_COMPUTE_PUBLIC_INCLUDE};${ARM_COMPUTE_COMMON_INCLUDE}"
      COMPILE_DEFINITIONS "${ARM_COMPUTE_DEFINES}"
@@ -58,7 +58,7 @@ index a42f54d705c..08662f273e6 100644
  
      # Adjusted for relative location of installed arm_compute lib
      INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-@@ -403,7 +403,7 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
+@@ -431,7 +431,7 @@ if(ARM_COMPUTE_BUILD_EXAMPLES)
    )
  
    # Now set the linking properties which differ between the NEON and Graph examples

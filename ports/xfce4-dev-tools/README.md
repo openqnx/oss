@@ -1,4 +1,4 @@
-# xfce4-dev-tools 4.21.0
+# xfce4-dev-tools 4.21.2
 
 > Xfce build tools: XDT autoconf macros, xdt-autogen, xdt-csource
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.0.tar.bz2 |
-| SHA-256 | `36059f48bbb196645f6514ab5a356e55cdd9bc917edcaf6afd86adfc28d7a358` |
+| Upstream | https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.2.tar.bz2 |
+| SHA-256 | `a43f726a082b589186d9e6ed076101d41249d1e22bbe61448037550190d7f75a` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.2.tar.bz2
 mkdir -p dist src/xfce4-dev-tools
 curl -fL -o dist/$(basename $URL) $URL
-echo "36059f48bbb196645f6514ab5a356e55cdd9bc917edcaf6afd86adfc28d7a358  dist/$(basename $URL)" | sha256sum -c -
+echo "a43f726a082b589186d9e6ed076101d41249d1e22bbe61448037550190d7f75a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/xfce4-dev-tools --strip-components=1
 ```
 
@@ -208,7 +208,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.21.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-dev-tools=<version>`), sources in `ported/xfce4-dev-tools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-dev-tools`; port one with `scripts/port-update xfce4-dev-tools`.
+This recipe builds **4.21.2**. Kept from earlier: `4.21.0` ([recipe and patches](versions/4.21.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xfce4-dev-tools=<version>`), sources in `ported/xfce4-dev-tools/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xfce4-dev-tools`; port one with `scripts/port-update xfce4-dev-tools`.
 
 <details><summary>recipe.sh</summary>
 
@@ -218,9 +218,9 @@ This recipe builds **4.21.0**. Every version stays available: packages in `dists
 # xdt-autogen (the autogen.sh of every Xfce module), xdt-csource (data to
 # C arrays, GLib), xdt-gen-visibility and xdt-check-abi (Python). Version
 # as in QNX's own package list.
-VERSION=4.21.0
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.0.tar.bz2
-SHA256=36059f48bbb196645f6514ab5a356e55cdd9bc917edcaf6afd86adfc28d7a358
+VERSION=4.21.2
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.2.tar.bz2
+SHA256=a43f726a082b589186d9e6ed076101d41249d1e22bbe61448037550190d7f75a
 # glib: xdt-csource.
 DEPS="glib"
 # xdt-autogen requires make and runs autoreconf/aclocal/automake (and

@@ -7,10 +7,9 @@ speed changes; on QNX the timer is restarted to fire at once instead (the
 next scroll step comes immediately, then at the new interval).
 
 Upstream-Status: QNX-specific
-
 --- a/selection.c
 +++ b/selection.c
-@@ -1729,10 +1729,15 @@
+@@ -1742,10 +1742,15 @@
      }
  
      struct itimerspec timer;

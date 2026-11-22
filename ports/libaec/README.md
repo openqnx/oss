@@ -1,4 +1,4 @@
-# libaec 1.1.7
+# libaec 1.1.8
 
 > Adaptive Entropy Coding library for lossless compression, SZIP compatible
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/MathisRosenhauer/libaec.git (tag `v1.1.7`) |
+| Upstream | https://github.com/MathisRosenhauer/libaec.git (tag `v1.1.8`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.7 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.8 --recurse-submodules --shallow-submodules \
     https://github.com/MathisRosenhauer/libaec.git src/libaec
 ```
 
@@ -105,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libaec`.
 ```
 /usr/local/lib/libaec.so
 /usr/local/lib/libaec.so.0
-/usr/local/lib/libaec.so.0.1.7
+/usr/local/lib/libaec.so.0.1.8
 /usr/local/lib/libsz.so
 /usr/local/lib/libsz.so.2
 /usr/local/lib/libsz.so.2.0.1
@@ -186,13 +186,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libaec=<version>`), sources in `ported/libaec/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libaec`; port one with `scripts/port-update libaec`.
+This recipe builds **1.1.8**. Kept from earlier: `1.1.7` ([recipe and patches](versions/1.1.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libaec=<version>`), sources in `ported/libaec/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libaec`; port one with `scripts/port-update libaec`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libaec: Adaptive Entropy Coding (CCSDS 121.0-B), with the SZIP-compatible API HDF5 and NetCDF use.
-VERSION=1.1.7; GIT=https://github.com/MathisRosenhauer/libaec.git; REF=v1.1.7
+VERSION=1.1.8; GIT=https://github.com/MathisRosenhauer/libaec.git; REF=v1.1.8
 DEPS=""
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_TESTING=OFF )

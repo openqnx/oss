@@ -1,4 +1,4 @@
-# vidstab 1.1.1
+# vidstab 1.1.2
 
 > Video stabilization library for FFmpeg and Transcode
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/georgmartius/vid.stab.git (tag `v1.1.1`) |
+| Upstream | https://github.com/georgmartius/vid.stab.git (tag `v1.1.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.2 --recurse-submodules --shallow-submodules \
     https://github.com/georgmartius/vid.stab.git src/vidstab
 ```
 
@@ -97,7 +97,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vidstab`.
 
 ### 5. What it installs
 
-19 files under `/usr/local`: 2 shared-library entries, 16 headers.
+22 files under `/usr/local`: 2 shared-library entries, 19 headers.
 
 ```
 /usr/local/lib/libvidstab.so
@@ -182,12 +182,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vidstab=<version>`), sources in `ported/vidstab/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vidstab`; port one with `scripts/port-update vidstab`.
+This recipe builds **1.1.2**. Kept from earlier: `1.1.1` ([recipe and patches](versions/1.1.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vidstab=<version>`), sources in `ported/vidstab/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vidstab`; port one with `scripts/port-update vidstab`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.1; GIT=https://github.com/georgmartius/vid.stab.git; REF=v1.1.1
+VERSION=1.1.2; GIT=https://github.com/georgmartius/vid.stab.git; REF=v1.1.2
 SRCROOT="$SRC_DIR/vidstab"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DUSE_OMP=OFF )
 ```

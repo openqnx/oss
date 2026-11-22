@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/nodejs/node.git (tag `v24.14.1`) |
 | Build system | custom (see recipe) |
-| QNX patches | 9 |
+| QNX patches | 10 |
 | Build dependencies | [`libuv`](../libuv/) [`ada`](../ada/) [`brotli`](../brotli/) [`zlib`](../zlib/) [`openssl`](../openssl/) [`c-ares`](../c-ares/) [`nghttp2`](../nghttp2/) [`simdjson`](../simdjson/) [`simdutf`](../simdutf/) [`sqlite`](../sqlite/) [`zstd`](../zstd/) [`icu`](../icu/) |
 | Run-time dependencies | [`ada`](../ada/) [`brotli`](../brotli/) [`c-ares`](../c-ares/) [`icu`](../icu/) [`libuv`](../libuv/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`simdjson`](../simdjson/) [`simdutf`](../simdutf/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,7 +82,7 @@ git clone --depth 1 -b v24.14.1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-9 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+10 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/nodejs < ports/nodejs/patches/0001-qnx-from-qnx-ports.patch
@@ -94,6 +94,7 @@ patch -p1 -d src/nodejs < ports/nodejs/patches/0006-aports-node_snapshotable.pat
 patch -p1 -d src/nodejs < ports/nodejs/patches/0007-v8config-target-os-fallback-value.patch
 patch -p1 -d src/nodejs < ports/nodejs/patches/0008-v8-wasm-objects-include-v8config-first.patch
 patch -p1 -d src/nodejs < ports/nodejs/patches/0009-v8-gyp-host-trap-handler-for-qnx.patch
+patch -p1 -d src/nodejs < ports/nodejs/patches/0010-gyp-ar-response-file.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — initial qnx support
@@ -227,6 +228,18 @@ Touches: `deps/v8/src/wasm/wasm-objects.cc` · Upstream status: Pending
 > v8_internal_simulator_ProbeMemory). Add them for that host toolset.
 
 Touches: `tools/v8_gypfiles/v8.gyp` · Upstream status: QNX-specific
+
+**[`0010-gyp-ar-response-file.patch`](patches/0010-gyp-ar-response-file.patch)** — gyp: archive through a response file (argument list too long)
+
+> gyp's Makefile gives ar every object of a static library on one command
+> line, which make passes to the shell as a single argument. For
+> libv8_base_without_compiler.a (about 1600 objects, absolute paths) that is
+> close to Linux's limit of 128 KiB for one argument: with the source tree at
+> .../src-x86_64/nodejs it was 127586 bytes, at .../src-aarch64le/nodejs it
+> was over ("make: /bin/sh: Argument list too long", Error 127). The object
+> list now goes through a response file written by make.
+
+Touches: `tools/gyp/pylib/gyp/generator/make.py` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -408,7 +421,7 @@ _node_hostlibs() {
   mkdir -p "$H/src" || return 1
   for n in $NODE_HOST_LIBS; do
     echo "-- host library for node's build tools: $n"
-    ( GIT= REF= COMMIT= TARBALL= SHA256= CFLAGS_APPEND=; CONF_ARGS_EXTRA=(); source "$WS/ports/$n/recipe.sh"
+    ( GIT= REF= COMMIT= TARBALL= SHA256= SUBDIR= CFLAGS_APPEND=; CONF_ARGS_EXTRA=(); source "$WS/ports/$n/recipe.sh"
       d="$H/src/$n"; rm -rf "$d"
       if [ -n "$GIT" ]; then git clone -q --depth 1 --branch "$REF" "$GIT" "$d"
       else t="$WS/dist/$(basename "$TARBALL")"
@@ -422,7 +435,8 @@ _node_hostlibs() {
           -DSIMDUTF_TESTS=OFF -DSIMDUTF_TOOLS=OFF -DLIBUV_BUILD_TESTS=OFF -DCARES_BUILD_TOOLS=OFF && \
         _host ninja -C "$d/_b" install
       else
-        local c="$d"; [ -x "$d/icu4c/source/configure" ] && c="$d/icu4c/source"   # ICU keeps it there
+        # ICU keeps configure in a subdirectory: icu4c/source from git, source from the release tarball.
+        local c="$d" sub; for sub in icu4c/source "${SUBDIR:-.}"; do [ -x "$d/$sub/configure" ] && c="$d/$sub" && break; done
         # The component's own configure options and flags (sqlite: the session
         # extension node:sqlite needs), then the host prefix.
         ( cd "$c" && _host env CFLAGS="-O2 $CFLAGS_APPEND" ./configure "${CONF_ARGS_EXTRA[@]}" \

@@ -1,4 +1,4 @@
-# vim 9.1.0900
+# vim 9.2.1382
 
 > Vi IMproved, a highly configurable text editor
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/vim/vim.git (tag `v9.1.0900`) |
+| Upstream | https://github.com/vim/vim.git (tag `v9.2.1382`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`ncurses`](../ncurses/) [`libiconv`](../libiconv/) [`libsodium`](../libsodium/) |
-| Run-time dependencies | [`libiconv`](../libiconv/) [`libsodium`](../libsodium/) [`ncurses`](../ncurses/) |
+| Run-time dependencies | [`cairo`](../cairo/) [`gettext`](../gettext/) [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`libiconv`](../libiconv/) [`libsodium`](../libsodium/) [`ncurses`](../ncurses/) [`pango`](../pango/) [`pixman`](../pixman/) [`wayland`](../wayland/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_vim`](../../tests/src/) |
 
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v9.1.0900 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v9.2.1382 --recurse-submodules --shallow-submodules \
     https://github.com/vim/vim.git src/vim
 ```
 
@@ -116,7 +116,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vim`.
 
 ### 5. What it installs
 
-1955 files under `/usr/local`, 8 programs.
+2115 files under `/usr/local`, 8 programs.
 
 ```
 /usr/local/bin/ex
@@ -201,12 +201,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **9.1.0900**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vim=<version>`), sources in `ported/vim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vim`; port one with `scripts/port-update vim`.
+This recipe builds **9.2.1382**. Kept from earlier: `9.1.0900` ([recipe and patches](versions/9.1.0900/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vim=<version>`), sources in `ported/vim/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vim`; port one with `scripts/port-update vim`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=9.1.0900; GIT=https://github.com/vim/vim.git; REF=v9.1.0900
+VERSION=9.2.1382; GIT=https://github.com/vim/vim.git; REF=v9.2.1382
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv libsodium
 DEPS="ncurses libiconv libsodium"
 BUILDSYS=autotools

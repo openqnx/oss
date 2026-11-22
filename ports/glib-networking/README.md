@@ -1,4 +1,4 @@
-# glib-networking 2.80.1
+# glib-networking 2.90.1
 
 > TLS (GnuTLS) and proxy support modules for GLib's GIO
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/glib-networking.git (tag `2.80.1`) |
+| Upstream | https://gitlab.gnome.org/GNOME/glib-networking.git (tag `2.90.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gnutls`](../gnutls/) [`libproxy`](../libproxy/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.80.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.90.1 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/glib-networking.git src/glib-networking
 ```
 
@@ -113,7 +113,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glib-networking`
 
 ### 5. What it installs
 
-81 files under `/usr/local`.
+85 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/glib-networking` after a build.
 
@@ -200,13 +200,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.80.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib-networking=<version>`), sources in `ported/glib-networking/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib-networking`; port one with `scripts/port-update glib-networking`.
+This recipe builds **2.90.1**. Kept from earlier: `2.80.1` ([recipe and patches](versions/2.80.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib-networking=<version>`), sources in `ported/glib-networking/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib-networking`; port one with `scripts/port-update glib-networking`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # glib-networking: TLS (GnuTLS) and proxy support for GIO.
-VERSION=2.80.1; GIT=https://gitlab.gnome.org/GNOME/glib-networking.git; REF=2.80.1
+VERSION=2.90.1; GIT=https://gitlab.gnome.org/GNOME/glib-networking.git; REF=2.90.1
 DEPS="glib gnutls libproxy"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dgnutls=enabled -Dopenssl=disabled -Dlibproxy=enabled -Dgnome_proxy=disabled -Dinstalled_tests=false )

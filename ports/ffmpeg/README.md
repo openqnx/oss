@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`opus`](../opus/) [`libvorbis`](../libvorbis/) [`libogg`](../libogg/) [`dav1d`](../dav1d/) [`openh264`](../openh264/) [`x264`](../x264/) [`x265`](../x265/) [`libvpx`](../libvpx/) [`libtheora`](../libtheora/) [`lame`](../lame/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`lame`](../lame/) [`libtheora`](../libtheora/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`openh264`](../openh264/) [`opus`](../opus/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`lame`](../lame/) [`libiconv`](../libiconv/) [`libtheora`](../libtheora/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`openh264`](../openh264/) [`opus`](../opus/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ffmpeg`](../../tests/src/) |
 

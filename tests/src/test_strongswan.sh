@@ -1,5 +1,5 @@
 #!/bin/sh
-# strongSwan 6.0.6:
+# strongSwan 6.1.0:
 #  1. libstrongswan_tests, strongSwan's own unit-test runner, on suites with
 #     known answers: chunk/ASN.1/identity parsing, hashers and crypters, RSA
 #     and ECDSA key generation, signing and verification with fixed keys, X.509
@@ -101,7 +101,7 @@ PKI=$BIN/pki; [ -x "$PKI" ] || PKI=$(command -v pki 2>/dev/null)
 if [ -z "$PKI" ] || [ ! -x "$PKI" ]; then bad "pki not installed"
 else
   v=$("$PKI" --help 2>&1 | head -n 1); echo "  info pki: $v"
-  case "$v" in *"strongSwan 6.0.6 PKI tool"*) ok "pki --help: strongSwan 6.0.6 PKI tool" ;; *) bad "pki --help: $v" ;; esac
+  case "$v" in *"strongSwan 6.1.0 PKI tool"*) ok "pki --help: strongSwan 6.1.0 PKI tool" ;; *) bad "pki --help: $v" ;; esac
   CADN="C=CH, O=QNX Test, CN=QNX Test CA"
   EEDN="C=CH, O=QNX Test, CN=moon.qnx.test"
   "$PKI" --gen --type ecdsa --size 256 --outform pem > ca.key 2>gen.err && grep -q "BEGIN EC PRIVATE KEY" ca.key \
@@ -235,9 +235,9 @@ EOF
   if [ $up -eq 1 ]; then
     ok "charon started (pid $CPID), answering over vici after ${i}s"
     out=$(swanctl --version $U 2>&1)
-    [ "$out" = "strongSwan swanctl 6.0.6" ] && ok "swanctl --version: $out" || bad "swanctl --version: $out"
+    [ "$out" = "strongSwan swanctl 6.1.0" ] && ok "swanctl --version: $out" || bad "swanctl --version: $out"
     out=$(swanctl --version --daemon $U 2>&1)
-    case "$out" in "strongSwan 6.0.6 charon ("*) ok "swanctl --version --daemon: $out" ;; *) bad "daemon version: $out" ;; esac
+    case "$out" in "strongSwan 6.1.0 charon ("*) ok "swanctl --version --daemon: $out" ;; *) bad "daemon version: $out" ;; esac
     out=$(cat stats.out)
     case "$out" in *"uptime:"*"worker threads:"*) ok "swanctl --stats: uptime and worker threads" ;; *) bad "swanctl --stats: $out" ;; esac
     out=$(swanctl --load-all --file "$T/swanctl.conf" $U 2>&1)

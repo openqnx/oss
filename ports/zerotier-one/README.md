@@ -1,4 +1,4 @@
-# zerotier-one 1.16.1
+# zerotier-one 1.16.2
 
 > ZeroTier network virtualization service
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/zerotier/ZeroTierOne.git (tag `1.16.1`) |
+| Upstream | https://github.com/zerotier/ZeroTierOne.git (tag `1.16.2`) |
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.16.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.16.2 --recurse-submodules --shallow-submodules \
     https://github.com/zerotier/ZeroTierOne.git src/zerotier-one
 ```
 
@@ -101,7 +101,7 @@ patch -p1 -d src/zerotier-one < ports/zerotier-one/patches/0002-qnx-release-cros
 >
 > ---
 
-Touches: `Makefile`, `ext/libnatpmp/getgateway.c`, `make-qnx.mk`, `node/Constants.hpp`, `node/Utils.cpp`, `osdep/EthernetTap.cpp` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `ext/libnatpmp/getgateway.c`, `Makefile`, `make-qnx.mk`, `node/Constants.hpp`, `node/Utils.cpp`, `osdep/EthernetTap.cpp` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 **[`0002-qnx-release-cross.patch`](patches/0002-qnx-release-cross.patch)** — Take OS_STRING's release from QNX_RELEASE when cross-compiling.
 
@@ -226,14 +226,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.16.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zerotier-one=<version>`), sources in `ported/zerotier-one/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zerotier-one`; port one with `scripts/port-update zerotier-one`.
+This recipe builds **1.16.2**. Kept from earlier: `1.16.1` ([recipe and patches](versions/1.16.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zerotier-one=<version>`), sources in `ported/zerotier-one/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zerotier-one`; port one with `scripts/port-update zerotier-one`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # ZeroTier One from upstream 1.16.1 with qnx-ports' QNX support (make-qnx.mk,
 # a /dev/tap EthernetTap, BSD routing paths); see patches/0001.
-VERSION=1.16.1; GIT=https://github.com/zerotier/ZeroTierOne.git; REF=1.16.1
+VERSION=1.16.2; GIT=https://github.com/zerotier/ZeroTierOne.git; REF=1.16.2
 BUILDSYS=custom
 # The Makefile builds in the source tree and picks make-qnx.mk from OSTYPE,
 # which it otherwise takes from the build machine's uname.

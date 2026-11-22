@@ -1,4 +1,4 @@
-# gperf 3.1
+# gperf 3.3
 
 > GNU perfect hash function generator
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/gperf/gperf-3.1.tar.gz |
-| SHA-256 | `588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2` |
+| Upstream | https://ftp.gnu.org/gnu/gperf/gperf-3.3.tar.gz |
+| SHA-256 | `fd87e0aba7e43ae054837afd6cd4db03a3f2693deb3619085e6ed9d8d9604ad8` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/gperf/gperf-3.1.tar.gz
+URL=https://ftp.gnu.org/gnu/gperf/gperf-3.3.tar.gz
 mkdir -p dist src/gperf
 curl -fL -o dist/$(basename $URL) $URL
-echo "588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2  dist/$(basename $URL)" | sha256sum -c -
+echo "fd87e0aba7e43ae054837afd6cd4db03a3f2693deb3619085e6ed9d8d9604ad8  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gperf --strip-components=1
 ```
 
@@ -186,15 +186,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gperf=<version>`), sources in `ported/gperf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gperf`; port one with `scripts/port-update gperf`.
+This recipe builds **3.3**. Kept from earlier: `3.1` ([recipe and patches](versions/3.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gperf=<version>`), sources in `ported/gperf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gperf`; port one with `scripts/port-update gperf`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU gperf (perfect hash generator). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=3.1
-TARBALL=https://ftp.gnu.org/gnu/gperf/gperf-3.1.tar.gz
-SHA256=588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2
+VERSION=3.3
+TARBALL=https://ftp.gnu.org/gnu/gperf/gperf-3.3.tar.gz
+SHA256=fd87e0aba7e43ae054837afd6cd4db03a3f2693deb3619085e6ed9d8d9604ad8
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=(  )
 ```

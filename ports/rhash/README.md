@@ -1,4 +1,4 @@
-# rhash 1.4.5
+# rhash 1.4.6
 
 > Hash sum and magnet link tool (rhash) and the LibRHash library: CRC32, MD5, SHA-1/2/3, BLAKE2/3, TTH, BTIH and more
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/rhash/RHash/archive/refs/tags/v1.4.5.tar.gz |
-| SHA-256 | `6db837e7bbaa7c72c5fd43ca5af04b1d370c5ce32367b9f6a1f7b49b2338c09a` |
+| Upstream | https://github.com/rhash/RHash/archive/refs/tags/v1.4.6.tar.gz |
+| SHA-256 | `9f6019cfeeae8ace7067ad22da4e4f857bb2cfa6c2deaa2258f55b2227ec937a` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.5.tar.gz
+URL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.6.tar.gz
 mkdir -p dist src/rhash
 curl -fL -o dist/$(basename $URL) $URL
-echo "6db837e7bbaa7c72c5fd43ca5af04b1d370c5ce32367b9f6a1f7b49b2338c09a  dist/$(basename $URL)" | sha256sum -c -
+echo "9f6019cfeeae8ace7067ad22da4e4f857bb2cfa6c2deaa2258f55b2227ec937a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/rhash --strip-components=1
 ```
 
@@ -210,7 +210,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rhash=<version>`), sources in `ported/rhash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rhash`; port one with `scripts/port-update rhash`.
+This recipe builds **1.4.6**. Kept from earlier: `1.4.5` ([recipe and patches](versions/1.4.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rhash=<version>`), sources in `ported/rhash/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rhash`; port one with `scripts/port-update rhash`.
 
 <details><summary>recipe.sh</summary>
 
@@ -218,9 +218,9 @@ This recipe builds **1.4.5**. Every version stays available: packages in `dists/
 # RHash: computes and verifies hash sums and magnet links (CRC32, MD5,
 # SHA-1/2/3, BLAKE2/3, Tiger, TTH, BTIH, ED2K, GOST, ...) -- the rhash
 # program and the LibRHash library. Version as in qnx-ports' aports.
-VERSION=1.4.5
-TARBALL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.5.tar.gz
-SHA256=6db837e7bbaa7c72c5fd43ca5af04b1d370c5ce32367b9f6a1f7b49b2338c09a
+VERSION=1.4.6
+TARBALL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.6.tar.gz
+SHA256=9f6019cfeeae8ace7067ad22da4e4f857bb2cfa6c2deaa2258f55b2227ec937a
 DEPS=""
 # Its own configure (not Autoconf), building in the source tree: configured
 # and built in a copy (src/ stays clean for scripts/mkpatch).

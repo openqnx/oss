@@ -4,7 +4,7 @@
 # native build of those tools is made (HOST_BINARY_DIR).
 # The binary goes to bin/ (OpenTTD defaults to games/, which is not on PATH,
 # so the desktop entry's Exec=openttd failed).
-VERSION=15.0-git-20250501; GIT=https://github.com/OpenTTD/OpenTTD.git; COMMIT=41b113840a983e2e9b107a452f800eb94c662b23
+VERSION=15.3; GIT=https://github.com/OpenTTD/OpenTTD.git; COMMIT=14ec60f248547d4d062a1160f0fc26d742319888
 DEPS="sdl2 zlib xz libpng freetype fontconfig curl lzo"
 BUILDSYS=custom
 do_configure() {

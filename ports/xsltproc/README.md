@@ -1,4 +1,4 @@
-# xsltproc 1.1.42
+# xsltproc 1.1.45
 
 > Command-line XSLT processor from libxslt
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/libxslt.git (tag `v1.1.42`) |
+| Upstream | https://gitlab.gnome.org/GNOME/libxslt.git (tag `v1.1.45`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libxslt`](../libxslt/) [`libxml2`](../libxml2/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.42 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.45 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/libxslt.git src/xsltproc
 ```
 
@@ -194,7 +194,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.42**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xsltproc=<version>`), sources in `ported/xsltproc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xsltproc`; port one with `scripts/port-update xsltproc`.
+This recipe builds **1.1.45**. Kept from earlier: `1.1.42` ([recipe and patches](versions/1.1.42/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xsltproc=<version>`), sources in `ported/xsltproc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xsltproc`; port one with `scripts/port-update xsltproc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -204,7 +204,7 @@ This recipe builds **1.1.42**. Every version stays available: packages in `dists
 # stylesheets. The libxslt component is built without its programs; this
 # builds libxslt's own xsltproc from the same release and installs only the
 # program, which links the libxslt and libexslt libraries of that component.
-VERSION=1.1.42; GIT=https://gitlab.gnome.org/GNOME/libxslt.git; REF=v1.1.42
+VERSION=1.1.45; GIT=https://gitlab.gnome.org/GNOME/libxslt.git; REF=v1.1.45
 DEPS="libxslt libxml2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DLIBXSLT_WITH_PYTHON=OFF -DLIBXSLT_WITH_TESTS=OFF
                    -DLIBXSLT_WITH_PROGRAMS=ON -DLIBXSLT_WITH_CRYPTO=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON

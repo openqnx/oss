@@ -1,4 +1,4 @@
-# xtrans 1.5.2
+# xtrans 1.6.0
 
 > Header-only X network transport layer code shared by X libraries
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxtrans.git (tag `xtrans-1.5.2`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxtrans.git (tag `xtrans-1.6.0`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b xtrans-1.5.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b xtrans-1.6.0 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxtrans.git src/xtrans
 ```
 
@@ -191,12 +191,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xtrans=<version>`), sources in `ported/xtrans/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xtrans`; port one with `scripts/port-update xtrans`.
+This recipe builds **1.6.0**. Kept from earlier: `1.5.2` ([recipe and patches](versions/1.5.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xtrans=<version>`), sources in `ported/xtrans/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xtrans`; port one with `scripts/port-update xtrans`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.5.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtrans.git; REF=xtrans-1.5.2
+VERSION=1.6.0; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtrans.git; REF=xtrans-1.6.0
 BUILDSYS=autotools
 # Header-only: it is #included by libX11 and libxcb rather than linked.
 CONF_ARGS_EXTRA=( --disable-docs )

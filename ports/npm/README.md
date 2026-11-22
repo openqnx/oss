@@ -131,7 +131,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH npm`.
 
 ### 5. What it installs
 
-1813 files under `/usr/local`, 2 programs.
+1814 files under `/usr/local`, 2 programs.
 
 ```
 /usr/local/bin/npm

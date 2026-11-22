@@ -1,4 +1,4 @@
-VERSION=0.3.28; GIT=https://github.com/OpenMathLib/OpenBLAS.git; REF=v0.3.28
+VERSION=0.3.34; GIT=https://github.com/OpenMathLib/OpenBLAS.git; REF=v0.3.34
 # Built with OpenBLAS's CMake build, as qnx-ports does: the Makefile build
 # queries the compiler with -dumpversion, which qcc does not answer (and then
 # fails with "expr: syntax error"). No Fortran: LAPACK comes from its C

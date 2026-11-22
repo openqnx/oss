@@ -1,4 +1,4 @@
-VERSION=2.3.4; GIT=https://github.com/numpy/numpy.git; REF=v2.3.4
+VERSION=2.5.5; GIT=https://github.com/numpy/numpy.git; REF=v2.5.5
 DEPS="python3 openblas"
 BUILDSYS=custom
 # A Python extension package, cross compiled the way qnx-ports does it:

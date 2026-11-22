@@ -103,7 +103,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2-jazzy-movei
 
 ### 5. What it installs
 
-4722 files under `/usr/local`.
+4647 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2-jazzy-moveit2` after a build.
 
@@ -159,7 +159,7 @@ PASS ros2-jazzy-moveit2
 
 ## How it was verified
 
-1. **Built** from the original source with the patches above for `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_ros2_jazzy_moveit2`](../../tests/src/) -- a program linked against ros2-jazzy-moveit2 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 

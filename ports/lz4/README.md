@@ -1,4 +1,4 @@
-# lz4 1.10.0
+# lz4 1.11.1
 
 > Fast lossless compression library and tool (LZ4)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/lz4/lz4.git (tag `v1.10.0`) |
+| Upstream | https://github.com/lz4/lz4.git (tag `v1.11.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.10.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.11.1 --recurse-submodules --shallow-submodules \
     https://github.com/lz4/lz4.git src/lz4
 ```
 
@@ -107,7 +107,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH lz4`.
 ```
 /usr/local/lib/liblz4.so
 /usr/local/lib/liblz4.so.1
-/usr/local/lib/liblz4.so.1.10.0
+/usr/local/lib/liblz4.so.1.11.1
 ```
 
 The complete list is `stage/<arch>/.manifest/lz4` after a build.
@@ -185,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lz4=<version>`), sources in `ported/lz4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lz4`; port one with `scripts/port-update lz4`.
+This recipe builds **1.11.1**. Kept from earlier: `1.10.0` ([recipe and patches](versions/1.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lz4=<version>`), sources in `ported/lz4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lz4`; port one with `scripts/port-update lz4`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.10.0; GIT=https://github.com/lz4/lz4.git; REF=v1.10.0
+VERSION=1.11.1; GIT=https://github.com/lz4/lz4.git; REF=v1.11.1
 SUBDIR=build/cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=ON
                    -DLZ4_BUILD_CLI=OFF -DLZ4_BUILD_LEGACY_LZ4C=OFF

@@ -5,23 +5,19 @@ QNX before 8.0 declares.
 
 Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
 
-diff --git a/include/mimalloc/prim.h b/include/mimalloc/prim.h
-index daddaf8b1..3a02d2a6a 100644
---- a/include/mimalloc/prim.h
-+++ b/include/mimalloc/prim.h
-@@ -263,6 +263,7 @@ static inline void mi_prim_tls_slot_set(size_t slot, void* value) mi_attr_noexce
- #if !defined(__APPLE__)  /* on apple (M1) the wrong register is read (tpidr_el0 instead of tpidrro_el0) so fall back to TLS slot assembly (<https://github.com/microsoft/mimalloc/issues/343#issuecomment-763272369>)*/ \
-     && !defined(__CYGWIN__) \
-     && !defined(MI_LIBC_MUSL) \
-+    && (!defined(__QNX__) || (defined(__QNX__) && __QNX__ >= 800)) \
-     && (!defined(__clang_major__) || __clang_major__ >= 14)  /* older clang versions emit bad code; fall back to using the TLS slot (<https://lore.kernel.org/linux-arm-kernel/202110280952.352F66D8@keescook/T/>) */
-   #if    (defined(__GNUC__) && (__GNUC__ >= 7)  && defined(__aarch64__)) /* aarch64 for older gcc versions (issue #851) */ \
-       || (defined(__GNUC__) && (__GNUC__ >= 11) && defined(__x86_64__)) \
-diff --git a/src/alloc-override.c b/src/alloc-override.c
-index 52ab69c53..a9e44e348 100644
---- a/src/alloc-override.c
-+++ b/src/alloc-override.c
-@@ -275,7 +275,11 @@ extern "C" {
+--- a/include/mimalloc/prim/prim-tls.h
++++ b/include/mimalloc/prim/prim-tls.h
+@@ -76,6 +76,7 @@
+   #if !defined(__APPLE__)  /* on apple (M1) the wrong register is read (tpidr_el0 instead of tpidrro_el0) so fall back to TLS slot assembly (<https://github.com/microsoft/mimalloc/issues/343#issuecomment-763272369>)*/ \
+       && !defined(__CYGWIN__) \
+       && !defined(MI_LIBC_MUSL) \
++      && (!defined(__QNX__) || (defined(__QNX__) && __QNX__ >= 800)) \
+       && (!defined(__clang_major__) || __clang_major__ >= 14)  /* older clang versions emit bad code; fall back to using the TLS slot (<https://lore.kernel.org/linux-arm-kernel/202110280952.352F66D8@keescook/T/>) */
+     #if    (defined(__GNUC__) && (__GNUC__ >= 7)  && defined(__aarch64__)) /* aarch64 for older gcc versions (issue #851) */ \
+         || (defined(__GNUC__) && (__GNUC__ >= 11) && defined(__riscv))     /* gcc 10.3+, issue #1497 */ \
+--- a/src/alloc/alloc-override.c
++++ b/src/alloc/alloc-override.c
+@@ -414,7 +414,11 @@
  #endif
  
  // no forwarding here due to aliasing/name mangling issues
@@ -32,4 +28,4 @@ index 52ab69c53..a9e44e348 100644
 +#endif
  void* pvalloc(size_t size)                              { return mi_pvalloc(size); }
  void* memalign(size_t alignment, size_t size)           { return mi_memalign(alignment, size); }
- void* _aligned_malloc(size_t alignment, size_t size)    { return mi_aligned_alloc(alignment, size); }
+ #if !defined(_WIN32)

@@ -1,4 +1,4 @@
-# gawk 5.3.2
+# gawk 5.4.2
 
 > GNU awk pattern scanning and text processing language
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz |
-| SHA-256 | `f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc` |
+| Upstream | https://ftp.gnu.org/gnu/gawk/gawk-5.4.2.tar.xz |
+| SHA-256 | `b95e4909533b5f988c6b5e5539b3b3ddf76e7d7df02ca2e5b5b7d6f62db78e6a` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`readline`](../readline/) [`ncurses`](../ncurses/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz
+URL=https://ftp.gnu.org/gnu/gawk/gawk-5.4.2.tar.xz
 mkdir -p dist src/gawk
 curl -fL -o dist/$(basename $URL) $URL
-echo "f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc  dist/$(basename $URL)" | sha256sum -c -
+echo "b95e4909533b5f988c6b5e5539b3b3ddf76e7d7df02ca2e5b5b7d6f62db78e6a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gawk --strip-components=1
 ```
 
@@ -97,7 +97,7 @@ patch -p1 -d src/gawk < ports/gawk/patches/0001-aports-fix-qnx.patch
 > Taken from qnx-ports/aports core/gawk -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
 
-Touches: `gawk-5.3.2/awk.h`, `gawk-5.3.2/extension/inplace.c` · Upstream status: QNX-specific
+Touches: `awk.h`, `extension/inplace.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -125,12 +125,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gawk`.
 
 ### 5. What it installs
 
-75 files under `/usr/local`, 4 programs, 1 headers.
+78 files under `/usr/local`, 4 programs, 1 headers.
 
 ```
 /usr/local/bin/awk
 /usr/local/bin/gawk
-/usr/local/bin/gawk-5.3.2
+/usr/local/bin/gawk-5.4.2
 /usr/local/bin/gawkbug
 ```
 
@@ -206,15 +206,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.3.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gawk=<version>`), sources in `ported/gawk/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gawk`; port one with `scripts/port-update gawk`.
+This recipe builds **5.4.2**. Kept from earlier: `5.3.2` ([recipe and patches](versions/5.3.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gawk=<version>`), sources in `ported/gawk/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gawk`; port one with `scripts/port-update gawk`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU awk. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=5.3.2
-TARBALL=https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz
-SHA256=f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc
+VERSION=5.4.2
+TARBALL=https://ftp.gnu.org/gnu/gawk/gawk-5.4.2.tar.xz
+SHA256=b95e4909533b5f988c6b5e5539b3b3ddf76e7d7df02ca2e5b5b7d6f62db78e6a
 DEPS="readline ncurses"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls --without-mpfr )

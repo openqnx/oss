@@ -1,4 +1,4 @@
-# pax-utils 1.3.8
+# pax-utils 1.3.9
 
 > ELF security and QA utilities (scanelf, lddtree)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.8.tar.xz |
-| SHA-256 | `12a168d1aeae2626efdbde3979da88a60ca80bb38e1db565e95ee441ff1d5a0c` |
+| Upstream | https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.9.tar.xz |
+| SHA-256 | `7409f246b3c59b3e2d459d2232a6f7374469637ae6cf616c115b8d5830cab840` |
 | Build system | Meson |
 | QNX patches | 3 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.8.tar.xz
+URL=https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.9.tar.xz
 mkdir -p dist src/pax-utils
 curl -fL -o dist/$(basename $URL) $URL
-echo "12a168d1aeae2626efdbde3979da88a60ca80bb38e1db565e95ee441ff1d5a0c  dist/$(basename $URL)" | sha256sum -c -
+echo "7409f246b3c59b3e2d459d2232a6f7374469637ae6cf616c115b8d5830cab840  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/pax-utils --strip-components=1
 ```
 
@@ -216,15 +216,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pax-utils=<version>`), sources in `ported/pax-utils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pax-utils`; port one with `scripts/port-update pax-utils`.
+This recipe builds **1.3.9**. Kept from earlier: `1.3.8` ([recipe and patches](versions/1.3.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pax-utils=<version>`), sources in `ported/pax-utils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pax-utils`; port one with `scripts/port-update pax-utils`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # pax-utils (scanelf, lddtree, ...). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=1.3.8
-TARBALL=https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.8.tar.xz
-SHA256=12a168d1aeae2626efdbde3979da88a60ca80bb38e1db565e95ee441ff1d5a0c
+VERSION=1.3.9
+TARBALL=https://dev.gentoo.org/~sam/distfiles/app-misc/pax-utils/pax-utils-1.3.9.tar.xz
+SHA256=7409f246b3c59b3e2d459d2232a6f7374469637ae6cf616c115b8d5830cab840
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dlddtree_implementation=sh -Duse_seccomp=false -Dbuild_manpages=disabled )
 ```

@@ -1,4 +1,4 @@
-# libproxy 0.5.9
+# libproxy 0.5.12
 
 > Library for automatic proxy configuration management
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libproxy/libproxy.git (tag `0.5.9`) |
+| Upstream | https://github.com/libproxy/libproxy.git (tag `0.5.12`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`curl`](../curl/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.5.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.5.12 --recurse-submodules --shallow-submodules \
     https://github.com/libproxy/libproxy.git src/libproxy
 ```
 
@@ -114,11 +114,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libproxy`.
 
 ### 5. What it installs
 
-8 files under `/usr/local`: 3 shared-library entries, 1 programs, 1 headers.
+9 files under `/usr/local`: 3 shared-library entries, 1 programs, 1 headers.
 
 ```
 /usr/local/lib/libproxy.so
-/usr/local/lib/libproxy.so.0.5.9
+/usr/local/lib/libproxy.so.0.5.12
 /usr/local/lib/libproxy.so.1
 /usr/local/bin/proxy
 ```
@@ -208,12 +208,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.5.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libproxy=<version>`), sources in `ported/libproxy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libproxy`; port one with `scripts/port-update libproxy`.
+This recipe builds **0.5.12**. Kept from earlier: `0.5.9` ([recipe and patches](versions/0.5.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libproxy=<version>`), sources in `ported/libproxy/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libproxy`; port one with `scripts/port-update libproxy`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.5.9; GIT=https://github.com/libproxy/libproxy.git; REF=0.5.9
+VERSION=0.5.12; GIT=https://github.com/libproxy/libproxy.git; REF=0.5.12
 DEPS="glib curl"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=false -Ddocs=false -Dintrospection=false -Dvapi=false

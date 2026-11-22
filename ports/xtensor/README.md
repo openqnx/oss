@@ -1,4 +1,4 @@
-# xtensor 0.27.1
+# xtensor 0.27.2
 
 > Header-only C++ multi-dimensional arrays with NumPy-style broadcasting
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/xtensor-stack/xtensor.git (tag `0.27.1`) |
+| Upstream | https://github.com/xtensor-stack/xtensor.git (tag `0.27.2`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`xtl`](../xtl/) [`xsimd`](../xsimd/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.27.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.27.2 --recurse-submodules --shallow-submodules \
     https://github.com/xtensor-stack/xtensor.git src/xtensor
 ```
 
@@ -215,7 +215,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.27.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xtensor=<version>`), sources in `ported/xtensor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xtensor`; port one with `scripts/port-update xtensor`.
+This recipe builds **0.27.2**. Kept from earlier: `0.27.1` ([recipe and patches](versions/0.27.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add xtensor=<version>`), sources in `ported/xtensor/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates xtensor`; port one with `scripts/port-update xtensor`.
 
 <details><summary>recipe.sh</summary>
 
@@ -223,7 +223,7 @@ This recipe builds **0.27.1**. Every version stays available: packages in `dists
 # xtensor: header-only C++ library for multi-dimensional arrays with
 # NumPy-style broadcasting and lazy expression evaluation. Header-only:
 # installs include/xtensor, xtensor.pc and the CMake package.
-VERSION=0.27.1; GIT=https://github.com/xtensor-stack/xtensor.git; REF=0.27.1
+VERSION=0.27.2; GIT=https://github.com/xtensor-stack/xtensor.git; REF=0.27.2
 # xtl is required; xsimd turns on SIMD evaluation of expressions
 # (XTENSOR_USE_XSIMD): the installed xtensorConfig.cmake then finds xsimd
 # and defines XTENSOR_USE_XSIMD for consumers, as distribution builds do.

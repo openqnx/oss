@@ -1,4 +1,4 @@
-# tree-sitter-c 0.24.1
+# tree-sitter-c 0.24.2
 
 > C grammar for tree-sitter
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter/tree-sitter-c.git (tag `v0.24.1`) |
+| Upstream | https://github.com/tree-sitter/tree-sitter-c.git (tag `v0.24.2`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.24.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.24.2 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter/tree-sitter-c.git src/tree-sitter-c
 ```
 
@@ -179,14 +179,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.24.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-c=<version>`), sources in `ported/tree-sitter-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-c`; port one with `scripts/port-update tree-sitter-c`.
+This recipe builds **0.24.2**. Kept from earlier: `0.24.1` ([recipe and patches](versions/0.24.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter-c=<version>`), sources in `ported/tree-sitter-c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter-c`; port one with `scripts/port-update tree-sitter-c`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # tree-sitter grammar: c. Installs lib/tree-sitter/c.so (the parser
 # Neovim and the tree-sitter library load). Version as in the QNX Everywhere image.
-VERSION=0.24.1; GIT=https://github.com/tree-sitter/tree-sitter-c.git; REF=v0.24.1
+VERSION=0.24.2; GIT=https://github.com/tree-sitter/tree-sitter-c.git; REF=v0.24.2
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

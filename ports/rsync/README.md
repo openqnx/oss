@@ -1,4 +1,4 @@
-# rsync 3.3.0
+# rsync 3.5.2
 
 > Fast local and remote file copying tool using delta transfer
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz |
-| SHA-256 | `7399e9a6708c32d678a72a63219e96f23be0be2336e50fd1348498d07041df90` |
+| Upstream | https://download.samba.org/pub/rsync/src/rsync-3.5.2.tar.gz |
+| SHA-256 | `a10d591825251e070f74c98df3daad195def4ed81b4a2de16169026aea33f6c8` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`zstd`](../zstd/) [`lz4`](../lz4/) [`xxhash`](../xxhash/) [`openssl`](../openssl/) |
-| Run-time dependencies | [`lz4`](../lz4/) [`openssl`](../openssl/) [`xxhash`](../xxhash/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`libiconv`](../libiconv/) [`libidn2`](../libidn2/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xxhash`](../xxhash/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_rsync`](../../tests/src/) |
 
@@ -74,10 +74,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz
+URL=https://download.samba.org/pub/rsync/src/rsync-3.5.2.tar.gz
 mkdir -p dist src/rsync
 curl -fL -o dist/$(basename $URL) $URL
-echo "7399e9a6708c32d678a72a63219e96f23be0be2336e50fd1348498d07041df90  dist/$(basename $URL)" | sha256sum -c -
+echo "a10d591825251e070f74c98df3daad195def4ed81b4a2de16169026aea33f6c8  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/rsync --strip-components=1
 ```
 
@@ -114,7 +114,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH rsync`.
 
 ### 5. What it installs
 
-2 files under `/usr/local`, 2 programs.
+5 files under `/usr/local`, 2 programs.
 
 ```
 /usr/local/bin/rsync
@@ -193,14 +193,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.3.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rsync=<version>`), sources in `ported/rsync/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rsync`; port one with `scripts/port-update rsync`.
+This recipe builds **3.5.2**. Kept from earlier: `3.3.0` ([recipe and patches](versions/3.3.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add rsync=<version>`), sources in `ported/rsync/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates rsync`; port one with `scripts/port-update rsync`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.3.0
-TARBALL=https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz
-SHA256=7399e9a6708c32d678a72a63219e96f23be0be2336e50fd1348498d07041df90
+VERSION=3.5.2
+TARBALL=https://download.samba.org/pub/rsync/src/rsync-3.5.2.tar.gz
+SHA256=a10d591825251e070f74c98df3daad195def4ed81b4a2de16169026aea33f6c8
 DEPS="zstd lz4 xxhash openssl"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-md2man --disable-debug --with-included-popt --with-included-zlib )

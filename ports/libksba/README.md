@@ -1,4 +1,4 @@
-# libksba 1.8.1
+# libksba 1.9.1
 
 > Library to access X.509 certificates and CMS data
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://gnupg.org/ftp/gcrypt/libksba/libksba-1.8.1.tar.bz2 |
-| SHA-256 | `c2f84393011827219ae117131dba8e7684c2bed0961eed11b0642c2acba440b5` |
+| Upstream | https://gnupg.org/ftp/gcrypt/libksba/libksba-1.9.1.tar.bz2 |
+| SHA-256 | `9afdd398b4a076735e1e7fd29c7f6e7670b6c382aee2d3a55aa937b283f43e5b` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libgpg-error`](../libgpg-error/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://gnupg.org/ftp/gcrypt/libksba/libksba-1.8.1.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/libksba/libksba-1.9.1.tar.bz2
 mkdir -p dist src/libksba
 curl -fL -o dist/$(basename $URL) $URL
-echo "c2f84393011827219ae117131dba8e7684c2bed0961eed11b0642c2acba440b5  dist/$(basename $URL)" | sha256sum -c -
+echo "9afdd398b4a076735e1e7fd29c7f6e7670b6c382aee2d3a55aa937b283f43e5b  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libksba --strip-components=1
 ```
 
@@ -126,7 +126,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libksba`.
 
 ```
 /usr/local/lib/libksba.so
-/usr/local/lib/libksba.so.24
+/usr/local/lib/libksba.so.25
 /usr/local/bin/ksba-config
 ```
 
@@ -188,7 +188,7 @@ PASS libksba
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_libksba`](../../tests/src/) -- a program linked against libksba the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - library version 1.8.1
+   - library version 1.9.1
    - ksba_cert_new
    - certificate (444 bytes DER) parsed
    - subject DN (RFC 2253)
@@ -216,14 +216,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.8.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libksba=<version>`), sources in `ported/libksba/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libksba`; port one with `scripts/port-update libksba`.
+This recipe builds **1.9.1**. Kept from earlier: `1.8.1` ([recipe and patches](versions/1.8.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libksba=<version>`), sources in `ported/libksba/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libksba`; port one with `scripts/port-update libksba`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.8.1
-TARBALL=https://gnupg.org/ftp/gcrypt/libksba/libksba-1.8.1.tar.bz2
-SHA256=c2f84393011827219ae117131dba8e7684c2bed0961eed11b0642c2acba440b5
+VERSION=1.9.1
+TARBALL=https://gnupg.org/ftp/gcrypt/libksba/libksba-1.9.1.tar.bz2
+SHA256=9afdd398b4a076735e1e7fd29c7f6e7670b6c382aee2d3a55aa937b283f43e5b
 BUILDSYS=autotools
 DEPS="libgpg-error"
 # configure probes PATH for gpgrt-config and would otherwise pick up the build

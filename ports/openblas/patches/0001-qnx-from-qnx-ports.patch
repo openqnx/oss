@@ -1,4 +1,4 @@
-From b56a74992ebe78a22eabb9878cd117d93a405a52 Mon Sep 17 00:00:00 2001
+From 420dfe423f2767b212eb306ef40e23119667535a Mon Sep 17 00:00:00 2001
 From: Deep Chordia <dchordia@blackberry.com>
 Date: Thu, 2 Jan 2025 13:21:03 +0530
 Subject: [PATCH 1/6] Synchronize libm linkage
@@ -6,57 +6,62 @@ Subject: [PATCH 1/6] Synchronize libm linkage
 Imported from qnx-ports/OpenBLAS (5ef8b1964658...qnx-0.3.28); original authorship kept.
 Upstream-Status: QNX-specific (carried in the qnx-ports fork)
 
-
+Rebased onto 0.3.34: upstream moved the C11 atomics block to the top of
+common.h, restructured cpp_thread_test/CMakeLists.txt (a new
+dgemm_thread_safety_mixed test gets the same install rule) and moved the
+OpenMP lookup to cmake/system.cmake, which now links OpenMP:: imported
+targets. Not carried from PATCH 4/6: the QNX override of find_package(OpenMP)
+in cmake/arch.cmake (this port builds with USE_OPENMP=0) and the explicit
+gomp link of the thread-safety tests (upstream links OpenMP::OpenMP_CXX there
+when CPP_THREAD_SAFETY_USE_OPENMP is set).
 ---
  ctest/CMakeLists.txt | 8 ++++----
  utest/CMakeLists.txt | 2 +-
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/ctest/CMakeLists.txt b/ctest/CMakeLists.txt
-index c56a78346f..acaf6ace82 100644
+index bed6a4e..5c8eddd 100644
 --- a/ctest/CMakeLists.txt
 +++ b/ctest/CMakeLists.txt
-@@ -44,7 +44,7 @@ endif()
-         string(REGEX REPLACE "-fopenmp" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
-         target_link_libraries(x${float_char}cblat1 omp pthread)
-   endif()
+@@ -45,7 +45,7 @@ else()
+     c_${float_char}blas1.c)
+ endif()
+   target_link_libraries(x${float_char}cblat1 ${OpenBLAS_LIBNAME})
 -  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +  if(${CMAKE_SYSTEM_NAME} MATCHES "AIX|Android|Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|Darwin" OR QNX)
        target_link_libraries(x${float_char}cblat1 m)
    endif()
    add_test(NAME "x${float_char}cblat1"
-@@ -73,7 +73,7 @@ endif()
-         string(REGEX REPLACE "-fopenmp" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
-         target_link_libraries(x${float_char}cblat2 omp pthread)
-   endif()
+@@ -70,7 +70,7 @@ else()
+     constant.c)
+ endif()
+   target_link_libraries(x${float_char}cblat2 ${OpenBLAS_LIBNAME})
 -  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +  if(${CMAKE_SYSTEM_NAME} MATCHES "AIX|Android|Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|Darwin" OR QNX)
      target_link_libraries(x${float_char}cblat2 m)
    endif()
    add_test(NAME "x${float_char}cblat2"
-@@ -124,7 +124,7 @@ endif()
-         string(REGEX REPLACE "-fopenmp" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
-         target_link_libraries(x${float_char}cblat3 omp pthread)
+@@ -117,13 +117,13 @@ else()
    endif()
+ endif()
+   target_link_libraries(x${float_char}cblat3 ${OpenBLAS_LIBNAME})
 -  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +  if(${CMAKE_SYSTEM_NAME} MATCHES "AIX|Android|Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|Darwin" OR QNX)
      target_link_libraries(x${float_char}cblat3 m)
    endif()
    if (USE_GEMM3M)
-@@ -134,7 +134,7 @@ endif()
-         string(REGEX REPLACE "-fopenmp" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
-         target_link_libraries(x${float_char}cblat3 omp pthread)
-   endif()
+   if ((${float_char} STREQUAL "c") OR (${float_char} STREQUAL "z"))
+   target_link_libraries(x${float_char}cblat3_3m ${OpenBLAS_LIBNAME})
 -  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +  if(${CMAKE_SYSTEM_NAME} MATCHES "AIX|Android|Linux|FreeBSD|OpenBSD|NetBSD|DragonFly|Darwin" OR QNX)
      target_link_libraries(x${float_char}cblat3_3m m)
    endif()
    endif()
 diff --git a/utest/CMakeLists.txt b/utest/CMakeLists.txt
-index 6a61899da5..bdb9c36025 100644
+index 1551cef..659d542 100644
 --- a/utest/CMakeLists.txt
 +++ b/utest/CMakeLists.txt
-@@ -138,7 +138,7 @@ add_executable(${OpenBLAS_utest_ext_bin} ${OpenBLAS_utest_ext_src})
+@@ -144,7 +144,7 @@ add_executable(${OpenBLAS_utest_ext_bin} ${OpenBLAS_utest_ext_src})
  target_link_libraries(${OpenBLAS_utest_bin} ${OpenBLAS_LIBNAME})
  target_link_libraries(${OpenBLAS_utest_ext_bin} ${OpenBLAS_LIBNAME})
  
@@ -66,23 +71,23 @@ index 6a61899da5..bdb9c36025 100644
  endif()
  
 
-From faf0dd8bb91448e8a2e7d48a31646c139e43cdf9 Mon Sep 17 00:00:00 2001
+From 18e3a85164e0131a43105938a96871ecf8f7cd81 Mon Sep 17 00:00:00 2001
 From: Deep Chordia <dchordia@blackberry.com>
 Date: Thu, 2 Jan 2025 14:56:58 +0530
 Subject: [PATCH 2/6] Add OPENBLAS_INSTALL_TESTS CMake Option
 
 ---
  CMakeLists.txt                 |  2 ++
- cpp_thread_test/CMakeLists.txt |  6 ++++++
+ cpp_thread_test/CMakeLists.txt |  9 +++++++++
  ctest/CMakeLists.txt           | 28 ++++++++++++++++++++++++++++
  utest/CMakeLists.txt           |  5 +++++
- 4 files changed, 41 insertions(+)
+ 4 files changed, 44 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 2006604146..30f04789c7 100644
+index 360bc44..d8ab217 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -67,6 +67,8 @@ if((BUILD_STATIC_LIBS AND BUILD_SHARED_LIBS) AND MSVC)
+@@ -72,6 +72,8 @@ if((BUILD_STATIC_LIBS AND BUILD_SHARED_LIBS) AND MSVC)
    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static library" FORCE)
  endif()
  
@@ -92,34 +97,39 @@ index 2006604146..30f04789c7 100644
  # Avoids conflicts with other BLAS libraries, especially when using
  # 64 bit integer interfaces in OpenBLAS.
 diff --git a/cpp_thread_test/CMakeLists.txt b/cpp_thread_test/CMakeLists.txt
-index 5eccb12ceb..9c98bfec61 100644
+index 5271d45..9eb665d 100644
 --- a/cpp_thread_test/CMakeLists.txt
 +++ b/cpp_thread_test/CMakeLists.txt
-@@ -11,6 +11,9 @@ if (CPP_THREAD_SAFETY_TEST)
-   add_executable(dgemm_thread_safety dgemm_thread_safety.cpp) 
-   target_link_libraries(dgemm_thread_safety ${OpenBLAS_LIBNAME})
-   add_test( dgemm_thread_safety ${CMAKE_CURRENT_BINARY_DIR}/dgemm_thread_safety)
+@@ -25,10 +25,16 @@ if (CPP_THREAD_SAFETY_TEST)
+   add_executable(dgemm_thread_safety dgemm_thread_safety.cpp)
+   target_link_libraries(dgemm_thread_safety ${CPP_THREAD_SAFETY_LIBS})
+   add_test(NAME dgemm_thread_safety COMMAND ${CMAKE_CURRENT_BINARY_DIR}/dgemm_thread_safety ${CPP_THREAD_SAFETY_DGEMM_ARGS})
 +  if (OPENBLAS_INSTALL_TESTS)
 +    install(TARGETS dgemm_thread_safety DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
++  endif()
+ 
+   add_executable(dgemm_thread_safety_mixed dgemm_thread_safety_mixed.cpp)
+   target_link_libraries(dgemm_thread_safety_mixed ${CPP_THREAD_SAFETY_LIBS})
+   add_test(NAME dgemm_thread_safety_mixed COMMAND ${CMAKE_CURRENT_BINARY_DIR}/dgemm_thread_safety_mixed ${CPP_THREAD_SAFETY_DGEMM_MIXED_ARGS})
++  if (OPENBLAS_INSTALL_TESTS)
++    install(TARGETS dgemm_thread_safety_mixed DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 +  endif()
  endif()
  
  
-@@ -18,6 +21,9 @@ if (CPP_THREAD_SAFETY_TEST OR CPP_THREAD_SAFETY_GEMV)
-   add_executable(dgemv_thread_safety dgemv_thread_safety.cpp) 
-   target_link_libraries(dgemv_thread_safety ${OpenBLAS_LIBNAME})
-   add_test(dgemv_thread_safety ${CMAKE_CURRENT_BINARY_DIR}/dgemv_thread_safety)
+@@ -36,4 +42,7 @@ if (CPP_THREAD_SAFETY_TEST OR CPP_THREAD_SAFETY_GEMV)
+   add_executable(dgemv_thread_safety dgemv_thread_safety.cpp)
+   target_link_libraries(dgemv_thread_safety ${CPP_THREAD_SAFETY_LIBS})
+   add_test(NAME dgemv_thread_safety COMMAND ${CMAKE_CURRENT_BINARY_DIR}/dgemv_thread_safety ${CPP_THREAD_SAFETY_DGEMV_ARGS})
 +  if (OPENBLAS_INSTALL_TESTS)
 +    install(TARGETS dgemv_thread_safety DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 +  endif()
  endif()
- 
- endif()
 diff --git a/ctest/CMakeLists.txt b/ctest/CMakeLists.txt
-index acaf6ace82..30a3587d57 100644
+index 5c8eddd..797505f 100644
 --- a/ctest/CMakeLists.txt
 +++ b/ctest/CMakeLists.txt
-@@ -49,6 +49,10 @@ endif()
+@@ -50,6 +50,10 @@ endif()
    endif()
    add_test(NAME "x${float_char}cblat1"
      COMMAND $<TARGET_FILE:x${float_char}cblat1>)
@@ -130,7 +140,7 @@ index acaf6ace82..30a3587d57 100644
  
    #level2
  if (NOT NOFORTRAN)
-@@ -78,6 +82,11 @@ endif()
+@@ -75,6 +79,11 @@ endif()
    endif()
    add_test(NAME "x${float_char}cblat2"
      COMMAND ${test_helper} $<TARGET_FILE:x${float_char}cblat2> "${PROJECT_SOURCE_DIR}/ctest/${float_char}in2")
@@ -142,7 +152,7 @@ index acaf6ace82..30a3587d57 100644
  
    #level3
  if (NOT NOFORTRAN)
-@@ -147,4 +156,23 @@ endif()
+@@ -136,4 +145,23 @@ endif()
      COMMAND ${test_helper} $<TARGET_FILE:x${float_char}cblat3_3m> "${PROJECT_SOURCE_DIR}/ctest/${float_char}in3_3m")
      endif()
    endif()
@@ -167,21 +177,20 @@ index acaf6ace82..30a3587d57 100644
 +  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/openblas_ctests.sh" DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 +endif()
 diff --git a/utest/CMakeLists.txt b/utest/CMakeLists.txt
-index bdb9c36025..9f3e1e1515 100644
+index 659d542..ceb33aa 100644
 --- a/utest/CMakeLists.txt
 +++ b/utest/CMakeLists.txt
-@@ -162,3 +162,8 @@ endif()
+@@ -168,3 +168,8 @@ endif()
  
  add_test(${OpenBLAS_utest_bin} ${CMAKE_CURRENT_BINARY_DIR}/${OpenBLAS_utest_bin})
- add_test(${OpenBLAS_utest_ext_bin} ${CMAKE_CURRENT_BINARY_DIR}/${OpenBLAS_utest_bin})
+ add_test(${OpenBLAS_utest_ext_bin} ${CMAKE_CURRENT_BINARY_DIR}/${OpenBLAS_utest_ext_bin})
 +
 +if (OPENBLAS_INSTALL_TESTS)
 +  install(TARGETS ${OpenBLAS_utest_bin} DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 +  install(TARGETS ${OpenBLAS_utest_ext_bin} DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 +endif()
-\ No newline at end of file
 
-From 44215092aa071bc4a76883c09bcbc90e5d0ef0de Mon Sep 17 00:00:00 2001
+From 09f99cdf2e9885da848060bc11b5fbad4bf1f854 Mon Sep 17 00:00:00 2001
 From: Deep Chordia <dchordia@blackberry.com>
 Date: Thu, 2 Jan 2025 16:24:40 +0530
 Subject: [PATCH 3/6] Do not include stdatomic.h for C++ before 23
@@ -191,45 +200,43 @@ Subject: [PATCH 3/6] Do not include stdatomic.h for C++ before 23
  1 file changed, 2 insertions(+)
 
 diff --git a/common.h b/common.h
-index b8bac1ad27..ae2c459859 100644
+index 336cb29..3ce7a31 100644
 --- a/common.h
 +++ b/common.h
-@@ -707,6 +707,7 @@ __declspec(dllimport) int __cdecl omp_in_parallel(void);
- __declspec(dllimport) int __cdecl omp_get_num_procs(void);
+@@ -80,6 +80,7 @@ extern "C" {
  #endif
  
+ #ifndef ASSEMBLER
 +#if !defined(__cplusplus) || __cplusplus >= 202302L
  #ifdef HAVE_C11
- #if defined(C_GCC) && ( __GNUC__ < 7) 
+ #if defined(C_GCC) && ( __GNUC__ < 7)
  // workaround for GCC bug 65467
-@@ -720,6 +721,7 @@ __declspec(dllimport) int __cdecl omp_get_num_procs(void);
- #define _Atomic volatile
+@@ -94,6 +95,7 @@ extern "C" {
+ #endif
  #endif
  #endif
 +#endif
  
- #else
- #ifdef __ELF__
+ #if !defined(NOINCLUDE) && !defined(ASSEMBLER)
+ #include <stdio.h>
 
-From a6e2f639bddcab884445abeb38c03990a905e594 Mon Sep 17 00:00:00 2001
+From 2ac98ea3ef3e025c71f4a81c82e67d2f410fbd26 Mon Sep 17 00:00:00 2001
 From: Deep Chordia <dchordia@blackberry.com>
 Date: Thu, 2 Jan 2025 16:46:01 +0530
 Subject: [PATCH 4/6] Add QNX Support
 
 ---
- CMakeLists.txt                 |  2 +-
- cmake/arch.cmake               |  9 ++++++++-
- cpp_thread_test/CMakeLists.txt |  6 ++++++
- ctest/c_cblat3c_3m.c           | 14 ++++++++++++--
- ctest/c_zblat3c_3m.c           | 14 ++++++++++++--
- utest/CMakeLists.txt           |  2 +-
- 6 files changed, 40 insertions(+), 7 deletions(-)
+ CMakeLists.txt       |  2 +-
+ ctest/c_cblat3c_3m.c | 14 ++++++++++++--
+ ctest/c_zblat3c_3m.c | 14 ++++++++++++--
+ utest/CMakeLists.txt |  2 +-
+ 4 files changed, 26 insertions(+), 6 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 30f04789c7..3e4ccdef7f 100644
+index d8ab217..0a1a5dc 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -251,7 +251,7 @@ endif()
+@@ -317,7 +317,7 @@ endif()
  set_target_properties(${OpenBLAS_LIBS} PROPERTIES OUTPUT_NAME ${OpenBLAS_LIBNAME})
  
  # Android needs to explicitly link against libm
@@ -238,52 +245,8 @@ index 30f04789c7..3e4ccdef7f 100644
    if(BUILD_STATIC_LIBS)
      target_link_libraries(${OpenBLAS_LIBNAME}_static m)
    endif()
-diff --git a/cmake/arch.cmake b/cmake/arch.cmake
-index 5f3703ae0b..f0ba4b8812 100644
---- a/cmake/arch.cmake
-+++ b/cmake/arch.cmake
-@@ -34,7 +34,14 @@ endif ()
- if (USE_OPENMP)
-   # USE_SIMPLE_THREADED_LEVEL3 = 1
-   # NO_AFFINITY = 1
--  find_package(OpenMP REQUIRED)
-+  if (NOT QNX)
-+    find_package(OpenMP REQUIRED)
-+  else()
-+    set(OpenMP_FOUND TRUE)
-+    set(OpenMP_C_FLAGS "-fopenmp")
-+    set(OpenMP_Fortran_FLAGS "-fopenmp")
-+  endif()
-+
-   if (OpenMP_FOUND)
-     set(CCOMMON_OPT "${CCOMMON_OPT} ${OpenMP_C_FLAGS} -DUSE_OPENMP")
-     set(FCOMMON_OPT "${FCOMMON_OPT} ${OpenMP_Fortran_FLAGS}")
-diff --git a/cpp_thread_test/CMakeLists.txt b/cpp_thread_test/CMakeLists.txt
-index 9c98bfec61..ab88626049 100644
---- a/cpp_thread_test/CMakeLists.txt
-+++ b/cpp_thread_test/CMakeLists.txt
-@@ -10,6 +10,9 @@ if (CPP_THREAD_SAFETY_TEST)
-   message(STATUS building thread safety test)
-   add_executable(dgemm_thread_safety dgemm_thread_safety.cpp) 
-   target_link_libraries(dgemm_thread_safety ${OpenBLAS_LIBNAME})
-+  if (QNX)
-+    target_link_libraries(dgemm_thread_safety gomp)
-+  endif()
-   add_test( dgemm_thread_safety ${CMAKE_CURRENT_BINARY_DIR}/dgemm_thread_safety)
-   if (OPENBLAS_INSTALL_TESTS)
-     install(TARGETS dgemm_thread_safety DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
-@@ -20,6 +23,9 @@ endif()
- if (CPP_THREAD_SAFETY_TEST OR CPP_THREAD_SAFETY_GEMV)
-   add_executable(dgemv_thread_safety dgemv_thread_safety.cpp) 
-   target_link_libraries(dgemv_thread_safety ${OpenBLAS_LIBNAME})
-+  if (QNX)
-+    target_link_libraries(dgemv_thread_safety gomp)
-+  endif()
-   add_test(dgemv_thread_safety ${CMAKE_CURRENT_BINARY_DIR}/dgemv_thread_safety)
-   if (OPENBLAS_INSTALL_TESTS)
-     install(TARGETS dgemv_thread_safety DESTINATION "${CMAKE_INSTALL_BINDIR}/openblas_tests")
 diff --git a/ctest/c_cblat3c_3m.c b/ctest/c_cblat3c_3m.c
-index b5d6bf9cbb..e511a5e984 100644
+index b5d6bf9..e511a5e 100644
 --- a/ctest/c_cblat3c_3m.c
 +++ b/ctest/c_cblat3c_3m.c
 @@ -259,6 +259,16 @@ struct {
@@ -312,7 +275,7 @@ index b5d6bf9cbb..e511a5e984 100644
  	    "cblas_ctrmm ", "cblas_ctrsm ", "cblas_cherk ", "cblas_csyrk ", 
  	    "cblas_cher2k", "cblas_csyr2k"};
  
-@@ -539,7 +549,7 @@ int /* Main program */ main(void)
+@@ -539,7 +549,7 @@ L30:
     if (! fgets(line,80,stdin)) {
  	goto L60;
      }
@@ -322,7 +285,7 @@ index b5d6bf9cbb..e511a5e984 100644
     if (tmpchar=='T')ltestt=TRUE_;
      if (i__1 < 2) {
 diff --git a/ctest/c_zblat3c_3m.c b/ctest/c_zblat3c_3m.c
-index 0c76f11e76..54f225169d 100644
+index 0c76f11..54f2251 100644
 --- a/ctest/c_zblat3c_3m.c
 +++ b/ctest/c_zblat3c_3m.c
 @@ -256,6 +256,16 @@ struct {
@@ -351,7 +314,7 @@ index 0c76f11e76..54f225169d 100644
       "cblas_ztrsm ", "cblas_zherk ", "cblas_zsyrk ", "cblas_zher2k", "cblas_zsyr2k"};
  
      /* System generated locals */
-@@ -526,7 +536,7 @@ static logical c_false = FALSE_;
+@@ -526,7 +536,7 @@ L30:
     if (! fgets(line,80,stdin)) {
          goto L60;
      }
@@ -361,7 +324,7 @@ index 0c76f11e76..54f225169d 100644
     if (tmpchar=='T')ltestt=TRUE_;
      if (i__1 < 2) {
 diff --git a/utest/CMakeLists.txt b/utest/CMakeLists.txt
-index 9f3e1e1515..069fe1a3f6 100644
+index ceb33aa..3e9ed29 100644
 --- a/utest/CMakeLists.txt
 +++ b/utest/CMakeLists.txt
 @@ -96,7 +96,7 @@ endif ()
@@ -374,7 +337,7 @@ index 9f3e1e1515..069fe1a3f6 100644
  set(OpenBLAS_utest_src
    ${OpenBLAS_utest_src}
 
-From 8962076f12b160b606d0d2ca0fdf1505946e0804 Mon Sep 17 00:00:00 2001
+From 1abfbe3dc9ae18d68cfd2ee3fba5445e19984fc9 Mon Sep 17 00:00:00 2001
 From: Ethan Leir <eleir@blackberry.com>
 Date: Fri, 20 Feb 2026 13:34:58 -0500
 Subject: [PATCH 5/6] Get number of CPUs on an SMP system.
@@ -384,7 +347,7 @@ Subject: [PATCH 5/6] Get number of CPUs on an SMP system.
  1 file changed, 14 insertions(+)
 
 diff --git a/driver/others/memory.c b/driver/others/memory.c
-index 6343a3785e..a298be1984 100644
+index e25dfba..64ec058 100644
 --- a/driver/others/memory.c
 +++ b/driver/others/memory.c
 @@ -175,6 +175,10 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -416,7 +379,7 @@ index 6343a3785e..a298be1984 100644
  
  int get_num_procs(void) {
 
-From 2897e36407339266789b2b4bc720d2f5c27aee0f Mon Sep 17 00:00:00 2001
+From ab29f43d8c59cee173a018b2a4e5659bdb7e3df5 Mon Sep 17 00:00:00 2001
 From: Ethan Leir <eleir@blackberry.com>
 Date: Fri, 20 Feb 2026 14:48:09 -0500
 Subject: [PATCH 6/6] Add get_num_procs to the other compile path.
@@ -426,10 +389,10 @@ Subject: [PATCH 6/6] Add get_num_procs to the other compile path.
  1 file changed, 14 insertions(+)
 
 diff --git a/driver/others/memory.c b/driver/others/memory.c
-index a298be1984..84deae5e26 100644
+index 64ec058..8c7e6b5 100644
 --- a/driver/others/memory.c
 +++ b/driver/others/memory.c
-@@ -1750,6 +1750,10 @@ inline int atoi(const char *str) { return 0; }
+@@ -1754,6 +1754,10 @@ inline int atoi(const char *str) { return 0; }
  #include <sys/resource.h>
  #endif
  
@@ -440,7 +403,7 @@ index a298be1984..84deae5e26 100644
  #if defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLY) || defined(OS_DARWIN)
  #include <sys/sysctl.h>
  #include <sys/resource.h>
-@@ -1946,6 +1950,16 @@ int get_num_procs(void) {
+@@ -1950,6 +1954,16 @@ int get_num_procs(void) {
  
  #endif
  

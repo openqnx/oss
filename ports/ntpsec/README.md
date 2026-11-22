@@ -1,4 +1,4 @@
-# ntpsec 1.2.4
+# ntpsec 1.2.6
 
 > Hardened implementation of the Network Time Protocol
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.com/NTPsec/ntpsec.git (tag `NTPsec_1_2_4`) |
+| Upstream | https://gitlab.com/NTPsec/ntpsec.git (tag `NTPsec_1_2_6`) |
 | Build system | custom (see recipe) |
 | QNX patches | 3 |
 | Build dependencies | [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b NTPsec_1_2_4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b NTPsec_1_2_6 --recurse-submodules --shallow-submodules \
     https://gitlab.com/NTPsec/ntpsec.git src/ntpsec
 ```
 
@@ -93,6 +93,7 @@ patch -p1 -d src/ntpsec < ports/ntpsec/patches/0003-ntpdig-untrusted-reply.patch
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add qnx-support
 
 > Imported from qnx-ports/ntpsec (NTPsec_1_2_4...qnx-ntpsec-1.2.4); original authorship kept.
+> The fork's six commits are carried as one diff of their net change (rebased onto 1.2.6).
 >
 >
 > ---
@@ -110,7 +111,7 @@ patch -p1 -d src/ntpsec < ports/ntpsec/patches/0003-ntpdig-untrusted-reply.patch
 >  wscript                 | 20 +++++++++++++-----
 >  12 files changed, 115 insertions(+), 28 deletions(-)
 
-Touches: `include/ntp_refclock.h`, `include/ntp_syscall.h`, `include/ntp_tty.h`, `include/ntp_types.h`, `libntp/clockwork.c`, `libntp/ntp_c.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `include/ntp_syscall.h`, `include/ntp_types.h`, `libntp/clockwork.c`, `libntp/ntp_c.c`, `libntp/statestr.c`, `ntpd/ntp_control.c` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 **[`0002-pylib-load-libntpc-by-soname.patch`](patches/0002-pylib-load-libntpc-by-soname.patch)** — ntp.ntpc: load libntpc by its runtime soname (libntpc.so.1).
 
@@ -263,12 +264,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ntpsec=<version>`), sources in `ported/ntpsec/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ntpsec`; port one with `scripts/port-update ntpsec`.
+This recipe builds **1.2.6**. Kept from earlier: `1.2.4` ([recipe and patches](versions/1.2.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ntpsec=<version>`), sources in `ported/ntpsec/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ntpsec`; port one with `scripts/port-update ntpsec`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.4; GIT=https://gitlab.com/NTPsec/ntpsec.git; REF=NTPsec_1_2_4
+VERSION=1.2.6; GIT=https://gitlab.com/NTPsec/ntpsec.git; REF=NTPsec_1_2_6
 DEPS="openssl"
 BUILDSYS=custom
 # NTPsec builds with waf (Python). Cross compiling is a waf feature: the

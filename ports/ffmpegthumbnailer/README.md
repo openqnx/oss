@@ -1,4 +1,4 @@
-# ffmpegthumbnailer 2.2.3
+# ffmpegthumbnailer 2.4.2
 
 > Lightweight video thumbnailer library and tool using FFmpeg
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/dirkvdb/ffmpegthumbnailer.git (tag `2.2.3`) |
+| Upstream | https://github.com/dirkvdb/ffmpegthumbnailer.git (tag `v2.4.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`ffmpeg`](../ffmpeg/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.2.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.4.2 --recurse-submodules --shallow-submodules \
     https://github.com/dirkvdb/ffmpegthumbnailer.git src/ffmpegthumbnailer
 ```
 
@@ -112,8 +112,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ffmpegthumbnaile
 
 ```
 /usr/local/lib/libffmpegthumbnailer.so
-/usr/local/lib/libffmpegthumbnailer.so.4
-/usr/local/lib/libffmpegthumbnailer.so.4.15.1
+/usr/local/lib/libffmpegthumbnailer.so.5
+/usr/local/lib/libffmpegthumbnailer.so.5.2.0
 /usr/local/bin/ffmpegthumbnailer
 ```
 
@@ -205,12 +205,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.2.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ffmpegthumbnailer=<version>`), sources in `ported/ffmpegthumbnailer/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ffmpegthumbnailer`; port one with `scripts/port-update ffmpegthumbnailer`.
+This recipe builds **2.4.2**. Kept from earlier: `2.2.3` ([recipe and patches](versions/2.2.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ffmpegthumbnailer=<version>`), sources in `ported/ffmpegthumbnailer/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ffmpegthumbnailer`; port one with `scripts/port-update ffmpegthumbnailer`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.2.3; GIT=https://github.com/dirkvdb/ffmpegthumbnailer.git; REF=2.2.3
+VERSION=2.4.2; GIT=https://github.com/dirkvdb/ffmpegthumbnailer.git; REF=v2.4.2
 DEPS="ffmpeg libpng libjpeg-turbo"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_GIO=OFF -DENABLE_THUMBNAILER=OFF
                    -DENABLE_TESTS=OFF )

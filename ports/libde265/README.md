@@ -1,4 +1,4 @@
-# libde265 1.0.15
+# libde265 1.1.3
 
 > H.265/HEVC video decoder library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/strukturag/libde265.git (tag `v1.0.15`) |
+| Upstream | https://github.com/strukturag/libde265.git (tag `v1.1.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.0.15 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.3 --recurse-submodules --shallow-submodules \
     https://github.com/strukturag/libde265.git src/libde265
 ```
 
@@ -103,10 +103,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libde265`.
 
 ### 5. What it installs
 
-9 files under `/usr/local`: 1 shared-library entries, 1 programs, 3 headers.
+10 files under `/usr/local`: 3 shared-library entries, 1 programs, 2 headers.
 
 ```
 /usr/local/lib/libde265.so
+/usr/local/lib/libde265.so.0
+/usr/local/lib/libde265.so.0.2.3
 /usr/local/bin/dec265
 ```
 
@@ -168,7 +170,7 @@ PASS libde265
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_libde265`](../../tests/src/) -- a program linked against libde265 the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - de265_get_version_number: 1.0.x
+   - de265_get_version_number: 1.1.x
    - de265_new_decoder
    - de265_push_data
    - 3 pictures decoded
@@ -194,12 +196,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.15**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libde265=<version>`), sources in `ported/libde265/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libde265`; port one with `scripts/port-update libde265`.
+This recipe builds **1.1.3**. Kept from earlier: `1.0.15` ([recipe and patches](versions/1.0.15/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libde265=<version>`), sources in `ported/libde265/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libde265`; port one with `scripts/port-update libde265`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.15; GIT=https://github.com/strukturag/libde265.git; REF=v1.0.15
+VERSION=1.1.3; GIT=https://github.com/strukturag/libde265.git; REF=v1.1.3
 BUILDSYS=cmake
 # The other half of the HEVC pair: x265 (already staged) encodes, libde265
 # decodes.  No SDL/Qt example programs -- they pull in a display stack the

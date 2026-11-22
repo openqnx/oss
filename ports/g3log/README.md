@@ -1,4 +1,4 @@
-# g3log 2.4
+# g3log 2.6.2
 
 > Asynchronous crash-safe C++ logging library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/KjellKod/g3log.git (tag `2.4`) |
+| Upstream | https://github.com/KjellKod/g3log.git (tag `2.6.2`) |
 | Build system | CMake |
 | QNX patches | 2 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.6.2 --recurse-submodules --shallow-submodules \
     https://github.com/KjellKod/g3log.git src/g3log
 ```
 
@@ -132,7 +132,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH g3log`.
 ```
 /usr/local/lib/libg3log.so
 /usr/local/lib/libg3log.so.2
-/usr/local/lib/libg3log.so.2.4-0
+/usr/local/lib/libg3log.so.2.6-0
 ```
 
 The complete list is `stage/<arch>/.manifest/g3log` after a build.
@@ -216,12 +216,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add g3log=<version>`), sources in `ported/g3log/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates g3log`; port one with `scripts/port-update g3log`.
+This recipe builds **2.6.2**. Kept from earlier: `2.4` ([recipe and patches](versions/2.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add g3log=<version>`), sources in `ported/g3log/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates g3log`; port one with `scripts/port-update g3log`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.4; GIT=https://github.com/KjellKod/g3log.git; REF=2.4
+VERSION=2.6.2; GIT=https://github.com/KjellKod/g3log.git; REF=2.6.2
 CMAKE_ARGS_EXTRA=( -DADD_G3LOG_UNIT_TEST=OFF -DADD_FATAL_EXAMPLE=OFF -DG3_SHARED_LIB=ON -DCHANGE_G3LOG_DEBUG_TO_DBUG=OFF )
 ```
 </details>

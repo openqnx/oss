@@ -22,7 +22,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "26.05"
+  "version": "26.06"
  },
  "abseil": {
   "build_closure": [],
@@ -231,10 +231,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "20260817.0"
@@ -335,12 +332,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 49,
-   "headers": 41,
+   "files": 51,
+   "headers": 43,
    "libs": [
     "usr/local/lib/libada.so",
     "usr/local/lib/libada.so.4",
-    "usr/local/lib/libada.so.4.0.0"
+    "usr/local/lib/libada.so.4.1.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -349,7 +346,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.0.0"
+  "version": "4.1.1"
  },
  "adwaita-fonts": {
   "build_closure": [],
@@ -456,10 +453,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "3.15.3"
@@ -553,7 +547,7 @@
    "bins": [
     "usr/local/bin/appstreamcli"
    ],
-   "files": 99,
+   "files": 100,
    "headers": 40,
    "libs": [
     "usr/local/lib/libappstream.so",
@@ -570,6 +564,7 @@
    "glib",
    "libffi",
    "libiconv",
+   "libidn2",
    "libunistring",
    "libxml2",
    "libxmlb",
@@ -662,7 +657,7 @@
    "libs": [
     "usr/local/lib/libaprutil-1.so",
     "usr/local/lib/libaprutil-1.so.0",
-    "usr/local/lib/libaprutil-1.so.0.6.5"
+    "usr/local/lib/libaprutil-1.so.0.6.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -686,7 +681,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.6.5"
+  "version": "1.6.6"
  },
  "apriltag": {
   "build_closure": [],
@@ -805,8 +800,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 635,
-   "headers": 635,
+   "files": 683,
+   "headers": 683,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -815,7 +810,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1-38-2"
+  "version": "1-39-0"
  },
  "aspell": {
   "build_closure": [
@@ -885,7 +880,7 @@
    "libs": [
     "usr/local/lib/libassimp.so",
     "usr/local/lib/libassimp.so.6",
-    "usr/local/lib/libassimp.so.6.0.2"
+    "usr/local/lib/libassimp.so.6.0.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -898,7 +893,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.0.2"
+  "version": "6.0.6"
  },
  "at-spi2-core": {
   "build_closure": [
@@ -1015,7 +1010,7 @@
     "usr/local/bin/autoupdate",
     "usr/local/bin/ifnames"
    ],
-   "files": 63,
+   "files": 64,
    "headers": 0,
    "libs": []
   },
@@ -1025,7 +1020,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.72"
+  "version": "2.73"
  },
  "automake": {
   "build_closure": [],
@@ -1039,11 +1034,11 @@
   "installs": {
    "bins": [
     "usr/local/bin/aclocal",
-    "usr/local/bin/aclocal-1.18",
+    "usr/local/bin/aclocal-1.20",
     "usr/local/bin/automake",
-    "usr/local/bin/automake-1.18"
+    "usr/local/bin/automake-1.20"
    ],
-   "files": 125,
+   "files": 128,
    "headers": 0,
    "libs": []
   },
@@ -1053,18 +1048,36 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.18"
+  "version": "1.20"
  },
  "avahi": {
   "build_closure": [
+   "bzip2",
    "dbus",
    "expat",
-   "libdaemon"
+   "gdbm",
+   "gettext",
+   "glib",
+   "gobject-introspection",
+   "libdaemon",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "dbus",
    "expat",
-   "libdaemon"
+   "libdaemon",
+   "gobject-introspection"
   ],
   "buildsys": "autotools",
   "built": {
@@ -1755,6 +1768,11 @@
    "brotli",
    "c-ares",
    "curl",
+   "gettext",
+   "libiconv",
+   "libidn2",
+   "libunistring",
+   "ncurses",
    "nghttp2",
    "openssl",
    "zlib",
@@ -1809,7 +1827,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.2.37"
+  "version": "5.3"
  },
  "bash-completion": {
   "build_closure": [],
@@ -1882,36 +1900,35 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 30,
-   "headers": 2,
+   "files": 60,
+   "headers": 13,
    "libs": [
     "usr/local/lib/libbenchmark.so",
     "usr/local/lib/libbenchmark.so.1",
-    "usr/local/lib/libbenchmark.so.1.9.0",
+    "usr/local/lib/libbenchmark.so.1.10.0",
     "usr/local/lib/libbenchmark_main.so",
     "usr/local/lib/libbenchmark_main.so.1",
-    "usr/local/lib/libbenchmark_main.so.1.9.0"
+    "usr/local/lib/libbenchmark_main.so.1.10.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.9.0"
+  "version": "1.10.0"
  },
  "binutils": {
   "build_closure": [
+   "msgpack-c",
    "zlib",
    "zstd"
   ],
   "build_deps": [
    "zlib",
-   "zstd"
+   "zstd",
+   "msgpack-c"
   ],
   "buildsys": "autotools",
   "built": {
@@ -1944,15 +1961,19 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "flex",
    "zlib",
    "zstd"
   ],
   "runtime_deps": [
+   "flex",
    "zlib",
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "flex"
+  ],
   "unresolved": [],
   "version": "2.43"
  },
@@ -2090,15 +2111,13 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "bzip2",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib"
   ],
   "runtime_deps": [
    "bzip2",
+   "libiconv",
    "xz",
    "zlib"
   ],
@@ -2120,7 +2139,7 @@
    "bins": [
     "usr/local/bin/bssl"
    ],
-   "files": 114,
+   "files": 115,
    "headers": 0,
    "libs": []
   },
@@ -2130,7 +2149,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.20260929.0"
+  "version": "0.20261105.0"
  },
  "brotli": {
   "build_closure": [],
@@ -2145,30 +2164,27 @@
    "bins": [
     "usr/local/bin/brotli"
    ],
-   "files": 18,
+   "files": 23,
    "headers": 5,
    "libs": [
     "usr/local/lib/libbrotlicommon.so",
     "usr/local/lib/libbrotlicommon.so.1",
-    "usr/local/lib/libbrotlicommon.so.1.1.0",
+    "usr/local/lib/libbrotlicommon.so.1.2.1",
     "usr/local/lib/libbrotlidec.so",
     "usr/local/lib/libbrotlidec.so.1",
-    "usr/local/lib/libbrotlidec.so.1.1.0",
+    "usr/local/lib/libbrotlidec.so.1.2.1",
     "usr/local/lib/libbrotlienc.so",
     "usr/local/lib/libbrotlienc.so.1",
-    "usr/local/lib/libbrotlienc.so.1.1.0"
+    "usr/local/lib/libbrotlienc.so.1.2.1"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.0"
+  "version": "1.2.1"
  },
  "btop": {
   "build_closure": [],
@@ -2303,10 +2319,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "1.0.8"
@@ -2327,19 +2340,16 @@
    "libs": [
     "usr/local/lib/libcares.so",
     "usr/local/lib/libcares.so.2",
-    "usr/local/lib/libcares.so.2.19.2"
+    "usr/local/lib/libcares.so.2.19.8"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.34.3"
+  "version": "1.34.9"
  },
  "c-blosc": {
   "build_closure": [
@@ -2365,7 +2375,7 @@
    "libs": [
     "usr/local/lib/libblosc.so",
     "usr/local/lib/libblosc.so.1",
-    "usr/local/lib/libblosc.so.1.21.6"
+    "usr/local/lib/libblosc.so.1.21.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -2382,7 +2392,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.21.6"
+  "version": "1.21.7"
  },
  "ca-certificates": {
   "build_closure": [],
@@ -2461,13 +2471,13 @@
    "libs": [
     "usr/local/lib/libcairo-gobject.so",
     "usr/local/lib/libcairo-gobject.so.2",
-    "usr/local/lib/libcairo-gobject.so.2.11802.2",
+    "usr/local/lib/libcairo-gobject.so.2.11806.6",
     "usr/local/lib/libcairo-script-interpreter.so",
     "usr/local/lib/libcairo-script-interpreter.so.2",
-    "usr/local/lib/libcairo-script-interpreter.so.2.11802.2",
+    "usr/local/lib/libcairo-script-interpreter.so.2.11806.6",
     "usr/local/lib/libcairo.so",
     "usr/local/lib/libcairo.so.2",
-    "usr/local/lib/libcairo.so.2.11802.2"
+    "usr/local/lib/libcairo.so.2.11806.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -2510,7 +2520,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.18.2"
+  "version": "1.18.6"
  },
  "can-utils": {
   "build_closure": [
@@ -2682,10 +2692,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "3.2.4"
@@ -2727,10 +2734,7 @@
    "boost",
    "bzip2",
    "capicxx-core-runtime",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "vsomeip",
    "xz",
    "zlib"
@@ -2770,27 +2774,27 @@
    "headers": 92,
    "libs": [
     "usr/local/lib/libcapnp-json.so",
-    "usr/local/lib/libcapnp-json.so.1.0.2",
+    "usr/local/lib/libcapnp-json.so.1.5.0",
     "usr/local/lib/libcapnp-rpc.so",
-    "usr/local/lib/libcapnp-rpc.so.1.0.2",
+    "usr/local/lib/libcapnp-rpc.so.1.5.0",
     "usr/local/lib/libcapnp-websocket.so",
-    "usr/local/lib/libcapnp-websocket.so.1.0.2",
+    "usr/local/lib/libcapnp-websocket.so.1.5.0",
     "usr/local/lib/libcapnp.so",
-    "usr/local/lib/libcapnp.so.1.0.2",
+    "usr/local/lib/libcapnp.so.1.5.0",
     "usr/local/lib/libcapnpc.so",
-    "usr/local/lib/libcapnpc.so.1.0.2",
+    "usr/local/lib/libcapnpc.so.1.5.0",
     "usr/local/lib/libkj-async.so",
-    "usr/local/lib/libkj-async.so.1.0.2",
+    "usr/local/lib/libkj-async.so.1.5.0",
     "usr/local/lib/libkj-gzip.so",
-    "usr/local/lib/libkj-gzip.so.1.0.2",
+    "usr/local/lib/libkj-gzip.so.1.5.0",
     "usr/local/lib/libkj-http.so",
-    "usr/local/lib/libkj-http.so.1.0.2",
+    "usr/local/lib/libkj-http.so.1.5.0",
     "usr/local/lib/libkj-test.so",
-    "usr/local/lib/libkj-test.so.1.0.2",
+    "usr/local/lib/libkj-test.so.1.5.0",
     "usr/local/lib/libkj-tls.so",
-    "usr/local/lib/libkj-tls.so.1.0.2",
+    "usr/local/lib/libkj-tls.so.1.5.0",
     "usr/local/lib/libkj.so",
-    "usr/local/lib/libkj.so.1.0.2"
+    "usr/local/lib/libkj.so.1.5.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -2805,7 +2809,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.2"
+  "version": "1.5.0"
  },
  "capstone": {
   "build_closure": [],
@@ -2915,7 +2919,6 @@
    "fontconfig",
    "freetype",
    "gettext",
-   "gflags",
    "glib",
    "glog",
    "libffi",
@@ -2942,14 +2945,15 @@
    "boost",
    "cairo",
    "ceres-solver",
-   "gflags",
    "glog",
    "lua5.3",
    "protobuf"
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [],
+  "unresolved": [
+   "libgflags.so.2.2"
+  ],
   "version": "2.0.0"
  },
  "casadi": {
@@ -3020,20 +3024,17 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 192,
-   "headers": 177,
+   "files": 198,
+   "headers": 183,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.7.1"
+  "version": "3.16.1"
  },
  "ccache": {
   "build_closure": [
@@ -3090,10 +3091,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "1.3.2"
@@ -3127,16 +3125,16 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gflags",
    "glog"
   ],
   "runtime_deps": [
-   "gflags",
    "glog"
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [],
+  "unresolved": [
+   "libgflags.so.2.2"
+  ],
   "version": "2.2.0"
  },
  "cgal": {
@@ -3230,7 +3228,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.8-git-20260226"
+  "version": "4.9"
  },
  "chrpath": {
   "build_closure": [],
@@ -3311,19 +3309,16 @@
    "libs": [
     "usr/local/lib/libcjson.so",
     "usr/local/lib/libcjson.so.1",
-    "usr/local/lib/libcjson.so.1.7.18"
+    "usr/local/lib/libcjson.so.1.7.19"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.18"
+  "version": "1.7.19"
  },
  "clapack": {
   "build_closure": [],
@@ -3363,20 +3358,17 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 29,
-   "headers": 26,
+   "files": 33,
+   "headers": 29,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4.2"
+  "version": "2.7.2"
  },
  "clinfo": {
   "build_closure": [
@@ -3442,7 +3434,7 @@
     "usr/local/bin/cpack",
     "usr/local/bin/ctest"
    ],
-   "files": 3907,
+   "files": 4283,
    "headers": 0,
    "libs": []
   },
@@ -3451,7 +3443,12 @@
    "brotli",
    "c-ares",
    "curl",
+   "gettext",
+   "libiconv",
+   "libidn2",
+   "libunistring",
    "libuv",
+   "ncurses",
    "nghttp2",
    "openssl",
    "zlib",
@@ -3459,14 +3456,17 @@
   ],
   "runtime_deps": [
    "curl",
+   "libiconv",
    "libuv",
    "openssl",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libiconv"
+  ],
   "unresolved": [],
-  "version": "4.1.1"
+  "version": "4.5.1"
  },
  "compiler-rt": {
   "build_closure": [],
@@ -3506,8 +3506,8 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 2263,
-   "headers": 2257,
+   "files": 2262,
+   "headers": 2256,
    "libs": [
     "usr/local/lib/libarm_compute.so",
     "usr/local/lib/libarm_compute_graph.so"
@@ -3519,7 +3519,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "53.0.0"
+  "version": "53.3.2"
  },
  "console_bridge": {
   "build_closure": [],
@@ -3542,10 +3542,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "1.0.2"
@@ -3576,7 +3573,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.10.0"
+  "version": "4.11.0"
  },
  "cpuinfo": {
   "build_closure": [],
@@ -3662,13 +3659,27 @@
  "cups": {
   "build_closure": [
    "avahi",
+   "bzip2",
    "dbus",
    "expat",
+   "gdbm",
+   "gettext",
+   "glib",
+   "gobject-introspection",
    "libdaemon",
+   "libffi",
    "libiconv",
+   "libunistring",
    "libxcrypt",
+   "ncurses",
    "openssl",
-   "zlib"
+   "pcre2",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
    "openssl",
@@ -3757,9 +3768,11 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gdbm",
    "gettext",
    "giflib",
    "glib",
+   "gobject-introspection",
    "lcms2",
    "libdaemon",
    "libexif",
@@ -3785,7 +3798,10 @@
    "pixman",
    "poppler",
    "pthread-stubs",
+   "python3",
    "qpdf",
+   "readline",
+   "sqlite",
    "xcb-proto",
    "xorgproto",
    "xtrans",
@@ -3843,6 +3859,7 @@
    "glib",
    "lcms2",
    "libdaemon",
+   "libdeflate",
    "libexif",
    "libffi",
    "libiconv",
@@ -3921,9 +3938,9 @@
    "bins": [
     "usr/local/bin/curl",
     "usr/local/bin/curl-config",
-    "usr/local/bin/mk-ca-bundle.pl"
+    "usr/local/bin/wcurl"
    ],
-   "files": 525,
+   "files": 571,
    "headers": 12,
    "libs": [
     "usr/local/lib/libcurl.so"
@@ -3933,6 +3950,11 @@
   "runtime_closure": [
    "brotli",
    "c-ares",
+   "gettext",
+   "libiconv",
+   "libidn2",
+   "libunistring",
+   "ncurses",
    "nghttp2",
    "openssl",
    "zlib",
@@ -3941,15 +3963,18 @@
   "runtime_deps": [
    "brotli",
    "c-ares",
+   "libidn2",
    "nghttp2",
    "openssl",
    "zlib",
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libidn2"
+  ],
   "unresolved": [],
-  "version": "8.11.1"
+  "version": "8.23.0"
  },
  "cxxopts": {
   "build_closure": [],
@@ -4001,10 +4026,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "0.10.5"
@@ -4077,7 +4099,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.24"
+  "version": "1.27"
  },
  "dav1d": {
   "build_closure": [],
@@ -4104,7 +4126,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.0"
+  "version": "1.5.5"
  },
  "davici": {
   "build_closure": [],
@@ -4130,7 +4152,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.6"
+  "version": "1.7"
  },
  "dbus": {
   "build_closure": [
@@ -4147,14 +4169,22 @@
   "class": "dependent",
   "installs": {
    "bins": [
-    "usr/local/bin/dbus-daemon"
+    "usr/local/bin/dbus-cleanup-sockets",
+    "usr/local/bin/dbus-daemon",
+    "usr/local/bin/dbus-launch",
+    "usr/local/bin/dbus-monitor",
+    "usr/local/bin/dbus-run-session",
+    "usr/local/bin/dbus-send",
+    "usr/local/bin/dbus-test-tool",
+    "usr/local/bin/dbus-update-activation-environment",
+    "usr/local/bin/dbus-uuidgen"
    ],
-   "files": 41,
+   "files": 50,
    "headers": 17,
    "libs": [
     "usr/local/lib/libdbus-1.so",
     "usr/local/lib/libdbus-1.so.3",
-    "usr/local/lib/libdbus-1.so.3.38.3"
+    "usr/local/lib/libdbus-1.so.3.38.5"
    ]
   },
   "linked_by_dev_name": [],
@@ -4167,7 +4197,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.16.0"
+  "version": "1.16.4"
  },
  "dbus-glib": {
   "build_closure": [
@@ -4280,7 +4310,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.28"
+  "version": "0.29"
  },
  "dhcpcd": {
   "build_closure": [],
@@ -4482,24 +4512,21 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 18,
-   "headers": 11,
+   "files": 20,
+   "headers": 12,
    "libs": [
     "usr/local/lib/libdouble-conversion.so",
     "usr/local/lib/libdouble-conversion.so.3",
-    "usr/local/lib/libdouble-conversion.so.3.3.0"
+    "usr/local/lib/libdouble-conversion.so.3.4.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.3.0"
+  "version": "3.4.0"
  },
  "doxygen": {
   "build_closure": [
@@ -4532,7 +4559,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.17.0"
+  "version": "1.18.0"
  },
  "duktape": {
   "build_closure": [],
@@ -4556,10 +4583,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "2.7.0"
@@ -4601,10 +4625,31 @@
  },
  "e2fsprogs": {
   "build_closure": [
-   "libuuid"
+   "bzip2",
+   "expat",
+   "file",
+   "gdbm",
+   "gettext",
+   "libarchive",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libuuid",
+   "libxml2",
+   "lz4",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
   ],
   "build_deps": [
-   "libuuid"
+   "libuuid",
+   "libarchive",
+   "file"
   ],
   "buildsys": "autotools",
   "built": {
@@ -4699,7 +4744,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.22.5"
+  "version": "1.22.6"
  },
  "eigen": {
   "build_closure": [],
@@ -4719,10 +4764,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "3.4.0"
@@ -4867,8 +4909,10 @@
    "libxml2",
    "ncurses",
    "nettle",
+   "openssl",
    "sqlite",
    "tree-sitter",
+   "unbound",
    "xz",
    "zlib",
    "zstd"
@@ -4947,7 +4991,9 @@
    "freeimage",
    "freetype",
    "gettext",
+   "libb2",
    "libiconv",
+   "libidn2",
    "libpng",
    "libunistring",
    "lz4",
@@ -4982,13 +5028,13 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/enca",
     "usr/local/bin/enconv"
    ],
-   "files": 21,
+   "files": 13,
    "headers": 1,
    "libs": [
     "usr/local/lib/libenca.so",
@@ -4996,15 +5042,18 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
-  "undeclared": [],
+  "runtime_closure": [
+   "libiconv"
+  ],
+  "runtime_deps": [
+   "libiconv"
+  ],
+  "standalone_verified": {},
+  "undeclared": [
+   "libiconv"
+  ],
   "unresolved": [],
-  "version": "1.19"
+  "version": "1.22"
  },
  "enchant": {
   "build_closure": [
@@ -5061,7 +5110,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.8.2"
+  "version": "2.8.21"
  },
  "encodings": {
   "build_closure": [],
@@ -5151,6 +5200,7 @@
    "libarchive",
    "libavif",
    "libdazzle",
+   "libdrm-headers",
    "libepoxy",
    "libffi",
    "libgcrypt",
@@ -5245,7 +5295,7 @@
    "bins": [
     "usr/local/bin/epiphany"
    ],
-   "files": 126,
+   "files": 774,
    "headers": 0,
    "libs": []
   },
@@ -5281,6 +5331,7 @@
    "lcms2",
    "libarchive",
    "libavif",
+   "libb2",
    "libdazzle",
    "libepoxy",
    "libffi",
@@ -5423,7 +5474,7 @@
    "headers": 47,
    "libs": [
     "usr/local/lib/libexiv2.so",
-    "usr/local/lib/libexiv2.so.0.28.5",
+    "usr/local/lib/libexiv2.so.0.28.9",
     "usr/local/lib/libexiv2.so.28"
    ]
   },
@@ -5431,19 +5482,23 @@
   "runtime_closure": [
    "brotli",
    "expat",
+   "libiconv",
    "libinih",
    "zlib"
   ],
   "runtime_deps": [
    "brotli",
    "expat",
+   "libiconv",
    "libinih",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libiconv"
+  ],
   "unresolved": [],
-  "version": "0.28.5"
+  "version": "0.28.9"
  },
  "exo": {
   "build_closure": [
@@ -5626,10 +5681,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "2.6.4"
@@ -5710,7 +5762,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "8.0.2"
+  "version": "8.3.3"
  },
  "fastcdr": {
   "build_closure": [],
@@ -5723,24 +5775,21 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 28,
-   "headers": 20,
+   "files": 29,
+   "headers": 21,
    "libs": [
     "usr/local/lib/libfastcdr.so",
     "usr/local/lib/libfastcdr.so.2",
-    "usr/local/lib/libfastcdr.so.2.2.6"
+    "usr/local/lib/libfastcdr.so.2.4.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.6"
+  "version": "2.4.0"
  },
  "fastdds": {
   "build_closure": [
@@ -5863,7 +5912,7 @@
    "libs": [
     "usr/local/lib/libfcft.so",
     "usr/local/lib/libfcft.so.4",
-    "usr/local/lib/libfcft.so.4.3.2"
+    "usr/local/lib/libfcft.so.4.3.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -5898,7 +5947,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.3.2"
+  "version": "3.3.3"
  },
  "fcl": {
   "build_closure": [
@@ -5963,10 +6012,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "2.0.3"
@@ -6050,15 +6096,12 @@
   "runtime_closure": [
    "bzip2",
    "dav1d",
-   "gettext",
    "lame",
    "libiconv",
    "libogg",
    "libtheora",
-   "libunistring",
    "libvorbis",
    "libvpx",
-   "ncurses",
    "openh264",
    "opus",
    "x264",
@@ -6070,6 +6113,7 @@
    "bzip2",
    "dav1d",
    "lame",
+   "libiconv",
    "libtheora",
    "libvorbis",
    "libvpx",
@@ -6127,8 +6171,8 @@
    "headers": 7,
    "libs": [
     "usr/local/lib/libffmpegthumbnailer.so",
-    "usr/local/lib/libffmpegthumbnailer.so.4",
-    "usr/local/lib/libffmpegthumbnailer.so.4.15.1"
+    "usr/local/lib/libffmpegthumbnailer.so.5",
+    "usr/local/lib/libffmpegthumbnailer.so.5.2.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -6136,17 +6180,14 @@
    "bzip2",
    "dav1d",
    "ffmpeg",
-   "gettext",
    "lame",
    "libiconv",
    "libjpeg-turbo",
    "libogg",
    "libpng",
    "libtheora",
-   "libunistring",
    "libvorbis",
    "libvpx",
-   "ncurses",
    "openh264",
    "opus",
    "x264",
@@ -6163,7 +6204,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.3"
+  "version": "2.4.2"
  },
  "fft2d": {
   "build_closure": [],
@@ -6264,10 +6305,6 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "bzip2",
-   "gettext",
-   "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib",
    "zstd"
@@ -6281,7 +6318,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.46"
+  "version": "5.48"
  },
  "fio": {
   "build_closure": [
@@ -6324,7 +6361,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.41"
+  "version": "3.43"
  },
  "flac": {
   "build_closure": [
@@ -6345,11 +6382,11 @@
    "headers": 14,
    "libs": [
     "usr/local/lib/libFLAC++.so",
-    "usr/local/lib/libFLAC++.so.10",
-    "usr/local/lib/libFLAC++.so.10.0.1",
+    "usr/local/lib/libFLAC++.so.11",
+    "usr/local/lib/libFLAC++.so.11.0.0",
     "usr/local/lib/libFLAC.so",
-    "usr/local/lib/libFLAC.so.12",
-    "usr/local/lib/libFLAC.so.12.1.0"
+    "usr/local/lib/libFLAC.so.14",
+    "usr/local/lib/libFLAC.so.14.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -6362,7 +6399,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.3"
+  "version": "1.5.0"
  },
  "flann": {
   "build_closure": [
@@ -6425,10 +6462,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "24.3.25"
@@ -6484,10 +6518,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "11.2.0"
@@ -6565,15 +6596,11 @@
    "boost",
    "bzip2",
    "fmt",
-   "gettext",
-   "gflags",
    "glog",
    "libevent",
    "libiconv",
    "libsodium",
-   "libunistring",
    "lz4",
-   "ncurses",
    "openssl",
    "xz",
    "zlib",
@@ -6583,7 +6610,6 @@
    "boost",
    "bzip2",
    "fmt",
-   "gflags",
    "glog",
    "libevent",
    "libsodium",
@@ -6595,7 +6621,9 @@
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [],
+  "unresolved": [
+   "libgflags.so.2.2"
+  ],
   "version": "2026.10.26.00"
  },
  "font-cantarell": {
@@ -6757,7 +6785,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.048"
+  "version": "2.051"
  },
  "font-noto-sans-cjk": {
   "build_closure": [],
@@ -6829,7 +6857,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.1"
+  "version": "1.4.2"
  },
  "fontconfig": {
   "build_closure": [
@@ -6928,19 +6956,16 @@
    "files": 51,
    "headers": 45,
    "libs": [
-    "usr/local/lib/libfoonathan_memory-0.7.3.so"
+    "usr/local/lib/libfoonathan_memory-0.7.4.so"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.7-3"
+  "version": "0.7-4"
  },
  "foot": {
   "build_closure": [
@@ -7001,7 +7026,7 @@
     "usr/local/bin/foot",
     "usr/local/bin/footclient"
    ],
-   "files": 97,
+   "files": 100,
    "headers": 0,
    "libs": []
   },
@@ -7043,7 +7068,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.23.1"
+  "version": "1.28.0"
  },
  "fp16": {
   "build_closure": [],
@@ -7121,7 +7146,7 @@
    "libs": [
     "usr/local/lib/libfreetype.so",
     "usr/local/lib/libfreetype.so.6",
-    "usr/local/lib/libfreetype.so.6.20.2"
+    "usr/local/lib/libfreetype.so.6.20.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -7140,7 +7165,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.13.3"
+  "version": "2-15-0"
  },
  "frei0r-plugins": {
   "build_closure": [
@@ -7252,7 +7277,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.16"
+  "version": "1.0.18"
  },
  "fxdiv": {
   "build_closure": [],
@@ -7293,7 +7318,7 @@
    "libs": [
     "usr/local/lib/libg3log.so",
     "usr/local/lib/libg3log.so.2",
-    "usr/local/lib/libg3log.so.2.4-0"
+    "usr/local/lib/libg3log.so.2.6-0"
    ]
   },
   "linked_by_dev_name": [],
@@ -7302,7 +7327,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4"
+  "version": "2.6.2"
  },
  "garcon": {
   "build_closure": [
@@ -7483,10 +7508,10 @@
    "bins": [
     "usr/local/bin/awk",
     "usr/local/bin/gawk",
-    "usr/local/bin/gawk-5.3.2",
+    "usr/local/bin/gawk-5.4.2",
     "usr/local/bin/gawkbug"
    ],
-   "files": 75,
+   "files": 78,
    "headers": 1,
    "libs": []
   },
@@ -7502,7 +7527,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.3.2"
+  "version": "5.4.2"
  },
  "gcr": {
   "build_closure": [
@@ -7749,20 +7774,18 @@
    "expat",
    "fontconfig",
    "freetype",
-   "gettext",
    "libavif",
    "libde265",
+   "libdeflate",
    "libheif",
-   "libiconv",
    "libjpeg-turbo",
    "libpng",
    "libtiff",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "openh264",
    "openjpeg",
    "openjph",
+   "x264",
    "x265",
    "xz",
    "zlib",
@@ -7829,10 +7852,8 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "expat",
-   "gettext",
    "gmp",
    "libiconv",
-   "libunistring",
    "mpfr",
    "ncurses",
    "readline",
@@ -7885,10 +7906,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "1.24"
@@ -8442,23 +8460,20 @@
    "headers": 4,
    "libs": [
     "usr/local/lib/libgflags.so",
-    "usr/local/lib/libgflags.so.2.2",
-    "usr/local/lib/libgflags.so.2.2.2",
+    "usr/local/lib/libgflags.so.2.3",
+    "usr/local/lib/libgflags.so.2.3.0",
     "usr/local/lib/libgflags_nothreads.so",
-    "usr/local/lib/libgflags_nothreads.so.2.2",
-    "usr/local/lib/libgflags_nothreads.so.2.2.2"
+    "usr/local/lib/libgflags_nothreads.so.2.3",
+    "usr/local/lib/libgflags_nothreads.so.2.3.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.2"
+  "version": "2.3.1"
  },
  "giflib": {
   "build_closure": [],
@@ -8482,10 +8497,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "5.2.2"
@@ -8543,7 +8555,11 @@
    "c-ares",
    "curl",
    "expat",
+   "gettext",
    "libiconv",
+   "libidn2",
+   "libunistring",
+   "ncurses",
    "nghttp2",
    "openssl",
    "pcre2",
@@ -8765,7 +8781,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 81,
+   "files": 85,
    "headers": 0,
    "libs": []
   },
@@ -8774,6 +8790,7 @@
    "brotli",
    "c-ares",
    "curl",
+   "expat",
    "gettext",
    "glib",
    "gmp",
@@ -8789,6 +8806,7 @@
    "nghttp2",
    "openssl",
    "pcre2",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -8801,7 +8819,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.80.1"
+  "version": "2.90.1"
  },
  "glib-typelibs": {
   "build_closure": [
@@ -8849,20 +8867,17 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 430,
-   "headers": 428,
+   "files": 434,
+   "headers": 432,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.1"
+  "version": "1.0.3"
  },
  "glog": {
   "build_closure": [
@@ -8876,7 +8891,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "dependent",
+  "class": "runtime-standalone",
   "installs": {
    "bins": [],
    "files": 18,
@@ -8888,15 +8903,13 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [
-   "gflags"
-  ],
-  "runtime_deps": [
-   "gflags"
-  ],
+  "runtime_closure": [],
+  "runtime_deps": [],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [],
+  "unresolved": [
+   "libgflags.so.2.2"
+  ],
   "version": "0.7.1"
  },
  "gloo": {
@@ -8997,10 +9010,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "6.3.0"
@@ -9232,6 +9242,7 @@
   "runtime_closure": [
    "brotli",
    "bzip2",
+   "expat",
    "gettext",
    "gmp",
    "gnutls",
@@ -9246,8 +9257,10 @@
    "ncurses",
    "nettle",
    "npth",
+   "openssl",
    "readline",
    "sqlite",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -9302,16 +9315,21 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 20,
-   "headers": 17,
+   "files": 27,
+   "headers": 19,
    "libs": [
+    "usr/local/lib/libgnutls-dane.so",
+    "usr/local/lib/libgnutls-dane.so.0",
+    "usr/local/lib/libgnutls-dane.so.0.4.1",
     "usr/local/lib/libgnutls.so",
-    "usr/local/lib/libgnutls.so.70"
+    "usr/local/lib/libgnutls.so.30",
+    "usr/local/lib/libgnutls.so.30.43.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
    "brotli",
+   "expat",
    "gettext",
    "gmp",
    "libiconv",
@@ -9320,6 +9338,8 @@
    "libunistring",
    "ncurses",
    "nettle",
+   "openssl",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -9330,13 +9350,16 @@
    "libtasn1",
    "libunistring",
    "nettle",
+   "unbound",
    "zlib",
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "unbound"
+  ],
   "unresolved": [],
-  "version": "3.8.8"
+  "version": "3.8.14"
  },
  "gobject-introspection": {
   "build_closure": [
@@ -9548,10 +9571,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "1.17.0"
@@ -9579,7 +9599,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.1"
+  "version": "3.3"
  },
  "gpgme": {
   "build_closure": [
@@ -9611,7 +9631,7 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libgpgme.so",
-    "usr/local/lib/libgpgme.so.47"
+    "usr/local/lib/libgpgme.so.48"
    ]
   },
   "linked_by_dev_name": [],
@@ -9630,7 +9650,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.0"
+  "version": "2.3.1"
  },
  "graphene": {
   "build_closure": [
@@ -9702,6 +9722,7 @@
    "libunistring",
    "libwebp",
    "libxml2",
+   "libzip",
    "ncurses",
    "openssl",
    "python3",
@@ -9723,7 +9744,8 @@
    "bzip2",
    "xz",
    "zstd",
-   "lcms2"
+   "lcms2",
+   "libzip"
   ],
   "buildsys": "autotools",
   "built": {
@@ -9754,23 +9776,27 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "aom",
    "brotli",
    "bzip2",
+   "dav1d",
    "freetype",
-   "gettext",
-   "highway",
    "lcms2",
-   "libiconv",
+   "libde265",
+   "libdeflate",
+   "libheif",
    "libjpeg-turbo",
-   "libjxl",
    "libpng",
    "libtiff",
-   "libunistring",
    "libwebp",
    "libxml2",
    "libzip",
-   "ncurses",
+   "openh264",
+   "openjpeg",
+   "openjph",
    "openssl",
+   "x264",
+   "x265",
    "xz",
    "zlib",
    "zstd"
@@ -9779,8 +9805,8 @@
    "bzip2",
    "freetype",
    "lcms2",
+   "libheif",
    "libjpeg-turbo",
-   "libjxl",
    "libpng",
    "libtiff",
    "libwebp",
@@ -9792,9 +9818,12 @@
   ],
   "standalone_verified": {},
   "undeclared": [
-   "libzip"
+   "libheif"
   ],
-  "unresolved": [],
+  "unresolved": [
+   "libjxl.so.0.11",
+   "libjxl_threads.so.0.11"
+  ],
   "version": "1.3.46"
  },
  "graphite2": {
@@ -9815,19 +9844,16 @@
    "libs": [
     "usr/local/lib/libgraphite2.so",
     "usr/local/lib/libgraphite2.so.3",
-    "usr/local/lib/libgraphite2.so.3.2.1"
+    "usr/local/lib/libgraphite2.so.3.3.1"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.14"
+  "version": "1.3.15"
  },
  "graphviz": {
   "build_closure": [
@@ -9990,6 +10016,7 @@
    "lcms2",
    "libavif",
    "libde265",
+   "libdeflate",
    "libffi",
    "libheif",
    "libiconv",
@@ -10015,6 +10042,7 @@
    "pcre2",
    "pixman",
    "poppler",
+   "x264",
    "x265",
    "xz",
    "zlib",
@@ -10069,17 +10097,15 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "libiconv",
    "pcre2"
   ],
   "runtime_deps": [
-   "libiconv",
    "pcre2"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.11"
+  "version": "3.12"
  },
  "groff": {
   "build_closure": [
@@ -10136,7 +10162,7 @@
     "usr/local/bin/tfmtodit",
     "usr/local/bin/troff"
    ],
-   "files": 667,
+   "files": 598,
    "headers": 0,
    "libs": []
   },
@@ -10177,63 +10203,78 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 357,
-   "headers": 289,
+   "files": 379,
+   "headers": 297,
    "libs": [
     "usr/local/lib/libaddress_sorting.so",
-    "usr/local/lib/libaddress_sorting.so.44",
-    "usr/local/lib/libaddress_sorting.so.44.2.0",
+    "usr/local/lib/libaddress_sorting.so.58",
+    "usr/local/lib/libaddress_sorting.so.58.0.0",
     "usr/local/lib/libgpr.so",
-    "usr/local/lib/libgpr.so.44",
-    "usr/local/lib/libgpr.so.44.2.0",
+    "usr/local/lib/libgpr.so.58",
+    "usr/local/lib/libgpr.so.58.0.0",
     "usr/local/lib/libgrpc++.so",
-    "usr/local/lib/libgrpc++.so.1.69",
-    "usr/local/lib/libgrpc++.so.1.69.0",
+    "usr/local/lib/libgrpc++.so.1.85",
+    "usr/local/lib/libgrpc++.so.1.85.4",
     "usr/local/lib/libgrpc++_alts.so",
-    "usr/local/lib/libgrpc++_alts.so.1.69",
-    "usr/local/lib/libgrpc++_alts.so.1.69.0",
+    "usr/local/lib/libgrpc++_alts.so.1.85",
+    "usr/local/lib/libgrpc++_alts.so.1.85.4",
     "usr/local/lib/libgrpc++_error_details.so",
-    "usr/local/lib/libgrpc++_error_details.so.1.69",
-    "usr/local/lib/libgrpc++_error_details.so.1.69.0",
+    "usr/local/lib/libgrpc++_error_details.so.1.85",
+    "usr/local/lib/libgrpc++_error_details.so.1.85.4",
     "usr/local/lib/libgrpc++_unsecure.so",
-    "usr/local/lib/libgrpc++_unsecure.so.1.69",
-    "usr/local/lib/libgrpc++_unsecure.so.1.69.0",
+    "usr/local/lib/libgrpc++_unsecure.so.1.85",
+    "usr/local/lib/libgrpc++_unsecure.so.1.85.4",
     "usr/local/lib/libgrpc.so",
-    "usr/local/lib/libgrpc.so.44",
-    "usr/local/lib/libgrpc.so.44.2.0",
+    "usr/local/lib/libgrpc.so.58",
+    "usr/local/lib/libgrpc.so.58.0.0",
     "usr/local/lib/libgrpc_authorization_provider.so",
-    "usr/local/lib/libgrpc_authorization_provider.so.1.69",
-    "usr/local/lib/libgrpc_authorization_provider.so.1.69.0",
+    "usr/local/lib/libgrpc_authorization_provider.so.1.85",
+    "usr/local/lib/libgrpc_authorization_provider.so.1.85.4",
     "usr/local/lib/libgrpc_plugin_support.so",
-    "usr/local/lib/libgrpc_plugin_support.so.1.69",
-    "usr/local/lib/libgrpc_plugin_support.so.1.69.0",
+    "usr/local/lib/libgrpc_plugin_support.so.1.85",
+    "usr/local/lib/libgrpc_plugin_support.so.1.85.4",
     "usr/local/lib/libgrpc_unsecure.so",
-    "usr/local/lib/libgrpc_unsecure.so.44",
-    "usr/local/lib/libgrpc_unsecure.so.44.2.0",
+    "usr/local/lib/libgrpc_unsecure.so.58",
+    "usr/local/lib/libgrpc_unsecure.so.58.0.0",
     "usr/local/lib/libupb_base_lib.so",
-    "usr/local/lib/libupb_base_lib.so.44",
-    "usr/local/lib/libupb_base_lib.so.44.2.0",
+    "usr/local/lib/libupb_base_lib.so.58",
+    "usr/local/lib/libupb_base_lib.so.58.0.0",
+    "usr/local/lib/libupb_descriptor_lib.so",
+    "usr/local/lib/libupb_descriptor_lib.so.58",
+    "usr/local/lib/libupb_descriptor_lib.so.58.0.0",
+    "usr/local/lib/libupb_hash_lib.so",
+    "usr/local/lib/libupb_hash_lib.so.58",
+    "usr/local/lib/libupb_hash_lib.so.58.0.0",
     "usr/local/lib/libupb_json_lib.so",
-    "usr/local/lib/libupb_json_lib.so.44",
-    "usr/local/lib/libupb_json_lib.so.44.2.0",
+    "usr/local/lib/libupb_json_lib.so.58",
+    "usr/local/lib/libupb_json_lib.so.58.0.0",
+    "usr/local/lib/libupb_lex_lib.so",
+    "usr/local/lib/libupb_lex_lib.so.58",
+    "usr/local/lib/libupb_lex_lib.so.58.0.0",
     "usr/local/lib/libupb_mem_lib.so",
-    "usr/local/lib/libupb_mem_lib.so.44",
-    "usr/local/lib/libupb_mem_lib.so.44.2.0",
+    "usr/local/lib/libupb_mem_lib.so.58",
+    "usr/local/lib/libupb_mem_lib.so.58.0.0",
     "usr/local/lib/libupb_message_lib.so",
-    "usr/local/lib/libupb_message_lib.so.44",
-    "usr/local/lib/libupb_message_lib.so.44.2.0",
+    "usr/local/lib/libupb_message_lib.so.58",
+    "usr/local/lib/libupb_message_lib.so.58.0.0",
     "usr/local/lib/libupb_mini_descriptor_lib.so",
-    "usr/local/lib/libupb_mini_descriptor_lib.so.44",
-    "usr/local/lib/libupb_mini_descriptor_lib.so.44.2.0",
+    "usr/local/lib/libupb_mini_descriptor_lib.so.58",
+    "usr/local/lib/libupb_mini_descriptor_lib.so.58.0.0",
+    "usr/local/lib/libupb_mini_table_lib.so",
+    "usr/local/lib/libupb_mini_table_lib.so.58",
+    "usr/local/lib/libupb_mini_table_lib.so.58.0.0",
+    "usr/local/lib/libupb_reflection_lib.so",
+    "usr/local/lib/libupb_reflection_lib.so.58",
+    "usr/local/lib/libupb_reflection_lib.so.58.0.0",
     "usr/local/lib/libupb_textformat_lib.so",
-    "usr/local/lib/libupb_textformat_lib.so.44",
-    "usr/local/lib/libupb_textformat_lib.so.44.2.0",
+    "usr/local/lib/libupb_textformat_lib.so.58",
+    "usr/local/lib/libupb_textformat_lib.so.58.0.0",
     "usr/local/lib/libupb_wire_lib.so",
-    "usr/local/lib/libupb_wire_lib.so.44",
-    "usr/local/lib/libupb_wire_lib.so.44.2.0",
+    "usr/local/lib/libupb_wire_lib.so.58",
+    "usr/local/lib/libupb_wire_lib.so.58.0.0",
     "usr/local/lib/libutf8_range_lib.so",
-    "usr/local/lib/libutf8_range_lib.so.44",
-    "usr/local/lib/libutf8_range_lib.so.44.2.0"
+    "usr/local/lib/libutf8_range_lib.so.58",
+    "usr/local/lib/libutf8_range_lib.so.58.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -10256,7 +10297,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.69.0"
+  "version": "1.85.4"
  },
  "gsettings-desktop-schemas": {
   "build_closure": [
@@ -10315,13 +10356,10 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.22"
+  "version": "1.0.24"
  },
  "gst-libav": {
   "build_closure": [
@@ -10431,6 +10469,7 @@
    "gstreamer",
    "harfbuzz",
    "icu",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -10462,6 +10501,8 @@
    "readline",
    "sqlite",
    "svt-av1",
+   "wayland",
+   "wayland-protocols",
    "x265",
    "xcb-proto",
    "xorgproto",
@@ -10480,7 +10521,10 @@
    "libwebp",
    "openssl",
    "pango",
-   "cairo"
+   "cairo",
+   "wayland",
+   "wayland-protocols",
+   "libdrm-headers"
   ],
   "buildsys": "meson",
   "built": {
@@ -10490,8 +10534,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 366,
-   "headers": 95,
+   "files": 385,
+   "headers": 106,
    "libs": [
     "usr/local/lib/libgstadaptivedemux-1.0.so",
     "usr/local/lib/libgstadaptivedemux-1.0.so.0",
@@ -10540,6 +10584,9 @@
     "usr/local/lib/libgsturidownloader-1.0.so",
     "usr/local/lib/libgsturidownloader-1.0.so.0",
     "usr/local/lib/libgsturidownloader-1.0.so.0.2410.0",
+    "usr/local/lib/libgstwayland-1.0.so",
+    "usr/local/lib/libgstwayland-1.0.so.0",
+    "usr/local/lib/libgstwayland-1.0.so.0.2410.0",
     "usr/local/lib/libgstwebrtc-1.0.so",
     "usr/local/lib/libgstwebrtc-1.0.so.0",
     "usr/local/lib/libgstwebrtc-1.0.so.0.2410.0"
@@ -10586,6 +10633,7 @@
    "pcre2",
    "pixman",
    "svt-av1",
+   "wayland",
    "x265",
    "zlib"
   ],
@@ -10600,6 +10648,7 @@
    "openh264",
    "pango",
    "svt-av1",
+   "wayland",
    "x265"
   ],
   "standalone_verified": {},
@@ -10726,20 +10775,28 @@
  },
  "gst-plugins-good": {
   "build_closure": [
+   "at-spi2-core",
    "brotli",
    "bzip2",
    "cairo",
+   "dbus",
    "expat",
    "flac",
    "fontconfig",
    "freetype",
+   "fribidi",
    "gdbm",
    "gdk-pixbuf",
    "gettext",
    "glib",
+   "graphite2",
    "gst-plugins-base",
    "gstreamer",
+   "gtk3",
+   "harfbuzz",
+   "icu",
    "lame",
+   "libepoxy",
    "libffi",
    "libiconv",
    "libidn2",
@@ -10755,22 +10812,35 @@
    "libx11",
    "libxau",
    "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
    "libxdmcp",
    "libxext",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
    "libxml2",
+   "libxrandr",
    "libxrender",
+   "libxtst",
    "lzo",
    "ncurses",
    "nghttp2",
    "openssl",
    "opus",
    "orc",
+   "pango",
    "pcre2",
    "pixman",
    "pthread-stubs",
    "python3",
    "readline",
    "sqlite",
+   "wayland",
+   "wayland-protocols",
    "xcb-proto",
    "xorgproto",
    "xtrans",
@@ -10789,7 +10859,8 @@
    "cairo",
    "libsoup",
    "gdk-pixbuf",
-   "bzip2"
+   "bzip2",
+   "gtk3"
   ],
   "buildsys": "meson",
   "built": {
@@ -10799,25 +10870,33 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 213,
+   "files": 216,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "at-spi2-core",
    "brotli",
    "bzip2",
    "cairo",
+   "dbus",
    "expat",
    "flac",
    "fontconfig",
    "freetype",
+   "fribidi",
    "gdk-pixbuf",
    "gettext",
    "glib",
+   "graphite2",
    "gst-plugins-base",
    "gstreamer",
+   "gtk3",
+   "harfbuzz",
+   "icu",
    "lame",
+   "libepoxy",
    "libffi",
    "libiconv",
    "libidn2",
@@ -10833,16 +10912,30 @@
    "libx11",
    "libxau",
    "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
    "libxdmcp",
    "libxext",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
    "libxrender",
+   "libxtst",
    "lzo",
    "ncurses",
    "nghttp2",
    "opus",
+   "pango",
    "pcre2",
    "pixman",
    "sqlite",
+   "wayland",
+   "xz",
    "zlib"
   ],
   "runtime_deps": [
@@ -10854,6 +10947,7 @@
    "glib",
    "gst-plugins-base",
    "gstreamer",
+   "gtk3",
    "lame",
    "libjpeg-turbo",
    "libpng",
@@ -11113,7 +11207,7 @@
    "bins": [
     "usr/local/bin/gthumb"
    ],
-   "files": 444,
+   "files": 1202,
    "headers": 118,
    "libs": []
   },
@@ -11137,6 +11231,7 @@
    "harfbuzz",
    "icu",
    "lcms2",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
@@ -11191,7 +11286,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.12.8.2"
+  "version": "3.12.12"
  },
  "gtk-layer-shell": {
   "build_closure": [
@@ -11273,7 +11368,7 @@
    "libs": [
     "usr/local/lib/libgtk-layer-shell.so",
     "usr/local/lib/libgtk-layer-shell.so.0",
-    "usr/local/lib/libgtk-layer-shell.so.0.9.0"
+    "usr/local/lib/libgtk-layer-shell.so.0.10.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -11327,7 +11422,6 @@
    "zlib"
   ],
   "runtime_deps": [
-   "cairo",
    "glib",
    "gtk3",
    "wayland"
@@ -11335,7 +11429,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.9.0"
+  "version": "0.10.1"
  },
  "gtk-vnc": {
   "build_closure": [
@@ -11487,9 +11581,11 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
+   "unbound",
    "wayland",
    "xz",
    "zlib",
@@ -11794,7 +11890,7 @@
    "libs": [
     "usr/local/lib/libgtk-4.so",
     "usr/local/lib/libgtk-4.so.1",
-    "usr/local/lib/libgtk-4.so.1.1600.7"
+    "usr/local/lib/libgtk-4.so.1.1600.13"
    ]
   },
   "linked_by_dev_name": [],
@@ -11813,6 +11909,7 @@
    "graphite2",
    "harfbuzz",
    "icu",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
@@ -11860,7 +11957,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.16.7"
+  "version": "4.16.13"
  },
  "gtsam": {
   "build_closure": [
@@ -11899,10 +11996,7 @@
   "runtime_closure": [
    "boost",
    "bzip2",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -11929,8 +12023,8 @@
    "headers": 2,
    "libs": [
     "usr/local/lib/libgumbo.so",
-    "usr/local/lib/libgumbo.so.3",
-    "usr/local/lib/libgumbo.so.3.0.0"
+    "usr/local/lib/libgumbo.so.4",
+    "usr/local/lib/libgumbo.so.4.0.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -11939,7 +12033,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.13.2"
+  "version": "0.14.1"
  },
  "gyp": {
   "build_closure": [
@@ -12001,7 +12095,7 @@
    "bins": [
     "usr/local/bin/hailortcli"
    ],
-   "files": 27,
+   "files": 28,
    "headers": 20,
    "libs": [
     "usr/local/lib/libhailort.so",
@@ -12227,27 +12321,24 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 63,
-   "headers": 52,
+   "files": 73,
+   "headers": 62,
    "libs": [
     "usr/local/lib/libhwy.so",
     "usr/local/lib/libhwy.so.1",
-    "usr/local/lib/libhwy.so.1.2.0",
+    "usr/local/lib/libhwy.so.1.4.0",
     "usr/local/lib/libhwy_contrib.so",
     "usr/local/lib/libhwy_contrib.so.1",
-    "usr/local/lib/libhwy_contrib.so.1.2.0"
+    "usr/local/lib/libhwy_contrib.so.1.4.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "FAIL"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.0"
+  "version": "1.4.0"
  },
  "highwayhash": {
   "build_closure": [],
@@ -12295,10 +12386,10 @@
    "libs": [
     "usr/local/lib/libhiredis.so",
     "usr/local/lib/libhiredis.so.1",
-    "usr/local/lib/libhiredis.so.1.5.0",
+    "usr/local/lib/libhiredis.so.1.5.1",
     "usr/local/lib/libhiredis_ssl.so",
     "usr/local/lib/libhiredis_ssl.so.1",
-    "usr/local/lib/libhiredis_ssl.so.1.5.0"
+    "usr/local/lib/libhiredis_ssl.so.1.5.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -12311,7 +12402,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.0"
+  "version": "1.5.1"
  },
  "htop": {
   "build_closure": [
@@ -12401,11 +12492,12 @@
     "usr/local/bin/wordforms",
     "usr/local/bin/wordlist2hunspell"
    ],
-   "files": 27,
-   "headers": 5,
+   "files": 30,
+   "headers": 6,
    "libs": [
     "usr/local/lib/libhunspell-1.7.so",
-    "usr/local/lib/libhunspell-1.7.so.0"
+    "usr/local/lib/libhunspell-1.7.so.0",
+    "usr/local/lib/libhunspell-1.7.so.0.2.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -12418,7 +12510,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.2"
+  "version": "1.7.6"
  },
  "hwdata": {
   "build_closure": [],
@@ -12466,10 +12558,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "2.8.8"
@@ -12502,10 +12591,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK",
-   "x86_64": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
   "version": "2.0.6"
@@ -12615,7 +12701,7 @@
    "libs": [
     "usr/local/lib/libImath-3_2.so",
     "usr/local/lib/libImath-3_2.so.30",
-    "usr/local/lib/libImath-3_2.so.30.3.2.2",
+    "usr/local/lib/libImath-3_2.so.30.3.2.3",
     "usr/local/lib/libImath.so"
    ]
   },
@@ -12625,7 +12711,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.2.2"
+  "version": "3.2.3"
  },
  "inetutils": {
   "build_closure": [
@@ -12728,7 +12814,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.1"
+  "version": "2.2.2"
  },
  "iperf3": {
   "build_closure": [
@@ -12775,6 +12861,8 @@
    "expat",
    "gdbm",
    "gettext",
+   "glib",
+   "gobject-introspection",
    "libdaemon",
    "libffi",
    "libiconv",
@@ -12784,6 +12872,7 @@
    "libxml2",
    "ncurses",
    "openssl",
+   "pcre2",
    "python3",
    "readline",
    "sqlite",
@@ -12817,14 +12906,11 @@
    "cups",
    "dbus",
    "expat",
-   "gettext",
    "libdaemon",
    "libiconv",
-   "libunistring",
    "libusb",
    "libxcrypt",
    "libxml2",
-   "ncurses",
    "openssl",
    "xz",
    "zlib"
@@ -12947,7 +13033,7 @@
    "libs": [
     "usr/local/lib/libjansson.so",
     "usr/local/lib/libjansson.so.4",
-    "usr/local/lib/libjansson.so.4.14.0"
+    "usr/local/lib/libjansson.so.4.15.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -12956,7 +13042,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.14"
+  "version": "2.15.1"
  },
  "javascriptcore": {
   "build_closure": [
@@ -13027,7 +13113,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.1"
+  "version": "1.8.2"
  },
  "json-c": {
   "build_closure": [],
@@ -13045,7 +13131,7 @@
    "libs": [
     "usr/local/lib/libjson-c.so",
     "usr/local/lib/libjson-c.so.5",
-    "usr/local/lib/libjson-c.so.5.4.0"
+    "usr/local/lib/libjson-c.so.5.5.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -13054,7 +13140,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.18"
+  "version": "0.19-20260627"
  },
  "json-glib": {
   "build_closure": [
@@ -13082,12 +13168,12 @@
     "usr/local/bin/json-glib-format",
     "usr/local/bin/json-glib-validate"
    ],
-   "files": 82,
+   "files": 83,
    "headers": 13,
    "libs": [
     "usr/local/lib/libjson-glib-1.0.so",
     "usr/local/lib/libjson-glib-1.0.so.0",
-    "usr/local/lib/libjson-glib-1.0.so.0.1000.6"
+    "usr/local/lib/libjson-glib-1.0.so.0.1000.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -13108,7 +13194,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.6"
+  "version": "1.10.8"
  },
  "jsoncpp": {
   "build_closure": [],
@@ -13125,8 +13211,8 @@
    "headers": 10,
    "libs": [
     "usr/local/lib/libjsoncpp.so",
-    "usr/local/lib/libjsoncpp.so.1.9.6",
-    "usr/local/lib/libjsoncpp.so.26"
+    "usr/local/lib/libjsoncpp.so.1.9.8",
+    "usr/local/lib/libjsoncpp.so.27"
    ]
   },
   "linked_by_dev_name": [],
@@ -13135,7 +13221,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.9.6"
+  "version": "1.9.8"
  },
  "kineto": {
   "build_closure": [],
@@ -13419,10 +13505,7 @@
    "boost",
    "bzip2",
    "geographiclib",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "pugixml",
    "xz",
    "zlib"
@@ -13469,7 +13552,7 @@
    "libs": [
     "usr/local/lib/liblcm.so",
     "usr/local/lib/liblcm.so.1",
-    "usr/local/lib/liblcm.so.1.5.2"
+    "usr/local/lib/liblcm.so.1.5.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -13489,7 +13572,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.2"
+  "version": "1.5.3"
  },
  "lcms2": {
   "build_closure": [
@@ -13734,9 +13817,11 @@
    "gtk4",
    "harfbuzz",
    "icu",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
+   "libidn2",
    "libjpeg-turbo",
    "libpng",
    "libtiff",
@@ -13795,7 +13880,7 @@
    "libs": [
     "usr/local/lib/libaec.so",
     "usr/local/lib/libaec.so.0",
-    "usr/local/lib/libaec.so.0.1.7",
+    "usr/local/lib/libaec.so.0.1.8",
     "usr/local/lib/libsz.so",
     "usr/local/lib/libsz.so.2",
     "usr/local/lib/libsz.so.2.0.1"
@@ -13807,7 +13892,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.7"
+  "version": "1.1.8"
  },
  "libarchive": {
   "build_closure": [
@@ -13855,18 +13940,15 @@
    "libs": [
     "usr/local/lib/libarchive.so",
     "usr/local/lib/libarchive.so.13",
-    "usr/local/lib/libarchive.so.13.7.7"
+    "usr/local/lib/libarchive.so.13.8.11"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
    "bzip2",
    "expat",
-   "gettext",
-   "libiconv",
-   "libunistring",
+   "libb2",
    "lz4",
-   "ncurses",
    "openssl",
    "xz",
    "zlib",
@@ -13875,6 +13957,7 @@
   "runtime_deps": [
    "bzip2",
    "expat",
+   "libb2",
    "lz4",
    "openssl",
    "xz",
@@ -13882,9 +13965,11 @@
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libb2"
+  ],
   "unresolved": [],
-  "version": "3.7.7"
+  "version": "3.8.11"
  },
  "libass": {
   "build_closure": [
@@ -13925,7 +14010,7 @@
    "headers": 2,
    "libs": [
     "usr/local/lib/libass.so",
-    "usr/local/lib/libass.so.12"
+    "usr/local/lib/libass.so.13"
    ]
   },
   "linked_by_dev_name": [],
@@ -13944,6 +14029,7 @@
    "libffi",
    "libiconv",
    "libpng",
+   "libunibreak",
    "libunistring",
    "ncurses",
    "pcre2",
@@ -13953,12 +14039,16 @@
    "fontconfig",
    "freetype",
    "fribidi",
-   "harfbuzz"
+   "harfbuzz",
+   "libiconv",
+   "libunibreak"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libunibreak"
+  ],
   "unresolved": [],
-  "version": "0.17.3"
+  "version": "0.17.5"
  },
  "libassuan": {
   "build_closure": [
@@ -14055,7 +14145,7 @@
    "libs": [
     "usr/local/lib/libavif.so",
     "usr/local/lib/libavif.so.16",
-    "usr/local/lib/libavif.so.16.1.1"
+    "usr/local/lib/libavif.so.16.4.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -14070,7 +14160,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.1"
+  "version": "1.4.2"
  },
  "libb2": {
   "build_closure": [],
@@ -14219,12 +14309,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 28,
-   "headers": 22,
+   "files": 32,
+   "headers": 24,
    "libs": [
     "usr/local/lib/libcbor.so",
-    "usr/local/lib/libcbor.so.0.11",
-    "usr/local/lib/libcbor.so.0.11.0"
+    "usr/local/lib/libcbor.so.0.15",
+    "usr/local/lib/libcbor.so.0.15.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -14233,7 +14323,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.11.0"
+  "version": "0.15.0"
  },
  "libccd": {
   "build_closure": [],
@@ -14320,10 +14410,10 @@
    "libs": [
     "usr/local/lib/libconfig++.so",
     "usr/local/lib/libconfig++.so.15",
-    "usr/local/lib/libconfig++.so.15.0.0",
+    "usr/local/lib/libconfig++.so.15.0.1",
     "usr/local/lib/libconfig.so",
     "usr/local/lib/libconfig.so.15",
-    "usr/local/lib/libconfig.so.15.0.0"
+    "usr/local/lib/libconfig.so.15.0.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -14332,7 +14422,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.1"
+  "version": "1.8.3"
  },
  "libdaemon": {
   "build_closure": [],
@@ -14368,7 +14458,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/trietool",
@@ -14382,12 +14472,18 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libiconv"
+  ],
+  "runtime_deps": [
+   "libiconv"
+  ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libiconv"
+  ],
   "unresolved": [],
-  "version": "0.2.13"
+  "version": "0.2.14"
  },
  "libdazzle": {
   "build_closure": [
@@ -14545,10 +14641,12 @@
    "bins": [
     "usr/local/bin/dec265"
    ],
-   "files": 9,
-   "headers": 3,
+   "files": 10,
+   "headers": 2,
    "libs": [
-    "usr/local/lib/libde265.so"
+    "usr/local/lib/libde265.so",
+    "usr/local/lib/libde265.so.0",
+    "usr/local/lib/libde265.so.0.2.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -14557,7 +14655,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.15"
+  "version": "1.1.3"
  },
  "libdecor": {
   "build_closure": [
@@ -14643,7 +14741,7 @@
    "libs": [
     "usr/local/lib/libdecor-0.so",
     "usr/local/lib/libdecor-0.so.0",
-    "usr/local/lib/libdecor-0.so.0.200.4"
+    "usr/local/lib/libdecor-0.so.0.200.5"
    ]
   },
   "linked_by_dev_name": [],
@@ -14707,7 +14805,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.2.4"
+  "version": "0.2.5"
  },
  "libdeflate": {
   "build_closure": [],
@@ -14736,7 +14834,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.22"
+  "version": "1.26"
  },
  "libdisplay-info": {
   "build_closure": [],
@@ -14751,12 +14849,12 @@
    "bins": [
     "usr/local/bin/di-edid-decode"
    ],
-   "files": 14,
-   "headers": 8,
+   "files": 16,
+   "headers": 10,
    "libs": [
     "usr/local/lib/libdisplay-info.so",
-    "usr/local/lib/libdisplay-info.so.0.3.0",
-    "usr/local/lib/libdisplay-info.so.3"
+    "usr/local/lib/libdisplay-info.so.0.4.0",
+    "usr/local/lib/libdisplay-info.so.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -14765,7 +14863,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.3.0"
+  "version": "0.4.0"
  },
  "libdrm-headers": {
   "build_closure": [],
@@ -14966,7 +15064,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.6.24"
+  "version": "0.6.26"
  },
  "libfdt": {
   "build_closure": [],
@@ -15006,11 +15104,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 9,
+   "files": 10,
    "headers": 2,
    "libs": [
     "usr/local/lib/libffi.so",
-    "usr/local/lib/libffi.so.9"
+    "usr/local/lib/libffi.so.8",
+    "usr/local/lib/libffi.so.8.5.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -15019,7 +15118,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.4.6"
+  "version": "3.8.1"
  },
  "libfyaml": {
   "build_closure": [],
@@ -15084,7 +15183,7 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libgcrypt.so",
-    "usr/local/lib/libgcrypt.so.25"
+    "usr/local/lib/libgcrypt.so.28"
    ]
   },
   "linked_by_dev_name": [],
@@ -15101,7 +15200,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.11.0"
+  "version": "1.12.4"
  },
  "libgit2": {
   "build_closure": [
@@ -15123,12 +15222,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 98,
-   "headers": 94,
+   "files": 101,
+   "headers": 93,
    "libs": [
     "usr/local/lib/libgit2.so",
-    "usr/local/lib/libgit2.so.1.8",
-    "usr/local/lib/libgit2.so.1.8.4"
+    "usr/local/lib/libgit2.so.1.9",
+    "usr/local/lib/libgit2.so.1.9.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -15145,7 +15244,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.4"
+  "version": "1.9.7"
  },
  "libgme": {
   "build_closure": [
@@ -15167,7 +15266,7 @@
    "libs": [
     "usr/local/lib/libgme.so",
     "usr/local/lib/libgme.so.0",
-    "usr/local/lib/libgme.so.0.6.4"
+    "usr/local/lib/libgme.so.0.6.5"
    ]
   },
   "linked_by_dev_name": [],
@@ -15180,7 +15279,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.6.4"
+  "version": "0.6.5"
  },
  "libgpg-error": {
   "build_closure": [
@@ -15207,7 +15306,7 @@
    "headers": 2,
    "libs": [
     "usr/local/lib/libgpg-error.so",
-    "usr/local/lib/libgpg-error.so.37"
+    "usr/local/lib/libgpg-error.so.42"
    ]
   },
   "linked_by_dev_name": [],
@@ -15223,7 +15322,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.50"
+  "version": "1.61"
  },
  "libgsf": {
   "build_closure": [
@@ -15264,7 +15363,7 @@
     "usr/local/bin/gsf-office-thumbnailer",
     "usr/local/bin/gsf-vba-dump"
    ],
-   "files": 109,
+   "files": 110,
    "headers": 49,
    "libs": [
     "usr/local/lib/libgsf-1.so",
@@ -15295,7 +15394,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.14.53"
+  "version": "1.14.60"
  },
  "libhandy": {
   "build_closure": [
@@ -15493,30 +15592,28 @@
     "usr/local/bin/heif-info",
     "usr/local/bin/heif-thumbnailer"
    ],
-   "files": 41,
-   "headers": 24,
+   "files": 45,
+   "headers": 28,
    "libs": [
     "usr/local/lib/libheif.so",
     "usr/local/lib/libheif.so.1",
-    "usr/local/lib/libheif.so.1.20.2"
+    "usr/local/lib/libheif.so.1.23.7"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
    "aom",
    "dav1d",
-   "gettext",
    "libde265",
-   "libiconv",
+   "libdeflate",
    "libjpeg-turbo",
    "libpng",
    "libtiff",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "openh264",
    "openjpeg",
    "openjph",
+   "x264",
    "x265",
    "xz",
    "zlib",
@@ -15533,13 +15630,16 @@
    "openh264",
    "openjpeg",
    "openjph",
+   "x264",
    "x265",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "x264"
+  ],
   "unresolved": [],
-  "version": "1.20.2"
+  "version": "1.23.7"
  },
  "libhevc": {
   "build_closure": [],
@@ -15565,7 +15665,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.5"
+  "version": "1.8.7"
  },
  "libice": {
   "build_closure": [
@@ -15621,7 +15721,7 @@
     "usr/local/lib/libcharset.so.1.0.0",
     "usr/local/lib/libiconv.so",
     "usr/local/lib/libiconv.so.2",
-    "usr/local/lib/libiconv.so.2.7.0"
+    "usr/local/lib/libiconv.so.2.7.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -15630,7 +15730,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.18"
+  "version": "1.19.1"
  },
  "libidn2": {
   "build_closure": [
@@ -15653,7 +15753,7 @@
    "bins": [
     "usr/local/bin/idn2"
    ],
-   "files": 30,
+   "files": 31,
    "headers": 1,
    "libs": [
     "usr/local/lib/libidn2.so",
@@ -15669,12 +15769,13 @@
   ],
   "runtime_deps": [
    "gettext",
+   "libiconv",
    "libunistring"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.3.7"
+  "version": "2.3.8"
  },
  "libinih": {
   "build_closure": [],
@@ -15722,7 +15823,7 @@
     "usr/local/bin/tjbench",
     "usr/local/bin/wrjpgcom"
    ],
-   "files": 39,
+   "files": 41,
    "headers": 5,
    "libs": [
     "usr/local/lib/libjpeg.so",
@@ -15730,7 +15831,7 @@
     "usr/local/lib/libjpeg.so.62.4.0",
     "usr/local/lib/libturbojpeg.so",
     "usr/local/lib/libturbojpeg.so.0",
-    "usr/local/lib/libturbojpeg.so.0.3.0"
+    "usr/local/lib/libturbojpeg.so.0.5.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -15739,7 +15840,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.0.4"
+  "version": "3.2.1"
  },
  "libjson": {
   "build_closure": [],
@@ -15799,14 +15900,14 @@
    "headers": 22,
    "libs": [
     "usr/local/lib/libjxl.so",
-    "usr/local/lib/libjxl.so.0.11",
-    "usr/local/lib/libjxl.so.0.11.1",
+    "usr/local/lib/libjxl.so.0.13",
+    "usr/local/lib/libjxl.so.0.13.0",
     "usr/local/lib/libjxl_cms.so",
-    "usr/local/lib/libjxl_cms.so.0.11",
-    "usr/local/lib/libjxl_cms.so.0.11.1",
+    "usr/local/lib/libjxl_cms.so.0.13",
+    "usr/local/lib/libjxl_cms.so.0.13.0",
     "usr/local/lib/libjxl_threads.so",
-    "usr/local/lib/libjxl_threads.so.0.11",
-    "usr/local/lib/libjxl_threads.so.0.11.1"
+    "usr/local/lib/libjxl_threads.so.0.13",
+    "usr/local/lib/libjxl_threads.so.0.13.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -15823,7 +15924,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.11.1"
+  "version": "0.13.0"
  },
  "libksba": {
   "build_closure": [
@@ -15850,7 +15951,7 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libksba.so",
-    "usr/local/lib/libksba.so.24"
+    "usr/local/lib/libksba.so.25"
    ]
   },
   "linked_by_dev_name": [],
@@ -15867,7 +15968,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.1"
+  "version": "1.9.1"
  },
  "libmd": {
   "build_closure": [],
@@ -15880,11 +15981,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 91,
-   "headers": 10,
+   "files": 132,
+   "headers": 11,
    "libs": [
     "usr/local/lib/libmd.so",
-    "usr/local/lib/libmd.so.0"
+    "usr/local/lib/libmd.so.0",
+    "usr/local/lib/libmd.so.0.3.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -15893,7 +15995,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.0"
+  "version": "1.3.0"
  },
  "libmetal": {
   "build_closure": [],
@@ -15929,11 +16031,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 4,
+   "files": 5,
    "headers": 1,
    "libs": [
     "usr/local/lib/libmicrohttpd.so",
-    "usr/local/lib/libmicrohttpd.so.74"
+    "usr/local/lib/libmicrohttpd.so.12",
+    "usr/local/lib/libmicrohttpd.so.12.62.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -15942,7 +16045,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.1"
+  "version": "1.0.11"
  },
  "libmodbus": {
   "build_closure": [],
@@ -15968,7 +16071,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.1.11"
+  "version": "3.2.0"
  },
  "libnotify": {
   "build_closure": [
@@ -15999,8 +16102,8 @@
    "bins": [
     "usr/local/bin/notify-send"
    ],
-   "files": 9,
-   "headers": 4,
+   "files": 10,
+   "headers": 5,
    "libs": [
     "usr/local/lib/libnotify.so",
     "usr/local/lib/libnotify.so.4",
@@ -16028,7 +16131,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.8.3"
+  "version": "0.8.9"
  },
  "libogg": {
   "build_closure": [],
@@ -16046,7 +16149,7 @@
    "libs": [
     "usr/local/lib/libogg.so",
     "usr/local/lib/libogg.so.0",
-    "usr/local/lib/libogg.so.0.8.5"
+    "usr/local/lib/libogg.so.0.8.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -16055,7 +16158,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.5"
+  "version": "1.3.6"
  },
  "libpanel": {
   "build_closure": [
@@ -16161,9 +16264,11 @@
    "harfbuzz",
    "icu",
    "libadwaita",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
+   "libidn2",
    "libjpeg-turbo",
    "libpng",
    "libtiff",
@@ -16251,7 +16356,7 @@
    "libs": [
     "usr/local/lib/libpcap.so",
     "usr/local/lib/libpcap.so.1",
-    "usr/local/lib/libpcap.so.1.10.5"
+    "usr/local/lib/libpcap.so.1.11.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -16260,7 +16365,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.5"
+  "version": "1.11.0"
  },
  "libpipeline": {
   "build_closure": [],
@@ -16306,12 +16411,13 @@
     "usr/local/bin/libpng-config",
     "usr/local/bin/libpng16-config"
    ],
-   "files": 18,
+   "files": 19,
    "headers": 6,
    "libs": [
     "usr/local/lib/libpng.so",
     "usr/local/lib/libpng16.so",
-    "usr/local/lib/libpng16.so.16"
+    "usr/local/lib/libpng16.so.16",
+    "usr/local/lib/libpng16.so.16.59.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -16324,7 +16430,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.6.44"
+  "version": "1.6.59"
  },
  "libportal": {
   "build_closure": [
@@ -16501,11 +16607,11 @@
    "bins": [
     "usr/local/bin/proxy"
    ],
-   "files": 8,
+   "files": 9,
    "headers": 1,
    "libs": [
     "usr/local/lib/libproxy.so",
-    "usr/local/lib/libproxy.so.0.5.9",
+    "usr/local/lib/libproxy.so.0.5.12",
     "usr/local/lib/libproxy.so.1"
    ]
   },
@@ -16518,6 +16624,7 @@
    "glib",
    "libffi",
    "libiconv",
+   "libidn2",
    "libunistring",
    "ncurses",
    "nghttp2",
@@ -16533,7 +16640,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.5.9"
+  "version": "0.5.12"
  },
  "libpsl": {
   "build_closure": [
@@ -16564,7 +16671,7 @@
    "libs": [
     "usr/local/lib/libpsl.so",
     "usr/local/lib/libpsl.so.5",
-    "usr/local/lib/libpsl.so.5.3.5"
+    "usr/local/lib/libpsl.so.5.3.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -16583,7 +16690,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.21.5"
+  "version": "0.23.3"
  },
  "libraqm": {
   "build_closure": [
@@ -16622,7 +16729,7 @@
    "libs": [
     "usr/local/lib/libraqm.so",
     "usr/local/lib/libraqm.so.0",
-    "usr/local/lib/libraqm.so.0.10.5"
+    "usr/local/lib/libraqm.so.0.11.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -16652,7 +16759,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.10.5"
+  "version": "0.11.0"
  },
  "libretro-2048": {
   "build_closure": [],
@@ -16850,7 +16957,7 @@
    "bins": [
     "usr/local/bin/secret-tool"
    ],
-   "files": 83,
+   "files": 89,
    "headers": 16,
    "libs": [
     "usr/local/lib/libsecret-1.so",
@@ -16878,7 +16985,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.21.4"
+  "version": "0.21.8.2"
  },
  "libsfdo": {
   "build_closure": [],
@@ -17009,11 +17116,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 71,
-   "headers": 67,
+   "files": 82,
+   "headers": 77,
    "libs": [
     "usr/local/lib/libsodium.so",
-    "usr/local/lib/libsodium.so.28"
+    "usr/local/lib/libsodium.so.26",
+    "usr/local/lib/libsodium.so.26.4.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -17022,7 +17130,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.20"
+  "version": "1.0.22"
  },
  "libsoup": {
   "build_closure": [
@@ -17125,7 +17233,7 @@
    "libs": [
     "usr/local/lib/libssh.so",
     "usr/local/lib/libssh.so.4",
-    "usr/local/lib/libssh.so.4.10.1"
+    "usr/local/lib/libssh.so.4.10.5"
    ]
   },
   "linked_by_dev_name": [],
@@ -17140,7 +17248,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.11.1"
+  "version": "0.11.5"
  },
  "libssh2": {
   "build_closure": [
@@ -17209,7 +17317,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.19.0"
+  "version": "4.21.0"
  },
  "libtermkey": {
   "build_closure": [
@@ -17272,7 +17380,8 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "libdatrie"
+   "libdatrie",
+   "libiconv"
   ],
   "runtime_deps": [
    "libdatrie"
@@ -17280,7 +17389,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.1.29"
+  "version": "0.1.30"
  },
  "libtheora": {
   "build_closure": [
@@ -17356,25 +17465,23 @@
    "libs": [
     "usr/local/lib/libtiff.so",
     "usr/local/lib/libtiff.so.6",
-    "usr/local/lib/libtiff.so.6.1.0",
+    "usr/local/lib/libtiff.so.6.3.0",
     "usr/local/lib/libtiffxx.so",
     "usr/local/lib/libtiffxx.so.6",
-    "usr/local/lib/libtiffxx.so.6.1.0"
+    "usr/local/lib/libtiffxx.so.6.3.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
+   "libdeflate",
    "libjpeg-turbo",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "xz",
    "zlib",
    "zstd"
   ],
   "runtime_deps": [
+   "libdeflate",
    "libjpeg-turbo",
    "libwebp",
    "xz",
@@ -17382,9 +17489,11 @@
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libdeflate"
+  ],
   "unresolved": [],
-  "version": "4.7.0"
+  "version": "4.7.2"
  },
  "libtomcrypt": {
   "build_closure": [
@@ -17509,7 +17618,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "standalone",
+  "class": "dependent",
   "installs": {
    "bins": [],
    "files": 50,
@@ -17517,16 +17626,22 @@
    "libs": [
     "usr/local/lib/libunistring.so",
     "usr/local/lib/libunistring.so.5",
-    "usr/local/lib/libunistring.so.5.2.0"
+    "usr/local/lib/libunistring.so.5.2.2"
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libiconv"
+  ],
+  "runtime_deps": [
+   "libiconv"
+  ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libiconv"
+  ],
   "unresolved": [],
-  "version": "1.3"
+  "version": "1.5"
  },
  "libunwind": {
   "build_closure": [],
@@ -17566,7 +17681,7 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libusb-1.0.so",
-    "usr/local/lib/libusb-1.0.so.4"
+    "usr/local/lib/libusb-1.0.so.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -17575,7 +17690,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.27"
+  "version": "1.0.30"
  },
  "libutempter": {
   "build_closure": [],
@@ -17642,7 +17757,7 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 24,
+   "files": 25,
    "headers": 14,
    "libs": [
     "usr/local/lib/libuv.so",
@@ -17656,7 +17771,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.51.0"
+  "version": "1.53.0"
  },
  "libvalkey": {
   "build_closure": [
@@ -17749,6 +17864,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "brotli",
+   "expat",
    "gettext",
    "gmp",
    "gnutls",
@@ -17763,6 +17879,7 @@
    "nettle",
    "openssl",
    "sdl2",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -17833,9 +17950,9 @@
    "headers": 11,
    "libs": [
     "usr/local/lib/libvpx.so",
-    "usr/local/lib/libvpx.so.9",
-    "usr/local/lib/libvpx.so.9.1",
-    "usr/local/lib/libvpx.so.9.1.0"
+    "usr/local/lib/libvpx.so.12",
+    "usr/local/lib/libvpx.so.12.1",
+    "usr/local/lib/libvpx.so.12.1.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -17844,7 +17961,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.15.0"
+  "version": "1.17.0"
  },
  "libvterm": {
   "build_closure": [],
@@ -17902,19 +18019,19 @@
    "libs": [
     "usr/local/lib/libsharpyuv.so",
     "usr/local/lib/libsharpyuv.so.0",
-    "usr/local/lib/libsharpyuv.so.0.1.0",
+    "usr/local/lib/libsharpyuv.so.0.1.2",
     "usr/local/lib/libwebp.so",
     "usr/local/lib/libwebp.so.7",
-    "usr/local/lib/libwebp.so.7.1.9",
+    "usr/local/lib/libwebp.so.7.2.0",
     "usr/local/lib/libwebpdecoder.so",
     "usr/local/lib/libwebpdecoder.so.3",
-    "usr/local/lib/libwebpdecoder.so.3.1.9",
+    "usr/local/lib/libwebpdecoder.so.3.2.0",
     "usr/local/lib/libwebpdemux.so",
     "usr/local/lib/libwebpdemux.so.2",
-    "usr/local/lib/libwebpdemux.so.2.0.15",
+    "usr/local/lib/libwebpdemux.so.2.0.17",
     "usr/local/lib/libwebpmux.so",
     "usr/local/lib/libwebpmux.so.3",
-    "usr/local/lib/libwebpmux.so.3.1.0"
+    "usr/local/lib/libwebpmux.so.3.1.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -17923,7 +18040,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.0"
+  "version": "1.6.0"
  },
  "libwebsockets": {
   "build_closure": [
@@ -17942,10 +18059,11 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 94,
+   "files": 95,
    "headers": 85,
    "libs": [
-    "usr/local/lib/libwebsockets.so"
+    "usr/local/lib/libwebsockets.so",
+    "usr/local/lib/libwebsockets.so.19"
    ]
   },
   "linked_by_dev_name": [],
@@ -18004,7 +18122,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.10"
+  "version": "1.8.14"
  },
  "libxau": {
   "build_closure": [
@@ -18034,7 +18152,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.11"
+  "version": "1.0.12"
  },
  "libxcb": {
   "build_closure": [
@@ -18187,11 +18305,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 16,
+   "files": 17,
    "headers": 1,
    "libs": [
     "usr/local/lib/libcrypt.so",
-    "usr/local/lib/libcrypt.so.2"
+    "usr/local/lib/libcrypt.so.2",
+    "usr/local/lib/libcrypt.so.2.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -18200,7 +18319,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.4.38"
+  "version": "4.5.2"
  },
  "libxcursor": {
   "build_closure": [
@@ -18253,7 +18372,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.2"
+  "version": "1.2.3"
  },
  "libxcvt": {
   "build_closure": [],
@@ -18331,7 +18450,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.6"
+  "version": "1.1.7"
  },
  "libxdmcp": {
   "build_closure": [
@@ -18406,7 +18525,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.6"
+  "version": "1.3.7"
  },
  "libxfce4ui": {
   "build_closure": [
@@ -18488,13 +18607,15 @@
    "bins": [
     "usr/local/bin/xfce4-about"
    ],
-   "files": 100,
+   "files": 104,
    "headers": 17,
    "libs": [
     "usr/local/lib/libxfce4kbd-private-3.so",
     "usr/local/lib/libxfce4kbd-private-3.so.0",
+    "usr/local/lib/libxfce4kbd-private-3.so.0.0.0",
     "usr/local/lib/libxfce4ui-2.so",
-    "usr/local/lib/libxfce4ui-2.so.0"
+    "usr/local/lib/libxfce4ui-2.so.0",
+    "usr/local/lib/libxfce4ui-2.so.0.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -18565,7 +18686,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.2"
  },
  "libxfce4util": {
   "build_closure": [
@@ -18592,11 +18713,12 @@
    "bins": [
     "usr/local/sbin/xfce4-kiosk-query"
    ],
-   "files": 88,
+   "files": 89,
    "headers": 17,
    "libs": [
     "usr/local/lib/libxfce4util.so",
-    "usr/local/lib/libxfce4util.so.7"
+    "usr/local/lib/libxfce4util.so.7",
+    "usr/local/lib/libxfce4util.so.7.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -18617,7 +18739,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.1"
  },
  "libxfce4windowing": {
   "build_closure": [
@@ -18815,7 +18937,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.0.1"
+  "version": "6.0.2"
  },
  "libxfont2": {
   "build_closure": [
@@ -18843,11 +18965,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 4,
+   "files": 5,
    "headers": 1,
    "libs": [
     "usr/local/lib/libXfont2.so",
-    "usr/local/lib/libXfont2.so.2"
+    "usr/local/lib/libXfont2.so.2",
+    "usr/local/lib/libXfont2.so.2.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -18867,7 +18990,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.0.7"
+  "version": "2.0.10"
  },
  "libxft": {
   "build_closure": [
@@ -18934,7 +19057,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.3.8"
+  "version": "2.3.9"
  },
  "libxi": {
   "build_closure": [
@@ -18985,7 +19108,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.2"
+  "version": "1.8.4"
  },
  "libxinerama": {
   "build_closure": [
@@ -19034,7 +19157,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.5"
+  "version": "1.1.6"
  },
  "libxkbcommon": {
   "build_closure": [
@@ -19079,11 +19202,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -19184,10 +19303,6 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -19241,11 +19356,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -19286,8 +19397,8 @@
    "bins": [
     "usr/local/bin/xb-tool"
    ],
-   "files": 28,
-   "headers": 21,
+   "files": 29,
+   "headers": 22,
    "libs": [
     "usr/local/lib/libxmlb.so",
     "usr/local/lib/libxmlb.so.2",
@@ -19315,7 +19426,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.3.24"
+  "version": "0.3.30"
  },
  "libxmu": {
   "build_closure": [
@@ -19466,7 +19577,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.4"
+  "version": "1.5.5"
  },
  "libxrender": {
   "build_closure": [
@@ -19511,7 +19622,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.9.11"
+  "version": "0.9.13"
  },
  "libxscrnsaver": {
   "build_closure": [
@@ -19560,7 +19671,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.4"
+  "version": "1.2.5"
  },
  "libxshmfence": {
   "build_closure": [
@@ -19626,24 +19737,20 @@
    "bins": [
     "usr/local/bin/xslt-config"
    ],
-   "files": 104,
-   "headers": 24,
+   "files": 105,
+   "headers": 25,
    "libs": [
     "usr/local/lib/libexslt.so",
     "usr/local/lib/libexslt.so.0",
-    "usr/local/lib/libexslt.so.0.8.23",
+    "usr/local/lib/libexslt.so.0.8.25",
     "usr/local/lib/libxslt.so",
     "usr/local/lib/libxslt.so.1",
-    "usr/local/lib/libxslt.so.1.1.42"
+    "usr/local/lib/libxslt.so.1.1.45"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -19653,7 +19760,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.42"
+  "version": "1.1.45"
  },
  "libxt": {
   "build_closure": [
@@ -19761,7 +19868,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.5"
+  "version": "1.2.6"
  },
  "libyaml": {
   "build_closure": [],
@@ -19786,7 +19893,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.2.5"
+  "version": "0.2.6"
  },
  "libyuv": {
   "build_closure": [
@@ -19854,21 +19961,17 @@
     "usr/local/bin/zipmerge",
     "usr/local/bin/ziptool"
    ],
-   "files": 16,
+   "files": 17,
    "headers": 2,
    "libs": [
     "usr/local/lib/libzip.so",
     "usr/local/lib/libzip.so.5",
-    "usr/local/lib/libzip.so.5.5"
+    "usr/local/lib/libzip.so.5.6"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
    "bzip2",
-   "gettext",
-   "libiconv",
-   "libunistring",
-   "ncurses",
    "openssl",
    "xz",
    "zlib",
@@ -19884,7 +19987,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.11.1"
+  "version": "1.12.1"
  },
  "libzmq": {
   "build_closure": [
@@ -19966,7 +20069,7 @@
    "libxcrypt"
   ],
   "unresolved": [],
-  "version": "1.4.77"
+  "version": "1.4.85"
  },
  "linux-headers-input-codes": {
   "build_closure": [],
@@ -20112,7 +20215,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.22"
+  "version": "1.0.23"
  },
  "llvm": {
   "build_closure": [
@@ -20297,11 +20400,7 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
-   "ncurses",
    "xz",
    "zlib",
    "zstd"
@@ -20365,7 +20464,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.4"
+  "version": "1.1.6"
  },
  "log4cxx": {
   "build_closure": [
@@ -20675,7 +20774,7 @@
    "libs": [
     "usr/local/lib/libluv.so",
     "usr/local/lib/libluv.so.1",
-    "usr/local/lib/libluv.so.1.51.0"
+    "usr/local/lib/libluv.so.1.53.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -20688,7 +20787,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.51.0-1"
+  "version": "1.53.0-1"
  },
  "lxde-icon-theme": {
   "build_closure": [],
@@ -20790,7 +20889,7 @@
    "libs": [
     "usr/local/lib/liblz4.so",
     "usr/local/lib/liblz4.so.1",
-    "usr/local/lib/liblz4.so.1.10.0"
+    "usr/local/lib/liblz4.so.1.11.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -20799,7 +20898,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.0"
+  "version": "1.11.1"
  },
  "lzip": {
   "build_closure": [],
@@ -20883,7 +20982,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.19"
+  "version": "1.4.21"
  },
  "magic_enum": {
   "build_closure": [],
@@ -20906,7 +21005,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.9.6"
+  "version": "0.9.8"
  },
  "make": {
   "build_closure": [],
@@ -21063,7 +21162,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.13.1"
+  "version": "2.13.3"
  },
  "mate-calc": {
   "build_closure": [
@@ -21391,13 +21490,9 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "expat",
-   "gettext",
    "libffi",
-   "libiconv",
-   "libunistring",
    "libxml2",
    "llvm",
-   "ncurses",
    "spirv-tools",
    "wayland",
    "xz",
@@ -21417,7 +21512,7 @@
    "spirv-tools"
   ],
   "unresolved": [],
-  "version": "26.2.6"
+  "version": "26.3.1"
  },
  "meson": {
   "build_closure": [
@@ -21450,7 +21545,7 @@
    "bins": [
     "usr/local/bin/meson"
    ],
-   "files": 255,
+   "files": 257,
    "headers": 0,
    "libs": []
   },
@@ -21460,7 +21555,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.0"
+  "version": "1.12.1"
  },
  "metis": {
   "build_closure": [
@@ -21518,7 +21613,7 @@
    "libs": [
     "usr/local/lib/libmimalloc.so",
     "usr/local/lib/libmimalloc.so.3",
-    "usr/local/lib/libmimalloc.so.3.1"
+    "usr/local/lib/libmimalloc.so.3.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -21527,7 +21622,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.1.5"
+  "version": "3.7.0"
  },
  "minicom": {
   "build_closure": [
@@ -21643,7 +21738,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.3"
+  "version": "1.2.4"
  },
  "mlpack": {
   "build_closure": [
@@ -21914,11 +22009,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 20,
+   "files": 21,
    "headers": 2,
    "libs": [
     "usr/local/lib/libmpfr.so",
-    "usr/local/lib/libmpfr.so.8"
+    "usr/local/lib/libmpfr.so.6",
+    "usr/local/lib/libmpfr.so.6.2.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -21931,7 +22027,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.2.1"
+  "version": "4.2.2"
  },
  "mpg123": {
   "build_closure": [],
@@ -21948,7 +22044,7 @@
    "headers": 3,
    "libs": [
     "usr/local/lib/libmpg123.so",
-    "usr/local/lib/libmpg123.so.48",
+    "usr/local/lib/libmpg123.so.49",
     "usr/local/lib/libsyn123.so",
     "usr/local/lib/libsyn123.so.2"
    ]
@@ -21959,7 +22055,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.32.9"
+  "version": "1.33.7"
  },
  "msgpack-c": {
   "build_closure": [],
@@ -22109,9 +22205,6 @@
   "runtime_closure": [
    "bzip2",
    "file",
-   "gettext",
-   "libiconv",
-   "libunistring",
    "ncurses",
    "xz",
    "zlib",
@@ -22125,7 +22218,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "8.2"
+  "version": "8.7.1"
  },
  "nanoflann": {
   "build_closure": [],
@@ -22241,6 +22334,7 @@
    "libxml2",
    "llvm",
    "make",
+   "msgpack-c",
    "ncurses",
    "openssl",
    "pkgconf",
@@ -22301,7 +22395,7 @@
    "libs": [
     "usr/local/lib/libncnn.so",
     "usr/local/lib/libncnn.so.1",
-    "usr/local/lib/libncnn.so.1.0.20261030"
+    "usr/local/lib/libncnn.so.1.0.20261119"
    ]
   },
   "linked_by_dev_name": [],
@@ -22325,25 +22419,25 @@
    "bins": [
     "usr/local/bin/ncursesw6-config"
    ],
-   "files": 2932,
+   "files": 2960,
    "headers": 17,
    "libs": [
     "usr/local/lib/libform.so",
     "usr/local/lib/libformw.so",
     "usr/local/lib/libformw.so.6",
-    "usr/local/lib/libformw.so.6.5",
+    "usr/local/lib/libformw.so.6.6",
     "usr/local/lib/libmenu.so",
     "usr/local/lib/libmenuw.so",
     "usr/local/lib/libmenuw.so.6",
-    "usr/local/lib/libmenuw.so.6.5",
+    "usr/local/lib/libmenuw.so.6.6",
     "usr/local/lib/libncurses.so",
     "usr/local/lib/libncursesw.so",
     "usr/local/lib/libncursesw.so.6",
-    "usr/local/lib/libncursesw.so.6.5",
+    "usr/local/lib/libncursesw.so.6.6",
     "usr/local/lib/libpanel.so",
     "usr/local/lib/libpanelw.so",
     "usr/local/lib/libpanelw.so.6",
-    "usr/local/lib/libpanelw.so.6.5",
+    "usr/local/lib/libpanelw.so.6.6",
     "usr/local/lib/libtermcap.so",
     "usr/local/lib/libtinfo.so"
    ]
@@ -22354,7 +22448,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.5"
+  "version": "6.6"
  },
  "neon": {
   "build_closure": [
@@ -22463,7 +22557,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.12.3"
+  "version": "0.12.6"
  },
  "netmap": {
   "build_closure": [],
@@ -22555,12 +22649,12 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 10,
+   "files": 11,
    "headers": 2,
    "libs": [
     "usr/local/lib/libnghttp2.so",
     "usr/local/lib/libnghttp2.so.14",
-    "usr/local/lib/libnghttp2.so.14.28.3"
+    "usr/local/lib/libnghttp2.so.14.30.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -22569,7 +22663,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.64.0"
+  "version": "1.71.0"
  },
  "nginx": {
   "build_closure": [
@@ -22615,7 +22709,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.30.6"
+  "version": "1.31.9"
  },
  "ninja": {
   "build_closure": [],
@@ -22801,7 +22895,7 @@
     "usr/local/bin/npm",
     "usr/local/bin/npx"
    ],
-   "files": 1813,
+   "files": 1814,
    "headers": 0,
    "libs": []
   },
@@ -23046,7 +23140,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.4"
+  "version": "1.2.6"
  },
  "ntttcp-for-linux": {
   "build_closure": [],
@@ -23104,7 +23198,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 897,
+   "files": 923,
    "headers": 0,
    "libs": []
   },
@@ -23117,6 +23211,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openblas",
    "openssl",
@@ -23134,7 +23229,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.3.4"
+  "version": "2.5.5"
  },
  "nuspell": {
   "build_closure": [
@@ -23198,10 +23293,10 @@
    "libs": [
     "usr/local/lib/liboctomap.so",
     "usr/local/lib/liboctomap.so.1.10",
-    "usr/local/lib/liboctomap.so.1.10.0",
+    "usr/local/lib/liboctomap.so.1.10.1",
     "usr/local/lib/liboctomath.so",
     "usr/local/lib/liboctomath.so.1.10",
-    "usr/local/lib/liboctomath.so.1.10.0"
+    "usr/local/lib/liboctomath.so.1.10.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -23210,7 +23305,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.0"
+  "version": "1.10.1"
  },
  "ompl": {
   "build_closure": [
@@ -23248,10 +23343,7 @@
   "runtime_closure": [
    "boost",
    "bzip2",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -23288,7 +23380,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.14.1"
+  "version": "3.14.2"
  },
  "onetbb": {
   "build_closure": [],
@@ -23341,7 +23433,7 @@
    "libs": [
     "usr/local/lib/libonig.so",
     "usr/local/lib/libonig.so.5",
-    "usr/local/lib/libonig.so.5.4.0"
+    "usr/local/lib/libonig.so.5.5.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -23350,7 +23442,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.9.9"
+  "version": "6.9.10"
  },
  "onnx": {
   "build_closure": [
@@ -23369,8 +23461,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 100,
-   "headers": 94,
+   "files": 117,
+   "headers": 111,
    "libs": [
     "usr/local/lib/libonnx.so",
     "usr/local/lib/libonnx_proto.so"
@@ -23389,7 +23481,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.17.0"
+  "version": "1.23.2"
  },
  "onnxruntime": {
   "build_closure": [
@@ -23549,7 +23641,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.3.28"
+  "version": "0.3.34"
  },
  "opencl-headers": {
   "build_closure": [],
@@ -23731,42 +23823,38 @@
     "usr/local/bin/exrmultiview",
     "usr/local/bin/exrstdattr"
    ],
-   "files": 184,
-   "headers": 148,
+   "files": 186,
+   "headers": 150,
    "libs": [
-    "usr/local/lib/libIex-3_4.so",
-    "usr/local/lib/libIex-3_4.so.33",
-    "usr/local/lib/libIex-3_4.so.33.3.4.1",
+    "usr/local/lib/libIex-3_5.so",
+    "usr/local/lib/libIex-3_5.so.34",
+    "usr/local/lib/libIex-3_5.so.34.3.5.4",
     "usr/local/lib/libIex.so",
-    "usr/local/lib/libIlmThread-3_4.so",
-    "usr/local/lib/libIlmThread-3_4.so.33",
-    "usr/local/lib/libIlmThread-3_4.so.33.3.4.1",
+    "usr/local/lib/libIlmThread-3_5.so",
+    "usr/local/lib/libIlmThread-3_5.so.34",
+    "usr/local/lib/libIlmThread-3_5.so.34.3.5.4",
     "usr/local/lib/libIlmThread.so",
-    "usr/local/lib/libOpenEXR-3_4.so",
-    "usr/local/lib/libOpenEXR-3_4.so.33",
-    "usr/local/lib/libOpenEXR-3_4.so.33.3.4.1",
+    "usr/local/lib/libOpenEXR-3_5.so",
+    "usr/local/lib/libOpenEXR-3_5.so.34",
+    "usr/local/lib/libOpenEXR-3_5.so.34.3.5.4",
     "usr/local/lib/libOpenEXR.so",
-    "usr/local/lib/libOpenEXRCore-3_4.so",
-    "usr/local/lib/libOpenEXRCore-3_4.so.33",
-    "usr/local/lib/libOpenEXRCore-3_4.so.33.3.4.1",
+    "usr/local/lib/libOpenEXRCore-3_5.so",
+    "usr/local/lib/libOpenEXRCore-3_5.so.34",
+    "usr/local/lib/libOpenEXRCore-3_5.so.34.3.5.4",
     "usr/local/lib/libOpenEXRCore.so",
-    "usr/local/lib/libOpenEXRUtil-3_4.so",
-    "usr/local/lib/libOpenEXRUtil-3_4.so.33",
-    "usr/local/lib/libOpenEXRUtil-3_4.so.33.3.4.1",
+    "usr/local/lib/libOpenEXRUtil-3_5.so",
+    "usr/local/lib/libOpenEXRUtil-3_5.so.34",
+    "usr/local/lib/libOpenEXRUtil-3_5.so.34.3.5.4",
     "usr/local/lib/libOpenEXRUtil.so"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
    "imath",
    "libdeflate",
-   "libiconv",
    "libjpeg-turbo",
    "libtiff",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "openjph",
    "xz",
    "zlib",
@@ -23775,12 +23863,13 @@
   "runtime_deps": [
    "imath",
    "libdeflate",
-   "openjph"
+   "openjph",
+   "zstd"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.4.1"
+  "version": "3.5.4"
  },
  "openh264": {
   "build_closure": [],
@@ -23797,8 +23886,8 @@
    "headers": 4,
    "libs": [
     "usr/local/lib/libopenh264.so",
-    "usr/local/lib/libopenh264.so.2.5.0",
-    "usr/local/lib/libopenh264.so.7"
+    "usr/local/lib/libopenh264.so.2.7.0",
+    "usr/local/lib/libopenh264.so.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -23807,7 +23896,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.5.0"
+  "version": "2.7.0"
  },
  "openjpeg": {
   "build_closure": [
@@ -23843,7 +23932,7 @@
    "headers": 2,
    "libs": [
     "usr/local/lib/libopenjp2.so",
-    "usr/local/lib/libopenjp2.so.2.5.3",
+    "usr/local/lib/libopenjp2.so.2.5.4",
     "usr/local/lib/libopenjp2.so.7"
    ]
   },
@@ -23853,7 +23942,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.5.3"
+  "version": "2.5.4"
  },
  "openjph": {
   "build_closure": [
@@ -23888,19 +23977,16 @@
    "headers": 10,
    "libs": [
     "usr/local/lib/libopenjph.so",
-    "usr/local/lib/libopenjph.so.0.24",
-    "usr/local/lib/libopenjph.so.0.24.1"
+    "usr/local/lib/libopenjph.so.0.33",
+    "usr/local/lib/libopenjph.so.0.33.0"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
+   "libdeflate",
    "libjpeg-turbo",
    "libtiff",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "xz",
    "zlib",
    "zstd"
@@ -23911,7 +23997,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.24.1"
+  "version": "0.33.0"
  },
  "openmp": {
   "build_closure": [],
@@ -24031,19 +24117,23 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "libmd",
    "libxcrypt",
    "openssl",
    "zlib"
   ],
   "runtime_deps": [
+   "libmd",
    "libxcrypt",
    "openssl",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libmd"
+  ],
   "unresolved": [],
-  "version": "10.2p1"
+  "version": "10.6p2"
  },
  "openssl": {
   "build_closure": [],
@@ -24165,7 +24255,12 @@
    "brotli",
    "c-ares",
    "curl",
+   "gettext",
    "grpc",
+   "libiconv",
+   "libidn2",
+   "libunistring",
+   "ncurses",
    "nghttp2",
    "openssl",
    "protobuf",
@@ -24227,8 +24322,10 @@
   },
   "class": "dependent",
   "installs": {
-   "bins": [],
-   "files": 153,
+   "bins": [
+    "usr/local/bin/openttd"
+   ],
+   "files": 154,
    "headers": 0,
    "libs": []
   },
@@ -24241,12 +24338,16 @@
    "freetype",
    "gettext",
    "libiconv",
+   "libidn2",
+   "libogg",
    "libpng",
    "libunistring",
    "lzo",
    "ncurses",
    "nghttp2",
    "openssl",
+   "opus",
+   "opusfile",
    "sdl2",
    "xz",
    "zlib",
@@ -24255,16 +24356,23 @@
   "runtime_deps": [
    "curl",
    "freetype",
+   "libogg",
    "libpng",
    "lzo",
+   "opus",
+   "opusfile",
    "sdl2",
    "xz",
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libogg",
+   "opus",
+   "opusfile"
+  ],
   "unresolved": [],
-  "version": "15.0-git-20250501"
+  "version": "15.3"
  },
  "openttd-opengfx": {
   "build_closure": [],
@@ -24351,7 +24459,7 @@
    "libs": [
     "usr/local/lib/libopus.so",
     "usr/local/lib/libopus.so.0",
-    "usr/local/lib/libopus.so.0.10.1"
+    "usr/local/lib/libopus.so.0.11.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -24360,7 +24468,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.2"
+  "version": "1.6.1"
  },
  "opusfile": {
   "build_closure": [
@@ -24417,12 +24525,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 37,
-   "headers": 32,
+   "files": 45,
+   "headers": 40,
    "libs": [
     "usr/local/lib/liborc-0.4.so",
     "usr/local/lib/liborc-0.4.so.0",
-    "usr/local/lib/liborc-0.4.so.0.40.0"
+    "usr/local/lib/liborc-0.4.so.0.44.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -24431,7 +24539,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.4.40"
+  "version": "0.4.44"
  },
  "orocos-kdl": {
   "build_closure": [
@@ -24448,12 +24556,12 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 103,
-   "headers": 93,
+   "files": 104,
+   "headers": 94,
    "libs": [
     "usr/local/lib/liborocos-kdl.so",
     "usr/local/lib/liborocos-kdl.so.1.5",
-    "usr/local/lib/liborocos-kdl.so.1.5.1"
+    "usr/local/lib/liborocos-kdl.so.1.5.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -24462,7 +24570,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.1"
+  "version": "1.5.4"
  },
  "osqp": {
   "build_closure": [],
@@ -24646,12 +24754,12 @@
    "bins": [
     "usr/local/bin/p11-kit"
    ],
-   "files": 19,
+   "files": 20,
    "headers": 9,
    "libs": [
     "usr/local/lib/libp11-kit.so",
     "usr/local/lib/libp11-kit.so.0",
-    "usr/local/lib/libp11-kit.so.0.4.1",
+    "usr/local/lib/libp11-kit.so.0.4.12",
     "usr/local/lib/p11-kit-proxy.so"
    ]
   },
@@ -24665,7 +24773,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.25.5"
+  "version": "0.26.6"
  },
  "paho.mqtt.c": {
   "build_closure": [
@@ -24689,16 +24797,16 @@
    "libs": [
     "usr/local/lib/libpaho-mqtt3a.so",
     "usr/local/lib/libpaho-mqtt3a.so.1",
-    "usr/local/lib/libpaho-mqtt3a.so.1.3.14",
+    "usr/local/lib/libpaho-mqtt3a.so.1.3.16",
     "usr/local/lib/libpaho-mqtt3as.so",
     "usr/local/lib/libpaho-mqtt3as.so.1",
-    "usr/local/lib/libpaho-mqtt3as.so.1.3.14",
+    "usr/local/lib/libpaho-mqtt3as.so.1.3.16",
     "usr/local/lib/libpaho-mqtt3c.so",
     "usr/local/lib/libpaho-mqtt3c.so.1",
-    "usr/local/lib/libpaho-mqtt3c.so.1.3.14",
+    "usr/local/lib/libpaho-mqtt3c.so.1.3.16",
     "usr/local/lib/libpaho-mqtt3cs.so",
     "usr/local/lib/libpaho-mqtt3cs.so.1",
-    "usr/local/lib/libpaho-mqtt3cs.so.1.3.14"
+    "usr/local/lib/libpaho-mqtt3cs.so.1.3.16"
    ]
   },
   "linked_by_dev_name": [],
@@ -24711,7 +24819,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.14"
+  "version": "1.3.16"
  },
  "paho.mqtt.cpp": {
   "build_closure": [
@@ -24734,7 +24842,7 @@
    "libs": [
     "usr/local/lib/libpaho-mqttpp3.so",
     "usr/local/lib/libpaho-mqttpp3.so.1",
-    "usr/local/lib/libpaho-mqttpp3.so.1.5.1"
+    "usr/local/lib/libpaho-mqttpp3.so.1.6.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -24749,7 +24857,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.2"
+  "version": "1.6.0"
  },
  "pandas": {
   "build_closure": [
@@ -24802,6 +24910,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openssl",
    "python3",
@@ -24939,6 +25048,190 @@
   "unresolved": [],
   "version": "1.54.0"
  },
+ "parole": {
+  "build_closure": [
+   "at-spi2-core",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dbus",
+   "dbus-glib",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdbm",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "graphite2",
+   "gst-plugins-base",
+   "gstreamer",
+   "gtk3",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libnotify",
+   "libogg",
+   "libpng",
+   "libtheora",
+   "libunistring",
+   "libvorbis",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
+   "libxdmcp",
+   "libxext",
+   "libxfce4ui",
+   "libxfce4util",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
+   "libxrender",
+   "libxtst",
+   "lzo",
+   "ncurses",
+   "openssl",
+   "opus",
+   "orc",
+   "pango",
+   "pcre2",
+   "pixman",
+   "pthread-stubs",
+   "python3",
+   "readline",
+   "sqlite",
+   "taglib",
+   "wayland",
+   "wayland-protocols",
+   "xcb-proto",
+   "xfconf",
+   "xorgproto",
+   "xtrans",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "glib",
+   "gtk3",
+   "dbus",
+   "dbus-glib",
+   "libxfce4util",
+   "libxfce4ui",
+   "xfconf",
+   "gstreamer",
+   "gst-plugins-base",
+   "taglib",
+   "libnotify"
+  ],
+  "buildsys": "meson",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "dependent",
+  "installs": {
+   "bins": [
+    "usr/local/bin/parole"
+   ],
+   "files": 84,
+   "headers": 8,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [
+   "at-spi2-core",
+   "brotli",
+   "bzip2",
+   "cairo",
+   "dbus",
+   "dbus-glib",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "graphite2",
+   "gst-plugins-base",
+   "gstreamer",
+   "gtk3",
+   "harfbuzz",
+   "icu",
+   "libepoxy",
+   "libffi",
+   "libiconv",
+   "libjpeg-turbo",
+   "libnotify",
+   "libogg",
+   "libpng",
+   "libtheora",
+   "libunistring",
+   "libvorbis",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxcomposite",
+   "libxcursor",
+   "libxdamage",
+   "libxdmcp",
+   "libxext",
+   "libxfce4ui",
+   "libxfce4util",
+   "libxfixes",
+   "libxft",
+   "libxi",
+   "libxinerama",
+   "libxkbcommon",
+   "libxml2",
+   "libxrandr",
+   "libxrender",
+   "libxtst",
+   "lzo",
+   "ncurses",
+   "opus",
+   "pango",
+   "pcre2",
+   "pixman",
+   "taglib",
+   "wayland",
+   "xfconf",
+   "xz",
+   "zlib"
+  ],
+  "runtime_deps": [
+   "cairo",
+   "dbus",
+   "dbus-glib",
+   "gdk-pixbuf",
+   "gettext",
+   "glib",
+   "gst-plugins-base",
+   "gstreamer",
+   "gtk3",
+   "libnotify",
+   "libxfce4ui",
+   "libxfce4util",
+   "taglib",
+   "xfconf"
+  ],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "4.20.0"
+ },
  "patch": {
   "build_closure": [],
   "build_deps": [],
@@ -24962,7 +25255,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.8"
+  "version": "2.8.1"
  },
  "pax-utils": {
   "build_closure": [],
@@ -24992,7 +25285,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.8"
+  "version": "1.3.9"
  },
  "pcl": {
   "build_closure": [
@@ -25082,11 +25375,8 @@
    "boost",
    "bzip2",
    "flann",
-   "gettext",
    "libiconv",
-   "libunistring",
    "lz4",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -25157,21 +25447,21 @@
    "bins": [
     "usr/local/bin/pcre2-config"
    ],
-   "files": 220,
+   "files": 242,
    "headers": 2,
    "libs": [
     "usr/local/lib/libpcre2-16.so",
     "usr/local/lib/libpcre2-16.so.0",
-    "usr/local/lib/libpcre2-16.so.0.13.0",
+    "usr/local/lib/libpcre2-16.so.0.16.1",
     "usr/local/lib/libpcre2-32.so",
     "usr/local/lib/libpcre2-32.so.0",
-    "usr/local/lib/libpcre2-32.so.0.13.0",
+    "usr/local/lib/libpcre2-32.so.0.16.1",
     "usr/local/lib/libpcre2-8.so",
     "usr/local/lib/libpcre2-8.so.0",
-    "usr/local/lib/libpcre2-8.so.0.13.0",
+    "usr/local/lib/libpcre2-8.so.0.16.1",
     "usr/local/lib/libpcre2-posix.so",
     "usr/local/lib/libpcre2-posix.so.3",
-    "usr/local/lib/libpcre2-posix.so.3.0.5"
+    "usr/local/lib/libpcre2-posix.so.3.0.9"
    ]
   },
   "linked_by_dev_name": [],
@@ -25180,7 +25470,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "10.44"
+  "version": "10.49"
  },
  "pdfium": {
   "build_closure": [],
@@ -25321,7 +25611,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.36"
+  "version": "1.37_01"
  },
  "perl-clone": {
   "build_closure": [
@@ -25433,7 +25723,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.17030"
+  "version": "0.17031"
  },
  "perl-extutils-config": {
   "build_closure": [
@@ -25685,7 +25975,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.86"
+  "version": "3.87"
  },
  "perl-html-tagset": {
   "build_closure": [
@@ -26206,7 +26496,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.96"
+  "version": "1.97_01"
  },
  "perl-protocol-websocket": {
   "build_closure": [
@@ -26704,10 +26994,7 @@
    "boost",
    "bzip2",
    "console_bridge",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "tinyxml2",
    "urdfdom",
    "xz",
@@ -26940,12 +27227,8 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
    "llvm",
-   "ncurses",
    "opencl-icd-loader",
    "xz",
    "zlib",
@@ -27119,6 +27402,7 @@
    "gettext",
    "glib",
    "lcms2",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -27331,7 +27615,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.13.2"
+  "version": "2.13.3"
  },
  "protobuf": {
   "build_closure": [
@@ -27409,7 +27693,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.0"
+  "version": "1.5.2"
  },
  "psutil": {
   "build_closure": [
@@ -27568,7 +27852,7 @@
    "libs": [
     "usr/local/lib/libpugixml.so",
     "usr/local/lib/libpugixml.so.1",
-    "usr/local/lib/libpugixml.so.1.14"
+    "usr/local/lib/libpugixml.so.1.16"
    ]
   },
   "linked_by_dev_name": [],
@@ -27577,7 +27861,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.14"
+  "version": "1.16"
  },
  "pybind11": {
   "build_closure": [],
@@ -27684,6 +27968,7 @@
    "harfbuzz",
    "icu",
    "libavif",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -27766,7 +28051,7 @@
     "usr/local/bin/python3.14",
     "usr/local/bin/python3.14-config"
    ],
-   "files": 3026,
+   "files": 3027,
    "headers": 283,
    "libs": [
     "usr/local/lib/libpython3.14.so",
@@ -27783,6 +28068,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openssl",
    "readline",
@@ -27797,6 +28083,7 @@
    "gdbm",
    "gettext",
    "libffi",
+   "libuuid",
    "ncurses",
    "openssl",
    "readline",
@@ -27806,7 +28093,9 @@
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libuuid"
+  ],
   "unresolved": [],
   "version": "3.14.0"
  },
@@ -28138,7 +28427,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.5.0"
+  "version": "0.5.1"
  },
  "python3-bitstruct": {
   "build_closure": [
@@ -28229,7 +28518,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.43.123"
+  "version": "1.44.9"
  },
  "python3-botocore": {
   "build_closure": [
@@ -28267,7 +28556,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 2019,
+   "files": 2061,
    "headers": 0,
    "libs": []
   },
@@ -28277,7 +28566,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.43.123"
+  "version": "1.44.9"
  },
  "python3-bracex": {
   "build_closure": [
@@ -28318,7 +28607,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.2.1"
+  "version": "3.2.4"
  },
  "python3-build": {
   "build_closure": [
@@ -28435,6 +28724,7 @@
    "libiconv",
    "libpng",
    "libunistring",
+   "libuuid",
    "libx11",
    "libxau",
    "libxcb",
@@ -28758,7 +29048,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "45.1.2"
+  "version": "45.2.0"
  },
  "python3-catkin-pkg": {
   "build_closure": [
@@ -28942,7 +29232,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "8.5.0"
+  "version": "8.5.1"
  },
  "python3-colcon-argcomplete": {
   "build_closure": [
@@ -30284,6 +30574,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openssl",
    "python3",
@@ -30340,7 +30631,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "7.17.0"
+  "version": "7.17.4"
  },
  "python3-cparser": {
   "build_closure": [
@@ -30641,6 +30932,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openssl",
    "pcre2",
@@ -31754,6 +32046,7 @@
    "libiconv",
    "libpng",
    "libunistring",
+   "libuuid",
    "libx11",
    "libxau",
    "libxcb",
@@ -31976,7 +32269,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.31.0"
+  "version": "1.33.0"
  },
  "python3-idna": {
   "build_closure": [
@@ -32307,12 +32600,8 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
    "libxslt",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -32457,6 +32746,7 @@
    "libpng",
    "libraqm",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openssl",
    "pcre2",
@@ -32608,7 +32898,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.6.0"
+  "version": "0.7.0"
  },
  "python3-msgpack": {
   "build_closure": [
@@ -32690,7 +32980,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.0"
+  "version": "1.2.0"
  },
  "python3-netifaces": {
   "build_closure": [
@@ -33017,6 +33307,7 @@
    "harfbuzz",
    "icu",
    "lcms2",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -33086,7 +33377,7 @@
    "bins": [
     "usr/local/bin/pint-convert"
    ],
-   "files": 124,
+   "files": 129,
    "headers": 0,
    "libs": []
   },
@@ -33096,7 +33387,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.24.4"
+  "version": "0.26.2"
  },
  "python3-pip": {
   "build_closure": [
@@ -33168,7 +33459,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 18,
+   "files": 22,
    "headers": 0,
    "libs": []
   },
@@ -33178,7 +33469,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.14.3"
+  "version": "4.14.8"
  },
  "python3-pluggy": {
   "build_closure": [
@@ -34291,7 +34582,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.0.3"
+  "version": "6.0.4"
  },
  "python3-rosdistro": {
   "build_closure": [
@@ -34600,6 +34891,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "openblas",
    "openssl",
@@ -35079,7 +35371,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.6"
+  "version": "6.6.1"
  },
  "python3-traitlets": {
   "build_closure": [
@@ -35206,7 +35498,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.6.0"
+  "version": "4.6.1"
  },
  "python3-typing-extensions": {
   "build_closure": [
@@ -35500,7 +35792,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 17,
+   "files": 20,
    "headers": 0,
    "libs": []
   },
@@ -35510,7 +35802,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.46.1"
+  "version": "0.48.0"
  },
  "python3-wrapt": {
   "build_closure": [
@@ -35734,6 +36026,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -35770,6 +36063,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -35822,6 +36116,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -35852,6 +36147,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -36003,6 +36299,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36038,6 +36335,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -36385,6 +36683,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36414,6 +36713,7 @@
    "pcre2",
    "pixman",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -36472,6 +36772,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36508,6 +36809,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -36595,6 +36897,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36625,6 +36928,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -36632,6 +36936,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -36664,6 +36969,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36700,6 +37006,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -36754,6 +37061,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36784,6 +37092,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -36823,6 +37132,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36859,6 +37169,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -36913,6 +37224,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -36943,6 +37255,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -36950,6 +37263,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -36982,6 +37296,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37018,6 +37333,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37069,6 +37385,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37099,6 +37416,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37138,6 +37456,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37175,6 +37494,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37227,6 +37547,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37258,6 +37579,7 @@
    "qt6",
    "qt6-positioning",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37265,6 +37587,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6",
    "qt6-positioning"
   ],
@@ -37298,6 +37621,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37334,6 +37658,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37385,6 +37710,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37415,6 +37741,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37422,6 +37749,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -37454,6 +37782,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37490,6 +37819,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37541,6 +37871,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37571,6 +37902,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37610,6 +37942,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37646,6 +37979,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37697,6 +38031,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37727,6 +38062,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37766,6 +38102,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37802,6 +38139,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -37856,6 +38194,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37886,6 +38225,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -37893,6 +38233,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -37925,6 +38266,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -37961,6 +38303,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38010,6 +38353,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38040,6 +38384,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -38047,6 +38392,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -38079,6 +38425,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38115,6 +38462,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38169,6 +38517,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38199,6 +38548,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -38238,6 +38588,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38274,6 +38625,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38334,6 +38686,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38364,6 +38717,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -38371,6 +38725,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "libxkbcommon",
    "qt6"
   ],
   "standalone_verified": {},
@@ -38403,6 +38758,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38439,6 +38795,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38493,6 +38850,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38523,6 +38881,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -38562,6 +38921,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38598,6 +38958,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38655,6 +39016,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38691,6 +39053,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38749,6 +39112,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38821,6 +39185,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38857,6 +39222,7 @@
    "sqlite",
    "svt-av1",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -38911,6 +39277,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -38941,6 +39308,7 @@
    "pixman",
    "qt6",
    "svt-av1",
+   "wayland",
    "x264",
    "x265",
    "xz",
@@ -39005,12 +39373,12 @@
     "usr/local/bin/qjs",
     "usr/local/bin/qjsc"
    ],
-   "files": 17,
+   "files": 20,
    "headers": 1,
    "libs": [
     "usr/local/lib/libqjs.so",
     "usr/local/lib/libqjs.so.0",
-    "usr/local/lib/libqjs.so.0.8.0"
+    "usr/local/lib/libqjs.so.0.18.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -39019,7 +39387,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.8.0"
+  "version": "0.18.0"
  },
  "rapidjson": {
   "build_closure": [],
@@ -39131,15 +39499,15 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 24,
+   "files": 27,
    "headers": 8,
    "libs": [
     "usr/local/lib/libhistory.so",
     "usr/local/lib/libhistory.so.8",
-    "usr/local/lib/libhistory.so.8.2",
+    "usr/local/lib/libhistory.so.8.3",
     "usr/local/lib/libreadline.so",
     "usr/local/lib/libreadline.so.8",
-    "usr/local/lib/libreadline.so.8.2"
+    "usr/local/lib/libreadline.so.8.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -39148,7 +39516,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "8.2"
+  "version": "8.3"
  },
  "redis": {
   "build_closure": [
@@ -39290,6 +39658,7 @@
    "libffi",
    "libiconv",
    "libpng",
+   "libunibreak",
    "libunistring",
    "libxkbcommon",
    "libxml2",
@@ -39377,7 +39746,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 19,
+   "files": 20,
    "headers": 0,
    "libs": []
   },
@@ -39426,7 +39795,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.5"
+  "version": "1.4.6"
  },
  "riegeli": {
   "build_closure": [
@@ -39480,12 +39849,8 @@
    "abseil",
    "brotli",
    "bzip2",
-   "gettext",
    "highwayhash",
-   "libiconv",
-   "libunistring",
    "lz4",
-   "ncurses",
    "protobuf",
    "snappy",
    "xz",
@@ -39531,12 +39896,12 @@
     "usr/local/bin/ldb",
     "usr/local/bin/sst_dump"
    ],
-   "files": 139,
-   "headers": 119,
+   "files": 145,
+   "headers": 125,
    "libs": [
     "usr/local/lib/librocksdb.so",
     "usr/local/lib/librocksdb.so.11",
-    "usr/local/lib/librocksdb.so.11.8.1"
+    "usr/local/lib/librocksdb.so.11.13.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -39553,7 +39918,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "11.8.1"
+  "version": "11.13.2"
  },
  "ros2": {
   "build_closure": [
@@ -39615,7 +39980,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 23983,
+   "files": 24058,
    "headers": 0,
    "libs": []
   },
@@ -39636,7 +40001,9 @@
    "gettext",
    "libffi",
    "libiconv",
+   "libidn2",
    "libunistring",
+   "libuuid",
    "libyaml",
    "lz4",
    "ncurses",
@@ -39648,7 +40015,6 @@
    "sqlite",
    "tinyxml2",
    "xz",
-   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -39665,12 +40031,13 @@
    "python3",
    "sqlite",
    "tinyxml2",
-   "yaml-cpp",
    "zstd"
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [],
+  "unresolved": [
+   "libyaml-cpp.so.0.8"
+  ],
   "version": "jazzy"
  },
  "ros2-jazzy-control": {
@@ -39747,7 +40114,9 @@
    "gettext",
    "libffi",
    "libiconv",
+   "libidn2",
    "libunistring",
+   "libuuid",
    "ncurses",
    "nghttp2",
    "openssl",
@@ -39941,13 +40310,13 @@
   ],
   "buildsys": "custom",
   "built": {
-   "aarch64le": false,
+   "aarch64le": true,
    "x86_64": true
   },
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 4722,
+   "files": 4647,
    "headers": 0,
    "libs": []
   },
@@ -39968,6 +40337,7 @@
    "libffi",
    "libiconv",
    "libunistring",
+   "libuuid",
    "ncurses",
    "octomap",
    "ompl",
@@ -40152,6 +40522,7 @@
    "libwebp",
    "libxml2",
    "libyaml",
+   "libzip",
    "libzmq",
    "lz4",
    "nanoflann",
@@ -40210,32 +40581,34 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 5395,
+   "files": 5407,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "aom",
    "boost",
    "brotli",
    "bzip2",
    "ceres-solver",
    "console_bridge",
+   "dav1d",
    "expat",
    "fastcdr",
    "freetype",
    "gdbm",
    "geographiclib",
    "gettext",
-   "gflags",
    "glog",
    "graphicsmagick",
-   "highway",
    "lcms2",
+   "libde265",
+   "libdeflate",
    "libffi",
+   "libheif",
    "libiconv",
    "libjpeg-turbo",
-   "libjxl",
    "libpng",
    "libsodium",
    "libtiff",
@@ -40248,14 +40621,18 @@
    "ncurses",
    "ompl",
    "opencv",
+   "openh264",
+   "openjpeg",
+   "openjph",
    "openssl",
    "orocos-kdl",
    "python3",
    "readline",
    "sqlite",
    "tinyxml2",
+   "x264",
+   "x265",
    "xz",
-   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -40273,8 +40650,7 @@
    "orocos-kdl",
    "python3",
    "sqlite",
-   "tinyxml2",
-   "yaml-cpp"
+   "tinyxml2"
   ],
   "standalone_verified": {},
   "undeclared": [
@@ -40368,7 +40744,8 @@
    "libunique_identifier_msgs__rosidl_typesupport_fastrtps_cpp.so",
    "libunique_identifier_msgs__rosidl_typesupport_introspection_c.so",
    "libunique_identifier_msgs__rosidl_typesupport_introspection_cpp.so",
-   "libvisualization_msgs__rosidl_typesupport_cpp.so"
+   "libvisualization_msgs__rosidl_typesupport_cpp.so",
+   "libyaml-cpp.so.0.8"
   ],
   "version": "20260128"
  },
@@ -40407,6 +40784,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdrm-headers",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -40452,6 +40830,7 @@
    "svt-av1",
    "tinyxml2",
    "wayland",
+   "wayland-protocols",
    "x264",
    "x265",
    "xcb-proto",
@@ -40508,6 +40887,7 @@
    "harfbuzz",
    "icu",
    "lame",
+   "libdeflate",
    "libffi",
    "libiconv",
    "libjpeg-turbo",
@@ -40540,10 +40920,10 @@
    "qt6",
    "svt-av1",
    "tinyxml2",
+   "wayland",
    "x264",
    "x265",
    "xz",
-   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -40553,8 +40933,7 @@
    "freetype",
    "orocos-kdl",
    "qt6",
-   "tinyxml2",
-   "yaml-cpp"
+   "tinyxml2"
   ],
   "standalone_verified": {},
   "undeclared": [],
@@ -40583,7 +40962,8 @@
    "libtf2_msgs__rosidl_typesupport_cpp.so",
    "libtf2_ros.so",
    "liburdf.so",
-   "libvisualization_msgs__rosidl_typesupport_cpp.so"
+   "libvisualization_msgs__rosidl_typesupport_cpp.so",
+   "libyaml-cpp.so.0.8"
   ],
   "version": "14.1.24"
  },
@@ -40611,27 +40991,37 @@
     "usr/local/bin/rsync",
     "usr/local/bin/rsync-ssl"
    ],
-   "files": 2,
+   "files": 5,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "gettext",
+   "libiconv",
+   "libidn2",
+   "libunistring",
    "lz4",
+   "ncurses",
    "openssl",
    "xxhash",
    "zstd"
   ],
   "runtime_deps": [
+   "libiconv",
+   "libidn2",
    "lz4",
    "openssl",
    "xxhash",
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libiconv",
+   "libidn2"
+  ],
   "unresolved": [],
-  "version": "3.3.0"
+  "version": "3.5.2"
  },
  "rtl-sdr": {
   "build_closure": [
@@ -40662,7 +41052,7 @@
    "libs": [
     "usr/local/lib/librtlsdr.so",
     "usr/local/lib/librtlsdr.so.0",
-    "usr/local/lib/librtlsdr.so.2.0.1"
+    "usr/local/lib/librtlsdr.so.2.0.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -40675,7 +41065,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.0.2"
+  "version": "2.0.3"
  },
  "ruby": {
   "build_closure": [
@@ -40718,12 +41108,12 @@
     "usr/local/bin/syntax_suggest",
     "usr/local/bin/typeprof"
    ],
-   "files": 2730,
+   "files": 2732,
    "headers": 193,
    "libs": [
     "usr/local/lib/libruby.so",
     "usr/local/lib/libruby.so.3.4",
-    "usr/local/lib/libruby.so.3.4.12"
+    "usr/local/lib/libruby.so.3.4.13"
    ]
   },
   "linked_by_dev_name": [],
@@ -40746,7 +41136,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.4.12"
+  "version": "3.4.13"
  },
  "ruckig": {
   "build_closure": [],
@@ -40771,7 +41161,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.17.3"
+  "version": "0.19.4"
  },
  "rust": {
   "build_closure": [],
@@ -40838,8 +41228,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 18,
-   "headers": 11,
+   "files": 19,
+   "headers": 12,
    "libs": [
     "usr/local/lib/libs2n.so",
     "usr/local/lib/libs2n.so.1",
@@ -40856,7 +41246,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.0"
+  "version": "1.7.14"
  },
  "samba": {
   "build_closure": [
@@ -40936,7 +41326,7 @@
     "usr/local/sbin/nmbd",
     "usr/local/sbin/smbd"
    ],
-   "files": 359,
+   "files": 467,
    "headers": 74,
    "libs": [
     "usr/local/lib/libdcerpc-binding.so",
@@ -40985,6 +41375,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "brotli",
+   "expat",
    "gettext",
    "gmp",
    "gnutls",
@@ -40996,7 +41387,9 @@
    "libxcrypt",
    "ncurses",
    "nettle",
+   "openssl",
    "tdb",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -41209,7 +41602,7 @@
    "libs": [
     "usr/local/lib/libSDL2-2.0.so",
     "usr/local/lib/libSDL2-2.0.so.0",
-    "usr/local/lib/libSDL2-2.0.so.0.3200.60",
+    "usr/local/lib/libSDL2-2.0.so.0.3200.74",
     "usr/local/lib/libSDL2.so"
    ]
   },
@@ -41219,7 +41612,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.32.60"
+  "version": "2.32.74"
  },
  "sdl2-image": {
   "build_closure": [
@@ -41275,14 +41668,12 @@
   "runtime_closure": [
    "aom",
    "dav1d",
-   "gettext",
    "libavif",
+   "libdeflate",
    "libiconv",
    "libjpeg-turbo",
    "libtiff",
-   "libunistring",
    "libwebp",
-   "ncurses",
    "sdl2",
    "xz",
    "zlib",
@@ -41517,7 +41908,7 @@
    "libs": [
     "usr/local/lib/libSDL3.so",
     "usr/local/lib/libSDL3.so.0",
-    "usr/local/lib/libSDL3.so.0.4.18"
+    "usr/local/lib/libSDL3.so.0.4.20"
    ]
   },
   "linked_by_dev_name": [],
@@ -41551,7 +41942,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.4.18"
+  "version": "3.4.20"
  },
  "sentencepiece": {
   "build_closure": [
@@ -41643,7 +42034,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2026.2"
+  "version": "2026.4"
  },
  "shared-mime-info": {
   "build_closure": [
@@ -41766,7 +42157,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.0"
+  "version": "1.2.1"
  },
  "simdjson": {
   "build_closure": [],
@@ -41892,7 +42283,7 @@
    "libs": [
     "usr/local/lib/libsnappy.so",
     "usr/local/lib/libsnappy.so.1",
-    "usr/local/lib/libsnappy.so.1.2.1"
+    "usr/local/lib/libsnappy.so.1.3.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -41901,7 +42292,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.1"
+  "version": "1.3.1"
  },
  "socat": {
   "build_closure": [
@@ -41947,7 +42338,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.8.0.3"
+  "version": "1.8.1.3"
  },
  "soem": {
   "build_closure": [
@@ -41961,7 +42352,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "runtime-standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/ec_sample",
@@ -41975,8 +42366,12 @@
    "libs": []
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libpcap"
+  ],
+  "runtime_deps": [
+   "libpcap"
+  ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
@@ -42058,8 +42453,8 @@
    "headers": 90,
    "libs": [
     "usr/local/lib/libspdlog.so",
-    "usr/local/lib/libspdlog.so.1.15",
-    "usr/local/lib/libspdlog.so.1.15.3"
+    "usr/local/lib/libspdlog.so.1.17",
+    "usr/local/lib/libspdlog.so.1.17.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -42072,7 +42467,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.15.3"
+  "version": "1.17.0"
  },
  "speexdsp": {
   "build_closure": [],
@@ -42231,7 +42626,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.9"
+  "version": "1.9.1"
  },
  "sscep": {
   "build_closure": [
@@ -42380,7 +42775,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.0.6"
+  "version": "6.1.0"
  },
  "sudo": {
   "build_closure": [
@@ -42444,7 +42839,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 177,
+   "files": 181,
    "headers": 16,
    "libs": [
     "usr/local/lib/libamd.so",
@@ -42461,7 +42856,7 @@
     "usr/local/lib/libccolamd.so.3.3.5",
     "usr/local/lib/libcholmod.so",
     "usr/local/lib/libcholmod.so.5",
-    "usr/local/lib/libcholmod.so.5.3.4",
+    "usr/local/lib/libcholmod.so.5.3.5",
     "usr/local/lib/libcolamd.so",
     "usr/local/lib/libcolamd.so.3",
     "usr/local/lib/libcolamd.so.3.3.5",
@@ -42482,13 +42877,13 @@
     "usr/local/lib/librbio.so.4.3.5",
     "usr/local/lib/libspqr.so",
     "usr/local/lib/libspqr.so.4",
-    "usr/local/lib/libspqr.so.4.3.5",
+    "usr/local/lib/libspqr.so.4.3.6",
     "usr/local/lib/libsuitesparseconfig.so",
     "usr/local/lib/libsuitesparseconfig.so.7",
-    "usr/local/lib/libsuitesparseconfig.so.7.11.0",
+    "usr/local/lib/libsuitesparseconfig.so.7.14.1",
     "usr/local/lib/libumfpack.so",
     "usr/local/lib/libumfpack.so.6",
-    "usr/local/lib/libumfpack.so.6.3.6"
+    "usr/local/lib/libumfpack.so.6.3.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -42501,7 +42896,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "7.11.0"
+  "version": "7.14.1"
  },
  "svt-av1": {
   "build_closure": [],
@@ -42718,15 +43113,15 @@
    "bins": [
     "usr/local/bin/taglib-config"
    ],
-   "files": 126,
-   "headers": 113,
+   "files": 156,
+   "headers": 140,
    "libs": [
     "usr/local/lib/libtag.so",
     "usr/local/lib/libtag.so.2",
-    "usr/local/lib/libtag.so.2.0.2",
+    "usr/local/lib/libtag.so.2.3.2",
     "usr/local/lib/libtag_c.so",
     "usr/local/lib/libtag_c.so.2",
-    "usr/local/lib/libtag_c.so.2.0.2"
+    "usr/local/lib/libtag_c.so.2.3.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -42739,7 +43134,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.0.2"
+  "version": "2.3.2"
  },
  "tar": {
   "build_closure": [
@@ -42823,23 +43218,27 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "runtime-standalone",
+  "class": "dependent",
   "installs": {
    "bins": [
     "usr/local/bin/tcpdump",
-    "usr/local/bin/tcpdump.4.99.5"
+    "usr/local/bin/tcpdump.4.99.7"
    ],
    "files": 3,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "libpcap"
+  ],
+  "runtime_deps": [
+   "libpcap"
+  ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.99.5"
+  "version": "4.99.7"
  },
  "tdb": {
   "build_closure": [],
@@ -42857,7 +43256,7 @@
     "usr/local/bin/tdbrestore",
     "usr/local/bin/tdbtool"
    ],
-   "files": 9,
+   "files": 13,
    "headers": 1,
    "libs": [
     "usr/local/lib/libtdb.so",
@@ -42921,7 +43320,7 @@
     "usr/local/bin/texi2pdf",
     "usr/local/bin/texindex"
    ],
-   "files": 495,
+   "files": 517,
    "headers": 0,
    "libs": []
   },
@@ -42935,7 +43334,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "7.2"
+  "version": "7.3"
  },
  "tftp-hpa": {
   "build_closure": [
@@ -43114,11 +43513,12 @@
     "usr/local/bin/thunar",
     "usr/local/bin/thunar-settings"
    ],
-   "files": 112,
+   "files": 116,
    "headers": 14,
    "libs": [
     "usr/local/lib/libthunarx-3.so",
-    "usr/local/lib/libthunarx-3.so.0"
+    "usr/local/lib/libthunarx-3.so.0",
+    "usr/local/lib/libthunarx-3.so.0.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -43145,10 +43545,12 @@
    "libepoxy",
    "libexif",
    "libffi",
+   "libice",
    "libiconv",
    "libjpeg-turbo",
    "libnotify",
    "libpng",
+   "libsm",
    "libunistring",
    "libx11",
    "libxau",
@@ -43191,7 +43593,9 @@
    "gtk3",
    "harfbuzz",
    "libexif",
+   "libice",
    "libnotify",
+   "libsm",
    "libx11",
    "libxfce4ui",
    "libxfce4util",
@@ -43202,9 +43606,12 @@
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libice",
+   "libsm"
+  ],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.10"
  },
  "tinyxml": {
   "build_closure": [],
@@ -43343,7 +43750,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.5a"
+  "version": "3.8"
  },
  "tomlplusplus": {
   "build_closure": [],
@@ -43414,7 +43821,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.1"
+  "version": "2.3.2"
  },
  "tree-sitter": {
   "build_closure": [],
@@ -43463,7 +43870,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.25.0"
+  "version": "0.25.1"
  },
  "tree-sitter-c": {
   "build_closure": [],
@@ -43486,7 +43893,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.24.1"
+  "version": "0.24.2"
  },
  "tree-sitter-cmake": {
   "build_closure": [],
@@ -43509,7 +43916,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.7.2"
+  "version": "0.7.6"
  },
  "tree-sitter-cpp": {
   "build_closure": [],
@@ -43555,7 +43962,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.4.0"
+  "version": "0.5.0"
  },
  "tree-sitter-make": {
   "build_closure": [],
@@ -43601,7 +44008,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.5.1"
+  "version": "0.5.4"
  },
  "tree-sitter-python": {
   "build_closure": [],
@@ -43624,7 +44031,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.23.6"
+  "version": "0.25.0"
  },
  "tree-sitter-query": {
   "build_closure": [],
@@ -43647,7 +44054,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.7.0"
+  "version": "0.8.0"
  },
  "tree-sitter-vim": {
   "build_closure": [],
@@ -43670,7 +44077,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.7.0"
+  "version": "0.8.1"
  },
  "tree-sitter-vimdoc": {
   "build_closure": [],
@@ -43693,7 +44100,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.0.0"
+  "version": "4.3.0"
  },
  "trompeloeil": {
   "build_closure": [],
@@ -43809,7 +44216,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 97,
+   "files": 98,
    "headers": 16,
    "libs": [
     "usr/local/lib/libtumbler-1.so",
@@ -43822,10 +44229,13 @@
    "brotli",
    "bzip2",
    "c-ares",
+   "cairo",
    "curl",
    "dav1d",
+   "expat",
    "ffmpeg",
    "ffmpegthumbnailer",
+   "fontconfig",
    "freetype",
    "gdk-pixbuf",
    "gettext",
@@ -43833,24 +44243,39 @@
    "gst-plugins-base",
    "gstreamer",
    "lame",
+   "lcms2",
+   "libdeflate",
    "libffi",
    "libgsf",
    "libiconv",
+   "libidn2",
    "libjpeg-turbo",
    "libogg",
    "libpng",
    "libtheora",
+   "libtiff",
    "libunistring",
    "libvorbis",
    "libvpx",
+   "libwebp",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
    "libxfce4util",
    "libxml2",
+   "libxrender",
+   "lzo",
    "ncurses",
    "nghttp2",
    "openh264",
+   "openjpeg",
    "openssl",
    "opus",
    "pcre2",
+   "pixman",
+   "poppler",
    "x264",
    "x265",
    "xz",
@@ -43858,6 +44283,7 @@
    "zstd"
   ],
   "runtime_deps": [
+   "cairo",
    "curl",
    "ffmpegthumbnailer",
    "freetype",
@@ -43870,12 +44296,15 @@
    "libjpeg-turbo",
    "libpng",
    "libxfce4util",
-   "libxml2"
+   "poppler"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "cairo",
+   "poppler"
+  ],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.2"
  },
  "tzdata": {
   "build_closure": [],
@@ -43946,7 +44375,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.24.1"
+  "version": "1.26.2"
  },
  "unibilium": {
   "build_closure": [],
@@ -43959,12 +44388,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 4,
+   "files": 58,
    "headers": 1,
    "libs": [
     "usr/local/lib/libunibilium.so",
     "usr/local/lib/libunibilium.so.4",
-    "usr/local/lib/libunibilium.so.4.0.1"
+    "usr/local/lib/libunibilium.so.4.0.2"
    ]
   },
   "linked_by_dev_name": [],
@@ -43973,7 +44402,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.1.2"
+  "version": "2.1.4"
  },
  "unifdef": {
   "build_closure": [],
@@ -44018,7 +44447,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 29,
+   "files": 31,
    "headers": 11,
    "libs": [
     "usr/local/lib/libup-core-api.so",
@@ -44039,7 +44468,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.6.0-alpha2"
+  "version": "1.6.0-alpha.7"
  },
  "up-cpp": {
   "build_closure": [
@@ -44264,7 +44693,7 @@
    "libs": [
     "usr/local/lib/libutf8proc.so",
     "usr/local/lib/libutf8proc.so.3",
-    "usr/local/lib/libutf8proc.so.3.2.3"
+    "usr/local/lib/libutf8proc.so.3.3.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -44273,7 +44702,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.11.3"
+  "version": "2.12.0"
  },
  "util-macros": {
   "build_closure": [],
@@ -44323,7 +44752,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.0.1"
+  "version": "4.0.2"
  },
  "vala": {
   "build_closure": [
@@ -44383,7 +44812,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.56.18"
+  "version": "0.56.19"
  },
  "valkey": {
   "build_closure": [
@@ -44497,8 +44926,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 19,
-   "headers": 16,
+   "files": 22,
+   "headers": 19,
    "libs": [
     "usr/local/lib/libvidstab.so",
     "usr/local/lib/libvidstab.so.1.2"
@@ -44510,7 +44939,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.1"
+  "version": "1.1.2"
  },
  "vim": {
   "build_closure": [
@@ -44540,25 +44969,70 @@
     "usr/local/bin/vimtutor",
     "usr/local/bin/xxd"
    ],
-   "files": 1955,
+   "files": 2115,
    "headers": 0,
    "libs": []
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
+   "brotli",
+   "bzip2",
+   "cairo",
+   "expat",
+   "fontconfig",
+   "freetype",
+   "fribidi",
+   "gettext",
+   "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
+   "libffi",
    "libiconv",
+   "libpng",
    "libsodium",
-   "ncurses"
+   "libunistring",
+   "libx11",
+   "libxau",
+   "libxcb",
+   "libxdmcp",
+   "libxext",
+   "libxft",
+   "libxrender",
+   "lzo",
+   "ncurses",
+   "pango",
+   "pcre2",
+   "pixman",
+   "wayland",
+   "zlib"
   ],
   "runtime_deps": [
+   "cairo",
+   "gettext",
+   "glib",
+   "harfbuzz",
    "libiconv",
    "libsodium",
-   "ncurses"
+   "ncurses",
+   "pango",
+   "pixman",
+   "wayland",
+   "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "cairo",
+   "gettext",
+   "glib",
+   "harfbuzz",
+   "pango",
+   "pixman",
+   "wayland",
+   "zlib"
+  ],
   "unresolved": [],
-  "version": "9.1.0900"
+  "version": "9.2.1382"
  },
  "virtualgl": {
   "build_closure": [
@@ -44658,17 +45132,16 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "bzip2",
-   "gettext",
+   "libb2",
    "libiconv",
-   "libunistring",
    "lz4",
-   "ncurses",
    "openssl",
    "xz",
    "zstd"
   ],
   "runtime_deps": [
    "bzip2",
+   "libb2",
    "libiconv",
    "lz4",
    "openssl",
@@ -44676,7 +45149,9 @@
    "zstd"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libb2"
+  ],
   "unresolved": [],
   "version": "3.0.21"
  },
@@ -44723,10 +45198,7 @@
   "runtime_closure": [
    "boost",
    "bzip2",
-   "gettext",
    "libiconv",
-   "libunistring",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -44838,7 +45310,7 @@
     "usr/local/lib/libvte-2.91-gtk4.so.0",
     "usr/local/lib/libvte-2.91.so",
     "usr/local/lib/libvte-2.91.so.0",
-    "usr/local/lib/libvte-2.91.so.0.7800.2"
+    "usr/local/lib/libvte-2.91.so.0.7800.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -44863,6 +45335,7 @@
    "gtk4",
    "harfbuzz",
    "icu",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
@@ -44894,9 +45367,11 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
+   "unbound",
    "wayland",
    "xz",
    "zlib",
@@ -44921,7 +45396,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.78.2"
+  "version": "0.78.7"
  },
  "wayland": {
   "build_closure": [
@@ -44960,16 +45435,16 @@
    "libs": [
     "usr/local/lib/libwayland-client.so",
     "usr/local/lib/libwayland-client.so.0",
-    "usr/local/lib/libwayland-client.so.0.24.0",
+    "usr/local/lib/libwayland-client.so.0.26.0",
     "usr/local/lib/libwayland-cursor.so",
     "usr/local/lib/libwayland-cursor.so.0",
-    "usr/local/lib/libwayland-cursor.so.0.24.0",
+    "usr/local/lib/libwayland-cursor.so.0.26.0",
     "usr/local/lib/libwayland-egl.so",
     "usr/local/lib/libwayland-egl.so.1",
-    "usr/local/lib/libwayland-egl.so.1.24.0",
+    "usr/local/lib/libwayland-egl.so.1.26.0",
     "usr/local/lib/libwayland-server.so",
     "usr/local/lib/libwayland-server.so.0",
-    "usr/local/lib/libwayland-server.so.0.24.0"
+    "usr/local/lib/libwayland-server.so.0.26.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -44982,7 +45457,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.24.0"
+  "version": "1.26.0"
  },
  "wayland-protocols": {
   "build_closure": [
@@ -45015,8 +45490,8 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 118,
-   "headers": 60,
+   "files": 125,
+   "headers": 66,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -45025,7 +45500,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.47"
+  "version": "1.50"
  },
  "webkitgtk": {
   "build_closure": [
@@ -45057,6 +45532,7 @@
    "icu",
    "lcms2",
    "libavif",
+   "libdrm-headers",
    "libepoxy",
    "libffi",
    "libgcrypt",
@@ -45305,8 +45781,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 1579,
-   "headers": 1575,
+   "files": 2231,
+   "headers": 2226,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -45363,13 +45839,9 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
    "libffi",
-   "libiconv",
-   "libunistring",
    "libxkbcommon",
    "libxml2",
-   "ncurses",
    "wayland",
    "xz",
    "zlib"
@@ -45443,6 +45915,7 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "brotli",
+   "expat",
    "gettext",
    "gmp",
    "gnutls",
@@ -45453,7 +45926,9 @@
    "libunistring",
    "ncurses",
    "nettle",
+   "openssl",
    "pcre2",
+   "unbound",
    "zlib",
    "zstd"
   ],
@@ -45572,14 +46047,10 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
    "lcms2",
    "libffi",
-   "libiconv",
-   "libunistring",
    "libxkbcommon",
    "libxml2",
-   "ncurses",
    "pixman",
    "wayland",
    "xz",
@@ -46022,7 +46493,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.21.0"
+  "version": "4.21.2"
  },
  "xfce4-panel": {
   "build_closure": [
@@ -46118,7 +46589,7 @@
     "usr/local/bin/xfce4-popup-directorymenu",
     "usr/local/bin/xfce4-popup-windowmenu"
    ],
-   "files": 204,
+   "files": 208,
    "headers": 10,
    "libs": [
     "usr/local/lib/libxfce4panel-2.0.so",
@@ -46193,19 +46664,17 @@
    "glib",
    "gtk-layer-shell",
    "gtk3",
-   "harfbuzz",
    "libxfce4ui",
    "libxfce4util",
    "libxfce4windowing",
    "pango",
    "wayland",
-   "xfconf",
-   "zlib"
+   "xfconf"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.0"
+  "version": "4.20.8"
  },
  "xfce4-session": {
   "build_closure": [
@@ -46359,19 +46828,22 @@
    "at-spi2-core",
    "cairo",
    "gdk-pixbuf",
+   "gettext",
    "glib",
    "gtk-layer-shell",
    "gtk3",
+   "harfbuzz",
    "libxfce4ui",
    "libxfce4util",
    "libxfce4windowing",
    "pango",
-   "xfconf"
+   "xfconf",
+   "zlib"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.2"
+  "version": "4.20.4"
  },
  "xfce4-settings": {
   "build_closure": [
@@ -46468,7 +46940,7 @@
     "usr/local/bin/xfce4-settings-manager",
     "usr/local/bin/xfsettingsd"
    ],
-   "files": 239,
+   "files": 241,
    "headers": 0,
    "libs": []
   },
@@ -46538,18 +47010,16 @@
    "glib",
    "gtk-layer-shell",
    "gtk3",
-   "harfbuzz",
    "libxfce4ui",
    "libxfce4util",
    "pango",
    "wayland",
-   "xfconf",
-   "zlib"
+   "xfconf"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.20.1"
+  "version": "4.20.5"
  },
  "xfce4-terminal": {
   "build_closure": [
@@ -46675,6 +47145,7 @@
    "gtk4",
    "harfbuzz",
    "icu",
+   "libdeflate",
    "libepoxy",
    "libffi",
    "libiconv",
@@ -46684,6 +47155,7 @@
    "libtasn1",
    "libtiff",
    "libunistring",
+   "libutempter",
    "libwebp",
    "libx11",
    "libxau",
@@ -46708,9 +47180,11 @@
    "lzo",
    "ncurses",
    "nettle",
+   "openssl",
    "pango",
    "pcre2",
    "pixman",
+   "unbound",
    "vte",
    "wayland",
    "xfconf",
@@ -46725,6 +47199,7 @@
    "glib",
    "gtk-layer-shell",
    "gtk3",
+   "libutempter",
    "libxfce4ui",
    "libxfce4util",
    "pango",
@@ -46733,7 +47208,9 @@
    "xfconf"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libutempter"
+  ],
   "unresolved": [],
   "version": "1.1.5"
  },
@@ -46855,7 +47332,7 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 343,
+   "files": 395,
    "headers": 0,
    "libs": []
   },
@@ -46865,7 +47342,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.43"
+  "version": "2.49"
  },
  "xmlto": {
   "build_closure": [],
@@ -47016,12 +47493,8 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
    "libxml2",
    "libxslt",
-   "ncurses",
    "xz",
    "zlib"
   ],
@@ -47032,7 +47505,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.42"
+  "version": "1.1.45"
  },
  "xtensor": {
   "build_closure": [
@@ -47061,7 +47534,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.27.1"
+  "version": "0.27.2"
  },
  "xtl": {
   "build_closure": [],
@@ -47107,7 +47580,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.2"
+  "version": "1.6.0"
  },
  "xvidcore": {
   "build_closure": [],
@@ -47258,7 +47731,7 @@
    "libs": [
     "usr/local/lib/libxxhash.so",
     "usr/local/lib/libxxhash.so.0",
-    "usr/local/lib/libxxhash.so.0.8.2"
+    "usr/local/lib/libxxhash.so.0.8.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -47267,7 +47740,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.8.2"
+  "version": "0.8.4"
  },
  "xz": {
   "build_closure": [
@@ -47284,7 +47757,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "dependent",
+  "class": "runtime-standalone",
   "installs": {
    "bins": [
     "usr/local/bin/lzcat",
@@ -47311,28 +47784,21 @@
     "usr/local/bin/xzless",
     "usr/local/bin/xzmore"
    ],
-   "files": 110,
+   "files": 87,
    "headers": 15,
    "libs": [
     "usr/local/lib/liblzma.so",
     "usr/local/lib/liblzma.so.5",
-    "usr/local/lib/liblzma.so.5.6.3"
+    "usr/local/lib/liblzma.so.5.8.4"
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [
-   "gettext",
-   "libiconv",
-   "libunistring",
-   "ncurses"
-  ],
-  "runtime_deps": [
-   "gettext"
-  ],
+  "runtime_closure": [],
+  "runtime_deps": [],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.6.3"
+  "version": "5.8.4"
  },
  "yaml-cpp": {
   "build_closure": [],
@@ -47345,12 +47811,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 45,
-   "headers": 37,
+   "files": 46,
+   "headers": 38,
    "libs": [
     "usr/local/lib/libyaml-cpp.so",
-    "usr/local/lib/libyaml-cpp.so.0.8",
-    "usr/local/lib/libyaml-cpp.so.0.8.0"
+    "usr/local/lib/libyaml-cpp.so.0.9",
+    "usr/local/lib/libyaml-cpp.so.0.9.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -47359,7 +47825,50 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.8.0"
+  "version": "0.9.0"
+ },
+ "yt-dlp": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "ncurses",
+   "openssl",
+   "python3",
+   "readline",
+   "sqlite",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "python3"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/yt-dlp"
+   ],
+   "files": 1058,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "2026.10.26"
  },
  "yubico-c-client": {
   "build_closure": [
@@ -47396,6 +47905,11 @@
    "brotli",
    "c-ares",
    "curl",
+   "gettext",
+   "libiconv",
+   "libidn2",
+   "libunistring",
+   "ncurses",
    "nghttp2",
    "openssl",
    "zlib",
@@ -47547,7 +48061,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.16.1"
+  "version": "1.16.2"
  },
  "zimg": {
   "build_closure": [],
@@ -47573,7 +48087,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.0.5"
+  "version": "3.0.6"
  },
  "zip": {
   "build_closure": [],
@@ -47614,23 +48128,21 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 8,
+   "files": 21,
    "headers": 2,
    "libs": [
     "usr/local/lib/libz.so",
     "usr/local/lib/libz.so.1",
-    "usr/local/lib/libz.so.1.3.1"
+    "usr/local/lib/libz.so.1.4"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [],
   "runtime_deps": [],
-  "standalone_verified": {
-   "aarch64le": "OK"
-  },
+  "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.1"
+  "version": "1.4"
  },
  "zlib-ng": {
   "build_closure": [],
@@ -47648,7 +48160,7 @@
    "libs": [
     "usr/local/lib/libz-ng.so",
     "usr/local/lib/libz-ng.so.2",
-    "usr/local/lib/libz-ng.so.2.2.5"
+    "usr/local/lib/libz-ng.so.2.3.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -47657,7 +48169,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.2.5"
+  "version": "2.3.3"
  },
  "zserio": {
   "build_closure": [],
@@ -47740,7 +48252,7 @@
    "libs": [
     "usr/local/lib/libzstd.so",
     "usr/local/lib/libzstd.so.1",
-    "usr/local/lib/libzstd.so.1.5.6"
+    "usr/local/lib/libzstd.so.1.5.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -47749,6 +48261,6 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.5.6"
+  "version": "1.5.7"
  }
 }

@@ -1,4 +1,4 @@
-# openexr 3.4.1
+# openexr 3.5.4
 
 > High dynamic-range (HDR) image file format library and tools
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/AcademySoftwareFoundation/openexr.git (tag `v3.4.1`) |
+| Upstream | https://github.com/AcademySoftwareFoundation/openexr.git (tag `v3.5.4`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`imath`](../imath/) [`libdeflate`](../libdeflate/) [`openjph`](../openjph/) |
-| Run-time dependencies | [`imath`](../imath/) [`libdeflate`](../libdeflate/) [`openjph`](../openjph/) |
+| Run-time dependencies | [`imath`](../imath/) [`libdeflate`](../libdeflate/) [`openjph`](../openjph/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_openexr`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.4.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.5.4 --recurse-submodules --shallow-submodules \
     https://github.com/AcademySoftwareFoundation/openexr.git src/openexr
 ```
 
@@ -134,24 +134,24 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openexr`.
 
 ### 5. What it installs
 
-184 files under `/usr/local`: 20 shared-library entries, 11 programs, 148 headers.
+186 files under `/usr/local`: 20 shared-library entries, 11 programs, 150 headers.
 
 ```
-/usr/local/lib/libIex-3_4.so
-/usr/local/lib/libIex-3_4.so.33
-/usr/local/lib/libIex-3_4.so.33.3.4.1
+/usr/local/lib/libIex-3_5.so
+/usr/local/lib/libIex-3_5.so.34
+/usr/local/lib/libIex-3_5.so.34.3.5.4
 /usr/local/lib/libIex.so
-/usr/local/lib/libIlmThread-3_4.so
-/usr/local/lib/libIlmThread-3_4.so.33
-/usr/local/lib/libIlmThread-3_4.so.33.3.4.1
+/usr/local/lib/libIlmThread-3_5.so
+/usr/local/lib/libIlmThread-3_5.so.34
+/usr/local/lib/libIlmThread-3_5.so.34.3.5.4
 /usr/local/lib/libIlmThread.so
-/usr/local/lib/libOpenEXR-3_4.so
-/usr/local/lib/libOpenEXR-3_4.so.33
-/usr/local/lib/libOpenEXR-3_4.so.33.3.4.1
+/usr/local/lib/libOpenEXR-3_5.so
+/usr/local/lib/libOpenEXR-3_5.so.34
+/usr/local/lib/libOpenEXR-3_5.so.34.3.5.4
 /usr/local/lib/libOpenEXR.so
-/usr/local/lib/libOpenEXRCore-3_4.so
-/usr/local/lib/libOpenEXRCore-3_4.so.33
-/usr/local/lib/libOpenEXRCore-3_4.so.33.3.4.1
+/usr/local/lib/libOpenEXRCore-3_5.so
+/usr/local/lib/libOpenEXRCore-3_5.so.34
+/usr/local/lib/libOpenEXRCore-3_5.so.34.3.5.4
 /usr/local/lib/libOpenEXRCore.so
 ...
 ```
@@ -236,7 +236,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.4.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openexr=<version>`), sources in `ported/openexr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openexr`; port one with `scripts/port-update openexr`.
+This recipe builds **3.5.4**. Kept from earlier: `3.4.1` ([recipe and patches](versions/3.4.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openexr=<version>`), sources in `ported/openexr/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openexr`; port one with `scripts/port-update openexr`.
 
 <details><summary>recipe.sh</summary>
 
@@ -244,7 +244,7 @@ This recipe builds **3.4.1**. Every version stays available: packages in `dists/
 # openexr: the OpenEXR high-dynamic-range image file format (ILM/ASWF) -- the
 # C core library, the C++ IlmImf/OpenEXR library, IlmThread and Iex, and the
 # exr* tools (exrinfo, exrheader, exrmaketiled, exrenvmap, exrstdattr ...).
-VERSION=3.4.1; GIT=https://github.com/AcademySoftwareFoundation/openexr.git; REF=v3.4.1
+VERSION=3.5.4; GIT=https://github.com/AcademySoftwareFoundation/openexr.git; REF=v3.5.4
 DEPS="imath libdeflate openjph"
 BUILDSYS=cmake
 # Built against the staged Imath, libdeflate and OpenJPH (HTJ2K compression):

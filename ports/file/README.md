@@ -1,4 +1,4 @@
-# file 5.46
+# file 5.48
 
 > File type identification tool and libmagic library
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://astron.com/pub/file/file-5.46.tar.gz |
-| SHA-256 | `c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088` |
+| Upstream | https://astron.com/pub/file/file-5.48.tar.gz |
+| SHA-256 | `ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,34 +82,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://astron.com/pub/file/file-5.46.tar.gz
+URL=https://astron.com/pub/file/file-5.48.tar.gz
 mkdir -p dist src/file
 curl -fL -o dist/$(basename $URL) $URL
-echo "c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088  dist/$(basename $URL)" | sha256sum -c -
+echo "ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/file --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/file < ports/file/patches/0001-aports-file-5.46-pr-579-net147-fix-stack-overrun.patch
-```
-
-**[`0001-aports-file-5.46-pr-579-net147-fix-stack-overrun.patch`](patches/0001-aports-file-5.46-pr-579-net147-fix-stack-overrun.patch)** — QNX change from QNX's aports (extra/file/file-5.46-pr-579-net147-fix-stack-overrun.patch).
-
-> Taken from qnx-ports/aports extra/file -- the APKBUILD the QNX Everywhere 8.0.4r1
-> image's package is built from.
->
->
-> PR/579: net147: Fix stack overrun.
->
-> ---
->  src/readelf.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Touches: `src/readelf.c` · Upstream status: QNX-specific
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -204,7 +186,7 @@ PASS file
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_file`](../../tests/src/) -- a program linked against file the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - magic_version() == 546 (file 5.46)
+   - magic_version() == 548 (file 5.48)
    - magic_open
    - magic_load(default database)
    - PNG header identified with size and depth
@@ -221,7 +203,7 @@ PASS file
    - MIME type of text is text/plain
    - mkdtemp
    - sample files written
-   - file -v reports file-5.46
+   - file -v reports file-5.48
    - file: PNG
    - file: gzip
    - file --mime-type: text/plain
@@ -240,15 +222,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.46**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add file=<version>`), sources in `ported/file/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates file`; port one with `scripts/port-update file`.
+This recipe builds **5.48**. Kept from earlier: `5.46` ([recipe and patches](versions/5.46/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add file=<version>`), sources in `ported/file/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates file`; port one with `scripts/port-update file`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # file(1) and libmagic. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=5.46
-TARBALL=https://astron.com/pub/file/file-5.46.tar.gz
-SHA256=c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088
+VERSION=5.48
+TARBALL=https://astron.com/pub/file/file-5.48.tar.gz
+SHA256=ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283
 DEPS="zlib bzip2 xz zstd"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-libseccomp )

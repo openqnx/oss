@@ -1,4 +1,4 @@
-# wayland 1.24.0
+# wayland 1.26.0
 
 > Wayland display protocol client and server libraries
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/wayland/wayland.git (tag `1.24.0`) |
+| Upstream | https://gitlab.freedesktop.org/wayland/wayland.git (tag `1.26.0`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`libffi`](../libffi/) [`expat`](../expat/) [`libxml2`](../libxml2/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.24.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.26.0 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/wayland/wayland.git src/wayland
 ```
 
@@ -145,16 +145,16 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH wayland`.
 ```
 /usr/local/lib/libwayland-client.so
 /usr/local/lib/libwayland-client.so.0
-/usr/local/lib/libwayland-client.so.0.24.0
+/usr/local/lib/libwayland-client.so.0.26.0
 /usr/local/lib/libwayland-cursor.so
 /usr/local/lib/libwayland-cursor.so.0
-/usr/local/lib/libwayland-cursor.so.0.24.0
+/usr/local/lib/libwayland-cursor.so.0.26.0
 /usr/local/lib/libwayland-egl.so
 /usr/local/lib/libwayland-egl.so.1
-/usr/local/lib/libwayland-egl.so.1.24.0
+/usr/local/lib/libwayland-egl.so.1.26.0
 /usr/local/lib/libwayland-server.so
 /usr/local/lib/libwayland-server.so.0
-/usr/local/lib/libwayland-server.so.0.24.0
+/usr/local/lib/libwayland-server.so.0.26.0
 ```
 
 The complete list is `stage/<arch>/.manifest/wayland` after a build.
@@ -244,12 +244,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.24.0**. Kept from earlier: `1.23.1` ([recipe and patches](versions/1.23.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland=<version>`), sources in `ported/wayland/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland`; port one with `scripts/port-update wayland`.
+This recipe builds **1.26.0**. Kept from earlier: `1.23.1` ([recipe and patches](versions/1.23.1/)), `1.24.0` ([recipe and patches](versions/1.24.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add wayland=<version>`), sources in `ported/wayland/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates wayland`; port one with `scripts/port-update wayland`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.24.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.24.0
+VERSION=1.26.0; GIT=https://gitlab.freedesktop.org/wayland/wayland.git; REF=1.26.0
 DEPS="libffi expat libxml2"
 BUILDSYS=meson
 # QNX's Wayland EGL (/system/lib/libEGL.so.1 on graphics images) dlopen()s the

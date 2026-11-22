@@ -1,4 +1,4 @@
-# magic_enum 0.9.6
+# magic_enum 0.9.8
 
 > Header-only C++17 library for static reflection of enums
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/Neargye/magic_enum.git (tag `v0.9.6`) |
+| Upstream | https://github.com/Neargye/magic_enum.git (tag `v0.9.8`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.9.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.9.8 --recurse-submodules --shallow-submodules \
     https://github.com/Neargye/magic_enum.git src/magic_enum
 ```
 
@@ -174,12 +174,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.9.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add magic_enum=<version>`), sources in `ported/magic_enum/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates magic_enum`; port one with `scripts/port-update magic_enum`.
+This recipe builds **0.9.8**. Kept from earlier: `0.9.6` ([recipe and patches](versions/0.9.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add magic_enum=<version>`), sources in `ported/magic_enum/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates magic_enum`; port one with `scripts/port-update magic_enum`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.9.6; GIT=https://github.com/Neargye/magic_enum.git; REF=v0.9.6
+VERSION=0.9.8; GIT=https://github.com/Neargye/magic_enum.git; REF=v0.9.8
 CMAKE_ARGS_EXTRA=( -DMAGIC_ENUM_OPT_BUILD_EXAMPLES=OFF -DMAGIC_ENUM_OPT_BUILD_TESTS=OFF )
 ```
 </details>

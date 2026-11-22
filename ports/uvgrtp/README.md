@@ -1,4 +1,4 @@
-# uvgrtp 4.0.1
+# uvgrtp 4.0.2
 
 > Open-source RTP library written in C++ (Ultra Video Group)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/ultravideo/uvgRTP.git (tag `v4.0.1`) |
+| Upstream | https://github.com/ultravideo/uvgRTP.git (tag `v4.0.2`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v4.0.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v4.0.2 --recurse-submodules --shallow-submodules \
     https://github.com/ultravideo/uvgRTP.git src/uvgrtp
 ```
 
@@ -216,14 +216,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.0.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add uvgrtp=<version>`), sources in `ported/uvgrtp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates uvgrtp`; port one with `scripts/port-update uvgrtp`.
+This recipe builds **4.0.2**. Kept from earlier: `4.0.1` ([recipe and patches](versions/4.0.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add uvgrtp=<version>`), sources in `ported/uvgrtp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates uvgrtp`; port one with `scripts/port-update uvgrtp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # uvgRTP: RTP library (RFC 3550) in C++ with RTCP, and payload formats for
 # H.264, H.265, H.266 (VVC) and Opus, from Ultra Video Group.
-VERSION=4.0.1; GIT=https://github.com/ultravideo/uvgRTP.git; REF=v4.0.1
+VERSION=4.0.2; GIT=https://github.com/ultravideo/uvgRTP.git; REF=v4.0.2
 BUILDSYS=cmake
 # Shared library. SRTP/ZRTP need Crypto++, which is not ported: off. No unit
 # tests (they download googletest) and no examples.

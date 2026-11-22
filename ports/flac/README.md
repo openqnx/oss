@@ -1,4 +1,4 @@
-# flac 1.4.3
+# flac 1.5.0
 
 > Free Lossless Audio Codec library and tools
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/xiph/flac.git (tag `1.4.3`) |
+| Upstream | https://github.com/xiph/flac.git (tag `1.5.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libogg`](../libogg/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.4.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.5.0 --recurse-submodules --shallow-submodules \
     https://github.com/xiph/flac.git src/flac
 ```
 
@@ -113,11 +113,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH flac`.
 
 ```
 /usr/local/lib/libFLAC++.so
-/usr/local/lib/libFLAC++.so.10
-/usr/local/lib/libFLAC++.so.10.0.1
+/usr/local/lib/libFLAC++.so.11
+/usr/local/lib/libFLAC++.so.11.0.0
 /usr/local/lib/libFLAC.so
-/usr/local/lib/libFLAC.so.12
-/usr/local/lib/libFLAC.so.12.1.0
+/usr/local/lib/libFLAC.so.14
+/usr/local/lib/libFLAC.so.14.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/flac` after a build.
@@ -202,12 +202,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add flac=<version>`), sources in `ported/flac/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates flac`; port one with `scripts/port-update flac`.
+This recipe builds **1.5.0**. Kept from earlier: `1.4.3` ([recipe and patches](versions/1.4.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add flac=<version>`), sources in `ported/flac/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates flac`; port one with `scripts/port-update flac`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.4.3; GIT=https://github.com/xiph/flac.git; REF=1.4.3
+VERSION=1.5.0; GIT=https://github.com/xiph/flac.git; REF=1.5.0
 DEPS="libogg"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_CXXLIBS=ON -DBUILD_PROGRAMS=OFF
                    -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_DOCS=OFF

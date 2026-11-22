@@ -111,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH retropie`.
 
 ### 5. What it installs
 
-19 files under `/usr/local`.
+20 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/retropie` after a build.
 

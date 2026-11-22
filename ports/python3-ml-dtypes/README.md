@@ -1,4 +1,4 @@
-# python3-ml-dtypes 0.6.0
+# python3-ml-dtypes 0.7.0
 
 > NumPy dtype extensions for machine learning (bfloat16, float8, int4)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/12/72/307d7c4bd0600601c7133fba5cb78af7db968152951c1cd473abb1cda782/ml_dtypes-0.6.0.tar.gz |
-| SHA-256 | `5e60251d32ced5598972e4d5e06a2f044341f9291402551a3f6f0ec44f9299b0` |
+| Upstream | https://files.pythonhosted.org/packages/bc/2d/4ce5532f433dfae6dc96ed4abd7a0e18106a63666bce8eb878d9ffdc0610/ml_dtypes-0.7.0.tar.gz |
+| SHA-256 | `67fd890fb09d1e068cfe1b4dc8e204430ae7632102b4a4f854b093b6f02b3950` |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
 | Build dependencies | [`numpy`](../numpy/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/12/72/307d7c4bd0600601c7133fba5cb78af7db968152951c1cd473abb1cda782/ml_dtypes-0.6.0.tar.gz
+URL=https://files.pythonhosted.org/packages/bc/2d/4ce5532f433dfae6dc96ed4abd7a0e18106a63666bce8eb878d9ffdc0610/ml_dtypes-0.7.0.tar.gz
 mkdir -p dist src/python3-ml-dtypes
 curl -fL -o dist/$(basename $URL) $URL
-echo "5e60251d32ced5598972e4d5e06a2f044341f9291402551a3f6f0ec44f9299b0  dist/$(basename $URL)" | sha256sum -c -
+echo "67fd890fb09d1e068cfe1b4dc8e204430ae7632102b4a4f854b093b6f02b3950  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-ml-dtypes --strip-components=1
 ```
 
@@ -222,7 +222,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.6.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-ml-dtypes=<version>`), sources in `ported/python3-ml-dtypes/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-ml-dtypes`; port one with `scripts/port-update python3-ml-dtypes`.
+This recipe builds **0.7.0**. Kept from earlier: `0.6.0` ([recipe and patches](versions/0.6.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-ml-dtypes=<version>`), sources in `ported/python3-ml-dtypes/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-ml-dtypes`; port one with `scripts/port-update python3-ml-dtypes`.
 
 <details><summary>recipe.sh</summary>
 
@@ -232,9 +232,9 @@ This recipe builds **0.6.0**. Every version stays available: packages in `dists/
 # with Eigen (vendored in the source distribution) against the ported numpy.
 # Built from the source distribution, which carries the Eigen copy the
 # release was made with (the git tag has it as a submodule).
-VERSION=0.6.0
-TARBALL=https://files.pythonhosted.org/packages/12/72/307d7c4bd0600601c7133fba5cb78af7db968152951c1cd473abb1cda782/ml_dtypes-0.6.0.tar.gz
-SHA256=5e60251d32ced5598972e4d5e06a2f044341f9291402551a3f6f0ec44f9299b0
+VERSION=0.7.0
+TARBALL=https://files.pythonhosted.org/packages/bc/2d/4ce5532f433dfae6dc96ed4abd7a0e18106a63666bce8eb878d9ffdc0610/ml_dtypes-0.7.0.tar.gz
+SHA256=67fd890fb09d1e068cfe1b4dc8e204430ae7632102b4a4f854b093b6f02b3950
 DEPS="numpy"
 RUNTIME_DEPS="numpy"
 BUILDSYS=custom

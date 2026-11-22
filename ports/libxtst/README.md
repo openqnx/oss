@@ -1,4 +1,4 @@
-# libxtst 1.2.5
+# libxtst 1.2.6
 
 > X XTEST and RECORD extensions client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxtst.git (tag `libXtst-1.2.5`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxtst.git (tag `libXtst-1.2.6`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxext`](../libxext/) [`libxfixes`](../libxfixes/) [`libxi`](../libxi/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXtst-1.2.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXtst-1.2.6 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxtst.git src/libxtst
 ```
 
@@ -211,12 +211,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxtst=<version>`), sources in `ported/libxtst/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxtst`; port one with `scripts/port-update libxtst`.
+This recipe builds **1.2.6**. Kept from earlier: `1.2.5` ([recipe and patches](versions/1.2.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxtst=<version>`), sources in `ported/libxtst/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxtst`; port one with `scripts/port-update libxtst`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtst.git; REF=libXtst-1.2.5
+VERSION=1.2.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtst.git; REF=libXtst-1.2.6
 DEPS="libx11 libxext libxfixes libxi xorgproto"   # xi: PKG_CHECK_MODULES(XTST ... xi ...)
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

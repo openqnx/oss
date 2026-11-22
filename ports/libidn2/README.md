@@ -1,4 +1,4 @@
-# libidn2 2.3.7
+# libidn2 2.3.8
 
 > Library for internationalized domain names (IDNA2008, Punycode, TR46)
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz |
-| SHA-256 | `4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64` |
+| Upstream | https://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz |
+| SHA-256 | `f557911bf6171621e1f72ff35f5b1825bb35b52ed45325dcdee931e5d3c0787a` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libunistring`](../libunistring/) [`gettext`](../gettext/) |
-| Run-time dependencies | [`gettext`](../gettext/) [`libunistring`](../libunistring/) |
+| Run-time dependencies | [`gettext`](../gettext/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libidn2`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz
+URL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz
 mkdir -p dist src/libidn2
 curl -fL -o dist/$(basename $URL) $URL
-echo "4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64  dist/$(basename $URL)" | sha256sum -c -
+echo "f557911bf6171621e1f72ff35f5b1825bb35b52ed45325dcdee931e5d3c0787a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libidn2 --strip-components=1
 ```
 
@@ -122,7 +122,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libidn2`.
 
 ### 5. What it installs
 
-30 files under `/usr/local`: 2 shared-library entries, 1 programs, 1 headers.
+31 files under `/usr/local`: 2 shared-library entries, 1 programs, 1 headers.
 
 ```
 /usr/local/lib/libidn2.so
@@ -207,15 +207,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.3.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libidn2=<version>`), sources in `ported/libidn2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libidn2`; port one with `scripts/port-update libidn2`.
+This recipe builds **2.3.8**. Kept from earlier: `2.3.7` ([recipe and patches](versions/2.3.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libidn2=<version>`), sources in `ported/libidn2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libidn2`; port one with `scripts/port-update libidn2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.3.7
+VERSION=2.3.8
 # libidn2 releases live under gnu/libidn/, not gnu/libidn2/.
-TARBALL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.7.tar.gz
-SHA256=4c21a791b610b9519b9d0e12b8097bf2f359b12f8dd92647611a929e6bfd7d64
+TARBALL=https://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz
+SHA256=f557911bf6171621e1f72ff35f5b1825bb35b52ed45325dcdee931e5d3c0787a
 BUILDSYS=autotools
 # Also linked at run time (found by scripts/gen-dependency-index): gettext
 DEPS="libunistring gettext"

@@ -1,4 +1,4 @@
-# libxmlb 0.3.24
+# libxmlb 0.3.30
 
 > Library to help create and query binary XML blobs
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/hughsie/libxmlb.git (tag `0.3.24`) |
+| Upstream | https://github.com/hughsie/libxmlb.git (tag `0.3.30`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`xz`](../xz/) [`zstd`](../zstd/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.3.24 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.3.30 --recurse-submodules --shallow-submodules \
     https://github.com/hughsie/libxmlb.git src/libxmlb
 ```
 
@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libxmlb`.
 
 ### 5. What it installs
 
-28 files under `/usr/local`: 3 shared-library entries, 1 programs, 21 headers.
+29 files under `/usr/local`: 3 shared-library entries, 1 programs, 22 headers.
 
 ```
 /usr/local/lib/libxmlb.so
@@ -211,7 +211,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.3.24**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxmlb=<version>`), sources in `ported/libxmlb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxmlb`; port one with `scripts/port-update libxmlb`.
+This recipe builds **0.3.30**. Kept from earlier: `0.3.24` ([recipe and patches](versions/0.3.24/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxmlb=<version>`), sources in `ported/libxmlb/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxmlb`; port one with `scripts/port-update libxmlb`.
 
 <details><summary>recipe.sh</summary>
 
@@ -219,7 +219,7 @@ This recipe builds **0.3.24**. Every version stays available: packages in `dists
 # libxmlb: library to help create and query binary XML blobs (mmap-able
 # compiled XML with XPath-like queries). Dependency of AppStream, which
 # libadwaita needs for its "about" dialog from AppStream metadata.
-VERSION=0.3.24; GIT=https://github.com/hughsie/libxmlb.git; REF=0.3.24
+VERSION=0.3.30; GIT=https://github.com/hughsie/libxmlb.git; REF=0.3.30
 DEPS="glib xz zstd"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dgtkdoc=false -Dintrospection=false -Dtests=false -Dstemmer=false

@@ -1,4 +1,4 @@
-# mimalloc 3.1.5
+# mimalloc 3.7.0
 
 > Compact general-purpose memory allocator from Microsoft
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/microsoft/mimalloc.git (tag `v3.1.5`) |
+| Upstream | https://github.com/microsoft/mimalloc.git (tag `v3.7.0`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.1.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.7.0 --recurse-submodules --shallow-submodules \
     https://github.com/microsoft/mimalloc.git src/mimalloc
 ```
 
@@ -90,7 +90,7 @@ patch -p1 -d src/mimalloc < ports/mimalloc/patches/0001-qnx-from-qnx-ports.patch
 > falls back to the TLS slot assembly), and cfree() with the int return type
 > QNX before 8.0 declares.
 
-Touches: `include/mimalloc/prim.h`, `src/alloc-override.c` · Upstream status: Inappropriate [QNX's port, kept as QNX published it]
+Touches: `include/mimalloc/prim/prim-tls.h`, `src/alloc/alloc-override.c` · Upstream status: Inappropriate [QNX's port, kept as QNX published it]
 
 ### 4. Configure, build and install into the staging tree
 
@@ -119,7 +119,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mimalloc`.
 ```
 /usr/local/lib/libmimalloc.so
 /usr/local/lib/libmimalloc.so.3
-/usr/local/lib/libmimalloc.so.3.1
+/usr/local/lib/libmimalloc.so.3.7
 ```
 
 The complete list is `stage/<arch>/.manifest/mimalloc` after a build.
@@ -180,7 +180,7 @@ PASS mimalloc
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_mimalloc`](../../tests/src/) -- a program linked against mimalloc the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - mimalloc 3.1.5
+   - mimalloc 3.7.0
    - mi_malloc 1 B .. 4 MB, usable size, written, freed
    - mi_malloc_aligned(4096)
    - mi_heap_new
@@ -198,7 +198,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.1.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mimalloc=<version>`), sources in `ported/mimalloc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mimalloc`; port one with `scripts/port-update mimalloc`.
+This recipe builds **3.7.0**. Kept from earlier: `3.1.5` ([recipe and patches](versions/3.1.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mimalloc=<version>`), sources in `ported/mimalloc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mimalloc`; port one with `scripts/port-update mimalloc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -206,7 +206,7 @@ This recipe builds **3.1.5**. Every version stays available: packages in `dists/
 # mimalloc: Microsoft's compact general-purpose allocator (link it, or preload
 # it to replace malloc), with QNX's changes (patches/0001, from
 # github.com/qnx-ports/mimalloc).
-VERSION=3.1.5; GIT=https://github.com/microsoft/mimalloc.git; REF=v3.1.5
+VERSION=3.7.0; GIT=https://github.com/microsoft/mimalloc.git; REF=v3.7.0
 DEPS=""
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DMI_BUILD_TESTS=OFF -DMI_BUILD_OBJECT=OFF -DMI_OVERRIDE=OFF )

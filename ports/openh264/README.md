@@ -1,4 +1,4 @@
-# openh264 2.5.0
+# openh264 2.7.0
 
 > H.264 video encoding and decoding library for real-time use
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/cisco/openh264.git (tag `v2.5.0`) |
+| Upstream | https://github.com/cisco/openh264.git (tag `v2.7.0`) |
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.5.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.7.0 --recurse-submodules --shallow-submodules \
     https://github.com/cisco/openh264.git src/openh264
 ```
 
@@ -111,8 +111,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openh264`.
 
 ```
 /usr/local/lib/libopenh264.so
-/usr/local/lib/libopenh264.so.2.5.0
-/usr/local/lib/libopenh264.so.7
+/usr/local/lib/libopenh264.so.2.7.0
+/usr/local/lib/libopenh264.so.8
 ```
 
 The complete list is `stage/<arch>/.manifest/openh264` after a build.
@@ -193,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openh264=<version>`), sources in `ported/openh264/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openh264`; port one with `scripts/port-update openh264`.
+This recipe builds **2.7.0**. Kept from earlier: `2.5.0` ([recipe and patches](versions/2.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openh264=<version>`), sources in `ported/openh264/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openh264`; port one with `scripts/port-update openh264`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.5.0; GIT=https://github.com/cisco/openh264.git; REF=v2.5.0
+VERSION=2.7.0; GIT=https://github.com/cisco/openh264.git; REF=v2.7.0
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=disabled )
 ```

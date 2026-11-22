@@ -1,4 +1,4 @@
-# libuv 1.51.0
+# libuv 1.53.0
 
 > Multi-platform support library for asynchronous I/O
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libuv/libuv.git (tag `v1.51.0`) |
+| Upstream | https://github.com/libuv/libuv.git (tag `v1.53.0`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,25 +72,13 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.51.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.53.0 --recurse-submodules --shallow-submodules \
     https://github.com/libuv/libuv.git src/libuv
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/libuv < ports/libuv/patches/0001-qnx8-syspage-layout.patch
-```
-
-**[`0001-qnx8-syspage-layout.patch`](patches/0001-qnx8-syspage-layout.patch)** — libuv: uptime on QNX 8.0 from CLOCK_MONOTONIC.
-
-> QNX 8.0 removed qtime_entry::nsec from the system page, so uv_uptime() no
-> longer compiled. CLOCK_MONOTONIC counts from boot on QNX and needs no system
-> page access.
-
-Touches: `src/unix/qnx.c` · Upstream status: Pending
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -114,7 +102,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libuv`.
 
 ### 5. What it installs
 
-24 files under `/usr/local`: 3 shared-library entries, 14 headers.
+25 files under `/usr/local`: 3 shared-library entries, 14 headers.
 
 ```
 /usr/local/lib/libuv.so
@@ -204,12 +192,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.51.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libuv=<version>`), sources in `ported/libuv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libuv`; port one with `scripts/port-update libuv`.
+This recipe builds **1.53.0**. Kept from earlier: `1.51.0` ([recipe and patches](versions/1.51.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libuv=<version>`), sources in `ported/libuv/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libuv`; port one with `scripts/port-update libuv`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.51.0; GIT=https://github.com/libuv/libuv.git; REF=v1.51.0
+VERSION=1.53.0; GIT=https://github.com/libuv/libuv.git; REF=v1.53.0
 # 1.51: the version Node.js 24 bundles and needs (uv_thread_setname is 1.50+).
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DLIBUV_BUILD_TESTS=OFF
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

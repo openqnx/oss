@@ -1,4 +1,4 @@
-# libsodium 1.0.20
+# libsodium 1.0.22
 
 > Easy-to-use library for encryption, signatures and password hashing
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://download.libsodium.org/libsodium/releases/libsodium-1.0.20.tar.gz |
-| SHA-256 | `ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19` |
+| Upstream | https://download.libsodium.org/libsodium/releases/libsodium-1.0.22.tar.gz |
+| SHA-256 | `adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.20.tar.gz
+URL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.22.tar.gz
 mkdir -p dist src/libsodium
 curl -fL -o dist/$(basename $URL) $URL
-echo "ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19  dist/$(basename $URL)" | sha256sum -c -
+echo "adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libsodium --strip-components=1
 ```
 
@@ -107,11 +107,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libsodium`.
 
 ### 5. What it installs
 
-71 files under `/usr/local`: 2 shared-library entries, 67 headers.
+82 files under `/usr/local`: 3 shared-library entries, 77 headers.
 
 ```
 /usr/local/lib/libsodium.so
-/usr/local/lib/libsodium.so.28
+/usr/local/lib/libsodium.so.26
+/usr/local/lib/libsodium.so.26.4.0
 ```
 
 The complete list is `stage/<arch>/.manifest/libsodium` after a build.
@@ -190,14 +191,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.20**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsodium=<version>`), sources in `ported/libsodium/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsodium`; port one with `scripts/port-update libsodium`.
+This recipe builds **1.0.22**. Kept from earlier: `1.0.20` ([recipe and patches](versions/1.0.20/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsodium=<version>`), sources in `ported/libsodium/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsodium`; port one with `scripts/port-update libsodium`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.20
-TARBALL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.20.tar.gz
-SHA256=ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19
+VERSION=1.0.22
+TARBALL=https://download.libsodium.org/libsodium/releases/libsodium-1.0.22.tar.gz
+SHA256=adbdd8f16149e81ac6078a03aca6fc03b592b89ef7b5ed83841c086191be3349
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --enable-static --disable-ssp )
 ```

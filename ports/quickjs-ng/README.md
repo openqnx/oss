@@ -1,4 +1,4 @@
-# quickjs-ng 0.8.0
+# quickjs-ng 0.18.0
 
 > Small and embeddable JavaScript engine
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/quickjs-ng/quickjs.git (tag `v0.8.0`) |
+| Upstream | https://github.com/quickjs-ng/quickjs.git (tag `v0.18.0`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.8.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.18.0 --recurse-submodules --shallow-submodules \
     https://github.com/quickjs-ng/quickjs.git src/quickjs-ng
 ```
 
@@ -90,10 +90,10 @@ patch -p1 -d src/quickjs-ng < ports/quickjs-ng/patches/0001-qnx-sighandler-t-and
 >   declare the plain function-pointer type.
 > - run-test262 is a conformance-suite driver, not part of the engine, and
 >   relies on struct dirent's d_type, which QNX does not have. Skip it.
-> - test_conv (an internal unit test) trips a GCC 12 aarch64 false positive
->   under -Werror; it is not built on QNX.
+> (The test_conv exclusion carried up to 0.8.0 is gone: upstream no longer
+> builds tests/test_conv.c.)
 
-Touches: `quickjs-libc.c`, `CMakeLists.txt` · Upstream status: QNX-specific
+Touches: `CMakeLists.txt`, `quickjs-libc.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -112,12 +112,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH quickjs-ng`.
 
 ### 5. What it installs
 
-17 files under `/usr/local`: 3 shared-library entries, 2 programs, 1 headers.
+20 files under `/usr/local`: 3 shared-library entries, 2 programs, 1 headers.
 
 ```
 /usr/local/lib/libqjs.so
 /usr/local/lib/libqjs.so.0
-/usr/local/lib/libqjs.so.0.8.0
+/usr/local/lib/libqjs.so.0.18.0
 /usr/local/bin/qjs
 /usr/local/bin/qjsc
 ```
@@ -196,12 +196,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.8.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add quickjs-ng=<version>`), sources in `ported/quickjs-ng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates quickjs-ng`; port one with `scripts/port-update quickjs-ng`.
+This recipe builds **0.18.0**. Kept from earlier: `0.8.0` ([recipe and patches](versions/0.8.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add quickjs-ng=<version>`), sources in `ported/quickjs-ng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates quickjs-ng`; port one with `scripts/port-update quickjs-ng`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.8.0; GIT=https://github.com/quickjs-ng/quickjs.git; REF=v0.8.0
+VERSION=0.18.0; GIT=https://github.com/quickjs-ng/quickjs.git; REF=v0.18.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DQJS_BUILD_EXAMPLES=OFF )
 ```
 </details>

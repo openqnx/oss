@@ -1,4 +1,4 @@
-# pcre2 10.44
+# pcre2 10.49
 
 > Perl compatible regular expressions library (PCRE2 API)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/PCRE2Project/pcre2.git (tag `pcre2-10.44`) |
+| Upstream | https://github.com/PCRE2Project/pcre2.git (tag `pcre2-10.49`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b pcre2-10.44 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b pcre2-10.49 --recurse-submodules --shallow-submodules \
     https://github.com/PCRE2Project/pcre2.git src/pcre2
 ```
 
@@ -106,21 +106,21 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH pcre2`.
 
 ### 5. What it installs
 
-220 files under `/usr/local`: 12 shared-library entries, 1 programs, 2 headers.
+242 files under `/usr/local`: 12 shared-library entries, 1 programs, 2 headers.
 
 ```
 /usr/local/lib/libpcre2-16.so
 /usr/local/lib/libpcre2-16.so.0
-/usr/local/lib/libpcre2-16.so.0.13.0
+/usr/local/lib/libpcre2-16.so.0.16.1
 /usr/local/lib/libpcre2-32.so
 /usr/local/lib/libpcre2-32.so.0
-/usr/local/lib/libpcre2-32.so.0.13.0
+/usr/local/lib/libpcre2-32.so.0.16.1
 /usr/local/lib/libpcre2-8.so
 /usr/local/lib/libpcre2-8.so.0
-/usr/local/lib/libpcre2-8.so.0.13.0
+/usr/local/lib/libpcre2-8.so.0.16.1
 /usr/local/lib/libpcre2-posix.so
 /usr/local/lib/libpcre2-posix.so.3
-/usr/local/lib/libpcre2-posix.so.3.0.5
+/usr/local/lib/libpcre2-posix.so.3.0.9
 /usr/local/bin/pcre2-config
 ```
 
@@ -200,12 +200,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **10.44**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pcre2=<version>`), sources in `ported/pcre2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pcre2`; port one with `scripts/port-update pcre2`.
+This recipe builds **10.49**. Kept from earlier: `10.44` ([recipe and patches](versions/10.44/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pcre2=<version>`), sources in `ported/pcre2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pcre2`; port one with `scripts/port-update pcre2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=10.44; GIT=https://github.com/PCRE2Project/pcre2.git; REF=pcre2-10.44
+VERSION=10.49; GIT=https://github.com/PCRE2Project/pcre2.git; REF=pcre2-10.49
 DEPS="zlib bzip2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DPCRE2_BUILD_PCRE2_8=ON
                    -DPCRE2_BUILD_PCRE2_16=ON -DPCRE2_BUILD_PCRE2_32=ON

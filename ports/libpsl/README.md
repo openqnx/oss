@@ -1,4 +1,4 @@
-# libpsl 0.21.5
+# libpsl 0.23.3
 
 > C library for handling the Public Suffix List
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/rockdaboot/libpsl.git (tag `0.21.5`) |
+| Upstream | https://github.com/rockdaboot/libpsl.git (tag `0.23.3`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`libidn2`](../libidn2/) [`libunistring`](../libunistring/) [`libiconv`](../libiconv/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.21.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.23.3 --recurse-submodules --shallow-submodules \
     https://github.com/rockdaboot/libpsl.git src/libpsl
 ```
 
@@ -117,7 +117,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libpsl`.
 ```
 /usr/local/lib/libpsl.so
 /usr/local/lib/libpsl.so.5
-/usr/local/lib/libpsl.so.5.3.5
+/usr/local/lib/libpsl.so.5.3.8
 /usr/local/bin/psl
 /usr/local/bin/psl-make-dafsa
 ```
@@ -201,12 +201,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.21.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpsl=<version>`), sources in `ported/libpsl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpsl`; port one with `scripts/port-update libpsl`.
+This recipe builds **0.23.3**. Kept from earlier: `0.21.5` ([recipe and patches](versions/0.21.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpsl=<version>`), sources in `ported/libpsl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpsl`; port one with `scripts/port-update libpsl`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.21.5; GIT=https://github.com/rockdaboot/libpsl.git; REF=0.21.5
+VERSION=0.23.3; GIT=https://github.com/rockdaboot/libpsl.git; REF=0.23.3
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="libidn2 libunistring libiconv"
 BUILDSYS=meson

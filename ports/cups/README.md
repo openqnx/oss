@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (8 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild openssl zlib avahi libiconv libxcrypt
 ```
 
-<details><summary>Full build chain (8)</summary>
+<details><summary>Full build chain (22)</summary>
 
-[`avahi`](../avahi/) [`dbus`](../dbus/) [`expat`](../expat/) [`libdaemon`](../libdaemon/) [`libiconv`](../libiconv/) [`libxcrypt`](../libxcrypt/) [`openssl`](../openssl/) [`zlib`](../zlib/)
+[`avahi`](../avahi/) [`bzip2`](../bzip2/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`gobject-introspection`](../gobject-introspection/) [`libdaemon`](../libdaemon/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxcrypt`](../libxcrypt/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -153,7 +153,7 @@ do_build() { make -C "$B" -j"$(nproc)"; }
 ```
 
 ```bash
-do_install() { make -C "$B" BUILDROOT="$STAGE" install; }
+do_install() { make -C "$B" BUILDROOT="$STAGE" SYSTEMD_DIR= install; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
@@ -162,7 +162,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - libxcrypt: crypt() for cupsd's Basic authentication against local accounts (configure links -lcrypt, which QNX's libc does not provide).
 - patches/0001 changes config-scripts/cups-sharedlibs.m4 (programs link libcups together with its own libraries: QNX's GNU ld does not resolve a program's direct references, regexec from libregex say, through libcups's DT_NEEDED); the shipped configure is regenerated from it.
 - CUPS's makefiles build in the source tree only (Makedefs at the top), so configure and build in a copy of it, with the same compiler settings the autotools driver uses. TLS: OpenSSL. DNS-SD: Avahi (printer sharing and ippfind). Off: PAM and Kerberos (neither exists on QNX), libusb (no USB backend: QNX's USB stack is not libusb's), systemd/launchd on-demand start, D-Bus notifications, the translations of the web interface (--with-languages=none). -z stack-size: ipptool's do_test() keeps a 1 MiB copy buffer on the stack, far more than QNX gives the main thread by default (hazard 119): it died with SIGSEGV on its first request. 8 MiB, Linux's default, for every program here (with -z noexecstack: the stack-size header would otherwise come out executable). -rpath $PREFIX/lib (DT_RPATH, which covers the libraries' own dependencies too): cupsd runs its filters, backends and helpers with a clean environment and, as root, refuses to pass any LD_* variable on (scheduler/env.c). /usr/local/lib is not on QNX's default library path, so every filter failed to start ("Could not load library libcups.so.2"). The loader still takes LD_LIBRARY_PATH first where it is set -- and with patches/0002 cupsd passes its own LD_LIBRARY_PATH on, which a minimal image needs for QNX's libeventfd & co. in a directory of their own. -lregex: regcomp()/regexec() (ipptool, the scheduler) are in QNX's libregex, not libc. State (spool, cache, logs, run) under $PREFIX/var; the icon and desktop file under the prefix too (CUPS's defaults are /usr/share/...).
-- BUILDROOT is CUPS's DESTDIR.
+- BUILDROOT is CUPS's DESTDIR. SYSTEMD_DIR=: --without-systemd leaves SYSTEMD_DIR=no in Makedefs, and "make install" then put the systemd units in "$BUILDROOT"no -- a directory next to the package's own (pkgroot/<arch>/cupsno).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cups`.
 
@@ -321,8 +321,10 @@ do_configure() {
     --with-icondir="$PREFIX/share/icons" --with-menudir="$PREFIX/share/applications"
 }
 do_build() { make -C "$B" -j"$(nproc)"; }
-# BUILDROOT is CUPS's DESTDIR.
-do_install() { make -C "$B" BUILDROOT="$STAGE" install; }
+# BUILDROOT is CUPS's DESTDIR. SYSTEMD_DIR=: --without-systemd leaves
+# SYSTEMD_DIR=no in Makedefs, and "make install" then put the systemd units in
+# "$BUILDROOT"no -- a directory next to the package's own (pkgroot/<arch>/cupsno).
+do_install() { make -C "$B" BUILDROOT="$STAGE" SYSTEMD_DIR= install; }
 ```
 </details>
 

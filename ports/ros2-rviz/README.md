@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`ros2`](../ros2/) [`qt6`](../qt6/) [`assimp`](../assimp/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`eigen`](../eigen/) [`orocos-kdl`](../orocos-kdl/) |
-| Run-time dependencies | [`assimp`](../assimp/) [`console_bridge`](../console_bridge/) [`freetype`](../freetype/) [`orocos-kdl`](../orocos-kdl/) [`qt6`](../qt6/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) |
+| Run-time dependencies | [`assimp`](../assimp/) [`console_bridge`](../console_bridge/) [`freetype`](../freetype/) [`orocos-kdl`](../orocos-kdl/) [`qt6`](../qt6/) [`tinyxml2`](../tinyxml2/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2_rviz`](../../tests/src/) |
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (87 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (89 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild ros2 qt6 assimp freetype zlib eigen orocos-kdl
 ```
 
-<details><summary>Full build chain (87)</summary>
+<details><summary>Full build chain (89)</summary>
 
-[`aom`](../aom/) [`assimp`](../assimp/) [`benchmark`](../benchmark/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`cairo`](../cairo/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`dav1d`](../dav1d/) [`double-conversion`](../double-conversion/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fdk-aac`](../fdk-aac/) [`ffmpeg`](../ffmpeg/) [`fontconfig`](../fontconfig/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lame`](../lame/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`orocos-kdl`](../orocos-kdl/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`qt6`](../qt6/) [`readline`](../readline/) [`ros2`](../ros2/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`tinyxml2`](../tinyxml2/) [`wayland`](../wayland/) [`x264`](../x264/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`aom`](../aom/) [`assimp`](../assimp/) [`benchmark`](../benchmark/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`cairo`](../cairo/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`dav1d`](../dav1d/) [`double-conversion`](../double-conversion/) [`eigen`](../eigen/) [`expat`](../expat/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`fdk-aac`](../fdk-aac/) [`ffmpeg`](../ffmpeg/) [`fontconfig`](../fontconfig/) [`foonathan_memory`](../foonathan_memory/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lame`](../lame/) [`libdrm-headers`](../libdrm-headers/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxft`](../libxft/) [`libxkbcommon`](../libxkbcommon/) [`libxml2`](../libxml2/) [`libxrender`](../libxrender/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`numpy`](../numpy/) [`openblas`](../openblas/) [`opencv`](../opencv/) [`openh264`](../openh264/) [`openssl`](../openssl/) [`opus`](../opus/) [`orc`](../orc/) [`orocos-kdl`](../orocos-kdl/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`python3`](../python3/) [`qt6`](../qt6/) [`readline`](../readline/) [`ros2`](../ros2/) [`sqlite`](../sqlite/) [`svt-av1`](../svt-av1/) [`tinyxml2`](../tinyxml2/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`x264`](../x264/) [`x265`](../x265/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`yaml-cpp`](../yaml-cpp/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -161,6 +161,12 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  # Python3_EXECUTABLE names the venv's interpreter: where cmake itself runs
+  # from another Python environment (a pip-installed cmake), FindPython3 takes
+  # that one, which has no catkin_pkg ("No module named 'catkin_pkg'").
+  # vcs_EXECUTABLE likewise names the venv's vcs: with the vcstool component
+  # staged, ament_vendor's find_program took the target's script
+  # (<stage>/usr/local/bin/vcs, "#!/usr/local/bin/python3": "vcs: not found").
   # The underlay: the staged ros2 install, sourced from where it is staged
   # (COLCON_CURRENT_PREFIX) so ament finds its packages, and the host Python
   # its pure-Python build tools (ament_package, ...).
@@ -170,7 +176,7 @@ EOF
     --event-handlers console_direct- --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/rviz-toolchain.cmake" \
       -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/eigen3" -DEigen3_DIR="$STAGE_SYSROOT$PREFIX/share/eigen3/cmake" \
-      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" \
+      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" -DPython3_EXECUTABLE="$v/bin/python3" -Dvcs_EXECUTABLE="$v/bin/vcs" \
       -Dassimp_DIR="$(ls -d "$L"/cmake/assimp-* 2>/dev/null | head -1)" \
       -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" )
 }
@@ -366,6 +372,12 @@ EOF
   mkdir -p "$w" && for t in cmake ctest; do
     printf '#!/bin/sh\nexec env -u LD_LIBRARY_PATH %s "$@"\n' "$(command -v $t)" > "$w/$t" && chmod +x "$w/$t" || return 1
   done
+  # Python3_EXECUTABLE names the venv's interpreter: where cmake itself runs
+  # from another Python environment (a pip-installed cmake), FindPython3 takes
+  # that one, which has no catkin_pkg ("No module named 'catkin_pkg'").
+  # vcs_EXECUTABLE likewise names the venv's vcs: with the vcstool component
+  # staged, ament_vendor's find_program took the target's script
+  # (<stage>/usr/local/bin/vcs, "#!/usr/local/bin/python3": "vcs: not found").
   # The underlay: the staged ros2 install, sourced from where it is staged
   # (COLCON_CURRENT_PREFIX) so ament finds its packages, and the host Python
   # its pure-Python build tools (ament_package, ...).
@@ -375,7 +387,7 @@ EOF
     --event-handlers console_direct- --cmake-args -DCMAKE_TOOLCHAIN_FILE="$B/rviz-toolchain.cmake" \
       -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli \
       -DEIGEN3_INCLUDE_DIR="$STAGE_SYSROOT$PREFIX/include/eigen3" -DEigen3_DIR="$STAGE_SYSROOT$PREFIX/share/eigen3/cmake" \
-      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" \
+      -DQT_HOST_PATH="$WS/hosttools/qt6-6.8.1" -DQt6_DIR="$L/cmake/Qt6" -DPython3_EXECUTABLE="$v/bin/python3" -Dvcs_EXECUTABLE="$v/bin/vcs" \
       -Dassimp_DIR="$(ls -d "$L"/cmake/assimp-* 2>/dev/null | head -1)" \
       -DCMAKE_INSTALL_PREFIX="$ROS_PREFIX" )
 }

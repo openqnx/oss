@@ -1,4 +1,4 @@
-# shaderc 2026.2
+# shaderc 2026.4
 
 > Tools and libraries for Vulkan shader compilation (glslc, libshaderc)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/shaderc.git (tag `v2026.2`) |
+| Upstream | https://github.com/google/shaderc.git (tag `v2026.4`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`glslang`](../glslang/) [`spirv-tools`](../spirv-tools/) [`spirv-headers`](../spirv-headers/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2026.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2026.4 --recurse-submodules --shallow-submodules \
     https://github.com/google/shaderc.git src/shaderc
 ```
 
@@ -206,7 +206,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2026.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add shaderc=<version>`), sources in `ported/shaderc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates shaderc`; port one with `scripts/port-update shaderc`.
+This recipe builds **2026.4**. Kept from earlier: `2026.2` ([recipe and patches](versions/2026.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add shaderc=<version>`), sources in `ported/shaderc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates shaderc`; port one with `scripts/port-update shaderc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -214,7 +214,7 @@ This recipe builds **2026.2**. Every version stays available: packages in `dists
 # shaderc: Google's shader compiler collection -- glslc (a GCC/Clang-like
 # command line GLSL/HLSL -> SPIR-V compiler) and libshaderc, the API Vulkan
 # applications and ffmpeg/libplacebo/mpv compile shaders with.
-VERSION=2026.2; GIT=https://github.com/google/shaderc.git; REF=v2026.2
+VERSION=2026.4; GIT=https://github.com/google/shaderc.git; REF=v2026.4
 DEPS="glslang spirv-tools spirv-headers"
 BUILDSYS=cmake
 # Built against the staged glslang and SPIRV-Tools rather than source trees in

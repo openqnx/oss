@@ -1,4 +1,4 @@
-# jansson 2.14
+# jansson 2.15.1
 
 > C library for encoding, decoding and manipulating JSON data
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/akheron/jansson.git (tag `v2.14`) |
+| Upstream | https://github.com/akheron/jansson.git (tag `v2.15.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.14 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.15.1 --recurse-submodules --shallow-submodules \
     https://github.com/akheron/jansson.git src/jansson
 ```
 
@@ -105,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH jansson`.
 ```
 /usr/local/lib/libjansson.so
 /usr/local/lib/libjansson.so.4
-/usr/local/lib/libjansson.so.4.14.0
+/usr/local/lib/libjansson.so.4.15.1
 ```
 
 The complete list is `stage/<arch>/.manifest/jansson` after a build.
@@ -185,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.14**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jansson=<version>`), sources in `ported/jansson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jansson`; port one with `scripts/port-update jansson`.
+This recipe builds **2.15.1**. Kept from earlier: `2.14` ([recipe and patches](versions/2.14/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add jansson=<version>`), sources in `ported/jansson/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates jansson`; port one with `scripts/port-update jansson`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.14; GIT=https://github.com/akheron/jansson.git; REF=v2.14
+VERSION=2.15.1; GIT=https://github.com/akheron/jansson.git; REF=v2.15.1
 CMAKE_ARGS_EXTRA=( -DJANSSON_BUILD_SHARED_LIBS=ON -DJANSSON_BUILD_DOCS=OFF
                    -DJANSSON_EXAMPLES=OFF -DJANSSON_WITHOUT_TESTS=ON
                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

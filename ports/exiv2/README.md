@@ -1,4 +1,4 @@
-# exiv2 0.28.5
+# exiv2 0.28.9
 
 > C++ library and tool for reading and writing Exif, IPTC and XMP metadata
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/Exiv2/exiv2.git (tag `v0.28.5`) |
+| Upstream | https://github.com/Exiv2/exiv2.git (tag `v0.28.9`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`expat`](../expat/) [`brotli`](../brotli/) [`libinih`](../libinih/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`expat`](../expat/) [`libinih`](../libinih/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`expat`](../expat/) [`libiconv`](../libiconv/) [`libinih`](../libinih/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_exiv2`](../../tests/src/) |
 
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.28.5 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.28.9 --recurse-submodules --shallow-submodules \
     https://github.com/Exiv2/exiv2.git src/exiv2
 ```
 
@@ -109,7 +109,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH exiv2`.
 
 ```
 /usr/local/lib/libexiv2.so
-/usr/local/lib/libexiv2.so.0.28.5
+/usr/local/lib/libexiv2.so.0.28.9
 /usr/local/lib/libexiv2.so.28
 ```
 
@@ -193,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.28.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add exiv2=<version>`), sources in `ported/exiv2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates exiv2`; port one with `scripts/port-update exiv2`.
+This recipe builds **0.28.9**. Kept from earlier: `0.28.5` ([recipe and patches](versions/0.28.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add exiv2=<version>`), sources in `ported/exiv2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates exiv2`; port one with `scripts/port-update exiv2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.28.5; GIT=https://github.com/Exiv2/exiv2.git; REF=v0.28.5
+VERSION=0.28.9; GIT=https://github.com/Exiv2/exiv2.git; REF=v0.28.9
 DEPS="zlib expat brotli libinih"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DEXIV2_BUILD_SAMPLES=OFF
                    -DEXIV2_BUILD_UNIT_TESTS=OFF -DEXIV2_BUILD_EXIV2_COMMAND=OFF

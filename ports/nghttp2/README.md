@@ -1,4 +1,4 @@
-# nghttp2 1.64.0
+# nghttp2 1.71.0
 
 > HTTP/2 protocol implementation library in C
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/nghttp2/nghttp2.git (tag `v1.64.0`) |
+| Upstream | https://github.com/nghttp2/nghttp2.git (tag `v1.71.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.64.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.71.0 --recurse-submodules --shallow-submodules \
     https://github.com/nghttp2/nghttp2.git src/nghttp2
 ```
 
@@ -104,12 +104,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH nghttp2`.
 
 ### 5. What it installs
 
-10 files under `/usr/local`: 3 shared-library entries, 2 headers.
+11 files under `/usr/local`: 3 shared-library entries, 2 headers.
 
 ```
 /usr/local/lib/libnghttp2.so
 /usr/local/lib/libnghttp2.so.14
-/usr/local/lib/libnghttp2.so.14.28.3
+/usr/local/lib/libnghttp2.so.14.30.0
 ```
 
 The complete list is `stage/<arch>/.manifest/nghttp2` after a build.
@@ -193,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.64.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nghttp2=<version>`), sources in `ported/nghttp2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nghttp2`; port one with `scripts/port-update nghttp2`.
+This recipe builds **1.71.0**. Kept from earlier: `1.64.0` ([recipe and patches](versions/1.64.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nghttp2=<version>`), sources in `ported/nghttp2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nghttp2`; port one with `scripts/port-update nghttp2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.64.0; GIT=https://github.com/nghttp2/nghttp2.git; REF=v1.64.0
+VERSION=1.71.0; GIT=https://github.com/nghttp2/nghttp2.git; REF=v1.71.0
 DEPS="zlib openssl"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_LIB_ONLY=ON -DENABLE_DOC=OFF
                    -DBUILD_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

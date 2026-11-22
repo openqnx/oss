@@ -1,4 +1,4 @@
-# libtasn1 4.19.0
+# libtasn1 4.21.0
 
 > GNU library for ASN.1 and DER manipulation
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz |
-| SHA-256 | `1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a` |
+| Upstream | https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.21.0.tar.gz |
+| SHA-256 | `1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz
+URL=https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.21.0.tar.gz
 mkdir -p dist src/libtasn1
 curl -fL -o dist/$(basename $URL) $URL
-echo "1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a  dist/$(basename $URL)" | sha256sum -c -
+echo "1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libtasn1 --strip-components=1
 ```
 
@@ -197,14 +197,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.19.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtasn1=<version>`), sources in `ported/libtasn1/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtasn1`; port one with `scripts/port-update libtasn1`.
+This recipe builds **4.21.0**. Kept from earlier: `4.19.0` ([recipe and patches](versions/4.19.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtasn1=<version>`), sources in `ported/libtasn1/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtasn1`; port one with `scripts/port-update libtasn1`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.19.0
-TARBALL=https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz
-SHA256=1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a
+VERSION=4.21.0
+TARBALL=https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.21.0.tar.gz
+SHA256=1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doc )
 ```

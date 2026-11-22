@@ -1,17 +1,17 @@
-# tcpdump 4.99.5
+# tcpdump 4.99.7
 
 > A tool for network monitoring and data acquisition
 
-**🟡 Runtime-standalone** — Needs other components **to build** (listed below), but what it installs runs on the target **on its own**.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
-| Upstream | https://www.tcpdump.org/release/tcpdump-4.99.5.tar.gz |
-| SHA-256 | `8c75856e00addeeadf70dad67c9ff3dd368536b2b8563abf6854d7c764cd3adb` |
+| Upstream | https://www.tcpdump.org/release/tcpdump-4.99.7.tar.gz |
+| SHA-256 | `8be364e28d3b745ef1459b385cd2f4bc0e1ebad7a5d2ebdf70071d6c9b5b9a54` |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`libpcap`](../libpcap/) |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`libpcap`](../libpcap/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_tcpdump`](../../tests/src/) |
 
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.tcpdump.org/release/tcpdump-4.99.5.tar.gz
+URL=https://www.tcpdump.org/release/tcpdump-4.99.7.tar.gz
 mkdir -p dist src/tcpdump
 curl -fL -o dist/$(basename $URL) $URL
-echo "8c75856e00addeeadf70dad67c9ff3dd368536b2b8563abf6854d7c764cd3adb  dist/$(basename $URL)" | sha256sum -c -
+echo "8be364e28d3b745ef1459b385cd2f4bc0e1ebad7a5d2ebdf70071d6c9b5b9a54  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/tcpdump --strip-components=1
 ```
 
@@ -135,7 +135,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tcpdump`.
 
 ```
 /usr/local/bin/tcpdump
-/usr/local/bin/tcpdump.4.99.5
+/usr/local/bin/tcpdump.4.99.7
 ```
 
 The complete list is `stage/<arch>/.manifest/tcpdump` after a build.
@@ -208,14 +208,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.99.5**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tcpdump=<version>`), sources in `ported/tcpdump/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tcpdump`; port one with `scripts/port-update tcpdump`.
+This recipe builds **4.99.7**. Kept from earlier: `4.99.5` ([recipe and patches](versions/4.99.5/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tcpdump=<version>`), sources in `ported/tcpdump/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tcpdump`; port one with `scripts/port-update tcpdump`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.99.5
-TARBALL=https://www.tcpdump.org/release/tcpdump-4.99.5.tar.gz
-SHA256=8c75856e00addeeadf70dad67c9ff3dd368536b2b8563abf6854d7c764cd3adb
+VERSION=4.99.7
+TARBALL=https://www.tcpdump.org/release/tcpdump-4.99.7.tar.gz
+SHA256=8be364e28d3b745ef1459b385cd2f4bc0e1ebad7a5d2ebdf70071d6c9b5b9a54
 BUILDSYS=autotools
 # On the libpcap port (static libpcap.a, found through its pcap-config).
 DEPS="libpcap"

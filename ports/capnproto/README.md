@@ -1,4 +1,4 @@
-# capnproto 1.0.2
+# capnproto 1.5.0
 
 > Cap'n Proto data serialization format and capability-based RPC system
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/capnproto/capnproto.git (tag `v1.0.2`) |
+| Upstream | https://github.com/capnproto/capnproto.git (tag `v1.5.0`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.0.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.0 --recurse-submodules --shallow-submodules \
     https://github.com/capnproto/capnproto.git src/capnproto
 ```
 
@@ -97,8 +97,18 @@ patch -p1 -d src/capnproto < ports/capnproto/patches/0001-qnx-from-qnx-ports.pat
 >  c++/src/capnp/CMakeLists.txt | 5 +++++
 >  c++/src/kj/CMakeLists.txt    | 7 +++++++
 >  3 files changed, 13 insertions(+)
+>
+> Folded commits (same patch):
+>
+>   From: Deep Chordia <dchordia@blackberry.com>
+>   Date: Thu, 24 Oct 2024 16:42:51 +0530
+>   Subject: [PATCH 2/3] Port for QNX
+>
+>   From: Deep Chordia <dchordia@blackberry.com>
+>   Date: Thu, 24 Oct 2024 18:54:34 +0530
+>   Subject: [PATCH 3/3] Rectify syntax error
 
-Touches: `c++/CMakeLists.txt`, `c++/src/capnp/CMakeLists.txt`, `c++/src/kj/CMakeLists.txt`, `c++/CMakeLists.txt`, `c++/src/CMakeLists.txt`, `c++/src/kj/CMakeLists.txt` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
+Touches: `c++/CMakeLists.txt`, `c++/src/capnp/CMakeLists.txt`, `c++/src/CMakeLists.txt`, `c++/src/kj/async-io-test.c++`, `c++/src/kj/async-io-unix.c++`, `c++/src/kj/async-unix-test.c++` … · Upstream status: QNX-specific (carried in the qnx-ports fork)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -128,21 +138,21 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH capnproto`.
 
 ```
 /usr/local/lib/libcapnp-json.so
-/usr/local/lib/libcapnp-json.so.1.0.2
+/usr/local/lib/libcapnp-json.so.1.5.0
 /usr/local/lib/libcapnp-rpc.so
-/usr/local/lib/libcapnp-rpc.so.1.0.2
+/usr/local/lib/libcapnp-rpc.so.1.5.0
 /usr/local/lib/libcapnp-websocket.so
-/usr/local/lib/libcapnp-websocket.so.1.0.2
+/usr/local/lib/libcapnp-websocket.so.1.5.0
 /usr/local/lib/libcapnp.so
-/usr/local/lib/libcapnp.so.1.0.2
+/usr/local/lib/libcapnp.so.1.5.0
 /usr/local/lib/libcapnpc.so
-/usr/local/lib/libcapnpc.so.1.0.2
+/usr/local/lib/libcapnpc.so.1.5.0
 /usr/local/lib/libkj-async.so
-/usr/local/lib/libkj-async.so.1.0.2
+/usr/local/lib/libkj-async.so.1.5.0
 /usr/local/lib/libkj-gzip.so
-/usr/local/lib/libkj-gzip.so.1.0.2
+/usr/local/lib/libkj-gzip.so.1.5.0
 /usr/local/lib/libkj-http.so
-/usr/local/lib/libkj-http.so.1.0.2
+/usr/local/lib/libkj-http.so.1.5.0
 ...
 ```
 
@@ -218,12 +228,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add capnproto=<version>`), sources in `ported/capnproto/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates capnproto`; port one with `scripts/port-update capnproto`.
+This recipe builds **1.5.0**. Kept from earlier: `1.0.2` ([recipe and patches](versions/1.0.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add capnproto=<version>`), sources in `ported/capnproto/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates capnproto`; port one with `scripts/port-update capnproto`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.0.2; GIT=https://github.com/capnproto/capnproto.git; REF=v1.0.2
+VERSION=1.5.0; GIT=https://github.com/capnproto/capnproto.git; REF=v1.5.0
 DEPS="zlib openssl"
 # Cap'n Proto names its C++ sources *.c++. qcc/q++ do not recognise that
 # extension and silently produce no object at all (the link then fails with

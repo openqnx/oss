@@ -1,4 +1,4 @@
-# nano 8.2
+# nano 8.7.1
 
 > GNU nano, a small and simple terminal text editor
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://www.nano-editor.org/dist/v8/nano-8.2.tar.xz |
-| SHA-256 | `d5ad07dd862facae03051c54c6535e54c7ed7407318783fcad1ad2d7076fffeb` |
+| Upstream | https://www.nano-editor.org/dist/v8/nano-8.7.1.tar.xz |
+| SHA-256 | `76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`ncurses`](../ncurses/) [`zlib`](../zlib/) [`file`](../file/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.nano-editor.org/dist/v8/nano-8.2.tar.xz
+URL=https://www.nano-editor.org/dist/v8/nano-8.7.1.tar.xz
 mkdir -p dist src/nano
 curl -fL -o dist/$(basename $URL) $URL
-echo "d5ad07dd862facae03051c54c6535e54c7ed7407318783fcad1ad2d7076fffeb  dist/$(basename $URL)" | sha256sum -c -
+echo "76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/nano --strip-components=1
 ```
 
@@ -198,14 +198,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **8.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nano=<version>`), sources in `ported/nano/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nano`; port one with `scripts/port-update nano`.
+This recipe builds **8.7.1**. Kept from earlier: `8.2` ([recipe and patches](versions/8.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nano=<version>`), sources in `ported/nano/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nano`; port one with `scripts/port-update nano`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=8.2
-TARBALL=https://www.nano-editor.org/dist/v8/nano-8.2.tar.xz
-SHA256=d5ad07dd862facae03051c54c6535e54c7ed7407318783fcad1ad2d7076fffeb
+VERSION=8.7.1
+TARBALL=https://www.nano-editor.org/dist/v8/nano-8.7.1.tar.xz
+SHA256=76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf
 # Also linked at run time (found by scripts/gen-dependency-index): zlib
 # Also linked at run time (found by scripts/gen-dependency-index): file
 DEPS="ncurses zlib file"

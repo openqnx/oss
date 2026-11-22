@@ -1,4 +1,4 @@
-# desktop-file-utils 0.28
+# desktop-file-utils 0.29
 
 > Command line utilities for validating and installing .desktop files
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xdg/desktop-file-utils.git (tag `0.28`) |
+| Upstream | https://gitlab.freedesktop.org/xdg/desktop-file-utils.git (tag `0.29`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.28 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.29 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xdg/desktop-file-utils.git src/desktop-file-utils
 ```
 
@@ -189,13 +189,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.28**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add desktop-file-utils=<version>`), sources in `ported/desktop-file-utils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates desktop-file-utils`; port one with `scripts/port-update desktop-file-utils`.
+This recipe builds **0.29**. Kept from earlier: `0.28` ([recipe and patches](versions/0.28/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add desktop-file-utils=<version>`), sources in `ported/desktop-file-utils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates desktop-file-utils`; port one with `scripts/port-update desktop-file-utils`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # desktop-file-utils: validate and install .desktop files, update-desktop-database.
-VERSION=0.28; GIT=https://gitlab.freedesktop.org/xdg/desktop-file-utils.git; REF=0.28
+VERSION=0.29; GIT=https://gitlab.freedesktop.org/xdg/desktop-file-utils.git; REF=0.29
 DEPS="glib"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( )

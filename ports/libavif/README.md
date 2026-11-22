@@ -1,4 +1,4 @@
-# libavif 1.1.1
+# libavif 1.4.2
 
 > Library for encoding and decoding AVIF images
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/AOMediaCodec/libavif.git (tag `v1.1.1`) |
+| Upstream | https://github.com/AOMediaCodec/libavif.git (tag `v1.4.2`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`aom`](../aom/) [`dav1d`](../dav1d/) [`libyuv`](../libyuv/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.1.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.4.2 --recurse-submodules --shallow-submodules \
     https://github.com/AOMediaCodec/libavif.git src/libavif
 ```
 
@@ -127,7 +127,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libavif`.
 ```
 /usr/local/lib/libavif.so
 /usr/local/lib/libavif.so.16
-/usr/local/lib/libavif.so.16.1.1
+/usr/local/lib/libavif.so.16.4.2
 ```
 
 The complete list is `stage/<arch>/.manifest/libavif` after a build.
@@ -215,12 +215,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libavif=<version>`), sources in `ported/libavif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libavif`; port one with `scripts/port-update libavif`.
+This recipe builds **1.4.2**. Kept from earlier: `1.1.1` ([recipe and patches](versions/1.1.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libavif=<version>`), sources in `ported/libavif/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libavif`; port one with `scripts/port-update libavif`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.1; GIT=https://github.com/AOMediaCodec/libavif.git; REF=v1.1.1
+VERSION=1.4.2; GIT=https://github.com/AOMediaCodec/libavif.git; REF=v1.4.2
 DEPS="aom dav1d libyuv"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DAVIF_CODEC_AOM=SYSTEM
                    -DAVIF_CODEC_DAV1D=SYSTEM -DAVIF_LIBYUV=LOCAL

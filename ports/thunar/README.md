@@ -1,4 +1,4 @@
-# thunar 4.20.0
+# thunar 4.20.10
 
 > Thunar, the Xfce file manager, and its extension library
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.0.tar.bz2 |
-| SHA-256 | `27731a76f3aecf3752b1ca35afad89e264c52244f70083d933507dd4a17548b0` |
+| Upstream | https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.10.tar.bz2 |
+| SHA-256 | `a5a32b51028dc821155e44cdec025fe70398bae193c619ae6ba8b1babf6f49f1` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`exo`](../exo/) [`pango`](../pango/) [`gdk-pixbuf`](../gdk-pixbuf/) [`libnotify`](../libnotify/) [`libexif`](../libexif/) [`pcre2`](../pcre2/) [`xfce4-panel`](../xfce4-panel/) |
-| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libexif`](../libexif/) [`libnotify`](../libnotify/) [`libx11`](../libx11/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`xfce4-panel`](../xfce4-panel/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`exo`](../exo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`libexif`](../libexif/) [`libice`](../libice/) [`libnotify`](../libnotify/) [`libsm`](../libsm/) [`libx11`](../libx11/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`pango`](../pango/) [`pcre2`](../pcre2/) [`xfce4-panel`](../xfce4-panel/) [`xfconf`](../xfconf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_thunar`](../../tests/src/) |
 
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.0.tar.bz2
+URL=https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.10.tar.bz2
 mkdir -p dist src/thunar
 curl -fL -o dist/$(basename $URL) $URL
-echo "27731a76f3aecf3752b1ca35afad89e264c52244f70083d933507dd4a17548b0  dist/$(basename $URL)" | sha256sum -c -
+echo "a5a32b51028dc821155e44cdec025fe70398bae193c619ae6ba8b1babf6f49f1  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/thunar --strip-components=1
 ```
 
@@ -121,16 +121,18 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - The Xfce file manager, and the thunarx extension library that its plugins (and tumbler's consumers) link against.  gudev is Linux's udev, which QNX does not have, so volume management is off; polkit likewise.
+- The release tarball ships the gdbus-codegen output, made with a glib newer than the target's: it calls g_variant_builder_init_static (glib 2.84), and the XML for two of the four files is not in the tarball to make them again. The call takes the same arguments as g_variant_builder_init (both set up a builder on the stack; _static only skips copying the type): use that one.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH thunar`.
 
 ### 5. What it installs
 
-112 files under `/usr/local`: 2 shared-library entries, 3 programs, 14 headers.
+116 files under `/usr/local`: 3 shared-library entries, 3 programs, 14 headers.
 
 ```
 /usr/local/lib/libthunarx-3.so
 /usr/local/lib/libthunarx-3.so.0
+/usr/local/lib/libthunarx-3.so.0.0.0
 /usr/local/bin/Thunar
 /usr/local/bin/thunar
 /usr/local/bin/thunar-settings
@@ -194,8 +196,8 @@ PASS thunar
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_thunar`](../../tests/src/) -- a program linked against thunar the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
-   - libthunarx 4.20.0
-   - thunarx_check_version(4.20.0) accepts
+   - libthunarx 4.20.10
+   - thunarx_check_version(4.20.10) accepts
    - thunarx_check_version(5.0.0): upstream stub, NULL
    - thunarx_menu_item_new
    - menu item properties read back
@@ -209,7 +211,7 @@ PASS thunar
    - thunar-apr: ThunarAprProvider (property page provider) loaded
    - thunar-uca: ThunarUcaProvider (custom actions) loaded
    - thunar-wallpaper: TwpProvider loaded
-   - thunar --version: thunar 4.20.0 (Xfce 4.20)
+   - thunar --version: thunar 4.20.10 (Xfce 4.20)
    - Thunar -V (the compatibility name)
    - thunar --help lists --bulk-rename, --daemon
    - default custom actions (uca.xml) installed
@@ -227,14 +229,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.20.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add thunar=<version>`), sources in `ported/thunar/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates thunar`; port one with `scripts/port-update thunar`.
+This recipe builds **4.20.10**. Kept from earlier: `4.20.0` ([recipe and patches](versions/4.20.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add thunar=<version>`), sources in `ported/thunar/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates thunar`; port one with `scripts/port-update thunar`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.20.0
-TARBALL=https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.0.tar.bz2
-SHA256=27731a76f3aecf3752b1ca35afad89e264c52244f70083d933507dd4a17548b0
+VERSION=4.20.10
+TARBALL=https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.10.tar.bz2
+SHA256=a5a32b51028dc821155e44cdec025fe70398bae193c619ae6ba8b1babf6f49f1
 DEPS="glib gtk3 libxfce4util libxfce4ui xfconf exo pango gdk-pixbuf libnotify libexif pcre2 xfce4-panel"
 BUILDSYS=autotools
 # The Xfce file manager, and the thunarx extension library that its plugins
@@ -243,6 +245,18 @@ BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-gtk-doc
                   --disable-introspection --disable-gudev --disable-polkit
                   --enable-notifications --enable-exif --enable-pcre2 )
+# The release tarball ships the gdbus-codegen output, made with a glib newer
+# than the target's: it calls g_variant_builder_init_static (glib 2.84), and
+# the XML for two of the four files is not in the tarball to make them again.
+# The call takes the same arguments as g_variant_builder_init (both set up a
+# builder on the stack; _static only skips copying the type): use that one.
+do_patch() {
+  cd "$SRCROOT/thunar" || return 1
+  sed -i 's/g_variant_builder_init_static (/g_variant_builder_init (/g' \
+    thunar-dbus-freedesktop-interfaces.c thunar-dbus-service-infos.c \
+    thunar-thumbnailer-proxy.c thunar-thumbnail-cache-proxy.c &&
+  ! grep -q g_variant_builder_init_static ./*.c
+}
 ```
 </details>
 

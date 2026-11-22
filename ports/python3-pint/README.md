@@ -1,4 +1,4 @@
-# python3-pint 0.24.4
+# python3-pint 0.26.2
 
 > Physical quantities for Python: units, conversions, dimensional analysis
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/b7/16/bd2f5904557265882108dc2e04f18abc05ab0c2b7082ae9430091daf1d5c/Pint-0.24.4-py3-none-any.whl |
-| SHA-256 | `aa54926c8772159fcf65f82cc0d34de6768c151b32ad1deb0331291c38fe7659` |
+| Upstream | https://files.pythonhosted.org/packages/b7/d5/01ea71591a29e88926582e3ca7ed32f8b933e9ebc99187a7ab100587242d/pint-0.26.2-py3-none-any.whl |
+| SHA-256 | `c94124cdb19baa1a84bb65c8bb9a620a9636b9b9cd80f32f30ad7ff795ea2eb8` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-flexcache`](../python3-flexcache/) [`python3-flexparser`](../python3-flexparser/) [`python3-platformdirs`](../python3-platformdirs/) [`python3-typing-extensions`](../python3-typing-extensions/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/b7/16/bd2f5904557265882108dc2e04f18abc05ab0c2b7082ae9430091daf1d5c/Pint-0.24.4-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/b7/d5/01ea71591a29e88926582e3ca7ed32f8b933e9ebc99187a7ab100587242d/pint-0.26.2-py3-none-any.whl
 mkdir -p dist src/python3-pint
 curl -fL -o dist/$(basename $URL) $URL
-echo "aa54926c8772159fcf65f82cc0d34de6768c151b32ad1deb0331291c38fe7659  dist/$(basename $URL)" | sha256sum -c -
+echo "c94124cdb19baa1a84bb65c8bb9a620a9636b9b9cd80f32f30ad7ff795ea2eb8  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-pint --strip-components=1
 ```
 
@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-pint`.
 
 ### 5. What it installs
 
-124 files under `/usr/local`, 1 programs.
+129 files under `/usr/local`, 1 programs.
 
 ```
 /usr/local/bin/pint-convert
@@ -201,7 +201,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.24.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pint=<version>`), sources in `ported/python3-pint/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pint`; port one with `scripts/port-update python3-pint`.
+This recipe builds **0.26.2**. Kept from earlier: `0.24.4` ([recipe and patches](versions/0.24.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pint=<version>`), sources in `ported/python3-pint/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pint`; port one with `scripts/port-update python3-pint`.
 
 <details><summary>recipe.sh</summary>
 
@@ -210,9 +210,9 @@ This recipe builds **0.24.4**. Every version stays available: packages in `dists
 # dimensional analysis. 0.24.x is the series python3-obd pins (pint==0.24.*).
 # Pure Python: the published wheel is installed as released
 # (scripts/lib/pywheel.sh).
-VERSION=0.24.4
-TARBALL=https://files.pythonhosted.org/packages/b7/16/bd2f5904557265882108dc2e04f18abc05ab0c2b7082ae9430091daf1d5c/Pint-0.24.4-py3-none-any.whl
-SHA256=aa54926c8772159fcf65f82cc0d34de6768c151b32ad1deb0331291c38fe7659
+VERSION=0.26.2
+TARBALL=https://files.pythonhosted.org/packages/b7/d5/01ea71591a29e88926582e3ca7ed32f8b933e9ebc99187a7ab100587242d/pint-0.26.2-py3-none-any.whl
+SHA256=c94124cdb19baa1a84bb65c8bb9a620a9636b9b9cd80f32f30ad7ff795ea2eb8
 DEPS="python3 python3-flexcache python3-flexparser python3-platformdirs python3-typing-extensions"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-flexcache python3-flexparser python3-platformdirs python3-typing-extensions"

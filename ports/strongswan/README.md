@@ -1,4 +1,4 @@
-# strongswan 6.0.6
+# strongswan 6.1.0
 
 > IPsec-based VPN solution
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/strongswan/strongswan.git (tag `6.0.6`) |
+| Upstream | https://github.com/strongswan/strongswan.git (tag `6.1.0`) |
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 6.0.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 6.1.0 --recurse-submodules --shallow-submodules \
     https://github.com/strongswan/strongswan.git src/strongswan
 ```
 
@@ -262,12 +262,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.0.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add strongswan=<version>`), sources in `ported/strongswan/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates strongswan`; port one with `scripts/port-update strongswan`.
+This recipe builds **6.1.0**. Kept from earlier: `6.0.6` ([recipe and patches](versions/6.0.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add strongswan=<version>`), sources in `ported/strongswan/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates strongswan`; port one with `scripts/port-update strongswan`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.0.6; GIT=https://github.com/strongswan/strongswan.git; REF=6.0.6
+VERSION=6.1.0; GIT=https://github.com/strongswan/strongswan.git; REF=6.1.0
 DEPS="openssl"
 BUILDSYS=autotools
 # GCC 12 reports a false -Wmaybe-uninitialized in utils/backtrace.c, which the

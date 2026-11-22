@@ -9,7 +9,7 @@
 | Upstream | https://github.com/avahi/avahi.git (tag `v0.9-rc3`) |
 | Build system | GNU Autotools |
 | QNX patches | 4 |
-| Build dependencies | [`dbus`](../dbus/) [`expat`](../expat/) [`libdaemon`](../libdaemon/) |
+| Build dependencies | [`dbus`](../dbus/) [`expat`](../expat/) [`libdaemon`](../libdaemon/) [`gobject-introspection`](../gobject-introspection/) |
 | Run-time dependencies | [`dbus`](../dbus/) [`expat`](../expat/) [`libdaemon`](../libdaemon/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_avahi`](../../tests/src/) |
@@ -67,11 +67,16 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (3 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (20 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild dbus expat libdaemon
+./scripts/qnxbuild dbus expat libdaemon gobject-introspection
 ```
+
+<details><summary>Full build chain (20)</summary>
+
+[`bzip2`](../bzip2/) [`dbus`](../dbus/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`gobject-introspection`](../gobject-introspection/) [`libdaemon`](../libdaemon/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+</details>
 
 ### 2. Get the upstream source
 
@@ -267,7 +272,7 @@ This recipe builds **0.9-rc3**. Every version stays available: packages in `dist
 # without an avahi account (a stock QNX system has none), 0004 stops the
 # client tools aborting on SIGINT/SIGTERM (QNX's POLLIN is two bits).
 VERSION=0.9-rc3; GIT=https://github.com/avahi/avahi.git; REF=v0.9-rc3
-DEPS="dbus expat libdaemon"
+DEPS="dbus expat libdaemon gobject-introspection"
 BUILDSYS=autotools
 # QNX's network stack is FreeBSD's: interfaces and addresses come from the
 # PF_ROUTE socket (avahi-core/iface-pfroute.c; configure picks it from

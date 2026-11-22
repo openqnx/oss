@@ -1,4 +1,4 @@
-# openjpeg 2.5.3
+# openjpeg 2.5.4
 
 > JPEG 2000 image codec library and tools
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/uclouvain/openjpeg.git (tag `v2.5.3`) |
+| Upstream | https://github.com/uclouvain/openjpeg.git (tag `v2.5.4`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`lcms2`](../lcms2/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.5.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.5.4 --recurse-submodules --shallow-submodules \
     https://github.com/uclouvain/openjpeg.git src/openjpeg
 ```
 
@@ -112,7 +112,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH openjpeg`.
 
 ```
 /usr/local/lib/libopenjp2.so
-/usr/local/lib/libopenjp2.so.2.5.3
+/usr/local/lib/libopenjp2.so.2.5.4
 /usr/local/lib/libopenjp2.so.7
 ```
 
@@ -200,12 +200,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.5.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openjpeg=<version>`), sources in `ported/openjpeg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openjpeg`; port one with `scripts/port-update openjpeg`.
+This recipe builds **2.5.4**. Kept from earlier: `2.5.3` ([recipe and patches](versions/2.5.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add openjpeg=<version>`), sources in `ported/openjpeg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates openjpeg`; port one with `scripts/port-update openjpeg`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.5.3; GIT=https://github.com/uclouvain/openjpeg.git; REF=v2.5.3
+VERSION=2.5.4; GIT=https://github.com/uclouvain/openjpeg.git; REF=v2.5.4
 DEPS="zlib libpng libtiff lcms2"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF
                    -DBUILD_CODEC=OFF -DBUILD_TESTING=OFF )

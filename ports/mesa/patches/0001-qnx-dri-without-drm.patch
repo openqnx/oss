@@ -11,11 +11,10 @@ llvmpipe/softpipe. libdrm, GBM and kms_swrast stay off (system_has_kms_drm
 is still false).
 
 Upstream-Status: QNX-specific
-
 --- a/meson.build
 +++ b/meson.build
-@@ -361,7 +361,9 @@
- ].contains(true)
+@@ -369,7 +369,9 @@
+ endif
  
  with_dri = false
 -if with_gallium and (system_has_kms_drm or (with_gallium_zink and (freedreno_kmds.contains('kgsl') or host_machine.system() == 'darwin')))
@@ -25,7 +24,7 @@ Upstream-Status: QNX-specific
    _glx = get_option('glx')
    _egl = get_option('egl')
    if _glx == 'dri' or _egl.enabled() or (_glx == 'disabled' and _egl.allowed())
-@@ -424,6 +426,10 @@
+@@ -437,6 +439,10 @@
    with_dri_platform = 'drm'
  elif host_machine.system() == 'gnu' or (freedreno_kmds.contains('kgsl') and with_gallium_zink)
    with_dri_platform = 'pseudo-drm'
@@ -34,5 +33,5 @@ Upstream-Status: QNX-specific
 +  # builds without libdrm), for the software rasterizers.
 +  with_dri_platform = 'pseudo-drm'
  else
-   # FIXME: haiku doesn't use dri, and xlib doesn't use dri, probably should
-   # assert here that one of those cases has been met.
+   # FIXME: haiku doesn't use dri, probably should
+   # assert here that this case has been met.

@@ -1,4 +1,4 @@
-# curl 8.11.1
+# curl 8.23.0
 
 > Command line tool and library for transferring data with URLs
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/curl/curl.git (tag `curl-8_11_1`) |
+| Upstream | https://github.com/curl/curl.git (tag `curl-8_23_0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`nghttp2`](../nghttp2/) [`c-ares`](../c-ares/) [`brotli`](../brotli/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`c-ares`](../c-ares/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`c-ares`](../c-ares/) [`libidn2`](../libidn2/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_curl`](../../tests/src/) |
 
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b curl-8_11_1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b curl-8_23_0 --recurse-submodules --shallow-submodules \
     https://github.com/curl/curl.git src/curl
 ```
 
@@ -111,13 +111,13 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH curl`.
 
 ### 5. What it installs
 
-525 files under `/usr/local`: 1 shared-library entries, 3 programs, 12 headers.
+571 files under `/usr/local`: 1 shared-library entries, 3 programs, 12 headers.
 
 ```
 /usr/local/lib/libcurl.so
 /usr/local/bin/curl
 /usr/local/bin/curl-config
-/usr/local/bin/mk-ca-bundle.pl
+/usr/local/bin/wcurl
 ```
 
 The complete list is `stage/<arch>/.manifest/curl` after a build.
@@ -204,12 +204,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **8.11.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add curl=<version>`), sources in `ported/curl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates curl`; port one with `scripts/port-update curl`.
+This recipe builds **8.23.0**. Kept from earlier: `8.11.1` ([recipe and patches](versions/8.11.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add curl=<version>`), sources in `ported/curl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates curl`; port one with `scripts/port-update curl`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=8.11.1; GIT=https://github.com/curl/curl.git; REF=curl-8_11_1
+VERSION=8.23.0; GIT=https://github.com/curl/curl.git; REF=curl-8_23_0
 DEPS="openssl zlib nghttp2 c-ares brotli zstd"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_CURL_EXE=ON -DBUILD_TESTING=OFF
                    -DCURL_USE_OPENSSL=ON -DOPENSSL_ROOT_DIR="$STAGE$PREFIX"

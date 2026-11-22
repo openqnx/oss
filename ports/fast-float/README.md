@@ -1,4 +1,4 @@
-# fast-float 8.0.2
+# fast-float 8.3.3
 
 > Fast and exact implementation of from_chars for numbers
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/fastfloat/fast_float.git (tag `v8.0.2`) |
+| Upstream | https://github.com/fastfloat/fast_float.git (tag `v8.3.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v8.0.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v8.3.3 --recurse-submodules --shallow-submodules \
     https://github.com/fastfloat/fast_float.git src/fast-float
 ```
 
@@ -182,7 +182,7 @@ Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> fast-f
 
 ## Versions
 
-This recipe builds **8.0.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fast-float=<version>`), sources in `ported/fast-float/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fast-float`; port one with `scripts/port-update fast-float`.
+This recipe builds **8.3.3**. Kept from earlier: `8.0.2` ([recipe and patches](versions/8.0.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fast-float=<version>`), sources in `ported/fast-float/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fast-float`; port one with `scripts/port-update fast-float`.
 
 <details><summary>recipe.sh</summary>
 
@@ -190,7 +190,7 @@ This recipe builds **8.0.2**. Every version stays available: packages in `dists/
 # fast_float: header-only C++ implementation of from_chars for floating-point
 # and integer types, several times faster than strtod (Eisel-Lemire
 # algorithm). Build dependency of folly.
-VERSION=8.0.2; GIT=https://github.com/fastfloat/fast_float.git; REF=v8.0.2
+VERSION=8.3.3; GIT=https://github.com/fastfloat/fast_float.git; REF=v8.3.3
 CMAKE_ARGS_EXTRA=( -DFASTFLOAT_TEST=OFF -DFASTFLOAT_INSTALL=ON )
 ```
 </details>

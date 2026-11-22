@@ -1,4 +1,4 @@
-# libpng 1.6.44
+# libpng 1.6.59
 
 > C library for reading and writing PNG images
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/pnggroup/libpng.git (tag `v1.6.44`) |
+| Upstream | https://github.com/pnggroup/libpng.git (tag `v1.6.59`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.6.44 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.6.59 --recurse-submodules --shallow-submodules \
     https://github.com/pnggroup/libpng.git src/libpng
 ```
 
@@ -113,12 +113,13 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libpng`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 3 shared-library entries, 2 programs, 6 headers.
+19 files under `/usr/local`: 4 shared-library entries, 2 programs, 6 headers.
 
 ```
 /usr/local/lib/libpng.so
 /usr/local/lib/libpng16.so
 /usr/local/lib/libpng16.so.16
+/usr/local/lib/libpng16.so.16.59.0
 /usr/local/bin/libpng-config
 /usr/local/bin/libpng16-config
 ```
@@ -201,12 +202,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.6.44**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpng=<version>`), sources in `ported/libpng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpng`; port one with `scripts/port-update libpng`.
+This recipe builds **1.6.59**. Kept from earlier: `1.6.44` ([recipe and patches](versions/1.6.44/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libpng=<version>`), sources in `ported/libpng/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libpng`; port one with `scripts/port-update libpng`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.6.44; GIT=https://github.com/pnggroup/libpng.git; REF=v1.6.44
+VERSION=1.6.59; GIT=https://github.com/pnggroup/libpng.git; REF=v1.6.59
 DEPS="zlib"
 BUILDSYS=autotools
 # libpng's CMake path generates pnglibconf by *running* a freshly built helper.

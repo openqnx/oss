@@ -1,4 +1,4 @@
-# libmodbus 3.1.11
+# libmodbus 3.2.0
 
 > Library for communicating with Modbus devices over serial or TCP
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/stephane/libmodbus.git (tag `v3.1.11`) |
+| Upstream | https://github.com/stephane/libmodbus.git (tag `v3.2.0`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.1.11 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.2.0 --recurse-submodules --shallow-submodules \
     https://github.com/stephane/libmodbus.git src/libmodbus
 ```
 
@@ -189,12 +189,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.1.11**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmodbus=<version>`), sources in `ported/libmodbus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmodbus`; port one with `scripts/port-update libmodbus`.
+This recipe builds **3.2.0**. Kept from earlier: `3.1.11` ([recipe and patches](versions/3.1.11/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmodbus=<version>`), sources in `ported/libmodbus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmodbus`; port one with `scripts/port-update libmodbus`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.1.11; GIT=https://github.com/stephane/libmodbus.git; REF=v3.1.11
+VERSION=3.2.0; GIT=https://github.com/stephane/libmodbus.git; REF=v3.2.0
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-tests --without-documentation )
 ```

@@ -1,4 +1,4 @@
-# onnx 1.17.0
+# onnx 1.23.2
 
 > Open Neural Network Exchange (ONNX) format library for AI models
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/onnx/onnx.git (tag `v1.17.0`) |
+| Upstream | https://github.com/onnx/onnx.git (tag `v1.23.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`protobuf`](../protobuf/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.17.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.23.2 --recurse-submodules --shallow-submodules \
     https://github.com/onnx/onnx.git src/onnx
 ```
 
@@ -123,7 +123,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH onnx`.
 
 ### 5. What it installs
 
-100 files under `/usr/local`: 2 shared-library entries, 94 headers.
+117 files under `/usr/local`: 2 shared-library entries, 111 headers.
 
 ```
 /usr/local/lib/libonnx.so
@@ -216,12 +216,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.17.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add onnx=<version>`), sources in `ported/onnx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates onnx`; port one with `scripts/port-update onnx`.
+This recipe builds **1.23.2**. Kept from earlier: `1.17.0` ([recipe and patches](versions/1.17.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add onnx=<version>`), sources in `ported/onnx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates onnx`; port one with `scripts/port-update onnx`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.17.0; GIT=https://github.com/onnx/onnx.git; REF=v1.17.0
+VERSION=1.23.2; GIT=https://github.com/onnx/onnx.git; REF=v1.23.2
 DEPS="protobuf"
 # ONNX generates its schema sources with protoc while it builds, so it needs a
 # protoc that runs on the build host -- and protobuf 29 gencode compiles only

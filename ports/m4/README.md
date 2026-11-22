@@ -1,4 +1,4 @@
-# m4 1.4.19
+# m4 1.4.21
 
 > GNU implementation of the Unix m4 macro processor
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz |
-| SHA-256 | `63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96` |
+| Upstream | https://ftp.gnu.org/gnu/m4/m4-1.4.21.tar.xz |
+| SHA-256 | `f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libiconv`](../libiconv/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
+URL=https://ftp.gnu.org/gnu/m4/m4-1.4.21.tar.xz
 mkdir -p dist src/m4
 curl -fL -o dist/$(basename $URL) $URL
-echo "63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96  dist/$(basename $URL)" | sha256sum -c -
+echo "f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/m4 --strip-components=1
 ```
 
@@ -192,17 +192,17 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.19**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add m4=<version>`), sources in `ported/m4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates m4`; port one with `scripts/port-update m4`.
+This recipe builds **1.4.21**. Kept from earlier: `1.4.19` ([recipe and patches](versions/1.4.19/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add m4=<version>`), sources in `ported/m4/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates m4`; port one with `scripts/port-update m4`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU m4. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=1.4.19
+VERSION=1.4.21
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="libiconv"
-TARBALL=https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
-SHA256=63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96
+TARBALL=https://ftp.gnu.org/gnu/m4/m4-1.4.21.tar.xz
+SHA256=f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls )
 ```

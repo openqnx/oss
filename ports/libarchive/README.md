@@ -1,4 +1,4 @@
-# libarchive 3.7.7
+# libarchive 3.8.11
 
 > Library and tools (bsdtar, bsdcpio) for reading and writing archives
 
@@ -6,11 +6,11 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/libarchive/libarchive.git (tag `v3.7.7`) |
+| Upstream | https://github.com/libarchive/libarchive.git (tag `v3.8.11`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) [`openssl`](../openssl/) [`libxml2`](../libxml2/) [`expat`](../expat/) [`lz4`](../lz4/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`libb2`](../libb2/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libarchive`](../../tests/src/) |
 
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.7.7 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.8.11 --recurse-submodules --shallow-submodules \
     https://github.com/libarchive/libarchive.git src/libarchive
 ```
 
@@ -122,7 +122,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libarchive`.
 ```
 /usr/local/lib/libarchive.so
 /usr/local/lib/libarchive.so.13
-/usr/local/lib/libarchive.so.13.7.7
+/usr/local/lib/libarchive.so.13.8.11
 /usr/local/bin/bsdtar
 /usr/local/bin/bsdunzip
 ```
@@ -206,12 +206,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.7.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libarchive=<version>`), sources in `ported/libarchive/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libarchive`; port one with `scripts/port-update libarchive`.
+This recipe builds **3.8.11**. Kept from earlier: `3.7.7` ([recipe and patches](versions/3.7.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libarchive=<version>`), sources in `ported/libarchive/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libarchive`; port one with `scripts/port-update libarchive`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.7.7; GIT=https://github.com/libarchive/libarchive.git; REF=v3.7.7
+VERSION=3.8.11; GIT=https://github.com/libarchive/libarchive.git; REF=v3.8.11
 # Also linked at run time (found by scripts/gen-dependency-index): expat lz4
 DEPS="zlib bzip2 xz zstd openssl libxml2 expat lz4"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_TEST=OFF -DENABLE_CPIO=OFF

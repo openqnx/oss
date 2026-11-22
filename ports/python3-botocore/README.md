@@ -1,4 +1,4 @@
-# python3-botocore 1.43.123
+# python3-botocore 1.44.9
 
 > Low-level, data-driven core of boto 3
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/db/96/4f2dffd304425c07160ab2c12cb13322d852fd956fe9d4386228c93f02ea/botocore-1.43.123-py3-none-any.whl |
-| SHA-256 | `e30580f9c1282c321529238ff8ff75066096a2adbd0a293c8ae592c21d1733a3` |
+| Upstream | https://files.pythonhosted.org/packages/20/ad/f8143d7a78503c3b67d135589cd1da82d3867ed1f37149e64d6f9bef6cfb/botocore-1.44.9-py3-none-any.whl |
+| SHA-256 | `6966752d38514a8e457ea062ea171b2b320c55bad23c8ae4f74f88296e00890d` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`python3-jmespath`](../python3-jmespath/) [`python3-dateutil`](../python3-dateutil/) [`python3-urllib3`](../python3-urllib3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/db/96/4f2dffd304425c07160ab2c12cb13322d852fd956fe9d4386228c93f02ea/botocore-1.43.123-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/20/ad/f8143d7a78503c3b67d135589cd1da82d3867ed1f37149e64d6f9bef6cfb/botocore-1.44.9-py3-none-any.whl
 mkdir -p dist src/python3-botocore
 curl -fL -o dist/$(basename $URL) $URL
-echo "e30580f9c1282c321529238ff8ff75066096a2adbd0a293c8ae592c21d1733a3  dist/$(basename $URL)" | sha256sum -c -
+echo "6966752d38514a8e457ea062ea171b2b320c55bad23c8ae4f74f88296e00890d  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-botocore --strip-components=1
 ```
 
@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-botocore
 
 ### 5. What it installs
 
-2019 files under `/usr/local`.
+2061 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/python3-botocore` after a build.
 
@@ -195,7 +195,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.43.123**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-botocore=<version>`), sources in `ported/python3-botocore/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-botocore`; port one with `scripts/port-update python3-botocore`.
+This recipe builds **1.44.9**. Kept from earlier: `1.43.123` ([recipe and patches](versions/1.43.123/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-botocore=<version>`), sources in `ported/python3-botocore/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-botocore`; port one with `scripts/port-update python3-botocore`.
 
 <details><summary>recipe.sh</summary>
 
@@ -203,9 +203,9 @@ This recipe builds **1.43.123**. Every version stays available: packages in `dis
 # botocore: the low-level, data-driven core of the AWS SDK for Python. Without the optional awscrt extra (the AWS Common Runtime bindings).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=1.43.123
-TARBALL=https://files.pythonhosted.org/packages/db/96/4f2dffd304425c07160ab2c12cb13322d852fd956fe9d4386228c93f02ea/botocore-1.43.123-py3-none-any.whl
-SHA256=e30580f9c1282c321529238ff8ff75066096a2adbd0a293c8ae592c21d1733a3
+VERSION=1.44.9
+TARBALL=https://files.pythonhosted.org/packages/20/ad/f8143d7a78503c3b67d135589cd1da82d3867ed1f37149e64d6f9bef6cfb/botocore-1.44.9-py3-none-any.whl
+SHA256=6966752d38514a8e457ea062ea171b2b320c55bad23c8ae4f74f88296e00890d
 DEPS="python3 python3-jmespath python3-dateutil python3-urllib3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3 python3-jmespath python3-dateutil python3-urllib3"

@@ -1,0 +1,4402 @@
+From 38b189e48384ebfa26204a4dc53c3e6a15f2c60b Mon Sep 17 00:00:00 2001
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
+Date: Tue, 12 Aug 2025 03:45:54 +0000
+Subject: [PATCH 1/3] Bump actions/checkout from 4 to 5
+
+Imported from qnx-ports/SuiteSparse (b35a1f9318f4...qnx-v7.11.0); original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+
+Bumps [actions/checkout](https://github.com/actions/checkout) from 4 to 5.
+- [Release notes](https://github.com/actions/checkout/releases)
+- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/actions/checkout/compare/v4...v5)
+
+---
+updated-dependencies:
+- dependency-name: actions/checkout
+  dependency-version: '5'
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+---
+ .github/workflows/build-arch-emu.yaml       | 2 +-
+ .github/workflows/build-mingw.yaml          | 2 +-
+ .github/workflows/build.yaml                | 2 +-
+ .github/workflows/codeql-analysis.yaml      | 4 ++--
+ .github/workflows/cross-compile.yaml        | 2 +-
+ .github/workflows/macos.yaml                | 2 +-
+ .github/workflows/root-cmakelists-msvc.yaml | 2 +-
+ .github/workflows/root-cmakelists.yaml      | 2 +-
+ 8 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/.github/workflows/build-arch-emu.yaml b/.github/workflows/build-arch-emu.yaml
+index d0c765560d..a77ac767e0 100644
+--- a/.github/workflows/build-arch-emu.yaml
++++ b/.github/workflows/build-arch-emu.yaml
+@@ -57,7 +57,7 @@ jobs:
+         run: lscpu
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+         # shell: bash
+ 
+       - name: install dependencies
+diff --git a/.github/workflows/build-mingw.yaml b/.github/workflows/build-mingw.yaml
+index 35025d661f..2e93f4ac0a 100644
+--- a/.github/workflows/build-mingw.yaml
++++ b/.github/workflows/build-mingw.yaml
+@@ -92,7 +92,7 @@ jobs:
+             mpfr:p
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: prepare ccache
+         # create key with human readable timestamp
+diff --git a/.github/workflows/build.yaml b/.github/workflows/build.yaml
+index 9f30e5ddbe..ac3ef06f71 100644
+--- a/.github/workflows/build.yaml
++++ b/.github/workflows/build.yaml
+@@ -81,7 +81,7 @@ jobs:
+         run: lscpu
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: install dependencies
+         run: |
+diff --git a/.github/workflows/codeql-analysis.yaml b/.github/workflows/codeql-analysis.yaml
+index 35a6839897..3080db8a5f 100644
+--- a/.github/workflows/codeql-analysis.yaml
++++ b/.github/workflows/codeql-analysis.yaml
+@@ -40,7 +40,7 @@ jobs:
+ 
+     steps:
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: install dependencies
+         run: |
+@@ -164,7 +164,7 @@ jobs:
+           msystem: MINGW32
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: initialize CodeQL
+         # Initialize the CodeQL tools for scanning.
+diff --git a/.github/workflows/cross-compile.yaml b/.github/workflows/cross-compile.yaml
+index 218db00d5a..f126a80ca0 100644
+--- a/.github/workflows/cross-compile.yaml
++++ b/.github/workflows/cross-compile.yaml
+@@ -92,7 +92,7 @@ jobs:
+           echo "::endgroup::"
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: install cross-toolchain
+         run: |
+diff --git a/.github/workflows/macos.yaml b/.github/workflows/macos.yaml
+index ad6f1d893e..cef61b5d30 100644
+--- a/.github/workflows/macos.yaml
++++ b/.github/workflows/macos.yaml
+@@ -38,7 +38,7 @@ jobs:
+           sysctl machdep
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: install dependencies
+         # Homebrew's Python conflicts with the Python that comes pre-installed
+diff --git a/.github/workflows/root-cmakelists-msvc.yaml b/.github/workflows/root-cmakelists-msvc.yaml
+index 04b232b355..ad104987c0 100644
+--- a/.github/workflows/root-cmakelists-msvc.yaml
++++ b/.github/workflows/root-cmakelists-msvc.yaml
+@@ -82,7 +82,7 @@ jobs:
+           Get-CIMInstance -Class Win32_Processor | Select-Object -Property Name
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - uses: conda-incubator/setup-miniconda@v3
+         with:
+diff --git a/.github/workflows/root-cmakelists.yaml b/.github/workflows/root-cmakelists.yaml
+index 5a7eea0fd0..af7f2126c6 100644
+--- a/.github/workflows/root-cmakelists.yaml
++++ b/.github/workflows/root-cmakelists.yaml
+@@ -65,7 +65,7 @@ jobs:
+         run: lscpu
+ 
+       - name: checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v5
+ 
+       - name: install dependencies
+         run: |
+
+From c8ad3d7c4dcddbd22bfe573a8a08a9ef3c5859ef Mon Sep 17 00:00:00 2001
+From: hyarasi <hyarasi@qnx.com>
+Date: Fri, 31 Oct 2025 15:53:33 +0530
+Subject: [PATCH 2/3] Add QNX Support
+
+---
+ GraphBLAS/Source/cpu/GB_cpu_features.h                 |  4 +++-
+ .../algorithm/LAGr_EdgeBetweennessCentrality.c         |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGr_MarkovClustering.c |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGr_MaxFlow.c          |  9 +++++++++
+ LAGraph/experimental/algorithm/LAGr_MaximumMatching.c  |  5 ++++-
+ LAGraph/experimental/algorithm/LAGr_Modularity.c       |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGr_PageRankGX.c       |  5 ++++-
+ LAGraph/experimental/algorithm/LAGr_PartitionQuality.c |  5 ++++-
+ .../algorithm/LAGr_PeerPressureClustering.c            |  5 ++++-
+ LAGraph/experimental/algorithm/LAGr_SwapEdges.c        |  4 ++++
+ .../experimental/algorithm/LAGr_TriangleCount_GPU.c    |  5 ++++-
+ LAGraph/experimental/algorithm/LAGraph_AllKCore.c      |  9 +++++++++
+ LAGraph/experimental/algorithm/LAGraph_AllKTruss.c     |  8 ++++++++
+ LAGraph/experimental/algorithm/LAGraph_BF_basic.c      |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_basic_mxv.c  |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_BF_basic_pushpull.c |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_full.c       |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_full1.c      |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_full1a.c     |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_full2.c      |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_BF_full_mxv.c   |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_CFL_reachability.c  |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_Coarsen_Matching.c  | 10 ++++++++--
+ .../experimental/algorithm/LAGraph_EstimateDiameter.c  |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_ExactDiameter.c |  9 ++++++++-
+ .../algorithm/LAGraph_FastGraphletTransform.c          |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_HITS.c          |  8 ++++++++
+ LAGraph/experimental/algorithm/LAGraph_Hdip_Fiedler.c  |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_HelloWorld.c    |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_KCore.c         |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_KCoreDecompose.c    |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_KTruss.c        |  9 ++++++++-
+ .../algorithm/LAGraph_MaximalIndependentSet.c          |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_MaximalMatching.c   |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_MultiSourceBFS.c    |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_RegularPathQuery.c  |  9 ++++++++-
+ .../algorithm/LAGraph_RichClubCoefficient.c            |  9 ++++++++-
+ .../experimental/algorithm/LAGraph_SquareClustering.c  |  9 ++++++++-
+ .../algorithm/LAGraph_VertexCentrality_Triangle.c      |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_argminmax.c     | 10 ++++++++--
+ LAGraph/experimental/algorithm/LAGraph_cc_lacc.c       |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_cdlp.c          |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_cdlp_withsort.c |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_coloring_MIS.c  |  9 ++++++++-
+ .../algorithm/LAGraph_coloring_independent_set.c       |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_dnn.c           |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_lcc.c           |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_msf.c           |  9 ++++++++-
+ LAGraph/experimental/algorithm/LAGraph_scc.c           |  9 ++++++++-
+ LAGraph/experimental/algorithm/LG_CC_FastSV5.c         |  5 ++++-
+ LAGraph/experimental/algorithm/LG_CC_FastSV7_FA.c      |  5 ++++-
+ LAGraph/experimental/benchmark/AllKCore_demo.c         |  9 ++++++++-
+ LAGraph/experimental/benchmark/FastAssign_demo.c       |  8 ++++++++
+ LAGraph/experimental/benchmark/Incidence_Matrix_demo.c |  9 ++++++++-
+ LAGraph/experimental/benchmark/KCore_demo.c            |  9 ++++++++-
+ LAGraph/experimental/benchmark/build_demo.c            |  9 ++++++++-
+ LAGraph/experimental/benchmark/colscale_demo.c         |  9 ++++++++-
+ LAGraph/experimental/benchmark/dnn_demo.c              |  9 ++++++++-
+ .../benchmark/edgeBetweennessCentrality_demo.c         |  9 ++++++++-
+ LAGraph/experimental/benchmark/hdip_fiedler_demo.c     |  9 ++++++++-
+ LAGraph/experimental/benchmark/lcc_demo.c              |  9 ++++++++-
+ LAGraph/experimental/benchmark/matching_demo.c         |  9 ++++++++-
+ LAGraph/experimental/benchmark/mcl_demo.c              |  9 ++++++++-
+ LAGraph/experimental/benchmark/multisourcebfs_demo.c   | 10 ++++++++--
+ LAGraph/experimental/benchmark/peer_pressure_demo.c    |  9 ++++++++-
+ LAGraph/experimental/benchmark/rowscale_demo.c         |  9 ++++++++-
+ LAGraph/experimental/benchmark/scc_demo.c              |  9 ++++++++-
+ LAGraph/experimental/benchmark/tcc_demo.c              |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_RCC.c               |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_coarsen.c           |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_coloring.c          |  9 ++++++++-
+ .../test/LG_check_edgeBetweennessCentrality.c          |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_flow.c              |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_kcore.c             |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_kcoredecompose.c    | 10 ++++++++--
+ LAGraph/experimental/test/LG_check_ktruss.c            |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_lcc.c               |  9 ++++++++-
+ LAGraph/experimental/test/LG_check_mis.c               |  9 ++++++++-
+ LAGraph/experimental/test/test_AllKCore.c              |  4 ++++
+ LAGraph/experimental/test/test_AllKtruss.c             |  9 ++++++++-
+ LAGraph/experimental/test/test_BF.c                    |  9 ++++++++-
+ LAGraph/experimental/test/test_CFL_reachability.c      |  9 ++++++++-
+ LAGraph/experimental/test/test_Coarsen_Matching.c      |  9 ++++++++-
+ LAGraph/experimental/test/test_FastGraphletTransform.c |  9 ++++++++-
+ LAGraph/experimental/test/test_Fiedler.c               | 10 ++++++++--
+ LAGraph/experimental/test/test_HITS.c                  |  9 ++++++++-
+ LAGraph/experimental/test/test_KTruss.c                |  9 ++++++++-
+ LAGraph/experimental/test/test_MaximalIndependentSet.c |  9 ++++++++-
+ LAGraph/experimental/test/test_MaximalMatching.c       |  9 ++++++++-
+ LAGraph/experimental/test/test_PageRankGX.c            |  9 ++++++++-
+ LAGraph/experimental/test/test_RegularPathQuery.c      |  9 ++++++++-
+ LAGraph/experimental/test/test_RichClubCoefficient.c   |  9 ++++++++-
+ LAGraph/experimental/test/test_SWrite.c                |  9 ++++++++-
+ LAGraph/experimental/test/test_TriangleCentrality.c    |  9 ++++++++-
+ LAGraph/experimental/test/test_argminmax.c             | 10 ++++++++--
+ LAGraph/experimental/test/test_diameter.c              | 10 ++++++++--
+ LAGraph/experimental/test/test_dnn.c                   |  9 ++++++++-
+ .../experimental/test/test_edgeBetweennessCentrality.c |  9 ++++++++-
+ LAGraph/experimental/test/test_lcc.c                   |  9 ++++++++-
+ LAGraph/experimental/test/test_mcl.c                   |  9 ++++++++-
+ LAGraph/experimental/test/test_msf.c                   |  9 ++++++++-
+ LAGraph/experimental/test/test_mxm.c                   | 10 ++++++++--
+ LAGraph/experimental/test/test_scc.c                   |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_FastAssign.c      |  9 +++++++++
+ .../experimental/utility/LAGraph_Incidence_Matrix.c    |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_Matrix_Hash.c     |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_Random_Matrix.c   |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_SLoadSet.c        |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_SRead.c           |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_SSaveSet.c        |  9 ++++++++-
+ LAGraph/experimental/utility/LAGraph_SWrite.c          |  9 ++++++++-
+ LAGraph/src/algorithm/LAGr_Betweenness.c               |  9 +++++++++
+ LAGraph/src/algorithm/LAGr_PageRank.c                  |  9 ++++++++-
+ LAGraph/src/algorithm/LAGr_PageRankGAP.c               |  9 ++++++++-
+ LAGraph/src/algorithm/LAGr_SingleSourceShortestPath.c  |  9 ++++++++-
+ LAGraph/src/algorithm/LAGr_TriangleCount.c             |  9 ++++++++-
+ LAGraph/src/algorithm/LAGraph_TriangleCount.c          |  9 ++++++++-
+ LAGraph/src/algorithm/LG_CC_Boruvka.c                  | 10 ++++++++--
+ LAGraph/src/algorithm/LG_CC_FastSV6.c                  |  9 ++++++++-
+ LAGraph/src/algorithm/LG_CC_FastSV7.c                  |  9 ++++++++-
+ .../template/LG_BreadthFirstSearch_SSGrB_template.c    |  9 ++++++++-
+ .../template/LG_BreadthFirstSearch_vanilla_template.c  |  9 ++++++++-
+ LAGraph/src/benchmark/LAGraph_demo.h                   |  9 ++++++++-
+ LAGraph/src/benchmark/bc_demo.c                        |  9 ++++++++-
+ LAGraph/src/benchmark/bfs_demo.c                       |  9 ++++++++-
+ LAGraph/src/benchmark/cc_demo.c                        |  9 ++++++++-
+ LAGraph/src/benchmark/gappagerank_demo.c               |  9 ++++++++-
+ LAGraph/src/benchmark/sssp_demo.c                      |  9 ++++++++-
+ LAGraph/src/test/LG_check_export.c                     |  9 ++++++++-
+ LAGraph/src/test/test_Betweenness.c                    | 10 +++++++++-
+ LAGraph/src/test/test_BreadthFirstSearch.c             | 10 +++++++++-
+ LAGraph/src/test/test_Cached_Degree.c                  | 10 +++++++++-
+ LAGraph/src/test/test_CheckGraph.c                     |  9 ++++++++-
+ LAGraph/src/test/test_ConnectedComponents.c            |  9 ++++++++-
+ LAGraph/src/test/test_DeleteCached.c                   |  9 ++++++++-
+ LAGraph/src/test/test_DisplayGraph.c                   | 10 +++++++++-
+ LAGraph/src/test/test_Init_errors.c                    |  9 ++++++++-
+ LAGraph/src/test/test_IsEqual.c                        | 10 +++++++++-
+ LAGraph/src/test/test_MMRead.c                         | 10 +++++++++-
+ LAGraph/src/test/test_Malloc.c                         |  8 ++++++++
+ LAGraph/src/test/test_New.c                            |  9 ++++++++-
+ LAGraph/src/test/test_NumThreads.c                     |  9 ++++++++-
+ LAGraph/src/test/test_PageRank.c                       |  9 ++++++++-
+ LAGraph/src/test/test_SingleSourceShortestPath.c       |  9 ++++++++-
+ LAGraph/src/test/test_SortByDegree.c                   |  9 ++++++++-
+ LAGraph/src/test/test_TriangleCount.c                  |  9 ++++++++-
+ LAGraph/src/test/test_Vector_Print.c                   |  9 ++++++++-
+ LAGraph/src/test/test_vector.c                         |  9 ++++++++-
+ LAGraph/src/utility/LAGr_SampleDegree.c                |  9 ++++++++-
+ LAGraph/src/utility/LAGr_SortByDegree.c                |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Cached_EMax.c              |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Cached_EMin.c              |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Cached_InDegree.c          |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Cached_OutDegree.c         |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_DeleteSelfEdges.c          |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_MMWrite.c                  |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Matrix_IsEqual.c           |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Matrix_IsEqualOp.c         |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Matrix_Print.c             | 10 ++++++++--
+ LAGraph/src/utility/LAGraph_Matrix_Structure.c         |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Random.c                   | 10 +++++++++-
+ LAGraph/src/utility/LAGraph_Vector_IsEqual.c           |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Vector_IsEqualOp.c         |  9 ++++++++-
+ LAGraph/src/utility/LAGraph_Vector_Print.c             | 10 ++++++++--
+ LAGraph/src/utility/LAGraph_Vector_Structure.c         |  9 ++++++++-
+ 165 files changed, 1290 insertions(+), 166 deletions(-)
+
+diff --git a/GraphBLAS/Source/cpu/GB_cpu_features.h b/GraphBLAS/Source/cpu/GB_cpu_features.h
+index 5ec7658d39..a137133c7d 100644
+--- a/GraphBLAS/Source/cpu/GB_cpu_features.h
++++ b/GraphBLAS/Source/cpu/GB_cpu_features.h
+@@ -33,7 +33,9 @@
+ 
+ #ifndef GB_CPU_FEATURES_H
+ #define GB_CPU_FEATURES_H
+-
++#ifdef __QNX__
++#define GBNCPUFEAT 1
++#endif
+ #if !defined ( GBNCPUFEAT )
+     #include "cpu_features_macros.h"
+     #define STACK_LINE_READER_BUFFER_SIZE 1024
+diff --git a/LAGraph/experimental/algorithm/LAGr_EdgeBetweennessCentrality.c b/LAGraph/experimental/algorithm/LAGr_EdgeBetweennessCentrality.c
+index 843c86675b..b0de262259 100644
+--- a/LAGraph/experimental/algorithm/LAGr_EdgeBetweennessCentrality.c
++++ b/LAGraph/experimental/algorithm/LAGr_EdgeBetweennessCentrality.c
+@@ -61,7 +61,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // (1+x)/y function for double: z = (1 + x) / y
+ //------------------------------------------------------------------------------
+@@ -478,3 +481,7 @@ int LAGr_EdgeBetweennessCentrality
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGr_MarkovClustering.c b/LAGraph/experimental/algorithm/LAGr_MarkovClustering.c
+index 24c0537776..3eb327b634 100644
+--- a/LAGraph/experimental/algorithm/LAGr_MarkovClustering.c
++++ b/LAGraph/experimental/algorithm/LAGr_MarkovClustering.c
+@@ -39,7 +39,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_MarkovClustering(
+     // output:
+     GrB_Vector *c_f, // output cluster vector
+@@ -215,3 +218,7 @@ int LAGr_MarkovClustering(
+     return (GrB_NOT_IMPLEMENTED);
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGr_MaxFlow.c b/LAGraph/experimental/algorithm/LAGr_MaxFlow.c
+index 5b0abfe635..94d130a801 100644
+--- a/LAGraph/experimental/algorithm/LAGr_MaxFlow.c
++++ b/LAGraph/experimental/algorithm/LAGr_MaxFlow.c
+@@ -36,6 +36,11 @@
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL ;
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++
+ static GrB_Info LG_augment_maxflow
+ (
+     double *f,                  // total maxflow from src to sink
+@@ -1121,3 +1126,7 @@ int LAGr_MaxFlow
+   return GrB_NOT_IMPLEMENTED ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/algorithm/LAGr_MaximumMatching.c b/LAGraph/experimental/algorithm/LAGr_MaximumMatching.c
+index 5617f2a3a9..1b6213a640 100644
+--- a/LAGraph/experimental/algorithm/LAGr_MaximumMatching.c
++++ b/LAGraph/experimental/algorithm/LAGr_MaximumMatching.c
+@@ -37,7 +37,10 @@
+ 
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // the Vertex tuple: (parentC, rootC)
+ //------------------------------------------------------------------------------
+diff --git a/LAGraph/experimental/algorithm/LAGr_Modularity.c b/LAGraph/experimental/algorithm/LAGr_Modularity.c
+index 6adbeeb016..ab3147dec7 100644
+--- a/LAGraph/experimental/algorithm/LAGr_Modularity.c
++++ b/LAGraph/experimental/algorithm/LAGr_Modularity.c
+@@ -59,7 +59,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_Modularity(
+     // Outputs
+     double *mod_handle, // output modularity
+@@ -210,3 +213,7 @@ int LAGr_Modularity(
+     return (GrB_NOT_IMPLEMENTED);
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGr_PageRankGX.c b/LAGraph/experimental/algorithm/LAGr_PageRankGX.c
+index 87e7449658..bbb2c96d42 100644
+--- a/LAGraph/experimental/algorithm/LAGr_PageRankGX.c
++++ b/LAGraph/experimental/algorithm/LAGr_PageRankGX.c
+@@ -47,7 +47,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_PageRankGX
+ (
+     // output:
+diff --git a/LAGraph/experimental/algorithm/LAGr_PartitionQuality.c b/LAGraph/experimental/algorithm/LAGr_PartitionQuality.c
+index 903a54ccb4..9c1be7fa69 100644
+--- a/LAGraph/experimental/algorithm/LAGr_PartitionQuality.c
++++ b/LAGraph/experimental/algorithm/LAGr_PartitionQuality.c
+@@ -46,7 +46,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_PartitionQuality(
+     // Outputs
+     double *cov,  // coverage output, can be NULL
+diff --git a/LAGraph/experimental/algorithm/LAGr_PeerPressureClustering.c b/LAGraph/experimental/algorithm/LAGr_PeerPressureClustering.c
+index b018ac8ae1..67db6fac0a 100644
+--- a/LAGraph/experimental/algorithm/LAGr_PeerPressureClustering.c
++++ b/LAGraph/experimental/algorithm/LAGr_PeerPressureClustering.c
+@@ -48,7 +48,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_PeerPressureClustering(
+     // output:
+     GrB_Vector *c_f, // output cluster vector
+diff --git a/LAGraph/experimental/algorithm/LAGr_SwapEdges.c b/LAGraph/experimental/algorithm/LAGr_SwapEdges.c
+index 0cba153adf..e55c34d608 100644
+--- a/LAGraph/experimental/algorithm/LAGr_SwapEdges.c
++++ b/LAGraph/experimental/algorithm/LAGr_SwapEdges.c
+@@ -75,6 +75,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ void LG_SE_shift_and 
+     (uint16_t *z, const uint16_t *x)
+     {
+diff --git a/LAGraph/experimental/algorithm/LAGr_TriangleCount_GPU.c b/LAGraph/experimental/algorithm/LAGr_TriangleCount_GPU.c
+index 48fad57753..a22ece514d 100644
+--- a/LAGraph/experimental/algorithm/LAGr_TriangleCount_GPU.c
++++ b/LAGraph/experimental/algorithm/LAGr_TriangleCount_GPU.c
+@@ -68,7 +68,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if defined ( GRAPHBLAS_HAS_CUDA )
+ 
+ //------------------------------------------------------------------------------
+diff --git a/LAGraph/experimental/algorithm/LAGraph_AllKCore.c b/LAGraph/experimental/algorithm/LAGraph_AllKCore.c
+index 5ffbd66be3..3b9704f49d 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_AllKCore.c
++++ b/LAGraph/experimental/algorithm/LAGraph_AllKCore.c
+@@ -35,6 +35,11 @@
+ 
+ #include "LG_internal.h"
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++
+ // TODO: need both basic and expert methods; this is mixed
+ // TODO: match filename to function name (this name is OK)
+ // vanilla OK: no GxB used here
+@@ -158,3 +163,7 @@ int LAGraph_KCore_All
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_AllKTruss.c b/LAGraph/experimental/algorithm/LAGraph_AllKTruss.c
+index 9d5a77a214..2f1eafc0e9 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_AllKTruss.c
++++ b/LAGraph/experimental/algorithm/LAGraph_AllKTruss.c
+@@ -65,6 +65,10 @@
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // C = LAGraph_AllKTruss: find all k-trusses a graph
+ //------------------------------------------------------------------------------
+@@ -196,3 +200,7 @@ int LAGraph_AllKTruss   // compute all k-trusses of a graph
+         }
+     }
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_basic.c b/LAGraph/experimental/algorithm/LAGraph_BF_basic.c
+index 53872c82d4..4eb579e015 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_basic.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_basic.c
+@@ -39,7 +39,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // Given a n-by-n adjacency matrix A and a source vertex s.
+ // If there is no negative-weight cycle reachable from s, return the distances
+ // of shortest paths from s as vector d. Otherwise, return d=NULL if there is
+@@ -118,3 +121,7 @@ GrB_Info LAGraph_BF_basic
+     LG_FREE_ALL;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_basic_mxv.c b/LAGraph/experimental/algorithm/LAGraph_BF_basic_mxv.c
+index 006abb39c9..e39a387188 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_basic_mxv.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_basic_mxv.c
+@@ -49,7 +49,10 @@
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+ 
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // Given the transposed of a n-by-n adjacency matrix A and a source vertex s.
+ // If there is no negative-weight cycle reachable from s, return the distances
+ // of shortest paths from s as vector d. Otherwise, return d=NULL if there is
+@@ -129,3 +132,7 @@ GrB_Info LAGraph_BF_basic_mxv
+     LG_FREE_ALL;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_basic_pushpull.c b/LAGraph/experimental/algorithm/LAGraph_BF_basic_pushpull.c
+index d311f3ffaa..13fb4e064e 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_basic_pushpull.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_basic_pushpull.c
+@@ -47,7 +47,10 @@
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+ 
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // Given a n-by-n adjacency matrix A and a source vertex s.
+ // If there is no negative-weight cycle reachable from s, return the distances
+ // of shortest paths from s as vector d. Otherwise, return d=NULL if there is
+@@ -228,3 +231,7 @@ GrB_Info LAGraph_BF_basic_pushpull
+     LG_FREE_ALL;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_full.c b/LAGraph/experimental/algorithm/LAGraph_BF_full.c
+index eb5a075a85..25098fe983 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_full.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_full.c
+@@ -57,7 +57,10 @@
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+ 
+ //------------------------------------------------------------------------------
+@@ -306,3 +309,7 @@ GrB_Info LAGraph_BF_full
+     LG_FREE_ALL;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_full1.c b/LAGraph/experimental/algorithm/LAGraph_BF_full1.c
+index 05beb00f16..aa44e17296 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_full1.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_full1.c
+@@ -75,7 +75,10 @@
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+ 
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+ 
+ //------------------------------------------------------------------------------
+@@ -365,3 +368,7 @@ GrB_Info LAGraph_BF_full1
+     LG_FREE_WORK;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_full1a.c b/LAGraph/experimental/algorithm/LAGraph_BF_full1a.c
+index bf1bc55062..8a0c8fcfac 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_full1a.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_full1a.c
+@@ -77,7 +77,10 @@
+ #include <LG_internal.h>  // from src/utility
+ 
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // data type for each entry of the adjacent matrix A and "distance" vector d;
+ // <INFINITY,INFINITY,INFINITY> corresponds to nonexistence of a path, and
+@@ -387,3 +390,7 @@ GrB_Info LAGraph_BF_full1a
+     LG_FREE_WORK;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_full2.c b/LAGraph/experimental/algorithm/LAGraph_BF_full2.c
+index 7ba95eff30..2e2986da5e 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_full2.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_full2.c
+@@ -75,7 +75,10 @@
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+ 
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+ 
+ //------------------------------------------------------------------------------
+@@ -345,3 +348,7 @@ GrB_Info LAGraph_BF_full2
+     LG_FREE_WORK;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_BF_full_mxv.c b/LAGraph/experimental/algorithm/LAGraph_BF_full_mxv.c
+index 9977b51b71..de138002c7 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_BF_full_mxv.c
++++ b/LAGraph/experimental/algorithm/LAGraph_BF_full_mxv.c
+@@ -78,7 +78,10 @@
+ #include <LG_internal.h>  // from src/utility
+ 
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // data type for each entry of the adjacent matrix A and "distance" vector d;
+ // <INFINITY,INFINITY,INFINITY> corresponds to nonexistence of a path, and
+@@ -335,3 +338,7 @@ GrB_Info LAGraph_BF_full_mxv
+     LG_FREE_WORK;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_CFL_reachability.c b/LAGraph/experimental/algorithm/LAGraph_CFL_reachability.c
+index c4c5d25ea5..05885b7532 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_CFL_reachability.c
++++ b/LAGraph/experimental/algorithm/LAGraph_CFL_reachability.c
+@@ -39,7 +39,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define ERROR_RULE(msg,i)                                                   \
+     {                                                                       \
+         LG_ASSERT_MSGF(false, GrB_INVALID_VALUE,                            \
+@@ -382,3 +385,7 @@ GrB_Info LAGraph_CFL_reachability
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_Coarsen_Matching.c b/LAGraph/experimental/algorithm/LAGraph_Coarsen_Matching.c
+index 2b82e2d88a..fa0674d0e1 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_Coarsen_Matching.c
++++ b/LAGraph/experimental/algorithm/LAGraph_Coarsen_Matching.c
+@@ -62,7 +62,10 @@ This method requires O(n + e) space for an undirected graph with e edges and n n
+ 
+ // #define dbg
+ // #define burble
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef LG_FREE_ALL
+ #undef LG_FREE_WORK
+ 
+@@ -507,4 +510,7 @@ int LAGraph_Coarsen_Matching
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/algorithm/LAGraph_EstimateDiameter.c b/LAGraph/experimental/algorithm/LAGraph_EstimateDiameter.c
+index c6e4e256c8..e45c61882d 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_EstimateDiameter.c
++++ b/LAGraph/experimental/algorithm/LAGraph_EstimateDiameter.c
+@@ -46,7 +46,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ void LG_ED_mod32 (int32_t *z, const int32_t *x, const int32_t *y) ;
+ void LG_ED_mod32 (int32_t *z, const int32_t *x, const int32_t *y)
+ {
+@@ -264,3 +267,7 @@ int LAGraph_EstimateDiameter
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_ExactDiameter.c b/LAGraph/experimental/algorithm/LAGraph_ExactDiameter.c
+index 9143b23b05..81bcb54bf3 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_ExactDiameter.c
++++ b/LAGraph/experimental/algorithm/LAGraph_ExactDiameter.c
+@@ -47,7 +47,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_ExactDiameter
+ (
+     // outputs:
+@@ -176,3 +179,7 @@ int LAGraph_ExactDiameter
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_FastGraphletTransform.c b/LAGraph/experimental/algorithm/LAGraph_FastGraphletTransform.c
+index 2ca361406f..928bac5a0d 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_FastGraphletTransform.c
++++ b/LAGraph/experimental/algorithm/LAGraph_FastGraphletTransform.c
+@@ -94,7 +94,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ void LG_FGT_sub_one_mult (int64_t *z, const int64_t *x) { (*z) = (*x) * ((*x)-1) ; }
+ 
+ int LAGraph_FastGraphletTransform
+@@ -650,3 +653,7 @@ int LAGraph_FastGraphletTransform
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_HITS.c b/LAGraph/experimental/algorithm/LAGraph_HITS.c
+index 8705459b2f..3714d0ca48 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_HITS.c
++++ b/LAGraph/experimental/algorithm/LAGraph_HITS.c
+@@ -34,6 +34,10 @@
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // Check graph with error messages if it's empty
+ 
+ int LAGr_HITS
+@@ -165,3 +169,7 @@ int LAGr_HITS
+     LG_FREE_WORK;
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_Hdip_Fiedler.c b/LAGraph/experimental/algorithm/LAGraph_Hdip_Fiedler.c
+index bea7d73c56..0389e477e6 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_Hdip_Fiedler.c
++++ b/LAGraph/experimental/algorithm/LAGraph_Hdip_Fiedler.c
+@@ -44,6 +44,10 @@ The happly function, applies a Householder Reflection
+     Acknowledgements: Michel Pelletier provided us with many helpful suggestions and assistance while developing this algorithm
+ 
+ */
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Happly //happly Checked for pointer issues
+ (
+     //outputs:
+@@ -754,4 +758,7 @@ int LAGraph_Hdip_Fiedler   // compute the Hdip_Fiedler
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/algorithm/LAGraph_HelloWorld.c b/LAGraph/experimental/algorithm/LAGraph_HelloWorld.c
+index e72f3470c6..491db7846b 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_HelloWorld.c
++++ b/LAGraph/experimental/algorithm/LAGraph_HelloWorld.c
+@@ -52,7 +52,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_HelloWorld // a simple algorithm, just for illustration
+ (
+     // output
+@@ -97,3 +100,7 @@ int LAGraph_HelloWorld // a simple algorithm, just for illustration
+     (*Yhandle) = Y ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_KCore.c b/LAGraph/experimental/algorithm/LAGraph_KCore.c
+index d97f464409..97ad1c20d1 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_KCore.c
++++ b/LAGraph/experimental/algorithm/LAGraph_KCore.c
+@@ -34,7 +34,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // TODO: revise and add to src
+ // TODO: need both basic and expert methods; this is mixed
+ // vanilla OK: no GxB used here
+@@ -146,3 +149,7 @@ int LAGraph_KCore  // TODO: LAGr_KCore (expert), cache is_symmetric_structure
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_KCoreDecompose.c b/LAGraph/experimental/algorithm/LAGraph_KCoreDecompose.c
+index c04dac7281..21e71f9fc3 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_KCoreDecompose.c
++++ b/LAGraph/experimental/algorithm/LAGraph_KCoreDecompose.c
+@@ -33,7 +33,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // TODO: need both basic and expert; this is advanced
+ // TODO: this should return D as an LAGraph_Graph, not as a GrB_Matrix
+ 
+@@ -107,3 +110,7 @@ int LAGraph_KCore_Decompose
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_KTruss.c b/LAGraph/experimental/algorithm/LAGraph_KTruss.c
+index def38d1a65..1bf50c32cd 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_KTruss.c
++++ b/LAGraph/experimental/algorithm/LAGraph_KTruss.c
+@@ -37,7 +37,10 @@
+ #define LG_FREE_ALL GrB_free (&C) ;
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_KTruss: find the k-truss subgraph of a graph
+ //------------------------------------------------------------------------------
+@@ -114,3 +117,7 @@ int LAGraph_KTruss              // compute the k-truss of a graph
+         S = C ;
+     }
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_MaximalIndependentSet.c b/LAGraph/experimental/algorithm/LAGraph_MaximalIndependentSet.c
+index 4acac180bf..a026ec65aa 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_MaximalIndependentSet.c
++++ b/LAGraph/experimental/algorithm/LAGraph_MaximalIndependentSet.c
+@@ -38,7 +38,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // A variant of Luby's randomized algorithm [Luby 1985].
+ 
+ // Given a numeric n x n adjacency matrix A of an unweighted and undirected
+@@ -319,3 +322,7 @@ int LAGraph_MaximalIndependentSet       // maximal independent set
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_MaximalMatching.c b/LAGraph/experimental/algorithm/LAGraph_MaximalMatching.c
+index d65c187351..a7646cfaa0 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_MaximalMatching.c
++++ b/LAGraph/experimental/algorithm/LAGraph_MaximalMatching.c
+@@ -44,7 +44,10 @@ This method requires O(e) space for an undirected graph with e edges
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define dbg
+ 
+ #undef LG_FREE_ALL
+@@ -304,3 +307,7 @@ int LAGraph_MaximalMatching
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_MultiSourceBFS.c b/LAGraph/experimental/algorithm/LAGraph_MultiSourceBFS.c
+index ce166c4d4c..f975389d62 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_MultiSourceBFS.c
++++ b/LAGraph/experimental/algorithm/LAGraph_MultiSourceBFS.c
+@@ -30,7 +30,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_MultiSourceBFS
+ (
+     // outputs:
+@@ -218,3 +221,7 @@ int LAGraph_MultiSourceBFS
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_RegularPathQuery.c b/LAGraph/experimental/algorithm/LAGraph_RegularPathQuery.c
+index 8173daadb6..4f291d2e11 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_RegularPathQuery.c
++++ b/LAGraph/experimental/algorithm/LAGraph_RegularPathQuery.c
+@@ -95,7 +95,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_RegularPathQuery
+ (
+     // output:
+@@ -344,3 +347,7 @@ int LAGraph_RegularPathQuery
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_RichClubCoefficient.c b/LAGraph/experimental/algorithm/LAGraph_RichClubCoefficient.c
+index cfbe263f84..8f37dcdd20 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_RichClubCoefficient.c
++++ b/LAGraph/experimental/algorithm/LAGraph_RichClubCoefficient.c
+@@ -62,7 +62,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ typedef void (*LAGraph_binary_function) (void *, const void *, const void *) ;
+ 
+ #define ISEQ_2ISLT                                                          \
+@@ -401,3 +404,7 @@ int LAGraph_RichClubCoefficient
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_SquareClustering.c b/LAGraph/experimental/algorithm/LAGraph_SquareClustering.c
+index 6ca18c709f..24c8157fd8 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_SquareClustering.c
++++ b/LAGraph/experimental/algorithm/LAGraph_SquareClustering.c
+@@ -95,7 +95,10 @@
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+ #include <LG_internal.h>  // from src/utility
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_SquareClustering
+ (
+     // outputs:
+@@ -225,3 +228,7 @@ int LAGraph_SquareClustering
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_VertexCentrality_Triangle.c b/LAGraph/experimental/algorithm/LAGraph_VertexCentrality_Triangle.c
+index ec50e6ae71..02ba1ed10f 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_VertexCentrality_Triangle.c
++++ b/LAGraph/experimental/algorithm/LAGraph_VertexCentrality_Triangle.c
+@@ -85,7 +85,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_VertexCentrality_Triangle: vertex triangle-centrality
+ //------------------------------------------------------------------------------
+@@ -319,3 +322,7 @@ int LAGraph_VertexCentrality_Triangle       // vertex triangle-centrality
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_argminmax.c b/LAGraph/experimental/algorithm/LAGraph_argminmax.c
+index 4fe11723dc..f66d2b1c49 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_argminmax.c
++++ b/LAGraph/experimental/algorithm/LAGraph_argminmax.c
+@@ -17,7 +17,10 @@
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+ #include <LAGraph.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define USAGE "usage: [x,p] = LAGraph_argminmax (A, minmax, dim)"
+ 
+ //------------------------------------------------------------------------------
+@@ -432,4 +435,7 @@ int LAGraph_argminmax
+     return (GrB_NOT_IMPLEMENTED);
+ #endif
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/algorithm/LAGraph_cc_lacc.c b/LAGraph/experimental/algorithm/LAGraph_cc_lacc.c
+index 7c9b2ea75f..0b6b94b062 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_cc_lacc.c
++++ b/LAGraph/experimental/algorithm/LAGraph_cc_lacc.c
+@@ -27,7 +27,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //****************************************************************************
+ // mask = NULL, accumulator = GrB_MIN_UINT64, descriptor = NULL
+ 
+@@ -234,3 +237,7 @@ int LAGraph_cc_lacc
+     LG_FREE_ALL;
+     return GrB_SUCCESS;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_cdlp.c b/LAGraph/experimental/algorithm/LAGraph_cdlp.c
+index b8aceb624d..fe9c067cc2 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_cdlp.c
++++ b/LAGraph/experimental/algorithm/LAGraph_cdlp.c
+@@ -75,7 +75,10 @@
+ #include <LAGraphX.h>
+ #include <stdalign.h>
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // A Go-style slice / Lisp-style property list
+ typedef struct {
+     GrB_Index* entries;
+@@ -342,3 +345,7 @@ int LAGraph_cdlp
+ 
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_cdlp_withsort.c b/LAGraph/experimental/algorithm/LAGraph_cdlp_withsort.c
+index e8d52ded74..ea99d52d1c 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_cdlp_withsort.c
++++ b/LAGraph/experimental/algorithm/LAGraph_cdlp_withsort.c
+@@ -136,7 +136,10 @@
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //****************************************************************************
+ int LAGraph_cdlp_withsort
+ (
+@@ -329,3 +332,7 @@ int LAGraph_cdlp_withsort
+ 
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_coloring_MIS.c b/LAGraph/experimental/algorithm/LAGraph_coloring_MIS.c
+index b2403f07dc..80c8f83efe 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_coloring_MIS.c
++++ b/LAGraph/experimental/algorithm/LAGraph_coloring_MIS.c
+@@ -1,6 +1,9 @@
+ #include "LG_internal.h" // contains all internal grb operations
+ #include "LAGraphX.h"    // algorithm added to LAGraphX.h
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_WORK
+ #define LG_FREE_WORK                \
+ {                                   \
+@@ -63,3 +66,7 @@ int LAGraph_coloring_MIS
+     LG_FREE_ALL ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_coloring_independent_set.c b/LAGraph/experimental/algorithm/LAGraph_coloring_independent_set.c
+index e6be6ef7b4..c19bf7e5c3 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_coloring_independent_set.c
++++ b/LAGraph/experimental/algorithm/LAGraph_coloring_independent_set.c
+@@ -1,6 +1,9 @@
+ #include "LG_internal.h" // contains all internal grb operations
+ #include "LAGraphX.h"    // algorithm added to LAGraphX.h
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_WORK
+ #define LG_FREE_WORK                \
+     GrB_free (&local_color) ;       \
+@@ -109,3 +112,7 @@ int LAGraph_coloring_independent_set
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_dnn.c b/LAGraph/experimental/algorithm/LAGraph_dnn.c
+index dcedba80dd..80fb54365d 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_dnn.c
++++ b/LAGraph/experimental/algorithm/LAGraph_dnn.c
+@@ -44,7 +44,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //****************************************************************************
+ GrB_Info LAGraph_dnn    // returns GrB_SUCCESS if successful
+ (
+@@ -113,3 +116,7 @@ GrB_Info LAGraph_dnn    // returns GrB_SUCCESS if successful
+     (*Yhandle) = Y ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_lcc.c b/LAGraph/experimental/algorithm/LAGraph_lcc.c
+index f418fee343..964116e127 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_lcc.c
++++ b/LAGraph/experimental/algorithm/LAGraph_lcc.c
+@@ -80,7 +80,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ 
+ #define F_UNARY(f)  ((void (*)(void *, const void *)) f)
+@@ -284,3 +287,7 @@ int LAGraph_lcc            // compute lcc for all nodes in A
+     LG_FREE_ALL ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_msf.c b/LAGraph/experimental/algorithm/LAGraph_msf.c
+index 993a389e1b..46181a1ec9 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_msf.c
++++ b/LAGraph/experimental/algorithm/LAGraph_msf.c
+@@ -38,7 +38,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // tuple: a tuple containing (weight,index)
+ //------------------------------------------------------------------------------
+@@ -1039,3 +1042,7 @@ int LAGraph_msf
+     return (GrB_NOT_IMPLEMENTED) ;
+     #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LAGraph_scc.c b/LAGraph/experimental/algorithm/LAGraph_scc.c
+index 8e33eca8c8..fd20c7ec98 100644
+--- a/LAGraph/experimental/algorithm/LAGraph_scc.c
++++ b/LAGraph/experimental/algorithm/LAGraph_scc.c
+@@ -30,7 +30,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if LAGRAPH_SUITESPARSE
+ 
+ //****************************************************************************
+@@ -340,3 +343,7 @@ int LAGraph_scc
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/algorithm/LG_CC_FastSV5.c b/LAGraph/experimental/algorithm/LG_CC_FastSV5.c
+index 0feba023b7..bcc638b7bf 100644
+--- a/LAGraph/experimental/algorithm/LG_CC_FastSV5.c
++++ b/LAGraph/experimental/algorithm/LG_CC_FastSV5.c
+@@ -50,7 +50,10 @@
+ #include "LG_internal.h"
+ 
+ // TODO: not ready for src; need a vanilla method with no GxB
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if LAGRAPH_SUITESPARSE
+ 
+ //------------------------------------------------------------------------------
+diff --git a/LAGraph/experimental/algorithm/LG_CC_FastSV7_FA.c b/LAGraph/experimental/algorithm/LG_CC_FastSV7_FA.c
+index 3060159227..9e2dbcfe78 100644
+--- a/LAGraph/experimental/algorithm/LG_CC_FastSV7_FA.c
++++ b/LAGraph/experimental/algorithm/LG_CC_FastSV7_FA.c
+@@ -57,7 +57,10 @@
+ #define LG_FREE_ALL ;
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ static double timings [16] ;
+ 
+ #if LG_SUITESPARSE_GRAPHBLAS_V10
+diff --git a/LAGraph/experimental/benchmark/AllKCore_demo.c b/LAGraph/experimental/benchmark/AllKCore_demo.c
+index 4d877a5d04..63b03c7203 100644
+--- a/LAGraph/experimental/benchmark/AllKCore_demo.c
++++ b/LAGraph/experimental/benchmark/AllKCore_demo.c
+@@ -18,7 +18,10 @@
+ 
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define NTHREAD_LIST 2
+ 
+ #define NTHREAD_LIST 1
+@@ -145,3 +148,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/FastAssign_demo.c b/LAGraph/experimental/benchmark/FastAssign_demo.c
+index a4139d28bd..0914030da7 100644
+--- a/LAGraph/experimental/benchmark/FastAssign_demo.c
++++ b/LAGraph/experimental/benchmark/FastAssign_demo.c
+@@ -20,6 +20,10 @@
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+ // LG_FREE_ALL is required by LG_TRY
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                             \
+ {                                               \
+@@ -175,3 +179,7 @@ int main (int argc, char **argv)
+     return (GrB_NOT_IMPLEMENTED) ;
+     #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/Incidence_Matrix_demo.c b/LAGraph/experimental/benchmark/Incidence_Matrix_demo.c
+index 4d2bd74a52..af87cb7b6f 100644
+--- a/LAGraph/experimental/benchmark/Incidence_Matrix_demo.c
++++ b/LAGraph/experimental/benchmark/Incidence_Matrix_demo.c
+@@ -19,7 +19,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // LG_FREE_ALL is required by LG_TRY
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                             \
+@@ -138,3 +141,7 @@ int main (int argc, char **argv)
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/KCore_demo.c b/LAGraph/experimental/benchmark/KCore_demo.c
+index 66ef050096..761ede6102 100644
+--- a/LAGraph/experimental/benchmark/KCore_demo.c
++++ b/LAGraph/experimental/benchmark/KCore_demo.c
+@@ -19,7 +19,10 @@
+ 
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define NTHREAD_LIST 2
+ 
+ // #define NTHREAD_LIST 1
+@@ -146,3 +149,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/build_demo.c b/LAGraph/experimental/benchmark/build_demo.c
+index 4609f76047..af4c7fe972 100644
+--- a/LAGraph/experimental/benchmark/build_demo.c
++++ b/LAGraph/experimental/benchmark/build_demo.c
+@@ -23,7 +23,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // LG_FREE_ALL is required by LG_TRY
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                             \
+@@ -283,3 +286,7 @@ int main (int argc, char **argv)
+     return (GrB_SUCCESS) ;
+ }
+ 
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/colscale_demo.c b/LAGraph/experimental/benchmark/colscale_demo.c
+index 1085e0aee9..369da3be3e 100644
+--- a/LAGraph/experimental/benchmark/colscale_demo.c
++++ b/LAGraph/experimental/benchmark/colscale_demo.c
+@@ -1,7 +1,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define DEFAULT_SIZE 2000
+ #define DEFAULT_DENSITY 0.7
+ #define DEFAULT_SEED 42
+@@ -75,3 +78,7 @@ int main(int argc, char **argv)
+     LG_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/dnn_demo.c b/LAGraph/experimental/benchmark/dnn_demo.c
+index 12dbce2d26..ca10ee65b6 100644
+--- a/LAGraph/experimental/benchmark/dnn_demo.c
++++ b/LAGraph/experimental/benchmark/dnn_demo.c
+@@ -26,7 +26,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LG_XSTR(x) LG_STR(x)
+ #define LG_STR(x) #x
+ #define LG_SOURCE_DIR LG_XSTR (LGDIR)
+@@ -576,3 +579,7 @@ int main (int argc, char **argv)
+     printf ("all tests passed\n") ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/edgeBetweennessCentrality_demo.c b/LAGraph/experimental/benchmark/edgeBetweennessCentrality_demo.c
+index 07be2e52e8..aa2891df65 100644
+--- a/LAGraph/experimental/benchmark/edgeBetweennessCentrality_demo.c
++++ b/LAGraph/experimental/benchmark/edgeBetweennessCentrality_demo.c
+@@ -10,7 +10,10 @@
+ #include "LG_internal.h"
+ #include "LG_Xtest.h"
+ #include <stdio.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ double difference(GrB_Matrix bc, GrB_Matrix reference_bc)
+ {
+     GrB_Matrix diff = NULL ;
+@@ -165,3 +168,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg));
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/hdip_fiedler_demo.c b/LAGraph/experimental/benchmark/hdip_fiedler_demo.c
+index f4fc25c5ff..f8b227b1bc 100644
+--- a/LAGraph/experimental/benchmark/hdip_fiedler_demo.c
++++ b/LAGraph/experimental/benchmark/hdip_fiedler_demo.c
+@@ -14,7 +14,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ float difference (GrB_Vector centrality, double *matlab_result) ;
+ 
+ float difference (GrB_Vector centrality, double *matlab_result)
+@@ -445,3 +448,7 @@ int main(int argc, char **argv)
+     LG_TRY(LAGraph_Finalize(msg));
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/lcc_demo.c b/LAGraph/experimental/benchmark/lcc_demo.c
+index d29761bf84..fa22c7a78c 100644
+--- a/LAGraph/experimental/benchmark/lcc_demo.c
++++ b/LAGraph/experimental/benchmark/lcc_demo.c
+@@ -24,7 +24,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define NTHREAD_LIST 1
+ #define THREAD_LIST 0
+ 
+@@ -162,3 +165,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/matching_demo.c b/LAGraph/experimental/benchmark/matching_demo.c
+index 3b7a240c7e..1658d209ad 100644
+--- a/LAGraph/experimental/benchmark/matching_demo.c
++++ b/LAGraph/experimental/benchmark/matching_demo.c
+@@ -35,7 +35,10 @@ NOTE: When complete, prints out the matching vector and E matrix of the input gr
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define VERBOSE
+ 
+ #define NTHREAD_LIST 1
+@@ -272,3 +275,7 @@ int main (int argc, char** argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/mcl_demo.c b/LAGraph/experimental/benchmark/mcl_demo.c
+index 63e97dbeaf..cb0a39c89e 100644
+--- a/LAGraph/experimental/benchmark/mcl_demo.c
++++ b/LAGraph/experimental/benchmark/mcl_demo.c
+@@ -22,7 +22,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define NTHREAD_LIST 1
+ #define THREAD_LIST 0
+ 
+@@ -142,3 +145,7 @@ int main(int argc, char **argv)
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/multisourcebfs_demo.c b/LAGraph/experimental/benchmark/multisourcebfs_demo.c
+index bf3d02dab7..76ca62e43c 100644
+--- a/LAGraph/experimental/benchmark/multisourcebfs_demo.c
++++ b/LAGraph/experimental/benchmark/multisourcebfs_demo.c
+@@ -29,7 +29,10 @@
+ //
+ #include "LAGraphX.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                             \
+ {                                               \
+@@ -146,4 +149,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/peer_pressure_demo.c b/LAGraph/experimental/benchmark/peer_pressure_demo.c
+index 57bc6de9b8..e86dd618f1 100644
+--- a/LAGraph/experimental/benchmark/peer_pressure_demo.c
++++ b/LAGraph/experimental/benchmark/peer_pressure_demo.c
+@@ -23,7 +23,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LG_FREE_ALL                                                            \
+     {                                                                          \
+         LAGraph_Delete(&G, NULL);                                              \
+@@ -142,3 +145,7 @@ int main(int argc, char **argv)
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/rowscale_demo.c b/LAGraph/experimental/benchmark/rowscale_demo.c
+index 23dc23384d..c5436f50f2 100644
+--- a/LAGraph/experimental/benchmark/rowscale_demo.c
++++ b/LAGraph/experimental/benchmark/rowscale_demo.c
+@@ -1,7 +1,10 @@
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define DEFAULT_SIZE 2000
+ #define DEFAULT_DENSITY 0.7
+ #define DEFAULT_SEED 42
+@@ -79,3 +82,7 @@ int main(int argc, char **argv)
+     LG_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/scc_demo.c b/LAGraph/experimental/benchmark/scc_demo.c
+index 9156e468c6..f4fa2b033f 100644
+--- a/LAGraph/experimental/benchmark/scc_demo.c
++++ b/LAGraph/experimental/benchmark/scc_demo.c
+@@ -23,7 +23,10 @@
+ #include "LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_alg_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                 \
+ {                                   \
+@@ -194,3 +197,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/benchmark/tcc_demo.c b/LAGraph/experimental/benchmark/tcc_demo.c
+index a0165d5d62..667ad9957c 100644
+--- a/LAGraph/experimental/benchmark/tcc_demo.c
++++ b/LAGraph/experimental/benchmark/tcc_demo.c
+@@ -21,7 +21,10 @@
+ 
+ #include "../../src/benchmark/LAGraph_demo.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #define NTHREAD_LIST 2
+ 
+ #define NTHREAD_LIST 1
+@@ -155,3 +158,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_RCC.c b/LAGraph/experimental/test/LG_check_RCC.c
+index 3a9da8ad81..a3e3882933 100644
+--- a/LAGraph/experimental/test/LG_check_RCC.c
++++ b/LAGraph/experimental/test/LG_check_RCC.c
+@@ -19,7 +19,10 @@
+ #include "LG_internal.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef LG_FREE_WORK
+ #undef LG_FREE_ALL
+ 
+@@ -270,3 +273,7 @@ int LG_check_rcc
+     #endif
+ }
+ #undef TIMINGS
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_coarsen.c b/LAGraph/experimental/test/LG_check_coarsen.c
+index 1e4ecdcc80..d4629a0c89 100644
+--- a/LAGraph/experimental/test/LG_check_coarsen.c
++++ b/LAGraph/experimental/test/LG_check_coarsen.c
+@@ -29,7 +29,10 @@
+ #include "LG_test.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // #undef LG_FREE_ALL
+ // #undef LG_FREE_WORK
+ 
+@@ -186,3 +189,7 @@ int LG_check_coarsen
+ 
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_coloring.c b/LAGraph/experimental/test/LG_check_coloring.c
+index 1ee2c1be79..a1a26c596e 100644
+--- a/LAGraph/experimental/test/LG_check_coloring.c
++++ b/LAGraph/experimental/test/LG_check_coloring.c
+@@ -4,7 +4,10 @@
+ #include "LG_internal.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_WORK
+ #define LG_FREE_WORK                            \
+ {                                               \
+@@ -90,3 +93,7 @@ int LG_check_coloring
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_edgeBetweennessCentrality.c b/LAGraph/experimental/test/LG_check_edgeBetweennessCentrality.c
+index c67c977a1d..d2d525d4cf 100644
+--- a/LAGraph/experimental/test/LG_check_edgeBetweennessCentrality.c
++++ b/LAGraph/experimental/test/LG_check_edgeBetweennessCentrality.c
+@@ -46,7 +46,10 @@
+ #include "LG_internal.h"
+ #include <LAGraphX.h>
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ 
+ //------------------------------------------------------------------------------
+ // test the results from a Edge Betweenness Centrality
+@@ -392,3 +395,7 @@ GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_flow.c b/LAGraph/experimental/test/LG_check_flow.c
+index 8c6adbe643..377c93ea9c 100644
+--- a/LAGraph/experimental/test/LG_check_flow.c
++++ b/LAGraph/experimental/test/LG_check_flow.c
+@@ -1,7 +1,10 @@
+ 
+ #include "LG_internal.h"
+ #include <LG_Xtest.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef LG_FREE_ALL
+ #undef LG_FREE_WORK
+ 
+@@ -36,3 +39,7 @@ int LG_check_flow(const GrB_Matrix flow_mtx, char* msg)
+   LG_FREE_WORK ;
+   return GrB_SUCCESS;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_kcore.c b/LAGraph/experimental/test/LG_check_kcore.c
+index 8ceb905abf..002c90cff5 100644
+--- a/LAGraph/experimental/test/LG_check_kcore.c
++++ b/LAGraph/experimental/test/LG_check_kcore.c
+@@ -33,7 +33,10 @@
+ #include "LG_internal.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LG_check_kcore
+ (
+     // outputs:
+@@ -179,3 +182,7 @@ int LG_check_kcore
+     GRB_TRY (GrB_Vector_wait(*decomp, GrB_MATERIALIZE));
+     return (GrB_SUCCESS);
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_kcoredecompose.c b/LAGraph/experimental/test/LG_check_kcoredecompose.c
+index 6f4bf4a49d..7127c30814 100644
+--- a/LAGraph/experimental/test/LG_check_kcoredecompose.c
++++ b/LAGraph/experimental/test/LG_check_kcoredecompose.c
+@@ -40,7 +40,10 @@
+ #include "LG_internal.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LG_check_kcore_decompose
+ (
+     // outputs:
+@@ -119,4 +122,7 @@ int LG_check_kcore_decompose
+     GRB_TRY (GrB_Matrix_wait(*D, GrB_MATERIALIZE));
+     return (GrB_SUCCESS);
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/test/LG_check_ktruss.c b/LAGraph/experimental/test/LG_check_ktruss.c
+index e5dfb33e8e..df1cef9cbc 100644
+--- a/LAGraph/experimental/test/LG_check_ktruss.c
++++ b/LAGraph/experimental/test/LG_check_ktruss.c
+@@ -36,7 +36,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LG_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LG_check_ktruss
+ (
+     // output
+@@ -178,3 +181,7 @@ int LG_check_ktruss
+         GRB_TRY (GrB_free (&C)) ;
+     }
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_lcc.c b/LAGraph/experimental/test/LG_check_lcc.c
+index 8762c1fc6c..6f2371fd38 100644
+--- a/LAGraph/experimental/test/LG_check_lcc.c
++++ b/LAGraph/experimental/test/LG_check_lcc.c
+@@ -38,7 +38,10 @@
+ #include "LG_test.h"
+ #include "LG_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // assumes that the indices array is sorted
+ GrB_Index find(const GrB_Index* indices, GrB_Index n, GrB_Index index) {
+     GrB_Index i = 0, j = n, h;
+@@ -199,3 +202,7 @@ int LG_check_lcc(
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/LG_check_mis.c b/LAGraph/experimental/test/LG_check_mis.c
+index 9519fdd191..a204ce5aca 100644
+--- a/LAGraph/experimental/test/LG_check_mis.c
++++ b/LAGraph/experimental/test/LG_check_mis.c
+@@ -29,7 +29,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LG_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LG_check_mis        // check if iset is a valid MIS of A
+ (
+     GrB_Matrix A,
+@@ -125,3 +128,7 @@ int LG_check_mis        // check if iset is a valid MIS of A
+     printf ("\n") ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_AllKCore.c b/LAGraph/experimental/test/test_AllKCore.c
+index 17322f96ef..aef715c749 100644
+--- a/LAGraph/experimental/test/test_AllKCore.c
++++ b/LAGraph/experimental/test/test_AllKCore.c
+@@ -186,3 +186,7 @@ TEST_LIST = {
+     {"AllKCore_errors", test_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_AllKtruss.c b/LAGraph/experimental/test/test_AllKtruss.c
+index 327b9f039c..558abfbe64 100644
+--- a/LAGraph/experimental/test/test_AllKtruss.c
++++ b/LAGraph/experimental/test/test_AllKtruss.c
+@@ -21,7 +21,10 @@
+ #include "LAGraphX.h"
+ #include "LAGraph_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -261,3 +264,7 @@ TEST_LIST = {
+     {"allktruss_errors", test_allktruss_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_BF.c b/LAGraph/experimental/test/test_BF.c
+index 76dbd5d444..a80476be88 100644
+--- a/LAGraph/experimental/test/test_BF.c
++++ b/LAGraph/experimental/test/test_BF.c
+@@ -20,7 +20,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include <LG_Xtest.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // globals
+ //------------------------------------------------------------------------------
+@@ -513,3 +516,7 @@ TEST_LIST =
+     { "test_BF", test_BF },
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_CFL_reachability.c b/LAGraph/experimental/test/test_CFL_reachability.c
+index d7d77c0041..2f906af4b5 100644
+--- a/LAGraph/experimental/test/test_CFL_reachability.c
++++ b/LAGraph/experimental/test/test_CFL_reachability.c
+@@ -16,7 +16,10 @@
+ #include <LG_test.h>
+ #include <acutest.h>
+ #include <stdio.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define run_algorithm()                                                                  \
+     LAGraph_CFL_reachability(outputs, adj_matrices, grammar.terms_count,                 \
+                              grammar.nonterms_count, grammar.rules, grammar.rules_count, \
+@@ -677,3 +680,7 @@ TEST_LIST = {{"CFL_reachability_complex_grammar", test_CFL_reachability_complex_
+              #endif
+              {NULL, NULL}};
+ 
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_Coarsen_Matching.c b/LAGraph/experimental/test/test_Coarsen_Matching.c
+index 6ccc9dbe9e..a4f74fa89c 100644
+--- a/LAGraph/experimental/test/test_Coarsen_Matching.c
++++ b/LAGraph/experimental/test/test_Coarsen_Matching.c
+@@ -26,7 +26,10 @@ matrices using specified configurations and seeds with LAGraph_Random_Matrix
+ #include "LAGraph_test.h"
+ #include "LG_Xtest.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ 
+ GrB_Matrix A = NULL, A_coarse_LAGraph = NULL, A_coarse_naive = NULL ;
+@@ -339,3 +342,7 @@ TEST_LIST = {
+     {"Coarsen_Matching_NullInputs", test_Coarsen_Matching_NullInputs},
+     {NULL, NULL}
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_FastGraphletTransform.c b/LAGraph/experimental/test/test_FastGraphletTransform.c
+index 7b35c0c144..b83b256ea1 100644
+--- a/LAGraph/experimental/test/test_FastGraphletTransform.c
++++ b/LAGraph/experimental/test/test_FastGraphletTransform.c
+@@ -20,7 +20,10 @@
+ #include <LG_test.h>
+ 
+ #include <graph_zachary_karate.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg[LAGRAPH_MSG_LEN];
+ LAGraph_Graph G = NULL;
+ 
+@@ -174,3 +177,7 @@ TEST_LIST = {
+     {"FastGraphletTransform", test_FastGraphletTransform},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_Fiedler.c b/LAGraph/experimental/test/test_Fiedler.c
+index 1faa770547..f85c7ae204 100644
+--- a/LAGraph/experimental/test/test_Fiedler.c
++++ b/LAGraph/experimental/test/test_Fiedler.c
+@@ -15,7 +15,10 @@
+ #include <LAGraph_test.h>
+ #include "LG_Xtest.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ typedef struct
+ {
+     const char *name ;
+@@ -380,4 +383,7 @@ TEST_LIST = {
+     {"Fieder", test_fiedler},
+     {NULL, NULL}
+ } ;
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/test/test_HITS.c b/LAGraph/experimental/test/test_HITS.c
+index ce94447aab..c53140cb9b 100644
+--- a/LAGraph/experimental/test/test_HITS.c
++++ b/LAGraph/experimental/test/test_HITS.c
+@@ -6,7 +6,10 @@
+ #include <acutest.h>
+ #include "LAGraphX.h"
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LEN 512
+ char msg[LAGRAPH_MSG_LEN];
+ char filename[LEN + 1];
+@@ -348,3 +351,7 @@ TEST_LIST = {
+     {NULL, NULL}
+ };
+ 
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_KTruss.c b/LAGraph/experimental/test/test_KTruss.c
+index 21d51608b2..e0f6523197 100644
+--- a/LAGraph/experimental/test/test_KTruss.c
++++ b/LAGraph/experimental/test/test_KTruss.c
+@@ -21,7 +21,10 @@
+ #include "LAGraphX.h"
+ #include "LAGraph_test.h"
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -204,3 +207,7 @@ TEST_LIST = {
+     {"ktruss_errors", test_ktruss_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_MaximalIndependentSet.c b/LAGraph/experimental/test/test_MaximalIndependentSet.c
+index b6722250eb..32e785ff93 100644
+--- a/LAGraph/experimental/test/test_MaximalIndependentSet.c
++++ b/LAGraph/experimental/test/test_MaximalIndependentSet.c
+@@ -20,7 +20,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include <LG_Xtest.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // test cases
+ //------------------------------------------------------------------------------
+@@ -248,3 +251,7 @@ TEST_LIST =
+     { "MIS", test_MIS },
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_MaximalMatching.c b/LAGraph/experimental/test/test_MaximalMatching.c
+index da5dd2913f..e9ae4d3670 100644
+--- a/LAGraph/experimental/test/test_MaximalMatching.c
++++ b/LAGraph/experimental/test/test_MaximalMatching.c
+@@ -26,7 +26,10 @@ matrices using specified configurations and seeds with LAGraph_Random_Matrix
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include <LG_Xtest.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ GrB_Vector matching = NULL , weight = NULL, node_degree = NULL, hop_nodes = NULL, hop_edges = NULL ;
+ GrB_Matrix A = NULL, E = NULL, E_t = NULL ;
+ LAGraph_Graph G = NULL ;
+@@ -276,3 +279,7 @@ TEST_LIST = {
+     { "MaximalMatchingErrors", test_MaximalMatchingErrors },
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_PageRankGX.c b/LAGraph/experimental/test/test_PageRankGX.c
+index 05b32c8835..698521d489 100644
+--- a/LAGraph/experimental/test/test_PageRankGX.c
++++ b/LAGraph/experimental/test/test_PageRankGX.c
+@@ -21,7 +21,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LEN 512
+ char msg [LAGRAPH_MSG_LEN] ;
+ char filename [LEN+1] ;
+@@ -338,3 +341,7 @@ TEST_LIST = {
+     {"test_ranker", test_ranker},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_RegularPathQuery.c b/LAGraph/experimental/test/test_RegularPathQuery.c
+index f5e04c20a3..bd4607ad1f 100644
+--- a/LAGraph/experimental/test/test_RegularPathQuery.c
++++ b/LAGraph/experimental/test/test_RegularPathQuery.c
+@@ -4,7 +4,10 @@
+ #include <LG_test.h>
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LEN 512
+ #define MAX_LABELS 3
+ #define MAX_RESULTS 2000000
+@@ -227,3 +230,7 @@ TEST_LIST = {
+     {"RegularPathQueryBasic", test_RegularPathQueryBasic},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_RichClubCoefficient.c b/LAGraph/experimental/test/test_RichClubCoefficient.c
+index 63866fb4d3..04a9f237b9 100644
+--- a/LAGraph/experimental/test/test_RichClubCoefficient.c
++++ b/LAGraph/experimental/test/test_RichClubCoefficient.c
+@@ -22,7 +22,10 @@
+ #include <LAGraph_test.h>
+ #include <LG_Xtest.h>
+ #include <LG_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ 
+ GrB_Matrix A = NULL, C = NULL;
+@@ -402,3 +405,7 @@ TEST_LIST =
+     #endif
+     {NULL, NULL}
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_SWrite.c b/LAGraph/experimental/test/test_SWrite.c
+index 97cd4685a4..e485456b1e 100644
+--- a/LAGraph/experimental/test/test_SWrite.c
++++ b/LAGraph/experimental/test/test_SWrite.c
+@@ -20,7 +20,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -350,3 +353,7 @@ TEST_LIST = {
+     {"SWrite_errors", test_SWrite_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_TriangleCentrality.c b/LAGraph/experimental/test/test_TriangleCentrality.c
+index 8bc888c619..eeb876594e 100644
+--- a/LAGraph/experimental/test/test_TriangleCentrality.c
++++ b/LAGraph/experimental/test/test_TriangleCentrality.c
+@@ -21,7 +21,10 @@
+ 
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -188,3 +191,7 @@ TEST_LIST = {
+     {"TriangleCentrality_errors", test_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_argminmax.c b/LAGraph/experimental/test/test_argminmax.c
+index faa53e65dc..7e812af93c 100644
+--- a/LAGraph/experimental/test/test_argminmax.c
++++ b/LAGraph/experimental/test/test_argminmax.c
+@@ -23,7 +23,10 @@
+ #include <LG_test.h>
+ #include <LAGraph.h>
+ #include <LG_internal.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ 
+ #define LEN 512
+@@ -202,4 +205,7 @@ TEST_LIST =
+     {"argminmax_errors", test_argminmax_errors},
+     {NULL, NULL}
+ } ;
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/test/test_diameter.c b/LAGraph/experimental/test/test_diameter.c
+index 26eae21f2c..c5d1fa15e7 100644
+--- a/LAGraph/experimental/test/test_diameter.c
++++ b/LAGraph/experimental/test/test_diameter.c
+@@ -23,7 +23,10 @@
+ 
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -249,4 +252,7 @@ TEST_LIST = {
+     {"diameter_errors", test_errors},
+     {NULL, NULL}
+ } ;
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/test/test_dnn.c b/LAGraph/experimental/test/test_dnn.c
+index f7004ba9fb..5b6744a4a7 100644
+--- a/LAGraph/experimental/test/test_dnn.c
++++ b/LAGraph/experimental/test/test_dnn.c
+@@ -21,7 +21,10 @@
+ #include "LAGraph_test.h"
+ #include "LG_Xtest.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ 
+ //------------------------------------------------------------------------------
+@@ -199,3 +202,7 @@ TEST_LIST = {
+     {"DNN", test_dnn},
+     {NULL, NULL}
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_edgeBetweennessCentrality.c b/LAGraph/experimental/test/test_edgeBetweennessCentrality.c
+index c1bfa6868e..fbf5c4bf59 100644
+--- a/LAGraph/experimental/test/test_edgeBetweennessCentrality.c
++++ b/LAGraph/experimental/test/test_edgeBetweennessCentrality.c
+@@ -23,7 +23,10 @@
+ #include "LAGraph_test.h"
+ #include "LG_Xtest.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LEN 512
+ char msg [LAGRAPH_MSG_LEN] ;
+ char filename [LEN+1] ;
+@@ -686,3 +689,7 @@ TEST_LIST = {
+     {"test_no_sources", test_no_sources},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_lcc.c b/LAGraph/experimental/test/test_lcc.c
+index 13df5af543..cfa46d13c4 100644
+--- a/LAGraph/experimental/test/test_lcc.c
++++ b/LAGraph/experimental/test/test_lcc.c
+@@ -21,7 +21,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include "LG_Xtest.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -160,3 +163,7 @@ TEST_LIST = {
+     {"lcc_errors", test_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_mcl.c b/LAGraph/experimental/test/test_mcl.c
+index 7098873174..ca256226ac 100644
+--- a/LAGraph/experimental/test/test_mcl.c
++++ b/LAGraph/experimental/test/test_mcl.c
+@@ -21,7 +21,10 @@
+ #include "LG_Xtest.h"
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg[LAGRAPH_MSG_LEN];
+ 
+ LAGraph_Graph G = NULL;
+@@ -189,3 +192,7 @@ void test_errors(void)
+ TEST_LIST = {{"mcl", test_mcl},
+              {"mcl_errors", test_errors},
+              {NULL, NULL}};
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_msf.c b/LAGraph/experimental/test/test_msf.c
+index 2a84cf77be..8237324610 100644
+--- a/LAGraph/experimental/test/test_msf.c
++++ b/LAGraph/experimental/test/test_msf.c
+@@ -23,7 +23,10 @@
+ 
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL, G_C = NULL;
+ GrB_Matrix A = NULL ;
+@@ -296,3 +299,7 @@ TEST_LIST = {
+     {"msf_errors", test_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/test/test_mxm.c b/LAGraph/experimental/test/test_mxm.c
+index 1d3c21c8bb..778be1b39b 100644
+--- a/LAGraph/experimental/test/test_mxm.c
++++ b/LAGraph/experimental/test/test_mxm.c
+@@ -20,7 +20,10 @@
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+ #include <LG_Xtest.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // test cases
+ //------------------------------------------------------------------------------
+@@ -122,4 +125,7 @@ TEST_LIST =
+     { "mxm", test_mxm },
+     { NULL, NULL }
+ } ;
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/experimental/test/test_scc.c b/LAGraph/experimental/test/test_scc.c
+index 6d45679646..46acaf3b48 100644
+--- a/LAGraph/experimental/test/test_scc.c
++++ b/LAGraph/experimental/test/test_scc.c
+@@ -23,7 +23,10 @@
+ 
+ #include <LAGraphX.h>
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ GrB_Matrix A = NULL ;
+@@ -217,3 +220,7 @@ TEST_LIST = {
+     {"scc_errors", test_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_FastAssign.c b/LAGraph/experimental/utility/LAGraph_FastAssign.c
+index 363bd701c5..6d9b850a76 100644
+--- a/LAGraph/experimental/utility/LAGraph_FastAssign.c
++++ b/LAGraph/experimental/utility/LAGraph_FastAssign.c
+@@ -59,6 +59,11 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++
+ #if LG_SUITESPARSE_GRAPHBLAS_V10
+ 
+ // Uncomment if you would like to use the monoid version of FastAssign.
+@@ -263,3 +268,7 @@ int LAGraph_FastAssign_Semiring
+     return (GrB_SUCCESS) ;
+ }
+ #endif
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_Incidence_Matrix.c b/LAGraph/experimental/utility/LAGraph_Incidence_Matrix.c
+index 7e83375249..4871d0ecb9 100644
+--- a/LAGraph/experimental/utility/LAGraph_Incidence_Matrix.c
++++ b/LAGraph/experimental/utility/LAGraph_Incidence_Matrix.c
+@@ -36,7 +36,10 @@ Note that complex types are NOT supported.
+ 
+ #define LOADTRICKIM
+ //#define dbg
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef LG_FREE_ALL
+ #define LG_FREE_ALL                                           \
+ {                                                             \
+@@ -282,3 +285,7 @@ int LAGraph_Incidence_Matrix
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_Matrix_Hash.c b/LAGraph/experimental/utility/LAGraph_Matrix_Hash.c
+index 29411ef359..356c2ea594 100644
+--- a/LAGraph/experimental/utility/LAGraph_Matrix_Hash.c
++++ b/LAGraph/experimental/utility/LAGraph_Matrix_Hash.c
+@@ -18,7 +18,10 @@
+ #include "LG_internal.h"
+ #include <LAGraph.h>
+ #include <LAGraphX.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef LG_FREE_ALL
+ #define LG_FREE_ALL               \
+ {                                 \
+@@ -92,3 +95,7 @@ GrB_Info LAGraph_Hash_Vector(
+     return GrB_NOT_IMPLEMENTED;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_Random_Matrix.c b/LAGraph/experimental/utility/LAGraph_Random_Matrix.c
+index d1401ee79f..cce4b2eca8 100644
+--- a/LAGraph/experimental/utility/LAGraph_Random_Matrix.c
++++ b/LAGraph/experimental/utility/LAGraph_Random_Matrix.c
+@@ -47,7 +47,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // uncomment these to test vanilla case for just this file:
+ // #undef LAGRAPH_SUITESPARSE
+ // #define LAGRAPH_SUITESPARSE 0
+@@ -451,3 +454,7 @@ GrB_Info LAGraph_Random_Matrix    // random matrix of any built-in type
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_SLoadSet.c b/LAGraph/experimental/utility/LAGraph_SLoadSet.c
+index e160854154..ada966230a 100644
+--- a/LAGraph/experimental/utility/LAGraph_SLoadSet.c
++++ b/LAGraph/experimental/utility/LAGraph_SLoadSet.c
+@@ -46,7 +46,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_SLoadSet
+ //------------------------------------------------------------------------------
+@@ -172,3 +175,7 @@ printf ("MATRIX KIND\n") ;
+     (*nmatrices_handle) = nmatrices ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_SRead.c b/LAGraph/experimental/utility/LAGraph_SRead.c
+index c431083bb0..936eb329a2 100644
+--- a/LAGraph/experimental/utility/LAGraph_SRead.c
++++ b/LAGraph/experimental/utility/LAGraph_SRead.c
+@@ -30,7 +30,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // json.h: JSON parser
+ //------------------------------------------------------------------------------
+@@ -372,3 +375,7 @@ int LAGraph_SRead   // read a set of matrices from a *.lagraph file
+     (*ncontents_handle) = ncontents ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_SSaveSet.c b/LAGraph/experimental/utility/LAGraph_SSaveSet.c
+index 74578d663c..7f83fc9d2a 100644
+--- a/LAGraph/experimental/utility/LAGraph_SSaveSet.c
++++ b/LAGraph/experimental/utility/LAGraph_SSaveSet.c
+@@ -42,7 +42,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_SSaveSet
+ //------------------------------------------------------------------------------
+@@ -137,3 +140,7 @@ int LAGraph_SSaveSet            // save a set of matrices from a *.lagraph file
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/experimental/utility/LAGraph_SWrite.c b/LAGraph/experimental/utility/LAGraph_SWrite.c
+index 1fc0307dd1..738ed23c5a 100644
+--- a/LAGraph/experimental/utility/LAGraph_SWrite.c
++++ b/LAGraph/experimental/utility/LAGraph_SWrite.c
+@@ -17,7 +17,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define FPRINT(params)                                  \
+ {                                                       \
+     int result = fprintf params ;                       \
+@@ -170,3 +173,7 @@ int LAGraph_SWrite_Item  // write the serialized blob of a matrix/vector/text
+         "file not written properly") ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LAGr_Betweenness.c b/LAGraph/src/algorithm/LAGr_Betweenness.c
+index d95aec36f7..7aa8a079cd 100644
+--- a/LAGraph/src/algorithm/LAGr_Betweenness.c
++++ b/LAGraph/src/algorithm/LAGr_Betweenness.c
+@@ -78,6 +78,11 @@
+ 
+ #include "LG_internal.h"
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++
+ //------------------------------------------------------------------------------
+ // LAGr_Betweenness: vertex betweenness-centrality
+ //------------------------------------------------------------------------------
+@@ -309,3 +314,7 @@ int LAGr_Betweenness
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LAGr_PageRank.c b/LAGraph/src/algorithm/LAGr_PageRank.c
+index c9eff55dcd..3bd8c3c2da 100644
+--- a/LAGraph/src/algorithm/LAGr_PageRank.c
++++ b/LAGraph/src/algorithm/LAGr_PageRank.c
+@@ -47,7 +47,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_PageRank
+ (
+     // output:
+@@ -183,3 +186,7 @@ int LAGr_PageRank
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LAGr_PageRankGAP.c b/LAGraph/src/algorithm/LAGr_PageRankGAP.c
+index 7aea1aaa52..cfee39d0b5 100644
+--- a/LAGraph/src/algorithm/LAGr_PageRankGAP.c
++++ b/LAGraph/src/algorithm/LAGr_PageRankGAP.c
+@@ -62,6 +62,10 @@ int LAGr_PageRankGAP
+ )
+ {
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+     //--------------------------------------------------------------------------
+     // check inputs
+     //--------------------------------------------------------------------------
+@@ -141,7 +145,10 @@ int LAGr_PageRankGAP
+         // rdiff = sum (t)
+         GRB_TRY (GrB_reduce (&rdiff, NULL, GrB_PLUS_MONOID_FP32, t, NULL)) ;
+     }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+     //--------------------------------------------------------------------------
+     // free workspace and return result
+     //--------------------------------------------------------------------------
+diff --git a/LAGraph/src/algorithm/LAGr_SingleSourceShortestPath.c b/LAGraph/src/algorithm/LAGr_SingleSourceShortestPath.c
+index 88c027e3e6..2e34353536 100644
+--- a/LAGraph/src/algorithm/LAGr_SingleSourceShortestPath.c
++++ b/LAGraph/src/algorithm/LAGr_SingleSourceShortestPath.c
+@@ -59,7 +59,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define setelement(s, k)                                                      \
+ {                                                                             \
+     switch (tcode)                                                            \
+@@ -413,3 +416,7 @@ int LAGr_SingleSourceShortestPath
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LAGr_TriangleCount.c b/LAGraph/src/algorithm/LAGr_TriangleCount.c
+index 2eca7e725a..4449e416b7 100644
+--- a/LAGraph/src/algorithm/LAGr_TriangleCount.c
++++ b/LAGraph/src/algorithm/LAGr_TriangleCount.c
+@@ -65,7 +65,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // tricount_prep: construct L and U for LAGr_TriangleCount
+ //------------------------------------------------------------------------------
+@@ -360,3 +363,7 @@ int LAGr_TriangleCount
+     (*ntriangles) = (uint64_t) ntri ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LAGraph_TriangleCount.c b/LAGraph/src/algorithm/LAGraph_TriangleCount.c
+index fb7d6597a1..e0cbc58405 100644
+--- a/LAGraph/src/algorithm/LAGraph_TriangleCount.c
++++ b/LAGraph/src/algorithm/LAGraph_TriangleCount.c
+@@ -23,7 +23,10 @@
+ #include <LAGraph.h>
+ #include "LG_internal.h"
+ #include "LG_alg_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // Pick the default method with auto presort.  Compute G->nself_edges, and
+ // G->out_degree if needed.  Determine if G->A is symmetric, if not known.
+ 
+@@ -44,3 +47,7 @@ int LAGraph_TriangleCount
+     // auto method and auto sort
+     return (LAGr_TriangleCount (ntriangles, G, NULL, NULL, msg)) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LG_CC_Boruvka.c b/LAGraph/src/algorithm/LG_CC_Boruvka.c
+index 5e471849ba..72b9e041da 100644
+--- a/LAGraph/src/algorithm/LG_CC_Boruvka.c
++++ b/LAGraph/src/algorithm/LG_CC_Boruvka.c
+@@ -28,7 +28,10 @@
+ #include <stdint.h>
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // Reduce_assign
+ //------------------------------------------------------------------------------
+@@ -283,4 +286,7 @@ int LG_CC_Boruvka
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/src/algorithm/LG_CC_FastSV6.c b/LAGraph/src/algorithm/LG_CC_FastSV6.c
+index 742a23d6bd..044f4a96d3 100644
+--- a/LAGraph/src/algorithm/LG_CC_FastSV6.c
++++ b/LAGraph/src/algorithm/LG_CC_FastSV6.c
+@@ -54,7 +54,10 @@
+ 
+ #define LG_FREE_ALL ;
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if LAGRAPH_SUITESPARSE
+ 
+ //==============================================================================
+@@ -756,3 +759,7 @@ int LG_CC_FastSV6           // SuiteSparse:GraphBLAS method, with GxB extensions
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/LG_CC_FastSV7.c b/LAGraph/src/algorithm/LG_CC_FastSV7.c
+index 446df348de..973ceb7c13 100644
+--- a/LAGraph/src/algorithm/LG_CC_FastSV7.c
++++ b/LAGraph/src/algorithm/LG_CC_FastSV7.c
+@@ -55,7 +55,10 @@
+ #include "LG_internal.h"
+ 
+ static double timings [16] ;
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if LG_SUITESPARSE_GRAPHBLAS_V10
+ 
+ //==============================================================================
+@@ -940,3 +943,7 @@ int LG_CC_FastSV7           // SuiteSparse:GraphBLAS method, with GraphBLAS v10
+     LG_ASSERT (false, GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_SSGrB_template.c b/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_SSGrB_template.c
+index d0ede6c992..aeb104734b 100644
+--- a/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_SSGrB_template.c
++++ b/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_SSGrB_template.c
+@@ -47,7 +47,10 @@
+ }
+ 
+ #include "LG_alg_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #ifdef LG_BFS_EXTENDED
+ int LG_BreadthFirstSearch_SSGrB_Extended
+ (
+@@ -353,3 +356,7 @@ int LG_BreadthFirstSearch_SSGrB
+     return (GrB_NOT_IMPLEMENTED) ;
+ #endif
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_vanilla_template.c b/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_vanilla_template.c
+index bdc2c86e0f..91b36d6e6d 100644
+--- a/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_vanilla_template.c
++++ b/LAGraph/src/algorithm/template/LG_BreadthFirstSearch_vanilla_template.c
+@@ -32,7 +32,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #ifdef LG_BFS_EXTENDED
+ int LG_BreadthFirstSearch_vanilla_Extended
+ (
+@@ -207,3 +210,7 @@ int LG_BreadthFirstSearch_vanilla
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/LAGraph_demo.h b/LAGraph/src/benchmark/LAGraph_demo.h
+index d96c1161d8..d6fc666d15 100644
+--- a/LAGraph/src/benchmark/LAGraph_demo.h
++++ b/LAGraph/src/benchmark/LAGraph_demo.h
+@@ -21,7 +21,10 @@
+ #include <LAGraph.h>
+ #include <LG_test.h>
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #if defined ( __linux__ )
+ // for mallopt
+ #include <malloc.h>
+@@ -1166,3 +1169,7 @@ static inline int demo_init (bool burble)
+ 
+ #undef  LG_FREE_ALL
+ #endif
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/bc_demo.c b/LAGraph/src/benchmark/bc_demo.c
+index 843678de3c..a8db594d10 100644
+--- a/LAGraph/src/benchmark/bc_demo.c
++++ b/LAGraph/src/benchmark/bc_demo.c
+@@ -20,7 +20,10 @@
+ // bc_demo matrixfile.mtx sourcenodes.mtx
+ 
+ #include "LAGraph_demo.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // NTHREAD_LIST and THREAD_LIST are used together to select the # of OpenMP
+ // threads to use in this demo.  If THREAD_LIST is zero, then the # of threads
+ // is chosen automatically.  Let p = omp_get_max_threads ( ).  Then if
+@@ -223,3 +226,7 @@ for (int nrepeat = 0 ; nrepeat <= 1 ; nrepeat++)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/bfs_demo.c b/LAGraph/src/benchmark/bfs_demo.c
+index dfaf66ef7f..86cc1461ac 100644
+--- a/LAGraph/src/benchmark/bfs_demo.c
++++ b/LAGraph/src/benchmark/bfs_demo.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_demo.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // to run just once, with p = omp_get_max_threads() threads
+ #define NTHREAD_LIST 1
+ #define THREAD_LIST 0
+@@ -318,3 +321,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/cc_demo.c b/LAGraph/src/benchmark/cc_demo.c
+index 1e9701028d..b8e9003b3e 100644
+--- a/LAGraph/src/benchmark/cc_demo.c
++++ b/LAGraph/src/benchmark/cc_demo.c
+@@ -23,7 +23,10 @@
+ #include "LAGraph_demo.h"
+ #include "LAGraphX.h"
+ #include "LG_alg_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL                 \
+ {                                   \
+@@ -374,3 +377,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/gappagerank_demo.c b/LAGraph/src/benchmark/gappagerank_demo.c
+index 1391257b0e..f4426b03e9 100644
+--- a/LAGraph/src/benchmark/gappagerank_demo.c
++++ b/LAGraph/src/benchmark/gappagerank_demo.c
+@@ -17,7 +17,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_demo.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // to run just once, with p = omp_get_max_threads() threads
+ #define NTHREAD_LIST 1
+ #define THREAD_LIST 0
+@@ -211,3 +214,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/benchmark/sssp_demo.c b/LAGraph/src/benchmark/sssp_demo.c
+index cba3d8b66f..733d0bc33e 100644
+--- a/LAGraph/src/benchmark/sssp_demo.c
++++ b/LAGraph/src/benchmark/sssp_demo.c
+@@ -21,7 +21,10 @@
+ // test_sssp matrix.grb sourcenodes.mtx delta
+ 
+ #include "LAGraph_demo.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ // to run just once, with p = omp_get_max_threads() threads
+ #define NTHREAD_LIST 1
+ #define THREAD_LIST 0
+@@ -216,3 +219,7 @@ int main (int argc, char **argv)
+     LAGRAPH_TRY (LAGraph_Finalize (msg)) ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/LG_check_export.c b/LAGraph/src/test/LG_check_export.c
+index 8b6dfaa653..212f880a0a 100644
+--- a/LAGraph/src/test/LG_check_export.c
++++ b/LAGraph/src/test/LG_check_export.c
+@@ -27,7 +27,10 @@
+ 
+ #include "LG_internal.h"
+ #include "LG_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LG_check_export
+ (
+     // input
+@@ -145,3 +148,7 @@ int LG_check_export
+ 
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_Betweenness.c b/LAGraph/src/test/test_Betweenness.c
+index 47c6765d47..0f44625bc2 100644
+--- a/LAGraph/src/test/test_Betweenness.c
++++ b/LAGraph/src/test/test_Betweenness.c
+@@ -19,7 +19,11 @@
+ #include <acutest.h>
+ 
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ #define LEN 512
+ char msg [LAGRAPH_MSG_LEN] ;
+ char filename [LEN+1] ;
+@@ -325,3 +329,7 @@ TEST_LIST = {
+     #endif
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_BreadthFirstSearch.c b/LAGraph/src/test/test_BreadthFirstSearch.c
+index a1f0763897..1c069722e6 100644
+--- a/LAGraph/src/test/test_BreadthFirstSearch.c
++++ b/LAGraph/src/test/test_BreadthFirstSearch.c
+@@ -24,7 +24,11 @@
+ #include <graph_zachary_karate.h>
+ #include "LG_alg_internal.h"
+ #include "LAGraphX.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ char msg[LAGRAPH_MSG_LEN];
+ LAGraph_Graph G = NULL;
+ 
+@@ -772,3 +776,7 @@ TEST_LIST = {
+     {"BreadthFirstSearch_Extended", test_BreadthFirstSearch_Extended},
+     {NULL, NULL}
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_Cached_Degree.c b/LAGraph/src/test/test_Cached_Degree.c
+index 6755dceda2..7a25e2259c 100644
+--- a/LAGraph/src/test/test_Cached_Degree.c
++++ b/LAGraph/src/test/test_Cached_Degree.c
+@@ -16,7 +16,11 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -367,3 +371,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_CheckGraph.c b/LAGraph/src/test/test_CheckGraph.c
+index 68edf1e6ed..a68273322e 100644
+--- a/LAGraph/src/test/test_CheckGraph.c
++++ b/LAGraph/src/test/test_CheckGraph.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -297,3 +300,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_ConnectedComponents.c b/LAGraph/src/test/test_ConnectedComponents.c
+index bcef55ec7f..e6c198692a 100644
+--- a/LAGraph/src/test/test_ConnectedComponents.c
++++ b/LAGraph/src/test/test_ConnectedComponents.c
+@@ -22,7 +22,10 @@
+ // also test LG_CC_FastSV5 and LAGraph_cc_lacc
+ #include "LAGraphX.h"
+ #include "LG_alg_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ #define LEN 512
+@@ -319,3 +322,7 @@ TEST_LIST = {
+     {"cc_errors", test_cc_errors},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_DeleteCached.c b/LAGraph/src/test/test_DeleteCached.c
+index ffa682e549..8a43af4028 100644
+--- a/LAGraph/src/test/test_DeleteCached.c
++++ b/LAGraph/src/test/test_DeleteCached.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -199,3 +202,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_DisplayGraph.c b/LAGraph/src/test/test_DisplayGraph.c
+index 2e0e714d24..c3d4c653c2 100644
+--- a/LAGraph/src/test/test_DisplayGraph.c
++++ b/LAGraph/src/test/test_DisplayGraph.c
+@@ -17,7 +17,11 @@
+ 
+ #include "LAGraph_test.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -300,3 +304,7 @@ TEST_LIST =
+     { "Graph_Print_failures", test_Graph_Print_failures },
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_Init_errors.c b/LAGraph/src/test/test_Init_errors.c
+index 56053b0091..e65bf1254f 100644
+--- a/LAGraph/src/test/test_Init_errors.c
++++ b/LAGraph/src/test/test_Init_errors.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -60,3 +63,7 @@ TEST_LIST =
+     // no brutal test: see test_Xinit
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_IsEqual.c b/LAGraph/src/test/test_IsEqual.c
+index 677de601f8..4f1cbee7a2 100644
+--- a/LAGraph/src/test/test_IsEqual.c
++++ b/LAGraph/src/test/test_IsEqual.c
+@@ -16,7 +16,11 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -450,3 +454,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_MMRead.c b/LAGraph/src/test/test_MMRead.c
+index 4471852279..b126062eea 100644
+--- a/LAGraph/src/test/test_MMRead.c
++++ b/LAGraph/src/test/test_MMRead.c
+@@ -17,7 +17,11 @@
+ 
+ #include "LAGraph_test.h"
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++// #unde
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -780,3 +784,7 @@ TEST_LIST =
+     { "array_pattern", test_array_pattern },
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_Malloc.c b/LAGraph/src/test/test_Malloc.c
+index 9b1c531944..3409435503 100644
+--- a/LAGraph/src/test/test_Malloc.c
++++ b/LAGraph/src/test/test_Malloc.c
+@@ -16,6 +16,10 @@
+ //-----------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ 
+ //-----------------------------------------------------------------------------
+@@ -119,3 +123,7 @@ TEST_LIST = {
+     // no brutal test needed
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_New.c b/LAGraph/src/test/test_New.c
+index 421e5dbb68..19f7f5eb4f 100644
+--- a/LAGraph/src/test/test_New.c
++++ b/LAGraph/src/test/test_New.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -187,3 +190,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_NumThreads.c b/LAGraph/src/test/test_NumThreads.c
+index 3373876665..5416c4a7d9 100644
+--- a/LAGraph/src/test/test_NumThreads.c
++++ b/LAGraph/src/test/test_NumThreads.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -75,3 +78,7 @@ TEST_LIST =
+     // no brutal test needed
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_PageRank.c b/LAGraph/src/test/test_PageRank.c
+index b0b8eb9b83..62ee77635c 100644
+--- a/LAGraph/src/test/test_PageRank.c
++++ b/LAGraph/src/test/test_PageRank.c
+@@ -19,7 +19,10 @@
+ #include <acutest.h>
+ 
+ #include <LAGraph_test.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #define LEN 512
+ char msg [LAGRAPH_MSG_LEN] ;
+ char filename [LEN+1] ;
+@@ -337,3 +340,7 @@ TEST_LIST = {
+     {"test_ranker", test_ranker},
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_SingleSourceShortestPath.c b/LAGraph/src/test/test_SingleSourceShortestPath.c
+index 565bde1580..102624114b 100644
+--- a/LAGraph/src/test/test_SingleSourceShortestPath.c
++++ b/LAGraph/src/test/test_SingleSourceShortestPath.c
+@@ -19,7 +19,10 @@
+ #include <acutest.h>
+ #include <LAGraph_test.h>
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ LAGraph_Graph G = NULL ;
+ 
+@@ -455,3 +458,7 @@ TEST_LIST = {
+     #endif
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_SortByDegree.c b/LAGraph/src/test/test_SortByDegree.c
+index 32ff33ec6b..845492c81b 100644
+--- a/LAGraph/src/test/test_SortByDegree.c
++++ b/LAGraph/src/test/test_SortByDegree.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -433,3 +436,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_TriangleCount.c b/LAGraph/src/test/test_TriangleCount.c
+index 0e0089bcd4..b53f313bdd 100644
+--- a/LAGraph/src/test/test_TriangleCount.c
++++ b/LAGraph/src/test/test_TriangleCount.c
+@@ -22,7 +22,10 @@
+ 
+ #include <LAGraph_test.h>
+ #include <graph_zachary_karate.h>
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg[LAGRAPH_MSG_LEN];
+ LAGraph_Graph G = NULL;
+ 
+@@ -504,3 +507,7 @@ TEST_LIST = {
+     #endif
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_Vector_Print.c b/LAGraph/src/test/test_Vector_Print.c
+index 5b622e8313..bd2dc8c9fd 100644
+--- a/LAGraph/src/test/test_Vector_Print.c
++++ b/LAGraph/src/test/test_Vector_Print.c
+@@ -16,7 +16,10 @@
+ //-----------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ char msg [LAGRAPH_MSG_LEN] ;
+ GrB_Vector v = NULL ;
+ GrB_Index n = 40 ;
+@@ -216,3 +219,7 @@ TEST_LIST = {
+     #endif
+     {NULL, NULL}
+ };
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/test/test_vector.c b/LAGraph/src/test/test_vector.c
+index 543413ab75..833b3cbc86 100644
+--- a/LAGraph/src/test/test_vector.c
++++ b/LAGraph/src/test/test_vector.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LAGraph_test.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // global variables
+ //------------------------------------------------------------------------------
+@@ -109,3 +112,7 @@ TEST_LIST =
+     #endif
+     { NULL, NULL }
+ } ;
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGr_SampleDegree.c b/LAGraph/src/utility/LAGr_SampleDegree.c
+index 36d28a6b4f..9a4e01c4ae 100644
+--- a/LAGraph/src/utility/LAGr_SampleDegree.c
++++ b/LAGraph/src/utility/LAGr_SampleDegree.c
+@@ -21,7 +21,10 @@
+ #define LG_FREE_ALL LAGraph_Free ((void **) &samples, NULL) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_SampleDegree
+ (
+     // output:
+@@ -114,3 +117,7 @@ int LAGr_SampleDegree
+     LG_FREE_ALL ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGr_SortByDegree.c b/LAGraph/src/utility/LAGr_SortByDegree.c
+index 3e1f16a642..6da9bb4a8a 100644
+--- a/LAGraph/src/utility/LAGr_SortByDegree.c
++++ b/LAGraph/src/utility/LAGr_SortByDegree.c
+@@ -50,7 +50,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGr_SortByDegree
+ (
+     // output:
+@@ -165,3 +168,7 @@ int LAGr_SortByDegree
+     (*P_handle) = P ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Cached_EMax.c b/LAGraph/src/utility/LAGraph_Cached_EMax.c
+index 85b97e3b94..b49bbe66e6 100644
+--- a/LAGraph/src/utility/LAGraph_Cached_EMax.c
++++ b/LAGraph/src/utility/LAGraph_Cached_EMax.c
+@@ -21,7 +21,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Cached_EMax
+ (
+     // input/output:
+@@ -79,3 +82,7 @@ int LAGraph_Cached_EMax
+     G->emax_state = LAGraph_VALUE ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Cached_EMin.c b/LAGraph/src/utility/LAGraph_Cached_EMin.c
+index 80291a0b8c..7aaca08ffb 100644
+--- a/LAGraph/src/utility/LAGraph_Cached_EMin.c
++++ b/LAGraph/src/utility/LAGraph_Cached_EMin.c
+@@ -21,7 +21,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Cached_EMin
+ (
+     // input/output:
+@@ -79,3 +82,7 @@ int LAGraph_Cached_EMin
+     G->emin_state = LAGraph_VALUE ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Cached_InDegree.c b/LAGraph/src/utility/LAGraph_Cached_InDegree.c
+index 69d81bc695..d4bf114a7a 100644
+--- a/LAGraph/src/utility/LAGraph_Cached_InDegree.c
++++ b/LAGraph/src/utility/LAGraph_Cached_InDegree.c
+@@ -36,7 +36,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Cached_InDegree
+ (
+     // input/output:
+@@ -103,3 +106,7 @@ int LAGraph_Cached_InDegree
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Cached_OutDegree.c b/LAGraph/src/utility/LAGraph_Cached_OutDegree.c
+index 3437a98da0..0d8095a33f 100644
+--- a/LAGraph/src/utility/LAGraph_Cached_OutDegree.c
++++ b/LAGraph/src/utility/LAGraph_Cached_OutDegree.c
+@@ -32,7 +32,10 @@
+ }
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Cached_OutDegree
+ (
+     // input/output:
+@@ -80,3 +83,7 @@ int LAGraph_Cached_OutDegree
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_DeleteSelfEdges.c b/LAGraph/src/utility/LAGraph_DeleteSelfEdges.c
+index f80919081a..a1e1d54a89 100644
+--- a/LAGraph/src/utility/LAGraph_DeleteSelfEdges.c
++++ b/LAGraph/src/utility/LAGraph_DeleteSelfEdges.c
+@@ -16,7 +16,10 @@
+ //------------------------------------------------------------------------------
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_DeleteSelfEdges
+ (
+     // input/output:
+@@ -57,3 +60,7 @@ int LAGraph_DeleteSelfEdges
+     G->nself_edges = 0 ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_MMWrite.c b/LAGraph/src/utility/LAGraph_MMWrite.c
+index 6dd1acb4ac..24382d0f6f 100644
+--- a/LAGraph/src/utility/LAGraph_MMWrite.c
++++ b/LAGraph/src/utility/LAGraph_MMWrite.c
+@@ -27,7 +27,10 @@
+ // are used here by permission of the author of CHOLMOD/Check (T. A. Davis).
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_WORK
+ #define LG_FREE_WORK                    \
+ {                                       \
+@@ -552,3 +555,7 @@ int LAGraph_MMWrite
+     LG_FREE_ALL ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Matrix_IsEqual.c b/LAGraph/src/utility/LAGraph_Matrix_IsEqual.c
+index 659087f25a..4052087591 100644
+--- a/LAGraph/src/utility/LAGraph_Matrix_IsEqual.c
++++ b/LAGraph/src/utility/LAGraph_Matrix_IsEqual.c
+@@ -24,7 +24,10 @@
+ #define LG_FREE_WORK GrB_free (&C) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Matrix_IsEqual
+ (
+     // output:
+@@ -157,3 +160,7 @@ int LAGraph_Matrix_IsEqual
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Matrix_IsEqualOp.c b/LAGraph/src/utility/LAGraph_Matrix_IsEqualOp.c
+index b679714680..249e51dbe5 100644
+--- a/LAGraph/src/utility/LAGraph_Matrix_IsEqualOp.c
++++ b/LAGraph/src/utility/LAGraph_Matrix_IsEqualOp.c
+@@ -21,7 +21,10 @@
+ #define LG_FREE_WORK GrB_free (&C) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_Matrix_IsEqualOp: compare two matrices using a given operator
+ //------------------------------------------------------------------------------
+@@ -121,3 +124,7 @@ int LAGraph_Matrix_IsEqualOp
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Matrix_Print.c b/LAGraph/src/utility/LAGraph_Matrix_Print.c
+index 8f45209cb0..a6e1e65620 100644
+--- a/LAGraph/src/utility/LAGraph_Matrix_Print.c
++++ b/LAGraph/src/utility/LAGraph_Matrix_Print.c
+@@ -18,7 +18,10 @@
+ // LAGraph_Matrix_Print:  pretty-print a matrix.
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ #undef  LG_FREE_WORK
+ #define LG_FREE_WORK                    \
+ {                                       \
+@@ -159,4 +162,7 @@ int LAGraph_Matrix_Print
+             return (GrB_NOT_IMPLEMENTED) ;
+     }
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/src/utility/LAGraph_Matrix_Structure.c b/LAGraph/src/utility/LAGraph_Matrix_Structure.c
+index 9bdff6019b..f0dc7fc633 100644
+--- a/LAGraph/src/utility/LAGraph_Matrix_Structure.c
++++ b/LAGraph/src/utility/LAGraph_Matrix_Structure.c
+@@ -21,7 +21,10 @@
+ #define LG_FREE_ALL GrB_free (C) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Matrix_Structure
+ (
+     // output:
+@@ -61,3 +64,7 @@ int LAGraph_Matrix_Structure
+ 
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Random.c b/LAGraph/src/utility/LAGraph_Random.c
+index ca4cf43b1f..de49afd4fc 100644
+--- a/LAGraph/src/utility/LAGraph_Random.c
++++ b/LAGraph/src/utility/LAGraph_Random.c
+@@ -30,6 +30,11 @@
+ 
+ #include "LG_internal.h"
+ 
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
++
+ //------------------------------------------------------------------------------
+ // global operator
+ //------------------------------------------------------------------------------
+@@ -302,4 +307,7 @@ int LAGraph_Random_Next     // advance to next random vector
+     GRB_TRY (GrB_apply (State, NULL, NULL, LG_rand_next_op, State, NULL)) ;
+     return (GrB_SUCCESS) ;
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/src/utility/LAGraph_Vector_IsEqual.c b/LAGraph/src/utility/LAGraph_Vector_IsEqual.c
+index 955711a50b..ab3ffb130d 100644
+--- a/LAGraph/src/utility/LAGraph_Vector_IsEqual.c
++++ b/LAGraph/src/utility/LAGraph_Vector_IsEqual.c
+@@ -29,7 +29,10 @@
+ #define LG_FREE_WORK GrB_free (&C) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Vector_IsEqual
+ (
+     // output:
+@@ -161,3 +164,7 @@ int LAGraph_Vector_IsEqual
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Vector_IsEqualOp.c b/LAGraph/src/utility/LAGraph_Vector_IsEqualOp.c
+index 4f6e0c60a7..ee1fec8c80 100644
+--- a/LAGraph/src/utility/LAGraph_Vector_IsEqualOp.c
++++ b/LAGraph/src/utility/LAGraph_Vector_IsEqualOp.c
+@@ -23,7 +23,10 @@
+ #define LG_FREE_WORK GrB_free (&C) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LAGraph_Vector_IsEqualOp:  compare two vectors using a given operator
+ //------------------------------------------------------------------------------
+@@ -121,3 +124,7 @@ int LAGraph_Vector_IsEqualOp
+     LG_FREE_WORK ;
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+diff --git a/LAGraph/src/utility/LAGraph_Vector_Print.c b/LAGraph/src/utility/LAGraph_Vector_Print.c
+index 560acdc6e4..b4ed73b212 100644
+--- a/LAGraph/src/utility/LAGraph_Vector_Print.c
++++ b/LAGraph/src/utility/LAGraph_Vector_Print.c
+@@ -28,7 +28,10 @@
+ 
+ #undef  LG_FREE_ALL
+ #define LG_FREE_ALL LG_FREE_WORK
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ //------------------------------------------------------------------------------
+ // LG_Vector_Print_TYPE: print with the specified type
+ //------------------------------------------------------------------------------
+@@ -160,4 +163,7 @@ int LAGraph_Vector_Print
+             return (GrB_NOT_IMPLEMENTED) ;
+     }
+ }
+-
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+diff --git a/LAGraph/src/utility/LAGraph_Vector_Structure.c b/LAGraph/src/utility/LAGraph_Vector_Structure.c
+index c2f513cb57..5705cdf04f 100644
+--- a/LAGraph/src/utility/LAGraph_Vector_Structure.c
++++ b/LAGraph/src/utility/LAGraph_Vector_Structure.c
+@@ -21,7 +21,10 @@
+ #define LG_FREE_ALL GrB_free (w) ;
+ 
+ #include "LG_internal.h"
+-
++#ifdef __QNX__
++#undef _INT32
++#undef _UINT32
++#endif
+ int LAGraph_Vector_Structure
+ (
+     // output:
+@@ -59,3 +62,7 @@ int LAGraph_Vector_Structure
+ 
+     return (GrB_SUCCESS) ;
+ }
++#ifdef __QNX__
++#define _INT32 int
++#define _UINT32 unsigned
++#endif
+\ No newline at end of file
+
+From 61c287e938e84f15b891fd66875dfe8d77849ea7 Mon Sep 17 00:00:00 2001
+From: felixlionardo <flionardo@blackberry.com>
+Date: Wed, 18 Mar 2026 11:07:23 -0400
+Subject: [PATCH 3/3] APK test fix
+
+---
+ CHOLMOD/Makefile  | 2 +-
+ LAGraph/Makefile  | 2 +-
+ Mongoose/Makefile | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CHOLMOD/Makefile b/CHOLMOD/Makefile
+index 9f19c28966..491003bb55 100644
+--- a/CHOLMOD/Makefile
++++ b/CHOLMOD/Makefile
+@@ -113,7 +113,7 @@ ilarge: library
+ 	./build/cholmod_si_simple < ~/nd12k.mtx > ./build/si_nd12k.out.txt
+ 
+ test: library
+-	( cd build && ctest . || ctest . --rerun-failed --output-on-failure )
++	( cd build && ctest -j1 || ctest -j1 --rerun-failed --output-on-failure )
+ 
+ cov:
+ 	( cd Tcov && $(MAKE) )
+diff --git a/LAGraph/Makefile b/LAGraph/Makefile
+index 39304d8e0f..5a8e37f07f 100644
+--- a/LAGraph/Makefile
++++ b/LAGraph/Makefile
+@@ -76,7 +76,7 @@ vanilla_debug:
+ all: library
+ 
+ test: library
+-	( cd build && ctest . || ctest . --rerun-failed --output-on-failure )
++	( cd build && ctest -j1 || ctest -j1 --rerun-failed --output-on-failure )
+ 
+ verbose_test: library
+ 	( cd build && ctest . --verbose || ctest . --rerun-failed --output-on-failure )
+diff --git a/Mongoose/Makefile b/Mongoose/Makefile
+index 65060e68a5..66054b8c8f 100644
+--- a/Mongoose/Makefile
++++ b/Mongoose/Makefile
+@@ -68,7 +68,7 @@ uninstall:
+ 
+ # run the extensive tests
+ test:
+-	( cd build && cmake $(CMAKE_OPTIONS) .. ; ctest . )
++	( cd build && cmake $(CMAKE_OPTIONS) .. ; ctest -j1 )
+ 
+ clean: distclean
+ 

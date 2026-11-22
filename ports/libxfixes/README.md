@@ -1,4 +1,4 @@
-# libxfixes 6.0.1
+# libxfixes 6.0.2
 
 > X Fixes extension client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxfixes.git (tag `libXfixes-6.0.1`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxfixes.git (tag `libXfixes-6.0.2`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXfixes-6.0.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXfixes-6.0.2 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxfixes.git src/libxfixes
 ```
 
@@ -209,12 +209,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.0.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfixes=<version>`), sources in `ported/libxfixes/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfixes`; port one with `scripts/port-update libxfixes`.
+This recipe builds **6.0.2**. Kept from earlier: `6.0.1` ([recipe and patches](versions/6.0.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxfixes=<version>`), sources in `ported/libxfixes/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxfixes`; port one with `scripts/port-update libxfixes`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.0.1; GIT=https://gitlab.freedesktop.org/xorg/lib/libxfixes.git; REF=libXfixes-6.0.1
+VERSION=6.0.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxfixes.git; REF=libXfixes-6.0.2
 DEPS="libx11 xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

@@ -1,4 +1,4 @@
-# paho.mqtt.c 1.3.14
+# paho.mqtt.c 1.3.16
 
 > Eclipse Paho MQTT client library for C
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-paho/paho.mqtt.c.git (tag `v1.3.14`) |
+| Upstream | https://github.com/eclipse-paho/paho.mqtt.c.git (tag `v1.3.16`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,26 +76,17 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.3.14 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.3.16 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-paho/paho.mqtt.c.git src/paho.mqtt.c
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/paho.mqtt.c < ports/paho.mqtt.c/patches/0001-qnx-bool-vs-stdbool.patch
 patch -p1 -d src/paho.mqtt.c < ports/paho.mqtt.c/patches/0002-qnx-endian-netbyte.patch
 ```
-
-**[`0001-qnx-bool-vs-stdbool.patch`](patches/0001-qnx-bool-vs-stdbool.patch)** — Paho MQTT C: do not redefine bool when <stdbool.h> is in scope.
-
-> With PAHO_WITH_SSL the OpenSSL headers bring in <stdbool.h>, which makes bool
-> a macro for _Bool; the typedef then reads "typedef unsigned int _Bool" and is
-> rejected.
-
-Touches: `src/MQTTPacket.h` · Upstream status: Pending
 
 **[`0002-qnx-endian-netbyte.patch`](patches/0002-qnx-endian-netbyte.patch)** — Paho MQTT C: byte-order helpers from <net/netbyte.h> on QNX.
 
@@ -130,16 +121,16 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH paho.mqtt.c`.
 ```
 /usr/local/lib/libpaho-mqtt3a.so
 /usr/local/lib/libpaho-mqtt3a.so.1
-/usr/local/lib/libpaho-mqtt3a.so.1.3.14
+/usr/local/lib/libpaho-mqtt3a.so.1.3.16
 /usr/local/lib/libpaho-mqtt3as.so
 /usr/local/lib/libpaho-mqtt3as.so.1
-/usr/local/lib/libpaho-mqtt3as.so.1.3.14
+/usr/local/lib/libpaho-mqtt3as.so.1.3.16
 /usr/local/lib/libpaho-mqtt3c.so
 /usr/local/lib/libpaho-mqtt3c.so.1
-/usr/local/lib/libpaho-mqtt3c.so.1.3.14
+/usr/local/lib/libpaho-mqtt3c.so.1.3.16
 /usr/local/lib/libpaho-mqtt3cs.so
 /usr/local/lib/libpaho-mqtt3cs.so.1
-/usr/local/lib/libpaho-mqtt3cs.so.1.3.14
+/usr/local/lib/libpaho-mqtt3cs.so.1.3.16
 /usr/local/bin/MQTTVersion
 ```
 
@@ -225,7 +216,7 @@ PASS paho.mqtt.c
    - broker: clients acknowledged the QoS 1 echoes
    - broker: topic and payload bytes as sent
    - broker: clean DISCONNECTs, no malformed packets
-   - MQTTVersion reports 1.3.14
+   - MQTTVersion reports 1.3.16
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
@@ -242,12 +233,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.14**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add paho.mqtt.c=<version>`), sources in `ported/paho.mqtt.c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates paho.mqtt.c`; port one with `scripts/port-update paho.mqtt.c`.
+This recipe builds **1.3.16**. Kept from earlier: `1.3.14` ([recipe and patches](versions/1.3.14/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add paho.mqtt.c=<version>`), sources in `ported/paho.mqtt.c/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates paho.mqtt.c`; port one with `scripts/port-update paho.mqtt.c`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3.14; GIT=https://github.com/eclipse-paho/paho.mqtt.c.git; REF=v1.3.14
+VERSION=1.3.16; GIT=https://github.com/eclipse-paho/paho.mqtt.c.git; REF=v1.3.16
 DEPS="openssl"
 CMAKE_ARGS_EXTRA=( -DPAHO_BUILD_SHARED=ON -DPAHO_BUILD_STATIC=ON
                    -DPAHO_WITH_SSL=ON -DPAHO_BUILD_SAMPLES=OFF

@@ -1,4 +1,4 @@
-# tmux 3.5a
+# tmux 3.8
 
 > Terminal multiplexer
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz |
-| SHA-256 | `16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951` |
+| Upstream | https://github.com/tmux/tmux/releases/download/3.8/tmux-3.8.tar.gz |
+| SHA-256 | `e79c699c7e949dccd0a4a125e17b8d1261e311b16979dbc8eb34542f3966d82e` |
 | Build system | GNU Autotools |
 | QNX patches | 3 |
 | Build dependencies | [`libevent`](../libevent/) [`ncurses`](../ncurses/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz
+URL=https://github.com/tmux/tmux/releases/download/3.8/tmux-3.8.tar.gz
 mkdir -p dist src/tmux
 curl -fL -o dist/$(basename $URL) $URL
-echo "16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951  dist/$(basename $URL)" | sha256sum -c -
+echo "e79c699c7e949dccd0a4a125e17b8d1261e311b16979dbc8eb34542f3966d82e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/tmux --strip-components=1
 ```
 
@@ -222,14 +222,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.5a**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tmux=<version>`), sources in `ported/tmux/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tmux`; port one with `scripts/port-update tmux`.
+This recipe builds **3.8**. Kept from earlier: `3.5a` ([recipe and patches](versions/3.5a/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tmux=<version>`), sources in `ported/tmux/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tmux`; port one with `scripts/port-update tmux`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.5a
-TARBALL=https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz
-SHA256=16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951
+VERSION=3.8
+TARBALL=https://github.com/tmux/tmux/releases/download/3.8/tmux-3.8.tar.gz
+SHA256=e79c699c7e949dccd0a4a125e17b8d1261e311b16979dbc8eb34542f3966d82e
 DEPS="libevent ncurses"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-utf8proc --enable-static=no )

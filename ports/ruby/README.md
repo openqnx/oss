@@ -1,4 +1,4 @@
-# ruby 3.4.12
+# ruby 3.4.13
 
 > Ruby programming language: interpreter, standard library, extensions and gems
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.12.tar.gz |
-| SHA-256 | `5e5d85ad93b0adcccbad47733680f4892bd0078e3342437f7babce01c1872479` |
+| Upstream | https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.13.tar.gz |
+| SHA-256 | `d0d3bf3dd8c224a3c3b7ecd816a0f1b2cbcf4f87b5afcbdbe91d3fef177f351a` |
 | Build system | GNU Autotools |
 | QNX patches | 5 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`libyaml`](../libyaml/) [`libffi`](../libffi/) [`gmp`](../gmp/) [`libxcrypt`](../libxcrypt/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.12.tar.gz
+URL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.13.tar.gz
 mkdir -p dist src/ruby
 curl -fL -o dist/$(basename $URL) $URL
-echo "5e5d85ad93b0adcccbad47733680f4892bd0078e3342437f7babce01c1872479  dist/$(basename $URL)" | sha256sum -c -
+echo "d0d3bf3dd8c224a3c3b7ecd816a0f1b2cbcf4f87b5afcbdbe91d3fef177f351a  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/ruby --strip-components=1
 ```
 
@@ -173,6 +173,8 @@ do_configure() {
   # passed descriptor allocates one (it cannot run its test program in a
   # cross build, and stops): ext/socket/extconf.rb's test program, run on
   # QNX 8, says it does, as on Linux.
+  # --with-out-ext="-test-/*": ruby's own test extensions are not installed;
+  # 3.4's -test-/debug uses SA_RESTART, which QNX does not define.
   # --with-setup=Setup: configure picks the first ext/Setup.<os> whose name
   # starts $target_os, and "nto-qnx..." starts with "nt": it took Windows'
   # Setup.nt, which links a list of extensions statically into the ruby
@@ -187,7 +189,7 @@ do_configure() {
       --enable-shared --disable-rpath --disable-install-doc --enable-pthread \
       --with-coroutine=$cor --with-baseruby="$HOSTRUBY_DIR/inst/bin/ruby" \
       --with-opt-dir="$STAGE$PREFIX" --enable-close-fds-by-recvmsg-with-peek \
-      --with-setup=Setup )
+      --with-setup=Setup --with-out-ext="-test-/*" )
 }
 ```
 
@@ -213,6 +215,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - libxcrypt: crypt() (String#crypt), which QNX's libc lacks.
 - Cache answers for what configure cannot run in a cross build, as QNX's own (native) build sets them: isnan/isinf are macros; no openat (it would use O_DIRECTORY paths QNX does not have); no thread-local storage specifier (QNX's TLS model breaks the VM's).
 - A cross build runs a Ruby of the same version on the build machine (BASERUBY: it generates sources and runs mkmf for the extensions with the target's rbconfig). It is built first, from the same source, once, with only what that needs: no openssl extension (the build machine's OpenSSL headers did not match what its configure found), no documentation.
+- One build at a time (flock): the directory is shared by both architectures, and two builds running side by side removed each other's tree.
 - The SDP's environment sets MAKEFLAGS=-I$QNX_TARGET/usr/include. Ruby's installer (tool/rbinstall.rb) reads the single-letter make flags out of it and finds the "n" of ".../qnx805/..." -- make -n: it ran as a dry run, printed every "installing ..." line, wrote nothing, and said "Installed under" an empty directory. Install without it. A cross build runs the build machine's ruby where a native one runs miniruby, so the target's miniruby is made explicitly.
 - miniruby -- the interpreter without extensions or rubygems that the build itself uses -- is installed too: a small Ruby for scripts that need only the core classes (and a way to tell a core problem from an extension one).
 
@@ -220,12 +223,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ruby`.
 
 ### 5. What it installs
 
-2730 files under `/usr/local`: 3 shared-library entries, 15 programs, 193 headers.
+2732 files under `/usr/local`: 3 shared-library entries, 15 programs, 193 headers.
 
 ```
 /usr/local/lib/libruby.so
 /usr/local/lib/libruby.so.3.4
-/usr/local/lib/libruby.so.3.4.12
+/usr/local/lib/libruby.so.3.4.13
 /usr/local/bin/bundle
 /usr/local/bin/bundler
 /usr/local/bin/erb
@@ -312,7 +315,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.4.12**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ruby=<version>`), sources in `ported/ruby/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ruby`; port one with `scripts/port-update ruby`.
+This recipe builds **3.4.13**. Kept from earlier: `3.4.12` ([recipe and patches](versions/3.4.12/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add ruby=<version>`), sources in `ported/ruby/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates ruby`; port one with `scripts/port-update ruby`.
 
 <details><summary>recipe.sh</summary>
 
@@ -322,9 +325,9 @@ This recipe builds **3.4.12**. Every version stays available: packages in `dists
 # (json, zlib, openssl, psych over libyaml, fiddle over libffi, readline via
 # reline, io/console, socket, ...) and the default and bundled gems.
 # QNX's own package list has 3.4.7; this is the latest 3.4 release.
-VERSION=3.4.12
-TARBALL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.12.tar.gz
-SHA256=5e5d85ad93b0adcccbad47733680f4892bd0078e3342437f7babce01c1872479
+VERSION=3.4.13
+TARBALL=https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.13.tar.gz
+SHA256=d0d3bf3dd8c224a3c3b7ecd816a0f1b2cbcf4f87b5afcbdbe91d3fef177f351a
 BUILDSYS=autotools
 # libxcrypt: crypt() (String#crypt), which QNX's libc lacks.
 DEPS="zlib openssl libyaml libffi gmp libxcrypt"
@@ -340,12 +343,24 @@ CONF_ENV=( ac_cv_func_isnan=yes ac_cv_func_isinf=yes ac_cv_func_malloc_trim=no
 # only what that needs: no openssl extension (the build machine's OpenSSL
 # headers did not match what its configure found), no documentation.
 HOSTRUBY_DIR="$WS/build/host/ruby-$VERSION"
+# One build at a time (flock): the directory is shared by both architectures,
+# and two builds running side by side removed each other's tree.
 ruby_host_build() {
   [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] && return 0
+  mkdir -p "$WS/build/host"
+  ( flock 9; [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] && exit 0; _ruby_host_build ) 9>"$WS/build/host/.ruby-$VERSION.lock"
+}
+_ruby_host_build() {
   rm -rf "$HOSTRUBY_DIR"; mkdir -p "$HOSTRUBY_DIR/b"
-  ( cd "$HOSTRUBY_DIR/b" && env -u MAKEFLAGS -u CC -u CXX -u CFLAGS -u CPPFLAGS -u LDFLAGS -u PKG_CONFIG_PATH -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR \
-      "$S/configure" --prefix="$HOSTRUBY_DIR/inst" --disable-install-doc --disable-shared --with-out-ext=openssl \
-    && make -j"$(nproc)" && make install && [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] ) || { rm -rf "$HOSTRUBY_DIR"; return 1; }
+  # (each step says so when it fails: the log of a host build that stopped
+  # without a word was no help)
+  ( cd "$HOSTRUBY_DIR/b" || exit 1
+    h() { env -u MAKEFLAGS -u CC -u CXX -u CFLAGS -u CPPFLAGS -u LDFLAGS -u PKG_CONFIG_PATH -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR "$@"; }
+    h "$S/configure" --prefix="$HOSTRUBY_DIR/inst" --disable-install-doc --disable-shared --with-out-ext=openssl || { echo "!! host ruby: configure failed ($?)"; exit 1; }
+    h make -j"$(nproc)" || { echo "!! host ruby: make failed ($?)"; exit 1; }
+    h make install || { echo "!! host ruby: make install failed ($?)"; exit 1; }
+    [ -x "$HOSTRUBY_DIR/inst/bin/ruby" ] || { echo "!! host ruby: no $HOSTRUBY_DIR/inst/bin/ruby"; ls -la "$HOSTRUBY_DIR/inst/bin"; exit 1; }
+  ) || { mv "$HOSTRUBY_DIR" "$HOSTRUBY_DIR.failed" 2>/dev/null; return 1; }
 }
 do_configure() {
   ruby_host_build || return 1
@@ -357,6 +372,8 @@ do_configure() {
   # passed descriptor allocates one (it cannot run its test program in a
   # cross build, and stops): ext/socket/extconf.rb's test program, run on
   # QNX 8, says it does, as on Linux.
+  # --with-out-ext="-test-/*": ruby's own test extensions are not installed;
+  # 3.4's -test-/debug uses SA_RESTART, which QNX does not define.
   # --with-setup=Setup: configure picks the first ext/Setup.<os> whose name
   # starts $target_os, and "nto-qnx..." starts with "nt": it took Windows'
   # Setup.nt, which links a list of extensions statically into the ruby
@@ -371,7 +388,7 @@ do_configure() {
       --enable-shared --disable-rpath --disable-install-doc --enable-pthread \
       --with-coroutine=$cor --with-baseruby="$HOSTRUBY_DIR/inst/bin/ruby" \
       --with-opt-dir="$STAGE$PREFIX" --enable-close-fds-by-recvmsg-with-peek \
-      --with-setup=Setup )
+      --with-setup=Setup --with-out-ext="-test-/*" )
 }
 # The SDP's environment sets MAKEFLAGS=-I$QNX_TARGET/usr/include. Ruby's
 # installer (tool/rbinstall.rb) reads the single-letter make flags out of it

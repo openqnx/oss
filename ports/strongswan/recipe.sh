@@ -1,4 +1,4 @@
-VERSION=6.0.6; GIT=https://github.com/strongswan/strongswan.git; REF=6.0.6
+VERSION=6.1.0; GIT=https://github.com/strongswan/strongswan.git; REF=6.1.0
 DEPS="openssl"
 BUILDSYS=autotools
 # GCC 12 reports a false -Wmaybe-uninitialized in utils/backtrace.c, which the

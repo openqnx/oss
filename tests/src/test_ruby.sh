@@ -26,7 +26,7 @@ R=$P/bin/ruby
 T=${TMPDIR:-/tmp}/ruby-test.$$; rm -rf "$T"; mkdir -p "$T"; cd "$T" || exit 1
 HOME=$T; export HOME; unset RUBYOPT RUBYLIB GEM_HOME GEM_PATH
 echo "  info $("$R" -v 2>&1)"
-chk "ruby -v" "$("$R" -e 'print RUBY_VERSION, " ", RUBY_PLATFORM' 2>&1)" "3.4.12 $("$R" -e 'print RUBY_PLATFORM')"
+chk "ruby -v" "$("$R" -e 'print RUBY_VERSION, " ", RUBY_PLATFORM' 2>&1)" "3.4.13 $("$R" -e 'print RUBY_PLATFORM')"
 case "$("$R" -e 'print RUBY_PLATFORM')" in *-nto-qnx*) ok "RUBY_PLATFORM names QNX ($("$R" -e 'print RUBY_PLATFORM'))" ;; *) bad "RUBY_PLATFORM names QNX" ;; esac
 
 cat > core.rb <<'RB'

@@ -55,7 +55,12 @@ port_test(test_glog             test_glog.cpp            glog gflags)
 # glog 0.7 requires its consumers to opt in to the generated export header and
 # to gflags support; the exported CMake target normally supplies both.
 target_compile_definitions(test_glog PRIVATE GLOG_USE_GLOG_EXPORT GLOG_USE_GFLAGS)
-port_test(test_foonathan_memory test_foonathan_memory.cpp foonathan_memory-0.7.3)
+# the library's file name carries its version (libfoonathan_memory-0.7.4.so)
+file(GLOB _fm "${LIB}/libfoonathan_memory-*.so")
+list(SORT _fm)
+list(GET _fm -1 _fm)
+string(REGEX REPLACE ".*/lib(foonathan_memory-[^/]*)\\.so$" "\\1" _fm "${_fm}")
+port_test(test_foonathan_memory test_foonathan_memory.cpp ${_fm})
 target_include_directories(test_foonathan_memory PRIVATE "${INC}/foonathan_memory")
 
 # ---- security -------------------------------------------------------------

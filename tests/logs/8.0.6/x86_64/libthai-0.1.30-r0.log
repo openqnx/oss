@@ -1,0 +1,29 @@
+# libthai 0.1.30-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:47:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libthai qnx-test-libthai qnx-port-tests
+(1/3) Installing libdatrie (0.2.14-r0)
+(2/3) Installing libthai (0.1.30-r0)
+(3/3) Installing qnx-test-libthai (1.0-r0)
+OK: 471.0 MiB in 31 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libthai
+     == libthai ==
+       ok   th_isthai on a Thai byte
+       ok   th_isthai on ASCII
+       ok   th_isupvowel classifies a consonant correctly
+       info th_brk found 1 break point(s)
+       ok   th_brk found a word boundary (the dictionary loaded)
+       ok   the break is inside the string
+       ok   break positions are ordered
+       ok   th_brk_line inserted the delimiter
+     PASS libthai
+PASS test_libthai
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

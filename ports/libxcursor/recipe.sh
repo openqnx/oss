@@ -1,4 +1,4 @@
-VERSION=1.2.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcursor.git; REF=libXcursor-1.2.2
+VERSION=1.2.3; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcursor.git; REF=libXcursor-1.2.3
 DEPS="libx11 libxrender libxfixes xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

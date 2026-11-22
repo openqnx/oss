@@ -303,8 +303,8 @@ int main(int argc, char **argv) {
 
   printf("  info libxfce4panel %u.%u.%u\n", libxfce4panel_major_version, libxfce4panel_minor_version,
          libxfce4panel_micro_version);
-  QT_CHECK(libxfce4panel_major_version == 4 && libxfce4panel_minor_version == 20 && libxfce4panel_micro_version == 0,
-           "libxfce4panel 4.20.0");
+  QT_CHECK(libxfce4panel_major_version == 4 && libxfce4panel_minor_version == 20 && libxfce4panel_micro_version == 8,
+           "libxfce4panel 4.20.8");
   QT_CHECK(libxfce4panel_check_version(4, 20, 0) == NULL && libxfce4panel_check_version(4, 99, 0) != NULL,
            "libxfce4panel_check_version");
   unsetenv("XFCE_PANEL_CHANNEL_NAME");
@@ -364,7 +364,7 @@ int main(int argc, char **argv) {
   int rc = run("xfce4-panel --version", out, sizeof out, 60);
   printf("  info xfce4-panel --version -> %d: %s\n", rc, line1(out));
   if (disp) {
-    QT_CHECK(rc == 0 && strstr(out, "xfce4-panel 4.20.0 (Xfce 4.20"), "xfce4-panel --version: 4.20.0");
+    QT_CHECK(rc == 0 && strstr(out, "xfce4-panel 4.20.8 (Xfce 4.20"), "xfce4-panel --version: 4.20.8");
     rc = run("xfce4-panel --help", out, sizeof out, 60);
     QT_CHECK(rc == 0 && strstr(out, "--preferences") && strstr(out, "--add"), "xfce4-panel --help lists --preferences, --add");
     if (gtk_init_check(&argc, &argv)) {

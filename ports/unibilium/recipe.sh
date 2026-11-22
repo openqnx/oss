@@ -1,4 +1,4 @@
-VERSION=2.1.2; GIT=https://github.com/neovim/unibilium.git; REF=v2.1.2
+VERSION=2.1.4; GIT=https://github.com/neovim/unibilium.git; REF=v2.1.4
 BUILDSYS=cmake
 # TERMINFO_DIRS: the compiled-in search path. Left alone, CMakeLists asks the
 # BUILD HOST's ncurses6-config and bakes in the host's directories

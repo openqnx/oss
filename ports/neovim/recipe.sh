@@ -1,4 +1,4 @@
-VERSION=0.12.3; GIT=https://github.com/neovim/neovim.git; REF=v0.12.3
+VERSION=0.12.6; GIT=https://github.com/neovim/neovim.git; REF=v0.12.6
 # Neovim with the QNX changes of QNX's aports (patches/), using this tree's
 # libraries (USE_BUNDLED=OFF) as the QNX Everywhere image does.
 #

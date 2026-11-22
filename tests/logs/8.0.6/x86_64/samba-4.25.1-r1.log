@@ -1,0 +1,42 @@
+# samba 4.25.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:52:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u samba qnx-test-samba qnx-port-tests
+( 1/10) Installing qnx-test-samba (1.0-r0)
+( 2/10) Installing brotli (1.1.0-r0)
+( 3/10) Installing libidn2 (2.3.8-r0)
+( 4/10) Installing libtasn1 (4.19.0-r0)
+( 5/10) Installing nettle (3.10.1-r0)
+( 6/10) Installing unbound (1.24.1-r0)
+( 7/10) Installing gnutls (3.8.14-r1)
+( 8/10) Installing icu (76.1-r0)
+( 9/10) Installing tdb (1.4.15-r0)
+(10/10) Installing samba (4.25.1-r1)
+OK: 580.1 MiB in 38 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_samba
+     == samba ==
+       ok   testparm accepts smb.conf
+       ok   smbpasswd -a: tdbsam user root
+       ok   smbd answers on <ip>:4455
+       ok   smbclient ls: hello.txt
+       ok   smbclient -L lists [pub] with its comment
+       ok   get: the same bytes
+       ok   put 512 KiB: lands in the share intact
+       ok   mkdir, listed
+       ok   del removes the file
+       ok   wrong password: NT_STATUS_LOGON_FAILURE
+       ok   SMB3 with encryption required (--client-protection=encrypt): get
+       ok   smbget smb://<ip>:4455/pub/hello.txt
+       ok   smbstatus -b
+       ok   nmblookup -U <target> QNXTEST: nmbd answers with <target>
+     PASS samba
+PASS test_samba
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

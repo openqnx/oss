@@ -1,0 +1,32 @@
+Take BTN_* from <linux/input-event-codes.h>
+
+The cairo and GTK plugins include <linux/input.h> for BTN_LEFT and BTN_RIGHT
+only, which are Wayland protocol constants (the values wl_pointer.button
+carries on every platform). QNX has no <linux/input.h>; the codes come with
+the linux-headers-input-codes component as <linux/input-event-codes.h>, the
+header <linux/input.h> itself takes them from.
+
+Upstream-Status: QNX-specific
+
+--- a/src/plugins/cairo/libdecor-cairo.c
++++ b/src/plugins/cairo/libdecor-cairo.c
+@@ -26,7 +26,7 @@
+ 
+ #include "config.h"
+ 
+-#include <linux/input.h>
++#include <linux/input-event-codes.h>
+ #include <fcntl.h>
+ #include <poll.h>
+ #include <string.h>
+--- a/src/plugins/gtk/libdecor-gtk.c
++++ b/src/plugins/gtk/libdecor-gtk.c
+@@ -26,7 +26,7 @@
+ 
+ #include "config.h"
+ 
+-#include <linux/input.h>
++#include <linux/input-event-codes.h>
+ #include <fcntl.h>
+ #include <string.h>
+ #include <sys/mman.h>

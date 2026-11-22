@@ -1,0 +1,46 @@
+# cups 2.4.16-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T01:21:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cups qnx-test-cups qnx-port-tests
+(1/5) Installing libdaemon (0.14-r0)
+(2/5) Installing avahi (0.9_rc3-r1)
+(3/5) Installing cups (2.4.16-r1)
+(4/5) Installing python3-pyserial (3.5-r0)
+(5/5) Installing qnx-test-cups (1.0-r0)
+Executing python3-3.14.0-r0.trigger
+OK: 343.9 MiB in 100 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cups
+     == cups ==
+       ok   cupsd running (scheduler is running)
+       ok   lpadmin: raw queue qnxq on file:///tmp/qnxport-cups.bRGfzz/out/out.prn
+       ok   lpstat -p: qnxq idle, enabled
+       ok   lpstat -v: device URI
+       ok   lpstat -a: accepting
+       info lp: request id is qnxq-1 (2 file(s))
+       ok   lp: job qnxq-1 queued (2 files)
+       ok   job printed: output file is both documents byte for byte
+       ok   lpstat -W completed lists qnxq-1
+       ok   held job qnxq-2 listed as pending
+       ok   cancel qnxq-2
+       ok   cupsreject: not accepting
+       ok   rejecting queue refuses lp
+       ok   cupsaccept: accepting again
+       ok   cupsdisable: stopped
+       ok   cupsenable: enabled
+       ok   lpoptions: media=A4 stored
+       ok   lpstat -d: qnxq is the default
+       ok   ipptool over IPP (HTTP on <ip>): printer attributes and the completed 2-document job, 2 tests PASS
+       ok   cupsctl reads the server settings
+       ok   lpadmin -x: queue removed
+       ok   cupsd shut down on SIGTERM
+     PASS cups
+PASS test_cups
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

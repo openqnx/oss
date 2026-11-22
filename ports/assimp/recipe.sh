@@ -5,7 +5,7 @@
 # ASSIMP_WARNINGS_AS_ERRORS off: GCC 12's -Wstringop-truncation fires on
 # assimp's own strncpy calls (EmbedTexturesProcess.cpp), which are bounded
 # correctly. The `assimp` command-line tool is built too (info, export).
-VERSION=6.0.2; GIT=https://github.com/assimp/assimp.git; REF=v6.0.2
+VERSION=6.0.6; GIT=https://github.com/assimp/assimp.git; REF=v6.0.6
 DEPS="zlib"
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DASSIMP_BUILD_TESTS=OFF -DASSIMP_BUILD_SAMPLES=OFF

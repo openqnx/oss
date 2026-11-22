@@ -16,3 +16,8 @@ CFLAGS_APPEND="-D__QNXTARGET__"
 # libbfd, libopcodes and libctf that gdb builds for itself -- static archives
 # and headers that are the binutils component's, which then had two owners.
 do_install() { make -C "$B" DESTDIR="$STAGE" install-gdb maybe-install-gdbserver; }
+# gdb's own include/ (md5.h, sha1.h) ahead of the staging tree's: libmd's
+# staged md5.h otherwise hides include/md5.h and libiberty's md5.c fails on
+# an undefined struct md5_ctx -- as for binutils.
+CONF_ENV=( CPPFLAGS="-I$SRC_DIR/$NAME/include -D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include"
+  CFLAGS="-I$SRC_DIR/$NAME/include -D__QNXTARGET__ -D_QNX_SOURCE -I$STAGE$PREFIX/include -I$QNX_TARGET/usr/include" )

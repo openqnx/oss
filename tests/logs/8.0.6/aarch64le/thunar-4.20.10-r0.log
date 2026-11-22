@@ -1,0 +1,47 @@
+# thunar 4.20.10-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T01:21:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u thunar qnx-test-thunar qnx-port-tests
+(1/6) Installing libexif (0.6.26-r0)
+(2/6) Installing libice (1.1.2-r0)
+(3/6) Installing libnotify (0.8.9-r0)
+(4/6) Installing libsm (1.2.6-r0)
+(5/6) Installing thunar (4.20.10-r0)
+(6/6) Installing qnx-test-thunar (1.0-r1)
+OK: 337.9 MiB in 102 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_thunar
+     == thunar ==
+       info libthunarx 4.20.10
+       ok   libthunarx 4.20.10
+       ok   thunarx_check_version(4.20.10) accepts
+       ok   thunarx_check_version(5.0.0): upstream stub, NULL
+       ok   thunarx_menu_item_new
+       ok   menu item properties read back
+       ok   sensitive by default
+       ok   set_sensitive(FALSE)
+       ok   "activate" emitted on each thunarx_menu_item_activate
+       ok   menu holds 3 items in order (prepend + 2 appends)
+       ok   submenu attached to an item
+       info renamer providers: ThunarSbrProvider
+       ok   thunar-sbr: ThunarSbrProvider (renamer provider) loaded
+       info property page providers: ThunarAprProvider
+       ok   thunar-apr: ThunarAprProvider (property page provider) loaded
+       info menu providers: TwpProvider ThunarUcaProvider
+       ok   thunar-uca: ThunarUcaProvider (custom actions) loaded
+       ok   thunar-wallpaper: TwpProvider loaded
+       info thunar --version -> 0: 
+       ok   thunar --version: thunar 4.20.10 (Xfce 4.20)
+       ok   Thunar -V (the compatibility name)
+       ok   thunar --help lists --bulk-rename, --daemon
+       ok   default custom actions (uca.xml) installed
+     PASS thunar
+PASS test_thunar
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

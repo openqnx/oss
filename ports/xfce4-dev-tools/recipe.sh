@@ -3,9 +3,9 @@
 # xdt-autogen (the autogen.sh of every Xfce module), xdt-csource (data to
 # C arrays, GLib), xdt-gen-visibility and xdt-check-abi (Python). Version
 # as in QNX's own package list.
-VERSION=4.21.0
-TARBALL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.0.tar.bz2
-SHA256=36059f48bbb196645f6514ab5a356e55cdd9bc917edcaf6afd86adfc28d7a358
+VERSION=4.21.2
+TARBALL=https://archive.xfce.org/src/xfce/xfce4-dev-tools/4.21/xfce4-dev-tools-4.21.2.tar.bz2
+SHA256=a43f726a082b589186d9e6ed076101d41249d1e22bbe61448037550190d7f75a
 # glib: xdt-csource.
 DEPS="glib"
 # xdt-autogen requires make and runs autoreconf/aclocal/automake (and

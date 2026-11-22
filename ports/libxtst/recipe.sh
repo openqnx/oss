@@ -1,4 +1,4 @@
-VERSION=1.2.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtst.git; REF=libXtst-1.2.5
+VERSION=1.2.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxtst.git; REF=libXtst-1.2.6
 DEPS="libx11 libxext libxfixes libxi xorgproto"   # xi: PKG_CHECK_MODULES(XTST ... xi ...)
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

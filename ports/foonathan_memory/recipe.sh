@@ -1,4 +1,4 @@
-VERSION=0.7-3; GIT=https://github.com/foonathan/memory.git; REF=v0.7-3
+VERSION=0.7-4; GIT=https://github.com/foonathan/memory.git; REF=v0.7-4
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=OFF
                    -DFOONATHAN_MEMORY_BUILD_TESTS=OFF
                    # nodesize_dbg links -static; QNX ships no libsocket.a

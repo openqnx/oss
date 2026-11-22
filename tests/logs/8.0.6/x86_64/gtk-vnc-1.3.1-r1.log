@@ -1,0 +1,76 @@
+# gtk-vnc 1.3.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:47:09Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gtk-vnc qnx-test-gtk-vnc qnx-port-tests
+( 1/50) Installing brotli (1.1.0-r0)
+( 2/50) Installing bzip2 (1.0.8-r0)
+( 3/50) Installing libpng (1.6.59-r0)
+( 4/50) Installing freetype (2.13.3-r0)
+( 5/50) Installing fontconfig (2.15.0-r0)
+( 6/50) Installing libffi (3.4.6-r0)
+( 7/50) Installing pcre2 (10.44-r0)
+( 8/50) Installing glib (2.82.4-r0)
+( 9/50) Installing libxau (1.0.12-r0)
+(10/50) Installing libxdmcp (1.1.5-r0)
+(11/50) Installing libxcb (1.17.0-r0)
+(12/50) Installing libx11 (1.8.14-r0)
+(13/50) Installing libxext (1.3.7-r0)
+(14/50) Installing libxrender (0.9.13-r0)
+(15/50) Installing lzo (2.10-r0)
+(16/50) Installing pixman (0.46.4-r0)
+(17/50) Installing cairo (1.18.6-r0)
+(18/50) Installing libjpeg-turbo (3.0.4-r0)
+(19/50) Installing gdk-pixbuf (2.42.12-r0)
+(20/50) Installing libidn2 (2.3.8-r0)
+(21/50) Installing libtasn1 (4.19.0-r0)
+(22/50) Installing nettle (3.10.1-r0)
+(23/50) Installing unbound (1.24.1-r0)
+(24/50) Installing gnutls (3.8.14-r1)
+(25/50) Installing dbus (1.16.4-r0)
+(26/50) Installing libxi (1.8.4-r0)
+(27/50) Installing libxtst (1.2.6-r0)
+(28/50) Installing at-spi2-core (2.54.2-r0)
+(29/50) Installing fribidi (1.0.18-r0)
+(30/50) Installing graphite2 (1.3.15-r0)
+(31/50) Installing icu (76.1-r0)
+(32/50) Installing harfbuzz (<ip>-r0)
+(33/50) Installing libepoxy (1.5.10-r0)
+(34/50) Installing libxcomposite (0.4.6-r0)
+(35/50) Installing libxfixes (6.0.2-r0)
+(36/50) Installing libxcursor (1.2.3-r0)
+(37/50) Installing libxdamage (1.1.7-r0)
+(38/50) Installing libxinerama (1.1.6-r0)
+(39/50) Installing libxkbcommon (1.8.1-r0)
+(40/50) Installing libxrandr (1.5.5-r0)
+(41/50) Installing libxft (2.3.9-r0)
+(42/50) Installing pango (1.54.0-r0)
+(43/50) Installing wayland (1.24.0-r0)
+(44/50) Installing gtk3 (3.24.43-r0)
+(45/50) Installing libgpg-error (1.50-r0)
+(46/50) Installing libgcrypt (1.11.0-r0)
+(47/50) Installing gtk-vnc (1.3.1-r1)
+(48/50) Installing sdl2 (2.32.10-r0)
+(49/50) Installing libvncserver (0.9.15-r1)
+(50/50) Installing qnx-test-gtk-vnc (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 610.0 MiB in 78 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gtk_vnc
+     == gtk-vnc ==
+       ok   vnc_connection_open_host
+       ok   connected and initialised
+       info desktop "QNX test desktop" 192x96
+       ok   name and size
+       ok   whole screen updated
+       info 0 differing bytes
+       ok   the image, exactly
+     PASS gtk-vnc
+PASS test_gtk_vnc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

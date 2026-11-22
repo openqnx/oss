@@ -1,0 +1,92 @@
+# vte 0.78.7-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T00:54:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vte qnx-test-vte qnx-port-tests
+( 1/59) Installing expat (2.6.4-r0)
+( 2/59) Installing dbus (1.16.4-r0)
+( 3/59) Installing libiconv (1.18-r0)
+( 4/59) Installing libunistring (1.3-r0)
+( 5/59) Installing gettext (0.22.5-r0)
+( 6/59) Installing libffi (3.4.6-r0)
+( 7/59) Installing pcre2 (10.44-r0)
+( 8/59) Installing glib (2.82.4-r0)
+( 9/59) Installing libxau (1.0.12-r0)
+(10/59) Installing libxdmcp (1.1.5-r0)
+(11/59) Installing libxcb (1.17.0-r0)
+(12/59) Installing libx11 (1.8.14-r0)
+(13/59) Installing libxext (1.3.7-r0)
+(14/59) Installing libxi (1.8.4-r0)
+(15/59) Installing libxtst (1.2.6-r0)
+(16/59) Installing at-spi2-core (2.54.2-r0)
+(17/59) Installing brotli (1.1.0-r0)
+(18/59) Installing bzip2 (1.0.8-r0)
+(19/59) Installing libpng (1.6.59-r0)
+(20/59) Installing freetype (2.13.3-r0)
+(21/59) Installing fontconfig (2.15.0-r0)
+(22/59) Installing libxrender (0.9.13-r0)
+(23/59) Installing lzo (2.10-r0)
+(24/59) Installing pixman (0.46.4-r0)
+(25/59) Installing cairo (1.18.6-r0)
+(26/59) Installing libjpeg-turbo (3.0.4-r0)
+(27/59) Installing gdk-pixbuf (2.42.12-r0)
+(28/59) Installing fribidi (1.0.18-r0)
+(29/59) Installing graphite2 (1.3.15-r0)
+(30/59) Installing icu (76.1-r0)
+(31/59) Installing harfbuzz (<ip>-r0)
+(32/59) Installing libepoxy (1.5.10-r0)
+(33/59) Installing libxcomposite (0.4.6-r0)
+(34/59) Installing libxfixes (6.0.2-r0)
+(35/59) Installing libxcursor (1.2.3-r0)
+(36/59) Installing libxdamage (1.1.7-r0)
+(37/59) Installing libxinerama (1.1.6-r0)
+(38/59) Installing xz (5.6.3-r0)
+(39/59) Installing libxml2 (2.13.5-r0)
+(40/59) Installing libxkbcommon (1.8.1-r0)
+(41/59) Installing libxrandr (1.5.5-r0)
+(42/59) Installing libxft (2.3.9-r0)
+(43/59) Installing pango (1.54.0-r0)
+(44/59) Installing wayland (1.24.0-r0)
+(45/59) Installing gtk3 (3.24.43-r0)
+(46/59) Installing gmp (6.3.0-r0)
+(47/59) Installing libidn2 (2.3.8-r0)
+(48/59) Installing libtasn1 (4.19.0-r0)
+(49/59) Installing nettle (3.10.1-r0)
+(50/59) Installing unbound (1.24.1-r0)
+(51/59) Installing gnutls (3.8.14-r1)
+(52/59) Installing graphene (1.10.8-r0)
+(53/59) Installing libdeflate (1.22-r0)
+(54/59) Installing libwebp (1.4.0-r0)
+(55/59) Installing libtiff (4.7.2-r0)
+(56/59) Installing gtk4 (4.16.13-r0)
+(57/59) Installing lz4 (1.10.0-r0)
+(58/59) Installing vte (0.78.7-r0)
+(59/59) Installing qnx-test-vte (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 213.7 MiB in 71 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vte
+     == vte ==
+       info VTE 0.78.7
+       ok   vte_get_major_version
+       ok   vte_terminal_get_type registered
+       ok   VteTerminal is a GtkWidget
+       info GType name = VteTerminal
+       ok   vte_pty_get_type registered
+       ok   vte_regex_get_type registered
+       ok   vte_regex_new_for_match compiled a URL pattern
+     PCRE2 library was built without JIT support
+       ok   vte_regex_jit answered
+       ok   vte_pty_new_sync opened a pty
+       info pty fd = 3
+       ok   vte_pty_get_fd
+       ok   vte_pty_set_size 24x80
+     PASS vte
+PASS test_vte
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

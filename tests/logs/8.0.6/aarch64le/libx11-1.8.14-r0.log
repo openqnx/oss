@@ -1,0 +1,52 @@
+# libx11 1.8.14-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T00:47:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libx11 qnx-test-libx11 qnx-port-tests
+(1/6) Installing libxau (1.0.12-r0)
+(2/6) Installing libxdmcp (1.1.5-r0)
+(3/6) Installing libxcb (1.17.0-r0)
+(4/6) Installing libx11 (1.8.14-r0)
+(5/6) Installing qnx-port-tests (1.0-r0)
+(6/6) Installing qnx-test-libx11 (1.0-r0)
+OK: 14.2 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libx11
+     == libx11 ==
+       ok   XStringToKeysym: a, Return, F12, udiaeresis
+       ok   XKeysymToString: BackSpace, KP_Enter
+       ok   unknown keysym name -> NoSymbol
+       ok   XConvertCase: Latin, Latin-1 and Greek
+       ok   XrmGetStringDatabase parses a resource text
+       info xterm.vt100.font -> fixed
+       ok   exact resource name
+       info xterm.vt100.foreground -> white
+       ok   class-based wildcard match
+       info foo.bar.background -> gray20
+       ok   global * wildcard
+       info app.button.label -> Press me
+       ok   continued line joined
+       info app.ok.width -> 42
+       ok   class match on an inner component
+       ok   unmatched resource not found
+       info foo.background -> black
+       info new.thing -> yes
+       ok   XrmMergeDatabases overrides and adds
+       info xterm.vt100.font -> fixed
+       info foo.background -> black
+       ok   XrmPutFileDatabase / XrmGetFileDatabase round trip
+       ok   quarks are interned
+       ok   XParseGeometry 800x600+10-20
+       ok   region union bounding box 150x75
+       ok   XPointInRegion inside/outside the L shape
+       ok   XIntersectRegion
+       ok   XOpenDisplay(:97) with no server returns NULL
+     PASS libx11
+PASS test_libx11
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

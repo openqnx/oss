@@ -1,0 +1,33 @@
+# fribidi 1.0.18-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-22T00:45:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u fribidi qnx-test-fribidi qnx-port-tests
+(1/2) Installing fribidi (1.0.18-r0)
+(2/2) Installing qnx-test-fribidi (1.0-r0)
+OK: 15.6 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fribidi
+     == fribidi ==
+       info (GNU FriBidi) 1.0.18
+       ok   U+05D0 (alef) is R
+       ok   U+0627 (Arabic alef) is AL
+       ok   digits EN, Latin L
+       ok   mirroring: ( -> ), << -> >>
+       ok   log2vis on mixed text
+       ok   LTR paragraph: Hebrew run reversed in place
+       ok   embedding levels and position maps
+       ok   RTL paragraph: "123 gimel bet alef"
+       ok   numbers in RTL get level 2
+       info lam-alef -> FEFB FEFF (max level 2)
+       ok   lam + alef shaped to U+FEFB
+       ok   paragraph direction from the first strong character (R after digits)
+     PASS fribidi
+PASS test_fribidi
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

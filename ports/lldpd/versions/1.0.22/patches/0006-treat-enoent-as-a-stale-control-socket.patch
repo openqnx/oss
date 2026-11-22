@@ -1,0 +1,42 @@
+From ac20728ae28736e97010bf4964bdc51f444d9099 Mon Sep 17 00:00:00 2001
+From: Marcin Sochacki <msochacki@qnx.com>
+Date: Tue, 1 Sep 2026 18:12:58 +0200
+Subject: [PATCH 6/6] treat ENOENT as a stale-socket signal in the
+ control-socket retry loop
+
+
+Imported from qnx-ports/lldpd (ac20728ae287, branch qnx-1.0.22, based on upstream 1.0.22);
+original authorship kept.
+Upstream-Status: QNX-specific (carried in the qnx-ports fork)
+
+---
+ src/daemon/lldpd.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/src/daemon/lldpd.c b/src/daemon/lldpd.c
+index ab8505f68..8f5b75102 100644
+--- a/src/daemon/lldpd.c
++++ b/src/daemon/lldpd.c
+@@ -1821,7 +1821,21 @@ lldpd_main(int argc, char *argv[], char *envp[])
+ 				log_warnx("main",
+ 				    "another instance is running, please stop it");
+ 				fatalx("main", "giving up");
+-			} else if (errno == ECONNREFUSED) {
++			} else if (errno == ECONNREFUSED
++#ifdef __QNX__
++			    /* On QNX, connect() to an orphaned AF_UNIX socket
++			     * path (listener died without unlink()ing it, e.g.
++			     * a non-graceful kill -9) reports ENOENT instead of
++			     * ECONNREFUSED, unlike Linux/BSD - confirmed with a
++			     * minimal unprivileged bind()+listen()+kill -9+
++			     * connect() reproducer independent of privsep/chroot.
++			     * Treat it the same as ECONNREFUSED: ctl_cleanup()'s
++			     * unlink() already tolerates ENOENT if the path is
++			     * gone by the time we get here, so this is safe even
++			     * in that race. */
++			    || errno == ENOENT
++#endif
++			    ) {
+ 				/* Nobody is listening */
+ 				log_info("main",
+ 				    "old control socket is present, clean it");

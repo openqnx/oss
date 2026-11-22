@@ -1,0 +1,27 @@
+Link libregex where regcomp() lives outside libc (QNX).
+
+scanelf uses regcomp()/regexec(); QNX provides them in libregex, so the link
+fails with undefined references. Find the library and link it when present.
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -10,6 +10,8 @@
+ cc = meson.get_compiler('c')
+ 
+ libcap = dependency('libcap', required : get_option('use_libcap'))
++# POSIX regex lives in its own library on QNX (libregex), not in libc.
++libregex = meson.get_compiler('c').find_library('regex', required : false)
+ if libcap.found()
+   add_project_arguments('-DWANT_SYSCAP', language : 'c')
+ endif
+@@ -87,7 +89,7 @@
+   'paxldso.c',
+   'scanelf.c',
+   version_h,
+-  dependencies : [libcap],
++  dependencies : [libregex, libcap],
+   link_with : common,
+   install : true
+ )

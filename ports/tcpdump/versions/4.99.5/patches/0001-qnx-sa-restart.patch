@@ -1,0 +1,22 @@
+Define SA_RESTART as 0 where the system lacks it.
+
+QNX's <signal.h> leaves SA_RESTART commented out ("not supported yet").
+setsignal() only asks for restartable system calls with it, for the
+handlers of SIGCHLD and the statistics/flush signals; without it a system
+call those handlers interrupt returns EINTR instead of restarting.
+
+Upstream-Status: QNX-specific
+
+--- a/tcpdump.c
++++ b/tcpdump.c
+@@ -2738,6 +2738,10 @@
+ 	return (signal(sig, func));
+ #else
+ 	struct sigaction old, new;
++#ifndef SA_RESTART
++	/* QNX: SA_RESTART is not supported (commented out in <signal.h>). */
++#define SA_RESTART 0
++#endif
+ 
+ 	memset(&new, 0, sizeof(new));
+ 	new.sa_handler = func;

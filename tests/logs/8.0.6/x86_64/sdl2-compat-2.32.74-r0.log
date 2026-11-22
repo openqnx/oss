@@ -1,0 +1,52 @@
+# sdl2-compat 2.32.74-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T01:37:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2-compat qnx-test-sdl2-compat qnx-port-tests
+(1/1) Upgrading qnx-test-sdl2-compat (1.0-r2 -> 1.0-r3)
+OK: 906.4 MiB in 161 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_compat
+     == sdl2-compat ==
+       ok   dlopen libSDL2-2.0.so.0
+       ok   all SDL2 entry points resolve
+       ok   sdl2-compat loaded libSDL3.so.0
+       info SDL_GetVersion: 2.32.74
+       ok   SDL2 API version 2.32.74
+       ok   scratch directory
+       ok   SDL_Init(VIDEO|AUDIO|EVENTS|TIMER)
+       info video driver dummy, audio driver disk
+       ok   video driver is dummy (SDL_VIDEODRIVER honoured)
+       ok   audio driver is disk (SDL_AUDIODRIVER honoured)
+       ok   64x48 ARGB8888 surface
+       ok   SDL_FillRect: blue background
+       ok   SDL_CreateSoftwareRenderer
+       ok   SDL_RenderFillRect: green square
+       ok   SDL_RenderReadPixels
+       info pixels: (2,2)=ff0000ff (16,16)=ffff0000 (48,16)=ff00ff00
+       ok   background pixel is blue
+       ok   SDL_FillRect square is red
+       ok   renderer square is green
+       ok   SDL_CreateWindow on the dummy driver
+       ok   window is 160x120
+       ok   window surface 160x120
+       ok   SDL_UpdateWindowSurface
+     CRITICAL: You are using the SDL disk i/o audio driver!
+     CRITICAL:  Writing to file [/tmp/qnxport-sdl2compat.FSJVVV/audio.raw], format=S16LE channels=2 freq=44100.
+       ok   SDL_OpenAudioDevice (callback, 44.1 kHz S16 stereo)
+       info obtained 44100 Hz, format 0x8010, 2 channel(s), 1024 samples
+       ok   obtained spec as requested
+       info callback produced 59392 samples in 766 ms
+       ok   the callback was pulled (>= 4 buffers)
+       info audio.raw: 61440 samples (2048 leading silence), 59392/59392 match the callback's
+       ok   the disk driver wrote the audio
+       ok   written samples are exactly the callback's
+     PASS sdl2-compat
+PASS test_sdl2_compat
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

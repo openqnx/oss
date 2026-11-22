@@ -1,4 +1,4 @@
-VERSION=3.4.18; GIT=https://github.com/libsdl-org/SDL.git; REF=release-3.4.18
+VERSION=3.4.20; GIT=https://github.com/libsdl-org/SDL.git; REF=release-3.4.20
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv libxtst
 DEPS="libx11 libxext libxcursor libxi libxfixes libxrandr libxrender libxscrnsaver libxkbcommon libiconv libxtst"
 BUILDSYS=cmake

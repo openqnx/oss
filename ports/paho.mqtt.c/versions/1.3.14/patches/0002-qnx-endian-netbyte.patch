@@ -1,0 +1,32 @@
+Paho MQTT C: byte-order helpers from <net/netbyte.h> on QNX.
+
+QNX has no <endian.h>; htobeNN/beNNtoh are declared in <net/netbyte.h>.
+
+Upstream-Status: QNX-specific
+
+--- a/src/SHA1.c
++++ b/src/SHA1.c
+@@ -61,6 +61,10 @@
+ #  define be32toh(x) OSSwapBigToHostInt32(x)
+ #elif defined(__FreeBSD__) || defined(__NetBSD__)
+ #  include <sys/endian.h>
++#elif defined(__QNXNTO__)
++/* QNX has no <endian.h>. The htobeNN and beNNtoh helpers are declared
++   in <net/netbyte.h> instead. */
++#  include <net/netbyte.h>
+ #endif
+ #include <string.h>
+ static unsigned char pad[64] = {
+--- a/src/WebSocket.c
++++ b/src/WebSocket.c
+@@ -47,6 +47,10 @@
+ #  define be64toh(x) OSSwapBigToHostInt64(x)
+ #elif defined(__FreeBSD__) || defined(__NetBSD__)
+ #  include <sys/endian.h>
++#elif defined(__QNXNTO__)
++/* QNX has no <endian.h>. The htobeNN and beNNtoh helpers are declared
++   in <net/netbyte.h> instead. */
++#  include <net/netbyte.h>
+ #elif defined(_WIN32) || defined(_WIN64)
+ #  pragma comment(lib, "rpcrt4.lib")
+ #  include <rpc.h>

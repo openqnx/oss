@@ -1,4 +1,4 @@
-VERSION=6.0.1; GIT=https://gitlab.freedesktop.org/xorg/lib/libxfixes.git; REF=libXfixes-6.0.1
+VERSION=6.0.2; GIT=https://gitlab.freedesktop.org/xorg/lib/libxfixes.git; REF=libXfixes-6.0.2
 DEPS="libx11 xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

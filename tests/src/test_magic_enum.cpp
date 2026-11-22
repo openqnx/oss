@@ -1,6 +1,11 @@
 // magic_enum: enum <-> string reflection.
 #include "common.h"
+// 0.9.6 moved the headers into include/magic_enum/
+#if __has_include(<magic_enum/magic_enum.hpp>)
+#include <magic_enum/magic_enum.hpp>
+#else
 #include <magic_enum.hpp>
+#endif
 enum class Arch { aarch64le, x86_64 };
 int main() {
   QT_BEGIN("magic_enum");

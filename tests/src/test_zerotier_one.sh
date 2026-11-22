@@ -5,7 +5,7 @@
 # rejecting a corrupted key) and a freshly generated one; then the service
 # itself, zerotier-one on a temporary home directory and port (port mapping
 # off), queried over its local HTTP API by zerotier-cli: `info` must report
-# the fixed identity's address and 1.16.1, `listnetworks` no networks.
+# the fixed identity's address and 1.16.2, `listnetworks` no networks.
 # Run the test itself in the background, its output to a log, and wait at
 # most 170 s: a hang ends as a FAIL with whatever the test printed so far.
 if [ -z "$QNXPORT_INNER" ]; then
@@ -44,7 +44,7 @@ trap stopall EXIT
 trap 'exit 143' TERM INT HUP
 
 V=$("$ZO" -v 2>&1); info "zerotier-one -v: $V"
-[ "$V" = "1.16.1" ] && ok "zerotier-one -v: 1.16.1" || bad "zerotier-one -v: $V"
+[ "$V" = "1.16.2" ] && ok "zerotier-one -v: 1.16.2" || bad "zerotier-one -v: $V"
 
 # A fixed test identity (made for this test only) and its known answers.
 ADDR=3829c0566b
@@ -98,7 +98,7 @@ while [ $i -lt 20 ]; do
   i=$((i+1)); sleep 1
 done
 case "$r" in
-  "200 info $ADDR 1.16.1 "*) ok "zerotier-cli info: $r" ;;
+  "200 info $ADDR 1.16.2 "*) ok "zerotier-cli info: $r" ;;
   *) bad "zerotier-cli info: $r"; info "service log: $(head -c 400 service.log)" ;;
 esac
 [ -s "$H/authtoken.secret" ] && ok "the service wrote its API token (authtoken.secret)" || bad "no authtoken.secret"

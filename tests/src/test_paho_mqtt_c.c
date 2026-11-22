@@ -287,6 +287,6 @@ int main(void) {
   out[n] = 0;
   int st = p ? pclose(p) : -1;
   printf("  info MQTTVersion: %.200s\n", out);
-  QT_CHECK(WIFEXITED(st) && strstr(out, "1.3.14") != NULL, "MQTTVersion reports 1.3.14");
+  QT_CHECK(WIFEXITED(st) && strstr(out, "1.3.16") != NULL, "MQTTVersion reports 1.3.16");
   QT_END();
 }

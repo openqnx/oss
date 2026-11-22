@@ -1,0 +1,31 @@
+# lcm 1.5.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:47:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lcm qnx-test-lcm qnx-port-tests
+(1/5) Installing libffi (3.4.6-r0)
+(2/5) Installing pcre2 (10.44-r0)
+(3/5) Installing glib (2.82.4-r0)
+(4/5) Installing lcm (1.5.3-r0)
+(5/5) Installing qnx-test-lcm (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 487.7 MiB in 33 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lcm
+     == lcm ==
+       ok   lcm_create(memq://)
+       ok   lcm_subscribe (regex channel)
+       ok   lcm_publish
+       ok   publish on another channel
+       ok   lcm_handle_timeout
+       ok   exactly one message received
+       ok   channel and payload
+     PASS lcm
+PASS test_lcm
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

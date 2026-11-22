@@ -3,7 +3,7 @@
 # (route socket, BPF on the single /dev/bpf clone device, getifaddrs()).
 # From git rather than the release tarball: patch 0001 changes configure.ac,
 # m4/os.m4 and Makefile.am, so configure has to be regenerated (autogen.sh).
-VERSION=1.0.22; GIT=https://github.com/lldpd/lldpd.git; REF=1.0.22
+VERSION=1.0.23; GIT=https://github.com/lldpd/lldpd.git; REF=1.0.23
 BUILDSYS=autotools
 DEPS="libevent"
 # --disable-privsep: privilege separation needs a dedicated "_lldpd" user and

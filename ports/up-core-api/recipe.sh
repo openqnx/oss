@@ -1,4 +1,4 @@
-VERSION=1.6.0-alpha2; GIT=https://github.com/eclipse-uprotocol/up-spec.git; REF=v1.6.0-alpha.2
+VERSION=1.6.0-alpha.7; GIT=https://github.com/eclipse-uprotocol/up-spec.git; REF=v1.6.0-alpha.7
 # The uProtocol data model (UUri, UUID, UAttributes, UMessage, UStatus) and
 # core service interfaces (uSubscription, uDiscovery, uTwin) as Protocol
 # Buffers, compiled for C++: the "up-core-api" library up-cpp builds on. The

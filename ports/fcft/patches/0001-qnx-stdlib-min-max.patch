@@ -6,10 +6,9 @@ error under the project's -Werror. #undef them first; the definitions are the
 same expressions.
 
 Upstream-Status: QNX-specific
-
 --- a/fcft.c
 +++ b/fcft.c
-@@ -46,6 +46,8 @@
+@@ -48,6 +48,8 @@
   #include "3rd-party/freetype-rsvg/rsvg-port.h"
  #endif
  

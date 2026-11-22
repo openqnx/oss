@@ -1,0 +1,23 @@
+libass: no clang-cl flag for qcc.
+
+0.17.5 tries /clang:-fno-math-errno (clang-cl's spelling). qcc takes the
+unknown argument for a file and hands it to the linker, so the compile-only
+flag check succeeds and every link check after it fails ("Unable to locate
+math functions!"). Try it only where the compiler can be MSVC-like.
+
+Upstream-Status: QNX-specific
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -53,7 +53,10 @@
+ # Configure Compiler
+ ## Perf tuning features
+ AX_APPEND_COMPILE_FLAGS([-fno-math-errno])
+-AX_APPEND_COMPILE_FLAGS([/clang:-fno-math-errno])
++dnl clang-cl's spelling. qcc passes an argument it does not know (a path, to
++dnl it) on to the linker, so the compile-only check "accepts" it and every
++dnl link test after it fails: only where the compiler is MSVC-like.
++AS_CASE([$host_os], [mingw*|cygwin*|windows*], [AX_APPEND_COMPILE_FLAGS([/clang:-fno-math-errno])])
+ 
+ ## Warnings
+ AX_APPEND_COMPILE_FLAGS([ \

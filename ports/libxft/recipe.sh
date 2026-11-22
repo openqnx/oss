@@ -1,4 +1,4 @@
-VERSION=2.3.8; GIT=https://gitlab.freedesktop.org/xorg/lib/libxft.git; REF=libXft-2.3.8
+VERSION=2.3.9; GIT=https://gitlab.freedesktop.org/xorg/lib/libxft.git; REF=libXft-2.3.9
 DEPS="libx11 libxrender freetype fontconfig xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

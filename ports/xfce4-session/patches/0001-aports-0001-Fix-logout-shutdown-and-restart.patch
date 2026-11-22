@@ -16,9 +16,6 @@ Subject: [PATCH] Fix logout, shutdown, and restart
  xfce4-session/xfsm-manager.c           |  4 ++--
  xfce4-session/xfsm-shutdown-fallback.c | 17 +++++++++++++++++
  4 files changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/libxfsm/xfsm-shutdown-common.h b/libxfsm/xfsm-shutdown-common.h
-index 6bceb8b3..6f574f10 100644
 --- a/libxfsm/xfsm-shutdown-common.h
 +++ b/libxfsm/xfsm-shutdown-common.h
 @@ -50,6 +50,9 @@
@@ -31,11 +28,9 @@ index 6bceb8b3..6f574f10 100644
  #else
  #define POWEROFF_CMD "/sbin/shutdown -h now"
  #define REBOOT_CMD "/sbin/shutdown -r now"
-diff --git a/xfce4-session/main.c b/xfce4-session/main.c
-index bb076ec1..72be1b96 100644
 --- a/xfce4-session/main.c
 +++ b/xfce4-session/main.c
-@@ -267,7 +267,7 @@ name_lost (GDBusConnection *connection,
+@@ -267,7 +267,7 @@
              cmd = g_strdup ("loginctl terminate-session ''");
          }
  
@@ -44,17 +39,15 @@ index bb076ec1..72be1b96 100644
          g_warning ("Failed to run logout command: %s", error->message);
        g_free (cmd);
      }
-diff --git a/xfce4-session/xfsm-manager.c b/xfce4-session/xfsm-manager.c
-index 21f7b649..cb31a25d 100644
 --- a/xfce4-session/xfsm-manager.c
 +++ b/xfce4-session/xfsm-manager.c
-@@ -2392,12 +2392,12 @@ xfsm_manager_save_yourself_dbus (XfsmManager *manager,
+@@ -2398,12 +2398,12 @@
                                   gboolean allow_save)
  {
    ShutdownIdleData *idata;
 -
 +#ifndef __QNX__
-   if (manager->state != XFSM_MANAGER_IDLE)
+   if (manager->state != XFSM_MANAGER_IDLE || manager->save_idle_id != 0)
      {
        return FALSE;
      }
@@ -63,11 +56,9 @@ index 21f7b649..cb31a25d 100644
    idata = g_new (ShutdownIdleData, 1);
    idata->manager = manager;
    idata->type = type;
-diff --git a/xfce4-session/xfsm-shutdown-fallback.c b/xfce4-session/xfsm-shutdown-fallback.c
-index 09e7f9f5..7b8fb6cd 100644
 --- a/xfce4-session/xfsm-shutdown-fallback.c
 +++ b/xfce4-session/xfsm-shutdown-fallback.c
-@@ -380,6 +380,17 @@ xfsm_shutdown_fallback_try_action (XfsmShutdownType type,
+@@ -384,6 +384,17 @@
      }
  #endif
  
@@ -85,26 +76,23 @@ index 09e7f9f5..7b8fb6cd 100644
      /* xfsm-shutdown-helper requires polkit to run */
  #ifdef HAVE_POLKIT
    command = g_strdup_printf ("pkexec " XFSM_SHUTDOWN_HELPER_CMD " --%s", xfsm_helper_action);
-@@ -487,6 +498,9 @@ xfsm_shutdown_fallback_auth_shutdown (void)
-   gboolean ret_val = xfsm_shutdown_fallback_bsd_check_auth (XFSM_SHUTDOWN_SHUTDOWN);
+@@ -492,6 +503,9 @@
    if (ret_val)
      return TRUE;
-+#endif
+ #endif
 +#ifdef __QNX__
 +  return TRUE;
- #endif
++#endif
    return xfsm_shutdown_fallback_check_auth_polkit (POLKIT_AUTH_SHUTDOWN_XFSM);
  }
-@@ -505,6 +519,9 @@ xfsm_shutdown_fallback_auth_restart (void)
-   gboolean ret_val = xfsm_shutdown_fallback_bsd_check_auth (XFSM_SHUTDOWN_RESTART);
+ 
+@@ -510,6 +524,9 @@
    if (ret_val)
      return TRUE;
-+#endif
+ #endif
 +#ifdef __QNX__
 +  return TRUE;
- #endif
++#endif
    return xfsm_shutdown_fallback_check_auth_polkit (POLKIT_AUTH_RESTART_XFSM);
  }
--- 
-2.51.1
-
+ 

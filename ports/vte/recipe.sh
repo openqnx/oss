@@ -1,6 +1,6 @@
-VERSION=0.78.2
-TARBALL=https://download.gnome.org/sources/vte/0.78/vte-0.78.2.tar.xz
-SHA256=35d7bcde07356846b4a12881c8e016705b70a9004a9082285eee5834ccc49890
+VERSION=0.78.7
+TARBALL=https://download.gnome.org/sources/vte/0.78/vte-0.78.7.tar.xz
+SHA256=6fd1edc332d9f9519ce4c0f07135fdf72d64dfd990dc4fabc6ce91b1b7e83dd0
 # Also linked at run time (found by scripts/gen-dependency-index): lz4
 DEPS="gtk3 gtk4 pcre2 fribidi icu glib gnutls lz4"
 BUILDSYS=meson

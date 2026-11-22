@@ -1,10 +1,10 @@
-VERSION=2.8.2
+VERSION=2.8.21
 # The release tarball, not the git tag.  Enchant's git tree carries gnulib and
 # gl-mod/bootstrap as submodules and expects ./bootstrap to run gnulib-tool;
 # the tarball ships a generated configure and the gnulib sources it uses, so
 # no submodule clone (and no gnulib-tool here) is needed.  README hazard 74.
-TARBALL=https://github.com/AbiWord/enchant/releases/download/v2.8.2/enchant-2.8.2.tar.gz
-SHA256=8f19535adb5577b83b00e02f330fe9b9eb40dd21f19e2899636fc4d3a7696375
+TARBALL=https://github.com/AbiWord/enchant/releases/download/v2.8.21/enchant-2.8.21.tar.gz
+SHA256=dd2a762697c463148a8f59867089a5ebf2dd1449d869f93764b76c12bcf8acc0
 DEPS="glib aspell"
 BUILDSYS=autotools
 # --enable-relocatable: enchant dlopens its providers from a path it composes

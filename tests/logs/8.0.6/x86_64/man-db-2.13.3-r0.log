@@ -1,0 +1,33 @@
+# man-db 2.13.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T01:21:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u man-db qnx-test-man-db qnx-port-tests
+OK: 906.4 MiB in 161 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_man_db
+     == man-db ==
+       info man 2.13.3
+       ok   man --version: 2.13.3
+       info lexgrog: man/man1/qnxtest.1: "qnxtest - a QNX port test page"
+       ok   lexgrog parses the NAME section
+       ok   lexgrog -w: whatis info found
+       ok   mandb -c: index database created (index.db)
+       info whatis: qnxtest (1)          - a QNX port test page
+       ok   whatis from the index
+       ok   apropos 'port test'
+       ok   whatis of a missing page fails
+       ok   man -w locates the page
+       ok   man -w 1 qnxtest (by section)
+       ok   man -w 8 qnxtest: not found
+       ok   manpath honours MANPATH
+       ok   man -l formats the page through nroff (12 lines)
+     PASS man-db
+PASS test_man_db
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

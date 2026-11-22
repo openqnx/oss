@@ -1,4 +1,4 @@
-VERSION=0.1.29; GIT=https://github.com/tlwg/libthai.git; REF=v0.1.29
+VERSION=0.1.30; GIT=https://github.com/tlwg/libthai.git; REF=v0.1.30
 DEPS="libdatrie"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doxygen-doc )

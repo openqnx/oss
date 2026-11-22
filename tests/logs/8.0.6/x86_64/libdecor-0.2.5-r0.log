@@ -1,0 +1,77 @@
+# libdecor 0.2.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:47:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libdecor qnx-test-libdecor qnx-port-tests
+( 1/47) Installing brotli (1.1.0-r0)
+( 2/47) Installing bzip2 (1.0.8-r0)
+( 3/47) Installing libpng (1.6.59-r0)
+( 4/47) Installing freetype (2.13.3-r0)
+( 5/47) Installing fontconfig (2.15.0-r0)
+( 6/47) Installing libffi (3.4.6-r0)
+( 7/47) Installing pcre2 (10.44-r0)
+( 8/47) Installing glib (2.82.4-r0)
+( 9/47) Installing libxau (1.0.12-r0)
+(10/47) Installing libxdmcp (1.1.5-r0)
+(11/47) Installing libxcb (1.17.0-r0)
+(12/47) Installing libx11 (1.8.14-r0)
+(13/47) Installing libxext (1.3.7-r0)
+(14/47) Installing libxrender (0.9.13-r0)
+(15/47) Installing lzo (2.10-r0)
+(16/47) Installing pixman (0.46.4-r0)
+(17/47) Installing cairo (1.18.6-r0)
+(18/47) Installing dbus (1.16.4-r0)
+(19/47) Installing libxi (1.8.4-r0)
+(20/47) Installing libxtst (1.2.6-r0)
+(21/47) Installing at-spi2-core (2.54.2-r0)
+(22/47) Installing fribidi (1.0.18-r0)
+(23/47) Installing libjpeg-turbo (3.0.4-r0)
+(24/47) Installing gdk-pixbuf (2.42.12-r0)
+(25/47) Installing graphite2 (1.3.15-r0)
+(26/47) Installing icu (76.1-r0)
+(27/47) Installing harfbuzz (<ip>-r0)
+(28/47) Installing libepoxy (1.5.10-r0)
+(29/47) Installing libxcomposite (0.4.6-r0)
+(30/47) Installing libxfixes (6.0.2-r0)
+(31/47) Installing libxcursor (1.2.3-r0)
+(32/47) Installing libxdamage (1.1.7-r0)
+(33/47) Installing libxinerama (1.1.6-r0)
+(34/47) Installing libxkbcommon (1.8.1-r0)
+(35/47) Installing libxrandr (1.5.5-r0)
+(36/47) Installing libxft (2.3.9-r0)
+(37/47) Installing pango (1.54.0-r0)
+(38/47) Installing wayland (1.24.0-r0)
+(39/47) Installing gtk3 (3.24.43-r0)
+(40/47) Installing libdecor (0.2.5-r0)
+(41/47) Installing font-dejavu (2.37-r0)
+(42/47) Installing libsfdo (0.1.4-r0)
+(43/47) Installing lcms2 (2.16-r0)
+(44/47) Installing wlroots (0.20.2-r0)
+(45/47) Installing xkeyboard-config (2.43-r0)
+(46/47) Installing labwc (0.20.2-r0)
+(47/47) Installing qnx-test-libdecor (1.0-r0)
+Executing glib-2.82.4-r0.trigger
+OK: 609.6 MiB in 75 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libdecor
+     == libdecor ==
+       ok   labwc up (headless Wayland compositor)
+       ok   wl_display_connect
+       ok   wl_compositor bound
+     Failed to load plugin 'libdecor-gtk.so': failed to init
+       ok   libdecor_new (plugin loaded)
+       ok   libdecor_decorate a wl_surface
+       info configured 1 time(s), content 320x240
+       ok   the compositor's configure arrives and is committed
+       ok   the frame keeps its title
+       ok   the frame can be closed
+       ok   no libdecor errors
+     PASS libdecor
+PASS test_libdecor
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

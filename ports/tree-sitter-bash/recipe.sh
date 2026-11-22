@@ -1,6 +1,6 @@
 # tree-sitter grammar: bash. Installs lib/tree-sitter/bash.so (the parser
 # Neovim and the tree-sitter library load). Version as in QNX's repository.
-VERSION=0.25.0; GIT=https://github.com/tree-sitter/tree-sitter-bash.git; REF=v0.25.0
+VERSION=0.25.1; GIT=https://github.com/tree-sitter/tree-sitter-bash.git; REF=v0.25.1
 BUILDSYS=custom
 do_build() {
   local d="$S/src" f objs=()

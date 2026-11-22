@@ -1,0 +1,26 @@
+# mpfr 4.2.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-22T00:49:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u mpfr qnx-test-mpfr qnx-port-tests
+(1/1) Installing qnx-test-mpfr (1.0-r1)
+OK: 470.3 MiB in 29 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mpfr
+     == mpfr ==
+       info MPFR 4.2.2
+       ok   pi to 28 decimals matches the known value
+       info pi = 3.141592653589793238462643383280
+       ok   e to 20 decimals
+       ok   pi + e exceeds both
+       ok   precision is honoured
+       ok   1/3 at 10 bits is close to 0.3333
+     PASS mpfr
+PASS test_mpfr
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

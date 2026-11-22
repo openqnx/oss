@@ -12,7 +12,7 @@ T=$(mktemp -d /tmp/qnxport-man-db.XXXXXX) || { echo "FAIL man-db (mktemp)"; exit
 cd "$T" || exit 1
 HOME=$T; export HOME
 v=$("$B/man" --version 2>&1 | head -n 1); echo "  info $v"
-case "$v" in *2.13.1*) ok "man --version: 2.13.1" ;; *) bad "man --version: $v" ;; esac
+case "$v" in *2.13.3*) ok "man --version: 2.13.3" ;; *) bad "man --version: $v" ;; esac
 
 mkdir -p man/man1
 cat > man/man1/qnxtest.1 <<'EOF'

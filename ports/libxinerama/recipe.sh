@@ -1,4 +1,4 @@
-VERSION=1.1.5; GIT=https://gitlab.freedesktop.org/xorg/lib/libxinerama.git; REF=libXinerama-1.1.5
+VERSION=1.1.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxinerama.git; REF=libXinerama-1.1.6
 DEPS="libx11 libxext xorgproto"
 BUILDSYS=autotools
 # malloc(0) is a run-time test, which cross configure cannot perform. QNX

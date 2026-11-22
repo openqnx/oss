@@ -295,8 +295,8 @@ int main(void) {
   QT_BEGIN("thunar");
   static char out[16384];
   printf("  info libthunarx %u.%u.%u\n", thunarx_major_version, thunarx_minor_version, thunarx_micro_version);
-  QT_CHECK(thunarx_major_version == 4 && thunarx_minor_version == 20 && thunarx_micro_version == 0, "libthunarx 4.20.0");
-  QT_CHECK(thunarx_check_version(4, 20, 0) == NULL, "thunarx_check_version(4.20.0) accepts");
+  QT_CHECK(thunarx_major_version == 4 && thunarx_minor_version == 20 && thunarx_micro_version == 10, "libthunarx 4.20.10");
+  QT_CHECK(thunarx_check_version(4, 20, 10) == NULL, "thunarx_check_version(4.20.10) accepts");
   /* Upstream thunarx_check_version() is a stub that always returns NULL
    * (thunarx/thunarx-config.c), so there is no "refuses" case to test. */
   QT_CHECK(thunarx_check_version(5, 0, 0) == NULL, "thunarx_check_version(5.0.0): upstream stub, NULL");
@@ -355,9 +355,9 @@ int main(void) {
   /* --- the program --- */
   int rc = run("thunar --version", out, sizeof out, 30);
   printf("  info thunar --version -> %d: %s\n", rc, line1(out));
-  QT_CHECK(rc == 0 && strstr(out, "thunar 4.20.0 (Xfce 4.20"), "thunar --version: thunar 4.20.0 (Xfce 4.20)");
+  QT_CHECK(rc == 0 && strstr(out, "thunar 4.20.10 (Xfce 4.20"), "thunar --version: thunar 4.20.10 (Xfce 4.20)");
   rc = run("Thunar -V", out, sizeof out, 30);
-  QT_CHECK(rc == 0 && strstr(out, "thunar 4.20.0"), "Thunar -V (the compatibility name)");
+  QT_CHECK(rc == 0 && strstr(out, "thunar 4.20.10"), "Thunar -V (the compatibility name)");
   rc = run("thunar --help", out, sizeof out, 30);
   QT_CHECK(rc == 0 && strstr(out, "--bulk-rename") && strstr(out, "--daemon"), "thunar --help lists --bulk-rename, --daemon");
   QT_CHECK(file_has("/usr/local/etc/xdg/Thunar/uca.xml", "<actions>"), "default custom actions (uca.xml) installed");

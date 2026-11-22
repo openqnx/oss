@@ -1,4 +1,4 @@
-VERSION=0.2.13; GIT=https://github.com/tlwg/libdatrie.git; REF=v0.2.13
+VERSION=0.2.14; GIT=https://github.com/tlwg/libdatrie.git; REF=v0.2.14
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-doxygen-doc )
 # Two problems, both from autoconf-archive not being installed here:

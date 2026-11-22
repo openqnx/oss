@@ -1,4 +1,4 @@
-VERSION=1.14.53; GIT=https://gitlab.gnome.org/GNOME/libgsf.git; REF=LIBGSF_1_14_53
+VERSION=1.14.60; GIT=https://gitlab.gnome.org/GNOME/libgsf.git; REF=LIBGSF_1_14_60
 DEPS="glib libxml2 zlib bzip2"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --without-gdk-pixbuf

@@ -1,4 +1,4 @@
-VERSION=1.1.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxdamage.git; REF=libXdamage-1.1.6
+VERSION=1.1.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxdamage.git; REF=libXdamage-1.1.7
 DEPS="libx11 libxfixes xorgproto"
 BUILDSYS=autotools
 # Needed by GTK3's X11 backend (HAVE_XDAMAGE), which Thunar requires.

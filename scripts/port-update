@@ -6,6 +6,8 @@
 #
 #   <version>  default: the newest upstream release (scripts/check-updates)
 #   -n         show what would change, change nothing
+#   -R         steps 1 and 2 only: keep the old version, move the recipe,
+#              fetch the new source -- build elsewhere (a build server)
 #
 # 1. The current version is kept: ports/<name>/versions/<old>/ gets its
 #    recipe.sh and patches/ (and the recipe's other patch sets). Its packages
@@ -22,8 +24,9 @@
 #    docs regenerated. Nothing is published: verify on a target first.
 set -o pipefail
 WS=$(cd "$(dirname "$0")/.." && pwd)
-DRY=""; [ "$1" = -n ] && { DRY=1; shift; }
-C=${1:?usage: $0 [-n] <component> [<version>]}; NEW=$2
+DRY=""; ONLY_RECIPE=""
+while :; do case "$1" in -n) DRY=1; shift ;; -R) ONLY_RECIPE=1; shift ;; *) break ;; esac; done
+C=${1:?usage: $0 [-n] [-R] <component> [<version>]}; NEW=$2
 R=$WS/ports/$C/recipe.sh
 [ -f "$R" ] || { echo "no recipe: $R" >&2; exit 1; }
 export QNX_SDP_ROOT=${QNX_SDP_ROOT:-$HOME/qnx800}
@@ -68,6 +71,24 @@ elif [ -n "$OLD_TARBALL" ]; then
     OLD_FORM=${OLD_VERSION//./$SEP}; NEW_FORM=${NEW//./$SEP}
     [ "$OLD_FORM" != "$OLD_VERSION" ] && NEW_TARBALL=${NEW_TARBALL//$OLD_FORM/$NEW_FORM}
   done
+  # PyPI keeps each release's files under a path of their own hash
+  # (files.pythonhosted.org/packages/<h>/<h>/<h...>/): ask its JSON API for the
+  # file of the new release with the same kind (sdist, or the same wheel tag).
+  case "$OLD_TARBALL" in https://files.pythonhosted.org/*)
+    NEW_TARBALL=$(python3 -I - "$OLD_TARBALL" "$OLD_VERSION" "$NEW" <<'EOF2'
+import json, sys, urllib.request
+old, ov, nv = sys.argv[1:]
+f = old.rsplit("/", 1)[1]; want = f.replace(ov, nv)
+pkg = f.split("-" + ov)[0]
+j = json.load(urllib.request.urlopen(urllib.request.Request(
+    "https://pypi.org/pypi/%s/%s/json" % (pkg, nv), headers={"User-Agent": "openqnx-oss port-update"}), timeout=30))
+for u in j.get("urls", []):
+    if u["filename"].lower() == want.lower():
+        print(u["url"]); break
+EOF2
+    ) || NEW_TARBALL=""
+    [ -n "$NEW_TARBALL" ] || { echo "!! PyPI has no $(basename "${OLD_TARBALL//$OLD_VERSION/$NEW}") for $NEW" >&2; exit 1; } ;;
+  esac
   [ "$NEW_TARBALL" != "$OLD_TARBALL" ] || { echo "!! the tarball URL does not contain the version; edit the recipe by hand" >&2; exit 1; }
   [ "$(basename "$NEW_TARBALL")" != "$(basename "$OLD_TARBALL")" ] ||
     { echo "!! the tarball's file name stays $(basename "$OLD_TARBALL") for $NEW (dist/ caches by name); edit the recipe by hand" >&2; exit 1; }
@@ -116,6 +137,7 @@ sub("SHA256", osha, nsha)
 open(p, "w").write(t)
 EOF
 echo "   recipe.sh now at $NEW (diff: git diff ports/$C/recipe.sh)"
+[ -z "$ONLY_RECIPE" ] || exit 0
 
 # 3. fetch, patch, build
 source "$WS/env.sh" x86_64 >/dev/null || exit 1

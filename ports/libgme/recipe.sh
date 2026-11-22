@@ -1,7 +1,7 @@
 # libgme (Game_Music_Emu): emulates the sound chips of video game consoles to
 # play their music files -- NSF/NSFE (NES), SPC (SNES), GBS (Game Boy), VGM/VGZ
 # and GYM (Mega Drive), HES, KSS, AY, SAP -- into 16-bit PCM.
-VERSION=0.6.4; GIT=https://github.com/libgme/game-music-emu.git; REF=0.6.4
+VERSION=0.6.5; GIT=https://github.com/libgme/game-music-emu.git; REF=0.6.5
 DEPS="zlib"
 BUILDSYS=cmake
 # All emulators, zlib for compressed VGZ files; the shared library only, no

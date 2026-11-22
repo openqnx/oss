@@ -1,4 +1,4 @@
-VERSION=1.6.44; GIT=https://github.com/pnggroup/libpng.git; REF=v1.6.44
+VERSION=1.6.59; GIT=https://github.com/pnggroup/libpng.git; REF=v1.6.59
 DEPS="zlib"
 BUILDSYS=autotools
 # libpng's CMake path generates pnglibconf by *running* a freshly built helper.

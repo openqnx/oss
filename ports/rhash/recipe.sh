@@ -1,9 +1,9 @@
 # RHash: computes and verifies hash sums and magnet links (CRC32, MD5,
 # SHA-1/2/3, BLAKE2/3, Tiger, TTH, BTIH, ED2K, GOST, ...) -- the rhash
 # program and the LibRHash library. Version as in qnx-ports' aports.
-VERSION=1.4.5
-TARBALL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.5.tar.gz
-SHA256=6db837e7bbaa7c72c5fd43ca5af04b1d370c5ce32367b9f6a1f7b49b2338c09a
+VERSION=1.4.6
+TARBALL=https://github.com/rhash/RHash/archive/refs/tags/v1.4.6.tar.gz
+SHA256=9f6019cfeeae8ace7067ad22da4e4f857bb2cfa6c2deaa2258f55b2227ec937a
 DEPS=""
 # Its own configure (not Autoconf), building in the source tree: configured
 # and built in a copy (src/ stays clean for scripts/mkpatch).

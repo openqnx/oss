@@ -1,0 +1,44 @@
+Build the settings dialog's session editor only with X11.
+
+The session editor shows the X11 session-management (XSMP) clients and
+includes <X11/SM/SMlib.h> unconditionally, so a Wayland-only build (here:
+--disable-x11) fails with "X11/SM/SMlib.h: No such file or directory".
+
+The same change as QNX's aports patch disable-x11-session-settings.patch
+(qnx-ports/aports extra/xfce4-session), which removes session-editor.c from
+the 4.21 Meson build. This tree is the 4.20 Autotools release, so the file
+stays in the build and its contents are compiled only when ENABLE_X11 is set.
+
+Upstream-Status: QNX-specific
+
+--- a/settings/main.c
++++ b/settings/main.c
+@@ -159,7 +159,9 @@
+       return EXIT_FAILURE;
+     }
+ 
++#ifdef ENABLE_X11
+   session_editor_init (builder);
++#endif
+ 
+   channel = xfconf_channel_get (SETTINGS_CHANNEL);
+ 
+--- a/settings/session-editor.c
++++ b/settings/session-editor.c
+@@ -19,6 +19,10 @@
+ #include "config.h"
+ #endif
+ 
++/* The session editor lists X11 session-management (XSMP) clients; without
++ * X11 there are none, and <X11/SM/SMlib.h> may not exist. */
++#ifdef ENABLE_X11
++
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
+@@ -935,3 +939,5 @@
+   g_signal_connect (sel, "changed",
+                     G_CALLBACK (session_editor_sel_changed_btn), GTK_WIDGET (btn_quit));
+ }
++
++#endif /* ENABLE_X11 */

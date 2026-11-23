@@ -370,7 +370,9 @@ pkg_check_modules(XFCE REQUIRED IMPORTED_TARGET
 port_test(test_xfce             test_xfce.c              PkgConfig::XFCE)
 
 port_test(test_sdl2_ext         test_sdl2_ext.c          SDL2_image SDL2_ttf SDL2_net SDL2)
-port_test(test_thorvg           test_thorvg.c            thorvg)
+# thorvg 1.x: libthorvg-1, headers in include/thorvg-1/
+port_test(test_thorvg           test_thorvg.c            thorvg-1)
+target_include_directories(test_thorvg PRIVATE "${INC}/thorvg-1")
 
 pkg_check_modules(GSF REQUIRED IMPORTED_TARGET libgsf-1)
 port_test(test_misc_libs        test_misc_libs.c         PkgConfig::GSF hyphen enca gsm)

@@ -91,11 +91,9 @@ Signed-off-by: Deep Chordia <dchordia@blackberry.com>
  create mode 100644 test/system/qnx/spinlock.c
  create mode 100644 test/system/qnx/threads.c
 
-diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
-index 8b186dd64..d8121e0aa 100644
 --- a/lib/CMakeLists.txt
 +++ b/lib/CMakeLists.txt
-@@ -51,8 +51,13 @@ collector_list (_deps PROJECT_LIB_DEPS)
+@@ -51,8 +51,13 @@
  
  foreach (f ${_headers})
    configure_file (${f} include/${PROJECT_NAME}/${f} @ONLY)
@@ -110,10 +108,7 @@ index 8b186dd64..d8121e0aa 100644
    if (${f} MATCHES "^[^/]*\\.h")
      collect (PROJECT_HDR_TESTS "metal/${f}")
    endif (${f} MATCHES "^[^/]*\\.h")
-diff --git a/lib/system/qnx/CMakeLists.txt b/lib/system/qnx/CMakeLists.txt
-new file mode 100644
-index 000000000..805298b45
---- /dev/null
+--- a/lib/system/qnx/CMakeLists.txt
 +++ b/lib/system/qnx/CMakeLists.txt
 @@ -0,0 +1,21 @@
 +collect (PROJECT_LIB_HEADERS alloc.h)
@@ -137,10 +132,7 @@ index 000000000..805298b45
 +collect (PROJECT_LIB_SOURCES utilities.c)
 +
 +collect (PROJECT_LIB_DEPS cache)
-diff --git a/lib/system/qnx/alloc.h b/lib/system/qnx/alloc.h
-new file mode 100644
-index 000000000..442db32f6
---- /dev/null
+--- a/lib/system/qnx/alloc.h
 +++ b/lib/system/qnx/alloc.h
 @@ -0,0 +1,39 @@
 +/*
@@ -182,10 +174,7 @@ index 000000000..442db32f6
 +#endif
 +
 +#endif /* __METAL_QNX_ALLOC__H__ */
-diff --git a/lib/system/qnx/assert.h b/lib/system/qnx/assert.h
-new file mode 100644
-index 000000000..1c728c68c
---- /dev/null
+--- a/lib/system/qnx/assert.h
 +++ b/lib/system/qnx/assert.h
 @@ -0,0 +1,27 @@
 +/*
@@ -215,10 +204,7 @@ index 000000000..1c728c68c
 +#define metal_sys_assert(cond) assert(cond)
 +
 +#endif /* __METAL_QNX_ASSERT__H__ */
-diff --git a/lib/system/qnx/cache.h b/lib/system/qnx/cache.h
-new file mode 100644
-index 000000000..3f2fd099e
---- /dev/null
+--- a/lib/system/qnx/cache.h
 +++ b/lib/system/qnx/cache.h
 @@ -0,0 +1,45 @@
 +/*
@@ -266,10 +252,7 @@ index 000000000..3f2fd099e
 +#endif
 +
 +#endif /* __METAL_QNX_CACHE__H__ */
-diff --git a/lib/system/qnx/condition.c b/lib/system/qnx/condition.c
-new file mode 100644
-index 000000000..c6eca5f4b
---- /dev/null
+--- a/lib/system/qnx/condition.c
 +++ b/lib/system/qnx/condition.c
 @@ -0,0 +1,19 @@
 +/*
@@ -291,10 +274,7 @@ index 000000000..c6eca5f4b
 +
 +	return (ret == EOK) ? 0 : -ret;
 +}
-diff --git a/lib/system/qnx/condition.h b/lib/system/qnx/condition.h
-new file mode 100644
-index 000000000..35964bb61
---- /dev/null
+--- a/lib/system/qnx/condition.h
 +++ b/lib/system/qnx/condition.h
 @@ -0,0 +1,59 @@
 +/*
@@ -356,10 +336,7 @@ index 000000000..35964bb61
 +#endif
 +
 +#endif /* __METAL_QNX_CONDITION__H__ */
-diff --git a/lib/system/qnx/device.c b/lib/system/qnx/device.c
-new file mode 100644
-index 000000000..dd60b3934
---- /dev/null
+--- a/lib/system/qnx/device.c
 +++ b/lib/system/qnx/device.c
 @@ -0,0 +1,29 @@
 +/*
@@ -391,10 +368,7 @@ index 000000000..dd60b3934
 +	return 0;
 +}
 +
-diff --git a/lib/system/qnx/init.c b/lib/system/qnx/init.c
-new file mode 100644
-index 000000000..c370e3c5a
---- /dev/null
+--- a/lib/system/qnx/init.c
 +++ b/lib/system/qnx/init.c
 @@ -0,0 +1,77 @@
 +/*
@@ -474,10 +448,7 @@ index 000000000..c370e3c5a
 +	}
 +}
 +
-diff --git a/lib/system/qnx/io.c b/lib/system/qnx/io.c
-new file mode 100644
-index 000000000..10c00c6db
---- /dev/null
+--- a/lib/system/qnx/io.c
 +++ b/lib/system/qnx/io.c
 @@ -0,0 +1,45 @@
 +/*
@@ -525,10 +496,7 @@ index 000000000..10c00c6db
 +
 +	return 0;
 +}
-diff --git a/lib/system/qnx/io.h b/lib/system/qnx/io.h
-new file mode 100644
-index 000000000..3884b5914
---- /dev/null
+--- a/lib/system/qnx/io.h
 +++ b/lib/system/qnx/io.h
 @@ -0,0 +1,43 @@
 +/*
@@ -574,10 +542,7 @@ index 000000000..3884b5914
 +#endif
 +
 +#endif /* __METAL_QNX_IO__H__ */
-diff --git a/lib/system/qnx/irq.c b/lib/system/qnx/irq.c
-new file mode 100644
-index 000000000..cec641589
---- /dev/null
+--- a/lib/system/qnx/irq.c
 +++ b/lib/system/qnx/irq.c
 @@ -0,0 +1,256 @@
 +/*
@@ -836,10 +801,7 @@ index 000000000..cec641589
 +			  "Failed to join IRQ thread: %d.\n", ret);
 +	}
 +}
-diff --git a/lib/system/qnx/irq.h b/lib/system/qnx/irq.h
-new file mode 100644
-index 000000000..e920a9876
---- /dev/null
+--- a/lib/system/qnx/irq.h
 +++ b/lib/system/qnx/irq.h
 @@ -0,0 +1,45 @@
 +/*
@@ -887,10 +849,7 @@ index 000000000..e920a9876
 +#endif
 +
 +#endif /* __METAL_QNX_IRQ__H__ */
-diff --git a/lib/system/qnx/log.h b/lib/system/qnx/log.h
-new file mode 100644
-index 000000000..4ae4a736b
---- /dev/null
+--- a/lib/system/qnx/log.h
 +++ b/lib/system/qnx/log.h
 @@ -0,0 +1,27 @@
 +/*
@@ -920,10 +879,7 @@ index 000000000..4ae4a736b
 +#endif
 +
 +#endif /* __METAL_QNX_LOG__H__ */
-diff --git a/lib/system/qnx/mutex.h b/lib/system/qnx/mutex.h
-new file mode 100644
-index 000000000..df285116a
---- /dev/null
+--- a/lib/system/qnx/mutex.h
 +++ b/lib/system/qnx/mutex.h
 @@ -0,0 +1,74 @@
 +/*
@@ -1000,10 +956,7 @@ index 000000000..df285116a
 +#endif
 +
 +#endif /* __METAL_QNX_MUTEX__H__ */
-diff --git a/lib/system/qnx/shmem.c b/lib/system/qnx/shmem.c
-new file mode 100644
-index 000000000..92fb33662
---- /dev/null
+--- a/lib/system/qnx/shmem.c
 +++ b/lib/system/qnx/shmem.c
 @@ -0,0 +1,103 @@
 +/*
@@ -1109,10 +1062,7 @@ index 000000000..92fb33662
 +	close(fd);
 +	return 0;
 +}
-diff --git a/lib/system/qnx/sleep.h b/lib/system/qnx/sleep.h
-new file mode 100644
-index 000000000..57ac6bff7
---- /dev/null
+--- a/lib/system/qnx/sleep.h
 +++ b/lib/system/qnx/sleep.h
 @@ -0,0 +1,40 @@
 +/*
@@ -1155,10 +1105,7 @@ index 000000000..57ac6bff7
 +#endif
 +
 +#endif /* __METAL_QNX_SLEEP__H__ */
-diff --git a/lib/system/qnx/sys.h b/lib/system/qnx/sys.h
-new file mode 100644
-index 000000000..39d542eb8
---- /dev/null
+--- a/lib/system/qnx/sys.h
 +++ b/lib/system/qnx/sys.h
 @@ -0,0 +1,86 @@
 +/*
@@ -1247,10 +1194,7 @@ index 000000000..39d542eb8
 +#endif
 +
 +#endif /* __METAL_QNX_SYS__H__ */
-diff --git a/lib/system/qnx/time.c b/lib/system/qnx/time.c
-new file mode 100644
-index 000000000..fb8e6b047
---- /dev/null
+--- a/lib/system/qnx/time.c
 +++ b/lib/system/qnx/time.c
 @@ -0,0 +1,30 @@
 +/*
@@ -1283,10 +1227,7 @@ index 000000000..fb8e6b047
 +	return 0;
 +}
 +
-diff --git a/lib/system/qnx/utilities.c b/lib/system/qnx/utilities.c
-new file mode 100644
-index 000000000..aaff60641
---- /dev/null
+--- a/lib/system/qnx/utilities.c
 +++ b/lib/system/qnx/utilities.c
 @@ -0,0 +1,98 @@
 +/*
@@ -1387,11 +1328,9 @@ index 000000000..aaff60641
 +{
 +	return munmap(mem, size) != 0 ? -errno : 0;
 +}
-diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
-index 127df2caa..ef36af8cd 100644
 --- a/test/CMakeLists.txt
 +++ b/test/CMakeLists.txt
-@@ -39,7 +39,11 @@ else (WITH_ZEPHYR)
+@@ -42,7 +42,11 @@
      set (_lib ${PROJECT_NAME}-shared)
      add_executable (test-${_lib} ${_srcs})
      target_link_libraries (test-${_lib} ${_deps} ${_lib})
@@ -1404,10 +1343,7 @@ index 127df2caa..ef36af8cd 100644
      target_compile_options (test-${_lib} PUBLIC ${_ec_flgs})
      add_dependencies (test-${_lib}  ${PROJECT_NAME}-shared)
      if (WITH_TESTS_EXEC)
-diff --git a/test/system/qnx/CMakeLists.txt b/test/system/qnx/CMakeLists.txt
-new file mode 100644
-index 000000000..0e2f927cf
---- /dev/null
+--- a/test/system/qnx/CMakeLists.txt
 +++ b/test/system/qnx/CMakeLists.txt
 @@ -0,0 +1,13 @@
 +collect (PROJECT_LIB_TESTS main.c)
@@ -1423,10 +1359,7 @@ index 000000000..0e2f927cf
 +if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_MACHINE})
 +	add_subdirectory(${PROJECT_MACHINE})
 +endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_MACHINE})
-diff --git a/test/system/qnx/alloc.c b/test/system/qnx/alloc.c
-new file mode 100644
-index 000000000..d347eaf79
---- /dev/null
+--- a/test/system/qnx/alloc.c
 +++ b/test/system/qnx/alloc.c
 @@ -0,0 +1,28 @@
 +/*
@@ -1457,10 +1390,7 @@ index 000000000..d347eaf79
 +}
 +
 +METAL_ADD_TEST(alloc);
-diff --git a/test/system/qnx/atomic.c b/test/system/qnx/atomic.c
-new file mode 100644
-index 000000000..cfbee58c5
---- /dev/null
+--- a/test/system/qnx/atomic.c
 +++ b/test/system/qnx/atomic.c
 @@ -0,0 +1,47 @@
 +/*
@@ -1510,10 +1440,7 @@ index 000000000..cfbee58c5
 +}
 +
 +METAL_ADD_TEST(atomic);
-diff --git a/test/system/qnx/condition.c b/test/system/qnx/condition.c
-new file mode 100644
-index 000000000..81a087a6a
---- /dev/null
+--- a/test/system/qnx/condition.c
 +++ b/test/system/qnx/condition.c
 @@ -0,0 +1,101 @@
 +/*
@@ -1617,10 +1544,7 @@ index 000000000..81a087a6a
 +}
 +
 +METAL_ADD_TEST(condition);
-diff --git a/test/system/qnx/irq.c b/test/system/qnx/irq.c
-new file mode 100644
-index 000000000..cb253c867
---- /dev/null
+--- a/test/system/qnx/irq.c
 +++ b/test/system/qnx/irq.c
 @@ -0,0 +1,68 @@
 +/*
@@ -1691,10 +1615,7 @@ index 000000000..cb253c867
 +}
 +
 +METAL_ADD_TEST(irq);
-diff --git a/test/system/qnx/main.c b/test/system/qnx/main.c
-new file mode 100644
-index 000000000..d340bb242
---- /dev/null
+--- a/test/system/qnx/main.c
 +++ b/test/system/qnx/main.c
 @@ -0,0 +1,16 @@
 +/*
@@ -1713,10 +1634,7 @@ index 000000000..d340bb242
 +
 +	return status;
 +}
-diff --git a/test/system/qnx/mutex.c b/test/system/qnx/mutex.c
-new file mode 100644
-index 000000000..4149a2d0d
---- /dev/null
+--- a/test/system/qnx/mutex.c
 +++ b/test/system/qnx/mutex.c
 @@ -0,0 +1,44 @@
 +/*
@@ -1763,17 +1681,11 @@ index 000000000..4149a2d0d
 +}
 +
 +METAL_ADD_TEST(mutex);
-diff --git a/test/system/qnx/rpi4/CMakeLists.txt b/test/system/qnx/rpi4/CMakeLists.txt
-new file mode 100644
-index 000000000..12ce3e482
---- /dev/null
+--- a/test/system/qnx/rpi4/CMakeLists.txt
 +++ b/test/system/qnx/rpi4/CMakeLists.txt
 @@ -0,0 +1 @@
 +collect (PROJECT_LIB_TESTS device.c)
-diff --git a/test/system/qnx/rpi4/device.c b/test/system/qnx/rpi4/device.c
-new file mode 100644
-index 000000000..215f2ce8d
---- /dev/null
+--- a/test/system/qnx/rpi4/device.c
 +++ b/test/system/qnx/rpi4/device.c
 @@ -0,0 +1,83 @@
 +/*
@@ -1859,10 +1771,7 @@ index 000000000..215f2ce8d
 +}
 +
 +METAL_ADD_TEST(device)
-diff --git a/test/system/qnx/shmem.c b/test/system/qnx/shmem.c
-new file mode 100644
-index 000000000..7cb1a0b63
---- /dev/null
+--- a/test/system/qnx/shmem.c
 +++ b/test/system/qnx/shmem.c
 @@ -0,0 +1,58 @@
 +/*
@@ -1923,10 +1832,7 @@ index 000000000..7cb1a0b63
 +}
 +
 +METAL_ADD_TEST(shmem);
-diff --git a/test/system/qnx/spinlock.c b/test/system/qnx/spinlock.c
-new file mode 100644
-index 000000000..085686733
---- /dev/null
+--- a/test/system/qnx/spinlock.c
 +++ b/test/system/qnx/spinlock.c
 @@ -0,0 +1,50 @@
 +/*
@@ -1979,10 +1885,7 @@ index 000000000..085686733
 +}
 +
 +METAL_ADD_TEST(spinlock);
-diff --git a/test/system/qnx/threads.c b/test/system/qnx/threads.c
-new file mode 100644
-index 000000000..22a13625a
---- /dev/null
+--- a/test/system/qnx/threads.c
 +++ b/test/system/qnx/threads.c
 @@ -0,0 +1,61 @@
 +/*

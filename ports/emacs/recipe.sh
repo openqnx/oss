@@ -5,9 +5,9 @@
 # needs a running Emacs: a native build for the build host is made first and
 # used for that (EMACS / BOOTSTRAPEMACS), then the target build reuses its
 # compiled Lisp.
-VERSION=30.2
-TARBALL=https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz
-SHA256=b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9
+VERSION=31.1
+TARBALL=https://ftp.gnu.org/gnu/emacs/emacs-31.1.tar.xz
+SHA256=1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586
 # Also linked at run time (found by scripts/gen-dependency-index): dbus lcms2 sqlite tree-sitter
 DEPS="ncurses gnutls libxml2 zlib dbus lcms2 sqlite tree-sitter"
 BUILDSYS=custom

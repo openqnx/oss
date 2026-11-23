@@ -7,7 +7,7 @@
 int main() {
   QT_BEGIN("simdutf");
   printf("  info implementation = %s\n",
-         simdutf::get_active_implementation()->name().c_str());
+         std::string(simdutf::get_active_implementation()->name()).c_str());  // a string_view since 9.x
   QT_CHECK(simdutf::get_active_implementation() != nullptr, "an implementation was selected");
 
   const std::string good = "QNX SDP 8.0 über 中文 \U0001F600";

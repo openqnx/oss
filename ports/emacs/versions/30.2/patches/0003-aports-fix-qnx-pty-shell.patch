@@ -1,0 +1,39 @@
+QNX build fix from QNX's aports (extra/emacs/fix-qnx-pty-shell.patch).
+
+Taken from qnx-ports/aports extra/emacs, the APKBUILD the QNX Everywhere image's
+package is built from.
+
+Upstream-Status: QNX-specific
+
+--- emacs-30.2.orig/src/callproc.c.orig
++++ emacs-30.2/src/callproc.c
+@@ -1287,7 +1287,9 @@
+   dup2 (err, STDERR_FILENO);
+ 
+   setpgid (0, 0);
++#ifndef __QNX__
+   tcsetpgrp (0, pid);
++#endif
+ 
+   int errnum = emacs_exec_file (new_argv[0], new_argv, env);
+   exec_failed (new_argv[0], errnum);
+@@ -1597,8 +1599,19 @@
+ 
+ 	  /* I wonder if emacs_close (emacs_open (pty, ...))
+ 	     would work?  */
++#ifdef __QNX__
++	  /* On QNX, call setsid and TIOCSCTTY before reopening the PTY.
++	     Even though both calls may fail with EPERM, they trigger
++	     necessary internal state changes in QNX's PTY implementation. */
+ 	  if (pty_in && std_in >= 0)
++	    {
++	      setsid();
++	      ioctl (std_in, TIOCSCTTY, 0);
++	    }
++#else
++	  if (pty_in && std_in >= 0)
+ 	    emacs_close (std_in);
++#endif
+ 	  int ptyfd = emacs_open_noquit (pty_name, O_RDWR, 0);
+ 	  if (pty_in)
+ 	    std_in = ptyfd;

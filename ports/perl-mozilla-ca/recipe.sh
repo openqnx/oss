@@ -1,9 +1,9 @@
 # perl-mozilla-ca: Mozilla::CA, Mozilla's CA certificate bundle for Perl
 # (LWP and IO::Socket::SSL verify HTTPS servers with it). Pure Perl and a
 # PEM file: installed into Perl's site library.
-VERSION=20261020
-TARBALL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261020.tar.gz
-SHA256=1aeed97a463389e582e085e82de03ae0bffae74d46cf8ee4c511341e5508c21d
+VERSION=20261105
+TARBALL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261105.tar.gz
+SHA256=b29dfd05d0f0038091fab9d7a184e8e476bc24fb5de5963cd23d21d262e0be10
 DEPS="perl"
 RUNTIME_DEPS="perl"
 BUILDSYS=custom

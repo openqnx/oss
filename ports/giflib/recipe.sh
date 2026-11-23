@@ -1,6 +1,6 @@
-VERSION=5.2.2
-TARBALL=https://downloads.sourceforge.net/giflib/giflib-5.2.2.tar.gz
-SHA256=be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb
+VERSION=6.1.3
+TARBALL=https://downloads.sourceforge.net/giflib/giflib-6.1.3.tar.gz
+SHA256=b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e
 BUILDSYS=custom
 # giflib ships only a Makefile that assumes the host toolchain.
 do_configure() { :; }

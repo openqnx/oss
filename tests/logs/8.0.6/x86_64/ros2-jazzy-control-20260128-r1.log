@@ -1,0 +1,66 @@
+# ros2-jazzy-control 20260128-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-23T04:25:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-control qnx-test-ros2-jazzy-control qnx-port-tests
+( 1/33) Upgrading libffi (3.4.6-r0 -> 3.8.1-r0)
+( 2/33) Installing libuuid (2.42.4-r0)
+( 3/33) Upgrading python3 (3.14.0-r0 -> 3.14.0-r1)
+( 4/33) Installing qnx-port-tests (1.0-r0)
+( 5/33) Installing qnx-test-ros2-jazzy-control (1.0-r0)
+( 6/33) Installing console_bridge (1.0.2-r0)
+( 7/33) Installing brotli (1.2.1-r0)
+( 8/33) Installing c-ares (1.34.9-r0)
+( 9/33) Installing libidn2 (2.3.8-r0)
+(10/33) Installing nghttp2 (1.71.0-r0)
+(11/33) Installing curl (8.23.0-r0)
+(12/33) Installing fastcdr (2.4.0-r0)
+(13/33) Installing fmt (11.2.0-r0)
+(14/33) Installing orocos-kdl (1.5.4-r0)
+(15/33) Installing python3-filelock (4.2.12-r0)
+(16/33) Installing libxml2 (2.13.5-r0)
+(17/33) Installing libxslt (1.1.45-r0)
+(18/33) Installing python3-lxml (6.1.3-r0)
+(19/33) Installing python3-pyyaml (6.0.4-r0)
+(20/33) Installing benchmark (1.10.0-r0)
+(21/33) Installing cyclonedds (0.10.5-r0)
+(22/33) Installing foonathan_memory (0.7.4-r0)
+(23/33) Installing tinyxml2 (11.0.0-r0)
+(24/33) Installing fastdds (2.14.4-r2)
+(25/33) Installing libyaml (0.2.6-r0)
+(26/33) Installing lz4 (1.11.1-r0)
+(27/33) Installing openblas (0.3.34-r0)
+(28/33) Installing numpy (2.5.5-r0)
+(29/33) Installing opencv (4.10.0-r0)
+(30/33) Installing urdfdom (4.0.3-r1)
+(31/33) Installing yaml-cpp (0.9.0-r0)
+(32/33) Installing ros2 (0_git-r1)
+(33/33) Installing ros2-jazzy-control (20260128-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 520.5 MiB in 48 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_control
+     == ros2-jazzy-control ==
+       ok   ament index has controller_manager
+       ok   ament index has hardware_interface
+       ok   ament index has joint_state_broadcaster
+       ok   ament index has forward_command_controller
+       ok   ament index has joint_trajectory_controller
+       ok   ament index has diff_drive_controller
+       ok   spawner loaded and activated joint_state_broadcaster and forward_position_controller
+       ok   load_controller + configure_controller: joint_trajectory_controller (inactive)
+       ok   list_controllers: [('forward_position_controller', 'active'), ('joint_state_broadcaster', 'active'), ('joint_trajectory_controller', 'inactive')]
+       ok   /joint_states reports joint1 at its initial 0.0
+       ok   forward command 0.5 -> joint1 at 0.500000
+       ok   switch_controller: forward_position_controller -> joint_trajectory_controller
+       ok   FollowJointTrajectory goal to -0.8 rad in 1 s succeeded
+       ok   joint_trajectory_controller -> joint1 at -0.800000 (-0.8)
+     PASS ros2-jazzy-control
+PASS test_ros2_jazzy_control
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

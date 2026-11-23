@@ -1,0 +1,19 @@
+QNX build fix from QNX's aports (extra/emacs/fix-qnx.patch).
+
+Taken from qnx-ports/aports extra/emacs, the APKBUILD the QNX Everywhere image's
+package is built from.
+
+Upstream-Status: QNX-specific
+
+--- emacs-30.2.orig/lib-src/emacsclient.c
++++ emacs-30.2/lib-src/emacsclient.c
+@@ -80,6 +80,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
++#ifdef __QNX__
++#include <sys/time.h>
++#endif
+ #include <unistd.h>
+ 
+ #include <attribute.h>

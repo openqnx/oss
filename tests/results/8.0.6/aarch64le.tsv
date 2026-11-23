@@ -123,6 +123,7 @@ test_cups	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	a
 test_cups	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	cups 2.4.16-r1
 test_cups	FAIL	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	cups 2.4.20-r0
 test_cups_filters	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	cups-filters 1.28.17-r0
+test_cups_filters	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	cups-filters 1.28.17-r1
 test_curl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	curl 8.11.1-r0
 test_curl	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	curl 8.23.0-r0
 test_cxxopts	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	cxxopts 3.3.1-r0
@@ -159,6 +160,7 @@ test_elfutils	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.
 test_elvis	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	elvis 2.2.1_git20240226-r0
 test_emacs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	emacs 30.2-r0
 test_emacs	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	emacs 30.2-r1
+test_emacs	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	emacs 31.1-r0
 test_emulationstation	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	emulationstation 2.11_git20241212-r0
 test_enchant	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	enchant 2.8.2-r0
 test_enchant	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	enchant 2.8.21-r0
@@ -174,16 +176,18 @@ test_fakeroot	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.
 test_farmhash	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	farmhash 1.1_git20190513-r0
 test_fast_float	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fast-float 8.0.2-r0
 test_fast_float	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fast-float 8.3.3-r0
-test_fastcdr	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastcdr 2.2.6-r0
+test_fastcdr	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastcdr 2.2.6-r0
 test_fastcdr	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastcdr 2.4.0-r0
 test_fastdds	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastdds 2.14.4-r0
 test_fastdds	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastdds 2.14.4-r1
+test_fastdds	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastdds 2.14.4-r3
 test_fastfetch	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fastfetch 2.66.1-r0
 test_fcft	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fcft 3.3.2-r0
 test_fcft	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fcft 3.3.3-r0
 test_fcl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fcl 0.7.0-r0
 test_fcl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libccd 2.1-r0
 test_fdk_aac	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fdk-aac 2.0.3-r0
+test_fdk_aac	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fdk-aac 3.0.0-r0
 test_ffmpeg	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ffmpeg 7.1.1-r0
 test_ffmpeg	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ffmpeg 7.1.1-r1
 test_ffmpeg	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ffmpeg 7.1.1-r2
@@ -226,6 +230,7 @@ test_freeimage	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0
 test_freetype	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	freetype 2.13.3-r0
 test_freetype	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	freetype 2.15.0-r0
 test_frei0r_plugins	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	frei0r-plugins 2.4.0-r0
+test_frei0r_plugins	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	frei0r-plugins 3.7.1-r0
 test_fribidi	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fribidi 1.0.16-r0
 test_fribidi	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fribidi 1.0.18-r0
 test_fxdiv	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	fxdiv 0_git20200417-r0
@@ -250,6 +255,7 @@ test_gettext	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6
 test_gflags	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	gflags 2.2.2-r0
 test_gflags	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	gflags 2.3.1-r0
 test_giflib	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	giflib 5.2.2-r0
+test_giflib	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	giflib 6.1.3-r0
 test_git	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	git 2.51.0-r0
 test_gklib	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	gklib 5.1.1_git20230326-r0
 test_glfw	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	glfw 3.5.1-r0
@@ -282,6 +288,7 @@ test_gpgme	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	
 test_graphene	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphene 1.10.8-r0
 test_graphicsmagick	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphicsmagick 1.3.46-r0
 test_graphicsmagick	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphicsmagick 1.3.46-r1
+test_graphicsmagick	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphicsmagick 1.3.46-r2
 test_graphite2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphite2 1.3.14-r0
 test_graphite2	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphite2 1.3.15-r0
 test_graphviz	FAIL	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	graphviz 13.1.2-r0
@@ -360,6 +367,7 @@ test_labwc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	
 test_labwc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	oss-desktop 1.1-r0
 test_labwc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	swaybg 1.2.2-r0
 test_lame	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	lame 3.100-r0
+test_lame	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	lame 4.0-r0
 test_lanelet2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	lanelet2 1.2.3-r0
 test_lcm	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	lcm 1.5.2-r0
 test_lcm	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	lcm 1.5.3-r0
@@ -374,6 +382,7 @@ test_libarchive	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.
 test_libarchive	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libarchive 3.8.11-r0
 test_libass	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libass 0.17.3-r0
 test_libass	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libass 0.17.5-r0
+test_libass	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libass 0.17.5-r1
 test_libassuan	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libassuan 3.0.2-r0
 test_libassuan	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libassuan 3.0.2-r1
 test_libasyncns	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libasyncns 0.8-r0
@@ -442,6 +451,7 @@ test_libksba	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6
 test_libmd	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmd 1.1.0-r0
 test_libmd	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmd 1.3.0-r0
 test_libmetal	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmetal 2024.10.0-r0
+test_libmetal	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmetal 2026.10.0-r0
 test_libmicrohttpd	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmicrohttpd 1.0.1-r0
 test_libmicrohttpd	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmicrohttpd 1.0.11-r0
 test_libmodbus	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libmodbus 3.1.11-r0
@@ -495,6 +505,7 @@ test_libtomcrypt	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8
 test_libtommath	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libtommath 1.3.0-r0
 test_libtool	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libtool 2.5.4-r0
 test_libunibreak	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libunibreak 6.1-r0
+test_libunibreak	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libunibreak 8.0.1-r0
 test_libunistring	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libunistring 1.3-r0
 test_libunistring	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libunistring 1.5-r0
 test_libunwind	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	libunwind 1.8.3-r0
@@ -651,6 +662,7 @@ test_mythes	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)
 test_nano	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nano 8.2-r0
 test_nano	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nano 8.7.1-r0
 test_nanoflann	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nanoflann 1.10.0-r0
+test_nanoflann	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nanoflann 2.0.2-r0
 test_nanomsg	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nanomsg 1.3.0-r0
 test_nanosvg	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nanosvg 0_git20260709-r0
 test_nasm	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nasm 2.16.03-r0
@@ -671,6 +683,7 @@ test_ninja	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	
 test_nlohmann_json	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nlohmann_json 3.12.0-r0
 test_nng	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nng 1.9.0-r0
 test_nodejs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nodejs 24.14.1-r0
+test_nodejs	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nodejs 24.14.1-r1
 test_npm	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	npm 11.11.0-r0
 test_npth	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	npth 1.8-r0
 test_nspr	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	nspr 4.39-r0
@@ -696,6 +709,7 @@ test_onnx	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	a
 test_onnxruntime	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	onnxruntime 1.20.1-r0
 test_open62541	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	open62541 1.4.8-r0
 test_open_amp	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	open-amp 2024.10.0-r0
+test_open_amp	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	open-amp 2026.10.0-r0
 test_openal_soft	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	openal-soft 1.24.1-r0
 test_openblas	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	openblas 0.3.28-r0
 test_openblas	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	openblas 0.3.34-r0
@@ -775,6 +789,7 @@ test_perl_http	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0
 test_perl_http	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-www-robotrules 6.03-r0
 test_perl_io_tty	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-io-tty 1.31-r0
 test_perl_mozilla_ca	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-mozilla-ca 20261020-r0
+test_perl_mozilla_ca	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-mozilla-ca 20261105-r0
 test_perl_ssl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-io-socket-ssl 2.099-r0
 test_perl_ssl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-net-http 6.24-r0
 test_perl_ssl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	perl-net-ssleay 1.96-r0
@@ -798,7 +813,7 @@ test_perl_xs_misc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 
 test_picocom	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	picocom 3.1-r0
 test_pinentry	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pinentry 1.3.3-r0
 test_pinentry	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pinentry 1.3.3-r1
-test_pinocchio	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pinocchio 3.9.0-r0
+test_pinocchio	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pinocchio 3.9.0-r0
 test_piper	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	piper 1.8.0-r0
 test_piper	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	piper-voice-en-us-joe 1.0.0-r0
 test_pistache	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pistache 0.4.26-r0
@@ -808,6 +823,7 @@ test_pocl	FAIL	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	a
 test_pocl	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pocl 7.2-r3
 test_poco	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	poco 1.15.4-r0
 test_poppler	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	poppler 25.12.0-r0
+test_poppler	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	poppler 26.11.0-r0
 test_portaudio	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	portaudio 19.7.0-r0
 test_pqiv	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pqiv 2.13.2-r0
 test_pqiv	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	pqiv 2.13.3-r0
@@ -974,6 +990,7 @@ test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SD
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-attrs 26.1.0-r0
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-cattrs 26.2.1-r0
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-filelock 3.32.7-r0
+test_python3_pylibs	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-filelock 4.2.12-r0
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-lark 1.3.1-r0
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-pathspec 1.1.1-r0
 test_python3_pylibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-platformdirs 4.14.3-r0
@@ -1001,6 +1018,7 @@ test_python3_pytest_plugins	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage i
 test_python3_pytest_plugins	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-pytest-xdist 3.8.0-r0
 test_python3_pytest_plugins	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-time-machine 3.6.0-r0
 test_python3_pytz	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-pytz 2025.2-r0
+test_python3_pytz	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-pytz 2026.6-r0
 test_python3_ros_tools	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-rosdistro 1.1.0-r0
 test_python3_ros_tools	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-rospkg 1.6.3-r0
 test_python3_ros_tools	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	vcstool 0.3.0-r0
@@ -1009,6 +1027,7 @@ test_python3_setuptools	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image
 test_python3_six	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-six 1.17.0-r0
 test_python3_sounddevice	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-sounddevice 0.5.6-r0
 test_python3_tzdata	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-tzdata 2025.2-r0
+test_python3_tzdata	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-tzdata 2026.6-r0
 test_python3_virtualenv	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-virtualenv 20.39.1-r0
 test_python3_wheel	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-wheel 0.46.1-r0
 test_python3_wheel	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	python3-wheel 0.48.0-r0
@@ -1052,10 +1071,15 @@ test_riegeli	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6
 test_rocksdb	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	rocksdb 11.13.2-r0
 test_rocksdb	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	rocksdb 11.8.1-r0
 test_ros2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2 0_git-r0
+test_ros2	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2 0_git-r2
 test_ros2_jazzy_control	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-control 20260128-r0
+test_ros2_jazzy_control	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-control 20260128-r2
 test_ros2_jazzy_moveit2	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-moveit2 20260128-r0
+test_ros2_jazzy_moveit2	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-moveit2 20260128-r2
 test_ros2_jazzy_nav2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-nav2 20260128-r0
+test_ros2_jazzy_nav2	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-jazzy-nav2 20260128-r2
 test_ros2_rviz	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-rviz 14.1.24-r0
+test_ros2_rviz	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	ros2-rviz 14.1.24-r2
 test_rsync	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	rsync 3.3.0-r0
 test_rsync	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	rsync 3.5.2-r0
 test_rtl_sdr	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	rtl-sdr 2.0.2-r0
@@ -1078,6 +1102,7 @@ test_sdl2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	a
 test_sdl2_compat	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-compat 2.32.60-r0
 test_sdl2_compat	FAIL	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-compat 2.32.74-r0
 test_sdl2_image	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-image 2.8.8-r0
+test_sdl2_image	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-image 2.8.8-r1
 test_sdl2_mixer	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-mixer 2.8.2-r0
 test_sdl2_net	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-net 2.2.0-r0
 test_sdl2_ttf	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sdl2-ttf 2.24.0-r0
@@ -1092,6 +1117,7 @@ test_silkit_adapters_tap	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage imag
 test_silkit_adapters_tap	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	silkit-adapters-tap 1.2.1-r0
 test_simdjson	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	simdjson 3.11.3-r0
 test_simdutf	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	simdutf 6.4.2-r0
+test_simdutf	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	simdutf 9.4.0-r0
 test_skalibs	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	skalibs 2.14.5.1-r0
 test_sleef	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	sleef 3.8_git20250214-r0
 test_snappy	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	snappy 1.2.1-r0
@@ -1132,10 +1158,12 @@ test_texinfo	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6
 test_tflite	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tensorflow-lite 2.16.1-r0
 test_tftp_hpa	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tftp-hpa 5.2-r0
 test_thorvg	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	thorvg 0.15.8-r0
+test_thorvg	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	thorvg 1.1.4-r0
 test_thunar	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	thunar 4.20.0-r0
 test_thunar	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	thunar 4.20.10-r0
 test_tinyxml	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tinyxml 2.6.2-r0
 test_tinyxml2	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tinyxml2 10.0.0-r0
+test_tinyxml2	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tinyxml2 11.0.0-r0
 test_tl_expected	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tl-expected 1.3.1-r0
 test_tllist	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tllist 1.1.0-r0
 test_tmux	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tmux 3.5a-r0
@@ -1160,6 +1188,7 @@ test_tree_sitter_vim	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (S
 test_tree_sitter_vimdoc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tree-sitter-vimdoc 4.0.0-r0
 test_tree_sitter_vimdoc	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tree-sitter-vimdoc 4.3.0-r0
 test_trompeloeil	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	trompeloeil 48-r0
+test_trompeloeil	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	trompeloeil 49-r0
 test_ts_grammars	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tree-sitter-bash 0.25.0-r0
 test_ts_grammars	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tree-sitter-bash 0.25.1-r0
 test_ts_grammars	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	tree-sitter-cmake 0.7.2-r0
@@ -1183,8 +1212,10 @@ test_up_cpp	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)
 test_up_transport_zenoh_cpp	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	up-transport-zenoh-cpp 1.0.0_git20250319-r0
 test_up_transport_zenoh_cpp	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	up-transport-zenoh-cpp 1.0.0_git20250319-r1
 test_urdfdom	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	urdfdom 4.0.3-r0
+test_urdfdom	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	urdfdom 4.0.3-r1
 test_urdfdom_headers	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	urdfdom_headers 1.1.2-r0
 test_uriparser	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	uriparser 0.9.8-r0
+test_uriparser	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	uriparser 1.0.3-r0
 test_utf8proc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	utf8proc 2.11.3-r0
 test_utf8proc	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	utf8proc 2.12.0-r0
 test_util_macros	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	util-macros 1.20.2-r0
@@ -1209,6 +1240,7 @@ test_wayland	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6
 test_wayland_protocols	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	wayland-protocols 1.47-r0
 test_wayland_protocols	PASS	2026-11-22	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	wayland-protocols 1.50-r0
 test_webkitgtk	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	webkitgtk 2.44.4-r0
+test_webkitgtk	PASS	2026-11-23	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	webkitgtk 2.44.4-r1
 test_webrtc	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	webrtc 0_git-r0
 test_webrtc_screencast	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	webrtc-screencast 1.1-r0
 test_whisper	PASS	2026-11-21	QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6)	apk:local-dists	whisper.cpp 0_git20260728-r0

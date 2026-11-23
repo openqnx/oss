@@ -1,0 +1,30 @@
+# groff 1.25.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-23T12:15:52Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u groff qnx-test-groff qnx-port-tests
+(1/4) Installing libiconv (1.19.1-r0)
+(2/4) Installing groff (1.25.0-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-groff (1.0-r0)
+OK: 23.5 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_groff
+     == groff ==
+       info GNU groff version 1.25.0
+       ok   -man -Tascii: header, NAME line, cross reference
+       ok   section headings NAME, DESCRIPTION
+       ok   tbl: boxed table rows
+       ok   eqn: equation set (x=a+b)
+       ok   -ms -Tutf8: title and paragraph
+       ok   -Tps: PostScript (6978 bytes)
+       ok   nroff: .ll 30 fills to 2 lines
+     PASS groff
+PASS test_groff
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

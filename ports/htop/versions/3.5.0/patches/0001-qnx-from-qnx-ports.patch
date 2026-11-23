@@ -1,0 +1,1244 @@
+htop on QNX, from QNX's port (github.com/qnx-ports/htop, branch qnx-3.5.0):
+a QNX platform for htop -- qnx/: the process table read from /proc (each
+process's debug info through devctl), per-CPU and memory figures from the
+system page, process fields QNX has -- and its wiring into configure.ac and
+Makefile.am.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+
+diff --git a/Makefile.am b/Makefile.am
+index 7a9a2a380..46a37ba6d 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -486,6 +486,33 @@ myhtopplatsources = $(pcp_platform_sources)
+ pcp_htop_SOURCES  = $(myhtopplatprogram) $(myhtopheaders) $(myhtopplatheaders) $(myhtopsources) $(myhtopplatsources)
+ endif
+ 
++# QNX Neutrino
++# ------------
++
++qnx_platform_headers = \
++	generic/gettime.h \
++	generic/hostname.h \
++	generic/uname.h \
++	qnx/Platform.h \
++	qnx/ProcessField.h \
++	qnx/QNXMachine.h \
++	qnx/QNXProcess.h \
++	qnx/QNXProcessTable.h
++
++qnx_platform_sources = \
++	generic/gettime.c \
++	generic/hostname.c \
++	generic/uname.c \
++	qnx/Platform.c \
++	qnx/QNXMachine.c \
++	qnx/QNXProcess.c \
++	qnx/QNXProcessTable.c
++
++if HTOP_QNX
++myhtopplatheaders = $(qnx_platform_headers)
++myhtopplatsources = $(qnx_platform_sources)
++endif
++
+ # Unsupported
+ # -----------
+ 
+diff --git a/configure.ac b/configure.ac
+index 2d174d738..a4cbd51ec 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -60,6 +60,10 @@ solaris*)
+    my_htop_platform=solaris
+    AC_DEFINE([HTOP_SOLARIS], [], [Building for Solaris.])
+    ;;
++nto*)
++   my_htop_platform=qnx
++   AC_DEFINE([HTOP_QNX], [], [Building for QNX Neutrino.])
++   ;;
+ *)
+    my_htop_platform=unsupported
+    AC_DEFINE([HTOP_UNSUPPORTED], [], [Building for an unsupported platform.])
+@@ -229,6 +233,13 @@ if test "$my_htop_platform" = darwin; then
+    AC_CHECK_DECLS([kIOMainPortDefault], [], [], [[#include <IOKit/IOKitLib.h>]])
+ fi
+ 
++if test "$my_htop_platform" = qnx; then
++    # Enable optional meters if available
++    AC_CHECK_HEADERS([sys/fs_stats.h])
++    AC_CHECK_HEADERS([gpt.h])
++    AC_CHECK_HEADERS([ifaddrs.h], [LIBS="$LIBS -lsocket"])
++fi
++
+ # ----------------------------------------------------------------------
+ 
+ 
+@@ -1840,6 +1851,7 @@ AM_CONDITIONAL([HTOP_OPENBSD], [test "$my_htop_platform" = openbsd])
+ AM_CONDITIONAL([HTOP_DARWIN], [test "$my_htop_platform" = darwin])
+ AM_CONDITIONAL([HTOP_SOLARIS], [test "$my_htop_platform" = solaris])
+ AM_CONDITIONAL([HTOP_PCP], [test "$my_htop_platform" = pcp])
++AM_CONDITIONAL([HTOP_QNX], [test "$my_htop_platform" = qnx])
+ AM_CONDITIONAL([HTOP_UNSUPPORTED], [test "$my_htop_platform" = unsupported])
+ 
+ AC_SUBST(my_htop_platform)
+diff --git a/qnx/Platform.c b/qnx/Platform.c
+new file mode 100644
+index 000000000..3730b9a2d
+--- /dev/null
++++ b/qnx/Platform.c
+@@ -0,0 +1,310 @@
++/*
++htop - qnx/Platform.c
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "config.h" // IWYU pragma: keep
++
++#include "qnx/Platform.h"
++
++#include <math.h>
++#include <stddef.h>
++#include <time.h>
++#include <unistd.h>
++#include <sys/syspage.h>
++#include <sys/utsname.h>
++#include <sys/resource.h>
++#if defined(HAVE_SYS_FS_STATS_H) && defined(HAVE_GPT_H)
++#include <sys/dcmd_blk.h>
++#include <sys/fs_stats.h>
++#endif
++#ifdef HAVE_IFADDRS_H
++#include <netinet/in.h>
++#include <ifaddrs.h>
++#include <net/if.h>
++#endif
++
++#include "qnx/QNXMachine.h"
++
++#include "CPUMeter.h"
++#include "ClockMeter.h"
++#include "DateTimeMeter.h"
++#include "FileDescriptorMeter.h"
++#include "HostnameMeter.h"
++#include "Macros.h"
++#include "MemoryMeter.h"
++#include "MemorySwapMeter.h"
++#include "Meter.h"
++#include "SwapMeter.h"
++#include "SysArchMeter.h"
++#include "TasksMeter.h"
++#include "UptimeMeter.h"
++#include "generic/hostname.h"
++#include "generic/uname.h"
++
++
++const ScreenDefaults Platform_defaultScreens[] = {
++   {
++      .name    = "Main",
++      .columns = "PID USER PRIORITY M_VIRT M_RESIDENT STATE PERCENT_CPU PERCENT_MEM Command",
++      .sortKey = "PERCENT_CPU",
++   }
++};
++
++const unsigned int Platform_numberOfDefaultScreens = ARRAYSIZE(Platform_defaultScreens);
++
++/*
++ * QNX signal table.
++ * Signal numbers match /usr/include/signal.h on QNX 8.
++ */
++const SignalItem Platform_signals[] = {
++   { .name = " 0 Cancel",    .number =  0 },
++   { .name = " 1 SIGHUP",    .number =  1 },
++   { .name = " 2 SIGINT",    .number =  2 },
++   { .name = " 3 SIGQUIT",   .number =  3 },
++   { .name = " 4 SIGILL",    .number =  4 },
++   { .name = " 5 SIGTRAP",   .number =  5 },
++   { .name = " 6 SIGABRT",   .number =  6 },
++   { .name = " 7 SIGEMT",    .number =  7 },
++   { .name = " 8 SIGFPE",    .number =  8 },
++   { .name = " 9 SIGKILL",   .number =  9 },
++   { .name = "10 SIGBUS",    .number = 10 },
++   { .name = "11 SIGSEGV",   .number = 11 },
++   { .name = "12 SIGSYS",    .number = 12 },
++   { .name = "13 SIGPIPE",   .number = 13 },
++   { .name = "14 SIGALRM",   .number = 14 },
++   { .name = "15 SIGTERM",   .number = 15 },
++   { .name = "16 SIGUSR1",   .number = 16 },
++   { .name = "17 SIGUSR2",   .number = 17 },
++   { .name = "18 SIGCHLD",   .number = 18 },
++   { .name = "19 SIGPWR",    .number = 19 },
++   { .name = "20 SIGWINCH",  .number = 20 },
++   { .name = "21 SIGURG",    .number = 21 },
++   { .name = "22 SIGPOLL",   .number = 22 },
++   { .name = "23 SIGSTOP",   .number = 23 },
++   { .name = "24 SIGTSTP",   .number = 24 },
++   { .name = "25 SIGCONT",   .number = 25 },
++   { .name = "26 SIGTTIN",   .number = 26 },
++   { .name = "27 SIGTTOU",   .number = 27 },
++   { .name = "28 SIGVTALRM", .number = 28 },
++   { .name = "29 SIGPROF",   .number = 29 },
++   { .name = "30 SIGXCPU",   .number = 30 },
++   { .name = "31 SIGXFSZ",   .number = 31 },
++   { .name = "32 SIGDOOM",   .number = 32 },
++};
++
++const unsigned int Platform_numberOfSignals = ARRAYSIZE(Platform_signals);
++
++/*
++ * Memory display classes.
++ */
++enum {
++   MEMORY_CLASS_USED = 0,
++};
++
++const MemoryClass Platform_memoryClasses[] = {
++   [MEMORY_CLASS_USED] = {
++      .label       = "used",
++      .countsAsUsed  = true,
++      .countsAsCache = false,
++      .color       = MEMORY_1,
++   },
++};
++
++const unsigned int Platform_numberOfMemoryClasses = ARRAYSIZE(Platform_memoryClasses);
++
++const MeterClass* const Platform_meterTypes[] = {
++   &CPUMeter_class,
++   &ClockMeter_class,
++   &DateMeter_class,
++   &DateTimeMeter_class,
++   &MemoryMeter_class,
++   &TasksMeter_class,
++   &UptimeMeter_class,
++   &SecondsUptimeMeter_class,
++   &HostnameMeter_class,
++#if defined(HAVE_IFADDRS_H)
++   &NetworkIOMeter_class,
++#endif
++#if defined(HAVE_SYS_FS_STATS_H) && defined(HAVE_GPT_H)
++   &DiskIORateMeter_class,
++#endif
++   &SysArchMeter_class,
++   &AllCPUsMeter_class,
++   &AllCPUs2Meter_class,
++   &AllCPUs4Meter_class,
++   &AllCPUs8Meter_class,
++   &LeftCPUsMeter_class,
++   &RightCPUsMeter_class,
++   &LeftCPUs2Meter_class,
++   &RightCPUs2Meter_class,
++   &LeftCPUs4Meter_class,
++   &RightCPUs4Meter_class,
++   &LeftCPUs8Meter_class,
++   &RightCPUs8Meter_class,
++   &FileDescriptorMeter_class,
++   &BlankMeter_class,
++   NULL
++};
++
++bool Platform_init(void) {
++   return true;
++}
++
++void Platform_done(void) {
++}
++
++void Platform_setBindings(Htop_Action* keys) {
++   (void) keys;
++}
++
++int Platform_getUptime(void) {
++   struct timespec tp;
++   if (clock_gettime(CLOCK_MONOTONIC, &tp) == -1)
++      return -1;
++
++   return (int)tp.tv_sec;
++}
++
++// QNX doesn't have a getloadavg api and we can't calculate that value accurately without building a resource manager for it
++// Approximations within htop will be innacurate so it's better to have no data than invalid data
++void Platform_setLoadAvg(double one, double five, double fifteen) {
++   (void)one; (void)five; (void)fifteen;
++}
++
++void Platform_getLoadAverage(double* one, double* five, double* fifteen) {
++   *one     = -1.0;
++   *five    = -1.0;
++   *fifteen = -1.0;
++}
++
++pid_t Platform_getMaxPid(void) {
++   return INT_MAX;
++}
++
++double Platform_setCPUValues(Meter* this, unsigned int cpu) {
++   const Machine* host = this->host;
++   const QNXMachine* qhost = (const QNXMachine*) host;
++
++   const CPUData* data = &qhost->cpus[cpu];
++
++   double* v = this->values;
++   v[CPU_METER_NICE]      = 0.0;
++   v[CPU_METER_NORMAL]    = data->userPercent;
++   v[CPU_METER_KERNEL]    = data->systemPercent;
++   v[CPU_METER_FREQUENCY] = data->frequency;
++   v[CPU_METER_TEMPERATURE] = NAN;
++   this->curItems = 3;
++
++   double percent = v[CPU_METER_NORMAL] + v[CPU_METER_KERNEL];
++   return CLAMP(percent, 0.0, 100.0);
++}
++
++void Platform_setMemoryValues(Meter* this) {
++   const Machine* host = this->host;
++   const QNXMachine* qhost = (const QNXMachine*) host;
++
++   this->total = host->totalMem;
++   this->values[MEMORY_CLASS_USED] = (double) qhost->usedMem;
++   this->curItems = 1;
++}
++
++void Platform_setSwapValues(Meter* this) {
++   const Machine* host = this->host;
++   this->total = host->totalSwap;
++   this->values[SWAP_METER_USED] = host->usedSwap;
++}
++
++char* Platform_getProcessEnv(pid_t pid) {
++   /* QNX does not expose process environment via /proc easily */
++   (void) pid;
++   return NULL;
++}
++
++FileLocks_ProcessData* Platform_getProcessLocks(pid_t pid) {
++   (void) pid;
++   return NULL;
++}
++
++void Platform_getFileDescriptors(double* used, double* max) {
++   // We can technically get one processes open connections by enumerating ConnectServerInfo(), however we need the total number of system fds
++   // We might also have issues with double-counting
++   // There is sysctl kern.openfiles, however that number is smaller than it should be, indicating that there are somethings it's not counting
++   *used = __curr_num_fds;
++
++   struct rlimit rlp;
++   if (getrlimit(RLIMIT_NOFILE, &rlp) == -1) *max = NAN;
++   else *max = (double) rlp.rlim_cur;
++}
++
++bool Platform_getDiskIO(DiskIOData* data) {
++#if defined(HAVE_SYS_FS_STATS_H) && defined(HAVE_GPT_H)
++   int disk=0;
++   char device_path[PATH_MAX];
++   int fd;
++   data->totalBytesRead = 0;
++   data->totalBytesWritten = 0;
++   data->numDisks = 0;
++   data->totalMsTimeSpend = 0;
++   while ((sprintf(device_path, "/dev/hd%d", disk)), (fd = open(device_path, O_ACCMODE)), disk++, fd != -1) {
++      struct fs_stats fst;
++      if (devctl(fd, DCMD_FSYS_STATISTICS, &fst,  sizeof(fst), NULL) != EOK) {
++         continue;
++      }
++
++      data->totalBytesRead += fst.s_buf_rphys_bytes;
++      data->totalBytesWritten += fst.s_buf_wphys_bytes;
++      data->numDisks++;
++      // I have no idea how to get that information, it will result in usage% not rendering
++      data->totalMsTimeSpend = 0;
++
++      close(fd);
++   }
++   return true;
++
++#else
++   (void) data;
++   return false;
++#endif
++}
++
++bool Platform_getNetworkIO(NetworkIOData* data) {
++#ifdef HAVE_IFADDRS_H
++   // netbsd implementation
++   struct ifaddrs* ifaddrs = NULL;
++
++   if (getifaddrs(&ifaddrs) != 0)
++      return false;
++
++   for (const struct ifaddrs* ifa = ifaddrs; ifa; ifa = ifa->ifa_next) {
++      if (!ifa->ifa_addr)
++         continue;
++      if (ifa->ifa_addr->sa_family != AF_LINK)
++         continue;
++      if (ifa->ifa_flags & IFF_LOOPBACK)
++         continue;
++
++      const struct if_data* ifd = (const struct if_data*)ifa->ifa_data;
++
++      data->bytesReceived += ifd->ifi_ibytes;
++      data->packetsReceived += ifd->ifi_ipackets;
++      data->bytesTransmitted += ifd->ifi_obytes;
++      data->packetsTransmitted += ifd->ifi_opackets;
++   }
++
++   freeifaddrs(ifaddrs);
++   return true;
++#else
++   (void) data;
++   return false;
++#endif
++}
++
++void Platform_getBattery(double* percent, ACPresence* isOnAC) {
++   *percent  = NAN;
++   *isOnAC   = AC_ERROR;
++}
++
+diff --git a/qnx/Platform.h b/qnx/Platform.h
+new file mode 100644
+index 000000000..83587c62c
+--- /dev/null
++++ b/qnx/Platform.h
+@@ -0,0 +1,141 @@
++#ifndef HEADER_Platform
++#define HEADER_Platform
++/*
++htop - qnx/Platform.h
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include <stdbool.h>
++#include <sys/time.h>
++#include <sys/types.h>
++
++#include "Action.h"
++#include "BatteryMeter.h"
++#include "DiskIOMeter.h"
++#include "Hashtable.h"
++#include "MemoryMeter.h"
++#include "NetworkIOMeter.h"
++#include "ProcessLocksScreen.h"
++#include "SignalsPanel.h"
++#include "CommandLine.h"
++#include "generic/gettime.h"
++#include "generic/hostname.h"
++#include "generic/uname.h"
++
++
++extern const ScreenDefaults Platform_defaultScreens[];
++
++extern const unsigned int Platform_numberOfDefaultScreens;
++
++extern const SignalItem Platform_signals[];
++
++extern const unsigned int Platform_numberOfSignals;
++
++extern const MemoryClass Platform_memoryClasses[];
++
++extern const unsigned int Platform_numberOfMemoryClasses;
++
++extern const MeterClass* const Platform_meterTypes[];
++
++bool Platform_init(void);
++
++void Platform_done(void);
++
++void Platform_setBindings(Htop_Action* keys);
++
++int Platform_getUptime(void);
++
++void Platform_setLoadAvg(double one, double five, double fifteen);
++
++void Platform_getLoadAverage(double* one, double* five, double* fifteen);
++
++pid_t Platform_getMaxPid(void);
++
++double Platform_setCPUValues(Meter* this, unsigned int cpu);
++
++void Platform_setMemoryValues(Meter* this);
++
++void Platform_setSwapValues(Meter* this);
++
++char* Platform_getProcessEnv(pid_t pid);
++
++FileLocks_ProcessData* Platform_getProcessLocks(pid_t pid);
++
++void Platform_getFileDescriptors(double* used, double* max);
++
++bool Platform_getDiskIO(DiskIOData* data);
++
++bool Platform_getNetworkIO(NetworkIOData* data);
++
++void Platform_getBattery(double* percent, ACPresence* isOnAC);
++
++static inline void Platform_getHostname(char* buffer, size_t size) {
++   Generic_hostname(buffer, size);
++}
++
++static inline const char* Platform_getRelease(void) {
++   return Generic_uname();
++}
++
++static inline const char* Platform_getFailedState(void) {
++   return NULL;
++}
++
++#define PLATFORM_LONG_OPTIONS
++
++static inline void Platform_longOptionsUsage(ATTR_UNUSED const char* name) { }
++
++static inline CommandLineStatus Platform_getLongOption(ATTR_UNUSED int opt, ATTR_UNUSED int argc, ATTR_UNUSED char** argv) {
++   return STATUS_ERROR_EXIT;
++}
++
++static inline void Platform_gettime_realtime(struct timeval* tv, uint64_t* msec) {
++   Generic_gettime_realtime(tv, msec);
++}
++
++static inline void Platform_gettime_monotonic(uint64_t* msec) {
++   Generic_gettime_monotonic(msec);
++}
++
++static inline Hashtable* Platform_dynamicMeters(void) {
++   return NULL;
++}
++
++static inline void Platform_dynamicMetersDone(ATTR_UNUSED Hashtable* table) { }
++
++static inline void Platform_dynamicMeterInit(ATTR_UNUSED Meter* meter) { }
++
++static inline void Platform_dynamicMeterUpdateValues(ATTR_UNUSED Meter* meter) { }
++
++static inline void Platform_dynamicMeterDisplay(ATTR_UNUSED const Meter* meter, ATTR_UNUSED RichString* out) { }
++
++static inline Hashtable* Platform_dynamicColumns(void) {
++   return NULL;
++}
++
++static inline void Platform_dynamicColumnsDone(ATTR_UNUSED Hashtable* table) { }
++
++static inline const char* Platform_dynamicColumnName(ATTR_UNUSED unsigned int key) {
++   return NULL;
++}
++
++static inline bool Platform_dynamicColumnWriteField(ATTR_UNUSED const Process* proc, ATTR_UNUSED RichString* str, ATTR_UNUSED unsigned int key) {
++   return false;
++}
++
++static inline Hashtable* Platform_dynamicScreens(void) {
++   return NULL;
++}
++
++static inline void Platform_defaultDynamicScreens(ATTR_UNUSED Settings* settings) { }
++
++static inline void Platform_addDynamicScreen(ATTR_UNUSED ScreenSettings* ss) { }
++
++static inline void Platform_addDynamicScreenAvailableColumns(ATTR_UNUSED Panel* availableColumns, ATTR_UNUSED const char* screen) { }
++
++static inline void Platform_dynamicScreensDone(ATTR_UNUSED Hashtable* screens) { }
++
++#endif /* HEADER_Platform */
+diff --git a/qnx/ProcessField.h b/qnx/ProcessField.h
+new file mode 100644
+index 000000000..f8e940443
+--- /dev/null
++++ b/qnx/ProcessField.h
+@@ -0,0 +1,17 @@
++#ifndef HEADER_QNXProcessField
++#define HEADER_QNXProcessField
++/*
++htop - qnx/ProcessField.h
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++(C) 2024 htop dev team
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++
++#define PLATFORM_PROCESS_FIELDS  \
++   /* No QNX-specific fields for now */ \
++   // End of list
++
++
++#endif /* HEADER_QNXProcessField */
+diff --git a/qnx/QNXMachine.c b/qnx/QNXMachine.c
+new file mode 100644
+index 000000000..acd0c8385
+--- /dev/null
++++ b/qnx/QNXMachine.c
+@@ -0,0 +1,176 @@
++/*
++htop - qnx/QNXMachine.c
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "config.h" // IWYU pragma: keep
++
++#include "qnx/QNXMachine.h"
++
++#include <fcntl.h>
++#include <math.h>
++#include <math.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <sys/neutrino.h>
++#include <sys/syspage.h>
++#include <unistd.h>
++
++#include "Machine.h"
++#include "XUtils.h"
++#include "qnx/Platform.h"
++
++uint32_t __curr_num_fds = 0;
++
++/*
++ * Compute total physical RAM by summing "ram" entries in syspage asinfo.
++ * Returns value in kB.
++ */
++static memory_t QNXMachine_totalRamKB(void) {
++   struct asinfo_entry* as = SYSPAGE_ENTRY(asinfo);
++   int n = (int)(SYSPAGE_ENTRY_SIZE(asinfo) / sizeof(*as));
++   const char* strings = SYSPAGE_ENTRY(strings)->data;
++
++   unsigned long long total = 0;
++   for (int i = 0; i < n; i++) {
++      if (strcmp(strings + as[i].name, "ram") == 0)
++         total += as[i].end - as[i].start + 1;
++   }
++   return (memory_t)(total / 1024);
++}
++
++/*
++ * Compute free physical RAM using the POSIX typed-memory interface.
++ * POSIX_TYPED_MEM_ALLOCATE reports allocatable (free) bytes.
++ * Returns value in kB; returns 0 on error.
++ */
++static memory_t QNXMachine_freeRamKB(void) {
++   int fd = posix_typed_mem_open("ram", O_RDONLY, POSIX_TYPED_MEM_ALLOCATE);
++   if (fd < 0)
++      return 0;
++
++   struct posix_typed_mem_info info;
++   memory_t free_kb = 0;
++   if (posix_typed_mem_get_info(fd, &info) == 0)
++      free_kb = (memory_t)(info.posix_tmi_length / 1024);
++
++   close(fd);
++   return free_kb;
++}
++
++Machine* Machine_new(UsersTable* usersTable, uid_t userId) {
++   QNXMachine* this = xCalloc(1, sizeof(QNXMachine));
++   Machine* super = &this->super;
++
++   Machine_init(super, usersTable, userId);
++
++   this->pageSize = sysconf(_SC_PAGESIZE);
++   if (this->pageSize <= 0)
++      this->pageSize = 4096;
++
++   /* Determine CPU count */
++   unsigned int numCPUs = (unsigned int)_syspage_ptr->num_cpu;
++   if (numCPUs < 1)
++      numCPUs = 1;
++
++   super->existingCPUs = numCPUs;
++   super->activeCPUs   = numCPUs;
++
++   this->cpus = xCalloc(numCPUs + 1, sizeof(CPUData));
++   for (unsigned int i = 0; i < numCPUs + 1; i++) {
++      this->cpus[i].frequency = NAN;
++      this->cpus[i].prevIdleNs = 0;
++   }
++
++   /* Total RAM (static) */
++   super->totalMem = QNXMachine_totalRamKB();
++
++   /* No swap support in base QNX */
++   super->totalSwap  = 0;
++   super->usedSwap   = 0;
++   super->cachedSwap = 0;
++
++   this->prevScanTime = 0;
++
++   return super;
++}
++
++void Machine_delete(Machine* super) {
++   QNXMachine* this = (QNXMachine*) super;
++   Machine_done(super);
++   free(this->cpus);
++   free(this);
++}
++
++bool Machine_isCPUonline(const Machine* host, unsigned int id) {
++   assert(id < host->existingCPUs);
++   (void) host; (void) id;
++   return true;
++}
++
++void Machine_scan(Machine* super) {
++   QNXMachine* this = (QNXMachine*) super;
++
++   /* Memory */
++   memory_t freeKB = QNXMachine_freeRamKB();
++   this->usedMem = 0;
++   if (super->totalMem > freeKB) {
++      this->usedMem = super->totalMem - freeKB;
++   }
++
++   struct timeval currentTime;
++   gettimeofday(&currentTime, NULL);
++   const uint64_t timeNowNs = (currentTime.tv_sec * 1e6 + currentTime.tv_usec) * 1e3;
++   uint64_t elapsedNs;
++   if (this->prevScanTime == 0) {
++      elapsedNs = Platform_getUptime() * 1e9;
++   }else {
++      elapsedNs = timeNowNs - this->prevScanTime;
++   }
++   this->prevScanTime = timeNowNs;
++
++   struct timespec coreKernelTime;
++   double totalPercent = 0.0;
++   int cpusCounted = 0;
++
++   // cpus is 1 indexed as 0 is used as the average
++   for (unsigned int i = 1; i <= super->existingCPUs; i++) {
++     // Tracking kernel busy time is close enough to system idle time since that
++     // time is reaped by the scheduler
++     clockid_t cid = ClockId(KPROCID, i);
++     if (cid == -1)
++       continue;
++     clock_gettime(cid, &coreKernelTime);
++     uint64_t idleNs = coreKernelTime.tv_sec * 1e9 + coreKernelTime.tv_nsec;
++
++     double perCoreTime = 0.0;
++     uint64_t idleDelta = idleNs - this->cpus[i].prevIdleNs;
++     double busyFrac = 1.0 - (double)idleDelta / (double)elapsedNs;
++     perCoreTime = CLAMP(busyFrac * 100.0, 0.0, 100.0);
++
++     this->cpus[i].prevIdleNs = idleNs;
++
++     this->cpus[i].userPercent = perCoreTime;
++     this->cpus[i].systemPercent = 0.0;
++     totalPercent += perCoreTime;
++     cpusCounted += 1;
++   }
++
++   this->cpus[0].userPercent = totalPercent / cpusCounted;
++}
++
++int Machine_getCPUPhysicalCoreID(const Machine* host, unsigned int id) {
++   assert(id < host->existingCPUs);
++   (void) host;
++   return (int)id;
++}
++
++int Machine_getCPUThreadIndex(const Machine* host, unsigned int id) {
++   assert(id < host->existingCPUs);
++   (void) host; (void) id;
++   return 0;
++}
+diff --git a/qnx/QNXMachine.h b/qnx/QNXMachine.h
+new file mode 100644
+index 000000000..8056a5a36
+--- /dev/null
++++ b/qnx/QNXMachine.h
+@@ -0,0 +1,49 @@
++#ifndef HEADER_QNXMachine
++#define HEADER_QNXMachine
++/*
++htop - qnx/QNXMachine.h
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include <stdbool.h>
++#include <stdint.h>
++
++#include "Machine.h"
++#include "UsersTable.h"
++
++#define QNX_MAX_CPUS 64
++
++#define KPROCID 1
++
++// Scuffed counter for the number of system fds, since we have to enumerate every proc, we'll just accumulate them here
++// This is to be read by Process_getFileDescriptors()
++extern uint32_t __curr_num_fds;
++
++typedef struct CPUData_ {
++   double userPercent;
++   double systemPercent;
++   double totalPercent;
++   double frequency;
++   uint64_t prevIdleNs;
++} CPUData;
++
++typedef struct QNXMachine_ {
++   Machine super;
++
++   memory_t usedMem;
++   memory_t cachedMem;
++
++   CPUData* cpus;
++
++   double loadAvg[3];
++   uint64_t prevLoadAvgMs;
++
++   long pageSize;
++
++   uint64_t prevScanTime;
++} QNXMachine;
++
++#endif
+diff --git a/qnx/QNXProcess.c b/qnx/QNXProcess.c
+new file mode 100644
+index 000000000..cd643165d
+--- /dev/null
++++ b/qnx/QNXProcess.c
+@@ -0,0 +1,103 @@
++/*
++htop - qnx/QNXProcess.c
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "config.h" // IWYU pragma: keep
++
++#include "qnx/QNXProcess.h"
++
++#include <stdlib.h>
++
++#include "CRT.h"
++#include "Process.h"
++#include "Row.h"
++#include "RichString.h"
++#include "XUtils.h"
++
++
++const ProcessFieldData Process_fields[LAST_PROCESSFIELD] = {
++   [0] = { .name = "", .title = NULL, .description = NULL, .flags = 0, },
++   [PID] = { .name = "PID", .title = "PID", .description = "Process/thread ID", .flags = 0, .pidColumn = true, },
++   [COMM] = { .name = "Command", .title = "Command ", .description = "Command line (insert as last column only)", .flags = 0, },
++   [STATE] = { .name = "STATE", .title = "S ", .description = "Process state (S sleeping, R running, D disk, Z zombie, T traced, W paging, I idle)", .flags = 0, },
++   [PPID] = { .name = "PPID", .title = "PPID", .description = "Parent process ID", .flags = 0, .pidColumn = true, },
++   [PGRP] = { .name = "PGRP", .title = "PGRP", .description = "Process group ID", .flags = 0, .pidColumn = true, },
++   [SESSION] = { .name = "SESSION", .title = "SID", .description = "Process's session ID", .flags = 0, .pidColumn = true, },
++   [PRIORITY] = { .name = "PRIORITY", .title = "PRI ", .description = "Kernel's internal priority for the process", .flags = 0, },
++   [STARTTIME] = { .name = "STARTTIME", .title = "START ", .description = "Time the process was started", .flags = 0, },
++   [ELAPSED] = { .name = "ELAPSED", .title = "ELAPSED  ", .description = "Time since the process was started", .flags = 0, },
++   [PROCESSOR] = { .name = "PROCESSOR", .title = "CPU ", .description = "Id of the CPU the process last executed on", .flags = 0, },
++   [M_VIRT] = { .name = "M_VIRT", .title = " VIRT ", .description = "Total program size in virtual memory", .flags = 0, .defaultSortDesc = true, },
++   [M_RESIDENT] = { .name = "M_RESIDENT", .title = "  RES ", .description = "Resident set size, size of the text and data sections, plus stack usage", .flags = 0, .defaultSortDesc = true, },
++   [ST_UID] = { .name = "ST_UID", .title = "UID", .description = "User ID of the process owner", .flags = 0, },
++   [PERCENT_CPU] = { .name = "PERCENT_CPU", .title = " CPU%", .description = "Percentage of the CPU time the process used in the last sampling", .flags = 0, .defaultSortDesc = true, .autoWidth = true, .autoTitleRightAlign = true, },
++   [PERCENT_NORM_CPU] = { .name = "PERCENT_NORM_CPU", .title = "NCPU%", .description = "Normalized percentage of the CPU time the process used in the last sampling (normalized by cpu count)", .flags = 0, .defaultSortDesc = true, .autoWidth = true, },
++   [PERCENT_MEM] = { .name = "PERCENT_MEM", .title = "MEM% ", .description = "Percentage of the memory the process is using, based on resident memory size", .flags = 0, .defaultSortDesc = true, },
++   [USER] = { .name = "USER", .title = "USER       ", .description = "Username of the process owner (or user ID if name cannot be determined)", .flags = 0, },
++   [TIME] = { .name = "TIME", .title = "  TIME+  ", .description = "Total time the process has spent in user and system time", .flags = 0, .defaultSortDesc = true, },
++   [NLWP] = { .name = "NLWP", .title = "NLWP ", .description = "Number of threads in the process", .flags = 0, .defaultSortDesc = true, },
++   [TGID] = { .name = "TGID", .title = "TGID", .description = "Thread group ID (i.e. process ID)", .flags = 0, .pidColumn = true, },
++};
++
++Process* QNXProcess_new(const Machine* host) {
++   QNXProcess* this = xCalloc(1, sizeof(QNXProcess));
++   Object_setClass(this, Class(QNXProcess));
++   Process_init(&this->super, host);
++   return &this->super;
++}
++
++void Process_delete(Object* cast) {
++   Process* super = (Process*) cast;
++   Process_done(super);
++   free(cast);
++}
++
++static void QNXProcess_rowWriteField(const Row* super, RichString* str, ProcessField field) {
++   const QNXProcess* qp = (const QNXProcess*) super;
++   char buffer[256];
++   buffer[255] = '\0';
++   int attr = CRT_colors[DEFAULT_COLOR];
++
++   switch (field) {
++   default:
++      Process_writeField(&qp->super, str, field);
++      return;
++   }
++
++   RichString_appendWide(str, attr, buffer);
++}
++
++static int QNXProcess_compareByKey(const Process* v1, const Process* v2, ProcessField key) {
++   const QNXProcess* p1 = (const QNXProcess*)v1;
++   const QNXProcess* p2 = (const QNXProcess*)v2;
++
++   (void) p1;
++   (void) p2;
++
++   switch (key) {
++   default:
++      return Process_compareByKey_Base(v1, v2, key);
++   }
++}
++
++const ProcessClass QNXProcess_class = {
++   .super = {
++      .super = {
++         .extends = Class(Process),
++         .display = Row_display,
++         .delete  = Process_delete,
++         .compare = Process_compare
++      },
++      .isHighlighted   = Process_rowIsHighlighted,
++      .isVisible       = Process_rowIsVisible,
++      .matchesFilter   = Process_rowMatchesFilter,
++      .compareByParent = Process_compareByParent,
++      .sortKeyString   = Process_rowGetSortKey,
++      .writeField      = QNXProcess_rowWriteField,
++   },
++   .compareByKey = QNXProcess_compareByKey,
++};
+diff --git a/qnx/QNXProcess.h b/qnx/QNXProcess.h
+new file mode 100644
+index 000000000..86543ccbb
+--- /dev/null
++++ b/qnx/QNXProcess.h
+@@ -0,0 +1,35 @@
++#ifndef HEADER_QNXProcess
++#define HEADER_QNXProcess
++/*
++htop - qnx/QNXProcess.h
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "Machine.h"
++#include "Object.h"
++#include "Process.h"
++
++
++typedef struct QNXProcess_ {
++   Process super;
++
++   /* Accumulated CPU time in nanoseconds (utime + stime from debug_process_t) */
++   uint64_t utime;
++   uint64_t stime;
++
++   uint32_t num_fds;
++} QNXProcess;
++
++
++extern const ProcessFieldData Process_fields[LAST_PROCESSFIELD];
++
++Process* QNXProcess_new(const Machine* host);
++
++void Process_delete(Object* cast);
++
++extern const ProcessClass QNXProcess_class;
++
++#endif /* HEADER_QNXProcess */
+diff --git a/qnx/QNXProcessTable.c b/qnx/QNXProcessTable.c
+new file mode 100644
+index 000000000..0b84a14cf
+--- /dev/null
++++ b/qnx/QNXProcessTable.c
+@@ -0,0 +1,256 @@
++/*
++htop - qnx/QNXProcessTable.c
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "config.h" // IWYU pragma: keep
++
++#include "qnx/QNXProcessTable.h"
++
++#include <ctype.h>
++#include <dirent.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++
++#include <errno.h>
++#include <devctl.h>
++#include <sys/procfs.h>
++#include <sys/neutrino.h>
++#include <sys/states.h>
++#include <sys/memmsg.h>
++
++#include "Machine.h"
++#include "Object.h"
++#include "Process.h"
++#include "ProcessTable.h"
++#include "Row.h"
++#include "Settings.h"
++#include "XUtils.h"
++#include "qnx/QNXMachine.h"
++#include "qnx/QNXProcess.h"
++
++
++ProcessTable* ProcessTable_new(Machine* host, Hashtable* pidMatchList) {
++   QNXProcessTable* this = xCalloc(1, sizeof(QNXProcessTable));
++   Object_setClass(this, Class(ProcessTable));
++
++   ProcessTable* super = &this->super;
++   ProcessTable_init(super, Class(QNXProcess), host, pidMatchList);
++   this->lastScanTime = 0;
++
++   return super;
++}
++
++void ProcessTable_delete(Object* cast) {
++   QNXProcessTable* this = (QNXProcessTable*) cast;
++   ProcessTable_done(&this->super);
++   free(this);
++}
++
++/* Map a QNX thread state to an htop ProcessState */
++static ProcessState QNXProcessTable_threadStateToProcessState(unsigned int state) {
++   switch (state) {
++   case STATE_RUNNING:
++      return RUNNING;
++   case STATE_READY:
++      return RUNNABLE;
++   case STATE_STOPPED:
++      return STOPPED;
++   case STATE_DEAD:
++      return ZOMBIE;
++   case STATE_SEND:
++   case STATE_RECEIVE:
++   case STATE_REPLY:
++   case STATE_MQ_SEND:
++   case STATE_MQ_RECEIVE:
++   case STATE_SIGSUSPEND:
++   case STATE_SIGWAITINFO:
++   case STATE_WAITCTX:
++   case STATE_SEM:
++   case STATE_JOIN:
++   case STATE_INTR:
++   case STATE_MUTEX:
++   case STATE_CONDVAR:
++   case STATE_BARRIER:
++   case STATE_PIPE:
++   case STATE_RWLOCK_READ:
++   case STATE_RWLOCK_WRITE:
++      return BLOCKED;
++   case STATE_NANOSLEEP:
++      return SLEEPING;
++   case STATE_WAITPAGE:
++      return PAGING;
++   default:
++      return UNKNOWN;
++   }
++}
++
++void ProcessTable_goThroughEntries(ProcessTable* super) {
++   QNXProcessTable *this = (QNXProcessTable*) super;
++   QNXMachine* qhost = (QNXMachine*) super->super.host;
++   Machine* host  = super->super.host;
++
++   struct timeval currentTime;
++   gettimeofday(&currentTime, NULL);
++   const uint64_t timeNowNs = (currentTime.tv_sec * 1e6 + currentTime.tv_usec) * 1e3;
++
++   uint64_t elapsedTime = timeNowNs - this->lastScanTime;
++   this->lastScanTime = timeNowNs;
++
++   DIR* procDir = opendir("/proc");
++   if (!procDir)
++      return;
++
++
++   uint32_t acc_fds = 0;
++   struct dirent* ent;
++   while ((ent = readdir(procDir)) != NULL) {
++      if (!isdigit((unsigned char)ent->d_name[0])) continue;
++      pid_t pid = atoi(ent->d_name);
++      if (pid <= 0) continue;
++      char ctlpath[64];
++      xSnprintf(ctlpath, sizeof(ctlpath), "/proc/%d/ctl", (int)pid);
++
++      int fd = open(ctlpath, O_RDONLY);
++      if (fd < 0) continue;
++
++      procfs_info info = {0};
++      memset(&info, 0, sizeof(info));
++      if (devctl(fd, DCMD_PROC_INFO, &info, sizeof(info), NULL) != EOK) {
++         close(fd);
++         continue;
++      }
++
++      procfs_status status = {0};
++      memset(&status, 0, sizeof(status));
++      status.tid = 1;
++      if (devctl(fd, DCMD_PROC_TIDSTATUS, &status, sizeof(status), NULL) != EOK) {
++         close(fd);
++         continue;
++      }
++
++      procfs_asinfo asinfo = {0};
++      if (devctl(fd, DCMD_PROC_ASINFO, &asinfo, sizeof(asinfo), NULL) != EOK) {
++         close(fd);
++         continue;
++      }
++
++      // we need to define this struct since devctl fills the hdr field and then adds the path after.
++      struct {
++         procfs_debuginfo hdr;
++         char             path[PATH_MAX];
++      } mapdebug = {0};
++      // dbg.hdr.vaddr = info.base_address;
++      if (devctl(fd, DCMD_PROC_MAPDEBUG_BASE, &mapdebug, sizeof(mapdebug), NULL) != EOK) {
++         close(fd);
++         continue;
++      }
++      close(fd);
++
++      bool preExisting;
++      Process* proc = ProcessTable_getProcess(super, pid, &preExisting, QNXProcess_new);
++      QNXProcess* qp = (QNXProcess*) proc;
++
++      if (!preExisting) {
++         // Initialise fields that don't change
++         Process_setPid(proc, pid);
++         Process_setParent(proc, info.parent);
++         Process_setThreadGroup(proc, pid);
++
++         proc->starttime_ctime = info.start_time / 1e9;
++         Process_fillStarttimeBuffer(proc);
++      }
++
++      // Fields updated each scan
++      proc->super.updated = true;
++      proc->isKernelThread = (status.flags & _DEBUG_FLAG_ISSYS) > 0;
++      proc->isUserlandThread = !proc->isKernelThread;
++      proc->pgrp = info.pgrp;
++      proc->session = info.sid;
++      proc->nlwp = (int) info.num_threads;
++      proc->st_uid = info.uid;
++      proc->priority = (int) status.priority;
++      proc->processor = (int) status.last_cpu;
++      proc->m_virt = asinfo.as_used / 1024;
++      proc->m_resident = asinfo.rss / 1024;
++      qp->num_fds = info.num_fdcons;
++      acc_fds += info.num_fdcons;
++
++      // Process state - use the first thread's state
++      proc->state = QNXProcessTable_threadStateToProcessState(status.state);
++      if (info.flags & _NTO_PF_ZOMBIE) {
++         proc->state = ZOMBIE;
++      }
++
++      // CPU time accounting
++      uint64_t cpuTimeNs = info.utime + info.stime;
++      uint64_t prevCpuTime = qp->utime + qp->stime;
++      qp->utime = info.utime;
++      qp->stime = info.stime;
++
++      if (preExisting && elapsedTime > 0) {
++         uint64_t deltaCpu = cpuTimeNs - prevCpuTime;
++         float percent = ((float)deltaCpu / (float)elapsedTime) * 100.0f;
++         proc->percent_cpu = percent;
++      } else {
++         proc->percent_cpu = 0;
++      }
++
++      Process_updateCPUFieldWidths(proc->percent_cpu);
++
++      // Total accumulated time in centiseconds (for TIME column)
++      proc->time = (unsigned long long)(cpuTimeNs / 1e6);
++
++      // Memory
++      if (host->totalMem > 0) proc->percent_mem = ((double)proc->m_resident / (double)host->totalMem) * 100.0;
++      else proc->percent_mem = 0.0;
++
++      // User name
++      proc->user = UsersTable_getRef(host->usersTable, proc->st_uid);
++
++      // Command line
++      Process_updateCmdline(proc, mapdebug.hdr.path, 0, strlen(mapdebug.hdr.path));
++
++      if (mapdebug.path[0]) {
++         Process_updateComm(proc, mapdebug.path);
++      }else {
++         char comm[64];
++         comm[63] = '\0';
++         snprintf(comm, 63, "[%d]", (int)pid);
++         Process_updateComm(proc, comm);
++      }
++
++      // Show / hide
++      proc->super.show = true;
++      if (proc->isKernelThread && host->settings->hideKernelThreads) proc->super.show = false;
++      if (proc->isUserlandThread && host->settings->hideUserlandThreads) proc->super.show = false;
++
++      if (proc->super.show) {
++         if (proc->state == RUNNING) {
++            super->runningTasks++;
++         }
++         super->totalTasks += proc->nlwp + 1;
++         if (proc->isKernelThread) {
++            super->kernelThreads += proc->nlwp;
++         }
++         if (proc->isUserlandThread) {
++            super->userlandThreads += proc->nlwp;
++         }
++      }
++
++      if (!preExisting) {
++         ProcessTable_add(super, proc);
++      }
++   }
++   __curr_num_fds = acc_fds;
++
++   closedir(procDir);
++}
+diff --git a/qnx/QNXProcessTable.h b/qnx/QNXProcessTable.h
+new file mode 100644
+index 000000000..5dcf5005c
+--- /dev/null
++++ b/qnx/QNXProcessTable.h
+@@ -0,0 +1,20 @@
++#ifndef HEADER_QNXProcessTable
++#define HEADER_QNXProcessTable
++/*
++htop - qnx/QNXProcessTable.h
++(C) 2024 htop dev team
++Copyright (c) 2026, BlackBerry Limited. All rights reserved.
++Released under the GNU GPLv2+, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "ProcessTable.h"
++
++
++typedef struct QNXProcessTable_ {
++   ProcessTable super;
++
++   uint64_t lastScanTime;
++} QNXProcessTable;
++
++#endif /* HEADER_QNXProcessTable */

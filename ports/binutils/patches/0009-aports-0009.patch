@@ -14,11 +14,10 @@ re-syncing the qnx/main branch to the latest in svn.
 
 CLT-9242
 ---
-diff --git a/ld/emultempl/nto.em b/ld/emultempl/nto.em
-index c577e0f33f9..2c726e5a814 100644
+
 --- a/ld/emultempl/nto.em
 +++ b/ld/emultempl/nto.em
-@@ -170,7 +170,7 @@ nto_add_note_section (void) {
+@@ -175,7 +175,7 @@
    /* Update QNX stack note content.  */
    h_size = note_sec->size - sizeof(struct nto_stack_note);
    n_note = (struct nto_stack_note *) (note_sec->contents + h_size);
@@ -27,4 +26,3 @@ index c577e0f33f9..2c726e5a814 100644
  
    if (link_info.stacksize > 0)
      bfd_h_put_32 (note_sec->owner, link_info.stacksize, &n_note->stacksize);
-

@@ -1,4 +1,4 @@
-# glib-typelibs 2.82.4
+# glib-typelibs 2.90.1
 
 > GObject introspection data (typelibs and GIR files) of the ported GLib, for PyGObject
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.82.4`) |
+| Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.90.1`) |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.82.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.90.1 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/glib.git src/glib-typelibs
 ```
 
@@ -122,6 +122,7 @@ do_install() {
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - glib-typelibs: the GObject introspection data of the ported GLib -- GLib-2.0, GObject-2.0, Gio-2.0, GModule-2.0, GLibUnix-2.0, GioUnix-2.0 and GIRepository-3.0 (.typelib for lib/girepository-1.0, .gir for share/gir-1.0) -- which PyGObject (python3-gobject3) loads to reach GLib from Python. The glib port cannot make them (-Dintrospection=disabled): g-ir-scanner runs a "dumper" program linked against the library it describes, and a QNX program does not run on the build machine. So the same GLib release is built a second time natively, on the build machine, only to describe it: 1. GLib (no introspection), 2. gobject-introspection's g-ir-scanner against it, 3. GLib again with -Dintrospection=enabled, all in build/host/glib-typelibs, once for both architectures. The API description is the same on QNX (same sources, same version); both QNX targets are LP64 little endian like the build machine, so the sizes and offsets g-ir-compiler computes match. What does differ are the values glibconfig.h gives the GLIB_SYSDEF_* constants (AF_INET6, MSG_*): those are taken from the target's staged glibconfig.h before the .typelibs are compiled (fix-constants.py).
+- glib 2.90 needs Meson >= 1.4, newer than the build image's default
 - The native builds: the build machine's compiler, pkg-config and libraries (libffi, pcre2, zlib, libmount), nothing of the cross environment.
 - (one at a time: both architectures use this directory, and two builds of them may run side by side)
 
@@ -203,7 +204,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.82.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib-typelibs=<version>`), sources in `ported/glib-typelibs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib-typelibs`; port one with `scripts/port-update glib-typelibs`.
+This recipe builds **2.90.1**. Kept from earlier: `2.82.4` ([recipe and patches](versions/2.82.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib-typelibs=<version>`), sources in `ported/glib-typelibs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib-typelibs`; port one with `scripts/port-update glib-typelibs`.
 
 <details><summary>recipe.sh</summary>
 
@@ -226,12 +227,14 @@ This recipe builds **2.82.4**. Every version stays available: packages in `dists
 # glibconfig.h gives the GLIB_SYSDEF_* constants (AF_INET6, MSG_*): those are
 # taken from the target's staged glibconfig.h before the .typelibs are
 # compiled (fix-constants.py).
-VERSION=2.82.4
-GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.82.4
+VERSION=2.90.1
+GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.90.1
 GI_GIT=https://gitlab.gnome.org/GNOME/gobject-introspection.git; GI_REF=1.86.0
 DEPS="glib"
 RUNTIME_DEPS=""
 BUILDSYS=custom
+# glib 2.90 needs Meson >= 1.4, newer than the build image's default
+HOSTTOOLS_NEW=1
 do_fetch() {
   git clone -q --depth 1 --branch "$REF" "$GIT" "$SRCROOT/glib" &&
   git clone -q --depth 1 --branch "$GI_REF" "$GI_GIT" "$SRCROOT/gobject-introspection" || { rm -rf "$SRCROOT"; return 1; }

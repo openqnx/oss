@@ -2,6 +2,8 @@
 # iperf3 on loopback: a server on 127.0.0.1, then TCP client runs with a
 # fixed byte count (-n 2M, JSON output must report exactly 2097152 bytes
 # sent and received), the same in reverse mode (-R), and a short UDP run.
+# The port's iperf3 by path: SDP 8.0.6 images carry their own
+# /system/bin/iperf3, which PATH may find first.
 echo "== iperf3 =="
 fail=0
 ok() { echo "  ok   $1"; }; bad() { echo "  FAIL $1"; fail=$((fail+1)); }
@@ -20,10 +22,13 @@ cleanup() { stop_server; cd /; rm -rf "$T"; }
 trap cleanup EXIT
 trap 'exit 1' INT TERM HUP
 cd "$T" || exit 1
+L=/usr/local; [ -x "$L/bin/iperf3" ] || L=/data/oss/usr/local
+iperf3() { "$L/bin/iperf3" "$@"; }
 
+# iperf3 always builds its own cJSON copy (src/cjson.c, ESnet-modified:
+# 64-bit valueint), hence "(cJSON 1.7.15)" whatever the cjson port is.
 V=$(iperf3 --version 2>&1 | head -n 1)
-echo "  info $V"
-case "$V" in "iperf 3.17.1"*) ok "iperf3 --version: 3.17.1" ;; *) bad "iperf3 --version: $V" ;; esac
+case "$V" in "iperf 3."[0-9]*) ok "$L/bin/iperf3 --version: $V" ;; *) bad "iperf3 --version: $V" ;; esac
 
 PORT=$((15201 + $$ % 200))
 iperf3 -s -B 127.0.0.1 -p $PORT > server.log 2>&1 &
@@ -60,11 +65,20 @@ fi
 
 iperf3 --connect-timeout 5000 -c 127.0.0.1 -p $PORT -u -b 2M -n 256K -l 1024 -J > udp.json 2> udp.err; rc=$?
 if [ $rc -eq 0 ] && grep -q '"protocol":[[:space:]]*"UDP"' udp.json; then
-  sed -n '/"end":/,$p' udp.json > udp.end
-  lost=$(grep '"lost_packets"' udp.end | head -n 1 | tr -dc '0-9')
-  echo "  info UDP: $(grep -c '"packets"' udp.end) packet counters in the summary, lost_packets=$lost"
-  grep -E -q '"packets":[[:space:]]*256,' udp.end && ok "UDP: 256 datagrams of 1024 bytes in the summary" \
-    || bad "UDP: packets $(grep '"packets"' udp.end | tr -d '\t\n ')"
+  # field <summary> <key>: a number from the end summary (sum_sent/sum_received)
+  field() { sed -n "/\"$1\":/,/}/p" udp.json | grep "\"$2\":" | head -n 1 | tr -dc '0-9'; }
+  sp=$(field sum_sent packets); sb=$(field sum_sent bytes)
+  rp=$(field sum_received packets); lost=$(field sum_received lost_packets)
+  echo "  info UDP: sent $sp datagrams ($sb bytes), receiver counted $rp, lost_packets=$lost"
+  # -n 256K of 1024-byte datagrams: at least 256. In throttled (-b) UDP
+  # runs the main thread checks -n when it wakes, at each report interval
+  # (3.17.1 stopped at exactly 256; 3.19 and 3.22 go on to the end of that
+  # interval: 489 at 2 Mbit/s), as upstream documents -n since 3.22.
+  [ -n "$sp" ] && [ "$sp" -ge 256 ] && [ "$sb" = $((sp * 1024)) ] \
+    && ok "UDP: -n 256K sent $sp datagrams, every one 1024 bytes" \
+    || bad "UDP: sum_sent packets $sp, bytes $sb"
+  [ -n "$rp" ] && [ "$rp" = "$sp" ] && ok "UDP: the receiver accounted for all $sp datagrams" \
+    || bad "UDP: sent $sp, receiver counted $rp"
 else
   bad "UDP run: rc=$rc $(head -c 300 udp.err)"
 fi

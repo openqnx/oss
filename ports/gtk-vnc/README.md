@@ -1,4 +1,4 @@
-# gtk-vnc 1.3.1
+# gtk-vnc 1.6.0
 
 > VNC client library and GTK 3 widget, with the gvncviewer viewer
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/gtk-vnc.git (tag `v1.3.1`) |
+| Upstream | https://gitlab.gnome.org/GNOME/gtk-vnc.git (tag `1.6.0`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`gdk-pixbuf`](../gdk-pixbuf/) [`cairo`](../cairo/) [`gnutls`](../gnutls/) [`libgcrypt`](../libgcrypt/) [`zlib`](../zlib/) [`libx11`](../libx11/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.3.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.6.0 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/gtk-vnc.git src/gtk-vnc
 ```
 
@@ -201,7 +201,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk-vnc=<version>`), sources in `ported/gtk-vnc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk-vnc`; port one with `scripts/port-update gtk-vnc`.
+This recipe builds **1.6.0**. Kept from earlier: `1.3.1` ([recipe and patches](versions/1.3.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtk-vnc=<version>`), sources in `ported/gtk-vnc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtk-vnc`; port one with `scripts/port-update gtk-vnc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -210,7 +210,7 @@ This recipe builds **1.3.1**. Every version stays available: packages in `dists/
 # a VNC viewer window for the QNX desktop (labwc). Tight/JPEG, ZRLE, VeNCrypt
 # TLS -- what TurboVNC servers speak (VirtualGL's vglrun in a TurboVNC session
 # shows OpenGL programs such as RViz here).
-VERSION=1.3.1; GIT=https://gitlab.gnome.org/GNOME/gtk-vnc.git; REF=v1.3.1
+VERSION=1.6.0; GIT=https://gitlab.gnome.org/GNOME/gtk-vnc.git; REF=1.6.0
 DEPS="glib gtk3 gdk-pixbuf cairo gnutls libgcrypt zlib libx11"
 BUILDSYS=meson
 # Coroutines on GLib threads: portable, no makecontext/swapcontext needed.

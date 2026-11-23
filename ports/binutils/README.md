@@ -1,4 +1,4 @@
-# binutils 2.43
+# binutils 2.47
 
 > GNU binary tools: assembler, linker, objdump, readelf and others
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.xz |
-| SHA-256 | `b53606f443ac8f01d1d5fc9c39497f2af322d99e14cea5c0b4b124d630379365` |
+| Upstream | https://ftp.gnu.org/gnu/binutils/binutils-2.47.tar.xz |
+| SHA-256 | `154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff` |
 | Build system | GNU Autotools |
 | QNX patches | 10 |
 | Build dependencies | [`zlib`](../zlib/) [`zstd`](../zstd/) [`msgpack-c`](../msgpack-c/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.xz
+URL=https://ftp.gnu.org/gnu/binutils/binutils-2.47.tar.xz
 mkdir -p dist src/binutils
 curl -fL -o dist/$(basename $URL) $URL
-echo "b53606f443ac8f01d1d5fc9c39497f2af322d99e14cea5c0b4b124d630379365  dist/$(basename $URL)" | sha256sum -c -
+echo "154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/binutils --strip-components=1
 ```
 
@@ -106,6 +106,10 @@ patch -p1 -d src/binutils < ports/binutils/patches/0010-aports-0010.patch
 > Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
 >
+> Changed here (2.47): the bfd/development.sh hunk (development=true) is
+> dropped -- 2.47 already has it; i386 nto moved out of the generic i386 elf
+> entry that upstream merged it into.
+>
 >
 > bfd: adding qnx bfd patches for binutils
 >
@@ -128,7 +132,7 @@ patch -p1 -d src/binutils < ports/binutils/patches/0010-aports-0010.patch
 >  bfd/elfxx-x86.h     |  8 ++++++++
 >  10 files changed, 67 insertions(+), 19 deletions(-)
 
-Touches: `bfd/Makefile.am`, `bfd/Makefile.in`, `bfd/coffcode.h`, `bfd/config.bfd`, `bfd/development.sh`, `bfd/elf.c` … · Upstream status: QNX-specific
+Touches: `bfd/coffcode.h`, `bfd/config.bfd`, `bfd/elf32-arm.c`, `bfd/elf.c`, `bfd/elfnn-aarch64.c`, `bfd/elfxx-x86.h` … · Upstream status: QNX-specific
 
 **[`0002-aports-0002.patch`](patches/0002-aports-0002.patch)** — QNX change from QNX's aports (core/binutils/0002.patch).
 
@@ -168,6 +172,19 @@ Touches: `gas/configure.tgt`, `gas/testsuite/gas/arm/mapshort-elf.d` · Upstream
 > Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
 >
+> Changed here (2.47): ld lost einfo's %F (fatal) -- the stub BFD error uses
+> fatal() now; the x86 set_options call is upstream's renamed
+> bfd_elf_linker_x86_set_options.
+> The nto.em hunk is carried over to 2.47's source_em/fragment: QNX's 2.43
+> patch made nto.em declare stub_file and source elf-x86.em for i386 (there
+> never was an i386elf.em; nto.em's "${ARCH}elf.em" exists only for aarch64).
+> Dropping that hunk broke i386nto ("i386elf.em: No such file", "stub_file
+> undeclared"). x86-64 now takes elf-x86-64.em -- after 2.43 elf_x86_64.sh
+> uses elf-x86-64-glibc.em, and elf-x86-64.em is its non-glibc part (as
+> FreeBSD/Haiku use it) -- so nto keeps upstream's x86-64 before_parse /
+> before_allocation hooks. The stray C line at the end of i386nto.sh (run by
+> the shell as a command "static") is dropped; nto.em declares stub_file.
+>
 >
 > ld: adding qnx patches
 >
@@ -176,12 +193,16 @@ Touches: `gas/configure.tgt`, `gas/testsuite/gas/arm/mapshort-elf.d` · Upstream
 > CLT-9242
 > ---
 
-Touches: `ld/Makefile.am`, `ld/Makefile.in`, `ld/configure.tgt`, `ld/emulparams/aarch64nto.sh`, `ld/emulparams/armnto.sh`, `ld/emulparams/elf32lppcnto.sh` … · Upstream status: QNX-specific
+Touches: `ld/configure.tgt`, `ld/emulparams/aarch64nto.sh`, `ld/emulparams/armnto.sh`, `ld/emulparams/elf32lppcnto.sh`, `ld/emulparams/elf32ppcnto.sh`, `ld/emulparams/elf_x86_64.sh` … · Upstream status: QNX-specific
 
 **[`0005-aports-0005.patch`](patches/0005-aports-0005.patch)** — QNX change from QNX's aports (core/binutils/0005.patch).
 
 > Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
+>
+> Changed here (2.47): upstream dropped the *-*-nacl* targets the hunks
+> were written next to; the nto/qnx entries are added to the lists as they are
+> now.
 >
 >
 > ld: adding qnx testsuite
@@ -257,6 +278,8 @@ Touches: `ld/emultempl/nto.em` · Upstream status: QNX-specific
 
 > Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
+>
+> Changed here (2.47): upstream renamed the local to obed; same check.
 >
 >
 > bdf-ld : custom linker script null derefence
@@ -394,15 +417,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.43**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add binutils=<version>`), sources in `ported/binutils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates binutils`; port one with `scripts/port-update binutils`.
+This recipe builds **2.47**. Kept from earlier: `2.43` ([recipe and patches](versions/2.43/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add binutils=<version>`), sources in `ported/binutils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates binutils`; port one with `scripts/port-update binutils`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU binutils for the target (as, ld, objdump, readelf, ...). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.43
-TARBALL=https://ftp.gnu.org/gnu/binutils/binutils-2.43.tar.xz
-SHA256=b53606f443ac8f01d1d5fc9c39497f2af322d99e14cea5c0b4b124d630379365
+VERSION=2.47
+TARBALL=https://ftp.gnu.org/gnu/binutils/binutils-2.47.tar.xz
+SHA256=154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff
 # Also linked at run time (found by scripts/gen-dependency-index): zstd
 DEPS="zlib zstd msgpack-c"
 BUILDSYS=autotools

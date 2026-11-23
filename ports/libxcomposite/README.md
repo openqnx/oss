@@ -1,4 +1,4 @@
-# libxcomposite 0.4.6
+# libxcomposite 0.4.7
 
 > X Composite extension client library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git (tag `libXcomposite-0.4.6`) |
+| Upstream | https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git (tag `libXcomposite-0.4.7`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libx11`](../libx11/) [`libxfixes`](../libxfixes/) [`xorgproto`](../xorgproto/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libXcomposite-0.4.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libXcomposite-0.4.7 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git src/libxcomposite
 ```
 
@@ -207,12 +207,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.4.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcomposite=<version>`), sources in `ported/libxcomposite/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcomposite`; port one with `scripts/port-update libxcomposite`.
+This recipe builds **0.4.7**. Kept from earlier: `0.4.6` ([recipe and patches](versions/0.4.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libxcomposite=<version>`), sources in `ported/libxcomposite/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libxcomposite`; port one with `scripts/port-update libxcomposite`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.4.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git; REF=libXcomposite-0.4.6
+VERSION=0.4.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git; REF=libXcomposite-0.4.7
 DEPS="libx11 libxfixes xorgproto"
 BUILDSYS=autotools
 # Needed by GTK3's X11 backend (HAVE_XCOMPOSITE), which Thunar requires.

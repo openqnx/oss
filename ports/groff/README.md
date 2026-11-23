@@ -1,4 +1,4 @@
-# groff 1.23.0
+# groff 1.25.0
 
 > GNU troff document formatting system
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/groff/groff-1.23.0.tar.gz |
-| SHA-256 | `6b9757f592b7518b4902eb6af7e54570bdccba37a871fddb2d30ae3863511c13` |
+| Upstream | https://ftp.gnu.org/gnu/groff/groff-1.25.0.tar.gz |
+| SHA-256 | `24d103a07eb79e418963bce206c8771b649871f83bda2fd4c2e65529c1c56921` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libiconv`](../libiconv/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/groff/groff-1.23.0.tar.gz
+URL=https://ftp.gnu.org/gnu/groff/groff-1.25.0.tar.gz
 mkdir -p dist src/groff
 curl -fL -o dist/$(basename $URL) $URL
-echo "6b9757f592b7518b4902eb6af7e54570bdccba37a871fddb2d30ae3863511c13  dist/$(basename $URL)" | sha256sum -c -
+echo "24d103a07eb79e418963bce206c8771b649871f83bda2fd4c2e65529c1c56921  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/groff --strip-components=1
 ```
 
@@ -97,18 +97,19 @@ S=src/groff; B=build/$QNX_ARCH/groff; mkdir -p $B
 ```
 
 ```bash
-do_build()   { _host_groff && make -C "$B" -j"$(nproc)" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff"; }
+do_build()   { _host_groff && make -C "$B" -j"$(nproc)" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" SOELIMBIN="$B/host-groff/soelim"; }
 ```
 
 ```bash
-do_install() { make -C "$B" DESTDIR="$STAGE" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" install; }
+do_install() { make -C "$B" DESTDIR="$STAGE" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" SOELIMBIN="$B/host-groff/soelim" install; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - GNU troff (needed by man-db). Version as in the QNX Everywhere 8.0.4r1 image.
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv
-- The build formats groff's own documentation and examples with groff -- the one it has just built is a QNX binary. A distribution's groff often lacks the preprocessors this needs (grn, for instance), so a groff for the build host is built from the same source first and used for that step.
+- gnulib's <locale.h> (new in 1.25) defines its own locale_t when the C <locale.h> has none -- QNX's has none; libc++ declares QNX's locale_t in <__support/qnx/xlocale.h> -- and every C++ file that reaches libc++'s <locale> then stops at "conflicting declaration ... locale_t". groff calls none of the *_l functions, so gnulib needs no locale_t of its own. The cross build also cannot run the localeconv probe and guesses "no", and gnulib's replacement returns a const struct lconv * that libc++'s localeconv_l fallback cannot return ("invalid conversion from 'const lconv*'"); QNX's localeconv is the standard one.
+- The build formats groff's own documentation and examples with groff -- the one it has just built is a QNX binary. A distribution's groff often lacks the preprocessors this needs (grn, for instance), so a groff for the build host is built from the same source first and used for that step; since 1.25 that includes soelim, which makes man/groff.7.man (SOELIMBIN).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH groff`.
 
@@ -208,31 +209,42 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.23.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add groff=<version>`), sources in `ported/groff/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates groff`; port one with `scripts/port-update groff`.
+This recipe builds **1.25.0**. Kept from earlier: `1.23.0` ([recipe and patches](versions/1.23.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add groff=<version>`), sources in `ported/groff/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates groff`; port one with `scripts/port-update groff`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # GNU troff (needed by man-db). Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=1.23.0
+VERSION=1.25.0
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="libiconv"
-TARBALL=https://ftp.gnu.org/gnu/groff/groff-1.23.0.tar.gz
-SHA256=6b9757f592b7518b4902eb6af7e54570bdccba37a871fddb2d30ae3863511c13
+TARBALL=https://ftp.gnu.org/gnu/groff/groff-1.25.0.tar.gz
+SHA256=24d103a07eb79e418963bce206c8771b649871f83bda2fd4c2e65529c1c56921
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --without-x --with-doc=no --without-gs --without-uchardet )
+# gnulib's <locale.h> (new in 1.25) defines its own locale_t when the C
+# <locale.h> has none -- QNX's has none; libc++ declares QNX's locale_t in
+# <__support/qnx/xlocale.h> -- and every C++ file that reaches libc++'s
+# <locale> then stops at "conflicting declaration ... locale_t". groff calls
+# none of the *_l functions, so gnulib needs no locale_t of its own. The
+# cross build also cannot run the localeconv probe and guesses "no", and
+# gnulib's replacement returns a const struct lconv * that libc++'s
+# localeconv_l fallback cannot return ("invalid conversion from 'const
+# lconv*'"); QNX's localeconv is the standard one.
+CONF_ENV=( gl_cv_header_locale_has_locale_t=yes gl_cv_func_localeconv_works=yes )
 # The build formats groff's own documentation and examples with groff -- the
 # one it has just built is a QNX binary. A distribution's groff often lacks
 # the preprocessors this needs (grn, for instance), so a groff for the build
-# host is built from the same source first and used for that step.
+# host is built from the same source first and used for that step; since
+# 1.25 that includes soelim, which makes man/groff.7.man (SOELIMBIN).
 _host_env() { env -u CC -u CXX -u CFLAGS -u CXXFLAGS -u CPPFLAGS -u LDFLAGS -u LIBS -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH "$@"; }
 _host_groff() {
   local h="$B/host-groff"
   [ -x "$h/groff" ] || { mkdir -p "$h" && cd "$h" && _host_env CC=gcc CXX=g++ "$S/configure" --without-x --with-doc=no \
       --without-gs --without-uchardet && _host_env make -C "$h" -j"$(nproc)"; } || return 1
 }
-do_build()   { _host_groff && make -C "$B" -j"$(nproc)" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff"; }
-do_install() { make -C "$B" DESTDIR="$STAGE" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" install; }
+do_build()   { _host_groff && make -C "$B" -j"$(nproc)" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" SOELIMBIN="$B/host-groff/soelim"; }
+do_install() { make -C "$B" DESTDIR="$STAGE" GROFFBIN="$B/host-groff/groff" GROFF_BIN_PATH="$B/host-groff" SOELIMBIN="$B/host-groff/soelim" install; }
 ```
 </details>
 

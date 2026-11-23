@@ -1,4 +1,4 @@
-# frei0r-plugins 2.4.0
+# frei0r-plugins 3.7.1
 
 > Minimalistic plugin API and collection of video sources and filters
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/dyne/frei0r.git (tag `v2.4.0`) |
+| Upstream | https://github.com/dyne/frei0r.git (tag `v3.7.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`cairo`](../cairo/) [`opencv`](../opencv/) [`freetype`](../freetype/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.4.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.7.1 --recurse-submodules --shallow-submodules \
     https://github.com/dyne/frei0r.git src/frei0r-plugins
 ```
 
@@ -193,7 +193,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.4.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add frei0r-plugins=<version>`), sources in `ported/frei0r-plugins/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates frei0r-plugins`; port one with `scripts/port-update frei0r-plugins`.
+This recipe builds **3.7.1**. Kept from earlier: `2.4.0` ([recipe and patches](versions/2.4.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add frei0r-plugins=<version>`), sources in `ported/frei0r-plugins/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates frei0r-plugins`; port one with `scripts/port-update frei0r-plugins`.
 
 <details><summary>recipe.sh</summary>
 
@@ -201,7 +201,7 @@ This recipe builds **2.4.0**. Every version stays available: packages in `dists/
 # frei0r-plugins: the frei0r video effect plugins (filters, generators, mixers;
 # about 150 .so files in lib/frei0r-1) that ffmpeg, MLT, Kdenlive and
 # GStreamer load through the one-header frei0r API.
-VERSION=2.4.0; GIT=https://github.com/dyne/frei0r.git; REF=v2.4.0
+VERSION=3.7.1; GIT=https://github.com/dyne/frei0r.git; REF=v3.7.1
 DEPS="cairo opencv freetype"
 BUILDSYS=cmake
 # With the cairo plugins (cairogradient, cairoimagegrid, cairoaffineblend ...)

@@ -1,4 +1,4 @@
-# perl-mozilla-ca 20261020
+# perl-mozilla-ca 20261105
 
 > Mozilla's CA certificate bundle for Perl (Mozilla::CA)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261020.tar.gz |
-| SHA-256 | `1aeed97a463389e582e085e82de03ae0bffae74d46cf8ee4c511341e5508c21d` |
+| Upstream | https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261105.tar.gz |
+| SHA-256 | `b29dfd05d0f0038091fab9d7a184e8e476bc24fb5de5963cd23d21d262e0be10` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`perl`](../perl/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261020.tar.gz
+URL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261105.tar.gz
 mkdir -p dist src/perl-mozilla-ca
 curl -fL -o dist/$(basename $URL) $URL
-echo "1aeed97a463389e582e085e82de03ae0bffae74d46cf8ee4c511341e5508c21d  dist/$(basename $URL)" | sha256sum -c -
+echo "b29dfd05d0f0038091fab9d7a184e8e476bc24fb5de5963cd23d21d262e0be10  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/perl-mozilla-ca --strip-components=1
 ```
 
@@ -194,7 +194,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **20261020**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-mozilla-ca=<version>`), sources in `ported/perl-mozilla-ca/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-mozilla-ca`; port one with `scripts/port-update perl-mozilla-ca`.
+This recipe builds **20261105**. Kept from earlier: `20261020` ([recipe and patches](versions/20261020/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add perl-mozilla-ca=<version>`), sources in `ported/perl-mozilla-ca/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates perl-mozilla-ca`; port one with `scripts/port-update perl-mozilla-ca`.
 
 <details><summary>recipe.sh</summary>
 
@@ -202,9 +202,9 @@ This recipe builds **20261020**. Every version stays available: packages in `dis
 # perl-mozilla-ca: Mozilla::CA, Mozilla's CA certificate bundle for Perl
 # (LWP and IO::Socket::SSL verify HTTPS servers with it). Pure Perl and a
 # PEM file: installed into Perl's site library.
-VERSION=20261020
-TARBALL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261020.tar.gz
-SHA256=1aeed97a463389e582e085e82de03ae0bffae74d46cf8ee4c511341e5508c21d
+VERSION=20261105
+TARBALL=https://cpan.metacpan.org/authors/id/L/LW/LWP/Mozilla-CA-20261105.tar.gz
+SHA256=b29dfd05d0f0038091fab9d7a184e8e476bc24fb5de5963cd23d21d262e0be10
 DEPS="perl"
 RUNTIME_DEPS="perl"
 BUILDSYS=custom

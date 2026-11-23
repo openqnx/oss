@@ -1,0 +1,82 @@
+# pango 1.56.4-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-23T12:13:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pango qnx-test-pango qnx-port-tests
+( 1/31) Installing expat (2.6.4-r0)
+( 2/31) Installing brotli (1.2.1-r0)
+( 3/31) Installing bzip2 (1.0.8-r0)
+( 4/31) Installing libpng (1.6.59-r0)
+( 5/31) Installing freetype (2.15.0-r0)
+( 6/31) Installing libiconv (1.19.1-r0)
+( 7/31) Installing libunistring (1.5-r0)
+( 8/31) Installing ncurses (6.6-r0)
+( 9/31) Installing gettext (0.22.5-r0)
+(10/31) Installing fontconfig (2.18.4-r0)
+(11/31) Installing libffi (3.8.1-r0)
+(12/31) Installing pcre2 (10.49-r0)
+(13/31) Installing glib (2.90.1-r0)
+(14/31) Installing libxau (1.0.12-r0)
+(15/31) Installing libxdmcp (1.1.5-r0)
+(16/31) Installing libxcb (1.17.0-r0)
+(17/31) Installing libx11 (1.8.14-r0)
+(18/31) Installing libxext (1.3.7-r0)
+(19/31) Installing libxrender (0.9.13-r0)
+(20/31) Installing lzo (2.10-r0)
+(21/31) Installing pixman (0.46.4-r0)
+(22/31) Installing cairo (1.18.6-r0)
+(23/31) Installing fribidi (1.0.18-r0)
+(24/31) Installing graphite2 (1.3.15-r0)
+(25/31) Installing icu (76.1-r0)
+(26/31) Installing harfbuzz (<ip>-r0)
+(27/31) Installing libxft (2.3.9-r0)
+(28/31) Installing pango (1.56.4-r0)
+(29/31) Installing qnx-port-tests (1.0-r0)
+(30/31) Installing font-dejavu (2.37-r0)
+(31/31) Installing qnx-test-pango (1.0-r0)
+Executing glib-2.90.1-r0.trigger
+OK: 109.0 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pango
+     == pango ==
+       info pango 1.56.4
+       ok   pangocairo font map
+       ok   pango_font_map_load_font(DejaVu Sans)
+       info resolved family: DejaVu Sans
+       ok   fontconfig found DejaVu Sans
+       info 8 font families
+       ok   font families listed
+       info "MMMMMMMMMM": logical 172.56 x 23.28 px, ink 168.64 px wide
+       ok   width = 10 x 1767/2048 x 20 px = 172.56 px
+       ok   one line
+       ok   no unknown glyphs
+       ok   ten glyphs shaped
+       info "Hello QNX": 101.46 px wide (unkerned advances sum to 101.45)
+       ok   "Hello QNX" ~101 px wide (kerning aside)
+       ok   xy_to_index(0,0) is the first character
+       info wrapped at 100 px: 6 lines, 76.2 px wide
+       ok   word wrap at 100 px gives >= 3 lines
+       ok   no line wider than 100 px
+       info rendered: 464 dark pixels, 0 outside the ink rect 100x19+1+3
+       ok   text was drawn
+       ok   every drawn pixel is inside the ink rectangle
+       info $ pango-segmentation --kind=word --text 'Hello QNX' -> 0
+       info output: |Hello| |QNX|
+       ok   pango-segmentation word boundaries |Hello| |QNX|
+       info $ pango-segmentation --kind=sentence --text 'One. Two.' -> 0
+       info output: |One. |Two.|
+       ok   pango-segmentation sentence boundaries
+       ok   scratch directory
+       info $ pango-view --backend=cairo -q --font='DejaVu Sans 20' --text='QNX pango' -o /tmp/qnxport-pango.Y2VUcQ/v.png -> 0
+       info pango-view PNG 170x52
+       ok   pango-view wrote a PNG
+       ok   PNG is one line of 20 pt text
+     PASS pango
+PASS test_pango
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

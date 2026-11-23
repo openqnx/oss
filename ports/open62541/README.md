@@ -1,4 +1,4 @@
-# open62541 1.4.8
+# open62541 1.5.10
 
 > C implementation of OPC UA (IEC 62541) clients and servers
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/open62541/open62541.git (tag `v1.4.8`) |
+| Upstream | https://github.com/open62541/open62541.git (tag `v1.5.10`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,13 +76,30 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.4.8 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.5.10 --recurse-submodules --shallow-submodules \
     https://github.com/open62541/open62541.git src/open62541
 ```
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/open62541 < ports/open62541/patches/0001-qnx-eventloop-sys-queue.patch
+```
+
+**[`0001-qnx-eventloop-sys-queue.patch`](patches/0001-qnx-eventloop-sys-queue.patch)** — Include <sys/queue.h> on QNX for the POSIX event loop's LIST_* macros.
+
+> eventloop_posix.h leaves out the bundled deps/open62541_queue.h on QNX, on
+> the assumption that the system header is there already, but includes
+> nothing in its place. Nothing else it includes pulls <sys/queue.h> in with
+> QNX SDP 8.0, so LIST_ENTRY and LIST_HEAD are unknown ("expected
+> specifier-qualifier-list before 'LIST_ENTRY'") and every file of the POSIX
+> event loop fails. QNX's <sys/queue.h> has every LIST_* macro the event loop
+> uses, LIST_FOREACH_SAFE included; it shares the _SYS_QUEUE_H_ guard with
+> the bundled copy, so the two never clash.
+
+Touches: `arch/posix/eventloop_posix.h` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -194,12 +211,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.4.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add open62541=<version>`), sources in `ported/open62541/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates open62541`; port one with `scripts/port-update open62541`.
+This recipe builds **1.5.10**. Kept from earlier: `1.4.8` ([recipe and patches](versions/1.4.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add open62541=<version>`), sources in `ported/open62541/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates open62541`; port one with `scripts/port-update open62541`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.4.8; GIT=https://github.com/open62541/open62541.git; REF=v1.4.8
+VERSION=1.5.10; GIT=https://github.com/open62541/open62541.git; REF=v1.5.10
 DEPS="openssl"
 # The node-set and data-type code generators are Python scripts that run on the
 # build host. The QNX toolchain file restricts find_package to the target

@@ -1,4 +1,4 @@
-# python3-filelock 3.32.7
+# python3-filelock 4.2.12
 
 > A platform independent file lock
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/15/df/31098c5aeb4d966b553641472bd55fcf5fdfac953549894b8a765ba44e91/filelock-3.32.7-py3-none-any.whl |
-| SHA-256 | `65ff0d0190ea42038b32bda4b77834fb05be2cad4c5b9b01aa4dfb3614536e52` |
+| Upstream | https://files.pythonhosted.org/packages/8a/c9/eb6b6528c7edb958d4c24ac47a8b94113d9de36e4cfc6eecd599b1a4f349/filelock-4.2.12-py3-none-any.whl |
+| SHA-256 | `21decfec02f116ed4c954433cdb31f28c3b346b784543177b6d7059da2702ee9` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/15/df/31098c5aeb4d966b553641472bd55fcf5fdfac953549894b8a765ba44e91/filelock-3.32.7-py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/8a/c9/eb6b6528c7edb958d4c24ac47a8b94113d9de36e4cfc6eecd599b1a4f349/filelock-4.2.12-py3-none-any.whl
 mkdir -p dist src/python3-filelock
 curl -fL -o dist/$(basename $URL) $URL
-echo "65ff0d0190ea42038b32bda4b77834fb05be2cad4c5b9b01aa4dfb3614536e52  dist/$(basename $URL)" | sha256sum -c -
+echo "21decfec02f116ed4c954433cdb31f28c3b346b784543177b6d7059da2702ee9  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-filelock --strip-components=1
 ```
 
@@ -209,7 +209,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.32.7**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-filelock=<version>`), sources in `ported/python3-filelock/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-filelock`; port one with `scripts/port-update python3-filelock`.
+This recipe builds **4.2.12**. Kept from earlier: `3.32.7` ([recipe and patches](versions/3.32.7/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-filelock=<version>`), sources in `ported/python3-filelock/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-filelock`; port one with `scripts/port-update python3-filelock`.
 
 <details><summary>recipe.sh</summary>
 
@@ -218,9 +218,9 @@ This recipe builds **3.32.7**. Every version stays available: packages in `dists
 # Version 3.x: virtualenv 20 asks for filelock<4.
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=3.32.7
-TARBALL=https://files.pythonhosted.org/packages/15/df/31098c5aeb4d966b553641472bd55fcf5fdfac953549894b8a765ba44e91/filelock-3.32.7-py3-none-any.whl
-SHA256=65ff0d0190ea42038b32bda4b77834fb05be2cad4c5b9b01aa4dfb3614536e52
+VERSION=4.2.12
+TARBALL=https://files.pythonhosted.org/packages/8a/c9/eb6b6528c7edb958d4c24ac47a8b94113d9de36e4cfc6eecd599b1a4f349/filelock-4.2.12-py3-none-any.whl
+SHA256=21decfec02f116ed4c954433cdb31f28c3b346b784543177b6d7059da2702ee9
 DEPS="python3"
 # Python modules are imported, not linked: what they need is named here.
 RUNTIME_DEPS="python3"

@@ -1,4 +1,4 @@
-# glib 2.82.4
+# glib 2.90.1
 
 > Low-level core C library of GTK and GNOME: data types, main loop, GIO
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.82.4`) |
+| Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.90.1`) |
 | Build system | Meson |
-| QNX patches | 3 |
+| QNX patches | 4 |
 | Build dependencies | [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`gettext`](../gettext/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,26 +81,31 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.82.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.90.1 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/glib.git src/glib
 ```
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/glib < ports/glib/patches/0001-qnx-fstab-mount-points.patch
 patch -p1 -d src/glib < ports/glib/patches/0002-qnx-credentials-cmsgcred.patch
 patch -p1 -d src/glib < ports/glib/patches/0003-qnx-inotify-spurious-wakeup-unmount.patch
+patch -p1 -d src/glib < ports/glib/patches/0004-qnx-fd-query-path.patch
 ```
 
-**[`0001-qnx-fstab-mount-points.patch`](patches/0001-qnx-fstab-mount-points.patch)** — GIO: use the fstab code for mount points on QNX.
+**[`0001-qnx-fstab-mount-points.patch`](patches/0001-qnx-fstab-mount-points.patch)** — GIO: the fstab mount-point code on QNX without the sysctl user-mount check.
 
-> QNX provides setfsent/getfsent/endfsent and struct fstab in <fstab.h>, but the
-> fstab branch of gunixmounts.c is chosen only with getfsstat/getvfsstat, which
-> QNX lacks (its mount table already has its own HAVE_QNX branch). Without this,
-> the file ends at "#error No g_get_mount_table() implementation".
+> In 2.90.1 upstream takes the fstab branch of gunixmounts.c whenever
+> getfsent() exists (HAVE_GETFSENT), which QNX provides in <fstab.h>, so QNX
+> gets _g_get_unix_mount_points() without help (this patch used to add
+> HAVE_QNX to those #if lines). What remains: that branch asks sysctl
+> whether users may mount filesystems. Meson's has_function() finds
+> sysctlbyname on QNX, but libc exports no userspace sysctlbyname (only the
+> kernel-internal kernel_sysctlbyname), so linking fails; QNX also has no
+> user-mountable-filesystem setting to ask. Skip that check on QNX.
 
 Touches: `gio/gunixmounts.c` · Upstream status: QNX-specific
 
@@ -133,6 +138,20 @@ Touches: `gio/gcredentialsprivate.h` · Upstream status: QNX-specific
 > arrive at once, moves are paired by cookie (docs/porting-hazards.md #160).
 
 Touches: `gio/inotify/inotify-kernel.c`, `gio/inotify/inotify-path.c` · Upstream status: QNX-specific
+
+**[`0004-qnx-fd-query-path.patch`](patches/0004-qnx-fd-query-path.patch)** — glib: implement g_unix_fd_query_path() on QNX with iofdinfo().
+
+> g_unix_fd_query_path() (new in 2.88) has a branch per platform -- readlink
+> of /proc/self/fd/N on Linux, fcntl(F_KINFO) on FreeBSD, fcntl(F_GETPATH) on
+> macOS/NetBSD/OpenBSD -- and ends in
+> '#error "g_unix_fd_query_path() not supported on this platform"', which
+> stops the QNX build in glib/glib-unix.c. QNX has neither /proc/self/fd
+> links nor F_GETPATH, but libc's iofdinfo() (<sys/iomgr.h>) asks the
+> resource manager behind the FD for the path it was opened by. Use it,
+> growing the buffer when the path is longer; an FD whose resource manager
+> keeps no path (pipe, socket) gets G_FILE_ERROR_NOSYS like the Hurd branch.
+
+Touches: `glib/glib-unix.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -181,6 +200,7 @@ DESTDIR=$STAGE ninja -C build/$QNX_ARCH/glib install
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - apk: compile the GSettings schemas whenever a package changes this directory (ports/glib/apk.trigger; manual installs: docs/packages.md)
+- glib 2.90 needs Meson >= 1.4, newer than the build image's default
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glib`.
 
@@ -306,17 +326,19 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.82.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib=<version>`), sources in `ported/glib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib`; port one with `scripts/port-update glib`.
+This recipe builds **2.90.1**. Kept from earlier: `2.82.4` ([recipe and patches](versions/2.82.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add glib=<version>`), sources in `ported/glib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates glib`; port one with `scripts/port-update glib`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.82.4; GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.82.4
+VERSION=2.90.1; GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.90.1
 DEPS="libffi pcre2 gettext zlib"
 # apk: compile the GSettings schemas whenever a package changes this directory
 # (ports/glib/apk.trigger; manual installs: docs/packages.md)
 APK_TRIGGERS="/usr/local/share/glib-2.0/schemas"
 BUILDSYS=meson
+# glib 2.90 needs Meson >= 1.4, newer than the build image's default
+HOSTTOOLS_NEW=1
 MESON_ARGS_EXTRA=(
   -Dtests=false
   -Dglib_debug=disabled

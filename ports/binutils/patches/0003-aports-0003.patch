@@ -17,22 +17,20 @@ adding qnx patches for gas as-is from internal svn.
 
 CLT-9242
 ---
-diff --git a/gas/configure.tgt b/gas/configure.tgt
-index d58f21873a3..b81d48e4891 100644
 --- a/gas/configure.tgt
 +++ b/gas/configure.tgt
-@@ -139,6 +139,8 @@ case ${generic_target} in
-   aarch64*-*-nto*)			fmt=elf;;
+@@ -140,6 +140,8 @@
    aarch64*-*-openbsd*)			fmt=elf;;
+   aarch64*-*-phoenix*)			fmt=elf;;
    aarch64*-*-pe* | aarch64*-*-mingw*)	fmt=coff em=pepaarch64 ;;
 +  aarch64*-nto-* | aarch64*-qnx-*)			fmt=elf;;
 +
    alpha-*-*vms*)			fmt=evax ;;
    alpha-*-osf*)				fmt=ecoff ;;
    alpha-*-linux*ecoff*)			fmt=ecoff ;;
-@@ -163,7 +165,8 @@ case ${generic_target} in
+@@ -163,7 +165,8 @@
+   arm-*-uclinux*eabi*)			fmt=elf  em=armlinuxeabi ;;
    arm-*-uclinux*)			fmt=elf  em=linux ;;
-   arm-*-nacl*)				fmt=elf  em=nacl ;;
    arm-*-netbsd* | arm-*-openbsd*)	fmt=elf  em=nbsd ;;
 -  arm-*-nto*)				fmt=elf ;;
 +  arm-*-nto-*eabi* | arm-*-qnx-*eabi*)			fmt=elf em=armeabi ;;
@@ -40,7 +38,7 @@ index d58f21873a3..b81d48e4891 100644
    arm-wince-pe | arm-*-wince | arm*-*-mingw32ce* | arm*-*-cegcc*)
  					fmt=coff em=wince-pe ;;
    arm-*-pe)				fmt=coff em=pe ;;
-@@ -263,7 +266,7 @@ case ${generic_target} in
+@@ -263,7 +266,7 @@
        x86_64*)				fmt=coff em=pep ;;
        i*)				fmt=coff em=pe ;;
      esac ;;
@@ -49,16 +47,16 @@ index d58f21873a3..b81d48e4891 100644
    i386-*-*nt*)				fmt=coff em=pe ;;
    i386-*-rdos*)				fmt=elf ;;
    i386-*-darwin*)			fmt=macho ;;
-@@ -369,7 +372,7 @@ case ${generic_target} in
+@@ -367,7 +370,7 @@
+   ppc-*-haiku*)				fmt=elf em=haiku ;;
    ppc-*-linux-*)			fmt=elf em=linux ;;
-   ppc-*-solaris*)			fmt=elf em=solaris ;;
    ppc-*-macos*)				fmt=coff em=macos ;;
 -  ppc-*-nto*)				fmt=elf ;;
 +  ppc-*-nto-*)				fmt=elf ;;
    ppc-*-kaos*)				fmt=elf ;;
  
    pru-*-*)				fmt=elf ;;
-@@ -397,7 +400,6 @@ case ${generic_target} in
+@@ -395,7 +398,6 @@
    sh-*-elf*)				fmt=elf ;;
    sh-*-uclinux* | sh[12]-*-uclinux*)	fmt=elf em=uclinux ;;
    sh-*-coff*)				fmt=coff ;;
@@ -66,8 +64,6 @@ index d58f21873a3..b81d48e4891 100644
    sh-*-pe*)				fmt=coff em=pe endian=little ;;
    sh-*-kaos*)				fmt=elf ;;
    shle*-*-kaos*)			fmt=elf ;;
-diff --git a/gas/testsuite/gas/arm/mapshort-elf.d b/gas/testsuite/gas/arm/mapshort-elf.d
-index d4790e595c6..f4ac5f41ab9 100644
 --- a/gas/testsuite/gas/arm/mapshort-elf.d
 +++ b/gas/testsuite/gas/arm/mapshort-elf.d
 @@ -1,7 +1,7 @@
@@ -79,4 +75,3 @@ index d4790e595c6..f4ac5f41ab9 100644
  #source: mapshort.s
  
  # Test the generation and use of ARM ELF Mapping Symbols
-

@@ -1,4 +1,4 @@
-# open-amp 2024.10.0
+# open-amp 2026.10.0
 
 > OpenAMP framework for asymmetric multiprocessing (remoteproc, RPMsg)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/OpenAMP/open-amp.git (tag `v2024.10.0`) |
+| Upstream | https://github.com/OpenAMP/open-amp.git (tag `v2026.10.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`libmetal`](../libmetal/) |
@@ -73,7 +73,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2024.10.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2026.10.0 --recurse-submodules --shallow-submodules \
     https://github.com/OpenAMP/open-amp.git src/open-amp
 ```
 
@@ -189,14 +189,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2024.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add open-amp=<version>`), sources in `ported/open-amp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates open-amp`; port one with `scripts/port-update open-amp`.
+This recipe builds **2026.10.0**. Kept from earlier: `2024.10.0` ([recipe and patches](versions/2024.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add open-amp=<version>`), sources in `ported/open-amp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates open-amp`; port one with `scripts/port-update open-amp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # qnx-ports/open-amp's qnx-v2024.10.0 branch is identical to upstream v2024.10.0:
 # it builds for QNX unmodified.
-VERSION=2024.10.0; GIT=https://github.com/OpenAMP/open-amp.git; REF=v2024.10.0
+VERSION=2026.10.0; GIT=https://github.com/OpenAMP/open-amp.git; REF=v2026.10.0
 DEPS="libmetal"
 CMAKE_ARGS_EXTRA=( -DWITH_APPS=OFF -DWITH_PROXY=OFF )
 ```

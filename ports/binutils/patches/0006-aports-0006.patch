@@ -14,11 +14,9 @@ adding qnx patches to libiberty
 
 CLT-9242
 ---
-diff --git a/libiberty/pex-unix.c b/libiberty/pex-unix.c
-index f3a1cc95ada..0fd8821172f 100644
 --- a/libiberty/pex-unix.c
 +++ b/libiberty/pex-unix.c
-@@ -369,7 +369,7 @@ pex_unix_close (struct pex_obj *obj ATTRIBUTE_UNUSED, int fd)
+@@ -369,7 +369,7 @@
  
  /* Execute a child.  */
  
@@ -27,4 +25,3 @@ index f3a1cc95ada..0fd8821172f 100644
  /* Implementation of pex->exec_child using the Cygwin spawn operation.  */
  
  /* Subroutine of pex_unix_exec_child.  Move OLD_FD to a new file descriptor
-

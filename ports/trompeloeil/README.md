@@ -1,4 +1,4 @@
-# trompeloeil 48
+# trompeloeil 49
 
 > Header-only C++14 mocking framework
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/rollbear/trompeloeil.git (tag `v48`) |
+| Upstream | https://github.com/rollbear/trompeloeil.git (tag `v49`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v48 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v49 --recurse-submodules --shallow-submodules \
     https://github.com/rollbear/trompeloeil.git src/trompeloeil
 ```
 
@@ -175,12 +175,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **48**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add trompeloeil=<version>`), sources in `ported/trompeloeil/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates trompeloeil`; port one with `scripts/port-update trompeloeil`.
+This recipe builds **49**. Kept from earlier: `48` ([recipe and patches](versions/48/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add trompeloeil=<version>`), sources in `ported/trompeloeil/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates trompeloeil`; port one with `scripts/port-update trompeloeil`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=48; GIT=https://github.com/rollbear/trompeloeil.git; REF=v48
+VERSION=49; GIT=https://github.com/rollbear/trompeloeil.git; REF=v49
 CMAKE_ARGS_EXTRA=( -DTROMPELOEIL_BUILD_TESTS=OFF )
 ```
 </details>

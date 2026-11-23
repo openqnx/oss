@@ -1,4 +1,4 @@
-# python3-tzdata 2025.2
+# python3-tzdata 2026.6
 
 > IANA time zone database as a Python package
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/5c/23/c7abc0ca0a1526a0774eca151daeb8de62ec457e77262b66b359c3c7679e/tzdata-2025.2-py2.py3-none-any.whl |
-| SHA-256 | `1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8` |
+| Upstream | https://files.pythonhosted.org/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl |
+| SHA-256 | `0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/5c/23/c7abc0ca0a1526a0774eca151daeb8de62ec457e77262b66b359c3c7679e/tzdata-2025.2-py2.py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl
 mkdir -p dist src/python3-tzdata
 curl -fL -o dist/$(basename $URL) $URL
-echo "1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8  dist/$(basename $URL)" | sha256sum -c -
+echo "0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-tzdata --strip-components=1
 ```
 
@@ -188,7 +188,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2025.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-tzdata=<version>`), sources in `ported/python3-tzdata/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-tzdata`; port one with `scripts/port-update python3-tzdata`.
+This recipe builds **2026.6**. Kept from earlier: `2025.2` ([recipe and patches](versions/2025.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-tzdata=<version>`), sources in `ported/python3-tzdata/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-tzdata`; port one with `scripts/port-update python3-tzdata`.
 
 <details><summary>recipe.sh</summary>
 
@@ -196,9 +196,9 @@ This recipe builds **2025.2**. Every version stays available: packages in `dists
 # tzdata (run-time dependency of pandas).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=2025.2
-TARBALL=https://files.pythonhosted.org/packages/5c/23/c7abc0ca0a1526a0774eca151daeb8de62ec457e77262b66b359c3c7679e/tzdata-2025.2-py2.py3-none-any.whl
-SHA256=1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8
+VERSION=2026.6
+TARBALL=https://files.pythonhosted.org/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl
+SHA256=0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec
 DEPS="python3"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"

@@ -16,12 +16,14 @@
 # glibconfig.h gives the GLIB_SYSDEF_* constants (AF_INET6, MSG_*): those are
 # taken from the target's staged glibconfig.h before the .typelibs are
 # compiled (fix-constants.py).
-VERSION=2.82.4
-GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.82.4
+VERSION=2.90.1
+GIT=https://gitlab.gnome.org/GNOME/glib.git; REF=2.90.1
 GI_GIT=https://gitlab.gnome.org/GNOME/gobject-introspection.git; GI_REF=1.86.0
 DEPS="glib"
 RUNTIME_DEPS=""
 BUILDSYS=custom
+# glib 2.90 needs Meson >= 1.4, newer than the build image's default
+HOSTTOOLS_NEW=1
 do_fetch() {
   git clone -q --depth 1 --branch "$REF" "$GIT" "$SRCROOT/glib" &&
   git clone -q --depth 1 --branch "$GI_REF" "$GI_GIT" "$SRCROOT/gobject-introspection" || { rm -rf "$SRCROOT"; return 1; }

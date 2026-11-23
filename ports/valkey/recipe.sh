@@ -1,7 +1,7 @@
 # Valkey: the open source key/value data store forked from Redis 7.2
 # (valkey-server, valkey-sentinel) with its command-line client, benchmark
 # and RDB/AOF checkers. TLS is built in, against the staged OpenSSL.
-VERSION=9.1.3; GIT=https://github.com/valkey-io/valkey.git; REF=9.1.3
+VERSION=9.2.0; GIT=https://github.com/valkey-io/valkey.git; REF=9.2.0
 DEPS="openssl"
 BUILDSYS=custom
 # Built like ports/redis (the same Makefile lineage). Notes on the variables:

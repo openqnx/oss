@@ -1,4 +1,4 @@
-VERSION=0.4.6; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git; REF=libXcomposite-0.4.6
+VERSION=0.4.7; GIT=https://gitlab.freedesktop.org/xorg/lib/libxcomposite.git; REF=libXcomposite-0.4.7
 DEPS="libx11 libxfixes xorgproto"
 BUILDSYS=autotools
 # Needed by GTK3's X11 backend (HAVE_XCOMPOSITE), which Thunar requires.

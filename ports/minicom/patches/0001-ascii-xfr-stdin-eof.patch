@@ -4,7 +4,7 @@ Upstream-Status: QNX-specific
 
 --- a/src/ascii-xfr.c
 +++ b/src/ascii-xfr.c
-@@ -129,7 +129,9 @@
+@@ -125,7 +125,9 @@
    tv.tv_usec = 0;
    while (select (STDIN_FILENO + 1, &rfds, NULL, NULL, &tv) > 0) {
      n = read (STDIN_FILENO, line, sizeof(line));

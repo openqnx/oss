@@ -1,0 +1,4 @@
+VERSION=2.0.6; GIT=https://github.com/eclipse-iceoryx/iceoryx.git; REF=v2.0.6
+SUBDIR=iceoryx_meta
+CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TEST=OFF -DEXAMPLES=OFF
+                   -DTOML_CONFIG=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

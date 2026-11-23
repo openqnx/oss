@@ -1,0 +1,27 @@
+Undefine QNX's bswap16/32/64 macros before endianconv.h's functions.
+
+endianconv.h defines static inline bswap16/bswap32/bswap64 functions. QNX's
+<net/netbyte.h>, which the socket headers include, defines macros of the
+same names, so the function definitions expand into nonsense ("expected
+declaration specifiers"). Both do the same byte swap: on QNX, drop the
+macros before the functions are defined.
+
+Upstream-Status: QNX-specific
+
+--- a/src/endianconv.h
++++ b/src/endianconv.h
+@@ -10,6 +10,14 @@
+ #include "config.h"
+ #include <stdint.h>
+ 
++/* QNX's <net/netbyte.h> (reached through the socket headers) defines
++ * bswap16/32/64 as macros; the functions below take their place. */
++#ifdef __QNX__
++#undef bswap16
++#undef bswap32
++#undef bswap64
++#endif
++
+ /* These bswap functions compile to a single bswap instruction. Verified for GCC
+  * and Clang with -O2 and -O3.
+  *

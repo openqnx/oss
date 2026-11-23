@@ -1,0 +1,23 @@
+busybox: LONG_BIT for QNX.
+
+BusyBox 1.38's TLS AES-GCM code (networking/tls_aesgcm.c, built for wget's
+https support) shifts by LONG_BIT, an XSI <limits.h> constant QNX does not
+define ('LONG_BIT' undeclared). Define it from the compiler's __SIZEOF_LONG__
+on QNX when the C library leaves it out.
+
+Upstream-Status: QNX-specific
+
+--- a/include/platform.h
++++ b/include/platform.h
+@@ -515,6 +515,11 @@
+ # endif
+ #endif
+ 
++/* QNX's <limits.h> has no XSI LONG_BIT (tls_aesgcm.c uses it). */
++#if defined(__QNX__) && !defined(LONG_BIT)
++# define LONG_BIT (__SIZEOF_LONG__ * 8)
++#endif
++
+ #if defined(__dietlibc__)
+ # undef HAVE_STRCHRNUL
+ #endif

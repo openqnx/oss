@@ -1,4 +1,4 @@
-# pango 1.54.0
+# pango 1.56.4
 
 > Library for layout and rendering of internationalized text
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/pango.git (tag `1.54.0`) |
+| Upstream | https://gitlab.gnome.org/GNOME/pango.git (tag `1.56.4`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`fribidi`](../fribidi/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`libxft`](../libxft/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.54.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.56.4 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/pango.git src/pango
 ```
 
@@ -96,7 +96,7 @@ meson setup build/$QNX_ARCH/pango src/pango \
       --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
       --native-file $QNX_MESON_DIR/meson-native.ini \
       --prefix=/usr/local --buildtype=release --default-library=both \
-      -Dgtk_doc=false \
+      -Ddocumentation=false \
       -Dintrospection=disabled \
       -Dbuild-testsuite=false \
       -Dbuild-examples=false \
@@ -228,16 +228,16 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.54.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pango=<version>`), sources in `ported/pango/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pango`; port one with `scripts/port-update pango`.
+This recipe builds **1.56.4**. Kept from earlier: `1.54.0` ([recipe and patches](versions/1.54.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pango=<version>`), sources in `ported/pango/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pango`; port one with `scripts/port-update pango`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.54.0; GIT=https://gitlab.gnome.org/GNOME/pango.git; REF=1.54.0
+VERSION=1.56.4; GIT=https://gitlab.gnome.org/GNOME/pango.git; REF=1.56.4
 # Also linked at run time (found by scripts/gen-dependency-index): libxft
 DEPS="glib harfbuzz fribidi cairo fontconfig freetype libxft"
 BUILDSYS=meson
-MESON_ARGS_EXTRA=( -Dgtk_doc=false -Dintrospection=disabled -Dbuild-testsuite=false
+MESON_ARGS_EXTRA=( -Ddocumentation=false -Dintrospection=disabled -Dbuild-testsuite=false
                    -Dbuild-examples=false -Dcairo=enabled -Dfontconfig=enabled
                    -Dfreetype=enabled -Dlibthai=disabled -Dsysprof=disabled )
 ```

@@ -1,4 +1,4 @@
-# gdk-pixbuf 2.42.12
+# gdk-pixbuf 2.44.8
 
 > GTK library for loading and scaling images
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/gdk-pixbuf.git (tag `2.42.12`) |
+| Upstream | https://gitlab.gnome.org/GNOME/gdk-pixbuf.git (tag `2.44.8`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.42.12 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.44.8 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/gdk-pixbuf.git src/gdk-pixbuf
 ```
 
@@ -99,11 +99,30 @@ meson setup build/$QNX_ARCH/gdk-pixbuf src/gdk-pixbuf \
       -Dtests=false \
       -Dinstalled_tests=false \
       -Dman=false \
-      -Dgtk_doc=false \
+      -Ddocumentation=false \
       -Dintrospection=disabled \
       -Dpng=enabled \
       -Djpeg=enabled \
       -Dtiff=disabled \
+      -Dgif=enabled \
+      # \
+      glycin \
+      (Rust, \
+      sandboxed \
+      loaders) \
+      and \
+      the \
+      Android \
+      # \
+      ImageDecoder \
+      loader \
+      do \
+      not \
+      apply \
+      to \
+      QNX. \
+      -Dglycin=disabled \
+      -Dandroid=disabled \
       -Dothers=enabled \
       -Dbuiltin_loaders=all \
       -Drelocatable=false \
@@ -133,6 +152,10 @@ meson setup build/$QNX_ARCH/gdk-pixbuf src/gdk-pixbuf \
 ninja -C build/$QNX_ARCH/gdk-pixbuf
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/gdk-pixbuf install
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- 2.44 needs meson >= 1.5 (pinned default is 1.3.2)
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gdk-pixbuf`.
 
@@ -227,17 +250,22 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.42.12**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gdk-pixbuf=<version>`), sources in `ported/gdk-pixbuf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gdk-pixbuf`; port one with `scripts/port-update gdk-pixbuf`.
+This recipe builds **2.44.8**. Kept from earlier: `2.42.12` ([recipe and patches](versions/2.42.12/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gdk-pixbuf=<version>`), sources in `ported/gdk-pixbuf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gdk-pixbuf`; port one with `scripts/port-update gdk-pixbuf`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.42.12; GIT=https://gitlab.gnome.org/GNOME/gdk-pixbuf.git; REF=2.42.12
+VERSION=2.44.8; GIT=https://gitlab.gnome.org/GNOME/gdk-pixbuf.git; REF=2.44.8
 DEPS="glib libpng libjpeg-turbo"
 BUILDSYS=meson
+# 2.44 needs meson >= 1.5 (pinned default is 1.3.2)
+HOSTTOOLS_NEW=1
 MESON_ARGS_EXTRA=( -Dtests=false -Dinstalled_tests=false -Dman=false
-                   -Dgtk_doc=false -Dintrospection=disabled
-                   -Dpng=enabled -Djpeg=enabled -Dtiff=disabled
+                   -Ddocumentation=false -Dintrospection=disabled
+                   -Dpng=enabled -Djpeg=enabled -Dtiff=disabled -Dgif=enabled
+                   # glycin (Rust, sandboxed loaders) and the Android
+                   # ImageDecoder loader do not apply to QNX.
+                   -Dglycin=disabled -Dandroid=disabled
                    -Dothers=enabled -Dbuiltin_loaders=all
                    -Drelocatable=false
                    # gio_sniffing pulls in shared-mime-info, a desktop data

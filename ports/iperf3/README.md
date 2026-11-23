@@ -1,4 +1,4 @@
-# iperf3 3.17.1
+# iperf3 3.22.1
 
 > TCP, UDP and SCTP network bandwidth measurement tool
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/esnet/iperf.git (tag `3.17.1`) |
+| Upstream | https://github.com/esnet/iperf.git (tag `3.22.1`) |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.17.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.22.1 --recurse-submodules --shallow-submodules \
     https://github.com/esnet/iperf.git src/iperf3
 ```
 
@@ -200,12 +200,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.17.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iperf3=<version>`), sources in `ported/iperf3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iperf3`; port one with `scripts/port-update iperf3`.
+This recipe builds **3.22.1**. Kept from earlier: `3.17.1` ([recipe and patches](versions/3.17.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iperf3=<version>`), sources in `ported/iperf3/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iperf3`; port one with `scripts/port-update iperf3`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.17.1; GIT=https://github.com/esnet/iperf.git; REF=3.17.1
+VERSION=3.22.1; GIT=https://github.com/esnet/iperf.git; REF=3.22.1
 SRCROOT="$SRC_DIR/iperf3"
 DEPS="openssl"
 BUILDSYS=autotools

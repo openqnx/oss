@@ -1,4 +1,4 @@
-# nanoflann 1.10.0
+# nanoflann 2.0.2
 
 > Header-only C++ KD-tree library for nearest-neighbour search
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/jlblancoc/nanoflann.git (tag `v1.10.0`) |
+| Upstream | https://github.com/jlblancoc/nanoflann.git (tag `2.0.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -69,7 +69,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.10.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.0.2 --recurse-submodules --shallow-submodules \
     https://github.com/jlblancoc/nanoflann.git src/nanoflann
 ```
 
@@ -179,7 +179,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nanoflann=<version>`), sources in `ported/nanoflann/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nanoflann`; port one with `scripts/port-update nanoflann`.
+This recipe builds **2.0.2**. Kept from earlier: `1.10.0` ([recipe and patches](versions/1.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add nanoflann=<version>`), sources in `ported/nanoflann/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates nanoflann`; port one with `scripts/port-update nanoflann`.
 
 <details><summary>recipe.sh</summary>
 
@@ -187,7 +187,7 @@ This recipe builds **1.10.0**. Every version stays available: packages in `dists
 # nanoflann: a header-only C++ library of KD-trees for nearest-neighbour and
 # radius searches in point clouds (a fork of FLANN's KD-tree). Header-only:
 # the CMake build installs nanoflann.hpp, nanoflann.pc and the CMake package.
-VERSION=1.10.0; GIT=https://github.com/jlblancoc/nanoflann.git; REF=v1.10.0
+VERSION=2.0.2; GIT=https://github.com/jlblancoc/nanoflann.git; REF=2.0.2
 BUILDSYS=cmake
 # Its examples and its bundled-gtest unit tests are not installed: off (the
 # bundled gtest also needs -lregex on QNX, which its CMake does not add).

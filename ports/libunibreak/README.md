@@ -1,4 +1,4 @@
-# libunibreak 6.1
+# libunibreak 8.0.1
 
 > Implementation of Unicode line, word and grapheme breaking algorithms
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/adah1972/libunibreak.git (tag `libunibreak_6_1`) |
+| Upstream | https://github.com/adah1972/libunibreak.git (tag `libunibreak_8_0_1`) |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b libunibreak_6_1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b libunibreak_8_0_1 --recurse-submodules --shallow-submodules \
     https://github.com/adah1972/libunibreak.git src/libunibreak
 ```
 
@@ -193,12 +193,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libunibreak=<version>`), sources in `ported/libunibreak/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libunibreak`; port one with `scripts/port-update libunibreak`.
+This recipe builds **8.0.1**. Kept from earlier: `6.1` ([recipe and patches](versions/6.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libunibreak=<version>`), sources in `ported/libunibreak/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libunibreak`; port one with `scripts/port-update libunibreak`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.1; GIT=https://github.com/adah1972/libunibreak.git; REF=libunibreak_6_1
+VERSION=8.0.1; GIT=https://github.com/adah1972/libunibreak.git; REF=libunibreak_8_0_1
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )
 # autogen.sh in these trees runs ./configure as well, which leaves the source

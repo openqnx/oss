@@ -18,25 +18,35 @@ public:
   std::vector<Drawn> texts;
   std::vector<web_color> bgs;
   std::string caption;
-  uint_ptr create_font(const char*, int size, int, font_style, unsigned int, font_metrics* fm) override {
-    fm->height = size + 4; fm->ascent = size; fm->descent = 4; fm->x_height = size / 2; fm->draw_spaces = false;
+  // litehtml 0.10: fonts come as a font_description, sizes are pixel_t (float),
+  // backgrounds are drawn per layer (draw_solid_fill/draw_image/gradients),
+  // get_client_rect became get_viewport, and mouse events reach the container.
+  uint_ptr create_font(const font_description& d, const document*, font_metrics* fm) override {
+    pixel_t size = d.size;
+    fm->font_size = size; fm->height = size + 4; fm->ascent = size; fm->descent = 4;
+    fm->x_height = size / 2; fm->ch_width = 8; fm->draw_spaces = false;
     return (uint_ptr)1;
   }
   void delete_font(uint_ptr) override {}
-  int text_width(const char* t, uint_ptr) override { return 8 * (int)strlen(t); }
+  pixel_t text_width(const char* t, uint_ptr) override { return 8 * (pixel_t)strlen(t); }
   void draw_text(uint_ptr, const char* t, uint_ptr, web_color c, const position& p) override { texts.push_back({t, c, p}); }
-  int pt_to_px(int pt) const override { return pt * 96 / 72; }
-  int get_default_font_size() const override { return 16; }
+  pixel_t pt_to_px(float pt) const override { return pt * 96 / 72; }
+  pixel_t get_default_font_size() const override { return 16; }
   const char* get_default_font_name() const override { return "monospace"; }
   void draw_list_marker(uint_ptr, const list_marker&) override {}
   void load_image(const char*, const char*, bool) override {}
   void get_image_size(const char*, const char*, size& sz) override { sz.width = sz.height = 0; }
-  void draw_background(uint_ptr, const std::vector<background_paint>& bg) override { bgs.push_back(bg.back().color); }
+  void draw_image(uint_ptr, const background_layer&, const std::string&, const std::string&) override {}
+  void draw_solid_fill(uint_ptr, const background_layer&, const web_color& col) override { bgs.push_back(col); }
+  void draw_linear_gradient(uint_ptr, const background_layer&, const background_layer::linear_gradient&) override {}
+  void draw_radial_gradient(uint_ptr, const background_layer&, const background_layer::radial_gradient&) override {}
+  void draw_conic_gradient(uint_ptr, const background_layer&, const background_layer::conic_gradient&) override {}
   void draw_borders(uint_ptr, const borders&, const position&, bool) override {}
   void set_caption(const char* c) override { caption = c; }
   void set_base_url(const char*) override {}
   void link(const std::shared_ptr<document>&, const element::ptr&) override {}
   void on_anchor_click(const char*, const element::ptr&) override {}
+  void on_mouse_event(const element::ptr&, mouse_event) override {}
   void set_cursor(const char*) override {}
   void transform_text(string& t, text_transform tt) override {
     if (tt == text_transform_uppercase) for (auto& ch : t) ch = toupper((unsigned char)ch);
@@ -44,7 +54,7 @@ public:
   void import_css(string&, const string&, string&) override {}
   void set_clip(const position&, const border_radiuses&) override {}
   void del_clip() override {}
-  void get_client_rect(position& c) const override { c.x = 0; c.y = 0; c.width = 400; c.height = 300; }
+  void get_viewport(position& c) const override { c.x = 0; c.y = 0; c.width = 400; c.height = 300; }
   element::ptr create_element(const char*, const string_map&, const std::shared_ptr<document>&) override { return nullptr; }
   void get_media_features(media_features& m) const override {
     m.type = media_type_screen; m.width = m.device_width = 400; m.height = m.device_height = 300;
@@ -76,8 +86,8 @@ int main() {
   document::ptr doc = document::createFromString(html, &c);
   QT_CHECK(doc != nullptr, "document parsed (gumbo) and styled");
   if (!doc) QT_END();
-  int w = doc->render(400);
-  printf("  info rendered width %d, height %d\n", w, doc->height());
+  pixel_t w = doc->render(400);
+  printf("  info rendered width %g, height %g\n", (double)w, (double)doc->height());
   element::ptr root = doc->root();
   auto pl = [&](const char* sel) { element::ptr e = root->select_one(sel); return e ? e->get_placement() : position(); };
   position a = pl("#a"), f = pl("#f"), p = pl("#p"), wd = pl("#w"), c1 = pl("#c1"), c2 = pl("#c2");

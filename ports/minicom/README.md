@@ -1,4 +1,4 @@
-# minicom 2.9
+# minicom 2.11.1
 
 > Menu-driven serial communication program and terminal emulator
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://salsa.debian.org/minicom-team/minicom.git (tag `2.9`) |
+| Upstream | https://salsa.debian.org/minicom-team/minicom.git (tag `2.11.1`) |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`ncurses`](../ncurses/) [`libiconv`](../libiconv/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.11.1 --recurse-submodules --shallow-submodules \
     https://salsa.debian.org/minicom-team/minicom.git src/minicom
 ```
 
@@ -117,6 +117,7 @@ cd -
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): libiconv
+- The git tag carries configure, aclocal.m4 and the Makefile.in files made by automake 1.18, but a clone gives every file the checkout time in no particular order: configure.ac could come out newer than aclocal.m4, and make then reruns aclocal-1.18, which the build machine does not have. Put the generated files after their inputs again; nothing is regenerated.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH minicom`.
 
@@ -203,16 +204,25 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add minicom=<version>`), sources in `ported/minicom/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates minicom`; port one with `scripts/port-update minicom`.
+This recipe builds **2.11.1**. Kept from earlier: `2.9` ([recipe and patches](versions/2.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add minicom=<version>`), sources in `ported/minicom/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates minicom`; port one with `scripts/port-update minicom`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.9; GIT=https://salsa.debian.org/minicom-team/minicom.git; REF=2.9
+VERSION=2.11.1; GIT=https://salsa.debian.org/minicom-team/minicom.git; REF=2.11.1
 # Also linked at run time (found by scripts/gen-dependency-index): libiconv
 DEPS="ncurses libiconv"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --disable-nls --enable-socket --enable-lock-dir=/var/lock --enable-dfl-port=/dev/ser1 )
+# The git tag carries configure, aclocal.m4 and the Makefile.in files made
+# by automake 1.18, but a clone gives every file the checkout time in no
+# particular order: configure.ac could come out newer than aclocal.m4, and
+# make then reruns aclocal-1.18, which the build machine does not have. Put
+# the generated files after their inputs again; nothing is regenerated.
+do_patch() {
+  ( cd "$SRCROOT" && touch aclocal.m4 && touch configure config.h.in \
+    && find . -name Makefile.in -exec touch {} + )
+}
 ```
 </details>
 

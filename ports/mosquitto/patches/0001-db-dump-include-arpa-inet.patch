@@ -1,0 +1,19 @@
+db_dump: include <arpa/inet.h> for ntohl()
+
+mosquitto_db_dump (2.1) calls ntohl() without including the header that
+declares it. On QNX none of its other headers declare it, so the call is
+an implicit declaration and the link fails with
+"undefined reference to ntohl". <arpa/inet.h> is the POSIX header for it.
+
+Upstream-Status: Pending
+
+--- a/apps/db_dump/db_dump.c
++++ b/apps/db_dump/db_dump.c
+@@ -16,6 +16,7 @@
+    Roger Light - initial implementation and documentation.
+ */
+ 
++#include <arpa/inet.h>
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>

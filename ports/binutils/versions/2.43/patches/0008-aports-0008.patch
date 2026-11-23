@@ -1,0 +1,31 @@
+QNX change from QNX's aports (core/binutils/0008.patch).
+
+Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
+image's package is built from.
+
+Upstream-Status: QNX-specific
+
+From 70ac3c4181df3a16de9dc264093cdeb9d86ac417 Mon Sep 17 00:00:00 2001
+From: Shivam Saxena <shisaxena@blackberry.com>
+Date: Wed, 4 Sep 2024 11:25:02 -0400
+Subject: [PATCH] qnx: updating config files
+
+updating config files to support qnx properly
+
+CLT-9242
+---
+diff --git a/config.sub b/config.sub
+index 2c6a07ab3c3..42ec47ae4a7 100755
+--- a/config.sub
++++ b/config.sub
+@@ -1386,9 +1386,6 @@ case $os in
+ 	psos*)
+ 		os=psos
+ 		;;
+-	qnx*)
+-		os=qnx
+-		;;
+ 	hiux*)
+ 		os=hiuxwe2
+ 		;;
+

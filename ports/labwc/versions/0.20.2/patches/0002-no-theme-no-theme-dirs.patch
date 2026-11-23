@@ -1,0 +1,24 @@
+Do not build theme paths when no theme is configured
+
+Without a theme in rc.xml, rc.theme_name is NULL, and loading the window
+buttons asks for theme directories under that name: snprintf("%s", NULL).
+glibc prints "(null)", finds no such directory and goes on; QNX's libc
+crashes in strlen -- labwc died a few seconds after start on every QNX target
+with no theme configured (SIGSEGV in build_theme_path_labwc, from
+load_buttons). No theme name means no theme directories.
+
+Upstream-Status: Pending
+
+--- a/src/common/dir.c
++++ b/src/common/dir.c
+@@ -181,6 +181,10 @@
+ {
+ 	static char buf[4096] = { 0 };
+ 	wl_list_init(paths);
++	/* No theme configured: there are no theme directories to look in. */
++	if (!theme_name) {
++		return;
++	}
+ 	struct ctx ctx = {
+ 		.build_path_fn = build_theme_path_labwc,
+ 		.filename = filename,

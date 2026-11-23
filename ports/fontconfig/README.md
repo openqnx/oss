@@ -1,4 +1,4 @@
-# fontconfig 2.15.0
+# fontconfig 2.18.4
 
 > Library for font configuration, discovery and customization
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.freedesktop.org/fontconfig/fontconfig.git (tag `2.15.0`) |
+| Upstream | https://gitlab.freedesktop.org/fontconfig/fontconfig.git (tag `2.18.4`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`freetype`](../freetype/) [`expat`](../expat/) |
 | Run-time dependencies | [`expat`](../expat/) [`freetype`](../freetype/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,13 +81,45 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 2.15.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 2.18.4 --recurse-submodules --shallow-submodules \
     https://gitlab.freedesktop.org/fontconfig/fontconfig.git src/fontconfig
 ```
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/fontconfig < ports/fontconfig/patches/0001-qnx-no-locale-objects.patch
+```
+
+**[`0001-qnx-no-locale-objects.patch`](patches/0001-qnx-no-locale-objects.patch)** — QNX: an FcLocale without locale objects (no newlocale/uselocale)
+
+> fontconfig 2.18.4 prints numbers in the "C" locale through FcLocale:
+> newlocale() + uselocale() (or vasprintf_l / _vsnprintf_l, or Windows'
+> _create_locale). QNX's C library has none of them -- no locale_t, no
+> LC_*_MASK, no newlocale/uselocale/freelocale, no vasprintf_l -- so fcint.h
+> did not compile (unknown locale_t, LC_CTYPE_MASK) and fccompat.c stopped at
+> "#error No thread-safe locale switching implemented".
+>
+> QNX's libc implements only the C/POSIX locale, and numbers are always
+> printed with '.'. Formatting "in the C locale" is therefore what every
+> call already does, without switching. Like the _WIN32
+> branch, an FcLocale on QNX is an int (the category mask; QNX's LC_* are
+> masks already); FcLocaleCreate returns the mask, FcLocaleSetCurrent changes
+> nothing and returns its argument, FcLocaleDestroy frees nothing.
+>
+> Thread safety: nothing is switched, so there is no locale state shared
+> between threads and FcStrDupVapFormat (vasprintf path) is as thread-safe as
+> QNX's vasprintf itself. setlocale() is deliberately NOT used as a fallback:
+> it changes the locale of the whole process, so a thread formatting a number
+> would change it under every other thread -- exactly the race upstream's
+> #error guards against. The cost: if QNX's libc ever gains a locale whose
+> decimal point is not '.', and an application selects it, fontconfig would
+> print numbers in that locale here; this patch must then be replaced by real
+> locale objects.
+
+Touches: `src/fccompat.c`, `src/fcint.h` · Upstream status: Inappropriate [QNX-specific: its libc has no POSIX.1-2008 locale objects]
 
 ### 4. Configure, build and install into the staging tree
 
@@ -105,6 +137,10 @@ meson setup build/$QNX_ARCH/fontconfig src/fontconfig \
 ninja -C build/$QNX_ARCH/fontconfig
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/fontconfig install
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- fontconfig 2.18 requires meson >= 1.11, newer than the build image's default
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fontconfig`.
 
@@ -196,16 +232,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.15.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fontconfig=<version>`), sources in `ported/fontconfig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fontconfig`; port one with `scripts/port-update fontconfig`.
+This recipe builds **2.18.4**. Kept from earlier: `2.15.0` ([recipe and patches](versions/2.15.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fontconfig=<version>`), sources in `ported/fontconfig/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fontconfig`; port one with `scripts/port-update fontconfig`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.15.0; GIT=https://gitlab.freedesktop.org/fontconfig/fontconfig.git; REF=2.15.0
+VERSION=2.18.4; GIT=https://gitlab.freedesktop.org/fontconfig/fontconfig.git; REF=2.18.4
 DEPS="freetype expat"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Ddoc=disabled -Dtests=disabled -Dtools=disabled
                    -Dnls=enabled -Dcache-build=disabled -Diconv=disabled )
+# fontconfig 2.18 requires meson >= 1.11, newer than the build image's default
+HOSTTOOLS_NEW=1
 ```
 </details>
 

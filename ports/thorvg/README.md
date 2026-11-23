@@ -1,4 +1,4 @@
-# thorvg 0.15.8
+# thorvg 1.1.4
 
 > Lightweight library for rendering vector graphics, SVG and Lottie
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/thorvg/thorvg.git (tag `v0.15.8`) |
+| Upstream | https://github.com/thorvg/thorvg.git (tag `v1.1.4`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`zlib`](../zlib/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.15.8 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.1.4 --recurse-submodules --shallow-submodules \
     https://github.com/thorvg/thorvg.git src/thorvg
 ```
 
@@ -96,17 +96,17 @@ meson setup build/$QNX_ARCH/thorvg src/thorvg \
       -Dloaders=svg,png,jpg,lottie \
       -Dsavers=gif \
       -Dtests=false \
-      -Dexamples=false \
       -Dbindings=capi \
       -Dlog=false \
-      -Dthreads=false
+      -Dthreads=false \
+      -Dextra=lottie_exp
 ninja -C build/$QNX_ARCH/thorvg
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/thorvg install
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- --default-library=both (the driver's default) makes ThorVG define TVG_STATIC, which turns TVG_API into nothing at all -- the shared library then exports no tvg_* symbol and every consumer fails to link. Build shared only.
+- --default-library=both (the driver's default) makes ThorVG define TVG_STATIC, which turns TVG_API into nothing at all -- the shared library then exports no tvg_* symbol and every consumer fails to link. Build shared only. -Dextra=lottie_exp: 1.x turns OpenMP on by default (extra=openmp), and the QNX toolchain has no libgomp; the Lottie expressions stay on.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH thorvg`.
 
@@ -184,7 +184,7 @@ PASS thorvg
    - set the render target
    - tvg_shape_new
    - set the fill colour
-   - push the shape
+   - add the shape
    - tvg_canvas_draw
    - tvg_canvas_sync
    - centre pixel was filled red
@@ -203,21 +203,24 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.15.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add thorvg=<version>`), sources in `ported/thorvg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates thorvg`; port one with `scripts/port-update thorvg`.
+This recipe builds **1.1.4**. Kept from earlier: `0.15.8` ([recipe and patches](versions/0.15.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add thorvg=<version>`), sources in `ported/thorvg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates thorvg`; port one with `scripts/port-update thorvg`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.15.8; GIT=https://github.com/thorvg/thorvg.git; REF=v0.15.8
+VERSION=1.1.4; GIT=https://github.com/thorvg/thorvg.git; REF=v1.1.4
 DEPS="libjpeg-turbo libpng zlib"
 BUILDSYS=meson
 # --default-library=both (the driver's default) makes ThorVG define TVG_STATIC,
 # which turns TVG_API into nothing at all -- the shared library then exports no
 # tvg_* symbol and every consumer fails to link. Build shared only.
+# -Dextra=lottie_exp: 1.x turns OpenMP on by default (extra=openmp), and the
+# QNX toolchain has no libgomp; the Lottie expressions stay on.
 MESON_ARGS_EXTRA=( --default-library=shared
                    -Dstatic=false
                    -Dloaders=svg,png,jpg,lottie -Dsavers=gif -Dtests=false
-                   -Dexamples=false -Dbindings=capi -Dlog=false -Dthreads=false )
+                   -Dbindings=capi -Dlog=false -Dthreads=false
+                   -Dextra=lottie_exp )
 ```
 </details>
 

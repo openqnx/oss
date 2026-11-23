@@ -1,4 +1,4 @@
-# labwc 0.20.2
+# labwc 0.20.3
 
 > Stacking Wayland compositor (window manager) based on wlroots
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/labwc/labwc.git (tag `0.20.2`) |
+| Upstream | https://github.com/labwc/labwc.git (tag `0.20.3`) |
 | Build system | Meson |
 | QNX patches | 2 |
 | Build dependencies | [`wlroots`](../wlroots/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`glib`](../glib/) [`cairo`](../cairo/) [`pango`](../pango/) [`libxml2`](../libxml2/) [`libsfdo`](../libsfdo/) [`libpng`](../libpng/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.20.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.20.3 --recurse-submodules --shallow-submodules \
     https://github.com/labwc/labwc.git src/labwc
 ```
 
@@ -101,18 +101,20 @@ patch -p1 -d src/labwc < ports/labwc/patches/0002-no-theme-no-theme-dirs.patch
 > wlroots has no libinput backend), and on the QNX Screen backend labwc creates
 > the qnx-redir global QNX's compositors provide.
 >
+> Rebased onto labwc 0.20.3 (openqnx/oss): 0.20.3 added src/config/accel.c
+> (custom pointer acceleration curves), which includes config/libinput.h
+> (<libinput.h>) and calls libinput_*; it is now built only with libinput,
+> together with libinput.c, and so is its unit test (t/meson.build). Its
+> callers -- libinput_curve_parse() in rcxml.c's fill_libinput_category() and
+> libinput_custom_accel_create() in seat.c's configure_libinput() -- are
+> already inside the WLR_HAS_LIBINPUT_BACKEND blocks. QNX's meson hunk also
+> said "labwc_source" (unset; meson stops there whenever libinput is found);
+> it is labwc_sources.
+>
 >
 > initial draft port
->
-> ---
->  include/labwc.h        |  2 ++
->  src/config/meson.build |  7 ++++++-
->  src/config/rcxml.c     | 13 +++++++++++--
->  src/seat.c             |  2 ++
->  src/server.c           | 25 +++++++++++++++++++++++++
->  5 files changed, 46 insertions(+), 3 deletions(-)
 
-Touches: `include/labwc.h`, `src/config/meson.build`, `src/config/rcxml.c`, `src/seat.c`, `src/server.c` · Upstream status: Inappropriate [QNX's port, kept as QNX published it]
+Touches: `include/labwc.h`, `src/config/meson.build`, `src/config/rcxml.c`, `src/seat.c`, `src/server.c`, `t/meson.build` · Upstream status: Inappropriate [QNX's port, kept as QNX published it; adapted to 0.20.3]
 
 **[`0002-no-theme-no-theme-dirs.patch`](patches/0002-no-theme-no-theme-dirs.patch)** — Do not build theme paths when no theme is configured
 
@@ -236,7 +238,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.20.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add labwc=<version>`), sources in `ported/labwc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates labwc`; port one with `scripts/port-update labwc`.
+This recipe builds **0.20.3**. Kept from earlier: `0.20.2` ([recipe and patches](versions/0.20.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add labwc=<version>`), sources in `ported/labwc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates labwc`; port one with `scripts/port-update labwc`.
 
 <details><summary>recipe.sh</summary>
 
@@ -244,7 +246,7 @@ This recipe builds **0.20.2**. Every version stays available: packages in `dists
 # labwc: a stacking Wayland compositor (window manager) on wlroots -- the one
 # QNX's Developer Desktop runs, with QNX's changes (patches/0001, from
 # github.com/qnx-ports/labwc). Xfce's panel and applications run on it.
-VERSION=0.20.2; GIT=https://github.com/labwc/labwc.git; REF=0.20.2
+VERSION=0.20.3; GIT=https://github.com/labwc/labwc.git; REF=0.20.3
 DEPS="wlroots wayland wayland-protocols libxkbcommon glib cairo pango libxml2 libsfdo libpng"
 BUILDSYS=meson
 # labwc will not start without a font (titles, menus) nor without keymaps.

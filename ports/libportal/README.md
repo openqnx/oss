@@ -1,4 +1,4 @@
-# libportal 0.8.1
+# libportal 0.11.0
 
 > GIO-style client library for XDG desktop portals
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/flatpak/libportal.git (tag `0.8.1`) |
+| Upstream | https://github.com/flatpak/libportal.git (tag `0.11.0`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) |
 | Run-time dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,13 +81,29 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 0.8.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 0.11.0 --recurse-submodules --shallow-submodules \
     https://github.com/flatpak/libportal.git src/libportal
 ```
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/libportal < ports/libportal/patches/0001-qnx-notification-no-memfd.patch
+```
+
+**[`0001-qnx-notification-no-memfd.patch`](patches/0001-qnx-notification-no-memfd.patch)** — libportal: notification media without memfd_create on QNX.
+
+> The notification portal v2 code passes icons/sounds as memfd_create(...,
+> MFD_ALLOW_SEALING) file descriptors. QNX has neither memfd_create() nor file
+> seals, so the build fails ('MFD_ALLOW_SEALING' undeclared, implicit
+> memfd_create). Where MFD_ALLOW_SEALING is not defined, create the buffer as an
+> unlinked temporary file instead: it is anonymous, can be passed over D-Bus,
+> truncated, mmap'ed and written like a memfd, only without seals (the code
+> never adds any). Linux keeps the memfd path unchanged.
+
+Touches: `libportal/notification.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -209,13 +225,13 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.8.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libportal=<version>`), sources in `ported/libportal/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libportal`; port one with `scripts/port-update libportal`.
+This recipe builds **0.11.0**. Kept from earlier: `0.8.1` ([recipe and patches](versions/0.8.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libportal=<version>`), sources in `ported/libportal/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libportal`; port one with `scripts/port-update libportal`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # libportal: XDG desktop portal client library (GTK3 flavour).
-VERSION=0.8.1; GIT=https://github.com/flatpak/libportal.git; REF=0.8.1
+VERSION=0.11.0; GIT=https://github.com/flatpak/libportal.git; REF=0.11.0
 DEPS="glib gtk3"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dbackend-gtk3=enabled -Dbackend-gtk4=disabled -Dbackend-qt5=disabled -Dbackend-qt6=disabled

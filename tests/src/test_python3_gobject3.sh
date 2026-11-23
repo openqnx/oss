@@ -25,7 +25,12 @@ import gi
 gi.require_version("GLib", "2.0"); gi.require_version("GObject", "2.0"); gi.require_version("Gio", "2.0")
 from gi.repository import GLib, GObject, Gio
 info("PyGObject %s, GLib %d.%d.%d" % (gi.__version__, GLib.MAJOR_VERSION, GLib.MINOR_VERSION, GLib.MICRO_VERSION))
-check((GLib.MAJOR_VERSION, GLib.MINOR_VERSION, GLib.MICRO_VERSION) == (2, 82, 4), "GLib typelib is the ported GLib 2.82.4")
+# The typelib must describe the libglib that is actually loaded (not one from
+# another GLib build): glib_check_version() runs in the library, so it accepts
+# the typelib's version and rejects the next micro release only when they match.
+tv = (GLib.MAJOR_VERSION, GLib.MINOR_VERSION, GLib.MICRO_VERSION)
+check(tv[0] == 2 and GLib.check_version(*tv) is None and GLib.check_version(tv[0], tv[1], tv[2] + 1) is not None,
+      "GLib typelib %d.%d.%d is the loaded libglib's version" % tv)
 check(int(GLib.IOCondition.IN) == select.POLLIN and int(GLib.IOCondition.OUT) == select.POLLOUT and int(GLib.IOCondition.HUP) == select.POLLHUP,
       "GLib.IOCondition values are the target's poll() bits")
 check(int(Gio.SocketFamily.IPV6) == socket.AF_INET6, "Gio.SocketFamily.IPV6 is the target's AF_INET6")

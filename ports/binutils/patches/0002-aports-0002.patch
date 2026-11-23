@@ -14,8 +14,6 @@ added qnx patches from internal svn to git as-is.
 
 CLT-9242
 ---
-diff --git a/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d b/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
-index 27cb6e17db3..d94b2c7994a 100644
 --- a/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
 +++ b/binutils/testsuite/binutils-all/aarch64/pei-aarch64-little.d
 @@ -1,4 +1,4 @@
@@ -23,9 +21,7 @@ index 27cb6e17db3..d94b2c7994a 100644
 +#skip: aarch64_be-*-* aarch64-unknown-nto-qnx* aarch64-unknown-qnx-*
  #ld: -e0
  #PROG: objcopy
- #objcopy: -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .rel.* -j .rela.* -j .rel* -j .rela* -j .reloc --target=efi-app-aarch64
-diff --git a/binutils/testsuite/binutils-all/elfedit-2.d b/binutils/testsuite/binutils-all/elfedit-2.d
-index b32b97ceff0..2ba78b712a3 100644
+ #objcopy: -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .rel.* -j .rela.* -j .rel* -j .rela* -j .reloc --output-target=efi-app-aarch64
 --- a/binutils/testsuite/binutils-all/elfedit-2.d
 +++ b/binutils/testsuite/binutils-all/elfedit-2.d
 @@ -3,7 +3,7 @@
@@ -37,8 +33,6 @@ index b32b97ceff0..2ba78b712a3 100644
  
  #...
  ELF Header:
-diff --git a/binutils/testsuite/binutils-all/i386/i386.exp b/binutils/testsuite/binutils-all/i386/i386.exp
-index ecfc6b44f0e..b1820a7c4fd 100644
 --- a/binutils/testsuite/binutils-all/i386/i386.exp
 +++ b/binutils/testsuite/binutils-all/i386/i386.exp
 @@ -16,6 +16,8 @@
@@ -50,8 +44,6 @@ index ecfc6b44f0e..b1820a7c4fd 100644
        || [istarget "x86_64-*-linux*"])
      || ![is_elf_format]
      || [is_remote host]} then {
-diff --git a/binutils/testsuite/binutils-all/strip-3.d b/binutils/testsuite/binutils-all/strip-3.d
-index 89c75ae6992..0bf948b832f 100644
 --- a/binutils/testsuite/binutils-all/strip-3.d
 +++ b/binutils/testsuite/binutils-all/strip-3.d
 @@ -3,7 +3,7 @@
@@ -63,11 +55,9 @@ index 89c75ae6992..0bf948b832f 100644
  
  #...
    \[[ 0]+\][ \t]+NULL[ \t]+.*
-diff --git a/binutils/testsuite/lib/binutils-common.exp b/binutils/testsuite/lib/binutils-common.exp
-index cffd9cfe290..3ce0aceed99 100644
 --- a/binutils/testsuite/lib/binutils-common.exp
 +++ b/binutils/testsuite/lib/binutils-common.exp
-@@ -48,6 +48,7 @@ proc is_elf_format {} {
+@@ -47,6 +47,7 @@
  	 && ![istarget *-*-netbsd*]
  	 && ![istarget *-*-nto*]
  	 && ![istarget *-*-openbsd*]
@@ -75,7 +65,3 @@ index cffd9cfe290..3ce0aceed99 100644
  	 && ![istarget *-*-rtems*]
  	 && ![istarget *-*-solaris2*]
  	 && ![istarget *-*-sysv4*]
--- 
-GitLab
-
-

@@ -1,0 +1,92 @@
+QNX: an FcLocale without locale objects (no newlocale/uselocale)
+
+fontconfig 2.18.4 prints numbers in the "C" locale through FcLocale:
+newlocale() + uselocale() (or vasprintf_l / _vsnprintf_l, or Windows'
+_create_locale). QNX's C library has none of them -- no locale_t, no
+LC_*_MASK, no newlocale/uselocale/freelocale, no vasprintf_l -- so fcint.h
+did not compile (unknown locale_t, LC_CTYPE_MASK) and fccompat.c stopped at
+"#error No thread-safe locale switching implemented".
+
+QNX's libc implements only the C/POSIX locale, and numbers are always
+printed with '.'. Formatting "in the C locale" is therefore what every
+call already does, without switching. Like the _WIN32
+branch, an FcLocale on QNX is an int (the category mask; QNX's LC_* are
+masks already); FcLocaleCreate returns the mask, FcLocaleSetCurrent changes
+nothing and returns its argument, FcLocaleDestroy frees nothing.
+
+Thread safety: nothing is switched, so there is no locale state shared
+between threads and FcStrDupVapFormat (vasprintf path) is as thread-safe as
+QNX's vasprintf itself. setlocale() is deliberately NOT used as a fallback:
+it changes the locale of the whole process, so a thread formatting a number
+would change it under every other thread -- exactly the race upstream's
+#error guards against. The cost: if QNX's libc ever gains a locale whose
+decimal point is not '.', and an application selects it, fontconfig would
+print numbers in that locale here; this patch must then be replaced by real
+locale objects.
+
+Upstream-Status: Inappropriate [QNX-specific: its libc has no POSIX.1-2008 locale objects]
+
+--- a/src/fccompat.c
++++ b/src/fccompat.c
+@@ -366,6 +366,10 @@
+ {
+ #ifdef _WIN32
+     return _create_locale (mask, locale);
++#elif defined(__QNXNTO__)
++    /* Only "C"/"POSIX" exists; fontconfig asks for nothing else. */
++    (void)locale;
++    return (FcLocale)mask;
+ #else
+     return newlocale (mask, locale, (locale_t)0);
+ #endif
+@@ -378,6 +382,12 @@
+ #  if HAVE_VASPRINTF_L || HAVE__VSNPRINTF_L
+     /* This function won't be used */
+     return NULL;
++#  elif defined(__QNXNTO__)
++    /* QNX: the process is always in the C/POSIX locale (numbers are
++     * printed with '.'), so formatting in "C" needs no switch.  Switching
++     * with setlocale() would be process-wide -- the race this function
++     * exists to avoid -- so nothing is switched. */
++    return loc;
+ #  elif HAVE_USELOCALE
+     return uselocale (loc);
+ #  else
+@@ -391,6 +401,8 @@
+ {
+ #ifdef _WIN32
+     _free_locale (locale);
++#elif defined(__QNXNTO__)
++    (void)locale; /* nothing was allocated */
+ #else
+     freelocale (locale);
+ #endif
+--- a/src/fcint.h
++++ b/src/fcint.h
+@@ -679,6 +679,26 @@
+     FC_LC_IDENTIFICATION = LC_ALL,
+     FC_LC_ALL = LC_ALL,
+ } FcLocaleMask;
++#elif defined(__QNXNTO__)
++/* QNX's C library has no locale objects (locale_t, newlocale, uselocale):
++ * it has only the C/POSIX locale, so there is nothing to switch to.  An
++ * FcLocale is just the category mask (QNX's LC_* are masks already). */
++typedef int FcLocale;
++typedef enum _FcLocaleMask {
++    FC_LC_CTYPE = LC_CTYPE,
++    FC_LC_NUMERIC = LC_NUMERIC,
++    FC_LC_TIME = LC_TIME,
++    FC_LC_COLLATE = LC_COLLATE,
++    FC_LC_MONETARY = LC_MONETARY,
++    FC_LC_MESSAGES = LC_MESSAGES,
++    FC_LC_PAPER = LC_ALL, /* not available */
++    FC_LC_NAME = LC_ALL,
++    FC_LC_ADDRESS = LC_ALL,
++    FC_LC_TELEPHONE = LC_ALL,
++    FC_LC_MEASUREMENT = LC_ALL,
++    FC_LC_IDENTIFICATION = LC_ALL,
++    FC_LC_ALL = LC_ALL,
++} FcLocaleMask;
+ #else
+ typedef locale_t FcLocale;
+ typedef enum _FcLocaleMask {

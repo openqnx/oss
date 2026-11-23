@@ -1,4 +1,4 @@
-VERSION=1.4.8; GIT=https://github.com/open62541/open62541.git; REF=v1.4.8
+VERSION=1.5.10; GIT=https://github.com/open62541/open62541.git; REF=v1.5.10
 DEPS="openssl"
 # The node-set and data-type code generators are Python scripts that run on the
 # build host. The QNX toolchain file restricts find_package to the target

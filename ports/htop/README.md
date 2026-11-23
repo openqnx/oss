@@ -1,4 +1,4 @@
-# htop 3.5.0
+# htop 3.5.3
 
 > Interactive process viewer
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/htop-dev/htop.git (tag `3.5.0`) |
+| Upstream | https://github.com/htop-dev/htop.git (tag `3.5.3`) |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | [`ncurses`](../ncurses/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.5.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.5.3 --recurse-submodules --shallow-submodules \
     https://github.com/htop-dev/htop.git src/htop
 ```
 
@@ -94,8 +94,21 @@ patch -p1 -d src/htop < ports/htop/patches/0001-qnx-from-qnx-ports.patch
 > process's debug info through devctl), per-CPU and memory figures from the
 > system page, process fields QNX has -- and its wiring into configure.ac and
 > Makefile.am.
+>
+> Rebased onto htop 3.5.3 (openqnx/oss), following what 3.5.3 did to the
+> other platforms: ClockMeter.c/.h were merged into DateTimeMeter (Clock,
+> Date and DateTime are one meter now; ClockMeter_class is declared in
+> DateTimeMeter.h), so qnx/Platform.c no longer includes "ClockMeter.h"
+> (it still offers the Clock meter). Time stamps moved from struct timeval to
+> struct timespec (Machine.realtime, Meter, Generic_gettime_realtime) and
+> Machine.h now includes <time.h> instead of <sys/time.h>: qnx/Platform.h's
+> Platform_gettime_realtime takes a struct timespec, like linux/ and the BSDs,
+> and QNXMachine.c / QNXProcessTable.c read the sample time with
+> clock_gettime(CLOCK_REALTIME) into a struct timespec (struct timeval was
+> incomplete there without <sys/time.h>). The nanosecond value is computed in
+> integers instead of through doubles; same clock, same meaning.
 
-Touches: `Makefile.am`, `configure.ac`, `qnx/Platform.c`, `qnx/Platform.h`, `qnx/ProcessField.h`, `qnx/QNXMachine.c` … · Upstream status: Inappropriate [QNX's port, kept as QNX published it]
+Touches: `configure.ac`, `Makefile.am`, `qnx/Platform.c`, `qnx/Platform.h`, `qnx/ProcessField.h`, `qnx/QNXMachine.c` … · Upstream status: Inappropriate [QNX's port, kept as QNX published it; adapted to 3.5.3]
 
 ### 4. Configure, build and install into the staging tree
 
@@ -215,7 +228,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.5.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add htop=<version>`), sources in `ported/htop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates htop`; port one with `scripts/port-update htop`.
+This recipe builds **3.5.3**. Kept from earlier: `3.5.0` ([recipe and patches](versions/3.5.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add htop=<version>`), sources in `ported/htop/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates htop`; port one with `scripts/port-update htop`.
 
 <details><summary>recipe.sh</summary>
 
@@ -223,7 +236,7 @@ This recipe builds **3.5.0**. Every version stays available: packages in `dists/
 # htop: the interactive process viewer, with QNX's QNX platform (patches/0001,
 # from github.com/qnx-ports/htop: processes from /proc, CPU and memory from
 # QNX's system page).
-VERSION=3.5.0; GIT=https://github.com/htop-dev/htop.git; REF=3.5.0
+VERSION=3.5.3; GIT=https://github.com/htop-dev/htop.git; REF=3.5.3
 DEPS="ncurses"
 BUILDSYS=autotools
 do_patch() { cd "$SRCROOT" && ./autogen.sh; }

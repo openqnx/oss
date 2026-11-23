@@ -26,7 +26,7 @@ Upstream-Status: QNX-specific
 
 --- a/gio/inotify/inotify-kernel.c
 +++ b/gio/inotify/inotify-kernel.c
-@@ -305,8 +305,15 @@
+@@ -309,8 +309,15 @@
             *
             * In that case, we need to switch back to polling the file
             * descriptor in the usual way.

@@ -8,9 +8,9 @@ Upstream-Status: QNX-specific
 
 --- a/src/connection.h
 +++ b/src/connection.h
-@@ -36,6 +36,13 @@
- #include <string.h>
+@@ -37,6 +37,13 @@
  #include <stdlib.h>
+ #include <string.h>
  #include <sys/uio.h>
 +#include <limits.h>
 +

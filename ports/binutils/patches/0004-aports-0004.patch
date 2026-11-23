@@ -3,6 +3,19 @@ QNX change from QNX's aports (core/binutils/0004.patch).
 Taken from qnx-ports/aports core/binutils -- the APKBUILD the QNX Everywhere 8.0.4r1
 image's package is built from.
 
+Changed here (2.47): ld lost einfo's %F (fatal) -- the stub BFD error uses
+fatal() now; the x86 set_options call is upstream's renamed
+bfd_elf_linker_x86_set_options.
+The nto.em hunk is carried over to 2.47's source_em/fragment: QNX's 2.43
+patch made nto.em declare stub_file and source elf-x86.em for i386 (there
+never was an i386elf.em; nto.em's "${ARCH}elf.em" exists only for aarch64).
+Dropping that hunk broke i386nto ("i386elf.em: No such file", "stub_file
+undeclared"). x86-64 now takes elf-x86-64.em -- after 2.43 elf_x86_64.sh
+uses elf-x86-64-glibc.em, and elf-x86-64.em is its non-glibc part (as
+FreeBSD/Haiku use it) -- so nto keeps upstream's x86-64 before_parse /
+before_allocation hooks. The stray C line at the end of i386nto.sh (run by
+the shell as a command "static") is dropped; nto.em declares stub_file.
+
 Upstream-Status: QNX-specific
 
 From 0f373d0bb946629863b9e4e58e1880a0654843c9 Mon Sep 17 00:00:00 2001
@@ -14,58 +27,19 @@ adding qnx patches to ld code as-is.
 
 CLT-9242
 ---
-diff --git a/ld/Makefile.am b/ld/Makefile.am
-index 6a9833e5775..bcd156fa64a 100644
---- a/ld/Makefile.am
-+++ b/ld/Makefile.am
-@@ -1,4 +1,4 @@
--## Process this file with automake to generate Makefile.in
-+# Process this file with automake to generate Makefile.in
- #
- #   Copyright (C) 2012-2024 Free Software Foundation, Inc.
- #
-@@ -183,6 +183,7 @@ ALL_EMULATION_SOURCES = \
- 	earmelfb_linux_fdpiceabi.c \
- 	earmelfb_nacl.c \
- 	earmelfb_nbsd.c \
-+	earmnto_eabi.c \
- 	earmnto.c \
- 	earmpe.c \
- 	eavr1.c \
-diff --git a/ld/Makefile.in b/ld/Makefile.in
-index 8639e782cdf..f789bdb2afe 100644
---- a/ld/Makefile.in
-+++ b/ld/Makefile.in
-@@ -694,6 +694,7 @@ ALL_EMULATION_SOURCES = \
- 	earmelfb_linux_fdpiceabi.c \
- 	earmelfb_nacl.c \
- 	earmelfb_nbsd.c \
-+	earmnto_eabi.c \
- 	earmnto.c \
- 	earmpe.c \
- 	eavr1.c \
-@@ -1319,6 +1320,7 @@ distclean-compile:
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb_nacl.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb_nbsd.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmnto.Po@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmnto_eabi.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmpe.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr1.Po@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr2.Po@am__quote@
-diff --git a/ld/configure.tgt b/ld/configure.tgt
-index f937f78b876..9d88c64b0c6 100644
+
 --- a/ld/configure.tgt
 +++ b/ld/configure.tgt
-@@ -196,7 +196,7 @@ armeb-*-netbsd*)	targ_emul=armelfb_nbsd;
+@@ -194,7 +194,7 @@
  arm-*-netbsd*)	targ_emul=armelf_nbsd;
  			targ_extra_emuls="armelfb_nbsd armelf"
  			;;
 -arm-*-nto*)		targ_emul=armnto
 +arm-*-nto-* | arm-*-qnx-*)		targ_emul=armnto
  			;;
- arm-*-phoenix*)		targ_emul=armelf
- 			;;
-@@ -351,7 +351,7 @@ hppa*-*-netbsd*)	targ_emul=hppanbsd
+ arm-*-phoenix*)		targ_emul=armelf_phoenix
+ 			targ_extra_emuls="armelf"
+@@ -334,7 +334,7 @@
  			;;
  hppa*-*-openbsd*)	targ_emul=hppaobsd
  			;;
@@ -74,7 +48,7 @@ index f937f78b876..9d88c64b0c6 100644
  			;;
  i[3-7]86-*-go32)	targ_emul=i386go32
  			targ_extra_ofiles=
-@@ -789,9 +789,7 @@ powerpc*-*-elf* | powerpc*-*-eabi* | powerpc*-*-sysv* \
+@@ -745,9 +745,7 @@
  			eval test -n \"\$${td}sim\" || eval ${td}sim="${ta32}"
  			eval test -n \"\$${td64}\" || eval ${td64}="${ta64}"
  			;;
@@ -85,7 +59,7 @@ index f937f78b876..9d88c64b0c6 100644
  			;;
  powerpc-*-macos*)	targ_emul=ppcmacos
  			targ_extra_ofiles=
-@@ -904,12 +902,6 @@ sh-*-uclinux* | sh[12]-*-uclinux*)
+@@ -850,12 +848,6 @@
  			targ_emul=shelf_uclinux
  			targ_extra_emuls="shelf shlelf sh shl shelf_fd shlelf_fd"
  			;;
@@ -98,7 +72,7 @@ index f937f78b876..9d88c64b0c6 100644
  sh-*-pe)		targ_emul=shpe ;
  			targ_extra_ofiles="deffilep.o pe-dll.o"
  			;;
-@@ -1020,6 +1012,9 @@ x86_64-*-linux-*)	targ_emul=elf_x86_64
+@@ -950,6 +942,9 @@
  			targ_extra_libpath="elf_i386 elf32_x86_64"
  			tdir_elf_i386=`echo ${targ_alias} | sed -e 's/x86_64/i386/'`
  			;;
@@ -108,8 +82,6 @@ index f937f78b876..9d88c64b0c6 100644
  x86_64-*-redox*)	targ_emul=elf_x86_64
  			targ_extra_emuls=elf_i386
  			;;
-diff --git a/ld/emulparams/aarch64nto.sh b/ld/emulparams/aarch64nto.sh
-index 5138e335ccc..558f643f896 100644
 --- a/ld/emulparams/aarch64nto.sh
 +++ b/ld/emulparams/aarch64nto.sh
 @@ -1,6 +1,6 @@
@@ -120,7 +92,7 @@ index 5138e335ccc..558f643f896 100644
  
  SCRIPT_NAME=elf
  ELFSIZE=64
-@@ -10,7 +10,7 @@ LITTLE_OUTPUT_FORMAT="elf64-littleaarch64"
+@@ -10,7 +10,7 @@
  NO_REL_RELOCS=yes
  
  TEMPLATE_NAME=elf
@@ -129,7 +101,7 @@ index 5138e335ccc..558f643f896 100644
  
  GENERATE_SHLIB_SCRIPT=yes
  GENERATE_PIE_SCRIPT=yes
-@@ -22,8 +22,8 @@ IREL_IN_PLT=
+@@ -22,8 +22,8 @@
  
  TEXT_START_ADDR=0x400000
  
@@ -140,7 +112,7 @@ index 5138e335ccc..558f643f896 100644
  
  # AArch64 does not support .s* sections.
  NO_SMALL_DATA=yes
-@@ -35,7 +35,6 @@ OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end__ = .${CREATE_SHLIB+)};"
+@@ -35,7 +35,6 @@
  OTHER_SECTIONS='.note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }'
  ATTRS_SECTIONS='.ARM.attributes 0 : { KEEP (*(.ARM.attributes)) KEEP (*(.gnu.attributes)) }'
  # Ensure each PLT entry is aligned to a cache line.
@@ -149,11 +121,9 @@ index 5138e335ccc..558f643f896 100644
 +PLT=".plt          ${RELOCATING-0} : ALIGN(16) { *(.plt)${IREL_IN_PLT+ *(.iplt)} }"
  
  ELF_INTERPRETER_NAME=\"/usr/lib/ldqnx-64.so.2\"
-diff --git a/ld/emulparams/armnto.sh b/ld/emulparams/armnto.sh
-index f0d7b33273d..7b76bf14e13 100644
 --- a/ld/emulparams/armnto.sh
 +++ b/ld/emulparams/armnto.sh
-@@ -11,18 +11,29 @@ OTHER_BSS_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__bss_start__ = .${CREATE_SHLIB+)};"
+@@ -11,18 +11,29 @@
  OTHER_BSS_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}_bss_end__ = .${CREATE_SHLIB+)}; ${CREATE_SHLIB+PROVIDE (}__bss_end__ = .${CREATE_SHLIB+)};"
  OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end__ = .${CREATE_SHLIB+)};"
  
@@ -185,19 +155,15 @@ index f0d7b33273d..7b76bf14e13 100644
  NO_SMALL_DATA=yes
 +
 +COMPILE_IN=yes
-diff --git a/ld/emulparams/elf32lppcnto.sh b/ld/emulparams/elf32lppcnto.sh
-index 83412179623..eab4a2be032 100644
 --- a/ld/emulparams/elf32lppcnto.sh
 +++ b/ld/emulparams/elf32lppcnto.sh
-@@ -2,4 +2,6 @@ source_sh ${srcdir}/emulparams/elf32ppc.sh
+@@ -2,4 +2,6 @@
  OUTPUT_FORMAT="elf32-powerpcle"
  MAXPAGESIZE="CONSTANT (MAXPAGESIZE)"
  TEXT_START_ADDR=0x48040000
 +TEXT_START_SYMBOLS='_btext = .;'
  
 +EXTRA_EM_FILE=nto
-diff --git a/ld/emulparams/elf32ppcnto.sh b/ld/emulparams/elf32ppcnto.sh
-index 9e1e5578560..af410f71542 100644
 --- a/ld/emulparams/elf32ppcnto.sh
 +++ b/ld/emulparams/elf32ppcnto.sh
 @@ -1,4 +1,5 @@
@@ -207,34 +173,28 @@ index 9e1e5578560..af410f71542 100644
  TEXT_START_ADDR=0x48040000
 -
 +TEXT_START_SYMBOLS='_btext = .;'
-diff --git a/ld/emulparams/elf_x86_64.sh b/ld/emulparams/elf_x86_64.sh
-index 92449745c7a..52126314ecc 100644
 --- a/ld/emulparams/elf_x86_64.sh
 +++ b/ld/emulparams/elf_x86_64.sh
-@@ -35,6 +35,8 @@ OTHER_PLT_SECTIONS="
- .plt.sec      ${RELOCATING-0} : { *(.plt.sec) }
- "
+@@ -39,6 +39,8 @@
+   .rela.tls	${RELOCATING-0} : { *(.rela.tls) }"
+ ALL_TEXT_AFTER_RO=yes
  
 +TEXT_START_SYMBOLS='_btext = .;'
 +
  if [ "x${host}" = "x${target}" ]; then
    case " $EMULATION_LIBPATH " in
      *" ${EMULATION_NAME} "*)
-@@ -55,5 +57,8 @@ case "$target" in
-   *-*-solaris2*)
-     LIBPATH_SUFFIX=/amd64
-     ELF_INTERPRETER_NAME=\"/lib/amd64/ld.so.1\"
--  ;;
-+    ;;
+@@ -56,4 +58,7 @@
+ 	;;
+     esac
+     ;;
 +  *nto* | *qnx*)
-+    EXTRA_EM_FILE=nto # nto.em sources elf-x86.em
++    EXTRA_EM_FILE=nto # nto.em sources elf-x86-64.em
 +    ;;
  esac
-diff --git a/ld/emulparams/i386nto.sh b/ld/emulparams/i386nto.sh
-index 3291412706d..0a694608e8c 100644
 --- a/ld/emulparams/i386nto.sh
 +++ b/ld/emulparams/i386nto.sh
-@@ -4,9 +4,16 @@ NO_RELA_RELOCS=yes
+@@ -4,9 +4,14 @@
  TEXT_START_ADDR=0x08048000
  TEXT_START_SYMBOLS="${CREATE_SHLIB+PROVIDE (}_btext = .${CREATE_SHLIB+)};"
  MAXPAGESIZE="CONSTANT (MAXPAGESIZE)"
@@ -250,16 +210,12 @@ index 3291412706d..0a694608e8c 100644
 +COMPILE_IN=yes
 +NO_SMALL_DATA=yes
 +SEPARATE_GOTPLT="SIZEOF (.got.plt) >= 12 ? 12 : 0"
-+
-+static lang_input_statement_type *stub_file;
-diff --git a/ld/emultempl/elf-x86.em b/ld/emultempl/elf-x86.em
-index 2e9863fa1e6..b8ec7e6850b 100644
 --- a/ld/emultempl/elf-x86.em
 +++ b/ld/emultempl/elf-x86.em
-@@ -34,8 +34,40 @@ static void
+@@ -34,8 +34,40 @@
  elf_x86_create_output_section_statements (void)
  {
-   _bfd_elf_linker_x86_set_options (&link_info, &params);
+   bfd_elf_linker_x86_set_options (&link_info, &params);
 +#ifdef __QNXTARGET__
 +  if (bfd_link_pie(&link_info)) {
 +        stub_file = lang_add_input_file ("linker stubs",
@@ -271,7 +227,7 @@ index 2e9863fa1e6..b8ec7e6850b 100644
 +                                bfd_get_arch (link_info.output_bfd),
 +                                bfd_get_mach (link_info.output_bfd)))
 +        {
-+        einfo (_("%F%P: can not create BFD: %E\n"));
++        fatal (_("%P: can not create BFD: %E\n"));
 +        return;
 +        }
 +
@@ -279,8 +235,8 @@ index 2e9863fa1e6..b8ec7e6850b 100644
 +        ldlang_add_file (stub_file);
 +  }
 +#endif
- }
- 
++}
++
 +#ifdef __QNXTARGET__
 +/*
 + * This is an awful hack, made necessary by presence of both ${ARCH}_elf_...
@@ -290,52 +246,54 @@ index 2e9863fa1e6..b8ec7e6850b 100644
 +static void
 +i386_elf_create_output_section_statements(void) {
 +  return elf_x86_create_output_section_statements();
-+}
-+
+ }
+ 
 +#endif // __QNXTARGET__
 +
  EOF
  
  LDEMUL_CREATE_OUTPUT_SECTION_STATEMENTS=elf_x86_create_output_section_statements
-diff --git a/ld/emultempl/nto.em b/ld/emultempl/nto.em
-index 7cda6650bc6..c577e0f33f9 100644
 --- a/ld/emultempl/nto.em
 +++ b/ld/emultempl/nto.em
-@@ -21,8 +21,19 @@
- # This file is sourced from elf.em, and defines extra Neutrino
+@@ -22,7 +22,24 @@
  # specific routines.
  
-+cat >>e${EMULATION_NAME}.c <<EOF
+ # NTO templates aims to refine the default ${ARCH}elf.em template.
+-source_em "${srcdir}/emultempl/${ARCH}elf.em"
++# x86 has no ${ARCH}elf.em: i386 takes elf-x86.em and x86-64 elf-x86-64.em
++# (the non-glibc x86 templates), and neither declares the stub_file used
++# below (aarch64elf.em does).
++case ${ARCH} in
++  i386:x86-64 | i386)
++    fragment <<EOF
 +static lang_input_statement_type *stub_file;
 +EOF
-+
-+REG_EXTENDED=1
-+
- # NTO templates aims to refine the default ${ARCH}elf.em template.
-+
-+if [[ ${ARCH} =~ i386 ]]; then
-+. "${srcdir}/emultempl/elf-x86.em"
-+else
- . "${srcdir}/emultempl/${ARCH}elf.em"
-+fi
++    if test "${ARCH}" = "i386:x86-64"; then
++      source_em "${srcdir}/emultempl/elf-x86-64.em"
++    else
++      source_em "${srcdir}/emultempl/elf-x86.em"
++    fi
++    ;;
++  *)
++    source_em "${srcdir}/emultempl/${ARCH}elf.em"
++    ;;
++esac
  
  cat >>e${EMULATION_NAME}.c <<EOF
  
-@@ -31,7 +42,7 @@ cat >>e${EMULATION_NAME}.c <<EOF
+@@ -30,7 +47,7 @@
+ #include "elf/common.h"
  #include "elf-bfd.h"
- #include "../bfd/libbfd.h"
  
 -bool nto_lazy_stack = false;
 +static bool nto_lazy_stack = false;
  struct nto_stack_note
  {
    unsigned char stacksize[4];
-diff --git a/ld/ldlex.l b/ld/ldlex.l
-index aa613100db0..e220a5a3b4a 100644
 --- a/ld/ldlex.l
 +++ b/ld/ldlex.l
-@@ -394,7 +394,12 @@ V_IDENTIFIER [*?.$_a-zA-Z\[\]\-\!\^\\]([*?.$_a-zA-Z0-9\[\]\-\!\^\\]|::)*
- 				  yylval.name = xstrdup (yytext);
+@@ -396,7 +396,12 @@
+ 				  yylval.name = stat_strdup (yytext);
  				  return NAME;
  				}
 -
@@ -347,5 +305,38 @@ index aa613100db0..e220a5a3b4a 100644
 +                      }
  
  <SCRIPT,INPUTLIST>{FILENAMECHAR1}{FILENAMECHAR}*	{
- 				  yylval.name = xstrdup (yytext);
-
+ 				  yylval.name = stat_strdup (yytext);
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -1,4 +1,4 @@
+-## Process this file with automake to generate Makefile.in
++# Process this file with automake to generate Makefile.in
+ #
+ #   Copyright (C) 2012-2026 Free Software Foundation, Inc.
+ #
+@@ -182,6 +182,7 @@
+ 	earmelfb_linux_eabi.c \
+ 	earmelfb_linux_fdpiceabi.c \
+ 	earmelfb_nbsd.c \
++	earmnto_eabi.c \
+ 	earmnto.c \
+ 	earmpe.c \
+ 	eavr1.c \
+--- a/ld/Makefile.in
++++ b/ld/Makefile.in
+@@ -697,6 +697,7 @@
+ 	earmelfb_linux_eabi.c \
+ 	earmelfb_linux_fdpiceabi.c \
+ 	earmelfb_nbsd.c \
++	earmnto_eabi.c \
+ 	earmnto.c \
+ 	earmpe.c \
+ 	eavr1.c \
+@@ -1308,6 +1309,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb_linux_fdpiceabi.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmelfb_nbsd.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmnto.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmnto_eabi.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/earmpe.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr1.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eavr2.Po@am__quote@

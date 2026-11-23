@@ -1,6 +1,6 @@
 # libmetal 2026.10.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T08:14:03Z   packages from: apk:local-dists
+# date: 2026-11-23T10:44:27Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -39,14 +39,14 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   condition variable woke the waiter for all 4
        info mutex owner word: free 0x0
        ok   try_acquire on a free mutex
-       info mutex owner word: held 0x30160001
+       info mutex owner word: held 0x160001
        ok   is_acquired while held
        info mutex owner word: released 0x0
        ok   not is_acquired once released
        ok   is_acquired left a free mutex free (try_acquire succeeds)
        ok   metal_allocate_memory
        ok   metal_sleep_usec(20 ms)
-       info metal_get_timestamp: 94310728600 -> 94331289240
+       info metal_get_timestamp: 129658395400 -> 129679274880
        ok   metal_get_timestamp advances (>= 15 ms in ns across the sleep)
      PASS libmetal
 PASS test_libmetal

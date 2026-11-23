@@ -11,7 +11,7 @@ Upstream-Status: QNX-specific
 
 --- a/src/util.c
 +++ b/src/util.c
-@@ -1254,7 +1254,7 @@
+@@ -1315,7 +1315,7 @@
   * i.e timezone variables are linux specific.
   */
  long getTimeZone(void) {

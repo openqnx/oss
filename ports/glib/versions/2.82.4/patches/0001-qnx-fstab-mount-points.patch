@@ -1,0 +1,66 @@
+GIO: use the fstab code for mount points on QNX.
+
+QNX provides setfsent/getfsent/endfsent and struct fstab in <fstab.h>, but the
+fstab branch of gunixmounts.c is chosen only with getfsstat/getvfsstat, which
+QNX lacks (its mount table already has its own HAVE_QNX branch). Without this,
+the file ends at "#error No g_get_mount_table() implementation".
+
+Upstream-Status: QNX-specific
+
+--- a/gio/gunixmounts.c
++++ b/gio/gunixmounts.c
+@@ -190,7 +190,8 @@
+ #include <fshelp.h>
+ #endif
+ 
+-#if (defined(HAVE_GETVFSSTAT) || defined(HAVE_GETFSSTAT)) && defined(HAVE_FSTAB_H) && defined(HAVE_SYS_MOUNT_H)
++/* QNX takes the fstab branch further down, so it needs these headers too. */
++#if (defined(HAVE_GETVFSSTAT) || defined(HAVE_GETFSSTAT) || defined(HAVE_QNX)) && defined(HAVE_FSTAB_H) && defined(HAVE_SYS_MOUNT_H)
+ #include <sys/param.h>
+ #include <sys/ucred.h>
+ #include <sys/mount.h>
+@@ -1647,7 +1648,14 @@
+   return unix_mount_point_array_free_to_list (g_steal_pointer (&points), n_points);
+ }
+ 
+-#elif (defined(HAVE_GETVFSSTAT) || defined(HAVE_GETFSSTAT)) && defined(HAVE_FSTAB_H) && defined(HAVE_SYS_MOUNT_H)
++/* QNX belongs on this branch. It only walks the fstab table --
++ * setfsent/getfsent/endfsent over struct fstab -- and QNX provides all of it in
++ * <fstab.h> with the same field names (fs_spec, fs_file, fs_vfstype, fs_mntops,
++ * fs_type). getfsstat/getvfsstat are what the *mounts* chain needs; QNX has
++ * neither, but that chain is served by its own HAVE_QNX branch earlier in the
++ * file. Without this, gunixmounts.c falls through to
++ * "#error No g_get_mount_table() implementation for system". */
++#elif (defined(HAVE_GETVFSSTAT) || defined(HAVE_GETFSSTAT) || defined(HAVE_QNX)) && defined(HAVE_FSTAB_H) && defined(HAVE_SYS_MOUNT_H)
+ 
+ static GList *
+ _g_get_unix_mount_points (void)
+@@ -1656,13 +1664,17 @@
+   GUnixMountPoint *mount_point;
+   GList *return_list = NULL;
+   G_LOCK_DEFINE_STATIC (fsent);
+-#ifdef HAVE_SYS_SYSCTL_H
++#if defined(HAVE_SYS_SYSCTL_H) && !defined(HAVE_QNX)
+   uid_t uid = getuid ();
+   int usermnt = 0;
+   struct stat sb;
+ #endif
+ 
+-#ifdef HAVE_SYS_SYSCTL_H
++/* HAVE_SYSCTLBYNAME is a false positive on QNX: meson's cc.has_function()
++ * accepts it, but libc exports no userspace sysctlbyname (only the
++ * kernel-internal kernel_sysctlbyname), so linking fails. QNX also has no
++ * user-mountable-filesystem concept to query. */
++#if defined(HAVE_SYS_SYSCTL_H) && !defined(HAVE_QNX)
+ #if defined(HAVE_SYSCTLBYNAME)
+   {
+     size_t len = sizeof(usermnt);
+@@ -1708,7 +1720,7 @@
+       if (strcmp (fstab->fs_type, "ro") == 0)
+ 	is_read_only = TRUE;
+ 
+-#ifdef HAVE_SYS_SYSCTL_H
++#if defined(HAVE_SYS_SYSCTL_H) && !defined(HAVE_QNX)
+       if (usermnt != 0)
+         {
+           if (uid == 0 ||

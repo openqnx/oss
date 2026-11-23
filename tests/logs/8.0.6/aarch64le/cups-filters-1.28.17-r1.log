@@ -1,6 +1,6 @@
 # cups-filters 1.28.17-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T08:14:36Z   packages from: apk:local-dists
+# date: 2026-11-23T10:45:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -60,9 +60,9 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   pdftopdf page-ranges=2: only "Page two"
        ok   pdftopdf number-up=2: both pages on one sheet
        ok   pdftops: PostScript, %%Pages: 2
-       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /GPBUI)
+       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /XXRLC)
        ok   imagetopdf: PPM image to a 1-page PDF
-       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.4N06KJ/bus
+       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.ZrfPhr/bus
        ok   driverless: PPD generated from the IPP printer's attributes
        ok   PPD: the printer's make, QNXTest
        ok   PPD: cupsFilter2 image/pwg-raster (the printer's only format)

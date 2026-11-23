@@ -8,7 +8,8 @@
 # preprocessor mode hits (CCACHE_NODIRECT), the statistics count each
 # (--print-stats), the cache directory holds the result files, -o writes
 # ccache.conf and --get-config reads it, -x shows compression, -z zeroes
-# and -C clears, --hash-file is content-based and both --hash-file and
+# and -C clears (result entries counted with --inspect), --hash-file is
+# content-based and both --hash-file and
 # --checksum-file give known values, CCACHE_DISABLE bypasses.
 # Run the test itself in the background, its output to a log, and wait at
 # most 170 s: nothing it leaves behind can hold the runner's output, and a
@@ -48,7 +49,8 @@ trap stopall EXIT
 trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 CC_=$L/bin/ccache
-r=$("$CC_" --version 2>&1 | head -n 1); [ "$r" = "ccache version 4.12.1" ] && ok "ccache --version: 4.12.1" || bad "version: $r"
+r=$("$CC_" --version 2>&1 | head -n 1)
+case "$r" in "ccache version "[0-9]*.[0-9]*) ok "ccache --version: ${r#ccache version }" ;; *) bad "version: $r" ;; esac
 # The fake compiler: "gcc" by name (ccache recognises the compiler type from
 # it). -E prints the source with a line marker, as a preprocessor would;
 # ccache runs it as "gcc -E -o <tmp>.i a.c"; -c writes an "object" (the
@@ -79,6 +81,16 @@ CCACHE_DIR=$T/cache; CCACHE_TEMPDIR=$T/cache/tmp; export CCACHE_DIR CCACHE_TEMPD
 unset CCACHE_DISABLE CCACHE_PREFIX CCACHE_CONFIGPATH
 calls() { wc -l < "$FAKECC_LOG" 2>/dev/null | tr -d ' '; }
 stat_() { "$CC_" --print-stats | awk -v k="$1" '$1 == k {print $2}'; }
+# Result entries in the cache. ccache 4.14 names an entry by its key alone
+# (until 4.13 a result file ended in R, a manifest in M), so each file's
+# header says what it is.
+results() {
+  rn=0
+  for f in $(find "$CCACHE_DIR" -type f); do
+    "$CC_" --inspect "$f" 2>/dev/null | grep -q '^Entry type: .*(result)' && rn=$((rn+1))
+  done
+  echo $rn
+}
 printf 'int answer(void) { return 42; }\n' > a.c
 r=$("$CC_" "$T/bin/gcc" -O2 -c a.c -o a.o 2>&1); rc=$?
 [ $rc -eq 0 ] && [ "$(calls)" = 1 ] && [ "$(head -n 1 a.o)" = FAKEOBJ ] && ok "first compile: a miss, the compiler ran once" || bad "first compile (rc $rc, calls $(calls)): $r"
@@ -94,23 +106,25 @@ r=$("$CC_" "$T/bin/gcc" -O2 -c a.c -o a.o 2>&1)
 cp a.o a.o.2
 r=$(CCACHE_NODIRECT=1 "$CC_" "$T/bin/gcc" -O2 -c a.c -o a.o 2>&1)
 [ "$(calls)" = 3 ] && cmp -s a.o a.o.2 && [ "$(stat_ preprocessed_cache_hit)" = 1 ] && ok "preprocessor mode (CCACHE_NODIRECT): a preprocessed hit, compiler not run" || bad "preprocessed hit: calls $(calls), $(stat_ preprocessed_cache_hit) $r"
-n=$(find "$CCACHE_DIR" -type f -name '*R' | wc -l | tr -d ' ')
+n=$(results)
 [ "$n" -ge 3 ] && ok "cache directory: $n result files under \$CCACHE_DIR" || bad "result files: $n"
 "$CC_" -o max_files=1234 && [ "$("$CC_" --get-config max_files)" = 1234 ] && grep -q '^max_files = 1234$' "$CCACHE_DIR/ccache.conf" \
   && ok "-o max_files=1234: in \$CCACHE_DIR/ccache.conf, --get-config reads it back" || bad "config: $("$CC_" --get-config max_files)"
 r=$("$CC_" -x 2>&1); echo "$r" | has "Total data:" && ok "-x: compression statistics (zstd)" || bad "-x: $r"
 "$CC_" -z >/dev/null && [ "$(stat_ direct_cache_hit)" = 0 ] && [ "$(stat_ cache_miss)" = 0 ] && ok "-z: statistics zeroed" || bad "-z"
 "$CC_" -C >/dev/null
-n=$(find "$CCACHE_DIR" -type f -name '*R' | wc -l | tr -d ' ')
+n=$(results)
 r=$("$CC_" "$T/bin/gcc" -O2 -c a.c -o a.o 2>&1)
 [ "$n" = 0 ] && [ "$(calls)" = 4 ] && [ "$(stat_ cache_miss)" = 1 ] && ok "-C: cache cleared, the next compile is a miss" || bad "-C: $n files left, calls $(calls)"
 printf 'QNX ccache hash test\n' > h1; cp h1 h2; printf 'QNX ccache hash test!\n' > h3
 x1=$("$CC_" --hash-file h1); x2=$("$CC_" --hash-file h2); x3=$("$CC_" --hash-file h3)
 [ -n "$x1" ] && [ "$x1" = "$x2" ] && [ "$x1" != "$x3" ] && ok "--hash-file: equal for equal content, different for different" || bad "hash-file: $x1 $x2 $x3"
 # Known answers (BLAKE3-based ccache hash; XXH3-128): the same on x86_64
-# and aarch64, so neither depends on the byte order or SIMD path.
+# and aarch64, so neither depends on the byte order or SIMD path. ccache
+# 4.14 prints the 160-bit digest in hex (until 4.13: 2 bytes hex, the rest
+# base32hex -- 04196s842l6tvkk3ami5f7r34nan6rmis, the same digest).
 c1=$("$CC_" --checksum-file h1 2>&1)
-[ "$x1" = 04196s842l6tvkk3ami5f7r34nan6rmis ] && [ "$c1" = 70f8eecc611e63a498e00c02cf66bce5 ] \
+[ "$x1" = 041937104154ddfd28355a4579f6325d5736ed2e ] && [ "$c1" = 70f8eecc611e63a498e00c02cf66bce5 ] \
   && ok "--hash-file / --checksum-file: the known values" || bad "hash-file $x1, checksum-file $c1"
 r=$(CCACHE_DISABLE=1 "$CC_" "$T/bin/gcc" -O2 -c a.c -o a.o 2>&1)
 [ "$(calls)" = 5 ] && ok "CCACHE_DISABLE: the compiler runs directly" || bad "CCACHE_DISABLE: calls $(calls)"

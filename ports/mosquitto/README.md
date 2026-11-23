@@ -1,4 +1,4 @@
-# mosquitto 2.0.20
+# mosquitto 2.1.4
 
 > Eclipse Mosquitto MQTT broker, client libraries and pub/sub utilities
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse/mosquitto.git (tag `v2.0.20`) |
+| Upstream | https://github.com/eclipse/mosquitto.git (tag `v2.1.4`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`cjson`](../cjson/) |
 | Run-time dependencies | [`cjson`](../cjson/) [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,13 +76,26 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.0.20 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.1.4 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse/mosquitto.git src/mosquitto
 ```
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/mosquitto < ports/mosquitto/patches/0001-db-dump-include-arpa-inet.patch
+```
+
+**[`0001-db-dump-include-arpa-inet.patch`](patches/0001-db-dump-include-arpa-inet.patch)** — db_dump: include <arpa/inet.h> for ntohl()
+
+> mosquitto_db_dump (2.1) calls ntohl() without including the header that
+> declares it. On QNX none of its other headers declare it, so the call is
+> an implicit declaration and the link fails with
+> "undefined reference to ntohl". <arpa/inet.h> is the POSIX header for it.
+
+Touches: `apps/db_dump/db_dump.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -91,7 +104,8 @@ cmake -S src/mosquitto -B build/$QNX_ARCH/mosquitto -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
-      -DDOCUMENTATION=OFF \
+      -DWITH_DOCS=OFF \
+      -DWITH_TESTS=OFF \
       -DWITH_SRV=OFF \
       -DWITH_WEBSOCKETS=OFF \
       -DWITH_STATIC_LIBRARIES=OFF \
@@ -102,6 +116,10 @@ cmake -S src/mosquitto -B build/$QNX_ARCH/mosquitto -G Ninja \
 cmake --build build/$QNX_ARCH/mosquitto -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/mosquitto
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- 2.1: DOCUMENTATION became WITH_DOCS, and the GoogleTest unit tests are on unless WITH_TESTS=OFF (CMake runs them at build time to list their cases, which cross-built binaries cannot do). patches/0001: <arpa/inet.h> for ntohl() in mosquitto_db_dump.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mosquitto`.
 
@@ -205,14 +223,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.20**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mosquitto=<version>`), sources in `ported/mosquitto/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mosquitto`; port one with `scripts/port-update mosquitto`.
+This recipe builds **2.1.4**. Kept from earlier: `2.0.20` ([recipe and patches](versions/2.0.20/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mosquitto=<version>`), sources in `ported/mosquitto/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mosquitto`; port one with `scripts/port-update mosquitto`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.0.20; GIT=https://github.com/eclipse/mosquitto.git; REF=v2.0.20
+VERSION=2.1.4; GIT=https://github.com/eclipse/mosquitto.git; REF=v2.1.4
 DEPS="openssl cjson"
-CMAKE_ARGS_EXTRA=( -DDOCUMENTATION=OFF -DWITH_SRV=OFF -DWITH_WEBSOCKETS=OFF -DWITH_STATIC_LIBRARIES=OFF
+# 2.1: DOCUMENTATION became WITH_DOCS, and the GoogleTest unit tests are on
+# unless WITH_TESTS=OFF (CMake runs them at build time to list their cases,
+# which cross-built binaries cannot do). patches/0001: <arpa/inet.h> for
+# ntohl() in mosquitto_db_dump.
+CMAKE_ARGS_EXTRA=( -DWITH_DOCS=OFF -DWITH_TESTS=OFF -DWITH_SRV=OFF -DWITH_WEBSOCKETS=OFF -DWITH_STATIC_LIBRARIES=OFF
                    -DWITH_TLS=ON -DWITH_CJSON=ON -DWITH_PLUGINS=ON -DWITH_APPS=ON )
 ```
 </details>

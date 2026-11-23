@@ -1962,11 +1962,13 @@
   "linked_by_dev_name": [],
   "runtime_closure": [
    "flex",
+   "msgpack-c",
    "zlib",
    "zstd"
   ],
   "runtime_deps": [
    "flex",
+   "msgpack-c",
    "zlib",
    "zstd"
   ],
@@ -1975,7 +1977,7 @@
    "flex"
   ],
   "unresolved": [],
-  "version": "2.43"
+  "version": "2.47"
  },
  "bison": {
   "build_closure": [],
@@ -2294,7 +2296,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.36.1"
+  "version": "1.38.0"
  },
  "bzip2": {
   "build_closure": [],
@@ -3071,7 +3073,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.12.1"
+  "version": "4.14.3"
  },
  "cereal": {
   "build_closure": [],
@@ -3857,6 +3859,9 @@
    "freetype",
    "gettext",
    "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
    "lcms2",
    "libdaemon",
    "libdeflate",
@@ -4882,14 +4887,13 @@
   "class": "dependent",
   "installs": {
    "bins": [
-    "usr/local/bin/ctags",
     "usr/local/bin/ebrowse",
     "usr/local/bin/emacs",
-    "usr/local/bin/emacs-30.2",
+    "usr/local/bin/emacs-31.1",
     "usr/local/bin/emacsclient",
     "usr/local/bin/etags"
    ],
-   "files": 4369,
+   "files": 4437,
    "headers": 1,
    "libs": []
   },
@@ -4931,7 +4935,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "30.2"
+  "version": "31.1"
  },
  "emulationstation": {
   "build_closure": [
@@ -5775,12 +5779,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 29,
-   "headers": 21,
+   "files": 28,
+   "headers": 20,
    "libs": [
     "usr/local/lib/libfastcdr.so",
     "usr/local/lib/libfastcdr.so.2",
-    "usr/local/lib/libfastcdr.so.2.4.0"
+    "usr/local/lib/libfastcdr.so.2.2.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -5789,7 +5793,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4.0"
+  "version": "2.2.6"
  },
  "fastdds": {
   "build_closure": [
@@ -6001,12 +6005,15 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 14,
-   "headers": 6,
+   "files": 23,
+   "headers": 7,
    "libs": [
     "usr/local/lib/libfdk-aac.so",
     "usr/local/lib/libfdk-aac.so.2",
-    "usr/local/lib/libfdk-aac.so.2.0.3"
+    "usr/local/lib/libfdk-aac.so.2.0.4",
+    "usr/local/lib/libfdk-xhe-aac.so",
+    "usr/local/lib/libfdk-xhe-aac.so.0",
+    "usr/local/lib/libfdk-xhe-aac.so.0.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -6015,7 +6022,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.0.3"
+  "version": "3.0.0"
  },
  "ffmpeg": {
   "build_closure": [
@@ -6102,6 +6109,7 @@
    "libtheora",
    "libvorbis",
    "libvpx",
+   "mpg123",
    "openh264",
    "opus",
    "x264",
@@ -6188,6 +6196,7 @@
    "libtheora",
    "libvorbis",
    "libvpx",
+   "mpg123",
    "openh264",
    "opus",
    "x264",
@@ -6481,7 +6490,7 @@
     "usr/local/bin/flex",
     "usr/local/bin/flex++"
    ],
-   "files": 15,
+   "files": 16,
    "headers": 1,
    "libs": [
     "usr/local/lib/libfl.so",
@@ -6494,7 +6503,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.6.4"
+  "version": "2.7.3"
  },
  "fmt": {
   "build_closure": [],
@@ -6880,12 +6889,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 79,
+   "files": 84,
    "headers": 3,
    "libs": [
     "usr/local/lib/libfontconfig.so",
     "usr/local/lib/libfontconfig.so.1",
-    "usr/local/lib/libfontconfig.so.1.14.0"
+    "usr/local/lib/libfontconfig.so.1.17.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -6894,17 +6903,24 @@
    "bzip2",
    "expat",
    "freetype",
+   "gettext",
+   "libiconv",
    "libpng",
+   "libunistring",
+   "ncurses",
    "zlib"
   ],
   "runtime_deps": [
    "expat",
-   "freetype"
+   "freetype",
+   "gettext"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "gettext"
+  ],
   "unresolved": [],
-  "version": "2.15.0"
+  "version": "2.18.4"
  },
  "fontenc": {
   "build_closure": [
@@ -7212,8 +7228,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 164,
-   "headers": 7,
+   "files": 178,
+   "headers": 8,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -7250,7 +7266,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4.0"
+  "version": "3.7.1"
  },
  "fribidi": {
   "build_closure": [],
@@ -7774,14 +7790,18 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gettext",
    "libavif",
    "libde265",
    "libdeflate",
    "libheif",
+   "libiconv",
    "libjpeg-turbo",
    "libpng",
    "libtiff",
+   "libunistring",
    "libwebp",
+   "ncurses",
    "openh264",
    "openjpeg",
    "openjph",
@@ -7943,11 +7963,11 @@
     "usr/local/bin/gdk-pixbuf-query-loaders"
    ],
    "files": 129,
-   "headers": 13,
+   "headers": 12,
    "libs": [
     "usr/local/lib/libgdk_pixbuf-2.0.so",
     "usr/local/lib/libgdk_pixbuf-2.0.so.0",
-    "usr/local/lib/libgdk_pixbuf-2.0.so.0.4200.12"
+    "usr/local/lib/libgdk_pixbuf-2.0.so.0.4400.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -7972,7 +7992,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.42.12"
+  "version": "2.44.8"
  },
  "geany": {
   "build_closure": [
@@ -8500,7 +8520,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.2.2"
+  "version": "6.1.3"
  },
  "git": {
   "build_closure": [
@@ -8545,7 +8565,7 @@
     "usr/local/bin/git-upload-pack",
     "usr/local/bin/scalar"
    ],
-   "files": 246,
+   "files": 251,
    "headers": 0,
    "libs": []
   },
@@ -8577,7 +8597,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.51.0"
+  "version": "2.56.1"
  },
  "gklib": {
   "build_closure": [],
@@ -8699,27 +8719,27 @@
     "usr/local/bin/gtester",
     "usr/local/bin/gtester-report"
    ],
-   "files": 487,
-   "headers": 305,
+   "files": 490,
+   "headers": 307,
    "libs": [
     "usr/local/lib/libgio-2.0.so",
     "usr/local/lib/libgio-2.0.so.0",
-    "usr/local/lib/libgio-2.0.so.0.8200.4",
+    "usr/local/lib/libgio-2.0.so.0.9000.1",
     "usr/local/lib/libgirepository-2.0.so",
     "usr/local/lib/libgirepository-2.0.so.0",
-    "usr/local/lib/libgirepository-2.0.so.0.8200.4",
+    "usr/local/lib/libgirepository-2.0.so.0.9000.1",
     "usr/local/lib/libglib-2.0.so",
     "usr/local/lib/libglib-2.0.so.0",
-    "usr/local/lib/libglib-2.0.so.0.8200.4",
+    "usr/local/lib/libglib-2.0.so.0.9000.1",
     "usr/local/lib/libgmodule-2.0.so",
     "usr/local/lib/libgmodule-2.0.so.0",
-    "usr/local/lib/libgmodule-2.0.so.0.8200.4",
+    "usr/local/lib/libgmodule-2.0.so.0.9000.1",
     "usr/local/lib/libgobject-2.0.so",
     "usr/local/lib/libgobject-2.0.so.0",
-    "usr/local/lib/libgobject-2.0.so.0.8200.4",
+    "usr/local/lib/libgobject-2.0.so.0.9000.1",
     "usr/local/lib/libgthread-2.0.so",
     "usr/local/lib/libgthread-2.0.so.0",
-    "usr/local/lib/libgthread-2.0.so.0.8200.4"
+    "usr/local/lib/libgthread-2.0.so.0.9000.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -8742,7 +8762,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.82.4"
+  "version": "2.90.1"
  },
  "glib-networking": {
   "build_closure": [
@@ -8854,7 +8874,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.82.4"
+  "version": "2.90.1"
  },
  "glm": {
   "build_closure": [],
@@ -9559,13 +9579,13 @@
    "headers": 40,
    "libs": [
     "usr/local/lib/libgmock.so",
-    "usr/local/lib/libgmock.so.1.17.0",
+    "usr/local/lib/libgmock.so.1.18.0",
     "usr/local/lib/libgmock_main.so",
-    "usr/local/lib/libgmock_main.so.1.17.0",
+    "usr/local/lib/libgmock_main.so.1.18.0",
     "usr/local/lib/libgtest.so",
-    "usr/local/lib/libgtest.so.1.17.0",
+    "usr/local/lib/libgtest.so.1.18.0",
     "usr/local/lib/libgtest_main.so",
-    "usr/local/lib/libgtest_main.so.1.17.0"
+    "usr/local/lib/libgtest_main.so.1.18.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -9574,7 +9594,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.17.0"
+  "version": "1.18.0"
  },
  "gperf": {
   "build_closure": [],
@@ -9781,11 +9801,13 @@
    "bzip2",
    "dav1d",
    "freetype",
+   "highway",
    "lcms2",
    "libde265",
    "libdeflate",
    "libheif",
    "libjpeg-turbo",
+   "libjxl",
    "libpng",
    "libtiff",
    "libwebp",
@@ -9807,6 +9829,7 @@
    "lcms2",
    "libheif",
    "libjpeg-turbo",
+   "libjxl",
    "libpng",
    "libtiff",
    "libwebp",
@@ -9820,10 +9843,7 @@
   "undeclared": [
    "libheif"
   ],
-  "unresolved": [
-   "libjxl.so.0.11",
-   "libjxl_threads.so.0.11"
-  ],
+  "unresolved": [],
   "version": "1.3.46"
  },
  "graphite2": {
@@ -10149,7 +10169,6 @@
     "usr/local/bin/neqn",
     "usr/local/bin/nroff",
     "usr/local/bin/pdfmom",
-    "usr/local/bin/pdfroff",
     "usr/local/bin/pfbtops",
     "usr/local/bin/pic",
     "usr/local/bin/pic2graph",
@@ -10162,7 +10181,7 @@
     "usr/local/bin/tfmtodit",
     "usr/local/bin/troff"
    ],
-   "files": 598,
+   "files": 644,
    "headers": 0,
    "libs": []
   },
@@ -10176,7 +10195,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.23.0"
+  "version": "1.25.0"
  },
  "grpc": {
   "build_closure": [
@@ -10429,6 +10448,7 @@
    "libunistring",
    "libvorbis",
    "libvpx",
+   "mpg123",
    "ncurses",
    "openh264",
    "opus",
@@ -10927,6 +10947,7 @@
    "libxrender",
    "libxtst",
    "lzo",
+   "mpg123",
    "ncurses",
    "nghttp2",
    "opus",
@@ -10936,7 +10957,8 @@
    "sqlite",
    "wayland",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "runtime_deps": [
    "bzip2",
@@ -11520,7 +11542,7 @@
     "usr/local/bin/gvnccapture",
     "usr/local/bin/gvncviewer"
    ],
-   "files": 82,
+   "files": 92,
    "headers": 19,
    "libs": [
     "usr/local/lib/libgtk-vnc-2.0.so",
@@ -11553,8 +11575,6 @@
    "icu",
    "libepoxy",
    "libffi",
-   "libgcrypt",
-   "libgpg-error",
    "libiconv",
    "libidn2",
    "libjpeg-turbo",
@@ -11596,16 +11616,16 @@
    "gdk-pixbuf",
    "gettext",
    "glib",
+   "gmp",
    "gnutls",
    "gtk3",
-   "libgcrypt",
    "libx11",
    "zlib"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.1"
+  "version": "1.6.0"
  },
  "gtk3": {
   "build_closure": [
@@ -11983,12 +12003,15 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 360,
-   "headers": 341,
+   "files": 498,
+   "headers": 476,
    "libs": [
+    "usr/local/lib/libcephes-gtsam.so",
+    "usr/local/lib/libcephes-gtsam.so.1",
+    "usr/local/lib/libcephes-gtsam.so.1.0.0",
     "usr/local/lib/libgtsam.so",
     "usr/local/lib/libgtsam.so.4",
-    "usr/local/lib/libgtsam.so.4.2.0",
+    "usr/local/lib/libgtsam.so.4.3.0",
     "usr/local/lib/libmetis-gtsam.so"
    ]
   },
@@ -11997,16 +12020,21 @@
    "boost",
    "bzip2",
    "libiconv",
+   "openblas",
+   "suitesparse",
    "xz",
    "zlib"
   ],
   "runtime_deps": [
-   "boost"
+   "boost",
+   "suitesparse"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "suitesparse"
+  ],
   "unresolved": [],
-  "version": "4.2"
+  "version": "4.3.0"
  },
  "gumbo-parser": {
   "build_closure": [],
@@ -12435,7 +12463,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.5.0"
+  "version": "3.5.3"
  },
  "http-parser": {
   "build_closure": [],
@@ -12576,16 +12604,30 @@
    "bins": [
     "usr/local/bin/iox-roudi"
    ],
-   "files": 453,
-   "headers": 402,
+   "files": 567,
+   "headers": 490,
    "libs": [
     "usr/local/lib/libiceoryx_binding_c.so",
+    "usr/local/lib/libiceoryx_binding_c.so.2",
+    "usr/local/lib/libiceoryx_binding_c.so.2.95.8",
     "usr/local/lib/libiceoryx_hoofs.so",
+    "usr/local/lib/libiceoryx_hoofs.so.2",
+    "usr/local/lib/libiceoryx_hoofs.so.2.95.8",
     "usr/local/lib/libiceoryx_platform.so",
+    "usr/local/lib/libiceoryx_platform.so.2",
+    "usr/local/lib/libiceoryx_platform.so.2.95.8",
     "usr/local/lib/libiceoryx_posh.so",
+    "usr/local/lib/libiceoryx_posh.so.2",
+    "usr/local/lib/libiceoryx_posh.so.2.95.8",
     "usr/local/lib/libiceoryx_posh_config.so",
+    "usr/local/lib/libiceoryx_posh_config.so.2",
+    "usr/local/lib/libiceoryx_posh_config.so.2.95.8",
     "usr/local/lib/libiceoryx_posh_gateway.so",
-    "usr/local/lib/libiceoryx_posh_roudi.so"
+    "usr/local/lib/libiceoryx_posh_gateway.so.2",
+    "usr/local/lib/libiceoryx_posh_gateway.so.2.95.8",
+    "usr/local/lib/libiceoryx_posh_roudi.so",
+    "usr/local/lib/libiceoryx_posh_roudi.so.2",
+    "usr/local/lib/libiceoryx_posh_roudi.so.2.95.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -12594,7 +12636,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.0.6"
+  "version": "2.95.8"
  },
  "icon-naming-utils": {
   "build_closure": [
@@ -12850,7 +12892,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.17.1"
+  "version": "3.22.1"
  },
  "ippusbxd": {
   "build_closure": [
@@ -13413,7 +13455,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.20.2"
+  "version": "0.20.3"
  },
  "lame": {
   "build_closure": [],
@@ -13423,23 +13465,30 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "standalone",
+  "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 18,
+   "files": 20,
    "headers": 1,
    "libs": [
     "usr/local/lib/libmp3lame.so",
-    "usr/local/lib/libmp3lame.so.0"
+    "usr/local/lib/libmp3lame.so.0",
+    "usr/local/lib/libmp3lame.so.0.0.0"
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "mpg123"
+  ],
+  "runtime_deps": [
+   "mpg123"
+  ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "mpg123"
+  ],
   "unresolved": [],
-  "version": "3.100"
+  "version": "4.0"
  },
  "lanelet2": {
   "build_closure": [
@@ -15082,7 +15131,7 @@
    "libs": [
     "usr/local/lib/libfdt.so",
     "usr/local/lib/libfdt.so.1",
-    "usr/local/lib/libfdt.so.1.7.2"
+    "usr/local/lib/libfdt.so.1.8.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -15091,7 +15140,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.7.2"
+  "version": "1.8.1"
  },
  "libffi": {
   "build_closure": [],
@@ -16018,7 +16067,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2024.10.0"
+  "version": "2026.10.0"
  },
  "libmicrohttpd": {
   "build_closure": [],
@@ -16505,8 +16554,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 38,
-   "headers": 28,
+   "files": 40,
+   "headers": 30,
    "libs": [
     "usr/local/lib/libportal-gtk3.so",
     "usr/local/lib/libportal-gtk3.so.1",
@@ -16573,7 +16622,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.8.1"
+  "version": "0.11.0"
  },
  "libproxy": {
   "build_closure": [
@@ -17163,7 +17212,8 @@
    "sqlite",
    "nghttp2",
    "libpsl",
-   "brotli"
+   "brotli",
+   "zstd"
   ],
   "buildsys": "meson",
   "built": {
@@ -17173,12 +17223,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 116,
-   "headers": 42,
+   "files": 120,
+   "headers": 43,
    "libs": [
     "usr/local/lib/libsoup-3.0.so",
     "usr/local/lib/libsoup-3.0.so.0",
-    "usr/local/lib/libsoup-3.0.so.0.7.1"
+    "usr/local/lib/libsoup-3.0.so.0.8.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -17195,7 +17245,8 @@
    "nghttp2",
    "pcre2",
    "sqlite",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "runtime_deps": [
    "brotli",
@@ -17204,12 +17255,13 @@
    "libpsl",
    "nghttp2",
    "sqlite",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.6.1"
+  "version": "3.8.1"
  },
  "libssh": {
   "build_closure": [
@@ -17595,11 +17647,11 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 10,
-   "headers": 7,
+   "files": 8,
+   "headers": 5,
    "libs": [
     "usr/local/lib/libunibreak.so",
-    "usr/local/lib/libunibreak.so.6"
+    "usr/local/lib/libunibreak.so.8"
    ]
   },
   "linked_by_dev_name": [],
@@ -17608,7 +17660,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.1"
+  "version": "8.0.1"
  },
  "libunistring": {
   "build_closure": [],
@@ -18292,7 +18344,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.4.6"
+  "version": "0.4.7"
  },
  "libxcrypt": {
   "build_closure": [],
@@ -19040,12 +19092,16 @@
    "expat",
    "fontconfig",
    "freetype",
+   "gettext",
+   "libiconv",
    "libpng",
+   "libunistring",
    "libx11",
    "libxau",
    "libxcb",
    "libxdmcp",
    "libxrender",
+   "ncurses",
    "zlib"
   ],
   "runtime_deps": [
@@ -20109,8 +20165,8 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 68,
-   "headers": 62,
+   "files": 74,
+   "headers": 68,
    "libs": [
     "usr/local/lib/liblitehtml.so",
     "usr/local/lib/liblitehtml.so.0",
@@ -20127,7 +20183,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.9"
+  "version": "0.10"
  },
  "llama.cpp": {
   "build_closure": [],
@@ -21662,7 +21718,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.9"
+  "version": "2.11.1"
  },
  "miniz": {
   "build_closure": [],
@@ -21924,37 +21980,55 @@
   "installs": {
    "bins": [
     "usr/local/bin/mosquitto_ctrl",
+    "usr/local/bin/mosquitto_db_dump",
     "usr/local/bin/mosquitto_passwd",
     "usr/local/bin/mosquitto_pub",
     "usr/local/bin/mosquitto_rr",
+    "usr/local/bin/mosquitto_signal",
     "usr/local/bin/mosquitto_sub",
     "usr/local/sbin/mosquitto"
    ],
-   "files": 24,
-   "headers": 5,
+   "files": 63,
+   "headers": 38,
    "libs": [
     "usr/local/lib/libmosquitto.so",
     "usr/local/lib/libmosquitto.so.1",
-    "usr/local/lib/libmosquitto.so.2.0.20",
+    "usr/local/lib/libmosquitto.so.2.1.4",
     "usr/local/lib/libmosquittopp.so",
     "usr/local/lib/libmosquittopp.so.1",
-    "usr/local/lib/libmosquittopp.so.2.0.20",
-    "usr/local/lib/mosquitto_dynamic_security.so"
+    "usr/local/lib/libmosquittopp.so.2.1.4",
+    "usr/local/lib/mosquitto_acl_file.so",
+    "usr/local/lib/mosquitto_dynamic_security.so",
+    "usr/local/lib/mosquitto_password_file.so",
+    "usr/local/lib/mosquitto_persist_sqlite.so",
+    "usr/local/lib/mosquitto_sparkplug_aware.so"
    ]
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
    "cjson",
-   "openssl"
+   "libedit",
+   "libmicrohttpd",
+   "ncurses",
+   "openssl",
+   "sqlite",
+   "zlib"
   ],
   "runtime_deps": [
    "cjson",
-   "openssl"
+   "libedit",
+   "libmicrohttpd",
+   "openssl",
+   "sqlite"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "libedit",
+   "libmicrohttpd",
+   "sqlite"
+  ],
   "unresolved": [],
-  "version": "2.0.20"
+  "version": "2.1.4"
  },
  "mpc": {
   "build_closure": [
@@ -22241,7 +22315,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.10.0"
+  "version": "2.0.2"
  },
  "nanomsg": {
   "build_closure": [],
@@ -23550,7 +23624,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2024.10.0"
+  "version": "2026.10.0"
  },
  "open62541": {
   "build_closure": [
@@ -23567,12 +23641,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 73,
+   "files": 71,
    "headers": 36,
    "libs": [
     "usr/local/lib/libopen62541.so",
-    "usr/local/lib/libopen62541.so.1.4",
-    "usr/local/lib/libopen62541.so.1.4.8"
+    "usr/local/lib/libopen62541.so.1.5",
+    "usr/local/lib/libopen62541.so.1.5.10"
    ]
   },
   "linked_by_dev_name": [],
@@ -23585,7 +23659,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.4.8"
+  "version": "1.5.10"
  },
  "openal-soft": {
   "build_closure": [],
@@ -24989,16 +25063,16 @@
    "libs": [
     "usr/local/lib/libpango-1.0.so",
     "usr/local/lib/libpango-1.0.so.0",
-    "usr/local/lib/libpango-1.0.so.0.5400.0",
+    "usr/local/lib/libpango-1.0.so.0.5600.4",
     "usr/local/lib/libpangocairo-1.0.so",
     "usr/local/lib/libpangocairo-1.0.so.0",
-    "usr/local/lib/libpangocairo-1.0.so.0.5400.0",
+    "usr/local/lib/libpangocairo-1.0.so.0.5600.4",
     "usr/local/lib/libpangoft2-1.0.so",
     "usr/local/lib/libpangoft2-1.0.so.0",
-    "usr/local/lib/libpangoft2-1.0.so.0.5400.0",
+    "usr/local/lib/libpangoft2-1.0.so.0.5600.4",
     "usr/local/lib/libpangoxft-1.0.so",
     "usr/local/lib/libpangoxft-1.0.so.0",
-    "usr/local/lib/libpangoxft-1.0.so.0.5400.0"
+    "usr/local/lib/libpangoxft-1.0.so.0.5600.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -25046,7 +25120,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.54.0"
+  "version": "1.56.4"
  },
  "parole": {
   "build_closure": [
@@ -25314,60 +25388,63 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 926,
-   "headers": 838,
+   "files": 910,
+   "headers": 820,
    "libs": [
     "usr/local/lib/libpcl_common.so",
-    "usr/local/lib/libpcl_common.so.1.14",
-    "usr/local/lib/libpcl_common.so.1.14.1",
+    "usr/local/lib/libpcl_common.so.1.15",
+    "usr/local/lib/libpcl_common.so.1.15.1",
     "usr/local/lib/libpcl_features.so",
-    "usr/local/lib/libpcl_features.so.1.14",
-    "usr/local/lib/libpcl_features.so.1.14.1",
+    "usr/local/lib/libpcl_features.so.1.15",
+    "usr/local/lib/libpcl_features.so.1.15.1",
     "usr/local/lib/libpcl_filters.so",
-    "usr/local/lib/libpcl_filters.so.1.14",
-    "usr/local/lib/libpcl_filters.so.1.14.1",
+    "usr/local/lib/libpcl_filters.so.1.15",
+    "usr/local/lib/libpcl_filters.so.1.15.1",
     "usr/local/lib/libpcl_io.so",
-    "usr/local/lib/libpcl_io.so.1.14",
-    "usr/local/lib/libpcl_io.so.1.14.1",
+    "usr/local/lib/libpcl_io.so.1.15",
+    "usr/local/lib/libpcl_io.so.1.15.1",
     "usr/local/lib/libpcl_io_ply.so",
-    "usr/local/lib/libpcl_io_ply.so.1.14",
-    "usr/local/lib/libpcl_io_ply.so.1.14.1",
+    "usr/local/lib/libpcl_io_ply.so.1.15",
+    "usr/local/lib/libpcl_io_ply.so.1.15.1",
     "usr/local/lib/libpcl_kdtree.so",
-    "usr/local/lib/libpcl_kdtree.so.1.14",
-    "usr/local/lib/libpcl_kdtree.so.1.14.1",
+    "usr/local/lib/libpcl_kdtree.so.1.15",
+    "usr/local/lib/libpcl_kdtree.so.1.15.1",
     "usr/local/lib/libpcl_keypoints.so",
-    "usr/local/lib/libpcl_keypoints.so.1.14",
-    "usr/local/lib/libpcl_keypoints.so.1.14.1",
+    "usr/local/lib/libpcl_keypoints.so.1.15",
+    "usr/local/lib/libpcl_keypoints.so.1.15.1",
     "usr/local/lib/libpcl_ml.so",
-    "usr/local/lib/libpcl_ml.so.1.14",
-    "usr/local/lib/libpcl_ml.so.1.14.1",
+    "usr/local/lib/libpcl_ml.so.1.15",
+    "usr/local/lib/libpcl_ml.so.1.15.1",
     "usr/local/lib/libpcl_octree.so",
-    "usr/local/lib/libpcl_octree.so.1.14",
-    "usr/local/lib/libpcl_octree.so.1.14.1",
+    "usr/local/lib/libpcl_octree.so.1.15",
+    "usr/local/lib/libpcl_octree.so.1.15.1",
+    "usr/local/lib/libpcl_outofcore.so",
+    "usr/local/lib/libpcl_outofcore.so.1.15",
+    "usr/local/lib/libpcl_outofcore.so.1.15.1",
     "usr/local/lib/libpcl_recognition.so",
-    "usr/local/lib/libpcl_recognition.so.1.14",
-    "usr/local/lib/libpcl_recognition.so.1.14.1",
+    "usr/local/lib/libpcl_recognition.so.1.15",
+    "usr/local/lib/libpcl_recognition.so.1.15.1",
     "usr/local/lib/libpcl_registration.so",
-    "usr/local/lib/libpcl_registration.so.1.14",
-    "usr/local/lib/libpcl_registration.so.1.14.1",
+    "usr/local/lib/libpcl_registration.so.1.15",
+    "usr/local/lib/libpcl_registration.so.1.15.1",
     "usr/local/lib/libpcl_sample_consensus.so",
-    "usr/local/lib/libpcl_sample_consensus.so.1.14",
-    "usr/local/lib/libpcl_sample_consensus.so.1.14.1",
+    "usr/local/lib/libpcl_sample_consensus.so.1.15",
+    "usr/local/lib/libpcl_sample_consensus.so.1.15.1",
     "usr/local/lib/libpcl_search.so",
-    "usr/local/lib/libpcl_search.so.1.14",
-    "usr/local/lib/libpcl_search.so.1.14.1",
+    "usr/local/lib/libpcl_search.so.1.15",
+    "usr/local/lib/libpcl_search.so.1.15.1",
     "usr/local/lib/libpcl_segmentation.so",
-    "usr/local/lib/libpcl_segmentation.so.1.14",
-    "usr/local/lib/libpcl_segmentation.so.1.14.1",
+    "usr/local/lib/libpcl_segmentation.so.1.15",
+    "usr/local/lib/libpcl_segmentation.so.1.15.1",
     "usr/local/lib/libpcl_stereo.so",
-    "usr/local/lib/libpcl_stereo.so.1.14",
-    "usr/local/lib/libpcl_stereo.so.1.14.1",
+    "usr/local/lib/libpcl_stereo.so.1.15",
+    "usr/local/lib/libpcl_stereo.so.1.15.1",
     "usr/local/lib/libpcl_surface.so",
-    "usr/local/lib/libpcl_surface.so.1.14",
-    "usr/local/lib/libpcl_surface.so.1.14.1",
+    "usr/local/lib/libpcl_surface.so.1.15",
+    "usr/local/lib/libpcl_surface.so.1.15.1",
     "usr/local/lib/libpcl_tracking.so",
-    "usr/local/lib/libpcl_tracking.so.1.14",
-    "usr/local/lib/libpcl_tracking.so.1.14.1"
+    "usr/local/lib/libpcl_tracking.so.1.15",
+    "usr/local/lib/libpcl_tracking.so.1.15.1"
    ]
   },
   "linked_by_dev_name": [],
@@ -25388,7 +25465,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.14.1"
+  "version": "1.15.1"
  },
  "pcre": {
   "build_closure": [],
@@ -26430,7 +26507,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "20261020"
+  "version": "20261105"
  },
  "perl-net-http": {
   "build_closure": [
@@ -27381,14 +27458,14 @@
    "headers": 29,
    "libs": [
     "usr/local/lib/libpoppler-cpp.so",
-    "usr/local/lib/libpoppler-cpp.so.2",
-    "usr/local/lib/libpoppler-cpp.so.2.2.0",
+    "usr/local/lib/libpoppler-cpp.so.3",
+    "usr/local/lib/libpoppler-cpp.so.3.1.0",
     "usr/local/lib/libpoppler-glib.so",
     "usr/local/lib/libpoppler-glib.so.8",
     "usr/local/lib/libpoppler-glib.so.8.31.0",
     "usr/local/lib/libpoppler.so",
-    "usr/local/lib/libpoppler.so.155",
-    "usr/local/lib/libpoppler.so.155.0.0"
+    "usr/local/lib/libpoppler.so.166",
+    "usr/local/lib/libpoppler.so.166.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -27401,6 +27478,9 @@
    "freetype",
    "gettext",
    "glib",
+   "graphite2",
+   "harfbuzz",
+   "icu",
    "lcms2",
    "libdeflate",
    "libffi",
@@ -27426,11 +27506,13 @@
    "zstd"
   ],
   "runtime_deps": [
+   "brotli",
    "cairo",
    "fontconfig",
    "freetype",
    "gettext",
    "glib",
+   "harfbuzz",
    "lcms2",
    "libiconv",
    "libjpeg-turbo",
@@ -27440,9 +27522,11 @@
    "zlib"
   ],
   "standalone_verified": {},
-  "undeclared": [],
+  "undeclared": [
+   "harfbuzz"
+  ],
   "unresolved": [],
-  "version": "25.12.0"
+  "version": "26.11.0"
  },
  "portaudio": {
   "build_closure": [],
@@ -31232,7 +31316,7 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 26,
+   "files": 29,
    "headers": 0,
    "libs": []
   },
@@ -31242,7 +31326,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.32.7"
+  "version": "4.2.12"
  },
  "python3-flake8": {
   "build_closure": [
@@ -34541,7 +34625,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2025.2"
+  "version": "2026.6"
  },
  "python3-pyyaml": {
   "build_closure": [
@@ -35580,7 +35664,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2025.2"
+  "version": "2026.6"
  },
  "python3-udsoncan": {
   "build_closure": [
@@ -36138,6 +36222,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -36705,6 +36790,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -36919,6 +37005,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37083,6 +37170,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37246,6 +37334,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37407,6 +37496,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37569,6 +37659,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37732,6 +37823,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -37893,6 +37985,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38053,6 +38146,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38216,6 +38310,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38375,6 +38470,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38539,6 +38635,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38708,6 +38805,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -38872,6 +38970,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -39134,6 +39233,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -39299,6 +39399,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -39980,7 +40081,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 24058,
+   "files": 24231,
    "headers": 0,
    "libs": []
   },
@@ -40004,7 +40105,6 @@
    "libidn2",
    "libunistring",
    "libuuid",
-   "libyaml",
    "lz4",
    "ncurses",
    "nghttp2",
@@ -40015,6 +40115,7 @@
    "sqlite",
    "tinyxml2",
    "xz",
+   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -40025,19 +40126,17 @@
    "cyclonedds",
    "fastcdr",
    "fastdds",
-   "libyaml",
    "lz4",
    "opencv",
    "python3",
    "sqlite",
    "tinyxml2",
+   "yaml-cpp",
    "zstd"
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libyaml-cpp.so.0.8"
-  ],
+  "unresolved": [],
   "version": "jazzy"
  },
  "ros2-jazzy-control": {
@@ -40581,7 +40680,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 5407,
+   "files": 5425,
    "headers": 0,
    "libs": []
   },
@@ -40600,8 +40699,10 @@
    "gdbm",
    "geographiclib",
    "gettext",
+   "gflags",
    "glog",
    "graphicsmagick",
+   "highway",
    "lcms2",
    "libde265",
    "libdeflate",
@@ -40609,6 +40710,7 @@
    "libheif",
    "libiconv",
    "libjpeg-turbo",
+   "libjxl",
    "libpng",
    "libsodium",
    "libtiff",
@@ -40633,6 +40735,7 @@
    "x264",
    "x265",
    "xz",
+   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -40641,6 +40744,7 @@
    "console_bridge",
    "fastcdr",
    "geographiclib",
+   "gflags",
    "glog",
    "graphicsmagick",
    "libuuid",
@@ -40650,7 +40754,8 @@
    "orocos-kdl",
    "python3",
    "sqlite",
-   "tinyxml2"
+   "tinyxml2",
+   "yaml-cpp"
   ],
   "standalone_verified": {},
   "undeclared": [
@@ -40744,8 +40849,7 @@
    "libunique_identifier_msgs__rosidl_typesupport_fastrtps_cpp.so",
    "libunique_identifier_msgs__rosidl_typesupport_introspection_c.so",
    "libunique_identifier_msgs__rosidl_typesupport_introspection_cpp.so",
-   "libvisualization_msgs__rosidl_typesupport_cpp.so",
-   "libyaml-cpp.so.0.8"
+   "libvisualization_msgs__rosidl_typesupport_cpp.so"
   ],
   "version": "20260128"
  },
@@ -40909,6 +41013,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "openh264",
    "openssl",
@@ -40924,6 +41029,7 @@
    "x264",
    "x265",
    "xz",
+   "yaml-cpp",
    "zlib",
    "zstd"
   ],
@@ -40933,7 +41039,8 @@
    "freetype",
    "orocos-kdl",
    "qt6",
-   "tinyxml2"
+   "tinyxml2",
+   "yaml-cpp"
   ],
   "standalone_verified": {},
   "undeclared": [],
@@ -40962,8 +41069,7 @@
    "libtf2_msgs__rosidl_typesupport_cpp.so",
    "libtf2_ros.so",
    "liburdf.so",
-   "libvisualization_msgs__rosidl_typesupport_cpp.so",
-   "libyaml-cpp.so.0.8"
+   "libvisualization_msgs__rosidl_typesupport_cpp.so"
   ],
   "version": "14.1.24"
  },
@@ -42197,12 +42303,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 18,
-   "headers": 10,
+   "files": 52,
+   "headers": 44,
    "libs": [
     "usr/local/lib/libsimdutf.so",
-    "usr/local/lib/libsimdutf.so.19",
-    "usr/local/lib/libsimdutf.so.19.0.0"
+    "usr/local/lib/libsimdutf.so.38",
+    "usr/local/lib/libsimdutf.so.38.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -42211,7 +42317,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "6.4.2"
+  "version": "9.4.0"
  },
  "skalibs": {
   "build_closure": [],
@@ -42224,12 +42330,12 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 103,
-   "headers": 90,
+   "files": 106,
+   "headers": 93,
    "libs": [
     "usr/local/lib/libskarnet.so",
-    "usr/local/lib/libskarnet.so.2.14",
-    "usr/local/lib/libskarnet.so.2.14.5.1"
+    "usr/local/lib/libskarnet.so.2.16",
+    "usr/local/lib/libskarnet.so.2.16.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -42238,7 +42344,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.14.5.1"
+  "version": "2.16.0.0"
  },
  "sleef": {
   "build_closure": [],
@@ -42265,7 +42371,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.8-git-20250214"
+  "version": "3.9.0"
  },
  "snappy": {
   "build_closure": [],
@@ -43396,9 +43502,9 @@
    "files": 7,
    "headers": 3,
    "libs": [
-    "usr/local/lib/libthorvg.so",
-    "usr/local/lib/libthorvg.so.0",
-    "usr/local/lib/libthorvg.so.0.15.8"
+    "usr/local/lib/libthorvg-1.so",
+    "usr/local/lib/libthorvg-1.so.1",
+    "usr/local/lib/libthorvg-1.so.1.1.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -43414,7 +43520,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.15.8"
+  "version": "1.1.4"
  },
  "thunar": {
   "build_closure": [
@@ -43655,8 +43761,8 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libtinyxml2.so",
-    "usr/local/lib/libtinyxml2.so.10",
-    "usr/local/lib/libtinyxml2.so.10.0.0"
+    "usr/local/lib/libtinyxml2.so.11",
+    "usr/local/lib/libtinyxml2.so.11.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -43665,7 +43771,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "10.0.0"
+  "version": "11.0.0"
  },
  "tl-expected": {
   "build_closure": [],
@@ -43838,7 +43944,7 @@
    "headers": 1,
    "libs": [
     "usr/local/lib/libtree-sitter.so",
-    "usr/local/lib/libtree-sitter.so.0.25"
+    "usr/local/lib/libtree-sitter.so.0.27"
    ]
   },
   "linked_by_dev_name": [],
@@ -43847,7 +43953,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.25.9"
+  "version": "0.27.2"
  },
  "tree-sitter-bash": {
   "build_closure": [],
@@ -44113,8 +44219,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 32,
-   "headers": 21,
+   "files": 35,
+   "headers": 24,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -44123,7 +44229,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "48"
+  "version": "49"
  },
  "tsl-robin-map": {
   "build_closure": [],
@@ -44240,8 +44346,11 @@
    "gdk-pixbuf",
    "gettext",
    "glib",
+   "graphite2",
    "gst-plugins-base",
    "gstreamer",
+   "harfbuzz",
+   "icu",
    "lame",
    "lcms2",
    "libdeflate",
@@ -44267,6 +44376,7 @@
    "libxml2",
    "libxrender",
    "lzo",
+   "mpg123",
    "ncurses",
    "nghttp2",
    "openh264",
@@ -44666,7 +44776,7 @@
    "libs": [
     "usr/local/lib/liburiparser.so",
     "usr/local/lib/liburiparser.so.1",
-    "usr/local/lib/liburiparser.so.1.0.31"
+    "usr/local/lib/liburiparser.so.1.2.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -44675,7 +44785,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "0.9.8"
+  "version": "1.0.3"
  },
  "utf8proc": {
   "build_closure": [],
@@ -44850,7 +44960,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "9.1.3"
+  "version": "9.2.0"
  },
  "vcstool": {
   "build_closure": [
@@ -45729,7 +45839,8 @@
    "woff2",
    "x265",
    "xz",
-   "zlib"
+   "zlib",
+   "zstd"
   ],
   "runtime_deps": [
    "at-spi2-core",

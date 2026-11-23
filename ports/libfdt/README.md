@@ -1,4 +1,4 @@
-# libfdt 1.7.2
+# libfdt 1.8.1
 
 > Device Tree Compiler (dtc) and libfdt for flat device trees
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/dgibson/dtc.git (tag `v1.7.2`) |
+| Upstream | https://github.com/dgibson/dtc.git (tag `v1.8.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.7.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.8.1 --recurse-submodules --shallow-submodules \
     https://github.com/dgibson/dtc.git src/libfdt
 ```
 
@@ -91,8 +91,7 @@ meson setup build/$QNX_ARCH/libfdt src/libfdt \
       -Dtests=false \
       -Dpython=disabled \
       -Dvalgrind=disabled \
-      -Dyaml=disabled \
-      -Dstatic-build=false
+      -Dyaml=disabled
 ninja -C build/$QNX_ARCH/libfdt
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/libfdt install
 ```
@@ -193,15 +192,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.7.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libfdt=<version>`), sources in `ported/libfdt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libfdt`; port one with `scripts/port-update libfdt`.
+This recipe builds **1.8.1**. Kept from earlier: `1.7.2` ([recipe and patches](versions/1.7.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libfdt=<version>`), sources in `ported/libfdt/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libfdt`; port one with `scripts/port-update libfdt`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.7.2; GIT=https://github.com/dgibson/dtc.git; REF=v1.7.2
+VERSION=1.8.1; GIT=https://github.com/dgibson/dtc.git; REF=v1.8.1
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtools=false -Dtests=false -Dpython=disabled -Dvalgrind=disabled
-                   -Dyaml=disabled -Dstatic-build=false )
+                   -Dyaml=disabled )
 ```
 </details>
 

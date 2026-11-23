@@ -1,4 +1,4 @@
-# uriparser 0.9.8
+# uriparser 1.0.3
 
 > Strictly RFC 3986 compliant URI parsing and handling library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/uriparser/uriparser.git (tag `uriparser-0.9.8`) |
+| Upstream | https://github.com/uriparser/uriparser.git (tag `uriparser-1.0.3`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b uriparser-0.9.8 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b uriparser-1.0.3 --recurse-submodules --shallow-submodules \
     https://github.com/uriparser/uriparser.git src/uriparser
 ```
 
@@ -183,12 +183,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.9.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add uriparser=<version>`), sources in `ported/uriparser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates uriparser`; port one with `scripts/port-update uriparser`.
+This recipe builds **1.0.3**. Kept from earlier: `0.9.8` ([recipe and patches](versions/0.9.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add uriparser=<version>`), sources in `ported/uriparser/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates uriparser`; port one with `scripts/port-update uriparser`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.9.8; GIT=https://github.com/uriparser/uriparser.git; REF=uriparser-0.9.8
+VERSION=1.0.3; GIT=https://github.com/uriparser/uriparser.git; REF=uriparser-1.0.3
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DURIPARSER_BUILD_DOCS=OFF -DURIPARSER_BUILD_TESTS=OFF -DURIPARSER_BUILD_TOOLS=ON )
 ```
 </details>

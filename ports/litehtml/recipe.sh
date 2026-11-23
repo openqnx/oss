@@ -2,7 +2,7 @@
 # CSS 2.1 with parts of CSS3); the application supplies drawing and fonts
 # through a document_container. Used by Qt Creator's help viewer, Notepad++
 # plugins, the Haiku/Gemini browsers ...
-VERSION=0.9; GIT=https://github.com/litehtml/litehtml.git; REF=v0.9
+VERSION=0.10; GIT=https://github.com/litehtml/litehtml.git; REF=v0.10
 DEPS="gumbo-parser"
 BUILDSYS=cmake
 # The staged gumbo-parser instead of the bundled copy (one HTML5 parser on

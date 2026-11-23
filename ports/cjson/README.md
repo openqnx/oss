@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/DaveGamble/cJSON.git (tag `v1.7.19`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -78,7 +78,24 @@ git clone --depth 1 -b v1.7.19 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/cjson < ports/cjson/patches/0001-relative-install-paths.patch
+```
+
+**[`0001-relative-install-paths.patch`](patches/0001-relative-install-paths.patch)** — cJSON: install with paths relative to the install prefix
+
+> cJSON installs to CMAKE_INSTALL_FULL_* (absolute paths), so the generated
+> cjson-release.cmake records the build host's /usr/local/lib/libcjson.so.*
+> and /usr/local/include. A cross build that finds cJSON through its CMake
+> config (mosquitto 2.1, pcl 1.15) then links the host path instead of the
+> staged library. Use the relative CMAKE_INSTALL_* dirs and compute the
+> include dir from the config file's location.
+>
+> ---
+
+Touches: `CMakeLists.txt`, `library_config/cJSONConfig.cmake.in` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

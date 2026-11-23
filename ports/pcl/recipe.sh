@@ -1,4 +1,4 @@
-VERSION=1.14.1; GIT=https://github.com/PointCloudLibrary/pcl.git; REF=pcl-1.14.1
+VERSION=1.15.1; GIT=https://github.com/PointCloudLibrary/pcl.git; REF=pcl-1.15.1
 DEPS="boost eigen flann"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON
                    # no VTK/OpenGL/X11 on a QNX target -- visualization is out
@@ -21,4 +21,9 @@ CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON
                    # the run result instead of letting the probe decide.
                    -DHAVE_POSIX_MEMALIGN=1
                    -DHAVE_POSIX_MEMALIGN_EXITCODE=0
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                   # 1.15 looks for a system cJSON (pcl_outofcore) and takes
+                   # the staged one if it is there, without it being a
+                   # dependency here; its bundled copy, as 1.14 always used,
+                   # keeps the build the same whatever else is staged.
+                   -DWITH_SYSTEM_CJSON=OFF )

@@ -1,4 +1,4 @@
-# googletest 1.17.0
+# googletest 1.18.0
 
 > Google's C++ testing and mocking framework (GoogleTest, GoogleMock)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/google/googletest.git (tag `v1.17.0`) |
+| Upstream | https://github.com/google/googletest.git (tag `v1.18.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v1.17.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v1.18.0 --recurse-submodules --shallow-submodules \
     https://github.com/google/googletest.git src/googletest
 ```
 
@@ -89,10 +89,16 @@ cmake -S src/googletest -B build/$QNX_ARCH/googletest -G Ninja \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
       -Dgtest_force_shared_crt=ON \
       -DBUILD_SHARED_LIBS=ON \
-      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+      -DCMAKE_C_FLAGS= \
+      -DCMAKE_CXX_FLAGS=-std=gnu++17
 cmake --build build/$QNX_ARCH/googletest -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/googletest
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- googletest needs no other component, so no staged header either. The toolchain file puts the staging tree's include directory on every compile with -isystem, ahead of googletest's own include directories, which its CMakeLists also marks SYSTEM (so a -I for them is merged into the same list and does not help). On an update the installed headers of the version before then win: 1.18's gmock-actions.h met 1.17's gtest-port.h, which has no GTEST_INTERNAL_DEPRECATE_AND_INLINE ("expected constructor, destructor, or type conversion before '('"). Flags without the staging tree instead.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH googletest`.
 
@@ -183,14 +189,23 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.17.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add googletest=<version>`), sources in `ported/googletest/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates googletest`; port one with `scripts/port-update googletest`.
+This recipe builds **1.18.0**. Kept from earlier: `1.17.0` ([recipe and patches](versions/1.17.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add googletest=<version>`), sources in `ported/googletest/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates googletest`; port one with `scripts/port-update googletest`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.17.0; GIT=https://github.com/google/googletest.git; REF=v1.17.0
+VERSION=1.18.0; GIT=https://github.com/google/googletest.git; REF=v1.18.0
+# googletest needs no other component, so no staged header either. The
+# toolchain file puts the staging tree's include directory on every compile
+# with -isystem, ahead of googletest's own include directories, which its
+# CMakeLists also marks SYSTEM (so a -I for them is merged into the same
+# list and does not help). On an update the installed headers of the version
+# before then win: 1.18's gmock-actions.h met 1.17's gtest-port.h, which has
+# no GTEST_INTERNAL_DEPRECATE_AND_INLINE ("expected constructor, destructor,
+# or type conversion before '('"). Flags without the staging tree instead.
 CMAKE_ARGS_EXTRA=( -Dgtest_force_shared_crt=ON -DBUILD_SHARED_LIBS=ON
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                   -DCMAKE_C_FLAGS= -DCMAKE_CXX_FLAGS=-std=gnu++17 )
 ```
 </details>
 

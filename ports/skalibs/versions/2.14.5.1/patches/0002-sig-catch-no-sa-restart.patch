@@ -1,0 +1,23 @@
+sig_catch: define SA_RESTART to 0 where the system lacks it
+
+QNX does not implement SA_RESTART (its <signal.h> has it commented out
+as "not supported yet"). Without it an interrupted system call returns
+EINTR, which skalibs' I/O primitives already retry on (the safe wrappers
+loop on EINTR), so 0 is the honest value.
+
+Upstream-Status: QNX-specific
+
+--- a/src/libstddjb/sig_catch.c
++++ b/src/libstddjb/sig_catch.c
+@@ -11,6 +11,11 @@
+ #include <skalibs/sig.h>
+ #include <skalibs/nsig.h>
+ 
++#ifndef SA_RESTART
++  /* QNX: not implemented (commented out in <signal.h>) */
++# define SA_RESTART 0
++#endif
++
+  /*
+    We don't want to fail on non-catchable signals,
+    even if sigaction() does.

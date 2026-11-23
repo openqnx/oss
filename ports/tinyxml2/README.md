@@ -1,4 +1,4 @@
-# tinyxml2 10.0.0
+# tinyxml2 11.0.0
 
 > Small C++ XML parser
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/leethomason/tinyxml2.git (tag `10.0.0`) |
+| Upstream | https://github.com/leethomason/tinyxml2.git (tag `11.0.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 10.0.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 11.0.0 --recurse-submodules --shallow-submodules \
     https://github.com/leethomason/tinyxml2.git src/tinyxml2
 ```
 
@@ -181,12 +181,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **10.0.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tinyxml2=<version>`), sources in `ported/tinyxml2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tinyxml2`; port one with `scripts/port-update tinyxml2`.
+This recipe builds **11.0.0**. Kept from earlier: `10.0.0` ([recipe and patches](versions/10.0.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tinyxml2=<version>`), sources in `ported/tinyxml2/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tinyxml2`; port one with `scripts/port-update tinyxml2`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=10.0.0; GIT=https://github.com/leethomason/tinyxml2.git; REF=10.0.0
+VERSION=11.0.0; GIT=https://github.com/leethomason/tinyxml2.git; REF=11.0.0
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -Dtinyxml2_BUILD_TESTING=OFF )
 ```
 </details>

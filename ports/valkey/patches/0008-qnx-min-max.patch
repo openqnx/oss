@@ -1,0 +1,28 @@
+Define MIN/MAX where <sys/param.h> does not.
+
+Valkey takes MIN() and MAX() from <sys/param.h>, which glibc and the BSDs
+provide there. QNX's <sys/param.h> has neither, so ae_epoll.c (used on QNX
+since 0004), bgiteration.c and throttle.c fail to link with
+"undefined reference to `MIN'". config.h, which includes <sys/param.h> and
+is reached by all of them, defines both when missing.
+
+Upstream-Status: QNX-specific
+
+--- a/src/config.h
++++ b/src/config.h
+@@ -32,6 +32,15 @@
+ 
+ #include <sys/param.h>
+ 
++/* QNX's <sys/param.h> does not define MIN/MAX (glibc's and the BSDs' do);
++ * ae_epoll.c, bgiteration.c and throttle.c use them. */
++#ifndef MIN
++#define MIN(a, b) (((a) < (b)) ? (a) : (b))
++#endif
++#ifndef MAX
++#define MAX(a, b) (((a) > (b)) ? (a) : (b))
++#endif
++
+ #ifdef __APPLE__
+ #include <fcntl.h> // for fcntl(fd, F_FULLFSYNC)
+ #include <AvailabilityMacros.h>

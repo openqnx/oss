@@ -207,8 +207,17 @@ int main(void) {
       close(sub);
     }
     CMD(fd, "INFO", "server");
+    /* The running server reports the version of the installed program
+     * (valkey-server --version: "Valkey server v=X.Y.Z sha=..."). */
+    char iv[32] = "", pv[32] = "";
     char *v = strstr(reply, "valkey_version:");
-    QT_CHECK(v && !strncmp(v + 15, "9.1.3", 5), "INFO server: valkey_version 9.1.3");
+    if (v) sscanf(v + 15, "%31[0-9.]", iv);
+    snprintf(out, sizeof out, "%s/version.out", dir);
+    char *ver[] = { "valkey-server", "--version", NULL };
+    if (run_wait(ver, out) == 0) { char *pvs = strstr(slurp(out), " v="); if (pvs) sscanf(pvs + 3, "%31[0-9.]", pv); }
+    printf("  info INFO valkey_version %s, valkey-server --version v=%s\n", iv, pv);
+    QT_CHECK(iv[0] >= '1' && iv[0] <= '9' && strchr(iv, '.') && !strcmp(iv, pv),
+             "INFO server: valkey_version is the installed valkey-server's version");
     char *os = strstr(reply, "os:"); if (os) { char *e = strchr(os, '\r'); if (e) *e = 0; printf("  info %s\n", os); }
 
     /* valkey-cli */

@@ -1,4 +1,4 @@
-# lame 3.100
+# lame 4.0
 
 > LAME MP3 audio encoder and library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://downloads.sourceforge.net/lame/lame-3.100.tar.gz |
-| SHA-256 | `ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e` |
+| Upstream | https://downloads.sourceforge.net/lame/lame-4.0.tar.gz |
+| SHA-256 | `3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://downloads.sourceforge.net/lame/lame-3.100.tar.gz
+URL=https://downloads.sourceforge.net/lame/lame-4.0.tar.gz
 mkdir -p dist src/lame
 curl -fL -o dist/$(basename $URL) $URL
-echo "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e  dist/$(basename $URL)" | sha256sum -c -
+echo "3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/lame --strip-components=1
 ```
 
@@ -195,14 +195,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.100**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lame=<version>`), sources in `ported/lame/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lame`; port one with `scripts/port-update lame`.
+This recipe builds **4.0**. Kept from earlier: `3.100` ([recipe and patches](versions/3.100/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lame=<version>`), sources in `ported/lame/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lame`; port one with `scripts/port-update lame`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.100
-TARBALL=https://downloads.sourceforge.net/lame/lame-3.100.tar.gz
-SHA256=ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e
+VERSION=4.0
+TARBALL=https://downloads.sourceforge.net/lame/lame-4.0.tar.gz
+SHA256=3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-frontend
                   --disable-gtktest --enable-nasm )

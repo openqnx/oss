@@ -1,4 +1,4 @@
-VERSION=3.17.1; GIT=https://github.com/esnet/iperf.git; REF=3.17.1
+VERSION=3.22.1; GIT=https://github.com/esnet/iperf.git; REF=3.22.1
 SRCROOT="$SRC_DIR/iperf3"
 DEPS="openssl"
 BUILDSYS=autotools

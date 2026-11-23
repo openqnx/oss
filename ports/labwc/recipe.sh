@@ -1,7 +1,7 @@
 # labwc: a stacking Wayland compositor (window manager) on wlroots -- the one
 # QNX's Developer Desktop runs, with QNX's changes (patches/0001, from
 # github.com/qnx-ports/labwc). Xfce's panel and applications run on it.
-VERSION=0.20.2; GIT=https://github.com/labwc/labwc.git; REF=0.20.2
+VERSION=0.20.3; GIT=https://github.com/labwc/labwc.git; REF=0.20.3
 DEPS="wlroots wayland wayland-protocols libxkbcommon glib cairo pango libxml2 libsfdo libpng"
 BUILDSYS=meson
 # labwc will not start without a font (titles, menus) nor without keymaps.

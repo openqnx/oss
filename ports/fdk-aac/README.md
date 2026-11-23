@@ -1,4 +1,4 @@
-# fdk-aac 2.0.3
+# fdk-aac 3.0.0
 
 > Fraunhofer FDK AAC audio codec library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/mstorsjo/fdk-aac.git (tag `v2.0.3`) |
+| Upstream | https://github.com/mstorsjo/fdk-aac.git (tag `v3.0.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.0.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.0.0 --recurse-submodules --shallow-submodules \
     https://github.com/mstorsjo/fdk-aac.git src/fdk-aac
 ```
 
@@ -185,12 +185,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fdk-aac=<version>`), sources in `ported/fdk-aac/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fdk-aac`; port one with `scripts/port-update fdk-aac`.
+This recipe builds **3.0.0**. Kept from earlier: `2.0.3` ([recipe and patches](versions/2.0.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add fdk-aac=<version>`), sources in `ported/fdk-aac/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates fdk-aac`; port one with `scripts/port-update fdk-aac`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.0.3; GIT=https://github.com/mstorsjo/fdk-aac.git; REF=v2.0.3
+VERSION=3.0.0; GIT=https://github.com/mstorsjo/fdk-aac.git; REF=v3.0.0
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_PROGRAMS=OFF )
 ```

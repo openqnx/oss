@@ -1,4 +1,4 @@
-# sleef 3.8-git-20250214
+# sleef 3.9.0
 
 > SIMD library of vectorized elementary math functions and DFT
 
@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://github.com/shibatch/sleef.git |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 0 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -78,23 +78,7 @@ git clone --depth 1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
-
-```bash
-patch -p1 -d src/sleef < ports/sleef/patches/0001-qnx-from-qnx-ports.patch
-```
-
-**[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX support.
-
-> Imported from qnx-ports/sleef (b8abbd56df03...qnx_master); original authorship kept.
->
->
-> ---
->  Configure.cmake        | 16 ++++++++++++----
->  src/dft/CMakeLists.txt |  4 ++--
->  2 files changed, 14 insertions(+), 6 deletions(-)
-
-Touches: `Configure.cmake`, `src/dft/CMakeLists.txt` · Upstream status: QNX-specific (carried in the qnx-ports fork)
+None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
 
 ### 4. Configure, build and install into the staging tree
 
@@ -107,10 +91,11 @@ S=src/sleef; B=build/$QNX_ARCH/sleef; mkdir -p $B
 ```bash
 do_configure() {
   local nat="$B/native"; mkdir -p "$nat"
-  env -u CC -u CXX cmake -S "$S" -B "$nat" -G Ninja -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_TESTS=OFF \
+  env -u CC -u CXX -u CFLAGS -u CXXFLAGS -u LDFLAGS -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH \
+      cmake -S "$S" -B "$nat" -G Ninja -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_TESTS=OFF -DSLEEF_DISABLE_SSL=ON \
       -DSLEEF_BUILD_DFT=OFF -DSLEEF_BUILD_QUAD=OFF -DSLEEF_BUILD_GNUABI_LIBS=OFF && ninja -C "$nat" || return 1
   cmake -S "$S" -B "$B/target" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$arch.cmake" -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX="$PREFIX" -DNATIVE_BUILD_DIR="$nat" -DSLEEF_BUILD_TESTS=OFF -DSLEEF_BUILD_SHARED_LIBS=ON \
+      -DCMAKE_INSTALL_PREFIX="$PREFIX" -DNATIVE_BUILD_DIR="$nat" -DSLEEF_BUILD_TESTS=OFF -DSLEEF_DISABLE_SSL=ON -DSLEEF_BUILD_SHARED_LIBS=ON \
       -DSLEEF_BUILD_DFT=OFF -DSLEEF_BUILD_QUAD=OFF -DSLEEF_BUILD_GNUABI_LIBS=OFF -DSLEEF_BUILD_INLINE_HEADERS=OFF
 }
 ```
@@ -125,7 +110,7 @@ do_install() { DESTDIR="$STAGE" cmake --install "$B/target"; }
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- SLEEF generates parts of itself with helper programs that must run on the build host: a native build of those helpers is made first (do_configure).
+- SLEEF generates parts of itself with helper programs that must run on the build host: a native build of those helpers is made first (do_configure). SLEEF_DISABLE_SSL: since 3.9.0 the always-built test_psha programs link OpenSSL when found; on the host pass pkg-config led find_package(OpenSSL) to the staged QNX libcrypto (undefined __stack_chk_guard, accept@libsocket.so.4). OpenSSL is only for SLEEF's own tests, so neither pass looks for it.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH sleef`.
 
@@ -229,20 +214,25 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.8-git-20250214**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sleef=<version>`), sources in `ported/sleef/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sleef`; port one with `scripts/port-update sleef`.
+This recipe builds **3.9.0**. Kept from earlier: `3.8-git-20250214` ([recipe and patches](versions/3.8-git-20250214/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add sleef=<version>`), sources in `ported/sleef/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates sleef`; port one with `scripts/port-update sleef`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.8-git-20250214; GIT=https://github.com/shibatch/sleef.git; COMMIT=b8abbd56df03eb7cc65b8025495b955ce5336973
+VERSION=3.9.0; GIT=https://github.com/shibatch/sleef.git; COMMIT=906ca7512ee483296780a81a21b9ca715d40dfe1
 # SLEEF generates parts of itself with helper programs that must run on the
 # build host: a native build of those helpers is made first (do_configure).
+# SLEEF_DISABLE_SSL: since 3.9.0 the always-built test_psha programs link
+# OpenSSL when found; on the host pass pkg-config led find_package(OpenSSL) to
+# the staged QNX libcrypto (undefined __stack_chk_guard, accept@libsocket.so.4).
+# OpenSSL is only for SLEEF's own tests, so neither pass looks for it.
 do_configure() {
   local nat="$B/native"; mkdir -p "$nat"
-  env -u CC -u CXX cmake -S "$S" -B "$nat" -G Ninja -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_TESTS=OFF \
+  env -u CC -u CXX -u CFLAGS -u CXXFLAGS -u LDFLAGS -u PKG_CONFIG_LIBDIR -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH \
+      cmake -S "$S" -B "$nat" -G Ninja -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_TESTS=OFF -DSLEEF_DISABLE_SSL=ON \
       -DSLEEF_BUILD_DFT=OFF -DSLEEF_BUILD_QUAD=OFF -DSLEEF_BUILD_GNUABI_LIBS=OFF && ninja -C "$nat" || return 1
   cmake -S "$S" -B "$B/target" -G Ninja -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$arch.cmake" -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX="$PREFIX" -DNATIVE_BUILD_DIR="$nat" -DSLEEF_BUILD_TESTS=OFF -DSLEEF_BUILD_SHARED_LIBS=ON \
+      -DCMAKE_INSTALL_PREFIX="$PREFIX" -DNATIVE_BUILD_DIR="$nat" -DSLEEF_BUILD_TESTS=OFF -DSLEEF_DISABLE_SSL=ON -DSLEEF_BUILD_SHARED_LIBS=ON \
       -DSLEEF_BUILD_DFT=OFF -DSLEEF_BUILD_QUAD=OFF -DSLEEF_BUILD_GNUABI_LIBS=OFF -DSLEEF_BUILD_INLINE_HEADERS=OFF
 }
 do_build() { ninja -C "$B/target"; }

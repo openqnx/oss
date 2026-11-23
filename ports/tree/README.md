@@ -164,7 +164,10 @@ PASS tree
    - ts_parser_new
    - no language set yet
    - parsing without a language returns NULL
-   - timeout round trip
+   - parse_with_options without a language returns NULL
+   - ordered included ranges accepted
+   - included ranges round trip
+   - out-of-order ranges rejected
    - TSPoint layout
    - language ABI version
 

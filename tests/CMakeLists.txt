@@ -105,9 +105,12 @@ port_test(test_protobuf         test_protobuf.cpp        protobuf::libprotobuf)
 find_package(gRPC CONFIG REQUIRED)
 port_test(test_grpc             test_grpc.cpp            gRPC::grpc++ gRPC::grpc)
 
-# iceoryx installs its headers under a versioned directory.
+# iceoryx installs its headers under a versioned directory (iceoryx/v<version>).
+file(GLOB _iox_inc "${INC}/iceoryx/v[0-9]*")
+list(SORT _iox_inc)
+list(GET _iox_inc -1 _iox_inc)
 port_test(test_iceoryx          test_iceoryx.cpp         iceoryx_hoofs iceoryx_platform)
-target_include_directories(test_iceoryx PRIVATE "${INC}/iceoryx/v2.0.6")
+target_include_directories(test_iceoryx PRIVATE "${_iox_inc}")
 
 # ---- perception / compute -------------------------------------------------
 port_test(test_eigen            test_eigen.cpp)
@@ -125,7 +128,11 @@ port_test(test_flann            test_flann.cpp           flann_cpp lz4)
 port_test(test_pcl              test_pcl.cpp
           pcl_common pcl_filters pcl_kdtree pcl_search pcl_octree
           flann_cpp boost_filesystem boost_system)
-target_include_directories(test_pcl PRIVATE "${INC}/pcl-1.14" "${INC}/eigen3")
+# pcl installs its headers under pcl-<major>.<minor>.
+file(GLOB _pcl_inc "${INC}/pcl-[0-9]*")
+list(SORT _pcl_inc)
+list(GET _pcl_inc -1 _pcl_inc)
+target_include_directories(test_pcl PRIVATE "${_pcl_inc}" "${INC}/eigen3")
 
 port_test(test_onnxruntime      test_onnxruntime.cpp     onnxruntime)
 

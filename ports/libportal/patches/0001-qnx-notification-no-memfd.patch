@@ -1,0 +1,39 @@
+libportal: notification media without memfd_create on QNX.
+
+The notification portal v2 code passes icons/sounds as memfd_create(...,
+MFD_ALLOW_SEALING) file descriptors. QNX has neither memfd_create() nor file
+seals, so the build fails ('MFD_ALLOW_SEALING' undeclared, implicit
+memfd_create). Where MFD_ALLOW_SEALING is not defined, create the buffer as an
+unlinked temporary file instead: it is anonymous, can be passed over D-Bus,
+truncated, mmap'ed and written like a memfd, only without seals (the code
+never adds any). Linux keeps the memfd path unchanged.
+
+Upstream-Status: QNX-specific
+
+--- a/libportal/notification.c
++++ b/libportal/notification.c
+@@ -35,6 +35,24 @@
+ #include "notification.h"
+ #include "portal-private.h"
+ 
++#ifndef MFD_ALLOW_SEALING
++/* No memfd_create() (QNX): an unlinked temporary file gives the same
++ * anonymous, fd-passable, mmap-able and writable buffer, without seals. */
++#define MFD_ALLOW_SEALING 0
++static int
++xdp_memfd_create (const char *name, unsigned int flags)
++{
++  g_autofree char *tmpl = g_build_filename (g_get_tmp_dir (), "libportal-XXXXXX", NULL);
++  int fd;
++
++  fd = g_mkstemp_full (tmpl, O_RDWR | O_CLOEXEC, 0600);
++  if (fd != -1)
++    g_unlink (tmpl);
++  return fd;
++}
++#define memfd_create(name, flags) xdp_memfd_create (name, flags)
++#endif
++
+ static void
+ action_invoked (GDBusConnection *bus,
+                 const char *sender_name,

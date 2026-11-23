@@ -1,4 +1,4 @@
-# valkey 9.1.3
+# valkey 9.2.0
 
 > High-performance key/value data store forked from Redis (server, client, benchmark)
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/valkey-io/valkey.git (tag `9.1.3`) |
+| Upstream | https://github.com/valkey-io/valkey.git (tag `9.2.0`) |
 | Build system | custom (see recipe) |
-| QNX patches | 7 |
+| QNX patches | 9 |
 | Build dependencies | [`openssl`](../openssl/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -73,13 +73,13 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 9.1.3 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 9.2.0 --recurse-submodules --shallow-submodules \
     https://github.com/valkey-io/valkey.git src/valkey
 ```
 
 ### 3. Apply the QNX patches
 
-7 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+9 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/valkey < ports/valkey/patches/0001-qnx-xopen-source.patch
@@ -89,6 +89,8 @@ patch -p1 -d src/valkey < ports/valkey/patches/0004-qnx-epoll.patch
 patch -p1 -d src/valkey < ports/valkey/patches/0005-qnx-timezone.patch
 patch -p1 -d src/valkey < ports/valkey/patches/0006-qnx-bswap-macros.patch
 patch -p1 -d src/valkey < ports/valkey/patches/0007-qnx-daemonize-gil.patch
+patch -p1 -d src/valkey < ports/valkey/patches/0008-qnx-min-max.patch
+patch -p1 -d src/valkey < ports/valkey/patches/0009-qnx-no-nested-epoll.patch
 ```
 
 **[`0001-qnx-xopen-source.patch`](patches/0001-qnx-xopen-source.patch)** — Define _XOPEN_SOURCE 700 on QNX.
@@ -164,6 +166,31 @@ Touches: `src/endianconv.h` · Upstream status: QNX-specific
 > child and lock it again, which is the state the parent had.
 
 Touches: `src/module.c`, `src/module.h`, `src/server.c` · Upstream status: QNX-specific
+
+**[`0008-qnx-min-max.patch`](patches/0008-qnx-min-max.patch)** — Define MIN/MAX where <sys/param.h> does not.
+
+> Valkey takes MIN() and MAX() from <sys/param.h>, which glibc and the BSDs
+> provide there. QNX's <sys/param.h> has neither, so ae_epoll.c (used on QNX
+> since 0004), bgiteration.c and throttle.c fail to link with
+> "undefined reference to `MIN'". config.h, which includes <sys/param.h> and
+> is reached by all of them, defines both when missing.
+
+Touches: `src/config.h` · Upstream status: QNX-specific
+
+**[`0009-qnx-no-nested-epoll.patch`](patches/0009-qnx-no-nested-epoll.patch)** — Keep valkey-server's event loop out of nested epoll on QNX.
+
+> Valkey 9.2 creates a second, high-priority epoll instance at start-up
+> (aeActuateQoSEventLoopIfSupported) and adds its descriptor to the main
+> event loop's epoll set. QNX's libepoll serves epoll descriptors from a
+> manager thread inside the process, and adding one epoll descriptor to
+> another blocks for good (the manager thread waits on its own request):
+> valkey-server stopped right after "monotonic clock: POSIX clock_gettime"
+> and never listened. aeApiGetPollFd() reports no poll fd on QNX, the
+> documented way for a backend without secondary polling (select, evport):
+> the server logs that QoS prioritisation is not supported and uses the
+> standard event loop.
+
+Touches: `src/ae_epoll.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -285,7 +312,7 @@ PASS valkey
    - Lua cjson library
    - PUBLISH reaches one subscriber
    - the subscriber receives the message
-   - INFO server: valkey_version 9.1.3
+   - INFO server: valkey_version is the installed valkey-server's version
    - valkey-cli SET prints OK
    - the key valkey-cli set is there
    - valkey-cli formats a list reply
@@ -307,7 +334,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **9.1.3**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add valkey=<version>`), sources in `ported/valkey/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates valkey`; port one with `scripts/port-update valkey`.
+This recipe builds **9.2.0**. Kept from earlier: `9.1.3` ([recipe and patches](versions/9.1.3/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add valkey=<version>`), sources in `ported/valkey/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates valkey`; port one with `scripts/port-update valkey`.
 
 <details><summary>recipe.sh</summary>
 
@@ -315,7 +342,7 @@ This recipe builds **9.1.3**. Every version stays available: packages in `dists/
 # Valkey: the open source key/value data store forked from Redis 7.2
 # (valkey-server, valkey-sentinel) with its command-line client, benchmark
 # and RDB/AOF checkers. TLS is built in, against the staged OpenSSL.
-VERSION=9.1.3; GIT=https://github.com/valkey-io/valkey.git; REF=9.1.3
+VERSION=9.2.0; GIT=https://github.com/valkey-io/valkey.git; REF=9.2.0
 DEPS="openssl"
 BUILDSYS=custom
 # Built like ports/redis (the same Makefile lineage). Notes on the variables:

@@ -1,0 +1,31 @@
+Keep valkey-server's event loop out of nested epoll on QNX.
+
+Valkey 9.2 creates a second, high-priority epoll instance at start-up
+(aeActuateQoSEventLoopIfSupported) and adds its descriptor to the main
+event loop's epoll set. QNX's libepoll serves epoll descriptors from a
+manager thread inside the process, and adding one epoll descriptor to
+another blocks for good (the manager thread waits on its own request):
+valkey-server stopped right after "monotonic clock: POSIX clock_gettime"
+and never listened. aeApiGetPollFd() reports no poll fd on QNX, the
+documented way for a backend without secondary polling (select, evport):
+the server logs that QoS prioritisation is not supported and uses the
+standard event loop.
+
+Upstream-Status: QNX-specific
+
+--- a/src/ae_epoll.c
++++ b/src/ae_epoll.c
+@@ -136,5 +136,13 @@
+ }
+ 
+ static int aeApiGetPollFd(aeApiState *state) {
++#ifdef __QNX__
++    /* QNX's libepoll cannot watch an epoll descriptor from another epoll
++     * instance: its epoll manager thread would serve its own request, and
++     * epoll_ctl() never returns. No poll fd: no QoS secondary loop. */
++    AE_NOTUSED(state);
++    return -1;
++#else
+     return state ? state->epfd : -1;
++#endif
+ }

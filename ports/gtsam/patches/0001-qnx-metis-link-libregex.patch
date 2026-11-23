@@ -10,7 +10,7 @@ Upstream-Status: QNX-specific
 
 --- a/gtsam/3rdparty/metis/libmetis/CMakeLists.txt
 +++ b/gtsam/3rdparty/metis/libmetis/CMakeLists.txt
-@@ -8,6 +8,10 @@
+@@ -7,6 +7,10 @@
  if(UNIX)
    target_link_libraries(metis-gtsam m)
  endif()

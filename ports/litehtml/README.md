@@ -1,4 +1,4 @@
-# litehtml 0.9
+# litehtml 0.10
 
 > Fast and lightweight HTML/CSS rendering engine
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/litehtml/litehtml.git (tag `v0.9`) |
+| Upstream | https://github.com/litehtml/litehtml.git (tag `v0.10`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`gumbo-parser`](../gumbo-parser/) |
@@ -76,7 +76,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.10 --recurse-submodules --shallow-submodules \
     https://github.com/litehtml/litehtml.git src/litehtml
 ```
 
@@ -197,7 +197,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add litehtml=<version>`), sources in `ported/litehtml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates litehtml`; port one with `scripts/port-update litehtml`.
+This recipe builds **0.10**. Kept from earlier: `0.9` ([recipe and patches](versions/0.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add litehtml=<version>`), sources in `ported/litehtml/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates litehtml`; port one with `scripts/port-update litehtml`.
 
 <details><summary>recipe.sh</summary>
 
@@ -206,7 +206,7 @@ This recipe builds **0.9**. Every version stays available: packages in `dists/8.
 # CSS 2.1 with parts of CSS3); the application supplies drawing and fonts
 # through a document_container. Used by Qt Creator's help viewer, Notepad++
 # plugins, the Haiku/Gemini browsers ...
-VERSION=0.9; GIT=https://github.com/litehtml/litehtml.git; REF=v0.9
+VERSION=0.10; GIT=https://github.com/litehtml/litehtml.git; REF=v0.10
 DEPS="gumbo-parser"
 BUILDSYS=cmake
 # The staged gumbo-parser instead of the bundled copy (one HTML5 parser on

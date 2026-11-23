@@ -1,4 +1,4 @@
-# busybox 1.36.1
+# busybox 1.38.0
 
 > Tiny versions of many common UNIX utilities in a single executable
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/vda-linux/busybox_mirror.git (tag `1_36_1`) |
+| Upstream | https://github.com/vda-linux/busybox_mirror.git (tag `1_38_0`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -69,16 +69,17 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1_36_1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1_38_0 --recurse-submodules --shallow-submodules \
     https://github.com/vda-linux/busybox_mirror.git src/busybox
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/busybox < ports/busybox/patches/0001-qnx-from-qnx-ports.patch
+patch -p1 -d src/busybox < ports/busybox/patches/0002-qnx-long-bit.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — migrate qnx patch from aports
@@ -100,6 +101,15 @@ patch -p1 -d src/busybox < ports/busybox/patches/0001-qnx-from-qnx-ports.patch
 
 Touches: `coreutils/ls.c`, `coreutils/stat.c`, `coreutils/uname.c`, `include/libbb.h`, `include/platform.h`, `libbb/makedev.c` … · Upstream status: QNX-specific (from qnx-ports)
 
+**[`0002-qnx-long-bit.patch`](patches/0002-qnx-long-bit.patch)** — busybox: LONG_BIT for QNX.
+
+> BusyBox 1.38's TLS AES-GCM code (networking/tls_aesgcm.c, built for wget's
+> https support) shifts by LONG_BIT, an XSI <limits.h> constant QNX does not
+> define ('LONG_BIT' undeclared). Define it from the compiler's __SIZEOF_LONG__
+> on QNX when the C library leaves it out.
+
+Touches: `include/platform.h` · Upstream status: QNX-specific
+
 ### 4. Configure, build and install into the staging tree
 
 This component uses its own build steps (`do_configure`, `do_build`, `do_install`), run with `S` = the source tree, `B` = the build directory:
@@ -109,7 +119,9 @@ S=src/busybox; B=build/$QNX_ARCH/busybox; mkdir -p $B
 ```
 
 ```bash
-do_configure() { cp -a "$S/." "$B/" && cp "$RECIPE_DIR/busybox/busybox.config" "$B/.config" && { yes "" || :; } | _bbmake oldconfig >/dev/null; }
+do_configure() { cp -a "$S/." "$B/" && cp "$RECIPE_DIR/busybox/busybox.config" "$B/.config" &&
+  for o in $_BB_OFF; do echo "# CONFIG_$o is not set" >> "$B/.config"; done &&
+  { yes "" || :; } | _bbmake oldconfig >/dev/null; }
 ```
 
 ```bash
@@ -122,8 +134,8 @@ do_install() { install -d "$STAGE$PREFIX/bin" && install -m755 "$B/busybox" "$ST
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- BusyBox 1.36.1 with qnx-ports' QNX support (patches/: the fork's QNX commit), built with the applet configuration of the QNX Everywhere 8.0.4r1 image (busybox.config, from qnx-ports/aports core/busybox).
-- oldconfig asks about options the saved .config does not mention; "yes" takes the defaults. yes ends on SIGPIPE when make is done, which under the driver's pipefail failed the whole step, hence the "|| :".
+- BusyBox with qnx-ports' QNX support (patches/0001: the fork's QNX commit, made on 1.36.1), built with the applet configuration of the QNX Everywhere 8.0.4r1 image (busybox.config, from qnx-ports/aports core/busybox).
+- CONFIG_EXTRA_LDLIBS carries its own double quotes, as a .config string does: since 1.38 the link rule passes it to scripts/trylink unquoted, and a bare "regex socket" split into two arguments and dropped -lsocket. oldconfig asks about options the saved .config does not mention; "yes" takes the defaults. yes ends on SIGPIPE when make is done, which under the driver's pipefail failed the whole step, hence the "|| :". Applets newer than busybox.config that cannot build on QNX are switched off before oldconfig: getfattr (needs <sys/xattr.h>), lsblk (needs <mntent.h> and Linux /sys/block).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH busybox`.
 
@@ -207,23 +219,32 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.36.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add busybox=<version>`), sources in `ported/busybox/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates busybox`; port one with `scripts/port-update busybox`.
+This recipe builds **1.38.0**. Kept from earlier: `1.36.1` ([recipe and patches](versions/1.36.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add busybox=<version>`), sources in `ported/busybox/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates busybox`; port one with `scripts/port-update busybox`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-# BusyBox 1.36.1 with qnx-ports' QNX support (patches/: the fork's QNX
-# commit), built with the applet configuration of the QNX Everywhere 8.0.4r1
+# BusyBox with qnx-ports' QNX support (patches/0001: the fork's QNX commit,
+# made on 1.36.1), built with the applet configuration of the QNX Everywhere 8.0.4r1
 # image (busybox.config, from qnx-ports/aports core/busybox).
-VERSION=1.36.1; GIT=https://github.com/vda-linux/busybox_mirror.git; REF=1_36_1
+VERSION=1.38.0; GIT=https://github.com/vda-linux/busybox_mirror.git; REF=1_38_0
 BUILDSYS=custom
 _bbmake() { make -C "$B" -j"$(nproc)" CROSS_COMPILE="$QNX_HOST/usr/bin/nto${QNX_CPU}-" CC="qcc -V$QCC_TARGET" \
   HOSTCC=gcc HOSTLDFLAGS="" LDFLAGS="-Wl,-z,stack-size=4194304" \
-  CONFIG_EXTRA_CFLAGS="-D_QNX_SOURCE -DBB_GLOBAL_CONST=''" CONFIG_EXTRA_LDLIBS="regex socket" "$@"; }
+  CONFIG_EXTRA_CFLAGS="-D_QNX_SOURCE -DBB_GLOBAL_CONST=''" CONFIG_EXTRA_LDLIBS='"regex socket"' "$@"; }
+# CONFIG_EXTRA_LDLIBS carries its own double quotes, as a .config string
+# does: since 1.38 the link rule passes it to scripts/trylink unquoted, and a
+# bare "regex socket" split into two arguments and dropped -lsocket.
 # oldconfig asks about options the saved .config does not mention; "yes" takes
 # the defaults. yes ends on SIGPIPE when make is done, which under the
 # driver's pipefail failed the whole step, hence the "|| :".
-do_configure() { cp -a "$S/." "$B/" && cp "$RECIPE_DIR/busybox/busybox.config" "$B/.config" && { yes "" || :; } | _bbmake oldconfig >/dev/null; }
+# Applets newer than busybox.config that cannot build on QNX are switched off
+# before oldconfig: getfattr (needs <sys/xattr.h>), lsblk (needs <mntent.h>
+# and Linux /sys/block).
+_BB_OFF="GETFATTR LSBLK"
+do_configure() { cp -a "$S/." "$B/" && cp "$RECIPE_DIR/busybox/busybox.config" "$B/.config" &&
+  for o in $_BB_OFF; do echo "# CONFIG_$o is not set" >> "$B/.config"; done &&
+  { yes "" || :; } | _bbmake oldconfig >/dev/null; }
 do_build() { _bbmake busybox; }
 do_install() { install -d "$STAGE$PREFIX/bin" && install -m755 "$B/busybox" "$STAGE$PREFIX/bin/"; }
 ```

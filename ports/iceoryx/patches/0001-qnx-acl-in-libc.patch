@@ -1,0 +1,27 @@
+iceoryx: ACLs from libc on QNX, not libacl.
+
+The QNX platform layer turns IOX_PLATFORM_FEATURE_ACL on by default
+(iceoryx_platform/qnx/source/acl_feature_on.cpp calls acl_init, acl_set_fd,
+...), and since 2.95 iceoryx_platform links "acl" whenever the feature is on,
+so the QNX link fails with "cannot find -lacl". QNX provides those POSIX.1e
+ACL functions in libc and has no libacl, so link no extra library on QNX and
+keep the ACL-based access control of the shared memory segments.
+
+Upstream-Status: Pending
+
+--- a/iceoryx_platform/CMakeLists.txt
++++ b/iceoryx_platform/CMakeLists.txt
+@@ -83,7 +83,12 @@
+ 
+ if(IOX_PLATFORM_FEATURE_ACL)
+     set(IOX_CFG_FEATURE_ACL "1")
+-    set(ACL_LIB acl)
++    if(QNX)
++        # QNX has the POSIX.1e ACL functions in libc; there is no libacl.
++        set(ACL_LIB)
++    else()
++        set(ACL_LIB acl)
++    endif()
+ else()
+     set(IOX_CFG_FEATURE_ACL "0")
+     set(ACL_LIB)

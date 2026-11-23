@@ -1,4 +1,4 @@
-# giflib 5.2.2
+# giflib 6.1.3
 
 > Library and tools for reading and writing GIF images
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://downloads.sourceforge.net/giflib/giflib-5.2.2.tar.gz |
-| SHA-256 | `be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb` |
+| Upstream | https://downloads.sourceforge.net/giflib/giflib-6.1.3.tar.gz |
+| SHA-256 | `b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://downloads.sourceforge.net/giflib/giflib-5.2.2.tar.gz
+URL=https://downloads.sourceforge.net/giflib/giflib-6.1.3.tar.gz
 mkdir -p dist src/giflib
 curl -fL -o dist/$(basename $URL) $URL
-echo "be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb  dist/$(basename $URL)" | sha256sum -c -
+echo "b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/giflib --strip-components=1
 ```
 
@@ -216,14 +216,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.2.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add giflib=<version>`), sources in `ported/giflib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates giflib`; port one with `scripts/port-update giflib`.
+This recipe builds **6.1.3**. Kept from earlier: `5.2.2` ([recipe and patches](versions/5.2.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add giflib=<version>`), sources in `ported/giflib/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates giflib`; port one with `scripts/port-update giflib`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=5.2.2
-TARBALL=https://downloads.sourceforge.net/giflib/giflib-5.2.2.tar.gz
-SHA256=be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb
+VERSION=6.1.3
+TARBALL=https://downloads.sourceforge.net/giflib/giflib-6.1.3.tar.gz
+SHA256=b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e
 BUILDSYS=custom
 # giflib ships only a Makefile that assumes the host toolchain.
 do_configure() { :; }

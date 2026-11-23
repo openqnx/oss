@@ -1,4 +1,4 @@
-# simdutf 6.4.2
+# simdutf 9.4.0
 
 > Fast SIMD Unicode validation and transcoding library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/simdutf/simdutf.git (tag `v6.4.2`) |
+| Upstream | https://github.com/simdutf/simdutf.git (tag `v9.4.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v6.4.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v9.4.0 --recurse-submodules --shallow-submodules \
     https://github.com/simdutf/simdutf.git src/simdutf
 ```
 
@@ -187,12 +187,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **6.4.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add simdutf=<version>`), sources in `ported/simdutf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates simdutf`; port one with `scripts/port-update simdutf`.
+This recipe builds **9.4.0**. Kept from earlier: `6.4.2` ([recipe and patches](versions/6.4.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add simdutf=<version>`), sources in `ported/simdutf/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates simdutf`; port one with `scripts/port-update simdutf`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=6.4.2; GIT=https://github.com/simdutf/simdutf.git; REF=v6.4.2
+VERSION=9.4.0; GIT=https://github.com/simdutf/simdutf.git; REF=v9.4.0
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DSIMDUTF_TESTS=OFF -DSIMDUTF_BENCHMARKS=OFF
                    -DSIMDUTF_TOOLS=OFF )

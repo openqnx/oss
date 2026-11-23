@@ -1,4 +1,4 @@
-# git 2.51.0
+# git 2.56.1
 
 > Fast distributed version control system
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.51.0.tar.xz |
-| SHA-256 | `60a7c2251cc2e588d5cd87bae567260617c6de0c22dca9cdbfc4c7d2b8990b62` |
+| Upstream | https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.56.1.tar.xz |
+| SHA-256 | `f0b0bf89264b9bd2e1c640363e7529643989da76281600473c50745cd34a607f` |
 | Build system | custom (see recipe) |
 | QNX patches | 1 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`curl`](../curl/) [`expat`](../expat/) [`pcre2`](../pcre2/) [`perl`](../perl/) [`perl-error`](../perl-error/) [`libiconv`](../libiconv/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.51.0.tar.xz
+URL=https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.56.1.tar.xz
 mkdir -p dist src/git
 curl -fL -o dist/$(basename $URL) $URL
-echo "60a7c2251cc2e588d5cd87bae567260617c6de0c22dca9cdbfc4c7d2b8990b62  dist/$(basename $URL)" | sha256sum -c -
+echo "f0b0bf89264b9bd2e1c640363e7529643989da76281600473c50745cd34a607f  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/git --strip-components=1
 ```
 
@@ -99,7 +99,7 @@ patch -p1 -d src/git < ports/git/patches/0001-aports-qnx-build.patch
 > Taken from qnx-ports/aports extra/git -- the APKBUILD the QNX Everywhere 8.0.4r1
 > image's package is built from.
 
-Touches: `git-2.51.0/config.mak.uname`, `git-2.51.0/t/helper/test-rot13-filter.c` · Upstream status: QNX-specific
+Touches: `config.mak.uname`, `t/helper/test-rot13-filter.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -124,7 +124,7 @@ do_install() { _gitmake DESTDIR="$STAGE" install; }
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Git for the target. Version as in the QNX Everywhere 8.0.4r1 image.
-- Git's Makefile is configured by variables rather than a configure script. uname_S=QNX selects its QNX settings; the rest names the target's paths and the features that are cross compiled here. git builds its own link list (EXTLIBS: -lz, -lcrypto, ...); setting EXTLIBS here replaced it ("undefined reference to crc32"). NEEDS_SOCKET adds QNX's -lsocket to it, and NO_REGEX builds git's bundled regex, so no -lregex. The staged GNU libiconv's <iconv.h> renames iconv() to libiconv(), which QNX's libc lacks: NEEDS_LIBICONV links -liconv.
+- Git's Makefile is configured by variables rather than a configure script. uname_S=QNX selects its QNX settings; the rest names the target's paths and the features that are cross compiled here. git builds its own link list (EXTLIBS: -lz, -lcrypto, ...); setting EXTLIBS here replaced it ("undefined reference to crc32"). NEEDS_SOCKET adds QNX's -lsocket to it, and NO_REGEX builds git's bundled regex, so no -lregex. The staged GNU libiconv's <iconv.h> renames iconv() to libiconv(), which QNX's libc lacks: NEEDS_LIBICONV links -liconv. NO_RUST: 2.56's Makefile builds libgitcore.a with cargo unless told not to; Rust is still optional (until Git 3.0) and there is no Rust toolchain for QNX here, so the C implementations are built as before.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH git`.
 
@@ -214,15 +214,15 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.51.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add git=<version>`), sources in `ported/git/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates git`; port one with `scripts/port-update git`.
+This recipe builds **2.56.1**. Kept from earlier: `2.51.0` ([recipe and patches](versions/2.51.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add git=<version>`), sources in `ported/git/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates git`; port one with `scripts/port-update git`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
 # Git for the target. Version as in the QNX Everywhere 8.0.4r1 image.
-VERSION=2.51.0
-TARBALL=https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.51.0.tar.xz
-SHA256=60a7c2251cc2e588d5cd87bae567260617c6de0c22dca9cdbfc4c7d2b8990b62
+VERSION=2.56.1
+TARBALL=https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.56.1.tar.xz
+SHA256=f0b0bf89264b9bd2e1c640363e7529643989da76281600473c50745cd34a607f
 DEPS="zlib openssl curl expat pcre2 perl perl-error libiconv"
 BUILDSYS=custom
 # Git's Makefile is configured by variables rather than a configure script.
@@ -233,11 +233,14 @@ BUILDSYS=custom
 # -lsocket to it, and NO_REGEX builds git's bundled regex, so no -lregex.
 # The staged GNU libiconv's <iconv.h> renames iconv() to libiconv(), which
 # QNX's libc lacks: NEEDS_LIBICONV links -liconv.
+# NO_RUST: 2.56's Makefile builds libgitcore.a with cargo unless told
+# not to; Rust is still optional (until Git 3.0) and there is no Rust
+# toolchain for QNX here, so the C implementations are built as before.
 _gitmake() { make -C "$B" -j"$(nproc)" prefix="$PREFIX" CC="qcc -V$QCC_TARGET" AR="$QNX_HOST/usr/bin/nto${QNX_CPU}-ar" \
   uname_S=QNX uname_M="$QNX_CPU" CFLAGS="-O2 -D_QNX_SOURCE -I$STAGE_SYSROOT$PREFIX/include" LDFLAGS="-L$STAGE_SYSROOT$PREFIX/lib" \
   NO_GETTEXT=1 NO_TCLTK=1 NO_PYTHON=1 USE_LIBPCRE2=1 CURL_CONFIG=false CURL_LDFLAGS="-lcurl" \
   PERL_PATH=/usr/local/bin/perl SHELL_PATH=/bin/sh NO_REGEX=NeedsStartEnd HOST_CPU="$QNX_CPU" \
-  NEEDS_SOCKET=YesPlease NEEDS_LIBICONV=YesPlease "$@"; }
+  NEEDS_SOCKET=YesPlease NEEDS_LIBICONV=YesPlease NO_RUST=YesPlease "$@"; }
 do_configure() { cp -a "$S/." "$B/"; }
 do_build() { _gitmake all; }
 do_install() { _gitmake DESTDIR="$STAGE" install; }

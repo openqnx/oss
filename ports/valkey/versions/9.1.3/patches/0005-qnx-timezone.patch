@@ -1,0 +1,22 @@
+Take the timezone offset from the timezone variable on QNX.
+
+getTimeZone() reads the global timezone on Linux and Solaris and otherwise
+calls gettimeofday(NULL, &tz) for the struct timezone. QNX's gettimeofday()
+writes through its first argument unconditionally (hazard 145): the server
+would die with SIGSEGV in initServerConfig() on every start, as redis did.
+QNX has the POSIX/XSI timezone variable, set by the tzset() main() calls
+first; use it.
+
+Upstream-Status: QNX-specific
+
+--- a/src/util.c
++++ b/src/util.c
+@@ -1254,7 +1254,7 @@
+  * i.e timezone variables are linux specific.
+  */
+ long getTimeZone(void) {
+-#if defined(__linux__) || defined(__sun)
++#if defined(__linux__) || defined(__sun) || defined(__QNX__)
+     return timezone;
+ #else
+     struct timezone tz;

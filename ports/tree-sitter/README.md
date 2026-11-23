@@ -1,4 +1,4 @@
-# tree-sitter 0.25.9
+# tree-sitter 0.27.2
 
 > Incremental parsing library for programming tools
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/tree-sitter/tree-sitter.git (tag `v0.25.9`) |
+| Upstream | https://github.com/tree-sitter/tree-sitter.git (tag `v0.27.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,11 +72,9 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v0.25.9 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v0.27.2 --recurse-submodules --shallow-submodules \
     https://github.com/tree-sitter/tree-sitter.git src/tree-sitter
 ```
-
-The project lives in the `lib/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
@@ -85,7 +83,7 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 ### 4. Configure, build and install into the staging tree
 
 ```bash
-cmake -S src/tree-sitter/lib -B build/$QNX_ARCH/tree-sitter -G Ninja \
+cmake -S src/tree-sitter -B build/$QNX_ARCH/tree-sitter -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
@@ -94,6 +92,10 @@ cmake -S src/tree-sitter/lib -B build/$QNX_ARCH/tree-sitter -G Ninja \
 cmake --build build/$QNX_ARCH/tree-sitter -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/tree-sitter
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- 0.26 moved the library's CMakeLists.txt from lib/ to the top of the tree.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tree-sitter`.
 
@@ -167,7 +169,10 @@ PASS tree-sitter
    - ts_parser_new
    - no language set yet
    - parsing without a language returns NULL
-   - timeout round trip
+   - parse_with_options without a language returns NULL
+   - ordered included ranges accepted
+   - included ranges round trip
+   - out-of-order ranges rejected
    - TSPoint layout
    - language ABI version
 
@@ -186,14 +191,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **0.25.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter=<version>`), sources in `ported/tree-sitter/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter`; port one with `scripts/port-update tree-sitter`.
+This recipe builds **0.27.2**. Kept from earlier: `0.25.9` ([recipe and patches](versions/0.25.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tree-sitter=<version>`), sources in `ported/tree-sitter/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tree-sitter`; port one with `scripts/port-update tree-sitter`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=0.25.9; GIT=https://github.com/tree-sitter/tree-sitter.git; REF=v0.25.9
+VERSION=0.27.2; GIT=https://github.com/tree-sitter/tree-sitter.git; REF=v0.27.2
 BUILDSYS=cmake
-SUBDIR=lib
+# 0.26 moved the library's CMakeLists.txt from lib/ to the top of the tree.
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DTREE_SITTER_FEATURE_WASM=OFF )
 ```
 </details>

@@ -1,0 +1,32 @@
+# tree-sitter 0.27.2-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-23T14:29:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tree-sitter qnx-test-tree-sitter qnx-port-tests
+(1/4) Installing qnx-port-tests (1.0-r0)
+(2/4) Installing tree (2.3.2-r0)
+(3/4) Installing tree-sitter (0.27.2-r0)
+(4/4) Installing qnx-test-tree-sitter (1.0-r1)
+OK: 132.0 MiB in 22 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tree_sitter
+     == tree-sitter ==
+       ok   ts_parser_new
+       ok   no language set yet
+       ok   parsing without a language returns NULL
+       ok   parse_with_options without a language returns NULL
+       ok   ordered included ranges accepted
+       ok   included ranges round trip
+       ok   out-of-order ranges rejected
+       ok   TSPoint layout
+       ok   language ABI version
+       info language ABI 15 (min 13)
+     PASS tree-sitter
+PASS test_tree_sitter
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

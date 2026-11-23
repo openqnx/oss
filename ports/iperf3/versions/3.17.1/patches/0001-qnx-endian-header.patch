@@ -1,0 +1,30 @@
+iperf3: byte-order helpers on QNX.
+
+QNX has no <endian.h>. Take the BSD names from <sys/param.h> and the conversion
+helpers from <net/netbyte.h>.
+
+Upstream-Status: QNX-specific
+
+diff --git a/src/portable_endian.h b/src/portable_endian.h
+index dbb6789..4ad1147 100644
+--- a/src/portable_endian.h
++++ b/src/portable_endian.h
+@@ -124,6 +124,18 @@
+ #	define __LITTLE_ENDIAN LITTLE_ENDIAN
+ #	define __PDP_ENDIAN    PDP_ENDIAN
+ 
++#elif defined(__QNX__) || defined(__QNXNTO__)
++
++// QNX has no <endian.h>. The BSD-style names live in <sys/param.h> and the
++// conversion helpers in <net/netbyte.h>, which is what the rest of the QNX
++// networking stack uses.
++#	include <sys/param.h>
++#	include <net/netbyte.h>
++#	define __BYTE_ORDER    BYTE_ORDER
++#	define __BIG_ENDIAN    BIG_ENDIAN
++#	define __LITTLE_ENDIAN LITTLE_ENDIAN
++#	define __PDP_ENDIAN    PDP_ENDIAN
++
+ #else
+ 
+ // Unsupported platforms.

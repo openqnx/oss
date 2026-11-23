@@ -1,4 +1,4 @@
-# emacs 30.2
+# emacs 31.1
 
 > GNU Emacs extensible text editor (terminal build)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz |
-| SHA-256 | `b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9` |
+| Upstream | https://ftp.gnu.org/gnu/emacs/emacs-31.1.tar.xz |
+| SHA-256 | `1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586` |
 | Build system | custom (see recipe) |
 | QNX patches | 4 |
 | Build dependencies | [`ncurses`](../ncurses/) [`gnutls`](../gnutls/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`dbus`](../dbus/) [`lcms2`](../lcms2/) [`sqlite`](../sqlite/) [`tree-sitter`](../tree-sitter/) |
@@ -82,10 +82,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz
+URL=https://ftp.gnu.org/gnu/emacs/emacs-31.1.tar.xz
 mkdir -p dist src/emacs
 curl -fL -o dist/$(basename $URL) $URL
-echo "b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9  dist/$(basename $URL)" | sha256sum -c -
+echo "1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/emacs --strip-components=1
 ```
 
@@ -259,7 +259,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **30.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add emacs=<version>`), sources in `ported/emacs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates emacs`; port one with `scripts/port-update emacs`.
+This recipe builds **31.1**. Kept from earlier: `30.2` ([recipe and patches](versions/30.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add emacs=<version>`), sources in `ported/emacs/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates emacs`; port one with `scripts/port-update emacs`.
 
 <details><summary>recipe.sh</summary>
 
@@ -271,9 +271,9 @@ This recipe builds **30.2**. Every version stays available: packages in `dists/8
 # needs a running Emacs: a native build for the build host is made first and
 # used for that (EMACS / BOOTSTRAPEMACS), then the target build reuses its
 # compiled Lisp.
-VERSION=30.2
-TARBALL=https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz
-SHA256=b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9
+VERSION=31.1
+TARBALL=https://ftp.gnu.org/gnu/emacs/emacs-31.1.tar.xz
+SHA256=1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586
 # Also linked at run time (found by scripts/gen-dependency-index): dbus lcms2 sqlite tree-sitter
 DEPS="ncurses gnutls libxml2 zlib dbus lcms2 sqlite tree-sitter"
 BUILDSYS=custom

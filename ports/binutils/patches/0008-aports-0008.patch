@@ -14,11 +14,9 @@ updating config files to support qnx properly
 
 CLT-9242
 ---
-diff --git a/config.sub b/config.sub
-index 2c6a07ab3c3..42ec47ae4a7 100755
 --- a/config.sub
 +++ b/config.sub
-@@ -1386,9 +1386,6 @@ case $os in
+@@ -1611,9 +1611,6 @@
  	psos*)
  		os=psos
  		;;
@@ -28,4 +26,3 @@ index 2c6a07ab3c3..42ec47ae4a7 100755
  	hiux*)
  		os=hiuxwe2
  		;;
-

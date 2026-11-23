@@ -1,4 +1,4 @@
-# libmetal 2024.10.0
+# libmetal 2026.10.0
 
 > Abstraction library for device access, interrupts and shared memory
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/OpenAMP/libmetal.git (tag `v2024.10.0`) |
+| Upstream | https://github.com/OpenAMP/libmetal.git (tag `v2026.10.0`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -69,17 +69,18 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2024.10.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2026.10.0 --recurse-submodules --shallow-submodules \
     https://github.com/OpenAMP/libmetal.git src/libmetal
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/libmetal < ports/libmetal/patches/0001-qnx-from-qnx-ports.patch
 patch -p1 -d src/libmetal < ports/libmetal/patches/0002-qnx-mutex-assert-timestamp.patch
+patch -p1 -d src/libmetal < ports/libmetal/patches/0003-qnx-init-irq-declarations.patch
 ```
 
 **[`0001-qnx-from-qnx-ports.patch`](patches/0001-qnx-from-qnx-ports.patch)** — Add QNX support
@@ -189,6 +190,14 @@ Touches: `lib/CMakeLists.txt`, `lib/system/qnx/CMakeLists.txt`, `lib/system/qnx/
 > sync_t instead (held whenever an owner is recorded).
 
 Touches: `lib/system/qnx/condition.h`, `lib/system/qnx/mutex.h`, `lib/system/qnx/sys.h`, `lib/system/qnx/time.c` · Upstream status: QNX-specific
+
+**[`0003-qnx-init-irq-declarations.patch`](patches/0003-qnx-init-irq-declarations.patch)** — libmetal: the QNX init code includes its own irq.h.
+
+> 2026.10 no longer has <metal/irq.h> include the system irq.h, so
+> metal_qnx_irq_init() and metal_qnx_irq_shutdown() were undeclared in
+> lib/system/qnx/init.c (an error with -Werror=implicit-function-declaration).
+
+Touches: `lib/system/qnx/init.c` · Upstream status: QNX-specific (the QNX system layer is carried here)
 
 ### 4. Configure, build and install into the staging tree
 
@@ -319,12 +328,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2024.10.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmetal=<version>`), sources in `ported/libmetal/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmetal`; port one with `scripts/port-update libmetal`.
+This recipe builds **2026.10.0**. Kept from earlier: `2024.10.0` ([recipe and patches](versions/2024.10.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libmetal=<version>`), sources in `ported/libmetal/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libmetal`; port one with `scripts/port-update libmetal`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2024.10.0; GIT=https://github.com/OpenAMP/libmetal.git; REF=v2024.10.0
+VERSION=2026.10.0; GIT=https://github.com/OpenAMP/libmetal.git; REF=v2026.10.0
 # libmetal builds with -Werror, and inline functions of the QNX system layer
 # leave parameters unused (patches/0002 keeps the calls out of metal_assert()).
 CMAKE_ARGS_EXTRA=( "-DCMAKE_C_FLAGS=-isystem $STAGE$PREFIX/include -Wno-error=unused-parameter" -DCMAKE_INSTALL_INCLUDEDIR=include -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DWITH_DOC=OFF -DWITH_EXAMPLES=OFF -DWITH_TESTS=OFF -DWITH_DEFAULT_LOGGER=ON )

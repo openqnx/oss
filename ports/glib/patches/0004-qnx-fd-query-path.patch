@@ -1,0 +1,78 @@
+glib: implement g_unix_fd_query_path() on QNX with iofdinfo().
+
+g_unix_fd_query_path() (new in 2.88) has a branch per platform -- readlink
+of /proc/self/fd/N on Linux, fcntl(F_KINFO) on FreeBSD, fcntl(F_GETPATH) on
+macOS/NetBSD/OpenBSD -- and ends in
+'#error "g_unix_fd_query_path() not supported on this platform"', which
+stops the QNX build in glib/glib-unix.c. QNX has neither /proc/self/fd
+links nor F_GETPATH, but libc's iofdinfo() (<sys/iomgr.h>) asks the
+resource manager behind the FD for the path it was opened by. Use it,
+growing the buffer when the path is longer; an FD whose resource manager
+keeps no path (pipe, socket) gets G_FILE_ERROR_NOSYS like the Hurd branch.
+
+Upstream-Status: Pending
+
+--- a/glib/glib-unix.c
++++ b/glib/glib-unix.c
+@@ -57,6 +57,10 @@
+ #include <sys/syscall.h>  /* for syscall and SYS_getdents64 */
+ #endif
+ 
++#ifdef __QNX__
++#include <sys/iomgr.h>    /* for iofdinfo, used by g_unix_fd_query_path */
++#endif
++
+ #ifdef HAVE_SYS_RESOURCE_H
+ #include <sys/resource.h>
+ #endif /* HAVE_SYS_RESOURCE_H */
+@@ -1006,6 +1010,50 @@
+   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOSYS,
+                "g_unix_fd_query_path() not supported on HURD");
+   return NULL;
++#elif defined (__QNX__)
++  /*
++   * QNX has no /proc/self/fd links and no F_GETPATH. iofdinfo() asks the
++   * resource manager that owns the FD for the path it was opened by (the
++   * path "pidin fds" shows). The return value is the length of the whole
++   * path, which can be longer than the buffer: grow it and ask again. A
++   * resource manager that keeps no path (pipes, sockets, some devices)
++   * gives an empty one.
++   */
++  struct _fdinfo info;
++  gsize size = 1024;
++  char *path = NULL;
++  int len;
++
++  for (;;)
++    {
++      path = g_realloc (path, size);
++      memset (&info, 0, sizeof (info));
++      len = iofdinfo (fd, 0, &info, path, (int) size);
++      if (len < 0)
++        {
++          int errsv = errno;
++
++          g_free (path);
++          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errsv),
++                       "Error querying file information for FD %d: %s",
++                       fd, g_strerror (errsv));
++          return NULL;
++        }
++      if ((gsize) len < size - 1 || size >= 64 * 1024)
++        break;
++      size *= 2;
++    }
++
++  path[size - 1] = '\0';
++  if (path[0] == '\0')
++    {
++      g_free (path);
++      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOSYS,
++                   "No path known for FD %d", fd);
++      return NULL;
++    }
++
++  return path;
+ #else
+   #error "g_unix_fd_query_path() not supported on this platform"
+ #endif

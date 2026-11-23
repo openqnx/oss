@@ -1,6 +1,6 @@
 # ros2-jazzy-moveit2 20260128-r2 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T08:17:21Z   packages from: apk:local-dists
+# date: 2026-11-23T10:48:15Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -77,10 +77,10 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_r
        ok   check_state_validity: (0, 0) collides with the box
        ok   check_state_validity: (0, pi/2) is collision-free
        ok   Pilz PTP (0,0) -> (pi/2,0): 2.5708 s (trapezoid pi/2 + 1 = 2.5708 s), error code 1
-       ok   OMPL RRTConnect found a plan around the box (70 points, error code 1, attempt 1 of 3)
-       ok   it ends at the goal (1.2, 0) (got (1.2000, 0.0001))
-       ok   every trajectory point is collision-free (70 checked)
-       ok   it is time-parameterised: 6.877 s >= the 3.4 s straight-line minimum
+       ok   OMPL RRTConnect found a plan around the box (68 points, error code 1, attempt 1 of 3)
+       ok   it ends at the goal (1.2, 0) (got (1.2000, -0.0001))
+       ok   every trajectory point is collision-free (68 checked)
+       ok   it is time-parameterised: 6.687 s >= the 3.4 s straight-line minimum
      PASS ros2-jazzy-moveit2
 PASS test_ros2_jazzy_moveit2
 --------------------------------------------

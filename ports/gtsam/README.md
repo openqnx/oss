@@ -1,4 +1,4 @@
-# gtsam 4.2
+# gtsam 4.3.0
 
 > Georgia Tech Smoothing and Mapping library for robotics and SLAM
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/borglab/gtsam.git (tag `4.2`) |
+| Upstream | https://github.com/borglab/gtsam.git (tag `4.3.0`) |
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`boost`](../boost/) [`eigen`](../eigen/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 4.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 4.3.0 --recurse-submodules --shallow-submodules \
     https://github.com/borglab/gtsam.git src/gtsam
 ```
 
@@ -116,12 +116,17 @@ cmake -S src/gtsam -B build/$QNX_ARCH/gtsam -G Ninja \
       -DGTSAM_WITH_TBB=OFF \
       -DGTSAM_USE_SYSTEM_EIGEN=ON \
       -DGTSAM_BUILD_UNSTABLE=OFF \
+      -DGTSAM_BUILD_WITH_WERROR=OFF \
       -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF \
       -DBoost_NO_BOOST_CMAKE=OFF \
       -DBOOST_ROOT="$STAGE$PREFIX"
 cmake --build build/$QNX_ARCH/gtsam -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/gtsam
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- GTSAM_BUILD_WITH_WERROR (on by default when GTSAM is the top-level project) turns every warning into an error. With QNX's libc++, GCC 12 then stops at a false positive inside <new> (-Walloc-size-larger-than on a std::vector copy inlined into HybridNonlinearFactor.cpp: a size it cannot prove is never reached). A release build keeps the warnings as warnings.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gtsam`.
 
@@ -217,15 +222,20 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtsam=<version>`), sources in `ported/gtsam/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtsam`; port one with `scripts/port-update gtsam`.
+This recipe builds **4.3.0**. Kept from earlier: `4.2` ([recipe and patches](versions/4.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gtsam=<version>`), sources in `ported/gtsam/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gtsam`; port one with `scripts/port-update gtsam`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.2; GIT=https://github.com/borglab/gtsam.git; REF=4.2
+VERSION=4.3.0; GIT=https://github.com/borglab/gtsam.git; REF=4.3.0
 DEPS="boost eigen"
+# GTSAM_BUILD_WITH_WERROR (on by default when GTSAM is the top-level
+# project) turns every warning into an error. With QNX's libc++, GCC 12 then
+# stops at a false positive inside <new> (-Walloc-size-larger-than on a
+# std::vector copy inlined into HybridNonlinearFactor.cpp: a size it cannot
+# prove is never reached). A release build keeps the warnings as warnings.
 CMAKE_ARGS_EXTRA=( -DGTSAM_BUILD_TESTS=OFF -DGTSAM_BUILD_EXAMPLES_ALWAYS=OFF -DGTSAM_BUILD_PYTHON=OFF
-                   -DGTSAM_WITH_TBB=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON -DGTSAM_BUILD_UNSTABLE=OFF
+                   -DGTSAM_WITH_TBB=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON -DGTSAM_BUILD_UNSTABLE=OFF -DGTSAM_BUILD_WITH_WERROR=OFF
                    -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DBoost_NO_BOOST_CMAKE=OFF -DBOOST_ROOT="$STAGE$PREFIX" )
 ```
 </details>

@@ -1,4 +1,4 @@
-# iceoryx 2.0.6
+# iceoryx 2.95.8
 
 > Eclipse iceoryx, true zero-copy inter-process communication middleware
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-iceoryx/iceoryx.git (tag `v2.0.6`) |
+| Upstream | https://github.com/eclipse-iceoryx/iceoryx.git (tag `v2.95.8`) |
 | Build system | CMake |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.0.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.95.8 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-iceoryx/iceoryx.git src/iceoryx
 ```
 
@@ -80,7 +80,22 @@ The project lives in the `iceoryx_meta/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/iceoryx < ports/iceoryx/patches/0001-qnx-acl-in-libc.patch
+```
+
+**[`0001-qnx-acl-in-libc.patch`](patches/0001-qnx-acl-in-libc.patch)** — iceoryx: ACLs from libc on QNX, not libacl.
+
+> The QNX platform layer turns IOX_PLATFORM_FEATURE_ACL on by default
+> (iceoryx_platform/qnx/source/acl_feature_on.cpp calls acl_init, acl_set_fd,
+> ...), and since 2.95 iceoryx_platform links "acl" whenever the feature is on,
+> so the QNX link fails with "cannot find -lacl". QNX provides those POSIX.1e
+> ACL functions in libc and has no libacl, so link no extra library on QNX and
+> keep the ACL-based access control of the shared memory segments.
+
+Touches: `iceoryx_platform/CMakeLists.txt` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -178,6 +193,7 @@ PASS iceoryx
    - push beyond capacity is rejected
    - fixed string size
    - fixed string content
+   - string truncates to its capacity
    - empty optional
    - engaged optional
 
@@ -194,12 +210,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.0.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iceoryx=<version>`), sources in `ported/iceoryx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iceoryx`; port one with `scripts/port-update iceoryx`.
+This recipe builds **2.95.8**. Kept from earlier: `2.0.6` ([recipe and patches](versions/2.0.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add iceoryx=<version>`), sources in `ported/iceoryx/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates iceoryx`; port one with `scripts/port-update iceoryx`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.0.6; GIT=https://github.com/eclipse-iceoryx/iceoryx.git; REF=v2.0.6
+VERSION=2.95.8; GIT=https://github.com/eclipse-iceoryx/iceoryx.git; REF=v2.95.8
 SUBDIR=iceoryx_meta
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DBUILD_TEST=OFF -DEXAMPLES=OFF
                    -DTOML_CONFIG=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON )

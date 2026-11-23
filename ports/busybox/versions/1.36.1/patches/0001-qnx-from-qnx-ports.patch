@@ -1,0 +1,282 @@
+From 7b389f762ae35f2ca7b9e8f0fad5acbd39a022b3 Mon Sep 17 00:00:00 2001
+From: Aaron Bassett <abassett@qnx.com>
+Date: Thu, 16 Jul 2026 19:54:33 +0000
+Subject: [PATCH] migrate qnx patch from aports
+
+Imported from qnx-ports (vda-linux/busybox_mirror 1_36_1...qnx-1_36_1_p0); original authorship kept.
+
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+---
+ coreutils/ls.c          |  6 +++---
+ coreutils/stat.c        | 17 ++++++++++-------
+ coreutils/uname.c       | 17 +++++++++++++++++
+ include/libbb.h         |  4 ++--
+ include/platform.h      | 20 ++++++++++++++++++++
+ libbb/makedev.c         |  9 ++++++++-
+ libbb/mode_string.c     | 10 +++++++++-
+ scripts/kconfig/mconf.c |  2 +-
+ 8 files changed, 70 insertions(+), 15 deletions(-)
+
+diff --git a/coreutils/ls.c b/coreutils/ls.c
+index b69b80460..8593e8fdf 100644
+--- a/coreutils/ls.c
++++ b/coreutils/ls.c
+@@ -370,7 +370,7 @@ struct globals {
+    045 gray foreground               057 white background
+ */
+ #define COLOR(mode) ( \
+-	/*un  fi  chr  -  dir  -  blk  -  file -  link -  sock -   -  exe */ \
++	/*un  fi  chr  -  dir QNF  blk  -  file -  link -  sock -   -  exe */ \
+ 	"\037\043\043\045\042\045\043\043\000\045\044\045\043\045\045\040" \
+ 	[TYPEINDEX(mode)])
+ /* Select normal (0) [actually "reset all"] or bold (1)
+@@ -379,8 +379,8 @@ struct globals {
+  * Note: coreutils 6.9 uses inverted red for setuid binaries.
+  */
+ #define ATTR(mode) ( \
+-	/*un fi chr - dir - blk - file- link- sock- -  exe */ \
+-	"\01\00\01\07\01\07\01\07\00\07\01\07\01\07\07\01" \
++	/*un fi chr - dir QNF blk - file- link- sock- -  exe */ \
++	"\01\00\01\07\01\00\01\07\00\07\01\07\01\07\07\01" \
+ 	[TYPEINDEX(mode)])
+ 
+ #if ENABLE_FEATURE_LS_COLOR
+diff --git a/coreutils/stat.c b/coreutils/stat.c
+index 2c2909e7e..dab0d1d43 100644
+--- a/coreutils/stat.c
++++ b/coreutils/stat.c
+@@ -106,6 +106,9 @@
+ 
+ #include "libbb.h"
+ #include "common_bufsiz.h"
++#ifdef __QNX__
++# include <sys/mount.h>
++#endif
+ 
+ enum {
+ 	OPT_TERSE       = (1 << 0),
+@@ -227,7 +230,7 @@ static const char *human_fstype(uint32_t f_type)
+ 
+ /* "man statfs" says that statfsbuf->f_fsid is a mess */
+ /* coreutils treats it as an array of ints, most significant first */
+-static unsigned long long get_f_fsid(const struct statfs *statfsbuf)
++static unsigned long long get_f_fsid(const struct statvfs *statfsbuf)
+ {
+ 	const unsigned *p = (const void*) &statfsbuf->f_fsid;
+ 	unsigned sz = sizeof(statfsbuf->f_fsid) / sizeof(unsigned);
+@@ -260,7 +263,7 @@ static void FAST_FUNC print_statfs(char *pformat, const char m,
+ 		const char *const filename, const void *data
+ 		IF_SELINUX(, security_context_t scontext))
+ {
+-	const struct statfs *statfsbuf = data;
++	const struct statvfs *statfsbuf = data;
+ 	if (m == 'n') {
+ 		printfs(pformat, filename);
+ 	} else if (m == 'i') {
+@@ -268,12 +271,12 @@ static void FAST_FUNC print_statfs(char *pformat, const char m,
+ 		printf(pformat, get_f_fsid(statfsbuf));
+ 	} else if (m == 'l') {
+ 		strcat(pformat, "lu");
+-		printf(pformat, (unsigned long) statfsbuf->f_namelen);
++		printf(pformat, (unsigned long) statfsbuf->f_namemax);
+ 	} else if (m == 't') {
+ 		strcat(pformat, "lx");
+-		printf(pformat, (unsigned long) statfsbuf->f_type); /* no equiv */
++		printf(pformat, statfsbuf->f_basetype); /* no equiv */
+ 	} else if (m == 'T') {
+-		printfs(pformat, human_fstype(statfsbuf->f_type));
++		printfs(pformat, statfsbuf->f_basetype);
+ 	} else if (m == 'b') {
+ 		strcat(pformat, "llu");
+ 		printf(pformat, (unsigned long long) statfsbuf->f_blocks);
+@@ -470,7 +473,7 @@ static void print_it(const char *masterformat,
+ #endif
+ static bool do_statfs(const char *filename, const char *format)
+ {
+-	struct statfs statfsbuf;
++	struct statvfs statfsbuf;
+ #if !ENABLE_FEATURE_STAT_FORMAT
+ 	const char *format;
+ #endif
+@@ -488,7 +491,7 @@ static bool do_statfs(const char *filename, const char *format)
+ 		}
+ 	}
+ #endif
+-	if (statfs(filename, &statfsbuf) != 0) {
++	if (statvfs(filename, &statfsbuf) != 0) {
+ 		bb_perror_msg("can't read file system information for '%s'", filename);
+ 		return 0;
+ 	}
+diff --git a/coreutils/uname.c b/coreutils/uname.c
+index 6c0bdf096..6cd5917ac 100644
+--- a/coreutils/uname.c
++++ b/coreutils/uname.c
+@@ -170,15 +170,32 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ 		}
+ 	}
+ #endif
++#if defined(__QNX__)
++    {
++         char buff[_SYSNAME_SIZE];
++         confstr(_CS_ARCHITECTURE, buff, sizeof(buff));
++
++         //strcpy(uname_info.name.machine, buff);
++         strcpy(uname_info.processor, buff);
++    }
++#endif
++
+ 	if (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
++#if defined(__QNX__)
++		puts(uname_info.processor);
++#else
+ 		puts(uname_info.name.machine);
++#endif
+ 	} else {
+ #if ENABLE_UNAME
+ 		/* "uname" */
+ 		const char *fmt;
+ 		const unsigned short *delta;
+ 
++#if !defined(__QNX__)
++		// QNX uses -p for aarch information
+ 		strcpy(uname_info.processor, unknown_str);
++#endif
+ 		strcpy(uname_info.platform, unknown_str);
+ 		strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
+ # if ENABLE_FEDORA_COMPAT
+diff --git a/include/libbb.h b/include/libbb.h
+index cca33a177..5a5651629 100644
+--- a/include/libbb.h
++++ b/include/libbb.h
+@@ -192,7 +192,7 @@ int klogctl(int type, char *b, int len);
+ # define BUFSIZ 4096
+ #endif
+ 
+-#if __GNUC_PREREQ(5,0)
++#if (defined(__clang__) && defined(__has_builtin) && __has_builtin(__builtin_bswap16)) ||  __GNUC_PREREQ(5,0)
+ /* Since musl is apparently unable to get it right and would use
+  * a function call to a single-instruction function of "bswap %eax",
+  * reroute to gcc builtins:
+@@ -1834,7 +1834,7 @@ int bb_xioctl(int fd, unsigned request, void *argp) FAST_FUNC;
+ char *is_in_ino_dev_hashtable(const struct stat *statbuf) FAST_FUNC;
+ void add_to_ino_dev_hashtable(const struct stat *statbuf, const char *name) FAST_FUNC;
+ void reset_ino_dev_hashtable(void) FAST_FUNC;
+-#ifdef __GLIBC__
++#if defined(__GLIBC__) || defined(__QNX__)
+ /* At least glibc has horrendously large inline for this, so wrap it */
+ unsigned long long bb_makedev(unsigned major, unsigned minor) FAST_FUNC;
+ #undef makedev
+diff --git a/include/platform.h b/include/platform.h
+index ea0512f36..6b4a7499a 100644
+--- a/include/platform.h
++++ b/include/platform.h
+@@ -164,6 +164,11 @@
+ # define bswap_64 __bswap64
+ # define bswap_32 __bswap32
+ # define bswap_16 __bswap16
++#elif defined(__QNX__)
++# include <sys/param.h>
++# define bswap_64 __builtin_bswap64
++# define bswap_32 __builtin_bswap32
++# define bswap_16 __builtin_bswap16
+ #else
+ # include <byteswap.h>
+ # include <endian.h>
+@@ -490,6 +495,21 @@ typedef unsigned smalluint;
+ # undef HAVE_PRINTF_PERCENTM
+ #endif
+ 
++#if defined(__QNX__)
++# undef HAVE_MNTENT_H
++# undef HAVE_SYS_STATFS_H
++# undef HAVE_UNLOCKED_LINE_OPS
++# undef HAVE_STRVERSCMP
++# undef HAVE_STRCHRNUL
++# undef HAVE_DPRINTF
++# undef HAVE_MEMPCPY
++# undef HAVE_MEMRCHR
++# define SA_RESTART 0
++# ifndef __X86__
++#  undef HAVE_GETLINE
++# endif
++#endif
++
+ #if defined(__dietlibc__)
+ # undef HAVE_STRCHRNUL
+ #endif
+diff --git a/libbb/makedev.c b/libbb/makedev.c
+index 06c4039a3..71a6c3a92 100644
+--- a/libbb/makedev.c
++++ b/libbb/makedev.c
+@@ -11,7 +11,7 @@
+ 
+ /* Different Unixes want different headers for makedev */
+ #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) \
+- || defined(__APPLE__)
++ || defined(__APPLE__) || defined(__QNX__)
+ # include <sys/types.h>
+ #else
+ # include <features.h>
+@@ -28,4 +28,11 @@ unsigned long long FAST_FUNC bb_makedev(unsigned major, unsigned minor)
+ {
+ 	return makedev(major, minor);
+ }
++#elifdef __QNX__
++/* Suppress gcc "no previous prototype" warning */
++unsigned long long FAST_FUNC bb_makedev(unsigned major, unsigned minor);
++unsigned long long FAST_FUNC bb_makedev(unsigned major, unsigned minor)
++{
++       return makedev(0, major, minor);
++}
+ #endif
+diff --git a/libbb/mode_string.c b/libbb/mode_string.c
+index 52abe66f7..7025e18f9 100644
+--- a/libbb/mode_string.c
++++ b/libbb/mode_string.c
+@@ -34,11 +34,14 @@ static const mode_t mode_flags[] ALIGN4 = {
+ 	S_IRGRP, S_IWGRP, S_IXGRP, S_ISGID,
+ 	S_IROTH, S_IWOTH, S_IXOTH, S_ISVTX
+ };
+-
++#if defined(__QNX__)
++static const char type_chars[16] ALIGN1 = "?pc?dnb?-?l?s???";
++#else
+ /* The previous version used "0pcCd?bB-?l?s???".  However, the '0', 'C',
+  * and 'B' types don't appear to be available on linux.  So I removed them. */
+ static const char type_chars[16] ALIGN1 = "?pc?d?b?-?l?s???";
+ /***************************************** 0123456789abcdef */
++#endif
+ static const char mode_chars[7] ALIGN1 = "rwxSTst";
+ 
+ char* FAST_FUNC bb_mode_string(char buf[11], mode_t mode)
+@@ -71,10 +74,15 @@ char* FAST_FUNC bb_mode_string(char buf[11], mode_t mode)
+ 
+ #else
+ 
++#if defined(__QNX__)
++static const char type_chars[16] ALIGN1 = "?pc?dnb?-?l?s???";
++#else
+ /* The previous version used "0pcCd?bB-?l?s???".  However, the '0', 'C',
+  * and 'B' types don't appear to be available on linux.  So I removed them. */
+ static const char type_chars[16] ALIGN1 = "?pc?d?b?-?l?s???";
+ /***************************************** 0123456789abcdef */
++#endif
++/***************************************** 0123456789abcdef */
+ static const char mode_chars[7] ALIGN1 = "rwxSTst";
+ 
+ char* FAST_FUNC bb_mode_string(char buf[11], mode_t mode)
+diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+index aaf82820e..e86b557bf 100644
+--- a/scripts/kconfig/mconf.c
++++ b/scripts/kconfig/mconf.c
+@@ -475,7 +475,7 @@ static int exec_conf(void)
+ 		struct sigaction sa;
+ 		sa.sa_handler = winch_handler;
+ 		sigemptyset(&sa.sa_mask);
+-		sa.sa_flags = SA_RESTART;
++		sa.sa_flags = 0;
+ 		sigaction(SIGWINCH, &sa, NULL);
+ 	}
+ #endif

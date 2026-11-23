@@ -1,4 +1,4 @@
-# libsoup 3.6.1
+# libsoup 3.8.1
 
 > GLib-based HTTP client and server library
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.gnome.org/GNOME/libsoup.git (tag `3.6.1`) |
+| Upstream | https://gitlab.gnome.org/GNOME/libsoup.git (tag `3.8.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) [`sqlite`](../sqlite/) [`nghttp2`](../nghttp2/) [`libpsl`](../libpsl/) [`brotli`](../brotli/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.6.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.8.1 --recurse-submodules --shallow-submodules \
     https://gitlab.gnome.org/GNOME/libsoup.git src/libsoup
 ```
 
@@ -102,9 +102,9 @@ meson setup build/$QNX_ARCH/libsoup src/libsoup \
       -Ddocs=disabled \
       -Dsysprof=disabled \
       -Dgssapi=disabled \
-      -Dkrb5_config= \
       -Dntlm=disabled \
       -Dbrotli=enabled \
+      -Dzstd=enabled \
       -Dtls_check=false
 ninja -C build/$QNX_ARCH/libsoup
 DESTDIR=$STAGE ninja -C build/$QNX_ARCH/libsoup install
@@ -205,18 +205,19 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.6.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsoup=<version>`), sources in `ported/libsoup/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsoup`; port one with `scripts/port-update libsoup`.
+This recipe builds **3.8.1**. Kept from earlier: `3.6.1` ([recipe and patches](versions/3.6.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libsoup=<version>`), sources in `ported/libsoup/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libsoup`; port one with `scripts/port-update libsoup`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.6.1; GIT=https://gitlab.gnome.org/GNOME/libsoup.git; REF=3.6.1
+VERSION=3.8.1; GIT=https://gitlab.gnome.org/GNOME/libsoup.git; REF=3.8.1
 # Also linked at run time (found by scripts/gen-dependency-index): brotli
-DEPS="glib libxml2 sqlite nghttp2 libpsl brotli"
+DEPS="glib libxml2 sqlite nghttp2 libpsl brotli zstd"
 BUILDSYS=meson
 MESON_ARGS_EXTRA=( -Dtests=false -Dintrospection=disabled -Dvapi=disabled
                    -Ddocs=disabled -Dsysprof=disabled -Dgssapi=disabled
-                   -Dkrb5_config= -Dntlm=disabled -Dbrotli=enabled -Dtls_check=false )
+                   -Dntlm=disabled -Dbrotli=enabled -Dzstd=enabled
+                   -Dtls_check=false )
 ```
 </details>
 

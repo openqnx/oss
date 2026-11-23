@@ -10,11 +10,9 @@ Upstream-Status: QNX-specific (carried in the qnx-ports fork)
  configure | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/configure b/configure
-index 453589f..f4f0ca2 100755
 --- a/configure
 +++ b/configure
-@@ -223,7 +223,7 @@ trybasic () {
+@@ -225,7 +225,7 @@
  tryendianness () {
    echo "Checking endianness..."
    if iscached endianness ; then return ; fi
@@ -23,6 +21,3 @@ index 453589f..f4f0ca2 100755
      cat > "$tmpc" <<EOF
  #undef _POSIX_C_SOURCE
  #undef _XOPEN_SOURCE
--- 
-2.43.0
-

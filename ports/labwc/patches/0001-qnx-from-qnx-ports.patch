@@ -4,26 +4,26 @@ configuration and the seat's libinput device handling are compiled out when
 wlroots has no libinput backend), and on the QNX Screen backend labwc creates
 the qnx-redir global QNX's compositors provide.
 
-Upstream-Status: Inappropriate [QNX's port, kept as QNX published it]
+Rebased onto labwc 0.20.3 (openqnx/oss): 0.20.3 added src/config/accel.c
+(custom pointer acceleration curves), which includes config/libinput.h
+(<libinput.h>) and calls libinput_*; it is now built only with libinput,
+together with libinput.c, and so is its unit test (t/meson.build). Its
+callers -- libinput_curve_parse() in rcxml.c's fill_libinput_category() and
+libinput_custom_accel_create() in seat.c's configure_libinput() -- are
+already inside the WLR_HAS_LIBINPUT_BACKEND blocks. QNX's meson hunk also
+said "labwc_source" (unset; meson stops there whenever libinput is found);
+it is labwc_sources.
+
+Upstream-Status: Inappropriate [QNX's port, kept as QNX published it; adapted to 0.20.3]
 
 From 5f4c032a3cd8652d3cef652ca83bb12d79d13570 Mon Sep 17 00:00:00 2001
 From: jscaff <jscaffidi@qnx.com>
 Date: Mon, 5 Oct 2026 19:19:13 +0000
 Subject: [PATCH] initial draft port
 
----
- include/labwc.h        |  2 ++
- src/config/meson.build |  7 ++++++-
- src/config/rcxml.c     | 13 +++++++++++--
- src/seat.c             |  2 ++
- src/server.c           | 25 +++++++++++++++++++++++++
- 5 files changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/include/labwc.h b/include/labwc.h
-index 87a421984e..b3e86cc9c9 100644
 --- a/include/labwc.h
 +++ b/include/labwc.h
-@@ -313,6 +313,8 @@ struct server {
+@@ -313,6 +313,8 @@
  	struct wlr_tablet_manager_v2 *tablet_manager;
  	struct wlr_security_context_manager_v1 *security_context_manager_v1;
  
@@ -32,24 +32,24 @@ index 87a421984e..b3e86cc9c9 100644
  	/* Set when in cycle (alt-tab) mode */
  	struct cycle_state cycle;
  
-diff --git a/src/config/meson.build b/src/config/meson.build
-index 70b1baa371..0f54268761 100644
 --- a/src/config/meson.build
 +++ b/src/config/meson.build
-@@ -6,5 +6,10 @@ labwc_sources += files(
+@@ -6,6 +6,13 @@
    'touch.c',
    'tablet.c',
    'tablet-tool.c',
 -  'libinput.c',
+-  'accel.c',
  )
 +
++# libinput.c and accel.c configure libinput devices (config/libinput.h
++# includes <libinput.h>): only with libinput.
 +if input.found()
-+  labwc_source += files(
++  labwc_sources += files(
 +    'libinput.c',
++    'accel.c',
 +  )
 +endif
-diff --git a/src/config/rcxml.c b/src/config/rcxml.c
-index b341e8e194..2c9af65321 100644
 --- a/src/config/rcxml.c
 +++ b/src/config/rcxml.c
 @@ -25,7 +25,9 @@
@@ -62,7 +62,7 @@ index b341e8e194..2c9af65321 100644
  #include "config/mousebind.h"
  #include "config/tablet.h"
  #include "config/tablet-tool.h"
-@@ -702,7 +704,7 @@ fill_tablet_button_map(xmlNode *node)
+@@ -703,7 +705,7 @@
  
  	tablet_button_mapping_add(map_from, map_to);
  }
@@ -71,7 +71,7 @@ index b341e8e194..2c9af65321 100644
  static int
  get_accel_profile(const char *s)
  {
-@@ -938,6 +940,10 @@ fill_libinput_category(xmlNode *node)
+@@ -976,6 +978,10 @@
  		}
  	}
  }
@@ -82,7 +82,7 @@ index b341e8e194..2c9af65321 100644
  
  static void
  set_font_attr(struct font *font, const char *nodename, const char *content)
-@@ -1860,6 +1866,7 @@ post_processing(void)
+@@ -1910,6 +1916,7 @@
  	if (!rc.font_osd.name) {
  		rc.font_osd.name = xstrdup("sans");
  	}
@@ -90,7 +90,7 @@ index b341e8e194..2c9af65321 100644
  	if (!libinput_category_get_default()) {
  		/* So we set default values of <tap> and <scrollFactor> */
  		struct libinput_category *l = libinput_category_create();
-@@ -1876,6 +1883,7 @@ post_processing(void)
+@@ -1926,6 +1933,7 @@
  			l->scroll_factor = mouse_scroll_factor;
  		}
  	}
@@ -98,7 +98,7 @@ index b341e8e194..2c9af65321 100644
  
  	int nr_workspaces = wl_list_length(&rc.workspace_config.workspaces);
  	if (nr_workspaces < rc.workspace_config.min_nr_workspaces) {
-@@ -2095,7 +2103,7 @@ rcxml_finish(void)
+@@ -2145,7 +2153,7 @@
  		action_list_free(&m->actions);
  		zfree(m);
  	}
@@ -107,7 +107,7 @@ index b341e8e194..2c9af65321 100644
  	struct touch_config_entry *touch_config, *touch_config_tmp;
  	wl_list_for_each_safe(touch_config, touch_config_tmp, &rc.touch_configs, link) {
  		wl_list_remove(&touch_config->link);
-@@ -2110,6 +2118,7 @@ rcxml_finish(void)
+@@ -2160,6 +2168,7 @@
  		zfree(l->name);
  		zfree(l);
  	}
@@ -115,8 +115,6 @@ index b341e8e194..2c9af65321 100644
  
  	struct workspace_config *w, *w_tmp;
  	wl_list_for_each_safe(w, w_tmp, &rc.workspace_config.workspaces, link) {
-diff --git a/src/seat.c b/src/seat.c
-index fe85dc2656..4df6d71c49 100644
 --- a/src/seat.c
 +++ b/src/seat.c
 @@ -17,7 +17,9 @@
@@ -129,8 +127,6 @@ index fe85dc2656..4df6d71c49 100644
  #include "config/rcxml.h"
  #include "config/touch.h"
  #include "input/ime.h"
-diff --git a/src/server.c b/src/server.c
-index e1a91eca4c..f4f645e6f6 100644
 --- a/src/server.c
 +++ b/src/server.c
 @@ -6,6 +6,7 @@
@@ -152,11 +148,10 @@ index e1a91eca4c..f4f645e6f6 100644
  #if HAVE_XWAYLAND
  	#include <wlr/xwayland.h>
  #endif
-@@ -400,6 +405,15 @@ get_headless_backend(struct wlr_backend *backend, void *data)
- 	}
+@@ -401,6 +406,15 @@
  }
  
-+static void
+ static void
 +get_qnx_screen_backend(struct wlr_backend *backend, void*data)
 +{
 +	if(wlr_backend_is_qnx_screen(backend)){
@@ -165,10 +160,11 @@ index e1a91eca4c..f4f645e6f6 100644
 +	}
 +}
 +
- static void
++static void
  handle_renderer_lost(struct wl_listener *listener, void *data)
  {
-@@ -545,6 +559,17 @@ server_init(void)
+ 	wlr_log(WLR_INFO, "Re-creating renderer after GPU reset");
+@@ -545,6 +559,17 @@
  	}
  	wlr_multi_backend_add(server.backend, server.headless.backend);
  
@@ -186,3 +182,54 @@ index e1a91eca4c..f4f645e6f6 100644
  	/*
  	 * If we don't populate headless backend with a virtual output (that we
  	 * create and immediately destroy), then virtual outputs being added
+--- a/t/meson.build
++++ b/t/meson.build
+@@ -6,28 +6,34 @@
+   wlroots,
+ ]
+ 
+-test_lib = static_library(
+-  'test_lib',
+-  sources: files(
+-    '../src/config/accel.c',
+-    '../src/common/parse-double.c',
+-    '../src/common/buf.c',
+-    '../src/common/mem.c',
+-    '../src/common/string-helpers.c',
+-    '../src/common/xml.c',
+-    '../src/common/parse-bool.c',
+-  ),
+-  include_directories: [labwc_inc],
+-  dependencies: test_deps,
++test_lib_sources = files(
++  '../src/common/parse-double.c',
++  '../src/common/buf.c',
++  '../src/common/mem.c',
++  '../src/common/string-helpers.c',
++  '../src/common/xml.c',
++  '../src/common/parse-bool.c',
+ )
+ 
+ tests = [
+-  'accel',
+   'buf-simple',
+   'str',
+   'xml',
+ ]
+ 
++# accel.c (and its test) configure libinput: only with libinput.
++if input.found()
++  test_lib_sources += files('../src/config/accel.c')
++  tests += 'accel'
++endif
++
++test_lib = static_library(
++  'test_lib',
++  sources: test_lib_sources,
++  include_directories: [labwc_inc],
++  dependencies: test_deps,
++)
++
+ foreach t : tests
+   test(
+     'test_@0@'.format(t),

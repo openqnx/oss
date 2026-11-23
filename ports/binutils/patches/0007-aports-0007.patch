@@ -14,11 +14,9 @@ adding qnx patches to elf and gdb headers
 
 CLT-9242
 ---
-diff --git a/include/elf/common.h b/include/elf/common.h
-index c9920e7731a..28b04d32e89 100644
 --- a/include/elf/common.h
 +++ b/include/elf/common.h
-@@ -1417,7 +1417,11 @@
+@@ -1455,7 +1455,11 @@
  #define	AT_SECURE	23		/* Boolean, was exec setuid-like?  */
  #define AT_BASE_PLATFORM 24		/* String identifying real platform,
  					   may differ from AT_PLATFORM.  */
@@ -30,7 +28,7 @@ index c9920e7731a..28b04d32e89 100644
  #define AT_HWCAP2	26		/* Extension of AT_HWCAP.  */
  #define AT_RSEQ_FEATURE_SIZE	27	/* rseq supported feature size */
  #define AT_RSEQ_ALIGN	28		/* rseq allocation alignment */
-@@ -1477,6 +1481,15 @@
+@@ -1517,6 +1521,15 @@
  #define AT_FREEBSD_USRSTACKBASE 35      /* Top of user stack. */
  #define AT_FREEBSD_USRSTACKLIM  36      /* Grow limit of user stack. */
  
@@ -46,11 +44,9 @@ index c9920e7731a..28b04d32e89 100644
  #define AT_SUN_UID      2000    /* Effective user ID.  */
  #define AT_SUN_RUID     2001    /* Real user ID.  */
  #define AT_SUN_GID      2002    /* Effective group ID.  */
-diff --git a/include/gdb/signals.def b/include/gdb/signals.def
-index 677b01e7f40..f8cd3f30f1f 100644
 --- a/include/gdb/signals.def
 +++ b/include/gdb/signals.def
-@@ -196,7 +196,18 @@ SET (GDB_EXC_BREAKPOINT, 150, "EXC_BREAKPOINT", "Breakpoint")
+@@ -196,7 +196,18 @@
  
  SET (GDB_SIGNAL_LIBRT, 151, "SIGLIBRT", "librt internal signal")
  
@@ -70,4 +66,3 @@ index 677b01e7f40..f8cd3f30f1f 100644
  /* Last and unused enum value, for sizing arrays, etc.  */
 -SET (GDB_SIGNAL_LAST, 152, NULL, "GDB_SIGNAL_LAST")
 +SET (GDB_SIGNAL_LAST, 161, NULL, "GDB_SIGNAL_LAST")
-

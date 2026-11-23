@@ -1,4 +1,4 @@
-# python3-pytz 2025.2
+# python3-pytz 2026.6
 
 > World timezone definitions for Python
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://files.pythonhosted.org/packages/81/c4/34e93fe5f5429d7570ec1fa436f1986fb1f00c3e0f43a589fe2bbcd22c3f/pytz-2025.2-py2.py3-none-any.whl |
-| SHA-256 | `5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00` |
+| Upstream | https://files.pythonhosted.org/packages/b6/25/564f3fc5b70c1398d706c51f2b1470d0ea0b1b2f96fee67877b6f5bdf3b6/pytz-2026.6-py2.py3-none-any.whl |
+| SHA-256 | `7fed3fee8fd6bd4a2b7b75a8d56021d0624127bf69bd5691f115db929ac570b3` |
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) |
@@ -79,10 +79,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://files.pythonhosted.org/packages/81/c4/34e93fe5f5429d7570ec1fa436f1986fb1f00c3e0f43a589fe2bbcd22c3f/pytz-2025.2-py2.py3-none-any.whl
+URL=https://files.pythonhosted.org/packages/b6/25/564f3fc5b70c1398d706c51f2b1470d0ea0b1b2f96fee67877b6f5bdf3b6/pytz-2026.6-py2.py3-none-any.whl
 mkdir -p dist src/python3-pytz
 curl -fL -o dist/$(basename $URL) $URL
-echo "5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00  dist/$(basename $URL)" | sha256sum -c -
+echo "7fed3fee8fd6bd4a2b7b75a8d56021d0624127bf69bd5691f115db929ac570b3  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/python3-pytz --strip-components=1
 ```
 
@@ -188,7 +188,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2025.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pytz=<version>`), sources in `ported/python3-pytz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pytz`; port one with `scripts/port-update python3-pytz`.
+This recipe builds **2026.6**. Kept from earlier: `2025.2` ([recipe and patches](versions/2025.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add python3-pytz=<version>`), sources in `ported/python3-pytz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates python3-pytz`; port one with `scripts/port-update python3-pytz`.
 
 <details><summary>recipe.sh</summary>
 
@@ -196,9 +196,9 @@ This recipe builds **2025.2**. Every version stays available: packages in `dists
 # pytz (run-time dependency of pandas).
 # Pure Python: the published wheel is platform independent, so it is
 # installed as released (see scripts/lib/pywheel.sh).
-VERSION=2025.2
-TARBALL=https://files.pythonhosted.org/packages/81/c4/34e93fe5f5429d7570ec1fa436f1986fb1f00c3e0f43a589fe2bbcd22c3f/pytz-2025.2-py2.py3-none-any.whl
-SHA256=5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00
+VERSION=2026.6
+TARBALL=https://files.pythonhosted.org/packages/b6/25/564f3fc5b70c1398d706c51f2b1470d0ea0b1b2f96fee67877b6f5bdf3b6/pytz-2026.6-py2.py3-none-any.whl
+SHA256=7fed3fee8fd6bd4a2b7b75a8d56021d0624127bf69bd5691f115db929ac570b3
 DEPS="python3"
 BUILDSYS=custom
 source "$WS/scripts/lib/pywheel.sh"

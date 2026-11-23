@@ -1,0 +1,24 @@
+Include <sys/queue.h> on QNX for the POSIX event loop's LIST_* macros.
+
+eventloop_posix.h leaves out the bundled deps/open62541_queue.h on QNX, on
+the assumption that the system header is there already, but includes
+nothing in its place. Nothing else it includes pulls <sys/queue.h> in with
+QNX SDP 8.0, so LIST_ENTRY and LIST_HEAD are unknown ("expected
+specifier-qualifier-list before 'LIST_ENTRY'") and every file of the POSIX
+event loop fails. QNX's <sys/queue.h> has every LIST_* macro the event loop
+uses, LIST_FOREACH_SAFE included; it shares the _SYS_QUEUE_H_ guard with
+the bundled copy, so the two never clash.
+
+Upstream-Status: Pending
+
+--- a/arch/posix/eventloop_posix.h
++++ b/arch/posix/eventloop_posix.h
+@@ -20,6 +20,8 @@
+ 
+ #if !defined(__QNX__)
+ # include "../deps/open62541_queue.h"
++#else
++# include <sys/queue.h>
+ #endif
+ 
+ #if defined(UA_ARCHITECTURE_POSIX) && !defined(UA_ARCHITECTURE_LWIP) || defined(UA_ARCHITECTURE_WIN32)

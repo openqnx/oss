@@ -5,7 +5,9 @@
 # keywords, identifiers, an escaped string, a comment start condition across
 # lines, yylineno, an invalid character) with known tokens and counts; then
 # the target's flex (which runs m4 on its skeleton) generates the scanner
-# from the same file: its DFA tables are identical to the build-time ones;
+# from the same file: its DFA tables (the numbers, whatever flex version
+# formats them) are identical to the build-time ones; --version agrees with
+# the YY_FLEX_*_VERSION the generated scanner carries;
 # flex -+ writes a C++ yyFlexLexer scanner; an unterminated action is
 # reported with its line.
 # Run the test itself in the background, its output to a log, and wait at
@@ -46,7 +48,8 @@ trap stopall EXIT
 trap 'exit 143' TERM
 to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
 FL=$L/bin/flex
-r=$("$FL" --version 2>&1); [ "$r" = "flex 2.6.4" ] && ok "flex --version: flex 2.6.4" || bad "version: $r"
+ver=$("$FL" --version 2>&1)
+case "$ver" in "flex "[0-9]*.[0-9]*.[0-9]*) info "$ver" ;; *) bad "version: $ver" ;; esac
 HLP=$D/test_flex_scan
 if [ -x "$HLP" ]; then
   r=$("$HLP" 2>&1); case "$r" in *"PASS test_flex_scan"*) ok "generated scanner self-check (libfl yywrap)" ;; *) bad "self-check: $r" ;; esac
@@ -109,10 +112,20 @@ int main(int argc, char **argv)
 EOL
 r=$(to 60 "$FL" -o scan.c scan.l 2>&1); rc=$?
 [ $rc -eq 0 ] && [ -s scan.c ] && ok "flex generated scan.c (skeleton through m4)" || bad "flex scan.l (rc $rc): $r"
+v=$(awk '/^#define YY_FLEX_(MAJOR|MINOR|SUBMINOR)_VERSION / {v = v (v == "" ? "" : ".") $3} END {print v}' scan.c)
+[ "$ver" = "flex $v" ] && ok "flex --version agrees with the generated scanner (YY_FLEX_*_VERSION $v)" || bad "version: $ver, scanner says $v"
 grep -q '^#define YY_NUM_RULES 13$' scan.c && grep -q '^static const flex_int16_t yy_accept\[47\] =' scan.c \
   && ok "13 rules, 47 DFA states" || bad "YY_NUM_RULES / yy_accept size"
-c=$(awk '/^static const flex_int16_t yy_accept\[/ {f=1} /^static const flex_int32_t yy_rule_can_match_eol/ {f=0} f' scan.c | cksum | awk '{print $1, $2}')
-[ "$c" = "1919225862 4638" ] && ok "DFA tables identical to the build-time scanner's (cksum 1919225862 4638)" || bad "tables cksum: $c"
+# The DFA tables' numbers only, in a fixed order: flex 2.7 lays the tables out
+# differently from 2.6 (order, line breaks), not their values. Not
+# yy_rule_can_match_eol: flex 2.7 also marks the default rule, which can match
+# a newline (2.6.4 did not).
+c=$(awk '
+/^static const [A-Za-z0-9_]+ yy_[a-z_]+\[[0-9]+\] *=/ { n = $0; sub(/^static const [A-Za-z0-9_]+ /, "", n); sub(/\[.*/, "", n); f = 1; b = $0; sub(/^[^=]*=/, "", b) }
+f && !/^static const/ { b = b " " $0 }
+f && /;/ { f = 0; gsub(/[^0-9,]/, "", b); t[n] = b }
+END { split("yy_accept yy_ec yy_meta yy_base yy_def yy_nxt yy_chk", o, " "); for (i = 1; i <= 7; i++) print o[i] ": " t[o[i]] }' scan.c | cksum | awk '{print $1, $2}')
+[ "$c" = "1013081650 1694" ] && ok "DFA tables identical to the build-time scanner's (cksum 1013081650 1694)" || bad "tables cksum: $c"
 r=$(to 60 "$FL" -+ -o cxx.cc scan.l 2>&1); rc=$?
 [ $rc -eq 0 ] && grep -q 'int yyFlexLexer::yylex()' cxx.cc && grep -q '#include <FlexLexer.h>' cxx.cc \
   && ok "flex -+: C++ yyFlexLexer scanner" || bad "flex -+ (rc $rc): $r"

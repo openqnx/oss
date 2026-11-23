@@ -1,4 +1,4 @@
-# pcl 1.14.1
+# pcl 1.15.1
 
 > Point Cloud Library for 2D/3D point cloud processing
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/PointCloudLibrary/pcl.git (tag `pcl-1.14.1`) |
+| Upstream | https://github.com/PointCloudLibrary/pcl.git (tag `pcl-1.15.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`boost`](../boost/) [`eigen`](../eigen/) [`flann`](../flann/) |
@@ -81,7 +81,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b pcl-1.14.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b pcl-1.15.1 --recurse-submodules --shallow-submodules \
     https://github.com/PointCloudLibrary/pcl.git src/pcl
 ```
 
@@ -188,7 +188,50 @@ cmake -S src/pcl -B build/$QNX_ARCH/pcl -G Ninja \
       decide. \
       -DHAVE_POSIX_MEMALIGN=1 \
       -DHAVE_POSIX_MEMALIGN_EXITCODE=0 \
-      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+      # \
+      1.15 \
+      looks \
+      for \
+      a \
+      system \
+      cJSON \
+      (pcl_outofcore) \
+      and \
+      takes \
+      # \
+      the \
+      staged \
+      one \
+      if \
+      it \
+      is \
+      there, \
+      without \
+      it \
+      being \
+      a \
+      # \
+      dependency \
+      here; \
+      its \
+      bundled \
+      copy, \
+      as \
+      1.14 \
+      always \
+      used, \
+      # \
+      keeps \
+      the \
+      build \
+      the \
+      same \
+      whatever \
+      else \
+      is \
+      staged. \
+      -DWITH_SYSTEM_CJSON=OFF
 cmake --build build/$QNX_ARCH/pcl -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/pcl
 ```
@@ -298,12 +341,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.14.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pcl=<version>`), sources in `ported/pcl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pcl`; port one with `scripts/port-update pcl`.
+This recipe builds **1.15.1**. Kept from earlier: `1.14.1` ([recipe and patches](versions/1.14.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add pcl=<version>`), sources in `ported/pcl/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates pcl`; port one with `scripts/port-update pcl`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.14.1; GIT=https://github.com/PointCloudLibrary/pcl.git; REF=pcl-1.14.1
+VERSION=1.15.1; GIT=https://github.com/PointCloudLibrary/pcl.git; REF=pcl-1.15.1
 DEPS="boost eigen flann"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON
                    # no VTK/OpenGL/X11 on a QNX target -- visualization is out
@@ -326,7 +369,12 @@ CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON
                    # the run result instead of letting the probe decide.
                    -DHAVE_POSIX_MEMALIGN=1
                    -DHAVE_POSIX_MEMALIGN_EXITCODE=0
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                   # 1.15 looks for a system cJSON (pcl_outofcore) and takes
+                   # the staged one if it is there, without it being a
+                   # dependency here; its bundled copy, as 1.14 always used,
+                   # keeps the build the same whatever else is staged.
+                   -DWITH_SYSTEM_CJSON=OFF )
 ```
 </details>
 

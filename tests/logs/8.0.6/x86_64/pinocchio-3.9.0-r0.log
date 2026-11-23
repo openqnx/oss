@@ -1,24 +1,19 @@
 # pinocchio 3.9.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:04:27Z   packages from: apk:local-dists
+# date: 2026-11-23T06:06:20Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pinocchio qnx-test-pinocchio qnx-port-tests
-( 1/12) Installing bzip2 (1.0.8-r0)
-( 2/12) Installing libiconv (1.18-r0)
-( 3/12) Installing libunistring (1.3-r0)
-( 4/12) Installing gettext (0.22.5-r0)
-( 5/12) Installing xz (5.6.3-r0)
-( 6/12) Installing boost (1.86.0-r0)
-( 7/12) Installing console_bridge (1.0.2-r0)
-( 8/12) Installing tinyxml2 (<ip>-r0)
-( 9/12) Installing urdfdom (4.0.3-r0)
-(10/12) Installing pinocchio (3.9.0-r0)
-(11/12) Installing qnx-port-tests (1.0-r0)
-(12/12) Installing qnx-test-pinocchio (1.0-r0)
-OK: 49.7 MiB in 23 packages
+(1/7) Installing boost (1.86.0-r0)
+(2/7) Installing console_bridge (1.0.2-r0)
+(3/7) Installing tinyxml2 (11.0.0-r0)
+(4/7) Installing urdfdom (4.0.3-r1)
+(5/7) Installing pinocchio (3.9.0-r0)
+(6/7) Installing qnx-port-tests (1.0-r0)
+(7/7) Installing qnx-test-pinocchio (1.0-r0)
+OK: 152.3 MiB in 24 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pinocchio
      == pinocchio ==

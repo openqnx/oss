@@ -1,4 +1,4 @@
-VERSION=6.1; GIT=https://github.com/adah1972/libunibreak.git; REF=libunibreak_6_1
+VERSION=8.0.1; GIT=https://github.com/adah1972/libunibreak.git; REF=libunibreak_8_0_1
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static )
 # autogen.sh in these trees runs ./configure as well, which leaves the source

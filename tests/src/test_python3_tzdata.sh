@@ -25,7 +25,7 @@ zoneinfo.reset_tzpath(to=[])                    # only the tzdata package may an
 def data():
     raw = importlib.resources.files("tzdata.zoneinfo").joinpath("Europe/Berlin").read_bytes()
     check(raw[:4] == b"TZif" and raw[4:5] in (b"2", b"3", b"4"), "zoneinfo/Europe/Berlin is TZif data (v%s)" % raw[4:5].decode())
-    check(tzdata.IANA_VERSION == "2025b", "IANA release 2025b")
+    check(tzdata.IANA_VERSION == "2026f", "IANA release 2026f")
     names = importlib.resources.files("tzdata").joinpath("zones").read_text().split()
     check(len(names) > 500 and "America/Sao_Paulo" in names, "%d zones listed" % len(names))
 def zones():

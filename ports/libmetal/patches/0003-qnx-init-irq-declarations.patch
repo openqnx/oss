@@ -1,0 +1,18 @@
+libmetal: the QNX init code includes its own irq.h.
+
+2026.10 no longer has <metal/irq.h> include the system irq.h, so
+metal_qnx_irq_init() and metal_qnx_irq_shutdown() were undeclared in
+lib/system/qnx/init.c (an error with -Werror=implicit-function-declaration).
+
+Upstream-Status: QNX-specific (the QNX system layer is carried here)
+
+--- a/lib/system/qnx/init.c
++++ b/lib/system/qnx/init.c
+@@ -13,6 +13,7 @@
+ #include <metal/sys.h>
+ #include <metal/device.h>
+ #include <metal/irq.h>
++#include <metal/system/qnx/irq.h>
+ #include <metal/cache.h>
+ #include <metal/utilities.h>
+ 

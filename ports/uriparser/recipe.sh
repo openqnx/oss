@@ -1,2 +1,2 @@
-VERSION=0.9.8; GIT=https://github.com/uriparser/uriparser.git; REF=uriparser-0.9.8
+VERSION=1.0.3; GIT=https://github.com/uriparser/uriparser.git; REF=uriparser-1.0.3
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DURIPARSER_BUILD_DOCS=OFF -DURIPARSER_BUILD_TESTS=OFF -DURIPARSER_BUILD_TOOLS=ON )

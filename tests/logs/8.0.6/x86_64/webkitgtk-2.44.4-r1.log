@@ -1,0 +1,121 @@
+# webkitgtk 2.44.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-23T06:16:17Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u webkitgtk qnx-test-webkitgtk qnx-port-tests
+( 1/70) Installing qnx-port-tests (1.0-r0)
+( 2/70) Installing dbus (1.16.4-r0)
+( 3/70) Installing pcre2 (10.49-r0)
+( 4/70) Installing glib (2.82.4-r0)
+( 5/70) Installing libxau (1.0.12-r0)
+( 6/70) Installing libxdmcp (1.1.5-r0)
+( 7/70) Installing libxcb (1.17.0-r0)
+( 8/70) Installing libx11 (1.8.14-r0)
+( 9/70) Installing libxext (1.3.7-r0)
+(10/70) Installing libxi (1.8.4-r0)
+(11/70) Installing libxtst (1.2.6-r0)
+(12/70) Installing at-spi2-core (2.54.2-r0)
+(13/70) Installing brotli (1.2.1-r0)
+(14/70) Installing libpng (1.6.59-r0)
+(15/70) Installing freetype (2.15.0-r0)
+(16/70) Installing fontconfig (2.15.0-r0)
+(17/70) Installing libxrender (0.9.13-r0)
+(18/70) Installing lzo (2.10-r0)
+(19/70) Installing pixman (0.46.4-r0)
+(20/70) Installing cairo (1.18.6-r0)
+(21/70) Installing libjpeg-turbo (3.2.1-r0)
+(22/70) Installing gdk-pixbuf (2.42.12-r0)
+(23/70) Installing fribidi (1.0.18-r0)
+(24/70) Installing graphite2 (1.3.15-r0)
+(25/70) Installing icu (76.1-r0)
+(26/70) Installing harfbuzz (<ip>-r0)
+(27/70) Installing libepoxy (1.5.10-r0)
+(28/70) Installing libxcomposite (0.4.6-r0)
+(29/70) Installing libxfixes (6.0.2-r0)
+(30/70) Installing libxcursor (1.2.3-r0)
+(31/70) Installing libxdamage (1.1.7-r0)
+(32/70) Installing libxinerama (1.1.6-r0)
+(33/70) Installing libxml2 (2.13.5-r0)
+(34/70) Installing libxkbcommon (1.8.1-r0)
+(35/70) Installing libxrandr (1.5.5-r0)
+(36/70) Installing libxft (2.3.9-r0)
+(37/70) Installing pango (1.54.0-r0)
+(38/70) Installing wayland (1.24.0-r0)
+(39/70) Installing gtk3 (3.24.43-r0)
+(40/70) Installing libidn2 (2.3.8-r0)
+(41/70) Installing libpsl (0.23.3-r0)
+(42/70) Installing nghttp2 (1.71.0-r0)
+(43/70) Installing libsoup (3.6.1-r0)
+(44/70) Installing aom (3.15.3-r0)
+(45/70) Installing fdk-aac (3.0.0-r0)
+(46/70) Installing gstreamer (1.24.10-r0)
+(47/70) Installing libogg (1.3.6-r0)
+(48/70) Installing libtheora (1.1.1-r0)
+(49/70) Installing libvorbis (1.3.7-r0)
+(50/70) Installing opus (1.6.1-r0)
+(51/70) Installing gst-plugins-base (1.24.10-r0)
+(52/70) Installing libwebp (1.6.0-r0)
+(53/70) Installing openh264 (2.7.0-r0)
+(54/70) Installing svt-av1 (2.3.0-r0)
+(55/70) Installing x265 (3.6-r0)
+(56/70) Installing gst-plugins-bad (1.24.10-r1)
+(57/70) Installing hyphen (2.8.8-r0)
+(58/70) Installing lcms2 (2.16-r0)
+(59/70) Installing dav1d (1.5.5-r0)
+(60/70) Installing libavif (1.4.2-r0)
+(61/70) Installing libgpg-error (1.61-r0)
+(62/70) Installing libgcrypt (1.12.4-r0)
+(63/70) Installing highway (1.4.0-r0)
+(64/70) Installing libjxl (0.13.0-r0)
+(65/70) Installing libsecret (0.21.8.2-r1)
+(66/70) Installing libtasn1 (4.21.0-r0)
+(67/70) Installing libxslt (1.1.45-r0)
+(68/70) Installing woff2 (1.0.2-r0)
+(69/70) Installing webkitgtk (2.44.4-r1)
+(70/70) Installing qnx-test-webkitgtk (1.0-r0)
+Executing python3-3.14.0-r0.trigger
+Executing glib-2.82.4-r0.trigger
+OK: 440.4 MiB in 87 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_webkitgtk
+     == webkitgtk ==
+       info WebKitGTK 2.44.4, JavaScriptCoreGTK 2.44.4
+       ok   libwebkit2gtk-4.1 is 2.44.4
+       ok   libjavascriptcoregtk-4.1 is 2.44
+       ok   jsc_context_new
+       ok   6 * 7 = 42
+       ok   recursion: fib(20) = 6765
+       ok   strings and Array.sort
+       ok   JSON.stringify
+       ok   RegExp capture group
+       ok   Date.UTC / toISOString (leap day)
+       ok   Math.sqrt
+       ok   C callback called from JS (twice)
+       ok   object literal
+       ok   object property read from C
+       ok   property set from C, seen by JS
+       ok   TypeError reported as a JSCException
+       info exception: TypeError: null is not an object (evaluating 'null.x')
+       ok   exception name TypeError
+       ok   100k allocations, collected while running
+       info jsc t.js -> 0: sum=5050 squares=1,4,9
+       ok   libexec jsc runs a script file
+       info jsc -e -> 0: undefined 1024
+       ok   jsc -e evaluates an expression
+       ok   WebKitWebDriver --help
+       ok   WebKitWebDriver listens on <ip>
+       info GET /status: HTTP/1.1 200 OK | HTTP/1.1 200 OK
+       ok   GET /status -> HTTP 200
+       ok   status: ready true
+       ok   status: "No sessions"
+       info GET /session/<bogus>/url: HTTP/1.1 404 Not Found
+       ok   unknown session -> 404 invalid session id
+     PASS webkitgtk
+PASS test_webkitgtk
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

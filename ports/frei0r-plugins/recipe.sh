@@ -1,7 +1,7 @@
 # frei0r-plugins: the frei0r video effect plugins (filters, generators, mixers;
 # about 150 .so files in lib/frei0r-1) that ffmpeg, MLT, Kdenlive and
 # GStreamer load through the one-header frei0r API.
-VERSION=2.4.0; GIT=https://github.com/dyne/frei0r.git; REF=v2.4.0
+VERSION=3.7.1; GIT=https://github.com/dyne/frei0r.git; REF=v3.7.1
 DEPS="cairo opencv freetype"
 BUILDSYS=cmake
 # With the cairo plugins (cairogradient, cairoimagegrid, cairoaffineblend ...)

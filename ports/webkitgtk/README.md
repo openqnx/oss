@@ -11,7 +11,7 @@
 | Build system | CMake |
 | QNX patches | 11 |
 | Build dependencies | [`gtk3`](../gtk3/) [`glib`](../glib/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`libgcrypt`](../libgcrypt/) [`libtasn1`](../libtasn1/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libepoxy`](../libepoxy/) [`libxml2`](../libxml2/) [`libpng`](../libpng/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`libwebp`](../libwebp/) [`libxslt`](../libxslt/) [`libsoup`](../libsoup/) [`gstreamer`](../gstreamer/) [`gst-plugins-base`](../gst-plugins-base/) [`hyphen`](../hyphen/) [`woff2`](../woff2/) [`libx11`](../libx11/) [`wayland`](../wayland/) [`wayland-protocols`](../wayland-protocols/) [`libxkbcommon`](../libxkbcommon/) [`at-spi2-core`](../at-spi2-core/) [`gst-plugins-bad`](../gst-plugins-bad/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libjxl`](../libjxl/) [`libsecret`](../libsecret/) [`expat`](../expat/) |
-| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-bad`](../gst-plugins-bad/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libepoxy`](../libepoxy/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libxslt`](../libxslt/) [`pango`](../pango/) [`sqlite`](../sqlite/) [`woff2`](../woff2/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`at-spi2-core`](../at-spi2-core/) [`cairo`](../cairo/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`harfbuzz`](../harfbuzz/) [`hyphen`](../hyphen/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libavif`](../libavif/) [`libepoxy`](../libepoxy/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libsecret`](../libsecret/) [`libsoup`](../libsoup/) [`libtasn1`](../libtasn1/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libxslt`](../libxslt/) [`pango`](../pango/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_webkitgtk`](../../tests/src/) |
 
@@ -312,15 +312,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH webkitgtk`.
 
 ### 5. What it installs
 
-284 files under `/usr/local`: 6 shared-library entries, 1 programs, 219 headers.
+287 files under `/usr/local`: 6 shared-library entries, 1 programs, 221 headers.
 
 ```
 /usr/local/lib/libjavascriptcoregtk-4.1.so
 /usr/local/lib/libjavascriptcoregtk-4.1.so.0
-/usr/local/lib/libjavascriptcoregtk-4.1.so.0.5.8
+/usr/local/lib/libjavascriptcoregtk-4.1.so.0.11.10
 /usr/local/lib/libwebkit2gtk-4.1.so
 /usr/local/lib/libwebkit2gtk-4.1.so.0
-/usr/local/lib/libwebkit2gtk-4.1.so.0.13.8
+/usr/local/lib/libwebkit2gtk-4.1.so.0.24.6
 /usr/local/bin/WebKitWebDriver
 ```
 
@@ -378,7 +378,7 @@ PASS webkitgtk
 
 ## How it was verified
 
-1. **Built** from the original source with the patches above for no architecture yet, by `scripts/qnxbuild` from a clean build directory.
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_webkitgtk`](../../tests/src/) -- a program linked against webkitgtk the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 

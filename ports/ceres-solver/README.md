@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`eigen`](../eigen/) [`glog`](../glog/) [`gflags`](../gflags/) |
-| Run-time dependencies | [`glog`](../glog/) |
+| Run-time dependencies | [`gflags`](../gflags/) [`glog`](../glog/) [`metis`](../metis/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ceres_solver`](../../tests/src/) |
 
@@ -111,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ceres-solver`.
 
 ### 5. What it installs
 
-71 files under `/usr/local`: 3 shared-library entries, 64 headers.
+72 files under `/usr/local`: 3 shared-library entries, 64 headers.
 
 ```
 /usr/local/lib/libceres.so

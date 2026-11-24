@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 6 |
 | Build dependencies | [`boost`](../boost/) [`fast-float`](../fast-float/) [`fmt`](../fmt/) [`gflags`](../gflags/) [`glog`](../glog/) [`libevent`](../libevent/) [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) [`lz4`](../lz4/) [`xz`](../xz/) [`bzip2`](../bzip2/) [`libsodium`](../libsodium/) |
-| Run-time dependencies | [`boost`](../boost/) [`bzip2`](../bzip2/) [`fmt`](../fmt/) [`glog`](../glog/) [`libevent`](../libevent/) [`libsodium`](../libsodium/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`boost`](../boost/) [`bzip2`](../bzip2/) [`fmt`](../fmt/) [`gflags`](../gflags/) [`glog`](../glog/) [`libevent`](../libevent/) [`libsodium`](../libsodium/) [`lz4`](../lz4/) [`openssl`](../openssl/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_folly`](../../tests/src/) |
 

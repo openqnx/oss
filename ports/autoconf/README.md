@@ -9,7 +9,7 @@
 | Upstream | https://ftp.gnu.org/gnu/autoconf/autoconf-2.73.tar.xz |
 | SHA-256 | `9fd672b1c8425fac2fa67fa0477b990987268b90ff36d5f016dae57be0d6b52e` |
 | Build system | GNU Autotools |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,7 +82,25 @@ tar xf dist/$(basename $URL) -C src/autoconf --strip-components=1
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/autoconf < ports/autoconf/patches/0001-ac-exit-trap-keep-exit-status.patch
+```
+
+**[`0001-ac-exit-trap-keep-exit-status.patch`](patches/0001-ac-exit-trap-keep-exit-status.patch)** — autoconf: ac_exit_trap lost the exit status (every failed configure exited 0).
+
+> 2.73 moved the exit trap's code into a shell function, ac_exit_trap,
+> called as "ac_exit_trap $?". The function is written inside
+> m4_define([_AC_INIT_PREPARE], ...) and reads its argument as a bare $1,
+> which m4 replaces with _AC_INIT_PREPARE's own (empty) first argument: the
+> generated configure says "exit_status=" and ends with "exit" after a
+> successful rm, so a configure that stops with AC_MSG_ERROR or "exit 1"
+> returns 0. Seen with XDT_CHECK_PACKAGE (xfce4-dev-tools): the "required
+> package was not found" message came with exit status 0. Quote the
+> parameter so the shell function gets its $1.
+
+Touches: `lib/autoconf/general.m4` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

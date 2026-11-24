@@ -81,6 +81,17 @@ to 60 sh ./configure --with-flavour=neutrino --enable-turbo > cf.log 2>&1 && ok 
 [ "$(cat info.txt 2>/dev/null)" = "package=qnxdemo version=2.5.1 flavour=neutrino" ] && ok "info.txt substituted" || bad "info.txt: $(cat info.txt 2>/dev/null)"
 awk '/^#define HAVE_TURBO 1/ {a=1} /^#define FLAVOUR_NAME "neutrino"/ {b=1} END {exit !(a && b)}' config.h 2>/dev/null && ok "config.h: HAVE_TURBO 1, FLAVOUR_NAME \"neutrino\"" || { bad "config.h"; cat config.h 2>/dev/null | head; }
 to 60 sh ./configure > cf2.log 2>&1 && awk '/HAVE_TURBO/ && /#define/ {f=1} END {exit f}' config.h && [ "$(cat info.txt)" = "package=qnxdemo version=2.5.1 flavour=plain" ] && ok "defaults: no turbo, flavour=plain" || bad "configure defaults"
+# A configure that stops must say so with its exit status: autoconf 2.73's
+# exit trap (ac_exit_trap, a shell function written inside an m4 macro)
+# lost the status, and every failed configure ended with 0.
+mkdir failcf && cd failcf && cat > configure.ac <<'EOF'
+AC_INIT([qnxfail], [1.0])
+AC_MSG_ERROR([stopping here on purpose])
+AC_OUTPUT
+EOF
+$AUTOCONF > ac.log 2>&1; r=$(to 60 sh ./configure 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$r" | grep -q 'error: stopping here on purpose' && ok "a configure stopped by AC_MSG_ERROR exits non-zero ($rc)" || bad "failing configure: exit status $rc: $(echo "$r" | tail -n 1)"
+cd ..
 stopall
 [ $fail -eq 0 ] && { echo "PASS $N"; exit 0; }
 echo "FAIL $N ($fail check(s) failed)"; exit 1

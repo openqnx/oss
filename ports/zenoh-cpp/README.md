@@ -1,4 +1,4 @@
-# zenoh-cpp 1.2.1
+# zenoh-cpp 1.10.2
 
 > C++ bindings for Eclipse Zenoh (header-only, over zenoh-c or zenoh-pico)
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-zenoh/zenoh-cpp.git (tag `1.2.1`) |
+| Upstream | https://github.com/eclipse-zenoh/zenoh-cpp.git (tag `1.10.2`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zenoh-c`](../zenoh-c/) [`zenoh-pico`](../zenoh-pico/) |
@@ -78,7 +78,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.2.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.10.2 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-zenoh/zenoh-cpp.git src/zenoh-cpp
 ```
 
@@ -104,7 +104,7 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/zenoh-cpp
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- C++ bindings for Eclipse Zenoh: headers only, over either zenoh-c (the full Rust implementation, ports/zenoh-c) or zenoh-pico. 1.2.1 is the release both of those are at here. qnx-ports' branch qnx-1.2.1 changes only the tests' CMake (no zenohd router when cross compiling); the headers need nothing for QNX. Configured with both backends, so the installed zenohcxxConfig.cmake gives zenohcxx::zenohc and zenohcxx::zenohpico to whichever of zenohc / zenohpico a consumer found first. Tests, examples and docs are not built.
+- C++ bindings for Eclipse Zenoh: headers only, over either zenoh-c (the full Rust implementation, ports/zenoh-c) or zenoh-pico. 1.10.2 is the release both of those are at here. qnx-ports' branch qnx-1.2.1 changes only the tests' CMake (no zenohd router when cross compiling); the headers need nothing for QNX. Configured with both backends, so the installed zenohcxxConfig.cmake gives zenohcxx::zenohc and zenohcxx::zenohpico to whichever of zenohc / zenohpico a consumer found first. Tests, examples and docs are not built.
 - Headers only: what a program built with them loads is the backend.
 - The zenoh-c and zenoh-pico submodules are not needed: the staged ones are used.
 
@@ -112,7 +112,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH zenoh-cpp`.
 
 ### 5. What it installs
 
-64 files under `/usr/local`, 61 headers.
+72 files under `/usr/local`, 69 headers.
 
 The complete list is `stage/<arch>/.manifest/zenoh-cpp` after a build.
 
@@ -188,14 +188,14 @@ Not run on a target yet: `scripts/verify-on-target -t "<target>" <target> zenoh-
 
 ## Versions
 
-This recipe builds **1.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zenoh-cpp=<version>`), sources in `ported/zenoh-cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zenoh-cpp`; port one with `scripts/port-update zenoh-cpp`.
+This recipe builds **1.10.2**. Kept from earlier: `1.2.1` ([recipe and patches](versions/1.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zenoh-cpp=<version>`), sources in `ported/zenoh-cpp/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zenoh-cpp`; port one with `scripts/port-update zenoh-cpp`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.1; GIT=https://github.com/eclipse-zenoh/zenoh-cpp.git; REF=1.2.1
+VERSION=1.10.2; GIT=https://github.com/eclipse-zenoh/zenoh-cpp.git; REF=1.10.2
 # C++ bindings for Eclipse Zenoh: headers only, over either zenoh-c (the
-# full Rust implementation, ports/zenoh-c) or zenoh-pico. 1.2.1 is the
+# full Rust implementation, ports/zenoh-c) or zenoh-pico. 1.10.2 is the
 # release both of those are at here. qnx-ports' branch qnx-1.2.1 changes only
 # the tests' CMake (no zenohd router when cross compiling); the headers need
 # nothing for QNX.

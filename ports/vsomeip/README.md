@@ -1,4 +1,4 @@
-# vsomeip 3.5.6
+# vsomeip 3.8.0
 
 > COVESA SOME/IP protocol stack for automotive communication
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/COVESA/vsomeip.git (tag `3.5.6`) |
+| Upstream | https://github.com/COVESA/vsomeip.git (tag `3.8.0`) |
 | Build system | CMake |
-| QNX patches | 4 |
+| QNX patches | 5 |
 | Build dependencies | [`boost`](../boost/) |
 | Run-time dependencies | [`boost`](../boost/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,19 +81,20 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.5.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 3.8.0 --recurse-submodules --shallow-submodules \
     https://github.com/COVESA/vsomeip.git src/vsomeip
 ```
 
 ### 3. Apply the QNX patches
 
-4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/vsomeip < ports/vsomeip/patches/0001-qnx8-native-accept4.patch
-patch -p1 -d src/vsomeip < ports/vsomeip/patches/0002-qnx-uds-server-recvmsg.patch
 patch -p1 -d src/vsomeip < ports/vsomeip/patches/0003-qnx-sd-without-netlink.patch
-patch -p1 -d src/vsomeip < ports/vsomeip/patches/0004-qnx-tcp-local-routing-start.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0005-qnx-uds-peer-credentials.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0006-qnx-socket-options.patch
+patch -p1 -d src/vsomeip < ports/vsomeip/patches/0007-qnx-cmake-wrap-flags.patch
 ```
 
 **[`0001-qnx8-native-accept4.patch`](patches/0001-qnx8-native-accept4.patch)** — vsomeip: use QNX 8.0's own accept4().
@@ -103,19 +104,6 @@ patch -p1 -d src/vsomeip < ports/vsomeip/patches/0004-qnx-tcp-local-routing-star
 > <sys/sockmsg.h>, which the emulation needs; build it for pre-8.0 targets only.
 
 Touches: `implementation/utility/src/wrappers_qnx.cpp` · Upstream status: Pending
-
-**[`0002-qnx-uds-server-recvmsg.patch`](patches/0002-qnx-uds-server-recvmsg.patch)** — Read UNIX-domain-socket messages on QNX (recvmsg loop was Linux-only).
-
-> The routing host reads what local clients send it over the UNIX domain
-> socket in local_endpoint_receive_op::receive_cb(). The recvmsg() loop that
-> does the read sits under #if defined(__linux__), so on QNX the handler runs
-> with 0 bytes and no error after every readiness wake-up: nothing a client
-> sends is ever read, client-ID assignment never completes, and a second
-> application on the same host keeps logging "request client timeout".
-> Run the loop on QNX too, without the Linux-only SCM_CREDENTIALS ancillary
-> data (QNX has no struct ucred; uid/gid stay ANY, as with security off).
-
-Touches: `implementation/endpoints/include/local_server_endpoint_impl_receive_op.hpp` · Upstream status: Pending
 
 **[`0003-qnx-sd-without-netlink.patch`](patches/0003-qnx-sd-without-netlink.patch)** — Send SD offers on QNX, which has no netlink route notification.
 
@@ -129,21 +117,51 @@ Touches: `implementation/endpoints/include/local_server_endpoint_impl_receive_op
 > ("Didn't receive a multicast SD message" on both sides). The
 > wait_route_netlink_notification setting does not help: it only stops the
 > route being cleared. On QNX, mark the SD route as set and flush the
-> pending offers when IP routing starts.
+> pending offers when IP routing starts. Since 3.8.0 start_ip_routing()
+> sets sd_route_set_ on QNX itself; the pending offers are still flushed only
+> by the netlink callback, so that part stays.
 
 Touches: `implementation/routing/src/routing_manager_impl.cpp` · Upstream status: Pending
 
-**[`0004-qnx-tcp-local-routing-start.patch`](patches/0004-qnx-tcp-local-routing-start.patch)** — Start the routing sender for TCP local routing on QNX.
+**[`0005-qnx-uds-peer-credentials.patch`](patches/0005-qnx-uds-peer-credentials.patch)** — Get the peer credentials of a UNIX domain socket with getpeereid() on QNX.
 
-> With TCP local routing ("routing": { "host": ..., "guests": ... }, as used
-> between VMs or when UNIX domain sockets are not wanted), init() takes the
-> non-Linux branch on QNX and creates the receiver and sender, but start()
-> groups QNX with Linux and only starts the sender for UDS routing; the TCP
-> branch, which on Linux starts the netlink link connector, does not exist
-> on QNX. So a guest application never connects to the routing host. Use the
-> Windows path on QNX, which starts the sender in both cases.
+> vsomeip 3.8 reads the uid/gid of every local (UDS) peer with
+> getsockopt(SOL_SOCKET, SO_PEERCRED) into a struct ucred, built for Linux and
+> QNX alike. QNX has neither SO_PEERCRED nor struct ucred (the build stops
+> there), but it has getpeereid() in <unistd.h>, which returns the same
+> effective uid and gid of the connected peer. Use it on QNX; an error still
+> makes the connection fail as before ("Could not getsockopt(SO_PEERCRED)").
 
-Touches: `implementation/routing/src/routing_manager_client.cpp` · Upstream status: Pending
+Touches: `implementation/endpoints/include/asio_uds_socket.hpp` · Upstream status: Pending
+
+**[`0006-qnx-socket-options.patch`](patches/0006-qnx-socket-options.patch)** — Build the 3.8 socket options on QNX: SO_BINDTODEVICE, IP_PKTINFO, SO_RCVBUFFORCE.
+
+> vsomeip 3.8 moved its socket options into socket_options.hpp and
+> asio_tcp_socket.hpp (built for Linux and QNX). They name SO_BINDTODEVICE,
+> IP_PKTINFO and SO_RCVBUFFORCE, which QNX 8.0's headers do not define, so the
+> build stops there. vsomeip's own qnx_helper.hpp defines the first two for
+> QNX (as 3.5 used them) but is not included by these files, and in 3.8.0 it
+> lacks the #endif of its #ifdef __QNX__ ("unterminated #ifdef" wherever it is
+> included). Close the #ifdef, include qnx_helper.hpp in both files, and use
+> SO_RCVBUF for receive_buffer_force on QNX (it is only set under __linux__;
+> the template still has to compile).
+
+Touches: `implementation/utility/include/qnx_helper.hpp`, `implementation/endpoints/include/socket_options.hpp`, `implementation/endpoints/include/asio_tcp_socket.hpp` · Upstream status: Pending
+
+**[`0007-qnx-cmake-wrap-flags.patch`](patches/0007-qnx-cmake-wrap-flags.patch)** — Link libvsomeip3 on QNX with only the syscall wrappers QNX has.
+
+> vsomeip 3.8 wraps close, recvfrom, recvmsg, sendto, sendmsg and epoll_* with
+> -Wl,-wrap on Linux; the __wrap_* functions for them (wrappers.cpp) are built
+> for Linux only, and QNX gets socket/accept/open (wrappers_qnx.cpp). The
+> choice is `if(${CMAKE_SYSTEM_NAME} MATCHES "QNX")`: on QNX ${CMAKE_SYSTEM_NAME}
+> is "QNX", which if() then reads as CMake's own variable QNX (1), so the test
+> is false and QNX got the Linux list -- every program linking libvsomeip3
+> failed with "undefined reference to `__wrap_close'" (and recvfrom, sendto,
+> sendmsg). Test the variable itself, for the library and the test library.
+> (The other `${CMAKE_SYSTEM_NAME} MATCHES "QNX"` tests are left as they were:
+> the port has always been built and verified with them false.)
+
+Touches: `CMakeLists.txt`, `test/CMakeLists.txt` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -167,21 +185,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH vsomeip`.
 
 ### 5. What it installs
 
-69 files under `/usr/local`: 12 shared-library entries, 46 headers.
+40 files under `/usr/local`: 3 shared-library entries, 26 headers.
 
 ```
-/usr/local/lib/libvsomeip3-cfg.so
-/usr/local/lib/libvsomeip3-cfg.so.3
-/usr/local/lib/libvsomeip3-cfg.so.3.5.6
-/usr/local/lib/libvsomeip3-e2e.so
-/usr/local/lib/libvsomeip3-e2e.so.3
-/usr/local/lib/libvsomeip3-e2e.so.3.5.6
-/usr/local/lib/libvsomeip3-sd.so
-/usr/local/lib/libvsomeip3-sd.so.3
-/usr/local/lib/libvsomeip3-sd.so.3.5.6
 /usr/local/lib/libvsomeip3.so
 /usr/local/lib/libvsomeip3.so.3
-/usr/local/lib/libvsomeip3.so.3.5.6
+/usr/local/lib/libvsomeip3.so.3.8.0
 ```
 
 The complete list is `stage/<arch>/.manifest/vsomeip` after a build.
@@ -274,12 +283,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.5.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vsomeip=<version>`), sources in `ported/vsomeip/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vsomeip`; port one with `scripts/port-update vsomeip`.
+This recipe builds **3.8.0**. Kept from earlier: `3.5.6` ([recipe and patches](versions/3.5.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add vsomeip=<version>`), sources in `ported/vsomeip/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates vsomeip`; port one with `scripts/port-update vsomeip`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.5.6; GIT=https://github.com/COVESA/vsomeip.git; REF=3.5.6
+VERSION=3.8.0; GIT=https://github.com/COVESA/vsomeip.git; REF=3.8.0
 DEPS="boost"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_SIGNAL_HANDLING=1
                    -DBoost_NO_BOOST_CMAKE=OFF

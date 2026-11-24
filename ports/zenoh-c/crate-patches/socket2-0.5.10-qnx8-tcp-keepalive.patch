@@ -1,0 +1,61 @@
+socket2 0.5.10: TCP keep-alive idle time on QNX 8
+
+socket2 0.5 imports libc::TCP_KEEPALIVE for every QNX, but libc 0.2.186
+(the last release that knows target_env "nto80", see the recipe) defines it
+only for QNX 7: "unresolved import libc::TCP_KEEPALIVE". QNX 8's io-sock is
+the FreeBSD stack: use TCP_KEEPIDLE (256, <netinet/tcp.h>) in seconds there,
+as for the BSDs; TCP_KEEPALIVE with a struct timeval stays for QNX 7.
+Applied after socket2-0.5.10-qnx-ipv6-multicast.patch.
+
+Upstream-Status: Inappropriate [libc crate gap for target_env nto80]
+---
+--- a/src/sys/unix.rs
++++ b/src/sys/unix.rs
+@@ -284,7 +284,7 @@
+     target_os = "ios",
+     target_os = "visionos",
+     target_os = "macos",
+-    target_os = "nto",
++    all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")),
+     target_os = "tvos",
+     target_os = "watchos",
+ ))]
+@@ -301,6 +301,11 @@
+     target_os = "vita",
+ )))]
+ use libc::TCP_KEEPIDLE as KEEPALIVE_TIME;
++// QNX 8 (io-sock): the libc crate releases that still know target_env
++// "nto80" define neither TCP_KEEPALIVE nor TCP_KEEPIDLE; the value is the
++// one in QNX 8's <netinet/tcp.h>. Like the BSDs, it takes seconds (int).
++#[cfg(all(target_os = "nto", target_env = "nto80"))]
++const KEEPALIVE_TIME: c_int = 256;
+ 
+ /// Helper macro to execute a system call that returns an `io::Result`.
+ macro_rules! syscall {
+@@ -1269,7 +1274,7 @@
+     #[cfg(not(any(
+         target_os = "haiku",
+         target_os = "openbsd",
+-        target_os = "nto",
++        all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")),
+         target_os = "vita"
+     )))]
+     if let Some(time) = keepalive.time {
+@@ -1305,7 +1310,7 @@
+         }
+     }
+ 
+-    #[cfg(target_os = "nto")]
++    #[cfg(all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")))]
+     if let Some(time) = keepalive.time {
+         let secs = into_timeval(Some(time));
+         unsafe { setsockopt(fd, libc::IPPROTO_TCP, KEEPALIVE_TIME, secs)? }
+@@ -1317,7 +1322,7 @@
+ #[cfg(not(any(
+     target_os = "haiku",
+     target_os = "openbsd",
+-    target_os = "nto",
++    all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")),
+     target_os = "vita"
+ )))]
+ fn into_secs(duration: Duration) -> c_int {

@@ -10,7 +10,7 @@ Upstream-Status: Pending
 +++ b/implementation/utility/src/wrappers_qnx.cpp
 @@ -14,11 +14,21 @@
  #include <pthread.h>
- #include <stdlib.h>
+ #include <cstdlib>
  #include <string.h>
 +/* QNX 7.x did not export accept4(), so the block below re-implements it on top
 + * of the _IO_OPENFD message protocol. QNX SDP 8.0 declares accept4() in
@@ -28,11 +28,11 @@ Upstream-Status: Pending
  
 +#if __QNX__ < 800
  typedef enum accept_msg_t {
- 	ACCEPT1=1,
- 	ACCEPT4,
-@@ -117,6 +127,7 @@
- accept4 (int s, struct sockaddr *addr, socklen_t *addrlen, int flags) {
- 	return __accept(s, addr, addrlen, ACCEPT4, flags);
+     ACCEPT1 = 1,
+     ACCEPT4,
+@@ -114,6 +124,7 @@
+ int accept4(int s, struct sockaddr* addr, socklen_t* addrlen, int flags) {
+     return __accept(s, addr, addrlen, ACCEPT4, flags);
  }
 +#endif /* __QNX__ < 800 */
  

@@ -1,4 +1,4 @@
-# restbed 4.8
+# restbed 5.0.0
 
 > C++ framework for building HTTP and HTTPS client and server applications
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/Corvusoft/restbed.git (tag `4.8`) |
+| Upstream | https://github.com/Corvusoft/restbed.git (tag `5.0.0`) |
 | Build system | CMake |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`openssl`](../openssl/) [`asio`](../asio/) |
 | Run-time dependencies | [`openssl`](../openssl/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,23 +76,35 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 4.8 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 5.0.0 --recurse-submodules --shallow-submodules \
     https://github.com/Corvusoft/restbed.git src/restbed
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/restbed < ports/restbed/patches/0001-qnx-sol-tcp.patch
+patch -p1 -d src/restbed < ports/restbed/patches/0002-cmake-own-headers-first.patch
 ```
 
 **[`0001-qnx-sol-tcp.patch`](patches/0001-qnx-sol-tcp.patch)** — Use IPPROTO_TCP as the TCP socket-option level on QNX.
 
 > SOL_TCP is a Linux alias for IPPROTO_TCP; QNX only has the POSIX name.
 
-Touches: `source/corvusoft/restbed/detail/socket_impl.cpp` · Upstream status: QNX-specific
+Touches: `src/corvusoft/restbed/detail/socket_impl.cpp` · Upstream status: QNX-specific
+
+**[`0002-cmake-own-headers-first.patch`](patches/0002-cmake-own-headers-first.patch)** — Search restbed's own headers before the staged dependencies' include dir.
+
+> restbed adds its src/ include dir after Asio's and OpenSSL's. In a
+> cross build those are the staging tree's include dir, which also holds the
+> headers of an earlier restbed (4.x) once one was installed there, so 5.0's
+> sources compiled against the 4.x corvusoft/restbed/*.hpp ("use of deleted
+> function restbed::Session::Session()"). An -I of src/ cannot help: GCC drops
+> an -I for a directory also given with -isystem. Name src/ first.
+
+Touches: `CMakeLists.txt` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -101,15 +113,11 @@ cmake -S src/restbed -B build/$QNX_ARCH/restbed -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
-      -DCMAKE_CXX_FLAGS=-std=gnu++17 \
-      -I$SRC_DIR/restbed/dependency/asio/asio/include \
-      -isystem \
-      $STAGE$PREFIX/include \
-      -DASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW \
-      -Wno-narrowing \
+      -DCMAKE_CXX_FLAGS=-Wno-narrowing \
       -DBUILD_SSL=ON \
+      -DBUILD_IPC=OFF \
       -DBUILD_TESTS=OFF \
-      -DBUILD_SHARED_LIBS=ON \
+      -DBUILD_SHARED_LIBRARY=ON \
       -DBUILD_STATIC_LIBRARY=OFF \
       -DCMAKE_INSTALL_LIBDIR=lib
 cmake --build build/$QNX_ARCH/restbed -j$(nproc)
@@ -118,18 +126,18 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/restbed
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- restbed builds as C++14, where standalone Asio reaches for <experimental/string_view> -- a libstdc++ header QNX's libc++ does not ship. Tell Asio not to use it. (CMAKE_CXX_FLAGS replaces the toolchain's initial flags, so those are repeated.) -Wno-narrowing: uri.cpp puts -1 in a char table, which is a narrowing error where char is unsigned (aarch64). Asio: restbed's own copy (the dependency/asio submodule, 1.18), put in front of the staged one with -I. restbed 4.8 uses asio::io_service, which the asio port's version (1.38) no longer has ("asio/io_service.hpp: No such file"). Asio is header-only and appears in restbed's private headers only.
+- restbed 5 is C++23 (CMAKE_CXX_STANDARD 23, std::format; QNX's libc++ 18 has it) and builds against the staged standalone Asio: 5.0 uses asio::io_context, and its dependency/ submodules are gone. CMAKE_CXX_FLAGS replaces the toolchain's initial flags on purpose: their "-isystem <staging>/include" goes ahead of every include dir CMake adds (qcc puts it first), so an earlier restbed's headers staged there would shadow 5.0's own; the staging dir still comes in through Asio's and OpenSSL's include dirs, after src/ (patch 0002). -Wno-narrowing: uri.cpp puts -1 in a char table, a narrowing error where char is unsigned (aarch64). The shared library only: no static one, no tests (upstream's test tree wants Catch2 from vcpkg).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH restbed`.
 
 ### 5. What it installs
 
-26 files under `/usr/local`: 3 shared-library entries, 22 headers.
+19 files under `/usr/local`: 3 shared-library entries, 16 headers.
 
 ```
 /usr/local/lib/librestbed.so
-/usr/local/lib/librestbed.so.4
-/usr/local/lib/librestbed.so.4.7
+/usr/local/lib/librestbed.so.5
+/usr/local/lib/librestbed.so.5.0
 ```
 
 The complete list is `stage/<arch>/.manifest/restbed` after a build.
@@ -212,23 +220,27 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **4.8**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add restbed=<version>`), sources in `ported/restbed/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates restbed`; port one with `scripts/port-update restbed`.
+This recipe builds **5.0.0**. Kept from earlier: `4.8` ([recipe and patches](versions/4.8/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add restbed=<version>`), sources in `ported/restbed/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates restbed`; port one with `scripts/port-update restbed`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=4.8; GIT=https://github.com/Corvusoft/restbed.git; REF=4.8
+VERSION=5.0.0; GIT=https://github.com/Corvusoft/restbed.git; REF=5.0.0
 DEPS="openssl asio"
-# restbed builds as C++14, where standalone Asio reaches for
-# <experimental/string_view> -- a libstdc++ header QNX's libc++ does not ship.
-# Tell Asio not to use it. (CMAKE_CXX_FLAGS replaces the toolchain's initial
-# flags, so those are repeated.) -Wno-narrowing: uri.cpp puts -1 in a char
-# table, which is a narrowing error where char is unsigned (aarch64).
-# Asio: restbed's own copy (the dependency/asio submodule, 1.18), put in front
-# of the staged one with -I. restbed 4.8 uses asio::io_service, which the asio
-# port's version (1.38) no longer has ("asio/io_service.hpp: No such file").
-# Asio is header-only and appears in restbed's private headers only.
-CMAKE_ARGS_EXTRA=( "-DCMAKE_CXX_FLAGS=-std=gnu++17 -I$SRC_DIR/restbed/dependency/asio/asio/include -isystem $STAGE$PREFIX/include -DASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW -Wno-narrowing" -DBUILD_SSL=ON -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBRARY=OFF
+# restbed 5 is C++23 (CMAKE_CXX_STANDARD 23, std::format; QNX's libc++ 18
+# has it) and builds against the staged standalone Asio: 5.0 uses
+# asio::io_context, and its dependency/ submodules are gone.
+# CMAKE_CXX_FLAGS replaces the toolchain's initial flags on purpose: their
+# "-isystem <staging>/include" goes ahead of every include dir CMake adds
+# (qcc puts it first), so an earlier restbed's headers staged there would
+# shadow 5.0's own; the staging dir still comes in through Asio's and
+# OpenSSL's include dirs, after src/ (patch 0002). -Wno-narrowing: uri.cpp
+# puts -1 in a char table, a narrowing error where char is unsigned (aarch64).
+# The shared library only: no static one, no tests (upstream's test tree
+# wants Catch2 from vcpkg).
+CMAKE_ARGS_EXTRA=( -DCMAKE_CXX_FLAGS=-Wno-narrowing
+                   -DBUILD_SSL=ON -DBUILD_IPC=OFF -DBUILD_TESTS=OFF
+                   -DBUILD_SHARED_LIBRARY=ON -DBUILD_STATIC_LIBRARY=OFF
                    -DCMAKE_INSTALL_LIBDIR=lib )
 ```
 </details>

@@ -108,13 +108,13 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH googletest`.
 
 ```
 /usr/local/lib/libgmock.so
-/usr/local/lib/libgmock.so.1.17.0
+/usr/local/lib/libgmock.so.1.18.0
 /usr/local/lib/libgmock_main.so
-/usr/local/lib/libgmock_main.so.1.17.0
+/usr/local/lib/libgmock_main.so.1.18.0
 /usr/local/lib/libgtest.so
-/usr/local/lib/libgtest.so.1.17.0
+/usr/local/lib/libgtest.so.1.18.0
 /usr/local/lib/libgtest_main.so
-/usr/local/lib/libgtest_main.so.1.17.0
+/usr/local/lib/libgtest_main.so.1.18.0
 ```
 
 The complete list is `stage/<arch>/.manifest/googletest` after a build.

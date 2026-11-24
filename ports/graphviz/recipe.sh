@@ -1,7 +1,7 @@
 # graphviz: graph layout and drawing -- dot, neato, circo, fdp, sfdp, twopi,
 # osage, patchwork and the graph tools (gvpr, gc, acyclic, tred, ccomps ...),
 # with libcgraph/libgvc for programs (doxygen draws its diagrams with dot).
-VERSION=13.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=13.1.2
+VERSION=16.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=16.1.2
 DEPS="gd cairo pango expat zlib libtool freetype fontconfig libwebp poppler glib libx11 libxrender"
 # A font to lay text out with: with no font at all, the pango text layout
 # returns garbage label heights (a 2x32767 PNG of a six-node graph).

@@ -2,7 +2,7 @@
 
 > LAME MP3 audio encoder and library
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
+| Run-time dependencies | [`mpg123`](../mpg123/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_lame`](../../tests/src/) |
 
@@ -109,11 +109,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH lame`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 2 shared-library entries, 1 headers.
+20 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libmp3lame.so
 /usr/local/lib/libmp3lame.so.0
+/usr/local/lib/libmp3lame.so.0.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/lame` after a build.

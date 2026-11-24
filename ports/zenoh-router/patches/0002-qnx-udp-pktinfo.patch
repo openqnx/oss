@@ -1,0 +1,47 @@
+zenoh-link-udp: on QNX, the IPv4 destination address through IP_RECVDSTADDR.
+
+The UDP link's pktinfo code (new in zenoh 1.x, pktinfo_unix.rs) asks for the
+destination address of IPv4 datagrams with IP_PKTINFO everywhere but FreeBSD,
+which uses IP_RECVDSTADDR and an in_addr control message instead. QNX's io-sock
+is the FreeBSD stack: <netinet/in.h> has IP_RECVDSTADDR (7) and no IP_PKTINFO,
+and the libc crate defines IP_PKTINFO for QNX 7 (io-pkt) only, so the file
+does not compile for QNX 8 ("cannot find value IP_PKTINFO in crate libc").
+Take the FreeBSD branch on QNX too. IPv6 is unchanged: IPV6_RECVPKTINFO and
+IPV6_PKTINFO are in QNX's <netinet6/in6.h> and in libc.
+
+The same change as ports/zenoh-c/crate-patches/zenoh-cc83980-qnx-udp-pktinfo.patch.
+
+Upstream-Status: Pending
+
+--- a/io/zenoh-links/zenoh-link-udp/src/pktinfo/pktinfo_unix.rs
++++ b/io/zenoh-links/zenoh-link-udp/src/pktinfo/pktinfo_unix.rs
+@@ -67,9 +67,9 @@
+     let local_src_addr = socket.local_addr()?;
+     match local_src_addr.is_ipv6() {
+         false => unsafe {
+-            #[cfg(not(target_os = "freebsd"))]
++            #[cfg(not(any(target_os = "freebsd", target_os = "nto")))]
+             setsockopt(socket.as_raw_fd(), libc::IPPROTO_IP, libc::IP_PKTINFO, 1)?;
+-            #[cfg(target_os = "freebsd")]
++            #[cfg(any(target_os = "freebsd", target_os = "nto"))]
+             setsockopt(
+                 socket.as_raw_fd(),
+                 libc::IPPROTO_IP,
+@@ -160,7 +160,7 @@
+         let p = unsafe { libc::CMSG_DATA(h) };
+ 
+         match (h.cmsg_level, h.cmsg_type) {
+-            #[cfg(not(target_os = "freebsd"))]
++            #[cfg(not(any(target_os = "freebsd", target_os = "nto")))]
+             (libc::IPPROTO_IP, libc::IP_PKTINFO) => {
+                 let pktinfo = unsafe { ptr::read_unaligned(p as *const libc::in_pktinfo) };
+                 addr_dst = Some(SocketAddr::new(
+@@ -168,7 +168,7 @@
+                     local_port,
+                 ));
+             }
+-            #[cfg(target_os = "freebsd")]
++            #[cfg(any(target_os = "freebsd", target_os = "nto"))]
+             (libc::IPPROTO_IP, libc::IP_RECVDSTADDR) => {
+                 let addr = unsafe { ptr::read_unaligned(p as *const libc::in_addr) };
+                 addr_dst = Some(SocketAddr::new(

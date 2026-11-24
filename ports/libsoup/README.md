@@ -9,8 +9,8 @@
 | Upstream | https://gitlab.gnome.org/GNOME/libsoup.git (tag `3.8.1`) |
 | Build system | Meson |
 | QNX patches | 0 |
-| Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) [`sqlite`](../sqlite/) [`nghttp2`](../nghttp2/) [`libpsl`](../libpsl/) [`brotli`](../brotli/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`gettext`](../gettext/) [`glib`](../glib/) [`libpsl`](../libpsl/) [`nghttp2`](../nghttp2/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) |
+| Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) [`sqlite`](../sqlite/) [`nghttp2`](../nghttp2/) [`libpsl`](../libpsl/) [`brotli`](../brotli/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`gettext`](../gettext/) [`glib`](../glib/) [`libpsl`](../libpsl/) [`nghttp2`](../nghttp2/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libsoup`](../../tests/src/) |
 
@@ -70,7 +70,7 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 **Build the dependencies first** (22 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild glib libxml2 sqlite nghttp2 libpsl brotli
+./scripts/qnxbuild glib libxml2 sqlite nghttp2 libpsl brotli zstd
 ```
 
 <details><summary>Full build chain (22)</summary>
@@ -118,12 +118,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libsoup`.
 
 ### 5. What it installs
 
-116 files under `/usr/local`: 3 shared-library entries, 42 headers.
+120 files under `/usr/local`: 3 shared-library entries, 43 headers.
 
 ```
 /usr/local/lib/libsoup-3.0.so
 /usr/local/lib/libsoup-3.0.so.0
-/usr/local/lib/libsoup-3.0.so.0.7.1
+/usr/local/lib/libsoup-3.0.so.0.8.1
 ```
 
 The complete list is `stage/<arch>/.manifest/libsoup` after a build.

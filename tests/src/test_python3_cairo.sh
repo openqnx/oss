@@ -20,7 +20,7 @@ def check(ok, what):
 def info(s): print("  info " + s)
 import cairo
 info("pycairo %s, cairo %s" % (cairo.version, cairo.cairo_version_string()))
-check(cairo.cairo_version_string() == "1.18.2", "linked against the ported cairo 1.18.2")
+check(cairo.cairo_version_string() == "1.18.6", "linked against the ported cairo 1.18.6")
 check(cairo._cairo.__file__.endswith(".so"), "cairo._cairo is the compiled extension")
 s = cairo.ImageSurface(cairo.FORMAT_ARGB32, 4, 2)
 cr = cairo.Context(s)

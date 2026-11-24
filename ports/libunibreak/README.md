@@ -108,11 +108,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libunibreak`.
 
 ### 5. What it installs
 
-10 files under `/usr/local`: 2 shared-library entries, 7 headers.
+8 files under `/usr/local`: 2 shared-library entries, 5 headers.
 
 ```
 /usr/local/lib/libunibreak.so
-/usr/local/lib/libunibreak.so.6
+/usr/local/lib/libunibreak.so.8
 ```
 
 The complete list is `stage/<arch>/.manifest/libunibreak` after a build.

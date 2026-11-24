@@ -1,0 +1,60 @@
+socket2: IPv6 multicast join/leave on QNX.
+
+socket2 0.5 leaves join_multicast_v6()/leave_multicast_v6() out on QNX
+because it imports IPV6_ADD_MEMBERSHIP/IPV6_DROP_MEMBERSHIP, names QNX does
+not use. QNX has the BSD names, IPV6_JOIN_GROUP/IPV6_LEAVE_GROUP (12/13 in
+<netinet6/in6.h>, exported by libc), so alias them as socket2 already does
+for the BSDs, and build the two functions. zenoh-link-udp calls them.
+
+socket2 upstream has QNX in that IPV6_JOIN_GROUP alias list since; the two
+functions are still left out for QNX in 0.5.10 and 0.6. Applied to 0.5.10,
+the version zenoh-c's and zenohd's Cargo.lock pin for zenoh-link-udp, by
+ports/zenoh-c/recipe.sh (socket2 0.6, used by tokio and quinn-udp, needs
+nothing).
+
+Upstream-Status: Pending (the alias is upstream, the two functions are not)
+
+--- a/src/socket.rs
++++ b/src/socket.rs
+@@ -11,7 +11,6 @@
+ #[cfg(not(target_os = "redox"))]
+ use std::io::{IoSlice, IoSliceMut};
+ use std::mem::MaybeUninit;
+-#[cfg(not(target_os = "nto"))]
+ use std::net::Ipv6Addr;
+ use std::net::{self, Ipv4Addr, Shutdown};
+ #[cfg(unix)]
+@@ -1769,7 +1768,6 @@
+     /// This function specifies a new multicast group for this socket to join.
+     /// The address must be a valid multicast address, and `interface` is the
+     /// index of the interface to join/leave (or 0 to indicate any interface).
+-    #[cfg(not(target_os = "nto"))]
+     pub fn join_multicast_v6(&self, multiaddr: &Ipv6Addr, interface: u32) -> io::Result<()> {
+         let mreq = sys::Ipv6Mreq {
+             ipv6mr_multiaddr: sys::to_in6_addr(multiaddr),
+@@ -1793,7 +1791,6 @@
+     /// For more information about this option, see [`join_multicast_v6`].
+     ///
+     /// [`join_multicast_v6`]: Socket::join_multicast_v6
+-    #[cfg(not(target_os = "nto"))]
+     pub fn leave_multicast_v6(&self, multiaddr: &Ipv6Addr, interface: u32) -> io::Result<()> {
+         let mreq = sys::Ipv6Mreq {
+             ipv6mr_multiaddr: sys::to_in6_addr(multiaddr),
+--- a/src/sys/unix.rs
++++ b/src/sys/unix.rs
+@@ -123,7 +123,6 @@
+ #[cfg(not(target_os = "redox"))]
+ pub(crate) use libc::SO_OOBINLINE;
+ // Used in `Socket`.
+-#[cfg(not(target_os = "nto"))]
+ pub(crate) use libc::ipv6_mreq as Ipv6Mreq;
+ #[cfg(all(
+     feature = "all",
+@@ -249,6 +248,7 @@
+     target_os = "visionos",
+     target_os = "macos",
+     target_os = "netbsd",
++    target_os = "nto",
+     target_os = "openbsd",
+     target_os = "solaris",
+     target_os = "tvos",

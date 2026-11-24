@@ -12,7 +12,7 @@ Upstream-Status: QNX-specific
 
 --- a/src/system/unix/system.c
 +++ b/src/system/unix/system.c
-@@ -33,20 +33,25 @@
+@@ -34,20 +34,25 @@
  
  /*------------------ Random ------------------*/
  #if defined(ZENOH_QNX)
@@ -51,7 +51,7 @@ Upstream-Status: QNX-specific
      }
  }
  #endif
-@@ -60,7 +65,7 @@
+@@ -61,7 +66,7 @@
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = z_random_u32();
  #elif defined(ZENOH_QNX)
@@ -60,7 +60,7 @@ Upstream-Status: QNX-specific
  #endif
  
      return ret;
-@@ -75,7 +80,7 @@
+@@ -76,7 +81,7 @@
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = z_random_u32();
  #elif defined(ZENOH_QNX)
@@ -69,7 +69,7 @@ Upstream-Status: QNX-specific
  #endif
  
      return ret;
-@@ -90,7 +95,7 @@
+@@ -91,7 +96,7 @@
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = arc4random();
  #elif defined(ZENOH_QNX)
@@ -78,7 +78,7 @@ Upstream-Status: QNX-specific
  #endif
  
      return ret;
-@@ -107,7 +112,7 @@
+@@ -108,7 +113,7 @@
      ret = ret << 32;
      ret |= z_random_u32();
  #elif defined(ZENOH_QNX)
@@ -87,7 +87,7 @@ Upstream-Status: QNX-specific
  #endif
  
      return ret;
-@@ -121,7 +126,7 @@
+@@ -122,7 +127,7 @@
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      arc4random_buf(buf, len);
  #elif defined(ZENOH_QNX)

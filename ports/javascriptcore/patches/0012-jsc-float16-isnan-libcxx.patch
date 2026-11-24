@@ -1,0 +1,31 @@
+JSC: call std::isnan() on a double for Float16 typed arrays.
+
+    JSGenericTypedArrayViewPrototypeFunctions.h:532: error: no matching
+        function for call to 'isnan(std::optional<WTF::Float16>::value_type&)'
+    c++/v1/__math/traits.h:111: error: no type named 'type' in
+        'struct std::enable_if<false, int>'
+
+QNX's C++ library is libc++, whose std::isnan() is a template restricted to
+arithmetic types (plus float/double/long double overloads that the class does
+not match exactly), so WTF::Float16 -- a class with an implicit conversion to
+double -- does not deduce.  libstdc++'s plain overloads take it through the
+conversion, which is why Linux builds pass.  includes() for Float16Array then
+fails to compile; convert explicitly, as the branch for the other float element
+sizes right below already does.  Same value, same result.
+
+Upstream-Status: Pending
+
+--- a/Source/JavaScriptCore/runtime/JSGenericTypedArrayViewPrototypeFunctions.h
++++ b/Source/JavaScriptCore/runtime/JSGenericTypedArrayViewPrototypeFunctions.h
+@@ -529,9 +529,9 @@
+     size_t searchLength = std::min<size_t>(length, updatedLength);
+     if constexpr (ViewClass::Adaptor::isFloat) {
+         if constexpr (ViewClass::elementSize == 2) {
+-            if (std::isnan(*targetOption)) {
++            if (std::isnan(static_cast<double>(*targetOption))) {
+                 for (; index < searchLength; ++index) {
+-                    if (std::isnan(array[index]))
++                    if (std::isnan(static_cast<double>(array[index])))
+                         return JSValue::encode(jsBoolean(true));
+                 }
+                 return JSValue::encode(jsBoolean(false));

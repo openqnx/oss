@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.gnome.org/GNOME/glib.git (tag `2.90.1`) |
 | Build system | Meson |
-| QNX patches | 4 |
+| QNX patches | 5 |
 | Build dependencies | [`libffi`](../libffi/) [`pcre2`](../pcre2/) [`gettext`](../gettext/) [`zlib`](../zlib/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`pcre2`](../pcre2/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -87,13 +87,14 @@ git clone --depth 1 -b 2.90.1 --recurse-submodules --shallow-submodules \
 
 ### 3. Apply the QNX patches
 
-4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+5 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/glib < ports/glib/patches/0001-qnx-fstab-mount-points.patch
 patch -p1 -d src/glib < ports/glib/patches/0002-qnx-credentials-cmsgcred.patch
 patch -p1 -d src/glib < ports/glib/patches/0003-qnx-inotify-spurious-wakeup-unmount.patch
 patch -p1 -d src/glib < ports/glib/patches/0004-qnx-fd-query-path.patch
+patch -p1 -d src/glib < ports/glib/patches/0005-qnx-query-exists-no-faccessat-flags.patch
 ```
 
 **[`0001-qnx-fstab-mount-points.patch`](patches/0001-qnx-fstab-mount-points.patch)** — GIO: the fstab mount-point code on QNX without the sysctl user-mount check.
@@ -153,6 +154,19 @@ Touches: `gio/inotify/inotify-kernel.c`, `gio/inotify/inotify-path.c` · Upstrea
 
 Touches: `glib/glib-unix.c` · Upstream status: Pending
 
+**[`0005-qnx-query-exists-no-faccessat-flags.patch`](patches/0005-qnx-query-exists-no-faccessat-flags.patch)** — glib: use the generic g_file_query_exists() path on QNX.
+
+> g_local_file_query_exists() calls faccessat(AT_FDCWD, path, F_OK,
+> AT_EACCESS | AT_SYMLINK_NOFOLLOW). QNX's faccessat() rejects that flag
+> combination with EINVAL, so every query answered "does not exist" and
+> logged "g_local_file_query_exists: faccessat doesn't support supplied
+> flags". appstreamcli (validate, convert) then reported its existing input
+> file as missing. glib already takes the generic path (query_info on
+> standard::type, no faccessat) on FreeBSD, Android, OpenBSD and Solaris for
+> the same reason; add QNX to that list.
+
+Touches: `gio/glocalfile.c` · Upstream status: Pending
+
 ### 4. Configure, build and install into the staging tree
 
 ```bash
@@ -206,24 +220,24 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH glib`.
 
 ### 5. What it installs
 
-487 files under `/usr/local`: 18 shared-library entries, 18 programs, 305 headers.
+490 files under `/usr/local`: 18 shared-library entries, 18 programs, 307 headers.
 
 ```
 /usr/local/lib/libgio-2.0.so
 /usr/local/lib/libgio-2.0.so.0
-/usr/local/lib/libgio-2.0.so.0.8200.4
+/usr/local/lib/libgio-2.0.so.0.9000.1
 /usr/local/lib/libgirepository-2.0.so
 /usr/local/lib/libgirepository-2.0.so.0
-/usr/local/lib/libgirepository-2.0.so.0.8200.4
+/usr/local/lib/libgirepository-2.0.so.0.9000.1
 /usr/local/lib/libglib-2.0.so
 /usr/local/lib/libglib-2.0.so.0
-/usr/local/lib/libglib-2.0.so.0.8200.4
+/usr/local/lib/libglib-2.0.so.0.9000.1
 /usr/local/lib/libgmodule-2.0.so
 /usr/local/lib/libgmodule-2.0.so.0
-/usr/local/lib/libgmodule-2.0.so.0.8200.4
+/usr/local/lib/libgmodule-2.0.so.0.9000.1
 /usr/local/lib/libgobject-2.0.so
 /usr/local/lib/libgobject-2.0.so.0
-/usr/local/lib/libgobject-2.0.so.0.8200.4
+/usr/local/lib/libgobject-2.0.so.0.9000.1
 /usr/local/lib/libgthread-2.0.so
 ...
 ```

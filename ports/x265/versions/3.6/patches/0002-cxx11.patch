@@ -1,0 +1,19 @@
+x265: compile as C++11, not C++98.
+
+Without HDR10+ the build asks for -std=gnu++98. The libc++ of QNX SDP 8.0.6
+no longer accepts C++03 from GCC ("libc++ only supports C++03 with
+Clang-based compilers"); the sources are valid C++11.
+
+Upstream-Status: QNX-specific
+
+--- a/source/CMakeLists.txt
++++ b/source/CMakeLists.txt
+@@ -228,7 +228,7 @@
+         endif()
+         add_definitions(-std=gnu++11)
+     else()
+-        add_definitions(-std=gnu++98)
++        add_definitions(-std=gnu++11)
+     endif()
+     if(ENABLE_PIC)
+          add_definitions(-fPIC)

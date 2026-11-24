@@ -1,0 +1,44 @@
+Skia: build for QNX as a Unix platform.
+
+WebKitGTK 2.46 and later render with the Skia copy in Source/ThirdParty/skia;
+Cairo is no longer an option for the GTK port.  Skia picks its platform in
+include/private/SkFeatures.h from compiler macros.  QNX's GCC defines __QNX__
+and __QNXNTO__ but not __unix__, so the chain ended in its last branch,
+SK_BUILD_FOR_MAC: SkSemaphore.cpp then includes <dispatch/dispatch.h>,
+SkAutoLocaleSetter.h <xlocale.h>, and the Mac font/memory code paths are
+selected.  QNX is POSIX, so SK_BUILD_FOR_UNIX is the right platform -- fonts
+come from fontconfig/FreeType as on Linux.
+
+SkAutoLocaleSetter (used when SkSL shaders are generated) calls
+newlocale()/uselocale()/freelocale(), which QNX's libc does not provide; it
+has the C locale only, which is what the setter switches to.  Treat QNX like
+Android/uClibc/newlib, where the setter is a no-op.
+
+Upstream-Status: Pending
+
+--- a/Source/ThirdParty/skia/include/private/SkFeatures.h
++++ b/Source/ThirdParty/skia/include/private/SkFeatures.h
+@@ -26,7 +26,10 @@
+     #elif defined(linux) || defined(__linux) || defined(__FreeBSD__) || \
+           defined(__OpenBSD__) || defined(__sun) || defined(__NetBSD__) || \
+           defined(__DragonFly__) || defined(__Fuchsia__) || \
+-          defined(__GLIBC__) || defined(__GNU__) || defined(__unix__)
++          defined(__GLIBC__) || defined(__GNU__) || defined(__unix__) || \
++          defined(__QNX__)
++        /* QNX's compiler defines __QNX__ but not __unix__: without this case
++           the chain falls through to SK_BUILD_FOR_MAC below. */
+         #define SK_BUILD_FOR_UNIX
+     #elif TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+         #define SK_BUILD_FOR_IOS
+--- a/Source/ThirdParty/skia/src/core/SkAutoLocaleSetter.h
++++ b/Source/ThirdParty/skia/src/core/SkAutoLocaleSetter.h
+@@ -27,7 +27,8 @@
+ #define HAVE_XLOCALE 0
+ #endif
+ 
+-#if defined(SK_BUILD_FOR_ANDROID) || defined(__UCLIBC__) || defined(_NEWLIB_VERSION)
++/* QNX's libc has no locale_t/newlocale()/uselocale() (and only the C locale). */
++#if defined(SK_BUILD_FOR_ANDROID) || defined(__UCLIBC__) || defined(_NEWLIB_VERSION) || defined(__QNX__)
+ #define HAVE_LOCALE_T 0
+ #else
+ #define HAVE_LOCALE_T 1

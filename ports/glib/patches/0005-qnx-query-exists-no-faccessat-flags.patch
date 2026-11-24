@@ -1,0 +1,33 @@
+glib: use the generic g_file_query_exists() path on QNX.
+
+g_local_file_query_exists() calls faccessat(AT_FDCWD, path, F_OK,
+AT_EACCESS | AT_SYMLINK_NOFOLLOW). QNX's faccessat() rejects that flag
+combination with EINVAL, so every query answered "does not exist" and
+logged "g_local_file_query_exists: faccessat doesn't support supplied
+flags". appstreamcli (validate, convert) then reported its existing input
+file as missing. glib already takes the generic path (query_info on
+standard::type, no faccessat) on FreeBSD, Android, OpenBSD and Solaris for
+the same reason; add QNX to that list.
+
+Upstream-Status: Pending
+
+--- a/gio/glocalfile.c
++++ b/gio/glocalfile.c
+@@ -1278,7 +1278,7 @@
+  * https://docs.oracle.com/cd/E86824_01/html/E54765/faccessat-2.html
+  */
+ #if defined(HAVE_FACCESSAT) && !defined(__FreeBSD__) && !defined(__ANDROID__) && \
+-    !defined(__OpenBSD__) && !defined(__sun__)
++    !defined(__OpenBSD__) && !defined(__sun__) && !defined(__QNXNTO__)
+ static gboolean
+ g_local_file_query_exists (GFile        *file,
+                            GCancellable *cancellable)
+@@ -3377,7 +3377,7 @@
+   iface->monitor_file = g_local_file_monitor_file;
+   iface->measure_disk_usage = g_local_file_measure_disk_usage;
+ #if defined(HAVE_FACCESSAT) && !defined(__FreeBSD__) && !defined(__ANDROID__) && \
+-    !defined(__OpenBSD__) && !defined(__sun__)
++    !defined(__OpenBSD__) && !defined(__sun__) && !defined(__QNXNTO__)
+   iface->query_exists = g_local_file_query_exists;
+ #endif
+ 

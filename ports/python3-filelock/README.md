@@ -115,7 +115,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3-filelock
 
 ### 5. What it installs
 
-26 files under `/usr/local`.
+29 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/python3-filelock` after a build.
 

@@ -513,11 +513,11 @@
    "gettext",
    "glib",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libunistring",
    "libxml2",
    "libxmlb",
-   "libyaml",
    "ncurses",
    "nghttp2",
    "openssl",
@@ -525,6 +525,7 @@
    "python3",
    "readline",
    "sqlite",
+   "wayland",
    "xz",
    "zlib",
    "zstd"
@@ -533,9 +534,10 @@
    "glib",
    "curl",
    "libxml2",
-   "libyaml",
+   "libfyaml",
    "libxmlb",
-   "zstd"
+   "zstd",
+   "wayland"
   ],
   "buildsys": "meson",
   "built": {
@@ -547,11 +549,11 @@
    "bins": [
     "usr/local/bin/appstreamcli"
    ],
-   "files": 100,
-   "headers": 40,
+   "files": 106,
+   "headers": 42,
    "libs": [
     "usr/local/lib/libappstream.so",
-    "usr/local/lib/libappstream.so.1.0.6",
+    "usr/local/lib/libappstream.so.1.2.3",
     "usr/local/lib/libappstream.so.5"
    ]
   },
@@ -563,12 +565,12 @@
    "gettext",
    "glib",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libidn2",
    "libunistring",
    "libxml2",
    "libxmlb",
-   "libyaml",
    "ncurses",
    "nghttp2",
    "openssl",
@@ -581,15 +583,15 @@
    "curl",
    "gettext",
    "glib",
+   "libfyaml",
    "libxml2",
    "libxmlb",
-   "libyaml",
    "zstd"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.0.6"
+  "version": "1.2.3"
  },
  "apr": {
   "build_closure": [
@@ -2921,6 +2923,8 @@
    "fontconfig",
    "freetype",
    "gettext",
+   "gflags",
+   "gklib",
    "glib",
    "glog",
    "libffi",
@@ -2935,6 +2939,7 @@
    "libxrender",
    "lua5.3",
    "lzo",
+   "metis",
    "ncurses",
    "pcre2",
    "pixman",
@@ -2947,15 +2952,14 @@
    "boost",
    "cairo",
    "ceres-solver",
+   "gflags",
    "glog",
    "lua5.3",
    "protobuf"
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libgflags.so.2.2"
-  ],
+  "unresolved": [],
   "version": "2.0.0"
  },
  "casadi": {
@@ -3117,7 +3121,7 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 71,
+   "files": 72,
    "headers": 64,
    "libs": [
     "usr/local/lib/libceres.so",
@@ -3127,16 +3131,21 @@
   },
   "linked_by_dev_name": [],
   "runtime_closure": [
-   "glog"
+   "gflags",
+   "gklib",
+   "glog",
+   "metis"
   ],
   "runtime_deps": [
-   "glog"
+   "gflags",
+   "glog",
+   "metis"
   ],
   "standalone_verified": {},
-  "undeclared": [],
-  "unresolved": [
-   "libgflags.so.2.2"
+  "undeclared": [
+   "metis"
   ],
+  "unresolved": [],
   "version": "2.2.0"
  },
  "cgal": {
@@ -3757,7 +3766,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4.16"
+  "version": "2.4.20"
  },
  "cups-filters": {
   "build_closure": [
@@ -4362,19 +4371,21 @@
     "usr/local/bin/dlt-adaptor-stdin",
     "usr/local/bin/dlt-adaptor-udp",
     "usr/local/bin/dlt-control",
+    "usr/local/bin/dlt-control-v2",
     "usr/local/bin/dlt-convert",
     "usr/local/bin/dlt-daemon",
     "usr/local/bin/dlt-logstorage-ctrl",
     "usr/local/bin/dlt-passive-node-ctrl",
     "usr/local/bin/dlt-qnx-system",
     "usr/local/bin/dlt-receive",
+    "usr/local/bin/dlt-receive-v2",
     "usr/local/bin/dlt-sortbytimestamp"
    ],
-   "files": 35,
-   "headers": 14,
+   "files": 38,
+   "headers": 15,
    "libs": [
     "usr/local/lib/libdlt.so",
-    "usr/local/lib/libdlt.so.2"
+    "usr/local/lib/libdlt.so.3"
    ]
   },
   "linked_by_dev_name": [],
@@ -4387,7 +4398,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.18.10"
+  "version": "3.0.0"
  },
  "dnsmasq": {
   "build_closure": [],
@@ -5313,7 +5324,6 @@
    "dav1d",
    "dbus",
    "expat",
-   "fdk-aac",
    "fontconfig",
    "freetype",
    "fribidi",
@@ -5323,7 +5333,6 @@
    "glib",
    "gmp",
    "graphite2",
-   "gst-plugins-bad",
    "gst-plugins-base",
    "gstreamer",
    "gtk3",
@@ -5380,7 +5389,6 @@
    "ncurses",
    "nettle",
    "nghttp2",
-   "openh264",
    "openssl",
    "opus",
    "p11-kit",
@@ -5388,11 +5396,8 @@
    "pcre2",
    "pixman",
    "sqlite",
-   "svt-av1",
    "wayland",
    "webkitgtk",
-   "woff2",
-   "x265",
    "xz",
    "zlib",
    "zstd"
@@ -6605,6 +6610,7 @@
    "boost",
    "bzip2",
    "fmt",
+   "gflags",
    "glog",
    "libevent",
    "libiconv",
@@ -6619,6 +6625,7 @@
    "boost",
    "bzip2",
    "fmt",
+   "gflags",
    "glog",
    "libevent",
    "libsodium",
@@ -6630,9 +6637,7 @@
   ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libgflags.so.2.2"
-  ],
+  "unresolved": [],
   "version": "2026.10.26.00"
  },
  "font-cantarell": {
@@ -7914,13 +7919,15 @@
     "usr/local/bin/gdbm_load",
     "usr/local/bin/gdbmtool"
    ],
-   "files": 15,
+   "files": 17,
    "headers": 3,
    "libs": [
     "usr/local/lib/libgdbm.so",
     "usr/local/lib/libgdbm.so.6",
+    "usr/local/lib/libgdbm.so.6.0.0",
     "usr/local/lib/libgdbm_compat.so",
-    "usr/local/lib/libgdbm_compat.so.4"
+    "usr/local/lib/libgdbm_compat.so.4",
+    "usr/local/lib/libgdbm_compat.so.4.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -7929,7 +7936,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.24"
+  "version": "1.26"
  },
  "gdk-pixbuf": {
   "build_closure": [
@@ -8911,7 +8918,7 @@
    "aarch64le": true,
    "x86_64": true
   },
-  "class": "runtime-standalone",
+  "class": "dependent",
   "installs": {
    "bins": [],
    "files": 18,
@@ -8923,13 +8930,15 @@
    ]
   },
   "linked_by_dev_name": [],
-  "runtime_closure": [],
-  "runtime_deps": [],
+  "runtime_closure": [
+   "gflags"
+  ],
+  "runtime_deps": [
+   "gflags"
+  ],
   "standalone_verified": {},
   "undeclared": [],
-  "unresolved": [
-   "libgflags.so.2.2"
-  ],
+  "unresolved": [],
   "version": "0.7.1"
  },
  "gloo": {
@@ -9238,6 +9247,7 @@
     "usr/local/bin/dirmngr-client",
     "usr/local/bin/gpg",
     "usr/local/bin/gpg-agent",
+    "usr/local/bin/gpg-authcode-sign.sh",
     "usr/local/bin/gpg-card",
     "usr/local/bin/gpg-connect-agent",
     "usr/local/bin/gpg-mail-tube",
@@ -9301,7 +9311,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.4.9"
+  "version": "2.5.24"
  },
  "gnutls": {
   "build_closure": [
@@ -9959,7 +9969,6 @@
     "usr/local/bin/ccomps",
     "usr/local/bin/circo",
     "usr/local/bin/cluster",
-    "usr/local/bin/diffimg",
     "usr/local/bin/dijkstra",
     "usr/local/bin/dot",
     "usr/local/bin/dot2gxl",
@@ -9993,27 +10002,27 @@
     "usr/local/bin/unflatten",
     "usr/local/bin/vimdot"
    ],
-   "files": 261,
+   "files": 259,
    "headers": 25,
    "libs": [
     "usr/local/lib/libcdt.so",
     "usr/local/lib/libcdt.so.6",
-    "usr/local/lib/libcdt.so.6.0.0",
+    "usr/local/lib/libcdt.so.6.0.3",
     "usr/local/lib/libcgraph.so",
-    "usr/local/lib/libcgraph.so.7",
-    "usr/local/lib/libcgraph.so.7.0.0",
+    "usr/local/lib/libcgraph.so.10",
+    "usr/local/lib/libcgraph.so.10.0.2",
     "usr/local/lib/libgvc.so",
     "usr/local/lib/libgvc.so.7",
-    "usr/local/lib/libgvc.so.7.0.0",
+    "usr/local/lib/libgvc.so.7.0.16",
     "usr/local/lib/libgvpr.so",
     "usr/local/lib/libgvpr.so.2",
-    "usr/local/lib/libgvpr.so.2.0.0",
+    "usr/local/lib/libgvpr.so.2.0.15",
     "usr/local/lib/libpathplan.so",
     "usr/local/lib/libpathplan.so.4",
-    "usr/local/lib/libpathplan.so.4.0.0",
+    "usr/local/lib/libpathplan.so.4.0.11",
     "usr/local/lib/libxdot.so",
-    "usr/local/lib/libxdot.so.4",
-    "usr/local/lib/libxdot.so.4.0.0"
+    "usr/local/lib/libxdot.so.5",
+    "usr/local/lib/libxdot.so.5.0.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -10086,7 +10095,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "13.1.2"
+  "version": "16.1.2"
  },
  "grep": {
   "build_closure": [
@@ -12802,7 +12811,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.6"
+  "version": "2.8"
  },
  "intltool": {
   "build_closure": [],
@@ -13119,7 +13128,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.44.4"
+  "version": "2.54.3"
  },
  "jq": {
   "build_closure": [
@@ -13692,7 +13701,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.3.4"
+  "version": "2.3.5"
  },
  "less": {
   "build_closure": [
@@ -13788,6 +13797,7 @@
    "icu",
    "libepoxy",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libjpeg-turbo",
    "libpng",
@@ -13804,7 +13814,6 @@
    "libxml2",
    "libxmlb",
    "libxrender",
-   "libyaml",
    "lzo",
    "ncurses",
    "nghttp2",
@@ -13869,6 +13878,7 @@
    "libdeflate",
    "libepoxy",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libidn2",
    "libjpeg-turbo",
@@ -13886,7 +13896,6 @@
    "libxml2",
    "libxmlb",
    "libxrender",
-   "libyaml",
    "lzo",
    "ncurses",
    "nghttp2",
@@ -16234,6 +16243,7 @@
    "libadwaita",
    "libepoxy",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libjpeg-turbo",
    "libpng",
@@ -16250,7 +16260,6 @@
    "libxml2",
    "libxmlb",
    "libxrender",
-   "libyaml",
    "lzo",
    "ncurses",
    "nghttp2",
@@ -16316,6 +16325,7 @@
    "libdeflate",
    "libepoxy",
    "libffi",
+   "libfyaml",
    "libiconv",
    "libidn2",
    "libjpeg-turbo",
@@ -16333,7 +16343,6 @@
    "libxml2",
    "libxmlb",
    "libxrender",
-   "libyaml",
    "lzo",
    "ncurses",
    "nghttp2",
@@ -17464,11 +17473,11 @@
    "headers": 4,
    "libs": [
     "usr/local/lib/libtheora.so",
-    "usr/local/lib/libtheora.so.3",
+    "usr/local/lib/libtheora.so.5",
     "usr/local/lib/libtheoradec.so",
-    "usr/local/lib/libtheoradec.so.2",
+    "usr/local/lib/libtheoradec.so.3",
     "usr/local/lib/libtheoraenc.so",
-    "usr/local/lib/libtheoraenc.so.2"
+    "usr/local/lib/libtheoraenc.so.4"
    ]
   },
   "linked_by_dev_name": [],
@@ -17481,7 +17490,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.1.1"
+  "version": "1.2.0"
  },
  "libtiff": {
   "build_closure": [
@@ -22047,11 +22056,11 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 4,
+   "files": 5,
    "headers": 1,
    "libs": [
     "usr/local/lib/libmpc.so",
-    "usr/local/lib/libmpc.so.6"
+    "usr/local/lib/libmpc.so.7"
    ]
   },
   "linked_by_dev_name": [],
@@ -22066,7 +22075,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.3.1"
+  "version": "1.4.1"
  },
  "mpfr": {
   "build_closure": [
@@ -39674,12 +39683,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 26,
-   "headers": 22,
+   "files": 19,
+   "headers": 16,
    "libs": [
     "usr/local/lib/librestbed.so",
-    "usr/local/lib/librestbed.so.4",
-    "usr/local/lib/librestbed.so.4.7"
+    "usr/local/lib/librestbed.so.5",
+    "usr/local/lib/librestbed.so.5.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -39692,7 +39701,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "4.8"
+  "version": "5.0.0"
  },
  "retroarch": {
   "build_closure": [
@@ -40700,6 +40709,7 @@
    "geographiclib",
    "gettext",
    "gflags",
+   "gklib",
    "glog",
    "graphicsmagick",
    "highway",
@@ -40720,6 +40730,7 @@
    "libxml2",
    "libzip",
    "libzmq",
+   "metis",
    "ncurses",
    "ompl",
    "opencv",
@@ -43478,7 +43489,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "5.2"
+  "version": "7.2"
  },
  "thorvg": {
   "build_closure": [
@@ -43869,8 +43880,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 57,
-   "headers": 52,
+   "files": 56,
+   "headers": 50,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -43879,7 +43890,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.4.0"
+  "version": "3.5.1"
  },
  "toybox": {
   "build_closure": [],
@@ -45219,8 +45230,8 @@
   ],
   "buildsys": "custom",
   "built": {
-   "aarch64le": true,
-   "x86_64": true
+   "aarch64le": false,
+   "x86_64": false
   },
   "class": "dependent",
   "installs": {
@@ -45263,7 +45274,7 @@
    "libb2"
   ],
   "unresolved": [],
-  "version": "3.0.21"
+  "version": "3.0.24"
  },
  "vsomeip": {
   "build_closure": [
@@ -45287,21 +45298,12 @@
   "class": "dependent",
   "installs": {
    "bins": [],
-   "files": 69,
-   "headers": 46,
+   "files": 40,
+   "headers": 26,
    "libs": [
-    "usr/local/lib/libvsomeip3-cfg.so",
-    "usr/local/lib/libvsomeip3-cfg.so.3",
-    "usr/local/lib/libvsomeip3-cfg.so.3.5.6",
-    "usr/local/lib/libvsomeip3-e2e.so",
-    "usr/local/lib/libvsomeip3-e2e.so.3",
-    "usr/local/lib/libvsomeip3-e2e.so.3.5.6",
-    "usr/local/lib/libvsomeip3-sd.so",
-    "usr/local/lib/libvsomeip3-sd.so.3",
-    "usr/local/lib/libvsomeip3-sd.so.3.5.6",
     "usr/local/lib/libvsomeip3.so",
     "usr/local/lib/libvsomeip3.so.3",
-    "usr/local/lib/libvsomeip3.so.3.5.6"
+    "usr/local/lib/libvsomeip3.so.3.8.0"
    ]
   },
   "linked_by_dev_name": [],
@@ -45318,7 +45320,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.5.6"
+  "version": "3.8.0"
  },
  "vte": {
   "build_closure": [
@@ -45738,7 +45740,8 @@
    "lcms2",
    "libavif",
    "libjxl",
-   "libsecret"
+   "libsecret",
+   "expat"
   ],
   "buildsys": "cmake",
   "built": {
@@ -45750,15 +45753,15 @@
    "bins": [
     "usr/local/bin/WebKitWebDriver"
    ],
-   "files": 284,
-   "headers": 219,
+   "files": 287,
+   "headers": 221,
    "libs": [
     "usr/local/lib/libjavascriptcoregtk-4.1.so",
     "usr/local/lib/libjavascriptcoregtk-4.1.so.0",
-    "usr/local/lib/libjavascriptcoregtk-4.1.so.0.5.8",
+    "usr/local/lib/libjavascriptcoregtk-4.1.so.0.11.10",
     "usr/local/lib/libwebkit2gtk-4.1.so",
     "usr/local/lib/libwebkit2gtk-4.1.so.0",
-    "usr/local/lib/libwebkit2gtk-4.1.so.0.13.8"
+    "usr/local/lib/libwebkit2gtk-4.1.so.0.24.6"
    ]
   },
   "linked_by_dev_name": [],
@@ -45771,7 +45774,6 @@
    "dav1d",
    "dbus",
    "expat",
-   "fdk-aac",
    "fontconfig",
    "freetype",
    "fribidi",
@@ -45779,7 +45781,6 @@
    "gettext",
    "glib",
    "graphite2",
-   "gst-plugins-bad",
    "gst-plugins-base",
    "gstreamer",
    "gtk3",
@@ -45828,16 +45829,12 @@
    "lzo",
    "ncurses",
    "nghttp2",
-   "openh264",
    "opus",
    "pango",
    "pcre2",
    "pixman",
    "sqlite",
-   "svt-av1",
    "wayland",
-   "woff2",
-   "x265",
    "xz",
    "zlib",
    "zstd"
@@ -45845,12 +45842,12 @@
   "runtime_deps": [
    "at-spi2-core",
    "cairo",
+   "expat",
    "fontconfig",
    "freetype",
    "gdk-pixbuf",
    "gettext",
    "glib",
-   "gst-plugins-bad",
    "gst-plugins-base",
    "gstreamer",
    "gtk3",
@@ -45873,13 +45870,12 @@
    "libxslt",
    "pango",
    "sqlite",
-   "woff2",
    "zlib"
   ],
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "2.44.4"
+  "version": "2.54.3"
  },
  "webrtc": {
   "build_closure": [],
@@ -46284,7 +46280,7 @@
    "headers": 2,
    "libs": [
     "usr/local/lib/libx265.so",
-    "usr/local/lib/libx265.so.209"
+    "usr/local/lib/libx265.so.216"
    ]
   },
   "linked_by_dev_name": [],
@@ -46293,7 +46289,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "3.6"
+  "version": "4.2"
  },
  "xcb-proto": {
   "build_closure": [],
@@ -48061,7 +48057,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.1"
+  "version": "1.10.2"
  },
  "zenoh-cpp": {
   "build_closure": [
@@ -48081,8 +48077,8 @@
   "class": "runtime-standalone",
   "installs": {
    "bins": [],
-   "files": 64,
-   "headers": 61,
+   "files": 72,
+   "headers": 69,
    "libs": []
   },
   "linked_by_dev_name": [],
@@ -48091,7 +48087,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.1"
+  "version": "1.10.2"
  },
  "zenoh-pico": {
   "build_closure": [],
@@ -48104,8 +48100,8 @@
   "class": "standalone",
   "installs": {
    "bins": [],
-   "files": 139,
-   "headers": 133,
+   "files": 185,
+   "headers": 179,
    "libs": [
     "usr/local/lib/libzenohpico.so"
    ]
@@ -48116,7 +48112,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.1"
+  "version": "1.10.2"
  },
  "zenoh-router": {
   "build_closure": [
@@ -48145,7 +48141,7 @@
   "standalone_verified": {},
   "undeclared": [],
   "unresolved": [],
-  "version": "1.2.1"
+  "version": "1.10.2"
  },
  "zerotier-one": {
   "build_closure": [],

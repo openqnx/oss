@@ -115,9 +115,9 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH thorvg`.
 7 files under `/usr/local`: 3 shared-library entries, 3 headers.
 
 ```
-/usr/local/lib/libthorvg.so
-/usr/local/lib/libthorvg.so.0
-/usr/local/lib/libthorvg.so.0.15.8
+/usr/local/lib/libthorvg-1.so
+/usr/local/lib/libthorvg-1.so.1
+/usr/local/lib/libthorvg-1.so.1.1.4
 ```
 
 The complete list is `stage/<arch>/.manifest/thorvg` after a build.

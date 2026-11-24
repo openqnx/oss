@@ -1,0 +1,43 @@
+DLT: QNX-only code fails the -Werror -Wconversion build of 3.0.0.
+
+dlt-daemon 3.0.0 compiles with -Werror -Wconversion (sign-conversion). Code
+that only builds on QNX trips it, which upstream CI does not build:
+- timer_thread() (#ifdef __QNX__) passes the int starts_in/period_sec to
+  sleep(), which takes unsigned int; create_timer_fd() has already rejected
+  values <= 0, so the cast is exact.
+- dlt-qnx-system logs the uint32_t injection service id with DLT_INT32;
+  DLT_UINT32 is the matching type.
+
+Upstream-Status: Pending
+
+--- a/src/daemon/dlt-daemon.c
++++ b/src/daemon/dlt-daemon.c
+@@ -5603,7 +5603,7 @@
+     DltDaemonPeriodicData* timer_thread_data = (DltDaemonPeriodicData*) data;
+ 
+     /* Timer will start in starts_in sec*/
+-    if ((sleep_ret = sleep(timer_thread_data->starts_in))) {
++    if ((sleep_ret = sleep((unsigned int)timer_thread_data->starts_in))) {
+         dlt_vlog(LOG_NOTICE, "Sleep remains [%u] for starting!"
+                 "Stop thread of timer [%d]\n",
+                 sleep_ret, timer_thread_data->timer_id);
+@@ -5627,7 +5627,7 @@
+             return NULL;
+         }
+ 
+-        if ((sleep_ret = sleep(timer_thread_data->period_sec))) {
++        if ((sleep_ret = sleep((unsigned int)timer_thread_data->period_sec))) {
+             dlt_vlog(LOG_NOTICE, "Sleep remains [%u] for interval!"
+                     "Stop thread of timer [%d]\n",
+                     sleep_ret, timer_thread_data->timer_id);
+--- a/src/dlt-qnx-system/dlt-qnx-system.c
++++ b/src/dlt-qnx-system/dlt-qnx-system.c
+@@ -441,7 +441,7 @@
+     (void) length;
+     DLT_LOG(dltQnxSystem, DLT_LOG_INFO,
+             DLT_STRING("Injection received:"),
+-            DLT_INT32(service_id));
++            DLT_UINT32(service_id));
+ 
+     if (service_id != INJECTION_SLOG2_ADAPTER)
+         return -1;

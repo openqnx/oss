@@ -1,0 +1,46 @@
+zenoh-util: bind-to-device stubs for every non-Linux system.
+
+set_bind_to_device_{tcp,udp}_socket() are implemented with SO_BINDTODEVICE on
+Linux/Android and stubbed (a warning, then Ok) on macOS, iOS, FreeBSD and
+Windows; other systems, QNX among them, get no definition and
+zenoh-link-commons fails to compile ("cannot find function
+set_bind_to_device_tcp_socket"). Use the stubs everywhere but Linux and
+Android.
+
+Applied to the zenoh workspace at cc839802639e (release/1.10.2 = tag 1.10.2,
+the commit zenoh-c's Cargo.lock pins) by ports/zenoh-c/recipe.sh. The same
+change as ports/zenoh-router/patches/0001-qnx-bind-to-device.patch.
+
+Upstream-Status: Pending
+
+--- a/commons/zenoh-util/src/net/mod.rs
++++ b/commons/zenoh-util/src/net/mod.rs
+@@ -473,24 +473,14 @@
+     Ok(())
+ }
+ 
+-#[cfg(any(
+-    target_os = "macos",
+-    target_os = "ios",
+-    target_os = "freebsd",
+-    target_os = "windows"
+-))]
++#[cfg(not(any(target_os = "linux", target_os = "android")))]
+ pub fn set_bind_to_device_tcp_socket(socket: &TcpSocket, iface: &str) -> ZResult<()> {
+-    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on macOS, iOS, FreeBSD and Windows");
++    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on this platform");
+     Ok(())
+ }
+ 
+-#[cfg(any(
+-    target_os = "macos",
+-    target_os = "ios",
+-    target_os = "freebsd",
+-    target_os = "windows"
+-))]
++#[cfg(not(any(target_os = "linux", target_os = "android")))]
+ pub fn set_bind_to_device_udp_socket(socket: &UdpSocket, iface: &str) -> ZResult<()> {
+-    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on macOS, iOS, FreeBSD and Windows");
++    tracing::warn!("Binding the socket {socket:?} to the interface {iface} is not supported on this platform");
+     Ok(())
+ }

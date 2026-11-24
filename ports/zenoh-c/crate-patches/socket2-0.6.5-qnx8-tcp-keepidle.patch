@@ -1,0 +1,55 @@
+socket2 0.6.5: TCP keep-alive idle time on QNX 8
+
+socket2 imports libc::TCP_KEEPIDLE for QNX 8, but libc 0.2.186 (the last
+release that knows target_env "nto80", see the recipe) does not define it:
+"unresolved import libc::TCP_KEEPIDLE". Define it with QNX 8's value (256,
+<netinet/tcp.h>) and, as QNX 8's io-sock is the FreeBSD stack, set it in
+seconds like the BSDs; the struct timeval form stays for QNX 7 (nto70/71),
+whose TCP_KEEPALIVE takes one.
+
+Upstream-Status: Inappropriate [libc crate gap for target_env nto80]
+---
+--- a/src/sys/unix.rs
++++ b/src/sys/unix.rs
+@@ -344,8 +344,14 @@
+     target_os = "tvos",
+     target_os = "watchos",
+     target_os = "vita",
++    all(target_os = "nto", target_env = "nto80"),
+ )))]
+ use libc::TCP_KEEPIDLE as KEEPALIVE_TIME;
++// QNX 8 (io-sock): the libc crate releases that still know target_env
++// "nto80" do not define TCP_KEEPIDLE; the value is the one in QNX 8's
++// <netinet/tcp.h>. Like the BSDs, it takes the idle time in seconds (int).
++#[cfg(all(target_os = "nto", target_env = "nto80"))]
++const KEEPALIVE_TIME: c_int = 256;
+ 
+ /// Helper macro to execute a system call that returns an `io::Result`.
+ macro_rules! syscall {
+@@ -1277,7 +1283,7 @@
+     #[cfg(not(any(
+         target_os = "haiku",
+         target_os = "openbsd",
+-        target_os = "nto",
++        all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")),
+         target_os = "vita"
+     )))]
+     if let Some(time) = keepalive.time {
+@@ -1316,7 +1322,7 @@
+         }
+     }
+ 
+-    #[cfg(target_os = "nto")]
++    #[cfg(all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")))]
+     if let Some(time) = keepalive.time {
+         let secs = into_timeval(Some(time));
+         unsafe { setsockopt(fd, libc::IPPROTO_TCP, KEEPALIVE_TIME, secs)? }
+@@ -1328,7 +1334,7 @@
+ #[cfg(not(any(
+     target_os = "haiku",
+     target_os = "openbsd",
+-    target_os = "nto",
++    all(target_os = "nto", any(target_env = "nto70", target_env = "nto71")),
+     target_os = "vita"
+ )))]
+ fn into_secs(duration: Duration) -> c_int {

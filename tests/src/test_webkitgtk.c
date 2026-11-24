@@ -5,7 +5,7 @@
  *  - the jsc shell WebKitGTK installs in libexec runs a script.
  *  - WebKitWebDriver serves the W3C WebDriver protocol on loopback: GET
  *    /status must answer {"value":{"ready":true,"message":"No sessions"}}.
- *  - libwebkit2gtk reports the 2.44.4 it was built as. */
+ *  - libwebkit2gtk reports the 2.54.3 it was built as. */
 #include "common.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -328,9 +328,9 @@ int main(void) {
   printf("  info WebKitGTK %u.%u.%u, JavaScriptCoreGTK %u.%u.%u\n",
          webkit_get_major_version(), webkit_get_minor_version(), webkit_get_micro_version(),
          jsc_get_major_version(), jsc_get_minor_version(), jsc_get_micro_version());
-  QT_CHECK(webkit_get_major_version() == 2 && webkit_get_minor_version() == 44 && webkit_get_micro_version() == 4,
-           "libwebkit2gtk-4.1 is 2.44.4");
-  QT_CHECK(jsc_get_major_version() == 2 && jsc_get_minor_version() == 44, "libjavascriptcoregtk-4.1 is 2.44");
+  QT_CHECK(webkit_get_major_version() == 2 && webkit_get_minor_version() == 54 && webkit_get_micro_version() == 3,
+           "libwebkit2gtk-4.1 is 2.54.3");
+  QT_CHECK(jsc_get_major_version() == 2 && jsc_get_minor_version() == 54, "libjavascriptcoregtk-4.1 is 2.54");
 
   /* --- JavaScriptCore, GLib API --- */
   JSCContext *ctx = jsc_context_new();

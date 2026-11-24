@@ -1,5 +1,5 @@
-/* GPGME on the installed GnuPG 2.4.9, in a scratch GNUPGHOME:
- *  - gpgme_check_version, the OpenPGP engine (gpg 2.4.9) and gpgconf found;
+/* GPGME on the installed GnuPG 2.5.24, in a scratch GNUPGHOME:
+ *  - gpgme_check_version, the OpenPGP engine (gpg 2.5.24) and gpgconf found;
  *  - an ed25519 key with a cv25519 encryption subkey created without a
  *    passphrase (gpgme_op_createkey / createsubkey), listed with its user id
  *    and algorithms;
@@ -61,7 +61,7 @@ int main(void) {
   for (; ei; ei = ei->next)
     if (ei->protocol == GPGME_PROTOCOL_OpenPGP) {
       printf("  info engine %s %s\n", ei->file_name, ei->version);
-      QT_CHECK(ei->version && !strcmp(ei->version, "2.4.9"), "OpenPGP engine: gpg 2.4.9");
+      QT_CHECK(ei->version && !strcmp(ei->version, "2.5.24"), "OpenPGP engine: gpg 2.5.24");
     }
 
   gpgme_ctx_t c = new_ctx(home1);

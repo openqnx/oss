@@ -45,27 +45,39 @@ to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@
 vf=0
 for p in bin/telnet bin/ftp bin/ping bin/traceroute bin/hostname bin/whois bin/logger libexec/telnetd libexec/ftpd; do
   r=$(to 20 "$L/$p" --version 2>&1 | head -n 1)
-  case "$r" in *"(GNU inetutils) 2.6"*) : ;; *) bad "$p --version: $r"; vf=1 ;; esac
+  case "$r" in *"(GNU inetutils) 2.8"*) : ;; *) bad "$p --version: $r"; vf=1 ;; esac
 done
-[ $vf -eq 0 ] && ok "telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.6"
+[ $vf -eq 0 ] && ok "telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.8"
 r=$(to 20 "$L/bin/hostname" 2>&1); [ "$r" = "$(uname -n)" ] && ok "hostname = uname -n ($r)" || bad "hostname: $r vs $(uname -n)"
-P=$((23000 + $$ % 2000))
-"$D/test_inetutils_inetd" $P "$L/libexec/telnetd" -h -E /bin/sh > inetd.out 2>&1 &
-I=$!; track $I
-i=0; while [ $i -lt 10 ]; do grep -q listening inetd.out 2>/dev/null && break; sleep 1; i=$((i+1)); done
 # telnetd looks up the local host's full name (getaddrinfo of the
 # hostname) before it says anything; a target whose /etc/hosts does not
 # name it asks its DNS server, which on the test VMs takes 30 s to fail.
 # Input that arrives before the shell runs can be lost, so the command is
 # typed again every 5 s until its output comes back (at most 120 s).
-: > tn.out
-t0=$(date +%s)
-( i=0; while [ $i -lt 24 ] && ! grep -q 'TELNET-42' tn.out 2>/dev/null; do echo 'echo TEL""NET-42'; sleep 5; i=$((i+1)); done
-  echo exit; sleep 3 ) | to 140 "$L/bin/telnet" 127.0.0.1 $P > tn.out 2>&1
-r=$(tr -d '\015' < tn.out); info "telnet session: $(( $(date +%s) - t0 )) s"
+# The first telnetd session after devc-pty starts (at boot, or when the
+# image workaround restarts it as root) is hung up: its shell gets SIGHUP
+# as the pty becomes its terminal and the connection closes before the
+# shell answers -- inetutils 2.6 the same. Only a whole session clears it,
+# so a session that ends that way is run once more.
+tn_session() {
+  P=$((23000 + ($$ + $1 * 7) % 2000))
+  "$D/test_inetutils_inetd" $P "$L/libexec/telnetd" -h -E /bin/sh > inetd.out 2>&1 &
+  I=$!; track $I
+  i=0; while [ $i -lt 10 ]; do grep -q listening inetd.out 2>/dev/null && break; sleep 1; i=$((i+1)); done
+  : > tn.out
+  t0=$(date +%s)
+  ( i=0; while [ $i -lt 24 ] && ! grep -q 'TELNET-42' tn.out 2>/dev/null; do echo 'echo TEL""NET-42'; sleep 5; i=$((i+1)); done
+    echo exit; sleep 3 ) | to 140 "$L/bin/telnet" 127.0.0.1 $P > tn.out 2>&1
+  r=$(tr -d '\015' < tn.out); info "telnet session $1: $(( $(date +%s) - t0 )) s"
+  kill $I 2>/dev/null; wait $I 2>/dev/null
+}
+tn_session 1
+if ! echo "$r" | grep -q 'TELNET-42' && echo "$r" | has "Connection closed by foreign host."; then
+  info "session 1 was hung up before its shell answered (first session after devc-pty started); running it again"
+  tn_session 2
+fi
 echo "$r" | has "Connected to 127.0.0.1." && ok "telnet connected to telnetd on 127.0.0.1:$P" || { bad "telnet connect"; echo "$r"; cat inetd.out; }
 echo "$r" | grep -q 'TELNET-42' && ok "a command typed into telnet ran in telnetd's pty shell (echo TEL\"\"NET-42 printed TELNET-42)" || { bad "telnet session"; echo "$r"; }
-kill $I 2>/dev/null; wait $I 2>/dev/null
 if [ "$(id -u)" = 0 ]; then
   r=$(to 30 "$L/bin/ping" -c 2 127.0.0.1 2>&1)
   echo "$r" | has "2 packets transmitted, 2 packets received" && ok "ping -c 2 127.0.0.1: 2 transmitted, 2 received" || { bad "ping"; echo "$r"; }

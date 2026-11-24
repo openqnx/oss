@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`ros2`](../ros2/) [`qt6`](../qt6/) [`assimp`](../assimp/) [`freetype`](../freetype/) [`zlib`](../zlib/) [`eigen`](../eigen/) [`orocos-kdl`](../orocos-kdl/) |
-| Run-time dependencies | [`assimp`](../assimp/) [`console_bridge`](../console_bridge/) [`freetype`](../freetype/) [`orocos-kdl`](../orocos-kdl/) [`qt6`](../qt6/) [`tinyxml2`](../tinyxml2/) |
+| Run-time dependencies | [`assimp`](../assimp/) [`console_bridge`](../console_bridge/) [`freetype`](../freetype/) [`orocos-kdl`](../orocos-kdl/) [`qt6`](../qt6/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2_rviz`](../../tests/src/) |
 

@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`cairo`](../cairo/) [`glib`](../glib/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`lcms2`](../lcms2/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`lcms2`](../lcms2/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_poppler`](../../tests/src/) |
 
@@ -133,14 +133,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH poppler`.
 
 ```
 /usr/local/lib/libpoppler-cpp.so
-/usr/local/lib/libpoppler-cpp.so.2
-/usr/local/lib/libpoppler-cpp.so.2.2.0
+/usr/local/lib/libpoppler-cpp.so.3
+/usr/local/lib/libpoppler-cpp.so.3.1.0
 /usr/local/lib/libpoppler-glib.so
 /usr/local/lib/libpoppler-glib.so.8
 /usr/local/lib/libpoppler-glib.so.8.31.0
 /usr/local/lib/libpoppler.so
-/usr/local/lib/libpoppler.so.155
-/usr/local/lib/libpoppler.so.155.0.0
+/usr/local/lib/libpoppler.so.166
+/usr/local/lib/libpoppler.so.166.0.0
 /usr/local/bin/pdfattach
 /usr/local/bin/pdfdetach
 /usr/local/bin/pdffonts

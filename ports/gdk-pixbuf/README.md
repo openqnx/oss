@@ -161,12 +161,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gdk-pixbuf`.
 
 ### 5. What it installs
 
-129 files under `/usr/local`: 3 shared-library entries, 3 programs, 13 headers.
+129 files under `/usr/local`: 3 shared-library entries, 3 programs, 12 headers.
 
 ```
 /usr/local/lib/libgdk_pixbuf-2.0.so
 /usr/local/lib/libgdk_pixbuf-2.0.so.0
-/usr/local/lib/libgdk_pixbuf-2.0.so.0.4200.12
+/usr/local/lib/libgdk_pixbuf-2.0.so.0.4400.8
 /usr/local/bin/gdk-pixbuf-csource
 /usr/local/bin/gdk-pixbuf-pixdata
 /usr/local/bin/gdk-pixbuf-query-loaders

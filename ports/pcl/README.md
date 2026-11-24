@@ -240,24 +240,24 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH pcl`.
 
 ### 5. What it installs
 
-926 files under `/usr/local`: 51 shared-library entries, 838 headers.
+910 files under `/usr/local`: 54 shared-library entries, 820 headers.
 
 ```
 /usr/local/lib/libpcl_common.so
-/usr/local/lib/libpcl_common.so.1.14
-/usr/local/lib/libpcl_common.so.1.14.1
+/usr/local/lib/libpcl_common.so.1.15
+/usr/local/lib/libpcl_common.so.1.15.1
 /usr/local/lib/libpcl_features.so
-/usr/local/lib/libpcl_features.so.1.14
-/usr/local/lib/libpcl_features.so.1.14.1
+/usr/local/lib/libpcl_features.so.1.15
+/usr/local/lib/libpcl_features.so.1.15.1
 /usr/local/lib/libpcl_filters.so
-/usr/local/lib/libpcl_filters.so.1.14
-/usr/local/lib/libpcl_filters.so.1.14.1
+/usr/local/lib/libpcl_filters.so.1.15
+/usr/local/lib/libpcl_filters.so.1.15.1
 /usr/local/lib/libpcl_io.so
-/usr/local/lib/libpcl_io.so.1.14
-/usr/local/lib/libpcl_io.so.1.14.1
+/usr/local/lib/libpcl_io.so.1.15
+/usr/local/lib/libpcl_io.so.1.15.1
 /usr/local/lib/libpcl_io_ply.so
-/usr/local/lib/libpcl_io_ply.so.1.14
-/usr/local/lib/libpcl_io_ply.so.1.14.1
+/usr/local/lib/libpcl_io_ply.so.1.15
+/usr/local/lib/libpcl_io_ply.so.1.15.1
 /usr/local/lib/libpcl_kdtree.so
 ...
 ```

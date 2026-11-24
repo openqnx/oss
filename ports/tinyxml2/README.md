@@ -101,8 +101,8 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tinyxml2`.
 
 ```
 /usr/local/lib/libtinyxml2.so
-/usr/local/lib/libtinyxml2.so.10
-/usr/local/lib/libtinyxml2.so.10.0.0
+/usr/local/lib/libtinyxml2.so.11
+/usr/local/lib/libtinyxml2.so.11.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/tinyxml2` after a build.

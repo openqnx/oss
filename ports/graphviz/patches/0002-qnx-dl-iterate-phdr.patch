@@ -9,7 +9,7 @@ Upstream-Status: QNX-specific
 
 --- a/lib/gvc/gvconfig.c
 +++ b/lib/gvc/gvconfig.c
-@@ -32,7 +32,14 @@
+@@ -33,7 +33,14 @@
  
  #ifdef ENABLE_LTDL
  #ifdef HAVE_DL_ITERATE_PHDR
@@ -22,14 +22,14 @@ Upstream-Status: QNX-specific
 +#define GV_PHDR_CONST
 +#endif
  #endif
- #include	<sys/types.h>
+ #include <sys/types.h>
  #ifdef _WIN32
-@@ -270,7 +277,7 @@
+@@ -257,7 +264,7 @@
  #define DOTLIBS "/.libs"
  
  #ifdef HAVE_DL_ITERATE_PHDR
--static int line_callback(struct dl_phdr_info *info, size_t size, void *line)
-+static int line_callback(GV_PHDR_CONST struct dl_phdr_info *info, size_t size, void *line)
- {
-    const char *p = info->dlpi_name;
-    char *tmp = strstr(p, "/libgvc.");
+-static int line_callback(struct dl_phdr_info *info, size_t size, void *xb) {
++static int line_callback(GV_PHDR_CONST struct dl_phdr_info *info, size_t size, void *xb) {
+   const char *p = info->dlpi_name;
+   const char *const tmp = strstr(p, "/libgvc.");
+   (void)size;

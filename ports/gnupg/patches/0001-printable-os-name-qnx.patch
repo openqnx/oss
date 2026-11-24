@@ -9,7 +9,7 @@ Upstream-Status: QNX-specific
 
 --- a/configure
 +++ b/configure
-@@ -11859,6 +11859,9 @@
+@@ -11127,6 +11127,9 @@
      *-linux*)
          PRINTABLE_OS_NAME="GNU/Linux"
          ;;
@@ -21,7 +21,7 @@ Upstream-Status: QNX-specific
          ;;
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1263,6 +1263,9 @@
+@@ -1248,6 +1248,9 @@
      *-linux*)
          PRINTABLE_OS_NAME="GNU/Linux"
          ;;

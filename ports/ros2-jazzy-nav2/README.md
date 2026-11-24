@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`ros2`](../ros2/) [`ros2-jazzy-control`](../ros2-jazzy-control/) [`boost`](../boost/) [`eigen`](../eigen/) [`tinyxml2`](../tinyxml2/) [`geographiclib`](../geographiclib/) [`graphicsmagick`](../graphicsmagick/) [`xtensor`](../xtensor/) [`xtl`](../xtl/) [`xsimd`](../xsimd/) [`nanoflann`](../nanoflann/) [`nlohmann_json`](../nlohmann_json/) [`libzmq`](../libzmq/) [`cppzmq`](../cppzmq/) [`sqlite`](../sqlite/) [`libuuid`](../libuuid/) [`ceres-solver`](../ceres-solver/) [`suitesparse`](../suitesparse/) [`ompl`](../ompl/) [`glog`](../glog/) [`opencv`](../opencv/) |
-| Run-time dependencies | [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`fastcdr`](../fastcdr/) [`geographiclib`](../geographiclib/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`libuuid`](../libuuid/) [`libzmq`](../libzmq/) [`ompl`](../ompl/) [`opencv`](../opencv/) [`orocos-kdl`](../orocos-kdl/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) |
+| Run-time dependencies | [`ceres-solver`](../ceres-solver/) [`console_bridge`](../console_bridge/) [`fastcdr`](../fastcdr/) [`geographiclib`](../geographiclib/) [`gflags`](../gflags/) [`glog`](../glog/) [`graphicsmagick`](../graphicsmagick/) [`libuuid`](../libuuid/) [`libzmq`](../libzmq/) [`ompl`](../ompl/) [`opencv`](../opencv/) [`orocos-kdl`](../orocos-kdl/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2_jazzy_nav2`](../../tests/src/) |
 
@@ -106,7 +106,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2-jazzy-nav2`
 
 ### 5. What it installs
 
-5407 files under `/usr/local`.
+5425 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2-jazzy-nav2` after a build.
 

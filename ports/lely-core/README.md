@@ -1,4 +1,4 @@
-# lely-core 2.3.4
+# lely-core 2.3.5
 
 > Lely C/C++ libraries for CANopen, CAN, event loop and I/O
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.com/lely_industries/lely-core.git (tag `v2.3.4`) |
+| Upstream | https://gitlab.com/lely_industries/lely-core.git (tag `v2.3.5`) |
 | Build system | GNU Autotools |
 | QNX patches | 1 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.3.4 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v2.3.5 --recurse-submodules --shallow-submodules \
     https://gitlab.com/lely_industries/lely-core.git src/lely-core
 ```
 
@@ -226,12 +226,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.3.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lely-core=<version>`), sources in `ported/lely-core/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lely-core`; port one with `scripts/port-update lely-core`.
+This recipe builds **2.3.5**. Kept from earlier: `2.3.4` ([recipe and patches](versions/2.3.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add lely-core=<version>`), sources in `ported/lely-core/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates lely-core`; port one with `scripts/port-update lely-core`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.3.4; GIT=https://gitlab.com/lely_industries/lely-core.git; REF=v2.3.4
+VERSION=2.3.5; GIT=https://gitlab.com/lely_industries/lely-core.git; REF=v2.3.5
 BUILDSYS=autotools
 # CANopen stack. QNX has no SocketCAN, so the generic (non-socketcan) CAN
 # backend is selected; the vehicle interface is bound at integration time.

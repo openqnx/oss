@@ -1,0 +1,37 @@
+Link libvsomeip3 on QNX with only the syscall wrappers QNX has.
+
+vsomeip 3.8 wraps close, recvfrom, recvmsg, sendto, sendmsg and epoll_* with
+-Wl,-wrap on Linux; the __wrap_* functions for them (wrappers.cpp) are built
+for Linux only, and QNX gets socket/accept/open (wrappers_qnx.cpp). The
+choice is `if(${CMAKE_SYSTEM_NAME} MATCHES "QNX")`: on QNX ${CMAKE_SYSTEM_NAME}
+is "QNX", which if() then reads as CMake's own variable QNX (1), so the test
+is false and QNX got the Linux list -- every program linking libvsomeip3
+failed with "undefined reference to `__wrap_close'" (and recvfrom, sendto,
+sendmsg). Test the variable itself, for the library and the test library.
+(The other `${CMAKE_SYSTEM_NAME} MATCHES "QNX"` tests are left as they were:
+the port has always been built and verified with them false.)
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -367,7 +367,7 @@
+     # symbol in every TU when BOOST_ASIO_DISABLE_IOCP is defined, causing LNK2005.
+     target_link_options(${VSOMEIP_NAME} PRIVATE "/FORCE:MULTIPLE")
+ else ()
+-    if(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++    if(CMAKE_SYSTEM_NAME MATCHES "QNX")
+         # add syscall wrappers to deal with CLOEXEC
+         set_target_properties(${VSOMEIP_NAME} PROPERTIES LINK_FLAGS "-Wl,-wrap,socket -Wl,-wrap,accept -Wl,-wrap,open")
+     else ()
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -50,7 +50,7 @@
+ target_link_libraries(${VSOMEIP_NAME}-test PRIVATE ${Boost_LIBRARIES} ${USE_RT} ${DL_LIBRARY} ${DLT_LIBRARIES} ${SystemD_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if (NOT MSVC)
+-    if(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++    if(CMAKE_SYSTEM_NAME MATCHES "QNX")
+         # add syscall wrappers to deal with CLOEXEC
+         set_target_properties(${VSOMEIP_NAME}-test PROPERTIES LINK_FLAGS "-Wl,-wrap,socket -Wl,-wrap,accept -Wl,-wrap,open")
+     else ()

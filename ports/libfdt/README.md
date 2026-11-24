@@ -105,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libfdt`.
 ```
 /usr/local/lib/libfdt.so
 /usr/local/lib/libfdt.so.1
-/usr/local/lib/libfdt.so.1.7.2
+/usr/local/lib/libfdt.so.1.8.1
 ```
 
 The complete list is `stage/<arch>/.manifest/libfdt` after a build.

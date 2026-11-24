@@ -132,7 +132,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libportal`.
 
 ### 5. What it installs
 
-38 files under `/usr/local`: 6 shared-library entries, 28 headers.
+40 files under `/usr/local`: 6 shared-library entries, 30 headers.
 
 ```
 /usr/local/lib/libportal-gtk3.so

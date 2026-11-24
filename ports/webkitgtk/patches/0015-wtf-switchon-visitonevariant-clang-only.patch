@@ -1,0 +1,31 @@
+WTF: use the switch-based switchOn() for libc++ only with Clang.
+
+    StyleTabSize.h:66: error: call to non-'constexpr' function
+        'decltype (WTF::visitOneVariant(...)) WTF::switchOn(V&&, F&& ...)'
+    (in 'constexpr bool WebCore::Style::TabSize::isZero() const')
+
+When the C++ library is libc++, StdLibExtras.h replaces switchOn() with a
+switch-based visitOneVariant() to work around code-size problems of libc++'s
+visit (webkit.org/b/279498).  That version is not constexpr; Clang in C++23
+mode accepts constexpr functions that call it (P2448), GCC 12 does not.  QNX's
+toolchain is exactly that pair -- GCC with libc++ -- so every constexpr caller
+in WebCore (TabSize::isZero() and the other style value types) fails.  Take the
+size workaround only with Clang; GCC + libc++ uses the generic constexpr
+switchOn() over WTF::visit, as GCC + libstdc++ already does.
+
+Upstream-Status: Pending
+
+--- a/Source/WTF/wtf/StdLibExtras.h
++++ b/Source/WTF/wtf/StdLibExtras.h
+@@ -549,7 +549,10 @@
+ 
+ #else
+ 
+-#ifdef _LIBCPP_VERSION
++// The switch-based visitor below is not constexpr, which only Clang accepts in
++// the constexpr functions that call switchOn() (C++23's P2448).  GCC with libc++
++// (QNX's toolchain) rejects every such caller, so keep it to Clang.
++#if defined(_LIBCPP_VERSION) && COMPILER(CLANG)
+ 
+ // Single-variant switch-based visit function adapted from https://www.reddit.com/r/cpp/comments/kst2pu/comment/giilcxv/.
+ // Works around bad code generation for WTF::visit with one Variant by some standard library / compilers that

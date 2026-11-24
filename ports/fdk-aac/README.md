@@ -97,12 +97,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fdk-aac`.
 
 ### 5. What it installs
 
-14 files under `/usr/local`: 3 shared-library entries, 6 headers.
+23 files under `/usr/local`: 6 shared-library entries, 7 headers.
 
 ```
 /usr/local/lib/libfdk-aac.so
 /usr/local/lib/libfdk-aac.so.2
-/usr/local/lib/libfdk-aac.so.2.0.3
+/usr/local/lib/libfdk-aac.so.2.0.4
+/usr/local/lib/libfdk-xhe-aac.so
+/usr/local/lib/libfdk-xhe-aac.so.0
+/usr/local/lib/libfdk-xhe-aac.so.0.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/fdk-aac` after a build.

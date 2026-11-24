@@ -1,0 +1,24 @@
+tokio 1.53.2: build the NetBSD peer-credential code for NetBSD only
+
+src/net/unix/ucred.rs compiles impl_netbsd for target_os = "nto" as well,
+although QNX uses impl_nto (getpeereid()). impl_netbsd imports
+libc::LOCAL_PEEREID, which libc defines for the QNX 7.x io-pkt stack only
+(target_env nto70/nto71); QNX 8 (io-sock) has no LOCAL_PEEREID in its
+headers and gives peer credentials through getpeereid() in <unistd.h>. So
+for nto80 the crate stopped with
+error[E0432]: unresolved import `libc::LOCAL_PEEREID`.
+Restrict the module to NetBSD, as tokio 1.54.1 does.
+
+Upstream-Status: Backport [tokio 1.54.1, src/net/unix/ucred.rs]
+---
+--- a/src/net/unix/ucred.rs
++++ b/src/net/unix/ucred.rs
+@@ -143,7 +143,7 @@
+     }
+ }
+ 
+-#[cfg(any(target_os = "netbsd", target_os = "nto"))]
++#[cfg(target_os = "netbsd")]
+ pub(crate) mod impl_netbsd {
+     use crate::net::unix::{self, UnixStream};
+ 

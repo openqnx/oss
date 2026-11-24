@@ -1,0 +1,46 @@
+Use memset() instead of bzero() in tftpd's recvfrom.c.
+
+QNX 8.0's libc neither declares nor provides bzero() (POSIX.1-2008 removed
+it), so recvfrom.c compiled with implicit declarations and in.tftpd failed
+to link. memset() does the same; the rest of tftp-hpa already uses it.
+
+Upstream-Status: Pending
+
+--- a/tftpd/recvfrom.c
++++ b/tftpd/recvfrom.c
+@@ -210,7 +210,7 @@
+     if (myaddr->sa.sa_family == AF_INET6 &&
+ 	!memcmp(&myaddr->s6.sin6_addr, ip6_compat_prefix,
+ 		sizeof ip6_compat_prefix)) {
+-	bzero(&in, sizeof in);
++	memset(&in, 0, sizeof in);
+ 	in.sin_family = AF_INET;
+ 	in.sin_port = myaddr->s6.sin6_port;
+ 	memcpy(&in.sin_addr, (const char *)&myaddr->s6.sin6_addr +
+@@ -257,7 +257,7 @@
+ #endif
+ 
+ #endif
+-    bzero(&msg, sizeof msg);    /* Clear possible system-dependent fields */
++    memset(&msg, 0, sizeof msg);    /* Clear possible system-dependent fields */
+     msg.msg_control = control_un.control;
+     msg.msg_controllen = sizeof(control_un);
+     msg.msg_flags = 0;
+@@ -273,7 +273,7 @@
+         return n;               /* Error */
+ 
+     if (myaddr) {
+-        bzero(myaddr, sizeof(*myaddr));
++        memset(myaddr, 0, sizeof(*myaddr));
+         myaddr->sa.sa_family = from->sa.sa_family;
+ 
+         if (msg.msg_controllen < sizeof(struct cmsghdr) ||
+@@ -362,7 +362,7 @@
+ 
+     n = recvfrom(s, buf, len, flags, &from->sa, &fromlen);
+ 
+-    bzero(myaddr, sizeof(*myaddr));
++    memset(myaddr, 0, sizeof(*myaddr));
+     if (n >= 0) {
+         myaddr->sa.sa_family = from->sa.sa_family;
+         sa_set_port(myaddr, htons(TFTP_IP_PORT));

@@ -1,4 +1,4 @@
-# zenoh-pico 1.2.1
+# zenoh-pico 1.10.2
 
 > Eclipse Zenoh pub/sub, store/query and compute protocol for microcontrollers
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/eclipse-zenoh/zenoh-pico.git (tag `1.2.1`) |
+| Upstream | https://github.com/eclipse-zenoh/zenoh-pico.git (tag `1.10.2`) |
 | Build system | CMake |
-| QNX patches | 3 |
+| QNX patches | 2 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,17 +72,16 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 1.2.1 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 1.10.2 --recurse-submodules --shallow-submodules \
     https://github.com/eclipse-zenoh/zenoh-pico.git src/zenoh-pico
 ```
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/zenoh-pico < ports/zenoh-pico/patches/0001-port-QNX7.1-8.0.patch
-patch -p1 -d src/zenoh-pico < ports/zenoh-pico/patches/0002-fix-properly-excluding-raweth-for-non-linux-platform.patch
 patch -p1 -d src/zenoh-pico < ports/zenoh-pico/patches/0003-qnx-urandom.patch
 ```
 
@@ -92,28 +91,15 @@ patch -p1 -d src/zenoh-pico < ports/zenoh-pico/patches/0003-qnx-urandom.patch
 > (qcc rejects it), SO_NOSIGPIPE on TCP sockets as on the BSDs, and random
 > numbers without Linux's getrandom() or the BSDs' arc4random().
 >
->
-> ---
->  CMakeLists.txt                              | 10 +++++--
->  include/zenoh-pico/system/common/platform.h |  2 +-
->  src/system/unix/network.c                   | 18 +++++++++++++
->  src/system/unix/system.c                    | 29 +++++++++++++++++++++
->  4 files changed, 56 insertions(+), 3 deletions(-)
+> Rebased onto 1.10.2, where platforms are CMake profiles (cmake/platforms/):
+> a "qnx" profile (the bsd one with ZENOH_QNX) picked for CMAKE_SYSTEM_NAME
+> QNX, ZENOH_QNX next to ZENOH_BSD where the sources choose the POSIX socket
+> layer, and the SO_NOSIGPIPE code, which moved from src/system/unix/network.c
+> to src/link/transport/tcp/tcp_posix.c. Two includes the new socket files
+> need on QNX: <sys/socket.h> in tcp_posix.c (glibc and macOS get it through
+> <netinet/in.h>; QNX does not) and, for AF_INET/AF_INET6, in address.c.
 
-Touches: `CMakeLists.txt`, `include/zenoh-pico/system/common/platform.h`, `src/system/unix/network.c`, `src/system/unix/system.c` · Upstream status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1)
-
-**[`0002-fix-properly-excluding-raweth-for-non-linux-platform.patch`](patches/0002-fix-properly-excluding-raweth-for-non-linux-platform.patch)** — fix properly excluding raweth for non-linux platforms
-
-> raweth.c includes Linux-only headers (<linux/if_packet.h>) before its
-> Z_FEATURE_RAWETH_TRANSPORT guard; move the guard above them so the file is
-> empty on QNX, where the raw-ethernet transport is off.
->
->
-> ---
->  src/system/unix/link/raweth.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Touches: `src/system/unix/link/raweth.c` · Upstream status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1)
+Touches: `CMakeLists.txt`, `cmake/platforms.cmake`, `cmake/platforms/qnx.cmake`, `include/zenoh-pico/system/common/platform.h`, `src/link/transport/common/address.c`, `src/link/transport/common/endpoints.c` … · Upstream status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1; rebased)
 
 **[`0003-qnx-urandom.patch`](patches/0003-qnx-urandom.patch)** — QNX: take random numbers from /dev/urandom, not unseeded random()
 
@@ -145,13 +131,13 @@ DESTDIR=$STAGE cmake --install build/$QNX_ARCH/zenoh-pico
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- Eclipse Zenoh for constrained devices, in C. 1.2.1 is the release zenoh-c here is at (ports/zenoh-c), so the two speak the same protocol and zenoh-cpp can sit on either. patches/0001-0002 are qnx-ports' QNX support (branch qnx-1.2.1): QNX as a unix platform. 0003 replaces its random() calls with /dev/urandom. Examples, tools and the test programs are not installed; the shared library with the default feature set is (TCP and UDP unicast, UDP multicast and scouting; raw ethernet, serial and Bluetooth are off as upstream has them).
+- Eclipse Zenoh for constrained devices, in C. 1.10.2 is the release zenoh-c here is at (ports/zenoh-c), so the two speak the same protocol and zenoh-cpp can sit on either. patches/0001 is qnx-ports' QNX support (branch qnx-1.2.1, rebased onto 1.10.2's platform profiles): QNX as a unix platform; their raweth fix (0002) is upstream. 0003 replaces its random() calls with /dev/urandom. Examples, tools and the test programs are not installed; the shared library with the default feature set is (TCP and UDP unicast, UDP multicast and scouting; raw ethernet, serial and Bluetooth are off as upstream has them).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH zenoh-pico`.
 
 ### 5. What it installs
 
-139 files under `/usr/local`: 1 shared-library entries, 133 headers.
+185 files under `/usr/local`: 1 shared-library entries, 179 headers.
 
 ```
 /usr/local/lib/libzenohpico.so
@@ -234,17 +220,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.2.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zenoh-pico=<version>`), sources in `ported/zenoh-pico/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zenoh-pico`; port one with `scripts/port-update zenoh-pico`.
+This recipe builds **1.10.2**. Kept from earlier: `1.2.1` ([recipe and patches](versions/1.2.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add zenoh-pico=<version>`), sources in `ported/zenoh-pico/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates zenoh-pico`; port one with `scripts/port-update zenoh-pico`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.2.1; GIT=https://github.com/eclipse-zenoh/zenoh-pico.git; REF=1.2.1
-# Eclipse Zenoh for constrained devices, in C. 1.2.1 is the release zenoh-c
+VERSION=1.10.2; GIT=https://github.com/eclipse-zenoh/zenoh-pico.git; REF=1.10.2
+# Eclipse Zenoh for constrained devices, in C. 1.10.2 is the release zenoh-c
 # here is at (ports/zenoh-c), so the two speak the same protocol and zenoh-cpp
-# can sit on either. patches/0001-0002 are qnx-ports' QNX support (branch
-# qnx-1.2.1): QNX as a unix platform. 0003 replaces its random() calls with
-# /dev/urandom.
+# can sit on either. patches/0001 is qnx-ports' QNX support (branch
+# qnx-1.2.1, rebased onto 1.10.2's platform profiles): QNX as a unix
+# platform; their raweth fix (0002) is upstream. 0003 replaces its random()
+# calls with /dev/urandom.
 # Examples, tools and the test programs are not installed; the shared library
 # with the default feature set is (TCP and UDP unicast, UDP multicast and
 # scouting; raw ethernet, serial and Bluetooth are off as upstream has them).

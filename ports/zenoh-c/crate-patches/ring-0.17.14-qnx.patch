@@ -1,0 +1,36 @@
+ring: build for QNX -- its assembly, and SystemRandom through getrandom.
+
+- build.rs: QNX is ELF with the SysV ABI on aarch64 and x86_64, which is what
+  LINUX_ABI lists. Without it ring assembled none of its code for QNX, and a
+  library using ring linked with the ring_core_* symbols undefined.
+- src/rand.rs: ring implements SecureRandom for SystemRandom only on the
+  systems it lists, each served through the getrandom crate. getrandom
+  supports QNX (/dev/urandom); add QNX to the list ("the trait bound
+  `SystemRandom: SecureRandom` is not satisfied" otherwise).
+
+Applied to ring 0.17.14 (the version zenoh-c's and zenohd's Cargo.lock pin;
+ring still lists no QNX there) by
+ports/zenoh-c/recipe.sh.
+
+Upstream-Status: Pending
+
+--- a/build.rs
++++ b/build.rs
+@@ -250,6 +250,7 @@
+     "hurd",
+     "illumos",
+     "netbsd",
++    "nto",
+     "openbsd",
+     "linux",
+     "redox",
+--- a/src/rand.rs
++++ b/src/rand.rs
+@@ -136,6 +136,7 @@
+     target_os = "illumos",
+     target_os = "linux",
+     target_os = "netbsd",
++    target_os = "nto",
+     target_os = "openbsd",
+     target_os = "redox",
+     target_os = "solaris",

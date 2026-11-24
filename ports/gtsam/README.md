@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`boost`](../boost/) [`eigen`](../eigen/) |
-| Run-time dependencies | [`boost`](../boost/) |
+| Run-time dependencies | [`boost`](../boost/) [`suitesparse`](../suitesparse/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gtsam`](../../tests/src/) |
 
@@ -132,12 +132,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gtsam`.
 
 ### 5. What it installs
 
-360 files under `/usr/local`: 4 shared-library entries, 341 headers.
+498 files under `/usr/local`: 7 shared-library entries, 476 headers.
 
 ```
+/usr/local/lib/libcephes-gtsam.so
+/usr/local/lib/libcephes-gtsam.so.1
+/usr/local/lib/libcephes-gtsam.so.1.0.0
 /usr/local/lib/libgtsam.so
 /usr/local/lib/libgtsam.so.4
-/usr/local/lib/libgtsam.so.4.2.0
+/usr/local/lib/libgtsam.so.4.3.0
 /usr/local/lib/libmetis-gtsam.so
 ```
 

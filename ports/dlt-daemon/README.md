@@ -1,4 +1,4 @@
-# dlt-daemon 2.18.10
+# dlt-daemon 3.0.0
 
 > COVESA Diagnostic Log and Trace (DLT) daemon, library and tools
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/COVESA/dlt-daemon.git (tag `v2.18.10`) |
+| Upstream | https://github.com/COVESA/dlt-daemon.git (tag `v3.0.0`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 3 |
 | Build dependencies | [`zlib`](../zlib/) [`libjson`](../libjson/) |
 | Run-time dependencies | [`libjson`](../libjson/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,25 +76,19 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v2.18.10 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.0.0 --recurse-submodules --shallow-submodules \
     https://github.com/COVESA/dlt-daemon.git src/dlt-daemon
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0001-qnx-syslog-header.patch
 patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0002-qnx-system-libjson.patch
+patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0003-qnx-werror-sign-conversion.patch
+patch -p1 -d src/dlt-daemon < ports/dlt-daemon/patches/0004-no-werror.patch
 ```
-
-**[`0001-qnx-syslog-header.patch`](patches/0001-qnx-syslog-header.patch)** — DLT: include <syslog.h> on QNX.
-
-> <sys/syslog.h> is a glibc/BSD alias that QNX does not ship; QNX has the POSIX
-> <syslog.h>.
-
-Touches: `src/offlinelogstorage/dlt_offline_logstorage.c` · Upstream status: QNX-specific
 
 **[`0002-qnx-system-libjson.patch`](patches/0002-qnx-system-libjson.patch)** — dlt-qnx-system: read the slog2 context map with the libjson port.
 
@@ -107,6 +101,29 @@ Touches: `src/offlinelogstorage/dlt_offline_logstorage.c` · Upstream status: QN
 > (the QNX decoder version stopped reading at it).
 
 Touches: `src/dlt-qnx-system/dlt-qnx-slogger2-adapter.cpp` · Upstream status: QNX-specific
+
+**[`0003-qnx-werror-sign-conversion.patch`](patches/0003-qnx-werror-sign-conversion.patch)** — DLT: QNX-only code fails the -Werror -Wconversion build of 3.0.0.
+
+> dlt-daemon 3.0.0 compiles with -Werror -Wconversion (sign-conversion). Code
+> that only builds on QNX trips it, which upstream CI does not build:
+> - timer_thread() (#ifdef __QNX__) passes the int starts_in/period_sec to
+>   sleep(), which takes unsigned int; create_timer_fd() has already rejected
+>   values <= 0, so the cast is exact.
+> - dlt-qnx-system logs the uint32_t injection service id with DLT_INT32;
+>   DLT_UINT32 is the matching type.
+
+Touches: `src/daemon/dlt-daemon.c`, `src/dlt-qnx-system/dlt-qnx-system.c` · Upstream status: Pending
+
+**[`0004-no-werror.patch`](patches/0004-no-werror.patch)** — dlt-daemon: do not build with -Werror -Wfatal-errors
+
+> dlt-daemon 3.0 compiles everything with -Werror -Wconversion. The code
+> assumes a signed char: on aarch64, where char is unsigned, the first
+> conversion warning (dlt_daemon_common.c, char -> int8_t) stops the build.
+> Keep the warnings, do not make them fatal.
+>
+> ---
+
+Touches: `CMakeLists.txt` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -148,20 +165,22 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH dlt-daemon`.
 
 ### 5. What it installs
 
-35 files under `/usr/local`: 2 shared-library entries, 10 programs, 14 headers.
+38 files under `/usr/local`: 2 shared-library entries, 12 programs, 15 headers.
 
 ```
 /usr/local/lib/libdlt.so
-/usr/local/lib/libdlt.so.2
+/usr/local/lib/libdlt.so.3
 /usr/local/bin/dlt-adaptor-stdin
 /usr/local/bin/dlt-adaptor-udp
 /usr/local/bin/dlt-control
+/usr/local/bin/dlt-control-v2
 /usr/local/bin/dlt-convert
 /usr/local/bin/dlt-daemon
 /usr/local/bin/dlt-logstorage-ctrl
 /usr/local/bin/dlt-passive-node-ctrl
 /usr/local/bin/dlt-qnx-system
 /usr/local/bin/dlt-receive
+/usr/local/bin/dlt-receive-v2
 /usr/local/bin/dlt-sortbytimestamp
 ```
 
@@ -245,12 +264,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.18.10**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dlt-daemon=<version>`), sources in `ported/dlt-daemon/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dlt-daemon`; port one with `scripts/port-update dlt-daemon`.
+This recipe builds **3.0.0**. Kept from earlier: `2.18.10` ([recipe and patches](versions/2.18.10/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add dlt-daemon=<version>`), sources in `ported/dlt-daemon/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates dlt-daemon`; port one with `scripts/port-update dlt-daemon`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.18.10; GIT=https://github.com/COVESA/dlt-daemon.git; REF=v2.18.10
+VERSION=3.0.0; GIT=https://github.com/COVESA/dlt-daemon.git; REF=v3.0.0
 # dlt-qnx-system reads its slog2 context map with the libjson port (patch
 # 0002), not with the libjson of QNX: "-ljson" finds the port first, and
 # the ports use ported libraries rather than those of QNX where they can.

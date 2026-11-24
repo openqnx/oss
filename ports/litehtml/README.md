@@ -108,7 +108,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH litehtml`.
 
 ### 5. What it installs
 
-68 files under `/usr/local`: 3 shared-library entries, 62 headers.
+74 files under `/usr/local`: 3 shared-library entries, 68 headers.
 
 ```
 /usr/local/lib/liblitehtml.so

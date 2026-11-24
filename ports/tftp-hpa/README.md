@@ -1,4 +1,4 @@
-# tftp-hpa 5.2
+# tftp-hpa 7.2
 
 > TFTP client and server
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git (tag `tftp-hpa-5.2`) |
+| Upstream | https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git (tag `tftp-hpa-7.2`) |
 | Build system | custom (see recipe) |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`readline`](../readline/) [`ncurses`](../ncurses/) |
 | Run-time dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -76,24 +76,37 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b tftp-hpa-5.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b tftp-hpa-7.2 --recurse-submodules --shallow-submodules \
     https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git src/tftp-hpa
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/tftp-hpa < ports/tftp-hpa/patches/0001-qnx-sa-restart.patch
+patch -p1 -d src/tftp-hpa < ports/tftp-hpa/patches/0001-tftpd-memset-not-bzero.patch
+patch -p1 -d src/tftp-hpa < ports/tftp-hpa/patches/0002-tftp-send-on-connected-socket.patch
 ```
 
-**[`0001-qnx-sa-restart.patch`](patches/0001-qnx-sa-restart.patch)** — Define SA_RESTART as 0 where the system lacks it.
+**[`0001-tftpd-memset-not-bzero.patch`](patches/0001-tftpd-memset-not-bzero.patch)** — Use memset() instead of bzero() in tftpd's recvfrom.c.
 
-> QNX's <signal.h> leaves SA_RESTART commented out ("not supported yet");
-> bsd_signal() only uses it to request restartable system calls.
+> QNX 8.0's libc neither declares nor provides bzero() (POSIX.1-2008 removed
+> it), so recvfrom.c compiled with implicit declarations and in.tftpd failed
+> to link. memset() does the same; the rest of tftp-hpa already uses it.
 
-Touches: `lib/bsdsignal.c` · Upstream status: QNX-specific
+Touches: `tftpd/recvfrom.c` · Upstream status: Pending
+
+**[`0002-tftp-send-on-connected-socket.patch`](patches/0002-tftp-send-on-connected-socket.patch)** — tftp: send() on the connected socket instead of sendto() with an address.
+
+> After the first reply the client connect()s its socket to the server's
+> transfer ID and keeps passing that address to sendto(). POSIX lets a
+> system fail sendto() with an address on a connected datagram socket
+> (EISCONN); QNX does, so every transfer stopped at its first data/ACK
+> packet with "send error: Socket is already connected". Send through a
+> helper that uses send() once the socket is connected.
+
+Touches: `tftp/tftp.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -104,9 +117,10 @@ S=src/tftp-hpa; B=build/$QNX_ARCH/tftp-hpa; mkdir -p $B
 ```
 
 ```bash
-do_configure() { cp -a "$S/." "$B/" && cd "$B" && autoreconf -fi && \
-  CC="qcc -V$QCC_TARGET -D_QNX_SOURCE -fcommon" LIBS="-lsocket" ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" \
-     --without-tcpwrappers --without-ipv6; }
+do_configure() { cp -a "$S/." "$B/" && cd "$B" && ./autogen.sh && \
+  CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" LIBS="-lsocket" ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" \
+     --disable-ipv6 && \
+  sed -i 's/ -MMD -MF \${DEPENDFILE}//' config/MCONFIG && ! grep -q DEPENDFILE config/MCONFIG; }
 ```
 
 ```bash
@@ -120,7 +134,7 @@ do_install() { make -C "$B" INSTALLROOT="$STAGE" install; }
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Also linked at run time (found by scripts/gen-dependency-index): readline
-- tftp-hpa's Makefiles only work in the source tree, so build in a copy of it. -fcommon: tftp.c and main.c both define "toplevel" (old-style common symbol), an error by default since GCC 10.
+- tftp-hpa's Makefiles only work in the source tree, so build in a copy of it. The git tree has no configure: autogen.sh makes it (and the autoconf helpers and config.h.in). IPv6 stays off as in the 5.2 port. configure puts "-MMD -MF ${DEPENDFILE}" (dependency files) in CFLAGS, which the Makefiles pass to the link step too; gcc ignores it there, but qcc hands the .dep name to ld ("cannot find tftp.dep"). Take it out of config/MCONFIG.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tftp-hpa`.
 
@@ -205,21 +219,25 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **5.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tftp-hpa=<version>`), sources in `ported/tftp-hpa/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tftp-hpa`; port one with `scripts/port-update tftp-hpa`.
+This recipe builds **7.2**. Kept from earlier: `5.2` ([recipe and patches](versions/5.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tftp-hpa=<version>`), sources in `ported/tftp-hpa/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tftp-hpa`; port one with `scripts/port-update tftp-hpa`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=5.2; GIT=https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git; REF=tftp-hpa-5.2
+VERSION=7.2; GIT=https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git; REF=tftp-hpa-7.2
 # Also linked at run time (found by scripts/gen-dependency-index): readline
 DEPS="readline ncurses"
 BUILDSYS=custom
 # tftp-hpa's Makefiles only work in the source tree, so build in a copy of it.
-# -fcommon: tftp.c and main.c both define "toplevel" (old-style common symbol),
-# an error by default since GCC 10.
-do_configure() { cp -a "$S/." "$B/" && cd "$B" && autoreconf -fi && \
-  CC="qcc -V$QCC_TARGET -D_QNX_SOURCE -fcommon" LIBS="-lsocket" ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" \
-     --without-tcpwrappers --without-ipv6; }
+# The git tree has no configure: autogen.sh makes it (and the autoconf
+# helpers and config.h.in). IPv6 stays off as in the 5.2 port.
+# configure puts "-MMD -MF ${DEPENDFILE}" (dependency files) in CFLAGS, which
+# the Makefiles pass to the link step too; gcc ignores it there, but qcc hands
+# the .dep name to ld ("cannot find tftp.dep"). Take it out of config/MCONFIG.
+do_configure() { cp -a "$S/." "$B/" && cd "$B" && ./autogen.sh && \
+  CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" LIBS="-lsocket" ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" \
+     --disable-ipv6 && \
+  sed -i 's/ -MMD -MF \${DEPENDFILE}//' config/MCONFIG && ! grep -q DEPENDFILE config/MCONFIG; }
 do_build() { make -C "$B" -j"$(nproc)"; }
 do_install() { make -C "$B" INSTALLROOT="$STAGE" install; }
 ```

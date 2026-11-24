@@ -1,4 +1,4 @@
-VERSION=3.5.6; GIT=https://github.com/COVESA/vsomeip.git; REF=3.5.6
+VERSION=3.8.0; GIT=https://github.com/COVESA/vsomeip.git; REF=3.8.0
 DEPS="boost"
 CMAKE_ARGS_EXTRA=( -DBUILD_SHARED_LIBS=ON -DENABLE_SIGNAL_HANDLING=1
                    -DBoost_NO_BOOST_CMAKE=OFF

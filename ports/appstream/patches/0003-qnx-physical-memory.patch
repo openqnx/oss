@@ -6,8 +6,8 @@ what the Solaris branch uses: take that branch (and its <unistd.h>) on QNX.
 
 Upstream-Status: QNX-specific
 
---- a/AppStream-1.0.6/src/as-system-info.c
-+++ b/AppStream-1.0.6/src/as-system-info.c
+--- a/AppStream-1.2.3/src/as-system-info.c
++++ b/AppStream-1.2.3/src/as-system-info.c
 @@ -56,7 +56,7 @@
  #include <mach/mach.h>
  #include <mach/host_info.h>
@@ -17,7 +17,7 @@ Upstream-Status: QNX-specific
  #include <unistd.h>
  #endif
  #ifdef HAVE_SYSTEMD
-@@ -513,7 +513,7 @@
+@@ -528,7 +528,7 @@
  		return 0;
  	}
  	return hbi.memory_size / MB_IN_BYTES;

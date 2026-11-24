@@ -1,4 +1,4 @@
-# x265 3.6
+# x265 4.2
 
 > H.265/HEVC video encoder library
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://bitbucket.org/multicoreware/x265_git.git (tag `3.6`) |
+| Upstream | https://bitbucket.org/multicoreware/x265_git.git (tag `4.2`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | none |
 | Run-time dependencies | none (QNX SDP only) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 3.6 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 4.2 --recurse-submodules --shallow-submodules \
     https://bitbucket.org/multicoreware/x265_git.git src/x265
 ```
 
@@ -80,20 +80,11 @@ The project lives in the `source/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/x265 < ports/x265/patches/0001-cmake4-policies.patch
 patch -p1 -d src/x265 < ports/x265/patches/0002-cxx11.patch
 ```
-
-**[`0001-cmake4-policies.patch`](patches/0001-cmake4-policies.patch)** — x265: set CMP0025 and CMP0054 to NEW for CMake 4.
-
-> CMake 4 removed the OLD behaviour of these policies and refuses to configure.
-> CMP0025 only affects Apple's compiler name; NEW CMP0054 is the long-standing
-> default.
-
-Touches: `source/CMakeLists.txt` · Upstream status: Pending (not QNX-specific: CMake 4)
 
 **[`0002-cxx11.patch`](patches/0002-cxx11.patch)** — x265: compile as C++11, not C++98.
 
@@ -133,7 +124,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH x265`.
 
 ```
 /usr/local/lib/libx265.so
-/usr/local/lib/libx265.so.209
+/usr/local/lib/libx265.so.216
 ```
 
 The complete list is `stage/<arch>/.manifest/x265` after a build.
@@ -213,12 +204,12 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add x265=<version>`), sources in `ported/x265/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates x265`; port one with `scripts/port-update x265`.
+This recipe builds **4.2**. Kept from earlier: `3.6` ([recipe and patches](versions/3.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add x265=<version>`), sources in `ported/x265/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates x265`; port one with `scripts/port-update x265`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.6; GIT=https://bitbucket.org/multicoreware/x265_git.git; REF=3.6
+VERSION=4.2; GIT=https://bitbucket.org/multicoreware/x265_git.git; REF=4.2
 SUBDIR=source
 CMAKE_ARGS_EXTRA=( -DENABLE_SHARED=ON -DENABLE_CLI=OFF -DENABLE_TESTS=OFF
                    -DENABLE_ASSEMBLY=OFF          # nasm/yasm absent on this host

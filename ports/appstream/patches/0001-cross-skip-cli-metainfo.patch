@@ -10,8 +10,8 @@ installed as before.
 
 Upstream-Status: QNX-specific
 
---- a/AppStream-1.0.6/data/meson.build
-+++ b/AppStream-1.0.6/data/meson.build
+--- a/AppStream-1.2.3/data/meson.build
++++ b/AppStream-1.2.3/data/meson.build
 @@ -7,39 +7,39 @@
  install_data('its/metainfo.loc',
                install_dir: join_paths(get_option('datadir'), 'gettext', 'its'))

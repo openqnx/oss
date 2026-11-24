@@ -1,0 +1,69 @@
+tftp: send() on the connected socket instead of sendto() with an address.
+
+After the first reply the client connect()s its socket to the server's
+transfer ID and keeps passing that address to sendto(). POSIX lets a
+system fail sendto() with an address on a connected datagram socket
+(EISCONN); QNX does, so every transfer stopped at its first data/ACK
+packet with "send error: Socket is already connected". Send through a
+helper that uses send() once the socket is connected.
+
+Upstream-Status: Pending
+
+--- a/tftp/tftp.c
++++ b/tftp/tftp.c
+@@ -109,13 +109,24 @@
+     return n;
+ }
+ 
++/*
++ * Send to the peer. Once the socket is connect()ed to the transfer ID,
++ * sendto() with an address fails with EISCONN on systems that do not
++ * ignore the address (QNX), so use send() then.
++ */
++static ssize_t peer_send(const void *buf, size_t len)
++{
++    if (peer.connected)
++        return send(peer.sock, buf, len, 0);
++    return sendto(peer.sock, buf, len, 0, &peer.addr.sa, peer.addrlen);
++}
++
+ static int client_xfer_send(void *vctx, const void *packet, int length)
+ {
+     (void)vctx;
+     if (copt.trace)
+         tpacket("sent", packet, length);
+-    return sendto(peer.sock, packet, length, 0, &peer.addr.sa,
+-                  peer.addrlen) == length ? 0 : -1;
++    return peer_send(packet, length) == length ? 0 : -1;
+ }
+ 
+ static int client_xfer_recv(void *vctx, void *packet, int length)
+@@ -319,8 +330,7 @@
+         (void)sigsetjmp(timeoutbuf, 1);
+         if (copt.trace)
+             tpacket("sent", req, size);
+-        if (sendto(peer.sock, req, size, 0, &peer.addr.sa, peer.addrlen)
+-            != size) {
++        if (peer_send(req, size) != size) {
+             print_os_error(name, "send", errno);
+             err = EX_OSERR;
+             goto abort;
+@@ -484,7 +494,7 @@
+         (void)sigsetjmp(timeoutbuf, 1);
+         if (copt.trace)
+             tpacket("sent", req, size);
+-        if (sendto(peer.sock, req, size, 0, &peer.addr.sa, peer.addrlen) != size) {
++        if (peer_send(req, size) != size) {
+             print_os_error(name, "send", errno);
+             err = EX_OSERR;
+             goto abort;
+@@ -767,8 +777,7 @@
+ 
+     if (copt.trace)
+         tpacket("sent", tp, length);
+-    if (sendto(peer.sock, tp, length, 0,
+-               &peer.addr.sa, peer.addrlen) != length) {
++    if (peer_send(tp, length) != length) {
+         err = errno;
+         if (name)
+             print_os_error(name, "send", err);

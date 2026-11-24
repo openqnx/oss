@@ -1,0 +1,33 @@
+WTF: include QNX's <sys/timerfd.h> as a C header.
+
+    RunLoopGLib.cpp: undefined reference to `timerfd_create(int, int)'
+    RunLoopGLib.cpp: undefined reference to `timerfd_settime(int, int,
+        itimerspec const*, itimerspec*)'
+
+The GLib run loop uses timerfd when CMake finds timerfd_create() (HAVE_TIMERFD),
+and on QNX it does: libtimerfd, linked by the toolchain's default libraries.
+But its <sys/timerfd.h> declares the functions without an extern "C" block, so
+C++ code references the mangled names and the link of libWTF fails.  Wrap the
+include in extern "C" on QNX.  (JSCOnly uses the generic run loop and does not
+build this file; the patch is carried in both ports to keep the shared tree the
+same.)
+
+Upstream-Status: Inappropriate [QNX system header lacks C++ guards]
+
+--- a/Source/WTF/wtf/glib/RunLoopGLib.cpp
++++ b/Source/WTF/wtf/glib/RunLoopGLib.cpp
+@@ -37,7 +37,14 @@
+ #include <wtf/glib/RunLoopSourcePriority.h>
+ 
+ #if HAVE(TIMERFD)
++#if OS(QNX)
++// QNX's <sys/timerfd.h> (libtimerfd, a C library) has no extern "C" guard.
++extern "C" {
+ #include <sys/timerfd.h>
++}
++#else
++#include <sys/timerfd.h>
++#endif
+ #include <time.h>
+ #include <unistd.h>
+ #include <wtf/SystemTracing.h>

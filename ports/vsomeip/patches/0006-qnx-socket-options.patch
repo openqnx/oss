@@ -1,0 +1,57 @@
+Build the 3.8 socket options on QNX: SO_BINDTODEVICE, IP_PKTINFO, SO_RCVBUFFORCE.
+
+vsomeip 3.8 moved its socket options into socket_options.hpp and
+asio_tcp_socket.hpp (built for Linux and QNX). They name SO_BINDTODEVICE,
+IP_PKTINFO and SO_RCVBUFFORCE, which QNX 8.0's headers do not define, so the
+build stops there. vsomeip's own qnx_helper.hpp defines the first two for
+QNX (as 3.5 used them) but is not included by these files, and in 3.8.0 it
+lacks the #endif of its #ifdef __QNX__ ("unterminated #ifdef" wherever it is
+included). Close the #ifdef, include qnx_helper.hpp in both files, and use
+SO_RCVBUF for receive_buffer_force on QNX (it is only set under __linux__;
+the template still has to compile).
+
+Upstream-Status: Pending
+
+--- a/implementation/utility/include/qnx_helper.hpp
++++ b/implementation/utility/include/qnx_helper.hpp
+@@ -20,3 +20,5 @@
+ };
+ #define _STRUCT_IN_PKTINFO
+ #endif
++
++#endif // __QNX__
+--- a/implementation/endpoints/include/socket_options.hpp
++++ b/implementation/endpoints/include/socket_options.hpp
+@@ -13,6 +13,9 @@
+ 
+ #include <sys/time.h>
+ 
++// QNX: SO_BINDTODEVICE and IP_PKTINFO as vsomeip defines them for QNX elsewhere
++#include "../../utility/include/qnx_helper.hpp"
++
+ namespace vsomeip_v3 {
+ 
+ template<typename Protocol>
+@@ -31,7 +34,12 @@
+ template<typename Protocol>
+ struct receive_buffer_force {
+     static int level(Protocol const&) { return SOL_SOCKET; };
++#if defined(__QNX__)
++    // No SO_RCVBUFFORCE on QNX (only used under __linux__): plain SO_RCVBUF.
++    static int name(Protocol const&) { return SO_RCVBUF; };
++#else
+     static int name(Protocol const&) { return SO_RCVBUFFORCE; };
++#endif
+     const void* data(Protocol const&) const { return static_cast<const void*>(&size_); }
+     size_t size(Protocol const&) const { return sizeof(size_); }
+ 
+--- a/implementation/endpoints/include/asio_tcp_socket.hpp
++++ b/implementation/endpoints/include/asio_tcp_socket.hpp
+@@ -6,6 +6,7 @@
+ #pragma once
+ 
+ #include "tcp_socket.hpp"
++#include "../../utility/include/qnx_helper.hpp" // SO_BINDTODEVICE on QNX
+ 
+ #include <boost/asio/write.hpp>
+ #include <boost/asio/ip/tcp.hpp>

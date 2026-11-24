@@ -1,4 +1,4 @@
-VERSION=2.3.4; GIT=https://gitlab.com/lely_industries/lely-core.git; REF=v2.3.4
+VERSION=2.3.5; GIT=https://gitlab.com/lely_industries/lely-core.git; REF=v2.3.5
 BUILDSYS=autotools
 # CANopen stack. QNX has no SocketCAN, so the generic (non-socketcan) CAN
 # backend is selected; the vehicle interface is bound at integration time.

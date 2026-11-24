@@ -97,12 +97,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fastcdr`.
 
 ### 5. What it installs
 
-29 files under `/usr/local`: 3 shared-library entries, 21 headers.
+28 files under `/usr/local`: 3 shared-library entries, 20 headers.
 
 ```
 /usr/local/lib/libfastcdr.so
 /usr/local/lib/libfastcdr.so.2
-/usr/local/lib/libfastcdr.so.2.4.0
+/usr/local/lib/libfastcdr.so.2.2.6
 ```
 
 The complete list is `stage/<arch>/.manifest/fastcdr` after a build.

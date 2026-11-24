@@ -8,7 +8,7 @@ Upstream-Status: QNX-specific
 
 --- a/telnet/sys_bsd.c
 +++ b/telnet/sys_bsd.c
-@@ -1009,7 +1009,11 @@
+@@ -983,7 +983,11 @@
  {
    struct sigaction sa;
  

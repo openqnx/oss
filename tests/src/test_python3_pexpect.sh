@@ -42,6 +42,10 @@ def shell():
     # character first), sent once the shell has printed the marker that
     # precedes the sleep, and again if the prompt is not back: a ^C that
     # reaches the pty before sleep is the foreground job is lost.
+    # A pty can come up without ISIG, or with another VINTR: ^C was then
+    # echoed as text and never became SIGINT. Set both before relying on it.
+    c.sendline("stty isig intr '^C' 2>/dev/null; echo TTY''SET")
+    c.expect_exact("TTYSET"); c.expect_exact("QNXP> ")
     c.sendline("echo SLEEP''ING; sleep 30")
     c.expect_exact("SLEEPING")
     import time

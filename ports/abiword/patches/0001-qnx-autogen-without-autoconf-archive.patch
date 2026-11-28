@@ -14,6 +14,8 @@ exception specifications, std::pointer_to_unary_function). The bundled libgcrypt
 Debian does (drop-outdated-libgcrypt.m4.diff): an outdated copy of macros
 autoreconf otherwise takes over the installed ones.
 
+Upstream-Status: QNX-specific
+
 diff -ruN abia/configure.ac abib/configure.ac
 --- abia/configure.ac	2026-02-18 12:16:18.000000000 +0900
 +++ abib/configure.ac	2026-11-25 18:06:50.010822675 +0900

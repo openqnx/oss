@@ -1,5 +1,7 @@
 QNX: libc++abi -- QNX in cxxabi.h's platform list (from qnx-ports' LLVM).
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/libcxxabi/include/cxxabi.h b/engine/src/flutter/third_party/libcxxabi/include/cxxabi.h
 index 9ea9368..01321f6 100644
 --- a/engine/src/flutter/third_party/libcxxabi/include/cxxabi.h

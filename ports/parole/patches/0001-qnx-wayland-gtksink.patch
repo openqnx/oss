@@ -15,6 +15,8 @@ skipped). The mouse handlers (controls on motion, click to pause) are on the
 enclosing event box and keep working. This path is taken only in a build
 without X11 sinks; with ximagesink/xvimagesink present nothing changes.
 
+Upstream-Status: Pending
+
 diff -ru a/src/gst/parole-gst.c b/src/gst/parole-gst.c
 --- a/src/gst/parole-gst.c	2025-05-21 15:46:43.000000000 +0900
 +++ b/src/gst/parole-gst.c	2026-11-25 16:34:06.723167843 +0900

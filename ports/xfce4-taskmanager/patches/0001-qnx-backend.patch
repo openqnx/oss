@@ -26,6 +26,8 @@ task-manager.h with what QNX Neutrino 8 provides:
 Sending signals and changing priorities stay in task-manager.c (kill(),
 setpriority()), which QNX has.
 
+Upstream-Status: QNX-specific
+
 diff -ruN a/meson.build b/meson.build
 --- a/meson.build	2025-05-21 16:00:22.000000000 +0900
 +++ b/meson.build	2026-11-25 17:07:52.569454678 +0900

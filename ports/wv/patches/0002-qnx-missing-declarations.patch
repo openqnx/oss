@@ -12,6 +12,8 @@ wvparse.c calls wvOLEDecode_gsf() (laolareplace.c) with no prototype in
 scope; it returns int, so it worked, but the prototype is added to wv.h so
 that the arguments are checked too.
 
+Upstream-Status: Pending
+
 diff -ru a/wv.h b/wv.h
 --- a/wv.h	2009-10-15 01:23:14.000000000 +0900
 +++ b/wv.h	2026-11-25 17:34:22.669336464 +0900

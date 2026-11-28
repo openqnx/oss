@@ -10,6 +10,8 @@ stopped with an empty "An error occurred while accessing the archive"
 dialog although gzip/tar had exited 0. Only G_IO_ERR and G_IO_NVAL now mean
 failure (the exit status still decides the rest).
 
+Upstream-Status: Pending
+
 --- a/src/archive.c	2026-11-25 21:53:41.522739608 +0900
 +++ b/src/archive.c	2026-11-25 21:53:41.532336136 +0900
 @@ -77,7 +77,9 @@

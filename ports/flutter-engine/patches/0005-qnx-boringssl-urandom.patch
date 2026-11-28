@@ -1,5 +1,7 @@
 QNX: BoringSSL takes random bytes from /dev/urandom (QNX has no getentropy).
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/boringssl/src/crypto/rand/internal.h b/engine/src/flutter/third_party/boringssl/src/crypto/rand/internal.h
 index 50dbf0b..1a6570d 100644
 --- a/engine/src/flutter/third_party/boringssl/src/crypto/rand/internal.h

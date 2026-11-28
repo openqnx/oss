@@ -1,6 +1,8 @@
 QNX: no ARM NEON/CRC32 code paths in zlib on QNX (they need Linux's
 getauxval/HWCAP to detect the CPU features).
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/zlib/BUILD.gn b/engine/src/flutter/third_party/zlib/BUILD.gn
 index eff72b2..60fb0d3 100644
 --- a/engine/src/flutter/third_party/zlib/BUILD.gn

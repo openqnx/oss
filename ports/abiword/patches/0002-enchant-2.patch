@@ -6,6 +6,8 @@ The patch is Debian's (debian/patches/enchant2.patch of abiword
 3.0.8+ds-2, by Laurent Bigonville, https://bugs.debian.org/956710): the
 pkg-config name and enchant 2's renamed functions.
 
+Upstream-Status: Backport (Debian debian/patches/enchant2.patch)
+
 --- a/configure.ac
 +++ b/configure.ac
 @@ -94,7 +94,7 @@

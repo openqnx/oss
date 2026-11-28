@@ -6,6 +6,8 @@ compiled. -std=gnu89 is the language level -ansi selected for this 1990s C
 code, with the GNU extensions the system headers expect. configure is
 changed along with configure.ac, so the tarball builds without autoreconf.
 
+Upstream-Status: QNX-specific
+
 diff -ru a/configure b/configure
 --- a/configure	2010-10-10 06:27:13.000000000 +0900
 +++ b/configure	2026-11-25 17:30:02.347900931 +0900

@@ -9,6 +9,8 @@ install kind, -Wl,-soname). Applied to cargo-c 0.10.19+cargo-0.93.0, the
 newest release whose rust-version (1.90) ports/rust meets, built for the
 build machine (cargo install --path, --locked).
 
+Upstream-Status: Pending
+
 diff -ru a/src/build_targets.rs b/src/build_targets.rs
 --- a/src/build_targets.rs	2006-07-24 10:21:28.000000000 +0900
 +++ b/src/build_targets.rs	2026-11-25 20:42:37.347956092 +0900

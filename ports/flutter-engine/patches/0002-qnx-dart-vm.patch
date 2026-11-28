@@ -7,6 +7,8 @@ edge triggering and no timerfd), a signal handler for QNX's mcontext layout;
 QNX ways for the thread id, random bytes (/dev/urandom), the thread's stack
 (TLS), fstatat, d_type, bzero and the machine-check codes.
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/dart/runtime/BUILD.gn b/engine/src/flutter/third_party/dart/runtime/BUILD.gn
 index 9da80ef6..5febed62 100644
 --- a/engine/src/flutter/third_party/dart/runtime/BUILD.gn

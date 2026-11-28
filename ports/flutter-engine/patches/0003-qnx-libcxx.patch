@@ -6,6 +6,8 @@ filesystem, errno) and a locale base API for QNX written here
 locale_t, newlocale or the *_l functions, so libc++ supports the "C" locale
 only and implements wcsnrtombs/mbsnrtowcs itself.
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/libcxx/include/__config b/engine/src/flutter/third_party/libcxx/include/__config
 index c8224b0..5d0ec58 100644
 --- a/engine/src/flutter/third_party/libcxx/include/__config

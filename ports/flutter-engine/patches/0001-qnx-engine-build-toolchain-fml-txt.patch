@@ -17,6 +17,8 @@ arm64, no Dart, no embedder). This adds what the embedder engine needs:
 - native assets: the target OS name is "linux";
 - the embedder engine and the snapshot tools in the build (flutter/BUILD.gn).
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/build/config/BUILDCONFIG.gn b/engine/src/build/config/BUILDCONFIG.gn
 index a6c8100d434..eb65853c571 100644
 --- a/engine/src/build/config/BUILDCONFIG.gn

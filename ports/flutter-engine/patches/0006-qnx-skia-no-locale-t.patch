@@ -1,5 +1,7 @@
 QNX: Skia's locale setter is a no-op as on Android (QNX has no locale_t).
 
+Upstream-Status: QNX-specific
+
 diff --git a/engine/src/flutter/third_party/skia/src/core/SkAutoLocaleSetter.h b/engine/src/flutter/third_party/skia/src/core/SkAutoLocaleSetter.h
 index 4642ca2..a0dd1ad 100644
 --- a/engine/src/flutter/third_party/skia/src/core/SkAutoLocaleSetter.h

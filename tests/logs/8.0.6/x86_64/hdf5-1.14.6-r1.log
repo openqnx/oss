@@ -1,0 +1,69 @@
+# hdf5 1.14.6-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:42:12Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u hdf5 qnx-test-hdf5 qnx-port-tests
+(1/4) Installing libaec (1.1.8-r1)
+(2/4) Installing hdf5 (1.14.6-r1)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-hdf5 (1.0-r1)
+OK: 15.8 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_hdf5
+     == hdf5 ==
+       ok   library version matches the headers
+       ok   this is HDF5 1.14
+       ok   DEFLATE filter encodes and decodes
+       ok   SZIP filter encodes and decodes
+       ok   H5Fcreate with the default file access (file locking: best effort)
+       ok   nested groups created
+       ok   DEFLATE+shuffle dataset is stored in less than half its raw size
+       ok   SZIP dataset is stored smaller than raw
+       ok   attributes written
+       ok   compound dataset written
+       ok   H5LT dataset and string attribute written
+       ok   file closed
+       ok   file starts with the HDF5 signature
+       ok   H5Fis_accessible recognises it
+       ok   file reopened read-only
+       ok   DEFLATE dataset reads back identical
+       ok   SZIP dataset reads back identical
+       ok   strided hyperslab holds the expected cells
+       ok   read as 64-bit integers, sum matches
+       ok   dataset reports chunked layout with 2 filters
+       ok   attributes read back: 12.5 and "millimetre"
+       ok   compound records read back
+       ok   /sensors has 3 links
+       ok   H5Lexists tells present from absent
+       ok   opening a missing dataset fails
+       ok   H5LT reads the 2x3 matrix and its attribute
+       ok   C++: dataset dimensions and contents
+       ok   C++: extendible dataset grown to 7 values, sum 28
+       ok   C++: opening a missing group throws H5::Exception
+       ok   C++: open dataset handles are counted
+       ok   h5ls -r lists the datasets with their dimensions
+       ok   h5dump prints the matrix values and the attribute
+       ok   h5repack rewrites the file with GZIP=9
+       ok   h5diff finds no difference between the file and its repacked copy
+       info: /usr/local/bin/h5diff '/tmp/qnx-hdf5-17698839.h5' '/tmp/qnx-hdf5-17698839.h5.repack' /hl_matrix 2>&1 -> exit 1: dataset: </hl_matrix> and </hl_matrix>
+     1 differences found
+     
+       ok   h5diff reports the one changed value (exit status 1)
+       ok   file removed
+       ok   core-driver file holds a dataset and has a file image
+       ok   core-driver file without backing store left nothing on disk
+       ok   double -> IEEE half: 1.5, -2.25, 65504, 2^-24 have the binary16 bit patterns
+       ok   IEEE half -> double restores the values exactly
+       ok   H5T_NATIVE_FLOAT16 is the 2-byte little-endian IEEE type
+       ok   long double -> _Float16 gives the binary16 bit patterns
+       ok   _Float16 -> int truncates to 1, -2, 65504
+       ok   H5close
+     PASS hdf5
+PASS test_hdf5
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,38 @@
+swaylock: a PAM policy that works on a stock QNX image.
+
+The installed policy is "auth include login", but a QNX target built with
+mkqnximage has no /etc/pam.d at all (the SDP's etc/pam.d/login is not put
+into the image), so pam_start() failed and swaylock left as soon as it had
+locked: "pam_start failed", "Failed to read pw result". Name the module
+QNX's own login policy uses, pam_qnx.so, directly -- by its path in the
+image, /system/lib/dll/pam/pam_qnx.so (OpenPAM loads a module named with a
+"/" from that path, after checking it belongs to root and only root may
+write it; /system/lib/dll/pam is not on its module search path) -- and for
+all four facilities, as that policy does: with "auth" alone OpenPAM goes
+looking for the "other" policy for the rest, does not find one, and
+pam_start() fails (System error, ENOENT). pam_qnx.so links OpenPAM's
+libpam.so.2 from /usr/local/lib: swaylock needs the desktop session's
+LD_LIBRARY_PATH (oss-env.sh), which it runs with.
+
+Upstream-Status: QNX-specific
+
+--- a/pam/swaylock	2026-11-25 21:42:26.089687383 +0900
++++ b/pam/swaylock	2026-11-25 21:42:26.090233822 +0900
+@@ -1,6 +1,14 @@
+ #
+-# PAM configuration file for the swaylock screen locker. By default, it includes
+-# the 'login' configuration file (see /etc/pam.d/login)
++# PAM configuration file for the swaylock screen locker. On QNX it names the
++# module of the system's 'login' policy itself, by its path: an image built
++# with mkqnximage has no /etc/pam.d/login to include, and keeps QNX's PAM
++# modules in /system/lib/dll/pam, which is not on OpenPAM's module path.
++# Another BSP image may keep them elsewhere: change the path here.
++# All four facilities are given: OpenPAM looks for the 'other' policy for any
++# that is missing.
+ #
+ 
+-auth include login
++auth requisite /system/lib/dll/pam/pam_qnx.so
++account requisite /system/lib/dll/pam/pam_qnx.so
++session requisite /system/lib/dll/pam/pam_qnx.so
++password requisite /system/lib/dll/pam/pam_qnx.so

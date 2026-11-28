@@ -1,0 +1,33 @@
+# iperf2 2.2.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:42:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u iperf2 qnx-test-iperf2 qnx-port-tests
+(1/3) Installing iperf2 (2.2.2-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-iperf2 (1.0-r3)
+OK: 9991 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_iperf2
+     == iperf2 ==
+       info iperf 2.2.2 (11 November 2026) pthreads (community)
+       ok   iperf -v: 2.2.2
+       info servers on <ip>:15408 (TCP, pid 17862680) and :15409 (UDP, pid 17862681)
+       ok   TCP client run completed (after 0 retries)
+       ok   TCP: client sent exactly 2097152 bytes
+       ok   reverse (-R): the server sent 1048576 bytes to the client
+       ok   full duplex: 1048576 bytes in each direction (2 lines)
+       ok   parallel (-P 2): stream bytes 560595008 + 488374336 = sum line 1048969344
+       ok   UDP: client sent 263168 bytes (257 datagrams of 1024)
+       ok   TCP: server received exactly 2097152 bytes
+       info UDP server: 20261127114230,<ip>,18298,<ip>,15409,1,0.0-1.0,263168,2102969,0.010,0,257,0.000,0
+       ok   UDP: server counted 257 datagrams, 263168 bytes (lost 0)
+     PASS iperf2
+PASS test_iperf2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

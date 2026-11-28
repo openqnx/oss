@@ -1,0 +1,92 @@
+# cartographer 2.0.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-25T04:09:17Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cartographer qnx-test-cartographer qnx-port-tests
+( 1/11) Installing abseil (20260817.0-r0)
+( 2/11) Installing boost (1.86.0-r0)
+( 3/11) Installing gflags (2.3.1-r0)
+( 4/11) Installing glog (0.7.1-r1)
+( 5/11) Installing gklib (5.1.1_git20230326-r0)
+( 6/11) Installing metis (5.2.1-r0)
+( 7/11) Installing ceres-solver (2.2.0-r1)
+( 8/11) Installing lua5.3 (5.3.6-r0)
+( 9/11) Installing protobuf (29.3-r0)
+(10/11) Installing cartographer (2.0.0-r1)
+(11/11) Installing qnx-test-cartographer (1.0-r1)
+OK: 209.5 MiB in 71 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cartographer
+     == cartographer ==
+       info configuration files: /usr/local/share/cartographer/configuration_files
+       ok   Rigid2d composition
+       ok   Embed3D, GetYaw, inverse
+     WARNING: Logging before InitGoogleLogging() is written to STDERR
+     I20261125 04:09:00.047893     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/map_builder.lua' for 'map_builder.lua'.
+     I20261125 04:09:00.061720     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/map_builder.lua' for 'map_builder.lua'.
+     I20261125 04:09:00.071957     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/pose_graph.lua' for 'pose_graph.lua'.
+     I20261125 04:09:00.075653     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/pose_graph.lua' for 'pose_graph.lua'.
+       ok   Lua dictionary: arithmetic, strings, nested tables
+       ok   Lua include of the installed map_builder.lua
+       ok   probability grid stores a cell; unknown cells read the minimum
+       ok   cell centre is within half a cell of the point
+       info inserted scan: p(wall 5,0) = 0.550, p(free 2.5,0) = 0.490, known(7,0) = 0
+       ok   range data inserter: wall cells hit (p = hit_probability 0.55)
+       ok   range data inserter: cells along the rays free (p = miss_probability 0.49)
+       ok   range data inserter: cells behind the wall stay unknown
+     I20261125 04:09:00.238332     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/map_builder.lua' for 'map_builder.lua'.
+     I20261125 04:09:00.241788     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/map_builder.lua' for 'map_builder.lua'.
+     I20261125 04:09:00.249234     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/pose_graph.lua' for 'pose_graph.lua'.
+     I20261125 04:09:00.252745     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/pose_graph.lua' for 'pose_graph.lua'.
+     I20261125 04:09:00.262007     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder.lua' for 'trajectory_builder.lua'.
+     I20261125 04:09:00.265703     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder.lua' for 'trajectory_builder.lua'.
+     I20261125 04:09:00.273293     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder_2d.lua' for 'trajectory_builder_2d.lua'.
+     I20261125 04:09:00.276895     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder_2d.lua' for 'trajectory_builder_2d.lua'.
+     I20261125 04:09:00.287173     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder_3d.lua' for 'trajectory_builder_3d.lua'.
+     I20261125 04:09:00.290829     1 configuration_file_resolver.cc:41] Found '/usr/local/share/cartographer/configuration_files/trajectory_builder_3d.lua' for 'trajectory_builder_3d.lua'.
+       ok   2D trajectory builder created
+     I20261125 04:09:00.454903     1 ordered_multi_queue.cc:172] All sensor data for trajectory 0 is available starting at '638000000000000000'.
+     I20261125 04:09:00.458328     1 local_trajectory_builder_2d.cc:312] Extrapolator not yet initialized.
+     W20261125 04:09:00.478412     1 pose_extrapolator.cc:168] Queue too short for velocity estimation. Queue duration: 0 s
+     I20261125 04:09:00.502210     1 pose_graph_2d.cc:148] Inserted submap (0, 0).
+     I20261125 04:09:03.203519     2 pose_graph_2d.cc:538] Remaining work items in queue: 0
+     I20261125 04:09:04.463404     3 constraint_builder_2d.cc:290] 0 computations resulted in 0 additional constraints.
+     I20261125 04:09:04.464666     3 constraint_builder_2d.cc:292] Score histogram:
+     Count: 0
+     W20261125 04:09:04.476473     3 preprocessor.cc:67] Specified options.num_threads: 7 exceeds maximum available from the threading model Ceres was compiled with: 2.  Bounding to maximum number available.
+     I20261125 04:09:04.539503     3 pose_graph_2d.cc:538] Remaining work items in queue: 2
+     I20261125 04:09:04.541098     2 constraint_builder_2d.cc:290] 0 computations resulted in 0 additional constraints.
+     I20261125 04:09:04.542308     2 constraint_builder_2d.cc:292] Score histogram:
+     Count: 0
+     W20261125 04:09:04.546472     2 preprocessor.cc:67] Specified options.num_threads: 7 exceeds maximum available from the threading model Ceres was compiled with: 2.  Bounding to maximum number available.
+     I20261125 04:09:04.562409     2 pose_graph_2d.cc:538] Remaining work items in queue: 1
+     I20261125 04:09:04.564034     2 constraint_builder_2d.cc:290] 0 computations resulted in 0 additional constraints.
+     I20261125 04:09:04.565143     2 constraint_builder_2d.cc:292] Score histogram:
+     Count: 0
+     W20261125 04:09:04.569224     2 preprocessor.cc:67] Specified options.num_threads: 7 exceeds maximum available from the threading model Ceres was compiled with: 2.  Bounding to maximum number available.
+     I20261125 04:09:04.579264     3 constraint_builder_2d.cc:290] 0 computations resulted in 0 additional constraints.
+     I20261125 04:09:04.580390     3 constraint_builder_2d.cc:292] Score histogram:
+     Count: 0
+     [KOptimizing: Done.     
+       ok   a local SLAM result for every scan
+       info 40 scans, 14 inserted; worst error 0.0333 m, 0.287 deg; last pose (1.445, 0.242, 17.16 deg)
+       info odometry alone ends 0.152 m, 3.48 deg from the true pose
+       ok   local SLAM corrects the odometry onto the true trajectory (5 cm, 1 deg)
+       ok   the motion filter inserts a node every 10 cm
+       info pose graph: 14 nodes, 1 submaps
+       ok   pose graph holds the nodes and a submap
+       info optimised global poses vs truth: worst 0.0457 m, 0.821 deg (14 nodes)
+       ok   optimised global node poses: within half the odometry's error of the truth
+     PASS cartographer
+     I20261125 04:09:04.736308     2 constraint_builder_2d.cc:290] 0 computations resulted in 0 additional constraints.
+     I20261125 04:09:04.737428     2 constraint_builder_2d.cc:292] Score histogram:
+     Count: 0
+     [KOptimizing: Done.     
+PASS test_cartographer
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

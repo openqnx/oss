@@ -1,0 +1,31 @@
+# geoip 1.6.12-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:40:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u geoip qnx-test-geoip qnx-port-tests
+(1/3) Installing geoip (1.6.12-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-geoip (1.0-r1)
+OK: 9890 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_geoip
+     == geoip ==
+       ok   country table: US <-> its id, "United States"
+       info GeoIP 1.6.12, US=225 DE=56
+       ok   database written
+       ok   GEOIP_STANDARD: GeoIP_open, Country Edition
+       ok   standard: 8.8.8.8 -> US, 200.1.2.3 -> DE, the /1 boundary
+       ok   country name by address: Germany
+       ok   GEOIP_MEMORY_CACHE: GeoIP_open, Country Edition
+       ok   cached: 8.8.8.8 -> US, 200.1.2.3 -> DE, the /1 boundary
+       info geoiplookup: GeoIP Country Edition: US, United States
+       ok   geoiplookup -f db 9.9.9.9: "US, United States"
+     PASS geoip
+PASS test_geoip
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

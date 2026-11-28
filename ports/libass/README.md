@@ -10,7 +10,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`harfbuzz`](../harfbuzz/) [`fontconfig`](../fontconfig/) |
-| Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`harfbuzz`](../harfbuzz/) [`libiconv`](../libiconv/) [`libunibreak`](../libunibreak/) |
+| Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`fribidi`](../fribidi/) [`harfbuzz`](../harfbuzz/) [`libiconv`](../libiconv/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libass`](../../tests/src/) |
 

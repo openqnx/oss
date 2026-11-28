@@ -1,22 +1,18 @@
 # pinocchio 3.9.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T10:44:59Z   packages from: apk:local-dists
+# date: 2026-11-24T15:28:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pinocchio qnx-test-pinocchio qnx-port-tests
-( 1/10) Installing bzip2 (1.0.8-r0)
-( 2/10) Installing libiconv (1.19.1-r0)
-( 3/10) Installing xz (5.8.4-r0)
-( 4/10) Installing boost (1.86.0-r0)
-( 5/10) Installing console_bridge (1.0.2-r0)
-( 6/10) Installing tinyxml2 (11.0.0-r0)
-( 7/10) Installing urdfdom (4.0.3-r1)
-( 8/10) Installing pinocchio (3.9.0-r0)
-( 9/10) Installing qnx-port-tests (1.0-r0)
-(10/10) Installing qnx-test-pinocchio (1.0-r0)
-OK: 30.5 MiB in 15 packages
+(1/6) Installing boost (1.86.0-r0)
+(2/6) Installing console_bridge (1.0.2-r0)
+(3/6) Installing tinyxml2 (11.0.0-r0)
+(4/6) Installing urdfdom (4.0.3-r1)
+(5/6) Installing pinocchio (3.9.0-r0)
+(6/6) Installing qnx-test-pinocchio (1.0-r0)
+OK: 154.9 MiB in 27 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pinocchio
      == pinocchio ==
@@ -64,7 +60,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   URDF: ABA inverts RNEA
        ok   URDF: kinetic energy
      Error:   Error=XML_ERROR_PARSING_ELEMENT ErrorID=6 (0x6) Line number=1: XMLElement name=oops
-              at line 101 in /build/oss/src-aarch64le/urdfdom/urdf_parser/src/model.cpp
+              at line 101 in .../src-aarch64le/urdfdom/urdf_parser/src/model.cpp
        ok   URDF: malformed input rejected
      PASS pinocchio
 PASS test_pinocchio

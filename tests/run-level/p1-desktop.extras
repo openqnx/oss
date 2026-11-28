@@ -1,0 +1,27 @@
+test_dconf	bin/dconf libexec/dconf-service lib/gio/modules/libdconfsettings.so share/dbus-1/services/ca.desrt.dconf.service bin/dbus-daemon share/dbus-1/session.conf bin/gsettings bin/glib-compile-schemas
+test_xfce4_notifyd	lib/xfce4/notifyd/xfce4-notifyd bin/xfce4-notifyd-config lib/xfce4/panel/plugins/libnotification-plugin.so share/dbus-1/services/org.xfce.xfce4-notifyd.Notifications.service etc/xdg/autostart/xfce4-notifyd.desktop bin/notify-send bin/gdbus bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_xdg_user_dirs	bin/xdg-user-dirs-update bin/xdg-user-dir etc/xdg/user-dirs.defaults etc/xdg/user-dirs.conf etc/xdg/autostart/xdg-user-dirs.desktop share/locale/de/LC_MESSAGES/xdg-user-dirs.mo
+test_xfdesktop	bin/xfdesktop bin/xfdesktop-settings share/backgrounds/xfce/xfce-x.svg bin/rsvg-convert bin/gdbus bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc share/icons/hicolor/index.theme
+test_evince	bin/evince bin/evince-thumbnailer libexec/evinced share/dbus-1/services/org.gnome.evince.Daemon.service share/glib-2.0/schemas/org.gnome.Evince.gschema.xml bin/gsettings bin/gdk-pixbuf-pixdata bin/zip bin/gdbus bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_xarchiver	bin/xarchiver share/applications/xarchiver.desktop libexec/thunar-archive-plugin/xarchiver.tap bin/tar bin/xz bin/zip bin/7zz bin/labwc
+test_swayidle	bin/swayidle bin/labwc
+test_swaylock	bin/swaylock etc/pam.d/swaylock bin/labwc share/fonts/font-dejavu/DejaVuSans.ttf
+test_xfce4_genmon_plugin	lib/xfce4/panel/plugins/libgenmon.so share/xfce4/panel/plugins/genmon.desktop share/xfce4/genmon/scripts/datetime bin/xfce4-panel lib/xfce4/panel/wrapper-2.0 bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_xfce4_cpugraph_plugin	lib/xfce4/panel/plugins/libcpugraph.so share/xfce4/panel/plugins/cpugraph.desktop
+test_xfce4_cpugraph_panel	lib/xfce4/panel/plugins/libcpugraph.so share/xfce4/panel/plugins/cpugraph.desktop bin/xfce4-panel bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_xfce4_alsa_plugin	lib/xfce4/panel/plugins/libalsa.so share/xfce4/panel/plugins/alsa.desktop bin/xfce4-panel bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_gtksourceview4	lib/libgtksourceview-4.so.0 share/gtksourceview-4/language-specs/c.lang bin/xmllint bin/mousepad bin/glib-compile-schemas bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_mousepad	bin/mousepad share/applications/org.xfce.mousepad.desktop bin/glib-compile-schemas bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_xfce4_taskmanager	bin/xfce4-taskmanager share/applications/xfce4-taskmanager.desktop bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_xfce4_screenshooter	bin/xfce4-screenshooter bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_librsvg	bin/rsvg-convert bin/gdk-pixbuf-query-loaders bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_wv	bin/wvHtml bin/wvSummary bin/wvText bin/wvVersion
+test_abiword	bin/abiword bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_goffice	bin/ssconvert bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_gnumeric	bin/gnumeric bin/ssconvert bin/glib-compile-schemas bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_oss_software	bin/oss-software share/applications/org.openqnx.Software.desktop bin/broadwayd bin/dbus-daemon share/dbus-1/session.conf share/fonts/font-dejavu/DejaVuSans.ttf
+test_oss_greeter	libexec/oss-greeter/oss-greeter libexec/oss-greeter/oss-greeter-session etc/pam.d/oss-greeter share/oss-greeter/labwc/rc.xml bin/labwc share/backgrounds/xfce/xfce-x.svg
+test_oss_network_plugin	lib/xfce4/panel/plugins/liboss-network.so share/xfce4/panel/plugins/oss-network.desktop bin/oss-network-info bin/xfce4-panel bin/xfconf-query lib/xfce4/xfconf/xfconfd share/dbus-1/services/org.xfce.Xfconf.service bin/dbus-daemon share/dbus-1/session.conf bin/labwc
+test_flutter_engine	lib/libflutter_engine.so share/flutter/icudtl.dat share/flutter-apps/counter/libapp.so share/flutter-apps/counter/flutter_assets/FontManifest.json
+test_qnx_flutter_wayland	bin/qnx-flutter-wayland bin/labwc share/flutter-apps/counter/libapp.so
+test_flutter_counter_example	bin/flutter-counter share/flutter-apps/counter/libapp.so share/applications/flutter-counter.desktop bin/labwc

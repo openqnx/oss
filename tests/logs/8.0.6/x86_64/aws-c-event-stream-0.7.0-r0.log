@@ -1,20 +1,19 @@
 # aws-c-event-stream 0.7.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:27:29Z   packages from: apk:local-dists
+# date: 2026-11-24T12:41:47Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u aws-c-event-stream qnx-test-aws-c-event-stream qnx-port-tests
-(1/8) Installing aws-c-common (0.12.6-r0)
-(2/8) Installing aws-c-cal (0.9.13-r0)
-(3/8) Installing s2n-tls (1.7.0-r0)
-(4/8) Installing aws-c-io (0.26.1-r0)
-(5/8) Installing aws-checksums (0.2.10-r0)
-(6/8) Installing aws-c-event-stream (0.7.0-r0)
-(7/8) Installing qnx-port-tests (1.0-r0)
-(8/8) Installing qnx-test-aws-c-event-stream (1.0-r0)
-OK: 11.8 MiB in 13 packages
+(1/7) Installing aws-c-common (0.12.6-r0)
+(2/7) Installing aws-c-cal (0.9.13-r0)
+(3/7) Installing s2n-tls (1.7.14-r0)
+(4/7) Installing aws-c-io (0.26.1-r0)
+(5/7) Installing aws-checksums (0.2.10-r0)
+(6/7) Installing aws-c-event-stream (0.7.0-r0)
+(7/7) Installing qnx-test-aws-c-event-stream (1.0-r0)
+OK: 182.9 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_event_stream
      == aws-c-event-stream ==

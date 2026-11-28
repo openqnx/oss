@@ -1,0 +1,53 @@
+# glib 2.90.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T14:35:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u glib qnx-test-glib qnx-port-tests
+(1/9) Installing libiconv (1.19.1-r0)
+(2/9) Installing libunistring (1.5-r0)
+(3/9) Installing ncurses (6.6-r0)
+(4/9) Installing gettext (0.22.5-r0)
+(5/9) Installing libffi (3.8.1-r0)
+(6/9) Installing pcre2 (10.49-r0)
+(7/9) Installing glib (2.90.1-r1)
+(8/9) Installing qnx-port-tests (1.0-r0)
+(9/9) Installing qnx-test-glib (1.0-r0)
+Executing glib-2.90.1-r1.trigger
+OK: 43.3 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_glib
+     == glib ==
+       info glib 2.90.1
+       ok   GLib 2.x
+       ok   default main context
+       ok   idle source ran
+       ok   timeout source ran and quit the loop
+       ok   g_thread_new
+       ok   thread returned its value
+       ok   thread ran
+       ok   g_object_new
+       ok   G_IS_OBJECT
+       ok   g_type_from_name
+       ok   g_utf8_strup
+       ok   GString formatting
+       ok   GHashTable insert
+       ok   GHashTable lookup
+       ok   g_file_new_for_path
+       ok   /tmp is reported as a directory
+       ok   g_file_test
+       ok   g_dir_make_tmp
+       ok   g_file_monitor_directory
+       info monitor GInotifyFileMonitor
+       info events created=1 renamed=2 deleted=1
+       ok   monitor: file created
+       ok   monitor: rename paired as RENAMED
+       ok   monitor: file deleted
+     PASS glib
+PASS test_glib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

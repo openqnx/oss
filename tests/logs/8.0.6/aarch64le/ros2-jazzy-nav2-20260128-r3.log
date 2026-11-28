@@ -1,0 +1,107 @@
+# ros2-jazzy-nav2 20260128-r3 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T23:57:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ros2-jazzy-nav2 qnx-test-ros2-jazzy-nav2 qnx-port-tests
+( 1/69) Installing qnx-test-ros2-jazzy-nav2 (1.0-r1)
+( 2/69) Installing gflags (2.3.1-r1)
+( 3/69) Installing glog (0.7.1-r2)
+( 4/69) Installing ceres-solver (2.2.0-r2)
+( 5/69) Installing console_bridge (1.0.2-r1)
+( 6/69) Installing fastcdr (2.2.6-r1)
+( 7/69) Installing geographiclib (2.7-r1)
+( 8/69) Installing bzip2 (1.0.8-r1)
+( 9/69) Installing brotli (1.2.1-r1)
+(10/69) Installing libpng (1.6.59-r1)
+(11/69) Installing freetype (2.15.0-r1)
+(12/69) Installing lcms2 (2.16-r1)
+(13/69) Installing aom (3.15.3-r1)
+(14/69) Installing dav1d (1.5.5-r1)
+(15/69) Installing libde265 (1.1.3-r1)
+(16/69) Installing libjpeg-turbo (3.2.1-r1)
+(17/69) Installing libwebp (1.6.0-r1)
+(18/69) Installing xz (5.8.4-r1)
+(19/69) Installing libtiff (4.7.2-r1)
+(20/69) Installing openh264 (2.7.0-r1)
+(21/69) Installing openjpeg (2.5.4-r1)
+(22/69) Installing openjph (0.33.0-r1)
+(23/69) Installing x264 (0_git-r1)
+(24/69) Installing x265 (4.2-r1)
+(25/69) Installing libheif (1.23.7-r3)
+(26/69) Installing highway (1.4.0-r1)
+(27/69) Installing libjxl (0.13.0-r1)
+(28/69) Installing libxml2 (2.13.5-r1)
+(29/69) Installing libzip (1.12.1-r1)
+(30/69) Installing graphicsmagick (1.3.46-r3)
+(31/69) Installing libuuid (2.42.4-r1)
+(32/69) Installing libsodium (1.0.22-r1)
+(33/69) Installing libzmq (4.3.5-r2)
+(34/69) Installing libiconv (1.19.1-r1)
+(35/69) Installing boost (1.86.0-r1)
+(36/69) Installing ompl (1.7.0-r1)
+(37/69) Installing opencv (4.10.0-r1)
+(38/69) Installing orocos-kdl (1.5.4-r1)
+(39/69) Installing expat (2.6.4-r1)
+(40/69) Installing gdbm (1.26-r1)
+(41/69) Installing libunistring (1.5-r1)
+(42/69) Installing ncurses (6.6-r1)
+(43/69) Installing gettext (0.22.5-r1)
+(44/69) Installing libffi (3.8.1-r1)
+(45/69) Installing readline (8.3-r1)
+(46/69) Installing sqlite (3.47.2-r1)
+(47/69) Installing python3 (3.14.0-r2)
+(48/69) Installing benchmark (1.10.0-r1)
+(49/69) Installing c-ares (1.34.9-r1)
+(50/69) Installing nghttp2 (1.71.0-r1)
+(51/69) Installing curl (8.23.0-r1)
+(52/69) Installing cyclonedds (0.10.5-r1)
+(53/69) Installing foonathan_memory (0.7.4-r1)
+(54/69) Installing tinyxml2 (11.0.0-r1)
+(55/69) Installing fastdds (2.14.4-r4)
+(56/69) Installing libyaml (0.2.6-r1)
+(57/69) Installing lz4 (1.11.1-r1)
+(58/69) Installing openblas (0.3.34-r1)
+(59/69) Installing numpy (2.5.5-r1)
+(60/69) Installing python3-pyyaml (6.0.4-r1)
+(61/69) Installing urdfdom (4.0.3-r2)
+(62/69) Installing yaml-cpp (0.9.0-r1)
+(63/69) Installing ros2 (0_git-r3)
+(64/69) Installing fmt (11.2.0-r1)
+(65/69) Installing python3-filelock (4.2.12-r1)
+(66/69) Installing libxslt (1.1.45-r1)
+(67/69) Installing python3-lxml (6.1.3-r1)
+(68/69) Installing ros2-jazzy-control (20260128-r3)
+(69/69) Installing ros2-jazzy-nav2 (20260128-r3)
+Executing python3-3.14.0-r2.trigger
+OK: 729.7 MiB in 75 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_nav2
+     == ros2-jazzy-nav2 ==
+       ok   ament index has nav2_map_server
+       ok   ament index has nav2_planner
+       ok   ament index has nav2_navfn_planner
+       ok   ament index has nav2_controller
+       ok   ament index has nav2_bt_navigator
+       ok   ament index has nav2_costmap_2d
+       ok   ament index has nav2_amcl
+       ok   ament index has nav2_mppi_controller
+       ok   ament index has nav2_smac_planner
+       ok   ament index has robot_localization
+       ok   ament index has behaviortree_cpp
+       ok   lifecycle_manager brought map_server and planner_server up
+       ok   compute_path_to_pose action server is there
+       ok   a path was planned (308 poses)
+       ok   it starts at (1, 1) and ends at (4, 1) (got (1.00, 1.00) .. (4.00, 1.00))
+       ok   it goes over the wall (highest y 4.34 m > 4)
+       ok   no pose inside the wall
+       ok   length 7.73 m >= the shortest way round, 6.82 m
+       ok   the navigator's default behaviour tree (BT.CPP 4 format) is installed
+     PASS ros2-jazzy-nav2
+PASS test_ros2_jazzy_nav2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

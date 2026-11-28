@@ -1,0 +1,61 @@
+# pandas 2.3.3-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T13:43:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pandas qnx-test-pandas qnx-port-tests
+( 1/21) Installing bzip2 (1.0.8-r1)
+( 2/21) Installing expat (2.6.4-r1)
+( 3/21) Installing gdbm (1.26-r1)
+( 4/21) Installing libiconv (1.19.1-r1)
+( 5/21) Installing libunistring (1.5-r1)
+( 6/21) Installing ncurses (6.6-r1)
+( 7/21) Installing gettext (0.22.5-r1)
+( 8/21) Installing libffi (3.8.1-r1)
+( 9/21) Installing readline (8.3-r1)
+(10/21) Installing sqlite (3.47.2-r1)
+(11/21) Installing xz (5.8.4-r1)
+(12/21) Installing python3 (3.14.0-r2)
+(13/21) Installing pandas (2.3.3-r3)
+(14/21) Installing qnx-port-tests (1.0-r1)
+(15/21) Installing openblas (0.3.34-r1)
+(16/21) Installing numpy (2.5.5-r1)
+(17/21) Installing python3-six (1.17.0-r1)
+(18/21) Installing python3-dateutil (2.9.0_p0-r1)
+(19/21) Installing python3-pytz (2026.6-r1)
+(20/21) Installing python3-tzdata (2026.6-r1)
+(21/21) Installing qnx-test-pandas (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 238.3 MiB in 26 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pandas
+     == pandas ==
+       info pandas 2.3.3, numpy 2.5.5
+       ok   groupby sum: Ottawa 100, Paris 70, Tokyo 40
+       ok   named aggregation: size, mean
+       ok   sort_values
+       ok   cumsum, describe
+       ok   left merge: Tokyo has no country
+       ok   inner merge
+       ok   pivot_table max
+       ok   concat
+       ok   date_range across Feb 29 2024
+       ok   hourly series resampled to daily sums
+       ok   UTC 12:00 -> New York 08:00 (EDT)
+       ok   Europe/Paris in January: +01:00
+       ok   to_datetime: 2024-03-10 is a Sunday
+       ok   timedelta: February 2024 has 29 days
+       ok   str.strip().upper()
+       ok   missing value: isna, fillna
+       ok   NaN skipped by mean; interpolated
+       ok   ordered categorical
+       ok   to_csv / read_csv round trip
+       ok   to_json / read_json
+     PASS pandas
+PASS test_pandas
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

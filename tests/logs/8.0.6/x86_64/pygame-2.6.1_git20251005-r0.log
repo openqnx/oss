@@ -1,50 +1,54 @@
 # pygame 2.6.1_git20251005-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:19:02Z   packages from: apk:local-dists
+# date: 2026-11-24T12:51:12Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pygame qnx-test-pygame qnx-port-tests
-( 1/36) Installing brotli (1.1.0-r0)
-( 2/36) Installing bzip2 (1.0.8-r0)
-( 3/36) Installing libpng (1.6.44-r0)
-( 4/36) Installing freetype (2.13.3-r0)
-( 5/36) Installing libjpeg-turbo (3.0.4-r0)
-( 6/36) Installing expat (2.6.4-r0)
-( 7/36) Installing gdbm (1.24-r0)
-( 8/36) Installing libiconv (1.18-r0)
-( 9/36) Installing libunistring (1.3-r0)
-(10/36) Installing gettext (0.22.5-r0)
-(11/36) Installing libffi (3.4.6-r0)
-(12/36) Installing sqlite (3.47.2-r0)
-(13/36) Installing xz (5.6.3-r0)
-(14/36) Installing python3 (3.14.0-r0)
-(15/36) Installing sdl2 (2.32.10-r0)
-(16/36) Installing aom (3.15.3-r0)
-(17/36) Installing dav1d (1.5.0-r0)
-(18/36) Installing libavif (1.1.1-r0)
-(19/36) Installing libwebp (1.4.0-r0)
-(20/36) Installing libtiff (4.7.0-r0)
-(21/36) Installing sdl2-image (2.8.8-r0)
-(22/36) Installing libogg (1.3.5-r0)
-(23/36) Installing opus (1.5.2-r0)
-(24/36) Installing opusfile (0.12-r0)
-(25/36) Installing sdl2-mixer (2.8.2-r0)
-(26/36) Installing pcre2 (10.44-r0)
-(27/36) Installing glib (2.82.4-r0)
-(28/36) Installing graphite2 (1.3.14-r0)
-(29/36) Installing icu (76.1-r0)
-(30/36) Installing harfbuzz (<ip>-r0)
-(31/36) Installing sdl2-ttf (2.24.0-r0)
-(32/36) Installing pygame (2.6.1_git20251005-r0)
-(33/36) Installing qnx-port-tests (1.0-r0)
-(34/36) Installing openblas (0.3.28-r0)
-(35/36) Installing numpy (2.3.4-r0)
-(36/36) Installing qnx-test-pygame (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-Executing glib-2.82.4-r0.trigger
-OK: 266.7 MiB in 47 packages
+( 1/40) Installing brotli (1.2.1-r0)
+( 2/40) Installing bzip2 (1.0.8-r0)
+( 3/40) Installing libpng (1.6.59-r0)
+( 4/40) Installing freetype (2.15.0-r0)
+( 5/40) Installing libjpeg-turbo (3.2.1-r0)
+( 6/40) Installing expat (2.6.4-r0)
+( 7/40) Installing gdbm (1.26-r0)
+( 8/40) Installing libiconv (1.19.1-r0)
+( 9/40) Installing libunistring (1.5-r0)
+(10/40) Installing ncurses (6.6-r0)
+(11/40) Installing gettext (0.22.5-r0)
+(12/40) Installing libffi (3.8.1-r0)
+(13/40) Installing libuuid (2.42.4-r0)
+(14/40) Installing readline (8.3-r0)
+(15/40) Installing sqlite (3.47.2-r0)
+(16/40) Installing xz (5.8.4-r0)
+(17/40) Installing python3 (3.14.0-r1)
+(18/40) Installing sdl2 (2.32.10-r0)
+(19/40) Installing aom (3.15.3-r0)
+(20/40) Installing dav1d (1.5.5-r0)
+(21/40) Installing libavif (1.4.2-r0)
+(22/40) Installing libdeflate (1.26-r0)
+(23/40) Installing libwebp (1.6.0-r0)
+(24/40) Installing libtiff (4.7.2-r0)
+(25/40) Installing sdl2-image (2.8.8-r1)
+(26/40) Installing libogg (1.3.6-r0)
+(27/40) Installing opus (1.6.1-r0)
+(28/40) Installing opusfile (0.12-r0)
+(29/40) Installing sdl2-mixer (2.8.2-r0)
+(30/40) Installing pcre2 (10.49-r0)
+(31/40) Installing glib (2.90.1-r1)
+(32/40) Installing graphite2 (1.3.15-r0)
+(33/40) Installing icu (76.1-r0)
+(34/40) Installing harfbuzz (<ip>-r0)
+(35/40) Installing sdl2-ttf (2.24.0-r0)
+(36/40) Installing pygame (2.6.1_git20251005-r0)
+(37/40) Installing qnx-port-tests (1.0-r0)
+(38/40) Installing openblas (0.3.34-r0)
+(39/40) Installing numpy (2.5.5-r0)
+(40/40) Installing qnx-test-pygame (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+Executing glib-2.90.1-r1.trigger
+OK: 266.0 MiB in 45 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pygame
      == pygame ==

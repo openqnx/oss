@@ -1,0 +1,47 @@
+cargo-c 0.10.19: QNX Neutrino (target_os "nto") as an ELF/.so target.
+
+librsvg 2.60 builds its C library with cargo-c (`cargo cbuild`). cargo-c
+knows the library file names, the library kind and the soname option per
+operating system and stopped on the QNX targets with "The target nto-nto80
+is not supported yet". QNX shared libraries are ELF with a DT_SONAME like
+Linux': "nto" joins the Linux/BSD group in the three places (file names,
+install kind, -Wl,-soname). Applied to cargo-c 0.10.19+cargo-0.93.0, the
+newest release whose rust-version (1.90) ports/rust meets, built for the
+build machine (cargo install --path, --locked).
+
+diff -ru a/src/build_targets.rs b/src/build_targets.rs
+--- a/src/build_targets.rs	2006-07-24 10:21:28.000000000 +0900
++++ b/src/build_targets.rs	2026-11-25 20:42:37.347956092 +0900
+@@ -165,7 +165,7 @@
+     ) -> Option<Self> {
+         let (shared_lib, static_lib, impl_lib, debug_info, def) = match target.os.as_str() {
+             "none" | "linux" | "freebsd" | "dragonfly" | "netbsd" | "android" | "haiku"
+-            | "illumos" | "openbsd" | "emscripten" | "hurd" => {
++            | "illumos" | "openbsd" | "emscripten" | "hurd" | "nto" => {
+                 let static_lib = targetdir.join(format!("lib{lib_name}.a"));
+                 let shared_lib = targetdir.join(format!("lib{lib_name}.so"));
+                 (shared_lib, static_lib, None, None, None)
+diff -ru a/src/install.rs b/src/install.rs
+--- a/src/install.rs	2006-07-24 10:21:28.000000000 +0900
++++ b/src/install.rs	2026-11-25 20:42:37.348061260 +0900
+@@ -105,7 +105,8 @@
+             | ("illumos", _)
+             | ("openbsd", _)
+             | ("emscripten", _)
+-            | ("hurd", _) => LibType::So,
++            | ("hurd", _)
++            | ("nto", _) => LibType::So,
+             ("macos", _) | ("ios", _) | ("tvos", _) | ("visionos", _) => LibType::Dylib,
+             ("windows", _) | ("cygwin", _) => LibType::Windows,
+             _ => unimplemented!("The target {}-{} is not supported yet", os, env),
+diff -ru a/src/target.rs b/src/target.rs
+--- a/src/target.rs	2006-07-24 10:21:28.000000000 +0900
++++ b/src/target.rs	2026-11-25 20:42:37.348127685 +0900
+@@ -113,6 +113,7 @@
+             || os == "illumos"
+             || os == "openbsd"
+             || os == "hurd"
++            || os == "nto"
+         {
+             lines.push(if capi_config.library.versioning {
+                 format!("-Wl,-soname,lib{lib_name}.so.{sover}")

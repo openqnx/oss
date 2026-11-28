@@ -1,0 +1,47 @@
+# python3-setuptools 80.8.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:04:41Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-setuptools qnx-test-python3-setuptools qnx-port-tests
+( 1/15) Installing python3-setuptools (80.8.0-r1)
+( 2/15) Installing qnx-port-tests (1.0-r1)
+( 3/15) Installing bzip2 (1.0.8-r1)
+( 4/15) Installing expat (2.6.4-r1)
+( 5/15) Installing gdbm (1.26-r1)
+( 6/15) Installing libiconv (1.19.1-r1)
+( 7/15) Installing libunistring (1.5-r1)
+( 8/15) Installing ncurses (6.6-r1)
+( 9/15) Installing gettext (0.22.5-r1)
+(10/15) Installing libffi (3.8.1-r1)
+(11/15) Installing readline (8.3-r1)
+(12/15) Installing sqlite (3.47.2-r1)
+(13/15) Installing xz (5.8.4-r1)
+(14/15) Installing python3 (3.14.0-r2)
+(15/15) Installing qnx-test-python3-setuptools (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 135.5 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_setuptools
+     == python3-setuptools ==
+       info setuptools 80.8.0
+       ok   setuptools 80.8.0 (importlib.metadata agrees)
+       ok   find_packages: qnxdemo, qnxdemo.sub
+       ok   setup.py --name --version
+       ok   shutil.rmtree removes a directory tree (used by bdist_wheel)
+       ok   setup.py build: packages and package data in build/lib
+       ok   sdist qnxdemo-1.2.3.tar.gz with setup.py, PKG-INFO
+       ok   bdist_wheel: qnxdemo-1.2.3-py3-none-any.whl
+       ok   wheel holds package data and RECORD
+       ok   METADATA: name, Requires-Dist, Requires-Python
+       ok   WHEEL tag py3-none-any
+       ok   pkg_resources.Requirement.parse
+       ok   parse_version ordering
+     PASS python3-setuptools
+PASS test_python3_setuptools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

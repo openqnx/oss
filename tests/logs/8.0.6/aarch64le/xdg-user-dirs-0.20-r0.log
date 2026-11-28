@@ -1,0 +1,39 @@
+# xdg-user-dirs 0.20-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-25T09:20:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xdg-user-dirs qnx-test-xdg-user-dirs qnx-port-tests
+(1/7) Installing qnx-port-tests (1.0-r1)
+(2/7) Installing libiconv (1.19.1-r0)
+(3/7) Installing libunistring (1.5-r0)
+(4/7) Installing ncurses (6.6-r0)
+(5/7) Installing gettext (0.22.5-r0)
+(6/7) Installing xdg-user-dirs (0.20-r0)
+(7/7) Installing qnx-test-xdg-user-dirs (1.0-r2)
+OK: 26.7 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xdg_user_dirs
+     == xdg-user-dirs ==
+       ok   xdg-user-dirs-update --help: Usage: xdg-user-dirs-update [--force] [--dummy-output <path>] [--set DIR path]
+       ok   user-dirs.defaults, user-dirs.conf and the autostart entry are installed
+       ok   first run created the 9 folders
+       ok   user-dirs.dirs has $HOME-relative entries
+       ok   user-dirs.locale records the locale (C)
+       ok   xdg-user-dir DOWNLOAD: /tmp/qnxport-xdgud.tR8Yx0/home/Downloads
+       ok   xdg-user-dir DESKTOP
+       ok   an unknown name gives the home directory
+       ok   --set MUSIC: /tmp/qnxport-xdgud.tR8Yx0/home/Tunes
+       ok   --set left the other entries alone
+       ok   a removed folder is not created again; its entry is the home directory
+       ok   --dummy-output wrote the list and created nothing
+       ok   translations installed (de.mo)
+       ok   German session: Bilder, Dokumente, /tmp/qnxport-xdgud.tR8Yx0/home3/Schreibtisch
+     PASS xdg-user-dirs
+PASS test_xdg_user_dirs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

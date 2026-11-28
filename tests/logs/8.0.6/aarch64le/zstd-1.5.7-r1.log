@@ -1,0 +1,25 @@
+# zstd 1.5.7-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T01:27:32Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u zstd qnx-test-zstd qnx-port-tests
+(1/1) Installing qnx-test-zstd (1.0-r1)
+OK: 9.9 MiB in 7 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zstd
+     == zstd ==
+       ok   version >= 1.5
+       ok   allocate work buffers
+       ok   compress succeeds
+       ok   output is smaller than input
+       ok   decompressed size matches
+       ok   round trip is byte-identical
+     PASS zstd
+PASS test_zstd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

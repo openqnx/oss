@@ -1,0 +1,28 @@
+volumebutton: say "No sound card found" when there is none
+
+Without any sound card -- no driver running, as on a QNX system without
+io-snd or a virtual machine without audio -- the button showed "Volume
+control is not configured", which points at the settings dialog, where
+nothing can be chosen. Tell that case apart (snd_card_next finds no card)
+and say so; with a card but no element chosen the old text stays.
+
+Upstream-Status: Pending
+
+--- a/src/volumebutton.vala
++++ b/src/volumebutton.vala
+@@ -88,7 +88,14 @@
+                     tooltip_text = "%s: %d%s".printf(alsa.channel, (int) volume, "%");
+                 }
+             } else {
+-                tooltip_text = _("Volume control is not configured");
++                // no card at all (no sound driver running) is not a setting
++                // the user can fix in the dialog: say so
++                int card = -1;
++                if (Alsa.Card.next(ref card) != 0 || card < 0) {
++                    tooltip_text = _("No sound card found");
++                } else {
++                    tooltip_text = _("Volume control is not configured");
++                }
+             }
+         }
+ 

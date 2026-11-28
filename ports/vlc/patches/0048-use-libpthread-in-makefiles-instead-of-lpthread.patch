@@ -1,0 +1,43 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 09:44:21 -0400
+Subject: [PATCH 48/60] Use $(LIBPTHREAD) in makefiles instead of -lpthread
+
+A handful of makefiles were explicitly adding -lpthread instead of using
+the $(LIBPTHREAD) variable. This caused problems on systems, like QNX,
+where there is no libpthread.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/modules/access/Makefile.am
++++ b/modules/access/Makefile.am
+@@ -128,7 +128,7 @@
+ 
+ libdecklink_plugin_la_SOURCES = access/decklink.cpp access/sdi.c access/sdi.h
+ libdecklink_plugin_la_CXXFLAGS = $(AM_CXXFLAGS) $(CPPFLAGS_decklink)
+-libdecklink_plugin_la_LIBADD = $(LIBS_decklink) $(LIBDL) -lpthread
++libdecklink_plugin_la_LIBADD = $(LIBS_decklink) $(LIBDL) $(LIBPTHREAD)
+ if HAVE_DECKLINK
+ access_LTLIBRARIES += libdecklink_plugin.la
+ endif
+--- a/modules/demux/Makefile.am
++++ b/modules/demux/Makefile.am
+@@ -485,7 +485,7 @@
+ libvlc_adaptive_la_LIBADD = $(SOCKET_LIBS) $(LIBM)
+ libvlc_adaptive_la_LDFLAGS = -static
+ if !HAVE_WIN32
+-libvlc_adaptive_la_LDFLAGS += -lpthread
++libvlc_adaptive_la_LDFLAGS += $(LIBPTHREAD)
+ endif
+ libvlc_adaptive_la_LIBADD += libvlc_http.la
+ if HAVE_ZLIB
+--- a/modules/video_output/Makefile.am
++++ b/modules/video_output/Makefile.am
+@@ -18,7 +18,7 @@
+ if HAVE_DECKLINK
+ libdecklinkoutput_plugin_la_SOURCES = video_output/decklink.cpp
+ libdecklinkoutput_plugin_la_CXXFLAGS = $(AM_CXXFLAGS) $(CPPFLAGS_decklinkoutput)
+-libdecklinkoutput_plugin_la_LIBADD = $(LIBS_decklink) $(LIBDL) -lpthread
++libdecklinkoutput_plugin_la_LIBADD = $(LIBS_decklink) $(LIBDL) $(LIBPTHREAD)
+ vout_LTLIBRARIES += libdecklinkoutput_plugin.la
+ endif
+ 

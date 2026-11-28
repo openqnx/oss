@@ -1,18 +1,17 @@
 # pcl 1.15.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-23T14:30:03Z   packages from: apk:local-dists
+# date: 2026-11-24T12:49:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pcl qnx-test-pcl qnx-port-tests
-(1/6) Installing boost (1.86.0-r0)
-(2/6) Installing lz4 (1.11.1-r0)
-(3/6) Installing flann (1.9.2-r0)
-(4/6) Installing pcl (1.15.1-r0)
-(5/6) Installing qnx-port-tests (1.0-r0)
-(6/6) Installing qnx-test-pcl (1.0-r1)
-OK: 284.6 MiB in 24 packages
+(1/5) Installing boost (1.86.0-r0)
+(2/5) Installing lz4 (1.11.1-r0)
+(3/5) Installing flann (1.9.2-r0)
+(4/5) Installing pcl (1.15.1-r0)
+(5/5) Installing qnx-test-pcl (1.0-r1)
+OK: 333.5 MiB in 39 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pcl
      == pcl ==

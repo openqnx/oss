@@ -1,6 +1,6 @@
 # libportal 0.11.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T12:14:31Z   packages from: apk:local-dists
+# date: 2026-11-24T13:47:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -12,7 +12,7 @@ $ apk add -u libportal qnx-test-libportal qnx-port-tests
 ( 4/49) Installing gettext (0.22.5-r0)
 ( 5/49) Installing libffi (3.8.1-r0)
 ( 6/49) Installing pcre2 (10.49-r0)
-( 7/49) Installing glib (2.90.1-r0)
+( 7/49) Installing glib (2.90.1-r1)
 ( 8/49) Installing expat (2.6.4-r0)
 ( 9/49) Installing dbus (1.16.4-r0)
 (10/49) Installing libxau (1.0.12-r0)
@@ -54,8 +54,8 @@ $ apk add -u libportal qnx-test-libportal qnx-port-tests
 (46/49) Installing gtk3 (3.24.43-r0)
 (47/49) Installing libportal (0.11.0-r0)
 (48/49) Installing qnx-port-tests (1.0-r0)
-(49/49) Installing qnx-test-libportal (1.0-r0)
-Executing glib-2.90.1-r0.trigger
+(49/49) Installing qnx-test-libportal (1.0-r1)
+Executing glib-2.90.1-r1.trigger
 OK: 155.1 MiB in 54 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libportal

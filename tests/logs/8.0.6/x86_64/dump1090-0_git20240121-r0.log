@@ -1,13 +1,13 @@
 # dump1090 0_git20240121-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:31:01Z   packages from: apk:local-dists
+# date: 2026-11-24T12:42:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u dump1090 qnx-test-dump1090 qnx-port-tests
-(1/5) Installing libusb (1.0.27-r0)
-(2/5) Installing rtl-sdr (2.0.2-r0)
+(1/5) Installing libusb (1.0.30-r0)
+(2/5) Installing rtl-sdr (2.0.3-r0)
 (3/5) Installing dump1090 (0_git20240121-r0)
 (4/5) Installing qnx-port-tests (1.0-r0)
 (5/5) Installing qnx-test-dump1090 (1.0-r0)

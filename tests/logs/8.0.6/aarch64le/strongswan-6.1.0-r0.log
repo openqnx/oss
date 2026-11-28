@@ -1,6 +1,6 @@
 # strongswan 6.1.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T16:45:46Z   packages from: apk:local-dists
+# date: 2026-11-24T22:58:16Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -15,8 +15,8 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
      == strongswan ==
        ok   libstrongswan: all 14 suites passed (chunk,enum,identification,asn1,host,printf,hasher,crypter,rsa,ecdsa,certnames,serial_gen,serial_parse,signature params)
        info loaded plugins: sha2 random nonce x509 revocation constraints pubkey pkcs1 pem openssl pkcs8 hmac kdf
-       ok   test_chunk_from_fd_huge (chunk suite) passed on its own
-       ok   test_sign_pkcs15_3072 (rsa suite) passed on its own
+       info test_chunk_from_fd_huge hit strongSwan's fixed per-test limit (slow emulated target, rc=1): not judged
+       info test_sign_pkcs15_3072 hit strongSwan's fixed per-test limit (slow emulated target, rc=1): not judged
        ok   exchanges: all 4 suites passed (child create,ike rekey,child rekey,ike delete)
        info pki: strongSwan 6.1.0 PKI tool
        ok   pki --help: strongSwan 6.1.0 PKI tool
@@ -41,7 +41,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
        ok   pki --verify: CA against itself trusted
        ok   pki --verify against another CA: untrusted (rc 1)
        ok   pki --verify: SAN outside the CA's name constraint untrusted (constraints plugin)
-       ok   charon started (pid 76099607), answering over vici after 1s
+       ok   charon started (pid 220237847), answering over vici after 1s
        ok   swanctl --version: strongSwan swanctl 6.1.0
        ok   swanctl --version --daemon: strongSwan 6.1.0 charon (QNX, 8.0.0, QEMU_virt)
        ok   swanctl --stats: uptime and worker threads

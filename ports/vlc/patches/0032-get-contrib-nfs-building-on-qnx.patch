@@ -1,0 +1,63 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 14:50:13 -0400
+Subject: [PATCH 32/60] Get contrib/nfs building on QNX
+
+A handful of small changes to get the code compiling on QNX. Mostly
+dealing with what API to use
+
+1. QNX's makedev takes three arguments, not two.
+2. getsockname is available, so use it.
+3. System level time APIs come from sys/time.h, not time.h
+
+3.0.24: libnfs 6.0.2 includes <sys/time.h> on every non-Windows system, so
+qnx_use_sys_time.patch is dropped (point 3 above); qnx_use_getsockname.patch
+is rewritten for the new condition (which added __OpenBSD__); the patches
+are applied after the upstream ones and only for QNX.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/nfs/qnx_three_arg_makedev.patch
++++ b/contrib/src/nfs/qnx_three_arg_makedev.patch
+@@ -0,0 +1,14 @@
++--- a/lib/nfs_v3.c	2025-02-06 09:37:45.709788455 -0500
+++++ b/lib/nfs_v3.c	2025-02-06 09:39:27.114138535 -0500
++@@ -105,7 +105,11 @@
++ specdata3_to_rdev(struct specdata3 *rdev)
++ {
++ #ifdef makedev
+++#if defined(__QNXNTO__)
+++	return makedev(0, rdev->specdata1, rdev->specdata2);
+++#else
++ 	return makedev(rdev->specdata1, rdev->specdata2);
+++#endif
++ #else
++ 	return 0;
++ #endif
+--- a/contrib/src/nfs/qnx_use_getsockname.patch
++++ b/contrib/src/nfs/qnx_use_getsockname.patch
+@@ -0,0 +1,12 @@
++--- a/lib/socket.c
+++++ b/lib/socket.c
++@@ -170,7 +170,8 @@
++ {
++ 	int level;
++ 
++-	#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__sun) || (defined(__APPLE__) && defined(__MACH__))
+++	#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__sun) || defined(__QNXNTO__) \
+++	    || (defined(__APPLE__) && defined(__MACH__))
++ 	struct protoent *buf;
++ 
++ 	if ((buf = getprotobyname("tcp")) != NULL)
+--- a/contrib/src/nfs/rules.mak
++++ b/contrib/src/nfs/rules.mak
+@@ -30,6 +30,10 @@
+ 	$(APPLY) $(SRC)/nfs/0007-tls-add-support-for-kernel-without-TLS_1_3_VERSION.patch
+ 	$(APPLY) $(SRC)/nfs/0008-tls-define-TLS_RX-if-it-s-missing.patch
+ 	$(APPLY) $(SRC)/nfs/0009-win32-stop-read-loop-when-transport-replaced.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/nfs/qnx_three_arg_makedev.patch
++	$(APPLY) $(SRC)/nfs/qnx_use_getsockname.patch
++endif
+ 	$(MOVE)
+ 
+ .nfs: nfs toolchain.cmake

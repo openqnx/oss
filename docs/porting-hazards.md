@@ -388,6 +388,16 @@ The first two checks are about correctness; the third is what actually enforces
 that rule, because the failure it catches is completely silent.
 
 ---
+- **QNX never reports `POLLHUP` on a pipe.** When the writing end of a pipe
+  is closed, Linux's `poll()` gives `POLLHUP` (with `POLLIN` while data is
+  left); QNX's gives only `POLLIN`, and `read()` then returns 0. Code that
+  ends a `GIOChannel` watch and calls it a failure unless the condition was
+  exactly `G_IO_HUP` sees every child's output end as an error: Xarchiver's
+  `--extract-to` stopped with an empty "An error occurred while accessing
+  the archive" dialog although gzip and tar had exited 0
+  (ports/xarchiver/patches/0003). Treat EOF as the normal end and only
+  `G_IO_ERR`/`G_IO_NVAL` as failure.
+
 ## Native helper tools
 
 `scripts/build-host-tools.sh` builds the tools a cross build must *run* on the

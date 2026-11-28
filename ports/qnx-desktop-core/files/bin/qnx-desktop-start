@@ -1,0 +1,309 @@
+#!/bin/sh
+# qnx-desktop-start -- start the desktop session at boot, on a board image.
+#
+#   qnx-desktop-start                 start the session (from rc.local, below)
+#   qnx-desktop-start --install-hook  put the call into /data/oss/etc/rc.local
+#   qnx-desktop-start --check         say what a start would do, start nothing
+#   qnx-desktop-start --stop          end the session and do not restart it
+#
+# The board's own startup script (the BSP's IFS) needs one line, after it has
+# mounted /data and started QNX Screen -- everything else is in packages:
+#
+#   [ -x /data/oss/etc/rc.local ] && /data/oss/etc/rc.local &
+#
+# (before the script's "exit 0" when it ends with one: a line appended after
+# it never runs). Checked on the QEMU x86_64 mkqnximage image: in
+# /system/etc/startup/post_startup.sh (local/snippets/post_start.custom when
+# the image is made), the desktop is up about a minute after the boot.
+#
+# and /data/oss/etc/rc.local calls this script (--install-hook writes it; a
+# ready one: share/qnx-desktop/rc.local.sample). What a start does, in order:
+#   1. links /usr/local to /data/oss/usr/local when the link is not there
+#      (the packages live under /data/oss and read their data from /usr/local);
+#   2. sets PATH and LD_LIBRARY_PATH (/data/oss/etc/oss-env.sh, from apk-setup);
+#   3. waits for QNX Screen (/dev/screen), SCREEN_WAIT seconds at most;
+#   4. starts the system D-Bus when dbus is installed and none is running
+#      (avahi and cups use it; the session has its own bus, from oss-desktop);
+#   5. starts the session, oss-desktop, as DESKTOP_USER, in the background,
+#      and starts it again when it ends (Log Out) -- automatic log-in, as a
+#      display manager would do it. Restart and Shut Down end the system.
+#      With DESKTOP_GREETER=yes the log-in screen (oss-greeter) comes first,
+#      and again after each Log Out: the session is that of the user who
+#      logged in there.
+#
+# Settings: /data/oss/etc/qnx-desktop.conf (a shell file; all optional)
+#   DESKTOP_USER=root     the user of the session (automatic log-in). Another
+#                         user than root is started with "on -u <name>"
+#                         (which also gives the user's supplementary groups).
+#                         Checked on the QEMU x86_64 image: such a session
+#                         runs on Screen, but draws in software (pixman)
+#                         unless the user is in the group of the GPU's render
+#                         node (/dev/dri/renderD128, gid 36 there): --check
+#                         prints the /etc/group line to add. root draws with
+#                         the GPU either way.
+#   DESKTOP_GREETER=no    yes: the log-in screen (oss-greeter, package
+#                         oss-greeter) instead of automatic log-in; it lists
+#                         root and the ordinary users and checks the password
+#                         with QNX's PAM module. DESKTOP_USER then only
+#                         preselects nobody: the greeter remembers the last
+#                         user (/data/oss/var/lib/oss-greeter/last-user).
+#   DESKTOP_HOME=         its home directory (default: from /etc/passwd; root
+#                         without a usable one: /data/home/root)
+#   DESKTOP_RESPAWN=yes   no: one session, not started again when it ends
+#   SCREEN_WAIT=60        seconds to wait for /dev/screen
+#   SYSTEM_DBUS=yes       no: leave the system bus alone
+#   TZ=                   the time zone of the session (the panel clock):
+#                         a POSIX string (KST-9, CET-1CEST,M3.5.0,M10.5.0/3)
+#                         or an area name (Asia/Seoul; needs the tzdata
+#                         package). Default: the TZ the boot gave this script,
+#                         else the system's (setconf _CS_TIMEZONE), else UTC.
+#                         QNX's C library reads only POSIX strings, so an area
+#                         name is turned into one (the last line of its
+#                         zoneinfo file) before the session starts.
+#                         Checked: Asia/Seoul -> KST-9; Europe/Berlin ->
+#                         CET-1CEST,M3.5.0,M10.5.0/3 (CET in January, CEST
+#                         in July); America/New_York, Australia/Sydney alike.
+# /data/oss/etc/no-desktop: while this file exists nothing is started (the
+# same switch target/oss-boot reads); --stop creates it.
+# Log: /data/oss/var/log/qnx-desktop.log
+#
+# NOT TESTED on a board: written from how target/oss-boot starts the same
+# session on the QEMU desktop image (scripts/make-ported-image --desktop).
+# Unverified in particular: the place of the hook in a BSP startup script,
+# and the system bus (it needs a "messagebus" account and a writable /var/local).
+ROOT=${OSS_ROOT:-/data/oss}
+CONF=$ROOT/etc/qnx-desktop.conf
+LOG=$ROOT/var/log/qnx-desktop.log
+# in /tmp (memory): a pid file on /data would outlive a reboot
+PIDF=/tmp/qnx-desktop.pid
+SELF=$ROOT/usr/local/bin/qnx-desktop-start
+HOOK="[ -x $SELF ] && $SELF &"
+
+DESKTOP_USER=root; DESKTOP_HOME=; DESKTOP_RESPAWN=yes; SCREEN_WAIT=60; SYSTEM_DBUS=yes; DESKTOP_GREETER=no
+GREETER=/usr/local/libexec/oss-greeter/oss-greeter-session
+GREETER_RESULT=$ROOT/var/run/oss-greeter/result
+[ -f "$CONF" ] && . "$CONF"
+
+say() { echo "qnx-desktop-start: $*"; }
+
+# The account dbus-daemon --system switches to. The package does not add it:
+# /etc/passwd is the BSP's file. Print the line to add, with a free uid/gid.
+messagebus_hint() {
+  grep -q '^messagebus:' /etc/passwd 2>/dev/null && return 0
+  nologin=/bin/false; [ -x /system/bin/false ] && nologin=/system/bin/false
+  id=101; while grep -q "^[^:]*:[^:]*:$id:" /etc/passwd /etc/group 2>/dev/null; do id=$((id+1)); done
+  say "no 'messagebus' account: the system bus (avahi, cups) is not started; the session does not need it"
+  say "  to have it, add to /etc/passwd:  messagebus:x:$id:$id:D-Bus system bus:/var/local/run/dbus:$nologin"
+  say "  and to /etc/group:              messagebus:x:$id:"
+}
+
+# The GPU's render node belongs to a group (gid 36 on the QEMU image, the
+# user QNX Screen runs as); a user outside it gets a software-drawn session.
+# The package does not edit /etc/group (the BSP's file): print the line.
+render_hint() {  # [--warn] user...: the users outside that group, and the line to fix it
+  warn=; [ "$1" = --warn ] && { warn=1; shift; }
+  node=$(ls /dev/dri/renderD* 2>/dev/null | head -n 1); [ -n "$node" ] || return 0
+  rg=$(ls -ln "$node" 2>/dev/null | awk '{print $4}'); [ -n "$rg" ] || return 0
+  out=
+  for u in "$@"; do
+    [ "$(id -u "$u" 2>/dev/null)" = 0 ] && continue      # root opens it anyway
+    in=; for g in $(id -G "$u" 2>/dev/null); do [ "$g" = "$rg" ] && in=1; done
+    [ -n "$in" ] || out="${out:+$out,}$u"
+  done
+  [ -n "$out" ] || return 0
+  if [ -n "$warn" ]; then
+    echo "!! $out is not in the group of $node (gid $rg): the session draws in software (pixman), not with the GPU (qnx-desktop-start --check prints the /etc/group line)"
+    return 0
+  fi
+  say "not in the group of the GPU's render node $node (gid $rg): $out -- their sessions would draw in software (pixman); root's uses the GPU"
+  gl=$(awk -F: -v g="$rg" '$3 == g {print; exit}' /etc/group 2>/dev/null)
+  if [ -n "$gl" ]; then
+    case "$gl" in *:) new="$gl$out" ;; *) new="$gl,$out" ;; esac
+    say "  to use the GPU, change that line of /etc/group to:  $new"
+  else
+    say "  to use the GPU, add to /etc/group:  render::$rg:$out"
+  fi
+}
+
+# TZ for the session, as the C library reads it (see TZ= above).
+resolve_tz() {
+  [ -n "$TZ" ] || TZ=$(getconf _CS_TIMEZONE 2>/dev/null)
+  case "$TZ" in
+    ""|*[0-9]*) ;;
+    *) zf=/usr/local/share/zoneinfo/$TZ
+       if [ -f "$zf" ] && p=$(tail -n 1 "$zf" 2>/dev/null) && [ -n "$p" ]; then TZ=$p
+       else say "time zone $TZ: no $zf (apk add tzdata, or set a POSIX string such as KST-9): UTC"; TZ=; fi ;;
+  esac
+  : "${TZ:=UTC0}"; export TZ
+}
+
+case "$1" in
+  -h|--help) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  --install-hook)
+    mkdir -p "$ROOT/etc" || exit 1
+    if [ ! -f "$ROOT/etc/rc.local" ]; then
+      { echo '#!/bin/sh'; echo "# $ROOT/etc/rc.local -- run at the end of the boot (see qnx-desktop-start)"; echo "$HOOK"; } > "$ROOT/etc/rc.local"
+    elif ! grep -q 'qnx-desktop-start' "$ROOT/etc/rc.local"; then
+      echo "$HOOK" >> "$ROOT/etc/rc.local"
+    fi
+    chmod 755 "$ROOT/etc/rc.local" && say "$ROOT/etc/rc.local calls $SELF"
+    say "the board's startup script needs, after /data and Screen:  [ -x $ROOT/etc/rc.local ] && $ROOT/etc/rc.local &"
+    messagebus_hint
+    exit 0 ;;
+  --stop)
+    mkdir -p "$ROOT/etc" && : > "$ROOT/etc/no-desktop"
+    # The loop's shell waits on the session and does not die of a TERM while
+    # it waits: end the session first (labwc; xfce4-session and the panel end
+    # with it), let the loop see no-desktop and leave, kill it if it does not.
+    slay -f -Q -s TERM labwc >/dev/null 2>&1   # the session's or the greeter's
+    if [ -f "$PIDF" ]; then
+      p=$(cat "$PIDF"); n=0
+      while kill -0 "$p" 2>/dev/null && [ "$n" -lt 10 ]; do sleep 1; n=$((n+1)); done
+      kill -9 "$p" 2>/dev/null; rm -f "$PIDF"
+    fi
+    say "stopped ($ROOT/etc/no-desktop written: remove it to start again)"; exit 0 ;;
+  --check) CHECK=1 ;;
+  "") CHECK= ;;
+  *) say "unknown option $1 (--help)"; exit 2 ;;
+esac
+
+# 1. /usr/local
+if [ ! -e /usr/local ]; then
+  if [ -n "$CHECK" ]; then say "would link /usr/local -> $ROOT/usr/local"
+  else ln -sP "$ROOT/usr/local" /usr/local || say "could not link /usr/local (not root?)"; fi
+fi
+
+# 2. the environment of the packages
+if [ -f "$ROOT/etc/oss-env.sh" ]; then . "$ROOT/etc/oss-env.sh"
+else
+  PATH=$ROOT/bin:/usr/local/bin:/usr/local/sbin${PATH:+:$PATH}
+  LD_LIBRARY_PATH=/usr/local/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+  [ -d "$ROOT/qnx-runtime/lib" ] && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOT/qnx-runtime/lib
+  export PATH LD_LIBRARY_PATH
+fi
+
+# Reasons not to start anything.
+if [ -e "$ROOT/etc/no-desktop" ]; then say "$ROOT/etc/no-desktop exists: not started"; exit 0; fi
+if [ ! -x /usr/local/bin/oss-desktop ]; then say "oss-desktop is not installed (apk add qnx-desktop)"; exit 1; fi
+# An image made by scripts/make-ported-image --desktop starts the session
+# itself (target/oss-boot): two sessions on one Screen would fight.
+if [ -n "$(cat /system/oss-seed/desktop 2>/dev/null)" ]; then say "this image starts the desktop itself (oss-boot): nothing to do"; exit 0; fi
+if [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF")" 2>/dev/null; then
+  say "already running (pid $(cat "$PIDF"))"; [ -n "$CHECK" ] || exit 0
+fi
+
+# A user's numeric ids and home directory: U_ID, G_ID, U_HOME.
+user_ids() {
+  U_ID=$(id -u "$1" 2>/dev/null) || return 1
+  G_ID=$(id -g "$1" 2>/dev/null); U_HOME=
+  [ "$1" = "$DESKTOP_USER" ] && U_HOME=$DESKTOP_HOME
+  if [ -z "$U_HOME" ] && [ -r /etc/passwd ]; then
+    while IFS=: read -r n _p _u _g _c h _s; do [ "$n" = "$1" ] && U_HOME=$h; done < /etc/passwd
+  fi
+  # root's home on a stock image is on a read-only or RAM file system.
+  if [ "$U_ID" = 0 ]; then case "$U_HOME" in ""|/|/root) U_HOME=/data/home/root ;; esac; fi
+  : "${U_HOME:=/data/home/$1}"
+}
+if [ "$DESKTOP_GREETER" = yes ]; then
+  [ -x "$GREETER" ] || { say "DESKTOP_GREETER=yes but oss-greeter is not installed (apk add oss-greeter)"; exit 1; }
+else
+  user_ids "$DESKTOP_USER" || { say "no such user: $DESKTOP_USER"; exit 1; }
+fi
+
+if [ -n "$CHECK" ]; then
+  if [ "$DESKTOP_GREETER" = yes ]; then
+    say "log-in screen (oss-greeter); then the session of the user who logs in"
+    render_hint $(awk -F: '($3 == 0 || ($3 >= 1000 && $3 < 60000 && $1 != "nobody")) && $7 !~ /(false|nologin)/ {print $1}' /etc/passwd)
+  else
+    say "user $DESKTOP_USER ($U_ID:$G_ID), home $U_HOME, respawn $DESKTOP_RESPAWN"
+    render_hint "$DESKTOP_USER"
+  fi
+  [ -e /dev/screen ] && say "QNX Screen is running" || say "QNX Screen is NOT running (/dev/screen): the start would wait ${SCREEN_WAIT}s, then give up"
+  command -v dbus-daemon >/dev/null 2>&1 && say "dbus-daemon: $(command -v dbus-daemon)" || say "no dbus-daemon: no system bus"
+  messagebus_hint
+  resolve_tz; say "time zone of the session: TZ=$TZ (now $(date '+%Y-%m-%d %H:%M %Z'))"
+  exit 0
+fi
+
+mkdir -p "$ROOT/var/log"
+exec >> "$LOG" 2>&1
+echo "== qnx-desktop-start $(date)"
+
+# 3. QNX Screen
+n=0; until [ -e /dev/screen ]; do n=$((n+1)); [ "$n" -ge "$SCREEN_WAIT" ] && break; sleep 1; done
+if [ ! -e /dev/screen ]; then echo "!! QNX Screen is not running after ${SCREEN_WAIT}s: no desktop"; exit 1; fi
+
+# 4. the system bus. dbus-daemon --system reads <prefix>/share/dbus-1/system.conf:
+# it switches to the "messagebus" user, listens on /var/local/run/dbus/
+# system_bus_socket and forks. Without that account it cannot start; the
+# session does not need it, so that is reported and the start goes on.
+if [ "$SYSTEM_DBUS" = yes ] && command -v dbus-daemon >/dev/null 2>&1; then
+  if dbus-send --system --dest=org.freedesktop.DBus --type=method_call --print-reply \
+       /org/freedesktop/DBus org.freedesktop.DBus.GetId >/dev/null 2>&1; then
+    echo "system bus: already running"
+  elif ! grep -q '^messagebus:' /etc/passwd 2>/dev/null; then
+    echo "system bus: not started (no 'messagebus' account; qnx-desktop-start --check prints the line to add)"
+  else
+    # left over from the last boot when /var/local is on a disk
+    rm -f /var/local/run/dbus/pid /var/local/run/dbus/system_bus_socket
+    mkdir -p /var/local/run/dbus /var/local/lib/dbus &&
+      { dbus-uuidgen --ensure 2>/dev/null; dbus-daemon --system; } &&
+      echo "system bus: started" || echo "!! system bus: could not be started"
+  fi
+fi
+
+# 5. the session
+resolve_tz; echo "time zone: TZ=$TZ"
+SH=/bin/sh; [ -x /usr/local/bin/bash ] && SH=/usr/local/bin/bash
+[ -f /usr/local/ssl/cert.pem ] && export SSL_CERT_FILE=/usr/local/ssl/cert.pem
+# One session of user $1, in a subshell (its environment stays there).
+session() (
+  user_ids "$1" || { echo "!! no such user: $1"; exit 1; }
+  mkdir -p "$U_HOME" 2>/dev/null
+  [ "$U_ID" = 0 ] || chown "$U_ID:$G_ID" "$U_HOME" 2>/dev/null
+  export HOME="$U_HOME" USER="$1" LOGNAME="$1" SHELL=$SH
+  # The runtime directory is the user's own (oss-desktop would take /tmp/xdg-runtime-<uid> too).
+  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$U_ID
+  mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
+  [ "$U_ID" = 0 ] || chown "$U_ID:$G_ID" "$XDG_RUNTIME_DIR"
+  render_hint --warn "$1"
+  cd "$U_HOME" 2>/dev/null || cd /
+  echo "session of $1 starts $(date)"
+  # by name: "on -u <uid>:<gid>" would leave out the supplementary groups
+  if [ "$U_ID" = 0 ]; then /usr/local/bin/oss-desktop
+  else on -u "$1" /usr/local/bin/oss-desktop; fi
+  rc=$?; echo "session of $1 ended (status $rc) $(date)"; exit $rc
+)
+# The log-in screen: its answer, or nothing when it did not give one.
+greeter() {
+  rm -f "$GREETER_RESULT"
+  echo "log-in screen starts $(date)"
+  "$GREETER"; rc=$?
+  ans=$(cat "$GREETER_RESULT" 2>/dev/null); rm -f "$GREETER_RESULT"
+  [ -n "$ans" ] || echo "!! log-in screen ended without an answer (status $rc)"
+  ANSWER=$ans
+}
+( cd /
+  quick=0
+  while [ ! -e "$ROOT/etc/no-desktop" ]; do
+    if [ "$DESKTOP_GREETER" != yes ]; then
+      session "$DESKTOP_USER"
+      [ "$DESKTOP_RESPAWN" = yes ] || break
+      sleep 2; continue
+    fi
+    t0=$(date +%s); greeter
+    [ -e "$ROOT/etc/no-desktop" ] && break
+    case "$ANSWER" in
+      "login "*) quick=0; session "${ANSWER#login }" ;;
+      reboot)   echo "restart from the log-in screen $(date)"; shutdown -S reboot; break ;;
+      poweroff) echo "shut down from the log-in screen $(date)"; shutdown -S system; break ;;
+      *) # it failed: again, but not in a tight loop -- and never past it
+         if [ $(( $(date +%s) - t0 )) -lt 30 ]; then quick=$((quick+1)); else quick=0; fi
+         if [ "$quick" -ge 3 ]; then echo "!! log-in screen failed 3 times in a row: waiting 60 s"; sleep 60; quick=0
+         else sleep 2; fi ;;
+    esac
+  done
+  rm -f "$PIDF" ) &
+echo $! > "$PIDF"
+echo "session loop: pid $(cat "$PIDF")"
+exit 0

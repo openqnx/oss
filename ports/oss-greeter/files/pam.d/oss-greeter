@@ -1,0 +1,9 @@
+# oss-greeter: the log-in screen of the QNX desktop checks passwords with
+# QNX's own module, by its path in the image (OpenPAM loads a module named
+# with a "/" from that path; /system/lib/dll/pam is not on its search path),
+# for all four facilities as QNX's login policy has them -- with "auth"
+# alone OpenPAM looks for an "other" policy for the rest and pam_start fails.
+auth requisite /system/lib/dll/pam/pam_qnx.so
+account requisite /system/lib/dll/pam/pam_qnx.so
+session requisite /system/lib/dll/pam/pam_qnx.so
+password requisite /system/lib/dll/pam/pam_qnx.so

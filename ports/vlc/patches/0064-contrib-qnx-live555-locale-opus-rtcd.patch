@@ -1,0 +1,40 @@
+contrib: live555 without newlocale() and opus without rtcd on QNX.
+
+live555 (the version of the 3.0.24 contribs) declares a locale_t member
+unless NEWLOCALE_NOT_USED is defined; the QNX build stopped with
+"locale_t does not name a type". Use its setlocale() path.
+
+opus on aarch64 was configured with run-time CPU detection, for which
+celt/arm/armcpu.c has no QNX method. Disable rtcd there, as the contrib
+already does for aarch64 Windows.
+
+Upstream-Status: Pending
+
+--- a/contrib/src/live555/rules.mak
++++ b/contrib/src/live555/rules.mak
+@@ -37,6 +37,11 @@
+ LIVE_TARGET := linux
+ LIVE_EXTRA_CFLAGS += -DXLOCALE_NOT_USED
+ endif
++ifdef HAVE_QNX
++# This live555 uses newlocale()/locale_t unless told not to; QNX's <locale.h>
++# does not give it locale_t here ("'locale_t' does not name a type").
++LIVE_EXTRA_CFLAGS += -DNEWLOCALE_NOT_USED=1
++endif
+ ifdef HAVE_ANDROID
+ LIVE_EXTRA_CFLAGS += -DDISABLE_LOOPBACK_IP_ADDRESS_CHECK=1
+ endif
+--- a/contrib/src/opus/rules.mak
++++ b/contrib/src/opus/rules.mak
+@@ -27,6 +27,11 @@
+ ifeq ($(ARCH)-$(HAVE_WIN32),aarch64-1)
+ OPUS_CONF += --disable-rtcd
+ endif
++# QNX on aarch64: opus has no run-time CPU detection for it (celt/arm/armcpu.c
++# stops with "no CPU detection method available"); NEON is in the baseline.
++ifeq ($(ARCH)-$(HAVE_QNX),aarch64-1)
++OPUS_CONF += --disable-rtcd
++endif
+ # disable asm and rtcd on armv7-windows
+ ifeq ($(ARCH)-$(HAVE_WIN32),arm-1)
+ OPUS_CONF += --disable-rtcd --disable-asm

@@ -1,0 +1,11 @@
+# oss-desktop: Xfce's preferred applications (exo-open --launch ...; the
+# panel's web browser launcher and "Open With" use them). Found before exo's
+# own default (etc/xdg/xfce4/helpers.rc: firefox, thunderbird -- not ported),
+# so a new user's web browser is epiphany (exo ships its helper). No mail
+# reader is ported: MailReader is left unset and the "Mail Reader" menu entry
+# is hidden (share/oss-desktop/data/applications/xfce4-mail-reader.desktop).
+# A user's own choice (Settings > Default Applications) goes to
+# ~/.config/xfce4/helpers.rc and wins over this file.
+WebBrowser=epiphany
+TerminalEmulator=xfce4-terminal
+FileManager=thunar

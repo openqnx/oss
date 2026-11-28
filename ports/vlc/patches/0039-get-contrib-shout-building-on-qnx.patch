@@ -1,0 +1,332 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 15:26:49 -0400
+Subject: [PATCH 39/60] Get contrib/shout building on QNX
+
+shout has a bunch of helper functions named like _blah_*(). This
+clashes with some internal names from QNX's headers. For example,
+_mutex_lock().
+
+Rename all the clashing usages in shout from _blah_*() to
+shout_blah_*().
+
+3.0.24: libshout 2.4.6: the same renames, regenerated against its thread.c.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/shout/0001-qnx-fix-namespace-clash.patch
++++ b/contrib/src/shout/0001-qnx-fix-namespace-clash.patch
+@@ -0,0 +1,302 @@
++--- a/src/common/thread/thread.c
+++++ b/src/common/thread/thread.c
++@@ -131,9 +131,9 @@
++ static int _free_thread(void *key);
++ 
++ /* mutex fuctions */
++-static void _mutex_create(mutex_t *mutex);
++-static void _mutex_lock(mutex_t *mutex);
++-static void _mutex_unlock(mutex_t *mutex);
+++static void shout_mutex_create(mutex_t *mutex);
+++static void shout_mutex_lock(mutex_t *mutex);
+++static void shout_mutex_unlock(mutex_t *mutex);
++ 
++ /* misc thread stuff */
++ static void *_start_routine(void *arg);
++@@ -162,7 +162,7 @@
++     /* we have to create this one by hand, because there's no
++     ** mutextree_mutex to lock yet!
++     */
++-    _mutex_create(&_mutextree_mutex);
+++    shout_mutex_create(&_mutextree_mutex);
++ 
++     _mutextree_mutex.mutex_id = _next_mutex_id++;
++     avl_insert(_mutextree, (void *)&_mutextree_mutex);
++@@ -288,9 +288,9 @@
++         thread->line = line;
++         thread->file = strdup(file);
++ 
++-        _mutex_lock (&_threadtree_mutex);
+++        shout_mutex_lock (&_threadtree_mutex);
++         thread->thread_id = _next_thread_id++;
++-        _mutex_unlock (&_threadtree_mutex);
+++        shout_mutex_unlock (&_threadtree_mutex);
++ 
++         thread->name = strdup(name);
++         thread->create_time = time(NULL);
++@@ -329,11 +329,11 @@
++     return NULL;
++ }
++ 
++-/* _mutex_create
+++/* shout_mutex_create
++ **
++ ** creates a mutex
++ */
++-static void _mutex_create(mutex_t *mutex)
+++static void shout_mutex_create(mutex_t *mutex)
++ {
++ #ifdef DEBUG_MUTEXES
++     mutex->thread_id = MUTEX_STATE_NEVERLOCKED;
++@@ -345,13 +345,13 @@
++ 
++ void thread_mutex_create_c(mutex_t *mutex, int line, char *file)
++ {
++-    _mutex_create(mutex);
+++    shout_mutex_create(mutex);
++ 
++ #ifdef DEBUG_MUTEXES
++-    _mutex_lock(&_mutextree_mutex);
+++    shout_mutex_lock(&_mutextree_mutex);
++     mutex->mutex_id = _next_mutex_id++;
++     avl_insert(_mutextree, (void *)mutex);
++-    _mutex_unlock(&_mutextree_mutex);
+++    shout_mutex_unlock(&_mutextree_mutex);
++ #endif
++ }
++ 
++@@ -360,9 +360,9 @@
++     pthread_mutex_destroy(&mutex->sys_mutex);
++ 
++ #ifdef DEBUG_MUTEXES
++-    _mutex_lock(&_mutextree_mutex);
+++    shout_mutex_lock(&_mutextree_mutex);
++     avl_delete(_mutextree, mutex, _free_mutex);
++-    _mutex_unlock(&_mutextree_mutex);
+++    shout_mutex_unlock(&_mutextree_mutex);
++ #endif
++ }
++ 
++@@ -385,7 +385,7 @@
++         avl_node *node;
++         mutex_t *tmutex;
++ 
++-        _mutex_lock(&_mutextree_mutex);
+++        shout_mutex_lock(&_mutextree_mutex);
++ 
++         node = avl_get_first (_mutextree);
++ 
++@@ -398,7 +398,7 @@
++                     LOG_ERROR7("DEADLOCK AVOIDED (%d == %d) on mutex [%s] in file %s line %d by thread %d [%s]",
++                          tmutex->thread_id, th->thread_id, mutex->name ? mutex->name : "undefined", file, line, th->thread_id, th->name);
++ 
++-                    _mutex_unlock(&_mutextree_mutex);
+++                    shout_mutex_unlock(&_mutextree_mutex);
++                     return;
++                 }
++             } else if (tmutex->thread_id == th->thread_id) {
++@@ -418,13 +418,13 @@
++             }
++         }
++ 
++-        _mutex_unlock(&_mutextree_mutex);
+++        shout_mutex_unlock(&_mutextree_mutex);
++     }
++ # endif /* CHECK_MUTEXES */
++ 
++-    _mutex_lock(mutex);
+++    shout_mutex_lock(mutex);
++ 
++-    _mutex_lock(&_mutextree_mutex);
+++    shout_mutex_lock(&_mutextree_mutex);
++ 
++     LOG_DEBUG2("Locked %p by thread %d", mutex, th ? th->thread_id : -1);
++     mutex->line = line;
++@@ -432,9 +432,9 @@
++         mutex->thread_id = th->thread_id;
++     }
++ 
++-    _mutex_unlock(&_mutextree_mutex);
+++    shout_mutex_unlock(&_mutextree_mutex);
++ #else
++-    _mutex_lock(mutex);
+++    shout_mutex_lock(mutex);
++ #endif /* DEBUG_MUTEXES */
++ }
++ 
++@@ -457,7 +457,7 @@
++         avl_node *node;
++         mutex_t *tmutex;
++ 
++-        _mutex_lock(&_mutextree_mutex);
+++        shout_mutex_lock(&_mutextree_mutex);
++ 
++         while (node) {
++             tmutex = (mutex_t *)node->key;
++@@ -466,7 +466,7 @@
++                 if (tmutex->thread_id != th->thread_id) {
++                     LOG_ERROR7("ILLEGAL UNLOCK (%d != %d) on mutex [%s] in file %s line %d by thread %d [%s]", tmutex->thread_id, th->thread_id,
++                          mutex->name ? mutex->name : "undefined", file, line, th->thread_id, th->name);
++-                    _mutex_unlock(&_mutextree_mutex);
+++                    shout_mutex_unlock(&_mutextree_mutex);
++                     return;
++                 }
++             } else if (tmutex->thread_id == th->thread_id) {
++@@ -483,13 +483,13 @@
++                  _multi_mutex.thread_id, th->thread_id, th->thread_id, th->name, mutex->name ? mutex->name : "undefined", file, line);
++         }
++ 
++-        _mutex_unlock(&_mutextree_mutex);
+++        shout_mutex_unlock(&_mutextree_mutex);
++     }
++ # endif  /* CHECK_MUTEXES */
++ 
++-    _mutex_unlock(mutex);
+++    shout_mutex_unlock(mutex);
++ 
++-    _mutex_lock(&_mutextree_mutex);
+++    shout_mutex_lock(&_mutextree_mutex);
++ 
++     LOG_DEBUG2("Unlocked %p by thread %d", mutex, th ? th->thread_id : -1);
++     mutex->line = -1;
++@@ -497,9 +497,9 @@
++         mutex->thread_id = MUTEX_STATE_NOTLOCKED;
++     }
++ 
++-    _mutex_unlock(&_mutextree_mutex);
+++    shout_mutex_unlock(&_mutextree_mutex);
++ #else
++-    _mutex_unlock(mutex);
+++    shout_mutex_unlock(mutex);
++ #endif /* DEBUG_MUTEXES */
++ }
++ 
++@@ -579,7 +579,7 @@
++         mutex_t *tmutex;
++         char name[40];
++ 
++-        _mutex_lock(&_mutextree_mutex);
+++        shout_mutex_lock(&_mutextree_mutex);
++ 
++         while (node) {
++             tmutex = (mutex_t *)node->key;
++@@ -592,7 +592,7 @@
++             node = avl_get_next (node);
++         }
++ 
++-        _mutex_unlock(&_mutextree_mutex);
+++        shout_mutex_unlock(&_mutextree_mutex);
++     }
++ #endif
++ 
++@@ -602,9 +602,9 @@
++         LOG_INFO4("Removing thread %d [%s] started at [%s:%d], reason: 'Thread Exited'", th->thread_id, th->name, th->file, th->line);
++ #endif
++ 
++-        _mutex_lock(&_threadtree_mutex);
+++        shout_mutex_lock(&_threadtree_mutex);
++         avl_delete(_threadtree, th, _free_thread);
++-        _mutex_unlock(&_threadtree_mutex);
+++        shout_mutex_unlock(&_threadtree_mutex);
++     }
++ 
++     pthread_exit ((void*)val);
++@@ -652,10 +652,10 @@
++     _block_signals();
++ 
++     /* insert thread into thread tree here */
++-    _mutex_lock(&_threadtree_mutex);
+++    shout_mutex_lock(&_threadtree_mutex);
++     thread->sys_thread = pthread_self();
++     avl_insert(_threadtree, (void *)thread);
++-    _mutex_unlock(&_threadtree_mutex);
+++    shout_mutex_unlock(&_threadtree_mutex);
++ 
++ #ifdef THREAD_DEBUG
++     LOG_INFO4("Added thread %d [%s] started at [%s:%d]", thread->thread_id, thread->name, thread->file, thread->line);
++@@ -671,9 +671,9 @@
++ 
++     if (thread->detached)
++     {
++-        _mutex_lock (&_threadtree_mutex);
+++        shout_mutex_lock (&_threadtree_mutex);
++         avl_delete (_threadtree, thread, _free_thread);
++-        _mutex_unlock (&_threadtree_mutex);
+++        shout_mutex_unlock (&_threadtree_mutex);
++     }
++ 
++     return NULL;
++@@ -685,13 +685,13 @@
++     thread_type *th;
++     pthread_t sys_thread = pthread_self();
++ 
++-    _mutex_lock(&_threadtree_mutex);
+++    shout_mutex_lock(&_threadtree_mutex);
++ 
++     if (_threadtree == NULL) {
++ #ifdef THREAD_DEBUG
++         LOG_WARN("Thread tree is empty, this must be wrong!");
++ #endif
++-        _mutex_unlock(&_threadtree_mutex);
+++        shout_mutex_unlock(&_threadtree_mutex);
++         return NULL;
++     }
++ 
++@@ -701,13 +701,13 @@
++         th = (thread_type *)node->key;
++ 
++         if (th && pthread_equal(sys_thread, th->sys_thread)) {
++-            _mutex_unlock(&_threadtree_mutex);
+++            shout_mutex_unlock(&_threadtree_mutex);
++             return th;
++         }
++ 
++         node = avl_get_next(node);
++     }
++-    _mutex_unlock(&_threadtree_mutex);
+++    shout_mutex_unlock(&_threadtree_mutex);
++ 
++ 
++ #ifdef THREAD_DEBUG
++@@ -727,12 +727,12 @@
++     th->name = strdup(name);
++ }
++ 
++-static void _mutex_lock(mutex_t *mutex)
+++static void shout_mutex_lock(mutex_t *mutex)
++ {
++     pthread_mutex_lock(&mutex->sys_mutex);
++ }
++ 
++-static void _mutex_unlock(mutex_t *mutex)
+++static void shout_mutex_unlock(mutex_t *mutex)
++ {
++     pthread_mutex_unlock(&mutex->sys_mutex);
++ }
++@@ -740,12 +740,12 @@
++ 
++ void thread_library_lock(void)
++ {
++-    _mutex_lock(&_library_mutex);
+++    shout_mutex_lock(&_library_mutex);
++ }
++ 
++ void thread_library_unlock(void)
++ {
++-    _mutex_unlock(&_library_mutex);
+++    shout_mutex_unlock(&_library_mutex);
++ }
++ 
++ void thread_join(thread_type *thread)
++@@ -753,9 +753,9 @@
++     void *ret;
++ 
++     pthread_join(thread->sys_thread, &ret);
++-    _mutex_lock(&_threadtree_mutex);
+++    shout_mutex_lock(&_threadtree_mutex);
++     avl_delete(_threadtree, thread, _free_thread);
++-    _mutex_unlock(&_threadtree_mutex);
+++    shout_mutex_unlock(&_threadtree_mutex);
++ }
++ 
++ /* AVL tree functions */
+--- a/contrib/src/shout/rules.mak
++++ b/contrib/src/shout/rules.mak
+@@ -35,6 +35,9 @@
+ 
+ 	# cast setsockopt
+ 	$(APPLY) $(SRC)/shout/0001-Add-cast-on-setsockopt-call.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/shout/0001-qnx-fix-namespace-clash.patch
++endif
+ 
+ 	$(call pkg_static,"shout.pc.in")
+ 	$(MOVE)

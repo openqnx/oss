@@ -1,0 +1,31 @@
+# libidn2 2.3.8-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T12:27:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libidn2 qnx-test-libidn2 qnx-port-tests
+(1/7) Installing libiconv (1.19.1-r1)
+(2/7) Installing libunistring (1.5-r1)
+(3/7) Installing ncurses (6.6-r1)
+(4/7) Installing gettext (0.22.5-r1)
+(5/7) Installing libidn2 (2.3.8-r1)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-libidn2 (1.0-r1)
+OK: 26.7 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libidn2
+     == libidn2 ==
+       info libidn2 2.3.8
+       ok   idn2_to_ascii_8z
+       ok   bücher.example -> xn--bcher-kva.example
+       ok   reverse conversion restores the U-label
+       ok   invalid A-label is rejected
+       ok   idn2_strerror
+     PASS libidn2
+PASS test_libidn2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,62 @@
+# pocl 7.2-r4 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T14:36:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pocl qnx-test-pocl qnx-port-tests
+(1/7) Installing xz (5.8.4-r1)
+(2/7) Installing libxml2 (2.13.5-r1)
+(3/7) Installing llvm (22.1.8-r1)
+(4/7) Installing opencl-icd-loader (2026.05.29-r1)
+(5/7) Installing pocl (7.2-r4)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-pocl (1.0-r2)
+OK: 389.0 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pocl
+     == pocl ==
+       ok   clGetPlatformIDs finds a platform
+       ok   the platform "Portable Computing Language" is there
+       ok   CL_PLATFORM_VERSION is "OpenCL <version> PoCL ..."
+       info OpenCL 3.0 PoCL 7.2  QNX, Release, RELOC, LLVM 22.1.8, SLEEF, POCL_DEBUG
+       ok   it has a CPU device
+       ok   CL_DEVICE_TYPE has CL_DEVICE_TYPE_CPU
+       ok   CL_DEVICE_MAX_COMPUTE_UNITS is at least 1
+       ok   the device and its compiler are available
+       info device "cpu-generic-Cortex-A57", 2 compute unit(s)
+       ok   CL_DEVICE_OPENCL_C_VERSION is "OpenCL C <version> ..."
+       ok   clCreateContext
+       ok   clCreateCommandQueue
+     1 error generated.
+       ok   a source with an undeclared identifier: CL_BUILD_PROGRAM_FAILURE
+       ok   the build log has the compiler's error naming the identifier
+       ok   clCreateProgramWithSource
+       ok   clBuildProgram compiles five kernels
+       ok   CL_PROGRAM_NUM_KERNELS is 5
+       ok   an unknown kernel name: CL_INVALID_KERNEL_NAME
+       ok   clCreateKernel(saxpy)
+       ok   saxpy is enqueued and finishes
+       ok   saxpy: y[i] = 3*i + (4096 - i) for all 4096 elements
+       ok   saxpy: y[1000] = 6096
+       ok   copy + fill + map: 100 elements 2.5, the rest the copied saxpy result
+       ok   squares: out[i] = i*i + 7 for 10000 work items
+       ok   squares: the sum is 333283405000
+       ok   the builtins kernel runs
+       ok   sqrt(i*i) = i for i = 0 .. 1023
+       ok   dot((1,2,3,i), (4,5,6,2)) = 32 + 2*i
+       ok   popcount(i); popcount(1023) = 10
+       ok   rotate(i + 0x80000001, 4); for i = 0 it is 0x18
+       ok   64 x 48 work items with offset (5, 9): each wrote its own coordinates
+       ok   local size 16: group id * 16 + local id is the global id in all 64 groups
+       ok   the program has a binary for the device
+       ok   clCreateProgramWithBinary accepts it
+       ok   the program from the binary builds
+       ok   its squares kernel gives the same 10000 results
+     PASS pocl
+PASS test_pocl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

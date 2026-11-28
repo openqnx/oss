@@ -1,0 +1,41 @@
+# aspell 0.60.8.1-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T07:59:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aspell qnx-test-aspell qnx-port-tests
+(1/4) Installing ncurses (6.6-r1)
+(2/4) Installing aspell (0.60.8.1-r2)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-aspell (1.0-r1)
+OK: 17.1 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aspell
+     == aspell ==
+       info @(#) International Ispell Version 3.1.20 (but really Aspell 0.60.8.1)
+       ok   aspell --version: 0.60.8.1
+       ok   aspell create master: xx.rws compiled
+       ok   new_aspell_speller on the compiled dictionary
+       info speller lang: xx
+       ok   speller language is xx
+       ok   check("banana") == correct
+       ok   check("microkernel") == correct
+       ok   check("bananna") == misspelled
+       ok   check("linux") == unknown
+       info 1 suggestion(s) for bananna, first: banana
+       ok   suggest("bananna") -> "banana" first
+       ok   add_to_session("photon")
+       ok   session word now correct
+       info aspell list: bananna
+     qnz
+       ok   aspell list: exactly bananna, qnz
+       ok   aspell -a: '& cherri ... : cherry'
+       ok   aspell dump master: 7 words
+     PASS aspell
+PASS test_aspell
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

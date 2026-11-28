@@ -39,6 +39,12 @@ do_patch() { ( cd "$SRCROOT" && autoconf -f ); }
 # not libc.
 # State (spool, cache, logs, run) under $PREFIX/var; the icon and desktop
 # file under the prefix too (CUPS's defaults are /usr/share/...).
+# XDGOPEN=xdg-open: the desktop file's Exec= (the menu's "Print Settings",
+# http://localhost:631/) is the xdg-open configure finds on the *build* host,
+# else "htmlview" -- a program no QNX image has, so the menu entry did
+# nothing. xdg-open is the target's (xdg-utils, in the desktop); set here,
+# not overridden by the desktop session, so a system with cups alone gets the
+# same entry.
 do_configure() {
   cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
@@ -46,7 +52,7 @@ do_configure() {
   CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -Wl,-z,stack-size=8388608 -Wl,-z,noexecstack -Wl,-rpath,$PREFIX/lib -Wl,--disable-new-dtags" \
-  LIBS="-lsocket -lregex" \
+  LIBS="-lsocket -lregex" XDGOPEN=xdg-open \
   ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --localstatedir="$PREFIX/var" \
     --with-tls=openssl --with-dnssd=avahi --disable-dbus --disable-pam --disable-gssapi --disable-libusb \
     --disable-libpaper --disable-acl --with-ondemand=no --without-systemd --without-rcdir \

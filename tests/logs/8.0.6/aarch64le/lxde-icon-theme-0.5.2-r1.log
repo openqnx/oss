@@ -1,0 +1,49 @@
+# lxde-icon-theme 0.5.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T13:03:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lxde-icon-theme qnx-test-lxde-icon-theme qnx-port-tests
+( 1/13) Installing lxde-icon-theme (0.5.2-r1)
+( 2/13) Installing qnx-port-tests (1.0-r1)
+( 3/13) Installing libiconv (1.19.1-r1)
+( 4/13) Installing libunistring (1.5-r1)
+( 5/13) Installing ncurses (6.6-r1)
+( 6/13) Installing gettext (0.22.5-r1)
+( 7/13) Installing libffi (3.8.1-r1)
+( 8/13) Installing pcre2 (10.49-r1)
+( 9/13) Installing glib (2.90.1-r3)
+(10/13) Installing libjpeg-turbo (3.2.1-r1)
+(11/13) Installing libpng (1.6.59-r1)
+(12/13) Installing gdk-pixbuf (2.44.8-r2)
+(13/13) Installing qnx-test-lxde-icon-theme (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 55.7 MiB in 18 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lxde_icon_theme
+     == lxde-icon-theme ==
+       ok   share/icons/nuoveXT2/index.theme installed
+       ok   index.theme parses as a key file
+       info Name=nuoveXT.2.2 Inherits=nuoveXT-1.6,Tango,gnome,crystalsvg
+       ok   Name nuoveXT.2.2, inherits gnome
+       info 90 directories listed, 90 sections, 90 present
+       ok   every listed directory has a section and exists
+       ok   each directory's Size matches its name (16x16 -> 16 ...)
+       ok   folder (Places, 48): found, loads as 48x48 RGBA
+       ok   folder (Places, 16): found, loads as 16x16 RGBA
+       ok   user-trash (Places, 48): found, loads as 48x48 RGBA
+       ok   document-open (Actions, 24): found, loads as 24x24 RGBA
+       ok   utilities-terminal (Applications, 32): found, loads as 32x32 RGBA
+       ok   computer (Devices, 128): found, loads as 128x128 RGBA
+       ok   dialog-warning (Status, 22): found, loads as 22x22 RGBA
+       ok   user-home (Places, 48): found, loads as 48x48 RGBA
+       info 6559 PNG icons, 5116 symlinks, 0 dangling
+       ok   6000+ PNG icons, no dangling symlink
+     PASS lxde-icon-theme
+PASS test_lxde_icon_theme
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

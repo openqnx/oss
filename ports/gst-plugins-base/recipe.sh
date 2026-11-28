@@ -8,8 +8,11 @@ MESON_ARGS_EXTRA=(
   -Dintrospection=disabled -Ddoc=disabled -Dnls=enabled
   # what we have ported
   -Dogg=enabled -Dvorbis=enabled -Dopus=enabled -Dtheora=enabled
+  # ALSA on the SDP's libasound (ALSA-compatible API, no alsa.pc): gstreamer
+  # patches/0001 finds it; alsasink then plays through io-snd
+  -Dalsa=enabled
   # desktop/Linux-only or not ported yet
-  -Dalsa=disabled -Dcdparanoia=disabled -Dlibvisual=disabled
+  -Dcdparanoia=disabled -Dlibvisual=disabled
   -Dpango=disabled -Dtremor=disabled
   -Dx11=disabled -Dxvideo=disabled -Dxshm=disabled
   -Dgl=disabled -Dgl-graphene=disabled

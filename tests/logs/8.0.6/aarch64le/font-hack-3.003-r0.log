@@ -1,27 +1,25 @@
 # font-hack 3.003-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:22:10Z   packages from: apk:local-dists
+# date: 2026-11-24T12:49:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u font-hack qnx-test-font-hack qnx-port-tests
-(1/9) Installing font-hack (3.003-r0)
-(2/9) Installing qnx-port-tests (1.0-r0)
-(3/9) Installing expat (2.6.4-r0)
-(4/9) Installing brotli (1.1.0-r0)
-(5/9) Installing bzip2 (1.0.8-r0)
-(6/9) Installing libpng (1.6.44-r0)
-(7/9) Installing freetype (2.13.3-r0)
-(8/9) Installing fontconfig (2.15.0-r0)
-(9/9) Installing qnx-test-font-hack (1.0-r0)
-OK: 13.9 MiB in 14 packages
+(1/6) Installing font-hack (3.003-r0)
+(2/6) Installing brotli (1.2.1-r0)
+(3/6) Installing libpng (1.6.59-r0)
+(4/6) Installing freetype (2.15.0-r0)
+(5/6) Installing fontconfig (2.18.4-r0)
+(6/6) Installing qnx-test-font-hack (1.0-r1)
+OK: 140.0 MiB in 27 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_hack
      == font-hack ==
        ok   font directory share/fonts/font-hack
        info /usr/local/share/fonts/font-hack/
-       info fontconfig 2.15.0
+       info fontconfig 2.18.4
+     
      Fontconfig error: No writable cache directories
        ok   fontconfig scans the directory
        info 4 face(s) in 4 file(s)

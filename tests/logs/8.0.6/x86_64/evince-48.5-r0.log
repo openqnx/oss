@@ -1,0 +1,107 @@
+# evince 48.5-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-25T04:47:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u evince qnx-test-evince qnx-port-tests
+( 1/63) Installing hicolor-icon-theme (0.18-r0)
+( 2/63) Installing adwaita-icon-theme (51.0-r0)
+( 3/63) Installing libxau (1.0.12-r0)
+( 4/63) Installing libxdmcp (1.1.5-r0)
+( 5/63) Installing libxcb (1.17.0-r0)
+( 6/63) Installing libx11 (1.8.14-r0)
+( 7/63) Installing libxext (1.3.7-r0)
+( 8/63) Installing libxi (1.8.4-r0)
+( 9/63) Installing libxtst (1.2.6-r0)
+(10/63) Installing at-spi2-core (2.54.2-r0)
+(11/63) Installing brotli (1.2.1-r0)
+(12/63) Installing bzip2 (1.0.8-r0)
+(13/63) Installing libpng (1.6.59-r0)
+(14/63) Installing freetype (2.15.0-r0)
+(15/63) Installing fontconfig (2.18.4-r0)
+(16/63) Installing libxrender (0.9.13-r0)
+(17/63) Installing lzo (2.10-r0)
+(18/63) Installing pixman (0.46.4-r0)
+(19/63) Installing cairo (1.18.6-r0)
+(20/63) Installing libjpeg-turbo (3.2.1-r0)
+(21/63) Installing gdk-pixbuf (2.44.8-r0)
+(22/63) Installing gsettings-desktop-schemas (49.0-r0)
+(23/63) Installing fribidi (1.0.18-r0)
+(24/63) Installing graphite2 (1.3.15-r0)
+(25/63) Installing icu (76.1-r0)
+(26/63) Installing harfbuzz (<ip>-r0)
+(27/63) Installing libepoxy (1.5.10-r0)
+(28/63) Installing libxcomposite (0.4.7-r0)
+(29/63) Installing libxfixes (6.0.2-r0)
+(30/63) Installing libxcursor (1.2.3-r0)
+(31/63) Installing libxdamage (1.1.7-r0)
+(32/63) Installing libxinerama (1.1.6-r0)
+(33/63) Installing xz (5.8.4-r0)
+(34/63) Installing libxml2 (2.13.5-r0)
+(35/63) Installing libxkbcommon (1.8.1-r0)
+(36/63) Installing libxrandr (1.5.5-r0)
+(37/63) Installing libxft (2.3.9-r0)
+(38/63) Installing pango (1.56.4-r0)
+(39/63) Installing wayland (1.26.0-r0)
+(40/63) Installing gtk3 (3.24.43-r0)
+(41/63) Installing libb2 (0.98.1-r0)
+(42/63) Installing lz4 (1.11.1-r0)
+(43/63) Installing libarchive (3.8.11-r0)
+(44/63) Installing libhandy (1.8.3-r0)
+(45/63) Installing libgpg-error (1.61-r0)
+(46/63) Installing libgcrypt (1.12.4-r0)
+(47/63) Installing libsecret (0.21.8.2-r1)
+(48/63) Installing libdeflate (1.26-r0)
+(49/63) Installing libwebp (1.6.0-r0)
+(50/63) Installing libtiff (4.7.2-r0)
+(51/63) Installing lcms2 (2.16-r0)
+(52/63) Installing openjpeg (2.5.4-r0)
+(53/63) Installing poppler (26.11.0-r0)
+(54/63) Installing shared-mime-info (2.4-r0)
+(55/63) Installing evince (48.5-r0)
+(56/63) Installing qnx-port-tests (1.0-r1)
+(57/63) Installing font-dejavu (2.37-r0)
+(58/63) Installing libsfdo (0.1.4-r0)
+(59/63) Installing wlroots (0.20.2-r0)
+(60/63) Installing xkeyboard-config (2.49-r0)
+(61/63) Installing labwc (0.20.3-r0)
+(62/63) Installing zip (3.0-r0)
+(63/63) Installing qnx-test-evince (1.0-r2)
+Executing glib-2.90.1-r2.trigger
+* Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+Executing shared-mime-info-2.4-r0.trigger
+OK: 217.7 MiB in 77 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_evince
+     == evince ==
+       info GNOME Document Viewer 48.5
+       ok   evince --version: 48.5
+       ok   PDF, TIFF and comics backends installed, modules load (ldd)
+       ok   GSettings schema org.gnome.Evince is compiled in
+       info thumbnail 198x256, 2055 bytes
+       ok   evince-thumbnailer: page 1 as a 198x256 PNG
+       info pixel(40,40)=0 0 0 pixel(150,40)=255 255 255 (4 bytes/pixel)
+       ok   rendered page: black rectangle upper left, white upper right
+       ok   thumbnailer refuses a file that is not a PDF
+       ok   comics backend: thumbnail of a .cbz (libarchive)
+       ok   labwc up (headless)
+       ok   private D-Bus session bus
+       ok   evince --help lists --page-index and --presentation
+       ok   evinced (D-Bus activated) knows the open document: owner :1.2
+       ok   the viewer has one window: /org/gnome/evince/Window/0
+       ok   org.gnome.evince.Window exported for the document (loaded)
+       ok   a second evince with the same file is handed to the running one
+       ok   evince still running with the document
+     PASS evince
+PASS test_evince
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

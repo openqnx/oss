@@ -8,7 +8,7 @@
 |---|---|
 | Upstream | https://gitlab.freedesktop.org/gstreamer/gstreamer.git (tag `1.24.10`) |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) [`libxml2`](../libxml2/) |
 | Run-time dependencies | [`gettext`](../gettext/) [`glib`](../glib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -89,7 +89,25 @@ The project lives in the `subprojects/gstreamer/` subdirectory of the repository
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/gstreamer < ports/gstreamer/patches/0001-gst-plugins-base-alsa-qnx-libasound.patch
+```
+
+**[`0001-gst-plugins-base-alsa-qnx-libasound.patch`](patches/0001-gst-plugins-base-alsa-qnx-libasound.patch)** — gst-plugins-base: the ALSA plugin on QNX's libasound
+
+> QNX SDP 8.0 ships libasound with an ALSA-compatible API (salsa-based,
+> SND_LIB_VERSION 1.2.8, headers in usr/include/alsa/) but no alsa.pc, so
+> dependency('alsa') finds nothing. On QNX take libasound from the compiler's
+> default paths when there is no alsa.pc.
+>
+> That libasound has the sequencer but not the snd_midi_event_* helpers that
+> the MIDI source (alsamidisrc) uses: build and register alsamidisrc only when
+> snd_midi_event_new links. alsasink, alsasrc and the device provider are
+> unchanged. Elsewhere (alsa.pc found, full alsa-lib) nothing changes.
+
+Touches: `subprojects/gst-plugins-base/ext/alsa/meson.build`, `subprojects/gst-plugins-base/ext/alsa/gstalsaplugin.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

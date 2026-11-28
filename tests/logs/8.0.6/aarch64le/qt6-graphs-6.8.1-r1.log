@@ -1,0 +1,30 @@
+# qt6-graphs 6.8.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T22:32:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qt6-graphs qnx-test-qt6-graphs qnx-port-tests
+(1/4) Installing double-conversion (3.4.0-r1)
+(2/4) Installing qt6 (6.8.1-r1)
+(3/4) Installing qt6-graphs (6.8.1-r1)
+(4/4) Installing qnx-test-qt6-graphs (1.0-r1)
+OK: 2617.3 MiB in 276 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qt6_graphs
+     == qt6-graphs ==
+       ok   QLineSeries points
+       ok   QLineSeries replace/remove
+       ok   QBarSet sum 10 over 3 values
+       ok   QPieSeries: slices 1 and 3 -> 25% and 75%
+       ok   QValueAxis range
+       ok   3D QBarDataProxy 2 x 2
+       ok   QtGraphs QML module loaded, GraphsView created
+       info no OpenGL on this platform (offscreen): render checks skipped
+     PASS qt6-graphs
+PASS test_qt6_graphs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

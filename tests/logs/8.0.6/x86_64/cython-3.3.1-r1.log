@@ -1,0 +1,51 @@
+# cython 3.3.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:01:21Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cython qnx-test-cython qnx-port-tests
+( 1/15) Installing bzip2 (1.0.8-r1)
+( 2/15) Installing expat (2.6.4-r1)
+( 3/15) Installing gdbm (1.26-r1)
+( 4/15) Installing libiconv (1.19.1-r1)
+( 5/15) Installing libunistring (1.5-r1)
+( 6/15) Installing ncurses (6.6-r1)
+( 7/15) Installing gettext (0.22.5-r1)
+( 8/15) Installing libffi (3.8.1-r1)
+( 9/15) Installing readline (8.3-r1)
+(10/15) Installing sqlite (3.47.2-r1)
+(11/15) Installing xz (5.8.4-r1)
+(12/15) Installing python3 (3.14.0-r2)
+(13/15) Installing cython (3.3.1-r1)
+(14/15) Installing qnx-port-tests (1.0-r1)
+(15/15) Installing qnx-test-cython (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 142.6 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cython
+     == cython ==
+       ok   temporary directory
+       ok   module written as qnxcy.so
+       info module 225664 bytes, interpreter /usr/local/bin/python3
+       info module /data/var/tmp/qnx-cython-27934743/qnxcy.so
+       ok   fib(): typed C loop, 64-bit result
+       ok   primes(): sieve over a memoryview
+       ok   norm(): double[:] buffer, libc sqrt
+       ok   clen(): libc strlen on bytes
+       ok   ValueError raised in C code, with its message
+       ok   TypeError for a non-int argument
+       ok   cdef class: public attribute, cpdef method
+       info Cython 3.3.1
+       ok   Cython compiler modules and refnanny are compiled extensions
+       ok   python3 imports the Cython-compiled module and every check in it passes
+       info Cython version 3.3.1
+       ok   cython --version reports Cython 3.x
+       ok   cython compiles tiny.pyx to C on the target (tiny.c defines PyInit_tiny)
+     PASS cython
+PASS test_cython
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

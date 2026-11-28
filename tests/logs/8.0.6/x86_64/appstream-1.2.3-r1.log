@@ -1,0 +1,63 @@
+# appstream 1.2.3-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T07:59:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u appstream qnx-test-appstream qnx-port-tests
+( 1/18) Installing brotli (1.2.1-r1)
+( 2/18) Installing c-ares (1.34.9-r1)
+( 3/18) Installing nghttp2 (1.71.0-r1)
+( 4/18) Installing curl (8.23.0-r1)
+( 5/18) Installing libiconv (1.19.1-r1)
+( 6/18) Installing libunistring (1.5-r1)
+( 7/18) Installing ncurses (6.6-r1)
+( 8/18) Installing gettext (0.22.5-r1)
+( 9/18) Installing libffi (3.8.1-r1)
+(10/18) Installing pcre2 (10.49-r1)
+(11/18) Installing glib (2.90.1-r3)
+(12/18) Installing libfyaml (0.9.6-r1)
+(13/18) Installing xz (5.8.4-r1)
+(14/18) Installing libxml2 (2.13.5-r1)
+(15/18) Installing libxmlb (0.3.30-r1)
+(16/18) Installing appstream (1.2.3-r1)
+(17/18) Installing qnx-port-tests (1.0-r1)
+(18/18) Installing qnx-test-appstream (1.0-r3)
+Executing glib-2.90.1-r3.trigger
+OK: 55.6 MiB in 23 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_appstream
+     == appstream ==
+       info AppStream 1.2.3
+       ok   metainfo parsed
+       ok   component id and kind console-application
+       ok   name and summary
+       ok   developer name
+       ok   project license
+       ok   two releases, newest (1.10.0) first
+       ok   release date 2026-03-01 as a timestamp
+       ok   provides binary porttest
+       ok   homepage URL
+       ok   written back as metainfo XML
+       ok   catalog YAML (DEP-11) output
+       ok   version comparison: 1.10.0 > 1.9.2, 1.0~rc1 < 1.0
+       ok   SPDX license expressions
+       ok   free license check
+       ok   validator accepts the good file
+     
+     (process:7856151): GLib-CRITICAL **: 07:59:45.324: g_str_has_suffix: assertion 'str != NULL' failed
+       info broken file: 9 issue(s), first: releases-info-missing
+       ok   validator rejects a file without an id, with issues listed
+       info appstreamcli validate: rc 0, I: org.qnx.porttest:6: description-first-para-too-short A test component for the AppStream port.
+     I: org.qnx.porttest:~: content-rating-missing
+     
+     ✔ Validation was successful: infos: 2
+       ok   appstreamcli validate --no-net: valid
+       ok   appstreamcli convert to YAML
+     PASS appstream
+PASS test_appstream
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

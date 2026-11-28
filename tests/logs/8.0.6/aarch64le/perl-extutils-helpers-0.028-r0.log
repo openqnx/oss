@@ -1,24 +1,23 @@
 # perl-extutils-helpers 0.028-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:07:37Z   packages from: apk:local-dists
+# date: 2026-11-24T15:02:24Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-extutils-helpers qnx-test-perl-buildtools qnx-port-tests
-( 1/12) Installing libxcrypt (4.4.38-r0)
-( 2/12) Installing perl (5.40.2-r0)
-( 3/12) Installing perl-extutils-helpers (0.028-r0)
-( 4/12) Installing qnx-port-tests (1.0-r0)
-( 5/12) Installing perl-extutils-config (0.010-r0)
-( 6/12) Installing perl-extutils-hascompiler (0.025-r0)
-( 7/12) Installing perl-cpan-requirements-dynamic (0.003-r0)
-( 8/12) Installing perl-extutils-installpaths (0.015-r0)
-( 9/12) Installing perl-file-sharedir-install (0.14-r0)
-(10/12) Installing perl-module-build (0.4234-r0)
-(11/12) Installing perl-module-build-tiny (0.053-r0)
-(12/12) Installing qnx-test-perl-buildtools (1.0-r0)
-OK: 73.9 MiB in 17 packages
+( 1/11) Installing libxcrypt (4.5.2-r0)
+( 2/11) Installing perl (5.40.2-r0)
+( 3/11) Installing perl-extutils-helpers (0.028-r0)
+( 4/11) Installing perl-extutils-config (0.010-r0)
+( 5/11) Installing perl-extutils-hascompiler (0.025-r0)
+( 6/11) Installing perl-cpan-requirements-dynamic (0.003-r0)
+( 7/11) Installing perl-extutils-installpaths (0.015-r0)
+( 8/11) Installing perl-file-sharedir-install (0.14-r0)
+( 9/11) Installing perl-module-build (0.4234-r0)
+(10/11) Installing perl-module-build-tiny (0.053-r0)
+(11/11) Installing qnx-test-perl-buildtools (1.0-r0)
+OK: 200.0 MiB in 32 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_buildtools
      == perl-module-build, -build-tiny, perl-extutils-*, perl-cpan-requirements-dynamic, perl-file-sharedir-install ==
@@ -33,7 +32,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   InstallPaths install_base lib
        ok   InstallPaths install_base bin
      sh: qcc: cannot execute - No such file or directory
-     Couldn't execute qcc -Vgcc_ntoaarch64le -D_QNX_SOURCE  "-I/usr/local/lib/perl5/5.40.2/aarch64-nto/CORE" -fPIC -Wno-unused-function -c /data/var/tmp/test_perl_buildtools.30617622/HASCOMPILERorH0/TESTvp7P.c -o /data/var/tmp/test_perl_buildtools.30617622/HASCOMPILERorH0/TESTvp7P.o: Inappropriate I/O control operation at /tmp/test_perl_buildtools.30617622/t.pl line 26.
+     Couldn't execute qcc -Vgcc_ntoaarch64le -D_QNX_SOURCE  "-I/usr/local/lib/perl5/5.40.2/aarch64-nto/CORE" -fPIC -Wno-unused-function -c /data/var/tmp/test_perl_buildtools.228618262/HASCOMPILERviiM/TESTXMAw.c -o /data/var/tmp/test_perl_buildtools.228618262/HASCOMPILERviiM/TESTXMAw.o: Inappropriate I/O control operation at /tmp/test_perl_buildtools.228618262/t.pl line 26.
        info perl's cc 'qcc -Vgcc_ntoaarch64le' on PATH: no; can_compile_loadable_object: 0
        ok   ExtUtils::HasCompiler agrees with the compiler's presence
        ok   CPAN::Requirements::Dynamic evaluates conditions (nto)

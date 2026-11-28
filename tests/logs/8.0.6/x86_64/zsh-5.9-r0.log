@@ -1,43 +1,45 @@
 # zsh 5.9-r0 -- FAIL
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:39:03Z   packages from: apk:local-dists
+# date: 2026-11-24T15:07:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u zsh qnx-test-zsh qnx-port-tests
-( 1/30) Installing qnx-port-tests (1.0-r0)
-( 2/30) Installing abuild (3.17.0-r0)
-( 3/30) Installing fastfetch (2.66.1-r0)
-( 4/30) Installing expat (2.6.4-r0)
-( 5/30) Installing brotli (1.1.0-r0)
-( 6/30) Installing bzip2 (1.0.8-r0)
-( 7/30) Installing libpng (1.6.44-r0)
-( 8/30) Installing freetype (2.13.3-r0)
-( 9/30) Installing fontconfig (2.15.0-r0)
-(10/30) Installing libiconv (1.18-r0)
-(11/30) Installing libunistring (1.3-r0)
-(12/30) Installing gettext (0.22.5-r0)
-(13/30) Installing libffi (3.4.6-r0)
-(14/30) Installing pcre2 (10.44-r0)
-(15/30) Installing glib (2.82.4-r0)
-(16/30) Installing graphite2 (1.3.14-r0)
-(17/30) Installing icu (76.1-r0)
-(18/30) Installing harfbuzz (<ip>-r0)
-(19/30) Installing pixman (0.46.4-r0)
-(20/30) Installing utf8proc (2.11.3-r0)
-(21/30) Installing fcft (3.3.2-r0)
-(22/30) Installing xz (5.6.3-r0)
-(23/30) Installing libxml2 (2.13.5-r0)
-(24/30) Installing libxkbcommon (1.8.1-r0)
-(25/30) Installing wayland (1.24.0-r0)
-(26/30) Installing foot (1.23.1-r0)
-(27/30) Installing libevent (2.1.12-r0)
-(28/30) Installing lldpd (1.0.22-r0)
-(29/30) Installing zsh (5.9-r0)
-(30/30) Installing qnx-test-zsh (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 107.8 MiB in 41 packages
+( 1/32) Installing qnx-port-tests (1.0-r0)
+( 2/32) Installing abuild (3.17.0-r0)
+( 3/32) Installing fastfetch (2.66.1-r0)
+( 4/32) Installing expat (2.6.4-r0)
+( 5/32) Installing brotli (1.2.1-r0)
+( 6/32) Installing bzip2 (1.0.8-r0)
+( 7/32) Installing libpng (1.6.59-r0)
+( 8/32) Installing freetype (2.15.0-r0)
+( 9/32) Installing libiconv (1.19.1-r0)
+(10/32) Installing libunistring (1.5-r0)
+(11/32) Installing ncurses (6.6-r0)
+(12/32) Installing gettext (0.22.5-r0)
+(13/32) Installing fontconfig (2.18.4-r0)
+(14/32) Installing libffi (3.8.1-r0)
+(15/32) Installing pcre2 (10.49-r0)
+(16/32) Installing glib (2.90.1-r1)
+(17/32) Installing graphite2 (1.3.15-r0)
+(18/32) Installing icu (76.1-r0)
+(19/32) Installing harfbuzz (<ip>-r0)
+(20/32) Installing pixman (0.46.4-r0)
+(21/32) Installing utf8proc (2.12.0-r0)
+(22/32) Installing fcft (3.3.3-r0)
+(23/32) Installing xz (5.8.4-r0)
+(24/32) Installing libxml2 (2.13.5-r0)
+(25/32) Installing libxkbcommon (1.8.1-r0)
+(26/32) Installing wayland (1.26.0-r0)
+(27/32) Installing foot (1.28.0-r0)
+(28/32) Installing libevent (2.1.12-r0)
+(29/32) Installing lldpd (1.0.23-r0)
+(30/32) Installing p11-kit (0.26.6-r0)
+(31/32) Installing zsh (5.9-r0)
+(32/32) Installing qnx-test-zsh (1.0-r1)
+Executing glib-2.90.1-r1.trigger
+OK: 111.0 MiB in 37 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_zsh
 FAIL test_zsh (rc=1)

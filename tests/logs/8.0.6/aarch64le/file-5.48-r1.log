@@ -1,0 +1,56 @@
+# file 5.48-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T10:04:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u file qnx-test-file qnx-port-tests
+(1/5) Installing bzip2 (1.0.8-r1)
+(2/5) Installing xz (5.8.4-r1)
+(3/5) Installing file (5.48-r1)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-file (1.0-r2)
+OK: 20.9 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_file
+     == file ==
+       info libmagic version 548
+       ok   magic_version() == 548 (file 5.48)
+       info default magic path: /usr/local/share/misc/magic
+       ok   magic_open
+       ok   magic_load(default database)
+       info png  -> PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   PNG header identified with size and depth
+       info gz   -> gzip compressed data, from Unix, original size modulo 2^32 0
+       ok   gzip stream identified
+       info pdf  -> PDF document, version 1.4
+       ok   PDF 1.4 identified
+       info sh   -> POSIX shell script, ASCII text executable
+       ok   #!/bin/sh script identified
+       info txt  -> ASCII text
+       ok   plain ASCII text identified
+       info self -> ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /usr/lib/ldqnx-64.so.2, BuildID[md5/uuid]=8d2105fb830cf06c4b0d99b81f88c4f2, with debug_info, not stripped
+       ok   own binary: ELF 64-bit LSB
+       ok   own binary: ARM aarch64
+       ok   magic_setflags(MAGIC_MIME_TYPE)
+       ok   MIME type of PNG is image/png
+       ok   MIME type of gzip is application/gzip
+       ok   MIME type of text is text/plain
+       ok   sample files written
+       info program: /usr/local/bin/file
+       info file -v: file-5.48
+       ok   file -v reports file-5.48
+       info file -b a.png: PNG image data, 1 x 1, 8-bit/color RGB, non-interlaced
+       ok   file: PNG
+       info file -b b.gz: gzip compressed data, from Unix, original size modulo 2^32 0
+       ok   file: gzip
+       info file -b --mime-type c.txt: text/plain
+       ok   file --mime-type: text/plain
+       ok   file <path>: "<path>: ASCII text"
+     PASS file
+PASS test_file
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

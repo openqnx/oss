@@ -1,0 +1,105 @@
+# oss-greeter 1.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:48:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u oss-greeter qnx-test-oss-greeter qnx-port-tests
+( 1/74) Installing expat (2.6.4-r1)
+( 2/74) Installing dbus (1.16.4-r1)
+( 3/74) Installing libiconv (1.19.1-r1)
+( 4/74) Installing libunistring (1.5-r1)
+( 5/74) Installing ncurses (6.6-r1)
+( 6/74) Installing gettext (0.22.5-r1)
+( 7/74) Installing libffi (3.8.1-r1)
+( 8/74) Installing pcre2 (10.49-r1)
+( 9/74) Installing glib (2.90.1-r3)
+(10/74) Installing libxau (1.0.12-r1)
+(11/74) Installing libxdmcp (1.1.5-r1)
+(12/74) Installing libxcb (1.17.0-r1)
+(13/74) Installing libx11 (1.8.14-r1)
+(14/74) Installing libxext (1.3.7-r1)
+(15/74) Installing libxi (1.8.4-r1)
+(16/74) Installing libxtst (1.2.6-r1)
+(17/74) Installing at-spi2-core (2.54.2-r1)
+(18/74) Installing brotli (1.2.1-r1)
+(19/74) Installing bzip2 (1.0.8-r1)
+(20/74) Installing libpng (1.6.59-r1)
+(21/74) Installing freetype (2.15.0-r1)
+(22/74) Installing fontconfig (2.18.4-r1)
+(23/74) Installing libxrender (0.9.13-r1)
+(24/74) Installing lzo (2.10-r1)
+(25/74) Installing pixman (0.46.4-r1)
+(26/74) Installing cairo (1.18.6-r1)
+(27/74) Installing libjpeg-turbo (3.2.1-r1)
+(28/74) Installing gdk-pixbuf (2.44.8-r1)
+(29/74) Installing fribidi (1.0.18-r1)
+(30/74) Installing graphite2 (1.3.15-r1)
+(31/74) Installing icu (76.1-r1)
+(32/74) Installing harfbuzz (<ip>-r1)
+(33/74) Installing libepoxy (1.5.10-r1)
+(34/74) Installing libxcomposite (0.4.7-r1)
+(35/74) Installing libxfixes (6.0.2-r1)
+(36/74) Installing libxcursor (1.2.3-r1)
+(37/74) Installing libxdamage (1.1.7-r1)
+(38/74) Installing libxinerama (1.1.6-r1)
+(39/74) Installing xz (5.8.4-r1)
+(40/74) Installing libxml2 (2.13.5-r1)
+(41/74) Installing libxkbcommon (1.8.1-r1)
+(42/74) Installing libxrandr (1.5.5-r1)
+(43/74) Installing libxft (2.3.9-r1)
+(44/74) Installing pango (1.56.4-r1)
+(45/74) Installing wayland (1.26.0-r1)
+(46/74) Installing gtk3 (3.24.43-r1)
+(47/74) Installing gtk-layer-shell (0.10.1-r1)
+(48/74) Installing font-dejavu (2.37-r1)
+(49/74) Installing libsfdo (0.1.4-r1)
+(50/74) Installing lcms2 (2.16-r1)
+(51/74) Installing wlroots (0.20.2-r1)
+(52/74) Installing xkeyboard-config (2.49-r1)
+(53/74) Installing labwc (0.20.3-r1)
+(54/74) Installing shared-mime-info (2.4-r1)
+(55/74) Installing librsvg (2.60.3-r0)
+(56/74) Installing openpam (20250531-r2)
+(57/74) Installing hicolor-icon-theme (0.18-r1)
+(58/74) Installing libxfce4util (4.20.1-r1)
+(59/74) Installing xfconf (4.20.0-r1)
+(60/74) Installing libxfce4ui (4.20.2-r1)
+(61/74) Installing exo (4.20.0-r1)
+(62/74) Installing garcon (4.20.0-r1)
+(63/74) Installing libnotify (0.8.9-r1)
+(64/74) Installing libxfce4windowing (4.20.7-r1)
+(65/74) Installing libyaml (0.2.6-r1)
+(66/74) Installing libexif (0.6.26-r1)
+(67/74) Installing libice (1.1.2-r1)
+(68/74) Installing libsm (1.2.6-r1)
+(69/74) Installing xfce4-panel (4.20.8-r1)
+(70/74) Installing thunar (4.20.10-r1)
+(71/74) Installing xfdesktop (4.20.2-r1)
+(72/74) Installing oss-greeter (1.0-r0)
+(73/74) Installing qnx-port-tests (1.0-r1)
+(74/74) Installing qnx-test-oss-greeter (1.0-r0)
+Executing glib-2.90.1-r3.trigger
+Executing gdk-pixbuf-2.44.8-r1.trigger
+Executing shared-mime-info-2.4-r1.trigger
+OK: 216.4 MiB in 79 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_oss_greeter
+     == oss-greeter ==
+       ok   oss-greeter and oss-greeter-session installed
+       ok   oss-greeter loads (ldd), with OpenPAM and gtk-layer-shell
+       ok   PAM policy: pam_qnx.so by absolute path for auth, account, session, password
+       info QNX's pam_qnx.so is there
+       ok   greeter's labwc: one inert key and mouse binding, no Execute/ShowMenu/default bindings
+       info qnx-desktop-start not installed (qnx-desktop-core)
+       ok   the greeter runs on its labwc (headless) after 1+4 s
+       ok   on the layer shell (overlay, full screen)
+       ok   no answer written while nobody logs in
+       info users it lists: root qnxuser user1 user2 user3 user4 user5 user6 
+     PASS oss-greeter
+PASS test_oss_greeter
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

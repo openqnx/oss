@@ -1,0 +1,47 @@
+# sdl2-image 2.8.8-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:09:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u sdl2-image qnx-test-sdl2-image qnx-port-tests
+( 1/11) Installing libiconv (1.19.1-r1)
+( 2/11) Installing sdl2 (2.32.10-r1)
+( 3/11) Installing aom (3.15.3-r1)
+( 4/11) Installing dav1d (1.5.5-r1)
+( 5/11) Installing libavif (1.4.2-r1)
+( 6/11) Installing libjpeg-turbo (3.2.1-r1)
+( 7/11) Installing libwebp (1.6.0-r1)
+( 8/11) Installing xz (5.8.4-r1)
+( 9/11) Installing libtiff (4.7.2-r1)
+(10/11) Installing sdl2-image (2.8.8-r2)
+(11/11) Installing qnx-test-sdl2-image (1.0-r1)
+OK: 27.1 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl2_image
+     == sdl2-image ==
+       info SDL2_image 2.8.8
+       info IMG_Init: png=1 jpg=1 tif=1 webp=1 avif=1 jxl=0
+       ok   PNG and JPEG codecs available
+       ok   format sniffing: PNG
+       ok   IMG_Load_RW decodes the 1x1 PNG
+       ok   decoded pixel is pure red
+       ok   create 64x48 RGBA surface
+       ok   IMG_SavePNG to /tmp
+       ok   IMG_Load reads it back (64x48)
+       info PNG mismatched pixels: 0
+       ok   PNG round trip is lossless (RGBA)
+       ok   IMG_SaveJPG quality 95
+       ok   format sniffing: JPEG
+       info JPEG max channel error 2
+       ok   JPEG round trip within tolerance
+       ok   TGA decoded (2x1)
+       ok   TGA pixels: blue, green
+       ok   missing file -> NULL with an error
+     PASS sdl2-image
+PASS test_sdl2_image
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

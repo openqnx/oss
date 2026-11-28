@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`fontconfig`](../fontconfig/) [`sdl2`](../sdl2/) [`sdl2-ttf`](../sdl2-ttf/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_mame`](../../tests/src/) |
 

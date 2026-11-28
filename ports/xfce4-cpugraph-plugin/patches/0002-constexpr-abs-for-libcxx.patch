@@ -1,0 +1,41 @@
+fuzzy-cmp: no std::abs in a constexpr function
+
+fuzzy_cmp() is constexpr and calls std::abs, which the C++ standard makes
+constexpr only from C++23. GCC's libstdc++ declares it constexpr earlier as an
+extension, so this builds on Linux; QNX's C++ library (libc++) follows the
+standard and the C++17 build stops with "call to non-'constexpr' function
+'double abs(double)'". A small constexpr absolute value in the header does the
+same for both types.
+
+Upstream-Status: Pending
+
+--- a/xfce4cpp/fuzzy-cmp.hh
++++ b/xfce4cpp/fuzzy-cmp.hh
+@@ -27,16 +27,25 @@
+ 
+ using namespace std;
+ 
++/* std::abs is constexpr only from C++23 (libstdc++ makes it one earlier,
++ * libc++ does not) */
++template <typename T>
++constexpr static inline T
++fuzzy_abs (T x)
++{
++    return x < 0 ? -x : x;
++}
++
+ constexpr static inline bool
+ fuzzy_cmp (double p1, double p2)
+ {
+-    return (abs (p1 - p2) <= 0.000000000001 * min (abs (p1), abs (p2)));
++    return (fuzzy_abs (p1 - p2) <= 0.000000000001 * min (fuzzy_abs (p1), fuzzy_abs (p2)));
+ }
+ 
+ constexpr static inline bool
+ fuzzy_cmp (float p1, float p2)
+ {
+-    return (abs (p1 - p2) <= 0.00001f * min (abs (p1), abs (p2)));
++    return (fuzzy_abs (p1 - p2) <= 0.00001f * min (fuzzy_abs (p1), fuzzy_abs (p2)));
+ }
+ 
+ } /* namespace xfce4 */

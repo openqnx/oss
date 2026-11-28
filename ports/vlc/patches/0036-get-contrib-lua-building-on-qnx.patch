@@ -1,0 +1,23 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 15:22:27 -0400
+Subject: [PATCH 36/60] Get contrib/lua building on QNX
+
+Treat QNX as a posix style target instead of a generic one.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+diff --git a/contrib/src/lua/rules.mak b/contrib/src/lua/rules.mak
+index e942a18c247..48b58937021 100644
+--- a/contrib/src/lua/rules.mak
++++ b/contrib/src/lua/rules.mak
+@@ -23,6 +23,9 @@ endif
+ ifdef HAVE_SOLARIS
+ LUA_TARGET := solaris
+ endif
++ifdef HAVE_QNX
++LUA_TARGET := posix
++endif
+ 
+ # Feel free to add autodetection if you need to...
+ PKGS += lua luac
+

@@ -1,0 +1,75 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 10:17:11 -0400
+Subject: [PATCH 53/60] Fix build when hand-written assembler doesn't use GOT
+
+Several of the contrib libraries (eg: libavcodec) have hand written
+assembler in them. While the c/c++ code is compiled with -fPIC, the hand
+written assembly generally isn't and doesn't bother trying to access
+symbols it wants via the GOT.
+
+This causes a problem when creating the final shared objects as the
+(non-GOT) relocation is not supported.
+
+Using SYMBOLIC_LDFLAGS adds -Bsymbolic to the link command line which
+in turn makes the linker treat global symbols that it finds as local
+and hence don't need the GOT.
+
+This does mean they can't be overriden by the dynamic linker but I
+believe that is ok in this instance.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/modules/codec/Makefile.am
++++ b/modules/codec/Makefile.am
+@@ -522,7 +522,7 @@
+ libx265_plugin_la_SOURCES = codec/x265.c
+ libx265_plugin_la_CPPFLAGS = $(CODEC_CPPFLAGS)
+ libx265_plugin_la_CFLAGS = $(AM_CFLAGS) $(CFLAGS_x265)
+-libx265_plugin_la_LDFLAGS = $(AM_LDFLAGS) $(LDFLAGS_x265) -rpath '$(codecdir)'
++libx265_plugin_la_LDFLAGS = $(AM_LDFLAGS) $(LDFLAGS_x265) -rpath '$(codecdir)' $(SYMBOLIC_LDFLAGS)
+ libx265_plugin_la_LIBADD = $(LIBS_x265)
+ EXTRA_LTLIBRARIES += libx265_plugin.la
+ if ENABLE_SOUT
+--- a/modules/demux/Makefile.am
++++ b/modules/demux/Makefile.am
+@@ -87,7 +87,7 @@
+ demux_LTLIBRARIES += libnsc_plugin.la
+ 
+ libmpc_plugin_la_SOURCES = demux/mpc.c
+-libmpc_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(demuxdir)'
++libmpc_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(demuxdir)' $(SYMBOLIC_LDFLAGS)
+ libmpc_plugin_la_LIBADD = $(LIBS_mpc) $(LIBM)
+ EXTRA_LTLIBRARIES += libmpc_plugin.la
+ demux_LTLIBRARIES += $(LTLIBmpc)
+--- a/modules/packetizer/Makefile.am
++++ b/modules/packetizer/Makefile.am
+@@ -35,6 +35,7 @@
+ 	codec/avcodec/avcodec.h
+ libpacketizer_avparser_plugin_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVUTIL_CFLAGS) $(AM_CFLAGS)
+ libpacketizer_avparser_plugin_la_LIBADD = $(AVCODEC_LIBS) $(AVUTIL_LIBS) $(LIBM) libavcodec_common.la
++libpacketizer_avparser_plugin_la_LDFLAGS = $(AM_LDFLAGS) $(SYMBOLIC_LDFLAGS)
+ 
+ noinst_HEADERS += packetizer/packetizer_helper.h packetizer/startcode_helper.h
+ 
+--- a/modules/stream_out/Makefile.am
++++ b/modules/stream_out/Makefile.am
+@@ -63,7 +63,7 @@
+ libstream_out_chromaprint_plugin_la_SOURCES = stream_out/chromaprint.c stream_out/chromaprint_data.h dummy.cpp
+ libstream_out_chromaprint_plugin_la_CPPFLAGS = $(AM_CPPFLAGS) $(CHROMAPRINT_CFLAGS)
+ libstream_out_chromaprint_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(soutdir)'
+-libstream_out_chromaprint_plugin_la_LIBADD = $(CHROMAPRINT_LIBS)
++libstream_out_chromaprint_plugin_la_LIBADD = $(CHROMAPRINT_LIBS) $(SYMBOLIC_LDFLAGS)
+ EXTRA_LTLIBRARIES += libstream_out_chromaprint_plugin.la
+ sout_LTLIBRARIES += $(LTLIBstream_out_chromaprint)
+ 
+--- a/modules/video_chroma/Makefile.am
++++ b/modules/video_chroma/Makefile.am
+@@ -13,7 +13,7 @@
+ libswscale_plugin_la_SOURCES = video_chroma/swscale.c codec/avcodec/chroma.c
+ libswscale_plugin_la_CFLAGS = $(AM_CFLAGS) $(SWSCALE_CFLAGS)
+ libswscale_plugin_la_LIBADD = $(SWSCALE_LIBS) $(LIBM)
+-libswscale_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(chromadir)'
++libswscale_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(chromadir)' $(SYMBOLIC_LDFLAGS)
+ 
+ libgrey_yuv_plugin_la_SOURCES = video_chroma/grey_yuv.c
+ 

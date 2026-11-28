@@ -1,16 +1,16 @@
 # qpdf 11.10.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:12:14Z   packages from: apk:local-dists
+# date: 2026-11-24T13:02:32Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u qpdf qnx-test-qpdf qnx-port-tests
 (1/4) Installing qnx-port-tests (1.0-r0)
-(2/4) Installing libjpeg-turbo (3.0.4-r0)
+(2/4) Installing libjpeg-turbo (3.2.1-r0)
 (3/4) Installing qpdf (11.10.1-r0)
 (4/4) Installing qnx-test-qpdf (1.0-r0)
-OK: 21.1 MiB in 15 packages
+OK: 16.3 MiB in 9 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qpdf
      == qpdf ==

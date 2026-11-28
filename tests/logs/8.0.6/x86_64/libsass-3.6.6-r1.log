@@ -1,0 +1,31 @@
+# libsass 3.6.6-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:44:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libsass qnx-test-libsass qnx-port-tests
+(1/3) Installing libsass (3.6.6-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libsass (1.0-r1)
+OK: 12.6 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libsass
+     == libsass ==
+       info libsass 3.6.6, Sass language 3.5
+       ok   libsass_version() is 3.6.6
+       ok   scratch directory
+       ok   compressed: variables, nesting, mixin, @function, @each, darken/lighten, @import
+       ok   expanded style
+       info error json line 1 column 1
+       ok   without the include path the @import fails
+       ok   indented syntax (.sass)
+       info error json line 1 column 13
+       ok   undefined variable: error with line:column
+     PASS libsass
+PASS test_libsass
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

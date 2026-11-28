@@ -1,26 +1,25 @@
 # aws-c-mqtt 0.15.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:09:35Z   packages from: apk:local-dists
+# date: 2026-11-24T12:20:11Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u aws-c-mqtt qnx-test-aws-c-mqtt qnx-port-tests
-(1/9) Installing aws-c-common (0.12.6-r0)
-(2/9) Installing aws-c-cal (0.9.13-r0)
-(3/9) Installing aws-c-compression (0.3.2-r0)
-(4/9) Installing s2n-tls (1.7.0-r0)
-(5/9) Installing aws-c-io (0.26.1-r0)
-(6/9) Installing aws-c-http (0.10.14-r0)
-(7/9) Installing aws-c-mqtt (0.15.2-r0)
-(8/9) Installing qnx-port-tests (1.0-r0)
-(9/9) Installing qnx-test-aws-c-mqtt (1.0-r0)
-OK: 13.0 MiB in 14 packages
+(1/8) Installing aws-c-common (0.12.6-r0)
+(2/8) Installing aws-c-cal (0.9.13-r0)
+(3/8) Installing aws-c-compression (0.3.2-r0)
+(4/8) Installing s2n-tls (1.7.14-r0)
+(5/8) Installing aws-c-io (0.26.1-r0)
+(6/8) Installing aws-c-http (0.10.14-r0)
+(7/8) Installing aws-c-mqtt (0.15.2-r0)
+(8/8) Installing qnx-test-aws-c-mqtt (1.0-r0)
+OK: 139.1 MiB in 29 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_mqtt
      == aws-c-mqtt ==
        ok   test broker listening on <ip>
-       info broker port 12718
+       info broker port 31051
        ok   MQTT client and connection objects
        ok   connect started
        ok   CONNACK accepted

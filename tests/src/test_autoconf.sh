@@ -4,17 +4,17 @@
 # QNX's sh: it substitutes variables into a file, defines into config.h and
 # honours --with/--enable options. No compiler is involved.
 # Run the test itself in the background, its output to a log, and wait at
-# most 170 s: nothing it leaves behind can hold the runner's output, and a
+# most 600 s (the autotools steps alone take about 200 s under emulation): nothing it leaves behind can hold the runner's output, and a
 # hang ends as a FAIL with whatever the test printed so far.
 if [ -z "$QNXPORT_INNER" ]; then
   QNXPORT_INNER=/tmp/qnxport-out.$$; export QNXPORT_INNER
   sh "$0" "$@" > "$QNXPORT_INNER" 2>&1 < /dev/null &
   qp=$!; qi=0
-  while kill -0 $qp 2>/dev/null && [ $qi -lt 170 ]; do sleep 1; qi=$((qi+1)); done
+  while kill -0 $qp 2>/dev/null && [ $qi -lt 600 ]; do sleep 1; qi=$((qi+1)); done
   if kill -0 $qp 2>/dev/null; then
     for p in $(cat "$QNXPORT_INNER.pids" 2>/dev/null); do kill $p 2>/dev/null; done
     kill $qp 2>/dev/null; sleep 1; kill -KILL $qp 2>/dev/null
-    cat "$QNXPORT_INNER"; echo "  FAIL watchdog: still running after 170 s -- stopped"
+    cat "$QNXPORT_INNER"; echo "  FAIL watchdog: still running after 600 s -- stopped"
     echo "FAIL ${0##*/} (watchdog)"; rm -f "$QNXPORT_INNER" "$QNXPORT_INNER.pids"; exit 1
   fi
   wait $qp; rc=$?; cat "$QNXPORT_INNER"; rm -f "$QNXPORT_INNER" "$QNXPORT_INNER.pids"; exit $rc

@@ -1,66 +1,54 @@
 # python3-catkin-pkg 1.1.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:31:59Z   packages from: apk:local-dists
+# date: 2026-11-24T12:53:03Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-catkin-pkg qnx-test-python3-colcon-common-extensions qnx-port-tests
-( 1/53) Installing bzip2 (1.0.8-r0)
-( 2/53) Installing expat (2.6.4-r0)
-( 3/53) Installing gdbm (1.24-r0)
-( 4/53) Installing libiconv (1.18-r0)
-( 5/53) Installing libunistring (1.3-r0)
-( 6/53) Installing gettext (0.22.5-r0)
-( 7/53) Installing libffi (3.4.6-r0)
-( 8/53) Installing sqlite (3.47.2-r0)
-( 9/53) Installing xz (5.6.3-r0)
-(10/53) Installing python3 (3.14.0-r0)
-(11/53) Installing python3-six (1.17.0-r0)
-(12/53) Installing python3-dateutil (2.9.0_p0-r0)
-(13/53) Installing python3-docutils (0.23-r0)
-(14/53) Installing python3-packaging (25.0-r0)
-(15/53) Installing python3-pyparsing (3.3.3-r0)
-(16/53) Installing python3-catkin-pkg (1.1.1-r0)
-(17/53) Installing qnx-port-tests (1.0-r0)
-(18/53) Installing python3-argcomplete (3.7.2-r0)
-(19/53) Installing python3-distlib (0.4.4-r0)
-(20/53) Installing python3-empy (4.2.1-r0)
-(21/53) Installing python3-iniconfig (2.3.1-r0)
-(22/53) Installing python3-pluggy (1.7.0-r0)
-(23/53) Installing python3-pygments (2.21.0-r0)
-(24/53) Installing python3-pytest (9.2.0-r0)
-(25/53) Installing python3-coverage (7.17.0-r0)
-(26/53) Installing python3-pytest-cov (7.1.0-r0)
-(27/53) Installing python3-pytest-repeat (0.9.4-r0)
-(28/53) Installing python3-pytest-rerunfailures (16.7-r0)
-(29/53) Installing python3-setuptools (80.8.0-r0)
-(30/53) Installing python3-colcon-core (0.21.3-r0)
-(31/53) Installing python3-colcon-argcomplete (0.3.3-r0)
-(32/53) Installing python3-colcon-bash (0.5.0-r0)
-(33/53) Installing python3-colcon-package-information (0.4.1-r0)
-(34/53) Installing python3-colcon-cd (0.1.1-r0)
-(35/53) Installing python3-colcon-library-path (0.2.1-r0)
-(36/53) Installing python3-colcon-test-result (0.3.8-r0)
-(37/53) Installing python3-colcon-cmake (0.2.30-r0)
-(38/53) Installing python3-pyyaml (6.0.3-r0)
-(39/53) Installing python3-colcon-defaults (0.2.9-r0)
-(40/53) Installing python3-colcon-devtools (0.3.0-r0)
-(41/53) Installing python3-colcon-metadata (0.3.1-r0)
-(42/53) Installing python3-colcon-notification (0.3.3-r0)
-(43/53) Installing python3-colcon-output (0.2.15-r0)
-(44/53) Installing python3-colcon-package-selection (0.2.10-r0)
-(45/53) Installing python3-colcon-parallel-executor (0.4.0-r0)
-(46/53) Installing python3-colcon-powershell (0.5.0-r0)
-(47/53) Installing python3-colcon-python-setup-py (0.2.9-r0)
-(48/53) Installing python3-colcon-recursive-crawl (0.2.3-r0)
-(49/53) Installing python3-colcon-pkg-config (0.1.0-r0)
-(50/53) Installing python3-colcon-ros (0.5.0-r0)
-(51/53) Installing python3-colcon-zsh (0.5.0-r0)
-(52/53) Installing python3-colcon-common-extensions (0.3.0-r0)
-(53/53) Installing qnx-test-python3-colcon-common-extensions (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 151.5 MiB in 64 packages
+( 1/41) Installing python3-six (1.17.0-r0)
+( 2/41) Installing python3-dateutil (2.9.0_p0-r0)
+( 3/41) Installing python3-docutils (0.23-r0)
+( 4/41) Installing python3-pyparsing (3.3.3-r0)
+( 5/41) Installing python3-catkin-pkg (1.1.1-r0)
+( 6/41) Installing python3-argcomplete (3.7.2-r0)
+( 7/41) Installing python3-distlib (0.4.4-r0)
+( 8/41) Installing python3-empy (4.2.1-r0)
+( 9/41) Installing python3-iniconfig (2.3.1-r0)
+(10/41) Installing python3-pluggy (1.7.0-r0)
+(11/41) Installing python3-pygments (2.21.0-r0)
+(12/41) Installing python3-pytest (9.2.0-r0)
+(13/41) Installing python3-coverage (7.17.4-r0)
+(14/41) Installing python3-pytest-cov (7.1.0-r0)
+(15/41) Installing python3-pytest-repeat (0.9.4-r0)
+(16/41) Installing python3-pytest-rerunfailures (16.7-r0)
+(17/41) Installing python3-setuptools (80.8.0-r0)
+(18/41) Installing python3-colcon-core (0.21.3-r0)
+(19/41) Installing python3-colcon-argcomplete (0.3.3-r0)
+(20/41) Installing python3-colcon-bash (0.5.0-r0)
+(21/41) Installing python3-colcon-package-information (0.4.1-r0)
+(22/41) Installing python3-colcon-cd (0.1.1-r0)
+(23/41) Installing python3-colcon-library-path (0.2.1-r0)
+(24/41) Installing python3-colcon-test-result (0.3.8-r0)
+(25/41) Installing python3-colcon-cmake (0.2.30-r0)
+(26/41) Installing python3-pyyaml (6.0.4-r0)
+(27/41) Installing python3-colcon-defaults (0.2.9-r0)
+(28/41) Installing python3-colcon-devtools (0.3.0-r0)
+(29/41) Installing python3-colcon-metadata (0.3.1-r0)
+(30/41) Installing python3-colcon-notification (0.3.3-r0)
+(31/41) Installing python3-colcon-output (0.2.15-r0)
+(32/41) Installing python3-colcon-package-selection (0.2.10-r0)
+(33/41) Installing python3-colcon-parallel-executor (0.4.0-r0)
+(34/41) Installing python3-colcon-powershell (0.5.0-r0)
+(35/41) Installing python3-colcon-python-setup-py (0.2.9-r0)
+(36/41) Installing python3-colcon-recursive-crawl (0.2.3-r0)
+(37/41) Installing python3-colcon-pkg-config (0.1.0-r0)
+(38/41) Installing python3-colcon-ros (0.5.0-r0)
+(39/41) Installing python3-colcon-zsh (0.5.0-r0)
+(40/41) Installing python3-colcon-common-extensions (0.3.0-r0)
+(41/41) Installing qnx-test-python3-colcon-common-extensions (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 197.5 MiB in 80 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_colcon_common_extensions
      == python3-colcon-common-extensions ==
@@ -110,9 +98,9 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   colcon test-result verb (colcon-test-result)
        ok   colcon-cd shell function installed (/usr/local/share/colcon_cd/function/colcon_cd.sh)
        info Starting >>> qnx_tools
-       info Finished <<< qnx_tools [3.02s]
+       info Finished <<< qnx_tools [1.24s]
        info 
-       info Summary: 1 package finished [3.94s]
+       info Summary: 1 package finished [1.64s]
        ok   colcon build qnx_tools (setup.py package)
        ok   qnx_tools installed into install/qnx_tools
        ok   installed module imports: ANSWER = 42

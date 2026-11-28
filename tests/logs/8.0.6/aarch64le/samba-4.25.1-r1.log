@@ -1,35 +1,35 @@
-# samba 4.25.1-r1 -- PASS
+# samba 4.25.1-r1 -- FAIL
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:52:51Z   packages from: apk:local-dists
+# date: 2026-11-25T03:02:41Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u samba qnx-test-samba qnx-port-tests
-( 1/15) Installing qnx-test-samba (1.0-r0)
-( 2/15) Installing brotli (1.1.0-r0)
-( 3/15) Installing gmp (6.3.0-r0)
-( 4/15) Installing libiconv (1.18-r0)
-( 5/15) Installing libunistring (1.3-r0)
-( 6/15) Installing gettext (0.22.5-r0)
-( 7/15) Installing libidn2 (2.3.8-r0)
-( 8/15) Installing libtasn1 (4.19.0-r0)
-( 9/15) Installing nettle (3.10.1-r0)
-(10/15) Installing expat (2.6.4-r0)
-(11/15) Installing unbound (1.24.1-r0)
-(12/15) Installing gnutls (3.8.14-r1)
-(13/15) Installing icu (76.1-r0)
-(14/15) Installing tdb (1.4.15-r0)
-(15/15) Installing samba (4.25.1-r1)
-OK: 140.2 MiB in 27 packages
+(1/9) Installing qnx-test-samba (1.0-r0)
+(2/9) Installing gmp (6.3.0-r0)
+(3/9) Installing libtasn1 (4.21.0-r0)
+(4/9) Installing nettle (3.10.1-r0)
+(5/9) Installing unbound (1.26.2-r0)
+(6/9) Installing gnutls (3.8.14-r1)
+(7/9) Installing libxcrypt (4.5.2-r0)
+(8/9) Installing tdb (1.4.15-r0)
+(9/9) Installing samba (4.25.1-r1)
+OK: 1263.3 MiB in 147 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_samba
+FAIL test_samba (rc=1)
      == samba ==
        ok   testparm accepts smb.conf
        ok   smbpasswd -a: tdbsam user root
        ok   smbd answers on <ip>:4455
        ok   smbclient ls: hello.txt
-       ok   smbclient -L lists [pub] with its comment
+       FAIL -L: tstream_smbXcli_np_destructor: cli_close failed on pipe srvsvc. Error was NT_STATUS_IO_TIMEOUT
+     cli_rpc_pipe_open_noauth: rpc_pipe_bind for pipe srvsvc failed with error NT_STATUS_IO_TIMEOUT
+     
+     	Sharename       Type      Comment
+     	---------       ----      -------
+     SMB1 disabled -- no workgroup available
        ok   get: the same bytes
        ok   put 512 KiB: lands in the share intact
        ok   mkdir, listed
@@ -39,9 +39,10 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
        ok   smbget smb://<ip>:4455/pub/hello.txt
        ok   smbstatus -b
        ok   nmblookup -U <ip> QNXTEST: nmbd answers with <ip>
-     PASS samba
-PASS test_samba
+       info smbd log: [2026/11/25 02:58:46.315694,  0] ../../source3/smbd/server.c:2534(main)|  smbd version 4.25.1 started.|  Copyright Andrew Tridgell and the Samba Team 1992-2026|[2026/11/25 02:58:48.233352,  0] ../../lib/tdb_wrap/tdb_wrap.c:154(tdb_wrap_open)|  tdb_wrap_open: mutexes requested but not available|[2026/11/25 02:58:53.141754,  0] ../../lib/tdb_wrap/tdb_wrap.c:154(tdb_wrap_open)|  tdb_wrap_open: mutexes requested but not available|
+     FAIL samba (1 check(s) failed)
 --------------------------------------------
-passed: 1   failed: 0
+passed: 0   failed: 1
+failing: test_samba
 
-RESULT: PASS
+RESULT: FAIL

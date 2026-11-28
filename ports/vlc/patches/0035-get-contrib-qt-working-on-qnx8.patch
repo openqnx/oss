@@ -1,0 +1,158 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 15:09:49 -0400
+Subject: [PATCH 35/60] Get contrib/qt working on QNX8
+
+A bunch of changes to get the contrib version of qt compiling and
+working on QNX8. Only minimal testing was done so improvements are
+likely possible.
+
+Changes are:
+1. Different location of slog2.h header.
+2. Make sure the top level window is a 'root' window. Otherwise any
+   dialog that pops up ends up being a detached floating window that
+   appears to be a separate application.
+3. When a new native (screen) buffer is created, make sure screen's
+   blit'ter is done clearing it before QT tries to start rendering into
+   it.
+4. Changes to how contrib drives qt's build so that the QNX specific
+   bits get exposed in a way that VLC can use them.
+5. Correctly specify the QT target type based on the target type that
+   QT is cross compiling for.
+6. Don't build the QT tools using the cross-compiler. They need to be
+   run on the development host, not the target.
+
+3.0.24: Qt's rules.mak was reorganised (no separate cross build of the Qt
+tools any more, so change 6 is gone); the other changes are carried to their
+new places. Qt is not built by this port (--disable-qt).
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/qt/0001-qnx-fix-slog2-support.patch
++++ b/contrib/src/qt/0001-qnx-fix-slog2-support.patch
+@@ -0,0 +1,23 @@
++--- a/config.tests/unix/slog2/slog2.cpp	2025-02-06 11:57:20.115176350 -0500
+++++ b/config.tests/unix/slog2/slog2.cpp	2025-02-06 11:57:27.416255443 -0500
++@@ -31,7 +31,7 @@
++ **
++ ****************************************************************************/
++ 
++-#include <slog2.h>
+++#include <sys/slog2.h>
++ 
++ int main(int, char **)
++ {
++
++--- a/src/corelib/global/qlogging.cpp	2025-02-06 16:13:51.586158185 -0500
+++++ b/src/corelib/global/qlogging.cpp	2025-02-06 16:13:57.391217093 -0500
++@@ -53,7 +53,7 @@
++ #include <qt_windows.h>
++ #endif
++ #ifdef QT_USE_SLOG2
++-#include <slog2.h>
+++#include <sys/slog2.h>
++ #endif
++ 
++ #ifdef Q_OS_ANDROID
+--- a/contrib/src/qt/0002-qnx-enable-root-window.patch
++++ b/contrib/src/qt/0002-qnx-enable-root-window.patch
+@@ -0,0 +1,19 @@
++--- a/src/plugins/platforms/qnx/qqnxintegration.cpp	2025-02-24 11:57:27.119921001 -0500
+++++ b/src/plugins/platforms/qnx/qqnxintegration.cpp	2025-02-24 11:58:08.188371171 -0500
++@@ -120,16 +120,9 @@
++         options |= QQnxIntegration::AlwaysFlushScreenContext;
++     }
++ 
++-// On Blackberry the first window is treated as a root window
++-#ifdef Q_OS_BLACKBERRY
++     if (!paramList.contains(QLatin1String("no-rootwindow"))) {
++-        options |= QQnxIntegration::RootWindow;
++-    }
++-#else
++-    if (paramList.contains(QLatin1String("rootwindow"))) {
++         options |= QQnxIntegration::RootWindow;
++     }
++-#endif
++     return options;
++ }
++ 
+--- a/contrib/src/qt/0003-qnx-flush-clear.patch
++++ b/contrib/src/qt/0003-qnx-flush-clear.patch
+@@ -0,0 +1,11 @@
++--- a/src/plugins/platforms/qnx/qqnxrasterwindow.cpp	2025-02-28 11:01:33.260154435 -0500
+++++ b/src/plugins/platforms/qnx/qqnxrasterwindow.cpp	2025-02-28 11:01:44.840231667 -0500
++@@ -151,7 +151,7 @@
++                                 "Failed to clear window buffer");
++         }
++ 
++-        Q_SCREEN_CHECKERROR(screen_flush_blits(screen()->nativeContext(), 0),
+++        Q_SCREEN_CHECKERROR(screen_flush_blits(screen()->nativeContext(), SCREEN_WAIT_IDLE),
++                             "Failed to flush blits");
++ 
++         // Use the first available render buffer
+--- a/contrib/src/qt/rules.mak
++++ b/contrib/src/qt/rules.mak
+@@ -55,6 +55,11 @@
+ 	$(APPLY) $(SRC)/qt/0005-Fix-specific-overflow-in-qtextlayout.patch
+ 	$(APPLY) $(SRC)/qt/0006-ODBC-SQL-driver-deal-with-different-sizes-of-SQLTCHA.patch
+ 	$(APPLY) $(SRC)/qt/0007-Fix-crash-when-reading-corrupt-font-data.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/qt/0001-qnx-fix-slog2-support.patch
++	$(APPLY) $(SRC)/qt/0002-qnx-enable-root-window.patch
++	$(APPLY) $(SRC)/qt/0003-qnx-flush-clear.patch
++endif
+ ifdef ENABLE_PDB
+ 	# for -gcodeview when PDB is enabled
+ 	sed -i.orig -e "s/ -g/ -g -gcodeview/g" "$(UNPACK_DIR)/mkspecs/win32-clang-g++/qmake.conf"
+@@ -76,6 +81,12 @@
+ endif
+ QT_PLATFORM := -xplatform $(QT_SPEC) -device-option CROSS_COMPILE=$(HOST)-
+ endif
++ifdef HAVE_QNX
++QT_SPEC := qnx-$(subst gcc_nto,,$(QNX_ARCH))-qcc
++# QNX uses x86_64 but QT_SPEC/QT_PLATFORM wants x86-64
++QT_SPEC := $(subst x86_64,x86-64,$(QT_SPEC))
++QT_PLATFORM := -xplatform $(QT_SPEC)
++endif
+ 
+ QT_CONFIG := -static -opensource -confirm-license -no-pkg-config -system-zlib \
+ 	-no-sql-sqlite -no-gif -qt-libjpeg -no-openssl -no-opengl -no-dbus \
+@@ -86,6 +97,11 @@
+ endif
+ 
+ QT_CONFIG += -release -force-debug-info
++ifdef HAVE_QNX
++# Make sure that the system zlib isn't used as QT seems to assume that it is
++# using its built-in copy of zlib
++QT_CONFIG += -qt-zlib
++endif
+ 
+ .qt: qt
+ 	cd $< && ./configure $(QT_PLATFORM) $(QT_CONFIG) -prefix $(PREFIX)
+@@ -96,7 +112,11 @@
+ 	+$(MAKE) -C $< -C src sub-moc-install_subtargets sub-rcc-install_subtargets sub-uic-install_subtargets
+ 	# Install plugins/platforms
+ 	+$(MAKE) -C $< -C src -C plugins sub-platforms-install_subtargets
++ifdef HAVE_QNX
++	mv $(PREFIX)/plugins/platforms/libqqnx.a $(PREFIX)/lib/ && rm -rf $(PREFIX)/plugins
++else
+ 	mv $(PREFIX)/plugins/platforms/libqwindows.a $(PREFIX)/lib/ && rm -rf $(PREFIX)/plugins
++endif
+ 	# Move includes to match what VLC expects
+ 	mkdir -p $(PREFIX)/include/QtGui/qpa
+ 	cp $(PREFIX)/include/QtGui/$(QT_VERSION)/QtGui/qpa/qplatformnativeinterface.h $(PREFIX)/include/QtGui/qpa
+@@ -104,8 +124,15 @@
+ 	rm -rf $(PREFIX)/lib/libQt5Bootstrap* $</lib/libQt5Bootstrap*
+ 	# Fix .pc files to remove debug version (d)
+ 	cd $(PREFIX)/lib/pkgconfig; for i in Qt5Core.pc Qt5Gui.pc Qt5Widgets.pc; do sed -i -e 's/d\.a/.a/g' -e 's/d $$/ /' $$i; done
++ifdef HAVE_QNX
++	# Fix Qt5Gui.pc file to include qqnx (QQnxIntegrationPlugin), all the things libqqnx needs, and Qt5Platform Support
++	cd $(PREFIX)/lib/pkgconfig; sed -i -e 's/ -lQt5Gui/ -lqqnx -lfreetype -lfontconfig -lz -lscreen -lQt5PlatformSupport -lQt5Gui/g' Qt5Gui.pc
++	# Update all the pkg-config files to use static linking
++	for i in ${PREFIX}/lib/pkgconfig/Qt5*.pc; do $(SRC_BUILT)/pkg-static.sh $$i; done
++else
+ 	# Fix Qt5Gui.pc file to include qwindows (QWindowsIntegrationPlugin) and Qt5Platform Support
+ 	cd $(PREFIX)/lib/pkgconfig; sed -i -e 's/ -lQt5Gui/ -lqwindows -lQt5PlatformSupport -lQt5Gui/g' Qt5Gui.pc
++endif
+ 	# install qmake to build QtSvg
+ 	+$(MAKE) -C $< install_qmake install_mkspecs
+ 	touch $@

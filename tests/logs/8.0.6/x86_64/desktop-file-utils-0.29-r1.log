@@ -1,0 +1,37 @@
+# desktop-file-utils 0.29-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:01:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u desktop-file-utils qnx-test-desktop-file-utils qnx-port-tests
+( 1/10) Installing libiconv (1.19.1-r1)
+( 2/10) Installing libunistring (1.5-r1)
+( 3/10) Installing ncurses (6.6-r1)
+( 4/10) Installing gettext (0.22.5-r1)
+( 5/10) Installing libffi (3.8.1-r1)
+( 6/10) Installing pcre2 (10.49-r1)
+( 7/10) Installing glib (2.90.1-r3)
+( 8/10) Installing desktop-file-utils (0.29-r1)
+( 9/10) Installing qnx-port-tests (1.0-r1)
+(10/10) Installing qnx-test-desktop-file-utils (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 43.6 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_desktop_file_utils
+     == desktop-file-utils ==
+       info desktop-file-install 0.29
+       ok   validate: correct file accepted
+       ok   validate: missing Type rejected
+       ok   validate: unregistered category reported
+       ok   install: copied with --set-name, --add-category, --remove-key
+       ok   edit: Terminal=true set in place
+       ok   edited file still validates
+       ok   update-desktop-database: mimeinfo.cache maps both MIME types
+     PASS desktop-file-utils
+PASS test_desktop_file_utils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

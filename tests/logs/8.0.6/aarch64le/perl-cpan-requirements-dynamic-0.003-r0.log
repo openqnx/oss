@@ -1,12 +1,12 @@
 # perl-cpan-requirements-dynamic 0.003-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:05:40Z   packages from: apk:local-dists
+# date: 2026-11-24T14:55:13Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-cpan-requirements-dynamic qnx-test-perl-buildtools qnx-port-tests
-( 1/12) Installing libxcrypt (4.4.38-r0)
+( 1/12) Installing libxcrypt (4.5.2-r0)
 ( 2/12) Installing perl (5.40.2-r0)
 ( 3/12) Installing perl-extutils-config (0.010-r0)
 ( 4/12) Installing perl-extutils-hascompiler (0.025-r0)
@@ -33,7 +33,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   InstallPaths install_base lib
        ok   InstallPaths install_base bin
      sh: qcc: cannot execute - No such file or directory
-     Couldn't execute qcc -Vgcc_ntoaarch64le -D_QNX_SOURCE  "-I/usr/local/lib/perl5/5.40.2/aarch64-nto/CORE" -fPIC -Wno-unused-function -c /data/var/tmp/test_perl_buildtools.27484182/HASCOMPILERgcmB/TESTsAqQ.c -o /data/var/tmp/test_perl_buildtools.27484182/HASCOMPILERgcmB/TESTsAqQ.o: Inappropriate I/O control operation at /tmp/test_perl_buildtools.27484182/t.pl line 26.
+     Couldn't execute qcc -Vgcc_ntoaarch64le -D_QNX_SOURCE  "-I/usr/local/lib/perl5/5.40.2/aarch64-nto/CORE" -fPIC -Wno-unused-function -c /data/var/tmp/test_perl_buildtools.122679318/HASCOMPILERVGiU/TEST7ZX_.c -o /data/var/tmp/test_perl_buildtools.122679318/HASCOMPILERVGiU/TEST7ZX_.o: Inappropriate I/O control operation at /tmp/test_perl_buildtools.122679318/t.pl line 26.
        info perl's cc 'qcc -Vgcc_ntoaarch64le' on PATH: no; can_compile_loadable_object: 0
        ok   ExtUtils::HasCompiler agrees with the compiler's presence
        ok   CPAN::Requirements::Dynamic evaluates conditions (nto)

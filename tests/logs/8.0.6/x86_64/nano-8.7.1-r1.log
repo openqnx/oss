@@ -1,0 +1,33 @@
+# nano 8.7.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:46:42Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nano qnx-test-nano qnx-port-tests
+(1/9) Installing bzip2 (1.0.8-r1)
+(2/9) Installing xz (5.8.4-r1)
+(3/9) Installing file (5.48-r1)
+(4/9) Installing ncurses (6.6-r1)
+(5/9) Installing nano (8.7.1-r1)
+(6/9) Installing qnx-port-tests (1.0-r1)
+(7/9) Installing libevent (2.1.12-r1)
+(8/9) Installing tmux (3.8-r1)
+(9/9) Installing qnx-test-nano (1.0-r1)
+OK: 26.2 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nano
+     == nano ==
+       ok   --version: GNU nano, version 8.7.1
+       ok   nano shows the file in its window
+       info write prompt not seen
+       ok   Ctrl-O, Ctrl-X: nano saved and exited
+       ok   file on disk holds both edits
+       ok   Ctrl-W search scrolled to line 121
+     PASS nano
+PASS test_nano
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

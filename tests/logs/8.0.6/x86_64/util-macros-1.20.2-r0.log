@@ -1,22 +1,23 @@
 # util-macros 1.20.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:31:27Z   packages from: apk:local-dists
+# date: 2026-11-24T14:41:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u util-macros qnx-test-util-macros qnx-port-tests
-( 1/10) Installing qnx-port-tests (1.0-r0)
-( 2/10) Installing libiconv (1.18-r0)
-( 3/10) Installing m4 (1.4.19-r0)
-( 4/10) Installing perl (5.40.2-r0)
-( 5/10) Installing autoconf (2.72-r0)
-( 6/10) Installing automake (1.18-r0)
-( 7/10) Installing pkgconf (2.3.0-r0)
-( 8/10) Installing util-macros (1.20.2-r0)
-( 9/10) Installing util-macros-dev (1.20.2-r0)
-(10/10) Installing qnx-test-util-macros (1.0-r0)
-OK: 83.0 MiB in 21 packages
+( 1/11) Installing qnx-port-tests (1.0-r0)
+( 2/11) Installing libiconv (1.19.1-r0)
+( 3/11) Installing m4 (1.4.21-r0)
+( 4/11) Installing libxcrypt (4.5.2-r0)
+( 5/11) Installing perl (5.40.2-r0)
+( 6/11) Installing autoconf (2.73-r1)
+( 7/11) Installing automake (1.20-r0)
+( 8/11) Installing pkgconf (2.3.0-r0)
+( 9/11) Installing util-macros (1.20.2-r0)
+(10/11) Installing util-macros-dev (1.20.2-r0)
+(11/11) Installing qnx-test-util-macros (1.0-r0)
+OK: 78.1 MiB in 16 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_util_macros
      == util_macros ==

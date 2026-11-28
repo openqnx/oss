@@ -1,0 +1,35 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 11:34:30 -0400
+Subject: [PATCH 16/60] Get contrib/dvdnav working on QNX
+
+dvdnav wanted to add `-lpthread` when building on QNX. There is no
+libpthread so link failed.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/dvdnav/0001-qnx-support.patch
++++ b/contrib/src/dvdnav/0001-qnx-support.patch
+@@ -0,0 +1,11 @@
++--- a/configure.ac	2025-03-05 12:07:50.339464331 -0500
+++++ b/configure.ac	2025-03-05 12:08:08.888657927 -0500
++@@ -88,6 +88,8 @@
++     ;;
++   *android*)
++     ;;
+++  *nto* | *qnx*)
+++    ;;
++   *)
++     AC_CHECK_LIB(pthread, pthread_create,
++         [THREAD_LIBS="-lpthread"],
+--- a/contrib/src/dvdnav/rules.mak
++++ b/contrib/src/dvdnav/rules.mak
+@@ -26,6 +26,9 @@
+ 	# fix some bogus accesses
+ 	$(APPLY) $(SRC)/dvdnav/0001-Check-the-the-title-parts-read-are-available.patch
+ 	$(APPLY) $(SRC)/dvdnav/0002-Fix-access-to-title-not-found-in-array.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/dvdnav/0001-qnx-support.patch
++endif
+ 	$(call pkg_static,"misc/dvdnav.pc.in")
+ 	$(MOVE)
+ 

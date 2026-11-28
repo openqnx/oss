@@ -1,0 +1,67 @@
+gst-plugins-base: the ALSA plugin on QNX's libasound
+
+QNX SDP 8.0 ships libasound with an ALSA-compatible API (salsa-based,
+SND_LIB_VERSION 1.2.8, headers in usr/include/alsa/) but no alsa.pc, so
+dependency('alsa') finds nothing. On QNX take libasound from the compiler's
+default paths when there is no alsa.pc.
+
+That libasound has the sequencer but not the snd_midi_event_* helpers that
+the MIDI source (alsamidisrc) uses: build and register alsamidisrc only when
+snd_midi_event_new links. alsasink, alsasrc and the device provider are
+unchanged. Elsewhere (alsa.pc found, full alsa-lib) nothing changes.
+
+Upstream-Status: Pending
+
+--- a/subprojects/gst-plugins-base/ext/alsa/meson.build
++++ b/subprojects/gst-plugins-base/ext/alsa/meson.build
+@@ -1,19 +1,35 @@
+ alsa_sources = [
+   'gstalsa.c',
+   'gstalsadeviceprovider.c',
+-  'gstalsamidisrc.c',
+   'gstalsaelement.c',
+   'gstalsaplugin.c',
+   'gstalsasink.c',
+   'gstalsasrc.c',
+ ]
+ 
+-alsa_dep = dependency('alsa', version : '>=0.9.1', required : get_option('alsa'))
++alsa_dep = dependency('alsa', version : '>=0.9.1', required : false)
++if not alsa_dep.found() and host_machine.system() == 'qnx'
++  # QNX's libasound (in the SDP; an ALSA-compatible API) comes without an
++  # alsa.pc: take it from the compiler's default paths
++  alsa_dep = cc.find_library('asound', required : false,
++    has_headers : ['alsa/asoundlib.h'])
++endif
++if get_option('alsa').enabled() and not alsa_dep.found()
++  error('alsa plugin enabled but ALSA (alsa.pc or libasound) not found')
++endif
+ 
++alsa_c_args = []
+ if alsa_dep.found()
++  # the MIDI source needs snd_midi_event_*, which QNX's libasound lacks
++  if cc.has_function('snd_midi_event_new', dependencies : alsa_dep,
++      prefix : '#include <alsa/asoundlib.h>')
++    alsa_sources += ['gstalsamidisrc.c']
++    alsa_c_args += ['-DHAVE_ALSA_MIDI_EVENT']
++  endif
++
+   gstalsa = library('gstalsa',
+     alsa_sources,
+-    c_args : gst_plugins_base_args,
++    c_args : gst_plugins_base_args + alsa_c_args,
+     include_directories: [configinc, libsinc],
+     dependencies : [alsa_dep, audio_dep, tag_dep, gst_dep, gst_base_dep],
+     install : true,
+--- a/subprojects/gst-plugins-base/ext/alsa/gstalsaplugin.c
++++ b/subprojects/gst-plugins-base/ext/alsa/gstalsaplugin.c
+@@ -37,7 +37,9 @@
+ 
+   ret |= GST_ELEMENT_REGISTER (alsasrc, plugin);
+   ret |= GST_ELEMENT_REGISTER (alsasink, plugin);
++#ifdef HAVE_ALSA_MIDI_EVENT
+   ret |= GST_ELEMENT_REGISTER (alsamidisrc, plugin);
++#endif
+ 
+   return ret;
+ }

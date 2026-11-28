@@ -1,0 +1,37 @@
+# ccache 4.14.3-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:36:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ccache qnx-test-ccache qnx-port-tests
+(1/4) Installing xxhash (0.8.4-r1)
+(2/4) Installing ccache (4.14.3-r1)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-ccache (1.0-r2)
+OK: 11.6 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ccache
+     == ccache ==
+       ok   ccache --version: 4.14.3
+       ok   first compile: a miss, the compiler ran once
+       ok   same compile again: served from the cache (compiler not run), same object
+       ok   stats: 1 direct hit, 1 miss
+       ok   other options (-O3): a miss, the compiler ran
+       ok   changed source: a miss, a new object
+       ok   preprocessor mode (CCACHE_NODIRECT): a preprocessed hit, compiler not run
+       ok   cache directory: 3 result files under $CCACHE_DIR
+       ok   -o max_files=1234: in $CCACHE_DIR/ccache.conf, --get-config reads it back
+       ok   -x: compression statistics (zstd)
+       ok   -z: statistics zeroed
+       ok   -C: cache cleared, the next compile is a miss
+       ok   --hash-file: equal for equal content, different for different
+       ok   --hash-file / --checksum-file: the known values
+       ok   CCACHE_DISABLE: the compiler runs directly
+     PASS ccache
+PASS test_ccache
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

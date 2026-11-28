@@ -1,0 +1,28 @@
+# datefudge 1.27-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:01:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u datefudge qnx-test-datefudge qnx-port-tests
+(1/4) Installing datefudge (1.27-r1)
+(2/4) Installing qnx-port-tests (1.0-r1)
+(3/4) Installing qnx-test-datefudge-clock (1.0-r1)
+(4/4) Installing qnx-test-datefudge (1.0-r2)
+OK: 9593 KiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_datefudge
+     == datefudge ==
+       ok   datefudge --version: 1.27
+       ok   without datefudge: the real time (1795766472)
+       ok   fudged to 2001-02-03 04:05:06 UTC: time() 981173106, gettimeofday 981173106, clock_gettime 981173106; monotonic clock runs
+       ok   --static: exactly 981173106 from all three
+       ok   the target's date under datefudge: 2001-02-03
+       ok   an unparsable date is refused (exit 1)
+     PASS datefudge
+PASS test_datefudge
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

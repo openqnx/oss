@@ -1,18 +1,17 @@
 # mosquitto 2.1.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-23T12:15:45Z   packages from: apk:local-dists
+# date: 2026-11-24T12:47:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u mosquitto qnx-test-mosquitto qnx-port-tests
-(1/6) Installing cjson (1.7.19-r0)
-(2/6) Installing libedit (20240808.3.1-r0)
-(3/6) Installing libmicrohttpd (1.0.11-r0)
-(4/6) Installing mosquitto (2.1.4-r0)
-(5/6) Installing qnx-port-tests (1.0-r0)
-(6/6) Installing qnx-test-mosquitto (1.0-r0)
-OK: 134.0 MiB in 24 packages
+(1/5) Installing cjson (1.7.19-r0)
+(2/5) Installing libedit (20240808.3.1-r0)
+(3/5) Installing libmicrohttpd (1.0.11-r0)
+(4/5) Installing mosquitto (2.1.4-r0)
+(5/5) Installing qnx-test-mosquitto (1.0-r1)
+OK: 182.7 MiB in 44 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mosquitto
      == mosquitto ==

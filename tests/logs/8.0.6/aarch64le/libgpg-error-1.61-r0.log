@@ -1,19 +1,14 @@
 # libgpg-error 1.61-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:40:02Z   packages from: apk:local-dists
+# date: 2026-11-24T13:41:52Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libgpg-error qnx-test-libgpg-error qnx-port-tests
-(1/7) Installing libiconv (1.19.1-r0)
-(2/7) Installing libunistring (1.5-r0)
-(3/7) Installing ncurses (6.6-r0)
-(4/7) Installing gettext (0.22.5-r0)
-(5/7) Installing libgpg-error (1.61-r0)
-(6/7) Installing qnx-port-tests (1.0-r0)
-(7/7) Installing qnx-test-libgpg-error (1.0-r2)
-OK: 27.2 MiB in 12 packages
+(1/2) Installing libgpg-error (1.61-r0)
+(2/2) Installing qnx-test-libgpg-error (1.0-r2)
+OK: 136.8 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgpg_error
      == libgpg-error ==

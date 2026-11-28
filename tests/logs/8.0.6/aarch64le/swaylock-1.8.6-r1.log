@@ -1,0 +1,83 @@
+# swaylock 1.8.6-r1 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-24T22:07:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swaylock qnx-test-swaylock qnx-port-tests
+( 1/42) Installing font-dejavu (2.37-r0)
+( 2/42) Installing expat (2.6.4-r0)
+( 3/42) Installing brotli (1.2.1-r0)
+( 4/42) Installing bzip2 (1.0.8-r0)
+( 5/42) Installing libpng (1.6.59-r0)
+( 6/42) Installing freetype (2.15.0-r0)
+( 7/42) Installing libiconv (1.19.1-r0)
+( 8/42) Installing libunistring (1.5-r0)
+( 9/42) Installing gettext (0.22.5-r0)
+(10/42) Installing fontconfig (2.18.4-r0)
+(11/42) Installing libffi (3.8.1-r0)
+(12/42) Installing pcre2 (10.49-r0)
+(13/42) Installing glib (2.90.1-r1)
+(14/42) Installing libxau (1.0.12-r0)
+(15/42) Installing libxdmcp (1.1.5-r0)
+(16/42) Installing libxcb (1.17.0-r0)
+(17/42) Installing libx11 (1.8.14-r0)
+(18/42) Installing libxext (1.3.7-r0)
+(19/42) Installing libxrender (0.9.13-r0)
+(20/42) Installing lzo (2.10-r0)
+(21/42) Installing pixman (0.46.4-r0)
+(22/42) Installing cairo (1.18.6-r0)
+(23/42) Installing libsfdo (0.1.4-r0)
+(24/42) Installing xz (5.8.4-r0)
+(25/42) Installing libxml2 (2.13.5-r0)
+(26/42) Installing libxkbcommon (1.8.1-r0)
+(27/42) Installing fribidi (1.0.18-r0)
+(28/42) Installing graphite2 (1.3.15-r0)
+(29/42) Installing icu (76.1-r0)
+(30/42) Installing harfbuzz (<ip>-r0)
+(31/42) Installing libxft (2.3.9-r0)
+(32/42) Installing pango (1.56.4-r0)
+(33/42) Installing wayland (1.26.0-r0)
+(34/42) Installing lcms2 (2.16-r0)
+(35/42) Installing wlroots (0.20.2-r0)
+(36/42) Installing xkeyboard-config (2.49-r0)
+(37/42) Installing labwc (0.20.3-r0)
+(38/42) Installing libjpeg-turbo (3.2.1-r0)
+(39/42) Installing gdk-pixbuf (2.44.8-r0)
+(40/42) Installing openpam (20250531-r0)
+(41/42) Installing swaylock (1.8.6-r1)
+(42/42) Installing qnx-test-swaylock (1.0-r2)
+Executing glib-2.90.1-r1.trigger
+OK: 134.4 MiB in 54 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swaylock
+FAIL test_swaylock (rc=1)
+     == swaylock ==
+       ok   swaylock version v1.8.6 (" __DATE__ ", branch 'HEAD')
+       ok   swaylock --help lists --daemonize, --image and --ready-fd
+       ok   PAM policy /usr/local/etc/pam.d/swaylock: auth requisite pam_qnx.so
+       ok   the policy's module is on the target: /system/lib/dll/pam/pam_qnx.so
+       ok   without a compositor: exit 1
+       ok   labwc up (headless)
+       ok   a malformed colour is refused (exit 1)
+       ok   session locked (compositor sent ext_session_lock_v1.locked)
+       FAIL swaylock exited while locked: 2026-11-24 22:07:20 - [src-aarch64le/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/pam.c:101] pam_start failed
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/comm.c:137] Failed to read pw result
+       ok   labwc running with the lock surfaces
+       ok   a second swaylock is turned away while locked (exit 1)
+       FAIL the first locker died when the second started: 2026-11-24 22:07:20 - [src-aarch64le/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/pam.c:101] pam_start failed
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/comm.c:137] Failed to read pw result
+       FAIL status after SIGUSR1: 1 2026-11-24 22:07:20 - [src-aarch64le/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/pam.c:101] pam_start failed
+     2026-11-24 22:07:20 - [src-aarch64le/swaylock/comm.c:137] Failed to read pw result
+       ok   locked again, with an image background
+       ok   unlocked again
+     FAIL swaylock (3 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_swaylock
+
+RESULT: FAIL

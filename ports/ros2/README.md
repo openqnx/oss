@@ -226,7 +226,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2`.
 
 ### 5. What it installs
 
-24231 files under `/usr/local`.
+24222 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2` after a build.
 

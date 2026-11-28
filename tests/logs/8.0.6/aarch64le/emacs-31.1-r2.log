@@ -1,0 +1,52 @@
+# emacs 31.1-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:55:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u emacs qnx-test-emacs qnx-port-tests
+( 1/29) Installing expat (2.6.4-r1)
+( 2/29) Installing dbus (1.16.4-r1)
+( 3/29) Installing gmp (6.3.0-r1)
+( 4/29) Installing brotli (1.2.1-r1)
+( 5/29) Installing libiconv (1.19.1-r1)
+( 6/29) Installing libunistring (1.5-r1)
+( 7/29) Installing ncurses (6.6-r1)
+( 8/29) Installing gettext (0.22.5-r1)
+( 9/29) Installing libidn2 (2.3.8-r1)
+(10/29) Installing libtasn1 (4.21.0-r1)
+(11/29) Installing nettle (3.10.1-r1)
+(12/29) Installing gnutls (3.8.14-r2)
+(13/29) Installing lcms2 (2.16-r1)
+(14/29) Installing xz (5.8.4-r1)
+(15/29) Installing libxml2 (2.13.5-r1)
+(16/29) Installing sqlite (3.47.2-r1)
+(17/29) Installing tree-sitter (0.27.2-r1)
+(18/29) Installing emacs (31.1-r2)
+(19/29) Installing qnx-port-tests (1.0-r1)
+(20/29) Installing c-ares (1.34.9-r1)
+(21/29) Installing nghttp2 (1.71.0-r1)
+(22/29) Installing curl (8.23.0-r1)
+(23/29) Installing libuv (1.53.0-r1)
+(24/29) Installing cmake (4.5.1-r1)
+(25/29) Installing libffi (3.8.1-r1)
+(26/29) Installing pcre2 (10.49-r1)
+(27/29) Installing glib (2.90.1-r3)
+(28/29) Installing desktop-file-utils (0.29-r1)
+(29/29) Installing qnx-test-emacs (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 247.7 MiB in 34 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_emacs
+     == emacs ==
+       ok   --version: GNU Emacs 31.1
+       ok   batch edit: replace-match, sort-lines, save-buffer
+       ok   Emacs Lisp: bignum recursion, mapcar, regexp, native JSON, floats
+       ok   etags indexed qnx_add and helper
+     PASS emacs
+PASS test_emacs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

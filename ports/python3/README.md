@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 2 |
 | Build dependencies | [`zlib`](../zlib/) [`openssl`](../openssl/) [`libffi`](../libffi/) [`expat`](../expat/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`sqlite`](../sqlite/) [`ncurses`](../ncurses/) [`readline`](../readline/) [`gdbm`](../gdbm/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`libuuid`](../libuuid/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`libffi`](../libffi/) [`ncurses`](../ncurses/) [`openssl`](../openssl/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_python`](../../tests/src/) |
 
@@ -271,7 +271,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH python3`.
 
 ### 5. What it installs
 
-3027 files under `/usr/local`: 3 shared-library entries, 8 programs, 283 headers.
+3026 files under `/usr/local`: 3 shared-library entries, 8 programs, 283 headers.
 
 ```
 /usr/local/lib/libpython3.14.so

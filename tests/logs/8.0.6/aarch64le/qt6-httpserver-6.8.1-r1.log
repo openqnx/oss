@@ -1,0 +1,30 @@
+# qt6-httpserver 6.8.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T22:32:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qt6-httpserver qnx-test-qt6-httpserver qnx-port-tests
+(1/4) Installing double-conversion (3.4.0-r1)
+(2/4) Installing qt6 (6.8.1-r1)
+(3/4) Installing qt6-httpserver (6.8.1-r1)
+(4/4) Installing qnx-test-qt6-httpserver (1.0-r1)
+OK: 2613.1 MiB in 276 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qt6_httpserver
+     == qt6-httpserver ==
+       ok   listening on <ip>
+       info port 13448
+       ok   GET / -> 200 hello
+       ok   GET /add/40/2 -> 42 (typed path arguments)
+       ok   GET /add/x/2 -> 404 (argument not an int)
+       ok   GET /nowhere -> 404
+       ok   POST /echo JSON -> JSON
+       ok   GET on a POST-only route refused
+     PASS qt6-httpserver
+PASS test_qt6_httpserver
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

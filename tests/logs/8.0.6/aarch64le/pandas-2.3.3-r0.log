@@ -1,38 +1,25 @@
 # pandas 2.3.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:08:56Z   packages from: apk:local-dists
+# date: 2026-11-24T14:45:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pandas qnx-test-pandas qnx-port-tests
-( 1/21) Installing bzip2 (1.0.8-r0)
-( 2/21) Installing expat (2.6.4-r0)
-( 3/21) Installing gdbm (1.24-r0)
-( 4/21) Installing libiconv (1.18-r0)
-( 5/21) Installing libunistring (1.3-r0)
-( 6/21) Installing ncurses (6.5-r0)
-( 7/21) Installing gettext (0.22.5-r0)
-( 8/21) Installing libffi (3.4.6-r0)
-( 9/21) Installing readline (8.2-r0)
-(10/21) Installing sqlite (3.47.2-r0)
-(11/21) Installing xz (5.6.3-r0)
-(12/21) Installing python3 (3.14.0-r0)
-(13/21) Installing pandas (2.3.3-r0)
-(14/21) Installing qnx-port-tests (1.0-r0)
-(15/21) Installing openblas (0.3.28-r0)
-(16/21) Installing numpy (2.3.4-r0)
-(17/21) Installing python3-six (1.17.0-r0)
-(18/21) Installing python3-dateutil (2.9.0_p0-r0)
-(19/21) Installing python3-pytz (2025.2-r0)
-(20/21) Installing python3-tzdata (2025.2-r0)
-(21/21) Installing qnx-test-pandas (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 228.9 MiB in 26 packages
+(1/8) Installing pandas (2.3.3-r0)
+(2/8) Installing openblas (0.3.34-r0)
+(3/8) Installing numpy (2.5.5-r0)
+(4/8) Installing python3-six (1.17.0-r0)
+(5/8) Installing python3-dateutil (2.9.0_p0-r0)
+(6/8) Installing python3-pytz (2026.6-r0)
+(7/8) Installing python3-tzdata (2026.6-r0)
+(8/8) Installing qnx-test-pandas (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 235.8 MiB in 29 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pandas
      == pandas ==
-       info pandas 2.3.3, numpy 2.3.4
+       info pandas 2.3.3, numpy 2.5.5
        ok   groupby sum: Ottawa 100, Paris 70, Tokyo 40
        ok   named aggregation: size, mean
        ok   sort_values

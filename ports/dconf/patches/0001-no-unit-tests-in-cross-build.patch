@@ -1,0 +1,26 @@
+build: leave the unit tests out of a cross build
+
+The tests directory is built unconditionally: eleven test programs that
+replace D-Bus, gvdb and the shm file with mock objects (and interpose libc
+functions through dlsym(RTLD_NEXT)), a symbol check that runs nm on the build
+machine, and a Python test that starts dbus-daemon. None of them can run when
+the build machine is not the target, and there is no option to turn them
+off, so they are skipped when meson cross-compiles. The port has its own
+test on the target (write, read back, watch, reset through dconf-service).
+
+Upstream-Status: Inappropriate [cross build]
+
+--- a/meson.build
++++ b/meson.build
+@@ -102,7 +102,10 @@
+ subdir('client')
+ subdir('bin')
+ subdir('docs')
+-subdir('tests')
++# The unit tests cannot run in a cross build; do not build them there.
++if not meson.is_cross_build()
++  subdir('tests')
++endif
+ 
+ gnome.post_install(
+   gio_querymodules: gio_module_dir,

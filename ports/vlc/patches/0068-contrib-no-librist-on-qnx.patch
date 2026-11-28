@@ -1,0 +1,31 @@
+contrib: no librist on QNX.
+
+librist is new among the contribs of 3.0.24 (3.0.21 had none) and serves
+the RIST access/output modules only. On QNX it does not build as it is:
+no <sys/endian.h> (QNX has the functions in <net/netbyte.h>); the
+contribs' Meson cross file names the system 'linux', so it compiles
+src/tun_linux.c, which is empty off Linux (an error under its
+-pedantic-errors) while rist.c still calls rist_tun_read/rist_tun_write;
+and its bundled cJSON references glibc's __isinf. Leave it out on QNX:
+VLC's configure then builds without the RIST modules.
+
+Upstream-Status: Inappropriate [QNX build choice]
+
+diff --git a/contrib/src/librist/rules.mak b/contrib/src/librist/rules.mak
+index d0e3648..1645dbe 100644
+--- a/contrib/src/librist/rules.mak
++++ b/contrib/src/librist/rules.mak
+@@ -4,8 +4,13 @@ LIBRIST_VERSION := v0.2.20
+ LIBRIST_URL := $(VIDEOLAN_GIT)/rist/librist/-/archive/$(LIBRIST_VERSION)/librist-$(LIBRIST_VERSION).tar.gz
+ 
+ ifdef BUILD_NETWORK
++# not on QNX: librist takes Linux's tun device and endian header as given
++# (src/tun_linux.c through the cross file's system = 'linux'), and its
++# bundled cJSON calls glibc's __isinf; VLC builds without its RIST module
++ifndef HAVE_QNX
+ PKGS += librist
+ endif
++endif
+ 
+ DEPS_librist =
+ ifdef HAVE_WIN32

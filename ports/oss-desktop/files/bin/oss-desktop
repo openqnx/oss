@@ -24,7 +24,9 @@ export WLR_BACKENDS ${WLR_RENDERER:+WLR_RENDERER}
 : "${XDG_RUNTIME_DIR:=/tmp/xdg-runtime-$(id -u)}"; mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 : "${HOME:=/tmp}"
 export XDG_RUNTIME_DIR HOME
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/share/oss-desktop/xdg:$P/etc/xdg}"
+# share/oss-desktop/data first: the session's own menu entries (in place of
+# installed ones with the same name, e.g. the hidden Mail Reader).
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-$P/share/oss-desktop/data:$P/share}" XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-$P/share/oss-desktop/xdg:$P/etc/xdg}"
 export XDG_CURRENT_DESKTOP=XFCE XDG_SESSION_TYPE=wayland GDK_BACKEND=wayland
 export XCURSOR_PATH="$P/share/icons" GTK_THEME="${GTK_THEME:-Adwaita}"
 [ -f "${FONTCONFIG_PATH:-/nonexistent}/fonts.conf" ] || FONTCONFIG_PATH=$P/etc/fonts
@@ -33,10 +35,17 @@ export TERMINFO="${TERMINFO:-$P/share/terminfo}"
 # GLib's helpers (gdk-pixbuf loaders, GIO modules) live under the prefix.
 [ -f "$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" ] && export GDK_PIXBUF_MODULE_FILE="$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
 # Xfce's settings (xfconfd) and the panel's plugins talk over the session bus.
+# A bus started here is the session's own: it ends with the session, and the
+# services it started (xfconfd, tumblerd, dconf-service, the accessibility
+# bus) end with it -- otherwise each Log Out would leave one set behind.
+BUS_PID=
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && command -v dbus-daemon >/dev/null; then
   DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
-  dbus-daemon --session --address="$DBUS_SESSION_BUS_ADDRESS" --fork --nopidfile >/dev/null 2>&1
+  BUS_PID=$(dbus-daemon --session --address="$DBUS_SESSION_BUS_ADDRESS" --fork --nopidfile --print-pid 2>/dev/null)
   export DBUS_SESSION_BUS_ADDRESS
 fi
 echo "oss-desktop: labwc on $WLR_BACKENDS (log: $XDG_RUNTIME_DIR/labwc.log)"
-exec labwc -C "$P/share/oss-desktop/labwc" > "$XDG_RUNTIME_DIR/labwc.log" 2>&1
+labwc -C "$P/share/oss-desktop/labwc" > "$XDG_RUNTIME_DIR/labwc.log" 2>&1
+rc=$?
+[ -n "$BUS_PID" ] && kill "$BUS_PID" 2>/dev/null
+exit $rc

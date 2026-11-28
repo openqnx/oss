@@ -1,27 +1,21 @@
 # wlroots 0.20.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T12:42:13Z   packages from: apk:local-dists
+# date: 2026-11-24T23:18:06Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u wlroots qnx-test-wlroots qnx-port-tests
-( 1/15) Installing qnx-port-tests (1.0-r0)
-( 2/15) Installing libffi (3.4.6-r0)
-( 3/15) Installing wayland (1.24.0-r0)
-( 4/15) Installing lcms2 (2.16-r0)
-( 5/15) Installing libiconv (1.18-r0)
-( 6/15) Installing libunistring (1.3-r0)
-( 7/15) Installing ncurses (6.5-r0)
-( 8/15) Installing gettext (0.22.5-r0)
-( 9/15) Installing xz (5.6.3-r0)
-(10/15) Installing libxml2 (2.13.5-r0)
-(11/15) Installing libxkbcommon (1.8.1-r0)
-(12/15) Installing pixman (0.46.4-r0)
-(13/15) Installing wlroots (0.20.2-r0)
-(14/15) Installing xkeyboard-config (2.43-r0)
-(15/15) Installing qnx-test-wlroots (1.0-r0)
-OK: 39.4 MiB in 20 packages
+(1/8) Installing wayland (1.26.0-r0)
+(2/8) Installing lcms2 (2.16-r0)
+(3/8) Installing libxml2 (2.13.5-r0)
+(4/8) Installing libxkbcommon (1.8.1-r0)
+(5/8) Installing pixman (0.46.4-r0)
+(6/8) Installing wlroots (0.20.2-r0)
+(7/8) Installing xkeyboard-config (2.49-r0)
+(8/8) Installing qnx-test-wlroots (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 151.9 MiB in 29 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wlroots
      == wlroots ==
@@ -40,7 +34,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_w
        ok   inside the rectangle: red
        ok   outside the rectangle: not red
        ok   frame committed
-     00:00:00.195 [ERROR] [backend/qnx-screen/backend.c:370] screen_create_context failed: No such file or directory
+     00:00:00.116 [ERROR] [backend/qnx-screen/backend.c:370] screen_create_context failed: No such file or directory
        info no QNX Screen on this target -- backend creation refused cleanly
        ok   QNX Screen backend: fails cleanly without Screen
      PASS wlroots

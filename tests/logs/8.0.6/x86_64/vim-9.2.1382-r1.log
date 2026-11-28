@@ -1,0 +1,64 @@
+# vim 9.2.1382-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:15:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vim qnx-test-vim qnx-port-tests
+( 1/39) Installing qnx-port-tests (1.0-r1)
+( 2/39) Installing brotli (1.2.1-r1)
+( 3/39) Installing c-ares (1.34.9-r1)
+( 4/39) Installing nghttp2 (1.71.0-r1)
+( 5/39) Installing curl (8.23.0-r1)
+( 6/39) Installing libiconv (1.19.1-r1)
+( 7/39) Installing libuv (1.53.0-r1)
+( 8/39) Installing cmake (4.5.1-r1)
+( 9/39) Installing espeak-ng (1.52.0-r1)
+(10/39) Installing expat (2.6.4-r1)
+(11/39) Installing bzip2 (1.0.8-r1)
+(12/39) Installing libpng (1.6.59-r1)
+(13/39) Installing freetype (2.15.0-r1)
+(14/39) Installing libunistring (1.5-r1)
+(15/39) Installing ncurses (6.6-r1)
+(16/39) Installing gettext (0.22.5-r1)
+(17/39) Installing fontconfig (2.18.4-r1)
+(18/39) Installing libffi (3.8.1-r1)
+(19/39) Installing pcre2 (10.49-r1)
+(20/39) Installing glib (2.90.1-r3)
+(21/39) Installing libxau (1.0.12-r1)
+(22/39) Installing libxdmcp (1.1.5-r1)
+(23/39) Installing libxcb (1.17.0-r1)
+(24/39) Installing libx11 (1.8.14-r1)
+(25/39) Installing libxext (1.3.7-r1)
+(26/39) Installing libxrender (0.9.13-r1)
+(27/39) Installing lzo (2.10-r1)
+(28/39) Installing pixman (0.46.4-r1)
+(29/39) Installing cairo (1.18.6-r1)
+(30/39) Installing graphite2 (1.3.15-r1)
+(31/39) Installing icu (76.1-r1)
+(32/39) Installing harfbuzz (<ip>-r1)
+(33/39) Installing libsodium (1.0.22-r1)
+(34/39) Installing fribidi (1.0.18-r1)
+(35/39) Installing libxft (2.3.9-r1)
+(36/39) Installing pango (1.56.4-r1)
+(37/39) Installing wayland (1.26.0-r1)
+(38/39) Installing vim (9.2.1382-r1)
+(39/39) Installing qnx-test-vim (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 221.8 MiB in 44 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vim
+     == vim ==
+       info VIM - Vi IMproved 9.2 (2026 Feb 14, compiled Nov 26 2026 17:24:19)
+       ok   vim -es: substitute, :g delete, append, sort, write
+       ok   Vim script: map/range, recursion, dict, printf, writefile
+       ok   xxd -p: 514e5801ff
+       ok   xxd -r -p restores the bytes
+       ok   xxd dump line
+     PASS vim
+PASS test_vim
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

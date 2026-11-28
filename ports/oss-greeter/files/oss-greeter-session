@@ -1,0 +1,24 @@
+#!/bin/sh
+# oss-greeter-session -- the log-in screen: a labwc of its own on QNX Screen
+# that runs only oss-greeter and ends with it (-S). Run as root by
+# qnx-desktop-start (DESKTOP_GREETER=yes); oss-greeter writes its answer to
+# /data/oss/var/run/oss-greeter/result, which qnx-desktop-start reads.
+#   oss-greeter-session [--headless] [oss-greeter options]
+unset ENV FONTCONFIG_FILE
+P=$(cd "$(dirname "$0")/../.." && pwd)
+[ -f /data/oss/etc/oss-env.sh ] && . /data/oss/etc/oss-env.sh
+WLR_BACKENDS=${WLR_BACKENDS:-qnx-screen}
+if [ "$1" = --headless ]; then WLR_BACKENDS=headless; WLR_RENDERER=pixman; export WLR_RENDERER; shift; fi
+export WLR_BACKENDS
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/xdg-runtime-greeter}
+mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
+export HOME=$XDG_RUNTIME_DIR GDK_BACKEND=wayland XDG_SESSION_TYPE=wayland
+export XDG_DATA_DIRS="$P/share" XCURSOR_PATH="$P/share/icons" GTK_THEME=Adwaita
+[ -f "${FONTCONFIG_PATH:-/nonexistent}/fonts.conf" ] || FONTCONFIG_PATH=$P/etc/fonts
+export FONTCONFIG_PATH
+[ -f "$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" ] && export GDK_PIXBUF_MODULE_FILE="$P/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+# no session bus: GTK runs without one (no accessibility bus either)
+export NO_AT_BRIDGE=1 GTK_A11Y=none
+cmd="$P/libexec/oss-greeter/oss-greeter"
+for a in "$@"; do cmd="$cmd '$a'"; done
+exec labwc -C "$P/share/oss-greeter/labwc" -S "$cmd" > "$XDG_RUNTIME_DIR/labwc.log" 2>&1

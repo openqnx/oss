@@ -1,19 +1,22 @@
 # lldpd 1.0.23-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T01:21:29Z   packages from: apk:local-dists
+# date: 2026-11-24T12:47:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u lldpd qnx-test-lldpd qnx-port-tests
-OK: 906.4 MiB in 161 packages
+(1/3) Installing libevent (2.1.12-r0)
+(2/3) Installing lldpd (1.0.23-r0)
+(3/3) Installing qnx-test-lldpd (1.0-r1)
+OK: 181.8 MiB in 37 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lldpd
      == lldpd ==
        ok   lldpd -v: 1.0.23
        ok   lldpcli -v: 1.0.23
        ok   lldpd -vv: built without privilege separation
-       info lldpd pid 553852952, socket /tmp/qnxport-lldpd.hOHENe/lldpd.socket
+       info lldpd pid 413929496, socket /tmp/qnxport-lldpd.GrgJzp/lldpd.socket
        ok   start-up configuration applied (after 1s)
        ok   control socket created at -u path
        ok   keyvalue: description=QNX port test
@@ -25,7 +28,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   lldpcli without a daemon: refused
        ok   lldpd stopped on SIGTERM
        ok   control socket removed at exit
-       info daemon log: 2026-11-22T01:21:21 [WARN/priv] no privilege separation available 
+       info daemon log: 2026-11-24T12:46:59 [WARN/priv] no privilege separation available 
      PASS lldpd
 PASS test_lldpd
 --------------------------------------------

@@ -1,0 +1,34 @@
+# inetutils 2.8-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:42:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u inetutils qnx-test-inetutils qnx-port-tests
+(1/7) Installing libxcrypt (4.5.2-r1)
+(2/7) Installing ncurses (6.6-r1)
+(3/7) Installing readline (8.3-r1)
+(4/7) Installing inetutils (2.8-r1)
+(5/7) Installing qnx-port-tests (1.0-r1)
+(6/7) Installing qnx-test-inetutils-inetd (1.0-r1)
+(7/7) Installing qnx-test-inetutils (1.0-r5)
+OK: 15.3 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_inetutils
+     == inetutils ==
+       ok   telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.8
+       ok   hostname = uname -n (v806-x86)
+       info telnet session 1: 5 s
+       info session 1 was hung up before its shell answered (first session after devc-pty started); running it again
+       info telnet session 2: 8 s
+       ok   telnet connected to telnetd on <ip>:23886
+       ok   a command typed into telnet ran in telnetd's pty shell (echo TEL""NET-42 printed TELNET-42)
+       ok   ping -c 2 <ip>: 2 transmitted, 2 received
+       ok   traceroute <ip>: hop 1 is <ip>
+     PASS inetutils
+PASS test_inetutils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

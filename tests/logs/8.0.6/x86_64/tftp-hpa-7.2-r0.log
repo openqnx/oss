@@ -1,0 +1,32 @@
+# tftp-hpa 7.2-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T01:06:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u tftp-hpa qnx-test-tftp-hpa qnx-port-tests
+(1/5) Installing qnx-port-tests (1.0-r0)
+(2/5) Installing ncurses (6.6-r0)
+(3/5) Installing readline (8.3-r0)
+(4/5) Installing tftp-hpa (7.2-r0)
+(5/5) Installing qnx-test-tftp-hpa (1.0-r1)
+OK: 13.4 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tftp_hpa
+FAIL test_tftp_hpa (rc=1)
+     == tftp-hpa ==
+       info tftp-hpa 7.2
+       ok   in.tftpd listening on <ip>:17708
+       FAIL get hello.txt: tftp: hello.txt: send error: Socket is already connected
+     tftp: hello.txt: warning: expected 25 bytes received 0
+       FAIL get big.bin: tftp: big.bin: send error: Socket is already connected
+     tftp: big.bin: warning: expected 124005 bytes received 0
+       FAIL put: tftp: up.txt: send error: Socket is already connected
+       ok   missing file: server error reported (tftp: no-such-file: server error: file n)
+     FAIL tftp-hpa (3 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_tftp_hpa
+
+RESULT: FAIL

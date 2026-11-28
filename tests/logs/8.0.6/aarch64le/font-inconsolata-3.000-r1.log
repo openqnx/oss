@@ -1,0 +1,51 @@
+# font-inconsolata 3.000-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T10:08:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u font-inconsolata qnx-test-font-inconsolata qnx-port-tests
+( 1/13) Installing font-inconsolata (3.000-r1)
+( 2/13) Installing qnx-port-tests (1.0-r1)
+( 3/13) Installing expat (2.6.4-r1)
+( 4/13) Installing brotli (1.2.1-r1)
+( 5/13) Installing bzip2 (1.0.8-r1)
+( 6/13) Installing libpng (1.6.59-r1)
+( 7/13) Installing freetype (2.15.0-r1)
+( 8/13) Installing libiconv (1.19.1-r1)
+( 9/13) Installing libunistring (1.5-r1)
+(10/13) Installing ncurses (6.6-r1)
+(11/13) Installing gettext (0.22.5-r1)
+(12/13) Installing fontconfig (2.18.4-r1)
+(13/13) Installing qnx-test-font-inconsolata (1.0-r2)
+OK: 33.7 MiB in 18 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_font_inconsolata
+     == font-inconsolata ==
+       ok   font directory share/fonts/font-inconsolata
+       info /usr/local/share/fonts/font-inconsolata/
+       info fontconfig 2.18.4
+     
+     Fontconfig error: No writable cache directories
+       ok   fontconfig scans the directory
+       info 74 face(s) in 74 file(s)
+       ok   at least 70 font file(s) found (74)
+       info Inconsolata: 72 face(s): Semi Condensed Bold, Semi Expanded Medium, Semi Condensed Medium, Semi Expanded SemiBold, Semi Condensed ExtraLight, Ultra Condensed, Semi Expanded, Semi Expanded ExtraLight, Semi Expanded Light, ...
+       ok   family "Inconsolata" listed
+       ok   "Inconsolata" covers U+0030 (72/72 faces)
+       ok   "Inconsolata" has a bold face
+       ok   "Inconsolata" is monospaced
+       info match "Inconsolata" -> /usr/local/share/fonts/font-inconsolata/Inconsolata-Regular.otf (index 0)
+       ok   FcFontMatch("Inconsolata") -> that family, a file of font-inconsolata
+       ok   FT_Init_FreeType
+       ok   FT_New_Face on the matched file
+       info freetype: "Inconsolata" "Regular", 964 glyphs, scalable
+       ok   glyph for U+0030 (index 474)
+       ok   rendered: 14x22, mode 2, 115 inked pixel(s)
+     PASS font-inconsolata
+PASS test_font_inconsolata
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

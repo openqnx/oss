@@ -10,7 +10,7 @@
 | SHA-256 | `8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17` |
 | Build system | Meson |
 | QNX patches | 2 |
-| Build dependencies | [`glib`](../glib/) [`curl`](../curl/) [`libxml2`](../libxml2/) [`libfyaml`](../libfyaml/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) [`wayland`](../wayland/) |
+| Build dependencies | [`glib`](../glib/) [`curl`](../curl/) [`libxml2`](../libxml2/) [`libfyaml`](../libfyaml/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) [`wayland`](../wayland/) [`bash-completion`](../bash-completion/) |
 | Run-time dependencies | [`curl`](../curl/) [`gettext`](../gettext/) [`glib`](../glib/) [`libfyaml`](../libfyaml/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_appstream`](../../tests/src/) |
@@ -68,15 +68,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (25 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (26 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild glib curl libxml2 libfyaml libxmlb zstd wayland
+./scripts/qnxbuild glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion
 ```
 
-<details><summary>Full build chain (25)</summary>
+<details><summary>Full build chain (26)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libfyaml`](../libfyaml/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`bash-completion`](../bash-completion/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libfyaml`](../libfyaml/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -265,7 +265,7 @@ This recipe builds **1.2.3**. Kept from earlier: `1.0.6` ([recipe and patches](v
 VERSION=1.2.3
 TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz
 SHA256=8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17
-DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland"
+DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion"   # bash-completion: contrib/meson.build requires its .pc (completion dir)
 BUILDSYS=meson
 # The tarball's paths start with ./AppStream-<version>/ (one level more than
 # usual); the patches name that directory too.

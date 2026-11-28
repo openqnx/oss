@@ -1,0 +1,20 @@
+build: librt is optional
+
+shm_open() and clock_gettime(), the reason librt is on the link line, are
+in libc on QNX (as on current glibc, musl and the BSDs), and QNX has no
+librt at all: the required find_library('rt') stopped the configuration.
+Link it where it exists.
+
+Upstream-Status: Pending
+
+--- a/meson.build
++++ b/meson.build
+@@ -36,7 +36,7 @@
+ libpam = cc.find_library('pam', required: get_option('pam'))
+ crypt = cc.find_library('crypt', required: not libpam.found())
+ math = cc.find_library('m')
+-rt = cc.find_library('rt')
++rt = cc.find_library('rt', required: false)
+ 
+ git = find_program('git', required: false)
+ scdoc = find_program('scdoc', required: get_option('man-pages'))

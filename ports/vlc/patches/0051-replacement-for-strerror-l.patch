@@ -1,0 +1,53 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 10:01:41 -0400
+Subject: [PATCH 51/60] Replacement for strerror_l
+
+Add a replacement of strerror_l for systems that don't have it.
+
+Ignores the passed in local and just calls strerror(). A non-localized
+error message is better than no error message.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/compat/strerror_l.c
++++ b/compat/strerror_l.c
+@@ -0,0 +1,16 @@
++/*****************************************************************************
++ * strerror_l.c: POSIX strerror_l() replacement
++ *****************************************************************************/
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++#include <string.h>
++#include <stdlib.h>
++
++char *strerror_l(int errnum, locale_t locale) {
++    (void)locale;
++    return strerror(errnum);
++}
++
+--- a/configure.ac
++++ b/configure.ac
+@@ -692,6 +692,7 @@
+ AC_CHECK_FUNCS([accept4 daemon fcntl flock fstatvfs fork getenv getmntent_r getpwuid_r isatty lstat memalign mkostemp mmap newlocale open_memstream openat pipe2 pread posix_fadvise posix_madvise posix_memalign setlocale stricmp strnicmp strptime uselocale])
+ AC_REPLACE_FUNCS([aligned_alloc atof atoll dirfd fdopendir flockfile fsync getdelim getpid lfind lldiv memrchr nrand48 poll recvmsg rewind sendmsg setenv strcasecmp strcasestr strdup strlcpy strndup strnlen strnstr strsep strtof strtok_r strtoll swab tdestroy tfind timegm timespec_get strverscmp pathconf])
+ AC_REPLACE_FUNCS([gettimeofday])
++AC_REPLACE_FUNCS([strerror_l])
+ AC_CHECK_FUNC(fdatasync,,
+   [AC_DEFINE(fdatasync, fsync, [Alias fdatasync() to fsync() if missing.])
+ ])
+--- a/include/vlc_fixups.h
++++ b/include/vlc_fixups.h
+@@ -666,6 +666,10 @@
+ # endif
+ #endif
+ 
++#if !defined(HAVE_STRERROR_L)
++char *strerror_l(int errnum, locale_t locale);
++#endif
++
+ #ifdef __APPLE__
+ # define fdatasync fsync
+ #endif

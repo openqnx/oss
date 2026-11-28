@@ -1,6 +1,6 @@
 # fakeroot 1.37.1.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:19:21Z   packages from: apk:local-dists
+# date: 2026-11-24T12:44:59Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -16,7 +16,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_f
      == fakeroot ==
        info real ids: uid=0 euid=0
        ok   /usr/local/lib/libfakeroot-0.so installed
-       info faked: 42350:14311449
+       info faked: 51554:37187609
        ok   faked started and printed key:pid
        info ids under fakeroot: 0 0 0 0
        ok   getuid/geteuid/getgid/getegid are 0 under fakeroot

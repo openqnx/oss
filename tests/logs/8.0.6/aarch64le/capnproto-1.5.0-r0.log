@@ -1,6 +1,6 @@
 # capnproto 1.5.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T16:44:48Z   packages from: apk:local-dists
+# date: 2026-11-24T12:25:44Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -26,7 +26,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   packed encode/decode round trip of a struct with text and a list
        info packed Shape message: 26 bytes
        ok   default value: closed = true
-       ok   capnp id: @0x846676947df52d66
+       ok   capnp id: @0x816e4c2b159642bd
        ok   compile -oc++: s.capnp.h / s.capnp.c++ with Point and Shape
        ok   compile -ocapnp echoes the schema
        ok   invalid schema rejected: bad.capnp:1:1: error: File does not declare an ID.  I've generated one for you. 

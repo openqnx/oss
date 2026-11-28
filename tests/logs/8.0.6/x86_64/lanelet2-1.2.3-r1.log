@@ -1,0 +1,67 @@
+# lanelet2 1.2.3-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:43:15Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lanelet2 qnx-test-lanelet2 qnx-port-tests
+( 1/39) Installing bzip2 (1.0.8-r1)
+( 2/39) Installing libiconv (1.19.1-r1)
+( 3/39) Installing xz (5.8.4-r1)
+( 4/39) Installing boost (1.86.0-r1)
+( 5/39) Installing geographiclib (2.7-r1)
+( 6/39) Installing pugixml (1.16-r1)
+( 7/39) Installing benchmark (1.10.0-r1)
+( 8/39) Installing console_bridge (1.0.2-r1)
+( 9/39) Installing brotli (1.2.1-r1)
+(10/39) Installing c-ares (1.34.9-r1)
+(11/39) Installing nghttp2 (1.71.0-r1)
+(12/39) Installing curl (8.23.0-r1)
+(13/39) Installing cyclonedds (0.10.5-r1)
+(14/39) Installing fastcdr (2.2.6-r1)
+(15/39) Installing foonathan_memory (0.7.4-r1)
+(16/39) Installing tinyxml2 (11.0.0-r1)
+(17/39) Installing fastdds (2.14.4-r4)
+(18/39) Installing libyaml (0.2.6-r1)
+(19/39) Installing lz4 (1.11.1-r1)
+(20/39) Installing openblas (0.3.34-r1)
+(21/39) Installing expat (2.6.4-r1)
+(22/39) Installing gdbm (1.26-r1)
+(23/39) Installing libunistring (1.5-r1)
+(24/39) Installing ncurses (6.6-r1)
+(25/39) Installing gettext (0.22.5-r1)
+(26/39) Installing libffi (3.8.1-r1)
+(27/39) Installing readline (8.3-r1)
+(28/39) Installing sqlite (3.47.2-r1)
+(29/39) Installing python3 (3.14.0-r2)
+(30/39) Installing numpy (2.5.5-r1)
+(31/39) Installing opencv (4.10.0-r1)
+(32/39) Installing orocos-kdl (1.5.4-r1)
+(33/39) Installing python3-pyyaml (6.0.4-r1)
+(34/39) Installing urdfdom (4.0.3-r2)
+(35/39) Installing yaml-cpp (0.9.0-r1)
+(36/39) Installing ros2 (0_git-r3)
+(37/39) Installing lanelet2 (1.2.3-r1)
+(38/39) Installing qnx-port-tests (1.0-r1)
+(39/39) Installing qnx-test-lanelet2 (1.0-r2)
+Executing python3-3.14.0-r2.trigger
+OK: 468.1 MiB in 44 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lanelet2
+     == lanelet2 ==
+       ok   map: 3 lanelets, 8 points (3, 8)
+       ok   centreline of the first lanelet: 10.000000 m (10)
+       ok   write the map as OSM (lat/lon, UTM around 49 N 8 E)
+       ok   read back: 3 lanelets, 8 points, 0 errors
+       ok   points round-trip within 5.21e-07 m (< 1 mm)
+       ok   German vehicle rules: the road lanelet is passable
+       ok   shortest path first -> last: 3 lanelets (3)
+       ok   route length 30.000000 m (30)
+       ok   one-way: no path from the last lanelet back to the first
+     PASS lanelet2
+PASS test_lanelet2
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,36 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 15:23:14 -0400
+Subject: [PATCH 37/60] Get contrib/mpcdec building on QNX
+
+qcc/q++ does not support the '-pipe' argument. Don't use it when
+building using these tools.
+
+For what it is worth, qcc/q++ by default has the behaviour that -pipe
+enables in gcc/g++ so even if it was supported, it wouldn't change
+anything.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/samplerate/rules.mak
++++ b/contrib/src/samplerate/rules.mak
+@@ -9,6 +9,11 @@
+ PKGS_FOUND += samplerate
+ endif
+ 
++ifdef HAVE_QNX
++# qcc enables -pipe by default and doesn't actually understand the '-pipe' option
++SAMPLERATE_CONF := --disable-gcc-pipe
++endif
++
+ $(TARBALLS)/libsamplerate-$(SAMPLERATE_VERSION).tar.gz:
+ 	$(call download_pkg,$(SAMPLERATE_URL),samplerate)
+ 
+@@ -23,7 +28,7 @@
+ .samplerate: samplerate
+ 	$(REQUIRE_GPL)
+ 	$(MAKEBUILDDIR)
+-	$(MAKECONFIGURE)
++	$(MAKECONFIGURE) $(SAMPLERATE_CONF)
+ 	+$(MAKEBUILD) -C src
+ 	+$(MAKEBUILD) -C src install
+ 	+$(MAKEBUILD) install-data

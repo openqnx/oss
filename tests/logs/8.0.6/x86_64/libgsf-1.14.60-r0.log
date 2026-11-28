@@ -1,19 +1,26 @@
 # libgsf 1.14.60-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:47:30Z   packages from: apk:local-dists
+# date: 2026-11-24T12:45:59Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libgsf qnx-test-libgsf qnx-port-tests
-(1/6) Installing bzip2 (1.0.8-r0)
-(2/6) Installing libffi (3.4.6-r0)
-(3/6) Installing pcre2 (10.44-r0)
-(4/6) Installing glib (2.82.4-r0)
-(5/6) Installing libgsf (1.14.60-r0)
-(6/6) Installing qnx-test-libgsf (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 488.2 MiB in 34 packages
+( 1/13) Installing bzip2 (1.0.8-r0)
+( 2/13) Installing libiconv (1.19.1-r0)
+( 3/13) Installing libunistring (1.5-r0)
+( 4/13) Installing ncurses (6.6-r0)
+( 5/13) Installing gettext (0.22.5-r0)
+( 6/13) Installing libffi (3.8.1-r0)
+( 7/13) Installing pcre2 (10.49-r0)
+( 8/13) Installing glib (2.90.1-r1)
+( 9/13) Installing xz (5.8.4-r0)
+(10/13) Installing libxml2 (2.13.5-r0)
+(11/13) Installing libgsf (1.14.60-r0)
+(12/13) Installing qnx-port-tests (1.0-r0)
+(13/13) Installing qnx-test-libgsf (1.0-r0)
+Executing glib-2.90.1-r1.trigger
+OK: 47.2 MiB in 18 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgsf
      == libgsf ==
@@ -47,8 +54,8 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        info $ gsf list t.zip -> 0
        info   t.zip:
        info   d                                0 *root*
-       info   f  2026-11-22 00:47:24          11 alpha.txt
-       info   f  2026-11-22 00:47:24       10000 big.txt
+       info   f  2026-11-24 12:45:56          11 alpha.txt
+       info   f  2026-11-24 12:45:56       10000 big.txt
        ok   gsf list t.zip shows both members and the 10000 B size
        info $ gsf cat t.zip big.txt -> 0
        ok   gsf cat t.zip big.txt inflates exactly

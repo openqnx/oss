@@ -1,0 +1,23 @@
+meson: no help2man man page when the program cannot run here
+
+The man page is made by running the freshly built xfce4-screenshooter
+--help under help2man. In a cross build that program is for the target
+(QNX) and does not run on the build machine: "help2man: can't get --help
+info from .../src/xfce4-screenshooter" stopped the build wherever help2man
+is installed. Make the man page only when meson can run host binaries; the
+release has no prebuilt one to install instead. --help itself is unchanged.
+
+Upstream-Status: Pending
+
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -45,7 +45,8 @@
+ )
+ 
+ help2man = find_program('help2man', required: false)
+-if help2man.found()
++# help2man runs the program: not possible for a cross build
++if help2man.found() and meson.can_run_host_binaries()
+   custom_target(
+     'xfce4-screenshooter.1',
+     depends: screenshooter,

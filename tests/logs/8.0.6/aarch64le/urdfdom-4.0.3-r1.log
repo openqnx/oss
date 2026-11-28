@@ -1,6 +1,6 @@
 # urdfdom 4.0.3-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T10:48:33Z   packages from: apk:local-dists
+# date: 2026-11-24T23:06:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -31,15 +31,15 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_u
        ok   wrote the URDF to a temporary file
        ok   parseURDFFile reads the same model
      Error:   Joint [j] is of type REVOLUTE but it does not specify limits
-              at line 461 in /build/oss/src-aarch64le/urdfdom/urdf_parser/src/joint.cpp
+              at line 461 in .../src-aarch64le/urdfdom/urdf_parser/src/joint.cpp
      Error:   joint xml is not initialized correctly
-              at line 234 in /build/oss/src-aarch64le/urdfdom/urdf_parser/src/model.cpp
+              at line 234 in .../src-aarch64le/urdfdom/urdf_parser/src/model.cpp
        ok   a joint naming a missing link is rejected
      Error:   Error=XML_ERROR_MISMATCHED_ELEMENT ErrorID=14 (0xe) Line number=1: XMLElement name=link
-              at line 101 in /build/oss/src-aarch64le/urdfdom/urdf_parser/src/model.cpp
+              at line 101 in .../src-aarch64le/urdfdom/urdf_parser/src/model.cpp
        ok   malformed XML is rejected
      Error:   Failed to find root link: Two root links found: [a] and [b]
-              at line 265 in /build/oss/src-aarch64le/urdfdom/urdf_parser/src/model.cpp
+              at line 265 in .../src-aarch64le/urdfdom/urdf_parser/src/model.cpp
        ok   two links and no joint (no single root) is rejected
      PASS urdfdom
 PASS test_urdfdom

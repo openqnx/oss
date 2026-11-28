@@ -1,0 +1,36 @@
+# lighttpd 1.4.85-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T12:57:02Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lighttpd qnx-test-lighttpd qnx-port-tests
+(1/5) Installing libxcrypt (4.5.2-r1)
+(2/5) Installing pcre2 (10.49-r1)
+(3/5) Installing lighttpd (1.4.85-r1)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-lighttpd (1.0-r1)
+OK: 12.4 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lighttpd
+     == lighttpd ==
+       ok   lighttpd -tt accepts the configuration
+       ok   lighttpd listening on <ip>
+       info GET /hello.txt: 4332 bytes, status 200
+       ok   GET /hello.txt -> 200
+       ok   Content-Length: 4096
+       ok   Content-Type from mimetype.assign
+       ok   body identical to the file
+       ok   GET / serves index.html
+       info GET /no-such-file: status 404
+       ok   missing file -> 404
+       ok   Range request -> 206 with the right bytes
+       ok   HEAD over HTTP/1.0: 200, no body
+       ok   lighttpd stops on SIGTERM
+     PASS lighttpd
+PASS test_lighttpd
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

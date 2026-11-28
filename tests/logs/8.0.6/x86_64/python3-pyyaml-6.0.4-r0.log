@@ -1,60 +1,53 @@
 # python3-pyyaml 6.0.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:51:13Z   packages from: apk:local-dists
+# date: 2026-11-24T13:01:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-pyyaml qnx-test-python3-colcon-common-extensions qnx-port-tests
-( 1/47) Installing bzip2 (1.0.8-r0)
-( 2/47) Installing gdbm (1.24-r0)
-( 3/47) Installing libffi (3.4.6-r0)
-( 4/47) Installing sqlite (3.47.2-r0)
-( 5/47) Installing python3 (3.14.0-r0)
-( 6/47) Installing python3-pyyaml (6.0.4-r0)
-( 7/47) Installing python3-argcomplete (3.7.2-r0)
-( 8/47) Installing python3-six (1.17.0-r0)
-( 9/47) Installing python3-dateutil (2.9.0_p0-r0)
-(10/47) Installing python3-docutils (0.23-r0)
-(11/47) Installing python3-packaging (25.0-r0)
-(12/47) Installing python3-pyparsing (3.3.3-r0)
-(13/47) Installing python3-catkin-pkg (1.1.1-r0)
-(14/47) Installing python3-distlib (0.4.4-r0)
-(15/47) Installing python3-empy (4.2.1-r0)
-(16/47) Installing python3-iniconfig (2.3.1-r0)
-(17/47) Installing python3-pluggy (1.7.0-r0)
-(18/47) Installing python3-pygments (2.21.0-r0)
-(19/47) Installing python3-pytest (9.2.0-r0)
-(20/47) Installing python3-coverage (7.17.4-r0)
-(21/47) Installing python3-pytest-cov (7.1.0-r0)
-(22/47) Installing python3-pytest-repeat (0.9.4-r0)
-(23/47) Installing python3-pytest-rerunfailures (16.7-r0)
-(24/47) Installing python3-setuptools (80.8.0-r0)
-(25/47) Installing python3-colcon-core (0.21.3-r0)
-(26/47) Installing python3-colcon-argcomplete (0.3.3-r0)
-(27/47) Installing python3-colcon-bash (0.5.0-r0)
-(28/47) Installing python3-colcon-package-information (0.4.1-r0)
-(29/47) Installing python3-colcon-cd (0.1.1-r0)
-(30/47) Installing python3-colcon-library-path (0.2.1-r0)
-(31/47) Installing python3-colcon-test-result (0.3.8-r0)
-(32/47) Installing python3-colcon-cmake (0.2.30-r0)
-(33/47) Installing python3-colcon-defaults (0.2.9-r0)
-(34/47) Installing python3-colcon-devtools (0.3.0-r0)
-(35/47) Installing python3-colcon-metadata (0.3.1-r0)
-(36/47) Installing python3-colcon-notification (0.3.3-r0)
-(37/47) Installing python3-colcon-output (0.2.15-r0)
-(38/47) Installing python3-colcon-package-selection (0.2.10-r0)
-(39/47) Installing python3-colcon-parallel-executor (0.4.0-r0)
-(40/47) Installing python3-colcon-powershell (0.5.0-r0)
-(41/47) Installing python3-colcon-python-setup-py (0.2.9-r0)
-(42/47) Installing python3-colcon-recursive-crawl (0.2.3-r0)
-(43/47) Installing python3-colcon-pkg-config (0.1.0-r0)
-(44/47) Installing python3-colcon-ros (0.5.0-r0)
-(45/47) Installing python3-colcon-zsh (0.5.0-r0)
-(46/47) Installing python3-colcon-common-extensions (0.3.0-r0)
-(47/47) Installing qnx-test-python3-colcon-common-extensions (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 592.7 MiB in 75 packages
+( 1/40) Installing python3-pyyaml (6.0.4-r0)
+( 2/40) Installing python3-argcomplete (3.7.2-r0)
+( 3/40) Installing python3-dateutil (2.9.0_p0-r0)
+( 4/40) Installing python3-docutils (0.23-r0)
+( 5/40) Installing python3-packaging (25.0-r0)
+( 6/40) Installing python3-pyparsing (3.3.3-r0)
+( 7/40) Installing python3-catkin-pkg (1.1.1-r0)
+( 8/40) Installing python3-distlib (0.4.4-r0)
+( 9/40) Installing python3-empy (4.2.1-r0)
+(10/40) Installing python3-iniconfig (2.3.1-r0)
+(11/40) Installing python3-pluggy (1.7.0-r0)
+(12/40) Installing python3-pygments (2.21.0-r0)
+(13/40) Installing python3-pytest (9.2.0-r0)
+(14/40) Installing python3-coverage (7.17.4-r0)
+(15/40) Installing python3-pytest-cov (7.1.0-r0)
+(16/40) Installing python3-pytest-repeat (0.9.4-r0)
+(17/40) Installing python3-pytest-rerunfailures (16.7-r0)
+(18/40) Installing python3-colcon-core (0.21.3-r0)
+(19/40) Installing python3-colcon-argcomplete (0.3.3-r0)
+(20/40) Installing python3-colcon-bash (0.5.0-r0)
+(21/40) Installing python3-colcon-package-information (0.4.1-r0)
+(22/40) Installing python3-colcon-cd (0.1.1-r0)
+(23/40) Installing python3-colcon-library-path (0.2.1-r0)
+(24/40) Installing python3-colcon-test-result (0.3.8-r0)
+(25/40) Installing python3-colcon-cmake (0.2.30-r0)
+(26/40) Installing python3-colcon-defaults (0.2.9-r0)
+(27/40) Installing python3-colcon-devtools (0.3.0-r0)
+(28/40) Installing python3-colcon-metadata (0.3.1-r0)
+(29/40) Installing python3-colcon-notification (0.3.3-r0)
+(30/40) Installing python3-colcon-output (0.2.15-r0)
+(31/40) Installing python3-colcon-package-selection (0.2.10-r0)
+(32/40) Installing python3-colcon-parallel-executor (0.4.0-r0)
+(33/40) Installing python3-colcon-powershell (0.5.0-r0)
+(34/40) Installing python3-colcon-python-setup-py (0.2.9-r0)
+(35/40) Installing python3-colcon-recursive-crawl (0.2.3-r0)
+(36/40) Installing python3-colcon-pkg-config (0.1.0-r0)
+(37/40) Installing python3-colcon-ros (0.5.0-r0)
+(38/40) Installing python3-colcon-zsh (0.5.0-r0)
+(39/40) Installing python3-colcon-common-extensions (0.3.0-r0)
+(40/40) Installing qnx-test-python3-colcon-common-extensions (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 193.9 MiB in 74 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_colcon_common_extensions
      == python3-colcon-common-extensions ==
@@ -104,9 +97,9 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   colcon test-result verb (colcon-test-result)
        ok   colcon-cd shell function installed (/usr/local/share/colcon_cd/function/colcon_cd.sh)
        info Starting >>> qnx_tools
-       info Finished <<< qnx_tools [2.40s]
+       info Finished <<< qnx_tools [1.60s]
        info 
-       info Summary: 1 package finished [3.22s]
+       info Summary: 1 package finished [2.17s]
        ok   colcon build qnx_tools (setup.py package)
        ok   qnx_tools installed into install/qnx_tools
        ok   installed module imports: ANSWER = 42

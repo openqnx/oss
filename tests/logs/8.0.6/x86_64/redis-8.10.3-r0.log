@@ -1,15 +1,14 @@
 # redis 8.10.3-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:16:14Z   packages from: apk:local-dists
+# date: 2026-11-24T13:03:35Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u redis qnx-test-redis qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r0)
-(2/3) Installing redis (8.10.3-r0)
-(3/3) Installing qnx-test-redis (1.0-r0)
-OK: 28.0 MiB in 14 packages
+(1/2) Installing redis (8.10.3-r0)
+(2/2) Installing qnx-test-redis (1.0-r0)
+OK: 193.5 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_redis
      == redis ==
@@ -34,7 +33,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_r
        ok   redis-cli SET prints OK
        ok   the key redis-cli set is there
        ok   redis-cli formats a list reply
-       info redis-benchmark: SET: 10204.08 requests per second, p50=0.215 msec
+       info redis-benchmark: SET: 14285.71 requests per second, p50=0.159 msec
        ok   redis-benchmark SET/GET run (2000 requests)
        ok   SAVE
        ok   dump.rdb written

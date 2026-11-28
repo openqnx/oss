@@ -1,0 +1,109 @@
+QNX desktop (Wayland only): play video through gtksink.
+
+Parole 4.20 shows video only through an X11 video overlay: it creates
+autoimagesink / xvimagesink / ximagesink and hands the sink the X window id
+of its own GtkWidget (GDK_WINDOW_XID). On the QNX desktop there is no X11 --
+gst-plugins-base is built without ximagesink and GDK runs on Wayland -- so
+Parole stopped at start-up with "Unable to load autoimagesink plugin ...
+Parole cannot start".
+
+When none of those sinks exists, use gtksink (gst-plugins-good's GTK plugin):
+it draws the video into a GTK widget of its own, which the player packs into
+the video area in place of ParoleGst's window (kept, hidden, for the rest of
+the player's logic; its size_allocate, which drives the X11 overlay, is
+skipped). The mouse handlers (controls on motion, click to pause) are on the
+enclosing event box and keep working. This path is taken only in a build
+without X11 sinks; with ximagesink/xvimagesink present nothing changes.
+
+diff -ru a/src/gst/parole-gst.c b/src/gst/parole-gst.c
+--- a/src/gst/parole-gst.c	2025-05-21 15:46:43.000000000 +0900
++++ b/src/gst/parole-gst.c	2026-11-25 16:34:06.723167843 +0900
+@@ -95,12 +95,14 @@
+ typedef enum {
+     AUTOIMAGESINK,
+     XIMAGESINK,
+-    XVIMAGESINK
++    XVIMAGESINK,
++    GTKSINK
+ } ParoleGstVideoSink;
+ 
+ struct ParoleGstPrivate {
+     GstElement         *playbin;
+     GstElement         *video_sink;
++    GtkWidget          *sink_widget;    /* gtksink's widget, or NULL */
+     GstElement         *audio_sink;
+ 
+     GstBus             *bus;
+@@ -343,6 +345,10 @@
+ parole_gst_size_allocate(GtkWidget *widget, GtkAllocation *allocation) {
+     g_return_if_fail(allocation != NULL);
+ 
++    /* gtksink: the video is in the sink's widget, this one is hidden */
++    if (PAROLE_GST(widget)->priv->sink_widget != NULL)
++        return;
++
+     gtk_widget_set_allocation(widget, allocation);
+ 
+     if (gtk_widget_get_realized(widget)) {
+@@ -1984,6 +1990,18 @@
+         gst->priv->video_sink = gst_element_factory_make("xvimagesink", "video");
+     }
+ 
++    /* No X11 (a Wayland-only desktop: gst-plugins-base without ximagesink,
++     * GDK without an X11 window to hand over): gtksink draws the video into a
++     * GTK widget of its own, which the player packs in place of this one
++     * (parole_gst_get_sink_widget). */
++    if (G_UNLIKELY(gst->priv->video_sink == NULL)) {
++        gst->priv->video_sink = gst_element_factory_make("gtksink", "video");
++        if (gst->priv->video_sink != NULL) {
++            gst->priv->image_sink = GTKSINK;
++            g_object_get(G_OBJECT(gst->priv->video_sink), "widget", &gst->priv->sink_widget, NULL);
++        }
++    }
++
+     if (G_UNLIKELY(gst->priv->video_sink == NULL)) {
+         gst->priv->image_sink = XIMAGESINK;
+         g_debug("%s trying to load ximagesink",
+@@ -2508,6 +2526,10 @@
+     return  pos / GST_SECOND;
+ }
+ 
++GtkWidget *parole_gst_get_sink_widget(ParoleGst *gst) {
++    return gst->priv->sink_widget;
++}
++
+ gboolean parole_gst_get_is_xvimage_sink(ParoleGst *gst) {
+     return gst->priv->image_sink == XVIMAGESINK;
+ }
+diff -ru a/src/gst/parole-gst.h b/src/gst/parole-gst.h
+--- a/src/gst/parole-gst.h	2025-05-21 15:46:43.000000000 +0900
++++ b/src/gst/parole-gst.h	2026-11-25 16:32:14.661965336 +0900
+@@ -155,6 +155,8 @@
+ 
+ gboolean    parole_gst_get_is_xvimage_sink  (ParoleGst *gst);
+ 
++GtkWidget  *parole_gst_get_sink_widget      (ParoleGst *gst);
++
+ void        parole_gst_set_cursor_visible   (ParoleGst *gst,
+                                              gboolean visible);
+ 
+diff -ru a/src/parole-player.c b/src/parole-player.c
+--- a/src/parole-player.c	2025-05-21 15:46:43.000000000 +0900
++++ b/src/parole-player.c	2026-11-25 16:32:14.662386250 +0900
+@@ -3618,6 +3618,16 @@
+     gtk_widget_realize(player->priv->gst);
+     gtk_widget_show(player->priv->gst);
+ 
++    /* gtksink (no X11): its widget shows the video; ParoleGst's own window,
++     * meant for an X11 video overlay, is not used. */
++    if (parole_gst_get_sink_widget(PAROLE_GST(player->priv->gst)) != NULL) {
++        GtkWidget *sink_widget = parole_gst_get_sink_widget(PAROLE_GST(player->priv->gst));
++        gtk_widget_hide(player->priv->gst);
++        gtk_widget_set_no_show_all(player->priv->gst, TRUE);
++        gtk_box_pack_start(GTK_BOX(player->priv->videobox), sink_widget, TRUE, TRUE, 0);
++        gtk_widget_show(sink_widget);
++    }
++
+     gtk_widget_grab_focus(player->priv->gst);
+ 
+     parole_gst_set_default_aspect_ratio(player, builder);

@@ -111,12 +111,32 @@ meson setup build/$QNX_ARCH/gst-plugins-base src/gst-plugins-base/subprojects/gs
       -Dopus=enabled \
       -Dtheora=enabled \
       # \
+      ALSA \
+      on \
+      the \
+      SDP's \
+      libasound \
+      (ALSA-compatible \
+      API, \
+      no \
+      alsa.pc): \
+      gstreamer \
+      # \
+      patches/0001 \
+      finds \
+      it; \
+      alsasink \
+      then \
+      plays \
+      through \
+      io-snd \
+      -Dalsa=enabled \
+      # \
       desktop/Linux-only \
       or \
       not \
       ported \
       yet \
-      -Dalsa=disabled \
       -Dcdparanoia=disabled \
       -Dlibvisual=disabled \
       -Dpango=disabled \
@@ -134,7 +154,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gst-plugins-base
 
 ### 5. What it installs
 
-320 files under `/usr/local`: 33 shared-library entries, 3 programs, 136 headers.
+323 files under `/usr/local`: 33 shared-library entries, 3 programs, 136 headers.
 
 ```
 /usr/local/lib/libgstallocators-1.0.so
@@ -225,6 +245,10 @@ PASS gst-plugins-base
    - 8000 samples @ 8 kHz resample to ~16000 @ 16 kHz
    - volume 0.8 * 0.5 -> peak ~0.4
    - mono upmixed to identical left/right
+   - alsasink is registered (ALSA plugin on libasound)
+   - alsasink plays or fails promptly, it does not hang
+   - alsasink pipeline built
+   - autoaudiosink plays to EOS (falls back without a card)
    - scratch directory
    - encoded 1 s of audio to Ogg/Vorbis
    - file starts with OggS
@@ -235,7 +259,7 @@ PASS gst-plugins-base
    - GstDiscoverer analysed the file
    - gst-discoverer-1.0 prints a 1 s duration
    - gst-discoverer-1.0 names the Vorbis stream
-   - pbutils codec description
+   - ... and 1 more
 
 Results recorded in [`tests/results/`](../../tests/results/) (`scripts/record-results`, `scripts/verify-on-target`):
 
@@ -265,8 +289,11 @@ MESON_ARGS_EXTRA=(
   -Dintrospection=disabled -Ddoc=disabled -Dnls=enabled
   # what we have ported
   -Dogg=enabled -Dvorbis=enabled -Dopus=enabled -Dtheora=enabled
+  # ALSA on the SDP's libasound (ALSA-compatible API, no alsa.pc): gstreamer
+  # patches/0001 finds it; alsasink then plays through io-snd
+  -Dalsa=enabled
   # desktop/Linux-only or not ported yet
-  -Dalsa=disabled -Dcdparanoia=disabled -Dlibvisual=disabled
+  -Dcdparanoia=disabled -Dlibvisual=disabled
   -Dpango=disabled -Dtremor=disabled
   -Dx11=disabled -Dxvideo=disabled -Dxshm=disabled
   -Dgl=disabled -Dgl-graphene=disabled

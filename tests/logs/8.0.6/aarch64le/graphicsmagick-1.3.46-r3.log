@@ -1,0 +1,50 @@
+# graphicsmagick 1.3.46-r3 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T11:35:59Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u graphicsmagick qnx-test-graphicsmagick qnx-port-tests
+( 1/25) Installing bzip2 (1.0.8-r1)
+( 2/25) Installing brotli (1.2.1-r1)
+( 3/25) Installing libpng (1.6.59-r1)
+( 4/25) Installing freetype (2.15.0-r1)
+( 5/25) Installing lcms2 (2.16-r1)
+( 6/25) Installing aom (3.15.3-r1)
+( 7/25) Installing dav1d (1.5.5-r1)
+( 8/25) Installing libde265 (1.1.3-r1)
+( 9/25) Installing libjpeg-turbo (3.2.1-r1)
+(10/25) Installing libwebp (1.6.0-r1)
+(11/25) Installing xz (5.8.4-r1)
+(12/25) Installing libtiff (4.7.2-r1)
+(13/25) Installing openh264 (2.7.0-r1)
+(14/25) Installing openjpeg (2.5.4-r1)
+(15/25) Installing openjph (0.33.0-r1)
+(16/25) Installing x264 (0_git-r1)
+(17/25) Installing x265 (4.2-r1)
+(18/25) Installing libheif (1.23.7-r3)
+(19/25) Installing highway (1.4.0-r1)
+(20/25) Installing libjxl (0.13.0-r1)
+(21/25) Installing libxml2 (2.13.5-r1)
+(22/25) Installing libzip (1.12.1-r1)
+(23/25) Installing graphicsmagick (1.3.46-r3)
+(24/25) Installing qnx-port-tests (1.0-r1)
+(25/25) Installing qnx-test-graphicsmagick (1.0-r1)
+OK: 46.5 MiB in 30 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_graphicsmagick
+     == graphicsmagick ==
+       info GraphicsMagick 1.3.46 2025-10-29 Q16 http://www.GraphicsMagick.org/
+       ok   xc:red -> PNG 64x32
+       ok   resize 50% -> JPEG 32x16
+       ok   rotate 90 -> TIFF 32x64
+       ok   PNG -> WebP
+       info pixel (10,10): 0,0: (255,  0,  0) #FF0000
+       ok   pixel is red
+     PASS graphicsmagick
+PASS test_graphicsmagick
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

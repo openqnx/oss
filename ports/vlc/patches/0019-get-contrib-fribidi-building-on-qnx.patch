@@ -1,0 +1,54 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 11:44:43 -0400
+Subject: [PATCH 19/60] Get contrib/fribidi building on QNX
+
+fribidi's meson build adds the -ansi flag to the build if it detects
+that the compiler supports it. I'm not sure why.
+
+QNX8 no longer supports this option. Normally meson's compiler feature
+detection would pick up on this but because the meson build process
+in the docker doesn't work with qcc/q++, I have to specify the
+underlying compiler directly. That compiler _does_ support "-ansi" so it
+gets turned on.
+
+The build then fails when including stdlib.h because it makes use of
+"inline" which "-ansi" does not allow.
+
+Remove the usage of "-ansi" when QNX is in play.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+diff --git a/contrib/src/fribidi/0001-qnx-remove_ansi_compiler_flag.patch b/contrib/src/fribidi/0001-qnx-remove_ansi_compiler_flag.patch
+new file mode 100644
+index 00000000000..e05fbc09299
+--- /dev/null
++++ b/contrib/src/fribidi/0001-qnx-remove_ansi_compiler_flag.patch
+@@ -0,0 +1,13 @@
++--- fribidi/meson.build
+++++ fribidi/meson.build
++@@ -21,10 +21,6 @@ libversion = '@0@.@1@.0'.format(soversion, interface_version, interface_age)
++ # C compiler. This is the cross compiler if we're cross-compiling
++ cc = meson.get_compiler('c')
++ 
++-if cc.get_id() == 'gcc' and cc.has_argument('-ansi')
++-  add_project_arguments('-ansi', language: 'c')
++-endif
++-
++ # Symbol visibility
++ have_visibility_hidden = false
++ if host_machine.system() != 'windows'
+diff --git a/contrib/src/fribidi/rules.mak b/contrib/src/fribidi/rules.mak
+index 881b3c2aa47..2d32f0a612d 100644
+--- a/contrib/src/fribidi/rules.mak
++++ b/contrib/src/fribidi/rules.mak
+@@ -14,6 +14,9 @@ $(TARBALLS)/fribidi-$(FRIBIDI_VERSION).tar.xz:
+ 
+ fribidi: fribidi-$(FRIBIDI_VERSION).tar.xz .sum-fribidi
+ 	$(UNPACK)
++ifdef HAVE_QNX
++	$(APPLY) ${SRC}/fribidi/0001-qnx-remove_ansi_compiler_flag.patch
++endif
+ 	$(MOVE)
+ 
+ # FIXME: DEPS_fribidi = iconv $(DEPS_iconv)
+

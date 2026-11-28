@@ -1,0 +1,40 @@
+# gnutls 3.8.14-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T10:32:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gnutls qnx-test-gnutls qnx-port-tests
+( 1/12) Installing brotli (1.2.1-r1)
+( 2/12) Installing gmp (6.3.0-r1)
+( 3/12) Installing libiconv (1.19.1-r1)
+( 4/12) Installing libunistring (1.5-r1)
+( 5/12) Installing ncurses (6.6-r1)
+( 6/12) Installing gettext (0.22.5-r1)
+( 7/12) Installing libidn2 (2.3.8-r1)
+( 8/12) Installing libtasn1 (4.21.0-r1)
+( 9/12) Installing nettle (3.10.1-r1)
+(10/12) Installing gnutls (3.8.14-r2)
+(11/12) Installing qnx-port-tests (1.0-r1)
+(12/12) Installing qnx-test-gnutls (1.0-r2)
+OK: 34.3 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gnutls
+     == gnutls ==
+       info gnutls 3.8.14
+       ok   gnutls_global_init
+       ok   gnutls_hash_fast
+       ok   SHA-256("abc") matches FIPS 180-2
+       ok   gnutls_rnd
+       ok   random bytes are not all zero
+       ok   gnutls_init(client)
+       ok   gnutls_set_default_priority
+       ok   allocate credentials
+       ok   credentials_set
+     PASS gnutls
+PASS test_gnutls
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- oss-desktop: one panel at the top, as on the QNX Developer Desktop: the
-     Applications menu, launchers, the window list, clock and action buttons. -->
+     Applications menu, launchers, the window list, the network indicator
+     (oss-network-plugin), the volume control
+     (xfce4-alsa-plugin: a muted speaker and "No sound card found" without
+     io-snd), clock and action buttons. -->
 <channel name="xfce4-panel" version="1.0">
   <property name="configver" type="int" value="2"/>
   <property name="panels" type="array">
@@ -22,6 +25,8 @@
         <value type="int" value="7"/>
         <value type="int" value="8"/>
         <value type="int" value="9"/>
+        <value type="int" value="13"/>
+        <value type="int" value="12"/>
         <value type="int" value="10"/>
         <value type="int" value="11"/>
       </property>
@@ -63,6 +68,8 @@
     <property name="plugin-9" type="string" value="systray">
       <property name="square-icons" type="bool" value="true"/>
     </property>
+    <property name="plugin-13" type="string" value="oss-network"/>
+    <property name="plugin-12" type="string" value="alsa"/>
     <property name="plugin-10" type="string" value="clock"/>
     <property name="plugin-11" type="string" value="actions">
       <property name="appearance" type="uint" value="0"/>

@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (20 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (21 component(s)), or let `qnxbuild` do it:
 
 ```bash
 ./scripts/qnxbuild ffmpeg libpng libjpeg-turbo
 ```
 
-<details><summary>Full build chain (20)</summary>
+<details><summary>Full build chain (21)</summary>
 
-[`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`ffmpeg`](../ffmpeg/) [`gettext`](../gettext/) [`lame`](../lame/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`opus`](../opus/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/)
+[`bzip2`](../bzip2/) [`dav1d`](../dav1d/) [`ffmpeg`](../ffmpeg/) [`gettext`](../gettext/) [`lame`](../lame/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`libtheora`](../libtheora/) [`libunistring`](../libunistring/) [`libvorbis`](../libvorbis/) [`libvpx`](../libvpx/) [`mpg123`](../mpg123/) [`ncurses`](../ncurses/) [`openh264`](../openh264/) [`opus`](../opus/) [`x264`](../x264/) [`x265`](../x265/) [`xz`](../xz/) [`zlib`](../zlib/)
 </details>
 
 ### 2. Get the upstream source

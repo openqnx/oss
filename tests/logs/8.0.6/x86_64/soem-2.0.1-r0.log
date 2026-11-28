@@ -1,16 +1,16 @@
 # soem 2.0.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:27:41Z   packages from: apk:local-dists
+# date: 2026-11-24T13:20:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u soem qnx-test-soem qnx-port-tests
 (1/4) Installing qnx-port-tests (1.0-r0)
-(2/4) Installing libpcap (1.10.5-r0)
+(2/4) Installing libpcap (1.11.0-r0)
 (3/4) Installing soem (2.0.1-r0)
-(4/4) Installing qnx-test-soem (1.0-r0)
-OK: 16.0 MiB in 15 packages
+(4/4) Installing qnx-test-soem (1.0-r1)
+OK: 10.7 MiB in 9 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_soem
      == soem ==
@@ -25,7 +25,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
        ok   slaveinfo on a nonexistent interface: No socket connection
        ok   slaveinfo without arguments lists the adapters
        ok   osal_usleep(20 ms) returns 0
-       info osal_usleep(20000) took 20.63 ms
+       info osal_usleep(20000) took 20.59 ms
        ok   monotonic clock: at least 20 ms elapsed
        ok   time difference normalised
        ok   osal_time_diff borrows across seconds (1.2 s)

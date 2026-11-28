@@ -1,18 +1,17 @@
 # up-cpp 1.0.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T12:35:25Z   packages from: apk:local-dists
+# date: 2026-11-24T23:06:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u up-cpp qnx-test-up-cpp qnx-port-tests
-(1/6) Installing qnx-port-tests (1.0-r0)
-(2/6) Installing abseil (20260817.0-r0)
-(3/6) Installing protobuf (29.3-r0)
-(4/6) Installing up-core-api (1.6.0_alpha2-r0)
-(5/6) Installing up-cpp (1.0.1-r0)
-(6/6) Installing qnx-test-up-cpp (1.0-r0)
-OK: 24.0 MiB in 11 packages
+(1/5) Installing abseil (20260817.0-r0)
+(2/5) Installing protobuf (29.3-r0)
+(3/5) Installing up-core-api (1.6.0_git-r0)
+(4/5) Installing up-cpp (1.0.1-r0)
+(5/5) Installing qnx-test-up-cpp (1.0-r0)
+OK: 149.9 MiB in 26 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_up_cpp
      == up-cpp ==

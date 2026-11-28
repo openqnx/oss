@@ -1,6 +1,6 @@
 # candb 0.1_git20210625-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:28:29Z   packages from: apk:local-dists
+# date: 2026-11-24T12:42:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -25,7 +25,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   CoolantTemp: 16|8@1- (1,-40) degC
        ok   BO_ 1024 BrakeStatus: one 1-bit Motorola signal
        ok   VAL_TABLE_ GEARS: 4 entries, 3 = DRIVE
-     [2026-11-21 09:28:28.959] [candb] [error] [dbcparser.cpp@66] Parser log 3:15 syntax error, unexpected '8', expecting <s>.
+     [2026-11-24 12:42:03.045] [candb] [error] [dbcparser.cpp@66] Parser log 3:15 syntax error, unexpected '8', expecting <s>.
        ok   a broken DBC is an error, not a database
        ok   empty input is an error
      PASS candb

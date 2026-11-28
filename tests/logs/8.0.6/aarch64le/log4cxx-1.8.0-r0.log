@@ -1,6 +1,6 @@
 # log4cxx 1.8.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:51:31Z   packages from: apk:local-dists
+# date: 2026-11-24T14:07:21Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -8,10 +8,10 @@
 $ apk add -u log4cxx qnx-test-log4cxx qnx-port-tests
 (1/9) Installing apr (1.7.6-r0)
 (2/9) Installing expat (2.6.4-r0)
-(3/9) Installing libiconv (1.18-r0)
-(4/9) Installing libxcrypt (4.4.38-r0)
+(3/9) Installing libiconv (1.19.1-r0)
+(4/9) Installing libxcrypt (4.5.2-r0)
 (5/9) Installing sqlite (3.47.2-r0)
-(6/9) Installing apr-util (1.6.5-r0)
+(6/9) Installing apr-util (1.6.6-r0)
 (7/9) Installing log4cxx (1.8.0-r0)
 (8/9) Installing qnx-port-tests (1.0-r0)
 (9/9) Installing qnx-test-log4cxx (1.0-r0)

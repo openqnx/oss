@@ -1,17 +1,15 @@
 # mlpack 4.8.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:53:09Z   packages from: apk:local-dists
+# date: 2026-11-24T12:47:43Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u mlpack qnx-test-mlpack-cli qnx-port-tests
-(1/5) Installing openblas (0.3.28-r0)
-(2/5) Installing armadillo (15.6.2-r0)
-(3/5) Installing mlpack (4.8.0-r0)
-(4/5) Installing qnx-port-tests (1.0-r0)
-(5/5) Installing qnx-test-mlpack-cli (1.0-r0)
-OK: 118.4 MiB in 10 packages
+(1/3) Installing armadillo (15.6.2-r0)
+(2/3) Installing mlpack (4.8.0-r0)
+(3/3) Installing qnx-test-mlpack-cli (1.0-r0)
+OK: 273.0 MiB in 42 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mlpack_cli
      == mlpack_cli ==

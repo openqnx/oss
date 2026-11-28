@@ -1,6 +1,6 @@
 # cups-filters 1.28.17-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T10:45:02Z   packages from: apk:local-dists
+# date: 2026-11-24T12:35:14Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -12,18 +12,18 @@ $ apk add -u cups-filters qnx-test-cups-filters qnx-port-tests
 ( 4/44) Installing avahi (0.9_rc3-r1)
 ( 5/44) Installing libiconv (1.19.1-r0)
 ( 6/44) Installing libxcrypt (4.5.2-r0)
-( 7/44) Installing cups (2.4.16-r1)
+( 7/44) Installing cups (2.4.20-r0)
 ( 8/44) Installing brotli (1.2.1-r0)
 ( 9/44) Installing bzip2 (1.0.8-r0)
 (10/44) Installing libpng (1.6.59-r0)
 (11/44) Installing freetype (2.15.0-r0)
-(12/44) Installing fontconfig (2.15.0-r0)
-(13/44) Installing libunistring (1.5-r0)
-(14/44) Installing ncurses (6.6-r0)
-(15/44) Installing gettext (0.22.5-r0)
-(16/44) Installing libffi (3.4.6-r0)
+(12/44) Installing libunistring (1.5-r0)
+(13/44) Installing ncurses (6.6-r0)
+(14/44) Installing gettext (0.22.5-r0)
+(15/44) Installing fontconfig (2.18.4-r0)
+(16/44) Installing libffi (3.8.1-r0)
 (17/44) Installing pcre2 (10.49-r0)
-(18/44) Installing glib (2.82.4-r0)
+(18/44) Installing glib (2.90.1-r1)
 (19/44) Installing lcms2 (2.16-r0)
 (20/44) Installing libexif (0.6.26-r0)
 (21/44) Installing libjpeg-turbo (3.2.1-r0)
@@ -50,8 +50,8 @@ $ apk add -u cups-filters qnx-test-cups-filters qnx-port-tests
 (42/44) Installing qnx-port-tests (1.0-r0)
 (43/44) Installing font-dejavu (2.37-r0)
 (44/44) Installing qnx-test-cups-filters (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 143.1 MiB in 49 packages
+Executing glib-2.90.1-r1.trigger
+OK: 144.2 MiB in 49 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cups_filters
      == cups-filters ==
@@ -60,9 +60,9 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   pdftopdf page-ranges=2: only "Page two"
        ok   pdftopdf number-up=2: both pages on one sheet
        ok   pdftops: PostScript, %%Pages: 2
-       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /XXRLC)
+       ok   texttopdf: a 1-page PDF with an embedded TrueType font (/BaseFont /VJRDQ)
        ok   imagetopdf: PPM image to a 1-page PDF
-       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.ZrfPhr/bus
+       info private D-Bus for ippeveprinter's Avahi client: unix:path=/tmp/qnxport-cupsfilters.of6uq0/bus
        ok   driverless: PPD generated from the IPP printer's attributes
        ok   PPD: the printer's make, QNXTest
        ok   PPD: cupsFilter2 image/pwg-raster (the printer's only format)

@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`boost`](../boost/) [`eigen`](../eigen/) |
-| Run-time dependencies | [`boost`](../boost/) [`suitesparse`](../suitesparse/) |
+| Run-time dependencies | [`boost`](../boost/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gtsam`](../../tests/src/) |
 

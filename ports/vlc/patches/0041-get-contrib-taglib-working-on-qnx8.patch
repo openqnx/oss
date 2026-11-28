@@ -1,0 +1,43 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 15:45:13 -0400
+Subject: [PATCH 41/60] Get contrib/taglib working on QNX8
+
+Two changes.
+1. Update C++ standard from c++98 to C++11 in order to make it
+   compatible with QNX's libc++ implementation that requires C++11
+
+2. Build static libraries with -fpic so that VLC can turn them into
+   shared objects later.
+
+3.0.24: taglib 1.13.1 still sets CXX_STANDARD 98, so change 1 stays; change
+2 (0002-qnx-use-fpic.patch) is dropped, because VLC's contrib CMake builds
+now pass -DCMAKE_POSITION_INDEPENDENT_CODE=ON (upstream ddbbf247).
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/taglib/0001-use-c++11.patch
++++ b/contrib/src/taglib/0001-use-c++11.patch
+@@ -0,0 +1,11 @@
++--- a/taglib/CMakeLists.txt	2025-02-06 14:30:13.557230071 -0500
+++++ b/taglib/CMakeLists.txt	2025-02-06 14:30:35.170428488 -0500
++@@ -335,7 +335,7 @@
++ )
++ 
++ add_library(tag ${tag_LIB_SRCS} ${tag_HDRS})
++-set_property(TARGET tag PROPERTY CXX_STANDARD 98)
+++set_property(TARGET tag PROPERTY CXX_STANDARD 11)
++ 
++ if(HAVE_ZLIB AND NOT HAVE_ZLIB_SOURCE)
++   target_link_libraries(tag ${ZLIB_LIBRARIES})
+--- a/contrib/src/taglib/rules.mak
++++ b/contrib/src/taglib/rules.mak
+@@ -17,6 +17,9 @@
+ 	$(UNPACK)
+ 	$(APPLY) $(SRC)/taglib/0001-Implement-ID3v2-readStyle-avoid-worst-case.patch
+ 	$(APPLY) $(SRC)/taglib/0001-Fix-crash-with-invalid-WAV-files-1163-1164.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/taglib/0001-use-c++11.patch
++endif
+ 	$(MOVE)
+ 
+ TAGLIB_CONF := -DBUILD_BINDINGS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5

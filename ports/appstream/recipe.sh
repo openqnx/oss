@@ -6,7 +6,7 @@
 VERSION=1.2.3
 TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz
 SHA256=8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17
-DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland"
+DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion"   # bash-completion: contrib/meson.build requires its .pc (completion dir)
 BUILDSYS=meson
 # The tarball's paths start with ./AppStream-<version>/ (one level more than
 # usual); the patches name that directory too.

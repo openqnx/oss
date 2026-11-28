@@ -1,6 +1,6 @@
 # opentelemetry-cpp 1.30.0-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T16:45:26Z   packages from: apk:local-dists
+# date: 2026-11-25T05:48:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -20,8 +20,8 @@ $ apk add -u opentelemetry-cpp qnx-test-opentelemetry-cpp qnx-port-tests
 (12/16) Installing re2 (2024.07.02-r0)
 (13/16) Installing grpc (1.85.4-r0)
 (14/16) Installing opentelemetry-cpp (1.30.0-r1)
-(15/16) Installing qnx-port-tests (1.0-r0)
-(16/16) Installing qnx-test-opentelemetry-cpp (1.0-r1)
+(15/16) Installing qnx-port-tests (1.0-r1)
+(16/16) Installing qnx-test-opentelemetry-cpp (1.0-r2)
 OK: 90.2 MiB in 21 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_opentelemetry_cpp

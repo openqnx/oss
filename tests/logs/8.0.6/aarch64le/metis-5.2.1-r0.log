@@ -1,17 +1,16 @@
 # metis 5.2.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:53:23Z   packages from: apk:local-dists
+# date: 2026-11-24T14:17:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u metis qnx-test-metis qnx-port-tests
-(1/5) Installing gklib (5.1.1_git20230326-r0)
-(2/5) Installing metis (5.2.1-r0)
-(3/5) Installing qnx-port-tests (1.0-r0)
-(4/5) Installing gklib-dev (5.1.1_git20230326-r0)
-(5/5) Installing qnx-test-metis (1.0-r0)
-OK: 10.8 MiB in 10 packages
+(1/4) Installing gklib (5.1.1_git20230326-r0)
+(2/4) Installing metis (5.2.1-r0)
+(3/4) Installing gklib-dev (5.1.1_git20230326-r0)
+(4/4) Installing qnx-test-metis (1.0-r0)
+OK: 136.8 MiB in 25 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_metis
      == metis ==

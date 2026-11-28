@@ -76,7 +76,21 @@ def recipe_meta(name):
     if m:
         meta["url"] = m.group(1).strip("\"'")
     readme = os.path.join(WS, "ports", name, "README.md")
+    # pkgdesc: ports/<name>/DESCRIPTION (one line saying what the component
+    # is for -- the same text gen-pkg-site shows), else the generic sentence.
+    # Over 200 characters it is cut at a word. The -dev package gets
+    # " (development files)" after it (main(), as gen-pkg-site's purpose()).
     meta["desc"] = "%s %s for QNX SDP %s" % (name, meta["version"], SDP)
+    meta["desc_dev"] = meta["desc"]
+    dfile = os.path.join(WS, "ports", name, "DESCRIPTION")
+    if os.path.exists(dfile):
+        first = next((l.strip() for l in open(dfile, encoding="utf-8", errors="replace") if l.strip()), "")
+        first = " ".join(first.split()).replace("|", "/")   # "|" separates INDEX fields
+        if len(first) > 200:
+            first = first[:200].rsplit(" ", 1)[0].rstrip(",;:-") + "..."
+        if first:
+            meta["desc"] = first
+            meta["desc_dev"] = first + " (development files)"
     meta["license"] = "see upstream"
     # CONFLICTS: components that install the same files as this one (two
     # implementations of one library, e.g. sdl2 and sdl2-compat).
@@ -479,6 +493,13 @@ def package(comp, arch, args, owner, outdir, existing=None):
                 sa = None   # the same files, but not this trigger
             if sa:   # a new release only by its fingerprint: keep the existing one
                 ver = sa[0]; e0 = dict(sa[1]["apk"]); e0["fp"] = fp; same = (e0, sa[1]["line"])
+        pdesc = meta["desc"] if pname == comp else meta.get("desc_dev", meta["desc"])
+        if same and same[1].split("|")[6] != pdesc:
+            # Same files, another description (ports/<name>/DESCRIPTION): the
+            # published entry would keep the old text, so a new release.
+            ver = "%s-r%d" % (base, int(ver.rpartition("-r")[2]) + 1)
+            print("   %s: description changed -> %s" % (pname, ver))
+            same = None
         if same and same[1].split("|")[2] != ",".join(pdeps):
             # Same files, other dependencies (a RUNTIME_DEPS change): the
             # published entry would keep the old ones, so a new release.
@@ -490,8 +511,8 @@ def package(comp, arch, args, owner, outdir, existing=None):
             continue
         tgz, sha, size = make_tgz("%s-%s" % (pname, ver), root, rels_sel, san, outdir)
         conf = [c if pname == comp else c + "-dev" for c in meta.get("conflicts", [])]
-        lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), meta["desc"], ",".join(conf)]))
-        pm = dict(meta); pm["conflicts_pkg"] = conf
+        lines.append("|".join([pname, ver, ",".join(pdeps), tgz, sha, str(size), pdesc, ",".join(conf)]))
+        pm = dict(meta); pm["conflicts_pkg"] = conf; pm["desc"] = pdesc
         entries.append(make_apk(pname, ver, arch, pm, root, rels_sel,
                                 pdeps + (sodeps if pname == comp else []),
                                 provides if pname == comp else [], san, args.key, outdir))
@@ -659,13 +680,17 @@ def package_tests(arch, args, owner, outdir):
         deps |= {"qnx-test-" + h[len("test_"):].replace("_", "-") for h in names
                  if h.startswith(n + "_") and comps_of.get(h, set()) & comps_of.get(n, set())}
         pname = "qnx-test-" + n[len("test_"):].replace("_", "-")
-        emit(pname, stage, [rel], sorted(deps), "QNX port test %s: checks its component on the target" % n)
+        # Every test needs the runner package: it also holds qnxport-timeout.sh,
+        # the time-limit helper the shell tests source.
+        emit(pname, stage, [rel], sorted(deps | {"qnx-port-tests"}), "QNX port test %s: checks its component on the target" % n)
     # The runner: a stand-alone copy, so it is packaged from a scratch root.
     root = os.path.join(WS, "build", arch, "qnx-port-tests-pkg")
     shutil.rmtree(root, ignore_errors=True)
     os.makedirs(os.path.join(root, tdir))
-    shutil.copy2(os.path.join(WS, "tests", "run-on-target.sh"), os.path.join(root, tdir, "run-on-target.sh"))
-    emit("qnx-port-tests", root, [os.path.join(tdir, "run-on-target.sh")], [],
+    common = ["run-on-target.sh", "qnxport-timeout.sh"]
+    for c in common:
+        shutil.copy2(os.path.join(WS, "tests", c), os.path.join(root, tdir, c))
+    emit("qnx-port-tests", root, [os.path.join(tdir, c) for c in common], [],
          "QNX port tests runner: runs every installed qnx-test-* package")
     # The plain programs too, for a target without apk, and the bundle.
     bdir = os.path.join(outdir, "bin")
@@ -674,7 +699,8 @@ def package_tests(arch, args, owner, outdir):
     for n in sorted(os.listdir(os.path.join(stage, tdir))):
         if n.startswith("test_"):
             shutil.copy2(os.path.join(stage, tdir, n), bdir)
-    shutil.copy2(os.path.join(WS, "tests", "run-on-target.sh"), bdir)
+    for c in common:
+        shutil.copy2(os.path.join(WS, "tests", c), bdir)
     bundle = os.path.join(WS, "dist", "qnx-port-tests-%s.tar.gz" % arch)
     if os.path.exists(bundle):
         shutil.copy2(bundle, outdir)

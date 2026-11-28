@@ -1,22 +1,21 @@
 # perl-net-ssleay 1.97_git-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T11:42:46Z   packages from: apk:local-dists
+# date: 2026-11-24T12:50:20Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-net-ssleay qnx-test-perl-ssl qnx-port-tests
-( 1/10) Installing libxcrypt (4.5.2-r0)
-( 2/10) Installing perl (5.40.2-r0)
-( 3/10) Installing perl-net-ssleay (1.97_git-r0)
-( 4/10) Installing qnx-port-tests (1.0-r0)
-( 5/10) Installing perl-mozilla-ca (20261020-r0)
-( 6/10) Installing perl-io-socket-ssl (2.099-r0)
-( 7/10) Installing perl-mime-base32 (1.303-r0)
-( 8/10) Installing perl-uri (5.40-r0)
-( 9/10) Installing perl-net-http (6.24-r0)
-(10/10) Installing qnx-test-perl-ssl (1.0-r0)
-OK: 74.7 MiB in 15 packages
+(1/9) Installing libxcrypt (4.5.2-r0)
+(2/9) Installing perl (5.40.2-r0)
+(3/9) Installing perl-net-ssleay (1.97_git-r0)
+(4/9) Installing perl-mozilla-ca (20261105-r0)
+(5/9) Installing perl-io-socket-ssl (2.099-r0)
+(6/9) Installing perl-mime-base32 (1.303-r0)
+(7/9) Installing perl-uri (5.40-r0)
+(8/9) Installing perl-net-http (6.24-r0)
+(9/9) Installing qnx-test-perl-ssl (1.0-r0)
+OK: 245.7 MiB in 48 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_ssl
      == perl-net-ssleay, perl-io-socket-ssl ==

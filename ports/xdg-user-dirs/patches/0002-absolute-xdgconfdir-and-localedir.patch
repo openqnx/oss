@@ -1,0 +1,25 @@
+build: compile in absolute configuration and locale directories
+
+XDGCONFDIR and LOCALEDIR are taken from meson's sysconfdir and localedir
+options as they are. Those are relative to the prefix ("etc",
+"share/locale") for every prefix but /usr, where meson makes sysconfdir
+/etc: built for /usr/local the program looked for etc/xdg/user-dirs.defaults
+and share/locale under the current directory, found neither, and created
+no directories unless it happened to be started in /usr/local. Join them
+with the prefix (an absolute sysconfdir, as for /usr, stays what it is).
+
+Upstream-Status: Pending
+
+--- a/meson.build
++++ b/meson.build
+@@ -59,8 +59,8 @@
+ endif
+ 
+ # Set install directories
+-conf_data.set_quoted('XDGCONFDIR', get_option('sysconfdir') / 'xdg')
+-conf_data.set_quoted('LOCALEDIR', get_option('localedir'))
++conf_data.set_quoted('XDGCONFDIR', get_option('prefix') / get_option('sysconfdir') / 'xdg')
++conf_data.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
+ 
+ # Generate config.h
+ configure_file(

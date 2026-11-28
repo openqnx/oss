@@ -103,19 +103,21 @@ do_build() { :; }
 do_install() {
   install -Dm755 "$S/bin/oss-desktop" "$STAGE$PREFIX/bin/oss-desktop"
   install -Dm755 "$S/bin/oss-desktop-menu" "$STAGE$PREFIX/bin/oss-desktop-menu"
-  install -d "$STAGE$PREFIX/share/oss-desktop" && cp -a "$S/share/oss-desktop/." "$STAGE$PREFIX/share/oss-desktop/"
+  install -d "$STAGE$PREFIX/share/oss-desktop" && cp -a "$S/share/oss-desktop/." "$STAGE$PREFIX/share/oss-desktop/" && \
+  install -Dm644 "$S/share/glib-2.0/schemas/50_oss-desktop.gschema.override" \
+                 "$STAGE$PREFIX/share/glib-2.0/schemas/50_oss-desktop.gschema.override"
 }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- oss-desktop: a desktop session on QNX Screen from the ported components, in the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on wlroots' QNX Screen backend), swaybg (background) and the Xfce session (xfce4-session: settings daemon, the panel, Thunar): one panel at the top with the Applications menu, launchers (terminal, files, web browser), the clock and the log out / restart / shut down buttons. The root menu (right click on the background) lists every installed application and runs the port test suite in a terminal. This component is only the session: a start script, oss-desktop, labwc's configuration and the Xfce defaults (files/); the programs are the components below. An image that boots into it: scripts/make-ported-image --desktop.
+- oss-desktop: a desktop session on QNX Screen from the ported components, in the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on wlroots' QNX Screen backend), swaybg (background colour) and the Xfce session (xfce4-session: settings daemon, the panel, Thunar, and xfdesktop -- the wallpaper and desktop icons -- when installed): one panel at the top with the Applications menu, launchers (terminal, files, web browser), the clock and the log out / restart / shut down buttons. The root menu (right click on the background) lists every installed application and runs the port test suite in a terminal. This component is only the session: a start script, oss-desktop, labwc's configuration and the Xfce defaults (files/); the programs are the components below. An image that boots into it: scripts/make-ported-image --desktop.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH oss-desktop`.
 
 ### 5. What it installs
 
-9 files under `/usr/local`, 2 programs.
+12 files under `/usr/local`, 2 programs.
 
 ```
 /usr/local/bin/oss-desktop
@@ -210,8 +212,9 @@ This recipe builds **1.1**. Every version stays available: packages in `dists/8.
 ```bash
 # oss-desktop: a desktop session on QNX Screen from the ported components, in
 # the way of QNX Everywhere's Developer Desktop -- labwc (window manager, on
-# wlroots' QNX Screen backend), swaybg (background) and the Xfce session
-# (xfce4-session: settings daemon, the panel, Thunar): one panel at the top
+# wlroots' QNX Screen backend), swaybg (background colour) and the Xfce
+# session (xfce4-session: settings daemon, the panel, Thunar, and xfdesktop --
+# the wallpaper and desktop icons -- when installed): one panel at the top
 # with the Applications menu, launchers (terminal, files, web browser), the
 # clock and the log out / restart / shut down buttons. The root menu (right
 # click on the background) lists every installed application and runs the
@@ -228,7 +231,9 @@ do_build() { :; }
 do_install() {
   install -Dm755 "$S/bin/oss-desktop" "$STAGE$PREFIX/bin/oss-desktop"
   install -Dm755 "$S/bin/oss-desktop-menu" "$STAGE$PREFIX/bin/oss-desktop-menu"
-  install -d "$STAGE$PREFIX/share/oss-desktop" && cp -a "$S/share/oss-desktop/." "$STAGE$PREFIX/share/oss-desktop/"
+  install -d "$STAGE$PREFIX/share/oss-desktop" && cp -a "$S/share/oss-desktop/." "$STAGE$PREFIX/share/oss-desktop/" && \
+  install -Dm644 "$S/share/glib-2.0/schemas/50_oss-desktop.gschema.override" \
+                 "$STAGE$PREFIX/share/glib-2.0/schemas/50_oss-desktop.gschema.override"
 }
 ```
 </details>

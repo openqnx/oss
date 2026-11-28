@@ -1,0 +1,58 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 14:45:41 -0400
+Subject: [PATCH 30/60] Get contrib/modplug building against qnx
+
+q++, by default, builds against libc++. However that requires at
+least c++11 (unless one uses clang apparently). modplug deliberately
+sets the standard to gnu++98.
+
+Update the standard used to c++11 so I can link against libc++ instead
+of libstdc++. I did it this way instead of just using libstdc++ because
+I didn't want to mix usage of libc++ and libstdc++ in the same
+application.
+
+This also required a change to the .pc file to specify libc++ instead of
+libstdc++.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/modplug/qnx-use-libc++.patch
++++ b/contrib/src/modplug/qnx-use-libc++.patch
+@@ -0,0 +1,9 @@
++--- libmodplug-0.8.9.0/libmodplug.pc.in.old	2020-04-29 21:39:14.000000000 +0200
+++++ libmodplug-0.8.9.0/libmodplug.pc.in	2020-04-29 21:40:06.000000000 +0200
++@@ -8,5 +8,5 @@
++ Version: @VERSION@
++ Requires: 
++ Libs: -L${libdir} -lmodplug 
++-Libs.private: -lstdc++ -lm
+++Libs.private: -lc++ -lm
++ Cflags: -I${includedir} -DMODPLUG_STATIC
+--- a/contrib/src/modplug/rules.mak
++++ b/contrib/src/modplug/rules.mak
+@@ -8,7 +8,14 @@
+ PKGS_FOUND += modplug
+ endif
+ 
+-MODPLUG_CXXFLAGS := $(CXXFLAGS) -std=gnu++98
++MODPLUG_CXXFLAGS := $(CXXFLAGS)
++ifdef HAVE_QNX
++# QNX uses GCC and libc++, and libc++ only supports C++03 (and earlier)
++# when compiled with clang. Work around this by bumping the C++ version.
++MODPLUG_CXXFLAGS += -std=gnu++11
++else
++MODPLUG_CXXFLAGS += -std=gnu++98
++endif
+ 
+ $(TARBALLS)/libmodplug-$(MODPLUG_VERSION).tar.gz:
+ 	$(call download_pkg,$(MODPLUG_URL),modplug)
+@@ -23,6 +30,9 @@
+ ifdef HAVE_CLANG
+ 	$(APPLY) $(SRC)/modplug/mac-use-c-stdlib.patch
+ endif
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/modplug/qnx-use-libc++.patch
++endif
+ 	$(call pkg_static,"libmodplug.pc.in")
+ 	$(MOVE)
+ 

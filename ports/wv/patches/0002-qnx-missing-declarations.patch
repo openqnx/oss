@@ -1,0 +1,39 @@
+wv: declare what wvSummary and wvparse.c call (pointers cut to 32 bits).
+
+wvSummary.c calls gsf_doc_meta_data_new(), gsf_doc_meta_data_foreach(),
+gsf_doc_prop_get_val() and gsf_doc_prop_get_link() without including
+<gsf/gsf-doc-meta-data.h>. Built as C89 (configure's -ansi, -std=gnu89 here)
+the compiler takes them as functions returning int, without a warning, and
+the returned pointers lose their upper 32 bits: on QNX, where heap addresses
+are above 4 GB, wvSummary crashed in libgsf (gsf_doc_meta_data_insert) on
+most documents. The header is included.
+
+wvparse.c calls wvOLEDecode_gsf() (laolareplace.c) with no prototype in
+scope; it returns int, so it worked, but the prototype is added to wv.h so
+that the arguments are checked too.
+
+diff -ru a/wv.h b/wv.h
+--- a/wv.h	2009-10-15 01:23:14.000000000 +0900
++++ b/wv.h	2026-11-25 17:34:22.669336464 +0900
+@@ -4702,6 +4702,10 @@
+ 		     char *path, wvStream ** mafd, wvStream ** tablefd0,
+ 		     wvStream ** tablefd1, wvStream ** data,
+ 		     wvStream ** summary);
++    /* laolareplace.c; called from wvparse.c */
++    int wvOLEDecode_gsf (wvParseStruct * ps, GsfInput * path, wvStream ** mainfd,
++			 wvStream ** tablefd0, wvStream ** tablefd1,
++			 wvStream ** data, wvStream ** summary);
+     int wvOLESummaryStream (char *filename, wvStream ** summary);
+ 
+     long get_picture_header (U32 fcPic, wvStream * data, U32 * len,
+diff -ru a/wvSummary.c b/wvSummary.c
+--- a/wvSummary.c	2009-09-01 17:38:31.000000000 +0900
++++ b/wvSummary.c	2026-11-25 17:34:22.668901597 +0900
+@@ -31,6 +31,7 @@
+ #include <gsf/gsf-infile.h>
+ #include <gsf/gsf-infile-msole.h>
+ #include <gsf/gsf-msole-utils.h>
++#include <gsf/gsf-doc-meta-data.h>
+ #include <gsf/gsf-docprop-vector.h>
+ #include <gsf/gsf-meta-names.h>
+ 

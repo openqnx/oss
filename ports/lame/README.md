@@ -10,7 +10,7 @@
 | SHA-256 | `3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
-| Build dependencies | none |
+| Build dependencies | [`mpg123`](../mpg123/) |
 | Run-time dependencies | [`mpg123`](../mpg123/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_lame`](../../tests/src/) |
@@ -68,7 +68,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild mpg123
+```
 
 ### 2. Get the upstream source
 
@@ -205,6 +209,7 @@ VERSION=4.0
 TARBALL=https://downloads.sourceforge.net/lame/lame-4.0.tar.gz
 SHA256=3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb
 BUILDSYS=autotools
+DEPS="mpg123"   # lame 4.0 configure requires libmpg123 >= 1.26 (external mp3 decoder)
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-frontend
                   --disable-gtktest --enable-nasm )
 ```

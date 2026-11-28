@@ -1,17 +1,16 @@
 # xtensor 0.27.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:54:43Z   packages from: apk:local-dists
+# date: 2026-11-25T03:15:15Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u xtensor qnx-test-xtensor qnx-port-tests
-(1/5) Installing qnx-port-tests (1.0-r0)
-(2/5) Installing qnx-test-xtensor (1.0-r1)
-(3/5) Installing xsimd-dev (14.3.0-r0)
-(4/5) Installing xtl-dev (0.8.2-r0)
-(5/5) Installing xtensor (0.27.2-r0)
-OK: 12.9 MiB in 10 packages
+(1/4) Installing qnx-test-xtensor (1.0-r1)
+(2/4) Installing xsimd-dev (14.3.0-r0)
+(3/4) Installing xtl-dev (0.8.2-r0)
+(4/4) Installing xtensor (0.27.2-r0)
+OK: 150.9 MiB in 65 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xtensor
      == xtensor ==

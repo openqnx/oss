@@ -1,0 +1,48 @@
+contrib: libass on QNX -- no clang-cl flag, no automake rerun.
+
+libass's configure tries -fno-math-errno and then the clang-cl spelling
+/clang:-fno-math-errno (AX_APPEND_COMPILE_FLAGS). The check only compiles
+(qcc -c), and qcc lets the extra argument through, so the flag was "accepted"
+and appended to CFLAGS. Every later check that links then failed on it as a
+missing input file: snprintf, strndup, lrint... and configure stopped with
+"Unable to locate math functions!". Give configure the answer for that check
+(its cache variable) on QNX.
+
+The contrib's QNX patch for libass changes configure.ac together with
+configure. configure.ac then is newer than aclocal.m4, and make reran
+aclocal-1.17 (the automake of the release) -- not on a build machine with
+automake 1.16: "aclocal-1.17: command not found". Touch the generated files
+after the patch.
+
+Upstream-Status: Pending
+
+diff --git a/contrib/src/ass/rules.mak b/contrib/src/ass/rules.mak
+index 8f2e7dc..b11d0b4 100644
+--- a/contrib/src/ass/rules.mak
++++ b/contrib/src/ass/rules.mak
+@@ -39,6 +39,10 @@ libass: libass-$(ASS_VERSION).tar.xz .sum-ass
+ 	$(call pkg_static,"libass.pc.in")
+ ifdef HAVE_QNX
+ 	$(APPLY) $(SRC)/ass/0001-qnx-support.patch
++	# that patch changes configure.ac and configure alike: make the generated
++	# files newer again, or make reruns aclocal-1.17 (the release's automake,
++	# not the build machine's) and stops
++	touch $(UNPACK_DIR)/aclocal.m4 $(UNPACK_DIR)/configure $(UNPACK_DIR)/config.h.in $(UNPACK_DIR)/Makefile.in
+ endif
+ 	$(MOVE)
+ 
+@@ -63,6 +67,14 @@ ifeq ($(WITH_ASS_ASM), 0)
+ ASS_CONF += --disable-asm
+ endif
+ 
++ifdef HAVE_QNX
++# configure tries the clang-cl spelling /clang:-fno-math-errno too; qcc -c
++# takes it (it only compiles, the extra "file" is not looked at), so it
++# went into CFLAGS, and every later check that links failed on it as a
++# missing input -- "Unable to locate math functions!". Answer that check.
++ASS_CONF += ax_cv_check_cflags___clang__fno_math_errno=no
++endif
++
+ .ass: libass
+ 	$(MAKEBUILDDIR)
+ 	$(MAKECONFIGURE) $(ASS_CONF)

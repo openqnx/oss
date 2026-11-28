@@ -1,0 +1,41 @@
+xarchiver: byte-order macros from <net/netbyte.h> on QNX
+
+exe.c, gzip_et_al.c and window.c take le16toh(), le32toh() and htole32() from
+<endian.h>, with branches for macOS and FreeBSD. QNX has neither <endian.h>
+nor <sys/endian.h>; the same macros are in <net/netbyte.h>.
+
+Upstream-Status: Pending
+---
+--- a/src/exe.c
++++ b/src/exe.c
+@@ -21,6 +21,8 @@
+ #include <libkern/OSByteOrder.h>
+ #define le16toh(x) OSSwapLittleToHostInt16(x)
+ #define le32toh(x) OSSwapLittleToHostInt32(x)
++#elif defined(__QNX__)
++#include <net/netbyte.h>
+ #elif defined(__FreeBSD__)
+ #include <sys/endian.h>
+ #else
+--- a/src/gzip_et_al.c
++++ b/src/gzip_et_al.c
+@@ -22,6 +22,8 @@
+ #include <libkern/OSByteOrder.h>
+ #define le32toh(x) OSSwapLittleToHostInt32(x)
+ #define htole32(x) OSSwapHostToLittleInt32(x)
++#elif defined(__QNX__)
++#include <net/netbyte.h>
+ #elif defined(__FreeBSD__)
+ #include <sys/endian.h>
+ #else
+--- a/src/window.c
++++ b/src/window.c
+@@ -49,6 +49,8 @@
+ #include <libkern/OSByteOrder.h>
+ #define le32toh(x) OSSwapLittleToHostInt32(x)
+ #define st_mtim st_mtimespec
++#elif defined(__QNX__)
++#include <net/netbyte.h>
+ #elif defined(__FreeBSD__)
+ #include <sys/endian.h>
+ #else

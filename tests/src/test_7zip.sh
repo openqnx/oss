@@ -6,6 +6,7 @@
 # 4 threads), zip, tar and xz, listed, tested and extracted back byte for
 # byte; an AES-256 encrypted 7z with encrypted headers opens with the right
 # password only.
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL 7zip (qnxport-timeout.sh missing)"; exit 1; }
 echo "== 7zip =="
 fail=0
 ok() { echo "  ok   $1"; }; bad() { echo "  FAIL $1"; fail=$((fail+1)); }
@@ -20,7 +21,7 @@ case "$V" in *"26.06"*) ok "7zz version 26.06" ;; *) bad "7zz version: $V" ;; es
 
 # The RAM size 7-Zip sizes its buffers by (the system page's, as pidin):
 # the benchmark header prints it; the benchmark itself is cut short.
-ram=$(timeout 60 7zz b -md16 -mmt1 2>&1 | grep -m1 'RAM size' | sed -n 's/.*RAM size: *\([0-9]*\) MB.*/\1/p')
+ram=$(qto 60 7zz b -md16 -mmt1 2>&1 | grep -m1 'RAM size' | sed -n 's/.*RAM size: *\([0-9]*\) MB.*/\1/p')
 pram=$(pidin info 2>/dev/null | sed -n 's/.*FreeMem:[0-9]*MB\/\([0-9]*\)MB.*/\1/p')
 echo "  info RAM size: 7zz ${ram} MB, pidin ${pram} MB"
 [ -n "$ram" ] && [ "$ram" = "$pram" ] && ok "RAM size $ram MB, as pidin" || bad "RAM size: '$ram' (pidin: '$pram')"

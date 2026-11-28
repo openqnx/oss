@@ -1,16 +1,15 @@
 # kiss-icp 1.3.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:41:35Z   packages from: apk:local-dists
+# date: 2026-11-24T12:45:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u kiss-icp qnx-test-kiss-icp qnx-port-tests
-(1/4) Installing kiss-icp (1.3.0-r0)
-(2/4) Installing qnx-port-tests (1.0-r0)
-(3/4) Installing onetbb (2022.0.0-r0)
-(4/4) Installing qnx-test-kiss-icp (1.0-r0)
-OK: 10.2 MiB in 9 packages
+(1/3) Installing kiss-icp (1.3.0-r0)
+(2/3) Installing onetbb (2022.0.0-r0)
+(3/3) Installing qnx-test-kiss-icp (1.0-r0)
+OK: 181.4 MiB in 37 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_kiss_icp
      == kiss-icp ==
@@ -31,7 +30,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_k
        ok   a 3 m deviation gives sqrt((2^2 + 3^2)/2)
        ok   a deviation below min_motion is ignored
        ok   a rotation counts with its chord length at max range
-       registration error: 4.6e-17 m, 8.64e-19 rad
+       registration error: 2.22e-17 m, 1.94e-18 rad
        ok   ICP recovers the transform (0.06,-0.04,0.03 m; 0.004,-0.006,0.010 rad) to 1e-6
        ok   against an empty map the initial guess is returned
        pipeline: 5904 scene points, 12 frames, travelled 2.79 m; worst pose error 0.0019 m, 0.00011 rad; local map 11137 points

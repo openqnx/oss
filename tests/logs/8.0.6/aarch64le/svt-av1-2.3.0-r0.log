@@ -1,15 +1,14 @@
 # svt-av1 2.3.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T12:27:06Z   packages from: apk:local-dists
+# date: 2026-11-24T22:52:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u svt-av1 qnx-test-svt-av1 qnx-port-tests
-(1/3) Installing qnx-port-tests (1.0-r0)
-(2/3) Installing svt-av1 (2.3.0-r0)
-(3/3) Installing qnx-test-svt-av1 (1.0-r0)
-OK: 14.1 MiB in 8 packages
+(1/2) Installing svt-av1 (2.3.0-r0)
+(2/2) Installing qnx-test-svt-av1 (1.0-r0)
+OK: 140.1 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_svt_av1
      == svt-av1 ==
@@ -21,7 +20,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
      Svt[info]: -------------------------------------------
        ok   svt_av1_enc_init_handle
      Svt[warn]: Preset M12 is mapped to M11.
-     Svt[info]: Level of Parallelism: 3
+     Svt[info]: Level of Parallelism: 2
      Svt[info]: Number of PPCS 42
      Svt[info]: [asm level on system : up to neon]
      Svt[info]: [asm level selected : up to neon]

@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`openssl`](../openssl/) [`zlib`](../zlib/) [`nghttp2`](../nghttp2/) [`c-ares`](../c-ares/) [`brotli`](../brotli/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`c-ares`](../c-ares/) [`libidn2`](../libidn2/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`c-ares`](../c-ares/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_curl`](../../tests/src/) |
 

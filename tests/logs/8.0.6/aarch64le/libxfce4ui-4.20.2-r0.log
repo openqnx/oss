@@ -1,19 +1,68 @@
-# libxfce4ui 4.20.2-r0 -- FAIL
+# libxfce4ui 4.20.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T01:21:13Z   packages from: apk:local-dists
+# date: 2026-11-24T13:56:02Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libxfce4ui qnx-test-libxfce4ui qnx-port-tests
-(1/1) Installing qnx-test-libxfce4ui (1.0-r1)
-OK: 329.3 MiB in 97 packages
+( 1/49) Installing dbus (1.16.4-r0)
+( 2/49) Installing pcre2 (10.49-r0)
+( 3/49) Installing glib (2.90.1-r1)
+( 4/49) Installing libxau (1.0.12-r0)
+( 5/49) Installing libxdmcp (1.1.5-r0)
+( 6/49) Installing libxcb (1.17.0-r0)
+( 7/49) Installing libx11 (1.8.14-r0)
+( 8/49) Installing libxext (1.3.7-r0)
+( 9/49) Installing libxi (1.8.4-r0)
+(10/49) Installing libxtst (1.2.6-r0)
+(11/49) Installing at-spi2-core (2.54.2-r0)
+(12/49) Installing brotli (1.2.1-r0)
+(13/49) Installing libpng (1.6.59-r0)
+(14/49) Installing freetype (2.15.0-r0)
+(15/49) Installing fontconfig (2.18.4-r0)
+(16/49) Installing libxrender (0.9.13-r0)
+(17/49) Installing lzo (2.10-r0)
+(18/49) Installing pixman (0.46.4-r0)
+(19/49) Installing cairo (1.18.6-r0)
+(20/49) Installing libjpeg-turbo (3.2.1-r0)
+(21/49) Installing gdk-pixbuf (2.44.8-r0)
+(22/49) Installing fribidi (1.0.18-r0)
+(23/49) Installing graphite2 (1.3.15-r0)
+(24/49) Installing icu (76.1-r0)
+(25/49) Installing harfbuzz (<ip>-r0)
+(26/49) Installing libepoxy (1.5.10-r0)
+(27/49) Installing libxcomposite (0.4.7-r0)
+(28/49) Installing libxfixes (6.0.2-r0)
+(29/49) Installing libxcursor (1.2.3-r0)
+(30/49) Installing libxdamage (1.1.7-r0)
+(31/49) Installing libxinerama (1.1.6-r0)
+(32/49) Installing libxml2 (2.13.5-r0)
+(33/49) Installing libxkbcommon (1.8.1-r0)
+(34/49) Installing libxrandr (1.5.5-r0)
+(35/49) Installing libxft (2.3.9-r0)
+(36/49) Installing pango (1.56.4-r0)
+(37/49) Installing wayland (1.26.0-r0)
+(38/49) Installing gtk3 (3.24.43-r0)
+(39/49) Installing hicolor-icon-theme (0.18-r0)
+(40/49) Installing libxfce4util (4.20.1-r0)
+(41/49) Installing xfconf (4.20.0-r0)
+(42/49) Installing libxfce4ui (4.20.2-r0)
+(43/49) Installing font-dejavu (2.37-r0)
+(44/49) Installing libsfdo (0.1.4-r0)
+(45/49) Installing lcms2 (2.16-r0)
+(46/49) Installing wlroots (0.20.2-r0)
+(47/49) Installing xkeyboard-config (2.49-r0)
+(48/49) Installing labwc (0.20.3-r0)
+(49/49) Installing qnx-test-libxfce4ui (1.0-r4)
+Executing glib-2.90.1-r1.trigger
+Executing python3-3.14.0-r1.trigger
+OK: 289.5 MiB in 70 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfce4ui
-FAIL test_libxfce4ui (rc=1)
      == libxfce4ui ==
        info libxfce4ui 4.20.2
-       FAIL libxfce4ui 4.20.2  (tests/src/test_libxfce4ui.c:333)
+       ok   libxfce4ui 4.20.2
        ok   libxfce4ui_check_version
        info xfce4-about.desktop Icon=org.xfce.about
        ok   xfce_icon_name_from_desktop_id(xfce4-about) = org.xfce.about
@@ -29,15 +78,16 @@ FAIL test_libxfce4ui (rc=1)
        ok   XfceTitledDialog with mixed buttons
        ok   subtitle set and read back
        ok   dialog title
+       info OK response widget: GtkButton, label _Save
        ok   OK response button is "_Save"
        ok   xfce_gtk_button_new_mixed
        ok   xfce_gtk_frame_box_new returns a frame and its container
        ok   menu item built from the action entry and appended
        ok   activating the menu item runs the entry's callback
        ok   xfce_spawn_command_line ran the child
-     FAIL libxfce4ui (1 check(s) failed)
+     PASS libxfce4ui
+PASS test_libxfce4ui
 --------------------------------------------
-passed: 0   failed: 1
-failing: test_libxfce4ui
+passed: 1   failed: 0
 
-RESULT: FAIL
+RESULT: PASS

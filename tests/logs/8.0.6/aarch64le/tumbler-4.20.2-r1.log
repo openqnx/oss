@@ -1,68 +1,72 @@
 # tumbler 4.20.2-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:44:47Z   packages from: apk:local-dists
+# date: 2026-11-24T23:05:49Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u tumbler qnx-test-tumbler qnx-port-tests
-( 1/55) Installing qnx-port-tests (1.0-r0)
-( 2/55) Installing libiconv (1.19.1-r0)
-( 3/55) Installing libunistring (1.5-r0)
-( 4/55) Installing ncurses (6.6-r0)
-( 5/55) Installing gettext (0.22.5-r0)
-( 6/55) Installing libffi (3.4.6-r0)
-( 7/55) Installing pcre2 (10.49-r0)
-( 8/55) Installing glib (2.82.4-r0)
-( 9/55) Installing libjpeg-turbo (3.2.1-r0)
-(10/55) Installing libpng (1.6.59-r0)
-(11/55) Installing gdk-pixbuf (2.42.12-r0)
-(12/55) Installing expat (2.6.4-r0)
-(13/55) Installing brotli (1.2.1-r0)
-(14/55) Installing bzip2 (1.0.8-r0)
-(15/55) Installing freetype (2.15.0-r0)
-(16/55) Installing fontconfig (2.15.0-r0)
-(17/55) Installing libxau (1.0.12-r0)
-(18/55) Installing libxdmcp (1.1.5-r0)
-(19/55) Installing libxcb (1.17.0-r0)
-(20/55) Installing libx11 (1.8.14-r0)
-(21/55) Installing libxext (1.3.7-r0)
-(22/55) Installing libxrender (0.9.13-r0)
-(23/55) Installing lzo (2.10-r0)
-(24/55) Installing pixman (0.46.4-r0)
-(25/55) Installing cairo (1.18.6-r0)
-(26/55) Installing c-ares (1.34.9-r0)
-(27/55) Installing libidn2 (2.3.8-r0)
-(28/55) Installing nghttp2 (1.71.0-r0)
-(29/55) Installing curl (8.23.0-r0)
-(30/55) Installing dav1d (1.5.5-r0)
-(31/55) Installing lame (3.100-r0)
-(32/55) Installing libogg (1.3.6-r0)
-(33/55) Installing libtheora (1.1.1-r0)
-(34/55) Installing libvorbis (1.3.7-r0)
-(35/55) Installing libvpx (1.17.0-r0)
-(36/55) Installing openh264 (2.5.0-r0)
-(37/55) Installing opus (1.6.1-r0)
-(38/55) Installing x264 (0_git-r0)
-(39/55) Installing x265 (3.6-r0)
-(40/55) Installing xz (5.8.4-r0)
-(41/55) Installing ffmpeg (7.1.1-r1)
-(42/55) Installing ffmpegthumbnailer (2.4.2-r0)
-(43/55) Installing gstreamer (1.24.10-r0)
-(44/55) Installing gst-plugins-base (1.24.10-r0)
-(45/55) Installing libxml2 (2.13.5-r0)
-(46/55) Installing libgsf (1.14.60-r0)
-(47/55) Installing libxfce4util (4.20.1-r0)
-(48/55) Installing lcms2 (2.16-r0)
-(49/55) Installing libdeflate (1.26-r0)
-(50/55) Installing libwebp (1.6.0-r0)
-(51/55) Installing libtiff (4.7.2-r0)
-(52/55) Installing openjpeg (2.5.4-r0)
-(53/55) Installing poppler (25.12.0-r0)
-(54/55) Installing tumbler (4.20.2-r1)
-(55/55) Installing qnx-test-tumbler (1.0-r1)
-Executing glib-2.82.4-r0.trigger
-OK: 120.2 MiB in 60 packages
+( 1/59) Installing qnx-port-tests (1.0-r0)
+( 2/59) Installing libiconv (1.19.1-r0)
+( 3/59) Installing libunistring (1.5-r0)
+( 4/59) Installing ncurses (6.6-r0)
+( 5/59) Installing gettext (0.22.5-r0)
+( 6/59) Installing libffi (3.8.1-r0)
+( 7/59) Installing pcre2 (10.49-r0)
+( 8/59) Installing glib (2.90.1-r1)
+( 9/59) Installing libjpeg-turbo (3.2.1-r0)
+(10/59) Installing libpng (1.6.59-r0)
+(11/59) Installing gdk-pixbuf (2.44.8-r0)
+(12/59) Installing expat (2.6.4-r0)
+(13/59) Installing brotli (1.2.1-r0)
+(14/59) Installing bzip2 (1.0.8-r0)
+(15/59) Installing freetype (2.15.0-r0)
+(16/59) Installing fontconfig (2.18.4-r0)
+(17/59) Installing libxau (1.0.12-r0)
+(18/59) Installing libxdmcp (1.1.5-r0)
+(19/59) Installing libxcb (1.17.0-r0)
+(20/59) Installing libx11 (1.8.14-r0)
+(21/59) Installing libxext (1.3.7-r0)
+(22/59) Installing libxrender (0.9.13-r0)
+(23/59) Installing lzo (2.10-r0)
+(24/59) Installing pixman (0.46.4-r0)
+(25/59) Installing cairo (1.18.6-r0)
+(26/59) Installing c-ares (1.34.9-r0)
+(27/59) Installing libidn2 (2.3.8-r0)
+(28/59) Installing nghttp2 (1.71.0-r0)
+(29/59) Installing curl (8.23.0-r0)
+(30/59) Installing dav1d (1.5.5-r0)
+(31/59) Installing mpg123 (1.33.7-r0)
+(32/59) Installing lame (4.0-r0)
+(33/59) Installing libogg (1.3.6-r0)
+(34/59) Installing libtheora (1.2.0-r0)
+(35/59) Installing libvorbis (1.3.7-r0)
+(36/59) Installing libvpx (1.17.0-r0)
+(37/59) Installing openh264 (2.7.0-r0)
+(38/59) Installing opus (1.6.1-r0)
+(39/59) Installing x264 (0_git-r0)
+(40/59) Installing x265 (4.2-r0)
+(41/59) Installing xz (5.8.4-r0)
+(42/59) Installing ffmpeg (7.1.1-r3)
+(43/59) Installing ffmpegthumbnailer (2.4.2-r0)
+(44/59) Installing gstreamer (1.24.10-r0)
+(45/59) Installing gst-plugins-base (1.24.10-r1)
+(46/59) Installing libxml2 (2.13.5-r0)
+(47/59) Installing libgsf (1.14.60-r0)
+(48/59) Installing libxfce4util (4.20.1-r0)
+(49/59) Installing graphite2 (1.3.15-r0)
+(50/59) Installing icu (76.1-r0)
+(51/59) Installing harfbuzz (<ip>-r0)
+(52/59) Installing lcms2 (2.16-r0)
+(53/59) Installing libdeflate (1.26-r0)
+(54/59) Installing libwebp (1.6.0-r0)
+(55/59) Installing libtiff (4.7.2-r0)
+(56/59) Installing openjpeg (2.5.4-r0)
+(57/59) Installing poppler (26.11.0-r0)
+(58/59) Installing tumbler (4.20.2-r1)
+(59/59) Installing qnx-test-tumbler (1.0-r1)
+Executing glib-2.90.1-r1.trigger
+OK: 164.3 MiB in 64 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tumbler
      == tumbler ==
@@ -77,12 +81,12 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_t
        info flavour normal: 128x128
        ok   tumbler_file_info_load
        ok   no thumbnail yet: needs update
-       info ready: ¿Ò’À&
+       info ready: 
        ok   thumbnailer reported ready
-       info expecting /tmp/qnxport-tumbler-82157590/cache/thumbnails/normal/cf6010205372ff35c11c3430dab09ddf.png
+       info expecting /tmp/qnxport-tumbler-227868694/cache/thumbnails/normal/5caa94030ae54048321d39fc4178b4db.png
        ok   thumbnail at $XDG_CACHE_HOME/thumbnails/normal/<md5(uri)>.png
        ok   thumbnail decodes
-       info thumbnail 128x85, Thumb::URI file:///tmp/qnxport-tumbler-82157590/picture.png
+       info thumbnail 128x85, Thumb::URI file:///tmp/qnxport-tumbler-227868694/picture.png
        ok   scaled to 128 wide, aspect kept
        ok   Thumb::URI names the source
        info left 220,0,0 right 0,0,220

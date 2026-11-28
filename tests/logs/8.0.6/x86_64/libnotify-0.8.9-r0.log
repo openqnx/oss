@@ -1,21 +1,20 @@
 # libnotify 0.8.9-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:47:35Z   packages from: apk:local-dists
+# date: 2026-11-24T12:46:05Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libnotify qnx-test-libnotify qnx-port-tests
-(1/8) Installing libffi (3.4.6-r0)
-(2/8) Installing pcre2 (10.44-r0)
-(3/8) Installing glib (2.82.4-r0)
-(4/8) Installing libjpeg-turbo (3.0.4-r0)
-(5/8) Installing libpng (1.6.59-r0)
-(6/8) Installing gdk-pixbuf (2.42.12-r0)
-(7/8) Installing libnotify (0.8.9-r0)
-(8/8) Installing qnx-test-libnotify (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 492.3 MiB in 36 packages
+(1/7) Installing pcre2 (10.49-r0)
+(2/7) Installing glib (2.90.1-r1)
+(3/7) Installing libjpeg-turbo (3.2.1-r0)
+(4/7) Installing libpng (1.6.59-r0)
+(5/7) Installing gdk-pixbuf (2.44.8-r0)
+(6/7) Installing libnotify (0.8.9-r0)
+(7/7) Installing qnx-test-libnotify (1.0-r0)
+Executing glib-2.90.1-r1.trigger
+OK: 203.9 MiB in 46 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libnotify
      == libnotify ==
@@ -24,7 +23,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   app name
        ok   notify_notification_new
      
-     (process:515604503): libnotify-CRITICAL **: 00:47:30.202: notify_notification_add_action: assertion 'callback != NULL' failed
+     (process:348770327): libnotify-CRITICAL **: 12:46:03.316: notify_notification_add_action: assertion 'callback != NULL' failed
        ok   notify_notification_update
        info no notification daemon: Cannot spawn a message bus without a machine-id: Unable to load /var/local/lib/dbus/machine-id or /etc/machine-id: Failed to open file “/var/local/lib/dbus/machine-id”: No such file or directory
        ok   the absence of a daemon is reported as an error

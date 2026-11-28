@@ -1,0 +1,433 @@
+QNX: libc++ for the engine build.
+
+The QNX parts of qnx-ports' LLVM (thread API, __locale masks, csetjmp,
+filesystem, errno) and a locale base API for QNX written here
+(__locale_dir/support/qnx.h, after Fuchsia's): QNX's C library has no
+locale_t, newlocale or the *_l functions, so libc++ supports the "C" locale
+only and implements wcsnrtombs/mbsnrtowcs itself.
+
+diff --git a/engine/src/flutter/third_party/libcxx/include/__config b/engine/src/flutter/third_party/libcxx/include/__config
+index c8224b0..5d0ec58 100644
+--- a/engine/src/flutter/third_party/libcxx/include/__config
++++ b/engine/src/flutter/third_party/libcxx/include/__config
+@@ -312,8 +312,10 @@ _LIBCPP_HARDENING_MODE_DEBUG
+ #    define decltype(...) __decltype(__VA_ARGS__)
+ #    define _LIBCPP_CONSTEXPR
+ 
+-typedef __char16_t char16_t;
+-typedef __char32_t char32_t;
++#    if !defined(__QNX__)
++       typedef __char16_t char16_t;
++       typedef __char32_t char32_t;
++#    endif
+ 
+ #  endif
+ 
+@@ -828,7 +830,8 @@ typedef __char32_t char32_t;
+         defined(__APPLE__) ||                                                                                          \
+         defined(__MVS__) ||                                                                                            \
+         defined(_AIX) ||                                                                                               \
+-        defined(__EMSCRIPTEN__)
++        defined(__EMSCRIPTEN__) ||                                                                                     \
++        defined(__QNX__)
+ // clang-format on
+ #      undef _LIBCPP_HAS_THREAD_API_PTHREAD
+ #      define _LIBCPP_HAS_THREAD_API_PTHREAD 1
+@@ -853,6 +856,8 @@ typedef __char32_t char32_t;
+ #      else
+ #        define _LIBCPP_HAS_COND_CLOCKWAIT 0
+ #      endif
++#    elif defined(__QNX__)
++#      define _LIBCPP_HAS_COND_CLOCKWAIT 1
+ #    else
+ #      define _LIBCPP_HAS_COND_CLOCKWAIT 0
+ #    endif
+diff --git a/engine/src/flutter/third_party/libcxx/include/__cxx03/__config b/engine/src/flutter/third_party/libcxx/include/__cxx03/__config
+index 880d14a..076e923 100644
+--- a/engine/src/flutter/third_party/libcxx/include/__cxx03/__config
++++ b/engine/src/flutter/third_party/libcxx/include/__cxx03/__config
+@@ -331,8 +331,10 @@ _LIBCPP_HARDENING_MODE_DEBUG
+ #    define decltype(...) __decltype(__VA_ARGS__)
+ #    define _LIBCPP_CONSTEXPR
+ 
+-typedef __char16_t char16_t;
+-typedef __char32_t char32_t;
++#    if !defined(__QNX__)
++       typedef __char16_t char16_t;
++       typedef __char32_t char32_t;
++#    endif
+ 
+ #  endif
+ 
+@@ -817,7 +819,8 @@ typedef __char32_t char32_t;
+         defined(__APPLE__) ||                                                                                          \
+         defined(__MVS__) ||                                                                                            \
+         defined(_AIX) ||                                                                                               \
+-        defined(__EMSCRIPTEN__)
++        defined(__EMSCRIPTEN__) ||                                                                                     \
++        defined(__QNX__)
+ // clang-format on
+ #      define _LIBCPP_HAS_THREAD_API_PTHREAD
+ #    elif defined(__Fuchsia__)
+@@ -833,6 +836,8 @@ typedef __char32_t char32_t;
+ #  if defined(_LIBCPP_HAS_THREAD_API_PTHREAD)
+ #    if defined(__ANDROID__) && __ANDROID_API__ >= 30
+ #      define _LIBCPP_HAS_COND_CLOCKWAIT
++#    elif defined(__QNX__)
++#      define _LIBCPP_HAS_COND_CLOCKWAIT
+ #    elif defined(_LIBCPP_GLIBC_PREREQ)
+ #      if _LIBCPP_GLIBC_PREREQ(2, 30)
+ #        define _LIBCPP_HAS_COND_CLOCKWAIT
+diff --git a/engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp b/engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp
+index 5eeda2d..68f3879 100644
+--- a/engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp
++++ b/engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp
+@@ -47,7 +47,16 @@ void longjmp(jmp_buf env, int val);
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+ using ::jmp_buf _LIBCPP_USING_IF_EXISTS;
++
++#if defined(__QNX__)
++#  undef longjmp
++[[noreturn]] inline void longjmp(jmp_buf __env, int __val)
++{
++    ::siglongjmp(__env, __val);
++}
++#else
+ using ::longjmp _LIBCPP_USING_IF_EXISTS;
++#endif
+ 
+ _LIBCPP_END_NAMESPACE_STD
+ 
+diff --git a/engine/src/flutter/third_party/libcxx/include/__locale b/engine/src/flutter/third_party/libcxx/include/__locale
+index 5ae3228..f4580b3 100644
+--- a/engine/src/flutter/third_party/libcxx/include/__locale
++++ b/engine/src/flutter/third_party/libcxx/include/__locale
+@@ -408,6 +408,19 @@ public:
+ #  define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
+ #  define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_ALPHA
+ #  define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_XDIGIT
++#elif defined(__QNX__)
++  typedef short mask;
++  static const mask space  = (_CN|_SP|_XS);
++  static const mask print  = (_DI|_LO|_PU|_SP|_UP|_XA);
++  static const mask cntrl  = _BB;
++  static const mask upper  = _UP;
++  static const mask lower  = _LO;
++  static const mask alpha  = (_LO|_UP|_XA);
++  static const mask digit  = _DI;
++  static const mask punct  = _PU;
++  static const mask xdigit = _XD;
++  static const mask blank  = (_SP|_XB);
++  static const mask __regex_word = 0x1000;
+ #elif defined(__MVS__)
+ #  if defined(__NATIVE_ASCII_F)
+   typedef unsigned int mask;
+diff --git a/engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h b/engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h
+index 9291694..c40ced4 100644
+--- a/engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h
++++ b/engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h
+@@ -115,6 +115,8 @@
+ #  include <__locale_dir/support/apple.h>
+ #elif defined(__FreeBSD__)
+ #  include <__locale_dir/support/freebsd.h>
++#elif defined(__QNX__)
++#  include <__locale_dir/support/qnx.h>
+ #elif defined(_LIBCPP_MSVCRT_LIKE)
+ #  include <__locale_dir/support/windows.h>
+ #elif defined(__Fuchsia__)
+diff --git a/engine/src/flutter/third_party/libcxx/include/__locale_dir/support/qnx.h b/engine/src/flutter/third_party/libcxx/include/__locale_dir/support/qnx.h
+new file mode 100644
+index 0000000..a87910f
+--- /dev/null
++++ b/engine/src/flutter/third_party/libcxx/include/__locale_dir/support/qnx.h
+@@ -0,0 +1,227 @@
++//===-----------------------------------------------------------------------===//
++//
++// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
++// See https://llvm.org/LICENSE.txt for license information.
++// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
++//
++//===----------------------------------------------------------------------===//
++
++#ifndef _LIBCPP___LOCALE_DIR_SUPPORT_QNX_H
++#define _LIBCPP___LOCALE_DIR_SUPPORT_QNX_H
++
++// QNX Neutrino: the C library has no locale_t / newlocale / uselocale and no
++// *_l functions. Like Fuchsia, character classification and number parsing
++// use the no_locale fallbacks; locales other than "C"/"POSIX" are reported as
++// unavailable (newlocale returns null, so std::locale("xx") throws).
++
++#include <__config>
++#include <__utility/forward.h>
++#include <clocale>
++#include <climits>
++#include <cstring>
++#include <cstdio>
++#include <cstdlib>
++#include <cwchar>
++
++#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
++#  pragma GCC system_header
++#endif
++
++_LIBCPP_BEGIN_NAMESPACE_STD
++namespace __locale {
++
++struct __qnx_c_locale {};
++inline __qnx_c_locale __qnx_c_locale_object;
++
++struct __locale_guard {
++  _LIBCPP_HIDE_FROM_ABI __locale_guard(__qnx_c_locale*&) {}
++  __locale_guard(__locale_guard const&)            = delete;
++  __locale_guard& operator=(__locale_guard const&) = delete;
++};
++
++//
++// Locale management
++//
++#define _LIBCPP_COLLATE_MASK LC_COLLATE_MASK
++#define _LIBCPP_CTYPE_MASK LC_CTYPE_MASK
++#define _LIBCPP_MONETARY_MASK LC_MONETARY_MASK
++#define _LIBCPP_NUMERIC_MASK LC_NUMERIC_MASK
++#define _LIBCPP_TIME_MASK LC_TIME_MASK
++#define _LIBCPP_MESSAGES_MASK LC_MESSAGES_MASK
++#define _LIBCPP_ALL_MASK LC_ALL_MASK
++#define _LIBCPP_LC_ALL LC_ALL
++
++#ifndef LC_COLLATE_MASK
++// QNX's LC_* category values are already bit masks (_M_*).
++#  define LC_COLLATE_MASK _M_COLLATE
++#  define LC_CTYPE_MASK _M_CTYPE
++#  define LC_MONETARY_MASK _M_MONETARY
++#  define LC_NUMERIC_MASK _M_NUMERIC
++#  define LC_TIME_MASK _M_TIME
++#  define LC_MESSAGES_MASK _M_MESSAGES
++#  define LC_ALL_MASK _M_ALL
++#endif
++
++using __locale_t _LIBCPP_NODEBUG = __qnx_c_locale*;
++
++#if defined(_LIBCPP_BUILDING_LIBRARY)
++using __lconv_t _LIBCPP_NODEBUG = std::lconv;
++
++inline _LIBCPP_HIDE_FROM_ABI __locale_t __newlocale(int __category_mask, const char* __name, __locale_t __loc) {
++  (void)__category_mask;
++  (void)__loc;
++  if (__name == nullptr || __name[0] == '\0' || std::strcmp(__name, "C") == 0 || std::strcmp(__name, "POSIX") == 0)
++    return &__qnx_c_locale_object;
++  return nullptr;
++}
++
++inline _LIBCPP_HIDE_FROM_ABI void __freelocale(__locale_t) {}
++
++inline _LIBCPP_HIDE_FROM_ABI char* __setlocale(int __category, char const* __locale) {
++  return ::setlocale(__category, __locale);
++}
++
++inline _LIBCPP_HIDE_FROM_ABI __lconv_t* __localeconv(__locale_t& __loc) {
++  __locale_guard __current(__loc);
++  return std::localeconv();
++}
++
++//
++// Other functions
++//
++inline _LIBCPP_HIDE_FROM_ABI decltype(MB_CUR_MAX) __mb_len_max(__locale_t __loc) {
++  __locale_guard __current(__loc);
++  return MB_CUR_MAX;
++}
++#  if _LIBCPP_HAS_WIDE_CHARACTERS
++inline _LIBCPP_HIDE_FROM_ABI wint_t __btowc(int __ch, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::btowc(__ch);
++}
++inline _LIBCPP_HIDE_FROM_ABI int __wctob(wint_t __ch, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::wctob(__ch);
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t
++__wcsnrtombs(char* __dest, const wchar_t** __src, size_t __nwc, size_t __len, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  // QNX has no wcsnrtombs(): convert at most __nwc wide characters.
++  size_t __out = 0;
++  const wchar_t* __p = *__src;
++  char __buf[MB_LEN_MAX];
++  for (; __nwc > 0; --__nwc, ++__p) {
++    size_t __r = std::wcrtomb(__dest ? __buf : __buf, *__p, __ps);
++    if (__r == static_cast<size_t>(-1)) {
++      *__src = __p;
++      return __r;
++    }
++    if (__dest) {
++      if (__out + __r > __len)
++        break;
++      std::memcpy(__dest + __out, __buf, __r);
++    }
++    __out += __r;
++    if (*__p == L'\0') {
++      if (__dest)
++        *__src = nullptr;
++      return __out - 1;
++    }
++  }
++  if (__dest)
++    *__src = __p;
++  return __out;
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t __wcrtomb(char* __s, wchar_t __ch, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::wcrtomb(__s, __ch, __ps);
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t
++__mbsnrtowcs(wchar_t* __dest, const char** __src, size_t __nms, size_t __len, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  // QNX has no mbsnrtowcs(): convert at most __nms bytes.
++  size_t __out = 0;
++  const char* __p = *__src;
++  while (__nms > 0 && (__dest == nullptr || __out < __len)) {
++    wchar_t __wc;
++    size_t __r = std::mbrtowc(&__wc, __p, __nms, __ps);
++    if (__r == static_cast<size_t>(-1)) {
++      if (__dest)
++        *__src = __p;
++      return __r;
++    }
++    if (__r == static_cast<size_t>(-2))
++      break;
++    if (__dest)
++      __dest[__out] = __wc;
++    if (__r == 0) {
++      if (__dest)
++        *__src = nullptr;
++      return __out;
++    }
++    __p += __r;
++    __nms -= __r;
++    ++__out;
++  }
++  if (__dest)
++    *__src = __p;
++  return __out;
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t
++__mbrtowc(wchar_t* __pwc, const char* __s, size_t __n, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::mbrtowc(__pwc, __s, __n, __ps);
++}
++inline _LIBCPP_HIDE_FROM_ABI int __mbtowc(wchar_t* __pwc, const char* __pmb, size_t __max, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::mbtowc(__pwc, __pmb, __max);
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t __mbrlen(const char* __s, size_t __n, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return std::mbrlen(__s, __n, __ps);
++}
++inline _LIBCPP_HIDE_FROM_ABI size_t
++__mbsrtowcs(wchar_t* __dest, const char** __src, size_t __len, mbstate_t* __ps, __locale_t __loc) {
++  __locale_guard __current(__loc);
++  return ::mbsrtowcs(__dest, __src, __len, __ps);
++}
++#  endif // _LIBCPP_HAS_WIDE_CHARACTERS
++#endif   // _LIBCPP_BUILDING_LIBRARY
++
++_LIBCPP_DIAGNOSTIC_PUSH
++_LIBCPP_CLANG_DIAGNOSTIC_IGNORED("-Wgcc-compat")
++_LIBCPP_GCC_DIAGNOSTIC_IGNORED("-Wformat-nonliteral") // GCC doesn't support [[gnu::format]] on variadic templates
++#ifdef _LIBCPP_COMPILER_CLANG_BASED
++#  define _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT(...) _LIBCPP_ATTRIBUTE_FORMAT(__VA_ARGS__)
++#else
++#  define _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT(...) /* nothing */
++#endif
++
++template <class... _Args>
++_LIBCPP_HIDE_FROM_ABI _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT(__printf__, 4, 5) int __snprintf(
++    char* __s, size_t __n, __locale_t __loc, const char* __format, _Args&&... __args) {
++  __locale_guard __current(__loc);
++  return std::snprintf(__s, __n, __format, std::forward<_Args>(__args)...);
++}
++template <class... _Args>
++_LIBCPP_HIDE_FROM_ABI _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT(__printf__, 3, 4) int __asprintf(
++    char** __s, __locale_t __loc, const char* __format, _Args&&... __args) {
++  __locale_guard __current(__loc);
++  return ::asprintf(__s, __format, std::forward<_Args>(__args)...); // non-standard
++}
++template <class... _Args>
++_LIBCPP_HIDE_FROM_ABI _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT(__scanf__, 3, 4) int __sscanf(
++    const char* __s, __locale_t __loc, const char* __format, _Args&&... __args) {
++  __locale_guard __current(__loc);
++  return std::sscanf(__s, __format, std::forward<_Args>(__args)...);
++}
++
++_LIBCPP_DIAGNOSTIC_POP
++#undef _LIBCPP_VARIADIC_ATTRIBUTE_FORMAT
++
++} // namespace __locale
++_LIBCPP_END_NAMESPACE_STD
++
++#include <__locale_dir/support/no_locale/characters.h>
++#include <__locale_dir/support/no_locale/strtonum.h>
++
++#endif // _LIBCPP___LOCALE_DIR_SUPPORT_QNX_H
+diff --git a/engine/src/flutter/third_party/libcxx/include/csetjmp b/engine/src/flutter/third_party/libcxx/include/csetjmp
+index 39ab035..7c6fd88 100644
+--- a/engine/src/flutter/third_party/libcxx/include/csetjmp
++++ b/engine/src/flutter/third_party/libcxx/include/csetjmp
+@@ -50,7 +50,16 @@ void longjmp(jmp_buf env, int val);
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+ using ::jmp_buf _LIBCPP_USING_IF_EXISTS;
++
++#if defined(__QNX__)
++#  undef longjmp
++[[noreturn]] inline void longjmp(jmp_buf __env, int __val)
++{
++    ::siglongjmp(__env, __val);
++}
++#else
+ using ::longjmp _LIBCPP_USING_IF_EXISTS;
++#endif
+ 
+ _LIBCPP_END_NAMESPACE_STD
+ 
+diff --git a/engine/src/flutter/third_party/libcxx/src/filesystem/posix_compat.h b/engine/src/flutter/third_party/libcxx/src/filesystem/posix_compat.h
+index ddd99d8..bcdfe93 100644
+--- a/engine/src/flutter/third_party/libcxx/src/filesystem/posix_compat.h
++++ b/engine/src/flutter/third_party/libcxx/src/filesystem/posix_compat.h
+@@ -475,7 +475,9 @@ using ::stat;
+ using ::statvfs;
+ using ::truncate;
+ 
+-#  define O_BINARY 0
++#  ifndef O_BINARY
++#    define O_BINARY 0
++#  endif
+ 
+ using StatVFS = struct statvfs;
+ using ModeT   = ::mode_t;
+diff --git a/engine/src/flutter/third_party/libcxx/src/include/config_elast.h b/engine/src/flutter/third_party/libcxx/src/include/config_elast.h
+index 7edff2d..3614758 100644
+--- a/engine/src/flutter/third_party/libcxx/src/include/config_elast.h
++++ b/engine/src/flutter/third_party/libcxx/src/include/config_elast.h
+@@ -43,6 +43,8 @@
+ #  define _LIBCPP_ELAST (_sys_nerr - 1)
+ #elif defined(_AIX)
+ #  define _LIBCPP_ELAST 127
++#elif defined(__QNX__)
++# define _LIBCPP_ELAST (sys_nerr - 1)
+ #else
+ // Warn here so that the person doing the libcxx port has an easier time:
+ #  warning ELAST for this platform not yet implemented
+diff --git a/engine/src/flutter/third_party/libcxx/src/locale.cpp b/engine/src/flutter/third_party/libcxx/src/locale.cpp
+index 9ea59a3..34af3a6 100644
+--- a/engine/src/flutter/third_party/libcxx/src/locale.cpp
++++ b/engine/src/flutter/third_party/libcxx/src/locale.cpp
+@@ -997,6 +997,8 @@ const ctype<char>::mask* ctype<char>::classic_table() noexcept {
+   return _ctype_ + 1;
+ #  elif defined(_AIX)
+   return (const unsigned int*)__lc_ctype_ptr->obj->mask;
++#  elif defined(__QNX__)
++  return &_Getchrtype(0);
+ #  elif defined(__MVS__)
+ #    if defined(__NATIVE_ASCII_F)
+   return const_cast<const ctype<char>::mask*>(__OBJ_DATA(__lc_ctype_a)->mask);

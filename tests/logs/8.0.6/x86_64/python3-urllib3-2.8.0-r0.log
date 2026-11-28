@@ -1,37 +1,26 @@
 # python3-urllib3 2.8.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:09:50Z   packages from: apk:local-dists
+# date: 2026-11-24T13:02:07Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-urllib3 qnx-test-python3-boto3 qnx-port-tests
-( 1/19) Installing bzip2 (1.0.8-r0)
-( 2/19) Installing expat (2.6.4-r0)
-( 3/19) Installing gdbm (1.24-r0)
-( 4/19) Installing libiconv (1.18-r0)
-( 5/19) Installing libunistring (1.3-r0)
-( 6/19) Installing gettext (0.22.5-r0)
-( 7/19) Installing libffi (3.4.6-r0)
-( 8/19) Installing sqlite (3.47.2-r0)
-( 9/19) Installing xz (5.6.3-r0)
-(10/19) Installing python3 (3.14.0-r0)
-(11/19) Installing python3-urllib3 (2.8.0-r0)
-(12/19) Installing qnx-port-tests (1.0-r0)
-(13/19) Installing python3-six (1.17.0-r0)
-(14/19) Installing python3-dateutil (2.9.0_p0-r0)
-(15/19) Installing python3-jmespath (1.1.0-r0)
-(16/19) Installing python3-botocore (1.43.123-r0)
-(17/19) Installing python3-s3transfer (0.19.3-r0)
-(18/19) Installing python3-boto3 (1.43.123-r0)
-(19/19) Installing qnx-test-python3-boto3 (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 156.1 MiB in 30 packages
+(1/8) Installing python3-urllib3 (2.8.0-r0)
+(2/8) Installing python3-six (1.17.0-r0)
+(3/8) Installing python3-dateutil (2.9.0_p0-r0)
+(4/8) Installing python3-jmespath (1.1.0-r0)
+(5/8) Installing python3-botocore (1.44.9-r0)
+(6/8) Installing python3-s3transfer (0.19.3-r0)
+(7/8) Installing python3-boto3 (1.44.9-r0)
+(8/8) Installing qnx-test-python3-boto3 (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 203.0 MiB in 47 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_boto3
      == python3-boto3 ==
-       info stub S3 at http://<ip>:60446
-       info boto3 1.43.123, botocore 1.43.123, s3transfer 0.19.3, jmespath 1.1.0, urllib3 2.8.0
+       info stub S3 at http://<ip>:11551
+       info boto3 1.44.9, botocore 1.44.9, s3transfer 0.19.3, jmespath 1.1.0, urllib3 2.8.0
        ok   boto3 imported from site-packages
        ok   botocore imported from site-packages
        ok   s3transfer imported from site-packages

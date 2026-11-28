@@ -1,0 +1,38 @@
+# openblas 0.3.34-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:47:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u openblas qnx-test-openblas qnx-port-tests
+(1/3) Installing openblas (0.3.34-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-openblas (1.0-r1)
+OK: 25.9 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_openblas
+     == openblas ==
+       info OpenBLAS 0.3.34 NO_AFFINITY HASWELL MAX_THREADS=64; core HASWELL; threads 4
+       ok   thread count reported
+       ok   ddot([1..4],[5..8]) = 70
+       ok   daxpy y += 2x
+       ok   dnrm2([3,4]) = 5
+       ok   idamax finds |-9|
+       ok   dgemv [[1,2,3],[4,5,6]]*[1,0,-1] = [-2,-2]
+       info dgemm = [58 64; 139 154]
+       ok   dgemm 2x3 * 3x2 = [58 64; 139 154]
+       ok   sgemm column-major 2x2 product
+       ok   dgemm 160x160 matches the naive product exactly
+       info dgesv info=0 x=[6 15 -23]
+       ok   LAPACKE_dgesv solves a 3x3 system
+       info eigenvalues 0.585786437627 2.000000000000 3.414213562373
+       ok   LAPACKE_dsyev: tridiag(-1,2,-1) eigenvalues 2-sqrt2, 2, 2+sqrt2
+       ok   dgetrf+dgetri inverse of [[4,7],[2,6]]
+       ok   dgesv reports a singular matrix
+     PASS openblas
+PASS test_openblas
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

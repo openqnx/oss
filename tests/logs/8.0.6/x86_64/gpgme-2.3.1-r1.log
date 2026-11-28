@@ -1,0 +1,63 @@
+# gpgme 2.3.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:41:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gpgme qnx-test-gpgme qnx-port-tests
+( 1/22) Installing bzip2 (1.0.8-r1)
+( 2/22) Installing brotli (1.2.1-r1)
+( 3/22) Installing gmp (6.3.0-r1)
+( 4/22) Installing libiconv (1.19.1-r1)
+( 5/22) Installing libunistring (1.5-r1)
+( 6/22) Installing ncurses (6.6-r1)
+( 7/22) Installing gettext (0.22.5-r1)
+( 8/22) Installing libidn2 (2.3.8-r1)
+( 9/22) Installing libtasn1 (4.21.0-r1)
+(10/22) Installing nettle (3.10.1-r1)
+(11/22) Installing gnutls (3.8.14-r2)
+(12/22) Installing libgpg-error (1.61-r1)
+(13/22) Installing libassuan (3.0.2-r2)
+(14/22) Installing libgcrypt (1.12.4-r1)
+(15/22) Installing libksba (1.9.1-r1)
+(16/22) Installing npth (1.8-r1)
+(17/22) Installing readline (8.3-r1)
+(18/22) Installing sqlite (3.47.2-r1)
+(19/22) Installing gnupg (2.5.24-r1)
+(20/22) Installing gpgme (2.3.1-r1)
+(21/22) Installing qnx-port-tests (1.0-r1)
+(22/22) Installing qnx-test-gpgme (1.0-r4)
+OK: 51.3 MiB in 27 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gpgme
+     == gpgme ==
+       info gpgme 2.3.1
+       ok   gpgme_check_version: 2.3.1
+       ok   OpenPGP engine usable
+       info engine /usr/local/bin/gpg 2.5.24
+       ok   OpenPGP engine: gpg 2.5.24
+       ok   context on the first scratch home
+       info fingerprint D391954B812A08D2C145BAE0EC947AC3474437CB
+       ok   ed25519 key created without passphrase (40-hex fingerprint)
+       ok   gpgme_get_key by fingerprint
+       ok   cv25519 encryption subkey added
+       ok   keylist: EdDSA signing primary, ECDH cv25519 encryption subkey
+       ok   keylist: the user id
+       ok   encrypted to the key (ASCII armour)
+       ok   decrypted: the plaintext back
+       ok   decrypt result: recipient is the cv25519 subkey
+       ok   detached signature made
+       ok   signature verifies: valid, by the key's fingerprint
+       ok   signature algorithm EdDSA
+       ok   altered data: GPG_ERR_BAD_SIGNATURE
+       ok   clear-text signature contains the message
+       ok   public key exported
+       ok   imported into the second home: 1 key, same fingerprint
+       ok   symmetric encryption (passphrase callback) decrypted in the other home
+     PASS gpgme
+PASS test_gpgme
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

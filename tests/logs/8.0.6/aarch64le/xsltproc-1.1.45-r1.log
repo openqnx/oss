@@ -1,0 +1,30 @@
+# xsltproc 1.1.45-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T01:21:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xsltproc qnx-test-xsltproc qnx-port-tests
+(1/5) Installing xz (5.8.4-r1)
+(2/5) Installing libxml2 (2.13.5-r1)
+(3/5) Installing libxslt (1.1.45-r1)
+(4/5) Installing xsltproc (1.1.45-r1)
+(5/5) Installing qnx-test-xsltproc (1.0-r2)
+OK: 13.1 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xsltproc
+     == xsltproc ==
+       info Using libxml 21305, libxslt 10145 and libexslt 825
+       ok   xsltproc uses libxslt 1.1.45
+       ok   grouping, sorting, sum and --stringparam: known result
+       ok   EXSLT str:tokenize and math:max
+       ok   -o writes the result file
+       ok   --xinclude merges the included document
+       ok   malformed stylesheet refused
+     PASS xsltproc
+PASS test_xsltproc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

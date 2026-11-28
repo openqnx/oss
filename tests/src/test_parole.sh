@@ -9,6 +9,7 @@
 # has a display, so a headless labwc (pixman renderer) is started for it.
 # Parole reads its settings through xfconf, which needs a D-Bus session bus:
 # a private one is started for the run (no dbus-launch/autolaunch here).
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL parole (qnxport-timeout.sh missing)"; exit 1; }
 echo "== parole =="
 fail=0
 ok() { echo "  ok   $1"; }; bad() { echo "  FAIL $1"; fail=$((fail+1)); }
@@ -33,10 +34,10 @@ LWP=$!
 i=0; while [ ! -S "$RT/wayland-0" ] && [ $i -lt 150 ]; do sleep 0.1; i=$((i+1)); done
 [ -S "$RT/wayland-0" ] && ok "labwc up (headless)" || bad "labwc: $(tail -n 2 labwc.log)"
 XDG_RUNTIME_DIR=$RT; WAYLAND_DISPLAY=wayland-0; GDK_BACKEND=wayland; export XDG_RUNTIME_DIR WAYLAND_DISPLAY GDK_BACKEND
-v=$(timeout 60 "$P/bin/parole" --version 2>&1 | grep -m1 "Parole Media Player")
+v=$(qto 60 "$P/bin/parole" --version 2>&1 | grep -m1 "Parole Media Player")
 echo "  info $v"
 case "$v" in *"4.20.0"*) ok "parole --version: 4.20.0" ;; *) bad "parole --version: $v" ;; esac
-h=$(timeout 60 "$P/bin/parole" --help 2>&1)
+h=$(qto 60 "$P/bin/parole" --help 2>&1)
 echo "$h" | grep -q -- "--play" && echo "$h" | grep -q -- "--volume" && ok "parole --help lists --play and --volume" || bad "parole --help: $(echo "$h" | head -n 3)"
 
 n=0; nb=0
@@ -49,7 +50,7 @@ done
 
 G=$P/bin/gst-launch-1.0
 if [ -x "$G" ]; then
-  timeout 60 "$G" -q audiotestsrc num-buffers=20 samplesperbuffer=1024 ! audio/x-raw,rate=44100,channels=2 ! audioconvert ! wavenc ! filesink location=t.wav > gst.out 2>&1
+  qto 60 "$G" -q audiotestsrc num-buffers=20 samplesperbuffer=1024 ! audio/x-raw,rate=44100,channels=2 ! audioconvert ! wavenc ! filesink location=t.wav > gst.out 2>&1
   sz=$(wc -c < t.wav 2>/dev/null | tr -d ' ')
   hd=$(head -c 12 t.wav 2>/dev/null | od -An -c | tr -d ' \n')
   echo "  info t.wav: ${sz:-0} bytes"

@@ -1,0 +1,40 @@
+# rsync 3.5.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:13:00Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u rsync qnx-test-rsync qnx-port-tests
+( 1/10) Installing qnx-port-tests (1.0-r1)
+( 2/10) Installing libiconv (1.19.1-r1)
+( 3/10) Installing libunistring (1.5-r1)
+( 4/10) Installing ncurses (6.6-r1)
+( 5/10) Installing gettext (0.22.5-r1)
+( 6/10) Installing libidn2 (2.3.8-r1)
+( 7/10) Installing lz4 (1.11.1-r1)
+( 8/10) Installing xxhash (0.8.4-r1)
+( 9/10) Installing rsync (3.5.2-r1)
+(10/10) Installing qnx-test-rsync (1.0-r1)
+OK: 27.0 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_rsync
+     == rsync ==
+       info rsync  version 3.5.2  protocol version 33
+       ok   -a copy: tree identical (diff -r)
+       ok   symlink preserved
+       ok   incremental: only a.txt transferred
+       ok   a.txt updated
+       ok   dry run itemizes the deletion
+       ok   dry run changed nothing
+       ok   --delete removed b.txt, --exclude kept junk.tmp untouched
+       ok   --exclude='*.tmp' on a fresh copy
+       ok   --checksum finds same-size same-mtime change
+       ok   daemon on <ip>:21448 lists module qnx
+       ok   pull over rsync:// (big.txt identical)
+     PASS rsync
+PASS test_rsync
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

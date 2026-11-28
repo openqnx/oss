@@ -1,0 +1,39 @@
+# flutter-engine 3.50.1-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T16:14:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u flutter-engine qnx-test-flutter-engine qnx-port-tests
+(1/8) Installing flutter-engine (3.50.1-r0)
+(2/8) Installing qnx-port-tests (1.0-r1)
+(3/8) Installing libffi (3.8.1-r1)
+(4/8) Installing wayland (1.26.0-r1)
+(5/8) Installing qnx-flutter-wayland (0.1-r0)
+(6/8) Installing flutter-counter-example (1.0-r1)
+(7/8) Installing flutter-engine-dev (3.50.1-r0)
+(8/8) Installing qnx-test-flutter-engine (1.0-r0)
+OK: 42.5 MiB in 13 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_flutter_engine
+     == flutter_engine ==
+       ok   procedure table complete
+       ok   release engine: runs AOT compiled Dart code
+       ok   engine clock advances (20 ms sleep)
+     embedder.cc (1732): 'FlutterEngineCreateAOTData' returned 'kInvalidArguments'. Invalid ELF path specified.
+       ok   a missing AOT ELF is refused
+       ok   the counter app's AOT ELF loads
+       ok   engine runs the app (software renderer)
+       ok   window metrics 320x240 accepted
+       info 1 frame(s), last 320x240
+       ok   frames presented within 15 s
+       ok   frames have the window size 320x240
+       ok   the app's surface is painted (light body colour in the middle)
+       ok   engine shuts down
+     PASS flutter_engine
+PASS test_flutter_engine
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,39 @@
+# capicxx-someip-runtime 3.2.4-r2 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:33:04Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u capicxx-someip-runtime qnx-test-capicxx-someip-runtime qnx-port-tests
+(1/9) Installing capicxx-core-runtime (3.2.4-r1)
+(2/9) Installing bzip2 (1.0.8-r1)
+(3/9) Installing libiconv (1.19.1-r1)
+(4/9) Installing xz (5.8.4-r1)
+(5/9) Installing boost (1.86.0-r1)
+(6/9) Installing vsomeip (3.8.0-r1)
+(7/9) Installing capicxx-someip-runtime (3.2.4-r2)
+(8/9) Installing qnx-port-tests (1.0-r1)
+(9/9) Installing qnx-test-capicxx-someip-runtime (1.0-r2)
+OK: 129.7 MiB in 14 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_capicxx_someip_runtime
+     [CAPI][INFO] Loading configuration file /etc//commonapi-someip.ini
+     == capicxx-someip-runtime ==
+       ok   AddressTranslator singleton
+       ok   CommonAPI address -> SOME/IP service 0x1234 instance 0x5678
+       ok   SOME/IP address -> CommonAPI address
+       ok   method call message for service 0x1234 method 0x0421
+       ok   serialise uint32, int32, bool, double, string
+       info payload (28 bytes) 01020304fffffffe013ff800000000000000000007efbbbf514e5800
+       ok   big-endian wire bytes for the fixed-size values
+       ok   string bytes present after its length field
+       ok   deserialise without error
+       ok   values read back unchanged
+       ok   response message mirrors method and session
+     PASS capicxx-someip-runtime
+PASS test_capicxx_someip_runtime
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,6 +1,6 @@
 # libxdmcp 1.1.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:46:59Z   packages from: apk:local-dists
+# date: 2026-11-24T13:53:52Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -19,7 +19,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   packet marshalled, length as computed
        ok   header and first ARRAY8 are big-endian on the wire
        ok   UDP socket bound on <ip>
-       info XDMCP peer on <ip>:30686
+       info XDMCP peer on <ip>:25424
        ok   XdmcpFlush sends the datagram
        ok   XdmcpFill receives it whole
        ok   XdmcpReadHeader: version 1, QUERY, length

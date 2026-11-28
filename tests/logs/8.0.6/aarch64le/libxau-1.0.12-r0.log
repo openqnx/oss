@@ -1,6 +1,6 @@
 # libxau 1.0.12-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:47:45Z   packages from: apk:local-dists
+# date: 2026-11-24T13:52:32Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -21,7 +21,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   first entry reads back identical
        ok   second entry reads back identical
        ok   end of file after two entries
-       info XauFileName = /tmp/qnxport-xauth-8998934
+       info XauFileName = /tmp/qnxport-xauth-81379350
        ok   XauFileName honours XAUTHORITY
        ok   XauGetAuthByAddr finds the TCP entry
        ok   lookup by local host and display 7

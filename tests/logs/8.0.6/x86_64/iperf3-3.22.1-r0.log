@@ -1,30 +1,29 @@
 # iperf3 3.22.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-23T14:30:28Z   packages from: apk:local-dists
+# date: 2026-11-24T12:45:19Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u iperf3 qnx-test-iperf3 qnx-port-tests
-(1/3) Installing iperf3 (3.22.1-r0)
-(2/3) Installing qnx-port-tests (1.0-r0)
-(3/3) Installing qnx-test-iperf3 (1.0-r1)
-OK: 131.9 MiB in 21 packages
+(1/2) Installing iperf3 (3.22.1-r0)
+(2/2) Installing qnx-test-iperf3 (1.0-r1)
+OK: 180.6 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_iperf3
      == iperf3 ==
        ok   /usr/local/bin/iperf3 --version: iperf 3.22.1 (cJSON 1.7.15)
-       info server pid 817725468 on <ip>:15299
+       info server pid 342982680 on <ip>:15312
        ok   TCP client run completed (after 0 retries)
        ok   TCP: sum_sent is exactly 2097152 bytes
        ok   TCP: sum_received is exactly 2097152 bytes
-       info TCP loopback throughput: ee16743093.575293552 bit/s
+       info TCP loopback throughput: ee16766854.08417598 bit/s
        ok   TCP: JSON reports protocol TCP
        ok   reverse mode (-R): server sent 1048576 bytes to the client
        info UDP: sent 489 datagrams (500736 bytes), receiver counted 489, lost_packets=0
        ok   UDP: -n 256K sent 489 datagrams, every one 1024 bytes
        ok   UDP: the receiver accounted for all 489 datagrams
-       info server log: ----------------------------------------------------------- Server listening on 15299 (test #1) ----------------------------------------------------------- 
+       info server log: ----------------------------------------------------------- Server listening on 15312 (test #1) ----------------------------------------------------------- 
      PASS iperf3
 PASS test_iperf3
 --------------------------------------------

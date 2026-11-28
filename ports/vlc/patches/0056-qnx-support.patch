@@ -1,0 +1,283 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 11:37:16 -0400
+Subject: [PATCH 56/60] QNX support
+
+Get VLC building and working on QNX8. In theory it should work for 7.1
+as well, though I haven't tried.
+
+The main thing to note is that GLESv2 & EGL is used to display video
+output. With work Qt might have been able to supply a vout_window
+provider, or QNX specific vout_display and vout_window providers could
+have been written. I choose to use GLESv2 & EGL because I felt using a
+standardized API would be easier, and if there any fancy video effects
+they would probably be done via GL.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -359,6 +359,8 @@
+     ;;
+   *nto*)
+     SYS=nto
++    AC_SEARCH_LIBS(recvmsg, [socket])
++    AC_SEARCH_LIBS(sendmsg, [socket])
+     ;;
+   solaris*)
+     SYS=solaris
+@@ -485,6 +487,9 @@
+ ])
+ AM_CONDITIONAL(HAVE_TIZEN, test "${HAVE_TIZEN}" = "1")
+ 
++dnl QNX SDP8.0
++AM_CONDITIONAL(HAVE_QNX, test "${SYS}" = "nto")
++
+ dnl
+ dnl  Check for the contrib directory
+ dnl
+--- a/include/vlc_vout_window.h
++++ b/include/vlc_vout_window.h
+@@ -53,6 +53,7 @@
+     VOUT_WINDOW_TYPE_NSOBJECT /**< MacOS X view */,
+     VOUT_WINDOW_TYPE_ANDROID_NATIVE /**< Android native window */,
+     VOUT_WINDOW_TYPE_WAYLAND /**< Wayland surface */,
++    VOUT_WINDOW_TYPE_QNX /**< QNX Screen window */,
+ };
+ 
+ /**
+@@ -159,6 +160,7 @@
+         void     *nsobject;      /**< Mac OSX view object */
+         void     *anativewindow; /**< Android native window */
+         struct wl_surface *wl;   /**< Wayland surface (client pointer) */
++        void     *scrWin;        /**< QNX screen window */
+     } handle;
+ 
+     /** Display server (mandatory)
+--- a/modules/gui/qt/components/interface_widgets.cpp
++++ b/modules/gui/qt/components/interface_widgets.cpp
+@@ -160,6 +160,9 @@
+         case VOUT_WINDOW_TYPE_NSOBJECT:
+             p_wnd->handle.nsobject = (void *)stable->winId();
+             break;
++        case VOUT_WINDOW_TYPE_QNX:
++            p_wnd->handle.scrWin = (void *)stable->winId();
++            break;
+         default:
+             vlc_assert_unreachable();
+     }
+--- a/modules/gui/qt/qt.cpp
++++ b/modules/gui/qt/qt.cpp
+@@ -65,6 +65,20 @@
+  #endif
+ #endif
+ 
++#ifdef __QNXNTO__
++ #include <QtPlugin>
++
++ #ifdef QT_STATICPLUGIN
++  Q_IMPORT_PLUGIN(QQnxIntegrationPlugin)
++  Q_IMPORT_PLUGIN(QSvgIconPlugin)
++  Q_IMPORT_PLUGIN(QSvgPlugin)
++
++  #if !HAS_QT56
++   Q_IMPORT_PLUGIN(AccessibleFactory)
++  #endif
++ #endif
++#endif
++
+ /*****************************************************************************
+  * Local prototypes.
+  *****************************************************************************/
+@@ -646,6 +660,8 @@
+             p_sys->voutWindowType = VOUT_WINDOW_TYPE_HWND;
+         else if( platform == qfu("cocoa" ) )
+             p_sys->voutWindowType = VOUT_WINDOW_TYPE_NSOBJECT;
++        else if( platform == qfu("qnx" ) )
++            p_sys->voutWindowType = VOUT_WINDOW_TYPE_QNX;
+         else
+             msg_Err( p_intf, "unknown Qt platform: %s", qtu(platform) );
+ 
+--- a/modules/misc/gnutls.c
++++ b/modules/misc/gnutls.c
+@@ -110,6 +110,8 @@
+ {
+ #ifdef IOV_MAX
+     const long iovmax = IOV_MAX;
++#elif defined(UIO_MAXIOV)
++    const long iovmax = UIO_MAXIOV;
+ #else
+     const long iovmax = sysconf(_SC_IOV_MAX);
+ #endif
+--- a/modules/video_output/flaschen.c
++++ b/modules/video_output/flaschen.c
+@@ -176,6 +176,8 @@
+ {
+ #ifdef IOV_MAX
+     const long iovmax = IOV_MAX;
++#elif defined(UIO_MAXIOV)
++    const long iovmax = UIO_MAXIOV;
+ #else
+     const long iovmax = sysconf(_SC_IOV_MAX);
+ #endif
+--- a/modules/video_output/Makefile.am
++++ b/modules/video_output/Makefile.am
+@@ -419,6 +419,17 @@
+ endif
+ endif
+ 
++### QNX ###
++
++libegl_qnx_plugin_la_SOURCES = video_output/opengl/egl.c
++libegl_qnx_plugin_la_CFLAGS = $(AM_CFLAGS) $(EGL_CFLAGS) -DUSE_PLATFORM_QNX=1
++libegl_qnx_plugin_la_LIBADD = $(EGL_LIBS) -lGLESv2
++
++if HAVE_QNX
++if HAVE_EGL
++vout_LTLIBRARIES += libegl_qnx_plugin.la
++endif
++endif
+ 
+ ### FrameBuffer ###
+ 
+--- a/modules/video_output/opengl/egl.c
++++ b/modules/video_output/opengl/egl.c
+@@ -42,6 +42,9 @@
+ #if defined (USE_PLATFORM_ANDROID)
+ # include "../android/utils.h"
+ #endif
++#if defined (USE_PLATFORM_QNX)
++# include <screen/screen.h>
++#endif
+ 
+ typedef struct vlc_gl_sys_t
+ {
+@@ -56,10 +59,16 @@
+     struct wl_egl_window *window;
+     unsigned width, height;
+ #endif
++#if defined (USE_PLATFORM_QNX)
++    screen_window_t window;
++    EGLConfig cfg;
++#endif
+     PFNEGLCREATEIMAGEKHRPROC    eglCreateImageKHR;
+     PFNEGLDESTROYIMAGEKHRPROC   eglDestroyImageKHR;
+ } vlc_gl_sys_t;
+ 
++static EGLSurface CreateWindowSurface(EGLDisplay dpy, EGLConfig config, void *window, const EGLint *attrs);
++
+ static int MakeCurrent (vlc_gl_t *gl)
+ {
+     vlc_gl_sys_t *sys = gl->sys;
+@@ -89,6 +98,56 @@
+     sys->width = width;
+     sys->height = height;
+ }
++
++#elif defined(USE_PLATFORM_QNX)
++static void Resize (vlc_gl_t *gl, unsigned width, unsigned height)
++{
++    vlc_gl_sys_t *sys = gl->sys;
++    int dims[2] = {0, 0};
++    int buf_dims[2] = {0, 0};
++    EGLint surf_dims[2] = {0, 0};
++    int make_surface = 0;
++    int make_buffers;
++
++    /* The width/height passed into this function represent the width/height of the
++     * (scaled) video image on the display. NOT the surface that image is rendered to.
++     * Query to get the current size of the underlying window and use that instead
++     * as that seems to be the actual size of the entire window (video + letterboxing)
++     * that is supposed to be visible.
++     */
++    (void)width;
++    (void)height;
++    screen_get_window_property_iv(sys->window, SCREEN_PROPERTY_SIZE, dims);
++
++    /* Figure out if the window's buffers actually need a resize */
++    screen_get_window_property_iv(sys->window, SCREEN_PROPERTY_BUFFER_SIZE, buf_dims);
++    make_buffers = dims[0] != buf_dims[0] || dims[1] != buf_dims[1];
++
++    /* If there already is a surface, see if it needs to be changed */
++    if (sys->surface != EGL_NO_SURFACE) {
++        eglQuerySurface(sys->display, sys->surface, EGL_WIDTH, &surf_dims[0]);
++        eglQuerySurface(sys->display, sys->surface, EGL_HEIGHT, &surf_dims[1]);
++
++        if (make_buffers || dims[0] != surf_dims[0] || dims[1] != surf_dims[1]) {
++            eglDestroySurface(sys->display, sys->surface);
++            sys->surface = EGL_NO_SURFACE;
++            make_surface = 1;
++        }
++    }
++
++    /* Recreate the screen buffers if required */
++    if (make_buffers) {
++        screen_destroy_window_buffers(sys->window);
++        screen_set_window_property_iv(sys->window, SCREEN_PROPERTY_BUFFER_SIZE, dims);
++        screen_create_window_buffers(sys->window, 2);
++    }
++
++    /* Re-create the surface (if required) */
++    if (make_surface) {
++        sys->surface = CreateWindowSurface(sys->display, sys->cfg, &sys->window, NULL);
++    }
++}
++
+ #else
+ # define Resize (NULL)
+ #endif
+@@ -347,6 +406,30 @@
+     sys->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+ # endif
+ 
++#elif defined (USE_PLATFORM_QNX)
++    if (wnd->type != VOUT_WINDOW_TYPE_QNX)
++        goto error;
++    window = &wnd->handle.scrWin;
++
++    /* Make sure that the window supports GLES2 */
++    int iprop;
++    if (screen_get_window_property_iv(wnd->handle.scrWin, SCREEN_PROPERTY_USAGE, &iprop))
++        goto error;
++    iprop |= SCREEN_USAGE_OPENGL_ES2;
++    if (screen_set_window_property_iv(wnd->handle.scrWin, SCREEN_PROPERTY_USAGE, &iprop))
++        goto error;
++
++    /* Change transparency as QT sets it to DISCARD which makes it permanently invisible */
++    if (screen_get_window_property_iv(wnd->handle.scrWin, SCREEN_PROPERTY_TRANSPARENCY, &iprop))
++        goto error;
++    if (iprop == SCREEN_TRANSPARENCY_DISCARD) {
++        iprop = SCREEN_TRANSPARENCY_NONE;
++        if (screen_set_window_property_iv(wnd->handle.scrWin, SCREEN_PROPERTY_TRANSPARENCY, &iprop))
++            goto error;
++    }
++
++    sys->window = wnd->handle.scrWin;
++    sys->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+ #endif
+ 
+     if (sys->display == EGL_NO_DISPLAY)
+@@ -387,6 +470,9 @@
+         msg_Err (obj, "cannot choose EGL configuration");
+         goto error;
+     }
++#if defined (USE_PLATFORM_QNX)
++    sys->cfg = cfgv[0];
++#endif
+ 
+     /* Create a drawing surface */
+     sys->surface = createSurface(sys->display, cfgv[0], window, NULL);
+--- a/src/posix/thread.c
++++ b/src/posix/thread.c
+@@ -550,7 +550,11 @@
+     return thread;
+ }
+ 
+-#if !defined (__linux__)
++#if defined (__QNXNTO__)
++unsigned long vlc_thread_id (void) {
++    return gettid();
++}
++#elif !defined (__linux__)
+ unsigned long vlc_thread_id (void)
+ {
+      return -1;

@@ -1,0 +1,160 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 11:20:06 -0400
+Subject: [PATCH 13/60] Get contrib/asdcplib working on QNX
+
+Changes are:
+1. q++, by default, builds against libc++. However that requires at
+   least c++11 (unless one uses clang apparently). asdcplib deliberately
+   sets the standard to gnu++98. Update that standard to gnu++11 so that
+   libc++ works.
+
+2. Support QNX's /proc filesystem to discover the currently running
+   binary. This is needed by the libkumu source.
+
+3. Explicitly link in libregex to get access to the various posix
+   regex APIs.
+
+4. QNX has statvfs(), not statfs().
+
+3.0.24: asdcplib 2_13_2 no longer forces -std=gnu++98, so the -std=gnu++11
+override is gone; qnx-support.patch is applied after the upstream patches
+and rewritten for 2_13_2 (configure.ac case and asdcplib.pc.in from the
+upstream pkg-config patch).
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/asdcplib/0001-qnx-support.patch
++++ b/contrib/src/asdcplib/0001-qnx-support.patch
+@@ -0,0 +1,120 @@
++--- a/src/KM_fileio.cpp
+++++ b/src/KM_fileio.cpp
++@@ -52,6 +52,12 @@
++ #include <sys/sysctl.h>
++ #endif
++ 
+++#if defined(__QNXNTO__)
+++#include <fstream>
+++#include <string>
+++#include <unistd.h>
+++#endif
+++
++ using namespace Kumu;
++ 
++ #ifdef KM_WIN32
++@@ -69,6 +75,8 @@
++ #else
++ # if defined(__linux__)
++ #   include <sys/statfs.h>
+++# elif defined(__QNXNTO__)
+++#   include <sys/statvfs.h>
++ # else
++ #  include <sys/param.h>
++ #  include <sys/mount.h>
++@@ -685,6 +693,14 @@
++   char program[MAXPATHLEN];
++   snprintf(program, MAXPATHLEN, "/proc/%d/path/a.out", getpid());
++   ssize_t rc = readlink(program, path, size);
+++#elif defined(__QNXNTO__)
+++  std::string exepath;
+++  std::ifstream fin("/proc/self/exefile");
+++  std::getline(fin, exepath);
+++  size_t size = X_BUFSIZE;
+++  ssize_t rc = readlink(exepath.c_str(), path, size);
+++  success = ( rc != -1 );
+++
++ #else
++ #error GetExecutablePath --> Create a method for obtaining the executable name
++ #endif
++@@ -1582,7 +1598,7 @@
++   if ( m_Handle == 0 )
++     return RESULT_FILEOPEN;
++ 
++-#if (defined(__sun) && defined(__SVR4)) || defined(_WIN32)
+++#if (defined(__sun) && defined(__SVR4)) || defined(_WIN32) || defined(__QNXNTO__)
++   struct stat s;
++ #endif
++   struct dirent* entry;
++@@ -1597,7 +1613,7 @@
++ 
++   next_item_name.assign(entry->d_name, strlen(entry->d_name));
++ 
++-#if (defined(__sun) && defined(__SVR4)) || defined(_WIN32)
+++#if (defined(__sun) && defined(__SVR4)) || defined(_WIN32) || defined(__QNXNTO__)
++ 
++   stat(entry->d_name, &s);
++ 
++@@ -1831,7 +1847,11 @@
++   DefaultLogSink().Error("FreeSpaceForPath GetDiskFreeSpaceEx %s: %lu\n", path.c_str(), last_error);
++   return RESULT_FAIL;
++ #else // KM_WIN32
+++#if defined(__QNXNTO__)
+++  struct statvfs s;
+++#else
++   struct statfs s;
+++#endif
++ 
++ #if defined(__sun) && defined(__SVR4)
++   if ( statfs(path.c_str(), &s, s.f_bsize, s.f_fstyp ) == 0 )
++@@ -1847,7 +1867,11 @@
++       return RESULT_OK;
++     }
++ #else
+++#if defined(__QNXNTO__)
+++  if ( statvfs(path.c_str(), &s) == 0 )
+++#else
++   if ( statfs(path.c_str(), &s) == 0 )
+++#endif
++     {
++       if ( s.f_blocks < 1 )
++ 	{
++--- a/configure.ac
+++++ b/configure.ac
++@@ -49,11 +49,14 @@
++ # Checks for programs.
++ AC_CANONICAL_BUILD
++ AC_CANONICAL_HOST
+++openbsd_host=false
+++qnx_host=false
++ case $host_os in
++        openbsd*) openbsd_host=true ;;
++-       *)        openbsd_host=false ;;
+++       nto-qnx*) qnx_host=true ;;
++ esac
++ AM_CONDITIONAL([OPENBSD_HOST], [test x$openbsd_host = xtrue])
+++AM_CONDITIONAL([QNX_HOST], [test x$qnx_host = xtrue])
++ AC_PROG_CC
++ AC_PROG_CXX
++ AC_PROG_LIBTOOL
++--- a/src/Makefile.am
+++++ b/src/Makefile.am
++@@ -114,6 +114,9 @@
++ 
++ # linker flags (*not* including libraries to link against) for a library
++ libkumu_la_LDFLAGS = -release @VERSION@
+++if QNX_HOST
+++libkumu_la_LIBADD = -lregex
+++endif
++ 
++ 
++ # sources for asdcp library that don't get added to a distribution
++--- a/asdcplib.pc.in
+++++ b/asdcplib.pc.in
++@@ -7,5 +7,5 @@
++ Description: @CPACK_PACKAGE_DESCRIPTION_SUMMARY@
++ Version: @VERSION_STRING@
++ Cflags: -I${includedir}
++-Libs: -L${libdir} -lasdcp -lkumu
+++Libs: -L${libdir} -lasdcp -lkumu -lregex
++ Requires: nettle, gmp
+--- a/contrib/src/asdcplib/rules.mak
++++ b/contrib/src/asdcplib/rules.mak
+@@ -43,6 +43,9 @@
+ 	$(APPLY) $(SRC)/asdcplib/0005-Include-cstdint-where-int64_t-is-needed.patch
+ 	# call GetModuleFileNameA explicitly to build properly with UNICODE
+ 	sed -i.orig 's, GetModuleFileName(, ::GetModuleFileNameA(,' $(UNPACK_DIR)/src/KM_fileio.cpp
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/asdcplib/0001-qnx-support.patch
++endif
+ 	$(MOVE)
+ 
+ DEPS_asdcplib = nettle $(DEPS_nettle)

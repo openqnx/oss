@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- labwc for oss-greeter alone: no menu, no key or mouse binding that
+     starts, closes or switches anything. labwc loads its default bindings
+     (A-F4, W-Return terminal, ...) when rc.xml has no keybind or mousebind
+     at all, so each section holds one binding that does nothing. -->
+<labwc_config>
+  <core><decoration>server</decoration></core>
+  <keyboard>
+    <keybind key="XF86Sleep"><action name="None"/></keybind>
+  </keyboard>
+  <mouse>
+    <context name="Root">
+      <mousebind button="Middle" action="Press"><action name="None"/></mousebind>
+    </context>
+  </mouse>
+</labwc_config>

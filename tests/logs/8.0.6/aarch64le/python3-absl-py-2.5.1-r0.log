@@ -1,41 +1,42 @@
 # python3-absl-py 2.5.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:21:20Z   packages from: apk:local-dists
+# date: 2026-11-24T15:49:41Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-absl-py qnx-test-python3-pylibs-b qnx-port-tests
-( 1/28) Installing bzip2 (1.0.8-r0)
-( 2/28) Installing expat (2.6.4-r0)
-( 3/28) Installing gdbm (1.24-r0)
-( 4/28) Installing libiconv (1.18-r0)
-( 5/28) Installing libunistring (1.3-r0)
-( 6/28) Installing ncurses (6.5-r0)
-( 7/28) Installing gettext (0.22.5-r0)
-( 8/28) Installing libffi (3.4.6-r0)
-( 9/28) Installing readline (8.2-r0)
-(10/28) Installing sqlite (3.47.2-r0)
-(11/28) Installing xz (5.6.3-r0)
-(12/28) Installing python3 (3.14.0-r0)
-(13/28) Installing python3-absl-py (2.5.1-r0)
-(14/28) Installing qnx-port-tests (1.0-r0)
-(15/28) Installing openblas (0.3.28-r0)
-(16/28) Installing numpy (2.3.4-r0)
-(17/28) Installing python3-gast (0.7.0-r0)
-(18/28) Installing python3-beniget (0.5.0-r0)
-(19/28) Installing python3-bracex (3.2.1-r0)
-(20/28) Installing python3-setuptools (80.8.0-r0)
-(21/28) Installing python3-cppy (1.3.1-r0)
-(22/28) Installing python3-distro (1.9.0-r0)
-(23/28) Installing python3-appdirs (1.4.4-r0)
-(24/28) Installing python3-six (1.17.0-r0)
-(25/28) Installing python3-fs (2.4.16-r0)
-(26/28) Installing python3-opt-einsum (3.4.0-r0)
-(27/28) Installing python3-py (1.11.0-r0)
-(28/28) Installing qnx-test-python3-pylibs-b (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 170.2 MiB in 33 packages
+( 1/29) Installing bzip2 (1.0.8-r0)
+( 2/29) Installing expat (2.6.4-r0)
+( 3/29) Installing gdbm (1.26-r0)
+( 4/29) Installing libiconv (1.19.1-r0)
+( 5/29) Installing libunistring (1.5-r0)
+( 6/29) Installing ncurses (6.6-r0)
+( 7/29) Installing gettext (0.22.5-r0)
+( 8/29) Installing libffi (3.8.1-r0)
+( 9/29) Installing libuuid (2.42.4-r0)
+(10/29) Installing readline (8.3-r0)
+(11/29) Installing sqlite (3.47.2-r0)
+(12/29) Installing xz (5.8.4-r0)
+(13/29) Installing python3 (3.14.0-r1)
+(14/29) Installing python3-absl-py (2.5.1-r0)
+(15/29) Installing qnx-port-tests (1.0-r0)
+(16/29) Installing openblas (0.3.34-r0)
+(17/29) Installing numpy (2.5.5-r0)
+(18/29) Installing python3-gast (0.7.0-r0)
+(19/29) Installing python3-beniget (0.5.1-r0)
+(20/29) Installing python3-bracex (3.2.4-r0)
+(21/29) Installing python3-setuptools (80.8.0-r0)
+(22/29) Installing python3-cppy (1.3.1-r0)
+(23/29) Installing python3-distro (1.9.0-r0)
+(24/29) Installing python3-appdirs (1.4.4-r0)
+(25/29) Installing python3-six (1.17.0-r0)
+(26/29) Installing python3-fs (2.4.16-r0)
+(27/29) Installing python3-opt-einsum (3.4.0-r0)
+(28/29) Installing python3-py (1.11.0-r0)
+(29/29) Installing qnx-test-python3-pylibs-b (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 171.8 MiB in 34 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pylibs_b
      == python3-pylibs-b ==

@@ -1,12 +1,12 @@
 # perl-encode-locale 1.05-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:05:10Z   packages from: apk:local-dists
+# date: 2026-11-24T14:56:15Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-encode-locale qnx-test-perl-html qnx-port-tests
-( 1/14) Installing libxcrypt (4.4.38-r0)
+( 1/14) Installing libxcrypt (4.5.2-r0)
 ( 2/14) Installing perl (5.40.2-r0)
 ( 3/14) Installing perl-encode-locale (1.05-r0)
 ( 4/14) Installing qnx-port-tests (1.0-r0)
@@ -18,14 +18,14 @@ $ apk add -u perl-encode-locale qnx-test-perl-html qnx-port-tests
 (10/14) Installing perl-mime-base32 (1.303-r0)
 (11/14) Installing perl-uri (5.40-r0)
 (12/14) Installing perl-http-message (7.04-r0)
-(13/14) Installing perl-html-parser (3.86-r0)
+(13/14) Installing perl-html-parser (3.87-r0)
 (14/14) Installing qnx-test-perl-html (1.0-r0)
 OK: 74.1 MiB in 19 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_html
      == perl-html-parser, perl-html-tagset, perl-io-html, perl-encode-locale ==
        ok   HTML::Parser event stream
-       ok   HTML::Parser version 3.86
+       ok   HTML::Parser version 3.87
        ok   decode_entities
        ok   encode_entities
        ok   encode_entities with a character class

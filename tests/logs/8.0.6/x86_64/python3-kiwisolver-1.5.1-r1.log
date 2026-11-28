@@ -1,0 +1,89 @@
+# python3-kiwisolver 1.5.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:01:18Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-kiwisolver qnx-test-python3-matplotlib qnx-port-tests
+( 1/42) Installing bzip2 (1.0.8-r1)
+( 2/42) Installing expat (2.6.4-r1)
+( 3/42) Installing gdbm (1.26-r1)
+( 4/42) Installing libiconv (1.19.1-r1)
+( 5/42) Installing libunistring (1.5-r1)
+( 6/42) Installing ncurses (6.6-r1)
+( 7/42) Installing gettext (0.22.5-r1)
+( 8/42) Installing libffi (3.8.1-r1)
+( 9/42) Installing readline (8.3-r1)
+(10/42) Installing sqlite (3.47.2-r1)
+(11/42) Installing xz (5.8.4-r1)
+(12/42) Installing python3 (3.14.0-r2)
+(13/42) Installing python3-kiwisolver (1.5.1-r1)
+(14/42) Installing qnx-port-tests (1.0-r1)
+(15/42) Installing openblas (0.3.34-r1)
+(16/42) Installing numpy (2.5.5-r1)
+(17/42) Installing python3-contourpy (1.4.0-r1)
+(18/42) Installing python3-cycler (0.12.1-r1)
+(19/42) Installing python3-six (1.17.0-r1)
+(20/42) Installing python3-dateutil (2.9.0_p0-r1)
+(21/42) Installing python3-fonttools (4.68.0-r1)
+(22/42) Installing brotli (1.2.1-r1)
+(23/42) Installing libpng (1.6.59-r1)
+(24/42) Installing freetype (2.15.0-r1)
+(25/42) Installing fribidi (1.0.18-r1)
+(26/42) Installing pcre2 (10.49-r1)
+(27/42) Installing glib (2.90.1-r3)
+(28/42) Installing graphite2 (1.3.15-r1)
+(29/42) Installing icu (76.1-r1)
+(30/42) Installing harfbuzz (<ip>-r1)
+(31/42) Installing libraqm (0.11.0-r1)
+(32/42) Installing python3-packaging (25.0-r1)
+(33/42) Installing lcms2 (2.16-r1)
+(34/42) Installing libjpeg-turbo (3.2.1-r1)
+(35/42) Installing libwebp (1.6.0-r1)
+(36/42) Installing libtiff (4.7.2-r1)
+(37/42) Installing openjpeg (2.5.4-r1)
+(38/42) Installing python3-pillow (13.0.0-r1)
+(39/42) Installing python3-pyparsing (3.3.3-r1)
+(40/42) Installing qhull (8.0.2-r1)
+(41/42) Installing python3-matplotlib (3.11.2-r1)
+(42/42) Installing qnx-test-python3-matplotlib (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+Executing glib-2.90.1-r3.trigger
+OK: 273.5 MiB in 47 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_matplotlib
+     == python3-matplotlib ==
+       info matplotlib 3.11.2, backend Agg
+       ok   4x3 in at 50 dpi -> 200x150 PNG
+       ok   left half red, right half blue
+       ok   line plot with title to PNG
+       ok   bundled DejaVu Sans found
+       info 'QNX' at 12 pt: 1664 x 672 (1/64 px)
+       ok   text extent grows with the string
+       ok   rendered text has dark pixels
+       ok   mathtext rendered
+       ok   pdf output
+       ok   svg output
+       ok   ps output
+       ok   eps output
+       ok   Delaunay of a square + centre: 4 triangles, 8 edges (Qhull)
+       ok   linear interpolation on the triangulation
+       ok   contourpy: one closed line at z = 0.25
+       ok   contourpy: the line is the circle r = 0.5
+       ok   contourpy: filled contour 0..0.25
+       ok   ax.contour levels
+       ok   kiwisolver: a+b=10, a-b=4 -> 7, 3
+       ok   kiwisolver: weak x == 2 loses to required x >= 5
+       ok   constrained layout separates the axes
+       ok   cycler product
+       ok   axes property cycle
+       ok   fontTools: DejaVu Sans, 2048 units/em
+       ok   fontTools: cmap and advance of 'A'
+       ok   matplotlib.dates epoch
+     PASS python3-matplotlib
+PASS test_python3_matplotlib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

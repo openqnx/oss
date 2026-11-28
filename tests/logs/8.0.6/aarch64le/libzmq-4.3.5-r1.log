@@ -1,17 +1,16 @@
 # libzmq 4.3.5-r1 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:49:54Z   packages from: apk:local-dists
+# date: 2026-11-24T14:05:16Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libzmq qnx-test-libzmq qnx-port-tests
-(1/5) Installing libsodium (1.0.22-r0)
-(2/5) Installing libzmq (4.3.5-r1)
-(3/5) Installing qnx-port-tests (1.0-r0)
-(4/5) Installing cppzmq-dev (4.10.0-r0)
-(5/5) Installing qnx-test-libzmq (1.0-r0)
-OK: 11.9 MiB in 10 packages
+(1/4) Installing libsodium (1.0.22-r0)
+(2/4) Installing libzmq (4.3.5-r1)
+(3/4) Installing cppzmq-dev (4.11.0-r0)
+(4/4) Installing qnx-test-libzmq (1.0-r0)
+OK: 138.0 MiB in 25 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libzmq
      == libzmq ==

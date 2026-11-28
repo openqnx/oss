@@ -1,22 +1,30 @@
 # samba 4.25.1-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:52:18Z   packages from: apk:local-dists
+# date: 2026-11-24T14:44:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u samba qnx-test-samba qnx-port-tests
-( 1/10) Installing qnx-test-samba (1.0-r0)
-( 2/10) Installing brotli (1.1.0-r0)
-( 3/10) Installing libidn2 (2.3.8-r0)
-( 4/10) Installing libtasn1 (4.19.0-r0)
-( 5/10) Installing nettle (3.10.1-r0)
-( 6/10) Installing unbound (1.24.1-r0)
-( 7/10) Installing gnutls (3.8.14-r1)
-( 8/10) Installing icu (76.1-r0)
-( 9/10) Installing tdb (1.4.15-r0)
-(10/10) Installing samba (4.25.1-r1)
-OK: 580.1 MiB in 38 packages
+( 1/18) Installing qnx-port-tests (1.0-r0)
+( 2/18) Installing qnx-test-samba (1.0-r0)
+( 3/18) Installing brotli (1.2.1-r0)
+( 4/18) Installing gmp (6.3.0-r0)
+( 5/18) Installing libiconv (1.19.1-r0)
+( 6/18) Installing libunistring (1.5-r0)
+( 7/18) Installing ncurses (6.6-r0)
+( 8/18) Installing gettext (0.22.5-r0)
+( 9/18) Installing libidn2 (2.3.8-r0)
+(10/18) Installing libtasn1 (4.21.0-r0)
+(11/18) Installing nettle (3.10.1-r0)
+(12/18) Installing expat (2.6.4-r0)
+(13/18) Installing unbound (1.26.2-r0)
+(14/18) Installing gnutls (3.8.14-r1)
+(15/18) Installing icu (76.1-r0)
+(16/18) Installing libxcrypt (4.5.2-r0)
+(17/18) Installing tdb (1.4.15-r0)
+(18/18) Installing samba (4.25.1-r1)
+OK: 136.8 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_samba
      == samba ==

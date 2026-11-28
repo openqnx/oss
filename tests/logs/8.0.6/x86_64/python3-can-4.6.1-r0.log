@@ -1,30 +1,13 @@
 # python3-can 4.6.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:29:50Z   packages from: apk:local-dists
+# date: 2026-11-24T12:52:33Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-can qnx-test-python3-can qnx-port-tests
-( 1/17) Installing bzip2 (1.0.8-r0)
-( 2/17) Installing expat (2.6.4-r0)
-( 3/17) Installing gdbm (1.24-r0)
-( 4/17) Installing libiconv (1.18-r0)
-( 5/17) Installing libunistring (1.3-r0)
-( 6/17) Installing gettext (0.22.5-r0)
-( 7/17) Installing libffi (3.4.6-r0)
-( 8/17) Installing sqlite (3.47.2-r0)
-( 9/17) Installing xz (5.6.3-r0)
-(10/17) Installing python3 (3.14.0-r0)
-(11/17) Installing python3-packaging (25.0-r0)
-(12/17) Installing python3-typing-extensions (4.16.0-r0)
-(13/17) Installing python3-wrapt (2.5.2-r0)
-(14/17) Installing qnx-socketcan (1.0-r0)
-(15/17) Installing python3-can (4.6.1-r0)
-(16/17) Installing qnx-port-tests (1.0-r0)
-(17/17) Installing qnx-test-python3-can (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 135.9 MiB in 28 packages
+(1/1) Installing qnx-test-python3-can (1.0-r0)
+OK: 180.3 MiB in 40 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_can
      == python3-can ==
@@ -38,7 +21,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   BLF log round trips three frames
        ok   socketcan without qcand fails ([Errno 250] Network is down)
        ok   can.Bus('vcan0', interface='socketcan') opens (SocketcanBus, fd 4)
-       ok   a frame sent on vcan0 arrives on another vcan0 bus: Timestamp: 1795256983.470599    ID:      123    S Tx                DL:  4    de ad be ef                 Channel: vcan0
+       ok   a frame sent on vcan0 arrives on another vcan0 bus: Timestamp: 1795524746.262587    ID:      123    S Tx                DL:  4    de ad be ef                 Channel: vcan0
        ok   its receive time is now (0.000 s off)
        ok   nothing arrives on vcan1
        ok   the sender does not receive its own frame

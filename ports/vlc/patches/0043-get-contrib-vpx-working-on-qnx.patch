@@ -1,0 +1,36 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 08:34:52 -0400
+Subject: [PATCH 43/60] Get contrib/vpx working on QNX
+
+Use qcc/q++ for cross compilation instead of the underlying gcc/g++
+compilers.
+
+Also disable runtime CPU detection for now. Need to figure out how to
+replace this functionality for QNX.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/vpx/rules.mak
++++ b/contrib/src/vpx/rules.mak
+@@ -190,12 +190,20 @@
+ endif
+ endif
+ 
++ifdef HAVE_QNX
++# Set HOSTVARs directly to use QNX's cross compiler
++VPX_HOSTVARS = $(HOSTVARS)
++
++# Explicitly disable runtime CPU detection for QNX
++VPX_CONF += --disable-runtime-cpu-detect
++endif
++
+ VPX_CONF += --extra-cflags="$(VPX_CFLAGS)"
+ 
+ .vpx: libvpx
+ 	rm -rf $(PREFIX)/include/vpx
+ 	$(MAKEBUILDDIR)
+-	cd $(BUILD_DIR) && LDFLAGS="$(VPX_LDFLAGS)" CROSS=$(VPX_CROSS) $(VPX_HOSTVARS) $(BUILD_SRC)/configure $(VPX_CONF)
++	cd $(BUILD_DIR) && CROSS=$(VPX_CROSS) $(VPX_HOSTVARS) LDFLAGS="$(VPX_LDFLAGS)" $(BUILD_SRC)/configure $(VPX_CONF)
+ 	+CONFIG_DEBUG=1 $(MAKEBUILD)
+ 	$(call pkg_static,"$(BUILD_DIRUNPACK)/vpx.pc")
+ 	+CONFIG_DEBUG=1 $(MAKEBUILD) install

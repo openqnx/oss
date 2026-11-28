@@ -1,0 +1,78 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 09:49:40 -0400
+Subject: [PATCH 49/60] Support Qt builds w/o clipboard support
+
+Not all Qt targets have a clipboard. Support this situation by checking
+for support and disabling code as required.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -4072,6 +4072,24 @@
+ AM_CONDITIONAL([HAVE_QT_GUI_PRIVATE], [test "${have_qt_gui_private}" = "yes"])
+ 
+ dnl
++dnl See if QT supports clipboard
++dnl
++AS_IF([test "${enable_qt}" != "no"], [
++  AC_MSG_CHECKING([for clipboard support in QT])
++  AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
++    [[#include <QtGui/qclipboard.h>
++      #ifdef QT_NO_CLIPBOARD
++      #error QT does not support clipboard
++      #endif
++    ]], [[;]])], [
++      AC_DEFINE([HAVE_QT_CLIPBOARD], [1], [Define to 1 if QT supports clipboard.])
++      AC_MSG_RESULT([yes])
++    ], [
++      AC_MSG_RESULT([no])
++    ])
++])
++
++dnl
+ dnl detect kde4-config patch (used for kde solids).
+ dnl
+ AC_ARG_VAR([KDE4_CONFIG], [kde4-config utility])
+--- a/modules/gui/qt/dialogs/messages.cpp
++++ b/modules/gui/qt/dialogs/messages.cpp
+@@ -195,9 +195,11 @@
+                           + messages->verticalScrollBar()->pageStep()
+                           >= messages->verticalScrollBar()->maximum() );
+ 
++#ifdef HAVE_QT_CLIPBOARD
+     /* Copy selected text to the clipboard */
+     if( messages->textCursor().hasSelection() )
+         messages->copy();
++#endif
+ 
+     /* Fix selected text bug */
+     if( !messages->textCursor().atEnd() ||
+--- a/modules/gui/qt/dialogs/openurl.cpp
++++ b/modules/gui/qt/dialogs/openurl.cpp
+@@ -67,9 +67,11 @@
+                                     "to the media you want to play."),
+                                this );
+ 
++#ifdef HAVE_QT_CLIPBOARD
+     setToolTip( qtr( "If your clipboard contains a valid URL\n"
+                      "or the path to a file on your computer,\n"
+                      "it will be automatically selected." ) );
++#endif
+ 
+     /* Layout */
+     QVBoxLayout *vlay = new QVBoxLayout( this );
+@@ -121,6 +123,7 @@
+     else
+         edit->clear();
+ 
++#ifdef HAVE_QT_CLIPBOARD
+     if( bClipboard )
+     {
+         QClipboard *clipboard = QApplication::clipboard();
+@@ -133,4 +136,5 @@
+         if( txt.contains( "://" ) || QFile::exists( txt ) )
+             edit->setText( txt );
+     }
++#endif
+ }

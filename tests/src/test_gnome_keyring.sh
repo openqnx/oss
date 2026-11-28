@@ -32,7 +32,7 @@ QP=$QNXPORT_INNER.pids; : > "$QP"
 track() { echo "$1" >> "$QP"; }
 stopall() { for p in $(cat "$QP" 2>/dev/null); do kill "$p" 2>/dev/null; done; : > "$QP"; sleep 1; cd /; rm -rf "$T"; }
 trap stopall EXIT
-to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL gnome_keyring (qnxport-timeout.sh missing)"; exit 1; }
 mkdir -m 700 run home data
 export HOME=$T/home XDG_RUNTIME_DIR=$T/run XDG_DATA_HOME=$T/data XDG_CONFIG_HOME=$T/home/.config
 cat > bus.conf <<EOS

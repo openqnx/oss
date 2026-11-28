@@ -1,0 +1,24 @@
+#!/bin/sh
+# /data/oss/etc/rc.local -- run at the end of the boot.
+#
+# A board image calls it from its startup script (the BSP's IFS), after /data
+# is mounted and QNX Screen is started, with this one line:
+#
+#   [ -x /data/oss/etc/rc.local ] && /data/oss/etc/rc.local &
+#
+# (an image made by scripts/make-ported-image calls it from target/oss-boot).
+# Copy this file there and make it executable, or let
+# "qnx-desktop-start --install-hook" write it:
+#
+#   cp /usr/local/share/qnx-desktop/rc.local.sample /data/oss/etc/rc.local
+#   chmod 755 /data/oss/etc/rc.local
+#
+# Not tested on a board (see the notes in qnx-desktop-start).
+
+# The desktop session: /usr/local link, environment, system D-Bus, then the
+# session of DESKTOP_USER (/data/oss/etc/qnx-desktop.conf; root by default).
+# By its real path: /usr/local may not be linked yet at this point.
+[ -x /data/oss/usr/local/bin/qnx-desktop-start ] && /data/oss/usr/local/bin/qnx-desktop-start &
+
+# Services of your own go below, for example the ported sshd:
+# [ -x /data/oss/usr/local/sbin/sshd ] && /data/oss/usr/local/sbin/sshd

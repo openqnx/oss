@@ -1,0 +1,123 @@
+# webkitgtk 2.54.3-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T14:42:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u webkitgtk qnx-test-webkitgtk qnx-port-tests
+( 1/73) Installing qnx-port-tests (1.0-r0)
+( 2/73) Installing expat (2.6.4-r0)
+( 3/73) Installing dbus (1.16.4-r0)
+( 4/73) Installing libiconv (1.19.1-r0)
+( 5/73) Installing libunistring (1.5-r0)
+( 6/73) Installing ncurses (6.6-r0)
+( 7/73) Installing gettext (0.22.5-r0)
+( 8/73) Installing libffi (3.8.1-r0)
+( 9/73) Installing pcre2 (10.49-r0)
+(10/73) Installing glib (2.90.1-r1)
+(11/73) Installing libxau (1.0.12-r0)
+(12/73) Installing libxdmcp (1.1.5-r0)
+(13/73) Installing libxcb (1.17.0-r0)
+(14/73) Installing libx11 (1.8.14-r0)
+(15/73) Installing libxext (1.3.7-r0)
+(16/73) Installing libxi (1.8.4-r0)
+(17/73) Installing libxtst (1.2.6-r0)
+(18/73) Installing at-spi2-core (2.54.2-r0)
+(19/73) Installing brotli (1.2.1-r0)
+(20/73) Installing bzip2 (1.0.8-r0)
+(21/73) Installing libpng (1.6.59-r0)
+(22/73) Installing freetype (2.15.0-r0)
+(23/73) Installing fontconfig (2.18.4-r0)
+(24/73) Installing libxrender (0.9.13-r0)
+(25/73) Installing lzo (2.10-r0)
+(26/73) Installing pixman (0.46.4-r0)
+(27/73) Installing cairo (1.18.6-r0)
+(28/73) Installing libjpeg-turbo (3.2.1-r0)
+(29/73) Installing gdk-pixbuf (2.44.8-r0)
+(30/73) Installing fribidi (1.0.18-r0)
+(31/73) Installing graphite2 (1.3.15-r0)
+(32/73) Installing icu (76.1-r0)
+(33/73) Installing harfbuzz (<ip>-r0)
+(34/73) Installing libepoxy (1.5.10-r0)
+(35/73) Installing libxcomposite (0.4.7-r0)
+(36/73) Installing libxfixes (6.0.2-r0)
+(37/73) Installing libxcursor (1.2.3-r0)
+(38/73) Installing libxdamage (1.1.7-r0)
+(39/73) Installing libxinerama (1.1.6-r0)
+(40/73) Installing xz (5.8.4-r0)
+(41/73) Installing libxml2 (2.13.5-r0)
+(42/73) Installing libxkbcommon (1.8.1-r0)
+(43/73) Installing libxrandr (1.5.5-r0)
+(44/73) Installing libxft (2.3.9-r0)
+(45/73) Installing pango (1.56.4-r0)
+(46/73) Installing wayland (1.26.0-r0)
+(47/73) Installing gtk3 (3.24.43-r0)
+(48/73) Installing libidn2 (2.3.8-r0)
+(49/73) Installing libpsl (0.23.3-r0)
+(50/73) Installing nghttp2 (1.71.0-r0)
+(51/73) Installing sqlite (3.47.2-r0)
+(52/73) Installing libsoup (3.8.1-r0)
+(53/73) Installing gstreamer (1.24.10-r0)
+(54/73) Installing libogg (1.3.6-r0)
+(55/73) Installing libtheora (1.2.0-r0)
+(56/73) Installing libvorbis (1.3.7-r0)
+(57/73) Installing opus (1.6.1-r0)
+(58/73) Installing gst-plugins-base (1.24.10-r1)
+(59/73) Installing hyphen (2.8.8-r0)
+(60/73) Installing lcms2 (2.16-r0)
+(61/73) Installing aom (3.15.3-r0)
+(62/73) Installing dav1d (1.5.5-r0)
+(63/73) Installing libavif (1.4.2-r0)
+(64/73) Installing libgpg-error (1.61-r0)
+(65/73) Installing libgcrypt (1.12.4-r0)
+(66/73) Installing highway (1.4.0-r0)
+(67/73) Installing libjxl (0.13.0-r0)
+(68/73) Installing libsecret (0.21.8.2-r1)
+(69/73) Installing libtasn1 (4.21.0-r0)
+(70/73) Installing libwebp (1.6.0-r0)
+(71/73) Installing libxslt (1.1.45-r0)
+(72/73) Installing webkitgtk (2.54.3-r0)
+(73/73) Installing qnx-test-webkitgtk (1.0-r2)
+Executing glib-2.90.1-r1.trigger
+OK: 356.7 MiB in 78 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_webkitgtk
+     == webkitgtk ==
+       info WebKitGTK 2.54.3, JavaScriptCoreGTK 2.54.3
+       ok   libwebkit2gtk-4.1 is 2.54.3
+       ok   libjavascriptcoregtk-4.1 is 2.54
+       ok   jsc_context_new
+       ok   6 * 7 = 42
+       ok   recursion: fib(20) = 6765
+       ok   strings and Array.sort
+       ok   JSON.stringify
+       ok   RegExp capture group
+       ok   Date.UTC / toISOString (leap day)
+       ok   Math.sqrt
+       ok   C callback called from JS (twice)
+       ok   object literal
+       ok   object property read from C
+       ok   property set from C, seen by JS
+       ok   TypeError reported as a JSCException
+       info exception: TypeError: null is not an object (evaluating 'null.x')
+       ok   exception name TypeError
+       ok   100k allocations, collected while running
+       info jsc t.js -> 0: sum=5050 squares=1,4,9
+       ok   libexec jsc runs a script file
+       info jsc -e -> 0: undefined 1024
+       ok   jsc -e evaluates an expression
+       ok   WebKitWebDriver --help
+       ok   WebKitWebDriver listens on <ip>
+       info GET /status: HTTP/1.1 200 OK | HTTP/1.1 200 OK
+       ok   GET /status -> HTTP 200
+       ok   status: ready true
+       ok   status: "No sessions"
+       info GET /session/<bogus>/url: HTTP/1.1 404 Not Found
+       ok   unknown session -> 404 invalid session id
+     PASS webkitgtk
+PASS test_webkitgtk
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

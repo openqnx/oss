@@ -1,0 +1,54 @@
+# python3-scipy 1.18.1-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:04:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-scipy qnx-test-python3-scipy qnx-port-tests
+( 1/17) Installing openblas (0.3.34-r1)
+( 2/17) Installing bzip2 (1.0.8-r1)
+( 3/17) Installing expat (2.6.4-r1)
+( 4/17) Installing gdbm (1.26-r1)
+( 5/17) Installing libiconv (1.19.1-r1)
+( 6/17) Installing libunistring (1.5-r1)
+( 7/17) Installing ncurses (6.6-r1)
+( 8/17) Installing gettext (0.22.5-r1)
+( 9/17) Installing libffi (3.8.1-r1)
+(10/17) Installing readline (8.3-r1)
+(11/17) Installing sqlite (3.47.2-r1)
+(12/17) Installing xz (5.8.4-r1)
+(13/17) Installing python3 (3.14.0-r2)
+(14/17) Installing numpy (2.5.5-r1)
+(15/17) Installing python3-scipy (1.18.1-r1)
+(16/17) Installing qnx-port-tests (1.0-r1)
+(17/17) Installing qnx-test-python3-scipy (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 247.1 MiB in 22 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_scipy
+     == python3-scipy ==
+       info SciPy 1.18.1, NumPy 2.5.5
+       ok   linalg.solve: (1, -2, -2)
+       ok   linalg.eigh: 2-sqrt2, 2, 2+sqrt2
+       ok   linalg.lu and det
+       ok   optimize.minimize (BFGS) of Rosenbrock reaches (1, 1)
+       ok   optimize.minimize (L-BFGS-B, the C translation) reaches (1, 1)
+       ok   optimize.brentq: sqrt(2)
+       ok   fft of a cosine: peaks n/2 at bins 5 and n-5
+       ok   ifft inverts fft
+       ok   integrate.quad: sqrt(pi)
+       ok   integrate.solve_ivp: y' = -y gives exp(-2)
+       ok   special.gamma(5) = 24, erf(1)
+       ok   sparse CSR matrix-vector product
+       ok   sparse.linalg.spsolve (SuperLU)
+       ok   stats.norm.cdf(1.96)
+       ok   interpolate.CubicSpline of x^3
+       ok   a Pythran-built module loads (optimize._group_columns)
+       info scipy.odr absent (Fortran; not built)
+     PASS python3-scipy
+PASS test_python3_scipy
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

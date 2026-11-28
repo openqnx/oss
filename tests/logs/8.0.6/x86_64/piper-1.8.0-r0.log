@@ -1,19 +1,17 @@
 # piper 1.8.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:04:37Z   packages from: apk:local-dists
+# date: 2026-11-24T12:50:41Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u piper qnx-test-piper qnx-port-tests
-(1/7) Installing espeak-ng (1.52.0-r0)
-(2/7) Installing libiconv (1.18-r0)
-(3/7) Installing onnxruntime (1.20.1-r0)
-(4/7) Installing piper (1.8.0-r0)
-(5/7) Installing qnx-port-tests (1.0-r0)
-(6/7) Installing piper-voice-en-us-joe (1.0.0-r0)
-(7/7) Installing qnx-test-piper (1.0-r0)
-OK: 119.6 MiB in 18 packages
+(1/5) Installing espeak-ng (1.52.0-r0)
+(2/5) Installing onnxruntime (1.20.1-r0)
+(3/5) Installing piper (1.8.0-r0)
+(4/5) Installing piper-voice-en-us-joe (1.0.0-r0)
+(5/5) Installing qnx-test-piper (1.0-r0)
+OK: 284.1 MiB in 39 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_piper
      == piper ==
@@ -26,8 +24,8 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        info defaults: length 1.00, noise 0.500, noise_w 0.333
        ok   defaults from the voice's configuration (length 1, noise 0.5)
        ok   two sentences: two chunks, the last with PIPER_DONE
-       info chunk 0: 27904 samples (1.27 s) at 22050 Hz, peak 0.466, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$
-       info chunk 1: 33280 samples (1.51 s) at 22050 Hz, peak 0.494, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$^ðɪs ɪz ɐ tˈɛst.$
+       info chunk 0: 27904 samples (1.27 s) at 22050 Hz, peak 0.433, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$
+       info chunk 1: 32000 samples (1.45 s) at 22050 Hz, peak 0.567, 33 ids, phonemes ^həlˈoʊ wˈɜːld.$^ðɪs ɪz ɐ tˈɛst.$
        ok   22050 Hz
        ok   phonemes of "Hello world." (en-us, IPA)
        ok   phonemes of "This is a test."
@@ -38,18 +36,18 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   samples finite and within [-1.5, 1.5]
        ok   real signal in both chunks
        ok   one sentence at length_scale 2: one chunk
-       info length_scale 2: 52736 samples (2.39 s)
+       info length_scale 2: 51712 samples (2.35 s)
        ok   clearly longer than at length_scale 1 (more than 1.4 times)
-       info piper_exe: /tmp/qnxport-piper-251596823.wav
+       info piper_exe: /tmp/qnxport-piper-499769367.wav
        ok   echo 'Hello world.' | piper_exe -m <voice> -f out.wav exits 0
        ok   WAV file written
        ok   RIFF / WAVE / fmt / data chunks
        ok   IEEE float, mono, 32 bit
        ok   22050 Hz, 88200 bytes per second, 4 bytes per frame
-       info 114732 bytes, RIFF length 0x7ffff024, data length 0x7ffff000
+       info 115756 bytes, RIFF length 0x7ffff024, data length 0x7ffff000
        ok   stream header: length fields "unknown"
        ok   the data is whole frames
-       info 28672 frames (1.30 s), peak 0.440, 8762 above 0.02
+       info 28928 frames (1.31 s), peak 0.485, 8751 above 0.02
        ok   between 0.4 s and 4 s of audio
        ok   the WAV samples are finite and not silent
      PASS piper

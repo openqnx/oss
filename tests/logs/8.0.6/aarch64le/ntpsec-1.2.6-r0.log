@@ -1,29 +1,15 @@
 # ntpsec 1.2.6-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T16:45:20Z   packages from: apk:local-dists
+# date: 2026-11-24T14:33:42Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u ntpsec qnx-test-ntpsec qnx-port-tests
-( 1/16) Installing ntpsec (1.2.6-r0)
-( 2/16) Installing qnx-port-tests (1.0-r0)
-( 3/16) Installing bzip2 (1.0.8-r0)
-( 4/16) Installing expat (2.6.4-r0)
-( 5/16) Installing gdbm (1.24-r0)
-( 6/16) Installing libiconv (1.19.1-r0)
-( 7/16) Installing libunistring (1.5-r0)
-( 8/16) Installing ncurses (6.6-r0)
-( 9/16) Installing gettext (0.22.5-r0)
-(10/16) Installing libffi (3.8.1-r0)
-(11/16) Installing libuuid (2.42.4-r0)
-(12/16) Installing readline (8.3-r0)
-(13/16) Installing sqlite (3.47.2-r0)
-(14/16) Installing xz (5.8.4-r0)
-(15/16) Installing python3 (3.14.0-r1)
-(16/16) Installing qnx-test-ntpsec (1.0-r1)
+(1/2) Installing ntpsec (1.2.6-r0)
+(2/2) Installing qnx-test-ntpsec (1.0-r1)
 Executing python3-3.14.0-r1.trigger
-OK: 132.6 MiB in 21 packages
+OK: 138.0 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ntpsec
      == ntpsec ==
@@ -44,7 +30,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_n
        ok   a flipped MAC bit does not
        info ntpd ntpsec-1.2.6+NTPsec_1_2_6-dirty
        ok   ntpd --version: ntpsec-1.2.6
-       info ntpdig: offset 100.000 s, stratum 2, host <ip>
+       info ntpdig: offset 100.002 s, stratum 2, host <ip>
        ok   ntpdig against the loopback server: offset +100 s, stratum 2
        info server saw (keyid, request MAC verifies): [(11, True)]
        ok   the server verifies ntpdig's AES-CMAC request MAC (key 11)

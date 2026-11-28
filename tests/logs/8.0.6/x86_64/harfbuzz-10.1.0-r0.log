@@ -1,30 +1,23 @@
 # harfbuzz <ip>-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:39:56Z   packages from: apk:local-dists
+# date: 2026-11-24T12:44:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u harfbuzz qnx-test-harfbuzz qnx-port-tests
-( 1/17) Installing brotli (1.1.0-r0)
-( 2/17) Installing bzip2 (1.0.8-r0)
-( 3/17) Installing libpng (1.6.44-r0)
-( 4/17) Installing freetype (2.13.3-r0)
-( 5/17) Installing libiconv (1.18-r0)
-( 6/17) Installing libunistring (1.3-r0)
-( 7/17) Installing ncurses (6.5-r0)
-( 8/17) Installing gettext (0.22.5-r0)
-( 9/17) Installing libffi (3.4.6-r0)
-(10/17) Installing pcre2 (10.44-r0)
-(11/17) Installing glib (2.82.4-r0)
-(12/17) Installing graphite2 (1.3.14-r0)
-(13/17) Installing icu (76.1-r0)
-(14/17) Installing harfbuzz (<ip>-r0)
-(15/17) Installing qnx-port-tests (1.0-r0)
-(16/17) Installing font-dejavu (2.37-r0)
-(17/17) Installing qnx-test-harfbuzz (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 96.5 MiB in 22 packages
+( 1/10) Installing brotli (1.2.1-r0)
+( 2/10) Installing libpng (1.6.59-r0)
+( 3/10) Installing freetype (2.15.0-r0)
+( 4/10) Installing pcre2 (10.49-r0)
+( 5/10) Installing glib (2.90.1-r1)
+( 6/10) Installing graphite2 (1.3.15-r0)
+( 7/10) Installing icu (76.1-r0)
+( 8/10) Installing harfbuzz (<ip>-r0)
+( 9/10) Installing font-dejavu (2.37-r0)
+(10/10) Installing qnx-test-harfbuzz (1.0-r0)
+Executing glib-2.90.1-r1.trigger
+OK: 252.5 MiB in 44 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_harfbuzz
      == harfbuzz ==

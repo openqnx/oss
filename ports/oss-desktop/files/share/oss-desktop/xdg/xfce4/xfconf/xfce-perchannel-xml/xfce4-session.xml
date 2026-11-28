@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- oss-desktop: what xfce4-session starts. Wayland session (labwc is the
-     window manager), without xfdesktop (not ported: swaybg draws the background). -->
+     window manager). xfdesktop draws the wallpaper and the desktop icons; swaybg
+     (started by labwc) paints a plain colour under it, which is what shows when
+     xfdesktop is not installed or has not started yet. -->
 <channel name="xfce4-session" version="1.0">
   <property name="general" type="empty">
     <property name="FailsafeSessionName" type="string" value="Failsafe"/>
@@ -17,7 +19,7 @@
   <property name="sessions" type="empty">
     <property name="Failsafe" type="empty">
       <property name="IsFailsafe" type="bool" value="true"/>
-      <property name="Count" type="int" value="3"/>
+      <property name="Count" type="int" value="4"/>
       <property name="Client0_Command" type="array">
         <value type="string" value="xfsettingsd"/>
       </property>
@@ -34,10 +36,15 @@
       </property>
       <property name="Client2_Priority" type="int" value="25"/>
       <property name="Client2_PerScreen" type="bool" value="false"/>
+      <property name="Client3_Command" type="array">
+        <value type="string" value="xfdesktop"/>
+      </property>
+      <property name="Client3_Priority" type="int" value="35"/>
+      <property name="Client3_PerScreen" type="bool" value="false"/>
     </property>
     <property name="FailsafeWayland" type="empty">
       <property name="IsFailsafe" type="bool" value="true"/>
-      <property name="Count" type="int" value="3"/>
+      <property name="Count" type="int" value="4"/>
       <property name="Client0_Command" type="array">
         <value type="string" value="xfsettingsd"/>
       </property>
@@ -54,6 +61,11 @@
       </property>
       <property name="Client2_Priority" type="int" value="25"/>
       <property name="Client2_PerScreen" type="bool" value="false"/>
+      <property name="Client3_Command" type="array">
+        <value type="string" value="xfdesktop"/>
+      </property>
+      <property name="Client3_Priority" type="int" value="35"/>
+      <property name="Client3_PerScreen" type="bool" value="false"/>
     </property>
   </property>
 </channel>

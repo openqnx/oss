@@ -139,7 +139,7 @@ do_configure() {
   CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -Wl,-z,stack-size=8388608 -Wl,-z,noexecstack -Wl,-rpath,$PREFIX/lib -Wl,--disable-new-dtags" \
-  LIBS="-lsocket -lregex" \
+  LIBS="-lsocket -lregex" XDGOPEN=xdg-open \
   ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --localstatedir="$PREFIX/var" \
     --with-tls=openssl --with-dnssd=avahi --disable-dbus --disable-pam --disable-gssapi --disable-libusb \
     --disable-libpaper --disable-acl --with-ondemand=no --without-systemd --without-rcdir \
@@ -161,7 +161,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 - CUPS, the printing system: libcups and libcupsimage, the scheduler (cupsd), the command-line tools (lp, lpr, lpstat, lpadmin, cancel, cupsctl, ipptool, ippfind, ippeveprinter ...), and the backends and filters. With qnx-ports' QNX support (patches/0001: s6_addr32 is spelled __u6_addr.__u6_addr32 in QNX's <netinet6/in6.h>, and programs link libcups together with its own libraries); patches/0002 lets cupsd pass LD_LIBRARY_PATH on to its filters and backends (see below).
 - libxcrypt: crypt() for cupsd's Basic authentication against local accounts (configure links -lcrypt, which QNX's libc does not provide).
 - patches/0001 changes config-scripts/cups-sharedlibs.m4 (programs link libcups together with its own libraries: QNX's GNU ld does not resolve a program's direct references, regexec from libregex say, through libcups's DT_NEEDED); the shipped configure is regenerated from it.
-- CUPS's makefiles build in the source tree only (Makedefs at the top), so configure and build in a copy of it, with the same compiler settings the autotools driver uses. TLS: OpenSSL. DNS-SD: Avahi (printer sharing and ippfind). Off: PAM and Kerberos (neither exists on QNX), libusb (no USB backend: QNX's USB stack is not libusb's), systemd/launchd on-demand start, D-Bus notifications, the translations of the web interface (--with-languages=none). -z stack-size: ipptool's do_test() keeps a 1 MiB copy buffer on the stack, far more than QNX gives the main thread by default (hazard 119): it died with SIGSEGV on its first request. 8 MiB, Linux's default, for every program here (with -z noexecstack: the stack-size header would otherwise come out executable). -rpath $PREFIX/lib (DT_RPATH, which covers the libraries' own dependencies too): cupsd runs its filters, backends and helpers with a clean environment and, as root, refuses to pass any LD_* variable on (scheduler/env.c). /usr/local/lib is not on QNX's default library path, so every filter failed to start ("Could not load library libcups.so.2"). The loader still takes LD_LIBRARY_PATH first where it is set -- and with patches/0002 cupsd passes its own LD_LIBRARY_PATH on, which a minimal image needs for QNX's libeventfd & co. in a directory of their own. -lregex: regcomp()/regexec() (ipptool, the scheduler) are in QNX's libregex, not libc. State (spool, cache, logs, run) under $PREFIX/var; the icon and desktop file under the prefix too (CUPS's defaults are /usr/share/...).
+- CUPS's makefiles build in the source tree only (Makedefs at the top), so configure and build in a copy of it, with the same compiler settings the autotools driver uses. TLS: OpenSSL. DNS-SD: Avahi (printer sharing and ippfind). Off: PAM and Kerberos (neither exists on QNX), libusb (no USB backend: QNX's USB stack is not libusb's), systemd/launchd on-demand start, D-Bus notifications, the translations of the web interface (--with-languages=none). -z stack-size: ipptool's do_test() keeps a 1 MiB copy buffer on the stack, far more than QNX gives the main thread by default (hazard 119): it died with SIGSEGV on its first request. 8 MiB, Linux's default, for every program here (with -z noexecstack: the stack-size header would otherwise come out executable). -rpath $PREFIX/lib (DT_RPATH, which covers the libraries' own dependencies too): cupsd runs its filters, backends and helpers with a clean environment and, as root, refuses to pass any LD_* variable on (scheduler/env.c). /usr/local/lib is not on QNX's default library path, so every filter failed to start ("Could not load library libcups.so.2"). The loader still takes LD_LIBRARY_PATH first where it is set -- and with patches/0002 cupsd passes its own LD_LIBRARY_PATH on, which a minimal image needs for QNX's libeventfd & co. in a directory of their own. -lregex: regcomp()/regexec() (ipptool, the scheduler) are in QNX's libregex, not libc. State (spool, cache, logs, run) under $PREFIX/var; the icon and desktop file under the prefix too (CUPS's defaults are /usr/share/...). XDGOPEN=xdg-open: the desktop file's Exec= (the menu's "Print Settings", http://localhost:631/) is the xdg-open configure finds on the *build* host, else "htmlview" -- a program no QNX image has, so the menu entry did nothing. xdg-open is the target's (xdg-utils, in the desktop); set here, not overridden by the desktop session, so a system with cups alone gets the same entry.
 - BUILDROOT is CUPS's DESTDIR. SYSTEMD_DIR=: --without-systemd leaves SYSTEMD_DIR=no in Makedefs, and "make install" then put the systemd units in "$BUILDROOT"no -- a directory next to the package's own (pkgroot/<arch>/cupsno).
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH cups`.
@@ -306,6 +306,12 @@ do_patch() { ( cd "$SRCROOT" && autoconf -f ); }
 # not libc.
 # State (spool, cache, logs, run) under $PREFIX/var; the icon and desktop
 # file under the prefix too (CUPS's defaults are /usr/share/...).
+# XDGOPEN=xdg-open: the desktop file's Exec= (the menu's "Print Settings",
+# http://localhost:631/) is the xdg-open configure finds on the *build* host,
+# else "htmlview" -- a program no QNX image has, so the menu entry did
+# nothing. xdg-open is the target's (xdg-utils, in the desktop); set here,
+# not overridden by the desktop session, so a system with cups alone gets the
+# same entry.
 do_configure() {
   cp -a "$S/." "$B/" && cd "$B" && \
   CC="qcc -V$QCC_TARGET -D_QNX_SOURCE" CXX="q++ -V${QCC_TARGET}_cxx -D_QNX_SOURCE" \
@@ -313,7 +319,7 @@ do_configure() {
   CPPFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   CFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" CXXFLAGS="-D_QNX_SOURCE -I$STAGE$PREFIX/include" \
   LDFLAGS="-Wl,--push-state,--no-as-needed -lc -Wl,--pop-state -L$STAGE$PREFIX/lib -Wl,-rpath-link,$STAGE$PREFIX/lib -Wl,-z,stack-size=8388608 -Wl,-z,noexecstack -Wl,-rpath,$PREFIX/lib -Wl,--disable-new-dtags" \
-  LIBS="-lsocket -lregex" \
+  LIBS="-lsocket -lregex" XDGOPEN=xdg-open \
   ./configure --host="$QNX_TRIPLE" --prefix="$PREFIX" --sysconfdir="$PREFIX/etc" --localstatedir="$PREFIX/var" \
     --with-tls=openssl --with-dnssd=avahi --disable-dbus --disable-pam --disable-gssapi --disable-libusb \
     --disable-libpaper --disable-acl --with-ondemand=no --without-systemd --without-rcdir \

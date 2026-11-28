@@ -1,0 +1,26 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Thu, 13 Mar 2025 14:35:47 -0400
+Subject: [PATCH 20/60] Get contrib/gcrypt working on QNX
+
+When building QNX for an x86_64 target, gcrypt's configure process
+thinks that underscores get added to external symbols. This isn't true
+and causes some of the custom assembly code to not be found.
+
+Force configure to keep the underscore setting off. This is really only
+for x86_64 builds but is safe to apply to aarch64 builds as that also
+wants underscores to be off.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/gcrypt/rules.mak
++++ b/contrib/src/gcrypt/rules.mak
+@@ -71,6 +71,9 @@
+ GCRYPT_CONF += ac_cv_sys_symbol_underscore=no
+ endif
+ endif
++ifdef HAVE_QNX
++GCRYPT_CONF += ac_cv_sys_symbol_underscore=no
++endif
+ 
+ .gcrypt: gcrypt
+ 	$(RECONF)

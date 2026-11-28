@@ -1,4 +1,4 @@
-# inetutils 2.6
+# inetutils 2.8
 
 > A collection of common network programs (GNU inetutils)
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz |
-| SHA-256 | `68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca` |
+| Upstream | https://ftp.gnu.org/gnu/inetutils/inetutils-2.8.tar.gz |
+| SHA-256 | `57b3cf4f77555992881e5ba2a09a63b05aa2c56342a60ed4305b5f45938390b5` |
 | Build system | GNU Autotools |
 | QNX patches | 3 |
 | Build dependencies | [`ncurses`](../ncurses/) [`readline`](../readline/) [`libxcrypt`](../libxcrypt/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz
+URL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.8.tar.gz
 mkdir -p dist src/inetutils
 curl -fL -o dist/$(basename $URL) $URL
-echo "68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca  dist/$(basename $URL)" | sha256sum -c -
+echo "57b3cf4f77555992881e5ba2a09a63b05aa2c56342a60ed4305b5f45938390b5  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/inetutils --strip-components=1
 ```
 
@@ -229,14 +229,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add inetutils=<version>`), sources in `ported/inetutils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates inetutils`; port one with `scripts/port-update inetutils`.
+This recipe builds **2.8**. Kept from earlier: `2.6` ([recipe and patches](versions/2.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add inetutils=<version>`), sources in `ported/inetutils/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates inetutils`; port one with `scripts/port-update inetutils`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.6
-TARBALL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz
-SHA256=68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca
+VERSION=2.8
+TARBALL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.8.tar.gz
+SHA256=57b3cf4f77555992881e5ba2a09a63b05aa2c56342a60ed4305b5f45938390b5
 BUILDSYS=autotools
 # crypt() for ftpd: QNX keeps it in its static liblogin.a, not libc, so
 # libxcrypt (libcrypt.so.2) supplies it; without it configure drops ftpd.

@@ -1,0 +1,77 @@
+WTF: memoryStatus() on QNX.
+
+    generic/MemoryFootprintGeneric.cpp:36: error: 'memoryStatus' was not
+        declared in this scope
+
+Both the GTK and the JSCOnly platform lists build
+generic/MemoryFootprintGeneric.cpp for QNX (alongside
+unix/MemoryPressureHandlerUnix.cpp), and since 2.46 that file computes the
+footprint through WTF::memoryStatus() -- which AvailableMemory.h declares only
+for iOS, Linux and FreeBSD.  Add QNX to those guards and give memoryStatus() a
+QNX branch: the resident set size from devctl(DCMD_PROC_ASINFO) on
+/proc/self/ctl, exactly how MemoryPressureHandlerUnix.cpp already measures the
+process on QNX; the percentage uses availableMemory() (sysconf
+_SC_PHYS_PAGES on QNX) like the other platforms.
+
+Upstream-Status: Pending
+
+--- a/Source/WTF/wtf/AvailableMemory.h
++++ b/Source/WTF/wtf/AvailableMemory.h
+@@ -32,7 +32,7 @@
+ 
+ WTF_EXPORT_PRIVATE size_t availableMemory();
+ 
+-#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD)
++#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD) || OS(QNX)
+ struct MemoryStatus {
+     MemoryStatus(size_t memoryFootprint, double percentAvailableMemoryInUse)
+         : memoryFootprint(memoryFootprint)
+@@ -55,7 +55,7 @@
+ 
+ inline bool isUnderMemoryPressure()
+ {
+-#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD)
++#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD) || OS(QNX)
+     constexpr double memoryPressureThreshold = 0.75;
+     return percentAvailableMemoryInUse() > memoryPressureThreshold;
+ #else
+--- a/Source/WTF/wtf/AvailableMemory.cpp
++++ b/Source/WTF/wtf/AvailableMemory.cpp
+@@ -50,6 +50,10 @@
+ #include <sys/sysctl.h>
+ #include <sys/types.h>
+ #include <sys/user.h>
++#elif OS(QNX)
++#include <devctl.h>
++#include <fcntl.h>
++#include <sys/procfs.h>
+ #endif
+ #include <unistd.h>
+ #elif OS(WINDOWS)
+@@ -182,7 +186,7 @@
+     return availableMemory;
+ }
+ 
+-#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD)
++#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD) || OS(QNX)
+ MemoryStatus memoryStatus()
+ {
+ #if PLATFORM(IOS_FAMILY)
+@@ -204,6 +208,17 @@
+     size_t memoryFootprint = 0;
+     if (!sysctl(mib.data(), mib.size(), &info, &infolen, nullptr, 0))
+         memoryFootprint = static_cast<size_t>(info.ki_rssize) * pageSize();
++#elif OS(QNX)
++    // The resident set size, read the way MemoryPressureHandlerUnix.cpp
++    // already does for QNX.
++    size_t memoryFootprint = 0;
++    int fd = open("/proc/self/ctl", O_RDONLY);
++    if (fd != -1) {
++        procfs_asinfo info;
++        if (!devctl(fd, DCMD_PROC_ASINFO, &info, sizeof(info), nullptr))
++            memoryFootprint = static_cast<size_t>(info.rss);
++        close(fd);
++    }
+ #endif
+ 
+     double percentInUse = static_cast<double>(memoryFootprint) / static_cast<double>(availableMemory());

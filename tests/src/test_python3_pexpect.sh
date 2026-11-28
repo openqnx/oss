@@ -38,10 +38,24 @@ def shell():
     i = c.expect([r"SZ (\d+) (\d+)", pexpect.TIMEOUT], timeout=20)
     check(i == 0 and c.match.groups() == ("30", "100"), "child sees the terminal size 30x100")
     c.expect_exact("QNXP> ")
-    c.sendline("sleep 30")
-    import time; time.sleep(1)
-    c.sendintr()
-    c.expect_exact("QNXP> ", timeout=10); check(True, "Ctrl-C interrupts a sleeping child")
+    # Ctrl-C as the byte itself (sendintr() asks the pty for its VINTR
+    # character first), sent once the shell has printed the marker that
+    # precedes the sleep, and again if the prompt is not back: a ^C that
+    # reaches the pty before sleep is the foreground job is lost.
+    # A pty can come up without ISIG, or with another VINTR: ^C was then
+    # echoed as text and never became SIGINT. Set both before relying on it.
+    c.sendline("stty isig intr '^C' 2>/dev/null; echo TTY''SET")
+    c.expect_exact("TTYSET"); c.expect_exact("QNXP> ")
+    c.sendline("echo SLEEP''ING; sleep 30")
+    c.expect_exact("SLEEPING")
+    import time
+    back = False
+    for attempt in range(4):
+        time.sleep(1)
+        c.send("\x03")
+        if c.expect_exact(["QNXP> ", pexpect.TIMEOUT], timeout=5) == 0:
+            back = True; break
+    check(back, "Ctrl-C interrupts a sleeping child")
     c.sendline("exit 3")
     c.expect(pexpect.EOF); c.close()
     check(c.exitstatus == 3, "exit status 3 from the shell")

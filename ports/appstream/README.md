@@ -1,4 +1,4 @@
-# appstream 1.0.6
+# appstream 1.2.3
 
 > Tools and libraries to work with AppStream metadata
 
@@ -6,12 +6,12 @@
 
 | | |
 |---|---|
-| Upstream | https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz |
-| SHA-256 | `db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d` |
+| Upstream | https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz |
+| SHA-256 | `8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17` |
 | Build system | Meson |
-| QNX patches | 3 |
-| Build dependencies | [`glib`](../glib/) [`curl`](../curl/) [`libxml2`](../libxml2/) [`libyaml`](../libyaml/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`curl`](../curl/) [`gettext`](../gettext/) [`glib`](../glib/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`libyaml`](../libyaml/) [`zstd`](../zstd/) |
+| QNX patches | 2 |
+| Build dependencies | [`glib`](../glib/) [`curl`](../curl/) [`libxml2`](../libxml2/) [`libfyaml`](../libfyaml/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) [`wayland`](../wayland/) [`bash-completion`](../bash-completion/) |
+| Run-time dependencies | [`curl`](../curl/) [`gettext`](../gettext/) [`glib`](../glib/) [`libfyaml`](../libfyaml/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_appstream`](../../tests/src/) |
 
@@ -68,36 +68,35 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (24 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (26 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild glib curl libxml2 libyaml libxmlb zstd
+./scripts/qnxbuild glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion
 ```
 
-<details><summary>Full build chain (24)</summary>
+<details><summary>Full build chain (26)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`libyaml`](../libyaml/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`bash-completion`](../bash-completion/) [`brotli`](../brotli/) [`bzip2`](../bzip2/) [`c-ares`](../c-ares/) [`curl`](../curl/) [`expat`](../expat/) [`gdbm`](../gdbm/) [`gettext`](../gettext/) [`glib`](../glib/) [`libffi`](../libffi/) [`libfyaml`](../libfyaml/) [`libiconv`](../libiconv/) [`libunistring`](../libunistring/) [`libxml2`](../libxml2/) [`libxmlb`](../libxmlb/) [`ncurses`](../ncurses/) [`nghttp2`](../nghttp2/) [`openssl`](../openssl/) [`pcre2`](../pcre2/) [`python3`](../python3/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`wayland`](../wayland/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
 
 ```bash
-URL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz
+URL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz
 mkdir -p dist src/appstream
 curl -fL -o dist/$(basename $URL) $URL
-echo "db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d  dist/$(basename $URL)" | sha256sum -c -
+echo "8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/appstream --strip-components=1
 ```
 
-The project lives in the `AppStream-1.0.6/` subdirectory of the repository.
+The project lives in the `AppStream-$VERSION/` subdirectory of the repository.
 
 ### 3. Apply the QNX patches
 
-3 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/appstream < ports/appstream/patches/0001-cross-skip-cli-metainfo.patch
-patch -p1 -d src/appstream < ports/appstream/patches/0002-optional-man-pages.patch
 patch -p1 -d src/appstream < ports/appstream/patches/0003-qnx-physical-memory.patch
 ```
 
@@ -111,17 +110,7 @@ patch -p1 -d src/appstream < ports/appstream/patches/0003-qnx-physical-memory.pa
 > it, and its validation test, in cross builds; everything else in data/ is
 > installed as before.
 
-Touches: `AppStream-1.0.6/data/meson.build` · Upstream status: QNX-specific
-
-**[`0002-optional-man-pages.patch`](patches/0002-optional-man-pages.patch)** — Make the manual pages optional when DocBook XSL is missing.
-
-> docs/meson.build stops the configuration when xsltproc cannot load the
-> DocBook manpages stylesheet from the local XML catalog, even with docs and
-> apidocs off. The build machine here has xsltproc but not the DocBook XSL
-> stylesheets. Build the appstreamcli manual page when the stylesheet is
-> there, and otherwise warn and go on without it.
-
-Touches: `AppStream-1.0.6/docs/meson.build` · Upstream status: QNX-specific
+Touches: `AppStream-1.2.3/data/meson.build` · Upstream status: QNX-specific
 
 **[`0003-qnx-physical-memory.patch`](patches/0003-qnx-physical-memory.patch)** — Determine the physical memory size on QNX with sysconf().
 
@@ -129,51 +118,48 @@ Touches: `AppStream-1.0.6/docs/meson.build` · Upstream status: QNX-specific
 > other. QNX's sysconf() answers _SC_PHYS_PAGES and _SC_PAGESIZE, which is
 > what the Solaris branch uses: take that branch (and its <unistd.h>) on QNX.
 
-Touches: `AppStream-1.0.6/src/as-system-info.c` · Upstream status: QNX-specific
+Touches: `AppStream-1.2.3/src/as-system-info.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
-This component uses its own build steps (`do_configure`), run with `S` = the source tree, `B` = the build directory:
-
 ```bash
-S=src/appstream/AppStream-1.0.6; B=build/$QNX_ARCH/appstream; mkdir -p $B
-```
-
-```bash
-do_configure() {
-  mkdir -p "$B/qnx-pc" && cat > "$B/qnx-pc/yaml-0.1.pc" <<PC || return 1
-prefix=$PREFIX
-libdir=\${prefix}/lib
-includedir=\${prefix}/include
-Name: LibYAML
-Description: Library to parse and emit YAML
-Version: 0.2.5
-Cflags: -I\${includedir}
-Libs: -L\${libdir} -lyaml
-PC
-  PKG_CONFIG_PATH="$B/qnx-pc${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" \
-  meson setup "$B" "$S" --cross-file "$QNX_MESON_DIR/meson-$arch.ini" \
-    --native-file "$QNX_MESON_DIR/meson-native.ini" \
-    --prefix="$PREFIX" --buildtype=release --default-library=both "${MESON_ARGS_EXTRA[@]}"
-}
+meson setup build/$QNX_ARCH/appstream src/appstream/AppStream-$VERSION \
+      --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
+      --native-file $QNX_MESON_DIR/meson-native.ini \
+      --prefix=/usr/local --buildtype=release --default-library=both \
+      -Dstemming=false \
+      -Dsystemd=false \
+      -Dvapi=false \
+      -Dqt=false \
+      -Dcompose=false \
+      -Dapt-support=false \
+      -Dgir=false \
+      -Dzstd-support=true \
+      -Dblake3-support=false \
+      -Ddisplay-detection=wayland \
+      -Ddocs=false \
+      -Dapidocs=false \
+      -Dinstall-docs=false \
+      -Dman=false
+ninja -C build/$QNX_ARCH/appstream
+DESTDIR=$STAGE ninja -C build/$QNX_ARCH/appstream install
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- AppStream: library and tool (appstreamcli) to read, write and validate AppStream software metadata (metainfo/catalog XML and YAML). Dependency of libadwaita, whose AdwAboutDialog/AdwAboutWindow can be filled in from an application's metainfo. The 1.0 series: 1.1 and later replace libyaml with libfyaml, which is not ported here, and libadwaita needs nothing newer.
-- The tarball's paths start with ./AppStream-1.0.6/ (one level more than usual).
-- No systemd, stemming (libstemmer), Qt, GObject introspection/Vala, SVG icon rendering (the compose module) or documentation.
-- meson looks libyaml up as pkg-config's yaml-0.1, and the libyaml component (built with CMake) installs no yaml-0.1.pc. A minimal one, private to this build, names the staged library; appstream.pc itself does not require it (AppStream strips its Requires.private).
+- AppStream: library and tool (appstreamcli) to read, write and validate AppStream software metadata (metainfo/catalog XML and YAML). Dependency of libadwaita, whose AdwAboutDialog/AdwAboutWindow can be filled in from an application's metainfo. Since 1.1 AppStream reads and writes YAML with libfyaml (not libyaml).
+- The tarball's paths start with ./AppStream-<version>/ (one level more than usual); the patches name that directory too.
+- No systemd, stemming (libstemmer), Qt, GObject introspection/Vala, SVG icon rendering (the compose module, which has it now), BLAKE3 checksums (libblake3 is not ported) or documentation; -Dman=false: the build machine has no DocBook XSL (patches/0002 made the man page optional before 1.1 had this option). Display detection (wayland): only wayland-client's headers at build time, the library is loaded at run time when it is there.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH appstream`.
 
 ### 5. What it installs
 
-100 files under `/usr/local`: 3 shared-library entries, 1 programs, 40 headers.
+106 files under `/usr/local`: 3 shared-library entries, 1 programs, 42 headers.
 
 ```
 /usr/local/lib/libappstream.so
-/usr/local/lib/libappstream.so.1.0.6
+/usr/local/lib/libappstream.so.1.2.3
 /usr/local/lib/libappstream.so.5
 /usr/local/bin/appstreamcli
 ```
@@ -266,7 +252,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.0.6**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add appstream=<version>`), sources in `ported/appstream/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates appstream`; port one with `scripts/port-update appstream`.
+This recipe builds **1.2.3**. Kept from earlier: `1.0.6` ([recipe and patches](versions/1.0.6/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add appstream=<version>`), sources in `ported/appstream/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates appstream`; port one with `scripts/port-update appstream`.
 
 <details><summary>recipe.sh</summary>
 
@@ -275,40 +261,25 @@ This recipe builds **1.0.6**. Every version stays available: packages in `dists/
 # AppStream software metadata (metainfo/catalog XML and YAML). Dependency of
 # libadwaita, whose AdwAboutDialog/AdwAboutWindow can be filled in from an
 # application's metainfo.
-# The 1.0 series: 1.1 and later replace libyaml with libfyaml, which is not
-# ported here, and libadwaita needs nothing newer.
-VERSION=1.0.6
-TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz
-SHA256=db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d
-DEPS="glib curl libxml2 libyaml libxmlb zstd"
+# Since 1.1 AppStream reads and writes YAML with libfyaml (not libyaml).
+VERSION=1.2.3
+TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz
+SHA256=8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17
+DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion"   # bash-completion: contrib/meson.build requires its .pc (completion dir)
 BUILDSYS=meson
-# The tarball's paths start with ./AppStream-1.0.6/ (one level more than usual).
-SUBDIR=AppStream-1.0.6
+# The tarball's paths start with ./AppStream-<version>/ (one level more than
+# usual); the patches name that directory too.
+SUBDIR=AppStream-$VERSION
 # No systemd, stemming (libstemmer), Qt, GObject introspection/Vala, SVG
-# icon rendering (the compose module) or documentation.
+# icon rendering (the compose module, which has it now), BLAKE3 checksums (libblake3 is not
+# ported) or documentation; -Dman=false: the build machine has no DocBook XSL
+# (patches/0002 made the man page optional before 1.1 had this option).
+# Display detection (wayland): only wayland-client's headers at build time,
+# the library is loaded at run time when it is there.
 MESON_ARGS_EXTRA=( -Dstemming=false -Dsystemd=false -Dvapi=false -Dqt=false -Dcompose=false
-                   -Dapt-support=false -Dgir=false -Dsvg-support=false -Dzstd-support=true
-                   -Ddocs=false -Dapidocs=false -Dinstall-docs=false )
-# meson looks libyaml up as pkg-config's yaml-0.1, and the libyaml component
-# (built with CMake) installs no yaml-0.1.pc. A minimal one, private to this
-# build, names the staged library; appstream.pc itself does not require it
-# (AppStream strips its Requires.private).
-do_configure() {
-  mkdir -p "$B/qnx-pc" && cat > "$B/qnx-pc/yaml-0.1.pc" <<PC || return 1
-prefix=$PREFIX
-libdir=\${prefix}/lib
-includedir=\${prefix}/include
-Name: LibYAML
-Description: Library to parse and emit YAML
-Version: 0.2.5
-Cflags: -I\${includedir}
-Libs: -L\${libdir} -lyaml
-PC
-  PKG_CONFIG_PATH="$B/qnx-pc${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" \
-  meson setup "$B" "$S" --cross-file "$QNX_MESON_DIR/meson-$arch.ini" \
-    --native-file "$QNX_MESON_DIR/meson-native.ini" \
-    --prefix="$PREFIX" --buildtype=release --default-library=both "${MESON_ARGS_EXTRA[@]}"
-}
+                   -Dapt-support=false -Dgir=false -Dzstd-support=true
+                   -Dblake3-support=false -Ddisplay-detection=wayland
+                   -Ddocs=false -Dapidocs=false -Dinstall-docs=false -Dman=false )
 ```
 </details>
 

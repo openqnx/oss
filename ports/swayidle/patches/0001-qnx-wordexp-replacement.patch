@@ -1,0 +1,107 @@
+swayidle: parse the configuration without wordexp() on QNX.
+
+QNX libc declares wordexp() but it is a stub: it returns -1 with ENOSYS
+for every string. swayidle splits each configuration line with it (and
+expands the configuration path), so with a configuration file it logged
+"Shell expansion error ... unknown error (-1)" and exited. Use a small
+replacement on QNX: words split on blanks, single and double quotes and
+backslashes honoured, a leading ~ and $VAR / ${VAR} expanded. The
+commands themselves are still run by sh -c.
+
+Upstream-Status: QNX-specific
+
+--- a/main.c
++++ b/main.c
+@@ -13,6 +13,92 @@
+ #include <wayland-server.h>
+ #include <wayland-util.h>
+ #include <wordexp.h>
++
++#ifdef __QNXNTO__
++/* QNX's wordexp() is a stub (returns -1, ENOSYS). The configuration parser
++ * only needs words split on blanks, quotes and backslashes honoured, and
++ * ~ and $VAR / ${VAR} expanded: do that here. */
++static int qnx_we_add(wordexp_t *p, char *w) {
++	char **v = realloc(p->we_wordv, (p->we_wordc + 2) * sizeof(char *));
++	if (!v) { free(w); return WRDE_NOSPACE; }
++	p->we_wordv = v;
++	v[p->we_wordc++] = w;
++	v[p->we_wordc] = NULL;
++	return 0;
++}
++static int qnx_we_put(char **buf, size_t *len, size_t *cap, const char *s, size_t n) {
++	if (*len + n + 1 > *cap) {
++		size_t c = (*len + n + 1) * 2;
++		char *b = realloc(*buf, c);
++		if (!b) return WRDE_NOSPACE;
++		*buf = b; *cap = c;
++	}
++	memcpy(*buf + *len, s, n);
++	*len += n;
++	(*buf)[*len] = '\0';
++	return 0;
++}
++static int qnx_wordexp(const char *s, wordexp_t *p, int flags) {
++	(void)flags;
++	p->we_wordc = 0; p->we_wordv = NULL; p->we_offs = 0;
++	while (*s) {
++		while (*s == ' ' || *s == '\t' || *s == '\n') s++;
++		if (!*s) break;
++		char *buf = NULL; size_t len = 0, cap = 0;
++		int quote = 0, start = 1;
++		if (qnx_we_put(&buf, &len, &cap, "", 0)) goto nospace;
++		for (; *s && (quote || (*s != ' ' && *s != '\t' && *s != '\n')); s++, start = 0) {
++			if (quote != '\'' && *s == '\\' && s[1]) {
++				s++;
++				if (qnx_we_put(&buf, &len, &cap, s, 1)) goto nospace_buf;
++			} else if (!quote && (*s == '\'' || *s == '"')) {
++				quote = *s;
++			} else if (quote && *s == quote) {
++				quote = 0;
++			} else if (quote != '\'' && *s == '$' && (s[1] == '{' || s[1] == '_' ||
++					(s[1] >= 'A' && s[1] <= 'Z') || (s[1] >= 'a' && s[1] <= 'z'))) {
++				const char *b = s + 1, *e;
++				int brace = *b == '{';
++				if (brace) b++;
++				for (e = b; *e == '_' || (*e >= 'A' && *e <= 'Z') || (*e >= 'a' && *e <= 'z') ||
++						(*e >= '0' && *e <= '9'); e++) ;
++				char name[128];
++				size_t nl = (size_t)(e - b) < sizeof name - 1 ? (size_t)(e - b) : sizeof name - 1;
++				memcpy(name, b, nl); name[nl] = '\0';
++				const char *v = getenv(name);
++				if (v && qnx_we_put(&buf, &len, &cap, v, strlen(v))) goto nospace_buf;
++				s = (brace && *e == '}') ? e : e - 1;
++			} else if (!quote && start && *s == '~' && (s[1] == '/' || s[1] == '\0' ||
++					s[1] == ' ' || s[1] == '\t')) {
++				const char *h = getenv("HOME");
++				if (h && qnx_we_put(&buf, &len, &cap, h, strlen(h))) goto nospace_buf;
++			} else {
++				if (qnx_we_put(&buf, &len, &cap, s, 1)) goto nospace_buf;
++			}
++		}
++		if (quote) { free(buf); wordfree(p); return WRDE_SYNTAX; }
++		if (qnx_we_add(p, buf)) goto nospace;
++		continue;
++nospace_buf:
++		free(buf);
++nospace:
++		wordfree(p);
++		return WRDE_NOSPACE;
++	}
++	if (!p->we_wordv) {
++		p->we_wordv = calloc(1, sizeof(char *));
++		if (!p->we_wordv) return WRDE_NOSPACE;
++	}
++	return 0;
++}
++static void qnx_wordfree(wordexp_t *p) {
++	for (size_t i = 0; p->we_wordv && i < p->we_wordc; i++) free(p->we_wordv[i]);
++	free(p->we_wordv);
++	p->we_wordv = NULL; p->we_wordc = 0;
++}
++#define wordexp qnx_wordexp
++#define wordfree qnx_wordfree
++#endif
+ #include "config.h"
+ #include "ext-idle-notify-v1-client-protocol.h"
+ #include "log.h"

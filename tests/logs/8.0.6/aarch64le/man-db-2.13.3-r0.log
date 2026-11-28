@@ -1,6 +1,6 @@
 # man-db 2.13.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T01:21:26Z   packages from: apk:local-dists
+# date: 2026-11-24T14:12:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -8,9 +8,9 @@
 $ apk add -u man-db qnx-test-man-db qnx-port-tests
 (1/4) Installing libpipeline (1.5.8-r0)
 (2/4) Installing man-db (2.13.3-r0)
-(3/4) Installing groff (1.23.0-r0)
+(3/4) Installing groff (1.25.0-r0)
 (4/4) Installing qnx-test-man-db (1.0-r1)
-OK: 341.9 MiB in 100 packages
+OK: 149.8 MiB in 25 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_man_db
      == man-db ==

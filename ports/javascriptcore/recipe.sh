@@ -1,10 +1,10 @@
-VERSION=2.44.4
+VERSION=2.54.3
 # WebKit's own release tarball; the JSCOnly port builds JavaScriptCore, WTF and
 # bmalloc without any of the web engine or platform integration.  Worth having
 # on its own -- a scripting engine for HMI code -- and it settles whether this
 # codebase compiles for QNX at all before the GTK port's much longer build.
-TARBALL=https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz
-SHA256=2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796
+TARBALL=https://webkitgtk.org/releases/webkitgtk-2.54.3.tar.xz
+SHA256=2779c1b46f88762e8400650271ba14452dc4e30b37059981552d8b562b7d0862
 DEPS="icu"
 BUILDSYS=cmake
 # -DENABLE_JIT=OFF / -DENABLE_C_LOOP=ON: the interpreter, not the JIT.  JSC's
@@ -24,8 +24,9 @@ CMAKE_ARGS_EXTRA=( -DPORT=JSCOnly -DENABLE_STATIC_JSC=OFF
                    # built whatever -DENABLE_API_TESTS says.  The list repeats the
                    # toolchain's default because a -D replaces it rather than adding.
                    -DCMAKE_CXX_STANDARD_LIBRARIES="-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify -lregex"
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                   -DCMAKE_CXX_STANDARD=20 )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+# (No CMAKE_CXX_STANDARD here: OptionsCommon.cmake sets C++23 itself, and
+# WebKitCommon.cmake requires GCC >= 12.2 -- exactly the SDP's compiler.)
 
 # JSCOnly installs the library and nothing else: the public C API headers are
 # generated into the build tree and left there, so a consumer has no way to
@@ -47,3 +48,4 @@ Libs: -L\${libdir} -lJavaScriptCore
 Cflags: -I\${includedir}
 PC
 }
+

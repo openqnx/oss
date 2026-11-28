@@ -1,0 +1,44 @@
+# nodejs 24.14.1-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:46:55Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u nodejs qnx-test-nodejs qnx-port-tests
+( 1/12) Installing ada (4.1.1-r1)
+( 2/12) Installing brotli (1.2.1-r1)
+( 3/12) Installing c-ares (1.34.9-r1)
+( 4/12) Installing icu (76.1-r1)
+( 5/12) Installing libuv (1.53.0-r1)
+( 6/12) Installing nghttp2 (1.71.0-r1)
+( 7/12) Installing simdjson (3.11.3-r1)
+( 8/12) Installing simdutf (9.4.0-r1)
+( 9/12) Installing sqlite (3.47.2-r1)
+(10/12) Installing nodejs (24.14.1-r2)
+(11/12) Installing qnx-port-tests (1.0-r1)
+(12/12) Installing qnx-test-nodejs (1.0-r1)
+OK: 116.7 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nodejs
+     == nodejs ==
+       ok   node --version: v24.14.1
+       ok   BigInt 2n**100n
+       ok   JSON round trip
+       ok   regex named groups
+       ok   class + async/await
+       ok   crypto sha256('abc')
+       ok   crypto AES-256-GCM round trip
+       ok   zlib gzip round trip
+       ok   Intl.NumberFormat en-US (ICU)
+       ok   Intl de-DE
+       ok   fs write/read in /tmp
+       ok   child_process.execFileSync(sh)
+       ok   HTTP server + client on <ip>
+       info openssl 3.5.1, icu 76.1, uv 1.53.0
+     PASS nodejs
+PASS test_nodejs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

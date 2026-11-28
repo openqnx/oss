@@ -1,5 +1,6 @@
 # component	test
 7zip	test_7zip
+abiword	test_abiword
 abseil	test_abseil
 abuild	test_abuild
 acado	test_acado
@@ -95,6 +96,7 @@ dav1d	test_dav1d
 davici	test_davici
 dbus	test_dbus
 dbus-glib	test_dbus_glib
+dconf	test_dconf
 desktop-file-utils	test_desktop_file_utils
 dhcpcd	test_dhcpcd
 dlt-daemon	test_dlt_daemon
@@ -120,6 +122,7 @@ encodings	test_encodings
 ensmallen	test_ensmallen
 epiphany	test_epiphany
 espeak-ng	test_espeak_ng
+evince	test_evince
 exiv2	test_exiv2
 exo	test_exo
 expat	test_expat
@@ -142,6 +145,9 @@ flac	test_flac
 flann	test_flann
 flatbuffers	test_flatbuffers
 flex	test_flex
+flutter-counter-example	test_flutter_counter_example
+flutter-engine	test_flutter_engine
+flutter-hmi-demo	test_flutter_hmi_demo
 fmt	test_fmt
 folly	test_folly
 font-cantarell	test_font_cantarell
@@ -192,10 +198,12 @@ gloo	test_gloo
 glslang	test_glslang
 gmp	test_gmp
 gnome-keyring	test_gnome_keyring
+gnumeric	test_gnumeric
 gnupg	test_gnupg
 gnutls	test_gnutls
 gobject-introspection	test_gobject_introspection
 godot	test_godot
+goffice	test_goffice
 googletest	test_googletest
 gperf	test_gperf
 gpgme	test_gpgme
@@ -219,6 +227,7 @@ gtk-layer-shell	test_gtk_layer_shell
 gtk-vnc	test_gtk_vnc
 gtk3	test_gtk3
 gtk4	test_gtk4
+gtksourceview4	test_gtksourceview4
 gtsam	test_gtsam
 gumbo-parser	test_gumbo_parser
 gyp	test_python3_buildtools
@@ -330,6 +339,7 @@ libretro-fake08	test_libretro_fake08
 libretro-mrboom	test_libretro_mrboom
 libretro-retro8	test_libretro_retro8
 libretro-samples	test_libretro_samples
+librsvg	test_librsvg
 libsamplerate	test_libsamplerate
 libsass	test_libsass
 libsecret	test_libsecret
@@ -442,6 +452,7 @@ mlpack	test_mlpack_cli
 mnn	test_mnn
 mosh	test_mosh
 mosquitto	test_mosquitto
+mousepad	test_mousepad
 mpc	test_mpc
 mpfr	test_mpfr
 mpg123	test_mpg123
@@ -510,6 +521,9 @@ orc	test_orc
 orocos-kdl	test_orocos_kdl
 osqp	test_osqp
 oss-desktop	test_labwc
+oss-greeter	test_oss_greeter
+oss-network-plugin	test_oss_network_plugin
+oss-software	test_oss_software
 p11-kit	test_p11kit
 paho.mqtt.c	test_paho_mqtt_c
 paho.mqtt.cpp	test_paho_mqtt_cpp
@@ -758,6 +772,16 @@ pythran	test_python3_buildtools
 pytorch	test_torch
 qdirstat	test_qdirstat
 qhull	test_qhull
+qnx-desktop	test_qnx_desktop
+qnx-desktop-applications	test_qnx_desktop
+qnx-desktop-core	test_qnx_desktop
+qnx-desktop-developer	test_qnx_desktop
+qnx-desktop-extras	test_qnx_desktop
+qnx-desktop-graphics	test_qnx_desktop
+qnx-desktop-preferences	test_qnx_desktop
+qnx-desktop-theme	test_qnx_desktop
+qnx-desktop-utilities	test_qnx_desktop
+qnx-flutter-wayland	test_qnx_flutter_wayland
 qnx-socketcan	test_qnx_socketcan
 qpdf	test_qpdf
 qt6	test_qt6_languageserver
@@ -842,6 +866,8 @@ sudo	test_sudo
 suitesparse	test_suitesparse
 svt-av1	test_svt_av1
 swaybg	test_labwc
+swayidle	test_swayidle
+swaylock	test_swaylock
 swig	test_swig
 sysbench	test_sysbench
 taglib	test_taglib
@@ -910,18 +936,28 @@ wlr-protocols	test_wlr_protocols
 wlroots	test_wlroots
 woff2	test_woff2
 wolfssl	test_wolfssl
+wv	test_wv
 x264	test_x264
 x265	test_x265
+xarchiver	test_xarchiver
 xcb-proto	test_xcb_proto
 xcb-util	test_xorg_libs
+xdg-user-dirs	test_xdg_user_dirs
 xdg-utils	test_xdg_utils
+xfce4-alsa-plugin	test_xfce4_alsa_plugin
 xfce4-appfinder	test_xfce4_appfinder
+xfce4-cpugraph-plugin	test_xfce4_cpugraph_panel
 xfce4-dev-tools	test_xfce4_dev_tools
+xfce4-genmon-plugin	test_xfce4_genmon_plugin
+xfce4-notifyd	test_xfce4_notifyd
 xfce4-panel	test_xfce4_panel
+xfce4-screenshooter	test_xfce4_screenshooter
 xfce4-session	test_xfce4_session
 xfce4-settings	test_xfce4_settings
+xfce4-taskmanager	test_xfce4_taskmanager
 xfce4-terminal	test_xfce4_terminal
 xfconf	test_xfconf
+xfdesktop	test_xfdesktop
 xkbcomp	test_xkbcomp
 xkeyboard-config	test_xkeyboard_config
 xmlto	test_xmlto

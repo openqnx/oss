@@ -1,0 +1,23 @@
+xarchiver: --info without an archive argument crashed.
+
+main() calls xa_init_structure_from_cmd_line(argv[1]) for every
+command-line mode, also for "xarchiver --info", which takes no archive:
+argv[1] is NULL there and xa_detect_archive_type(NULL) dereferences it.
+On QNX that is a SIGSEGV (exit 139) before the list of archivers is
+printed. Return NULL for a missing file name, as for an unknown type.
+
+Upstream-Status: Pending
+
+--- a/src/main.c
++++ b/src/main.c
+@@ -1226,6 +1226,10 @@
+ 	ArchiveType xa;
+ 	gchar *path;
+ 
++	/* "xarchiver --info" has no archive argument */
++	if (!filename)
++		return NULL;
++
+ 	xa = xa_detect_archive_type(filename);
+ 
+ 	if (xa.type == XARCHIVETYPE_UNKNOWN || xa.type == XARCHIVETYPE_NOT_FOUND)

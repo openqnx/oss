@@ -10,7 +10,7 @@
 | Build system | Meson |
 | QNX patches | 1 |
 | Build dependencies | [`freetype`](../freetype/) [`expat`](../expat/) |
-| Run-time dependencies | [`expat`](../expat/) [`freetype`](../freetype/) |
+| Run-time dependencies | [`expat`](../expat/) [`freetype`](../freetype/) [`gettext`](../gettext/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_fontconfig`](../../tests/src/) |
 
@@ -146,12 +146,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH fontconfig`.
 
 ### 5. What it installs
 
-79 files under `/usr/local`: 3 shared-library entries, 3 headers.
+84 files under `/usr/local`: 3 shared-library entries, 3 headers.
 
 ```
 /usr/local/lib/libfontconfig.so
 /usr/local/lib/libfontconfig.so.1
-/usr/local/lib/libfontconfig.so.1.14.0
+/usr/local/lib/libfontconfig.so.1.17.0
 ```
 
 The complete list is `stage/<arch>/.manifest/fontconfig` after a build.

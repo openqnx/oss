@@ -1,0 +1,31 @@
+Search restbed's own headers before the staged dependencies' include dir.
+
+restbed adds its src/ include dir after Asio's and OpenSSL's. In a
+cross build those are the staging tree's include dir, which also holds the
+headers of an earlier restbed (4.x) once one was installed there, so 5.0's
+sources compiled against the 4.x corvusoft/restbed/*.hpp ("use of deleted
+function restbed::Session::Session()"). An -I of src/ cannot help: GCC drops
+an -I for a directory also given with -isystem. Name src/ first.
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -75,7 +75,7 @@
+     set_property( TARGET ${STATIC_LIBRARY_NAME} PROPERTY CXX_STANDARD_REQUIRED ON )
+     set_target_properties( ${STATIC_LIBRARY_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME} )
+ 
+-    target_include_directories(${STATIC_LIBRARY_NAME} SYSTEM PUBLIC ${asio_INCLUDE} ${ssl_INCLUDE} ${INCLUDE_DIR})
++    target_include_directories(${STATIC_LIBRARY_NAME} SYSTEM PUBLIC ${INCLUDE_DIR} ${asio_INCLUDE} ${ssl_INCLUDE})
+ 
+     if ( BUILD_SSL )
+         target_link_libraries( ${STATIC_LIBRARY_NAME} LINK_PRIVATE ${ssl_LIBRARY_STATIC} ${crypto_LIBRARY_STATIC} ${CMAKE_DL_LIBS} )
+@@ -96,7 +96,7 @@
+     endif ( )
+     set_target_properties( ${SHARED_LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR} VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR} )
+ 
+-    target_include_directories(${SHARED_LIBRARY_NAME} SYSTEM PUBLIC ${asio_INCLUDE} ${ssl_INCLUDE} ${INCLUDE_DIR})
++    target_include_directories(${SHARED_LIBRARY_NAME} SYSTEM PUBLIC ${INCLUDE_DIR} ${asio_INCLUDE} ${ssl_INCLUDE})
+ 
+     if ( BUILD_SSL )
+         target_link_libraries( ${SHARED_LIBRARY_NAME} LINK_PRIVATE ${ssl_LIBRARY_SHARED} ${crypto_LIBRARY_SHARED} )

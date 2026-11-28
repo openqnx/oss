@@ -11,6 +11,7 @@
 #    mDNS, and avahi-resolve -a maps 127.0.0.1 back;
 #  - avahi-publish-address publishes an extra A record that resolves.
 # Both daemons and every publisher are stopped on every exit path.
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL avahi (qnxport-timeout.sh missing)"; exit 1; }
 echo "== avahi =="
 fail=0
 ok() { echo "  ok   $1"; }; bad() { echo "  FAIL $1"; fail=$((fail+1)); }
@@ -104,7 +105,7 @@ PIDS="$PIDS $!"
 i=0; while ! grep -q 'Established under name' pub.log && [ $i -lt 40 ]; do sleep 0.5; i=$((i+1)); done
 grep -q 'Established under name' pub.log && ok "avahi-publish-service: service established" || bad "publish: $(cat pub.log | tr '\n' ' ')"
 
-timeout 30 avahi-browse -p -r -t _qnxtest._tcp > browse.log 2>&1
+qto 30 avahi-browse -p -r -t _qnxtest._tcp > browse.log 2>&1
 # -p (parsable) escapes the spaces of the name as \032; printf, not echo:
 # ksh's echo would expand those backslash sequences.
 grep '^=' browse.log | grep -F 'QNX\032Test\032Service' | head -n 1 > res.line
@@ -114,16 +115,16 @@ grep -F -q ";QNX\\032Test\\032Service;_qnxtest._tcp;local;$HN.local;127.0.0.1;42
   || { bad "browse/resolve:"; sed 's/^/       /' browse.log | head -5; }
 grep -F -q '"board=qemu"' res.line && grep -F -q '"sdp=8.0"' res.line && ok "TXT record board=qemu sdp=8.0" || bad "TXT record"
 
-a=$(timeout 20 avahi-resolve -4 -n $HN.local 2>&1)
+a=$(qto 20 avahi-resolve -4 -n $HN.local 2>&1)
 echo "  info avahi-resolve -n: $a"
 case "$a" in "$HN.local"*127.0.0.1*) ok "own host name resolves to 127.0.0.1 over mDNS" ;; *) bad "resolve -n: $a" ;; esac
-a=$(timeout 20 avahi-resolve -a 127.0.0.1 2>&1)
+a=$(qto 20 avahi-resolve -a 127.0.0.1 2>&1)
 case "$a" in *"$HN.local"*) ok "avahi-resolve -a 127.0.0.1 -> $HN.local" ;; *) bad "resolve -a: $a" ;; esac
 
 avahi-publish-address -R qnx-extra-$$.local 127.0.0.1 > addr.log 2>&1 &
 PIDS="$PIDS $!"
 i=0; while ! grep -q 'Established under name' addr.log && [ $i -lt 40 ]; do sleep 0.5; i=$((i+1)); done
-a=$(timeout 20 avahi-resolve -4 -n qnx-extra-$$.local 2>&1)
+a=$(qto 20 avahi-resolve -4 -n qnx-extra-$$.local 2>&1)
 case "$a" in *127.0.0.1*) ok "published address record qnx-extra-$$.local resolves" ;; *) bad "publish-address: $a $(cat addr.log)" ;; esac
 
 stop_all

@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 1 |
 | Build dependencies | [`openssl`](../openssl/) [`cjson`](../cjson/) |
-| Run-time dependencies | [`cjson`](../cjson/) [`openssl`](../openssl/) |
+| Run-time dependencies | [`cjson`](../cjson/) [`libedit`](../libedit/) [`libmicrohttpd`](../libmicrohttpd/) [`openssl`](../openssl/) [`sqlite`](../sqlite/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_mosquitto`](../../tests/src/) |
 
@@ -125,22 +125,26 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mosquitto`.
 
 ### 5. What it installs
 
-24 files under `/usr/local`: 7 shared-library entries, 6 programs, 5 headers.
+63 files under `/usr/local`: 11 shared-library entries, 8 programs, 38 headers.
 
 ```
 /usr/local/lib/libmosquitto.so
 /usr/local/lib/libmosquitto.so.1
-/usr/local/lib/libmosquitto.so.2.0.20
+/usr/local/lib/libmosquitto.so.2.1.4
 /usr/local/lib/libmosquittopp.so
 /usr/local/lib/libmosquittopp.so.1
-/usr/local/lib/libmosquittopp.so.2.0.20
+/usr/local/lib/libmosquittopp.so.2.1.4
+/usr/local/lib/mosquitto_acl_file.so
 /usr/local/lib/mosquitto_dynamic_security.so
+/usr/local/lib/mosquitto_password_file.so
+/usr/local/lib/mosquitto_persist_sqlite.so
+/usr/local/lib/mosquitto_sparkplug_aware.so
 /usr/local/bin/mosquitto_ctrl
+/usr/local/bin/mosquitto_db_dump
 /usr/local/bin/mosquitto_passwd
 /usr/local/bin/mosquitto_pub
 /usr/local/bin/mosquitto_rr
-/usr/local/bin/mosquitto_sub
-/usr/local/sbin/mosquitto
+...
 ```
 
 The complete list is `stage/<arch>/.manifest/mosquitto` after a build.

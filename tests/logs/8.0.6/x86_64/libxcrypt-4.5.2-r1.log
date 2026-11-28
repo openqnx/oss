@@ -1,0 +1,39 @@
+# libxcrypt 4.5.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:44:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxcrypt qnx-test-libxcrypt qnx-port-tests
+(1/3) Installing libxcrypt (4.5.2-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libxcrypt (1.0-r1)
+OK: 9917 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxcrypt
+     == libxcrypt ==
+       ok   sha512crypt: reference hash reproduced
+       ok   sha256crypt: reference hash reproduced
+       ok   bcrypt 2a: reference hash reproduced
+       ok   bcrypt 2b: reference hash reproduced
+       ok   yescrypt: reference hash reproduced
+       ok   scrypt: reference hash reproduced
+       ok   md5crypt: reference hash reproduced
+       ok   descrypt: reference hash reproduced
+       ok   wrong password gives a different hash
+       ok   unknown method rejected (failure token)
+       info gensalt $y$ -> $y$j9T$pIjXnoERiY1BnZqpeF9RJ0
+       ok   crypt_gensalt_rn $y$ + hash + verify
+       info gensalt $2b$ -> $2b$05$uDOHiOLFL1Gj9l/WECuMBu
+       ok   crypt_gensalt_rn $2b$ + hash + verify
+       info gensalt $6$ -> $6$oqB6B02vekJZeoXf
+       ok   crypt_gensalt_rn $6$ + hash + verify
+       info preferred method $y$
+       ok   crypt_preferred_method
+     PASS libxcrypt
+PASS test_libxcrypt
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

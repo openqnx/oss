@@ -1,0 +1,49 @@
+# vsomeip 3.8.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:15:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vsomeip qnx-test-vsomeip qnx-port-tests
+(1/7) Installing qnx-port-tests (1.0-r1)
+(2/7) Installing bzip2 (1.0.8-r1)
+(3/7) Installing libiconv (1.19.1-r1)
+(4/7) Installing xz (5.8.4-r1)
+(5/7) Installing boost (1.86.0-r1)
+(6/7) Installing vsomeip (3.8.0-r1)
+(7/7) Installing qnx-test-vsomeip (1.0-r2)
+OK: 129.4 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vsomeip
+     == vsomeip ==
+       ok   fork consumer process
+       ok   runtime::get
+       ok   create_payload
+       ok   payload length
+       ok   payload content
+       ok   create_request
+       ok   service id readback
+       ok   method id readback
+       ok   payload attached to message
+       ok   create_application
+       ok   application name readback
+     2026-11-27 12:15:28.698288 [info] Using configuration file: "/tmp/qpt191815703.json".
+     2026-11-27 12:15:28.698548 [info] Parsed vsomeip configuration in 0ms
+       ok   init as routing manager
+     2026-11-27 12:15:28.700078 [error] usei::set_multicast_option_unlocked: #1::<target>:32703:: Failed setting the packet_info option: Protocol not available
+       ok   SD OfferService seen on the multicast group
+     2026-11-27 12:15:29.198230 [info] Using configuration file: "/tmp/qpt191815703.json".
+     2026-11-27 12:15:29.198412 [info] Parsed vsomeip configuration in 0ms
+       ok   consumer process subscribed over local routing
+     2026-11-27 12:15:29.534258 [warning] le::receive_cbk: Escalating the error: End of file socket > Client: 1302 (0), connection : role: server, own: /tmp/qpt191815703-1301, peer: , mem: 26a7fb4958, fd: 14, 26a7fb4958, send_queue: 0, receive_buffer: {mem_size: 4096, first_used: 0, last_used: 0, shrink: [0, 5]}, is_sending: false, is_flushing: false, state: CONNECTED
+     2026-11-27 12:15:29.534554 [warning] le::receive_cbk: Escalating the error: End of file socket > Client: 1302 (0), connection : role: server, own: /tmp/qpt191815703-0, peer: , mem: 26a7fb1d78, fd: 7, 26a7fb1d78, send_queue: 0, receive_buffer: {mem_size: 4096, first_used: 0, last_used: 0, shrink: [0, 5]}, is_sending: false, is_flushing: false, state: CONNECTED
+       ok   consumer received all events in order and all method replies
+       ok   provider served every method call
+     2026-11-27 12:15:29.539670 [warning] le::receive_cbk: Escalating the error: End of file socket > Client: 1301 (0), connection : role: server, own: /tmp/qpt191815703-0, peer: , mem: 26a7faeaa8, fd: 11, 26a7faeaa8, send_queue: 0, receive_buffer: {mem_size: 4096, first_used: 0, last_used: 0, shrink: [0, 5]}, is_sending: false, is_flushing: false, state: CONNECTED
+     PASS vsomeip
+PASS test_vsomeip
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

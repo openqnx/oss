@@ -1,0 +1,35 @@
+# ntp 4.2.8_p18-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:47:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u ntp qnx-test-ntp qnx-port-tests
+(1/8) Installing ncurses (6.6-r1)
+(2/8) Installing libedit (20240808.3.1-r1)
+(3/8) Installing libevent (2.1.12-r1)
+(4/8) Installing libxcrypt (4.5.2-r1)
+(5/8) Installing perl (5.40.2-r1)
+(6/8) Installing ntp (4.2.8_p18-r1)
+(7/8) Installing qnx-port-tests (1.0-r1)
+(8/8) Installing qnx-test-ntp (1.0-r1)
+OK: 81.2 MiB in 13 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ntp
+     == ntp ==
+       info ntpq 4.2.8p18@1.4062 Thu Nov 26 02:07:20 AM UTC 2026 (1)
+       ok   ntpd --version: 4.2.8p18
+       ok   ntp-keygen -M: ntp.keys with MD5 key 1
+       ok   ntpq rv: the server answers mode 6 (version=ntpd 4.2.8p18)
+       ok   ntpq -p: the local clock <ip> .LOCL. stratum 10
+       ok   ntpdc sysinfo (mode 7)
+       ok   synchronised to the local clock after 18 s: stratum 11
+       ok   system refid: the local clock
+       ok   ntpdate -q: server <ip>, stratum 11, offset -0.000001, delay 0.02586
+     PASS ntp
+PASS test_ntp
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

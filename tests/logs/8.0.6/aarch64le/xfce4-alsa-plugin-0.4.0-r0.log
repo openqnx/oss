@@ -1,0 +1,95 @@
+# xfce4-alsa-plugin 0.4.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T03:50:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-alsa-plugin qnx-test-xfce4-alsa-plugin qnx-port-tests
+( 1/64) Installing qnx-port-tests (1.0-r1)
+( 2/64) Installing expat (2.6.4-r1)
+( 3/64) Installing dbus (1.16.4-r1)
+( 4/64) Installing brotli (1.2.1-r1)
+( 5/64) Installing bzip2 (1.0.8-r1)
+( 6/64) Installing libpng (1.6.59-r1)
+( 7/64) Installing freetype (2.15.0-r1)
+( 8/64) Installing libiconv (1.19.1-r1)
+( 9/64) Installing libunistring (1.5-r1)
+(10/64) Installing ncurses (6.6-r1)
+(11/64) Installing gettext (0.22.5-r1)
+(12/64) Installing fontconfig (2.18.4-r1)
+(13/64) Installing libffi (3.8.1-r1)
+(14/64) Installing pcre2 (10.49-r1)
+(15/64) Installing glib (2.90.1-r3)
+(16/64) Installing libxau (1.0.12-r1)
+(17/64) Installing libxdmcp (1.1.5-r1)
+(18/64) Installing libxcb (1.17.0-r1)
+(19/64) Installing libx11 (1.8.14-r1)
+(20/64) Installing libxext (1.3.7-r1)
+(21/64) Installing libxrender (0.9.13-r1)
+(22/64) Installing lzo (2.10-r1)
+(23/64) Installing pixman (0.46.4-r1)
+(24/64) Installing cairo (1.18.6-r1)
+(25/64) Installing font-dejavu (2.37-r1)
+(26/64) Installing libsfdo (0.1.4-r1)
+(27/64) Installing xz (5.8.4-r1)
+(28/64) Installing libxml2 (2.13.5-r1)
+(29/64) Installing libxkbcommon (1.8.1-r1)
+(30/64) Installing fribidi (1.0.18-r1)
+(31/64) Installing graphite2 (1.3.15-r1)
+(32/64) Installing icu (76.1-r1)
+(33/64) Installing harfbuzz (<ip>-r1)
+(34/64) Installing libxft (2.3.9-r1)
+(35/64) Installing pango (1.56.4-r1)
+(36/64) Installing wayland (1.26.0-r1)
+(37/64) Installing lcms2 (2.16-r1)
+(38/64) Installing wlroots (0.20.2-r1)
+(39/64) Installing xkeyboard-config (2.49-r1)
+(40/64) Installing labwc (0.20.3-r1)
+(41/64) Installing libxi (1.8.4-r1)
+(42/64) Installing libxtst (1.2.6-r1)
+(43/64) Installing at-spi2-core (2.54.2-r1)
+(44/64) Installing libjpeg-turbo (3.2.1-r1)
+(45/64) Installing gdk-pixbuf (2.44.8-r3)
+(46/64) Installing libepoxy (1.5.10-r1)
+(47/64) Installing libxcomposite (0.4.7-r1)
+(48/64) Installing libxfixes (6.0.2-r1)
+(49/64) Installing libxcursor (1.2.3-r1)
+(50/64) Installing libxdamage (1.1.7-r1)
+(51/64) Installing libxinerama (1.1.6-r1)
+(52/64) Installing libxrandr (1.5.5-r1)
+(53/64) Installing gtk3 (3.24.43-r1)
+(54/64) Installing hicolor-icon-theme (0.18-r1)
+(55/64) Installing libxfce4util (4.20.1-r1)
+(56/64) Installing xfconf (4.20.0-r1)
+(57/64) Installing libxfce4ui (4.20.2-r1)
+(58/64) Installing exo (4.20.0-r1)
+(59/64) Installing garcon (4.20.0-r1)
+(60/64) Installing gtk-layer-shell (0.10.1-r1)
+(61/64) Installing libxfce4windowing (4.20.7-r1)
+(62/64) Installing xfce4-panel (4.20.8-r1)
+(63/64) Installing xfce4-alsa-plugin (0.4.0-r0)
+(64/64) Installing qnx-test-xfce4-alsa-plugin (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+Executing gdk-pixbuf-2.44.8-r3.trigger
+OK: 189.7 MiB in 69 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_alsa_plugin
+     == xfce4-alsa-plugin ==
+       ok   libalsa.so and alsa.desktop installed
+       ok   alsa.desktop names the module
+       ok   libalsa.so loads (ldd), with libasound.so.5
+       ok   the no-card message is built in (patches/0002)
+       info no sound card (/dev/snd absent; io-snd not running): the no-card path
+       ok   labwc up (headless)
+       ok   private D-Bus session bus
+       ok   panel configuration written to xfconf
+       ok   xfce4-panel with the plugin running after 6 s
+       ok   the panel loaded the plugin (libalsa.so mapped)
+       ok   xfce4-panel --quit
+     PASS xfce4-alsa-plugin
+PASS test_xfce4_alsa_plugin
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

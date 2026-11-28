@@ -1,16 +1,15 @@
 # ccache 4.14.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T14:30:12Z   packages from: apk:local-dists
+# date: 2026-11-24T12:28:22Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u ccache qnx-test-ccache qnx-port-tests
-(1/4) Installing xxhash (0.8.4-r0)
-(2/4) Installing ccache (4.14.3-r0)
-(3/4) Installing qnx-port-tests (1.0-r0)
-(4/4) Installing qnx-test-ccache (1.0-r1)
-OK: 11.6 MiB in 9 packages
+(1/3) Installing xxhash (0.8.4-r0)
+(2/3) Installing ccache (4.14.3-r0)
+(3/3) Installing qnx-test-ccache (1.0-r1)
+OK: 137.6 MiB in 24 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ccache
      == ccache ==

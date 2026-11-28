@@ -1,0 +1,26 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 10:41:00 -0400
+Subject: [PATCH 55/60] Add VLC_LIB_PATH
+
+Provide a way to override the hard coded VLC lib directory, set at
+compile time. Makes it easier to deal with situations where the location
+VLC is built/installed on the host is NOT the same as where it will be
+run on the target.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+diff --git a/src/posix/dirs.c b/src/posix/dirs.c
+index 31f4a175301..d4e9c1f37f6 100644
+--- a/src/posix/dirs.c
++++ b/src/posix/dirs.c
+@@ -54,7 +54,8 @@ char *config_GetDataDir (void)
+  */
+ char *config_GetLibDir (void)
+ {
+-    return strdup (PKGLIBDIR);
++    const char *path = getenv ("VLC_LIB_PATH");
++    return strdup ((path != NULL) ? path : PKGLIBDIR);
+ }
+ #endif
+ 
+

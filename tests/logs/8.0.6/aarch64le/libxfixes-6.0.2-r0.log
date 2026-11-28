@@ -1,6 +1,6 @@
 # libxfixes 6.0.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:49:09Z   packages from: apk:local-dists
+# date: 2026-11-24T13:58:07Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -13,18 +13,18 @@ $ apk add -u libxfixes qnx-test-libxfixes qnx-port-tests
 ( 5/48) Installing libxfixes (6.0.2-r0)
 ( 6/48) Installing qnx-port-tests (1.0-r0)
 ( 7/48) Installing expat (2.6.4-r0)
-( 8/48) Installing brotli (1.1.0-r0)
+( 8/48) Installing brotli (1.2.1-r0)
 ( 9/48) Installing bzip2 (1.0.8-r0)
 (10/48) Installing libpng (1.6.59-r0)
-(11/48) Installing freetype (2.13.3-r0)
-(12/48) Installing fontconfig (2.15.0-r0)
-(13/48) Installing libiconv (1.18-r0)
-(14/48) Installing libunistring (1.3-r0)
-(15/48) Installing ncurses (6.5-r0)
-(16/48) Installing gettext (0.22.5-r0)
-(17/48) Installing libffi (3.4.6-r0)
-(18/48) Installing pcre2 (10.44-r0)
-(19/48) Installing glib (2.82.4-r0)
+(11/48) Installing freetype (2.15.0-r0)
+(12/48) Installing libiconv (1.19.1-r0)
+(13/48) Installing libunistring (1.5-r0)
+(14/48) Installing ncurses (6.6-r0)
+(15/48) Installing gettext (0.22.5-r0)
+(16/48) Installing fontconfig (2.18.4-r0)
+(17/48) Installing libffi (3.8.1-r0)
+(18/48) Installing pcre2 (10.49-r0)
+(19/48) Installing glib (2.90.1-r1)
 (20/48) Installing libxext (1.3.7-r0)
 (21/48) Installing libxrender (0.9.13-r0)
 (22/48) Installing lzo (2.10-r0)
@@ -32,7 +32,7 @@ $ apk add -u libxfixes qnx-test-libxfixes qnx-port-tests
 (24/48) Installing cairo (1.18.6-r0)
 (25/48) Installing font-dejavu (2.37-r0)
 (26/48) Installing libsfdo (0.1.4-r0)
-(27/48) Installing xz (5.6.3-r0)
+(27/48) Installing xz (5.8.4-r0)
 (28/48) Installing libxml2 (2.13.5-r0)
 (29/48) Installing libxkbcommon (1.8.1-r0)
 (30/48) Installing fribidi (1.0.18-r0)
@@ -40,13 +40,13 @@ $ apk add -u libxfixes qnx-test-libxfixes qnx-port-tests
 (32/48) Installing icu (76.1-r0)
 (33/48) Installing harfbuzz (<ip>-r0)
 (34/48) Installing libxft (2.3.9-r0)
-(35/48) Installing pango (1.54.0-r0)
-(36/48) Installing wayland (1.24.0-r0)
+(35/48) Installing pango (1.56.4-r0)
+(36/48) Installing wayland (1.26.0-r0)
 (37/48) Installing lcms2 (2.16-r0)
 (38/48) Installing wlroots (0.20.2-r0)
-(39/48) Installing xkeyboard-config (2.43-r0)
-(40/48) Installing labwc (0.20.2-r0)
-(41/48) Installing libmd (1.1.0-r0)
+(39/48) Installing xkeyboard-config (2.49-r0)
+(40/48) Installing labwc (0.20.3-r0)
+(41/48) Installing libmd (1.3.0-r0)
 (42/48) Installing libxcvt (0.1.3-r0)
 (43/48) Installing fontenc (1.1.8-r0)
 (44/48) Installing libxfont2 (2.0.10-r0)
@@ -54,12 +54,12 @@ $ apk add -u libxfixes qnx-test-libxfixes qnx-port-tests
 (46/48) Installing xkbcomp (1.5.0-r0)
 (47/48) Installing xwayland (24.1.14-r0)
 (48/48) Installing qnx-test-libxfixes (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 124.1 MiB in 53 packages
+Executing glib-2.90.1-r1.trigger
+OK: 128.8 MiB in 53 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxfixes
      == libxfixes ==
-       info X server :42: The X.Org Foundation 12401014, screen 320x240 depth 24
+       info X server :58: The X.Org Foundation 12401014, screen 320x240 depth 24
        ok   headless X server (labwc + Xwayland) up
        ok   XFIXES extension present
        ok   XFIXES version >= 4

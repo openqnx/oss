@@ -4,17 +4,17 @@
 # QNX's sh: it substitutes variables into a file, defines into config.h and
 # honours --with/--enable options. No compiler is involved.
 # Run the test itself in the background, its output to a log, and wait at
-# most 170 s: nothing it leaves behind can hold the runner's output, and a
+# most 600 s (the autotools steps alone take about 200 s under emulation): nothing it leaves behind can hold the runner's output, and a
 # hang ends as a FAIL with whatever the test printed so far.
 if [ -z "$QNXPORT_INNER" ]; then
   QNXPORT_INNER=/tmp/qnxport-out.$$; export QNXPORT_INNER
   sh "$0" "$@" > "$QNXPORT_INNER" 2>&1 < /dev/null &
   qp=$!; qi=0
-  while kill -0 $qp 2>/dev/null && [ $qi -lt 170 ]; do sleep 1; qi=$((qi+1)); done
+  while kill -0 $qp 2>/dev/null && [ $qi -lt 600 ]; do sleep 1; qi=$((qi+1)); done
   if kill -0 $qp 2>/dev/null; then
     for p in $(cat "$QNXPORT_INNER.pids" 2>/dev/null); do kill $p 2>/dev/null; done
     kill $qp 2>/dev/null; sleep 1; kill -KILL $qp 2>/dev/null
-    cat "$QNXPORT_INNER"; echo "  FAIL watchdog: still running after 170 s -- stopped"
+    cat "$QNXPORT_INNER"; echo "  FAIL watchdog: still running after 600 s -- stopped"
     echo "FAIL ${0##*/} (watchdog)"; rm -f "$QNXPORT_INNER" "$QNXPORT_INNER.pids"; exit 1
   fi
   wait $qp; rc=$?; cat "$QNXPORT_INNER"; rm -f "$QNXPORT_INNER" "$QNXPORT_INNER.pids"; exit $rc
@@ -81,6 +81,17 @@ to 60 sh ./configure --with-flavour=neutrino --enable-turbo > cf.log 2>&1 && ok 
 [ "$(cat info.txt 2>/dev/null)" = "package=qnxdemo version=2.5.1 flavour=neutrino" ] && ok "info.txt substituted" || bad "info.txt: $(cat info.txt 2>/dev/null)"
 awk '/^#define HAVE_TURBO 1/ {a=1} /^#define FLAVOUR_NAME "neutrino"/ {b=1} END {exit !(a && b)}' config.h 2>/dev/null && ok "config.h: HAVE_TURBO 1, FLAVOUR_NAME \"neutrino\"" || { bad "config.h"; cat config.h 2>/dev/null | head; }
 to 60 sh ./configure > cf2.log 2>&1 && awk '/HAVE_TURBO/ && /#define/ {f=1} END {exit f}' config.h && [ "$(cat info.txt)" = "package=qnxdemo version=2.5.1 flavour=plain" ] && ok "defaults: no turbo, flavour=plain" || bad "configure defaults"
+# A configure that stops must say so with its exit status: autoconf 2.73's
+# exit trap (ac_exit_trap, a shell function written inside an m4 macro)
+# lost the status, and every failed configure ended with 0.
+mkdir failcf && cd failcf && cat > configure.ac <<'EOF'
+AC_INIT([qnxfail], [1.0])
+AC_MSG_ERROR([stopping here on purpose])
+AC_OUTPUT
+EOF
+$AUTOCONF > ac.log 2>&1; r=$(to 60 sh ./configure 2>&1); rc=$?
+[ $rc -ne 0 ] && echo "$r" | grep -q 'error: stopping here on purpose' && ok "a configure stopped by AC_MSG_ERROR exits non-zero ($rc)" || bad "failing configure: exit status $rc: $(echo "$r" | tail -n 1)"
+cd ..
 stopall
 [ $fail -eq 0 ] && { echo "PASS $N"; exit 0; }
 echo "FAIL $N ($fail check(s) failed)"; exit 1

@@ -1,6 +1,6 @@
 # fastfetch 2.66.1-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:19:59Z   packages from: apk:local-dists
+# date: 2026-11-24T12:45:50Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -18,13 +18,13 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_f
        ok   OS: QNX 8.0.0
        ok   OS build: 2026/10/30-09:09:47EDT
        ok   Kernel release 8.0.0
-       info pidin: 2 CPUs at 0 MHz, FreeMem:1351MB/1536MB
+       info pidin: 2 CPUs at 0 MHz, FreeMem:2357MB/2560MB
        ok   CPU: 2 logical cores, as pidin
        ok   CPU: base frequency 0 MHz, as pidin
-       ok   Memory: total 1536 MB, as pidin
+       ok   Memory: total 2560 MB, as pidin
        ok   Memory: used is between 0 and the total
-       ok   Uptime: 1173 s since boot
-       info boot time: fastfetch 2026-11-21T08:58:02.000+0000, pidin Nov 21 08:58:02
+       ok   Uptime: 2544 s since boot
+       info boot time: fastfetch 2026-11-24T12:03:21.000+0000, pidin Nov 24 12:03:21
        ok   Processes: 23 (/proc has 24)
        ok   Disk /: 9432 KB total, as df -k
        ok   Disk: mount point /

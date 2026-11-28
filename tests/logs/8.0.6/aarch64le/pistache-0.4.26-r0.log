@@ -1,20 +1,19 @@
 # pistache 0.4.26-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:25:48Z   packages from: apk:local-dists
+# date: 2026-11-24T15:43:47Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pistache qnx-test-pistache qnx-port-tests
-(1/4) Installing libevent (2.1.12-r0)
-(2/4) Installing pistache (0.4.26-r0)
-(3/4) Installing qnx-port-tests (1.0-r0)
-(4/4) Installing qnx-test-pistache (1.0-r0)
-OK: 12.3 MiB in 9 packages
+(1/3) Installing libevent (2.1.12-r0)
+(2/3) Installing pistache (0.4.26-r0)
+(3/3) Installing qnx-test-pistache (1.0-r0)
+OK: 138.4 MiB in 24 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pistache
      == pistache ==
-     21 10:13:36 INF: (01 PSTCH) eventmeth.cc:1286 in EventMethBase(): No edge trigger
+     24 15:33:48 INF: (01 PSTCH) eventmeth.cc:1286 in EventMethBase(): No edge trigger
        ok   endpoint serving on the loopback
        info HTTP/1.1 200 OK
        ok   GET /hello: 200

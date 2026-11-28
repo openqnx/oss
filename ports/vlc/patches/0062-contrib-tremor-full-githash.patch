@@ -1,0 +1,22 @@
+contrib: pin tremor by its full commit hash.
+
+tremor is fetched from git master and archived at TREMOR_HASH, and
+check_githash then reads the hash back from tremor-git.githash with a
+pattern for a 40-digit SHA-1. With the short TREMOR_HASH (b56ffce0) the
+pattern never matches, the comparison sees the whole line, and
+"make fetch-all" stops at .sum-tremor. Use the full hash of the same
+commit.
+
+Upstream-Status: Pending
+
+--- a/contrib/src/tremor/rules.mak
++++ b/contrib/src/tremor/rules.mak
+@@ -1,7 +1,7 @@
+ # tremor (fixed-point Vorbis)
+ 
+ TREMOR_URL := https://gitlab.xiph.org/xiph/tremor.git
+-TREMOR_HASH := b56ffce0
++TREMOR_HASH := b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
+ 
+ ifndef HAVE_FPU
+ PKGS += tremor

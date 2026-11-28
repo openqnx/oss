@@ -1,4 +1,4 @@
-# mpc 1.3.1
+# mpc 1.4.1
 
 > GNU MPC library for complex number arithmetic with arbitrary precision
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz |
-| SHA-256 | `ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8` |
+| Upstream | https://ftp.gnu.org/gnu/mpc/mpc-1.4.1.tar.xz |
+| SHA-256 | `91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`gmp`](../gmp/) [`mpfr`](../mpfr/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
+URL=https://ftp.gnu.org/gnu/mpc/mpc-1.4.1.tar.xz
 mkdir -p dist src/mpc
 curl -fL -o dist/$(basename $URL) $URL
-echo "ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8  dist/$(basename $URL)" | sha256sum -c -
+echo "91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/mpc --strip-components=1
 ```
 
@@ -112,11 +112,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH mpc`.
 
 ### 5. What it installs
 
-4 files under `/usr/local`: 2 shared-library entries, 1 headers.
+5 files under `/usr/local`: 2 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libmpc.so
-/usr/local/lib/libmpc.so.6
+/usr/local/lib/libmpc.so.7
 ```
 
 The complete list is `stage/<arch>/.manifest/mpc` after a build.
@@ -194,13 +194,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.3.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpc=<version>`), sources in `ported/mpc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpc`; port one with `scripts/port-update mpc`.
+This recipe builds **1.4.1**. Kept from earlier: `1.3.1` ([recipe and patches](versions/1.3.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add mpc=<version>`), sources in `ported/mpc/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates mpc`; port one with `scripts/port-update mpc`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.3.1; TARBALL=https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
-SHA256=ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8
+VERSION=1.4.1
+TARBALL=https://ftp.gnu.org/gnu/mpc/mpc-1.4.1.tar.xz
+SHA256=91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931
 DEPS="gmp mpfr"
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static

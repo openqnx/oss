@@ -1,0 +1,50 @@
+# meson 1.12.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T13:14:16Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u meson qnx-test-meson qnx-port-tests
+( 1/15) Installing meson (1.12.1-r1)
+( 2/15) Installing qnx-port-tests (1.0-r1)
+( 3/15) Installing bzip2 (1.0.8-r1)
+( 4/15) Installing expat (2.6.4-r1)
+( 5/15) Installing gdbm (1.26-r1)
+( 6/15) Installing libiconv (1.19.1-r1)
+( 7/15) Installing libunistring (1.5-r1)
+( 8/15) Installing ncurses (6.6-r1)
+( 9/15) Installing gettext (0.22.5-r1)
+(10/15) Installing libffi (3.8.1-r1)
+(11/15) Installing readline (8.3-r1)
+(12/15) Installing sqlite (3.47.2-r1)
+(13/15) Installing xz (5.8.4-r1)
+(14/15) Installing python3 (3.14.0-r2)
+(15/15) Installing qnx-test-meson (1.0-r2)
+Executing python3-3.14.0-r2.trigger
+OK: 134.5 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_meson
+     == meson ==
+       info meson 1.12.1
+       ok   meson --version: 1.12.1
+       info Message: system=qnx cpu=aarch64
+       ok   meson setup --backend=none (no compiler needed)
+       ok   config.h: ANSWER 42 (run_command), FLAVOUR "plain", NWORDS 3
+       ok   configure_file substitution: hello ALPHA-BETA-GAMMA
+       ok   introspect --projectinfo: qnxdemo 1.2.3
+       ok   introspect --buildoptions: flavour plain of plain/spicy
+       ok   default buildtype debug
+       ok   meson configure -Dflavour=spicy
+       ok   reconfigured: config.h has FLAVOUR "spicy"
+       info meson configure build -Dflavour=sweet: rc 1:
+     
+     ERROR: Value "sweet" (of type "string") for option "flavour" is not one of the choices. Possible choices are (as string): "plain", "spicy".
+     
+       ok   a value outside the combo is rejected
+     PASS meson
+PASS test_meson
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

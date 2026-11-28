@@ -2,7 +2,7 @@
 
 > LAME MP3 audio encoder and library
 
-**🟢 Standalone** — Builds with only the QNX SDP and runs on a stock QNX 8.0 target. Nothing else from this repository is needed, at build time or at run time.
+**🔴 Dependent** — Needs other components **to build and at run time**. `oss-get` installs the run-time ones with it.
 
 | | |
 |---|---|
@@ -10,8 +10,8 @@
 | SHA-256 | `3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
-| Build dependencies | none |
-| Run-time dependencies | none (QNX SDP only) |
+| Build dependencies | [`mpg123`](../mpg123/) |
+| Run-time dependencies | [`mpg123`](../mpg123/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_lame`](../../tests/src/) |
 
@@ -68,7 +68,11 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-No other component has to be built first.
+**Build the dependencies first** (1 component(s)), or let `qnxbuild` do it:
+
+```bash
+./scripts/qnxbuild mpg123
+```
 
 ### 2. Get the upstream source
 
@@ -109,11 +113,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH lame`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 2 shared-library entries, 1 headers.
+20 files under `/usr/local`: 3 shared-library entries, 1 headers.
 
 ```
 /usr/local/lib/libmp3lame.so
 /usr/local/lib/libmp3lame.so.0
+/usr/local/lib/libmp3lame.so.0.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/lame` after a build.
@@ -204,6 +209,7 @@ VERSION=4.0
 TARBALL=https://downloads.sourceforge.net/lame/lame-4.0.tar.gz
 SHA256=3df5124d5ad3a98312ffd7ba6a9b36230e4f8a3e66d3ce0f425e336c32d216eb
 BUILDSYS=autotools
+DEPS="mpg123"   # lame 4.0 configure requires libmpg123 >= 1.26 (external mp3 decoder)
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-frontend
                   --disable-gtktest --enable-nasm )
 ```

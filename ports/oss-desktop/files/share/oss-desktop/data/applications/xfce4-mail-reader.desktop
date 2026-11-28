@@ -1,0 +1,13 @@
+# oss-desktop: hides exo's "Mail Reader" menu entry while no mail program is
+# ported (it opened only the "Choose Preferred Application" dialog). This
+# directory comes first in XDG_DATA_DIRS (bin/oss-desktop), so this file is
+# used in place of share/applications/xfce4-mail-reader.desktop. Remove it
+# when a mail reader is in the desktop.
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Mail Reader
+Exec=exo-open --launch MailReader %u
+Icon=org.xfce.mailreader
+Terminal=false
+NoDisplay=true

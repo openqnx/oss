@@ -1,19 +1,19 @@
 # azure-iot-sdk-c 0_git-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:27:36Z   packages from: apk:local-dists
+# date: 2026-11-24T12:41:50Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u azure-iot-sdk-c qnx-test-azure-iot-sdk-c qnx-port-tests
-(1/7) Installing brotli (1.1.0-r0)
-(2/7) Installing c-ares (1.34.3-r0)
-(3/7) Installing nghttp2 (1.64.0-r0)
-(4/7) Installing curl (8.11.1-r0)
-(5/7) Installing azure-iot-sdk-c (0_git-r0)
-(6/7) Installing qnx-port-tests (1.0-r0)
+(1/7) Installing brotli (1.2.1-r0)
+(2/7) Installing c-ares (1.34.9-r0)
+(3/7) Installing libidn2 (2.3.8-r0)
+(4/7) Installing nghttp2 (1.71.0-r0)
+(5/7) Installing curl (8.23.0-r0)
+(6/7) Installing azure-iot-sdk-c (0_git-r0)
 (7/7) Installing qnx-test-azure-iot-sdk-c (1.0-r0)
-OK: 13.8 MiB in 12 packages
+OK: 185.4 MiB in 46 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_azure_iot_sdk_c
      == azure-iot-sdk-c ==
@@ -32,7 +32,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_a
        ok   cloned message body
        ok   clone keeps message id and properties
        ok   device client from a valid connection string (MQTT transport)
-     Error: Time:Sat Nov 21 09:27:35 2026 File:/build/oss/src-x86_64/azure-iot-sdk-c/iothub_client/src/iothub_client_core_ll.c Func:IoTHubClientCore_LL_CreateFromConnectionString Line:1562 iotHubName is not found
+     Error: Time:Tue Nov 24 12:41:48 2026 File:.../src-x86_64/azure-iot-sdk-c/iothub_client/src/iothub_client_core_ll.c Func:IoTHubClientCore_LL_CreateFromConnectionString Line:1562 iotHubName is not found
        ok   connection string without HostName rejected
        ok   serializer: SINT32 to string
        ok   serializer: string is quoted and escaped

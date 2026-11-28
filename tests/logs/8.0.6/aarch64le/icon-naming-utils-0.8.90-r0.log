@@ -1,15 +1,15 @@
 # icon-naming-utils 0.8.90-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:35:50Z   packages from: apk:local-dists
+# date: 2026-11-24T13:24:18Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u icon-naming-utils qnx-test-icon-naming-utils qnx-port-tests
-( 1/10) Installing libxcrypt (4.4.38-r0)
+( 1/10) Installing libxcrypt (4.5.2-r0)
 ( 2/10) Installing perl (5.40.2-r0)
 ( 3/10) Installing expat (2.6.4-r0)
-( 4/10) Installing perl-class-inspector (1.36-r0)
+( 4/10) Installing perl-class-inspector (1.37_git-r0)
 ( 5/10) Installing perl-file-sharedir (1.118-r0)
 ( 6/10) Installing perl-xml-parser (2.59-r0)
 ( 7/10) Installing perl-xml-simple (2.25-r0)

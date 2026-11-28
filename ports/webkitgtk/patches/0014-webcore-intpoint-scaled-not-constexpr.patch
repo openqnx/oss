@@ -1,0 +1,31 @@
+WebCore: IntPoint::scaled() is not constexpr with GCC and libc++.
+
+    IntPoint.h:88: error: call to non-'constexpr' function
+        'long int std::__math::lround(float)'
+
+IntPoint::scaled() is declared constexpr and calls std::lround().  libstdc++
+lets GCC fold lround as a builtin; libc++ (the C++ library of QNX's GCC
+toolchain) declares it as an ordinary function, and GCC 12 -- which predates
+C++23's relaxed rule for constexpr functions (P2448) -- rejects a non-template
+constexpr function whose body can never be a constant expression.  Nothing
+uses scaled() in a constant expression, so drop the constexpr.
+
+Upstream-Status: Pending
+
+--- a/Source/WebCore/platform/graphics/IntPoint.h
++++ b/Source/WebCore/platform/graphics/IntPoint.h
+@@ -83,12 +83,12 @@
+         this->scale(scale, scale);
+     }
+ 
+-    constexpr IntPoint scaled(float scale) const
++    IntPoint scaled(float scale) const
+     {
+         return { static_cast<int>(std::lround(m_x * scale)), static_cast<int>(std::lround(m_y * scale)) };
+     }
+ 
+-    constexpr IntPoint scaled(float scaleX, float scaleY) const
++    IntPoint scaled(float scaleX, float scaleY) const
+     {
+         return { static_cast<int>(std::lround(m_x * scaleX)), static_cast<int>(std::lround(m_y * scaleY)) };
+     }

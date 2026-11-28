@@ -1,0 +1,42 @@
+# xtl 0.8.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:17:09Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xtl-dev qnx-test-xtl qnx-port-tests
+(1/3) Installing qnx-port-tests (1.0-r1)
+(2/3) Installing qnx-test-xtl (1.0-r1)
+(3/3) Installing xtl-dev (0.8.2-r1)
+OK: 10.0 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xtl
+     == xtl ==
+       info xtl 0.8.2
+       ok   base64("foobar") = Zm9vYmFy
+       ok   base64("fo") = Zm8= (padding)
+       ok   base64 decode Zm9vYg== = foob
+       ok   base64 round trip of all 256 byte values
+       ok   half 1.5 is exact
+       ok   half 1.5 + 2.25 = 3.75
+       ok   half max 65504
+       ok   half 70000 overflows to inf
+       ok   half(0.1) rounds to 0.0999755859375
+       ok   optional 2 * 3 = 6
+       ok   optional + missing is missing
+       ok   missing value_or(-1) = -1
+       ok   70-bit dynamic bitset with 3 bits set: count 3
+       ok   bit 33 set, bit 34 clear
+       ok   flip(): 67 bits set
+       ok   fixed string append, max_size 16
+       ok   fixed string find("port") = 4
+       ok   span over {2,3,4}: sum 9
+       info executable_path = /usr/local/bin/qnx-port-tests/test_xtl, prefix_path = /usr/local/bin/
+       ok   executable_path() is the absolute path of this program
+     PASS xtl
+PASS test_xtl
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

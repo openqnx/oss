@@ -1,36 +1,33 @@
 # python3-pyserial 3.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T01:21:41Z   packages from: apk:local-dists
+# date: 2026-11-24T20:20:13Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-pyserial qnx-test-python3-canlibs qnx-port-tests
-( 1/23) Installing aspell (0.60.8.1-r1)
-( 2/23) Installing sqlite (3.47.2-r0)
-( 3/23) Installing python3 (3.14.0-r0)
-( 4/23) Installing python3-pyserial (3.5-r0)
-( 5/23) Installing python3-argparse-addons (0.12.0-r0)
-( 6/23) Installing python3-bitstruct (8.24.0-r0)
-( 7/23) Installing python3-packaging (25.0-r0)
-( 8/23) Installing python3-typing-extensions (4.16.0-r0)
-( 9/23) Installing python3-wrapt (2.5.2-r0)
-(10/23) Installing qnx-socketcan (1.0-r0)
-(11/23) Installing python3-can (4.6.1-r0)
-(12/23) Installing python3-can-isotp (2.0.7-r0)
-(13/23) Installing openblas (0.3.28-r0)
-(14/23) Installing numpy (2.3.4-r0)
-(15/23) Installing python3-can-j1939 (2.0.12-r0)
-(16/23) Installing python3-attrs (26.1.0-r0)
-(17/23) Installing python3-click (8.5.1-r0)
-(18/23) Installing python3-canmatrix (1.3.3-r0)
-(19/23) Installing python3-crccheck (1.3.1-r0)
-(20/23) Installing python3-textparser (0.26.2-r0)
-(21/23) Installing python3-cantools (45.1.2-r0)
-(22/23) Installing python3-udsoncan (1.26.1-r0)
-(23/23) Installing qnx-test-python3-canlibs (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 382.4 MiB in 121 packages
+( 1/20) Installing python3-pyserial (3.5-r0)
+( 2/20) Installing python3-argparse-addons (0.12.0-r0)
+( 3/20) Installing python3-bitstruct (8.24.0-r0)
+( 4/20) Installing python3-packaging (25.0-r0)
+( 5/20) Installing python3-typing-extensions (4.16.0-r0)
+( 6/20) Installing python3-wrapt (2.5.2-r0)
+( 7/20) Installing qnx-socketcan (1.0-r0)
+( 8/20) Installing python3-can (4.6.1-r0)
+( 9/20) Installing python3-can-isotp (2.0.7-r0)
+(10/20) Installing openblas (0.3.34-r0)
+(11/20) Installing numpy (2.5.5-r0)
+(12/20) Installing python3-can-j1939 (2.0.12-r0)
+(13/20) Installing python3-attrs (26.1.0-r0)
+(14/20) Installing python3-click (8.5.1-r0)
+(15/20) Installing python3-canmatrix (1.3.3-r0)
+(16/20) Installing python3-crccheck (1.3.1-r0)
+(17/20) Installing python3-textparser (0.26.2-r0)
+(18/20) Installing python3-cantools (45.2.0-r0)
+(19/20) Installing python3-udsoncan (1.26.1-r0)
+(20/20) Installing qnx-test-python3-canlibs (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 177.1 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canlibs
      == python3-canlibs ==

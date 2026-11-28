@@ -1,0 +1,60 @@
+# gsettings-desktop-schemas 49.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:41:33Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gsettings-desktop-schemas qnx-test-gsettings-desktop-schemas qnx-port-tests
+( 1/10) Installing gsettings-desktop-schemas (49.0-r1)
+( 2/10) Installing qnx-port-tests (1.0-r1)
+( 3/10) Installing libiconv (1.19.1-r1)
+( 4/10) Installing libunistring (1.5-r1)
+( 5/10) Installing ncurses (6.6-r1)
+( 6/10) Installing gettext (0.22.5-r1)
+( 7/10) Installing libffi (3.8.1-r1)
+( 8/10) Installing pcre2 (10.49-r1)
+( 9/10) Installing glib (2.90.1-r3)
+(10/10) Installing qnx-test-gsettings-desktop-schemas (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+* Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+OK: 49.0 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gsettings_desktop_schemas
+     == gsettings-desktop-schemas ==
+       ok   share/glib-2.0/schemas/org.gnome.desktop.*.gschema.xml installed
+       ok   glib-compile-schemas available
+       info 32 schema files of the package
+       info glib-compile-schemas: Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+     Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+       ok   glib-compile-schemas --strict compiled them
+       ok   schema source loads gschemas.compiled
+       info 46 schemas, 6 relocatable
+       ok   30+ schemas, wm.preferences and system.proxy among them
+       ok   relocatable app-folders.folder
+       ok   GSettings for org.gnome.desktop.interface (memory backend)
+       info font-name 'Adwaita Sans 11', gtk-theme 'Adwaita'
+       ok   defaults: font-name 'Adwaita Sans 11', gtk-theme 'Adwaita'
+       ok   enum defaults match gdesktop-enums.h: 24h, default
+       ok   set color-scheme = G_DESKTOP_COLOR_SCHEME_PREFER_DARK
+       ok   reads back as nick 'prefer-dark'
+       ok   'neon' is not a valid color-scheme
+       ok   wm num-workspaces: range 1..36
+       ok   num-workspaces default 4
+       info gsettings get: 'Adwaita Sans 11'
+       ok   gsettings get org.gnome.desktop.interface font-name
+     PASS gsettings-desktop-schemas
+PASS test_gsettings_desktop_schemas
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

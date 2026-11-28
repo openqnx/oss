@@ -1,0 +1,81 @@
+bmalloc, WTF: madvise() through posix_madvise() on QNX.
+
+    VMAllocate.h:327: error: 'madvise' was not declared in this scope
+    VMAllocate.h:327: error: 'MADV_DONTNEED' was not declared in this scope
+    VMAllocate.h:344: error: 'MADV_NORMAL' was not declared in this scope
+
+QNX's libc has no madvise() and no MADV_* constants; <sys/mman.h> offers the
+POSIX form, posix_madvise() with POSIX_MADV_NORMAL/WILLNEED/DONTNEED, which
+returns the error number instead of -1/errno.  bmalloc's VMAllocate.h (included
+even with USE_SYSTEM_MALLOC) and WTF's OSAllocatorPOSIX.cpp -- whose QNX
+branches upstream already call madvise(MADV_WILLNEED/MADV_DONTNEED) -- get a
+small static madvise() that forwards to posix_madvise() and sets errno, so the
+callers' "== -1 && errno == EAGAIN" loops are unchanged.  The block is the same
+in both files and guarded by !defined(MADV_NORMAL), so a unified source that
+includes both defines it once.  DONTNEED is advice here, as it is for every
+non-Linux caller: none of these paths rely on the pages reading back as zero
+(vmZeroAndPurge() re-maps with mmap(MAP_FIXED) on everything but Linux).
+
+Upstream-Status: Pending
+
+--- a/Source/bmalloc/bmalloc/VMAllocate.h
++++ b/Source/bmalloc/bmalloc/VMAllocate.h
+@@ -44,6 +44,29 @@
+ #include <unistd.h>
+ #endif
+ 
++#if defined(__QNX__)
++#include <errno.h>
++#endif
++#if defined(__QNX__) && !defined(MADV_NORMAL)
++// QNX's libc has no madvise() and no MADV_* names, only the POSIX spelling
++// posix_madvise()/POSIX_MADV_*, which returns the error number instead of
++// setting errno.  Map the BSD names onto it so the callers keep their Linux
++// form (while (madvise(...) == -1 && errno == EAGAIN)).  Both bmalloc and WTF
++// carry this same block; whichever is included first defines it.
++#define MADV_NORMAL POSIX_MADV_NORMAL
++#define MADV_WILLNEED POSIX_MADV_WILLNEED
++#define MADV_DONTNEED POSIX_MADV_DONTNEED
++static inline int madvise(void* address, size_t length, int advice)
++{
++    int error = posix_madvise(address, length, advice);
++    if (error) {
++        errno = error;
++        return -1;
++    }
++    return 0;
++}
++#endif
++
+ #if BOS(DARWIN)
+ #include <mach/mach.h>
+ #include <mach/vm_page_size.h>
+--- a/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp
++++ b/Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp
+@@ -37,6 +37,26 @@
+ #include <wtf/SafeStrerror.h>
+ #include <wtf/text/CString.h>
+ 
++#if defined(__QNX__) && !defined(MADV_NORMAL)
++// QNX's libc has no madvise() and no MADV_* names, only the POSIX spelling
++// posix_madvise()/POSIX_MADV_*, which returns the error number instead of
++// setting errno.  Map the BSD names onto it so the callers keep their Linux
++// form (while (madvise(...) == -1 && errno == EAGAIN)).  Both bmalloc and WTF
++// carry this same block; whichever is included first defines it.
++#define MADV_NORMAL POSIX_MADV_NORMAL
++#define MADV_WILLNEED POSIX_MADV_WILLNEED
++#define MADV_DONTNEED POSIX_MADV_DONTNEED
++static inline int madvise(void* address, size_t length, int advice)
++{
++    int error = posix_madvise(address, length, advice);
++    if (error) {
++        errno = error;
++        return -1;
++    }
++    return 0;
++}
++#endif
++
+ #if ENABLE(JIT_CAGE)
+ #include <WebKitAdditions/JITCageAdditions.h>
+ #else // ENABLE(JIT_CAGE)

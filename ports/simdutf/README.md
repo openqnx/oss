@@ -99,12 +99,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH simdutf`.
 
 ### 5. What it installs
 
-18 files under `/usr/local`: 3 shared-library entries, 10 headers.
+52 files under `/usr/local`: 3 shared-library entries, 44 headers.
 
 ```
 /usr/local/lib/libsimdutf.so
-/usr/local/lib/libsimdutf.so.19
-/usr/local/lib/libsimdutf.so.19.0.0
+/usr/local/lib/libsimdutf.so.38
+/usr/local/lib/libsimdutf.so.38.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/simdutf` after a build.

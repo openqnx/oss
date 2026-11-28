@@ -1,12 +1,12 @@
 # hdf5 1.14.6-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:39:57Z   packages from: apk:local-dists
+# date: 2026-11-24T12:44:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u hdf5 qnx-test-hdf5 qnx-port-tests
-(1/4) Installing libaec (1.1.7-r0)
+(1/4) Installing libaec (1.1.8-r0)
 (2/4) Installing hdf5 (1.14.6-r0)
 (3/4) Installing qnx-port-tests (1.0-r0)
 (4/4) Installing qnx-test-hdf5 (1.0-r0)
@@ -48,7 +48,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_h
        ok   h5dump prints the matrix values and the attribute
        ok   h5repack rewrites the file with GZIP=9
        ok   h5diff finds no difference between the file and its repacked copy
-       info: /usr/local/bin/h5diff '/tmp/qnx-hdf5-87789591.h5' '/tmp/qnx-hdf5-87789591.h5.repack' /hl_matrix 2>&1 -> exit 1: dataset: </hl_matrix> and </hl_matrix>
+       info: /usr/local/bin/h5diff '/tmp/qnx-hdf5-41222167.h5' '/tmp/qnx-hdf5-41222167.h5.repack' /hl_matrix 2>&1 -> exit 1: dataset: </hl_matrix> and </hl_matrix>
      1 differences found
      
        ok   h5diff reports the one changed value (exit status 1)

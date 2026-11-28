@@ -6,8 +6,12 @@ static const char kPage[] = R"HTML(<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>QNX screen</title>
 <style>
- html,body{margin:0;height:100%;background:#111;color:#ccc;font:14px system-ui,sans-serif}
- video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+ /* the picture fills the window, whole and centred, never scrolled: the
+    video box is the window (fixed, inset 0) and the picture is fitted into
+    it keeping its aspect ratio (bands on the two sides that are longer) */
+ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#ccc;font:14px system-ui,sans-serif}
+ video{position:fixed;inset:0;width:100%;height:100%;max-width:100vw;max-height:100vh;box-sizing:border-box;
+       object-fit:contain;object-position:50% 50%;background:#000;display:block;margin:0;padding:0;border:0}
  #s{position:fixed;left:8px;bottom:8px;padding:4px 8px;background:rgba(0,0,0,.6);border-radius:4px}
 </style></head><body>
 <video id="v" autoplay muted playsinline></video><div id="s">connecting...</div>
@@ -16,6 +20,15 @@ const v=document.getElementById('v'), s=document.getElementById('s');
 let pc=null, timer=null, dc=null;
 const INPUT=__INPUT__;
 function say(t){ s.textContent=t; s.style.display=t?'block':'none'; }
+// "?info" in the address keeps the picture size and the fitted size on screen
+const INFO=/[?&]info\b/.test(location.search); let infoT=null;
+function info(){
+  const r=v.getBoundingClientRect(), vw=v.videoWidth, vh=v.videoHeight; if(!vw||!vh) return;
+  const k=Math.min(r.width/vw, r.height/vh);
+  say('picture '+vw+'x'+vh+', shown '+Math.round(vw*k)+'x'+Math.round(vh*k)+' in window '+Math.round(r.width)+'x'+Math.round(r.height));
+  clearTimeout(infoT); if(!INFO) infoT=setTimeout(()=>say(''),4000);
+}
+v.addEventListener('resize',info); window.addEventListener('resize',info);
 function again(t){ say(t+' - reconnecting'); clearTimeout(timer); timer=setTimeout(start,2000); }
 async function start(){
   if(pc){ pc.onconnectionstatechange=null; pc.close(); }
@@ -26,7 +39,7 @@ async function start(){
   pc.ontrack=e=>{ v.srcObject=e.streams[0]||new MediaStream([e.track]); };
   pc.onconnectionstatechange=()=>{
     if(me!==pc) return;
-    if(pc.connectionState==='connected') say('');
+    if(pc.connectionState==='connected') info();
     else if(pc.connectionState==='failed'||pc.connectionState==='disconnected'||pc.connectionState==='closed') again(pc.connectionState);
     else say(pc.connectionState);
   };
@@ -53,16 +66,19 @@ Numpad2:80,Numpad3:81,Numpad0:82,NumpadDecimal:83,IntlBackslash:86,F11:87,F12:88
 AltRight:100,Home:102,ArrowUp:103,PageUp:104,ArrowLeft:105,ArrowRight:106,End:107,ArrowDown:108,PageDown:109,Insert:110,
 Delete:111,MetaLeft:125,MetaRight:126,ContextMenu:127};
 function tx(t){ if(dc&&dc.readyState==='open') dc.send(t); }
-function pos(e){            // where in the picture (the video is letterboxed in its box)
+function pos(e){            // where in the picture (0..1): the same fit as object-fit:contain
   const r=v.getBoundingClientRect(), vw=v.videoWidth||1, vh=v.videoHeight||1;
   const k=Math.min(r.width/vw, r.height/vh), w=vw*k, h=vh*k;
-  return [(e.clientX-r.left-(r.width-w)/2)/w, (e.clientY-r.top-(r.height-h)/2)/h];
+  const x=(e.clientX-r.left-(r.width-w)/2)/w, y=(e.clientY-r.top-(r.height-h)/2)/h;
+  return [x, y, x>=0&&x<=1&&y>=0&&y<=1];   // [2]: on the picture, not on a band
 }
+const cl=a=>Math.min(1,Math.max(0,a));
 if(INPUT){
   let last=0;
-  v.addEventListener('mousemove',e=>{ const n=performance.now(); if(n-last<15) return; last=n; const p=pos(e); tx('m '+p[0].toFixed(5)+' '+p[1].toFixed(5)); });
+  v.addEventListener('mousemove',e=>{ const n=performance.now(); if(n-last<15) return; last=n; const p=pos(e); if(!p[2]) return; tx('m '+p[0].toFixed(5)+' '+p[1].toFixed(5)); });
   const B=[0,1,2];
-  v.addEventListener('mousedown',e=>{ e.preventDefault(); const p=pos(e); tx('m '+p[0].toFixed(5)+' '+p[1].toFixed(5)); if(e.button<3) tx('b '+B[e.button]+' 1'); });
+  // a press on a band is not sent; a release always is (a drag may end there)
+  v.addEventListener('mousedown',e=>{ e.preventDefault(); const p=pos(e); if(!p[2]) return; tx('m '+cl(p[0]).toFixed(5)+' '+cl(p[1]).toFixed(5)); if(e.button<3) tx('b '+B[e.button]+' 1'); });
   window.addEventListener('mouseup',e=>{ if(e.button<3) tx('b '+B[e.button]+' 0'); });
   v.addEventListener('contextmenu',e=>e.preventDefault());
   v.addEventListener('wheel',e=>{ e.preventDefault(); tx('w '+Math.sign(e.deltaX)+' '+Math.sign(e.deltaY)); },{passive:false});

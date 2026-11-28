@@ -1,6 +1,6 @@
 # libxcrypt 4.5.2-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:40:32Z   packages from: apk:local-dists
+# date: 2026-11-24T13:53:04Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -23,11 +23,11 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   descrypt: reference hash reproduced
        ok   wrong password gives a different hash
        ok   unknown method rejected (failure token)
-       info gensalt $y$ -> $y$j9T$CNks.g6DaSm/twmPYpezB/
+       info gensalt $y$ -> $y$j9T$BQ.NTWAikHVGfIGIS8Qr50
        ok   crypt_gensalt_rn $y$ + hash + verify
-       info gensalt $2b$ -> $2b$05$WkUxE954KmC71HO4hCoB5u
+       info gensalt $2b$ -> $2b$05$DCrJD42CyPFNNnJIRhhaRO
        ok   crypt_gensalt_rn $2b$ + hash + verify
-       info gensalt $6$ -> $6$kbkK0O0QA0PeBNeE
+       info gensalt $6$ -> $6$NOvJAqsnDWRUTECt
        ok   crypt_gensalt_rn $6$ + hash + verify
        info preferred method $y$
        ok   crypt_preferred_method

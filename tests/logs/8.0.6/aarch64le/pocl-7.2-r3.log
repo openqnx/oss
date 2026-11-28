@@ -1,23 +1,19 @@
 # pocl 7.2-r3 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T13:37:09Z   packages from: apk:local-dists
+# date: 2026-11-24T15:36:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pocl qnx-test-pocl qnx-port-tests
-( 1/11) Installing libiconv (1.18-r0)
-( 2/11) Installing libunistring (1.3-r0)
-( 3/11) Installing ncurses (6.5-r0)
-( 4/11) Installing gettext (0.22.5-r0)
-( 5/11) Installing xz (5.6.3-r0)
-( 6/11) Installing libxml2 (2.13.5-r0)
-( 7/11) Installing llvm (22.1.8-r0)
-( 8/11) Installing opencl-icd-loader (2026.05.29-r0)
-( 9/11) Installing pocl (7.2-r3)
-(10/11) Installing qnx-port-tests (1.0-r0)
-(11/11) Installing qnx-test-pocl (1.0-r1)
-OK: 405.8 MiB in 16 packages
+(1/7) Installing xz (5.8.4-r0)
+(2/7) Installing libxml2 (2.13.5-r0)
+(3/7) Installing llvm (22.1.8-r0)
+(4/7) Installing opencl-icd-loader (2026.05.29-r0)
+(5/7) Installing pocl (7.2-r3)
+(6/7) Installing qnx-port-tests (1.0-r0)
+(7/7) Installing qnx-test-pocl (1.0-r1)
+OK: 389.0 MiB in 12 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pocl
      == pocl ==
@@ -29,7 +25,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   CL_DEVICE_TYPE has CL_DEVICE_TYPE_CPU
        ok   CL_DEVICE_MAX_COMPUTE_UNITS is at least 1
        ok   the device and its compiler are available
-       info device "cpu-generic-Cortex-A57", 4 compute unit(s)
+       info device "cpu-generic-Cortex-A57", 2 compute unit(s)
        ok   CL_DEVICE_OPENCL_C_VERSION is "OpenCL C <version> ..."
        ok   clCreateContext
        ok   clCreateCommandQueue

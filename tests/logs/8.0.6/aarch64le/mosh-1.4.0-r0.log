@@ -1,19 +1,17 @@
 # mosh 1.4.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:55:13Z   packages from: apk:local-dists
+# date: 2026-11-24T14:20:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u mosh qnx-test-mosh qnx-port-tests
-(1/7) Installing abseil (20260817.0-r0)
-(2/7) Installing libutempter (1.2.3-r0)
-(3/7) Installing ncurses (6.5-r0)
-(4/7) Installing protobuf (29.3-r0)
-(5/7) Installing mosh (1.4.0-r0)
-(6/7) Installing qnx-port-tests (1.0-r0)
-(7/7) Installing qnx-test-mosh (1.0-r0)
-OK: 29.5 MiB in 12 packages
+(1/5) Installing abseil (20260817.0-r0)
+(2/5) Installing libutempter (1.2.3-r0)
+(3/5) Installing protobuf (29.3-r0)
+(4/5) Installing mosh (1.4.0-r0)
+(5/5) Installing qnx-test-mosh (1.0-r0)
+OK: 152.7 MiB in 26 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mosh
      == mosh ==
@@ -28,7 +26,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_m
        ok   mosh-server detached and is running
        ok   forkpty for mosh-client
        ok   mosh-client shows the session's output (MOSH-QNX-42)
-       info client exited; last output: l-^ .].[0;37;44m                            ....[?25h.[0m.[0m.[1;3r.[?25l.[3;1H...[r.[2;1HMOSH-QNX-42...[?25h.[?1l.[0m.[?25h.[?1003l.[?1002l.[?1001l.[?1000l.[?1015l.[?1006l.[?1005l[mosh is exiting.]..
+       info client exited; last output: .[?25l.[1;1H.[0;1;37;44mmosh: Exiting on user request... [To quit: Ctrl-^ .].[0;37;44m                            ....[?25h.[0m
        ok   Ctrl-^ . ends mosh-client (exit 0)
        ok   mosh-server stopped
      PASS mosh

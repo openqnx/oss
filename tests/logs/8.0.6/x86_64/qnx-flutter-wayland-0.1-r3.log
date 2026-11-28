@@ -1,0 +1,31 @@
+# qnx-flutter-wayland 0.1-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-28T09:57:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qnx-flutter-wayland qnx-test-qnx-flutter-wayland qnx-port-tests
+(1/4) Upgrading qnx-flutter-wayland (0.1-r2 -> 0.1-r3)
+(2/4) Installing qnx-port-tests (1.0-r1)
+(3/4) Installing flutter-counter-example (1.0-r2)
+(4/4) Installing qnx-test-qnx-flutter-wayland (1.0-r3)
+OK: 162.3 MiB in 49 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qnx_flutter_wayland
+     == qnx_flutter_wayland ==
+       ok   --help: usage with the bundle layout
+       ok   --help names --size, --title and --app-id
+       ok   a window size out of range is refused (rc 2)
+       ok   a missing bundle (or no display) is refused (rc 1)
+       ok   labwc up (headless)
+       ok   the app runs: qnx-flutter-wayland: running /usr/local/share/flutter-apps/counter (480x640)
+       ok   still running 5 s later (frames on the headless output)
+       info QNX_FLUTTER_FPS=2: no frame presented in the interval (idle app)
+       ok   SIGTERM: clean exit (rc 0) after 1 s
+     PASS qnx_flutter_wayland
+PASS test_qnx_flutter_wayland
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,92 @@
+os: a CPU load backend for QNX
+
+The plugin reads the processors' time counters from /proc/stat (Linux),
+sysctl (the BSDs, macOS) or kstat (Solaris) and stops the build with
+"Your OS is not supported" anywhere else. QNX has none of these. Each
+processor has an idle thread in the kernel process (pid 1, thread ids
+1..num_cpu); the CPU time that thread has consumed is the processor's idle
+time and is readable, without access to /proc, through the thread's
+CPU-time clock (ClockId(1, cpu + 1), ClockTime). The load of a processor
+over an interval is then 1 - (idle time used / time elapsed on the monotonic
+clock). The number of processors comes from the system page. Only the
+overall load per processor is filled in: QNX keeps no user/system/nice/iowait
+split per processor (the "Detailed" colour mode is offered on Linux only), and there is no
+topology (SMT) information, as on the BSDs.
+
+Upstream-Status: QNX-specific
+
+--- a/panel-plugin/os.cc
++++ b/panel-plugin/os.cc
+@@ -78,6 +78,13 @@
+ #include <sys/sysctl.h>
+ #endif
+ 
++#if defined (__QNXNTO__)
++#include <stdint.h>
++#include <sys/neutrino.h>
++#include <sys/syspage.h>
++#include <time.h>
++#endif
++
+ #if defined (__sun__)
+ #include <kstat.h>
+ static kstat_ctl_t *kc;
+@@ -455,6 +462,58 @@
+     }
+ 
+     data[0].load /= nb_cpu;
++    return true;
++}
++#elif defined (__QNXNTO__)
++/* QNX has no per-CPU time counters in a file. Each processor has an idle
++ * thread in the kernel process (pid 1, thread ids 1..num_cpu); the CPU time
++ * that thread has used is the processor's idle time, readable through the
++ * thread's CPU-time clock (ClockId). Total time is the monotonic clock:
++ * used = elapsed - idle. */
++static guint
++detect_cpu_number ()
++{
++    return _syspage_ptr->num_cpu;
++}
++
++static bool
++read_cpu_data (unordered_map<guint, CpuData> &data)
++{
++    if (G_UNLIKELY(data.size() == 0))
++        return false;
++
++    const size_t nb_cpu = data.size()-1;
++    struct timespec ts;
++
++    if (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)
++        return false;
++    const guint64 total = (guint64) ts.tv_sec * 1000000000ull + ts.tv_nsec;
++
++    data[0].load = 0;
++    for (guint i = 1; i <= nb_cpu; i++)
++    {
++        uint64_t idle = 0;  /* _Uint64t, what ClockTime() fills */
++        const int id = ClockId (1, i);
++
++        if (id == -1 || ClockTime (id, NULL, &idle) == -1)
++            return false;
++
++        const guint64 used = total > idle ? total - idle : 0;
++
++        if (used >= data[i].previous_used && total > data[i].previous_total)
++            data[i].load = (gfloat) (used - data[i].previous_used) /
++                           (gfloat) (total - data[i].previous_total);
++        else
++            data[i].load = 0;
++        if (data[i].load > 1)
++            data[i].load = 1;
++
++        data[i].previous_used = used;
++        data[i].previous_total = total;
++        data[0].load += data[i].load;
++    }
++
++    data[0].load /= nb_cpu;
+     return true;
+ }
+ #else

@@ -1,0 +1,40 @@
+# xkeyboard-config 2.49-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T01:19:36Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xkeyboard-config qnx-test-xkeyboard-config qnx-port-tests
+(1/5) Installing xz (5.8.4-r1)
+(2/5) Installing libxml2 (2.13.5-r1)
+(3/5) Installing libxkbcommon (1.8.1-r1)
+(4/5) Installing xkeyboard-config (2.49-r1)
+(5/5) Installing qnx-test-xkeyboard-config (1.0-r1)
+OK: 23.4 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xkeyboard_config
+     == xkeyboard-config ==
+       ok   XKB data (rules/evdev)
+       info /usr/local/share/X11/xkb
+       ok   xkb context with only this data
+       ok   keymaps us, de, fr, ru compiled
+       ok   us: a, A, semicolon
+       ok   us: shift+1 -> exclam
+       ok   us: one layout, Shift modifier
+       ok   de: QWERTZ (Y key -> z, Z key -> y)
+       ok   de: odiaeresis, dead_acute
+       ok   fr: AZERTY (Q key -> a, 1 -> ampersand)
+       ok   ru: Cyrillic ef, SHORTI
+       ok   us,de keymap: 2 layouts
+       info layout 1: German
+       ok   group 2 (de): Y key -> z
+       ok   keymap serialised to text
+       ok   and compiled back
+       ok   rules/evdev.xml lists us, de, fr
+     PASS xkeyboard-config
+PASS test_xkeyboard_config
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

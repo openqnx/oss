@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 10 |
 | Build dependencies | [`zlib`](../zlib/) [`zstd`](../zstd/) [`msgpack-c`](../msgpack-c/) |
-| Run-time dependencies | [`flex`](../flex/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`msgpack-c`](../msgpack-c/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_binutils`](../../tests/src/) |
 

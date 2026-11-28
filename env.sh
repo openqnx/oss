@@ -221,9 +221,16 @@ qnx_make_linkroot() {
   for e in "$libdir"/*.so*; do
     [ -e "$e" ] && ln -sfn "$e" "$root/$QNX_ARCH/usr/lib/$(basename "$e")"; done
   touch "$root/.stamp"
+  # The tree being replaced: stamp it now, so its age below counts from when it
+  # stopped being live, not from when it was built (hours ago).
+  local prev; prev=$(readlink "$live" 2>/dev/null)
   ln -sfn "$root" "$live.tmp.$$" && mv -T "$live.tmp.$$" "$live"
-  # Drop old trees; give processes that resolved the previous link a minute.
-  find "$STAGE_DIR/$QNX_ARCH/linkroot.d" -mindepth 1 -maxdepth 1 -mmin +1 ! -path "$root" -exec rm -rf {} + 2>/dev/null
+  [ -n "$prev" ] && [ -d "$prev" ] && touch "$prev"
+  # Drop trees replaced more than 10 minutes ago. Not sooner: a build on
+  # another machine sharing this workspace over NFS keeps resolving the old
+  # link from its attribute cache for a while; deleting the tree under it made
+  # its compiles fail with "stdio.h: No such file or directory".
+  find "$STAGE_DIR/$QNX_ARCH/linkroot.d" -mindepth 1 -maxdepth 1 -mmin +10 ! -path "$root" -exec rm -rf {} + 2>/dev/null
   root="$live"
   export QNX_TARGET="$root"
 }

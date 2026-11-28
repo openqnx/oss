@@ -1,0 +1,27 @@
+build: find libyaml without its pkg-config file
+
+The saved icon positions are YAML, read and written with libyaml, which
+meson looks up as the pkg-config module yaml-0.1. Only libyaml's Autotools
+build installs yaml-0.1.pc; a libyaml built with its CMake files (as the
+one in this tree is) installs the library, yaml.h and CMake package files,
+and no .pc. Fall back to looking for the library and its header, so file
+icons are not silently built out (or the configuration refused) because of
+the missing metadata.
+
+Upstream-Status: Pending
+
+--- a/meson.build
++++ b/meson.build
+@@ -61,7 +61,11 @@
+ gtk_layer_shell = dependency('gtk-layer-shell-0', version: dependency_versions['gtk-layer-shell'], required: get_option('wayland'))
+ 
+ # Feature file-icons
+-libyaml = dependency('yaml-0.1', version: dependency_versions['libyaml'], required: get_option('desktop-icons') and get_option('file-icons'))
++libyaml = dependency('yaml-0.1', version: dependency_versions['libyaml'], required: false)
++if not libyaml.found()
++  # libyaml built with its CMake files installs no yaml-0.1.pc
++  libyaml = cc.find_library('yaml', has_headers: 'yaml.h', required: get_option('desktop-icons') and get_option('file-icons'))
++endif
+ 
+ feature_cflags = []
+ 

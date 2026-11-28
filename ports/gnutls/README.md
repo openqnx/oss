@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`nettle`](../nettle/) [`gmp`](../gmp/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`libidn2`](../libidn2/) [`zlib`](../zlib/) [`brotli`](../brotli/) [`zstd`](../zstd/) |
-| Run-time dependencies | [`brotli`](../brotli/) [`gmp`](../gmp/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`nettle`](../nettle/) [`unbound`](../unbound/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`gmp`](../gmp/) [`libidn2`](../libidn2/) [`libtasn1`](../libtasn1/) [`libunistring`](../libunistring/) [`nettle`](../nettle/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gnutls`](../../tests/src/) |
 
@@ -130,12 +130,9 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gnutls`.
 
 ### 5. What it installs
 
-27 files under `/usr/local`: 6 shared-library entries, 19 headers.
+22 files under `/usr/local`: 3 shared-library entries, 18 headers.
 
 ```
-/usr/local/lib/libgnutls-dane.so
-/usr/local/lib/libgnutls-dane.so.0
-/usr/local/lib/libgnutls-dane.so.0.4.1
 /usr/local/lib/libgnutls.so
 /usr/local/lib/libgnutls.so.30
 /usr/local/lib/libgnutls.so.30.43.0

@@ -1,0 +1,34 @@
+# suitesparse 7.14.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:19:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u suitesparse qnx-test-suitesparse qnx-port-tests
+(1/3) Installing openblas (0.3.34-r1)
+(2/3) Installing suitesparse (7.14.1-r1)
+(3/3) Installing qnx-test-suitesparse (1.0-r2)
+OK: 26.4 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_suitesparse
+     == suitesparse ==
+       info SuiteSparse 7.14.1
+       ok   library version matches header
+       info umfpack status 0 x = 1 2 3 4 5
+       ok   UMFPACK solves Ax=b (x = 1..5)
+       ok   KLU solves the same system
+       info KLU rcond 0.561, 3 blocks
+       ok   CXSparse cs_lusol solves the same system
+       info AMD perm 5 4 3 2 1 0, nnz(L) 5
+       ok   AMD orders the dense arrow node last
+       ok   AMD ordering gives fill-free factor (nnz(L)=5)
+       info CHOLMOD status 0, ordering 2, is_super 0
+       ok   CHOLMOD analyze + factorize (SPD)
+       ok   CHOLMOD solve gives x = 1..50
+     PASS suitesparse
+PASS test_suitesparse
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

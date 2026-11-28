@@ -1,0 +1,140 @@
+# qnx-desktop-extras 1.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T22:21:06Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qnx-desktop-extras qnx-test-qnx-desktop qnx-port-tests
+OK: 2454.6 MiB in 272 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qnx_desktop
+     == qnx-desktop ==
+       info apk: /data/oss/bin/apk
+       ok   qnx-desktop lists its 8 groups
+       ok   apk: qnx-desktop is installed
+       ok   oss-desktop: bin/oss-desktop is executable
+       ok   oss-greeter: libexec/oss-greeter/oss-greeter loads (ldd)
+       ok   labwc: bin/labwc loads (ldd)
+       ok   swaybg: bin/swaybg loads (ldd)
+       ok   xfce4-panel: bin/xfce4-panel loads (ldd)
+       ok   oss-network-plugin: lib/xfce4/panel/plugins/liboss-network.so loads (ldd)
+       ok   xfce4-alsa-plugin: lib/xfce4/panel/plugins/libalsa.so loads (ldd)
+       ok   xfce4-session: bin/xfce4-session loads (ldd)
+       ok   xfce4-settings: bin/xfsettingsd loads (ldd)
+       ok   xfce4-terminal: bin/xfce4-terminal loads (ldd)
+       ok   thunar: bin/thunar loads (ldd)
+       ok   xfce4-appfinder: bin/xfce4-appfinder loads (ldd)
+       ok   xfconf: bin/xfconf-query loads (ldd)
+       ok   garcon: lib/libgarcon-1.so.0 loads (ldd)
+       ok   exo: bin/exo-open loads (ldd)
+       ok   tumbler: lib/tumbler-1/tumblerd loads (ldd)
+       ok   dbus: bin/dbus-daemon loads (ldd)
+       ok   libnotify: bin/notify-send loads (ldd)
+       ok   xwayland: bin/Xwayland loads (ldd)
+       ok   xkeyboard-config: share/xkeyboard-config-2/rules/evdev is there
+       ok   xdg-utils: bin/xdg-open is executable
+       ok   shared-mime-info: bin/update-mime-database loads (ldd)
+       ok   desktop-file-utils: bin/desktop-file-validate loads (ldd)
+       ok   gsettings-desktop-schemas: share/glib-2.0/schemas/org.gnome.desktop.interface.gschema.xml is there
+       ok   glib-networking: lib/gio/modules/libgiognutls.so loads (ldd)
+       ok   gnome-keyring: bin/gnome-keyring-daemon loads (ldd)
+       ok   dconf: bin/dconf loads (ldd)
+       ok   xfce4-notifyd: bin/xfce4-notifyd-config loads (ldd)
+       ok   xfdesktop: bin/xfdesktop loads (ldd)
+       ok   swayidle: bin/swayidle loads (ldd)
+       ok   swaylock: bin/swaylock loads (ldd)
+       ok   tzdata: share/zoneinfo is there
+       ok   librsvg: lib/librsvg-2.so.2 loads (ldd)
+       ok   apk: qnx-desktop-core and its 33 members are installed
+       ok   adwaita-icon-theme: share/icons/Adwaita/index.theme is there
+       ok   hicolor-icon-theme: share/icons/hicolor/index.theme is there
+       ok   lxde-icon-theme: share/icons/nuoveXT2/index.theme is there
+       ok   adwaita-fonts: share/fonts/adwaita-fonts is there
+       ok   font-dejavu: share/fonts/font-dejavu is there
+       ok   font-liberation: share/fonts/font-liberation is there
+       ok   font-cantarell: share/fonts/font-cantarell is there
+       ok   font-inter: share/fonts/font-inter is there
+       ok   font-hack: share/fonts/font-hack is there
+       ok   font-inconsolata: share/fonts/font-inconsolata is there
+       ok   font-noto-sans-cjk: share/fonts/font-noto-sans-cjk is there
+       ok   font-noto-emoji: share/fonts/font-noto-emoji is there
+       ok   fontconfig: lib/libfontconfig.so.1 loads (ldd)
+       ok   apk: qnx-desktop-theme and its 13 members are installed
+       ok   cups: sbin/cupsd loads (ldd)
+       ok   cups-filters: sbin/cups-browsed loads (ldd)
+       ok   ippusbxd: sbin/ippusbxd loads (ldd)
+       ok   avahi: sbin/avahi-daemon loads (ldd)
+       ok   chrony: sbin/chronyd loads (ldd)
+       ok   tzdata: share/zoneinfo is there
+       ok   libpaper: bin/paper loads (ldd)
+       ok   apk: qnx-desktop-preferences and its 7 members are installed
+       ok   geany: bin/geany loads (ldd)
+       ok   gthumb: bin/gthumb loads (ldd)
+       ok   mate-calc: bin/mate-calc loads (ldd)
+       ok   htop: bin/htop loads (ldd)
+       ok   ffmpegthumbnailer: bin/ffmpegthumbnailer loads (ldd)
+       ok   7zip: bin/7zz loads (ldd)
+       ok   zip: bin/zip loads (ldd)
+       ok   nano: bin/nano loads (ldd)
+       ok   evince: bin/evince loads (ldd)
+       ok   xdg-user-dirs: bin/xdg-user-dirs-update loads (ldd)
+       ok   xfce4-genmon-plugin: lib/xfce4/panel/plugins/libgenmon.so loads (ldd)
+       ok   xfce4-cpugraph-plugin: lib/xfce4/panel/plugins/libcpugraph.so loads (ldd)
+       ok   xarchiver: bin/xarchiver loads (ldd)
+       ok   mousepad: bin/mousepad loads (ldd)
+       ok   xfce4-taskmanager: bin/xfce4-taskmanager loads (ldd)
+       ok   xfce4-screenshooter: bin/xfce4-screenshooter loads (ldd)
+       ok   oss-software: bin/oss-software loads (ldd)
+       ok   apk: qnx-desktop-utilities and its 17 members are installed
+       ok   epiphany: bin/epiphany loads (ldd)
+       ok   parole: bin/parole loads (ldd)
+       ok   geany-plugins: lib/libgeanypluginutils.so.0 loads (ldd)
+       ok   abiword: bin/abiword loads (ldd)
+       ok   gnumeric: bin/gnumeric loads (ldd)
+       ok   apk: qnx-desktop-applications and its 5 members are installed
+       ok   native-toolchain: bin/cc is executable
+       ok   cmake: bin/cmake loads (ldd)
+       ok   ninja: bin/ninja loads (ldd)
+       ok   meson: bin/meson is executable
+       ok   python3: bin/python3 loads (ldd)
+       ok   python3-pip: python3 imports pip
+       ok   python3-setuptools: python3 imports setuptools
+       ok   python3-wheel: python3 imports wheel
+       ok   python3-virtualenv: python3 imports virtualenv
+       ok   numpy: python3 imports numpy
+       ok   pygame: python3 imports pygame
+       ok   git: bin/git loads (ldd)
+       ok   gdb: bin/gdb loads (ldd)
+       ok   nodejs: bin/node loads (ldd)
+       ok   npm: bin/npm is executable
+       ok   apk: qnx-desktop-developer and its 15 members are installed
+       ok   gstreamer: bin/gst-launch-1.0 loads (ldd)
+       ok   gst-plugins-base: lib/gstreamer-1.0/libgstplayback.so loads (ldd)
+       ok   gst-plugins-good: lib/gstreamer-1.0/libgstisomp4.so loads (ldd)
+       ok   gst-plugins-bad: lib/gstreamer-1.0/libgstmpegtsdemux.so loads (ldd)
+       ok   gst-plugins-ugly: lib/gstreamer-1.0/libgstasf.so loads (ldd)
+       ok   gst-libav: lib/gstreamer-1.0/libgstlibav.so loads (ldd)
+       ok   ffmpeg: bin/ffmpeg loads (ldd)
+       ok   mesa: opt/mesa/lib is there
+       ok   apk: qnx-desktop-graphics and its 8 members are installed
+       ok   webrtc-screencast: bin/webrtc-screencast loads (ldd)
+       ok   gtk-vnc: bin/gvncviewer loads (ldd)
+       ok   openssh: bin/ssh loads (ldd)
+       ok   sudo: bin/sudo loads (ldd)
+       ok   apk: qnx-desktop-extras and its 4 members are installed
+       info 102 members in 8 groups
+       ok   all members listed (102)
+       ok   sh -n bin/oss-desktop
+       ok   sh -n bin/oss-desktop-menu
+       ok   sh -n bin/qnx-desktop-start
+       ok   sh -n share/qnx-desktop/rc.local.sample
+       ok   qnx-desktop-start is executable
+       ok   qnx-desktop-start --help names --install-hook and --check
+       ok   rc.local.sample calls qnx-desktop-start
+     PASS qnx-desktop
+PASS test_qnx_desktop
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

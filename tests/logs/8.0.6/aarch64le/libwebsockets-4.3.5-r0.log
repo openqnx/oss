@@ -1,6 +1,6 @@
 # libwebsockets 4.3.5-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:46:24Z   packages from: apk:local-dists
+# date: 2026-11-24T13:52:19Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -13,13 +13,13 @@ OK: 10.3 MiB in 8 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libwebsockets
      == libwebsockets ==
-     [2026/11/21 09:44:12:2677] N: lws_create_context: LWS: 4.3.5-v4.3.5, NET CLI SRV H1 H2 WS ConMon IPv6-absent
-     [2026/11/21 09:44:12:2811] N: __lws_lc_tag:  ++ [wsi|0|pipe] (1)
-     [2026/11/21 09:44:12:2880] N: __lws_lc_tag:  ++ [vh|0|default||-1] (1)
+     [2026/11/24 13:52:20:9852] N: lws_create_context: LWS: 4.3.5-v4.3.5, NET CLI SRV H1 H2 WS ConMon IPv6-absent
+     [2026/11/24 13:52:20:9952] N: __lws_lc_tag:  ++ [wsi|0|pipe] (1)
+     [2026/11/24 13:52:20:9989] N: __lws_lc_tag:  ++ [vh|0|default||-1] (1)
        ok   lws_create_context
        ok   lws_service pass
-     [2026/11/21 09:44:12:3235] N: __lws_lc_untag:  -- [wsi|0|pipe] (0) 42.054ms
-     [2026/11/21 09:44:12:3279] N: __lws_lc_untag:  -- [vh|0|default||-1] (0) 39.774ms
+     [2026/11/24 13:52:21:0148] N: __lws_lc_untag:  -- [wsi|0|pipe] (0) 19.334ms
+     [2026/11/24 13:52:21:0170] N: __lws_lc_untag:  -- [vh|0|default||-1] (0) 18.066ms
        ok   lws_context_destroy
        info 4.3.5-v4.3.5
      PASS libwebsockets

@@ -1,0 +1,44 @@
+contrib: keep qcc's -V out of the global LDFLAGS; quote live555's compilers.
+
+Two contribs stopped the QNX build of the 3.0.24 contrib tree:
+
+- ffmpeg/rules.mak appended -V$(QNX_ARCH) to LDFLAGS for ffmpeg's
+  configure, which links with the C compiler (qcc). LDFLAGS is one make
+  variable for all contribs, and main.mak now hands it to Meson as
+  c_link_args; the Meson contribs are built with the plain nto<arch>-gcc
+  (Meson does not know qcc), which rejects -V: dav1d's setup failed with
+  "Unable to detect linker ... unrecognized command-line option
+  '-Vgcc_ntox86_64'". Give the option to ffmpeg alone (--extra-ldflags).
+
+- live555/rules.mak passes C_COMPILER=$(CC) CPLUSPLUS_COMPILER=$(CXX) to
+  make unquoted. With CC = "qcc -V<target>" the second word became a make
+  option ("make: invalid option -- 'V'"). Quote both.
+
+Upstream-Status: Pending
+
+--- a/contrib/src/ffmpeg/rules.mak
++++ b/contrib/src/ffmpeg/rules.mak
+@@ -228,8 +228,10 @@
+ FFMPEGCONF += --target-os=qnx --enable-pic --extra-libs="-lm"
+ 
+ # ffmpeg's configure defaults to using the C compiler for linking.
+-# So it will try to use qcc which needs to be told the target
+-LDFLAGS += -V$(QNX_ARCH)
++# So it will try to use qcc which needs to be told the target.
++# (Only for ffmpeg: appending to LDFLAGS here changed it for every contrib,
++# and the Meson ones then passed -V to the plain gcc they are built with.)
++FFMPEGCONF += --extra-ldflags="-V$(QNX_ARCH)"
+ endif
+ 
+ # Build
+--- a/contrib/src/live555/rules.mak
++++ b/contrib/src/live555/rules.mak
+@@ -106,7 +106,7 @@
+ 	sed -e 's,all: $$(,all: #,' -e 's,install: $$,install: #,' -e 's,install ,#install ,' -i.orig $(UNPACK_DIR)/hlsProxy/Makefile.tail
+ 	$(MOVE)
+ 
+-LIVE555_ENV := $(HOSTVARS) C_COMPILER=$(CC) CPLUSPLUS_COMPILER=$(CXX) LIBRARY_LINK="$(AR) cr " \
++LIVE555_ENV := $(HOSTVARS) C_COMPILER="$(CC)" CPLUSPLUS_COMPILER="$(CXX)" LIBRARY_LINK="$(AR) cr " \
+ 	PREFIX=$(PREFIX) DESTDIR= LIBDIR=$(PREFIX)/lib EXTRA_CFLAGS="$(LIVE_EXTRA_CFLAGS)"
+ 
+ .live555: BUILD_DIR=$<

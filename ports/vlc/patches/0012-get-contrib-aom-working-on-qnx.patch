@@ -1,0 +1,30 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 09:06:39 -0400
+Subject: [PATCH 12/60] Get contrib/aom working on QNX
+
+Two main changes to get contrib/aom to build/work on QNX.
+1. No need to specify -lpthread. QNX doesn't have a separate pthread
+   library and asking to link against it won't work.
+2. Disable the runtime CPU detection. It should still enable NEON if it
+   was detected during configuration.
+
+3.0.24: aom 3.15.0 writes only ${CMAKE_THREAD_LIBS_INIT} into aom.pc (empty
+on QNX, where pthreads are in libc), so aom-qnx-pthreads.patch is dropped;
+the runtime CPU detection setting stays.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/aom/rules.mak
++++ b/contrib/src/aom/rules.mak
+@@ -85,6 +85,11 @@
+ endif
+ endif
+ 
++ifdef HAVE_QNX
++# No runtime cpu detection
++AOM_CONF += -DCONFIG_RUNTIME_CPU_DETECT=0
++endif
++
+ # libaom doesn't allow in-tree builds
+ .aom: aom toolchain.cmake
+ 	rm -rf $(PREFIX)/include/aom

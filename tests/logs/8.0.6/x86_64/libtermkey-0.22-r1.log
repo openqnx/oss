@@ -1,0 +1,36 @@
+# libtermkey 0.22-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:44:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libtermkey qnx-test-libtermkey qnx-port-tests
+(1/4) Installing unibilium (2.1.4-r1)
+(2/4) Installing libtermkey (0.22-r1)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-libtermkey (1.0-r1)
+OK: 9717 KiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libtermkey
+     == libtermkey ==
+       ok   termkey_new_abstract("vt100", UTF8)
+       ok   "a" -> codepoint 'a'
+       ok   UTF-8 "\u00e9" -> U+00E9
+       ok   0x01 -> Ctrl-a ("<C-a>")
+       ok   ESC[A -> Up
+       ok   ESC[1;5C -> Ctrl-Right ("<C-Right>")
+       ok   ESC O P -> F1
+       ok   ESC[5~ -> PageUp
+       ok   ESC x -> Alt-x ("<M-x>")
+       ok   X10 mouse report -> press, button 1, line 3, col 2
+       ok   termkey_keyname2sym("PageUp")
+       ok   a lone ESC: wait for more (TERMKEY_RES_AGAIN)
+       ok   forced: the lone ESC is the Escape key
+       ok   buffer empty afterwards
+     PASS libtermkey
+PASS test_libtermkey
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

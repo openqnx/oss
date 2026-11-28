@@ -117,17 +117,26 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH iceoryx`.
 
 ### 5. What it installs
 
-453 files under `/usr/local`: 7 shared-library entries, 1 programs, 402 headers.
+567 files under `/usr/local`: 21 shared-library entries, 1 programs, 490 headers.
 
 ```
 /usr/local/lib/libiceoryx_binding_c.so
+/usr/local/lib/libiceoryx_binding_c.so.2
+/usr/local/lib/libiceoryx_binding_c.so.2.95.8
 /usr/local/lib/libiceoryx_hoofs.so
+/usr/local/lib/libiceoryx_hoofs.so.2
+/usr/local/lib/libiceoryx_hoofs.so.2.95.8
 /usr/local/lib/libiceoryx_platform.so
+/usr/local/lib/libiceoryx_platform.so.2
+/usr/local/lib/libiceoryx_platform.so.2.95.8
 /usr/local/lib/libiceoryx_posh.so
+/usr/local/lib/libiceoryx_posh.so.2
+/usr/local/lib/libiceoryx_posh.so.2.95.8
 /usr/local/lib/libiceoryx_posh_config.so
+/usr/local/lib/libiceoryx_posh_config.so.2
+/usr/local/lib/libiceoryx_posh_config.so.2.95.8
 /usr/local/lib/libiceoryx_posh_gateway.so
-/usr/local/lib/libiceoryx_posh_roudi.so
-/usr/local/bin/iox-roudi
+...
 ```
 
 The complete list is `stage/<arch>/.manifest/iceoryx` after a build.

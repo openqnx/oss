@@ -1,0 +1,28 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 14:03:30 -0400
+Subject: [PATCH 26/60] Get contrib/libarchive building with QNX8
+
+QNX8 has the lz4.h header in a subdirectory of sysroot. Update
+libarchive's build to deal with that.
+
+3.0.24: libarchive 3.8.9 is built with CMake, so the configure.ac and source
+changes no longer apply; the same intent (find the SDP's lz4.h under
+usr/include/lz4/) is now a LZ4_INCLUDE_DIR setting.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/libarchive/rules.mak
++++ b/contrib/src/libarchive/rules.mak
+@@ -20,6 +20,12 @@
+ # bsdunzip doesn't build on macos, android and emscripten and it's disabled on Windows
+ LIBARCHIVE_CONF +=-DENABLE_UNZIP=OFF
+ 
++ifdef HAVE_QNX
++# The QNX SDP keeps the LZ4 headers in usr/include/lz4/, where CMake's
++# find_path(lz4.h) does not look
++LIBARCHIVE_CONF += -DLZ4_INCLUDE_DIR=$(QNX_TARGET)/usr/include/lz4
++endif
++
+ ifdef HAVE_MACOSX
+ # these functions are detected as present but there are not until macOS 10.10
+ # the minimum supported value is 10.7, in each case missing the functions falls

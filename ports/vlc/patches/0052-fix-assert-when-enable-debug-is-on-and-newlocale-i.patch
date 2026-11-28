@@ -1,0 +1,102 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 10:05:33 -0400
+Subject: [PATCH 52/60] Fix assert when --enable-debug is on and newlocale
+ isn't available
+
+On systems that don't have the uselocale/newlocale/duplocale/freelocal
+APIs, the fixups do nothing beyond return 0 (as appropriate).
+This worked fine until --enable-debug is turned on.
+
+There is at least one assert, in vlc_strerror_l, that will fire if
+newlocale returns 0 AND errno is neither ENOENT nor EINVAL. Since the
+newlocale() fixup didn't set errno whether the assert would fire or not
+was somewhat random.
+
+Rework the code a bit so that the newlocale fixup returns 0 with errno
+explicitly set to ENOENT. vlc_strerror_l will then just use strerror()
+instead of asserting. Any other failure will still trigger an assert.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/include/vlc_fixups.h
++++ b/include/vlc_fixups.h
+@@ -328,14 +328,21 @@
+ # define HAVE_USELOCALE
+ #endif
+ 
+-#if !defined(HAVE_NEWLOCALE) && defined(HAVE_CXX_LOCALE_T) && defined(__cplusplus)
+-# include <locale>
+-# define HAVE_NEWLOCALE
++#if defined(HAVE_CXX_LOCALE_T) && defined(__cplusplus)
++# if !defined(HAVE_NEWLOCALE)
++#  include <locale>
++#  define HAVE_NEWLOCALE
++# endif
++# if !defined(HAVE_USELOCALE)
++#  include <locale>
++#  define HAVE_USELOCALE
++# endif
+ #endif
+ 
+ /* locale.h */
+ #ifndef HAVE_USELOCALE
+ # ifndef HAVE_NEWLOCALE
++#  include <errno.h>
+ #  define LC_ALL_MASK      0
+ #  define LC_NUMERIC_MASK  0
+ #  define LC_MESSAGES_MASK 0
+@@ -349,6 +356,7 @@
+ static inline locale_t newlocale(int mask, const char * locale, locale_t base)
+ {
+     (void)mask; (void)locale; (void)base;
++    errno = ENOENT;
+     return NULL;
+ }
+ # else
+--- a/src/posix/error.c
++++ b/src/posix/error.c
+@@ -31,26 +31,36 @@
+ 
+ static const char *vlc_strerror_l(int errnum, const char *lname)
+ {
++    const char *buf = NULL;
+     int saved_errno = errno;
+     locale_t loc = newlocale(LC_MESSAGES_MASK, lname, (locale_t)0);
+ 
+-    if (unlikely(loc == (locale_t)0))
++    if (likely(loc != (locale_t)0))
++    {
++        buf = strerror_l(errnum, loc);
++    }
++    else
+     {
+         if (errno == ENOENT) /* fallback to POSIX locale */
+             loc = newlocale(LC_MESSAGES_MASK, "C", (locale_t)0);
+ 
+-        if (unlikely(loc == (locale_t)0))
++        if (likely(loc != (locale_t)0))
++        {
++            buf = strerror_l(errnum, loc);
++        }
++        else if (errno == ENOENT)
+         {
+-            assert(errno != EINVAL && errno != ENOENT);
+-            errno = saved_errno;
+-            return "Error message unavailable";
++            buf = strerror(errnum);
++        }
++        else
++        {
++            assert(errno != EINVAL);
++            buf = "Error message unavailable";
+         }
+-        errno = saved_errno;
+     }
+ 
+-    const char *buf = strerror_l(errnum, loc);
+-
+     freelocale(loc);
++    errno = saved_errno;
+     return buf;
+ }
+ 

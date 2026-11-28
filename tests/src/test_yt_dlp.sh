@@ -9,6 +9,7 @@
 # locale.getlocale() fails on QNX's "C;ctype:POSIX" (a python3 issue being
 # looked into, not yt-dlp's); users set LANG/LC_ALL as on any system.
 LC_ALL=C.UTF-8; export LC_ALL
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL yt-dlp (qnxport-timeout.sh missing)"; exit 1; }
 echo "== yt-dlp =="
 fail=0
 ok() { echo "  ok   $1"; }; bad() { echo "  FAIL $1"; fail=$((fail+1)); }
@@ -33,7 +34,7 @@ PORT=$((24000 + $$ % 2000))
 ( cd srv && exec python3 -m http.server $PORT --bind 127.0.0.1 ) > http.log 2>&1 &
 S=$!
 i=0; while [ $i -lt 20 ] && ! grep -q "Serving" http.log 2>/dev/null; do sleep 0.5; i=$((i+1)); done
-timeout 120 "$Y" --no-progress -o out.%\(ext\)s "http://127.0.0.1:$PORT/clip.mp4" > dl.out 2>&1; rc=$?
+qto 120 "$Y" --no-progress -o out.%\(ext\)s "http://127.0.0.1:$PORT/clip.mp4" > dl.out 2>&1; rc=$?
 cmp -s srv/clip.mp4 out.mp4 && ok "generic extractor downloaded http://127.0.0.1/clip.mp4 byte for byte" || bad "download rc=$rc: $(tail -n 3 dl.out)"
 
 [ $fail -eq 0 ] && { echo "PASS yt-dlp"; exit 0; }

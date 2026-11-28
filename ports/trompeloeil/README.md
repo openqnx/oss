@@ -93,7 +93,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH trompeloeil`.
 
 ### 5. What it installs
 
-32 files under `/usr/local`, 21 headers.
+35 files under `/usr/local`, 24 headers.
 
 The complete list is `stage/<arch>/.manifest/trompeloeil` after a build.
 

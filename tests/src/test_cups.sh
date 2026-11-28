@@ -81,6 +81,10 @@ else
   bad "cupsd did not start: $(cat cupsd.out | head -5) $(tail -5 log/error_log 2>/dev/null)"
 fi
 
+# CUPS 2.4.17+ no longer creates plain files for a file: device (only an
+# existing file or device is opened, O_WRONLY|O_EXCL, no O_CREAT/O_TRUNC):
+# without the file the job stopped with "could not open the output file".
+: > out/out.prn; chmod 666 out/out.prn
 lpadmin -p qnxq -E -v file://$T/out/out.prn -D "QNX test queue" -L "QEMU" > lpadmin.log 2>&1
 rc=$?
 [ $rc -eq 0 ] && ok "lpadmin: raw queue qnxq on file://$T/out/out.prn" || bad "lpadmin rc=$rc: $(cat lpadmin.log)"

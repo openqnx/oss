@@ -1,0 +1,48 @@
+# swig 4.3.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:28:10Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swig qnx-test-swig qnx-port-tests
+( 1/17) Installing bzip2 (1.0.8-r1)
+( 2/17) Installing expat (2.6.4-r1)
+( 3/17) Installing gdbm (1.26-r1)
+( 4/17) Installing libiconv (1.19.1-r1)
+( 5/17) Installing libunistring (1.5-r1)
+( 6/17) Installing ncurses (6.6-r1)
+( 7/17) Installing gettext (0.22.5-r1)
+( 8/17) Installing libffi (3.8.1-r1)
+( 9/17) Installing readline (8.3-r1)
+(10/17) Installing sqlite (3.47.2-r1)
+(11/17) Installing xz (5.8.4-r1)
+(12/17) Installing python3 (3.14.0-r2)
+(13/17) Installing qnx-test-swig-c (1.0-r1)
+(14/17) Installing qnx-test-swig-py (1.0-r1)
+(15/17) Installing pcre2 (10.49-r1)
+(16/17) Installing swig (4.3.1-r1)
+(17/17) Installing qnx-test-swig (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 137.2 MiB in 23 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swig
+     == swig ==
+       ok   swig -version: 4.3.1
+       ok   built with PCRE2 (+pcre)
+       ok   swig library: /usr/local/share/swig/4.3.1
+       ok   swig -python: py_wrap.c and qnxswig.py
+       ok   swig -c (experimental C target): c_wrap.c and c_wrap.h
+       ok   py_wrap.c identical to the build machine's swig output (cksum 3352411739 130999)
+       ok   qnxswig.py identical to the build machine's swig output (cksum 2676095911 2706)
+       ok   c_wrap.c identical to the build machine's swig output (cksum 3809040953 7257)
+       ok   c_wrap.h identical to the build machine's swig output (cksum 914484883 1238)
+       ok   PCRE2 %rename: qs_gcd is qnxswig_gcd (C) and gcd (Python)
+       ok   python3: the target-generated qnxswig.py over _qnxswig.so: gcd 21, crc8, reverse, struct, cvar
+       ok   syntax error reported at bad.i:2 (exit 1)
+     PASS swig
+PASS test_swig
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

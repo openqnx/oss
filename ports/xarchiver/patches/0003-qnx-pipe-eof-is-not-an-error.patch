@@ -1,0 +1,38 @@
+xarchiver: the end of a child's output is not an error on QNX.
+
+xa_process_stdout() and xa_process_stderr() read the archiver's output
+through GIOChannel watches and, when a watch ends, report "failed" unless
+the last condition was exactly G_IO_HUP. Linux's poll() gives POLLHUP when
+the writer has closed the pipe; QNX's never does for a pipe: it reports
+POLLIN, and read() then returns 0 (EOF). After the EOF the condition left
+was 0, not G_IO_HUP, so every command counted as failed: --extract-to
+stopped with an empty "An error occurred while accessing the archive"
+dialog although gzip/tar had exited 0. Only G_IO_ERR and G_IO_NVAL now mean
+failure (the exit status still decides the rest).
+
+Upstream-Status: Pending
+
+--- a/src/archive.c	2026-11-25 21:53:41.522739608 +0900
++++ b/src/archive.c	2026-11-25 21:53:41.532336136 +0900
+@@ -77,7 +77,9 @@
+ 	g_io_channel_shutdown(ioc, FALSE, NULL);
+ 	g_io_channel_unref(ioc);
+ 
+-	xa_child_processed(XA_CHILD_STDOUT, cond != G_IO_HUP, archive);
++	/* only an error or an invalid descriptor is a failure: at the end of the
++	 * output QNX reports G_IO_IN (and read gives EOF), never G_IO_HUP */
++	xa_child_processed(XA_CHILD_STDOUT, (cond & (G_IO_ERR | G_IO_NVAL)) != 0, archive);
+ 
+ 	return FALSE;
+ }
+@@ -122,7 +124,9 @@
+ 	g_io_channel_shutdown(ioc, FALSE, NULL);
+ 	g_io_channel_unref(ioc);
+ 
+-	xa_child_processed(XA_CHILD_STDERR, cond != G_IO_HUP, archive);
++	/* only an error or an invalid descriptor is a failure: at the end of the
++	 * output QNX reports G_IO_IN (and read gives EOF), never G_IO_HUP */
++	xa_child_processed(XA_CHILD_STDERR, (cond & (G_IO_ERR | G_IO_NVAL)) != 0, archive);
+ 
+ 	return FALSE;
+ }

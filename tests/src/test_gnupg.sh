@@ -23,7 +23,7 @@ G="gpg --batch --no-tty --pinentry-mode loopback"
 
 V=$(gpg --version 2>&1 | head -n 2 | tr '\n' ' ')
 echo "  info $V"
-case "$V" in "gpg (GnuPG) 2.4.9 libgcrypt 1.12.4"*) ok "gpg 2.4.9 on libgcrypt 1.12.4" ;; *) bad "gpg --version: $V" ;; esac
+case "$V" in "gpg (GnuPG) 2.5.24 libgcrypt 1.12.4"*) ok "gpg 2.5.24 on libgcrypt 1.12.4" ;; *) bad "gpg --version: $V" ;; esac
 
 D=$(printf abc | gpg --with-colons --print-md SHA256 2>&1)
 case "$D" in *BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD*) ok "SHA256(\"abc\") = ba7816bf...f20015ad" ;; *) bad "print-md SHA256: $D" ;; esac
@@ -41,7 +41,7 @@ elif grep -q 'Bad session key' bad.err; then ok "wrong passphrase refused: Bad s
 else bad "wrong passphrase: $(head -c 300 bad.err)"; fi
 
 AV=$(gpg-connect-agent 'GETINFO version' /bye 2>&1 | head -n 1)
-[ "$AV" = "D 2.4.9" ] && ok "gpg-agent answers GETINFO version over Assuan: 2.4.9" || bad "agent GETINFO version: $AV"
+[ "$AV" = "D 2.5.24" ] && ok "gpg-agent answers GETINFO version over Assuan: 2.5.24" || bad "agent GETINFO version: $AV"
 
 UID1="QNX Port Test <test@qnx.invalid>"
 if $G --passphrase '' --quick-generate-key "$UID1" ed25519 default never 2> gen.err; then

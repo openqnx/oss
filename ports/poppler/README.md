@@ -9,8 +9,8 @@
 | Upstream | https://gitlab.freedesktop.org/poppler/poppler.git (tag `poppler-26.11.0`) |
 | Build system | CMake |
 | QNX patches | 0 |
-| Build dependencies | [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`cairo`](../cairo/) [`glib`](../glib/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`lcms2`](../lcms2/) [`zlib`](../zlib/) |
-| Run-time dependencies | [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`zlib`](../zlib/) |
+| Build dependencies | [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`cairo`](../cairo/) [`glib`](../glib/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`lcms2`](../lcms2/) [`zlib`](../zlib/) [`harfbuzz`](../harfbuzz/) |
+| Run-time dependencies | [`brotli`](../brotli/) [`cairo`](../cairo/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`lcms2`](../lcms2/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`openjpeg`](../openjpeg/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_poppler`](../../tests/src/) |
 
@@ -67,15 +67,15 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 
 `env.sh` sets up the cross compiler (`qcc`/`q++`), the staging tree `stage/<arch>/usr/local` (= `/usr/local` on the target), pkg-config, and the CMake/Meson toolchain files.
 
-**Build the dependencies first** (35 component(s)), or let `qnxbuild` do it:
+**Build the dependencies first** (38 component(s)), or let `qnxbuild` do it:
 
 ```bash
-./scripts/qnxbuild freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib
+./scripts/qnxbuild freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib harfbuzz
 ```
 
-<details><summary>Full build chain (35)</summary>
+<details><summary>Full build chain (38)</summary>
 
-[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openjpeg`](../openjpeg/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
+[`brotli`](../brotli/) [`bzip2`](../bzip2/) [`cairo`](../cairo/) [`expat`](../expat/) [`fontconfig`](../fontconfig/) [`freetype`](../freetype/) [`gettext`](../gettext/) [`giflib`](../giflib/) [`glib`](../glib/) [`graphite2`](../graphite2/) [`harfbuzz`](../harfbuzz/) [`icu`](../icu/) [`lcms2`](../lcms2/) [`libffi`](../libffi/) [`libiconv`](../libiconv/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libunistring`](../libunistring/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxau`](../libxau/) [`libxcb`](../libxcb/) [`libxdmcp`](../libxdmcp/) [`libxext`](../libxext/) [`libxrender`](../libxrender/) [`lzo`](../lzo/) [`ncurses`](../ncurses/) [`openjpeg`](../openjpeg/) [`pcre2`](../pcre2/) [`pixman`](../pixman/) [`pthread-stubs`](../pthread-stubs/) [`xcb-proto`](../xcb-proto/) [`xorgproto`](../xorgproto/) [`xtrans`](../xtrans/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/)
 </details>
 
 ### 2. Get the upstream source
@@ -133,14 +133,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH poppler`.
 
 ```
 /usr/local/lib/libpoppler-cpp.so
-/usr/local/lib/libpoppler-cpp.so.2
-/usr/local/lib/libpoppler-cpp.so.2.2.0
+/usr/local/lib/libpoppler-cpp.so.3
+/usr/local/lib/libpoppler-cpp.so.3.1.0
 /usr/local/lib/libpoppler-glib.so
 /usr/local/lib/libpoppler-glib.so.8
 /usr/local/lib/libpoppler-glib.so.8.31.0
 /usr/local/lib/libpoppler.so
-/usr/local/lib/libpoppler.so.155
-/usr/local/lib/libpoppler.so.155.0.0
+/usr/local/lib/libpoppler.so.166
+/usr/local/lib/libpoppler.so.166.0.0
 /usr/local/bin/pdfattach
 /usr/local/bin/pdfdetach
 /usr/local/bin/pdffonts
@@ -236,7 +236,7 @@ This recipe builds **26.11.0**. Kept from earlier: `25.12.0` ([recipe and patche
 # pdfinfo, pdftoppm, pdftocairo, ...); C++, GLib and cairo front ends. No NSS
 # (signature verification: NSS is not ported), no Qt front ends, no GPGME.
 VERSION=26.11.0; GIT=https://gitlab.freedesktop.org/poppler/poppler.git; REF=poppler-26.11.0
-DEPS="freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib"
+DEPS="freetype fontconfig cairo glib libjpeg-turbo libpng libtiff openjpeg lcms2 zlib harfbuzz"   # harfbuzz(+subset): required by poppler 26 (CMake)
 BUILDSYS=cmake
 CMAKE_ARGS_EXTRA=( -DENABLE_NSS3=OFF -DENABLE_GPGME=OFF -DENABLE_QT5=OFF -DENABLE_QT6=OFF -DENABLE_LIBCURL=OFF -DBUILD_GTK_TESTS=OFF -DBUILD_QT5_TESTS=OFF -DBUILD_QT6_TESTS=OFF -DBUILD_CPP_TESTS=OFF -DBUILD_MANUAL_TESTS=OFF -DENABLE_GLIB=ON -DENABLE_UTILS=ON -DENABLE_CPP=ON -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF -DENABLE_GOBJECT_INTROSPECTION=OFF -DENABLE_LCMS=ON -DENABLE_DCTDECODER=libjpeg -DENABLE_LIBOPENJPEG=openjpeg2 -DENABLE_BOOST=OFF
                    -DPython3_EXECUTABLE=/usr/bin/python3 -DGLIB2_MKENUMS_PYTHON=/usr/bin/python3 )

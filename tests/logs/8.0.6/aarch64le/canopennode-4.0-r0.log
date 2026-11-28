@@ -1,17 +1,16 @@
 # canopennode 4.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:12:29Z   packages from: apk:local-dists
+# date: 2026-11-24T12:25:18Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u canopennode qnx-test-canopennode qnx-port-tests
-(1/5) Installing qnx-socketcan (1.0-r0)
-(2/5) Installing canopennode (4.0-r0)
-(3/5) Installing qnx-port-tests (1.0-r0)
-(4/5) Installing can-utils (2025.01-r0)
-(5/5) Installing qnx-test-canopennode (1.0-r0)
-OK: 11.1 MiB in 10 packages
+(1/4) Installing qnx-socketcan (1.0-r0)
+(2/4) Installing canopennode (4.0-r0)
+(3/4) Installing can-utils (2025.01-r0)
+(4/4) Installing qnx-test-canopennode (1.0-r0)
+OK: 137.1 MiB in 25 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_canopennode
      == canopennode ==
@@ -31,7 +30,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   missing object 0x1008 is refused with abort 0x06020000: '[1] ERROR:0x06020000 #Object does not exist.'
        ok   the SDO abort frame is on the bus
        ok   node 1 answers for its own identity object (4 entries): '[1] 4'
-       ok   node 4 sends heartbeats every 500 ms in pre-operational (6 seen)
+       ok   node 4 sends heartbeats every 500 ms in pre-operational (5 seen)
        ok   NMT start node 4: '[1] OK'
        ok   NMT command 000#01 04 is on the bus
        ok   NMT enter pre-operational: '[1] OK'

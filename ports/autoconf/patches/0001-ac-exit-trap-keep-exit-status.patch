@@ -1,0 +1,25 @@
+autoconf: ac_exit_trap lost the exit status (every failed configure exited 0).
+
+2.73 moved the exit trap's code into a shell function, ac_exit_trap,
+called as "ac_exit_trap $?". The function is written inside
+m4_define([_AC_INIT_PREPARE], ...) and reads its argument as a bare $1,
+which m4 replaces with _AC_INIT_PREPARE's own (empty) first argument: the
+generated configure says "exit_status=" and ends with "exit" after a
+successful rm, so a configure that stops with AC_MSG_ERROR or "exit 1"
+returns 0. Seen with XDT_CHECK_PACKAGE (xfce4-dev-tools): the "required
+package was not found" message came with exit status 0. Quote the
+parameter so the shell function gets its $1.
+
+Upstream-Status: Pending
+
+--- a/lib/autoconf/general.m4
++++ b/lib/autoconf/general.m4
+@@ -1366,7 +1366,7 @@
+ # config.log.
+ ac_exit_trap ()
+ {
+-  exit_status=$1
++  exit_status=$[]1
+   # Sanitize IFS.
+   IFS=" ""	$as_nl"
+   # Save into config.log some information that might help in debugging.

@@ -39,7 +39,7 @@ stopall() {
 }
 trap stopall EXIT
 trap 'exit 143' TERM
-to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL foot (qnxport-timeout.sh missing)"; exit 1; }
 F=$L/bin/foot
 v=$("$F" --version 2>&1); info "$v"
 echo "$v" | grep -q '^foot version: 1\.28\.0' && ok "foot --version: 1.28.0" || bad "--version: $v"

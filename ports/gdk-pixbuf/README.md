@@ -91,82 +91,38 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 
 ### 4. Configure, build and install into the staging tree
 
+This component uses its own build steps (`do_install`), run with `S` = the source tree, `B` = the build directory:
+
 ```bash
-meson setup build/$QNX_ARCH/gdk-pixbuf src/gdk-pixbuf \
-      --cross-file $QNX_MESON_DIR/meson-$QNX_ARCH.ini \
-      --native-file $QNX_MESON_DIR/meson-native.ini \
-      --prefix=/usr/local --buildtype=release --default-library=both \
-      -Dtests=false \
-      -Dinstalled_tests=false \
-      -Dman=false \
-      -Ddocumentation=false \
-      -Dintrospection=disabled \
-      -Dpng=enabled \
-      -Djpeg=enabled \
-      -Dtiff=disabled \
-      -Dgif=enabled \
-      # \
-      glycin \
-      (Rust, \
-      sandboxed \
-      loaders) \
-      and \
-      the \
-      Android \
-      # \
-      ImageDecoder \
-      loader \
-      do \
-      not \
-      apply \
-      to \
-      QNX. \
-      -Dglycin=disabled \
-      -Dandroid=disabled \
-      -Dothers=enabled \
-      -Dbuiltin_loaders=all \
-      -Drelocatable=false \
-      # \
-      gio_sniffing \
-      pulls \
-      in \
-      shared-mime-info, \
-      a \
-      desktop \
-      data \
-      # \
-      package; \
-      gdk-pixbuf's \
-      own \
-      image \
-      sniffing \
-      is \
-      what \
-      an \
-      # \
-      embedded \
-      target \
-      wants \
-      anyway. \
-      -Dgio_sniffing=false
-ninja -C build/$QNX_ARCH/gdk-pixbuf
-DESTDIR=$STAGE ninja -C build/$QNX_ARCH/gdk-pixbuf install
+S=src/gdk-pixbuf; B=build/$QNX_ARCH/gdk-pixbuf; mkdir -p $B
+```
+
+```bash
+do_install() {
+  DESTDIR="$STAGE" ninja -C "$B" install
+  mkdir -p "$STAGE$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+  printf '%s\n' "gdk-pixbuf loader modules of other packages (librsvg's SVG loader, ...)." \
+    "The gdk-pixbuf apk trigger rewrites ../loaders.cache whenever they change." \
+    > "$STAGE$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/README"
+}
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
+- apk.trigger: loaders.cache rewritten whenever a package adds or removes a loader module (librsvg's SVG loader); the built-in loaders need none.
 - 2.44 needs meson >= 1.5 (pinned default is 1.3.2)
+- The package owns the loaders/ directory (through a small README in it; qnxpkg packs files, not empty directories): then installing gdk-pixbuf changes the trigger directory, so its trigger also runs when librsvg and gdk-pixbuf were removed together (no trigger ran then) and a stale loaders.cache naming the SVG module was left behind -- the reinstall now deletes it (GTK programs aborted on it: "Unable to load image-loading module"); and apk no longer takes the directory away with the last loader package.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gdk-pixbuf`.
 
 ### 5. What it installs
 
-129 files under `/usr/local`: 3 shared-library entries, 3 programs, 13 headers.
+130 files under `/usr/local`: 3 shared-library entries, 3 programs, 12 headers.
 
 ```
 /usr/local/lib/libgdk_pixbuf-2.0.so
 /usr/local/lib/libgdk_pixbuf-2.0.so.0
-/usr/local/lib/libgdk_pixbuf-2.0.so.0.4200.12
+/usr/local/lib/libgdk_pixbuf-2.0.so.0.4400.8
 /usr/local/bin/gdk-pixbuf-csource
 /usr/local/bin/gdk-pixbuf-pixdata
 /usr/local/bin/gdk-pixbuf-query-loaders
@@ -258,6 +214,9 @@ This recipe builds **2.44.8**. Kept from earlier: `2.42.12` ([recipe and patches
 VERSION=2.44.8; GIT=https://gitlab.gnome.org/GNOME/gdk-pixbuf.git; REF=2.44.8
 DEPS="glib libpng libjpeg-turbo"
 BUILDSYS=meson
+# apk.trigger: loaders.cache rewritten whenever a package adds or removes a
+# loader module (librsvg's SVG loader); the built-in loaders need none.
+APK_TRIGGERS="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders"
 # 2.44 needs meson >= 1.5 (pinned default is 1.3.2)
 HOSTTOOLS_NEW=1
 MESON_ARGS_EXTRA=( -Dtests=false -Dinstalled_tests=false -Dman=false
@@ -272,6 +231,20 @@ MESON_ARGS_EXTRA=( -Dtests=false -Dinstalled_tests=false -Dman=false
                    # package; gdk-pixbuf's own image sniffing is what an
                    # embedded target wants anyway.
                    -Dgio_sniffing=false )
+# The package owns the loaders/ directory (through a small README in it; qnxpkg
+# packs files, not empty directories): then installing gdk-pixbuf changes the
+# trigger directory, so its trigger also runs when librsvg and gdk-pixbuf were
+# removed together (no trigger ran then) and a stale loaders.cache naming the
+# SVG module was left behind -- the reinstall now deletes it (GTK programs
+# aborted on it: "Unable to load image-loading module"); and apk no longer
+# takes the directory away with the last loader package.
+do_install() {
+  DESTDIR="$STAGE" ninja -C "$B" install
+  mkdir -p "$STAGE$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+  printf '%s\n' "gdk-pixbuf loader modules of other packages (librsvg's SVG loader, ...)." \
+    "The gdk-pixbuf apk trigger rewrites ../loaders.cache whenever they change." \
+    > "$STAGE$PREFIX/lib/gdk-pixbuf-2.0/2.10.0/loaders/README"
+}
 ```
 </details>
 

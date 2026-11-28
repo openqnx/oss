@@ -1,0 +1,36 @@
+# javascriptcore 2.54.3-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-25T04:11:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u javascriptcore qnx-test-javascriptcore qnx-port-tests
+(1/2) Installing javascriptcore (2.54.3-r0)
+(2/2) Installing qnx-test-javascriptcore (1.0-r0)
+OK: 188.4 MiB in 62 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_javascriptcore
+     == javascriptcore ==
+       ok   JSContextGroupCreate
+       ok   JSGlobalContextCreateInGroup
+       ok   arithmetic and precedence
+       ok   array sort with a closure
+       ok   recursion (fib 20)
+       ok   string and parseInt
+       ok   JSON.parse
+       ok   Math through libm
+       ok   ES6 Map
+       ok   arrow function and for-of
+       ok   200k allocations, collected while running
+       ok   a thrown Error reaches the embedder
+       info exception: Error: boom
+       ok   the exception carries its message
+       ok   JSON.stringify
+       ok   the context still works after an explicit GC
+     PASS javascriptcore
+PASS test_javascriptcore
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

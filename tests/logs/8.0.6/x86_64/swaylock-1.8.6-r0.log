@@ -1,0 +1,74 @@
+# swaylock 1.8.6-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T17:11:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swaylock qnx-test-swaylock qnx-port-tests
+( 1/33) Installing font-dejavu (2.37-r0)
+( 2/33) Installing brotli (1.2.1-r0)
+( 3/33) Installing libpng (1.6.59-r0)
+( 4/33) Installing freetype (2.15.0-r0)
+( 5/33) Installing fontconfig (2.18.4-r0)
+( 6/33) Installing libxau (1.0.12-r0)
+( 7/33) Installing libxdmcp (1.1.5-r0)
+( 8/33) Installing libxcb (1.17.0-r0)
+( 9/33) Installing libx11 (1.8.14-r0)
+(10/33) Installing libxext (1.3.7-r0)
+(11/33) Installing libxrender (0.9.13-r0)
+(12/33) Installing lzo (2.10-r0)
+(13/33) Installing pixman (0.46.4-r0)
+(14/33) Installing cairo (1.18.6-r0)
+(15/33) Installing libsfdo (0.1.4-r0)
+(16/33) Installing libxml2 (2.13.5-r0)
+(17/33) Installing libxkbcommon (1.8.1-r0)
+(18/33) Installing fribidi (1.0.18-r0)
+(19/33) Installing graphite2 (1.3.15-r0)
+(20/33) Installing icu (76.1-r0)
+(21/33) Installing harfbuzz (<ip>-r0)
+(22/33) Installing libxft (2.3.9-r0)
+(23/33) Installing pango (1.56.4-r0)
+(24/33) Installing wayland (1.26.0-r0)
+(25/33) Installing lcms2 (2.16-r0)
+(26/33) Installing wlroots (0.20.2-r0)
+(27/33) Installing xkeyboard-config (2.49-r0)
+(28/33) Installing labwc (0.20.3-r0)
+(29/33) Installing libjpeg-turbo (3.2.1-r0)
+(30/33) Installing gdk-pixbuf (2.44.8-r0)
+(31/33) Installing openpam (20250531-r0)
+(32/33) Installing swaylock (1.8.6-r0)
+(33/33) Installing qnx-test-swaylock (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 316.7 MiB in 72 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swaylock
+FAIL test_swaylock (rc=1)
+     == swaylock ==
+       ok   swaylock version v1.8.6 (" __DATE__ ", branch 'HEAD')
+       ok   swaylock --help lists --daemonize, --image and --ready-fd
+       ok   PAM policy /usr/local/etc/pam.d/swaylock (auth include login)
+       FAIL no /etc/pam.d/login on this target: swaylock could lock but never unlock by password
+       ok   without a compositor: exit 1
+       ok   labwc up (headless)
+       ok   a malformed colour is refused (exit 1)
+       ok   session locked (compositor sent ext_session_lock_v1.locked)
+       FAIL swaylock exited while locked: 2026-11-24 17:11:31 - [src-x86_64/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/pam.c:101] pam_start failed
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/comm.c:137] Failed to read pw result
+       ok   labwc running with the lock surfaces
+       ok   a second swaylock is turned away while locked (exit 1)
+       FAIL the first locker died when the second started: 2026-11-24 17:11:31 - [src-x86_64/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/pam.c:101] pam_start failed
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/comm.c:137] Failed to read pw result
+       FAIL status after SIGUSR1: 1 2026-11-24 17:11:31 - [src-x86_64/swaylock/main.c:1148] Parsing CLI Args
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/pam.c:101] pam_start failed
+     2026-11-24 17:11:31 - [src-x86_64/swaylock/comm.c:137] Failed to read pw result
+       ok   locked again, with an image background
+       ok   unlocked again
+     FAIL swaylock (4 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_swaylock
+
+RESULT: FAIL

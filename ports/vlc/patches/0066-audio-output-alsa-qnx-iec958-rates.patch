@@ -1,0 +1,48 @@
+audio_output/alsa: the IEC958 rate codes QNX's libasound lacks.
+
+QNX SDP 8.0 ships libasound with an ALSA-compatible API, so the ALSA audio
+output builds against it -- except that its <alsa/asoundef.h> defines only
+the 44.1, 48 and 32 kHz IEC958_AES3_CON_FS_* codes, and the S/PDIF pass-
+through setup uses eight more (22.05 to 192 kHz and NOTID). Define the
+missing ones with alsa-lib's values where the header has none.
+
+Upstream-Status: Pending
+
+diff --git a/modules/audio_output/alsa.c b/modules/audio_output/alsa.c
+index e10e1eb..3df58a4 100644
+--- a/modules/audio_output/alsa.c
++++ b/modules/audio_output/alsa.c
+@@ -37,6 +37,33 @@
+ #include <vlc_cpu.h>
+ 
+ #include <alsa/asoundlib.h>
++
++/* QNX's libasound (an ALSA-compatible API) defines only the 44.1, 48 and
++ * 32 kHz IEC958 sample-rate codes; the others, with alsa-lib's values: */
++#ifndef IEC958_AES3_CON_FS_NOTID
++# define IEC958_AES3_CON_FS_NOTID  (1<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_22050
++# define IEC958_AES3_CON_FS_22050  (4<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_24000
++# define IEC958_AES3_CON_FS_24000  (6<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_88200
++# define IEC958_AES3_CON_FS_88200  (8<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_768000
++# define IEC958_AES3_CON_FS_768000 (9<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_96000
++# define IEC958_AES3_CON_FS_96000  (10<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_176400
++# define IEC958_AES3_CON_FS_176400 (12<<0)
++#endif
++#ifndef IEC958_AES3_CON_FS_192000
++# define IEC958_AES3_CON_FS_192000 (14<<0)
++#endif
+ #include <alsa/version.h>
+ 
+ /** Private data for an ALSA PCM playback stream */

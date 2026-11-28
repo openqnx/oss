@@ -1,0 +1,187 @@
+dlt-qnx-system: read the slog2 context map with the libjson port.
+
+dlt-qnx-system read dlt-slog2ctxt.json with the JSON decoder of the QNX
+libjson (<sys/json.h>, json_decoder_*). The libjson port (a streaming
+parser, <json.h>) has the same link name: "-ljson" finds it first
+in the prefix, where the link then fails on json_decoder_*, and the ports
+are to use ported libraries rather than those of QNX. The map is now read with the port's
+parser. An entry without "name" or "description" is reported and skipped
+(the QNX decoder version stopped reading at it).
+
+Upstream-Status: QNX-specific
+
+--- a/src/dlt-qnx-system/dlt-qnx-slogger2-adapter.cpp
++++ b/src/dlt-qnx-system/dlt-qnx-slogger2-adapter.cpp
+@@ -26,23 +26,18 @@
+ 
+ #include <pthread.h>
+ #include <sys/slog2.h>
+-#include <sys/json.h>
++#include <json.h>
+ #include <slog2_parse.h>
+ #include <thread>
+ #include <set>
++#include <fstream>
++#include <sstream>
+ 
+ #include "dlt-qnx-system.h"
+ #include "dlt_cpp_extension.hpp"
+ using std::chrono_literals::operator""ms;
+ using std::chrono_literals::operator""s;
+ 
+-/* Teach dlt about json_decoder_error_t */
+-template<>
+-inline int32_t logToDlt(DltContextData &log, const json_decoder_error_t &value)
+-{
+-    return logToDlt(log, static_cast<int>(value));
+-}
+-
+ extern DltContext dltQnxSystem;
+ 
+ static DltContext dltQnxSlogger2Context;
+@@ -54,60 +49,99 @@
+ 
+ static std::unordered_map<std::string, DltContext*> g_slog2file;
+ 
+-static void dlt_context_map_read(const char *json_filename)
+-{
+-    DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_VERBOSE,
+-            "Loading Slog2Ctxt Map from json file: ", json_filename);
+-
+-    auto dec = json_decoder_create();
+-    if (json_decoder_parse_file(dec, json_filename) != JSON_DECODER_OK) {
+-        DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_ERROR,
+-                "Could not load Slog2Ctxt Map from json file: ", json_filename);
+-        return;
+-    }
++/* What is read of dlt-slog2ctxt.json so far:
++ * { "<context id>": { "name": "<slog2 file>", "description": "<text>" }, ... } */
++struct Slog2CtxtMapReader {
++    int depth = 0;
++    std::string ctxtID, key, name, description;
++    bool haveName = false, haveDescription = false;
++};
+ 
+-    const char *ctxtID, *name, *description;
++/* libjson (streaming parser) calls this for every element of the file. */
++static int dlt_context_map_element(void *userdata, int type, const char *data, uint32_t length)
++{
++    auto r = static_cast<Slog2CtxtMapReader *>(userdata);
+ 
+-    /* go to first element in dlt-slog2ctxt.json e.g. "ADIO" */
+-    auto ret = json_decoder_push_object(dec, nullptr, false);
+-    while (ret == JSON_DECODER_OK) {
+-        ctxtID = json_decoder_name(dec);
+-
+-        /* go into the element e.g. { name: "", description: "" } */
+-        ret = json_decoder_push_object(dec, nullptr, false);
+-        if (ret != JSON_DECODER_OK) {
+-            DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_WARN, __func__,
+-                    ": json parser error while descending into context dict. ret=", ret);
+-            break;
++    switch (type) {
++    case JSON_OBJECT_BEGIN:
++    case JSON_ARRAY_BEGIN:
++        r->depth++;
++        if (r->depth == 2) {
++            r->name.clear();
++            r->description.clear();
++            r->haveName = r->haveDescription = false;
+         }
+-
+-        ret = json_decoder_get_string(dec, "name", &name, false);
+-        if (ret != JSON_DECODER_OK) {
+-            DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_WARN, __func__,
+-                    ": json parser error while retrieving 'name' element of ", ctxtID, ". ret=", ret);
+-            break;
++        break;
++    case JSON_KEY:
++        if (r->depth == 1)
++            r->ctxtID.assign(data, length);
++        else if (r->depth == 2)
++            r->key.assign(data, length);
++        break;
++    case JSON_STRING:
++        if (r->depth == 2) {
++            if (r->key == "name") {
++                r->name.assign(data, length);
++                r->haveName = true;
++            } else if (r->key == "description") {
++                r->description.assign(data, length);
++                r->haveDescription = true;
++            }
+         }
+-
+-        ret = json_decoder_get_string(dec, "description", &description, false);
+-        if (ret != JSON_DECODER_OK) {
+-            DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_WARN, __func__,
+-                    ": json parser error while retrieving 'description' element of ", ctxtID, ". ret=", ret);
+-            break;
++        break;
++    case JSON_OBJECT_END:
++    case JSON_ARRAY_END:
++        if (type == JSON_OBJECT_END && r->depth == 2) {
++            if (!r->haveName || !r->haveDescription) {
++                DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_WARN, __func__,
++                        ": 'name' or 'description' element missing in ", r->ctxtID.c_str());
++            } else {
++                auto ctxt = new DltContext;
++                g_slog2file.emplace(r->name, ctxt);
++
++                auto search = g_slog2file.find(r->name);
++                if (search == g_slog2file.end()) {
++                    DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_INFO,
++                            "Could not emplace slog2ctxt map key: ", r->name.c_str());
++                } else {
++                    dlt_register_context(ctxt, r->ctxtID.c_str(), r->description.c_str());
++                }
++            }
+         }
++        r->depth--;
++        break;
++    default:
++        break;
++    }
++    return 0;
++}
+ 
+-        auto ctxt = new DltContext;
+-        g_slog2file.emplace(name, ctxt);
+-
+-        auto search = g_slog2file.find(name);
+-        if (search == g_slog2file.end()) {
+-            DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_INFO,
+-                    "Could not emplace slog2ctxt map key: ", name);
+-        } else {
+-            dlt_register_context(ctxt, ctxtID, description);
+-        }
++static void dlt_context_map_read(const char *json_filename)
++{
++    DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_INFO,
++            "Loading Slog2Ctxt Map from json file: ", json_filename);
+ 
+-        ret = json_decoder_pop(dec);
++    std::ifstream file(json_filename, std::ios::binary);
++    std::stringstream content;
++    if (file)
++        content << file.rdbuf();
++    const std::string text = content.str();
++
++    Slog2CtxtMapReader reader;
++    json_parser parser;
++    int ret = file ? json_parser_init(&parser, nullptr, dlt_context_map_element, &reader) : -1;
++    if (ret == 0) {
++        ret = json_parser_string(&parser, text.data(), static_cast<uint32_t>(text.size()), nullptr);
++        if (ret == 0 && !json_parser_is_done(&parser))
++            ret = -1;
++        json_parser_free(&parser);
++    }
++    if (ret != 0) {
++        DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_ERROR,
++                "Could not load Slog2Ctxt Map from json file: ", json_filename, " ret=", ret);
++        return;
+     }
++
+     DLT_LOG_CXX(dltQnxSlogger2Context, DLT_LOG_DEBUG,
+             "Added ", g_slog2file.size(), " elements into the mapping table.");
+ }

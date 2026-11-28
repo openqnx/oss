@@ -1,0 +1,45 @@
+# azure-iot-sdk-c 0_git-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:00:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u azure-iot-sdk-c qnx-test-azure-iot-sdk-c qnx-port-tests
+(1/7) Installing brotli (1.2.1-r1)
+(2/7) Installing c-ares (1.34.9-r1)
+(3/7) Installing nghttp2 (1.71.0-r1)
+(4/7) Installing curl (8.23.0-r1)
+(5/7) Installing azure-iot-sdk-c (0_git-r1)
+(6/7) Installing qnx-port-tests (1.0-r1)
+(7/7) Installing qnx-test-azure-iot-sdk-c (1.0-r1)
+OK: 14.1 MiB in 12 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_azure_iot_sdk_c
+     == azure-iot-sdk-c ==
+       ok   platform_init
+       ok   Base64 encode
+       ok   Base64 decode
+       ok   HMAC-SHA256 (RFC 4231 #2)
+       info URL_EncodeString -> a%20b%2fc%3fd%3de%26f
+       ok   URL encode
+       ok   URL decode round trip
+       info SharedAccessSignature sr=myhub.azure-devices.net%2Fdevices%2Fdev1&sig=wosmA3uJK9T0mdB5CIYn%2bsAVA2ODflnucuvNO5S6mbM%3d&se=1700000000&skn=iothubowner
+       ok   SAS token known answer
+       ok   Map add / update / lookup
+       ok   Map_ToJSON
+       ok   message from string
+       ok   cloned message body
+       ok   clone keeps message id and properties
+       ok   device client from a valid connection string (MQTT transport)
+     Error: Time:Fri Nov 27 08:00:12 2026 File:/build/oss/src-x86_64/azure-iot-sdk-c/iothub_client/src/iothub_client_core_ll.c Func:IoTHubClientCore_LL_CreateFromConnectionString Line:1562 iotHubName is not found
+       ok   connection string without HostName rejected
+       ok   serializer: SINT32 to string
+       ok   serializer: string is quoted and escaped
+       info "he said \"hi\""
+     PASS azure-iot-sdk-c
+PASS test_azure_iot_sdk_c
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

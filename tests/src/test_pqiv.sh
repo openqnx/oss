@@ -54,7 +54,7 @@ bw_start() {
   kill -0 $BWP 2>/dev/null || { info "broadwayd exited: $(head -n 3 "$T/broadwayd.log")"; return 1; }
   GDK_BACKEND=broadway; BROADWAY_DISPLAY=:$BD; export GDK_BACKEND BROADWAY_DISPLAY
 }
-to() { if command -v timeout >/dev/null 2>&1; then timeout "$@"; else shift; "$@"; fi; }
+. "$(dirname "$0")/qnxport-timeout.sh" || { echo "FAIL pqiv (qnxport-timeout.sh missing)"; exit 1; }
 # GTK lays text out with Pango; with no font installed it measures nonsense
 # (VTE asked for a window 185370 px wide) and crashes. The test installs
 # DejaVu (font-dejavu) and says so if fontconfig still finds nothing.

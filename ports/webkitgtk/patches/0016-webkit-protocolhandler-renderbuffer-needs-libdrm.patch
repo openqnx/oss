@@ -1,0 +1,22 @@
+webkitgtk: the "Buffer format" row without hardware acceleration needs USE(LIBDRM).
+
+renderBufferDescription() is defined inside #if USE(LIBDRM) in
+WebKitProtocolHandler.cpp, and the hardware-acceleration branch above only
+calls it under USE(LIBDRM). The other branch (acceleration off) calls it
+under PLATFORM(GTK) alone, so a GTK build without libdrm -- QNX has none --
+fails with "'renderBufferDescription' was not declared in this scope".
+Guard that call the same way.
+
+Upstream-Status: Pending
+
+--- a/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp
++++ b/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp
+@@ -757,7 +757,7 @@
+         if (hasEGLContext)
+             addEGLInfo(hardwareAccelerationObject);
+     } else {
+-#if PLATFORM(GTK)
++#if PLATFORM(GTK) && USE(LIBDRM)
+         addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferDescription(request));
+ #endif
+     }

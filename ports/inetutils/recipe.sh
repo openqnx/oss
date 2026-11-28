@@ -1,6 +1,6 @@
-VERSION=2.6
-TARBALL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz
-SHA256=68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca
+VERSION=2.8
+TARBALL=https://ftp.gnu.org/gnu/inetutils/inetutils-2.8.tar.gz
+SHA256=57b3cf4f77555992881e5ba2a09a63b05aa2c56342a60ed4305b5f45938390b5
 BUILDSYS=autotools
 # crypt() for ftpd: QNX keeps it in its static liblogin.a, not libc, so
 # libxcrypt (libcrypt.so.2) supplies it; without it configure drops ftpd.

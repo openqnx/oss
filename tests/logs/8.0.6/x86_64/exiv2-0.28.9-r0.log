@@ -1,16 +1,16 @@
 # exiv2 0.28.9-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:45:26Z   packages from: apk:local-dists
+# date: 2026-11-24T12:43:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u exiv2 qnx-test-exiv2 qnx-port-tests
-(1/4) Installing brotli (1.1.0-r0)
+(1/4) Installing brotli (1.2.1-r0)
 (2/4) Installing libinih (58-r0)
 (3/4) Installing exiv2 (0.28.9-r0)
 (4/4) Installing qnx-test-exiv2 (1.0-r0)
-OK: 475.9 MiB in 32 packages
+OK: 186.0 MiB in 38 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_exiv2
      == exiv2 ==

@@ -1,15 +1,14 @@
 # fastfetch 2.66.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:33:02Z   packages from: apk:local-dists
+# date: 2026-11-24T12:43:08Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u fastfetch qnx-test-fastfetch qnx-port-tests
-(1/3) Installing fastfetch (2.66.1-r0)
-(2/3) Installing qnx-port-tests (1.0-r0)
-(3/3) Installing qnx-test-fastfetch (1.0-r0)
-OK: 11.4 MiB in 8 packages
+(1/2) Installing fastfetch (2.66.1-r0)
+(2/2) Installing qnx-test-fastfetch (1.0-r0)
+OK: 182.4 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_fastfetch
      == fastfetch ==
@@ -18,14 +17,14 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_f
        ok   OS: QNX 8.0.0
        ok   OS build: 2026/10/30-09:10:05EDT
        ok   Kernel release 8.0.0
-       info pidin: 4 CPUs at 3600 MHz, FreeMem:1827MB/2047MB
+       info pidin: 4 CPUs at 2712 MHz, FreeMem:1806MB/2047MB
        ok   CPU: 4 logical cores, as pidin
-       ok   CPU: base frequency 3600 MHz, as pidin
+       ok   CPU: base frequency 2712 MHz, as pidin
        ok   Memory: total 2047 MB, as pidin
        ok   Memory: used is between 0 and the total
-       ok   Uptime: 1482 s since boot
-       info boot time: fastfetch 2026-11-21T09:08:18.000+0000, pidin Nov 21 09:08:18
-       ok   Processes: 24 (/proc has 25)
+       ok   Uptime: 13293 s since boot
+       info boot time: fastfetch 2026-11-24T09:01:32.000+0000, pidin Nov 24 09:01:32
+       ok   Processes: 25 (/proc has 26)
        ok   Disk /: 10484 KB total, as df -k
        ok   Disk: mount point /
        ok   Local IP: lo0 <ip>/8

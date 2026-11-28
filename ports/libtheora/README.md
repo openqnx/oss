@@ -1,4 +1,4 @@
-# libtheora 1.1.1
+# libtheora 1.2.0
 
 > Theora video codec library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2 |
-| SHA-256 | `b6ae1ee2fa3d42ac489287d3ec34c5885730b1296f0801ae577a35193d3affbc` |
+| Upstream | https://downloads.xiph.org/releases/theora/libtheora-1.2.0.tar.xz |
+| SHA-256 | `ebdf77a8f5c0a8f7a9e42323844fa09502b34eb1d1fece7b5f54da41fe2122ec` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libogg`](../libogg/) [`libvorbis`](../libvorbis/) |
@@ -77,10 +77,10 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
+URL=https://downloads.xiph.org/releases/theora/libtheora-1.2.0.tar.xz
 mkdir -p dist src/libtheora
 curl -fL -o dist/$(basename $URL) $URL
-echo "b6ae1ee2fa3d42ac489287d3ec34c5885730b1296f0801ae577a35193d3affbc  dist/$(basename $URL)" | sha256sum -c -
+echo "ebdf77a8f5c0a8f7a9e42323844fa09502b34eb1d1fece7b5f54da41fe2122ec  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/libtheora --strip-components=1
 ```
 
@@ -119,11 +119,11 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH libtheora`.
 
 ```
 /usr/local/lib/libtheora.so
-/usr/local/lib/libtheora.so.3
+/usr/local/lib/libtheora.so.5
 /usr/local/lib/libtheoradec.so
-/usr/local/lib/libtheoradec.so.2
+/usr/local/lib/libtheoradec.so.3
 /usr/local/lib/libtheoraenc.so
-/usr/local/lib/libtheoraenc.so.2
+/usr/local/lib/libtheoraenc.so.4
 ```
 
 The complete list is `stage/<arch>/.manifest/libtheora` after a build.
@@ -207,14 +207,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.1.1**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtheora=<version>`), sources in `ported/libtheora/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtheora`; port one with `scripts/port-update libtheora`.
+This recipe builds **1.2.0**. Kept from earlier: `1.1.1` ([recipe and patches](versions/1.1.1/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add libtheora=<version>`), sources in `ported/libtheora/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates libtheora`; port one with `scripts/port-update libtheora`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.1.1
-TARBALL=https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
-SHA256=b6ae1ee2fa3d42ac489287d3ec34c5885730b1296f0801ae577a35193d3affbc
+VERSION=1.2.0
+TARBALL=https://downloads.xiph.org/releases/theora/libtheora-1.2.0.tar.xz
+SHA256=ebdf77a8f5c0a8f7a9e42323844fa09502b34eb1d1fece7b5f54da41fe2122ec
 BUILDSYS=autotools
 DEPS="libogg libvorbis"
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-examples

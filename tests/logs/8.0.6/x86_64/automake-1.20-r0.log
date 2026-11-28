@@ -1,6 +1,6 @@
 # automake 1.20-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T11:38:16Z   packages from: apk:local-dists
+# date: 2026-11-24T14:33:13Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -10,7 +10,7 @@ $ apk add -u automake qnx-test-automake qnx-port-tests
 ( 2/11) Installing m4 (1.4.21-r0)
 ( 3/11) Installing libxcrypt (4.5.2-r0)
 ( 4/11) Installing perl (5.40.2-r0)
-( 5/11) Installing autoconf (2.73-r0)
+( 5/11) Installing autoconf (2.73-r1)
 ( 6/11) Installing automake (1.20-r0)
 ( 7/11) Installing qnx-port-tests (1.0-r0)
 ( 8/11) Installing pcre2 (10.49-r0)

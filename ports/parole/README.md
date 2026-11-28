@@ -9,7 +9,7 @@
 | Upstream | https://archive.xfce.org/src/apps/parole/4.20/parole-4.20.0.tar.xz |
 | SHA-256 | `5cf753e670d6518701133eb860d8bceb3a08a496af6a2b7cc67b93320230c983` |
 | Build system | Meson |
-| QNX patches | 0 |
+| QNX patches | 1 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`dbus`](../dbus/) [`dbus-glib`](../dbus-glib/) [`libxfce4util`](../libxfce4util/) [`libxfce4ui`](../libxfce4ui/) [`xfconf`](../xfconf/) [`gstreamer`](../gstreamer/) [`gst-plugins-base`](../gst-plugins-base/) [`taglib`](../taglib/) [`libnotify`](../libnotify/) |
 | Run-time dependencies | [`cairo`](../cairo/) [`dbus`](../dbus/) [`dbus-glib`](../dbus-glib/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gst-plugins-base`](../gst-plugins-base/) [`gstreamer`](../gstreamer/) [`gtk3`](../gtk3/) [`libnotify`](../libnotify/) [`libxfce4ui`](../libxfce4ui/) [`libxfce4util`](../libxfce4util/) [`taglib`](../taglib/) [`xfconf`](../xfconf/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -58,7 +58,30 @@ tar xf dist/$(basename $URL) -C src/parole --strip-components=1
 
 ### 3. Apply the QNX patches
 
-None — the upstream source builds for QNX unmodified; everything QNX-specific is in the configuration below and in the shared toolchain files.
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+
+```bash
+patch -p1 -d src/parole < ports/parole/patches/0001-qnx-wayland-gtksink.patch
+```
+
+**[`0001-qnx-wayland-gtksink.patch`](patches/0001-qnx-wayland-gtksink.patch)** — QNX desktop (Wayland only): play video through gtksink.
+
+> Parole 4.20 shows video only through an X11 video overlay: it creates
+> autoimagesink / xvimagesink / ximagesink and hands the sink the X window id
+> of its own GtkWidget (GDK_WINDOW_XID). On the QNX desktop there is no X11 --
+> gst-plugins-base is built without ximagesink and GDK runs on Wayland -- so
+> Parole stopped at start-up with "Unable to load autoimagesink plugin ...
+> Parole cannot start".
+>
+> When none of those sinks exists, use gtksink (gst-plugins-good's GTK plugin):
+> it draws the video into a GTK widget of its own, which the player packs into
+> the video area in place of ParoleGst's window (kept, hidden, for the rest of
+> the player's logic; its size_allocate, which drives the X11 overlay, is
+> skipped). The mouse handlers (controls on motion, click to pause) are on the
+> enclosing event box and keep working. This path is taken only in a build
+> without X11 sinks; with ximagesink/xvimagesink present nothing changes.
+
+Touches: `src/gst/parole-gst.c`, `src/gst/parole-gst.h`, `src/parole-player.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -76,7 +99,7 @@ DESTDIR=$STAGE ninja -C build/$QNX_ARCH/parole install
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - Parole: the Xfce media player (GTK 3, GStreamer). Plays local files and network streams (HTTP, HLS/DASH through GStreamer) on the Wayland desktop. No DRM: Widevine-protected services (Netflix and the like) cannot play -- their decryption module is closed and not available for QNX.
-- Wayland only, as the rest of this Xfce (libxfce4windowing --disable-x11).
+- Wayland only, as the rest of this Xfce (libxfce4windowing --disable-x11). patches/0001: video through gtksink (gst-plugins-good) -- upstream Parole shows video only in an X11 overlay (ximagesink/xvimagesink), which a Wayland-only desktop does not have; without it Parole did not start.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH parole`.
 
@@ -167,6 +190,9 @@ DEPS="glib gtk3 dbus dbus-glib libxfce4util libxfce4ui xfconf gstreamer gst-plug
 RUNTIME_DEPS="dbus gst-plugins-good gst-plugins-bad gst-libav"
 BUILDSYS=meson
 # Wayland only, as the rest of this Xfce (libxfce4windowing --disable-x11).
+# patches/0001: video through gtksink (gst-plugins-good) -- upstream Parole
+# shows video only in an X11 overlay (ximagesink/xvimagesink), which a
+# Wayland-only desktop does not have; without it Parole did not start.
 MESON_ARGS_EXTRA=( -Dx11=disabled -Dwayland=enabled )
 ```
 </details>

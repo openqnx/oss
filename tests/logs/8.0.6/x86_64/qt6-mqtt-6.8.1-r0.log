@@ -1,129 +1,132 @@
 # qt6-mqtt 6.8.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:13:54Z   packages from: apk:local-dists
+# date: 2026-11-24T13:02:59Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u qt6-mqtt qnx-test-qt6-mqtt qnx-port-tests
-( 1/58) Installing qnx-port-tests (1.0-r0)
-( 2/58) Installing cjson (1.7.18-r0)
-( 3/58) Installing mosquitto (2.0.20-r0)
-( 4/58) Installing brotli (1.1.0-r0)
-( 5/58) Installing double-conversion (3.3.0-r0)
-( 6/58) Installing bzip2 (1.0.8-r0)
-( 7/58) Installing dav1d (1.5.0-r0)
-( 8/58) Installing lame (3.100-r0)
-( 9/58) Installing libiconv (1.18-r0)
-(10/58) Installing libogg (1.3.5-r0)
-(11/58) Installing libtheora (1.1.1-r0)
-(12/58) Installing libvorbis (1.3.7-r0)
-(13/58) Installing libvpx (1.15.0-r0)
-(14/58) Installing openh264 (2.5.0-r0)
-(15/58) Installing opus (1.5.2-r0)
-(16/58) Installing x264 (0_git-r0)
-(17/58) Installing x265 (3.6-r0)
-(18/58) Installing libunistring (1.3-r0)
-(19/58) Installing gettext (0.22.5-r0)
-(20/58) Installing xz (5.6.3-r0)
-(21/58) Installing ffmpeg (7.1.1-r0)
-(22/58) Installing expat (2.6.4-r0)
-(23/58) Installing libpng (1.6.44-r0)
-(24/58) Installing freetype (2.13.3-r0)
-(25/58) Installing fontconfig (2.15.0-r0)
-(26/58) Installing libffi (3.4.6-r0)
-(27/58) Installing pcre2 (10.44-r0)
-(28/58) Installing glib (2.82.4-r0)
-(29/58) Installing aom (3.15.3-r0)
-(30/58) Installing libxau (1.0.11-r0)
-(31/58) Installing libxdmcp (1.1.5-r0)
-(32/58) Installing libxcb (1.17.0-r0)
-(33/58) Installing libx11 (1.8.10-r0)
-(34/58) Installing libxext (1.3.6-r0)
-(35/58) Installing libxrender (0.9.11-r0)
-(36/58) Installing lzo (2.10-r0)
-(37/58) Installing pixman (0.46.4-r0)
-(38/58) Installing cairo (1.18.2-r0)
-(39/58) Installing fdk-aac (2.0.3-r0)
-(40/58) Installing gstreamer (1.24.10-r0)
-(41/58) Installing gst-plugins-base (1.24.10-r0)
-(42/58) Installing libwebp (1.4.0-r0)
-(43/58) Installing fribidi (1.0.16-r0)
-(44/58) Installing graphite2 (1.3.14-r0)
-(45/58) Installing icu (76.1-r0)
-(46/58) Installing harfbuzz (<ip>-r0)
-(47/58) Installing libxft (2.3.8-r0)
-(48/58) Installing pango (1.54.0-r0)
-(49/58) Installing svt-av1 (2.3.0-r0)
-(50/58) Installing wayland (1.24.0-r0)
-(51/58) Installing gst-plugins-bad (1.24.10-r0)
-(52/58) Installing libjpeg-turbo (3.0.4-r0)
-(53/58) Installing libtiff (4.7.0-r0)
-(54/58) Installing libxml2 (2.13.5-r0)
-(55/58) Installing libxkbcommon (1.8.1-r0)
-(56/58) Installing qt6 (6.8.1-r0)
-(57/58) Installing qt6-mqtt (6.8.1-r0)
-(58/58) Installing qnx-test-qt6-mqtt (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 340.1 MiB in 69 packages
+( 1/54) Installing cjson (1.7.19-r0)
+( 2/54) Installing libedit (20240808.3.1-r0)
+( 3/54) Installing libmicrohttpd (1.0.11-r0)
+( 4/54) Installing mosquitto (2.1.4-r0)
+( 5/54) Installing brotli (1.2.1-r0)
+( 6/54) Installing double-conversion (3.4.0-r0)
+( 7/54) Installing dav1d (1.5.5-r0)
+( 8/54) Installing mpg123 (1.33.7-r0)
+( 9/54) Installing lame (4.0-r0)
+(10/54) Installing libogg (1.3.6-r0)
+(11/54) Installing libtheora (1.2.0-r0)
+(12/54) Installing libvorbis (1.3.7-r0)
+(13/54) Installing libvpx (1.17.0-r0)
+(14/54) Installing openh264 (2.7.0-r0)
+(15/54) Installing opus (1.6.1-r0)
+(16/54) Installing x264 (0_git-r0)
+(17/54) Installing x265 (4.2-r0)
+(18/54) Installing ffmpeg (7.1.1-r3)
+(19/54) Installing libpng (1.6.59-r0)
+(20/54) Installing freetype (2.15.0-r0)
+(21/54) Installing fontconfig (2.18.4-r0)
+(22/54) Installing pcre2 (10.49-r0)
+(23/54) Installing glib (2.90.1-r1)
+(24/54) Installing aom (3.15.3-r0)
+(25/54) Installing libxau (1.0.12-r0)
+(26/54) Installing libxdmcp (1.1.5-r0)
+(27/54) Installing libxcb (1.17.0-r0)
+(28/54) Installing libx11 (1.8.14-r0)
+(29/54) Installing libxext (1.3.7-r0)
+(30/54) Installing libxrender (0.9.13-r0)
+(31/54) Installing lzo (2.10-r0)
+(32/54) Installing pixman (0.46.4-r0)
+(33/54) Installing cairo (1.18.6-r0)
+(34/54) Installing fdk-aac (3.0.0-r0)
+(35/54) Installing gstreamer (1.24.10-r0)
+(36/54) Installing gst-plugins-base (1.24.10-r1)
+(37/54) Installing libwebp (1.6.0-r0)
+(38/54) Installing fribidi (1.0.18-r0)
+(39/54) Installing graphite2 (1.3.15-r0)
+(40/54) Installing icu (76.1-r0)
+(41/54) Installing harfbuzz (<ip>-r0)
+(42/54) Installing libxft (2.3.9-r0)
+(43/54) Installing pango (1.56.4-r0)
+(44/54) Installing svt-av1 (2.3.0-r0)
+(45/54) Installing wayland (1.26.0-r0)
+(46/54) Installing gst-plugins-bad (1.24.10-r2)
+(47/54) Installing libjpeg-turbo (3.2.1-r0)
+(48/54) Installing libdeflate (1.26-r0)
+(49/54) Installing libtiff (4.7.2-r0)
+(50/54) Installing libxml2 (2.13.5-r0)
+(51/54) Installing libxkbcommon (1.8.1-r0)
+(52/54) Installing qt6 (6.8.1-r0)
+(53/54) Installing qt6-mqtt (6.8.1-r0)
+(54/54) Installing qnx-test-qt6-mqtt (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+Executing glib-2.90.1-r1.trigger
+OK: 497.4 MiB in 88 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qt6_mqtt
      == qt6-mqtt ==
        ok   mosquitto broker found
-     1795259632: Warning: Mosquitto should not be run as root/administrator.
-     1795259632: mosquitto version 2.0.20 starting
-     1795259632: Config loaded from /data/var/tmp/qt6-mqtt-19005.conf.
-     1795259632: Opening ipv4 listen socket on port 19005.
-     1795259632: mosquitto version 2.0.20 running
-     1795259632: New connection from <ip>:16874 on port 19005.
-     1795259632: Client <unknown> closed its connection.
-     1795259632: New connection from <ip>:39468 on port 19005.
-       ok1795259632: Client <unknown> closed its connection.
-        broker listening
-     1795259632: New connection from <ip>:35766 on port 19005.
-     1795259632: New connection from <ip>:32347 on port 19005.
-     1795259632: New client connected from <ip>:35766 as qnx-a (p2, c1, k60).
-     1795259632: No will message specified.
-     1795259632: Sending CONNACK to qnx-a (0, 0)
-     1795259632: New client connected from <ip>:32347 as qnx-b (p5, c1, k60).
-     1795259632: No will message specified.
-     1795259632: Sending CONNACK to qnx-b (0, 0)
+     1795525378: Info: running mosquitto as user: root.
+     1795525378: Warning: Mosquitto should not be run as root/administrator.
+     1795525378: mosquitto version 2.1.4 starting
+     1795525378: Config loaded from /data/var/tmp/qt6-mqtt-19485.conf.
+     1795525378: Bridge support available.
+     1795525378: Persistence support available.
+     1795525378: TLS support available.
+     1795525378: TLS-PSK support available.
+     1795525378: Websockets support NOT available.
+     1795525378: Opening ipv4 listen socket on port 19485.
+     1795525378: mosquitto version 2.1.4 running
+     1795525378: New connection from <ip>:16593 on port 19485.
+     1795525378: Client <ip> [<ip>:16593] disconnected: connection closed by client.
+     1795525378: New connection from <ip>:51176 on port 19485. 
+      ok   1795525378: Client <ip> [<ip>:51176] disconnected: connection closed by client.broker listening
+     
+     1795525378: New connection from <ip>:63952 on port 19485.
+     1795525378: New connection from <ip>:53063 on port 19485.
+     1795525378: New client connected from <ip>:63952 as qnx-a (p4, c1, k60).
+     1795525378: No will message specified.
+     1795525378: Sending CONNACK to qnx-a (0, 0)
+     1795525378: New client connected from <ip>:53063 as qnx-b (p5, c1, k60).
+     1795525378: No will message specified.
+     1795525378: Sending CONNACK to qnx-b (0, 0)
        ok   both clients connected (3.1.1 and 5)
-     1795259632: Received SUBSCRIBE from qnx-b
-     1795259632: 	qnx/test/# (QoS 1)
-     1795259632: qnx-b 1 qnx/test/#
-     1795259632: Sending SUBACK to qnx-b
+     1795525378: Received SUBSCRIBE from qnx-b
+     1795525378: 	qnx/test/# (QoS 1)
+     1795525378: qnx-b 1 qnx/test/#
+     1795525378: Sending SUBACK to qnx-b
        ok   wildcard subscription acknowledged
-     1795259632: Received PUBLISH from qnx-a (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
-     1795259632: Sending PUBLISH to qnx-b (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
-     1795259632: Received PUBLISH from qnx-a (d0, q1, r0, m3, 'qnx/test/q1', ... (3 bytes))
-     1795259632: Sending PUBLISH to qnx-b (d0, q1, r0, m1, 'qnx/test/q1', ... (3 bytes))
-     1795259632: Sending PUBACK to qnx-a (m3, rc0)
+     1795525378: Received PUBLISH from qnx-a (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
+     1795525378: Sending PUBLISH to qnx-b (d0, q0, r0, m0, 'qnx/test/q0', ... (4 bytes))
+     1795525378: Received PUBLISH from qnx-a (d0, q1, r0, m3, 'qnx/test/q1', ... (3 bytes))
+     1795525378: Sending PUBLISH to qnx-b (d0, q1, r0, m1, 'qnx/test/q1', ... (3 bytes))
+     1795525378: Sending PUBACK to qnx-a (m3, rc0)
        ok   QoS 1 publish acknowledged (PUBACK)
-     1795259632: Received PUBACK from qnx-b (Mid: 1, RC:0)
+     1795525378: Received PUBACK from qnx-b (Mid: 1, RC:0)
        ok   QoS 0 and 1 messages received
        info got qnx/test/q0: zero
        info got qnx/test/q1: one
-     1795259632: Received PUBLISH from qnx-b (d0, q1, r0, m4, 'qnx/test/v5', ... (4 bytes))
-     1795259632: Sending PUBLISH to qnx-b (d0, q1, r0, m2, 'qnx/test/v5', ... (4 bytes))
-     1795259632: Sending PUBACK to qnx-b (m4, rc0)
-     1795259632: Received PUBACK from qnx-b (Mid: 2, RC:0)
+     1795525378: Received PUBLISH from qnx-b (d0, q1, r0, m4, 'qnx/test/v5', ... (4 bytes))
+     1795525378: Sending PUBLISH to qnx-b (d0, q1, r0, m2, 'qnx/test/v5', ... (4 bytes))
+     1795525378: Sending PUBACK to qnx-b (m4, rc0)
+     1795525378: Received PUBACK from qnx-b (Mid: 2, RC:0)
        ok   MQTT 5 user property delivered
-     1795259633: Received PUBLISH from qnx-a (d0, q1, r1, m5, 'qnx/retained', ... (4 bytes))
-     1795259633: Sending PUBACK to qnx-a (m5, rc0)
-     1795259633: Received SUBSCRIBE from qnx-b
-     1795259633: 	qnx/retained (QoS 1)
-     1795259633: qnx-b 1 qnx/retained
-     1795259633: Sending SUBACK to qnx-b
-     1795259633: Sending PUBLISH to qnx-b (d0, q1, r1, m3, 'qnx/retained', ... (4 bytes))
-     1795259633: Received PUBACK from qnx-b (Mid: 3, RC:0)
+     1795525378: Received PUBLISH from qnx-a (d0, q1, r1, m5, 'qnx/retained', ... (4 bytes))
+     1795525378: Sending PUBACK to qnx-a (m5, rc0)
+     1795525378: Received SUBSCRIBE from qnx-b
+     1795525378: 	qnx/retained (QoS 1)
+     1795525378: qnx-b 1 qnx/retained
+     1795525378: Sending SUBACK to qnx-b
+     1795525378: Sending PUBLISH to qnx-b (d0, q1, r1, m3, 'qnx/retained', ... (4 bytes))
+     1795525378: Received PUBACK from qnx-b (Mid: 3, RC:0)
        ok   retained message delivered to a late subscriber
-     1795259633: Received DISCONNECT from qnx-a
-     1795259633: Client qnx-a disconnected.
-       o1795259633: Received DISCONNECT from qnx-bk
-     1795259633: Client qnx-b disconnected.
-        clean disconnect
-     1795259633: mosquitto version 2.0.20 terminating
+     1795525378: Received DISCONNECT from qnx-a
+     1795525378: Client qnx-a [<ip>:63952] disconnected.
+       ok  1795525378: Received DISCONNECT from qnx-b 
+     clean disconnect1795525378: Client qnx-b [<ip>:53063] disconnected.
+     
+     1795525378: mosquitto version 2.1.4 terminating
      PASS qt6-mqtt
 PASS test_qt6_mqtt
 --------------------------------------------

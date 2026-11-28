@@ -1,0 +1,615 @@
+QNX: build the embedder engine with a QNX clang toolchain.
+
+Upstream Flutter knows QNX only for the standalone Impeller library (qcc,
+arm64, no Dart, no embedder). This adds what the embedder engine needs:
+- //build/toolchain/qnx: clang toolchains for x64 and arm64 (qnx_use_clang,
+  qnx_clang_dir, qnx_sysroot_*), small compatibility headers for Linux names
+  QNX spells differently (endian.h, elf.h, dirent.h DT_*, sys/syscall.h for
+  gettid, sys/sendfile.h, sys/mman.h, sys/prctl.h, linux/random.h, fcntl.h
+  openat64), empty libdl/libpthread/librt (QNX has them in libc) and
+  -lsocket -lfsnotify -lcatalog;
+- the engine's own libc++ on QNX (the SDP's libc++ 18 has no std::atomic_ref),
+  libc++abi with exceptions, no _FORTIFY_SOURCE (QNX's headers use gcc builtins);
+- fml: a message loop on a condition variable (QNX has no epoll/timerfd);
+- txt: system fonts from Skia's FreeType directory font manager
+  (/usr/local/share/fonts), which also loads the fonts an app bundles;
+- Skia N32 = BGRA as on Linux (the byte order of wl_shm ARGB8888);
+- native assets: the target OS name is "linux";
+- the embedder engine and the snapshot tools in the build (flutter/BUILD.gn).
+
+Upstream-Status: QNX-specific
+
+diff --git a/engine/src/build/config/BUILDCONFIG.gn b/engine/src/build/config/BUILDCONFIG.gn
+index a6c8100d434..eb65853c571 100644
+--- a/engine/src/build/config/BUILDCONFIG.gn
++++ b/engine/src/build/config/BUILDCONFIG.gn
+@@ -358,7 +358,7 @@ if (!is_clang && using_sanitizer) {
+   is_clang = true
+ }
+ 
+-use_flutter_cxx = is_clang && (is_linux || is_android || is_mac || is_ios)
++use_flutter_cxx = is_clang && (is_linux || is_android || is_mac || is_ios || is_qnx)
+ 
+ if (is_msan && !is_linux) {
+   assert(false, "Memory sanitizer is only available on Linux.")
+@@ -643,7 +643,12 @@ if (custom_toolchain != "") {
+   set_default_toolchain("//build/toolchain/wasm")
+ } else if (is_qnx) {
+   host_toolchain = "//build/toolchain/linux:clang_$host_cpu"
+-  set_default_toolchain("//build/toolchain/qnx")
++  import("//build/toolchain/qnx/qnx.gni")
++  if (qnx_use_clang) {
++    set_default_toolchain("//build/toolchain/qnx:clang_$target_cpu")
++  } else {
++    set_default_toolchain("//build/toolchain/qnx")
++  }
+ } else {
+   assert(false, "Toolchain not set because of unknown platform.")
+ }
+diff --git a/engine/src/build/config/compiler/BUILD.gn b/engine/src/build/config/compiler/BUILD.gn
+index ad938db2379..4fe4f887158 100644
+--- a/engine/src/build/config/compiler/BUILD.gn
++++ b/engine/src/build/config/compiler/BUILD.gn
+@@ -387,7 +387,7 @@ config("compiler") {
+     }
+   }
+ 
+-  if (is_qnx) {
++  if (is_qnx && !is_clang) {
+     qnx_arch_flags = []
+     if (target_cpu == "arm64") {
+       qnx_arch_flags += [
+@@ -847,7 +847,7 @@ config("chromium_code") {
+       "__STDC_FORMAT_MACROS",
+     ]
+ 
+-    if (!using_sanitizer && (!is_linux || !is_clang)) {
++    if (!using_sanitizer && (!(is_linux || is_qnx) || !is_clang)) {
+       # _FORTIFY_SOURCE isn't really supported by Clang now, see
+       # http://llvm.org/bugs/show_bug.cgi?id=16821.
+       # It seems to work fine with Ubuntu 12 headers though, so use it in
+diff --git a/engine/src/build/toolchain/qnx/BUILD.gn b/engine/src/build/toolchain/qnx/BUILD.gn
+index 87fd9714811..263aef97aaa 100644
+--- a/engine/src/build/toolchain/qnx/BUILD.gn
++++ b/engine/src/build/toolchain/qnx/BUILD.gn
+@@ -19,3 +19,40 @@ gcc_toolchain("qnx") {
+   toolchain_os = "linux"
+   is_clang = false
+ }
++
++# Clang toolchains for QNX SDP 8.0 (x86_64, aarch64): a host clang/lld built
++# from LLVM with the qnx-ports QNX support, and a sysroot that merges the SDP
++# target headers and libraries (args qnx_clang_dir, qnx_sysroot_<cpu>).
++import("//build/toolchain/qnx/qnx.gni")
++template("qnx_clang_toolchain") {
++  gcc_toolchain(target_name) {
++    _compat = rebase_path("//build/toolchain/qnx/include")
++    _flags = "--target=${invoker.triple} --sysroot=${invoker.sysroot} -isystem $_compat"
++    asm = "${qnx_clang_dir}/bin/clang $_flags"
++    cc = "${qnx_clang_dir}/bin/clang $_flags"
++    cxx = "${qnx_clang_dir}/bin/clang++ $_flags"
++    _compat_lib = rebase_path("//build/toolchain/qnx/lib")
++    ld = "$cxx -L$_compat_lib"
++    # QNX keeps the BSD sockets in libsocket, inotify in libfsnotify and
++    # catopen()/catgets() in libcatalog.
++    libs_section_postfix = "-lsocket -lfsnotify -lcatalog"
++    solink_libs_section_postfix = "-lsocket -lfsnotify -lcatalog"
++    readelf = "${qnx_clang_dir}/bin/llvm-readelf"
++    nm = "${qnx_clang_dir}/bin/llvm-nm"
++    ar = "${qnx_clang_dir}/bin/llvm-ar"
++    strip = "${qnx_clang_dir}/bin/llvm-strip"
++    toolchain_cpu = invoker.cpu
++    toolchain_os = "qnx"
++    is_clang = true
++  }
++}
++qnx_clang_toolchain("clang_x64") {
++  cpu = "x64"
++  triple = "x86_64-pc-qnx8.0.0"
++  sysroot = qnx_sysroot_x64
++}
++qnx_clang_toolchain("clang_arm64") {
++  cpu = "arm64"
++  triple = "aarch64-unknown-qnx8.0.0"
++  sysroot = qnx_sysroot_arm64
++}
+diff --git a/engine/src/build/toolchain/qnx/include/dirent.h b/engine/src/build/toolchain/qnx/include/dirent.h
+new file mode 100644
+index 00000000000..bbdca98370b
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/dirent.h
+@@ -0,0 +1,18 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_DIRENT_H
++#define QNX_COMPAT_DIRENT_H
++#include_next <dirent.h>
++/* QNX's struct dirent has no d_type; code that uses it reads DT_UNKNOWN
++   through __qnx_dirent_type() and falls back to stat(). */
++#ifndef DT_UNKNOWN
++#define DT_UNKNOWN 0
++#define DT_FIFO 1
++#define DT_CHR 2
++#define DT_DIR 4
++#define DT_BLK 6
++#define DT_REG 8
++#define DT_LNK 10
++#define DT_SOCK 12
++#endif
++#define __qnx_dirent_type(e) ((void)(e), DT_UNKNOWN)
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/elf.h b/engine/src/build/toolchain/qnx/include/elf.h
+new file mode 100644
+index 00000000000..31330d6e850
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/elf.h
+@@ -0,0 +1,11 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_ELF_H
++#define QNX_COMPAT_ELF_H
++#include <sys/elf.h>
++#ifndef ELF_NOTE_GNU
++#define ELF_NOTE_GNU "GNU"
++#endif
++#ifndef NT_GNU_BUILD_ID
++#define NT_GNU_BUILD_ID 3
++#endif
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/endian.h b/engine/src/build/toolchain/qnx/include/endian.h
+new file mode 100644
+index 00000000000..2fe661d63a5
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/endian.h
+@@ -0,0 +1,5 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_ENDIAN_H
++#define QNX_COMPAT_ENDIAN_H
++#include <net/netbyte.h>
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/fcntl.h b/engine/src/build/toolchain/qnx/include/fcntl.h
+new file mode 100644
+index 00000000000..8d7d4b08b06
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/fcntl.h
+@@ -0,0 +1,9 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_FCNTL_H
++#define QNX_COMPAT_FCNTL_H
++#include_next <fcntl.h>
++/* QNX is 64-bit only: openat() is already large-file capable. */
++#ifndef openat64
++#define openat64 openat
++#endif
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/linux/random.h b/engine/src/build/toolchain/qnx/include/linux/random.h
+new file mode 100644
+index 00000000000..d41134f4b73
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/linux/random.h
+@@ -0,0 +1,7 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_LINUX_RANDOM_H
++#define QNX_COMPAT_LINUX_RANDOM_H
++/* getrandom() flags; on QNX the call fails with ENOSYS (see sys/syscall.h). */
++#define GRND_NONBLOCK 0x0001
++#define GRND_RANDOM 0x0002
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/sys/mman.h b/engine/src/build/toolchain/qnx/include/sys/mman.h
+new file mode 100644
+index 00000000000..239209987db
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/sys/mman.h
+@@ -0,0 +1,14 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_SYS_MMAN_H
++#define QNX_COMPAT_SYS_MMAN_H
++#include_next <sys/mman.h>
++/* MAP_NORESERVE has no effect on QNX (only defined with __EXT_UNIX_HIST). */
++#ifndef MAP_NORESERVE
++#define MAP_NORESERVE 0
++#endif
++/* QNX has posix_madvise() only. */
++#ifndef MADV_DONTNEED
++#define MADV_DONTNEED POSIX_MADV_DONTNEED
++#define madvise posix_madvise
++#endif
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/sys/prctl.h b/engine/src/build/toolchain/qnx/include/sys/prctl.h
+new file mode 100644
+index 00000000000..38f30274a9a
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/sys/prctl.h
+@@ -0,0 +1,9 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_SYS_PRCTL_H
++#define QNX_COMPAT_SYS_PRCTL_H
++/* QNX has no prctl(); Linux-only VMA naming becomes a no-op. */
++#define PR_SET_VMA 0x53564d41
++#define PR_SET_VMA_ANON_NAME 0
++#define PR_SET_NAME 15
++static inline int prctl(int o, ...) { (void)o; return -1; }
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/sys/sendfile.h b/engine/src/build/toolchain/qnx/include/sys/sendfile.h
+new file mode 100644
+index 00000000000..3d5f094a2e6
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/sys/sendfile.h
+@@ -0,0 +1,11 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_SYS_SENDFILE_H
++#define QNX_COMPAT_SYS_SENDFILE_H
++#include <errno.h>
++#include <sys/types.h>
++/* QNX has no sendfile(); callers fall back to read()/write() on ENOSYS. */
++static inline ssize_t sendfile(int __o, int __i, off_t* __off, size_t __n) {
++  (void)__o; (void)__i; (void)__off; (void)__n; errno = ENOSYS; return -1;
++}
++#define sendfile64 sendfile
++#endif
+diff --git a/engine/src/build/toolchain/qnx/include/sys/syscall.h b/engine/src/build/toolchain/qnx/include/sys/syscall.h
+new file mode 100644
+index 00000000000..4f626cc2e22
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/include/sys/syscall.h
+@@ -0,0 +1,19 @@
++/* Compatibility header for the QNX clang toolchain (//build/toolchain/qnx). */
++#ifndef QNX_COMPAT_SYS_SYSCALL_H
++#define QNX_COMPAT_SYS_SYSCALL_H
++#include <errno.h>
++#include <pthread.h>
++#include <stdarg.h>
++/* QNX has no syscall(2). Only the thread id is emulated (QNX thread ids are
++   the pthread_t values); every other number fails with ENOSYS. */
++#define __NR_gettid 186
++#define SYS_gettid __NR_gettid
++#define __NR_getrandom 318
++#define __NR_memfd_create 319
++static inline long __qnx_compat_syscall(long __n, ...) {
++  if (__n == __NR_gettid) return (long)pthread_self();
++  errno = ENOSYS;
++  return -1;
++}
++#define syscall __qnx_compat_syscall
++#endif
+diff --git a/engine/src/build/toolchain/qnx/lib/README b/engine/src/build/toolchain/qnx/lib/README
+new file mode 100644
+index 00000000000..e6f7da9c2dc
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/lib/README
+@@ -0,0 +1,2 @@
++QNX provides dlopen(), pthreads and clock functions in libc; these empty
++archives satisfy the -ldl / -lpthread / -lrt that Linux-style build files add.
+diff --git a/engine/src/build/toolchain/qnx/lib/libdl.a b/engine/src/build/toolchain/qnx/lib/libdl.a
+new file mode 100644
+index 00000000000..8b277f0dd5d
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/lib/libdl.a
+@@ -0,0 +1 @@
++!<arch>
+diff --git a/engine/src/build/toolchain/qnx/lib/libpthread.a b/engine/src/build/toolchain/qnx/lib/libpthread.a
+new file mode 100644
+index 00000000000..8b277f0dd5d
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/lib/libpthread.a
+@@ -0,0 +1 @@
++!<arch>
+diff --git a/engine/src/build/toolchain/qnx/lib/librt.a b/engine/src/build/toolchain/qnx/lib/librt.a
+new file mode 100644
+index 00000000000..8b277f0dd5d
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/lib/librt.a
+@@ -0,0 +1 @@
++!<arch>
+diff --git a/engine/src/build/toolchain/qnx/qnx.gni b/engine/src/build/toolchain/qnx/qnx.gni
+new file mode 100644
+index 00000000000..dafb27212ff
+--- /dev/null
++++ b/engine/src/build/toolchain/qnx/qnx.gni
+@@ -0,0 +1,7 @@
++declare_args() {
++  # Use the clang toolchains of //build/toolchain/qnx instead of qcc.
++  qnx_use_clang = false
++  qnx_clang_dir = ""
++  qnx_sysroot_x64 = ""
++  qnx_sysroot_arm64 = ""
++}
+diff --git a/engine/src/flutter/BUILD.gn b/engine/src/flutter/BUILD.gn
+index 524cc5b8b11..326d26ee91d 100644
+--- a/engine/src/flutter/BUILD.gn
++++ b/engine/src/flutter/BUILD.gn
+@@ -77,7 +77,8 @@ group("flutter") {
+   # Compile the engine.
+   public_deps = []
+ 
+-  if (!is_qnx) {
++  # QNX: the embedder engine is built with the clang toolchain (qnx_use_clang).
++  if (!is_qnx || qnx_use_clang) {
+     public_deps = [
+       "//flutter/shell/platform/embedder:flutter_engine",
+       "//flutter/sky",
+@@ -100,7 +101,7 @@ group("flutter") {
+   }
+ 
+   # If enabled, compile the SDK / snapshot.
+-  if (!is_fuchsia && !is_qnx) {
++  if (!is_fuchsia && (!is_qnx || qnx_use_clang)) {
+     public_deps += [ "//flutter/lib/snapshot:generate_snapshot_bins" ]
+ 
+     if (build_engine_artifacts) {
+diff --git a/engine/src/flutter/assets/native_assets.cc b/engine/src/flutter/assets/native_assets.cc
+index 9b3ede77b7b..67001451a9b 100644
+--- a/engine/src/flutter/assets/native_assets.cc
++++ b/engine/src/flutter/assets/native_assets.cc
+@@ -29,7 +29,8 @@ namespace flutter {
+ #define kTargetOperatingSystemName "android"
+ #elif defined(OS_FUCHSIA)
+ #define kTargetOperatingSystemName "fuchsia"
+-#elif defined(FML_OS_LINUX)
++#elif defined(FML_OS_LINUX) || defined(FML_OS_QNX)
++// QNX apps are built for the "linux" target (Dart treats QNX like Linux).
+ #define kTargetOperatingSystemName "linux"
+ #elif defined(FML_OS_IOS) || defined(FML_OS_IOS_SIMULATOR)
+ #define kTargetOperatingSystemName "ios"
+diff --git a/engine/src/flutter/build/secondary/flutter/third_party/libcxxabi/BUILD.gn b/engine/src/flutter/build/secondary/flutter/third_party/libcxxabi/BUILD.gn
+index 7fbe512f0d9..c9138134235 100644
+--- a/engine/src/flutter/build/secondary/flutter/third_party/libcxxabi/BUILD.gn
++++ b/engine/src/flutter/build/secondary/flutter/third_party/libcxxabi/BUILD.gn
+@@ -44,8 +44,11 @@ source_set("libcxxabi") {
+   # Objective-C exceptions requires some infrastructure setup for exceptions,
+   # as do the sanitizer runtimes on Linux, which reference __cxa_begin_catch
+   # and __gxx_personality_v0. Build support for the same in cxxabi there.
+-  if (is_mac || is_ios || is_linux) {
+-    configs -= [ "//build/config/gcc:no_exceptions" ]
++  if (is_mac || is_ios || is_linux || is_qnx) {
++    if (!is_qnx) {
++      # QNX builds do not add no_exceptions in the first place.
++      configs -= [ "//build/config/gcc:no_exceptions" ]
++    }
+     sources += [
+       "src/cxa_exception.cpp",
+       "src/cxa_personality.cpp",
+@@ -79,7 +82,7 @@ source_set("libcxxabi") {
+     sources += [ "src/cxa_guard.cpp" ]
+   }
+ 
+-  if (is_fuchsia || (is_posix && !is_apple)) {
++  if (is_fuchsia || is_qnx || (is_posix && !is_apple)) {
+     sources += [ "src/cxa_thread_atexit.cpp" ]
+   }
+ }
+diff --git a/engine/src/flutter/fml/BUILD.gn b/engine/src/flutter/fml/BUILD.gn
+index 85c6171dbd2..9acc24fb3f2 100644
+--- a/engine/src/flutter/fml/BUILD.gn
++++ b/engine/src/flutter/fml/BUILD.gn
+@@ -201,7 +201,11 @@ source_set("fml") {
+   }
+ 
+   if (is_qnx) {
+-    sources += [ "platform/qnx/paths_qnx.cc" ]
++    sources += [
++      "platform/qnx/message_loop_qnx.cc",
++      "platform/qnx/message_loop_qnx.h",
++      "platform/qnx/paths_qnx.cc",
++    ]
+   }
+ 
+   if (is_fuchsia) {
+diff --git a/engine/src/flutter/fml/message_loop_impl.cc b/engine/src/flutter/fml/message_loop_impl.cc
+index 01f4d58d769..953fe90856c 100644
+--- a/engine/src/flutter/fml/message_loop_impl.cc
++++ b/engine/src/flutter/fml/message_loop_impl.cc
+@@ -20,6 +20,8 @@
+ #include "flutter/fml/platform/fuchsia/message_loop_fuchsia.h"
+ #elif FML_OS_LINUX
+ #include "flutter/fml/platform/linux/message_loop_linux.h"
++#elif FML_OS_QNX
++#include "flutter/fml/platform/qnx/message_loop_qnx.h"
+ #elif FML_OS_WIN
+ #include "flutter/fml/platform/win/message_loop_win.h"
+ #endif
+@@ -35,6 +37,8 @@ fml::RefPtr<MessageLoopImpl> MessageLoopImpl::Create() {
+   return fml::MakeRefCounted<MessageLoopFuchsia>();
+ #elif FML_OS_LINUX
+   return fml::MakeRefCounted<MessageLoopLinux>();
++#elif FML_OS_QNX
++  return fml::MakeRefCounted<MessageLoopQnx>();
+ #elif FML_OS_WIN
+   return fml::MakeRefCounted<MessageLoopWin>();
+ #else
+diff --git a/engine/src/flutter/fml/platform/qnx/message_loop_qnx.cc b/engine/src/flutter/fml/platform/qnx/message_loop_qnx.cc
+new file mode 100644
+index 00000000000..12582280f0b
+--- /dev/null
++++ b/engine/src/flutter/fml/platform/qnx/message_loop_qnx.cc
+@@ -0,0 +1,56 @@
++// Copyright 2013 The Flutter Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "flutter/fml/platform/qnx/message_loop_qnx.h"
++
++#include <chrono>
++
++namespace fml {
++
++MessageLoopQnx::MessageLoopQnx() = default;
++
++MessageLoopQnx::~MessageLoopQnx() = default;
++
++// |fml::MessageLoopImpl|
++void MessageLoopQnx::Run() {
++  while (true) {
++    {
++      std::unique_lock<std::mutex> lock(mutex_);
++      while (!terminated_) {
++        const fml::TimePoint now = fml::TimePoint::Now();
++        if (wake_time_ <= now) {
++          break;
++        }
++        if (wake_time_ == fml::TimePoint::Max()) {
++          cv_.wait(lock);
++        } else {
++          cv_.wait_for(lock, std::chrono::microseconds(
++                                 (wake_time_ - now).ToMicroseconds() + 1));
++        }
++      }
++      if (terminated_) {
++        return;
++      }
++      // Tasks re-arm the loop through WakeUp() while they run.
++      wake_time_ = fml::TimePoint::Max();
++    }
++    RunExpiredTasksNow();
++  }
++}
++
++// |fml::MessageLoopImpl|
++void MessageLoopQnx::Terminate() {
++  std::lock_guard<std::mutex> lock(mutex_);
++  terminated_ = true;
++  cv_.notify_one();
++}
++
++// |fml::MessageLoopImpl|
++void MessageLoopQnx::WakeUp(fml::TimePoint time_point) {
++  std::lock_guard<std::mutex> lock(mutex_);
++  wake_time_ = time_point;
++  cv_.notify_one();
++}
++
++}  // namespace fml
+diff --git a/engine/src/flutter/fml/platform/qnx/message_loop_qnx.h b/engine/src/flutter/fml/platform/qnx/message_loop_qnx.h
+new file mode 100644
+index 00000000000..b3e6ab76e45
+--- /dev/null
++++ b/engine/src/flutter/fml/platform/qnx/message_loop_qnx.h
+@@ -0,0 +1,46 @@
++// Copyright 2013 The Flutter Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef FLUTTER_FML_PLATFORM_QNX_MESSAGE_LOOP_QNX_H_
++#define FLUTTER_FML_PLATFORM_QNX_MESSAGE_LOOP_QNX_H_
++
++#include <condition_variable>
++#include <mutex>
++
++#include "flutter/fml/macros.h"
++#include "flutter/fml/message_loop_impl.h"
++#include "flutter/fml/time/time_point.h"
++
++namespace fml {
++
++// QNX Neutrino: no epoll/timerfd of its own, so the loop waits on a condition
++// variable with a deadline (the next task's time) instead of a timer fd.
++class MessageLoopQnx : public MessageLoopImpl {
++ private:
++  std::mutex mutex_;
++  std::condition_variable cv_;
++  fml::TimePoint wake_time_ = fml::TimePoint::Max();
++  bool terminated_ = false;
++
++  MessageLoopQnx();
++
++  ~MessageLoopQnx() override;
++
++  // |fml::MessageLoopImpl|
++  void Run() override;
++
++  // |fml::MessageLoopImpl|
++  void Terminate() override;
++
++  // |fml::MessageLoopImpl|
++  void WakeUp(fml::TimePoint time_point) override;
++
++  FML_FRIEND_MAKE_REF_COUNTED(MessageLoopQnx);
++  FML_FRIEND_REF_COUNTED_THREAD_SAFE(MessageLoopQnx);
++  FML_DISALLOW_COPY_AND_ASSIGN(MessageLoopQnx);
++};
++
++}  // namespace fml
++
++#endif  // FLUTTER_FML_PLATFORM_QNX_MESSAGE_LOOP_QNX_H_
+diff --git a/engine/src/flutter/skia/BUILD.gn b/engine/src/flutter/skia/BUILD.gn
+index b20346b3f77..5b98cd541b1 100644
+--- a/engine/src/flutter/skia/BUILD.gn
++++ b/engine/src/flutter/skia/BUILD.gn
+@@ -33,7 +33,7 @@ config("skia_public") {
+   defines += flutter_defines
+ 
+   cflags_objcc = []
+-  if (is_fuchsia || is_linux) {
++  if (is_fuchsia || is_linux || is_qnx) {
+     defines += [ "SK_R32_SHIFT=16" ]
+   }
+ 
+diff --git a/engine/src/flutter/tools/gn b/engine/src/flutter/tools/gn
+index 7adef0bef47..2bdf65f10ab 100755
+--- a/engine/src/flutter/tools/gn
++++ b/engine/src/flutter/tools/gn
+@@ -189,7 +189,7 @@ def get_target_cpu(args):
+   if args.target_os == 'win':
+     return args.windows_cpu
+   if args.target_os == 'qnx':
+-    return 'arm64'
++    return args.linux_cpu or 'arm64'
+ 
+   # Host build. Default to x64 unless overridden.
+   if get_host_os() == 'mac' and args.mac_cpu:
+diff --git a/engine/src/flutter/txt/BUILD.gn b/engine/src/flutter/txt/BUILD.gn
+index 142a19decb9..2a61a349f9e 100644
+--- a/engine/src/flutter/txt/BUILD.gn
++++ b/engine/src/flutter/txt/BUILD.gn
+@@ -110,6 +110,8 @@ source_set("txt") {
+     deps += [ "${fuchsia_sdk}/fidl/fuchsia.fonts" ]
+   } else if (is_win) {
+     sources += [ "src/txt/platform_windows.cc" ]
++  } else if (is_qnx) {
++    sources += [ "src/txt/platform_qnx.cc" ]
+   } else {
+     sources += [ "src/txt/platform.cc" ]
+   }
+diff --git a/engine/src/flutter/txt/src/txt/platform_qnx.cc b/engine/src/flutter/txt/src/txt/platform_qnx.cc
+new file mode 100644
+index 00000000000..18d5e1c6130
+--- /dev/null
++++ b/engine/src/flutter/txt/src/txt/platform_qnx.cc
+@@ -0,0 +1,39 @@
++// Copyright 2013 The Flutter Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++// QNX Neutrino: no fontconfig in the engine build, so system fonts come from
++// Skia's FreeType directory font manager over the fonts the QNX packages
++// install (/usr/local/share/fonts, scanned recursively). The same manager also
++// loads the fonts an app bundles (FontManifest), e.g. MaterialIcons.
++
++#include "txt/platform.h"
++
++#if defined(SK_FONTMGR_FREETYPE_DIRECTORY_AVAILABLE)
++#include "third_party/skia/include/ports/SkFontMgr_directory.h"
++#endif
++
++#if defined(SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE)
++#include "third_party/skia/include/ports/SkFontMgr_empty.h"
++#endif
++
++namespace txt {
++
++std::vector<std::string> GetDefaultFontFamilies() {
++  return {"Inter", "DejaVu Sans", "Liberation Sans", "Cantarell",
++          "Noto Sans CJK KR"};
++}
++
++sk_sp<SkFontMgr> GetDefaultFontManager(uint32_t font_initialization_data) {
++#if defined(SK_FONTMGR_FREETYPE_DIRECTORY_AVAILABLE)
++  static sk_sp<SkFontMgr> mgr =
++      SkFontMgr_New_Custom_Directory("/usr/local/share/fonts/");
++#elif defined(SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE)
++  static sk_sp<SkFontMgr> mgr = SkFontMgr_New_Custom_Empty();
++#else
++  static sk_sp<SkFontMgr> mgr = SkFontMgr::RefEmpty();
++#endif
++  return mgr;
++}
++
++}  // namespace txt

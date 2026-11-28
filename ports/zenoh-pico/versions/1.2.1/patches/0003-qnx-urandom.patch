@@ -1,0 +1,98 @@
+QNX: take random numbers from /dev/urandom, not unseeded random()
+
+qnx-ports' 0001 fills zenoh-pico's random numbers from random(), which nothing
+seeds: every process then draws the same sequence, so two zenoh-pico processes
+get the same session id (ZID) and the same request ids, and a router or peer
+treats them as one. QNX has no getrandom() (Linux) or arc4random() (BSD); it
+has /dev/urandom, which this reads (random() only if it cannot be opened). The
+helper is also static now -- 0001 exported a global "random_buf" symbol from
+libzenohpico.
+
+Upstream-Status: QNX-specific
+
+--- a/src/system/unix/system.c
++++ b/src/system/unix/system.c
+@@ -33,20 +33,25 @@
+ 
+ /*------------------ Random ------------------*/
+ #if defined(ZENOH_QNX)
+-void random_buf(void *buf, size_t nbytes) {
+-    while (nbytes > sizeof(long)-1) {
+-        *((long*)buf) = random();
+-        nbytes -= sizeof(long);
+-        buf += sizeof(long);
+-    }
+-    if (nbytes > 0){
+-        long rest = random();
+-        while (nbytes > 0) {
+-            *((unsigned char*)buf) = rest;
+-            rest >>= 8;
+-            --nbytes;
+-            ++buf;
++#include <fcntl.h>
++// QNX has neither getrandom() nor arc4random(): read the kernel's entropy
++// pool. random() (unseeded) would give every process the same session id.
++static void _z_qnx_random_fill(void *buf, size_t nbytes) {
++    unsigned char *p = (unsigned char *)buf;
++    int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
++    while (fd >= 0 && nbytes > 0) {
++        ssize_t n = read(fd, p, nbytes);
++        if (n <= 0) {
++            if (n < 0 && errno == EINTR) continue;
++            break;
+         }
++        p += n;
++        nbytes -= (size_t)n;
++    }
++    if (fd >= 0) close(fd);
++    while (nbytes > 0) {  // no /dev/urandom: better than nothing
++        *p++ = (unsigned char)(random() >> 7);
++        nbytes--;
+     }
+ }
+ #endif
+@@ -60,7 +65,7 @@
+ #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
+     ret = z_random_u32();
+ #elif defined(ZENOH_QNX)
+-    ret = random();
++    _z_qnx_random_fill(&ret, sizeof(ret));
+ #endif
+ 
+     return ret;
+@@ -75,7 +80,7 @@
+ #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
+     ret = z_random_u32();
+ #elif defined(ZENOH_QNX)
+-    ret = random();
++    _z_qnx_random_fill(&ret, sizeof(ret));
+ #endif
+ 
+     return ret;
+@@ -90,7 +95,7 @@
+ #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
+     ret = arc4random();
+ #elif defined(ZENOH_QNX)
+-    ret = random();
++    _z_qnx_random_fill(&ret, sizeof(ret));
+ #endif
+ 
+     return ret;
+@@ -107,7 +112,7 @@
+     ret = ret << 32;
+     ret |= z_random_u32();
+ #elif defined(ZENOH_QNX)
+-    random_buf(&ret, sizeof(ret));
++    _z_qnx_random_fill(&ret, sizeof(ret));
+ #endif
+ 
+     return ret;
+@@ -121,7 +126,7 @@
+ #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
+     arc4random_buf(buf, len);
+ #elif defined(ZENOH_QNX)
+-    random_buf(buf, len);
++    _z_qnx_random_fill(buf, len);
+ #endif
+ }
+ 

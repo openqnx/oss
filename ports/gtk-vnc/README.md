@@ -10,7 +10,7 @@
 | Build system | Meson |
 | QNX patches | 0 |
 | Build dependencies | [`glib`](../glib/) [`gtk3`](../gtk3/) [`gdk-pixbuf`](../gdk-pixbuf/) [`cairo`](../cairo/) [`gnutls`](../gnutls/) [`libgcrypt`](../libgcrypt/) [`zlib`](../zlib/) [`libx11`](../libx11/) |
-| Run-time dependencies | [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gnutls`](../gnutls/) [`gtk3`](../gtk3/) [`libgcrypt`](../libgcrypt/) [`libx11`](../libx11/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`cairo`](../cairo/) [`gdk-pixbuf`](../gdk-pixbuf/) [`gettext`](../gettext/) [`glib`](../glib/) [`gmp`](../gmp/) [`gnutls`](../gnutls/) [`gtk3`](../gtk3/) [`libx11`](../libx11/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_gtk_vnc`](../../tests/src/) |
 
@@ -113,7 +113,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gtk-vnc`.
 
 ### 5. What it installs
 
-82 files under `/usr/local`: 6 shared-library entries, 2 programs, 19 headers.
+92 files under `/usr/local`: 6 shared-library entries, 2 programs, 19 headers.
 
 ```
 /usr/local/lib/libgtk-vnc-2.0.so

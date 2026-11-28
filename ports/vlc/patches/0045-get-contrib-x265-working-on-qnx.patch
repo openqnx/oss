@@ -1,0 +1,114 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 08:51:45 -0400
+Subject: [PATCH 45/60] Get contrib/x265 working on QNX
+
+1. Update C++ standard from c++98 to C++11 in order to make it
+   compatible with QNX's libc++ implementation that requires C++11
+
+2. Build static libraries with -fpic so that VLC can turn them into
+   shared objects later.
+
+3. QNX does not need `-lpthread` to be explicitly added to link in
+   pthread support. It breaks if you do so as there is no libpthread
+   available.
+
+4. CMake will try to figure out what libraries are implicitly linked
+   when creating an executable/shared-object. The x265 CMakeLists will
+   then explicitly add these libraries to the .pc dependency lists. This
+   causes them to be explicitly linked later on when VLC creates the
+   final shared object.
+
+   One of this implicit libraries is the static version of libc (libcS)
+   and explicitly linking that in causes problems with malloc and
+   friends when a shared object is unloaded.
+
+   I'm not sure why x265 whats to explicitly link these in, it should
+   happen automatically. Perhaps it is trying to protect against a
+   different toolchain consuming what the x265 build produces? In any
+   case, there is only one toolchain on QNX so don't link in libcS to
+   avoid the malloc issue.
+
+5. Update x265's build process so that it can properly pull the gcc
+   version from qcc/q++.
+
+3.0.24: x265 4.1: x265-pkg-libs.patch is gone and upstream's 0010 patch now
+lets -lpthread into Libs.private, so point 3 moved into 0002-qnx-dont-link-
+libcS.patch (which now removes -lcS and -lpthread); the three sub-patches
+are regenerated against 4.1 with the upstream patches applied, and
+ENABLE_PIC is passed in X265_CONF.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/x265/0001-qnx-use-gnu++11.patch
++++ b/contrib/src/x265/0001-qnx-use-gnu++11.patch
+@@ -0,0 +1,11 @@
++--- a/source/CMakeLists.txt
+++++ b/source/CMakeLists.txt
++@@ -243,7 +243,7 @@
++         endif()
++         add_definitions(-std=gnu++11)
++     else()
++-        add_definitions(-std=gnu++98)
+++        add_definitions(-std=gnu++11)
++     endif()
++     if(ENABLE_PIC)
++          add_definitions(-fPIC)
+--- a/contrib/src/x265/0002-qnx-dont-link-libcS.patch
++++ b/contrib/src/x265/0002-qnx-dont-link-libcS.patch
+@@ -0,0 +1,10 @@
++--- a/source/CMakeLists.txt
+++++ b/source/CMakeLists.txt
++@@ -970,6 +970,7 @@
++         list(REMOVE_ITEM PLIBLIST "-lc" "-lmingwex" "-lmingwthrd"
++             "-lmingw32" "-lmoldname" "-lmsvcrt" "-ladvapi32" "-lshell32"
++             "-luser32" "-lkernel32")
+++        list(REMOVE_ITEM PLIBLIST "-lcS" "-lpthread")
++         string(REPLACE ";" " " PRIVATE_LIBS "${PLIBLIST}")
++     else()
++         set(PRIVATE_LIBS "")
+--- a/contrib/src/x265/0003-qnx-get-compiler-version.patch
++++ b/contrib/src/x265/0003-qnx-get-compiler-version.patch
+@@ -0,0 +1,22 @@
++--- a/source/CMakeLists.txt
+++++ b/source/CMakeLists.txt
++@@ -509,7 +509,18 @@
++             endif()
++         endif()
++     endif(ENABLE_AGGRESSIVE_CHECKS)
++-    execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE CC_VERSION)
+++    if (CMAKE_SYSTEM_NAME STREQUAL QNX)
+++        execute_process(COMMAND ${CMAKE_CXX_COMPILER} -V OUTPUT_VARIABLE CC_VERSION ERROR_VARIABLE CC_VERSION)
+++        # Output will be a bit of preamble on the 1st line, the subsequent lines
+++        # each giving a target and version. Assume that the version is the same
+++        # for each target.
+++        string(REPLACE "\n" ";" CC_VERSION "${CC_VERSION}")
+++        list(GET CC_VERSION 1 CC_VERSION)
+++        string(STRIP "${CC_VERSION}" CC_VERSION)
+++        string(REGEX MATCH "^[0-9.]*" CC_VERSION "${CC_VERSION}")
+++    else()
+++        execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE CC_VERSION)
+++    endif()
++ endif(GCC)
++ 
++ find_package(Nasm)
+--- a/contrib/src/x265/rules.mak
++++ b/contrib/src/x265/rules.mak
+@@ -34,10 +34,18 @@
+ 	$(APPLY) $(SRC)/x265/0010-CMake-allow-lpthread-in-the-pkg-config-file.patch
+ 	$(APPLY) $(SRC)/x265/0012-CMake-also-use-the-arch-flag-when-cross-compiling-ar.patch
+ 	$(APPLY) $(SRC)/x265/0001-Work-around-broken-Xcode-12-SDK-which-doesn-t-correc.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/x265/0001-qnx-use-gnu++11.patch
++	$(APPLY) $(SRC)/x265/0002-qnx-dont-link-libcS.patch
++	$(APPLY) $(SRC)/x265/0003-qnx-get-compiler-version.patch
++endif
+ 	$(call pkg_static,"source/x265.pc.in")
+ 	$(MOVE)
+ 
+ X265_CONF := -DENABLE_SHARED=OFF -DENABLE_CLI=OFF
++ifdef HAVE_QNX
++X265_CONF += -DENABLE_PIC=ON
++endif
+ 
+ ifdef HAVE_DARWIN_OS
+ ifneq ($(filter arm aarch64, $(ARCH)),)

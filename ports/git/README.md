@@ -130,7 +130,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH git`.
 
 ### 5. What it installs
 
-246 files under `/usr/local`, 7 programs.
+251 files under `/usr/local`, 7 programs.
 
 ```
 /usr/local/bin/git

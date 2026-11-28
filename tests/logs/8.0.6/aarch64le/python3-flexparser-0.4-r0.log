@@ -1,40 +1,41 @@
 # python3-flexparser 0.4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T11:16:43Z   packages from: apk:local-dists
+# date: 2026-11-24T18:45:29Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-flexparser qnx-test-python3-canapps qnx-port-tests
-( 1/27) Installing bzip2 (1.0.8-r0)
-( 2/27) Installing expat (2.6.4-r0)
-( 3/27) Installing gdbm (1.24-r0)
-( 4/27) Installing libiconv (1.18-r0)
-( 5/27) Installing libunistring (1.3-r0)
-( 6/27) Installing ncurses (6.5-r0)
-( 7/27) Installing gettext (0.22.5-r0)
-( 8/27) Installing libffi (3.4.6-r0)
-( 9/27) Installing readline (8.2-r0)
-(10/27) Installing sqlite (3.47.2-r0)
-(11/27) Installing xz (5.6.3-r0)
-(12/27) Installing python3 (3.14.0-r0)
-(13/27) Installing python3-typing-extensions (4.16.0-r0)
-(14/27) Installing python3-flexparser (0.4-r0)
-(15/27) Installing qnx-port-tests (1.0-r0)
-(16/27) Installing python3-packaging (25.0-r0)
-(17/27) Installing python3-wrapt (2.5.2-r0)
-(18/27) Installing qnx-socketcan (1.0-r0)
-(19/27) Installing python3-can (4.6.1-r0)
-(20/27) Installing python3-flexcache (0.3-r0)
-(21/27) Installing python3-platformdirs (4.14.3-r0)
-(22/27) Installing python3-pint (0.24.4-r0)
-(23/27) Installing python3-pyserial (3.5-r0)
-(24/27) Installing python3-obd (0.7.3-r0)
-(25/27) Installing libpcap (1.10.5-r0)
-(26/27) Installing python3-scapy (2.8.0-r0)
-(27/27) Installing qnx-test-python3-canapps (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 144.7 MiB in 32 packages
+( 1/28) Installing bzip2 (1.0.8-r0)
+( 2/28) Installing expat (2.6.4-r0)
+( 3/28) Installing gdbm (1.26-r0)
+( 4/28) Installing libiconv (1.19.1-r0)
+( 5/28) Installing libunistring (1.5-r0)
+( 6/28) Installing ncurses (6.6-r0)
+( 7/28) Installing gettext (0.22.5-r0)
+( 8/28) Installing libffi (3.8.1-r0)
+( 9/28) Installing libuuid (2.42.4-r0)
+(10/28) Installing readline (8.3-r0)
+(11/28) Installing sqlite (3.47.2-r0)
+(12/28) Installing xz (5.8.4-r0)
+(13/28) Installing python3 (3.14.0-r1)
+(14/28) Installing python3-typing-extensions (4.16.0-r0)
+(15/28) Installing python3-flexparser (0.4-r0)
+(16/28) Installing qnx-port-tests (1.0-r0)
+(17/28) Installing python3-packaging (25.0-r0)
+(18/28) Installing python3-wrapt (2.5.2-r0)
+(19/28) Installing qnx-socketcan (1.0-r0)
+(20/28) Installing python3-can (4.6.1-r0)
+(21/28) Installing python3-flexcache (0.3-r0)
+(22/28) Installing python3-platformdirs (4.14.8-r0)
+(23/28) Installing python3-pint (0.26.2-r0)
+(24/28) Installing python3-pyserial (3.5-r0)
+(25/28) Installing python3-obd (0.7.3-r0)
+(26/28) Installing libpcap (1.11.0-r0)
+(27/28) Installing python3-scapy (2.8.0-r0)
+(28/28) Installing qnx-test-python3-canapps (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 145.1 MiB in 33 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canapps
      == python3-canapps ==

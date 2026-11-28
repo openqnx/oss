@@ -1,6 +1,6 @@
 # paho.mqtt.c 1.3.16-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T01:21:20Z   packages from: apk:local-dists
+# date: 2026-11-24T14:42:11Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -8,13 +8,13 @@
 $ apk add -u paho.mqtt.c qnx-test-paho-mqtt-c qnx-port-tests
 (1/2) Installing paho.mqtt.c (1.3.16-r0)
 (2/2) Installing qnx-test-paho-mqtt-c (1.0-r1)
-OK: 229.5 MiB in 76 packages
+OK: 136.9 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_paho_mqtt_c
      == paho.mqtt.c ==
        info paho.mqtt.c 1.3.16
        ok   test broker listening on <ip>
-       info broker on port 46139
+       info broker on port 13768
        ok   broker thread started
        ok   MQTTClient_create
        ok   MQTTClient_connect (CONNACK accepted)

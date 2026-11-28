@@ -1,0 +1,379 @@
+# qnx-desktop-applications 1.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T21:36:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qnx-desktop-applications qnx-test-qnx-desktop qnx-port-tests
+(  1/240) Installing dbus (1.16.4-r0)
+(  2/240) Installing pcre2 (10.49-r0)
+(  3/240) Installing glib (2.90.1-r1)
+(  4/240) Installing libxau (1.0.12-r0)
+(  5/240) Installing libxdmcp (1.1.5-r0)
+(  6/240) Installing libxcb (1.17.0-r0)
+(  7/240) Installing libx11 (1.8.14-r0)
+(  8/240) Installing libxext (1.3.7-r0)
+(  9/240) Installing libxi (1.8.4-r0)
+( 10/240) Installing libxtst (1.2.6-r0)
+( 11/240) Installing at-spi2-core (2.54.2-r0)
+( 12/240) Installing brotli (1.2.1-r0)
+( 13/240) Installing libpng (1.6.59-r0)
+( 14/240) Installing freetype (2.15.0-r0)
+( 15/240) Installing fontconfig (2.18.4-r0)
+( 16/240) Installing libxrender (0.9.13-r0)
+( 17/240) Installing lzo (2.10-r0)
+( 18/240) Installing pixman (0.46.4-r0)
+( 19/240) Installing cairo (1.18.6-r0)
+( 20/240) Installing libjpeg-turbo (3.2.1-r0)
+( 21/240) Installing gdk-pixbuf (2.44.8-r0)
+( 22/240) Installing fribidi (1.0.18-r0)
+( 23/240) Installing graphite2 (1.3.15-r0)
+( 24/240) Installing icu (76.1-r0)
+( 25/240) Installing harfbuzz (<ip>-r0)
+( 26/240) Installing libepoxy (1.5.10-r0)
+( 27/240) Installing libxcomposite (0.4.7-r0)
+( 28/240) Installing libxfixes (6.0.2-r0)
+( 29/240) Installing libxcursor (1.2.3-r0)
+( 30/240) Installing libxdamage (1.1.7-r0)
+( 31/240) Installing libxinerama (1.1.6-r0)
+( 32/240) Installing libxml2 (2.13.5-r0)
+( 33/240) Installing libxkbcommon (1.8.1-r0)
+( 34/240) Installing libxrandr (1.5.5-r0)
+( 35/240) Installing libxft (2.3.9-r0)
+( 36/240) Installing pango (1.56.4-r0)
+( 37/240) Installing wayland (1.26.0-r0)
+( 38/240) Installing gtk3 (3.24.43-r0)
+( 39/240) Installing libgpg-error (1.61-r0)
+( 40/240) Installing libgcrypt (1.12.4-r0)
+( 41/240) Installing p11-kit (0.26.6-r0)
+( 42/240) Installing gcr (3.41.2-r1)
+( 43/240) Installing gmp (6.3.0-r0)
+( 44/240) Installing json-glib (1.10.8-r0)
+( 45/240) Installing libb2 (0.98.1-r0)
+( 46/240) Installing lz4 (1.11.1-r0)
+( 47/240) Installing libarchive (3.8.11-r0)
+( 48/240) Installing libdazzle (3.44.0-r0)
+( 49/240) Installing libhandy (1.8.3-r0)
+( 50/240) Installing libportal (0.11.0-r0)
+( 51/240) Installing libsecret (0.21.8.2-r1)
+( 52/240) Installing libidn2 (2.3.8-r0)
+( 53/240) Installing libpsl (0.23.3-r0)
+( 54/240) Installing nghttp2 (1.71.0-r0)
+( 55/240) Installing libsoup (3.8.1-r0)
+( 56/240) Installing nettle (3.10.1-r0)
+( 57/240) Installing gstreamer (1.24.10-r0)
+( 58/240) Installing libogg (1.3.6-r0)
+( 59/240) Installing libtheora (1.2.0-r0)
+( 60/240) Installing libvorbis (1.3.7-r0)
+( 61/240) Installing opus (1.6.1-r0)
+( 62/240) Installing gst-plugins-base (1.24.10-r1)
+( 63/240) Installing hyphen (2.8.8-r0)
+( 64/240) Installing lcms2 (2.16-r0)
+( 65/240) Installing aom (3.15.3-r0)
+( 66/240) Installing dav1d (1.5.5-r0)
+( 67/240) Installing libavif (1.4.2-r0)
+( 68/240) Installing highway (1.4.0-r0)
+( 69/240) Installing libjxl (0.13.0-r0)
+( 70/240) Installing libtasn1 (4.21.0-r0)
+( 71/240) Installing libwebp (1.6.0-r0)
+( 72/240) Installing libxslt (1.1.45-r0)
+( 73/240) Installing webkitgtk (2.54.3-r0)
+( 74/240) Installing epiphany (43.1-r1)
+( 75/240) Installing geany (2.1-r0)
+( 76/240) Installing geany-plugins (2.1-r0)
+( 77/240) Installing dbus-glib (0.116-r0)
+( 78/240) Installing mpg123 (1.33.7-r0)
+( 79/240) Installing lame (4.0-r0)
+( 80/240) Installing libvpx (1.17.0-r0)
+( 81/240) Installing openh264 (2.7.0-r0)
+( 82/240) Installing x264 (0_git-r0)
+( 83/240) Installing x265 (4.2-r0)
+( 84/240) Installing ffmpeg (7.1.1-r3)
+( 85/240) Installing gst-libav (1.24.10-r0)
+( 86/240) Installing fdk-aac (3.0.0-r0)
+( 87/240) Installing svt-av1 (2.3.0-r0)
+( 88/240) Installing gst-plugins-bad (1.24.10-r2)
+( 89/240) Installing flac (1.5.0-r0)
+( 90/240) Installing gst-plugins-good (1.24.10-r1)
+( 91/240) Installing libnotify (0.8.9-r0)
+( 92/240) Installing hicolor-icon-theme (0.18-r0)
+( 93/240) Installing libxfce4util (4.20.1-r0)
+( 94/240) Installing xfconf (4.20.0-r0)
+( 95/240) Installing libxfce4ui (4.20.2-r0)
+( 96/240) Installing taglib (2.3.2-r0)
+( 97/240) Installing parole (4.20.0-r0)
+( 98/240) Installing qnx-desktop-applications (1.0-r0)
+( 99/240) Installing dconf (51.0-r0)
+(100/240) Installing desktop-file-utils (0.29-r0)
+(101/240) Installing exo (4.20.0-r0)
+(102/240) Installing garcon (4.20.0-r0)
+(103/240) Installing unbound (1.26.2-r0)
+(104/240) Installing gnutls (3.8.14-r1)
+(105/240) Installing c-ares (1.34.9-r0)
+(106/240) Installing curl (8.23.0-r0)
+(107/240) Installing libproxy (0.5.12-r0)
+(108/240) Installing glib-networking (2.90.1-r0)
+(109/240) Installing gnome-keyring (51.1-r1)
+(110/240) Installing gsettings-desktop-schemas (49.0-r0)
+(111/240) Installing font-dejavu (2.37-r0)
+(112/240) Installing libsfdo (0.1.4-r0)
+(113/240) Installing wlroots (0.20.2-r0)
+(114/240) Installing xkeyboard-config (2.49-r0)
+(115/240) Installing labwc (0.20.3-r0)
+(116/240) Installing adwaita-icon-theme (51.0-r0)
+(117/240) Installing lxde-icon-theme (0.5.2-r0)
+(118/240) Installing swaybg (1.2.2-r0)
+(119/240) Installing libexif (0.6.26-r0)
+(120/240) Installing libice (1.1.2-r0)
+(121/240) Installing libsm (1.2.6-r0)
+(122/240) Installing gtk-layer-shell (0.10.1-r0)
+(123/240) Installing libxfce4windowing (4.20.7-r0)
+(124/240) Installing xfce4-panel (4.20.8-r0)
+(125/240) Installing thunar (4.20.10-r0)
+(126/240) Installing xfce4-appfinder (4.20.0-r0)
+(127/240) Installing xfce4-session (4.20.4-r0)
+(128/240) Installing xfce4-settings (4.20.5-r0)
+(129/240) Installing libutempter (1.2.3-r0)
+(130/240) Installing graphene (1.10.8-r0)
+(131/240) Installing libdeflate (1.26-r0)
+(132/240) Installing libtiff (4.7.2-r0)
+(133/240) Installing gtk4 (4.16.13-r0)
+(134/240) Installing vte (0.78.7-r0)
+(135/240) Installing xfce4-terminal (1.1.5-r0)
+(136/240) Installing oss-desktop (1.1-r0)
+(137/240) Installing shared-mime-info (2.4-r0)
+(138/240) Installing swayidle (1.9.1-r0)
+(139/240) Installing openpam (20250531-r0)
+(140/240) Installing swaylock (1.8.6-r0)
+(141/240) Installing ffmpegthumbnailer (2.4.2-r0)
+(142/240) Installing libgsf (1.14.60-r0)
+(143/240) Installing openjpeg (2.5.4-r0)
+(144/240) Installing poppler (26.11.0-r0)
+(145/240) Installing tumbler (4.20.2-r1)
+(146/240) Installing xdg-utils (1.2.1-r0)
+(147/240) Installing xfce4-notifyd (0.9.7-r0)
+(148/240) Installing libyaml (0.2.6-r0)
+(149/240) Installing xfdesktop (4.20.2-r0)
+(150/240) Installing libmd (1.3.0-r0)
+(151/240) Installing libxcvt (0.1.3-r0)
+(152/240) Installing fontenc (1.1.8-r0)
+(153/240) Installing libxfont2 (2.0.10-r0)
+(154/240) Installing libxkbfile (1.2.0-r0)
+(155/240) Installing xkbcomp (1.5.0-r0)
+(156/240) Installing xwayland (24.1.14-r0)
+(157/240) Installing qnx-desktop-core (1.0-r0)
+(158/240) Installing libuv (1.53.0-r0)
+(159/240) Installing cmake (4.5.1-r0)
+(160/240) Installing mpfr (4.2.2-r0)
+(161/240) Installing xxhash (0.8.4-r0)
+(162/240) Installing gdb (14.2-r1)
+(163/240) Installing git (2.56.1-r0)
+(164/240) Installing meson (1.12.1-r0)
+(165/240) Installing m4 (1.4.21-r0)
+(166/240) Installing flex (2.7.3-r0)
+(167/240) Installing msgpack-c (6.1.0-r0)
+(168/240) Installing binutils (2.47-r0)
+(169/240) Installing llvm (22.1.8-r0)
+(170/240) Installing make (4.4.1-r1)
+(171/240) Installing pkgconf (2.3.0-r0)
+(172/240) Installing native-toolchain (1.0-r0)
+(173/240) Installing ninja (1.13.1-r0)
+(174/240) Installing ada (4.1.1-r0)
+(175/240) Installing simdjson (3.11.3-r0)
+(176/240) Installing simdutf (9.4.0-r0)
+(177/240) Installing nodejs (24.14.1-r1)
+(178/240) Installing npm (11.11.0-r0)
+(179/240) Installing sdl2 (2.32.10-r0)
+(180/240) Installing sdl2-image (2.8.8-r1)
+(181/240) Installing opusfile (0.12-r0)
+(182/240) Installing sdl2-mixer (2.8.2-r0)
+(183/240) Installing sdl2-ttf (2.24.0-r0)
+(184/240) Installing pygame (2.6.1_git20251005-r0)
+(185/240) Installing python3-pip (25.1.1-r0)
+(186/240) Installing python3-distlib (0.4.4-r0)
+(187/240) Installing python3-filelock (4.2.12-r0)
+(188/240) Installing python3-platformdirs (4.14.8-r0)
+(189/240) Installing python3-virtualenv (20.39.1-r0)
+(190/240) Installing python3-wheel (0.48.0-r0)
+(191/240) Installing qnx-desktop-developer (1.0-r0)
+(192/240) Installing gtk-vnc (1.6.0-r0)
+(193/240) Installing libxcrypt (4.5.2-r0)
+(194/240) Installing openssh (10.6_p2-r0)
+(195/240) Installing sudo (1.9.17_p2-r0)
+(196/240) Installing webrtc-screencast (1.1-r0)
+(197/240) Installing qnx-desktop-extras (1.0-r0)
+(198/240) Installing gst-plugins-ugly (1.24.10-r0)
+(199/240) Installing spirv-tools (1.4.321.0-r0)
+(200/240) Installing mesa (26.3.1-r0)
+(201/240) Installing qnx-desktop-graphics (1.0-r0)
+(202/240) Installing libdaemon (0.14-r0)
+(203/240) Installing avahi (0.9_rc3-r1)
+(204/240) Installing chrony (4.9-r0)
+(205/240) Installing cups (2.4.20-r0)
+(206/240) Installing qpdf (11.10.1-r0)
+(207/240) Installing cups-filters (1.28.17-r1)
+(208/240) Installing libusb (1.0.30-r0)
+(209/240) Installing ippusbxd (1.34-r1)
+(210/240) Installing libpaper (2.3.0-r0)
+(211/240) Installing tzdata (2026f-r0)
+(212/240) Installing qnx-desktop-preferences (1.0-r0)
+(213/240) Installing adwaita-fonts (49.0-r0)
+(214/240) Installing font-cantarell (0.303.1-r0)
+(215/240) Installing font-hack (3.003-r0)
+(216/240) Installing font-inconsolata (3.000-r0)
+(217/240) Installing font-inter (4.1-r0)
+(218/240) Installing font-liberation (2.1.5-r0)
+(219/240) Installing font-noto-emoji (2.051-r0)
+(220/240) Installing font-noto-sans-cjk (2.004-r0)
+(221/240) Installing qnx-desktop-theme (1.0-r0)
+(222/240) Installing 7zip (26.06-r0)
+(223/240) Installing evince (48.5-r0)
+(224/240) Installing libinih (58-r0)
+(225/240) Installing exiv2 (0.28.9-r0)
+(226/240) Installing gthumb (3.12.12-r0)
+(227/240) Installing htop (3.5.3-r0)
+(228/240) Installing mpc (1.4.1-r0)
+(229/240) Installing mate-calc (1.28.0-r2)
+(230/240) Installing file (5.48-r0)
+(231/240) Installing nano (8.7.1-r0)
+(232/240) Installing lzip (1.26-r0)
+(233/240) Installing tar (1.35-r0)
+(234/240) Installing zip (3.0-r0)
+(235/240) Installing xarchiver (0.5.4.27-r0)
+(236/240) Installing xdg-user-dirs (0.20-r0)
+(237/240) Installing xfce4-genmon-plugin (4.3.0-r0)
+(238/240) Installing qnx-desktop-utilities (1.0-r0)
+(239/240) Installing qnx-desktop (1.0-r0)
+(240/240) Installing qnx-test-qnx-desktop (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+Executing glib-2.90.1-r1.trigger
+* Warning: Schema “org.gnome.crypto.cache” has path “/desktop/gnome/crypto/cache/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.crypto.pgp” has path “/desktop/gnome/crypto/pgp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.locale” has path “/system/locale/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy” has path “/system/proxy/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.http” has path “/system/proxy/http/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.https” has path “/system/proxy/https/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.ftp” has path “/system/proxy/ftp/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+* Warning: Schema “org.gnome.system.proxy.socks” has path “/system/proxy/socks/”.  Paths starting with “/apps/”, “/desktop/” or “/system/” are deprecated.
+Executing shared-mime-info-2.4-r0.trigger
+OK: 2430.9 MiB in 274 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qnx_desktop
+     == qnx-desktop ==
+       info apk: /data/oss/bin/apk
+       ok   qnx-desktop lists its 8 groups
+       ok   apk: qnx-desktop is installed
+       ok   oss-desktop: bin/oss-desktop is executable
+       ok   labwc: bin/labwc loads (ldd)
+       ok   swaybg: bin/swaybg loads (ldd)
+       ok   xfce4-panel: bin/xfce4-panel loads (ldd)
+       ok   xfce4-session: bin/xfce4-session loads (ldd)
+       ok   xfce4-settings: bin/xfsettingsd loads (ldd)
+       ok   xfce4-terminal: bin/xfce4-terminal loads (ldd)
+       ok   thunar: bin/thunar loads (ldd)
+       ok   xfce4-appfinder: bin/xfce4-appfinder loads (ldd)
+       ok   xfconf: bin/xfconf-query loads (ldd)
+       ok   garcon: lib/libgarcon-1.so.0 loads (ldd)
+       ok   exo: bin/exo-open loads (ldd)
+       ok   tumbler: lib/tumbler-1/tumblerd loads (ldd)
+       ok   dbus: bin/dbus-daemon loads (ldd)
+       ok   libnotify: bin/notify-send loads (ldd)
+       ok   xwayland: bin/Xwayland loads (ldd)
+       ok   xkeyboard-config: share/xkeyboard-config-2/rules/evdev is there
+       ok   xdg-utils: bin/xdg-open is executable
+       ok   shared-mime-info: bin/update-mime-database loads (ldd)
+       ok   desktop-file-utils: bin/desktop-file-validate loads (ldd)
+       ok   gsettings-desktop-schemas: share/glib-2.0/schemas/org.gnome.desktop.interface.gschema.xml is there
+       ok   glib-networking: lib/gio/modules/libgiognutls.so loads (ldd)
+       ok   gnome-keyring: bin/gnome-keyring-daemon loads (ldd)
+       ok   dconf: bin/dconf loads (ldd)
+       ok   xfce4-notifyd: bin/xfce4-notifyd-config loads (ldd)
+       ok   xfdesktop: bin/xfdesktop loads (ldd)
+       ok   swayidle: bin/swayidle loads (ldd)
+       ok   swaylock: bin/swaylock loads (ldd)
+       ok   apk: qnx-desktop-core and its 28 members are installed
+       ok   adwaita-icon-theme: share/icons/Adwaita/index.theme is there
+       ok   hicolor-icon-theme: share/icons/hicolor/index.theme is there
+       ok   lxde-icon-theme: share/icons/nuoveXT2/index.theme is there
+       ok   adwaita-fonts: share/fonts/adwaita-fonts is there
+       ok   font-dejavu: share/fonts/font-dejavu is there
+       ok   font-liberation: share/fonts/font-liberation is there
+       ok   font-cantarell: share/fonts/font-cantarell is there
+       ok   font-inter: share/fonts/font-inter is there
+       ok   font-hack: share/fonts/font-hack is there
+       ok   font-inconsolata: share/fonts/font-inconsolata is there
+       ok   font-noto-sans-cjk: share/fonts/font-noto-sans-cjk is there
+       ok   font-noto-emoji: share/fonts/font-noto-emoji is there
+       ok   fontconfig: lib/libfontconfig.so.1 loads (ldd)
+       ok   apk: qnx-desktop-theme and its 13 members are installed
+       ok   cups: sbin/cupsd loads (ldd)
+       ok   cups-filters: sbin/cups-browsed loads (ldd)
+       ok   ippusbxd: sbin/ippusbxd loads (ldd)
+       ok   avahi: sbin/avahi-daemon loads (ldd)
+       ok   chrony: sbin/chronyd loads (ldd)
+       ok   tzdata: share/zoneinfo is there
+       ok   libpaper: bin/paper loads (ldd)
+       ok   apk: qnx-desktop-preferences and its 7 members are installed
+       ok   geany: bin/geany loads (ldd)
+       ok   gthumb: bin/gthumb loads (ldd)
+       ok   mate-calc: bin/mate-calc loads (ldd)
+       ok   htop: bin/htop loads (ldd)
+       ok   ffmpegthumbnailer: bin/ffmpegthumbnailer loads (ldd)
+       ok   7zip: bin/7zz loads (ldd)
+       ok   zip: bin/zip loads (ldd)
+       ok   nano: bin/nano loads (ldd)
+       ok   evince: bin/evince loads (ldd)
+       ok   xdg-user-dirs: bin/xdg-user-dirs-update loads (ldd)
+       ok   xfce4-genmon-plugin: lib/xfce4/panel/plugins/libgenmon.so loads (ldd)
+       ok   xarchiver: bin/xarchiver loads (ldd)
+       ok   apk: qnx-desktop-utilities and its 12 members are installed
+       ok   epiphany: bin/epiphany loads (ldd)
+       ok   parole: bin/parole loads (ldd)
+       ok   geany-plugins: lib/libgeanypluginutils.so.0 loads (ldd)
+       ok   apk: qnx-desktop-applications and its 3 members are installed
+       ok   native-toolchain: bin/cc is executable
+       ok   cmake: bin/cmake loads (ldd)
+       ok   ninja: bin/ninja loads (ldd)
+       ok   meson: bin/meson is executable
+       ok   python3: bin/python3 loads (ldd)
+       ok   python3-pip: python3 imports pip
+       ok   python3-setuptools: python3 imports setuptools
+       ok   python3-wheel: python3 imports wheel
+       ok   python3-virtualenv: python3 imports virtualenv
+       ok   numpy: python3 imports numpy
+       ok   pygame: python3 imports pygame
+       ok   git: bin/git loads (ldd)
+       ok   gdb: bin/gdb loads (ldd)
+       ok   nodejs: bin/node loads (ldd)
+       ok   npm: bin/npm is executable
+       ok   apk: qnx-desktop-developer and its 15 members are installed
+       ok   gstreamer: bin/gst-launch-1.0 loads (ldd)
+       ok   gst-plugins-base: lib/gstreamer-1.0/libgstplayback.so loads (ldd)
+       ok   gst-plugins-good: lib/gstreamer-1.0/libgstisomp4.so loads (ldd)
+       ok   gst-plugins-bad: lib/gstreamer-1.0/libgstmpegtsdemux.so loads (ldd)
+       ok   gst-plugins-ugly: lib/gstreamer-1.0/libgstasf.so loads (ldd)
+       ok   gst-libav: lib/gstreamer-1.0/libgstlibav.so loads (ldd)
+       ok   ffmpeg: bin/ffmpeg loads (ldd)
+       ok   mesa: opt/mesa/lib is there
+       ok   apk: qnx-desktop-graphics and its 8 members are installed
+       ok   webrtc-screencast: bin/webrtc-screencast loads (ldd)
+       ok   gtk-vnc: bin/gvncviewer loads (ldd)
+       ok   openssh: bin/ssh loads (ldd)
+       ok   sudo: bin/sudo loads (ldd)
+       ok   apk: qnx-desktop-extras and its 4 members are installed
+       info 90 members in 8 groups
+       ok   all members listed (90)
+       ok   sh -n bin/oss-desktop
+       ok   sh -n bin/oss-desktop-menu
+       ok   sh -n bin/qnx-desktop-start
+       ok   sh -n share/qnx-desktop/rc.local.sample
+       ok   qnx-desktop-start is executable
+       ok   qnx-desktop-start --help names --install-hook and --check
+       ok   rc.local.sample calls qnx-desktop-start
+     PASS qnx-desktop
+PASS test_qnx_desktop
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

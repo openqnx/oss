@@ -1,6 +1,6 @@
 # iso-codes 4.17.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:41:06Z   packages from: apk:local-dists
+# date: 2026-11-24T12:45:17Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -8,7 +8,7 @@
 $ apk add -u iso-codes qnx-test-iso-codes qnx-port-tests
 (1/4) Installing iso-codes (4.17.0-r0)
 (2/4) Installing qnx-port-tests (1.0-r0)
-(3/4) Installing json-c (0.18-r0)
+(3/4) Installing json-c (0.19.20260627-r0)
 (4/4) Installing qnx-test-iso-codes (1.0-r0)
 OK: 29.7 MiB in 9 packages
 

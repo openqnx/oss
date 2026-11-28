@@ -1,0 +1,397 @@
+xfce4-taskmanager: a QNX backend (src/task-manager-qnx.c).
+
+The task manager reads processes, CPU and memory through one source file per
+operating system (Linux /proc, the BSDs' sysctl, Solaris kstat, Darwin);
+meson.build picks it by host_machine.system() and has none for QNX, so the
+build stopped there. task-manager-qnx.c implements the five functions of
+task-manager.h with what QNX Neutrino 8 provides:
+
+- processes: the numeric entries of /proc; devctl(DCMD_PROC_INFO) on
+  /proc/<pid>/ctl gives the parent, uid, base priority and the user and
+  system times in nanoseconds; /proc/<pid>/exefile the name, cmdline the
+  arguments (NUL-separated), vmstat the resident and mapped sizes (pages);
+  the state is "R" when a thread is RUNNING or READY (DCMD_PROC_TIDSTATUS),
+  else "S";
+- CPU: the sum of all processes' times between two samples, against the
+  elapsed time times the number of CPUs (the system page) -- the same scale
+  as the Linux backend's jiffies; the time of procnto's idle threads
+  (process 1, priority 0) is taken off (it is accounted as procnto's user
+  time, so procnto showed 99 % and the system 100 % busy);
+- procnto (process 1) is reported as its own parent; it is given parent 0,
+  as on Linux: the process tree model otherwise looped for ever on the cycle
+  (the window never appeared, the main thread at 100 %);
+- memory: RAM from the system page's "ram" entries, free memory from the
+  size of /proc; no swap.
+
+Sending signals and changing priorities stay in task-manager.c (kill(),
+setpriority()), which QNX has.
+
+Upstream-Status: QNX-specific
+
+diff -ruN a/meson.build b/meson.build
+--- a/meson.build	2025-05-21 16:00:22.000000000 +0900
++++ b/meson.build	2026-11-25 17:07:52.569454678 +0900
+@@ -96,6 +96,21 @@
+       'stdlib.h',
+       'string.h',
+     ]
++  elif target_os == 'qnx'
++    # QNX Neutrino: /proc with devctl() (task-manager-qnx.c)
++    os_implementation = 'qnx'
++    headers += [
++      'sys/procfs.h',
++      'sys/stat.h',
++      'sys/syspage.h',
++      'sys/resource.h',
++      'devctl.h',
++      'dirent.h',
++      'signal.h',
++      'stdio.h',
++      'string.h',
++      'unistd.h',
++    ]
+   elif target_os == 'linux'
+     os_implementation = 'linux'
+     headers += [
+diff -ruN a/src/task-manager-qnx.c b/src/task-manager-qnx.c
+--- a/src/task-manager-qnx.c	1970-01-01 09:00:00.000000000 +0900
++++ b/src/task-manager-qnx.c	2026-11-25 17:11:13.627080664 +0900
+@@ -0,0 +1,338 @@
++/*
++ * Copyright (c) 2026 openqnx/oss contributors
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * QNX Neutrino 8 backend: processes from /proc (devctl DCMD_PROC_INFO and
++ * DCMD_PROC_TIDSTATUS on /proc/<pid>/ctl, the text files cmdline, exefile
++ * and vmstat), memory from the system page (RAM) and the size of /proc (free
++ * memory), CPU time from the processes' user and system times in
++ * nanoseconds, the idle time from procnto's idle threads (process 1,
++ * priority 0).
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <dirent.h>
++#include <devctl.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <unistd.h>
++#include <sys/neutrino.h>
++#include <sys/procfs.h>
++#include <sys/stat.h>
++#include <sys/states.h>
++#include <sys/syspage.h>
++
++#include "task-manager.h"
++
++static gushort _cpu_count = 0;
++/* nanoseconds of CPU time all processors had between the last two samples */
++static guint64 ns_total_delta = 0;
++
++static guint64
++now_ns (void)
++{
++	struct timespec ts;
++	clock_gettime (CLOCK_MONOTONIC, &ts);
++	return (guint64)ts.tv_sec * 1000000000ULL + (guint64)ts.tv_nsec;
++}
++
++static gushort
++cpu_count (void)
++{
++	if (_cpu_count == 0)
++		_cpu_count = _syspage_ptr->num_cpu > 0 ? _syspage_ptr->num_cpu : 1;
++	return _cpu_count;
++}
++
++gboolean
++get_memory_usage (guint64 *memory_total, guint64 *memory_available, guint64 *memory_free, guint64 *memory_cache, guint64 *memory_buffers, guint64 *swap_total, guint64 *swap_free)
++{
++	static guint64 ram = 0;
++	struct stat st;
++
++	if (ram == 0)
++	{
++		/* the RAM entries of the system page's address space list */
++		struct asinfo_entry *as = SYSPAGE_ENTRY (asinfo);
++		const char *strings = SYSPAGE_ENTRY (strings)->data;
++		unsigned n = _syspage_ptr->asinfo.entry_size / sizeof (*as), i;
++		for (i = 0; i < n; i++)
++			if (strcmp (strings + as[i].name, "ram") == 0)
++				ram += as[i].end - as[i].start + 1;
++	}
++	*memory_total = ram;
++	/* on QNX the size of /proc is the free memory */
++	*memory_free = stat ("/proc", &st) == 0 ? (guint64)st.st_size : 0;
++	*memory_available = *memory_free;
++	*memory_cache = 0;
++	*memory_buffers = 0;
++	*swap_total = 0;
++	*swap_free = 0;
++	return TRUE;
++}
++
++static int
++open_ctl (GPid pid)
++{
++	char path[64];
++	int fd;
++	g_snprintf (path, sizeof (path), "/proc/%d/ctl", (int)pid);
++	fd = open (path, O_RDONLY | O_CLOEXEC);
++	if (fd < 0)
++	{
++		g_snprintf (path, sizeof (path), "/proc/%d/as", (int)pid);
++		fd = open (path, O_RDONLY | O_CLOEXEC);
++	}
++	return fd;
++}
++
++/* take the idle time off a user/system pair (user first: that is where
++ * procnto accounts it) */
++static void
++take_idle (guint64 *user, guint64 *sys, guint64 idle)
++{
++	guint64 u = MIN (*user, idle);
++	*user -= u;
++	idle -= u;
++	*sys -= MIN (*sys, idle);
++}
++
++/* sum of the running times of procnto's idle threads (process 1) */
++static guint64
++idle_ns (void)
++{
++	procfs_status st;
++	guint64 idle = 0;
++	int fd = open_ctl (1), tid = 1, n;
++	if (fd < 0)
++		return 0;
++	for (n = 0; n < 65536; n++)
++	{
++		memset (&st, 0, sizeof (st));
++		st.tid = tid;
++		/* the first thread with an id >= tid; past the last one some
++		 * versions start again from the first: stop there too */
++		if (devctl (fd, DCMD_PROC_TIDSTATUS, &st, sizeof (st), NULL) != EOK || st.tid < tid)
++			break;
++		if (st.priority == 0)
++			idle += st.sutime;
++		tid = st.tid + 1;
++	}
++	close (fd);
++	return idle;
++}
++
++gboolean
++get_cpu_usage (gushort *count, gfloat *cpu_user, gfloat *cpu_system)
++{
++	static guint64 user_old = 0, sys_old = 0, t_old = 0;
++	guint64 user = 0, sys = 0, t, idle;
++	DIR *dir;
++	struct dirent *de;
++
++	if ((dir = opendir ("/proc")) == NULL)
++		return FALSE;
++	while ((de = readdir (dir)) != NULL)
++	{
++		procfs_info info;
++		int fd;
++		if (de->d_name[0] < '0' || de->d_name[0] > '9')
++			continue;
++		if ((fd = open_ctl (atoi (de->d_name))) < 0)
++			continue;
++		if (devctl (fd, DCMD_PROC_INFO, &info, sizeof (info), NULL) == EOK)
++		{
++			user += info.utime;
++			sys += info.stime;
++		}
++		close (fd);
++	}
++	closedir (dir);
++	/* procnto's times include its idle threads: that is not load */
++	idle = idle_ns ();
++	take_idle (&user, &sys, idle);
++	t = now_ns ();
++
++	*cpu_user = *cpu_system = 0.0f;
++	if (t_old != 0 && t > t_old)
++	{
++		ns_total_delta = (t - t_old) * cpu_count ();
++		if (user >= user_old)
++			*cpu_user = (gfloat)((user - user_old) * 100.0 / (gdouble)ns_total_delta);
++		if (sys >= sys_old)
++			*cpu_system = (gfloat)((sys - sys_old) * 100.0 / (gdouble)ns_total_delta);
++		*cpu_user = MIN (*cpu_user, 100.0f);
++		*cpu_system = MIN (*cpu_system, 100.0f - *cpu_user);
++	}
++	user_old = user; sys_old = sys; t_old = t;
++	*count = cpu_count ();
++	return TRUE;
++}
++
++static void
++get_cpu_percent (GPid pid, guint64 user, gfloat *cpu_user, guint64 sys, gfloat *cpu_system)
++{
++	static GHashTable *h_user = NULL, *h_sys = NULL;
++	guint64 *u_old, *s_old;
++
++	if (h_user == NULL)
++	{
++		h_user = g_hash_table_new_full (NULL, NULL, NULL, g_free);
++		h_sys = g_hash_table_new_full (NULL, NULL, NULL, g_free);
++	}
++	u_old = g_hash_table_lookup (h_user, GINT_TO_POINTER (pid));
++	s_old = g_hash_table_lookup (h_sys, GINT_TO_POINTER (pid));
++	*cpu_user = *cpu_system = 0.0f;
++	if (u_old != NULL && s_old != NULL && ns_total_delta > 0 && user >= *u_old && sys >= *s_old)
++	{
++		*cpu_user = (gfloat)((user - *u_old) * 100.0 / (gdouble)ns_total_delta);
++		*cpu_system = (gfloat)((sys - *s_old) * 100.0 / (gdouble)ns_total_delta);
++	}
++	u_old = g_new (guint64, 1); *u_old = user;
++	s_old = g_new (guint64, 1); *s_old = sys;
++	g_hash_table_insert (h_user, GINT_TO_POINTER (pid), u_old);
++	g_hash_table_insert (h_sys, GINT_TO_POINTER (pid), s_old);
++}
++
++/* "R" when a thread of the process is running or ready, "S" otherwise */
++static gboolean
++process_running (int fd)
++{
++	procfs_status st;
++	int tid = 1, n;
++	for (n = 0; n < 65536; n++)
++	{
++		memset (&st, 0, sizeof (st));
++		st.tid = tid;
++		if (devctl (fd, DCMD_PROC_TIDSTATUS, &st, sizeof (st), NULL) != EOK || st.tid < tid)
++			return FALSE;
++		if (st.state == STATE_RUNNING || st.state == STATE_READY)
++			return TRUE;
++		tid = st.tid + 1;
++	}
++	return FALSE;
++}
++
++static gsize
++read_file (GPid pid, const char *name, char *buf, gsize size)
++{
++	char path[64];
++	ssize_t n;
++	int fd;
++	g_snprintf (path, sizeof (path), "/proc/%d/%s", (int)pid, name);
++	if ((fd = open (path, O_RDONLY | O_CLOEXEC)) < 0)
++		return 0;
++	n = read (fd, buf, size - 1);
++	close (fd);
++	if (n < 0)
++		n = 0;
++	buf[n] = '\0';
++	return (gsize)n;
++}
++
++/* "as_stats.<key>=0x<pages> (...)" from /proc/<pid>/vmstat, in bytes */
++static guint64
++vmstat_bytes (const char *vmstat, const char *key)
++{
++	const char *p = strstr (vmstat, key);
++	if (p == NULL)
++		return 0;
++	p += strlen (key);
++	return (guint64)strtoull (p, NULL, 0) * (guint64)sysconf (_SC_PAGESIZE);
++}
++
++static gboolean
++get_task_details (GPid pid, Task *task)
++{
++	procfs_info info;
++	char buf[4096];
++	gsize n, i;
++	int fd;
++
++	memset (task, 0, sizeof (Task));
++	if ((fd = open_ctl (pid)) < 0)
++		return FALSE;
++	if (devctl (fd, DCMD_PROC_INFO, &info, sizeof (info), NULL) != EOK)
++	{
++		close (fd);
++		return FALSE;
++	}
++	task->pid = pid;
++	/* procnto (process 1) is its own parent here; the process tree wants
++	 * a root with no parent (an own parent makes a cycle it never leaves) */
++	task->ppid = info.parent != pid ? info.parent : 0;
++	task->uid = info.uid;
++	task->prio = info.priority;
++	g_strlcpy (task->state, process_running (fd) ? "R" : "S", sizeof (task->state));
++	close (fd);
++	if (pid == 1)
++		take_idle (&info.utime, &info.stime, idle_ns ());
++	get_cpu_percent (pid, info.utime, &task->cpu_user, info.stime, &task->cpu_system);
++
++	/* name: the executable's file name (procnto, the kernel, has none) */
++	if (read_file (pid, "exefile", buf, sizeof (buf)) > 0)
++	{
++		const char *b = strrchr (buf, '/');
++		g_strlcpy (task->name, b != NULL ? b + 1 : buf, sizeof (task->name));
++	}
++	else
++		g_strlcpy (task->name, pid == 1 ? "procnto" : "?", sizeof (task->name));
++	/* command line: NUL-separated arguments */
++	n = read_file (pid, "cmdline", buf, sizeof (buf));
++	for (i = 0; i + 1 < n; i++)
++		if (buf[i] == '\0')
++			buf[i] = ' ';
++	g_strlcpy (task->cmdline, n > 0 ? g_strstrip (buf) : task->name, sizeof (task->cmdline));
++
++	if (read_file (pid, "vmstat", buf, sizeof (buf)) > 0)
++	{
++		task->rss = vmstat_bytes (buf, "as_stats.rss=");
++		task->vsz = vmstat_bytes (buf, "as_stats.map_size=");
++		if (task->vsz < task->rss)
++			task->vsz = task->rss;
++	}
++	return TRUE;
++}
++
++gboolean
++get_task_list (GArray *task_list)
++{
++	DIR *dir;
++	struct dirent *de;
++	Task task;
++
++	if ((dir = opendir ("/proc")) == NULL)
++		return FALSE;
++	while ((de = readdir (dir)) != NULL)
++	{
++		if (de->d_name[0] < '0' || de->d_name[0] > '9')
++			continue;
++		if (get_task_details ((GPid)atoi (de->d_name), &task))
++			g_array_append_val (task_list, task);
++	}
++	closedir (dir);
++	g_array_sort (task_list, task_pid_compare_fn);
++	return TRUE;
++}
++
++gboolean
++pid_is_sleeping (GPid pid)
++{
++	gboolean running;
++	int fd = open_ctl (pid);
++	if (fd < 0)
++		return FALSE;
++	running = process_running (fd);
++	close (fd);
++	return !running;
++}

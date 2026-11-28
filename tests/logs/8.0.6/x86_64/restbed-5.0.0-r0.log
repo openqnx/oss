@@ -1,0 +1,31 @@
+# restbed 5.0.0-r0 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T13:03:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u restbed qnx-test-restbed qnx-port-tests
+(1/2) Installing restbed (5.0.0-r0)
+(2/2) Installing qnx-test-restbed (1.0-r1)
+OK: 182.2 MiB in 36 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_restbed
+     == restbed ==
+       ok   service up on <ip>
+       info GET /sensor/42 -> 200 {"sensor":42,"unit":"K"}
+       ok   GET /sensor/42 -> 200
+       ok   Content-Type header
+       ok   path and query parameters reached the handler
+       info POST /echo -> 201 BRAKE PRESSURE 3.5 BAR
+       ok   POST /echo -> 201 with custom header
+       ok   request body read and transformed by the handler
+       info GET /sensor/abc -> 404
+       ok   path not matching the {id: [0-9]+} rule -> 404
+       ok   service stopped
+     PASS restbed
+PASS test_restbed
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

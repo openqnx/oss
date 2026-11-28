@@ -1,19 +1,18 @@
 # perl-fcgi 0.82-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:07:08Z   packages from: apk:local-dists
+# date: 2026-11-24T15:03:24Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-fcgi qnx-test-perl-xs-misc qnx-port-tests
-(1/7) Installing libxcrypt (4.4.38-r0)
-(2/7) Installing perl (5.40.2-r0)
-(3/7) Installing perl-fcgi (0.82-r0)
-(4/7) Installing qnx-port-tests (1.0-r0)
-(5/7) Installing perl-b-cow (0.007-r0)
-(6/7) Installing perl-clone (0.51-r0)
-(7/7) Installing qnx-test-perl-xs-misc (1.0-r0)
-OK: 73.6 MiB in 12 packages
+(1/6) Installing libxcrypt (4.5.2-r0)
+(2/6) Installing perl (5.40.2-r0)
+(3/6) Installing perl-fcgi (0.82-r0)
+(4/6) Installing perl-b-cow (0.007-r0)
+(5/6) Installing perl-clone (0.51-r0)
+(6/6) Installing qnx-test-perl-xs-misc (1.0-r0)
+OK: 199.7 MiB in 27 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_xs_misc
      == perl-clone, perl-b-cow, perl-fcgi ==

@@ -1,0 +1,102 @@
+contrib: QNX fixes for the aarch64 assembler, libarchive, zvbi and mpg123.
+
+The 3.0.24 contribs stopped on QNX in four places:
+
+- aarch64 .S files were assembled for x86_64. qcc and q++ take the target
+  from -V, which is part of $(CC)/$(CXX); CMake takes the ASM compiler from
+  the C compiler's path alone, and a bare qcc builds for x86_64 (mpg123:
+  "no such instruction: fmadd ..."). toolchain.cmake now names the ASM
+  compiler with its -V. x265 builds its arm64 .S files with custom commands
+  that use ${CMAKE_CXX_COMPILER} alone ("bad value 'armv8-a' for '-march='");
+  its ASM_FLAGS, which those commands carry, gets q++'s -V on aarch64.
+- libarchive: libmd can be on the compiler's default library path when it is
+  installed next to the SDP. The MD5Init link check then succeeds, but
+  find_library() is confined to the contrib prefix and the configure stops
+  with "LIBMD_LIBRARY ... NOTFOUND". libmd is not used (its digests are
+  optional for VLC's archive access).
+- zvbi: QNX has <syslog.h> but no <sys/syslog.h> (src/proxy-msg.h).
+- mpg123: QNX's <signal.h> has no SA_RESTART; the SIGILL probe for NEON in
+  getcpuflags_arm.c works without it.
+
+Upstream-Status: Pending
+
+diff --git a/contrib/src/libarchive/rules.mak b/contrib/src/libarchive/rules.mak
+index 69b8f20..3dda770 100644
+--- a/contrib/src/libarchive/rules.mak
++++ b/contrib/src/libarchive/rules.mak
+@@ -24,6 +24,11 @@ ifdef HAVE_QNX
+ # The QNX SDP keeps the LZ4 headers in usr/include/lz4/, where CMake's
+ # find_path(lz4.h) does not look
+ LIBARCHIVE_CONF += -DLZ4_INCLUDE_DIR=$(QNX_TARGET)/usr/include/lz4
++# libmd (MD5Init) can be on the compiler's default library path when it is
++# installed next to the SDP: the link check then finds it, but find_library()
++# is confined to the contrib prefix and the configure stops with
++# "LIBMD_LIBRARY ... NOTFOUND". Do not use it: the digests are optional.
++LIBARCHIVE_CONF += -DLIBMD_FOUND:BOOL=OFF
+ endif
+ 
+ ifdef HAVE_MACOSX
+diff --git a/contrib/src/main.mak b/contrib/src/main.mak
+index d3102e8..f1466bb 100644
+--- a/contrib/src/main.mak
++++ b/contrib/src/main.mak
+@@ -734,6 +734,10 @@ else ifdef HAVE_QNX
+ 	echo "set(CMAKE_C_FLAGS \"$(CFLAGS)\")" >> $@
+ 	echo "set(CMAKE_CXX_FLAGS \"$(CXXFLAGS)\")" >> $@
+ 	echo "set(CMAKE_AR $(AR) CACHE FILEPATH \"Archiver\")" >> $@
++	# qcc picks its target from -V (part of $(CC)); CMake takes the
++	# assembler from the C compiler's path alone, and a bare qcc builds for
++	# x86_64: aarch64 .S files (mpg123, x265) then failed
++	echo "set(CMAKE_ASM_COMPILER $(CC))" >> $@
+ else
+ 	echo "set(CMAKE_AR $(AR) CACHE FILEPATH \"Archiver\")" >> $@
+ endif
+diff --git a/contrib/src/mpg123/rules.mak b/contrib/src/mpg123/rules.mak
+index 9782691..a60d1d1 100644
+--- a/contrib/src/mpg123/rules.mak
++++ b/contrib/src/mpg123/rules.mak
+@@ -21,6 +21,11 @@ mpg123: mpg123-$(MPG123_VERSION).tar.bz2 .sum-mpg123
+ 	# fix llvm-mingw ARM/AArch64 build
+ 	$(APPLY) $(SRC)/mpg123/0001-ports-cmake-Fix-detecting-asm-align-directives-in-cm.patch
+ 	$(APPLY) $(SRC)/mpg123/0002-ports-cmake-Fix-building-ARM-assembly-for-Windows-fo.patch
++ifdef HAVE_QNX
++	# QNX's <signal.h> has no SA_RESTART ("not supported yet"); the SIGILL
++	# probe for NEON does not need it
++	sed -i.orig 's,act.sa_flags = SA_RESTART;,act.sa_flags = 0;,' $(UNPACK_DIR)/src/libmpg123/getcpuflags_arm.c
++endif
+ 	$(MOVE)
+ 
+ .mpg123: mpg123 toolchain.cmake
+diff --git a/contrib/src/x265/rules.mak b/contrib/src/x265/rules.mak
+index 71eaf24..4e0a978 100644
+--- a/contrib/src/x265/rules.mak
++++ b/contrib/src/x265/rules.mak
+@@ -45,6 +45,13 @@ endif
+ X265_CONF := -DENABLE_SHARED=OFF -DENABLE_CLI=OFF
+ ifdef HAVE_QNX
+ X265_CONF += -DENABLE_PIC=ON
++# the arm64 .S files are built by custom commands with ${CMAKE_CXX_COMPILER}
++# alone, which drops q++'s -V<target>: a bare q++ builds for x86_64 ("bad
++# value 'armv8-a' for '-march='"). ASM_FLAGS goes on those command lines
++# (on x86 it goes to nasm, which has no -V).
++ifeq ($(ARCH),aarch64)
++X265_CONF += -DASM_FLAGS="$(filter -V%,$(CXX))"
++endif
+ endif
+ 
+ ifdef HAVE_DARWIN_OS
+diff --git a/contrib/src/zvbi/rules.mak b/contrib/src/zvbi/rules.mak
+index 61b5232..f16bccd 100644
+--- a/contrib/src/zvbi/rules.mak
++++ b/contrib/src/zvbi/rules.mak
+@@ -34,6 +34,10 @@ endif
+ 	sed -i.orig 's,AC_FUNC_REALLOC,dnl AC_FUNC_REALLOC,' $(UNPACK_DIR)/configure.ac
+ 	# fix automake lookup for README
+ 	touch $(UNPACK_DIR)/README
++ifdef HAVE_QNX
++	# QNX has <syslog.h> (POSIX) but no <sys/syslog.h>
++	sed -i.orig 's,<sys/syslog.h>,<syslog.h>,' $(UNPACK_DIR)/src/proxy-msg.h
++endif
+ 	$(MOVE)
+ 
+ DEPS_zvbi = png $(DEPS_png) iconv $(DEPS_iconv)

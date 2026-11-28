@@ -1,0 +1,54 @@
+# xfce4-dev-tools 4.21.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:16:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfce4-dev-tools qnx-test-xfce4-dev-tools qnx-port-tests
+( 1/27) Installing qnx-port-tests (1.0-r1)
+( 2/27) Installing libiconv (1.19.1-r1)
+( 3/27) Installing m4 (1.4.21-r1)
+( 4/27) Installing libxcrypt (4.5.2-r1)
+( 5/27) Installing perl (5.40.2-r1)
+( 6/27) Installing autoconf (2.73-r2)
+( 7/27) Installing automake (1.20-r1)
+( 8/27) Installing libunistring (1.5-r1)
+( 9/27) Installing ncurses (6.6-r1)
+(10/27) Installing gettext (0.22.5-r1)
+(11/27) Installing libffi (3.8.1-r1)
+(12/27) Installing pcre2 (10.49-r1)
+(13/27) Installing glib (2.90.1-r3)
+(14/27) Installing glib-dev (2.90.1-r3)
+(15/27) Installing make (4.4.1-r2)
+(16/27) Installing pkgconf (2.3.0-r1)
+(17/27) Installing pkgconf-dev (2.3.0-r1)
+(18/27) Installing bzip2 (1.0.8-r1)
+(19/27) Installing expat (2.6.4-r1)
+(20/27) Installing gdbm (1.26-r1)
+(21/27) Installing readline (8.3-r1)
+(22/27) Installing sqlite (3.47.2-r1)
+(23/27) Installing xz (5.8.4-r1)
+(24/27) Installing python3 (3.14.0-r2)
+(25/27) Installing xfce4-dev-tools (4.21.2-r1)
+(26/27) Installing xfce4-dev-tools-dev (4.21.2-r1)
+(27/27) Installing qnx-test-xfce4-dev-tools (1.0-r2)
+Executing glib-2.90.1-r3.trigger
+Executing python3-3.14.0-r2.trigger
+OK: 229.0 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_dev_tools
+     == xfce4_dev_tools ==
+       ok   xdt-csource --static: the array, escaped quotes/tab/newline, qnx_data_length = 17u
+       ok   aclocal copied XDT_* macros from share/aclocal/xdt-*.m4
+       ok   autoconf: XDT_VERSION_INIT and XDT_CHECK_PACKAGE expanded
+       ok   XDT_CHECK_PACKAGE: glib-2.0 2.90.1 found by pkgconf
+       ok   XDT_VERSION_INIT: version 4.21.7, minor 21 (m4 esyscmd through the target's sh)
+       ok   a missing package: configure stops naming no-such-package-qnx (exit 1)
+       ok   xdt-autogen: configure and Makefile.in generated
+     PASS xfce4_dev_tools
+PASS test_xfce4_dev_tools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

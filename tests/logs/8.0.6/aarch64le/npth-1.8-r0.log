@@ -1,15 +1,14 @@
 # npth 1.8-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:57:13Z   packages from: apk:local-dists
+# date: 2026-11-24T14:32:13Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u npth qnx-test-npth qnx-port-tests
-(1/3) Installing npth (1.8-r0)
-(2/3) Installing qnx-port-tests (1.0-r0)
-(3/3) Installing qnx-test-npth (1.0-r0)
-OK: 9.9 MiB in 8 packages
+(1/2) Installing npth (1.8-r0)
+(2/2) Installing qnx-test-npth (1.0-r0)
+OK: 136.0 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_npth
      == npth ==
@@ -20,7 +19,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_n
        ok   unlocked counter is exactly 4000 (one thread runs at a time)
        ok   condition variable handshake delivers 42
        ok   cond_timedwait with nobody signalling times out (ETIMEDOUT)
-       info npth_sleep(1) took 1.001 s
+       info npth_sleep(1) took 1.002 s
        ok   npth_sleep(1) sleeps about one second
        ok   rwlock: two read locks at once
        info trywrlock while read-locked: 16

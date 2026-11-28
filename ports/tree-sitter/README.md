@@ -105,7 +105,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tree-sitter`.
 
 ```
 /usr/local/lib/libtree-sitter.so
-/usr/local/lib/libtree-sitter.so.0.25
+/usr/local/lib/libtree-sitter.so.0.27
 ```
 
 The complete list is `stage/<arch>/.manifest/tree-sitter` after a build.

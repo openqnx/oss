@@ -1,67 +1,53 @@
 # ros2-jazzy-moveit2 20260128-r2 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-23T10:48:15Z   packages from: apk:local-dists
+# date: 2026-11-24T22:33:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u ros2-jazzy-moveit2 qnx-test-ros2-jazzy-moveit2 qnx-port-tests
-( 1/54) Installing qnx-port-tests (1.0-r0)
-( 2/54) Installing qnx-test-ros2-jazzy-moveit2 (1.0-r0)
-( 3/54) Installing assimp (6.0.6-r0)
-( 4/54) Installing bzip2 (1.0.8-r0)
-( 5/54) Installing libiconv (1.19.1-r0)
-( 6/54) Installing xz (5.8.4-r0)
-( 7/54) Installing boost (1.86.0-r0)
-( 8/54) Installing bullet3 (3.25-r0)
-( 9/54) Installing console_bridge (1.0.2-r0)
-(10/54) Installing fastcdr (2.2.6-r0)
-(11/54) Installing libccd (2.1-r0)
-(12/54) Installing octomap (1.10.1-r0)
-(13/54) Installing fcl (0.7.0-r0)
-(14/54) Installing fmt (11.2.0-r0)
-(15/54) Installing ompl (1.7.0-r0)
-(16/54) Installing orocos-kdl (1.5.4-r0)
-(17/54) Installing osqp (0.6.3-r0)
-(18/54) Installing expat (2.6.4-r0)
-(19/54) Installing gdbm (1.24-r0)
-(20/54) Installing libunistring (1.5-r0)
-(21/54) Installing ncurses (6.6-r0)
-(22/54) Installing gettext (0.22.5-r0)
-(23/54) Installing libffi (3.8.1-r0)
-(24/54) Installing libuuid (2.42.4-r0)
-(25/54) Installing readline (8.3-r0)
-(26/54) Installing sqlite (3.47.2-r0)
-(27/54) Installing python3 (3.14.0-r1)
-(28/54) Installing qhull (8.0.2-r0)
-(29/54) Installing benchmark (1.10.0-r0)
-(30/54) Installing brotli (1.2.1-r0)
-(31/54) Installing c-ares (1.34.9-r0)
-(32/54) Installing libidn2 (2.3.8-r0)
-(33/54) Installing nghttp2 (1.71.0-r0)
-(34/54) Installing curl (8.23.0-r0)
-(35/54) Installing cyclonedds (0.10.5-r0)
-(36/54) Installing foonathan_memory (0.7.4-r0)
-(37/54) Installing tinyxml2 (11.0.0-r0)
-(38/54) Installing fastdds (2.14.4-r3)
-(39/54) Installing libyaml (0.2.6-r0)
-(40/54) Installing lz4 (1.11.1-r0)
-(41/54) Installing openblas (0.3.34-r0)
-(42/54) Installing numpy (2.5.5-r0)
-(43/54) Installing opencv (4.10.0-r0)
-(44/54) Installing python3-pyyaml (6.0.4-r0)
-(45/54) Installing urdfdom (4.0.3-r1)
-(46/54) Installing yaml-cpp (0.9.0-r0)
-(47/54) Installing ros2 (0_git-r2)
-(48/54) Installing python3-filelock (4.2.12-r0)
-(49/54) Installing libxml2 (2.13.5-r0)
-(50/54) Installing libxslt (1.1.45-r0)
-(51/54) Installing python3-lxml (6.1.3-r0)
-(52/54) Installing ros2-jazzy-control (20260128-r2)
-(53/54) Installing ruckig (0.19.4-r0)
-(54/54) Installing ros2-jazzy-moveit2 (20260128-r2)
+( 1/40) Installing qnx-test-ros2-jazzy-moveit2 (1.0-r0)
+( 2/40) Installing assimp (6.0.6-r0)
+( 3/40) Installing boost (1.86.0-r0)
+( 4/40) Installing bullet3 (3.25-r0)
+( 5/40) Installing console_bridge (1.0.2-r0)
+( 6/40) Installing fastcdr (2.2.6-r0)
+( 7/40) Installing libccd (2.1-r0)
+( 8/40) Installing octomap (1.10.1-r0)
+( 9/40) Installing fcl (0.7.0-r0)
+(10/40) Installing fmt (11.2.0-r0)
+(11/40) Installing ompl (1.7.0-r0)
+(12/40) Installing orocos-kdl (1.5.4-r0)
+(13/40) Installing osqp (0.6.3-r0)
+(14/40) Installing qhull (8.0.2-r0)
+(15/40) Installing benchmark (1.10.0-r0)
+(16/40) Installing brotli (1.2.1-r0)
+(17/40) Installing c-ares (1.34.9-r0)
+(18/40) Installing libidn2 (2.3.8-r0)
+(19/40) Installing nghttp2 (1.71.0-r0)
+(20/40) Installing curl (8.23.0-r0)
+(21/40) Installing cyclonedds (0.10.5-r0)
+(22/40) Installing foonathan_memory (0.7.4-r0)
+(23/40) Installing tinyxml2 (11.0.0-r0)
+(24/40) Installing fastdds (2.14.4-r3)
+(25/40) Installing libyaml (0.2.6-r0)
+(26/40) Installing lz4 (1.11.1-r0)
+(27/40) Installing openblas (0.3.34-r0)
+(28/40) Installing numpy (2.5.5-r0)
+(29/40) Installing opencv (4.10.0-r0)
+(30/40) Installing python3-pyyaml (6.0.4-r0)
+(31/40) Installing urdfdom (4.0.3-r1)
+(32/40) Installing yaml-cpp (0.9.0-r0)
+(33/40) Installing ros2 (0_git-r2)
+(34/40) Installing python3-filelock (4.2.12-r0)
+(35/40) Installing libxml2 (2.13.5-r0)
+(36/40) Installing libxslt (1.1.45-r0)
+(37/40) Installing python3-lxml (6.1.3-r0)
+(38/40) Installing ros2-jazzy-control (20260128-r2)
+(39/40) Installing ruckig (0.19.4-r0)
+(40/40) Installing ros2-jazzy-moveit2 (20260128-r2)
 Executing python3-3.14.0-r1.trigger
-OK: 664.7 MiB in 59 packages
+OK: 670.2 MiB in 61 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_ros2_jazzy_moveit2
      == ros2-jazzy-moveit2 ==
@@ -77,10 +63,10 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_r
        ok   check_state_validity: (0, 0) collides with the box
        ok   check_state_validity: (0, pi/2) is collision-free
        ok   Pilz PTP (0,0) -> (pi/2,0): 2.5708 s (trapezoid pi/2 + 1 = 2.5708 s), error code 1
-       ok   OMPL RRTConnect found a plan around the box (68 points, error code 1, attempt 1 of 3)
+       ok   OMPL RRTConnect found a plan around the box (72 points, error code 1, attempt 1 of 3)
        ok   it ends at the goal (1.2, 0) (got (1.2000, -0.0001))
-       ok   every trajectory point is collision-free (68 checked)
-       ok   it is time-parameterised: 6.687 s >= the 3.4 s straight-line minimum
+       ok   every trajectory point is collision-free (72 checked)
+       ok   it is time-parameterised: 7.035 s >= the 3.4 s straight-line minimum
      PASS ros2-jazzy-moveit2
 PASS test_ros2_jazzy_moveit2
 --------------------------------------------

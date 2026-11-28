@@ -1,26 +1,26 @@
 # libgsf 1.14.60-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:47:16Z   packages from: apk:local-dists
+# date: 2026-11-24T13:42:56Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libgsf qnx-test-libgsf qnx-port-tests
 ( 1/13) Installing bzip2 (1.0.8-r0)
-( 2/13) Installing libiconv (1.18-r0)
-( 3/13) Installing libunistring (1.3-r0)
-( 4/13) Installing ncurses (6.5-r0)
+( 2/13) Installing libiconv (1.19.1-r0)
+( 3/13) Installing libunistring (1.5-r0)
+( 4/13) Installing ncurses (6.6-r0)
 ( 5/13) Installing gettext (0.22.5-r0)
-( 6/13) Installing libffi (3.4.6-r0)
-( 7/13) Installing pcre2 (10.44-r0)
-( 8/13) Installing glib (2.82.4-r0)
-( 9/13) Installing xz (5.6.3-r0)
+( 6/13) Installing libffi (3.8.1-r0)
+( 7/13) Installing pcre2 (10.49-r0)
+( 8/13) Installing glib (2.90.1-r1)
+( 9/13) Installing xz (5.8.4-r0)
 (10/13) Installing libxml2 (2.13.5-r0)
 (11/13) Installing libgsf (1.14.60-r0)
 (12/13) Installing qnx-port-tests (1.0-r0)
 (13/13) Installing qnx-test-libgsf (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 48.9 MiB in 18 packages
+Executing glib-2.90.1-r1.trigger
+OK: 49.4 MiB in 18 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libgsf
      == libgsf ==
@@ -54,8 +54,8 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        info $ gsf list t.zip -> 0
        info   t.zip:
        info   d                                0 *root*
-       info   f  2026-11-22 00:45:04          11 alpha.txt
-       info   f  2026-11-22 00:45:04       10000 big.txt
+       info   f  2026-11-24 13:42:54          11 alpha.txt
+       info   f  2026-11-24 13:42:54       10000 big.txt
        ok   gsf list t.zip shows both members and the 10000 B size
        info $ gsf cat t.zip big.txt -> 0
        ok   gsf cat t.zip big.txt inflates exactly

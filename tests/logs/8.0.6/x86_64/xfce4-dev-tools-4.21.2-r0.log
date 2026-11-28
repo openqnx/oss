@@ -1,39 +1,40 @@
 # xfce4-dev-tools 4.21.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:53:31Z   packages from: apk:local-dists
+# date: 2026-11-25T04:48:38Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u xfce4-dev-tools qnx-test-xfce4-dev-tools qnx-port-tests
-( 1/18) Installing m4 (1.4.21-r0)
-( 2/18) Installing perl (5.40.2-r0)
-( 3/18) Installing autoconf (2.72-r0)
-( 4/18) Installing automake (1.18-r0)
-( 5/18) Installing libffi (3.4.6-r0)
-( 6/18) Installing pcre2 (10.44-r0)
-( 7/18) Installing glib (2.82.4-r0)
-( 8/18) Installing glib-dev (2.82.4-r0)
-( 9/18) Installing make (4.4.1-r1)
-(10/18) Installing pkgconf (2.3.0-r0)
-(11/18) Installing pkgconf-dev (2.3.0-r0)
-(12/18) Installing bzip2 (1.0.8-r0)
-(13/18) Installing gdbm (1.24-r0)
-(14/18) Installing sqlite (3.47.2-r0)
-(15/18) Installing python3 (3.14.0-r0)
-(16/18) Installing xfce4-dev-tools (4.21.2-r0)
-(17/18) Installing xfce4-dev-tools-dev (4.21.2-r0)
-(18/18) Installing qnx-test-xfce4-dev-tools (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-Executing python3-3.14.0-r0.trigger
-OK: 671.0 MiB in 46 packages
+( 1/20) Installing qnx-port-tests (1.0-r1)
+( 2/20) Installing m4 (1.4.21-r0)
+( 3/20) Installing libxcrypt (4.5.2-r0)
+( 4/20) Installing perl (5.40.2-r0)
+( 5/20) Installing autoconf (2.73-r1)
+( 6/20) Installing automake (1.20-r0)
+( 7/20) Installing glib-dev (2.90.1-r2)
+( 8/20) Installing make (4.4.1-r1)
+( 9/20) Installing pkgconf (2.3.0-r0)
+(10/20) Installing pkgconf-dev (2.3.0-r0)
+(11/20) Installing bzip2 (1.0.8-r0)
+(12/20) Installing gdbm (1.26-r0)
+(13/20) Installing libuuid (2.42.4-r0)
+(14/20) Installing readline (8.3-r0)
+(15/20) Installing sqlite (3.47.2-r0)
+(16/20) Installing xz (5.8.4-r0)
+(17/20) Installing python3 (3.14.0-r1)
+(18/20) Installing xfce4-dev-tools (4.21.2-r0)
+(19/20) Installing xfce4-dev-tools-dev (4.21.2-r0)
+(20/20) Installing qnx-test-xfce4-dev-tools (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 230.0 MiB in 34 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfce4_dev_tools
      == xfce4_dev_tools ==
        ok   xdt-csource --static: the array, escaped quotes/tab/newline, qnx_data_length = 17u
        ok   aclocal copied XDT_* macros from share/aclocal/xdt-*.m4
        ok   autoconf: XDT_VERSION_INIT and XDT_CHECK_PACKAGE expanded
-       ok   XDT_CHECK_PACKAGE: glib-2.0 2.82.4 found by pkgconf
+       ok   XDT_CHECK_PACKAGE: glib-2.0 2.90.1 found by pkgconf
        ok   XDT_VERSION_INIT: version 4.21.7, minor 21 (m4 esyscmd through the target's sh)
        ok   a missing package: configure stops naming no-such-package-qnx (exit 1)
        ok   xdt-autogen: configure and Makefile.in generated

@@ -1,0 +1,39 @@
+# emulationstation 2.11_git20241212-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:01:50Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u emulationstation qnx-test-emulationstation qnx-port-tests
+( 1/16) Installing brotli (1.2.1-r1)
+( 2/16) Installing c-ares (1.34.9-r1)
+( 3/16) Installing nghttp2 (1.71.0-r1)
+( 4/16) Installing curl (8.23.0-r1)
+( 5/16) Installing freeimage (3.18.0-r1)
+( 6/16) Installing bzip2 (1.0.8-r1)
+( 7/16) Installing libpng (1.6.59-r1)
+( 8/16) Installing freetype (2.15.0-r1)
+( 9/16) Installing pugixml (1.16-r1)
+(10/16) Installing libiconv (1.19.1-r1)
+(11/16) Installing sdl2 (2.32.10-r1)
+(12/16) Installing xz (5.8.4-r1)
+(13/16) Installing vlc (3.0.24-r0)
+(14/16) Installing emulationstation (2.11_git20241212-r1)
+(15/16) Installing qnx-port-tests (1.0-r1)
+(16/16) Installing qnx-test-emulationstation (1.0-r1)
+OK: 641.3 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_emulationstation
+     == emulationstation ==
+       ok   --help: Version 2.12.0rp-dev, built Nov 26 2026 - 22:17:36
+       ok   --help lists --resolution and --windowed
+       ok   started: es_log.txt has 'EmulationStation - v2.12.0rp-dev, built Nov 26 2026 - 22:17:36'
+       ok   stopped by itself without a display (rc=1)
+       info last log line: Nov 27 08:01:49 lvl0: 	Window failed to initialize!
+     PASS emulationstation
+PASS test_emulationstation
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,6 +1,6 @@
 # libde265 1.1.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:39:43Z   packages from: apk:local-dists
+# date: 2026-11-24T13:38:33Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -24,7 +24,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_l
        ok   SEI MD5 picture hashes verified
        ok   a stream cut inside the headers yields no pictures
        ok   scratch directory
-       info dec265 rc=0: nFrames decoded: 3 (32x32 @ 3537.74 fps)
+       info dec265 rc=0: nFrames decoded: 3 (32x32 @ 223.26 fps)
      
        ok   dec265 -q -c exits 0
        ok   dec265 reports no hash mismatch

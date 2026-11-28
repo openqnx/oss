@@ -1,0 +1,67 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 08:48:17 -0400
+Subject: [PATCH 44/60] Get contrib/x264 working on QNX
+
+Using qcc/q++ as the pre-processor to generate dependency files requires
+passing the pre-processor specific arguments via '-Wp,<arg>'. Otherwise
+they get confused and the build fails.
+
+Also QNX has getopt_long so no need to disable that.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/x264/0001-updae-qnx-settings.patch
++++ b/contrib/src/x264/0001-updae-qnx-settings.patch
+@@ -0,0 +1,40 @@
++--- a/configure
+++++ b/configure
++@@ -723,8 +723,6 @@
++         SYS="QNX"
++         define HAVE_MALLOC_H
++         libm="-lm"
++-        HAVE_GETOPT_LONG=0
++-        CFLAGS="$CFLAGS -I\$(SRCPATH)/extras"
++         ;;
++     *haiku*)
++         SYS="HAIKU"
++@@ -1481,6 +1479,10 @@
++         CFLAGS="-DNDEBUG $CFLAGS"
++     fi
++ else # gcc/icc
+++    if [[ "$host_os" = nto-qnx* && "${cc_base%% *}" = qcc ]]; then
+++        DEPMM="-E -Wp,-MM"
+++        DEPMT="-Wp,-MT"
+++    fi
++     DEPMM="$DEPMM -g0"
++     AR="$AR rc "
++     LD="$CC -o "
++--- a/Makefile
+++++ b/Makefile
++@@ -328,12 +328,12 @@
++ 	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS_X) $(SRCCLI_X) $(SRCCHK_X)), $(SRCPATH)/tools/msvsdepend.sh "$(CC)" "$(CFLAGS)" "$(SRC)" "$(SRC:$(SRCPATH)/%.c=%-10.o)" 1>> .depend;)
++ endif
++ else
++-	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS) $(SRCCLI) $(SRCSO) $(SRCEXAMPLE)), $(CC) $(CFLAGS) $(SRC) $(DEPMT) $(SRC:$(SRCPATH)/%.c=%.o) $(DEPMM) 1>> .depend;)
+++	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS) $(SRCCLI) $(SRCSO) $(SRCEXAMPLE)), $(CC) $(CFLAGS) $(SRC) $(DEPMT)$(SRC:$(SRCPATH)/%.c=%.o) $(DEPMM) 1>> .depend;)
++ ifneq ($(findstring HAVE_BITDEPTH8 1, $(CONFIG)),)
++-	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS_X) $(SRCS_8) $(SRCCLI_X) $(SRCCHK_X)), $(CC) $(CFLAGS) $(SRC) $(DEPMT) $(SRC:$(SRCPATH)/%.c=%-8.o) $(DEPMM) 1>> .depend;)
+++	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS_X) $(SRCS_8) $(SRCCLI_X) $(SRCCHK_X)), $(CC) $(CFLAGS) $(SRC) $(DEPMT)$(SRC:$(SRCPATH)/%.c=%-8.o) $(DEPMM) 1>> .depend;)
++ endif
++ ifneq ($(findstring HAVE_BITDEPTH10 1, $(CONFIG)),)
++-	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS_X) $(SRCCLI_X) $(SRCCHK_X)), $(CC) $(CFLAGS) $(SRC) $(DEPMT) $(SRC:$(SRCPATH)/%.c=%-10.o) $(DEPMM) 1>> .depend;)
+++	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS_X) $(SRCCLI_X) $(SRCCHK_X)), $(CC) $(CFLAGS) $(SRC) $(DEPMT)$(SRC:$(SRCPATH)/%.c=%-10.o) $(DEPMM) 1>> .depend;)
++ endif
++ endif
++ 
+--- a/contrib/src/x264/rules.mak
++++ b/contrib/src/x264/rules.mak
+@@ -77,6 +77,9 @@
+ 	$(APPLY) $(SRC)/x264/x264-winstore.patch
+ 	$(APPLY) $(SRC)/x264/0001-osdep-use-direct-path-to-internal-x264.h.patch
+ 	$(APPLY) $(SRC)/x264/0001-configure-set-_FILE_OFFSET_BITS-to-detect-fseeko.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/x264/0001-updae-qnx-settings.patch
++endif
+ 	$(MOVE)
+ 
+ .x264: x264

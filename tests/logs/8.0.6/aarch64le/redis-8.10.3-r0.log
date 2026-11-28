@@ -1,6 +1,6 @@
 # redis 8.10.3-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T12:20:04Z   packages from: apk:local-dists
+# date: 2026-11-24T22:05:31Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -34,7 +34,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_r
        ok   redis-cli SET prints OK
        ok   the key redis-cli set is there
        ok   redis-cli formats a list reply
-       info redis-benchmark: SET: 137.26 requests per second, p50=16.639 msec
+       info redis-benchmark: SET: 245.10 requests per second, p50=9.687 msec
        ok   redis-benchmark SET/GET run (2000 requests)
        ok   SAVE
        ok   dump.rdb written

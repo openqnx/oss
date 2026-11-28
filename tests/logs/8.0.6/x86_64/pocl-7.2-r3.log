@@ -1,13 +1,18 @@
 # pocl 7.2-r3 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T13:06:45Z   packages from: apk:local-dists
+# date: 2026-11-24T12:50:51Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u pocl qnx-test-pocl qnx-port-tests
-(1/1) Upgrading pocl (7.2-r2 -> 7.2-r3)
-OK: 470.3 MiB in 28 packages
+(1/5) Installing libxml2 (2.13.5-r0)
+(2/5) Installing llvm (22.1.8-r0)
+(3/5) Installing opencl-icd-loader (2026.05.29-r0)
+(4/5) Installing pocl (7.2-r3)
+(5/5) Installing qnx-test-pocl (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 587.3 MiB in 44 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pocl
      == pocl ==
@@ -19,7 +24,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   CL_DEVICE_TYPE has CL_DEVICE_TYPE_CPU
        ok   CL_DEVICE_MAX_COMPUTE_UNITS is at least 1
        ok   the device and its compiler are available
-       info device "cpu-x86-64-Intel 686 F6M158S9", 4 compute unit(s)
+       info device "cpu-x86-64-Intel 686 F6M165S2", 4 compute unit(s)
        ok   CL_DEVICE_OPENCL_C_VERSION is "OpenCL C <version> ..."
        ok   clCreateContext
        ok   clCreateCommandQueue

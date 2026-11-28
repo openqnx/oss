@@ -1,0 +1,42 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 14:48:10 -0400
+Subject: [PATCH 31/60] Get contrib/mpcdec building on QNX
+
+qcc/q++ does not support the '-pipe' argument. Don't use it when
+building using these tools.
+
+For what it is worth, qcc/q++ by default has the behaviour that -pipe
+enables in gcc/g++ so even if it was supported, it wouldn't change
+anything.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/mpcdec/0001-qnx-support.patch
++++ b/contrib/src/mpcdec/0001-qnx-support.patch
+@@ -0,0 +1,14 @@
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -21,7 +21,10 @@
++ add_definitions(-DFAST_MATH -DCVD_FASTLOG)
++ 
++ if(NOT MSVC)
++-  add_definitions(-O3 -Wall -fomit-frame-pointer -pipe)
+++  add_definitions(-O3 -Wall -fomit-frame-pointer)
+++  if(NOT CMAKE_SYSTEM_NAME STREQUAL QNX)
+++    add_definitions(-pipe)
+++  endif()
++ endif(NOT MSVC)
++ 
++ add_subdirectory(libmpcdec)
+--- a/contrib/src/mpcdec/rules.mak
++++ b/contrib/src/mpcdec/rules.mak
+@@ -28,6 +28,9 @@
+ 	$(APPLY) $(SRC)/mpcdec/0007-only-build-libmpcdec.patch
+ 	$(APPLY) $(SRC)/mpcdec/0008-mpc_demux-avoid-using-a-shift-on-negative-value.patch
+ 	$(APPLY) $(SRC)/mpcdec/0009-mpc_decoder-add-sanity-checks-on-the-Cc-access.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/mpcdec/0001-qnx-support.patch
++endif
+ 	$(MOVE)
+ 
+ .mpcdec: musepack toolchain.cmake

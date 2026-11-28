@@ -1,0 +1,48 @@
+# libxmlb 0.3.30-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T12:52:27Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libxmlb qnx-test-libxmlb qnx-port-tests
+( 1/11) Installing libiconv (1.19.1-r1)
+( 2/11) Installing libunistring (1.5-r1)
+( 3/11) Installing ncurses (6.6-r1)
+( 4/11) Installing gettext (0.22.5-r1)
+( 5/11) Installing libffi (3.8.1-r1)
+( 6/11) Installing pcre2 (10.49-r1)
+( 7/11) Installing glib (2.90.1-r3)
+( 8/11) Installing xz (5.8.4-r1)
+( 9/11) Installing libxmlb (0.3.30-r1)
+(10/11) Installing qnx-port-tests (1.0-r1)
+(11/11) Installing qnx-test-libxmlb (1.0-r2)
+Executing glib-2.90.1-r3.trigger
+OK: 46.3 MiB in 16 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxmlb
+     == libxmlb ==
+       ok   silo compiled from XML
+       ok   query components/component: 3 results
+       ok   attribute predicate: the two desktop ids
+       ok   text() predicate and .. find the shell component
+       ok   child text as an integer: priority 5
+       ok   parent element and its attribute
+       ok   next sibling
+       ok   no match: G_IO_ERROR_NOT_FOUND
+       ok   malformed query reported as an error
+       info failed to process components/component[@type=: predicate [@type= was unfinished, missing ']'
+       ok   silo saved to a file
+       ok   silo mapped back from the file
+       ok   same GUID after the round trip
+       ok   loaded silo answers queries
+       ok   gzip and xz source files written
+       ok   builder loads the gzip and the xz source
+       ok   compiled silo of both sources: 6 components
+       ok   node exported back to XML
+     PASS libxmlb
+PASS test_libxmlb
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

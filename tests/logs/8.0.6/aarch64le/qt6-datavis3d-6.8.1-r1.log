@@ -1,0 +1,29 @@
+# qt6-datavis3d 6.8.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T22:30:54Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u qt6-datavis3d qnx-test-qt6-datavis3d qnx-port-tests
+(1/4) Installing double-conversion (3.4.0-r1)
+(2/4) Installing qt6 (6.8.1-r1)
+(3/4) Installing qt6-datavis3d (6.8.1-r1)
+(4/4) Installing qnx-test-qt6-datavis3d (1.0-r1)
+OK: 2616.3 MiB in 276 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_qt6_datavis3d
+     == qt6-datavis3d ==
+       ok   QBarDataProxy: 3 x 4, item (2,3) = 23
+       ok   QItemModelBarDataProxy: rows by year, columns by month
+       ok   QItemModelBarDataProxy: value 2025/Feb = 102.5
+       ok   QValue3DAxis range and segments
+       ok   axis label format and formatter
+       ok   QSurfaceDataProxy 3 x 3, y(2,2) = 4
+       info no OpenGL on this platform (offscreen): render checks skipped
+     PASS qt6-datavis3d
+PASS test_qt6_datavis3d
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

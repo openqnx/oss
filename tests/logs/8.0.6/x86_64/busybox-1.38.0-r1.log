@@ -1,0 +1,39 @@
+# busybox 1.38.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:00:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u busybox qnx-test-busybox qnx-port-tests
+(1/3) Installing busybox (1.38.0-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-busybox (1.0-r1)
+OK: 9932 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_busybox
+     == busybox ==
+       info BusyBox v1.38.0 (2026-11-25 10:02:13 UTC) multi-call binary.
+       ok   --list: 144 applets
+       ok   ash: script (function, loop, case, expansions)
+       ok   sha256sum 'abc'
+       ok   md5sum 'abc'
+       ok   sort | uniq -c
+       ok   cut -d: -f2 and tac
+       ok   factor 360
+       ok   expr 7 \* 6
+       ok   seq 1 3 10
+       ok   tar -czf / -xzf round trip (diff -r identical)
+       ok   tar -tzf lists both files
+       ok   unxz of a known .xz
+       ok   gzip -9 / gunzip round trip
+       ok   bzip2 / bunzip2 round trip
+       ok   diff -u finds the changed line
+       ok   find -name '*.txt' | wc -l
+       ok   grep -E -o
+     PASS busybox
+PASS test_busybox
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

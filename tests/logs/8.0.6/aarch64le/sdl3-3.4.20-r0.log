@@ -1,28 +1,26 @@
 # sdl3 3.4.20-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:52:36Z   packages from: apk:local-dists
+# date: 2026-11-24T22:44:01Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u sdl3 qnx-test-sdl3 qnx-port-tests
-( 1/16) Installing qnx-port-tests (1.0-r0)
-( 2/16) Installing libiconv (1.18-r0)
-( 3/16) Installing libxau (1.0.12-r0)
-( 4/16) Installing libxdmcp (1.1.5-r0)
-( 5/16) Installing libxcb (1.17.0-r0)
-( 6/16) Installing libx11 (1.8.14-r0)
-( 7/16) Installing libxfixes (6.0.2-r0)
-( 8/16) Installing libxrender (0.9.13-r0)
-( 9/16) Installing libxcursor (1.2.3-r0)
-(10/16) Installing libxext (1.3.7-r0)
-(11/16) Installing libxi (1.8.4-r0)
-(12/16) Installing libxrandr (1.5.5-r0)
-(13/16) Installing libxscrnsaver (1.2.5-r0)
-(14/16) Installing libxtst (1.2.6-r0)
-(15/16) Installing sdl3 (3.4.20-r0)
-(16/16) Installing qnx-test-sdl3 (1.0-r0)
-OK: 18.8 MiB in 21 packages
+( 1/14) Installing libxau (1.0.12-r0)
+( 2/14) Installing libxdmcp (1.1.5-r0)
+( 3/14) Installing libxcb (1.17.0-r0)
+( 4/14) Installing libx11 (1.8.14-r0)
+( 5/14) Installing libxfixes (6.0.2-r0)
+( 6/14) Installing libxrender (0.9.13-r0)
+( 7/14) Installing libxcursor (1.2.3-r0)
+( 8/14) Installing libxext (1.3.7-r0)
+( 9/14) Installing libxi (1.8.4-r0)
+(10/14) Installing libxrandr (1.5.5-r0)
+(11/14) Installing libxscrnsaver (1.2.5-r0)
+(12/14) Installing libxtst (1.2.6-r0)
+(13/14) Installing sdl3 (3.4.20-r0)
+(14/14) Installing qnx-test-sdl3 (1.0-r0)
+OK: 143.5 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_sdl3
      == sdl3 ==
@@ -49,7 +47,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_s
        info converted 32 bytes: 0 0 | 0.5 0.5 | -0.5
        ok   sample values converted and duplicated
        ok   two threads, return codes, atomic sum 2000
-       info 4 logical CPU core(s)
+       info 2 logical CPU core(s)
        info video driver: dummy
        ok   video subsystem on the dummy driver
        ok   window + renderer

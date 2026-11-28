@@ -1,0 +1,36 @@
+# cpuinfo 0_git20240417-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:39:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u cpuinfo qnx-test-cpuinfo qnx-port-tests
+(1/3) Installing cpuinfo (0_git20240417-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-cpuinfo (1.0-r1)
+OK: 9.9 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cpuinfo
+     == cpuinfo ==
+       ok   cpuinfo_initialize
+       info 2 processor(s), 1 core(s), 1 cluster(s), 1 package(s); syspage num_cpu 2, sysconf 2
+       ok   processor count = syspage num_cpu
+       ok   processor count = sysconf(_SC_NPROCESSORS_ONLN)
+       ok   1 <= packages <= clusters <= cores <= processors
+       ok   package 0 has processors
+       info package 0: "Cortex-A57", 2 processor(s), 1 core(s)
+       ok   processors of all packages add up
+       ok   every processor has a core, cluster and package
+       info core 0: vendor 3, uarch 0x300357, 62500000 Hz
+       info current processor: found
+       ok   current processor is one of them
+       info L1d caches: 1 (32768 bytes, line 64), L2: 1, max cache 0 bytes
+       ok   aarch64: NEON (Advanced SIMD)
+       info dot product 0, SVE 0
+     PASS cpuinfo
+PASS test_cpuinfo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

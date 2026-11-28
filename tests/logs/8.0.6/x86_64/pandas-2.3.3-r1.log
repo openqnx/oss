@@ -1,0 +1,26 @@
+# pandas 2.3.3-r1 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:57:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pandas qnx-test-pandas qnx-port-tests
+(1/6) Installing pandas (2.3.3-r1)
+(2/6) Installing python3-six (1.17.0-r1)
+(3/6) Installing python3-dateutil (2.9.0_p0-r1)
+(4/6) Installing python3-pytz (2026.6-r1)
+(5/6) Installing python3-tzdata (2026.6-r1)
+(6/6) Installing qnx-test-pandas (1.0-r1)
+OK: 2591.9 MiB in 279 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pandas
+FAIL test_pandas (rc=1)
+     == pandas ==
+     /usr/local/bin/qnx-port-tests/test_pandas[73]: python3: cannot execute - No such file or directory
+     FAIL pandas (rc=126)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_pandas
+
+RESULT: FAIL

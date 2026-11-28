@@ -1,6 +1,6 @@
 # vim 9.2.1382-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T11:48:28Z   packages from: apk:local-dists
+# date: 2026-11-24T13:37:46Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -23,10 +23,10 @@ $ apk add -u vim qnx-test-vim qnx-port-tests
 (15/40) Installing bzip2 (1.0.8-r0)
 (16/40) Installing libpng (1.6.59-r0)
 (17/40) Installing freetype (2.15.0-r0)
-(18/40) Installing fontconfig (2.15.0-r0)
-(19/40) Installing libffi (3.4.6-r0)
+(18/40) Installing fontconfig (2.18.4-r0)
+(19/40) Installing libffi (3.8.1-r0)
 (20/40) Installing pcre2 (10.49-r0)
-(21/40) Installing glib (2.82.4-r0)
+(21/40) Installing glib (2.90.1-r1)
 (22/40) Installing libxau (1.0.12-r0)
 (23/40) Installing libxdmcp (1.1.5-r0)
 (24/40) Installing libxcb (1.17.0-r0)
@@ -42,12 +42,12 @@ $ apk add -u vim qnx-test-vim qnx-port-tests
 (34/40) Installing libsodium (1.0.22-r0)
 (35/40) Installing fribidi (1.0.18-r0)
 (36/40) Installing libxft (2.3.9-r0)
-(37/40) Installing pango (1.54.0-r0)
-(38/40) Installing wayland (1.24.0-r0)
+(37/40) Installing pango (1.56.4-r0)
+(38/40) Installing wayland (1.26.0-r0)
 (39/40) Installing vim (9.2.1382-r0)
 (40/40) Installing qnx-test-vim (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 221.0 MiB in 45 packages
+Executing glib-2.90.1-r1.trigger
+OK: 222.2 MiB in 45 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vim
      == vim ==

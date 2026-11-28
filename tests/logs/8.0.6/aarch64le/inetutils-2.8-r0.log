@@ -1,0 +1,30 @@
+# inetutils 2.8-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-25T04:11:57Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u inetutils qnx-test-inetutils qnx-port-tests
+(1/3) Installing inetutils (2.8-r0)
+(2/3) Installing qnx-test-inetutils-inetd (1.0-r0)
+(3/3) Installing qnx-test-inetutils (1.0-r4)
+OK: 839.2 MiB in 98 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_inetutils
+     == inetutils ==
+       ok   telnet, ftp, ping, traceroute, hostname, whois, logger, telnetd, ftpd: GNU inetutils 2.8
+       ok   hostname = uname -n (v806-a64)
+       info telnet session 1: 6 s
+       info session 1 was hung up before its shell answered (first session after devc-pty started); running it again
+       info telnet session 2: 10 s
+       ok   telnet connected to telnetd on <ip>:24253
+       ok   a command typed into telnet ran in telnetd's pty shell (echo TEL""NET-42 printed TELNET-42)
+       ok   ping -c 2 <ip>: 2 transmitted, 2 received
+       ok   traceroute <ip>: hop 1 is <ip>
+     PASS inetutils
+PASS test_inetutils
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

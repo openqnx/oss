@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 0 |
 | Build dependencies | [`python3`](../python3/) [`numpy`](../numpy/) [`opencv`](../opencv/) [`curl`](../curl/) [`lz4`](../lz4/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`cyclonedds`](../cyclonedds/) [`console_bridge`](../console_bridge/) [`libyaml`](../libyaml/) [`yaml-cpp`](../yaml-cpp/) [`zstd`](../zstd/) [`benchmark`](../benchmark/) [`tinyxml2`](../tinyxml2/) |
-| Run-time dependencies | [`benchmark`](../benchmark/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`libyaml`](../libyaml/) [`lz4`](../lz4/) [`opencv`](../opencv/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`benchmark`](../benchmark/) [`console_bridge`](../console_bridge/) [`curl`](../curl/) [`cyclonedds`](../cyclonedds/) [`fastcdr`](../fastcdr/) [`fastdds`](../fastdds/) [`lz4`](../lz4/) [`opencv`](../opencv/) [`python3`](../python3/) [`sqlite`](../sqlite/) [`tinyxml2`](../tinyxml2/) [`yaml-cpp`](../yaml-cpp/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_ros2`](../../tests/src/) |
 
@@ -226,7 +226,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH ros2`.
 
 ### 5. What it installs
 
-24058 files under `/usr/local`.
+24222 files under `/usr/local`.
 
 The complete list is `stage/<arch>/.manifest/ros2` after a build.
 

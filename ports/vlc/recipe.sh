@@ -1,5 +1,5 @@
-VERSION=3.0.21; GIT=https://code.videolan.org/videolan/vlc.git; REF=3.0.21
-# VLC 3.0.21 with qnx-ports' QNX support (patches/: a Screen + EGL/GLES2 video
+VERSION=3.0.24; GIT=https://code.videolan.org/videolan/vlc.git; REF=3.0.24
+# VLC 3.0.24 with qnx-ports' QNX support (patches/: a Screen + EGL/GLES2 video
 # output, QNX fixes in the core and modules, and QNX recipes in VLC's contrib
 # system). Built the way the fork's qnx/ makefiles do it:
 #   1. ./bootstrap; fetch every contrib tarball (VLC's contrib system checks
@@ -7,11 +7,13 @@ VERSION=3.0.21; GIT=https://code.videolan.org/videolan/vlc.git; REF=3.0.21
 #   2. build protoc natively from the contrib protobuf (the cross build of the
 #      protobuf contrib needs a matching protoc);
 #   3. build the contribs for the target, then VLC against them.
-# Audio output modules are off (ALSA's uses IEC958 rates QNX's alsa-lib does
-# not define; Pulse, sndio and JACK do not exist on QNX).
+# Audio output: the ALSA module, on the SDP's libasound (an ALSA-compatible
+# API, playing through io-snd); patches/0066 defines the IEC958 rate codes
+# its headers lack. There is no alsa.pc and pkg-config is confined to the
+# contrib tree, so configure gets ALSA_CFLAGS/ALSA_LIBS directly. Pulse,
+# sndio and JACK do not exist on QNX.
 # The Qt GUI is left out (it needs a Qt 5 contrib build): libvlc, the plugins
-# and the command-line player (cvlc) are built. Audio output is not supported
-# on QNX yet (upstream of this port).
+# and the command-line player (cvlc) are built.
 # Beyond its contribs, VLC links these components' shared libraries (found on
 # the toolchain's default library path), so its package depends on them.
 DEPS="bzip2 libiconv lz4 openssl xz zstd"
@@ -25,11 +27,14 @@ do_patch() {
   # own installs: the contribs then went to the build host's /usr/local
   # ("mkdir: cannot create directory /usr/local/share/aclocal"). Unset it.
   ( cd "$h/contrib" && "$SRCROOT/contrib/bootstrap" && env -u PREFIX make fetch-all ) || return 1
-  # host protoc from the contrib protobuf, with the "don't build protoc" patch reverted
+  # host protoc from the contrib protobuf (built with CMake since 3.0.22): the
+  # contrib comments out libprotoc/protoc in cmake/CMakeLists.txt; put them
+  # back and build only the protoc target for the build machine
   ( cd "$h/contrib" && env -u PREFIX make protobuf && cd protobuf && \
-    patch -p1 -R < "$SRCROOT/contrib/src/protobuf/dont-build-protoc.patch" && autoreconf -vif && \
-    ./configure --prefix="$PWD/install" && make -C src protoc && make -C src install && \
-    cp install/bin/protoc "$h/protoc" ) || return 1
+    sed -i -e 's,#include(libprotoc,include(libprotoc,' -e 's,#include(protoc,include(protoc,' cmake/CMakeLists.txt && \
+    cmake -S cmake -B host-build -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_WITH_ZLIB=OFF \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build host-build --target protoc -j"$(nproc)" && cp host-build/protoc "$h/protoc" ) || return 1
 }
 # The contribs find each other through the pkg-config paths VLC's contrib
 # Makefile sets; env.sh's PKG_CONFIG_* (this tree's staging) must not apply --
@@ -62,15 +67,16 @@ do_configure() {
   CFLAGS="-D_QNX_SOURCE -O2" CXXFLAGS="-D_QNX_SOURCE -O2" CC="qcc -V$QCC_TARGET" CXX="q++ -V${QCC_TARGET}_cxx" \
   EGL_CFLAGS="-DDUMMY_EGL_CFLAG" EGL_LIBS="-lEGL -lscreen" \
   GLES2_CFLAGS="-DDUMMY_GLES2_CFLAG" GLES2_LIBS="-lEGL -lGLESv2 -lscreen" PROTOC="$h/protoc" \
+  ALSA_CFLAGS=" " ALSA_LIBS="-lasound" \
   "$S/configure" --host="$(_vlc_host)" --build=x86_64-linux-gnu --prefix="$PREFIX" \
     --with-contrib="$B/contrib/../$(_vlc_host)" --disable-a52 --disable-xcb --disable-sdl-image --enable-gles2 \
     --disable-qt --disable-skins2 --disable-lua --disable-vdpau \
-    --disable-alsa --disable-pulse --disable-sndio --disable-jack --enable-run-as-root
+    --enable-alsa --disable-pulse --disable-sndio --disable-jack --enable-run-as-root
 }
 # --enable-run-as-root: QNX targets usually run everything as root, and vlc
 # otherwise stops with "VLC is not supposed to be run as root".
 # Video on QNX Screen: egl_qnx + gles2 draw into a window from qnx_window
-# (patches/0002), the Screen window provider for the command-line player.
+# (patches/0061), the Screen window provider for the command-line player.
 do_build() { env -u PKG_CONFIG_SYSROOT_DIR -u PKG_CONFIG_PATH PKG_CONFIG_LIBDIR="$B/$(_vlc_host)/lib/pkgconfig" make -C "$B/build" -j"$(nproc)" $(_vlc_jobserver); }
 # vlc-plugin.pc carries -L for the contrib tree in the build directory (where
 # libintl/libiconv were found): meaningless on any other machine, and

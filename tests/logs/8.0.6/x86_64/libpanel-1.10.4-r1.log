@@ -1,0 +1,89 @@
+# libpanel 1.10.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T12:46:11Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libpanel qnx-test-libpanel qnx-port-tests
+( 1/48) Installing brotli (1.2.1-r0)
+( 2/48) Installing libpng (1.6.59-r0)
+( 3/48) Installing freetype (2.15.0-r0)
+( 4/48) Installing fontconfig (2.18.4-r0)
+( 5/48) Installing pcre2 (10.49-r0)
+( 6/48) Installing glib (2.90.1-r1)
+( 7/48) Installing libxau (1.0.12-r0)
+( 8/48) Installing libxdmcp (1.1.5-r0)
+( 9/48) Installing libxcb (1.17.0-r0)
+(10/48) Installing libx11 (1.8.14-r0)
+(11/48) Installing libxext (1.3.7-r0)
+(12/48) Installing libxrender (0.9.13-r0)
+(13/48) Installing lzo (2.10-r0)
+(14/48) Installing pixman (0.46.4-r0)
+(15/48) Installing cairo (1.18.6-r0)
+(16/48) Installing graphene (1.10.8-r0)
+(17/48) Installing fribidi (1.0.18-r0)
+(18/48) Installing libjpeg-turbo (3.2.1-r0)
+(19/48) Installing gdk-pixbuf (2.44.8-r0)
+(20/48) Installing graphite2 (1.3.15-r0)
+(21/48) Installing icu (76.1-r0)
+(22/48) Installing harfbuzz (<ip>-r0)
+(23/48) Installing libepoxy (1.5.10-r0)
+(24/48) Installing libdeflate (1.26-r0)
+(25/48) Installing libwebp (1.6.0-r0)
+(26/48) Installing libtiff (4.7.2-r0)
+(27/48) Installing libxml2 (2.13.5-r0)
+(28/48) Installing libxkbcommon (1.8.1-r0)
+(29/48) Installing libxft (2.3.9-r0)
+(30/48) Installing pango (1.56.4-r0)
+(31/48) Installing wayland (1.26.0-r0)
+(32/48) Installing gtk4 (4.16.13-r0)
+(33/48) Installing c-ares (1.34.9-r0)
+(34/48) Installing libidn2 (2.3.8-r0)
+(35/48) Installing nghttp2 (1.71.0-r0)
+(36/48) Installing curl (8.23.0-r0)
+(37/48) Installing libfyaml (0.9.6-r0)
+(38/48) Installing libxmlb (0.3.30-r0)
+(39/48) Installing appstream (1.2.3-r0)
+(40/48) Installing libadwaita (1.6.10-r1)
+(41/48) Installing libpanel (1.10.4-r1)
+(42/48) Installing font-dejavu (2.37-r0)
+(43/48) Installing libsfdo (0.1.4-r0)
+(44/48) Installing lcms2 (2.16-r0)
+(45/48) Installing wlroots (0.20.2-r0)
+(46/48) Installing xkeyboard-config (2.49-r0)
+(47/48) Installing labwc (0.20.3-r0)
+(48/48) Installing qnx-test-libpanel (1.0-r1)
+Executing glib-2.90.1-r1.trigger
+Executing python3-3.14.0-r1.trigger
+OK: 336.9 MiB in 82 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libpanel
+     == libpanel ==
+       info libpanel 1.10.4
+       ok   labwc (headless) Wayland socket appeared
+       ok   gtk_init_check on labwc
+       ok   panel types registered
+       info position: {'depth': <uint32 3>, 'column': <uint32 2>, 'area': <'start'>, 'row': <uint32 1>}
+       ok   PanelPosition round trip through a GVariant
+       ok   a new position is indeterminate, a set one is not
+       ok   PanelSession restored from its GVariant
+       ok   session item: module, metadata (uri, line) and position restored
+     
+     (process:401522711): libpanel-WARNING **: 12:46:09.192: PanelDropControls added without a dock, this cannot work.
+     
+     (process:401522711): libpanel-WARNING **: 12:46:09.192: PanelDropControls added without a dock, this cannot work.
+       ok   window with a dock, a grid and a frame mapped
+       info grid: 1 column(s), 1 frame(s)
+       ok   grid holds the widgets in frames
+       ok   widget title and modified flag
+       ok   frame with two pages
+       ok   frame switches to page A
+       ok   panel_widget_raise brings page B forward
+       ok   a closed page leaves the frame
+     PASS libpanel
+PASS test_libpanel
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

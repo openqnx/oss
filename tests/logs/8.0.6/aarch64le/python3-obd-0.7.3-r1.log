@@ -1,0 +1,73 @@
+# python3-obd 0.7.3-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T19:32:45Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-obd qnx-test-python3-canapps qnx-port-tests
+( 1/27) Installing bzip2 (1.0.8-r1)
+( 2/27) Installing expat (2.6.4-r1)
+( 3/27) Installing gdbm (1.26-r1)
+( 4/27) Installing libiconv (1.19.1-r1)
+( 5/27) Installing libunistring (1.5-r1)
+( 6/27) Installing ncurses (6.6-r1)
+( 7/27) Installing gettext (0.22.5-r1)
+( 8/27) Installing libffi (3.8.1-r1)
+( 9/27) Installing readline (8.3-r1)
+(10/27) Installing sqlite (3.47.2-r1)
+(11/27) Installing xz (5.8.4-r1)
+(12/27) Installing python3 (3.14.0-r2)
+(13/27) Installing python3-typing-extensions (4.16.0-r1)
+(14/27) Installing python3-flexcache (0.3-r1)
+(15/27) Installing python3-flexparser (0.4-r1)
+(16/27) Installing python3-platformdirs (4.14.8-r1)
+(17/27) Installing python3-pint (0.26.2-r1)
+(18/27) Installing python3-pyserial (3.5-r1)
+(19/27) Installing python3-obd (0.7.3-r1)
+(20/27) Installing qnx-port-tests (1.0-r1)
+(21/27) Installing python3-packaging (25.0-r1)
+(22/27) Installing python3-wrapt (2.5.2-r1)
+(23/27) Installing qnx-socketcan (1.0-r1)
+(24/27) Installing python3-can (4.6.1-r1)
+(25/27) Installing libpcap (1.11.0-r1)
+(26/27) Installing python3-scapy (2.8.0-r1)
+(27/27) Installing qnx-test-python3-canapps (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 145.0 MiB in 32 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_canapps
+     == python3-canapps ==
+       ok   pint: 100 km/h is 62.137 mph
+       ok   pint: 3 m + 4 cm is 3040.0 millimeter
+       ok   pint: metre to second raises DimensionalityError
+       ok   pint: 25 degC is 298.15 K
+       ok   pint-convert 100 kph mph prints 62.137...: '100 kilometer_per_hour = 62.1371192237 mph'
+       ok   obd: connection on /dev/ttyp4 reaches 'Car Connected'
+       ok   obd: protocol 6, ISO 15765-4 (CAN 11/500)
+       ok   obd: the supported PID bitmap is decoded (44 commands)
+       ok   obd: RPM 2E E0 is 3000 rpm
+       ok   obd: SPEED 0x64 is 100 km/h, 62.137 mph
+       ok   obd: COOLANT_TEMP 0x7B is 83 degC
+       ok   obd: adapter voltage 12.5 V
+       ok   obd: an unsupported PID gives a null response
+       ok   obd: the adapter saw ATZ ATE0 ATH1 ATL0 ATRV ATSP0 ... 010C
+       ok   scapy: CAN 123#010203 builds and dissects
+       ok   scapy: extended frame 18FECA80 (flag bit 31)
+       ok   scapy: CAN FD frame with 12 bytes and BRS
+       ok   scapy: rdcandump reads two frames with their time stamps
+       ok   scapy: the frames cross a pcap file (LINKTYPE_CAN_SOCKETCAN)
+       ok   scapy: UDS ReadDataByIdentifier builds 22 F1 90; 62 F1 90 dissects as its positive response
+       ok   scapy: a 15-byte ISO-TP message fragments into FF 10 0F and two CFs
+       ok   scapy: CANSocket (python-can, qnx-socketcan) sends and receives 123#010203
+       ok   scapy: ISOTPSoftSocket pair: UDS request 22 F1 90, segmented 20-byte response
+       ok   scapy: interfaces ['enc0', 'lo0', 'pflog0', 'pfsync0', 'vtnet0'], <ip> is routed to lo0
+       ok   scapy: sr1 ICMP echo on lo0 through /dev/bpf is answered
+       ok   scapy: a sniffer with the filter "icmp" (libpcap) sees request and reply: ['Loopback / IP / ICMP <ip> > <ip> echo-request 0 / Raw', 'Loopback / IP / ICMP <ip> > <ip> echo-reply 0 / Raw'] None
+     FAILS 0
+     PASS python3-canapps
+PASS test_python3_canapps
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

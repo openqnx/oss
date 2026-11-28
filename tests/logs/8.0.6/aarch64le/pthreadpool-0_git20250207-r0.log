@@ -1,6 +1,6 @@
 # pthreadpool 0_git20250207-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:17:13Z   packages from: apk:local-dists
+# date: 2026-11-24T15:42:00Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -20,7 +20,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_p
        ok   parallelize_2d: every cell of 37x53 visited once
        ok   parallelize_2d_tile_2d (8x16 tiles): every cell once more
        ok   parallelize_1d_tile_1d: tile sizes add up to the range
-       info thread mask 7
+       info thread mask 5
        ok   thread ids are within 0..3
        ok   NULL pool runs serially
      PASS pthreadpool

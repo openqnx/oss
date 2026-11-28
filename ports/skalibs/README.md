@@ -139,12 +139,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH skalibs`.
 
 ### 5. What it installs
 
-103 files under `/usr/local`: 3 shared-library entries, 90 headers.
+106 files under `/usr/local`: 3 shared-library entries, 93 headers.
 
 ```
 /usr/local/lib/libskarnet.so
-/usr/local/lib/libskarnet.so.2.14
-/usr/local/lib/libskarnet.so.2.14.5.1
+/usr/local/lib/libskarnet.so.2.16
+/usr/local/lib/libskarnet.so.2.16.0.0
 ```
 
 The complete list is `stage/<arch>/.manifest/skalibs` after a build.

@@ -1,6 +1,6 @@
 # tcpdump 4.99.7-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:52:46Z   packages from: apk:local-dists
+# date: 2026-11-24T22:58:35Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -8,14 +8,14 @@
 $ apk add -u tcpdump qnx-test-tcpdump qnx-port-tests
 (1/5) Installing qnx-port-tests (1.0-r0)
 (2/5) Installing qnx-test-tcpdump-mkpcap (1.0-r0)
-(3/5) Installing libpcap (1.10.5-r0)
+(3/5) Installing libpcap (1.11.0-r0)
 (4/5) Installing tcpdump (4.99.7-r0)
 (5/5) Installing qnx-test-tcpdump (1.0-r0)
-OK: 13.4 MiB in 10 packages
+OK: 13.5 MiB in 10 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_tcpdump
      == tcpdump ==
-       info tcpdump version 4.99.7 libpcap version 1.10.5 
+       info tcpdump version 4.99.7 libpcap version 1.11.0 (64-bit time_t, with netmap support) 
        ok   capture file written (248 bytes)
        ok   three packets decoded: DNS A? qnx.example., ICMP echo, TCP SYN
        ok   -vv: IP header fields, UDP and TCP checksums verified

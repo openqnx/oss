@@ -1,13 +1,16 @@
-VERSION=2.44.4
-# 2.44 is the last series that still renders with Cairo: 2.46 switched the GTK
-# port to Skia, which brings its own graphics stack and hard-requires GBM.
-TARBALL=https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz
-SHA256=2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796
+VERSION=2.54.3
+# Since 2.46 the GTK port renders with Skia, built from the copy in
+# Source/ThirdParty/skia (static, CPU raster here); Cairo is still linked, but
+# only for GTK's own API.  GBM is optional: without it the web process draws
+# into shared-memory buffers (or, with compositing off, paints without it).
+TARBALL=https://webkitgtk.org/releases/webkitgtk-2.54.3.tar.xz
+SHA256=2779c1b46f88762e8400650271ba14452dc4e30b37059981552d8b562b7d0862
 # Also linked at run time (found by scripts/gen-dependency-index): gst-plugins-bad lcms2 libavif libjxl libsecret
 DEPS="gtk3 glib cairo fontconfig freetype libgcrypt libtasn1 harfbuzz icu
       libjpeg-turbo libepoxy libxml2 libpng sqlite zlib libwebp libxslt
       libsoup gstreamer gst-plugins-base hyphen woff2 libx11 wayland
-      wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret"
+      wayland-protocols libxkbcommon at-spi2-core gst-plugins-bad lcms2 libavif libjxl libsecret
+      expat"
 BUILDSYS=cmake
 # What QNX cannot provide, and why each is off:
 #   USE_GBM / USE_LIBDRM  - no DRM/KMS on QNX; these are the buffer-sharing path
@@ -17,6 +20,10 @@ BUILDSYS=cmake
 #   ENABLE_GAMEPAD        - libmanette, which is udev-based.
 #   JOURNALD_LOG          - systemd.
 #   ENABLE_INTROSPECTION  - would have to run target binaries.
+#   ENABLE_SPEECH_SYNTHESIS - needs Flite or libspiel, neither ported.
+#   USE_SYSPROF_CAPTURE   - Linux profiler tracing; the bundled copy needs
+#                           <sys/syscall.h> (memfd_create), which QNX lacks.
+# (ENABLE_GPU_PROCESS follows USE_GBM off by itself.)
 # GL entry points come through libepoxy, which resolves them at run time, so no
 # GL library is linked here.
 CMAKE_ARGS_EXTRA=( -DPORT=GTK -DUSE_GTK4=OFF
@@ -25,6 +32,7 @@ CMAKE_ARGS_EXTRA=( -DPORT=GTK -DUSE_GTK4=OFF
                    -DUSE_GBM=OFF -DUSE_LIBDRM=OFF -DENABLE_WEBGL=OFF
                    -DENABLE_BUBBLEWRAP_SANDBOX=OFF -DENABLE_GAMEPAD=OFF
                    -DENABLE_JOURNALD_LOG=OFF -DENABLE_INTROSPECTION=OFF
+                   -DENABLE_SPEECH_SYNTHESIS=OFF -DUSE_SYSPROF_CAPTURE=OFF
                    -DENABLE_DOCUMENTATION=OFF -DENABLE_MINIBROWSER=OFF
                    -DENABLE_API_TESTS=OFF -DENABLE_SPELLCHECK=OFF
                    -DUSE_LIBHYPHEN=ON -DUSE_WOFF2=ON -DUSE_SYSTEM_MALLOC=ON
@@ -56,5 +64,25 @@ CMAKE_ARGS_EXTRA=( -DPORT=GTK -DUSE_GTK4=OFF
                    # built whatever -DENABLE_API_TESTS says.  The list repeats the
                    # toolchain's default because a -D replaces it rather than adding.
                    -DCMAKE_CXX_STANDARD_LIBRARIES="-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify -lregex"
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                   -DCMAKE_CXX_STANDARD=20 )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+# (No CMAKE_CXX_STANDARD here: OptionsCommon.cmake sets C++23 itself, and
+# WebKitCommon.cmake requires GCC >= 12.2 -- exactly the SDP's compiler.)
+
+# The GLib API headers are generated through unifdef.  USE_SYSTEM_UNIFDEF=OFF
+# would build the bundled copy with the cross compiler -- a QNX binary the build
+# cannot run -- and the build image has no unifdef.  Build the bundled source
+# for the build machine instead and hand it to CMake.
+do_configure() {
+  local HB="$B/host-unifdef"
+  mkdir -p "$HB" || return 1
+  ( unset CC CFLAGS CPPFLAGS LDFLAGS
+    gcc -std=gnu99 -O2 -o "$HB/unifdef" "$S/Source/ThirdParty/unifdef/unifdef.c" ) \
+    || { echo "native unifdef build failed"; return 1; }
+  cmake -S "$S" -B "$B" -G Ninja \
+    -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_DIR/qnx-$QNX_ARCH.cmake" \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
+    -DUSE_SYSTEM_UNIFDEF=ON -DUNIFDEF_EXECUTABLE="$HB/unifdef" \
+    "${CMAKE_ARGS_EXTRA[@]}"
+}
+

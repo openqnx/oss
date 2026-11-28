@@ -1,0 +1,111 @@
+# xfdesktop 4.20.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T01:21:26Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfdesktop qnx-test-xfdesktop qnx-port-tests
+( 1/71) Installing expat (2.6.4-r1)
+( 2/71) Installing dbus (1.16.4-r1)
+( 3/71) Installing libiconv (1.19.1-r1)
+( 4/71) Installing libunistring (1.5-r1)
+( 5/71) Installing ncurses (6.6-r1)
+( 6/71) Installing gettext (0.22.5-r1)
+( 7/71) Installing libffi (3.8.1-r1)
+( 8/71) Installing pcre2 (10.49-r1)
+( 9/71) Installing glib (2.90.1-r3)
+(10/71) Installing hicolor-icon-theme (0.18-r1)
+(11/71) Installing brotli (1.2.1-r1)
+(12/71) Installing bzip2 (1.0.8-r1)
+(13/71) Installing libpng (1.6.59-r1)
+(14/71) Installing freetype (2.15.0-r1)
+(15/71) Installing fontconfig (2.18.4-r1)
+(16/71) Installing libxau (1.0.12-r1)
+(17/71) Installing libxdmcp (1.1.5-r1)
+(18/71) Installing libxcb (1.17.0-r1)
+(19/71) Installing libx11 (1.8.14-r1)
+(20/71) Installing libxext (1.3.7-r1)
+(21/71) Installing libxrender (0.9.13-r1)
+(22/71) Installing lzo (2.10-r1)
+(23/71) Installing pixman (0.46.4-r1)
+(24/71) Installing cairo (1.18.6-r1)
+(25/71) Installing font-dejavu (2.37-r1)
+(26/71) Installing libsfdo (0.1.4-r1)
+(27/71) Installing xz (5.8.4-r1)
+(28/71) Installing libxml2 (2.13.5-r1)
+(29/71) Installing libxkbcommon (1.8.1-r1)
+(30/71) Installing fribidi (1.0.18-r1)
+(31/71) Installing graphite2 (1.3.15-r1)
+(32/71) Installing icu (76.1-r1)
+(33/71) Installing harfbuzz (<ip>-r1)
+(34/71) Installing libxft (2.3.9-r1)
+(35/71) Installing pango (1.56.4-r1)
+(36/71) Installing wayland (1.26.0-r1)
+(37/71) Installing lcms2 (2.16-r1)
+(38/71) Installing wlroots (0.20.2-r1)
+(39/71) Installing xkeyboard-config (2.49-r1)
+(40/71) Installing labwc (0.20.3-r1)
+(41/71) Installing libjpeg-turbo (3.2.1-r1)
+(42/71) Installing gdk-pixbuf (2.44.8-r3)
+(43/71) Installing shared-mime-info (2.4-r1)
+(44/71) Installing librsvg (2.60.3-r0)
+(45/71) Installing libxfce4util (4.20.1-r1)
+(46/71) Installing xfconf (4.20.0-r1)
+(47/71) Installing libxi (1.8.4-r1)
+(48/71) Installing libxtst (1.2.6-r1)
+(49/71) Installing at-spi2-core (2.54.2-r1)
+(50/71) Installing libepoxy (1.5.10-r1)
+(51/71) Installing libxcomposite (0.4.7-r1)
+(52/71) Installing libxfixes (6.0.2-r1)
+(53/71) Installing libxcursor (1.2.3-r1)
+(54/71) Installing libxdamage (1.1.7-r1)
+(55/71) Installing libxinerama (1.1.6-r1)
+(56/71) Installing libxrandr (1.5.5-r1)
+(57/71) Installing gtk3 (3.24.43-r1)
+(58/71) Installing libxfce4ui (4.20.2-r1)
+(59/71) Installing exo (4.20.0-r1)
+(60/71) Installing garcon (4.20.0-r1)
+(61/71) Installing gtk-layer-shell (0.10.1-r1)
+(62/71) Installing libnotify (0.8.9-r1)
+(63/71) Installing libxfce4windowing (4.20.7-r1)
+(64/71) Installing libyaml (0.2.6-r1)
+(65/71) Installing libexif (0.6.26-r1)
+(66/71) Installing libice (1.1.2-r1)
+(67/71) Installing libsm (1.2.6-r1)
+(68/71) Installing xfce4-panel (4.20.8-r1)
+(69/71) Installing thunar (4.20.10-r1)
+(70/71) Installing xfdesktop (4.20.2-r1)
+(71/71) Installing qnx-test-xfdesktop (1.0-r3)
+Executing glib-2.90.1-r3.trigger
+Executing gdk-pixbuf-2.44.8-r3.trigger
+Executing shared-mime-info-2.4-r1.trigger
+OK: 220.9 MiB in 77 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfdesktop
+     == xfdesktop ==
+       ok   labwc up (headless)
+       ok   private D-Bus session bus
+       info This is xfdesktop version 4.20.2, running on Xfce 4.20.
+       ok   xfdesktop --version: 4.20.2
+       ok   xfdesktop --help lists --reload, --arrange and --quit
+       ok   default background /usr/local/share/backgrounds/xfce/xfce-x.svg is an SVG and renders (librsvg)
+       ok   xfdesktop owns org.xfce.xfdesktop on the session bus
+       ok   xfdesktop running on the layer-shell background surface
+       ok   labwc still running
+       ok   xfconf channel xfce4-desktop
+       info properties: 1
+       ok   xfdesktop --reload
+       ok   xfdesktop --next
+       ok   xfdesktop --arrange
+       ok   icon positions saved as YAML, with both files of ~/Desktop
+       ok   backdrop setting written through xfconf
+       ok   xfdesktop took the change and is still running
+       ok   xfdesktop --quit ended it
+       ok   xfdesktop-settings --help
+     PASS xfdesktop
+PASS test_xfdesktop
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

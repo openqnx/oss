@@ -2,37 +2,22 @@
 # AppStream software metadata (metainfo/catalog XML and YAML). Dependency of
 # libadwaita, whose AdwAboutDialog/AdwAboutWindow can be filled in from an
 # application's metainfo.
-# The 1.0 series: 1.1 and later replace libyaml with libfyaml, which is not
-# ported here, and libadwaita needs nothing newer.
-VERSION=1.0.6
-TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz
-SHA256=db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d
-DEPS="glib curl libxml2 libyaml libxmlb zstd"
+# Since 1.1 AppStream reads and writes YAML with libfyaml (not libyaml).
+VERSION=1.2.3
+TARBALL=https://www.freedesktop.org/software/appstream/releases/AppStream-1.2.3.tar.xz
+SHA256=8daa01a4d66c73f036aa92af9bf76abfe8408eaa76fcda6ca54fa8ef5b93ed17
+DEPS="glib curl libxml2 libfyaml libxmlb zstd wayland bash-completion"   # bash-completion: contrib/meson.build requires its .pc (completion dir)
 BUILDSYS=meson
-# The tarball's paths start with ./AppStream-1.0.6/ (one level more than usual).
-SUBDIR=AppStream-1.0.6
+# The tarball's paths start with ./AppStream-<version>/ (one level more than
+# usual); the patches name that directory too.
+SUBDIR=AppStream-$VERSION
 # No systemd, stemming (libstemmer), Qt, GObject introspection/Vala, SVG
-# icon rendering (the compose module) or documentation.
+# icon rendering (the compose module, which has it now), BLAKE3 checksums (libblake3 is not
+# ported) or documentation; -Dman=false: the build machine has no DocBook XSL
+# (patches/0002 made the man page optional before 1.1 had this option).
+# Display detection (wayland): only wayland-client's headers at build time,
+# the library is loaded at run time when it is there.
 MESON_ARGS_EXTRA=( -Dstemming=false -Dsystemd=false -Dvapi=false -Dqt=false -Dcompose=false
-                   -Dapt-support=false -Dgir=false -Dsvg-support=false -Dzstd-support=true
-                   -Ddocs=false -Dapidocs=false -Dinstall-docs=false )
-# meson looks libyaml up as pkg-config's yaml-0.1, and the libyaml component
-# (built with CMake) installs no yaml-0.1.pc. A minimal one, private to this
-# build, names the staged library; appstream.pc itself does not require it
-# (AppStream strips its Requires.private).
-do_configure() {
-  mkdir -p "$B/qnx-pc" && cat > "$B/qnx-pc/yaml-0.1.pc" <<PC || return 1
-prefix=$PREFIX
-libdir=\${prefix}/lib
-includedir=\${prefix}/include
-Name: LibYAML
-Description: Library to parse and emit YAML
-Version: 0.2.5
-Cflags: -I\${includedir}
-Libs: -L\${libdir} -lyaml
-PC
-  PKG_CONFIG_PATH="$B/qnx-pc${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" \
-  meson setup "$B" "$S" --cross-file "$QNX_MESON_DIR/meson-$arch.ini" \
-    --native-file "$QNX_MESON_DIR/meson-native.ini" \
-    --prefix="$PREFIX" --buildtype=release --default-library=both "${MESON_ARGS_EXTRA[@]}"
-}
+                   -Dapt-support=false -Dgir=false -Dzstd-support=true
+                   -Dblake3-support=false -Ddisplay-detection=wayland
+                   -Ddocs=false -Dapidocs=false -Dinstall-docs=false -Dman=false )

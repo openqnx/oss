@@ -1,0 +1,32 @@
+# libogg 1.3.6-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:43:47Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libogg qnx-test-libogg qnx-port-tests
+(1/3) Installing libogg (1.3.6-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libogg (1.0-r1)
+OK: 9623 KiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libogg
+     == libogg ==
+       ok   packed 44 bits into 6 bytes
+       ok   LSb-first bit order (first bytes a5 91)
+       ok   bit reader returns the values
+       ok   MSb-first packer
+       info 50 packets -> 5 pages, 17605 bytes
+       ok   pages written, capture pattern OggS
+       ok   all packets re-read intact through the sync layer
+       ok   BOS/EOS flags and final granule position
+       info after corruption: 4 good page(s), 1 hole(s)
+       ok   corrupted page detected (CRC mismatch -> hole)
+       ok   all other pages still verified
+     PASS libogg
+PASS test_libogg
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

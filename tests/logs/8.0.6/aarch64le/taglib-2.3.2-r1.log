@@ -1,0 +1,23 @@
+# taglib 2.3.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:28:28Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u taglib qnx-test-taglib qnx-port-tests
+(1/2) Installing taglib (2.3.2-r1)
+(2/2) Installing qnx-test-taglib (1.0-r1)
+OK: 11.8 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_taglib
+     == taglib ==
+       ok   TagLib 2.x
+       ok   save tag
+       ok   read tag back
+     PASS taglib
+PASS test_taglib
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

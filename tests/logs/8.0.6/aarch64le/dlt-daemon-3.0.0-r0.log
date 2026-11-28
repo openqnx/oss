@@ -1,0 +1,51 @@
+# dlt-daemon 3.0.0-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-24T08:08:31Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dlt-daemon qnx-test-dlt-daemon qnx-port-tests
+(1/4) Installing libjson (0.8_git20260512-r0)
+(2/4) Installing dlt-daemon (3.0.0-r0)
+(3/4) Installing qnx-port-tests (1.0-r0)
+(4/4) Installing qnx-test-dlt-daemon (1.0-r1)
+OK: 10.9 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dlt_daemon
+     == dlt-daemon ==
+       ok   scratch directory
+       ok   dlt-daemon listens on <ip> and created /tmp/dlt
+       info dlt-daemon pid 3891223 on port 13616
+       ok   five messages logged through libdlt
+       ok   dlt_file_open on the received file
+     [  675.320848]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.337371]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.352227]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.368812]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.385049]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.399679]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.415006]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.431687]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.449999]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.467265]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.484104]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.501385]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.517849]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.532761]~DLT~3887126~INFO     ~dlt_message_payload()
+     [  675.547743]~DLT~3887126~INFO     ~dlt_message_payload()
+       info 15 message(s) in the file, ours: 1 1 1 1 1
+       ok  [   each of qnx-dlt-msg 0..4 received exactly once675
+     . 611061 o]k~ D L Tapp ID QNXT / context ID TCTX on our messages~
+     3887126~CRITICAL ~Housekeeper thread encountered error condition
+     [  675.639431]~DLT~3887126~INFO     ~Socket /tmp/dlt cannot be opened (errno=2). Retrying later...
+       info 11 2026/11/24 08:06:16.426690    6737644 003 QNX1 QNXT TCTX log info V 2 [qnx-dlt-msg 3
+       ok   dlt-convert -a prints "... QNXT TCTX log info ... qnx-dlt-msg 3"
+       info dlt-convert -c: Total number of messages: 15
+       ok   dlt-convert -c counts the messages
+     PASS dlt-daemon
+PASS test_dlt_daemon
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

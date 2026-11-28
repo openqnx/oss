@@ -162,7 +162,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gthumb`.
 
 ### 5. What it installs
 
-1202 files under `/usr/local`, 1 programs, 118 headers.
+1201 files under `/usr/local`, 1 programs, 118 headers.
 
 ```
 /usr/local/bin/gthumb

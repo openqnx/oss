@@ -101,7 +101,11 @@ fi
 if [ ! -x "$HT/bin/trietool" ]; then
   echo "== building native trietool (libdatrie) -> $HT"
   src="$WS/src/libdatrie-native"
-  [ -d "$src" ] || git clone -q --depth 1 -b v0.2.13 \
+  # The same release and patches as the cross build (ports/libdatrie): a
+  # hard-coded tag here went stale when the port moved to 0.2.14 and dropped
+  # its 0.2.13 patch, and a fresh workspace then failed in autoreconf.
+  ref=$(. "$WS/ports/libdatrie/recipe.sh" >/dev/null 2>&1; echo "$REF")
+  [ -d "$src" ] || git clone -q --depth 1 -b "${ref:?no REF in ports/libdatrie/recipe.sh}" \
       https://github.com/tlwg/libdatrie.git "$src"
   aux=$(ls -d /usr/share/automake-*/ 2>/dev/null | head -1)
   mkdir -p "$src/build-aux"
@@ -109,10 +113,11 @@ if [ ! -x "$HT/bin/trietool" ]; then
     [ -e "$aux/$f" ] && cp -f "$aux/$f" "$src/build-aux/$f"
   done
   chmod u+x "$src/build-aux/"* 2>/dev/null
-  # Same AX_COMPARE_VERSION problem as the cross build: the macro comes from
-  # autoconf-archive, which is not installed, so autoreconf refuses. Apply the
-  # recipe's patch here too.
-  ( cd "$src" && patch -p1 -N -r - < "$WS/ports/libdatrie/patches/0001-drop-ax-compare-version.patch" ) >/dev/null 2>&1
+  for p in "$WS"/ports/libdatrie/patches/*.patch; do
+    [ -f "$p" ] || continue
+    ( cd "$src" && patch -p1 -N -r - < "$p" ) >/dev/null 2>&1 \
+      || { echo "!! native trietool: patch $(basename "$p") does not apply"; exit 1; }
+  done
   b="$WS/build/host/libdatrie"; rm -rf "$b"; mkdir -p "$b"
   ( unset CC CXX CPP CFLAGS CXXFLAGS CPPFLAGS LDFLAGS PKG_CONFIG_LIBDIR PKG_CONFIG_SYSROOT_DIR
     cd "$src" && autoreconf -fi \

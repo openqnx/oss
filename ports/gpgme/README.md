@@ -199,7 +199,7 @@ PASS gpgme
    - gpgme_check_version: 2.3.1
    - OpenPGP engine usable
    - scratch GNUPGHOMEs
-   - OpenPGP engine: gpg 2.4.9
+   - OpenPGP engine: gpg 2.5.24
    - context on the first scratch home
    - ed25519 key created without passphrase (40-hex fingerprint)
    - gpgme_get_key by fingerprint

@@ -1,0 +1,39 @@
+# wayland-protocols 1.50-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T12:15:37Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u wayland-protocols qnx-test-wayland-protocols qnx-port-tests
+(1/6) Installing qnx-port-tests (1.0-r1)
+(2/6) Installing expat (2.6.4-r1)
+(3/6) Installing libffi (3.8.1-r1)
+(4/6) Installing wayland (1.26.0-r1)
+(5/6) Installing wayland-protocols (1.50-r1)
+(6/6) Installing qnx-test-wayland-protocols (1.0-r2)
+OK: 10.7 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wayland_protocols
+     == wayland-protocols ==
+       ok   share/wayland-protocols installed
+       info 58 XML files: 58 protocols, 166 interfaces, 449 requests, 337 events
+       ok   every protocol XML file parses (50 or more)
+       ok   each file is a protocol of interfaces, requests, events
+       ok   stable protocols: xdg_shell, viewporter, linux_dmabuf_v1
+       info xdg_wm_base version 7
+       ok   xdg_wm_base version >= 6
+       ok   xdg_wm_base: get_xdg_surface, ping/pong
+       ok   xdg_toplevel: state enum (maximized 1, fullscreen 2), configure event
+       ok   xdg-shell-enum.h: the same values
+       ok   viewporter and linux-dmabuf enum headers
+       info generated xdg_toplevel_interface: 14 methods, 4 events, version 7
+       ok   scanned code: xdg_wm_base interface, same version
+       ok   scanned code: xdg_toplevel requests/events match the XML
+       ok   get_xdg_surface takes a wl_surface (resolved against libwayland-client)
+     PASS wayland-protocols
+PASS test_wayland_protocols
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

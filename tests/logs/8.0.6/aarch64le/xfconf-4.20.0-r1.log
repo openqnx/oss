@@ -1,0 +1,63 @@
+# xfconf 4.20.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T01:17:35Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u xfconf qnx-test-xfconf qnx-port-tests
+( 1/12) Installing expat (2.6.4-r1)
+( 2/12) Installing dbus (1.16.4-r1)
+( 3/12) Installing libiconv (1.19.1-r1)
+( 4/12) Installing libunistring (1.5-r1)
+( 5/12) Installing ncurses (6.6-r1)
+( 6/12) Installing gettext (0.22.5-r1)
+( 7/12) Installing libffi (3.8.1-r1)
+( 8/12) Installing pcre2 (10.49-r1)
+( 9/12) Installing glib (2.90.1-r3)
+(10/12) Installing libxfce4util (4.20.1-r1)
+(11/12) Installing xfconf (4.20.0-r1)
+(12/12) Installing qnx-test-xfconf (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 48.9 MiB in 18 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_xfconf
+     == xfconf ==
+       info xfconf-query --version -> 0: xfconf-query 4.20.0
+       ok   xfconf-query --version: 4.20.0
+       info xfconfd --version -> 0: Xfconfd 4.20.0
+       ok   xfconfd --version: 4.20.0
+       ok   private dbus-daemon listening on a UNIX socket
+       ok   xfconfd serves the seeded channel: /greeting
+       ok   seeded int /answer = 42
+       ok   seeded nested bool /nested/flag = true
+       ok   xfconf-query -n creates /app/name in a new channel
+       ok   string property created and read back
+       ok   int property created, then changed
+       ok   array property (2 strings)
+       ok   -l lists the channel's properties
+       info qnx-new.xml saved by xfconfd
+       info xfconf-query -l: Channels:   qnx-new   qnx-seed
+       ok   -l lists both channels (after the delayed save)
+       ok   -r resets a property (now reported missing)
+       ok   xfconf_init on the private bus
+       ok   libxfconf reads what xfconf-query wrote
+       ok   libxfconf get_int
+       ok   libxfconf set double/bool/uint
+       ok   xfconf-query reads the double back
+       ok   ... the bool
+       ok   ... the uint
+       ok   string list round trip
+       ok   has_property
+       ok   xfconf_list_channels includes qnx-seed
+       info property-changed seen 1 time(s), value "after"
+       ok   property-changed signal for xfconf-query's change
+       ok   xfconfd exits on SIGTERM
+       ok   qnx-new.xml written with the new values
+       ok   qnx-seed.xml saved without the reset /answer
+     PASS xfconf
+PASS test_xfconf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

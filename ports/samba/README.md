@@ -215,7 +215,18 @@ do_build() {
 do_install() { cd "$B" && _smb_env make install DESTDIR="$STAGE" || return 1
   local d; for d in log/samba lib/samba lib/samba/private lock/samba cache/samba run/samba; do
     mkdir -p "$STAGE$PREFIX/var/$d" && : > "$STAGE$PREFIX/var/$d/.keep" || return 1; done
-  chmod 700 "$STAGE$PREFIX/var/lib/samba/private"; }
+  chmod 700 "$STAGE$PREFIX/var/lib/samba/private"
+  # smb.conf(5) prints the defaults of the "dns update", "gpo update", "kcc"
+  # and "spn update" commands as the build tree's scripts (samba_dnsupdate,
+  # samba-gpupdate, samba_kcc, samba_spnupdate in source4/scripting/bin; the
+  # docs are made from the source tree before install); the programs' own
+  # defaults are the installed $PREFIX/sbin/... (testparm -sv on the target).
+  # The page is made to say so.
+  local m="$STAGE$PREFIX/share/man/man5/smb.conf.5"
+  if [ -f "$m" ]; then
+    sed -i "s|/[^ \\]*/source4/scripting/bin/|$PREFIX/sbin/|g" "$m" &&
+      ! grep -q "/source4/scripting/bin/" "$m" || return 1
+  fi; }
 ```
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
@@ -422,7 +433,18 @@ do_build() {
 do_install() { cd "$B" && _smb_env make install DESTDIR="$STAGE" || return 1
   local d; for d in log/samba lib/samba lib/samba/private lock/samba cache/samba run/samba; do
     mkdir -p "$STAGE$PREFIX/var/$d" && : > "$STAGE$PREFIX/var/$d/.keep" || return 1; done
-  chmod 700 "$STAGE$PREFIX/var/lib/samba/private"; }
+  chmod 700 "$STAGE$PREFIX/var/lib/samba/private"
+  # smb.conf(5) prints the defaults of the "dns update", "gpo update", "kcc"
+  # and "spn update" commands as the build tree's scripts (samba_dnsupdate,
+  # samba-gpupdate, samba_kcc, samba_spnupdate in source4/scripting/bin; the
+  # docs are made from the source tree before install); the programs' own
+  # defaults are the installed $PREFIX/sbin/... (testparm -sv on the target).
+  # The page is made to say so.
+  local m="$STAGE$PREFIX/share/man/man5/smb.conf.5"
+  if [ -f "$m" ]; then
+    sed -i "s|/[^ \\]*/source4/scripting/bin/|$PREFIX/sbin/|g" "$m" &&
+      ! grep -q "/source4/scripting/bin/" "$m" || return 1
+  fi; }
 ```
 </details>
 

@@ -1,0 +1,53 @@
+# gyp 0.22.4-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:42:22Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gyp qnx-test-python3-buildtools qnx-port-tests
+( 1/24) Installing bzip2 (1.0.8-r1)
+( 2/24) Installing expat (2.6.4-r1)
+( 3/24) Installing gdbm (1.26-r1)
+( 4/24) Installing libiconv (1.19.1-r1)
+( 5/24) Installing libunistring (1.5-r1)
+( 6/24) Installing ncurses (6.6-r1)
+( 7/24) Installing gettext (0.22.5-r1)
+( 8/24) Installing libffi (3.8.1-r1)
+( 9/24) Installing readline (8.3-r1)
+(10/24) Installing sqlite (3.47.2-r1)
+(11/24) Installing xz (5.8.4-r1)
+(12/24) Installing python3 (3.14.0-r2)
+(13/24) Installing python3-packaging (25.0-r1)
+(14/24) Installing python3-setuptools (80.8.0-r1)
+(15/24) Installing gyp (0.22.4-r1)
+(16/24) Installing qnx-port-tests (1.0-r1)
+(17/24) Installing openblas (0.3.34-r1)
+(18/24) Installing numpy (2.5.5-r1)
+(19/24) Installing python3-gast (0.7.0-r1)
+(20/24) Installing python3-beniget (0.5.1-r1)
+(21/24) Installing python3-ply (3.11-r1)
+(22/24) Installing pythran (0.19.0-r1)
+(23/24) Installing scons (4.11.1-r1)
+(24/24) Installing qnx-test-python3-buildtools (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 223.7 MiB in 29 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_buildtools
+     == python3-buildtools ==
+       ok   scons builds app from two sources with the fake compiler
+       ok   scons ran each step once
+       ok   second scons run: up to date, nothing run
+       ok   a changed source rebuilds exactly its object and the link
+       ok   scons -c removes the targets
+       ok   gyp --format=ninja: sources, define and the executable
+       ok   gyp --format=make: Makefile and hello.target.mk
+       ok   pythran -E translates the kernel to C++
+       ok   the kernel itself runs as Python (32.0)
+       ok   pythran-config --cflags names the installed headers
+     PASS python3-buildtools
+PASS test_python3_buildtools
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,41 @@
+# lynx 2.9.2-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:45:25Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u lynx qnx-test-lynx qnx-port-tests
+( 1/10) Installing brotli (1.2.1-r1)
+( 2/10) Installing bzip2 (1.0.8-r1)
+( 3/10) Installing libiconv (1.19.1-r1)
+( 4/10) Installing libunistring (1.5-r1)
+( 5/10) Installing ncurses (6.6-r1)
+( 6/10) Installing gettext (0.22.5-r1)
+( 7/10) Installing libidn2 (2.3.8-r1)
+( 8/10) Installing lynx (2.9.2-r1)
+( 9/10) Installing qnx-port-tests (1.0-r1)
+(10/10) Installing qnx-test-lynx (1.0-r1)
+OK: 29.3 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lynx
+     == lynx ==
+       info Lynx Version 2.9.2 (31 May 2024)
+       ok   lynx -version: 2.9.2
+       ok   -version names OpenSSL
+       ok   -dump: the <h1> heading
+       ok   paragraph wrapped within 60 columns
+       ok   list items as "* item"
+       ok   entities: &eacute; -> UTF-8 \u00e9, &amp; -> &
+       ok   link [1] and the References list
+       ok   table cells rendered
+       ok   -nolist: no References section
+       ok   -source: the file byte for byte
+       ok   -dump http://<ip>:<port>/page.html renders the served page
+       ok   the server saw GET /page.html with User-Agent Lynx/2.9.2
+     PASS lynx
+PASS test_lynx
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -104,7 +104,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH uriparser`.
 ```
 /usr/local/lib/liburiparser.so
 /usr/local/lib/liburiparser.so.1
-/usr/local/lib/liburiparser.so.1.0.31
+/usr/local/lib/liburiparser.so.1.2.3
 /usr/local/bin/uriparse
 ```
 

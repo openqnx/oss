@@ -1,0 +1,38 @@
+webkitgtk: AcceleratedBackingStore::BufferEGLImage::create without GBM.
+
+DMABufBuffer::createEGLImage(GLDisplay&, const Attributes&) is defined
+inside #if USE(GBM) in DMABufBuffer.cpp, but
+AcceleratedBackingStore::BufferEGLImage::create calls it unconditionally,
+so a GTK build without GBM -- QNX has none -- fails to link
+libwebkit2gtk-4.1.so ("undefined reference to
+WebCore::DMABufBuffer::createEGLImage"). Without GBM no DMABuf buffer can
+reach this path; log and return no buffer there.
+
+Upstream-Status: Pending
+
+--- a/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp
++++ b/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp
+@@ -399,6 +399,7 @@
+     if (!glDisplay)
+         return nullptr;
+ 
++#if USE(GBM)
+     auto* image = DMABufBuffer::createEGLImage(*glDisplay, dmaBufAttributes);
+     if (!image) {
+         WTFLogAlways("Failed to create EGL image from DMABuf of size %dx%d", size.width(), size.height());
+@@ -406,6 +407,15 @@
+     }
+ 
+     return adoptRef(*new BufferEGLImage(webPage, id, surfaceID, size, usage, WTF::move(dmaBufAttributes), image));
++#else
++    UNUSED_PARAM(webPage);
++    UNUSED_PARAM(id);
++    UNUSED_PARAM(surfaceID);
++    UNUSED_PARAM(usage);
++    UNUSED_PARAM(dmaBufAttributes);
++    WTFLogAlways("Cannot create an EGL image from a DMABuf of size %dx%d: built without GBM", size.width(), size.height());
++    return nullptr;
++#endif
+ }
+ 
+ AcceleratedBackingStore::BufferEGLImage::BufferEGLImage(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes, EGLImage image)

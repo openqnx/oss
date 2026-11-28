@@ -1,0 +1,50 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Thu, 13 Mar 2025 14:28:49 -0400
+Subject: [PATCH 27/60] Get contrib/libass building for QNX
+
+libass needed to recognize QNX's host identifier so that it could
+configure how to run the assembler.
+
+3.0.24: libass 0.17.5 matches $host_os instead of the host triplet, so the
+patch now adds nto-qnx* to that case (configure.ac and the shipped
+configure).
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/ass/0001-qnx-support.patch
++++ b/contrib/src/ass/0001-qnx-support.patch
+@@ -0,0 +1,22 @@
++--- a/configure
+++++ b/configure
++@@ -16519,7 +16519,7 @@
++ 
++ fi
++                      ;; #(
++-  linux*|solaris*|haiku*|gnu*) :
+++  linux*|solaris*|haiku*|gnu*|nto-qnx*) :
++ 
++                         ASFLAGS="$ASFLAGS -f elf$BITTYPE -DSTACK_ALIGNMENT=16"
++                      ;; #(
++--- a/configure.ac
+++++ b/configure.ac
++@@ -308,7 +308,7 @@
++                             ASFLAGS="$ASFLAGS -DPREFIX"
++                         ])
++                     ],
++-                    [linux*|solaris*|haiku*|gnu*], [
+++                    [linux*|solaris*|haiku*|gnu*|nto-qnx*], [
++                         ASFLAGS="$ASFLAGS -f elf$BITTYPE -DSTACK_ALIGNMENT=16"
++                     ],
++                     [dragonfly*|*bsd*], [
+--- a/contrib/src/ass/rules.mak
++++ b/contrib/src/ass/rules.mak
+@@ -37,6 +37,9 @@
+ 	$(UNPACK)
+ 	$(UPDATE_AUTOCONFIG)
+ 	$(call pkg_static,"libass.pc.in")
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/ass/0001-qnx-support.patch
++endif
+ 	$(MOVE)
+ 
+ DEPS_ass = freetype2 $(DEPS_freetype2) fribidi $(DEPS_fribidi) iconv $(DEPS_iconv) harfbuzz $(DEPS_harfbuzz)

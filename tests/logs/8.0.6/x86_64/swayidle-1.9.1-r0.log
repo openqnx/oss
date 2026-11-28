@@ -1,0 +1,62 @@
+# swayidle 1.9.1-r0 -- FAIL
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-24T17:11:30Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swayidle qnx-test-swayidle qnx-port-tests
+( 1/30) Installing brotli (1.2.1-r0)
+( 2/30) Installing libpng (1.6.59-r0)
+( 3/30) Installing freetype (2.15.0-r0)
+( 4/30) Installing fontconfig (2.18.4-r0)
+( 5/30) Installing libxau (1.0.12-r0)
+( 6/30) Installing libxdmcp (1.1.5-r0)
+( 7/30) Installing libxcb (1.17.0-r0)
+( 8/30) Installing libx11 (1.8.14-r0)
+( 9/30) Installing libxext (1.3.7-r0)
+(10/30) Installing libxrender (0.9.13-r0)
+(11/30) Installing lzo (2.10-r0)
+(12/30) Installing pixman (0.46.4-r0)
+(13/30) Installing cairo (1.18.6-r0)
+(14/30) Installing font-dejavu (2.37-r0)
+(15/30) Installing libsfdo (0.1.4-r0)
+(16/30) Installing libxml2 (2.13.5-r0)
+(17/30) Installing libxkbcommon (1.8.1-r0)
+(18/30) Installing fribidi (1.0.18-r0)
+(19/30) Installing graphite2 (1.3.15-r0)
+(20/30) Installing icu (76.1-r0)
+(21/30) Installing harfbuzz (<ip>-r0)
+(22/30) Installing libxft (2.3.9-r0)
+(23/30) Installing pango (1.56.4-r0)
+(24/30) Installing wayland (1.26.0-r0)
+(25/30) Installing lcms2 (2.16-r0)
+(26/30) Installing wlroots (0.20.2-r0)
+(27/30) Installing xkeyboard-config (2.49-r0)
+(28/30) Installing labwc (0.20.3-r0)
+(29/30) Installing swayidle (1.9.1-r0)
+(30/30) Installing qnx-test-swayidle (1.0-r1)
+Executing python3-3.14.0-r1.trigger
+OK: 311.0 MiB in 69 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swayidle
+FAIL test_swayidle (rc=1)
+     == swayidle ==
+       ok   swayidle -h prints the usage
+       ok   without a compositor: exit 253 (2026-11-24 17:11:14 - [Line 1089] Unable to connect to the compositor. If your compositor is running, check or set the WAYLAND_DISPLAY environment variable.)
+       ok   labwc up (headless)
+       ok   swayidle running (ext-idle-notify-v1 bound)
+       ok   after 2 s: the 1 s timeout ran, the 3 s one not yet
+       ok   the 3 s timeout ran after it
+       ok   SIGTERM ran the pending resume command
+       ok   swayidle ended with status 0
+       FAIL config run: 2026-11-24 17:11:17 - [Line 1021] Shell expansion error on line 2: unknown error (-1)
+     2026-11-24 17:11:17 - [Line 1073] Config file /tmp/qnxport-swayidle.n7MkTZ/cfg has errors, exiting. 
+       FAIL SIGUSR1: cat: ev2.log: No such file or directory 2026-11-24 17:11:17 - [Line 1021] Shell expansion error on line 2: unknown error (-1)
+     2026-11-24 17:11:17 - [Line 1073] Config file /tmp/qnxport-swayidle.n7MkTZ/cfg has errors, exiting.
+     FAIL swayidle (2 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_swayidle
+
+RESULT: FAIL

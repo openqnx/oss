@@ -1,0 +1,8 @@
+# oss-desktop: GSettings defaults of the session (vendor override; glib's apk
+# trigger compiles it with the schemas). A user's own setting still wins.
+# An override for a schema that is not installed is ignored with a warning.
+
+# Epiphany: do not ask "Set Web as your default browser?" -- the session's
+# default browser is set in xdg/xfce4/helpers.rc (WebBrowser=epiphany).
+[org.gnome.Epiphany]
+ask-for-default=false

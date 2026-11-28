@@ -1,22 +1,21 @@
 # mate-common 1.28.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:51:50Z   packages from: apk:local-dists
+# date: 2026-11-25T04:47:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u mate-common qnx-test-mate-common qnx-port-tests
-( 1/10) Installing libiconv (1.18-r0)
-( 2/10) Installing m4 (1.4.19-r0)
-( 3/10) Installing libxcrypt (4.4.38-r0)
-( 4/10) Installing perl (5.40.2-r0)
-( 5/10) Installing autoconf (2.72-r0)
-( 6/10) Installing automake (1.18-r0)
-( 7/10) Installing mate-common (1.28.0-r0)
-( 8/10) Installing qnx-port-tests (1.0-r0)
-( 9/10) Installing mate-common-dev (1.28.0-r0)
-(10/10) Installing qnx-test-mate-common (1.0-r0)
-OK: 77.8 MiB in 15 packages
+(1/9) Installing m4 (1.4.21-r0)
+(2/9) Installing libxcrypt (4.5.2-r0)
+(3/9) Installing perl (5.40.2-r0)
+(4/9) Installing autoconf (2.73-r1)
+(5/9) Installing automake (1.20-r0)
+(6/9) Installing mate-common (1.28.0-r0)
+(7/9) Upgrading qnx-port-tests (1.0-r0 -> 1.0-r1)
+(8/9) Installing mate-common-dev (1.28.0-r0)
+(9/9) Installing qnx-test-mate-common (1.0-r1)
+OK: 111.8 MiB in 23 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mate_common
      == mate_common ==

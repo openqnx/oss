@@ -1,21 +1,25 @@
 # e2fsprogs 1.47.4-r1 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:31:02Z   packages from: apk:local-dists
+# date: 2026-11-24T12:42:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u e2fsprogs qnx-test-e2fsprogs qnx-port-tests
-(1/4) Installing libuuid (2.42.4-r0)
-(2/4) Installing e2fsprogs (1.47.4-r1)
-(3/4) Installing qnx-port-tests (1.0-r0)
-(4/4) Installing qnx-test-e2fsprogs (1.0-r0)
-OK: 14.0 MiB in 9 packages
+(1/2) Installing e2fsprogs (1.47.4-r1)
+(2/2) Installing qnx-test-e2fsprogs (1.0-r0)
+OK: 185.0 MiB in 41 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_e2fsprogs
      == e2fsprogs ==
        ok   com_err: EXT2_ET_BAD_MAGIC = "Bad magic number in super-block"
        ok   com_err: EXT2_ET_FILE_NOT_FOUND = "File not found by ext2_lookup"
+     unknown symbol: tgoto referenced from libreadline.so.8
+     unknown symbol: tgetflag referenced from libreadline.so.8
+     unknown symbol: tgetstr referenced from libreadline.so.8
+     unknown symbol: tputs referenced from libreadline.so.8
+     unknown symbol: tgetent referenced from libreadline.so.8
+     unknown symbol: tgetnum referenced from libreadline.so.8
        ok   ss_create_invocation
        ok   ss_execute_line: greet hello world
        ok   ss_execute_line: alias with a quoted argument

@@ -9,4 +9,7 @@ DEPS="glib gtk3 dbus dbus-glib libxfce4util libxfce4ui xfconf gstreamer gst-plug
 RUNTIME_DEPS="dbus gst-plugins-good gst-plugins-bad gst-libav"
 BUILDSYS=meson
 # Wayland only, as the rest of this Xfce (libxfce4windowing --disable-x11).
+# patches/0001: video through gtksink (gst-plugins-good) -- upstream Parole
+# shows video only in an X11 overlay (ximagesink/xvimagesink), which a
+# Wayland-only desktop does not have; without it Parole did not start.
 MESON_ARGS_EXTRA=( -Dx11=disabled -Dwayland=enabled )

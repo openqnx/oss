@@ -1,25 +1,26 @@
 # patch 2.8.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:49:25Z   packages from: apk:local-dists
+# date: 2026-11-24T12:49:34Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u patch qnx-test-cli-tools qnx-port-tests
-( 1/13) Installing patch (2.8.1-r0)
-( 2/13) Installing ed (1.22.6-r0)
-( 3/13) Installing lzip (1.26-r0)
-( 4/13) Installing brotli (1.1.0-r0)
-( 5/13) Installing libidn2 (2.3.8-r0)
-( 6/13) Installing libtasn1 (4.19.0-r0)
-( 7/13) Installing nettle (3.10.1-r0)
-( 8/13) Installing unbound (1.24.1-r0)
-( 9/13) Installing gnutls (3.8.14-r1)
-(10/13) Installing libpsl (0.21.5-r0)
-(11/13) Installing pcre2 (10.44-r0)
-(12/13) Installing wget (1.25.0-r1)
-(13/13) Installing qnx-test-cli-tools (1.0-r0)
-OK: 487.1 MiB in 41 packages
+( 1/14) Installing patch (2.8.1-r0)
+( 2/14) Installing ed (1.22.6-r0)
+( 3/14) Installing lzip (1.26-r0)
+( 4/14) Installing brotli (1.2.1-r0)
+( 5/14) Installing gmp (6.3.0-r0)
+( 6/14) Installing libidn2 (2.3.8-r0)
+( 7/14) Installing libtasn1 (4.21.0-r0)
+( 8/14) Installing nettle (3.10.1-r0)
+( 9/14) Installing unbound (1.26.2-r0)
+(10/14) Installing gnutls (3.8.14-r1)
+(11/14) Installing libpsl (0.23.3-r0)
+(12/14) Installing pcre2 (10.49-r0)
+(13/14) Installing wget (1.25.0-r1)
+(14/14) Installing qnx-test-cli-tools (1.0-r0)
+OK: 198.4 MiB in 48 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_cli_tools
      == cli-tools ==
@@ -29,7 +30,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        ok   lzip: compressed (60890 -> 1313 bytes, LZIP magic)
        ok   lzip -t: integrity
        ok   lzip -d: identical
-       ok   wget: http://<ip>:8006/dists/8.0.6/x86_64/APKINDEX.tar.gz (151529 bytes, gzip)
+       ok   wget: http://<ip>:8006/dists/8.0.6/x86_64/APKINDEX.tar.gz (177938 bytes, gzip)
      PASS cli-tools
 PASS test_cli_tools
 --------------------------------------------

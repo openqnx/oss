@@ -1,4 +1,4 @@
-# tomlplusplus 3.4.0
+# tomlplusplus 3.5.1
 
 > Header-only TOML configuration file parser and serializer for C++17
 
@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| Upstream | https://github.com/marzer/tomlplusplus.git (tag `v3.4.0`) |
+| Upstream | https://github.com/marzer/tomlplusplus.git (tag `v3.5.1`) |
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -72,7 +72,7 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b v3.4.0 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b v3.5.1 --recurse-submodules --shallow-submodules \
     https://github.com/marzer/tomlplusplus.git src/tomlplusplus
 ```
 
@@ -86,16 +86,21 @@ None — the upstream source builds for QNX unmodified; everything QNX-specific 
 cmake -S src/tomlplusplus -B build/$QNX_ARCH/tomlplusplus -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$PWD/toolchain/qnx-$QNX_ARCH.cmake \
       -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF \
+      -Dtomlplusplus_REGENERATE=OFF
 cmake --build build/$QNX_ARCH/tomlplusplus -j$(nproc)
 DESTDIR=$STAGE cmake --install build/$QNX_ARCH/tomlplusplus
 ```
+
+Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
+
+- Header-only (the default; tomlplusplus_BUILD_LIB stays off). From a git checkout 3.5 reruns tools/regenerate.py at configure time to rewrite the shipped toml.hpp with whatever python3 cmake finds: install the headers as tagged instead.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH tomlplusplus`.
 
 ### 5. What it installs
 
-57 files under `/usr/local`, 52 headers.
+56 files under `/usr/local`, 50 headers.
 
 The complete list is `stage/<arch>/.manifest/tomlplusplus` after a build.
 
@@ -172,13 +177,17 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **3.4.0**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tomlplusplus=<version>`), sources in `ported/tomlplusplus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tomlplusplus`; port one with `scripts/port-update tomlplusplus`.
+This recipe builds **3.5.1**. Kept from earlier: `3.4.0` ([recipe and patches](versions/3.4.0/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add tomlplusplus=<version>`), sources in `ported/tomlplusplus/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates tomlplusplus`; port one with `scripts/port-update tomlplusplus`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=3.4.0; GIT=https://github.com/marzer/tomlplusplus.git; REF=v3.4.0
-CMAKE_ARGS_EXTRA=( )
+VERSION=3.5.1; GIT=https://github.com/marzer/tomlplusplus.git; REF=v3.5.1
+# Header-only (the default; tomlplusplus_BUILD_LIB stays off). From a git
+# checkout 3.5 reruns tools/regenerate.py at configure time to rewrite the
+# shipped toml.hpp with whatever python3 cmake finds: install the headers as
+# tagged instead.
+CMAKE_ARGS_EXTRA=( -Dtomlplusplus_REGENERATE=OFF )
 ```
 </details>
 

@@ -1,0 +1,942 @@
+QNX: the Dart VM on QNX Neutrino.
+
+Dart treats QNX like FreeBSD: a Linux-family host (DART_HOST_OS_LINUX) with
+DART_HOST_OS_QNX for the differences, and the Linux target ABI for snapshots.
+New: a poll(2) event handler (bin/eventhandler_qnx.*; QNX has no epoll with
+edge triggering and no timerfd), a signal handler for QNX's mcontext layout;
+QNX ways for the thread id, random bytes (/dev/urandom), the thread's stack
+(TLS), fstatat, d_type, bzero and the machine-check codes.
+
+Upstream-Status: QNX-specific
+
+diff --git a/engine/src/flutter/third_party/dart/runtime/BUILD.gn b/engine/src/flutter/third_party/dart/runtime/BUILD.gn
+index 9da80ef6..5febed62 100644
+--- a/engine/src/flutter/third_party/dart/runtime/BUILD.gn
++++ b/engine/src/flutter/third_party/dart/runtime/BUILD.gn
+@@ -31,7 +31,7 @@ config("dart_maybe_product_config") {
+     }
+     assert(!dart_debug)
+     defines += [ "PRODUCT" ]
+-    if (target_os == "linux") {
++    if (target_os == "linux" || target_os == "qnx") {
+       defines += [ "DART_DISABLE_TIMELINE" ]
+     }
+   }
+@@ -44,7 +44,8 @@ config("dart_product_config") {
+   cflags = []
+   if (!dart_debug) {
+     defines += [ "PRODUCT" ]
+-    if (dart_runtime_mode == "release" && target_os == "linux") {
++    if (dart_runtime_mode == "release" &&
++        (target_os == "linux" || target_os == "qnx")) {
+       defines += [ "DART_DISABLE_TIMELINE" ]
+     }
+   }
+@@ -127,6 +128,9 @@ config("dart_os_config") {
+     defines += [ "DART_TARGET_OS_MACOS_IOS" ]
+   } else if (target_os == "linux") {
+     defines += [ "DART_TARGET_OS_LINUX" ]
++  } else if (target_os == "qnx") {
++    # QNX: a POSIX/ELF target that the VM handles like Linux (as FreeBSD).
++    defines += [ "DART_TARGET_OS_LINUX" ]
+   } else if (target_os == "mac") {
+     defines += [ "DART_TARGET_OS_MACOS" ]
+   } else if (target_os == "win") {
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc b/engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc
+index 16a0c866..3ccc1b65 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc
+@@ -7,7 +7,9 @@
+ 
+ #include <errno.h>
+ #include <fcntl.h>
++#if !defined(DART_HOST_OS_QNX)
+ #include <sys/syscall.h>
++#endif
+ 
+ #include "bin/crypto.h"
+ #include "bin/fdutils.h"
+@@ -41,6 +43,9 @@ static bool GetRandomFromDev(intptr_t count, uint8_t* buffer) {
+ }
+ 
+ bool Crypto::GetRandomBytes(intptr_t count, uint8_t* buffer) {
++#if defined(DART_HOST_OS_QNX)
++  return GetRandomFromDev(count, buffer);
++#else
+   intptr_t bytes_read = 0;
+   do {
+     ssize_t res;
+@@ -60,6 +65,7 @@ bool Crypto::GetRandomBytes(intptr_t count, uint8_t* buffer) {
+   // interceptor for anyway.
+   MSAN_UNPOISON(buffer, count);
+   return true;
++#endif  // defined(DART_HOST_OS_QNX)
+ }
+ 
+ }  // namespace bin
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc b/engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc
+index 319caaa6..18042750 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc
+@@ -25,6 +25,12 @@
+ #include "platform/memory_sanitizer.h"
+ #include "platform/signal_blocker.h"
+ 
++#if defined(DART_HOST_OS_QNX)
++#define DART_DIRENT_TYPE(e) __qnx_dirent_type(e)
++#else
++#define DART_DIRENT_TYPE(e) ((e)->d_type)
++#endif
++
+ namespace dart {
+ namespace bin {
+ 
+@@ -32,7 +38,14 @@ static int fstatat64_fixed(int dirfd,
+                            const char* __restrict pathname,
+                            struct stat64* __restrict statbuf,
+                            int flags) {
++#if defined(DART_HOST_OS_QNX)
++  // QNX declares fstatat64() but libc does not export it; QNX is 64-bit only,
++  // so struct stat64 and struct stat have the same layout.
++  int result = ::fstatat(dirfd, pathname,
++                         reinterpret_cast<struct stat*>(statbuf), flags);
++#else
+   int result = ::fstatat64(dirfd, pathname, statbuf, flags);
++#endif
+   if (result == 0) {
+     // MSAN only intercepts the old symbol name.
+     MSAN_UNPOISON(statbuf, sizeof(*statbuf));
+@@ -142,7 +155,7 @@ ListType DirectoryListingEntry::Next(DirectoryListing* listing) {
+       done_ = true;
+       return kListError;
+     }
+-    switch (entry->d_type) {
++    switch (DART_DIRENT_TYPE(entry)) {
+       case DT_DIR:
+         if ((strcmp(entry->d_name, ".") == 0) ||
+             (strcmp(entry->d_name, "..") == 0)) {
+@@ -225,7 +238,7 @@ ListType DirectoryListingEntry::Next(DirectoryListing* listing) {
+ 
+       default:
+         // We should have covered all the bases. If not, let's get an error.
+-        FATAL("Unexpected d_type: %d\n", entry->d_type);
++        FATAL("Unexpected d_type: %d\n", DART_DIRENT_TYPE(entry));
+         return kListError;
+     }
+   }
+@@ -340,7 +353,7 @@ static bool DeleteRecursively(int dirfd,
+       return (status == 0) || (!fail_on_missing && (errno == ENOENT));
+     }
+     bool ok = false;
+-    switch (entry->d_type) {
++    switch (DART_DIRENT_TYPE(entry)) {
+       case DT_DIR:
+         ok = DeleteDir(dirfd, entry->d_name, path);
+         break;
+@@ -384,7 +397,7 @@ static bool DeleteRecursively(int dirfd,
+       }
+       default:
+         // We should have covered all the bases. If not, let's get an error.
+-        FATAL("Unexpected d_type: %d\n", entry->d_type);
++        FATAL("Unexpected d_type: %d\n", DART_DIRENT_TYPE(entry));
+         break;
+     }
+     if (!ok) {
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h
+index 7da269ca..2c8dc63f 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h
++++ b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h
+@@ -596,6 +596,8 @@ class DescriptorInfoMultipleMixin : public DI {
+ // The event handler delegation class is OS specific.
+ #if defined(DART_HOST_OS_FUCHSIA)
+ #include "bin/eventhandler_fuchsia.h"
++#elif defined(DART_HOST_OS_QNX)
++#include "bin/eventhandler_qnx.h"
+ #elif defined(DART_HOST_OS_LINUX) || defined(DART_HOST_OS_ANDROID)
+ #include "bin/eventhandler_linux.h"
+ #elif defined(DART_HOST_OS_MACOS)
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc
+index dd3aaa24..4fd14fe4 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc
+@@ -3,7 +3,7 @@
+ // BSD-style license that can be found in the LICENSE file.
+ 
+ #include "platform/globals.h"
+-#if defined(DART_HOST_OS_LINUX) || defined(DART_HOST_OS_ANDROID)
++#if (defined(DART_HOST_OS_LINUX) || defined(DART_HOST_OS_ANDROID)) && !defined(DART_HOST_OS_QNX)
+ 
+ #include "bin/eventhandler.h"
+ #include "bin/eventhandler_linux.h"
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.cc b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.cc
+new file mode 100644
+index 00000000..feecf43a
+--- /dev/null
++++ b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.cc
+@@ -0,0 +1,382 @@
++// Copyright (c) 2026, the Dart project authors.  Please see the AUTHORS file
++// for details. All rights reserved. Use of this source code is governed by a
++// BSD-style license that can be found in the LICENSE file.
++
++#include "platform/globals.h"
++#if defined(DART_HOST_OS_QNX)
++
++#include "bin/eventhandler.h"
++#include "bin/eventhandler_qnx.h"
++
++#include <errno.h>   // NOLINT
++#include <fcntl.h>   // NOLINT
++#include <poll.h>    // NOLINT
++#include <stdio.h>   // NOLINT
++#include <stdlib.h>  // NOLINT
++#include <string.h>  // NOLINT
++#include <unistd.h>  // NOLINT
++
++#include "bin/dartutils.h"
++#include "bin/fdutils.h"
++#include "bin/lockers.h"
++#include "bin/process.h"
++#include "bin/socket.h"
++#include "bin/thread.h"
++#include "bin/utils.h"
++#include "platform/hashmap.h"
++#include "platform/syslog.h"
++#include "platform/utils.h"
++
++namespace dart {
++namespace bin {
++
++intptr_t DescriptorInfo::GetPollEvents() {
++  intptr_t events = 0;
++  if ((Mask() & (1 << kInEvent)) != 0) {
++    events |= POLLIN;
++  }
++  if ((Mask() & (1 << kOutEvent)) != 0) {
++    events |= POLLOUT;
++  }
++  return events;
++}
++
++EventHandlerImplementation::EventHandlerImplementation()
++    : socket_map_(&SimpleHashMap::SamePointerValue, 16) {
++  intptr_t result = NO_RETRY_EXPECTED(pipe2(interrupt_fds_, O_CLOEXEC));
++  if (result != 0) {
++    FATAL("Pipe creation failed");
++  }
++  if (!FDUtils::SetNonBlocking(interrupt_fds_[0])) {
++    FATAL("Failed to set pipe fd non-blocking\n");
++  }
++  shutdown_ = false;
++  poll_capacity_ = 64;
++  poll_fds_ = reinterpret_cast<struct pollfd*>(
++      malloc(poll_capacity_ * sizeof(struct pollfd)));
++  poll_infos_ = reinterpret_cast<DescriptorInfo**>(
++      malloc(poll_capacity_ * sizeof(DescriptorInfo*)));
++  if (poll_fds_ == nullptr || poll_infos_ == nullptr) {
++    FATAL("Failed to allocate the poll set");
++  }
++}
++
++static void DeleteDescriptorInfo(void* info) {
++  DescriptorInfo* di = reinterpret_cast<DescriptorInfo*>(info);
++  di->Close();
++  delete di;
++}
++
++EventHandlerImplementation::~EventHandlerImplementation() {
++  socket_map_.Clear(DeleteDescriptorInfo);
++  close(interrupt_fds_[0]);
++  close(interrupt_fds_[1]);
++  free(poll_fds_);
++  free(poll_infos_);
++}
++
++DescriptorInfo* EventHandlerImplementation::GetDescriptorInfo(
++    intptr_t fd,
++    bool is_listening) {
++  ASSERT(fd >= 0);
++  SimpleHashMap::Entry* entry = socket_map_.Lookup(
++      GetHashmapKeyFromFd(fd), GetHashmapHashFromFd(fd), true);
++  ASSERT(entry != nullptr);
++  DescriptorInfo* di = reinterpret_cast<DescriptorInfo*>(entry->value);
++  if (di == nullptr) {
++    // If there is no data in the hash map for this file descriptor a
++    // new DescriptorInfo for the file descriptor is inserted.
++    if (is_listening) {
++      di = new DescriptorInfoMultiple(fd);
++    } else {
++      di = new DescriptorInfoSingle(fd);
++    }
++    entry->value = di;
++  }
++  ASSERT(fd == di->fd());
++  return di;
++}
++
++void EventHandlerImplementation::WakeupHandler(intptr_t id,
++                                               Dart_Port dart_port,
++                                               int64_t data) {
++  InterruptMessage msg;
++  msg.id = id;
++  msg.dart_port = dart_port;
++  msg.data = data;
++  // WriteToBlocking will write up to 512 bytes atomically, and since our msg
++  // is smaller than 512, we don't need a thread lock.
++  ASSERT(kInterruptMessageSize < PIPE_BUF);
++  intptr_t result =
++      FDUtils::WriteToBlocking(interrupt_fds_[1], &msg, kInterruptMessageSize);
++  if (result != kInterruptMessageSize) {
++    if (result == -1) {
++      FATAL("Interrupt message failure: %s", strerror(errno));
++    } else {
++      FATAL("Interrupt message failure: expected to write %" Pd
++            " bytes, but wrote %" Pd ".",
++            kInterruptMessageSize, result);
++    }
++  }
++}
++
++void EventHandlerImplementation::HandleInterruptFd() {
++  const intptr_t MAX_MESSAGES = kInterruptMessageSize;
++  InterruptMessage msg[MAX_MESSAGES];
++  ssize_t bytes = TEMP_FAILURE_RETRY_NO_SIGNAL_BLOCKER(
++      read(interrupt_fds_[0], msg, MAX_MESSAGES * kInterruptMessageSize));
++  for (ssize_t i = 0; i < bytes / kInterruptMessageSize; i++) {
++    if (msg[i].id == kTimerId) {
++      timeout_queue_.UpdateTimeout(msg[i].dart_port, msg[i].data);
++    } else if (msg[i].id == kShutdownId) {
++      shutdown_ = true;
++    } else {
++      ASSERT((msg[i].data & COMMAND_MASK) != 0);
++      Socket* socket = reinterpret_cast<Socket*>(msg[i].id);
++      RefCntReleaseScope<Socket> rs(socket);
++      if (socket->fd() == -1) {
++        continue;
++      }
++      DescriptorInfo* di =
++          GetDescriptorInfo(socket->fd(), IS_LISTENING_SOCKET(msg[i].data));
++      if (IS_COMMAND(msg[i].data, kShutdownReadCommand)) {
++        ASSERT(!di->IsListeningSocket());
++        // Close the socket for reading.
++        VOID_NO_RETRY_EXPECTED(shutdown(di->fd(), SHUT_RD));
++      } else if (IS_COMMAND(msg[i].data, kShutdownWriteCommand)) {
++        ASSERT(!di->IsListeningSocket());
++        // Close the socket for writing.
++        VOID_NO_RETRY_EXPECTED(shutdown(di->fd(), SHUT_WR));
++      } else if (IS_COMMAND(msg[i].data, kCloseCommand)) {
++        // Close the socket and free system resources and move on to next
++        // message.
++        if (IS_SIGNAL_SOCKET(msg[i].data)) {
++          Process::ClearSignalHandlerByFd(di->fd(), socket->isolate_port());
++        }
++        Dart_Port port = msg[i].dart_port;
++        if (port != ILLEGAL_PORT) {
++          di->RemovePort(port);
++        }
++        intptr_t fd = di->fd();
++        if (di->IsListeningSocket()) {
++          // We only close the socket file descriptor from the operating
++          // system if there are no other dart socket objects which
++          // are listening on the same (address, port) combination.
++          ListeningSocketRegistry* registry =
++              ListeningSocketRegistry::Instance();
++
++          MutexLocker locker(registry->mutex());
++
++          if (registry->CloseSafe(socket)) {
++            ASSERT(di->Mask() == 0);
++            socket_map_.Remove(GetHashmapKeyFromFd(fd),
++                               GetHashmapHashFromFd(fd));
++            di->Close();
++            delete di;
++          }
++          socket->CloseFd();
++        } else {
++          ASSERT(di->Mask() == 0);
++          socket_map_.Remove(GetHashmapKeyFromFd(fd), GetHashmapHashFromFd(fd));
++          di->Close();
++          delete di;
++          socket->CloseFd();
++        }
++
++        DartUtils::PostInt32(port, 1 << kDestroyedEvent);
++      } else if (IS_COMMAND(msg[i].data, kReturnTokenCommand)) {
++        di->ReturnTokens(msg[i].dart_port, TOKEN_COUNT(msg[i].data));
++      } else if (IS_COMMAND(msg[i].data, kSetEventMaskCommand)) {
++        // `events` can only have kInEvent/kOutEvent flags set.
++        intptr_t events = msg[i].data & EVENT_MASK;
++        ASSERT(0 == (events & ~(1 << kInEvent | 1 << kOutEvent)));
++        di->SetPortAndMask(msg[i].dart_port, msg[i].data & EVENT_MASK);
++      } else {
++        UNREACHABLE();
++      }
++    }
++  }
++}
++
++intptr_t EventHandlerImplementation::BuildPollSet() {
++  intptr_t n = 0;
++  poll_fds_[n].fd = interrupt_fds_[0];
++  poll_fds_[n].events = POLLIN;
++  poll_fds_[n].revents = 0;
++  poll_infos_[n] = nullptr;
++  n++;
++  for (SimpleHashMap::Entry* entry = socket_map_.Start(); entry != nullptr;
++       entry = socket_map_.Next(entry)) {
++    DescriptorInfo* di = reinterpret_cast<DescriptorInfo*>(entry->value);
++    if (di == nullptr || di->fd() < 0) {
++      continue;
++    }
++    intptr_t events = di->GetPollEvents();
++    if (events == 0) {
++      continue;
++    }
++    if (n == poll_capacity_) {
++      poll_capacity_ *= 2;
++      poll_fds_ = reinterpret_cast<struct pollfd*>(
++          realloc(static_cast<void*>(poll_fds_),
++                  static_cast<size_t>(poll_capacity_) * sizeof(struct pollfd)));
++      poll_infos_ = reinterpret_cast<DescriptorInfo**>(
++          realloc(static_cast<void*>(poll_infos_),
++                  static_cast<size_t>(poll_capacity_) * sizeof(DescriptorInfo*)));
++      if (poll_fds_ == nullptr || poll_infos_ == nullptr) {
++        FATAL("Failed to grow the poll set");
++      }
++    }
++    poll_fds_[n].fd = di->fd();
++    poll_fds_[n].events = static_cast<short>(events);
++    poll_fds_[n].revents = 0;
++    poll_infos_[n] = di;
++    n++;
++  }
++  return n;
++}
++
++intptr_t EventHandlerImplementation::GetEvents(intptr_t revents,
++                                               DescriptorInfo* di) {
++  if ((revents & POLLNVAL) != 0) {
++    // The descriptor is not open (any more): report it as closed.
++    return (1 << kCloseEvent);
++  }
++  if ((revents & POLLERR) != 0) {
++    return (1 << kErrorEvent);
++  }
++  intptr_t event_mask = 0;
++  if (di->IsListeningSocket()) {
++    // On a listening socket the READ event means that there are
++    // connections ready to be accepted.
++    if ((revents & POLLIN) != 0) {
++      event_mask |= (1 << kInEvent);
++    }
++    return event_mask;
++  }
++  if ((revents & POLLIN) != 0) {
++    event_mask |= (1 << kInEvent);
++    // Readable without data means end of stream. QNX does not report POLLHUP
++    // for pipes, so this is also how a closed pipe shows up.
++    if (FDUtils::AvailableBytes(di->fd()) == 0) {
++      event_mask |= (1 << kCloseEvent);
++    }
++  }
++  if ((revents & POLLOUT) != 0) {
++    event_mask |= (1 << kOutEvent);
++  }
++  if ((revents & POLLHUP) != 0) {
++    event_mask |= (1 << kCloseEvent);
++  }
++  return event_mask;
++}
++
++void EventHandlerImplementation::HandleEvents(intptr_t count) {
++  bool interrupt_seen = false;
++  for (intptr_t i = 0; i < count; i++) {
++    intptr_t revents = poll_fds_[i].revents;
++    if (revents == 0) {
++      continue;
++    }
++    DescriptorInfo* di = poll_infos_[i];
++    if (di == nullptr) {
++      interrupt_seen = true;
++      continue;
++    }
++    const intptr_t event_mask = GetEvents(revents, di);
++    if ((event_mask & (1 << kErrorEvent)) != 0) {
++      di->NotifyAllDartPorts(event_mask);
++    } else if (event_mask != 0) {
++      Dart_Port port = di->NextNotifyDartPort(event_mask);
++      ASSERT(port != 0);
++      DartUtils::PostInt32(port, event_mask);
++    }
++  }
++  if (interrupt_seen) {
++    // Handle after socket events, so we avoid closing a socket before we handle
++    // the current events.
++    HandleInterruptFd();
++  }
++}
++
++int64_t EventHandlerImplementation::GetTimeout() {
++  if (!timeout_queue_.HasTimeout()) {
++    return kInfinityTimeout;
++  }
++  int64_t millis =
++      timeout_queue_.CurrentTimeout() - TimerUtils::GetCurrentMonotonicMillis();
++  return (millis < 0) ? 0 : millis;
++}
++
++void EventHandlerImplementation::HandleTimeout() {
++  if (timeout_queue_.HasTimeout()) {
++    int64_t millis = timeout_queue_.CurrentTimeout() -
++                     TimerUtils::GetCurrentMonotonicMillis();
++    if (millis <= 0) {
++      DartUtils::PostNull(timeout_queue_.CurrentPort());
++      timeout_queue_.RemoveCurrent();
++    }
++  }
++}
++
++void EventHandlerImplementation::Poll(uword args) {
++  ThreadSignalBlocker signal_blocker(SIGPROF);
++  EventHandler* handler = reinterpret_cast<EventHandler*>(args);
++  EventHandlerImplementation* handler_impl = &handler->delegate_;
++  ASSERT(handler_impl != nullptr);
++
++  while (!handler_impl->shutdown_) {
++    int64_t millis = handler_impl->GetTimeout();
++    ASSERT(millis == kInfinityTimeout || millis >= 0);
++    if (millis > kMaxInt32) {
++      millis = kMaxInt32;
++    }
++    ASSERT(kInfinityTimeout < 0);
++    int timeout = (millis < 0) ? -1 : static_cast<int>(millis);
++    intptr_t count = handler_impl->BuildPollSet();
++    intptr_t result = TEMP_FAILURE_RETRY_NO_SIGNAL_BLOCKER(
++        poll(handler_impl->poll_fds_, count, timeout));
++    if (result == -1) {
++      const int kBufferSize = 1024;
++      char error_message[kBufferSize];
++      Utils::StrError(errno, error_message, kBufferSize);
++      FATAL("poll failed %s\n", error_message);
++    }
++    handler_impl->HandleTimeout();
++    if (result > 0) {
++      handler_impl->HandleEvents(count);
++    }
++  }
++  DEBUG_ASSERT(ReferenceCounted<Socket>::instances() == 0);
++  handler->NotifyShutdownDone();
++}
++
++void EventHandlerImplementation::Start(EventHandler* handler) {
++  Thread::Start("dart:io EventHandler", &EventHandlerImplementation::Poll,
++                reinterpret_cast<uword>(handler));
++}
++
++void EventHandlerImplementation::Shutdown() {
++  SendData(kShutdownId, 0, 0);
++}
++
++void EventHandlerImplementation::SendData(intptr_t id,
++                                          Dart_Port dart_port,
++                                          int64_t data) {
++  WakeupHandler(id, dart_port, data);
++}
++
++void* EventHandlerImplementation::GetHashmapKeyFromFd(intptr_t fd) {
++  // The hashmap does not support keys with value 0.
++  return reinterpret_cast<void*>(fd + 1);
++}
++
++uint32_t EventHandlerImplementation::GetHashmapHashFromFd(intptr_t fd) {
++  // The hashmap does not support keys with value 0.
++  return dart::Utils::WordHash(fd + 1);
++}
++
++}  // namespace bin
++}  // namespace dart
++
++#endif  // defined(DART_HOST_OS_QNX)
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.h b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.h
+new file mode 100644
+index 00000000..c5506e00
+--- /dev/null
++++ b/engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.h
+@@ -0,0 +1,106 @@
++// Copyright (c) 2026, the Dart project authors.  Please see the AUTHORS file
++// for details. All rights reserved. Use of this source code is governed by a
++// BSD-style license that can be found in the LICENSE file.
++
++#ifndef RUNTIME_BIN_EVENTHANDLER_QNX_H_
++#define RUNTIME_BIN_EVENTHANDLER_QNX_H_
++
++#if !defined(RUNTIME_BIN_EVENTHANDLER_H_)
++#error Do not include eventhandler_qnx.h directly; use eventhandler.h instead.
++#endif
++
++#include <errno.h>
++#include <poll.h>
++#include <sys/socket.h>
++#include <unistd.h>
++
++#include "platform/hashmap.h"
++#include "platform/signal_blocker.h"
++
++namespace dart {
++namespace bin {
++
++// QNX Neutrino has no epoll/timerfd of its own (only emulation libraries,
++// without edge triggering) and no kqueue, so this event handler is built on
++// poll(2): the poll set is rebuilt from the descriptors' current masks on every
++// iteration (level triggered, like the listening sockets on macOS), timers use
++// the poll timeout, and an interrupt pipe carries the commands from Dart.
++
++class DescriptorInfo : public DescriptorInfoBase {
++ public:
++  explicit DescriptorInfo(intptr_t fd) : DescriptorInfoBase(fd) {}
++
++  virtual ~DescriptorInfo() {}
++
++  // The poll(2) events for the current mask (0: leave it out of the set).
++  intptr_t GetPollEvents();
++
++  virtual void Close() {
++    close(fd_);
++    fd_ = -1;
++  }
++
++ private:
++  DISALLOW_COPY_AND_ASSIGN(DescriptorInfo);
++};
++
++class DescriptorInfoSingle : public DescriptorInfoSingleMixin<DescriptorInfo> {
++ public:
++  explicit DescriptorInfoSingle(intptr_t fd) : DescriptorInfoSingleMixin(fd) {}
++  virtual ~DescriptorInfoSingle() {}
++
++ private:
++  DISALLOW_COPY_AND_ASSIGN(DescriptorInfoSingle);
++};
++
++class DescriptorInfoMultiple
++    : public DescriptorInfoMultipleMixin<DescriptorInfo> {
++ public:
++  explicit DescriptorInfoMultiple(intptr_t fd)
++      : DescriptorInfoMultipleMixin(fd) {}
++  virtual ~DescriptorInfoMultiple() {}
++
++ private:
++  DISALLOW_COPY_AND_ASSIGN(DescriptorInfoMultiple);
++};
++
++class EventHandlerImplementation {
++ public:
++  EventHandlerImplementation();
++  ~EventHandlerImplementation();
++
++  // Gets the socket data structure for a given file
++  // descriptor. Creates a new one if one is not found.
++  DescriptorInfo* GetDescriptorInfo(intptr_t fd, bool is_listening);
++  void SendData(intptr_t id, Dart_Port dart_port, int64_t data);
++  void Start(EventHandler* handler);
++  void Shutdown();
++
++ private:
++  static void Poll(uword args);
++  void WakeupHandler(intptr_t id, Dart_Port dart_port, int64_t data);
++  void HandleInterruptFd();
++  int64_t GetTimeout();
++  void HandleTimeout();
++  intptr_t BuildPollSet();
++  void HandleEvents(intptr_t count);
++  intptr_t GetEvents(intptr_t revents, DescriptorInfo* di);
++  static void* GetHashmapKeyFromFd(intptr_t fd);
++  static uint32_t GetHashmapHashFromFd(intptr_t fd);
++
++  SimpleHashMap socket_map_;
++  TimeoutQueue timeout_queue_;
++  bool shutdown_;
++  int interrupt_fds_[2];
++  // The poll set: slot 0 is the interrupt pipe, the others descriptors.
++  struct pollfd* poll_fds_;
++  DescriptorInfo** poll_infos_;
++  intptr_t poll_capacity_;
++
++  DISALLOW_COPY_AND_ASSIGN(EventHandlerImplementation);
++};
++
++}  // namespace bin
++}  // namespace dart
++
++#endif  // RUNTIME_BIN_EVENTHANDLER_QNX_H_
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/file_linux.cc b/engine/src/flutter/third_party/dart/runtime/bin/file_linux.cc
+index f15036fe..f75c9ebf 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/file_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/file_linux.cc
+@@ -54,7 +54,14 @@ static int fstatat64_fixed(int dirfd,
+                            const char* __restrict pathname,
+                            struct stat64* __restrict statbuf,
+                            int flags) {
++#if defined(DART_HOST_OS_QNX)
++  // QNX declares fstatat64() but libc does not export it; QNX is 64-bit only,
++  // so struct stat64 and struct stat have the same layout.
++  int result = ::fstatat(dirfd, pathname,
++                         reinterpret_cast<struct stat*>(statbuf), flags);
++#else
+   int result = ::fstatat64(dirfd, pathname, statbuf, flags);
++#endif
+   if (result == 0) {
+     // MSAN only intercepts the old symbol name.
+     MSAN_UNPOISON(statbuf, sizeof(*statbuf));
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/io_impl_sources.gni b/engine/src/flutter/third_party/dart/runtime/bin/io_impl_sources.gni
+index d3ace672..d8b293a0 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/io_impl_sources.gni
++++ b/engine/src/flutter/third_party/dart/runtime/bin/io_impl_sources.gni
+@@ -14,6 +14,8 @@ io_impl_sources = [
+   "eventhandler_fuchsia.h",
+   "eventhandler_linux.cc",
+   "eventhandler_linux.h",
++  "eventhandler_qnx.cc",
++  "eventhandler_qnx.h",
+   "eventhandler_macos.cc",
+   "eventhandler_macos.h",
+   "eventhandler_win.cc",
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/platform_linux.cc b/engine/src/flutter/third_party/dart/runtime/bin/platform_linux.cc
+index 42512e19..cdd7f7eb 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/platform_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/platform_linux.cc
+@@ -45,8 +45,10 @@ static const char* strcode(int si_signo, int si_code) {
+   CASE(SIGBUS, BUS_ADRALN);
+   CASE(SIGBUS, BUS_ADRERR);
+   CASE(SIGBUS, BUS_OBJERR);
++#if defined(BUS_MCEERR_AR)
+   CASE(SIGBUS, BUS_MCEERR_AR);
+   CASE(SIGBUS, BUS_MCEERR_AO);
++#endif
+   CASE(SIGTRAP, TRAP_BRKPT);
+   CASE(SIGTRAP, TRAP_TRACE);
+ #undef CASE
+diff --git a/engine/src/flutter/third_party/dart/runtime/bin/socket_base.cc b/engine/src/flutter/third_party/dart/runtime/bin/socket_base.cc
+index aa92cef9..563160ad 100644
+--- a/engine/src/flutter/third_party/dart/runtime/bin/socket_base.cc
++++ b/engine/src/flutter/third_party/dart/runtime/bin/socket_base.cc
+@@ -5,6 +5,7 @@
+ #include "bin/socket_base.h"
+ 
+ #include <errno.h>  // NOLINT
++#include <string.h>  // NOLINT
+ 
+ #include "bin/dartutils.h"
+ #include "bin/io_buffer.h"
+@@ -19,6 +20,10 @@
+ #include "platform/globals.h"
+ #include "platform/utils.h"
+ 
++#if defined(DART_HOST_OS_QNX) && !defined(bzero)
++#define bzero(p, n) memset((p), 0, (n))
++#endif
++
+ namespace dart {
+ namespace bin {
+ 
+diff --git a/engine/src/flutter/third_party/dart/runtime/platform/globals.h b/engine/src/flutter/third_party/dart/runtime/platform/globals.h
+index 4bbd9c63..265a5c20 100644
+--- a/engine/src/flutter/third_party/dart/runtime/platform/globals.h
++++ b/engine/src/flutter/third_party/dart/runtime/platform/globals.h
+@@ -110,10 +110,13 @@
+ // Check for Android first, to determine its difference from Linux.
+ #define DART_HOST_OS_ANDROID 1
+ 
+-#elif defined(__linux__) || defined(__FreeBSD__)
++#elif defined(__linux__) || defined(__FreeBSD__) || defined(__QNXNTO__)
+ 
+ // Generic Linux.
+ #define DART_HOST_OS_LINUX 1
++#if defined(__QNXNTO__)
++#define DART_HOST_OS_QNX 1
++#endif
+ 
+ #elif defined(__APPLE__)
+ 
+diff --git a/engine/src/flutter/third_party/dart/runtime/vm/os_linux.cc b/engine/src/flutter/third_party/dart/runtime/vm/os_linux.cc
+index 27506e42..07339ca5 100644
+--- a/engine/src/flutter/third_party/dart/runtime/vm/os_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/vm/os_linux.cc
+@@ -16,7 +16,9 @@
+ #include <sys/mman.h>      // NOLINT
+ #include <sys/resource.h>  // NOLINT
+ #include <sys/stat.h>      // NOLINT
++#if !defined(DART_HOST_OS_QNX)
+ #include <sys/syscall.h>   // NOLINT
++#endif
+ #include <sys/time.h>      // NOLINT
+ #include <sys/types.h>     // NOLINT
+ #include <time.h>          // NOLINT
+@@ -226,7 +228,11 @@ class JitDumpCodeObserver : public CodeObserver {
+     ev.size = sizeof(ev) + (name_length + 1) + size;
+     ev.time_stamp = OS::GetCurrentMonotonicTicks();
+     ev.process_id = getpid();
++#if defined(DART_HOST_OS_QNX)
++    ev.thread_id = pthread_self();
++#else
+     ev.thread_id = syscall(SYS_gettid);
++#endif
+     ev.vma = base;
+     ev.code_address = base;
+     ev.code_size = size;
+diff --git a/engine/src/flutter/third_party/dart/runtime/vm/os_thread_linux.cc b/engine/src/flutter/third_party/dart/runtime/vm/os_thread_linux.cc
+index c3f112cc..4a5df061 100644
+--- a/engine/src/flutter/third_party/dart/runtime/vm/os_thread_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/vm/os_thread_linux.cc
+@@ -12,6 +12,9 @@
+ #include <stdio.h>
+ #include <sys/resource.h>
+ #include <sys/syscall.h>
++#if defined(DART_HOST_OS_QNX)
++#include <sys/storage.h>
++#endif
+ #include <sys/time.h>
+ 
+ #include "platform/address_sanitizer.h"
+@@ -176,6 +179,16 @@ ThreadId OSThread::ThreadIdFromIntPtr(intptr_t id) {
+ }
+ 
+ bool OSThread::GetCurrentStackBounds(uword* lower, uword* upper) {
++#if defined(DART_HOST_OS_QNX)
++  // QNX has no pthread_getattr_np(); the thread's stack is in its TLS block.
++  struct _thread_local_storage* tls = __tls();
++  if (tls == nullptr || tls->__stackaddr == nullptr || tls->__stacksize == 0) {
++    return false;
++  }
++  *lower = reinterpret_cast<uword>(tls->__stackaddr);
++  *upper = *lower + tls->__stacksize;
++  return true;
++#else
+   pthread_attr_t attr;
+   // May fail on the main thread.
+   if (pthread_getattr_np(pthread_self(), &attr) != 0) {
+@@ -193,6 +206,7 @@ bool OSThread::GetCurrentStackBounds(uword* lower, uword* upper) {
+   *lower = reinterpret_cast<uword>(base);
+   *upper = *lower + size;
+   return true;
++#endif  // defined(DART_HOST_OS_QNX)
+ }
+ 
+ #if defined(USING_SAFE_STACK)
+diff --git a/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_linux.cc b/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_linux.cc
+index 1078498d..a3bb1382 100644
+--- a/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_linux.cc
++++ b/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_linux.cc
+@@ -6,7 +6,7 @@
+ #include "vm/instructions.h"
+ #include "vm/signal_handler.h"
+ #include "vm/simulator.h"
+-#if defined(DART_HOST_OS_LINUX)
++#if defined(DART_HOST_OS_LINUX) && !defined(DART_HOST_OS_QNX)
+ 
+ namespace dart {
+ 
+diff --git a/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_qnx.cc b/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_qnx.cc
+new file mode 100644
+index 00000000..5fe12f4d
+--- /dev/null
++++ b/engine/src/flutter/third_party/dart/runtime/vm/signal_handler_qnx.cc
+@@ -0,0 +1,87 @@
++// Copyright (c) 2026, the Dart project authors.  Please see the AUTHORS file
++// for details. All rights reserved. Use of this source code is governed by a
++// BSD-style license that can be found in the LICENSE file.
++
++// QNX Neutrino: like signal_handler_linux.cc, but QNX's mcontext_t holds the
++// CPU registers in .cpu (x86_64: named fields, aarch64: gpr[32] + elr), and
++// SA_RESTART is not supported.
++
++#include "vm/globals.h"
++#include "vm/instructions.h"
++#include "vm/signal_handler.h"
++#include "vm/simulator.h"
++#if defined(DART_HOST_OS_QNX)
++
++namespace dart {
++
++uintptr_t SignalHandler::GetProgramCounter(const mcontext_t& mcontext) {
++#if defined(HOST_ARCH_X64)
++  return static_cast<uintptr_t>(mcontext.cpu.rip);
++#elif defined(HOST_ARCH_ARM64)
++  return static_cast<uintptr_t>(mcontext.cpu.elr);
++#else
++#error Unsupported architecture.
++#endif
++}
++
++uintptr_t SignalHandler::GetFramePointer(const mcontext_t& mcontext) {
++#if defined(HOST_ARCH_X64)
++  return static_cast<uintptr_t>(mcontext.cpu.rbp);
++#elif defined(HOST_ARCH_ARM64)
++  return static_cast<uintptr_t>(mcontext.cpu.gpr[AARCH64_REG_X29]);
++#else
++#error Unsupported architecture.
++#endif
++}
++
++uintptr_t SignalHandler::GetCStackPointer(const mcontext_t& mcontext) {
++#if defined(HOST_ARCH_X64)
++  return static_cast<uintptr_t>(mcontext.cpu.rsp);
++#elif defined(HOST_ARCH_ARM64)
++  return static_cast<uintptr_t>(mcontext.cpu.gpr[AARCH64_REG_SP]);
++#else
++#error Unsupported architecture.
++#endif
++}
++
++uintptr_t SignalHandler::GetDartStackPointer(const mcontext_t& mcontext) {
++#if defined(TARGET_ARCH_ARM64) && !defined(DART_INCLUDE_SIMULATOR)
++  return static_cast<uintptr_t>(mcontext.cpu.gpr[SPREG]);
++#else
++  return GetCStackPointer(mcontext);
++#endif
++}
++
++uintptr_t SignalHandler::GetLinkRegister(const mcontext_t& mcontext) {
++#if defined(HOST_ARCH_X64)
++  return 0;
++#elif defined(HOST_ARCH_ARM64)
++  return static_cast<uintptr_t>(mcontext.cpu.gpr[AARCH64_REG_LR]);
++#else
++#error Unsupported architecture.
++#endif
++}
++
++void SignalHandler::Install(SignalAction action) {
++  struct sigaction act = {};
++  act.sa_sigaction = action;
++  sigemptyset(&act.sa_mask);
++  sigaddset(&act.sa_mask, SIGPROF);  // Prevent nested signals.
++  act.sa_flags = SA_SIGINFO;          // QNX: no SA_RESTART
++  int r = sigaction(SIGPROF, &act, nullptr);
++  ASSERT(r == 0);
++}
++
++void SignalHandler::Remove() {
++  // Ignore future SIGPROF signals because by default SIGPROF will terminate
++  // the process and we may have some signals in flight.
++  struct sigaction act = {};
++  act.sa_handler = SIG_IGN;
++  sigemptyset(&act.sa_mask);
++  int r = sigaction(SIGPROF, &act, nullptr);
++  ASSERT(r == 0);
++}
++
++}  // namespace dart
++
++#endif  // defined(DART_HOST_OS_QNX)
+diff --git a/engine/src/flutter/third_party/dart/runtime/vm/vm_sources.gni b/engine/src/flutter/third_party/dart/runtime/vm/vm_sources.gni
+index 4a975aec..84fb962b 100644
+--- a/engine/src/flutter/third_party/dart/runtime/vm/vm_sources.gni
++++ b/engine/src/flutter/third_party/dart/runtime/vm/vm_sources.gni
+@@ -292,6 +292,7 @@ vm_sources = [
+   "signal_handler_android.cc",
+   "signal_handler_fuchsia.cc",
+   "signal_handler_linux.cc",
++  "signal_handler_qnx.cc",
+   "signal_handler_macos.cc",
+   "signal_handler_win.cc",
+   "simulator.h",

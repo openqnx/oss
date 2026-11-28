@@ -1,0 +1,33 @@
+Look for libgstgl only when USE_GSTREAMER_GL is on.
+
+GStreamerChecks.cmake puts "gl" in the required GStreamer components for every
+ENABLE_VIDEO build, so -DUSE_GSTREAMER_GL=OFF no longer configures when
+gstreamer-gl-1.0 is absent:
+
+    Could NOT find GStreamer (missing: GSTREAMER_GL_LIBRARIES)
+
+Nothing else needs it in that case: every <gst/gl/...> include and the
+GSTREAMER_GL_LIBRARIES link in WebCore/platform/GStreamer.cmake are already
+under USE(GSTREAMER_GL) / USE_GSTREAMER_GL, and the same file checks
+"USE_GSTREAMER_GL AND NOT PC_GSTREAMER_GL_FOUND" itself.  QNX has no
+EGL/GLES-backed libgstgl in this tree, so video decodes into system memory.
+
+Upstream-Status: Pending
+
+--- a/Source/cmake/GStreamerChecks.cmake
++++ b/Source/cmake/GStreamerChecks.cmake
+@@ -9,7 +9,13 @@
+       else ()
+           set(GSTREAMER_COMPONENTS app pbutils)
+           if (ENABLE_VIDEO)
+-              list(APPEND GSTREAMER_COMPONENTS video mpegts tag gl)
++              list(APPEND GSTREAMER_COMPONENTS video mpegts tag)
++              # libgstgl only when it is used: everything that includes
++              # <gst/gl/...> or links GSTREAMER_GL_LIBRARIES is already
++              # conditional on USE_GSTREAMER_GL.
++              if (USE_GSTREAMER_GL)
++                  list(APPEND GSTREAMER_COMPONENTS gl)
++              endif ()
+           endif ()
+ 
+           if (ENABLE_WEB_AUDIO)

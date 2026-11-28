@@ -108,7 +108,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH flex`.
 
 ### 5. What it installs
 
-15 files under `/usr/local`: 2 shared-library entries, 2 programs, 1 headers.
+16 files under `/usr/local`: 2 shared-library entries, 2 programs, 1 headers.
 
 ```
 /usr/local/lib/libfl.so

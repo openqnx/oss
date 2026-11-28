@@ -1,12 +1,12 @@
 # perl-test-requires 0.11-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T10:16:00Z   packages from: apk:local-dists
+# date: 2026-11-24T15:23:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u perl-test-requires qnx-test-perl-testmods qnx-port-tests
-( 1/12) Installing libxcrypt (4.4.38-r0)
+( 1/12) Installing libxcrypt (4.5.2-r0)
 ( 2/12) Installing perl (5.40.2-r0)
 ( 3/12) Installing perl-test-requires (0.11-r0)
 ( 4/12) Installing qnx-port-tests (1.0-r0)
@@ -18,7 +18,7 @@ $ apk add -u perl-test-requires qnx-test-perl-testmods qnx-port-tests
 (10/12) Installing perl-test-requiresinternet (0.05-r0)
 (11/12) Installing perl-test-warnings (0.038-r0)
 (12/12) Installing qnx-test-perl-testmods (1.0-r0)
-OK: 73.7 MiB in 17 packages
+OK: 73.8 MiB in 17 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_perl_testmods
      == perl-test-deep, -fatal, -warnings, -needs, -requires, -requiresinternet, -leaktrace, perl-try-tiny ==

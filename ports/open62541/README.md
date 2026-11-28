@@ -128,12 +128,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH open62541`.
 
 ### 5. What it installs
 
-73 files under `/usr/local`: 3 shared-library entries, 36 headers.
+71 files under `/usr/local`: 3 shared-library entries, 36 headers.
 
 ```
 /usr/local/lib/libopen62541.so
-/usr/local/lib/libopen62541.so.1.4
-/usr/local/lib/libopen62541.so.1.4.8
+/usr/local/lib/libopen62541.so.1.5
+/usr/local/lib/libopen62541.so.1.5.10
 ```
 
 The complete list is `stage/<arch>/.manifest/open62541` after a build.

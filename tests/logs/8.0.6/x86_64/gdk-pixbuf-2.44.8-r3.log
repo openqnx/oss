@@ -1,0 +1,43 @@
+# gdk-pixbuf 2.44.8-r3 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T13:43:44Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u gdk-pixbuf qnx-test-gdk-pixbuf qnx-port-tests
+( 1/12) Installing libiconv (1.19.1-r1)
+( 2/12) Installing libunistring (1.5-r1)
+( 3/12) Installing ncurses (6.6-r1)
+( 4/12) Installing gettext (0.22.5-r1)
+( 5/12) Installing libffi (3.8.1-r1)
+( 6/12) Installing pcre2 (10.49-r1)
+( 7/12) Installing glib (2.90.1-r3)
+( 8/12) Installing libjpeg-turbo (3.2.1-r1)
+( 9/12) Installing libpng (1.6.59-r1)
+(10/12) Installing gdk-pixbuf (2.44.8-r3)
+(11/12) Installing qnx-port-tests (1.0-r1)
+(12/12) Installing qnx-test-gdk-pixbuf (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+Executing gdk-pixbuf-2.44.8-r3.trigger
+OK: 49.1 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gdk_pixbuf
+     == gdk-pixbuf ==
+       info gdk-pixbuf 2.44.8
+       ok   gdk_pixbuf_new
+       ok   pixbuf geometry
+       ok   gdk_pixbuf_fill wrote RGBA
+       info 12 loader format(s) available
+       ok   at least one image format is registered
+       ok   png
+       ok   decoded image has the right size
+       ok   jpeg
+       ok   decoded image has the right size
+       ok   gdk_pixbuf_scale_simple
+     PASS gdk-pixbuf
+PASS test_gdk_pixbuf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

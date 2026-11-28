@@ -1,12 +1,19 @@
 # man-db 2.13.3-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T01:21:30Z   packages from: apk:local-dists
+# date: 2026-11-24T12:47:23Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u man-db qnx-test-man-db qnx-port-tests
-OK: 906.4 MiB in 161 packages
+(1/7) Installing gdbm (1.26-r0)
+(2/7) Installing libiconv (1.19.1-r0)
+(3/7) Installing libpipeline (1.5.8-r0)
+(4/7) Installing man-db (2.13.3-r0)
+(5/7) Installing qnx-port-tests (1.0-r0)
+(6/7) Installing groff (1.25.0-r0)
+(7/7) Installing qnx-test-man-db (1.0-r1)
+OK: 24.5 MiB in 12 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_man_db
      == man-db ==

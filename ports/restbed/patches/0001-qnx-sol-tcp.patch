@@ -4,8 +4,8 @@ SOL_TCP is a Linux alias for IPPROTO_TCP; QNX only has the POSIX name.
 
 Upstream-Status: QNX-specific
 
---- a/source/corvusoft/restbed/detail/socket_impl.cpp
-+++ b/source/corvusoft/restbed/detail/socket_impl.cpp
+--- a/src/corvusoft/restbed/detail/socket_impl.cpp
++++ b/src/corvusoft/restbed/detail/socket_impl.cpp
 @@ -3,6 +3,11 @@
   */
  

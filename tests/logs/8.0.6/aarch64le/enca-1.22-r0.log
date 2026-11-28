@@ -1,29 +1,22 @@
 # enca 1.22-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:38:28Z   packages from: apk:local-dists
+# date: 2026-11-24T12:42:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u enca qnx-test-misc-libs qnx-port-tests
-( 1/16) Installing libiconv (1.19.1-r0)
-( 2/16) Installing enca (1.22-r0)
-( 3/16) Installing qnx-port-tests (1.0-r0)
-( 4/16) Installing libunistring (1.5-r0)
-( 5/16) Installing ncurses (6.6-r0)
-( 6/16) Installing gettext (0.22.5-r0)
-( 7/16) Installing libffi (3.4.6-r0)
-( 8/16) Installing pcre2 (10.49-r0)
-( 9/16) Installing glib (2.82.4-r0)
-(10/16) Installing gsm (1.0.24-r0)
-(11/16) Installing hyphen (2.8.8-r0)
-(12/16) Installing bzip2 (1.0.8-r0)
-(13/16) Installing xz (5.8.4-r0)
-(14/16) Installing libxml2 (2.13.5-r0)
-(15/16) Installing libgsf (1.14.60-r0)
-(16/16) Installing qnx-test-misc-libs (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 49.1 MiB in 21 packages
+(1/8) Installing enca (1.22-r0)
+(2/8) Installing pcre2 (10.49-r0)
+(3/8) Installing glib (2.90.1-r1)
+(4/8) Installing gsm (1.0.24-r0)
+(5/8) Installing hyphen (2.8.8-r0)
+(6/8) Installing libxml2 (2.13.5-r0)
+(7/8) Installing libgsf (1.14.60-r0)
+(8/8) Installing qnx-test-misc-libs (1.0-r0)
+Executing glib-2.90.1-r1.trigger
+Executing python3-3.14.0-r1.trigger
+OK: 159.1 MiB in 29 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_misc_libs
      == hyphen / enca / libgsf / gsm ==

@@ -1,0 +1,28 @@
+main: SA_RESTART does not exist on QNX
+
+The SIGUSR1 (unlock) handler is installed with sa_flags = SA_RESTART. QNX's
+<signal.h> has the flag commented out ("not supported yet"), so main.c did
+not compile; it is the only use in the source. Define it to 0 there. A
+system call interrupted by the signal then returns EINTR instead of being
+restarted: the event loop's poll() (loop.c) and the read/write of the
+password pipe (comm.c) already retry on EINTR, and the only signal handled
+this way is the one that ends the locker anyway.
+
+Upstream-Status: QNX-specific
+
+--- a/main.c
++++ b/main.c
+@@ -26,6 +26,13 @@
+ #include "swaylock.h"
+ #include "ext-session-lock-v1-client-protocol.h"
+ 
++/* QNX has no SA_RESTART (<signal.h>: "not supported yet"); an interrupted
++ * call returns EINTR, which the event loop's poll() already handles. */
++#ifndef SA_RESTART
++#define SA_RESTART 0
++#endif
++
++
+ static uint32_t parse_color(const char *color) {
+ 	if (color[0] == '#') {
+ 		++color;

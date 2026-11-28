@@ -1,0 +1,23 @@
+QNX arm64: SwiftShader's Reactor has no JIT backend there (no Subzero on
+arm64, LLVM not configured for QNX); the target stays declared so that the GN
+graph resolves -- nothing built for QNX links it.
+
+Upstream-Status: QNX-specific
+
+diff --git a/engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn b/engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn
+index c2e894a..83d3794 100644
+--- a/engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn
++++ b/engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn
+@@ -352,9 +352,11 @@ swiftshader_source_set("swiftshader_reactor") {
+     deps = [
+       ":swiftshader_subzero_reactor",
+     ]
+-  } else {
++  } else if (supports_llvm) {
+     deps = [
+       ":swiftshader_llvm_reactor",
+     ]
+   }
++  # else (e.g. QNX arm64): no JIT backend; the target exists so that the build
++  # graph resolves, but nothing that links it can be built for this platform.
+ }

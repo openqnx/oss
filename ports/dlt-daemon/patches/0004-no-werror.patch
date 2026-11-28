@@ -1,0 +1,20 @@
+dlt-daemon: do not build with -Werror -Wfatal-errors
+
+dlt-daemon 3.0 compiles everything with -Werror -Wconversion. The code
+assumes a signed char: on aarch64, where char is unsigned, the first
+conversion warning (dlt_daemon_common.c, char -> int8_t) stops the build.
+Keep the warnings, do not make them fatal.
+
+Upstream-Status: Pending
+---
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -253,8 +253,6 @@
+     -pedantic
+     -Wno-variadic-macros
+     -Wno-strict-aliasing
+-    -Werror
+-    -Wfatal-errors
+     -Wconversion
+     -Wshadow
+     -Wundef

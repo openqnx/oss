@@ -1,6 +1,6 @@
 # rocksdb 11.13.2-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T11:47:17Z   packages from: apk:local-dists
+# date: 2026-11-24T13:03:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -42,7 +42,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_r
        ok   a clean transaction commits both keys
        ok   ldb get reads a value
        ok   ldb list_column_families names meta
-       info sst_dump /tmp/qnxport-rocksdb-661655575/db/000017.sst: rc 0
+       info sst_dump /tmp/qnxport-rocksdb-167149591/db/000017.sst: rc 0
        info     # data blocks compression rejected: 0
        info     # data blocks compression bypassed: 0
        info     SST file compression algo: BuiltinV2;07;

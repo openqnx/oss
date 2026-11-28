@@ -45,7 +45,7 @@ int main(void) {
   QT_BEGIN("vlc");
   const char *ver = libvlc_get_version();
   printf("  info libvlc %s\n", ver ? ver : "(null)");
-  QT_CHECK(ver && !strncmp(ver, "3.0.21", 6), "libvlc_get_version is 3.0.21");
+  QT_CHECK(ver && !strncmp(ver, "3.0.24", 6), "libvlc_get_version is 3.0.24");
   strcpy(dir, "/tmp/qnxport-vlc.XXXXXX");
   QT_CHECK(mkdtemp(dir) != NULL, "scratch directory");
   chmod(dir, 0777);

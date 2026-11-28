@@ -1,25 +1,26 @@
 # shared-mime-info 2.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T11:27:25Z   packages from: apk:local-dists
+# date: 2026-11-24T13:18:36Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u shared-mime-info qnx-test-shared-mime-info qnx-port-tests
-( 1/11) Installing qnx-port-tests (1.0-r0)
-( 2/11) Installing libiconv (1.18-r0)
-( 3/11) Installing libunistring (1.3-r0)
-( 4/11) Installing gettext (0.22.5-r0)
-( 5/11) Installing libffi (3.4.6-r0)
-( 6/11) Installing pcre2 (10.44-r0)
-( 7/11) Installing glib (2.82.4-r0)
-( 8/11) Installing xz (5.6.3-r0)
-( 9/11) Installing libxml2 (2.13.5-r0)
-(10/11) Installing shared-mime-info (2.4-r0)
-(11/11) Installing qnx-test-shared-mime-info (1.0-r0)
-Executing glib-2.82.4-r0.trigger
+( 1/12) Installing qnx-port-tests (1.0-r0)
+( 2/12) Installing libiconv (1.19.1-r0)
+( 3/12) Installing libunistring (1.5-r0)
+( 4/12) Installing ncurses (6.6-r0)
+( 5/12) Installing gettext (0.22.5-r0)
+( 6/12) Installing libffi (3.8.1-r0)
+( 7/12) Installing pcre2 (10.49-r0)
+( 8/12) Installing glib (2.90.1-r1)
+( 9/12) Installing xz (5.8.4-r0)
+(10/12) Installing libxml2 (2.13.5-r0)
+(11/12) Installing shared-mime-info (2.4-r0)
+(12/12) Installing qnx-test-shared-mime-info (1.0-r0)
+Executing glib-2.90.1-r1.trigger
 Executing shared-mime-info-2.4-r0.trigger
-OK: 50.6 MiB in 22 packages
+OK: 48.5 MiB in 17 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_shared_mime_info
      == shared-mime-info ==

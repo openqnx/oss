@@ -1,0 +1,48 @@
+# enca 1.22-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T08:01:46Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u enca qnx-test-misc-libs qnx-port-tests
+( 1/16) Installing libiconv (1.19.1-r1)
+( 2/16) Installing enca (1.22-r1)
+( 3/16) Installing qnx-port-tests (1.0-r1)
+( 4/16) Installing libunistring (1.5-r1)
+( 5/16) Installing ncurses (6.6-r1)
+( 6/16) Installing gettext (0.22.5-r1)
+( 7/16) Installing libffi (3.8.1-r1)
+( 8/16) Installing pcre2 (10.49-r1)
+( 9/16) Installing glib (2.90.1-r3)
+(10/16) Installing gsm (1.0.24-r1)
+(11/16) Installing hyphen (2.8.8-r1)
+(12/16) Installing bzip2 (1.0.8-r1)
+(13/16) Installing xz (5.8.4-r1)
+(14/16) Installing libxml2 (2.13.5-r1)
+(15/16) Installing libgsf (1.14.60-r1)
+(16/16) Installing qnx-test-misc-libs (1.0-r1)
+Executing glib-2.90.1-r3.trigger
+OK: 47.7 MiB in 21 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_misc_libs
+     == hyphen / enca / libgsf / gsm ==
+       ok   enca reports supported languages
+       info 16 language(s), first = be
+       ok   enca_analyser_alloc
+       info enca charset = 7bit ASCII characters
+       ok   enca identified the encoding
+       ok   gsf_output_memory_new
+       ok   gsf_output_write
+       ok   gsf_output_size
+       ok   bytes came back
+       ok   gsm_create
+       ok   gsm encode/decode round trip
+       ok   decoded frame carries signal energy
+       ok   hnj_hyphen_hyphenate2
+     PASS hyphen / enca / libgsf / gsm
+PASS test_misc_libs
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

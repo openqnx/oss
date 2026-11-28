@@ -1,0 +1,74 @@
+# pinocchio 3.9.0-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:50:13Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u pinocchio qnx-test-pinocchio qnx-port-tests
+( 1/10) Installing bzip2 (1.0.8-r1)
+( 2/10) Installing libiconv (1.19.1-r1)
+( 3/10) Installing xz (5.8.4-r1)
+( 4/10) Installing boost (1.86.0-r1)
+( 5/10) Installing console_bridge (1.0.2-r1)
+( 6/10) Installing tinyxml2 (11.0.0-r1)
+( 7/10) Installing urdfdom (4.0.3-r2)
+( 8/10) Installing pinocchio (3.9.0-r1)
+( 9/10) Installing qnx-port-tests (1.0-r1)
+(10/10) Installing qnx-test-pinocchio (1.0-r1)
+OK: 31.8 MiB in 15 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_pinocchio
+     == pinocchio ==
+       ok   model dimensions
+       ok   joint lookup by name
+       ok   kinematic tree
+       ok   total mass
+       ok   tip frame exists
+       ok   FK: shoulder at the origin
+       ok   FK: elbow position
+       ok   FK: tip position
+       ok   FK: tip orientation
+       ok   FK: q = 0 hangs straight down
+       ok   FK: q1 = pi/2 is horizontal
+       ok   tip Jacobian (LOCAL_WORLD_ALIGNED)
+       ok   frame velocity = J * v
+       ok   centre of mass
+       ok   potential energy
+       ok   point masses: CRBA inertia matrix
+       ok   point masses: gravity torques
+       ok   point masses: RNEA Coriolis + gravity
+       ok   point masses: RNEA full inverse dynamics
+       ok   point masses: ABA inverts RNEA
+       ok   point masses: kinetic energy
+       ok   RNEA: no torque hanging at rest
+       ok   RNEA: static torque held horizontal
+       ok   free flyer: nq = 7, nv = 6
+       ok   free flyer: neutral configuration
+       ok   free flyer: integrate a translation
+       ok   free flyer: integrate a quarter turn about Z
+       ok   free flyer: difference inverts integrate
+       ok   URDF: string parsed
+       ok   URDF: robot name
+       ok   URDF: dimensions
+       ok   URDF: joint names
+       ok   URDF: position limits
+       ok   URDF: effort and velocity limits
+       ok   URDF: link and fixed joint frames
+       ok   URDF: link inertias
+       ok   URDF: tip position
+       ok   URDF: CRBA inertia matrix
+       ok   URDF: gravity torques
+       ok   URDF: RNEA Coriolis + gravity
+       ok   URDF: RNEA full inverse dynamics
+       ok   URDF: ABA inverts RNEA
+       ok   URDF: kinetic energy
+     Error:   Error=XML_ERROR_PARSING_ELEMENT ErrorID=6 (0x6) Line number=1: XMLElement name=oops
+              at line 101 in /build/oss/src-x86_64/urdfdom/urdf_parser/src/model.cpp
+       ok   URDF: malformed input rejected
+     PASS pinocchio
+PASS test_pinocchio
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

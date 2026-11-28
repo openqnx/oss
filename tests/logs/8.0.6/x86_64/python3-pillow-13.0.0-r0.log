@@ -1,42 +1,32 @@
 # python3-pillow 13.0.0-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T10:56:39Z   packages from: apk:local-dists
+# date: 2026-11-24T12:59:03Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-pillow qnx-test-python3-pillow qnx-port-tests
-( 1/28) Installing brotli (1.1.0-r0)
-( 2/28) Installing bzip2 (1.0.8-r0)
-( 3/28) Installing libpng (1.6.44-r0)
-( 4/28) Installing freetype (2.13.3-r0)
-( 5/28) Installing lcms2 (2.16-r0)
-( 6/28) Installing libjpeg-turbo (3.0.4-r0)
-( 7/28) Installing fribidi (1.0.16-r0)
-( 8/28) Installing libiconv (1.18-r0)
-( 9/28) Installing libunistring (1.3-r0)
-(10/28) Installing gettext (0.22.5-r0)
-(11/28) Installing libffi (3.4.6-r0)
-(12/28) Installing pcre2 (10.44-r0)
-(13/28) Installing glib (2.82.4-r0)
-(14/28) Installing graphite2 (1.3.14-r0)
-(15/28) Installing icu (76.1-r0)
-(16/28) Installing harfbuzz (<ip>-r0)
-(17/28) Installing libraqm (0.10.5-r0)
-(18/28) Installing libwebp (1.4.0-r0)
-(19/28) Installing xz (5.6.3-r0)
-(20/28) Installing libtiff (4.7.0-r0)
-(21/28) Installing openjpeg (2.5.3-r0)
-(22/28) Installing expat (2.6.4-r0)
-(23/28) Installing gdbm (1.24-r0)
-(24/28) Installing sqlite (3.47.2-r0)
-(25/28) Installing python3 (3.14.0-r0)
-(26/28) Installing python3-pillow (13.0.0-r0)
-(27/28) Installing qnx-port-tests (1.0-r0)
-(28/28) Installing qnx-test-python3-pillow (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-Executing python3-3.14.0-r0.trigger
-OK: 202.6 MiB in 39 packages
+( 1/18) Installing brotli (1.2.1-r0)
+( 2/18) Installing libpng (1.6.59-r0)
+( 3/18) Installing freetype (2.15.0-r0)
+( 4/18) Installing lcms2 (2.16-r0)
+( 5/18) Installing libjpeg-turbo (3.2.1-r0)
+( 6/18) Installing fribidi (1.0.18-r0)
+( 7/18) Installing pcre2 (10.49-r0)
+( 8/18) Installing glib (2.90.1-r1)
+( 9/18) Installing graphite2 (1.3.15-r0)
+(10/18) Installing icu (76.1-r0)
+(11/18) Installing harfbuzz (<ip>-r0)
+(12/18) Installing libraqm (0.11.0-r0)
+(13/18) Installing libdeflate (1.26-r0)
+(14/18) Installing libwebp (1.6.0-r0)
+(15/18) Installing libtiff (4.7.2-r0)
+(16/18) Installing openjpeg (2.5.4-r0)
+(17/18) Installing python3-pillow (13.0.0-r0)
+(18/18) Installing qnx-test-python3-pillow (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+Executing glib-2.90.1-r1.trigger
+OK: 250.6 MiB in 57 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pillow
      == python3-pillow ==

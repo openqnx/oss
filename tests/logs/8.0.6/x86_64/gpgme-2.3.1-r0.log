@@ -1,6 +1,6 @@
 # gpgme 2.3.1-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T12:10:01Z   packages from: apk:local-dists
+# date: 2026-11-24T14:35:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -17,7 +17,7 @@ $ apk add -u gpgme qnx-test-gpgme qnx-port-tests
 ( 9/24) Installing libtasn1 (4.21.0-r0)
 (10/24) Installing nettle (3.10.1-r0)
 (11/24) Installing expat (2.6.4-r0)
-(12/24) Installing unbound (1.24.1-r0)
+(12/24) Installing unbound (1.26.2-r0)
 (13/24) Installing gnutls (3.8.14-r1)
 (14/24) Installing libgpg-error (1.61-r0)
 (15/24) Installing libassuan (3.0.2-r1)
@@ -26,21 +26,21 @@ $ apk add -u gpgme qnx-test-gpgme qnx-port-tests
 (18/24) Installing npth (1.8-r0)
 (19/24) Installing readline (8.3-r0)
 (20/24) Installing sqlite (3.47.2-r0)
-(21/24) Installing gnupg (2.4.9-r2)
+(21/24) Installing gnupg (2.5.24-r0)
 (22/24) Installing gpgme (2.3.1-r0)
 (23/24) Installing qnx-port-tests (1.0-r0)
-(24/24) Installing qnx-test-gpgme (1.0-r2)
-OK: 58.3 MiB in 29 packages
+(24/24) Installing qnx-test-gpgme (1.0-r3)
+OK: 58.7 MiB in 29 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_gpgme
      == gpgme ==
        info gpgme 2.3.1
        ok   gpgme_check_version: 2.3.1
        ok   OpenPGP engine usable
-       info engine /usr/local/bin/gpg 2.4.9
-       ok   OpenPGP engine: gpg 2.4.9
+       info engine /usr/local/bin/gpg 2.5.24
+       ok   OpenPGP engine: gpg 2.5.24
        ok   context on the first scratch home
-       info fingerprint E02EE5A5F4978FDF5652A9C78653F9FD660AC272
+       info fingerprint 67CE79932875D658B8EDEB85265FD7184B44CFD5
        ok   ed25519 key created without passphrase (40-hex fingerprint)
        ok   gpgme_get_key by fingerprint
        ok   cv25519 encryption subkey added

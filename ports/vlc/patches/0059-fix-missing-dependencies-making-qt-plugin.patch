@@ -1,0 +1,59 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 18 Mar 2025 15:21:46 -0400
+Subject: [PATCH 59/60] Fix missing dependencies making QT plugin
+
+When trying to build VLC for x86_64 I ran into a problem making the QT
+plugin with missing dependencies. This led down a rabbit hole of trying
+to track dependencies and where they come from.
+
+The dependencies for a given plugin are discovered by configure by
+looking at the associated .pc file. In this case contrib's Qt5Gui.pc
+lists, among other things, fontconfig as a dependency. Thus automake
+adds -lfontconfig to the link command line for the QT plugin.
+
+fontconfig has its own dependencies, the relevant ones for this
+discussion are libxml2 and liblzma.
+
+At this point, libtool takes over. It looks at the various .la files
+that were created to find any transitive dependencies. It correctly
+identifies that libfontconfig.la wants libxml2 and liblzma, however
+since I'm making a shared object instead of a program it doesn't add
+them to the link. Thus any unresolved symbols from libfontconfig will
+likely remain unresolved, breaking the build.
+
+I don't think there is a way to get either libtool or configure to deal
+with this without major surgery. Instead I noticed that the Makefile.am
+that creates the QT plugin target adds the following variables to the
+link: QT_LIBS (which is set by configure), LIBS_qt (which appears to not
+be set by anyone and is empty) and LIBM.
+
+LIBS_qt, being empty, seems an obvious choice. So for the QNX build set
+it to hold the missing libraries (and anything THEY depend on).
+
+This got the build going for the QT plugin and luckily nothing else
+seems to have this problem. Ideally a global solution would be better
+but as long as this is the only failure of this kind, this specific
+solution is good enough.
+
+An interesting side note, this only breaks the x86_64 build. The
+aarch64le build, in theory, should have the same problem but it does
+not. For whatever reason, libfontconfig built for Arm64 doesn't seem to
+depend on the same unresolved symbols. This probably is worth further
+investigation when there is time.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+diff --git a/qnx/common.mk b/qnx/common.mk
+index 1858b4681a1..ad7e2289f59 100644
+--- a/qnx/common.mk
++++ b/qnx/common.mk
+@@ -128,6 +128,8 @@ VLC_CFG_ARGS += --host=${VLC_HOST} \
+ 		--with-contrib=$(CURDIR)/${VLC_HOST} \
+ 		--prefix=$(CURDIR)/install
+ 
++VLC_MAKE_ENV := LIBS_qt="-lfreetype -lz -lxml2 -llzma"
++
+ # Currently x86_64 does not support audio/ALSA
+ ifneq "$(CPU)" "x86_64"
+     VLC_CFG_ARGS += --enable-alsa
+

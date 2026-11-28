@@ -1,42 +1,43 @@
 # python3-pycodestyle 2.15.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T11:45:12Z   packages from: apk:local-dists
+# date: 2026-11-24T20:01:55Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u python3-pycodestyle qnx-test-python3-flake8 qnx-port-tests
-( 1/29) Installing bzip2 (1.0.8-r0)
-( 2/29) Installing expat (2.6.4-r0)
-( 3/29) Installing gdbm (1.24-r0)
-( 4/29) Installing libiconv (1.18-r0)
-( 5/29) Installing libunistring (1.3-r0)
-( 6/29) Installing ncurses (6.5-r0)
-( 7/29) Installing gettext (0.22.5-r0)
-( 8/29) Installing libffi (3.4.6-r0)
-( 9/29) Installing readline (8.2-r0)
-(10/29) Installing sqlite (3.47.2-r0)
-(11/29) Installing xz (5.6.3-r0)
-(12/29) Installing python3 (3.14.0-r0)
-(13/29) Installing python3-pycodestyle (2.15.0-r0)
-(14/29) Installing qnx-port-tests (1.0-r0)
-(15/29) Installing python3-mccabe (0.7.0-r0)
-(16/29) Installing python3-pyflakes (4.1.0-r0)
-(17/29) Installing python3-flake8 (7.5.0-r0)
-(18/29) Installing python3-flake8-blind-except (0.2.1-r0)
-(19/29) Installing python3-flake8-builtins (3.2.0-r0)
-(20/29) Installing python3-flake8-class-newline (1.6.0-r0)
-(21/29) Installing python3-flake8-comprehensions (3.17.0-r0)
-(22/29) Installing python3-flake8-deprecated (2.4.0-r0)
-(23/29) Installing python3-snowballstemmer (3.1.1-r0)
-(24/29) Installing python3-pydocstyle (6.3.0-r0)
-(25/29) Installing python3-flake8-docstrings (1.7.0-r0)
-(26/29) Installing python3-setuptools (80.8.0-r0)
-(27/29) Installing python3-flake8-import-order (0.19.2-r0)
-(28/29) Installing python3-flake8-quotes (3.4.0-r0)
-(29/29) Installing qnx-test-python3-flake8 (1.0-r0)
-Executing python3-3.14.0-r0.trigger
-OK: 136.4 MiB in 34 packages
+( 1/30) Installing bzip2 (1.0.8-r0)
+( 2/30) Installing expat (2.6.4-r0)
+( 3/30) Installing gdbm (1.26-r0)
+( 4/30) Installing libiconv (1.19.1-r0)
+( 5/30) Installing libunistring (1.5-r0)
+( 6/30) Installing ncurses (6.6-r0)
+( 7/30) Installing gettext (0.22.5-r0)
+( 8/30) Installing libffi (3.8.1-r0)
+( 9/30) Installing libuuid (2.42.4-r0)
+(10/30) Installing readline (8.3-r0)
+(11/30) Installing sqlite (3.47.2-r0)
+(12/30) Installing xz (5.8.4-r0)
+(13/30) Installing python3 (3.14.0-r1)
+(14/30) Installing python3-pycodestyle (2.15.0-r0)
+(15/30) Installing qnx-port-tests (1.0-r0)
+(16/30) Installing python3-mccabe (0.7.0-r0)
+(17/30) Installing python3-pyflakes (4.1.0-r0)
+(18/30) Installing python3-flake8 (7.5.0-r0)
+(19/30) Installing python3-flake8-blind-except (0.2.1-r0)
+(20/30) Installing python3-flake8-builtins (3.2.0-r0)
+(21/30) Installing python3-flake8-class-newline (1.6.0-r0)
+(22/30) Installing python3-flake8-comprehensions (3.17.0-r0)
+(23/30) Installing python3-flake8-deprecated (2.4.0-r0)
+(24/30) Installing python3-snowballstemmer (3.1.1-r0)
+(25/30) Installing python3-pydocstyle (6.3.0-r0)
+(26/30) Installing python3-flake8-docstrings (1.7.0-r0)
+(27/30) Installing python3-setuptools (80.8.0-r0)
+(28/30) Installing python3-flake8-import-order (0.19.2-r0)
+(29/30) Installing python3-flake8-quotes (3.4.0-r0)
+(30/30) Installing qnx-test-python3-flake8 (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+OK: 136.1 MiB in 35 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_flake8
      == python3-flake8 ==

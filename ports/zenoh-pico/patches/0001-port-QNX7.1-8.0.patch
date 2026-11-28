@@ -8,20 +8,19 @@ QNX as a zenoh-pico platform: the unix system layer (ZENOH_QNX), no -pipe
 (qcc rejects it), SO_NOSIGPIPE on TCP sockets as on the BSDs, and random
 numbers without Linux's getrandom() or the BSDs' arc4random().
 
-Upstream-Status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1)
+Rebased onto 1.10.2, where platforms are CMake profiles (cmake/platforms/):
+a "qnx" profile (the bsd one with ZENOH_QNX) picked for CMAKE_SYSTEM_NAME
+QNX, ZENOH_QNX next to ZENOH_BSD where the sources choose the POSIX socket
+layer, and the SO_NOSIGPIPE code, which moved from src/system/unix/network.c
+to src/link/transport/tcp/tcp_posix.c. Two includes the new socket files
+need on QNX: <sys/socket.h> in tcp_posix.c (glibc and macOS get it through
+<netinet/in.h>; QNX does not) and, for AF_INET/AF_INET6, in address.c.
 
----
- CMakeLists.txt                              | 10 +++++--
- include/zenoh-pico/system/common/platform.h |  2 +-
- src/system/unix/network.c                   | 18 +++++++++++++
- src/system/unix/system.c                    | 29 +++++++++++++++++++++
- 4 files changed, 56 insertions(+), 3 deletions(-)
+Upstream-Status: QNX-specific (from qnx-ports, github.com/qnx-ports/zenoh-pico branch qnx-1.2.1; rebased)
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a52eb68..ecb8423 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -85,7 +85,9 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+@@ -127,7 +127,9 @@
  
  # Compile options
  if(CMAKE_BUILD_TYPE MATCHES "RELEASE" OR "Release")
@@ -32,7 +31,7 @@ index a52eb68..ecb8423 100644
      add_compile_options(-pipe -O3)
    elseif(CMAKE_SYSTEM_NAME MATCHES "Generic")
      add_compile_options(-pipe -O3)
-@@ -93,6 +95,8 @@ if(CMAKE_BUILD_TYPE MATCHES "RELEASE" OR "Release")
+@@ -135,6 +137,8 @@
  else()
    if(CMAKE_SYSTEM_NAME MATCHES "PICO")
      add_compile_options(-c -Wall -Wextra -Wno-unused -Wno-strict-prototypes -pipe -g -O0)
@@ -41,78 +40,121 @@ index a52eb68..ecb8423 100644
    elseif(UNIX)
      add_compile_options(-c -Wall -Wextra -Werror -Wshadow -Wunused -Wstrict-prototypes -pipe -g -O0)
      # C99 pedantic doesn't like struct anonymous in unix header
-@@ -171,6 +175,8 @@ elseif(POSIX_COMPATIBLE)
-   set(CHECK_THREADS "OFF")
- elseif(CMAKE_SYSTEM_NAME MATCHES "BSD")
-   pico_add_compile_definition(ZENOH_BSD)
-+elseif(CMAKE_SYSTEM_NAME MATCHES "QNX")
-+  pico_add_compile_definition(ZENOH_QNX)
- elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-   pico_add_compile_definition(ZENOH_MACOS)
-   set(MACOSX_RPATH "ON")
-@@ -358,7 +364,7 @@ elseif(WITH_FREERTOS_PLUS_TCP)
- elseif(WITH_RPI_PICO)
-   file (GLOB Sources_RPI_Pico "src/system/rpi_pico/*.c")
-   list(APPEND Sources ${Sources_RPI_Pico})
--elseif(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "BSD" OR POSIX_COMPATIBLE)
-+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "BSD" OR CMAKE_SYSTEM_NAME MATCHES "QNX" OR POSIX_COMPATIBLE)
-   file (GLOB Sources_Unix "src/system/unix/*.c" "src/system/unix/link/*.c")
-   list(APPEND Sources ${Sources_Unix})
- elseif(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
-diff --git a/include/zenoh-pico/system/common/platform.h b/include/zenoh-pico/system/common/platform.h
-index 9c2433c..eb9bcb6 100644
+--- a/cmake/platforms.cmake
++++ b/cmake/platforms.cmake
+@@ -5,6 +5,8 @@
+     set(${out_var} "posix_compatible" PARENT_SCOPE)
+   elseif(CMAKE_SYSTEM_NAME MATCHES "BSD")
+     set(${out_var} "bsd" PARENT_SCOPE)
++  elseif(CMAKE_SYSTEM_NAME MATCHES "QNX")
++    set(${out_var} "qnx" PARENT_SCOPE)
+   elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+     set(${out_var} "macos" PARENT_SCOPE)
+   elseif(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
+--- a/cmake/platforms/qnx.cmake
++++ b/cmake/platforms/qnx.cmake
+@@ -0,0 +1,13 @@
++set(ZP_PLATFORM_SYSTEM_LAYER qnx)
++set(ZP_PLATFORM_COMPILE_DEFINITIONS ZENOH_QNX)
++set(ZP_PLATFORM_SOURCE_FILES
++    "${PROJECT_SOURCE_DIR}/src/system/unix/system.c"
++    "${PROJECT_SOURCE_DIR}/src/system/unix/network.c"
++    "${PROJECT_SOURCE_DIR}/src/link/transport/udp/raweth_unix.c"
++    "${PROJECT_SOURCE_DIR}/src/link/transport/tcp/tcp_posix.c"
++    "${PROJECT_SOURCE_DIR}/src/link/transport/udp/udp_posix.c"
++    "${PROJECT_SOURCE_DIR}/src/link/transport/serial/tty_posix.c")
++if(ZP_UDP_MULTICAST_ENABLED)
++  list(APPEND ZP_PLATFORM_SOURCE_FILES
++       "${PROJECT_SOURCE_DIR}/src/link/transport/udp/udp_multicast_posix.c")
++endif()
 --- a/include/zenoh-pico/system/common/platform.h
 +++ b/include/zenoh-pico/system/common/platform.h
-@@ -25,7 +25,7 @@
- #include "zenoh-pico/config.h"
- #include "zenoh-pico/utils/result.h"
+@@ -27,7 +27,7 @@
  
--#if defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD)
-+#if defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_QNX)
+ /* Centralized built-in socket markers for TCP/UDP/WS/TLS transports that use
+  * the platform socket layer. */
+-#if !defined(ZP_PLATFORM_SOCKET_POSIX) && (defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD))
++#if !defined(ZP_PLATFORM_SOCKET_POSIX) && (defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_QNX))
+ #define ZP_PLATFORM_SOCKET_POSIX 1
+ #endif
+ 
+@@ -67,7 +67,7 @@
+ 
+ #ifdef ZP_SYSTEM_PLATFORM_HEADER
+ #include ZP_SYSTEM_PLATFORM_HEADER
+-#elif defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD)
++#elif defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_QNX)
  #include "zenoh-pico/system/platform/unix.h"
  #elif defined(ZENOH_WINDOWS)
  #define NOMINMAX
-diff --git a/src/system/unix/network.c b/src/system/unix/network.c
-index c822e4a..61fc52f 100644
---- a/src/system/unix/network.c
-+++ b/src/system/unix/network.c
-@@ -89,6 +89,15 @@ z_result_t _z_open_tcp(_z_sys_net_socket_t *sock, const _z_sys_net_endpoint_t re
+--- a/src/link/transport/common/address.c
++++ b/src/link/transport/common/address.c
+@@ -16,9 +16,13 @@
  
- #if defined(ZENOH_MACOS) || defined(ZENOH_BSD)
-         setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)0, sizeof(int));
-+#elif defined(ZENOH_QNX)
-+    #if defined(__QNX__)
-+        #if __QNX__ >= 800
-+        // QNX 8 or later
-+        setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)0, sizeof(int));
-+        #else
-+        // QNX 7.x or earlier
-+        #endif
-+    #endif
+ #include "zenoh-pico/config.h"
+ 
+-#if defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD)
++#if defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_QNX)
+ #include <arpa/inet.h>
  #endif
++#if defined(ZENOH_QNX)
++// AF_INET/AF_INET6: QNX's <arpa/inet.h> does not bring in <sys/socket.h>.
++#include <sys/socket.h>
++#endif
+ #if defined(ZENOH_FREERTOS_LWIP)
+ #include "lwip/inet.h"
+ #endif
+@@ -30,7 +34,7 @@
+ #include "zenoh-pico/utils/logging.h"
  
-         struct addrinfo *it = NULL;
-@@ -143,6 +152,15 @@ z_result_t _z_listen_tcp(_z_sys_net_socket_t *sock, const _z_sys_net_endpoint_t
+ #if defined(ZENOH_WINDOWS) || defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || \
+-    defined(ZENOH_FREERTOS_LWIP) || defined(ZENOH_ZEPHYR)
++    defined(ZENOH_QNX) || defined(ZENOH_FREERTOS_LWIP) || defined(ZENOH_ZEPHYR)
+ 
+ static z_result_t _z_ipv4_port_to_endpoint(const uint8_t *address, uint16_t port, char *dst, size_t dst_len) {
+     char ip[INET_ADDRSTRLEN] = {0};
+--- a/src/link/transport/common/endpoints.c
++++ b/src/link/transport/common/endpoints.c
+@@ -63,7 +63,7 @@
+     return _Z_RES_OK;
+ }
+ 
+-#elif defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_ZEPHYR)
++#elif defined(ZENOH_LINUX) || defined(ZENOH_MACOS) || defined(ZENOH_BSD) || defined(ZENOH_QNX) || defined(ZENOH_ZEPHYR)
+ 
+ #include <stddef.h>
+ 
+--- a/src/link/transport/tcp/tcp_posix.c
++++ b/src/link/transport/tcp/tcp_posix.c
+@@ -25,6 +25,7 @@
+ #include <stddef.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <sys/socket.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
+@@ -95,7 +96,7 @@
+             ret = _Z_ERR_GENERIC;
+         }
+ 
+-#if defined(ZENOH_MACOS) || defined(ZENOH_BSD)
++#if defined(ZENOH_MACOS) || defined(ZENOH_BSD) || (defined(ZENOH_QNX) && __QNX__ >= 800)
+         int nosigpipe_val = 1;
+         setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)&nosigpipe_val, sizeof(int));
+ #endif
+@@ -155,7 +156,7 @@
+         _Z_ERROR_LOG(_Z_ERR_GENERIC);
+         ret = _Z_ERR_GENERIC;
      }
- #if defined(ZENOH_MACOS) || defined(ZENOH_BSD)
-     setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)0, sizeof(int));
-+#elif defined(ZENOH_QNX)
-+    #if defined(__QNX__)
-+        #if __QNX__ >= 800
-+        // QNX 8 or later
-+        setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)0, sizeof(int));
-+        #else
-+        // QNX 7.x or earlier
-+        #endif
-+    #endif
+-#if defined(ZENOH_MACOS) || defined(ZENOH_BSD)
++#if defined(ZENOH_MACOS) || defined(ZENOH_BSD) || (defined(ZENOH_QNX) && __QNX__ >= 800)
+     int nosigpipe_val = 1;
+     setsockopt(sock->_fd, SOL_SOCKET, SO_NOSIGPIPE, (void *)&nosigpipe_val, sizeof(int));
  #endif
-     if (ret != _Z_RES_OK) {
-         close(sock->_fd);
-diff --git a/src/system/unix/system.c b/src/system/unix/system.c
-index ab58318..40933c7 100644
 --- a/src/system/unix/system.c
 +++ b/src/system/unix/system.c
-@@ -32,6 +32,25 @@
+@@ -33,6 +33,25 @@
  #include "zenoh-pico/system/platform.h"
  
  /*------------------ Random ------------------*/
@@ -138,7 +180,7 @@ index ab58318..40933c7 100644
  uint8_t z_random_u8(void) {
      uint8_t ret = 0;
  #if defined(ZENOH_LINUX)
-@@ -40,6 +59,8 @@ uint8_t z_random_u8(void) {
+@@ -41,6 +60,8 @@
      }
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = z_random_u32();
@@ -147,7 +189,7 @@ index ab58318..40933c7 100644
  #endif
  
      return ret;
-@@ -53,6 +74,8 @@ uint16_t z_random_u16(void) {
+@@ -54,6 +75,8 @@
      }
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = z_random_u32();
@@ -156,7 +198,7 @@ index ab58318..40933c7 100644
  #endif
  
      return ret;
-@@ -66,6 +89,8 @@ uint32_t z_random_u32(void) {
+@@ -67,6 +90,8 @@
      }
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      ret = arc4random();
@@ -165,7 +207,7 @@ index ab58318..40933c7 100644
  #endif
  
      return ret;
-@@ -81,6 +106,8 @@ uint64_t z_random_u64(void) {
+@@ -82,6 +107,8 @@
      ret |= z_random_u32();
      ret = ret << 32;
      ret |= z_random_u32();
@@ -174,7 +216,7 @@ index ab58318..40933c7 100644
  #endif
  
      return ret;
-@@ -93,6 +120,8 @@ void z_random_fill(void *buf, size_t len) {
+@@ -94,6 +121,8 @@
      }
  #elif defined(ZENOH_MACOS) || defined(ZENOH_BSD)
      arc4random_buf(buf, len);
@@ -183,6 +225,3 @@ index ab58318..40933c7 100644
  #endif
  }
  
--- 
-2.43.0
-

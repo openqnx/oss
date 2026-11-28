@@ -1,6 +1,6 @@
 # lmbench 3.0_git20260929-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:51:54Z   packages from: apk:local-dists
+# date: 2026-11-24T14:06:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -14,15 +14,15 @@ OK: 12.9 MiB in 8 packages
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lmbench
      == lmbench ==
        ok   hello: Hello world
-       ok   lat_syscall null: Simple syscall: 148.9151 microseconds
-       ok   lat_syscall read: Simple read: 163.2727 microseconds
-       ok   lat_syscall write: Simple write: 158.0676 microseconds
-       ok   lat_syscall stat: Simple stat: 1653.4682 microseconds
-       ok   lat_pipe: Pipe latency: 1098.8660 microseconds
-       ok   bw_pipe: Pipe bandwidth: 67.73 MB/sec
-       ok   lat_proc fork: Process fork+exit: 15407.3939 microseconds
-       ok   bw_mem 256k rd: 0.262144 2995.49 MB/s
-       ok   lat_tcp over loopback: TCP latency using <ip>: 3711.9880 microseconds
+       ok   lat_syscall null: Simple syscall: 86.8952 microseconds
+       ok   lat_syscall read: Simple read: 92.2932 microseconds
+       ok   lat_syscall write: Simple write: 84.4546 microseconds
+       ok   lat_syscall stat: Simple stat: 784.0539 microseconds
+       ok   lat_pipe: Pipe latency: 441.5660 microseconds
+       ok   bw_pipe: Pipe bandwidth: 101.64 MB/sec
+       ok   lat_proc fork: Process fork+exit: 10664.4471 microseconds
+       ok   bw_mem 256k rd: 0.262144 4775.93 MB/s
+       ok   lat_tcp over loopback: TCP latency using <ip>: 2678.4040 microseconds
      PASS lmbench
 PASS test_lmbench
 --------------------------------------------

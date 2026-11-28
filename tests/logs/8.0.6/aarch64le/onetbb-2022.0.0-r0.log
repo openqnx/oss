@@ -1,6 +1,6 @@
 # onetbb 2022.0.0-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-21T09:58:25Z   packages from: apk:local-dists
+# date: 2026-11-24T14:35:53Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
@@ -13,7 +13,7 @@ OK: 10.4 MiB in 8 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_onetbb
      == onetbb ==
-       info TBB 2022.0.0, interface 12140, max concurrency 4
+       info TBB 2022.0.0, interface 12140, max concurrency 2
        ok   runtime interface version matches header
        ok   task arena has workers
        info sum of squares 1..1000000 = 333333833333500000

@@ -1,0 +1,41 @@
+# wv 1.2.9-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:57:24Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u wv qnx-test-wv qnx-port-tests
+( 1/14) Installing libiconv (1.19.1-r1)
+( 2/14) Installing libunistring (1.5-r1)
+( 3/14) Installing ncurses (6.6-r1)
+( 4/14) Installing gettext (0.22.5-r1)
+( 5/14) Installing libffi (3.8.1-r1)
+( 6/14) Installing pcre2 (10.49-r1)
+( 7/14) Installing glib (2.90.1-r3)
+( 8/14) Installing bzip2 (1.0.8-r1)
+( 9/14) Installing xz (5.8.4-r1)
+(10/14) Installing libxml2 (2.13.5-r1)
+(11/14) Installing libgsf (1.14.60-r1)
+(12/14) Installing libpng (1.6.59-r1)
+(13/14) Installing wv (1.2.9-r0)
+(14/14) Installing qnx-test-wv (1.0-r0)
+Executing glib-2.90.1-r3.trigger
+OK: 50.5 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_wv
+     == wv ==
+       ok   test document: 20992 bytes
+       ok   wvVersion: Version: word8 or higher, Encrypted: No
+       ok   wvText: "Times New Roman 10pt in bold and italic and both."
+       ok   wvText: "Verdana (Baltic) at 18 point."
+       ok   wvText: "Centred"
+       ok   wvHtml: an HTML page with the text
+       ok   wvSummary: 28 document properties
+       ok   a non-Word file is refused (exit 255)
+     PASS wv
+PASS test_wv
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

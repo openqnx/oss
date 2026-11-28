@@ -1,0 +1,30 @@
+# flutter-hmi-demo 1.0-r2 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-28T09:58:08Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u flutter-hmi-demo qnx-test-flutter-hmi-demo qnx-port-tests
+(1/3) Upgrading flutter-hmi-demo (1.0-r1 -> 1.0-r2)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-flutter-hmi-demo (1.0-r1)
+OK: 156.7 MiB in 48 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_flutter_hmi_demo
+     == flutter_hmi_demo ==
+       ok   flutter-hmi-demo and the app bundle installed
+       ok   libapp.so is AOT code for x86_64 (e_machine 0x3e)
+       ok   assets: Material icons font listed and present
+       ok   menu entry: Vehicle HMI Demo, Exec=flutter-hmi-demo
+       ok   labwc up (headless)
+       ok   flutter-hmi-demo runs the app without LD_LIBRARY_PATH: qnx-flutter-wayland: running /usr/local/share/flutter-apps/hmi-demo (1280x720)
+       ok   still running 8 s later (animated screens on the headless output)
+       info frame rate (software rendering): 60.0 fps (1280x720), 0 frame(s) dropped
+       ok   SIGTERM: clean exit (rc 0)
+     PASS flutter_hmi_demo
+PASS test_flutter_hmi_demo
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

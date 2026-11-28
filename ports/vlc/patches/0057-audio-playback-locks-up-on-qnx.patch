@@ -1,0 +1,65 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Wed, 12 Mar 2025 12:51:30 -0400
+Subject: [PATCH 57/60] Audio playback locks up on QNX
+
+On QNX, sometimes audio playback would lock up. The easiest way to
+trigger this would be to start playback, then stop/restart it a few
+times.
+
+The problem was traced to how QNX deals with thread cancellation. It is
+a little different than Linux. Once a thread with a cancellation type of
+DEFERRED is cancelled, it _will_ be cancelled at the next cancellation
+point. Regardless of what the cancellation state of the thread is at the
+time the cancellation point is hit.
+
+The upswing is that if the audio_output's worker thread already had a
+deferred cancellation request when it set the cancellation state to
+DISABLED, it would get cancelled at the next cancellation point, while
+it held the mutex lock. Holding this lock would prevent future audio
+playback from working.
+
+Work around this by explicitly forcing a cancellation point every time
+the cancellation state is disabled. If cancellation is already disabled,
+the call correctly does nothing, so it really only has an effect when
+called when cancellation is currently enabled.
+
+This solution isn't foolproof. It is possible, though unlikely, that a
+cancellation could happen between the call to pthread_testcancel and the
+call to pthread_setcancelstate(DISABLED). Unfortunately I couldn't find
+another method to trigger a cancellation point that was lightweight and
+reliable.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+diff --git a/src/posix/thread.c b/src/posix/thread.c
+index 40e515ac86e..b18fcd8d85b 100644
+--- a/src/posix/thread.c
++++ b/src/posix/thread.c
+@@ -593,6 +593,26 @@ void vlc_cancel(vlc_thread_t th)
+ int vlc_savecancel (void)
+ {
+     int state;
++
++#if defined(__QNXNTO__)
++    /* If there is a pending cancellation while the cancel state was disabled,
++     * it will fire when cancel state is enabled and the next cancellation point
++     * is hit. However what should happen if the cancel state is again disabled
++     * before a cancellation point is hit? POSIX is unclear on this point.
++     *
++     * On Linux, it appears that the cancellation request goes back to being pending.
++     *
++     * On QNX, it will still fire at the next cancellation point. This is arguably
++     * a bug and may be fixed in the future.
++     *
++     * Since the code is assuming Linux behaviour, make a pending cancellation
++     * fire now. I have to do it before the cancelstate is set as pthread_testcancel
++     * does nothing once the cancelstate is disabled. Thus if the cancelstate is
++     * already disabled this does nothing (as it should).
++     */
++    pthread_testcancel();
++#endif
++
+     int val = pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &state);
+ 
+     VLC_THREAD_ASSERT ("saving cancellation");
+

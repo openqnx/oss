@@ -10,7 +10,7 @@
 | Build system | custom (see recipe) |
 | QNX patches | 2 |
 | Build dependencies | [`sdl2`](../sdl2/) [`zlib`](../zlib/) [`xz`](../xz/) [`libpng`](../libpng/) [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`curl`](../curl/) [`lzo`](../lzo/) |
-| Run-time dependencies | [`curl`](../curl/) [`freetype`](../freetype/) [`libogg`](../libogg/) [`libpng`](../libpng/) [`lzo`](../lzo/) [`opus`](../opus/) [`opusfile`](../opusfile/) [`sdl2`](../sdl2/) [`xz`](../xz/) [`zlib`](../zlib/) |
+| Run-time dependencies | [`curl`](../curl/) [`freetype`](../freetype/) [`libpng`](../libpng/) [`lzo`](../lzo/) [`sdl2`](../sdl2/) [`xz`](../xz/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | none (no run-time code) |
 

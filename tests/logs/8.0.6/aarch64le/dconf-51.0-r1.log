@@ -1,0 +1,54 @@
+# dconf 51.0-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:47:48Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u dconf qnx-test-dconf qnx-port-tests
+( 1/12) Installing expat (2.6.4-r1)
+( 2/12) Installing dbus (1.16.4-r1)
+( 3/12) Installing libiconv (1.19.1-r1)
+( 4/12) Installing libunistring (1.5-r1)
+( 5/12) Installing ncurses (6.6-r1)
+( 6/12) Installing gettext (0.22.5-r1)
+( 7/12) Installing libffi (3.8.1-r1)
+( 8/12) Installing pcre2 (10.49-r1)
+( 9/12) Installing glib (2.90.1-r3)
+(10/12) Installing dconf (51.0-r1)
+(11/12) Installing qnx-port-tests (1.0-r1)
+(12/12) Installing qnx-test-dconf (1.0-r2)
+Executing glib-2.90.1-r3.trigger
+OK: 48.2 MiB in 17 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_dconf
+     == dconf ==
+       ok   dconf help lists watch, compile and dump
+       ok   dconf-service and its D-Bus activation file are installed
+       ok   private D-Bus session bus
+       ok   dconf write (dconf-service started by the bus)
+       ok   read back int32 42
+       ok   read back a string
+       ok   read back a string array
+       ok   a malformed value is refused
+       ok   database /tmp/qnxport-dconf.gNOZzY/home/.config/dconf/user is a GVariant database (334 bytes)
+       ok   shm flag file in $XDG_RUNTIME_DIR/dconf
+       ok   dconf list: list name number 
+       ok   dconf dump writes the keyfile form
+       ok   dconf load: uint32 and boolean keys
+       ok   dconf watch reported the change
+       ok   reset removed the key
+       ok   reset -f removed a directory
+       ok   dconf compile built a database from keyfiles
+       ok   profile: default from the compiled database
+       ok   profile: the user's value overrides, read -d still gives the default
+       ok   GIO module libdconfsettings.so installed
+       ok   gsettings get: the schema default
+       ok   gsettings set is stored in dconf (backend loaded)
+       ok   gsettings get reads it back from dconf
+     PASS dconf
+PASS test_dconf
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

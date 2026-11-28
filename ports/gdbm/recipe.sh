@@ -1,5 +1,6 @@
-VERSION=1.24; TARBALL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.24.tar.gz
-SHA256=695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf
+VERSION=1.26
+TARBALL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz
+SHA256=6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-nls
                   --without-readline --enable-libgdbm-compat )

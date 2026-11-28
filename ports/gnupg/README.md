@@ -1,4 +1,4 @@
-# gnupg 2.4.9
+# gnupg 2.5.24
 
 > GNU Privacy Guard 2: OpenPGP and S/MIME encryption and signing tools
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.9.tar.bz2 |
-| SHA-256 | `dd17ab2e9a04fd79d39d853f599cbc852062ddb9ab52a4ddeb4176fd8b302964` |
+| Upstream | https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.24.tar.bz2 |
+| SHA-256 | `bf149d01a2b9fcc0e4589b8ae8697d3d5c557ea48ed95a3fa55dd3b1187e6039` |
 | Build system | GNU Autotools |
-| QNX patches | 1 |
+| QNX patches | 2 |
 | Build dependencies | [`libgpg-error`](../libgpg-error/) [`libgcrypt`](../libgcrypt/) [`libassuan`](../libassuan/) [`libksba`](../libksba/) [`npth`](../npth/) [`gnutls`](../gnutls/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`readline`](../readline/) [`libiconv`](../libiconv/) |
 | Run-time dependencies | [`bzip2`](../bzip2/) [`gnutls`](../gnutls/) [`libassuan`](../libassuan/) [`libgcrypt`](../libgcrypt/) [`libgpg-error`](../libgpg-error/) [`libiconv`](../libiconv/) [`libksba`](../libksba/) [`ncurses`](../ncurses/) [`npth`](../npth/) [`readline`](../readline/) [`sqlite`](../sqlite/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -82,19 +82,20 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.9.tar.bz2
+URL=https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.24.tar.bz2
 mkdir -p dist src/gnupg
 curl -fL -o dist/$(basename $URL) $URL
-echo "dd17ab2e9a04fd79d39d853f599cbc852062ddb9ab52a4ddeb4176fd8b302964  dist/$(basename $URL)" | sha256sum -c -
+echo "bf149d01a2b9fcc0e4589b8ae8697d3d5c557ea48ed95a3fa55dd3b1187e6039  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gnupg --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
 patch -p1 -d src/gnupg < ports/gnupg/patches/0001-printable-os-name-qnx.patch
+patch -p1 -d src/gnupg < ports/gnupg/patches/0002-qnx-gpgtar-output-directory-check.patch
 ```
 
 **[`0001-printable-os-name-qnx.patch`](patches/0001-printable-os-name-qnx.patch)** — Report the platform as QNX, not the build machine's uname
@@ -105,6 +106,18 @@ patch -p1 -d src/gnupg < ports/gnupg/patches/0001-printable-os-name-qnx.patch
 > and in the shipped configure (which the build does not regenerate).
 
 Touches: `configure`, `configure.ac` · Upstream status: QNX-specific
+
+**[`0002-qnx-gpgtar-output-directory-check.patch`](patches/0002-qnx-gpgtar-output-directory-check.patch)** — gpgtar: check the output directory with lstat() and opendir() on QNX
+
+> GnuPG 2.5 checks that the --directory of gpgtar --extract is not a symlink
+> and is empty: open(dir, O_RDONLY|O_NOFOLLOW), then fdopendir() on that fd.
+> On QNX fdopendir() returned NULL there, check_output_directory() gave up
+> without a message, and every extract into an existing directory failed with
+> "extracting archive failed: Invalid argument" (seen with 2.5.24 on QNX
+> x86_64). Use the code path upstream has for systems without O_NOFOLLOW:
+> lstat() rejects a symlink, opendir() reads the directory. Same checks.
+
+Touches: `tools/gpgtar-extract.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -141,7 +154,7 @@ cd -
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- 2.4 is the newest release series this tree's libraries can carry: GnuPG 2.5 needs libgpg-error >= 1.56 and libgcrypt >= 1.12 (ported here: 1.50, 1.11).
+- GnuPG 2.5 (needs libgpg-error >= 1.56, libgcrypt >= 1.12, libassuan 3). patches/0002: gpgtar --extract --directory DIR failed on QNX (its new empty-directory check uses fdopendir(), which failed there).
 - configure probes PATH for gpgrt-config and would otherwise pick up the build host's copy, which reports the host's libgpg-error rather than ours.
 - No LDAP client library and no TPM2 stack here: dirmngr goes without LDAP keyserver support, and tpm2d is not built. The internal CCID driver needs libusb; scdaemon still talks to readers through PC/SC (loaded at run time). NLS off: messages stay English, and no catalogue path is compiled in. --disable-tests: the test-suite interpreter (gpgscm) needs gcc's -imacros, which qcc rejects, and the suite only runs on the build machine anyway.
 
@@ -149,13 +162,14 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gnupg`.
 
 ### 5. What it installs
 
-30 files under `/usr/local`, 19 programs.
+30 files under `/usr/local`, 20 programs.
 
 ```
 /usr/local/bin/dirmngr
 /usr/local/bin/dirmngr-client
 /usr/local/bin/gpg
 /usr/local/bin/gpg-agent
+/usr/local/bin/gpg-authcode-sign.sh
 /usr/local/bin/gpg-card
 /usr/local/bin/gpg-connect-agent
 /usr/local/bin/gpg-mail-tube
@@ -167,7 +181,6 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gnupg`.
 /usr/local/bin/gpgsplit
 /usr/local/bin/gpgtar
 /usr/local/bin/gpgv
-/usr/local/bin/kbxutil
 ...
 ```
 
@@ -241,16 +254,17 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.4.9**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gnupg=<version>`), sources in `ported/gnupg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gnupg`; port one with `scripts/port-update gnupg`.
+This recipe builds **2.5.24**. Kept from earlier: `2.4.9` ([recipe and patches](versions/2.4.9/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gnupg=<version>`), sources in `ported/gnupg/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gnupg`; port one with `scripts/port-update gnupg`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-# 2.4 is the newest release series this tree's libraries can carry: GnuPG 2.5
-# needs libgpg-error >= 1.56 and libgcrypt >= 1.12 (ported here: 1.50, 1.11).
-VERSION=2.4.9
-TARBALL=https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.9.tar.bz2
-SHA256=dd17ab2e9a04fd79d39d853f599cbc852062ddb9ab52a4ddeb4176fd8b302964
+# GnuPG 2.5 (needs libgpg-error >= 1.56, libgcrypt >= 1.12, libassuan 3).
+# patches/0002: gpgtar --extract --directory DIR failed on QNX (its new
+# empty-directory check uses fdopendir(), which failed there).
+VERSION=2.5.24
+TARBALL=https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.24.tar.bz2
+SHA256=bf149d01a2b9fcc0e4589b8ae8697d3d5c557ea48ed95a3fa55dd3b1187e6039
 BUILDSYS=autotools
 DEPS="libgpg-error libgcrypt libassuan libksba npth gnutls sqlite zlib bzip2 readline libiconv"
 # configure probes PATH for gpgrt-config and would otherwise pick up the build

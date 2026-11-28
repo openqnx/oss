@@ -1,19 +1,18 @@
 # lua-compat53 0.14.4-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T12:10:11Z   packages from: apk:local-dists
+# date: 2026-11-24T12:47:09Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u lua-compat53 qnx-test-lua-compat53 qnx-port-tests
-(1/7) Installing lua-compat53 (0.14.4-r0)
-(2/7) Installing qnx-port-tests (1.0-r0)
-(3/7) Installing lua5.1 (5.1.5-r0)
-(4/7) Installing lua5.2 (5.2.4-r0)
-(5/7) Installing lua5.3 (5.3.6-r0)
-(6/7) Installing luajit (2.1_git-r0)
-(7/7) Installing qnx-test-lua-compat53 (1.0-r0)
-OK: 12.2 MiB in 12 packages
+(1/6) Installing lua-compat53 (0.14.4-r0)
+(2/6) Installing lua5.1 (5.1.5-r0)
+(3/6) Installing lua5.2 (5.2.4-r0)
+(4/6) Installing lua5.3 (5.3.6-r0)
+(5/6) Installing luajit (2.1_git-r0)
+(6/6) Installing qnx-test-lua-compat53 (1.0-r0)
+OK: 183.3 MiB in 40 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_lua_compat53
      == lua-compat53 ==

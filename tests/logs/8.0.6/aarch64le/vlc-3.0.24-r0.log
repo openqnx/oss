@@ -1,0 +1,53 @@
+# vlc 3.0.24-r0 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-28T00:49:49Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u vlc qnx-test-vlc qnx-port-tests
+(1/4) Installing libiconv (1.19.1-r1)
+(2/4) Installing xz (5.8.4-r1)
+(3/4) Installing vlc (3.0.24-r0)
+(4/4) Installing qnx-test-vlc (1.0-r2)
+OK: 606.0 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_vlc
+     == vlc ==
+       info libvlc 3.0.24 Vetinari
+       ok   libvlc_get_version is 3.0.24
+       ok   scratch directory
+       ok   wrote 1 s 8 kHz mono WAV
+       ok   libvlc_new
+       ok   libvlc_media_new_path
+       ok   parse request
+       info parsed status 4 after 150 ms
+       ok   media parsed
+       info duration 1000 ms
+       ok   duration is 1000 ms
+       info audio track: 8000 Hz, 1 channel(s)
+       ok   one audio track, 8000 Hz mono
+       ok   libvlc_media_player_new_from_media
+       ok   libvlc_media_player_play
+       info state 6 after 200 ms: 8000 samples, peak 12000
+       ok   playback reached the end
+       ok   ~8000 samples reached the audio callback
+       ok   decoded peak is the generated 12000
+       info vlc exited with status 0x0 after 6100 ms
+       info vlc: [0000002da8d3ea30] main interface error: no suitable interface module
+       info vlc: [0000001194638130] main libvlc error: interface "globalhotkeys,none" initialization failed
+       info vlc: [0000002da8d3fef0] dummy interface: using the dummy interface module...
+       info vlc: [0000002da8d401c0] idummy demux: command `quit'
+       info vlc: [0000002da8d29ce0] main playlist: end of playlist, exiting
+       ok   vlc -I dummy --aout=afile exits 0
+       info out.wav: 8000 Hz, 1 channel(s)
+       ok   afile wrote an 8 kHz mono WAV
+       info out.wav: 8000 samples, 8000 identical to the input (max diff 0)
+       ok   the vlc program decoded ~8000 samples
+       ok   PCM passed through unchanged
+     PASS vlc
+PASS test_vlc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

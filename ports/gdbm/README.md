@@ -1,4 +1,4 @@
-# gdbm 1.24
+# gdbm 1.26
 
 > GNU dbm key/value database library
 
@@ -6,8 +6,8 @@
 
 | | |
 |---|---|
-| Upstream | https://ftp.gnu.org/gnu/gdbm/gdbm-1.24.tar.gz |
-| SHA-256 | `695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf` |
+| Upstream | https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz |
+| SHA-256 | `6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e` |
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | none |
@@ -73,10 +73,10 @@ No other component has to be built first.
 ### 2. Get the upstream source
 
 ```bash
-URL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.24.tar.gz
+URL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz
 mkdir -p dist src/gdbm
 curl -fL -o dist/$(basename $URL) $URL
-echo "695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf  dist/$(basename $URL)" | sha256sum -c -
+echo "6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/gdbm --strip-components=1
 ```
 
@@ -109,13 +109,15 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH gdbm`.
 
 ### 5. What it installs
 
-15 files under `/usr/local`: 4 shared-library entries, 3 programs, 3 headers.
+17 files under `/usr/local`: 6 shared-library entries, 3 programs, 3 headers.
 
 ```
 /usr/local/lib/libgdbm.so
 /usr/local/lib/libgdbm.so.6
+/usr/local/lib/libgdbm.so.6.0.0
 /usr/local/lib/libgdbm_compat.so
 /usr/local/lib/libgdbm_compat.so.4
+/usr/local/lib/libgdbm_compat.so.4.0.0
 /usr/local/bin/gdbm_dump
 /usr/local/bin/gdbm_load
 /usr/local/bin/gdbmtool
@@ -202,13 +204,14 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **1.24**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gdbm=<version>`), sources in `ported/gdbm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gdbm`; port one with `scripts/port-update gdbm`.
+This recipe builds **1.26**. Kept from earlier: `1.24` ([recipe and patches](versions/1.24/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add gdbm=<version>`), sources in `ported/gdbm/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates gdbm`; port one with `scripts/port-update gdbm`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=1.24; TARBALL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.24.tar.gz
-SHA256=695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf
+VERSION=1.26
+TARBALL=https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz
+SHA256=6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e
 BUILDSYS=autotools
 CONF_ARGS_EXTRA=( --enable-shared --disable-static --disable-nls
                   --without-readline --enable-libgdbm-compat )

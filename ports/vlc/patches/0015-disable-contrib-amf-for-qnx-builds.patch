@@ -1,0 +1,24 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Thu, 13 Mar 2025 14:27:01 -0400
+Subject: [PATCH 15/60] Disable contrib/amf for QNX builds
+
+AMF provides an interface to HW decoders and it isn't plugged into QNX
+yet. Disable it for now.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/amf/rules.mak
++++ b/contrib/src/amf/rules.mak
+@@ -12,10 +12,12 @@
+ endif
+ ifdef HAVE_LINUX
+ ifndef HAVE_ANDROID
++ifndef HAVE_QNX
+ PKGS += amf
+ endif
+ endif
+ endif
++endif
+ 
+ $(TARBALLS)/AMF-$(AMF_VERSION).tar.gz:
+ 	$(call download_pkg,$(AMF_URL),amf)

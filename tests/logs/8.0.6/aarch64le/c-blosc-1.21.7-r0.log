@@ -1,16 +1,15 @@
 # c-blosc 1.21.7-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T01:21:12Z   packages from: apk:local-dists
+# date: 2026-11-24T12:24:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u c-blosc qnx-test-c-blosc qnx-port-tests
-(1/4) Installing lz4 (1.10.0-r0)
-(2/4) Installing c-blosc (1.21.7-r0)
-(3/4) Installing cups (2.4.16-r1)
-(4/4) Installing qnx-test-c-blosc (1.0-r1)
-OK: 228.8 MiB in 77 packages
+(1/3) Installing lz4 (1.11.1-r0)
+(2/3) Installing c-blosc (1.21.7-r0)
+(3/3) Installing qnx-test-c-blosc (1.0-r1)
+OK: 136.2 MiB in 24 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c_blosc
      == c-blosc ==
@@ -37,7 +36,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_c
        info lz4     shuffle=1: 4194304 -> 35344 bytes
        ok   lz4 shuffle=1: round trip bit-exact, header sizes right
        ok   lz4 shuffle=1: compresses a counting int32 array at least 10x
-       info lz4     shuffle=2: 4194304 -> 96672 bytes
+       info lz4     shuffle=2: 4194304 -> 18983 bytes
        ok   lz4 shuffle=2: round trip bit-exact, header sizes right
        ok   lz4 shuffle=2: compresses a counting int32 array at least 10x
        info lz4hc   shuffle=0: 4194304 -> 4194320 bytes

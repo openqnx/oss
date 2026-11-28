@@ -1,0 +1,30 @@
+ctor 0.4.3: support QNX (target_os = "nto") through .init_array
+
+ctor knows its ELF targets by name and stops anywhere else with
+"#[ctor]/#[dtor] is not supported on the current target". zenoh-c uses
+#[ctor::ctor] on unix (src/lib.rs, ignoring SIGPIPE at load time), so
+zenoh-c did not compile for QNX. QNX 8 is ELF and its runtime (crt1/ldd,
+qcc's gcc 12) runs the .init_array entries of executables and shared
+objects like the other ELF systems, so QNX joins the list of targets whose
+constructors go into .init_array.
+
+Upstream-Status: Pending
+---
+--- a/src/macros/mod.rs
++++ b/src/macros/mod.rs
+@@ -498,6 +498,7 @@
+             target_os = "dragonfly",
+             target_os = "illumos",
+             target_os = "haiku",
++            target_os = "nto",
+             target_vendor = "apple",
+             target_family = "wasm",
+             windows
+@@ -528,6 +529,7 @@
+                     target_os = "dragonfly",
+                     target_os = "illumos",
+                     target_os = "haiku",
++                    target_os = "nto",
+                     target_family = "wasm"
+                 ), ".init_array"],
+                 [target_vendor = "apple", "__DATA,__mod_init_func"],

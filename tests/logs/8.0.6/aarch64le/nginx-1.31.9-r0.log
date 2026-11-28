@@ -1,17 +1,16 @@
 # nginx 1.31.9-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T11:40:53Z   packages from: apk:local-dists
+# date: 2026-11-24T14:26:10Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u nginx qnx-test-nginx qnx-port-tests
-(1/5) Installing libxcrypt (4.5.2-r0)
-(2/5) Installing pcre2 (10.49-r0)
-(3/5) Installing nginx (1.31.9-r0)
-(4/5) Installing qnx-port-tests (1.0-r0)
-(5/5) Installing qnx-test-nginx (1.0-r1)
-OK: 18.4 MiB in 10 packages
+(1/4) Installing libxcrypt (4.5.2-r0)
+(2/4) Installing pcre2 (10.49-r0)
+(3/4) Installing nginx (1.31.9-r0)
+(4/4) Installing qnx-test-nginx (1.0-r1)
+OK: 144.4 MiB in 25 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_nginx
      == nginx ==

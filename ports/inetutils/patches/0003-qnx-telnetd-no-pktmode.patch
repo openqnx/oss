@@ -11,8 +11,8 @@ Upstream-Status: QNX-specific
 
 --- a/telnetd/telnetd.c
 +++ b/telnetd/telnetd.c
-@@ -39,6 +39,8 @@
- static void parse_debug_level (char *str);
+@@ -38,6 +38,8 @@
+ static void parse_linemode (char *str);
  static void telnetd_setup (int fd);
  static int telnetd_run (void);
 +/* Whether the pty reports in TIOCPKT packets (see telnetd_setup).  */
@@ -20,7 +20,7 @@ Upstream-Status: QNX-specific
  static void print_hostinfo (void);
  static void chld_is_done (int sig);
  
-@@ -514,8 +516,10 @@
+@@ -466,8 +468,10 @@
    pty = startslave (remote_hostname, level, user_name);
  
  #ifndef HAVE_STREAMSPTY
@@ -33,7 +33,7 @@ Upstream-Status: QNX-specific
  #endif
    ioctl (pty, FIONBIO, (char *) &on);
    ioctl (net, FIONBIO, (char *) &on);
-@@ -672,6 +676,10 @@
+@@ -618,6 +622,10 @@
  	  if (pty_read () < 0)
  	    break;
  
@@ -44,7 +44,7 @@ Upstream-Status: QNX-specific
  	  /* The first byte is now TIOCPKT data.  Peek at it.  */
  	  c = pty_get_char (1);
  
-@@ -712,6 +720,7 @@
+@@ -655,6 +663,7 @@
  
  	  pty_get_char (0);	/* Discard the TIOCPKT preamble.  */
  	}

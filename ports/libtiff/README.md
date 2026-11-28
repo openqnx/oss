@@ -10,7 +10,7 @@
 | Build system | CMake |
 | QNX patches | 0 |
 | Build dependencies | [`zlib`](../zlib/) [`xz`](../xz/) [`zstd`](../zstd/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) |
-| Run-time dependencies | [`libdeflate`](../libdeflate/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`libjpeg-turbo`](../libjpeg-turbo/) [`libwebp`](../libwebp/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_libtiff`](../../tests/src/) |
 

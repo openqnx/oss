@@ -1,0 +1,49 @@
+# python3-pytz 2026.6-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T20:39:34Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u python3-pytz qnx-test-python3-pytz qnx-port-tests
+( 1/15) Installing python3-pytz (2026.6-r1)
+( 2/15) Installing qnx-port-tests (1.0-r1)
+( 3/15) Installing bzip2 (1.0.8-r1)
+( 4/15) Installing expat (2.6.4-r1)
+( 5/15) Installing gdbm (1.26-r1)
+( 6/15) Installing libiconv (1.19.1-r1)
+( 7/15) Installing libunistring (1.5-r1)
+( 8/15) Installing ncurses (6.6-r1)
+( 9/15) Installing gettext (0.22.5-r1)
+(10/15) Installing libffi (3.8.1-r1)
+(11/15) Installing readline (8.3-r1)
+(12/15) Installing sqlite (3.47.2-r1)
+(13/15) Installing xz (5.8.4-r1)
+(14/15) Installing python3 (3.14.0-r2)
+(15/15) Installing qnx-test-python3-pytz (1.0-r1)
+Executing python3-3.14.0-r2.trigger
+OK: 131.4 MiB in 20 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_python3_pytz
+     == python3-pytz ==
+       info pytz 2026.6 (Olson 2026f)
+       ok   New York in July: EDT -04:00
+       ok   New York in January: EST -05:00
+       ok   12:00 EDT = 16:00 UTC
+       ok   -> London 17:00 BST
+       ok   UTC midnight = 05:30 in Kolkata
+       ok   Lord Howe: +11:00 summer, +10:30 winter (half-hour DST)
+       ok   normalize across spring forward: 01:30 EST + 1h = 03:30 EDT
+       ok   02:30 on 2024-03-10 does not exist (NonExistentTimeError)
+       ok   01:30 on 2024-11-03 is ambiguous (AmbiguousTimeError)
+       ok   the two 01:30s are an hour apart
+       ok   597 zones, 433 common
+       ok   country_timezones, country_names
+       ok   unknown zone rejected
+       ok   FixedOffset(+330 min)
+     PASS python3-pytz
+PASS test_python3_pytz
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

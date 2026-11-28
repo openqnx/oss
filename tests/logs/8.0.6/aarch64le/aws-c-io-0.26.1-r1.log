@@ -1,0 +1,43 @@
+# aws-c-io 0.26.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:26:51Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u aws-c-io qnx-test-aws-c-io qnx-port-tests
+(1/6) Installing aws-c-common (0.12.6-r1)
+(2/6) Installing aws-c-cal (0.9.13-r1)
+(3/6) Installing s2n-tls (1.7.14-r1)
+(4/6) Installing aws-c-io (0.26.1-r1)
+(5/6) Installing qnx-port-tests (1.0-r1)
+(6/6) Installing qnx-test-aws-c-io (1.0-r1)
+OK: 12.2 MiB in 11 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_io
+     == aws-c-io ==
+       ok   event loop group with one loop
+       ok   immediate and 20 ms tasks both ran
+       ok   tasks run on the event loop thread
+       ok   the immediate task ran before the delayed one
+       ok   pipe created on the loop
+       ok   bytes written to the pipe arrive through the readable callback
+       ok   listener socket created
+       info listening on <ip>:64927
+       ok   bind to an ephemeral loopback port and listen
+       ok   accepting on the event loop
+       ok   connect started
+       ok   server received "ping"
+       ok   client received "pong"
+       ok   sockets closed on the loop
+       ok   input stream length and first read
+       ok   seek from end, then EOF
+       ok   two PEM objects parsed around junk
+       ok   certificate decoded
+       ok   private key decoded
+     PASS aws-c-io
+PASS test_aws_c_io
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

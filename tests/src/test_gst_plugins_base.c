@@ -5,7 +5,14 @@
  *    16 kHz stereo F32 appsink: the sample count doubles, the peak halves;
  *  - audiotestsrc -> vorbisenc -> oggmux -> file, then decodebin (oggdemux,
  *    vorbisdec, typefind) back to raw audio, gst-discoverer-1.0 on the file,
- *    and the pbutils codec description API. */
+ *    and the pbutils codec description API;
+ *  - ALSA (on QNX's libasound, through io-snd): alsasink is registered; a
+ *    short tone to alsasink either plays to EOS (a sound card) or ends with an
+ *    error at once (none) -- it must not hang. autoaudiosink lives in
+ *    gst-plugins-good (autodetect), not in this package: only when it is
+ *    installed, it must play to EOS either way (it ranks alsasink first and
+ *    without a card falls back to a fake sink), so players keep going without
+ *    sound; otherwise that check is skipped with an info line. */
 #include "common.h"
 #include <stdlib.h>
 #include <math.h>
@@ -131,6 +138,30 @@ int main(int argc, char **argv) {
     gst_element_set_state(ap, GST_STATE_NULL);
     gst_object_unref(a); gst_object_unref(ap);
   }
+
+  /* ---- ALSA output ---- */
+  if (have("alsasink")) {
+    QT_CHECK(1, "alsasink is registered (ALSA plugin on libasound)");
+    GstElement *sp = gst_parse_launch("audiotestsrc num-buffers=10 ! alsasink", &err);
+    if (err) { printf("  info %s\n", err->message); g_clear_error(&err); }
+    if (sp) {
+      gint64 t0 = g_get_monotonic_time();
+      int eos = run_to_eos(sp, 20);
+      int secs = (int)((g_get_monotonic_time() - t0) / G_USEC_PER_SEC);
+      printf("  info alsasink: %s after %d s\n", eos ? "played to EOS (sound card present)"
+                                                     : "ended with an error (no sound card)", secs);
+      QT_CHECK(secs < 15, "alsasink plays or fails promptly, it does not hang");
+      gst_element_set_state(sp, GST_STATE_NULL); gst_object_unref(sp);
+    } else QT_CHECK(0, "alsasink pipeline built");
+    /* autoaudiosink is in gst-plugins-good (autodetect), not in this package:
+     * check it only when that is installed too. */
+    if (have("autoaudiosink")) {
+      GstElement *xp = gst_parse_launch("audiotestsrc num-buffers=10 ! autoaudiosink", &err);
+      if (err) { printf("  info %s\n", err->message); g_clear_error(&err); }
+      QT_CHECK(xp && run_to_eos(xp, 20), "autoaudiosink plays to EOS (falls back without a card)");
+      if (xp) { gst_element_set_state(xp, GST_STATE_NULL); gst_object_unref(xp); }
+    } else printf("  info autoaudiosink not registered (gst-plugins-good not installed): skipped\n");
+  } else QT_CHECK(0, "alsasink is registered (ALSA plugin on libasound)");
 
   /* ---- Ogg/Vorbis encode, decode, discover ---- */
   char dir[64] = "/tmp/qnxport-gstbase.XXXXXX";

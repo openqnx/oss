@@ -1,19 +1,18 @@
 # mkfontscale 1.2.4-r0 -- PASS
 # target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
-# date: 2026-11-22T00:50:09Z   packages from: apk:local-dists
+# date: 2026-11-24T14:18:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u mkfontscale qnx-test-mkfontscale qnx-port-tests
-(1/7) Installing fontenc (1.1.8-r0)
-(2/7) Installing brotli (1.1.0-r0)
-(3/7) Installing bzip2 (1.0.8-r0)
-(4/7) Installing libpng (1.6.59-r0)
-(5/7) Installing freetype (2.13.3-r0)
-(6/7) Installing mkfontscale (1.2.4-r0)
-(7/7) Installing qnx-test-mkfontscale (1.0-r0)
-OK: 17.6 MiB in 19 packages
+(1/6) Installing fontenc (1.1.8-r0)
+(2/6) Installing brotli (1.2.1-r0)
+(3/6) Installing libpng (1.6.59-r0)
+(4/6) Installing freetype (2.15.0-r0)
+(5/6) Installing mkfontscale (1.2.4-r0)
+(6/6) Installing qnx-test-mkfontscale (1.0-r0)
+OK: 138.1 MiB in 27 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_mkfontscale
      == mkfontscale ==

@@ -1,0 +1,35 @@
+# bc 1.08.2-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T09:29:05Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u bc qnx-test-bc qnx-port-tests
+(1/5) Installing ncurses (6.6-r1)
+(2/5) Installing readline (8.3-r1)
+(3/5) Installing bc (1.08.2-r1)
+(4/5) Installing qnx-port-tests (1.0-r1)
+(5/5) Installing qnx-test-bc (1.0-r1)
+OK: 13.5 MiB in 10 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_bc
+     == bc ==
+       info bc 1.08.2
+       ok   bc: pi (scale=20, 4*a(1)) = 3.14159265358979323844
+       ok   bc: 2^100 = 1267650600228229401496703205376
+       ok   bc: sqrt(2) (scale=10) = 1.4142135623
+       ok   bc: e^1 (scale=15) = 2.718281828459045
+       ok   bc: recursive factorial 25 = 15511210043330985984000000
+       ok   bc: obase=16 of 3735928559 = DEADBEEF
+       ok   bc: ibase=2 of 101010 = 42
+       ok   bc: integer division and modulo = 142857 4
+       ok   dc: 2 64 ^ = 18446744073709551616
+       ok   dc: stack sum 1..5 = 15
+       ok   dc: precision 10, 1/3 = .3333333333
+     PASS bc
+PASS test_bc
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

@@ -1,0 +1,33 @@
+glib: do not use eventfd() for GWakeup on QNX.
+
+QNX has no eventfd system call: the SDP's libeventfd emulates it with a
+resource manager inside each process and a thread ("eventfd-mgr") that
+serves it. On a multi-core target a GLib program that exits while its
+worker threads are still tearing down sometimes never goes away: the
+main thread is gone, the work is done and printed, and only the
+eventfd-mgr thread is left, blocked in MsgReceive. Measured with
+"gdbus call ... ListNames" on a 4-CPU x86_64 target: 2 to 6 of 100 runs,
+depending on how the CPUs are emulated; 0 of 100 with one CPU; the same rate with GLib 2.82.4.
+Programs without GLib that leave threads behind, or that only create and
+use an eventfd, exit every time (0 of 500 each).
+
+Skip the eventfd check on QNX, so GWakeup falls back to its pipe: nothing
+in the process then loads the eventfd emulation on GLib's behalf.
+
+Upstream-Status: QNX-specific
+
+--- a/meson.build
++++ b/meson.build
+@@ -1062,7 +1062,11 @@
+ endif
+ 
+ # Check for eventfd(2)
+-if cc.links('''#include <sys/eventfd.h>
++# Not on QNX: eventfd() there is a library (libeventfd) with a manager thread
++# in every process that uses it, and a program that ends while other threads
++# are still closing their wakeups now and then does not go away -- only that
++# "eventfd-mgr" thread is left. GWakeup uses a pipe instead.
++if host_system != 'qnx' and cc.links('''#include <sys/eventfd.h>
+                #include <unistd.h>
+                int main (int argc, char ** argv) {
+                  eventfd (0, EFD_CLOEXEC);

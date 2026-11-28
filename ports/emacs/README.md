@@ -176,13 +176,12 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH emacs`.
 
 ### 5. What it installs
 
-4369 files under `/usr/local`, 6 programs, 1 headers.
+4437 files under `/usr/local`, 5 programs, 1 headers.
 
 ```
-/usr/local/bin/ctags
 /usr/local/bin/ebrowse
 /usr/local/bin/emacs
-/usr/local/bin/emacs-30.2
+/usr/local/bin/emacs-31.1
 /usr/local/bin/emacsclient
 /usr/local/bin/etags
 ```

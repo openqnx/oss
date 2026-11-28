@@ -1,0 +1,29 @@
+# libyuv 0_git-r1 -- PASS
+# target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
+# date: 2026-11-27T11:45:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libyuv qnx-test-libyuv qnx-port-tests
+(1/4) Installing libjpeg-turbo (3.2.1-r1)
+(2/4) Installing libyuv (0_git-r1)
+(3/4) Installing qnx-port-tests (1.0-r1)
+(4/4) Installing qnx-test-libyuv (1.0-r1)
+OK: 14.0 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libyuv
+     == libyuv ==
+       ok   ARGBToI420
+       ok   I420ToARGB
+       ok   ARGB -> I420 -> ARGB stays close
+       ok   mean luma is preserved by scaling
+       ok   row was mirrored
+       ok   RotatePlane 90 degrees
+       ok   rotation moved the bottom-left pixel to the top-left
+     PASS libyuv
+PASS test_libyuv
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

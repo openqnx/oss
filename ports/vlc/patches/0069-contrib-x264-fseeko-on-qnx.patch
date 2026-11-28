@@ -1,0 +1,27 @@
+contrib: x264 uses fseeko on QNX, not fseeko64.
+
+x264's configure checks fseeko with "#define _FILE_OFFSET_BITS 64" as the
+second argument of cc_check -- the place of compiler flags. qcc passes the
+words on to the linker ("cannot find #define"), the check fails, and the
+next one picked fseeko64/ftello64, which QNX's libc does not provide: VLC's
+x264 plugin then failed to link (undefined reference to `fseeko64').
+Drop that argument on QNX; off_t is 64-bit there.
+
+Upstream-Status: Pending
+
+diff --git a/contrib/src/x264/rules.mak b/contrib/src/x264/rules.mak
+index 0f89a74..bd2e927 100644
+--- a/contrib/src/x264/rules.mak
++++ b/contrib/src/x264/rules.mak
+@@ -79,6 +79,11 @@ x264 x26410b: %: x264-$(X264_VERSION).tar.xz .sum-%
+ 	$(APPLY) $(SRC)/x264/0001-configure-set-_FILE_OFFSET_BITS-to-detect-fseeko.patch
+ ifdef HAVE_QNX
+ 	$(APPLY) $(SRC)/x264/0001-updae-qnx-settings.patch
++	# configure's fseeko check passes "#define _FILE_OFFSET_BITS 64" as a
++	# compiler argument; qcc hands it to the linker, which fails on it, so
++	# fseeko was "missing" and fseeko64 -- not in QNX's libc -- was chosen
++	# (undefined fseeko64 when VLC's plugin links). QNX's off_t is 64-bit.
++	sed -i.orig 's,cc_check "stdio.h" "#define _FILE_OFFSET_BITS 64" "fseeko,cc_check "stdio.h" "" "fseeko,' $(UNPACK_DIR)/configure
+ endif
+ 	$(MOVE)
+ 

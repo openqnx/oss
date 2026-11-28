@@ -1,0 +1,10 @@
+#!/bin/sh
+# Flutter's counter example on QNX (qnx-flutter-wayland).
+# The libraries' search path as for every package (apk-setup's oss-env.sh:
+# /usr/local/lib and the QNX run-time libraries of vanilla images): QNX's
+# loader takes a program's RPATH only for the program's own NEEDED, not for
+# its libraries' (libwayland-client needs libffi and libepoll).
+[ -f /data/oss/etc/oss-env.sh ] && . /data/oss/etc/oss-env.sh
+case ":$LD_LIBRARY_PATH:" in *":@PREFIX@/lib:"*) ;; *) LD_LIBRARY_PATH=@PREFIX@/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} ;; esac
+export LD_LIBRARY_PATH
+exec @PREFIX@/bin/qnx-flutter-wayland @PREFIX@/share/flutter-apps/counter "$@"

@@ -1,0 +1,32 @@
+# libev 4.33-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T12:22:20Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u libev qnx-test-libev qnx-port-tests
+(1/3) Installing libev (4.33-r1)
+(2/3) Installing qnx-port-tests (1.0-r1)
+(3/3) Installing qnx-test-libev (1.0-r1)
+OK: 10.0 MiB in 8 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libev
+     == libev ==
+       info libev 4.33
+       ok   ev_default_loop
+       ok   a backend was selected
+       info backend 0x4 (supported 0x7)
+       ok   the default loop uses epoll
+       ok   pipe
+       ok   write to pipe
+       ok   io watcher fired
+       ok   io watcher read 3 bytes
+       ok   timer fired and broke the loop
+       ok   ev_time
+     PASS libev
+PASS test_libev
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

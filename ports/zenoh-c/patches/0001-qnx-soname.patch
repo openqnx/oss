@@ -1,0 +1,23 @@
+zenoh-c: give libzenohc.so its SONAME on QNX too.
+
+build.rs passes -Wl,-soname,libzenohc.so only when the target OS is
+linux. Without a SONAME on QNX (target_os "nto"), a program linked
+against the library through CMake's imported target records the build
+machine's absolute path to it as DT_NEEDED
+(/home/.../stage/<arch>/usr/local/lib/libzenohc.so), and on the target
+ldd and the loader fail with "Could not load library". zenoh-cpp's and
+up-transport-zenoh-cpp's programs and tests were hit.
+
+Upstream-Status: Pending
+
+--- a/build.rs
++++ b/build.rs
+@@ -97,7 +97,7 @@
+     println!("cargo:rerun-if-changed=build-resources");
+     println!("cargo:rerun-if-changed=include");
+     println!("cargo:rerun-if-changed=Cargo.lock");
+-    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
++    if matches!(std::env::var("CARGO_CFG_TARGET_OS").as_deref(), Ok("linux") | Ok("nto")) {
+         let name = std::env::var("CARGO_PKG_NAME").unwrap();
+         // Create the shared library name by removing hyphens from the pkg_name
+         let soname = format!("lib{}.so", name.replace('-', ""));

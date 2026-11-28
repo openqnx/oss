@@ -1,0 +1,120 @@
+pnet_datalink: a QNX backend (interface listing).
+
+pnet_datalink picks a backend per OS and has none for QNX, so the crate does
+not compile there ("use of unresolved module backend"). zenoh uses it to list
+network interfaces. Add a QNX backend whose interfaces() is the shared
+getifaddrs() code -- with QNX's AF_LINK/sockaddr_dl from libc for MAC
+addresses -- and whose channel() reports raw data-link channels as
+unsupported (that would need BPF bindings for QNX's io-sock).
+
+Applied to pnet_datalink 0.35.0 (the version zenoh-c's Cargo.lock pins) by
+ports/zenoh-c/recipe.sh.
+
+Upstream-Status: Pending
+
+diff -ruN a/src/lib.rs b/src/lib.rs
+--- a/src/lib.rs	2006-07-24 10:21:28.000000000 +0900
++++ b/src/lib.rs	2026-10-28 05:46:59.510255281 +0900
+@@ -74,6 +74,11 @@
+ ))]
+ pub mod bpf;
+ 
++// QNX: interface listing only (see qnx.rs).
++#[cfg(all(not(feature = "netmap"), target_os = "nto"))]
++#[path = "qnx.rs"]
++mod backend;
++
+ #[cfg(feature = "netmap")]
+ #[path = "netmap.rs"]
+ mod backend;
+diff -ruN a/src/qnx.rs b/src/qnx.rs
+--- a/src/qnx.rs	1970-01-01 09:00:00.000000000 +0900
++++ b/src/qnx.rs	2026-10-28 05:46:59.510394586 +0900
+@@ -0,0 +1,37 @@
++//! QNX backend: network interface listing; no raw data-link channels.
++//!
++//! interfaces() uses getifaddrs(), as the other Unix backends do. A layer-2
++//! channel would need BPF bindings for QNX's io-sock, which this crate does
++//! not have, so channel() reports the operation as unsupported instead of
++//! failing to compile.
++
++use std::io;
++use std::time::Duration;
++
++use crate::NetworkInterface;
++
++/// Configuration for the QNX backend (accepted and ignored).
++#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
++pub struct Config {
++    /// Unused on QNX.
++    pub read_timeout: Option<Duration>,
++}
++
++impl<'a> From<&'a super::Config> for Config {
++    fn from(config: &super::Config) -> Config {
++        Config { read_timeout: config.read_timeout }
++    }
++}
++
++/// Raw data-link channels are not available on QNX.
++#[inline]
++pub fn channel(_: &NetworkInterface, _: Config) -> io::Result<super::Channel> {
++    Err(io::Error::new(io::ErrorKind::Unsupported, "data-link channels are not supported on QNX"))
++}
++
++/// Get a list of available network interfaces for the current machine.
++pub fn interfaces() -> Vec<NetworkInterface> {
++    #[path = "unix_interfaces.rs"]
++    mod interfaces;
++    interfaces::interfaces()
++}
+diff -ruN a/src/unix_interfaces.rs b/src/unix_interfaces.rs
+--- a/src/unix_interfaces.rs	2006-07-24 10:21:28.000000000 +0900
++++ b/src/unix_interfaces.rs	2026-10-28 05:46:59.510509914 +0900
+@@ -138,6 +138,46 @@
+     }
+ }
+ 
++// QNX: link-level addresses come as AF_LINK / sockaddr_dl, as on the BSDs,
++// with the definitions taken from libc.
++#[cfg(target_os = "nto")]
++fn sockaddr_to_network_addr(sa: *const libc::sockaddr) -> (Option<MacAddr>, Option<IpAddr>) {
++    use std::net::SocketAddr;
++
++    unsafe {
++        if sa.is_null() {
++            (None, None)
++        } else if (*sa).sa_family as libc::c_int == libc::AF_LINK {
++            let sdl: *const libc::sockaddr_dl = mem::transmute(sa);
++            let nlen = (*sdl).sdl_nlen as usize;
++            if (*sdl).sdl_alen as usize != 6 || nlen + 6 > (*sdl).sdl_data.len() {
++                return (None, None);
++            }
++            let mac = MacAddr(
++                (*sdl).sdl_data[nlen] as u8,
++                (*sdl).sdl_data[nlen + 1] as u8,
++                (*sdl).sdl_data[nlen + 2] as u8,
++                (*sdl).sdl_data[nlen + 3] as u8,
++                (*sdl).sdl_data[nlen + 4] as u8,
++                (*sdl).sdl_data[nlen + 5] as u8,
++            );
++
++            (Some(mac), None)
++        } else {
++            let addr = pnet_sys::sockaddr_to_addr(
++                mem::transmute(sa),
++                mem::size_of::<libc::sockaddr_storage>(),
++            );
++
++            match addr {
++                Ok(SocketAddr::V4(sa)) => (None, Some(IpAddr::V4(*sa.ip()))),
++                Ok(SocketAddr::V6(sa)) => (None, Some(IpAddr::V6(*sa.ip()))),
++                Err(_) => (None, None),
++            }
++        }
++    }
++}
++
+ #[cfg(any(
+     target_os = "openbsd",
+     target_os = "freebsd",

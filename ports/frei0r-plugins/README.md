@@ -111,7 +111,7 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH frei0r-plugins`.
 
 ### 5. What it installs
 
-164 files under `/usr/local`, 7 headers.
+178 files under `/usr/local`, 8 headers.
 
 The complete list is `stage/<arch>/.manifest/frei0r-plugins` after a build.
 

@@ -1,0 +1,39 @@
+# hiredis 1.5.1-r1 -- PASS
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-27T11:56:58Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u hiredis qnx-test-hiredis qnx-port-tests
+(1/4) Installing hiredis (1.5.1-r1)
+(2/4) Installing qnx-port-tests (1.0-r1)
+(3/4) Installing valkey (9.2.0-r1)
+(4/4) Installing qnx-test-hiredis (1.0-r1)
+OK: 25.6 MiB in 9 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_hiredis
+     == hiredis ==
+       ok   reader: an incomplete reply yields nothing yet
+       ok   reader: array ["foo", 42, nil]
+       ok   redisFormatCommand: exact RESP bytes (binary %b)
+       ok   self-signed certificate for the TLS port
+       ok   redisConnect to valkey-server on <ip>, PING -> PONG
+       ok   SET of a binary value
+       ok   GET returns the 6 binary bytes
+       ok   INCR: 42
+       ok   GET of a missing key: nil
+       ok   INCR of a non-integer: error reply
+       ok   pipelining: three commands, replies in order
+       ok   RESP3: HELLO 3, HGETALL is a map reply
+       ok   redisConnectUnix: GET over the UNIX socket
+       ok   async API (poll adapter): SET and GET callbacks, then disconnect
+       ok   redisCreateSSLContext trusting the self-signed certificate
+       ok   TLS handshake with valkey-server's tls-port
+       ok   SET/GET over TLS
+     PASS hiredis
+PASS test_hiredis
+--------------------------------------------
+passed: 1   failed: 0
+
+RESULT: PASS

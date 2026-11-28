@@ -1,20 +1,19 @@
 # aws-c-http 0.10.14-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-21T09:27:30Z   packages from: apk:local-dists
+# date: 2026-11-24T12:41:48Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u aws-c-http qnx-test-aws-c-http qnx-port-tests
-(1/8) Installing aws-c-common (0.12.6-r0)
-(2/8) Installing aws-c-cal (0.9.13-r0)
-(3/8) Installing aws-c-compression (0.3.2-r0)
-(4/8) Installing s2n-tls (1.7.0-r0)
-(5/8) Installing aws-c-io (0.26.1-r0)
-(6/8) Installing aws-c-http (0.10.14-r0)
-(7/8) Installing qnx-port-tests (1.0-r0)
-(8/8) Installing qnx-test-aws-c-http (1.0-r0)
-OK: 12.0 MiB in 13 packages
+(1/7) Installing aws-c-common (0.12.6-r0)
+(2/7) Installing aws-c-cal (0.9.13-r0)
+(3/7) Installing aws-c-compression (0.3.2-r0)
+(4/7) Installing s2n-tls (1.7.14-r0)
+(5/7) Installing aws-c-io (0.26.1-r0)
+(6/7) Installing aws-c-http (0.10.14-r0)
+(7/7) Installing qnx-test-aws-c-http (1.0-r0)
+OK: 183.0 MiB in 46 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_aws_c_http
      == aws-c-http ==
@@ -22,7 +21,7 @@ $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_a
        ok   header lookup is case-insensitive, first wins
        ok   event loop, resolver and bootstraps
        ok   HTTP server listening
-       info server on <ip>:51938
+       info server on <ip>:49210
        ok   ephemeral port assigned
        ok   client connect started
        ok   client connection set up

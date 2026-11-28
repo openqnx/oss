@@ -1,0 +1,71 @@
+# swayidle 1.9.1-r0 -- FAIL
+# target: QEMU aarch64le, vanilla mkqnximage image (SDP 8.0.6) (aarch64le): QNX v806-a64 8.0.0 2026/10/30-09:09:47EDT QEMU_virt aarch64le
+# date: 2026-11-24T17:12:01Z   packages from: apk:local-dists
+# how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
+# a component without a test of its own passes when every program and
+# library it installs loads (ldd: every dependency resolved).
+
+$ apk add -u swayidle qnx-test-swayidle qnx-port-tests
+( 1/39) Installing expat (2.6.4-r0)
+( 2/39) Installing brotli (1.2.1-r0)
+( 3/39) Installing bzip2 (1.0.8-r0)
+( 4/39) Installing libpng (1.6.59-r0)
+( 5/39) Installing freetype (2.15.0-r0)
+( 6/39) Installing libiconv (1.19.1-r0)
+( 7/39) Installing libunistring (1.5-r0)
+( 8/39) Installing gettext (0.22.5-r0)
+( 9/39) Installing fontconfig (2.18.4-r0)
+(10/39) Installing libffi (3.8.1-r0)
+(11/39) Installing pcre2 (10.49-r0)
+(12/39) Installing glib (2.90.1-r1)
+(13/39) Installing libxau (1.0.12-r0)
+(14/39) Installing libxdmcp (1.1.5-r0)
+(15/39) Installing libxcb (1.17.0-r0)
+(16/39) Installing libx11 (1.8.14-r0)
+(17/39) Installing libxext (1.3.7-r0)
+(18/39) Installing libxrender (0.9.13-r0)
+(19/39) Installing lzo (2.10-r0)
+(20/39) Installing pixman (0.46.4-r0)
+(21/39) Installing cairo (1.18.6-r0)
+(22/39) Installing font-dejavu (2.37-r0)
+(23/39) Installing libsfdo (0.1.4-r0)
+(24/39) Installing xz (5.8.4-r0)
+(25/39) Installing libxml2 (2.13.5-r0)
+(26/39) Installing libxkbcommon (1.8.1-r0)
+(27/39) Installing fribidi (1.0.18-r0)
+(28/39) Installing graphite2 (1.3.15-r0)
+(29/39) Installing icu (76.1-r0)
+(30/39) Installing harfbuzz (<ip>-r0)
+(31/39) Installing libxft (2.3.9-r0)
+(32/39) Installing pango (1.56.4-r0)
+(33/39) Installing wayland (1.26.0-r0)
+(34/39) Installing lcms2 (2.16-r0)
+(35/39) Installing wlroots (0.20.2-r0)
+(36/39) Installing xkeyboard-config (2.49-r0)
+(37/39) Installing labwc (0.20.3-r0)
+(38/39) Installing swayidle (1.9.1-r0)
+(39/39) Installing qnx-test-swayidle (1.0-r1)
+Executing glib-2.90.1-r1.trigger
+OK: 128.8 MiB in 51 packages
+
+$ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_swayidle
+FAIL test_swayidle (rc=1)
+     == swayidle ==
+       ok   swayidle -h prints the usage
+       ok   without a compositor: exit 253 (2026-11-24 17:11:43 - [Line 1089] Unable to connect to the compositor. If your compositor is running, check or set the WAYLAND_DISPLAY environment variable.)
+       ok   labwc up (headless)
+       ok   swayidle running (ext-idle-notify-v1 bound)
+       ok   after 2 s: the 1 s timeout ran, the 3 s one not yet
+       ok   the 3 s timeout ran after it
+       ok   SIGTERM ran the pending resume command
+       ok   swayidle ended with status 0
+       FAIL config run: 2026-11-24 17:11:48 - [Line 1021] Shell expansion error on line 2: unknown error (-1)
+     2026-11-24 17:11:48 - [Line 1073] Config file /tmp/qnxport-swayidle.j4Wsy1/cfg has errors, exiting. 
+       FAIL SIGUSR1: cat: ev2.log: No such file or directory 2026-11-24 17:11:48 - [Line 1021] Shell expansion error on line 2: unknown error (-1)
+     2026-11-24 17:11:48 - [Line 1073] Config file /tmp/qnxport-swayidle.j4Wsy1/cfg has errors, exiting.
+     FAIL swayidle (2 check(s) failed)
+--------------------------------------------
+passed: 0   failed: 1
+failing: test_swayidle
+
+RESULT: FAIL

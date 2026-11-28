@@ -1,4 +1,4 @@
-# javascriptcore 2.44.4
+# javascriptcore 2.54.3
 
 > WebKit's JavaScriptCore JavaScript engine (standalone JSCOnly port)
 
@@ -6,10 +6,10 @@
 
 | | |
 |---|---|
-| Upstream | https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz |
-| SHA-256 | `2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796` |
+| Upstream | https://webkitgtk.org/releases/webkitgtk-2.54.3.tar.xz |
+| SHA-256 | `2779c1b46f88762e8400650271ba14452dc4e30b37059981552d8b562b7d0862` |
 | Build system | CMake |
-| QNX patches | 4 |
+| QNX patches | 6 |
 | Build dependencies | [`icu`](../icu/) |
 | Run-time dependencies | [`icu`](../icu/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -77,56 +77,25 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-URL=https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz
+URL=https://webkitgtk.org/releases/webkitgtk-2.54.3.tar.xz
 mkdir -p dist src/javascriptcore
 curl -fL -o dist/$(basename $URL) $URL
-echo "2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796  dist/$(basename $URL)" | sha256sum -c -
+echo "2779c1b46f88762e8400650271ba14452dc4e30b37059981552d8b562b7d0862  dist/$(basename $URL)" | sha256sum -c -
 tar xf dist/$(basename $URL) -C src/javascriptcore --strip-components=1
 ```
 
 ### 3. Apply the QNX patches
 
-4 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+6 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0001-cmake4-quote-framework-vars.patch
-patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0002-icu76-cplusplus-header-api.patch
 patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0003-jsconly-qnx-memorypressure.patch
-patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0004-qnx-structure-heap-128mb.patch
+patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0010-qnx-madvise-posix-madvise.patch
+patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0011-qnx-wtf-memory-status.patch
+patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0012-jsc-float16-isnan-libcxx.patch
+patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0013-wtf-qnx-timerfd-extern-c.patch
+patch -p1 -d src/javascriptcore < ports/javascriptcore/patches/0015-wtf-switchon-visitonevariant-clang-only.patch
 ```
-
-**[`0001-cmake4-quote-framework-vars.patch`](patches/0001-cmake4-quote-framework-vars.patch)** — Quote the framework variables in _WEBKIT_TARGET_LINK_FRAMEWORK.
-
-> Configuring with CMake 4 fails before any compilation:
->
->     CMake Error at Source/cmake/WebKitMacros.cmake:280 (if):
->       if given arguments:
->         "(" "NOT" "_linked_into" ")" "OR" "(" "WTF" "STREQUAL" ")" "OR" ...
->       Unknown arguments specified
->
-> When a framework has no LINKED_INTO property, ${_linked_into} expands to
-> nothing and STREQUAL loses its right-hand operand.  Older CMake accepted the
-> malformed expression; 4.x does not.  Quoting both expansions makes the
-> comparison well-formed for every CMake version, and changes nothing about what
-> it decides.  Not QNX-specific.
-
-Touches: `Source/cmake/WebKitMacros.cmake` · Upstream status: Pending
-
-**[`0002-icu76-cplusplus-header-api.patch`](patches/0002-icu76-cplusplus-header-api.patch)** — Turn off ICU 76's second C++ API switch as well.
-
-> WTF/Platform.h sets U_SHOW_CPLUSPLUS_API 0 because WebKit uses only ICU's C
-> API.  ICU 76 introduced U_SHOW_CPLUSPLUS_HEADER_API, defaulting to 1, and moved
-> some declarations behind "U_SHOW_CPLUSPLUS_API || U_SHOW_CPLUSPLUS_HEADER_API".
-> Building against ICU 76 therefore compiles a std::u16string_view iterator in
-> uset.h whose helper types the first switch has already suppressed:
->
->     unicode/uset.h:1660:21: error: 'ConstChar16Ptr' was not declared in this scope
->     unicode/uset.h:1763:5:  error: 'UnicodeString' does not name a type
->
-> Setting both to 0 is what the ICU 76 release notes prescribe for C-only
-> consumers.  Not QNX-specific: any WebKit 2.44 build against ICU >= 76 hits it.
-
-Touches: `Source/WTF/wtf/Platform.h` · Upstream status: Pending
 
 **[`0003-jsconly-qnx-memorypressure.patch`](patches/0003-jsconly-qnx-memorypressure.patch)** — JSCOnly: select the Unix memory-pressure handler on QNX.
 
@@ -145,21 +114,92 @@ Touches: `Source/WTF/wtf/Platform.h` · Upstream status: Pending
 
 Touches: `Source/WTF/wtf/PlatformJSCOnly.cmake` · Upstream status: QNX-specific
 
-**[`0004-qnx-structure-heap-128mb.patch`](patches/0004-qnx-structure-heap-128mb.patch)** — Use a 128 MB structure heap on QNX.
+**[`0010-qnx-madvise-posix-madvise.patch`](patches/0010-qnx-madvise-posix-madvise.patch)** — bmalloc, WTF: madvise() through posix_madvise() on QNX.
 
-> JSC reserves its structure heap with tryReserveUncommittedAligned(size,
-> structureHeapAddressSize).  StructureMemoryManager halves the size up to eight
-> times when the reservation fails, but the *alignment* argument stays at
-> structureHeapAddressSize -- so with the 4 GB default every attempt needs up to
-> 8 GB of contiguous address space.  On a QNX target with 1 GB of RAM all eight
-> fail and the RELEASE_ASSERT aborts inside JSContextGroupCreate(), before any
-> script runs.  It passes on an 8 GB board, so the failure looks like an
-> architecture difference and is really an address-space one.
+> VMAllocate.h:327: error: 'madvise' was not declared in this scope
+>     VMAllocate.h:327: error: 'MADV_DONTNEED' was not declared in this scope
+>     VMAllocate.h:344: error: 'MADV_NORMAL' was not declared in this scope
 >
-> 128 MB is the value PLAYSTATION already uses for the same reason.  StructureID
-> derives its masks from this constant, so nothing else needs changing.
+> QNX's libc has no madvise() and no MADV_* constants; <sys/mman.h> offers the
+> POSIX form, posix_madvise() with POSIX_MADV_NORMAL/WILLNEED/DONTNEED, which
+> returns the error number instead of -1/errno.  bmalloc's VMAllocate.h (included
+> even with USE_SYSTEM_MALLOC) and WTF's OSAllocatorPOSIX.cpp -- whose QNX
+> branches upstream already call madvise(MADV_WILLNEED/MADV_DONTNEED) -- get a
+> small static madvise() that forwards to posix_madvise() and sets errno, so the
+> callers' "== -1 && errno == EAGAIN" loops are unchanged.  The block is the same
+> in both files and guarded by !defined(MADV_NORMAL), so a unified source that
+> includes both defines it once.  DONTNEED is advice here, as it is for every
+> non-Linux caller: none of these paths rely on the pages reading back as zero
+> (vmZeroAndPurge() re-maps with mmap(MAP_FIXED) on everything but Linux).
 
-Touches: `Source/JavaScriptCore/runtime/StructureID.h` · Upstream status: QNX-specific
+Touches: `Source/bmalloc/bmalloc/VMAllocate.h`, `Source/WTF/wtf/posix/OSAllocatorPOSIX.cpp` · Upstream status: Pending
+
+**[`0011-qnx-wtf-memory-status.patch`](patches/0011-qnx-wtf-memory-status.patch)** — WTF: memoryStatus() on QNX.
+
+> generic/MemoryFootprintGeneric.cpp:36: error: 'memoryStatus' was not
+>         declared in this scope
+>
+> Both the GTK and the JSCOnly platform lists build
+> generic/MemoryFootprintGeneric.cpp for QNX (alongside
+> unix/MemoryPressureHandlerUnix.cpp), and since 2.46 that file computes the
+> footprint through WTF::memoryStatus() -- which AvailableMemory.h declares only
+> for iOS, Linux and FreeBSD.  Add QNX to those guards and give memoryStatus() a
+> QNX branch: the resident set size from devctl(DCMD_PROC_ASINFO) on
+> /proc/self/ctl, exactly how MemoryPressureHandlerUnix.cpp already measures the
+> process on QNX; the percentage uses availableMemory() (sysconf
+> _SC_PHYS_PAGES on QNX) like the other platforms.
+
+Touches: `Source/WTF/wtf/AvailableMemory.h`, `Source/WTF/wtf/AvailableMemory.cpp` · Upstream status: Pending
+
+**[`0012-jsc-float16-isnan-libcxx.patch`](patches/0012-jsc-float16-isnan-libcxx.patch)** — JSC: call std::isnan() on a double for Float16 typed arrays.
+
+> JSGenericTypedArrayViewPrototypeFunctions.h:532: error: no matching
+>         function for call to 'isnan(std::optional<WTF::Float16>::value_type&)'
+>     c++/v1/__math/traits.h:111: error: no type named 'type' in
+>         'struct std::enable_if<false, int>'
+>
+> QNX's C++ library is libc++, whose std::isnan() is a template restricted to
+> arithmetic types (plus float/double/long double overloads that the class does
+> not match exactly), so WTF::Float16 -- a class with an implicit conversion to
+> double -- does not deduce.  libstdc++'s plain overloads take it through the
+> conversion, which is why Linux builds pass.  includes() for Float16Array then
+> fails to compile; convert explicitly, as the branch for the other float element
+> sizes right below already does.  Same value, same result.
+
+Touches: `Source/JavaScriptCore/runtime/JSGenericTypedArrayViewPrototypeFunctions.h` · Upstream status: Pending
+
+**[`0013-wtf-qnx-timerfd-extern-c.patch`](patches/0013-wtf-qnx-timerfd-extern-c.patch)** — WTF: include QNX's <sys/timerfd.h> as a C header.
+
+> RunLoopGLib.cpp: undefined reference to `timerfd_create(int, int)'
+>     RunLoopGLib.cpp: undefined reference to `timerfd_settime(int, int,
+>         itimerspec const*, itimerspec*)'
+>
+> The GLib run loop uses timerfd when CMake finds timerfd_create() (HAVE_TIMERFD),
+> and on QNX it does: libtimerfd, linked by the toolchain's default libraries.
+> But its <sys/timerfd.h> declares the functions without an extern "C" block, so
+> C++ code references the mangled names and the link of libWTF fails.  Wrap the
+> include in extern "C" on QNX.  (JSCOnly uses the generic run loop and does not
+> build this file; the patch is carried in both ports to keep the shared tree the
+> same.)
+
+Touches: `Source/WTF/wtf/glib/RunLoopGLib.cpp` · Upstream status: Inappropriate [QNX system header lacks C++ guards]
+
+**[`0015-wtf-switchon-visitonevariant-clang-only.patch`](patches/0015-wtf-switchon-visitonevariant-clang-only.patch)** — WTF: use the switch-based switchOn() for libc++ only with Clang.
+
+> StyleTabSize.h:66: error: call to non-'constexpr' function
+>         'decltype (WTF::visitOneVariant(...)) WTF::switchOn(V&&, F&& ...)'
+>     (in 'constexpr bool WebCore::Style::TabSize::isZero() const')
+>
+> When the C++ library is libc++, StdLibExtras.h replaces switchOn() with a
+> switch-based visitOneVariant() to work around code-size problems of libc++'s
+> visit (webkit.org/b/279498).  That version is not constexpr; Clang in C++23
+> mode accepts constexpr functions that call it (P2448), GCC 12 does not.  QNX's
+> toolchain is exactly that pair -- GCC with libc++ -- so every constexpr caller
+> in WebCore (TabSize::isZero() and the other style value types) fails.  Take the
+> size workaround only with Clang; GCC + libc++ uses the generic constexpr
+> switchOn() over WTF::visit, as GCC + libstdc++ already does.
+
+Touches: `Source/WTF/wtf/StdLibExtras.h` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 
@@ -192,6 +232,7 @@ Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
 - WebKit's own release tarball; the JSCOnly port builds JavaScriptCore, WTF and bmalloc without any of the web engine or platform integration.  Worth having on its own -- a scripting engine for HMI code -- and it settles whether this codebase compiles for QNX at all before the GTK port's much longer build.
 - -DENABLE_JIT=OFF / -DENABLE_C_LOOP=ON: the interpreter, not the JIT.  JSC's JIT needs W^X handling and signal-based OSR that are written per-OS; the CLoop interpreter is the portable path and is what a first port should prove. ENABLE_FTL_JIT and the sampling profiler follow the JIT off. ENABLE_STATIC_JSC=OFF keeps the shared library that consumers link.
+- (No CMAKE_CXX_STANDARD here: OptionsCommon.cmake sets C++23 itself, and WebKitCommon.cmake requires GCC >= 12.2 -- exactly the SDP's compiler.)
 - JSCOnly installs the library and nothing else: the public C API headers are generated into the build tree and left there, so a consumer has no way to include <JavaScriptCore/JavaScript.h>.  Install them, and write the .pc file the port does not provide either.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH javascriptcore`.
@@ -291,18 +332,18 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **2.44.4**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add javascriptcore=<version>`), sources in `ported/javascriptcore/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates javascriptcore`; port one with `scripts/port-update javascriptcore`.
+This recipe builds **2.54.3**. Kept from earlier: `2.44.4` ([recipe and patches](versions/2.44.4/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add javascriptcore=<version>`), sources in `ported/javascriptcore/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates javascriptcore`; port one with `scripts/port-update javascriptcore`.
 
 <details><summary>recipe.sh</summary>
 
 ```bash
-VERSION=2.44.4
+VERSION=2.54.3
 # WebKit's own release tarball; the JSCOnly port builds JavaScriptCore, WTF and
 # bmalloc without any of the web engine or platform integration.  Worth having
 # on its own -- a scripting engine for HMI code -- and it settles whether this
 # codebase compiles for QNX at all before the GTK port's much longer build.
-TARBALL=https://webkitgtk.org/releases/webkitgtk-2.44.4.tar.xz
-SHA256=2ce4ec1b78413035037aba8326b31ed72696626b7bea7bace5e46ac0d8cbe796
+TARBALL=https://webkitgtk.org/releases/webkitgtk-2.54.3.tar.xz
+SHA256=2779c1b46f88762e8400650271ba14452dc4e30b37059981552d8b562b7d0862
 DEPS="icu"
 BUILDSYS=cmake
 # -DENABLE_JIT=OFF / -DENABLE_C_LOOP=ON: the interpreter, not the JIT.  JSC's
@@ -322,8 +363,9 @@ CMAKE_ARGS_EXTRA=( -DPORT=JSCOnly -DENABLE_STATIC_JSC=OFF
                    # built whatever -DENABLE_API_TESTS says.  The list repeats the
                    # toolchain's default because a -D replaces it rather than adding.
                    -DCMAKE_CXX_STANDARD_LIBRARIES="-lsocket -lm -leventfd -lepoll -lsignalfd -ltimerfd -lfsnotify -lregex"
-                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                   -DCMAKE_CXX_STANDARD=20 )
+                   -DCMAKE_POSITION_INDEPENDENT_CODE=ON )
+# (No CMAKE_CXX_STANDARD here: OptionsCommon.cmake sets C++23 itself, and
+# WebKitCommon.cmake requires GCC >= 12.2 -- exactly the SDP's compiler.)
 
 # JSCOnly installs the library and nothing else: the public C API headers are
 # generated into the build tree and left there, so a consumer has no way to

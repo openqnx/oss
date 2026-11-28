@@ -30,7 +30,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # and libraries for their host-side helpers (clang/LLVM 18, 32-bit libc,
 # GLib, Cairo, Pango, SDL2, GnuTLS, ...), documentation and data tools
 # (itstool, xmlto, docbook-xsl, sassc, appstreamcli, gpg, mkfontscale,
-# gdk-pixbuf-pixdata, pnp.ids from hwdata), Python and Perl modules.
+# gdk-pixbuf-pixdata, pnp.ids from hwdata), Python and Perl modules, and the
+# Vala compiler (valac: recipes written in Vala are translated to C on the host).
 RUN apt-get update && apt-get install -y --no-install-recommends \
       clang-18 libclang-18-dev llvm-18-dev lld-18 gawk chrpath cpio diffstat jq wget zip lz4 \
       lib32z1-dev libc6-dev-i386 libglib2.0-dev libglib2.0-bin libcairo2-dev libpango1.0-dev \
@@ -42,6 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libgdk-pixbuf2.0-bin xfonts-utils libltdl-dev libgtk-3-bin x11-xkb-utils python3-dev python3-gi \
       python3-pil python3-jsonschema python3-attr python3-six python3-dateutil python3-typing-extensions \
       ninja-build gnupg appstream libxml-parser-perl hwdata libzstd-dev libgnutls28-dev \
+      valac \
     && rm -rf /var/lib/apt/lists/*
 
 # Pinned Meson / CMake / Ninja, in their own venv so they cannot fight the

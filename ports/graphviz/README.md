@@ -1,4 +1,4 @@
-# graphviz 13.1.2
+# graphviz 16.1.2
 
 > Graph visualization tools: dot, neato and other layout engines
 
@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Upstream | https://gitlab.com/graphviz/graphviz.git (tag `13.1.2`) |
+| Upstream | https://gitlab.com/graphviz/graphviz.git (tag `16.1.2`) |
 | Build system | CMake |
-| QNX patches | 2 |
+| QNX patches | 1 |
 | Build dependencies | [`gd`](../gd/) [`cairo`](../cairo/) [`pango`](../pango/) [`expat`](../expat/) [`zlib`](../zlib/) [`libtool`](../libtool/) [`freetype`](../freetype/) [`fontconfig`](../fontconfig/) [`libwebp`](../libwebp/) [`poppler`](../poppler/) [`glib`](../glib/) [`libx11`](../libx11/) [`libxrender`](../libxrender/) |
 | Run-time dependencies | [`cairo`](../cairo/) [`expat`](../expat/) [`gd`](../gd/) [`gettext`](../gettext/) [`glib`](../glib/) [`harfbuzz`](../harfbuzz/) [`libtool`](../libtool/) [`libwebp`](../libwebp/) [`libx11`](../libx11/) [`libxrender`](../libxrender/) [`pango`](../pango/) [`poppler`](../poppler/) [`zlib`](../zlib/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
@@ -81,25 +81,17 @@ source ./env.sh aarch64le              # or x86_64; once per shell
 ### 2. Get the upstream source
 
 ```bash
-git clone --depth 1 -b 13.1.2 --recurse-submodules --shallow-submodules \
+git clone --depth 1 -b 16.1.2 --recurse-submodules --shallow-submodules \
     https://gitlab.com/graphviz/graphviz.git src/graphviz
 ```
 
 ### 3. Apply the QNX patches
 
-2 patch(es), each a separate file in [`patches/`](patches/), applied in order:
+1 patch(es), each a separate file in [`patches/`](patches/), applied in order:
 
 ```bash
-patch -p1 -d src/graphviz < ports/graphviz/patches/0001-qnx-no-sysexits.patch
 patch -p1 -d src/graphviz < ports/graphviz/patches/0002-qnx-dl-iterate-phdr.patch
 ```
-
-**[`0001-qnx-no-sysexits.patch`](patches/0001-qnx-no-sysexits.patch)** — diffimg: define EX_* on QNX (no <sysexits.h>)
-
-> QNX has no <sysexits.h>. diffimg already defines the five EX_* codes it
-> uses for Windows, with the BSD values; use them on QNX too.
-
-Touches: `contrib/diffimg/diffimg.c` · Upstream status: QNX-specific
 
 **[`0002-qnx-dl-iterate-phdr.patch`](patches/0002-qnx-dl-iterate-phdr.patch)** — gvconfig: dl_iterate_phdr() from <sys/link.h> on QNX
 
@@ -140,24 +132,24 @@ Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH graphviz`.
 
 ### 5. What it installs
 
-261 files under `/usr/local`: 18 shared-library entries, 38 programs, 25 headers.
+259 files under `/usr/local`: 18 shared-library entries, 37 programs, 25 headers.
 
 ```
 /usr/local/lib/libcdt.so
 /usr/local/lib/libcdt.so.6
-/usr/local/lib/libcdt.so.6.0.0
+/usr/local/lib/libcdt.so.6.0.3
 /usr/local/lib/libcgraph.so
-/usr/local/lib/libcgraph.so.7
-/usr/local/lib/libcgraph.so.7.0.0
+/usr/local/lib/libcgraph.so.10
+/usr/local/lib/libcgraph.so.10.0.2
 /usr/local/lib/libgvc.so
 /usr/local/lib/libgvc.so.7
-/usr/local/lib/libgvc.so.7.0.0
+/usr/local/lib/libgvc.so.7.0.16
 /usr/local/lib/libgvpr.so
 /usr/local/lib/libgvpr.so.2
-/usr/local/lib/libgvpr.so.2.0.0
+/usr/local/lib/libgvpr.so.2.0.15
 /usr/local/lib/libpathplan.so
 /usr/local/lib/libpathplan.so.4
-/usr/local/lib/libpathplan.so.4.0.0
+/usr/local/lib/libpathplan.so.4.0.11
 /usr/local/lib/libxdot.so
 ...
 ```
@@ -232,7 +224,7 @@ The targets are stock QNX SDP 8.0 QEMU images; [docs/qemu-test-vms.md](../../doc
 
 ## Versions
 
-This recipe builds **13.1.2**. Every version stays available: packages in `dists/8.0/<arch>/` (`apk add graphviz=<version>`), sources in `ported/graphviz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates graphviz`; port one with `scripts/port-update graphviz`.
+This recipe builds **16.1.2**. Kept from earlier: `13.1.2` ([recipe and patches](versions/13.1.2/)). Every version stays available: packages in `dists/8.0/<arch>/` (`apk add graphviz=<version>`), sources in `ported/graphviz/<version>/`, results per version in `tests/results/`. Newer upstream releases: `scripts/check-updates graphviz`; port one with `scripts/port-update graphviz`.
 
 <details><summary>recipe.sh</summary>
 
@@ -240,7 +232,7 @@ This recipe builds **13.1.2**. Every version stays available: packages in `dists
 # graphviz: graph layout and drawing -- dot, neato, circo, fdp, sfdp, twopi,
 # osage, patchwork and the graph tools (gvpr, gc, acyclic, tred, ccomps ...),
 # with libcgraph/libgvc for programs (doxygen draws its diagrams with dot).
-VERSION=13.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=13.1.2
+VERSION=16.1.2; GIT=https://gitlab.com/graphviz/graphviz.git; REF=16.1.2
 DEPS="gd cairo pango expat zlib libtool freetype fontconfig libwebp poppler glib libx11 libxrender"
 # A font to lay text out with: with no font at all, the pango text layout
 # returns garbage label heights (a 2x32767 PNG of a six-node graph).

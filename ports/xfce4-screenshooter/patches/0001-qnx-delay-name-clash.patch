@@ -1,0 +1,49 @@
+xfce4-screenshooter: rename the global "delay" in src/main.c.
+
+QNX's <unistd.h> declares delay() (sleep in milliseconds), and main.c, which
+includes it through GLib, defines a global int with the same name for the
+--delay option: "error: 'delay' redeclared as different kind of symbol".
+The variable is local to main.c; it is renamed opt_delay. Nothing else
+changes (lib/ only has the struct member sd->delay, which does not clash).
+
+Upstream-Status: QNX-specific
+
+diff -ru a/src/main.c b/src/main.c
+--- a/src/main.c	2025-11-06 06:42:53.000000000 +0900
++++ b/src/main.c	2026-11-25 17:23:21.709274053 +0900
+@@ -35,7 +35,7 @@
+ gboolean show_in_folder = FALSE;
+ gchar *screenshot_dir = NULL;
+ gchar *application = NULL;
+-gint delay = 0;
++gint opt_delay = 0;
+ 
+ 
+ 
+@@ -48,7 +48,7 @@
+     NULL
+   },
+   {
+-    "delay", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_INT, &delay,
++    "delay", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_INT, &opt_delay,
+     N_("Delay in seconds before taking the screenshot"),
+     NULL
+   },
+@@ -199,7 +199,7 @@
+     }
+   if (clipboard && !(fullscreen || window || region))
+     g_printerr (ignore_error, "clipboard");
+-  if (delay && !(fullscreen || window || region))
++  if (opt_delay && !(fullscreen || window || region))
+     g_printerr (ignore_error, "delay");
+   if (mouse && !(fullscreen || window || region))
+     g_printerr (ignore_error, "mouse");
+@@ -267,7 +267,7 @@
+       /* Whether to display the window border on the screenshot */
+       no_border ? (sd->show_border = 0) : (sd->show_border = 1);
+ 
+-      sd->delay = delay;
++      sd->delay = opt_delay;
+ 
+       if (application != NULL)
+         {

@@ -11,7 +11,7 @@
 | Build system | GNU Autotools |
 | QNX patches | 0 |
 | Build dependencies | [`libpng`](../libpng/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libjxl`](../libjxl/) [`freetype`](../freetype/) [`libxml2`](../libxml2/) [`zlib`](../zlib/) [`bzip2`](../bzip2/) [`xz`](../xz/) [`zstd`](../zstd/) [`lcms2`](../lcms2/) [`libzip`](../libzip/) |
-| Run-time dependencies | [`bzip2`](../bzip2/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libheif`](../libheif/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libzip`](../libzip/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
+| Run-time dependencies | [`bzip2`](../bzip2/) [`freetype`](../freetype/) [`lcms2`](../lcms2/) [`libheif`](../libheif/) [`libjpeg-turbo`](../libjpeg-turbo/) [`libjxl`](../libjxl/) [`libpng`](../libpng/) [`libtiff`](../libtiff/) [`libwebp`](../libwebp/) [`libxml2`](../libxml2/) [`libzip`](../libzip/) [`xz`](../xz/) [`zlib`](../zlib/) [`zstd`](../zstd/) |
 | Targets | QNX SDP 8.0 — `aarch64le`, `x86_64` |
 | On-target test | [`test_graphicsmagick`](../../tests/src/) |
 

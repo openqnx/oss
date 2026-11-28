@@ -1,0 +1,14 @@
+name: hmi_demo
+description: A vehicle HMI mock-up (cluster, navigation, media, climate, vehicle status) in Flutter, for QNX.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

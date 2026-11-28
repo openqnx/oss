@@ -1,58 +1,58 @@
 # libxdamage 1.1.7-r0 -- PASS
 # target: QEMU x86_64, vanilla mkqnximage image (SDP 8.0.6) (x86_64): QNX v806-x86 8.0.0 2026/10/30-09:10:05EDT x86pc x86_64
-# date: 2026-11-22T00:48:04Z   packages from: apk:local-dists
+# date: 2026-11-24T12:46:37Z   packages from: apk:local-dists
 # how to read: each check prints ok/FAIL, a test ends with PASS/FAIL <test>;
 # a component without a test of its own passes when every program and
 # library it installs loads (ldd: every dependency resolved).
 
 $ apk add -u libxdamage qnx-test-libxdamage qnx-port-tests
-( 1/41) Installing libxau (1.0.12-r0)
-( 2/41) Installing libxdmcp (1.1.5-r0)
-( 3/41) Installing libxcb (1.17.0-r0)
-( 4/41) Installing libx11 (1.8.14-r0)
-( 5/41) Installing libxfixes (6.0.2-r0)
-( 6/41) Installing libxdamage (1.1.7-r0)
-( 7/41) Installing brotli (1.1.0-r0)
-( 8/41) Installing bzip2 (1.0.8-r0)
-( 9/41) Installing libpng (1.6.59-r0)
-(10/41) Installing freetype (2.13.3-r0)
-(11/41) Installing fontconfig (2.15.0-r0)
-(12/41) Installing libffi (3.4.6-r0)
-(13/41) Installing pcre2 (10.44-r0)
-(14/41) Installing glib (2.82.4-r0)
-(15/41) Installing libxext (1.3.7-r0)
-(16/41) Installing libxrender (0.9.13-r0)
-(17/41) Installing lzo (2.10-r0)
-(18/41) Installing pixman (0.46.4-r0)
-(19/41) Installing cairo (1.18.6-r0)
-(20/41) Installing font-dejavu (2.37-r0)
-(21/41) Installing libsfdo (0.1.4-r0)
-(22/41) Installing libxkbcommon (1.8.1-r0)
-(23/41) Installing fribidi (1.0.18-r0)
-(24/41) Installing graphite2 (1.3.15-r0)
-(25/41) Installing icu (76.1-r0)
-(26/41) Installing harfbuzz (<ip>-r0)
-(27/41) Installing libxft (2.3.9-r0)
-(28/41) Installing pango (1.54.0-r0)
-(29/41) Installing wayland (1.24.0-r0)
-(30/41) Installing lcms2 (2.16-r0)
-(31/41) Installing wlroots (0.20.2-r0)
-(32/41) Installing xkeyboard-config (2.43-r0)
-(33/41) Installing labwc (0.20.2-r0)
-(34/41) Installing libmd (1.1.0-r0)
-(35/41) Installing libxcvt (0.1.3-r0)
-(36/41) Installing fontenc (1.1.8-r0)
-(37/41) Installing libxfont2 (2.0.10-r0)
-(38/41) Installing libxkbfile (1.2.0-r0)
-(39/41) Installing xkbcomp (1.5.0-r0)
-(40/41) Installing xwayland (24.1.14-r0)
-(41/41) Installing qnx-test-libxdamage (1.0-r0)
-Executing glib-2.82.4-r0.trigger
-OK: 563.2 MiB in 69 packages
+( 1/40) Installing libxau (1.0.12-r0)
+( 2/40) Installing libxdmcp (1.1.5-r0)
+( 3/40) Installing libxcb (1.17.0-r0)
+( 4/40) Installing libx11 (1.8.14-r0)
+( 5/40) Installing libxfixes (6.0.2-r0)
+( 6/40) Installing libxdamage (1.1.7-r0)
+( 7/40) Installing brotli (1.2.1-r0)
+( 8/40) Installing libpng (1.6.59-r0)
+( 9/40) Installing freetype (2.15.0-r0)
+(10/40) Installing fontconfig (2.18.4-r0)
+(11/40) Installing pcre2 (10.49-r0)
+(12/40) Installing glib (2.90.1-r1)
+(13/40) Installing libxext (1.3.7-r0)
+(14/40) Installing libxrender (0.9.13-r0)
+(15/40) Installing lzo (2.10-r0)
+(16/40) Installing pixman (0.46.4-r0)
+(17/40) Installing cairo (1.18.6-r0)
+(18/40) Installing font-dejavu (2.37-r0)
+(19/40) Installing libsfdo (0.1.4-r0)
+(20/40) Installing libxml2 (2.13.5-r0)
+(21/40) Installing libxkbcommon (1.8.1-r0)
+(22/40) Installing fribidi (1.0.18-r0)
+(23/40) Installing graphite2 (1.3.15-r0)
+(24/40) Installing icu (76.1-r0)
+(25/40) Installing harfbuzz (<ip>-r0)
+(26/40) Installing libxft (2.3.9-r0)
+(27/40) Installing pango (1.56.4-r0)
+(28/40) Installing wayland (1.26.0-r0)
+(29/40) Installing lcms2 (2.16-r0)
+(30/40) Installing wlroots (0.20.2-r0)
+(31/40) Installing xkeyboard-config (2.49-r0)
+(32/40) Installing labwc (0.20.3-r0)
+(33/40) Installing libmd (1.3.0-r0)
+(34/40) Installing libxcvt (0.1.3-r0)
+(35/40) Installing fontenc (1.1.8-r0)
+(36/40) Installing libxfont2 (2.0.10-r0)
+(37/40) Installing libxkbfile (1.2.0-r0)
+(38/40) Installing xkbcomp (1.5.0-r0)
+(39/40) Installing xwayland (24.1.14-r0)
+(40/40) Installing qnx-test-libxdamage (1.0-r0)
+Executing python3-3.14.0-r1.trigger
+Executing glib-2.90.1-r1.trigger
+OK: 280.7 MiB in 74 packages
 
 $ QNX_PORT_TESTS_VERBOSE=1 /usr/local/bin/qnx-port-tests/run-on-target.sh test_libxdamage
      == libxdamage ==
-       info X server :59: The X.Org Foundation 12401014, screen 320x240 depth 24
+       info X server :43: The X.Org Foundation 12401014, screen 320x240 depth 24
        ok   headless X server (labwc + Xwayland) up
        ok   DAMAGE extension present
        ok   DAMAGE version >= 1.0

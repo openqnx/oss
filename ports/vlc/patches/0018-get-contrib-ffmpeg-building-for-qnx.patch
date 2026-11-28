@@ -1,0 +1,68 @@
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Tue, 11 Mar 2025 11:40:31 -0400
+Subject: [PATCH 18/60] Get contrib/ffmpeg building for QNX
+
+ffmpeg's build process needed to be taught how to build with qcc/q++.
+Mostly so that it knew the correct flags to pass to the compiler in
+order to get the preprocessor to generate the expected dependency files.
+
+In addition, when building for x86_64, the assembler didn't like some of
+the hand written assembly code. Turns out there was already a fix for
+that in ffmpeg's upstream, so I'm adding it as part of this change.
+
+3.0.24: FFmpeg 8.1 already has the x86 mathops fix for binutils >= 2.41
+(FFmpeg effadce6), so its backport is dropped; the QNX qcc patch is applied
+after the upstream patches.
+
+Upstream-Status: QNX-specific (from qnx-ports)
+
+--- a/contrib/src/ffmpeg/0001-qnx-support-qcc.patch
++++ b/contrib/src/ffmpeg/0001-qnx-support-qcc.patch
+@@ -0,0 +1,19 @@
++--- a/configure
+++++ b/configure
++@@ -5406,6 +5406,16 @@
++         _cflags_speed='-O4'
++         _cflags_size='-O2'
++         _flags_filter=cparser_flags
+++    elif $_cc -V 2>&1 | head -1 | grep -q "^cc: targets available in.*" && $_cc -V 2>&1 | tail +2 | grep -q ",gcc_nto"; then
+++        # QNX qcc/q++, same as GCC/G++
+++        _type=gcc
+++        _ident=$(qcc -V 2>&1 | tail -n +2 | head -n 1 | cut -f 1 -d , | grep -o '[^[:space:]]*')
+++        _ident="gcc${_ident}"
+++        # For some reason SDP8's gcc12.2.0 seems to expect a file argument to -MMD,
+++        # so no reason to specify -MF
+++        _depflags='-Wp,-MMD,$(@:.o=.d),-MT,$@'
+++        _cflags_speed='-O3'
+++        _cflags_size='-Os'
++     fi
++ 
++     eval ${pfx}_type=\$_type
+--- a/contrib/src/ffmpeg/rules.mak
++++ b/contrib/src/ffmpeg/rules.mak
+@@ -223,6 +223,15 @@
+ FFMPEGCONF += --target-os=sunos --enable-pic
+ endif
+ 
++# QNX
++ifdef HAVE_QNX
++FFMPEGCONF += --target-os=qnx --enable-pic --extra-libs="-lm"
++
++# ffmpeg's configure defaults to using the C compiler for linking.
++# So it will try to use qcc which needs to be told the target
++LDFLAGS += -V$(QNX_ARCH)
++endif
++
+ # Build
+ PKGS += ffmpeg
+ ifeq ($(call need_pkg,"libavcodec >= $(FFMPEG_LAVC_MIN) libavformat >= 53.21.0 libswscale"),)
+@@ -260,6 +269,9 @@
+ 	$(APPLY) $(SRC)/ffmpeg/0001-bring-back-XP-support.patch
+ 	$(APPLY) $(SRC)/ffmpeg/0011-avcodec-videotoolboxenc-disable-calls-on-unsupported.patch
+ 	$(APPLY) $(SRC)/ffmpeg/avcodec-fix-compilation-visionos.patch
++ifdef HAVE_QNX
++	$(APPLY) $(SRC)/ffmpeg/0001-qnx-support-qcc.patch
++endif
+ endif
+ ifdef USE_LIBAV
+ 	$(APPLY) $(SRC)/ffmpeg/libav_gsm.patch

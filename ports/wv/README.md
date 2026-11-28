@@ -73,7 +73,7 @@ patch -p1 -d src/wv < ports/wv/patches/0002-qnx-missing-declarations.patch
 > code, with the GNU extensions the system headers expect. configure is
 > changed along with configure.ac, so the tarball builds without autoreconf.
 
-Touches: `configure`, `configure.ac`
+Touches: `configure`, `configure.ac` · Upstream status: QNX-specific
 
 **[`0002-qnx-missing-declarations.patch`](patches/0002-qnx-missing-declarations.patch)** — wv: declare what wvSummary and wvparse.c call (pointers cut to 32 bits).
 
@@ -89,7 +89,7 @@ Touches: `configure`, `configure.ac`
 > scope; it returns int, so it worked, but the prototype is added to wv.h so
 > that the arguments are checked too.
 
-Touches: `wv.h`, `wvSummary.c`
+Touches: `wv.h`, `wvSummary.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

@@ -1,11 +1,11 @@
 # Component index
 
-990 components. **986** build for both `aarch64le` and `x86_64` from upstream source, carrying 650 QNX patches between them.
+991 components. **990** build for both `aarch64le` and `x86_64` from upstream source, carrying 650 QNX patches between them.
 
 | Class | | Components |
 |---|---|---|
 | 🟢 **standalone** | builds with the QNX SDP only, runs on a stock target | **322** |
-| 🟡 **build-deps only** | needs other components to build, runs on its own | **265** |
+| 🟡 **build-deps only** | needs other components to build, runs on its own | **266** |
 | 🔴 **dependent** | needs other components to build and to run | **402** |
 | 📋 **planned** | recorded for porting, not ported yet | **0** |
 | ⛔ **blocked** | tried; cannot be built for QNX as things stand (the recipe says why) | **1** |
@@ -162,8 +162,9 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [flann](ports/flann/README.md) | Fast Library for Approximate Nearest Neighbors search | 1.9.2 | cmake | github.com | — | 🔴 dependent | 1 | ✅ | ✅ |
 | [flatbuffers](ports/flatbuffers/README.md) | Memory-efficient serialization library and flatc schema compiler | 24.3.25 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [flex](ports/flex/README.md) | Fast lexical analyser generator (flex) and its libfl | 2.7.3 | autotools | github.com | — | 🟢 standalone | — | ✅ | ✅ |
-| [flutter-counter-example](ports/flutter-counter-example/README.md) | Flutter's counter example app for QNX (runs with qnx-flutter-wayland) | 1.0 | custom | custom | — | 🟡 build-deps only | — | — | ✅ |
-| [flutter-engine](ports/flutter-engine/README.md) | The Flutter engine (embedder API, software rendering) for QNX | 3.50.1 | custom | github.com | 8 | 🟢 standalone | — | — | ✅ |
+| [flutter-counter-example](ports/flutter-counter-example/README.md) | Flutter's counter example app for QNX (runs with qnx-flutter-wayland) | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
+| [flutter-engine](ports/flutter-engine/README.md) | The Flutter engine (embedder API, software rendering) for QNX | 3.50.1 | custom | github.com | 8 | 🟢 standalone | — | ✅ | ✅ |
+| [flutter-hmi-demo](ports/flutter-hmi-demo/README.md) | A vehicle HMI mock-up in Flutter (cluster, navigation, media, climate) for QNX | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [fmt](ports/fmt/README.md) | Fast and safe C++ formatting library | 11.2.0 | cmake | github.com | — | 🟢 standalone | — | ✅ | ✅ |
 | [folly](ports/folly/README.md) | Open-source C++ library developed and used at Facebook | 2026.10.26.00 | cmake | github.com | 6 | 🔴 dependent | 12 | ✅ | ✅ |
 | [font-cantarell](ports/font-cantarell/README.md) | Cantarell, the GNOME user interface font | 0.303.1 | custom | download.gnome.org | — | 🟢 standalone | — | ✅ | ✅ |
@@ -799,7 +800,7 @@ Click a component for its source URL, its patches, the exact build commands and 
 | [qnx-desktop-theme](ports/qnx-desktop-theme/README.md) | Desktop look: icon themes and fonts, with CJK and emoji | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [qnx-desktop-utilities](ports/qnx-desktop-utilities/README.md) | Desktop utilities: text editor, image viewer, calculator, archives, task monitor | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
 | [qnx-desktop](ports/qnx-desktop/README.md) | Complete desktop for QNX: session, applications, developer tools (meta package) | 1.0 | custom | custom | — | 🟡 build-deps only | — | ✅ | ✅ |
-| [qnx-flutter-wayland](ports/qnx-flutter-wayland/README.md) | A small Flutter embedder for QNX: Flutter apps in a Wayland window | 0.1 | custom | custom | — | 🔴 dependent | 2 | — | ✅ |
+| [qnx-flutter-wayland](ports/qnx-flutter-wayland/README.md) | A small Flutter embedder for QNX: Flutter apps in a Wayland window | 0.1 | custom | custom | — | 🔴 dependent | 2 | ✅ | ✅ |
 | [qnx-socketcan](ports/qnx-socketcan/README.md) | Linux SocketCAN for QNX programs: CAN_RAW sockets, <linux/can.h>, virtual CAN buses | 1.0 | custom | custom | — | 🟢 standalone | — | ✅ | ✅ |
 | [qpdf](ports/qpdf/README.md) | PDF Transformation System | 11.10.1 | cmake | github.com | 1 | 🔴 dependent | 3 | ✅ | ✅ |
 | [qt6-3d](ports/qt6-3d/README.md) | Qt 6 3D: a 3D scene graph and rendering framework (Qt 3D) for C++ and QML | 6.8.1 | custom | download.qt.io | — | 🔴 dependent | 2 | ✅ | ✅ |

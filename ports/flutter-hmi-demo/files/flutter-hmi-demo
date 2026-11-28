@@ -1,0 +1,11 @@
+#!/bin/sh
+# Vehicle HMI demo on QNX (qnx-flutter-wayland), 1280x720 window.
+# The libraries' search path as for every package (apk-setup's oss-env.sh:
+# /usr/local/lib and the QNX run-time libraries of vanilla images): QNX's
+# loader takes a program's RPATH only for the program's own NEEDED, not for
+# its libraries' (libwayland-client needs libffi and libepoll).
+[ -f /data/oss/etc/oss-env.sh ] && . /data/oss/etc/oss-env.sh
+case ":$LD_LIBRARY_PATH:" in *":@PREFIX@/lib:"*) ;; *) LD_LIBRARY_PATH=@PREFIX@/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} ;; esac
+export LD_LIBRARY_PATH
+exec @PREFIX@/bin/qnx-flutter-wayland --size "${HMI_SIZE:-1280x720}" --title "Vehicle HMI demo" --app-id flutter-hmi-demo \
+  @PREFIX@/share/flutter-apps/hmi-demo "$@"

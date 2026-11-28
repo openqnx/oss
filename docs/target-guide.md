@@ -125,7 +125,7 @@ unpack it under `/data/oss`, or `test_suites/8.0/<arch>/bin/test_<test>`).
 ## Standalone and dependent
 
 
-**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **667 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
+**322 standalone** components build with the QNX SDP alone and run on a vanilla image with nothing else: `apk add <name>` installs one package. **668 dependent** components need others: apk installs those first by itself (the *needs at run time* column); to build one yourself, build its *build* dependencies first (`ports/<name>/README.md` lists them in order).
 
 Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version in `dists/`, `ᵛ` on a vanilla image installed with apk; details per component in its README's *How it was verified*.
 
@@ -456,7 +456,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`zserio`](../ports/zserio/) | C++ runtime library of zserio, a serialization framework for binary data | 2.20.0 | `apk add zserio` | `qnx-test-zserio` | – |
 | [`zstd`](../ports/zstd/) | Fast real-time lossless compression library (Zstandard) | 1.5.7 | `apk add zstd` | `qnx-test-zstd` | x86✅ᵛ a64✅ᵛ |
 
-### Dependent (667)
+### Dependent (668)
 
 | Component | What it is | Version | Install | Needs at run time | Needs to build | Test package | Verified |
 |---|---|---|---|---|---|---|---|
@@ -541,6 +541,7 @@ Verified: `x86✅` / `a64✅` passed on x86_64 / aarch64 (QEMU) with the version
 | [`flac`](../ports/flac/) | Free Lossless Audio Codec library and tools | 1.5.0 | `apk add flac` | libogg | libogg | `qnx-test-flac` | x86✅ a64✅ |
 | [`flann`](../ports/flann/) | Fast Library for Approximate Nearest Neighbors search | 1.9.2 | `apk add flann` | lz4 | lz4 | `qnx-test-flann` | x86✅ᵛ a64✅ᵛ |
 | [`flutter-counter-example`](../ports/flutter-counter-example/) | Flutter's counter example app for QNX (runs with qnx-flutter-wayland) | 1.0 | `apk add flutter-counter-example` | – | flutter-engine qnx-flutter-wayland | `qnx-test-flutter-counter-example` | – |
+| [`flutter-hmi-demo`](../ports/flutter-hmi-demo/) | A vehicle HMI mock-up in Flutter (cluster, navigation, media, climate) for QNX | 1.0 | `apk add flutter-hmi-demo` | – | flutter-engine qnx-flutter-wayland | `qnx-test-flutter-hmi-demo` | – |
 | [`folly`](../ports/folly/) | Open-source C++ library developed and used at Facebook | 2026.10.26.00 | `apk add folly` | boost bzip2 fmt gflags glog libevent libsodium lz4 openssl xz zlib zstd | boost fast-float fmt gflags glog libevent openssl zlib zstd lz4 xz bzip2 libsodium | `qnx-test-folly` | x86✅ᵛ a64✅ᵛ |
 | [`fontconfig`](../ports/fontconfig/) | Library for font configuration, discovery and customization | 2.18.4 | `apk add fontconfig` | expat freetype gettext | freetype expat | `qnx-test-fontconfig` | x86✅ a64✅ |
 | [`fontenc`](../ports/fontenc/) | X.Org font encoding library | 1.1.8 | `apk add fontenc` | zlib | xorgproto zlib | `qnx-test-fontenc` | x86✅ᵛ a64✅ᵛ |

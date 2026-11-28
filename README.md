@@ -1,11 +1,11 @@
 # QNX OSS — open source for QNX SDP 8.0
 
-![ported](https://img.shields.io/badge/open_source_ported-989-blue)
+![ported](https://img.shields.io/badge/open_source_ported-990-blue)
 ![verified](https://img.shields.io/badge/verified_on_QNX_targets-944-brightgreen)
 ![SDP](https://img.shields.io/badge/QNX_SDP-8.0-informational)
 ![arch](https://img.shields.io/badge/arch-x86__64_%7C_aarch64le-informational)
 
-**989 open source projects ported to QNX SDP 8.0, for x86_64 and aarch64le.
+**990 open source projects ported to QNX SDP 8.0, for x86_64 and aarch64le.
 944 of them are verified by running them on QNX targets and install with `apk`
 from this repository's releases.** From zlib and curl to Python, Qt 6, GTK,
 a Wayland desktop, ROS 2, PyTorch, MAME and VLC.
@@ -56,7 +56,7 @@ with its files, dependencies and test log: **<https://openqnx.github.io/oss/>**.
 > QNX. QNX is a trademark of BlackBerry Limited. Each component keeps its own license
 > (on its package page).
 
-Build files, QNX patches and step-by-step guides for **989 open source
+Build files, QNX patches and step-by-step guides for **990 open source
 components**, cross-built from their upstream source for **QNX SDP 8.0** on
 **aarch64le** and **x86_64**, and the same components as prebuilt packages
 a QNX target can download and install directly. The numbers are counted from
@@ -101,10 +101,10 @@ How this set compares with QNX's: [docs/upstream-comparison.md](docs/upstream-co
 
 | | |
 |---|---|
-| Components | **989** (986 build for every architecture they support -- both, but for a few aarch64-only ones) |
+| Components | **990** (990 build for every architecture they support -- both, but for a few aarch64-only ones) |
 | Verified on QNX targets | **944** -- installed with apk and tested on both architectures; these are the packages in the releases |
 | 🟢 Standalone | **322** — QNX SDP only, at build time and at run time |
-| 🟡 Build-deps only | **265** — need other components to build, run on their own |
+| 🟡 Build-deps only | **266** — need other components to build, run on their own |
 | 🔴 Dependent | **402** — need other components to build and to run |
 | QNX patches | **1080**, one file per change, each with its reason |
 | On-target tests | **235** test programs |

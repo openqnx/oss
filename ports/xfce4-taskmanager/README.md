@@ -92,7 +92,7 @@ patch -p1 -d src/xfce4-taskmanager < ports/xfce4-taskmanager/patches/0001-qnx-ba
 > Sending signals and changing priorities stay in task-manager.c (kill(),
 > setpriority()), which QNX has.
 
-Touches: `meson.build`, `src/task-manager-qnx.c`
+Touches: `meson.build`, `src/task-manager-qnx.c` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 

@@ -5,16 +5,16 @@ Two kinds, by whether anything else from this repository is needed:
 | Kind | Meaning | Components |
 |---|---|---|
 | 🟢 **Standalone** | builds with the QNX SDP alone and runs on a stock QNX image -- port it on its own | **322** |
-| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **667** |
+| 🔴 **Dependent** | needs other components built first (listed per component, in build order) | **668** |
 
-Dependent components split further by what they need at run time (265 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
+Dependent components split further by what they need at run time (266 run on their own once built). Each component's README (`ports/<name>/README.md`) walks through porting it by hand from the upstream source -- download, QNX patches, configure, build, install, package, test -- with its dependencies first when it has any.
 
 Every component is in exactly one of three classes. The class is computed by `scripts/gen-dependency-index` from the recipes *and* from the binaries the build installed (their `DT_NEEDED` entries), so it describes what actually happens on the target, not only what the recipe declares.
 
 | Class | Build | Run on the target | Components |
 |---|---|---|---|
 | **[Standalone](#standalone)** | QNX SDP only | stock QNX image, nothing else | **322** |
-| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **265** |
+| **[Runtime-standalone](#runtime-standalone)** | needs other components first | on its own | **266** |
 | **[Dependent](#dependent)** | needs other components first | needs other components installed | **402** |
 
 Libraries that ship with the QNX SDP target (libc, libm, libsocket, libregex, libc++, the eventfd/epoll shims, ...) are part of every QNX 8.0 system and are never counted as dependencies.
@@ -97,7 +97,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`fftw`](ports/fftw/) | 3.3.10 | autotools | – | 0 |
 | [`flatbuffers`](ports/flatbuffers/) | 24.3.25 | cmake | – | 0 |
 | [`flex`](ports/flex/) | 2.7.3 | autotools | – | 0 |
-| [`flutter-engine`](ports/flutter-engine/) | 3.50.1 | custom | – | 2 |
+| [`flutter-engine`](ports/flutter-engine/) | 3.50.1 | custom | – | 3 |
 | [`fmt`](ports/fmt/) | 11.2.0 | cmake | – | 5 |
 | [`font-cantarell`](ports/font-cantarell/) | 0.303.1 | custom | – | 1 |
 | [`font-dejavu`](ports/font-dejavu/) | 2.37 | custom | – | 2 |
@@ -356,7 +356,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 
 ## Runtime-standalone
 
-265 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
+266 components. They need other components at *build* time -- header-only libraries (Eigen, nlohmann_json, ...), static archives, or generators -- but what they install loads nothing from this tree. Build the listed chain first (`qnxbuild` does it); deploy the component alone.
 
 | Component | Version | Needs to build | Full build chain |
 |---|---|---|---|
@@ -371,6 +371,7 @@ Machine-readable: [`ports/dependencies.json`](ports/dependencies.json).
 | [`cython`](ports/cython/) | 3.3.1 | python3 | 15 |
 | [`ensmallen`](ports/ensmallen/) | 3.11.1 | armadillo | 2 |
 | [`flutter-counter-example`](ports/flutter-counter-example/) | 1.0 | flutter-engine qnx-flutter-wayland | 20 |
+| [`flutter-hmi-demo`](ports/flutter-hmi-demo/) | 1.0 | flutter-engine qnx-flutter-wayland | 20 |
 | [`glfw`](ports/glfw/) | 3.5.1 | wayland libxkbcommon linux-headers-input-codes | 19 |
 | [`glib-typelibs`](ports/glib-typelibs/) | 2.90.1 | glib | 9 |
 | [`gsettings-desktop-schemas`](ports/gsettings-desktop-schemas/) | 49.0 | glib | 9 |

@@ -77,7 +77,7 @@ patch -p1 -d src/flutter-engine < ports/flutter-engine/patches/0008-qnx-swiftsha
 > - native assets: the target OS name is "linux";
 > - the embedder engine and the snapshot tools in the build (flutter/BUILD.gn).
 
-Touches: `engine/src/build/config/BUILDCONFIG.gn`, `engine/src/build/config/compiler/BUILD.gn`, `engine/src/build/toolchain/qnx/BUILD.gn`, `engine/src/build/toolchain/qnx/include/dirent.h`, `engine/src/build/toolchain/qnx/include/elf.h`, `engine/src/build/toolchain/qnx/include/endian.h` …
+Touches: `engine/src/build/config/BUILDCONFIG.gn`, `engine/src/build/config/compiler/BUILD.gn`, `engine/src/build/toolchain/qnx/BUILD.gn`, `engine/src/build/toolchain/qnx/include/dirent.h`, `engine/src/build/toolchain/qnx/include/elf.h`, `engine/src/build/toolchain/qnx/include/endian.h` … · Upstream status: QNX-specific
 
 **[`0002-qnx-dart-vm.patch`](patches/0002-qnx-dart-vm.patch)** — QNX: the Dart VM on QNX Neutrino.
 
@@ -88,7 +88,7 @@ Touches: `engine/src/build/config/BUILDCONFIG.gn`, `engine/src/build/config/comp
 > QNX ways for the thread id, random bytes (/dev/urandom), the thread's stack
 > (TLS), fstatat, d_type, bzero and the machine-check codes.
 
-Touches: `engine/src/flutter/third_party/dart/runtime/BUILD.gn`, `engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.cc` …
+Touches: `engine/src/flutter/third_party/dart/runtime/BUILD.gn`, `engine/src/flutter/third_party/dart/runtime/bin/crypto_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/directory_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler.h`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler_linux.cc`, `engine/src/flutter/third_party/dart/runtime/bin/eventhandler_qnx.cc` … · Upstream status: QNX-specific
 
 **[`0003-qnx-libcxx.patch`](patches/0003-qnx-libcxx.patch)** — QNX: libc++ for the engine build.
 
@@ -98,32 +98,32 @@ Touches: `engine/src/flutter/third_party/dart/runtime/BUILD.gn`, `engine/src/flu
 > locale_t, newlocale or the *_l functions, so libc++ supports the "C" locale
 > only and implements wcsnrtombs/mbsnrtowcs itself.
 
-Touches: `engine/src/flutter/third_party/libcxx/include/__config`, `engine/src/flutter/third_party/libcxx/include/__cxx03/__config`, `engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp`, `engine/src/flutter/third_party/libcxx/include/__locale`, `engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h`, `engine/src/flutter/third_party/libcxx/include/__locale_dir/support/qnx.h` …
+Touches: `engine/src/flutter/third_party/libcxx/include/__config`, `engine/src/flutter/third_party/libcxx/include/__cxx03/__config`, `engine/src/flutter/third_party/libcxx/include/__cxx03/csetjmp`, `engine/src/flutter/third_party/libcxx/include/__locale`, `engine/src/flutter/third_party/libcxx/include/__locale_dir/locale_base_api.h`, `engine/src/flutter/third_party/libcxx/include/__locale_dir/support/qnx.h` … · Upstream status: QNX-specific
 
 **[`0004-qnx-libcxxabi.patch`](patches/0004-qnx-libcxxabi.patch)** — QNX: libc++abi -- QNX in cxxabi.h's platform list (from qnx-ports' LLVM).
 
-Touches: `engine/src/flutter/third_party/libcxxabi/include/cxxabi.h`
+Touches: `engine/src/flutter/third_party/libcxxabi/include/cxxabi.h` · Upstream status: QNX-specific
 
 **[`0005-qnx-boringssl-urandom.patch`](patches/0005-qnx-boringssl-urandom.patch)** — QNX: BoringSSL takes random bytes from /dev/urandom (QNX has no getentropy).
 
-Touches: `engine/src/flutter/third_party/boringssl/src/crypto/rand/internal.h`
+Touches: `engine/src/flutter/third_party/boringssl/src/crypto/rand/internal.h` · Upstream status: QNX-specific
 
 **[`0006-qnx-skia-no-locale-t.patch`](patches/0006-qnx-skia-no-locale-t.patch)** — QNX: Skia's locale setter is a no-op as on Android (QNX has no locale_t).
 
-Touches: `engine/src/flutter/third_party/skia/src/core/SkAutoLocaleSetter.h`
+Touches: `engine/src/flutter/third_party/skia/src/core/SkAutoLocaleSetter.h` · Upstream status: QNX-specific
 
 **[`0007-qnx-zlib-no-arm-cpu-features.patch`](patches/0007-qnx-zlib-no-arm-cpu-features.patch)** — QNX: no ARM NEON/CRC32 code paths in zlib on QNX (they need Linux's
 
 > getauxval/HWCAP to detect the CPU features).
 
-Touches: `engine/src/flutter/third_party/zlib/BUILD.gn`
+Touches: `engine/src/flutter/third_party/zlib/BUILD.gn` · Upstream status: QNX-specific
 
 **[`0008-qnx-swiftshader-gn.patch`](patches/0008-qnx-swiftshader-gn.patch)** — QNX arm64: SwiftShader's Reactor has no JIT backend there (no Subzero on
 
 > arm64, LLVM not configured for QNX); the target stays declared so that the GN
 > graph resolves -- nothing built for QNX links it.
 
-Touches: `engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn`
+Touches: `engine/src/flutter/third_party/swiftshader/src/Reactor/BUILD.gn` · Upstream status: QNX-specific
 
 ### 4. Configure, build and install into the staging tree
 
@@ -238,7 +238,7 @@ PASS flutter-engine
 
 ## How it was verified
 
-1. **Built** from the original source with the patches above for `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_flutter_engine`](../../tests/src/) -- a program linked against flutter-engine the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 

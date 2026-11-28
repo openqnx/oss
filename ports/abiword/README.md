@@ -81,7 +81,7 @@ patch -p1 -d src/abiword < ports/abiword/patches/0002-enchant-2.patch
 > Debian does (drop-outdated-libgcrypt.m4.diff): an outdated copy of macros
 > autoreconf otherwise takes over the installed ones.
 
-Touches: `abib/configure.ac`, `abib/libgcrypt.m4`
+Touches: `abib/configure.ac`, `abib/libgcrypt.m4` · Upstream status: QNX-specific
 
 **[`0002-enchant-2.patch`](patches/0002-enchant-2.patch)** — abiword: enchant-2 (Debian's enchant2.patch, unchanged below).
 
@@ -91,7 +91,7 @@ Touches: `abib/configure.ac`, `abib/libgcrypt.m4`
 > 3.0.8+ds-2, by Laurent Bigonville, https://bugs.debian.org/956710): the
 > pkg-config name and enchant 2's renamed functions.
 
-Touches: `configure.ac`, `src/af/xap/xp/enchant_checker.cpp`
+Touches: `configure.ac`, `src/af/xap/xp/enchant_checker.cpp` · Upstream status: Backport (Debian debian/patches/enchant2.patch)
 
 ### 4. Configure, build and install into the staging tree
 

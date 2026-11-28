@@ -94,7 +94,7 @@ Touches: `src/main.c` · Upstream status: Pending
 > dialog although gzip/tar had exited 0. Only G_IO_ERR and G_IO_NVAL now mean
 > failure (the exit status still decides the rest).
 
-Touches: `src/archive.c`
+Touches: `src/archive.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

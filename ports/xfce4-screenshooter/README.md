@@ -73,7 +73,7 @@ patch -p1 -d src/xfce4-screenshooter < ports/xfce4-screenshooter/patches/0002-ma
 > The variable is local to main.c; it is renamed opt_delay. Nothing else
 > changes (lib/ only has the struct member sd->delay, which does not clash).
 
-Touches: `src/main.c`
+Touches: `src/main.c` · Upstream status: QNX-specific
 
 **[`0002-man-page-only-when-the-program-runs-here.patch`](patches/0002-man-page-only-when-the-program-runs-here.patch)** — meson: no help2man man page when the program cannot run here
 

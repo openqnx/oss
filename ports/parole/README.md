@@ -81,7 +81,7 @@ patch -p1 -d src/parole < ports/parole/patches/0001-qnx-wayland-gtksink.patch
 > enclosing event box and keep working. This path is taken only in a build
 > without X11 sinks; with ximagesink/xvimagesink present nothing changes.
 
-Touches: `src/gst/parole-gst.c`, `src/gst/parole-gst.h`, `src/parole-player.c`
+Touches: `src/gst/parole-gst.c`, `src/gst/parole-gst.h`, `src/parole-player.c` · Upstream status: Pending
 
 ### 4. Configure, build and install into the staging tree
 

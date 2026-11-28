@@ -160,7 +160,7 @@ PASS flutter-counter-example
 
 ## How it was verified
 
-1. **Built** from the original source with the patches above for `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_flutter_counter_example`](../../tests/src/) -- a program linked against flutter-counter-example the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 

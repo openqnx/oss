@@ -46,6 +46,9 @@ export LD_LIBRARY_PATH=$L/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 h=$("$W" --help 2>&1); rc=$?
 [ $rc -eq 0 ] && echo "$h" | has "<bundle dir>" && echo "$h" | has "libapp.so" && echo "$h" | has "flutter_assets" \
   && ok "--help: usage with the bundle layout" || { bad "--help (rc $rc)"; echo "$h"; }
+echo "$h" | has "--size WxH" && ok "--help names --size, --title and --app-id" || bad "--help without the window options"
+"$W" --size 10x10 "$T/no-such-bundle" > bads.out 2>&1; rc=$?
+[ $rc -eq 2 ] && has "bad --size" < bads.out && ok "a window size out of range is refused (rc 2)" || { bad "--size 10x10: rc $rc"; cat bads.out; }
 "$W" "$T/no-such-bundle" > nob.out 2>&1; rc=$?
 [ $rc -ne 0 ] && { has "cannot" < nob.out || has "Wayland" < nob.out; } && ok "a missing bundle (or no display) is refused (rc $rc)" \
   || { bad "missing bundle: rc $rc"; cat nob.out; }
@@ -57,12 +60,16 @@ else
   track $!
   i=0; while [ ! -S "$RT/wayland-0" ] && [ $i -lt 150 ]; do sleep 0.1; i=$((i+1)); done
   [ -S "$RT/wayland-0" ] && ok "labwc up (headless)" || { bad "labwc"; cat labwc.log; }
-  XDG_RUNTIME_DIR=$RT WAYLAND_DISPLAY=wayland-0 "$W" "$APP" > app.out 2>&1 &
+  XDG_RUNTIME_DIR=$RT WAYLAND_DISPLAY=wayland-0 QNX_FLUTTER_FPS=2 "$W" "$APP" > app.out 2>&1 &
   ap=$!; track $ap
   i=0; while ! has "running" < app.out && [ $i -lt 60 ] && kill -0 $ap 2>/dev/null; do sleep 1; i=$((i+1)); done
   has "qnx-flutter-wayland: running $APP" < app.out && ok "the app runs: $(head -n 1 app.out)" || { bad "no 'running' line after ${i} s"; cat app.out; }
   sleep 5
   kill -0 $ap 2>/dev/null && ok "still running 5 s later (frames on the headless output)" || { bad "the app ended"; cat app.out; }
+  # the counter app draws only when something changes: an idle app presents no
+  # frames, so the rate line is information (flutter-hmi-demo's test animates)
+  has " fps (" < app.out && info "QNX_FLUTTER_FPS: $(grep ' fps (' app.out | tail -n 1 | sed 's/^qnx-flutter-wayland: //')" \
+    || info "QNX_FLUTTER_FPS=2: no frame presented in the interval (idle app)"
   kill -TERM $ap 2>/dev/null; i=0; while kill -0 $ap 2>/dev/null && [ $i -lt 10 ]; do sleep 1; i=$((i+1)); done
   if kill -0 $ap 2>/dev/null; then bad "still running 10 s after SIGTERM"; else wait $ap; rc=$?
     [ $rc -eq 0 ] && ok "SIGTERM: clean exit (rc 0) after ${i} s" || bad "exit status $rc after SIGTERM"; fi

@@ -85,7 +85,7 @@ do_install() { install -Dm755 "$B/qnx-flutter-wayland" "$STAGE$PREFIX/bin/qnx-fl
 
 Why the configuration looks like this (from [`recipe.sh`](recipe.sh)):
 
-- qnx-flutter-wayland: a small Flutter embedder for QNX on Wayland (labwc). Written for this tree (files/qnx_flutter_wayland.c, C): an xdg-shell window on wl_shm buffers that the engine's software renderer draws into; pointer (mouse) input; its own platform task runner (poll on the Wayland fd, a wake pipe and the next task's time). Keyboard and text input are not done yet. qnx-flutter-wayland <bundle dir>   (flutter_assets/, libapp.so[, icudtl.dat]) QNX's loader does not expand $ORIGIN in RPATH/RUNPATH, so the program names $PREFIX/lib as its RPATH (DT_RPATH) to find libflutter_engine.so and libwayland-client. The loader uses it for the program's own NEEDED only, not for those libraries' (libffi of libwayland-client): outside a desktop session (whose LD_LIBRARY_PATH has $PREFIX/lib) an app's launcher sets LD_LIBRARY_PATH, as flutter-counter does.
+- qnx-flutter-wayland: a small Flutter embedder for QNX on Wayland (labwc). Written for this tree (files/qnx_flutter_wayland.c, C): an xdg-shell window on wl_shm buffers that the engine's software renderer draws into; pointer (mouse) input; its own platform task runner (poll on the Wayland fd, a wake pipe and the next task's time). Mouse wheel scrolling; QNX_FLUTTER_FPS=<s> prints the frame rate. Keyboard and text input are not done yet. qnx-flutter-wayland [--size WxH] [--title T] [--app-id ID] <bundle dir> (flutter_assets/, libapp.so[, icudtl.dat]); --size sets the starting window size QNX's loader does not expand $ORIGIN in RPATH/RUNPATH, so the program names $PREFIX/lib as its RPATH (DT_RPATH) to find libflutter_engine.so and libwayland-client. The loader uses it for the program's own NEEDED only, not for those libraries' (libffi of libwayland-client): outside a desktop session (whose LD_LIBRARY_PATH has $PREFIX/lib) an app's launcher sets LD_LIBRARY_PATH, as flutter-counter does.
 
 Or all of steps 2–4 at once: `./scripts/qnxbuild -a $QNX_ARCH qnx-flutter-wayland`.
 
@@ -151,7 +151,7 @@ PASS qnx-flutter-wayland
 
 ## How it was verified
 
-1. **Built** from the original source with the patches above for `x86_64`, by `scripts/qnxbuild` from a clean build directory.
+1. **Built** from the original source with the patches above for `aarch64le`, `x86_64`, by `scripts/qnxbuild` from a clean build directory.
 2. **Staging audits** (`scripts/check-all`) over what it installs: every undefined symbol resolvable, no library taken from the SDP where this tree builds one, development links present, no duplicate files, no host binaries or build paths, no private copies of libc, every DT_NEEDED a plain soname.
 3. **On the target**: [`test_qnx_flutter_wayland`](../../tests/src/) -- a program linked against qnx-flutter-wayland the way an application would be -- run on QNX 8.0, each check printing `ok`/`FAIL`:
 
@@ -169,9 +169,11 @@ This recipe builds **0.1**. Every version stays available: packages in `dists/8.
 # Written for this tree (files/qnx_flutter_wayland.c, C): an xdg-shell window
 # on wl_shm buffers that the engine's software renderer draws into; pointer
 # (mouse) input; its own platform task runner (poll on the Wayland fd, a wake
-# pipe and the next task's time). Keyboard and text input are not done yet.
+# pipe and the next task's time). Mouse wheel scrolling; QNX_FLUTTER_FPS=<s>
+# prints the frame rate. Keyboard and text input are not done yet.
 #
-#   qnx-flutter-wayland <bundle dir>   (flutter_assets/, libapp.so[, icudtl.dat])
+#   qnx-flutter-wayland [--size WxH] [--title T] [--app-id ID] <bundle dir>
+#     (flutter_assets/, libapp.so[, icudtl.dat]); --size sets the starting window size
 #
 # QNX's loader does not expand $ORIGIN in RPATH/RUNPATH, so the program names
 # $PREFIX/lib as its RPATH (DT_RPATH) to find libflutter_engine.so and

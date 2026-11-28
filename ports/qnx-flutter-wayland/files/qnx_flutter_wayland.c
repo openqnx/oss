@@ -34,7 +34,10 @@
 #endif
 
 #define MAX_TASKS 1024
-#define NBUF 2
+// three buffers: the compositor can hold one on screen and one queued while
+// the engine draws into the third (with two, frames were dropped while both
+// were still held, which capped animation at a third of the output rate)
+#define NBUF 3
 
 struct buf {
   struct wl_buffer* wl;
@@ -70,6 +73,10 @@ static struct {
   double px, py;              // pointer position
   int64_t buttons;
   bool pointer_added;
+  int fps_every;              // QNX_FLUTTER_FPS: report interval in seconds, 0 = off
+  uint64_t fps_t0;
+  int fps_n, fps_dropped;
+  bool debug_input;            // QNX_FLUTTER_DEBUG_INPUT: log pointer axis events
 } g = {.width = 480, .height = 640};
 
 static uint64_t now_ns(void) { return FlutterEngineGetCurrentTime(); }
@@ -134,7 +141,8 @@ static bool present(void* user_data, const void* allocation, size_t row_bytes, s
   struct buf* b = NULL;
   for (int i = 0; i < NBUF; i++)
     if (g.bufs[i].wl && !g.bufs[i].busy) { b = &g.bufs[i]; break; }
-  if (b == NULL) {  // the compositor still holds both: drop this frame
+  if (b == NULL) {  // the compositor still holds them all: drop this frame
+    g.fps_dropped++;
     pthread_mutex_unlock(&g.buf_mu);
     return true;
   }
@@ -143,6 +151,16 @@ static bool present(void* user_data, const void* allocation, size_t row_bytes, s
   for (size_t y = 0; y < rows; y++)
     memcpy((char*)b->data + y * b->stride, (const char*)allocation + y * row_bytes, n);
   b->busy = true;
+  if (g.fps_every) {  // QNX_FLUTTER_FPS=<seconds>: frames presented per second
+    uint64_t t = now_ns();
+    if (g.fps_t0 == 0) g.fps_t0 = t;
+    g.fps_n++;
+    if (t - g.fps_t0 >= (uint64_t)g.fps_every * 1000000000ULL) {
+      fprintf(stderr, "qnx-flutter-wayland: %.1f fps (%dx%d), %d frame(s) dropped\n", g.fps_n * 1e9 / (double)(t - g.fps_t0),
+              b->w, b->h, g.fps_dropped);
+      g.fps_t0 = t; g.fps_n = 0; g.fps_dropped = 0;
+    }
+  }
   wl_surface_attach(g.surface, b->wl, 0, 0);
   wl_surface_damage_buffer(g.surface, 0, 0, b->w, b->h);
   wl_surface_commit(g.surface);
@@ -251,8 +269,28 @@ static void ptr_button(void* data, struct wl_pointer* p, uint32_t serial, uint32
     send_pointer(g.buttons == 0 ? kUp : kMove);
   }
 }
+// Wheel and touchpad scrolling: a Flutter pointer signal (scroll) at the
+// pointer position. Wayland gives the distance in surface pixels per event
+// (about 10-15 for one wheel notch); Flutter scrolls by the logical pixels it
+// is given, so a notch is made about three lines of a list.
 static void ptr_axis(void* data, struct wl_pointer* p, uint32_t time, uint32_t axis, wl_fixed_t v) {
-  (void)data; (void)p; (void)time; (void)axis; (void)v;
+  (void)data; (void)p; (void)time;
+  double d = wl_fixed_to_double(v) * 4.0;
+  if (g.debug_input) fprintf(stderr, "qnx-flutter-wayland: axis %u value %.3f -> scroll %.1f at %.0f,%.0f\n", axis, wl_fixed_to_double(v), d, g.px, g.py);
+  if (!g.pointer_added) { send_pointer(kAdd); g.pointer_added = true; }
+  FlutterPointerEvent ev = {0};
+  ev.struct_size = sizeof ev;
+  ev.phase = g.buttons ? kMove : kHover;
+  ev.timestamp = (size_t)(now_ns() / 1000);
+  ev.x = g.px;
+  ev.y = g.py;
+  ev.device = 0;
+  ev.signal_kind = kFlutterPointerSignalKindScroll;
+  ev.device_kind = kFlutterPointerDeviceKindMouse;
+  ev.buttons = g.buttons;
+  if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL) ev.scroll_delta_y = d;
+  else ev.scroll_delta_x = d;
+  FlutterEngineSendPointerEvent(g.engine, &ev, 1);
 }
 static void ptr_frame(void* data, struct wl_pointer* p) { (void)data; (void)p; }
 static void ptr_axis_source(void* data, struct wl_pointer* p, uint32_t s) { (void)data; (void)p; (void)s; }
@@ -352,19 +390,44 @@ static void on_signal(int s) {
   wake_up();
 }
 
+static void usage(FILE* f, const char* prog) {
+  fprintf(f,
+          "usage: %s [--size WxH] [--title TEXT] [--app-id ID] <bundle dir>\n"
+          "Runs a Flutter app (release AOT) in a Wayland window (labwc).\n"
+          "  <bundle dir>/flutter_assets/  assets (flutter build bundle)\n"
+          "  <bundle dir>/libapp.so        the app's AOT code (gen_snapshot app-aot-elf)\n"
+          "  <bundle dir>/icudtl.dat       optional, else %s\n"
+          "  --size WxH     window size the app starts with (default 480x640);\n"
+          "                 the compositor may still resize it\n"
+          "  --title TEXT   window title (default \"Flutter on QNX\")\n"
+          "  --app-id ID    Wayland app id (default qnx-flutter-wayland)\n"
+          "QNX_FLUTTER_FPS=<s> prints the frames presented per second every <s> s.\n"
+          "Needs WAYLAND_DISPLAY and XDG_RUNTIME_DIR of the desktop session.\n",
+          prog, ICU_DATA_DEFAULT);
+}
+
 int main(int argc, char** argv) {
-  if (argc < 2 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
-    fprintf(argc < 2 ? stderr : stdout,
-            "usage: %s <bundle dir>\n"
-            "Runs a Flutter app (release AOT) in a Wayland window (labwc).\n"
-            "  <bundle dir>/flutter_assets/  assets (flutter build bundle)\n"
-            "  <bundle dir>/libapp.so        the app's AOT code (gen_snapshot app-aot-elf)\n"
-            "  <bundle dir>/icudtl.dat       optional, else %s\n"
-            "Needs WAYLAND_DISPLAY and XDG_RUNTIME_DIR of the desktop session.\n",
-            argv[0], ICU_DATA_DEFAULT);
-    return argc < 2 ? 2 : 0;
+  const char* title = "Flutter on QNX";
+  const char* app_id = "qnx-flutter-wayland";
+  const char* dir = NULL;
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) { usage(stdout, argv[0]); return 0; }
+    if (strcmp(argv[i], "--size") == 0 && i + 1 < argc) {
+      int w = 0, h = 0;
+      if (sscanf(argv[++i], "%dx%d", &w, &h) != 2 || w < 64 || h < 64 || w > 8192 || h > 8192) {
+        fprintf(stderr, "bad --size %s (want WxH, 64..8192)\n", argv[i]); return 2;
+      }
+      g.width = w; g.height = h;
+    } else if (strcmp(argv[i], "--title") == 0 && i + 1 < argc) title = argv[++i];
+    else if (strcmp(argv[i], "--app-id") == 0 && i + 1 < argc) app_id = argv[++i];
+    else if (argv[i][0] == '-') { fprintf(stderr, "unknown option %s\n", argv[i]); usage(stderr, argv[0]); return 2; }
+    else if (!dir) dir = argv[i];
+    else { usage(stderr, argv[0]); return 2; }
   }
-  const char* dir = argv[1];
+  if (!dir) { usage(stderr, argv[0]); return 2; }
+  const char* fps = getenv("QNX_FLUTTER_FPS");
+  if (fps && *fps) { g.fps_every = atoi(fps); if (g.fps_every <= 0) g.fps_every = 5; }
+  g.debug_input = getenv("QNX_FLUTTER_DEBUG_INPUT") != NULL;
   char assets[PATH_MAX], icu[PATH_MAX], elf[PATH_MAX];
   snprintf(assets, sizeof assets, "%s/flutter_assets", dir);
   snprintf(icu, sizeof icu, "%s/icudtl.dat", dir);
@@ -391,8 +454,8 @@ int main(int argc, char** argv) {
   xdg_surface_add_listener(g.xdg_surface, &xdg_surface_listener, NULL);
   g.toplevel = xdg_surface_get_toplevel(g.xdg_surface);
   xdg_toplevel_add_listener(g.toplevel, &toplevel_listener, NULL);
-  xdg_toplevel_set_title(g.toplevel, "Flutter on QNX");
-  xdg_toplevel_set_app_id(g.toplevel, "qnx-flutter-wayland");
+  xdg_toplevel_set_title(g.toplevel, title);
+  xdg_toplevel_set_app_id(g.toplevel, app_id);
   wl_surface_commit(g.surface);
   while (!g.configured && wl_display_dispatch(g.display) != -1) {}
 

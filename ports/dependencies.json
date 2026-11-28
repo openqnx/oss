@@ -6952,7 +6952,7 @@
   ],
   "buildsys": "custom",
   "built": {
-   "aarch64le": false,
+   "aarch64le": true,
    "x86_64": true
   },
   "class": "runtime-standalone",
@@ -6977,7 +6977,7 @@
   "build_deps": [],
   "buildsys": "custom",
   "built": {
-   "aarch64le": false,
+   "aarch64le": true,
    "x86_64": true
   },
   "class": "standalone",
@@ -6996,6 +6996,55 @@
   "undeclared": [],
   "unresolved": [],
   "version": "3.50.1"
+ },
+ "flutter-hmi-demo": {
+  "build_closure": [
+   "bzip2",
+   "expat",
+   "flutter-engine",
+   "gdbm",
+   "gettext",
+   "libffi",
+   "libiconv",
+   "libunistring",
+   "libxml2",
+   "ncurses",
+   "openssl",
+   "python3",
+   "qnx-flutter-wayland",
+   "readline",
+   "sqlite",
+   "wayland",
+   "wayland-protocols",
+   "xz",
+   "zlib",
+   "zstd"
+  ],
+  "build_deps": [
+   "flutter-engine",
+   "qnx-flutter-wayland"
+  ],
+  "buildsys": "custom",
+  "built": {
+   "aarch64le": true,
+   "x86_64": true
+  },
+  "class": "runtime-standalone",
+  "installs": {
+   "bins": [
+    "usr/local/bin/flutter-hmi-demo"
+   ],
+   "files": 11,
+   "headers": 0,
+   "libs": []
+  },
+  "linked_by_dev_name": [],
+  "runtime_closure": [],
+  "runtime_deps": [],
+  "standalone_verified": {},
+  "undeclared": [],
+  "unresolved": [],
+  "version": "1.0"
  },
  "fmt": {
   "build_closure": [],
@@ -39308,7 +39357,7 @@
   ],
   "buildsys": "custom",
   "built": {
-   "aarch64le": false,
+   "aarch64le": true,
    "x86_64": true
   },
   "class": "dependent",

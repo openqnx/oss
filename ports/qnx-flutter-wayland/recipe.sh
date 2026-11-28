@@ -2,9 +2,11 @@
 # Written for this tree (files/qnx_flutter_wayland.c, C): an xdg-shell window
 # on wl_shm buffers that the engine's software renderer draws into; pointer
 # (mouse) input; its own platform task runner (poll on the Wayland fd, a wake
-# pipe and the next task's time). Keyboard and text input are not done yet.
+# pipe and the next task's time). Mouse wheel scrolling; QNX_FLUTTER_FPS=<s>
+# prints the frame rate. Keyboard and text input are not done yet.
 #
-#   qnx-flutter-wayland <bundle dir>   (flutter_assets/, libapp.so[, icudtl.dat])
+#   qnx-flutter-wayland [--size WxH] [--title T] [--app-id ID] <bundle dir>
+#     (flutter_assets/, libapp.so[, icudtl.dat]); --size sets the starting window size
 #
 # QNX's loader does not expand $ORIGIN in RPATH/RUNPATH, so the program names
 # $PREFIX/lib as its RPATH (DT_RPATH) to find libflutter_engine.so and
